@@ -53,53 +53,51 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
   };
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ marginBottom: 8, padding: '12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <input
-          value={name}
-          onChange={e => setName(e.target.value.slice(0, 50))}
-          placeholder="Room name"
-          maxLength={50}
-          required
-          style={{
-            flex: 1,
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            padding: '6px 10px',
-            fontSize: 14,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            background: '#f9fafb',
-            color: '#0f172a',
-          }}
-        />
+    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ margin: '4px 0 8px', padding: '8px', background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+      <input
+        value={name}
+        onChange={e => setName(e.target.value.slice(0, 50))}
+        placeholder="Room name"
+        maxLength={50}
+        required
+        autoFocus
+        style={{
+          width: '100%', boxSizing: 'border-box',
+          border: '1px solid #d1d5db',
+          borderRadius: 5,
+          padding: '5px 8px',
+          fontSize: 13,
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          background: '#fff',
+          color: '#0f172a',
+          marginBottom: 6,
+        }}
+      />
+      <div style={{ display: 'flex', gap: 6 }}>
         <button
           type="submit"
           disabled={!name.trim() || loading}
           style={{
-            height: 36,
-            padding: '0 12px',
-            background: !name.trim() || loading ? '#f1f5f9' : '#646cff',
-            color: !name.trim() || loading ? '#9ca3af' : '#ffffff',
-            border: !name.trim() || loading ? '1px solid #e2e8f0' : 'none',
-            borderRadius: 8,
-            fontSize: 14,
-            fontWeight: 600,
+            flex: 1, height: 28, border: 'none', borderRadius: 5,
+            background: !name.trim() || loading ? '#e2e8f0' : '#646cff',
+            color: !name.trim() || loading ? '#9ca3af' : '#fff',
+            fontSize: 12, fontWeight: 600,
             cursor: !name.trim() || loading ? 'default' : 'pointer',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontFamily: 'inherit',
           }}
         >
-          {loading ? 'Creating…' : 'Create Room'}
+          {loading ? 'Creating…' : 'Create'}
         </button>
         <button
           type="button"
           onClick={onDiscard}
-          style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+          style={{ height: 28, padding: '0 8px', border: '1px solid #e2e8f0', borderRadius: 5, background: '#fff', color: '#64748b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           Cancel
         </button>
       </div>
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 13, marginTop: 6, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div style={{ color: '#dc2626', fontSize: 11, marginTop: 4 }}>
           {formError}
         </div>
       )}
@@ -140,59 +138,52 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
       <button
         onClick={() => setShowForm(true)}
         style={{
-          width: '100%',
-          height: 36,
-          marginBottom: 12,
-          background: '#ffffff',
-          color: '#374151',
-          border: '1px solid #e2e8f0',
-          borderRadius: 8,
-          fontSize: 14,
-          cursor: 'pointer',
+          width: '100%', textAlign: 'left', padding: '5px 8px',
+          background: 'none', border: 'none', cursor: 'pointer',
+          fontSize: 12, color: '#646cff', fontWeight: 600,
           fontFamily: 'system-ui, -apple-system, sans-serif',
+          borderRadius: 4, marginBottom: 4,
         }}
       >
-        Open DM
+        + New DM
       </button>
     );
   }
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ marginBottom: 12, padding: '12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <select
-          value={peerId}
-          onChange={e => setPeerId(e.target.value)}
-          disabled={friends.length === 0}
-          style={{
-            flex: 1,
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            padding: '6px 10px',
-            fontSize: 14,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            background: '#f9fafb',
-            color: '#0f172a',
-          }}
-        >
-          <option value="">{friends.length === 0 ? 'No mutual friends yet' : 'Select a friend\u2026'}</option>
-          {friends.map(f => (
-            <option key={f.userId} value={f.userId}>{f.displayName}</option>
-          ))}
-        </select>
+    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ margin: '4px 0 8px', padding: '8px', background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+      <select
+        value={peerId}
+        onChange={e => setPeerId(e.target.value)}
+        disabled={friends.length === 0}
+        style={{
+          width: '100%', boxSizing: 'border-box',
+          border: '1px solid #d1d5db',
+          borderRadius: 5,
+          padding: '5px 8px',
+          fontSize: 13,
+          fontFamily: 'system-ui, -apple-system, sans-serif',
+          background: '#fff',
+          color: '#0f172a',
+          marginBottom: 6,
+        }}
+      >
+        <option value="">{friends.length === 0 ? 'No mutual friends yet' : 'Select a friend\u2026'}</option>
+        {friends.map(f => (
+          <option key={f.userId} value={f.userId}>{f.displayName}</option>
+        ))}
+      </select>
+      <div style={{ display: 'flex', gap: 6 }}>
         <button
           type="submit"
           disabled={!peerId.trim() || loading || friends.length === 0}
           style={{
-            height: 36,
-            padding: '0 12px',
-            background: !peerId.trim() || loading ? '#f1f5f9' : '#ffffff',
-            color: !peerId.trim() || loading ? '#9ca3af' : '#374151',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            fontSize: 14,
+            flex: 1, height: 28, border: 'none', borderRadius: 5,
+            background: !peerId.trim() || loading ? '#e2e8f0' : '#646cff',
+            color: !peerId.trim() || loading ? '#9ca3af' : '#fff',
+            fontSize: 12, fontWeight: 600,
             cursor: !peerId.trim() || loading ? 'default' : 'pointer',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontFamily: 'inherit',
           }}
         >
           Open DM
@@ -200,13 +191,13 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
         <button
           type="button"
           onClick={() => setShowForm(false)}
-          style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+          style={{ height: 28, padding: '0 8px', border: '1px solid #e2e8f0', borderRadius: 5, background: '#fff', color: '#64748b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
         >
           Cancel
         </button>
       </div>
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 13, marginTop: 6, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div style={{ color: '#dc2626', fontSize: 11, marginTop: 4 }}>
           {formError}
         </div>
       )}

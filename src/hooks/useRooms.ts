@@ -2,11 +2,11 @@
 //
 // Rooms hook — list/create/join/leave rooms plus real-time member tracking.
 // Handles social:member_joined and social:member_left WebSocket events (RTIM-04).
-// All requests use Authorization: Bearer idToken against VITE_SOCIAL_API_URL.
+// All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GatewayMessage } from '../types/gateway';
-import { useToast } from '../components/shared/ToastProvider';
+import type { GatewayMessage } from '../../types/gateway';
+import { useToast } from '../../components/shared/ToastProvider';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,7 +67,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
   const [reloadKey, setReloadKey] = useState(0);
   const { toast } = useToast();
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
 
   const retry = useCallback(() => setReloadKey((k) => k + 1), []);
 
@@ -116,23 +116,24 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
 
   useEffect(() => {
     const unregister = onMessageRef.current((msg) => {
-      if (msg.type === 'social:member_joined' && msg.roomId === activeRoomRef.current) {
+      const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
+      if (msg.type === 'social:member_joined' && payload.roomId === activeRoomRef.current) {
         setMembers((prev) => [
           ...prev,
           {
-            roomId: msg.roomId as string,
-            userId: msg.userId as string,
-            displayName: msg.displayName as string | undefined,
+            roomId: payload.roomId as string,
+            userId: payload.userId as string,
+            displayName: payload.displayName as string | undefined,
             joinedAt: new Date().toISOString(),
           },
         ]);
-      } else if (msg.type === 'social:member_left' && msg.roomId === activeRoomRef.current) {
-        setMembers((prev) => prev.filter((m) => m.userId !== (msg.userId as string)));
+      } else if (msg.type === 'social:member_left' && payload.roomId === activeRoomRef.current) {
+        setMembers((prev) => prev.filter((m) => m.userId !== (payload.userId as string)));
       }
     });
 
     return unregister;
-  }, []);  
+  }, []);
 
   // ---- loadMembers (ROOM-06) -----------------------------------------------
 
@@ -148,7 +149,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } catch (err) {
       setError((err as Error).message);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   // ---- setActiveRoom -------------------------------------------------------
 
@@ -184,7 +185,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } finally {
       setLoading(false);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   // ---- createDM ------------------------------------------------------------
 
@@ -210,7 +211,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } finally {
       setLoading(false);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   // ---- joinRoom ------------------------------------------------------------
 
@@ -226,7 +227,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } catch (err) {
       setError((err as Error).message);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   // ---- leaveRoom -----------------------------------------------------------
 
@@ -243,7 +244,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } catch (err) {
       setError((err as Error).message);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   // ---- createGroupRoom (ROOM-02) -------------------------------------------
 
@@ -269,7 +270,7 @@ export function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsRetur
     } finally {
       setLoading(false);
     }
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   return {
     rooms,

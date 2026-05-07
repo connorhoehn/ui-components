@@ -2,10 +2,10 @@
 //
 // Comments hook — fetches and manages comments for a post with real-time updates.
 // Handles social:comment events by appending incoming comments with a fade-in flag.
-// All requests use Authorization: Bearer idToken against VITE_SOCIAL_API_URL.
+// All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GatewayMessage } from '../types/gateway';
+import type { GatewayMessage } from '../../types/gateway';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -47,7 +47,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
 
   // ---- Stable refs for WS handler -----------------------------------------
 
@@ -85,16 +85,17 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
       .finally(() => {
         setLoading(false);
       });
-  }, [idToken, roomId, postId, baseUrl]);  
+  }, [idToken, roomId, postId, baseUrl]);
 
   // ---- WS handler: social:comment -----------------------------------------
 
   useEffect(() => {
     const unregister = onMessageRef.current((msg: GatewayMessage) => {
-      if (msg.type === 'social:comment' && msg.postId === postIdRef.current) {
-        const incoming = { ...(msg.comment as CommentItem), _fadeIn: true };
+      if (msg.type === 'social:comment') {
+        const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
+        if (payload.postId !== postIdRef.current) return;
+        const incoming = { ...(payload as unknown as CommentItem), _fadeIn: true };
         setComments((prev) => [...prev, incoming]);
-        // Clear fade-in flag after 300ms
         setTimeout(() => {
           setComments((prev) =>
             prev.map((c) =>
@@ -106,7 +107,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
     });
 
     return unregister;
-  }, []);  
+  }, []);
 
   // ---- createComment -------------------------------------------------------
 
@@ -136,7 +137,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
     } finally {
       setLoading(false);
     }
-  }, [idToken, roomId, postId, baseUrl]);  
+  }, [idToken, roomId, postId, baseUrl]);
 
   // ---- deleteComment -------------------------------------------------------
 
@@ -156,7 +157,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
     } catch (err) {
       setError((err as Error).message);
     }
-  }, [idToken, roomId, postId, baseUrl]);  
+  }, [idToken, roomId, postId, baseUrl]);
 
   return { comments, createComment, deleteComment, loading, error };
 }

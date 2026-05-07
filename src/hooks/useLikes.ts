@@ -3,10 +3,10 @@
 // Likes hook — like/unlike posts and comments with real-time like count updates.
 // Handles social:like events by integer-swapping likeCount in-place (no animation).
 // Also exposes reactWithEmoji() for emoji reactions on posts.
-// All requests use Authorization: Bearer idToken against VITE_SOCIAL_API_URL.
+// All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GatewayMessage } from '../types/gateway';
+import type { GatewayMessage } from '../../types/gateway';
 import type { PublicProfile } from './useFriends';
 
 // ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
 
   // ---- Stable refs for WS handler -----------------------------------------
 
@@ -86,20 +86,21 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
       .finally(() => {
         setLoading(false);
       });
-  }, [idToken, roomId, postId, commentId, baseUrl]);  
+  }, [idToken, roomId, postId, commentId, baseUrl]);
 
   // ---- WS handler: social:like --------------------------------------------
 
   useEffect(() => {
     const unregister = onMessageRef.current((msg: GatewayMessage) => {
-      if (msg.type === 'social:like' && msg.postId === postIdRef.current) {
-        // Integer swap — no animation per UI-SPEC
-        setLikeCount(msg.likeCount as number);
+      if (msg.type === 'social:like') {
+        const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
+        if (payload.postId !== postIdRef.current) return;
+        setLikeCount((prev) => payload.action === 'unliked' ? Math.max(0, prev - 1) : prev + 1);
       }
     });
 
     return unregister;
-  }, []);  
+  }, []);
 
   // ---- toggle --------------------------------------------------------------
 
@@ -136,7 +137,7 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
     } finally {
       setLoading(false);
     }
-  }, [idToken, roomId, postId, commentId, isLiked, baseUrl]);  
+  }, [idToken, roomId, postId, commentId, isLiked, baseUrl]);
 
   // ---- reactWithEmoji ------------------------------------------------------
 
@@ -156,7 +157,7 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
     } catch (err) {
       setError((err as Error).message);
     }
-  }, [idToken, roomId, postId, baseUrl]);  
+  }, [idToken, roomId, postId, baseUrl]);
 
   return { isLiked, likeCount, whoLiked, toggle, reactWithEmoji, loading, error };
 }

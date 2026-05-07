@@ -130,6 +130,7 @@ export default function SocialTabContent({
               createGroupRoom={createGroupRoom}
               onRoomSelect={handleRoomSelect}
               roomsLoading={roomsLoading}
+              compact
             />
           )}
           {socialTab === 'dms' && (

@@ -2,10 +2,10 @@
 //
 // Posts hook — fetches and manages posts for a room with real-time WS updates.
 // Handles social:post events by prepending incoming posts with a fade-in flag.
-// All requests use Authorization: Bearer idToken against VITE_SOCIAL_API_URL.
+// All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GatewayMessage } from '../types/gateway';
+import type { GatewayMessage } from '../../types/gateway';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -52,7 +52,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   const [_mutating, setMutating] = useState(false);    // createPost / editPost / deletePost
   const [error, setError] = useState<string | null>(null);
 
-  const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
+  const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
 
   // ---- Stable refs for WS handler -----------------------------------------
 
@@ -93,16 +93,17 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       .finally(() => {
         setLoading(false);
       });
-  }, [idToken, roomId, baseUrl]);  
+  }, [idToken, roomId, baseUrl]);
 
   // ---- WS handler: social:post ---------------------------------------------
 
   useEffect(() => {
     const unregister = onMessageRef.current((msg: GatewayMessage) => {
-      if (msg.type === 'social:post' && msg.roomId === roomIdRef.current) {
-        const incoming = { ...(msg.post as PostItem), _fadeIn: true };
+      if (msg.type === 'social:post') {
+        const payload = (msg.payload ?? msg) as Record<string, unknown>;
+        if (payload.roomId !== roomIdRef.current) return;
+        const incoming = { ...(payload as unknown as PostItem), _fadeIn: true };
         setPosts((prev) => [incoming, ...prev]);
-        // Clear fade-in flag after 300ms
         setTimeout(() => {
           setPosts((prev) =>
             prev.map((p) => (p.postId === incoming.postId ? { ...p, _fadeIn: false } : p))
@@ -112,7 +113,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     });
 
     return unregister;
-  }, []);  
+  }, []);
 
   // ---- loadMore ------------------------------------------------------------
 
@@ -134,7 +135,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     } finally {
       setLoading(false);
     }
-  }, [idToken, roomId, lastKey, baseUrl]);  
+  }, [idToken, roomId, lastKey, baseUrl]);
 
   // ---- createPost ----------------------------------------------------------
 
@@ -160,7 +161,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     } finally {
       setMutating(false);
     }
-  }, [idToken, roomId, baseUrl]);  
+  }, [idToken, roomId, baseUrl]);
 
   // ---- editPost ------------------------------------------------------------
 
@@ -205,7 +206,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     } finally {
       setMutating(false);
     }
-  }, [idToken, roomId, baseUrl]);  
+  }, [idToken, roomId, baseUrl]);
 
   // ---- getUserPosts (CONT-05) -----------------------------------------------
 
@@ -216,7 +217,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     });
     if (!res.ok) throw new Error(`Failed to load user posts (${res.status})`);
     return ((await res.json()) as { posts: PostItem[] }).posts;
-  }, [idToken, baseUrl]);  
+  }, [idToken, baseUrl]);
 
   return {
     posts,
