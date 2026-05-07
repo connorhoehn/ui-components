@@ -3,6 +3,7 @@
 // Stub. Dense row used by /observability/events and BigBrotherPanel.
 // Real implementation will wire in icon/color via getEventGlyph().
 
+import { cn } from '../../lib/cn';
 import { getEventGlyph } from './eventGlyphs';
 
 export interface EventRowProps {
@@ -14,11 +15,11 @@ export interface EventRowProps {
   selected?: boolean;
 }
 
-const severityColor: Record<NonNullable<EventRowProps['severity']>, string> = {
-  info: '#64748b',
-  warning: '#d97706',
-  error: '#dc2626',
-  success: '#16a34a',
+const severityClass: Record<NonNullable<EventRowProps['severity']>, string> = {
+  info: 'text-slate-500',
+  warning: 'text-amber-600',
+  error: 'text-red-600',
+  success: 'text-green-600',
 };
 
 function EventRow({ timestamp, type, summary, severity = 'info', onClick, selected }: EventRowProps) {
@@ -28,20 +29,18 @@ function EventRow({ timestamp, type, summary, severity = 'info', onClick, select
     <div
       data-testid="event-row"
       onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '6px 10px', fontSize: 13, fontFamily: 'inherit',
-        background: selected ? '#ede9fe' : 'transparent',
-        borderRadius: 6, cursor: onClick ? 'pointer' : 'default',
-        color: '#0f172a',
-      }}
+      className={cn(
+        'flex items-center gap-2 px-2.5 py-1.5 text-[13px] font-[inherit] rounded-md text-slate-900',
+        selected ? 'bg-violet-100' : 'bg-transparent',
+        onClick ? 'cursor-pointer' : 'cursor-default',
+      )}
     >
-      <span style={{ fontSize: 14, color: glyph.color, flexShrink: 0 }}>{glyph.icon}</span>
-      <span style={{ fontSize: 11, color: '#94a3b8', flexShrink: 0, width: 70 }}>{timestamp}</span>
-      <span style={{ fontSize: 12, color: severityColor[severity], fontWeight: 600, flexShrink: 0 }}>
+      <span className="text-sm shrink-0" style={{ color: glyph.color }}>{glyph.icon}</span>
+      <span className="text-[11px] text-slate-400 shrink-0 w-[70px]">{timestamp}</span>
+      <span className={cn('text-xs font-semibold shrink-0', severityClass[severity])}>
         {type}
       </span>
-      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
         {summary}
       </span>
     </div>

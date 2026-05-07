@@ -35,7 +35,7 @@ function Sparkline({ data, width = 80, height = 20, color = '#646cff' }: Sparkli
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="none"
-      style={{ display: 'block' }}
+      className="block"
     >
       <polyline fill="none" stroke={color} strokeWidth={1.5} points={points} />
     </svg>

@@ -1,5 +1,5 @@
 import Modal from './Modal';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -17,9 +17,9 @@ export interface ConfirmDialogProps {
 }
 
 const CONFIRM_BG: Record<NonNullable<ConfirmDialogProps['tone']>, string> = {
-  destructive: '#dc2626',
-  caution: '#d97706',
-  info: colors.primary,
+  destructive: 'bg-red-600',
+  caution: 'bg-amber-600',
+  info: 'bg-[var(--color-primary)]',
 };
 
 export default function ConfirmDialog({
@@ -27,8 +27,6 @@ export default function ConfirmDialog({
   confirmLabel = 'Confirm', cancelLabel = 'Cancel',
   confirmDisabled = false, tone = 'info', children,
 }: ConfirmDialogProps) {
-  const confirmBg = CONFIRM_BG[tone];
-
   return (
     <Modal
       open={open}
@@ -41,12 +39,11 @@ export default function ConfirmDialog({
             type="button"
             data-testid="confirm-dialog-cancel"
             onClick={onCancel}
-            style={{
-              padding: '7px 16px', fontSize: 13,
-              border: `1px solid ${colors.border}`,
-              background: colors.surface, color: colors.textSecondary,
-              borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-            }}
+            className={cn(
+              'px-4 py-[7px] text-[13px] font-[inherit]',
+              'border border-border bg-surface text-text-secondary',
+              'rounded-md cursor-pointer',
+            )}
           >
             {cancelLabel}
           </button>
@@ -55,20 +52,19 @@ export default function ConfirmDialog({
             data-testid="confirm-dialog-confirm"
             onClick={onConfirm}
             disabled={confirmDisabled}
-            style={{
-              padding: '7px 16px', fontSize: 13, fontWeight: 600,
-              border: 'none', background: confirmBg, color: '#fff',
-              borderRadius: 6, fontFamily: 'inherit',
-              cursor: confirmDisabled ? 'not-allowed' : 'pointer',
-              opacity: confirmDisabled ? 0.7 : 1,
-            }}
+            className={cn(
+              'px-4 py-[7px] text-[13px] font-semibold font-[inherit]',
+              'border-none text-white rounded-md',
+              CONFIRM_BG[tone],
+              confirmDisabled ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100',
+            )}
           >
             {confirmLabel}
           </button>
         </>
       }
     >
-      {body && <p style={{ margin: '0 0 12px', fontSize: 13, color: colors.textSecondary }}>{body}</p>}
+      {body && <p className="m-0 mb-3 text-[13px] text-text-secondary">{body}</p>}
       {children}
     </Modal>
   );

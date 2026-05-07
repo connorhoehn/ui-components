@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
-  plugins: [react(), dts({ rollupTypes: true })],
+  plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
   resolve: {
     alias: { '@': resolve(__dirname, 'src') },
   },
@@ -23,9 +24,11 @@ export default defineConfig({
       },
       formats: ['es', 'cjs'],
     },
+    cssCodeSplit: false,
     rollupOptions: {
       external: [
         'react', 'react-dom', 'react/jsx-runtime', 'react-router',
+        'clsx', 'tailwind-merge',
         'yjs', 'y-prosemirror', 'y-protocols',
         '@xyflow/react', 'reactflow', '@tiptap/react', '@tiptap/starter-kit',
         '@tiptap/extension-collaboration', '@tiptap/extension-collaboration-cursor',

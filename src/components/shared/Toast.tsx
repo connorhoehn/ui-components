@@ -1,12 +1,12 @@
 // frontend/src/components/shared/Toast.tsx
 //
-// Single toast visual — styled to match the NotificationBanner style in
-// AppLayout (white card, left accent border, soft shadow, system font). Color
-// accent and default duration are driven by toast type. Consumers should not
-// render this directly; use <ToastProvider> and `useToast()` instead.
+// Single toast visual — Tailwind-styled card with left accent border, soft
+// shadow, and slide-in / fade-out animations via keyframes defined in
+// src/styles.css. Consumers should not render this directly; use
+// <ToastProvider> and `useToast()` instead.
 
-import type { CSSProperties } from 'react';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
+import { cn } from '../../lib/cn';
 
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
 
@@ -28,55 +28,46 @@ const ACCENT_COLOR: Record<ToastType, string> = {
   error:   '#dc2626',
 };
 
+const ACCENT_BORDER: Record<ToastType, string> = {
+  info:    'border-l-[#2563eb]',
+  success: 'border-l-[#16a34a]',
+  warning: 'border-l-[#d97706]',
+  error:   'border-l-[#dc2626]',
+};
+
 function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps) {
   const accent = ACCENT_COLOR[type];
   const reduceMotion = usePrefersReducedMotion();
 
-  const style: CSSProperties = {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderLeft: `3px solid ${accent}`,
-    borderRadius: 8,
-    padding: '12px 16px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-    minWidth: 260,
-    maxWidth: 360,
-    // §18.12 reduced-motion: toasts still appear and are removed, but the
-    // 200ms slide-in / 160ms fade-out become instant. We also zero the
-    // opacity on `exiting` so the entry disappears immediately instead of
-    // lingering for the fade-out animation duration.
-    animation: reduceMotion
-      ? 'none'
-      : exiting
-        ? 'toastFadeOut 160ms ease-in forwards'
-        : 'toastSlideIn 200ms ease-out',
-    opacity: reduceMotion && exiting ? 0 : undefined,
-  };
+  const animationClass = reduceMotion
+    ? 'animate-none'
+    : exiting
+      ? 'animate-[toast-fade-out_160ms_ease-in_forwards]'
+      : 'animate-[toast-slide-in_200ms_ease-out]';
 
   return (
-    <div role="alert" aria-live={type === 'error' || type === 'warning' ? 'assertive' : 'polite'} style={style}>
-      <span style={{ fontSize: 14, color: '#374151', fontWeight: 400, flex: 1, lineHeight: 1.35 }}>
+    <div
+      role="alert"
+      aria-live={type === 'error' || type === 'warning' ? 'assertive' : 'polite'}
+      className={cn(
+        'bg-white border border-border border-l-[3px] rounded-lg',
+        'px-4 py-3 flex items-center justify-between gap-3',
+        'font-[system-ui,-apple-system,sans-serif] shadow-md',
+        'min-w-[260px] max-w-[360px]',
+        ACCENT_BORDER[type],
+        animationClass,
+        reduceMotion && exiting && 'opacity-0',
+      )}
+    >
+      <span className="text-sm text-gray-700 font-normal flex-1 leading-[1.35]">
         {message}
       </span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+      <div className="flex items-center gap-1 shrink-0">
         {actionLabel && onAction && (
           <button
             onClick={() => { onAction(); onDismiss(id); }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: accent,
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: 'pointer',
-              padding: '2px 6px',
-              fontFamily: 'inherit',
-            }}
+            className="bg-transparent border-none text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]"
+            style={{ color: accent }}
           >
             {actionLabel}
           </button>
@@ -84,17 +75,9 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
         <button
           onClick={() => onDismiss(id)}
           aria-label="Dismiss notification"
-          style={{
-            fontSize: 16,
-            color: '#94a3b8',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '0 4px',
-            lineHeight: 1,
-          }}
+          className="text-base text-slate-400 bg-transparent border-none cursor-pointer px-1 py-0 leading-none"
         >
-          ×
+          &times;
         </button>
       </div>
     </div>

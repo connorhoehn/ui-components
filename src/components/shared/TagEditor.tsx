@@ -2,7 +2,7 @@
 //
 // Reusable tag input: a small text field plus a chip strip. Enter adds the
 // current draft as a tag (trimmed, lowercased, duplicates dropped); clicking
-// the × on a chip removes it. An optional `suggestions` prop renders a
+// the x on a chip removes it. An optional `suggestions` prop renders a
 // popover below the input showing the currently-unused suggestions that match
 // the draft — click one to add it.
 
@@ -10,10 +10,9 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
 } from 'react';
-import { chipStyle, colors, fieldStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -33,62 +32,6 @@ export interface TagEditorProps {
 function normalize(raw: string): string {
   return raw.trim().toLowerCase();
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const wrapperStyle: CSSProperties = {
-  position: 'relative',
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  gap: 6,
-};
-
-const inputStyle: CSSProperties = {
-  ...fieldStyle,
-  padding: '4px 8px',
-  fontSize: 12,
-  flex: 'initial',
-  width: 140,
-  minWidth: 120,
-};
-
-const removeBtnStyle: CSSProperties = {
-  marginLeft: 4,
-  background: 'transparent',
-  border: 'none',
-  color: 'inherit',
-  cursor: 'pointer',
-  fontSize: 12,
-  lineHeight: 1,
-  padding: 0,
-  fontFamily: 'inherit',
-};
-
-const popoverStyle: CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  marginTop: 4,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 6,
-  boxShadow: '0 6px 18px rgba(15,23,42,0.10)',
-  padding: 6,
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 4,
-  maxWidth: 320,
-  zIndex: 30,
-};
-
-const suggestionBtnStyle: CSSProperties = {
-  ...chipStyle('neutral'),
-  cursor: 'pointer',
-  border: `1px dashed ${colors.borderField}`,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -147,21 +90,25 @@ export default function TagEditor({
   const showPopover = focused && shownSuggestions.length > 0;
 
   return (
-    <div style={wrapperStyle} data-testid="tag-editor">
+    <div className="relative flex flex-wrap items-center gap-1.5" data-testid="tag-editor">
       {value.map((tag) => (
-        <span key={tag} style={chipStyle('neutral')} data-testid={`tag-chip-${tag}`}>
+        <span
+          key={tag}
+          className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600"
+          data-testid={`tag-chip-${tag}`}
+        >
           {tag}
           <button
             type="button"
             aria-label={`Remove tag ${tag}`}
             onClick={() => removeTag(tag)}
-            style={removeBtnStyle}
+            className="ml-1 bg-transparent border-none text-inherit cursor-pointer text-xs leading-none p-0 font-[inherit]"
           >
-            ×
+            &times;
           </button>
         </span>
       ))}
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         <input
           ref={inputRef}
           data-testid="tag-editor-input"
@@ -175,10 +122,13 @@ export default function TagEditor({
             setTimeout(() => setFocused(false), 120);
           }}
           placeholder={placeholder}
-          style={inputStyle}
+          className="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-gray-50 w-[140px] min-w-[120px] outline-none font-[inherit] text-slate-900"
         />
         {showPopover ? (
-          <div style={popoverStyle} data-testid="tag-suggestions">
+          <div
+            className="absolute top-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30"
+            data-testid="tag-suggestions"
+          >
             {shownSuggestions.map((s) => (
               <button
                 key={s}
@@ -188,7 +138,7 @@ export default function TagEditor({
                   e.preventDefault();
                 }}
                 onClick={() => addTag(s)}
-                style={suggestionBtnStyle}
+                className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600 cursor-pointer border border-dashed border-gray-300"
               >
                 + {s}
               </button>

@@ -1,30 +1,31 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { cn } from '../../lib/cn';
 
 export type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
 
-const SOFT: Record<ChipTone, { background: string; color: string }> = {
-  neutral: { background: '#f1f5f9', color: '#475569' },
-  success: { background: '#f0fdf4', color: '#16a34a' },
-  warning: { background: '#fffbeb', color: '#d97706' },
-  danger:  { background: '#fef2f2', color: '#dc2626' },
-  info:    { background: '#eff6ff', color: '#2563eb' },
-  caution: { background: '#fff7ed', color: '#ea580c' },
-  purple:  { background: '#faf5ff', color: '#9333ea' },
+const SOFT_CLASSES: Record<ChipTone, string> = {
+  neutral: 'bg-slate-100 text-slate-600',
+  success: 'bg-green-50 text-green-600',
+  warning: 'bg-amber-50 text-amber-600',
+  danger:  'bg-red-50 text-red-600',
+  info:    'bg-blue-50 text-blue-600',
+  caution: 'bg-orange-50 text-orange-600',
+  purple:  'bg-purple-50 text-purple-600',
 };
 
-const SOLID: Record<ChipTone, { background: string; color: string }> = {
-  neutral: { background: '#64748b', color: '#fff' },
-  success: { background: '#16a34a', color: '#fff' },
-  warning: { background: '#d97706', color: '#fff' },
-  danger:  { background: '#dc2626', color: '#fff' },
-  info:    { background: '#2563eb', color: '#fff' },
-  caution: { background: '#ea580c', color: '#fff' },
-  purple:  { background: '#9333ea', color: '#fff' },
+const SOLID_CLASSES: Record<ChipTone, string> = {
+  neutral: 'bg-slate-500 text-white',
+  success: 'bg-green-600 text-white',
+  warning: 'bg-amber-600 text-white',
+  danger:  'bg-red-600 text-white',
+  info:    'bg-blue-600 text-white',
+  caution: 'bg-orange-600 text-white',
+  purple:  'bg-purple-600 text-white',
 };
 
-const SIZE: Record<'sm' | 'xs', CSSProperties> = {
-  sm: { padding: '2px 8px', fontSize: 11 },
-  xs: { padding: '1px 6px', fontSize: 10 },
+const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
+  sm: 'px-2 py-0.5 text-[11px]',
+  xs: 'px-1.5 py-px text-[10px]',
 };
 
 export interface ChipProps {
@@ -52,23 +53,19 @@ export default function Chip({
   'data-testid': testId,
   'aria-label': ariaLabel,
 }: ChipProps) {
-  const palette = solid ? SOLID[tone] : SOFT[tone];
+  const paletteClasses = solid ? SOLID_CLASSES[tone] : SOFT_CLASSES[tone];
   return (
     <span
       data-testid={testId}
       aria-label={ariaLabel}
       title={title}
-      style={{
-        display: 'inline-block',
-        borderRadius: 4,
-        fontWeight: 600,
-        fontFamily: mono ? 'monospace' : 'inherit',
-        lineHeight: 1.4,
-        whiteSpace: 'nowrap',
-        ...SIZE[size],
-        ...palette,
-        ...style,
-      }}
+      className={cn(
+        'inline-block rounded-sm font-semibold leading-[1.4] whitespace-nowrap',
+        SIZE_CLASSES[size],
+        paletteClasses,
+        mono && 'font-mono',
+      )}
+      style={style}
     >
       {children}
     </span>

@@ -11,43 +11,43 @@ describe('Chip', () => {
   it('applies correct tone styling (neutral default)', () => {
     render(<Chip data-testid="chip">Label</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ background: '#f1f5f9', color: '#475569' });
+    expect(chip).toHaveClass('bg-slate-100', 'text-slate-600');
   });
 
   it('applies success tone styling', () => {
     render(<Chip tone="success" data-testid="chip">OK</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ background: '#f0fdf4', color: '#16a34a' });
+    expect(chip).toHaveClass('bg-green-50', 'text-green-600');
   });
 
   it('applies danger tone styling', () => {
     render(<Chip tone="danger" data-testid="chip">Error</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ background: '#fef2f2', color: '#dc2626' });
+    expect(chip).toHaveClass('bg-red-50', 'text-red-600');
   });
 
   it('applies solid variant styling', () => {
     render(<Chip tone="success" solid data-testid="chip">Done</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ background: '#16a34a', color: '#fff' });
+    expect(chip).toHaveClass('bg-green-600', 'text-white');
   });
 
   it('renders with sm size (default)', () => {
     render(<Chip data-testid="chip">SM</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ padding: '2px 8px', fontSize: '11px' });
+    expect(chip).toHaveClass('px-2', 'text-[11px]');
   });
 
   it('renders with xs size', () => {
     render(<Chip size="xs" data-testid="chip">XS</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ padding: '1px 6px', fontSize: '10px' });
+    expect(chip).toHaveClass('px-1.5', 'text-[10px]');
   });
 
   it('applies monospace font when mono is true', () => {
     render(<Chip mono data-testid="chip">42</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveStyle({ fontFamily: 'monospace' });
+    expect(chip).toHaveClass('font-mono');
   });
 
   it('renders all tones without crashing', () => {

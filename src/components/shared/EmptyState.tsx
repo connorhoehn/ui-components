@@ -4,6 +4,8 @@
 // DocumentTypesPage: 52px emoji, 17px/600 slate-600 headline, 13px/slate-400
 // body capped at 340px, optional indigo primary CTA.
 
+import { cn } from '../../lib/cn';
+
 export interface EmptyStateProps {
   icon?: string;
   title: string;
@@ -28,19 +30,15 @@ function EmptyState({
   return (
     <div
       data-testid={testId}
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
-        // minHeight gives the empty state visual weight without forcing it
-        // to overflow short parents. (height: 100% used to over-fill — e.g.
-        // the 278px Recent Activity card got a 308px child.)
-        justifyContent: 'center', minHeight: 220, color: '#94a3b8', gap: 8,
-        padding: '32px', fontFamily: 'inherit',
-      }}
+      className={cn(
+        'flex flex-col items-center justify-center min-h-[220px]',
+        'text-slate-400 gap-2 p-8 font-[inherit]',
+      )}
     >
-      {icon && <div style={{ fontSize: 52, marginBottom: 8 }}>{icon}</div>}
-      <div style={{ fontSize: 17, fontWeight: 600, color: '#64748b' }}>{title}</div>
+      {icon && <div className="text-[52px] mb-2">{icon}</div>}
+      <div className="text-[17px] font-semibold text-slate-500">{title}</div>
       {body && (
-        <div style={{ fontSize: 13, textAlign: 'center', maxWidth: 340, color: '#94a3b8', lineHeight: 1.5 }}>
+        <div className="text-[13px] text-center max-w-[340px] text-slate-400 leading-normal">
           {body}
         </div>
       )}
@@ -48,11 +46,10 @@ function EmptyState({
         <button
           data-testid={actionTestId}
           onClick={onAction}
-          style={{
-            marginTop: 10, padding: '9px 22px', fontSize: 14, fontWeight: 600,
-            background: '#646cff', color: '#fff', border: 'none',
-            borderRadius: 8, cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className={cn(
+            'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
+            'bg-primary text-white border-none rounded-lg cursor-pointer font-[inherit]',
+          )}
         >
           {actionLabel}
         </button>

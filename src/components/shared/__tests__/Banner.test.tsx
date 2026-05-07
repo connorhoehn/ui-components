@@ -17,25 +17,25 @@ describe('Banner', () => {
   it('renders with error variant styling by default', () => {
     render(<Banner>Error message</Banner>);
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveStyle({ background: '#fef2f2' });
+    expect(alert).toHaveClass('bg-danger-bg', 'border-danger-border');
   });
 
   it('renders with warning variant styling', () => {
     render(<Banner variant="warning">Warning message</Banner>);
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveStyle({ background: '#fffbeb' });
+    expect(alert).toHaveClass('bg-warning-bg', 'border-warning-border');
   });
 
   it('renders with info variant styling', () => {
     render(<Banner variant="info">Info message</Banner>);
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveStyle({ background: '#eff6ff' });
+    expect(alert).toHaveClass('bg-info-bg', 'border-info-border');
   });
 
   it('renders with success variant styling', () => {
     render(<Banner variant="success">Success message</Banner>);
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveStyle({ background: '#f0fdf4' });
+    expect(alert).toHaveClass('bg-success-bg', 'border-success-border');
   });
 
   it('shows dismiss button and calls onDismiss', () => {

@@ -1,3 +1,5 @@
+import '../../styles.css';
+
 export { default as Banner } from './Banner';
 export * from './Banner';
 export * from './Chart';

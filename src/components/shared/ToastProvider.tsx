@@ -3,7 +3,8 @@
 // App-wide toast queue. Mount once high in the tree (App.tsx / AppLayout.tsx)
 // and call `useToast().toast(message, opts?)` from anywhere below. Toasts
 // render fixed top-right, stacked with 8px gap, auto-dismiss after a
-// type-dependent duration, and can be dismissed manually with the × button.
+// type-dependent duration, and can be dismissed manually with the x button.
+// Keyframes for animations are defined in src/styles.css.
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -35,7 +36,7 @@ const DEFAULT_DURATION: Record<ToastType, number> = {
   error:   6000,
 };
 
-// Animation durations that must match Toast.tsx keyframes below.
+// Animation durations that must match Toast.tsx keyframes in styles.css.
 const FADE_OUT_MS = 160;
 
 // ---------------------------------------------------------------------------
@@ -75,7 +76,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   }, [clearTimer]);
 
   // Mark a toast as exiting (fade-out class), then remove it after the
-  // animation finishes. Called from the × button and from the auto-dismiss
+  // animation finishes. Called from the x button and from the auto-dismiss
   // timer.
   const dismiss = useCallback((id: string) => {
     setToasts(prev => prev.map(t => t.id === id ? { ...t, exiting: true } : t));
@@ -104,32 +105,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={ctxValue}>
       {children}
-      {/* Keyframes for slide-in / fade-out. Injected once per mount; harmless
-          if duplicated across providers. */}
-      <style>{`
-        @keyframes toastSlideIn {
-          from { transform: translateX(110%); opacity: 0; }
-          to   { transform: translateX(0);    opacity: 1; }
-        }
-        @keyframes toastFadeOut {
-          from { opacity: 1; transform: translateX(0); }
-          to   { opacity: 0; transform: translateX(20px); }
-        }
-      `}</style>
-      <div
-        style={{
-          position: 'fixed',
-          top: 64,
-          right: 16,
-          zIndex: 2000,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          pointerEvents: 'none',
-        }}
-      >
+      <div className="fixed top-16 right-4 z-[2000] flex flex-col gap-2 pointer-events-none">
         {toasts.map(t => (
-          <div key={t.id} style={{ pointerEvents: 'auto' }}>
+          <div key={t.id} className="pointer-events-auto">
             <Toast
               id={t.id}
               message={t.message}

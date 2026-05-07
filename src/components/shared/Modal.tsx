@@ -1,18 +1,11 @@
 // frontend/src/components/shared/Modal.tsx
 //
-// Reusable modal shell. Matches the DeleteConfirmModal style used across the
-// app: rgba(0,0,0,0.45) backdrop, white card with 12px radius, 28px/24px
-// padding, 0 8px 32px rgba(0,0,0,0.18) shadow. Closes on backdrop click and
-// Escape keypress.
-//
-// Accessibility: when the modal opens it captures the previously-focused
-// element, moves focus inside the dialog (preferring `[data-autofocus]` when
-// present), and traps Tab/Shift+Tab so keyboard navigation cannot escape the
-// modal. On close the previously-focused element is re-focused. The whole
-// dance is ~30 lines so we don't pull in `focus-trap-react`. See task brief.
+// Reusable modal shell. Tailwind-styled backdrop + card with focus trap,
+// Escape handling, and backdrop-click close. Portal-rendered into document.body.
 
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { cn } from '../../lib/cn';
 
 export interface ModalProps {
   open: boolean;
@@ -44,9 +37,8 @@ export interface ModalProps {
   zIndex?: number;
   /**
    * When true, render children directly inside the card without the default
-   * `fontSize: 13, color: '#64748b'` wrapper div. Useful for modals that
-   * manage their own full-layout (header / scrollable body / footer) and
-   * need the card to be a flex container.
+   * text-sm text-text-secondary wrapper div. Useful for modals that manage
+   * their own full-layout and need the card to be a flex container.
    */
   rawChildren?: boolean;
 }
@@ -178,12 +170,10 @@ function Modal({
   return createPortal(
     <div
       data-testid={backdropTestId}
-      style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex,
-        ...backdropStyle,
-      }}
+      className={cn(
+        'fixed inset-0 flex items-center justify-center bg-black/45',
+      )}
+      style={{ zIndex, ...backdropStyle }}
       onClick={onClose}
     >
       <div
@@ -191,24 +181,22 @@ function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        style={{
-          background: '#fff', borderRadius: 12, padding: '28px 24px',
-          maxWidth, width: '90%', boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          fontFamily: 'inherit',
-          ...cardStyle,
-        }}
+        className={cn(
+          'bg-surface rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]',
+        )}
+        style={{ maxWidth, ...cardStyle }}
         onClick={e => e.stopPropagation()}
       >
         {title && (
-          <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+          <div className="text-base font-semibold text-text-primary mb-2.5">
             {title}
           </div>
         )}
         {rawChildren
           ? children
-          : <div style={{ fontSize: 13, color: '#64748b' }}>{children}</div>}
+          : <div className="text-[13px] text-text-secondary">{children}</div>}
         {footer && (
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 22 }}>
+          <div className="flex gap-2 justify-end mt-5">
             {footer}
           </div>
         )}
