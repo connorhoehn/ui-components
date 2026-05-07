@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import type { RoomItem } from '../../hooks/useRooms';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
+import { useTheme } from '../../contexts/ThemeContext';
 
 import { RoomList } from './RoomList';
 import { GroupPanel } from './GroupPanel';
@@ -149,6 +150,13 @@ export default function SocialTabContent({
   activeRoomId,
   onMessage,
 }: SocialTabContentProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  // ---- Sidebar collapse ----
+  const [chatSidebarOpen, setChatSidebarOpen] = useState(true);
+  const CHAT_SIDEBAR_WIDTH = chatSidebarOpen ? 240 : 0;
+
   // ---- Unread tracking ----
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
   const activeRoomIdRef = useRef(activeRoomId);
@@ -193,28 +201,36 @@ export default function SocialTabContent({
   const channelUnreadTotal = channels.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
   const dmUnreadTotal = dms.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
 
+  const sidebarBg = isDark ? '#1e1f2e' : '#f8fafc';
+  const sidebarBorder = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
+  const sidebarTextPrimary = isDark ? '#fff' : '#0f172a';
+  const sidebarTextSecondary = isDark ? '#94a3b8' : '#64748b';
+  const chatBg = isDark ? '#0f172a' : '#fff';
+
   return (
     <div style={{
       display: 'flex',
       height: 'calc(100vh - 120px)',
-      background: '#fff',
+      background: chatBg,
       borderRadius: 8,
-      border: '1px solid #e2e8f0',
+      border: `1px solid ${sidebarBorder}`,
       overflow: 'hidden',
+      transition: 'background 200ms ease',
     }}>
       {/* ── Left sidebar ──────────────────────────────────────────────────── */}
       <div style={{
-        width: 240, flexShrink: 0,
-        display: 'flex', flexDirection: 'column',
-        borderRight: '1px solid #e2e8f0',
-        background: '#1e1f2e',
+        width: CHAT_SIDEBAR_WIDTH, flexShrink: 0,
+        display: chatSidebarOpen ? 'flex' : 'none', flexDirection: 'column',
+        borderRight: `1px solid ${sidebarBorder}`,
+        background: sidebarBg,
         overflow: 'hidden',
+        transition: 'width 180ms ease',
       }}>
         {/* Workspace header */}
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8,
           padding: '14px 14px 12px',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          borderBottom: `1px solid ${sidebarBorder}`,
           flexShrink: 0,
         }}>
           <div style={{
@@ -226,14 +242,25 @@ export default function SocialTabContent({
             {initials}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: sidebarTextPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {displayName || userId}
             </div>
-            <div style={{ fontSize: 11, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ fontSize: 11, color: sidebarTextSecondary, display: 'flex', alignItems: 'center', gap: 4 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
               Active
             </div>
           </div>
+          <button
+            onClick={() => setChatSidebarOpen(false)}
+            title="Collapse sidebar"
+            style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: sidebarTextSecondary, fontSize: 16, lineHeight: 1,
+              padding: '2px 4px', borderRadius: 4,
+            }}
+          >
+            «
+          </button>
         </div>
 
         {/* Scrollable sections */}
@@ -242,9 +269,9 @@ export default function SocialTabContent({
           <CollapsibleSection title="Channels" count={channels.length} unreadTotal={channelUnreadTotal}>
             <div style={{ padding: '0 4px' }}>
               {roomsLoading && channels.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: '#6b7280', fontSize: 12 }}>Loading…</div>
+                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>Loading…</div>
               ) : channels.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: '#6b7280', fontSize: 12 }}>No channels yet</div>
+                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>No channels yet</div>
               ) : (
                 channels.map(room => (
                   <SidebarRoomRow
@@ -262,7 +289,7 @@ export default function SocialTabContent({
                   display: 'flex', alignItems: 'center', gap: 6,
                   width: '100%', padding: '5px 8px 5px 24px',
                   background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 12, color: '#6b7280', fontFamily: 'inherit',
+                  fontSize: 12, color: sidebarTextSecondary, fontFamily: 'inherit',
                   borderRadius: 4,
                 }}
               >
@@ -291,7 +318,7 @@ export default function SocialTabContent({
           <CollapsibleSection title="Direct Messages" count={dms.length} unreadTotal={dmUnreadTotal}>
             <div style={{ padding: '0 4px' }}>
               {dms.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: '#6b7280', fontSize: 12 }}>No conversations yet</div>
+                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>No conversations yet</div>
               ) : (
                 dms.map(room => (
                   <SidebarRoomRow
@@ -321,26 +348,53 @@ export default function SocialTabContent({
       </div>
 
       {/* ── Main chat area ────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        {activeRoom ? (
-          <ChatRoom
-            key={activeRoom.roomId}
-            idToken={idToken}
-            roomId={activeRoom.roomId}
-            roomName={activeRoom.name}
-            onMessage={onMessage}
-          />
-        ) : (
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Toggle bar when sidebar is collapsed */}
+        {!chatSidebarOpen && (
           <div style={{
-            height: '100%', display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            color: '#94a3b8', gap: 8,
+            padding: '6px 12px', borderBottom: `1px solid ${sidebarBorder}`,
+            display: 'flex', alignItems: 'center', gap: 8,
           }}>
-            <span style={{ fontSize: 36 }}>💬</span>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#374151' }}>Select a room to start chatting</span>
-            <span style={{ fontSize: 13 }}>Choose a channel or DM from the sidebar</span>
+            <button
+              onClick={() => setChatSidebarOpen(true)}
+              title="Expand sidebar"
+              style={{
+                background: 'none', border: `1px solid ${sidebarBorder}`,
+                borderRadius: 4, cursor: 'pointer',
+                color: sidebarTextSecondary, fontSize: 14, padding: '2px 8px',
+                fontFamily: 'inherit',
+              }}
+            >
+              »
+            </button>
+            {activeRoom && (
+              <span style={{ fontSize: 13, fontWeight: 600, color: sidebarTextPrimary }}>
+                {activeRoom.type === 'dm' ? '●' : '#'} {activeRoom.name}
+              </span>
+            )}
           </div>
         )}
+        <div style={{ flex: 1, minHeight: 0 }}>
+          {activeRoom ? (
+            <ChatRoom
+              key={activeRoom.roomId}
+              idToken={idToken}
+              roomId={activeRoom.roomId}
+              roomName={activeRoom.name}
+              onMessage={onMessage}
+            />
+          ) : (
+            <div style={{
+              height: '100%', display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              color: sidebarTextSecondary, gap: 8,
+            }}>
+              <span style={{ fontSize: 36 }}>💬</span>
+              <span style={{ fontSize: 15, fontWeight: 600, color: sidebarTextPrimary }}>Select a room to start chatting</span>
+              <span style={{ fontSize: 13 }}>Choose a channel or DM from the sidebar</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
