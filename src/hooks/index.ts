@@ -1,6 +1,18 @@
 export { useActivityBus } from './useActivityBus';
 export { useApiCall } from './useApiCall';
 export { useApiHealth } from './useApiHealth';
+export { apiFetch as identityApiFetch, BASE_URL as IDENTITY_BASE_URL } from './identityApi';
+export { useIdentityAdmin } from './useIdentityAdmin';
+export { useIdentityAudit } from './useIdentityAudit';
+export { useIdentityClients } from './useIdentityClients';
+export { useIdentityDiagnostics } from './useIdentityDiagnostics';
+export { useIdentityEmailTemplates } from './useIdentityEmailTemplates';
+export { useIdentityGroups } from './useIdentityGroups';
+export { useIdentityMfa } from './useIdentityMfa';
+export { useIdentityMfaAdmin } from './useIdentityMfaAdmin';
+export { useIdentityPools } from './useIdentityPools';
+export { useIdentitySetupStatus } from './useIdentitySetupStatus';
+export { useIdentityUsers } from './useIdentityUsers';
 export { useAuth } from './useAuth';
 export { useAwareness } from './useAwareness';
 export { useAwarenessState } from './useAwarenessState';
