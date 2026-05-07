@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePosts } from '../../hooks/usePosts';
 import type { PostItem } from '../../hooks/usePosts';
 import type { GatewayMessage } from '../../types/gateway';
+import { cn } from '../../lib/cn';
 
 type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
@@ -68,55 +69,50 @@ function MessageBubble({ post, isOwn, showSender }: MessageBubbleProps) {
   const color = avatarColor(post.authorId);
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: isOwn ? 'row-reverse' : 'row',
-      alignItems: 'flex-end',
-      gap: 8,
-      padding: showSender ? '8px 16px 2px' : '1px 16px',
-    }}>
+    <div
+      className={cn(
+        'flex items-end gap-2',
+        isOwn ? 'flex-row-reverse' : 'flex-row',
+      )}
+      style={{ padding: showSender ? '8px 16px 2px' : '1px 16px' }}
+    >
       {/* Avatar — left side only, shown for first in group */}
-      <div style={{ width: 32, flexShrink: 0, alignSelf: 'flex-end' }}>
+      <div className="w-8 shrink-0 self-end">
         {!isOwn && showSender && (
-          <div style={{
-            width: 32, height: 32, borderRadius: '50%',
-            background: color, color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 11, fontWeight: 700, userSelect: 'none',
-          }}>
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold text-white select-none"
+            style={{ background: color }}
+          >
             {initials(post.authorId)}
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div style={{
-        maxWidth: '68%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: isOwn ? 'flex-end' : 'flex-start',
-        gap: 2,
-      }}>
+      <div
+        className={cn(
+          'max-w-[68%] flex flex-col gap-0.5',
+          isOwn ? 'items-end' : 'items-start',
+        )}
+      >
         {!isOwn && showSender && (
-          <span style={{ fontSize: 11, color: color, fontWeight: 600, paddingLeft: 4 }}>
+          <span className="text-[11px] font-semibold pl-1" style={{ color }}>
             {post.authorId}
           </span>
         )}
-        <div style={{
-          background: isOwn ? '#646cff' : '#f1f5f9',
-          color: isOwn ? '#fff' : '#0f172a',
-          borderRadius: isOwn ? '18px 18px 4px 18px' : '4px 18px 18px 18px',
-          padding: '9px 14px',
-          fontSize: 14,
-          lineHeight: 1.5,
-          wordBreak: 'break-word',
-          opacity: post._fadeIn ? 0 : 1,
-          transition: 'opacity 200ms ease',
-        }}>
+        <div
+          className={cn(
+            'px-3.5 py-2 text-sm leading-relaxed break-words transition-opacity duration-200',
+            isOwn
+              ? 'bg-primary text-white rounded-[18px_18px_4px_18px]'
+              : 'bg-surface-hover text-text-primary rounded-[4px_18px_18px_18px]',
+          )}
+          style={{ opacity: post._fadeIn ? 0 : 1 }}
+        >
           {post.content}
         </div>
         {showSender && (
-          <span style={{ fontSize: 10, color: '#94a3b8', paddingLeft: 4, paddingRight: 4 }}>
+          <span className="text-[10px] text-text-tertiary px-1">
             {relativeTime(post.createdAt)}
           </span>
         )}
@@ -137,7 +133,7 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
   const bottomRef = useRef<HTMLDivElement>(null);
   const currentUserId = decodeUserId(idToken);
 
-  // Chronological order (oldest → top, newest → bottom)
+  // Chronological order (oldest -> top, newest -> bottom)
   const chronological = [...posts].reverse();
 
   // Scroll to bottom whenever messages change
@@ -166,45 +162,37 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
   };
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      height: '100%',
-      background: '#ffffff',
-      borderRadius: 8, border: '1px solid #e2e8f0',
-      overflow: 'hidden',
-    }}>
+    <div className="flex flex-col h-full bg-surface rounded-lg border border-border overflow-hidden">
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 16px',
-        borderBottom: '1px solid #e2e8f0',
-        background: '#fff', flexShrink: 0,
-      }}>
-        <span style={{ fontSize: 15, fontWeight: 600, color: '#0f172a' }}>
+      <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-surface shrink-0">
+        <span className="text-[15px] font-semibold text-text-primary">
           # {roomName}
         </span>
       </div>
 
       {/* Message list */}
-      <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', paddingBottom: 4 }}>
+      <div className="flex-1 overflow-y-auto flex flex-col pb-1">
         {hasMore && (
-          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div className="text-center py-2">
             <button onClick={() => void loadMore()} disabled={loading}
-              style={{ fontSize: 12, color: '#64748b', background: 'none', border: '1px solid #e2e8f0', borderRadius: 20, padding: '3px 14px', cursor: loading ? 'default' : 'pointer', fontFamily: 'inherit' }}>
+              className={cn(
+                'text-xs text-text-secondary bg-transparent border border-border rounded-full px-3.5 py-0.5 font-[inherit]',
+                loading ? 'cursor-default' : 'cursor-pointer',
+              )}>
               {loading ? 'Loading…' : 'Load earlier'}
             </button>
           </div>
         )}
 
         {loading && chronological.length === 0 ? (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', fontSize: 13 }}>
+          <div className="flex-1 flex items-center justify-center text-text-tertiary text-[13px]">
             Loading messages…
           </div>
         ) : chronological.length === 0 ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', gap: 6 }}>
-            <span style={{ fontSize: 28 }}>💬</span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>No messages yet</span>
-            <span style={{ fontSize: 13 }}>Be the first to say something!</span>
+          <div className="flex-1 flex flex-col items-center justify-center text-text-tertiary gap-1.5">
+            <span className="text-[28px]">💬</span>
+            <span className="text-sm font-semibold text-text-primary">No messages yet</span>
+            <span className="text-[13px]">Be the first to say something!</span>
           </div>
         ) : (
           chronological.map((post, i) => {
@@ -222,41 +210,30 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
 
       {/* Error banners */}
       {(error || sendError) && (
-        <div style={{ padding: '6px 16px', background: '#fef2f2', borderTop: '1px solid #fecaca', fontSize: 12, color: '#dc2626' }}>
+        <div className="px-4 py-1.5 bg-danger-bg border-t border-danger-border text-xs text-danger">
           {sendError ?? error}
         </div>
       )}
 
       {/* Input */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 12px',
-        borderTop: '1px solid #e2e8f0',
-        background: '#fff', flexShrink: 0,
-      }}>
+      <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border bg-surface shrink-0">
         <input
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={`Message #${roomName}…`}
           disabled={sending}
-          style={{
-            flex: 1, border: '1px solid #d1d5db', borderRadius: 22,
-            padding: '8px 16px', fontSize: 14,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            background: '#f8fafc', color: '#0f172a', outline: 'none',
-          }}
+          className="flex-1 border border-border-field rounded-[22px] px-4 py-2 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-panel text-text-primary outline-none"
         />
         <button
           onClick={() => void handleSend()}
           disabled={!message.trim() || sending}
-          style={{
-            width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-            background: !message.trim() || sending ? '#f1f5f9' : '#646cff',
-            color: !message.trim() || sending ? '#9ca3af' : '#fff',
-            border: 'none', cursor: !message.trim() || sending ? 'default' : 'pointer',
-            fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
+          className={cn(
+            'w-[34px] h-[34px] rounded-full shrink-0 border-none flex items-center justify-center text-base',
+            !message.trim() || sending
+              ? 'bg-surface-hover text-text-tertiary cursor-default'
+              : 'bg-primary text-white cursor-pointer',
+          )}
         >
           ↑
         </button>

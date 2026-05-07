@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { CodeInput } from '../shared/CodeInput';
+import { cn } from '../../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,105 +15,6 @@ export interface MfaVerifyPageProps {
   onVerifyBackup: (code: string) => Promise<void>;
   error?: string | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--ui-spacingLg)',
-    background: 'var(--ui-surfaceAlt)',
-  } as React.CSSProperties,
-  card: {
-    width: '100%',
-    maxWidth: 420,
-    background: 'var(--ui-surface)',
-    borderRadius: 'var(--ui-radiusMd)',
-    boxShadow: 'var(--ui-shadowMd)',
-    padding: 'var(--ui-spacingLg)',
-  } as React.CSSProperties,
-  heading: {
-    fontSize: 'var(--ui-fontSizeLg)',
-    fontWeight: 600,
-    color: 'var(--ui-textPrimary)',
-    margin: '0 0 var(--ui-spacingSm)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  subheading: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-    margin: '0 0 var(--ui-spacingMd)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  errorAlert: {
-    padding: '10px 14px',
-    marginBottom: 'var(--ui-spacingMd)',
-    background: 'color-mix(in srgb, var(--ui-danger) 10%, transparent)',
-    border: '1px solid var(--ui-danger)',
-    borderRadius: 'var(--ui-radiusSm)',
-    color: 'var(--ui-danger)',
-    fontSize: 'var(--ui-fontSizeSm)',
-  } as React.CSSProperties,
-  toggleLink: {
-    display: 'block',
-    textAlign: 'center' as const,
-    marginTop: 'var(--ui-spacingMd)',
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-primary)',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    textDecoration: 'underline',
-  } as React.CSSProperties,
-  field: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 4,
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  label: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-    fontWeight: 500,
-  } as React.CSSProperties,
-  input: {
-    padding: '10px 12px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    background: 'var(--ui-surface)',
-    color: 'var(--ui-textPrimary)',
-    fontFamily: 'monospace',
-    outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box' as const,
-  } as React.CSSProperties,
-  primaryButton: (loading: boolean) => ({
-    width: '100%',
-    padding: '12px 16px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    fontWeight: 600,
-    background: 'var(--ui-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: loading ? 'not-allowed' : 'pointer',
-    opacity: loading ? 0.7 : 1,
-    fontFamily: 'inherit',
-  }) as React.CSSProperties,
-  loadingText: {
-    textAlign: 'center' as const,
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textMuted)',
-    marginTop: 'var(--ui-spacingSm)',
-  } as React.CSSProperties,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -157,18 +59,20 @@ export function MfaVerifyPage({
   }, [backupCode, onVerifyBackup]);
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card} role="main" aria-label="Multi-factor verification">
-        <h1 style={styles.heading}>Verify Your Identity</h1>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[420px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="Multi-factor verification">
+        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0 text-center">Verify Your Identity</h1>
 
         {mode === 'totp' ? (
           <>
-            <p style={styles.subheading}>
+            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
               Enter the 6-digit code from your authenticator app
             </p>
 
             {displayError && (
-              <div role="alert" style={styles.errorAlert}>{displayError}</div>
+              <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
+                {displayError}
+              </div>
             )}
 
             <CodeInput
@@ -178,11 +82,11 @@ export function MfaVerifyPage({
               autoFocus
             />
 
-            {loading && <p style={styles.loadingText}>Verifying...</p>}
+            {loading && <p className="text-center text-sm text-text-tertiary mt-2">Verifying...</p>}
 
             <button
               type="button"
-              style={styles.toggleLink}
+              className="block text-center mt-4 text-sm text-primary bg-transparent border-none cursor-pointer font-[inherit] underline mx-auto"
               onClick={() => { setMode('backup'); setLocalError(null); }}
             >
               Use a backup code instead
@@ -190,24 +94,26 @@ export function MfaVerifyPage({
           </>
         ) : (
           <>
-            <p style={styles.subheading}>
+            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
               Enter one of your backup codes
             </p>
 
             {displayError && (
-              <div role="alert" style={styles.errorAlert}>{displayError}</div>
+              <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
+                {displayError}
+              </div>
             )}
 
             <form onSubmit={handleBackupSubmit} aria-label="Backup code verification">
-              <div style={styles.field}>
-                <label style={styles.label} htmlFor="backup-code">Backup Code</label>
+              <div className="flex flex-col gap-1 mb-4">
+                <label className="text-sm text-text-secondary font-medium" htmlFor="backup-code">Backup Code</label>
                 <input
                   id="backup-code"
                   type="text"
                   required
                   value={backupCode}
                   onChange={e => setBackupCode(e.target.value)}
-                  style={styles.input}
+                  className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-mono outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                   disabled={loading}
                   autoFocus
                   autoComplete="off"
@@ -216,7 +122,10 @@ export function MfaVerifyPage({
               </div>
               <button
                 type="submit"
-                style={styles.primaryButton(loading)}
+                className={cn(
+                  'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit]',
+                  loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+                )}
                 disabled={loading || !backupCode.trim()}
               >
                 {loading ? 'Verifying...' : 'Verify Backup Code'}
@@ -225,7 +134,7 @@ export function MfaVerifyPage({
 
             <button
               type="button"
-              style={styles.toggleLink}
+              className="block text-center mt-4 text-sm text-primary bg-transparent border-none cursor-pointer font-[inherit] underline mx-auto"
               onClick={() => { setMode('totp'); setLocalError(null); }}
             >
               Use authenticator code instead

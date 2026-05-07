@@ -11,38 +11,17 @@ export interface QrCodeDisplayProps {
 
 export function QrCodeDisplay({ value, size = 200, label }: QrCodeDisplayProps) {
   return (
-    <figure
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 'var(--ui-spacingSm)',
-        margin: 0,
-        padding: 'var(--ui-spacingMd)',
-        border: '1px solid var(--ui-border)',
-        borderRadius: 'var(--ui-radiusMd)',
-        background: 'var(--ui-surface)',
-      }}
-    >
+    <figure className="flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-surface">
       <img
         src={value}
         alt={label || 'QR Code'}
         width={size}
         height={size}
-        style={{
-          display: 'block',
-          borderRadius: 'var(--ui-radiusSm)',
-          imageRendering: 'pixelated',
-        }}
+        className="block rounded-sm"
+        style={{ imageRendering: 'pixelated' }}
       />
       {label && (
-        <figcaption
-          style={{
-            fontSize: 'var(--ui-fontSizeSm)',
-            color: 'var(--ui-textSecondary)',
-            textAlign: 'center',
-          }}
-        >
+        <figcaption className="text-sm text-text-secondary text-center">
           {label}
         </figcaption>
       )}

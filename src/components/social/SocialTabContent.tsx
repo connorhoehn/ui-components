@@ -8,6 +8,7 @@ import type { RoomItem } from '../../hooks/useRooms';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
 import { useTheme } from '../../contexts/ThemeContext';
+import { cn } from '../../lib/cn';
 
 import { RoomList } from './RoomList';
 import { GroupPanel } from './GroupPanel';
@@ -48,38 +49,26 @@ function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, chi
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div style={{ marginBottom: 2 }}>
+    <div className="mb-0.5">
       <button
         onClick={() => setOpen(v => !v)}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 4,
-          width: '100%', padding: '6px 12px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontFamily: 'inherit', textAlign: 'left',
-        }}
+        className="flex items-center gap-1 w-full px-3 py-1.5 bg-transparent border-none cursor-pointer font-[inherit] text-left"
       >
-        <span style={{
-          fontSize: 10, color: '#6b7280', transition: 'transform 150ms',
-          transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-          display: 'inline-block', width: 12,
-        }}>
+        <span
+          className="text-[10px] text-[#6b7280] inline-block w-3 transition-transform duration-150"
+          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        >
           ▶
         </span>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', flex: 1 }}>
+        <span className="text-[11px] font-bold text-text-tertiary uppercase tracking-wide flex-1">
           {title}
         </span>
         {!open && unreadTotal !== undefined && unreadTotal > 0 && (
-          <span style={{
-            minWidth: 18, height: 18, borderRadius: 9,
-            background: '#dc2626', color: '#fff',
-            fontSize: 10, fontWeight: 700,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '0 5px',
-          }}>
+          <span className="min-w-[18px] h-[18px] rounded-[9px] bg-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5">
             {unreadTotal > 99 ? '99+' : unreadTotal}
           </span>
         )}
-        <span style={{ fontSize: 11, color: '#6b7280' }}>{count}</span>
+        <span className="text-[11px] text-[#6b7280]">{count}</span>
       </button>
       {open && children}
     </div>
@@ -99,31 +88,24 @@ function SidebarRoomRow({ room, isActive, unread, onClick }: {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        width: '100%', border: 'none', borderRadius: 5,
-        padding: '6px 8px 6px 24px', cursor: 'pointer',
-        background: isActive ? 'rgba(100, 108, 255, 0.15)' : 'transparent',
-        color: isActive ? '#a5b4fc' : unread > 0 ? '#f1f5f9' : '#94a3b8',
-        fontWeight: isActive || unread > 0 ? 600 : 400,
-        fontSize: 13, textAlign: 'left',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
+      className={cn(
+        'flex items-center gap-1.5 w-full border-none rounded-[5px] py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
+        isActive
+          ? 'bg-[rgba(100,108,255,0.15)] text-[#a5b4fc] font-semibold'
+          : unread > 0
+            ? 'bg-transparent text-surface-hover font-semibold'
+            : 'bg-transparent text-text-tertiary font-normal',
+      )}
+      style={{ padding: '6px 8px 6px 24px' }}
     >
-      <span style={{ color: isActive ? '#a5b4fc' : '#6b7280', fontSize: 13, flexShrink: 0 }}>
+      <span className={cn('text-[13px] shrink-0', isActive ? 'text-[#a5b4fc]' : 'text-[#6b7280]')}>
         {room.type === 'dm' ? '●' : '#'}
       </span>
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
         {room.name}
       </span>
       {unread > 0 && !isActive && (
-        <span style={{
-          minWidth: 18, height: 18, borderRadius: 9,
-          background: '#dc2626', color: '#fff',
-          fontSize: 10, fontWeight: 700,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: '0 5px', flexShrink: 0,
-        }}>
+        <span className="min-w-[18px] h-[18px] rounded-[9px] bg-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5 shrink-0">
           {unread > 99 ? '99+' : unread}
         </span>
       )}
@@ -208,70 +190,63 @@ export default function SocialTabContent({
   const chatBg = isDark ? '#0f172a' : '#fff';
 
   return (
-    <div style={{
-      display: 'flex',
-      height: 'calc(100vh - 120px)',
-      background: chatBg,
-      borderRadius: 8,
-      border: `1px solid ${sidebarBorder}`,
-      overflow: 'hidden',
-      transition: 'background 200ms ease',
-    }}>
-      {/* ── Left sidebar ──────────────────────────────────────────────────── */}
-      <div style={{
-        width: CHAT_SIDEBAR_WIDTH, flexShrink: 0,
-        display: chatSidebarOpen ? 'flex' : 'none', flexDirection: 'column',
-        borderRight: `1px solid ${sidebarBorder}`,
-        background: sidebarBg,
-        overflow: 'hidden',
-        transition: 'width 180ms ease',
-      }}>
+    <div
+      className="flex overflow-hidden rounded-lg transition-colors duration-200"
+      style={{
+        height: 'calc(100vh - 120px)',
+        background: chatBg,
+        border: `1px solid ${sidebarBorder}`,
+      }}
+    >
+      {/* Left sidebar */}
+      <div
+        className="shrink-0 flex-col overflow-hidden transition-[width] duration-[180ms]"
+        style={{
+          width: CHAT_SIDEBAR_WIDTH,
+          display: chatSidebarOpen ? 'flex' : 'none',
+          borderRight: `1px solid ${sidebarBorder}`,
+          background: sidebarBg,
+        }}
+      >
         {/* Workspace header */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          padding: '14px 14px 12px',
-          borderBottom: `1px solid ${sidebarBorder}`,
-          flexShrink: 0,
-        }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 6,
-            background: 'linear-gradient(135deg, #646cff, #9b59b6)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: 700, fontSize: 11, flexShrink: 0,
-          }}>
+        <div
+          className="flex items-center gap-2 shrink-0"
+          style={{
+            padding: '14px 14px 12px',
+            borderBottom: `1px solid ${sidebarBorder}`,
+          }}
+        >
+          <div className="w-7 h-7 rounded-md flex items-center justify-center text-white font-bold text-[11px] shrink-0" style={{ background: 'linear-gradient(135deg, #646cff, #9b59b6)' }}>
             {initials}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: sidebarTextPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-bold overflow-hidden text-ellipsis whitespace-nowrap" style={{ color: sidebarTextPrimary }}>
               {displayName || userId}
             </div>
-            <div style={{ fontSize: 11, color: sidebarTextSecondary, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+            <div className="text-[11px] flex items-center gap-1" style={{ color: sidebarTextSecondary }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] inline-block" />
               Active
             </div>
           </div>
           <button
             onClick={() => setChatSidebarOpen(false)}
             title="Collapse sidebar"
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              color: sidebarTextSecondary, fontSize: 16, lineHeight: 1,
-              padding: '2px 4px', borderRadius: 4,
-            }}
+            className="bg-transparent border-none cursor-pointer text-base leading-none px-1 py-0.5 rounded"
+            style={{ color: sidebarTextSecondary }}
           >
             «
           </button>
         </div>
 
         {/* Scrollable sections */}
-        <div style={{ flex: 1, overflowY: 'auto', paddingTop: 8 }}>
+        <div className="flex-1 overflow-y-auto pt-2">
           {/* Channels section */}
           <CollapsibleSection title="Channels" count={channels.length} unreadTotal={channelUnreadTotal}>
-            <div style={{ padding: '0 4px' }}>
+            <div className="px-1">
               {roomsLoading && channels.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>Loading…</div>
+                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
               ) : channels.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>No channels yet</div>
+                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No channels yet</div>
               ) : (
                 channels.map(room => (
                   <SidebarRoomRow
@@ -285,18 +260,13 @@ export default function SocialTabContent({
               )}
               <button
                 onClick={() => setShowNewRoom(v => !v)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  width: '100%', padding: '5px 8px 5px 24px',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 12, color: sidebarTextSecondary, fontFamily: 'inherit',
-                  borderRadius: 4,
-                }}
+                className="flex items-center gap-1.5 w-full bg-transparent border-none cursor-pointer text-xs font-[inherit] rounded"
+                style={{ padding: '5px 8px 5px 24px', color: sidebarTextSecondary }}
               >
-                <span style={{ fontSize: 14, lineHeight: 1 }}>+</span> Add channel
+                <span className="text-sm leading-none">+</span> Add channel
               </button>
               {showNewRoom && (
-                <div style={{ padding: '0 8px' }}>
+                <div className="px-2">
                   <RoomList
                     idToken={idToken}
                     rooms={[]}
@@ -316,9 +286,9 @@ export default function SocialTabContent({
 
           {/* Direct Messages section */}
           <CollapsibleSection title="Direct Messages" count={dms.length} unreadTotal={dmUnreadTotal}>
-            <div style={{ padding: '0 4px' }}>
+            <div className="px-1">
               {dms.length === 0 ? (
-                <div style={{ padding: '8px 24px', color: sidebarTextSecondary, fontSize: 12 }}>No conversations yet</div>
+                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No conversations yet</div>
               ) : (
                 dms.map(room => (
                   <SidebarRoomRow
@@ -347,34 +317,30 @@ export default function SocialTabContent({
         </div>
       </div>
 
-      {/* ── Main chat area ────────────────────────────────────────────────── */}
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      {/* Main chat area */}
+      <div className="flex-1 min-w-0 flex flex-col">
         {/* Toggle bar when sidebar is collapsed */}
         {!chatSidebarOpen && (
-          <div style={{
-            padding: '6px 12px', borderBottom: `1px solid ${sidebarBorder}`,
-            display: 'flex', alignItems: 'center', gap: 8,
-          }}>
+          <div
+            className="flex items-center gap-2"
+            style={{ padding: '6px 12px', borderBottom: `1px solid ${sidebarBorder}` }}
+          >
             <button
               onClick={() => setChatSidebarOpen(true)}
               title="Expand sidebar"
-              style={{
-                background: 'none', border: `1px solid ${sidebarBorder}`,
-                borderRadius: 4, cursor: 'pointer',
-                color: sidebarTextSecondary, fontSize: 14, padding: '2px 8px',
-                fontFamily: 'inherit',
-              }}
+              className="bg-transparent rounded cursor-pointer text-sm px-2 py-0.5 font-[inherit]"
+              style={{ border: `1px solid ${sidebarBorder}`, color: sidebarTextSecondary }}
             >
               »
             </button>
             {activeRoom && (
-              <span style={{ fontSize: 13, fontWeight: 600, color: sidebarTextPrimary }}>
+              <span className="text-[13px] font-semibold" style={{ color: sidebarTextPrimary }}>
                 {activeRoom.type === 'dm' ? '●' : '#'} {activeRoom.name}
               </span>
             )}
           </div>
         )}
-        <div style={{ flex: 1, minHeight: 0 }}>
+        <div className="flex-1 min-h-0">
           {activeRoom ? (
             <ChatRoom
               key={activeRoom.roomId}
@@ -384,14 +350,13 @@ export default function SocialTabContent({
               onMessage={onMessage}
             />
           ) : (
-            <div style={{
-              height: '100%', display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              color: sidebarTextSecondary, gap: 8,
-            }}>
-              <span style={{ fontSize: 36 }}>💬</span>
-              <span style={{ fontSize: 15, fontWeight: 600, color: sidebarTextPrimary }}>Select a room to start chatting</span>
-              <span style={{ fontSize: 13 }}>Choose a channel or DM from the sidebar</span>
+            <div
+              className="h-full flex flex-col items-center justify-center gap-2"
+              style={{ color: sidebarTextSecondary }}
+            >
+              <span className="text-4xl">💬</span>
+              <span className="text-[15px] font-semibold" style={{ color: sidebarTextPrimary }}>Select a room to start chatting</span>
+              <span className="text-[13px]">Choose a channel or DM from the sidebar</span>
             </div>
           )}
         </div>

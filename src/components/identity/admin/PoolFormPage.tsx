@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
+import { cn } from '../../../lib/cn';
 
 export interface PoolFormPageProps {
   pool?: {
@@ -17,109 +18,6 @@ export interface PoolFormPageProps {
   onCancel: () => void;
   error?: string | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  maxWidth: '640px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const sectionStyle: React.CSSProperties = {
-  marginBottom: 'var(--ui-spacingLg)',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const attrRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '8px',
-  alignItems: 'center',
-  marginBottom: '8px',
-};
-
-const attrInputStyle: React.CSSProperties = {
-  flex: 1,
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const removeBtnStyle: React.CSSProperties = {
-  padding: '6px 10px',
-  border: '1px solid var(--ui-danger)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'transparent',
-  color: 'var(--ui-danger)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  font: 'inherit',
-};
-
-const addBtnStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  font: 'inherit',
-};
-
-const buttonRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  marginTop: 'var(--ui-spacingLg)',
-};
-
-const submitBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const cancelBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'transparent',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const errorBannerStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-danger)',
-  color: '#fff',
-  borderRadius: 'var(--ui-radiusSm)',
-  marginBottom: 'var(--ui-spacingMd)',
-  fontSize: 'var(--ui-fontSizeSm)',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -183,10 +81,10 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
   );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>{isEdit ? 'Edit Pool' : 'Create Pool'}</h1>
+    <div className="max-w-[640px]">
+      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Pool' : 'Create Pool'}</h1>
 
-      {error && <div style={errorBannerStyle}>{error}</div>}
+      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -198,8 +96,8 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           placeholder="my-user-pool"
         />
 
-        <section style={sectionStyle}>
-          <h3 style={sectionTitleStyle}>MFA Configuration</h3>
+        <section className="mb-6">
+          <h3 className="text-base font-semibold text-text-primary mb-2">MFA Configuration</h3>
           <FormField
             label="MFA Mode"
             name="mfaConfig"
@@ -214,8 +112,8 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           />
         </section>
 
-        <section style={sectionStyle}>
-          <h3 style={sectionTitleStyle}>Password Policy</h3>
+        <section className="mb-6">
+          <h3 className="text-base font-semibold text-text-primary mb-2">Password Policy</h3>
           <FormField
             label="Minimum Length"
             name="minLength"
@@ -253,37 +151,53 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           />
         </section>
 
-        <section style={sectionStyle}>
-          <h3 style={sectionTitleStyle}>Custom Attributes</h3>
+        <section className="mb-6">
+          <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
           {customAttrs.map((attr, idx) => (
-            <div key={idx} style={attrRowStyle}>
+            <div key={idx} className="flex gap-2 items-center mb-2">
               <input
-                style={attrInputStyle}
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
               <input
-                style={attrInputStyle}
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}
               />
-              <button type="button" style={removeBtnStyle} onClick={() => handleRemoveAttr(idx)}>
+              <button
+                type="button"
+                className="px-2.5 py-1.5 border border-danger rounded-sm bg-transparent text-danger cursor-pointer text-sm"
+                onClick={() => handleRemoveAttr(idx)}
+              >
                 Remove
               </button>
             </div>
           ))}
-          <button type="button" style={addBtnStyle} onClick={handleAddAttr}>
+          <button
+            type="button"
+            className="px-3 py-1.5 border border-border rounded-sm bg-surface text-text-primary cursor-pointer text-sm"
+            onClick={handleAddAttr}
+          >
             + Add Attribute
           </button>
         </section>
 
-        <div style={buttonRowStyle}>
-          <button type="submit" style={submitBtnStyle} disabled={submitting}>
+        <div className="flex gap-2 mt-6">
+          <button
+            type="submit"
+            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={submitting}
+          >
             {submitting ? 'Saving...' : isEdit ? 'Update Pool' : 'Create Pool'}
           </button>
-          <button type="button" style={cancelBtnStyle} onClick={onCancel}>
+          <button
+            type="button"
+            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
+            onClick={onCancel}
+          >
             Cancel
           </button>
         </div>

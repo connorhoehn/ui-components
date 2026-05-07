@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
+import { cn } from '../../../lib/cn';
 
 export interface UserFormPageProps {
   user?: {
@@ -23,67 +24,6 @@ export interface UserFormPageProps {
   onCancel: () => void;
   error?: string | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  maxWidth: '640px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginTop: 'var(--ui-spacingLg)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const buttonRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  marginTop: 'var(--ui-spacingLg)',
-};
-
-const submitBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const cancelBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'transparent',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const errorBannerStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-danger)',
-  color: '#fff',
-  borderRadius: 'var(--ui-radiusSm)',
-  marginBottom: 'var(--ui-spacingMd)',
-  fontSize: 'var(--ui-fontSizeSm)',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -138,10 +78,10 @@ export function UserFormPage({
   );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>{isEdit ? 'Edit User' : 'Create User'}</h1>
+    <div className="max-w-[640px]">
+      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit User' : 'Create User'}</h1>
 
-      {error && <div style={errorBannerStyle}>{error}</div>}
+      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -210,7 +150,7 @@ export function UserFormPage({
         {/* Custom Attributes */}
         {customAttributeDefinitions && Object.keys(customAttributeDefinitions).length > 0 && (
           <section>
-            <h3 style={sectionTitleStyle}>Custom Attributes</h3>
+            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Custom Attributes</h3>
             {Object.entries(customAttributeDefinitions).map(([key, type]) => (
               <FormField
                 key={key}
@@ -225,11 +165,19 @@ export function UserFormPage({
           </section>
         )}
 
-        <div style={buttonRowStyle}>
-          <button type="submit" style={submitBtnStyle} disabled={submitting}>
+        <div className="flex gap-2 mt-6">
+          <button
+            type="submit"
+            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={submitting}
+          >
             {submitting ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}
           </button>
-          <button type="button" style={cancelBtnStyle} onClick={onCancel}>
+          <button
+            type="button"
+            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
+            onClick={onCancel}
+          >
             Cancel
           </button>
         </div>

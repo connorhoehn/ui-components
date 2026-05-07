@@ -4,6 +4,7 @@
 // Provides breadcrumb navigation and tab sub-nav.
 
 import { useCallback } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface PoolScopedLayoutProps {
   children: React.ReactNode;
@@ -13,51 +14,6 @@ export interface PoolScopedLayoutProps {
   onNavigate: (path: string) => void;
   onBack: () => void;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const wrapperStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--ui-spacingMd)',
-};
-
-const breadcrumbStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textMuted)',
-};
-
-const breadcrumbLinkStyle: React.CSSProperties = {
-  color: 'var(--ui-primary)',
-  cursor: 'pointer',
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  font: 'inherit',
-  fontSize: 'var(--ui-fontSizeSm)',
-  textDecoration: 'underline',
-};
-
-const tabBarStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '0',
-  borderBottom: '2px solid var(--ui-border)',
-};
-
-const backBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  padding: '6px 12px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-};
 
 const TABS: Array<{ key: 'users' | 'groups' | 'mfa'; label: string }> = [
   { key: 'users', label: 'Users' },
@@ -78,24 +34,18 @@ function Tab({
   active: boolean;
   onClick: () => void;
 }) {
-  const style: React.CSSProperties = {
-    padding: '8px 16px',
-    cursor: 'pointer',
-    fontWeight: active ? 600 : 400,
-    color: active ? 'var(--ui-primary)' : 'var(--ui-textSecondary)',
-    borderBottom: active ? '2px solid var(--ui-primary)' : '2px solid transparent',
-    marginBottom: '-2px',
-    background: 'none',
-    border: 'none',
-    borderBottomWidth: '2px',
-    borderBottomStyle: 'solid',
-    borderBottomColor: active ? 'var(--ui-primary)' : 'transparent',
-    font: 'inherit',
-    fontSize: 'var(--ui-fontSizeMd)',
-  };
-
   return (
-    <button type="button" style={style} onClick={onClick}>
+    <button
+      type="button"
+      className={cn(
+        'px-4 py-2 cursor-pointer font-[inherit] text-sm bg-transparent border-none -mb-[2px]',
+        'border-b-2',
+        active
+          ? 'font-semibold text-primary border-b-primary'
+          : 'font-normal text-text-secondary border-b-transparent'
+      )}
+      onClick={onClick}
+    >
       {label}
     </button>
   );
@@ -125,14 +75,18 @@ export function PoolScopedLayout({
     : '';
 
   return (
-    <div style={wrapperStyle}>
+    <div className="flex flex-col gap-4">
       {/* Breadcrumb */}
-      <nav style={breadcrumbStyle}>
-        <button type="button" style={breadcrumbLinkStyle} onClick={onBack}>
+      <nav className="flex items-center gap-1.5 text-sm text-text-tertiary">
+        <button
+          type="button"
+          className="text-primary cursor-pointer bg-transparent border-none p-0 font-[inherit] text-sm underline"
+          onClick={onBack}
+        >
           Pools
         </button>
         <span>/</span>
-        <span style={{ color: 'var(--ui-textPrimary)', fontWeight: 500 }}>{poolName}</span>
+        <span className="text-text-primary font-medium">{poolName}</span>
         {activeSection && (
           <>
             <span>/</span>
@@ -143,13 +97,17 @@ export function PoolScopedLayout({
 
       {/* Back button */}
       <div>
-        <button type="button" style={backBtnStyle} onClick={onBack}>
+        <button
+          type="button"
+          className="bg-transparent border border-border rounded-sm px-3 py-1.5 text-sm text-text-primary cursor-pointer"
+          onClick={onBack}
+        >
           &larr; Back to Pools
         </button>
       </div>
 
       {/* Tab bar */}
-      <div style={tabBarStyle}>
+      <div className="flex border-b-2 border-border">
         {TABS.map((tab) => (
           <Tab
             key={tab.key}

@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useGroups } from '../../hooks/useGroups';
 import type { GroupItem, MemberItem } from '../../hooks/useGroups';
 import type { RoomItem } from '../../hooks/useRooms';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -32,21 +33,15 @@ function CompactGroupRow({ group, isSelected, onClick }: {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        width: '100%', border: 'none', borderRadius: 5,
-        padding: '6px 8px', cursor: 'pointer',
-        background: isSelected ? '#ede9fe' : 'transparent',
-        color: isSelected ? '#4c1d95' : '#374151',
-        fontWeight: isSelected ? 600 : 400,
-        fontSize: 13, textAlign: 'left',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
+      className={cn(
+        'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
+        isSelected ? 'bg-[#ede9fe] text-[#4c1d95] font-semibold' : 'bg-transparent text-text-primary font-normal',
+      )}
     >
-      <span style={{ color: isSelected ? '#646cff' : '#94a3b8', fontSize: 12, flexShrink: 0 }}>
+      <span className={cn('text-xs shrink-0', isSelected ? 'text-primary' : 'text-text-tertiary')}>
         {group.visibility === 'private' ? '🔒' : '👥'}
       </span>
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
         {group.name}
       </span>
     </button>
@@ -78,7 +73,7 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
   };
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ padding: '8px', background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0', margin: '4px 0 8px' }}>
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="p-2 bg-surface-panel rounded-md border border-border my-1 mb-2">
       <input
         value={name}
         onChange={e => setName(e.target.value.slice(0, 50))}
@@ -86,33 +81,21 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
         maxLength={50}
         required
         autoFocus
-        style={{
-          width: '100%', boxSizing: 'border-box',
-          border: '1px solid #d1d5db', borderRadius: 5,
-          padding: '5px 8px', fontSize: 13,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: '#fff', color: '#0f172a', marginBottom: 6,
-        }}
+        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
       />
-      <div style={{ display: 'flex', gap: 6 }}>
-        <button type="submit" disabled={!name.trim() || loading} style={{
-          flex: 1, height: 28, border: 'none', borderRadius: 5,
-          background: !name.trim() || loading ? '#e2e8f0' : '#646cff',
-          color: !name.trim() || loading ? '#9ca3af' : '#fff',
-          fontSize: 12, fontWeight: 600, cursor: !name.trim() || loading ? 'default' : 'pointer',
-          fontFamily: 'inherit',
-        }}>
+      <div className="flex gap-1.5">
+        <button type="submit" disabled={!name.trim() || loading} className={cn(
+          'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
+          !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+        )}>
           {loading ? 'Creating…' : 'Create'}
         </button>
-        <button type="button" onClick={onDiscard} style={{
-          height: 28, padding: '0 8px', border: '1px solid #e2e8f0', borderRadius: 5,
-          background: '#fff', color: '#64748b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit',
-        }}>
+        <button type="button" onClick={onDiscard} className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]">
           Cancel
         </button>
       </div>
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 11, marginTop: 4 }}>{formError}</div>
+        <div className="text-danger text-[11px] mt-1">{formError}</div>
       )}
     </form>
   );
@@ -158,92 +141,72 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
   };
 
   return (
-    <div style={{ padding: '4px 8px 8px', borderTop: '1px solid #e2e8f0', marginTop: 4 }}>
+    <div className="px-2 pb-2 pt-1 border-t border-border mt-1">
       {/* Members count + invite */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[11px] text-text-secondary font-semibold uppercase tracking-wide">
           Members ({members.length})
         </span>
         {isOwner && (
-          <button onClick={() => setShowInvite(v => !v)} style={{
-            fontSize: 11, color: '#646cff', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-          }}>
+          <button onClick={() => setShowInvite(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
             + Invite
           </button>
         )}
       </div>
 
       {showInvite && (
-        <form onSubmit={(e) => { void handleInvite(e); }} style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+        <form onSubmit={(e) => { void handleInvite(e); }} className="flex gap-1 mb-1.5">
           <input
             value={inviteId}
             onChange={e => setInviteId(e.target.value)}
             placeholder="User ID"
-            style={{
-              flex: 1, border: '1px solid #d1d5db', borderRadius: 4,
-              padding: '3px 6px', fontSize: 12, fontFamily: 'inherit',
-              background: '#fff', color: '#0f172a',
-            }}
+            className="flex-1 border border-border-field rounded px-1.5 py-0.5 text-xs font-[inherit] bg-surface text-text-primary"
           />
-          <button type="submit" disabled={!inviteId.trim()} style={{
-            height: 24, padding: '0 8px', border: 'none', borderRadius: 4,
-            background: !inviteId.trim() ? '#e2e8f0' : '#646cff',
-            color: !inviteId.trim() ? '#9ca3af' : '#fff',
-            fontSize: 11, cursor: !inviteId.trim() ? 'default' : 'pointer', fontFamily: 'inherit',
-          }}>
+          <button type="submit" disabled={!inviteId.trim()} className={cn(
+            'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
+            !inviteId.trim() ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+          )}>
             Invite
           </button>
         </form>
       )}
 
       {/* Member avatars row */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 8 }}>
+      <div className="flex flex-wrap gap-1 mb-2">
         {members.slice(0, 8).map(m => (
-          <div key={m.userId} title={m.displayName ?? m.userId} style={{
-            width: 24, height: 24, borderRadius: '50%',
-            background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 600, color: '#374151',
-          }}>
+          <div key={m.userId} title={m.displayName ?? m.userId} className="w-6 h-6 rounded-full bg-border flex items-center justify-center text-[10px] font-semibold text-text-primary">
             {(m.displayName ?? m.userId).slice(0, 2).toUpperCase()}
           </div>
         ))}
         {members.length > 8 && (
-          <span style={{ fontSize: 11, color: '#94a3b8', alignSelf: 'center' }}>+{members.length - 8}</span>
+          <span className="text-[11px] text-text-tertiary self-center">+{members.length - 8}</span>
         )}
       </div>
 
       {/* Group rooms */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-[11px] text-text-secondary font-semibold uppercase tracking-wide">
           Rooms ({groupRooms.length})
         </span>
         {isOwner && (
-          <button onClick={() => setShowCreateRoom(v => !v)} style={{
-            fontSize: 11, color: '#646cff', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-          }}>
+          <button onClick={() => setShowCreateRoom(v => !v)} className="text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]">
             + Room
           </button>
         )}
       </div>
 
       {showCreateRoom && (
-        <form onSubmit={(e) => { void handleCreateRoom(e); }} style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+        <form onSubmit={(e) => { void handleCreateRoom(e); }} className="flex gap-1 mb-1.5">
           <input
             value={roomName}
             onChange={e => setRoomName(e.target.value.slice(0, 50))}
             placeholder="Room name"
-            style={{
-              flex: 1, border: '1px solid #d1d5db', borderRadius: 4,
-              padding: '3px 6px', fontSize: 12, fontFamily: 'inherit',
-              background: '#fff', color: '#0f172a',
-            }}
+            className="flex-1 border border-border-field rounded px-1.5 py-0.5 text-xs font-[inherit] bg-surface text-text-primary"
           />
-          <button type="submit" disabled={!roomName.trim() || loading} style={{
-            height: 24, padding: '0 8px', border: 'none', borderRadius: 4,
-            background: !roomName.trim() || loading ? '#e2e8f0' : '#646cff',
-            color: !roomName.trim() || loading ? '#9ca3af' : '#fff',
-            fontSize: 11, cursor: !roomName.trim() || loading ? 'default' : 'pointer', fontFamily: 'inherit',
-          }}>
+          <button type="submit" disabled={!roomName.trim() || loading} className={cn(
+            'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
+            !roomName.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+          )}>
             Create
           </button>
         </form>
@@ -253,16 +216,10 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
         <button
           key={room.roomId}
           onClick={() => onRoomSelect?.(room)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            width: '100%', border: 'none', borderRadius: 5,
-            padding: '5px 8px', cursor: 'pointer',
-            background: 'transparent', color: '#374151',
-            fontSize: 13, textAlign: 'left', fontFamily: 'inherit',
-          }}
+          className="flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1 cursor-pointer bg-transparent text-text-primary text-[13px] text-left font-[inherit]"
         >
-          <span style={{ color: '#94a3b8', fontSize: 12 }}>#</span>
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{room.name}</span>
+          <span className="text-text-tertiary text-xs">#</span>
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{room.name}</span>
         </button>
       ))}
     </div>
@@ -282,14 +239,6 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
   const [formError, setFormError] = useState<string | null>(null);
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%', boxSizing: 'border-box',
-    border: '1px solid #d1d5db', borderRadius: 6,
-    padding: '6px 10px', fontSize: 14,
-    fontFamily: 'system-ui, -apple-system, sans-serif',
-    background: '#f9fafb', color: '#0f172a',
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -302,44 +251,33 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
   };
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ marginBottom: 12, padding: '12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-      <div style={{ marginBottom: 12 }}>
-        <label style={{ fontSize: 14, color: '#374151', display: 'block', marginBottom: 4 }}>Group name</label>
-        <input value={name} onChange={e => setName(e.target.value.slice(0, 50))} placeholder="Group name" maxLength={50} required style={inputStyle} />
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="mb-3 p-3 bg-surface-panel rounded-lg border border-border">
+      <div className="mb-3">
+        <label className="text-sm text-text-primary block mb-1">Group name</label>
+        <input value={name} onChange={e => setName(e.target.value.slice(0, 50))} placeholder="Group name" maxLength={50} required className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-        <span style={{ fontSize: 13, color: '#374151', minWidth: 42 }}>{visibility === 'public' ? 'Public' : 'Private'}</span>
+      <div className="flex items-center gap-2.5 mb-3.5">
+        <span className="text-[13px] text-text-primary min-w-[42px]">{visibility === 'public' ? 'Public' : 'Private'}</span>
         <button type="button" role="switch" aria-checked={visibility === 'private'}
           onClick={() => setVisibility(v => v === 'public' ? 'private' : 'public')}
-          style={{
-            position: 'relative', width: 44, height: 24, borderRadius: 12,
-            background: visibility === 'private' ? '#646cff' : '#d1d5db',
-            border: 'none', cursor: 'pointer', padding: 0, transition: 'background 200ms ease', flexShrink: 0,
-          }}>
-          <span style={{
-            position: 'absolute', top: 3, left: visibility === 'private' ? 23 : 3,
-            width: 18, height: 18, borderRadius: '50%', background: '#fff',
-            transition: 'left 200ms ease', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-          }} />
+          className="relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200"
+          style={{ background: visibility === 'private' ? '#646cff' : '#d1d5db' }}>
+          <span className="absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow-sm transition-[left] duration-200" style={{ left: visibility === 'private' ? 23 : 3 }} />
         </button>
-        <span style={{ fontSize: 12, color: '#94a3b8' }}>{visibility === 'public' ? 'Visible to everyone' : 'Invite only'}</span>
+        <span className="text-xs text-text-tertiary">{visibility === 'public' ? 'Visible to everyone' : 'Invite only'}</span>
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button type="submit" disabled={!name.trim() || loading} style={{
-          flex: 1, height: 36,
-          background: !name.trim() || loading ? '#f1f5f9' : '#646cff',
-          color: !name.trim() || loading ? '#9ca3af' : '#ffffff',
-          border: !name.trim() || loading ? '1px solid #e2e8f0' : 'none',
-          borderRadius: 8, fontSize: 14, fontWeight: 600,
-          cursor: !name.trim() || loading ? 'default' : 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}>
+      <div className="flex gap-2">
+        <button type="submit" disabled={!name.trim() || loading} className={cn(
+          'flex-1 h-9 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
+          !name.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+        )}>
           {loading ? 'Creating…' : 'Create Group'}
         </button>
-        <button type="button" onClick={onDiscard} style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <button type="button" onClick={onDiscard} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">
           Cancel
         </button>
       </div>
-      {formError && <div style={{ color: '#dc2626', fontSize: 13, marginTop: 6 }}>{formError}</div>}
+      {formError && <div className="text-danger text-[13px] mt-1.5">{formError}</div>}
     </form>
   );
 }
@@ -352,23 +290,26 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
   const isOwner = group.ownerId === currentUserId;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', height: 56, borderBottom: '1px solid #f1f5f9', cursor: 'pointer' }} onClick={() => onSelect(group.groupId)}>
-      <div style={{ flex: 1, minWidth: 0, paddingRight: 8 }}>
-        <div style={{ fontSize: 16, color: '#0f172a', fontWeight: isSelected ? 600 : 400 }}>{group.name}</div>
-        {group.description && <div style={{ fontSize: 14, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.description}</div>}
+    <div className="flex items-center h-14 border-b border-surface-hover cursor-pointer" onClick={() => onSelect(group.groupId)}>
+      <div className="flex-1 min-w-0 pr-2">
+        <div className={cn('text-base text-text-primary', isSelected ? 'font-semibold' : 'font-normal')}>{group.name}</div>
+        {group.description && <div className="text-sm text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap">{group.description}</div>}
       </div>
-      <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 4, background: group.visibility === 'public' ? '#f0fdf4' : '#f1f5f9', color: group.visibility === 'public' ? '#16a34a' : '#64748b', flexShrink: 0, marginRight: 8 }}>
+      <span className={cn(
+        'text-xs px-2 py-0.5 rounded shrink-0 mr-2',
+        group.visibility === 'public' ? 'bg-success-bg text-success' : 'bg-surface-hover text-text-secondary',
+      )}>
         {group.visibility}
       </span>
       {isOwner && (
-        <div style={{ flexShrink: 0 }} onClick={e => e.stopPropagation()}>
+        <div className="shrink-0" onClick={e => e.stopPropagation()}>
           {confirmDeleteId === group.groupId ? (
-            <div role="group" aria-label="Confirm delete group" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <button onClick={() => setConfirmDeleteId(null)} style={{ fontSize: 12, color: '#64748b', background: 'none', border: '1px solid #e2e8f0', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>Cancel</button>
-              <button onClick={() => { void onDelete(group.groupId); setConfirmDeleteId(null); }} style={{ fontSize: 12, color: '#ffffff', background: '#dc2626', border: 'none', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>Delete</button>
+            <div role="group" aria-label="Confirm delete group" className="flex items-center gap-1">
+              <button onClick={() => setConfirmDeleteId(null)} className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
+              <button onClick={() => { void onDelete(group.groupId); setConfirmDeleteId(null); }} className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]">Delete</button>
             </div>
           ) : (
-            <button onClick={() => setConfirmDeleteId(group.groupId)} style={{ fontSize: 12, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px', fontFamily: 'system-ui, -apple-system, sans-serif' }} aria-label={`Delete group ${group.name}`}>Delete</button>
+            <button onClick={() => setConfirmDeleteId(group.groupId)} className="text-xs text-danger bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]" aria-label={`Delete group ${group.name}`}>Delete</button>
           )}
         </div>
       )}
@@ -381,29 +322,32 @@ function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!userId.trim()) return; void onInvite(groupId, userId.trim()); setUserId(''); };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-      <input value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" style={{ flex: 1, border: '1px solid #d1d5db', borderRadius: 6, padding: '6px 10px', fontSize: 14, fontFamily: 'system-ui, -apple-system, sans-serif', background: '#f9fafb', color: '#0f172a' }} />
-      <button type="submit" disabled={!userId.trim()} style={{ height: 36, padding: '0 12px', background: !userId.trim() ? '#f1f5f9' : '#646cff', color: !userId.trim() ? '#9ca3af' : '#ffffff', border: !userId.trim() ? '1px solid #e2e8f0' : 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: !userId.trim() ? 'default' : 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>Invite</button>
+    <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
+      <input value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
+      <button type="submit" disabled={!userId.trim()} className={cn(
+        'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
+        !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+      )}>Invite</button>
     </form>
   );
 }
 
 function MemberList({ members }: { members: MemberItem[] }) {
-  const roleBadgeStyle = (role: 'owner' | 'admin' | 'member'): React.CSSProperties => {
-    if (role === 'owner') return { background: '#f0fdf4', color: '#16a34a', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
-    if (role === 'admin') return { background: '#eff6ff', color: '#3b82f6', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
-    return { background: '#f1f5f9', color: '#64748b', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
+  const roleBadgeClass = (role: 'owner' | 'admin' | 'member') => {
+    if (role === 'owner') return 'bg-success-bg text-success text-xs px-2 py-0.5 rounded';
+    if (role === 'admin') return 'bg-info-bg text-info text-xs px-2 py-0.5 rounded';
+    return 'bg-surface-hover text-text-secondary text-xs px-2 py-0.5 rounded';
   };
 
   return (
-    <div style={{ maxHeight: 200, overflowY: 'auto', marginTop: 8, borderTop: '1px solid #e2e8f0' }}>
+    <div className="max-h-[200px] overflow-y-auto mt-2 border-t border-border">
       {members.map(member => (
-        <div key={member.userId} style={{ display: 'flex', alignItems: 'center', gap: 8, height: 48, borderBottom: '1px solid #f1f5f9' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 600, color: '#374151', flexShrink: 0 }}>
+        <div key={member.userId} className="flex items-center gap-2 h-12 border-b border-surface-hover">
+          <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold text-text-primary shrink-0">
             {(member.displayName ?? member.userId).slice(0, 2).toUpperCase()}
           </div>
-          <div style={{ flex: 1, fontSize: 16, color: '#0f172a' }}>{member.displayName ?? member.userId}</div>
-          <span style={roleBadgeStyle(member.role)}>{member.role}</span>
+          <div className="flex-1 text-base text-text-primary">{member.displayName ?? member.userId}</div>
+          <span className={roleBadgeClass(member.role)}>{member.role}</span>
         </div>
       ))}
     </div>
@@ -428,30 +372,33 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
   };
 
   return (
-    <div style={{ marginTop: 12 }}>
-      <h3 style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', margin: '0 0 8px 0' }}>GROUP ROOMS</h3>
+    <div className="mt-3">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-2">GROUP ROOMS</h3>
       {(selectedGroupRole === 'owner' || selectedGroupRole === 'admin') && (
         showCreateForm ? (
-          <form onSubmit={handleCreateRoom} style={{ marginBottom: 8, padding: '12px', background: '#f8fafc', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required style={{ flex: 1, border: '1px solid #d1d5db', borderRadius: 6, padding: '6px 10px', fontSize: 14, fontFamily: 'system-ui, -apple-system, sans-serif', background: '#f9fafb', color: '#0f172a' }} />
-              <button type="submit" disabled={!roomName.trim() || loading} style={{ height: 36, padding: '0 12px', background: !roomName.trim() || loading ? '#f1f5f9' : '#646cff', color: !roomName.trim() || loading ? '#9ca3af' : '#ffffff', border: !roomName.trim() || loading ? '1px solid #e2e8f0' : 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: !roomName.trim() || loading ? 'default' : 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+          <form onSubmit={handleCreateRoom} className="mb-2 p-3 bg-surface-panel rounded-lg border border-border">
+            <div className="flex gap-2">
+              <input value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
+              <button type="submit" disabled={!roomName.trim() || loading} className={cn(
+                'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
+                !roomName.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+              )}>
                 {loading ? 'Creating…' : 'Create Room'}
               </button>
-              <button type="button" onClick={() => setShowCreateForm(false)} style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>Cancel</button>
+              <button type="button" onClick={() => setShowCreateForm(false)} className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]">Cancel</button>
             </div>
           </form>
         ) : (
-          <button onClick={() => setShowCreateForm(true)} style={{ width: '100%', height: 36, marginBottom: 8, background: '#646cff', color: '#ffffff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}>Create Room</button>
+          <button onClick={() => setShowCreateForm(true)} className="w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]">Create Room</button>
         )
       )}
       {groupRooms.length === 0 ? (
-        <div style={{ fontSize: 14, color: '#9ca3af', padding: '8px 0' }}>No rooms in this group yet.</div>
+        <div className="text-sm text-text-tertiary py-2">No rooms in this group yet.</div>
       ) : (
         groupRooms.map(room => (
-          <div key={room.roomId} onClick={() => onRoomSelect?.(room)} style={{ display: 'flex', alignItems: 'center', height: 48, borderBottom: '1px solid #f1f5f9', cursor: 'pointer', paddingRight: 8 }}>
-            <div style={{ flex: 1, fontSize: 16, color: '#0f172a' }}>{room.name}</div>
-            <span style={{ background: '#eff6ff', color: '#3b82f6', fontSize: 12, padding: '2px 8px', borderRadius: 4 }}>group</span>
+          <div key={room.roomId} onClick={() => onRoomSelect?.(room)} className="flex items-center h-12 border-b border-surface-hover cursor-pointer pr-2">
+            <div className="flex-1 text-base text-text-primary">{room.name}</div>
+            <span className="bg-info-bg text-info text-xs px-2 py-0.5 rounded">group</span>
           </div>
         ))
       )}
@@ -500,15 +447,10 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
     const selectedGroup = selectedGroupId ? groups.find(g => g.groupId === selectedGroupId) : null;
 
     return (
-      <div style={{ padding: '8px 8px 0' }}>
+      <div className="px-2 pt-2">
         <button
           onClick={() => setShowCreateForm(prev => !prev)}
-          style={{
-            width: '100%', textAlign: 'left', padding: '5px 8px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 12, color: '#646cff', fontWeight: 600,
-            fontFamily: 'system-ui, -apple-system, sans-serif', borderRadius: 4,
-          }}
+          className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded"
         >
           + New Group
         </button>
@@ -521,9 +463,9 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
         )}
         <div>
           {loading && groups.length === 0 ? (
-            <div style={{ padding: '8px', color: '#94a3b8', fontSize: 12, textAlign: 'center' }}>Loading…</div>
+            <div className="p-2 text-text-tertiary text-xs text-center">Loading…</div>
           ) : groups.length === 0 ? (
-            <div style={{ padding: '12px 8px', color: '#94a3b8', fontSize: 12 }}>No groups yet</div>
+            <div className="px-2 py-3 text-text-tertiary text-xs">No groups yet</div>
           ) : (
             groups.map(group => (
               <CompactGroupRow
@@ -559,14 +501,14 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
     : 'member';
 
   return (
-    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '1.25rem' }}>
-      <h2 style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', margin: '0 0 0.75rem 0' }}>Groups</h2>
+    <div className="bg-surface border border-border rounded-lg p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Groups</h2>
 
-      <div style={{ maxHeight: 320, overflowY: 'auto', marginBottom: 12 }}>
+      <div className="max-h-80 overflow-y-auto mb-3">
         {groups.length === 0 ? (
-          <div style={{ padding: '16px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 4 }}>No groups yet</div>
-            <div style={{ fontSize: 14, color: '#9ca3af' }}>Create a group or join a public one.</div>
+          <div className="py-4 text-center">
+            <div className="text-sm font-semibold text-text-primary mb-1">No groups yet</div>
+            <div className="text-sm text-text-tertiary">Create a group or join a public one.</div>
           </div>
         ) : (
           groups.map(group => (
@@ -576,7 +518,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
       </div>
 
       {selectedGroupId && (
-        <div style={{ marginBottom: 12 }}>
+        <div className="mb-3">
           <MemberList members={members} />
           {(selectedGroupRole === 'owner' || selectedGroupRole === 'admin') && (
             <InviteForm groupId={selectedGroupId} onInvite={inviteUser} />
@@ -587,7 +529,7 @@ export function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, room
 
       <button
         onClick={() => setShowCreateForm(prev => !prev)}
-        style={{ width: '100%', height: 36, marginBottom: showCreateForm ? 8 : 0, background: '#646cff', color: '#ffffff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+        className={cn('w-full h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]', showCreateForm && 'mb-2')}
       >
         {showCreateForm ? 'Cancel' : 'Create Group'}
       </button>

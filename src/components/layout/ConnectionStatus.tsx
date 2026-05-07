@@ -16,9 +16,9 @@ const STATE_CONFIG: Record<ConnectionState, { label: string; color: string; dot:
 export function ConnectionStatus({ state }: Props) {
   const cfg = STATE_CONFIG[state];
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'monospace' }}>
+    <span className="inline-flex items-center gap-1.5 font-mono">
       <span style={{ color: cfg.color }}>{cfg.dot}</span>
-      <span style={{ color: cfg.color, fontWeight: 600 }}>{cfg.label}</span>
+      <span style={{ color: cfg.color }} className="font-semibold">{cfg.label}</span>
     </span>
   );
 }

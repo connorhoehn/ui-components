@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '../shared/ToastProvider';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -51,21 +52,21 @@ function formatActivity(item: ActivityItem): { icon: string; text: string } {
   const d = item.detail;
   switch (item.eventType) {
     case 'social.room.join':
-      return { icon: '\uD83D\uDEAA', text: `Joined room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '🚪', text: `Joined room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
     case 'social.room.leave':
-      return { icon: '\uD83D\uDEAA', text: `Left room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '🚪', text: `Left room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
     case 'social.follow':
-      return { icon: '\uD83D\uDC65', text: `Followed @${(d.followeeId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '👥', text: `Followed @${(d.followeeId as string)?.slice(0, 8) ?? ''}` };
     case 'social.unfollow':
-      return { icon: '\uD83D\uDC65', text: `Unfollowed @${(d.followeeId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '👥', text: `Unfollowed @${(d.followeeId as string)?.slice(0, 8) ?? ''}` };
     case 'social.like':
-      return { icon: '\u2764\uFE0F', text: `Liked ${(d.contentId as string)?.slice(0, 8) ?? 'content'}` };
+      return { icon: '❤️', text: `Liked ${(d.contentId as string)?.slice(0, 8) ?? 'content'}` };
     case 'social.reaction':
-      return { icon: (d.emoji as string) ?? '\uD83D\uDE00', text: `Reacted to ${(d.contentId as string)?.slice(0, 8) ?? 'content'}` };
+      return { icon: (d.emoji as string) ?? '😀', text: `Reacted to ${(d.contentId as string)?.slice(0, 8) ?? 'content'}` };
     case 'social.post.created':
-      return { icon: '\uD83D\uDCDD', text: `Posted in room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '📝', text: `Posted in room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
     case 'social.comment.created':
-      return { icon: '\uD83D\uDCAC', text: `Commented in room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
+      return { icon: '💬', text: `Commented in room ${(d.roomId as string)?.slice(0, 8) ?? ''}` };
     // Pipeline run-lifecycle events (relayed via usePipelineActivityRelay)
     case 'pipeline.run.started': {
       const pid = (d.pipelineId as string) ?? '';
@@ -87,7 +88,7 @@ function formatActivity(item: ActivityItem): { icon: string; text: string } {
     case 'pipeline.approval.requested':
       return { icon: '✋', text: 'Approval requested' };
     default:
-      return { icon: '\u2139\uFE0F', text: item.eventType };
+      return { icon: 'ℹ️', text: item.eventType };
   }
 }
 
@@ -188,10 +189,10 @@ function useActivityFeed({
     }
     const channelId = `activity:${userId}`;
     sendMessageRef.current({ service: 'activity', action: 'subscribe', channelId });
-    setIsLive(true);  
+    setIsLive(true);
     return () => {
       sendMessageRef.current({ service: 'activity', action: 'unsubscribe', channelId });
-      setIsLive(false);  
+      setIsLive(false);
     };
   }, [connectionState, userId]);
 
@@ -222,22 +223,6 @@ function useActivityFeed({
 // ActivityPanel (exported)
 // ---------------------------------------------------------------------------
 
-const sectionCardStyle: React.CSSProperties = {
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  padding: '1.25rem',
-};
-
-const sectionHeaderStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  color: '#64748b',
-  margin: '0 0 0.75rem 0',
-};
-
 interface ActivityPanelProps {
   idToken: string | null;
   sendMessage: (msg: Record<string, unknown>) => void;
@@ -249,56 +234,38 @@ export function ActivityPanel({ idToken, sendMessage, onMessage, connectionState
   const { items, loading, isLive, error, retry } = useActivityFeed({ idToken, sendMessage, onMessage, connectionState });
 
   return (
-    <div style={sectionCardStyle}>
-      <h2 style={sectionHeaderStyle}>
+    <div className="bg-surface border border-border rounded-lg p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">
         Activity
         {isLive && (
           <span
-            style={{
-              display: 'inline-block',
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              backgroundColor: '#22c55e',
-              marginLeft: 8,
-              verticalAlign: 'middle',
-            }}
+            className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"
             title="Live"
           />
         )}
       </h2>
       {loading ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '1rem', justifyContent: 'center', color: '#64748b' }}>
-          <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid #e2e8f0', borderTopColor: '#646cff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">
+          <span className="inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           Loading...
         </div>
       ) : error && items.length === 0 ? (
         <div
           role="alert"
-          style={{ padding: '1.5rem 1rem', textAlign: 'center', color: '#b91c1c', fontSize: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}
+          className="py-6 px-4 text-center text-[#b91c1c] text-sm flex flex-col items-center gap-2"
         >
           <span>Couldn't load activity</span>
-          <span style={{ color: '#64748b', fontSize: 12 }}>{error}</span>
+          <span className="text-text-secondary text-xs">{error}</span>
           <button
             type="button"
             onClick={retry}
-            style={{
-              marginTop: 4,
-              padding: '4px 12px',
-              fontSize: 12,
-              fontWeight: 500,
-              color: '#1d4ed8',
-              background: '#eff6ff',
-              border: '1px solid #bfdbfe',
-              borderRadius: 4,
-              cursor: 'pointer',
-            }}
+            className="mt-1 px-3 py-1 text-xs font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer"
           >
             Retry
           </button>
         </div>
       ) : items.length === 0 ? (
-        <div style={{ padding: 40, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
+        <div className="py-10 text-center text-text-tertiary text-sm">
           No activity yet
         </div>
       ) : (
@@ -308,19 +275,14 @@ export function ActivityPanel({ idToken, sendMessage, onMessage, connectionState
             return (
               <div
                 key={idx}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 8,
-                  paddingTop: 8,
-                  paddingBottom: 8,
-                  borderBottom: idx < items.length - 1 ? '1px solid #f1f5f9' : 'none',
-                }}
+                className={cn(
+                  'flex flex-row items-center gap-2 py-2',
+                  idx < items.length - 1 && 'border-b border-surface-hover',
+                )}
               >
-                <span style={{ width: 24, flexShrink: 0, textAlign: 'center' }}>{icon}</span>
-                <span style={{ flex: 1, fontSize: 14, color: '#374151' }}>{text}</span>
-                <span style={{ fontSize: 12, color: '#9ca3af', flexShrink: 0 }}>
+                <span className="w-6 shrink-0 text-center">{icon}</span>
+                <span className="flex-1 text-sm text-text-primary">{text}</span>
+                <span className="text-xs text-text-tertiary shrink-0">
                   {relativeTime(item.timestamp)}
                 </span>
               </div>

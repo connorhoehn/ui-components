@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
+import { cn } from '../../../lib/cn';
 
 export interface GroupFormPageProps {
   group?: {
@@ -22,142 +23,6 @@ export interface GroupFormPageProps {
   onCancel: () => void;
   error?: string | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  maxWidth: '640px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginTop: 'var(--ui-spacingLg)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const tagContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '6px',
-  marginBottom: '8px',
-};
-
-const tagStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '4px',
-  padding: '4px 10px',
-  borderRadius: '999px',
-  backgroundColor: 'var(--ui-info)',
-  color: '#fff',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-};
-
-const tagRemoveBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: '#fff',
-  cursor: 'pointer',
-  fontSize: '14px',
-  lineHeight: 1,
-  padding: '0 2px',
-};
-
-const tagInputStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  width: '100%',
-  boxSizing: 'border-box',
-};
-
-const memberRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '6px 0',
-  borderBottom: '1px solid var(--ui-border)',
-};
-
-const addMemberRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '8px',
-  marginTop: 'var(--ui-spacingSm)',
-};
-
-const selectStyle: React.CSSProperties = {
-  flex: 1,
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const buttonRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  marginTop: 'var(--ui-spacingLg)',
-};
-
-const submitBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const cancelBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'transparent',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const smallBtnStyle: React.CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const errorBannerStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-danger)',
-  color: '#fff',
-  borderRadius: 'var(--ui-radiusSm)',
-  marginBottom: 'var(--ui-spacingMd)',
-  fontSize: 'var(--ui-fontSizeSm)',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -220,10 +85,10 @@ export function GroupFormPage({
   );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>{isEdit ? 'Edit Group' : 'Create Group'}</h1>
+    <div className="max-w-[640px]">
+      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Group' : 'Create Group'}</h1>
 
-      {error && <div style={errorBannerStyle}>{error}</div>}
+      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -246,19 +111,23 @@ export function GroupFormPage({
 
         {/* Permissions tag input */}
         <section>
-          <h3 style={sectionTitleStyle}>Permissions</h3>
-          <div style={tagContainerStyle}>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
+          <div className="flex flex-wrap gap-1.5 mb-2">
             {permissions.map((perm) => (
-              <span key={perm} style={tagStyle}>
+              <span key={perm} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
                 {perm}
-                <button type="button" style={tagRemoveBtnStyle} onClick={() => removePermission(perm)}>
+                <button
+                  type="button"
+                  className="bg-transparent border-none text-white cursor-pointer text-[14px] leading-none px-0.5"
+                  onClick={() => removePermission(perm)}
+                >
                   x
                 </button>
               </span>
             ))}
           </div>
           <input
-            style={tagInputStyle}
+            className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary box-border"
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -269,19 +138,19 @@ export function GroupFormPage({
         {/* Members section (edit mode only) */}
         {isEdit && members && (
           <section>
-            <h3 style={sectionTitleStyle}>Members</h3>
+            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
-              <p style={{ color: 'var(--ui-textMuted)', fontSize: 'var(--ui-fontSizeSm)' }}>
+              <p className="text-text-tertiary text-sm">
                 No members yet.
               </p>
             ) : (
               members.map((m) => (
-                <div key={m.userId} style={memberRowStyle}>
-                  <span style={{ fontSize: 'var(--ui-fontSizeMd)' }}>{m.email}</span>
+                <div key={m.userId} className="flex items-center justify-between py-1.5 border-b border-border">
+                  <span className="text-base">{m.email}</span>
                   {onRemoveMember && (
                     <button
                       type="button"
-                      style={{ ...smallBtnStyle, borderColor: 'var(--ui-danger)', color: 'var(--ui-danger)' }}
+                      className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer"
                       onClick={() => onRemoveMember(m.userId)}
                     >
                       Remove
@@ -293,9 +162,9 @@ export function GroupFormPage({
 
             {/* Add member */}
             {availableUsers && availableUsers.length > 0 && onAddMember && (
-              <div style={addMemberRowStyle}>
+              <div className="flex gap-2 mt-2">
                 <select
-                  style={selectStyle}
+                  className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >
@@ -306,7 +175,12 @@ export function GroupFormPage({
                     </option>
                   ))}
                 </select>
-                <button type="button" style={smallBtnStyle} onClick={handleAddMember} disabled={!selectedUser}>
+                <button
+                  type="button"
+                  className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer"
+                  onClick={handleAddMember}
+                  disabled={!selectedUser}
+                >
                   Add
                 </button>
               </div>
@@ -314,11 +188,19 @@ export function GroupFormPage({
           </section>
         )}
 
-        <div style={buttonRowStyle}>
-          <button type="submit" style={submitBtnStyle} disabled={submitting}>
+        <div className="flex gap-2 mt-6">
+          <button
+            type="submit"
+            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={submitting}
+          >
             {submitting ? 'Saving...' : isEdit ? 'Update Group' : 'Create Group'}
           </button>
-          <button type="button" style={cancelBtnStyle} onClick={onCancel}>
+          <button
+            type="button"
+            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
+            onClick={onCancel}
+          >
             Cancel
           </button>
         </div>

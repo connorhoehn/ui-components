@@ -3,10 +3,9 @@
 // Reusable editor for mapping rules within a source. Renders a table of rules
 // with inline editing, reordering, add/delete, and a preview button.
 
-import type { CSSProperties } from 'react';
 import { useCallback, useState } from 'react';
 import { useIdentityContext } from '../../contexts/IdentityContext';
-import { colors, fieldStyle, saveBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { MappingRule } from '../../types/ingest';
 
 const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
@@ -19,71 +18,6 @@ export interface MappingRuleEditorProps {
   rules: MappingRule[];
   onChange: (rules: MappingRule[]) => void;
 }
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  container: {
-    display: 'flex', flexDirection: 'column', gap: 10,
-  },
-  tableWrap: {
-    overflowX: 'auto',
-  },
-  table: {
-    width: '100%', borderCollapse: 'collapse', fontSize: 12,
-  },
-  th: {
-    padding: '8px 10px', fontWeight: 600, textAlign: 'left' as const,
-    borderBottom: `1px solid ${colors.border}`, color: colors.textSecondary, fontSize: 11,
-    textTransform: 'uppercase' as const, letterSpacing: '0.03em',
-  },
-  td: {
-    padding: '6px 10px', borderBottom: `1px solid ${colors.border}`,
-    color: colors.textSecondary, fontSize: 12, verticalAlign: 'middle',
-  },
-  row: {
-    borderBottom: `1px solid ${colors.border}`,
-  },
-  actionBtn: {
-    padding: '3px 8px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 4, background: colors.surface, cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.textSecondary,
-  },
-  actionBtnDanger: {
-    padding: '3px 8px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 4, background: '#fef2f2', cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.state.failed,
-  },
-  addBtn: {
-    padding: '6px 14px', fontSize: 12, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 6, background: colors.surface, cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.textSecondary, alignSelf: 'flex-start',
-  },
-  inlineInput: {
-    ...fieldStyle, padding: '4px 8px', fontSize: 12, minWidth: 80, width: '100%',
-  },
-  inlineSelect: {
-    ...fieldStyle, padding: '4px 8px', fontSize: 12, minWidth: 90, cursor: 'pointer',
-  },
-  previewBtn: {
-    padding: '6px 14px', fontSize: 12, fontWeight: 500, border: `1px solid ${colors.primary}`,
-    borderRadius: 6, background: '#eff6ff', cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.primary, alignSelf: 'flex-start',
-  },
-  previewResult: {
-    padding: 12, background: colors.surfaceInset, border: `1px solid ${colors.border}`,
-    borderRadius: 6, fontSize: 12, color: colors.textSecondary, fontFamily: 'monospace',
-    whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-  },
-  footer: {
-    display: 'flex', gap: 10, alignItems: 'center',
-  },
-  emptyMsg: {
-    padding: 16, textAlign: 'center', color: colors.textTertiary, fontSize: 13,
-  },
-};
 
 const FIELD_OPTIONS = ['extension', 'path', 'mimeType', 'tag', 'name'] as const;
 const OP_OPTIONS = ['eq', 'contains', 'regex', 'startsWith'] as const;
@@ -203,19 +137,19 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
   const buildPattern = (field: string, op: string, value: string) => `${field}:${op}:${value}`;
 
   return (
-    <div style={styles.container} data-testid="mapping-rule-editor">
+    <div className="flex flex-col gap-2.5" data-testid="mapping-rule-editor">
       {rules.length === 0 ? (
-        <div style={styles.emptyMsg}>No mapping rules configured. Add one to get started.</div>
+        <div className="p-4 text-center text-text-tertiary text-[13px]">No mapping rules configured. Add one to get started.</div>
       ) : (
-        <div style={styles.tableWrap}>
-          <table style={styles.table}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-xs">
             <thead>
               <tr>
-                <th style={styles.th}>Priority</th>
-                <th style={styles.th}>Condition</th>
-                <th style={styles.th}>Target Type ID</th>
-                <th style={styles.th}>Pipeline</th>
-                <th style={{ ...styles.th, textAlign: 'right' }}>Actions</th>
+                <th className="px-2.5 py-2 font-semibold text-left border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Priority</th>
+                <th className="px-2.5 py-2 font-semibold text-left border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Condition</th>
+                <th className="px-2.5 py-2 font-semibold text-left border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Target Type ID</th>
+                <th className="px-2.5 py-2 font-semibold text-left border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Pipeline</th>
+                <th className="px-2.5 py-2 font-semibold text-right border-b border-border text-text-secondary text-[11px] uppercase tracking-tight">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -226,59 +160,59 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                 if (isEditing) {
                   const draftParsed = parsePattern(draft.pattern);
                   return (
-                    <tr key={idx} style={styles.row}>
-                      <td style={styles.td}>
+                    <tr key={idx} className="border-b border-border">
+                      <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <input
-                          style={{ ...styles.inlineInput, width: 50 }}
+                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none w-[50px]"
                           type="number"
                           value={draft.priority}
                           onChange={(e) => setDraft({ ...draft, priority: Number(e.target.value) })}
                         />
                       </td>
-                      <td style={styles.td}>
-                        <div style={{ display: 'flex', gap: 4, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
+                        <div className="flex gap-1 items-center flex-wrap">
                           <select
-                            style={styles.inlineSelect}
+                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[90px] cursor-pointer"
                             value={draftParsed.field}
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(e.target.value, draftParsed.op, draftParsed.value) })}
                           >
                             {FIELD_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
                           </select>
                           <select
-                            style={styles.inlineSelect}
+                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[90px] cursor-pointer"
                             value={draftParsed.op}
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(draftParsed.field, e.target.value, draftParsed.value) })}
                           >
                             {OP_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
                           </select>
                           <input
-                            style={{ ...styles.inlineInput, minWidth: 100 }}
+                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[100px] w-full"
                             value={draftParsed.value}
                             placeholder="value"
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(draftParsed.field, draftParsed.op, e.target.value) })}
                           />
                         </div>
                       </td>
-                      <td style={styles.td}>
+                      <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <input
-                          style={styles.inlineInput}
+                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[80px] w-full"
                           value={draft.documentTypeId}
                           placeholder="document type id"
                           onChange={(e) => setDraft({ ...draft, documentTypeId: e.target.value })}
                         />
                       </td>
-                      <td style={styles.td}>
+                      <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <input
-                          style={styles.inlineInput}
+                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[80px] w-full"
                           value={draft.pipelineId ?? ''}
                           placeholder="(optional)"
                           onChange={(e) => setDraft({ ...draft, pipelineId: e.target.value || undefined })}
                         />
                       </td>
-                      <td style={{ ...styles.td, textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
-                          <button style={styles.actionBtn} onClick={saveEdit}>Save</button>
-                          <button style={styles.actionBtn} onClick={cancelEdit}>Cancel</button>
+                      <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle text-right">
+                        <div className="flex gap-1 justify-end">
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={saveEdit}>Save</button>
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={cancelEdit}>Cancel</button>
                         </div>
                       </td>
                     </tr>
@@ -286,27 +220,27 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                 }
 
                 return (
-                  <tr key={idx} style={styles.row}>
-                    <td style={{ ...styles.td, fontFamily: 'monospace', fontWeight: 600 }}>{rule.priority}</td>
-                    <td style={styles.td}>
-                      <span style={{ fontFamily: 'monospace', fontSize: 11 }}>
+                  <tr key={idx} className="border-b border-border">
+                    <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle font-mono font-semibold">{rule.priority}</td>
+                    <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
+                      <span className="font-mono text-[11px]">
                         {parsed.field} {parsed.op} &quot;{parsed.value}&quot;
                       </span>
                     </td>
-                    <td style={{ ...styles.td, fontFamily: 'monospace' }}>{rule.documentTypeId || '—'}</td>
-                    <td style={{ ...styles.td, fontFamily: 'monospace', color: colors.textTertiary }}>
+                    <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle font-mono">{rule.documentTypeId || '—'}</td>
+                    <td className="px-2.5 py-1.5 border-b border-border text-text-tertiary text-xs align-middle font-mono">
                       {rule.pipelineId ?? '—'}
                     </td>
-                    <td style={{ ...styles.td, textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
-                        <button style={styles.actionBtn} onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
-                          ↑
+                    <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle text-right">
+                      <div className="flex gap-1 justify-end">
+                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
+                          &uarr;
                         </button>
-                        <button style={styles.actionBtn} onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
-                          ↓
+                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
+                          &darr;
                         </button>
-                        <button style={styles.actionBtn} onClick={() => startEdit(idx)}>Edit</button>
-                        <button style={styles.actionBtnDanger} onClick={() => deleteRule(idx)}>Delete</button>
+                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
+                        <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -318,22 +252,29 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
       )}
 
       {/* Footer: Add Rule + Preview */}
-      <div style={styles.footer}>
-        <button style={styles.addBtn} onClick={addRule} data-testid="add-rule-btn">
+      <div className="flex gap-2.5 items-center">
+        <button
+          className="px-3.5 py-1.5 text-xs font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary self-start"
+          onClick={addRule}
+          data-testid="add-rule-btn"
+        >
           + Add Rule
         </button>
       </div>
 
       {/* Preview section */}
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 4 }}>
+      <div className="flex gap-2 items-center mt-1">
         <input
-          style={{ ...fieldStyle, flex: 1 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
           value={previewPath}
           onChange={(e) => setPreviewPath(e.target.value)}
           placeholder="Enter a file path to preview mapping..."
         />
         <button
-          style={styles.previewBtn}
+          className={cn(
+            'px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-[#eff6ff] cursor-pointer font-[inherit] text-primary self-start',
+            (previewLoading || !previewPath.trim()) && 'opacity-50 cursor-not-allowed',
+          )}
           onClick={() => void handlePreview()}
           disabled={previewLoading || !previewPath.trim()}
         >
@@ -341,7 +282,9 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
         </button>
       </div>
       {previewResult && (
-        <div style={styles.previewResult}>{previewResult}</div>
+        <div className="p-3 bg-surface-inset border border-border rounded-md text-xs text-text-secondary font-mono whitespace-pre-wrap break-words">
+          {previewResult}
+        </div>
       )}
     </div>
   );

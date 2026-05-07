@@ -5,6 +5,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
 import { StatusBadge } from '../shared/StatusBadge';
+import { cn } from '../../../lib/cn';
 
 export interface GroupListPageProps {
   groups: Array<{
@@ -20,67 +21,6 @@ export interface GroupListPageProps {
   onDeleteGroup: (groupId: string) => Promise<void>;
   loading?: boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const createBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const actionBtnStyle: React.CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  marginRight: '6px',
-  font: 'inherit',
-};
-
-const dangerBtnStyle: React.CSSProperties = {
-  ...actionBtnStyle,
-  borderColor: 'var(--ui-danger)',
-  color: 'var(--ui-danger)',
-};
-
-const confirmStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '6px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-danger)',
-};
-
-const badgeListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '4px',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -120,9 +60,9 @@ export function GroupListPage({
         key: 'permissions',
         header: 'Permissions',
         render: (item) => (
-          <div style={badgeListStyle}>
+          <div className="flex flex-wrap gap-1">
             {item.permissions.length === 0
-              ? <span style={{ color: 'var(--ui-textMuted)' }}>None</span>
+              ? <span className="text-text-tertiary">None</span>
               : item.permissions.map((p) => (
                   <StatusBadge key={p} status={p} variant="info" />
                 ))}
@@ -137,17 +77,21 @@ export function GroupListPage({
     (item: GroupRow) => {
       if (confirmingId === item.groupId) {
         return (
-          <span style={confirmStyle}>
+          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
             Are you sure?
             <button
               type="button"
-              style={{ ...dangerBtnStyle, fontWeight: 600 }}
+              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
               onClick={() => handleDelete(item.groupId)}
               disabled={deleting}
             >
               {deleting ? '...' : 'Yes'}
             </button>
-            <button type="button" style={actionBtnStyle} onClick={() => setConfirmingId(null)}>
+            <button
+              type="button"
+              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
+              onClick={() => setConfirmingId(null)}
+            >
               No
             </button>
           </span>
@@ -156,10 +100,18 @@ export function GroupListPage({
 
       return (
         <>
-          <button type="button" style={actionBtnStyle} onClick={() => onEditGroup(item.groupId)}>
+          <button
+            type="button"
+            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
+            onClick={() => onEditGroup(item.groupId)}
+          >
             Edit
           </button>
-          <button type="button" style={dangerBtnStyle} onClick={() => setConfirmingId(item.groupId)}>
+          <button
+            type="button"
+            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
+            onClick={() => setConfirmingId(item.groupId)}
+          >
             Delete
           </button>
         </>
@@ -170,9 +122,13 @@ export function GroupListPage({
 
   return (
     <div>
-      <div style={headerStyle}>
-        <h1 style={titleStyle}>Groups — {poolName}</h1>
-        <button type="button" style={createBtnStyle} onClick={onCreateGroup}>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-semibold text-text-primary">Groups — {poolName}</h1>
+        <button
+          type="button"
+          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
+          onClick={onCreateGroup}
+        >
           Create Group
         </button>
       </div>

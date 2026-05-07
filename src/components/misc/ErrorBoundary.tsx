@@ -38,35 +38,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: 8,
-            padding: '1.5rem',
-            textAlign: 'center',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-          }}
-        >
-          <p style={{ margin: '0 0 0.5rem', fontSize: '0.95rem', fontWeight: 600, color: '#991b1b' }}>
+        <div className="bg-danger-bg border border-danger-border rounded-lg p-6 text-center font-sans">
+          <p className="m-0 mb-2 text-[0.95rem] font-semibold text-[#991b1b]">
             Something went wrong
           </p>
-          <p style={{ margin: '0 0 1rem', fontSize: '0.8rem', color: '#b91c1c' }}>
+          <p className="m-0 mb-4 text-[0.8rem] text-[#b91c1c]">
             {this.state.error?.message ?? 'An unexpected error occurred.'}
           </p>
           <button
             onClick={this.handleRetry}
-            style={{
-              background: '#dc2626',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: 6,
-              padding: '0.4rem 1rem',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className="bg-[#dc2626] text-white border-none rounded-md px-4 py-1.5 text-[0.8rem] font-semibold cursor-pointer font-[inherit]"
           >
             Retry
           </button>

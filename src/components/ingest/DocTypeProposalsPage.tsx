@@ -1,60 +1,33 @@
 // frontend/src/components/ingest/DocTypeProposalsPage.tsx
 //
 // Operator promotion queue for auto-discovered DocType proposals.
-// AGENTIC_ETL_VISION §B Tier 3 — when the LLM mapper sees N similar files
-// of an unknown shape, it proposes a new DocType. Operator promotes /
-// rejects from this page.
-//
-// Per-row actions: Promote (resolves status='promoted' on the backend),
-// Reject (resolves status='rejected'). The companion follow-up wires
-// promotion through to the canonical DocType store; today this page just
-// records the operator's decision against the proposal row.
 
-import type { CSSProperties } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, pageContainerStyle, saveBtnStyle, cancelBtnStyle } from '../../constants/styles';
 import { useDocTypeProposals } from '../../hooks/useDocTypeProposals';
 import type { DocTypeProposalRow } from '../../hooks/useDocTypeProposals';
-
-const styles: Record<string, CSSProperties> = {
-  header: { marginBottom: 16 },
-  title: { fontSize: 22, fontWeight: 700, color: colors.textPrimary },
-  subtitle: { fontSize: 12, color: colors.textTertiary, marginTop: 4 },
-  errorBanner: { padding: '8px 12px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`, color: colors.state.failed, borderRadius: 8, marginBottom: 12 },
-  list: { display: 'flex', flexDirection: 'column', gap: 12 },
-  card: { padding: 16, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 10 },
-  cardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  proposedName: { fontSize: 16, fontWeight: 700, color: colors.textPrimary },
-  meta: { fontSize: 12, color: colors.textSecondary, display: 'flex', gap: 16, flexWrap: 'wrap' },
-  description: { fontSize: 13, color: colors.textPrimary, lineHeight: 1.5 },
-  fieldList: { display: 'flex', flexWrap: 'wrap', gap: 6 },
-  fieldChip: { fontSize: 11, padding: '2px 8px', borderRadius: 999, background: colors.surfaceInset, color: colors.textSecondary, fontFamily: 'ui-monospace, monospace' },
-  reasoning: { fontSize: 12, color: colors.textTertiary, fontStyle: 'italic' },
-  actions: { display: 'flex', gap: 8 },
-};
 
 export default function DocTypeProposalsPage() {
   const { proposals, loading, error, promote, reject } = useDocTypeProposals();
 
   return (
-    <div data-testid="doctype-proposals-page" style={pageContainerStyle}>
-      <div style={styles.header}>
-        <div style={styles.title}>DocType proposals</div>
-        <div style={styles.subtitle}>
+    <div data-testid="doctype-proposals-page" className="p-6 flex flex-col gap-3">
+      <div className="mb-4">
+        <div className="text-[22px] font-bold text-text-primary">DocType proposals</div>
+        <div className="text-xs text-text-tertiary mt-1">
           Auto-discovered candidate types from the LLM mapper. Promote to
           accept; reject to suppress similar future proposals.
         </div>
       </div>
 
       {error ? (
-        <div data-testid="proposals-error" style={styles.errorBanner}>
+        <div data-testid="proposals-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load DocType proposals: {error}
         </div>
       ) : null}
 
       {loading && proposals.length === 0 ? (
-        <div style={styles.list}>
+        <div className="flex flex-col gap-3">
           <SkeletonCard height={120} />
           <SkeletonCard height={120} />
         </div>
@@ -66,7 +39,7 @@ export default function DocTypeProposalsPage() {
           testId="proposals-empty"
         />
       ) : (
-        <div data-testid="proposals-list" style={styles.list}>
+        <div data-testid="proposals-list" className="flex flex-col gap-3">
           {proposals.map((p) => (
             <ProposalRow
               key={p.proposalId}
@@ -89,24 +62,24 @@ interface ProposalRowProps {
 
 function ProposalRow({ proposal, onPromote, onReject }: ProposalRowProps) {
   return (
-    <div data-testid={`proposal-row-${proposal.proposalId}`} style={styles.card}>
-      <div style={styles.cardHeader}>
-        <span style={styles.proposedName}>{proposal.proposedName}</span>
-        <span style={{ fontSize: 11, color: colors.textTertiary }}>
+    <div data-testid={`proposal-row-${proposal.proposalId}`} className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-2.5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-base font-bold text-text-primary">{proposal.proposedName}</span>
+        <span className="text-[11px] text-text-tertiary">
           {proposal.sampleIngestIds.length} sample{proposal.sampleIngestIds.length === 1 ? '' : 's'}
         </span>
       </div>
-      <div style={styles.meta}>
+      <div className="text-xs text-text-secondary flex gap-4 flex-wrap">
         <span>Source: {proposal.sourceId.slice(0, 12)}</span>
         <span>Signature: {proposal.signature.slice(0, 24)}</span>
       </div>
       {proposal.proposedDescription ? (
-        <div style={styles.description}>{proposal.proposedDescription}</div>
+        <div className="text-[13px] text-text-primary leading-relaxed">{proposal.proposedDescription}</div>
       ) : null}
       {proposal.proposedFields.length > 0 ? (
-        <div style={styles.fieldList}>
+        <div className="flex flex-wrap gap-1.5">
           {proposal.proposedFields.map((f) => (
-            <span key={f.name} style={styles.fieldChip}>
+            <span key={f.name} className="text-[11px] px-2 py-0.5 rounded-full bg-surface-inset text-text-secondary font-mono">
               {f.name}
               {f.required ? '*' : ''}
             </span>
@@ -114,22 +87,22 @@ function ProposalRow({ proposal, onPromote, onReject }: ProposalRowProps) {
         </div>
       ) : null}
       {proposal.reasoning ? (
-        <div style={styles.reasoning} title={proposal.reasoning}>
+        <div className="text-xs text-text-tertiary italic" title={proposal.reasoning}>
           {proposal.reasoning.slice(0, 200)}
           {proposal.reasoning.length > 200 ? '…' : ''}
         </div>
       ) : null}
-      <div style={styles.actions}>
+      <div className="flex gap-2">
         <button
           data-testid={`proposal-promote-${proposal.proposalId}`}
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           onClick={onPromote}
         >
           Promote
         </button>
         <button
           data-testid={`proposal-reject-${proposal.proposalId}`}
-          style={cancelBtnStyle}
+          className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
           onClick={onReject}
         >
           Reject

@@ -3,6 +3,7 @@
 // Overview dashboard showing stats cards, pool list, and quick-action links.
 
 import { useMemo } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface AdminDashboardPageProps {
   stats: { userPools: number; clients: number; totalUsers: number };
@@ -10,94 +11,6 @@ export interface AdminDashboardPageProps {
   onNavigate: (path: string) => void;
   loading?: boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--ui-spacingLg)',
-};
-
-const statsGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-  gap: 'var(--ui-spacingMd)',
-};
-
-const cardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--ui-surface)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-  padding: 'var(--ui-spacingMd)',
-  boxShadow: 'var(--ui-shadowSm)',
-};
-
-const statValueStyle: React.CSSProperties = {
-  fontSize: '2rem',
-  fontWeight: 700,
-  color: 'var(--ui-primary)',
-  marginBottom: '4px',
-};
-
-const statLabelStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const poolRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  borderBottom: '1px solid var(--ui-border)',
-};
-
-const linkBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--ui-primary)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-  padding: 0,
-  textDecoration: 'underline',
-  font: 'inherit',
-};
-
-const quickLinksStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'var(--ui-spacingSm)',
-};
-
-const quickLinkBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  borderRadius: 'var(--ui-radiusSm)',
-  border: '1px solid var(--ui-primary)',
-  backgroundColor: 'transparent',
-  color: 'var(--ui-primary)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const skeletonStyle: React.CSSProperties = {
-  height: '60px',
-  borderRadius: 'var(--ui-radiusMd)',
-  backgroundColor: 'var(--ui-border)',
-  opacity: 0.5,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -115,49 +28,52 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
 
   if (loading) {
     return (
-      <div style={pageStyle}>
-        <div style={statsGridStyle}>
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} style={{ ...cardStyle, ...skeletonStyle }} />
+            <div
+              key={i}
+              className="bg-border rounded-md h-[60px] opacity-50"
+            />
           ))}
         </div>
-        <div style={skeletonStyle} />
+        <div className="bg-border rounded-md h-[60px] opacity-50" />
       </div>
     );
   }
 
   return (
-    <div style={pageStyle}>
+    <div className="flex flex-col gap-6">
       {/* Stats */}
-      <section style={statsGridStyle}>
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {statsCards.map((s) => (
-          <div key={s.label} style={cardStyle}>
-            <div style={statValueStyle}>{s.value}</div>
-            <div style={statLabelStyle}>{s.label}</div>
+          <div key={s.label} className="bg-surface border border-border rounded-md p-4 shadow-sm">
+            <div className="text-[2rem] font-bold text-primary mb-1">{s.value}</div>
+            <div className="text-sm text-text-secondary">{s.label}</div>
           </div>
         ))}
       </section>
 
       {/* Pools */}
       <section>
-        <h2 style={sectionTitleStyle}>User Pools</h2>
-        <div style={{ ...cardStyle, padding: 0, overflow: 'hidden' }}>
+        <h2 className="text-lg font-semibold text-text-primary mb-2">User Pools</h2>
+        <div className="bg-surface border border-border rounded-md p-0 overflow-hidden shadow-sm">
           {pools.length === 0 ? (
-            <p style={{ padding: 'var(--ui-spacingMd)', color: 'var(--ui-textMuted)', textAlign: 'center' }}>
+            <p className="p-4 text-text-tertiary text-center">
               No pools created yet.
             </p>
           ) : (
             pools.map((pool) => (
-              <div key={pool.poolId} style={poolRowStyle}>
+              <div key={pool.poolId} className="flex items-center justify-between px-4 py-2 border-b border-border">
                 <div>
-                  <span style={{ fontWeight: 500, color: 'var(--ui-textPrimary)' }}>{pool.poolName}</span>
-                  <span style={{ marginLeft: '12px', fontSize: 'var(--ui-fontSizeSm)', color: 'var(--ui-textMuted)' }}>
+                  <span className="font-medium text-text-primary">{pool.poolName}</span>
+                  <span className="ml-3 text-sm text-text-tertiary">
                     {pool.createdAt}
                   </span>
                 </div>
                 <button
                   type="button"
-                  style={linkBtnStyle}
+                  className="bg-transparent border-none text-primary cursor-pointer text-sm font-medium p-0 underline"
                   onClick={() => onNavigate(`/identity/admin/pools/${pool.poolId}`)}
                 >
                   View
@@ -170,25 +86,25 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
 
       {/* Quick Links */}
       <section>
-        <h2 style={sectionTitleStyle}>Quick Actions</h2>
-        <div style={quickLinksStyle}>
+        <h2 className="text-lg font-semibold text-text-primary mb-2">Quick Actions</h2>
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            style={quickLinkBtnStyle}
+            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
             onClick={() => onNavigate('/identity/admin/pools/new')}
           >
             Create Pool
           </button>
           <button
             type="button"
-            style={quickLinkBtnStyle}
+            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
             onClick={() => onNavigate('/identity/admin/applications/new')}
           >
             Create Application
           </button>
           <button
             type="button"
-            style={quickLinkBtnStyle}
+            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
             onClick={() => onNavigate('/identity/admin/setup')}
           >
             Setup Guide

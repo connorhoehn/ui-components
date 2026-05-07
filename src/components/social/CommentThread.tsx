@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { useComments } from '../../hooks/useComments';
 import type { CommentItem } from '../../hooks/useComments';
 import type { GatewayMessage } from '../../types/gateway';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -64,37 +65,22 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+    <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
       <input
         value={content}
         onChange={e => setContent(e.target.value)}
         placeholder={placeholder}
-        style={{
-          flex: 1,
-          border: '1px solid #d1d5db',
-          borderRadius: 6,
-          padding: '6px 10px',
-          fontSize: 14,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: '#f9fafb',
-          color: '#0f172a',
-        }}
+        className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
       />
       <button
         type="submit"
         disabled={!content.trim() || loading}
-        style={{
-          height: 28,
-          padding: '0 10px',
-          background: !content.trim() || loading ? '#f1f5f9' : '#646cff',
-          color: !content.trim() || loading ? '#9ca3af' : '#ffffff',
-          border: !content.trim() || loading ? '1px solid #e2e8f0' : 'none',
-          borderRadius: 6,
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: !content.trim() || loading ? 'default' : 'pointer',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}
+        className={cn(
+          'h-7 px-2.5 rounded-md text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
+          !content.trim() || loading
+            ? 'bg-surface-hover text-text-tertiary border border-border cursor-default'
+            : 'bg-primary text-white border-none cursor-pointer',
+        )}
       >
         Comment
       </button>
@@ -128,66 +114,54 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
 
   const isOwn = comment.authorId === currentUserId;
   const isReply = !!comment.parentCommentId;
-  const initials = comment.authorId.slice(0, 2).toUpperCase();
+  const commentInitials = comment.authorId.slice(0, 2).toUpperCase();
 
   const inner = (
     <div style={{ opacity, transition: 'opacity 200ms ease' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-        <div style={{
-          width: 32,
-          height: 32,
-          borderRadius: '50%',
-          background: '#e2e8f0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#374151',
-          flexShrink: 0,
-        }}>
-          {initials}
+      <div className="flex items-start gap-2">
+        <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold text-text-primary shrink-0">
+          {commentInitials}
         </div>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className="text-sm font-semibold text-text-primary">
               {comment.authorId}
             </span>
-            <span style={{ fontSize: 12, color: '#9ca3af' }}>
+            <span className="text-xs text-text-tertiary">
               {relativeTime(comment.createdAt)}
             </span>
           </div>
-          <div style={{ fontSize: 14, color: '#374151', marginBottom: 4 }}>
+          <div className="text-sm text-text-primary mb-1">
             {comment.content}
           </div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div className="flex gap-2 items-center">
             <button
               onClick={() => setShowReplyForm(prev => !prev)}
-              style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'system-ui, -apple-system, sans-serif' }}
+              className="text-sm text-text-secondary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
             >
               Reply
             </button>
             {isOwn && !showConfirmDelete && (
               <button
                 onClick={() => setShowConfirmDelete(true)}
-                style={{ fontSize: 14, color: '#9ca3af', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                className="text-sm text-text-tertiary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
                 aria-label="Delete comment"
               >
                 Delete
               </button>
             )}
             {isOwn && showConfirmDelete && (
-              <div role="group" aria-label="Confirm delete comment" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                <span style={{ fontSize: 12, color: '#374151' }}>Delete this comment?</span>
+              <div role="group" aria-label="Confirm delete comment" className="flex gap-1.5 items-center">
+                <span className="text-xs text-text-primary">Delete this comment?</span>
                 <button
                   onClick={() => setShowConfirmDelete(false)}
-                  style={{ fontSize: 12, color: '#64748b', background: 'none', border: '1px solid #e2e8f0', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                  className="text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => { void onDelete(comment.commentId); setShowConfirmDelete(false); }}
-                  style={{ fontSize: 12, color: '#ffffff', background: '#dc2626', border: 'none', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+                  className="text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]"
                 >
                   Delete
                 </button>
@@ -211,14 +185,14 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
 
   if (isReply) {
     return (
-      <div style={{ paddingLeft: 32, paddingTop: 8, paddingBottom: 8 }}>
+      <div className="pl-8 py-2">
         {inner}
       </div>
     );
   }
 
   return (
-    <div style={{ paddingTop: 8, paddingBottom: 8, borderBottom: '1px solid #f1f5f9' }}>
+    <div className="py-2 border-b border-surface-hover">
       {inner}
     </div>
   );
@@ -238,13 +212,13 @@ export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThr
   };
 
   return (
-    <div style={{ paddingTop: 8, paddingLeft: 8, borderTop: '1px solid #f1f5f9' }}>
+    <div className="pt-2 pl-2 border-t border-surface-hover">
       {loading ? (
-        <div style={{ fontSize: 14, color: '#9ca3af', padding: '8px 0' }}>
+        <div className="text-sm text-text-tertiary py-2">
           Loading comments…
         </div>
       ) : comments.length === 0 ? (
-        <div style={{ fontSize: 14, color: '#9ca3af', textAlign: 'center', padding: '16px 0' }}>
+        <div className="text-sm text-text-tertiary text-center py-4">
           No comments yet
         </div>
       ) : (

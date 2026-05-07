@@ -4,6 +4,7 @@
 // Sidebar collapses on narrow viewports via a toggle button.
 
 import { useState, useCallback } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface IdentityAdminLayoutProps {
   children: React.ReactNode;
@@ -30,90 +31,6 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const containerStyle: React.CSSProperties = {
-  display: 'flex',
-  minHeight: '100vh',
-  backgroundColor: 'var(--ui-surfaceAlt)',
-  fontFamily: 'inherit',
-};
-
-const sidebarStyle: React.CSSProperties = {
-  width: '240px',
-  backgroundColor: 'var(--ui-surface)',
-  borderRight: '1px solid var(--ui-border)',
-  display: 'flex',
-  flexDirection: 'column',
-  flexShrink: 0,
-  transition: 'width 0.2s ease',
-  overflow: 'hidden',
-};
-
-const sidebarCollapsedStyle: React.CSSProperties = {
-  ...sidebarStyle,
-  width: '0px',
-  borderRight: 'none',
-};
-
-const sidebarHeaderStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingMd)',
-  fontWeight: 700,
-  fontSize: 'var(--ui-fontSizeLg)',
-  color: 'var(--ui-primaryDark)',
-  borderBottom: '1px solid var(--ui-border)',
-};
-
-const navListStyle: React.CSSProperties = {
-  listStyle: 'none',
-  margin: 0,
-  padding: 'var(--ui-spacingSm) 0',
-  flex: 1,
-};
-
-const mainStyle: React.CSSProperties = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  minWidth: 0,
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surface)',
-  borderBottom: '1px solid var(--ui-border)',
-};
-
-const contentStyle: React.CSSProperties = {
-  flex: 1,
-  padding: 'var(--ui-spacingLg)',
-  overflowY: 'auto',
-};
-
-const toggleBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  fontSize: '20px',
-  cursor: 'pointer',
-  color: 'var(--ui-textPrimary)',
-  padding: '4px 8px',
-};
-
-const logoutBtnStyle: React.CSSProperties = {
-  padding: '6px 14px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  backgroundColor: 'var(--ui-danger)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  cursor: 'pointer',
-};
-
-// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
@@ -126,25 +43,17 @@ function NavLink({
   active: boolean;
   onNavigate: (path: string) => void;
 }) {
-  const style: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '8px var(--ui-spacingMd)',
-    cursor: 'pointer',
-    backgroundColor: active ? 'var(--ui-surfaceAlt)' : 'transparent',
-    color: active ? 'var(--ui-primary)' : 'var(--ui-textPrimary)',
-    fontWeight: active ? 600 : 400,
-    fontSize: 'var(--ui-fontSizeMd)',
-    borderLeft: active ? '3px solid var(--ui-primary)' : '3px solid transparent',
-    transition: 'background-color 0.15s ease',
-  };
-
   return (
     <li>
       <button
         type="button"
-        style={{ ...style, width: '100%', textAlign: 'left', border: 'none', background: style.backgroundColor, font: 'inherit' }}
+        className={cn(
+          'flex items-center gap-2 w-full text-left px-4 py-2 text-sm font-[inherit] border-none transition-colors duration-150',
+          'border-l-[3px]',
+          active
+            ? 'bg-surface-hover text-primary font-semibold border-l-primary'
+            : 'bg-transparent text-text-primary font-normal border-l-transparent hover:bg-surface-hover'
+        )}
         onClick={() => onNavigate(item.path)}
       >
         <span>{item.icon}</span>
@@ -170,10 +79,17 @@ export function IdentityAdminLayout({
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
 
   return (
-    <div style={containerStyle}>
-      <aside style={sidebarOpen ? sidebarStyle : sidebarCollapsedStyle}>
-        <div style={sidebarHeaderStyle}>Identity Admin</div>
-        <ul style={navListStyle}>
+    <div className="flex min-h-screen bg-surface-panel font-[inherit]">
+      <aside
+        className={cn(
+          'bg-surface border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
+          sidebarOpen ? 'w-60' : 'w-0 border-r-0'
+        )}
+      >
+        <div className="p-4 font-bold text-lg text-primary border-b border-border">
+          Identity Admin
+        </div>
+        <ul className="list-none m-0 py-2 flex-1">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.path}
@@ -185,27 +101,36 @@ export function IdentityAdminLayout({
         </ul>
       </aside>
 
-      <div style={mainStyle}>
-        <header style={headerStyle}>
-          <button type="button" style={toggleBtnStyle} onClick={toggleSidebar} aria-label="Toggle sidebar">
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
+          <button
+            type="button"
+            className="bg-transparent border-none text-xl cursor-pointer text-text-primary px-2 py-1"
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+          >
             {sidebarOpen ? '←' : '→'}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--ui-spacingMd)' }}>
+          <div className="flex items-center gap-4">
             {adminEmail && (
-              <span style={{ fontSize: 'var(--ui-fontSizeSm)', color: 'var(--ui-textSecondary)' }}>
+              <span className="text-sm text-text-secondary">
                 {adminEmail}
               </span>
             )}
             {onLogout && (
-              <button type="button" style={logoutBtnStyle} onClick={onLogout}>
+              <button
+                type="button"
+                className="px-3.5 py-1.5 text-sm bg-danger text-white border-none rounded-sm cursor-pointer"
+                onClick={onLogout}
+              >
                 Logout
               </button>
             )}
           </div>
         </header>
 
-        <main style={contentStyle}>{children}</main>
+        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

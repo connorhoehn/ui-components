@@ -3,6 +3,7 @@
 // Step-by-step setup checklist with expandable details and progress indicator.
 
 import { useState, useMemo, useCallback } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface SetupGuidePageProps {
   status: {
@@ -23,104 +24,6 @@ export interface SetupGuidePageProps {
   };
   onNavigate: (path: string) => void;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  maxWidth: '720px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const progressBarOuterStyle: React.CSSProperties = {
-  height: '8px',
-  backgroundColor: 'var(--ui-border)',
-  borderRadius: '4px',
-  overflow: 'hidden',
-  marginBottom: 'var(--ui-spacingLg)',
-};
-
-const progressTextStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-  marginBottom: '6px',
-};
-
-const stepCardStyle: React.CSSProperties = {
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-  marginBottom: 'var(--ui-spacingSm)',
-  overflow: 'hidden',
-  backgroundColor: 'var(--ui-surface)',
-};
-
-const stepHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: 'var(--ui-spacingMd)',
-  cursor: 'pointer',
-  userSelect: 'none',
-};
-
-const stepStatusStyle = (done: boolean): React.CSSProperties => ({
-  width: '24px',
-  height: '24px',
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: done ? 'var(--ui-success)' : 'var(--ui-border)',
-  color: done ? '#fff' : 'var(--ui-textMuted)',
-  fontWeight: 700,
-  fontSize: '14px',
-  flexShrink: 0,
-});
-
-const stepTitleStyle: React.CSSProperties = {
-  flex: 1,
-  marginLeft: '12px',
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 500,
-  color: 'var(--ui-textPrimary)',
-};
-
-const stepBodyStyle: React.CSSProperties = {
-  padding: '0 var(--ui-spacingMd) var(--ui-spacingMd)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-  lineHeight: 1.6,
-};
-
-const linkBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--ui-primary)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  padding: 0,
-  textDecoration: 'underline',
-  font: 'inherit',
-};
-
-const codeStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surfaceAlt)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontFamily: 'monospace',
-  fontSize: 'var(--ui-fontSizeSm)',
-  overflowX: 'auto',
-  whiteSpace: 'pre',
-  marginTop: '8px',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -153,7 +56,11 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             ) : (
               <p>No user pools yet.</p>
             )}
-            <button type="button" style={linkBtnStyle} onClick={() => onNavigate('/identity/admin/pools/new')}>
+            <button
+              type="button"
+              className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
+              onClick={() => onNavigate('/identity/admin/pools/new')}
+            >
               Create a User Pool
             </button>
           </div>
@@ -169,7 +76,11 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             ) : (
               <p>No applications registered.</p>
             )}
-            <button type="button" style={linkBtnStyle} onClick={() => onNavigate('/identity/admin/applications/new')}>
+            <button
+              type="button"
+              className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
+              onClick={() => onNavigate('/identity/admin/applications/new')}
+            >
               Register an Application
             </button>
           </div>
@@ -191,7 +102,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             {status.firstPoolId && (
               <button
                 type="button"
-                style={linkBtnStyle}
+                className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
                 onClick={() => onNavigate(`/identity/admin/pools/${status.firstPoolId}/users/new`)}
               >
                 Create Admin User
@@ -222,7 +133,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             {status.wellKnownUrl && (
               <p>
                 Well-known URL:{' '}
-                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--ui-primary)' }}>
+                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-primary">
                   {status.wellKnownUrl}
                 </a>
               </p>
@@ -239,7 +150,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
               <>
                 <p>Client ID: <code>{status.firstClientId}</code></p>
                 <p>Use this code snippet to test the OIDC authorization flow:</p>
-                <pre style={codeStyle}>{`// OIDC Authorization Code Flow
+                <pre className="px-4 py-2 bg-surface-inset border border-border rounded-sm font-mono text-sm overflow-x-auto whitespace-pre mt-2">{`// OIDC Authorization Code Flow
 const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
   client_id: '${status.firstClientId}',
   response_type: 'code',
@@ -263,40 +174,49 @@ window.location.href = authUrl;`}</pre>
   const progressPercent = Math.round((completedCount / steps.length) * 100);
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>Setup Guide</h1>
+    <div className="max-w-[720px]">
+      <h1 className="text-lg font-semibold text-text-primary mb-2">Setup Guide</h1>
 
       {/* Progress */}
-      <p style={progressTextStyle}>
+      <p className="text-sm text-text-secondary mb-1.5">
         {completedCount} of {steps.length} steps completed ({progressPercent}%)
       </p>
-      <div style={progressBarOuterStyle}>
+      <div className="h-2 bg-border rounded-sm overflow-hidden mb-6">
         <div
-          style={{
-            height: '100%',
-            width: `${progressPercent}%`,
-            backgroundColor: 'var(--ui-success)',
-            borderRadius: '4px',
-            transition: 'width 0.3s ease',
-          }}
+          className="h-full bg-success rounded-sm transition-[width] duration-300 ease-in-out"
+          style={{ width: `${progressPercent}%` }}
         />
       </div>
 
       {/* Steps */}
       {steps.map((step, idx) => (
-        <div key={idx} style={stepCardStyle}>
-          <div style={stepHeaderStyle} onClick={() => toggleStep(idx)}>
-            <div style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-              <div style={stepStatusStyle(step.done)}>
+        <div key={idx} className="border border-border rounded-md mb-2 overflow-hidden bg-surface">
+          <div
+            className="flex items-center justify-between p-4 cursor-pointer select-none"
+            onClick={() => toggleStep(idx)}
+          >
+            <div className="flex items-center flex-1">
+              <div
+                className={cn(
+                  "w-6 h-6 rounded-full flex items-center justify-center font-bold text-[14px] shrink-0",
+                  step.done
+                    ? "bg-success text-white"
+                    : "bg-border text-text-tertiary"
+                )}
+              >
                 {step.done ? '✓' : idx + 1}
               </div>
-              <span style={stepTitleStyle}>{step.title}</span>
+              <span className="flex-1 ml-3 text-base font-medium text-text-primary">{step.title}</span>
             </div>
-            <span style={{ color: 'var(--ui-textMuted)', fontSize: '18px' }}>
+            <span className="text-text-tertiary text-[18px]">
               {expanded === idx ? '▲' : '▼'}
             </span>
           </div>
-          {expanded === idx && <div style={stepBodyStyle}>{step.content}</div>}
+          {expanded === idx && (
+            <div className="px-4 pb-4 text-sm text-text-secondary leading-relaxed">
+              {step.content}
+            </div>
+          )}
         </div>
       ))}
     </div>

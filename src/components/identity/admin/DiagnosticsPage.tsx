@@ -3,6 +3,7 @@
 // System diagnostics viewer with node info, rate limiter stats, and DLQ management.
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface DiagnosticsPageProps {
   diagnostics?: Record<string, unknown>;
@@ -21,160 +22,36 @@ export interface DiagnosticsPageProps {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--ui-spacingLg)',
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const headerActionsStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'var(--ui-spacingSm)',
-};
-
-const refreshBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const autoRefreshLabelStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-  cursor: 'pointer',
-};
-
-const sectionStyle: React.CSSProperties = {
-  backgroundColor: 'var(--ui-surface)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-  overflow: 'hidden',
-};
-
-const sectionHeaderStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surfaceAlt)',
-  borderBottom: '1px solid var(--ui-border)',
-  fontWeight: 600,
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const codeBlockStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingMd)',
-  fontFamily: 'monospace',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textPrimary)',
-  overflowX: 'auto',
-  whiteSpace: 'pre-wrap',
-  maxHeight: '400px',
-  overflowY: 'auto',
-  margin: 0,
-};
-
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  fontSize: 'var(--ui-fontSizeSm)',
-};
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  borderBottom: '1px solid var(--ui-border)',
-  color: 'var(--ui-textSecondary)',
-  fontWeight: 600,
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  borderBottom: '1px solid var(--ui-border)',
-  color: 'var(--ui-textPrimary)',
-  verticalAlign: 'middle',
-};
-
-const actionBtnStyle: React.CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  marginRight: '6px',
-  font: 'inherit',
-};
-
-const dangerBtnStyle: React.CSSProperties = {
-  ...actionBtnStyle,
-  borderColor: 'var(--ui-danger)',
-  color: 'var(--ui-danger)',
-};
-
-const skeletonStyle: React.CSSProperties = {
-  height: '120px',
-  borderRadius: 'var(--ui-radiusMd)',
-  backgroundColor: 'var(--ui-border)',
-  opacity: 0.5,
-};
-
-const emptyStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingMd)',
-  textAlign: 'center',
-  color: 'var(--ui-textMuted)',
-};
-
-// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
 function JsonViewer({ data }: { data: unknown }) {
-  return <pre style={codeBlockStyle}>{JSON.stringify(data, null, 2)}</pre>;
+  return (
+    <pre className="p-4 font-mono text-sm text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0">
+      {JSON.stringify(data, null, 2)}
+    </pre>
+  );
 }
 
 function RateTable({ rates }: { rates: Record<string, unknown> }) {
   const entries = Object.entries(rates);
   if (entries.length === 0) {
-    return <p style={emptyStyle}>No rate limiter data available.</p>;
+    return <p className="p-4 text-center text-text-tertiary">No rate limiter data available.</p>;
   }
 
   return (
-    <table style={tableStyle}>
+    <table className="w-full border-collapse text-sm">
       <thead>
         <tr>
-          <th style={thStyle}>Key</th>
-          <th style={thStyle}>Value</th>
+          <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Key</th>
+          <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Value</th>
         </tr>
       </thead>
       <tbody>
         {entries.map(([key, val]) => (
           <tr key={key}>
-            <td style={tdStyle}>{key}</td>
-            <td style={tdStyle}>
+            <td className="px-4 py-2 border-b border-border text-text-primary align-middle">{key}</td>
+            <td className="px-4 py-2 border-b border-border text-text-primary align-middle">
               {typeof val === 'object' ? JSON.stringify(val) : String(val)}
             </td>
           </tr>
@@ -228,23 +105,23 @@ export function DiagnosticsPage({
 
   if (loading) {
     return (
-      <div style={pageStyle}>
-        <div style={headerStyle}>
-          <h1 style={titleStyle}>Diagnostics</h1>
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-semibold text-text-primary">Diagnostics</h1>
         </div>
-        <div style={skeletonStyle} />
-        <div style={skeletonStyle} />
-        <div style={skeletonStyle} />
+        <div className="h-[120px] rounded-md bg-border opacity-50" />
+        <div className="h-[120px] rounded-md bg-border opacity-50" />
+        <div className="h-[120px] rounded-md bg-border opacity-50" />
       </div>
     );
   }
 
   return (
-    <div style={pageStyle}>
-      <div style={headerStyle}>
-        <h1 style={titleStyle}>Diagnostics</h1>
-        <div style={headerActionsStyle}>
-          <label style={autoRefreshLabelStyle}>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-text-primary">Diagnostics</h1>
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 text-sm text-text-secondary cursor-pointer">
             <input
               type="checkbox"
               checked={autoRefresh}
@@ -252,58 +129,76 @@ export function DiagnosticsPage({
             />
             Auto-refresh (10s)
           </label>
-          <button type="button" style={refreshBtnStyle} onClick={onRefresh}>
+          <button
+            type="button"
+            className="px-4 py-2 border border-border rounded-sm bg-surface text-text-primary text-sm cursor-pointer"
+            onClick={onRefresh}
+          >
             Refresh
           </button>
         </div>
       </div>
 
       {/* Node/Cluster diagnostics */}
-      <section style={sectionStyle}>
-        <div style={sectionHeaderStyle}>Node / Cluster Diagnostics</div>
+      <section className="bg-surface border border-border rounded-md overflow-hidden">
+        <div className="px-4 py-2 bg-surface-inset border-b border-border font-semibold text-base text-text-primary">
+          Node / Cluster Diagnostics
+        </div>
         {diagnostics ? (
           <JsonViewer data={diagnostics} />
         ) : (
-          <p style={emptyStyle}>No diagnostics data available.</p>
+          <p className="p-4 text-center text-text-tertiary">No diagnostics data available.</p>
         )}
       </section>
 
       {/* Rate limiter stats */}
-      <section style={sectionStyle}>
-        <div style={sectionHeaderStyle}>Rate Limiter Stats</div>
-        {rates ? <RateTable rates={rates} /> : <p style={emptyStyle}>No rate data available.</p>}
+      <section className="bg-surface border border-border rounded-md overflow-hidden">
+        <div className="px-4 py-2 bg-surface-inset border-b border-border font-semibold text-base text-text-primary">
+          Rate Limiter Stats
+        </div>
+        {rates ? <RateTable rates={rates} /> : <p className="p-4 text-center text-text-tertiary">No rate data available.</p>}
       </section>
 
       {/* Dead Letter Queue */}
-      <section style={sectionStyle}>
-        <div style={sectionHeaderStyle}>Dead Letter Queue</div>
+      <section className="bg-surface border border-border rounded-md overflow-hidden">
+        <div className="px-4 py-2 bg-surface-inset border-b border-border font-semibold text-base text-text-primary">
+          Dead Letter Queue
+        </div>
         {!dlq || dlq.length === 0 ? (
-          <p style={emptyStyle}>Dead letter queue is empty.</p>
+          <p className="p-4 text-center text-text-tertiary">Dead letter queue is empty.</p>
         ) : (
-          <table style={tableStyle}>
+          <table className="w-full border-collapse text-sm">
             <thead>
               <tr>
-                <th style={thStyle}>ID</th>
-                <th style={thStyle}>Error</th>
-                <th style={thStyle}>Failed At</th>
-                <th style={thStyle}>Retries</th>
-                <th style={thStyle}>Actions</th>
+                <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">ID</th>
+                <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Error</th>
+                <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Failed At</th>
+                <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Retries</th>
+                <th className="text-left px-4 py-2 border-b border-border text-text-secondary font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
               {dlq.map((entry) => (
                 <tr key={entry.id}>
-                  <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 'var(--ui-fontSizeSm)' }}>
+                  <td className="px-4 py-2 border-b border-border text-text-primary align-middle font-mono text-sm">
                     {entry.id.substring(0, 12)}...
                   </td>
-                  <td style={tdStyle}>{entry.error}</td>
-                  <td style={tdStyle}>{new Date(entry.failedAt).toLocaleString()}</td>
-                  <td style={tdStyle}>{entry.retryCount}</td>
-                  <td style={tdStyle}>
-                    <button type="button" style={actionBtnStyle} onClick={() => handleRedrive(entry.id)}>
+                  <td className="px-4 py-2 border-b border-border text-text-primary align-middle">{entry.error}</td>
+                  <td className="px-4 py-2 border-b border-border text-text-primary align-middle">{new Date(entry.failedAt).toLocaleString()}</td>
+                  <td className="px-4 py-2 border-b border-border text-text-primary align-middle">{entry.retryCount}</td>
+                  <td className="px-4 py-2 border-b border-border text-text-primary align-middle">
+                    <button
+                      type="button"
+                      className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
+                      onClick={() => handleRedrive(entry.id)}
+                    >
                       Redrive
                     </button>
-                    <button type="button" style={dangerBtnStyle} onClick={() => handlePurge(entry.id)}>
+                    <button
+                      type="button"
+                      className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
+                      onClick={() => handlePurge(entry.id)}
+                    >
                       Purge
                     </button>
                   </td>

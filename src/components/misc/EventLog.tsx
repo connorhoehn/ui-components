@@ -38,73 +38,39 @@ export function EventLog({ entries }: Props) {
   }, [entries]);
 
   return (
-    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem', marginTop: '1rem' }}>
-      <h3 style={{ margin: '0 0 0.5rem', fontSize: '0.875rem' }}>
+    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+      <h3 className="m-0 mb-2 text-sm">
         Event Log{' '}
-        <span style={{ color: '#9ca3af', fontWeight: 'normal' }}>({entries.length})</span>
+        <span className="text-[#9ca3af] font-normal">({entries.length})</span>
       </h3>
 
       {entries.length === 0 ? (
-        <p style={{ color: '#9ca3af' }}>No events yet.</p>
+        <p className="text-[#9ca3af]">No events yet.</p>
       ) : (
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <div className="max-h-[300px] overflow-y-auto">
           {entries.map((entry) => (
             <div
               key={entry.id}
-              style={{
-                background: '#f9fafb',
-                borderRadius: '4px',
-                marginBottom: '0.25rem',
-                padding: '0.25rem 0.5rem',
-                fontFamily: 'monospace',
-              }}
+              className="bg-[#f9fafb] rounded mb-1 px-2 py-1 font-mono"
             >
               {/* Direction badge + timestamp */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <div className="flex items-center gap-2 mb-1">
                 {entry.direction === 'sent' ? (
-                  <span
-                    style={{
-                      background: '#dbeafe',
-                      color: '#1d4ed8',
-                      borderRadius: '3px',
-                      padding: '0 0.35rem',
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                    }}
-                  >
+                  <span className="bg-[#dbeafe] text-[#1d4ed8] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [SENT]
                   </span>
                 ) : (
-                  <span
-                    style={{
-                      background: '#dcfce7',
-                      color: '#15803d',
-                      borderRadius: '3px',
-                      padding: '0 0.35rem',
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                    }}
-                  >
+                  <span className="bg-[#dcfce7] text-[#15803d] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [RECV]
                   </span>
                 )}
-                <span style={{ color: '#9ca3af', fontSize: '0.7rem' }}>
+                <span className="text-[#9ca3af] text-[0.7rem]">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </span>
               </div>
 
               {/* JSON payload */}
-              <pre
-                style={{
-                  margin: 0,
-                  fontSize: '0.7rem',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                  maxHeight: '80px',
-                  overflowY: 'auto',
-                  background: 'transparent',
-                }}
-              >
+              <pre className="m-0 text-[0.7rem] whitespace-pre-wrap break-all max-h-20 overflow-y-auto bg-transparent">
                 {JSON.stringify(entry.message, null, 2)}
               </pre>
             </div>

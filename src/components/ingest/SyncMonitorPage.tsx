@@ -8,113 +8,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useIngestProgress } from '../../hooks/useIngestProgress';
 import type { ActiveSync, IngestProgressEvent } from '../../hooks/useIngestProgress';
-import { colors, fieldStyle, pageContainerStyle } from '../../constants/styles';
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16,
-  },
-  titleRow: {
-    display: 'flex', alignItems: 'center', gap: 10,
-  },
-  title: {
-    margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary,
-  },
-  liveBadge: {
-    display: 'inline-flex', alignItems: 'center', gap: 6,
-    padding: '3px 10px', fontSize: 11, fontWeight: 600,
-    background: '#ecfdf5', color: '#16a34a', borderRadius: 12,
-    border: '1px solid #bbf7d0',
-  },
-  liveDot: {
-    width: 7, height: 7, borderRadius: '50%', background: '#16a34a',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-  statsRow: {
-    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12, marginBottom: 20,
-  },
-  statCard: {
-    padding: 14, background: colors.surface, border: `1px solid ${colors.border}`,
-    borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 4,
-  },
-  statLabel: {
-    fontSize: 11, fontWeight: 500, color: colors.textTertiary, textTransform: 'uppercase' as const,
-    letterSpacing: '0.03em',
-  },
-  statValue: {
-    fontSize: 22, fontWeight: 700, color: colors.textPrimary, lineHeight: 1,
-  },
-  section: {
-    background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10,
-    padding: 16, marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 14, fontWeight: 600, color: colors.textPrimary, marginBottom: 12,
-  },
-  syncCard: {
-    padding: 14, background: colors.surfaceInset, border: `1px solid ${colors.border}`,
-    borderRadius: 8, marginBottom: 10,
-  },
-  syncHeader: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8,
-  },
-  syncName: {
-    fontSize: 14, fontWeight: 600, color: colors.textPrimary,
-  },
-  syncDuration: {
-    fontSize: 11, color: colors.textTertiary, fontFamily: 'monospace',
-  },
-  progressBarOuter: {
-    height: 8, borderRadius: 4, background: '#e2e8f0', overflow: 'hidden', marginBottom: 8,
-  },
-  progressBarInner: {
-    height: '100%', borderRadius: 4, background: colors.state.running,
-    transition: 'width 0.3s ease',
-  },
-  syncStats: {
-    display: 'flex', gap: 16, fontSize: 12, color: colors.textSecondary,
-  },
-  syncStatItem: {
-    display: 'flex', alignItems: 'center', gap: 4,
-  },
-  emptyState: {
-    padding: '32px 0', textAlign: 'center' as const,
-  },
-  emptyTitle: {
-    fontSize: 14, fontWeight: 500, color: colors.textSecondary, marginBottom: 4,
-  },
-  emptyBody: {
-    fontSize: 12, color: colors.textTertiary,
-  },
-  eventLog: {
-    maxHeight: 320, overflowY: 'auto' as const, display: 'flex', flexDirection: 'column', gap: 2,
-  },
-  eventRow: {
-    display: 'flex', alignItems: 'center', gap: 8, padding: '5px 8px',
-    borderRadius: 4, fontSize: 12,
-  },
-  eventTime: {
-    fontSize: 11, fontFamily: 'monospace', color: colors.textTertiary,
-    flexShrink: 0, minWidth: 60,
-  },
-  eventBadge: {
-    padding: '2px 7px', fontSize: 10, fontWeight: 600, borderRadius: 4,
-    flexShrink: 0,
-  },
-  eventDescription: {
-    fontSize: 12, color: colors.textSecondary, flex: 1, minWidth: 0,
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  },
-  linkBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: 'none',
-    border: `1px solid ${colors.border}`, borderRadius: 6, cursor: 'pointer',
-    fontFamily: 'inherit', color: colors.textSecondary,
-  },
-};
+import { cn } from '../../lib/cn';
 
 // Inject keyframe animation for the pulsing dot
 const pulseKeyframes = `
@@ -142,20 +36,20 @@ function formatDuration(startedAt: string): string {
   return `${min}m ${remSec}s`;
 }
 
-function eventBadgeStyle(type: string): CSSProperties {
+function eventBadgeClasses(type: string): string {
   if (type.startsWith('sync.')) {
-    return { ...styles.eventBadge, background: '#dbeafe', color: '#1d4ed8' };
+    return 'bg-[#dbeafe] text-[#1d4ed8]';
   }
   if (type === 'item.mapped') {
-    return { ...styles.eventBadge, background: '#ede9fe', color: '#7c3aed' };
+    return 'bg-[#ede9fe] text-[#7c3aed]';
   }
   if (type === 'item.materialized') {
-    return { ...styles.eventBadge, background: '#dcfce7', color: '#16a34a' };
+    return 'bg-[#dcfce7] text-[#16a34a]';
   }
   if (type === 'item.failed') {
-    return { ...styles.eventBadge, background: '#fef2f2', color: '#dc2626' };
+    return 'bg-[#fef2f2] text-[#dc2626]';
   }
-  return { ...styles.eventBadge, background: '#f1f5f9', color: '#64748b' };
+  return 'bg-[#f1f5f9] text-[#64748b]';
 }
 
 function eventDescription(event: IngestProgressEvent): string {
@@ -185,8 +79,7 @@ function eventDescription(event: IngestProgressEvent): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Coarse event-type buckets the filter UI exposes. Each bucket maps to
- * a list of `IngestEvent.type` strings; "all" matches everything.
+ * Coarse event-type buckets the filter UI exposes.
  */
 const EVENT_TYPE_BUCKETS = [
   { value: 'all',     label: 'All',     match: (_t: string) => true },
@@ -203,17 +96,11 @@ export default function SyncMonitorPage() {
   const { events, activeSyncs, clearEvents } = useIngestProgress();
   const logRef = useRef<HTMLDivElement>(null);
 
-  // Filter + pause state. The pause snapshot freezes the live event stream
-  // so the operator can inspect history without it scrolling out from under
-  // them. New events arriving while paused are still tracked in `events`
-  // and re-appear when resumed.
   const [paused, setPaused] = useState(false);
   const [sourceFilter, setSourceFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<EventTypeBucket>('all');
   const pausedSnapshotRef = useRef<IngestProgressEvent[] | null>(null);
 
-  // When pausing, capture the current event list once and freeze it. When
-  // resuming, drop the snapshot so the live stream takes over again.
   useEffect(() => {
     if (paused && pausedSnapshotRef.current === null) {
       pausedSnapshotRef.current = [...events];
@@ -253,8 +140,6 @@ export default function SyncMonitorPage() {
     }
   }, [filteredEvents.length, paused]);
 
-  // Quick stats — always against the full live stream so the badges
-  // reflect reality, not the filter view.
   const stats = useMemo(() => {
     const errorCount = events.filter((e) => e.type === 'item.failed' || e.type === 'sync.failed').length;
     return {
@@ -270,21 +155,21 @@ export default function SyncMonitorPage() {
   );
 
   return (
-    <div data-testid="sync-monitor-page" style={pageContainerStyle}>
+    <div data-testid="sync-monitor-page" className="p-6 flex flex-col gap-3">
       {/* Inject pulse keyframes */}
       <style>{pulseKeyframes}</style>
 
       {/* Header */}
-      <div style={styles.header}>
-        <div style={styles.titleRow}>
-          <h2 style={styles.title}>Sync Monitor</h2>
-          <span style={styles.liveBadge}>
-            <span style={styles.liveDot} />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Monitor</h2>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-[#16a34a] rounded-full border border-[#bbf7d0]">
+            <span className="w-[7px] h-[7px] rounded-full bg-[#16a34a] animate-[pulse_1.5s_ease-in-out_infinite]" />
             Live
           </span>
         </div>
         <button
-          style={styles.linkBtn}
+          className="px-3.5 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
           onClick={() => navigate('/ingest/sources')}
         >
           Sources
@@ -292,32 +177,32 @@ export default function SyncMonitorPage() {
       </div>
 
       {/* Quick Stats */}
-      <div style={styles.statsRow}>
-        <div style={styles.statCard}>
-          <span style={styles.statLabel}>Events Received</span>
-          <span style={styles.statValue}>{stats.totalEvents}</span>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] gap-3 mb-5">
+        <div className="p-3.5 bg-surface border border-border rounded-[10px] flex flex-col gap-1">
+          <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-tight">Events Received</span>
+          <span className="text-[22px] font-bold text-text-primary leading-none">{stats.totalEvents}</span>
         </div>
-        <div style={styles.statCard}>
-          <span style={styles.statLabel}>Active Syncs</span>
-          <span style={{ ...styles.statValue, color: stats.activeSyncsCount > 0 ? colors.state.running : colors.textPrimary }}>
+        <div className="p-3.5 bg-surface border border-border rounded-[10px] flex flex-col gap-1">
+          <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-tight">Active Syncs</span>
+          <span className={cn('text-[22px] font-bold leading-none', stats.activeSyncsCount > 0 ? 'text-[var(--color-state-running)]' : 'text-text-primary')}>
             {stats.activeSyncsCount}
           </span>
         </div>
-        <div style={styles.statCard}>
-          <span style={styles.statLabel}>Errors</span>
-          <span style={{ ...styles.statValue, color: stats.errorsCount > 0 ? colors.state.failed : colors.textPrimary }}>
+        <div className="p-3.5 bg-surface border border-border rounded-[10px] flex flex-col gap-1">
+          <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-tight">Errors</span>
+          <span className={cn('text-[22px] font-bold leading-none', stats.errorsCount > 0 ? 'text-[var(--color-state-failed)]' : 'text-text-primary')}>
             {stats.errorsCount}
           </span>
         </div>
       </div>
 
       {/* Active Syncs */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Active Syncs</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4 mb-4">
+        <div className="text-sm font-semibold text-text-primary mb-3">Active Syncs</div>
         {activeSyncList.length === 0 ? (
-          <div style={styles.emptyState}>
-            <div style={styles.emptyTitle}>No active syncs</div>
-            <div style={styles.emptyBody}>Trigger a sync from the Sources page to see progress here.</div>
+          <div className="py-8 text-center">
+            <div className="text-sm font-medium text-text-secondary mb-1">No active syncs</div>
+            <div className="text-xs text-text-tertiary">Trigger a sync from the Sources page to see progress here.</div>
           </div>
         ) : (
           activeSyncList.map((sync) => {
@@ -325,22 +210,25 @@ export default function SyncMonitorPage() {
               ? Math.round((sync.filesFetched / sync.fileCount) * 100)
               : 0;
             return (
-              <div key={sync.sourceId} style={styles.syncCard}>
-                <div style={styles.syncHeader}>
-                  <span style={styles.syncName}>{sync.sourceName}</span>
-                  <span style={styles.syncDuration}>{formatDuration(sync.startedAt)}</span>
+              <div key={sync.sourceId} className="p-3.5 bg-surface-inset border border-border rounded-lg mb-2.5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-semibold text-text-primary">{sync.sourceName}</span>
+                  <span className="text-[11px] text-text-tertiary font-mono">{formatDuration(sync.startedAt)}</span>
                 </div>
-                <div style={styles.progressBarOuter}>
-                  <div style={{ ...styles.progressBarInner, width: `${pct}%` }} />
+                <div className="h-2 rounded bg-[#e2e8f0] overflow-hidden mb-2">
+                  <div
+                    className="h-full rounded bg-[var(--color-state-running)] transition-[width] duration-300 ease-out"
+                    style={{ width: `${pct}%` }}
+                  />
                 </div>
-                <div style={styles.syncStats}>
-                  <span style={styles.syncStatItem}>
+                <div className="flex gap-4 text-xs text-text-secondary">
+                  <span className="flex items-center gap-1">
                     Files: {sync.filesFetched}/{sync.fileCount} ({pct}%)
                   </span>
-                  <span style={styles.syncStatItem}>
+                  <span className="flex items-center gap-1">
                     Mapped: {sync.itemsMapped}
                   </span>
-                  <span style={styles.syncStatItem}>
+                  <span className="flex items-center gap-1">
                     Materialized: {sync.itemsMaterialized}
                   </span>
                 </div>
@@ -351,14 +239,14 @@ export default function SyncMonitorPage() {
       </div>
 
       {/* Event Log */}
-      <div style={styles.section}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, gap: 8, flexWrap: 'wrap' }}>
-          <span style={styles.sectionTitle}>Event Log</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+      <div className="bg-surface border border-border rounded-[10px] p-4 mb-4">
+        <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
+          <span className="text-sm font-semibold text-text-primary">Event Log</span>
+          <div className="flex items-center gap-2 flex-wrap">
             <select
               data-testid="event-source-filter"
               aria-label="Filter by source"
-              style={{ ...fieldStyle, flex: 'none', minWidth: 140 }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
             >
@@ -370,7 +258,7 @@ export default function SyncMonitorPage() {
             <select
               data-testid="event-type-filter"
               aria-label="Filter by event type"
-              style={{ ...fieldStyle, flex: 'none', minWidth: 110 }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[110px]"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as EventTypeBucket)}
             >
@@ -380,7 +268,7 @@ export default function SyncMonitorPage() {
             </select>
             <button
               data-testid="event-pause-toggle"
-              style={{ ...styles.linkBtn, fontSize: 11, padding: '3px 10px' }}
+              className="px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
               onClick={() => setPaused((p) => !p)}
               title={paused ? 'Resume the live stream' : 'Pause the stream so the log doesn\'t scroll'}
             >
@@ -388,7 +276,7 @@ export default function SyncMonitorPage() {
             </button>
             {events.length > 0 && (
               <button
-                style={{ ...styles.linkBtn, fontSize: 11, padding: '3px 10px' }}
+                className="px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
                 onClick={clearEvents}
               >
                 Clear
@@ -397,23 +285,23 @@ export default function SyncMonitorPage() {
           </div>
         </div>
         {filteredEvents.length === 0 ? (
-          <div style={styles.emptyState}>
-            <div style={styles.emptyTitle}>
+          <div className="py-8 text-center">
+            <div className="text-sm font-medium text-text-secondary mb-1">
               {events.length === 0 ? 'No events yet' : 'No events match the current filter'}
             </div>
-            <div style={styles.emptyBody}>
+            <div className="text-xs text-text-tertiary">
               {events.length === 0
                 ? 'Events will appear here in real-time as syncs run.'
                 : 'Try a different source or event-type filter, or clear the filter.'}
             </div>
           </div>
         ) : (
-          <div ref={logRef} data-testid="event-log" style={styles.eventLog}>
+          <div ref={logRef} data-testid="event-log" className="max-h-80 overflow-y-auto flex flex-col gap-0.5">
             {filteredEvents.map((event, idx) => (
-              <div key={`${event.timestamp}-${idx}`} style={styles.eventRow}>
-                <span style={styles.eventTime}>{formatTime(event.timestamp)}</span>
-                <span style={eventBadgeStyle(event.type)}>{event.type}</span>
-                <span style={styles.eventDescription} title={eventDescription(event)}>
+              <div key={`${event.timestamp}-${idx}`} className="flex items-center gap-2 px-2 py-1 rounded text-xs">
+                <span className="text-[11px] font-mono text-text-tertiary shrink-0 min-w-[60px]">{formatTime(event.timestamp)}</span>
+                <span className={cn('px-[7px] py-0.5 text-[10px] font-semibold rounded shrink-0', eventBadgeClasses(event.type))}>{event.type}</span>
+                <span className="text-xs text-text-secondary flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap" title={eventDescription(event)}>
                   {eventDescription(event)}
                 </span>
               </div>

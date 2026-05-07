@@ -3,7 +3,7 @@
 // Pill-shaped status badge with color variants.
 // Auto-maps common identity statuses to appropriate colors.
 
-import { useMemo } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface StatusBadgeProps {
   status: string;
@@ -23,32 +23,25 @@ const STATUS_VARIANT_MAP: Record<string, StatusBadgeProps['variant']> = {
   UNKNOWN: 'neutral',
 };
 
-const VARIANT_STYLES: Record<string, { bg: string; color: string }> = {
-  success: { bg: 'var(--ui-success)', color: '#fff' },
-  warning: { bg: 'var(--ui-warning)', color: '#fff' },
-  danger: { bg: 'var(--ui-danger)', color: '#fff' },
-  info: { bg: 'var(--ui-info)', color: '#fff' },
-  neutral: { bg: 'var(--ui-border)', color: 'var(--ui-textPrimary)' },
+const variantClasses: Record<string, string> = {
+  success: 'bg-success text-white',
+  warning: 'bg-warning text-white',
+  danger: 'bg-danger text-white',
+  info: 'bg-info text-white',
+  neutral: 'bg-border text-text-primary',
 };
 
 export function StatusBadge({ status, variant }: StatusBadgeProps) {
   const resolvedVariant = variant || STATUS_VARIANT_MAP[status] || 'neutral';
-  const styles = VARIANT_STYLES[resolvedVariant];
 
-  const badgeStyle: React.CSSProperties = useMemo(
-    () => ({
-      display: 'inline-block',
-      padding: '2px 10px',
-      borderRadius: '999px',
-      fontSize: 'var(--ui-fontSizeSm)',
-      fontWeight: 600,
-      backgroundColor: styles.bg,
-      color: styles.color,
-      lineHeight: 1.6,
-      whiteSpace: 'nowrap',
-    }),
-    [styles],
+  return (
+    <span
+      className={cn(
+        'inline-block px-2.5 py-0.5 rounded-full text-sm font-semibold leading-relaxed whitespace-nowrap',
+        variantClasses[resolvedVariant]
+      )}
+    >
+      {status}
+    </span>
   );
-
-  return <span style={badgeStyle}>{status}</span>;
 }

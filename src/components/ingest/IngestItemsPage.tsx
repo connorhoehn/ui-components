@@ -3,7 +3,6 @@
 // Table of ingest items flowing through the pipeline, with source and status
 // filters, action buttons (retry/skip), and color-coded status badges.
 
-import type { CSSProperties } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIngestItems } from '../../hooks/useIngestItems';
 import { useIngestSources } from '../../hooks/useIngestSources';
@@ -11,75 +10,9 @@ import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, pageContainerStyle, tableCellStyle, saveBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../../types/ingest';
 import IngestItemDrawer from './IngestItemDrawer';
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16,
-  },
-  title: {
-    margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary,
-  },
-  count: {
-    fontSize: 13, color: colors.textTertiary,
-  },
-  filtersRow: {
-    display: 'flex', gap: 10, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap',
-  },
-  select: {
-    padding: '6px 10px', fontSize: 13, fontFamily: 'inherit', border: `1px solid ${colors.borderField}`,
-    borderRadius: 6, background: colors.surface, color: colors.textPrimary, cursor: 'pointer',
-    outline: 'none',
-  },
-  tableWrap: {
-    overflowX: 'auto',
-  },
-  table: {
-    width: '100%', borderCollapse: 'collapse', fontSize: 13,
-  },
-  th: {
-    ...tableCellStyle, fontWeight: 600, textAlign: 'left' as const,
-  },
-  row: {
-    borderBottom: `1px solid ${colors.border}`, cursor: 'default',
-  },
-  pathCell: {
-    ...tableCellStyle, fontWeight: 500, color: colors.textPrimary, maxWidth: 260,
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  },
-  actionsCell: {
-    ...tableCellStyle, display: 'flex', gap: 6, alignItems: 'center',
-  },
-  actionBtn: {
-    padding: '4px 10px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 5, background: colors.surface, cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.textSecondary,
-  },
-  actionBtnDanger: {
-    padding: '4px 10px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 5, background: '#fef2f2', cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.state.failed,
-  },
-  errorBanner: {
-    padding: '12px 16px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`,
-    color: colors.state.failed, borderRadius: 8, display: 'flex', alignItems: 'center',
-    justifyContent: 'space-between', gap: 12, marginBottom: 16,
-  },
-  retryBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: '#fff',
-    color: colors.state.failed, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-  },
-  link: {
-    color: colors.primary, textDecoration: 'none', fontWeight: 500, fontSize: 12,
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -129,7 +62,6 @@ export default function IngestItemsPage() {
   });
 
   // Keep the drawer in sync with the latest item state when items refresh
-  // (e.g. after a status update via WebSocket → useIngestItems → here).
   const drawerItemFresh = drawerItem
     ? items.find((it) => it.itemId === drawerItem.itemId) ?? drawerItem
     : null;
@@ -153,9 +85,9 @@ export default function IngestItemsPage() {
 
   if (loading && items.length === 0) {
     return (
-      <div data-testid="ingest-items-page" style={pageContainerStyle}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Ingest Items</h2>
+      <div data-testid="ingest-items-page" className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Ingest Items</h2>
         </div>
         <SkeletonCard height={48} />
         <SkeletonCard height={48} />
@@ -165,21 +97,21 @@ export default function IngestItemsPage() {
   }
 
   return (
-    <div data-testid="ingest-items-page" style={pageContainerStyle}>
+    <div data-testid="ingest-items-page" className="p-6 flex flex-col gap-3">
       {/* Header */}
-      <div style={styles.header}>
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 style={styles.title}>Ingest Items</h2>
-          <span style={styles.count}>
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Ingest Items</h2>
+          <span className="text-[13px] text-text-tertiary">
             {items.length} item{items.length !== 1 ? 's' : ''}
           </span>
         </div>
       </div>
 
       {/* Filters row */}
-      <div style={styles.filtersRow}>
+      <div className="flex gap-2.5 items-center mb-3 flex-wrap">
         <select
-          style={styles.select}
+          className="px-2.5 py-1.5 text-[13px] font-[inherit] border border-border-field rounded-md bg-surface text-text-primary cursor-pointer outline-none"
           value={sourceFilter ?? ''}
           onChange={(e) => setSourceFilter(e.target.value || null)}
           data-testid="source-filter"
@@ -191,7 +123,7 @@ export default function IngestItemsPage() {
         </select>
 
         <select
-          style={styles.select}
+          className="px-2.5 py-1.5 text-[13px] font-[inherit] border border-border-field rounded-md bg-surface text-text-primary cursor-pointer outline-none"
           value={statusFilter ?? ''}
           onChange={(e) => setStatusFilter((e.target.value || null) as IngestItemStatus | null)}
           data-testid="status-filter"
@@ -203,7 +135,7 @@ export default function IngestItemsPage() {
         </select>
 
         <button
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
           onClick={() => void refresh()}
           data-testid="refresh-btn"
         >
@@ -213,9 +145,14 @@ export default function IngestItemsPage() {
 
       {/* Error banner */}
       {error && (
-        <div style={styles.errorBanner} role="alert">
-          <span style={{ fontSize: 13, fontWeight: 500 }}>Failed to load ingest items.</span>
-          <button onClick={() => void refresh()} style={styles.retryBtn}>Retry</button>
+        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
+          <span className="text-[13px] font-medium">Failed to load ingest items.</span>
+          <button
+            onClick={() => void refresh()}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+          >
+            Retry
+          </button>
         </div>
       )}
 
@@ -227,51 +164,49 @@ export default function IngestItemsPage() {
           body="No ingest items match the current filters."
         />
       ) : !error && (
-        <div style={styles.tableWrap}>
-          <table style={styles.table}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${colors.border}` }}>
-                <th style={styles.th}>File Path</th>
-                <th style={styles.th}>Source</th>
-                <th style={styles.th}>Status</th>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>Method</th>
-                <th style={styles.th}>Document</th>
-                <th style={{ ...styles.th, textAlign: 'right' }}>Actions</th>
+              <tr className="border-b border-border">
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">File Path</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Source</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Status</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Type</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Method</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Document</th>
+                <th className="p-2 text-right text-[11px] font-semibold text-text-tertiary uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item) => (
                 <tr
                   key={item.itemId}
-                  style={{ ...styles.row, cursor: 'pointer' }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = colors.surfaceHover ?? '#f8fafc')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  className="border-b border-border cursor-pointer hover:bg-surface-hover"
                   onClick={() => setDrawerItem(item)}
                   data-testid={`item-row-${item.itemId}`}
                 >
-                  <td style={styles.pathCell} title={item.sourcePath}>
+                  <td className="p-2 font-medium text-text-primary max-w-[260px] overflow-hidden text-ellipsis whitespace-nowrap" title={item.sourcePath}>
                     {truncatePath(item.sourcePath)}
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2 text-text-secondary">
                     {sourceNameMap.get(item.sourceId) ?? item.sourceId.slice(0, 8)}
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2">
                     <Chip tone={statusTone(item.status)} size="sm">{item.status}</Chip>
                   </td>
-                  <td style={{ ...tableCellStyle, fontFamily: 'monospace', fontSize: 11 }}>
+                  <td className="p-2 font-mono text-[11px] text-text-secondary">
                     {item.documentTypeId ?? '—'}
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2">
                     {item.mappingMethod ? (
                       <Chip tone={methodTone(item.mappingMethod)} size="xs">{item.mappingMethod}</Chip>
                     ) : '—'}
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2">
                     {item.documentId ? (
                       <a
                         href={`/documents/${item.documentId}`}
-                        style={styles.link}
+                        className="text-primary no-underline font-medium text-xs"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {item.documentId.slice(0, 8)}...
@@ -279,13 +214,13 @@ export default function IngestItemsPage() {
                     ) : '—'}
                   </td>
                   <td
-                    style={{ ...tableCellStyle, textAlign: 'right' }}
+                    className="p-2 text-right"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                    <div className="flex gap-1.5 justify-end">
                       {item.status === 'failed' && (
                         <button
-                          style={styles.actionBtn}
+                          className="px-2.5 py-1 text-[11px] font-medium border border-border rounded-[5px] bg-surface cursor-pointer font-[inherit] text-text-secondary"
                           onClick={() => void handleRetry(item.itemId)}
                           data-testid={`retry-${item.itemId}`}
                         >
@@ -294,7 +229,7 @@ export default function IngestItemsPage() {
                       )}
                       {item.status !== 'done' && (
                         <button
-                          style={styles.actionBtnDanger}
+                          className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
                           onClick={() => void handleSkip(item.itemId)}
                           data-testid={`skip-${item.itemId}`}
                         >

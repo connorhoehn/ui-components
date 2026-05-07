@@ -1,40 +1,16 @@
 // frontend/src/components/ingest/IngestAuditPage.tsx
 //
-// Operator audit-log viewer (hub#2214 — slice 2/3 of the audit-viewer
-// feature). Lists every mapping decision, source change, and write-back
-// attempt with timestamp / actor / event type / target / summary +
-// expandable JSON detail. Filter bar covers time-range, event type,
-// actor, targetId.
-//
-// The table is empty until hub#2215 (instrumentation pass) lands. Page
-// + route + filters still ship first so the seam is verifiable.
+// Operator audit-log viewer.
 
-import type { CSSProperties } from 'react';
 import { useMemo, useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, fieldStyle, pageContainerStyle } from '../../constants/styles';
 import { useIngestAudit } from '../../hooks/useIngestAudit';
 import type {
   IngestAuditEntry,
   IngestAuditEventType,
   IngestAuditFilters,
 } from '../../hooks/useIngestAudit';
-
-const styles: Record<string, CSSProperties> = {
-  header: { marginBottom: 12 },
-  title: { fontSize: 22, fontWeight: 700, color: colors.textPrimary },
-  filters: { display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', padding: 12, background: colors.surfaceInset, borderRadius: 8, marginBottom: 12 },
-  filterLabel: { fontSize: 11, color: colors.textTertiary, marginRight: 4 },
-  filterField: { ...fieldStyle, flex: 'none', minWidth: 140 },
-  errorBanner: { padding: '8px 12px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`, color: colors.state.failed, borderRadius: 8, marginBottom: 12 },
-  table: { width: '100%', borderCollapse: 'collapse' as const, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10, overflow: 'hidden' },
-  th: { textAlign: 'left' as const, fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase' as const, padding: '8px 10px', borderBottom: `1px solid ${colors.border}` },
-  td: { fontSize: 13, padding: '8px 10px', verticalAlign: 'top' as const, borderBottom: `1px solid ${colors.border}` },
-  tdMono: { fontSize: 12, fontFamily: 'ui-monospace, monospace' },
-  detailButton: { fontSize: 11, color: colors.primary, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', textDecoration: 'underline' },
-  detailJson: { fontSize: 11, fontFamily: 'ui-monospace, monospace', background: colors.surfaceInset, padding: '6px 8px', borderRadius: 4, whiteSpace: 'pre-wrap' as const, marginTop: 4, maxHeight: 200, overflow: 'auto' },
-};
 
 const EVENT_TYPES: Array<{ value: '' | IngestAuditEventType; label: string }> = [
   { value: '',                     label: 'All events' },
@@ -76,46 +52,46 @@ export default function IngestAuditPage() {
   const { entries, loading, error } = useIngestAudit(filters);
 
   return (
-    <div data-testid="ingest-audit-page" style={pageContainerStyle}>
-      <div style={styles.header}>
-        <div style={styles.title}>Audit log</div>
+    <div data-testid="ingest-audit-page" className="p-6 flex flex-col gap-3">
+      <div className="mb-3">
+        <div className="text-[22px] font-bold text-text-primary">Audit log</div>
       </div>
 
-      <div style={styles.filters}>
-        <span style={styles.filterLabel}>Time</span>
+      <div className="flex gap-2 flex-wrap items-center p-3 bg-surface-inset rounded-lg mb-3">
+        <span className="text-[11px] text-text-tertiary mr-1">Time</span>
         <select
           data-testid="audit-time-range"
           aria-label="Time range"
-          style={styles.filterField}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
         >
           {TIME_RANGES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
-        <span style={styles.filterLabel}>Event</span>
+        <span className="text-[11px] text-text-tertiary mr-1">Event</span>
         <select
           data-testid="audit-event-type"
           aria-label="Event type"
-          style={styles.filterField}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
           value={eventType}
           onChange={(e) => setEventType(e.target.value as '' | IngestAuditEventType)}
         >
           {EVENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>
-        <span style={styles.filterLabel}>Actor</span>
+        <span className="text-[11px] text-text-tertiary mr-1">Actor</span>
         <input
           data-testid="audit-actor"
           aria-label="Actor"
-          style={styles.filterField}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
           value={actor}
           onChange={(e) => setActor(e.target.value)}
           placeholder="email or system"
         />
-        <span style={styles.filterLabel}>Target</span>
+        <span className="text-[11px] text-text-tertiary mr-1">Target</span>
         <input
           data-testid="audit-target-id"
           aria-label="Target ID"
-          style={styles.filterField}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
           value={targetId}
           onChange={(e) => setTargetId(e.target.value)}
           placeholder="sourceId / itemId"
@@ -123,7 +99,7 @@ export default function IngestAuditPage() {
       </div>
 
       {error ? (
-        <div data-testid="audit-error" style={styles.errorBanner}>
+        <div data-testid="audit-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load audit log: {error}
         </div>
       ) : null}
@@ -140,15 +116,15 @@ export default function IngestAuditPage() {
           testId="audit-empty"
         />
       ) : (
-        <table data-testid="audit-table" style={styles.table}>
+        <table data-testid="audit-table" className="w-full border-collapse bg-surface border border-border rounded-[10px] overflow-hidden">
           <thead>
             <tr>
-              <th style={styles.th}>Time</th>
-              <th style={styles.th}>Actor</th>
-              <th style={styles.th}>Event</th>
-              <th style={styles.th}>Target</th>
-              <th style={styles.th}>Summary</th>
-              <th style={styles.th}></th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Time</th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Actor</th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Event</th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Target</th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border">Summary</th>
+              <th className="text-left text-[11px] font-semibold text-text-tertiary uppercase p-2 border-b border-border"></th>
             </tr>
           </thead>
           <tbody>
@@ -171,17 +147,17 @@ function AuditRow({ entry, expanded, onToggle }: { entry: IngestAuditEntry; expa
   return (
     <>
       <tr data-testid={`audit-row-${entry.auditId}`}>
-        <td style={{ ...styles.td, ...styles.tdMono }}>{entry.createdAt.slice(0, 19).replace('T', ' ')}</td>
-        <td style={styles.td}>{entry.actor}</td>
-        <td style={{ ...styles.td, ...styles.tdMono }}>{entry.eventType}</td>
-        <td style={{ ...styles.td, ...styles.tdMono }} title={entry.targetId}>
+        <td className="text-[13px] p-2 align-top border-b border-border font-mono text-xs">{entry.createdAt.slice(0, 19).replace('T', ' ')}</td>
+        <td className="text-[13px] p-2 align-top border-b border-border">{entry.actor}</td>
+        <td className="text-[13px] p-2 align-top border-b border-border font-mono text-xs">{entry.eventType}</td>
+        <td className="text-[13px] p-2 align-top border-b border-border font-mono text-xs" title={entry.targetId}>
           {entry.targetType}/{entry.targetId.slice(0, 12)}
         </td>
-        <td style={styles.td}>{entry.summary}</td>
-        <td style={styles.td}>
+        <td className="text-[13px] p-2 align-top border-b border-border">{entry.summary}</td>
+        <td className="text-[13px] p-2 align-top border-b border-border">
           <button
             data-testid={`audit-detail-toggle-${entry.auditId}`}
-            style={styles.detailButton}
+            className="text-[11px] text-primary bg-transparent border-none p-0 cursor-pointer underline"
             onClick={onToggle}
           >
             {expanded ? 'hide' : 'detail'}
@@ -190,8 +166,8 @@ function AuditRow({ entry, expanded, onToggle }: { entry: IngestAuditEntry; expa
       </tr>
       {expanded ? (
         <tr>
-          <td colSpan={6} style={styles.td}>
-            <pre data-testid={`audit-detail-${entry.auditId}`} style={styles.detailJson}>
+          <td colSpan={6} className="text-[13px] p-2 align-top border-b border-border">
+            <pre data-testid={`audit-detail-${entry.auditId}`} className="text-[11px] font-mono bg-surface-inset px-2 py-1.5 rounded whitespace-pre-wrap mt-1 max-h-[200px] overflow-auto">
               {JSON.stringify(entry.detail, null, 2)}
             </pre>
           </td>

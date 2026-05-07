@@ -1,5 +1,6 @@
 // frontend/src/components/LoginForm.tsx
 import { useState } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface LoginFormProps {
   status: 'loading' | 'unauthenticated' | 'authenticated';
@@ -19,64 +20,27 @@ export function LoginForm({ status, error, onSignIn, onSwitchToSignup }: LoginFo
     onSignIn(email, password);
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '0.5rem',
-    border: '1px solid #d1d5db',
-    borderRadius: '4px',
-    fontFamily: 'monospace',
-    fontSize: '0.875rem',
-    boxSizing: 'border-box',
-  };
-
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: '#f8fafc',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-    }}>
+    <div className="flex flex-col justify-center items-center min-h-screen bg-surface-panel font-sans">
       {/* Brand header */}
-      <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-        <div style={{
-          fontSize: '1.25rem',
-          fontWeight: 700,
-          color: '#0f172a',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          letterSpacing: '-0.025em',
-        }}>
+      <div className="mb-6 text-center">
+        <div className="text-xl font-bold text-text-primary font-sans tracking-tight">
           WebSocket Gateway
         </div>
       </div>
 
       {/* Card */}
-      <div style={{
-        background: '#ffffff',
-        border: '1px solid #e5e7eb',
-        borderRadius: '12px',
-        padding: '2rem',
-        maxWidth: '400px',
-        width: '100%',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)',
-      }}>
-        <h2 style={{
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          fontWeight: 600,
-          marginTop: 0,
-          marginBottom: '1.5rem',
-        }}>Sign In</h2>
+      <div className="bg-surface border border-[#e5e7eb] rounded-xl p-8 max-w-[400px] w-full shadow-sm">
+        <h2 className="font-sans font-semibold mt-0 mb-6">Sign In</h2>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="Email address"
             disabled={isLoading}
-            style={inputStyle}
+            className="w-full p-2 border border-border-field rounded font-mono text-sm box-border"
           />
 
           <input
@@ -85,46 +49,30 @@ export function LoginForm({ status, error, onSignIn, onSwitchToSignup }: LoginFo
             onChange={e => setPassword(e.target.value)}
             placeholder="Password"
             disabled={isLoading}
-            style={inputStyle}
+            className="w-full p-2 border border-border-field rounded font-mono text-sm box-border"
           />
 
           {error !== null && (
-            <p style={{ color: '#dc2626', fontSize: '0.875rem', margin: 0 }}>{error}</p>
+            <p className="text-danger text-sm m-0">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={isLoading}
-            style={{
-              background: '#2563eb',
-              color: '#ffffff',
-              padding: '0.5rem 1rem',
-              borderRadius: '4px',
-              border: 'none',
-              width: '100%',
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontSize: '0.875rem',
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-              opacity: isLoading ? 0.7 : 1,
-            }}
+            className={cn(
+              'bg-[#2563eb] text-white px-4 py-2 rounded border-none w-full font-sans text-sm',
+              isLoading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer opacity-100'
+            )}
           >
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <div className="text-center mt-4">
           <button
             type="button"
             onClick={onSwitchToSignup}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#2563eb',
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontSize: '0.875rem',
-            }}
+            className="bg-none border-none text-[#2563eb] cursor-pointer underline font-sans text-sm"
           >
             Don't have an account?
           </button>

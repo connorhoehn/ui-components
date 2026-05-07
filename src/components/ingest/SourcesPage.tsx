@@ -3,7 +3,6 @@
 // Table of all ingest sources with columns for name, type, status, last sync,
 // files synced, and row actions (Sync Now, Pause/Resume, Delete).
 
-import type { CSSProperties } from 'react';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useIngestSources } from '../../hooks/useIngestSources';
@@ -11,67 +10,8 @@ import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, pageContainerStyle, tableCellStyle, saveBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { IngestSource, IngestSourceStatus, IngestSourceType } from '../../types/ingest';
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16,
-  },
-  title: {
-    margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary,
-  },
-  count: {
-    fontSize: 13, color: colors.textTertiary,
-  },
-  tableWrap: {
-    overflowX: 'auto',
-  },
-  table: {
-    width: '100%', borderCollapse: 'collapse', fontSize: 13,
-  },
-  th: {
-    ...tableCellStyle, fontWeight: 600, textAlign: 'left' as const,
-  },
-  row: {
-    borderBottom: `1px solid ${colors.border}`, cursor: 'default',
-  },
-  nameCell: {
-    ...tableCellStyle, fontWeight: 500, color: colors.textPrimary,
-  },
-  actionsCell: {
-    ...tableCellStyle, display: 'flex', gap: 6, alignItems: 'center',
-  },
-  actionBtn: {
-    padding: '4px 10px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 5, background: colors.surface, cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.textSecondary,
-  },
-  actionBtnDanger: {
-    padding: '4px 10px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 5, background: '#fef2f2', cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.state.failed,
-  },
-  syncingBtn: {
-    padding: '4px 10px', fontSize: 11, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 5, background: colors.surfaceInset, cursor: 'not-allowed', fontFamily: 'inherit',
-    color: colors.textTertiary, opacity: 0.7,
-  },
-  errorBanner: {
-    padding: '12px 16px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`,
-    color: colors.state.failed, borderRadius: 8, display: 'flex', alignItems: 'center',
-    justifyContent: 'space-between', gap: 12, marginBottom: 16,
-  },
-  retryBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: '#fff',
-    color: colors.state.failed, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -132,7 +72,6 @@ export default function SourcesPage() {
       next.delete(sourceId);
       return next;
     });
-    // Refresh sources to pick up updated lastSyncAt
     void refresh();
   }, [triggerSync, refresh]);
 
@@ -144,9 +83,9 @@ export default function SourcesPage() {
 
   if (loading && sources.length === 0) {
     return (
-      <div data-testid="sources-page" style={pageContainerStyle}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Sources</h2>
+      <div data-testid="sources-page" className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Sources</h2>
         </div>
         <SkeletonCard height={48} />
         <SkeletonCard height={48} />
@@ -156,17 +95,17 @@ export default function SourcesPage() {
   }
 
   return (
-    <div data-testid="sources-page" style={pageContainerStyle}>
+    <div data-testid="sources-page" className="p-6 flex flex-col gap-3">
       {/* Header */}
-      <div style={styles.header}>
+      <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 style={styles.title}>Sources</h2>
-          <span style={styles.count}>
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Sources</h2>
+          <span className="text-[13px] text-text-tertiary">
             {sources.length} source{sources.length !== 1 ? 's' : ''}
           </span>
         </div>
         <button
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
           onClick={() => navigate('/ingest/sources')}
           data-testid="add-source-btn"
         >
@@ -176,9 +115,14 @@ export default function SourcesPage() {
 
       {/* Error banner */}
       {error && (
-        <div style={styles.errorBanner} role="alert">
-          <span style={{ fontSize: 13, fontWeight: 500 }}>Failed to load sources.</span>
-          <button onClick={() => void refresh()} style={styles.retryBtn}>Retry</button>
+        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
+          <span className="text-[13px] font-medium">Failed to load sources.</span>
+          <button
+            onClick={() => void refresh()}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+          >
+            Retry
+          </button>
         </div>
       )}
 
@@ -192,63 +136,52 @@ export default function SourcesPage() {
           onAction={() => navigate('/ingest/sources')}
         />
       ) : (
-        <div style={styles.tableWrap}>
-          <table style={styles.table}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${colors.border}` }}>
-                <th style={styles.th}>Name</th>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>Status</th>
-                <th style={styles.th}>Last Sync</th>
-                <th style={styles.th}>Files Synced</th>
-                <th style={{ ...styles.th, textAlign: 'right' }}>Actions</th>
+              <tr className="border-b border-border">
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Name</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Type</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Status</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Last Sync</th>
+                <th className="p-2 text-left text-[11px] font-semibold text-text-tertiary uppercase">Files Synced</th>
+                <th className="p-2 text-right text-[11px] font-semibold text-text-tertiary uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sources.map((source) => (
                 <tr
                   key={source.sourceId}
-                  style={styles.row}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = colors.surfaceHover ?? '#f8fafc')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  className="border-b border-border hover:bg-surface-hover"
                 >
-                  <td style={styles.nameCell}>
+                  <td className="p-2 font-medium text-text-primary">
                     <button
                       type="button"
                       data-testid={`source-name-link-${source.sourceId}`}
                       onClick={() => navigate(`/ingest/sources/${source.sourceId}`)}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        padding: 0,
-                        font: 'inherit',
-                        color: colors.primary,
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        textAlign: 'left',
-                      }}
+                      className="bg-transparent border-none p-0 font-[inherit] text-primary cursor-pointer underline text-left"
                     >
                       {source.name}
                     </button>
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2">
                     <Chip tone={typeTone(source.type)} size="xs">{typeLabel(source.type)}</Chip>
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2">
                     <Chip tone={statusTone(source.status)} size="sm">{source.status}</Chip>
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="p-2 text-text-secondary">
                     {source.lastSyncAt ? relativeTime(source.lastSyncAt) : 'Never'}
                   </td>
                   <td
                     data-testid={`source-files-synced-${source.sourceId}`}
-                    style={{ ...tableCellStyle, fontFamily: 'monospace', fontSize: 12 }}
+                    className="p-2 font-mono text-xs text-text-secondary"
                   >
                     {source.lastSyncStats ? (
                       <span>
                         {source.lastSyncStats.filesFound}
                         {source.lastSyncStats.filesNew > 0 ? (
-                          <span style={{ color: colors.textTertiary }}>
+                          <span className="text-text-tertiary">
                             {' · '}
                             {source.lastSyncStats.filesNew} new
                           </span>
@@ -258,10 +191,15 @@ export default function SourcesPage() {
                       '—'
                     )}
                   </td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                  <td className="p-2 text-right">
+                    <div className="flex gap-1.5 justify-end">
                       <button
-                        style={syncing.has(source.sourceId) || source.status === 'paused' ? styles.syncingBtn : styles.actionBtn}
+                        className={cn(
+                          'px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]',
+                          syncing.has(source.sourceId) || source.status === 'paused'
+                            ? 'border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed'
+                            : 'border border-border bg-surface text-text-secondary',
+                        )}
                         disabled={syncing.has(source.sourceId) || source.status === 'paused'}
                         onClick={() => void handleSync(source.sourceId)}
                         data-testid={`sync-${source.sourceId}`}
@@ -269,7 +207,7 @@ export default function SourcesPage() {
                         {syncing.has(source.sourceId) ? 'Syncing...' : 'Sync Now'}
                       </button>
                       <button
-                        style={styles.actionBtnDanger}
+                        className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
                         onClick={() => void handleDelete(source)}
                         data-testid={`delete-${source.sourceId}`}
                       >

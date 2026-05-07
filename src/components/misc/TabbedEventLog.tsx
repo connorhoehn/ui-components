@@ -8,6 +8,7 @@
 // Entries are pre-capped at 200 by the parent (App.tsx).
 
 import { useState, useRef, useEffect } from 'react';
+import { cn } from '../../lib/cn';
 import type { LogEntry } from './EventLog';
 
 // ---------------------------------------------------------------------------
@@ -31,23 +32,18 @@ function getTabEntries(entries: LogEntry[], tab: Tab): LogEntry[] {
 
     switch (tab) {
       case 'Chat':
-        // Chat: type starts with 'chat:' (captures 'chat:history', 'chat:message')
         return typeof type === 'string' && type.startsWith('chat:');
 
       case 'Presence':
-        // Presence: exact match on 'presence'
         return type === 'presence';
 
       case 'Cursors':
-        // Cursors: exact match on 'cursor' (action field distinguishes subscribed/update/remove)
         return type === 'cursor';
 
       case 'Reactions':
-        // Reactions: type starts with 'reactions:' (captures 'reactions:reaction', 'reactions:subscribed')
         return typeof type === 'string' && type.startsWith('reactions:');
 
       case 'System':
-        // System: error, session, or anything not matching the above four
         return (
           type === 'error' ||
           type === 'session' ||
@@ -87,23 +83,14 @@ export function TabbedEventLog({ entries }: Props) {
   const activeEntries = getTabEntries(entries, activeTab);
 
   return (
-    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem', marginTop: '1rem' }}>
-      <h3 style={{ margin: '0 0 0.5rem', fontSize: '0.875rem' }}>
+    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+      <h3 className="m-0 mb-2 text-sm">
         Event Log{' '}
-        <span style={{ color: '#9ca3af', fontWeight: 'normal' }}>({entries.length})</span>
+        <span className="text-[#9ca3af] font-normal">({entries.length})</span>
       </h3>
 
       {/* Tab buttons */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          marginBottom: '1rem',
-          borderBottom: '1px solid #e5e7eb',
-          paddingBottom: '1rem',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div className="flex gap-2 mb-4 border-b border-[#e5e7eb] pb-4 flex-wrap">
         {tabs.map((tab) => {
           const tabCount = getTabEntries(entries, tab).length;
           const isActive = tab === activeTab;
@@ -112,16 +99,12 @@ export function TabbedEventLog({ entries }: Props) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              style={{
-                background: isActive ? '#3b82f6' : '#e5e7eb',
-                color: isActive ? '#ffffff' : '#374151',
-                fontWeight: isActive ? 600 : 400,
-                border: 'none',
-                borderRadius: 4,
-                padding: '0.5rem 1rem',
-                cursor: 'pointer',
-                fontSize: '0.875rem',
-              }}
+              className={cn(
+                'border-none rounded px-4 py-2 cursor-pointer text-sm',
+                isActive
+                  ? 'bg-[#3b82f6] text-white font-semibold'
+                  : 'bg-[#e5e7eb] text-[#374151] font-normal'
+              )}
             >
               {tab} ({tabCount})
             </button>
@@ -131,66 +114,32 @@ export function TabbedEventLog({ entries }: Props) {
 
       {/* Tab content */}
       {activeEntries.length === 0 ? (
-        <p style={{ color: '#9ca3af' }}>No events yet.</p>
+        <p className="text-[#9ca3af]">No events yet.</p>
       ) : (
-        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+        <div className="max-h-[300px] overflow-y-auto">
           {activeEntries.map((entry) => (
             <div
               key={entry.id}
-              style={{
-                background: '#f9fafb',
-                borderRadius: '4px',
-                marginBottom: '0.25rem',
-                padding: '0.25rem 0.5rem',
-                fontFamily: 'monospace',
-              }}
+              className="bg-[#f9fafb] rounded mb-1 px-2 py-1 font-mono"
             >
               {/* Direction badge + timestamp */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <div className="flex items-center gap-2 mb-1">
                 {entry.direction === 'sent' ? (
-                  <span
-                    style={{
-                      background: '#dbeafe',
-                      color: '#1d4ed8',
-                      borderRadius: '3px',
-                      padding: '0 0.35rem',
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                    }}
-                  >
+                  <span className="bg-[#dbeafe] text-[#1d4ed8] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [SENT]
                   </span>
                 ) : (
-                  <span
-                    style={{
-                      background: '#dcfce7',
-                      color: '#15803d',
-                      borderRadius: '3px',
-                      padding: '0 0.35rem',
-                      fontSize: '0.7rem',
-                      fontWeight: 600,
-                    }}
-                  >
+                  <span className="bg-[#dcfce7] text-[#15803d] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [RECV]
                   </span>
                 )}
-                <span style={{ color: '#9ca3af', fontSize: '0.7rem' }}>
+                <span className="text-[#9ca3af] text-[0.7rem]">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </span>
               </div>
 
               {/* JSON payload */}
-              <pre
-                style={{
-                  margin: 0,
-                  fontSize: '0.7rem',
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                  maxHeight: '80px',
-                  overflowY: 'auto',
-                  background: 'transparent',
-                }}
-              >
+              <pre className="m-0 text-[0.7rem] whitespace-pre-wrap break-all max-h-20 overflow-y-auto bg-transparent">
                 {JSON.stringify(entry.message, null, 2)}
               </pre>
             </div>

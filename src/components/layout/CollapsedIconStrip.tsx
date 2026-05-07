@@ -11,7 +11,7 @@
 //
 // Width is 56px to match SIDEBAR_COLLAPSED_WIDTH in AppLayout.
 
-import type { CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 
 type ConnectionState =
   | 'idle'
@@ -28,34 +28,6 @@ export interface CollapsedIconStripProps {
   onObservability: () => void;
 }
 
-const buttonStyle: CSSProperties = {
-  width: 40,
-  height: 40,
-  borderRadius: 8,
-  border: 'none',
-  background: 'transparent',
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 18,
-  color: '#475569',
-  fontFamily: 'inherit',
-  padding: 0,
-  transition: 'background 0.15s ease',
-};
-
-const connectionDotStyle = (state: ConnectionState): CSSProperties => ({
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-  background:
-    state === 'connected' ? '#22c55e'
-    : state === 'connecting' || state === 'reconnecting' ? '#f59e0b'
-    : '#ef4444',
-  margin: '6px auto',
-});
-
 function IconButton({
   icon,
   title,
@@ -68,16 +40,15 @@ function IconButton({
   return (
     <button
       type="button"
-      style={buttonStyle}
+      className={cn(
+        'w-10 h-10 rounded-lg border-none bg-transparent cursor-pointer',
+        'flex items-center justify-center text-lg text-text-secondary',
+        'font-[inherit] p-0 transition-colors duration-150 ease-in-out',
+        'hover:bg-surface-hover'
+      )}
       title={title}
       aria-label={title}
       onClick={onClick}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.background = '#f1f5f9';
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-      }}
     >
       {icon}
     </button>
@@ -94,21 +65,20 @@ export function CollapsedIconStrip({
   return (
     <div
       data-testid="collapsed-icon-strip"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 4,
-        height: '100%',
-      }}
+      className="flex flex-col items-center gap-1 h-full"
     >
-      <IconButton icon={'\u2630'} title="Expand sidebar" onClick={onExpand} />
+      <IconButton icon={'☰'} title="Expand sidebar" onClick={onExpand} />
       <div
-        style={connectionDotStyle(connectionState)}
+        className={cn(
+          'w-2 h-2 rounded-full mx-auto my-1.5',
+          connectionState === 'connected' && 'bg-[#22c55e]',
+          (connectionState === 'connecting' || connectionState === 'reconnecting') && 'bg-[#f59e0b]',
+          (connectionState === 'idle' || connectionState === 'disconnected') && 'bg-[#ef4444]'
+        )}
         title={`Connection: ${connectionState}`}
         aria-label={`Connection: ${connectionState}`}
       />
-      <div style={{ height: 8 }} />
+      <div className="h-2" />
       <IconButton icon={'\u{1F4C4}'} title="Documents" onClick={onDocuments} />
       <IconButton icon={'\u{1F500}'} title="Pipelines" onClick={onPipelines} />
       <IconButton icon={'\u{1F4E1}'} title="Observability" onClick={onObservability} />

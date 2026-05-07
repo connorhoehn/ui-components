@@ -4,6 +4,7 @@
 // paste support, and backspace navigation.
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface CodeInputProps {
   length?: number;
@@ -103,9 +104,9 @@ export function CodeInput({
   }, [length, onComplete, focusInput]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--ui-spacingSm)' }}>
+    <div className="flex flex-col items-center gap-2">
       <div
-        style={{ display: 'flex', gap: 'var(--ui-spacingSm)' }}
+        className="flex gap-2"
         role="group"
         aria-label="Verification code input"
       >
@@ -124,32 +125,22 @@ export function CodeInput({
             onKeyDown={e => handleKeyDown(i, e)}
             onPaste={handlePaste}
             onFocus={e => e.target.select()}
-            style={{
-              width: 44,
-              height: 52,
-              textAlign: 'center',
-              fontSize: 'var(--ui-fontSizeLg)',
-              fontWeight: 600,
-              fontFamily: 'inherit',
-              border: `2px solid ${error ? 'var(--ui-danger)' : 'var(--ui-border)'}`,
-              borderRadius: 'var(--ui-radiusMd)',
-              background: disabled ? 'var(--ui-surfaceAlt)' : 'var(--ui-surface)',
-              color: 'var(--ui-textPrimary)',
-              outline: 'none',
-              transition: 'border-color 0.15s, box-shadow 0.15s',
-              cursor: disabled ? 'not-allowed' : 'text',
-            }}
+            className={cn(
+              'w-11 h-[52px] text-center text-lg font-semibold font-[inherit]',
+              'rounded-md outline-none transition-[border-color,box-shadow] duration-150',
+              'border-2',
+              error ? 'border-danger' : 'border-border',
+              disabled ? 'bg-surface-inset cursor-not-allowed' : 'bg-surface cursor-text',
+              'text-text-primary',
+              'focus:border-primary focus:ring-2 focus:ring-primary/25'
+            )}
           />
         ))}
       </div>
       {error && (
         <p
           role="alert"
-          style={{
-            margin: 0,
-            fontSize: 'var(--ui-fontSizeSm)',
-            color: 'var(--ui-danger)',
-          }}
+          className="m-0 text-sm text-danger"
         >
           {error}
         </p>

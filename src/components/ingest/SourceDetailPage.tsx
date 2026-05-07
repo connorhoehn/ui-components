@@ -11,7 +11,7 @@ import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import SkeletonCard from '../shared/SkeletonCard';
 import MappingRuleEditor from './MappingRuleEditor';
-import { colors, pageContainerStyle, fieldStyle, saveBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { IngestSource, IngestSourceStatus, IngestSourceType, MappingRule } from '../../types/ingest';
 import { usePipelineDefs } from '../../hooks/usePipelineDefs';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
@@ -28,97 +28,6 @@ const SCHEDULE_PRESETS: Array<{ label: string; cron: string }> = [
 ];
 
 const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16,
-    flexWrap: 'wrap', gap: 12,
-  },
-  headerLeft: {
-    display: 'flex', alignItems: 'center', gap: 10,
-  },
-  title: {
-    margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary,
-  },
-  backLink: {
-    fontSize: 13, color: colors.primary, cursor: 'pointer', background: 'none',
-    border: 'none', fontFamily: 'inherit', padding: 0, textDecoration: 'underline',
-  },
-  editBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 6, background: colors.surface, cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.textSecondary,
-  },
-  section: {
-    background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10,
-    padding: 16, marginBottom: 0,
-  },
-  sectionTitle: {
-    fontSize: 14, fontWeight: 600, color: colors.textPrimary, marginBottom: 12,
-  },
-  kvRow: {
-    display: 'flex', alignItems: 'center', gap: 12, padding: '6px 0',
-    borderBottom: `1px solid ${colors.border}`,
-  },
-  kvLabel: {
-    fontSize: 12, fontWeight: 600, color: colors.textTertiary, minWidth: 130,
-    textTransform: 'uppercase' as const, letterSpacing: '0.03em',
-  },
-  kvValue: {
-    fontSize: 13, color: colors.textSecondary, fontFamily: 'monospace', wordBreak: 'break-all',
-  },
-  statsGrid: {
-    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10,
-  },
-  statCard: {
-    padding: 12, background: colors.surfaceInset, border: `1px solid ${colors.border}`,
-    borderRadius: 8, textAlign: 'center',
-  },
-  statValue: {
-    fontSize: 20, fontWeight: 700, color: colors.textPrimary, lineHeight: 1,
-  },
-  statLabel: {
-    fontSize: 11, color: colors.textTertiary, marginTop: 4,
-    textTransform: 'uppercase' as const, letterSpacing: '0.03em',
-  },
-  syncBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, border: `1px solid ${colors.primary}`,
-    borderRadius: 6, background: '#eff6ff', cursor: 'pointer', fontFamily: 'inherit',
-    color: colors.primary,
-  },
-  syncingBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, border: `1px solid ${colors.border}`,
-    borderRadius: 6, background: colors.surfaceInset, cursor: 'not-allowed', fontFamily: 'inherit',
-    color: colors.textTertiary, opacity: 0.7,
-  },
-  formRow: {
-    display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10,
-  },
-  formLabel: {
-    fontSize: 12, fontWeight: 600, color: colors.textTertiary, minWidth: 140,
-  },
-  toggleBtn: {
-    padding: '6px 14px', fontSize: 12, fontWeight: 500, borderRadius: 6,
-    cursor: 'pointer', fontFamily: 'inherit', border: 'none',
-  },
-  errorBanner: {
-    padding: '12px 16px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`,
-    color: colors.state.failed, borderRadius: 8, display: 'flex', alignItems: 'center',
-    justifyContent: 'space-between', gap: 12,
-  },
-  retryBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: '#fff',
-    color: colors.state.failed, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-  },
-  actionsRow: {
-    display: 'flex', gap: 10, alignItems: 'center',
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -169,8 +78,7 @@ function relativeTime(iso: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Rule format bridge: backend uses { condition: { field, op, value } },
-// frontend editor uses { pattern: "field:op:value" }
+// Rule format bridge
 // ---------------------------------------------------------------------------
 
 function normalizeRules(raw: unknown[]): MappingRule[] {
@@ -281,10 +189,6 @@ export default function SourceDetailPage() {
     }
   }, [source, id, editConfig, editRules, editSchedule, editPipelineId, editPipelineByDocType, headers]);
 
-  // Dirty-state guard: while editing, warn the operator if they try to leave
-  // with unsaved changes (browser-level beforeunload — covers refresh / tab
-  // close / external nav). Internal react-router nav doesn't fire this; that
-  // would require useBlocker and is left for a follow-up.
   const isDirty = editing && source !== null && (
     JSON.stringify(editConfig) !== JSON.stringify(source.config) ||
     JSON.stringify(editRules) !== JSON.stringify(source.mappingRules) ||
@@ -312,7 +216,6 @@ export default function SourceDetailPage() {
         headers: headers(),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      // Refresh source to get updated sync stats
       await fetchSource();
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -341,9 +244,9 @@ export default function SourceDetailPage() {
   // Loading state
   if (loading && !source) {
     return (
-      <div data-testid="source-detail-page" style={pageContainerStyle}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Source Detail</h2>
+      <div data-testid="source-detail-page" className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Source Detail</h2>
         </div>
         <SkeletonCard height={120} />
         <SkeletonCard height={200} />
@@ -355,15 +258,23 @@ export default function SourceDetailPage() {
   // Error state with no source loaded
   if (error && !source) {
     return (
-      <div data-testid="source-detail-page" style={pageContainerStyle}>
-        <div style={styles.header}>
-          <button style={styles.backLink} onClick={() => navigate('/ingest/sources')}>
+      <div data-testid="source-detail-page" className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <button
+            className="text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline"
+            onClick={() => navigate('/ingest/sources')}
+          >
             Back to Sources
           </button>
         </div>
-        <div style={styles.errorBanner} role="alert">
-          <span style={{ fontSize: 13, fontWeight: 500 }}>Failed to load source: {error}</span>
-          <button onClick={() => void fetchSource()} style={styles.retryBtn}>Retry</button>
+        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
+          <span className="text-[13px] font-medium">Failed to load source: {error}</span>
+          <button
+            onClick={() => void fetchSource()}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -372,53 +283,78 @@ export default function SourceDetailPage() {
   if (!source) return null;
 
   return (
-    <div data-testid="source-detail-page" style={pageContainerStyle}>
+    <div data-testid="source-detail-page" className="p-6 flex flex-col gap-4">
       {/* Header */}
-      <div style={styles.header}>
-        <div style={styles.headerLeft}>
-          <button style={styles.backLink} onClick={() => navigate('/ingest/sources')}>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-2.5">
+          <button
+            className="text-[13px] text-primary cursor-pointer bg-transparent border-none font-[inherit] p-0 underline"
+            onClick={() => navigate('/ingest/sources')}
+          >
             Back to Sources
           </button>
         </div>
       </div>
-      <div style={styles.header}>
-        <div style={styles.headerLeft}>
-          <h2 style={styles.title}>{source.name}</h2>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-2.5">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">{source.name}</h2>
           <Chip tone={typeTone(source.type)} size="sm">{typeLabel(source.type)}</Chip>
           <Chip tone={statusTone(source.status)} size="sm">{source.status}</Chip>
         </div>
-        <div style={styles.actionsRow}>
+        <div className="flex gap-2.5 items-center">
           {editing ? (
             <>
-              <button style={styles.editBtn} onClick={cancelEdit}>Cancel</button>
-              <button style={saveBtnStyle(saving)} onClick={() => void saveChanges()} disabled={saving}>
+              <button
+                className="px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary"
+                onClick={cancelEdit}
+              >
+                Cancel
+              </button>
+              <button
+                className={cn(
+                  'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
+                  saving && 'opacity-50 cursor-not-allowed',
+                )}
+                onClick={() => void saveChanges()}
+                disabled={saving}
+              >
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </>
           ) : (
-            <button style={styles.editBtn} onClick={enterEditMode}>Edit</button>
+            <button
+              className="px-3.5 py-1.5 text-[13px] font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary"
+              onClick={enterEditMode}
+            >
+              Edit
+            </button>
           )}
         </div>
       </div>
 
       {/* Error banner (non-blocking) */}
       {error && (
-        <div style={styles.errorBanner} role="alert">
-          <span style={{ fontSize: 13, fontWeight: 500 }}>{error}</span>
-          <button onClick={() => setError(null)} style={styles.retryBtn}>Dismiss</button>
+        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
+          <span className="text-[13px] font-medium">{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
       {/* Config section */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Configuration</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4">
+        <div className="text-sm font-semibold text-text-primary mb-3">Configuration</div>
         {editing ? (
           <div>
             {Object.entries(editConfig).map(([key, value]) => (
-              <div key={key} style={styles.formRow}>
-                <span style={styles.formLabel}>{key}</span>
+              <div key={key} className="flex items-center gap-3 mb-2.5">
+                <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">{key}</span>
                 <input
-                  style={fieldStyle}
+                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
                   value={typeof value === 'string' ? value : JSON.stringify(value)}
                   onChange={(e) => setEditConfig({ ...editConfig, [key]: e.target.value })}
                 />
@@ -428,26 +364,26 @@ export default function SourceDetailPage() {
         ) : (
           <div>
             {Object.entries(source.config).map(([key, value]) => (
-              <div key={key} style={styles.kvRow}>
-                <span style={styles.kvLabel}>{key}</span>
-                <span style={styles.kvValue}>
+              <div key={key} className="flex items-center gap-3 py-1.5 border-b border-border">
+                <span className="text-xs font-semibold text-text-tertiary min-w-[130px] uppercase tracking-tight">{key}</span>
+                <span className="text-[13px] text-text-secondary font-mono break-all">
                   {typeof value === 'string' ? value : JSON.stringify(value)}
                 </span>
               </div>
             ))}
             {Object.keys(source.config).length === 0 && (
-              <span style={{ fontSize: 13, color: colors.textTertiary }}>No configuration fields.</span>
+              <span className="text-[13px] text-text-tertiary">No configuration fields.</span>
             )}
           </div>
         )}
       </div>
 
-      {/* Per-source SLO panel — latency / error rate / queue depth. */}
+      {/* Per-source SLO panel */}
       {source ? <SourceSloPanel sourceId={source.sourceId} /> : null}
 
       {/* Mapping Rules section */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Mapping Rules</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4">
+        <div className="text-sm font-semibold text-text-primary mb-3">Mapping Rules</div>
         {editing ? (
           <MappingRuleEditor rules={editRules} onChange={setEditRules} />
         ) : (
@@ -456,11 +392,16 @@ export default function SourceDetailPage() {
       </div>
 
       {/* Sync History section */}
-      <div style={styles.section}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-          <div style={styles.sectionTitle}>Sync History</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm font-semibold text-text-primary">Sync History</div>
           <button
-            style={syncing || source.status === 'paused' ? styles.syncingBtn : styles.syncBtn}
+            className={cn(
+              'px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]',
+              syncing || source.status === 'paused'
+                ? 'border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed'
+                : 'border border-primary bg-[#eff6ff] text-primary',
+            )}
             disabled={syncing || source.status === 'paused'}
             onClick={() => void handleSync()}
             data-testid="sync-now-btn"
@@ -470,51 +411,51 @@ export default function SourceDetailPage() {
         </div>
         {source.lastSyncAt ? (
           <>
-            <div style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 10 }}>
+            <div className="text-xs text-text-tertiary mb-2.5">
               Last synced: {relativeTime(source.lastSyncAt)} ({new Date(source.lastSyncAt).toLocaleString()})
             </div>
             {source.lastSyncStats && (
-              <div style={styles.statsGrid}>
-                <div style={styles.statCard}>
-                  <div style={styles.statValue}>{(source.lastSyncStats as any).filesDiscovered}</div>
-                  <div style={styles.statLabel}>Found</div>
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2.5">
+                <div className="p-3 bg-surface-inset border border-border rounded-lg text-center">
+                  <div className="text-xl font-bold text-text-primary leading-none">{(source.lastSyncStats as any).filesDiscovered}</div>
+                  <div className="text-[11px] text-text-tertiary mt-1 uppercase tracking-tight">Found</div>
                 </div>
-                <div style={styles.statCard}>
-                  <div style={{ ...styles.statValue, color: colors.state.completed }}>{(source.lastSyncStats as any).filesIngested}</div>
-                  <div style={styles.statLabel}>Ingested</div>
+                <div className="p-3 bg-surface-inset border border-border rounded-lg text-center">
+                  <div className="text-xl font-bold text-[var(--color-state-completed)] leading-none">{(source.lastSyncStats as any).filesIngested}</div>
+                  <div className="text-[11px] text-text-tertiary mt-1 uppercase tracking-tight">Ingested</div>
                 </div>
-                <div style={styles.statCard}>
-                  <div style={styles.statValue}>{source.lastSyncStats.filesSkipped}</div>
-                  <div style={styles.statLabel}>Skipped</div>
+                <div className="p-3 bg-surface-inset border border-border rounded-lg text-center">
+                  <div className="text-xl font-bold text-text-primary leading-none">{source.lastSyncStats.filesSkipped}</div>
+                  <div className="text-[11px] text-text-tertiary mt-1 uppercase tracking-tight">Skipped</div>
                 </div>
-                <div style={styles.statCard}>
-                  <div style={{ ...styles.statValue, color: (source.lastSyncStats as any).filesFailed > 0 ? colors.state.failed : colors.textPrimary }}>
+                <div className="p-3 bg-surface-inset border border-border rounded-lg text-center">
+                  <div className={cn('text-xl font-bold leading-none', (source.lastSyncStats as any).filesFailed > 0 ? 'text-[var(--color-state-failed)]' : 'text-text-primary')}>
                     {(source.lastSyncStats as any).filesFailed}
                   </div>
-                  <div style={styles.statLabel}>Errors</div>
+                  <div className="text-[11px] text-text-tertiary mt-1 uppercase tracking-tight">Errors</div>
                 </div>
-                <div style={styles.statCard}>
-                  <div style={styles.statValue}>{formatDuration(source.lastSyncStats.durationMs)}</div>
-                  <div style={styles.statLabel}>Duration</div>
+                <div className="p-3 bg-surface-inset border border-border rounded-lg text-center">
+                  <div className="text-xl font-bold text-text-primary leading-none">{formatDuration(source.lastSyncStats.durationMs)}</div>
+                  <div className="text-[11px] text-text-tertiary mt-1 uppercase tracking-tight">Duration</div>
                 </div>
               </div>
             )}
           </>
         ) : (
-          <span style={{ fontSize: 13, color: colors.textTertiary }}>No sync history yet.</span>
+          <span className="text-[13px] text-text-tertiary">No sync history yet.</span>
         )}
       </div>
 
       {/* Settings section */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Settings</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4">
+        <div className="text-sm font-semibold text-text-primary mb-3">Settings</div>
         {editing ? (
           <div>
-            <div style={styles.formRow}>
-              <span style={styles.formLabel}>Sync Schedule</span>
-              <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Sync Schedule</span>
+              <div className="flex gap-2 flex-1 flex-wrap">
                 <select
-                  style={{ ...fieldStyle, flex: 'none', minWidth: 160 }}
+                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[160px]"
                   value={SCHEDULE_PRESETS.some((p) => p.cron === editSchedule) ? editSchedule : '__custom__'}
                   onChange={(e) => {
                     if (e.target.value !== '__custom__') setEditSchedule(e.target.value);
@@ -527,7 +468,7 @@ export default function SourceDetailPage() {
                   <option value="__custom__">Custom…</option>
                 </select>
                 <input
-                  style={{ ...fieldStyle, fontFamily: 'monospace' }}
+                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none font-mono flex-1"
                   value={editSchedule}
                   onChange={(e) => setEditSchedule(e.target.value)}
                   placeholder="Cron (e.g. 0 */6 * * *) — empty = manual"
@@ -535,10 +476,10 @@ export default function SourceDetailPage() {
                 />
               </div>
             </div>
-            <div style={styles.formRow}>
-              <span style={styles.formLabel}>Default Pipeline</span>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Default Pipeline</span>
               <select
-                style={fieldStyle}
+                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
                 value={editPipelineId}
                 onChange={(e) => setEditPipelineId(e.target.value)}
                 data-testid="default-pipeline-picker"
@@ -549,41 +490,37 @@ export default function SourceDetailPage() {
                     {p.name} {p.status ? `(${p.status})` : ''}
                   </option>
                 ))}
-                {/* Allow keeping a stale id even when the pipeline isn't in the loaded list */}
                 {editPipelineId && !pipelineDefs.some((p) => p.id === editPipelineId) && (
                   <option value={editPipelineId}>{editPipelineId} (unknown)</option>
                 )}
               </select>
             </div>
-            <div style={styles.formRow}>
-              <span style={styles.formLabel}>Pipeline overrides</span>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div className="flex items-center gap-3 mb-2.5">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Pipeline overrides</span>
+              <div className="flex-1 flex flex-col gap-2">
                 <button
                   type="button"
                   data-testid="overrides-toggle"
                   onClick={() => setShowOverrides(!showOverrides)}
-                  style={{
-                    background: 'transparent', border: 'none', textAlign: 'left',
-                    color: colors.textSecondary, padding: 0, cursor: 'pointer', fontSize: 13,
-                  }}
+                  className="bg-transparent border-none text-left text-text-secondary p-0 cursor-pointer text-[13px]"
                 >
                   {showOverrides ? '▾' : '▸'} Per-matched-DocType pipeline override ({Object.keys(editPipelineByDocType).length})
                 </button>
                 {showOverrides ? (
-                  <div data-testid="overrides-section" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <div data-testid="overrides-section" className="flex flex-col gap-1.5">
                     {Object.keys(editPipelineByDocType).length === 0 ? (
-                      <div style={{ fontSize: 12, color: colors.textTertiary }}>
+                      <div className="text-xs text-text-tertiary">
                         No overrides — every matched type uses the default pipeline.
                       </div>
                     ) : (
                       Object.entries(editPipelineByDocType).map(([typeId, pipelineId]) => (
-                        <div key={typeId} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <span style={{ flex: '0 0 160px', fontSize: 13 }}>
+                        <div key={typeId} className="flex gap-2 items-center">
+                          <span className="flex-[0_0_160px] text-[13px]">
                             {docTypes.find((t) => t.id === typeId)?.name ?? typeId}
                           </span>
                           <select
                             data-testid={`overrides-pipeline-${typeId}`}
-                            style={{ ...fieldStyle, flex: 1 }}
+                            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
                             value={pipelineId}
                             onChange={(e) =>
                               setEditPipelineByDocType({ ...editPipelineByDocType, [typeId]: e.target.value })
@@ -601,7 +538,7 @@ export default function SourceDetailPage() {
                               delete next[typeId];
                               setEditPipelineByDocType(next);
                             }}
-                            style={{ ...fieldStyle, flex: 'none', cursor: 'pointer' }}
+                            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none cursor-pointer"
                           >
                             Remove
                           </button>
@@ -610,7 +547,7 @@ export default function SourceDetailPage() {
                     )}
                     <select
                       data-testid="overrides-add-type"
-                      style={{ ...fieldStyle, alignSelf: 'flex-start' }}
+                      className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none self-start"
                       value=""
                       onChange={(e) => {
                         const typeId = e.target.value;
@@ -635,29 +572,28 @@ export default function SourceDetailPage() {
           </div>
         ) : (
           <div>
-            <div style={styles.kvRow}>
-              <span style={styles.kvLabel}>Sync Schedule</span>
-              <span style={styles.kvValue}>
+            <div className="flex items-center gap-3 py-1.5 border-b border-border">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[130px] uppercase tracking-tight">Sync Schedule</span>
+              <span className="text-[13px] text-text-secondary font-mono break-all">
                 {source.syncSchedule ?? 'Manual (no schedule)'}
               </span>
             </div>
-            <div style={styles.kvRow}>
-              <span style={styles.kvLabel}>Default Pipeline</span>
-              <span style={styles.kvValue}>
+            <div className="flex items-center gap-3 py-1.5 border-b border-border">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[130px] uppercase tracking-tight">Default Pipeline</span>
+              <span className="text-[13px] text-text-secondary font-mono break-all">
                 {source.defaultPipelineId
                   ? (pipelineDefs.find((p) => p.id === source.defaultPipelineId)?.name ?? source.defaultPipelineId)
                   : '—'}
               </span>
             </div>
-            <div style={{ ...styles.kvRow, borderBottom: 'none' }}>
-              <span style={styles.kvLabel}>Status</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="flex items-center gap-3 py-1.5">
+              <span className="text-xs font-semibold text-text-tertiary min-w-[130px] uppercase tracking-tight">Status</span>
+              <span className="flex items-center gap-2.5">
                 <Chip tone={statusTone(source.status)} size="sm">{source.status}</Chip>
                 <button
+                  className="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer font-[inherit] border-none text-white"
                   style={{
-                    ...styles.toggleBtn,
-                    background: source.status === 'paused' ? colors.state.completed : colors.state.awaiting,
-                    color: '#fff',
+                    background: source.status === 'paused' ? 'var(--color-state-completed)' : 'var(--color-state-awaiting)',
                   }}
                   onClick={() => void handleTogglePause()}
                 >

@@ -5,6 +5,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
 import { StatusBadge } from '../shared/StatusBadge';
+import { cn } from '../../../lib/cn';
 
 export interface MfaManagementPageProps {
   metrics?: {
@@ -23,87 +24,6 @@ export interface MfaManagementPageProps {
   onRefresh: () => void;
   loading?: boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--ui-spacingLg)',
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const refreshBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const metricsGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-  gap: 'var(--ui-spacingMd)',
-};
-
-const metricCardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--ui-surface)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-  padding: 'var(--ui-spacingMd)',
-  boxShadow: 'var(--ui-shadowSm)',
-};
-
-const metricValueStyle: React.CSSProperties = {
-  fontSize: '1.75rem',
-  fontWeight: 700,
-  color: 'var(--ui-primary)',
-  marginBottom: '4px',
-};
-
-const metricLabelStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-};
-
-const filterRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 'var(--ui-spacingSm)',
-};
-
-const selectStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const skeletonStyle: React.CSSProperties = {
-  height: '60px',
-  borderRadius: 'var(--ui-radiusMd)',
-  backgroundColor: 'var(--ui-border)',
-  opacity: 0.5,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -142,56 +62,60 @@ export function MfaManagementPage({
 
   if (loading) {
     return (
-      <div style={pageStyle}>
-        <div style={metricsGridStyle}>
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} style={{ ...metricCardStyle, ...skeletonStyle }} />
+            <div key={i} className="bg-border rounded-md h-[60px] opacity-50" />
           ))}
         </div>
-        <div style={skeletonStyle} />
+        <div className="bg-border rounded-md h-[60px] opacity-50" />
       </div>
     );
   }
 
   return (
-    <div style={pageStyle}>
-      <div style={headerStyle}>
-        <h1 style={titleStyle}>MFA Management</h1>
-        <button type="button" style={refreshBtnStyle} onClick={onRefresh}>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold text-text-primary">MFA Management</h1>
+        <button
+          type="button"
+          className="px-4 py-2 border border-border rounded-sm bg-surface text-text-primary text-sm cursor-pointer"
+          onClick={onRefresh}
+        >
           Refresh
         </button>
       </div>
 
       {/* Metrics */}
       {metrics && (
-        <section style={metricsGridStyle}>
-          <div style={metricCardStyle}>
-            <div style={metricValueStyle}>{metrics.totalUsers}</div>
-            <div style={metricLabelStyle}>Total Users</div>
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
+          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
+            <div className="text-[1.75rem] font-bold text-primary mb-1">{metrics.totalUsers}</div>
+            <div className="text-sm text-text-secondary">Total Users</div>
           </div>
-          <div style={metricCardStyle}>
-            <div style={{ ...metricValueStyle, color: 'var(--ui-success)' }}>{metrics.mfaEnabled}</div>
-            <div style={metricLabelStyle}>MFA Enabled</div>
+          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
+            <div className="text-[1.75rem] font-bold text-success mb-1">{metrics.mfaEnabled}</div>
+            <div className="text-sm text-text-secondary">MFA Enabled</div>
           </div>
-          <div style={metricCardStyle}>
-            <div style={{ ...metricValueStyle, color: 'var(--ui-warning)' }}>{metrics.mfaDisabled}</div>
-            <div style={metricLabelStyle}>MFA Disabled</div>
+          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
+            <div className="text-[1.75rem] font-bold text-warning mb-1">{metrics.mfaDisabled}</div>
+            <div className="text-sm text-text-secondary">MFA Disabled</div>
           </div>
-          <div style={metricCardStyle}>
-            <div style={metricValueStyle}>{metrics.adoptionRate}%</div>
-            <div style={metricLabelStyle}>Adoption Rate</div>
+          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
+            <div className="text-[1.75rem] font-bold text-primary mb-1">{metrics.adoptionRate}%</div>
+            <div className="text-sm text-text-secondary">Adoption Rate</div>
           </div>
         </section>
       )}
 
       {/* Pool filter */}
       {pools && pools.length > 0 && (
-        <div style={filterRowStyle}>
-          <label style={{ fontSize: 'var(--ui-fontSizeSm)', color: 'var(--ui-textSecondary)' }}>
+        <div className="flex items-center gap-2">
+          <label className="text-sm text-text-secondary">
             Filter by pool:
           </label>
           <select
-            style={selectStyle}
+            className="p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
             value={selectedPool}
             onChange={(e) => setSelectedPool(e.target.value)}
           >

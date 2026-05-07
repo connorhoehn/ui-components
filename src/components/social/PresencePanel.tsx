@@ -17,29 +17,15 @@ interface PresencePanelProps {
 
 export function PresencePanel({ users, currentClientId }: PresencePanelProps) {
   return (
-    <div
-      style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: '4px',
-        padding: '0.75rem',
-        fontFamily: 'monospace',
-      }}
-    >
+    <div className="border border-border rounded p-3 font-mono">
       {/* Header */}
-      <div
-        style={{
-          fontSize: '0.8rem',
-          fontWeight: 'bold',
-          marginBottom: '0.5rem',
-          color: '#374151',
-        }}
-      >
+      <div className="text-[0.8rem] font-bold mb-2 text-text-primary">
         Users in channel ({users.length})
       </div>
 
       {/* User list */}
       {users.length === 0 ? (
-        <div style={{ color: '#9ca3af', fontSize: '0.75rem' }}>
+        <div className="text-text-tertiary text-xs">
           No other users connected
         </div>
       ) : (
@@ -62,44 +48,27 @@ export function PresencePanel({ users, currentClientId }: PresencePanelProps) {
             return (
               <div
                 key={user.clientId}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.25rem 0',
-                  fontSize: '0.75rem',
-                }}
+                className="flex items-center gap-2 py-1 text-xs"
               >
                 {/* Colored avatar circle */}
                 <div
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    backgroundColor: color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.55rem',
-                    fontWeight: 'bold',
-                    color: '#ffffff',
-                    flexShrink: 0,
-                  }}
+                  className="w-5 h-5 rounded-full flex items-center justify-center text-[0.55rem] font-bold text-white shrink-0"
+                  style={{ backgroundColor: color }}
                 >
                   {initials}
                 </div>
 
                 {/* Display name (or truncated clientId fallback) */}
-                <span style={{ color: '#374151' }}>{displayLabel}</span>
+                <span className="text-text-primary">{displayLabel}</span>
 
                 {/* "You" label */}
                 {isYou && (
-                  <span style={{ color: '#9ca3af' }}>(you)</span>
+                  <span className="text-text-tertiary">(you)</span>
                 )}
 
                 {/* Typing indicator */}
                 {isTyping && (
-                  <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>
+                  <span className="text-text-tertiary italic">
                     typing...
                   </span>
                 )}

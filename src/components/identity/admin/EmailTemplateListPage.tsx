@@ -4,6 +4,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
+import { cn } from '../../../lib/cn';
 
 export interface EmailTemplateListPageProps {
   templates: Array<{ templateId: string; name: string; subject: string }>;
@@ -13,111 +14,6 @@ export interface EmailTemplateListPageProps {
   onTestSend: (templateId: string, email: string) => Promise<void>;
   loading?: boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const createBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const actionBtnStyle: React.CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  marginRight: '6px',
-  font: 'inherit',
-};
-
-const dangerBtnStyle: React.CSSProperties = {
-  ...actionBtnStyle,
-  borderColor: 'var(--ui-danger)',
-  color: 'var(--ui-danger)',
-};
-
-const infoBtnStyle: React.CSSProperties = {
-  ...actionBtnStyle,
-  borderColor: 'var(--ui-info)',
-  color: 'var(--ui-info)',
-};
-
-const confirmStyle: React.CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '6px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-danger)',
-};
-
-const modalOverlayStyle: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  backgroundColor: 'rgba(0,0,0,0.4)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 1000,
-};
-
-const modalStyle: React.CSSProperties = {
-  backgroundColor: 'var(--ui-surface)',
-  borderRadius: 'var(--ui-radiusMd)',
-  padding: 'var(--ui-spacingLg)',
-  boxShadow: 'var(--ui-shadowMd)',
-  minWidth: '320px',
-  maxWidth: '90vw',
-};
-
-const modalTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const modalInputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  boxSizing: 'border-box',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const modalBtnRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  justifyContent: 'flex-end',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -176,17 +72,21 @@ export function EmailTemplateListPage({
     (item: TemplateRow) => {
       if (confirmingId === item.templateId) {
         return (
-          <span style={confirmStyle}>
+          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
             Are you sure?
             <button
               type="button"
-              style={{ ...dangerBtnStyle, fontWeight: 600 }}
+              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
               onClick={() => handleDelete(item.templateId)}
               disabled={deleting}
             >
               {deleting ? '...' : 'Yes'}
             </button>
-            <button type="button" style={actionBtnStyle} onClick={() => setConfirmingId(null)}>
+            <button
+              type="button"
+              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
+              onClick={() => setConfirmingId(null)}
+            >
               No
             </button>
           </span>
@@ -195,13 +95,25 @@ export function EmailTemplateListPage({
 
       return (
         <>
-          <button type="button" style={actionBtnStyle} onClick={() => onEditTemplate(item.templateId)}>
+          <button
+            type="button"
+            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
+            onClick={() => onEditTemplate(item.templateId)}
+          >
             Edit
           </button>
-          <button type="button" style={infoBtnStyle} onClick={() => { setTestModalId(item.templateId); setTestEmail(''); }}>
+          <button
+            type="button"
+            className="px-2.5 py-1 text-sm border border-info rounded-sm bg-surface text-info cursor-pointer mr-1.5"
+            onClick={() => { setTestModalId(item.templateId); setTestEmail(''); }}
+          >
             Test Send
           </button>
-          <button type="button" style={dangerBtnStyle} onClick={() => setConfirmingId(item.templateId)}>
+          <button
+            type="button"
+            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
+            onClick={() => setConfirmingId(item.templateId)}
+          >
             Delete
           </button>
         </>
@@ -212,9 +124,13 @@ export function EmailTemplateListPage({
 
   return (
     <div>
-      <div style={headerStyle}>
-        <h1 style={titleStyle}>Email Templates</h1>
-        <button type="button" style={createBtnStyle} onClick={onCreateTemplate}>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-semibold text-text-primary">Email Templates</h1>
+        <button
+          type="button"
+          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
+          onClick={onCreateTemplate}
+        >
           Create Template
         </button>
       </div>
@@ -230,24 +146,37 @@ export function EmailTemplateListPage({
 
       {/* Test send modal */}
       {testModalId && (
-        <div style={modalOverlayStyle} onClick={() => setTestModalId(null)}>
-          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h3 style={modalTitleStyle}>Send Test Email</h3>
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
+          onClick={() => setTestModalId(null)}
+        >
+          <div
+            className="bg-surface rounded-md p-6 shadow-md min-w-[320px] max-w-[90vw]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-semibold text-text-primary mb-4">Send Test Email</h3>
             <input
-              style={modalInputStyle}
+              className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary box-border mb-4"
               type="email"
               placeholder="recipient@example.com"
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
               autoFocus
             />
-            <div style={modalBtnRowStyle}>
-              <button type="button" style={actionBtnStyle} onClick={() => setTestModalId(null)}>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer"
+                onClick={() => setTestModalId(null)}
+              >
                 Cancel
               </button>
               <button
                 type="button"
-                style={{ ...createBtnStyle, opacity: sending || !testEmail.trim() ? 0.6 : 1 }}
+                className={cn(
+                  "bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer",
+                  (sending || !testEmail.trim()) && "opacity-60"
+                )}
                 onClick={handleTestSend}
                 disabled={sending || !testEmail.trim()}
               >

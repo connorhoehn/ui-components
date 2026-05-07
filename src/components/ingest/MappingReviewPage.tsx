@@ -1,39 +1,16 @@
 // frontend/src/components/ingest/MappingReviewPage.tsx
 //
 // Operator queue for ingest items the LLM mapper produced low-confidence
-// type matches for. Per AGENTIC_ETL_VISION §B Tier 2: below the confidence
-// threshold, items fall through to this queue instead of auto-accepting
-// (which risks the wrong type) or silently DLQ'ing.
-//
-// Per-row actions:
-//   • Accept — commit the suggested type as-is (re-maps with method='rule').
-//   • Re-map — pick a different type from the DocType list and re-queue.
-//   • Discard — mark the item as skipped.
+// type matches for.
 
-import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, fieldStyle, pageContainerStyle, saveBtnStyle, cancelBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import { useMappingReviewQueue } from '../../hooks/useMappingReviewQueue';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
 import type { IngestItem } from '../../types/ingest';
-
-const styles: Record<string, CSSProperties> = {
-  header: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 },
-  title: { fontSize: 22, fontWeight: 700, color: colors.textPrimary },
-  threshold: { fontSize: 12, color: colors.textTertiary },
-  errorBanner: { padding: '8px 12px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`, color: colors.state.failed, borderRadius: 8, marginBottom: 12 },
-  list: { display: 'flex', flexDirection: 'column', gap: 12 },
-  card: { padding: 16, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 8 },
-  cardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  filePath: { fontFamily: 'ui-monospace, monospace', fontSize: 13, color: colors.textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-  confidencePill: { fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 999, background: '#fef3c7', color: '#92400e' },
-  meta: { fontSize: 12, color: colors.textSecondary, display: 'flex', gap: 12, flexWrap: 'wrap' },
-  actions: { display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' },
-  remapPicker: { ...fieldStyle, flex: 'none', minWidth: 200 },
-};
 
 export default function MappingReviewPage() {
   const { idToken } = useIdentityContext();
@@ -43,24 +20,24 @@ export default function MappingReviewPage() {
   const [remapById, setRemapById] = useState<Record<string, string>>({});
 
   return (
-    <div data-testid="mapping-review-page" style={pageContainerStyle}>
-      <div style={styles.header}>
+    <div data-testid="mapping-review-page" className="p-6 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between mb-4">
         <div>
-          <div style={styles.title}>Mapping needs review</div>
-          <div style={styles.threshold}>
+          <div className="text-[22px] font-bold text-text-primary">Mapping needs review</div>
+          <div className="text-xs text-text-tertiary">
             Showing items with confidence &lt; {Math.round(threshold * 100)}%.
           </div>
         </div>
       </div>
 
       {error ? (
-        <div data-testid="mapping-review-error" style={styles.errorBanner}>
+        <div data-testid="mapping-review-error" className="px-3 py-2 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load review queue: {error}
         </div>
       ) : null}
 
       {loading && items.length === 0 ? (
-        <div style={styles.list}>
+        <div className="flex flex-col gap-3">
           <SkeletonCard height={96} />
           <SkeletonCard height={96} />
           <SkeletonCard height={96} />
@@ -73,7 +50,7 @@ export default function MappingReviewPage() {
           testId="mapping-review-empty"
         />
       ) : (
-        <div data-testid="mapping-review-list" style={styles.list}>
+        <div data-testid="mapping-review-list" className="flex flex-col gap-3">
           {items.map((item) => (
             <ReviewRow
               key={item.itemId}
@@ -117,24 +94,31 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
     : '—';
 
   return (
-    <div data-testid={`review-row-${item.itemId}`} style={styles.card}>
-      <div style={styles.cardHeader}>
-        <span style={styles.filePath} title={item.sourcePath}>{item.sourcePath}</span>
-        <span style={styles.confidencePill}>conf {conf}</span>
+    <div data-testid={`review-row-${item.itemId}`} className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-[ui-monospace,monospace] text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap" title={item.sourcePath}>
+          {item.sourcePath}
+        </span>
+        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
+          conf {conf}
+        </span>
       </div>
-      <div style={styles.meta}>
+      <div className="text-xs text-text-secondary flex gap-3 flex-wrap">
         <span>Suggested type: <strong>{suggestedName}</strong></span>
         <span>Source: {item.sourceId.slice(0, 8)}</span>
       </div>
       {item.error ? (
-        <div style={{ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic' }}>
+        <div className="text-xs text-text-secondary italic">
           {item.error.slice(0, 200)}
         </div>
       ) : null}
-      <div style={styles.actions}>
+      <div className="flex gap-2 items-center flex-wrap">
         <button
           data-testid={`review-accept-${item.itemId}`}
-          style={saveBtnStyle(false)}
+          className={cn(
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
+            !item.documentTypeId && 'opacity-50 cursor-not-allowed',
+          )}
           onClick={onAccept}
           disabled={!item.documentTypeId}
           title={item.documentTypeId ? 'Commit the suggested type' : 'No suggestion to accept'}
@@ -143,7 +127,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         </button>
         <select
           data-testid={`review-remap-picker-${item.itemId}`}
-          style={styles.remapPicker}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[200px]"
           value={remapTypeId}
           onChange={(e) => onPickRemapType(e.target.value)}
         >
@@ -154,7 +138,10 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         </select>
         <button
           data-testid={`review-remap-${item.itemId}`}
-          style={saveBtnStyle(false)}
+          className={cn(
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]',
+            !remapTypeId && 'opacity-50 cursor-not-allowed',
+          )}
           onClick={onRemap}
           disabled={!remapTypeId}
         >
@@ -162,7 +149,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         </button>
         <button
           data-testid={`review-discard-${item.itemId}`}
-          style={cancelBtnStyle}
+          className="px-3 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
           onClick={onDiscard}
         >
           Discard

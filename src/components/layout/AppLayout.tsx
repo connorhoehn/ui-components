@@ -39,6 +39,7 @@ import { type PipelineIndexEntry } from '../pipelines/persistence/pipelineStorag
 import { listPipelines } from '../pipelines/persistence/pipelineStorageRemote';
 import { ObservabilityProvider } from '../observability/context/ObservabilityContext';
 import { useAlertToasts } from '../observability/hooks/useAlertToasts';
+import { cn } from '../../lib/cn';
 
 // Lazy-loaded: only DocumentEditorPage needed for docked video persistence
 const DocumentEditorPage = lazy(() => import('../doc-editor/DocumentEditorPage'));
@@ -77,58 +78,33 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
   const isClickable = (n: Notification) => (n.type === 'mention' || n.type === 'assignment') && !!n.sectionId;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 64,
-      right: 16,
-      width: 320,
-      zIndex: 1000,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 8,
-    }}>
+    <div className="fixed top-16 right-4 w-80 z-[1000] flex flex-col gap-2">
       {notifications.map(n => (
-        <div key={n.id} style={{
-          background: '#ffffff',
-          border: '1px solid #e2e8f0',
-          borderLeft: `3px solid ${n.type === 'mention' ? '#3b82f6' : '#646cff'}`,
-          borderRadius: 8,
-          padding: '12px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-          animation: 'slideInRight 0.3s ease-out',
-        }}>
+        <div
+          key={n.id}
+          className={cn(
+            'bg-surface border border-border rounded-lg px-4 py-3',
+            'flex items-center justify-between font-sans shadow-md',
+            'animate-[slideInRight_0.3s_ease-out]'
+          )}
+          style={{ borderLeft: `3px solid ${n.type === 'mention' ? '#3b82f6' : '#646cff'}` }}
+        >
           <span
             role={isClickable(n) ? 'button' : undefined}
             tabIndex={isClickable(n) ? 0 : undefined}
             onClick={isClickable(n) ? () => onClick?.(n) : undefined}
             onKeyDown={isClickable(n) ? (e) => { if (e.key === 'Enter') onClick?.(n); } : undefined}
-            style={{
-              fontSize: 14,
-              color: '#374151',
-              fontWeight: 400,
-              cursor: isClickable(n) ? 'pointer' : 'default',
-              textDecoration: isClickable(n) ? 'underline' : 'none',
-              textDecorationColor: '#94a3b8',
-            }}
+            className={cn(
+              'text-sm text-[#374151] font-normal',
+              isClickable(n) && 'cursor-pointer underline decoration-text-tertiary'
+            )}
           >
             {n.message}
           </span>
           <button
             onClick={() => onDismiss(n.id)}
             aria-label="Dismiss notification"
-            style={{
-              fontSize: 16,
-              color: '#94a3b8',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '0 0 0 12px',
-              lineHeight: 1,
-            }}
+            className="text-base text-text-tertiary bg-none border-none cursor-pointer pl-3 leading-none"
           >
             x
           </button>
@@ -441,15 +417,30 @@ function AppLayoutInner({
     }
   }, [dismissNotification]);
 
+  // Helper for menu button classes
+  const menuBtnClass = (isActive: boolean) => cn(
+    'block w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel',
+    isActive ? 'bg-surface-hover text-text-primary font-semibold' : 'bg-transparent text-[#374151] font-normal'
+  );
+
+  // Helper for tab button classes
+  const tabBtnClass = (isActive: boolean) => cn(
+    'px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out',
+    isActive
+      ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
+      : 'bg-transparent text-[#64748b] font-medium hover:bg-surface-hover'
+  );
+
+  // Sub-nav tab class
+  const subTabClass = (isActive: boolean) => cn(
+    'px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out',
+    isActive
+      ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
+      : 'bg-transparent text-[#64748b] font-medium hover:bg-surface-hover'
+  );
+
   return (
-    <div
-      style={{
-        position: 'relative',
-        minHeight: '100vh',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        background: '#f8fafc',
-      }}
-    >
+    <div className="relative min-h-screen font-sans bg-surface-panel">
       {/* Reactions overlay — fixed-position, sits above everything */}
       <ReactionsOverlay reactions={activeReactions} />
 
@@ -457,197 +448,96 @@ function AppLayoutInner({
       <NotificationBanner notifications={notifications} onDismiss={dismissNotification} onClick={handleNotificationClick} />
 
       {/* Header bar */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.75rem 1.5rem',
-          background: '#ffffff',
-          borderBottom: '1px solid #e2e8f0',
-          gap: '1rem',
-          position: 'sticky',
-          top: 0,
-          zIndex: 50,
-        }}
-      >
+      <div className="flex items-center justify-between px-6 py-3 bg-surface border-b border-border gap-4 sticky top-0 z-50">
         {/* Left: app title */}
-        <span
-          style={{
-            fontSize: '1rem',
-            fontWeight: 600,
-            color: '#0f172a',
-            flexShrink: 0,
-          }}
-        >
+        <span className="text-base font-semibold text-text-primary shrink-0">
           WebSocket Gateway
         </span>
 
         {/* Center: connection status + active room/channel */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, justifyContent: 'center' }}>
+        <div className="flex items-center gap-4 flex-1 justify-center">
           <ConnectionStatus state={connectionState} />
-          <span style={{
-            fontSize: '0.875rem',
-            color: '#64748b',
-            fontFamily: 'monospace',
-            background: '#f1f5f9',
-            border: '1px solid #e2e8f0',
-            borderRadius: 6,
-            padding: '0.25rem 0.625rem',
-          }}>
+          <span className="text-sm text-[#64748b] font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1">
             {rooms.find(r => r.roomId === activeRoomId)?.name ?? currentChannel}
           </span>
         </div>
 
         {/* Right: user email + sign out + hamburger menu */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
+        <div className="flex items-center gap-3 shrink-0">
           {userEmail && (
-            <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
+            <span className="text-sm text-[#64748b]">
               {userEmail}
             </span>
           )}
           <button
             onClick={onSignOut}
-            style={{
-              background: 'none',
-              border: '1px solid #e2e8f0',
-              borderRadius: 6,
-              padding: '0.25rem 0.75rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              color: '#374151',
-            }}
+            className="bg-none border border-border rounded-md px-3 py-1 cursor-pointer text-sm text-[#374151]"
           >
             Sign Out
           </button>
           {/* Hamburger — app-level menu */}
-          <div style={{ position: 'relative' }}>
+          <div className="relative">
             <button
               onClick={() => setShowAppMenu(v => !v)}
-              style={{
-                background: showAppMenu ? '#f1f5f9' : 'none',
-                border: '1px solid #e2e8f0',
-                borderRadius: 6,
-                padding: '0.25rem 0.5rem',
-                cursor: 'pointer',
-                fontSize: '1rem',
-                color: '#64748b',
-                lineHeight: 1,
-              }}
+              className={cn(
+                'border border-border rounded-md px-2 py-1 cursor-pointer text-base text-[#64748b] leading-none',
+                showAppMenu ? 'bg-surface-hover' : 'bg-none'
+              )}
               title="Menu"
               aria-label="Open app menu"
             >
               ☰
             </button>
             {showAppMenu && (
-              <div style={{
-                position: 'absolute', top: 'calc(100% + 6px)', right: 0,
-                background: '#fff', border: '1px solid #e2e8f0',
-                borderRadius: 8, boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                zIndex: 100, minWidth: 180, overflow: 'hidden',
-              }}>
-                <div style={{ padding: '6px 12px', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div className="absolute top-[calc(100%+6px)] right-0 bg-surface border border-border rounded-lg shadow-md z-[100] min-w-[180px] overflow-hidden">
+                <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
                   Content
                 </div>
                 <button
                   onClick={() => { navigate('/document-types'); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: activeView === 'doc-types' ? '#f1f5f9' : 'transparent',
-                    color: activeView === 'doc-types' ? '#0f172a' : '#374151',
-                    fontWeight: activeView === 'doc-types' ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = activeView === 'doc-types' ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(activeView === 'doc-types')}
                 >
                   📋 Document Types
                 </button>
                 <button
                   onClick={() => { navigate('/field-types'); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: activeView === 'field-types' ? '#f1f5f9' : 'transparent',
-                    color: activeView === 'field-types' ? '#0f172a' : '#374151',
-                    fontWeight: activeView === 'field-types' ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = activeView === 'field-types' ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(activeView === 'field-types')}
                 >
                   🧩 Data Types
                 </button>
-                <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
-                <div style={{ padding: '6px 12px', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div className="border-t border-surface-hover my-1" />
+                <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
                   Automation
                 </div>
                 <button
                   onClick={() => { navigate('/pipelines'); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: activeView === 'pipelines' ? '#f1f5f9' : 'transparent',
-                    color: activeView === 'pipelines' ? '#0f172a' : '#374151',
-                    fontWeight: activeView === 'pipelines' ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = activeView === 'pipelines' ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(activeView === 'pipelines')}
                 >
                   🔀 Pipelines
                 </button>
                 <button
                   onClick={() => { navigate('/observability'); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: activeView === 'observability' ? '#f1f5f9' : 'transparent',
-                    color: activeView === 'observability' ? '#0f172a' : '#374151',
-                    fontWeight: activeView === 'observability' ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = activeView === 'observability' ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(activeView === 'observability')}
                 >
                   📡 Observability
                 </button>
-                <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
-                <div style={{ padding: '6px 12px', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div className="border-t border-surface-hover my-1" />
+                <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
                   Analytics
                 </div>
                 <button
                   onClick={() => { navigate('/dashboard'); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: activeView === 'dashboard' ? '#f1f5f9' : 'transparent',
-                    color: activeView === 'dashboard' ? '#0f172a' : '#374151',
-                    fontWeight: activeView === 'dashboard' ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = activeView === 'dashboard' ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(activeView === 'dashboard')}
                 >
                   📊 Live Activity
                 </button>
-                <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
-                <div style={{ padding: '6px 12px', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div className="border-t border-surface-hover my-1" />
+                <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
                   Developer
                 </div>
                 <button
                   onClick={() => { setShowDevTools(v => !v); setShowAppMenu(false); }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left',
-                    padding: '8px 14px', fontSize: 14, border: 'none',
-                    background: showDevTools ? '#f1f5f9' : 'transparent',
-                    color: showDevTools ? '#0f172a' : '#374151',
-                    fontWeight: showDevTools ? 600 : 400,
-                    cursor: 'pointer', fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = showDevTools ? '#f1f5f9' : 'transparent'; }}
+                  className={menuBtnClass(showDevTools)}
                 >
                   🔧 Dev Tools
                 </button>
@@ -658,29 +548,16 @@ function AppLayoutInner({
       </div>
 
       {/* Body — sidebar + main */}
-      <div style={{ display: 'flex', minHeight: 'calc(100vh - 53px)' }}>
+      <div className="flex min-h-[calc(100vh-53px)]">
 
         {/* Sidebar — full when open; 56px icon strip when collapsed.
             Always visible, full-height, persistent. Replaces the previous
             display:none + overlay hamburger pattern. */}
         <div
+          className="shrink-0 border-r border-border bg-surface flex flex-col fixed top-[53px] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40 box-border transition-[width,padding] duration-[180ms] ease-in-out"
           style={{
             width: SIDEBAR_WIDTH,
-            flexShrink: 0,
             padding: sidebarOpen ? '1rem' : '0.5rem 0',
-            borderRight: '1px solid #e2e8f0',
-            background: '#ffffff',
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'fixed',
-            top: 53,
-            left: 0,
-            bottom: 0,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            zIndex: 40,
-            boxSizing: 'border-box',
-            transition: 'width 0.18s ease, padding 0.18s ease',
           }}
         >
           {sidebarOpen ? (
@@ -716,20 +593,10 @@ function AppLayoutInner({
 
         {/* Main content — offset by fixed sidebar width */}
         <div
+          className="flex flex-col gap-0 min-h-0 bg-surface-panel relative z-[1]"
           style={{
             marginLeft: SIDEBAR_WIDTH,
             width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
-            // No top padding — the primary tab bar sits flush below the
-            // header. Horizontal/bottom padding still applies via the
-            // wrapper around the route Outlet (see below).
-            padding: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 0,
-            minHeight: 0,
-            background: '#f8fafc',
-            position: 'relative',
-            zIndex: 1,
           }}
         >
 
@@ -737,9 +604,9 @@ function AppLayoutInner({
           {(() => {
             const inContent = activeView === 'doc-editor' || activeView === 'doc-types' || activeView === 'field-types';
             return (
-              <div style={{ position: 'sticky', top: 53, background: '#f8fafc', zIndex: 33, padding: '0 2rem' }}>
+              <div className="sticky top-[53px] bg-surface-panel z-[33] px-8">
                 {/* Main tabs */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 4px', borderBottom: '1px solid #e2e8f0' }}>
+                <div className="flex items-center gap-1 px-1 py-1.5 border-b border-border">
                   {([
                     ['/previews', 'panels', 'Previews'],
                     ['/social', 'social', 'Social'],
@@ -753,24 +620,7 @@ function AppLayoutInner({
                       <button
                         key={view}
                         onClick={() => navigate(path)}
-                        style={{
-                          padding: '6px 14px',
-                          border: 'none',
-                          borderRadius: 6,
-                          background: isActive ? '#e0e7ff' : 'transparent',
-                          color: isActive ? '#1e1b4b' : '#64748b',
-                          fontWeight: isActive ? 600 : 500,
-                          fontSize: '0.875rem',
-                          cursor: 'pointer',
-                          fontFamily: 'inherit',
-                          transition: 'background 120ms ease, color 120ms ease',
-                        }}
-                        onMouseEnter={e => {
-                          if (!isActive) (e.currentTarget as HTMLElement).style.background = '#f1f5f9';
-                        }}
-                        onMouseLeave={e => {
-                          if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent';
-                        }}
+                        className={cn(tabBtnClass(isActive), 'text-sm')}
                       >
                         {label}
                       </button>
@@ -781,14 +631,7 @@ function AppLayoutInner({
                     <button
                       data-testid="new-document-btn"
                       onClick={() => setShowNewDocModal(true)}
-                      style={{
-                        marginLeft: 'auto',
-                        display: 'flex', alignItems: 'center', gap: 4,
-                        padding: '5px 12px', fontSize: 13, fontWeight: 600,
-                        border: 'none', borderRadius: 6,
-                        background: '#3b82f6', color: '#ffffff',
-                        cursor: 'pointer', fontFamily: 'inherit',
-                      }}
+                      className="ml-auto flex items-center gap-1 px-3 py-[5px] text-[13px] font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit]"
                     >
                       + New Document
                     </button>
@@ -797,12 +640,7 @@ function AppLayoutInner({
 
                 {/* Sub-nav — visible when in Documents section */}
                 {inContent && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 4,
-                    padding: '6px 4px',
-                    borderBottom: '1px solid #e2e8f0',
-                    background: '#f8fafc',
-                  }}>
+                  <div className="flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel">
                     {([
                       ['/documents',      'doc-editor',  'Documents'],
                       ['/document-types', 'doc-types',   'Document Types'],
@@ -813,24 +651,7 @@ function AppLayoutInner({
                         <button
                           key={view}
                           onClick={() => navigate(path)}
-                          style={{
-                            padding: '5px 12px',
-                            border: 'none',
-                            borderRadius: 6,
-                            background: isActive ? '#e0e7ff' : 'transparent',
-                            color: isActive ? '#1e1b4b' : '#64748b',
-                            fontWeight: isActive ? 600 : 500,
-                            fontSize: '0.8125rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                            transition: 'background 120ms ease, color 120ms ease',
-                          }}
-                          onMouseEnter={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = '#f1f5f9';
-                          }}
-                          onMouseLeave={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent';
-                          }}
+                          className={subTabClass(isActive)}
                         >
                           {label}
                         </button>
@@ -841,12 +662,7 @@ function AppLayoutInner({
 
                 {/* Pipelines sub-nav */}
                 {activeView === 'pipelines' && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 4,
-                    padding: '6px 4px',
-                    borderBottom: '1px solid #e2e8f0',
-                    background: '#f8fafc',
-                  }}>
+                  <div className="flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel">
                     {([
                       ['/pipelines',           'All pipelines',     (p: string) => p === '/pipelines' || (p.startsWith('/pipelines/') && p !== '/pipelines/approvals' && p !== '/pipelines/runs')],
                       ['/pipelines/approvals', 'Pending approvals', (p: string) => p === '/pipelines/approvals'],
@@ -858,44 +674,13 @@ function AppLayoutInner({
                         <button
                           key={path}
                           onClick={() => navigate(path)}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            padding: '5px 12px',
-                            border: 'none',
-                            borderRadius: 6,
-                            background: isActive ? '#e0e7ff' : 'transparent',
-                            color: isActive ? '#1e1b4b' : '#64748b',
-                            fontWeight: isActive ? 600 : 500,
-                            fontSize: '0.8125rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                            transition: 'background 120ms ease, color 120ms ease',
-                          }}
-                          onMouseEnter={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = '#f1f5f9';
-                          }}
-                          onMouseLeave={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent';
-                          }}
+                          className={cn(subTabClass(isActive), 'flex items-center gap-1.5')}
                         >
                           <span>{label}</span>
                           {showBadge && (
                             <span
                               data-testid="pending-approvals-badge"
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minWidth: 18,
-                                height: 18,
-                                padding: '0 6px',
-                                borderRadius: 9,
-                                fontSize: 11,
-                                fontWeight: 700,
-                                background: '#f59e0b',
-                                color: '#fff',
-                                lineHeight: 1,
-                              }}
+                              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[11px] font-bold bg-[#f59e0b] text-white leading-none"
                             >
                               {pendingApprovalsCount}
                             </span>
@@ -908,12 +693,7 @@ function AppLayoutInner({
 
                 {/* Ingest sub-nav */}
                 {activeView === 'ingest' && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 4,
-                    padding: '6px 4px',
-                    borderBottom: '1px solid #e2e8f0',
-                    background: '#f8fafc',
-                  }}>
+                  <div className="flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel">
                     {([
                       ['/ingest',                'Dashboard',    (p: string) => p === '/ingest'],
                       ['/ingest/sources',        'Sources',      (p: string) => p.startsWith('/ingest/sources')],
@@ -930,25 +710,7 @@ function AppLayoutInner({
                         <button
                           key={path}
                           onClick={() => navigate(path)}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: 6,
-                            padding: '5px 12px',
-                            border: 'none',
-                            borderRadius: 6,
-                            background: isActive ? '#e0e7ff' : 'transparent',
-                            color: isActive ? '#1e1b4b' : '#64748b',
-                            fontWeight: isActive ? 600 : 500,
-                            fontSize: '0.8125rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                            transition: 'background 120ms ease, color 120ms ease',
-                          }}
-                          onMouseEnter={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = '#f1f5f9';
-                          }}
-                          onMouseLeave={e => {
-                            if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent';
-                          }}
+                          className={cn(subTabClass(isActive), 'flex items-center gap-1.5')}
                         >
                           <span>{label}</span>
                         </button>
@@ -959,12 +721,7 @@ function AppLayoutInner({
 
                 {/* Observability sub-nav */}
                 {activeView === 'observability' && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 2,
-                    padding: '0 4px',
-                    borderBottom: '1px solid #e2e8f0',
-                    background: '#f8fafc',
-                  }}>
+                  <div className="flex items-center gap-0.5 px-1 border-b border-border bg-surface-panel">
                     {([
                       ['/observability',         'Dashboard', (p: string) => p === '/observability'],
                       ['/observability/nodes',   'Nodes',     (p: string) => p === '/observability/nodes'],
@@ -976,17 +733,12 @@ function AppLayoutInner({
                         <button
                           key={path}
                           onClick={() => navigate(path)}
-                          style={{
-                            padding: '6px 12px',
-                            border: 'none',
-                            borderBottom: isActive ? '2px solid #646cff' : '2px solid transparent',
-                            background: 'none',
-                            color: isActive ? '#0f172a' : '#64748b',
-                            fontWeight: isActive ? 600 : 400,
-                            fontSize: '0.8125rem',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit',
-                          }}
+                          className={cn(
+                            'px-3 py-1.5 border-none bg-none cursor-pointer font-[inherit] text-[0.8125rem]',
+                            isActive
+                              ? 'border-b-2 border-b-primary text-text-primary font-semibold'
+                              : 'border-b-2 border-b-transparent text-[#64748b] font-normal'
+                          )}
                         >
                           {label}
                         </button>
@@ -1001,7 +753,7 @@ function AppLayoutInner({
           {/* Route content — rendered by React Router. Wrapped in a
               padded container so the tab bar above stays flush to the
               header but the page content below has breathing room. */}
-          <div style={{ padding: '1rem 2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1, minHeight: 0 }}>
+          <div className="px-8 pt-4 pb-6 flex flex-col gap-4 flex-1 min-h-0">
             <ApiDegradedBanner health={apiHealth} />
             <ErrorBoundary name="RouteContent">
               <Suspense fallback={<div>Loading...</div>}>
@@ -1016,7 +768,7 @@ function AppLayoutInner({
           {dockedVideoDocId && location.pathname !== `/documents/${dockedVideoDocId}` && (
             <ErrorBoundary name="DockedVideoEditor">
               <Suspense fallback={<div>Loading...</div>}>
-              <div style={{ display: 'none' }}>
+              <div className="hidden">
                 <DocumentEditorPage
                   documentId={dockedVideoDocId}
                   ws={ws}
@@ -1040,57 +792,23 @@ function AppLayoutInner({
 
       {/* Dev Tools slide-out panel */}
       {showDevTools && (
-        <div style={{
-          position: 'fixed',
-          top: 53,
-          right: 0,
-          bottom: 0,
-          width: 480,
-          background: '#ffffff',
-          borderLeft: '1px solid #e2e8f0',
-          boxShadow: '-4px 0 12px rgba(0,0,0,0.08)',
-          zIndex: 900,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.75rem 1rem',
-            borderBottom: '1px solid #e2e8f0',
-          }}>
-            <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0f172a' }}>
+        <div className="fixed top-[53px] right-0 bottom-0 w-[480px] bg-surface border-l border-border shadow-[-4px_0_12px_rgba(0,0,0,0.08)] z-[900] flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <span className="text-sm font-semibold text-text-primary">
               Dev Tools
             </span>
             <button
               onClick={() => setShowDevTools(false)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '1.25rem',
-                color: '#94a3b8',
-                lineHeight: 1,
-                padding: '0 4px',
-              }}
+              className="bg-none border-none cursor-pointer text-xl text-text-tertiary leading-none px-1"
             >
               x
             </button>
           </div>
-          <div style={{ flex: 1, overflow: 'auto', padding: '1rem' }}>
+          <div className="flex-1 overflow-auto p-4">
             <ErrorDisplay error={lastError} />
             <ErrorPanel errors={errors} />
             <TabbedEventLog entries={logEntries} />
-            <div
-              style={{
-                fontSize: '0.75rem',
-                color: '#94a3b8',
-                fontFamily: 'monospace',
-                marginTop: '0.5rem',
-              }}
-            >
+            <div className="text-xs text-text-tertiary font-mono mt-2">
               clientId: {clientId ?? '—'} | sessionToken: {sessionToken ? sessionToken.slice(0, 8) + '…' : '—'}
             </div>
           </div>

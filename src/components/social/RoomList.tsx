@@ -7,6 +7,7 @@ import { useState } from 'react';
 import type { RoomItem } from '../../hooks/useRooms';
 import { useFriends } from '../../hooks/useFriends';
 import type { PublicProfile } from '../../hooks/useFriends';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,7 +54,7 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
   };
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ margin: '4px 0 8px', padding: '8px', background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border">
       <input
         value={name}
         onChange={e => setName(e.target.value.slice(0, 50))}
@@ -61,43 +62,29 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
         maxLength={50}
         required
         autoFocus
-        style={{
-          width: '100%', boxSizing: 'border-box',
-          border: '1px solid #d1d5db',
-          borderRadius: 5,
-          padding: '5px 8px',
-          fontSize: 13,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: '#fff',
-          color: '#0f172a',
-          marginBottom: 6,
-        }}
+        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
       />
-      <div style={{ display: 'flex', gap: 6 }}>
+      <div className="flex gap-1.5">
         <button
           type="submit"
           disabled={!name.trim() || loading}
-          style={{
-            flex: 1, height: 28, border: 'none', borderRadius: 5,
-            background: !name.trim() || loading ? '#e2e8f0' : '#646cff',
-            color: !name.trim() || loading ? '#9ca3af' : '#fff',
-            fontSize: 12, fontWeight: 600,
-            cursor: !name.trim() || loading ? 'default' : 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className={cn(
+            'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
+            !name.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+          )}
         >
           {loading ? 'Creating…' : 'Create'}
         </button>
         <button
           type="button"
           onClick={onDiscard}
-          style={{ height: 28, padding: '0 8px', border: '1px solid #e2e8f0', borderRadius: 5, background: '#fff', color: '#64748b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
+          className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]"
         >
           Cancel
         </button>
       </div>
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 11, marginTop: 4 }}>
+        <div className="text-danger text-[11px] mt-1">
           {formError}
         </div>
       )}
@@ -137,13 +124,7 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
     return (
       <button
         onClick={() => setShowForm(true)}
-        style={{
-          width: '100%', textAlign: 'left', padding: '5px 8px',
-          background: 'none', border: 'none', cursor: 'pointer',
-          fontSize: 12, color: '#646cff', fontWeight: 600,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          borderRadius: 4, marginBottom: 4,
-        }}
+        className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded mb-1"
       >
         + New DM
       </button>
@@ -151,53 +132,39 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
   }
 
   return (
-    <form onSubmit={(e) => { void handleSubmit(e); }} style={{ margin: '4px 0 8px', padding: '8px', background: '#f8fafc', borderRadius: 6, border: '1px solid #e2e8f0' }}>
+    <form onSubmit={(e) => { void handleSubmit(e); }} className="my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border">
       <select
         value={peerId}
         onChange={e => setPeerId(e.target.value)}
         disabled={friends.length === 0}
-        style={{
-          width: '100%', boxSizing: 'border-box',
-          border: '1px solid #d1d5db',
-          borderRadius: 5,
-          padding: '5px 8px',
-          fontSize: 13,
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          background: '#fff',
-          color: '#0f172a',
-          marginBottom: 6,
-        }}
+        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
       >
-        <option value="">{friends.length === 0 ? 'No mutual friends yet' : 'Select a friend\u2026'}</option>
+        <option value="">{friends.length === 0 ? 'No mutual friends yet' : 'Select a friend…'}</option>
         {friends.map(f => (
           <option key={f.userId} value={f.userId}>{f.displayName}</option>
         ))}
       </select>
-      <div style={{ display: 'flex', gap: 6 }}>
+      <div className="flex gap-1.5">
         <button
           type="submit"
           disabled={!peerId.trim() || loading || friends.length === 0}
-          style={{
-            flex: 1, height: 28, border: 'none', borderRadius: 5,
-            background: !peerId.trim() || loading ? '#e2e8f0' : '#646cff',
-            color: !peerId.trim() || loading ? '#9ca3af' : '#fff',
-            fontSize: 12, fontWeight: 600,
-            cursor: !peerId.trim() || loading ? 'default' : 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className={cn(
+            'flex-1 h-7 border-none rounded-[5px] text-xs font-semibold font-[inherit]',
+            !peerId.trim() || loading ? 'bg-border text-text-tertiary cursor-default' : 'bg-primary text-white cursor-pointer',
+          )}
         >
           Open DM
         </button>
         <button
           type="button"
           onClick={() => setShowForm(false)}
-          style={{ height: 28, padding: '0 8px', border: '1px solid #e2e8f0', borderRadius: 5, background: '#fff', color: '#64748b', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}
+          className="h-7 px-2 border border-border rounded-[5px] bg-surface text-text-secondary text-xs cursor-pointer font-[inherit]"
         >
           Cancel
         </button>
       </div>
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 11, marginTop: 4 }}>
+        <div className="text-danger text-[11px] mt-1">
           {formError}
         </div>
       )}
@@ -216,31 +183,24 @@ interface RoomRowProps {
 }
 
 function RoomRow({ room, isActive, onClick }: RoomRowProps) {
-  const typeBadgeStyle = (type: RoomItem['type']): React.CSSProperties => {
-    if (type === 'standalone') return { background: '#ede9fe', color: '#646cff', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
-    if (type === 'group') return { background: '#eff6ff', color: '#3b82f6', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
-    return { background: '#f0fdf4', color: '#16a34a', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
+  const typeBadgeClass = (type: RoomItem['type']) => {
+    if (type === 'standalone') return 'bg-[#ede9fe] text-primary text-xs px-2 py-0.5 rounded';
+    if (type === 'group') return 'bg-info-bg text-info text-xs px-2 py-0.5 rounded';
+    return 'bg-success-bg text-success text-xs px-2 py-0.5 rounded';
   };
 
   return (
     <div
       onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        height: 56,
-        borderBottom: '1px solid #f1f5f9',
-        cursor: 'pointer',
-        paddingLeft: isActive ? 13 : 0,
-        paddingRight: 8,
-        background: isActive ? '#f1f5f9' : 'transparent',
-        borderLeft: isActive ? '3px solid #646cff' : '3px solid transparent',
-      }}
+      className={cn(
+        'flex items-center h-14 border-b border-surface-hover cursor-pointer pr-2',
+        isActive ? 'bg-surface-hover border-l-[3px] border-l-primary pl-[13px]' : 'bg-transparent border-l-[3px] border-l-transparent',
+      )}
     >
-      <div style={{ flex: 1, fontSize: 16, color: '#0f172a', fontWeight: isActive ? 600 : 400 }}>
+      <div className={cn('flex-1 text-base text-text-primary', isActive ? 'font-semibold' : 'font-normal')}>
         {room.name}
       </div>
-      <span style={typeBadgeStyle(room.type)}>{room.type}</span>
+      <span className={typeBadgeClass(room.type)}>{room.type}</span>
     </div>
   );
 }
@@ -253,21 +213,15 @@ function CompactRoomRow({ room, isActive, onClick }: RoomRowProps) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 6,
-        width: '100%', border: 'none', borderRadius: 5,
-        padding: '6px 8px', cursor: 'pointer',
-        background: isActive ? '#ede9fe' : 'transparent',
-        color: isActive ? '#4c1d95' : '#374151',
-        fontWeight: isActive ? 600 : 400,
-        fontSize: 13, textAlign: 'left',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
+      className={cn(
+        'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
+        isActive ? 'bg-[#ede9fe] text-[#4c1d95] font-semibold' : 'bg-transparent text-text-primary font-normal',
+      )}
     >
-      <span style={{ color: isActive ? '#646cff' : '#94a3b8', fontSize: 13, flexShrink: 0 }}>
+      <span className={cn('text-[13px] shrink-0', isActive ? 'text-primary' : 'text-text-tertiary')}>
         {room.type === 'dm' ? '●' : '#'}
       </span>
-      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
         {room.name}
       </span>
     </button>
@@ -288,35 +242,23 @@ function RoomsErrorState({ message, onRetry, compact }: RoomsErrorStateProps) {
   return (
     <div
       role="alert"
-      style={{
-        padding: compact ? '12px 8px' : '24px 16px',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 6,
-      }}
+      className={cn(
+        'text-center flex flex-col items-center gap-1.5',
+        compact ? 'px-2 py-3' : 'px-4 py-6',
+      )}
     >
-      <div style={{ fontSize: compact ? 12 : 14, fontWeight: 600, color: '#b91c1c' }}>
+      <div className={cn('font-semibold text-[#b91c1c]', compact ? 'text-xs' : 'text-sm')}>
         Couldn't load rooms
       </div>
-      <div style={{ fontSize: compact ? 11 : 12, color: '#64748b' }}>{message}</div>
+      <div className={cn('text-text-secondary', compact ? 'text-[11px]' : 'text-xs')}>{message}</div>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          style={{
-            marginTop: 4,
-            padding: compact ? '3px 10px' : '4px 14px',
-            fontSize: compact ? 11 : 12,
-            fontWeight: 500,
-            color: '#1d4ed8',
-            background: '#eff6ff',
-            border: '1px solid #bfdbfe',
-            borderRadius: 4,
-            cursor: 'pointer',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-          }}
+          className={cn(
+            'mt-1 font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer font-[system-ui,-apple-system,sans-serif]',
+            compact ? 'px-2.5 py-0.5 text-[11px]' : 'px-3.5 py-1 text-xs',
+          )}
         >
           Retry
         </button>
@@ -341,17 +283,11 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
 
   if (compact) {
     return (
-      <div style={{ padding: '8px 8px 0' }}>
+      <div className="px-2 pt-2">
         {/* Compact "+ New Room" link */}
         <button
           onClick={() => setShowCreateForm(prev => !prev)}
-          style={{
-            width: '100%', textAlign: 'left', padding: '5px 8px',
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 12, color: '#646cff', fontWeight: 600,
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            borderRadius: 4,
-          }}
+          className="w-full text-left px-2 py-1 bg-transparent border-none cursor-pointer text-xs text-primary font-semibold font-[system-ui,-apple-system,sans-serif] rounded"
         >
           + New Room
         </button>
@@ -365,11 +301,11 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
         <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} />
         <div>
           {loading && rooms.length === 0 ? (
-            <div style={{ padding: '8px', color: '#94a3b8', fontSize: 12, textAlign: 'center' }}>Loading…</div>
+            <div className="p-2 text-text-tertiary text-xs text-center">Loading…</div>
           ) : error && rooms.length === 0 ? (
             <RoomsErrorState message={error} onRetry={onRetry} compact />
           ) : rooms.length === 0 ? (
-            <div style={{ padding: '12px 8px', color: '#94a3b8', fontSize: 12 }}>No rooms yet</div>
+            <div className="px-2 py-3 text-text-tertiary text-xs">No rooms yet</div>
           ) : (
             rooms.map(room => (
               <CompactRoomRow
@@ -385,40 +321,12 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
     );
   }
 
-  const sectionCardStyle: React.CSSProperties = {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 8,
-    padding: '1.25rem',
-  };
-
-  const sectionHeaderStyle: React.CSSProperties = {
-    fontSize: '0.75rem',
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    color: '#64748b',
-    margin: '0 0 0.75rem 0',
-  };
-
   return (
-    <div style={sectionCardStyle}>
-      <h2 style={sectionHeaderStyle}>Rooms</h2>
+    <div className="bg-surface border border-border rounded-lg p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Rooms</h2>
       <button
         onClick={() => setShowCreateForm(prev => !prev)}
-        style={{
-          width: '100%',
-          height: 36,
-          marginBottom: 8,
-          background: '#646cff',
-          color: '#ffffff',
-          border: 'none',
-          borderRadius: 8,
-          fontSize: 14,
-          fontWeight: 600,
-          cursor: 'pointer',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}
+        className="w-full h-9 mb-2 bg-primary text-white border-none rounded-lg text-sm font-semibold cursor-pointer font-[system-ui,-apple-system,sans-serif]"
       >
         Create Room
       </button>
@@ -430,20 +338,20 @@ export function RoomList({ idToken, rooms, createRoom, createDM, loading, error,
         />
       )}
       <DMRoomButton onCreateDM={createDM} loading={loading} friends={friends} />
-      <div style={{ maxHeight: 320, overflowY: 'auto' }}>
+      <div className="max-h-80 overflow-y-auto">
         {loading && rooms.length === 0 ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '1rem', justifyContent: 'center', color: '#64748b' }}>
-            <span style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid #e2e8f0', borderTopColor: '#646cff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">
+            <span className="inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
             Loading...
           </div>
         ) : error && rooms.length === 0 ? (
           <RoomsErrorState message={error} onRetry={onRetry} />
         ) : rooms.length === 0 ? (
-          <div style={{ padding: '24px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+          <div className="py-6 text-center">
+            <div className="text-sm font-semibold text-text-primary mb-1">
               No rooms yet
             </div>
-            <div style={{ fontSize: 14, color: '#9ca3af' }}>
+            <div className="text-sm text-text-tertiary">
               Create a room or ask to be added.
             </div>
           </div>

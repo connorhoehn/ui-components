@@ -7,26 +7,10 @@
 //   • Replay — re-enqueue the entry (POST /api/ingest/dlq/:id/replay).
 //   • Drop   — purge without replay   (DELETE /api/ingest/dlq/:id).
 
-import type { CSSProperties } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, fieldStyle, pageContainerStyle, saveBtnStyle, cancelBtnStyle } from '../../constants/styles';
 import { useIngestDLQ } from '../../hooks/useIngestDLQ';
 import type { DLQEntryRow } from '../../hooks/useIngestDLQ';
-
-const styles: Record<string, CSSProperties> = {
-  header: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16, gap: 12, flexWrap: 'wrap' },
-  title: { fontSize: 22, fontWeight: 700, color: colors.textPrimary },
-  subtitle: { fontSize: 12, color: colors.textTertiary },
-  errorBanner: { padding: '8px 12px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`, color: colors.state.failed, borderRadius: 8, marginBottom: 12 },
-  list: { display: 'flex', flexDirection: 'column', gap: 12 },
-  card: { padding: 14, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 8 },
-  cardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  envId: { fontFamily: 'ui-monospace, monospace', fontSize: 13, color: colors.textPrimary },
-  meta: { fontSize: 12, color: colors.textSecondary, display: 'flex', gap: 16, flexWrap: 'wrap' },
-  errorText: { fontSize: 12, color: colors.textPrimary, fontFamily: 'ui-monospace, monospace', background: colors.surfaceInset, padding: '6px 8px', borderRadius: 6, whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: 80, overflow: 'auto' },
-  actions: { display: 'flex', gap: 8 },
-};
 
 function formatAge(ms: number): string {
   const delta = Date.now() - ms;
@@ -41,22 +25,22 @@ export default function DeadLetterQueuePage() {
   const { entries, loading, error, replay, drop } = useIngestDLQ();
 
   return (
-    <div data-testid="ingest-dlq-page" style={pageContainerStyle}>
-      <div style={styles.header}>
+    <div data-testid="ingest-dlq-page" className="p-6 flex flex-col gap-3">
+      <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
         <div>
-          <div style={styles.title}>Dead Letter Queue</div>
-          <div style={styles.subtitle}>Items the engine couldn't process. Replay re-enqueues; drop purges.</div>
+          <div className="text-[22px] font-bold text-text-primary">Dead Letter Queue</div>
+          <div className="text-xs text-text-tertiary">Items the engine couldn't process. Replay re-enqueues; drop purges.</div>
         </div>
       </div>
 
       {error ? (
-        <div data-testid="ingest-dlq-error" style={styles.errorBanner}>
+        <div data-testid="ingest-dlq-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           {error}
         </div>
       ) : null}
 
       {loading && entries.length === 0 ? (
-        <div style={styles.list}>
+        <div className="flex flex-col gap-3">
           <SkeletonCard height={96} />
           <SkeletonCard height={96} />
           <SkeletonCard height={96} />
@@ -69,7 +53,7 @@ export default function DeadLetterQueuePage() {
           testId="ingest-dlq-empty"
         />
       ) : (
-        <div data-testid="ingest-dlq-list" style={styles.list}>
+        <div data-testid="ingest-dlq-list" className="flex flex-col gap-3">
           {entries.map((e) => (
             <DLQRow
               key={e.id}
@@ -92,31 +76,31 @@ interface DLQRowProps {
 
 function DLQRow({ entry, onReplay, onDrop }: DLQRowProps) {
   return (
-    <div data-testid={`dlq-row-${entry.id}`} style={styles.card}>
-      <div style={styles.cardHeader}>
-        <span style={styles.envId} title={entry.id}>{entry.id}</span>
-        <span style={{ fontSize: 11, color: colors.textTertiary }}>{formatAge(entry.failedAtMs)}</span>
+    <div data-testid={`dlq-row-${entry.id}`} className="p-3.5 bg-surface border border-border rounded-[10px] flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-mono text-[13px] text-text-primary" title={entry.id}>{entry.id}</span>
+        <span className="text-[11px] text-text-tertiary">{formatAge(entry.failedAtMs)}</span>
       </div>
-      <div style={styles.meta}>
+      <div className="text-xs text-text-secondary flex gap-4 flex-wrap">
         <span>Attempts: <strong>{entry.totalAttempts}</strong></span>
         {(entry.envelope as { body?: { sourceId?: string } }).body?.sourceId ? (
           <span>Source: {(entry.envelope as { body: { sourceId: string } }).body.sourceId.slice(0, 12)}</span>
         ) : null}
       </div>
       {entry.lastError ? (
-        <div style={styles.errorText}>{entry.lastError}</div>
+        <div className="text-xs text-text-primary font-mono bg-surface-inset px-2 py-1.5 rounded-md whitespace-pre-wrap break-words max-h-20 overflow-auto">{entry.lastError}</div>
       ) : null}
-      <div style={styles.actions}>
+      <div className="flex gap-2">
         <button
           data-testid={`dlq-replay-${entry.id}`}
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
           onClick={onReplay}
         >
           Replay
         </button>
         <button
           data-testid={`dlq-drop-${entry.id}`}
-          style={cancelBtnStyle}
+          className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
           onClick={onDrop}
         >
           Drop

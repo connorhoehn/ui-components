@@ -4,6 +4,7 @@
 // optional row click, and per-row action buttons.
 
 import { useState, useCallback, useMemo } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface Column<T> {
   key: string;
@@ -21,52 +22,6 @@ export interface EntityTableProps<T> {
   emptyMessage?: string;
   loading?: boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  fontSize: 'var(--ui-fontSizeMd)',
-};
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  borderBottom: '2px solid var(--ui-border)',
-  color: 'var(--ui-textSecondary)',
-  fontWeight: 600,
-  fontSize: 'var(--ui-fontSizeSm)',
-  whiteSpace: 'nowrap',
-  userSelect: 'none',
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  borderBottom: '1px solid var(--ui-border)',
-  color: 'var(--ui-textPrimary)',
-  verticalAlign: 'middle',
-};
-
-const rowHoverStyle: React.CSSProperties = {
-  cursor: 'pointer',
-};
-
-const emptyStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingLg)',
-  textAlign: 'center',
-  color: 'var(--ui-textMuted)',
-};
-
-const skeletonRowStyle: React.CSSProperties = {
-  height: '20px',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-border)',
-  opacity: 0.5,
-  animation: 'pulse 1.5s ease-in-out infinite',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -108,28 +63,35 @@ export function EntityTable<T extends Record<string, unknown>>({
 
   if (loading) {
     return (
-      <table style={tableStyle}>
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} style={thStyle}>
+              <th
+                key={col.key}
+                className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none"
+              >
                 {col.header}
               </th>
             ))}
-            {actions && <th style={thStyle}>Actions</th>}
+            {actions && (
+              <th className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
           {Array.from({ length: 5 }).map((_, i) => (
             <tr key={i}>
               {columns.map((col) => (
-                <td key={col.key} style={tdStyle}>
-                  <div style={skeletonRowStyle} />
+                <td key={col.key} className="px-4 py-2 border-b border-border text-text-primary align-middle">
+                  <div className="h-5 rounded-sm bg-border opacity-50 animate-pulse" />
                 </td>
               ))}
               {actions && (
-                <td style={tdStyle}>
-                  <div style={skeletonRowStyle} />
+                <td className="px-4 py-2 border-b border-border text-text-primary align-middle">
+                  <div className="h-5 rounded-sm bg-border opacity-50 animate-pulse" />
                 </td>
               )}
             </tr>
@@ -140,45 +102,52 @@ export function EntityTable<T extends Record<string, unknown>>({
   }
 
   if (data.length === 0) {
-    return <p style={emptyStyle}>{emptyMessage}</p>;
+    return <p className="p-6 text-center text-text-tertiary">{emptyMessage}</p>;
   }
 
   return (
-    <table style={tableStyle}>
+    <table className="w-full border-collapse text-sm">
       <thead>
         <tr>
           {columns.map((col) => (
             <th
               key={col.key}
-              style={{
-                ...thStyle,
-                cursor: col.sortable ? 'pointer' : 'default',
-              }}
+              className={cn(
+                'text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none',
+                col.sortable ? 'cursor-pointer' : 'cursor-default'
+              )}
               onClick={col.sortable ? () => handleSort(col.key) : undefined}
             >
               {col.header}
               {col.sortable && sortKey === col.key && (
-                <span style={{ marginLeft: '4px' }}>{sortDir === 'asc' ? '▲' : '▼'}</span>
+                <span className="ml-1">{sortDir === 'asc' ? '▲' : '▼'}</span>
               )}
             </th>
           ))}
-          {actions && <th style={thStyle}>Actions</th>}
+          {actions && (
+            <th className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none">
+              Actions
+            </th>
+          )}
         </tr>
       </thead>
       <tbody>
         {sortedData.map((item) => (
           <tr
             key={String(item[keyField])}
-            style={onRowClick ? rowHoverStyle : undefined}
+            className={cn(onRowClick && 'cursor-pointer')}
             onClick={onRowClick ? () => onRowClick(item) : undefined}
           >
             {columns.map((col) => (
-              <td key={col.key} style={tdStyle}>
+              <td key={col.key} className="px-4 py-2 border-b border-border text-text-primary align-middle">
                 {col.render ? col.render(item) : String(item[col.key] ?? '')}
               </td>
             ))}
             {actions && (
-              <td style={tdStyle} onClick={(e) => e.stopPropagation()}>
+              <td
+                className="px-4 py-2 border-b border-border text-text-primary align-middle"
+                onClick={(e) => e.stopPropagation()}
+              >
                 {actions(item)}
               </td>
             )}

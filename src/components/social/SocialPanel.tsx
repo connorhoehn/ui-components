@@ -8,6 +8,7 @@ import { useSocialProfile } from '../../hooks/useSocialProfile';
 import { useFriends } from '../../hooks/useFriends';
 import type { ProfileItem, OnMessageFn } from '../../hooks/useSocialProfile';
 import type { PublicProfile } from '../../hooks/useFriends';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -56,33 +57,30 @@ function profileItemToUserProfile(p: ProfileItem): UserProfile {
 
 function Avatar({ user, size }: { user: UserProfile; size: 32 | 48 }) {
   const initials = user.displayName.slice(0, 2).toUpperCase();
-  const style: React.CSSProperties = {
-    width: size,
-    height: size,
-    borderRadius: '50%',
-    background: '#e2e8f0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: size === 48 ? 16 : 12,
-    fontWeight: 600,
-    color: '#374151',
-    flexShrink: 0,
-    overflow: 'hidden',
-  };
   if (user.avatarUrl) {
     return (
-      <div style={style}>
+      <div
+        className={cn(
+          'rounded-full bg-border flex items-center justify-center font-semibold text-text-primary shrink-0 overflow-hidden',
+          size === 48 ? 'w-12 h-12 text-base' : 'w-8 h-8 text-xs',
+        )}
+      >
         <img
           src={user.avatarUrl}
           alt={`${user.displayName}'s avatar`}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          className="w-full h-full object-cover"
         />
       </div>
     );
   }
   return (
-    <div style={style} aria-label={`Avatar placeholder for ${user.displayName}`}>
+    <div
+      className={cn(
+        'rounded-full bg-border flex items-center justify-center font-semibold text-text-primary shrink-0 overflow-hidden',
+        size === 48 ? 'w-12 h-12 text-base' : 'w-8 h-8 text-xs',
+      )}
+      aria-label={`Avatar placeholder for ${user.displayName}`}
+    >
       {initials}
     </div>
   );
@@ -101,23 +99,6 @@ interface FollowButtonProps {
 
 function FollowButton({ targetUser, followState, compact = false, onFollowChange }: FollowButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false);
-  const height = compact ? 28 : 36;
-
-  const buttonStyle = (state: FollowState): React.CSSProperties => {
-    const base: React.CSSProperties = {
-      height,
-      borderRadius: 8,
-      fontSize: 14,
-      cursor: 'pointer',
-      minWidth: 88,
-      padding: '0 16px',
-      border: 'none',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-    };
-    if (state === 'not-following') return { ...base, background: '#646cff', color: '#ffffff', fontWeight: 600 };
-    if (state === 'following') return { ...base, background: '#ffffff', color: '#374151', fontWeight: 400, border: '1px solid #e2e8f0' };
-    return { ...base, background: '#f1f5f9', color: '#64748b', fontWeight: 400, border: '1px solid #e2e8f0' };
-  };
 
   const handleFollow = () => {
     void onFollowChange(targetUser.id, 'pending');
@@ -133,7 +114,7 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
   if (followState === 'not-following') {
     return (
       <button
-        style={buttonStyle('not-following')}
+        className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border-none font-[system-ui,-apple-system,sans-serif] bg-primary text-white font-semibold', compact ? 'h-7' : 'h-9')}
         onClick={handleFollow}
         aria-label={`Follow ${targetUser.displayName}`}
       >
@@ -144,36 +125,40 @@ function FollowButton({ targetUser, followState, compact = false, onFollowChange
 
   if (followState === 'pending') {
     return (
-      <button style={buttonStyle('pending')} disabled aria-label={`Follow ${targetUser.displayName}`}>
-        Following\u2026
+      <button
+        className={cn('rounded-lg text-sm min-w-[88px] px-4 border border-border font-[system-ui,-apple-system,sans-serif] bg-surface-hover text-text-secondary font-normal cursor-default', compact ? 'h-7' : 'h-9')}
+        disabled
+        aria-label={`Follow ${targetUser.displayName}`}
+      >
+        Following…
       </button>
     );
   }
 
   // following state
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+    <div className="flex flex-col gap-1">
       <button
-        style={buttonStyle('following')}
+        className={cn('rounded-lg text-sm cursor-pointer min-w-[88px] px-4 border border-border font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary font-normal', compact ? 'h-7' : 'h-9')}
         onClick={handleUnfollowClick}
         aria-label={`Unfollow ${targetUser.displayName}`}
       >
         Following
       </button>
       {showConfirm && (
-        <div role="group" aria-label="Confirm unfollow" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ fontSize: 14, color: '#374151', marginRight: 4 }}>
+        <div role="group" aria-label="Confirm unfollow" className="flex gap-2 items-center">
+          <span className="text-sm text-text-primary mr-1">
             Unfollow {targetUser.displayName}?
           </span>
           <button
             onClick={handleKeepFollowing}
-            style={{ height: 36, borderRadius: 8, fontSize: 14, padding: '0 12px', background: '#ffffff', color: '#374151', border: '1px solid #e2e8f0', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+            className="h-9 rounded-lg text-sm px-3 bg-surface text-text-primary border border-border cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
             Keep Following
           </button>
           <button
             onClick={handleConfirmUnfollow}
-            style={{ height: 36, borderRadius: 8, fontSize: 14, padding: '0 12px', background: '#dc2626', color: '#ffffff', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+            className="h-9 rounded-lg text-sm px-3 bg-danger text-white border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
             Unfollow
           </button>
@@ -209,10 +194,6 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
     setVisibility(user.visibility);
   }, [user]);
 
-  const privacyBadgeStyle = (v: Visibility): React.CSSProperties => v === 'public'
-    ? { background: '#f0fdf4', color: '#16a34a', fontSize: 12, padding: '2px 8px', borderRadius: 4 }
-    : { background: '#f1f5f9', color: '#64748b', fontSize: 12, padding: '2px 8px', borderRadius: 4 };
-
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -224,95 +205,67 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
   };
 
   if (editing) {
-    const inputStyle: React.CSSProperties = {
-      width: '100%',
-      boxSizing: 'border-box',
-      border: '1px solid #d1d5db',
-      borderRadius: 6,
-      padding: '6px 10px',
-      fontSize: 14,
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      background: '#f9fafb',
-      color: '#0f172a',
-    };
     return (
       <div>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 14, color: '#374151', display: 'block', marginBottom: 4 }}>Display name</label>
+        <div className="mb-3">
+          <label className="text-sm text-text-primary block mb-1">Display name</label>
           <input
             value={displayName}
             onChange={e => setDisplayName(e.target.value.slice(0, 50))}
             placeholder="Your name"
             maxLength={50}
-            style={inputStyle}
+            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
           />
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 14, color: '#374151', display: 'block', marginBottom: 4 }}>Bio</label>
+        <div className="mb-3">
+          <label className="text-sm text-text-primary block mb-1">Bio</label>
           <textarea
             value={bio}
             onChange={e => setBio(e.target.value.slice(0, 160))}
             placeholder="Tell people a bit about yourself (max 160 characters)"
             maxLength={160}
             rows={3}
-            style={{ ...inputStyle, resize: 'vertical' }}
+            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary resize-y"
           />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 14, color: '#374151', display: 'block', marginBottom: 4 }}>Avatar URL</label>
+        <div className="mb-4">
+          <label className="text-sm text-text-primary block mb-1">Avatar URL</label>
           <input
             value={avatarUrl}
             onChange={e => setAvatarUrl(e.target.value)}
             placeholder="https://example.com/avatar.png"
-            style={inputStyle}
+            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
           />
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <div role="radiogroup" aria-label="Profile visibility" style={{ display: 'flex', gap: 8 }}>
+        <div className="mb-4">
+          <div role="radiogroup" aria-label="Profile visibility" className="flex gap-2">
             {(['public', 'private'] as Visibility[]).map(v => (
               <button
                 key={v}
                 role="radio"
                 aria-checked={visibility === v}
                 onClick={() => setVisibility(v)}
-                style={{
-                  padding: '4px 16px',
-                  borderRadius: 20,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  border: '1px solid #e2e8f0',
-                  background: visibility === v ? '#646cff' : '#ffffff',
-                  color: visibility === v ? '#ffffff' : '#374151',
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                }}
+                className={cn(
+                  'px-4 py-1 rounded-full text-sm cursor-pointer border border-border font-[system-ui,-apple-system,sans-serif]',
+                  visibility === v ? 'bg-primary text-white' : 'bg-surface text-text-primary',
+                )}
               >
                 {v.charAt(0).toUpperCase() + v.slice(1)}
               </button>
             ))}
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="flex items-center gap-3">
           <button
             onClick={() => { void handleSave(); }}
             disabled={saving}
-            style={{
-              flex: 1,
-              height: 36,
-              background: '#646cff',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: saving ? 'default' : 'pointer',
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-            }}
+            className={cn('flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]', saving ? 'cursor-default' : 'cursor-pointer')}
           >
-            {saving ? 'Saving\u2026' : 'Save Changes'}
+            {saving ? 'Saving…' : 'Save Changes'}
           </button>
           <button
             onClick={() => setEditing(false)}
-            style={{ fontSize: 14, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'system-ui, -apple-system, sans-serif' }}
+            className="text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]"
           >
             Discard Changes
           </button>
@@ -323,29 +276,32 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+      <div className="flex items-start gap-3 mb-3">
         <Avatar user={user} size={48} />
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 20, fontWeight: 600, color: '#0f172a' }}>{user.displayName}</span>
-            <span style={privacyBadgeStyle(user.visibility)}>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xl font-semibold text-text-primary">{user.displayName}</span>
+            <span className={cn(
+              'text-xs px-2 py-0.5 rounded',
+              user.visibility === 'public' ? 'bg-success-bg text-success' : 'bg-surface-hover text-text-secondary',
+            )}>
               {user.visibility === 'public' ? 'Public' : 'Private'}
             </span>
           </div>
-          <p style={{ fontSize: 16, color: '#374151', margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
+          <p className="text-base text-text-primary m-0 overflow-hidden line-clamp-3">
             {user.bio}
           </p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 16, fontSize: 14, color: '#64748b', marginBottom: 12 }}>
-        <span><strong style={{ color: '#0f172a' }}>{user.followersCount ?? 0}</strong> Followers</span>
-        <span><strong style={{ color: '#0f172a' }}>{user.followingCount ?? 0}</strong> Following</span>
-        <span><strong style={{ color: '#0f172a' }}>{user.friendsCount ?? 0}</strong> Friends</span>
+      <div className="flex gap-4 text-sm text-text-secondary mb-3">
+        <span><strong className="text-text-primary">{user.followersCount ?? 0}</strong> Followers</span>
+        <span><strong className="text-text-primary">{user.followingCount ?? 0}</strong> Following</span>
+        <span><strong className="text-text-primary">{user.friendsCount ?? 0}</strong> Friends</span>
       </div>
       {isOwnProfile && (
         <button
           onClick={() => setEditing(true)}
-          style={{ fontSize: 14, color: '#646cff', background: 'none', border: 'none', cursor: 'pointer', padding: 0, fontFamily: 'system-ui, -apple-system, sans-serif' }}
+          className="text-sm text-primary bg-transparent border-none cursor-pointer p-0 font-[system-ui,-apple-system,sans-serif]"
         >
           Edit profile
         </button>
@@ -386,27 +342,21 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
   const activeUsers = tabs.find(t => t.key === activeTab)?.users ?? [];
 
   return (
-    <div style={{ marginTop: 16 }}>
+    <div className="mt-4">
       {/* Tab bar */}
-      <div role="tablist" style={{ display: 'flex', borderBottom: '1px solid #e2e8f0', marginBottom: 12 }}>
+      <div role="tablist" className="flex border-b border-border mb-3">
         {tabs.map(tab => (
           <button
             key={tab.key}
             role="tab"
             aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
-            style={{
-              padding: '8px 16px',
-              fontSize: 14,
-              fontWeight: 400,
-              color: activeTab === tab.key ? '#0f172a' : '#64748b',
-              background: 'none',
-              border: 'none',
-              borderBottom: activeTab === tab.key ? '2px solid #646cff' : '2px solid transparent',
-              cursor: 'pointer',
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              marginBottom: -1,
-            }}
+            className={cn(
+              'px-4 py-2 text-sm font-normal bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif] -mb-px',
+              activeTab === tab.key
+                ? 'text-text-primary border-b-2 border-b-primary'
+                : 'text-text-secondary border-b-2 border-b-transparent',
+            )}
           >
             {tab.label}
           </button>
@@ -417,14 +367,14 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
       <div
         role="tabpanel"
         aria-label={activeTab}
-        style={{ minHeight: 120 }}
+        className="min-h-[120px]"
       >
         {activeUsers.length === 0 ? (
-          <div style={{ padding: '24px 0', textAlign: 'center' }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 4 }}>
+          <div className="py-6 text-center">
+            <div className="text-sm font-semibold text-text-primary mb-1">
               {emptyStates[activeTab].heading}
             </div>
-            <div style={{ fontSize: 14, color: '#9ca3af' }}>
+            <div className="text-sm text-text-tertiary">
               {emptyStates[activeTab].body}
             </div>
           </div>
@@ -433,20 +383,14 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
             {activeUsers.map(user => (
               <div
                 key={user.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  height: 56,
-                  borderBottom: '1px solid #f1f5f9',
-                }}
+                className="flex items-center gap-2 h-14 border-b border-surface-hover"
               >
                 <Avatar user={user} size={32} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 16, color: '#0f172a' }}>{user.displayName}</div>
-                  <div style={{ fontSize: 14, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 240 }}>
+                <div className="flex-1">
+                  <div className="text-base text-text-primary">{user.displayName}</div>
+                  <div className="text-sm text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap max-w-[240px]">
                     {user.visibility === 'private' ? (
-                      <em style={{ color: '#9ca3af' }}>This profile is private.</em>
+                      <em className="text-text-tertiary">This profile is private.</em>
                     ) : user.bio}
                   </div>
                 </div>
@@ -506,31 +450,15 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
     friendsCount: friends.length,
   } : null;
 
-  const sectionCardStyle: React.CSSProperties = {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 8,
-    padding: '1.25rem',
-  };
-
-  const sectionHeaderStyle: React.CSSProperties = {
-    fontSize: '0.75rem',
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    color: '#64748b',
-    margin: '0 0 0.75rem 0',
-  };
-
   // Suppress unused warning for onMessage — it's accepted as a prop for symmetry
   // with GroupPanel / RoomList but SocialPanel itself does not subscribe to WS events.
   void onMessage;
 
   return (
-    <div style={sectionCardStyle}>
-      <h2 style={sectionHeaderStyle}>Social Profile</h2>
+    <div className="bg-surface border border-border rounded-lg p-5">
+      <h2 className="text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3">Social Profile</h2>
       {profileLoading && !currentUserProfile ? (
-        <div style={{ padding: 40, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
+        <div className="py-10 text-center text-text-tertiary text-sm">
           Loading profile…
         </div>
       ) : currentUserProfile ? (
@@ -550,7 +478,7 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
         </>
       ) : null}
       {formError && (
-        <div style={{ color: '#dc2626', fontSize: 13, marginTop: 6, fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
           {formError}
         </div>
       )}

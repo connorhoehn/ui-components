@@ -6,6 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -91,37 +92,15 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
   }
 
   return (
-    <div
-      style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: 4,
-        padding: '0.75rem',
-        marginTop: '1rem',
-        fontFamily: 'monospace',
-      }}
-    >
+    <div className="border border-border rounded p-3 mt-4 font-mono">
       {/* Header */}
-      <div
-        style={{
-          fontSize: '0.8rem',
-          fontWeight: 'bold',
-          marginBottom: '0.5rem',
-          color: '#374151',
-        }}
-      >
+      <div className="text-[0.8rem] font-bold mb-2 text-text-primary">
         Chat ({messages.length})
       </div>
 
       {/* Typing banner */}
       {typingUsers.length > 0 && (
-        <div
-          style={{
-            fontSize: '0.7rem',
-            color: '#9ca3af',
-            fontStyle: 'italic',
-            marginBottom: '0.25rem',
-          }}
-        >
+        <div className="text-[0.7rem] text-text-tertiary italic mb-1">
           {formatTypingBanner(typingUsers)}
         </div>
       )}
@@ -129,14 +108,10 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
       {/* Message list */}
       <div
         ref={listRef}
-        style={{
-          maxHeight: 200,
-          overflowY: 'auto',
-          marginBottom: '0.5rem',
-        }}
+        className="max-h-[200px] overflow-y-auto mb-2"
       >
         {messages.length === 0 ? (
-          <div style={{ color: '#9ca3af', fontSize: '0.75rem' }}>
+          <div className="text-text-tertiary text-xs">
             No messages yet
           </div>
         ) : (
@@ -146,39 +121,15 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
             return (
               <div
                 key={index}
-                style={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  gap: '0.4rem',
-                  padding: '0.15rem 0',
-                  flexWrap: 'wrap',
-                }}
+                className="flex items-baseline gap-1.5 py-0.5 flex-wrap"
               >
-                <span
-                  style={{
-                    color: '#6b7280',
-                    fontSize: '0.7rem',
-                    flexShrink: 0,
-                  }}
-                >
+                <span className="text-[0.7rem] text-text-secondary shrink-0">
                   {author}
                 </span>
-                <span
-                  style={{
-                    fontSize: '0.8rem',
-                    color: '#374151',
-                    flexGrow: 1,
-                  }}
-                >
+                <span className="text-[0.8rem] text-text-primary grow">
                   {message.content}
                 </span>
-                <span
-                  style={{
-                    fontSize: '0.65rem',
-                    color: '#9ca3af',
-                    flexShrink: 0,
-                  }}
-                >
+                <span className="text-[0.65rem] text-text-tertiary shrink-0">
                   {time}
                 </span>
               </div>
@@ -188,7 +139,7 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
       </div>
 
       {/* Input row */}
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem' }}>
+      <div className="flex flex-row gap-2">
         <input
           type="text"
           value={inputValue}
@@ -196,30 +147,20 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={disabled ? 'Not connected' : 'Type a message...'}
-          style={{
-            flex: 1,
-            fontSize: '0.8rem',
-            padding: '0.3rem 0.5rem',
-            border: '1px solid #d1d5db',
-            borderRadius: 4,
-            fontFamily: 'monospace',
-            color: '#374151',
-            background: disabled ? '#f9fafb' : 'white',
-          }}
+          className={cn(
+            'flex-1 text-[0.8rem] px-2 py-1 border border-border-field rounded font-mono text-text-primary',
+            disabled ? 'bg-surface-inset' : 'bg-surface',
+          )}
         />
         <button
           onClick={handleSend}
           disabled={disabled || !inputValue.trim()}
-          style={{
-            fontSize: '0.8rem',
-            padding: '0.3rem 0.75rem',
-            border: '1px solid #d1d5db',
-            borderRadius: 4,
-            cursor: disabled || !inputValue.trim() ? 'default' : 'pointer',
-            background: disabled || !inputValue.trim() ? '#f9fafb' : '#007bff',
-            color: disabled || !inputValue.trim() ? '#9ca3af' : 'white',
-            fontFamily: 'monospace',
-          }}
+          className={cn(
+            'text-[0.8rem] px-3 py-1 border border-border-field rounded font-mono',
+            disabled || !inputValue.trim()
+              ? 'bg-surface-inset text-text-tertiary cursor-default'
+              : 'bg-[#007bff] text-white cursor-pointer',
+          )}
         >
           Send
         </button>

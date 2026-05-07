@@ -4,6 +4,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
+import { cn } from '../../../lib/cn';
 
 export interface AuditPageProps {
   records: Array<{
@@ -25,119 +26,6 @@ export interface AuditPageProps {
   loading?: boolean;
   totalRecords?: number;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 'var(--ui-spacingMd)',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const filterBarStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 'var(--ui-spacingSm)',
-  alignItems: 'flex-end',
-  padding: 'var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surface)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-};
-
-const filterFieldStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4px',
-};
-
-const filterLabelStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textSecondary)',
-  fontWeight: 500,
-};
-
-const filterInputStyle: React.CSSProperties = {
-  padding: '6px 10px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const queryBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-  alignSelf: 'flex-end',
-};
-
-const replayPanelStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surface)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusMd)',
-};
-
-const replayTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const replayInputRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  alignItems: 'flex-end',
-  marginBottom: 'var(--ui-spacingSm)',
-  flexWrap: 'wrap',
-};
-
-const codeBlockStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-surfaceAlt)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontFamily: 'monospace',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textPrimary)',
-  overflowX: 'auto',
-  whiteSpace: 'pre-wrap',
-  maxHeight: '300px',
-  overflowY: 'auto',
-};
-
-const totalStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textMuted)',
-};
-
-const linkBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--ui-primary)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  padding: 0,
-  textDecoration: 'underline',
-  font: 'inherit',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -211,7 +99,7 @@ export function AuditPage({
         render: (item) => (
           <button
             type="button"
-            style={linkBtnStyle}
+            className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
             onClick={() => onViewEntity(item.entityType, item.entityId)}
           >
             {item.entityId}
@@ -224,15 +112,15 @@ export function AuditPage({
   );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>Audit Log</h1>
+    <div className="flex flex-col gap-4">
+      <h1 className="text-lg font-semibold text-text-primary">Audit Log</h1>
 
       {/* Filter bar */}
-      <div style={filterBarStyle}>
-        <div style={filterFieldStyle}>
-          <label style={filterLabelStyle}>Entity Type</label>
+      <div className="flex flex-wrap gap-2 items-end p-4 bg-surface border border-border rounded-md">
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-text-secondary font-medium">Entity Type</label>
           <select
-            style={filterInputStyle}
+            className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
             value={entityType}
             onChange={(e) => setEntityType(e.target.value)}
           >
@@ -242,50 +130,55 @@ export function AuditPage({
             ))}
           </select>
         </div>
-        <div style={filterFieldStyle}>
-          <label style={filterLabelStyle}>Entity ID</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-text-secondary font-medium">Entity ID</label>
           <input
-            style={filterInputStyle}
+            className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
             value={entityId}
             onChange={(e) => setEntityId(e.target.value)}
             placeholder="Optional"
           />
         </div>
-        <div style={filterFieldStyle}>
-          <label style={filterLabelStyle}>From</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-text-secondary font-medium">From</label>
           <input
-            style={filterInputStyle}
+            className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
             type="datetime-local"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
           />
         </div>
-        <div style={filterFieldStyle}>
-          <label style={filterLabelStyle}>To</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-text-secondary font-medium">To</label>
           <input
-            style={filterInputStyle}
+            className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
             type="datetime-local"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
           />
         </div>
-        <div style={filterFieldStyle}>
-          <label style={filterLabelStyle}>Limit</label>
+        <div className="flex flex-col gap-1">
+          <label className="text-sm text-text-secondary font-medium">Limit</label>
           <input
-            style={{ ...filterInputStyle, width: '60px' }}
+            className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary w-[60px]"
             type="number"
             value={limit}
             onChange={(e) => setLimit(e.target.value)}
           />
         </div>
-        <button type="button" style={queryBtnStyle} onClick={handleQuery} disabled={loading}>
+        <button
+          type="button"
+          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed self-end"
+          onClick={handleQuery}
+          disabled={loading}
+        >
           {loading ? 'Querying...' : 'Query'}
         </button>
       </div>
 
       {/* Results */}
       {totalRecords !== undefined && (
-        <p style={totalStyle}>{totalRecords} total record(s)</p>
+        <p className="text-sm text-text-tertiary">{totalRecords} total record(s)</p>
       )}
 
       <EntityTable<AuditRow>
@@ -297,22 +190,22 @@ export function AuditPage({
       />
 
       {/* Point-in-time replay */}
-      <div style={replayPanelStyle}>
-        <h3 style={replayTitleStyle}>Point-in-Time Replay</h3>
-        <div style={replayInputRowStyle}>
-          <div style={filterFieldStyle}>
-            <label style={filterLabelStyle}>Entity ID</label>
+      <div className="p-4 bg-surface border border-border rounded-md">
+        <h3 className="text-base font-semibold text-text-primary mb-2">Point-in-Time Replay</h3>
+        <div className="flex gap-2 items-end mb-2 flex-wrap">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-text-secondary font-medium">Entity ID</label>
             <input
-              style={filterInputStyle}
+              className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
               value={replayEntityId}
               onChange={(e) => setReplayEntityId(e.target.value)}
               placeholder="entity-id"
             />
           </div>
-          <div style={filterFieldStyle}>
-            <label style={filterLabelStyle}>At Timestamp</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-text-secondary font-medium">At Timestamp</label>
             <input
-              style={filterInputStyle}
+              className="px-2.5 py-1.5 text-sm border border-border rounded-sm bg-surface text-text-primary"
               type="datetime-local"
               value={replayTimestamp}
               onChange={(e) => setReplayTimestamp(e.target.value)}
@@ -320,7 +213,7 @@ export function AuditPage({
           </div>
           <button
             type="button"
-            style={queryBtnStyle}
+            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed self-end"
             onClick={handleReplay}
             disabled={replaying || !replayEntityId || !replayTimestamp}
           >
@@ -328,7 +221,9 @@ export function AuditPage({
           </button>
         </div>
         {replayResult && (
-          <pre style={codeBlockStyle}>{JSON.stringify(replayResult, null, 2)}</pre>
+          <pre className="p-4 bg-surface-inset border border-border rounded-sm font-mono text-sm text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto">
+            {JSON.stringify(replayResult, null, 2)}
+          </pre>
         )}
       </div>
     </div>

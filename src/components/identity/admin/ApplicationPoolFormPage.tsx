@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
+import { cn } from '../../../lib/cn';
 
 export interface ApplicationPoolFormPageProps {
   onSubmit: (data: {
@@ -15,128 +16,6 @@ export interface ApplicationPoolFormPageProps {
   onCancel: () => void;
   error?: string | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: React.CSSProperties = {
-  maxWidth: '640px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeLg)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const subtitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textSecondary)',
-  marginBottom: 'var(--ui-spacingLg)',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-  marginTop: 'var(--ui-spacingLg)',
-  marginBottom: 'var(--ui-spacingSm)',
-};
-
-const multiInputRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '8px',
-  alignItems: 'center',
-  marginBottom: '6px',
-};
-
-const multiInputStyle: React.CSSProperties = {
-  flex: 1,
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-};
-
-const removeBtnStyle: React.CSSProperties = {
-  padding: '6px 10px',
-  border: '1px solid var(--ui-danger)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'transparent',
-  color: 'var(--ui-danger)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  font: 'inherit',
-};
-
-const addBtnStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  fontSize: 'var(--ui-fontSizeSm)',
-  font: 'inherit',
-};
-
-const checkboxGroupStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-  marginBottom: 'var(--ui-spacingMd)',
-};
-
-const checkboxLabelStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-};
-
-const buttonRowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 'var(--ui-spacingSm)',
-  marginTop: 'var(--ui-spacingLg)',
-};
-
-const submitBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'var(--ui-primary)',
-  color: '#fff',
-  border: 'none',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  fontWeight: 500,
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const cancelBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  backgroundColor: 'transparent',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  color: 'var(--ui-textPrimary)',
-  cursor: 'pointer',
-  font: 'inherit',
-};
-
-const errorBannerStyle: React.CSSProperties = {
-  padding: 'var(--ui-spacingSm) var(--ui-spacingMd)',
-  backgroundColor: 'var(--ui-danger)',
-  color: '#fff',
-  borderRadius: 'var(--ui-radiusSm)',
-  marginBottom: 'var(--ui-spacingMd)',
-  fontSize: 'var(--ui-fontSizeSm)',
-};
 
 const GRANT_TYPE_OPTIONS = ['authorization_code', 'client_credentials', 'refresh_token'];
 
@@ -188,11 +67,11 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
   );
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>New Application + Pool</h1>
-      <p style={subtitleStyle}>Create a user pool and register an application in one step.</p>
+    <div className="max-w-[640px]">
+      <h1 className="text-lg font-semibold text-text-primary mb-2">New Application + Pool</h1>
+      <p className="text-base text-text-secondary mb-6">Create a user pool and register an application in one step.</p>
 
-      {error && <div style={errorBannerStyle}>{error}</div>}
+      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -215,33 +94,41 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
 
         {/* Redirect URIs */}
         <section>
-          <h3 style={sectionTitleStyle}>Redirect URIs</h3>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Redirect URIs</h3>
           {redirectUris.map((uri, idx) => (
-            <div key={idx} style={multiInputRowStyle}>
+            <div key={idx} className="flex gap-2 items-center mb-1.5">
               <input
-                style={multiInputStyle}
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
                 value={uri}
                 onChange={(e) => handleUriChange(idx, e.target.value)}
                 placeholder="https://app.example.com/callback"
               />
               {redirectUris.length > 1 && (
-                <button type="button" style={removeBtnStyle} onClick={() => handleRemoveUri(idx)}>
+                <button
+                  type="button"
+                  className="px-2.5 py-1.5 border border-danger rounded-sm bg-transparent text-danger cursor-pointer text-sm"
+                  onClick={() => handleRemoveUri(idx)}
+                >
                   Remove
                 </button>
               )}
             </div>
           ))}
-          <button type="button" style={addBtnStyle} onClick={handleAddUri}>
+          <button
+            type="button"
+            className="px-3 py-1.5 border border-border rounded-sm bg-surface text-text-primary cursor-pointer text-sm"
+            onClick={handleAddUri}
+          >
             + Add URI
           </button>
         </section>
 
         {/* Grant Types */}
         <section>
-          <h3 style={sectionTitleStyle}>Grant Types</h3>
-          <div style={checkboxGroupStyle}>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Grant Types</h3>
+          <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
-              <label key={gt} style={checkboxLabelStyle}>
+              <label key={gt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={grantTypes.includes(gt)}
@@ -253,11 +140,19 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
           </div>
         </section>
 
-        <div style={buttonRowStyle}>
-          <button type="submit" style={submitBtnStyle} disabled={submitting}>
+        <div className="flex gap-2 mt-6">
+          <button
+            type="submit"
+            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={submitting}
+          >
             {submitting ? 'Creating...' : 'Create Pool + Application'}
           </button>
-          <button type="button" style={cancelBtnStyle} onClick={onCancel}>
+          <button
+            type="button"
+            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
+            onClick={onCancel}
+          >
             Cancel
           </button>
         </div>

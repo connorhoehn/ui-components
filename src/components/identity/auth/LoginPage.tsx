@@ -4,6 +4,7 @@
 // Props-driven with async handlers — no internal routing.
 
 import { useState, useCallback } from 'react';
+import { cn } from '../../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,129 +30,6 @@ export interface LoginPageProps {
 }
 
 type Tab = 'signin' | 'register' | 'forgot';
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--ui-spacingLg)',
-    background: 'var(--ui-surfaceAlt)',
-  } as React.CSSProperties,
-  card: {
-    width: '100%',
-    maxWidth: 420,
-    background: 'var(--ui-surface)',
-    borderRadius: 'var(--ui-radiusMd)',
-    boxShadow: 'var(--ui-shadowMd)',
-    padding: 'var(--ui-spacingLg)',
-  } as React.CSSProperties,
-  header: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    gap: 'var(--ui-spacingSm)',
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  logo: {
-    width: 48,
-    height: 48,
-    objectFit: 'contain' as const,
-    borderRadius: 'var(--ui-radiusSm)',
-  } as React.CSSProperties,
-  clientName: {
-    fontSize: 'var(--ui-fontSizeLg)',
-    fontWeight: 600,
-    color: 'var(--ui-textPrimary)',
-    margin: 0,
-  } as React.CSSProperties,
-  tabs: {
-    display: 'flex',
-    gap: 0,
-    borderBottom: '1px solid var(--ui-border)',
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  tab: (active: boolean) => ({
-    flex: 1,
-    padding: '10px 8px',
-    background: 'none',
-    border: 'none',
-    borderBottom: active ? '2px solid var(--ui-primary)' : '2px solid transparent',
-    color: active ? 'var(--ui-primary)' : 'var(--ui-textSecondary)',
-    fontWeight: active ? 600 : 400,
-    fontSize: 'var(--ui-fontSizeSm)',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    transition: 'color 0.15s, border-color 0.15s',
-  }) as React.CSSProperties,
-  errorAlert: {
-    padding: '10px 14px',
-    marginBottom: 'var(--ui-spacingMd)',
-    background: 'color-mix(in srgb, var(--ui-danger) 10%, transparent)',
-    border: '1px solid var(--ui-danger)',
-    borderRadius: 'var(--ui-radiusSm)',
-    color: 'var(--ui-danger)',
-    fontSize: 'var(--ui-fontSizeSm)',
-  } as React.CSSProperties,
-  field: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 4,
-    marginBottom: 'var(--ui-spacingSm)',
-  } as React.CSSProperties,
-  label: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-    fontWeight: 500,
-  } as React.CSSProperties,
-  input: {
-    padding: '10px 12px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    background: 'var(--ui-surface)',
-    color: 'var(--ui-textPrimary)',
-    fontFamily: 'inherit',
-    outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box' as const,
-  } as React.CSSProperties,
-  checkboxRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 'var(--ui-spacingSm)',
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-  } as React.CSSProperties,
-  primaryButton: (loading: boolean) => ({
-    width: '100%',
-    padding: '12px 16px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    fontWeight: 600,
-    background: 'var(--ui-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: loading ? 'not-allowed' : 'pointer',
-    opacity: loading ? 0.7 : 1,
-    fontFamily: 'inherit',
-    marginTop: 'var(--ui-spacingSm)',
-  }) as React.CSSProperties,
-  successMessage: {
-    padding: '10px 14px',
-    background: 'color-mix(in srgb, var(--ui-success) 10%, transparent)',
-    border: '1px solid var(--ui-success)',
-    borderRadius: 'var(--ui-radiusSm)',
-    color: 'var(--ui-success)',
-    fontSize: 'var(--ui-fontSizeSm)',
-  } as React.CSSProperties,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -248,20 +126,25 @@ export function LoginPage({
   };
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card} role="main" aria-label="Authentication">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[420px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="Authentication">
         {/* Header */}
-        <header style={styles.header}>
-          {logoUrl && <img src={logoUrl} alt="" style={styles.logo} />}
-          {clientName && <h1 style={styles.clientName}>{clientName}</h1>}
+        <header className="flex flex-col items-center gap-2 mb-4">
+          {logoUrl && <img src={logoUrl} alt="" className="w-12 h-12 object-contain rounded-sm" />}
+          {clientName && <h1 className="text-lg font-semibold text-text-primary m-0">{clientName}</h1>}
         </header>
 
         {/* Tabs */}
-        <nav style={styles.tabs} role="tablist" aria-label="Authentication method">
+        <nav className="flex border-b border-border mb-4" role="tablist" aria-label="Authentication method">
           <button
             role="tab"
             aria-selected={tab === 'signin'}
-            style={styles.tab(tab === 'signin')}
+            className={cn(
+              'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+              tab === 'signin'
+                ? 'border-b-primary text-primary font-semibold'
+                : 'border-b-transparent text-text-secondary font-normal'
+            )}
             onClick={() => switchTab('signin')}
             type="button"
           >
@@ -271,7 +154,12 @@ export function LoginPage({
             <button
               role="tab"
               aria-selected={tab === 'register'}
-              style={styles.tab(tab === 'register')}
+              className={cn(
+                'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                tab === 'register'
+                  ? 'border-b-primary text-primary font-semibold'
+                  : 'border-b-transparent text-text-secondary font-normal'
+              )}
               onClick={() => switchTab('register')}
               type="button"
             >
@@ -282,7 +170,12 @@ export function LoginPage({
             <button
               role="tab"
               aria-selected={tab === 'forgot'}
-              style={styles.tab(tab === 'forgot')}
+              className={cn(
+                'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                tab === 'forgot'
+                  ? 'border-b-primary text-primary font-semibold'
+                  : 'border-b-transparent text-text-secondary font-normal'
+              )}
               onClick={() => switchTab('forgot')}
               type="button"
             >
@@ -293,15 +186,17 @@ export function LoginPage({
 
         {/* Error */}
         {displayError && (
-          <div role="alert" style={styles.errorAlert}>{displayError}</div>
+          <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
+            {displayError}
+          </div>
         )}
 
         {/* Sign In */}
         {tab === 'signin' && (
           <form onSubmit={handleLogin} aria-label="Sign in form">
             <input type="hidden" name="uid" value={uid} />
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="login-email">Email</label>
+            <div className="flex flex-col gap-1 mb-3">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="login-email">Email</label>
               <input
                 id="login-email"
                 type="email"
@@ -309,12 +204,12 @@ export function LoginPage({
                 autoComplete="email"
                 value={loginEmail}
                 onChange={e => setLoginEmail(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
               />
             </div>
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="login-password">Password</label>
+            <div className="flex flex-col gap-1 mb-3">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="login-password">Password</label>
               <input
                 id="login-password"
                 type="password"
@@ -322,11 +217,18 @@ export function LoginPage({
                 autoComplete="current-password"
                 value={loginPassword}
                 onChange={e => setLoginPassword(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
               />
             </div>
-            <button type="submit" style={styles.primaryButton(loading)} disabled={loading}>
+            <button
+              type="submit"
+              className={cn(
+                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
+                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+              )}
+              disabled={loading}
+            >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
@@ -335,8 +237,8 @@ export function LoginPage({
         {/* Register */}
         {tab === 'register' && (
           <form onSubmit={handleRegister} aria-label="Registration form">
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="reg-email">Email</label>
+            <div className="flex flex-col gap-1 mb-3">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-email">Email</label>
               <input
                 id="reg-email"
                 type="email"
@@ -344,38 +246,38 @@ export function LoginPage({
                 autoComplete="email"
                 value={regEmail}
                 onChange={e => setRegEmail(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
               />
             </div>
-            <div style={{ display: 'flex', gap: 'var(--ui-spacingSm)' }}>
-              <div style={{ ...styles.field, flex: 1 }}>
-                <label style={styles.label} htmlFor="reg-given">Given Name</label>
+            <div className="flex gap-2">
+              <div className="flex flex-col gap-1 mb-3 flex-1">
+                <label className="text-sm text-text-secondary font-medium" htmlFor="reg-given">Given Name</label>
                 <input
                   id="reg-given"
                   type="text"
                   autoComplete="given-name"
                   value={regGivenName}
                   onChange={e => setRegGivenName(e.target.value)}
-                  style={styles.input}
+                  className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                   disabled={loading}
                 />
               </div>
-              <div style={{ ...styles.field, flex: 1 }}>
-                <label style={styles.label} htmlFor="reg-family">Family Name</label>
+              <div className="flex flex-col gap-1 mb-3 flex-1">
+                <label className="text-sm text-text-secondary font-medium" htmlFor="reg-family">Family Name</label>
                 <input
                   id="reg-family"
                   type="text"
                   autoComplete="family-name"
                   value={regFamilyName}
                   onChange={e => setRegFamilyName(e.target.value)}
-                  style={styles.input}
+                  className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                   disabled={loading}
                 />
               </div>
             </div>
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="reg-password">Password</label>
+            <div className="flex flex-col gap-1 mb-3">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-password">Password</label>
               <input
                 id="reg-password"
                 type="password"
@@ -383,12 +285,12 @@ export function LoginPage({
                 autoComplete="new-password"
                 value={regPassword}
                 onChange={e => setRegPassword(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
               />
             </div>
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="reg-confirm">Confirm Password</label>
+            <div className="flex flex-col gap-1 mb-3">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-confirm">Confirm Password</label>
               <input
                 id="reg-confirm"
                 type="password"
@@ -396,11 +298,11 @@ export function LoginPage({
                 autoComplete="new-password"
                 value={regConfirm}
                 onChange={e => setRegConfirm(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
               />
             </div>
-            <label style={styles.checkboxRow}>
+            <label className="flex items-center gap-2 mb-3 text-sm text-text-secondary">
               <input
                 type="checkbox"
                 checked={regEnableMfa}
@@ -409,7 +311,14 @@ export function LoginPage({
               />
               Enable Multi-Factor Authentication
             </label>
-            <button type="submit" style={styles.primaryButton(loading)} disabled={loading}>
+            <button
+              type="submit"
+              className={cn(
+                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
+                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+              )}
+              disabled={loading}
+            >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
@@ -419,13 +328,13 @@ export function LoginPage({
         {tab === 'forgot' && (
           <form onSubmit={handleForgot} aria-label="Forgot password form">
             {forgotSuccess ? (
-              <div style={styles.successMessage}>
+              <div className="px-3.5 py-2.5 bg-success/10 border border-success rounded-sm text-success text-sm">
                 If an account exists for that email, a password reset link has been sent.
               </div>
             ) : (
               <>
-                <div style={styles.field}>
-                  <label style={styles.label} htmlFor="forgot-email">Email</label>
+                <div className="flex flex-col gap-1 mb-3">
+                  <label className="text-sm text-text-secondary font-medium" htmlFor="forgot-email">Email</label>
                   <input
                     id="forgot-email"
                     type="email"
@@ -433,11 +342,18 @@ export function LoginPage({
                     autoComplete="email"
                     value={forgotEmail}
                     onChange={e => setForgotEmail(e.target.value)}
-                    style={styles.input}
+                    className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                     disabled={loading}
                   />
                 </div>
-                <button type="submit" style={styles.primaryButton(loading)} disabled={loading}>
+                <button
+                  type="submit"
+                  className={cn(
+                    'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
+                    loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+                  )}
+                  disabled={loading}
+                >
                   {loading ? 'Sending...' : 'Send Reset Link'}
                 </button>
               </>

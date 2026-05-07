@@ -3,6 +3,7 @@
 // Icon-only button with proper aria-label for accessibility.
 
 import { type CSSProperties, type ReactNode } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface IconButtonProps {
   /** Accessible label for screen readers (required) */
@@ -16,47 +17,17 @@ export interface IconButtonProps {
   className?: string;
 }
 
-const colors = {
-  ghost: 'transparent',
-  ghostHover: '#f3f4f6',
-  primary: '#3b82f6',
-  primaryHover: '#2563eb',
-  danger: '#ef4444',
-  dangerHover: '#dc2626',
+const variantClasses: Record<'ghost' | 'primary' | 'danger', string> = {
+  ghost: 'bg-transparent text-[#374151] hover:bg-[#f3f4f6]',
+  primary: 'bg-[#3b82f6] text-white hover:bg-[#2563eb]',
+  danger: 'bg-[#ef4444] text-white hover:bg-[#dc2626]',
 };
 
-function getVariantStyles(variant: 'ghost' | 'primary' | 'danger'): CSSProperties {
-  switch (variant) {
-    case 'ghost':
-      return { background: colors.ghost, color: '#374151' };
-    case 'primary':
-      return { background: colors.primary, color: '#fff' };
-    case 'danger':
-      return { background: colors.danger, color: '#fff' };
-  }
-}
-
-function getSizeStyles(size: 'sm' | 'md' | 'lg'): CSSProperties {
-  switch (size) {
-    case 'sm':
-      return { width: 24, height: 24, fontSize: 14 };
-    case 'md':
-      return { width: 32, height: 32, fontSize: 16 };
-    case 'lg':
-      return { width: 40, height: 40, fontSize: 18 };
-  }
-}
-
-function getHoverColor(variant: 'ghost' | 'primary' | 'danger'): string {
-  switch (variant) {
-    case 'ghost':
-      return colors.ghostHover;
-    case 'primary':
-      return colors.primaryHover;
-    case 'danger':
-      return colors.dangerHover;
-  }
-}
+const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
+  sm: 'w-6 h-6 text-sm',
+  md: 'w-8 h-8 text-base',
+  lg: 'w-10 h-10 text-lg',
+};
 
 export function IconButton({
   'aria-label': ariaLabel,
@@ -68,39 +39,22 @@ export function IconButton({
   style,
   className,
 }: IconButtonProps) {
-  const baseStyles: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: 'none',
-    borderRadius: 6,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.5 : 1,
-    transition: 'background 0.15s ease',
-    ...getVariantStyles(variant),
-    ...getSizeStyles(size),
-    ...style,
-  };
-
   return (
     <button
       type="button"
       aria-label={ariaLabel}
       disabled={disabled}
       onClick={onClick}
-      className={className}
-      style={baseStyles}
-      onMouseEnter={(e) => {
-        if (!disabled) {
-          e.currentTarget.style.background = getHoverColor(variant);
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled) {
-          e.currentTarget.style.background =
-            (getVariantStyles(variant).background as string | undefined) || colors.ghost;
-        }
-      }}
+      className={cn(
+        'inline-flex items-center justify-center border-none rounded-md',
+        'transition-colors duration-150 ease-in-out',
+        variantClasses[variant],
+        sizeClasses[size],
+        disabled && 'opacity-50 cursor-not-allowed',
+        !disabled && 'cursor-pointer',
+        className,
+      )}
+      style={style}
     >
       {icon}
     </button>

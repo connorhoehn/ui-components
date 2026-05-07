@@ -11,93 +11,6 @@ export interface ErrorPageProps {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--ui-spacingLg)',
-    background: 'var(--ui-surfaceAlt)',
-  } as React.CSSProperties,
-  card: {
-    width: '100%',
-    maxWidth: 420,
-    background: 'var(--ui-surface)',
-    borderRadius: 'var(--ui-radiusMd)',
-    boxShadow: 'var(--ui-shadowMd)',
-    padding: 'var(--ui-spacingLg)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  indicator: {
-    width: 48,
-    height: 48,
-    borderRadius: '50%',
-    background: 'color-mix(in srgb, var(--ui-danger) 12%, transparent)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto var(--ui-spacingMd)',
-    fontSize: 24,
-    color: 'var(--ui-danger)',
-    fontWeight: 700,
-  } as React.CSSProperties,
-  heading: {
-    fontSize: 'var(--ui-fontSizeLg)',
-    fontWeight: 600,
-    color: 'var(--ui-textPrimary)',
-    margin: '0 0 var(--ui-spacingSm)',
-  } as React.CSSProperties,
-  message: {
-    fontSize: 'var(--ui-fontSizeMd)',
-    color: 'var(--ui-textSecondary)',
-    margin: '0 0 var(--ui-spacingSm)',
-    lineHeight: 1.5,
-  } as React.CSSProperties,
-  errorCode: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textMuted)',
-    fontFamily: 'monospace',
-    margin: '0 0 var(--ui-spacingMd)',
-    padding: '6px 12px',
-    background: 'var(--ui-surfaceAlt)',
-    borderRadius: 'var(--ui-radiusSm)',
-    display: 'inline-block',
-  } as React.CSSProperties,
-  actions: {
-    display: 'flex',
-    gap: 'var(--ui-spacingSm)',
-    justifyContent: 'center',
-    marginTop: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  primaryButton: {
-    padding: '12px 24px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    fontWeight: 600,
-    background: 'var(--ui-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  } as React.CSSProperties,
-  secondaryButton: {
-    padding: '12px 24px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    fontWeight: 500,
-    background: 'var(--ui-surface)',
-    color: 'var(--ui-textSecondary)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  } as React.CSSProperties,
-};
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -109,22 +22,39 @@ export function ErrorPage({
   onBack,
 }: ErrorPageProps) {
   return (
-    <div style={styles.page}>
-      <div style={styles.card} role="main" aria-label="Error">
-        <div style={styles.indicator} aria-hidden="true">!</div>
-        <h1 style={styles.heading}>{title}</h1>
-        <p style={styles.message}>{message}</p>
-        {error && <code style={styles.errorCode}>{error}</code>}
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[420px] bg-surface rounded-md shadow-md p-6 text-center" role="main" aria-label="Error">
+        <div
+          className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4 text-2xl text-danger font-bold"
+          aria-hidden="true"
+        >
+          !
+        </div>
+        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0">{title}</h1>
+        <p className="text-sm text-text-secondary mb-2 mt-0 leading-relaxed">{message}</p>
+        {error && (
+          <code className="text-xs text-text-tertiary font-mono mb-4 px-3 py-1.5 bg-surface-panel rounded-sm inline-block">
+            {error}
+          </code>
+        )}
 
         {(onRetry || onBack) && (
-          <div style={styles.actions}>
+          <div className="flex gap-2 justify-center mt-4">
             {onBack && (
-              <button type="button" style={styles.secondaryButton} onClick={onBack}>
+              <button
+                type="button"
+                className="px-6 py-3 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
+                onClick={onBack}
+              >
                 Go Back
               </button>
             )}
             {onRetry && (
-              <button type="button" style={styles.primaryButton} onClick={onRetry}>
+              <button
+                type="button"
+                className="px-6 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
+                onClick={onRetry}
+              >
                 Try Again
               </button>
             )}

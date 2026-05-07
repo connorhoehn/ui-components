@@ -6,6 +6,7 @@
 // versa. Reusable from any layout that already calls `useApiHealth()`.
 
 import type { ApiHealthSnapshot } from '../../hooks/useApiHealth';
+import { cn } from '../../lib/cn';
 
 interface ApiDegradedBannerProps {
   health: ApiHealthSnapshot;
@@ -23,22 +24,14 @@ export function ApiDegradedBanner({ health }: ApiDegradedBannerProps) {
       role="status"
       aria-live="polite"
       data-testid="api-degraded-banner"
-      style={{
-        background: '#fef3c7',
-        border: '1px solid #f59e0b',
-        borderRadius: 6,
-        color: '#78350f',
-        padding: '8px 14px',
-        fontSize: 13,
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 10,
-      }}
+      className={cn(
+        'bg-[#fef3c7] border border-[#f59e0b] rounded-md text-[#78350f]',
+        'px-3.5 py-2 text-[13px] font-sans flex items-center gap-2.5'
+      )}
     >
-      <span style={{ fontSize: 16 }} aria-hidden="true">⚠</span>
-      <span style={{ fontWeight: 600 }}>Backend services degraded — some features unavailable.</span>
-      <span style={{ color: '#92400e', fontWeight: 400 }}>{detail}</span>
+      <span className="text-base" aria-hidden="true">⚠</span>
+      <span className="font-semibold">Backend services degraded — some features unavailable.</span>
+      <span className="text-[#92400e] font-normal">{detail}</span>
     </div>
   );
 }

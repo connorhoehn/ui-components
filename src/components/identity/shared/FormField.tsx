@@ -4,6 +4,7 @@
 // select, checkbox, and number input types with validation styling.
 
 import { useCallback, useId } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface FormFieldProps {
   label: string;
@@ -19,47 +20,8 @@ export interface FormFieldProps {
   disabled?: boolean;
 }
 
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  marginBottom: '4px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  fontWeight: 600,
-  color: 'var(--ui-textPrimary)',
-};
-
-const baseInputStyle: React.CSSProperties = {
-  display: 'block',
-  width: '100%',
-  padding: 'var(--ui-spacingSm)',
-  fontSize: 'var(--ui-fontSizeMd)',
-  border: '1px solid var(--ui-border)',
-  borderRadius: 'var(--ui-radiusSm)',
-  backgroundColor: 'var(--ui-surface)',
-  color: 'var(--ui-textPrimary)',
-  outline: 'none',
-  boxSizing: 'border-box',
-};
-
-const errorInputStyle: React.CSSProperties = {
-  ...baseInputStyle,
-  borderColor: 'var(--ui-danger)',
-};
-
-const errorTextStyle: React.CSSProperties = {
-  marginTop: '4px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-danger)',
-};
-
-const helpTextStyle: React.CSSProperties = {
-  marginTop: '4px',
-  fontSize: 'var(--ui-fontSizeSm)',
-  color: 'var(--ui-textMuted)',
-};
-
-const wrapperStyle: React.CSSProperties = {
-  marginBottom: 'var(--ui-spacingMd)',
-};
+const inputClasses = 'block w-full px-3 py-2 text-sm border border-border rounded-sm bg-surface text-text-primary outline-none box-border focus:ring-2 focus:ring-primary/25 focus:border-primary';
+const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-danger rounded-sm bg-surface text-text-primary outline-none box-border focus:ring-2 focus:ring-danger/25 focus:border-danger';
 
 export function FormField({
   label,
@@ -89,12 +51,12 @@ export function FormField({
     [onChange, type],
   );
 
-  const inputStyles = error ? errorInputStyle : baseInputStyle;
+  const classes = error ? inputErrorClasses : inputClasses;
 
   const renderInput = () => {
     if (type === 'checkbox') {
       return (
-        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+        <label className="flex items-center gap-2 cursor-pointer">
           <input
             id={id}
             type="checkbox"
@@ -103,8 +65,8 @@ export function FormField({
             onChange={handleChange}
             disabled={disabled}
           />
-          <span style={{ fontSize: 'var(--ui-fontSizeMd)', color: 'var(--ui-textPrimary)' }}>
-            {label}{required && <span style={{ color: 'var(--ui-danger)' }}> *</span>}
+          <span className="text-sm text-text-primary">
+            {label}{required && <span className="text-danger"> *</span>}
           </span>
         </label>
       );
@@ -121,7 +83,7 @@ export function FormField({
           disabled={disabled}
           required={required}
           rows={5}
-          style={{ ...inputStyles, resize: 'vertical', minHeight: '100px' }}
+          className={cn(classes, 'resize-y min-h-[100px]')}
         />
       );
     }
@@ -135,7 +97,7 @@ export function FormField({
           onChange={handleChange}
           disabled={disabled}
           required={required}
-          style={inputStyles}
+          className={classes}
         >
           <option value="">{placeholder || 'Select...'}</option>
           {options?.map((opt) => (
@@ -157,29 +119,29 @@ export function FormField({
         placeholder={placeholder}
         disabled={disabled}
         required={required}
-        style={inputStyles}
+        className={classes}
       />
     );
   };
 
   if (type === 'checkbox') {
     return (
-      <div style={wrapperStyle}>
+      <div className="mb-4">
         {renderInput()}
-        {error && <p style={errorTextStyle}>{error}</p>}
-        {helpText && !error && <p style={helpTextStyle}>{helpText}</p>}
+        {error && <p className="mt-1 text-sm text-danger">{error}</p>}
+        {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
       </div>
     );
   }
 
   return (
-    <div style={wrapperStyle}>
-      <label htmlFor={id} style={labelStyle}>
-        {label}{required && <span style={{ color: 'var(--ui-danger)' }}> *</span>}
+    <div className="mb-4">
+      <label htmlFor={id} className="block mb-1 text-sm font-semibold text-text-primary">
+        {label}{required && <span className="text-danger"> *</span>}
       </label>
       {renderInput()}
-      {error && <p style={errorTextStyle}>{error}</p>}
-      {helpText && !error && <p style={helpTextStyle}>{helpText}</p>}
+      {error && <p className="mt-1 text-sm text-danger">{error}</p>}
+      {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
     </div>
   );
 }

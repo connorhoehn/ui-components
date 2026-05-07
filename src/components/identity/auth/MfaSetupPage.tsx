@@ -5,6 +5,7 @@
 import { useState, useCallback } from 'react';
 import { QrCodeDisplay } from '../shared/QrCodeDisplay';
 import { CodeInput } from '../shared/CodeInput';
+import { cn } from '../../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -26,151 +27,6 @@ export interface MfaSetupPageProps {
 }
 
 type Step = 'name' | 'scan' | 'verify' | 'backup';
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--ui-spacingLg)',
-    background: 'var(--ui-surfaceAlt)',
-  } as React.CSSProperties,
-  card: {
-    width: '100%',
-    maxWidth: 480,
-    background: 'var(--ui-surface)',
-    borderRadius: 'var(--ui-radiusMd)',
-    boxShadow: 'var(--ui-shadowMd)',
-    padding: 'var(--ui-spacingLg)',
-  } as React.CSSProperties,
-  heading: {
-    fontSize: 'var(--ui-fontSizeLg)',
-    fontWeight: 600,
-    color: 'var(--ui-textPrimary)',
-    margin: '0 0 var(--ui-spacingSm)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  subheading: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-    margin: '0 0 var(--ui-spacingMd)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  stepper: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 8,
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  stepDot: (active: boolean, completed: boolean) => ({
-    width: 10,
-    height: 10,
-    borderRadius: '50%',
-    background: completed ? 'var(--ui-success)' : active ? 'var(--ui-primary)' : 'var(--ui-border)',
-    transition: 'background 0.2s',
-  }) as React.CSSProperties,
-  field: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: 4,
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  label: {
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textSecondary)',
-    fontWeight: 500,
-  } as React.CSSProperties,
-  input: {
-    padding: '10px 12px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    background: 'var(--ui-surface)',
-    color: 'var(--ui-textPrimary)',
-    fontFamily: 'inherit',
-    outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box' as const,
-  } as React.CSSProperties,
-  primaryButton: (loading: boolean) => ({
-    width: '100%',
-    padding: '12px 16px',
-    fontSize: 'var(--ui-fontSizeMd)',
-    fontWeight: 600,
-    background: 'var(--ui-primary)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: loading ? 'not-allowed' : 'pointer',
-    opacity: loading ? 0.7 : 1,
-    fontFamily: 'inherit',
-  }) as React.CSSProperties,
-  secondaryButton: {
-    width: '100%',
-    padding: '10px 16px',
-    fontSize: 'var(--ui-fontSizeSm)',
-    fontWeight: 500,
-    background: 'var(--ui-surface)',
-    color: 'var(--ui-textSecondary)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    marginTop: 'var(--ui-spacingSm)',
-  } as React.CSSProperties,
-  secretBox: {
-    padding: '10px 14px',
-    background: 'var(--ui-surfaceAlt)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    fontFamily: 'monospace',
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textPrimary)',
-    wordBreak: 'break-all' as const,
-    textAlign: 'center' as const,
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  backupGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 8,
-    marginBottom: 'var(--ui-spacingMd)',
-  } as React.CSSProperties,
-  backupCode: {
-    padding: '8px 12px',
-    background: 'var(--ui-surfaceAlt)',
-    border: '1px solid var(--ui-border)',
-    borderRadius: 'var(--ui-radiusSm)',
-    fontFamily: 'monospace',
-    fontSize: 'var(--ui-fontSizeSm)',
-    color: 'var(--ui-textPrimary)',
-    textAlign: 'center' as const,
-  } as React.CSSProperties,
-  errorAlert: {
-    padding: '10px 14px',
-    marginBottom: 'var(--ui-spacingMd)',
-    background: 'color-mix(in srgb, var(--ui-danger) 10%, transparent)',
-    border: '1px solid var(--ui-danger)',
-    borderRadius: 'var(--ui-radiusSm)',
-    color: 'var(--ui-danger)',
-    fontSize: 'var(--ui-fontSizeSm)',
-  } as React.CSSProperties,
-  backButton: {
-    background: 'none',
-    border: 'none',
-    color: 'var(--ui-textSecondary)',
-    fontSize: 'var(--ui-fontSizeSm)',
-    cursor: 'pointer',
-    padding: '4px 0',
-    marginBottom: 'var(--ui-spacingSm)',
-    fontFamily: 'inherit',
-  } as React.CSSProperties,
-};
 
 const STEPS: Step[] = ['name', 'scan', 'verify', 'backup'];
 
@@ -254,30 +110,39 @@ export function MfaSetupPage({
   }, [backupCodes]);
 
   return (
-    <div style={styles.page}>
-      <div style={styles.card} role="main" aria-label="MFA setup">
-        <h1 style={styles.heading}>Set Up Multi-Factor Authentication</h1>
-        {userEmail && <p style={styles.subheading}>{userEmail}</p>}
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[480px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="MFA setup">
+        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0 text-center">
+          Set Up Multi-Factor Authentication
+        </h1>
+        {userEmail && <p className="text-sm text-text-secondary mb-4 mt-0 text-center">{userEmail}</p>}
 
         {/* Step indicator */}
-        <div style={styles.stepper} role="group" aria-label="Setup progress">
+        <div className="flex justify-center gap-2 mb-4" role="group" aria-label="Setup progress">
           {STEPS.map((s, i) => (
             <div
               key={s}
-              style={styles.stepDot(i === currentStepIndex, i < currentStepIndex)}
+              className={cn(
+                'w-2.5 h-2.5 rounded-full transition-colors duration-200',
+                i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-primary' : 'bg-border'
+              )}
               aria-label={`Step ${i + 1}${i === currentStepIndex ? ' (current)' : i < currentStepIndex ? ' (completed)' : ''}`}
             />
           ))}
         </div>
 
         {/* Error */}
-        {error && <div role="alert" style={styles.errorAlert}>{error}</div>}
+        {error && (
+          <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Step 1: Name device */}
         {step === 'name' && (
           <form onSubmit={handleNameSubmit} aria-label="Name your device">
-            <div style={styles.field}>
-              <label style={styles.label} htmlFor="device-name">Device Name</label>
+            <div className="flex flex-col gap-1 mb-4">
+              <label className="text-sm text-text-secondary font-medium" htmlFor="device-name">Device Name</label>
               <input
                 id="device-name"
                 type="text"
@@ -285,12 +150,19 @@ export function MfaSetupPage({
                 required
                 value={deviceName}
                 onChange={e => setDeviceName(e.target.value)}
-                style={styles.input}
+                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
                 disabled={loading}
                 autoFocus
               />
             </div>
-            <button type="submit" style={styles.primaryButton(loading)} disabled={loading || !deviceName.trim()}>
+            <button
+              type="submit"
+              className={cn(
+                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit]',
+                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
+              )}
+              disabled={loading || !deviceName.trim()}
+            >
               {loading ? 'Setting up...' : 'Continue'}
             </button>
           </form>
@@ -301,29 +173,31 @@ export function MfaSetupPage({
           <div>
             <button
               type="button"
-              style={styles.backButton}
+              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-2 font-[inherit]"
               onClick={() => setStep('name')}
               aria-label="Go back to name step"
             >
               &larr; Back
             </button>
-            <p style={{ ...styles.subheading, marginBottom: 'var(--ui-spacingMd)' }}>
+            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
               Scan this QR code with your authenticator app
             </p>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--ui-spacingMd)' }}>
+            <div className="flex justify-center mb-4">
               <QrCodeDisplay
                 value={setupResult.qrCode}
                 size={200}
                 label={`Device: ${deviceName}`}
               />
             </div>
-            <p style={{ fontSize: 'var(--ui-fontSizeSm)', color: 'var(--ui-textMuted)', textAlign: 'center', margin: '0 0 var(--ui-spacingSm)' }}>
+            <p className="text-sm text-text-tertiary text-center mb-2 mt-0">
               Or enter this secret manually:
             </p>
-            <div style={styles.secretBox}>{setupResult.secret}</div>
+            <div className="px-3.5 py-2.5 bg-surface-panel border border-border rounded-sm font-mono text-sm text-text-primary break-all text-center mb-4">
+              {setupResult.secret}
+            </div>
             <button
               type="button"
-              style={styles.primaryButton(false)}
+              className="w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
               onClick={() => setStep('verify')}
             >
               I&apos;ve scanned it
@@ -336,13 +210,13 @@ export function MfaSetupPage({
           <div>
             <button
               type="button"
-              style={styles.backButton}
+              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-2 font-[inherit]"
               onClick={() => setStep('scan')}
               aria-label="Go back to scan step"
             >
               &larr; Back
             </button>
-            <p style={{ ...styles.subheading, marginBottom: 'var(--ui-spacingMd)' }}>
+            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
               Enter the 6-digit code from your authenticator app
             </p>
             <CodeInput
@@ -352,7 +226,7 @@ export function MfaSetupPage({
               autoFocus
             />
             {loading && (
-              <p style={{ textAlign: 'center', fontSize: 'var(--ui-fontSizeSm)', color: 'var(--ui-textMuted)', marginTop: 'var(--ui-spacingSm)' }}>
+              <p className="text-center text-sm text-text-tertiary mt-2">
                 Verifying...
               </p>
             )}
@@ -362,24 +236,26 @@ export function MfaSetupPage({
         {/* Step 4: Backup codes */}
         {step === 'backup' && (
           <div>
-            <p style={{ ...styles.subheading, marginBottom: 'var(--ui-spacingSm)' }}>
+            <p className="text-sm text-text-secondary mb-2 mt-0 text-center">
               Save these backup codes in a safe place. Each code can only be used once.
             </p>
-            <div style={styles.backupGrid}>
+            <div className="grid grid-cols-2 gap-2 mb-4">
               {backupCodes.map((code, i) => (
-                <div key={i} style={styles.backupCode}>{code}</div>
+                <div key={i} className="px-3 py-2 bg-surface-panel border border-border rounded-sm font-mono text-sm text-text-primary text-center">
+                  {code}
+                </div>
               ))}
             </div>
             <button
               type="button"
-              style={styles.primaryButton(false)}
+              className="w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
               onClick={handleCopyAll}
             >
               {copied ? 'Copied!' : 'Copy All'}
             </button>
             <button
               type="button"
-              style={styles.secondaryButton}
+              className="w-full px-4 py-2.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit] mt-2"
               onClick={onComplete}
             >
               I&apos;ve saved them

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { colors, spacing, fontSize, borderRadius } from '../../styles/tokens';
+import { cn } from '../../lib/cn';
 
 /* ------------------------------------------------------------------ */
 /*  Panel                                                             */
@@ -19,7 +19,6 @@ export const Panel: React.FC<PanelProps> = ({
   width = 320,
   style,
 }) => {
-  const bg = variant === 'dark' ? '#111827' : colors.surface;
   // Render into document.body so the panel escapes any ancestor stacking
   // context (AppLayout's main content area creates one via `zIndex: 1`,
   // which would otherwise trap Panel's z-index below the sticky header).
@@ -27,19 +26,11 @@ export const Panel: React.FC<PanelProps> = ({
   if (typeof document === 'undefined') return null;
   return createPortal(
     <div
-      style={{
-        position: 'fixed',
-        right: 0,
-        top: 0,
-        height: '100%',
-        width,
-        zIndex: 60,
-        display: 'flex',
-        flexDirection: 'column',
-        background: bg,
-        boxShadow: '-4px 0 12px rgba(0,0,0,0.08)',
-        ...style,
-      }}
+      className={cn(
+        'fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]',
+        variant === 'dark' ? 'bg-[#111827]' : 'bg-surface'
+      )}
+      style={{ width, ...style }}
     >
       {children}
     </div>,
@@ -67,44 +58,31 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   const isDark = variant === 'dark';
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: `${spacing.sm}px ${spacing.md}px`,
-        borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : colors.border}`,
-      }}
+      className={cn(
+        'flex items-center justify-between px-4 py-2',
+        isDark ? 'border-b border-white/10' : 'border-b border-border'
+      )}
     >
       <span
-        style={{
-          fontSize: fontSize.sm,
-          fontWeight: 600,
-          color: isDark ? '#ffffff' : colors.textPrimary,
-        }}
+        className={cn(
+          'text-[13px] font-semibold',
+          isDark ? 'text-white' : 'text-text-primary'
+        )}
       >
         {title}
       </span>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: spacing.xs }}>
+      <div className="flex items-center gap-1">
         {actions}
         <button
           type="button"
           onClick={onClose}
-          style={{
-            width: 22,
-            height: 22,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'transparent',
-            border: 'none',
-            borderRadius: borderRadius.sm,
-            cursor: 'pointer',
-            color: isDark ? colors.textMuted : colors.textSecondary,
-            fontSize: fontSize.md,
-            padding: 0,
-            lineHeight: 1,
-          }}
+          className={cn(
+            'w-[22px] h-[22px] flex items-center justify-center',
+            'bg-transparent border-none rounded-sm cursor-pointer',
+            'text-sm p-0 leading-none',
+            isDark ? 'text-text-tertiary' : 'text-text-secondary'
+          )}
           aria-label="Close panel"
         >
           ×
@@ -125,14 +103,11 @@ interface PanelBodyProps {
 
 export const PanelBody: React.FC<PanelBodyProps> = ({
   children,
-  padding = '14px 12px',
+  padding,
 }) => (
   <div
-    style={{
-      flex: 1,
-      overflowY: 'auto',
-      padding,
-    }}
+    className="flex-1 overflow-y-auto"
+    style={{ padding: padding ?? '14px 12px' }}
   >
     {children}
   </div>
@@ -147,27 +122,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md';
 }
 
-const buttonVariants: Record<string, React.CSSProperties> = {
-  default: {
-    background: colors.surface,
-    color: colors.textPrimary,
-    border: `1px solid ${colors.border}`,
-  },
-  primary: {
-    background: '#16a34a',
-    color: '#ffffff',
-    border: '1px solid #16a34a',
-  },
-  danger: {
-    background: colors.danger,
-    color: '#ffffff',
-    border: `1px solid ${colors.danger}`,
-  },
+const btnVariantClasses: Record<string, string> = {
+  default: 'bg-surface text-text-primary border border-border',
+  primary: 'bg-[#16a34a] text-white border border-[#16a34a]',
+  danger: 'bg-danger text-white border border-danger',
 };
 
-const buttonSizes: Record<string, React.CSSProperties> = {
-  sm: { padding: '4px 10px', fontSize: fontSize.xs + 1 },
-  md: { padding: '6px 12px', fontSize: fontSize.sm },
+const btnSizeClasses: Record<string, string> = {
+  sm: 'px-2.5 py-1 text-xs',
+  md: 'px-3 py-1.5 text-[13px]',
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -175,19 +138,18 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   style,
   type = 'button',
+  className,
   ...rest
 }) => (
   <button
     type={type}
-    style={{
-      borderRadius: borderRadius.sm,
-      cursor: 'pointer',
-      fontWeight: 500,
-      lineHeight: 1.4,
-      ...buttonVariants[variant],
-      ...buttonSizes[size],
-      ...style,
-    }}
+    className={cn(
+      'rounded-sm cursor-pointer font-medium leading-[1.4]',
+      btnVariantClasses[variant],
+      btnSizeClasses[size],
+      className,
+    )}
+    style={style}
     {...rest}
   />
 );
@@ -208,22 +170,19 @@ export const IconButton: React.FC<IconButtonProps> = ({
   size = 36,
   style,
   type = 'button',
+  className,
   ...rest
 }) => (
   <button
     type={type}
+    className={cn(
+      'flex items-center justify-center border-none rounded-full cursor-pointer p-0 text-inherit',
+      className,
+    )}
     style={{
       width: size,
       height: size,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
       background: active ? activeColor : 'transparent',
-      border: 'none',
-      borderRadius: borderRadius.full,
-      cursor: 'pointer',
-      padding: 0,
-      color: 'inherit',
       ...style,
     }}
     {...rest}

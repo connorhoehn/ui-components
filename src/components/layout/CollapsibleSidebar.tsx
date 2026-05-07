@@ -8,6 +8,7 @@ import { useState, useMemo } from 'react';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { DocumentInfo } from '../../hooks/useDocuments';
 import { identityToColor, identityToInitials } from '../../utils/identity';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -102,15 +103,15 @@ function relativeTime(timestamp: string): string {
 }
 
 function eventIcon(eventType: string): string {
-  if (eventType.includes('cursor')) return '\u25CE';     // cursor
-  if (eventType.includes('chat')) return '\u2709';       // envelope
-  if (eventType.includes('reaction')) return '\u2764';   // heart
-  if (eventType.includes('join')) return '\u2192';        // arrow
-  if (eventType.includes('leave')) return '\u2190';       // arrow
-  if (eventType.includes('doc') || eventType.includes('edit')) return '\u270E'; // pencil
+  if (eventType.includes('cursor')) return '◎';     // cursor
+  if (eventType.includes('chat')) return '✉';       // envelope
+  if (eventType.includes('reaction')) return '❤';   // heart
+  if (eventType.includes('join')) return '→';        // arrow
+  if (eventType.includes('leave')) return '←';       // arrow
+  if (eventType.includes('doc') || eventType.includes('edit')) return '✎'; // pencil
   if (eventType.includes('mention')) return '@';
-  if (eventType.includes('presence')) return '\u25CF';    // dot
-  return '\u2022'; // bullet
+  if (eventType.includes('presence')) return '●';    // dot
+  return '•'; // bullet
 }
 
 function eventDescription(event: ActivityEvent): string {
@@ -147,30 +148,6 @@ function isMentionEvent(event: ActivityEvent, userId: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Section styles
-// ---------------------------------------------------------------------------
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-  color: '#64748b',
-  margin: 0,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  userSelect: 'none',
-  padding: '8px 0',
-};
-
-const separatorStyle: React.CSSProperties = {
-  borderTop: '1px solid #e2e8f0',
-  margin: 0,
-};
-
-// ---------------------------------------------------------------------------
 // CollapsibleSection
 // ---------------------------------------------------------------------------
 
@@ -192,43 +169,30 @@ function CollapsibleSection({
   return (
     <div>
       <div
-        style={sectionTitleStyle}
+        className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748b] m-0 cursor-pointer flex items-center gap-1.5 select-none py-2"
         onClick={() => setExpanded(v => !v)}
         role="button"
         tabIndex={0}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(v => !v); } }}
       >
-        <span style={{
-          display: 'inline-block',
-          transition: 'transform 0.2s ease',
-          transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-          fontSize: 10,
-        }}>
-          {'\u25B8'}
+        <span
+          className="inline-block transition-transform duration-200 ease-in-out text-[10px]"
+          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        >
+          {'▸'}
         </span>
-        {emoji && <span style={{ fontSize: 12 }}>{emoji}</span>}
+        {emoji && <span className="text-xs">{emoji}</span>}
         <span>{title}</span>
         {typeof count === 'number' && count > 0 && (
-          <span style={{
-            marginLeft: 4,
-            fontSize: 10,
-            fontWeight: 600,
-            color: '#64748b',
-            background: '#e2e8f0',
-            borderRadius: 8,
-            padding: '1px 6px',
-            letterSpacing: 0,
-            textTransform: 'none',
-          }}>
+          <span className="ml-1 text-[10px] font-semibold text-[#64748b] bg-border rounded-lg px-1.5 py-px tracking-normal normal-case">
             {count}
           </span>
         )}
       </div>
-      <div style={{
-        maxHeight: expanded ? 600 : 0,
-        overflow: 'hidden',
-        transition: 'max-height 0.25s ease',
-      }}>
+      <div
+        className="overflow-hidden transition-[max-height] duration-[250ms] ease-in-out"
+        style={{ maxHeight: expanded ? 600 : 0 }}
+      >
         {children}
       </div>
     </div>
@@ -266,56 +230,36 @@ export function CollapsibleSidebar({
   const showPipelinesSection = pipelines !== undefined;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+    <div className="flex flex-col gap-0">
 
       {/* ---- Connection controls ---- */}
-      <div style={{ padding: '4px 0 8px', display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: isConnected ? '#22c55e' : '#ef4444',
-          display: 'inline-block',
-          flexShrink: 0,
-        }} />
-        <span style={{
-          fontSize: 13,
-          fontWeight: 500,
-          color: isConnected ? '#16a34a' : '#dc2626',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}>
+      <div className="pt-1 pb-2 flex items-center gap-2">
+        <span
+          className={cn(
+            'w-2 h-2 rounded-full inline-block shrink-0',
+            isConnected ? 'bg-[#22c55e]' : 'bg-[#ef4444]'
+          )}
+        />
+        <span
+          className={cn(
+            'text-[13px] font-medium font-sans',
+            isConnected ? 'text-[#16a34a]' : 'text-[#dc2626]'
+          )}
+        >
           {isConnected ? 'Connected' : connectionState === 'connecting' || connectionState === 'reconnecting' ? 'Connecting...' : 'Disconnected'}
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
+        <div className="ml-auto flex gap-1">
           {isConnected ? (
             <button
               onClick={onDisconnect}
-              style={{
-                fontSize: 11,
-                padding: '2px 8px',
-                border: '1px solid #e2e8f0',
-                borderRadius: 4,
-                background: '#fff',
-                color: '#64748b',
-                cursor: 'pointer',
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-              }}
+              className="text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-[#64748b] cursor-pointer font-sans"
             >
               Disconnect
             </button>
           ) : (
             <button
               onClick={onReconnect}
-              style={{
-                fontSize: 11,
-                padding: '2px 8px',
-                border: '1px solid #3b82f6',
-                borderRadius: 4,
-                background: '#eff6ff',
-                color: '#2563eb',
-                cursor: 'pointer',
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-              }}
+              className="text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-[#2563eb] cursor-pointer font-sans"
             >
               Reconnect
             </button>
@@ -325,41 +269,21 @@ export function CollapsibleSidebar({
               onClick={onCollapse}
               title="Collapse sidebar"
               aria-label="Collapse sidebar"
-              style={{
-                width: 22,
-                height: 22,
-                border: 'none',
-                background: 'transparent',
-                color: '#94a3b8',
-                cursor: 'pointer',
-                fontSize: 14,
-                lineHeight: 1,
-                padding: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 4,
-              }}
-            >{'\u2715'}</button>
+              className="w-[22px] h-[22px] border-none bg-transparent text-text-tertiary cursor-pointer text-sm leading-none p-0 flex items-center justify-center rounded"
+            >{'✕'}</button>
           )}
         </div>
       </div>
 
-      <hr style={separatorStyle} />
+      <hr className="border-t border-border m-0" />
 
       {/* ---- Channels ---- */}
       <CollapsibleSection title="Channels">
-        <div style={{ paddingBottom: 8 }}>
-          <div style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: '#0f172a',
-            fontFamily: 'monospace',
-            marginBottom: 6,
-          }}>
+        <div className="pb-2">
+          <div className="text-[13px] font-semibold text-text-primary font-mono mb-1.5">
             # {currentChannel}
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <div className="flex flex-col gap-0.5">
             {presenceUsers.map(user => {
               const name = (user.metadata.displayName as string | undefined) ?? user.clientId.slice(0, 8);
               const isSelf = user.clientId === currentClientId;
@@ -371,39 +295,25 @@ export function CollapsibleSidebar({
               return (
                 <div
                   key={user.clientId}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '3px 0',
-                    fontSize: 13,
-                    color: isSelf ? '#0f172a' : '#475569',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                  }}
+                  className={cn(
+                    'flex items-center gap-2 py-[3px] text-[13px] font-sans',
+                    isSelf ? 'text-text-primary' : 'text-text-secondary'
+                  )}
                 >
-                  <span style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: '50%',
-                    background: color,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 10,
-                    fontWeight: 700,
-                    color: '#fff',
-                    flexShrink: 0,
-                  }}>
+                  <span
+                    className="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+                    style={{ background: color }}
+                  >
                     {initials}
                   </span>
-                  <span style={{ fontWeight: isSelf ? 600 : 400 }}>
+                  <span className={isSelf ? 'font-semibold' : 'font-normal'}>
                     {name}{isSelf ? ' (you)' : ''}
                   </span>
                 </div>
               );
             })}
             {presenceUsers.length === 0 && (
-              <span style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
+              <span className="text-xs text-text-tertiary italic">
                 No users online
               </span>
             )}
@@ -411,26 +321,17 @@ export function CollapsibleSidebar({
         </div>
       </CollapsibleSection>
 
-      <hr style={separatorStyle} />
+      <hr className="border-t border-border m-0" />
 
       {/* ---- Activity ---- */}
       <CollapsibleSection title="Activity">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingBottom: 4, position: 'relative' }}>
+        <div className="flex flex-col gap-0.5 pb-1 relative">
           {/* Fade gradient overlay at bottom */}
           {recentEvents.length > 3 && (
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 32,
-              background: 'linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1))',
-              pointerEvents: 'none',
-              zIndex: 1,
-            }} />
+            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-white pointer-events-none z-[1]" />
           )}
           {recentEvents.length === 0 && (
-            <span style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
+            <span className="text-xs text-text-tertiary italic">
               No recent activity
             </span>
           )}
@@ -439,39 +340,23 @@ export function CollapsibleSidebar({
             return (
               <div
                 key={event.id}
+                className={cn(
+                  'flex items-start gap-1.5 px-1 py-[3px] rounded text-xs font-sans',
+                  isMention && 'bg-[rgba(59,130,246,0.10)]'
+                )}
                 style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 6,
-                  padding: '3px 4px',
-                  borderRadius: 4,
-                  fontSize: 12,
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
                   animation: isMention
                     ? 'mentionPulse 2s ease-in-out 3, fadeSlideIn 0.3s ease-out'
                     : 'fadeSlideIn 0.3s ease-out',
-                  background: isMention ? 'rgba(59,130,246,0.10)' : 'transparent',
                 }}
               >
-                <span style={{ flexShrink: 0, width: 16, textAlign: 'center', color: '#94a3b8' }}>
+                <span className="shrink-0 w-4 text-center text-text-tertiary">
                   {eventIcon(event.eventType)}
                 </span>
-                <span style={{
-                  flex: 1,
-                  color: '#374151',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
+                <span className="flex-1 text-[#374151] overflow-hidden text-ellipsis whitespace-nowrap">
                   {eventDescription(event)}
                 </span>
-                <span style={{
-                  flexShrink: 0,
-                  fontSize: 10,
-                  color: '#94a3b8',
-                  fontFamily: 'monospace',
-                  whiteSpace: 'nowrap',
-                }}>
+                <span className="shrink-0 text-[10px] text-text-tertiary font-mono whitespace-nowrap">
                   {relativeTime(event.timestamp)}
                 </span>
               </div>
@@ -480,13 +365,13 @@ export function CollapsibleSidebar({
         </div>
       </CollapsibleSection>
 
-      <hr style={separatorStyle} />
+      <hr className="border-t border-border m-0" />
 
       {/* ---- Documents ---- */}
       <CollapsibleSection title="Documents">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingBottom: 8 }}>
+        <div className="flex flex-col gap-0.5 pb-2">
           {recentDocs.length === 0 && (
-            <span style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
+            <span className="text-xs text-text-tertiary italic">
               No documents
             </span>
           )}
@@ -497,35 +382,12 @@ export function CollapsibleSidebar({
               role="button"
               tabIndex={0}
               onKeyDown={e => { if (e.key === 'Enter') onOpenDocument(doc.id); }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '4px 4px',
-                borderRadius: 4,
-                cursor: 'pointer',
-                fontSize: 12,
-                color: '#374151',
-                fontFamily: 'system-ui, -apple-system, sans-serif',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = '#f1f5f9'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
+              className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-[#374151] font-sans hover:bg-surface-hover"
             >
-              <span style={{
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                flex: 1,
-              }}>
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
                 {doc.title}
               </span>
-              <span style={{
-                flexShrink: 0,
-                fontSize: 10,
-                color: '#94a3b8',
-                fontFamily: 'monospace',
-                marginLeft: 8,
-              }}>
+              <span className="shrink-0 text-[10px] text-text-tertiary font-mono ml-2">
                 {relativeTime(doc.updatedAt ?? doc.createdAt)}
               </span>
             </div>
@@ -536,20 +398,11 @@ export function CollapsibleSidebar({
       {/* ---- Pipelines ---- */}
       {showPipelinesSection && (
         <>
-          <hr style={separatorStyle} />
+          <hr className="border-t border-border m-0" />
           <CollapsibleSection title="Pipelines" emoji={'\u{1F500}'} count={pipelineList.length}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingBottom: 8 }}>
+            <div className="flex flex-col gap-0.5 pb-2">
               {pipelineList.length === 0 && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '2px 4px',
-                  fontSize: 12,
-                  color: '#94a3b8',
-                  fontStyle: 'italic',
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                }}>
+                <div className="flex items-center justify-between px-1 py-0.5 text-xs text-text-tertiary italic font-sans">
                   <span>No pipelines yet</span>
                   {onSeeAllPipelines && (
                     <span
@@ -557,13 +410,7 @@ export function CollapsibleSidebar({
                       tabIndex={0}
                       onClick={onSeeAllPipelines}
                       onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
-                      style={{
-                        fontSize: 11,
-                        color: '#2563eb',
-                        fontStyle: 'normal',
-                        cursor: 'pointer',
-                        marginLeft: 8,
-                      }}
+                      className="text-[11px] text-[#2563eb] not-italic cursor-pointer ml-2"
                     >
                       + New
                     </span>
@@ -577,45 +424,22 @@ export function CollapsibleSidebar({
                   role="button"
                   tabIndex={0}
                   onKeyDown={e => { if (e.key === 'Enter') onOpenPipeline?.(p.id); }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '4px 4px',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    fontSize: 12,
-                    color: '#374151',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                    gap: 6,
-                    minWidth: 0,
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = '#f1f5f9'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent'; }}
+                  className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-[#374151] font-sans gap-1.5 min-w-0 hover:bg-surface-hover"
                 >
-                  <span style={{ flexShrink: 0, fontSize: 12, width: 16, textAlign: 'center' }}>
+                  <span className="shrink-0 text-xs w-4 text-center">
                     {p.icon ?? '\u{1F500}'}
                   </span>
-                  <span style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flex: 1,
-                  }}>
+                  <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
                     {p.name}
                   </span>
-                  <span style={{
-                    flexShrink: 0,
-                    fontSize: 9,
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.4px',
-                    padding: '1px 6px',
-                    borderRadius: 8,
-                    color: p.status === 'published' ? '#166534' : '#92400e',
-                    background: p.status === 'published' ? '#dcfce7' : '#fef3c7',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                  }}>
+                  <span
+                    className={cn(
+                      'shrink-0 text-[9px] font-semibold uppercase tracking-[0.4px] px-1.5 py-px rounded-lg font-sans',
+                      p.status === 'published'
+                        ? 'text-[#166534] bg-[#dcfce7]'
+                        : 'text-[#92400e] bg-[#fef3c7]'
+                    )}
+                  >
                     {p.status}
                   </span>
                 </div>
@@ -626,13 +450,7 @@ export function CollapsibleSidebar({
                   tabIndex={0}
                   onClick={onSeeAllPipelines}
                   onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
-                  style={{
-                    padding: '4px 4px',
-                    fontSize: 11,
-                    color: '#2563eb',
-                    cursor: 'pointer',
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
-                  }}
+                  className="px-1 py-1 text-[11px] text-[#2563eb] cursor-pointer font-sans"
                 >
                   See all pipelines {'→'}
                 </div>
@@ -645,7 +463,7 @@ export function CollapsibleSidebar({
       {/* ---- Docked Video (bottom) ---- */}
       {videoSlot && (
         <>
-          <hr style={separatorStyle} />
+          <hr className="border-t border-border m-0" />
           <CollapsibleSection title="Video">
             {videoSlot}
           </CollapsibleSection>

@@ -4,7 +4,6 @@
 // sources with status breakdown, items in queue, recent completions, errors),
 // a recent activity list, and quick-action buttons.
 
-import type { CSSProperties } from 'react';
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useIngestSources } from '../../hooks/useIngestSources';
@@ -12,16 +11,14 @@ import { useIngestItems } from '../../hooks/useIngestItems';
 import Chip from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import { colors, pageContainerStyle, saveBtnStyle, cancelBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import type { IngestItem } from '../../types/ingest';
 
 const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
 /**
- * Dev-only button that posts to /api/ingest/dev/seed-fake-content. Vite gates
- * the import-meta DEV flag to local dev builds; the backend re-enforces the
- * non-prod gate on its end. AGENTIC_ETL_VISION slice J.
+ * Dev-only button that posts to /api/ingest/dev/seed-fake-content.
  */
 function DevSeedButton() {
   const { idToken } = useIdentityContext();
@@ -50,10 +47,10 @@ function DevSeedButton() {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <div className="flex items-center gap-2">
       <button
         data-testid="dev-seed-btn"
-        style={cancelBtnStyle}
+        className="px-3 py-1.5 text-[13px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"
         onClick={() => void seed(5)}
         disabled={busy}
         title="Dev-only: seed 5 fake ingest items so the UI renders against realistic data"
@@ -61,78 +58,13 @@ function DevSeedButton() {
         {busy ? 'Seeding…' : 'Seed sample data'}
       </button>
       {status ? (
-        <span data-testid="dev-seed-status" style={{ fontSize: 11, color: colors.textTertiary }}>
+        <span data-testid="dev-seed-status" className="text-[11px] text-text-tertiary">
           {status}
         </span>
       ) : null}
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Static styles
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  header: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16,
-  },
-  title: {
-    margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary,
-  },
-  cardsRow: {
-    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 20,
-  },
-  card: {
-    padding: 16, background: colors.surface, border: `1px solid ${colors.border}`,
-    borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 6,
-  },
-  cardLabel: {
-    fontSize: 12, fontWeight: 500, color: colors.textTertiary, textTransform: 'uppercase' as const, letterSpacing: '0.03em',
-  },
-  cardValue: {
-    fontSize: 28, fontWeight: 700, color: colors.textPrimary, lineHeight: 1,
-  },
-  cardSub: {
-    fontSize: 12, color: colors.textTertiary,
-  },
-  section: {
-    background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10,
-    padding: 16, marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 14, fontWeight: 600, color: colors.textPrimary, marginBottom: 12,
-  },
-  activityRow: {
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
-    padding: '8px 0', borderBottom: `1px solid ${colors.border}`,
-  },
-  activityPath: {
-    fontSize: 13, color: colors.textSecondary, fontFamily: 'monospace',
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0,
-  },
-  activityTime: {
-    fontSize: 11, color: colors.textTertiary, whiteSpace: 'nowrap', flexShrink: 0,
-  },
-  quickActions: {
-    display: 'flex', gap: 10, alignItems: 'center',
-  },
-  linkBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: 'none',
-    border: `1px solid ${colors.border}`, borderRadius: 6, cursor: 'pointer',
-    fontFamily: 'inherit', color: colors.textSecondary,
-  },
-  errorBanner: {
-    padding: '12px 16px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`,
-    color: colors.state.failed, borderRadius: 8, display: 'flex', alignItems: 'center',
-    justifyContent: 'space-between', gap: 12, marginBottom: 16,
-  },
-  retryBtn: {
-    padding: '6px 14px', fontSize: 13, fontWeight: 500, background: '#fff',
-    color: colors.state.failed, border: `1px solid ${colors.state.failed}`,
-    borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -186,13 +118,6 @@ export default function IngestDashboard() {
       .slice(0, 5);
   }, [items]);
 
-  /**
-   * Threshold-based alerts surfaced as a strip at the top of the dashboard,
-   * above the summary cards. AGENTIC_ETL_VISION §F. Currently emits:
-   *   - one banner per source with status === 'error'
-   *   - one banner if the rolling 1h failure rate exceeds 10%
-   *   - one banner if the queue depth exceeds DASHBOARD_QUEUE_DEPTH_ALERT
-   */
   const alerts = useMemo(() => {
     const out: Array<{ id: string; level: 'warning' | 'critical'; message: string }> = [];
     for (const s of sources) {
@@ -233,11 +158,11 @@ export default function IngestDashboard() {
 
   if (loading && sources.length === 0 && items.length === 0) {
     return (
-      <div data-testid="ingest-dashboard" style={pageContainerStyle}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Ingest</h2>
+      <div data-testid="ingest-dashboard" className="p-6 flex flex-col gap-3">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="m-0 text-[22px] font-bold text-text-primary">Ingest</h2>
         </div>
-        <div style={styles.cardsRow}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 mb-5">
           <SkeletonCard height={90} />
           <SkeletonCard height={90} />
           <SkeletonCard height={90} />
@@ -249,14 +174,14 @@ export default function IngestDashboard() {
   }
 
   return (
-    <div data-testid="ingest-dashboard" style={pageContainerStyle}>
+    <div data-testid="ingest-dashboard" className="p-6 flex flex-col gap-3">
       {/* Header */}
-      <div style={styles.header}>
-        <h2 style={styles.title}>Ingest</h2>
-        <div style={styles.quickActions}>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="m-0 text-[22px] font-bold text-text-primary">Ingest</h2>
+        <div className="flex gap-2.5 items-center">
           {import.meta.env.DEV ? <DevSeedButton /> : null}
           <button
-            style={saveBtnStyle(false)}
+            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"
             onClick={() => navigate('/ingest/sources')}
             data-testid="add-source-btn"
           >
@@ -267,27 +192,30 @@ export default function IngestDashboard() {
 
       {/* Error banner */}
       {error && (
-        <div style={styles.errorBanner} role="alert">
-          <span style={{ fontSize: 13, fontWeight: 500 }}>Failed to load ingest data.</span>
-          <button onClick={handleRetry} style={styles.retryBtn}>Retry</button>
+        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
+          <span className="text-[13px] font-medium">Failed to load ingest data.</span>
+          <button
+            onClick={handleRetry}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
+          >
+            Retry
+          </button>
         </div>
       )}
 
       {/* Alerts strip */}
       {alerts.length > 0 && (
-        <div data-testid="alerts-strip" style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+        <div data-testid="alerts-strip" className="flex flex-col gap-1.5 mb-3">
           {alerts.map((a) => (
             <div
               key={a.id}
               data-testid={`alert-${a.id}`}
-              style={{
-                padding: '8px 12px',
-                borderRadius: 6,
-                fontSize: 13,
-                background: a.level === 'critical' ? '#fef2f2' : '#fefce8',
-                border: `1px solid ${a.level === 'critical' ? colors.state.failed : '#fbbf24'}`,
-                color: a.level === 'critical' ? colors.state.failed : '#92400e',
-              }}
+              className={cn(
+                'px-3 py-2 rounded-md text-[13px] border',
+                a.level === 'critical'
+                  ? 'bg-[#fef2f2] border-[var(--color-state-failed)] text-[var(--color-state-failed)]'
+                  : 'bg-[#fefce8] border-[#fbbf24] text-[#92400e]',
+              )}
             >
               <strong>{a.level === 'critical' ? '⛔' : '⚠'}</strong> {a.message}
             </div>
@@ -296,40 +224,40 @@ export default function IngestDashboard() {
       )}
 
       {/* Summary cards */}
-      <div style={styles.cardsRow}>
-        <div style={styles.card}>
-          <span style={styles.cardLabel}>Sources</span>
-          <span style={styles.cardValue}>{stats.total}</span>
-          <span style={styles.cardSub}>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3 mb-5">
+        <div className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wide">Sources</span>
+          <span className="text-[28px] font-bold text-text-primary leading-none">{stats.total}</span>
+          <span className="text-xs text-text-tertiary">
             {stats.active} active, {stats.paused} paused{stats.errored > 0 ? `, ${stats.errored} error` : ''}
           </span>
         </div>
-        <div style={styles.card}>
-          <span style={styles.cardLabel}>In Queue</span>
-          <span style={{ ...styles.cardValue, color: stats.queued > 0 ? colors.state.awaiting : colors.textPrimary }}>
+        <div className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wide">In Queue</span>
+          <span className={cn('text-[28px] font-bold leading-none', stats.queued > 0 ? 'text-[var(--color-state-awaiting)]' : 'text-text-primary')}>
             {stats.queued}
           </span>
-          <span style={styles.cardSub}>items processing</span>
+          <span className="text-xs text-text-tertiary">items processing</span>
         </div>
-        <div style={styles.card}>
-          <span style={styles.cardLabel}>Completed (24h)</span>
-          <span style={{ ...styles.cardValue, color: stats.recentDone > 0 ? colors.state.completed : colors.textPrimary }}>
+        <div className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wide">Completed (24h)</span>
+          <span className={cn('text-[28px] font-bold leading-none', stats.recentDone > 0 ? 'text-[var(--color-state-completed)]' : 'text-text-primary')}>
             {stats.recentDone}
           </span>
-          <span style={styles.cardSub}>items ingested</span>
+          <span className="text-xs text-text-tertiary">items ingested</span>
         </div>
-        <div style={styles.card}>
-          <span style={styles.cardLabel}>Errors</span>
-          <span style={{ ...styles.cardValue, color: stats.failed > 0 ? colors.state.failed : colors.textPrimary }}>
+        <div className="p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-text-tertiary uppercase tracking-wide">Errors</span>
+          <span className={cn('text-[28px] font-bold leading-none', stats.failed > 0 ? 'text-[var(--color-state-failed)]' : 'text-text-primary')}>
             {stats.failed}
           </span>
-          <span style={styles.cardSub}>items failed</span>
+          <span className="text-xs text-text-tertiary">items failed</span>
         </div>
       </div>
 
       {/* Recent Activity */}
-      <div style={styles.section}>
-        <div style={styles.sectionTitle}>Recent Activity</div>
+      <div className="bg-surface border border-border rounded-[10px] p-4 mb-4">
+        <div className="text-sm font-semibold text-text-primary mb-3">Recent Activity</div>
         {recentActivity.length === 0 ? (
           <EmptyState
             icon="📥"
@@ -339,12 +267,12 @@ export default function IngestDashboard() {
         ) : (
           <div>
             {recentActivity.map((item) => (
-              <div key={item.itemId} style={styles.activityRow}>
-                <span style={styles.activityPath} title={item.sourcePath}>
+              <div key={item.itemId} className="flex items-center justify-between gap-3 py-2 border-b border-border">
+                <span className="text-[13px] text-text-secondary font-mono overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0" title={item.sourcePath}>
                   {item.sourcePath}
                 </span>
                 <Chip tone="success" size="xs">done</Chip>
-                <span style={styles.activityTime}>{relativeTime(item.updatedAt)}</span>
+                <span className="text-[11px] text-text-tertiary whitespace-nowrap shrink-0">{relativeTime(item.updatedAt)}</span>
               </div>
             ))}
           </div>
