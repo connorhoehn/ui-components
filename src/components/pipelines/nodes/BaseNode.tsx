@@ -17,8 +17,8 @@
 // a `tabIndex` so keyboard users can land on it. A `:focus-visible` outline
 // (drawn from `colors.primary`) is added so keyboard focus is obvious.
 
-import { useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
-import { colors } from '../../../constants/styles';
+import { useState, type MouseEvent, type ReactNode } from 'react';
+import { cn } from '../../../lib/cn';
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
 
 // ---------------------------------------------------------------------------
@@ -63,25 +63,22 @@ export interface BaseNodeProps {
 }
 
 // ---------------------------------------------------------------------------
-// Per-state visual tokens (colors + border-width/style + background)
-// Derived from PIPELINES_PLAN.md §7.1.
+// Per-state visual tokens
 // ---------------------------------------------------------------------------
 
-interface StateStyle {
-  border: string;
-  background: string;
-  opacity: number;
+interface StateTokens {
+  card: string;
   dot: string;
 }
 
-const STATE_STYLES: Record<NodeExecutionState, StateStyle> = {
-  idle:      { border: `1px solid ${colors.state.idle}`,        background: colors.surface,   opacity: 1,   dot: colors.state.idle },
-  pending:   { border: `1px dashed ${colors.state.pending}`,    background: '#eff6ff',        opacity: 1,   dot: colors.state.pending },
-  running:   { border: `2px solid ${colors.state.running}`,     background: '#eff6ff',        opacity: 1,   dot: colors.state.running },
-  awaiting:  { border: `2px solid ${colors.state.awaiting}`,    background: '#fffbeb',        opacity: 1,   dot: colors.state.awaiting },
-  completed: { border: `1px solid ${colors.state.completed}`,   background: '#f0fdf4',        opacity: 1,   dot: colors.state.completed },
-  failed:    { border: `2px solid ${colors.state.failed}`,      background: '#fef2f2',        opacity: 1,   dot: colors.state.failed },
-  skipped:   { border: `1px dashed ${colors.state.skipped}`,    background: '#f9fafb',        opacity: 0.5, dot: colors.state.skipped },
+const STATE_TOKENS: Record<NodeExecutionState, StateTokens> = {
+  idle:      { card: 'border border-[#d1d5db] bg-white',                    dot: 'bg-[#d1d5db]' },
+  pending:   { card: 'border border-dashed border-[#93c5fd] bg-[#eff6ff]',  dot: 'bg-[#93c5fd]' },
+  running:   { card: 'border-2 border-[#2563eb] bg-[#eff6ff]',              dot: 'bg-[#2563eb]' },
+  awaiting:  { card: 'border-2 border-[#f59e0b] bg-[#fffbeb]',              dot: 'bg-[#f59e0b]' },
+  completed: { card: 'border border-[#16a34a] bg-[#f0fdf4]',                dot: 'bg-[#16a34a]' },
+  failed:    { card: 'border-2 border-[#dc2626] bg-[#fef2f2]',              dot: 'bg-[#dc2626]' },
+  skipped:   { card: 'border border-dashed border-[#d1d5db] bg-[#f9fafb] opacity-50', dot: 'bg-[#d1d5db]' },
 };
 
 // ---------------------------------------------------------------------------
@@ -90,7 +87,7 @@ const STATE_STYLES: Record<NodeExecutionState, StateStyle> = {
 
 export default function BaseNode(props: BaseNodeProps) {
   const { icon, subtitle, state, body, footer, selected, onRetry, hasBreakpoint, pausedAtBreakpoint, ariaLabel, children } = props;
-  const tokens = STATE_STYLES[state];
+  const tokens = STATE_TOKENS[state];
   const reduceMotion = usePrefersReducedMotion();
   const [retryHover, setRetryHover] = useState(false);
 
@@ -111,105 +108,28 @@ export default function BaseNode(props: BaseNodeProps) {
   // color + the per-state border weight to convey state.
   const pulseAnim =
     !reduceMotion && state === 'pending'
-      ? 'basenode-pulse 2000ms cubic-bezier(0.25, 0.1, 0.25, 1) infinite'
+      ? 'animate-[basenode-pulse_2000ms_cubic-bezier(0.25,0.1,0.25,1)_infinite]'
       : !reduceMotion && state === 'running'
-        ? 'basenode-pulse 1500ms linear infinite'
-        : 'none';
+        ? 'animate-[basenode-pulse_1500ms_linear_infinite]'
+        : '';
 
-  const cardStyle: CSSProperties = {
-    width: 200,
-    borderRadius: 8,
-    border: pausedAtBreakpoint ? '2px solid #d97706' : tokens.border,
-    background: pausedAtBreakpoint ? '#fffbeb' : tokens.background,
-    opacity: tokens.opacity,
-    boxShadow: pausedAtBreakpoint
-      ? '0 0 0 3px rgba(217, 119, 6, 0.25), 0 1px 2px rgba(15, 23, 42, 0.06)'
-      : selected
-        ? '0 0 0 4px rgba(100, 108, 255, 0.18), 0 1px 2px rgba(15, 23, 42, 0.06)'
-        : '0 1px 2px rgba(15, 23, 42, 0.06)',
-    position: 'relative',
-    fontFamily: 'inherit',
-    color: colors.textPrimary,
-    boxSizing: 'border-box',
-    // 200ms snap transition between state colors — matches §18.12. Disabled
-    // under reduced-motion so the change is instant.
-    transition: reduceMotion
-      ? 'none'
-      : 'border-color 200ms cubic-bezier(0.4, 0, 0.2, 1), background-color 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-    // Native button reset — we use `role="button"` on a div so React Flow can
-    // own pointer events, but we still want a tight focus model.
-    outline: 'none',
-  };
-
-  const headerStyle: CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: 8,
-    height: 28, padding: '0 10px',
-    borderBottom: body || footer || showRetry ? `1px solid ${colors.border}` : 'none',
-  };
-
-  // §17.6 retry pill — small inline button just below the header, matching the
-  // failed-state palette. Transparent background with a red border + label;
-  // hover darkens to the same `#fef2f2` we use for the failed card background
-  // so the pill visually nests inside the card. Reduced-motion-friendly: no
-  // animation here, just a snap on hover.
-  const retryRowStyle: CSSProperties = {
-    display: 'flex',
-    padding: '6px 10px',
-    borderBottom: body || footer ? `1px solid ${colors.border}` : 'none',
-  };
-
-  const retryPillStyle: CSSProperties = {
-    cursor: 'pointer',
-    appearance: 'none',
-    fontFamily: 'inherit',
-    fontSize: 11,
-    fontWeight: 500,
-    lineHeight: 1.2,
-    padding: '2px 8px',
-    borderRadius: 999,
-    border: `1px solid ${colors.state.failed}`,
-    color: colors.state.failed,
-    background: retryHover ? '#fef2f2' : 'transparent',
-    transition: reduceMotion
-      ? 'none'
-      : 'background-color 120ms cubic-bezier(0.4, 0, 0.2, 1)',
-  };
-
-  const iconStyle: CSSProperties = {
-    fontSize: 14, lineHeight: 1, flexShrink: 0,
-  };
-
-  const subtitleStyle: CSSProperties = {
-    flex: 1, minWidth: 0,
-    fontSize: 12, fontWeight: 600, color: colors.textPrimary,
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  };
-
-  const dotStyle: CSSProperties = {
-    width: 8, height: 8, borderRadius: '50%',
-    background: tokens.dot, flexShrink: 0,
-    animation: pulseAnim,
-  };
-
-  const bodyStyle: CSSProperties = {
-    padding: '8px 10px',
-    fontSize: 13, lineHeight: 1.4,
-    color: colors.textSecondary,
-  };
-
-  const footerStyle: CSSProperties = {
-    borderTop: `1px solid ${colors.border}`,
-    padding: '6px 10px',
-    fontSize: 12,
-    color: colors.textSecondary,
-  };
+  const hasDividerAfterHeader = !!(body || footer || showRetry);
+  const hasDividerAfterRetry = !!(body || footer);
 
   // Synthesize a sensible default aria-label when the caller didn't supply one.
   const defaultAriaLabel = subtitle ? `${subtitle}, state: ${state}` : `Node, state: ${state}`;
 
   return (
     <div
-      style={cardStyle}
+      className={cn(
+        'w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+        pausedAtBreakpoint
+          ? 'border-2 border-[#d97706] bg-[#fffbeb] shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]'
+          : tokens.card,
+        !pausedAtBreakpoint && selected && 'shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]',
+        !pausedAtBreakpoint && !selected && 'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
+        reduceMotion && 'transition-none',
+      )}
       role="button"
       tabIndex={0}
       aria-label={ariaLabel ?? defaultAriaLabel}
@@ -218,44 +138,43 @@ export default function BaseNode(props: BaseNodeProps) {
       data-node-state={state}
       data-pipeline-node="true"
     >
-      {/* Keyframes for the pending/running dot pulse and a focus-visible
-          outline. Pulse keyframes were already documented in PIPELINES_PLAN.md
-          §18.12; the focus-visible outline uses `colors.primary` so it matches
-          the rest of the editor's keyboard-focus treatment. The browser dedupes
-          identical @keyframes / selectors so this stays cheap per render. */}
+      {/* Keyframes for the pending/running dot pulse */}
       <style>{`
         @keyframes basenode-pulse {
           0%, 100% { opacity: 1;   transform: scale(1);   }
           50%      { opacity: 0.55; transform: scale(1.25); }
-        }
-        [data-pipeline-node="true"]:focus-visible {
-          outline: 2px solid ${colors.primary};
-          outline-offset: 2px;
         }
       `}</style>
       {hasBreakpoint && (
         <span
           aria-label="breakpoint"
           data-testid="breakpoint-dot"
-          style={{
-            position: 'absolute', top: -4, left: -4,
-            width: 10, height: 10, borderRadius: '50%',
-            background: '#ef4444',
-            border: '1.5px solid #ffffff',
-            zIndex: 1,
-          }}
+          className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-[#ef4444] border-[1.5px] border-white z-[1]"
         />
       )}
-      <div style={headerStyle}>
-        <span style={iconStyle} aria-hidden="true">{icon}</span>
-        <span style={subtitleStyle}>{subtitle}</span>
-        <span style={dotStyle} aria-label={`state: ${state}`} />
+      <div className={cn(
+        'flex items-center gap-2 h-7 px-2.5',
+        hasDividerAfterHeader && 'border-b border-border',
+      )}>
+        <span className="text-sm leading-none shrink-0" aria-hidden="true">{icon}</span>
+        <span className="flex-1 min-w-0 text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{subtitle}</span>
+        <span
+          className={cn('w-2 h-2 rounded-full shrink-0', tokens.dot, pulseAnim)}
+          aria-label={`state: ${state}`}
+        />
       </div>
       {showRetry && (
-        <div style={retryRowStyle}>
+        <div className={cn(
+          'flex px-2.5 py-1.5',
+          hasDividerAfterRetry && 'border-b border-border',
+        )}>
           <button
             type="button"
-            style={retryPillStyle}
+            className={cn(
+              'cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-[#dc2626] text-[#dc2626] transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
+              retryHover ? 'bg-[#fef2f2]' : 'bg-transparent',
+              reduceMotion && 'transition-none',
+            )}
             onClick={handleRetryClick}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseEnter={() => setRetryHover(true)}
@@ -266,8 +185,12 @@ export default function BaseNode(props: BaseNodeProps) {
           </button>
         </div>
       )}
-      {body !== undefined && body !== null && <div style={bodyStyle}>{body}</div>}
-      {footer !== undefined && footer !== null && <div style={footerStyle}>{footer}</div>}
+      {body !== undefined && body !== null && (
+        <div className="px-2.5 py-2 text-[13px] leading-[1.4] text-text-secondary">{body}</div>
+      )}
+      {footer !== undefined && footer !== null && (
+        <div className="border-t border-border px-2.5 py-1.5 text-xs text-text-secondary">{footer}</div>
+      )}
       {children}
     </div>
   );

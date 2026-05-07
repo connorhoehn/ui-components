@@ -18,8 +18,8 @@
 // NOTE: No npm dependencies are introduced — see PIPELINES_PLAN.md.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent, ChangeEvent } from 'react';
-import { colors } from '../../constants/styles';
+import type { KeyboardEvent, ChangeEvent } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface CodeEditorProps {
   value: string;
@@ -49,73 +49,6 @@ const PADDING_Y   = 8;
 const PADDING_X   = 10;
 const GUTTER_W    = 36;
 
-const wrapperBase: CSSProperties = {
-  display: 'flex',
-  border: `1px solid ${colors.borderField}`,
-  borderRadius: 6,
-  background: colors.surfaceInset,
-  fontFamily: FONT_FAMILY,
-  fontSize: FONT_SIZE,
-  lineHeight: LINE_HEIGHT,
-  overflow: 'hidden',
-  boxSizing: 'border-box',
-};
-
-const wrapperFocused: CSSProperties = {
-  borderColor: colors.primary,
-  boxShadow: `0 0 0 1px ${colors.primary}`, // fills out the 2px ring with the 1px border
-};
-
-const gutterStyle: CSSProperties = {
-  width: GUTTER_W,
-  padding: `${PADDING_Y}px 6px`,
-  background: colors.surfacePanel,
-  color: colors.textTertiary,
-  fontFamily: FONT_FAMILY,
-  fontSize: 11,
-  lineHeight: LINE_HEIGHT,
-  textAlign: 'right',
-  userSelect: 'none',
-  borderRight: `1px solid ${colors.border}`,
-  overflow: 'hidden',
-  whiteSpace: 'pre',
-};
-
-const textareaBase: CSSProperties = {
-  flex: 1,
-  border: 'none',
-  outline: 'none',
-  resize: 'none',
-  padding: `${PADDING_Y}px ${PADDING_X}px`,
-  fontFamily: FONT_FAMILY,
-  fontSize: FONT_SIZE,
-  lineHeight: LINE_HEIGHT,
-  background: 'transparent',
-  color: colors.textPrimary,
-  // overflow toggled dynamically when content exceeds maxLines
-  tabSize: 2,
-  boxSizing: 'border-box',
-};
-
-const pillRowStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 4,
-  marginBottom: 4,
-};
-
-const pillStyle: CSSProperties = {
-  display: 'inline-block',
-  padding: '1px 6px',
-  fontSize: 11,
-  fontFamily: FONT_FAMILY,
-  background: '#eef2ff',
-  color: '#4338ca',
-  border: '1px solid #c7d2fe',
-  borderRadius: 4,
-  cursor: 'pointer',
-  lineHeight: 1.4,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -216,13 +149,14 @@ export default function CodeEditor({
   return (
     <div>
       {variables && variables.length > 0 && (
-        <div style={pillRowStyle}>
+        <div className="flex flex-wrap gap-1 mb-1">
           {variables.map(v => (
             <button
               key={v}
               type="button"
               onClick={() => insertAtCursor(`{{ ${v} }}`)}
-              style={pillStyle}
+              className="inline-block px-1.5 py-px text-[11px] bg-[#eef2ff] text-[#4338ca] border border-[#c7d2fe] rounded cursor-pointer leading-[1.4]"
+              style={{ fontFamily: FONT_FAMILY }}
               title={`Insert {{ ${v} }}`}
               disabled={readOnly}
             >
@@ -233,18 +167,16 @@ export default function CodeEditor({
       )}
 
       <div
-        style={{
-          ...wrapperBase,
-          ...(focused ? wrapperFocused : null),
-          height: contentHeight,
-        }}
+        className={cn(
+          'flex border border-border-field rounded-md bg-[#fafbfc] overflow-hidden box-border',
+          focused && 'border-primary shadow-[0_0_0_1px_#646cff]',
+        )}
+        style={{ fontFamily: FONT_FAMILY, fontSize: FONT_SIZE, lineHeight: LINE_HEIGHT, height: contentHeight }}
       >
         <div
           data-gutter
-          style={{
-            ...gutterStyle,
-            overflow: scrollable ? 'hidden' : 'hidden',
-          }}
+          className="text-right select-none border-r border-border overflow-hidden whitespace-pre bg-[#f8fafc] text-text-tertiary text-[11px]"
+          style={{ width: GUTTER_W, padding: `${PADDING_Y}px 6px`, fontFamily: FONT_FAMILY, lineHeight: LINE_HEIGHT }}
         >
           {lineNumbers}
         </div>
@@ -262,8 +194,13 @@ export default function CodeEditor({
           spellCheck={false}
           autoCorrect="off"
           autoCapitalize="off"
+          className="flex-1 border-none outline-none resize-none bg-transparent text-text-primary box-border"
           style={{
-            ...textareaBase,
+            padding: `${PADDING_Y}px ${PADDING_X}px`,
+            fontFamily: FONT_FAMILY,
+            fontSize: FONT_SIZE,
+            lineHeight: LINE_HEIGHT,
+            tabSize: 2,
             height: contentHeight,
             overflow: scrollable ? 'auto' : 'hidden',
           }}

@@ -1,5 +1,4 @@
 import React from 'react';
-import { colors } from '../../../constants/styles';
 
 export interface StepSectionProps {
   title: string;
@@ -8,15 +7,8 @@ export interface StepSectionProps {
 
 export function StepSection({ title, children }: StepSectionProps) {
   return (
-    <div style={{ padding: '10px 16px', borderTop: `1px solid ${colors.border}` }}>
-      <div style={{
-        fontSize: 10,
-        fontWeight: 700,
-        color: colors.textTertiary,
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-        marginBottom: 6,
-      }}>
+    <div className="px-4 py-2.5 border-t border-border">
+      <div className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.5px] mb-1.5">
         {title}
       </div>
       {children}

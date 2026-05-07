@@ -2,48 +2,26 @@
 //
 // Simple progress bar showing section review progress.
 
+import { cn } from '../../lib/cn';
+
 interface ReviewProgressProps {
   current: number;
   total: number;
 }
 
-const containerStyle: React.CSSProperties = {
-  marginBottom: '1rem',
-};
-
-const barBackground: React.CSSProperties = {
-  height: 8,
-  background: '#e5e7eb',
-  borderRadius: 4,
-  overflow: 'hidden',
-};
-
-const labelStyle: React.CSSProperties = {
-  fontSize: 13,
-  color: '#6b7280',
-  marginBottom: 4,
-  display: 'flex',
-  justifyContent: 'space-between',
-};
-
 export default function ReviewProgress({ current, total }: ReviewProgressProps) {
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;
 
   return (
-    <div style={containerStyle}>
-      <div style={labelStyle}>
+    <div className={cn('mb-4')}>
+      <div className={cn('text-[13px] text-[#6b7280] mb-1 flex justify-between')}>
         <span>{current} of {total} sections reviewed</span>
         <span>{pct}%</span>
       </div>
-      <div style={barBackground}>
+      <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden')}>
         <div
-          style={{
-            height: '100%',
-            width: `${pct}%`,
-            background: '#3b82f6',
-            borderRadius: 4,
-            transition: 'width 0.3s ease',
-          }}
+          className={cn('h-full bg-[#3b82f6] rounded transition-[width] duration-300 ease-in-out')}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>

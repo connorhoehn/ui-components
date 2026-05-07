@@ -4,7 +4,6 @@
 // Shows horizontal timeline with colored bars for each node's execution,
 // positioned by start time and sized by duration.
 
-import type { CSSProperties } from 'react';
 import type { StepExecution, PipelineRun } from '../../../types/pipeline';
 import { formatDuration } from '../utils/formatTime';
 
@@ -13,80 +12,17 @@ export interface ExecutionTimelineProps {
   onNodeClick?: (nodeId: string) => void;
 }
 
-const timelineHeight = 120;
 const nodeBarHeight = 20;
 const nodeBarGap = 4;
 
-const containerStyle: CSSProperties = {
-  width: '100%',
-  height: timelineHeight,
-  background: '#ffffff',
-  borderTop: '1px solid #e2e8f0',
-  borderBottom: '1px solid #e2e8f0',
-  position: 'relative',
-  padding: '16px 24px',
-  overflowX: 'auto',
-  overflowY: 'hidden',
+/** Runtime color lookup for node status (dynamic values, kept as inline style). */
+const statusColors: Record<string, string> = {
+  completed: 'var(--color-state-completed)',
+  failed: 'var(--color-state-failed)',
+  cancelled: '#64748b',
+  skipped: '#94a3b8',
+  running: 'var(--color-state-running)',
 };
-
-const timelineBarStyle: CSSProperties = {
-  position: 'relative',
-  height: nodeBarHeight * 4 + nodeBarGap * 3, // Support up to 4 parallel tracks
-  background: '#f8fafc',
-  borderRadius: 4,
-  border: '1px solid #e2e8f0',
-};
-
-const nodeBarStyle = (
-  status: string,
-  leftPercent: number,
-  widthPercent: number,
-  track: number,
-): CSSProperties => {
-  const colors: Record<string, string> = {
-    completed: '#16a34a',
-    failed: '#dc2626',
-    cancelled: '#64748b',
-    skipped: '#94a3b8',
-    running: '#2563eb',
-  };
-
-  return {
-    position: 'absolute',
-    left: `${leftPercent}%`,
-    top: track * (nodeBarHeight + nodeBarGap),
-    width: `${widthPercent}%`,
-    height: nodeBarHeight,
-    background: colors[status] || '#64748b',
-    borderRadius: 3,
-    cursor: 'pointer',
-    transition: 'opacity 0.15s',
-  };
-};
-
-const tooltipStyle: CSSProperties = {
-  position: 'absolute',
-  bottom: '100%',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  marginBottom: 8,
-  padding: '6px 10px',
-  background: '#0f172a',
-  color: '#ffffff',
-  fontSize: 11,
-  borderRadius: 4,
-  whiteSpace: 'nowrap',
-  pointerEvents: 'none',
-  zIndex: 10,
-  boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-};
-
-const labelStyle: CSSProperties = {
-  fontSize: 11,
-  color: '#64748b',
-  marginBottom: 8,
-};
-
 
 function calculateRunBounds(run: PipelineRun): { minTime: number; maxTime: number } {
   const steps = Object.values(run.steps || {});
@@ -163,8 +99,8 @@ function assignTracks(steps: Record<string, StepExecution>): Record<string, numb
 export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelineProps) {
   if (!run.steps || Object.keys(run.steps).length === 0) {
     return (
-      <div style={{ ...containerStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ color: '#94a3b8', fontSize: 12 }}>No execution data available</span>
+      <div className="w-full h-[120px] bg-white border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden flex items-center justify-center">
+        <span className="text-text-tertiary text-xs">No execution data available</span>
       </div>
     );
   }
@@ -174,11 +110,14 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
   const tracks = assignTracks(run.steps);
 
   return (
-    <div style={containerStyle}>
-      <div style={labelStyle}>
-        Execution Timeline • Total Duration: {formatDuration(totalDuration)}
+    <div className="w-full h-[120px] bg-white border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden">
+      <div className="text-[11px] text-[#64748b] mb-2">
+        Execution Timeline &bull; Total Duration: {formatDuration(totalDuration)}
       </div>
-      <div style={timelineBarStyle}>
+      <div
+        className="relative bg-surface-panel rounded-sm border border-border"
+        style={{ height: nodeBarHeight * 4 + nodeBarGap * 3 }}
+      >
         {Object.entries(run.steps).map(([nodeId, step]) => {
           if (!step.startedAt) return null;
 
@@ -193,7 +132,14 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
           return (
             <div
               key={nodeId}
-              style={nodeBarStyle(step.status, leftPercent, widthPercent, track)}
+              className="absolute rounded-[3px] cursor-pointer transition-opacity duration-150"
+              style={{
+                left: `${leftPercent}%`,
+                top: track * (nodeBarHeight + nodeBarGap),
+                width: `${widthPercent}%`,
+                height: nodeBarHeight,
+                background: statusColors[step.status] || '#64748b',
+              }}
               onClick={() => onNodeClick?.(nodeId)}
               onMouseEnter={(e) => {
                 const tooltip = e.currentTarget.querySelector('[data-tooltip]') as HTMLElement;
@@ -204,8 +150,11 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
                 if (tooltip) tooltip.style.display = 'none';
               }}
             >
-              <div data-tooltip style={{ ...tooltipStyle, display: 'none' }}>
-                {nodeId} • {step.status} • {formatDuration(duration)}
+              <div
+                data-tooltip
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-[#0f172a] text-white text-[11px] rounded-sm whitespace-nowrap pointer-events-none z-10 shadow-md hidden"
+              >
+                {nodeId} &bull; {step.status} &bull; {formatDuration(duration)}
               </div>
             </div>
           );

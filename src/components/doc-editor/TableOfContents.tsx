@@ -4,6 +4,7 @@
 // Highlights the currently visible section as the user scrolls.
 
 import { useState, useEffect, useCallback } from 'react';
+import { cn } from '../../lib/cn';
 
 interface Section {
   id: string;
@@ -24,7 +25,6 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
 
     const observer = new IntersectionObserver(
       (entries) => {
-        // Find the most visible section
         let bestEntry: IntersectionObserverEntry | null = null;
         for (const entry of entries) {
           if (entry.isIntersecting) {
@@ -67,17 +67,9 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
   const currentIndex = uniqueSections.findIndex(s => s.id === currentId);
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 0,
-      fontSize: 11,
-      width: 140,
-      maxHeight: 'calc(100vh - 160px)',
-      overflowY: 'auto',
-    }}>
+    <div className={cn('flex flex-col gap-0 text-[11px] w-[140px] max-h-[calc(100vh-160px)] overflow-y-auto')}>
       {/* Header */}
-      <div style={{ fontSize: 10, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 }}>
+      <div className={cn('text-[10px] font-semibold text-text-tertiary uppercase tracking-wide mb-1.5')}>
         Contents
       </div>
 
@@ -90,40 +82,25 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
             key={section.id}
             type="button"
             onClick={() => handleClick(section.id)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '4px 0',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontFamily: 'inherit',
-            }}
+            className={cn('flex items-center gap-2 py-1 border-none bg-transparent cursor-pointer text-left font-[inherit]')}
           >
-            {/* Timeline dot + line */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 12, flexShrink: 0 }}>
-              <div style={{
-                width: isActive ? 8 : 6,
-                height: isActive ? 8 : 6,
-                borderRadius: '50%',
-                background: isActive ? '#3b82f6' : isPast ? '#94a3b8' : '#d1d5db',
-                transition: 'all 0.2s',
-                boxShadow: isActive ? '0 0 0 3px rgba(59, 130, 246, 0.2)' : 'none',
-              }} />
+            {/* Timeline dot */}
+            <div className={cn('flex flex-col items-center w-3 shrink-0')}>
+              <div
+                className={cn(
+                  'rounded-full transition-all duration-200',
+                  isActive ? 'w-2 h-2 bg-[#3b82f6] shadow-[0_0_0_3px_rgba(59,130,246,0.2)]' :
+                  isPast ? 'w-1.5 h-1.5 bg-[#94a3b8]' : 'w-1.5 h-1.5 bg-[#d1d5db]',
+                )}
+              />
             </div>
 
             {/* Label */}
-            <span style={{
-              fontSize: 11,
-              fontWeight: isActive ? 600 : 400,
-              color: isActive ? '#1e293b' : isPast ? '#64748b' : '#94a3b8',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              transition: 'color 0.2s',
-            }}>
+            <span className={cn(
+              'text-[11px] overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200',
+              isActive ? 'font-semibold text-[#1e293b]' :
+              isPast ? 'font-normal text-[#64748b]' : 'font-normal text-text-tertiary',
+            )}>
               {section.title || 'Untitled'}
             </span>
           </button>
@@ -132,7 +109,7 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
 
       {/* Progress indicator */}
       {currentIndex >= 0 && (
-        <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 8 }}>
+        <div className={cn('text-[10px] text-text-tertiary mt-2')}>
           {currentIndex + 1} / {uniqueSections.length}
         </div>
       )}

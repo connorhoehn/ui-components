@@ -7,6 +7,7 @@ import * as Y from 'yjs';
 import type { DocumentMeta, Section, TaskItem } from '../../types/document';
 import TiptapEditor from './TiptapEditor';
 import type { CollaborationProvider } from './TiptapEditor';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Style constants (shared with ReaderMode)
@@ -16,24 +17,6 @@ const STATUS_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
   draft: { bg: '#fef3c7', text: '#92400e' },
   review: { bg: '#dbeafe', text: '#1e40af' },
   final: { bg: '#d1fae5', text: '#065f46' },
-};
-
-const card: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  padding: 16,
-  marginBottom: 16,
-};
-
-const sectionHeader: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.05em',
-  color: '#64748b',
-  margin: 0,
-  marginBottom: 12,
 };
 
 // ---------------------------------------------------------------------------
@@ -122,43 +105,21 @@ export function HeaderBanner({
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
   return (
     <div
-      style={{
-        borderTop: '3px solid #3b82f6',
-        background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)',
-        borderRadius: '8px 8px 0 0',
-        padding: '20px 24px 16px',
-        marginBottom: 16,
-        gridColumn: '1 / -1',
-      }}
+      className={cn('border-t-[3px] border-t-[#3b82f6] rounded-t-lg pt-5 pb-4 px-6 mb-4')}
+      style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)', gridColumn: '1 / -1' }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-        <h1
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            margin: 0,
-            color: '#0f172a',
-            flex: 1,
-          }}
-        >
+      <div className={cn('flex items-center gap-3 mb-1.5')}>
+        <h1 className={cn('text-xl font-bold m-0 text-text-primary flex-1')}>
           {meta.title || 'Untitled Document'}
         </h1>
         <span
-          style={{
-            display: 'inline-block',
-            fontSize: 12,
-            fontWeight: 600,
-            padding: '3px 12px',
-            borderRadius: 9999,
-            background: sc.bg,
-            color: sc.text,
-            textTransform: 'capitalize',
-          }}
+          className={cn('inline-block text-xs font-semibold py-[3px] px-3 rounded-full capitalize')}
+          style={{ background: sc.bg, color: sc.text }}
         >
           {meta.status}
         </span>
       </div>
-      <div style={{ fontSize: 12, color: '#64748b' }}>
+      <div className={cn('text-xs text-[#64748b]')}>
         {meta.createdBy && <>Created by {meta.createdByName || meta.createdBy}</>}
         {meta.createdAt && <> &middot; {formatDate(meta.createdAt)}</>}
         {participantCount > 0 && (
@@ -189,16 +150,13 @@ export function ExecutiveSummaryCard({
   const hasFragment = fragment && ydoc;
   const hasContent = contentText && contentText.trim().length > 0;
   return (
-    <div style={card}>
-      <h2 style={sectionHeader}>Executive Summary</h2>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Executive Summary</h2>
       {hasFragment ? (
-        <div style={{
-          marginBottom: bullets.length > 0 ? 12 : 0,
-          padding: '4px 12px',
-          background: '#f8fafc',
-          borderRadius: 6,
-          borderLeft: '3px solid #8b5cf6',
-        }}>
+        <div className={cn(
+          'py-1 px-3 bg-[#f8fafc] rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          bullets.length > 0 ? 'mb-3' : '',
+        )}>
           <TiptapEditor
             fragment={fragment}
             ydoc={ydoc}
@@ -208,21 +166,14 @@ export function ExecutiveSummaryCard({
           />
         </div>
       ) : hasContent ? (
-        <div style={{
-          fontSize: 14,
-          color: '#1e293b',
-          lineHeight: 1.7,
-          whiteSpace: 'pre-wrap',
-          marginBottom: bullets.length > 0 ? 12 : 0,
-          padding: '8px 12px',
-          background: '#f8fafc',
-          borderRadius: 6,
-          borderLeft: '3px solid #8b5cf6',
-        }}>
+        <div className={cn(
+          'text-sm text-[#1e293b] leading-relaxed whitespace-pre-wrap py-2 px-3 bg-[#f8fafc] rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          bullets.length > 0 ? 'mb-3' : '',
+        )}>
           {contentText!.trim()}
         </div>
       ) : null}
-      <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: '#334155', lineHeight: 1.7 }}>
+      <ul className={cn('m-0 pl-[18px] text-[13px] text-[#334155] leading-relaxed')}>
         {bullets.map((b, i) => (
           <li key={i}>{b}</li>
         ))}

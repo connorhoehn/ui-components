@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 import type { PlayerPhase } from './VideoPlayer';
 
 export interface StatusStripProps {
@@ -37,32 +38,21 @@ export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }:
   const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 12,
-      padding: '6px 12px',
-      background: '#0f172a',
-      borderRadius: 6,
-      fontSize: 12,
-      color: '#e2e8f0',
-      fontFamily: 'monospace',
-      ...style,
-    }}>
-      <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <span style={{
-          width: 7,
-          height: 7,
-          borderRadius: '50%',
-          background: color,
-          boxShadow: phase === 'live' || phase === 'playing' ? `0 0 6px ${color}` : 'none',
-        }} />
-        <span style={{ color, fontWeight: 600 }}>{label}</span>
+    <div className={cn('flex items-center gap-3 px-3 py-1.5 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono')} style={style}>
+      <span className={cn('flex items-center gap-1')}>
+        <span
+          className={cn('w-[7px] h-[7px] rounded-full')}
+          style={{
+            background: color,
+            boxShadow: phase === 'live' || phase === 'playing' ? `0 0 6px ${color}` : 'none',
+          }}
+        />
+        <span className={cn('font-semibold')} style={{ color }}>{label}</span>
       </span>
       {bitrateBps !== undefined && <span>{formatBitrate(bitrateBps)}</span>}
       {duration !== undefined && <span>{formatDuration(duration)}</span>}
       {viewerCount !== undefined && (
-        <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        <span className={cn('flex items-center gap-[3px]')}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor">
             <circle cx="5" cy="4" r="2" />
             <path d="M1 9a4 4 0 0 1 8 0" />

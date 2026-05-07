@@ -4,11 +4,9 @@
 // Subtitle = label or 'condition'; body shows the expression snippet.
 // See PIPELINES_PLAN.md §5.4 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ConditionNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ConditionData = ConditionNodeData & {
@@ -36,44 +34,24 @@ export default function ConditionNode(props: NodeProps<ConditionFlowNode>) {
   const retry = useRetryFromStep();
   const onRetry = state === 'failed' ? () => retry(id) : undefined;
 
-  const exprStyle: CSSProperties = {
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    fontSize: 12,
-    color: colors.textPrimary,
-    background: colors.surfaceInset,
-    padding: '2px 6px',
-    borderRadius: 4,
-    display: 'inline-block',
-    maxWidth: '100%',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  };
-
-  const inHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-  const trueHandle: CSSProperties = {
-    background: colors.state.completed, width: 10, height: 10, top: '40%',
-  };
-  const falseHandle: CSSProperties = {
-    background: colors.state.awaiting, width: 10, height: 10, top: '60%',
-  };
-
   return (
     <BaseNode
       icon="❓"
       subtitle={data.label || 'condition'}
       state={state}
-      body={<span style={exprStyle}>{snippet(data.expression)}</span>}
+      body={
+        <span className="font-mono text-xs text-text-primary bg-surface-inset px-1.5 py-0.5 rounded inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+          {snippet(data.expression)}
+        </span>
+      }
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    style={inHandle} />
-      <Handle type="source" position={Position.Right} id="true"  style={trueHandle} />
-      <Handle type="source" position={Position.Right} id="false" style={falseHandle} />
+      <Handle type="target" position={Position.Left}  id="in"    style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="true"  style={{ background: '#16a34a', width: 10, height: 10, top: '40%' }} />
+      <Handle type="source" position={Position.Right} id="false" style={{ background: '#f59e0b', width: 10, height: 10, top: '60%' }} />
     </BaseNode>
   );
 }

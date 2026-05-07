@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useClickOutside } from './hooks/useClickOutside';
-import { colors, fieldStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { DateRangeKey, StatusKey, TriggerKindKey } from './runsUtils';
 import { STATUS_KEYS, TRIGGER_KIND_KEYS, DATE_RANGE_KEYS } from './runsUtils';
 
@@ -58,81 +58,43 @@ function FilterDropdown<T extends string>({
         : `${selected.size} selected`;
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={ref} className="relative">
       <button
         type="button"
         onClick={() => setOpen(!open)}
         data-testid={`${testIdPrefix}-dropdown`}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '5px 10px',
-          fontSize: 12,
-          fontWeight: 500,
-          border: `1px solid ${selected.size > 0 ? colors.primary : colors.border}`,
-          background: colors.surface,
-          color: colors.textSecondary,
-          borderRadius: 4,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-          whiteSpace: 'nowrap',
-        }}
+        className={cn(
+          'flex items-center gap-1.5 px-2.5 py-[5px] text-xs font-medium rounded cursor-pointer font-[inherit] whitespace-nowrap bg-surface text-text-secondary border',
+          selected.size > 0 ? 'border-primary' : 'border-border',
+        )}
       >
-        <span style={{ color: colors.textTertiary, fontWeight: 600, fontSize: 11 }}>
+        <span className="text-text-tertiary font-semibold text-[11px]">
           {label}
         </span>
         <span
-          style={{
-            color: selected.size > 0 ? colors.primary : colors.textSecondary,
-            fontWeight: selected.size > 0 ? 600 : 500,
-          }}
+          className={cn(
+            selected.size > 0 ? 'text-primary font-semibold' : 'text-text-secondary font-medium',
+          )}
         >
           {summary}
         </span>
-        <span style={{ fontSize: 9, marginLeft: 2, opacity: 0.6 }}>&#9662;</span>
+        <span className="text-[9px] ml-0.5 opacity-60">&#9662;</span>
       </button>
       {open && (
         <div
-          style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            marginTop: 4,
-            background: '#fff',
-            border: `1px solid ${colors.border}`,
-            borderRadius: 6,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            zIndex: 50,
-            minWidth: 160,
-            padding: '4px 0',
-          }}
+          className="absolute top-full left-0 mt-1 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] py-1"
         >
           {options.map((opt) => (
             <label
               key={opt}
               data-testid={`${testIdPrefix}-${opt}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '6px 12px',
-                fontSize: 12,
-                cursor: 'pointer',
-                color: colors.textPrimary,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = colors.surfaceHover;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}
+              className="flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-[#f1f5f9]"
             >
               <input
                 type="checkbox"
                 checked={selected.has(opt)}
                 onChange={() => onToggle(opt)}
-                style={{ margin: 0, accentColor: colors.primary }}
+                className="m-0 accent-primary"
               />
               {labels[opt]}
             </label>
@@ -174,15 +136,7 @@ export default function RunsFilterBar({
 
   return (
     <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        background: colors.surfaceInset,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 6,
-      }}
+      className="flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md"
     >
       <input
         id="runs-search"
@@ -191,13 +145,13 @@ export default function RunsFilterBar({
         placeholder="Search…"
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
-        style={{ ...fieldStyle, flex: '1 1 180px', maxWidth: 240, padding: '5px 10px', fontSize: 12 }}
+        className="flex-[1_1_180px] max-w-[240px] px-2.5 py-[5px] text-xs border border-border-field rounded-md font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
         aria-label="Search runs by run id or pipeline id"
       />
 
-      <div style={{ width: 1, height: 20, background: colors.border, flexShrink: 0 }} />
+      <div className="w-px h-5 bg-border shrink-0" />
 
-      <div role="radiogroup" aria-label="Date range" style={{ display: 'flex', gap: 2 }}>
+      <div role="radiogroup" aria-label="Date range" className="flex gap-0.5">
         {DATE_RANGE_KEYS.map((r) => (
           <button
             key={r}
@@ -206,24 +160,19 @@ export default function RunsFilterBar({
             aria-checked={range === r}
             data-testid={`runs-range-${r}`}
             onClick={() => onRangeChange(r)}
-            style={{
-              padding: '4px 8px',
-              fontSize: 11,
-              fontWeight: range === r ? 600 : 500,
-              border: 'none',
-              background: range === r ? colors.primary : 'transparent',
-              color: range === r ? '#fff' : colors.textSecondary,
-              borderRadius: 3,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className={cn(
+              'px-2 py-1 text-[11px] border-none rounded-[3px] cursor-pointer font-[inherit]',
+              range === r
+                ? 'font-semibold bg-primary text-white'
+                : 'font-medium bg-transparent text-text-secondary',
+            )}
           >
             {RANGE_LABEL[r]}
           </button>
         ))}
       </div>
 
-      <div style={{ width: 1, height: 20, background: colors.border, flexShrink: 0 }} />
+      <div className="w-px h-5 bg-border shrink-0" />
 
       <FilterDropdown
         label="Status"
@@ -247,16 +196,7 @@ export default function RunsFilterBar({
         <button
           type="button"
           onClick={onClearFilters}
-          style={{
-            padding: '3px 8px',
-            fontSize: 11,
-            background: 'none',
-            border: 'none',
-            color: colors.textTertiary,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            textDecoration: 'underline',
-          }}
+          className="px-2 py-[3px] text-[11px] bg-none border-none text-text-tertiary cursor-pointer font-[inherit] underline"
         >
           Clear filters
         </button>

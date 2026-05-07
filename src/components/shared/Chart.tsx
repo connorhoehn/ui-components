@@ -1,13 +1,8 @@
 // frontend/src/components/shared/Chart.tsx
 //
-// Thin wrapper around recharts that applies the app's styling defaults
-// (per PIPELINES_PLAN.md §18.9, §19.5). MetricsPage uses these wrappers
-// so individual cards don't each re-import recharts primitives and repeat
-// the same axis/tooltip/legend boilerplate.
-//
-// NOTE: The palette uses `colors.state.awaiting` for the amber/warning slot
-// (the design tokens in constants/styles.ts do not ship a dedicated
-// `colors.state.warning`; `awaiting` is the semantic amber).
+// Thin wrapper around recharts that applies the app's styling defaults.
+// MetricsPage uses these wrappers so individual cards don't each re-import
+// recharts primitives and repeat the same axis/tooltip/legend boilerplate.
 
 import type { CSSProperties, JSX } from 'react';
 import {
@@ -24,8 +19,6 @@ import {
   Area,
   Bar,
 } from 'recharts';
-import { colors } from '../../constants/styles';
-
 // ---------------------------------------------------------------------------
 // Public types
 // ---------------------------------------------------------------------------
@@ -42,13 +35,11 @@ export interface LineSeries {
 
 const DEFAULT_HEIGHT = 180;
 
-// Palette used for multi-series charts when an individual series does not
-// supply its own `color`.
 const MULTI_SERIES_PALETTE: string[] = [
-  colors.primary,
-  colors.state.completed,
-  colors.state.awaiting,
-  colors.state.failed,
+  '#646cff',
+  '#16a34a',
+  '#f59e0b',
+  '#dc2626',
   '#8b5cf6',
 ];
 
@@ -58,23 +49,23 @@ const MULTI_SERIES_PALETTE: string[] = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AXIS_TICK_STYLE: any = {
   fontSize: 10,
-  fill: colors.textTertiary,
+  fill: '#94a3b8',
 };
 
 const TOOLTIP_CONTENT_STYLE: CSSProperties = {
   background: '#ffffff',
-  border: `1px solid ${colors.border}`,
+  border: '1px solid #e2e8f0',
   borderRadius: 6,
   fontSize: 10,
   padding: '6px 8px',
   fontFamily: 'inherit',
-  color: colors.textPrimary,
+  color: '#0f172a',
   boxShadow: '0 1px 2px rgba(15, 23, 42, 0.06)',
 };
 
 const TOOLTIP_LABEL_STYLE: CSSProperties = {
   fontSize: 10,
-  color: colors.textSecondary,
+  color: '#475569',
   marginBottom: 2,
 };
 
@@ -85,12 +76,11 @@ const TOOLTIP_ITEM_STYLE: CSSProperties = {
 
 const LEGEND_WRAPPER_STYLE: CSSProperties = {
   fontSize: 11,
-  color: colors.textSecondary,
+  color: '#475569',
   paddingBottom: 4,
 };
 
-// Grid lines use `colors.border` with 0.5 opacity per the spec.
-const GRID_STROKE = colors.border;
+const GRID_STROKE = '#e2e8f0';
 const GRID_OPACITY = 0.5;
 
 // ---------------------------------------------------------------------------
@@ -154,13 +144,13 @@ export function LineChart({
         <XAxis
           dataKey="x"
           tick={AXIS_TICK_STYLE}
-          stroke={colors.border}
+          stroke="#e2e8f0"
           tickFormatter={xFormat}
           minTickGap={16}
         />
         <YAxis
           tick={AXIS_TICK_STYLE}
-          stroke={colors.border}
+          stroke="#e2e8f0"
           tickFormatter={yFormat}
           width={yFormat ? 56 : 40}
         />
@@ -225,10 +215,10 @@ export function StackedAreaChart({
         <XAxis
           dataKey="x"
           tick={AXIS_TICK_STYLE}
-          stroke={colors.border}
+          stroke="#e2e8f0"
           minTickGap={16}
         />
-        <YAxis tick={AXIS_TICK_STYLE} stroke={colors.border} width={40} />
+        <YAxis tick={AXIS_TICK_STYLE} stroke="#e2e8f0" width={40} />
         <Tooltip
           contentStyle={TOOLTIP_CONTENT_STYLE}
           labelStyle={TOOLTIP_LABEL_STYLE}
@@ -293,12 +283,12 @@ export function BarChart({
         <XAxis
           dataKey={xKey}
           tick={AXIS_TICK_STYLE}
-          stroke={colors.border}
+          stroke="#e2e8f0"
           minTickGap={16}
         />
         <YAxis
           tick={AXIS_TICK_STYLE}
-          stroke={colors.border}
+          stroke="#e2e8f0"
           tickFormatter={yFormat}
           width={yFormat ? 56 : 40}
         />
@@ -322,7 +312,7 @@ export function BarChart({
         <Bar
           dataKey={yKey}
           name={yKey}
-          fill={color ?? colors.primary}
+          fill={color ?? "#646cff"}
           isAnimationActive={false}
         />
       </RBarChart>

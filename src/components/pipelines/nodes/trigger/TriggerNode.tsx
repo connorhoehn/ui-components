@@ -7,7 +7,6 @@
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { TriggerNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 // Some runs tag data with an ephemeral `_state` — use it if present.
@@ -61,7 +60,7 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
       icon="▶"
       subtitle={subtitleFor(data)}
       state={state}
-      body={<span style={{ fontStyle: 'italic' }}>{bodyFor(data)}</span>}
+      body={<span className="italic">{bodyFor(data)}</span>}
       selected={selected}
       onRetry={onRetry}
       ariaLabel={ariaLabel}
@@ -72,7 +71,7 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
         type="source"
         position={Position.Right}
         id="out"
-        style={{ background: colors.borderEmphasis, width: 10, height: 10 }}
+        style={{ background: '#cbd5e1', width: 10, height: 10 }}
       />
     </BaseNode>
   );

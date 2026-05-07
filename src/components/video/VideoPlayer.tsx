@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, type CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 
 export type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
 
@@ -57,14 +58,7 @@ export function VideoPlayer({
   const overlayText = overlayLabels[phase];
 
   return (
-    <div style={{
-      position: 'relative',
-      background: '#000',
-      borderRadius: 8,
-      overflow: 'hidden',
-      aspectRatio: '16/9',
-      ...style,
-    }}>
+    <div className={cn('relative bg-black rounded-lg overflow-hidden aspect-video')} style={style}>
       <video
         ref={videoRef}
         src={src}
@@ -73,23 +67,12 @@ export function VideoPlayer({
         loop={loop}
         poster={poster}
         playsInline
-        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+        className={cn('w-full h-full object-contain block')}
       />
       {showOverlay && overlayText && (
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(0,0,0,0.6)',
-          color: '#fff',
-          fontSize: 14,
-          fontWeight: 500,
-          letterSpacing: 0.5,
-        }}>
+        <div className={cn('absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide')}>
           {phase === 'buffering' && <Spinner />}
-          <span style={{ marginLeft: phase === 'buffering' ? 8 : 0 }}>{overlayText}</span>
+          <span className={cn(phase === 'buffering' ? 'ml-2' : '')}>{overlayText}</span>
         </div>
       )}
     </div>
@@ -98,10 +81,9 @@ export function VideoPlayer({
 
 function Spinner() {
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" style={{ animation: 'spin 1s linear infinite' }}>
+    <svg width="18" height="18" viewBox="0 0 18 18" className={cn('animate-spin')}>
       <circle cx="9" cy="9" r="7" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
       <path d="M9 2a7 7 0 0 1 7 7" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </svg>
   );
 }

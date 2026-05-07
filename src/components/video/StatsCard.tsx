@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface StreamMetrics {
   bitrateBps: number;
@@ -22,7 +23,7 @@ function formatBitrate(bps: number): string {
 export function StatsCard({ metrics, style }: StatsCardProps) {
   if (!metrics) {
     return (
-      <div style={{ padding: 12, background: '#1e293b', borderRadius: 8, color: '#94a3b8', fontSize: 12, ...style }}>
+      <div className={cn('p-3 bg-[#1e293b] rounded-lg text-[#94a3b8] text-xs')} style={style}>
         No stream data
       </div>
     );
@@ -39,11 +40,11 @@ export function StatsCard({ metrics, style }: StatsCardProps) {
   }
 
   return (
-    <div style={{ padding: 12, background: '#1e293b', borderRadius: 8, fontSize: 12, color: '#e2e8f0', ...style }}>
+    <div className={cn('p-3 bg-[#1e293b] rounded-lg text-xs text-[#e2e8f0]')} style={style}>
       {rows.map(([label, value]) => (
-        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '3px 0' }}>
-          <span style={{ color: '#94a3b8' }}>{label}</span>
-          <span style={{ fontFamily: 'monospace' }}>{value}</span>
+        <div key={label} className={cn('flex justify-between py-[3px]')}>
+          <span className={cn('text-[#94a3b8]')}>{label}</span>
+          <span className={cn('font-mono')}>{value}</span>
         </div>
       ))}
     </div>

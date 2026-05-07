@@ -4,7 +4,7 @@
 // grid. Empty state: "No nodes connected".
 
 import NodeGridTile, { type NodeSummary } from './NodeGridTile';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export interface NodeGridProps {
   nodes: NodeSummary[];
@@ -17,13 +17,7 @@ function NodeGrid({ nodes, onSelect, selectedId }: NodeGridProps) {
     return (
       <div
         data-testid="node-grid-empty"
-        style={{
-          padding: 24,
-          textAlign: 'center',
-          color: colors.textTertiary,
-          fontSize: 13,
-          fontFamily: 'inherit',
-        }}
+        className={cn('p-6 text-center text-text-tertiary text-[13px] font-[inherit]')}
       >
         No nodes connected
       </div>
@@ -33,12 +27,7 @@ function NodeGrid({ nodes, onSelect, selectedId }: NodeGridProps) {
   return (
     <div
       data-testid="node-grid"
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 16,
-        fontFamily: 'inherit',
-      }}
+      className={cn('flex flex-wrap gap-4 font-[inherit]')}
     >
       {nodes.map((node) => (
         <NodeGridTile

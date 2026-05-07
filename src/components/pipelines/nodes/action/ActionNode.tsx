@@ -4,11 +4,9 @@
 // the action type; body is a one-line description derived from config.
 // See PIPELINES_PLAN.md §5.5 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ActionNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ActionData = ActionNodeData & {
@@ -58,30 +56,20 @@ export default function ActionNode(props: NodeProps<ActionFlowNode>) {
   const retry = useRetryFromStep();
   const onRetry = state === 'failed' ? () => retry(id) : undefined;
 
-  const inHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-  const outHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10, top: '40%',
-  };
-  const errorHandle: CSSProperties = {
-    background: colors.state.failed, width: 10, height: 10, top: '60%',
-  };
-
   return (
     <BaseNode
       icon="⚡"
       subtitle={data.actionType}
       state={state}
-      body={<span style={{ fontStyle: 'italic' }}>{describe(data)}</span>}
+      body={<span className="italic">{describe(data)}</span>}
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    style={inHandle} />
-      <Handle type="source" position={Position.Right} id="out"   style={outHandle} />
-      <Handle type="source" position={Position.Right} id="error" style={errorHandle} />
+      <Handle type="target" position={Position.Left}  id="in"    style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="out"   style={{ background: '#cbd5e1', width: 10, height: 10, top: '40%' }} />
+      <Handle type="source" position={Position.Right} id="error" style={{ background: '#dc2626', width: 10, height: 10, top: '60%' }} />
     </BaseNode>
   );
 }

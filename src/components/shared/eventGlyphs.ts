@@ -8,8 +8,6 @@
 // Visual continuity: icons for doc.* / social.* entries are preserved from
 // the original inline maps in BigBrotherPanel.tsx and doc-editor/ActivityFeed.tsx.
 
-import { colors } from '../../constants/styles';
-
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -20,14 +18,13 @@ export interface EventGlyph {
   severity: 'info' | 'success' | 'warning' | 'error' | 'neutral';
 }
 
-// Semantic colour shortcuts (map spec colours to colors.state.* where possible).
-const C_SUCCESS = colors.state.completed; // #16a34a
-const C_ERROR   = colors.state.failed;    // #dc2626
-const C_WARNING = '#d97706';              // warning amber (spec)
-const C_INFO    = colors.state.running;   // #2563eb
-const C_NEUTRAL = colors.textTertiary;    // #94a3b8
-const C_SOCIAL  = colors.primary;         // #646cff
-const C_DOC     = colors.textPrimary;     // #0f172a
+const C_SUCCESS = '#16a34a';
+const C_ERROR   = '#dc2626';
+const C_WARNING = '#d97706';
+const C_INFO    = '#2563eb';
+const C_NEUTRAL = '#94a3b8';
+const C_SOCIAL  = '#646cff';
+const C_DOC     = '#0f172a';
 
 // ---------------------------------------------------------------------------
 // Glyph map
@@ -108,7 +105,7 @@ export const eventGlyphs: Record<string, EventGlyph> = {
  * Look up a glyph for an event type, falling back to a neutral bullet.
  */
 export function getEventGlyph(type: string): EventGlyph {
-  return eventGlyphs[type] ?? { icon: '•', color: colors.textTertiary, severity: 'neutral' };
+  return eventGlyphs[type] ?? { icon: '•', color: '#94a3b8', severity: 'neutral' };
 }
 
 /**

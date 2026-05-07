@@ -9,28 +9,11 @@ import * as Y from 'yjs';
 import type { Section, TaskItem, CommentThread } from '../../types/document';
 import TiptapEditor from './TiptapEditor';
 import type { CollaborationProvider } from './TiptapEditor';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Style constants
 // ---------------------------------------------------------------------------
-
-const card: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  padding: 16,
-  marginBottom: 16,
-};
-
-const sectionHeader: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.05em',
-  color: '#64748b',
-  margin: 0,
-  marginBottom: 12,
-};
 
 const STATUS_COLORS = {
   pending: '#f59e0b',
@@ -53,11 +36,11 @@ function statusIcon(status: TaskItem['status']): string {
   switch (status) {
     case 'acked':
     case 'done':
-      return '\u2705';
+      return '✅';
     case 'rejected':
-      return '\u274c';
+      return '❌';
     default:
-      return '\u2b1c';
+      return '⬜';
   }
 }
 
@@ -92,49 +75,26 @@ function CollapsibleGroup({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ marginBottom: 8 }}>
+    <div className={cn('mb-2')}>
       <button
         onClick={() => setOpen(!open)}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          padding: '4px 0',
-          fontSize: 13,
-          fontWeight: 600,
-          color: '#334155',
-          fontFamily: 'inherit',
-          width: '100%',
-        }}
+        className={cn('bg-transparent border-none cursor-pointer flex items-center gap-1.5 py-1 px-0 text-[13px] font-semibold text-[#334155] font-[inherit] w-full')}
       >
         <span
-          style={{
-            display: 'inline-block',
-            transition: 'transform 0.15s ease',
-            transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
-            fontSize: 10,
-          }}
+          className={cn('inline-block text-[10px] transition-transform duration-150 ease-in-out')}
+          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
         >
-          {'\u25b6'}
+          {'▶'}
         </span>
         <span style={{ color }}>{label}</span>
         <span
-          style={{
-            fontSize: 11,
-            background: `${color}18`,
-            color,
-            padding: '1px 8px',
-            borderRadius: 9999,
-            fontWeight: 600,
-          }}
+          className={cn('text-[11px] px-2 py-px rounded-full font-semibold')}
+          style={{ background: `${color}18`, color }}
         >
           {count}
         </span>
       </button>
-      {open && <div style={{ paddingLeft: 16, marginTop: 4 }}>{children}</div>}
+      {open && <div className={cn('pl-4 mt-1')}>{children}</div>}
     </div>
   );
 }
@@ -159,23 +119,17 @@ function ItemRow({
 
   return (
     <div
+      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r')}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '5px 8px',
         borderLeft: `3px solid ${borderColor}`,
-        marginBottom: 4,
-        borderRadius: '0 4px 4px 0',
         background: variant === 'pending' ? '#fffbeb' : '#fff',
       }}
     >
-      <span style={{ fontSize: 13, flex: 1 }}>
+      <span className={cn('text-[13px] flex-1')}>
         <span
-          style={{
-            textDecoration: variant === 'completed' ? 'line-through' : 'none',
-            color: variant === 'completed' ? '#94a3b8' : '#334155',
-          }}
+          className={cn(
+            variant === 'completed' ? 'line-through text-text-tertiary' : 'text-[#334155]',
+          )}
         >
           {item.text}
         </span>
@@ -183,23 +137,15 @@ function ItemRow({
 
       {item.priority && (
         <span
-          style={{
-            fontSize: 10,
-            fontWeight: 600,
-            padding: '1px 6px',
-            borderRadius: 9999,
-            background: `${PRIORITY_COLORS[item.priority]}18`,
-            color: PRIORITY_COLORS[item.priority],
-            textTransform: 'uppercase',
-            flexShrink: 0,
-          }}
+          className={cn('text-[10px] font-semibold px-1.5 py-px rounded-full uppercase shrink-0')}
+          style={{ background: `${PRIORITY_COLORS[item.priority]}18`, color: PRIORITY_COLORS[item.priority] }}
         >
           {item.priority}
         </span>
       )}
 
       {item.ackedBy && (
-        <span style={{ fontSize: 11, color: '#94a3b8', flexShrink: 0 }}>
+        <span className={cn('text-[11px] text-text-tertiary shrink-0')}>
           {item.ackedBy}
         </span>
       )}
@@ -216,36 +162,21 @@ export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
   const items = decisionSections.flatMap((s) => s.items);
 
   return (
-    <div style={card}>
-      <h2 style={sectionHeader}>Key Decisions</h2>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Key Decisions</h2>
       {items.length === 0 ? (
-        <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>
+        <div className={cn('text-[13px] text-text-tertiary italic')}>
           No decisions recorded
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <div className={cn('flex flex-col gap-1.5')}>
           {items.map((item) => (
             <div
               key={item.id}
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 8,
-                fontSize: 13,
-                color: '#334155',
-              }}
+              className={cn('flex items-start gap-2 text-[13px] text-[#334155]')}
             >
-              <span style={{ flexShrink: 0 }}>{statusIcon(item.status)}</span>
-              <span
-                style={{
-                  textDecoration:
-                    item.status === 'acked' || item.status === 'done'
-                      ? 'none'
-                      : 'none',
-                }}
-              >
-                {item.text}
-              </span>
+              <span className={cn('shrink-0')}>{statusIcon(item.status)}</span>
+              <span>{item.text}</span>
             </div>
           ))}
         </div>
@@ -262,11 +193,11 @@ export function ActionItemsCard({ allItems }: { allItems: TaskItem[] }) {
   const { pending, completed, rejected } = groupItems(allItems);
 
   return (
-    <div style={card}>
-      <h2 style={sectionHeader}>Action Items</h2>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Action Items</h2>
 
       {allItems.length === 0 ? (
-        <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>
+        <div className={cn('text-[13px] text-text-tertiary italic')}>
           No action items yet
         </div>
       ) : (
@@ -341,36 +272,23 @@ export function SectionSummariesCard({
   const toggle = (id: string) =>
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
 
-  const typeBadgeStyle = (type: string): React.CSSProperties => {
-    const colors: Record<string, { bg: string; text: string }> = {
-      summary: { bg: '#e0e7ff', text: '#4338ca' },
-      tasks: { bg: '#dbeafe', text: '#1e40af' },
-      decisions: { bg: '#fce7f3', text: '#9d174d' },
-      notes: { bg: '#f0fdf4', text: '#166534' },
-      custom: { bg: '#f3f4f6', text: '#6b7280' },
-    };
-    const c = colors[type] ?? colors.custom;
-    return {
-      fontSize: 10,
-      fontWeight: 600,
-      padding: '1px 8px',
-      borderRadius: 9999,
-      background: c.bg,
-      color: c.text,
-      textTransform: 'capitalize' as const,
-      flexShrink: 0,
-    };
+  const TYPE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
+    summary: { bg: '#e0e7ff', text: '#4338ca' },
+    tasks: { bg: '#dbeafe', text: '#1e40af' },
+    decisions: { bg: '#fce7f3', text: '#9d174d' },
+    notes: { bg: '#f0fdf4', text: '#166534' },
+    custom: { bg: '#f3f4f6', text: '#6b7280' },
   };
 
   return (
-    <div style={card}>
-      <h2 style={sectionHeader}>Section Summaries</h2>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Section Summaries</h2>
       {sections.length === 0 ? (
-        <div style={{ fontSize: 13, color: '#94a3b8', fontStyle: 'italic' }}>
+        <div className={cn('text-[13px] text-text-tertiary italic')}>
           No sections
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className={cn('flex flex-col gap-0.5')}>
           {sections.map((section) => {
             const done = section.items.filter(
               (i) => i.status === 'acked' || i.status === 'done',
@@ -381,6 +299,7 @@ export function SectionSummariesCard({
             const sectionComments = comments?.[section.id] ?? [];
             const isOpen = !!expanded[section.id];
             const hasContent = sectionContent.trim().length > 0;
+            const tc = TYPE_BADGE_COLORS[section.type] ?? TYPE_BADGE_COLORS.custom;
 
             return (
               <div
@@ -390,62 +309,49 @@ export function SectionSummariesCard({
               >
                 <button
                   onClick={() => toggle(section.id)}
-                  style={{
-                    background: isOpen ? '#f8fafc' : 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '8px 6px',
-                    borderRadius: 6,
-                    width: '100%',
-                    fontFamily: 'inherit',
-                    fontSize: 13,
-                    color: '#334155',
-                    transition: 'background 0.1s',
-                  }}
+                  className={cn(
+                    'border-none cursor-pointer flex items-center gap-2 py-2 px-1.5 rounded-md w-full font-[inherit] text-[13px] text-[#334155] transition-colors duration-100',
+                    isOpen ? 'bg-[#f8fafc]' : 'bg-transparent',
+                  )}
                 >
                   <span
-                    style={{
-                      fontSize: 10,
-                      transition: 'transform 0.15s ease',
-                      transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
-                      flexShrink: 0,
-                    }}
+                    className={cn('text-[10px] transition-transform duration-150 ease-in-out shrink-0')}
+                    style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
                   >
-                    {'\u25b6'}
+                    {'▶'}
                   </span>
-                  <span style={{ fontWeight: 600, flex: 1, textAlign: 'left' }}>
+                  <span className={cn('font-semibold flex-1 text-left')}>
                     {section.title}
                   </span>
-                  <span style={typeBadgeStyle(section.type)}>{section.type}</span>
+                  <span
+                    className={cn('text-[10px] font-semibold px-2 py-px rounded-full capitalize shrink-0')}
+                    style={{ background: tc.bg, color: tc.text }}
+                  >
+                    {section.type}
+                  </span>
                   {total > 0 && (
-                    <span style={{ fontSize: 11, color: '#64748b', flexShrink: 0 }}>
+                    <span className={cn('text-[11px] text-[#64748b] shrink-0')}>
                       {done}/{total} done
                     </span>
                   )}
                   {commentCount > 0 && (
-                    <span style={{ fontSize: 11, color: '#64748b', flexShrink: 0 }}>
+                    <span className={cn('text-[11px] text-[#64748b] shrink-0')}>
                       {commentCount} comment{commentCount !== 1 ? 's' : ''}
                     </span>
                   )}
                 </button>
 
                 {isOpen && (
-                  <div style={{ paddingLeft: 24, paddingBottom: 8 }}>
+                  <div className={cn('pl-6 pb-2')}>
                     {/* Rich-text content */}
                     {(() => {
                       const frag = getSectionFragment?.(section.id);
                       if (frag && ydoc) {
                         return (
-                          <div style={{
-                            padding: '4px 10px',
-                            background: '#f8fafc',
-                            borderRadius: 4,
-                            borderLeft: '2px solid #cbd5e1',
-                            marginBottom: section.items.length > 0 ? 8 : 0,
-                          }}>
+                          <div className={cn(
+                            'py-1 px-2.5 bg-[#f8fafc] rounded border-l-2 border-l-[#cbd5e1]',
+                            section.items.length > 0 ? 'mb-2' : '',
+                          )}>
                             <TiptapEditor
                               fragment={frag}
                               ydoc={ydoc}
@@ -458,17 +364,10 @@ export function SectionSummariesCard({
                       }
                       if (hasContent) {
                         return (
-                          <div style={{
-                            fontSize: 13,
-                            color: '#334155',
-                            lineHeight: 1.6,
-                            whiteSpace: 'pre-wrap',
-                            padding: '8px 10px',
-                            background: '#f8fafc',
-                            borderRadius: 4,
-                            borderLeft: '2px solid #cbd5e1',
-                            marginBottom: section.items.length > 0 ? 8 : 0,
-                          }}>
+                          <div className={cn(
+                            'text-[13px] text-[#334155] leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-[#f8fafc] rounded border-l-2 border-l-[#cbd5e1]',
+                            section.items.length > 0 ? 'mb-2' : '',
+                          )}>
                             {sectionContent.trim()}
                           </div>
                         );
@@ -480,23 +379,13 @@ export function SectionSummariesCard({
                     {section.items.map((item) => (
                       <div
                         key={item.id}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          padding: '3px 0',
-                          fontSize: 12,
-                          color: '#64748b',
-                        }}
+                        className={cn('flex items-center gap-1.5 py-[3px] text-xs text-[#64748b]')}
                       >
-                        <span style={{ flexShrink: 0 }}>{statusIcon(item.status)}</span>
+                        <span className={cn('shrink-0')}>{statusIcon(item.status)}</span>
                         <span
-                          style={{
-                            textDecoration:
-                              item.status === 'acked' || item.status === 'done'
-                                ? 'line-through'
-                                : 'none',
-                          }}
+                          className={cn(
+                            (item.status === 'acked' || item.status === 'done') ? 'line-through' : '',
+                          )}
                         >
                           {item.text}
                         </span>
@@ -505,28 +394,22 @@ export function SectionSummariesCard({
 
                     {/* Comments summary */}
                     {sectionComments.length > 0 && (
-                      <div style={{ marginTop: 8, paddingTop: 6, borderTop: '1px solid #f1f5f9' }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', marginBottom: 4 }}>
+                      <div className={cn('mt-2 pt-1.5 border-t border-[#f1f5f9]')}>
+                        <div className={cn('text-[11px] font-semibold text-text-tertiary mb-1')}>
                           Comments ({commentCount})
                         </div>
                         {sectionComments.slice(0, 3).map(c => (
-                          <div key={c.id} style={{
-                            fontSize: 12,
-                            color: '#64748b',
-                            padding: '2px 0',
-                            display: 'flex',
-                            gap: 6,
-                          }}>
-                            <span style={{ fontWeight: 600, color: '#475569', flexShrink: 0 }}>
+                          <div key={c.id} className={cn('text-xs text-[#64748b] py-0.5 flex gap-1.5')}>
+                            <span className={cn('font-semibold text-text-secondary shrink-0')}>
                               {c.displayName}:
                             </span>
-                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span className={cn('overflow-hidden text-ellipsis whitespace-nowrap')}>
                               {c.text}
                             </span>
                           </div>
                         ))}
                         {sectionComments.length > 3 && (
-                          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                          <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>
                             +{sectionComments.length - 3} more
                           </div>
                         )}
@@ -535,7 +418,7 @@ export function SectionSummariesCard({
 
                     {/* Empty state */}
                     {!hasContent && section.items.length === 0 && sectionComments.length === 0 && (
-                      <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>
+                      <div className={cn('text-xs text-text-tertiary italic')}>
                         No content in this section
                       </div>
                     )}

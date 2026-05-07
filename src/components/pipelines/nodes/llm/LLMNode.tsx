@@ -5,11 +5,10 @@
 // footer is an expandable response preview when `_llmResponse` is present.
 // See PIPELINES_PLAN.md §5.2 / §7.3 / §18.4.4 / §19.12.
 
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { LLMNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 interface LLMResponseInfo {
@@ -46,27 +45,6 @@ function previewPrompt(template: string): string {
 function ResponseFooter({ info }: { info: LLMResponseInfo }) {
   const [open, setOpen] = useState(false);
 
-  const toggleBtn: CSSProperties = {
-    background: 'transparent', border: 'none', padding: 0, cursor: 'pointer',
-    fontFamily: 'inherit', fontSize: 12, color: colors.textSecondary,
-    fontWeight: 500, textAlign: 'left',
-  };
-
-  const tokensLabel: CSSProperties = {
-    marginLeft: 6, fontSize: 11, color: colors.textTertiary,
-  };
-
-  const bodyStyle: CSSProperties = {
-    marginTop: 4,
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    fontSize: 11, lineHeight: 1.4,
-    color: colors.textPrimary,
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-word',
-    maxHeight: open ? 'none' : '1.4em',
-    overflow: 'hidden',
-  };
-
   const text = open
     ? info.response
     : info.response.length > 60 ? `${info.response.slice(0, 60)}…` : info.response;
@@ -75,16 +53,20 @@ function ResponseFooter({ info }: { info: LLMResponseInfo }) {
 
   return (
     <div>
-      <button type="button" onClick={() => setOpen((v) => !v)} style={toggleBtn}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="bg-transparent border-none p-0 cursor-pointer font-inherit text-xs text-text-secondary font-medium text-left"
+      >
         {open ? '▾' : '▸'} Response
         {showTokens && (
-          <span style={tokensLabel}>
+          <span className="ml-1.5 text-[11px] text-text-tertiary">
             {info.tokensIn ?? 0} → {info.tokensOut ?? 0} tokens
           </span>
         )}
         {info.streamOpening && (
           <span
-            style={{ ...tokensLabel, color: colors.state.running }}
+            className="ml-1.5 text-[11px] text-[#2563eb]"
             data-testid="llm-stream-opening"
             title="LLM stream is open — waiting for the first token"
           >
@@ -92,18 +74,14 @@ function ResponseFooter({ info }: { info: LLMResponseInfo }) {
           </span>
         )}
         {!info.streamOpening && info.streaming && (
-          <span style={tokensLabel}>· streaming…</span>
+          <span className="ml-1.5 text-[11px] text-text-tertiary">· streaming…</span>
         )}
       </button>
       <div
-        style={{
-          ...bodyStyle,
-          // Clamp to 6 lines when expanded (CSS line-clamp). When collapsed,
-          // maxHeight above already caps the preview to one line.
-          display: open ? '-webkit-box' : 'block',
-          WebkitLineClamp: open ? 6 : undefined,
-          WebkitBoxOrient: open ? ('vertical' as const) : undefined,
-        }}
+        className={open
+          ? 'mt-1 font-mono text-[11px] leading-[1.4] text-text-primary whitespace-pre-wrap break-words line-clamp-6'
+          : 'mt-1 font-mono text-[11px] leading-[1.4] text-text-primary whitespace-pre-wrap break-words max-h-[1.4em] overflow-hidden'
+        }
       >
         {text}
       </div>
@@ -119,25 +97,12 @@ export default function LLMNode(props: NodeProps<LLMFlowNode>) {
   // config when no run has touched this node yet, so editor view (no runs
   // triggered) renders as before.
   const liveStep = useLatestStepForNode(id);
-  // StepStatus is a structural superset of NodeExecutionState — both share
-  // pending|running|completed|failed|skipped|awaiting. The only divergence is
-  // `cancelled`, which we surface as `failed` (the reducer already records
-  // it that way for run-level UI, see PipelineRunsContext.tsx step.cancelled).
   const liveState: NodeExecutionState | undefined =
     liveStep?.status === 'cancelled' ? 'failed' : (liveStep?.status as NodeExecutionState | undefined);
-  // During replay, the canvas stamps `data._state` with the cursor-relative
-  // execution state. When set to a non-idle value it takes priority over
-  // liveState (which reflects the persisted run's final state, not the
-  // scrubber position). Outside of replay, `data._state` is undefined so
-  // liveState continues to drive the visual as before.
   const replayState = data._state && data._state !== 'idle' ? data._state : undefined;
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
-  // Build a runtime LLMResponseInfo from the live step. Two visuals are
-  // distinguished:
-  //   - streamOpening: open but no tokens yet (waiting on first token)
-  //   - streaming: tokens are arriving and the step is still running
-  // Both clear when the step completes (status !== 'running').
+  // Build a runtime LLMResponseInfo from the live step.
   const liveLlm = liveStep?.llm;
   const isStreamOpening =
     state === 'running' &&
@@ -153,7 +118,7 @@ export default function LLMNode(props: NodeProps<LLMFlowNode>) {
   const onRetry = state === 'failed' ? () => retry(id) : undefined;
 
   const body = (
-    <span style={{ fontStyle: 'italic' }}>
+    <span className="italic">
       {previewPrompt(data.userPromptTemplate)}
     </span>
   );
@@ -173,19 +138,7 @@ export default function LLMNode(props: NodeProps<LLMFlowNode>) {
   const responseInfo = liveResponse ?? data._llmResponse;
   const footer = responseInfo ? <ResponseFooter info={responseInfo} /> : undefined;
 
-  const targetHandleStyle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-  const outHandleStyle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10, top: '40%',
-  };
-  const errorHandleStyle: CSSProperties = {
-    background: colors.state.failed, width: 10, height: 10, top: '60%',
-  };
-
-  // Build a descriptive aria-label for screen readers — type + model + a
-  // truncated peek at the system prompt. Keep ~120 chars max so AT users
-  // aren't slowed down by repeated long announcements.
+  // Build a descriptive aria-label for screen readers
   const sys = (data.systemPrompt ?? '').replace(/\s+/g, ' ').trim();
   const sysPreview = sys.length === 0
     ? 'no system prompt'
@@ -205,9 +158,9 @@ export default function LLMNode(props: NodeProps<LLMFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    style={targetHandleStyle} />
-      <Handle type="source" position={Position.Right} id="out"   style={outHandleStyle} />
-      <Handle type="source" position={Position.Right} id="error" style={errorHandleStyle} />
+      <Handle type="target" position={Position.Left}  id="in"    style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="out"   style={{ background: '#cbd5e1', width: 10, height: 10, top: '40%' }} />
+      <Handle type="source" position={Position.Right} id="error" style={{ background: '#dc2626', width: 10, height: 10, top: '60%' }} />
     </BaseNode>
   );
 }

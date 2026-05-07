@@ -15,6 +15,7 @@ import type { Section, Participant, DocumentMeta, CommentThread } from '../../ty
 import type { CollaborationProvider } from './TiptapEditor';
 import { HeaderBanner, ExecutiveSummaryCard, generateSummaryBullets } from './ReaderSummary';
 import { KeyDecisionsCard, ActionItemsCard, SectionSummariesCard } from './ReaderSectionCard';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -36,47 +37,6 @@ interface ReaderModeProps {
   /** Collaboration provider for awareness */
   provider?: CollaborationProvider | null;
 }
-
-// ---------------------------------------------------------------------------
-// Style constants
-// ---------------------------------------------------------------------------
-
-const gridLayout: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 280px',
-  gap: 16,
-  maxWidth: 1100,
-  margin: '0 auto',
-};
-
-// Phase 51 / hub#60 — adds a left-sticky TOC column when the doc has
-// 2+ navigable sections. Single-section docs keep the original
-// 2-column layout to avoid empty TOC noise.
-const gridLayoutWithToc: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '200px 1fr 280px',
-  gap: 16,
-  maxWidth: 1300,
-  margin: '0 auto',
-};
-
-const sidebarCard: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  padding: 16,
-  marginBottom: 12,
-};
-
-const sectionHeader: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  textTransform: 'uppercase' as const,
-  letterSpacing: '0.05em',
-  color: '#64748b',
-  margin: 0,
-  marginBottom: 12,
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -132,42 +92,20 @@ function TocCard({ sections }: { sections: Section[] }) {
   return (
     <aside
       data-testid="reader-toc"
-      style={{
-        position: 'sticky',
-        top: 16,
-        alignSelf: 'start',
-        ...sidebarCard,
-      }}
+      className={cn('sticky top-4 self-start bg-white border border-border rounded-lg p-4 mb-3')}
     >
-      <h3 style={sectionHeader}>Contents</h3>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Contents</h3>
       <nav>
-        <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <ol className={cn('list-none m-0 p-0 flex flex-col gap-1')}>
           {sections.map((s, i) => (
             <li key={s.id}>
               <a
                 href={`#section-${s.id}`}
                 data-testid={`toc-link-${s.id}`}
                 onClick={(e) => handleClick(e, s.id)}
-                style={{
-                  display: 'block',
-                  padding: '4px 6px',
-                  fontSize: 13,
-                  color: '#475569',
-                  textDecoration: 'none',
-                  borderRadius: 4,
-                  borderLeft: '2px solid transparent',
-                  transition: 'background 80ms, border-left-color 80ms',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#f1f5f9';
-                  e.currentTarget.style.borderLeftColor = '#646cff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderLeftColor = 'transparent';
-                }}
+                className={cn('block py-1 px-1.5 text-[13px] text-text-secondary no-underline rounded border-l-2 border-l-transparent transition-colors duration-75 hover:bg-[#f1f5f9] hover:border-l-primary')}
               >
-                <span style={{ fontWeight: 500, color: '#0f172a' }}>{i + 1}.</span>{' '}
+                <span className={cn('font-medium text-text-primary')}>{i + 1}.</span>{' '}
                 {s.title || `Section ${i + 1}`}
               </a>
             </li>
@@ -189,40 +127,20 @@ function ProgressCard({
   const color = progressColor(pct);
 
   return (
-    <div style={sidebarCard}>
-      <h3 style={sectionHeader}>Progress</h3>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: 4,
-          marginBottom: 8,
-        }}
-      >
-        <span style={{ fontSize: 28, fontWeight: 700, color, lineHeight: 1 }}>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Progress</h3>
+      <div className={cn('flex items-baseline gap-1 mb-2')}>
+        <span className={cn('text-[28px] font-bold leading-none')} style={{ color }}>
           {pct}%
         </span>
       </div>
-      <div
-        style={{
-          height: 8,
-          background: '#e5e7eb',
-          borderRadius: 4,
-          overflow: 'hidden',
-          marginBottom: 6,
-        }}
-      >
+      <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden mb-1.5')}>
         <div
-          style={{
-            height: '100%',
-            width: `${pct}%`,
-            background: color,
-            borderRadius: 4,
-            transition: 'width 0.3s ease',
-          }}
+          className={cn('h-full rounded transition-[width] duration-300 ease-in-out')}
+          style={{ width: `${pct}%`, background: color }}
         />
       </div>
-      <div style={{ fontSize: 12, color: '#64748b' }}>
+      <div className={cn('text-xs text-[#64748b]')}>
         {reviewed} of {total} items reviewed
       </div>
     </div>
@@ -247,47 +165,42 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
   }
 
   return (
-    <div style={sidebarCard}>
-      <h3 style={sectionHeader}>Contributors</h3>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Contributors</h3>
       {/* Bubble row */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+      <div className={cn('flex flex-wrap gap-1.5 mb-3')}>
         {contributors.map((c, i) => {
           const initials = c.name.split(' ').map(w => w[0] ?? '').join('').toUpperCase().slice(0, 2);
           return (
-            <div key={`${c.name}-${i}`} title={`${c.name}${c.mode ? ` (${MODE_LABELS[c.mode] ?? c.mode})` : ''}`} style={{ position: 'relative' }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: '50%',
-                background: c.color, color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 700,
-              }}>
+            <div key={`${c.name}-${i}`} title={`${c.name}${c.mode ? ` (${MODE_LABELS[c.mode] ?? c.mode})` : ''}`} className={cn('relative')}>
+              <div
+                className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-[11px] font-bold')}
+                style={{ background: c.color }}
+              >
                 {initials}
               </div>
               {c.isOnline && (
-                <div style={{
-                  position: 'absolute', bottom: 0, right: 0,
-                  width: 8, height: 8, borderRadius: '50%',
-                  background: MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8',
-                  border: '2px solid #fff',
-                }} />
+                <div
+                  className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white')}
+                  style={{ background: MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8' }}
+                />
               )}
             </div>
           );
         })}
       </div>
       {/* Detail list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div className={cn('flex flex-col gap-1.5')}>
         {contributors.map((c, i) => (
-          <div key={`detail-${c.name}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-            <span style={{
-              width: 8, height: 8, borderRadius: '50%',
-              background: c.isOnline ? (MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8') : '#d1d5db',
-              flexShrink: 0,
-            }} />
-            <span style={{ fontWeight: 500, color: '#334155', flex: 1 }}>
+          <div key={`detail-${c.name}-${i}`} className={cn('flex items-center gap-2 text-[13px]')}>
+            <span
+              className={cn('w-2 h-2 rounded-full shrink-0')}
+              style={{ background: c.isOnline ? (MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8') : '#d1d5db' }}
+            />
+            <span className={cn('font-medium text-[#334155] flex-1')}>
               {c.name}
             </span>
-            <span style={{ fontSize: 11, color: '#94a3b8' }}>
+            <span className={cn('text-[11px] text-text-tertiary')}>
               {c.isOnline ? (MODE_LABELS[c.mode ?? ''] ?? 'online') : 'offline'}
             </span>
           </div>
@@ -314,46 +227,37 @@ function DocumentStatsCard({
     ? Object.values(commentCounts).reduce((a, b) => a + b, 0)
     : 0;
 
-  const statRow: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '4px 0',
-    fontSize: 13,
-    color: '#334155',
-    borderBottom: '1px solid #f1f5f9',
-  };
-
   return (
-    <div style={sidebarCard}>
-      <h3 style={sectionHeader}>Document Info</h3>
-      <div style={statRow}>
-        <span style={{ color: '#64748b' }}>Sections</span>
-        <span style={{ fontWeight: 600 }}>{sections.length}</span>
+    <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Document Info</h3>
+      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+        <span className={cn('text-[#64748b]')}>Sections</span>
+        <span className={cn('font-semibold')}>{sections.length}</span>
       </div>
-      <div style={statRow}>
-        <span style={{ color: '#64748b' }}>Total tasks</span>
-        <span style={{ fontWeight: 600 }}>{allItems.length}</span>
+      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+        <span className={cn('text-[#64748b]')}>Total tasks</span>
+        <span className={cn('font-semibold')}>{allItems.length}</span>
       </div>
-      <div style={statRow}>
-        <span style={{ color: '#64748b' }}>Completed</span>
-        <span style={{ fontWeight: 600, color: '#10b981' }}>{completedCount}</span>
+      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+        <span className={cn('text-[#64748b]')}>Completed</span>
+        <span className={cn('font-semibold text-[#10b981]')}>{completedCount}</span>
       </div>
       {totalComments > 0 && (
-        <div style={statRow}>
-          <span style={{ color: '#64748b' }}>Comments</span>
-          <span style={{ fontWeight: 600 }}>{totalComments}</span>
+        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+          <span className={cn('text-[#64748b]')}>Comments</span>
+          <span className={cn('font-semibold')}>{totalComments}</span>
         </div>
       )}
       {meta.createdAt && (
-        <div style={statRow}>
-          <span style={{ color: '#64748b' }}>Created</span>
-          <span style={{ fontWeight: 500, fontSize: 12 }}>{formatDate(meta.createdAt)}</span>
+        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+          <span className={cn('text-[#64748b]')}>Created</span>
+          <span className={cn('font-medium text-xs')}>{formatDate(meta.createdAt)}</span>
         </div>
       )}
       {meta.updatedAt && (
-        <div style={{ ...statRow, borderBottom: 'none' }}>
-          <span style={{ color: '#64748b' }}>Last changed</span>
-          <span style={{ fontWeight: 500, fontSize: 12 }}>{formatDate(meta.updatedAt)}</span>
+        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155]')}>
+          <span className={cn('text-[#64748b]')}>Last changed</span>
+          <span className={cn('font-medium text-xs')}>{formatDate(meta.updatedAt)}</span>
         </div>
       )}
     </div>
@@ -385,7 +289,13 @@ export default function ReaderMode({
   const showToc = sections.length >= 2;
 
   return (
-    <div style={showToc ? gridLayoutWithToc : gridLayout}>
+    <div
+      className={cn('grid gap-4 mx-auto')}
+      style={{
+        gridTemplateColumns: showToc ? '200px 1fr 280px' : '1fr 280px',
+        maxWidth: showToc ? 1300 : 1100,
+      }}
+    >
       {/* Header spanning all columns */}
       <HeaderBanner meta={meta} participantCount={participants.length} />
 

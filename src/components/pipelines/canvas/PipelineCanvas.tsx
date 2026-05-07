@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, DragEvent, MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 import {
   Background,
   BackgroundVariant,
@@ -26,11 +26,11 @@ import type { NodeType, PipelineDefinition, PipelineNode } from '../../../types/
 import { usePipelineEditor } from '../context/PipelineEditorContext';
 import { isValidHandleConnection } from '../validation/handleCompatibility';
 import { nodeTypes as registeredNodeTypes } from '../nodes';
-import { colors } from '../../../constants/styles';
 import AnimatedEdge from './edges/AnimatedEdge';
 import QuickInsertPopover from './QuickInsertPopover';
 import { useDevEditorBridge } from '../dev/useDevEditorBridge';
 import { useCanvasKeyboard } from './useCanvasKeyboard';
+import { useCanvasDragDrop } from './useCanvasDragDrop';
 import CanvasContextMenu from './CanvasContextMenu';
 import QuickInsertLayer from './QuickInsertLayer';
 import CanvasToolbar from './CanvasToolbar';
@@ -93,18 +93,18 @@ const edgeTypes = { animated: AnimatedEdge };
 const controlsStyleOverrides = `
   .react-flow__controls button {
     background: transparent;
-    border-bottom: 1px solid ${colors.border};
-    color: ${colors.textSecondary};
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+    color: var(--color-text-secondary, #475569);
   }
   .react-flow__controls button:hover {
-    background: ${colors.surfaceHover};
-    color: ${colors.textPrimary};
+    background: var(--color-surface-hover, #f1f5f9);
+    color: var(--color-text-primary, #0f172a);
   }
   .react-flow__controls button:last-child {
     border-bottom: none;
   }
   .react-flow__controls-interactive.active {
-    color: ${colors.primary};
+    color: var(--color-primary, #646cff);
   }
   @keyframes node-error-pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
@@ -480,32 +480,10 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
     return definition.nodes.some((n) => n.type === 'trigger') ? ['trigger'] : [];
   }, [definition]);
 
-  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  const handleDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      const raw = e.dataTransfer.getData('application/reactflow');
-      if (!raw) return;
-      let parsed: { nodeType?: string } | null = null;
-      try {
-        parsed = JSON.parse(raw) as { nodeType?: string };
-      } catch {
-        return;
-      }
-      const nodeType = parsed?.nodeType as NodeType | undefined;
-      if (!nodeType) return;
-      const position = screenToFlowPosition({
-        x: e.clientX,
-        y: e.clientY,
-      });
-      addNode(nodeType, position);
-    },
-    [addNode, screenToFlowPosition],
-  );
+  const { handleDragOver, handleDrop } = useCanvasDragDrop({
+    addNode,
+    screenToFlowPosition,
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -538,59 +516,27 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
     containerRef,
   });
 
-  const containerStyle = useMemo<CSSProperties>(
-    () => ({
-      flex: 1,
-      minWidth: 0,
-      minHeight: 520,
-      position: 'relative',
-      background: colors.surfaceInset,
-    }),
-    [],
-  );
-
   const miniMapNodeColor = useCallback((node: Node): string => {
     const state = (node.data as { _state?: string } | undefined)?._state;
     switch (state) {
       case 'running':
       case 'pending':
-        return colors.state.running;
+        return '#2563eb';
       case 'completed':
-        return colors.state.completed;
+        return '#16a34a';
       case 'failed':
-        return colors.state.failed;
+        return '#dc2626';
       case 'awaiting':
-        return colors.state.awaiting;
+        return '#f59e0b';
       default:
-        return colors.textTertiary;
+        return '#94a3b8';
     }
   }, []);
-
-  const miniMapStyle = useMemo<CSSProperties>(
-    () => ({
-      width: 180,
-      height: 120,
-      background: colors.surface,
-      border: `1px solid ${colors.border}`,
-      borderRadius: 6,
-    }),
-    [],
-  );
-
-  const controlsStyle = useMemo<CSSProperties>(
-    () => ({
-      background: colors.surface,
-      border: `1px solid ${colors.border}`,
-      borderRadius: 6,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-    }),
-    [],
-  );
 
   return (
     <div
       ref={containerRef}
-      style={containerStyle}
+      className="flex-1 min-w-0 min-h-[520px] relative bg-[#fafbfc]"
       role="application"
       aria-label="Pipeline editor canvas"
       tabIndex={0}
@@ -623,8 +569,8 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
           variant={BackgroundVariant.Dots}
           gap={16}
           size={1}
-          color={colors.border}
-          bgColor={colors.surfaceInset}
+          color="#e2e8f0"
+          bgColor="#fafbfc"
         />
         {showControls ? (
           <Controls
@@ -632,7 +578,12 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
             showZoom
             showFitView
             showInteractive
-            style={controlsStyle}
+            style={{
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: 6,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+            }}
           />
         ) : null}
         {showMiniMap ? (
@@ -640,10 +591,16 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
             position="bottom-right"
             pannable
             zoomable
-            style={miniMapStyle}
+            style={{
+              width: 180,
+              height: 120,
+              background: '#ffffff',
+              border: '1px solid #e2e8f0',
+              borderRadius: 6,
+            }}
             maskColor="rgba(15, 23, 42, 0.04)"
             nodeColor={miniMapNodeColor}
-            nodeStrokeColor={colors.border}
+            nodeStrokeColor="#e2e8f0"
           />
         ) : null}
       </ReactFlow>

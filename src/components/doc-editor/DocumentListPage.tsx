@@ -1,11 +1,10 @@
 // frontend/src/components/doc-editor/DocumentListPage.tsx
 //
 // Card-based list view of all documents in the workspace.
-// Shows document metadata, presence avatars, and actions.
 
 import { useState, useCallback, useMemo } from 'react';
 import NewDocumentModal from './NewDocumentModal';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Exported types
@@ -38,12 +37,11 @@ export interface PresenceInfo {
 
 export interface DocumentListPageProps {
   documents: DocumentInfo[];
-  presence: Record<string, PresenceInfo[]>; // documentId -> users in that doc
+  presence: Record<string, PresenceInfo[]>;
   onOpenDocument: (documentId: string) => void;
   onCreateDocument: (meta: { title: string; type: string; description?: string }) => void;
   onDeleteDocument: (documentId: string) => void;
   onJumpToUser: (documentId: string, userId: string) => void;
-  /** Hide the header row (title + new button) when controlled externally */
   hideHeader?: boolean;
 }
 
@@ -55,22 +53,16 @@ function relativeTime(isoString: string): string {
   const now = Date.now();
   const then = new Date(isoString).getTime();
   if (isNaN(then)) return '';
-
   const diffMs = now - then;
   if (diffMs < 0) return 'just now';
-
   const seconds = Math.floor(diffMs / 1000);
   if (seconds < 60) return 'just now';
-
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
-
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}h ago`;
-
   const days = Math.floor(hours / 24);
   if (days < 30) return `${days}d ago`;
-
   const months = Math.floor(days / 30);
   return `${months}mo ago`;
 }
@@ -90,17 +82,8 @@ function StatusBadge({ status }: { status: string }) {
   const style = STATUS_STYLES[status] ?? STATUS_STYLES.draft;
   return (
     <span
-      style={{
-        display: 'inline-block',
-        padding: '2px 8px',
-        fontSize: 11,
-        fontWeight: 600,
-        borderRadius: 9999,
-        background: style.bg,
-        color: style.color,
-        textTransform: 'capitalize',
-        lineHeight: '18px',
-      }}
+      className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full capitalize leading-[18px]')}
+      style={{ background: style.bg, color: style.color }}
     >
       {status}
     </span>
@@ -108,9 +91,9 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 const MODE_ICONS: Record<string, { icon: string; label: string }> = {
-  editor: { icon: '\u270F', label: 'Editing' },    // pencil
-  reviewer: { icon: '\u2714', label: 'Reviewing' }, // check
-  reader: { icon: '\uD83D\uDC41', label: 'Viewing' },    // eye
+  editor: { icon: '✏', label: 'Editing' },
+  reviewer: { icon: '✔', label: 'Reviewing' },
+  reader: { icon: '👁', label: 'Viewing' },
 };
 
 function PresenceAvatars({
@@ -125,7 +108,7 @@ function PresenceAvatars({
   const overflow = users.length - MAX_SHOWN;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+    <div className={cn('flex items-center gap-0.5')}>
       {shown.map((u, i) => {
         const modeInfo = MODE_ICONS[u.mode ?? 'editor'] ?? MODE_ICONS.editor;
         const isIdle = u.idle === true;
@@ -139,67 +122,20 @@ function PresenceAvatars({
               e.stopPropagation();
               onClickUser(u.userId);
             }}
-            style={{
-              position: 'relative',
-              marginLeft: i > 0 ? -6 : 0,
-              zIndex: MAX_SHOWN - i,
-              cursor: 'pointer',
-            }}
+            className={cn('relative cursor-pointer')}
+            style={{ marginLeft: i > 0 ? -6 : 0, zIndex: MAX_SHOWN - i }}
           >
-            {/* Avatar circle */}
             <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                background: isIdle ? `${u.color}99` : u.color,
-                color: '#ffffff',
-                fontSize: 11,
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid #ffffff',
-              }}
+              className={cn('w-8 h-8 rounded-full text-white text-[11px] font-bold flex items-center justify-center border-2 border-white')}
+              style={{ background: isIdle ? `${u.color}99` : u.color }}
             >
-              {u.displayName
-                .split(' ')
-                .map((w) => w[0])
-                .join('')
-                .slice(0, 2)
-                .toUpperCase()}
+              {u.displayName.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase()}
             </div>
-            {/* Status dot (green=active, yellow=idle) */}
             <div
-              style={{
-                position: 'absolute',
-                bottom: -1,
-                right: -1,
-                width: 10,
-                height: 10,
-                borderRadius: '50%',
-                background: statusColor,
-                border: '2px solid #ffffff',
-              }}
+              className={cn('absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full border-2 border-white')}
+              style={{ background: statusColor }}
             />
-            {/* Mode icon badge */}
-            <div
-              style={{
-                position: 'absolute',
-                top: -4,
-                right: -4,
-                width: 14,
-                height: 14,
-                borderRadius: '50%',
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 8,
-                lineHeight: 1,
-              }}
-            >
+            <div className={cn('absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none')}>
               {modeInfo.icon}
             </div>
           </div>
@@ -207,20 +143,8 @@ function PresenceAvatars({
       })}
       {overflow > 0 && (
         <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            background: '#94a3b8',
-            color: '#ffffff',
-            fontSize: 10,
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '2px solid #ffffff',
-            marginLeft: -6,
-          }}
+          className={cn('w-8 h-8 rounded-full bg-[#94a3b8] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white')}
+          style={{ marginLeft: -6 }}
         >
           +{overflow}
         </div>
@@ -249,7 +173,6 @@ export default function DocumentListPage({
   const DOCS_PER_PAGE = 10;
   const totalPages = Math.max(1, Math.ceil(documents.length / DOCS_PER_PAGE));
 
-  // Reset to page 1 when the documents list changes length (e.g. after delete)
   const safeCurrentPage = Math.min(currentPage, totalPages);
   const paginatedDocs = useMemo(() => {
     const start = (safeCurrentPage - 1) * DOCS_PER_PAGE;
@@ -267,37 +190,17 @@ export default function DocumentListPage({
   );
 
   return (
-    <div style={{ padding: '0 16px' }}>
-      {/* Header — hidden when controlled externally (button in toolbar) */}
+    <div className={cn('px-4')}>
+      {/* Header */}
       {!hideHeader && (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 20,
-        }}
-      >
-        <h1 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: '#1e293b' }}>Documents</h1>
+      <div className={cn('flex items-center justify-between mb-5')}>
+        <h1 className={cn('m-0 text-[22px] font-bold text-[#1e293b]')}>Documents</h1>
         <button
           data-testid="new-document-btn"
           onClick={() => setShowModal(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '8px 16px',
-            fontSize: 14,
-            fontWeight: 600,
-            border: 'none',
-            borderRadius: 8,
-            background: '#3b82f6',
-            color: '#ffffff',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className={cn('flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-[#3b82f6] text-white cursor-pointer font-[inherit]')}
         >
-          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+          <span className={cn('text-base leading-none')}>+</span>
           New Document
         </button>
       </div>
@@ -307,17 +210,12 @@ export default function DocumentListPage({
       {documents.length === 0 ? (
         <div
           data-testid="documents-empty"
-          style={{
-            textAlign: 'center',
-            padding: '48px 16px',
-            color: '#94a3b8',
-            fontSize: 15,
-          }}
+          className={cn('text-center px-4 py-12 text-text-tertiary text-[15px]')}
         >
           No documents yet. Create your first document to get started.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className={cn('flex flex-col gap-3')}>
           {paginatedDocs.map((doc) => {
             const users = presence[doc.id] ?? [];
             const isHovered = hoveredCard === doc.id;
@@ -329,94 +227,46 @@ export default function DocumentListPage({
                 onClick={() => onOpenDocument(doc.id)}
                 onMouseEnter={() => setHoveredCard(doc.id)}
                 onMouseLeave={() => setHoveredCard(null)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 16,
-                  padding: '14px 16px',
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  position: 'relative',
-                  transition: 'box-shadow 0.15s',
-                  boxShadow: isHovered ? '0 4px 12px rgba(0,0,0,0.08)' : 'none',
-                }}
+                className={cn(
+                  'flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150',
+                  isHovered ? 'shadow-[0_4px_12px_rgba(0,0,0,0.08)]' : '',
+                )}
               >
                 {/* Icon */}
-                <span style={{ fontSize: 24, flexShrink: 0 }}>{doc.icon}</span>
+                <span className={cn('text-2xl shrink-0')}>{doc.icon}</span>
 
                 {/* Left: metadata */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                    <span
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 600,
-                        color: '#1e293b',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
+                <div className={cn('flex-1 min-w-0')}>
+                  <div className={cn('flex items-center gap-2 mb-0.5')}>
+                    <span className={cn('text-[15px] font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
                       {doc.title}
                     </span>
                     <StatusBadge status={doc.status} />
                     {doc.type && (
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '1px 8px',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        borderRadius: 9999,
-                        background: '#f1f5f9',
-                        color: '#475569',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                      }}>
+                      <span className={cn('inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-[#f1f5f9] text-text-secondary whitespace-nowrap shrink-0')}>
                         {doc.type}
                       </span>
                     )}
                     {doc.activeCallSessionId && (
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        padding: '2px 8px',
-                        fontSize: 11,
-                        fontWeight: 600,
-                        borderRadius: 9999,
-                        background: '#dcfce7',
-                        color: '#166534',
-                        lineHeight: '18px',
-                      }}>
-                        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a', animation: 'pulse 1.5s infinite' }} />
+                      <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] leading-[18px]')}>
+                        <span className={cn('w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse')} />
                         Live Call
                       </span>
                     )}
                   </div>
                   {doc.description && (
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: '#64748b',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                        marginBottom: 2,
-                      }}
-                    >
+                    <div className={cn('text-[13px] text-[#64748b] overflow-hidden text-ellipsis whitespace-nowrap mb-0.5')}>
                       {doc.description}
                     </div>
                   )}
-                  <div style={{ fontSize: 12, color: '#94a3b8' }}>
+                  <div className={cn('text-xs text-text-tertiary')}>
                     Updated {relativeTime(doc.updatedAt)}
                   </div>
                 </div>
 
                 {/* Right: presence */}
                 {users.length > 0 && (
-                  <div style={{ flexShrink: 0 }}>
+                  <div className={cn('shrink-0')}>
                     <PresenceAvatars
                       users={users}
                       onClickUser={(uid) => onJumpToUser(doc.id, uid)}
@@ -429,25 +279,7 @@ export default function DocumentListPage({
                   <button
                     onClick={(e) => handleDelete(e, doc.id, doc.title)}
                     title="Delete document"
-                    style={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      width: 22,
-                      height: 22,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      border: 'none',
-                      borderRadius: 4,
-                      background: '#fee2e2',
-                      color: '#dc2626',
-                      fontSize: 14,
-                      lineHeight: 1,
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      padding: 0,
-                    }}
+                    className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-[#dc2626] text-sm leading-none cursor-pointer font-[inherit] p-0')}
                   >
                     &#215;
                   </button>
@@ -462,37 +294,22 @@ export default function DocumentListPage({
       {documents.length > DOCS_PER_PAGE && (
         <div
           data-testid="pagination-controls"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 12,
-            marginTop: 16,
-            paddingTop: 12,
-            borderTop: `1px solid ${colors.border}`,
-          }}
+          className={cn('flex items-center justify-center gap-3 mt-4 pt-3 border-t border-border')}
         >
           <button
             data-testid="pagination-prev"
             disabled={safeCurrentPage <= 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            style={{
-              padding: '6px 14px',
-              fontSize: 13,
-              fontWeight: 600,
-              fontFamily: 'inherit',
-              border: `1px solid ${colors.border}`,
-              borderRadius: 6,
-              background: safeCurrentPage <= 1 ? colors.surfaceInset : colors.surface,
-              color: safeCurrentPage <= 1 ? colors.textDisabled : colors.textSecondary,
-              cursor: safeCurrentPage <= 1 ? 'not-allowed' : 'pointer',
-            }}
+            className={cn(
+              'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
+              safeCurrentPage <= 1 ? 'bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+            )}
           >
             Previous
           </button>
           <span
             data-testid="pagination-info"
-            style={{ fontSize: 13, color: colors.textSecondary, fontWeight: 500 }}
+            className={cn('text-[13px] text-text-secondary font-medium')}
           >
             Page {safeCurrentPage} of {totalPages}
           </span>
@@ -500,17 +317,10 @@ export default function DocumentListPage({
             data-testid="pagination-next"
             disabled={safeCurrentPage >= totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            style={{
-              padding: '6px 14px',
-              fontSize: 13,
-              fontWeight: 600,
-              fontFamily: 'inherit',
-              border: `1px solid ${colors.border}`,
-              borderRadius: 6,
-              background: safeCurrentPage >= totalPages ? colors.surfaceInset : colors.surface,
-              color: safeCurrentPage >= totalPages ? colors.textDisabled : colors.textSecondary,
-              cursor: safeCurrentPage >= totalPages ? 'not-allowed' : 'pointer',
-            }}
+            className={cn(
+              'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
+              safeCurrentPage >= totalPages ? 'bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+            )}
           >
             Next
           </button>

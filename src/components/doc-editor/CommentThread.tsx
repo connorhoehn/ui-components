@@ -1,22 +1,16 @@
 // frontend/src/components/doc-editor/CommentThread.tsx
 //
 // Shared presentational layer for threaded comment rendering.
-// Extracted from SectionComments so any caller that wants to render
-// a threaded conversation (Reddit-style nested replies, mentions,
-// resolve/unresolve) can compose this without reimplementing the UI.
-//
-// The component is data-source-agnostic: it takes a CommentThread tree
-// (from `types/document`) plus handler callbacks; it does not fetch or
-// mutate anything on its own.
 
 import { useState, useRef, useCallback } from 'react';
 import type { CommentThread } from '../../types/document';
 import { MentionDropdown } from './MentionDropdown';
 import type { MentionDropdownHandle } from './MentionDropdown';
 import type { MentionUser } from '../../hooks/useMentionUsers';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
-// Small display helpers — shared by all thread-rendering callers
+// Small display helpers
 // ---------------------------------------------------------------------------
 
 export function getInitials(name: string): string {
@@ -59,13 +53,7 @@ export function renderCommentText(text: string): React.ReactNode {
     part.startsWith('@') && /^@[A-Z]/.test(part) ? (
       <span
         key={i}
-        style={{
-          color: '#3b82f6',
-          fontWeight: 600,
-          background: '#eff6ff',
-          padding: '0 2px',
-          borderRadius: 2,
-        }}
+        className={cn('text-[#3b82f6] font-semibold bg-[#eff6ff] px-0.5 rounded-sm')}
       >
         {part}
       </span>
@@ -76,7 +64,7 @@ export function renderCommentText(text: string): React.ReactNode {
 }
 
 // ---------------------------------------------------------------------------
-// Mention detection — shared logic for any textarea with @mention support
+// Mention detection
 // ---------------------------------------------------------------------------
 
 export interface MentionState {
@@ -94,16 +82,11 @@ export const MENTION_INITIAL: MentionState = {
   atIndex: -1,
 };
 
-/**
- * Given the current textarea value and selectionStart, determine
- * whether we are in an @mention context.  Returns updated MentionState.
- */
 export function detectMention(
   value: string,
   cursorPos: number,
   textareaEl: HTMLTextAreaElement | null,
 ): MentionState {
-  // Walk backwards from cursor to find un-spaced `@`
   let i = cursorPos - 1;
   while (i >= 0 && value[i] !== '@' && value[i] !== ' ' && value[i] !== '\n') {
     i--;
@@ -111,13 +94,10 @@ export function detectMention(
   if (i < 0 || value[i] !== '@') {
     return MENTION_INITIAL;
   }
-  // `@` must be at start of string or preceded by whitespace / newline
   if (i > 0 && value[i - 1] !== ' ' && value[i - 1] !== '\n') {
     return MENTION_INITIAL;
   }
   const query = value.slice(i + 1, cursorPos);
-  // Position dropdown below the textarea using viewport-absolute coords
-  // so the portal-rendered MentionDropdown (position: fixed) aligns correctly.
   const rect = textareaEl?.getBoundingClientRect();
   const position = rect
     ? { top: rect.bottom + 4, left: rect.left }
@@ -125,17 +105,13 @@ export function detectMention(
   return { active: true, query, position, atIndex: i };
 }
 
-/**
- * Insert a mention into the textarea value, replacing `@query` with
- * `@DisplayName `.  Returns the new value and new cursor position.
- */
 export function insertMention(
   value: string,
   mention: MentionState,
   user: MentionUser,
 ): { newValue: string; newCursor: number } {
   const before = value.slice(0, mention.atIndex);
-  const after = value.slice(mention.atIndex + 1 + mention.query.length); // skip @+query
+  const after = value.slice(mention.atIndex + 1 + mention.query.length);
   const insert = `@${user.displayName} `;
   return {
     newValue: before + insert + after,
@@ -144,8 +120,7 @@ export function insertMention(
 }
 
 // ---------------------------------------------------------------------------
-// CommentThreadNode — recursive presentational component for a single
-// comment + its replies. Pure UI: accepts the thread node and callbacks.
+// CommentThreadNode
 // ---------------------------------------------------------------------------
 
 export interface CommentThreadNodeProps {
@@ -177,7 +152,7 @@ function CommentThreadNode({
   const cappedDepth = Math.min(depth, 5);
 
   const handleSubmitReply = () => {
-    if (mention.active) return; // don't submit while picking a mention
+    if (mention.active) return;
     const trimmed = replyText.trim();
     if (!trimmed) return;
     onReply(comment.id, trimmed);
@@ -211,7 +186,6 @@ function CommentThreadNode({
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Forward to mention dropdown first
     if (mention.active && mentionRef.current) {
       const consumed = mentionRef.current.handleKeyDown(e);
       if (consumed) return;
@@ -232,30 +206,20 @@ function CommentThreadNode({
     return (
       <div style={{ marginLeft: cappedDepth > 0 ? 20 : 0 }}>
         <div
-          style={{
-            background: '#f0fdf4',
-            borderLeft: '3px solid #22c55e',
-            padding: '8px 12px',
-            marginBottom: 4,
-            borderRadius: 4,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+          className={cn('bg-[#f0fdf4] border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(true)}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: '#16a34a', fontSize: 12 }}>{'\u2714'}</span>
-            <span style={{ color: '#16a34a', fontSize: 12, fontWeight: 600 }}>
+          <div className={cn('flex items-center gap-1.5')}>
+            <span className={cn('text-[#16a34a] text-xs')}>{'✔'}</span>
+            <span className={cn('text-[#16a34a] text-xs font-semibold')}>
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
-              <span style={{ color: '#86efac', fontSize: 11 }}>
+              <span className={cn('text-[#86efac] text-[11px]')}>
                 {relativeTime(comment.resolvedAt)}
               </span>
             )}
-            <span style={{ color: '#94a3b8', fontSize: 11, marginLeft: 4 }}>
+            <span className={cn('text-text-tertiary text-[11px] ml-1')}>
               — click to expand
             </span>
           </div>
@@ -265,16 +229,7 @@ function CommentThreadNode({
               e.stopPropagation();
               onUnresolveThread?.(comment.id);
             }}
-            style={{
-              background: 'none',
-              border: '1px solid #cbd5e1',
-              borderRadius: 4,
-              color: '#64748b',
-              fontSize: 11,
-              cursor: 'pointer',
-              padding: '2px 8px',
-              fontFamily: 'inherit',
-            }}
+            className={cn('bg-transparent border border-[#cbd5e1] rounded px-2 py-0.5 text-[#64748b] text-[11px] cursor-pointer font-[inherit]')}
           >
             Reopen
           </button>
@@ -288,30 +243,20 @@ function CommentThreadNode({
       {/* Resolved banner (expanded) */}
       {isResolved && resolvedExpanded && (
         <div
-          style={{
-            background: '#f0fdf4',
-            borderLeft: '3px solid #22c55e',
-            padding: '8px 12px',
-            marginBottom: 4,
-            borderRadius: 4,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+          className={cn('bg-[#f0fdf4] border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(false)}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ color: '#16a34a', fontSize: 12 }}>{'\u2714'}</span>
-            <span style={{ color: '#16a34a', fontSize: 12, fontWeight: 600 }}>
+          <div className={cn('flex items-center gap-1.5')}>
+            <span className={cn('text-[#16a34a] text-xs')}>{'✔'}</span>
+            <span className={cn('text-[#16a34a] text-xs font-semibold')}>
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
-              <span style={{ color: '#86efac', fontSize: 11 }}>
+              <span className={cn('text-[#86efac] text-[11px]')}>
                 {relativeTime(comment.resolvedAt)}
               </span>
             )}
-            <span style={{ color: '#94a3b8', fontSize: 11, marginLeft: 4 }}>
+            <span className={cn('text-text-tertiary text-[11px] ml-1')}>
               — click to collapse
             </span>
           </div>
@@ -321,16 +266,7 @@ function CommentThreadNode({
               e.stopPropagation();
               onUnresolveThread?.(comment.id);
             }}
-            style={{
-              background: 'none',
-              border: '1px solid #cbd5e1',
-              borderRadius: 4,
-              color: '#64748b',
-              fontSize: 11,
-              cursor: 'pointer',
-              padding: '2px 8px',
-              fontFamily: 'inherit',
-            }}
+            className={cn('bg-transparent border border-[#cbd5e1] rounded px-2 py-0.5 text-[#64748b] text-[11px] cursor-pointer font-[inherit]')}
           >
             Reopen
           </button>
@@ -339,57 +275,34 @@ function CommentThreadNode({
 
       {/* Comment card */}
       <div
-        style={{
-          borderLeft: `3px solid ${borderColor}`,
-          padding: '8px 12px',
-          marginBottom: 4,
-          transition: 'border-color 0.2s',
-        }}
+        className={cn('px-3 py-2 mb-1 transition-colors duration-200')}
+        style={{ borderLeft: `3px solid ${borderColor}` }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
         {/* Avatar + name + time */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+        <div className={cn('flex items-center gap-1.5 mb-1')}>
           <div
-            style={{
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: `linear-gradient(135deg, ${comment.color}, ${comment.color}dd)`,
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 10,
-              fontWeight: 600,
-              flexShrink: 0,
-            }}
+            className={cn('w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold shrink-0')}
+            style={{ background: `linear-gradient(135deg, ${comment.color}, ${comment.color}dd)` }}
           >
             {getInitials(comment.displayName)}
           </div>
-          <span style={{ fontWeight: 600, fontSize: 13, color: '#1e293b' }}>
+          <span className={cn('font-semibold text-[13px] text-[#1e293b]')}>
             {comment.displayName}
           </span>
-          <span style={{ fontSize: 11, color: '#94a3b8' }}>
+          <span className={cn('text-[11px] text-text-tertiary')}>
             {relativeTime(comment.timestamp)}
           </span>
         </div>
 
-        {/* Comment text — with styled @mentions */}
-        <div
-          style={{
-            fontSize: 13,
-            lineHeight: 1.5,
-            color: '#334155',
-            paddingLeft: 30,
-            whiteSpace: 'pre-wrap',
-          }}
-        >
+        {/* Comment text */}
+        <div className={cn('text-[13px] leading-normal text-[#334155] pl-[30px] whitespace-pre-wrap')}>
           {renderCommentText(comment.text)}
         </div>
 
         {/* Reply + Resolve buttons */}
-        <div style={{ paddingLeft: 30, marginTop: 4, display: 'flex', gap: 8 }}>
+        <div className={cn('pl-[30px] mt-1 flex gap-2')}>
           <button
             type="button"
             onClick={() => {
@@ -398,15 +311,7 @@ function CommentThreadNode({
                 setTimeout(() => textareaRef.current?.focus(), 50);
               }
             }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              fontSize: 12,
-              cursor: 'pointer',
-              padding: '2px 0',
-              fontFamily: 'inherit',
-            }}
+            className={cn('bg-transparent border-none text-[#64748b] text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
           >
             Reply
           </button>
@@ -414,32 +319,17 @@ function CommentThreadNode({
             <button
               type="button"
               onClick={() => onResolveThread(comment.id)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#64748b',
-                fontSize: 12,
-                cursor: 'pointer',
-                padding: '2px 0',
-                fontFamily: 'inherit',
-              }}
+              className={cn('bg-transparent border-none text-[#64748b] text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
             >
-              {'\u2714'} Resolve
+              {'✔'} Resolve
             </button>
           )}
         </div>
 
-        {/* Inline reply form — slides down */}
+        {/* Inline reply form */}
         {showReplyForm && (
-          <div
-            style={{
-              paddingLeft: 30,
-              marginTop: 8,
-              overflow: 'hidden',
-              animation: 'sectionCommentsSlideDown 0.2s ease-out',
-            }}
-          >
-            <div style={{ position: 'relative' }}>
+          <div className={cn('pl-[30px] mt-2 overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
+            <div className={cn('relative')}>
               <textarea
                 ref={textareaRef}
                 value={replyText}
@@ -447,20 +337,7 @@ function CommentThreadNode({
                 onKeyDown={handleKeyDown}
                 placeholder="Write a reply... (type @ to mention)"
                 rows={2}
-                style={{
-                  width: '100%',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 6,
-                  padding: '6px 10px',
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                  outline: 'none',
-                  resize: 'vertical',
-                  minHeight: 48,
-                  boxSizing: 'border-box',
-                  color: '#1e293b',
-                  background: '#fff',
-                }}
+                className={cn('w-full border border-border rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] outline-none resize-y min-h-12 box-border text-[#1e293b] bg-white')}
               />
               {mention.active && (
                 <MentionDropdown
@@ -473,38 +350,18 @@ function CommentThreadNode({
                 />
               )}
             </div>
-            <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+            <div className={cn('flex gap-1.5 mt-1.5')}>
               <button
                 type="button"
                 onClick={handleSubmitReply}
-                style={{
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  border: 'none',
-                  borderRadius: 6,
-                  background: '#3b82f6',
-                  color: '#fff',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
+                className={cn('px-3 py-1 text-xs font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit]')}
               >
                 Reply
               </button>
               <button
                 type="button"
                 onClick={() => setShowReplyForm(false)}
-                style={{
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 6,
-                  background: 'transparent',
-                  color: '#64748b',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
+                className={cn('px-3 py-1 text-xs font-medium border border-border rounded-md bg-transparent text-[#64748b] cursor-pointer font-[inherit]')}
               >
                 Cancel
               </button>

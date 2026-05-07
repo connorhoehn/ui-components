@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { colors } from '../../../constants/styles';
+import { useEffect } from 'react';
+import { cn } from '../../../lib/cn';
 
 interface NodeContextMenuState {
   nodeId: string;
@@ -45,47 +45,21 @@ export default function CanvasContextMenu({
     };
   }, [onDismiss]);
 
-  const menuItemStyle = useCallback(
-    (color?: string) => ({
-      display: 'block' as const,
-      width: '100%',
-      textAlign: 'left' as const,
-      padding: '8px 12px',
-      border: 'none',
-      background: 'transparent',
-      color: color ?? colors.textPrimary,
-      fontSize: 13,
-      cursor: 'pointer',
-      borderRadius: 4,
-      fontFamily: 'inherit',
-    }),
-    [],
-  );
+  const menuItemBase = 'block w-full text-left px-3 py-2 border-none bg-transparent text-[13px] cursor-pointer rounded font-inherit';
 
   return (
     <div
       data-testid="canvas-node-context-menu"
       role="menu"
-      style={{
-        position: 'fixed',
-        top: nodeMenu.y,
-        left: nodeMenu.x,
-        background: colors.surface,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 6,
-        boxShadow: '0 8px 20px rgba(15, 23, 42, 0.16)',
-        minWidth: 220,
-        zIndex: 50,
-        padding: 4,
-        fontFamily: 'inherit',
-      }}
+      className="fixed bg-white border border-[#e2e8f0] rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
+      style={{ top: nodeMenu.y, left: nodeMenu.x }}
     >
       <button
         type="button"
         role="menuitem"
         onClick={onFilterLog}
         data-testid="ctx-filter-log"
-        style={menuItemStyle()}
+        className={cn(menuItemBase, 'text-[#0f172a]')}
       >
         🎯 Filter log to this node
       </button>
@@ -94,7 +68,7 @@ export default function CanvasContextMenu({
         role="menuitem"
         onClick={onCopyNodeId}
         data-testid="ctx-copy-id"
-        style={menuItemStyle()}
+        className={cn(menuItemBase, 'text-[#0f172a]')}
       >
         📋 Copy node id
       </button>
@@ -103,7 +77,7 @@ export default function CanvasContextMenu({
         role="menuitem"
         onClick={onDuplicate}
         data-testid="ctx-duplicate"
-        style={menuItemStyle()}
+        className={cn(menuItemBase, 'text-[#0f172a]')}
       >
         📑 Duplicate node
       </button>
@@ -113,8 +87,9 @@ export default function CanvasContextMenu({
           role="menuitem"
           onClick={onToggleBreakpoint}
           data-testid="ctx-toggle-breakpoint"
-          style={menuItemStyle(
-            breakpoints?.has(nodeMenu.nodeId) ? '#dc2626' : undefined,
+          className={cn(
+            menuItemBase,
+            breakpoints?.has(nodeMenu.nodeId) ? 'text-[#dc2626]' : 'text-[#0f172a]',
           )}
         >
           {breakpoints?.has(nodeMenu.nodeId) ? '🔴 Remove Breakpoint' : '🔴 Toggle Breakpoint'}

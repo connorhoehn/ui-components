@@ -13,19 +13,14 @@
 // The runtime type only admits two onError values, so "Retry" is
 // represented as a halt with an attached retry budget in config.
 
-import type { CSSProperties } from 'react';
 import type { ActionNodeData, ActionType } from '../../../../types/pipeline';
-import { fieldStyle, colors } from '../../../../constants/styles';
+import { ConfigField } from '../shared';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 
 export interface ActionConfigProps {
   data: ActionNodeData;
   onChange: (patch: Partial<ActionNodeData>) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const requiredDot: CSSProperties = { color: '#dc2626', marginLeft: 4 };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 2 };
 
 const ACTION_OPTIONS: Array<{ value: ActionType; label: string }> = [
   { value: 'update-document', label: 'Update document' },
@@ -101,12 +96,11 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Action type */}
-      <div>
-        <label style={labelStyle}>Action type<span style={requiredDot}>●</span></label>
+      <ConfigField label="Action type" required>
         <select
-          style={{ ...fieldStyle, marginTop: 4 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
           value={data.actionType}
           onChange={(e) => onChange({ actionType: e.target.value as ActionType, config: {} })}
         >
@@ -114,18 +108,17 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-      </div>
+      </ConfigField>
 
       {/* Per-subtype fields */}
-      <div>
-        <label style={labelStyle}>Configuration</label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 4 }}>
+      <ConfigField label="Configuration">
+        <div className="flex flex-col gap-2.5">
           {fieldDefs.map(fd => (
             <div key={fd.key}>
-              <label style={{ ...labelStyle, fontSize: 11 }}>{fd.label}</label>
+              <label className="text-[11px] font-semibold text-text-secondary">{fd.label}</label>
               {fd.multiline ? (
                 <textarea
-                  style={{ ...fieldStyle, marginTop: 2, resize: 'vertical', minHeight: 48, fontFamily: 'inherit' }}
+                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[48px] mt-0.5"
                   rows={2}
                   placeholder={fd.placeholder}
                   value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
@@ -134,21 +127,21 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
               ) : (
                 <input
                   type="text"
-                  style={{ ...fieldStyle, marginTop: 2 }}
+                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit mt-0.5"
                   placeholder={fd.placeholder}
                   value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
                   onChange={(e) => setConfigField(fd.key, e.target.value)}
                 />
               )}
-              {fd.help && <div style={helpStyle}>{fd.help}</div>}
+              {fd.help && <div className="text-[11px] text-text-tertiary mt-0.5">{fd.help}</div>}
             </div>
           ))}
         </div>
-      </div>
+      </ConfigField>
 
       {/* Idempotent */}
       <div>
-        <label style={{ ...labelStyle, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
           <input
             type="checkbox"
             checked={!!data.idempotent}
@@ -156,41 +149,38 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
           />
           Idempotent
         </label>
-        <div style={helpStyle}>This action is safe to retry.</div>
+        <div className="text-[11px] text-text-tertiary mt-0.5">This action is safe to retry.</div>
       </div>
 
       {/* Idempotency mode — visible only when idempotent is checked */}
       {data.idempotent && (
-        <div>
-          <label style={labelStyle}>Dedup scope</label>
+        <ConfigField label="Dedup scope">
           <select
-            style={{ ...fieldStyle, marginTop: 4 }}
+            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
             value={data.idempotencyMode ?? 'per-step'}
             onChange={(e) => onChange({ idempotencyMode: e.target.value as 'per-attempt' | 'per-step' })}
           >
             <option value="per-step">Per step — fire once regardless of retries</option>
             <option value="per-attempt">Per attempt — fire once per retry window</option>
           </select>
-          <div style={helpStyle}>
+          <div className="text-[11px] text-text-tertiary mt-0.5">
             {(data.idempotencyMode ?? 'per-step') === 'per-step'
               ? 'Retries skip this action if it already succeeded. Best for post-comment, notify.'
               : 'Each retry attempt can execute the action. Best for idempotent PUTs/webhooks.'}
           </div>
-        </div>
+        </ConfigField>
       )}
 
-      {/* Retry policy (hub#1289) — canonical retryPolicy field, separate from
-          the legacy config.retryCount UI below. */}
+      {/* Retry policy (hub#1289) */}
       <RetryPolicyEditor
         value={data.retryPolicy}
         onChange={(next) => onChange({ retryPolicy: next })}
       />
 
       {/* On error */}
-      <div>
-        <label style={labelStyle}>On error</label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}>
+      <ConfigField label="On error">
+        <div className="flex flex-col gap-1.5">
+          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
             <input
               type="radio"
               name="action-on-error"
@@ -199,7 +189,7 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
             />
             Route to error handle
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}>
+          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
             <input
               type="radio"
               name="action-on-error"
@@ -208,7 +198,7 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
             />
             Halt pipeline
           </label>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}>
+          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
             <input
               type="radio"
               name="action-on-error"
@@ -220,7 +210,7 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
               type="number"
               min={1}
               disabled={onErrorUI !== 'retry'}
-              style={{ ...fieldStyle, width: 64, flex: 'none' }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-16 flex-none font-inherit"
               value={retryCount}
               onChange={(e) => {
                 const n = Math.max(1, parseInt(e.target.value, 10) || 1);
@@ -230,7 +220,7 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
             times
           </label>
         </div>
-      </div>
+      </ConfigField>
     </div>
   );
 }

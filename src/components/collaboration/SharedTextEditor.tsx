@@ -3,6 +3,7 @@
 // WYSIWYG rich text editor bound to useCRDT content and applyLocalEdit.
 
 import { useRef, useEffect } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface SharedTextEditorProps {
   content: string;
@@ -23,19 +24,6 @@ const TOOLBAR: { cmd: string; label: string; title: string }[] = [
   { cmd: 'justifyCenter',       label: '≡C',  title: 'Align center' },
   { cmd: 'justifyRight',        label: '≡R',  title: 'Align right' },
 ];
-
-const btnStyle: React.CSSProperties = {
-  padding: '3px 8px',
-  fontSize: '0.75rem',
-  fontFamily: 'inherit',
-  fontWeight: 600,
-  border: '1px solid #d1d5db',
-  borderRadius: 4,
-  background: '#f9fafb',
-  color: '#374151',
-  cursor: 'pointer',
-  lineHeight: '1.5',
-};
 
 export function SharedTextEditor({ content, applyLocalEdit, disabled = false, hasConflict = false, onDismissConflict }: SharedTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -65,23 +53,23 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
   return (
     <div>
       {/* Toolbar */}
-      <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap', marginBottom: '0.5rem', alignItems: 'center' }}>
+      <div className="flex gap-1 flex-wrap mb-2 items-center">
         {TOOLBAR.map(({ cmd, label, title }) => (
           <button
             key={cmd}
             onMouseDown={(e) => { e.preventDefault(); exec(cmd); }}
             disabled={disabled}
             title={title}
-            style={btnStyle}
+            className="px-2 py-0.5 text-xs font-semibold border border-gray-300 rounded bg-gray-50 text-gray-700 cursor-pointer leading-normal"
           >
             {label}
           </button>
         ))}
-        <div style={{ width: 1, alignSelf: 'stretch', background: '#e2e8f0', margin: '0 4px' }} />
+        <div className="w-px self-stretch bg-gray-200 mx-1" />
         <select
           onChange={(e) => { document.execCommand('formatBlock', false, e.target.value); flush(); }}
           disabled={disabled}
-          style={{ fontSize: '0.75rem', border: '1px solid #d1d5db', borderRadius: 4, padding: '3px 6px', background: '#f9fafb', color: '#374151' }}
+          className="text-xs border border-gray-300 rounded px-1.5 py-0.5 bg-gray-50 text-gray-700"
         >
           <option value="p">Paragraph</option>
           <option value="h1">H1</option>
@@ -93,31 +81,12 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
 
       {/* CRDT-03: Merge conflict indicator */}
       {hasConflict && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '8px 12px',
-          marginBottom: '0.5rem',
-          background: '#fefce8',
-          border: '1px solid #fde68a',
-          borderRadius: 4,
-          fontSize: '0.8rem',
-          color: '#92400e',
-        }}>
+        <div className="flex items-center justify-between px-3 py-2 mb-2 bg-yellow-50 border border-yellow-300 rounded text-[0.8rem] text-yellow-800">
           <span>Edits merged — your changes are preserved</span>
           <button
             onClick={onDismissConflict}
             aria-label="Dismiss conflict indicator"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              color: '#92400e',
-              padding: '0 0 0 12px',
-              lineHeight: 1,
-            }}
+            className="bg-transparent border-none cursor-pointer text-base text-yellow-800 pl-3 leading-none"
           >
             x
           </button>
@@ -130,22 +99,13 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
         contentEditable={!disabled}
         suppressContentEditableWarning
         onInput={flush}
-        style={{
-          minHeight: 180,
-          border: '1px solid #d1d5db',
-          borderRadius: 4,
-          padding: '0.5rem 0.75rem',
-          fontSize: '0.9rem',
-          fontFamily: 'inherit',
-          lineHeight: 1.6,
-          outline: 'none',
-          overflowY: 'auto',
-          background: disabled ? '#f8fafc' : '#ffffff',
-          color: '#1e293b',
-        }}
+        className={cn(
+          'min-h-[180px] border border-gray-300 rounded px-3 py-2 text-[0.9rem] font-[inherit] leading-relaxed outline-none overflow-y-auto text-slate-800',
+          disabled ? 'bg-slate-50' : 'bg-white'
+        )}
       />
       {disabled && (
-        <p style={{ color: '#9ca3af', margin: '0.25rem 0 0', fontSize: '0.8rem' }}>
+        <p className="text-gray-400 mt-1 mb-0 text-[0.8rem]">
           Disconnected — reconnect to edit
         </p>
       )}

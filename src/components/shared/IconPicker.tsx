@@ -14,9 +14,8 @@ import {
   useEffect,
   useRef,
   useState,
-  type CSSProperties,
 } from 'react';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Curated default set — 48 emojis covering flow, tools, comms, docs, data,
@@ -46,80 +45,6 @@ export interface IconPickerProps {
 // Styles
 // ---------------------------------------------------------------------------
 
-const triggerBtnStyle = (hovered: boolean): CSSProperties => ({
-  width: 34,
-  height: 34,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-  fontSize: 22,
-  lineHeight: 1,
-  background: hovered ? colors.surfaceHover : 'transparent',
-  border: `1px solid ${hovered ? colors.borderEmphasis : colors.border}`,
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  flexShrink: 0,
-});
-
-const popoverStyle: CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  marginTop: 6,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  boxShadow: '0 12px 28px rgba(15,23,42,0.14)',
-  padding: 10,
-  zIndex: 30,
-  minWidth: 272,
-};
-
-const gridStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(8, 28px)',
-  gap: 4,
-};
-
-const cellStyle = (active: boolean, hovered: boolean): CSSProperties => ({
-  width: 28,
-  height: 28,
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: 0,
-  fontSize: 16,
-  lineHeight: 1,
-  background: hovered ? colors.surfaceHover : 'transparent',
-  border: `1px solid ${active ? colors.primary : 'transparent'}`,
-  borderRadius: 4,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-});
-
-const customRowStyle: CSSProperties = {
-  display: 'flex',
-  gap: 6,
-  marginTop: 10,
-  paddingTop: 10,
-  borderTop: `1px solid ${colors.border}`,
-};
-
-const customInputStyle: CSSProperties = {
-  flex: 1,
-  minWidth: 0,
-  border: `1px solid ${colors.borderField}`,
-  borderRadius: 6,
-  padding: '4px 8px',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  background: '#f9fafb',
-  color: colors.textPrimary,
-  outline: 'none',
-};
-
 // ---------------------------------------------------------------------------
 // Grid cell (needs hover state per-cell)
 // ---------------------------------------------------------------------------
@@ -133,14 +58,14 @@ function IconCell({
   active: boolean;
   onPick: (e: string) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
   return (
     <button
       type="button"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       onClick={() => onPick(emoji)}
-      style={cellStyle(active, hovered)}
+      className={cn(
+        'w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-[#f1f5f9]',
+        active ? 'border border-primary' : 'border border-transparent',
+      )}
       aria-label={`Select ${emoji}`}
       aria-pressed={active}
     >
@@ -194,13 +119,11 @@ export default function IconPicker({
   };
 
   return (
-    <div style={{ position: 'relative', display: 'inline-block' }} ref={rootRef}>
+    <div className="relative inline-block" ref={rootRef}>
       <button
         type="button"
         onClick={() => setOpen((x) => !x)}
-        onMouseEnter={() => setTriggerHovered(true)}
-        onMouseLeave={() => setTriggerHovered(false)}
-        style={triggerBtnStyle(triggerHovered)}
+        className="w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-[#f1f5f9] hover:border-[#cbd5e1]"
         aria-label="Choose icon"
         aria-haspopup="dialog"
         aria-expanded={open}
@@ -210,8 +133,8 @@ export default function IconPicker({
       </button>
 
       {open ? (
-        <div ref={popoverRef} style={popoverStyle} data-testid="icon-picker-popover">
-          <div style={gridStyle}>
+        <div ref={popoverRef} className="absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]" data-testid="icon-picker-popover">
+          <div className="grid grid-cols-[repeat(8,28px)] gap-1">
             {icons.map((emoji, idx) => (
               <IconCell
                 key={`${emoji}-${idx}`}
@@ -221,7 +144,7 @@ export default function IconPicker({
               />
             ))}
           </div>
-          <div style={customRowStyle}>
+          <div className="flex gap-1.5 mt-2.5 pt-2.5 border-t border-border">
             <input
               type="text"
               value={customDraft}
@@ -235,7 +158,7 @@ export default function IconPicker({
                 }
               }}
               placeholder="Paste any emoji…"
-              style={customInputStyle}
+              className="flex-1 min-w-0 border border-border-field rounded-md px-2 py-1 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
               data-testid="icon-picker-custom-input"
               aria-label="Custom emoji"
             />
@@ -243,19 +166,7 @@ export default function IconPicker({
               type="button"
               onClick={handleCustomCommit}
               disabled={customDraft.trim().length === 0}
-              style={{
-                padding: '4px 10px',
-                fontSize: 12,
-                fontWeight: 600,
-                background: colors.primary,
-                color: '#fff',
-                border: 'none',
-                borderRadius: 6,
-                cursor:
-                  customDraft.trim().length === 0 ? 'not-allowed' : 'pointer',
-                opacity: customDraft.trim().length === 0 ? 0.5 : 1,
-                fontFamily: 'inherit',
-              }}
+              className="px-2.5 py-1 text-xs font-semibold bg-primary text-white border-none rounded-md font-[inherit] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
             >
               Set
             </button>

@@ -5,15 +5,11 @@
 // Opens when a node is selected; closes on Esc, click-outside, or the header
 // close button. Body dispatches to per-type *Config components for the Config
 // tab; Runs / Docs tabs are simple placeholders for now.
-//
-// Multi-selection path: if >1 node is selected (passed via `selectedIds`
-// prop, typically fed by React Flow selection inside the canvas), the panel
-// renders a compact bulk-action pane instead of a single-node config form.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import type { NodeData, NodeType, PipelineNode } from '../../../types/pipeline';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
 import { usePipelineEditor } from '../context/PipelineEditorContext';
 import TriggerConfig from '../nodes/trigger/TriggerConfig';
@@ -77,116 +73,14 @@ type Tab = 'config' | 'runs' | 'docs';
 
 export interface ConfigPanelProps {
   /**
-   * React Flow's current selected node IDs. If omitted or of length ≤ 1 the
+   * React Flow's current selected node IDs. If omitted or of length <= 1 the
    * panel falls back to `selectedNodeId` from the editor context.
    */
   selectedIds?: string[];
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const panelWidth = 320;
-
-const wrapStyle = (_open: boolean, _reduceMotion: boolean): CSSProperties => ({
-  // When rendered inside the right sidebar, fill the parent flex container.
-  // The absolute positioning is no longer needed — the sidebar owns the
-  // width/height and border.
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-  minHeight: 0,
-  background: '#ffffff',
-});
-
-const headerStyle: CSSProperties = {
-  height: 44,
-  padding: '0 12px 0 14px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  borderBottom: '1px solid #e2e8f0',
-  flexShrink: 0,
-};
-
-const tabsRowStyle: CSSProperties = {
-  height: 36,
-  display: 'flex',
-  borderBottom: '1px solid #e2e8f0',
-  flexShrink: 0,
-};
-
-const tabStyle = (active: boolean): CSSProperties => ({
-  flex: 1,
-  border: 'none',
-  background: 'transparent',
-  fontSize: 12,
-  fontWeight: 600,
-  color: active ? '#0f172a' : '#64748b',
-  borderBottom: active ? '2px solid #646cff' : '2px solid transparent',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-});
-
-const bodyStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-};
-
-const footerStyle: CSSProperties = {
-  height: 40,
-  padding: '0 12px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: 8,
-  borderTop: '1px solid #e2e8f0',
-  flexShrink: 0,
-};
-
-const deleteBtnStyle: CSSProperties = {
-  padding: '6px 10px',
-  fontSize: 12,
-  fontWeight: 600,
-  background: 'transparent',
-  color: '#dc2626',
-  border: '1px solid transparent',
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-const duplicateBtnStyle: CSSProperties = {
-  padding: '6px 10px',
-  fontSize: 12,
-  fontWeight: 600,
-  background: '#f1f5f9',
-  color: '#0f172a',
-  border: '1px solid #e2e8f0',
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-const closeBtnStyle: CSSProperties = {
-  width: 28,
-  height: 28,
-  padding: 0,
-  background: 'transparent',
-  border: 'none',
-  color: '#64748b',
-  fontSize: 18,
-  lineHeight: 1,
-  cursor: 'pointer',
-  borderRadius: 4,
-  fontFamily: 'inherit',
-};
-
-// ---------------------------------------------------------------------------
 // Dispatch to per-type Config. Each *Config expects `{ data, onChange }`.
-// Typed as a loose component to tolerate sibling-agent stubs that may not
-// yet declare the full props shape.
 // ---------------------------------------------------------------------------
 
 type AnyConfig = (props: {
@@ -230,7 +124,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
   const [tab, setTab] = useState<Tab>('config');
   const panelRef = useRef<HTMLDivElement | null>(null);
   const tabsRef = useRef<HTMLDivElement | null>(null);
-  const reduceMotion = usePrefersReducedMotion();
+  const _reduceMotion = usePrefersReducedMotion();
 
   // Effective selection: multi-select wins when passed; else single from ctx.
   const effectiveIds = useMemo(() => {
@@ -269,29 +163,21 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, close]);
 
-  // Click-outside to close (panel click = inside; anything else outside).
+  // Click-outside to close
   useEffect(() => {
     if (!open) return;
     const onPointerDown = (e: MouseEvent) => {
       const el = panelRef.current;
       if (!el) return;
       if (e.target instanceof Node && el.contains(e.target)) return;
-      // Let the canvas's own onPaneClick handle clearing selection — but if
-      // the user clicks chrome outside the panel (top bar, palette, etc.)
-      // we still close. The canvas will separately fire onPaneClick which
-      // also calls setSelectedNodeId(null), so this is idempotent.
       if (!(e.target instanceof Element)) return;
-      // Heuristic: don't close if the click lands inside a palette draggable.
       if (e.target.closest('[data-node-type]')) return;
       close();
     };
-    // `mousedown` so we fire before the canvas's own click handling.
     window.addEventListener('mousedown', onPointerDown);
     return () => window.removeEventListener('mousedown', onPointerDown);
   }, [open, close]);
 
-  // If nothing selected, render the collapsed frame (still in the DOM so the
-  // CSS transition can animate).
   const meta = selectedNode ? TYPE_META[selectedNode.type] : null;
 
   const handleDelete = () => {
@@ -313,31 +199,44 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
   };
 
   return (
-    <div ref={panelRef} style={wrapStyle(open, reduceMotion)} data-testid="config-panel">
+    <div ref={panelRef} className="flex flex-col flex-1 min-h-0 bg-white" data-testid="config-panel">
       {isMulti ? (
         // ---------------------------------------------------------------
         // Multi-select pane
         // ---------------------------------------------------------------
         <>
-          <div style={headerStyle}>
-            <span style={{ fontSize: 16 }} aria-hidden>⧉</span>
-            <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0">
+            <span className="text-base" aria-hidden>{'⧉'}</span>
+            <div className="flex-1 text-[13px] font-semibold text-[#0f172a]">
               {effectiveIds.length} nodes selected
             </div>
-            <button type="button" onClick={close} style={closeBtnStyle} aria-label="Close">
-              ×
+            <button
+              type="button"
+              onClick={close}
+              className="w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit"
+              aria-label="Close"
+            >
+              {'×'}
             </button>
           </div>
-          <div style={{ ...bodyStyle, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <div style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5 }}>
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+            <div className="text-xs text-[#64748b] leading-normal">
               Bulk actions apply to every selected node. Individual node
               configuration is only shown for single selections.
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button type="button" onClick={handleDelete} style={{ ...deleteBtnStyle, border: '1px solid #fecaca' }}>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-[#fecaca] rounded-md cursor-pointer font-inherit"
+              >
                 Delete all
               </button>
-              <button type="button" onClick={handleDuplicate} style={duplicateBtnStyle}>
+              <button
+                type="button"
+                onClick={handleDuplicate}
+                className="px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+              >
                 Duplicate all
               </button>
             </div>
@@ -348,23 +247,26 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
         // Single-node pane
         // ---------------------------------------------------------------
         <>
-          <div style={headerStyle}>
-            <span style={{ fontSize: 18, lineHeight: 1 }} aria-hidden>{meta.icon}</span>
-            <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0">
+            <span className="text-lg leading-none" aria-hidden>{meta.icon}</span>
+            <div className="flex-1 text-[13px] font-semibold text-[#0f172a]">
               {meta.name}
             </div>
-            <button type="button" onClick={close} style={closeBtnStyle} aria-label="Close">
-              ×
+            <button
+              type="button"
+              onClick={close}
+              className="w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit"
+              aria-label="Close"
+            >
+              {'×'}
             </button>
           </div>
           <div
             ref={tabsRef}
             role="tablist"
             aria-label="Node configuration tabs"
-            style={tabsRowStyle}
+            className="h-9 flex border-b border-[#e2e8f0] shrink-0"
             onKeyDown={(e) => {
-              // Roving tabindex: ←/→ move focus between tabs, Home/End jump
-              // to first/last, space/enter activate the focused tab.
               const order: Tab[] = ['config', 'runs', 'docs'];
               const idx = order.indexOf(tab);
               let next: Tab | null = null;
@@ -393,7 +295,12 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                   aria-selected={active}
                   tabIndex={active ? 0 : -1}
                   data-tab={key}
-                  style={tabStyle(active)}
+                  className={cn(
+                    'flex-1 border-none bg-transparent text-xs font-semibold cursor-pointer font-inherit',
+                    active
+                      ? 'text-[#0f172a] border-b-2 border-b-[#646cff]'
+                      : 'text-[#64748b] border-b-2 border-b-transparent',
+                  )}
                   onClick={() => setTab(key)}
                 >
                   {label}
@@ -401,33 +308,24 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               );
             })}
           </div>
-          <div style={bodyStyle}>
+          <div className="flex-1 overflow-y-auto">
             {tab === 'config' && renderConfig(selectedNode, onChange)}
             {tab === 'runs' && (
-              <div style={{ padding: 24, fontSize: 12, color: '#64748b' }}>
+              <div className="p-6 text-xs text-[#64748b]">
                 No runs yet.
               </div>
             )}
             {tab === 'docs' && (
-              <div
-                className="pipeline-docs-pane"
-                style={{
-                  padding: 16,
-                  fontSize: 13,
-                  color: colors.textPrimary,
-                  lineHeight: 1.4,
-                }}
-              >
-                {/* Scoped prose styles — we use inline <style> instead of CSS
-                    modules to keep this file self-contained (see §19.5). */}
+              <div className="pipeline-docs-pane p-4 text-[13px] text-[#0f172a] leading-snug">
+                {/* Scoped prose styles */}
                 <style>{`
                   .pipeline-docs-pane h4 {
                     font-size: 14px;
                     font-weight: 600;
-                    color: ${colors.textPrimary};
+                    color: #0f172a;
                     margin: 16px 0 8px;
                     padding-bottom: 4px;
-                    border-bottom: 1px solid ${colors.border};
+                    border-bottom: 1px solid #e2e8f0;
                   }
                   .pipeline-docs-pane h4:first-child {
                     margin-top: 0;
@@ -444,24 +342,32 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                   }
                   .pipeline-docs-pane code {
                     font-size: 12px;
-                    color: ${colors.textSecondary};
+                    color: #475569;
                     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
                   }
                 `}</style>
                 {docsContent[selectedNode.type] ?? (
-                  <p style={{ color: colors.textSecondary }}>
+                  <p className="text-text-secondary">
                     No docs available for this node type.
                   </p>
                 )}
               </div>
             )}
           </div>
-          <div style={footerStyle}>
-            <button type="button" onClick={handleDelete} style={deleteBtnStyle}>
+          <div className="h-10 px-3 flex items-center justify-between gap-2 border-t border-[#e2e8f0] shrink-0">
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-transparent rounded-md cursor-pointer font-inherit"
+            >
               🗑 Delete node
             </button>
-            <button type="button" onClick={handleDuplicate} style={duplicateBtnStyle}>
-              ⧉ Duplicate
+            <button
+              type="button"
+              onClick={handleDuplicate}
+              className="px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+            >
+              {'⧉'} Duplicate
             </button>
           </div>
         </>

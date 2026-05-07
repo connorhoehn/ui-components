@@ -22,9 +22,8 @@
 // appear.
 
 import React, { useCallback, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
-import { colors } from '../../constants/styles';
-import Button from './ui/Button';
+import { cn } from '../../lib/cn';
+import { Button } from '../ui/Button';
 import {
   usePipelineRunAuditLog,
   type UsePipelineRunAuditLogResult,
@@ -132,109 +131,9 @@ function formatRelative(iso: string, nowMs: number = Date.now()): string {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
+// Pulse keyframes
 // ---------------------------------------------------------------------------
 
-const containerStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-  minHeight: 0,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  overflow: 'hidden',
-};
-
-const filterBarStyle: CSSProperties = {
-  position: 'sticky',
-  top: 0,
-  zIndex: 2,
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignItems: 'center',
-  gap: 8,
-  padding: '10px 12px',
-  background: colors.surfacePanel,
-  borderBottom: `1px solid ${colors.border}`,
-  fontSize: 12,
-};
-
-const chipBaseStyle: CSSProperties = {
-  fontFamily: 'inherit',
-  fontSize: 11,
-  fontWeight: 600,
-  padding: '3px 9px',
-  borderRadius: 12,
-  border: `1px solid ${colors.border}`,
-  background: colors.surface,
-  color: colors.textSecondary,
-  cursor: 'pointer',
-};
-
-const chipActiveStyle: CSSProperties = {
-  background: '#dbeafe',
-  color: '#1d4ed8',
-  border: '1px solid #93c5fd',
-};
-
-const inputStyle: CSSProperties = {
-  fontFamily: 'inherit',
-  fontSize: 12,
-  padding: '4px 8px',
-  border: `1px solid ${colors.borderField}`,
-  borderRadius: 4,
-  background: colors.surface,
-  color: colors.textPrimary,
-  minWidth: 120,
-};
-
-const timelineStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '12px 16px',
-  position: 'relative',
-};
-
-const rowStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '14px auto auto 1fr',
-  alignItems: 'baseline',
-  gap: 10,
-  padding: '6px 0',
-  fontSize: 12,
-  borderBottom: `1px solid ${colors.surfaceInset}`,
-};
-
-const markerStyle: CSSProperties = {
-  width: 10,
-  height: 10,
-  borderRadius: 999,
-  flexShrink: 0,
-  alignSelf: 'center',
-};
-
-const footerStyle: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  gap: 8,
-  padding: '10px 12px',
-  borderTop: `1px solid ${colors.border}`,
-  background: colors.surfacePanel,
-};
-
-const pulseDotBase: CSSProperties = {
-  display: 'inline-block',
-  width: 8,
-  height: 8,
-  borderRadius: 999,
-  marginRight: 6,
-  verticalAlign: 'middle',
-};
-
-// CSS keyframes injected once — cheaper than a separate stylesheet for a
-// single feature surface.
 const KEYFRAMES_ID = 'executor-log-pulse-keyframes';
 function ensurePulseKeyframes(): void {
   if (typeof document === 'undefined') return;
@@ -333,34 +232,38 @@ export default function ExecutorLog({
   );
 
   // ── Live indicator ─────────────────────────────────────────────────
-  const liveDotStyle: CSSProperties = useMemo(() => {
-    return {
-      ...pulseDotBase,
-      background: error ? colors.textTertiary : '#22c55e',
-      animation: error ? 'none' : 'executor-log-pulse 1.6s ease-in-out infinite',
-    };
-  }, [error]);
+  const liveDotStyle = useMemo(() => ({
+    background: error ? undefined : '#22c55e',
+    animation: error ? 'none' : 'executor-log-pulse 1.6s ease-in-out infinite',
+  }), [error]);
 
   return (
-    <div style={containerStyle} data-testid="executor-log">
+    <div
+      className="flex flex-col flex-1 min-h-0 bg-surface border border-border rounded-lg overflow-hidden"
+      data-testid="executor-log"
+    >
       {/* ── Sticky filter bar ─────────────────────────────────────── */}
-      <div style={filterBarStyle}>
+      <div className="sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-[#f8fafc] border-b border-border text-xs">
         <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            fontSize: 11,
-            color: error ? colors.textTertiary : colors.textSecondary,
-            fontWeight: 600,
-          }}
+          className={cn(
+            'inline-flex items-center text-[11px] font-semibold',
+            error ? 'text-text-tertiary' : 'text-text-secondary',
+          )}
           data-testid="executor-log-live-indicator"
           title={error ? `Live updates unavailable: ${error}` : 'Live updates active'}
         >
-          <span style={liveDotStyle} aria-hidden />
+          <span
+            className={cn(
+              'inline-block w-2 h-2 rounded-full mr-1.5 align-middle',
+              error ? 'bg-text-tertiary' : '',
+            )}
+            style={liveDotStyle}
+            aria-hidden
+          />
           Live
         </span>
 
-        <span style={{ color: colors.border }}>|</span>
+        <span className="text-border">|</span>
 
         {ACTION_CHIPS.map((chip) => {
           const active = activeChips.has(chip.label);
@@ -368,7 +271,12 @@ export default function ExecutorLog({
             <button
               key={chip.label}
               type="button"
-              style={{ ...chipBaseStyle, ...(active ? chipActiveStyle : null) }}
+              className={cn(
+                'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
+                active
+                  ? 'bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]'
+                  : 'bg-surface text-text-secondary border-border',
+              )}
               onClick={() => toggleChip(chip.label)}
               data-testid={`executor-log-chip-${chip.label.toLowerCase().replace(/\s+/g, '-')}`}
               aria-pressed={active}
@@ -378,19 +286,19 @@ export default function ExecutorLog({
           );
         })}
 
-        <span style={{ color: colors.border }}>|</span>
+        <span className="text-border">|</span>
 
         <input
           type="text"
           value={actorFilter}
           onChange={(e) => setActorFilter(e.target.value)}
           placeholder="Actor"
-          style={inputStyle}
+          className="font-[inherit] text-xs px-2 py-1 border border-border-field rounded bg-surface text-text-primary min-w-[120px]"
           data-testid="executor-log-actor-input"
           aria-label="Filter by actor"
         />
 
-        <span style={{ color: colors.border }}>|</span>
+        <span className="text-border">|</span>
 
         {(['1h', '24h', 'all'] as const).map((preset) => {
           const active = timePreset === preset;
@@ -398,7 +306,12 @@ export default function ExecutorLog({
             <button
               key={preset}
               type="button"
-              style={{ ...chipBaseStyle, ...(active ? chipActiveStyle : null) }}
+              className={cn(
+                'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
+                active
+                  ? 'bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]'
+                  : 'bg-surface text-text-secondary border-border',
+              )}
               onClick={() => setTimePreset(preset)}
               data-testid={`executor-log-time-${preset}`}
               aria-pressed={active}
@@ -408,30 +321,24 @@ export default function ExecutorLog({
           );
         })}
 
-        <div style={{ flex: 1 }} />
+        <div className="flex-1" />
 
-        <span style={{ fontSize: 11, color: colors.textTertiary }}>
+        <span className="text-[11px] text-text-tertiary">
           {filtered.length} of {items.length} shown
         </span>
       </div>
 
       {/* ── Timeline ──────────────────────────────────────────────── */}
-      <div style={timelineStyle} data-testid="executor-log-timeline">
+      <div className="flex-1 overflow-y-auto px-4 py-3 relative" data-testid="executor-log-timeline">
         {loading && items.length === 0 && (
-          <div style={{ fontSize: 12, color: colors.textTertiary, padding: 12 }}>
+          <div className="text-xs text-text-tertiary p-3">
             Loading audit rows…
           </div>
         )}
 
         {!loading && items.length === 0 && (
           <div
-            style={{
-              padding: '24px 12px',
-              fontSize: 13,
-              color: colors.textSecondary,
-              textAlign: 'center',
-              lineHeight: 1.5,
-            }}
+            className="px-3 py-6 text-[13px] text-text-secondary text-center leading-relaxed"
             data-testid="executor-log-empty"
           >
             Audit log started recording on 2026-05-07 (hub#2224). This run predates that — no rows captured.
@@ -440,7 +347,7 @@ export default function ExecutorLog({
 
         {filtered.length === 0 && items.length > 0 && (
           <div
-            style={{ padding: '20px 12px', fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}
+            className="px-3 py-5 text-xs text-text-tertiary text-center"
             data-testid="executor-log-no-matches"
           >
             No audit rows match the current filters.
@@ -454,52 +361,42 @@ export default function ExecutorLog({
           return (
             <div
               key={row.auditId}
-              style={{
-                ...rowStyle,
-                cursor: 'pointer',
-              }}
+              className="grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-[#fafbfc] cursor-pointer"
               onClick={() => handleRowClick(row)}
               data-testid="executor-log-row"
               data-action={row.action}
               data-audit-id={row.auditId}
             >
               <span
-                style={{ ...markerStyle, background: markerColor(row) }}
+                className="w-2.5 h-2.5 rounded-full shrink-0 self-center"
+                style={{ background: markerColor(row) }}
                 aria-hidden
                 data-testid="executor-log-marker"
               />
               <span
-                style={{ color: colors.textTertiary, fontFamily: 'monospace', fontSize: 11, whiteSpace: 'nowrap' }}
+                className="text-text-tertiary font-mono text-[11px] whitespace-nowrap"
                 title={row.timestamp}
               >
                 {formatRelative(row.timestamp)}
               </span>
-              <span style={{ color: colors.textSecondary, fontSize: 11, whiteSpace: 'nowrap' }}>
+              <span className="text-text-secondary text-[11px] whitespace-nowrap">
                 {row.actorUserId}
               </span>
-              <span style={{ color: colors.textPrimary, display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'wrap' }}>
-                <code
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: 11,
-                    background: colors.surfaceInset,
-                    padding: '1px 6px',
-                    borderRadius: 3,
-                  }}
-                >
+              <span className="text-text-primary flex items-baseline gap-1.5 flex-wrap">
+                <code className="font-mono text-[11px] bg-[#fafbfc] px-1.5 py-px rounded-[3px]">
                   {row.action}
                 </code>
                 {stepId && (
-                  <span style={{ fontSize: 11, color: colors.textTertiary }} data-testid="executor-log-stepid">
+                  <span className="text-[11px] text-text-tertiary" data-testid="executor-log-stepid">
                     · {stepId.slice(0, 14)}{stepId.length > 14 ? '…' : ''}
                   </span>
                 )}
                 {row.outcome && (
                   <span
-                    style={{
-                      fontSize: 11,
-                      color: row.outcome === 'error' ? '#b91c1c' : colors.textTertiary,
-                    }}
+                    className={cn(
+                      'text-[11px]',
+                      row.outcome === 'error' ? 'text-[#b91c1c]' : 'text-text-tertiary',
+                    )}
                   >
                     · {row.outcome}
                   </span>
@@ -507,18 +404,7 @@ export default function ExecutorLog({
               </span>
               {expanded && row.trace && (
                 <pre
-                  style={{
-                    gridColumn: '2 / span 3',
-                    margin: '4px 0 0',
-                    padding: 8,
-                    background: colors.surfaceInset,
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: 4,
-                    fontSize: 11,
-                    fontFamily: 'monospace',
-                    color: colors.textSecondary,
-                    overflowX: 'auto',
-                  }}
+                  className="col-[2/span_3] mt-1 p-2 bg-[#fafbfc] border border-border rounded text-[11px] font-mono text-text-secondary overflow-x-auto"
                   data-testid="executor-log-trace"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -531,28 +417,30 @@ export default function ExecutorLog({
       </div>
 
       {/* ── Footer ────────────────────────────────────────────────── */}
-      <div style={footerStyle}>
+      <div className="flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-[#f8fafc]">
         {hasMore ? (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => loadMore()}
-            data-testid="executor-log-load-more"
-          >
-            Load more
-          </Button>
+          <span data-testid="executor-log-load-more">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => loadMore()}
+            >
+              Load more
+            </Button>
+          </span>
         ) : (
           <span />
         )}
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleDownload}
-          disabled={filtered.length === 0}
-          data-testid="executor-log-download"
-        >
-          Download log
-        </Button>
+        <span data-testid="executor-log-download">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleDownload}
+            disabled={filtered.length === 0}
+          >
+            Download log
+          </Button>
+        </span>
       </div>
     </div>
   );

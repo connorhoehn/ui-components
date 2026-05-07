@@ -1,12 +1,8 @@
 import { useRef, useState } from 'react';
 import { useClickOutside } from './hooks/useClickOutside';
 import type { TriggerBinding } from '../../types/pipeline';
-import {
-  colors,
-  chipStyle,
-  saveBtnStyle,
-  menuBtn,
-} from '../../constants/styles';
+import Chip from '../shared/Chip';
+import { cn } from '../../lib/cn';
 import type { PipelineRow } from './PipelinesPage';
 
 function triggerSummary(binding?: TriggerBinding): { icon: string; text: string } {
@@ -77,13 +73,6 @@ export default function PipelineCard({
     }
   };
 
-  const borderColor = selected
-    ? colors.primary
-    : (hovered ? colors.primary : colors.border);
-  const boxShadow = selected
-    ? `0 0 0 4px rgba(100,108,255,0.18)`
-    : (hovered ? '0 2px 8px rgba(15,23,42,0.06)' : 'none');
-
   return (
     <div
       data-testid={`pipeline-card-${row.id}`}
@@ -91,27 +80,19 @@ export default function PipelineCard({
       onClick={handleCardClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setMenuOpen(false); }}
-      style={{
-        display: 'flex', flexDirection: 'column', gap: 8,
-        width: '100%',
-        padding: '12px 14px', background: colors.surface,
-        border: `1px solid ${borderColor}`,
-        borderRadius: 8, cursor: 'pointer',
-        transition: 'border-color 100ms, box-shadow 100ms',
-        boxShadow,
-        position: 'relative',
-      }}
+      className={cn(
+        'flex flex-col gap-2 w-full px-3.5 py-3 bg-surface rounded-lg cursor-pointer relative transition-[border-color,box-shadow] duration-100',
+        selected
+          ? 'border border-primary shadow-[0_0_0_4px_rgba(100,108,255,0.18)]'
+          : hovered
+            ? 'border border-primary shadow-[0_2px_8px_rgba(15,23,42,0.06)]'
+            : 'border border-border shadow-none'
+      )}
     >
       {checkboxVisible && (
         <label
           onClick={(e) => e.stopPropagation()}
-          style={{
-            position: 'absolute', top: 8, right: 8,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            width: 22, height: 22,
-            cursor: 'pointer',
-            zIndex: 1,
-          }}
+          className="absolute top-2 right-2 flex items-center justify-center w-[22px] h-[22px] cursor-pointer z-[1]"
         >
           <input
             type="checkbox"
@@ -128,71 +109,54 @@ export default function PipelineCard({
               }
             }}
             onChange={() => {}}
-            style={{ cursor: 'pointer', width: 16, height: 16, accentColor: colors.primary }}
+            className="cursor-pointer w-4 h-4 accent-primary"
           />
         </label>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, paddingRight: checkboxVisible ? 28 : 0 }}>
-        <span style={{ fontSize: 18, flexShrink: 0 }} aria-hidden>{row.icon}</span>
+      <div className={cn('flex items-center gap-2 min-w-0', checkboxVisible && 'pr-7')}>
+        <span className="text-lg shrink-0" aria-hidden>{row.icon}</span>
         <div
-          style={{
-            flex: 1, minWidth: 0, fontSize: 13, fontWeight: 600,
-            color: colors.textPrimary,
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}
+          className="flex-1 min-w-0 text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
           title={row.name}
         >
           {row.name}
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <span aria-label={`Status: ${statusLabel}`} style={chipStyle(statusVariant)}>{statusLabel}</span>
-        <span style={{ fontSize: 11, color: colors.textSecondary }}>
+      <div className="flex items-center gap-2 flex-wrap">
+        <Chip aria-label={`Status: ${statusLabel}`} tone={statusVariant} size="sm">{statusLabel}</Chip>
+        <span className="text-[11px] text-text-secondary">
           {trigger.icon} {trigger.text}
         </span>
-        <span style={{ fontSize: 11, color: colors.textTertiary }}>
+        <span className="text-[11px] text-text-tertiary">
           &middot; {row.nodeCount} node{row.nodeCount === 1 ? '' : 's'}
         </span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div className="flex items-center gap-1.5">
         <button
           data-testid={`run-pipeline-${row.id}`}
           onClick={stop(onRun)}
           disabled={runDisabled}
           title={runDisabled ? 'Run requires published state' : 'Run pipeline'}
-          style={{
-            ...saveBtnStyle(runDisabled),
-            padding: '5px 12px', fontSize: 12,
-          }}
+          className="px-3 py-[5px] text-xs font-semibold bg-primary text-white border-none rounded-md font-[inherit] shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
           Run
         </button>
         <button
           data-testid={`edit-pipeline-${row.id}`}
           onClick={stop(onOpen)}
-          style={{
-            padding: '5px 12px', fontSize: 12, fontWeight: 600,
-            background: colors.surface, color: colors.textSecondary,
-            border: `1px solid ${colors.borderField}`, borderRadius: 6,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className="px-3 py-[5px] text-xs font-semibold bg-surface text-text-secondary border border-border-field rounded-md cursor-pointer font-[inherit]"
         >
           Edit
         </button>
-        <div style={{ position: 'relative', marginLeft: 'auto' }} ref={menuRef}>
+        <div className="relative ml-auto" ref={menuRef}>
           <button
             data-testid={`overflow-pipeline-${row.id}`}
             onClick={stop(() => setMenuOpen(v => !v))}
             aria-label="More actions"
-            style={{
-              padding: '4px 8px', fontSize: 14, fontWeight: 700,
-              background: 'transparent', color: colors.textSecondary,
-              border: `1px solid transparent`, borderRadius: 6,
-              cursor: 'pointer', fontFamily: 'inherit', lineHeight: 1,
-            }}
+            className="px-2 py-1 text-sm font-bold bg-transparent text-text-secondary border border-transparent rounded-md cursor-pointer font-[inherit] leading-none"
           >
             &#x22EF;
           </button>
@@ -201,21 +165,16 @@ export default function PipelineCard({
               data-testid={`overflow-menu-${row.id}`}
               role="menu"
               onClick={(e) => e.stopPropagation()}
-              style={{
-                position: 'absolute', right: 0, top: '100%', marginTop: 4,
-                background: colors.surface, border: `1px solid ${colors.border}`,
-                borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.12)',
-                minWidth: 160, zIndex: 10, overflow: 'hidden',
-              }}
+              className="absolute right-0 top-full mt-1 bg-surface border border-border rounded-lg shadow-[0_8px_24px_rgba(15,23,42,0.12)] min-w-[160px] z-10 overflow-hidden"
             >
-              <button style={menuBtn} role="menuitem" onClick={stop(() => { setMenuOpen(false); onDuplicate(); })}>
+              <button className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onDuplicate(); })}>
                 Duplicate
               </button>
-              <button style={menuBtn} role="menuitem" onClick={stop(() => { setMenuOpen(false); onExport(); })}>
+              <button className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit]" role="menuitem" onClick={stop(() => { setMenuOpen(false); onExport(); })}>
                 Export JSON
               </button>
               <button
-                style={{ ...menuBtn, color: '#dc2626' }}
+                className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-[#dc2626]"
                 role="menuitem"
                 onClick={stop(() => { setMenuOpen(false); onDelete(); })}
               >

@@ -4,8 +4,8 @@
 
 import type { VersionEntry, SnapshotSection } from '../../hooks/useVersionHistory';
 import { Panel, PanelHeader, PanelBody, Button } from '../ui/Panel';
-import { colors, fontSize as fs, borderRadius } from '../../styles/tokens';
 import DiffViewer from './DiffViewer';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -55,71 +55,6 @@ function formatRelativeTime(ms: number): string {
   const months = Math.floor(days / 30);
   return `${months} month${months !== 1 ? 's' : ''} ago`;
 }
-
-// ---------------------------------------------------------------------------
-// Styles (kept: list-item-level styles not covered by shared components)
-// ---------------------------------------------------------------------------
-
-const emptyStyle: React.CSSProperties = {
-  padding: '2rem 1rem',
-  textAlign: 'center',
-  color: colors.textMuted,
-  fontSize: fs.sm,
-};
-
-const versionItemStyle = (active: boolean): React.CSSProperties => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '10px 1rem',
-  cursor: 'pointer',
-  background: active ? '#eff6ff' : 'transparent',
-  borderLeft: active ? '3px solid #3b82f6' : '3px solid transparent',
-  fontSize: fs.sm,
-  color: colors.textPrimary,
-});
-
-const timestampLabel: React.CSSProperties = {
-  fontSize: fs.xs,
-  color: colors.textMuted,
-};
-
-const versionNameStyle: React.CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  color: '#1f2937',
-  display: 'block',
-  marginBottom: 1,
-};
-
-const versionTypeBadge = (type?: string): React.CSSProperties => ({
-  fontSize: 10,
-  fontWeight: 500,
-  padding: '1px 5px',
-  borderRadius: 3,
-  marginLeft: 6,
-  background: type === 'pre-restore' ? '#fef3c7' : type === 'auto' ? '#f3f4f6' : '#e0f2fe',
-  color: type === 'pre-restore' ? '#92400e' : type === 'auto' ? colors.textMuted : '#0369a1',
-});
-
-const authorStyle: React.CSSProperties = {
-  fontSize: 10,
-  color: colors.textMuted,
-  display: 'block',
-};
-
-const compareBtnStyle: React.CSSProperties = {
-  padding: '3px 8px',
-  fontSize: fs.xs,
-  fontWeight: 500,
-  border: `1px solid ${colors.border}`,
-  borderRadius: borderRadius.sm,
-  background: colors.surface,
-  color: '#6b7280',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  whiteSpace: 'nowrap',
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -184,42 +119,51 @@ export default function VersionHistoryPanel({
 
       {/* Version list */}
       <PanelBody padding="0.5rem 0">
-        {loading && <div style={emptyStyle}>Loading...</div>}
+        {loading && <div className={cn('py-8 px-4 text-center text-text-tertiary text-[13px]')}>Loading...</div>}
 
         {!loading && versions.length === 0 && (
-          <div style={emptyStyle}>No saved versions yet</div>
+          <div className={cn('py-8 px-4 text-center text-text-tertiary text-[13px]')}>No saved versions yet</div>
         )}
 
         {!loading &&
           versions.map((v) => (
             <div
               key={v.timestamp}
-              style={versionItemStyle(previewTimestamp === v.timestamp)}
+              className={cn(
+                'flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary',
+                previewTimestamp === v.timestamp ? 'bg-[#eff6ff] border-l-[3px] border-l-[#3b82f6]' : 'bg-transparent border-l-[3px] border-l-transparent',
+              )}
               onClick={() => onPreview(v.timestamp)}
             >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                {v.name && <span style={versionNameStyle}>{v.name}</span>}
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <div className={cn('flex-1 min-w-0')}>
+                {v.name && <span className={cn('text-xs font-semibold text-[#1f2937] block mb-px')}>{v.name}</span>}
+                <span className={cn('flex items-center gap-1')}>
                   {formatRelativeTime(v.age)}
                   {v.type && v.type !== 'manual' && (
-                    <span style={versionTypeBadge(v.type)}>
+                    <span
+                      className={cn('text-[10px] font-medium px-[5px] py-px rounded-[3px] ml-1.5')}
+                      style={{
+                        background: v.type === 'pre-restore' ? '#fef3c7' : v.type === 'auto' ? '#f3f4f6' : '#e0f2fe',
+                        color: v.type === 'pre-restore' ? '#92400e' : v.type === 'auto' ? '#94a3b8' : '#0369a1',
+                      }}
+                    >
                       {versionTypeLabel(v)}
                     </span>
                   )}
                 </span>
-                {v.author && <span style={authorStyle}>by {v.author}</span>}
-                <span style={timestampLabel}>
+                {v.author && <span className={cn('text-[10px] text-text-tertiary block')}>by {v.author}</span>}
+                <span className={cn('text-[11px] text-text-tertiary')}>
                   {new Date(v.timestamp).toLocaleString()}
                 </span>
               </div>
               <button
                 type="button"
-                style={{
-                  ...compareBtnStyle,
-                  ...(compareTimestamp === v.timestamp
-                    ? { background: '#eff6ff', borderColor: '#3b82f6', color: '#3b82f6' }
-                    : {}),
-                }}
+                className={cn(
+                  'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',
+                  compareTimestamp === v.timestamp
+                    ? 'bg-[#eff6ff] border-[#3b82f6] text-[#3b82f6]'
+                    : 'bg-white border-border text-[#6b7280]',
+                )}
                 onClick={(e) => handleCompare(e, v.timestamp)}
               >
                 {compareTimestamp === v.timestamp ? 'Hide Diff' : 'Compare'}
@@ -239,7 +183,7 @@ export default function VersionHistoryPanel({
 
       {/* Restore button — shown when a version is selected for compare */}
       {onRestore && compareTimestamp != null && (
-        <div style={{ padding: '0.75rem 1rem', borderTop: `1px solid ${colors.border}`, flexShrink: 0 }}>
+        <div className={cn('py-3 px-4 border-t border-border shrink-0')}>
           <Button
             variant="primary"
             onClick={() => {
@@ -258,12 +202,12 @@ export default function VersionHistoryPanel({
               padding: '10px 16px',
               fontSize: 14,
               fontWeight: 600,
-              borderRadius: borderRadius.lg,
+              borderRadius: 8,
             }}
           >
             Restore this version
           </Button>
-          <div style={{ fontSize: fs.xs, color: colors.textMuted, textAlign: 'center', marginTop: 6 }}>
+          <div className={cn('text-[11px] text-text-tertiary text-center mt-1.5')}>
             A pre-restore checkpoint will be saved automatically
           </div>
         </div>

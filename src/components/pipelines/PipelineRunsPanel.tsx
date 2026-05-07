@@ -5,13 +5,15 @@
 // "Runs" button in the PipelineEditorPage top bar.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import { listPipelineRuns } from '../../api/pipelineRuns';
 import { useEventStream } from './context/EventStreamContext';
 import type { WildcardEvent } from './context/EventStreamContext';
 import type { PipelineRun, RunStatus } from '../../types/pipeline';
-import { colors, chipStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
+import Chip from '../shared/Chip';
+import type { ChipTone } from '../shared/Chip';
+import RunDetailDrawer from './RunDetailDrawer';
 import { formatDuration } from './utils/formatTime';
 
 // ---------------------------------------------------------------------------
@@ -35,12 +37,12 @@ function formatCost(usd?: number): string {
   return `$${usd.toFixed(2)}`;
 }
 
-function costColor(usd?: number): string {
-  if (usd == null || usd === 0) return colors.textTertiary;
-  if (usd < 0.01) return '#16a34a'; // green
-  if (usd < 0.10) return '#ca8a04'; // yellow
-  if (usd < 1.00) return '#ea580c'; // orange
-  return '#dc2626'; // red
+function costColorClass(usd?: number): string {
+  if (usd == null || usd === 0) return 'text-text-tertiary';
+  if (usd < 0.01) return 'text-[#16a34a]';
+  if (usd < 0.10) return 'text-[#ca8a04]';
+  if (usd < 1.00) return 'text-[#ea580c]';
+  return 'text-[#dc2626]';
 }
 
 function relativeTime(iso: string): string {
@@ -52,22 +54,27 @@ function relativeTime(iso: string): string {
   return new Date(iso).toLocaleDateString();
 }
 
-function statusBadge(s: RunStatus): { style: CSSProperties; label: string } {
+function statusBadgeTone(s: RunStatus): ChipTone {
   switch (s) {
-    case 'completed':
-      return { style: chipStyle('success'), label: 'Completed' };
-    case 'failed':
-      return { style: chipStyle('danger'), label: 'Failed' };
-    case 'cancelled':
-      return { style: chipStyle('neutral'), label: 'Cancelled' };
-    case 'running':
-      return { style: chipStyle('info'), label: 'Running' };
-    case 'pending':
-      return { style: chipStyle('neutral'), label: 'Pending' };
-    case 'awaiting_approval':
-      return { style: chipStyle('warning'), label: 'Awaiting' };
-    default:
-      return { style: chipStyle('neutral'), label: s };
+    case 'completed':         return 'success';
+    case 'failed':            return 'danger';
+    case 'cancelled':         return 'neutral';
+    case 'running':           return 'info';
+    case 'pending':           return 'neutral';
+    case 'awaiting_approval': return 'warning';
+    default:                  return 'neutral';
+  }
+}
+
+function statusLabel(s: RunStatus): string {
+  switch (s) {
+    case 'completed':         return 'Completed';
+    case 'failed':            return 'Failed';
+    case 'cancelled':         return 'Cancelled';
+    case 'running':           return 'Running';
+    case 'pending':           return 'Pending';
+    case 'awaiting_approval': return 'Awaiting';
+    default:                  return s;
   }
 }
 
@@ -75,55 +82,6 @@ function triggerLabel(run: PipelineRun): string {
   if (run.triggeredBy.userId) return run.triggeredBy.userId;
   return run.triggeredBy.triggerType || 'manual';
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const panelStyle: CSSProperties = {
-  // Fill parent sidebar container (no longer standalone side panel).
-  flex: 1,
-  minHeight: 0,
-  background: colors.surface,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'hidden',
-  position: 'relative',
-};
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '12px 16px',
-  borderBottom: `1px solid ${colors.border}`,
-  flexShrink: 0,
-};
-
-const listStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: 0,
-  margin: 0,
-  listStyle: 'none',
-};
-
-const rowStyle: CSSProperties = {
-  padding: '10px 16px',
-  borderBottom: `1px solid ${colors.border}`,
-  cursor: 'pointer',
-  transition: 'background 0.1s',
-};
-
-const detailOverlayStyle: CSSProperties = {
-  position: 'absolute',
-  inset: 0,
-  background: colors.surface,
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'hidden',
-  zIndex: 2,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -256,12 +214,16 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
   // ---- Render ----
 
   return (
-    <div style={panelStyle} data-testid="pipeline-runs-panel">
-      <div style={headerStyle}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: colors.textPrimary }}>
+    <div
+      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-surface"
+      data-testid="pipeline-runs-panel"
+    >
+      {/* Header */}
+      <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+        <span className="text-sm font-bold text-text-primary">
           Run History
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto' }}>
+        <div className="ml-auto flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => {
@@ -269,17 +231,12 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
               if (compareMode) setComparePair([]);
             }}
             data-testid="runs-panel-compare-toggle"
-            style={{
-              padding: '3px 8px',
-              fontSize: 11,
-              fontWeight: 500,
-              border: `1px solid ${compareMode ? colors.primary : colors.border}`,
-              background: compareMode ? colors.primary : colors.surface,
-              color: compareMode ? '#fff' : colors.textSecondary,
-              borderRadius: 4,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className={cn(
+              'cursor-pointer rounded px-2 py-0.5 font-inherit text-[11px] font-medium',
+              compareMode
+                ? 'border border-primary bg-primary text-white'
+                : 'border border-border bg-surface text-text-secondary',
+            )}
           >
             Compare
           </button>
@@ -287,36 +244,20 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
             type="button"
             onClick={onClose}
             aria-label="Close runs panel"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 16,
-              color: colors.textTertiary,
-              padding: '2px 6px',
-              borderRadius: 4,
-            }}
+            className="cursor-pointer rounded border-none bg-transparent px-1.5 py-0.5 text-base text-text-tertiary"
           >
             x
           </button>
         </div>
       </div>
 
-      {/* Compare action bar — visible when in compare mode */}
+      {/* Compare action bar */}
       {compareMode && (
         <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '8px 16px',
-            borderBottom: `1px solid ${colors.border}`,
-            background: colors.surfaceInset,
-            flexShrink: 0,
-          }}
+          className="flex shrink-0 items-center gap-2 border-b border-border bg-surface-inset px-4 py-2"
           data-testid="runs-panel-compare-bar"
         >
-          <span style={{ fontSize: 11, color: colors.textSecondary }}>
+          <span className="text-[11px] text-text-secondary">
             {comparePair.length}/2 selected
           </span>
           <button
@@ -324,366 +265,42 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
             disabled={comparePair.length !== 2}
             onClick={handleCompare}
             data-testid="runs-panel-compare-action"
-            style={{
-              padding: '3px 10px',
-              fontSize: 11,
-              fontWeight: 600,
-              border: `1px solid ${comparePair.length === 2 ? colors.primary : colors.border}`,
-              background: comparePair.length === 2 ? colors.primary : colors.surface,
-              color: comparePair.length === 2 ? '#fff' : colors.textDisabled,
-              borderRadius: 4,
-              cursor: comparePair.length === 2 ? 'pointer' : 'not-allowed',
-              fontFamily: 'inherit',
-              marginLeft: 'auto',
-            }}
+            className={cn(
+              'ml-auto rounded px-2.5 py-0.5 font-inherit text-[11px] font-semibold',
+              comparePair.length === 2
+                ? 'cursor-pointer border border-primary bg-primary text-white'
+                : 'cursor-not-allowed border border-border bg-surface text-text-disabled',
+            )}
           >
             Compare
           </button>
         </div>
       )}
 
-      <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
+      <div className="relative min-h-0 flex-1">
         {/* Run detail overlay */}
         {selectedRun && (
-          <div style={detailOverlayStyle}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '10px 16px',
-                borderBottom: `1px solid ${colors.border}`,
-                flexShrink: 0,
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setSelectedRunId(null)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  color: colors.primary,
-                  padding: 0,
-                  fontFamily: 'inherit',
-                }}
-              >
-                &larr; Back
-              </button>
-              <span style={{ fontSize: 12, color: colors.textTertiary, fontFamily: 'monospace' }}>
-                {selectedRun.id.slice(0, 12)}
-              </span>
-            </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: 16 }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <DetailRow label="Status">
-                  <span
-                    aria-label={`Status: ${statusBadge(selectedRun.status).label}`}
-                    style={statusBadge(selectedRun.status).style}
-                  >
-                    {statusBadge(selectedRun.status).label}
-                  </span>
-                </DetailRow>
-                <DetailRow label="Started">
-                  {new Date(selectedRun.startedAt).toLocaleString()}
-                </DetailRow>
-                {selectedRun.completedAt && (
-                  <DetailRow label="Completed">
-                    {new Date(selectedRun.completedAt).toLocaleString()}
-                  </DetailRow>
-                )}
-                <DetailRow label="Duration">
-                  {formatDuration(selectedRun.durationMs)}
-                </DetailRow>
-                <DetailRow label="Triggered by">
-                  {triggerLabel(selectedRun)}
-                </DetailRow>
-                <DetailRow label="Trigger type">
-                  {selectedRun.triggeredBy.triggerType}
-                </DetailRow>
-                {selectedRun.estimatedCostUsd != null && selectedRun.estimatedCostUsd > 0 && (
-                  <DetailRow label="Est. Cost">
-                    <span style={{ color: costColor(selectedRun.estimatedCostUsd), fontWeight: 600 }}>
-                      {formatCost(selectedRun.estimatedCostUsd)}
-                    </span>
-                    {selectedRun.estimatedCostUsd > 1.0 && (
-                      <span
-                        style={{
-                          background: '#fef3c7',
-                          color: '#92400e',
-                          fontSize: 9,
-                          fontWeight: 700,
-                          padding: '1px 4px',
-                          borderRadius: 3,
-                          marginLeft: 6,
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        Budget Warning
-                      </span>
-                    )}
-                  </DetailRow>
-                )}
-                {selectedRun.tokenUsage && Object.keys(selectedRun.tokenUsage).length > 0 && (
-                  <div style={{ marginTop: 8 }}>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: colors.textSecondary,
-                        marginBottom: 6,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Cost Breakdown
-                    </div>
-                    {Object.entries(selectedRun.tokenUsage).map(([model, usage]) => (
-                      <div
-                        key={model}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 8,
-                          padding: '3px 0',
-                          fontSize: 11,
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontFamily: 'monospace',
-                            color: colors.textSecondary,
-                            minWidth: 100,
-                          }}
-                        >
-                          {model}
-                        </span>
-                        <span style={{ color: colors.textTertiary }}>
-                          {usage.tokensIn.toLocaleString()} in / {usage.tokensOut.toLocaleString()} out
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {selectedRun.error && (
-                  <div style={{ marginTop: 8 }}>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: colors.state.failed,
-                        marginBottom: 4,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Error
-                    </div>
-                    <div
-                      style={{
-                        padding: '8px 10px',
-                        background: '#fef2f2',
-                        borderRadius: 6,
-                        fontSize: 12,
-                        color: '#991b1b',
-                        fontFamily: 'monospace',
-                        whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-word',
-                      }}
-                    >
-                      {selectedRun.error.message}
-                      {selectedRun.error.nodeId && (
-                        <div style={{ marginTop: 4, fontSize: 11, color: '#b91c1c' }}>
-                          at node: {selectedRun.error.nodeId}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {/* View full run detail page */}
-                <button
-                  type="button"
-                  onClick={() => navigate(`/pipelines/${pipelineId}/runs/${selectedRun.id}`)}
-                  data-testid="runs-panel-replay-btn"
-                  style={{
-                    marginTop: 12,
-                    width: '100%',
-                    padding: '8px 14px',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    background: colors.primary,
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: 6,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  View Full Run
-                </button>
-                {/* Steps summary */}
-                {Object.keys(selectedRun.steps).length > 0 && (
-                  <div style={{ marginTop: 8 }}>
-                    <div
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 600,
-                        color: colors.textSecondary,
-                        marginBottom: 6,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Steps ({Object.keys(selectedRun.steps).length})
-                    </div>
-                    {Object.entries(selectedRun.steps).map(([stepId, step]) => {
-                      const badge = statusBadge(step.status as RunStatus);
-                      const output = step.output as Record<string, unknown> | undefined;
-                      const llmResponse = output?.response as string | undefined;
-                      return (
-                        <div key={stepId} style={{ marginBottom: 8 }}>
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 8,
-                              padding: '4px 0',
-                              fontSize: 12,
-                            }}
-                          >
-                            <span aria-label={`Status: ${badge.label}`} style={badge.style}>{badge.label}</span>
-                            <span
-                              style={{
-                                fontFamily: 'monospace',
-                                color: colors.textSecondary,
-                                fontSize: 11,
-                              }}
-                            >
-                              {stepId.slice(0, 10)}
-                            </span>
-                            {step.durationMs != null && (
-                              <span style={{ color: colors.textTertiary, fontSize: 11, marginLeft: 'auto' }}>
-                                {formatDuration(step.durationMs)}
-                              </span>
-                            )}
-                          </div>
-                          {llmResponse && (
-                            <div
-                              style={{
-                                marginTop: 4,
-                                padding: '8px 10px',
-                                background: colors.surfaceInset,
-                                border: `1px solid ${colors.border}`,
-                                borderRadius: 6,
-                                fontSize: 12,
-                                color: colors.textPrimary,
-                                whiteSpace: 'pre-wrap',
-                                wordBreak: 'break-word',
-                                lineHeight: 1.5,
-                                maxHeight: 160,
-                                overflowY: 'auto',
-                              }}
-                            >
-                              {llmResponse}
-                            </div>
-                          )}
-                          {output && !llmResponse && Object.keys(output).length > 0 && (
-                            <div
-                              style={{
-                                marginTop: 4,
-                                padding: '6px 10px',
-                                background: colors.surfaceInset,
-                                border: `1px solid ${colors.border}`,
-                                borderRadius: 6,
-                                fontSize: 11,
-                                fontFamily: 'monospace',
-                                color: colors.textSecondary,
-                                whiteSpace: 'pre-wrap',
-                                wordBreak: 'break-word',
-                                maxHeight: 120,
-                                overflowY: 'auto',
-                              }}
-                            >
-                              {JSON.stringify(output, null, 2)}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                {/* Raw JSON for debugging */}
-                <div style={{ marginTop: 12 }}>
-                  <details>
-                    <summary
-                      style={{
-                        fontSize: 11,
-                        color: colors.textTertiary,
-                        cursor: 'pointer',
-                        userSelect: 'none',
-                      }}
-                    >
-                      Raw snapshot JSON
-                    </summary>
-                    <pre
-                      style={{
-                        marginTop: 6,
-                        padding: 10,
-                        background: colors.surfaceInset,
-                        border: `1px solid ${colors.border}`,
-                        borderRadius: 6,
-                        fontSize: 10,
-                        overflow: 'auto',
-                        maxHeight: 300,
-                        whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-all',
-                      }}
-                    >
-                      {JSON.stringify(selectedRun, null, 2)}
-                    </pre>
-                  </details>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RunDetailDrawer
+            pipelineId={pipelineId}
+            run={selectedRun}
+            onBack={() => setSelectedRunId(null)}
+          />
         )}
 
         {/* Run list */}
         {loading && runs.length === 0 && (
-          <div
-            style={{
-              padding: 24,
-              textAlign: 'center',
-              color: colors.textTertiary,
-              fontSize: 13,
-            }}
-          >
+          <div className="p-6 text-center text-[13px] text-text-tertiary">
             Loading runs...
           </div>
         )}
 
         {error && (
-          <div
-            style={{
-              padding: 16,
-              textAlign: 'center',
-              color: colors.state.failed,
-              fontSize: 12,
-            }}
-          >
+          <div className="p-4 text-center text-xs text-state-failed">
             {error}
             <button
               type="button"
               onClick={() => void fetchRuns()}
-              style={{
-                display: 'block',
-                margin: '8px auto 0',
-                fontSize: 12,
-                color: colors.primary,
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                textDecoration: 'underline',
-              }}
+              className="mx-auto mt-2 block cursor-pointer border-none bg-transparent font-inherit text-xs text-primary underline"
             >
               Retry
             </button>
@@ -691,22 +308,16 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
         )}
 
         {!loading && !error && runs.length === 0 && (
-          <div
-            style={{
-              padding: 24,
-              textAlign: 'center',
-              color: colors.textTertiary,
-              fontSize: 13,
-            }}
-          >
+          <div className="p-6 text-center text-[13px] text-text-tertiary">
             No runs yet. Trigger this pipeline to see history here.
           </div>
         )}
 
         {runs.length > 0 && (
-          <ul style={listStyle}>
+          <ul className="m-0 flex-1 list-none overflow-y-auto p-0">
             {runs.map((run) => {
-              const badge = statusBadge(run.status);
+              const tone = statusBadgeTone(run.status);
+              const label = statusLabel(run.status);
               const isCompareSelected = comparePair.includes(run.id);
               return (
                 <li
@@ -719,20 +330,12 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                       setSelectedRunId(run.id);
                     }
                   }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = colors.surfaceHover;
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.background = isCompareSelected
-                      ? '#eff6ff'
-                      : 'transparent';
-                  }}
-                  style={{
-                    ...rowStyle,
-                    background: isCompareSelected ? '#eff6ff' : undefined,
-                  }}
+                  className={cn(
+                    'cursor-pointer border-b border-border px-4 py-2.5 transition-colors duration-100 hover:bg-surface-hover',
+                    isCompareSelected && 'bg-[#eff6ff]',
+                  )}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div className="flex items-center gap-2">
                     {compareMode && (
                       <input
                         type="checkbox"
@@ -740,81 +343,39 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                         onChange={() => toggleCompareSelection(run.id)}
                         onClick={(e) => e.stopPropagation()}
                         data-testid={`runs-panel-compare-check-${run.id}`}
-                        style={{ margin: 0, accentColor: colors.primary, flexShrink: 0 }}
+                        className="m-0 shrink-0 accent-primary"
                         aria-label={`Select run ${run.id.slice(0, 8)} for comparison`}
                       />
                     )}
-                    <span aria-label={`Status: ${badge.label}`} style={badge.style}>{badge.label}</span>
-                    <span
-                      style={{
-                        fontSize: 12,
-                        color: colors.textSecondary,
-                        fontFamily: 'monospace',
-                      }}
-                    >
+                    <Chip tone={tone} aria-label={`Status: ${label}`}>
+                      {label}
+                    </Chip>
+                    <span className="font-mono text-xs text-text-secondary">
                       {run.id.slice(0, 8)}
                     </span>
-                    <span
-                      style={{
-                        marginLeft: 'auto',
-                        fontSize: 11,
-                        color: colors.textTertiary,
-                      }}
-                    >
+                    <span className="ml-auto text-[11px] text-text-tertiary">
                       {relativeTime(run.startedAt)}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      marginTop: 4,
-                      fontSize: 11,
-                      color: colors.textTertiary,
-                    }}
-                  >
+                  <div className="mt-1 flex items-center gap-2 text-[11px] text-text-tertiary">
                     <span>{formatDuration(run.durationMs)}</span>
                     {run.estimatedCostUsd != null && run.estimatedCostUsd > 0 && (
                       <span
-                        style={{
-                          color: costColor(run.estimatedCostUsd),
-                          fontWeight: 600,
-                          fontFamily: 'monospace',
-                        }}
+                        className={cn('font-mono font-semibold', costColorClass(run.estimatedCostUsd))}
                         title={`Estimated cost: ${formatCost(run.estimatedCostUsd)}`}
                       >
                         {formatCost(run.estimatedCostUsd)}
                       </span>
                     )}
                     {run.estimatedCostUsd != null && run.estimatedCostUsd > 1.0 && (
-                      <span
-                        style={{
-                          background: '#fef3c7',
-                          color: '#92400e',
-                          fontSize: 9,
-                          fontWeight: 700,
-                          padding: '1px 4px',
-                          borderRadius: 3,
-                          textTransform: 'uppercase',
-                        }}
-                      >
+                      <span className="rounded-sm bg-[#fef3c7] px-1 py-px text-[9px] font-bold uppercase text-[#92400e]">
                         High Cost
                       </span>
                     )}
-                    <span style={{ marginLeft: 'auto' }}>{triggerLabel(run)}</span>
+                    <span className="ml-auto">{triggerLabel(run)}</span>
                   </div>
                   {run.error && (
-                    <div
-                      style={{
-                        marginTop: 4,
-                        fontSize: 11,
-                        color: colors.state.failed,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
+                    <div className="mt-1 truncate text-[11px] text-state-failed">
                       {run.error.message}
                     </div>
                   )}
@@ -824,29 +385,6 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
           </ul>
         )}
       </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Detail row helper
-// ---------------------------------------------------------------------------
-
-function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: colors.textTertiary,
-          minWidth: 80,
-          textTransform: 'uppercase',
-        }}
-      >
-        {label}
-      </span>
-      <span style={{ fontSize: 13, color: colors.textPrimary }}>{children}</span>
     </div>
   );
 }

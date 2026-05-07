@@ -3,6 +3,7 @@
 // Extracted toolbar with formatting buttons for the Tiptap editor.
 
 import type { Editor } from '@tiptap/react';
+import { cn } from '../../lib/cn';
 
 interface EditorToolbarProps {
   editor: Editor | null;
@@ -82,31 +83,11 @@ const buttons: ToolbarButton[] = [
   },
 ];
 
-const toolbarStyle: React.CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 4,
-  padding: '6px 8px',
-  borderBottom: '1px solid #e2e8f0',
-  background: '#f8fafc',
-  borderRadius: '8px 8px 0 0',
-};
-
-const btnBase: React.CSSProperties = {
-  padding: '4px 8px',
-  fontSize: 12,
-  fontFamily: 'inherit',
-  border: '1px solid #cbd5e1',
-  borderRadius: 4,
-  cursor: 'pointer',
-  lineHeight: 1.4,
-};
-
 export default function EditorToolbar({ editor }: EditorToolbarProps) {
   if (!editor) return null;
 
   return (
-    <div style={toolbarStyle}>
+    <div className={cn('flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-[#f8fafc] rounded-t-lg')}>
       {buttons.map((btn) => {
         const active = btn.isActive(editor);
         return (
@@ -114,11 +95,10 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
             key={btn.label}
             type="button"
             onClick={() => btn.action(editor)}
-            style={{
-              ...btnBase,
-              background: active ? '#3b82f6' : '#fff',
-              color: active ? '#fff' : '#334155',
-            }}
+            className={cn(
+              'px-2 py-1 text-xs font-[inherit] border border-[#cbd5e1] rounded cursor-pointer leading-snug',
+              active ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#334155]',
+            )}
             title={btn.label}
           >
             {btn.label}

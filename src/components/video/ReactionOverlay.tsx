@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback, type CSSProperties } from 'react';
+import { useState, useEffect, type CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface Reaction {
   id: string;
@@ -42,24 +43,12 @@ export function ReactionOverlay({ reactions, style }: ReactionOverlayProps) {
   }, []);
 
   return (
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      pointerEvents: 'none',
-      overflow: 'hidden',
-      ...style,
-    }}>
+    <div className={cn('absolute inset-0 pointer-events-none overflow-hidden')} style={style}>
       {floating.map(r => (
         <span
           key={r.id}
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: `${r.x}%`,
-            fontSize: 24,
-            animation: 'floatUp 3s ease-out forwards',
-            opacity: 0,
-          }}
+          className={cn('absolute bottom-0 text-2xl opacity-0 animate-[floatUp_3s_ease-out_forwards]')}
+          style={{ left: `${r.x}%` }}
         >
           {r.emoji}
         </span>
@@ -85,28 +74,13 @@ const DEFAULT_EMOJIS = ['👍', '❤️', '🔥', '😂', '👏', '🎉', '😮'
 
 export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, style }: ReactionPickerProps) {
   return (
-    <div style={{
-      display: 'flex',
-      gap: 4,
-      padding: '6px 8px',
-      background: 'rgba(0,0,0,0.8)',
-      borderRadius: 20,
-      ...style,
-    }}>
+    <div className={cn('flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]')} style={style}>
       {emojis.map(emoji => (
         <button
           key={emoji}
           type="button"
           onClick={() => onReact(emoji)}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: 20,
-            cursor: 'pointer',
-            padding: '2px 4px',
-            borderRadius: 4,
-            transition: 'transform 0.1s',
-          }}
+          className={cn('bg-transparent border-none text-xl cursor-pointer px-1 py-0.5 rounded transition-transform duration-100')}
           onMouseDown={e => (e.currentTarget.style.transform = 'scale(1.3)')}
           onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
           onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}

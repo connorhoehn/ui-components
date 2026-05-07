@@ -5,18 +5,13 @@
 // Current-input count is computed at runtime from incoming edges; Phase 1
 // renders a placeholder string so the layout matches the design.
 
-import type { CSSProperties } from 'react';
 import type { JoinNodeData, JoinMode, JoinMergeStrategy } from '../../../../types/pipeline';
-import { fieldStyle, colors } from '../../../../constants/styles';
+import { ConfigField } from '../shared';
 
 export interface JoinConfigProps {
   data: JoinNodeData;
   onChange: (patch: Partial<JoinNodeData>) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const requiredDot: CSSProperties = { color: '#dc2626', marginLeft: 4 };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 2 };
 
 const MODE_OPTIONS: Array<{ value: JoinMode; label: string; hint: string }> = [
   { value: 'all',    label: 'All',     hint: 'Wait for every input.' },
@@ -32,15 +27,14 @@ const STRATEGY_OPTIONS: Array<{ value: JoinMergeStrategy; label: string; hint: s
 
 export default function JoinConfig({ data, onChange }: JoinConfigProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Mode */}
-      <div>
-        <label style={labelStyle}>Mode<span style={requiredDot}>●</span></label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
+      <ConfigField label="Mode" required>
+        <div className="flex flex-col gap-1.5">
           {MODE_OPTIONS.map(opt => (
             <label
               key={opt.value}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}
+              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
             >
               <input
                 type="radio"
@@ -49,33 +43,32 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
                 onChange={() => onChange({ mode: opt.value })}
               />
               {opt.label}
-              <span style={{ color: colors.textTertiary, fontSize: 11 }}>— {opt.hint}</span>
+              <span className="text-text-tertiary text-[11px]">— {opt.hint}</span>
             </label>
           ))}
         </div>
 
         {data.mode === 'n_of_m' && (
-          <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <label style={{ ...labelStyle, fontSize: 11 }}>N</label>
+          <div className="mt-2 flex items-center gap-2">
+            <label className="text-[11px] font-semibold text-text-secondary">N</label>
             <input
               type="number"
               min={1}
-              style={{ ...fieldStyle, width: 80 }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-20 font-inherit"
               value={data.n ?? 1}
               onChange={(e) => onChange({ n: Math.max(1, parseInt(e.target.value, 10) || 1) })}
             />
           </div>
         )}
-      </div>
+      </ConfigField>
 
       {/* Merge strategy */}
-      <div>
-        <label style={labelStyle}>Merge strategy<span style={requiredDot}>●</span></label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
+      <ConfigField label="Merge strategy" required>
+        <div className="flex flex-col gap-1.5">
           {STRATEGY_OPTIONS.map(opt => (
             <label
               key={opt.value}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}
+              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
             >
               <input
                 type="radio"
@@ -84,25 +77,16 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
                 onChange={() => onChange({ mergeStrategy: opt.value })}
               />
               {opt.label}
-              <span style={{ color: colors.textTertiary, fontSize: 11 }}>— {opt.hint}</span>
+              <span className="text-text-tertiary text-[11px]">— {opt.hint}</span>
             </label>
           ))}
         </div>
-      </div>
+      </ConfigField>
 
       {/* Current inputs (read-only) */}
-      <div
-        style={{
-          padding: 8,
-          background: colors.surfaceInset,
-          border: `1px solid ${colors.border}`,
-          borderRadius: 6,
-          fontSize: 12,
-          color: colors.textSecondary,
-        }}
-      >
+      <div className="p-2 bg-surface-inset border border-border rounded-md text-xs text-text-secondary">
         Current inputs: <strong>TBD</strong>
-        <div style={helpStyle}>Derived from incoming edges once the canvas is connected.</div>
+        <div className="text-[11px] text-text-tertiary mt-0.5">Derived from incoming edges once the canvas is connected.</div>
       </div>
     </div>
   );

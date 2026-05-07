@@ -9,6 +9,7 @@ import type { Section, Participant, CommentThread } from '../../types/document';
 import type { CollaborationProvider } from './TiptapEditor';
 import ReviewProgress from './ReviewProgress';
 import ChunkViewer from './ChunkViewer';
+import { cn } from '../../lib/cn';
 
 interface AckModeProps {
   sections: Section[];
@@ -27,32 +28,6 @@ interface AckModeProps {
   onResolveThread?: (sectionId: string, commentId: string) => void;
   onUnresolveThread?: (sectionId: string, commentId: string) => void;
 }
-
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginTop: '1rem',
-  padding: '0.75rem 0',
-};
-
-const navBtnStyle = (disabled: boolean): React.CSSProperties => ({
-  padding: '8px 18px',
-  fontSize: 14,
-  fontWeight: 600,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  background: disabled ? '#f9fafb' : '#fff',
-  color: disabled ? '#9ca3af' : '#374151',
-  cursor: disabled ? 'default' : 'pointer',
-});
-
-const emptyStyle: React.CSSProperties = {
-  textAlign: 'center',
-  padding: '3rem',
-  color: '#6b7280',
-  fontSize: 15,
-};
 
 const SECTIONS_PER_PAGE = 4;
 
@@ -79,7 +54,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
   }, [startIdx, onSectionFocus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (sections.length === 0) {
-    return <div style={emptyStyle}>No sections to review.</div>;
+    return <div className={cn('text-center p-12 text-[#6b7280] text-[15px]')}>No sections to review.</div>;
   }
 
   const prev = () => setPageIndex((i) => Math.max(0, i - 1));
@@ -90,21 +65,21 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
     <div>
       <ReviewProgress current={reviewedCount} total={sections.length} />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className={cn('flex flex-col gap-4')}>
         {pageSections.map((section) => {
           const sectionParticipants = participants?.filter(p => p.currentSectionId === section.id) ?? [];
           return (
             <div key={section.id}>
               {sectionParticipants.length > 0 && (
-                <div style={{ display: 'flex', gap: 4, marginBottom: 6, alignItems: 'center' }}>
-                  <span style={{ fontSize: 12, color: '#6b7280', marginRight: 4 }}>Viewing:</span>
+                <div className={cn('flex gap-1 mb-1.5 items-center')}>
+                  <span className={cn('text-xs text-[#6b7280] mr-1')}>Viewing:</span>
                   {sectionParticipants.map(p => (
-                    <div key={p.clientId} title={`${p.displayName} (${p.mode})`} style={{
-                      width: 24, height: 24, borderRadius: '50%',
-                      background: p.color, color: '#fff',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 10, fontWeight: 600,
-                    }}>
+                    <div
+                      key={p.clientId}
+                      title={`${p.displayName} (${p.mode})`}
+                      className={cn('w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold')}
+                      style={{ background: p.color }}
+                    >
                       {p.displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)}
                     </div>
                   ))}
@@ -129,21 +104,27 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
         })}
       </div>
 
-      <div style={navStyle}>
+      <div className={cn('flex justify-between items-center mt-4 py-3')}>
         <button
           type="button"
-          style={navBtnStyle(pageIndex === 0)}
+          className={cn(
+            'px-[18px] py-2 text-sm font-semibold border border-[#d1d5db] rounded-md font-[inherit]',
+            pageIndex === 0 ? 'bg-[#f9fafb] text-[#9ca3af] cursor-default' : 'bg-white text-[#374151] cursor-pointer',
+          )}
           onClick={prev}
           disabled={pageIndex === 0}
         >
           Previous
         </button>
-        <span style={{ fontSize: 13, color: '#6b7280' }}>
+        <span className={cn('text-[13px] text-[#6b7280]')}>
           Page {pageIndex + 1} of {totalPages} ({sections.length} sections)
         </span>
         <button
           type="button"
-          style={navBtnStyle(pageIndex === totalPages - 1)}
+          className={cn(
+            'px-[18px] py-2 text-sm font-semibold border border-[#d1d5db] rounded-md font-[inherit]',
+            pageIndex === totalPages - 1 ? 'bg-[#f9fafb] text-[#9ca3af] cursor-default' : 'bg-white text-[#374151] cursor-pointer',
+          )}
           onClick={next}
           disabled={pageIndex === totalPages - 1}
         >

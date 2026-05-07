@@ -39,32 +39,17 @@ export function CursorCanvas({
   return (
     <div
       onMouseMove={handleMouseMove}
+      className="relative border-2 border-gray-200 rounded overflow-hidden cursor-none"
       style={{
-        position: 'relative',
         width,
         height,
-        border: '2px solid #e5e7eb',
-        borderRadius: 4,
-        overflow: 'hidden',
-        cursor: 'none',
         backgroundImage:
           'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
         backgroundSize: '20px 20px',
       }}
     >
       {/* Label */}
-      <span
-        style={{
-          position: 'absolute',
-          top: 4,
-          left: 4,
-          color: '#9ca3af',
-          fontSize: 12,
-          padding: 4,
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}
-      >
+      <span className="absolute top-1 left-1 text-gray-400 text-xs p-1 pointer-events-none select-none">
         Move your mouse here
       </span>
 
@@ -74,28 +59,8 @@ export function CursorCanvas({
         const ly = localCursor.position.y as number;
         return (
           <div
-            style={{
-              position: 'absolute',
-              left: lx,
-              top: ly,
-              transform: 'translate(-50%, -50%)',
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: '#3b82f6',
-              border: '2px dashed white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 9,
-              fontWeight: 'bold',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 11,
-              pointerEvents: 'none',
-              userSelect: 'none',
-              opacity: 0.8,
-            }}
+            className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md z-[11] pointer-events-none select-none opacity-80"
+            style={{ left: lx, top: ly }}
           >
             You
           </div>
@@ -116,26 +81,8 @@ export function CursorCanvas({
         return (
           <div
             key={cursor.clientId}
-            style={{
-              position: 'absolute',
-              left: x,
-              top: y,
-              transform: 'translate(-50%, -50%)',
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 10,
-              fontWeight: 'bold',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 10,
-              pointerEvents: 'none',
-              userSelect: 'none',
-            }}
+            className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-md z-10 pointer-events-none select-none"
+            style={{ left: x, top: y, background: color }}
           >
             {initials}
           </div>

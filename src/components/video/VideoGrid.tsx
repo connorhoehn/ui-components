@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { cn } from '../../lib/cn';
 
 export interface Participant {
   id: string;
@@ -20,15 +21,10 @@ export function VideoGrid({ participants, style }: VideoGridProps) {
   const cols = count <= 1 ? 1 : count <= 4 ? 2 : count <= 9 ? 3 : 4;
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${cols}, 1fr)`,
-      gap: 4,
-      background: '#0f0f0f',
-      borderRadius: 8,
-      overflow: 'hidden',
-      ...style,
-    }}>
+    <div
+      className={cn('grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden')}
+      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...style }}
+    >
       {participants.map(p => (
         <ParticipantTile key={p.id} participant={p} />
       ))}
@@ -40,52 +36,25 @@ function ParticipantTile({ participant }: { participant: Participant }) {
   const { displayName, isSpeaking, isMuted, isLocal, videoElement, avatarUrl } = participant;
 
   return (
-    <div style={{
-      position: 'relative',
-      aspectRatio: '16/9',
-      background: '#1a1a2e',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: isSpeaking ? '2px solid #22c55e' : '2px solid transparent',
-      borderRadius: 4,
-      overflow: 'hidden',
-    }}>
+    <div className={cn(
+      'relative aspect-video bg-[#1a1a2e] flex items-center justify-center rounded overflow-hidden border-2',
+      isSpeaking ? 'border-[#22c55e]' : 'border-transparent',
+    )}>
       {videoElement ?? (
-        <div style={{
-          width: 48,
-          height: 48,
-          borderRadius: '50%',
-          background: stringToColor(displayName),
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#fff',
-          fontSize: 18,
-          fontWeight: 600,
-        }}>
+        <div
+          className={cn('w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-semibold')}
+          style={{ background: stringToColor(displayName) }}
+        >
           {avatarUrl ? (
-            <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src={avatarUrl} alt="" className={cn('w-full h-full rounded-full object-cover')} />
           ) : (
             displayName.charAt(0).toUpperCase()
           )}
         </div>
       )}
 
-      <div style={{
-        position: 'absolute',
-        bottom: 4,
-        left: 4,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 4,
-        background: 'rgba(0,0,0,0.7)',
-        borderRadius: 3,
-        padding: '2px 6px',
-        fontSize: 11,
-        color: '#fff',
-      }}>
-        {isLocal && <span style={{ color: '#60a5fa' }}>You</span>}
+      <div className={cn('absolute bottom-1 left-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white')}>
+        {isLocal && <span className={cn('text-[#60a5fa]')}>You</span>}
         {!isLocal && <span>{displayName}</span>}
         {isMuted && (
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -95,16 +64,7 @@ function ParticipantTile({ participant }: { participant: Participant }) {
       </div>
 
       {isSpeaking && (
-        <div style={{
-          position: 'absolute',
-          top: 4,
-          right: 4,
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: '#22c55e',
-          boxShadow: '0 0 4px #22c55e',
-        }} />
+        <div className={cn('absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]')} />
       )}
     </div>
   );

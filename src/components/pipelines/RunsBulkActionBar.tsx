@@ -1,5 +1,3 @@
-import { colors } from '../../constants/styles';
-
 export interface RunsBulkActionBarProps {
   selectionCount: number;
   onExport: () => void;
@@ -16,34 +14,16 @@ export default function RunsBulkActionBar({
   return (
     <div
       data-testid="runs-bulk-toolbar"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        background: colors.surfaceInset,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 6,
-      }}
+      className="flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md"
     >
-      <span style={{ fontSize: 12, color: colors.textSecondary }}>
+      <span className="text-xs text-text-secondary">
         {selectionCount} selected
       </span>
       <button
         type="button"
         data-testid="runs-bulk-export"
         onClick={onExport}
-        style={{
-          padding: '4px 10px',
-          fontSize: 12,
-          fontWeight: 500,
-          border: `1px solid ${colors.border}`,
-          background: colors.surface,
-          color: colors.textSecondary,
-          borderRadius: 4,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
+        className="px-2.5 py-1 text-xs font-medium border border-border bg-surface text-text-secondary rounded cursor-pointer font-[inherit]"
       >
         Export JSON
       </button>
@@ -51,17 +31,7 @@ export default function RunsBulkActionBar({
         type="button"
         data-testid="runs-bulk-delete"
         onClick={onDelete}
-        style={{
-          padding: '4px 10px',
-          fontSize: 12,
-          fontWeight: 500,
-          border: `1px solid ${colors.state.failed}`,
-          background: colors.surface,
-          color: colors.state.failed,
-          borderRadius: 4,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
+        className="px-2.5 py-1 text-xs font-medium border border-[#dc2626] bg-surface text-[#dc2626] rounded cursor-pointer font-[inherit]"
       >
         Delete
       </button>
@@ -69,16 +39,7 @@ export default function RunsBulkActionBar({
         type="button"
         data-testid="runs-bulk-clear"
         onClick={onClear}
-        style={{
-          padding: '4px 10px',
-          fontSize: 12,
-          background: 'none',
-          border: 'none',
-          color: colors.textSecondary,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-          marginLeft: 'auto',
-        }}
+        className="px-2.5 py-1 text-xs bg-none border-none text-text-secondary cursor-pointer font-[inherit] ml-auto"
       >
         Clear selection
       </button>

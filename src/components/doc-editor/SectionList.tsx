@@ -9,6 +9,7 @@ import type { Section, TaskItem, Participant } from '../../types/document';
 import SectionBlock from './SectionBlock';
 import type { CollaborationProvider } from './TiptapEditor';
 import type { CommentThread } from '../../types/document';
+import { cn } from '../../lib/cn';
 
 export interface SectionListProps {
   sections: Section[];
@@ -34,13 +35,6 @@ export interface SectionListProps {
   onOpenComments?: (sectionId: string) => void;
 }
 
-const containerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 0,
-  padding: '0 0 16px 0',
-};
-
 export default function SectionList({
   sections,
   getSectionFragment,
@@ -63,7 +57,7 @@ export default function SectionList({
   onOpenComments,
 }: SectionListProps) {
   return (
-    <div style={containerStyle}>
+    <div className={cn('flex flex-col gap-0 pb-4')}>
       {sections.map((section) => (
         <SectionBlock
           key={section.id}

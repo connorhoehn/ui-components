@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import Chip from '../shared/Chip';
-import { colors, tableCellStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { ErrorCategory, PipelineRun } from '../../types/pipeline';
 import { formatDuration } from './utils/formatTime';
 import { statusChipVariant, errorCategoryTone } from './utils/statusColors';
@@ -88,21 +88,13 @@ export default function RunsTable({
 
   return (
     <table
-      style={{
-        width: '100%',
-        borderCollapse: 'collapse',
-        fontSize: 13,
-        background: colors.surface,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 8,
-        overflow: 'hidden',
-      }}
+      className="w-full border-collapse text-[13px] bg-surface border border-border rounded-lg overflow-hidden"
     >
       <thead>
-        <tr style={{ background: colors.surfaceInset, textAlign: 'left' }}>
+        <tr className="bg-[#fafbfc] text-left">
           <th
             scope="col"
-            style={{ padding: '8px 12px', width: 24, borderBottom: `1px solid ${colors.border}` }}
+            className="px-3 py-2 w-6 border-b border-border"
           >
             <input
               type="checkbox"
@@ -119,15 +111,7 @@ export default function RunsTable({
             <th
               key={`${h}-${i}`}
               scope="col"
-              style={{
-                padding: '8px 12px',
-                fontSize: 11,
-                fontWeight: 600,
-                color: colors.textSecondary,
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-                borderBottom: `1px solid ${colors.border}`,
-              }}
+              className="px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em] border-b border-border"
             >
               {h}
             </th>
@@ -143,24 +127,13 @@ export default function RunsTable({
             <tr
               key={r.id}
               data-testid={`run-card-${r.id}`}
-              style={{
-                borderBottom: `1px solid ${colors.border}`,
-                cursor: 'pointer',
-                background: isSelected ? colors.surfaceHover : undefined,
-              }}
+              className={cn(
+                'border-b border-border cursor-pointer hover:bg-[#f1f5f9]',
+                isSelected && 'bg-[#f1f5f9]',
+              )}
               onClick={() => onNavigate(`/pipelines/${pipelineId}/runs/${r.id}`)}
-              onMouseEnter={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.background = colors.surfaceHover;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isSelected) {
-                  (e.currentTarget as HTMLElement).style.background = 'transparent';
-                }
-              }}
             >
-              <td style={{ ...tableCellStyle, width: 24 }} onClick={(e) => e.stopPropagation()}>
+              <td className="px-3 py-2.5 text-xs text-text-secondary w-6" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="checkbox"
                   data-testid={`run-select-${r.id}`}
@@ -178,21 +151,20 @@ export default function RunsTable({
                   }}
                   aria-label={`Select run ${r.id.slice(0, 8)}`}
                 />
-                {/* Hidden but keyboard-reachable Compare picker. */}
                 <input
                   type="checkbox"
                   data-testid={`run-compare-pick-${r.id}`}
                   checked={comparePair.includes(r.id)}
                   onChange={() => onToggleComparePair(r.id)}
                   aria-label={`Pick run ${r.id.slice(0, 8)} for comparison`}
-                  style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                  className="absolute w-px h-px opacity-0 pointer-events-none"
                   tabIndex={-1}
                 />
               </td>
-              <td style={{ ...tableCellStyle, color: colors.textPrimary }}>
+              <td className="px-3 py-2.5 text-xs text-text-primary">
                 {relativeTime(r.startedAt)}
               </td>
-              <td style={tableCellStyle}>
+              <td className="px-3 py-2.5 text-xs text-text-secondary">
                 <Chip tone={statusTone} aria-label={`Status: ${statusLabel}`}>{statusLabel}</Chip>
                 {r.status === 'running' && r.stuckAt && (
                   <Chip
@@ -217,31 +189,32 @@ export default function RunsTable({
                   </Chip>
                 )}
               </td>
-              <td style={{ ...tableCellStyle, fontFamily: 'monospace' }}>
+              <td className="px-3 py-2.5 text-xs text-text-secondary font-mono">
                 {formatDuration(r.durationMs)}
               </td>
-              {/* Hub#1287: total retries across all steps. */}
               <td
-                style={{ ...tableCellStyle, fontFamily: 'monospace', color: retries > 0 ? colors.textPrimary : colors.textTertiary }}
+                className={cn(
+                  'px-3 py-2.5 text-xs font-mono',
+                  retries > 0 ? 'text-text-primary' : 'text-text-tertiary',
+                )}
                 data-testid={`run-retries-${r.id}`}
                 title={retries > 0 ? `${retries} retry attempts across this run` : 'No retries — every step succeeded on first attempt'}
               >
                 {retries > 0 ? `×${retries}` : '—'}
               </td>
               <td
-                style={{ ...tableCellStyle, fontFamily: 'monospace' }}
+                className="px-3 py-2.5 text-xs text-text-secondary font-mono"
                 data-testid={`run-cost-${r.id}`}
               >
                 {costByRunId[r.id] ?? '—'}
               </td>
-              <td style={tableCellStyle}>
+              <td className="px-3 py-2.5 text-xs text-text-secondary">
                 {r.triggeredBy.userId ?? r.triggeredBy.triggerType}
               </td>
-              <td style={{ ...tableCellStyle, fontSize: 11, fontFamily: 'monospace', color: colors.textTertiary }}>
+              <td className="px-3 py-2.5 text-[11px] font-mono text-text-tertiary">
                 {r.id.slice(0, 8)}
               </td>
-              <td style={{ ...tableCellStyle, textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
-                {/* Hub#1285: Force-fail affordance for stuck runs. */}
+              <td className="px-3 py-2.5 text-xs text-text-secondary text-right" onClick={(e) => e.stopPropagation()}>
                 {r.status === 'running' && r.stuckAt && (
                   <button
                     type="button"
@@ -256,44 +229,23 @@ export default function RunsTable({
                       }
                     }}
                     title="Force-fail this stuck run so you can retry from the stuck step"
-                    style={{
-                      fontSize: 11,
-                      padding: '4px 8px',
-                      marginRight: 8,
-                      background: 'transparent',
-                      color: '#b45309',
-                      border: '1px solid #fde68a',
-                      borderRadius: 4,
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
+                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-[#fde68a] rounded cursor-pointer font-[inherit]"
                   >
                     ⚡ Force-fail
                   </button>
                 )}
-                {/* Hub#1288: Retry-from-failed-step affordance. */}
                 {r.status === 'failed' && r.error?.nodeId && r.error.nodeId !== 'unknown' && (
                   <button
                     type="button"
                     data-testid={`retry-from-failed-step-${r.id}`}
                     onClick={(e) => { e.stopPropagation(); onOpenRetryModal(r); }}
                     title={`Retry from "${r.error.nodeId}" with the original upstream context`}
-                    style={{
-                      fontSize: 11,
-                      padding: '4px 8px',
-                      marginRight: 8,
-                      background: 'transparent',
-                      color: '#ea580c',
-                      border: '1px solid #fed7aa',
-                      borderRadius: 4,
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
+                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#ea580c] border border-[#fed7aa] rounded cursor-pointer font-[inherit]"
                   >
                     ↻ Retry from failed
                   </button>
                 )}
-                <span style={{ fontSize: 12, color: colors.primary }}>View →</span>
+                <span className="text-xs text-primary">View →</span>
               </td>
             </tr>
           );

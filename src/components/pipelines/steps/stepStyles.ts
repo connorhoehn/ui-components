@@ -1,58 +1,21 @@
-import type { CSSProperties } from 'react';
-import { colors } from '../../../constants/styles';
+export const codeBlockClass =
+  'm-0 px-3 py-2 bg-[#fafbfc] border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto';
 
-export const codeBlockStyle: CSSProperties = {
-  margin: 0,
-  padding: '8px 12px',
-  background: colors.surfaceInset,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 6,
-  fontSize: 11,
-  fontFamily: 'monospace',
-  color: colors.textSecondary,
-  whiteSpace: 'pre-wrap',
-  wordBreak: 'break-word',
-  maxHeight: 300,
-  overflow: 'auto',
-};
+export const proseBlockClass =
+  'px-3.5 py-2.5 bg-[#fafbfc] border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto';
 
-export const proseBlockStyle: CSSProperties = {
-  padding: '10px 14px',
-  background: colors.surfaceInset,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 6,
-  fontSize: 13,
-  color: colors.textPrimary,
-  whiteSpace: 'pre-wrap',
-  wordBreak: 'break-word',
-  lineHeight: 1.6,
-  maxHeight: 400,
-  overflow: 'auto',
-};
+export const thClass =
+  'text-left px-2 py-1 text-[10px] font-semibold text-text-tertiary uppercase';
 
-export const thStyle: CSSProperties = {
-  textAlign: 'left',
-  padding: '4px 8px',
-  fontSize: 10,
-  fontWeight: 600,
-  color: colors.textTertiary,
-  textTransform: 'uppercase',
-};
+export const tdClass =
+  'px-2 py-[5px] text-[11px] text-text-secondary align-top';
 
-export const tdStyle: CSSProperties = {
-  padding: '5px 8px',
-  fontSize: 11,
-  color: colors.textSecondary,
-  verticalAlign: 'top',
-};
+export function eventChipClass(color: string): string {
+  return `inline-block px-1.5 py-px rounded-[3px] text-[10px] font-semibold`;
+}
 
-export function eventChipStyle(color: string): CSSProperties {
+export function eventChipStyle(color: string): { background: string; color: string } {
   return {
-    display: 'inline-block',
-    padding: '1px 6px',
-    borderRadius: 3,
-    fontSize: 10,
-    fontWeight: 600,
     background: color + '18',
     color,
   };

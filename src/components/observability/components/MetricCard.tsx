@@ -5,7 +5,7 @@
 // chip + `⛶` maximize button; body slot for the chart itself.
 
 import type { ReactNode } from 'react';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export interface MetricCardProps {
   title: string;
@@ -18,44 +18,21 @@ function MetricCard({ title, timeRange, children, onMaximize }: MetricCardProps)
   return (
     <div
       data-testid="metric-card"
-      style={{
-        background: colors.surface,
-        border: `1px solid ${colors.border}`,
-        borderRadius: 10,
-        padding: 16,
-        display: 'flex', flexDirection: 'column', gap: 10,
-        fontFamily: 'inherit',
-      }}
+      className={cn(
+        'bg-surface border border-border rounded-[10px] p-4',
+        'flex flex-col gap-2.5 font-[inherit]'
+      )}
     >
-      <div
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 8,
-        }}
-      >
+      <div className="flex items-center justify-between gap-2">
         <div
-          style={{
-            fontSize: 13, fontWeight: 600, color: colors.textPrimary,
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}
+          className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
           title={title}
         >
           {title}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="flex items-center gap-1.5">
           {timeRange && (
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '2px 8px',
-                borderRadius: 4,
-                fontSize: 11, fontWeight: 600,
-                background: colors.surfaceHover,
-                color: colors.textSecondary,
-                lineHeight: 1.4,
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <span className="inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-surface-hover text-text-secondary leading-[1.4] whitespace-nowrap">
               {timeRange}
             </span>
           )}
@@ -64,18 +41,14 @@ function MetricCard({ title, timeRange, children, onMaximize }: MetricCardProps)
               data-testid="metric-card-maximize"
               onClick={onMaximize}
               aria-label={`Maximize ${title}`}
-              style={{
-                border: 'none', background: 'transparent',
-                color: colors.textTertiary, cursor: 'pointer',
-                fontSize: 14, padding: '2px 4px', fontFamily: 'inherit',
-              }}
+              className="border-none bg-transparent text-text-tertiary cursor-pointer text-sm px-1 py-0.5 font-[inherit]"
             >
               ⛶
             </button>
           )}
         </div>
       </div>
-      <div style={{ flex: 1 }}>{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 
 export type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
@@ -26,18 +27,7 @@ export function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps
   const bars = quality === 'good' ? 4 : quality === 'medium' ? 3 : quality === 'poor' ? 2 : 1;
 
   return (
-    <div style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 6,
-      padding: '4px 8px',
-      borderRadius: 4,
-      background: 'rgba(0,0,0,0.6)',
-      color: '#fff',
-      fontSize: 11,
-      fontWeight: 500,
-      ...style,
-    }}>
+    <div className={cn('inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/60 text-white text-[11px] font-medium')} style={style}>
       <svg width="14" height="12" viewBox="0 0 14 12">
         {[0, 1, 2, 3].map(i => (
           <rect

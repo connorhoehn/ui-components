@@ -1,9 +1,6 @@
 // frontend/src/components/doc-editor/SectionComments.tsx
 //
-// Section-scoped comment panel. The per-comment threaded rendering
-// (mentions, nested replies, resolve/unresolve UX) lives in
-// `CommentThread.tsx` — this file composes it alongside the top-level
-// draft input, sort toggle, empty-state copy, and expand/collapse chrome.
+// Section-scoped comment panel.
 
 import { useState, useRef, useCallback } from 'react';
 import type { CommentThread, Participant } from '../../types/document';
@@ -18,6 +15,7 @@ import CommentThreadNode, {
   insertMention,
   type MentionState,
 } from './CommentThread';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -32,7 +30,7 @@ interface SectionCommentsProps {
 }
 
 // ---------------------------------------------------------------------------
-// SectionComments — top-level component
+// SectionComments
 // ---------------------------------------------------------------------------
 
 export default function SectionComments({
@@ -52,7 +50,6 @@ export default function SectionComments({
   const totalCount = countAllComments(comments);
   const [sortNewest, setSortNewest] = useState(true);
 
-  // Sort: resolved to bottom, then by time (newest or oldest first)
   const sortedComments = [...comments].sort((a, b) => {
     if (a.resolved && !b.resolved) return 1;
     if (!a.resolved && b.resolved) return -1;
@@ -62,7 +59,7 @@ export default function SectionComments({
   });
 
   const handlePost = () => {
-    if (mention.active) return; // don't submit while picking a mention
+    if (mention.active) return;
     const trimmed = draft.trim();
     if (!trimmed) return;
     onAddComment(trimmed, null);
@@ -95,7 +92,6 @@ export default function SectionComments({
   );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Forward to mention dropdown first
     if (mention.active && mentionRef.current) {
       const consumed = mentionRef.current.handleKeyDown(e);
       if (consumed) return;
@@ -129,49 +125,20 @@ export default function SectionComments({
             setTimeout(() => inputRef.current?.focus(), 100);
           }
         }}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-          marginTop: 10,
-          padding: '4px 10px',
-          fontSize: 12,
-          fontWeight: 500,
-          border: '1px solid #e2e8f0',
-          borderRadius: 6,
-          background: totalCount > 0 ? '#f0f9ff' : 'transparent',
-          color: totalCount > 0 ? '#2563eb' : '#64748b',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
+        className={cn(
+          'inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-medium border border-border rounded-md cursor-pointer font-[inherit]',
+          totalCount > 0 ? 'bg-[#f0f9ff] text-[#2563eb]' : 'bg-transparent text-[#64748b]',
+        )}
       >
-        {expanded ? '\u25BC' : '\u25B6'} Comments{totalCount > 0 ? ` (${totalCount})` : ''}
+        {expanded ? '▼' : '▶'} Comments{totalCount > 0 ? ` (${totalCount})` : ''}
       </button>
 
       {/* Expanded thread container */}
       {expanded && (
-        <div
-          style={{
-            marginTop: 8,
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            background: '#f8fafc',
-            overflow: 'hidden',
-            animation: 'sectionCommentsSlideDown 0.2s ease-out',
-          }}
-        >
+        <div className={cn('mt-2 border border-border rounded-lg bg-[#f8fafc] overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
           {/* New comment input at top */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 6,
-              padding: '10px 12px',
-              borderBottom: '1px solid #e2e8f0',
-              background: '#fff',
-            }}
-          >
-            <div style={{ flex: 1, position: 'relative' }}>
+          <div className={cn('flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-white')}>
+            <div className={cn('flex-1 relative')}>
               <textarea
                 ref={inputRef}
                 value={draft}
@@ -179,20 +146,7 @@ export default function SectionComments({
                 onKeyDown={handleKeyDown}
                 placeholder="Add a comment... (type @ to mention)"
                 rows={2}
-                style={{
-                  width: '100%',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 6,
-                  padding: '8px 10px',
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                  outline: 'none',
-                  resize: 'vertical',
-                  minHeight: 48,
-                  boxSizing: 'border-box',
-                  color: '#1e293b',
-                  background: '#fff',
-                }}
+                className={cn('w-full border border-border rounded-md px-2.5 py-2 text-[13px] font-[inherit] outline-none resize-y min-h-12 box-border text-[#1e293b] bg-white')}
               />
               {mention.active && (
                 <MentionDropdown
@@ -208,19 +162,7 @@ export default function SectionComments({
             <button
               type="button"
               onClick={handlePost}
-              style={{
-                padding: '6px 14px',
-                fontSize: 12,
-                fontWeight: 600,
-                border: 'none',
-                borderRadius: 6,
-                background: '#3b82f6',
-                color: '#fff',
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-                whiteSpace: 'nowrap',
-                alignSelf: 'flex-end',
-              }}
+              className={cn('px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit] whitespace-nowrap self-end')}
             >
               Post
             </button>
@@ -228,33 +170,19 @@ export default function SectionComments({
 
           {/* Sort control + comment threads */}
           {comments.length > 1 && (
-            <div style={{
-              display: 'flex', justifyContent: 'flex-end', padding: '4px 12px 0',
-              borderBottom: '1px solid #f1f5f9',
-            }}>
+            <div className={cn('flex justify-end px-3 pt-1 border-b border-[#f1f5f9]')}>
               <button
                 type="button"
                 onClick={() => setSortNewest(v => !v)}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 11, color: '#64748b', padding: '2px 6px',
-                  fontFamily: 'inherit',
-                }}
+                className={cn('bg-transparent border-none cursor-pointer text-[11px] text-[#64748b] px-1.5 py-0.5 font-[inherit]')}
               >
                 {sortNewest ? '↓ Newest first' : '↑ Oldest first'}
               </button>
             </div>
           )}
-          <div style={{ maxHeight: 420, overflowY: 'auto', padding: '8px 12px' }}>
+          <div className={cn('max-h-[420px] overflow-y-auto px-3 py-2')}>
             {comments.length === 0 && (
-              <div
-                style={{
-                  padding: '12px',
-                  textAlign: 'center',
-                  color: '#94a3b8',
-                  fontSize: 12,
-                }}
-              >
+              <div className={cn('p-3 text-center text-text-tertiary text-xs')}>
                 No comments yet. Start the discussion!
               </div>
             )}

@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import type { Participant } from '../../types/document';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -17,124 +18,26 @@ interface ActivityFeedProps {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const containerStyle: React.CSSProperties = {
-  background: '#f8fafc',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  overflow: 'hidden',
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '8px 12px',
-  background: '#f1f5f9',
-  borderBottom: '1px solid #e2e8f0',
-  fontSize: 13,
-  fontWeight: 600,
-  color: '#334155',
-  cursor: 'pointer',
-  userSelect: 'none',
-};
-
-const listStyle: React.CSSProperties = {
-  maxHeight: 260,
-  overflowY: 'auto',
-  padding: '4px 0',
-};
-
-const entryStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: 8,
-  padding: '6px 12px',
-  fontSize: 12,
-  lineHeight: 1.5,
-  borderBottom: '1px solid #f1f5f9',
-};
-
-const avatarStyle = (color: string): React.CSSProperties => ({
-  width: 22,
-  height: 22,
-  borderRadius: '50%',
-  background: color,
-  color: '#fff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: 9,
-  fontWeight: 700,
-  flexShrink: 0,
-  marginTop: 1,
-});
-
-const timeStyle: React.CSSProperties = {
-  fontSize: 10,
-  color: '#94a3b8',
-  whiteSpace: 'nowrap',
-  marginLeft: 'auto',
-  paddingLeft: 8,
-  flexShrink: 0,
-};
-
-const presenceBarStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  padding: '6px 12px',
-  borderBottom: '1px solid #e2e8f0',
-  fontSize: 11,
-  color: '#64748b',
-  flexWrap: 'wrap',
-};
-
-const presenceDotStyle = (_color: string): React.CSSProperties => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 4,
-  background: '#fff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 12,
-  padding: '2px 8px 2px 4px',
-  fontSize: 11,
-  fontWeight: 500,
-  color: '#334155',
-});
-
-const dotStyle = (color: string): React.CSSProperties => ({
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-  background: color,
-  flexShrink: 0,
-});
-
-// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 /** Map event types to display icons */
 function eventIcon(eventType: string): string {
-  if (eventType === 'doc.ack') return '\u2705';
-  if (eventType === 'doc.reject') return '\u274C';
-  if (eventType === 'doc.add_item') return '\u2795';
-  if (eventType === 'doc.add_section') return '\u2795';
-  if (eventType === 'doc.edit_section') return '\u270F\uFE0F';
-  if (eventType === 'doc.remove_item') return '\u2796';
+  if (eventType === 'doc.ack') return '✅';
+  if (eventType === 'doc.reject') return '❌';
+  if (eventType === 'doc.add_item') return '➕';
+  if (eventType === 'doc.add_section') return '➕';
+  if (eventType === 'doc.edit_section') return '✏️';
+  if (eventType === 'doc.remove_item') return '➖';
   if (eventType === 'doc.comment') return '\u{1F4AC}';
   if (eventType.endsWith('.join')) return '\u{1F7E2}';
   if (eventType.endsWith('.leave')) return '\u{1F534}';
   if (eventType.startsWith('social.')) return '\u{1F4AC}';
-  // Pipeline run-lifecycle events (relayed via usePipelineActivityRelay)
-  if (eventType === 'pipeline.run.started') return '\u25b6';
-  if (eventType === 'pipeline.run.completed') return '\u2713';
-  if (eventType === 'pipeline.run.failed') return '\u2715';
-  if (eventType === 'pipeline.approval.requested') return '\u270b';
-  return '\u2022';
+  if (eventType === 'pipeline.run.started') return '▶';
+  if (eventType === 'pipeline.run.completed') return '✓';
+  if (eventType === 'pipeline.run.failed') return '✕';
+  if (eventType === 'pipeline.approval.requested') return '✋';
+  return '•';
 }
 
 /** Map event type + detail to human-readable description */
@@ -155,7 +58,6 @@ function eventDescription(eventType: string, detail: Record<string, unknown>): s
       return `removed "${(detail.itemText as string) || 'item'}"${docCtx}`;
     case 'doc.comment':
       return `commented: "${(detail.text as string) || '...'}"${docCtx}`;
-    // Pipeline run-lifecycle events (relayed via usePipelineActivityRelay)
     case 'pipeline.run.started': {
       const pid = (detail.pipelineId as string) ?? '';
       return pid ? `triggered pipeline ${pid}` : 'triggered a pipeline';
@@ -169,7 +71,6 @@ function eventDescription(eventType: string, detail: Record<string, unknown>): s
     case 'pipeline.approval.requested':
       return 'approval requested';
     default:
-      // For social.* or unknown events, use detail.description if available
       if (detail.description) return String(detail.description);
       return eventType;
   }
@@ -205,11 +106,14 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle} onClick={() => setCollapsed(v => !v)}>
+    <div className={cn('bg-[#f8fafc] border border-border rounded-lg overflow-hidden')}>
+      <div
+        className={cn('flex items-center justify-between px-3 py-2 bg-[#f1f5f9] border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none')}
+        onClick={() => setCollapsed(v => !v)}
+      >
         <span>Activity {events.length > 0 && `(${events.length})`}</span>
-        <span style={{ fontSize: 11, fontWeight: 400, color: '#94a3b8' }}>
-          {collapsed ? '\u25B6' : '\u25BC'}
+        <span className={cn('text-[11px] font-normal text-text-tertiary')}>
+          {collapsed ? '▶' : '▼'}
         </span>
       </div>
 
@@ -217,11 +121,11 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
         <>
           {/* Active participants bar */}
           {participants.length > 0 && (
-            <div style={presenceBarStyle}>
-              <span style={{ fontWeight: 600 }}>Active:</span>
+            <div className={cn('flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-[#64748b] flex-wrap')}>
+              <span className={cn('font-semibold')}>Active:</span>
               {participants.map(p => (
-                <span key={p.clientId} style={presenceDotStyle(p.color)}>
-                  <span style={dotStyle(p.color)} />
+                <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-[#334155]')}>
+                  <span className={cn('w-2 h-2 rounded-full shrink-0')} style={{ background: p.color }} />
                   {p.displayName} ({modeLabel(p.mode)})
                 </span>
               ))}
@@ -229,25 +133,28 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
           )}
 
           {/* Feed entries */}
-          <div style={listStyle}>
+          <div className={cn('max-h-[260px] overflow-y-auto py-1')}>
             {events.length === 0 ? (
-              <div style={{ padding: '16px 12px', textAlign: 'center', color: '#94a3b8', fontSize: 12 }}>
+              <div className={cn('px-3 py-4 text-center text-text-tertiary text-xs')}>
                 No activity yet. Actions like acknowledging tasks will appear here.
               </div>
             ) : (
               events.map(event => (
-                <div key={event.id} style={entryStyle}>
-                  <div style={avatarStyle(event.color || '#94a3b8')}>
+                <div key={event.id} className={cn('flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-[#f1f5f9]')}>
+                  <div
+                    className={cn('w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px')}
+                    style={{ background: event.color || '#94a3b8' }}
+                  >
                     {getInitials(event.displayName || 'Unknown')}
                   </div>
                   <div>
-                    <span style={{ fontWeight: 600, color: '#334155' }}>{event.displayName || 'Unknown'}</span>
+                    <span className={cn('font-semibold text-[#334155]')}>{event.displayName || 'Unknown'}</span>
                     {' '}
-                    <span style={{ color: '#64748b' }}>
+                    <span className={cn('text-[#64748b]')}>
                       {eventIcon(event.eventType)} {eventDescription(event.eventType, event.detail)}
                     </span>
                   </div>
-                  <span style={timeStyle}>{formatTime(event.timestamp)}</span>
+                  <span className={cn('text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0')}>{formatTime(event.timestamp)}</span>
                 </div>
               ))
             )}

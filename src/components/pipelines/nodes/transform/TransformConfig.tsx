@@ -6,9 +6,8 @@
 // expression textarea, an optional outputKey, and a visual-only
 // "sample input | sample output" preview area (not yet implemented).
 
-import type { CSSProperties } from 'react';
 import type { TransformNodeData, TransformType } from '../../../../types/pipeline';
-import { fieldStyle, colors } from '../../../../constants/styles';
+import { ConfigField } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 
@@ -16,11 +15,6 @@ export interface TransformConfigProps {
   data: TransformNodeData;
   onChange: (patch: Partial<TransformNodeData>) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const requiredDot: CSSProperties = { color: '#dc2626', marginLeft: 4 };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 2 };
-const errorStyle: CSSProperties = { fontSize: 11, color: '#dc2626', marginTop: 2 };
 
 // Variables available to Transform expressions. Rendered as clickable pills
 // above the CodeEditor so authors can insert without typing dot paths by hand.
@@ -36,18 +30,14 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
   const expressionMissing = !data.expression?.trim();
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Type */}
-      <div>
-        <label style={labelStyle}>Type<span style={requiredDot}>●</span></label>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
+      <ConfigField label="Type" required>
+        <div className="flex flex-col gap-1.5">
           {RADIO_OPTIONS.map(opt => (
             <label
               key={opt.value}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                fontSize: 13, color: colors.textPrimary, cursor: 'pointer',
-              }}
+              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
             >
               <input
                 type="radio"
@@ -60,45 +50,42 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
             </label>
           ))}
         </div>
-      </div>
+      </ConfigField>
 
       {/* Expression */}
-      <div>
-        <label style={labelStyle}>Expression<span style={requiredDot}>●</span></label>
-        <div style={{ marginTop: 4 }}>
-          <CodeEditor
-            value={data.expression}
-            onChange={(next) => onChange({ expression: next })}
-            language={data.transformType === 'javascript' ? 'javascript' : 'jsonpath'}
-            variables={TRANSFORM_VARIABLES}
-            aria-label="Transform expression"
-          />
-        </div>
-        {expressionMissing
-          ? <div style={errorStyle}>Expression is required.</div>
-          : <div style={helpStyle}>
-              {data.transformType === 'jsonpath'   && 'e.g. $.items[?(@.status == "active")]'}
-              {data.transformType === 'template'   && 'Mustache-style: {{ context.doc.title }}'}
-              {data.transformType === 'javascript' && 'return ctx.items.filter(x => x.active)'}
-            </div>
-        }
-      </div>
+      <ConfigField
+        label="Expression"
+        required
+        error={expressionMissing ? 'Expression is required.' : undefined}
+        help={!expressionMissing ? (
+          data.transformType === 'jsonpath'   ? 'e.g. $.items[?(@.status == "active")]' :
+          data.transformType === 'template'   ? 'Mustache-style: {{ context.doc.title }}' :
+          data.transformType === 'javascript' ? 'return ctx.items.filter(x => x.active)' :
+          undefined
+        ) : undefined}
+      >
+        <CodeEditor
+          value={data.expression}
+          onChange={(next) => onChange({ expression: next })}
+          language={data.transformType === 'javascript' ? 'javascript' : 'jsonpath'}
+          variables={TRANSFORM_VARIABLES}
+          aria-label="Transform expression"
+        />
+      </ConfigField>
 
       {/* Output key */}
-      <div>
-        <label style={labelStyle}>Output key (optional)</label>
+      <ConfigField
+        label="Output key (optional)"
+        help={`If set, writes to context.${data.outputKey || 'outputKey'}. Otherwise merges into root context.`}
+      >
         <input
           type="text"
-          style={{ ...fieldStyle, marginTop: 4 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
           value={data.outputKey ?? ''}
           onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
           placeholder="activeItems"
         />
-        <div style={helpStyle}>
-          If set, writes to context.{data.outputKey || 'outputKey'}.
-          Otherwise merges into root context.
-        </div>
-      </div>
+      </ConfigField>
 
       {/* Retry policy (hub#1289) */}
       <RetryPolicyEditor
@@ -107,43 +94,26 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
       />
 
       {/* Preview area (not yet implemented) */}
-      <div>
-        <label style={labelStyle}>Preview</label>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 4 }}>
+      <ConfigField label="Preview">
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <div style={{ ...helpStyle, marginTop: 0, marginBottom: 4 }}>Sample input</div>
+            <div className="text-[11px] text-text-tertiary mb-1">Sample input</div>
             <textarea
               disabled
-              style={{
-                ...fieldStyle,
-                minHeight: 80,
-                fontFamily: 'monospace',
-                fontSize: 11,
-                background: colors.surfaceInset,
-                color: colors.textTertiary,
-                resize: 'vertical',
-              }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[11px] bg-surface-inset text-text-tertiary outline-none w-full font-mono resize-y min-h-[80px]"
               placeholder='{ "items": [...] }'
             />
           </div>
           <div>
-            <div style={{ ...helpStyle, marginTop: 0, marginBottom: 4 }}>Sample output</div>
+            <div className="text-[11px] text-text-tertiary mb-1">Sample output</div>
             <textarea
               disabled
-              style={{
-                ...fieldStyle,
-                minHeight: 80,
-                fontFamily: 'monospace',
-                fontSize: 11,
-                background: colors.surfaceInset,
-                color: colors.textTertiary,
-                resize: 'vertical',
-              }}
+              className="border border-border-field rounded-md px-2.5 py-1.5 text-[11px] bg-surface-inset text-text-tertiary outline-none w-full font-mono resize-y min-h-[80px]"
               placeholder="(preview not yet available)"
             />
           </div>
         </div>
-      </div>
+      </ConfigField>
     </div>
   );
 }

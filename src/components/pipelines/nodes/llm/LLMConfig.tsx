@@ -7,9 +7,9 @@
 // Advanced section for temperature / maxTokens / streaming.
 
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { LLMNodeData, LLMProvider } from '../../../../types/pipeline';
-import { fieldStyle, saveBtnStyle, colors } from '../../../../constants/styles';
+import { ConfigField, ConfigSection } from '../shared';
+import { cn } from '../../../../lib/cn';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 
@@ -17,12 +17,6 @@ export interface LLMConfigProps {
   data: LLMNodeData;
   onChange: (patch: Partial<LLMNodeData>) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const requiredDot: CSSProperties = { color: '#dc2626', marginLeft: 4 };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 2 };
-const errorStyle: CSSProperties = { fontSize: 11, color: '#dc2626', marginTop: 2 };
-const errorFieldStyle: CSSProperties = { ...fieldStyle, borderColor: '#dc2626' };
 
 const MODELS_BY_PROVIDER: Record<LLMProvider, string[]> = {
   anthropic: [
@@ -65,7 +59,6 @@ function resolveTemplate(template: string): string {
 }
 
 export default function LLMConfig({ data, onChange }: LLMConfigProps) {
-  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
   const systemMissing = !data.systemPrompt?.trim();
@@ -80,12 +73,11 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Provider */}
-      <div>
-        <label style={labelStyle}>Provider<span style={requiredDot}>●</span></label>
+      <ConfigField label="Provider" required>
         <select
-          style={{ ...fieldStyle, marginTop: 4 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
           value={data.provider}
           onChange={(e) => setProvider(e.target.value as LLMProvider)}
         >
@@ -93,13 +85,12 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
           <option value="bedrock">Bedrock</option>
           <option value="claude-code">Claude Code (subprocess)</option>
         </select>
-      </div>
+      </ConfigField>
 
       {/* Model */}
-      <div>
-        <label style={labelStyle}>Model<span style={requiredDot}>●</span></label>
+      <ConfigField label="Model" required>
         <select
-          style={{ ...fieldStyle, marginTop: 4 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
           value={data.model}
           onChange={(e) => onChange({ model: e.target.value })}
         >
@@ -107,186 +98,122 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
             <option key={m} value={m}>{m}</option>
           ))}
         </select>
-      </div>
+      </ConfigField>
 
       {/* System prompt */}
-      <div>
-        <label style={labelStyle}>System prompt<span style={requiredDot}>●</span></label>
+      <ConfigField
+        label="System prompt"
+        required
+        error={systemMissing ? 'System prompt is required.' : undefined}
+        help={!systemMissing ? 'Sets the model\'s role and constraints.' : undefined}
+      >
         <textarea
-          style={{
-            ...(systemMissing ? errorFieldStyle : fieldStyle),
-            marginTop: 4,
-            minHeight: 80,
-            resize: 'vertical',
-            fontFamily: 'inherit',
-          }}
+          className={cn(
+            'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[80px]',
+            systemMissing ? 'border-[#dc2626]' : 'border-border-field',
+          )}
           value={data.systemPrompt}
           onChange={(e) => onChange({ systemPrompt: e.target.value })}
         />
-        {systemMissing
-          ? <div style={errorStyle}>System prompt is required.</div>
-          : <div style={helpStyle}>Sets the model's role and constraints.</div>
-        }
-      </div>
+      </ConfigField>
 
       {/* User prompt template */}
-      <div>
-        <label style={labelStyle}>User prompt template<span style={requiredDot}>●</span></label>
-        <div style={{ marginTop: 4 }}>
-          <CodeEditor
-            value={data.userPromptTemplate}
-            onChange={(next) => onChange({ userPromptTemplate: next })}
-            language="template"
-            variables={VARIABLES}
-            minLines={6}
-            aria-label="User prompt template"
-          />
-        </div>
-        {userMissing
-          ? <div style={errorStyle}>User prompt template is required.</div>
-          : <div style={helpStyle}>Supports {'{{ context.* }}'} substitution — click a pill above to insert.</div>
-        }
-      </div>
+      <ConfigField
+        label="User prompt template"
+        required
+        error={userMissing ? 'User prompt template is required.' : undefined}
+        help={!userMissing ? 'Supports {{ context.* }} substitution — click a pill above to insert.' : undefined}
+      >
+        <CodeEditor
+          value={data.userPromptTemplate}
+          onChange={(next) => onChange({ userPromptTemplate: next })}
+          language="template"
+          variables={VARIABLES}
+          minLines={6}
+          aria-label="User prompt template"
+        />
+      </ConfigField>
 
       {/* Advanced */}
-      <div>
-        <button
-          type="button"
-          onClick={() => setAdvancedOpen(v => !v)}
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            fontSize: 12,
-            fontWeight: 600,
-            color: colors.textSecondary,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-          }}
+      <ConfigSection title="Advanced" defaultCollapsed>
+        <ConfigField
+          label="Temperature"
+          help="0 = deterministic, 1 = creative."
         >
-          <span>{advancedOpen ? '▾' : '▸'}</span> Advanced
-        </button>
+          <span className="text-text-tertiary text-xs ml-2">
+            {(data.temperature ?? 0.7).toFixed(1)}
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.1}
+            value={data.temperature ?? 0.7}
+            onChange={(e) => onChange({ temperature: parseFloat(e.target.value) })}
+            className="w-full mt-1"
+          />
+        </ConfigField>
 
-        {advancedOpen && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 8 }}>
-            <div>
-              <label style={labelStyle}>
-                Temperature <span style={{ color: colors.textTertiary, fontWeight: 400 }}>
-                  {(data.temperature ?? 0.7).toFixed(1)}
-                </span>
-              </label>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.1}
-                value={data.temperature ?? 0.7}
-                onChange={(e) => onChange({ temperature: parseFloat(e.target.value) })}
-                style={{ width: '100%', marginTop: 4 }}
-              />
-              <div style={helpStyle}>0 = deterministic, 1 = creative.</div>
-            </div>
+        <ConfigField label="Max tokens" help="Upper bound on response length.">
+          <input
+            type="number"
+            min={1}
+            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+            value={data.maxTokens ?? ''}
+            onChange={(e) => {
+              const v = e.target.value;
+              onChange({ maxTokens: v === '' ? undefined : Math.max(1, parseInt(v, 10) || 0) });
+            }}
+          />
+        </ConfigField>
 
-            <div>
-              <label style={labelStyle}>Max tokens</label>
-              <input
-                type="number"
-                min={1}
-                style={{ ...fieldStyle, marginTop: 4 }}
-                value={data.maxTokens ?? ''}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  onChange({ maxTokens: v === '' ? undefined : Math.max(1, parseInt(v, 10) || 0) });
-                }}
-              />
-              <div style={helpStyle}>Upper bound on response length.</div>
-            </div>
-
-            <div>
-              <label style={{ ...labelStyle, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <input
-                  type="checkbox"
-                  checked={data.streaming}
-                  onChange={(e) => onChange({ streaming: e.target.checked })}
-                />
-                Streaming
-              </label>
-              <div style={helpStyle}>Stream tokens as they are generated.</div>
-            </div>
-
-            {/* Retry policy (hub#1289). Currently consulted only by action
-                nodes in distributed-core; LLM auto-retry awaits hub#1686. */}
-            <RetryPolicyEditor
-              value={data.retryPolicy}
-              onChange={(next) => onChange({ retryPolicy: next })}
+        <div>
+          <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={data.streaming}
+              onChange={(e) => onChange({ streaming: e.target.checked })}
             />
-          </div>
-        )}
-      </div>
+            Streaming
+          </label>
+          <div className="text-[11px] text-text-tertiary mt-0.5">Stream tokens as they are generated.</div>
+        </div>
+
+        {/* Retry policy (hub#1289) */}
+        <RetryPolicyEditor
+          value={data.retryPolicy}
+          onChange={(next) => onChange({ retryPolicy: next })}
+        />
+      </ConfigSection>
 
       {/* Preview */}
       <button
         type="button"
         onClick={() => setPreviewOpen((v) => !v)}
-        style={saveBtnStyle(false)}
+        className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit shrink-0"
       >
         {previewOpen ? '▾' : '▶'} Preview with sample context
       </button>
 
       {previewOpen && (
-        <div style={{
-          background: colors.surfaceInset,
-          border: `1px solid ${colors.border}`,
-          borderRadius: 8,
-          padding: 12,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 10,
-        }}>
+        <div className="bg-surface-inset border border-border rounded-lg p-3 flex flex-col gap-2.5">
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: colors.textSecondary, marginBottom: 4 }}>
+            <div className="text-[11px] font-semibold text-text-secondary mb-1">
               Resolved system prompt
             </div>
-            <pre style={{
-              fontSize: 12,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              margin: 0,
-              color: colors.textPrimary,
-              background: colors.surface,
-              padding: 8,
-              borderRadius: 6,
-              border: `1px solid ${colors.border}`,
-              maxHeight: 120,
-              overflow: 'auto',
-            }}>
+            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[120px] overflow-auto">
               {resolveTemplate(data.systemPrompt || '(empty)')}
             </pre>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: colors.textSecondary, marginBottom: 4 }}>
+            <div className="text-[11px] font-semibold text-text-secondary mb-1">
               Resolved user prompt
             </div>
-            <pre style={{
-              fontSize: 12,
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              margin: 0,
-              color: colors.textPrimary,
-              background: colors.surface,
-              padding: 8,
-              borderRadius: 6,
-              border: `1px solid ${colors.border}`,
-              maxHeight: 200,
-              overflow: 'auto',
-            }}>
+            <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[200px] overflow-auto">
               {resolveTemplate(data.userPromptTemplate || '(empty)')}
             </pre>
           </div>
-          <div style={{ fontSize: 11, color: colors.textTertiary }}>
+          <div className="text-[11px] text-text-tertiary">
             Sample values: {Object.keys(SAMPLE_CONTEXT).map(k => `{{${k}}}`).join(', ')}
           </div>
         </div>

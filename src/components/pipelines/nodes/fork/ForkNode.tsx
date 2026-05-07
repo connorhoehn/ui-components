@@ -5,11 +5,9 @@
 // branch count; body lists branch labels.
 // See PIPELINES_PLAN.md §5.6 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ForkNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ForkData = ForkNodeData & {
@@ -39,29 +37,15 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
     return custom && custom.trim().length > 0 ? custom : `branch ${i}`;
   });
 
-  const inHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-
-  const labelListStyle: CSSProperties = {
-    margin: 0, padding: 0, listStyle: 'none',
-    display: 'flex', flexDirection: 'column', gap: 2,
-    fontSize: 12, color: colors.textSecondary,
-  };
-
-  const labelItemStyle: CSSProperties = {
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  };
-
   return (
     <BaseNode
       icon="⑂"
       subtitle={`${count} branches`}
       state={state}
       body={
-        <ul style={labelListStyle}>
+        <ul className="m-0 p-0 list-none flex flex-col gap-0.5 text-xs text-text-secondary">
           {labels.map((label, i) => (
-            <li key={i} style={labelItemStyle}>• {label}</li>
+            <li key={i} className="overflow-hidden text-ellipsis whitespace-nowrap">• {label}</li>
           ))}
         </ul>
       }
@@ -70,22 +54,17 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left} id="in" style={inHandle} />
+      <Handle type="target" position={Position.Left} id="in" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
       {labels.map((_label, i) => {
         // Evenly spaced in the vertical axis (leave 0% and 100% as margins).
         const pct = ((i + 1) / (count + 1)) * 100;
-        const style: CSSProperties = {
-          background: BRANCH_HANDLE_COLOR,
-          width: 10, height: 10,
-          top: `${pct}%`,
-        };
         return (
           <Handle
             key={i}
             type="source"
             position={Position.Right}
             id={`branch-${i}`}
-            style={style}
+            style={{ background: BRANCH_HANDLE_COLOR, width: 10, height: 10, top: `${pct}%` }}
           />
         );
       })}

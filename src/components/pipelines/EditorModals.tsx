@@ -1,7 +1,7 @@
 import Modal from '../shared/Modal';
 import VersionDiffModal from './versions/VersionDiffModal';
 import SimulatorPanel from './dev/SimulatorPanel';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { PipelineDefinition } from '../../types/pipeline';
 
 export interface EditorModalsProps {
@@ -30,6 +30,9 @@ export interface EditorModalsProps {
   simPanelOpen: boolean;
   onSimPanelClose: () => void;
 }
+
+const cancelBtnClass = 'px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit]';
+const dangerBtnClass = 'px-4 py-[7px] text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-[7px] cursor-pointer font-[inherit]';
 
 export default function EditorModals(props: EditorModalsProps) {
   const {
@@ -64,49 +67,31 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={420}
         footer={
           <>
-            <button
-              onClick={onPublishClose}
-              style={{
-                padding: '6px 12px',
-                fontSize: 13,
-                background: 'none',
-                border: 'none',
-                color: colors.textSecondary,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
+            <button onClick={onPublishClose} className={cancelBtnClass}>
               Cancel
             </button>
             <button
               onClick={onPublishConfirm}
               disabled={hasErrors}
-              style={{
-                padding: '7px 16px',
-                fontSize: 13,
-                fontWeight: 600,
-                background: hasErrors ? colors.textDisabled : colors.primary,
-                color: '#fff',
-                border: 'none',
-                borderRadius: 7,
-                cursor: hasErrors ? 'not-allowed' : 'pointer',
-                fontFamily: 'inherit',
-              }}
+              className={cn(
+                'px-4 py-[7px] text-[13px] font-semibold text-white border-none rounded-[7px] font-[inherit]',
+                hasErrors ? 'bg-[#cbd5e1] cursor-not-allowed' : 'bg-primary cursor-pointer',
+              )}
             >
               Publish
             </button>
           </>
         }
       >
-        <p style={{ margin: 0 }}>
-          Publishing will make <strong>"{definitionName}"</strong> available
+        <p className="m-0">
+          Publishing will make <strong>&quot;{definitionName}&quot;</strong> available
           for runs and set the published version to
           <strong> v{definitionVersion + 1}</strong>.
           {hasErrors ? (
             <>
               <br />
               <br />
-              <span style={{ color: '#dc2626' }}>
+              <span className="text-[#dc2626]">
                 Pipeline has {validationErrorCount} validation error
                 {validationErrorCount === 1 ? '' : 's'}. Fix them before
                 publishing.
@@ -123,41 +108,17 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={400}
         footer={
           <>
-            <button
-              onClick={onDeleteClose}
-              style={{
-                padding: '6px 12px',
-                fontSize: 13,
-                background: 'none',
-                border: 'none',
-                color: colors.textSecondary,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
+            <button onClick={onDeleteClose} className={cancelBtnClass}>
               Cancel
             </button>
-            <button
-              onClick={onDeleteConfirm}
-              style={{
-                padding: '7px 16px',
-                fontSize: 13,
-                fontWeight: 600,
-                background: '#dc2626',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 7,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
+            <button onClick={onDeleteConfirm} className={dangerBtnClass}>
               Delete
             </button>
           </>
         }
       >
-        <p style={{ margin: 0 }}>
-          <strong>"{definitionName}"</strong> will be permanently removed. Run
+        <p className="m-0">
+          <strong>&quot;{definitionName}&quot;</strong> will be permanently removed. Run
           history for this pipeline will also be lost.
         </p>
       </Modal>
@@ -169,41 +130,17 @@ export default function EditorModals(props: EditorModalsProps) {
         maxWidth={400}
         footer={
           <>
-            <button
-              onClick={onClearRunsClose}
-              style={{
-                padding: '6px 12px',
-                fontSize: 13,
-                background: 'none',
-                border: 'none',
-                color: colors.textSecondary,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
+            <button onClick={onClearRunsClose} className={cancelBtnClass}>
               Cancel
             </button>
-            <button
-              onClick={onClearRunsConfirm}
-              style={{
-                padding: '7px 16px',
-                fontSize: 13,
-                fontWeight: 600,
-                background: '#dc2626',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 7,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
-            >
+            <button onClick={onClearRunsConfirm} className={dangerBtnClass}>
               Clear history
             </button>
           </>
         }
       >
-        <p style={{ margin: 0 }}>
-          All stored run history for <strong>"{definitionName}"</strong> will
+        <p className="m-0">
+          All stored run history for <strong>&quot;{definitionName}&quot;</strong> will
           be permanently removed. This cannot be undone.
         </p>
       </Modal>

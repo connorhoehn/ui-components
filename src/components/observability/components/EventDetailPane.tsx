@@ -4,7 +4,7 @@
 // event payload as JSON and exposes copy / download buttons. Null state is a
 // gentle prompt to pick a row.
 
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 import type { EventItem } from './EventTimeline';
 
 export interface EventDetailPaneProps {
@@ -24,11 +24,10 @@ function EventDetailPane({ event }: EventDetailPaneProps) {
     return (
       <div
         data-testid="event-detail-empty"
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          height: '100%', fontSize: 13, color: colors.textTertiary,
-          padding: 24, textAlign: 'center', fontFamily: 'inherit',
-        }}
+        className={cn(
+          'flex items-center justify-center h-full text-[13px] text-text-tertiary',
+          'p-6 text-center font-[inherit]'
+        )}
       >
         Select an event to see details
       </div>
@@ -62,63 +61,49 @@ function EventDetailPane({ event }: EventDetailPaneProps) {
   return (
     <div
       data-testid="event-detail-pane"
-      style={{
-        display: 'flex', flexDirection: 'column', height: '100%',
-        fontFamily: 'inherit', background: colors.surface,
-      }}
+      className="flex flex-col h-full font-[inherit] bg-surface"
     >
-      <div
-        style={{
-          padding: '12px 14px', borderBottom: `1px solid ${colors.border}`,
-          display: 'flex', flexDirection: 'column', gap: 4,
-        }}
-      >
-        <div style={{ fontSize: 13, fontWeight: 600, color: colors.textPrimary }}>
+      <div className="px-3.5 py-3 border-b border-border flex flex-col gap-1">
+        <div className="text-[13px] font-semibold text-text-primary">
           {event.type}
         </div>
-        <div style={{ fontSize: 11, color: colors.textTertiary }}>{event.timestamp}</div>
+        <div className="text-[11px] text-text-tertiary">{event.timestamp}</div>
       </div>
 
-      <div
-        style={{
-          padding: '10px 14px', display: 'flex', gap: 8,
-          borderBottom: `1px solid ${colors.border}`,
-        }}
-      >
+      <div className="px-3.5 py-2.5 flex gap-2 border-b border-border">
         <button
           data-testid="event-detail-copy"
           onClick={onCopy}
-          style={{
-            padding: '5px 10px', fontSize: 12, fontWeight: 600,
-            background: colors.surfaceHover, color: colors.textSecondary,
-            border: `1px solid ${colors.border}`, borderRadius: 6,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className={cn(
+            'px-2.5 py-[5px] text-xs font-semibold',
+            'bg-surface-hover text-text-secondary',
+            'border border-border rounded-md',
+            'cursor-pointer font-[inherit]'
+          )}
         >
           Copy
         </button>
         <button
           data-testid="event-detail-download"
           onClick={onDownload}
-          style={{
-            padding: '5px 10px', fontSize: 12, fontWeight: 600,
-            background: colors.surfaceHover, color: colors.textSecondary,
-            border: `1px solid ${colors.border}`, borderRadius: 6,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className={cn(
+            'px-2.5 py-[5px] text-xs font-semibold',
+            'bg-surface-hover text-text-secondary',
+            'border border-border rounded-md',
+            'cursor-pointer font-[inherit]'
+          )}
         >
           Download
         </button>
       </div>
 
       <pre
-        style={{
-          margin: 0, padding: '12px 14px', flex: 1, overflow: 'auto',
-          background: colors.surfaceInset,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          fontSize: 12, color: colors.textPrimary, lineHeight: 1.5,
-          whiteSpace: 'pre', tabSize: 2,
-        }}
+        className={cn(
+          'm-0 px-3.5 py-3 flex-1 overflow-auto',
+          'bg-surface-inset font-mono text-xs text-text-primary',
+          'leading-normal whitespace-pre'
+        )}
+        style={{ tabSize: 2 }}
       >
         {body}
       </pre>

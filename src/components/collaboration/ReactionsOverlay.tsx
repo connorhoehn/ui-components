@@ -134,27 +134,15 @@ export function ReactionsOverlay({ reactions }: Props) {
           100% { opacity: 0; transform: translateX(-20px) translateY(-120px); }
         }
       `}</style>
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: 'none',
-          zIndex: 9999,
-        }}
-      >
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-[9999]">
         {reactions.map((reaction) => (
           <span
             key={reaction.id}
+            className="absolute text-[2rem] select-none"
             style={{
-              position: 'absolute',
               left: `${reaction.x}%`,
               top: `${reaction.y}%`,
-              fontSize: '2rem',
               animation: EMOJI_ANIMATIONS[reaction.emoji] ?? DEFAULT_ANIMATION,
-              userSelect: 'none',
             }}
           >
             {reaction.emoji}

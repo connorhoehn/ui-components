@@ -11,6 +11,7 @@ import type { Section, Participant, CommentThread, SectionReview } from '../../t
 import type { CollaborationProvider } from './TiptapEditor';
 import TiptapEditor from './TiptapEditor';
 import SectionComments from './SectionComments';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -45,8 +46,8 @@ const typeBadgeColors: Record<Section['type'], { bg: string; text: string }> = {
 };
 
 const statusConfig: Record<SectionReview['status'], { label: string; color: string; bg: string; icon: string }> = {
-  approved: { label: 'Approved', color: '#166534', bg: '#dcfce7', icon: '\u2713' },
-  reviewed: { label: 'Reviewed', color: '#374151', bg: '#f3f4f6', icon: '\u2014' },
+  approved: { label: 'Approved', color: '#166534', bg: '#dcfce7', icon: '✓' },
+  reviewed: { label: 'Reviewed', color: '#374151', bg: '#f3f4f6', icon: '—' },
   changes_requested: { label: 'Changes Requested', color: '#92400e', bg: '#fef3c7', icon: '!' },
 };
 
@@ -92,33 +93,33 @@ export default function ReviewMode({
 
   if (sections.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280', fontSize: 15 }}>
+      <div className={cn('text-center p-12 text-[#6b7280] text-[15px]')}>
         No sections to review.
       </div>
     );
   }
 
   return (
-    <div data-testid="review-mode" style={{ maxWidth: 800, margin: '0 auto' }}>
+    <div data-testid="review-mode" className={cn('max-w-[800px] mx-auto')}>
       {/* Progress bar */}
-      <div data-testid="review-progress" style={{ marginBottom: '1.5rem' }}>
-        <div style={{ fontSize: 13, color: '#6b7280', marginBottom: 4, display: 'flex', justifyContent: 'space-between' }}>
+      <div data-testid="review-progress" className={cn('mb-6')}>
+        <div className={cn('text-[13px] text-[#6b7280] mb-1 flex justify-between')}>
           <span data-testid="review-progress-text">{reviewedByMe} of {sections.length} sections reviewed by you</span>
           <span data-testid="review-progress-pct">{pct}%</span>
         </div>
-        <div style={{ height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-          <div style={{
-            height: '100%',
-            width: `${pct}%`,
-            background: reviewedByMe === sections.length ? '#16a34a' : '#3b82f6',
-            borderRadius: 4,
-            transition: 'width 0.3s ease',
-          }} />
+        <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden')}>
+          <div
+            className={cn('h-full rounded transition-[width] duration-300 ease-in-out')}
+            style={{
+              width: `${pct}%`,
+              background: reviewedByMe === sections.length ? '#16a34a' : '#3b82f6',
+            }}
+          />
         </div>
       </div>
 
       {/* Sections */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div className={cn('flex flex-col gap-6')}>
         {sections.map((section) => {
           const fragment = getSectionFragment(section.id);
           const tc = typeBadgeColors[section.type] ?? typeBadgeColors.custom;
@@ -133,11 +134,8 @@ export default function ReviewMode({
               key={section.id}
               id={`section-${section.id}`}
               data-testid={`review-section-${section.id}`}
+              className={cn('bg-white border border-[#e5e7eb] rounded-lg p-5')}
               style={{
-                background: '#fff',
-                border: '1px solid #e5e7eb',
-                borderRadius: 8,
-                padding: '1.25rem',
                 borderLeft: myReview
                   ? `3px solid ${statusConfig[myReview.status].color}`
                   : '3px solid #d1d5db',
@@ -145,26 +143,21 @@ export default function ReviewMode({
               onMouseEnter={() => onSectionFocus?.(section.id)}
             >
               {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: '#1e293b', flex: 1 }}>
+              <div className={cn('flex items-center gap-2 mb-1')}>
+                <h3 className={cn('text-lg font-bold m-0 text-[#1e293b] flex-1')}>
                   {section.title}
                 </h3>
-                <span style={{
-                  display: 'inline-block',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  padding: '2px 10px',
-                  borderRadius: 9999,
-                  background: tc.bg,
-                  color: tc.text,
-                }}>
+                <span
+                  className={cn('inline-block text-[11px] font-semibold py-0.5 px-2.5 rounded-full')}
+                  style={{ background: tc.bg, color: tc.text }}
+                >
                   {section.sectionType ?? section.type}
                 </span>
               </div>
 
               {/* Rich-text content (read-only) */}
               {fragment && (
-                <div style={{ marginBottom: section.items.length > 0 ? 16 : 8 }}>
+                <div className={cn(section.items.length > 0 ? 'mb-4' : 'mb-2')}>
                   <TiptapEditor
                     fragment={fragment}
                     ydoc={ydoc}
@@ -178,65 +171,48 @@ export default function ReviewMode({
 
               {/* No content */}
               {!fragment && section.items.length === 0 && (
-                <div style={{ padding: '1rem 0', color: '#94a3b8', fontSize: 14, textAlign: 'center' }}>
+                <div className={cn('py-4 text-text-tertiary text-sm text-center')}>
                   This section has no content.
                 </div>
               )}
 
               {/* Task items list */}
               {section.items.length > 0 && (
-                <div style={{ marginBottom: 12 }}>
+                <div className={cn('mb-3')}>
                   {section.items.map((item) => {
                     const itemStatusColor =
                       item.status === 'acked' ? '#16a34a' :
                       item.status === 'rejected' ? '#dc2626' :
                       item.status === 'done' ? '#6b7280' : '#94a3b8';
                     return (
-                      <div key={item.id} style={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 8,
-                        padding: '6px 0',
-                        borderBottom: '1px solid #f3f4f6',
-                        fontSize: 14,
-                      }}>
-                        <span style={{
-                          display: 'inline-block',
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          background: itemStatusColor,
-                          marginTop: 5,
-                          flexShrink: 0,
-                        }} />
-                        <div style={{ flex: 1 }}>
-                          <span style={{ color: '#1e293b' }}>{item.text}</span>
+                      <div key={item.id} className={cn('flex items-start gap-2 py-1.5 border-b border-[#f3f4f6] text-sm')}>
+                        <span
+                          className={cn('inline-block w-2 h-2 rounded-full mt-[5px] shrink-0')}
+                          style={{ background: itemStatusColor }}
+                        />
+                        <div className={cn('flex-1')}>
+                          <span className={cn('text-[#1e293b]')}>{item.text}</span>
                           {item.assignee && (
-                            <span style={{ color: '#6b7280', fontSize: 12, marginLeft: 8 }}>
+                            <span className={cn('text-[#6b7280] text-xs ml-2')}>
                               — {item.assignee}
                             </span>
                           )}
                           {item.priority && item.priority !== 'medium' && (
-                            <span style={{
-                              fontSize: 10,
-                              fontWeight: 600,
-                              marginLeft: 6,
-                              padding: '1px 6px',
-                              borderRadius: 4,
-                              background: item.priority === 'high' ? '#fef2f2' : '#f0fdf4',
-                              color: item.priority === 'high' ? '#dc2626' : '#16a34a',
-                            }}>
+                            <span
+                              className={cn('text-[10px] font-semibold ml-1.5 px-1.5 py-px rounded')}
+                              style={{
+                                background: item.priority === 'high' ? '#fef2f2' : '#f0fdf4',
+                                color: item.priority === 'high' ? '#dc2626' : '#16a34a',
+                              }}
+                            >
                               {item.priority}
                             </span>
                           )}
                         </div>
-                        <span style={{
-                          fontSize: 11,
-                          color: itemStatusColor,
-                          fontWeight: 600,
-                          textTransform: 'capitalize',
-                          flexShrink: 0,
-                        }}>
+                        <span
+                          className={cn('text-[11px] font-semibold capitalize shrink-0')}
+                          style={{ color: itemStatusColor }}
+                        >
                           {item.status}
                         </span>
                       </div>
@@ -246,14 +222,7 @@ export default function ReviewMode({
               )}
 
               {/* Review action bar */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '10px 0 4px',
-                borderTop: '1px solid #f3f4f6',
-                flexWrap: 'wrap',
-              }}>
+              <div className={cn('flex items-center gap-2 pt-2.5 pb-1 border-t border-[#f3f4f6] flex-wrap')}>
                 {(!myReview || isChanging) ? (
                   <>
                     <ReviewButton
@@ -293,14 +262,7 @@ export default function ReviewMode({
                       <button
                         data-testid={`section-${section.id}-cancel-change`}
                         onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: false }))}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#6b7280',
-                          fontSize: 12,
-                          cursor: 'pointer',
-                          textDecoration: 'underline',
-                        }}
+                        className={cn('bg-transparent border-none text-[#6b7280] text-xs cursor-pointer underline')}
                       >
                         Cancel
                       </button>
@@ -311,21 +273,13 @@ export default function ReviewMode({
                     <span
                       data-testid={`section-${section.id}-status`}
                       data-status={myReview.status}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        fontSize: 13,
-                        fontWeight: 600,
-                        padding: '4px 10px',
-                        borderRadius: 6,
-                        background: statusConfig[myReview.status].bg,
-                        color: statusConfig[myReview.status].color,
-                      }}>
-                      <span style={{ fontSize: 14 }}>{statusConfig[myReview.status].icon}</span>
+                      className={cn('inline-flex items-center gap-1 text-[13px] font-semibold py-1 px-2.5 rounded-md')}
+                      style={{ background: statusConfig[myReview.status].bg, color: statusConfig[myReview.status].color }}
+                    >
+                      <span className={cn('text-sm')}>{statusConfig[myReview.status].icon}</span>
                       {statusConfig[myReview.status].label}
                     </span>
-                    <span style={{ fontSize: 12, color: '#6b7280' }}>
+                    <span className={cn('text-xs text-[#6b7280]')}>
                       by you &middot; {new Date(myReview.timestamp).toLocaleString(undefined, {
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
@@ -333,15 +287,7 @@ export default function ReviewMode({
                     <button
                       data-testid={`section-${section.id}-change-review`}
                       onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: true }))}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#3b82f6',
-                        fontSize: 12,
-                        cursor: 'pointer',
-                        textDecoration: 'underline',
-                        padding: 0,
-                      }}
+                      className={cn('bg-transparent border-none text-[#3b82f6] text-xs cursor-pointer underline p-0')}
                     >
                       Change
                     </button>
@@ -350,7 +296,7 @@ export default function ReviewMode({
 
                 {/* Other reviewers as avatar badges */}
                 {otherReviews.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, marginLeft: 'auto', alignItems: 'center' }}>
+                  <div className={cn('flex gap-1 ml-auto items-center')}>
                     {otherReviews.map((r) => {
                       const cfg = statusConfig[r.status];
                       const initials = r.displayName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2);
@@ -358,19 +304,8 @@ export default function ReviewMode({
                         <div
                           key={r.userId}
                           title={`${r.displayName}: ${cfg.label}`}
-                          style={{
-                            width: 26,
-                            height: 26,
-                            borderRadius: '50%',
-                            background: cfg.bg,
-                            color: cfg.color,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 10,
-                            fontWeight: 700,
-                            border: `2px solid ${cfg.color}`,
-                          }}
+                          className={cn('w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-bold')}
+                          style={{ background: cfg.bg, color: cfg.color, border: `2px solid ${cfg.color}` }}
                         >
                           {initials}
                         </div>
@@ -381,24 +316,14 @@ export default function ReviewMode({
 
                 {/* Viewing participants */}
                 {sectionParticipants.length > 0 && (
-                  <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginLeft: otherReviews.length > 0 ? 0 : 'auto' }}>
-                    <span style={{ fontSize: 11, color: '#94a3b8' }}>Viewing:</span>
+                  <div className={cn('flex gap-1 items-center')} style={{ marginLeft: otherReviews.length > 0 ? 0 : 'auto' }}>
+                    <span className={cn('text-[11px] text-text-tertiary')}>Viewing:</span>
                     {sectionParticipants.map((p) => (
                       <div
                         key={p.clientId}
                         title={p.displayName}
-                        style={{
-                          width: 22,
-                          height: 22,
-                          borderRadius: '50%',
-                          background: p.color,
-                          color: '#fff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: 9,
-                          fontWeight: 600,
-                        }}
+                        className={cn('w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-semibold')}
+                        style={{ background: p.color }}
                       >
                         {p.displayName.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)}
                       </div>
@@ -426,42 +351,36 @@ export default function ReviewMode({
       {allReviewers.size > 0 && (
         <div
           data-testid="review-summary"
-          style={{
-            marginTop: 32,
-            padding: '1rem 1.25rem',
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-          }}
+          className={cn('mt-8 p-4 px-5 bg-[#f8fafc] border border-border rounded-lg')}
         >
-          <h4 style={{ margin: '0 0 12px', fontSize: 14, fontWeight: 700, color: '#475569' }}>
+          <h4 className={cn('m-0 mb-3 text-sm font-bold text-text-secondary')}>
             Document Review Summary
           </h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className={cn('flex flex-col gap-2')}>
             {Array.from(allReviewers.entries()).map(([uid, entry]) => {
               const approvedCount = entry.statuses.filter((s) => s === 'approved').length;
               const changesCount = entry.statuses.filter((s) => s === 'changes_requested').length;
               const reviewedCount = entry.statuses.filter((s) => s === 'reviewed').length;
               return (
-                <div key={uid} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
-                  <span style={{ fontWeight: 600, color: '#1e293b', minWidth: 100 }}>
+                <div key={uid} className={cn('flex items-center gap-2.5 text-[13px]')}>
+                  <span className={cn('font-semibold text-[#1e293b] min-w-[100px]')}>
                     {entry.displayName}{uid === userId ? ' (you)' : ''}
                   </span>
-                  <span style={{ color: '#6b7280' }}>
+                  <span className={cn('text-[#6b7280]')}>
                     {entry.statuses.length} of {sections.length} sections
                   </span>
                   {approvedCount > 0 && (
-                    <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 4, background: '#dcfce7', color: '#166534', fontWeight: 600 }}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#dcfce7] text-[#166534] font-semibold')}>
                       {approvedCount} approved
                     </span>
                   )}
                   {reviewedCount > 0 && (
-                    <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 4, background: '#f3f4f6', color: '#374151', fontWeight: 600 }}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#f3f4f6] text-[#374151] font-semibold')}>
                       {reviewedCount} reviewed
                     </span>
                   )}
                   {changesCount > 0 && (
-                    <span style={{ fontSize: 11, padding: '1px 8px', borderRadius: 4, background: '#fef3c7', color: '#92400e', fontWeight: 600 }}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#fef3c7] text-[#92400e] font-semibold')}>
                       {changesCount} changes requested
                     </span>
                   )}
@@ -494,17 +413,8 @@ function ReviewButton({ label, bg, color, hoverBg, onClick, testid }: {
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        padding: '6px 14px',
-        fontSize: 13,
-        fontWeight: 600,
-        border: '1px solid transparent',
-        borderRadius: 6,
-        background: hovered ? hoverBg : bg,
-        color,
-        cursor: 'pointer',
-        transition: 'background 0.15s',
-      }}
+      className={cn('py-1.5 px-3.5 text-[13px] font-semibold border border-transparent rounded-md cursor-pointer transition-colors duration-150')}
+      style={{ background: hovered ? hoverBg : bg, color }}
     >
       {label}
     </button>

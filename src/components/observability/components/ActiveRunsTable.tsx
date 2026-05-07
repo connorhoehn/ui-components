@@ -10,8 +10,8 @@
 // navigation.
 
 import { useState } from 'react';
-import type { CSSProperties, KeyboardEvent, MouseEvent } from 'react';
-import { colors } from '../../../constants/styles';
+import type { KeyboardEvent, MouseEvent } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface ActiveRunRow {
   pipelineId: string;
@@ -36,26 +36,6 @@ export interface ActiveRunsTableProps {
    */
   onCancelRun?: (run: ActiveRunRow) => void;
 }
-
-const thStyle: CSSProperties = {
-  textAlign: 'left',
-  padding: '8px 12px',
-  fontSize: 11,
-  fontWeight: 600,
-  color: colors.textSecondary,
-  textTransform: 'uppercase',
-  letterSpacing: 0.3,
-  background: colors.surfaceInset,
-  borderBottom: `1px solid ${colors.border}`,
-};
-
-const tdStyle: CSSProperties = {
-  padding: '8px 12px',
-  fontSize: 13,
-  color: colors.textPrimary,
-  fontFamily: 'inherit',
-  borderBottom: `1px solid ${colors.border}`,
-};
 
 function Row({
   run,
@@ -102,71 +82,38 @@ function Row({
       onKeyDown={interactive ? handleKeyDown : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      style={{
-        background: hover ? colors.surfaceHover : 'transparent',
-        cursor: onClick ? 'pointer' : 'default',
-        outline: 'none',
-      }}
+      className={cn(
+        'outline-none',
+        onClick ? 'cursor-pointer' : 'cursor-default',
+        hover ? 'bg-surface-hover' : 'bg-transparent'
+      )}
     >
-      <td style={{ ...tdStyle, fontWeight: 600 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      <td className="px-3 py-2 text-[13px] text-text-primary font-[inherit] border-b border-border font-semibold">
+        <span className="inline-flex items-center gap-1.5">
           {run.pipelineName}
           {/* Hover-only external-link affordance next to the runId. */}
           {hover && interactive && (
             <span
               data-testid="active-run-link-icon"
               aria-hidden="true"
-              style={{
-                fontSize: 11,
-                color: colors.primary,
-                fontWeight: 500,
-              }}
+              className="text-[11px] text-primary font-medium"
             >
               ↗
             </span>
           )}
         </span>
       </td>
-      <td
-        style={{
-          ...tdStyle,
-          color: colors.textSecondary,
-          fontFamily: 'SF Mono, Menlo, monospace',
-          fontSize: 11,
-        }}
-      >
+      <td className="px-3 py-2 text-[11px] text-text-secondary font-mono border-b border-border">
         {run.currentStep}
       </td>
-      <td
-        style={{
-          ...tdStyle,
-          color: colors.textSecondary,
-          fontFamily: 'SF Mono, Menlo, monospace',
-          fontSize: 11,
-        }}
-      >
+      <td className="px-3 py-2 text-[11px] text-text-secondary font-mono border-b border-border">
         {run.ownerNode}
       </td>
-      <td
-        style={{
-          ...tdStyle,
-          color: colors.textSecondary,
-          fontFamily: 'SF Mono, Menlo, monospace',
-          fontSize: 11,
-          textAlign: 'right',
-        }}
-      >
+      <td className="px-3 py-2 text-[11px] text-text-secondary font-mono border-b border-border text-right">
         {run.elapsed}
       </td>
       {onCancel && (
-        <td
-          style={{
-            ...tdStyle,
-            textAlign: 'right',
-            width: 1,
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <td className="px-3 py-2 text-[13px] text-text-primary font-[inherit] border-b border-border text-right w-px whitespace-nowrap">
           {isCancellable && (
             <button
               data-testid="active-run-cancel"
@@ -176,17 +123,7 @@ function Row({
               // Also block keydown bubbling so Enter/Space on the button
               // doesn't activate the row's keyboard handler.
               onKeyDown={(e) => e.stopPropagation()}
-              style={{
-                padding: '2px 8px',
-                fontSize: 11,
-                fontWeight: 600,
-                background: 'transparent',
-                color: colors.state.failed,
-                border: `1px solid ${colors.border}`,
-                borderRadius: 4,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
+              className="px-2 py-0.5 text-[11px] font-semibold bg-transparent text-state-failed border border-border rounded-sm cursor-pointer font-[inherit]"
             >
               Cancel
             </button>
@@ -202,16 +139,7 @@ function ActiveRunsTable({ runs, onRowClick, onCancelRun }: ActiveRunsTableProps
     return (
       <div
         data-testid="active-runs-empty"
-        style={{
-          padding: 24,
-          textAlign: 'center',
-          color: colors.textTertiary,
-          fontSize: 13,
-          border: `1px solid ${colors.border}`,
-          borderRadius: 8,
-          background: colors.surface,
-          fontFamily: 'inherit',
-        }}
+        className="p-6 text-center text-text-tertiary text-[13px] border border-border rounded-lg bg-surface font-[inherit]"
       >
         No active runs
       </div>
@@ -221,27 +149,26 @@ function ActiveRunsTable({ runs, onRowClick, onCancelRun }: ActiveRunsTableProps
   return (
     <div
       data-testid="active-runs-table"
-      style={{
-        border: `1px solid ${colors.border}`,
-        borderRadius: 8,
-        overflow: 'hidden',
-        background: colors.surface,
-      }}
+      className="border border-border rounded-lg overflow-hidden bg-surface"
     >
-      <table
-        style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          fontFamily: 'inherit',
-        }}
-      >
+      <table className="w-full border-collapse font-[inherit]">
         <thead>
           <tr>
-            <th style={thStyle}>Pipeline</th>
-            <th style={thStyle}>Step</th>
-            <th style={thStyle}>Owner</th>
-            <th style={{ ...thStyle, textAlign: 'right' }}>Elapsed</th>
-            {onCancelRun && <th style={{ ...thStyle, textAlign: 'right' }} />}
+            <th className="text-left px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border">
+              Pipeline
+            </th>
+            <th className="text-left px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border">
+              Step
+            </th>
+            <th className="text-left px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border">
+              Owner
+            </th>
+            <th className="text-right px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border">
+              Elapsed
+            </th>
+            {onCancelRun && (
+              <th className="text-right px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border" />
+            )}
           </tr>
         </thead>
         <tbody>

@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Modal from '../../shared/Modal';
-import { colors, fieldStyle, saveBtnStyle, cancelBtnStyle } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 import {
   getChaosState,
   resetChaosState,
@@ -33,17 +33,6 @@ export interface ChaosPanelProps {
 const defaultNodes: ChaosPanelNode[] = [
   { id: 'node-0' }, { id: 'node-1' }, { id: 'node-2' },
 ];
-
-const labelStyle = {
-  fontSize: 11, fontWeight: 600, color: colors.textSecondary,
-  textTransform: 'uppercase' as const, letterSpacing: 0.3,
-};
-
-const sectionStyle = {
-  display: 'flex' as const, flexDirection: 'column' as const, gap: 6,
-  paddingBottom: 12, marginBottom: 12,
-  borderBottom: `1px solid ${colors.border}`,
-};
 
 function ChaosPanel(props: ChaosPanelProps) {
   // Default handlers mutate the shared `chaosState` module that the
@@ -114,91 +103,85 @@ function ChaosPanel(props: ChaosPanelProps) {
   return (
     <div
       data-testid="chaos-panel"
-      style={{
-        width: 240, flexShrink: 0, padding: 16,
-        background: colors.surfacePanel,
-        borderRight: `1px solid ${colors.border}`,
-        fontFamily: 'inherit', fontSize: 13, color: colors.textPrimary,
-        overflowY: 'auto',
-      }}
+      className="w-60 shrink-0 p-4 bg-surface-panel border-r border-border font-[inherit] text-[13px] text-text-primary overflow-y-auto"
     >
-      <div style={{ fontSize: 11, fontWeight: 700, color: colors.textSecondary, letterSpacing: 0.4, marginBottom: 12 }}>
+      <div className="text-[11px] font-bold text-text-secondary tracking-[0.4px] mb-3">
         CHAOS
       </div>
 
       {/* Live state readout */}
       <div
         data-testid="chaos-state-readout"
-        style={{
-          ...sectionStyle,
-          background: chaosActive ? '#fffbeb' : 'transparent',
-          padding: chaosActive ? 8 : 0,
-          borderRadius: 6,
-          border: chaosActive ? `1px solid #fde68a` : 'none',
-        }}
+        className={cn(
+          'flex flex-col gap-1.5 pb-3 mb-3 border-b border-border',
+          chaosActive && 'bg-[#fffbeb] p-2 rounded-md border border-[#fde68a]'
+        )}
       >
-        <div style={labelStyle}>Current state</div>
-        <div style={{ fontSize: 12, color: colors.textPrimary, lineHeight: 1.6 }}>
+        <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
+          Current state
+        </div>
+        <div className="text-xs text-text-primary leading-relaxed">
           <div>
-            <span style={{ color: colors.textTertiary }}>Latency:</span>{' '}
+            <span className="text-text-tertiary">Latency:</span>{' '}
             <strong data-testid="chaos-state-latency">{chaos.injectedLatencyMs}</strong> ms
           </div>
           <div>
-            <span style={{ color: colors.textTertiary }}>Failure rate:</span>{' '}
+            <span className="text-text-tertiary">Failure rate:</span>{' '}
             <strong data-testid="chaos-state-failure">
               {Math.round(chaos.injectedFailureRate * 100)}
             </strong>
             %
           </div>
           <div>
-            <span style={{ color: colors.textTertiary }}>Paused:</span>{' '}
+            <span className="text-text-tertiary">Paused:</span>{' '}
             <strong data-testid="chaos-state-paused">{chaos.paused ? 'yes' : 'no'}</strong>
           </div>
         </div>
         <button
           data-testid="chaos-pause-toggle"
           onClick={togglePause}
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           {chaos.paused ? 'Resume' : 'Pause'}
         </button>
       </div>
 
       {/* Latency */}
-      <div style={sectionStyle}>
-        <div style={labelStyle}>Latency</div>
-        <div style={{ display: 'flex', gap: 6 }}>
+      <div className="flex flex-col gap-1.5 pb-3 mb-3 border-b border-border">
+        <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
+          Latency
+        </div>
+        <div className="flex gap-1.5">
           <input
             data-testid="chaos-latency-input"
             type="number"
             min={0}
             value={latencyMs}
             onChange={(e) => setLatencyMs(e.target.value)}
-            style={{ ...fieldStyle, minWidth: 60 }}
+            className="flex-1 min-w-[60px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
             aria-label="Latency in milliseconds"
           />
-          <span style={{ fontSize: 11, color: colors.textTertiary, alignSelf: 'center' }}>ms</span>
+          <span className="text-[11px] text-text-tertiary self-center">ms</span>
         </div>
         <button
           data-testid="chaos-latency-apply"
           onClick={applyLatency}
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           Apply
         </button>
       </div>
 
       {/* Partition */}
-      <div style={sectionStyle}>
-        <div style={labelStyle}>Partition nodes</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div className="flex flex-col gap-1.5 pb-3 mb-3 border-b border-border">
+        <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
+          Partition nodes
+        </div>
+        <div className="flex flex-col gap-1">
           {nodeOptions.map((n) => (
             <label
               key={n.id}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                fontSize: 12, color: colors.textPrimary, cursor: 'pointer',
-              }}
+              className="flex items-center gap-1.5 text-xs text-text-primary cursor-pointer"
             >
               <input
                 type="checkbox"
@@ -212,7 +195,10 @@ function ChaosPanel(props: ChaosPanelProps) {
         <button
           data-testid="chaos-partition-inject"
           onClick={injectPartition}
-          style={saveBtnStyle(selectedNodes.length === 0)}
+          className={cn(
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md font-[inherit] shrink-0',
+            selectedNodes.length === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+          )}
           disabled={selectedNodes.length === 0}
         >
           Inject
@@ -220,9 +206,11 @@ function ChaosPanel(props: ChaosPanelProps) {
       </div>
 
       {/* Drop messages */}
-      <div style={sectionStyle}>
-        <div style={labelStyle}>Drop messages</div>
-        <div style={{ display: 'flex', gap: 6 }}>
+      <div className="flex flex-col gap-1.5 pb-3 mb-3 border-b border-border">
+        <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
+          Drop messages
+        </div>
+        <div className="flex gap-1.5">
           <input
             data-testid="chaos-drop-input"
             type="number"
@@ -230,38 +218,33 @@ function ChaosPanel(props: ChaosPanelProps) {
             max={100}
             value={dropPercent}
             onChange={(e) => setDropPercent(e.target.value)}
-            style={{ ...fieldStyle, minWidth: 60 }}
+            className="flex-1 min-w-[60px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
             aria-label="Drop percent"
           />
-          <span style={{ fontSize: 11, color: colors.textTertiary, alignSelf: 'center' }}>%</span>
+          <span className="text-[11px] text-text-tertiary self-center">%</span>
         </div>
         <button
           data-testid="chaos-drop-apply"
           onClick={applyDrop}
-          style={saveBtnStyle(false)}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
         >
           Apply
         </button>
       </div>
 
       {/* Kill all + Reset */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="flex flex-col gap-2">
         <button
           data-testid="chaos-kill-all"
           onClick={() => setConfirmKill(true)}
-          style={{
-            padding: '6px 14px', fontSize: 13, fontWeight: 600,
-            background: colors.state.failed, color: '#fff',
-            border: 'none', borderRadius: 6, cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
         >
           Kill all
         </button>
         <button
           data-testid="chaos-reset"
           onClick={onReset}
-          style={cancelBtnStyle}
+          className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
         >
           Reset
         </button>
@@ -276,19 +259,14 @@ function ChaosPanel(props: ChaosPanelProps) {
             <button
               data-testid="chaos-kill-cancel"
               onClick={() => setConfirmKill(false)}
-              style={cancelBtnStyle}
+              className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
             >
               Cancel
             </button>
             <button
               data-testid="chaos-kill-confirm"
               onClick={confirmKillAll}
-              style={{
-                padding: '6px 14px', fontSize: 13, fontWeight: 600,
-                background: colors.state.failed, color: '#fff',
-                border: 'none', borderRadius: 6, cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
+              className="px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
             >
               Kill all
             </button>

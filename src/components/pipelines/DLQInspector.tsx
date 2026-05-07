@@ -5,8 +5,8 @@
 // Mounted at /pipelines/dlq and accessible from the pipeline editor toolbar.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
+import { cn } from '../../lib/cn';
 import {
   listDLQEntries,
   redriveDLQEntries,
@@ -15,25 +15,11 @@ import {
 import type { DLQEntry } from '../../api/pipelineDLQ';
 import Modal from '../shared/Modal';
 import { useToast } from '../shared/ToastProvider';
-import { colors, chipStyle, fieldStyle, saveBtnStyle, cancelBtnStyle } from '../../constants/styles';
+import { DLQEntryCard } from './DLQEntryCard';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function relativeTime(iso: string): string {
-  const d = Date.now() - new Date(iso).getTime();
-  if (d < 0) return 'just now';
-  if (d < 60_000) return `${Math.floor(d / 1000)}s ago`;
-  if (d < 3_600_000) return `${Math.floor(d / 60_000)}m ago`;
-  if (d < 86_400_000) return `${Math.floor(d / 3_600_000)}h ago`;
-  return `${Math.floor(d / 86_400_000)}d ago`;
-}
-
-function truncate(s: string, max: number): string {
-  if (s.length <= max) return s;
-  return s.slice(0, max) + '...';
-}
 
 /** Extract distinct error kinds from entries for the filter dropdown. */
 function extractErrorKinds(entries: DLQEntry[]): string[] {
@@ -43,97 +29,6 @@ function extractErrorKinds(entries: DLQEntry[]): string[] {
   }
   return Array.from(kinds).sort();
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: CSSProperties = {
-  padding: '24px 32px',
-  fontFamily: 'inherit',
-  color: colors.textPrimary,
-  maxWidth: 1200,
-  margin: '0 auto',
-};
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  marginBottom: 20,
-};
-
-const titleStyle: CSSProperties = {
-  fontSize: 18,
-  fontWeight: 700,
-  color: colors.textPrimary,
-  margin: 0,
-};
-
-const badgeStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minWidth: 22,
-  height: 22,
-  padding: '0 6px',
-  borderRadius: 11,
-  fontSize: 12,
-  fontWeight: 700,
-  background: '#fef2f2',
-  color: '#dc2626',
-};
-
-const toolbarStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  marginBottom: 16,
-  flexWrap: 'wrap',
-};
-
-const tableStyle: CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  fontSize: 13,
-};
-
-const thStyle: CSSProperties = {
-  textAlign: 'left',
-  padding: '8px 10px',
-  borderBottom: `2px solid ${colors.border}`,
-  fontSize: 11,
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  color: colors.textSecondary,
-  whiteSpace: 'nowrap',
-};
-
-const tdStyle: CSSProperties = {
-  padding: '10px 10px',
-  borderBottom: `1px solid ${colors.border}`,
-  verticalAlign: 'top',
-};
-
-const rowHoverBg = colors.surfaceHover;
-
-const actionBtnStyle: CSSProperties = {
-  padding: '4px 10px',
-  fontSize: 12,
-  fontWeight: 600,
-  border: 'none',
-  borderRadius: 5,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-const emptyStyle: CSSProperties = {
-  textAlign: 'center',
-  padding: '48px 24px',
-  color: colors.textTertiary,
-  fontSize: 14,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -284,39 +179,30 @@ export default function DLQInspector() {
   // ── Render ────────────────────────────────────────────────────────────
 
   return (
-    <div style={pageStyle}>
+    <div className="py-6 px-8 font-[inherit] text-text-primary max-w-[1200px] mx-auto">
       {/* Header */}
-      <div style={headerStyle}>
+      <div className="flex items-center gap-3 mb-5">
         <button
           type="button"
           onClick={() => navigate('/pipelines')}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: 16,
-            cursor: 'pointer',
-            color: colors.textSecondary,
-            padding: '4px 8px',
-          }}
+          className="bg-none border-none text-base cursor-pointer text-text-secondary py-1 px-2"
           aria-label="Back to pipelines"
           title="Back to pipelines"
         >
           ←
         </button>
-        <h1 style={titleStyle}>Dead Letter Queue</h1>
-        <span style={badgeStyle} data-testid="dlq-depth-badge">
+        <h1 className="text-lg font-bold text-text-primary m-0">Dead Letter Queue</h1>
+        <span
+          className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold bg-[#fef2f2] text-[#dc2626]"
+          data-testid="dlq-depth-badge"
+        >
           {entries.length}
         </span>
-        <div style={{ flex: 1 }} />
+        <div className="flex-1" />
         <button
           type="button"
           onClick={() => void fetchEntries(false)}
-          style={{
-            ...actionBtnStyle,
-            background: colors.surfaceHover,
-            color: colors.textSecondary,
-            border: `1px solid ${colors.border}`,
-          }}
+          className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-surface-hover text-text-secondary border border-border"
           title="Refresh"
         >
           Refresh
@@ -324,25 +210,20 @@ export default function DLQInspector() {
       </div>
 
       {/* Toolbar: filters + bulk actions */}
-      <div style={toolbarStyle}>
+      <div className="flex items-center gap-2.5 mb-4 flex-wrap">
         <input
           type="text"
           placeholder="Filter by error text or event type..."
           value={filterText}
           onChange={(e) => setFilterText(e.target.value)}
-          style={{ ...fieldStyle, maxWidth: 300 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none flex-1 min-w-[120px] max-w-[300px]"
           data-testid="dlq-filter-text"
         />
 
         <select
           value={filterKind}
           onChange={(e) => setFilterKind(e.target.value)}
-          style={{
-            ...fieldStyle,
-            maxWidth: 200,
-            flex: 'none',
-            cursor: 'pointer',
-          }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none max-w-[200px] flex-none cursor-pointer"
           data-testid="dlq-filter-kind"
         >
           <option value="">All error kinds</option>
@@ -353,21 +234,17 @@ export default function DLQInspector() {
           ))}
         </select>
 
-        <div style={{ flex: 1 }} />
+        <div className="flex-1" />
 
         {selected.size > 0 && (
           <>
-            <span style={{ fontSize: 12, color: colors.textSecondary }}>
+            <span className="text-xs text-text-secondary">
               {selected.size} selected
             </span>
             <button
               type="button"
               onClick={() => void handleRedrive(Array.from(selected))}
-              style={{
-                ...actionBtnStyle,
-                background: colors.primary,
-                color: '#fff',
-              }}
+              className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-primary text-white"
               data-testid="dlq-bulk-redrive"
             >
               Redrive Selected
@@ -375,11 +252,7 @@ export default function DLQInspector() {
             <button
               type="button"
               onClick={() => setPurgeTarget(Array.from(selected))}
-              style={{
-                ...actionBtnStyle,
-                background: '#fef2f2',
-                color: '#dc2626',
-              }}
+              className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-[#fef2f2] text-[#dc2626]"
               data-testid="dlq-bulk-purge"
             >
               Purge Selected
@@ -391,11 +264,7 @@ export default function DLQInspector() {
           <button
             type="button"
             onClick={() => void handleRedrive(sorted.map((e) => e.messageId))}
-            style={{
-              ...actionBtnStyle,
-              background: colors.primary,
-              color: '#fff',
-            }}
+            className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-primary text-white"
             data-testid="dlq-redrive-all"
           >
             Redrive All ({sorted.length})
@@ -405,32 +274,24 @@ export default function DLQInspector() {
 
       {/* Error state */}
       {error && (
-        <div
-          style={{
-            padding: '10px 14px',
-            marginBottom: 16,
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            borderRadius: 6,
-            fontSize: 13,
-            color: '#dc2626',
-          }}
-        >
+        <div className="py-2.5 px-3.5 mb-4 bg-[#fef2f2] border border-[#fecaca] rounded-md text-[13px] text-[#dc2626]">
           {error}
         </div>
       )}
 
       {/* Loading state */}
       {loading && entries.length === 0 && (
-        <div style={emptyStyle}>Loading DLQ entries...</div>
+        <div className="text-center py-12 px-6 text-text-tertiary text-sm">
+          Loading DLQ entries...
+        </div>
       )}
 
       {/* Empty state */}
       {!loading && entries.length === 0 && !error && (
-        <div style={emptyStyle}>
-          <div style={{ fontSize: 32, marginBottom: 8 }}>--</div>
+        <div className="text-center py-12 px-6 text-text-tertiary text-sm">
+          <div className="text-[32px] mb-2">--</div>
           <div>No dead-letter entries.</div>
-          <div style={{ marginTop: 4, fontSize: 12 }}>
+          <div className="mt-1 text-xs">
             Failed events will appear here when pipeline subscribers throw errors.
           </div>
         </div>
@@ -439,10 +300,10 @@ export default function DLQInspector() {
       {/* Table */}
       {sorted.length > 0 && (
         <>
-          <table style={tableStyle} data-testid="dlq-table">
+          <table className="w-full border-collapse text-[13px]" data-testid="dlq-table">
             <thead>
               <tr>
-                <th style={{ ...thStyle, width: 32 }}>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-8">
                   <input
                     type="checkbox"
                     checked={selected.size === sorted.length && sorted.length > 0}
@@ -450,125 +311,38 @@ export default function DLQInspector() {
                     title="Select all"
                   />
                 </th>
-                <th style={thStyle}>Event Type</th>
-                <th style={thStyle}>Error</th>
-                <th style={{ ...thStyle, width: 100 }}>Kind</th>
-                <th style={{ ...thStyle, width: 80 }}>Attempts</th>
-                <th style={{ ...thStyle, width: 100 }}>Failed</th>
-                <th style={{ ...thStyle, width: 140 }}>Actions</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap">Event Type</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap">Error</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-[100px]">Kind</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-20">Attempts</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-[100px]">Failed</th>
+                <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-[140px]">Actions</th>
               </tr>
             </thead>
             <tbody>
               {sorted.map((entry) => (
-                <tr
+                <DLQEntryCard
                   key={entry.messageId}
-                  onMouseEnter={() => setHoveredRow(entry.messageId)}
+                  entry={entry}
+                  isHovered={hoveredRow === entry.messageId}
+                  isSelected={selected.has(entry.messageId)}
+                  onToggleSelect={toggleSelect}
+                  onRedrive={handleRedrive}
+                  onPurge={(ids) => setPurgeTarget(ids)}
+                  onMouseEnter={setHoveredRow}
                   onMouseLeave={() => setHoveredRow(null)}
-                  style={{
-                    background:
-                      hoveredRow === entry.messageId ? rowHoverBg : 'transparent',
-                    transition: 'background 0.1s',
-                  }}
-                >
-                  <td style={tdStyle}>
-                    <input
-                      type="checkbox"
-                      checked={selected.has(entry.messageId)}
-                      onChange={() => toggleSelect(entry.messageId)}
-                    />
-                  </td>
-                  <td style={tdStyle}>
-                    <span
-                      style={{
-                        fontFamily: 'monospace',
-                        fontSize: 12,
-                        color: colors.textPrimary,
-                      }}
-                    >
-                      {entry.eventType}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>
-                    <span
-                      style={{ fontSize: 12, color: colors.textSecondary }}
-                      title={entry.lastError}
-                    >
-                      {truncate(entry.lastError, 80)}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>
-                    {entry.errorKind ? (
-                      <span style={chipStyle('danger')}>{entry.errorKind}</span>
-                    ) : (
-                      <span style={{ fontSize: 11, color: colors.textTertiary }}>
-                        unknown
-                      </span>
-                    )}
-                  </td>
-                  <td style={{ ...tdStyle, textAlign: 'center' }}>
-                    <span
-                      style={{
-                        ...chipStyle('neutral'),
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {entry.totalAttempts}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>
-                    <span
-                      style={{ fontSize: 12, color: colors.textSecondary }}
-                      title={new Date(entry.failedAt).toLocaleString()}
-                    >
-                      {relativeTime(entry.failedAt)}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ display: 'flex', gap: 4 }}>
-                      <button
-                        type="button"
-                        onClick={() => void handleRedrive([entry.messageId])}
-                        style={{
-                          ...actionBtnStyle,
-                          background: '#eff6ff',
-                          color: '#2563eb',
-                        }}
-                        title="Redrive this entry"
-                      >
-                        Redrive
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPurgeTarget([entry.messageId])}
-                        style={{
-                          ...actionBtnStyle,
-                          background: '#fef2f2',
-                          color: '#dc2626',
-                        }}
-                        title="Purge this entry"
-                      >
-                        Purge
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                />
               ))}
             </tbody>
           </table>
 
           {/* Load more */}
           {hasMore && (
-            <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <div className="text-center mt-4">
               <button
                 type="button"
                 onClick={() => void fetchEntries(true)}
-                style={{
-                  ...actionBtnStyle,
-                  background: colors.surfaceHover,
-                  color: colors.textSecondary,
-                  border: `1px solid ${colors.border}`,
-                  padding: '8px 16px',
-                }}
+                className="py-2 px-4 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-surface-hover text-text-secondary border border-border"
               >
                 Load more
               </button>
@@ -587,20 +361,20 @@ export default function DLQInspector() {
           <>
             <button
               onClick={() => setPurgeTarget(null)}
-              style={cancelBtnStyle}
+              className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={() => void handlePurgeConfirm()}
-              style={saveBtnStyle(false)}
+              className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer"
             >
               Purge
             </button>
           </>
         }
       >
-        <p style={{ margin: 0 }}>
+        <p className="m-0">
           This will permanently delete{' '}
           <strong>{purgeTarget?.length ?? 0}</strong> entr
           {purgeTarget?.length === 1 ? 'y' : 'ies'} from the dead letter queue.

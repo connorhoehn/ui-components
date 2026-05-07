@@ -18,6 +18,7 @@
 // booleans live as actual booleans tied to checkbox state.
 
 import { useState, type JSX } from 'react';
+import { cn } from '../../lib/cn';
 import type { ApiDocumentType, ApiDocumentTypeField, TypedDocumentValue } from '../../hooks/useTypedDocuments';
 
 export interface ReferenceOption {
@@ -141,6 +142,8 @@ function coerceUnlimited(field: ApiDocumentTypeField, arr: string[]): TypedDocum
   return out.length > 0 ? (out as string[] | number[]) : null;
 }
 
+const fieldInputClass = 'font-[inherit] text-[13px] p-2 border border-[#cbd5e1] rounded-md';
+
 export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {} }: TypedDocumentFormProps): JSX.Element {
   const [values, setValues] = useState<FormState>(() => {
     const init: FormState = {};
@@ -230,18 +233,18 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
   };
 
   return (
-    <form onSubmit={handleSubmit} data-testid="typed-document-form" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>
+    <form onSubmit={handleSubmit} data-testid="typed-document-form" className={cn('flex flex-col gap-3')}>
+      <div className={cn('text-base font-semibold text-text-primary')}>
         New {type.name}
       </div>
 
       {error && (
-        <div data-testid="form-error" role="alert" style={{ color: '#dc2626', fontSize: 13 }}>
+        <div data-testid="form-error" role="alert" className={cn('text-[#dc2626] text-[13px]')}>
           {error}
         </div>
       )}
       {successKey > 0 && !error && (
-        <div data-testid="form-success" key={successKey} style={{ color: '#16a34a', fontSize: 13 }}>
+        <div data-testid="form-success" key={successKey} className={cn('text-[#16a34a] text-[13px]')}>
           ✓ Saved
         </div>
       )}
@@ -251,10 +254,10 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
         const v = values[field.fieldId];
 
         return (
-          <div key={field.fieldId} data-testid={`field-${field.fieldId}`} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>
+          <div key={field.fieldId} data-testid={`field-${field.fieldId}`} className={cn('flex flex-col gap-1')}>
+            <label className={cn('text-[13px] font-medium text-[#374151]')}>
               {field.name}
-              {field.required && <span style={{ color: '#dc2626', marginLeft: 4 }}>*</span>}
+              {field.required && <span className={cn('text-[#dc2626] ml-1')}>*</span>}
             </label>
 
             {field.cardinality === 1 && field.widget === 'textarea' && (
@@ -263,7 +266,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
                 rows={4}
-                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                className={cn(fieldInputClass)}
               />
             )}
 
@@ -273,7 +276,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 type="text"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                className={cn(fieldInputClass)}
               />
             )}
 
@@ -283,7 +286,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 type="number"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                className={cn(fieldInputClass)}
               />
             )}
 
@@ -293,7 +296,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 type="date"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                className={cn(fieldInputClass)}
               />
             )}
 
@@ -303,7 +306,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 type="checkbox"
                 checked={typeof v === 'boolean' ? v : false}
                 onChange={(e) => setField(field.fieldId, e.target.checked)}
-                style={{ alignSelf: 'flex-start' }}
+                className={cn('self-start')}
               />
             )}
 
@@ -312,7 +315,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 data-testid={`input-${field.fieldId}`}
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6, background: '#fff' }}
+                className={cn(fieldInputClass, 'bg-white')}
               >
                 <option value="">— select —</option>
                 {(field.options ?? []).map((opt) => (
@@ -331,7 +334,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                     value={typeof v === 'string' ? v : ''}
                     onChange={(e) => setField(field.fieldId, e.target.value)}
                     disabled={empty}
-                    style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6, background: empty ? '#f1f5f9' : '#fff' }}
+                    className={cn(fieldInputClass, empty ? 'bg-[#f1f5f9]' : 'bg-white')}
                   >
                     <option value="">— select —</option>
                     {opts.map((opt) => (
@@ -339,7 +342,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                     ))}
                   </select>
                   {empty && (
-                    <span data-testid={`reference-empty-${field.fieldId}`} style={{ fontSize: 11, color: '#94a3b8' }}>
+                    <span data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
                       No referenceable documents yet for this type.
                     </span>
                   )}
@@ -348,21 +351,21 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
             })()}
 
             {field.cardinality === 'unlimited' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div className={cn('flex flex-col gap-1.5')}>
                 {(Array.isArray(v) ? v : ['']).map((entry, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                  <div key={idx} className={cn('flex gap-1.5 items-center')}>
                     <input
                       data-testid={`input-${field.fieldId}-${idx}`}
                       type={field.widget === 'number_input' ? 'number' : field.widget === 'date_picker' ? 'date' : 'text'}
                       value={entry}
                       onChange={(e) => setArrayAt(field.fieldId, idx, e.target.value)}
-                      style={{ flex: 1, fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                      className={cn('flex-1', fieldInputClass)}
                     />
                     <button
                       type="button"
                       data-testid={`remove-${field.fieldId}-${idx}`}
                       onClick={() => removeArrayEntry(field.fieldId, idx)}
-                      style={{ background: 'none', border: '1px solid #cbd5e1', color: '#94a3b8', cursor: 'pointer', borderRadius: 6, padding: '4px 10px', fontSize: 13 }}
+                      className={cn('bg-transparent border border-[#cbd5e1] text-text-tertiary cursor-pointer rounded-md px-2.5 py-1 text-[13px]')}
                     >
                       −
                     </button>
@@ -372,7 +375,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                   type="button"
                   data-testid={`add-${field.fieldId}`}
                   onClick={() => addArrayEntry(field.fieldId)}
-                  style={{ alignSelf: 'flex-start', background: 'none', border: '1px dashed #cbd5e1', color: '#646cff', cursor: 'pointer', borderRadius: 6, padding: '4px 12px', fontSize: 13 }}
+                  className={cn('self-start bg-transparent border border-dashed border-[#cbd5e1] text-primary cursor-pointer rounded-md px-3 py-1 text-[13px]')}
                 >
                   + Add another
                 </button>
@@ -380,7 +383,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
             )}
 
             {field.helpText && (
-              <span style={{ fontSize: 11, color: '#94a3b8' }}>{field.helpText}</span>
+              <span className={cn('text-[11px] text-text-tertiary')}>{field.helpText}</span>
             )}
           </div>
         );
@@ -390,18 +393,10 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
         type="submit"
         data-testid="submit-typed-document"
         disabled={submitting}
-        style={{
-          alignSelf: 'flex-start',
-          padding: '8px 18px',
-          fontSize: 13,
-          fontWeight: 600,
-          background: submitting ? '#a5b4fc' : '#646cff',
-          color: '#fff',
-          border: 'none',
-          borderRadius: 6,
-          cursor: submitting ? 'wait' : 'pointer',
-          fontFamily: 'inherit',
-        }}
+        className={cn(
+          'self-start px-[18px] py-2 text-[13px] font-semibold text-white border-none rounded-md font-[inherit]',
+          submitting ? 'bg-[#a5b4fc] cursor-wait' : 'bg-primary cursor-pointer',
+        )}
       >
         {submitting ? 'Saving…' : 'Save'}
       </button>

@@ -4,9 +4,9 @@
 // and future transcript/summary once the VNL pipeline populates them.
 
 import { useEffect } from 'react';
-import { colors, fontSize, spacing, borderRadius } from '../../styles/tokens';
 import { Panel, PanelHeader, PanelBody } from '../ui/Panel';
 import type { VideoSession } from '../../hooks/useVideoSessions';
+import { cn } from '../../lib/cn';
 
 interface VideoHistoryPanelProps {
   sessions: VideoSession[];
@@ -54,15 +54,15 @@ export default function VideoHistoryPanel({ sessions, loading, onFetch, onClose 
   return (
     <Panel width={340}>
       <PanelHeader title="Past Conversations" onClose={onClose} />
-      <PanelBody padding={`${spacing.md}px`}>
+      <PanelBody padding="12px">
         {loading && (
-          <div style={{ textAlign: 'center', color: colors.textMuted, fontSize: fontSize.sm, padding: spacing.lg }}>
+          <div className={cn('text-center text-text-tertiary text-[13px] py-6')}>
             Loading...
           </div>
         )}
 
         {!loading && sessions.length === 0 && (
-          <div style={{ textAlign: 'center', color: colors.textMuted, fontSize: fontSize.sm, padding: spacing.lg }}>
+          <div className={cn('text-center text-text-tertiary text-[13px] py-6')}>
             No video conversations yet for this document.
           </div>
         )}
@@ -87,42 +87,31 @@ export default function VideoHistoryPanel({ sessions, loading, onFetch, onClose 
 
 function SessionCard({ session, isActive }: { session: VideoSession; isActive?: boolean }) {
   return (
-    <div style={{
-      border: `1px solid ${isActive ? colors.success : colors.border}`,
-      borderRadius: borderRadius.lg,
-      padding: spacing.md,
-      marginBottom: spacing.sm,
-      background: isActive ? 'rgba(16,185,129,0.04)' : colors.surface,
-    }}>
+    <div className={cn(
+      'rounded-lg p-3 mb-2',
+      isActive ? 'border border-[#10b981] bg-[rgba(16,185,129,0.04)]' : 'border border-border bg-white',
+    )}>
       {/* Top row: time + duration */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs }}>
-        <span style={{ fontSize: fontSize.xs, color: colors.textMuted }}>
+      <div className={cn('flex justify-between items-center mb-1')}>
+        <span className={cn('text-[11px] text-text-tertiary')}>
           {relativeTime(session.startedAt)}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: spacing.xs }}>
+        <div className={cn('flex items-center gap-1')}>
           {isActive && (
-            <span style={{
-              fontSize: fontSize.xs, fontWeight: 600, color: colors.success,
-              background: 'rgba(16,185,129,0.1)', padding: '1px 6px',
-              borderRadius: borderRadius.full,
-            }}>
+            <span className={cn('text-[11px] font-semibold text-[#10b981] bg-[rgba(16,185,129,0.1)] px-1.5 py-px rounded-full')}>
               Live
             </span>
           )}
-          <span style={{ fontSize: fontSize.xs, color: colors.textSecondary }}>
+          <span className={cn('text-[11px] text-text-secondary')}>
             {formatDuration(session.startedAt, session.endedAt)}
           </span>
         </div>
       </div>
 
       {/* Participants */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: spacing.xs, marginBottom: spacing.sm }}>
+      <div className={cn('flex flex-wrap gap-1 mb-2')}>
         {session.participants.map((p, i) => (
-          <span key={`${p.userId}-${i}`} style={{
-            fontSize: fontSize.xs, color: colors.textSecondary,
-            background: colors.background, padding: '2px 8px',
-            borderRadius: borderRadius.full,
-          }}>
+          <span key={`${p.userId}-${i}`} className={cn('text-[11px] text-text-secondary bg-[#f8fafc] px-2 py-0.5 rounded-full')}>
             {p.displayName || p.userId.slice(0, 10)}
           </span>
         ))}
@@ -130,18 +119,14 @@ function SessionCard({ session, isActive }: { session: VideoSession; isActive?: 
 
       {/* Summary (if available) */}
       {session.aiSummary && (
-        <div style={{
-          fontSize: fontSize.xs, color: colors.textPrimary,
-          background: colors.background, padding: spacing.sm,
-          borderRadius: borderRadius.md, lineHeight: 1.5,
-        }}>
+        <div className={cn('text-[11px] text-text-primary bg-[#f8fafc] p-2 rounded-md leading-normal')}>
           {session.aiSummary}
         </div>
       )}
 
       {/* Transcript status */}
       {session.transcriptStatus && session.transcriptStatus !== 'available' && (
-        <div style={{ fontSize: fontSize.xs, color: colors.textMuted, marginTop: spacing.xs }}>
+        <div className={cn('text-[11px] text-text-tertiary mt-1')}>
           Transcript: {session.transcriptStatus}
         </div>
       )}

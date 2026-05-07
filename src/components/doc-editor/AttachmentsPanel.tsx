@@ -1,10 +1,9 @@
 // frontend/src/components/doc-editor/AttachmentsPanel.tsx
 //
 // Per-document attachments: file references and linked documents.
-// Stored in localStorage keyed by documentId.
-// This intentionally stays simple: no real upload — just name + URL references.
 
 import { useState } from 'react';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -88,30 +87,30 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
   const valid = name.trim().length > 0 && url.trim().length > 0;
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+    <div className={cn('flex gap-2 items-start flex-wrap')}>
       <input
         autoFocus
         placeholder="File name"
         value={name}
         onChange={e => setName(e.target.value)}
-        style={fieldStyle}
+        className={cn('flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
       />
       <input
         placeholder="URL or path"
         value={url}
         onChange={e => setUrl(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter' && valid) { onAdd(name, url); } }}
-        style={{ ...fieldStyle, flex: 2 }}
+        className={cn('flex-[2] min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
       />
       <button
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(name, url); }}
-        style={saveBtnStyle(!valid)}
+        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
       >
         Attach
       </button>
-      <button type="button" onClick={onCancel} style={cancelBtnStyle}>Cancel</button>
+      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-[#64748b] cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -121,24 +120,24 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
   const valid = title.trim().length > 0;
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div className={cn('flex gap-2 items-center flex-wrap')}>
       <input
         autoFocus
         placeholder="Document name"
         value={title}
         onChange={e => setTitle(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter' && valid) onAdd(title); }}
-        style={{ ...fieldStyle, flex: 1 }}
+        className={cn('flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
       />
       <button
         type="button"
         disabled={!valid}
         onClick={() => { if (valid) onAdd(title); }}
-        style={saveBtnStyle(!valid)}
+        className={cn('px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0')}
       >
         Link
       </button>
-      <button type="button" onClick={onCancel} style={cancelBtnStyle}>Cancel</button>
+      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-[#64748b] cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -155,32 +154,26 @@ function AttachmentRow({ attachment, onRemove, editable }: {
   const isFile = attachment.kind === 'file';
 
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 10,
-      padding: '7px 10px', borderRadius: 6,
-      background: '#f8fafc', border: '1px solid #e2e8f0',
-    }}>
-      <span style={{ fontSize: 14, flexShrink: 0, color: '#64748b' }}>
+    <div className={cn('flex items-center gap-2.5 px-2.5 py-[7px] rounded-md bg-[#f8fafc] border border-border')}>
+      <span className={cn('text-sm shrink-0 text-[#64748b]')}>
         {isFile ? '📎' : '📄'}
       </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className={cn('flex-1 min-w-0')}>
         {isFile ? (
           <a
             href={(attachment as FileAttachment).url}
             target="_blank"
             rel="noopener noreferrer"
-            style={{ fontSize: 13, color: '#2563eb', fontWeight: 500, textDecoration: 'none' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'underline'; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.textDecoration = 'none'; }}
+            className={cn('text-[13px] text-[#2563eb] font-medium no-underline hover:underline')}
           >
             {(attachment as FileAttachment).name}
           </a>
         ) : (
-          <span style={{ fontSize: 13, color: '#0f172a', fontWeight: 500 }}>
+          <span className={cn('text-[13px] text-text-primary font-medium')}>
             {(attachment as DocumentLink).title}
           </span>
         )}
-        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>
+        <div className={cn('text-[11px] text-text-tertiary mt-px')}>
           {isFile ? (attachment as FileAttachment).url : 'Linked document'}
         </div>
       </div>
@@ -189,13 +182,7 @@ function AttachmentRow({ attachment, onRemove, editable }: {
           type="button"
           onClick={onRemove}
           title="Remove"
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: '#ef4444', fontSize: 14, padding: '2px 5px',
-            opacity: 0.5, lineHeight: 1, borderRadius: 4, flexShrink: 0,
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '0.5'; }}
+          className={cn('bg-transparent border-none cursor-pointer text-[#ef4444] text-sm px-[5px] py-0.5 opacity-50 leading-none rounded shrink-0 hover:opacity-100')}
         >
           ×
         </button>
@@ -203,30 +190,6 @@ function AttachmentRow({ attachment, onRemove, editable }: {
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Shared micro-styles
-// ---------------------------------------------------------------------------
-
-const fieldStyle: React.CSSProperties = {
-  flex: 1, minWidth: 120,
-  border: '1px solid #d1d5db', borderRadius: 6, padding: '6px 10px',
-  fontSize: 13, fontFamily: 'inherit', background: '#f9fafb', color: '#0f172a',
-  outline: 'none',
-};
-
-const saveBtnStyle = (disabled: boolean): React.CSSProperties => ({
-  padding: '6px 14px', fontSize: 13, fontWeight: 600,
-  background: '#646cff', color: '#fff', border: 'none',
-  borderRadius: 6, cursor: disabled ? 'not-allowed' : 'pointer',
-  fontFamily: 'inherit', opacity: disabled ? 0.5 : 1, flexShrink: 0,
-});
-
-const cancelBtnStyle: React.CSSProperties = {
-  padding: '6px 12px', fontSize: 13,
-  background: 'none', border: 'none', color: '#64748b',
-  cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0,
-};
 
 // ---------------------------------------------------------------------------
 // Panel
@@ -244,48 +207,33 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
   const hasItems = attachments.length > 0;
 
   return (
-    <div style={{
-      marginTop: 16,
-      border: '1px solid #e2e8f0',
-      borderRadius: 10,
-      overflow: 'hidden',
-    }}>
+    <div className={cn('mt-4 border border-border rounded-[10px] overflow-hidden')}>
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 14px',
-        background: '#f8fafc',
-        borderBottom: hasItems || addMode ? '1px solid #e2e8f0' : 'none',
-      }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>
+      <div className={cn(
+        'flex items-center justify-between px-3.5 py-2.5 bg-[#f8fafc]',
+        (hasItems || addMode) ? 'border-b border-border' : '',
+      )}>
+        <span className={cn('text-[13px] font-semibold text-[#374151]')}>
           Attachments
           {hasItems && (
-            <span style={{ marginLeft: 6, fontSize: 11, color: '#94a3b8', fontWeight: 400 }}>
+            <span className={cn('ml-1.5 text-[11px] text-text-tertiary font-normal')}>
               {attachments.length}
             </span>
           )}
         </span>
         {editable && addMode === null && (
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div className={cn('flex gap-1.5')}>
             <button
               type="button"
               onClick={() => setAddMode('file')}
-              style={{
-                fontSize: 12, padding: '4px 10px', fontWeight: 600,
-                background: '#fff', border: '1px solid #d1d5db',
-                borderRadius: 5, cursor: 'pointer', fontFamily: 'inherit', color: '#374151',
-              }}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-[#d1d5db] rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
             >
               + File
             </button>
             <button
               type="button"
               onClick={() => setAddMode('document')}
-              style={{
-                fontSize: 12, padding: '4px 10px', fontWeight: 600,
-                background: '#fff', border: '1px solid #d1d5db',
-                borderRadius: 5, cursor: 'pointer', fontFamily: 'inherit', color: '#374151',
-              }}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-[#d1d5db] rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
             >
               + Document
             </button>
@@ -295,7 +243,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
 
       {/* Attachment list */}
       {hasItems && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '10px 14px' }}>
+        <div className={cn('flex flex-col gap-1.5 px-3.5 py-2.5')}>
           {attachments.map(a => (
             <AttachmentRow
               key={a.id}
@@ -309,7 +257,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
 
       {/* Add forms */}
       {addMode === 'file' && (
-        <div style={{ padding: '10px 14px', borderTop: hasItems ? '1px solid #e2e8f0' : 'none' }}>
+        <div className={cn('px-3.5 py-2.5', hasItems ? 'border-t border-border' : '')}>
           <AddFileForm
             onAdd={(name, url) => { addFile(name, url); setAddMode(null); }}
             onCancel={() => setAddMode(null)}
@@ -317,7 +265,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
         </div>
       )}
       {addMode === 'document' && (
-        <div style={{ padding: '10px 14px', borderTop: hasItems ? '1px solid #e2e8f0' : 'none' }}>
+        <div className={cn('px-3.5 py-2.5', hasItems ? 'border-t border-border' : '')}>
           <AddDocumentForm
             onAdd={(title) => { addDocumentLink(title); setAddMode(null); }}
             onCancel={() => setAddMode(null)}
@@ -327,10 +275,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
 
       {/* Empty state */}
       {!hasItems && !addMode && (
-        <div style={{
-          padding: '14px 14px', fontSize: 12, color: '#94a3b8',
-          textAlign: 'center',
-        }}>
+        <div className={cn('px-3.5 py-3.5 text-xs text-text-tertiary text-center')}>
           {editable ? 'No attachments yet — add a file or link a document above.' : 'No attachments.'}
         </div>
       )}

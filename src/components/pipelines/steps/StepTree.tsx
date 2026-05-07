@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { colors } from '../../../constants/styles';
 import type { NodeType, PipelineEdge, StepExecution } from '../../../types/pipeline';
 import { StepThread } from './StepThread';
 
@@ -7,13 +6,7 @@ export interface StepTreeProps {
   steps: Record<string, StepExecution>;
   nodeDataMap: Record<string, { type: NodeType; data: Record<string, unknown> }>;
   edges?: PipelineEdge[];
-  /** When provided, each step renders a "Retry from here" action. */
   onRetryFromStep?: (stepId: string) => void;
-  /**
-   * hub#2223: when provided, each step renders a "Resume from here" action
-   * that calls back with the step's nodeId. The caller (the run-detail page)
-   * gates whether this is set based on run.status === 'failed'.
-   */
   onResumeFromStep?: (stepId: string) => void;
 }
 
@@ -69,7 +62,6 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
       }
     }
 
-    // Build forward adjacency: nodeId → [{target, handle}]
     const outEdges = new Map<string, { target: string; handle: string }[]>();
     for (const edge of edges) {
       if (!outEdges.has(edge.source)) outEdges.set(edge.source, []);
@@ -78,9 +70,6 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
 
     const claimed = new Set<string>();
 
-    // Walk forward from a node along 'out' edges, collecting the linear chain.
-    // Stops at dead-ends or already-claimed nodes. Returns StepTreeNodes with
-    // children populated recursively for any branching nodes encountered.
     function walkChain(startNodeId: string): StepTreeNode[] {
       const chain: StepTreeNode[] = [];
       let current: string | null = startNodeId;
@@ -91,7 +80,6 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
         claimed.add(stepId);
         const node: StepTreeNode = { stepId, step, children: [] };
 
-        // If this node is a branching node, collect its branch children
         const base = baseNodeId(stepId);
         if (branchingNodes.has(base)) {
           const myBranchEdges = branchEdges.filter((be) => be.forkId === base);
@@ -109,15 +97,12 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
 
         chain.push(node);
 
-        // Follow the 'out' edge to the next sequential node
         const nexts = outEdges.get(base)?.filter((e) => e.handle === 'out');
         current = nexts && nexts.length === 1 ? nexts[0].target : null;
       }
       return chain;
     }
 
-    // Find roots: nodes with no incoming edges from other executed nodes, OR
-    // use the sorted order and walk from the first unclaimed.
     const hasIncoming = new Set<string>();
     for (const edge of edges) {
       hasIncoming.add(edge.target);
@@ -131,7 +116,6 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
       rootNodes = walkChain(baseNodeId(rootNodeId));
     }
 
-    // Any remaining unclaimed steps (e.g. disconnected nodes)
     for (const [stepId, step] of sorted) {
       if (claimed.has(stepId)) continue;
       rootNodes.push({ stepId, step, children: [] });
@@ -171,17 +155,10 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
             onResumeFromStep={onResumeFromStep}
           />
           {node.children.length > 0 && (
-            <div style={{ marginLeft: 36, paddingLeft: 20, borderLeft: `2px dashed ${colors.border}`, marginBottom: 4 }}>
+            <div className="ml-9 pl-5 border-l-2 border-dashed border-border mb-1">
               {Array.from(branches.entries()).map(([branch, children], branchIdx) => (
                 <div key={branch}>
-                  <div style={{
-                    fontSize: 10,
-                    fontWeight: 600,
-                    color: colors.textTertiary,
-                    textTransform: 'uppercase',
-                    padding: '4px 0 2px',
-                    marginTop: branchIdx === 0 ? 4 : 8,
-                  }}>
+                  <div className={`text-[10px] font-semibold text-text-tertiary uppercase pt-1 pb-0.5 ${branchIdx === 0 ? 'mt-1' : 'mt-2'}`}>
                     {branch.replace('-', ' ')}
                   </div>
                   {renderNodes(children, counter)}
@@ -195,16 +172,8 @@ export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeF
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div style={{
-        position: 'absolute',
-        left: 15,
-        top: 24,
-        bottom: 24,
-        width: 2,
-        background: colors.border,
-        borderRadius: 1,
-      }} />
+    <div className="relative">
+      <div className="absolute left-[15px] top-6 bottom-6 w-0.5 bg-border rounded-sm" />
       {renderNodes(tree, 0)}
     </div>
   );

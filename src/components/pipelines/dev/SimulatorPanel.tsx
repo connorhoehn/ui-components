@@ -12,12 +12,14 @@
 //
 // See PIPELINES_PLAN.md §14 (WebSocket protocol) for the full frame format.
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { cn } from '../../../lib/cn';
 import Modal from '../../shared/Modal';
 import { useToast } from '../../shared/ToastProvider';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 import type { GatewayMessage } from '../../../types/gateway';
 import type { PipelineEventMap } from '../../../types/pipeline';
+import { EventPayloadEditor, type EventKey } from './EventPayloadEditor';
 
 // ---------------------------------------------------------------------------
 // Event catalog — kept as a string-literal tuple so `EventKey` stays in sync
@@ -69,8 +71,6 @@ const EVENT_TYPES = [
   // Resume from step (past-tense form)
   'pipeline.run.resumed-from-step',
 ] as const satisfies ReadonlyArray<keyof PipelineEventMap>;
-
-type EventKey = (typeof EVENT_TYPES)[number];
 
 // Compile-time assertion: EVENT_TYPES must cover every key of the event map.
 // If a new key is added to PipelineEventMap without updating the array, the
@@ -354,16 +354,6 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
     setHistory([]);
   }, []);
 
-  const eventOptions = useMemo(
-    () =>
-      EVENT_TYPES.map((t) => (
-        <option key={t} value={t}>
-          {t}
-        </option>
-      )),
-    [],
-  );
-
   return (
     <Modal
       open={open}
@@ -376,15 +366,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
           <button
             type="button"
             onClick={onClose}
-            style={{
-              padding: '6px 12px',
-              fontSize: 13,
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className="py-1.5 px-3 text-[13px] bg-none border-none text-[#64748b] cursor-pointer font-[inherit]"
           >
             Close
           </button>
@@ -392,158 +374,39 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
             type="button"
             onClick={handleEmit}
             data-testid="sim-emit-button"
-            style={{
-              padding: '7px 16px',
-              fontSize: 13,
-              fontWeight: 600,
-              background: '#2563eb',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 7,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className="py-[7px] px-4 text-[13px] font-semibold bg-[#2563eb] text-white border-none rounded-[7px] cursor-pointer font-[inherit]"
           >
             ▶ Emit
           </button>
         </>
       }
     >
-      <div
-        style={{
-          fontSize: 12,
-          color: '#92400e',
-          background: '#fef3c7',
-          border: '1px solid #fde68a',
-          borderRadius: 6,
-          padding: '8px 10px',
-          marginBottom: 14,
-          lineHeight: 1.45,
-        }}
-      >
+      <div className="text-xs text-[#92400e] bg-[#fef3c7] border border-[#fde68a] rounded-md py-2 px-2.5 mb-3.5 leading-[1.45]">
         Dev only — requires <code>DCORE_ENABLE_TEST_EMIT=1</code> on the
         gateway. Emits fake events onto the pipelineEventSource to exercise
         the frontend without a real pipeline executor.
       </div>
 
-      <label
-        style={{
-          display: 'block',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#334155',
-          marginBottom: 4,
-        }}
-      >
-        Event type
-      </label>
-      <select
-        data-testid="sim-event-type"
-        value={eventType}
-        onChange={(e) => handleEventTypeChange(e.target.value as EventKey)}
-        style={{
-          width: '100%',
-          padding: '7px 8px',
-          fontSize: 13,
-          borderRadius: 6,
-          border: '1px solid #cbd5e1',
-          background: '#fff',
-          fontFamily: 'inherit',
-          marginBottom: 12,
-        }}
-      >
-        {eventOptions}
-      </select>
-
-      <label
-        style={{
-          display: 'block',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#334155',
-          marginBottom: 4,
-        }}
-      >
-        Payload (JSON)
-      </label>
-      <textarea
-        data-testid="sim-payload"
-        value={payloadText}
-        onChange={(e) => setPayloadText(e.target.value)}
-        spellCheck={false}
-        rows={12}
-        style={{
-          width: '100%',
-          padding: 8,
-          fontSize: 12,
-          fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-          borderRadius: 6,
-          border: '1px solid #cbd5e1',
-          resize: 'vertical',
-          marginBottom: 12,
-          boxSizing: 'border-box',
-        }}
-      />
-
-      <label
-        style={{
-          display: 'block',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#334155',
-          marginBottom: 4,
-        }}
-      >
-        Seq (optional)
-      </label>
-      <input
-        data-testid="sim-seq"
-        type="number"
-        value={seq}
-        onChange={(e) => setSeq(e.target.value)}
-        style={{
-          width: 120,
-          padding: '6px 8px',
-          fontSize: 13,
-          borderRadius: 6,
-          border: '1px solid #cbd5e1',
-          fontFamily: 'inherit',
-        }}
+      <EventPayloadEditor
+        eventType={eventType}
+        onEventTypeChange={handleEventTypeChange}
+        payloadText={payloadText}
+        onPayloadChange={setPayloadText}
+        seq={seq}
+        onSeqChange={setSeq}
       />
 
       {history.length > 0 && (
-        <div data-testid="sim-history" style={{ marginTop: 16 }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 6,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: '#334155',
-              }}
-            >
+        <div data-testid="sim-history" className="mt-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-semibold text-[#334155]">
               Recent fires ({history.length})
             </span>
             <button
               type="button"
               data-testid="sim-history-clear"
               onClick={handleClearHistory}
-              style={{
-                fontSize: 11,
-                background: 'none',
-                border: 'none',
-                color: '#64748b',
-                cursor: 'pointer',
-                padding: 0,
-                textDecoration: 'underline',
-                fontFamily: 'inherit',
-              }}
+              className="text-[11px] bg-none border-none text-[#64748b] cursor-pointer p-0 underline font-[inherit]"
             >
               Clear history
             </button>
@@ -553,52 +416,21 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
             push the modal taller than the viewport. The Modal shell itself
             has no overflow handling, so we cap height here.
           */}
-          <ul
-            style={{
-              listStyle: 'none',
-              margin: 0,
-              padding: 0,
-              maxHeight: 180,
-              overflowY: 'auto',
-              border: '1px solid #e2e8f0',
-              borderRadius: 6,
-              background: '#f8fafc',
-            }}
-          >
+          <ul className="list-none m-0 p-0 max-h-[180px] overflow-y-auto border border-[#e2e8f0] rounded-md bg-[#f8fafc]">
             {history.map((entry, idx) => (
               <li
                 key={`${entry.ts}-${idx}`}
                 data-testid="sim-history-row"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  gap: 8,
-                  padding: '6px 8px',
-                  borderBottom:
-                    idx === history.length - 1 ? 'none' : '1px solid #e2e8f0',
-                  fontSize: 12,
-                }}
+                className={cn(
+                  'flex items-center justify-between gap-2 py-1.5 px-2 text-xs',
+                  idx !== history.length - 1 && 'border-b border-[#e2e8f0]',
+                )}
               >
-                <span
-                  style={{
-                    color: '#94a3b8',
-                    fontVariantNumeric: 'tabular-nums',
-                    minWidth: 64,
-                  }}
-                >
+                <span className="text-[#94a3b8] tabular-nums min-w-[64px]">
                   {formatRelative(now, entry.ts)}
                 </span>
                 <span
-                  style={{
-                    flex: 1,
-                    color: '#0f172a',
-                    fontFamily:
-                      'ui-monospace, SFMono-Regular, Menlo, monospace',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
+                  className="flex-1 text-[#0f172a] font-mono overflow-hidden text-ellipsis whitespace-nowrap"
                   title={entry.eventType}
                 >
                   {entry.eventType}
@@ -607,16 +439,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
                   type="button"
                   data-testid="sim-history-refire"
                   onClick={() => handleRefire(entry)}
-                  style={{
-                    fontSize: 11,
-                    padding: '3px 8px',
-                    background: '#fff',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    color: '#334155',
-                  }}
+                  className="text-[11px] py-[3px] px-2 bg-white border border-[#cbd5e1] rounded cursor-pointer font-[inherit] text-[#334155]"
                 >
                   ↻ re-fire
                 </button>

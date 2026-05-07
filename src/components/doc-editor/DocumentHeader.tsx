@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import ParticipantAvatars from './ParticipantAvatars';
+import { cn } from '../../lib/cn';
 
 interface DocumentHeaderProps {
   meta: DocumentMeta;
@@ -31,53 +32,10 @@ interface DocumentHeaderProps {
   pastCallsCount?: number;
 }
 
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '0.5rem 1rem',
-  background: '#fff',
-  borderBottom: '1px solid #e5e7eb',
-  flexShrink: 0,
-  gap: 6,
-  position: 'sticky',
-  top: 53,
-  zIndex: 34,
-};
-
-const centerStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 4,
-};
-
-const titleInput: React.CSSProperties = {
-  fontSize: 16,
-  fontWeight: 600,
-  border: '1px solid transparent',
-  borderRadius: 4,
-  padding: '4px 8px',
-  outline: 'none',
-  background: 'transparent',
-  fontFamily: 'inherit',
-  minWidth: 180,
-  color: '#111827',
-};
-
-const statusBadge = (status: DocumentMeta['status']): React.CSSProperties => {
-  const colors: Record<string, { bg: string; text: string }> = {
-    draft: { bg: '#fef3c7', text: '#92400e' },
-    review: { bg: '#dbeafe', text: '#1e40af' },
-    final: { bg: '#d1fae5', text: '#065f46' },
-  };
-  const c = colors[status] ?? colors.draft;
-  return {
-    display: 'inline-block',
-    fontSize: 11,
-    fontWeight: 600,
-    padding: '2px 10px',
-    borderRadius: 9999,
-    background: c.bg,
-    color: c.text,
-  };
+const STATUS_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
+  draft: { bg: '#fef3c7', text: '#92400e' },
+  review: { bg: '#dbeafe', text: '#1e40af' },
+  final: { bg: '#d1fae5', text: '#065f46' },
 };
 
 const modeLabels: { mode: ViewMode; label: string }[] = [
@@ -85,58 +43,6 @@ const modeLabels: { mode: ViewMode; label: string }[] = [
   { mode: 'ack', label: 'Review' },
   { mode: 'reader', label: 'Read' },
 ];
-
-const modeBtnStyle = (active: boolean): React.CSSProperties => ({
-  padding: '6px 14px',
-  fontSize: 13,
-  fontWeight: 600,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  cursor: 'pointer',
-  background: active ? '#3b82f6' : '#fff',
-  color: active ? '#fff' : '#374151',
-  fontFamily: 'inherit',
-});
-
-const exportBtnStyle: React.CSSProperties = {
-  padding: '6px 12px',
-  fontSize: 13,
-  fontWeight: 500,
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  background: '#fff',
-  color: '#374151',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  position: 'relative',
-};
-
-const dropdownStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  right: 0,
-  marginTop: 4,
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 6,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-  zIndex: 50,
-  minWidth: 140,
-  overflow: 'hidden',
-};
-
-const dropdownItem: React.CSSProperties = {
-  display: 'block',
-  width: '100%',
-  padding: '8px 14px',
-  fontSize: 13,
-  border: 'none',
-  background: 'transparent',
-  color: '#374151',
-  textAlign: 'left',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
 
 export default function DocumentHeader({
   meta,
@@ -164,41 +70,40 @@ export default function DocumentHeader({
 }: DocumentHeaderProps) {
   const [showMore, setShowMore] = useState(false);
 
+  const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
+
   return (
-    <header style={headerStyle}>
+    <header className={cn('flex flex-col py-2 px-4 bg-white border-b border-[#e5e7eb] shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
       {/* Row 1: breadcrumb + title + status + participants */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className={cn('flex items-center justify-between')}>
+        <div className={cn('flex items-center gap-2.5')}>
           {onBack && (
-            <button onClick={onBack} style={{
-              background: 'none', border: 'none', color: '#3b82f6',
-              cursor: 'pointer', fontSize: 13, padding: '2px 0',
-              display: 'flex', alignItems: 'center', gap: 4,
-              fontFamily: 'inherit',
-            }}>
+            <button
+              onClick={onBack}
+              className={cn('bg-transparent border-none text-[#3b82f6] cursor-pointer text-[13px] p-0 flex items-center gap-1 font-[inherit]')}
+            >
               &larr; Documents
             </button>
           )}
           <input
-            style={titleInput}
+            className={cn('text-base font-semibold border border-transparent rounded outline-none bg-transparent font-[inherit] min-w-[180px] text-[#111827] py-1 px-2 focus:border-[#3b82f6]')}
             value={meta.title}
             placeholder="Untitled document"
             onChange={(e) => onUpdateMeta({ title: e.target.value })}
-            onFocus={(e) => {
-              (e.target as HTMLInputElement).style.borderColor = '#3b82f6';
-            }}
-            onBlur={(e) => {
-              (e.target as HTMLInputElement).style.borderColor = 'transparent';
-            }}
           />
-          <span style={statusBadge(meta.status)}>{meta.status}</span>
+          <span
+            className={cn('inline-block text-[11px] font-semibold py-0.5 px-2.5 rounded-full')}
+            style={{ background: sc.bg, color: sc.text }}
+          >
+            {meta.status}
+          </span>
           {mode === 'editor' && (
-            <span style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>
+            <span className={cn('text-[11px] text-text-tertiary italic')}>
               Auto-saved
             </span>
           )}
           {meta.updatedAt && (
-            <span style={{ fontSize: 11, color: '#94a3b8' }}>
+            <span className={cn('text-[11px] text-text-tertiary')}>
               Last edited {(() => {
                 const diff = Date.now() - new Date(meta.updatedAt).getTime();
                 const mins = Math.floor(diff / 60000);
@@ -211,17 +116,7 @@ export default function DocumentHeader({
             </span>
           )}
           {commentCount != null && commentCount > 0 && (
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 4,
-              fontSize: 11,
-              fontWeight: 600,
-              padding: '2px 10px',
-              borderRadius: 9999,
-              background: '#f3f4f6',
-              color: '#6b7280',
-            }}>
+            <span className={cn('inline-flex items-center gap-1 text-[11px] font-semibold py-0.5 px-2.5 rounded-full bg-[#f3f4f6] text-[#6b7280]')}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
@@ -235,24 +130,31 @@ export default function DocumentHeader({
       </div>
 
       {/* Row 2: mode selector + actions */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 4 }}>
-        <div style={centerStyle}>
+      <div className={cn('flex items-center justify-between flex-wrap gap-1')}>
+        <div className={cn('flex gap-1')}>
           {modeLabels.map(({ mode: m, label }) => (
             <button
               key={m}
               type="button"
               data-testid={`mode-btn-${m}`}
-              style={modeBtnStyle(mode === m)}
+              className={cn(
+                'py-1.5 px-3.5 text-[13px] font-semibold border border-[#d1d5db] rounded-md cursor-pointer font-[inherit]',
+                mode === m ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#374151]',
+              )}
               onClick={() => onModeChange(m)}
             >
               {label}
             </button>
           ))}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className={cn('flex items-center gap-2')}>
 
           {/* My Items — always visible */}
-          <button type="button" style={exportBtnStyle} onClick={onToggleMyItems}>
+          <button
+            type="button"
+            className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#d1d5db] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative')}
+            onClick={onToggleMyItems}
+          >
             My Items{myItemCount ? ` (${myItemCount})` : ''}
           </button>
 
@@ -260,10 +162,10 @@ export default function DocumentHeader({
           {onToggleVideoCall && (
             <button
               type="button"
-              style={{
-                ...exportBtnStyle,
-                ...(isCallActive ? { background: '#dcfce7', color: '#166534', border: '1px solid #86efac' } : {}),
-              }}
+              className={cn(
+                'py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative',
+                isCallActive ? 'bg-[#dcfce7] text-[#166534] border-[#86efac]' : 'bg-white text-[#374151] border-[#d1d5db]',
+              )}
               onClick={onToggleVideoCall}
             >
               {isCallActive ? 'In Call' : 'Call'}
@@ -272,60 +174,67 @@ export default function DocumentHeader({
 
           {/* Finalize / Unlock */}
           {meta.status === 'final' ? (
-            <button type="button" style={{ ...exportBtnStyle, background: '#f0fdf4', color: '#065f46', border: '1px solid #86efac' }} onClick={onUnlock}>
+            <button
+              type="button"
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-[#f0fdf4] text-[#065f46] cursor-pointer font-[inherit] relative')}
+              onClick={onUnlock}
+            >
               Unlock
             </button>
           ) : (
-            <button type="button" style={{ ...exportBtnStyle, background: '#f0fdf4', color: '#065f46', border: '1px solid #86efac' }} onClick={onFinalize}>
+            <button
+              type="button"
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-[#f0fdf4] text-[#065f46] cursor-pointer font-[inherit] relative')}
+              onClick={onFinalize}
+            >
               Finalize
             </button>
           )}
 
-          {/* ⋯ More — secondary actions + export */}
-          <div style={{ position: 'relative' }}>
+          {/* More — secondary actions + export */}
+          <div className={cn('relative')}>
             <button
               type="button"
-              style={{ ...exportBtnStyle, letterSpacing: 1 }}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#d1d5db] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative tracking-wider')}
               onClick={() => setShowMore((v) => !v)}
               title="More actions"
             >
               ⋯
             </button>
             {showMore && (
-              <div style={{ ...dropdownStyle, right: 0, minWidth: 160 }}>
-                <button type="button" style={dropdownItem} onClick={() => { onToggleHistory(); setShowMore(false); }}
-                  onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#f3f4f6'; }}
-                  onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'transparent'; }}
+              <div className={cn('absolute top-full right-0 mt-1 bg-white border border-[#e5e7eb] rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
+                <button
+                  type="button"
+                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
+                  onClick={() => { onToggleHistory(); setShowMore(false); }}
                 >
                   History
                 </button>
                 {onToggleVideoHistory && (pastCallsCount ?? 0) > 0 && (
-                  <button type="button" style={dropdownItem} onClick={() => { onToggleVideoHistory(); setShowMore(false); }}
-                    onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#f3f4f6'; }}
-                    onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'transparent'; }}
+                  <button
+                    type="button"
+                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
+                    onClick={() => { onToggleVideoHistory(); setShowMore(false); }}
                   >
                     Past Calls ({pastCallsCount})
                   </button>
                 )}
-                <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
+                <div className={cn('border-t border-[#f1f5f9] my-1')} />
                 {(['markdown', 'pdf', 'json'] as const).map((fmt) => (
                   <button
                     key={fmt}
                     type="button"
-                    style={dropdownItem}
+                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
                     onClick={() => { onExport(fmt); setShowMore(false); }}
-                    onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#f3f4f6'; }}
-                    onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'transparent'; }}
                   >
                     Export {fmt.charAt(0).toUpperCase() + fmt.slice(1)}
                   </button>
                 ))}
-                <div style={{ borderTop: '1px solid #f1f5f9', margin: '4px 0' }} />
-                <button type="button"
-                  style={{ ...dropdownItem, color: '#dc2626' }}
+                <div className={cn('border-t border-[#f1f5f9] my-1')} />
+                <button
+                  type="button"
+                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#dc2626] text-left cursor-pointer font-[inherit] hover:bg-[#fff5f5]')}
                   onClick={() => { setShowMore(false); if (window.confirm('Clear all document content? This cannot be undone.')) onClearDocument(); }}
-                  onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#fff5f5'; }}
-                  onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'transparent'; }}
                 >
                   Clear Document
                 </button>

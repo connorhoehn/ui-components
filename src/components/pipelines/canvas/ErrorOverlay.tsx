@@ -5,8 +5,8 @@
 // category badge, error message, failed nodeId, optional collapsible stack
 // trace, "Copy error details" and "Retry from here" actions.
 
-import { useState, useCallback, type CSSProperties } from 'react';
-import { colors } from '../../../constants/styles';
+import { useState, useCallback } from 'react';
+import { cn } from '../../../lib/cn';
 import type { ErrorCategory, PipelineRunError } from '../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -47,58 +47,6 @@ function categoryLabel(cat: ErrorCategory): string {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const overlayStyle: CSSProperties = {
-  position: 'fixed',
-  zIndex: 100,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 10,
-  boxShadow: '0 12px 32px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08)',
-  padding: 0,
-  width: 340,
-  maxHeight: 420,
-  overflowY: 'auto',
-  fontFamily: 'inherit',
-  color: colors.textPrimary,
-};
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '12px 14px 10px',
-  borderBottom: `1px solid ${colors.border}`,
-};
-
-const bodyStyle: CSSProperties = {
-  padding: '12px 14px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
-
-const footerStyle: CSSProperties = {
-  display: 'flex',
-  gap: 8,
-  padding: '10px 14px 12px',
-  borderTop: `1px solid ${colors.border}`,
-};
-
-const btnStyle: CSSProperties = {
-  padding: '6px 12px',
-  fontSize: 12,
-  fontWeight: 600,
-  border: 'none',
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  lineHeight: 1.3,
-};
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -134,75 +82,49 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
     onRetry?.();
   }, [onRetry]);
 
-  // Position the overlay near the anchor with a slight offset to avoid
-  // covering the node itself. Clamp to viewport bounds.
+  // Position the overlay near the anchor with a slight offset
   const top = Math.min(anchor.y + 8, window.innerHeight - 440);
   const left = Math.min(anchor.x + 12, window.innerWidth - 360);
 
   return (
     <div
-      style={{ ...overlayStyle, top: Math.max(8, top), left: Math.max(8, left) }}
+      className="fixed z-[100] bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-[#0f172a]"
+      style={{ top: Math.max(8, top), left: Math.max(8, left) }}
       data-testid="error-overlay"
       role="dialog"
       aria-label={`Error details for node ${error.nodeId}`}
     >
       {/* Header */}
-      <div style={headerStyle}>
+      <div className="flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b border-[#e2e8f0]">
         <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '2px 8px',
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 700,
-            background: catColor.bg,
-            color: catColor.fg,
-            lineHeight: 1.4,
-          }}
+          className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold leading-snug"
+          style={{ background: catColor.bg, color: catColor.fg }}
           data-testid="error-category-badge"
         >
           {categoryLabel(category)}
         </span>
-        <span style={{ flex: 1 }} />
+        <span className="flex-1" />
         <button
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss error overlay"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.textTertiary,
-            cursor: 'pointer',
-            fontSize: 16,
-            lineHeight: 1,
-            padding: '2px 4px',
-          }}
+          className="bg-transparent border-none text-[#94a3b8] cursor-pointer text-base leading-none px-1 py-0.5"
         >
-          ×
+          {'×'}
         </button>
       </div>
 
       {/* Body */}
-      <div style={bodyStyle}>
+      <div className="px-3.5 py-3 flex flex-col gap-2.5">
         {/* Error message */}
-        <div style={{ fontSize: 13, lineHeight: 1.5, color: colors.textPrimary }}>
+        <div className="text-[13px] leading-normal text-[#0f172a]">
           {error.message}
         </div>
 
         {/* Node ID */}
-        <div style={{ fontSize: 11, color: colors.textTertiary }}>
+        <div className="text-[11px] text-[#94a3b8]">
           Failed node:{' '}
-          <code
-            style={{
-              background: '#f1f5f9',
-              padding: '1px 5px',
-              borderRadius: 3,
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: 11,
-              color: colors.textSecondary,
-            }}
-          >
+          <code className="bg-[#f1f5f9] px-[5px] py-px rounded-[3px] font-mono text-[11px] text-[#475569]">
             {error.nodeId}
           </code>
         </div>
@@ -213,38 +135,14 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
             <button
               type="button"
               onClick={() => setStackOpen((v) => !v)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                padding: 0,
-                cursor: 'pointer',
-                fontSize: 12,
-                fontWeight: 500,
-                color: colors.textSecondary,
-                fontFamily: 'inherit',
-              }}
+              className="bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-[#475569] font-inherit"
               data-testid="error-stack-toggle"
             >
               {stackOpen ? '▾' : '▸'} Stack trace
             </button>
             {stackOpen && (
               <pre
-                style={{
-                  marginTop: 6,
-                  padding: 10,
-                  background: '#f8fafc',
-                  border: `1px solid ${colors.border}`,
-                  borderRadius: 6,
-                  fontSize: 10,
-                  lineHeight: 1.5,
-                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                  color: colors.textSecondary,
-                  whiteSpace: 'pre-wrap',
-                  wordBreak: 'break-all',
-                  maxHeight: 160,
-                  overflowY: 'auto',
-                  margin: 0,
-                }}
+                className="mt-1.5 p-2.5 bg-[#f8fafc] border border-[#e2e8f0] rounded-md text-[10px] leading-normal font-mono text-[#475569] whitespace-pre-wrap break-all max-h-40 overflow-y-auto m-0"
                 data-testid="error-stack-content"
               >
                 {error.stack}
@@ -255,15 +153,11 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
       </div>
 
       {/* Footer actions */}
-      <div style={footerStyle}>
+      <div className="flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-[#e2e8f0]">
         <button
           type="button"
           onClick={handleCopy}
-          style={{
-            ...btnStyle,
-            background: '#f1f5f9',
-            color: colors.textSecondary,
-          }}
+          className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-[#f1f5f9] text-[#475569]"
           data-testid="error-copy-btn"
         >
           {copied ? 'Copied!' : 'Copy error details'}
@@ -272,11 +166,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
           <button
             type="button"
             onClick={handleRetry}
-            style={{
-              ...btnStyle,
-              background: colors.primary,
-              color: '#ffffff',
-            }}
+            className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-primary text-white"
             data-testid="error-retry-btn"
           >
             Retry from here

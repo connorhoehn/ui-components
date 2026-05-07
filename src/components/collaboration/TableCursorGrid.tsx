@@ -52,43 +52,16 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
   });
 
   return (
-    <div
-      style={{
-        overflow: 'auto',
-        border: '1px solid #e5e7eb',
-        borderRadius: 4,
-      }}
-    >
-      <table
-        style={{
-          borderCollapse: 'collapse',
-          width: '100%',
-        }}
-      >
+    <div className="overflow-auto border border-gray-200 rounded">
+      <table className="border-collapse w-full">
         <thead>
           <tr>
             {/* empty corner cell */}
-            <th
-              style={{
-                fontWeight: 'bold',
-                background: '#f9fafb',
-                padding: '6px',
-                minWidth: 40,
-                textAlign: 'center',
-                border: '1px solid #e5e7eb',
-              }}
-            />
+            <th className="font-bold bg-gray-50 p-1.5 min-w-[40px] text-center border border-gray-200" />
             {COL_HEADERS.map((header) => (
               <th
                 key={header}
-                style={{
-                  fontWeight: 'bold',
-                  background: '#f9fafb',
-                  padding: '6px',
-                  minWidth: 80,
-                  textAlign: 'center',
-                  border: '1px solid #e5e7eb',
-                }}
+                className="font-bold bg-gray-50 p-1.5 min-w-[80px] text-center border border-gray-200"
               >
                 {header}
               </th>
@@ -99,16 +72,7 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
           {Array.from({ length: ROW_COUNT }, (_, rowIndex) => (
             <tr key={rowIndex}>
               {/* Row header */}
-              <th
-                style={{
-                  fontWeight: 'bold',
-                  background: '#f9fafb',
-                  padding: '6px',
-                  minWidth: 40,
-                  textAlign: 'center',
-                  border: '1px solid #e5e7eb',
-                }}
-              >
+              <th className="font-bold bg-gray-50 p-1.5 min-w-[40px] text-center border border-gray-200">
                 {rowIndex + 1}
               </th>
 
@@ -121,47 +85,13 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
                   <td
                     key={colIndex}
                     onClick={() => onCellClick(rowIndex, colIndex)}
-                    style={{
-                      position: 'relative',
-                      padding: 8,
-                      minWidth: 80,
-                      height: 30,
-                      border: '1px solid #e5e7eb',
-                      cursor: 'pointer',
-                      background: 'white',
-                    }}
+                    className="relative p-2 min-w-[80px] h-[30px] border border-gray-200 cursor-pointer bg-white"
                   >
                     {/* Local cursor cell highlight */}
                     {localCursorKey === key && (
                       <div>
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            border: '2px dashed #3b82f6',
-                            borderRadius: 4,
-                            pointerEvents: 'none',
-                            zIndex: 9,
-                          }}
-                        />
-                        <div
-                          style={{
-                            position: 'absolute',
-                            top: -10,
-                            right: 0,
-                            fontSize: 10,
-                            background: '#3b82f6',
-                            color: 'white',
-                            padding: '1px 4px',
-                            borderRadius: 3,
-                            pointerEvents: 'none',
-                            zIndex: 19,
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
+                        <div className="absolute inset-0 border-2 border-dashed border-blue-500 rounded pointer-events-none z-[9]" />
+                        <div className="absolute -top-2.5 right-0 text-[10px] bg-blue-500 text-white px-1 py-px rounded-[3px] pointer-events-none z-[19] whitespace-nowrap">
                           You
                         </div>
                       </div>
@@ -180,34 +110,21 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
                         <div key={cursor.clientId}>
                           {/* Cell-border indicator */}
                           <div
+                            className="absolute inset-0 rounded pointer-events-none"
                             style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
                               border: `${borderWidth}px solid ${color}`,
-                              borderRadius: 4,
                               boxShadow: `0 0 0 1px ${color}`,
-                              pointerEvents: 'none',
                               zIndex: 10 + i,
                               opacity: 1 - i * 0.15,
                             }}
                           />
                           {/* Initials badge */}
                           <div
+                            className="absolute -top-2.5 text-[10px] text-white px-1 py-px rounded-[3px] pointer-events-none whitespace-nowrap"
                             style={{
-                              position: 'absolute',
-                              top: -10,
                               left: i * 22,
-                              fontSize: 10,
                               background: color,
-                              color: 'white',
-                              padding: '1px 4px',
-                              borderRadius: 3,
-                              pointerEvents: 'none',
                               zIndex: 20 + i,
-                              whiteSpace: 'nowrap',
                             }}
                           >
                             {initials}

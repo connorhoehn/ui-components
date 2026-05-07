@@ -4,18 +4,12 @@
 // Transform, and Action nodes. Until this landed, retryPolicy was defined in
 // types but had no UI surface — operators had to hand-edit JSON.
 
-import type { CSSProperties } from 'react';
 import type { RetryPolicy } from '../../../types/pipeline';
-import { fieldStyle, colors } from '../../../constants/styles';
 
 export interface RetryPolicyEditorProps {
   value: RetryPolicy | undefined;
   onChange: (next: RetryPolicy | undefined) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 4 };
-const warningStyle: CSSProperties = { fontSize: 11, color: '#ca8a04', marginTop: 4 };
 
 const DEFAULT_POLICY: RetryPolicy = {
   maxAttempts: 3,
@@ -52,8 +46,8 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
   const tailRiskMs = totalDelayMs > 5 * 60 * 1000;
 
   return (
-    <div data-testid="retry-policy-editor" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <label style={{ ...labelStyle, display: 'flex', alignItems: 'center', gap: 6 }}>
+    <div data-testid="retry-policy-editor" className="flex flex-col gap-1.5">
+      <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
         <input
           type="checkbox"
           checked={enabled}
@@ -63,19 +57,19 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
         Retry policy
       </label>
       {!enabled && (
-        <div style={helpStyle}>No retries — failure is terminal on first attempt.</div>
+        <div className="text-[11px] text-text-tertiary mt-1">No retries — failure is terminal on first attempt.</div>
       )}
       {enabled && (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 4 }}>
+          <div className="grid grid-cols-3 gap-2 mt-1">
             <div>
-              <label style={{ ...labelStyle, fontSize: 11 }}>Max attempts</label>
+              <label className="text-[11px] font-semibold text-text-secondary">Max attempts</label>
               <input
                 type="number"
                 min={1}
                 max={10}
                 step={1}
-                style={{ ...fieldStyle, marginTop: 2 }}
+                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
                 value={policy.maxAttempts}
                 onChange={(e) => {
                   const n = Math.max(1, Math.min(10, parseInt(e.target.value, 10) || 1));
@@ -85,12 +79,12 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
               />
             </div>
             <div>
-              <label style={{ ...labelStyle, fontSize: 11 }}>Initial backoff (ms)</label>
+              <label className="text-[11px] font-semibold text-text-secondary">Initial backoff (ms)</label>
               <input
                 type="number"
                 min={0}
                 step={100}
-                style={{ ...fieldStyle, marginTop: 2 }}
+                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
                 value={policy.backoffMs}
                 onChange={(e) => {
                   const n = Math.max(0, parseInt(e.target.value, 10) || 0);
@@ -100,13 +94,13 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
               />
             </div>
             <div>
-              <label style={{ ...labelStyle, fontSize: 11 }}>Backoff multiplier</label>
+              <label className="text-[11px] font-semibold text-text-secondary">Backoff multiplier</label>
               <input
                 type="number"
                 min={1}
                 max={4}
                 step={0.5}
-                style={{ ...fieldStyle, marginTop: 2 }}
+                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
                 value={policy.backoffMultiplier}
                 onChange={(e) => {
                   const n = Math.max(1, Math.min(4, parseFloat(e.target.value) || 1));
@@ -116,7 +110,7 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
               />
             </div>
           </div>
-          <div style={helpStyle} data-testid="retry-policy-preview">
+          <div className="text-[11px] text-text-tertiary mt-1" data-testid="retry-policy-preview">
             {policy.maxAttempts === 1
               ? 'Effectively no retry (1 attempt).'
               : delays.length === 0
@@ -124,7 +118,7 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
                 : `Retries up to ${policy.maxAttempts}× with delays: ${delays.map(formatMs).join(', ')}.`}
           </div>
           {tailRiskMs && (
-            <div style={warningStyle} data-testid="retry-policy-tail-warning">
+            <div className="text-[11px] text-[#ca8a04] mt-1" data-testid="retry-policy-tail-warning">
               ⚠ Total backoff &gt;5min — long-tail latency risk on persistent failures.
             </div>
           )}

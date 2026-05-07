@@ -4,11 +4,9 @@
 // transform type; body shows a truncated mono-font expression snippet.
 // See PIPELINES_PLAN.md §5.3 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { TransformNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type TransformData = TransformNodeData & {
@@ -36,37 +34,23 @@ export default function TransformNode(props: NodeProps<TransformFlowNode>) {
   const retry = useRetryFromStep();
   const onRetry = state === 'failed' ? () => retry(id) : undefined;
 
-  const exprStyle: CSSProperties = {
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    fontSize: 12,
-    color: colors.textPrimary,
-    background: colors.surfaceInset,
-    padding: '2px 6px',
-    borderRadius: 4,
-    display: 'inline-block',
-    maxWidth: '100%',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  };
-
-  const handleStyle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-
   return (
     <BaseNode
       icon="✨"
       subtitle={data.transformType}
       state={state}
-      body={<span style={exprStyle}>{snippet(data.expression)}</span>}
+      body={
+        <span className="font-mono text-xs text-text-primary bg-surface-inset px-1.5 py-0.5 rounded inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
+          {snippet(data.expression)}
+        </span>
+      }
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"  style={handleStyle} />
-      <Handle type="source" position={Position.Right} id="out" style={handleStyle} />
+      <Handle type="target" position={Position.Left}  id="in"  style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="out" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
     </BaseNode>
   );
 }

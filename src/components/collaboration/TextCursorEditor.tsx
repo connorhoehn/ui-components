@@ -170,16 +170,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
   return (
     <div
       ref={containerRef}
-      style={{
-        position: 'relative',
-        border: '1px solid #e5e7eb',
-        borderRadius: 4,
-        minHeight: 120,
-        padding: 12,
-        fontFamily: 'monospace',
-        fontSize: 14,
-        lineHeight: 1.6,
-      }}
+      className="relative border border-gray-200 rounded min-h-[120px] p-3 font-mono text-sm leading-relaxed"
     >
       {/* Contenteditable document */}
       <div
@@ -188,13 +179,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
         suppressContentEditableWarning
         onClick={handleInteraction}
         onKeyUp={handleInteraction}
-        style={{
-          outline: 'none',
-          minHeight: 80,
-          whiteSpace: 'pre-wrap',
-          wordBreak: 'break-word',
-          color: '#1e293b',
-        }}
+        className="outline-none min-h-[80px] whitespace-pre-wrap break-words text-slate-800"
       >
         {INITIAL_TEXT}
       </div>
@@ -204,34 +189,24 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
         textCursors.map(({ cursor, position, color, initials }) => {
           const coords = getTextCoordinates(editable, position);
           return (
-            <div key={cursor.clientId} style={{ pointerEvents: 'none' }}>
+            <div key={cursor.clientId} className="pointer-events-none">
               {/* Blinking caret line */}
               <div
+                className="absolute w-0.5 z-10 pointer-events-none"
                 style={{
-                  position: 'absolute',
-                  top: coords.top + 12, // offset for container padding
+                  top: coords.top + 12,
                   left: coords.left + 12,
-                  width: 2,
                   height: coords.height,
                   background: color,
-                  zIndex: 10,
-                  pointerEvents: 'none',
                 }}
               />
               {/* Initials label above cursor */}
               <div
+                className="absolute text-[10px] text-white px-[3px] py-px rounded-sm z-[11] pointer-events-none whitespace-nowrap"
                 style={{
-                  position: 'absolute',
                   top: coords.top + 12 - 14,
                   left: coords.left + 12,
-                  fontSize: 10,
                   background: color,
-                  color: 'white',
-                  padding: '1px 3px',
-                  borderRadius: 2,
-                  zIndex: 11,
-                  pointerEvents: 'none',
-                  whiteSpace: 'nowrap',
                 }}
               >
                 {initials}
@@ -246,37 +221,23 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
         if (pos.position == null) return null;
         const coords = getTextCoordinates(editable, pos.position);
         return (
-          <div style={{ pointerEvents: 'none' }}>
+          <div className="pointer-events-none">
             {/* Local caret line (dashed) */}
             <div
+              className="absolute w-0.5 z-10 pointer-events-none opacity-70 border-r border-dashed border-blue-500"
               style={{
-                position: 'absolute',
                 top: coords.top + 12,
                 left: coords.left + 12,
-                width: 2,
                 height: coords.height,
                 background: '#3b82f6',
-                zIndex: 10,
-                pointerEvents: 'none',
-                opacity: 0.7,
-                borderRight: '1px dashed #3b82f6',
               }}
             />
             {/* "You" label */}
             <div
+              className="absolute text-[10px] bg-blue-500 text-white px-[3px] py-px rounded-sm z-[11] pointer-events-none whitespace-nowrap opacity-80"
               style={{
-                position: 'absolute',
                 top: coords.top + 12 - 14,
                 left: coords.left + 12,
-                fontSize: 10,
-                background: '#3b82f6',
-                color: 'white',
-                padding: '1px 3px',
-                borderRadius: 2,
-                zIndex: 11,
-                pointerEvents: 'none',
-                whiteSpace: 'nowrap',
-                opacity: 0.8,
               }}
             >
               You
@@ -295,20 +256,18 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
           const top = Math.min(startCoords.top, endCoords.top) + 12;
           const left = startCoords.left + 12;
           const right = endCoords.left + 12;
-          const width = Math.max(right - left, 4);
-          const height = Math.max(startCoords.height, endCoords.height);
+          const w = Math.max(right - left, 4);
+          const h = Math.max(startCoords.height, endCoords.height);
           return (
             <div
               key={`sel-${cursor.clientId}`}
+              className="absolute z-[5] pointer-events-none"
               style={{
-                position: 'absolute',
                 top,
                 left,
-                width,
-                height,
+                width: w,
+                height: h,
                 background: `${color}40`,
-                zIndex: 5,
-                pointerEvents: 'none',
               }}
             />
           );

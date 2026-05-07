@@ -13,7 +13,6 @@
 // Phase 1: fixture-driven. A TODO marker flags Phase 4 polling hookup.
 
 import { useMemo, useRef } from 'react';
-import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import dashboardFixture from './fixtures/dashboardFixture';
 import { useDashboard } from './hooks/useDashboard';
@@ -21,19 +20,19 @@ import { usePipelineMetrics } from './hooks/usePipelineMetrics';
 import type { PipelineMetricsSource } from './hooks/usePipelineMetrics';
 import { useObservability } from './context/ObservabilityContext';
 import type { RecentEvent } from './context/ObservabilityContext';
-import KPICard from './components/KPICard';
+import DashboardKPIStrip from './components/DashboardKPIStrip';
 import NodeGrid from './components/NodeGrid';
 import type { NodeSummary } from './components/NodeGridTile';
 import ActiveRunsTable, { type ActiveRunRow } from './components/ActiveRunsTable';
 import AlertsPanel, { type Alert } from './components/AlertsPanel';
 import EventRow from '../shared/EventRow';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-const EM_DASH = '\u2014';
+const EM_DASH = '—';
 
 /**
  * Format a millisecond value for the KPI card. Returns the em-dash for
@@ -83,22 +82,6 @@ const PHASE1_ACTIVE_RUNS: ActiveRunRow[] = [];
 // Sub-components (kept local — not reused elsewhere)
 // ---------------------------------------------------------------------------
 
-const cardStyle: CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 10,
-  padding: 16,
-  fontFamily: 'inherit',
-};
-
-const sectionTitleStyle: CSSProperties = {
-  fontSize: 14,
-  fontWeight: 600,
-  color: colors.textPrimary,
-  marginBottom: 8,
-  fontFamily: 'inherit',
-};
-
 /**
  * Tiny pill that surfaces where pipeline metrics came from on this poll.
  * Rendering rules (Wave 2 / AUDIT-06):
@@ -112,29 +95,22 @@ function MetricsSourcePill({ source }: { source: PipelineMetricsSource | null })
   if (source === null || source === 'bridge') return null;
 
   const isError = source === 'error';
-  const background = isError ? '#fef2f2' : '#fffbeb';
-  const color = isError ? colors.state.failed : colors.state.awaiting;
-  const label = isError ? 'metrics error' : 'demo data';
-  const title = isError
-    ? '/api/pipelines/metrics returned an error — values are placeholders'
-    : 'No pipeline bridge wired — metrics are synthesized fixture data';
 
   return (
     <span
       data-testid="pipeline-metrics-source-pill"
       data-source={source}
-      title={title}
-      style={{
-        display: 'inline-block',
-        padding: '2px 8px',
-        borderRadius: 4,
-        fontSize: 11,
-        fontWeight: 600,
-        background,
-        color,
-      }}
+      title={
+        isError
+          ? '/api/pipelines/metrics returned an error — values are placeholders'
+          : 'No pipeline bridge wired — metrics are synthesized fixture data'
+      }
+      className={cn(
+        'inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold',
+        isError ? 'bg-danger-bg text-state-failed' : 'bg-warning-bg text-state-awaiting'
+      )}
     >
-      {label}
+      {isError ? 'metrics error' : 'demo data'}
     </span>
   );
 }
@@ -150,28 +126,17 @@ function LiveToggle({
     <button
       data-testid="live-toggle"
       onClick={() => onChange(!live)}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-        padding: '4px 10px',
-        fontSize: 12,
-        fontWeight: 600,
-        background: live ? colors.surface : colors.surfaceInset,
-        border: `1px solid ${live ? colors.primary : colors.border}`,
-        borderRadius: 6,
-        color: live ? colors.primary : colors.textSecondary,
-        cursor: 'pointer',
-        fontFamily: 'inherit',
-      }}
+      className={cn(
+        'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold',
+        'rounded-md cursor-pointer font-[inherit]',
+        live
+          ? 'bg-surface border border-primary text-primary'
+          : 'bg-surface-inset border border-border text-text-secondary'
+      )}
     >
       <span
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: live ? colors.state.completed : colors.textTertiary,
-        }}
+        className="w-2 h-2 rounded-full"
+        style={{ background: live ? '#16a34a' : '#94a3b8' }}
       />
       {live ? 'Live' : 'Paused'}
     </button>
@@ -190,31 +155,19 @@ function ClusterHealthCard({
   onSelect: (id: string) => void;
 }) {
   const allHealthy = healthyCount === totalCount;
-  const chipBg = allHealthy ? '#f0fdf4' : '#fffbeb';
-  const chipColor = allHealthy ? colors.state.completed : colors.state.awaiting;
 
   return (
-    <div style={cardStyle}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 12,
-        }}
-      >
-        <div style={sectionTitleStyle}>Cluster health</div>
+    <div className="bg-surface border border-border rounded-[10px] p-4 font-[inherit]">
+      <div className="flex justify-between items-center mb-3">
+        <div className="text-sm font-semibold text-text-primary mb-0 font-[inherit]">
+          Cluster health
+        </div>
         <span
           data-testid="cluster-health-chip"
-          style={{
-            display: 'inline-block',
-            padding: '2px 8px',
-            borderRadius: 4,
-            fontSize: 11,
-            fontWeight: 600,
-            background: chipBg,
-            color: chipColor,
-          }}
+          className={cn(
+            'inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold',
+            allHealthy ? 'bg-success-bg text-state-completed' : 'bg-warning-bg text-state-awaiting'
+          )}
         >
           {healthyCount}/{totalCount} {allHealthy ? '✓' : '!'}
         </span>
@@ -232,45 +185,25 @@ function RecentEventsCard({
   onViewAll: () => void;
 }) {
   return (
-    <div style={cardStyle}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 8,
-        }}
-      >
-        <div style={sectionTitleStyle}>Recent events (last 20)</div>
+    <div className="bg-surface border border-border rounded-[10px] p-4 font-[inherit]">
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-sm font-semibold text-text-primary font-[inherit]">
+          Recent events (last 20)
+        </div>
         <button
           data-testid="recent-events-view-all"
           onClick={onViewAll}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.primary,
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="bg-transparent border-none text-primary text-xs font-semibold cursor-pointer font-[inherit]"
         >
           ▸ view all
         </button>
       </div>
       {events.length === 0 ? (
-        <div
-          style={{
-            padding: 16,
-            textAlign: 'center',
-            color: colors.textTertiary,
-            fontSize: 13,
-          }}
-        >
+        <div className="p-4 text-center text-text-tertiary text-[13px]">
           No recent events
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className="flex flex-col gap-0.5">
           {events.slice(0, 20).map((e) => (
             <EventRow
               key={e.id}
@@ -357,38 +290,14 @@ export default function DashboardPage() {
   return (
     <div
       data-testid="observability-dashboard"
-      style={{
-        padding: 24,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16,
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        fontSize: 13,
-        color: colors.textPrimary,
-        background: colors.surfacePanel,
-        minHeight: '100%',
-      }}
+      className="p-6 flex flex-col gap-4 font-sans text-[13px] text-text-primary bg-surface-panel min-h-full"
     >
       {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 18,
-            fontWeight: 700,
-            color: colors.textPrimary,
-            margin: 0,
-            lineHeight: 1.3,
-          }}
-        >
+      <div className="flex justify-between items-center">
+        <h1 className="text-lg font-bold text-text-primary m-0 leading-[1.3]">
           Dashboard
         </h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex items-center gap-2">
           <span
             data-testid="dashboard-data-source"
             title={
@@ -396,11 +305,10 @@ export default function DashboardPage() {
                 ? 'Connected to /api/observability/dashboard'
                 : 'Backend unreachable — using fixture data'
             }
-            style={{
-              fontSize: 11,
-              color: isLiveData ? colors.state.completed : colors.textTertiary,
-              fontWeight: 600,
-            }}
+            className={cn(
+              'text-[11px] font-semibold',
+              isLiveData ? 'text-state-completed' : 'text-text-tertiary'
+            )}
           >
             {isLiveData ? 'live data' : 'fixture'}
           </span>
@@ -409,44 +317,18 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* KPI row — responsive auto-fit grid (minmax 170px). 5 cards may wrap
-          to 4+1 or 5+0 depending on viewport; both layouts are intentional.
-          Deltas suppressed when the underlying KPI is null/em-dash so we
-          don't render a stale "▲ 12%" next to "—". */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-          gap: 16,
-        }}
-      >
-        <KPICard
-          title="Runs today"
-          value={runsToday}
-          delta={typeof runsToday === 'number' ? { value: 12, direction: 'up' } : undefined}
-          sparklineData={runsSparkline}
-        />
-        <KPICard
-          title="Active now"
-          value={activeNow}
-          onClick={handleScrollToActive}
-        />
-        <KPICard
-          title="Pending approvals"
-          value={pendingApprovals}
-          onClick={handleGoToPipelines}
-        />
-        <KPICard
-          title="Failed (24h)"
-          value={failed24h}
-          delta={typeof failed24h === 'number' ? { value: 4, direction: 'down' } : undefined}
-          onClick={handleGoToFailedEvents}
-        />
-        <KPICard
-          title="Avg first-token latency"
-          value={avgFirstTokenLatency}
-        />
-      </div>
+      {/* KPI row */}
+      <DashboardKPIStrip
+        runsToday={runsToday}
+        runsSparkline={runsSparkline}
+        activeNow={activeNow}
+        pendingApprovals={pendingApprovals}
+        failed24h={failed24h}
+        avgFirstTokenLatency={avgFirstTokenLatency}
+        onScrollToActive={handleScrollToActive}
+        onGoToPipelines={handleGoToPipelines}
+        onGoToFailedEvents={handleGoToFailedEvents}
+      />
 
       {/* Cluster health */}
       <ClusterHealthCard
@@ -458,7 +340,7 @@ export default function DashboardPage() {
 
       {/* Active runs */}
       <div ref={activeRunsRef}>
-        <div style={sectionTitleStyle}>
+        <div className="text-sm font-semibold text-text-primary mb-2 font-[inherit]">
           Active runs ({PHASE1_ACTIVE_RUNS.length})
         </div>
         <ActiveRunsTable
@@ -477,7 +359,9 @@ export default function DashboardPage() {
 
       {/* Alerts */}
       <div>
-        <div style={sectionTitleStyle}>Alerts ({alerts.length})</div>
+        <div className="text-sm font-semibold text-text-primary mb-2 font-[inherit]">
+          Alerts ({alerts.length})
+        </div>
         <AlertsPanel alerts={alerts} />
       </div>
     </div>

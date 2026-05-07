@@ -7,6 +7,7 @@
 // Delete flows through a confirmation modal.
 
 import { useEffect, useState } from 'react';
+import { cn } from '../../lib/cn';
 import { DocumentTypeWizard } from './DocumentTypeWizard';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
@@ -24,16 +25,6 @@ export interface DocumentTypesPageProps {
 }
 
 type Mode = 'idle' | 'create' | 'edit';
-
-// ---------------------------------------------------------------------------
-// Shared micro-styles
-// ---------------------------------------------------------------------------
-
-const menuBtn: React.CSSProperties = {
-  display: 'block', width: '100%', textAlign: 'left',
-  padding: '8px 14px', fontSize: 13, border: 'none',
-  background: 'transparent', cursor: 'pointer', fontFamily: 'inherit',
-};
 
 // ---------------------------------------------------------------------------
 // Delete confirmation modal
@@ -58,31 +49,23 @@ function DeleteConfirmModal({
         <button
           data-testid="cancel-delete"
           onClick={onCancel}
-          style={{
-            padding: '7px 18px', fontSize: 13, fontWeight: 600,
-            background: '#fff', border: '1px solid #d1d5db', borderRadius: 7,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-white border border-border-field rounded-[7px] cursor-pointer font-inherit"
         >
           Cancel
         </button>
         <button
           data-testid="confirm-delete"
           onClick={onConfirm}
-          style={{
-            padding: '7px 18px', fontSize: 13, fontWeight: 600,
-            background: '#dc2626', color: '#fff', border: 'none', borderRadius: 7,
-            cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-[7px] cursor-pointer font-inherit"
         >
           Delete
         </button>
       </>}
     >
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+      <div className="text-base font-semibold text-text-primary mb-2.5">
         Delete document type?
       </div>
-      <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>
+      <p className="text-[13px] text-[#64748b] m-0">
         <strong>"{typeName}"</strong> will be permanently removed. Documents already
         created from this type are unaffected.
       </p>
@@ -108,20 +91,19 @@ function TypeListItem({
   return (
     <div
       data-testid={`type-item-${type.id}`}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 10px', borderRadius: 7, marginBottom: 2,
-        background: active ? '#ede9fe' : 'transparent',
-        border: active ? '1px solid #c4b5fd' : '1px solid transparent',
-        transition: 'background 100ms',
-      }}
+      className={cn(
+        'flex items-center gap-2 py-2 px-2.5 rounded-[7px] mb-0.5 transition-colors',
+        active
+          ? 'bg-[#ede9fe] border border-[#c4b5fd]'
+          : 'bg-transparent border border-transparent',
+      )}
     >
-      <span style={{ fontSize: 18, flexShrink: 0 }}>{type.icon}</span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 500, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <span className="text-lg shrink-0">{type.icon}</span>
+      <div className="flex-1 min-w-0">
+        <div className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
           {type.name}
         </div>
-        <div style={{ fontSize: 11, color: '#94a3b8' }}>
+        <div className="text-[11px] text-[#94a3b8]">
           {type.fields.length} field{type.fields.length !== 1 ? 's' : ''}
         </div>
       </div>
@@ -129,16 +111,10 @@ function TypeListItem({
         data-testid={`edit-type-${type.id}`}
         onClick={onSelect}
         title="Edit type"
-        style={{
-          background: active ? '#c4b5fd' : 'none',
-          border: '1px solid transparent',
-          color: active ? '#4c1d95' : '#94a3b8',
-          cursor: 'pointer', fontSize: 12, padding: '3px 8px',
-          flexShrink: 0, lineHeight: 1, borderRadius: 4,
-          fontWeight: 600, fontFamily: 'inherit',
-        }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#ede9fe'; (e.currentTarget as HTMLElement).style.color = '#4c1d95'; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = active ? '#c4b5fd' : 'none'; (e.currentTarget as HTMLElement).style.color = active ? '#4c1d95' : '#94a3b8'; }}
+        className={cn(
+          'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-[#ede9fe] hover:text-[#4c1d95]',
+          active ? 'bg-[#c4b5fd] text-[#4c1d95]' : 'bg-transparent text-[#94a3b8]',
+        )}
       >
         Edit
       </button>
@@ -146,14 +122,7 @@ function TypeListItem({
         data-testid={`delete-type-${type.id}`}
         onClick={e => { e.stopPropagation(); onDeleteRequest(); }}
         title="Delete type"
-        style={{
-          background: 'none', border: 'none', color: '#ef4444',
-          cursor: 'pointer', fontSize: 16, padding: '2px 5px',
-          flexShrink: 0, opacity: 0.55, lineHeight: 1,
-          borderRadius: 4,
-        }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.opacity = '1'; }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.opacity = '0.55'; }}
+        className="bg-transparent border-none text-[#ef4444] cursor-pointer text-base px-[5px] py-0.5 shrink-0 opacity-55 leading-none rounded hover:opacity-100"
       >
         ×
       </button>
@@ -174,18 +143,12 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
   const [cookbooksOpen, setCookbooksOpen] = useState(false);
   const [saveMessage, setSaveMessage] = useState<{ text: string; key: number; syncSuffix?: string } | null>(null);
 
-  // When a sync resolves, decorate the most recent save banner with the
-  // outcome. Tests assert via toHaveTextContent (substring match) so the
-  // existing "X created" / "X updated" assertions stay green.
   useEffect(() => {
     if (!lastSync || !saveMessage) return;
-    if (saveMessage.syncSuffix !== undefined) return; // already decorated
-    if (lastSync.op === 'delete') return; // delete clears the banner; no decoration
+    if (saveMessage.syncSuffix !== undefined) return;
+    if (lastSync.op === 'delete') return;
     const suffix = lastSync.ok ? ' — synced' : ' — offline';
     setSaveMessage((prev) => prev ? { ...prev, syncSuffix: suffix } : prev);
-    // We deliberately depend on lastSync.key (monotonic), not the whole
-    // object, so a stale render doesn't re-trigger the effect for the
-    // same sync.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastSync?.key]);
 
@@ -257,42 +220,27 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
   // ---------------------------------------------------------------------------
 
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', fontFamily: 'inherit' }}>
+    <div className="flex h-full overflow-hidden font-inherit">
 
-      {/* ── Left sidebar ── */}
-      <div style={{
-        width: 264, flexShrink: 0, borderRight: '1px solid #e2e8f0',
-        display: 'flex', flexDirection: 'column', overflow: 'hidden',
-        background: '#fafbfc',
-      }}>
+      {/* -- Left sidebar -- */}
+      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-[#fafbfc]">
         {/* Header */}
-        <div style={{
-          padding: '14px 16px', borderBottom: '1px solid #e2e8f0',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>
+        <div className="py-3.5 px-4 border-b border-border flex items-center justify-between">
+          <span className="text-[13px] font-bold text-[#374151]">
             Document Types
           </span>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div className="flex gap-1.5">
             <button
               data-testid="cookbooks-btn"
               onClick={() => setCookbooksOpen(true)}
-              style={{
-                padding: '5px 12px', fontSize: 12, fontWeight: 600,
-                background: '#fff', color: '#646cff', border: '1px solid #646cff',
-                borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-              }}
+              className="py-[5px] px-3 text-xs font-semibold bg-white text-primary border border-primary rounded-md cursor-pointer font-inherit"
             >
               Cookbooks
             </button>
             <button
               data-testid="create-type-btn"
               onClick={handleCreateClick}
-              style={{
-                padding: '5px 12px', fontSize: 12, fontWeight: 600,
-                background: '#646cff', color: '#fff', border: 'none',
-                borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-              }}
+              className="py-[5px] px-3 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit"
             >
               + New
             </button>
@@ -300,30 +248,13 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
         </div>
 
         {/* Type list */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }} data-testid="type-list">
+        <div className="flex-1 overflow-y-auto p-2" data-testid="type-list">
           {types.length === 0 ? (
-            <div
-              style={{
-                padding: '32px 16px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              <div style={{ color: '#94a3b8', fontSize: 13 }}>No types yet.</div>
+            <div className="py-8 px-4 flex flex-col items-center gap-2">
+              <div className="text-[#94a3b8] text-[13px]">No types yet.</div>
               <button
                 onClick={handleCreateClick}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#646cff',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: 'pointer',
-                  padding: '4px 8px',
-                  fontFamily: 'inherit',
-                }}
+                className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit"
               >
                 Create one →
               </button>
@@ -346,18 +277,15 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
           <div
             key={saveMessage.key}
             data-testid="save-message"
-            style={{
-              padding: '8px 14px', borderTop: '1px solid #bbf7d0',
-              background: '#f0fdf4', fontSize: 12, color: '#16a34a', fontWeight: 500,
-            }}
+            className="py-2 px-3.5 border-t border-[#bbf7d0] bg-[#f0fdf4] text-xs text-[#16a34a] font-medium"
           >
             ✓ {saveMessage.text}{saveMessage.syncSuffix ?? ''}
           </div>
         )}
       </div>
 
-      {/* ── Right panel ── */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '28px 36px' }} data-testid="right-panel">
+      {/* -- Right panel -- */}
+      <div className="flex-1 overflow-y-auto py-7 px-9" data-testid="right-panel">
         {mode === 'idle' && (
           <EmptyState
             testId="idle-panel"
@@ -382,7 +310,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
         )}
       </div>
 
-      {/* ── Delete confirmation modal ── */}
+      {/* -- Delete confirmation modal -- */}
       {confirmDeleteId && confirmDeleteType && (
         <DeleteConfirmModal
           typeName={confirmDeleteType.name}
@@ -391,7 +319,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
         />
       )}
 
-      {/* ── Cookbooks gallery modal ── */}
+      {/* -- Cookbooks gallery modal -- */}
       <CookbooksModal
         open={cookbooksOpen}
         onClose={() => setCookbooksOpen(false)}

@@ -2,22 +2,17 @@
 //
 // Shared button component with consistent variants.
 
-import { type CSSProperties, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-export interface ButtonProps {
+export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  disabled?: boolean;
   fullWidth?: boolean;
   children: ReactNode;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-  style?: CSSProperties;
-  className?: string;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -39,16 +34,14 @@ export function Button({
   disabled = false,
   fullWidth = false,
   children,
-  onClick,
   type = 'button',
-  style,
   className,
+  ...rest
 }: ButtonProps) {
   return (
     <button
       type={type}
       disabled={disabled}
-      onClick={onClick}
       className={cn(
         'font-semibold rounded-md font-[inherit] transition-colors duration-150 ease-in-out',
         variantClasses[variant],
@@ -58,7 +51,7 @@ export function Button({
         fullWidth && 'w-full',
         className,
       )}
-      style={style}
+      {...rest}
     >
       {children}
     </button>

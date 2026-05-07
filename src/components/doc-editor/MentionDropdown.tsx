@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import ReactDOM from 'react-dom';
 import type { MentionUser } from '../../hooks/useMentionUsers';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -18,82 +19,6 @@ export interface MentionDropdownHandle {
   /** Forward a keydown event from the parent input. Returns true if the dropdown consumed it. */
   handleKeyDown: (e: React.KeyboardEvent | KeyboardEvent) => boolean;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const styles = {
-  container: (pos: { top: number; left: number }): React.CSSProperties => ({
-    position: 'fixed',
-    top: pos.top,
-    left: pos.left,
-    zIndex: 1000,
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: 8,
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
-    maxHeight: 240,
-    overflowY: 'auto',
-    minWidth: 200,
-  }),
-  row: (highlighted: boolean): React.CSSProperties => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding: '8px 12px',
-    cursor: 'pointer',
-    background: highlighted ? '#eff6ff' : 'transparent',
-    transition: 'background 0.1s',
-  }),
-  avatar: (color: string): React.CSSProperties => ({
-    width: 24,
-    height: 24,
-    borderRadius: '50%',
-    background: color,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    fontSize: 11,
-    fontWeight: 600,
-    color: '#ffffff',
-    lineHeight: 1,
-  }),
-  nameContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    flex: 1,
-    minWidth: 0,
-  } as React.CSSProperties,
-  name: {
-    fontSize: 13,
-    fontWeight: 500,
-    color: '#1e293b',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  } as React.CSSProperties,
-  onlineDot: (online: boolean): React.CSSProperties => ({
-    width: 8,
-    height: 8,
-    borderRadius: '50%',
-    background: online ? '#10b981' : '#cbd5e1',
-    flexShrink: 0,
-  }),
-  mode: {
-    fontSize: 11,
-    color: '#94a3b8',
-    flexShrink: 0,
-  } as React.CSSProperties,
-  empty: {
-    padding: '12px 16px',
-    fontSize: 13,
-    color: '#94a3b8',
-    textAlign: 'center',
-  } as React.CSSProperties,
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -168,33 +93,44 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
     useImperativeHandle(ref, () => ({ handleKeyDown }), [handleKeyDown]);
 
     return ReactDOM.createPortal(
-      <div style={styles.container(position)} ref={listRef} role="listbox">
+      <div
+        ref={listRef}
+        role="listbox"
+        className={cn('fixed z-[1000] bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]')}
+        style={{ top: position.top, left: position.left }}
+      >
         {filtered.length === 0 ? (
-          <div style={styles.empty}>No users found</div>
+          <div className={cn('px-4 py-3 text-[13px] text-text-tertiary text-center')}>No users found</div>
         ) : (
           filtered.map((user, i) => (
             <div
               key={user.userId}
               role="option"
               aria-selected={i === activeIndex}
-              style={styles.row(i === activeIndex)}
+              className={cn(
+                'flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors duration-100',
+                i === activeIndex ? 'bg-[#eff6ff]' : 'bg-transparent',
+              )}
               onMouseEnter={() => setActiveIndex(i)}
               onMouseDown={(e) => {
-                e.preventDefault(); // prevent blur on the parent input
+                e.preventDefault();
                 onSelect(user);
               }}
             >
-              <div style={styles.avatar(user.color)}>
+              <div
+                className={cn('w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[11px] font-semibold text-white leading-none')}
+                style={{ background: user.color }}
+              >
                 {user.type === 'group' ? '#' : getInitials(user.displayName)}
               </div>
-              <div style={styles.nameContainer as React.CSSProperties}>
-                <span style={styles.name}>
+              <div className={cn('flex items-center gap-1.5 flex-1 min-w-0')}>
+                <span className={cn('text-[13px] font-medium text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
                   {user.type === 'group' ? `@${user.displayName.toLowerCase()}` : user.displayName}
                 </span>
-                {user.type === 'user' && <span style={styles.onlineDot(user.online)} />}
-                {user.type === 'user' && user.mode && <span style={styles.mode}>{user.mode}</span>}
+                {user.type === 'user' && <span className={cn('w-2 h-2 rounded-full shrink-0')} style={{ background: user.online ? '#10b981' : '#cbd5e1' }} />}
+                {user.type === 'user' && user.mode && <span className={cn('text-[11px] text-text-tertiary shrink-0')}>{user.mode}</span>}
                 {user.type === 'group' && user.memberCount != null && (
-                  <span style={styles.mode}>{user.memberCount} members</span>
+                  <span className={cn('text-[11px] text-text-tertiary shrink-0')}>{user.memberCount} members</span>
                 )}
               </div>
             </div>

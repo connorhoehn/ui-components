@@ -4,8 +4,7 @@
 // severity icon, colored left border, message, relative timestamp, and a
 // dismiss button. Empty state: centered "No active alerts" in gray.
 
-import type { CSSProperties } from 'react';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export type AlertSeverity = 'info' | 'warning' | 'error' | 'critical';
 
@@ -23,10 +22,10 @@ export interface AlertsPanelProps {
 }
 
 const SEVERITY_COLOR: Record<AlertSeverity, string> = {
-  info: colors.state.running,
-  warning: colors.state.awaiting,
-  error: colors.state.failed,
-  critical: colors.state.failed,
+  info: '#2563eb',
+  warning: '#f59e0b',
+  error: '#dc2626',
+  critical: '#dc2626',
 };
 
 const SEVERITY_ICON: Record<AlertSeverity, string> = {
@@ -65,50 +64,27 @@ function AlertItem({
   const color = SEVERITY_COLOR[alert.severity];
   const icon = SEVERITY_ICON[alert.severity];
 
-  const rowStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: 10,
-    padding: '10px 12px',
-    background: colors.surface,
-    border: `1px solid ${colors.border}`,
-    borderLeft: `3px solid ${color}`,
-    borderRadius: 6,
-    fontFamily: 'inherit',
-  };
-
   return (
-    <div data-testid="alert-item" style={rowStyle}>
+    <div
+      data-testid="alert-item"
+      className={cn(
+        'flex items-start gap-2.5 px-3 py-2.5',
+        'bg-surface border border-border rounded-md font-[inherit]'
+      )}
+      style={{ borderLeft: `3px solid ${color}` }}
+    >
       <span
         aria-hidden="true"
-        style={{
-          color,
-          fontSize: 14,
-          lineHeight: '20px',
-          flexShrink: 0,
-          width: 16,
-          textAlign: 'center',
-        }}
+        className="text-sm leading-5 shrink-0 w-4 text-center"
+        style={{ color }}
       >
         {icon}
       </span>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 13,
-            color: colors.textPrimary,
-            lineHeight: 1.4,
-          }}
-        >
+      <div className="flex-1 min-w-0">
+        <div className="text-[13px] text-text-primary leading-[1.4]">
           {alert.message}
         </div>
-        <div
-          style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            marginTop: 2,
-          }}
-        >
+        <div className="text-[11px] text-text-tertiary mt-0.5">
           {alert.category ? `${alert.category} · ` : ''}
           {relativeTimestamp(alert.timestamp)}
         </div>
@@ -118,17 +94,7 @@ function AlertItem({
           data-testid="alert-dismiss"
           aria-label="dismiss alert"
           onClick={() => onDismiss(alert.id)}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: colors.textTertiary,
-            fontSize: 16,
-            lineHeight: 1,
-            cursor: 'pointer',
-            padding: '2px 6px',
-            fontFamily: 'inherit',
-            flexShrink: 0,
-          }}
+          className="bg-transparent border-none text-text-tertiary text-base leading-none cursor-pointer px-1.5 py-0.5 font-[inherit] shrink-0"
         >
           ×
         </button>
@@ -142,16 +108,7 @@ function AlertsPanel({ alerts, onDismiss }: AlertsPanelProps) {
     return (
       <div
         data-testid="alerts-empty"
-        style={{
-          padding: 24,
-          textAlign: 'center',
-          color: colors.textTertiary,
-          fontSize: 13,
-          border: `1px solid ${colors.border}`,
-          borderRadius: 8,
-          background: colors.surface,
-          fontFamily: 'inherit',
-        }}
+        className="p-6 text-center text-text-tertiary text-[13px] border border-border rounded-lg bg-surface font-[inherit]"
       >
         No active alerts
       </div>
@@ -161,11 +118,7 @@ function AlertsPanel({ alerts, onDismiss }: AlertsPanelProps) {
   return (
     <div
       data-testid="alerts-panel"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-      }}
+      className="flex flex-col gap-2"
     >
       {alerts.map((a) => (
         <AlertItem key={a.id} alert={a} onDismiss={onDismiss} />

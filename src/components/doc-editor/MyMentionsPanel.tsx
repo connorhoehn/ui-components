@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import type { MyItem, MentionItem, TaskAssignment } from '../../hooks/useMyMentionsAndTasks';
 import { Panel, PanelHeader, PanelBody, Button } from '../ui/Panel';
-import { colors, fontSize } from '../../styles/tokens';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -49,133 +49,6 @@ function getInitials(name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Styles (item-level — panel/header/body handled by shared components)
-// ---------------------------------------------------------------------------
-
-const tabBarStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 0,
-  borderBottom: `1px solid ${colors.border}`,
-  flexShrink: 0,
-};
-
-const tabStyle = (active: boolean): React.CSSProperties => ({
-  flex: 1,
-  padding: '8px 0',
-  fontSize: fontSize.sm,
-  fontWeight: active ? 600 : 400,
-  color: active ? colors.primary : colors.textSecondary,
-  background: 'transparent',
-  border: 'none',
-  borderBottom: active ? `2px solid ${colors.primary}` : '2px solid transparent',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-});
-
-const emptyStyle: React.CSSProperties = {
-  padding: '2rem 1rem',
-  textAlign: 'center',
-  color: colors.textMuted,
-  fontSize: fontSize.sm,
-};
-
-const itemStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 10,
-  padding: '10px 1rem',
-  cursor: 'pointer',
-  borderBottom: '1px solid #f3f4f6',
-  alignItems: 'flex-start',
-};
-
-const avatarStyle = (color: string): React.CSSProperties => ({
-  width: 28,
-  height: 28,
-  borderRadius: '50%',
-  background: color,
-  color: '#fff',
-  fontSize: fontSize.xs,
-  fontWeight: 600,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-});
-
-const itemBodyStyle: React.CSSProperties = {
-  flex: 1,
-  minWidth: 0,
-};
-
-const commentTextStyle: React.CSSProperties = {
-  fontSize: fontSize.sm,
-  color: colors.textPrimary,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-};
-
-const sectionLabelStyle: React.CSSProperties = {
-  fontSize: fontSize.xs,
-  color: colors.textMuted,
-  marginTop: 2,
-};
-
-const timestampStyle: React.CSSProperties = {
-  fontSize: fontSize.xs,
-  color: colors.textMuted,
-  flexShrink: 0,
-  marginTop: 2,
-};
-
-const dismissBtnStyle: React.CSSProperties = {
-  padding: '2px 6px',
-  fontSize: fontSize.sm,
-  color: colors.textMuted,
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  lineHeight: 1,
-  flexShrink: 0,
-};
-
-const priorityDotStyle = (priority: string): React.CSSProperties => {
-  const dotColors: Record<string, string> = {
-    high: '#ef4444',
-    medium: '#f59e0b',
-    low: '#22c55e',
-  };
-  return {
-    width: 8,
-    height: 8,
-    borderRadius: '50%',
-    background: dotColors[priority] ?? colors.textMuted,
-    flexShrink: 0,
-    marginTop: 4,
-  };
-};
-
-const statusBadgeStyle = (status: string): React.CSSProperties => {
-  const badgeColors: Record<string, { bg: string; text: string }> = {
-    pending: { bg: '#fef3c7', text: '#92400e' },
-    acked: { bg: '#dbeafe', text: '#1e40af' },
-    done: { bg: '#d1fae5', text: '#065f46' },
-    rejected: { bg: '#fee2e2', text: '#991b1b' },
-  };
-  const c = badgeColors[status] ?? badgeColors.pending;
-  return {
-    display: 'inline-block',
-    fontSize: 10,
-    fontWeight: 600,
-    padding: '1px 6px',
-    borderRadius: 9999,
-    background: c.bg,
-    color: c.text,
-    marginLeft: 6,
-  };
-};
-
-// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
@@ -190,28 +63,25 @@ function MentionRow({
 }) {
   return (
     <div
-      style={itemStyle}
+      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-[#f3f4f6] items-start hover:bg-[#f9fafb]')}
       onClick={onClick}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.background = '#f9fafb';
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.background = 'transparent';
-      }}
     >
-      <div style={avatarStyle(item.authorColor)}>
+      <div
+        className={cn('w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0')}
+        style={{ background: item.authorColor }}
+      >
         {getInitials(item.authorName)}
       </div>
-      <div style={itemBodyStyle}>
-        <div style={commentTextStyle}>{item.commentText}</div>
-        <div style={sectionLabelStyle}>{item.sectionTitle}</div>
+      <div className={cn('flex-1 min-w-0')}>
+        <div className={cn('text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>{item.commentText}</div>
+        <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
       </div>
-      <div style={timestampStyle}>{formatRelativeTime(item.timestamp)}</div>
+      <div className={cn('text-[11px] text-text-tertiary shrink-0 mt-0.5')}>{formatRelativeTime(item.timestamp)}</div>
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); onDismiss(); }}
         aria-label="Dismiss mention"
-        style={dismissBtnStyle}
+        className={cn('px-1.5 py-0.5 text-[13px] text-text-tertiary bg-transparent border-none cursor-pointer leading-none shrink-0')}
       >
         x
       </button>
@@ -228,30 +98,47 @@ function TaskRow({
   onClick: () => void;
   onDismiss: () => void;
 }) {
+  const dotColors: Record<string, string> = {
+    high: '#ef4444',
+    medium: '#f59e0b',
+    low: '#22c55e',
+  };
+
+  const badgeColors: Record<string, { bg: string; text: string }> = {
+    pending: { bg: '#fef3c7', text: '#92400e' },
+    acked: { bg: '#dbeafe', text: '#1e40af' },
+    done: { bg: '#d1fae5', text: '#065f46' },
+    rejected: { bg: '#fee2e2', text: '#991b1b' },
+  };
+
+  const bc = badgeColors[item.status] ?? badgeColors.pending;
+
   return (
     <div
-      style={itemStyle}
+      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-[#f3f4f6] items-start hover:bg-[#f9fafb]')}
       onClick={onClick}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.background = '#f9fafb';
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.background = 'transparent';
-      }}
     >
-      <div style={priorityDotStyle(item.priority)} />
-      <div style={itemBodyStyle}>
-        <div style={commentTextStyle}>
+      <div
+        className={cn('w-2 h-2 rounded-full shrink-0 mt-1')}
+        style={{ background: dotColors[item.priority] ?? '#94a3b8' }}
+      />
+      <div className={cn('flex-1 min-w-0')}>
+        <div className={cn('text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>
           {item.taskText}
-          <span style={statusBadgeStyle(item.status)}>{item.status}</span>
+          <span
+            className={cn('inline-block text-[10px] font-semibold px-1.5 py-px rounded-full ml-1.5')}
+            style={{ background: bc.bg, color: bc.text }}
+          >
+            {item.status}
+          </span>
         </div>
-        <div style={sectionLabelStyle}>{item.sectionTitle}</div>
+        <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>{item.sectionTitle}</div>
       </div>
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); onDismiss(); }}
         aria-label="Dismiss task"
-        style={dismissBtnStyle}
+        className={cn('px-1.5 py-0.5 text-[13px] text-text-tertiary bg-transparent border-none cursor-pointer leading-none shrink-0')}
       >
         x
       </button>
@@ -313,12 +200,17 @@ export default function MyMentionsPanel({
       />
 
       {/* Filter tabs */}
-      <div style={tabBarStyle}>
+      <div className={cn('flex gap-0 border-b border-border shrink-0')}>
         {(['all', 'mentions', 'tasks'] as const).map((tab) => (
           <button
             key={tab}
             type="button"
-            style={tabStyle(filter === tab)}
+            className={cn(
+              'flex-1 py-2 text-[13px] bg-transparent border-none cursor-pointer font-[inherit]',
+              filter === tab
+                ? 'font-semibold text-primary border-b-2 border-b-primary'
+                : 'font-normal text-text-secondary border-b-2 border-b-transparent',
+            )}
             onClick={() => setFilter(tab)}
           >
             {tab === 'all' ? 'All' : tab === 'mentions' ? 'Mentions' : 'Tasks'}
@@ -329,7 +221,7 @@ export default function MyMentionsPanel({
       {/* Item list */}
       <PanelBody padding="0.5rem 0">
         {filtered.length === 0 && (
-          <div style={emptyStyle}>No mentions or tasks for you</div>
+          <div className={cn('py-8 px-4 text-center text-text-tertiary text-[13px]')}>No mentions or tasks for you</div>
         )}
 
         {filtered.map((item) =>

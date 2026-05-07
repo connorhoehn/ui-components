@@ -2,7 +2,8 @@
 //
 // Grid of 12 emoji reaction buttons. Clicking a button calls onReact(emoji).
 // Buttons are disabled (with reduced opacity) when the disabled prop is true.
-// No external CSS — inline styles only, consistent with rest of app.
+
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -25,22 +26,16 @@ const EMOJIS = ['❤️', '😂', '👍', '👎', '😮', '😢', '😡', '🎉'
 
 export function ReactionButtons({ onReact, disabled = false }: Props) {
   return (
-    <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+    <div className="flex gap-1 flex-wrap">
       {EMOJIS.map((emoji) => (
         <button
           key={emoji}
           onClick={() => onReact(emoji)}
           disabled={disabled}
-          style={{
-            fontSize: '1.125rem',
-            background: 'none',
-            border: '1px solid #e2e8f0',
-            borderRadius: 6,
-            cursor: disabled ? 'not-allowed' : 'pointer',
-            padding: '0.2rem 0.4rem',
-            opacity: disabled ? 0.4 : 1,
-            lineHeight: 1,
-          }}
+          className={cn(
+            'text-lg bg-transparent border border-border rounded-md px-1.5 py-0.5 leading-none',
+            disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer opacity-100'
+          )}
           title={emoji}
         >
           {emoji}

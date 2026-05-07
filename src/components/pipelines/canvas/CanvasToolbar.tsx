@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useMemo } from 'react';
-import type { CSSProperties } from 'react';
+import { useEffect } from 'react';
 import type { PipelineDefinition } from '../../../types/pipeline';
-import { colors } from '../../../constants/styles';
-import { autoArrange } from './autoArrange';
+import { useCanvasLayout } from './useCanvasLayout';
 
 export interface CanvasToolbarProps {
   definition: PipelineDefinition | null;
@@ -15,54 +13,11 @@ export default function CanvasToolbar({
   setPositions,
   fitView,
 }: CanvasToolbarProps) {
-  const fitViewBtnStyle = useMemo<CSSProperties>(
-    () => ({
-      position: 'absolute',
-      top: 12,
-      right: 12,
-      zIndex: 5,
-      width: 32,
-      height: 32,
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: colors.surface,
-      border: `1px solid ${colors.border}`,
-      borderRadius: 6,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-      color: colors.textSecondary,
-      cursor: 'pointer',
-      padding: 0,
-      fontFamily: 'inherit',
-      fontSize: 14,
-      lineHeight: 1,
-    }),
-    [],
-  );
-
-  const autoArrangeBtnStyle = useMemo<CSSProperties>(
-    () => ({
-      ...fitViewBtnStyle,
-      right: 12 + 32 + 6,
-    }),
-    [fitViewBtnStyle],
-  );
-
-  const handleFitView = useCallback(() => {
-    fitView({ padding: 0.15, duration: 500 });
-  }, [fitView]);
-
-  const handleAutoArrange = useCallback(() => {
-    if (!definition) return;
-    const positions = autoArrange(definition);
-    if (positions.length === 0) return;
-    setPositions(positions);
-    if (typeof requestAnimationFrame === 'function') {
-      requestAnimationFrame(() => fitView({ padding: 0.15, duration: 500 }));
-    } else {
-      fitView({ padding: 0.15, duration: 500 });
-    }
-  }, [definition, setPositions, fitView]);
+  const { handleFitView, handleAutoArrange } = useCanvasLayout({
+    definition,
+    setPositions,
+    fitView,
+  });
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -90,7 +45,7 @@ export default function CanvasToolbar({
       <button
         type="button"
         onClick={handleAutoArrange}
-        style={autoArrangeBtnStyle}
+        className="absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none"
         title="Auto-arrange (Shift+A)"
         aria-label="Auto-arrange"
         data-testid="auto-arrange-btn"
@@ -107,7 +62,7 @@ export default function CanvasToolbar({
       <button
         type="button"
         onClick={handleFitView}
-        style={fitViewBtnStyle}
+        className="absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none"
         title="Fit view"
         aria-label="Fit view"
       >

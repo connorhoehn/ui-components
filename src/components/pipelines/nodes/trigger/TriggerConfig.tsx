@@ -8,9 +8,9 @@
 //   webhook     → path input + read-only full-URL preview
 
 import { useContext, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { TriggerNodeData, TriggerType } from '../../../../types/pipeline';
-import { fieldStyle, colors } from '../../../../constants/styles';
+import { cn } from '../../../../lib/cn';
+import { ConfigField } from '../shared';
 import { parseCron, nextFires } from '../../cron/cronUtils';
 import { useToast } from '../../../shared/ToastProvider';
 import { PipelineEditorContext } from '../../context/PipelineEditorContext';
@@ -31,38 +31,6 @@ export interface TriggerConfigProps {
   data: TriggerNodeData;
   onChange: (patch: Partial<TriggerNodeData>) => void;
 }
-
-// ---------------------------------------------------------------------------
-// Shared label / help / error styles (kept local to avoid touching constants)
-// ---------------------------------------------------------------------------
-
-const labelStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  color: colors.textSecondary,
-};
-
-const requiredDot: CSSProperties = {
-  color: '#dc2626',
-  marginLeft: 4,
-};
-
-const helpStyle: CSSProperties = {
-  fontSize: 11,
-  color: colors.textTertiary,
-  marginTop: 2,
-};
-
-const errorStyle: CSSProperties = {
-  fontSize: 11,
-  color: '#dc2626',
-  marginTop: 2,
-};
-
-const errorFieldStyle: CSSProperties = {
-  ...fieldStyle,
-  borderColor: '#dc2626',
-};
 
 // Minimal localStorage document-type shape (null-safe, read-only).
 interface StoredDocType { id: string; name: string }
@@ -95,9 +63,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
   const { toast } = useToast();
   // Secret is server-minted and lives on `triggerBinding`, not on the node
   // data — but the editor context owns the live definition so we can pull it
-  // out for the reveal/copy interaction. `null` context is gracefully
-  // tolerated (storybook, tests, etc.) so this component still renders
-  // outside an editor provider.
+  // out for the reveal/copy interaction.
   const editor = useContext(PipelineEditorContext);
   const webhookSecret = editor?.definition?.triggerBinding?.webhookSecret;
   const [secretRevealed, setSecretRevealed] = useState(false);
@@ -108,9 +74,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
   const scheduleMissing = data.triggerType === 'schedule' && !data.schedule;
   const webhookMissing  = data.triggerType === 'webhook'  && !data.webhookPath;
 
-  // Webhook path validity (only meaningful when triggerType === 'webhook' and
-  // a non-empty value is set). Empty path → show the "set a path" hint;
-  // invalid path → show the red regex hint; valid path → show the full URL.
+  // Webhook path validity
   const webhookPathRaw = data.webhookPath ?? '';
   const webhookPathInvalid =
     data.triggerType === 'webhook' &&
@@ -155,14 +119,11 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
     data.triggerType === 'document.comment'  ? 'On comment added' : '';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Trigger type */}
-      <div>
-        <label style={labelStyle}>
-          Trigger type<span style={requiredDot}>●</span>
-        </label>
+      <ConfigField label="Trigger type" required>
         <select
-          style={{ ...fieldStyle, marginTop: 4 }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
           value={data.triggerType}
           onChange={(e) => onChange({ triggerType: e.target.value as TriggerType })}
         >
@@ -170,16 +131,21 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-      </div>
+      </ConfigField>
 
       {/* Document type (when document.*) */}
       {isDoc && (
-        <div>
-          <label style={labelStyle}>
-            Document type<span style={requiredDot}>●</span>
-          </label>
+        <ConfigField
+          label="Document type"
+          required
+          error={docTypeMissing ? 'Select a document type.' : undefined}
+          help={!docTypeMissing ? 'Which document type should trigger this pipeline.' : undefined}
+        >
           <select
-            style={{ ...(docTypeMissing ? errorFieldStyle : fieldStyle), marginTop: 4 }}
+            className={cn(
+              'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit',
+              docTypeMissing ? 'border-[#dc2626]' : 'border-border-field',
+            )}
             value={data.documentTypeId ?? ''}
             onChange={(e) => onChange({ documentTypeId: e.target.value || undefined })}
           >
@@ -188,61 +154,40 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
               <option key={dt.id} value={dt.id}>{dt.name}</option>
             ))}
           </select>
-          {docTypeMissing
-            ? <div style={errorStyle}>Select a document type.</div>
-            : <div style={helpStyle}>Which document type should trigger this pipeline.</div>
-          }
           {eventLabel && (
-            <div style={{ ...helpStyle, marginTop: 6 }}>
-              Event: <span style={{ fontWeight: 600, color: colors.textSecondary }}>{eventLabel}</span>
+            <div className="text-[11px] text-text-tertiary mt-1.5">
+              Event: <span className="font-semibold text-text-secondary">{eventLabel}</span>
             </div>
           )}
-        </div>
+        </ConfigField>
       )}
 
       {/* Schedule (cron) */}
       {data.triggerType === 'schedule' && (
-        <div>
-          <label style={labelStyle}>
-            Schedule (cron)<span style={requiredDot}>●</span>
-          </label>
+        <ConfigField
+          label="Schedule (cron)"
+          required
+          error={
+            scheduleMissing ? 'Cron expression is required.' :
+            cronInvalid ? 'Invalid cron expression — supports *, */N, N,M, A-B, exact values.' :
+            undefined
+          }
+          help={!scheduleMissing && !cronInvalid ? '5-field cron: minute hour day month weekday.' : undefined}
+        >
           <input
             type="text"
-            style={{
-              ...((scheduleMissing || cronInvalid) ? errorFieldStyle : fieldStyle),
-              marginTop: 4,
-              fontFamily: 'monospace',
-            }}
+            className={cn(
+              'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-mono',
+              (scheduleMissing || cronInvalid) ? 'border-[#dc2626]' : 'border-border-field',
+            )}
             placeholder="*/15 * * * *"
             value={data.schedule ?? ''}
             onChange={(e) => onChange({ schedule: e.target.value })}
           />
-          {scheduleMissing && (
-            <div style={errorStyle}>Cron expression is required.</div>
-          )}
-          {!scheduleMissing && cronInvalid && (
-            <div style={errorStyle}>
-              Invalid cron expression — supports *, */N, N,M, A-B, exact values.
-            </div>
-          )}
-          {!scheduleMissing && !cronInvalid && (
-            <div style={helpStyle}>5-field cron: minute hour day month weekday.</div>
-          )}
-          <div
-            style={{
-              marginTop: 8,
-              padding: 8,
-              background: colors.surfaceInset,
-              border: `1px dashed ${colors.border}`,
-              borderRadius: 6,
-              fontSize: 11,
-              color: colors.textTertiary,
-              fontFamily: 'monospace',
-            }}
-          >
+          <div className="mt-2 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-tertiary font-mono">
             {upcomingFires.length > 0 ? (
               <>
-                <div style={{ color: colors.textSecondary, marginBottom: 4 }}>
+                <div className="text-text-secondary mb-1">
                   Next 3 fires:
                 </div>
                 {upcomingFires.map((d, i) => (
@@ -253,163 +198,89 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
               <span>Next fires: enter a valid cron expression to preview.</span>
             )}
           </div>
-        </div>
+        </ConfigField>
       )}
 
       {/* Webhook */}
       {data.triggerType === 'webhook' && (
-        <div>
-          <label style={labelStyle}>
-            Path<span style={requiredDot}>●</span>
-          </label>
-          <input
-            type="text"
-            style={{
-              ...(webhookMissing || webhookPathInvalid ? errorFieldStyle : fieldStyle),
-              marginTop: 4,
-              fontFamily: 'monospace',
-            }}
-            placeholder="weekly-digest"
-            value={webhookPathRaw}
-            onChange={(e) => onChange({ webhookPath: e.target.value })}
-          />
-          {webhookMissing ? (
-            <div style={errorStyle}>Webhook path is required.</div>
-          ) : webhookPathInvalid ? (
-            <div style={errorStyle}>
-              Path must be alphanumeric (plus _, -)
-            </div>
-          ) : (
-            <div style={helpStyle}>
-              Alphanumeric, _, or - (max 64 chars). No leading slash.
-            </div>
-          )}
+        <div className="flex flex-col gap-3">
+          <ConfigField
+            label="Path"
+            required
+            error={
+              webhookMissing ? 'Webhook path is required.' :
+              webhookPathInvalid ? 'Path must be alphanumeric (plus _, -)' :
+              undefined
+            }
+            help={!webhookMissing && !webhookPathInvalid ? 'Alphanumeric, _, or - (max 64 chars). No leading slash.' : undefined}
+          >
+            <input
+              type="text"
+              className={cn(
+                'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-mono',
+                (webhookMissing || webhookPathInvalid) ? 'border-[#dc2626]' : 'border-border-field',
+              )}
+              placeholder="weekly-digest"
+              value={webhookPathRaw}
+              onChange={(e) => onChange({ webhookPath: e.target.value })}
+            />
+          </ConfigField>
 
           {/* Full URL preview / copy button */}
-          <div
-            style={{
-              marginTop: 8,
-              padding: 8,
-              background: colors.surfaceInset,
-              border: `1px dashed ${colors.border}`,
-              borderRadius: 6,
-              fontSize: 11,
-              color: colors.textSecondary,
-              fontFamily: 'monospace',
-              wordBreak: 'break-all',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
+          <div className="p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2">
             {webhookFullUrl ? (
               <>
-                <span style={{ flex: 1 }}>
-                  <span
-                    style={{
-                      fontFamily: 'sans-serif',
-                      color: colors.textTertiary,
-                      marginRight: 4,
-                    }}
-                  >
-                    Full URL:
-                  </span>
+                <span className="flex-1">
+                  <span className="font-sans text-text-tertiary mr-1">Full URL:</span>
                   {webhookFullUrl}
                 </span>
                 <button
                   type="button"
                   onClick={onCopyWebhookUrl}
-                  style={{
-                    fontSize: 11,
-                    padding: '2px 8px',
-                    border: `1px solid ${colors.border}`,
-                    borderRadius: 4,
-                    background: 'transparent',
-                    color: colors.textSecondary,
-                    cursor: 'pointer',
-                    fontFamily: 'sans-serif',
-                  }}
+                  className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"
                 >
                   Copy
                 </button>
               </>
             ) : (
-              <span style={{ fontFamily: 'sans-serif', color: colors.textTertiary }}>
+              <span className="font-sans text-text-tertiary">
                 Set a path above to see the URL
               </span>
             )}
           </div>
 
-          {/*
-            Webhook signing secret — minted server-side on first save and
-            round-tripped on every PipelineDefinition response. Surfaced
-            here so the user can copy it into their webhook source's
-            "secret" field. Hidden by default to avoid shoulder-surfing.
-          */}
-          <div style={{ marginTop: 8 }}>
-            <label style={labelStyle}>Signing secret</label>
-            <div
-              style={{
-                marginTop: 4,
-                padding: 8,
-                background: colors.surfaceInset,
-                border: `1px dashed ${colors.border}`,
-                borderRadius: 6,
-                fontSize: 11,
-                color: colors.textSecondary,
-                fontFamily: 'monospace',
-                wordBreak: 'break-all',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
+          {/* Webhook signing secret */}
+          <div>
+            <label className="text-xs font-semibold text-text-secondary">Signing secret</label>
+            <div className="mt-1 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2">
               {webhookSecret ? (
                 <>
-                  <span style={{ flex: 1 }} aria-label="webhook secret">
+                  <span className="flex-1" aria-label="webhook secret">
                     {secretRevealed ? webhookSecret : '•'.repeat(32)}
                   </span>
                   <button
                     type="button"
                     onClick={() => setSecretRevealed((v) => !v)}
-                    style={{
-                      fontSize: 11,
-                      padding: '2px 8px',
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 4,
-                      background: 'transparent',
-                      color: colors.textSecondary,
-                      cursor: 'pointer',
-                      fontFamily: 'sans-serif',
-                    }}
+                    className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"
                   >
                     {secretRevealed ? 'Hide' : 'Reveal'}
                   </button>
                   <button
                     type="button"
                     onClick={onCopyWebhookSecret}
-                    style={{
-                      fontSize: 11,
-                      padding: '2px 8px',
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 4,
-                      background: 'transparent',
-                      color: colors.textSecondary,
-                      cursor: 'pointer',
-                      fontFamily: 'sans-serif',
-                    }}
+                    className="text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans"
                   >
                     Copy
                   </button>
                 </>
               ) : (
-                <span style={{ fontFamily: 'sans-serif', color: colors.textTertiary }}>
+                <span className="font-sans text-text-tertiary">
                   Save the pipeline to mint a signing secret. External callers
                   must send <code>X-Pipeline-Signature-256: sha256=&lt;hmac&gt;</code>.
                 </span>
               )}
             </div>
-            <div style={helpStyle}>
+            <div className="text-[11px] text-text-tertiary mt-0.5">
               HMAC-SHA256 of the raw request body. Send as
               {' '}<code>X-Pipeline-Signature-256: sha256=&lt;hex&gt;</code>.
             </div>

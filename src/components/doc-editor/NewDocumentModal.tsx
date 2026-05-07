@@ -1,13 +1,12 @@
 // frontend/src/components/doc-editor/NewDocumentModal.tsx
 //
-// Modal for creating a new document. The type picker is driven by user-defined
-// document types from the wizard (stored in localStorage). If no types exist
-// yet, an empty-state prompt guides the user to create one first.
+// Modal for creating a new document.
 
 import { useState, useEffect, useRef } from 'react';
 import { loadTypes } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
 import Modal from '../shared/Modal';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -30,7 +29,6 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const [description, setDescription] = useState('');
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Reload types from localStorage each time the modal opens
   useEffect(() => {
     if (!open) return;
     const loaded = loadTypes();
@@ -82,35 +80,27 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     >
       <div onKeyDown={handleKeyDown} style={{ display: 'contents' }}>
         {/* Header */}
-        <h2 style={{ margin: 0, padding: '24px 24px 16px', fontSize: 18, fontWeight: 700, color: '#1e293b', flexShrink: 0 }}>
+        <h2 className={cn('m-0 px-6 pt-6 pb-4 text-lg font-bold text-[#1e293b] shrink-0')}>
           Create New Document
         </h2>
 
         {/* Scrollable body */}
-        <div style={{ flex: '1 1 auto', overflowY: 'auto', padding: '0 24px', minHeight: 0 }}>
+        <div className={cn('flex-1 overflow-y-auto px-6 min-h-0')}>
 
-          {/* ── No types defined yet ── */}
+          {/* No types defined yet */}
           {types.length === 0 ? (
-            <div style={{
-              textAlign: 'center', padding: '32px 16px',
-              border: '1px dashed #d1d5db', borderRadius: 8, marginBottom: 20,
-              color: '#64748b',
-            }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8, color: '#374151' }}>
+            <div className={cn('text-center px-4 py-8 border border-dashed border-[#d1d5db] rounded-lg mb-5 text-[#64748b]')}>
+              <div className={cn('text-[40px] mb-3')}>📋</div>
+              <div className={cn('text-[15px] font-semibold mb-2 text-[#374151]')}>
                 No document types defined yet
               </div>
-              <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 320, margin: '0 auto 16px' }}>
+              <div className={cn('text-[13px] text-text-tertiary max-w-xs mx-auto mb-4')}>
                 Document types define the sections and structure of your documents.
                 Create one first in <strong>☰ → Document Types</strong>.
               </div>
               <button
                 onClick={onClose}
-                style={{
-                  padding: '8px 20px', fontSize: 13, fontWeight: 600,
-                  background: '#646cff', color: '#fff', border: 'none',
-                  borderRadius: 7, cursor: 'pointer', fontFamily: 'inherit',
-                }}
+                className={cn('px-5 py-2 text-[13px] font-semibold bg-primary text-white border-none rounded-[7px] cursor-pointer font-[inherit]')}
               >
                 Close
               </button>
@@ -118,11 +108,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
           ) : (
             <>
               {/* Type picker */}
-              <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 8 }}>
+              <div className={cn('mb-5')}>
+                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}>
                   Document Type
                 </label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div className={cn('grid grid-cols-2 gap-2')}>
                   {types.map((t) => {
                     const isSelected = selectedId === t.id;
                     return (
@@ -130,34 +120,27 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                         key={t.id}
                         data-testid={`type-option-${t.id}`}
                         onClick={() => setSelectedId(t.id)}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: 10,
-                          minHeight: 72, padding: '10px 14px',
-                          background: isSelected ? '#eff6ff' : '#ffffff',
-                          border: `2px solid ${isSelected ? '#3b82f6' : '#e2e8f0'}`,
-                          borderRadius: 8, cursor: 'pointer', textAlign: 'left',
-                          position: 'relative', fontFamily: 'inherit',
-                          transition: 'background 0.12s, border-color 0.12s',
-                        }}
-                        onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = '#f8fafc'; }}
-                        onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = '#ffffff'; }}
+                        className={cn(
+                          'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
+                          isSelected ? 'bg-[#eff6ff] border-2 border-[#3b82f6]' : 'bg-white border-2 border-border hover:bg-[#f8fafc]',
+                        )}
                       >
-                        <span style={{ fontSize: 24, flexShrink: 0 }}>{t.icon}</span>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontSize: 14, fontWeight: 600, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <span className={cn('text-2xl shrink-0')}>{t.icon}</span>
+                        <div className={cn('min-w-0')}>
+                          <div className={cn('text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
                             {t.name}
                           </div>
                           {t.description && (
-                            <div style={{ fontSize: 11, color: '#64748b', lineHeight: 1.3, marginTop: 2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                            <div className={cn('text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2')}>
                               {t.description}
                             </div>
                           )}
-                          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>
+                          <div className={cn('text-[11px] text-text-tertiary mt-0.5')}>
                             {t.fields.length} section{t.fields.length !== 1 ? 's' : ''}
                           </div>
                         </div>
                         {isSelected && (
-                          <span style={{ position: 'absolute', top: 6, right: 8, fontSize: 14, color: '#3b82f6', fontWeight: 700 }}>
+                          <span className={cn('absolute top-1.5 right-2 text-sm text-[#3b82f6] font-bold')}>
                             ✓
                           </span>
                         )}
@@ -168,9 +151,9 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               </div>
 
               {/* Title */}
-              <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
-                  Title <span style={{ color: '#ef4444' }}>*</span>
+              <div className={cn('mb-4')}>
+                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
+                  Title <span className={cn('text-[#ef4444]')}>*</span>
                 </label>
                 <input
                   ref={titleRef}
@@ -179,21 +162,14 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={selected ? `e.g. Q2 ${selected.name}` : 'Document title…'}
-                  style={{
-                    width: '100%', padding: '8px 12px', fontSize: 14,
-                    border: '1px solid #e2e8f0', borderRadius: 8, outline: 'none',
-                    background: '#ffffff', color: '#1e293b', boxSizing: 'border-box',
-                    fontFamily: 'inherit',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#3b82f6'; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  className={cn('w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] box-border font-[inherit] focus:border-[#3b82f6]')}
                 />
               </div>
 
               {/* Description */}
-              <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
-                  Description <span style={{ color: '#94a3b8', fontWeight: 400 }}>(optional)</span>
+              <div className={cn('mb-5')}>
+                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
+                  Description <span className={cn('text-text-tertiary font-normal')}>(optional)</span>
                 </label>
                 <textarea
                   data-testid="new-doc-description"
@@ -201,14 +177,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Brief description of this document…"
                   rows={3}
-                  style={{
-                    width: '100%', padding: '8px 12px', fontSize: 14,
-                    border: '1px solid #e2e8f0', borderRadius: 8, outline: 'none',
-                    background: '#ffffff', color: '#1e293b', resize: 'vertical',
-                    boxSizing: 'border-box', fontFamily: 'inherit',
-                  }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#3b82f6'; }}
-                  onBlur={e => { e.currentTarget.style.borderColor = '#e2e8f0'; }}
+                  className={cn('w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] resize-y box-border font-[inherit] focus:border-[#3b82f6]')}
                 />
               </div>
             </>
@@ -217,20 +186,11 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
         {/* Footer */}
         {types.length > 0 && (
-          <div style={{
-            display: 'flex', justifyContent: 'flex-end', gap: 8,
-            padding: '16px 24px', borderTop: '1px solid #e2e8f0',
-            background: '#ffffff', flexShrink: 0,
-          }}>
+          <div className={cn('flex justify-end gap-2 px-6 py-4 border-t border-border bg-white shrink-0')}>
             <button
               data-testid="new-doc-cancel"
               onClick={onClose}
-              style={{
-                padding: '8px 16px', fontSize: 14, fontWeight: 500,
-                border: '1px solid #e2e8f0', borderRadius: 8,
-                background: '#ffffff', color: '#475569',
-                cursor: 'pointer', fontFamily: 'inherit',
-              }}
+              className={cn('px-4 py-2 text-sm font-medium border border-border rounded-lg bg-white text-text-secondary cursor-pointer font-[inherit]')}
             >
               Cancel
             </button>
@@ -238,14 +198,10 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               data-testid="new-doc-submit"
               onClick={handleSubmit}
               disabled={!canSubmit}
-              style={{
-                padding: '8px 20px', fontSize: 14, fontWeight: 600,
-                border: 'none', borderRadius: 8,
-                background: canSubmit ? '#3b82f6' : '#94a3b8',
-                color: '#ffffff',
-                cursor: canSubmit ? 'pointer' : 'not-allowed',
-                fontFamily: 'inherit',
-              }}
+              className={cn(
+                'px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]',
+                canSubmit ? 'bg-[#3b82f6] cursor-pointer' : 'bg-[#94a3b8] cursor-not-allowed',
+              )}
             >
               Create Document
             </button>

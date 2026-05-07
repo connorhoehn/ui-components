@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react';
 import EventRow from '../../shared/EventRow';
 import EmptyState from '../../shared/EmptyState';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export interface EventItem {
   id: string;
@@ -57,7 +57,7 @@ function EventTimeline({ events, selectedId, onSelect, live = false }: EventTime
 
   if (events.length === 0) {
     return (
-      <div style={{ flex: 1, display: 'flex' }}>
+      <div className="flex-1 flex">
         <EmptyState
           icon="📡"
           title="No events yet"
@@ -70,15 +70,12 @@ function EventTimeline({ events, selectedId, onSelect, live = false }: EventTime
   return (
     <div
       data-testid="event-timeline"
-      style={{ position: 'relative', flex: 1, minHeight: 0, display: 'flex' }}
+      className="relative flex-1 min-h-0 flex"
     >
       <div
         ref={scrollRef}
         onScroll={onScroll}
-        style={{
-          flex: 1, overflowY: 'auto', padding: '6px 0',
-          fontFamily: 'inherit',
-        }}
+        className="flex-1 overflow-y-auto py-1.5 font-[inherit]"
       >
         {events.map((ev) => (
           <EventRow
@@ -97,14 +94,13 @@ function EventTimeline({ events, selectedId, onSelect, live = false }: EventTime
         <button
           data-testid="jump-to-live"
           onClick={jumpToLive}
-          style={{
-            position: 'absolute', bottom: 12, left: '50%',
-            transform: 'translateX(-50%)',
-            padding: '6px 14px', fontSize: 12, fontWeight: 600,
-            background: colors.primary, color: '#fff',
-            border: 'none', borderRadius: 999, cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)', fontFamily: 'inherit',
-          }}
+          className={cn(
+            'absolute bottom-3 left-1/2 -translate-x-1/2',
+            'px-3.5 py-1.5 text-xs font-semibold',
+            'bg-primary text-white',
+            'border-none rounded-full cursor-pointer',
+            'shadow-[0_2px_8px_rgba(0,0,0,0.15)] font-[inherit]'
+          )}
         >
           Jump to live ↓
         </button>

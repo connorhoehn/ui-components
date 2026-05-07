@@ -10,6 +10,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import type { RemoteCursor, CanvasTool } from '../../hooks/useCursors';
 import { identityToColor, identityToInitials } from '../../utils/identity';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Trail helper
@@ -142,48 +143,44 @@ export function CanvasCursorBoard({
   return (
     <div>
       {/* Tool controls row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontSize: 11, color: '#6b7280' }}>Tool:</span>
+      <div className="flex items-center gap-3 mb-2 flex-wrap">
+        <div className="flex items-center gap-1">
+          <span className="text-[11px] text-gray-500">Tool:</span>
           {tools.map((t) => (
             <button
               key={t}
               onClick={() => setTool(t)}
-              style={{
-                fontSize: 12,
-                padding: '4px 10px',
-                border: '1px solid',
-                borderRadius: 4,
-                cursor: 'pointer',
-                background: tool === t ? '#007bff' : 'white',
-                color: tool === t ? 'white' : '#374151',
-                borderColor: tool === t ? '#007bff' : '#ddd',
-              }}
+              className={cn(
+                'text-xs px-2.5 py-1 border rounded cursor-pointer',
+                tool === t
+                  ? 'bg-[#007bff] text-white border-[#007bff]'
+                  : 'bg-white text-gray-700 border-gray-300'
+              )}
             >
               {toolLabels[t]}
             </button>
           ))}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontSize: 11, color: '#6b7280' }}>Color:</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[11px] text-gray-500">Color:</span>
           <input
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            style={{ width: 32, height: 24, cursor: 'pointer', border: 'none', padding: 0 }}
+            className="w-8 h-6 cursor-pointer border-none p-0"
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ fontSize: 11, color: '#6b7280' }}>Size: {size}</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[11px] text-gray-500">Size: {size}</span>
           <input
             type="range"
             min={1}
             max={50}
             value={size}
             onChange={(e) => setSize(parseInt(e.target.value, 10))}
-            style={{ width: 80, cursor: 'pointer' }}
+            className="w-20 cursor-pointer"
           />
         </div>
       </div>
@@ -192,32 +189,17 @@ export function CanvasCursorBoard({
       <div
         ref={boardRef}
         onMouseMove={handleMouseMove}
+        className="relative border-2 border-gray-200 rounded overflow-hidden cursor-crosshair"
         style={{
-          position: 'relative',
           width,
           height,
-          border: '2px solid #e5e7eb',
-          borderRadius: 4,
-          overflow: 'hidden',
-          cursor: 'crosshair',
           backgroundImage:
             'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
           backgroundSize: '20px 20px',
         }}
       >
         {/* Board label */}
-        <span
-          style={{
-            position: 'absolute',
-            top: 4,
-            left: 4,
-            color: '#9ca3af',
-            fontSize: 12,
-            padding: 4,
-            pointerEvents: 'none',
-            userSelect: 'none',
-          }}
-        >
+        <span className="absolute top-1 left-1 text-gray-400 text-xs p-1 pointer-events-none select-none">
           Move your mouse here (canvas mode)
         </span>
 
@@ -228,50 +210,13 @@ export function CanvasCursorBoard({
           const localTool = (localCursor.metadata.tool as CanvasTool | undefined) ?? 'brush';
           return (
             <div
-              style={{
-                position: 'absolute',
-                left: lx,
-                top: ly,
-                transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                zIndex: 11,
-                pointerEvents: 'none',
-                userSelect: 'none',
-                opacity: 0.7,
-              }}
+              className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[11] pointer-events-none select-none opacity-70"
+              style={{ left: lx, top: ly }}
             >
-              <div
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  background: '#3b82f6',
-                  border: '2px dashed white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: 9,
-                  fontWeight: 'bold',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                }}
-              >
+              <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md">
                 You
               </div>
-              <div
-                style={{
-                  fontSize: 11,
-                  marginTop: 2,
-                  color: 'white',
-                  background: '#3b82f6',
-                  opacity: 0.85,
-                  borderRadius: 3,
-                  padding: '1px 4px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <div className="text-[11px] mt-0.5 text-white bg-blue-500 opacity-85 rounded-[3px] px-1 py-px whitespace-nowrap">
                 You ({localTool})
               </div>
             </div>
@@ -290,11 +235,6 @@ export function CanvasCursorBoard({
           );
           const remoteTool = (cursor.metadata.tool as CanvasTool | undefined) ?? 'brush';
           const remoteSize = (cursor.metadata.size as number | undefined) ?? 5;
-
-          // Add trail for each remote cursor update imperatively.
-          // We use a key-based approach: add the trail particle via a ref
-          // callback since React doesn't re-invoke effect on same data.
-          // Actually we append the trail directly in the cursor div's ref.
 
           return (
             <RemoteCursorWithTrail
@@ -346,50 +286,21 @@ function RemoteCursorWithTrail({
 
   return (
     <div
-      style={{
-        position: 'absolute',
-        left: x,
-        top: y,
-        transform: 'translate(-50%, -50%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        zIndex: 10,
-        pointerEvents: 'none',
-        userSelect: 'none',
-      }}
+      className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-10 pointer-events-none select-none"
+      style={{ left: x, top: y }}
     >
       {/* Cursor circle with initials */}
       <div
-        style={{
-          width: 24,
-          height: 24,
-          borderRadius: '50%',
-          background: color,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontSize: 10,
-          fontWeight: 'bold',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-        }}
+        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-md"
+        style={{ background: color }}
       >
         {initials}
       </div>
 
       {/* Tool label below cursor */}
       <div
-        style={{
-          fontSize: 11,
-          marginTop: 2,
-          color: 'white',
-          background: color,
-          opacity: 0.85,
-          borderRadius: 3,
-          padding: '1px 4px',
-          whiteSpace: 'nowrap',
-        }}
+        className="text-[11px] mt-0.5 text-white opacity-85 rounded-[3px] px-1 py-px whitespace-nowrap"
+        style={{ background: color }}
       >
         {initials} ({tool})
       </div>

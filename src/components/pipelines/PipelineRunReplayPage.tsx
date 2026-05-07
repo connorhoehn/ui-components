@@ -17,9 +17,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import type { CSSProperties } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { useClickOutside } from './hooks/useClickOutside';
+import { cn } from '../../lib/cn';
 
 import {
   PipelineEditorProvider,
@@ -38,83 +38,14 @@ import Chip from '../shared/Chip';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { useRunCost } from './cost/useRunCost';
 import { formatUsd } from './cost/llmPricing';
-import { colors } from '../../constants/styles';
 import type { NodeType, PipelineRun } from '../../types/pipeline';
 import { formatDate } from './utils/formatTime';
 import { downloadJSON } from './utils/fileUtils';
 import { statusChipVariant } from './utils/statusColors';
 import { StepTree } from './steps/StepTree';
-import Button from './ui/Button';
-import IconButton from './ui/IconButton';
+import { Button } from '../ui/Button';
+import { IconButton } from '../ui/IconButton';
 import ExecutorLog from './ExecutorLog';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-  height: 0,
-  overflow: 'hidden',
-  background: colors.surfaceInset,
-  fontFamily: 'inherit',
-  color: colors.textPrimary,
-  borderRadius: 8,
-  border: `1px solid ${colors.border}`,
-};
-
-const topBarStyle: CSSProperties = {
-  height: 44,
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  padding: '0 12px',
-  borderBottom: `1px solid ${colors.border}`,
-  background: colors.surface,
-  position: 'relative',
-  zIndex: 5,
-};
-
-
-
-
-const popoverStyle: CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  right: 0,
-  marginTop: 6,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  boxShadow: '0 12px 28px rgba(15,23,42,0.14)',
-  minWidth: 200,
-  zIndex: 20,
-  overflow: 'hidden',
-};
-
-const menuBtnStyle: CSSProperties = {
-  display: 'block',
-  width: '100%',
-  textAlign: 'left',
-  padding: '8px 14px',
-  fontSize: 13,
-  border: 'none',
-  background: 'transparent',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  color: colors.textPrimary,
-};
-
-
-// Scrubber styles live in `replay/Scrubber.tsx` — extracted to keep this page
-// under the 700-line guideline in PIPELINES_PLAN.md §18.5.
 
 // ---------------------------------------------------------------------------
 // Outer page — route param validation + providers
@@ -332,8 +263,11 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   // ── Missing-run fallback ─────────────────────────────────────────────
   if (!run) {
     return (
-      <div style={pageStyle} data-testid="pipeline-replay-missing">
-        <div style={topBarStyle}>
+      <div
+        className="flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border"
+        data-testid="pipeline-replay-missing"
+      >
+        <div className="h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]">
           <IconButton
             onClick={() => navigate(`/pipelines/${pipelineId}`)}
             aria-label="Back to pipeline"
@@ -341,29 +275,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           >
             ←
           </IconButton>
-          <div
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: colors.textPrimary,
-            }}
-          >
+          <div className="text-[13px] font-semibold text-text-primary">
             {definition?.name ?? 'Pipeline'}
           </div>
         </div>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 14,
-            padding: 32,
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ fontSize: 14, color: colors.textSecondary }}>
+        <div className="flex-1 flex flex-col items-center justify-center gap-3.5 p-8 text-center">
+          <div className="text-sm text-text-secondary">
             Run not available — it may have been trimmed from history.
           </div>
           <Button
@@ -381,9 +298,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   const costLabel = formatUsd(runCost);
 
   return (
-    <div style={pageStyle} data-testid="pipeline-replay">
+    <div
+      className="flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border"
+      data-testid="pipeline-replay"
+    >
       {/* ── Top bar ───────────────────────────────────────────────── */}
-      <div style={topBarStyle}>
+      <div className="h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]">
         <IconButton
           onClick={() => navigate(`/pipelines/${pipelineId}`)}
           aria-label="Back to pipeline"
@@ -393,37 +313,23 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
         </IconButton>
 
         <div
-          style={{
-            fontSize: 13,
-            fontWeight: 700,
-            color: colors.textPrimary,
-            maxWidth: 220,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+          className="text-[13px] font-bold text-text-primary max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap"
           title={definition?.name ?? pipelineId}
         >
           {definition?.name ?? pipelineId}
         </div>
 
-        <span style={{ color: colors.textTertiary, fontSize: 12 }}>·</span>
+        <span className="text-text-tertiary text-xs">·</span>
 
         <div
-          style={{
-            fontSize: 12,
-            color: colors.textSecondary,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+          className="text-xs text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap"
           data-testid="replay-subtitle"
         >
           Run from {formatDate(run.startedAt)} by {triggeredByLabel}
         </div>
 
         <span
-          style={{ color: colors.textTertiary, fontSize: 12 }}
+          className="text-text-tertiary text-xs"
           data-testid="replay-cost"
         >
           · {costLabel}
@@ -442,7 +348,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           </Chip>
         ) : null}
 
-        <div style={{ flex: 1 }} />
+        <div className="flex-1" />
 
         {/* Hub#1288: Retry-from-failed-step. Only shown for failed runs that
             have a known failing nodeId. */}
@@ -465,7 +371,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           ↻ Re-run
         </Button>
 
-        <div style={{ position: 'relative' }} ref={menuRef}>
+        <div className="relative" ref={menuRef}>
           <IconButton
             onClick={() => setMenuOpen((x) => !x)}
             aria-label="More actions"
@@ -474,14 +380,14 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
             ⋯
           </IconButton>
           {menuOpen ? (
-            <div style={popoverStyle} role="menu">
-              <button style={menuBtnStyle} role="menuitem" onClick={handleCopyRunId}>
+            <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden" role="menu">
+              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleCopyRunId}>
                 Copy runId
               </button>
-              <button style={menuBtnStyle} role="menuitem" onClick={handleExportRun}>
+              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleExportRun}>
                 Export run JSON
               </button>
-              <button style={menuBtnStyle} role="menuitem" onClick={handleOpenAsNewDraft}>
+              <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleOpenAsNewDraft}>
                 Open as new draft
               </button>
             </div>
@@ -499,39 +405,39 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
         confirmDisabled={retryInFlight}
       >
         {retryModal && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontSize: 13, color: colors.textSecondary }}>
+          <div className="flex flex-col gap-2.5">
+            <div className="text-[13px] text-text-secondary">
               A new run will start from{' '}
-              <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>
+              <code className="bg-surface-inset px-1 rounded text-xs">
                 {retryModal.nodeId.slice(0, 12)}{retryModal.nodeId.length > 12 ? '…' : ''}
               </code>
               {' '}using the original upstream context.
             </div>
             {retryModal.skippedNodes.length > 0 && (
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase', marginBottom: 6 }}>
+                <div className="text-[11px] font-semibold text-text-tertiary uppercase mb-1.5">
                   Steps that will be skipped ({retryModal.skippedNodes.length})
                 </div>
-                <div style={{ maxHeight: 80, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                <div className="max-h-20 overflow-y-auto flex flex-wrap gap-1">
                   {retryModal.skippedNodes.map((id) => (
-                    <span key={id} style={{ background: colors.surfaceInset, border: `1px solid ${colors.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 11, fontFamily: 'monospace', color: colors.textSecondary }}>
+                    <span key={id} className="bg-surface-inset border border-border rounded px-1.5 py-px text-[11px] font-mono text-text-secondary">
                       {id.slice(0, 10)}
                     </span>
                   ))}
                 </div>
               </div>
             )}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: colors.textSecondary, cursor: 'pointer' }}>
+            <label className="flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer">
               <input
                 type="checkbox"
                 checked={retryModal.snapshotInput}
                 onChange={(e) => setRetryModal((m) => m ? { ...m, snapshotInput: e.target.checked } : m)}
-                style={{ accentColor: colors.primary }}
+                className="accent-primary"
               />
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, fontSize: 12, color: '#991b1b' }}>
+              <div data-testid="retry-modal-error" className="py-2 px-3 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b]">
                 {retryError}
               </div>
             )}
@@ -539,18 +445,18 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
         )}
       </ConfirmDialog>
       {/* ── Threaded step detail — fills workspace ─────────────────── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-        <div style={{ flex: 1, overflow: 'auto', padding: '20px 28px', background: colors.surface }}>
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 overflow-auto py-5 px-7 bg-surface">
           {/* Run summary header */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: colors.textPrimary }}>
+          <div className="flex items-center gap-3 mb-5">
+            <h3 className="m-0 text-[15px] font-bold text-text-primary">
               Steps ({Object.keys(run.steps).length})
             </h3>
-            <span style={{ fontSize: 12, color: colors.textTertiary }}>
+            <span className="text-xs text-text-tertiary">
               {run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : ''} — {run.completedAt ? new Date(run.completedAt).toLocaleTimeString() : 'in progress'}
             </span>
             {run.durationMs != null && (
-              <span style={{ fontSize: 12, color: colors.textSecondary, marginLeft: 'auto' }}>
+              <span className="text-xs text-text-secondary ml-auto">
                 Total: {run.durationMs < 1000 ? `${run.durationMs}ms` : `${(run.durationMs / 1000).toFixed(1)}s`}
               </span>
             )}
@@ -576,7 +482,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               style={{ marginBottom: 16 }}
               data-testid="resume-history-banner"
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div className="flex flex-col gap-1.5">
                 <div>
                   {run.error?.nodeId && run.error.nodeId !== 'unknown' && (
                     <>Originally failed at <code>{run.error.nodeId.slice(0, 12)}</code> — </>
@@ -592,13 +498,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
                 </div>
                 {run.resumeHistory && run.resumeHistory.length > 1 && (
                   <ol
-                    style={{
-                      margin: 0,
-                      paddingLeft: 18,
-                      fontSize: 11,
-                      color: colors.textTertiary,
-                      lineHeight: 1.6,
-                    }}
+                    className="m-0 pl-[18px] text-[11px] text-text-tertiary leading-relaxed"
                     data-testid="resume-history-timeline"
                   >
                     {run.resumeHistory.map((h, i) => (
@@ -622,12 +522,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
             <Banner title="Run failed:" style={{ marginBottom: 16 }}>
               {run.error.message}
               {run.error.nodeId && run.error.nodeId !== 'unknown' && (
-                <span style={{ marginLeft: 8, fontSize: 11, color: '#b91c1c' }}>
+                <span className="ml-2 text-[11px] text-[#b91c1c]">
                   at node {run.error.nodeId.slice(0, 8)}
                 </span>
               )}
               {run.status === 'failed' && run.error.nodeId && run.error.nodeId !== 'unknown' && (
-                <div style={{ marginTop: 8 }}>
+                <div className="mt-2">
                   <Button
                     onClick={() => handleResumeFromHere(run.error!.nodeId)}
                     disabled={resumeInFlight !== null}
@@ -645,7 +545,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           <div
             role="tablist"
             aria-label="Run detail view"
-            style={{ display: 'flex', gap: 4, marginBottom: 12, borderBottom: `1px solid ${colors.border}` }}
+            className="flex gap-1 mb-3 border-b border-border"
             data-testid="run-replay-tabs"
           >
             {([
@@ -660,18 +560,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
                   aria-selected={active}
                   onClick={() => setActiveTab(tab.id)}
                   data-testid={`run-replay-tab-${tab.id}`}
-                  style={{
-                    fontFamily: 'inherit',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    padding: '6px 14px',
-                    border: 'none',
-                    background: 'transparent',
-                    color: active ? colors.textPrimary : colors.textTertiary,
-                    cursor: 'pointer',
-                    borderBottom: active ? `2px solid ${colors.primary}` : '2px solid transparent',
-                    marginBottom: -1,
-                  }}
+                  className={cn(
+                    'font-[inherit] text-[13px] font-semibold py-1.5 px-3.5 border-none bg-transparent cursor-pointer -mb-px',
+                    active
+                      ? 'text-text-primary border-b-2 border-b-primary'
+                      : 'text-text-tertiary border-b-2 border-b-transparent',
+                  )}
                 >
                   {tab.label}
                 </button>
@@ -689,7 +583,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               onResumeFromStep={run.status === 'failed' ? handleResumeFromHere : undefined}
             />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', minHeight: 400, height: '60vh' }}>
+            <div className="flex flex-col min-h-[400px] h-[60vh]">
               <ExecutorLog
                 pipelineId={pipelineId}
                 runId={runId}

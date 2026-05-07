@@ -5,9 +5,8 @@
 // Card is clickable when `onClick` is provided — hover draws a primary border.
 
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
 import Sparkline from '../../shared/Sparkline';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export interface KPICardProps {
   title: string;
@@ -29,25 +28,6 @@ function KPICard({ title, value, delta, sparklineData, onClick }: KPICardProps) 
 
   const clickable = Boolean(onClick);
 
-  const cardStyle: CSSProperties = {
-    flex: 1,
-    minWidth: 180,
-    background: colors.surface,
-    border: `1px solid ${hover && clickable ? colors.primary : colors.border}`,
-    borderRadius: 10,
-    padding: 16,
-    cursor: clickable ? 'pointer' : 'default',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-    fontFamily: 'inherit',
-    transition: 'border-color 120ms ease',
-  };
-
-  const deltaColor =
-    delta?.direction === 'up' ? colors.state.completed : colors.state.failed;
-  const deltaArrow = delta?.direction === 'up' ? '▲' : '▼';
-
   return (
     <div
       data-testid="kpi-card"
@@ -66,34 +46,18 @@ function KPICard({ title, value, delta, sparklineData, onClick }: KPICardProps) 
             }
           : undefined
       }
-      style={cardStyle}
+      className={cn(
+        'flex-1 min-w-[180px] bg-surface border rounded-[10px] p-4',
+        'flex flex-col gap-1.5 font-[inherit] transition-[border-color] duration-[120ms] ease-linear',
+        clickable ? 'cursor-pointer' : 'cursor-default',
+        hover && clickable ? 'border-primary' : 'border-border'
+      )}
     >
-      <div
-        style={{
-          fontSize: 12,
-          fontWeight: 600,
-          color: colors.textSecondary,
-          letterSpacing: 0.2,
-        }}
-      >
+      <div className="text-xs font-semibold text-text-secondary tracking-[0.2px]">
         {title}
       </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'baseline',
-          justifyContent: 'space-between',
-          gap: 8,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 28,
-            fontWeight: 700,
-            color: colors.textPrimary,
-            lineHeight: 1.1,
-          }}
-        >
+      <div className="flex items-baseline justify-between gap-2">
+        <div className="text-[28px] font-bold text-text-primary leading-[1.1]">
           {formatValue(value)}
         </div>
         {sparklineData && sparklineData.length > 0 && (
@@ -101,20 +65,18 @@ function KPICard({ title, value, delta, sparklineData, onClick }: KPICardProps) 
             data={sparklineData}
             width={80}
             height={20}
-            color={colors.primary}
+            color="#646cff"
           />
         )}
       </div>
       {delta && (
         <div
-          style={{
-            fontSize: 11,
-            fontWeight: 600,
-            color: deltaColor,
-            fontFamily: 'inherit',
-          }}
+          className={cn(
+            'text-[11px] font-semibold font-[inherit]',
+            delta.direction === 'up' ? 'text-state-completed' : 'text-state-failed'
+          )}
         >
-          {deltaArrow} {Math.abs(delta.value)}%
+          {delta.direction === 'up' ? '▲' : '▼'} {Math.abs(delta.value)}%
         </div>
       )}
     </div>

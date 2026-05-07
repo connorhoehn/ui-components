@@ -5,11 +5,9 @@
 // Body: approver chips (first 2, "+N more" if more).
 // See PIPELINES_PLAN.md §5.8 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ApprovalNodeData, Approver } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type ApprovalData = ApprovalNodeData & {
@@ -40,50 +38,26 @@ export default function ApprovalNode(props: NodeProps<ApprovalFlowNode>) {
   const required = data.requiredCount ?? 0;
   const subtitle = `${total} approver${total === 1 ? '' : 's'}, ${required}/${total} required`;
 
-  const chipsRowStyle: CSSProperties = {
-    display: 'flex', flexWrap: 'wrap', gap: 4,
-  };
-
-  const chipStyle: CSSProperties = {
-    display: 'inline-block',
-    padding: '2px 8px',
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 500,
-    background: colors.surfacePanel,
-    color: colors.textSecondary,
-    border: `1px solid ${colors.border}`,
-    maxWidth: 120,
-    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-  };
-
-  const moreChipStyle: CSSProperties = {
-    ...chipStyle,
-    background: colors.surfaceInset,
-    color: colors.textTertiary,
-  };
-
   const firstTwo = approvers.slice(0, 2);
   const more = Math.max(0, approvers.length - 2);
 
-  const inHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-  const approvedHandle: CSSProperties = {
-    background: colors.state.completed, width: 10, height: 10, top: '40%',
-  };
-  const rejectedHandle: CSSProperties = {
-    background: colors.state.failed, width: 10, height: 10, top: '60%',
-  };
-
   const body = approvers.length === 0
-    ? <span style={{ fontStyle: 'italic', color: colors.textTertiary }}>No approvers</span>
+    ? <span className="italic text-text-tertiary">No approvers</span>
     : (
-      <div style={chipsRowStyle}>
+      <div className="flex flex-wrap gap-1">
         {firstTwo.map((a, i) => (
-          <span key={i} style={chipStyle}>{approverLabel(a)}</span>
+          <span
+            key={i}
+            className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-surface-panel text-text-secondary border border-border max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap"
+          >
+            {approverLabel(a)}
+          </span>
         ))}
-        {more > 0 && <span style={moreChipStyle}>+{more} more</span>}
+        {more > 0 && (
+          <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-surface-inset text-text-tertiary border border-border max-w-[120px] overflow-hidden text-ellipsis whitespace-nowrap">
+            +{more} more
+          </span>
+        )}
       </div>
     );
 
@@ -98,9 +72,9 @@ export default function ApprovalNode(props: NodeProps<ApprovalFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"       style={inHandle} />
-      <Handle type="source" position={Position.Right} id="approved" style={approvedHandle} />
-      <Handle type="source" position={Position.Right} id="rejected" style={rejectedHandle} />
+      <Handle type="target" position={Position.Left}  id="in"       style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="approved" style={{ background: '#16a34a', width: 10, height: 10, top: '40%' }} />
+      <Handle type="source" position={Position.Right} id="rejected" style={{ background: '#dc2626', width: 10, height: 10, top: '60%' }} />
     </BaseNode>
   );
 }

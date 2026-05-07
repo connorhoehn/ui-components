@@ -5,6 +5,7 @@
 import type { MutableRefObject } from 'react';
 import type { TaskItem } from '../../types/document';
 import TaskItemRow from './TaskItemRow';
+import { cn } from '../../lib/cn';
 
 export interface TaskListProps {
   items: TaskItem[];
@@ -15,27 +16,16 @@ export interface TaskListProps {
   focusLastItem?: MutableRefObject<boolean>;
 }
 
-const listStyle: React.CSSProperties = {
-  padding: '8px 0',
-};
-
-const emptyStyle: React.CSSProperties = {
-  color: '#94a3b8',
-  fontSize: 13,
-  fontStyle: 'italic',
-  padding: '8px 0',
-};
-
 export default function TaskList({ items, editable, onUpdateItem, onRemoveItem, focusLastItem }: TaskListProps) {
   if (items.length === 0) {
-    return <div style={emptyStyle}>No tasks yet.</div>;
+    return <div className={cn('text-text-tertiary text-[13px] italic py-2')}>No tasks yet.</div>;
   }
 
   // Determine if the last item should receive auto-focus
   const shouldFocusLast = focusLastItem?.current ?? false;
 
   return (
-    <div style={listStyle}>
+    <div className={cn('py-2')}>
       {items.map((item, idx) => (
         <TaskItemRow
           key={item.id}

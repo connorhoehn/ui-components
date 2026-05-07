@@ -8,6 +8,7 @@
 //
 // Part of Phase 07, Plan 07-04 (CURS-07).
 
+import { cn } from '../../lib/cn';
 import type { CursorMode } from '../../hooks/useCursors';
 
 export type { CursorMode };
@@ -26,24 +27,19 @@ const MODES: { mode: CursorMode; label: string }[] = [
 
 export function CursorModeSelector({ activeMode, onModeChange }: CursorModeSelectorProps) {
   return (
-    <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+    <div className="flex gap-2 mb-4">
       {MODES.map(({ mode, label }) => {
         const isActive = mode === activeMode;
         return (
           <button
             key={mode}
             onClick={() => onModeChange(mode)}
-            style={{
-              padding: '8px 16px',
-              border: '2px solid',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontSize: 14,
-              fontFamily: 'monospace',
-              background: isActive ? '#007bff' : 'white',
-              color: isActive ? 'white' : '#374151',
-              borderColor: isActive ? '#007bff' : '#d1d5db',
-            }}
+            className={cn(
+              'px-4 py-2 border-2 rounded-md cursor-pointer text-sm font-mono',
+              isActive
+                ? 'bg-[#007bff] text-white border-[#007bff]'
+                : 'bg-white text-gray-700 border-gray-300'
+            )}
           >
             {label}
           </button>

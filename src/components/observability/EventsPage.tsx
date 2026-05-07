@@ -10,14 +10,13 @@
 // memory bounded — oldest trimmed first. Live/Paused toggle freezes prepends.
 //
 import { useCallback, useMemo, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import {
   useEventStream,
 } from '../pipelines/context/EventStreamContext';
 import type { WildcardEvent } from '../pipelines/context/EventStreamContext';
 import EventTimeline, { type EventItem } from './components/EventTimeline';
 import EventDetailPane from './components/EventDetailPane';
-import { colors, fieldStyle, cancelBtnStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -210,72 +209,22 @@ function EventsPageInner() {
   };
   const clearFilters = () => setFilters(INITIAL_FILTERS);
 
-  // -----------------------------------------------------------------------
-  // Styles
-  // -----------------------------------------------------------------------
-
-  const pageStyle: CSSProperties = {
-    display: 'flex', flexDirection: 'column',
-    height: '100%', minHeight: 0,
-    fontFamily: 'inherit', fontSize: 13, color: colors.textPrimary,
-    background: colors.surface,
-  };
-
-  const topBarStyle: CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: 12,
-    padding: '10px 16px',
-    borderBottom: `1px solid ${colors.border}`,
-    background: colors.surfacePanel,
-  };
-
-  const bodyStyle: CSSProperties = {
-    display: 'flex', flex: 1, minHeight: 0,
-  };
-
-  const railStyle: CSSProperties = {
-    width: railCollapsed ? 36 : 240,
-    flexShrink: 0,
-    borderRight: `1px solid ${colors.border}`,
-    background: colors.surfacePanel,
-    overflowY: 'auto',
-    transition: 'width 150ms ease',
-  };
-
-  const centerStyle: CSSProperties = {
-    flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column',
-  };
-
-  const detailStyle: CSSProperties = {
-    width: 320, flexShrink: 0,
-    borderLeft: `1px solid ${colors.border}`,
-    background: colors.surface,
-  };
-
-  const sectionStyle: CSSProperties = {
-    display: 'flex', flexDirection: 'column', gap: 6,
-    padding: '12px 14px',
-    borderBottom: `1px solid ${colors.border}`,
-  };
-
-  const sectionLabel: CSSProperties = {
-    fontSize: 11, fontWeight: 700, letterSpacing: 0.3,
-    color: colors.textSecondary, textTransform: 'uppercase',
-  };
-
   return (
-    <div data-testid="events-page" style={pageStyle}>
+    <div
+      data-testid="events-page"
+      className="flex flex-col h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface"
+    >
       {/* Top bar */}
-      <div style={topBarStyle}>
+      <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel">
         <button
           onClick={() => setPaused((p) => !p)}
           data-testid="events-live-toggle"
-          style={{
-            padding: '5px 12px', fontSize: 12, fontWeight: 600,
-            background: paused ? colors.surfaceHover : colors.state.completed,
-            color: paused ? colors.textSecondary : '#fff',
-            border: `1px solid ${paused ? colors.border : colors.state.completed}`,
-            borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className={cn(
+            'px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer font-[inherit]',
+            paused
+              ? 'bg-surface-hover text-text-secondary border border-border'
+              : 'bg-state-completed text-white border border-state-completed'
+          )}
         >
           {paused ? '■ Paused' : '● Live'}
         </button>
@@ -287,40 +236,37 @@ function EventsPageInner() {
           onChange={(e) =>
             setFilters((f) => ({ ...f, timeRange: e.target.value as TimeRange }))
           }
-          style={{ ...fieldStyle, flex: 0, minWidth: 120 }}
+          className="min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
         >
           {TIME_RANGES.map((t) => (
             <option key={t.value} value={t.value}>{t.label}</option>
           ))}
         </select>
 
-        <div style={{ marginLeft: 'auto', fontSize: 12, color: colors.textTertiary }}>
+        <div className="ml-auto text-xs text-text-tertiary">
           {visibleEvents.length} / {events.length} event{events.length === 1 ? '' : 's'}
         </div>
       </div>
 
-      <div style={bodyStyle}>
+      <div className="flex flex-1 min-h-0">
         {/* Filter rail */}
-        <aside data-testid="events-filter-rail" style={railStyle}>
-          <div
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              padding: '10px 14px', borderBottom: `1px solid ${colors.border}`,
-            }}
-          >
+        <aside
+          data-testid="events-filter-rail"
+          className={cn(
+            'shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out',
+            railCollapsed ? 'w-9' : 'w-60'
+          )}
+        >
+          <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-border">
             {!railCollapsed && (
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 0.3, color: colors.textSecondary }}>
+              <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary">
                 FILTERS
               </div>
             )}
             <button
               onClick={() => setRailCollapsed((c) => !c)}
               aria-label={railCollapsed ? 'Expand filters' : 'Collapse filters'}
-              style={{
-                border: 'none', background: 'transparent',
-                color: colors.textTertiary, cursor: 'pointer',
-                fontSize: 12, padding: 2, fontFamily: 'inherit',
-              }}
+              className="border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]"
             >
               {railCollapsed ? '›' : '‹'}
             </button>
@@ -328,12 +274,14 @@ function EventsPageInner() {
 
           {!railCollapsed && (
             <>
-              <div style={sectionStyle}>
-                <div style={sectionLabel}>Event type</div>
+              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                  Event type
+                </div>
                 {EVENT_GROUPS.map((g) => (
                   <label
                     key={g}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+                    className="flex items-center gap-1.5 text-xs"
                   >
                     <input
                       type="checkbox"
@@ -345,8 +293,10 @@ function EventsPageInner() {
                 ))}
               </div>
 
-              <div style={sectionStyle}>
-                <div style={sectionLabel}>Runs</div>
+              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                  Runs
+                </div>
                 <input
                   data-testid="events-filter-runs"
                   type="text"
@@ -355,12 +305,14 @@ function EventsPageInner() {
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, runIds: e.target.value }))
                   }
-                  style={fieldStyle}
+                  className="flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
                 />
               </div>
 
-              <div style={sectionStyle}>
-                <div style={sectionLabel}>Pipelines</div>
+              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                  Pipelines
+                </div>
                 <input
                   data-testid="events-filter-pipelines"
                   type="text"
@@ -369,16 +321,18 @@ function EventsPageInner() {
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, pipelineIds: e.target.value }))
                   }
-                  style={fieldStyle}
+                  className="flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
                 />
               </div>
 
-              <div style={sectionStyle}>
-                <div style={sectionLabel}>Nodes</div>
+              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                  Nodes
+                </div>
                 {DEFAULT_NODE_OPTIONS.map((id) => (
                   <label
                     key={id}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+                    className="flex items-center gap-1.5 text-xs"
                   >
                     <input
                       type="checkbox"
@@ -390,12 +344,14 @@ function EventsPageInner() {
                 ))}
               </div>
 
-              <div style={sectionStyle}>
-                <div style={sectionLabel}>Severity</div>
+              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                  Severity
+                </div>
                 {SEVERITIES.map((s) => (
                   <label
                     key={s}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}
+                    className="flex items-center gap-1.5 text-xs"
                   >
                     <input
                       type="checkbox"
@@ -407,11 +363,11 @@ function EventsPageInner() {
                 ))}
               </div>
 
-              <div style={{ padding: '12px 14px' }}>
+              <div className="px-3.5 py-3">
                 <button
                   data-testid="events-clear-filters"
                   onClick={clearFilters}
-                  style={cancelBtnStyle}
+                  className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
                 >
                   Clear
                 </button>
@@ -421,7 +377,7 @@ function EventsPageInner() {
         </aside>
 
         {/* Center list */}
-        <section style={centerStyle}>
+        <section className="flex-1 min-w-0 flex flex-col">
           <EventTimeline
             events={visibleEvents}
             selectedId={selectedId}
@@ -431,7 +387,7 @@ function EventsPageInner() {
         </section>
 
         {/* Detail pane */}
-        <aside style={detailStyle}>
+        <aside className="w-80 shrink-0 border-l border-border bg-surface">
           <EventDetailPane event={selectedEvent} />
         </aside>
       </div>

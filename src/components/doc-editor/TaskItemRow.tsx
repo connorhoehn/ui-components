@@ -6,6 +6,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import type { TaskItem } from '../../types/document';
 import { DEV_USERS, findUserByName } from '../../data/userDirectory';
 import type { DirectoryUser } from '../../data/userDirectory';
+import { cn } from '../../lib/cn';
 
 export interface TaskItemRowProps {
   item: TaskItem;
@@ -53,125 +54,14 @@ function isOverdue(iso: string): boolean {
   return d < today;
 }
 
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '6px 0',
-  borderBottom: '1px solid #f1f5f9',
-};
-
-const badgeStyle = (bg: string): React.CSSProperties => ({
-  display: 'inline-block',
-  padding: '2px 8px',
-  fontSize: 11,
-  fontWeight: 600,
-  borderRadius: 12,
-  backgroundColor: bg,
-  color: '#fff',
-  textTransform: 'capitalize',
-  lineHeight: 1.4,
-  whiteSpace: 'nowrap',
-});
-
-const inputStyle: React.CSSProperties = {
-  flex: 1,
-  border: 'none',
-  outline: 'none',
-  fontSize: 14,
-  fontFamily: 'inherit',
-  background: 'transparent',
-  padding: '2px 4px',
-};
-
-const deleteBtnStyle: React.CSSProperties = {
-  border: 'none',
-  background: 'none',
-  color: '#ef4444',
-  cursor: 'pointer',
-  fontSize: 16,
-  padding: '2px 6px',
-  borderRadius: 4,
-  lineHeight: 1,
-};
-
-const assigneeBadgeStyle = (hasAssignee: boolean): React.CSSProperties => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minWidth: hasAssignee ? 'auto' : 24,
-  height: 24,
-  padding: hasAssignee ? '2px 8px' : 0,
-  fontSize: 11,
-  fontWeight: 600,
-  borderRadius: 12,
-  background: hasAssignee ? '#e0e7ff' : '#fff',
-  color: hasAssignee ? '#4338ca' : '#94a3b8',
-  cursor: 'pointer',
-  border: hasAssignee ? 'none' : '1px dashed #cbd5e1',
-  whiteSpace: 'nowrap',
-  lineHeight: 1.4,
-});
-
-const assigneeInputStyle: React.CSSProperties = {
-  width: '100%',
-  fontSize: 11,
-  fontFamily: 'inherit',
-  padding: '4px 8px',
-  borderRadius: 6,
-  border: '1px solid #d1d5db',
-  outline: 'none',
-  height: 28,
-  background: '#fff',
-  color: '#1e293b',
-  boxSizing: 'border-box',
-};
-
-const assigneeDropdownStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  marginTop: 4,
-  minWidth: 180,
-  maxHeight: 200,
-  overflowY: 'auto',
-  background: '#fff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-  zIndex: 1000,
-  padding: '4px 0',
-};
-
-const assigneeOptionStyle = (highlighted: boolean): React.CSSProperties => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '6px 10px',
-  fontSize: 12,
-  cursor: 'pointer',
-  background: highlighted ? '#f1f5f9' : 'transparent',
-  border: 'none',
-  width: '100%',
-  textAlign: 'left',
-  fontFamily: 'inherit',
-  color: '#1e293b',
-});
-
-const avatarCircleStyle = (color: string, size: number): React.CSSProperties => ({
-  width: size,
-  height: size,
-  borderRadius: '50%',
-  background: color,
-  color: '#fff',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: size * 0.45,
-  fontWeight: 700,
-  flexShrink: 0,
-  lineHeight: 1,
-});
+function getInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
 
 export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFocusText, onDidAutoFocus }: TaskItemRowProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -184,15 +74,6 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
   const toggleStatus = () => {
     const next = item.status === 'done' ? 'pending' : 'done';
     onUpdate({ status: next });
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(/\s+/)
-      .map(w => w[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
   };
 
   // Resolve the current assignee to a directory user (for color)
@@ -280,17 +161,12 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
   const overdue = item.dueDate && item.status !== 'done' ? isOverdue(item.dueDate) : false;
 
   return (
-    <div style={rowStyle}>
+    <div className={cn('flex items-center gap-2 py-1.5 border-b border-[#f1f5f9]')}>
       {/* Priority dot indicator */}
       <span
         title={`Priority: ${item.priority}`}
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: priorityColors[item.priority],
-          flexShrink: 0,
-        }}
+        className={cn('w-2 h-2 rounded-full shrink-0')}
+        style={{ background: priorityColors[item.priority] }}
       />
 
       <input
@@ -298,7 +174,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         checked={item.status === 'done'}
         onChange={toggleStatus}
         disabled={!editable}
-        style={{ cursor: editable ? 'pointer' : 'default', width: 16, height: 16, accentColor: '#3b82f6', background: '#fff', WebkitAppearance: 'checkbox' as never }}
+        className={cn('w-4 h-4 accent-[#3b82f6]')}
+        style={{ cursor: editable ? 'pointer' : 'default' }}
       />
 
       <input
@@ -308,8 +185,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.text}
         onChange={(e) => onUpdate({ text: e.target.value })}
         readOnly={!editable}
+        className={cn('flex-1 border-none outline-none text-sm font-[inherit] bg-transparent px-1 py-0.5')}
         style={{
-          ...inputStyle,
           textDecoration: item.status === 'done' ? 'line-through' : 'none',
           color: item.status === 'done' ? '#94a3b8' : '#1e293b',
         }}
@@ -319,46 +196,49 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
       {item.dueDate && (
         <span
           title={item.dueDate}
+          className={cn('inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug')}
           style={{
-            display: 'inline-block',
-            padding: '2px 8px',
-            fontSize: 10,
-            fontWeight: 600,
-            borderRadius: 12,
             background: overdue ? '#fef2f2' : '#f0f9ff',
             color: overdue ? '#dc2626' : '#64748b',
             border: overdue ? '1px solid #fecaca' : '1px solid #e0f2fe',
-            whiteSpace: 'nowrap',
-            lineHeight: 1.4,
           }}
         >
-          {overdue ? '\u26A0 ' : ''}Due: {formatDueDate(item.dueDate)}
+          {overdue ? '⚠ ' : ''}Due: {formatDueDate(item.dueDate)}
         </span>
       )}
 
       {/* Category badge (retro: start/stop/continue, etc.) */}
       {item.category && (
         <span
-          style={badgeStyle(categoryColors[item.category.toLowerCase()] ?? '#6b7280')}
+          className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap')}
+          style={{ backgroundColor: categoryColors[item.category.toLowerCase()] ?? '#6b7280' }}
         >
           {item.category}
         </span>
       )}
 
       {/* Assignee picker */}
-      <div ref={pickerRef} style={{ position: 'relative' }}>
+      <div ref={pickerRef} className={cn('relative')}>
         <button
           type="button"
           onClick={openPicker}
-          style={assigneeBadgeStyle(!!item.assignee)}
           title={item.assignee || 'Unassigned'}
+          className={cn(
+            'inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap',
+            item.assignee
+              ? 'px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0'
+              : 'w-6 px-0 bg-white text-text-tertiary border border-dashed border-[#cbd5e1]',
+          )}
         >
           {item.assignee ? (
             <>
-              <span style={avatarCircleStyle(assigneeUser?.color ?? '#94a3b8', 18)}>
+              <span
+                className={cn('w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none')}
+                style={{ background: assigneeUser?.color ?? '#94a3b8' }}
+              >
                 {getInitials(item.assignee)}
               </span>
-              <span style={{ marginLeft: 4, fontSize: 11 }}>{item.assignee.split(' ')[0]}</span>
+              <span className={cn('ml-1 text-[11px]')}>{item.assignee.split(' ')[0]}</span>
             </>
           ) : (
             '+'
@@ -366,8 +246,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         </button>
 
         {pickerOpen && (
-          <div style={assigneeDropdownStyle}>
-            <div style={{ padding: '4px 8px' }}>
+          <div className={cn('absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1')}>
+            <div className={cn('px-2 py-1')}>
               <input
                 ref={inputRef}
                 type="text"
@@ -375,7 +255,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
                 onChange={(e) => setFilterText(e.target.value)}
                 onKeyDown={handlePickerKeyDown}
                 placeholder="Search users..."
-                style={assigneeInputStyle}
+                className={cn('w-full text-[11px] font-[inherit] px-2 py-1 rounded-md border border-[#d1d5db] outline-none h-7 bg-white text-[#1e293b] box-border')}
               />
             </div>
 
@@ -384,10 +264,10 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
               <button
                 type="button"
                 onClick={clearAssignee}
-                style={assigneeOptionStyle(false)}
+                className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-[#1e293b]')}
               >
-                <span style={{ ...avatarCircleStyle('#cbd5e1', 22), color: '#64748b' }}>--</span>
-                <span style={{ color: '#64748b', fontStyle: 'italic' }}>Unassigned</span>
+                <span className={cn('w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-[#64748b] inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}>--</span>
+                <span className={cn('text-[#64748b] italic')}>Unassigned</span>
               </button>
             )}
 
@@ -397,9 +277,13 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
                 type="button"
                 onClick={() => selectUser(user)}
                 onMouseEnter={() => setHighlightIdx(idx)}
-                style={assigneeOptionStyle(idx === highlightIdx)}
+                className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]')}
+                style={{ background: idx === highlightIdx ? '#f1f5f9' : 'transparent' }}
               >
-                <span style={avatarCircleStyle(user.color, 22)}>
+                <span
+                  className={cn('w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}
+                  style={{ background: user.color }}
+                >
                   {getInitials(user.displayName)}
                 </span>
                 <span>{user.displayName}</span>
@@ -407,7 +291,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             ))}
 
             {filteredUsers.length === 0 && (
-              <div style={{ padding: '8px 10px', fontSize: 11, color: '#94a3b8' }}>
+              <div className={cn('px-2.5 py-2 text-[11px] text-text-tertiary')}>
                 No users found
               </div>
             )}
@@ -419,18 +303,14 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.priority}
         disabled={!editable}
         onChange={(e) => onUpdate({ priority: e.target.value as TaskItem['priority'] })}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4')}
         style={{
-          ...badgeStyle(priorityColors[item.priority]),
-          border: 'none',
+          backgroundColor: priorityColors[item.priority],
           cursor: editable ? 'pointer' : 'default',
-          appearance: 'none',
-          WebkitAppearance: 'none',
-          paddingRight: 16,
           backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'5\' viewBox=\'0 0 8 5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23fff\'/%3E%3C/svg%3E")',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'right 5px center',
           backgroundSize: '8px 5px',
-          outline: 'none',
         }}
         title={`Priority: ${item.priority}`}
       >
@@ -443,18 +323,14 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.status}
         disabled={!editable}
         onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4')}
         style={{
-          ...badgeStyle(statusColors[item.status]),
-          border: 'none',
+          backgroundColor: statusColors[item.status],
           cursor: editable ? 'pointer' : 'default',
-          appearance: 'none',
-          WebkitAppearance: 'none',
-          paddingRight: 16,
           backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'5\' viewBox=\'0 0 8 5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23fff\'/%3E%3C/svg%3E")',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'right 5px center',
           backgroundSize: '8px 5px',
-          outline: 'none',
         }}
         title={`Status: ${item.status}`}
       >
@@ -465,7 +341,12 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
       </select>
 
       {editable && (
-        <button type="button" onClick={onRemove} style={deleteBtnStyle} title="Remove task">
+        <button
+          type="button"
+          onClick={onRemove}
+          title="Remove task"
+          className={cn('border-none bg-transparent text-[#ef4444] cursor-pointer text-base px-1.5 py-0.5 rounded leading-none')}
+        >
           x
         </button>
       )}

@@ -5,14 +5,12 @@
 // Subtitle describes the mode; body shows the merge strategy.
 // See PIPELINES_PLAN.md §5.7 / §18.4.4 / §19.12.
 
-import type { CSSProperties } from 'react';
 import {
   Handle, Position, useNodeConnections,
   type NodeProps, type Node,
 } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { JoinNodeData } from '../../../../types/pipeline';
-import { colors } from '../../../../constants/styles';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
 type JoinData = JoinNodeData & {
@@ -55,16 +53,12 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
   const incoming = useNodeConnections({ handleType: 'target' });
   const handleCount = Math.max(2, incoming.length + 1);
 
-  const outHandle: CSSProperties = {
-    background: colors.borderEmphasis, width: 10, height: 10,
-  };
-
   return (
     <BaseNode
       icon="⑃"
       subtitle={modeSubtitle(data)}
       state={state}
-      body={<span style={{ fontStyle: 'italic' }}>{mergeLabel(data.mergeStrategy)}</span>}
+      body={<span className="italic">{mergeLabel(data.mergeStrategy)}</span>}
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
@@ -72,22 +66,17 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
     >
       {Array.from({ length: handleCount }, (_, i) => {
         const pct = ((i + 1) / (handleCount + 1)) * 100;
-        const style: CSSProperties = {
-          background: colors.borderEmphasis,
-          width: 10, height: 10,
-          top: `${pct}%`,
-        };
         return (
           <Handle
             key={`in-${i}`}
             type="target"
             position={Position.Left}
             id={`in-${i}`}
-            style={style}
+            style={{ background: '#cbd5e1', width: 10, height: 10, top: `${pct}%` }}
           />
         );
       })}
-      <Handle type="source" position={Position.Right} id="out" style={outHandle} />
+      <Handle type="source" position={Position.Right} id="out" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
     </BaseNode>
   );
 }

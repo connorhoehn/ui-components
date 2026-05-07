@@ -10,6 +10,7 @@
 
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { cn } from '../../lib/cn';
 import { useCustomFieldTypes } from '../../hooks/useCustomFieldTypes';
 import type { CustomFieldType } from '../../types/fieldType';
 
@@ -44,33 +45,6 @@ const AVAILABLE = PRIMITIVE_STORAGE_TYPES.filter(p => p.rendererBase !== null);
 const COMING_SOON = PRIMITIVE_STORAGE_TYPES.filter(p => p.rendererBase === null);
 
 // ---------------------------------------------------------------------------
-// Shared micro-styles
-// ---------------------------------------------------------------------------
-
-const btn = (variant: 'primary' | 'secondary' | 'ghost' | 'danger', disabled = false): React.CSSProperties => {
-  const base: React.CSSProperties = {
-    padding: '7px 16px', fontSize: 13, fontWeight: 600, borderRadius: 7,
-    cursor: disabled ? 'not-allowed' : 'pointer', fontFamily: 'inherit',
-    border: '1px solid transparent', opacity: disabled ? 0.5 : 1,
-  };
-  if (variant === 'primary')   return { ...base, background: '#646cff', color: '#fff', border: 'none' };
-  if (variant === 'secondary') return { ...base, background: '#fff', color: '#374151', border: '1px solid #d1d5db' };
-  if (variant === 'danger')    return { ...base, background: '#fff', color: '#dc2626', border: '1px solid #fca5a5' };
-  return { ...base, background: 'none', color: '#64748b', border: 'none' };
-};
-
-const inputStyle: React.CSSProperties = {
-  width: '100%', boxSizing: 'border-box',
-  border: '1px solid #d1d5db', borderRadius: 7, padding: '8px 12px',
-  fontSize: 14, fontFamily: 'inherit', background: '#f9fafb', color: '#0f172a',
-  outline: 'none',
-};
-
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 5,
-};
-
-// ---------------------------------------------------------------------------
 // Delete confirmation modal
 // ---------------------------------------------------------------------------
 
@@ -80,20 +54,28 @@ function DeleteModal({ name, onConfirm, onCancel }: {
   return createPortal(
     <div
       data-testid="delete-modal"
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}
+      className="fixed inset-0 bg-black/45 flex items-center justify-center z-[10000]"
       onClick={onCancel}
     >
       <div
-        style={{ background: '#fff', borderRadius: 10, padding: '28px 32px', maxWidth: 400, width: '90vw', boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }}
+        className="bg-white rounded-[10px] py-7 px-8 max-w-[400px] w-[90vw] shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
         onClick={e => e.stopPropagation()}
       >
-        <div style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Delete data type?</div>
-        <p style={{ fontSize: 13, color: '#64748b', marginBottom: 20 }}>
+        <div className="text-[17px] font-bold text-text-primary mb-2">Delete data type?</div>
+        <p className="text-[13px] text-[#64748b] mb-5">
           <strong>{name}</strong> will be removed. Document types that reference it will keep their existing sections, but this type won't appear in the picker for new sections.
         </p>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-          <button data-testid="cancel-delete" onClick={onCancel} style={btn('secondary')}>Cancel</button>
-          <button data-testid="confirm-delete" onClick={onConfirm} style={btn('danger')}>Delete</button>
+        <div className="flex justify-end gap-2">
+          <button
+            data-testid="cancel-delete"
+            onClick={onCancel}
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+          >Cancel</button>
+          <button
+            data-testid="confirm-delete"
+            onClick={onConfirm}
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#dc2626] border border-[#fca5a5]"
+          >Delete</button>
         </div>
       </div>
     </div>,
@@ -107,7 +89,7 @@ function DeleteModal({ name, onConfirm, onCancel }: {
 
 function StepIndicator({ step }: { step: 1 | 2 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 28 }}>
+    <div className="flex items-center mb-7">
       {([
         [1, 'Storage type'],
         [2, 'Display'],
@@ -115,25 +97,23 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
         const active = n === step;
         const done   = n < step;
         return (
-          <div key={n} style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 12, fontWeight: 700,
-              background: done ? '#646cff' : active ? '#ede9fe' : '#f1f5f9',
-              color: done ? '#fff' : active ? '#4c1d95' : '#94a3b8',
-              border: active ? '2px solid #646cff' : '2px solid transparent',
-            }}>
+          <div key={n} className="flex items-center">
+            <div className={cn(
+              'w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center text-xs font-bold border-2',
+              done && 'bg-primary text-white border-transparent',
+              active && 'bg-[#ede9fe] text-[#4c1d95] border-primary',
+              !done && !active && 'bg-[#f1f5f9] text-[#94a3b8] border-transparent',
+            )}>
               {done ? '✓' : n}
             </div>
-            <span style={{
-              marginLeft: 6, fontSize: 12, fontWeight: active ? 600 : 400,
-              color: active ? '#0f172a' : '#94a3b8', whiteSpace: 'nowrap',
-            }}>
+            <span className={cn(
+              'ml-1.5 text-xs whitespace-nowrap',
+              active ? 'font-semibold text-text-primary' : 'font-normal text-[#94a3b8]',
+            )}>
               {label}
             </span>
             {i < 1 && (
-              <div style={{ width: 28, height: 1, background: '#e2e8f0', margin: '0 10px', flexShrink: 0 }} />
+              <div className="w-7 h-px bg-border mx-2.5 shrink-0" />
             )}
           </div>
         );
@@ -160,26 +140,28 @@ function Step1({
   const selected = PRIMITIVE_STORAGE_TYPES.find(p => p.id === primitiveType);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="flex flex-col gap-5">
       <div>
-        <span style={labelStyle}>Label <span style={{ color: '#dc2626' }}>*</span></span>
+        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
+          Label <span className="text-[#dc2626]">*</span>
+        </span>
         <input
           data-testid="name-input"
-          style={inputStyle}
+          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none"
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="e.g. Article title, Publication date, Author bio…"
           maxLength={80}
           autoFocus
         />
-        {nameError && <div style={{ color: '#dc2626', fontSize: 12, marginTop: 4 }}>{nameError}</div>}
+        {nameError && <div className="text-[#dc2626] text-xs mt-1">{nameError}</div>}
       </div>
 
       <div>
-        <span style={labelStyle}>Description</span>
+        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">Description</span>
         <textarea
           data-testid="description-input"
-          style={{ ...inputStyle, minHeight: 64, resize: 'vertical' }}
+          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none min-h-16 resize-y"
           value={description}
           onChange={e => setDescription(e.target.value)}
           placeholder="Optional — describe when and how this field is used"
@@ -188,8 +170,8 @@ function Step1({
       </div>
 
       <div>
-        <span style={labelStyle}>
-          Field type <span style={{ fontWeight: 400, color: '#94a3b8' }}>— what kind of data this field stores</span>
+        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
+          Field type <span className="font-normal text-[#94a3b8]">— what kind of data this field stores</span>
         </span>
 
         {/* Drupal-style select */}
@@ -197,11 +179,7 @@ function Step1({
           data-testid="primitive-type-select"
           value={primitiveType}
           onChange={e => setPrimitiveType(e.target.value)}
-          style={{
-            ...inputStyle,
-            cursor: 'pointer',
-            appearance: 'auto',
-          }}
+          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none cursor-pointer appearance-auto"
         >
           <option value="">— Select a field type —</option>
           <optgroup label="Available now">
@@ -218,14 +196,10 @@ function Step1({
 
         {/* Description of selected type */}
         {selected && (
-          <div style={{
-            marginTop: 10, padding: '10px 14px', borderRadius: 7,
-            background: '#f8fafc', border: '1px solid #e2e8f0',
-            fontSize: 13, color: '#475569',
-          }}>
-            <strong style={{ color: '#0f172a' }}>{selected.label}</strong> — {selected.description}
+          <div className="mt-2.5 py-2.5 px-3.5 rounded-[7px] bg-[#f8fafc] border border-border text-[13px] text-[#475569]">
+            <strong className="text-text-primary">{selected.label}</strong> — {selected.description}
             {selected.rendererBase && (
-              <span style={{ marginLeft: 8, fontSize: 11, color: '#94a3b8' }}>
+              <span className="ml-2 text-[11px] text-[#94a3b8]">
                 · renders with: {selected.rendererBase}
               </span>
             )}
@@ -285,26 +259,26 @@ function Step2({
   const rendererKeys = prim?.rendererBase ? RENDERER_KEYS[prim.rendererBase] ?? {} : {};
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <p style={{ margin: '0 0 16px', fontSize: 13, color: '#64748b' }}>
+    <div className="flex flex-col gap-2">
+      <p className="m-0 mb-4 text-[13px] text-[#64748b]">
         Configure which view modes this field appears in and which renderer to use.
       </p>
 
-      <div style={{ border: '1px solid #e2e8f0', borderRadius: 10, overflow: 'hidden' }}>
+      <div className="border border-border rounded-[10px] overflow-hidden">
         {/* Header */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ padding: '10px 16px', fontSize: 13, fontWeight: 700, color: '#0f172a' }}>Field</div>
+        <div className="grid grid-cols-4 bg-[#f8fafc] border-b border-border">
+          <div className="py-2.5 px-4 text-[13px] font-bold text-text-primary">Field</div>
           {VIEW_MODES.map(m => (
-            <div key={m.key} style={{ padding: '10px 16px', fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{m.label}</div>
+            <div key={m.key} className="py-2.5 px-4 text-[13px] font-bold text-text-primary">{m.label}</div>
           ))}
         </div>
 
         {/* Data row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', alignItems: 'flex-start', padding: '14px 0' }}>
+        <div className="grid grid-cols-4 items-start py-3.5">
           {/* Field cell */}
-          <div style={{ padding: '0 16px' }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{fieldLabel}</div>
-            <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{prim?.label ?? primitiveType}</div>
+          <div className="px-4">
+            <div className="text-sm font-semibold text-text-primary">{fieldLabel}</div>
+            <div className="text-[11px] text-[#94a3b8] mt-0.5">{prim?.label ?? primitiveType}</div>
           </div>
 
           {/* Mode cells */}
@@ -312,25 +286,21 @@ function Step2({
             const options = rendererKeys[m.key] ?? [];
             const isVisible = visibility[m.key] ?? true;
             return (
-              <div key={m.key} style={{ padding: '0 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 7, cursor: 'pointer', userSelect: 'none' }}>
+              <div key={m.key} className="px-4 flex flex-col gap-2">
+                <label className="flex items-center gap-[7px] cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={isVisible}
                     onChange={e => setVisibility({ ...visibility, [m.key]: e.target.checked })}
-                    style={{ width: 16, height: 16, accentColor: '#646cff', cursor: 'pointer' }}
+                    className="w-4 h-4 accent-primary cursor-pointer"
                   />
-                  <span style={{ fontSize: 13, color: '#374151' }}>Visible</span>
+                  <span className="text-[13px] text-[#374151]">Visible</span>
                 </label>
                 {isVisible && options.length > 0 && (
                   <select
                     value={formatters[m.key] ?? options[0]}
                     onChange={e => setFormatters({ ...formatters, [m.key]: e.target.value })}
-                    style={{
-                      width: '100%', fontSize: 13, border: '1px solid #d1d5db', borderRadius: 6,
-                      padding: '6px 10px', background: '#fff', color: '#374151',
-                      fontFamily: 'inherit', cursor: 'pointer',
-                    }}
+                    className="w-full text-[13px] border border-border-field rounded-md py-1.5 px-2.5 bg-white text-[#374151] font-inherit cursor-pointer"
                   >
                     {options.map(key => (
                       <option key={key} value={key}>{RENDERER_LABELS[key] ?? key}</option>
@@ -338,7 +308,7 @@ function Step2({
                   </select>
                 )}
                 {isVisible && options.length === 0 && (
-                  <span style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>Default</span>
+                  <span className="text-xs text-[#94a3b8] italic">Default</span>
                 )}
               </div>
             );
@@ -420,24 +390,40 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
         />
       )}
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 20, marginTop: 20, borderTop: '1px solid #e2e8f0' }}>
-        <button type="button" onClick={onCancel} style={btn('ghost')}>Cancel</button>
-        <div style={{ display: 'flex', gap: 8 }}>
+      <div className="flex justify-between items-center pt-5 mt-5 border-t border-border">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-[#64748b]"
+        >Cancel</button>
+        <div className="flex gap-2">
           {step === 2 && (
-            <button type="button" onClick={() => setStep(1)} style={btn('secondary')}>← Back</button>
+            <button
+              type="button"
+              onClick={() => setStep(1)}
+              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+            >← Back</button>
           )}
           {step === 1 ? (
             <button
               data-testid="next-button"
               type="button"
               onClick={handleNext}
-              style={btn('primary', !canNext)}
               disabled={!canNext}
+              className={cn(
+                'py-[7px] px-4 text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-primary text-white',
+                canNext ? 'cursor-pointer opacity-100' : 'cursor-not-allowed opacity-50',
+              )}
             >
               Next →
             </button>
           ) : (
-            <button data-testid="save-button" type="button" onClick={handleSave} style={btn('primary')}>
+            <button
+              data-testid="save-button"
+              type="button"
+              onClick={handleSave}
+              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
+            >
               {initial ? 'Save Changes' : 'Create Data Type'}
             </button>
           )}
@@ -461,18 +447,18 @@ function TypeListItem({
   return (
     <div
       onClick={onSelect}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        padding: '8px 14px', cursor: 'pointer', borderRadius: 7,
-        background: active ? '#f1f0ff' : 'transparent',
-        borderLeft: active ? '3px solid #646cff' : '3px solid transparent',
-      }}
+      className={cn(
+        'flex items-center gap-2.5 py-2 px-3.5 cursor-pointer rounded-[7px]',
+        active
+          ? 'bg-[#f1f0ff] border-l-[3px] border-l-primary'
+          : 'bg-transparent border-l-[3px] border-l-transparent',
+      )}
     >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div className="flex-1 min-w-0">
+        <div className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
           {label}
         </div>
-        <div style={{ fontSize: 11, color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div className="text-[11px] text-[#94a3b8] overflow-hidden text-ellipsis whitespace-nowrap">
           {primitiveLabel}
         </div>
       </div>
@@ -480,7 +466,7 @@ function TypeListItem({
         type="button"
         onClick={e => { e.stopPropagation(); onDelete(); }}
         title="Delete"
-        style={{ ...btn('ghost'), padding: '2px 6px', fontSize: 14, color: '#ef4444', flexShrink: 0 }}
+        className="px-1.5 py-0.5 text-sm bg-transparent border-none text-[#ef4444] cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
       >
         ×
       </button>
@@ -494,9 +480,9 @@ function TypeListItem({
 
 function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center' }}>
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#374151', marginBottom: 8 }}>Data Types</div>
-      <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 360, marginBottom: 24, lineHeight: 1.6 }}>
+    <div className="h-full flex flex-col items-center justify-center py-10 px-6 text-center">
+      <div className="text-base font-semibold text-[#374151] mb-2">Data Types</div>
+      <div className="text-[13px] text-[#94a3b8] max-w-[360px] mb-6 leading-relaxed">
         Data types define the primitive storage type a document section holds — Text, Long text, Integer, Boolean, and more.
         Create custom types to give sections distinct labels and display configuration.
       </div>
@@ -504,7 +490,7 @@ function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
         data-testid="new-data-type-empty-btn"
         type="button"
         onClick={onCreateNew}
-        style={btn('primary')}
+        className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
       >
         + New Data Type
       </button>
@@ -553,29 +539,25 @@ export default function FieldTypesPage() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', minHeight: 0, position: 'relative' }}>
+    <div className="flex h-full min-h-0 relative">
 
       {/* Left sidebar */}
-      <div style={{
-        width: 264, flexShrink: 0, borderRight: '1px solid #e2e8f0',
-        display: 'flex', flexDirection: 'column', overflowY: 'auto',
-        background: '#fafbfc',
-      }}>
-        <div style={{ padding: '16px 14px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>Data Types</span>
+      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-y-auto bg-[#fafbfc]">
+        <div className="py-4 px-3.5 pb-2.5 flex items-center justify-between">
+          <span className="text-[13px] font-bold text-[#374151]">Data Types</span>
           <button
             data-testid="new-data-type-button"
             type="button"
             onClick={() => { setMode('create'); setEditingId(null); }}
-            style={{ ...btn('primary'), padding: '5px 12px', fontSize: 12 }}
+            className="py-[5px] px-3 text-xs font-semibold rounded-[7px] cursor-pointer font-inherit border-none bg-primary text-white"
           >
             + New
           </button>
         </div>
 
-        <div style={{ padding: '4px 8px', flex: 1 }}>
+        <div className="px-2 py-1 flex-1">
           {customTypes.length === 0 ? (
-            <div style={{ padding: '20px 12px', textAlign: 'center', color: '#94a3b8', fontSize: 12 }}>
+            <div className="py-5 px-3 text-center text-[#94a3b8] text-xs">
               No custom data types yet.
             </div>
           ) : (
@@ -597,10 +579,7 @@ export default function FieldTypesPage() {
           <div
             key={saveMessage.key}
             data-testid="save-banner"
-            style={{
-              padding: '8px 14px', borderTop: '1px solid #bbf7d0',
-              background: '#f0fdf4', fontSize: 12, color: '#16a34a', fontWeight: 500,
-            }}
+            className="py-2 px-3.5 border-t border-[#bbf7d0] bg-[#f0fdf4] text-xs text-[#16a34a] font-medium"
           >
             ✓ {saveMessage.text}
           </div>
@@ -608,14 +587,14 @@ export default function FieldTypesPage() {
       </div>
 
       {/* Right panel */}
-      <div style={{ flex: 1, minWidth: 0, overflowY: 'auto' }}>
+      <div className="flex-1 min-w-0 overflow-y-auto">
         {mode === 'idle' && (
           <IdlePanel onCreateNew={() => setMode('create')} />
         )}
 
         {(mode === 'create' || mode === 'edit') && (
-          <div style={{ padding: '28px 32px' }}>
-            <h2 style={{ margin: '0 0 24px', fontSize: 18, fontWeight: 700, color: '#0f172a' }}>
+          <div className="py-7 px-8">
+            <h2 className="m-0 mb-6 text-lg font-bold text-text-primary">
               {mode === 'create' ? 'New Data Type' : `Edit: ${editingType?.name ?? ''}`}
             </h2>
             <DataTypeForm

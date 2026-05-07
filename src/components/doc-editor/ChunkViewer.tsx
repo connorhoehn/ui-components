@@ -9,6 +9,7 @@ import TiptapEditor from './TiptapEditor';
 import type { CollaborationProvider } from './TiptapEditor';
 import ReviewableItem from './ReviewableItem';
 import SectionComments from './SectionComments';
+import { cn } from '../../lib/cn';
 
 interface ChunkViewerProps {
   section: Section;
@@ -32,53 +33,23 @@ const typeBadgeColors: Record<Section['type'], { bg: string; text: string }> = {
   custom: { bg: '#e0e7ff', text: '#3730a3' },
 };
 
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 8,
-  padding: '1.25rem',
-  marginBottom: '1rem',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 20,
-  fontWeight: 700,
-  margin: 0,
-  marginBottom: 4,
-  color: '#1e293b',
-};
-
-const badgeStyle = (bg: string, text: string): React.CSSProperties => ({
-  display: 'inline-block',
-  fontSize: 11,
-  fontWeight: 600,
-  padding: '2px 10px',
-  borderRadius: 9999,
-  background: bg,
-  color: text,
-  marginBottom: 12,
-});
-
-const statsStyle: React.CSSProperties = {
-  fontSize: 12,
-  color: '#6b7280',
-  marginTop: 12,
-  paddingTop: 8,
-  borderTop: '1px solid #f3f4f6',
-};
-
 export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread, participants }: ChunkViewerProps) {
   const tc = typeBadgeColors[section.type] ?? typeBadgeColors.custom;
   const reviewed = section.items.filter((i) => i.status !== 'pending').length;
 
   return (
-    <div style={cardStyle}>
-      <h2 style={titleStyle}>{section.title}</h2>
-      <span style={badgeStyle(tc.bg, tc.text)}>{section.type}</span>
+    <div className={cn('bg-white border border-[#e5e7eb] rounded-lg p-5 mb-4')}>
+      <h2 className={cn('text-xl font-bold m-0 mb-1 text-[#1e293b]')}>{section.title}</h2>
+      <span
+        className={cn('inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3')}
+        style={{ background: tc.bg, color: tc.text }}
+      >
+        {section.type}
+      </span>
 
       {/* Rich-text content (read-only) */}
       {fragment && (
-        <div style={{ marginBottom: section.items.length > 0 ? 16 : 0 }}>
+        <div className={cn(section.items.length > 0 ? 'mb-4' : '')}>
           <TiptapEditor
             fragment={fragment}
             ydoc={ydoc}
@@ -92,7 +63,7 @@ export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment
 
       {/* No content at all */}
       {!fragment && section.items.length === 0 && (
-        <div style={{ padding: '1.5rem 0', color: '#94a3b8', fontSize: 14, textAlign: 'center' }}>
+        <div className={cn('py-6 text-text-tertiary text-sm text-center')}>
           This {section.type} section has no content. Switch to Editor mode to add content.
         </div>
       )}
@@ -107,7 +78,7 @@ export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment
               onReject={(reason) => onRejectItem(item.id, reason)}
             />
           ))}
-          <div style={statsStyle}>
+          <div className={cn('text-xs text-[#6b7280] mt-3 pt-2 border-t border-[#f3f4f6]')}>
             {reviewed} of {section.items.length} items reviewed
           </div>
         </div>

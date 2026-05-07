@@ -7,8 +7,8 @@
 // Modeled after the pipeline TemplatesModal (src/components/pipelines/TemplatesModal.tsx).
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from '../../lib/cn';
 import Modal from '../shared/Modal';
-import { colors, fieldStyle } from '../../constants/styles';
 import {
   documentTypeCookbooks,
   COOKBOOK_CATEGORIES,
@@ -37,42 +37,26 @@ function CookbookCard({ cookbook, onPick }: CookbookCardProps) {
   return (
     <div
       data-testid={`cookbook-card-${cookbook.id}`}
-      style={{
-        display: 'flex', flexDirection: 'column', gap: 8,
-        width: 220, minHeight: 200, padding: 14,
-        background: colors.surface, border: `1px solid ${colors.border}`,
-        borderRadius: 10, fontFamily: 'inherit',
-      }}
+      className="flex flex-col gap-2 w-[220px] min-h-[200px] p-3.5 bg-white border border-border rounded-[10px] font-inherit"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontSize: 24 }} aria-hidden>{cookbook.icon}</span>
-        <div
-          style={{
-            fontSize: 14, fontWeight: 700, color: colors.textPrimary,
-            overflow: 'hidden', textOverflow: 'ellipsis',
-          }}
-        >
+      <div className="flex items-center gap-2.5">
+        <span className="text-2xl" aria-hidden>{cookbook.icon}</span>
+        <div className="text-sm font-bold text-text-primary overflow-hidden text-ellipsis">
           {cookbook.name}
         </div>
       </div>
-      <div
-        style={{ fontSize: 11, color: colors.textTertiary, display: 'flex', gap: 8 }}
-      >
+      <div className="text-[11px] text-[#94a3b8] flex gap-2">
         <span>{cookbook.category}</span>
       </div>
-      <div style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 1.4, flex: 1 }}>
+      <div className="text-xs text-text-secondary leading-[1.4] flex-1">
         {cookbook.description}
       </div>
       {cookbook.tags.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        <div className="flex flex-wrap gap-1">
           {cookbook.tags.map((tag) => (
             <span
               key={tag}
-              style={{
-                fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
-                background: colors.surfaceHover, color: colors.textSecondary,
-                textTransform: 'lowercase',
-              }}
+              className="text-[10px] font-semibold py-0.5 px-1.5 rounded bg-[#f1f5f9] text-text-secondary lowercase"
             >
               {tag}
             </span>
@@ -83,12 +67,7 @@ function CookbookCard({ cookbook, onPick }: CookbookCardProps) {
         type="button"
         data-testid={`cookbook-use-${cookbook.id}`}
         onClick={() => onPick(cookbook)}
-        style={{
-          marginTop: 'auto',
-          padding: '6px 10px', fontSize: 12, fontWeight: 600,
-          background: colors.primary, color: '#fff', border: 'none',
-          borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit',
-        }}
+        className="mt-auto py-1.5 px-2.5 text-xs font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit"
       >
         Install
       </button>
@@ -155,22 +134,22 @@ export default function CookbooksModal({
       backdropTestId="cookbooks-modal"
       rawChildren
     >
-      <div style={{ fontSize: 13, color: colors.textSecondary, marginBottom: 12 }}>
+      <div className="text-[13px] text-text-secondary mb-3">
         Install a prebuilt document type. You can customize the fields after installing.
       </div>
 
       {/* Category pills */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+      <div className="flex flex-wrap gap-1.5 mb-2.5">
         <button
           type="button"
           data-testid="cookbook-cat-all"
           onClick={() => setActiveCategory('All')}
-          style={{
-            padding: '4px 10px', fontSize: 11, fontWeight: 600, borderRadius: 12,
-            border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-            background: activeCategory === 'All' ? colors.primary : colors.surfaceHover,
-            color: activeCategory === 'All' ? '#fff' : colors.textSecondary,
-          }}
+          className={cn(
+            'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
+            activeCategory === 'All'
+              ? 'bg-primary text-white'
+              : 'bg-[#f1f5f9] text-text-secondary',
+          )}
         >
           All
         </button>
@@ -180,12 +159,12 @@ export default function CookbooksModal({
             key={cat}
             data-testid={`cookbook-cat-${cat.toLowerCase().replace(/[^a-z]/g, '-')}`}
             onClick={() => setActiveCategory(cat)}
-            style={{
-              padding: '4px 10px', fontSize: 11, fontWeight: 600, borderRadius: 12,
-              border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-              background: activeCategory === cat ? colors.primary : colors.surfaceHover,
-              color: activeCategory === cat ? '#fff' : colors.textSecondary,
-            }}
+            className={cn(
+              'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
+              activeCategory === cat
+                ? 'bg-primary text-white'
+                : 'bg-[#f1f5f9] text-text-secondary',
+            )}
           >
             {cat}
           </button>
@@ -200,24 +179,20 @@ export default function CookbooksModal({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleSearchKeyDown}
-        style={{ ...fieldStyle, width: '100%', padding: '8px 12px', fontSize: 13, marginBottom: 14 }}
+        className="w-full border border-border-field rounded-md px-3 py-2 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none mb-3.5"
       />
 
       {filtered.length === 0 ? (
         <div
           data-testid="cookbooks-empty"
-          style={{ textAlign: 'center', padding: 32, fontSize: 13, color: colors.textTertiary }}
+          className="text-center py-8 text-[13px] text-[#94a3b8]"
         >
           No cookbooks match "{search}".
         </div>
       ) : (
         <div
           data-testid="cookbooks-grid"
-          style={{
-            display: 'grid', gridTemplateColumns: 'repeat(3, 220px)',
-            gap: 12, justifyContent: 'center',
-            maxHeight: '60vh', overflowY: 'auto', padding: 4,
-          }}
+          className="grid grid-cols-[repeat(3,220px)] gap-3 justify-center max-h-[60vh] overflow-y-auto p-1"
         >
           {filtered.map((cookbook) => (
             <CookbookCard

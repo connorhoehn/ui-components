@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { TaskItem } from '../../types/document';
+import { cn } from '../../lib/cn';
 
 // Inject keyframes for the status transition effects
 const REVIEW_ANIM_STYLE_ID = 'reviewable-item-animations';
@@ -49,34 +50,6 @@ const priorityColors: Record<TaskItem['priority'], string> = {
   high: '#ef4444',
 };
 
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 8,
-  padding: '0.75rem 1rem',
-  marginBottom: '0.5rem',
-};
-
-const badgeBase: React.CSSProperties = {
-  display: 'inline-block',
-  fontSize: 11,
-  fontWeight: 600,
-  padding: '2px 8px',
-  borderRadius: 9999,
-  marginLeft: 8,
-};
-
-const btnStyle = (color: string): React.CSSProperties => ({
-  padding: '6px 14px',
-  fontSize: 13,
-  fontWeight: 600,
-  border: 'none',
-  borderRadius: 6,
-  cursor: 'pointer',
-  background: color,
-  color: '#fff',
-});
-
 export default function ReviewableItem({ item, onAck, onReject }: ReviewableItemProps) {
   const [showNotes, setShowNotes] = useState(false);
   const [noteText, setNoteText] = useState('');
@@ -84,7 +57,6 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
   const prevStatus = useRef(item.status);
   const sc = statusColors[item.status];
 
-  // Detect when status changes from 'pending' to 'acked' or 'rejected' (e.g. from another user)
   useEffect(() => {
     if (prevStatus.current === 'pending' && item.status === 'acked') {
       setTransition('ack');
@@ -116,40 +88,35 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
     }, 150);
   };
 
-  const transitionStyle: React.CSSProperties = transition === 'ack'
-    ? { animation: 'ackPulse 0.6s ease-out', borderColor: '#22c55e', background: '#f0fdf4' }
+  const transitionClass = transition === 'ack'
+    ? 'animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]'
     : transition === 'reject'
-    ? { animation: 'rejectPulse 0.6s ease-out', borderColor: '#ef4444', background: '#fef2f2' }
-    : {};
+    ? 'animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]'
+    : '';
 
   return (
-    <div style={{ ...cardStyle, ...transitionStyle, transition: 'all 0.3s ease' }}>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, flex: 1, color: '#1e293b' }}>{item.text}</span>
-        <span style={{ ...badgeBase, background: sc.bg, color: sc.text }}>
+    <div className={cn('bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out', transitionClass)}>
+      <div className={cn('flex items-center mb-1.5')}>
+        <span className={cn('text-sm font-medium flex-1 text-[#1e293b]')}>{item.text}</span>
+        <span
+          className={cn('inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2')}
+          style={{ background: sc.bg, color: sc.text }}
+        >
           {item.status}
         </span>
         <span
-          style={{
-            ...badgeBase,
-            background: 'transparent',
-            color: priorityColors[item.priority],
-            border: `1px solid ${priorityColors[item.priority]}`,
-          }}
+          className={cn('inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2 bg-transparent')}
+          style={{ color: priorityColors[item.priority], border: `1px solid ${priorityColors[item.priority]}` }}
         >
           {item.priority}
         </span>
       </div>
 
       {item.status === 'acked' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#6b7280', marginBottom: 4 }}>
-          <span style={{
-            width: 20, height: 20, borderRadius: '50%', background: '#22c55e',
-            color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 700, flexShrink: 0,
-          }}>✓</span>
+        <div className={cn('flex items-center gap-1.5 text-xs text-[#6b7280] mb-1')}>
+          <span className={cn('w-5 h-5 rounded-full bg-[#22c55e] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✓</span>
           <span>
-            Approved by <strong style={{ color: '#334155' }}>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
+            Approved by <strong className={cn('text-[#334155]')}>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
             {item.ackedAt && <> · {new Date(item.ackedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>}
             {item.notes && <> — {item.notes}</>}
           </span>
@@ -157,12 +124,8 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       )}
 
       {item.status === 'rejected' && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#991b1b', marginBottom: 4 }}>
-          <span style={{
-            width: 20, height: 20, borderRadius: '50%', background: '#ef4444',
-            color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 10, fontWeight: 700, flexShrink: 0,
-          }}>✕</span>
+        <div className={cn('flex items-center gap-1.5 text-xs text-[#991b1b] mb-1')}>
+          <span className={cn('w-5 h-5 rounded-full bg-[#ef4444] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✕</span>
           <span>
             Rejected by <strong>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
             {item.ackedAt && <> · {new Date(item.ackedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>}
@@ -173,17 +136,17 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
 
       {item.status === 'pending' && (
         <div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-            <button type="button" style={btnStyle('#22c55e')} onClick={handleAck}>
+          <div className={cn('flex gap-2 mt-1.5')}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white')} onClick={handleAck}>
               Acknowledge
             </button>
-            <button type="button" style={btnStyle('#ef4444')} onClick={handleReject}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white')} onClick={handleReject}>
               Reject
             </button>
             {!showNotes && (
               <button
                 type="button"
-                style={{ ...btnStyle('#6b7280'), background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db' }}
+                className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-[#d1d5db]')}
                 onClick={() => setShowNotes(true)}
               >
                 Add note
@@ -192,7 +155,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
           </div>
 
           {showNotes && (
-            <div style={{ marginTop: 8 }}>
+            <div className={cn('mt-2')}>
               <textarea
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
@@ -208,24 +171,12 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 }}
                 placeholder="Add notes or rejection reason... (Enter to submit, Esc to cancel)"
                 autoFocus
-                style={{
-                  width: '100%',
-                  minHeight: 60,
-                  padding: 8,
-                  fontSize: 13,
-                  border: '1px solid #d1d5db',
-                  borderRadius: 6,
-                  resize: 'vertical',
-                  fontFamily: 'inherit',
-                  background: '#fff',
-                  color: '#1e293b',
-                  outline: 'none',
-                }}
+                className={cn('w-full min-h-[60px] p-2 text-[13px] border border-[#d1d5db] rounded-md resize-y font-[inherit] bg-white text-[#1e293b] outline-none')}
               />
-              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+              <div className={cn('flex gap-1.5 mt-1.5')}>
                 <button
                   type="button"
-                  style={{ ...btnStyle('#22c55e'), fontSize: 12, padding: '5px 12px' }}
+                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white')}
                   onClick={handleAck}
                   tabIndex={0}
                 >
@@ -233,7 +184,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 </button>
                 <button
                   type="button"
-                  style={{ ...btnStyle('#ef4444'), fontSize: 12, padding: '5px 12px' }}
+                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white')}
                   onClick={handleReject}
                   tabIndex={0}
                 >
@@ -241,7 +192,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 </button>
                 <button
                   type="button"
-                  style={{ ...btnStyle('#6b7280'), background: 'transparent', color: '#6b7280', border: '1px solid #d1d5db', fontSize: 12, padding: '5px 12px' }}
+                  className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-[#d1d5db]')}
                   onClick={() => { setShowNotes(false); setNoteText(''); }}
                   tabIndex={0}
                 >

@@ -2,19 +2,15 @@
 //
 // Icon-only button with proper aria-label for accessibility.
 
-import { type CSSProperties, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
-export interface IconButtonProps {
-  /** Accessible label for screen readers (required) */
+export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   'aria-label': string;
-  icon: ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
+  icon?: ReactNode;
+  children?: ReactNode;
   variant?: 'ghost' | 'primary' | 'danger';
   size?: 'sm' | 'md' | 'lg';
-  style?: CSSProperties;
-  className?: string;
 }
 
 const variantClasses: Record<'ghost' | 'primary' | 'danger', string> = {
@@ -32,19 +28,18 @@ const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
 export function IconButton({
   'aria-label': ariaLabel,
   icon,
-  onClick,
+  children,
   disabled = false,
   variant = 'ghost',
   size = 'md',
-  style,
   className,
+  ...rest
 }: IconButtonProps) {
   return (
     <button
       type="button"
       aria-label={ariaLabel}
       disabled={disabled}
-      onClick={onClick}
       className={cn(
         'inline-flex items-center justify-center border-none rounded-md',
         'transition-colors duration-150 ease-in-out',
@@ -54,9 +49,9 @@ export function IconButton({
         !disabled && 'cursor-pointer',
         className,
       )}
-      style={style}
+      {...rest}
     >
-      {icon}
+      {icon ?? children}
     </button>
   );
 }

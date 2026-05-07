@@ -16,35 +16,13 @@
 // dependency we use the window width (read once on mount + on resize).
 
 import { useEffect, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
-import MetricCard from './components/MetricCard';
-import {
-  LineChart,
-  StackedAreaChart,
-  BarChart,
-  type LineSeries,
-} from '../shared/Chart';
+import type { LineSeries } from '../shared/Chart';
 import { useMetricsHistory } from './hooks/useMetricsHistory';
 import { usePipelineMetrics } from './hooks/usePipelineMetrics';
 import type { PipelineMetrics } from './hooks/usePipelineMetrics';
 import { usePipelineModuleDashboard } from './hooks/usePipelineModuleDashboard';
-import { colors, fieldStyle, cancelBtnStyle, saveBtnStyle } from '../../constants/styles';
-
-type TimeRange = '15m' | '1h' | '24h' | '7d';
-const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
-  { value: '15m', label: 'Last 15m' },
-  { value: '1h', label: 'Last 1h' },
-  { value: '24h', label: 'Last 24h' },
-  { value: '7d', label: 'Last 7d' },
-];
-
-type RefreshInterval = 'off' | '5s' | '30s' | '60s';
-const REFRESH_INTERVALS: Array<{ value: RefreshInterval; label: string }> = [
-  { value: 'off', label: 'Off' },
-  { value: '5s', label: '5s' },
-  { value: '30s', label: '30s' },
-  { value: '60s', label: '60s' },
-];
+import MetricTimeSeriesPanel from './components/MetricTimeSeriesPanel';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Seed helpers — deterministic LCG so first paint is stable across reloads.
@@ -76,6 +54,13 @@ function toSeries(label: string, values: number[], color?: string): LineSeries {
 // Seeded chart data builders
 // ---------------------------------------------------------------------------
 
+// Chart data viz colors — kept as raw values since these are runtime data colors
+const CHART_COLORS = {
+  primary: '#646cff',
+  completed: '#16a34a',
+  failed: '#dc2626',
+};
+
 interface SeedBundle {
   runsPerMinute: LineSeries[];
   stepDuration: LineSeries[];
@@ -92,9 +77,9 @@ interface SeedBundle {
 function buildSeeds(): SeedBundle {
   return {
     runsPerMinute: [
-      toSeries('started',   seeded(3,  30, 40), colors.primary),
-      toSeries('completed', seeded(7,  30, 40), colors.state.completed),
-      toSeries('failed',    seeded(11, 30, 20), colors.state.failed),
+      toSeries('started',   seeded(3,  30, 40), CHART_COLORS.primary),
+      toSeries('completed', seeded(7,  30, 40), CHART_COLORS.completed),
+      toSeries('failed',    seeded(11, 30, 20), CHART_COLORS.failed),
     ],
     stepDuration: [
       toSeries('p50', seeded(17, 30, 400)),
@@ -159,12 +144,90 @@ function useColumnCount(): number {
 }
 
 // ---------------------------------------------------------------------------
+// Active modules section
+// ---------------------------------------------------------------------------
+
+function ActiveModulesSection() {
+  const { data, loading, error } = usePipelineModuleDashboard();
+
+  if (loading && !data) {
+    return (
+      <div
+        data-testid="modules-section-loading"
+        className="flex flex-col gap-2 px-4 py-3 bg-surface border border-border rounded-[10px] mb-4"
+      >
+        <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
+          Loading active modules…
+        </span>
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div
+        data-testid="modules-section-error"
+        className="flex flex-col gap-2 px-4 py-3 bg-surface border border-border rounded-[10px] mb-4"
+      >
+        <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
+          Active modules unavailable{error ? `: ${error}` : ''}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      data-testid="modules-section"
+      className="flex flex-col gap-2 px-4 py-3 bg-surface border border-border rounded-[10px] mb-4"
+    >
+      <div className="flex items-baseline gap-3">
+        <span className="text-sm font-bold text-text-primary">{data.moduleName}</span>
+        <span className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
+          {data.source} · {data.state}
+        </span>
+      </div>
+      <div className="flex gap-4 flex-wrap">
+        <div className="flex flex-col gap-0.5 min-w-[110px]">
+          <span className="text-[11px] text-text-tertiary">Total</span>
+          <span className="text-lg font-bold text-text-primary">{data.summary.totalResources}</span>
+        </div>
+        <div className="flex flex-col gap-0.5 min-w-[110px]">
+          <span className="text-[11px] text-text-tertiary">Healthy</span>
+          <span className="text-lg font-bold text-text-primary">{data.summary.healthyResources}</span>
+        </div>
+        <div className="flex flex-col gap-0.5 min-w-[110px]">
+          <span className="text-[11px] text-text-tertiary">Active</span>
+          <span className="text-lg font-bold text-text-primary">{data.summary.activeConnections}</span>
+        </div>
+        <div className="flex flex-col gap-0.5 min-w-[110px]">
+          <span className="text-[11px] text-text-tertiary">Throughput</span>
+          <span className="text-lg font-bold text-text-primary">{data.summary.throughput}</span>
+        </div>
+      </div>
+      {data.alerts && data.alerts.length > 0 ? (
+        <div data-testid="modules-section-alerts" className="flex flex-col gap-1">
+          {data.alerts.map((a, i) => (
+            <div
+              key={i}
+              className={cn(
+                'text-xs px-2.5 py-1.5 rounded-md bg-surface-inset',
+                (a.level === 'critical' || a.level === 'error') ? 'text-state-failed' : 'text-text-primary'
+              )}
+            >
+              [{a.level}] {a.message}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
 function MetricsPage() {
-  const [timeRange, setTimeRange] = useState<TimeRange>('1h');
-  const [refresh, setRefresh] = useState<RefreshInterval>('30s');
   const seeds = useMemo(buildSeeds, []);
   const cols = useColumnCount();
 
@@ -183,30 +246,6 @@ function MetricsPage() {
     if (!metrics) return;
     setMetricsRing((prev) => [...prev, metrics].slice(-30));
   }, [metrics]);
-
-  const pageStyle: CSSProperties = {
-    display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0,
-    fontFamily: 'inherit', fontSize: 13, color: colors.textPrimary,
-    background: colors.surface,
-  };
-
-  const topBarStyle: CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: 12,
-    padding: '10px 16px',
-    borderBottom: `1px solid ${colors.border}`,
-    background: colors.surfacePanel,
-  };
-
-  const gridStyle: CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-    gap: 16,
-    padding: 16,
-    overflowY: 'auto',
-    flex: 1,
-  };
-
-  const timeLabel = TIME_RANGES.find((t) => t.value === timeRange)?.label ?? '';
 
   // Derived live series — only used when we've collected at least 2 samples
   // AND the bridge is actually populating the relevant numeric fields. The
@@ -252,281 +291,28 @@ function MetricsPage() {
       runsPerMinute:
         hasEnough(started) && hasEnough(completed) && hasEnough(failed)
           ? ([
-              { label: 'started', color: colors.primary, data: started },
-              { label: 'completed', color: colors.state.completed, data: completed },
-              { label: 'failed', color: colors.state.failed, data: failed },
+              { label: 'started', color: CHART_COLORS.primary, data: started },
+              { label: 'completed', color: CHART_COLORS.completed, data: completed },
+              { label: 'failed', color: CHART_COLORS.failed, data: failed },
             ] as LineSeries[])
           : null,
     };
   }, [metricsRing]);
 
   return (
-    <div data-testid="metrics-page" style={pageStyle}>
-      <div style={topBarStyle}>
-        <select
-          data-testid="metrics-time-range"
-          aria-label="Time range"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-          style={{ ...fieldStyle, flex: 0, minWidth: 120 }}
-        >
-          {TIME_RANGES.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
-          ))}
-        </select>
-
-        <select
-          data-testid="metrics-refresh-interval"
-          aria-label="Refresh interval"
-          value={refresh}
-          onChange={(e) => setRefresh(e.target.value as RefreshInterval)}
-          style={{ ...fieldStyle, flex: 0, minWidth: 100 }}
-        >
-          {REFRESH_INTERVALS.map((r) => (
-            <option key={r.value} value={r.value}>Refresh: {r.label}</option>
-          ))}
-        </select>
-
-        <button
-          data-testid="metrics-reset-zoom"
-          onClick={() => console.log('[MetricsPage] reset zoom')}
-          style={cancelBtnStyle}
-        >
-          Reset zoom
-        </button>
-
-        <button
-          data-testid="metrics-export-csv"
-          onClick={() => console.log('[MetricsPage] export CSV')}
-          style={saveBtnStyle(false)}
-        >
-          Export CSV
-        </button>
-
-        <div
-          data-testid="metrics-data-source"
-          style={{
-            marginLeft: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            fontSize: 11,
-            color: colors.textTertiary,
-          }}
-        >
-          <span
-            title={
-              isLiveData
-                ? 'Connected to /api/pipelines/metrics'
-                : 'Backend unreachable — using seeded fixture'
-            }
-            style={{
-              color: isLiveData ? colors.state.completed : colors.textTertiary,
-              fontWeight: 600,
-            }}
-          >
-            {isLiveData ? 'live' : 'fixture'}
-          </span>
-          <span>{cols} column{cols === 1 ? '' : 's'}</span>
-        </div>
-      </div>
+    <div
+      data-testid="metrics-page"
+      className="flex flex-col h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface"
+    >
+      <MetricTimeSeriesPanel
+        seeds={seeds}
+        liveSeries={liveSeries}
+        cols={cols}
+        isLiveData={isLiveData}
+        failedColor={CHART_COLORS.failed}
+      />
 
       <ActiveModulesSection />
-
-      <div style={gridStyle}>
-        <MetricCard title="Runs per minute" timeRange={timeLabel}>
-          <StackedAreaChart
-            series={liveSeries?.runsPerMinute ?? seeds.runsPerMinute}
-            height={180}
-          />
-        </MetricCard>
-
-        <MetricCard title="Step duration (p50/p95/p99)" timeRange={timeLabel}>
-          <LineChart
-            series={seeds.stepDuration}
-            height={180}
-            yFormat={(v) => `${Math.round(v)}ms`}
-          />
-        </MetricCard>
-
-        <MetricCard title="LLM tokens" timeRange={timeLabel}>
-          <LineChart
-            series={liveSeries?.llmTokens ?? seeds.llmTokens}
-            height={180}
-          />
-        </MetricCard>
-
-        <MetricCard title="LLM cost" timeRange={timeLabel}>
-          <LineChart
-            series={liveSeries?.llmCost ?? seeds.llmCost}
-            height={180}
-            yFormat={(v) => `$${v.toFixed(2)}`}
-          />
-        </MetricCard>
-
-        <MetricCard title="Cluster CPU" timeRange={timeLabel}>
-          <LineChart
-            series={seeds.clusterCpu}
-            height={180}
-            yFormat={(v) => `${Math.round(v)}%`}
-          />
-        </MetricCard>
-
-        <MetricCard title="Cluster memory" timeRange={timeLabel}>
-          <LineChart
-            series={seeds.clusterMemory}
-            height={180}
-            yFormat={(v) => `${Math.round(v)}MB`}
-          />
-        </MetricCard>
-
-        <MetricCard title="Event rate" timeRange={timeLabel}>
-          <LineChart series={seeds.eventRate} height={180} />
-        </MetricCard>
-
-        <MetricCard title="Active runs over time" timeRange={timeLabel}>
-          <LineChart
-            series={liveSeries?.activeRuns ?? seeds.activeRuns}
-            height={180}
-          />
-        </MetricCard>
-
-        <MetricCard title="Failure rate by type" timeRange={timeLabel}>
-          <BarChart
-            data={seeds.failureRate}
-            xKey="x"
-            yKey="total"
-            color={colors.state.failed}
-            height={180}
-          />
-        </MetricCard>
-
-        <MetricCard title="Approval latency" timeRange={timeLabel}>
-          <LineChart
-            series={seeds.approvalLatency}
-            height={180}
-            yFormat={(v) => `${Math.round(v)}s`}
-          />
-        </MetricCard>
-      </div>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Active modules — module-driven observability (PipelineModule.getDashboardData)
-//
-// Renders summary KPIs + alerts from the bridge-forwarded
-// `getDashboardData()` payload. Charts are out of scope for this slice; the
-// 4-card grid below stays the canonical chart surface until a follow-up
-// replaces those with the module-supplied chart definitions.
-// ---------------------------------------------------------------------------
-
-const moduleSectionStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8,
-  padding: '12px 16px',
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 10,
-  marginBottom: 16,
-};
-const moduleHeaderStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 12,
-};
-const moduleTitleStyle: CSSProperties = {
-  fontSize: 14,
-  fontWeight: 700,
-  color: colors.textPrimary,
-};
-const moduleSourceStyle: CSSProperties = {
-  fontSize: 11,
-  color: colors.textTertiary,
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-};
-const moduleKpiRowStyle: CSSProperties = {
-  display: 'flex',
-  gap: 16,
-  flexWrap: 'wrap',
-};
-const moduleKpiStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 2,
-  minWidth: 110,
-};
-const moduleKpiLabelStyle: CSSProperties = {
-  fontSize: 11,
-  color: colors.textTertiary,
-};
-const moduleKpiValueStyle: CSSProperties = {
-  fontSize: 18,
-  fontWeight: 700,
-  color: colors.textPrimary,
-};
-const moduleAlertStyle: CSSProperties = {
-  fontSize: 12,
-  padding: '6px 10px',
-  borderRadius: 6,
-  background: colors.surfaceInset,
-};
-
-function ActiveModulesSection() {
-  const { data, loading, error } = usePipelineModuleDashboard();
-
-  if (loading && !data) {
-    return (
-      <div data-testid="modules-section-loading" style={moduleSectionStyle}>
-        <span style={moduleSourceStyle}>Loading active modules…</span>
-      </div>
-    );
-  }
-  if (!data) {
-    return (
-      <div data-testid="modules-section-error" style={moduleSectionStyle}>
-        <span style={moduleSourceStyle}>Active modules unavailable{error ? `: ${error}` : ''}</span>
-      </div>
-    );
-  }
-
-  return (
-    <div data-testid="modules-section" style={moduleSectionStyle}>
-      <div style={moduleHeaderStyle}>
-        <span style={moduleTitleStyle}>{data.moduleName}</span>
-        <span style={moduleSourceStyle}>{data.source} · {data.state}</span>
-      </div>
-      <div style={moduleKpiRowStyle}>
-        <div style={moduleKpiStyle}>
-          <span style={moduleKpiLabelStyle}>Total</span>
-          <span style={moduleKpiValueStyle}>{data.summary.totalResources}</span>
-        </div>
-        <div style={moduleKpiStyle}>
-          <span style={moduleKpiLabelStyle}>Healthy</span>
-          <span style={moduleKpiValueStyle}>{data.summary.healthyResources}</span>
-        </div>
-        <div style={moduleKpiStyle}>
-          <span style={moduleKpiLabelStyle}>Active</span>
-          <span style={moduleKpiValueStyle}>{data.summary.activeConnections}</span>
-        </div>
-        <div style={moduleKpiStyle}>
-          <span style={moduleKpiLabelStyle}>Throughput</span>
-          <span style={moduleKpiValueStyle}>{data.summary.throughput}</span>
-        </div>
-      </div>
-      {data.alerts && data.alerts.length > 0 ? (
-        <div data-testid="modules-section-alerts" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {data.alerts.map((a, i) => (
-            <div key={i} style={{ ...moduleAlertStyle, color: a.level === 'critical' || a.level === 'error' ? colors.state.failed : colors.textPrimary }}>
-              [{a.level}] {a.message}
-            </div>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }

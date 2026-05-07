@@ -11,18 +11,19 @@
 
 import { useMemo } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
-import type { CSSProperties } from 'react';
 
+import { cn } from '../../lib/cn';
 import { loadPipeline } from './persistence/pipelineStorage';
 import { getRun } from './persistence/runHistory';
 import { aggregateCost, formatUsd } from './cost/llmPricing';
 import EmptyState from '../shared/EmptyState';
-import { colors, chipStyle } from '../../constants/styles';
+import Chip from '../shared/Chip';
+import type { ChipTone } from '../shared/Chip';
+import CompareStepMatrix from './CompareStepMatrix';
 import type {
   PipelineDefinition,
   PipelineRun,
   RunStatus,
-  StepExecution,
 } from '../../types/pipeline';
 import { formatDate, formatDuration } from './utils/formatTime';
 
@@ -36,21 +37,7 @@ function formatDelta(ms?: number): string {
   return `${sign}${formatDuration(Math.abs(ms))}`.replace(/^(\+|-)?/, ms === 0 ? '' : (ms > 0 ? '+' : '-'));
 }
 
-function statusVariant(s: StepExecution['status']):
-  | 'success' | 'danger' | 'neutral' | 'info' | 'warning' {
-  switch (s) {
-    case 'completed': return 'success';
-    case 'failed':    return 'danger';
-    case 'cancelled': return 'neutral';
-    case 'skipped':   return 'neutral';
-    case 'running':   return 'info';
-    case 'awaiting':  return 'warning';
-    default:          return 'neutral';
-  }
-}
-
-function runStatusVariant(s: RunStatus):
-  | 'success' | 'danger' | 'neutral' | 'info' | 'warning' {
+function runStatusVariant(s: RunStatus): ChipTone {
   switch (s) {
     case 'completed':         return 'success';
     case 'failed':            return 'danger';
@@ -60,17 +47,6 @@ function runStatusVariant(s: RunStatus):
     case 'pending':           return 'neutral';
     default:                  return 'neutral';
   }
-}
-
-function lookupNodeName(
-  def: PipelineDefinition | null,
-  nodeId: string,
-): string {
-  if (!def) return nodeId;
-  const node = def.nodes.find((n) => n.id === nodeId);
-  if (!node) return nodeId;
-  if (node.data.type === 'condition' && node.data.label) return node.data.label;
-  return node.type.charAt(0).toUpperCase() + node.type.slice(1);
 }
 
 function modelByNodeIdMap(def: PipelineDefinition | null): Map<string, string> {
@@ -97,297 +73,45 @@ function runCostLabel(
 }
 
 // ---------------------------------------------------------------------------
-// Word-level diff (LCS over whitespace-split tokens)
+// Sub-components
 // ---------------------------------------------------------------------------
 
-type DiffPart = { type: 'eq' | 'add' | 'del'; text: string };
-
-/**
- * Tiny LCS-based word diff. Splits both inputs on whitespace (preserving the
- * separators so re-joining reads naturally), then walks the LCS table to emit
- * a `(equal | added | removed)` token stream.
- */
-export function wordDiff(a: string, b: string): DiffPart[] {
-  // Split keeping whitespace tokens so re-joining reproduces original spacing.
-  const tokenize = (s: string): string[] => s.split(/(\s+)/).filter((t) => t.length > 0);
-  const A = tokenize(a);
-  const B = tokenize(b);
-
-  // Build LCS length table.
-  const m = A.length;
-  const n = B.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array<number>(n + 1).fill(0));
-  for (let i = m - 1; i >= 0; i--) {
-    for (let j = n - 1; j >= 0; j--) {
-      if (A[i] === B[j]) dp[i][j] = dp[i + 1][j + 1] + 1;
-      else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
-    }
-  }
-
-  // Backtrack into a parts list, coalescing adjacent same-type tokens.
-  const parts: DiffPart[] = [];
-  const push = (type: DiffPart['type'], text: string) => {
-    const last = parts[parts.length - 1];
-    if (last && last.type === type) last.text += text;
-    else parts.push({ type, text });
-  };
-  let i = 0;
-  let j = 0;
-  while (i < m && j < n) {
-    if (A[i] === B[j]) {
-      push('eq', A[i]);
-      i++; j++;
-    } else if (dp[i + 1][j] >= dp[i][j + 1]) {
-      push('del', A[i]);
-      i++;
-    } else {
-      push('add', B[j]);
-      j++;
-    }
-  }
-  while (i < m) { push('del', A[i++]); }
-  while (j < n) { push('add', B[j++]); }
-  return parts;
-}
-
-// ---------------------------------------------------------------------------
-// Step row construction
-// ---------------------------------------------------------------------------
-
-interface CompareRow {
-  nodeId: string;
-  name: string;
-  a: StepExecution | undefined;
-  b: StepExecution | undefined;
-  /** ms delta (B - A); undefined if either side missing duration. */
-  durationDelta: number | undefined;
-  /** Both steps run AND statuses differ. */
-  statusDiffers: boolean;
-  /** Both completed successfully but durationDelta is large (>50%). */
-  durationLarge: boolean;
-  /** Condition step where the routed branch differs between runs. */
-  branchDiffers: boolean;
-  /** True if either side has llm data. */
-  isLlm: boolean;
-  /** True if either side is a condition node. */
-  isCondition: boolean;
-  /** "true" / "false" routed branch, derived from output.result for condition nodes. */
-  branchA?: string;
-  branchB?: string;
-}
-
-function isConditionNode(def: PipelineDefinition | null, nodeId: string): boolean {
-  if (!def) return false;
-  const node = def.nodes.find((n) => n.id === nodeId);
-  return !!node && node.data.type === 'condition';
-}
-
-function conditionBranch(step: StepExecution | undefined): string | undefined {
-  if (!step) return undefined;
-  const out = step.output as { result?: unknown } | undefined;
-  if (out && typeof out === 'object' && 'result' in out) {
-    return out.result ? 'true' : 'false';
-  }
-  return undefined;
-}
-
-function buildRows(
-  runA: PipelineRun,
-  runB: PipelineRun,
-  def: PipelineDefinition | null,
-): CompareRow[] {
-  // Preserve a stable order: nodes from definition first (in their listed
-  // order), then any nodeIds that exist in either run but not the definition.
-  const seen = new Set<string>();
-  const ordered: string[] = [];
-  if (def) {
-    for (const n of def.nodes) {
-      if (runA.steps[n.id] || runB.steps[n.id]) {
-        ordered.push(n.id);
-        seen.add(n.id);
-      }
-    }
-  }
-  for (const id of [...Object.keys(runA.steps), ...Object.keys(runB.steps)]) {
-    if (!seen.has(id)) {
-      ordered.push(id);
-      seen.add(id);
-    }
-  }
-
-  return ordered.map<CompareRow>((nodeId) => {
-    const a = runA.steps[nodeId];
-    const b = runB.steps[nodeId];
-    const aDur = a?.durationMs;
-    const bDur = b?.durationMs;
-    const durationDelta = aDur != null && bDur != null ? bDur - aDur : undefined;
-    const statusDiffers = !!a && !!b && a.status !== b.status;
-
-    let durationLarge = false;
-    if (aDur != null && bDur != null && aDur > 0) {
-      const ratio = Math.abs(bDur - aDur) / aDur;
-      durationLarge = ratio > 0.5;
-    }
-
-    const isCondition = isConditionNode(def, nodeId);
-    const branchA = isCondition ? conditionBranch(a) : undefined;
-    const branchB = isCondition ? conditionBranch(b) : undefined;
-    const branchDiffers = isCondition
-      && branchA !== undefined
-      && branchB !== undefined
-      && branchA !== branchB;
-
-    return {
-      nodeId,
-      name: lookupNodeName(def, nodeId),
-      a, b,
-      durationDelta,
-      statusDiffers,
-      durationLarge,
-      branchDiffers,
-      isLlm: !!(a?.llm || b?.llm),
-      isCondition,
-      branchA, branchB,
-    };
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const pageStyle: CSSProperties = {
-  padding: 24,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 16,
-  fontFamily: 'inherit',
-  color: colors.textPrimary,
-};
-
-const headerRowStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-};
-
-const summaryColsStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: 12,
-};
-
-const summaryCardStyle: CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  padding: 14,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  fontSize: 12,
-};
-
-const summaryLabelStyle: CSSProperties = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: colors.textTertiary,
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-};
-
-const tableStyle: CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  fontSize: 13,
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  overflow: 'hidden',
-};
-
-const thStyle: CSSProperties = {
-  padding: '8px 12px',
-  fontSize: 11,
-  fontWeight: 600,
-  color: colors.textSecondary,
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-  borderBottom: `1px solid ${colors.border}`,
-  textAlign: 'left',
-  background: colors.surfaceInset,
-};
-
-const tdStyle: CSSProperties = {
-  padding: '10px 12px',
-  fontSize: 12,
-  color: colors.textPrimary,
-  borderBottom: `1px solid ${colors.border}`,
-  verticalAlign: 'top',
-};
-
-// Highlight palette for diff rows (faint pastel backgrounds).
-const HIGHLIGHT = {
-  status:   '#fef2f2', // red-ish (status differs)
-  duration: '#fffbeb', // amber-ish (slow/fast)
-  branch:   '#eff6ff', // blue-ish (different branch routed)
-} as const;
-
-function rowHighlight(row: CompareRow): CSSProperties | undefined {
-  if (row.statusDiffers) return { background: HIGHLIGHT.status };
-  if (row.branchDiffers) return { background: HIGHLIGHT.branch };
-  if (row.durationLarge) return { background: HIGHLIGHT.duration };
-  return undefined;
-}
-
-// ---------------------------------------------------------------------------
-// LLM diff cell (collapsible)
-// ---------------------------------------------------------------------------
-
-function LlmDiff({ a, b }: { a: string; b: string }) {
-  const parts = useMemo(() => wordDiff(a, b), [a, b]);
-
-  const containerStyle: CSSProperties = {
-    background: colors.surfaceInset,
-    border: `1px solid ${colors.border}`,
-    borderRadius: 6,
-    padding: 10,
-    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-    fontSize: 12,
-    lineHeight: 1.5,
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-word',
-  };
-
+function RunSummary({
+  label,
+  run,
+  cost,
+  testIdPrefix,
+}: {
+  label: string;
+  run: PipelineRun;
+  cost: string;
+  testIdPrefix: string;
+}) {
+  const variant = runStatusVariant(run.status);
   return (
-    <div style={containerStyle} data-testid="llm-word-diff">
-      {parts.map((p, i) => {
-        if (p.type === 'eq') return <span key={i}>{p.text}</span>;
-        if (p.type === 'add') {
-          return (
-            <span
-              key={i}
-              data-diff="add"
-              style={{ background: '#dcfce7', color: '#166534' }}
-            >
-              {p.text}
-            </span>
-          );
-        }
-        return (
-          <span
-            key={i}
-            data-diff="del"
-            style={{
-              background: '#fee2e2',
-              color: '#991b1b',
-              textDecoration: 'line-through',
-            }}
-          >
-            {p.text}
-          </span>
-        );
-      })}
+    <div
+      className="flex flex-col gap-1.5 rounded-lg border border-border bg-surface p-3.5 text-xs"
+      data-testid={`${testIdPrefix}-summary`}
+    >
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
+        {label}
+      </span>
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-xs text-text-tertiary">
+          {run.id.slice(0, 8)}
+        </span>
+        <span className="text-text-tertiary">&middot;</span>
+        <span className="text-text-secondary">{formatDate(run.startedAt)}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <Chip tone={variant}>{run.status}</Chip>
+        <span className="text-text-tertiary">&middot;</span>
+        <span className="font-mono">{formatDuration(run.durationMs)}</span>
+        <span className="text-text-tertiary">&middot;</span>
+        <span className="font-mono" data-testid={`${testIdPrefix}-cost`}>
+          {cost}
+        </span>
+      </div>
     </div>
   );
 }
@@ -419,18 +143,13 @@ export default function PipelineRunComparePage() {
 
   const modelMap = useMemo(() => modelByNodeIdMap(def), [def]);
 
-  const rows = useMemo(() => {
-    if (!runA || !runB) return [] as CompareRow[];
-    return buildRows(runA, runB, def);
-  }, [runA, runB, def]);
-
   if (!pipelineId || !runIdA || !runIdB) {
     return <Navigate to="/pipelines" replace />;
   }
 
   if (!def) {
     return (
-      <div style={{ padding: 32 }}>
+      <div className="p-8">
         <EmptyState
           icon="🔍"
           title="Pipeline not found"
@@ -444,7 +163,7 @@ export default function PipelineRunComparePage() {
 
   if (!runA || !runB) {
     return (
-      <div style={{ padding: 32 }} data-testid="run-compare-missing">
+      <div className="p-8" data-testid="run-compare-missing">
         <EmptyState
           icon="🔍"
           title="Run not found"
@@ -459,312 +178,59 @@ export default function PipelineRunComparePage() {
   const totalDelta = (runB.durationMs ?? 0) - (runA.durationMs ?? 0);
   const costA = runCostLabel(runA, modelMap);
   const costB = runCostLabel(runB, modelMap);
+  const stepCount = new Set([
+    ...Object.keys(runA.steps),
+    ...Object.keys(runB.steps),
+  ]).size;
 
   return (
-    <div style={pageStyle} data-testid="run-compare">
-      {/* ── Breadcrumb ──────────────────────────────────────────────── */}
-      <div style={headerRowStyle}>
+    <div className="flex flex-col gap-4 p-6 text-text-primary" data-testid="run-compare">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}/runs`)}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: colors.primary,
-            cursor: 'pointer',
-            fontSize: 13,
-            padding: 0,
-          }}
+          className="cursor-pointer border-none bg-transparent p-0 text-[13px] text-primary"
         >
-          ← {def.name}
+          &larr; {def.name}
         </button>
-        <span style={{ color: colors.textTertiary }}>/</span>
-        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+        <span className="text-text-tertiary">/</span>
+        <span className="text-lg font-bold text-text-primary">
           Compare runs
         </span>
         <span
-          style={{ fontSize: 12, color: colors.textTertiary, marginLeft: 'auto' }}
+          className="ml-auto text-xs text-text-tertiary"
           data-testid="run-compare-cost-delta"
         >
-          {costA} → {costB}
+          {costA} &rarr; {costB}
         </span>
       </div>
 
-      {/* ── Run A / Run B summary cards ────────────────────────────── */}
-      <div style={summaryColsStyle}>
-        <RunSummary
-          label="Run A"
-          run={runA}
-          cost={costA}
-          testIdPrefix="run-a"
-        />
-        <RunSummary
-          label="Run B"
-          run={runB}
-          cost={costB}
-          testIdPrefix="run-b"
-        />
+      {/* Run A / Run B summary cards */}
+      <div className="grid grid-cols-2 gap-3">
+        <RunSummary label="Run A" run={runA} cost={costA} testIdPrefix="run-a" />
+        <RunSummary label="Run B" run={runB} cost={costB} testIdPrefix="run-b" />
       </div>
 
-      {/* ── Total delta strip ──────────────────────────────────────── */}
+      {/* Total delta strip */}
       <div
-        style={{
-          ...summaryCardStyle,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 16,
-          padding: '10px 14px',
-        }}
+        className="flex items-center gap-4 rounded-lg border border-border bg-surface px-3.5 py-2.5 text-xs"
         data-testid="run-compare-delta"
       >
-        <span style={summaryLabelStyle}>Δ duration</span>
-        <span style={{ fontFamily: 'monospace', fontSize: 13 }}>
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
+          &Delta; duration
+        </span>
+        <span className="font-mono text-[13px]">
           {formatDelta(totalDelta)}
         </span>
-        <span style={{ flex: 1 }} />
-        <span style={summaryLabelStyle}>{rows.length} step{rows.length === 1 ? '' : 's'} compared</span>
-      </div>
-
-      {/* ── Step diff table ────────────────────────────────────────── */}
-      <table style={tableStyle} data-testid="run-compare-table">
-        <thead>
-          <tr>
-            <th style={thStyle}>Step</th>
-            <th style={thStyle}>Run A</th>
-            <th style={thStyle}>Run B</th>
-            <th style={thStyle}>Δ</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <CompareTableRow key={row.nodeId} row={row} />
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-function RunSummary({
-  label,
-  run,
-  cost,
-  testIdPrefix,
-}: {
-  label: string;
-  run: PipelineRun;
-  cost: string;
-  testIdPrefix: string;
-}) {
-  const variant = runStatusVariant(run.status);
-  return (
-    <div style={summaryCardStyle} data-testid={`${testIdPrefix}-summary`}>
-      <span style={summaryLabelStyle}>{label}</span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span
-          style={{ fontFamily: 'monospace', fontSize: 12, color: colors.textTertiary }}
-        >
-          {run.id.slice(0, 8)}
-        </span>
-        <span style={{ color: colors.textTertiary }}>·</span>
-        <span style={{ color: colors.textSecondary }}>{formatDate(run.startedAt)}</span>
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={chipStyle(variant)}>{run.status}</span>
-        <span style={{ color: colors.textTertiary }}>·</span>
-        <span style={{ fontFamily: 'monospace' }}>{formatDuration(run.durationMs)}</span>
-        <span style={{ color: colors.textTertiary }}>·</span>
-        <span style={{ fontFamily: 'monospace' }} data-testid={`${testIdPrefix}-cost`}>
-          {cost}
+        <span className="flex-1" />
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
+          {stepCount} step{stepCount === 1 ? '' : 's'} compared
         </span>
       </div>
-    </div>
-  );
-}
 
-function CompareTableRow({ row }: { row: CompareRow }) {
-  const aLlm = row.a?.llm;
-  const bLlm = row.b?.llm;
-  const tokenDelta =
-    aLlm && bLlm ? (bLlm.tokensIn + bLlm.tokensOut) - (aLlm.tokensIn + aLlm.tokensOut) : undefined;
-
-  const highlight = rowHighlight(row);
-  const baseTd: CSSProperties = { ...tdStyle, ...(highlight ?? {}) };
-
-  return (
-    <>
-      <tr data-testid={`run-compare-row-${row.nodeId}`} style={highlight}>
-        <td style={baseTd}>
-          <div style={{ fontWeight: 600, color: colors.textPrimary }}>{row.name}</div>
-          <div
-            style={{
-              fontFamily: 'monospace',
-              fontSize: 11,
-              color: colors.textTertiary,
-            }}
-          >
-            {row.nodeId}
-          </div>
-        </td>
-        <td style={baseTd}>
-          <StepCell step={row.a} branch={row.branchA} isCondition={row.isCondition} />
-        </td>
-        <td style={baseTd}>
-          <StepCell step={row.b} branch={row.branchB} isCondition={row.isCondition} />
-        </td>
-        <td
-          style={{ ...baseTd, fontFamily: 'monospace' }}
-          data-testid={`run-compare-delta-${row.nodeId}`}
-        >
-          {row.branchDiffers ? (
-            <span style={{ color: '#2563eb', fontWeight: 600 }}>different branch!</span>
-          ) : row.statusDiffers ? (
-            <span style={{ color: '#dc2626', fontWeight: 600 }}>status differs</span>
-          ) : row.durationDelta != null ? (
-            <span style={{ color: row.durationLarge ? '#d97706' : colors.textSecondary }}>
-              {formatDelta(row.durationDelta)}
-            </span>
-          ) : (
-            <span style={{ color: colors.textTertiary }}>—</span>
-          )}
-          {tokenDelta != null && tokenDelta !== 0 ? (
-            <div style={{ fontSize: 11, color: colors.textTertiary, marginTop: 2 }}>
-              {tokenDelta > 0 ? '+' : ''}
-              {tokenDelta}tok
-            </div>
-          ) : null}
-        </td>
-      </tr>
-
-      {row.isLlm && (aLlm || bLlm) ? (
-        <tr>
-          <td style={{ ...tdStyle, padding: 0 }} colSpan={4}>
-            <details style={{ padding: '10px 14px', background: colors.surfaceInset }}>
-              <summary
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: colors.textSecondary,
-                }}
-                data-testid={`run-compare-llm-toggle-${row.nodeId}`}
-              >
-                LLM response diff
-              </summary>
-              <div
-                style={{
-                  marginTop: 8,
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: 8,
-                }}
-              >
-                <div>
-                  <div style={summaryLabelStyle}>Run A</div>
-                  <pre
-                    data-testid={`run-compare-llm-a-${row.nodeId}`}
-                    style={{
-                      background: colors.surface,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 6,
-                      padding: 10,
-                      fontSize: 12,
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                      margin: 0,
-                    }}
-                  >
-                    {aLlm?.response ?? '(no response)'}
-                  </pre>
-                </div>
-                <div>
-                  <div style={summaryLabelStyle}>Run B</div>
-                  <pre
-                    data-testid={`run-compare-llm-b-${row.nodeId}`}
-                    style={{
-                      background: colors.surface,
-                      border: `1px solid ${colors.border}`,
-                      borderRadius: 6,
-                      padding: 10,
-                      fontSize: 12,
-                      whiteSpace: 'pre-wrap',
-                      wordBreak: 'break-word',
-                      margin: 0,
-                    }}
-                  >
-                    {bLlm?.response ?? '(no response)'}
-                  </pre>
-                </div>
-              </div>
-              <div style={{ marginTop: 10 }}>
-                <div style={summaryLabelStyle}>Word-level diff</div>
-                <div style={{ marginTop: 6 }}>
-                  <LlmDiff
-                    a={aLlm?.response ?? ''}
-                    b={bLlm?.response ?? ''}
-                  />
-                </div>
-              </div>
-            </details>
-          </td>
-        </tr>
-      ) : null}
-    </>
-  );
-}
-
-function StepCell({
-  step,
-  branch,
-  isCondition,
-}: {
-  step: StepExecution | undefined;
-  branch: string | undefined;
-  isCondition: boolean;
-}) {
-  if (!step) {
-    return <span style={{ color: colors.textTertiary }}>(not run)</span>;
-  }
-  const variant = statusVariant(step.status);
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={chipStyle(variant)}>{step.status}</span>
-        <span style={{ fontFamily: 'monospace', color: colors.textSecondary }}>
-          {formatDuration(step.durationMs)}
-        </span>
-        {isCondition && branch ? (
-          <span
-            style={{
-              fontFamily: 'monospace',
-              fontSize: 11,
-              color: colors.textTertiary,
-            }}
-          >
-            ({branch === 'true' ? 'T' : 'F'})
-          </span>
-        ) : null}
-      </div>
-      {step.llm ? (
-        <div
-          style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            fontFamily: 'monospace',
-          }}
-        >
-          {step.llm.tokensIn}→{step.llm.tokensOut}tok
-        </div>
-      ) : null}
-      {step.error ? (
-        <div style={{ fontSize: 11, color: '#dc2626' }} title={step.error}>
-          {step.error.length > 60 ? `${step.error.slice(0, 60)}…` : step.error}
-        </div>
-      ) : null}
+      {/* Step diff table */}
+      <CompareStepMatrix runA={runA} runB={runB} def={def} />
     </div>
   );
 }

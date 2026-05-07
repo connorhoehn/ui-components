@@ -9,20 +9,15 @@
 // role support in a later phase).
 
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { ApprovalNodeData, Approver, ApprovalTimeoutAction } from '../../../../types/pipeline';
-import { fieldStyle, chipStyle, colors } from '../../../../constants/styles';
+import { ConfigField } from '../shared';
 import UserPicker from '../../../shared/UserPicker';
+import { cn } from '../../../../lib/cn';
 
 export interface ApprovalConfigProps {
   data: ApprovalNodeData;
   onChange: (patch: Partial<ApprovalNodeData>) => void;
 }
-
-const labelStyle: CSSProperties = { fontSize: 12, fontWeight: 600, color: colors.textSecondary };
-const requiredDot: CSSProperties = { color: '#dc2626', marginLeft: 4 };
-const helpStyle: CSSProperties = { fontSize: 11, color: colors.textTertiary, marginTop: 2 };
-const errorStyle: CSSProperties = { fontSize: 11, color: '#dc2626', marginTop: 2 };
 
 type TimeUnit = 'seconds' | 'minutes' | 'hours';
 const UNIT_MS: Record<TimeUnit, number> = {
@@ -93,47 +88,38 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
   const requiredCountMax = Math.max(1, approvers.length);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 16px' }}>
+    <div className="flex flex-col gap-3 px-4 py-3">
       {/* Approvers */}
-      <div>
-        <label style={labelStyle}>Approvers<span style={requiredDot}>●</span></label>
-
-        <div style={{ marginTop: 4 }}>
-          <UserPicker
-            value={userApproverIds}
-            onChange={setUserApprovers}
-            placeholder="Add approver…"
-          />
-        </div>
+      <ConfigField
+        label="Approvers"
+        required
+        error={approversMissing ? 'At least one approver is required.' : undefined}
+        help={!approversMissing ? 'Who can approve this step.' : undefined}
+      >
+        <UserPicker
+          value={userApproverIds}
+          onChange={setUserApprovers}
+          placeholder="Add approver…"
+        />
 
         {approvers.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+          <div className="flex flex-wrap gap-1.5 mt-2">
             {approvers.map((a, idx) => (
               <span
                 key={`${a.type}:${a.value}:${idx}`}
-                style={{
-                  ...chipStyle(a.type === 'role' ? 'warning' : 'info'),
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
+                className={cn(
+                  'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-[1.4] whitespace-nowrap',
+                  a.type === 'role'
+                    ? 'bg-[#fffbeb] text-[#d97706]'
+                    : 'bg-[#eff6ff] text-[#2563eb]',
+                )}
               >
                 {a.type === 'role' ? '🎖' : '👤'} {a.value}
                 <button
                   type="button"
                   onClick={() => removeApprover(idx)}
                   aria-label={`Remove ${a.value}`}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    padding: 0,
-                    marginLeft: 2,
-                    cursor: 'pointer',
-                    color: 'inherit',
-                    fontFamily: 'inherit',
-                    fontSize: 12,
-                    lineHeight: 1,
-                  }}
+                  className="bg-transparent border-none p-0 ml-0.5 cursor-pointer text-current font-inherit text-xs leading-none"
                 >
                   ×
                 </button>
@@ -141,50 +127,46 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
             ))}
           </div>
         )}
-
-        {approversMissing
-          ? <div style={errorStyle}>At least one approver is required.</div>
-          : <div style={helpStyle}>Who can approve this step.</div>
-        }
-      </div>
+      </ConfigField>
 
       {/* Required count */}
-      <div>
-        <label style={labelStyle}>
-          Required count<span style={requiredDot}>●</span>
-          <span style={{ color: colors.textTertiary, fontWeight: 400, marginLeft: 8 }}>
+      <ConfigField
+        label="Required count"
+        required
+        help="How many approvers must say yes."
+      >
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={1}
+            max={requiredCountMax}
+            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-24 font-inherit"
+            value={data.requiredCount || 1}
+            onChange={(e) => {
+              const n = parseInt(e.target.value, 10);
+              const clamped = Math.max(1, Math.min(requiredCountMax, Number.isNaN(n) ? 1 : n));
+              onChange({ requiredCount: clamped });
+            }}
+          />
+          <span className="text-text-tertiary text-xs">
             {data.requiredCount || 1} of {requiredCountMax}
           </span>
-        </label>
-        <input
-          type="number"
-          min={1}
-          max={requiredCountMax}
-          style={{ ...fieldStyle, marginTop: 4, width: 96 }}
-          value={data.requiredCount || 1}
-          onChange={(e) => {
-            const n = parseInt(e.target.value, 10);
-            const clamped = Math.max(1, Math.min(requiredCountMax, Number.isNaN(n) ? 1 : n));
-            onChange({ requiredCount: clamped });
-          }}
-        />
-        <div style={helpStyle}>How many approvers must say yes.</div>
-      </div>
+        </div>
+      </ConfigField>
 
       {/* Timeout */}
-      <div>
-        <label style={labelStyle}>Timeout</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+      <ConfigField label="Timeout" help="Leave blank for no timeout.">
+        <div className="flex items-center gap-2">
           <input
             type="number"
             min={0}
-            style={{ ...fieldStyle, width: 96, flex: 'none' }}
+            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-24 flex-none font-inherit"
             value={unitValue}
             onChange={(e) => setTimeoutValue(e.target.value)}
             placeholder="24"
           />
           <select
-            style={{ ...fieldStyle, width: 120, flex: 'none' }}
+            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-[120px] flex-none font-inherit"
             value={unit}
             onChange={(e) => setTimeoutUnit(e.target.value as TimeUnit)}
           >
@@ -193,16 +175,15 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
             <option value="hours">hours</option>
           </select>
         </div>
-        <div style={helpStyle}>Leave blank for no timeout.</div>
 
         {data.timeoutMs !== undefined && data.timeoutMs > 0 && (
-          <div style={{ marginTop: 8 }}>
-            <label style={{ ...labelStyle, fontSize: 11 }}>If timeout</label>
-            <div style={{ display: 'flex', gap: 12, marginTop: 4 }}>
+          <div className="mt-2">
+            <label className="text-[11px] font-semibold text-text-secondary">If timeout</label>
+            <div className="flex gap-3 mt-1">
               {(['reject', 'approve'] as ApprovalTimeoutAction[]).map(action => (
                 <label
                   key={action}
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: colors.textPrimary, cursor: 'pointer' }}
+                  className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
                 >
                   <input
                     type="radio"
@@ -216,25 +197,17 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
             </div>
           </div>
         )}
-      </div>
+      </ConfigField>
 
       {/* Message */}
-      <div>
-        <label style={labelStyle}>Message for approver (optional)</label>
+      <ConfigField label="Message for approver (optional)" help="Shown to the approver when the request is sent.">
         <textarea
-          style={{
-            ...fieldStyle,
-            marginTop: 4,
-            minHeight: 80,
-            resize: 'vertical',
-            fontFamily: 'inherit',
-          }}
+          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[80px]"
           value={data.message ?? ''}
           onChange={(e) => onChange({ message: e.target.value || undefined })}
           placeholder="Please review the summary before it's posted to the document."
         />
-        <div style={helpStyle}>Shown to the approver when the request is sent.</div>
-      </div>
+      </ConfigField>
     </div>
   );
 }

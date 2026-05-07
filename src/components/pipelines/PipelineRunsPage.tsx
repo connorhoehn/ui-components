@@ -24,7 +24,7 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import RunsFilterBar from './RunsFilterBar';
 import RunsBulkActionBar from './RunsBulkActionBar';
 import RunsTable from './RunsTable';
-import { colors, pageContainerStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { PipelineDefinition, PipelineRun } from '../../types/pipeline';
 import { retryFromNode } from '../../api/pipelineRetry';
 import {
@@ -205,7 +205,7 @@ export default function PipelineRunsPage() {
   if (!pipelineId) return <Navigate to="/pipelines" replace />;
   if (!def) {
     return (
-      <div style={{ padding: 32 }}>
+      <div className="p-8">
         <EmptyState
           icon="🔍"
           title="Pipeline not found"
@@ -218,7 +218,7 @@ export default function PipelineRunsPage() {
   }
 
   return (
-    <div data-testid="pipeline-runs-page" style={pageContainerStyle}>
+    <div data-testid="pipeline-runs-page" className="p-6 flex flex-col gap-3">
       {/* Hub#1288: retry-from-failure confirmation modal. */}
       <ConfirmDialog
         open={retryTarget !== null}
@@ -229,30 +229,30 @@ export default function PipelineRunsPage() {
         confirmDisabled={retryInFlight}
       >
         {retryTarget && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <div style={{ fontSize: 13, color: colors.textSecondary }}>
-              Run <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>{retryTarget.run.id.slice(0, 8)}</code> will restart from step{' '}
-              <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>{retryTarget.nodeId.slice(0, 12)}{retryTarget.nodeId.length > 12 ? '…' : ''}</code>
+          <div className="flex flex-col gap-2.5">
+            <div className="text-[13px] text-text-secondary">
+              Run <code className="bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs">{retryTarget.run.id.slice(0, 8)}</code> will restart from step{' '}
+              <code className="bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs">{retryTarget.nodeId.slice(0, 12)}{retryTarget.nodeId.length > 12 ? '…' : ''}</code>
               {' '}using the original upstream context.
             </div>
             {retryTarget.skippedNodes.length > 0 && (
               <div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase', marginBottom: 6 }}>
+                <div className="text-[11px] font-semibold text-text-tertiary uppercase mb-1.5">
                   Steps skipped ({retryTarget.skippedNodes.length})
                 </div>
-                <div style={{ maxHeight: 80, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                <div className="max-h-20 overflow-y-auto flex flex-wrap gap-1">
                   {retryTarget.skippedNodes.map((id) => (
-                    <span key={id} style={{ background: colors.surfaceInset, border: `1px solid ${colors.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 11, fontFamily: 'monospace', color: colors.textSecondary }}>{id.slice(0, 10)}</span>
+                    <span key={id} className="bg-[#fafbfc] border border-border rounded-[3px] px-1.5 py-px text-[11px] font-mono text-text-secondary">{id.slice(0, 10)}</span>
                   ))}
                 </div>
               </div>
             )}
-            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: colors.textSecondary, cursor: 'pointer' }}>
-              <input type="checkbox" checked={retryTarget.snapshotInput} onChange={(e) => setRetryTarget((t) => t ? { ...t, snapshotInput: e.target.checked } : t)} style={{ accentColor: colors.primary }} />
+            <label className="flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer">
+              <input type="checkbox" checked={retryTarget.snapshotInput} onChange={(e) => setRetryTarget((t) => t ? { ...t, snapshotInput: e.target.checked } : t)} className="accent-primary" />
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, fontSize: 12, color: '#991b1b' }}>{retryError}</div>
+              <div data-testid="retry-modal-error" className="px-3 py-2 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b]">{retryError}</div>
             )}
           </div>
         )}
@@ -273,33 +273,26 @@ export default function PipelineRunsPage() {
       )}
 
       {/* Header / breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}`)}
-          style={{
-            background: 'none', border: 'none', color: colors.primary,
-            cursor: 'pointer', fontSize: 13, padding: 0,
-          }}
+          className="bg-none border-none text-primary cursor-pointer text-[13px] p-0"
         >
           ← {def.name}
         </button>
-        <span style={{ color: colors.textTertiary }}>/</span>
-        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+        <span className="text-text-tertiary">/</span>
+        <span className="text-lg font-bold text-text-primary">
           Run history
         </span>
-        <span style={{ fontSize: 12, color: colors.textTertiary, marginLeft: 'auto' }}>
+        <span className="text-xs text-text-tertiary ml-auto">
           {runs.length} run{runs.length === 1 ? '' : 's'} persisted
         </span>
         <button
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}/stats`)}
           data-testid="runs-stats-link"
-          style={{
-            padding: '4px 10px', fontSize: 12, fontWeight: 500,
-            border: `1px solid ${colors.border}`, background: colors.surface,
-            color: colors.textSecondary, borderRadius: 4, cursor: 'pointer', fontFamily: 'inherit',
-          }}
+          className="px-2.5 py-1 text-xs font-medium border border-border bg-surface text-text-secondary rounded cursor-pointer font-[inherit]"
         >
           📊 Stats
         </button>
@@ -312,16 +305,12 @@ export default function PipelineRunsPage() {
             navigate(`/pipelines/${pipelineId}/runs/compare/${a}/${b}`);
           }}
           data-testid="run-compare-btn"
-          style={{
-            padding: '4px 10px', fontSize: 12, fontWeight: 500,
-            border: `1px solid ${comparePair.length === 2 ? colors.primary : colors.border}`,
-            background: comparePair.length === 2 ? colors.primary : colors.surface,
-            color: comparePair.length === 2 ? '#fff' : colors.textSecondary,
-            borderRadius: 4,
-            cursor: comparePair.length === 2 ? 'pointer' : 'not-allowed',
-            opacity: comparePair.length === 2 ? 1 : 0.7,
-            fontFamily: 'inherit',
-          }}
+          className={cn(
+            'px-2.5 py-1 text-xs font-medium rounded font-[inherit]',
+            comparePair.length === 2
+              ? 'border border-primary bg-primary text-white cursor-pointer opacity-100'
+              : 'border border-border bg-surface text-text-secondary cursor-not-allowed opacity-70'
+          )}
         >
           ⇄ Compare ({comparePair.length}/2)
         </button>

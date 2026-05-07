@@ -8,9 +8,9 @@ import { aggregateCost, formatUsd } from './cost/llmPricing';
 import EmptyState from '../shared/EmptyState';
 import RunsFilterBar from './RunsFilterBar';
 import Chip from '../shared/Chip';
-import { colors, pageContainerStyle, tableCellStyle } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { PipelineRun } from '../../types/pipeline';
-import { formatDuration } from './utils/formatTime';
+import { formatDuration, relativeTime } from './utils/formatTime';
 import { statusChipVariant } from './utils/statusColors';
 import {
   filterRuns,
@@ -22,15 +22,6 @@ import {
 
 interface RunWithMeta extends PipelineRun {
   pipelineName: string;
-}
-
-function relativeTime(iso: string): string {
-  const d = Date.now() - new Date(iso).getTime();
-  if (d < 60_000) return 'just now';
-  if (d < 3_600_000) return `${Math.floor(d / 60_000)}m ago`;
-  if (d < 86_400_000) return `${Math.floor(d / 3_600_000)}h ago`;
-  if (d < 259_200_000) return `${Math.floor(d / 86_400_000)}d ago`;
-  return new Date(iso).toLocaleDateString();
 }
 
 export default function AllRunsPage() {
@@ -147,12 +138,12 @@ export default function AllRunsPage() {
   }, [filtered]);
 
   return (
-    <div data-testid="all-runs-page" style={pageContainerStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <h2 style={{ margin: 0, fontSize: 22, fontWeight: 700, color: colors.textPrimary }}>
+    <div data-testid="all-runs-page" className="p-6 flex flex-col gap-3">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="m-0 text-[22px] font-bold text-text-primary">
           Runs
         </h2>
-        <span style={{ fontSize: 13, color: colors.textTertiary }}>
+        <span className="text-[13px] text-text-tertiary">
           {filtered.length} run{filtered.length !== 1 ? 's' : ''}
         </span>
       </div>
@@ -176,17 +167,17 @@ export default function AllRunsPage() {
           body="Run a pipeline to see execution history here."
         />
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-[13px]">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${colors.border}` }}>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'left' }}>Pipeline</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'left' }}>Run ID</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'left' }}>Status</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'left' }}>Trigger</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'left' }}>Started</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'right' }}>Duration</th>
-                <th style={{ ...tableCellStyle, fontWeight: 600, textAlign: 'right' }}>Cost</th>
+              <tr className="border-b border-border">
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Pipeline</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Run ID</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Status</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Trigger</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-left">Started</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-right">Duration</th>
+                <th className="px-3 py-2.5 text-xs text-text-secondary font-semibold text-right">Cost</th>
               </tr>
             </thead>
             <tbody>
@@ -194,25 +185,23 @@ export default function AllRunsPage() {
                 <tr
                   key={run.id}
                   onClick={() => navigate(`/pipelines/${run.pipelineId}/runs/${run.id}`)}
-                  style={{ borderBottom: `1px solid ${colors.border}`, cursor: 'pointer' }}
-                  onMouseEnter={e => (e.currentTarget.style.background = colors.surfaceHover ?? '#f8fafc')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  className="border-b border-border cursor-pointer hover:bg-surface-hover"
                 >
-                  <td style={{ ...tableCellStyle, fontWeight: 500 }}>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary font-medium">
                     {(run as RunWithMeta).pipelineName}
                   </td>
-                  <td style={{ ...tableCellStyle, fontFamily: 'monospace', fontSize: 12 }}>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary font-mono">
                     {run.id.slice(0, 11)}
                   </td>
-                  <td style={tableCellStyle}>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary">
                     <Chip tone={statusChipVariant(run.status).tone} size="sm">{run.status}</Chip>
                   </td>
-                  <td style={tableCellStyle}>{(run as any).triggerType ?? run.triggeredBy?.triggerType}</td>
-                  <td style={tableCellStyle}>{relativeTime(run.startedAt)}</td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontFamily: 'monospace', fontSize: 12 }}>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary">{(run as any).triggerType ?? run.triggeredBy?.triggerType}</td>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary">{relativeTime(run.startedAt)}</td>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary text-right font-mono">
                     {run.completedAt ? formatDuration(new Date(run.completedAt).getTime() - new Date(run.startedAt).getTime()) : '—'}
                   </td>
-                  <td style={{ ...tableCellStyle, textAlign: 'right', fontFamily: 'monospace', fontSize: 12 }}>
+                  <td className="px-3 py-2.5 text-xs text-text-secondary text-right font-mono">
                     {costByRunId[run.id] ?? '—'}
                   </td>
                 </tr>

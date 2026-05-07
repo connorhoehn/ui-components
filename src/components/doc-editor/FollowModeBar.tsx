@@ -5,6 +5,7 @@
 
 import { useEffect, useRef } from 'react';
 import type { Participant } from '../../types/document';
+import { cn } from '../../lib/cn';
 
 interface FollowModeBarProps {
   followingUserId: string | null;
@@ -50,33 +51,11 @@ export default function FollowModeBar({
   if (!followed) return null;
 
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      padding: '6px 16px',
-      background: '#eff6ff',
-      borderBottom: '1px solid #bfdbfe',
-      fontSize: 13,
-      fontWeight: 500,
-      color: '#1d4ed8',
-      flexShrink: 0,
-    }}>
+    <div className={cn('flex items-center justify-center gap-2 px-4 py-1.5 bg-[#eff6ff] border-b border-[#bfdbfe] text-[13px] font-medium text-[#1d4ed8] shrink-0')}>
       <span>Following {followed.displayName}</span>
       <button
         onClick={onStopFollow}
-        style={{
-          background: 'none',
-          border: '1px solid #93c5fd',
-          borderRadius: 4,
-          padding: '2px 8px',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#1d4ed8',
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-        }}
+        className={cn('bg-transparent border border-[#93c5fd] rounded px-2 py-0.5 text-xs font-semibold text-[#1d4ed8] cursor-pointer font-[inherit]')}
       >
         Stop
       </button>

@@ -12,7 +12,6 @@
 // Error:   red banner with retry.
 // Empty:   friendly empty-state once load resolves with zero approvals.
 
-import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { usePipelineRuns } from './context/PipelineRunsContext';
@@ -24,50 +23,9 @@ import { loadPipeline } from './persistence/pipelineStorage';
 import { getPipelineRun } from '../../api/pipelineRuns';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
-import {
-  colors,
-  chipStyle,
-  fieldStyle,
-  saveBtnStyle,
-} from '../../constants/styles';
+import Chip from '../shared/Chip';
+import { cn } from '../../lib/cn';
 import type { Approver, PipelineDefinition } from '../../types/pipeline';
-
-// ---------------------------------------------------------------------------
-// Static styles — hoisted so we don't reallocate on every render.
-// ---------------------------------------------------------------------------
-
-const styles: Record<string, CSSProperties> = {
-  page: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', background: colors.surfaceInset, fontFamily: 'inherit' },
-  header: { height: 56, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', borderBottom: `1px solid ${colors.border}`, background: colors.surface, position: 'sticky', top: 0, zIndex: 2 },
-  headerTitle: { fontSize: 18, fontWeight: 700, color: colors.textPrimary },
-  body: { flex: 1, overflowY: 'auto', padding: 20 },
-  card: { display: 'flex', flexDirection: 'column', gap: 12, padding: 16, background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 10 },
-  cardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  pipelineButton: { fontSize: 14, fontWeight: 600, color: colors.textPrimary, background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' },
-  runTail: { fontFamily: 'ui-monospace, monospace', fontSize: 11, color: colors.textTertiary },
-  message: { fontSize: 13, color: colors.textSecondary, background: colors.surfaceInset, padding: '8px 12px', borderRadius: 6, lineHeight: 1.5, boxSizing: 'border-box' },
-  approversRow: { display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' },
-  approverChipBase: { ...chipStyle('info'), display: 'inline-flex', alignItems: 'center', gap: 4 },
-  textarea: { ...fieldStyle, width: '100%', padding: '8px 12px', fontSize: 13, resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box', display: 'block' },
-  actions: { display: 'flex', gap: 8, justifyContent: 'flex-end' },
-  rejectBtn: { padding: '6px 14px', fontSize: 13, fontWeight: 600, background: colors.state.failed, color: '#fff', border: 'none', borderRadius: 6, fontFamily: 'inherit', cursor: 'pointer' },
-  approveBtn: { ...saveBtnStyle(false), padding: '6px 14px', fontSize: 13, background: colors.state.completed },
-  errorBanner: { padding: '12px 16px', background: '#fef2f2', border: `1px solid ${colors.state.failed}`, color: colors.state.failed, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 16 },
-  retryBtn: { padding: '6px 14px', fontSize: 13, fontWeight: 500, background: '#fff', color: colors.state.failed, border: `1px solid ${colors.state.failed}`, borderRadius: 6, cursor: 'pointer', fontFamily: 'inherit' },
-  list: { display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 680, margin: '0 auto' },
-  hand: { fontSize: 18 },
-  rowMeta: { display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 },
-  elapsed: { fontSize: 12, color: colors.textTertiary, whiteSpace: 'nowrap' },
-  approverLabel: { fontSize: 11, color: colors.textTertiary, marginRight: 4 },
-  approverNote: { fontSize: 11, color: colors.textTertiary, marginLeft: 4 },
-  errorText: { fontSize: 13, fontWeight: 500 },
-  pendingHeaderRow: { display: 'flex', alignItems: 'center', gap: 10 },
-  contextSection: { display: 'flex', flexDirection: 'column', gap: 6, padding: '10px 12px', background: colors.surfaceInset, borderRadius: 6, border: `1px solid ${colors.border}` },
-  contextLabel: { fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: '0.5px' },
-  contextItem: { display: 'flex', flexDirection: 'column', gap: 2 },
-  contextItemLabel: { fontSize: 11, fontWeight: 500, color: colors.textSecondary },
-  contextItemValue: { margin: 0, fontSize: 12, lineHeight: 1.5, color: colors.textPrimary, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'inherit', maxHeight: 120, overflow: 'auto' },
-};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -98,7 +56,7 @@ function ApproverChip({ approver, idx }: { approver: Approver; idx: number }) {
   return (
     <span
       key={`${approver.type}:${approver.value}:${idx}`}
-      style={styles.approverChipBase}
+      className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap"
     >
       <span aria-hidden>{icon}</span>
       <span>{approver.value}</span>
@@ -185,56 +143,56 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
   const reviewItems = useMemo(() => extractReviewContext(row.runContext, row.runSteps), [row.runContext, row.runSteps]);
 
   return (
-    <div data-testid={`approval-card-${row.runId}`} style={styles.card}>
-      <div style={styles.cardHeader}>
-        <div style={styles.rowMeta}>
-          <span style={styles.hand} aria-hidden>✋</span>
-          <div style={{ minWidth: 0 }}>
+    <div data-testid={`approval-card-${row.runId}`} className="flex flex-col gap-3 p-4 bg-surface border border-border rounded-[10px]">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-lg" aria-hidden>✋</span>
+          <div className="min-w-0">
             <button
               type="button"
               onClick={onOpenPipeline}
               data-testid={`open-pipeline-${row.pipelineId}`}
-              style={styles.pipelineButton}
+              className="text-sm font-semibold text-text-primary bg-transparent border-none p-0 cursor-pointer font-[inherit] text-left overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
               title={row.pipelineName}
             >
               {row.pipelineName}
             </button>
-            <div style={styles.runTail}>run #{runIdTail(row.runId)}</div>
+            <div className="font-mono text-[11px] text-text-tertiary">run #{runIdTail(row.runId)}</div>
           </div>
         </div>
-        <span style={styles.elapsed}>{formatElapsed(row.requestedAt)}</span>
+        <span className="text-xs text-text-tertiary whitespace-nowrap">{formatElapsed(row.requestedAt)}</span>
       </div>
 
       {row.message ? (
-        <div data-testid={`approval-message-${row.runId}`} style={styles.message}>
+        <div data-testid={`approval-message-${row.runId}`} className="text-[13px] text-text-secondary bg-[#fafbfc] px-3 py-2 rounded-md leading-normal">
           {row.message}
         </div>
       ) : null}
 
-      <div style={styles.contextSection}>
-        <div style={styles.contextLabel}>
+      <div className="flex flex-col gap-1.5 px-3 py-2.5 bg-[#fafbfc] rounded-md border border-border">
+        <div className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
           {reviewItems.length > 0 ? 'Context' : 'Run details'}
         </div>
         {reviewItems.length > 0 ? (
           reviewItems.map(({ label, value }) => (
-            <div key={label} style={styles.contextItem}>
-              <div style={styles.contextItemLabel}>{label}</div>
-              <pre style={styles.contextItemValue}>{value}</pre>
+            <div key={label} className="flex flex-col gap-0.5">
+              <div className="text-[11px] font-medium text-text-secondary">{label}</div>
+              <pre className="m-0 text-xs leading-normal text-text-primary whitespace-pre-wrap break-words font-[inherit] max-h-[120px] overflow-auto">{value}</pre>
             </div>
           ))
         ) : (
           <>
-            <div style={styles.contextItem}>
-              <div style={styles.contextItemLabel}>Run</div>
-              <pre style={styles.contextItemValue}>{row.runId}</pre>
+            <div className="flex flex-col gap-0.5">
+              <div className="text-[11px] font-medium text-text-secondary">Run</div>
+              <pre className="m-0 text-xs leading-normal text-text-primary whitespace-pre-wrap break-words font-[inherit] max-h-[120px] overflow-auto">{row.runId}</pre>
             </div>
-            <div style={styles.contextItem}>
-              <div style={styles.contextItemLabel}>Step</div>
-              <pre style={styles.contextItemValue}>{row.stepId}</pre>
+            <div className="flex flex-col gap-0.5">
+              <div className="text-[11px] font-medium text-text-secondary">Step</div>
+              <pre className="m-0 text-xs leading-normal text-text-primary whitespace-pre-wrap break-words font-[inherit] max-h-[120px] overflow-auto">{row.stepId}</pre>
             </div>
-            <div style={styles.contextItem}>
-              <div style={styles.contextItemLabel}>Status</div>
-              <pre style={styles.contextItemValue}>
+            <div className="flex flex-col gap-0.5">
+              <div className="text-[11px] font-medium text-text-secondary">Status</div>
+              <pre className="m-0 text-xs leading-normal text-text-primary whitespace-pre-wrap break-words font-[inherit] max-h-[120px] overflow-auto">
                 Awaiting your approval — upstream steps haven't produced reviewable output yet
                 (or this approval node runs in parallel with them).
               </pre>
@@ -243,15 +201,15 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
         )}
       </div>
 
-      <div style={styles.approversRow}>
-        <span style={styles.approverLabel}>Approvers:</span>
+      <div className="flex flex-wrap gap-1.5 items-center">
+        <span className="text-[11px] text-text-tertiary mr-1">Approvers:</span>
         {row.approvers.length === 0 ? (
-          <span style={styles.approverLabel}>(anyone)</span>
+          <span className="text-[11px] text-text-tertiary">(anyone)</span>
         ) : (
           row.approvers.map((a, i) => <ApproverChip approver={a} idx={i} key={i} />)
         )}
         {required > 1 ? (
-          <span style={styles.approverNote}>({recorded}/{required} approvals)</span>
+          <span className="text-[11px] text-text-tertiary ml-1">({recorded}/{required} approvals)</span>
         ) : null}
       </div>
 
@@ -261,14 +219,14 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
         onChange={(e) => setComment(e.target.value)}
         placeholder="Optional comment…"
         rows={2}
-        style={styles.textarea}
+        className="w-full px-3 py-2 text-[13px] font-[inherit] border border-border-field rounded-md bg-[#f9fafb] text-text-primary outline-none resize-y"
       />
 
-      <div style={styles.actions}>
-        <button data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} style={styles.rejectBtn}>
+      <div className="flex gap-2 justify-end">
+        <button data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-md font-[inherit] cursor-pointer">
           Reject
         </button>
-        <button data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} style={styles.approveBtn}>
+        <button data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-[#16a34a] text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0">
           Approve
         </button>
       </div>
@@ -391,26 +349,26 @@ export default function PendingApprovalsPage() {
   const count = rows.length;
 
   return (
-    <div data-testid="pending-approvals-page" style={styles.page}>
-      <div style={styles.header}>
-        <div style={styles.pendingHeaderRow}>
-          <div style={styles.headerTitle}>Pending approvals</div>
-          <span data-testid="pending-count" style={chipStyle(count > 0 ? 'warning' : 'neutral')}>
+    <div data-testid="pending-approvals-page" className="flex flex-col h-full overflow-hidden bg-[#fafbfc] font-[inherit]">
+      <div className="h-14 shrink-0 flex items-center justify-between px-6 border-b border-border bg-surface sticky top-0 z-[2]">
+        <div className="flex items-center gap-2.5">
+          <div className="text-lg font-bold text-text-primary">Pending approvals</div>
+          <Chip data-testid="pending-count" tone={count > 0 ? 'warning' : 'neutral'} size="sm">
             {count}
-          </span>
+          </Chip>
         </div>
       </div>
 
-      <div style={styles.body}>
+      <div className="flex-1 overflow-y-auto p-5">
         {error ? (
-          <div data-testid="approvals-error" role="alert" style={styles.errorBanner}>
-            <span style={styles.errorText}>Couldn't load pending approvals. Try again.</span>
-            <button data-testid="approvals-retry" onClick={retry} style={styles.retryBtn}>Retry</button>
+          <div data-testid="approvals-error" role="alert" className="px-4 py-3 bg-[#fef2f2] border border-[#dc2626] text-[#dc2626] rounded-lg flex items-center justify-between gap-3 mb-4">
+            <span className="text-[13px] font-medium">Couldn't load pending approvals. Try again.</span>
+            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[#dc2626] border border-[#dc2626] rounded-md cursor-pointer font-[inherit]">Retry</button>
           </div>
         ) : null}
 
         {isLoading && count === 0 ? (
-          <div data-testid="approvals-loading" style={styles.list}>
+          <div data-testid="approvals-loading" className="flex flex-col gap-3 max-w-[680px] mx-auto">
             <SkeletonCard height={140} />
             <SkeletonCard height={140} />
             <SkeletonCard height={140} />
@@ -423,7 +381,7 @@ export default function PendingApprovalsPage() {
             testId="approvals-empty"
           />
         ) : (
-          <div data-testid="approvals-list" style={styles.list}>
+          <div data-testid="approvals-list" className="flex flex-col gap-3 max-w-[680px] mx-auto">
             {rows.map((row) => (
               <ApprovalCard
                 key={`${row.runId}:${row.stepId}`}

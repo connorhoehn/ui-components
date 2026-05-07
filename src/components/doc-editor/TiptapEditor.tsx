@@ -19,6 +19,7 @@ import type { Awareness } from 'y-protocols/awareness';
 // Using y-prosemirror's key would never match the actual sync plugin state.
 import { ySyncPluginKey, absolutePositionToRelativePosition, relativePositionToAbsolutePosition } from '@tiptap/y-tiptap';
 import EditorToolbar from './EditorToolbar';
+import { cn } from '../../lib/cn';
 
 // Suppress known Tiptap compat warning (collaboration has its own undo/redo)
 const origWarn = console.warn;
@@ -58,29 +59,6 @@ interface RemoteCursorInfo {
   anchor: number | null;
   head: number | null;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const wrapperStyleEditable: React.CSSProperties = {
-  border: '1px solid #e2e8f0',
-  borderRadius: 8,
-  overflow: 'hidden',
-  position: 'relative',
-};
-
-const wrapperStyleReadOnly: React.CSSProperties = {
-  position: 'relative',
-};
-
-const editorAreaStyle: React.CSSProperties = {
-  padding: '12px 16px',
-  fontSize: 14,
-  lineHeight: 1.6,
-  color: '#1e293b',
-  position: 'relative',
-};
 
 // Inject global ProseMirror styles once
 const PROSEMIRROR_STYLE_ID = 'tiptap-prosemirror-style';
@@ -141,10 +119,6 @@ function getCoords(view: any, pos: number, containerEl?: HTMLDivElement | null):
 }
 
 // ---------------------------------------------------------------------------
-// @mention suggestion popup helper (vanilla DOM — required by Tiptap API)
-// ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
 // Cursor Overlay Component
 // ---------------------------------------------------------------------------
 
@@ -171,7 +145,6 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
         if (c.anchor != null && c.anchor !== c.head) {
           const startPos = Math.min(c.anchor, c.head);
           const endPos = Math.max(c.anchor, c.head);
-          // Walk through positions to find line breaks and render per-line rects
           try {
             const editorDom = editorView.dom as HTMLElement;
             const editorWidth = editorDom.offsetWidth;
@@ -179,7 +152,6 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
             while (pos <= endPos) {
               const lineStart = getCoords(editorView, pos, containerEl);
               if (!lineStart) break;
-              // Find end of this line — scan forward until y coordinate changes
               let lineEndPos = pos;
               const lineY = lineStart.top;
               for (let p = pos + 1; p <= endPos; p++) {
@@ -209,7 +181,6 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
                   />
                 );
               }
-              // Move to next line
               pos = lineEndPos + 1;
             }
           } catch {
@@ -220,7 +191,7 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
         return (
           <div key={c.clientId} style={{ pointerEvents: 'none' }}>
             {selectionEls}
-            {/* Cursor caret — semi-transparent ghost */}
+            {/* Cursor caret */}
             <div
               style={{
                 position: 'absolute',
@@ -236,7 +207,7 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
                 animation: 'cursorBlink 1.2s ease-in-out infinite',
               }}
             />
-            {/* Ghost glow — very subtle */}
+            {/* Ghost glow */}
             <div
               style={{
                 position: 'absolute',
@@ -251,7 +222,7 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
                 zIndex: 9,
               }}
             />
-            {/* Name badge — semi-transparent */}
+            {/* Name badge */}
             <div
               style={{
                 position: 'absolute',
@@ -394,11 +365,7 @@ export default function TiptapEditor({
       }
     };
 
-    // Only listen to selectionUpdate — NOT 'update' which fires for remote
-    // changes too and creates a feedback loop (remote update → cursor send →
-    // server broadcast → all editors react → repeat).
     editor.on('selectionUpdate', handleTransaction);
-    // Send initial position
     handleTransaction();
 
     return () => {
@@ -406,7 +373,7 @@ export default function TiptapEditor({
     };
   }, [editor, provider, sectionId]);
 
-  // Listen for remote awareness changes — only on awareness 'change', NOT editor 'update'
+  // Listen for remote awareness changes
   useEffect(() => {
     if (!provider?.awareness) return;
     const handler = () => updateCursors();
@@ -417,11 +384,11 @@ export default function TiptapEditor({
   }, [provider, updateCursors]);
 
   return (
-    <div style={editable ? wrapperStyleEditable : wrapperStyleReadOnly}>
+    <div className={cn(editable ? 'border border-border rounded-lg overflow-hidden relative' : 'relative')}>
       {editable && <EditorToolbar editor={editor} />}
-      <div ref={editorAreaRef} style={editorAreaStyle}>
+      <div ref={editorAreaRef} className={cn('px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative')}>
         <EditorContent editor={editor} />
-        {/* Custom cursor overlay — rendered as React elements, not ProseMirror decorations */}
+        {/* Custom cursor overlay */}
         <CursorOverlay cursors={remoteCursors} editorView={editor?.view} containerEl={editorAreaRef.current} />
       </div>
     </div>

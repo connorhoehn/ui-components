@@ -4,22 +4,16 @@
 // the user double-clicks blank canvas. Presents a small searchable list of
 // node types; Enter inserts the top (highlighted) match at the captured flow
 // position, Escape / outside-click closes without inserting.
-//
-// The shape matches the app's existing popovers (`DocumentHeader.tsx`'s
-// overflow menu, `IconPicker.tsx`'s emoji popover): white surface, 1px border,
-// 8px radius, soft shadow, 260px wide. The node metadata (icon + description)
-// mirrors `NodePalette.tsx` so both entry points stay visually consistent.
 
 import {
   useEffect,
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
 } from 'react';
 import type { NodeType } from '../../../types/pipeline';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 import { useClickOutside } from '../hooks/useClickOutside';
 
 // ---------------------------------------------------------------------------
@@ -38,8 +32,7 @@ export interface QuickInsertPopoverProps {
 }
 
 // ---------------------------------------------------------------------------
-// Node catalog — kept in the same order / with the same copy as NodePalette
-// so both entry points (drag-from-palette + quick-insert) feel unified.
+// Node catalog
 // ---------------------------------------------------------------------------
 
 interface QuickInsertItem {
@@ -71,95 +64,6 @@ function matches(item: QuickInsertItem, query: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Styles — aligned with DocumentHeader's overflow dropdown / IconPicker popover
-// ---------------------------------------------------------------------------
-
-const POPOVER_WIDTH = 260;
-
-function popoverStyle(anchor: { x: number; y: number }): CSSProperties {
-  return {
-    position: 'fixed',
-    top: anchor.y,
-    left: anchor.x,
-    width: POPOVER_WIDTH,
-    background: colors.surface,
-    border: `1px solid ${colors.border}`,
-    borderRadius: 8,
-    boxShadow: '0 12px 28px rgba(15,23,42,0.14)',
-    zIndex: 50,
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    fontFamily: 'inherit',
-  };
-}
-
-const searchWrapStyle: CSSProperties = {
-  padding: 8,
-  borderBottom: `1px solid ${colors.border}`,
-};
-
-const searchStyle: CSSProperties = {
-  width: '100%',
-  boxSizing: 'border-box',
-  border: `1px solid ${colors.borderField}`,
-  borderRadius: 6,
-  padding: '6px 10px',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  background: '#f9fafb',
-  color: colors.textPrimary,
-  outline: 'none',
-};
-
-const listStyle: CSSProperties = {
-  maxHeight: 260,
-  overflowY: 'auto',
-  padding: '4px 0',
-};
-
-function rowStyle(highlighted: boolean): CSSProperties {
-  return {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-    padding: '8px 12px',
-    cursor: 'pointer',
-    background: highlighted ? colors.surfaceHover : 'transparent',
-    fontFamily: 'inherit',
-  };
-}
-
-const iconStyle: CSSProperties = {
-  fontSize: 18,
-  lineHeight: 1,
-  width: 22,
-  textAlign: 'center',
-  flexShrink: 0,
-};
-
-const nameStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 600,
-  color: colors.textPrimary,
-};
-
-const descStyle: CSSProperties = {
-  fontSize: 11,
-  color: colors.textSecondary,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-};
-
-const emptyStyle: CSSProperties = {
-  padding: '14px 12px',
-  fontSize: 12,
-  color: colors.textTertiary,
-  fontFamily: 'inherit',
-};
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -182,8 +86,7 @@ export default function QuickInsertPopover({
     [disabledSet, query],
   );
 
-  // Reset highlight whenever the filter result set changes so the top row is
-  // always the Enter target; clamp if the previous index is now out of range.
+  // Reset highlight whenever the filter result set changes
   useEffect(() => {
     setHighlightIdx((idx) => (idx >= filtered.length ? 0 : idx));
   }, [filtered.length]);
@@ -191,8 +94,6 @@ export default function QuickInsertPopover({
   // Auto-focus the search input when the popover opens.
   useEffect(() => {
     if (anchor) {
-      // Defer focus to the next tick to avoid fighting React Flow's own
-      // focus handling on the dblclick gesture.
       const t = setTimeout(() => inputRef.current?.focus(), 0);
       return () => clearTimeout(t);
     }
@@ -231,12 +132,13 @@ export default function QuickInsertPopover({
   return (
     <div
       ref={popoverRef}
-      style={popoverStyle(anchor)}
+      className="fixed w-[260px] bg-white border border-[#e2e8f0] rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit"
+      style={{ top: anchor.y, left: anchor.x }}
       role="dialog"
       aria-label="Quick insert node"
       data-testid="quick-insert-popover"
     >
-      <div style={searchWrapStyle}>
+      <div className="p-2 border-b border-[#e2e8f0]">
         <input
           ref={inputRef}
           type="text"
@@ -244,14 +146,16 @@ export default function QuickInsertPopover({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search nodes…"
-          style={searchStyle}
+          className="w-full box-border border border-[#d1d5db] rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-[#0f172a] outline-none"
           aria-label="Search node types"
           data-testid="quick-insert-search"
         />
       </div>
-      <div style={listStyle} role="listbox">
+      <div className="max-h-[260px] overflow-y-auto py-1" role="listbox">
         {filtered.length === 0 ? (
-          <div style={emptyStyle}>No nodes match "{query}"</div>
+          <div className="px-3 py-3.5 text-xs text-[#94a3b8] font-inherit">
+            No nodes match "{query}"
+          </div>
         ) : (
           filtered.map((item, idx) => {
             const highlighted = idx === highlightIdx;
@@ -262,22 +166,24 @@ export default function QuickInsertPopover({
                 aria-selected={highlighted}
                 onMouseEnter={() => setHighlightIdx(idx)}
                 onMouseDown={(e) => {
-                  // Use mousedown (not click) so the outside-mousedown handler
-                  // does not fire before the row's click handler — committing
-                  // synchronously on mousedown avoids that race.
                   e.preventDefault();
                   commit(idx);
                 }}
-                style={rowStyle(highlighted)}
+                className={cn(
+                  'flex items-center gap-2.5 px-3 py-2 cursor-pointer font-inherit',
+                  highlighted ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                )}
                 data-node-type={item.type}
                 data-testid={`quick-insert-row-${item.type}`}
               >
-                <span style={iconStyle} aria-hidden>
+                <span className="text-lg leading-none w-[22px] text-center shrink-0" aria-hidden>
                   {item.icon}
                 </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={nameStyle}>{item.name}</div>
-                  <div style={descStyle}>{item.description}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-semibold text-[#0f172a]">{item.name}</div>
+                  <div className="text-[11px] text-[#475569] whitespace-nowrap overflow-hidden text-ellipsis">
+                    {item.description}
+                  </div>
                 </div>
               </div>
             );

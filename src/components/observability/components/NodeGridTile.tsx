@@ -1,13 +1,12 @@
 // frontend/src/components/observability/components/NodeGridTile.tsx
 //
-// 200×200 tile summarizing a single cluster node (§18.6 cluster health, §18.7
+// 200x200 tile summarizing a single cluster node (§18.6 cluster health, §18.7
 // node grid). Shows id, role/region tags, CPU%, MEM, CONN, RUNS, CPU sparkline,
 // and a subtle [● kill] action (Phase 5 chaos — stub onKill for Phase 1).
 
 import { useState } from 'react';
-import type { CSSProperties } from 'react';
 import Sparkline from '../../shared/Sparkline';
-import { colors } from '../../../constants/styles';
+import { cn } from '../../../lib/cn';
 
 export interface NodeSummary {
   id: string;
@@ -29,10 +28,10 @@ export interface NodeGridTileProps {
 }
 
 const STATUS_COLOR: Record<NodeSummary['status'], string> = {
-  healthy: colors.state.completed,
-  degraded: colors.state.awaiting,
-  dead: colors.state.failed,
-  idle: colors.state.idle,
+  healthy: '#16a34a',
+  degraded: '#f59e0b',
+  dead: '#dc2626',
+  idle: '#d1d5db',
 };
 
 function formatMem(mb: number): string {
@@ -44,19 +43,11 @@ function formatMem(mb: number): string {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'baseline',
-        fontSize: 12,
-        fontFamily: 'inherit',
-      }}
-    >
-      <span style={{ color: colors.textSecondary, fontWeight: 600 }}>
+    <div className="flex justify-between items-baseline text-xs font-[inherit]">
+      <span className="text-text-secondary font-semibold">
         {label}
       </span>
-      <span style={{ color: colors.textPrimary, fontFamily: 'SF Mono, Menlo, monospace', fontSize: 11 }}>
+      <span className="text-text-primary font-mono text-[11px]">
         {value}
       </span>
     </div>
@@ -67,27 +58,6 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
   const [hover, setHover] = useState(false);
 
   const statusColor = STATUS_COLOR[node.status];
-
-  const tileStyle: CSSProperties = {
-    width: 200,
-    height: 200,
-    background: colors.surface,
-    border: `1px solid ${selected ? colors.primary : statusColor}`,
-    boxShadow: selected
-      ? '0 0 0 4px rgba(100, 108, 255, 0.18)'
-      : hover
-      ? '0 2px 8px rgba(100, 108, 255, 0.10)'
-      : 'none',
-    borderRadius: 10,
-    padding: 12,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 6,
-    cursor: onClick ? 'pointer' : 'default',
-    fontFamily: 'inherit',
-    boxSizing: 'border-box',
-    transition: 'box-shadow 120ms ease, border-color 120ms ease',
-  };
 
   const runsText =
     node.activeRuns > 0
@@ -100,25 +70,25 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      style={tileStyle}
+      className={cn(
+        'w-[200px] h-[200px] bg-surface rounded-[10px] p-3',
+        'flex flex-col gap-1.5 font-[inherit] box-border',
+        'transition-[box-shadow,border-color] duration-[120ms] ease-linear',
+        onClick ? 'cursor-pointer' : 'cursor-default'
+      )}
+      style={{
+        border: `1px solid ${selected ? '#646cff' : statusColor}`,
+        boxShadow: selected
+          ? '0 0 0 4px rgba(100, 108, 255, 0.18)'
+          : hover
+          ? '0 2px 8px rgba(100, 108, 255, 0.10)'
+          : 'none',
+      }}
     >
       {/* Header: id + status dot */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+      <div className="flex justify-between items-center">
         <div
-          style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: colors.textPrimary,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+          className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
           title={node.id}
         >
           {node.id}
@@ -126,31 +96,20 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
         <span
           role="img"
           aria-label={`status ${node.status}`}
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: statusColor,
-            flexShrink: 0,
-          }}
+          className="w-2 h-2 rounded-full shrink-0"
+          style={{ background: statusColor }}
         />
       </div>
 
       {/* Role + region tags */}
       {(node.role || node.region) && (
-        <div
-          style={{
-            fontSize: 11,
-            color: colors.textTertiary,
-            fontFamily: 'inherit',
-          }}
-        >
+        <div className="text-[11px] text-text-tertiary font-[inherit]">
           {[node.role, node.region].filter(Boolean).join(' · ')}
         </div>
       )}
 
       {/* Stats */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <div className="flex flex-col gap-0.5">
         <Stat label="CPU" value={`${Math.round(node.cpu)}%`} />
         <Stat label="MEM" value={formatMem(node.memoryMb)} />
         <Stat label="CONN" value={`${node.connections}`} />
@@ -158,12 +117,12 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
       </div>
 
       {/* CPU sparkline */}
-      <div style={{ marginTop: 'auto' }}>
+      <div className="mt-auto">
         <Sparkline
           data={node.cpuHistory}
           width={176}
           height={18}
-          color={colors.primary}
+          color="#646cff"
         />
       </div>
 
@@ -175,18 +134,7 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
             e.stopPropagation();
             onKill();
           }}
-          style={{
-            alignSelf: 'flex-start',
-            padding: '2px 8px',
-            fontSize: 11,
-            fontWeight: 600,
-            background: 'transparent',
-            color: colors.textTertiary,
-            border: `1px solid ${colors.border}`,
-            borderRadius: 4,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="self-start px-2 py-0.5 text-[11px] font-semibold bg-transparent text-text-tertiary border border-border rounded-sm cursor-pointer font-[inherit]"
         >
           ● kill
         </button>

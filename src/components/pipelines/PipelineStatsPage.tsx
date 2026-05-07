@@ -11,7 +11,6 @@
 // model config to produce real per-model USD totals.
 
 import { useEffect, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router';
 import { loadPipeline } from './persistence/pipelineStorage';
 import { listRuns } from './persistence/runHistory';
@@ -23,7 +22,7 @@ import {
 } from './cost/llmPricing';
 import EmptyState from '../shared/EmptyState';
 import { BarChart, LineChart, type LineSeries } from '../shared/Chart';
-import { colors } from '../../constants/styles';
+import { cn } from '../../lib/cn';
 import type { PipelineDefinition, PipelineRun, StepExecution } from '../../types/pipeline';
 import { formatDuration } from './utils/formatTime';
 
@@ -210,13 +209,13 @@ function aggregate(runs: PipelineRun[], models: Map<string, string>): Stats {
 }
 
 // ---------------------------------------------------------------------------
-// Success-rate color ramp (≥90 green, ≥70 amber, else red)
+// Success-rate color ramp
 // ---------------------------------------------------------------------------
 
 function successRateColor(pct: number): string {
-  if (pct >= 90) return colors.state.completed;
-  if (pct >= 70) return colors.state.awaiting;
-  return colors.state.failed;
+  if (pct >= 90) return '#16a34a';
+  if (pct >= 70) return '#f59e0b';
+  return '#dc2626';
 }
 
 // ---------------------------------------------------------------------------
@@ -224,7 +223,6 @@ function successRateColor(pct: number): string {
 // ---------------------------------------------------------------------------
 
 function buildRunsOverTime(runs: PipelineRun[]): LineSeries[] {
-  // Oldest-first for cumulative stepping.
   const sorted = [...runs].sort((a, b) => a.startedAt.localeCompare(b.startedAt));
 
   const completed: Array<{ x: number; y: number }> = [];
@@ -246,9 +244,9 @@ function buildRunsOverTime(runs: PipelineRun[]): LineSeries[] {
   }
 
   return [
-    { label: 'Completed', data: completed, color: colors.state.completed },
-    { label: 'Failed', data: failed, color: colors.state.failed },
-    { label: 'Cancelled', data: cancelled, color: colors.state.idle },
+    { label: 'Completed', data: completed, color: '#16a34a' },
+    { label: 'Failed', data: failed, color: '#dc2626' },
+    { label: 'Cancelled', data: cancelled, color: '#d1d5db' },
   ];
 }
 
@@ -261,8 +259,8 @@ function buildDurationSeries(runs: PipelineRun[], p50: number): LineSeries[] {
   const p50Line = points.map((p) => ({ x: p.x, y: p50 }));
 
   return [
-    { label: 'Duration (ms)', data: points, color: colors.primary },
-    { label: 'p50', data: p50Line, color: colors.textTertiary },
+    { label: 'Duration (ms)', data: points, color: '#646cff' },
+    { label: 'p50', data: p50Line, color: '#94a3b8' },
   ];
 }
 
@@ -278,57 +276,10 @@ function buildTokenSeries(runs: PipelineRun[]): LineSeries[] {
     tout.push({ x: t, y: tokensOut });
   }
   return [
-    { label: 'Tokens in', data: tin, color: colors.primary },
-    { label: 'Tokens out', data: tout, color: colors.state.completed },
+    { label: 'Tokens in', data: tin, color: '#646cff' },
+    { label: 'Tokens out', data: tout, color: '#16a34a' },
   ];
 }
-
-// ---------------------------------------------------------------------------
-// Shared styles
-// ---------------------------------------------------------------------------
-
-const cardStyle: CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  padding: 16,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  minWidth: 0,
-};
-
-const cardLabelStyle: CSSProperties = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: colors.textSecondary,
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-};
-
-const cardValueStyle: CSSProperties = {
-  fontSize: 22,
-  fontWeight: 700,
-  color: colors.textPrimary,
-  fontFamily: 'monospace',
-};
-
-const cardSubStyle: CSSProperties = {
-  fontSize: 12,
-  color: colors.textTertiary,
-  fontFamily: 'monospace',
-};
-
-const chartCardStyle: CSSProperties = {
-  ...cardStyle,
-  gap: 8,
-};
-
-const chartTitleStyle: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 600,
-  color: colors.textPrimary,
-};
 
 // ---------------------------------------------------------------------------
 // Component
@@ -359,22 +310,18 @@ export default function PipelineStatsPage() {
   const models = useMemo(() => buildModelMap(def), [def]);
   const stats = useMemo(() => aggregate(visibleRuns, models), [visibleRuns, models]);
 
-  // Per-node cost: scoped to the visible window so it tracks the range selector.
   const nodeCostRows = useMemo<NodeCostRow[]>(
     () => costByNode(visibleRuns, def).filter((r) => r.totalCostUsd > 0 || r.stepCount > 0),
     [visibleRuns, def],
   );
 
-  // 30-day spend trend: always uses the full persisted history (not gated on
-  // the range selector) so the trend is meaningful even when "Last 10" is
-  // active.
   const trendPoints = useMemo(() => dailyCostTrend(runs, def, 30), [runs, def]);
   const trendSeries: LineSeries[] = useMemo(
     () => [
       {
         label: 'Daily spend',
         data: trendPoints.map((p) => ({ x: p.ts, y: p.totalCostUsd })),
-        color: colors.primary,
+        color: '#646cff',
       },
     ],
     [trendPoints],
@@ -383,7 +330,7 @@ export default function PipelineStatsPage() {
   if (!pipelineId) return <Navigate to="/pipelines" replace />;
   if (!def) {
     return (
-      <div style={{ padding: 32 }}>
+      <div className="p-8">
         <EmptyState
           icon="🔍"
           title="Pipeline not found"
@@ -398,30 +345,23 @@ export default function PipelineStatsPage() {
   const hasRuns = visibleRuns.length > 0;
 
   return (
-    <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* ─ Top bar ────────────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <div className="p-6 flex flex-col gap-4">
+      {/* Top bar */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate(`/pipelines/${pipelineId}`)}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: colors.primary,
-            cursor: 'pointer',
-            fontSize: 13,
-            padding: 0,
-          }}
+          className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
         >
           ← {def.name}
         </button>
-        <span style={{ color: colors.textTertiary }}>/</span>
-        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+        <span className="text-text-tertiary">/</span>
+        <span className="text-lg font-bold text-text-primary">
           Execution stats
         </span>
 
         <div
-          style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}
+          className="ml-auto flex gap-1.5"
           data-testid="stats-range"
         >
           {(['10', '50', 'all'] as const).map((r) => (
@@ -429,17 +369,12 @@ export default function PipelineStatsPage() {
               key={r}
               type="button"
               onClick={() => setRange(r)}
-              style={{
-                padding: '4px 10px',
-                fontSize: 12,
-                fontWeight: 500,
-                border: `1px solid ${range === r ? colors.primary : colors.border}`,
-                background: range === r ? colors.primary : colors.surface,
-                color: range === r ? '#fff' : colors.textSecondary,
-                borderRadius: 4,
-                cursor: 'pointer',
-                fontFamily: 'inherit',
-              }}
+              className={cn(
+                'px-2.5 py-1 text-xs font-medium rounded cursor-pointer font-[inherit]',
+                range === r
+                  ? 'border border-primary bg-primary text-white'
+                  : 'border border-border bg-surface text-text-secondary',
+              )}
             >
               {r === 'all' ? 'All' : `Last ${r}`}
             </button>
@@ -447,7 +382,7 @@ export default function PipelineStatsPage() {
         </div>
       </div>
 
-      {/* ─ Empty state ────────────────────────────────────────────────────── */}
+      {/* Empty state */}
       {!hasRuns ? (
         <EmptyState
           icon="📊"
@@ -456,70 +391,57 @@ export default function PipelineStatsPage() {
         />
       ) : (
         <>
-          {/* ─ KPI row ───────────────────────────────────────────────────── */}
+          {/* KPI row */}
           <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: 12,
-            }}
+            className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3"
             data-testid="stats-kpis"
           >
-            <div style={cardStyle}>
-              <div style={cardLabelStyle}>Success rate</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-1.5 min-w-0">
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Success rate</div>
               <div
-                style={{ ...cardValueStyle, color: successRateColor(stats.successRatePct) }}
+                className="text-[22px] font-bold font-mono"
+                style={{ color: successRateColor(stats.successRatePct) }}
                 data-testid="stats-success-rate"
               >
                 {stats.completedCount}/{stats.totalCount} ({stats.successRatePct}%)
               </div>
-              <div style={cardSubStyle}>
+              <div className="text-xs text-text-tertiary font-mono">
                 {stats.failedCount} failed · {stats.cancelledCount} cancelled
               </div>
             </div>
 
-            <div style={cardStyle}>
-              <div style={cardLabelStyle}>Median duration</div>
-              <div style={cardValueStyle}>{formatDuration(stats.medianMs)}</div>
-              <div style={cardSubStyle}>p95 · {formatDuration(stats.p95Ms)}</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-1.5 min-w-0">
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Median duration</div>
+              <div className="text-[22px] font-bold text-text-primary font-mono">{formatDuration(stats.medianMs)}</div>
+              <div className="text-xs text-text-tertiary font-mono">p95 · {formatDuration(stats.p95Ms)}</div>
             </div>
 
-            <div style={cardStyle}>
-              <div style={cardLabelStyle}>Total tokens</div>
-              <div style={cardValueStyle}>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-1.5 min-w-0">
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Total tokens</div>
+              <div className="text-[22px] font-bold text-text-primary font-mono">
                 {stats.tokensIn.toLocaleString()} → {stats.tokensOut.toLocaleString()}
               </div>
-              <div style={cardSubStyle}>
+              <div className="text-xs text-text-tertiary font-mono">
                 {stats.tokensPerRun.toLocaleString()} avg per run
               </div>
             </div>
 
-            <div style={cardStyle}>
-              <div style={cardLabelStyle}>Total cost</div>
-              <div style={cardValueStyle}>{formatMoney(stats.totalCost)}</div>
-              <div style={cardSubStyle}>{formatMoney(stats.costPerRun)} avg per run</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-1.5 min-w-0">
+              <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Total cost</div>
+              <div className="text-[22px] font-bold text-text-primary font-mono">{formatMoney(stats.totalCost)}</div>
+              <div className="text-xs text-text-tertiary font-mono">{formatMoney(stats.costPerRun)} avg per run</div>
             </div>
           </div>
 
-          {/* ─ Cost charts row ───────────────────────────────────────────── */}
+          {/* Cost charts row */}
           <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-              gap: 12,
-            }}
+            className="grid grid-cols-[repeat(auto-fit,minmax(360px,1fr))] gap-3"
             data-testid="stats-cost-row"
           >
-            <div style={chartCardStyle} data-testid="stats-cost-by-node">
-              <div style={chartTitleStyle}>Cost by node</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0" data-testid="stats-cost-by-node">
+              <div className="text-[13px] font-semibold text-text-primary">Cost by node</div>
               {nodeCostRows.length === 0 ? (
-                <div
-                  style={{
-                    fontSize: 12,
-                    color: colors.textTertiary,
-                    padding: '8px 0',
-                  }}
-                >
+                <div className="text-xs text-text-tertiary py-2">
                   No per-node cost data in this range.
                 </div>
               ) : (
@@ -531,14 +453,14 @@ export default function PipelineStatsPage() {
                   xKey="label"
                   yKey="cost"
                   height={200}
-                  color={colors.primary}
+                  color="#646cff"
                   yFormat={formatUsdAxis}
                 />
               )}
             </div>
 
-            <div style={chartCardStyle} data-testid="stats-cost-trend-30d">
-              <div style={chartTitleStyle}>30-day spend trend</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0" data-testid="stats-cost-trend-30d">
+              <div className="text-[13px] font-semibold text-text-primary">30-day spend trend</div>
               <LineChart
                 series={trendSeries}
                 height={200}
@@ -553,16 +475,10 @@ export default function PipelineStatsPage() {
             </div>
           </div>
 
-          {/* ─ Charts grid ───────────────────────────────────────────────── */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-              gap: 12,
-            }}
-          >
-            <div style={chartCardStyle}>
-              <div style={chartTitleStyle}>Runs over time (cumulative)</div>
+          {/* Charts grid */}
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(360px,1fr))] gap-3">
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
+              <div className="text-[13px] font-semibold text-text-primary">Runs over time (cumulative)</div>
               <LineChart
                 series={buildRunsOverTime(visibleRuns)}
                 height={180}
@@ -570,8 +486,8 @@ export default function PipelineStatsPage() {
               />
             </div>
 
-            <div style={chartCardStyle}>
-              <div style={chartTitleStyle}>Duration over time</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
+              <div className="text-[13px] font-semibold text-text-primary">Duration over time</div>
               <LineChart
                 series={buildDurationSeries(visibleRuns, stats.medianMs)}
                 height={180}
@@ -580,8 +496,8 @@ export default function PipelineStatsPage() {
               />
             </div>
 
-            <div style={chartCardStyle}>
-              <div style={chartTitleStyle}>Token usage over time</div>
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
+              <div className="text-[13px] font-semibold text-text-primary">Token usage over time</div>
               <LineChart
                 series={buildTokenSeries(visibleRuns)}
                 height={180}
@@ -590,35 +506,21 @@ export default function PipelineStatsPage() {
               />
             </div>
 
-            {/* ─ Failure breakdown ─────────────────────────────────────── */}
-            <div style={chartCardStyle} data-testid="stats-failure-breakdown">
-              <div style={chartTitleStyle}>Failure breakdown (top 5)</div>
+            {/* Failure breakdown */}
+            <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0" data-testid="stats-failure-breakdown">
+              <div className="text-[13px] font-semibold text-text-primary">Failure breakdown (top 5)</div>
               {stats.failureBreakdown.length === 0 ? (
-                <div style={{ fontSize: 12, color: colors.textTertiary, padding: '8px 0' }}>
+                <div className="text-xs text-text-tertiary py-2">
                   No failures in this range.
                 </div>
               ) : (
-                <table
-                  style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: 12,
-                  }}
-                >
+                <table className="w-full border-collapse text-xs">
                   <thead>
-                    <tr style={{ textAlign: 'left' }}>
+                    <tr className="text-left">
                       {['Error', 'Count', 'Last seen', 'Example'].map((h) => (
                         <th
                           key={h}
-                          style={{
-                            padding: '6px 8px',
-                            fontSize: 10,
-                            fontWeight: 600,
-                            color: colors.textSecondary,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.04em',
-                            borderBottom: `1px solid ${colors.border}`,
-                          }}
+                          className="px-2 py-1.5 text-[10px] font-semibold text-text-secondary uppercase tracking-[0.04em] border-b border-border"
                         >
                           {h}
                         </th>
@@ -627,43 +529,26 @@ export default function PipelineStatsPage() {
                   </thead>
                   <tbody>
                     {stats.failureBreakdown.map((row) => (
-                      <tr key={row.key} style={{ borderBottom: `1px solid ${colors.border}` }}>
+                      <tr key={row.key} className="border-b border-border">
                         <td
-                          style={{
-                            padding: '6px 8px',
-                            color: colors.textPrimary,
-                            maxWidth: 240,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
+                          className="px-2 py-1.5 text-text-primary max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap"
                           title={row.key}
                         >
                           {row.key}
                         </td>
-                        <td
-                          style={{ padding: '6px 8px', fontFamily: 'monospace', color: colors.textPrimary }}
-                        >
+                        <td className="px-2 py-1.5 font-mono text-text-primary">
                           {row.count}
                         </td>
-                        <td style={{ padding: '6px 8px', color: colors.textSecondary }}>
+                        <td className="px-2 py-1.5 text-text-secondary">
                           {relativeTime(row.lastSeenAt)}
                         </td>
-                        <td style={{ padding: '6px 8px' }}>
+                        <td className="px-2 py-1.5">
                           <button
                             type="button"
                             onClick={() =>
                               navigate(`/pipelines/${pipelineId}/runs/${row.exampleRunId}`)
                             }
-                            style={{
-                              background: 'none',
-                              border: 'none',
-                              color: colors.primary,
-                              cursor: 'pointer',
-                              fontSize: 12,
-                              fontFamily: 'monospace',
-                              padding: 0,
-                            }}
+                            className="bg-transparent border-none text-primary cursor-pointer text-xs font-mono p-0"
                           >
                             {shortRunId(row.exampleRunId)} →
                           </button>

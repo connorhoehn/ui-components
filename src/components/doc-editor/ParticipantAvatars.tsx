@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { Participant } from '../../types/document';
+import { cn } from '../../lib/cn';
 
 interface ParticipantAvatarsProps {
   participants: Participant[];
@@ -91,51 +92,6 @@ function ensurePulseKeyframe() {
   document.head.appendChild(style);
 }
 
-/* ---- styles ------------------------------------------------------------- */
-
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: 10,
-  alignItems: 'flex-start',
-  padding: '4px 0',
-};
-
-const avatarWrap: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: 3,
-  position: 'relative',
-  cursor: 'pointer',
-  animation: 'presenceFadeIn 0.3s ease',
-};
-
-const tooltipStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: '100%',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  marginBottom: 4,
-  background: '#1e293b',
-  color: '#fff',
-  padding: '8px 12px',
-  borderRadius: 6,
-  fontSize: 12,
-  whiteSpace: 'nowrap',
-  zIndex: 100,
-  pointerEvents: 'auto',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-  lineHeight: 1.4,
-};
-
-const separatorStyle: React.CSSProperties = {
-  width: 1,
-  height: 36,
-  background: '#e2e8f0',
-  margin: '0 4px',
-  alignSelf: 'center',
-};
-
 /* ---- component ---------------------------------------------------------- */
 
 function AvatarItem({
@@ -169,20 +125,24 @@ function AvatarItem({
   return (
     <div
       ref={ref}
-      style={avatarWrap}
+      className={cn('flex flex-col items-center gap-[3px] relative cursor-pointer animate-[presenceFadeIn_0.3s_ease]')}
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
       onClick={() => onJumpToUser?.(participant)}
     >
       {/* Tooltip */}
       {hovered && (
-        <div style={tooltipStyle} onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
-          <div style={{ fontWeight: 600, marginBottom: 2 }}>{participant.displayName}</div>
-          <div style={{ color: '#94a3b8', fontSize: 11 }}>
+        <div
+          className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-[#1e293b] text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
+          onMouseEnter={showTooltip}
+          onMouseLeave={hideTooltip}
+        >
+          <div className={cn('font-semibold mb-0.5')}>{participant.displayName}</div>
+          <div className={cn('text-text-tertiary text-[11px]')}>
             {participant.idle ? 'away' : modeText(participant.mode)}{lastSeenText(participant.lastSeen)}
           </div>
           {sectionTitle && (
-            <div style={{ color: '#94a3b8', fontSize: 11, marginTop: 2 }}>
+            <div className={cn('text-text-tertiary text-[11px] mt-0.5')}>
               &sect; {sectionTitle}
             </div>
           )}
@@ -190,13 +150,8 @@ function AvatarItem({
             <div
               role="button"
               onClick={(e) => { e.stopPropagation(); onFollowUser(participant); }}
-              style={{
-                marginTop: 4,
-                fontSize: 11,
-                fontWeight: 600,
-                color: isFollowing ? '#f59e0b' : '#60a5fa',
-                cursor: 'pointer',
-              }}
+              className={cn('mt-1 text-[11px] font-semibold cursor-pointer')}
+              style={{ color: isFollowing ? '#f59e0b' : '#60a5fa' }}
             >
               {isFollowing ? 'Stop following' : 'Follow'}
             </div>
@@ -205,20 +160,11 @@ function AvatarItem({
       )}
 
       {/* Avatar circle with gradient + online dot */}
-      <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div className={cn('relative inline-block')}>
         <div
+          className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out')}
           style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
             background: `linear-gradient(135deg, ${baseColor}, ${darkenColor(baseColor, 0.2)})`,
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12,
-            fontWeight: 600,
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
             transform: hovered ? 'scale(1.1)' : 'scale(1)',
             boxShadow: hovered ? `0 0 0 2px ${baseColor}40` : 'none',
           }}
@@ -228,15 +174,9 @@ function AvatarItem({
 
         {/* Status dot: green = active, yellow = away/idle */}
         <div
+          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white')}
           style={{
-            position: 'absolute',
-            bottom: 0,
-            right: 0,
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
             background: participant.idle ? '#f59e0b' : '#10b981',
-            border: '2px solid #fff',
             animation: participant.idle ? 'none' : 'presencePulse 2s infinite',
           }}
         />
@@ -244,14 +184,10 @@ function AvatarItem({
 
       {/* Mode badge */}
       <span
+        className={cn('text-[11px] font-semibold px-2 py-px rounded-full leading-4')}
         style={{
-          fontSize: 11,
-          fontWeight: 600,
-          padding: '1px 8px',
-          borderRadius: 9999,
           background: participant.idle ? '#fef3c7' : badge.bg,
           color: participant.idle ? '#92400e' : badge.text,
-          lineHeight: '16px',
         }}
       >
         {participant.idle ? 'away' : modeText(participant.mode)}{lastSeenText(participant.lastSeen)}
@@ -259,30 +195,14 @@ function AvatarItem({
 
       {/* Following indicator */}
       {isFollowing && (
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 600,
-            color: '#3b82f6',
-          }}
-        >
+        <span className={cn('text-[10px] font-semibold text-[#3b82f6]')}>
           following
         </span>
       )}
 
       {/* Section indicator */}
       {sectionTitle && (
-        <span
-          style={{
-            fontSize: 10,
-            color: '#64748b',
-            maxWidth: 80,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-          }}
-        >
+        <span className={cn('text-[10px] text-[#64748b] max-w-[80px] overflow-hidden text-ellipsis whitespace-nowrap text-center')}>
           &sect; {sectionTitle}
         </span>
       )}
@@ -311,8 +231,8 @@ export default function ParticipantAvatars({
   if (participants.length === 0) return null;
 
   return (
-    <div data-testid="participant-avatars" style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
-      <div style={rowStyle}>
+    <div data-testid="participant-avatars" className={cn('flex items-center gap-0')}>
+      <div className={cn('flex gap-2.5 items-start py-1')}>
         {participants.filter((p, i, arr) => arr.findIndex(x => (x.userId || x.clientId) === (p.userId || p.clientId)) === i).map((p) => (
           <AvatarItem
             key={p.clientId}
@@ -324,7 +244,7 @@ export default function ParticipantAvatars({
           />
         ))}
       </div>
-      <div style={separatorStyle} />
+      <div className={cn('w-px h-9 bg-border mx-1 self-center')} />
     </div>
   );
 }

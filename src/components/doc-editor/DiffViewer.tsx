@@ -4,6 +4,7 @@
 // Shows per-section changes: added, removed, modified sections and items.
 
 import type { SnapshotSection } from '../../hooks/useVersionHistory';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -136,104 +137,29 @@ function diffSections(
 }
 
 // ---------------------------------------------------------------------------
-// Styles
+// Style helpers
 // ---------------------------------------------------------------------------
 
-const containerStyle: React.CSSProperties = {
-  borderTop: '1px solid #e5e7eb',
-  background: '#fafbfc',
-  maxHeight: 400,
-  overflow: 'auto',
-  padding: '0.75rem 1rem',
+const statusBgClass: Record<SectionDiffStatus, string> = {
+  added: 'bg-[#dcfce7] border-[#86efac]',
+  removed: 'bg-[#fee2e2] border-[#fca5a5]',
+  modified: 'bg-[#fef9c3] border-[#fde047]',
+  unchanged: 'bg-transparent border-[#e5e7eb]',
 };
 
-const headerRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 8,
-};
+function badgeClasses(status: string): string {
+  if (status === 'added') return 'text-[#166534] bg-[#bbf7d0]';
+  if (status === 'removed') return 'text-[#991b1b] bg-[#fecaca]';
+  if (status === 'modified') return 'text-[#854d0e] bg-[#fef08a]';
+  return 'text-[#6b7280] bg-[#f3f4f6]';
+}
 
-const diffTitleStyle: React.CSSProperties = {
-  fontSize: 13,
-  fontWeight: 600,
-  color: '#374151',
-  margin: 0,
-};
-
-const closeDiffBtnStyle: React.CSSProperties = {
-  padding: '2px 8px',
-  fontSize: 12,
-  border: '1px solid #d1d5db',
-  borderRadius: 4,
-  background: '#fff',
-  color: '#6b7280',
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-};
-
-const statusColors: Record<SectionDiffStatus | 'added' | 'removed' | 'modified' | 'unchanged', string> = {
-  added: '#dcfce7',
-  removed: '#fee2e2',
-  modified: '#fef9c3',
-  unchanged: 'transparent',
-};
-
-const statusBorderColors: Record<string, string> = {
-  added: '#86efac',
-  removed: '#fca5a5',
-  modified: '#fde047',
-  unchanged: '#e5e7eb',
-};
-
-const sectionBlockStyle = (status: SectionDiffStatus): React.CSSProperties => ({
-  background: statusColors[status],
-  border: `1px solid ${statusBorderColors[status]}`,
-  borderRadius: 6,
-  padding: '8px 10px',
-  marginBottom: 6,
-});
-
-const sectionHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  marginBottom: 4,
-};
-
-const badgeStyle = (status: string): React.CSSProperties => ({
-  fontSize: 10,
-  fontWeight: 600,
-  textTransform: 'uppercase' as const,
-  padding: '1px 6px',
-  borderRadius: 3,
-  color: status === 'added' ? '#166534' : status === 'removed' ? '#991b1b' : status === 'modified' ? '#854d0e' : '#6b7280',
-  background: status === 'added' ? '#bbf7d0' : status === 'removed' ? '#fecaca' : status === 'modified' ? '#fef08a' : '#f3f4f6',
-});
-
-const itemRowStyle = (status: string): React.CSSProperties => ({
-  fontSize: 12,
-  padding: '3px 8px',
-  borderRadius: 3,
-  marginTop: 2,
-  background: status === 'added' ? '#dcfce7' : status === 'removed' ? '#fee2e2' : status === 'modified' ? '#fef9c3' : 'transparent',
-  color: status === 'added' ? '#166534' : status === 'removed' ? '#991b1b' : status === 'modified' ? '#854d0e' : '#374151',
-  textDecoration: status === 'removed' ? 'line-through' : 'none',
-});
-
-const changeDetailStyle: React.CSSProperties = {
-  fontSize: 11,
-  color: '#92400e',
-  marginLeft: 16,
-  fontStyle: 'italic',
-};
-
-const noChangesStyle: React.CSSProperties = {
-  fontSize: 13,
-  color: '#9ca3af',
-  textAlign: 'center',
-  padding: '1rem',
-};
+function itemRowClasses(status: string): string {
+  if (status === 'added') return 'bg-[#dcfce7] text-[#166534]';
+  if (status === 'removed') return 'bg-[#fee2e2] text-[#991b1b] line-through';
+  if (status === 'modified') return 'bg-[#fef9c3] text-[#854d0e]';
+  return 'bg-transparent text-[#374151]';
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -244,30 +170,34 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
   const hasChanges = diffs.some(d => d.status !== 'unchanged');
 
   return (
-    <div style={containerStyle}>
-      <div style={headerRowStyle}>
-        <h4 style={diffTitleStyle}>Changes from selected version to current</h4>
-        <button type="button" style={closeDiffBtnStyle} onClick={onClose}>
+    <div className={cn('border-t border-[#e5e7eb] bg-[#fafbfc] max-h-[400px] overflow-auto px-4 py-3')}>
+      <div className={cn('flex items-center justify-between mb-2')}>
+        <h4 className={cn('text-[13px] font-semibold text-[#374151] m-0')}>Changes from selected version to current</h4>
+        <button
+          type="button"
+          className={cn('px-2 py-0.5 text-xs border border-[#d1d5db] rounded bg-white text-[#6b7280] cursor-pointer font-[inherit]')}
+          onClick={onClose}
+        >
           Dismiss
         </button>
       </div>
 
       {!hasChanges && (
-        <div style={noChangesStyle}>No differences found. The documents are identical.</div>
+        <div className={cn('text-[13px] text-[#9ca3af] text-center p-4')}>No differences found. The documents are identical.</div>
       )}
 
       {diffs
         .filter(d => d.status !== 'unchanged')
         .map((sd) => (
-          <div key={sd.id} style={sectionBlockStyle(sd.status)}>
-            <div style={sectionHeaderStyle}>
-              <span style={badgeStyle(sd.status)}>{sd.status}</span>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#1f2937' }}>
+          <div key={sd.id} className={cn('border rounded-md p-2 px-2.5 mb-1.5', statusBgClass[sd.status])}>
+            <div className={cn('flex items-center gap-2 mb-1')}>
+              <span className={cn('text-[10px] font-semibold uppercase px-1.5 py-px rounded-sm', badgeClasses(sd.status))}>{sd.status}</span>
+              <span className={cn('text-[13px] font-semibold text-[#1f2937]')}>
                 {sd.status === 'removed' ? sd.oldTitle : sd.newTitle ?? sd.oldTitle}
               </span>
               {sd.titleChanged && (
-                <span style={{ fontSize: 11, color: '#92400e' }}>
-                  (was: "{sd.oldTitle}")
+                <span className={cn('text-[11px] text-[#92400e]')}>
+                  (was: &quot;{sd.oldTitle}&quot;)
                 </span>
               )}
             </div>
@@ -279,7 +209,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
                 const item = id.newItem ?? id.oldItem;
                 return (
                   <div key={item?.id ?? idx}>
-                    <div style={itemRowStyle(id.status)}>
+                    <div className={cn('text-xs px-2 py-0.5 rounded-sm mt-0.5', itemRowClasses(id.status))}>
                       {id.status === 'added' && '+ '}
                       {id.status === 'removed' && '- '}
                       {id.status === 'modified' && '~ '}
@@ -287,7 +217,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
                       {item?.assignee ? ` [${item.assignee}]` : ''}
                     </div>
                     {id.changes.length > 0 && (
-                      <div style={changeDetailStyle}>
+                      <div className={cn('text-[11px] text-[#92400e] ml-4 italic')}>
                         {id.changes.join(', ')}
                       </div>
                     )}
@@ -297,14 +227,14 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
 
             {/* Text content diff */}
             {sd.textChanged && (
-              <div style={{ marginTop: 4, fontSize: 12 }}>
+              <div className={cn('mt-1 text-xs')}>
                 {sd.oldTextContent && (
-                  <div style={{ padding: '4px 8px', borderRadius: 3, background: '#fee2e2', color: '#991b1b', textDecoration: 'line-through', marginBottom: 2 }}>
+                  <div className={cn('px-2 py-1 rounded-sm bg-[#fee2e2] text-[#991b1b] line-through mb-0.5')}>
                     {sd.oldTextContent.substring(0, 200)}{(sd.oldTextContent?.length ?? 0) > 200 ? '...' : ''}
                   </div>
                 )}
                 {sd.newTextContent && (
-                  <div style={{ padding: '4px 8px', borderRadius: 3, background: '#dcfce7', color: '#166534' }}>
+                  <div className={cn('px-2 py-1 rounded-sm bg-[#dcfce7] text-[#166534]')}>
                     {sd.newTextContent.substring(0, 200)}{(sd.newTextContent?.length ?? 0) > 200 ? '...' : ''}
                   </div>
                 )}
@@ -312,7 +242,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
             )}
 
             {sd.status === 'modified' && !sd.textChanged && sd.itemDiffs.every(d => d.status === 'unchanged') && sd.titleChanged && (
-              <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>
+              <div className={cn('text-xs text-[#6b7280] mt-0.5')}>
                 Only the section title changed.
               </div>
             )}

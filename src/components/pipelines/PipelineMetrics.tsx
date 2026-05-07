@@ -6,11 +6,9 @@
 // Polls every 10s for live updates.
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import { BarChart, Bar, ResponsiveContainer, Cell } from 'recharts';
 import { useIdentityContext } from '../../contexts/IdentityContext';
-import { colors } from '../../constants/styles';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,15 +51,15 @@ function successRate(started: number, completed: number): number {
 }
 
 function rateColor(pct: number): string {
-  if (pct >= 90) return colors.state.completed;
-  if (pct >= 70) return colors.state.awaiting;
-  return colors.state.failed;
+  if (pct >= 90) return '#16a34a';
+  if (pct >= 70) return '#f59e0b';
+  return '#dc2626';
 }
 
 function latencyColor(ms: number): string {
-  if (ms <= 500) return colors.state.completed;
-  if (ms <= 2000) return colors.state.awaiting;
-  return colors.state.failed;
+  if (ms <= 500) return '#16a34a';
+  if (ms <= 2000) return '#f59e0b';
+  return '#dc2626';
 }
 
 function formatCostUsd(usd: number | null | undefined): string {
@@ -81,19 +79,19 @@ function costPerRun(totalCost: number | null | undefined, runsCompleted: number)
 }
 
 function costValueColor(usd: number | null | undefined): string {
-  if (usd == null || usd === 0) return colors.textTertiary;
-  if (usd < 1) return '#16a34a'; // green
-  if (usd < 10) return '#ca8a04'; // yellow
-  if (usd < 100) return '#ea580c'; // orange
-  return '#dc2626'; // red
+  if (usd == null || usd === 0) return '#94a3b8';
+  if (usd < 1) return '#16a34a';
+  if (usd < 10) return '#ca8a04';
+  if (usd < 100) return '#ea580c';
+  return '#dc2626';
 }
 
 function failureRateColor(started: number, failed: number): string {
-  if (started === 0) return colors.textTertiary;
+  if (started === 0) return '#94a3b8';
   const pct = (failed / started) * 100;
-  if (pct <= 5) return colors.state.completed;
-  if (pct <= 20) return colors.state.awaiting;
-  return colors.state.failed;
+  if (pct <= 5) return '#16a34a';
+  if (pct <= 20) return '#f59e0b';
+  return '#dc2626';
 }
 
 function relativeTimeAgo(iso: string): string {
@@ -103,42 +101,6 @@ function relativeTimeAgo(iso: string): string {
   if (d < 3_600_000) return `${Math.floor(d / 60_000)}m ago`;
   return `${Math.floor(d / 3_600_000)}h ago`;
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const cardStyle: CSSProperties = {
-  background: colors.surface,
-  border: `1px solid ${colors.border}`,
-  borderRadius: 8,
-  padding: 16,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  minWidth: 0,
-};
-
-const cardLabelStyle: CSSProperties = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: colors.textSecondary,
-  textTransform: 'uppercase',
-  letterSpacing: '0.04em',
-};
-
-const cardValueStyle: CSSProperties = {
-  fontSize: 22,
-  fontWeight: 700,
-  color: colors.textPrimary,
-  fontFamily: 'monospace',
-};
-
-const cardSubStyle: CSSProperties = {
-  fontSize: 12,
-  color: colors.textTertiary,
-  fontFamily: 'monospace',
-};
 
 // ---------------------------------------------------------------------------
 // Stat Card
@@ -154,12 +116,15 @@ interface StatCardProps {
 
 function StatCard({ label, value, sub, valueColor, testId }: StatCardProps) {
   return (
-    <div style={cardStyle} data-testid={testId}>
-      <div style={cardLabelStyle}>{label}</div>
-      <div style={{ ...cardValueStyle, color: valueColor || colors.textPrimary }}>
+    <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-1.5 min-w-0" data-testid={testId}>
+      <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">{label}</div>
+      <div
+        className="text-[22px] font-bold font-mono"
+        style={{ color: valueColor || '#0f172a' }}
+      >
         {value}
       </div>
-      {sub && <div style={cardSubStyle}>{sub}</div>}
+      {sub && <div className="text-xs text-text-tertiary font-mono">{sub}</div>}
     </div>
   );
 }
@@ -170,13 +135,13 @@ function StatCard({ label, value, sub, valueColor, testId }: StatCardProps) {
 
 function TokenBarChart({ tokensIn, tokensOut }: { tokensIn: number; tokensOut: number }) {
   const data = [
-    { name: 'In', value: tokensIn, color: colors.primary },
-    { name: 'Out', value: tokensOut, color: colors.state.completed },
+    { name: 'In', value: tokensIn, color: '#646cff' },
+    { name: 'Out', value: tokensOut, color: '#16a34a' },
   ];
   return (
-    <div style={{ ...cardStyle, gap: 8 }}>
-      <div style={cardLabelStyle}>Token Usage</div>
-      <div style={{ width: '100%', height: 80 }}>
+    <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
+      <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Token Usage</div>
+      <div className="w-full h-20">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
@@ -187,13 +152,13 @@ function TokenBarChart({ tokensIn, tokensOut }: { tokensIn: number; tokensOut: n
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div style={{ display: 'flex', gap: 12, fontSize: 11, color: colors.textSecondary }}>
+      <div className="flex gap-3 text-[11px] text-text-secondary">
         <span>
-          <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: colors.primary, marginRight: 4 }} />
+          <span className="inline-block w-2 h-2 rounded-sm bg-primary mr-1" />
           In: {formatNumber(tokensIn)}
         </span>
         <span>
-          <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: colors.state.completed, marginRight: 4 }} />
+          <span className="inline-block w-2 h-2 rounded-sm bg-[#16a34a] mr-1" />
           Out: {formatNumber(tokensOut)}
         </span>
       </div>
@@ -209,15 +174,15 @@ function RunsBarChart({ started, completed, failed, active }: {
   started: number; completed: number; failed: number; active: number;
 }) {
   const data = [
-    { name: 'Started', value: started, color: colors.primary },
-    { name: 'Completed', value: completed, color: colors.state.completed },
-    { name: 'Failed', value: failed, color: colors.state.failed },
-    { name: 'Active', value: active, color: colors.state.running },
+    { name: 'Started', value: started, color: '#646cff' },
+    { name: 'Completed', value: completed, color: '#16a34a' },
+    { name: 'Failed', value: failed, color: '#dc2626' },
+    { name: 'Active', value: active, color: '#2563eb' },
   ];
   return (
-    <div style={{ ...cardStyle, gap: 8 }}>
-      <div style={cardLabelStyle}>Run Breakdown</div>
-      <div style={{ width: '100%', height: 80 }}>
+    <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
+      <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Run Breakdown</div>
+      <div className="w-full h-20">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
@@ -228,10 +193,10 @@ function RunsBarChart({ started, completed, failed, active }: {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', fontSize: 11, color: colors.textSecondary }}>
+      <div className="flex gap-2.5 flex-wrap text-[11px] text-text-secondary">
         {data.map((d) => (
           <span key={d.name}>
-            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: d.color, marginRight: 4 }} />
+            <span className="inline-block w-2 h-2 rounded-sm mr-1" style={{ background: d.color }} />
             {d.name}: {d.value}
           </span>
         ))}
@@ -295,10 +260,7 @@ export default function PipelineMetrics() {
   if (loading && !metrics) {
     return (
       <div
-        style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          height: '100%', color: colors.textTertiary, fontSize: 13,
-        }}
+        className="flex items-center justify-center h-full text-text-tertiary text-[13px]"
         data-testid="metrics-loading"
       >
         Loading metrics...
@@ -309,35 +271,26 @@ export default function PipelineMetrics() {
   // No data state
   if (!metrics && !loading) {
     return (
-      <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="p-6 flex flex-col gap-4">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => navigate('/pipelines')}
-            style={{
-              background: 'none', border: 'none', color: colors.primary,
-              cursor: 'pointer', fontSize: 13, padding: 0,
-            }}
+            className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
           >
             ← Pipelines
           </button>
-          <span style={{ color: colors.textTertiary }}>/</span>
-          <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+          <span className="text-text-tertiary">/</span>
+          <span className="text-lg font-bold text-text-primary">
             Metrics
           </span>
         </div>
         <div
           data-testid="metrics-empty"
-          style={{
-            textAlign: 'center', padding: 48, fontSize: 14,
-            color: colors.textTertiary,
-            background: colors.surface,
-            border: `1px solid ${colors.border}`,
-            borderRadius: 8,
-          }}
+          className="text-center p-12 text-sm text-text-tertiary bg-surface border border-border rounded-lg"
         >
-          <div style={{ fontSize: 32, marginBottom: 12 }}>--</div>
-          <div style={{ fontWeight: 600, color: colors.textSecondary, marginBottom: 4 }}>
+          <div className="text-[32px] mb-3">--</div>
+          <div className="font-semibold text-text-secondary mb-1">
             No data yet
           </div>
           <div>
@@ -357,33 +310,30 @@ export default function PipelineMetrics() {
 
   return (
     <div
-      style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16, overflow: 'auto' }}
+      className="p-6 flex flex-col gap-4 overflow-auto"
       data-testid="pipeline-metrics"
     >
       {/* Top bar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => navigate('/pipelines')}
-          style={{
-            background: 'none', border: 'none', color: colors.primary,
-            cursor: 'pointer', fontSize: 13, padding: 0,
-          }}
+          className="bg-transparent border-none text-primary cursor-pointer text-[13px] p-0"
         >
           ← Pipelines
         </button>
-        <span style={{ color: colors.textTertiary }}>/</span>
-        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+        <span className="text-text-tertiary">/</span>
+        <span className="text-lg font-bold text-text-primary">
           Pipeline Metrics
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="ml-auto flex items-center gap-2">
           {error && (
-            <span style={{ fontSize: 11, color: colors.state.failed }}>
+            <span className="text-[11px] text-[#dc2626]">
               Fetch error: {error}
             </span>
           )}
           <span
-            style={{ fontSize: 11, color: colors.textTertiary }}
+            className="text-[11px] text-text-tertiary"
             data-testid="metrics-last-updated"
           >
             Updated {relativeTimeAgo(m.asOf)}
@@ -391,12 +341,7 @@ export default function PipelineMetrics() {
           <button
             type="button"
             onClick={() => void fetchMetrics()}
-            style={{
-              padding: '4px 10px', fontSize: 12, fontWeight: 500,
-              background: colors.surface, color: colors.textSecondary,
-              border: `1px solid ${colors.border}`, borderRadius: 4,
-              cursor: 'pointer', fontFamily: 'inherit',
-            }}
+            className="px-2.5 py-1 text-xs font-medium bg-surface text-text-secondary border border-border rounded cursor-pointer font-[inherit]"
           >
             Refresh
           </button>
@@ -405,11 +350,7 @@ export default function PipelineMetrics() {
 
       {/* KPI Row - Run Counts */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: 12,
-        }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3"
         data-testid="metrics-run-cards"
       >
         <StatCard
@@ -420,7 +361,7 @@ export default function PipelineMetrics() {
         <StatCard
           label="Runs Completed"
           value={formatNumber(m.runsCompleted)}
-          valueColor={colors.state.completed}
+          valueColor="#16a34a"
           testId="metric-runs-completed"
         />
         <StatCard
@@ -432,18 +373,14 @@ export default function PipelineMetrics() {
         <StatCard
           label="Runs Active"
           value={formatNumber(m.runsActive)}
-          valueColor={m.runsActive > 0 ? colors.state.running : colors.textTertiary}
+          valueColor={m.runsActive > 0 ? '#2563eb' : '#94a3b8'}
           testId="metric-runs-active"
         />
       </div>
 
       {/* KPI Row - Rates & Latency */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 12,
-        }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3"
         data-testid="metrics-rate-cards"
       >
         <StatCard
@@ -477,11 +414,7 @@ export default function PipelineMetrics() {
 
       {/* Cost KPI Row */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 12,
-        }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3"
         data-testid="metrics-cost-cards"
       >
         <StatCard
@@ -502,11 +435,7 @@ export default function PipelineMetrics() {
 
       {/* Token Usage & Run Breakdown */}
       <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 12,
-        }}
+        className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3"
         data-testid="metrics-charts"
       >
         <StatCard
@@ -524,13 +453,7 @@ export default function PipelineMetrics() {
       </div>
 
       {/* Charts Row */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 12,
-        }}
-      >
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-3">
         <TokenBarChart tokensIn={m.llmTokensIn} tokensOut={m.llmTokensOut} />
         <RunsBarChart
           started={m.runsStarted}
