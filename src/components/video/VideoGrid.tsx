@@ -42,7 +42,7 @@ function ParticipantTile({ participant }: { participant: Participant }) {
     )}>
       {videoElement ?? (
         <div
-          className={cn('w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-semibold')}
+          className={cn('w-10 h-10 rounded-full flex items-center justify-center text-white text-base font-semibold')}
           style={{ background: stringToColor(displayName) }}
         >
           {avatarUrl ? (
@@ -53,9 +53,9 @@ function ParticipantTile({ participant }: { participant: Participant }) {
         </div>
       )}
 
-      <div className={cn('absolute bottom-1 left-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white')}>
-        {isLocal && <span className={cn('text-[#60a5fa]')}>You</span>}
-        {!isLocal && <span>{displayName}</span>}
+      <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden')}>
+        {isLocal && <span className={cn('text-[#60a5fa] truncate')}>You</span>}
+        {!isLocal && <span className="truncate">{displayName}</span>}
         {isMuted && (
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
             <path d="M1 1l8 8M5 1v4.5" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" />
