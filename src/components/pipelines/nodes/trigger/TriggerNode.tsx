@@ -1,0 +1,79 @@
+// frontend/src/components/pipelines/nodes/trigger/TriggerNode.tsx
+//
+// Trigger node — 0 inputs, 1 output (`out`). Subtitle summarizes the
+// trigger type; body shows the concrete details (cron, path, doc-type).
+// See PIPELINES_PLAN.md §5.1 / §18.4.4 / §19.12.
+
+import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
+import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import type { TriggerNodeData } from '../../../../types/pipeline';
+import { colors } from '../../../../constants/styles';
+import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
+
+// Some runs tag data with an ephemeral `_state` — use it if present.
+// The `& Record<string, unknown>` intersection satisfies @xyflow/react's
+// Node generic constraint, which interface-shaped data does not meet on its own.
+type TriggerData = TriggerNodeData & {
+  _state?: NodeExecutionState;
+  _hasBreakpoint?: boolean;
+  _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+type TriggerFlowNode = Node<TriggerData, 'trigger'>;
+
+function subtitleFor(data: TriggerData): string {
+  switch (data.triggerType) {
+    case 'manual':              return 'Manual';
+    case 'document.finalize':   return 'On doc.finalize';
+    case 'document.comment':    return 'On doc.comment';
+    case 'document.submit':     return 'On doc.submit';
+    case 'schedule':            return `Schedule: ${data.schedule ?? '—'}`;
+    case 'webhook':             return `Webhook: ${data.webhookPath ?? '/—'}`;
+    default:                    return 'Trigger';
+  }
+}
+
+function bodyFor(data: TriggerData): string {
+  if (data.triggerType === 'schedule') return data.schedule ? `cron: ${data.schedule}` : 'No schedule set';
+  if (data.triggerType === 'webhook')  return data.webhookPath ? `POST ${data.webhookPath}` : 'No path set';
+  if (data.triggerType.startsWith('document.')) {
+    return data.documentTypeId ? `Doc type: ${data.documentTypeId}` : 'Any document';
+  }
+  return 'Fires on user click';
+}
+
+export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
+  const { id, data, selected } = props;
+  const liveStep = useLatestStepForNode(id);
+  const liveState = liveStep?.status === 'cancelled' ? 'failed' : (liveStep?.status as NodeExecutionState | undefined);
+  const replayState = data._state && data._state !== 'idle' ? data._state : undefined;
+  const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
+
+  // §17.6 — when this node is in `failed`, wire the BaseNode retry pill to
+  // PipelineRunsContext.retryFromStep. The pill itself only renders inside
+  // BaseNode when both conditions hold (state === 'failed' && onRetry).
+  const retry = useRetryFromStep();
+  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+
+  const ariaLabel = `Trigger node, ${subtitleFor(data)}, state: ${state}`;
+
+  return (
+    <BaseNode
+      icon="▶"
+      subtitle={subtitleFor(data)}
+      state={state}
+      body={<span style={{ fontStyle: 'italic' }}>{bodyFor(data)}</span>}
+      selected={selected}
+      onRetry={onRetry}
+      ariaLabel={ariaLabel}
+      hasBreakpoint={data._hasBreakpoint}
+      pausedAtBreakpoint={data._pausedAtBreakpoint}
+    >
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="out"
+        style={{ background: colors.borderEmphasis, width: 10, height: 10 }}
+      />
+    </BaseNode>
+  );
+}

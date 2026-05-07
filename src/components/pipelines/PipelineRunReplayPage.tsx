@@ -1,0 +1,705 @@
+// frontend/src/components/pipelines/PipelineRunReplayPage.tsx
+//
+// Route: /pipelines/:pipelineId/runs/:runId — historical run replay per
+// PIPELINES_PLAN.md §18.5.
+//
+// Same overall frame as the editor, but:
+//   - Palette is hidden (read-only mode) — canvas takes its space.
+//   - Canvas is passed a readOnly flag (sibling agent may not wire it yet —
+//     see TODO below).
+//   - Top bar shows breadcrumb + "Run from <date> by <user>" + Re-run + ⋯.
+//   - Bottom is a scrubber strip placeholder (Phase 1 stubs, wired in Phase 5).
+
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import type { CSSProperties } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router';
+import { useClickOutside } from './hooks/useClickOutside';
+
+import {
+  PipelineEditorProvider,
+  usePipelineEditor,
+} from './context/PipelineEditorContext';
+import {
+  PipelineRunsProvider,
+  usePipelineRuns,
+} from './context/PipelineRunsContext';
+import { usePipelineRunChannelSubscription } from './context/WebSocketEventAdapter';
+import { duplicatePipeline } from './persistence/pipelineStorage';
+import { retryFromNode } from '../../api/pipelineRetry';
+import { resumeFromStep } from '../../api/pipelineResume';
+import Banner from '../shared/Banner';
+import Chip from '../shared/Chip';
+import ConfirmDialog from '../shared/ConfirmDialog';
+import { useRunCost } from './cost/useRunCost';
+import { formatUsd } from './cost/llmPricing';
+import { colors } from '../../constants/styles';
+import type { NodeType, PipelineRun } from '../../types/pipeline';
+import { formatDate } from './utils/formatTime';
+import { downloadJSON } from './utils/fileUtils';
+import { statusChipVariant } from './utils/statusColors';
+import { StepTree } from './steps/StepTree';
+import Button from './ui/Button';
+import IconButton from './ui/IconButton';
+import ExecutorLog from './ExecutorLog';
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
+
+const pageStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+  height: 0,
+  overflow: 'hidden',
+  background: colors.surfaceInset,
+  fontFamily: 'inherit',
+  color: colors.textPrimary,
+  borderRadius: 8,
+  border: `1px solid ${colors.border}`,
+};
+
+const topBarStyle: CSSProperties = {
+  height: 44,
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  padding: '0 12px',
+  borderBottom: `1px solid ${colors.border}`,
+  background: colors.surface,
+  position: 'relative',
+  zIndex: 5,
+};
+
+
+
+
+const popoverStyle: CSSProperties = {
+  position: 'absolute',
+  top: '100%',
+  right: 0,
+  marginTop: 6,
+  background: colors.surface,
+  border: `1px solid ${colors.border}`,
+  borderRadius: 8,
+  boxShadow: '0 12px 28px rgba(15,23,42,0.14)',
+  minWidth: 200,
+  zIndex: 20,
+  overflow: 'hidden',
+};
+
+const menuBtnStyle: CSSProperties = {
+  display: 'block',
+  width: '100%',
+  textAlign: 'left',
+  padding: '8px 14px',
+  fontSize: 13,
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  color: colors.textPrimary,
+};
+
+
+// Scrubber styles live in `replay/Scrubber.tsx` — extracted to keep this page
+// under the 700-line guideline in PIPELINES_PLAN.md §18.5.
+
+// ---------------------------------------------------------------------------
+// Outer page — route param validation + providers
+// ---------------------------------------------------------------------------
+
+export default function PipelineRunReplayPage() {
+  const { pipelineId, runId } = useParams<{
+    pipelineId: string;
+    runId: string;
+  }>();
+
+  if (!pipelineId || !runId) {
+    return <Navigate to="/pipelines" replace />;
+  }
+
+  return (
+    <PipelineEditorProvider pipelineId={pipelineId}>
+      <PipelineRunsProvider>
+        <ReplayFrame pipelineId={pipelineId} runId={runId} />
+      </PipelineRunsProvider>
+    </PipelineEditorProvider>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Inner frame — consumes editor + runs context
+// ---------------------------------------------------------------------------
+
+interface ReplayFrameProps {
+  pipelineId: string;
+  runId: string;
+}
+
+function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
+  const navigate = useNavigate();
+  const editor = usePipelineEditor();
+  const runs = usePipelineRuns();
+  const { definition } = editor;
+
+  // Always fetch from the API so historical step data is available even when
+  // the live context has a sparse version of the run (e.g. page opened after
+  // events already fired, or WS reconnection lost intermediate step events).
+  const [fetchedRun, setFetchedRun] = useState<PipelineRun | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    import('../../api/pipelineRuns').then(({ getPipelineRun }) => {
+      getPipelineRun(pipelineId, runId).then((r) => {
+        if (!cancelled && r) setFetchedRun(r);
+      });
+    });
+    return () => { cancelled = true; };
+  }, [pipelineId, runId]);
+
+  const run: PipelineRun | undefined = useMemo(() => {
+    const live = runs.runs[runId];
+    const fetched = fetchedRun;
+    if (!live && !fetched) return undefined;
+    if (!live) return fetched ?? undefined;
+    if (!fetched) return live;
+    const liveStepCount = Object.keys(live.steps).length;
+    const fetchedStepCount = Object.keys(fetched.steps).length;
+    if (liveStepCount >= fetchedStepCount) return live;
+    return { ...fetched, status: live.status, currentStepIds: live.currentStepIds };
+  }, [runs.runs, runId, fetchedRun]);
+
+  usePipelineRunChannelSubscription(runId);
+
+  const runCost = useRunCost(run ?? null);
+
+  // ── Node data map — carries full config for each node ────────────────
+  const nodeDataMap = useMemo<Record<string, { type: NodeType; data: Record<string, unknown> }>>(() => {
+    const map: Record<string, { type: NodeType; data: Record<string, unknown> }> = {};
+    if (!definition) return map;
+    for (const node of definition.nodes) {
+      map[node.id] = { type: node.data.type as NodeType, data: node.data as unknown as Record<string, unknown> };
+    }
+    return map;
+  }, [definition]);
+
+
+  // ── Overflow menu ────────────────────────────────────────────────────
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  useClickOutside(menuRef, () => setMenuOpen(false), menuOpen);
+
+  // ── Tab state (hub#2225: Steps | Executor Log) ──────────────────────
+  const [activeTab, setActiveTab] = useState<'steps' | 'log'>('steps');
+
+  // hub#2225: ExecutorLog forwards step-row clicks here so the canvas can
+  // highlight the node. The replay page currently renders a StepTree (no
+  // canvas), so we accept the stepId, switch to the Steps tab, and stash it
+  // for any future StepTree highlight wiring. TODO: when the read-only canvas
+  // lands, feed `highlightedStepId` into its `currentStepIds` prop.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [highlightedStepId, setHighlightedStepId] = useState<string | null>(null);
+  const handleExecutorLogStepClick = useCallback((stepId: string) => {
+    setHighlightedStepId(stepId);
+    setActiveTab('steps');
+  }, []);
+
+  // ── Retry from step — modal state (hub#1288) ────────────────────────
+  interface RetryModalState { nodeId: string; skippedNodes: string[]; snapshotInput: boolean; }
+  const [retryModal, setRetryModal] = useState<RetryModalState | null>(null);
+  const [retryError, setRetryError] = useState<string | null>(null);
+  const [retryInFlight, setRetryInFlight] = useState(false);
+  const failedNodeId = run?.status === 'failed' ? run.error?.nodeId : undefined;
+
+  const openRetryModal = useCallback((nodeId: string) => {
+    if (!run) return;
+    const skippedNodes = Object.entries(run.steps)
+      .filter(([id, s]) => id !== nodeId && s.status === 'completed')
+      .map(([id]) => id);
+    setRetryModal({ nodeId, skippedNodes, snapshotInput: false });
+    setRetryError(null);
+  }, [run]);
+
+  const confirmRetry = useCallback(async () => {
+    if (!retryModal || !run) return;
+    setRetryError(null);
+    setRetryInFlight(true);
+    try {
+      const resp = await retryFromNode(
+        pipelineId, run.id, retryModal.nodeId,
+        undefined, retryModal.snapshotInput || undefined,
+      );
+      setRetryModal(null);
+      navigate(`/pipelines/${pipelineId}/runs/${resp.newRunId}`);
+    } catch (err) {
+      setRetryError(err instanceof Error ? err.message : String(err));
+      setRetryInFlight(false);
+    }
+  }, [retryModal, run, pipelineId, navigate]);
+
+  // ── Resume from here (hub#2223) ──────────────────────────────────────
+  // Distinct from retry-from-node: resume re-enters the SAME run via
+  // PipelineModule.resumeFromStep, preserving accumulated context. Only
+  // surfaced for failed runs.
+  const [resumeInFlight, setResumeInFlight] = useState<string | null>(null);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [resumeToast, setResumeToast] = useState<string | null>(null);
+
+  const handleResumeFromHere = useCallback(async (nodeId: string) => {
+    if (!run) return;
+    setResumeError(null);
+    setResumeInFlight(nodeId);
+    try {
+      const resp = await resumeFromStep(pipelineId, run.id, nodeId);
+      setResumeToast(
+        `Resumed from ${nodeId.slice(0, 10)}${nodeId.length > 10 ? '…' : ''} (replay #${resp.replayAttempts})`,
+      );
+      // Auto-dismiss the toast after a short window so it doesn't linger.
+      setTimeout(() => setResumeToast(null), 4000);
+      // Stay on the same run-detail page — the resumed-from-step event
+      // will live-update replayAttempts via the context reducer.
+      navigate(`/pipelines/${pipelineId}/runs/${run.id}`);
+    } catch (err) {
+      setResumeError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setResumeInFlight(null);
+    }
+  }, [run, pipelineId, navigate]);
+
+  // ── Re-run ───────────────────────────────────────────────────────────
+  const handleReRun = useCallback(async () => {
+    if (!run) {
+      // No known run — still allow a fresh run with an empty payload.
+      try {
+        const newRunId = await runs.triggerRun(pipelineId);
+        navigate(`/pipelines/${pipelineId}/runs/${newRunId}`);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('[PipelineRunReplay] re-run failed', err);
+      }
+      return;
+    }
+    try {
+      const newRunId = await runs.triggerRun(
+        pipelineId,
+        run.triggeredBy.payload,
+      );
+      navigate(`/pipelines/${pipelineId}/runs/${newRunId}`);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[PipelineRunReplay] re-run failed', err);
+    }
+  }, [run, runs, pipelineId, navigate]);
+
+  // ── Menu handlers ────────────────────────────────────────────────────
+  const handleCopyRunId = async () => {
+    setMenuOpen(false);
+    try {
+      await navigator.clipboard?.writeText(runId);
+    } catch {
+      // ignore — clipboard may not be available
+    }
+  };
+
+  const handleExportRun = () => {
+    setMenuOpen(false);
+    if (!run) return;
+    const json = JSON.stringify(run, null, 2);
+    downloadJSON(`run-${runId}.json`, json);
+  };
+
+  const handleOpenAsNewDraft = () => {
+    setMenuOpen(false);
+    if (!definition) return;
+    const clone = duplicatePipeline(
+      definition.id,
+      `${definition.name} (from run)`,
+    );
+    if (clone) navigate(`/pipelines/${clone.id}`);
+  };
+
+  // ── Missing-run fallback ─────────────────────────────────────────────
+  if (!run) {
+    return (
+      <div style={pageStyle} data-testid="pipeline-replay-missing">
+        <div style={topBarStyle}>
+          <IconButton
+            onClick={() => navigate(`/pipelines/${pipelineId}`)}
+            aria-label="Back to pipeline"
+            title="Back to pipeline"
+          >
+            ←
+          </IconButton>
+          <div
+            style={{
+              fontSize: 13,
+              fontWeight: 600,
+              color: colors.textPrimary,
+            }}
+          >
+            {definition?.name ?? 'Pipeline'}
+          </div>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 14,
+            padding: 32,
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 14, color: colors.textSecondary }}>
+            Run not available — it may have been trimmed from history.
+          </div>
+          <Button
+            onClick={() => navigate(`/pipelines/${pipelineId}`)}
+          >
+            Back to pipeline
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const statusChip = statusChipVariant(run.status);
+  const triggeredByLabel = run.triggeredBy.userId ?? run.triggeredBy.triggerType;
+  const costLabel = formatUsd(runCost);
+
+  return (
+    <div style={pageStyle} data-testid="pipeline-replay">
+      {/* ── Top bar ───────────────────────────────────────────────── */}
+      <div style={topBarStyle}>
+        <IconButton
+          onClick={() => navigate(`/pipelines/${pipelineId}`)}
+          aria-label="Back to pipeline"
+          title="Back to pipeline"
+        >
+          ←
+        </IconButton>
+
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 700,
+            color: colors.textPrimary,
+            maxWidth: 220,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+          title={definition?.name ?? pipelineId}
+        >
+          {definition?.name ?? pipelineId}
+        </div>
+
+        <span style={{ color: colors.textTertiary, fontSize: 12 }}>·</span>
+
+        <div
+          style={{
+            fontSize: 12,
+            color: colors.textSecondary,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+          data-testid="replay-subtitle"
+        >
+          Run from {formatDate(run.startedAt)} by {triggeredByLabel}
+        </div>
+
+        <span
+          style={{ color: colors.textTertiary, fontSize: 12 }}
+          data-testid="replay-cost"
+        >
+          · {costLabel}
+        </span>
+
+        <Chip tone={statusChip.tone} aria-label={`Status: ${statusChip.label}`}>
+          {statusChip.label}
+        </Chip>
+
+        {run.status === 'failed' && run.error?.errorCategory ? (
+          <Chip
+            tone="danger"
+            title={run.error.message || 'Error details unavailable'}
+          >
+            {run.error.errorCategory}
+          </Chip>
+        ) : null}
+
+        <div style={{ flex: 1 }} />
+
+        {/* Hub#1288: Retry-from-failed-step. Only shown for failed runs that
+            have a known failing nodeId. */}
+        {failedNodeId && (
+          <Button
+            onClick={() => openRetryModal(failedNodeId)}
+            disabled={retryInFlight}
+            data-testid="retry-from-failed-step-button"
+            title={`Retry from "${failedNodeId}" with the original upstream context`}
+          >
+            ↻ Retry from failure
+          </Button>
+        )}
+
+        <Button
+          onClick={handleReRun}
+          data-testid="rerun-button"
+          title="Re-run with the original trigger payload"
+        >
+          ↻ Re-run
+        </Button>
+
+        <div style={{ position: 'relative' }} ref={menuRef}>
+          <IconButton
+            onClick={() => setMenuOpen((x) => !x)}
+            aria-label="More actions"
+            data-testid="replay-overflow-btn"
+          >
+            ⋯
+          </IconButton>
+          {menuOpen ? (
+            <div style={popoverStyle} role="menu">
+              <button style={menuBtnStyle} role="menuitem" onClick={handleCopyRunId}>
+                Copy runId
+              </button>
+              <button style={menuBtnStyle} role="menuitem" onClick={handleExportRun}>
+                Export run JSON
+              </button>
+              <button style={menuBtnStyle} role="menuitem" onClick={handleOpenAsNewDraft}>
+                Open as new draft
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {/* ── Retry-from-step confirmation modal (hub#1288) ───────────── */}
+      <ConfirmDialog
+        open={retryModal !== null}
+        onConfirm={confirmRetry}
+        onCancel={() => { if (!retryInFlight) setRetryModal(null); }}
+        title="Retry from step"
+        confirmLabel={retryInFlight ? 'Starting…' : 'Confirm retry'}
+        confirmDisabled={retryInFlight}
+      >
+        {retryModal && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 13, color: colors.textSecondary }}>
+              A new run will start from{' '}
+              <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>
+                {retryModal.nodeId.slice(0, 12)}{retryModal.nodeId.length > 12 ? '…' : ''}
+              </code>
+              {' '}using the original upstream context.
+            </div>
+            {retryModal.skippedNodes.length > 0 && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase', marginBottom: 6 }}>
+                  Steps that will be skipped ({retryModal.skippedNodes.length})
+                </div>
+                <div style={{ maxHeight: 80, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {retryModal.skippedNodes.map((id) => (
+                    <span key={id} style={{ background: colors.surfaceInset, border: `1px solid ${colors.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 11, fontFamily: 'monospace', color: colors.textSecondary }}>
+                      {id.slice(0, 10)}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: colors.textSecondary, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={retryModal.snapshotInput}
+                onChange={(e) => setRetryModal((m) => m ? { ...m, snapshotInput: e.target.checked } : m)}
+                style={{ accentColor: colors.primary }}
+              />
+              Use persisted input snapshot
+            </label>
+            {retryError && (
+              <div data-testid="retry-modal-error" style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, fontSize: 12, color: '#991b1b' }}>
+                {retryError}
+              </div>
+            )}
+          </div>
+        )}
+      </ConfirmDialog>
+      {/* ── Threaded step detail — fills workspace ─────────────────── */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <div style={{ flex: 1, overflow: 'auto', padding: '20px 28px', background: colors.surface }}>
+          {/* Run summary header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: colors.textPrimary }}>
+              Steps ({Object.keys(run.steps).length})
+            </h3>
+            <span style={{ fontSize: 12, color: colors.textTertiary }}>
+              {run.startedAt ? new Date(run.startedAt).toLocaleTimeString() : ''} — {run.completedAt ? new Date(run.completedAt).toLocaleTimeString() : 'in progress'}
+            </span>
+            {run.durationMs != null && (
+              <span style={{ fontSize: 12, color: colors.textSecondary, marginLeft: 'auto' }}>
+                Total: {run.durationMs < 1000 ? `${run.durationMs}ms` : `${(run.durationMs / 1000).toFixed(1)}s`}
+              </span>
+            )}
+          </div>
+
+          {retryError && (
+            <Banner title="Retry failed:" style={{ marginBottom: 16 }}>
+              {retryError}
+            </Banner>
+          )}
+
+          {resumeError && (
+            <Banner title="Resume failed:" style={{ marginBottom: 16 }} data-testid="resume-error-banner">
+              {resumeError}
+            </Banner>
+          )}
+
+          {/* hub#2223: replay history strip — surfaces when the run has
+              been resumed at least once. */}
+          {(run.replayAttempts ?? 0) > 0 && (
+            <Banner
+              title="Resumed from a previous failure"
+              style={{ marginBottom: 16 }}
+              data-testid="resume-history-banner"
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div>
+                  {run.error?.nodeId && run.error.nodeId !== 'unknown' && (
+                    <>Originally failed at <code>{run.error.nodeId.slice(0, 12)}</code> — </>
+                  )}
+                  Resumed {run.replayAttempts} time{run.replayAttempts === 1 ? '' : 's'}.
+                  {run.resumeHistory && run.resumeHistory.length > 0 && (
+                    <>
+                      {' '}Most recent: from{' '}
+                      <code>{run.resumeHistory[run.resumeHistory.length - 1].fromNodeId.slice(0, 12)}</code>
+                      {' '}at {formatDate(run.resumeHistory[run.resumeHistory.length - 1].at)}.
+                    </>
+                  )}
+                </div>
+                {run.resumeHistory && run.resumeHistory.length > 1 && (
+                  <ol
+                    style={{
+                      margin: 0,
+                      paddingLeft: 18,
+                      fontSize: 11,
+                      color: colors.textTertiary,
+                      lineHeight: 1.6,
+                    }}
+                    data-testid="resume-history-timeline"
+                  >
+                    {run.resumeHistory.map((h, i) => (
+                      <li key={`${h.fromNodeId}-${h.at}-${i}`}>
+                        from <code>{h.fromNodeId.slice(0, 12)}</code> at {formatDate(h.at)}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            </Banner>
+          )}
+
+          {resumeToast && (
+            <Banner title="Resumed" style={{ marginBottom: 16 }} data-testid="resume-toast">
+              {resumeToast}
+            </Banner>
+          )}
+
+          {run.error && (
+            <Banner title="Run failed:" style={{ marginBottom: 16 }}>
+              {run.error.message}
+              {run.error.nodeId && run.error.nodeId !== 'unknown' && (
+                <span style={{ marginLeft: 8, fontSize: 11, color: '#b91c1c' }}>
+                  at node {run.error.nodeId.slice(0, 8)}
+                </span>
+              )}
+              {run.status === 'failed' && run.error.nodeId && run.error.nodeId !== 'unknown' && (
+                <div style={{ marginTop: 8 }}>
+                  <Button
+                    onClick={() => handleResumeFromHere(run.error!.nodeId)}
+                    disabled={resumeInFlight !== null}
+                    data-testid="resume-from-here-button"
+                    title={`Resume this run from "${run.error.nodeId}" using its accumulated upstream context`}
+                  >
+                    {resumeInFlight === run.error.nodeId ? 'Resuming…' : '↻ Resume from here'}
+                  </Button>
+                </div>
+              )}
+            </Banner>
+          )}
+
+          {/* hub#2225: Tab bar — Steps timeline vs Executor Log audit trail. */}
+          <div
+            role="tablist"
+            aria-label="Run detail view"
+            style={{ display: 'flex', gap: 4, marginBottom: 12, borderBottom: `1px solid ${colors.border}` }}
+            data-testid="run-replay-tabs"
+          >
+            {([
+              { id: 'steps' as const, label: 'Steps' },
+              { id: 'log' as const, label: 'Executor Log' },
+            ]).map((tab) => {
+              const active = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setActiveTab(tab.id)}
+                  data-testid={`run-replay-tab-${tab.id}`}
+                  style={{
+                    fontFamily: 'inherit',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    padding: '6px 14px',
+                    border: 'none',
+                    background: 'transparent',
+                    color: active ? colors.textPrimary : colors.textTertiary,
+                    cursor: 'pointer',
+                    borderBottom: active ? `2px solid ${colors.primary}` : '2px solid transparent',
+                    marginBottom: -1,
+                  }}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {activeTab === 'steps' ? (
+            /* Threaded step list with fork nesting */
+            <StepTree
+              steps={run.steps}
+              nodeDataMap={nodeDataMap}
+              edges={definition?.edges}
+              onRetryFromStep={openRetryModal}
+              onResumeFromStep={run.status === 'failed' ? handleResumeFromHere : undefined}
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: 400, height: '60vh' }}>
+              <ExecutorLog
+                pipelineId={pipelineId}
+                runId={runId}
+                onStepClick={handleExecutorLogStepClick}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+}

@@ -1,0 +1,83 @@
+import type { SimulationTimeline } from '../../engine/types';
+
+export const observabilityTimeline: SimulationTimeline = {
+  id: 'observability-metrics',
+  name: 'Observability Updates',
+  description: 'Simulates metric updates, alert firing and resolution, and node health changes.',
+  loop: true,
+  events: [
+    {
+      delay: 1000,
+      message: {
+        type: 'metrics',
+        action: 'datapoint',
+        metric: 'api.latency.p99',
+        value: 2450,
+        unit: 'ms',
+        nodeId: 'api-gateway-1',
+        timestamp: Date.now(),
+      },
+      description: 'Latency spike detected: 2450ms p99',
+    },
+    {
+      delay: 2000,
+      message: {
+        type: 'alert',
+        action: 'fired',
+        alertId: 'alert-err-rate-001',
+        severity: 'critical',
+        title: 'High Error Rate',
+        description: 'Error rate exceeded 5% threshold (current: 8.2%)',
+        metric: 'api.error_rate',
+        value: 8.2,
+        threshold: 5.0,
+        nodeId: 'api-gateway-1',
+        timestamp: Date.now(),
+      },
+      description: 'Alert fired: High error rate (8.2%)',
+    },
+    {
+      delay: 3000,
+      message: {
+        type: 'health',
+        action: 'status.changed',
+        nodeId: 'worker-pool-3',
+        previousStatus: 'healthy',
+        currentStatus: 'degraded',
+        reason: 'Memory utilization at 92%',
+        timestamp: Date.now(),
+      },
+      description: 'Node worker-pool-3 degraded (92% memory)',
+    },
+    {
+      delay: 4000,
+      message: {
+        type: 'metrics',
+        action: 'datapoint',
+        metric: 'api.latency.p99',
+        value: 380,
+        unit: 'ms',
+        nodeId: 'api-gateway-1',
+        timestamp: Date.now(),
+      },
+      description: 'Latency recovering: 380ms p99',
+    },
+    {
+      delay: 3000,
+      message: {
+        type: 'alert',
+        action: 'resolved',
+        alertId: 'alert-err-rate-001',
+        severity: 'critical',
+        title: 'High Error Rate',
+        description: 'Error rate returned below threshold (current: 2.1%)',
+        metric: 'api.error_rate',
+        value: 2.1,
+        threshold: 5.0,
+        nodeId: 'api-gateway-1',
+        resolvedAt: Date.now(),
+      },
+      description: 'Alert resolved: Error rate back to normal (2.1%)',
+    },
+  ],
+};

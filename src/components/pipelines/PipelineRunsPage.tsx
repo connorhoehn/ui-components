@@ -1,0 +1,380 @@
+// frontend/src/components/pipelines/PipelineRunsPage.tsx
+//
+// List view for a pipeline's persisted run history. Route: /pipelines/:pipelineId/runs.
+//
+// URL query-param scheme (state survives reload + back-button):
+//   q=<text>                                    case-insensitive substring match against runId/pipelineId
+//   status=pending,running,completed,...        multi-select; empty/missing = all statuses
+//   trigger=manual,scheduled,webhook,document   multi-select; empty/missing = all kinds
+//                                                'document' matches any 'document.*' triggerType
+//                                                'scheduled' matches the 'schedule' triggerType (UI alias)
+//   range=24h|7d|30d|all                        default 7d
+//
+// Bulk actions operate on the current `selected` set (independent of the
+// 2-cap Compare selection — Compare still uses two of the same checkboxes).
+
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useParams, useNavigate, Navigate, useSearchParams } from 'react-router';
+import { loadPipeline } from './persistence/pipelineStorage';
+import { listRuns, clearRuns, appendRun } from './persistence/runHistory';
+import { aggregateCost, formatUsd } from './cost/llmPricing';
+import EmptyState from '../shared/EmptyState';
+import Banner from '../shared/Banner';
+import ConfirmDialog from '../shared/ConfirmDialog';
+import RunsFilterBar from './RunsFilterBar';
+import RunsBulkActionBar from './RunsBulkActionBar';
+import RunsTable from './RunsTable';
+import { colors, pageContainerStyle } from '../../constants/styles';
+import type { PipelineDefinition, PipelineRun } from '../../types/pipeline';
+import { retryFromNode } from '../../api/pipelineRetry';
+import {
+  filterRuns,
+  parseFilterParams,
+  type StatusKey,
+  type TriggerKindKey,
+  type DateRangeKey,
+} from './runsUtils';
+
+// Re-export domain utilities so existing tests importing from this module still work.
+export type { StatusKey, TriggerKindKey, DateRangeKey, RunFilterCriteria } from './runsUtils';
+export {
+  STATUS_KEYS,
+  TRIGGER_KIND_KEYS,
+  DATE_RANGE_KEYS,
+  triggerTypeToKind,
+  countTotalRetries,
+  filterRuns,
+  parseFilterParams,
+} from './runsUtils';
+
+export default function PipelineRunsPage() {
+  const { pipelineId } = useParams<{ pipelineId: string }>();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [runs, setRuns] = useState<PipelineRun[]>([]);
+  const [def, setDef] = useState<PipelineDefinition | null>(null);
+  // Compare-pair (cap of 2) — kept separate from `selected` so the user can
+  // bulk-act on many runs without clobbering an in-progress compare pick.
+  const [comparePair, setComparePair] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(() => new Set());
+  // Hub#1288: retry-from-failed-step modal state.
+  interface RetryTarget { run: PipelineRun; nodeId: string; skippedNodes: string[]; snapshotInput: boolean; }
+  const [retryTarget, setRetryTarget] = useState<RetryTarget | null>(null);
+  const [retryInFlight, setRetryInFlight] = useState(false);
+  const [retryError, setRetryError] = useState<string | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+
+  const openRetryModal = useCallback((r: PipelineRun) => {
+    const nodeId = r.error?.nodeId;
+    if (!nodeId || nodeId === 'unknown') return;
+    const skippedNodes = Object.entries(r.steps)
+      .filter(([id, s]) => id !== nodeId && s.status === 'completed')
+      .map(([id]) => id);
+    setRetryTarget({ run: r, nodeId, skippedNodes, snapshotInput: false });
+    setRetryError(null);
+  }, []);
+
+  const confirmRetry = useCallback(async () => {
+    if (!retryTarget) return;
+    setRetryError(null);
+    setRetryInFlight(true);
+    try {
+      const resp = await retryFromNode(
+        retryTarget.run.pipelineId, retryTarget.run.id, retryTarget.nodeId,
+        undefined, retryTarget.snapshotInput || undefined,
+      );
+      setRetryTarget(null);
+      navigate(`/pipelines/${retryTarget.run.pipelineId}/runs/${resp.newRunId}`);
+    } catch (err) {
+      setRetryError(err instanceof Error ? err.message : String(err));
+      setRetryInFlight(false);
+    }
+  }, [retryTarget, navigate]);
+
+  // Decode current params on every render (cheap — small URLs).
+  const { query, statuses, triggerKinds, range } = useMemo(
+    () => parseFilterParams(searchParams),
+    [searchParams],
+  );
+
+  // Mutators write through to the URL so back-button restores prior filters.
+  const updateParam = (key: string, value: string | null) => {
+    const next = new URLSearchParams(searchParams);
+    if (!value) next.delete(key);
+    else next.set(key, value);
+    setSearchParams(next, { replace: true });
+  };
+
+  const toggleStatus = (s: StatusKey) => {
+    const next = new Set(statuses);
+    if (next.has(s)) next.delete(s);
+    else next.add(s);
+    updateParam('status', next.size === 0 ? null : Array.from(next).join(','));
+  };
+
+  const toggleTriggerKind = (k: TriggerKindKey) => {
+    const next = new Set(triggerKinds);
+    if (next.has(k)) next.delete(k);
+    else next.add(k);
+    updateParam('trigger', next.size === 0 ? null : Array.from(next).join(','));
+  };
+
+  const setRange = (r: DateRangeKey) => {
+    updateParam('range', r === '7d' ? null : r);
+  };
+
+  const setQuery = (q: string) => {
+    updateParam('q', q.length === 0 ? null : q);
+  };
+
+  const toggleComparePair = (runId: string) => {
+    setComparePair((prev) => {
+      if (prev.includes(runId)) return prev.filter((id) => id !== runId);
+      if (prev.length >= 2) return [prev[1], runId];
+      return [...prev, runId];
+    });
+  };
+
+  useEffect(() => {
+    if (!pipelineId) return;
+    setDef(loadPipeline(pipelineId));
+    setRuns(listRuns(pipelineId));
+  }, [pipelineId]);
+
+  const filtered = useMemo(
+    () => filterRuns(runs, { query, statuses, triggerKinds, range }),
+    [runs, query, statuses, triggerKinds, range],
+  );
+
+  const modelByNodeId = useMemo(() => {
+    const map = new Map<string, string>();
+    if (!def) return map;
+    for (const node of def.nodes) {
+      if (node.data.type === 'llm') {
+        map.set(node.id, node.data.model);
+      }
+    }
+    return map;
+  }, [def]);
+
+  const costByRunId = useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const r of filtered) {
+      const steps = Object.values(r.steps)
+        .filter((s) => !!s.llm)
+        .map((s) => ({
+          model: modelByNodeId.get(s.nodeId),
+          tokensIn: s.llm?.tokensIn ?? 0,
+          tokensOut: s.llm?.tokensOut ?? 0,
+        }));
+      out[r.id] = formatUsd(aggregateCost(steps).total);
+    }
+    return out;
+  }, [filtered, modelByNodeId]);
+
+  const bulkDeleteConfirmed = () => {
+    if (!pipelineId) return;
+    setBulkDeleteOpen(false);
+    const ids = Array.from(selected);
+    const remaining = runs.filter((r) => !selected.has(r.id));
+    clearRuns(pipelineId);
+    for (const r of [...remaining].sort((a, b) => a.startedAt.localeCompare(b.startedAt))) {
+      appendRun(pipelineId, r);
+    }
+    setRuns(listRuns(pipelineId));
+    setSelected(new Set());
+    setComparePair((p) => p.filter((id) => !ids.includes(id)));
+  };
+
+  const bulkExport = () => {
+    const picked = runs.filter((r) => selected.has(r.id));
+    if (picked.length === 0) return;
+    const blob = new Blob([JSON.stringify(picked, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    a.href = url;
+    a.download = `pipeline-runs-${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (!pipelineId) return <Navigate to="/pipelines" replace />;
+  if (!def) {
+    return (
+      <div style={{ padding: 32 }}>
+        <EmptyState
+          icon="🔍"
+          title="Pipeline not found"
+          body="It may have been deleted. Go back to the pipelines list."
+          actionLabel="Back to pipelines"
+          onAction={() => navigate('/pipelines')}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div data-testid="pipeline-runs-page" style={pageContainerStyle}>
+      {/* Hub#1288: retry-from-failure confirmation modal. */}
+      <ConfirmDialog
+        open={retryTarget !== null}
+        onConfirm={confirmRetry}
+        onCancel={() => { if (!retryInFlight) setRetryTarget(null); }}
+        title="Retry from failure"
+        confirmLabel={retryInFlight ? 'Starting…' : 'Confirm retry'}
+        confirmDisabled={retryInFlight}
+      >
+        {retryTarget && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 13, color: colors.textSecondary }}>
+              Run <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>{retryTarget.run.id.slice(0, 8)}</code> will restart from step{' '}
+              <code style={{ background: colors.surfaceInset, padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>{retryTarget.nodeId.slice(0, 12)}{retryTarget.nodeId.length > 12 ? '…' : ''}</code>
+              {' '}using the original upstream context.
+            </div>
+            {retryTarget.skippedNodes.length > 0 && (
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: colors.textTertiary, textTransform: 'uppercase', marginBottom: 6 }}>
+                  Steps skipped ({retryTarget.skippedNodes.length})
+                </div>
+                <div style={{ maxHeight: 80, overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                  {retryTarget.skippedNodes.map((id) => (
+                    <span key={id} style={{ background: colors.surfaceInset, border: `1px solid ${colors.border}`, borderRadius: 3, padding: '1px 6px', fontSize: 11, fontFamily: 'monospace', color: colors.textSecondary }}>{id.slice(0, 10)}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: colors.textSecondary, cursor: 'pointer' }}>
+              <input type="checkbox" checked={retryTarget.snapshotInput} onChange={(e) => setRetryTarget((t) => t ? { ...t, snapshotInput: e.target.checked } : t)} style={{ accentColor: colors.primary }} />
+              Use persisted input snapshot
+            </label>
+            {retryError && (
+              <div data-testid="retry-modal-error" style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, fontSize: 12, color: '#991b1b' }}>{retryError}</div>
+            )}
+          </div>
+        )}
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={bulkDeleteOpen}
+        onConfirm={bulkDeleteConfirmed}
+        onCancel={() => setBulkDeleteOpen(false)}
+        title={`Delete ${selected.size} run${selected.size === 1 ? '' : 's'}?`}
+        body="This cannot be undone."
+        confirmLabel={`Delete ${selected.size}`}
+        tone="destructive"
+      />
+      {retryError && (
+        <Banner title="Retry failed:" onDismiss={() => setRetryError(null)}>
+          {retryError}
+        </Banner>
+      )}
+
+      {/* Header / breadcrumb */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button
+          type="button"
+          onClick={() => navigate(`/pipelines/${pipelineId}`)}
+          style={{
+            background: 'none', border: 'none', color: colors.primary,
+            cursor: 'pointer', fontSize: 13, padding: 0,
+          }}
+        >
+          ← {def.name}
+        </button>
+        <span style={{ color: colors.textTertiary }}>/</span>
+        <span style={{ fontSize: 18, fontWeight: 700, color: colors.textPrimary }}>
+          Run history
+        </span>
+        <span style={{ fontSize: 12, color: colors.textTertiary, marginLeft: 'auto' }}>
+          {runs.length} run{runs.length === 1 ? '' : 's'} persisted
+        </span>
+        <button
+          type="button"
+          onClick={() => navigate(`/pipelines/${pipelineId}/stats`)}
+          data-testid="runs-stats-link"
+          style={{
+            padding: '4px 10px', fontSize: 12, fontWeight: 500,
+            border: `1px solid ${colors.border}`, background: colors.surface,
+            color: colors.textSecondary, borderRadius: 4, cursor: 'pointer', fontFamily: 'inherit',
+          }}
+        >
+          📊 Stats
+        </button>
+        <button
+          type="button"
+          disabled={comparePair.length !== 2}
+          onClick={() => {
+            if (comparePair.length !== 2) return;
+            const [a, b] = comparePair;
+            navigate(`/pipelines/${pipelineId}/runs/compare/${a}/${b}`);
+          }}
+          data-testid="run-compare-btn"
+          style={{
+            padding: '4px 10px', fontSize: 12, fontWeight: 500,
+            border: `1px solid ${comparePair.length === 2 ? colors.primary : colors.border}`,
+            background: comparePair.length === 2 ? colors.primary : colors.surface,
+            color: comparePair.length === 2 ? '#fff' : colors.textSecondary,
+            borderRadius: 4,
+            cursor: comparePair.length === 2 ? 'pointer' : 'not-allowed',
+            opacity: comparePair.length === 2 ? 1 : 0.7,
+            fontFamily: 'inherit',
+          }}
+        >
+          ⇄ Compare ({comparePair.length}/2)
+        </button>
+      </div>
+
+      <RunsFilterBar
+        query={query}
+        statuses={statuses}
+        triggerKinds={triggerKinds}
+        range={range}
+        onQueryChange={setQuery}
+        onStatusToggle={toggleStatus}
+        onTriggerToggle={toggleTriggerKind}
+        onRangeChange={setRange}
+        onClearFilters={() => {
+          setQuery('');
+          updateParam('status', null);
+          updateParam('trigger', null);
+        }}
+      />
+
+      {selected.size > 0 && (
+        <RunsBulkActionBar
+          selectionCount={selected.size}
+          onExport={bulkExport}
+          onDelete={() => { if (selected.size > 0 && pipelineId) setBulkDeleteOpen(true); }}
+          onClear={() => setSelected(new Set())}
+        />
+      )}
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          icon="📜"
+          title={runs.length === 0 ? 'No runs yet' : 'No runs match these filters'}
+          body={
+            runs.length === 0
+              ? 'Trigger this pipeline and completed runs will appear here.'
+              : 'Try clearing a filter or expanding the date range.'
+          }
+        />
+      ) : (
+        <RunsTable
+          filtered={filtered}
+          selected={selected}
+          onSelectionChange={setSelected}
+          comparePair={comparePair}
+          onToggleComparePair={toggleComparePair}
+          costByRunId={costByRunId}
+          pipelineId={pipelineId}
+          onNavigate={navigate}
+          onOpenRetryModal={openRetryModal}
+        />
+      )}
+    </div>
+  );
+}

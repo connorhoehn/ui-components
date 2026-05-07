@@ -1,0 +1,410 @@
+// Phase 51 Phase A + B + C — auto-generated form for an API-shaped DocumentType.
+//
+// Widget mapping:
+//   - text + cardinality=1       → <input type="text">
+//   - long_text + cardinality=1  → <textarea>
+//   - number + cardinality=1     → <input type="number">
+//   - date + cardinality=1       → <input type="date">
+//   - boolean + cardinality=1    → <input type="checkbox">
+//   - enum + cardinality=1       → <select> populated from field.options (Phase C)
+//   - reference + cardinality=1  → <select> populated from props.referenceOptions (Phase C)
+//   - text/number/date + cardinality=unlimited → list of inputs with + / −
+//   - boolean + unlimited is REJECTED at the backend (semantically meaningless)
+//   - enum/reference + unlimited: out of scope for v1 (cardinality=1 only); a
+//     follow-up task can add multi-select repeating UI.
+//
+// Form internal state stores text-shaped values as strings; numbers are
+// coerced via Number() at submit time, dates pass through as ISO strings,
+// booleans live as actual booleans tied to checkbox state.
+
+import { useState, type JSX } from 'react';
+import type { ApiDocumentType, ApiDocumentTypeField, TypedDocumentValue } from '../../hooks/useTypedDocuments';
+
+export interface ReferenceOption {
+  value: string; // documentId
+  label: string; // display label (caller picks which field to show)
+}
+
+// Form state per field. Booleans are stored natively; everything else is a
+// string (or string array for unlimited) for clean input wiring.
+type SingleStored = string | boolean;
+type FieldStored = SingleStored | string[];
+
+interface FormState {
+  [fieldId: string]: FieldStored;
+}
+
+// Phase D — observed value for showWhen comparison. Maps the form's stored
+// shape to what an `equals` predicate would compare against. Numbers stored
+// as strings (number widget) coerce to Number for the comparison; empty
+// strings stay strings so an unset text field can't accidentally equal 0.
+function observedFor(field: ApiDocumentTypeField, stored: FieldStored): string | number | boolean | undefined {
+  if (Array.isArray(stored)) return undefined; // unlimited fields aren't valid showWhen sources
+  if (field.fieldType === 'boolean') return typeof stored === 'boolean' ? stored : undefined;
+  if (field.fieldType === 'number') {
+    if (typeof stored !== 'string' || stored.trim() === '') return undefined;
+    const n = Number(stored);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return typeof stored === 'string' ? stored : undefined;
+}
+
+function isVisible(field: ApiDocumentTypeField, type: ApiDocumentType, values: FormState): boolean {
+  if (!field.showWhen) return true;
+  const source = type.fields.find((f) => f.fieldId === field.showWhen!.fieldId);
+  if (!source) return true; // bad reference — show the field rather than silently hiding
+  const observed = observedFor(source, values[source.fieldId]);
+  return observed === field.showWhen.equals;
+}
+
+function applyClientValidation(field: ApiDocumentTypeField, coerced: TypedDocumentValue): string | null {
+  const v = field.validation;
+  if (!v) return null;
+  const check = (val: string | number | boolean): string | null => {
+    if (typeof val === 'string') {
+      if (v.min !== undefined && val.length < v.min) return `${field.name}: must be at least ${v.min} characters`;
+      if (v.max !== undefined && val.length > v.max) return `${field.name}: must be at most ${v.max} characters`;
+      if (v.regex !== undefined) {
+        try { if (!new RegExp(v.regex).test(val)) return `${field.name}: does not match required pattern`; }
+        catch { /* malformed regex from server — defer to server-side check */ }
+      }
+    } else if (typeof val === 'number') {
+      if (v.min !== undefined && val < v.min) return `${field.name}: must be at least ${v.min}`;
+      if (v.max !== undefined && val > v.max) return `${field.name}: must be at most ${v.max}`;
+    } else if (typeof val === 'boolean') {
+      if (v.requireTrue && !val) return `${field.name} must be checked`;
+    }
+    return null;
+  };
+  if (Array.isArray(coerced)) {
+    for (const it of coerced) {
+      const e = check(it as string | number);
+      if (e) return e;
+    }
+    return null;
+  }
+  return check(coerced);
+}
+
+export interface TypedDocumentFormProps {
+  type: ApiDocumentType;
+  onSubmit: (values: Record<string, TypedDocumentValue>) => Promise<void>;
+  /** Reset to defaults after a successful submit (default true). */
+  resetOnSubmit?: boolean;
+  /**
+   * Phase C — keyed by DocumentType id. Used by reference fields to populate
+   * their picker. Caller (typically TypedDocumentsPage) fetches instances of
+   * each referenced type and supplies them. Missing entries render a disabled
+   * picker with a "no options" hint.
+   */
+  referenceOptions?: Record<string, ReferenceOption[]>;
+}
+
+function defaultForField(field: ApiDocumentTypeField): FieldStored {
+  if (field.cardinality === 'unlimited') return [''];
+  if (field.fieldType === 'boolean') return false;
+  return '';
+}
+
+function coerceSingle(field: ApiDocumentTypeField, raw: SingleStored): TypedDocumentValue | null {
+  switch (field.fieldType) {
+    case 'text':
+    case 'long_text':
+      return typeof raw === 'string' && raw !== '' ? raw : null;
+    case 'date':
+      return typeof raw === 'string' && raw !== '' ? raw : null;
+    case 'number': {
+      if (typeof raw !== 'string' || raw.trim() === '') return null;
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    }
+    case 'boolean':
+      return typeof raw === 'boolean' ? raw : null;
+    case 'enum':
+    case 'reference':
+      return typeof raw === 'string' && raw !== '' ? raw : null;
+  }
+}
+
+function coerceUnlimited(field: ApiDocumentTypeField, arr: string[]): TypedDocumentValue | null {
+  const out: (string | number)[] = [];
+  for (const entry of arr) {
+    if (entry.trim() === '') continue;
+    if (field.fieldType === 'number') {
+      const n = Number(entry);
+      if (!Number.isFinite(n)) return null; // signal a coercion error
+      out.push(n);
+    } else {
+      out.push(entry);
+    }
+  }
+  return out.length > 0 ? (out as string[] | number[]) : null;
+}
+
+export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {} }: TypedDocumentFormProps): JSX.Element {
+  const [values, setValues] = useState<FormState>(() => {
+    const init: FormState = {};
+    for (const f of type.fields) init[f.fieldId] = defaultForField(f);
+    return init;
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successKey, setSuccessKey] = useState(0);
+
+  const setField = (fieldId: string, v: FieldStored): void => {
+    setValues((prev) => ({ ...prev, [fieldId]: v }));
+  };
+  const setArrayAt = (fieldId: string, idx: number, v: string): void => {
+    setValues((prev) => {
+      const arr = Array.isArray(prev[fieldId]) ? [...(prev[fieldId] as string[])] : [];
+      arr[idx] = v;
+      return { ...prev, [fieldId]: arr };
+    });
+  };
+  const addArrayEntry = (fieldId: string): void => {
+    setValues((prev) => {
+      const arr = Array.isArray(prev[fieldId]) ? [...(prev[fieldId] as string[]), ''] : [''];
+      return { ...prev, [fieldId]: arr };
+    });
+  };
+  const removeArrayEntry = (fieldId: string, idx: number): void => {
+    setValues((prev) => {
+      const arr = Array.isArray(prev[fieldId]) ? [...(prev[fieldId] as string[])] : [];
+      arr.splice(idx, 1);
+      return { ...prev, [fieldId]: arr.length ? arr : [''] };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault();
+    setError(null);
+
+    // Required-field check + per-type coercion in one pass. Hidden fields
+    // (showWhen unmet) are skipped entirely and dropped from the payload.
+    const cleaned: Record<string, TypedDocumentValue> = {};
+    for (const field of type.fields) {
+      if (!isVisible(field, type, values)) continue;
+      const stored = values[field.fieldId];
+      let coerced: TypedDocumentValue | null;
+      if (field.cardinality === 'unlimited') {
+        coerced = coerceUnlimited(field, Array.isArray(stored) ? stored : []);
+        if (coerced === null && Array.isArray(stored) && stored.some((s) => s.trim() !== '')) {
+          // Some entries present but coercion failed — number parse error.
+          setError(`${field.name}: invalid value for ${field.fieldType}`);
+          return;
+        }
+      } else {
+        coerced = coerceSingle(field, stored as SingleStored);
+      }
+
+      if (field.required && coerced === null) {
+        setError(`${field.name} is required`);
+        return;
+      }
+      // Boolean false IS a valid coerced value — coerceSingle returns it
+      // explicitly. Skip null-coerced (i.e. truly empty) optional fields.
+      if (coerced !== null) {
+        const validationError = applyClientValidation(field, coerced);
+        if (validationError) {
+          setError(validationError);
+          return;
+        }
+        cleaned[field.fieldId] = coerced;
+      }
+    }
+
+    setSubmitting(true);
+    try {
+      await onSubmit(cleaned);
+      if (resetOnSubmit) {
+        const reset: FormState = {};
+        for (const f of type.fields) reset[f.fieldId] = defaultForField(f);
+        setValues(reset);
+      }
+      setSuccessKey((k) => k + 1);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} data-testid="typed-document-form" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a' }}>
+        New {type.name}
+      </div>
+
+      {error && (
+        <div data-testid="form-error" role="alert" style={{ color: '#dc2626', fontSize: 13 }}>
+          {error}
+        </div>
+      )}
+      {successKey > 0 && !error && (
+        <div data-testid="form-success" key={successKey} style={{ color: '#16a34a', fontSize: 13 }}>
+          ✓ Saved
+        </div>
+      )}
+
+      {type.fields.map((field) => {
+        if (!isVisible(field, type, values)) return null;
+        const v = values[field.fieldId];
+
+        return (
+          <div key={field.fieldId} data-testid={`field-${field.fieldId}`} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151' }}>
+              {field.name}
+              {field.required && <span style={{ color: '#dc2626', marginLeft: 4 }}>*</span>}
+            </label>
+
+            {field.cardinality === 1 && field.widget === 'textarea' && (
+              <textarea
+                data-testid={`input-${field.fieldId}`}
+                value={typeof v === 'string' ? v : ''}
+                onChange={(e) => setField(field.fieldId, e.target.value)}
+                rows={4}
+                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+              />
+            )}
+
+            {field.cardinality === 1 && field.widget === 'text_field' && (
+              <input
+                data-testid={`input-${field.fieldId}`}
+                type="text"
+                value={typeof v === 'string' ? v : ''}
+                onChange={(e) => setField(field.fieldId, e.target.value)}
+                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+              />
+            )}
+
+            {field.cardinality === 1 && field.widget === 'number_input' && (
+              <input
+                data-testid={`input-${field.fieldId}`}
+                type="number"
+                value={typeof v === 'string' ? v : ''}
+                onChange={(e) => setField(field.fieldId, e.target.value)}
+                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+              />
+            )}
+
+            {field.cardinality === 1 && field.widget === 'date_picker' && (
+              <input
+                data-testid={`input-${field.fieldId}`}
+                type="date"
+                value={typeof v === 'string' ? v : ''}
+                onChange={(e) => setField(field.fieldId, e.target.value)}
+                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+              />
+            )}
+
+            {field.cardinality === 1 && field.widget === 'checkbox' && (
+              <input
+                data-testid={`input-${field.fieldId}`}
+                type="checkbox"
+                checked={typeof v === 'boolean' ? v : false}
+                onChange={(e) => setField(field.fieldId, e.target.checked)}
+                style={{ alignSelf: 'flex-start' }}
+              />
+            )}
+
+            {field.cardinality === 1 && field.widget === 'select' && (
+              <select
+                data-testid={`input-${field.fieldId}`}
+                value={typeof v === 'string' ? v : ''}
+                onChange={(e) => setField(field.fieldId, e.target.value)}
+                style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6, background: '#fff' }}
+              >
+                <option value="">— select —</option>
+                {(field.options ?? []).map((opt) => (
+                  <option key={opt} value={opt}>{opt}</option>
+                ))}
+              </select>
+            )}
+
+            {field.cardinality === 1 && field.widget === 'reference_picker' && (() => {
+              const opts = field.referenceTypeId ? (referenceOptions[field.referenceTypeId] ?? []) : [];
+              const empty = opts.length === 0;
+              return (
+                <>
+                  <select
+                    data-testid={`input-${field.fieldId}`}
+                    value={typeof v === 'string' ? v : ''}
+                    onChange={(e) => setField(field.fieldId, e.target.value)}
+                    disabled={empty}
+                    style={{ fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6, background: empty ? '#f1f5f9' : '#fff' }}
+                  >
+                    <option value="">— select —</option>
+                    {opts.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  {empty && (
+                    <span data-testid={`reference-empty-${field.fieldId}`} style={{ fontSize: 11, color: '#94a3b8' }}>
+                      No referenceable documents yet for this type.
+                    </span>
+                  )}
+                </>
+              );
+            })()}
+
+            {field.cardinality === 'unlimited' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {(Array.isArray(v) ? v : ['']).map((entry, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <input
+                      data-testid={`input-${field.fieldId}-${idx}`}
+                      type={field.widget === 'number_input' ? 'number' : field.widget === 'date_picker' ? 'date' : 'text'}
+                      value={entry}
+                      onChange={(e) => setArrayAt(field.fieldId, idx, e.target.value)}
+                      style={{ flex: 1, fontFamily: 'inherit', fontSize: 13, padding: 8, border: '1px solid #cbd5e1', borderRadius: 6 }}
+                    />
+                    <button
+                      type="button"
+                      data-testid={`remove-${field.fieldId}-${idx}`}
+                      onClick={() => removeArrayEntry(field.fieldId, idx)}
+                      style={{ background: 'none', border: '1px solid #cbd5e1', color: '#94a3b8', cursor: 'pointer', borderRadius: 6, padding: '4px 10px', fontSize: 13 }}
+                    >
+                      −
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  data-testid={`add-${field.fieldId}`}
+                  onClick={() => addArrayEntry(field.fieldId)}
+                  style={{ alignSelf: 'flex-start', background: 'none', border: '1px dashed #cbd5e1', color: '#646cff', cursor: 'pointer', borderRadius: 6, padding: '4px 12px', fontSize: 13 }}
+                >
+                  + Add another
+                </button>
+              </div>
+            )}
+
+            {field.helpText && (
+              <span style={{ fontSize: 11, color: '#94a3b8' }}>{field.helpText}</span>
+            )}
+          </div>
+        );
+      })}
+
+      <button
+        type="submit"
+        data-testid="submit-typed-document"
+        disabled={submitting}
+        style={{
+          alignSelf: 'flex-start',
+          padding: '8px 18px',
+          fontSize: 13,
+          fontWeight: 600,
+          background: submitting ? '#a5b4fc' : '#646cff',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 6,
+          cursor: submitting ? 'wait' : 'pointer',
+          fontFamily: 'inherit',
+        }}
+      >
+        {submitting ? 'Saving…' : 'Save'}
+      </button>
+    </form>
+  );
+}

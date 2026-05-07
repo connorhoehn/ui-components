@@ -1,0 +1,49 @@
+export const mockDocument = {
+  id: 'rfc-001',
+  title: 'RFC / Technical Proposal',
+  status: 'draft' as const,
+  lastEditedAgo: 'Auto-saved',
+  participants: [
+    { id: 'user-1', name: 'Frank Davis', color: '#3b82f6', initials: 'FD' },
+    { id: 'user-2', name: 'Alice Smith', color: '#ec4899', initials: 'AS' },
+  ],
+  sections: [
+    { id: 's1', title: 'RFC Title', type: 'notes', collapsed: false, content: 'asdf', tasks: [] },
+    { id: 's2', title: 'Author', type: 'notes', collapsed: false, content: '', tasks: [] },
+    { id: 's3', title: 'Status', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's4', title: 'Created Date', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's5', title: 'Decision Date', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's6', title: 'Reviewers', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's7', title: 'Problem Statement', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's8', title: 'Proposed Solution', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's9', title: 'Alternatives Considered', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's10', title: 'Technical Design', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's11', title: 'Migration Plan', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's12', title: 'Risks', type: 'notes', collapsed: true, content: '', tasks: [] },
+    { id: 's13', title: 'Open Questions', type: 'notes', collapsed: true, content: '', tasks: [] },
+  ],
+};
+
+export const typeBadgeColors: Record<string, string> = {
+  summary: '#8b5cf6',
+  tasks: '#3b82f6',
+  decisions: '#f59e0b',
+  notes: '#6b7280',
+  custom: '#10b981',
+};
+
+export const toolbarButtons = [
+  { label: 'B', title: 'Bold' },
+  { label: 'I', title: 'Italic' },
+  { label: 'S', title: 'Strikethrough' },
+  { label: '</>', title: 'Code' },
+  { label: 'H1', title: 'Heading 1' },
+  { label: 'H2', title: 'Heading 2' },
+  { label: 'H3', title: 'Heading 3' },
+  { label: 'Bullet', title: 'Bullet List' },
+  { label: 'Ordered', title: 'Ordered List' },
+  { label: 'Task', title: 'Task List' },
+  { label: 'Quote', title: 'Blockquote' },
+  { label: 'Code Block', title: 'Code Block' },
+  { label: 'HR', title: 'Horizontal Rule' },
+];
