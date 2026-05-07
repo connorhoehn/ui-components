@@ -21,6 +21,7 @@ export default defineConfig({
         hooks: resolve(__dirname, 'src/hooks/index.ts'),
         types: resolve(__dirname, 'src/types/index.ts'),
         shared: resolve(__dirname, 'src/components/shared/index.ts'),
+        identity: resolve(__dirname, 'src/components/identity/index.ts'),
       },
       formats: ['es', 'cjs'],
     },

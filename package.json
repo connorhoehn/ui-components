@@ -43,6 +43,10 @@
       "types": "./dist/shared.d.ts",
       "import": "./dist/shared.js"
     },
+    "./identity": {
+      "types": "./dist/identity.d.ts",
+      "import": "./dist/identity.js"
+    },
     "./styles.css": "./dist/ui-components.css"
   },
   "files": [
