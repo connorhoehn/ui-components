@@ -67,6 +67,46 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
     name: 'Approval',
     docs: 'Pause the pipeline and wait for a human to approve or reject. Supports n-of-m approvers and timeout fallbacks.',
   },
+  agent: {
+    icon: '🤖',
+    name: 'Agent',
+    docs: 'Invoke a Strands agent via A2A protocol. Supports streaming output and configurable timeouts.',
+  },
+  'mcp-tool': {
+    icon: '🔌',
+    name: 'MCP Tool',
+    docs: 'Invoke an external tool through MCP Gateway. Supports arbitrary tool inputs and configurable timeouts.',
+  },
+  'knowledge-base': {
+    icon: '📚',
+    name: 'Knowledge Base',
+    docs: 'Query a Bedrock Knowledge Base for relevant document chunks via RAG retrieval.',
+  },
+  'graph-query': {
+    icon: '🕸️',
+    name: 'Graph Query',
+    docs: 'Run an openCypher query against Neptune Analytics. Returns graph traversal results into pipeline context.',
+  },
+  memory: {
+    icon: '💾',
+    name: 'Memory',
+    docs: 'Read from or write to AgentCore Memory. Supports session-scoped and long-term persistent storage.',
+  },
+  guardrail: {
+    icon: '🛡️',
+    name: 'Guardrail',
+    docs: 'Apply Bedrock Guardrails content filtering. Routes to pass or block based on content policy evaluation.',
+  },
+  policy: {
+    icon: '📜',
+    name: 'Policy',
+    docs: 'Evaluate a Cedar authorization policy. Routes to allow or deny based on principal/action/resource.',
+  },
+  'ag-ui-output': {
+    icon: '📡',
+    name: 'AG-UI Output',
+    docs: 'Stream output to the AG-UI frontend. Terminal node — emits AG-UI protocol events for real-time display.',
+  },
 };
 
 type Tab = 'config' | 'runs' | 'docs';
@@ -88,6 +128,12 @@ type AnyConfig = (props: {
   onChange: (patch: Partial<NodeData>) => void;
 }) => ReactElement;
 
+const PlaceholderConfig: AnyConfig = ({ data }) => (
+  <div style={{ padding: 12, fontSize: 13, color: '#64748b' }}>
+    Configuration for <strong>{data.type}</strong> — coming in Phase C.
+  </div>
+);
+
 const CONFIGS: Record<NodeType, AnyConfig> = {
   trigger: TriggerConfig as unknown as AnyConfig,
   llm: LLMConfig as unknown as AnyConfig,
@@ -97,6 +143,14 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   fork: ForkConfig as unknown as AnyConfig,
   join: JoinConfig as unknown as AnyConfig,
   approval: ApprovalConfig as unknown as AnyConfig,
+  agent: PlaceholderConfig,
+  'mcp-tool': PlaceholderConfig,
+  'knowledge-base': PlaceholderConfig,
+  'graph-query': PlaceholderConfig,
+  memory: PlaceholderConfig,
+  guardrail: PlaceholderConfig,
+  policy: PlaceholderConfig,
+  'ag-ui-output': PlaceholderConfig,
 };
 
 function renderConfig(

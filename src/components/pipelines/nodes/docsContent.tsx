@@ -187,6 +187,133 @@ const docsContent: Record<NodeType, ReactNode> = {
       <p>Two output handles: <code>approved</code> and <code>rejected</code>. The flow resumes down the matching branch.</p>
     </>
   ),
+
+  // -------------------------------------------------------------------------
+  // Agent (AgentCore)
+  // -------------------------------------------------------------------------
+  agent: (
+    <>
+      <h4>What it does</h4>
+      <p>Invokes a Strands agent via A2A protocol. The agent processes the input and returns a structured response.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>agentId</code> — AgentCore agent identifier or ARN.</li>
+        <li><code>protocol</code> — <code>a2a</code> (recommended) or <code>direct</code>.</li>
+        <li><code>inputTemplate</code> — supports <code>{'{{context.*}}'}</code> substitution.</li>
+        <li><code>streaming</code> — whether to stream the agent's response tokens.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Output handles: <code>out</code> (success) and <code>error</code> (invocation failure).</p>
+    </>
+  ),
+
+  'mcp-tool': (
+    <>
+      <h4>What it does</h4>
+      <p>Invokes an external tool through an MCP Gateway server.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>gatewayUrl</code> — MCP Gateway endpoint.</li>
+        <li><code>toolName</code> — registered tool to invoke.</li>
+        <li><code>inputTemplate</code> — JSON input with substitution support.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Output handles: <code>out</code> and <code>error</code>.</p>
+    </>
+  ),
+
+  'knowledge-base': (
+    <>
+      <h4>What it does</h4>
+      <p>Queries a Bedrock Knowledge Base for relevant document chunks (RAG retrieval).</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>knowledgeBaseId</code> — Bedrock KB identifier.</li>
+        <li><code>queryTemplate</code> — natural language query with substitution.</li>
+        <li><code>topK</code> — number of chunks to retrieve (default 5).</li>
+        <li><code>scoreThreshold</code> — minimum relevance score (0–1).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Output handles: <code>out</code> (retrieved chunks in context) and <code>error</code>.</p>
+    </>
+  ),
+
+  'graph-query': (
+    <>
+      <h4>What it does</h4>
+      <p>Runs an openCypher query against a Neptune Analytics graph.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>graphId</code> — Neptune Analytics graph identifier.</li>
+        <li><code>query</code> — openCypher query (NOT Gremlin/SPARQL).</li>
+        <li><code>parameters</code> — named query parameters.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Output handles: <code>out</code> and <code>error</code>.</p>
+    </>
+  ),
+
+  memory: (
+    <>
+      <h4>What it does</h4>
+      <p>Reads from or writes to AgentCore Memory (session or long-term).</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>mode</code> — <code>read</code> or <code>write</code>.</li>
+        <li><code>scope</code> — <code>session</code> (ephemeral) or <code>long-term</code> (persistent).</li>
+        <li><code>namespace</code> — memory collection key.</li>
+        <li><code>keyExpression</code> — lookup key (read) or storage key (write).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Output handles: <code>out</code> and <code>error</code>.</p>
+    </>
+  ),
+
+  guardrail: (
+    <>
+      <h4>What it does</h4>
+      <p>Applies Bedrock Guardrails content filtering. Evaluates input against configured policies and routes accordingly.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>guardrailId</code> — Bedrock Guardrail identifier.</li>
+        <li><code>inputField</code> — context path to evaluate.</li>
+        <li><code>action</code> — <code>block</code>, <code>mask</code>, or <code>warn</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Two output handles: <code>pass</code> (content OK) and <code>block</code> (content flagged).</p>
+    </>
+  ),
+
+  policy: (
+    <>
+      <h4>What it does</h4>
+      <p>Evaluates a Cedar authorization policy against principal/action/resource.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>policyStoreId</code> — Cedar policy store identifier.</li>
+        <li><code>principal</code> — who is requesting (supports substitution).</li>
+        <li><code>action</code> — what action is being performed.</li>
+        <li><code>resource</code> — what resource is being accessed.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Two output handles: <code>allow</code> and <code>deny</code>.</p>
+    </>
+  ),
+
+  'ag-ui-output': (
+    <>
+      <h4>What it does</h4>
+      <p>Streams output to the AG-UI frontend via Server-Sent Events. This is a terminal node — no downstream flow.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceField</code> — context path to stream.</li>
+        <li><code>eventType</code> — AG-UI event type to emit (TEXT_MESSAGE_CONTENT, STATE_DELTA, or CUSTOM).</li>
+        <li><code>terminal</code> — marks this as the pipeline endpoint.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>One input handle <code>in</code>. No output — this is the endpoint.</p>
+    </>
+  ),
 };
 
 export default docsContent;

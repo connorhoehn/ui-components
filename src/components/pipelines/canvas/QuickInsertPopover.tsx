@@ -43,14 +43,22 @@ interface QuickInsertItem {
 }
 
 const ITEMS: QuickInsertItem[] = [
-  { type: 'trigger',   icon: '⚡', name: 'Trigger',   description: 'Starts the pipeline' },
-  { type: 'llm',       icon: '🧠', name: 'LLM',       description: 'Call an LLM model' },
-  { type: 'transform', icon: '🔧', name: 'Transform', description: 'Reshape the context' },
-  { type: 'condition', icon: '🔀', name: 'Condition', description: 'Branch on an expression' },
-  { type: 'fork',      icon: '🍴', name: 'Fork',      description: 'Split into parallel branches' },
-  { type: 'join',      icon: '🔗', name: 'Join',      description: 'Combine parallel branches' },
-  { type: 'action',    icon: '🎯', name: 'Action',    description: 'Produce a side effect' },
-  { type: 'approval',  icon: '✅', name: 'Approval',  description: 'Wait for a human decision' },
+  { type: 'trigger',        icon: '⚡', name: 'Trigger',        description: 'Starts the pipeline' },
+  { type: 'llm',            icon: '🧠', name: 'LLM',            description: 'Call an LLM model' },
+  { type: 'agent',          icon: '🤖', name: 'Agent',          description: 'Invoke a Strands agent via A2A' },
+  { type: 'mcp-tool',       icon: '🔌', name: 'MCP Tool',       description: 'Invoke an MCP Gateway tool' },
+  { type: 'knowledge-base', icon: '📚', name: 'Knowledge Base', description: 'RAG retrieval from Bedrock KB' },
+  { type: 'graph-query',    icon: '🕸️', name: 'Graph Query',    description: 'Neptune openCypher query' },
+  { type: 'memory',         icon: '💾', name: 'Memory',         description: 'AgentCore Memory read/write' },
+  { type: 'guardrail',      icon: '🛡️', name: 'Guardrail',      description: 'Bedrock Guardrails content filter' },
+  { type: 'policy',         icon: '📜', name: 'Policy',         description: 'Cedar authorization policy' },
+  { type: 'transform',      icon: '🔧', name: 'Transform',      description: 'Reshape the context' },
+  { type: 'condition',      icon: '🔀', name: 'Condition',      description: 'Branch on an expression' },
+  { type: 'fork',           icon: '🍴', name: 'Fork',           description: 'Split into parallel branches' },
+  { type: 'join',           icon: '🔗', name: 'Join',           description: 'Combine parallel branches' },
+  { type: 'action',         icon: '🎯', name: 'Action',         description: 'Produce a side effect' },
+  { type: 'ag-ui-output',   icon: '📡', name: 'AG-UI Output',   description: 'Stream to AG-UI frontend' },
+  { type: 'approval',       icon: '✅', name: 'Approval',       description: 'Wait for a human decision' },
 ];
 
 function matches(item: QuickInsertItem, query: string): boolean {

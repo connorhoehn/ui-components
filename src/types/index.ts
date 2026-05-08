@@ -6,3 +6,4 @@ export * from './identity';
 export * from './pipeline';
 export * from './pipeline-contracts';
 export * from './ingest';
+export * from './agents';

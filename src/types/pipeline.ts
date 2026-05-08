@@ -19,7 +19,15 @@ export type NodeType =
   | 'action'
   | 'fork'
   | 'join'
-  | 'approval';
+  | 'approval'
+  | 'agent'
+  | 'mcp-tool'
+  | 'knowledge-base'
+  | 'graph-query'
+  | 'memory'
+  | 'guardrail'
+  | 'policy'
+  | 'ag-ui-output';
 
 export type TriggerType =
   | 'manual'
@@ -147,6 +155,98 @@ export interface RetryPolicy {
   backoffMultiplier: number;
 }
 
+// ---------------------------------------------------------------------------
+// AgentCore node types — agentic orchestration extensions
+// ---------------------------------------------------------------------------
+
+export type AgentInvokeProtocol = 'a2a' | 'direct';
+
+export interface AgentNodeData {
+  type: 'agent';
+  agentId: string;
+  agentName?: string;
+  protocol: AgentInvokeProtocol;
+  inputTemplate: string;
+  streaming: boolean;
+  timeoutMs?: number;
+  outputKey?: string;
+  retryPolicy?: RetryPolicy;
+}
+
+export type GuardrailAction = 'block' | 'mask' | 'warn';
+
+export interface GuardrailNodeData {
+  type: 'guardrail';
+  guardrailId: string;
+  guardrailVersion?: string;
+  inputField: string;
+  action: GuardrailAction;
+  label?: string;
+}
+
+export interface McpToolNodeData {
+  type: 'mcp-tool';
+  gatewayUrl: string;
+  toolName: string;
+  inputTemplate: string;
+  outputKey?: string;
+  timeoutMs?: number;
+  retryPolicy?: RetryPolicy;
+}
+
+export interface KnowledgeBaseNodeData {
+  type: 'knowledge-base';
+  knowledgeBaseId: string;
+  queryTemplate: string;
+  topK: number;
+  scoreThreshold?: number;
+  outputKey?: string;
+  retryPolicy?: RetryPolicy;
+}
+
+export interface GraphQueryNodeData {
+  type: 'graph-query';
+  graphId: string;
+  query: string;
+  parameters?: Record<string, string>;
+  outputKey?: string;
+  timeoutMs?: number;
+  retryPolicy?: RetryPolicy;
+}
+
+export type MemoryMode = 'read' | 'write';
+export type MemoryScope = 'session' | 'long-term';
+
+export interface MemoryNodeData {
+  type: 'memory';
+  mode: MemoryMode;
+  scope: MemoryScope;
+  namespace: string;
+  keyExpression: string;
+  valueField?: string;
+  outputKey?: string;
+}
+
+export interface PolicyNodeData {
+  type: 'policy';
+  policyStoreId: string;
+  principal: string;
+  action: string;
+  resource: string;
+  contextEntities?: string;
+  label?: string;
+}
+
+export type AgUiOutputEventType = 'TEXT_MESSAGE_CONTENT' | 'STATE_DELTA' | 'CUSTOM';
+
+export interface AgUiOutputNodeData {
+  type: 'ag-ui-output';
+  sourceField: string;
+  eventType: AgUiOutputEventType;
+  terminal: boolean;
+  customEventName?: string;
+}
+
 export type NodeData =
   | TriggerNodeData
   | LLMNodeData
@@ -155,7 +255,15 @@ export type NodeData =
   | ActionNodeData
   | ForkNodeData
   | JoinNodeData
-  | ApprovalNodeData;
+  | ApprovalNodeData
+  | AgentNodeData
+  | GuardrailNodeData
+  | McpToolNodeData
+  | KnowledgeBaseNodeData
+  | GraphQueryNodeData
+  | MemoryNodeData
+  | PolicyNodeData
+  | AgUiOutputNodeData;
 
 // ---------------------------------------------------------------------------
 // Definition (template) — persisted, versioned, published

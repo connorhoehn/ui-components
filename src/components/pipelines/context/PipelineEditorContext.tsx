@@ -119,6 +119,64 @@ function defaultNodeData(type: NodeType): NodeData {
         approvers: [],
         requiredCount: 1,
       };
+    case 'agent':
+      return {
+        type: 'agent',
+        agentId: '',
+        protocol: 'a2a',
+        inputTemplate: '{{context.input}}',
+        streaming: true,
+      };
+    case 'guardrail':
+      return {
+        type: 'guardrail',
+        guardrailId: '',
+        inputField: 'context.input',
+        action: 'block',
+      };
+    case 'mcp-tool':
+      return {
+        type: 'mcp-tool',
+        gatewayUrl: '',
+        toolName: '',
+        inputTemplate: '{}',
+      };
+    case 'knowledge-base':
+      return {
+        type: 'knowledge-base',
+        knowledgeBaseId: '',
+        queryTemplate: '{{context.input}}',
+        topK: 5,
+      };
+    case 'graph-query':
+      return {
+        type: 'graph-query',
+        graphId: '',
+        query: 'MATCH (n) RETURN n LIMIT 10',
+      };
+    case 'memory':
+      return {
+        type: 'memory',
+        mode: 'read',
+        scope: 'session',
+        namespace: 'default',
+        keyExpression: '',
+      };
+    case 'policy':
+      return {
+        type: 'policy',
+        policyStoreId: '',
+        principal: '{{context.user.id}}',
+        action: '',
+        resource: '',
+      };
+    case 'ag-ui-output':
+      return {
+        type: 'ag-ui-output',
+        sourceField: 'context.output',
+        eventType: 'TEXT_MESSAGE_CONTENT',
+        terminal: true,
+      };
   }
 }
 

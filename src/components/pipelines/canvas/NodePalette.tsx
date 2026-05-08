@@ -43,6 +43,28 @@ const CATEGORIES: PaletteCategory[] = [
     ],
   },
   {
+    name: 'Agents',
+    items: [
+      { type: 'agent', icon: '🤖', name: 'Agent', description: 'Invoke a Strands agent via A2A' },
+      { type: 'mcp-tool', icon: '🔌', name: 'MCP Tool', description: 'Invoke an MCP Gateway tool' },
+    ],
+  },
+  {
+    name: 'Knowledge',
+    items: [
+      { type: 'knowledge-base', icon: '📚', name: 'Knowledge Base', description: 'RAG retrieval from Bedrock KB' },
+      { type: 'graph-query', icon: '🕸️', name: 'Graph Query', description: 'Neptune openCypher query' },
+      { type: 'memory', icon: '💾', name: 'Memory', description: 'AgentCore Memory read/write' },
+    ],
+  },
+  {
+    name: 'Safety',
+    items: [
+      { type: 'guardrail', icon: '🛡️', name: 'Guardrail', description: 'Bedrock Guardrails content filter' },
+      { type: 'policy', icon: '📜', name: 'Policy', description: 'Cedar authorization policy' },
+    ],
+  },
+  {
     name: 'Data',
     items: [
       { type: 'transform', icon: '🔧', name: 'Transform', description: 'Reshape the context' },
@@ -60,6 +82,7 @@ const CATEGORIES: PaletteCategory[] = [
     name: 'Outputs',
     items: [
       { type: 'action', icon: '🎯', name: 'Action', description: 'Produce a side effect' },
+      { type: 'ag-ui-output', icon: '📡', name: 'AG-UI Output', description: 'Stream to AG-UI frontend' },
     ],
   },
   {

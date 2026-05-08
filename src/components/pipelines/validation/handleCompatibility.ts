@@ -20,6 +20,14 @@ const OUTPUT_HANDLES: Record<NodeType, readonly string[] | 'fork'> = {
   fork: 'fork', // dynamic: 'branch-0'..'branch-(N-1)'
   join: ['out'],
   approval: ['approved', 'rejected'],
+  agent: ['out', 'error'],
+  'mcp-tool': ['out', 'error'],
+  'knowledge-base': ['out', 'error'],
+  'graph-query': ['out', 'error'],
+  memory: ['out', 'error'],
+  guardrail: ['pass', 'block'],
+  policy: ['allow', 'deny'],
+  'ag-ui-output': [],
 };
 
 /** Valid input handle ids for each node type. `null` means the type has no input. */
@@ -32,6 +40,14 @@ const INPUT_HANDLES: Record<NodeType, readonly string[] | 'join' | null> = {
   fork: ['in'],
   join: 'join', // dynamic: 'in-0'..'in-(N-1)'
   approval: ['in'],
+  agent: ['in'],
+  'mcp-tool': ['in'],
+  'knowledge-base': ['in'],
+  'graph-query': ['in'],
+  memory: ['in'],
+  guardrail: ['in'],
+  policy: ['in'],
+  'ag-ui-output': ['in'],
 };
 
 // ---------------------------------------------------------------------------
