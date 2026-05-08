@@ -1,14 +1,6 @@
-// src/components/identity/auth/ConsentPage.tsx
-//
-// OAuth2/OIDC consent screen. Shows requested scopes and lets the user
-// authorize or deny the client application.
-
 import { useState, useCallback } from 'react';
+import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 
 export interface ConsentPageProps {
   clientName: string;
@@ -18,10 +10,6 @@ export interface ConsentPageProps {
   onDeny: () => Promise<void>;
   logoUrl?: string;
 }
-
-// ---------------------------------------------------------------------------
-// Scope descriptions
-// ---------------------------------------------------------------------------
 
 const SCOPE_DESCRIPTIONS: Record<string, string> = {
   openid: 'Verify your identity',
@@ -35,10 +23,6 @@ const SCOPE_DESCRIPTIONS: Record<string, string> = {
 function getScopeDescription(scope: string): string {
   return SCOPE_DESCRIPTIONS[scope] || `Access: ${scope}`;
 }
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 export function ConsentPage({
   clientName,
@@ -69,65 +53,69 @@ export function ConsentPage({
   }, [onDeny]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div
-        className="w-full max-w-[440px] bg-surface rounded-md shadow-md p-6"
+        className="w-full max-w-[440px] bg-surface rounded-xl shadow-md overflow-hidden"
         role="main"
         aria-label="Authorization consent"
       >
-        <header className="flex flex-col items-center gap-2 mb-4">
-          {logoUrl && <img src={logoUrl} alt="" className="w-12 h-12 object-contain rounded-sm" />}
-          <h1 className="text-lg font-semibold text-text-primary m-0 text-center">
+        <header className="flex flex-col items-center gap-3 px-8 pt-8 pb-5">
+          {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
+          <h1 className="text-xl font-bold text-text-primary m-0 text-center">
             Authorize {clientName}
           </h1>
-          <p className="text-sm text-text-secondary m-0 text-center">
+          <p className="text-sm text-text-secondary m-0 text-center leading-relaxed">
             This application is requesting access to your account.
           </p>
         </header>
 
-        <ul className="list-none p-0 my-4 flex flex-col gap-2" aria-label="Requested permissions">
-          {scopes.map(scope => (
-            <li key={scope} className="flex items-center gap-2.5 px-3.5 py-2.5 bg-surface-panel rounded-sm text-sm text-text-primary">
-              <span
-                className="w-[18px] h-[18px] rounded-full bg-primary flex items-center justify-center shrink-0 text-white text-[11px] font-bold"
-                aria-hidden="true"
-              >
-                &bull;
-              </span>
-              <span>{getScopeDescription(scope)}</span>
-            </li>
-          ))}
-        </ul>
-
-        {redirectUri && (
-          <p className="text-sm text-text-tertiary mb-4 break-all">
-            You will be redirected to: <strong>{redirectUri}</strong>
+        <div className="mx-8 border border-border rounded-md overflow-hidden mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary px-4 py-2.5 m-0 bg-surface-panel border-b border-border">
+            Requested Permissions
           </p>
-        )}
+          <ul className="list-none p-0 m-0" aria-label="Requested permissions">
+            {scopes.map((scope, i) => (
+              <li
+                key={scope}
+                className={cn(
+                  'flex items-center gap-3 px-4 py-3 text-sm text-text-primary',
+                  i < scopes.length - 1 && 'border-b border-border'
+                )}
+              >
+                <span className="w-2 h-2 rounded-full bg-primary shrink-0" aria-hidden="true" />
+                <span>{getScopeDescription(scope)}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={handleDeny}
-            disabled={loading}
-            className={cn(
-              'flex-1 px-4 py-3 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm font-[inherit]',
-              loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-            )}
-          >
-            Deny
-          </button>
-          <button
-            type="button"
-            onClick={handleAuthorize}
-            disabled={loading}
-            className={cn(
-              'flex-1 px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit]',
-              loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-            )}
-          >
-            {loading ? 'Authorizing...' : 'Authorize'}
-          </button>
+        <div className="px-8 pb-8">
+          {redirectUri && (
+            <p className="text-[11px] text-text-tertiary mb-5 mt-0 break-all leading-relaxed">
+              You will be redirected to: <strong className="text-text-secondary">{redirectUri}</strong>
+            </p>
+          )}
+
+          <div className="flex gap-3">
+            <Button
+              variant="ghost"
+              size="lg"
+              fullWidth
+              onClick={handleDeny}
+              disabled={loading}
+            >
+              Deny
+            </Button>
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
+              onClick={handleAuthorize}
+              disabled={loading}
+            >
+              {loading ? 'Authorizing...' : 'Authorize'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

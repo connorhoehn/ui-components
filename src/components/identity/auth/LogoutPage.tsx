@@ -1,6 +1,4 @@
-// src/components/identity/auth/LogoutPage.tsx
-//
-// Simple logout confirmation page.
+import { Button } from '../../ui/Button';
 
 export interface LogoutPageProps {
   onConfirm: () => void;
@@ -8,36 +6,32 @@ export interface LogoutPageProps {
   clientName?: string;
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[400px] bg-surface rounded-md shadow-md p-6 text-center" role="main" aria-label="Sign out confirmation">
-        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0">Sign Out</h1>
-        <p className="text-sm text-text-secondary mb-4 mt-0">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[420px] bg-surface rounded-xl shadow-md p-8 text-center" role="main" aria-label="Sign out confirmation">
+        <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-danger-bg flex items-center justify-center">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </div>
+        <h1 className="text-xl font-bold text-text-primary mb-3 mt-0">Sign Out</h1>
+        <p className="text-sm text-text-secondary mb-6 mt-0 leading-relaxed">
           Are you sure you want to sign out
-          {clientName ? ` from ${clientName}` : ''}?
+          {clientName ? <> from <strong className="text-text-primary">{clientName}</strong></> : ''}?
+          You will need to sign in again to access your account.
         </p>
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-3 justify-center">
           {onCancel && (
-            <button
-              type="button"
-              className="px-6 py-3 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-              onClick={onCancel}
-            >
+            <Button variant="ghost" size="lg" fullWidth onClick={onCancel}>
               Cancel
-            </button>
+            </Button>
           )}
-          <button
-            type="button"
-            className="px-6 py-3 text-sm font-semibold bg-danger text-white border-none rounded-sm cursor-pointer font-[inherit]"
-            onClick={onConfirm}
-          >
+          <Button variant="danger" size="lg" fullWidth onClick={onConfirm}>
             Sign Out
-          </button>
+          </Button>
         </div>
       </div>
     </div>

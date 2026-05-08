@@ -27,7 +27,7 @@ export function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps
   const bars = quality === 'good' ? 4 : quality === 'medium' ? 3 : quality === 'poor' ? 2 : 1;
 
   return (
-    <div className={cn('inline-flex items-center gap-1.5 px-2 py-1 rounded bg-black/60 text-white text-[11px] font-medium')} style={style}>
+    <div className={cn('inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium')} style={style}>
       <svg width="14" height="12" viewBox="0 0 14 12">
         {[0, 1, 2, 3].map(i => (
           <rect

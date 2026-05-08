@@ -39,6 +39,22 @@ const NodeEditorLive = lazy(() => import('./demos/node-editor-live'));
 const VideoStreaming = lazy(() => import('./demos/video-streaming'));
 const SharedComponents = lazy(() => import('./demos/shared-components'));
 
+// Identity demos (lazy)
+const IdentityLoginDemo = lazy(() => import('./demos/identity/auth/LoginDemo'));
+const IdentityConsentDemo = lazy(() => import('./demos/identity/auth/ConsentDemo'));
+const IdentityMfaVerifyDemo = lazy(() => import('./demos/identity/auth/MfaVerifyDemo'));
+const IdentityMfaSetupDemo = lazy(() => import('./demos/identity/auth/MfaSetupDemo'));
+const IdentityLogoutDemo = lazy(() => import('./demos/identity/auth/LogoutDemo'));
+const IdentityDashboardDemo = lazy(() => import('./demos/identity/admin/DashboardDemo'));
+const IdentityPoolsDemo = lazy(() => import('./demos/identity/admin/PoolsDemo'));
+const IdentityUsersDemo = lazy(() => import('./demos/identity/admin/UsersDemo'));
+const IdentityGroupsDemo = lazy(() => import('./demos/identity/admin/GroupsDemo'));
+const IdentityApplicationsDemo = lazy(() => import('./demos/identity/admin/ApplicationsDemo'));
+const IdentityEmailTemplatesDemo = lazy(() => import('./demos/identity/admin/EmailTemplatesDemo'));
+const IdentityMfaDemo = lazy(() => import('./demos/identity/admin/MfaDemo'));
+const IdentityAuditDemo = lazy(() => import('./demos/identity/admin/AuditDemo'));
+const IdentityFullAdminDemo = lazy(() => import('./demos/identity/admin/FullAdminDemo'));
+
 function Loading() {
   return <div style={{ padding: 40, color: '#64748b' }}>Loading...</div>;
 }
@@ -93,6 +109,25 @@ export default function App() {
           <Route path="node-editor-live" element={<S><NodeEditorLive /></S>} />
           <Route path="video-streaming" element={<S><VideoStreaming /></S>} />
           <Route path="shared-components" element={<S><SharedComponents /></S>} />
+        </Route>
+
+        {/* Identity */}
+        <Route path="identity">
+          <Route index element={<Navigate to="login" replace />} />
+          <Route path="login" element={<S><IdentityLoginDemo /></S>} />
+          <Route path="consent" element={<S><IdentityConsentDemo /></S>} />
+          <Route path="mfa-verify" element={<S><IdentityMfaVerifyDemo /></S>} />
+          <Route path="mfa-setup" element={<S><IdentityMfaSetupDemo /></S>} />
+          <Route path="logout" element={<S><IdentityLogoutDemo /></S>} />
+          <Route path="admin" element={<S><IdentityDashboardDemo /></S>} />
+          <Route path="admin/pools" element={<S><IdentityPoolsDemo /></S>} />
+          <Route path="admin/users" element={<S><IdentityUsersDemo /></S>} />
+          <Route path="admin/groups" element={<S><IdentityGroupsDemo /></S>} />
+          <Route path="admin/applications" element={<S><IdentityApplicationsDemo /></S>} />
+          <Route path="admin/email-templates" element={<S><IdentityEmailTemplatesDemo /></S>} />
+          <Route path="admin/mfa" element={<S><IdentityMfaDemo /></S>} />
+          <Route path="admin/audit" element={<S><IdentityAuditDemo /></S>} />
+          <Route path="admin/full" element={<S><IdentityFullAdminDemo /></S>} />
         </Route>
 
         {/* Patterns */}

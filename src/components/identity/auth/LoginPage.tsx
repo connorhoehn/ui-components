@@ -1,14 +1,8 @@
-// src/components/identity/auth/LoginPage.tsx
-//
-// Tabbed authentication page: Sign In, Register, Forgot Password.
-// Props-driven with async handlers — no internal routing.
-
 import { useState, useCallback } from 'react';
+import { FormField } from '../shared/FormField';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 import { cn } from '../../../lib/cn';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 
 export interface LoginPageProps {
   uid: string;
@@ -31,10 +25,6 @@ export interface LoginPageProps {
 
 type Tab = 'signin' | 'register' | 'forgot';
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export function LoginPage({
   uid,
   interactionUrl,
@@ -51,11 +41,9 @@ export function LoginPage({
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // Sign In state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  // Register state
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
@@ -63,7 +51,6 @@ export function LoginPage({
   const [regFamilyName, setRegFamilyName] = useState('');
   const [regEnableMfa, setRegEnableMfa] = useState(false);
 
-  // Forgot Password state
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState(false);
 
@@ -126,24 +113,22 @@ export function LoginPage({
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[420px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="Authentication">
-        {/* Header */}
-        <header className="flex flex-col items-center gap-2 mb-4">
-          {logoUrl && <img src={logoUrl} alt="" className="w-12 h-12 object-contain rounded-sm" />}
-          {clientName && <h1 className="text-lg font-semibold text-text-primary m-0">{clientName}</h1>}
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
+        <header className="flex flex-col items-center gap-3 mb-6">
+          {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
+          {clientName && <h1 className="text-xl font-bold text-text-primary m-0">{clientName}</h1>}
         </header>
 
-        {/* Tabs */}
-        <nav className="flex border-b border-border mb-4" role="tablist" aria-label="Authentication method">
+        <nav className="flex border-b border-border mb-6" role="tablist" aria-label="Authentication method">
           <button
             role="tab"
             aria-selected={tab === 'signin'}
             className={cn(
-              'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+              'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
               tab === 'signin'
                 ? 'border-b-primary text-primary font-semibold'
-                : 'border-b-transparent text-text-secondary font-normal'
+                : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
             )}
             onClick={() => switchTab('signin')}
             type="button"
@@ -155,10 +140,10 @@ export function LoginPage({
               role="tab"
               aria-selected={tab === 'register'}
               className={cn(
-                'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
                 tab === 'register'
                   ? 'border-b-primary text-primary font-semibold'
-                  : 'border-b-transparent text-text-secondary font-normal'
+                  : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
               )}
               onClick={() => switchTab('register')}
               type="button"
@@ -171,10 +156,10 @@ export function LoginPage({
               role="tab"
               aria-selected={tab === 'forgot'}
               className={cn(
-                'flex-1 px-2 py-2.5 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
                 tab === 'forgot'
                   ? 'border-b-primary text-primary font-semibold'
-                  : 'border-b-transparent text-text-secondary font-normal'
+                  : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
               )}
               onClick={() => switchTab('forgot')}
               type="button"
@@ -184,178 +169,146 @@ export function LoginPage({
           )}
         </nav>
 
-        {/* Error */}
         {displayError && (
-          <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
-            {displayError}
+          <div className="mb-5">
+            <Banner variant="error">{displayError}</Banner>
           </div>
         )}
 
-        {/* Sign In */}
         {tab === 'signin' && (
           <form onSubmit={handleLogin} aria-label="Sign in form">
             <input type="hidden" name="uid" value={uid} />
-            <div className="flex flex-col gap-1 mb-3">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="login-email">Email</label>
-              <input
-                id="login-email"
-                type="email"
-                required
-                autoComplete="email"
-                value={loginEmail}
-                onChange={e => setLoginEmail(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-              />
-            </div>
-            <div className="flex flex-col gap-1 mb-3">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="login-password">Password</label>
-              <input
-                id="login-password"
-                type="password"
-                required
-                autoComplete="current-password"
-                value={loginPassword}
-                onChange={e => setLoginPassword(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-              />
-            </div>
-            <button
+            <FormField
+              label="Email"
+              name="login-email"
+              type="email"
+              value={loginEmail}
+              onChange={(v) => setLoginEmail(String(v))}
+              required
+              placeholder="you@example.com"
+              disabled={loading}
+            />
+            <FormField
+              label="Password"
+              name="login-password"
+              type="password"
+              value={loginPassword}
+              onChange={(v) => setLoginPassword(String(v))}
+              required
+              disabled={loading}
+            />
+            <Button
               type="submit"
-              className={cn(
-                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
-                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-              )}
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={loading}
             >
               {loading ? 'Signing in...' : 'Sign In'}
-            </button>
+            </Button>
           </form>
         )}
 
-        {/* Register */}
         {tab === 'register' && (
           <form onSubmit={handleRegister} aria-label="Registration form">
-            <div className="flex flex-col gap-1 mb-3">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-email">Email</label>
-              <input
-                id="reg-email"
-                type="email"
-                required
-                autoComplete="email"
-                value={regEmail}
-                onChange={e => setRegEmail(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-              />
-            </div>
-            <div className="flex gap-2">
-              <div className="flex flex-col gap-1 mb-3 flex-1">
-                <label className="text-sm text-text-secondary font-medium" htmlFor="reg-given">Given Name</label>
-                <input
-                  id="reg-given"
-                  type="text"
-                  autoComplete="given-name"
+            <FormField
+              label="Email"
+              name="reg-email"
+              type="email"
+              value={regEmail}
+              onChange={(v) => setRegEmail(String(v))}
+              required
+              placeholder="you@example.com"
+              disabled={loading}
+            />
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <FormField
+                  label="Given Name"
+                  name="reg-given"
                   value={regGivenName}
-                  onChange={e => setRegGivenName(e.target.value)}
-                  className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
+                  onChange={(v) => setRegGivenName(String(v))}
                   disabled={loading}
                 />
               </div>
-              <div className="flex flex-col gap-1 mb-3 flex-1">
-                <label className="text-sm text-text-secondary font-medium" htmlFor="reg-family">Family Name</label>
-                <input
-                  id="reg-family"
-                  type="text"
-                  autoComplete="family-name"
+              <div className="flex-1">
+                <FormField
+                  label="Family Name"
+                  name="reg-family"
                   value={regFamilyName}
-                  onChange={e => setRegFamilyName(e.target.value)}
-                  className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
+                  onChange={(v) => setRegFamilyName(String(v))}
                   disabled={loading}
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-1 mb-3">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-password">Password</label>
-              <input
-                id="reg-password"
-                type="password"
-                required
-                autoComplete="new-password"
-                value={regPassword}
-                onChange={e => setRegPassword(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-              />
-            </div>
-            <div className="flex flex-col gap-1 mb-3">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="reg-confirm">Confirm Password</label>
-              <input
-                id="reg-confirm"
-                type="password"
-                required
-                autoComplete="new-password"
-                value={regConfirm}
-                onChange={e => setRegConfirm(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-              />
-            </div>
-            <label className="flex items-center gap-2 mb-3 text-sm text-text-secondary">
-              <input
-                type="checkbox"
-                checked={regEnableMfa}
-                onChange={e => setRegEnableMfa(e.target.checked)}
-                disabled={loading}
-              />
-              Enable Multi-Factor Authentication
-            </label>
-            <button
+            <FormField
+              label="Password"
+              name="reg-password"
+              type="password"
+              value={regPassword}
+              onChange={(v) => setRegPassword(String(v))}
+              required
+              disabled={loading}
+            />
+            <FormField
+              label="Confirm Password"
+              name="reg-confirm"
+              type="password"
+              value={regConfirm}
+              onChange={(v) => setRegConfirm(String(v))}
+              required
+              disabled={loading}
+            />
+            <FormField
+              label="Enable Multi-Factor Authentication"
+              name="reg-mfa"
+              type="checkbox"
+              value={regEnableMfa}
+              onChange={(v) => setRegEnableMfa(Boolean(v))}
+              disabled={loading}
+            />
+            <Button
               type="submit"
-              className={cn(
-                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
-                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-              )}
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={loading}
             >
               {loading ? 'Creating account...' : 'Create Account'}
-            </button>
+            </Button>
           </form>
         )}
 
-        {/* Forgot Password */}
         {tab === 'forgot' && (
           <form onSubmit={handleForgot} aria-label="Forgot password form">
             {forgotSuccess ? (
-              <div className="px-3.5 py-2.5 bg-success/10 border border-success rounded-sm text-success text-sm">
+              <Banner variant="success">
                 If an account exists for that email, a password reset link has been sent.
-              </div>
+              </Banner>
             ) : (
               <>
-                <div className="flex flex-col gap-1 mb-3">
-                  <label className="text-sm text-text-secondary font-medium" htmlFor="forgot-email">Email</label>
-                  <input
-                    id="forgot-email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    value={forgotEmail}
-                    onChange={e => setForgotEmail(e.target.value)}
-                    className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                    disabled={loading}
-                  />
-                </div>
-                <button
+                <p className="text-sm text-text-secondary mb-4 mt-0 leading-relaxed">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+                <FormField
+                  label="Email"
+                  name="forgot-email"
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(v) => setForgotEmail(String(v))}
+                  required
+                  placeholder="you@example.com"
+                  disabled={loading}
+                />
+                <Button
                   type="submit"
-                  className={cn(
-                    'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit] mt-2',
-                    loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-                  )}
+                  variant="primary"
+                  size="lg"
+                  fullWidth
                   disabled={loading}
                 >
                   {loading ? 'Sending...' : 'Send Reset Link'}
-                </button>
+                </Button>
               </>
             )}
           </form>

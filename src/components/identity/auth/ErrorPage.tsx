@@ -1,6 +1,4 @@
-// src/components/identity/auth/ErrorPage.tsx
-//
-// Generic error page with optional retry/back actions.
+import { Button } from '../../ui/Button';
 
 export interface ErrorPageProps {
   title?: string;
@@ -10,10 +8,6 @@ export interface ErrorPageProps {
   onBack?: () => void;
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export function ErrorPage({
   title = 'Something went wrong',
   message,
@@ -22,41 +16,34 @@ export function ErrorPage({
   onBack,
 }: ErrorPageProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[420px] bg-surface rounded-md shadow-md p-6 text-center" role="main" aria-label="Error">
-        <div
-          className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-4 text-2xl text-danger font-bold"
-          aria-hidden="true"
-        >
-          !
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[420px] bg-surface rounded-xl shadow-md p-8 text-center" role="main" aria-label="Error">
+        <div className="w-14 h-14 rounded-full bg-danger-bg flex items-center justify-center mx-auto mb-5" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
         </div>
-        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0">{title}</h1>
-        <p className="text-sm text-text-secondary mb-2 mt-0 leading-relaxed">{message}</p>
+        <h1 className="text-xl font-bold text-text-primary mb-3 mt-0">{title}</h1>
+        <p className="text-sm text-text-secondary mb-3 mt-0 leading-relaxed">{message}</p>
         {error && (
-          <code className="text-xs text-text-tertiary font-mono mb-4 px-3 py-1.5 bg-surface-panel rounded-sm inline-block">
+          <code className="text-[11px] text-text-tertiary font-mono mb-5 px-3.5 py-2 bg-surface-panel border border-border rounded-md inline-block max-w-full overflow-x-auto">
             {error}
           </code>
         )}
 
         {(onRetry || onBack) && (
-          <div className="flex gap-2 justify-center mt-4">
+          <div className="flex gap-3 justify-center mt-6">
             {onBack && (
-              <button
-                type="button"
-                className="px-6 py-3 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-                onClick={onBack}
-              >
+              <Button variant="ghost" size="lg" onClick={onBack}>
                 Go Back
-              </button>
+              </Button>
             )}
             {onRetry && (
-              <button
-                type="button"
-                className="px-6 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
-                onClick={onRetry}
-              >
+              <Button variant="primary" size="lg" onClick={onRetry}>
                 Try Again
-              </button>
+              </Button>
             )}
           </div>
         )}

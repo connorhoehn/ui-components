@@ -1,15 +1,10 @@
-// src/components/identity/auth/MfaSetupPage.tsx
-//
-// Multi-step MFA setup wizard: name device, scan QR, verify code, save backup codes.
-
 import { useState, useCallback } from 'react';
+import { FormField } from '../shared/FormField';
 import { QrCodeDisplay } from '../shared/QrCodeDisplay';
 import { CodeInput } from '../shared/CodeInput';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 import { cn } from '../../../lib/cn';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
 
 export interface MfaSetupPageProps {
   onSetup: (deviceName: string) => Promise<{
@@ -29,10 +24,7 @@ export interface MfaSetupPageProps {
 type Step = 'name' | 'scan' | 'verify' | 'backup';
 
 const STEPS: Step[] = ['name', 'scan', 'verify', 'backup'];
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+const STEP_LABELS = ['Name', 'Scan', 'Verify', 'Backup'];
 
 export function MfaSetupPage({
   onSetup,
@@ -44,10 +36,8 @@ export function MfaSetupPage({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Step 1: device name
   const [deviceName, setDeviceName] = useState('');
 
-  // Step 2: setup result
   const [setupResult, setSetupResult] = useState<{
     deviceId: string;
     qrCode: string;
@@ -55,7 +45,6 @@ export function MfaSetupPage({
     backupCodes: string[];
   } | null>(null);
 
-  // Step 4: backup codes (may come from verify response)
   const [backupCodes, setBackupCodes] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
 
@@ -110,114 +99,115 @@ export function MfaSetupPage({
   }, [backupCodes]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[480px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="MFA setup">
-        <h1 className="text-lg font-semibold text-text-primary mb-2 mt-0 text-center">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[480px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="MFA setup">
+        <h1 className="text-xl font-bold text-text-primary mb-2 mt-0 text-center">
           Set Up Multi-Factor Authentication
         </h1>
-        {userEmail && <p className="text-sm text-text-secondary mb-4 mt-0 text-center">{userEmail}</p>}
+        {userEmail && <p className="text-sm text-text-secondary mb-5 mt-0 text-center">{userEmail}</p>}
 
         {/* Step indicator */}
-        <div className="flex justify-center gap-2 mb-4" role="group" aria-label="Setup progress">
+        <div className="flex justify-center gap-6 mb-6" role="group" aria-label="Setup progress">
           {STEPS.map((s, i) => (
-            <div
-              key={s}
-              className={cn(
-                'w-2.5 h-2.5 rounded-full transition-colors duration-200',
-                i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-primary' : 'bg-border'
-              )}
-              aria-label={`Step ${i + 1}${i === currentStepIndex ? ' (current)' : i < currentStepIndex ? ' (completed)' : ''}`}
-            />
+            <div key={s} className="flex flex-col items-center gap-1.5">
+              <div
+                className={cn(
+                  'w-3 h-3 rounded-full transition-colors duration-200',
+                  i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-primary' : 'bg-border'
+                )}
+                aria-label={`Step ${i + 1}${i === currentStepIndex ? ' (current)' : i < currentStepIndex ? ' (completed)' : ''}`}
+              />
+              <span className={cn(
+                'text-[10px] uppercase tracking-wide font-medium',
+                i === currentStepIndex ? 'text-text-primary' : 'text-text-tertiary'
+              )}>
+                {STEP_LABELS[i]}
+              </span>
+            </div>
           ))}
         </div>
 
-        {/* Error */}
         {error && (
-          <div role="alert" className="px-3.5 py-2.5 mb-4 bg-danger/10 border border-danger rounded-sm text-danger text-sm">
-            {error}
+          <div className="mb-5">
+            <Banner variant="error">{error}</Banner>
           </div>
         )}
 
-        {/* Step 1: Name device */}
         {step === 'name' && (
           <form onSubmit={handleNameSubmit} aria-label="Name your device">
-            <div className="flex flex-col gap-1 mb-4">
-              <label className="text-sm text-text-secondary font-medium" htmlFor="device-name">Device Name</label>
-              <input
-                id="device-name"
-                type="text"
-                placeholder="e.g., My Phone"
-                required
-                value={deviceName}
-                onChange={e => setDeviceName(e.target.value)}
-                className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-full box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                disabled={loading}
-                autoFocus
-              />
-            </div>
-            <button
+            <p className="text-sm text-text-secondary mb-4 mt-0 text-center leading-relaxed">
+              Give your authenticator device a name so you can identify it later.
+            </p>
+            <FormField
+              label="Device Name"
+              name="device-name"
+              value={deviceName}
+              onChange={(v) => setDeviceName(String(v))}
+              required
+              placeholder="e.g., My Phone"
+              disabled={loading}
+            />
+            <Button
               type="submit"
-              className={cn(
-                'w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm font-[inherit]',
-                loading ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'
-              )}
+              variant="primary"
+              size="lg"
+              fullWidth
               disabled={loading || !deviceName.trim()}
             >
               {loading ? 'Setting up...' : 'Continue'}
-            </button>
+            </Button>
           </form>
         )}
 
-        {/* Step 2: Scan QR */}
         {step === 'scan' && setupResult && (
           <div>
             <button
               type="button"
-              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-2 font-[inherit]"
+              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-4 font-[inherit] hover:text-text-primary transition-colors"
               onClick={() => setStep('name')}
               aria-label="Go back to name step"
             >
               &larr; Back
             </button>
-            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
+            <p className="text-sm text-text-secondary mb-5 mt-0 text-center leading-relaxed">
               Scan this QR code with your authenticator app
             </p>
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-5">
               <QrCodeDisplay
                 value={setupResult.qrCode}
                 size={200}
                 label={`Device: ${deviceName}`}
               />
             </div>
-            <p className="text-sm text-text-tertiary text-center mb-2 mt-0">
-              Or enter this secret manually:
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0">
+              Or enter this secret manually
             </p>
-            <div className="px-3.5 py-2.5 bg-surface-panel border border-border rounded-sm font-mono text-sm text-text-primary break-all text-center mb-4">
+            <div className="px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all">
               {setupResult.secret}
             </div>
-            <button
-              type="button"
-              className="w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
               onClick={() => setStep('verify')}
             >
               I&apos;ve scanned it
-            </button>
+            </Button>
           </div>
         )}
 
-        {/* Step 3: Verify */}
         {step === 'verify' && (
           <div>
             <button
               type="button"
-              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-2 font-[inherit]"
+              className="bg-transparent border-none text-text-secondary text-sm cursor-pointer p-0 mb-4 font-[inherit] hover:text-text-primary transition-colors"
               onClick={() => setStep('scan')}
               aria-label="Go back to scan step"
             >
               &larr; Back
             </button>
-            <p className="text-sm text-text-secondary mb-4 mt-0 text-center">
-              Enter the 6-digit code from your authenticator app
+            <p className="text-sm text-text-secondary mb-6 mt-0 text-center leading-relaxed">
+              Enter the 6-digit code from your authenticator app to confirm setup
             </p>
             <CodeInput
               onComplete={handleVerify}
@@ -226,40 +216,48 @@ export function MfaSetupPage({
               autoFocus
             />
             {loading && (
-              <p className="text-center text-sm text-text-tertiary mt-2">
+              <p className="text-center text-sm text-text-tertiary mt-3">
                 Verifying...
               </p>
             )}
           </div>
         )}
 
-        {/* Step 4: Backup codes */}
         {step === 'backup' && (
           <div>
-            <p className="text-sm text-text-secondary mb-2 mt-0 text-center">
+            <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-success-bg flex items-center justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <p className="text-sm text-text-secondary mb-5 mt-0 text-center leading-relaxed">
               Save these backup codes in a safe place. Each code can only be used once.
             </p>
-            <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="grid grid-cols-2 gap-2.5 mb-6">
               {backupCodes.map((code, i) => (
-                <div key={i} className="px-3 py-2 bg-surface-panel border border-border rounded-sm font-mono text-sm text-text-primary text-center">
+                <div key={i} className="px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all">
                   {code}
                 </div>
               ))}
             </div>
-            <button
-              type="button"
-              className="w-full px-4 py-3 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
+            <Button
+              variant="primary"
+              size="lg"
+              fullWidth
               onClick={handleCopyAll}
             >
-              {copied ? 'Copied!' : 'Copy All'}
-            </button>
-            <button
-              type="button"
-              className="w-full px-4 py-2.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit] mt-2"
-              onClick={onComplete}
-            >
-              I&apos;ve saved them
-            </button>
+              {copied ? 'Copied!' : 'Copy All Codes'}
+            </Button>
+            <div className="mt-3">
+              <Button
+                variant="ghost"
+                size="lg"
+                fullWidth
+                onClick={onComplete}
+              >
+                I&apos;ve saved them &mdash; Continue
+              </Button>
+            </div>
           </div>
         )}
       </div>

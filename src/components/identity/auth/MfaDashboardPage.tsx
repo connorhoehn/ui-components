@@ -1,13 +1,10 @@
-// src/components/identity/auth/MfaDashboardPage.tsx
-//
-// Dashboard for managing MFA devices: view, rename, remove, add new.
-
 import { useState, useCallback } from 'react';
-import { cn } from '../../../lib/cn';
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+import { FormField } from '../shared/FormField';
+import { StatusBadge } from '../shared/StatusBadge';
+import { Button } from '../../ui/Button';
+import EmptyState from '../../shared/EmptyState';
+import ConfirmDialog from '../../shared/ConfirmDialog';
+import Chip from '../../shared/Chip';
 
 export interface MfaDevice {
   deviceId: string;
@@ -28,10 +25,6 @@ export interface MfaDashboardPageProps {
   loading?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString(undefined, {
@@ -43,10 +36,6 @@ function formatDate(iso: string): string {
     return iso;
   }
 }
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 export function MfaDashboardPage({
   devices,
@@ -91,122 +80,86 @@ export function MfaDashboardPage({
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[600px] bg-surface rounded-md shadow-md p-6" role="main" aria-label="MFA device management">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+    <div className="min-h-full flex items-start justify-center p-6 bg-surface-panel">
+      <div className="w-full max-w-[600px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="text-lg font-semibold text-text-primary m-0">MFA Devices</h1>
+            <h1 className="text-xl font-bold text-text-primary m-0">MFA Devices</h1>
             {userEmail && <p className="text-sm text-text-secondary m-0">{userEmail}</p>}
           </div>
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                'inline-block px-2.5 py-1 text-sm font-semibold rounded-sm',
-                mfaEnabled
-                  ? 'bg-success/15 text-success'
-                  : 'bg-warning/15 text-warning'
-              )}
-            >
-              {mfaEnabled ? 'MFA Enabled' : 'MFA Disabled'}
-            </span>
-            <button
-              type="button"
-              className="px-4 py-2.5 text-sm font-semibold bg-primary text-white border-none rounded-sm cursor-pointer font-[inherit]"
-              onClick={onAddDevice}
-            >
+          <div className="flex items-center gap-3">
+            <Chip tone={mfaEnabled ? 'success' : 'warning'}>
+              {mfaEnabled ? 'Enabled' : 'Disabled'}
+            </Chip>
+            <Button variant="primary" size="md" onClick={onAddDevice}>
               Add Device
-            </button>
+            </Button>
           </div>
         </div>
 
-        {/* Loading state */}
         {loading && (
-          <p className="text-center text-text-tertiary text-sm">
+          <p className="text-center text-text-tertiary text-sm py-8">
             Loading devices...
           </p>
         )}
 
-        {/* Empty state */}
         {!loading && devices.length === 0 && (
-          <div className="text-center p-6 text-text-tertiary text-sm">
-            <p className="mb-2 mt-0">No MFA devices configured.</p>
-            <p className="m-0">Add a device to secure your account with multi-factor authentication.</p>
-          </div>
+          <EmptyState
+            icon="🔐"
+            title="No MFA devices configured"
+            body="Add a device to secure your account with multi-factor authentication."
+            actionLabel="Add Device"
+            onAction={onAddDevice}
+          />
         )}
 
-        {/* Device list */}
         {!loading && devices.length > 0 && (
-          <div className="flex flex-col gap-2" role="list" aria-label="MFA devices">
+          <div className="flex flex-col gap-3" role="list" aria-label="MFA devices">
             {devices.map(device => (
-              <div key={device.deviceId} className="p-4 border border-border rounded-sm bg-surface" role="listitem">
+              <div key={device.deviceId} className="p-5 border border-border rounded-lg bg-surface" role="listitem">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center">
+                  <div className="flex items-center gap-2.5">
                     {renaming === device.deviceId ? (
                       <form
                         onSubmit={e => { e.preventDefault(); handleRename(device.deviceId); }}
-                        className="flex gap-1.5 items-center"
+                        className="flex gap-2 items-center"
                       >
-                        <input
-                          type="text"
+                        <FormField
+                          label=""
+                          name={`rename-${device.deviceId}`}
                           value={renameValue}
-                          onChange={e => setRenameValue(e.target.value)}
-                          className="px-3 py-2.5 text-sm border border-border rounded-sm bg-surface text-text-primary font-[inherit] outline-none w-[180px] box-border focus:ring-2 focus:ring-primary/25 focus:border-primary"
-                          autoFocus
+                          onChange={(v) => setRenameValue(String(v))}
                           disabled={actionLoading}
                         />
-                        <button
-                          type="submit"
-                          className="px-3 py-1.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-                          disabled={actionLoading || !renameValue.trim()}
-                        >
+                        <Button type="submit" variant="primary" size="sm" disabled={actionLoading || !renameValue.trim()}>
                           Save
-                        </button>
-                        <button
-                          type="button"
-                          className="px-3 py-1.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-                          onClick={() => setRenaming(null)}
-                        >
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => setRenaming(null)}>
                           Cancel
-                        </button>
+                        </Button>
                       </form>
                     ) : (
                       <>
-                        <h3 className="text-sm font-semibold text-text-primary m-0">{device.deviceName}</h3>
-                        <span
-                          className={cn(
-                            'inline-block px-1.5 py-0.5 text-[11px] font-semibold rounded-sm ml-2',
-                            device.isVerified
-                              ? 'bg-success/15 text-success'
-                              : 'bg-warning/15 text-warning'
-                          )}
-                        >
-                          {device.isVerified ? 'Verified' : 'Unverified'}
-                        </span>
+                        <h3 className="text-[15px] font-semibold text-text-primary m-0">{device.deviceName}</h3>
+                        <StatusBadge
+                          status={device.isVerified ? 'CONFIRMED' : 'UNCONFIRMED'}
+                        />
                       </>
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-text-tertiary m-0">
+                <p className="text-[11px] text-text-tertiary m-0 mb-3">
                   Type: {device.deviceType} &middot; Added: {formatDate(device.createdAt)}
                   {device.lastUsed && ` · Last used: ${formatDate(device.lastUsed)}`}
                 </p>
                 {renaming !== device.deviceId && (
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-                      onClick={() => startRename(device)}
-                    >
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" onClick={() => startRename(device)}>
                       Rename
-                    </button>
-                    <button
-                      type="button"
-                      className="px-3 py-1.5 text-sm font-medium bg-surface text-danger border border-danger rounded-sm cursor-pointer font-[inherit]"
-                      onClick={() => setConfirmRemove(device.deviceId)}
-                    >
+                    </Button>
+                    <Button variant="danger" size="sm" onClick={() => setConfirmRemove(device.deviceId)}>
                       Remove
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -214,41 +167,16 @@ export function MfaDashboardPage({
           </div>
         )}
 
-        {/* Confirm remove dialog */}
-        {confirmRemove && (
-          <div
-            className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Confirm device removal"
-            onClick={e => { if (e.target === e.currentTarget) setConfirmRemove(null); }}
-          >
-            <div className="w-full max-w-[380px] bg-surface rounded-md shadow-md p-6">
-              <h2 className="text-sm font-semibold text-text-primary mb-2 mt-0">Remove Device</h2>
-              <p className="text-sm text-text-secondary mb-4 mt-0">
-                Are you sure you want to remove this MFA device? You will no longer be able to use it for verification.
-              </p>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="px-3 py-1.5 text-sm font-medium bg-surface text-text-secondary border border-border rounded-sm cursor-pointer font-[inherit]"
-                  onClick={() => setConfirmRemove(null)}
-                  disabled={actionLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="px-3 py-1.5 text-sm font-medium bg-surface text-danger border border-danger rounded-sm cursor-pointer font-[inherit]"
-                  onClick={handleRemove}
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? 'Removing...' : 'Remove'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ConfirmDialog
+          open={!!confirmRemove}
+          onConfirm={handleRemove}
+          onCancel={() => setConfirmRemove(null)}
+          title="Remove Device"
+          body="Are you sure you want to remove this MFA device? You will no longer be able to use it for verification."
+          confirmLabel={actionLoading ? 'Removing...' : 'Remove'}
+          confirmDisabled={actionLoading}
+          tone="destructive"
+        />
       </div>
     </div>
   );

@@ -50,6 +50,31 @@ export const navigationTree: NavigationTree = [
     ],
   },
   {
+    id: 'identity',
+    label: 'Identity',
+    basePath: '/identity',
+    groups: [
+      { id: 'identity-auth', label: 'Auth Pages', items: [
+        { id: 'identity-login', label: 'Login', path: '/identity/login' },
+        { id: 'identity-consent', label: 'Consent', path: '/identity/consent' },
+        { id: 'identity-mfa-verify', label: 'MFA Verify', path: '/identity/mfa-verify' },
+        { id: 'identity-mfa-setup', label: 'MFA Setup', path: '/identity/mfa-setup' },
+        { id: 'identity-logout', label: 'Logout', path: '/identity/logout' },
+      ]},
+      { id: 'identity-admin', label: 'Admin Pages', items: [
+        { id: 'identity-admin-dashboard', label: 'Dashboard', path: '/identity/admin' },
+        { id: 'identity-admin-pools', label: 'Pool Management', path: '/identity/admin/pools' },
+        { id: 'identity-admin-users', label: 'User Management', path: '/identity/admin/users' },
+        { id: 'identity-admin-groups', label: 'Group Management', path: '/identity/admin/groups' },
+        { id: 'identity-admin-apps', label: 'Applications', path: '/identity/admin/applications' },
+        { id: 'identity-admin-email', label: 'Email Templates', path: '/identity/admin/email-templates' },
+        { id: 'identity-admin-mfa', label: 'MFA Management', path: '/identity/admin/mfa' },
+        { id: 'identity-admin-audit', label: 'Audit Log', path: '/identity/admin/audit' },
+        { id: 'identity-admin-full', label: 'Full Admin (Live)', path: '/identity/admin/full' },
+      ]},
+    ],
+  },
+  {
     id: 'patterns',
     label: 'Patterns',
     basePath: '/patterns',
