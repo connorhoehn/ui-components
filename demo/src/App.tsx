@@ -37,6 +37,7 @@ const SocialPanel = lazy(() => import('./demos/social-panel'));
 const Collaboration = lazy(() => import('./demos/collaboration'));
 const NodeEditorLive = lazy(() => import('./demos/node-editor-live'));
 const VideoStreaming = lazy(() => import('./demos/video-streaming'));
+const SharedComponents = lazy(() => import('./demos/shared-components'));
 
 function Loading() {
   return <div style={{ padding: 40, color: '#64748b' }}>Loading...</div>;
@@ -91,6 +92,7 @@ export default function App() {
           <Route path="collaboration" element={<S><Collaboration /></S>} />
           <Route path="node-editor-live" element={<S><NodeEditorLive /></S>} />
           <Route path="video-streaming" element={<S><VideoStreaming /></S>} />
+          <Route path="shared-components" element={<S><SharedComponents /></S>} />
         </Route>
 
         {/* Patterns */}

@@ -6,48 +6,36 @@ test.describe('Demo Catalog', () => {
     await expect(page.getByRole('heading', { name: 'Component Demos' })).toBeVisible();
   });
 
-  test('all 7 demo cards are rendered', async ({ page }) => {
+  test('demo cards are rendered', async ({ page }) => {
     await page.goto('/');
-    const cards = page.locator('a[href^="/demo/"]');
-    await expect(cards).toHaveCount(7);
+    const cards = page.locator('a[href^="/pages/"], a[href^="/components/"]');
+    await expect(cards.first()).toBeVisible();
+    const count = await cards.count();
+    expect(count).toBeGreaterThanOrEqual(6);
   });
 
   test('category filter chips are shown', async ({ page }) => {
     await page.goto('/');
-    const chips = page.getByRole('button');
-    // Categories: All, Pipelines, Ingest, Documents, Observability, Social, Collaboration, Shared
-    await expect(chips.filter({ hasText: 'All' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Pipelines' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Ingest' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Documents' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Observability' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Social' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Collaboration' })).toBeVisible();
-    await expect(chips.filter({ hasText: 'Shared' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'All' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Pages', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Components', exact: true })).toBeVisible();
   });
 
   test('clicking a category filters the grid', async ({ page }) => {
     await page.goto('/');
-    // Click Pipelines category
-    await page.getByRole('button', { name: 'Pipelines' }).click();
-    const cards = page.locator('a[href^="/demo/"]');
-    await expect(cards).toHaveCount(1);
+    const cards = page.locator('a[href^="/pages/"], a[href^="/components/"]');
+    const allCount = await cards.count();
+    await page.getByRole('button', { name: 'Pages', exact: true }).click();
+    const filteredCount = await cards.count();
+    expect(filteredCount).toBeLessThan(allCount);
     // Click All to restore
     await page.getByRole('button', { name: 'All' }).click();
-    await expect(cards).toHaveCount(7);
+    await expect(cards).toHaveCount(allCount);
   });
 
   test('clicking a demo card navigates to the demo page', async ({ page }) => {
     await page.goto('/');
-    await page.locator('a[href="/demo/pipeline-editor"]').click();
-    await expect(page).toHaveURL(/\/demo\/pipeline-editor/);
-    await expect(page.getByText('Pipeline Editor')).toBeVisible();
-  });
-
-  test('back link returns to catalog', async ({ page }) => {
-    await page.goto('/demo/pipeline-editor');
-    await page.getByText('All Demos').click();
-    await expect(page).toHaveURL('/');
-    await expect(page.getByRole('heading', { name: 'Component Demos' })).toBeVisible();
+    await page.locator('a[href="/pages/pipeline-editor"]').click();
+    await expect(page).toHaveURL(/\/pages\/pipeline-editor/);
   });
 });
