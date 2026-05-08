@@ -22,6 +22,7 @@ export default defineConfig({
         types: resolve(__dirname, 'src/types/index.ts'),
         shared: resolve(__dirname, 'src/components/shared/index.ts'),
         identity: resolve(__dirname, 'src/components/identity/index.ts'),
+        agents: resolve(__dirname, 'src/components/agents/index.ts'),
       },
       formats: ['es', 'cjs'],
     },

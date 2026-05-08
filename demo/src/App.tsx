@@ -42,6 +42,12 @@ const CallWidgetDemo = lazy(() => import('./demos/video-streaming/CallWidgetDemo
 const CallWidgetLive = lazy(() => import('./demos/call-widget-live'));
 const SharedComponents = lazy(() => import('./demos/shared-components'));
 
+// Agent demos (lazy)
+const AgentDashboard = lazy(() => import('./demos/agents/DashboardDemo'));
+const AgentFlow = lazy(() => import('./demos/agents/FlowDemo'));
+const AgentInvoke = lazy(() => import('./demos/agents/InvokeDemo'));
+const AgentDetail = lazy(() => import('./demos/agents/DetailDemo'));
+
 // Identity demos (lazy)
 const IdentityLoginDemo = lazy(() => import('./demos/identity/auth/LoginDemo'));
 const IdentityConsentDemo = lazy(() => import('./demos/identity/auth/ConsentDemo'));
@@ -68,7 +74,7 @@ function S({ children }: { children: React.ReactNode }) {
 
 function RedirectToPages() {
   const { id } = useParams();
-  return <Navigate to={`/pages/${id}`} replace />;
+  return <Navigate to={`/workflows/${id}`} replace />;
 }
 
 export default function App() {
@@ -86,7 +92,7 @@ export default function App() {
           <Route path="theming" element={<ThemingPage />} />
         </Route>
 
-        {/* Components */}
+        {/* Foundations (Components) */}
         <Route path="components">
           <Route index element={<ComponentsOverviewPage />} />
           <Route path="buttons" element={<S><ButtonsPage /></S>} />
@@ -101,19 +107,42 @@ export default function App() {
           <Route path="call-widget" element={<S><CallWidgetPage /></S>} />
         </Route>
 
-        {/* Pages (live demos) */}
-        <Route path="pages">
+        {/* Workflows (domain demos) */}
+        <Route path="workflows">
           <Route index element={<PagesOverviewPage />} />
+          {/* Pipelines */}
           <Route path="pipeline-editor" element={<S><PipelineEditor /></S>} />
+          <Route path="pipeline-runs" element={<S><PipelineEditor /></S>} />
+          {/* Agents */}
+          <Route path="agents/dashboard" element={<S><AgentDashboard /></S>} />
+          <Route path="agents/flow" element={<S><AgentFlow /></S>} />
+          <Route path="agents/invoke" element={<S><AgentInvoke /></S>} />
+          <Route path="agents/detail" element={<S><AgentDetail /></S>} />
+          {/* Documents */}
           <Route path="document-workspace" element={<S><DocumentWorkspace /></S>} />
-          <Route path="ingest-dashboard" element={<S><IngestDashboard /></S>} />
-          <Route path="observability-shell" element={<S><ObservabilityShell /></S>} />
-          <Route path="social-panel" element={<S><SocialPanel /></S>} />
           <Route path="collaboration" element={<S><Collaboration /></S>} />
-          <Route path="node-editor-live" element={<S><NodeEditorLive /></S>} />
+          {/* Data */}
+          <Route path="ingest-dashboard" element={<S><IngestDashboard /></S>} />
+          <Route path="observability" element={<S><ObservabilityShell /></S>} />
+          {/* Social */}
+          <Route path="social" element={<S><SocialPanel /></S>} />
           <Route path="video-streaming" element={<S><VideoStreaming /></S>} />
-          <Route path="call-widget" element={<S><CallWidgetDemo /></S>} />
-          <Route path="call-widget-live" element={<S><CallWidgetLive /></S>} />
+          <Route path="call-widget" element={<S><CallWidgetLive /></S>} />
+        </Route>
+
+        {/* Legacy /pages routes → redirect to /workflows */}
+        <Route path="pages">
+          <Route index element={<Navigate to="/workflows" replace />} />
+          <Route path="pipeline-editor" element={<Navigate to="/workflows/pipeline-editor" replace />} />
+          <Route path="document-workspace" element={<Navigate to="/workflows/document-workspace" replace />} />
+          <Route path="ingest-dashboard" element={<Navigate to="/workflows/ingest-dashboard" replace />} />
+          <Route path="observability-shell" element={<Navigate to="/workflows/observability" replace />} />
+          <Route path="social-panel" element={<Navigate to="/workflows/social" replace />} />
+          <Route path="collaboration" element={<Navigate to="/workflows/collaboration" replace />} />
+          <Route path="node-editor-live" element={<S><NodeEditorLive /></S>} />
+          <Route path="video-streaming" element={<Navigate to="/workflows/video-streaming" replace />} />
+          <Route path="call-widget" element={<Navigate to="/workflows/call-widget" replace />} />
+          <Route path="call-widget-live" element={<Navigate to="/workflows/call-widget" replace />} />
           <Route path="shared-components" element={<S><SharedComponents /></S>} />
         </Route>
 

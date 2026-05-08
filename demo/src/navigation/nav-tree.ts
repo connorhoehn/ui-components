@@ -15,8 +15,8 @@ export const navigationTree: NavigationTree = [
     ],
   },
   {
-    id: 'components',
-    label: 'Components',
+    id: 'foundations',
+    label: 'Foundations',
     basePath: '/components',
     groups: [
       { id: 'comp-main', label: '', items: [
@@ -34,20 +34,32 @@ export const navigationTree: NavigationTree = [
     ],
   },
   {
-    id: 'pages',
-    label: 'Pages',
-    basePath: '/pages',
+    id: 'workflows',
+    label: 'Workflows',
+    basePath: '/workflows',
     groups: [
-      { id: 'pages-main', label: '', items: [
-        { id: 'pipeline-editor', label: 'Pipeline Editor', path: '/pages/pipeline-editor' },
-        { id: 'document-workspace', label: 'Document Workspace', path: '/pages/document-workspace' },
-        { id: 'ingest-dashboard', label: 'Ingest Dashboard', path: '/pages/ingest-dashboard' },
-        { id: 'observability-shell', label: 'Observability', path: '/pages/observability-shell' },
-        { id: 'social-panel', label: 'Social & Chat', path: '/pages/social-panel' },
-        { id: 'collaboration', label: 'Collaboration', path: '/pages/collaboration' },
-        { id: 'node-editor-live', label: 'Node Editor (Live)', path: '/pages/node-editor-live' },
-        { id: 'video-streaming', label: 'Video Streaming', path: '/pages/video-streaming' },
-        { id: 'call-widget-live', label: 'Call Widget (Live)', path: '/pages/call-widget-live' },
+      { id: 'wf-pipelines', label: 'Pipelines', items: [
+        { id: 'pipeline-editor', label: 'Pipeline Editor', path: '/workflows/pipeline-editor' },
+        { id: 'pipeline-runs', label: 'Pipeline Runs', path: '/workflows/pipeline-runs' },
+      ]},
+      { id: 'wf-agents', label: 'Agents', items: [
+        { id: 'agent-dashboard', label: 'Agent Dashboard', path: '/workflows/agents/dashboard' },
+        { id: 'agent-flow', label: 'Agent Flow (A2A)', path: '/workflows/agents/flow' },
+        { id: 'agent-invoke', label: 'Agent Invoke', path: '/workflows/agents/invoke' },
+        { id: 'agent-detail', label: 'Agent Detail', path: '/workflows/agents/detail' },
+      ]},
+      { id: 'wf-documents', label: 'Documents', items: [
+        { id: 'document-workspace', label: 'Document Workspace', path: '/workflows/document-workspace' },
+        { id: 'wf-collaboration', label: 'Collaboration', path: '/workflows/collaboration' },
+      ]},
+      { id: 'wf-data', label: 'Data', items: [
+        { id: 'ingest-dashboard', label: 'Ingest Dashboard', path: '/workflows/ingest-dashboard' },
+        { id: 'observability', label: 'Observability', path: '/workflows/observability' },
+      ]},
+      { id: 'wf-social', label: 'Social', items: [
+        { id: 'social-chat', label: 'Social & Chat', path: '/workflows/social' },
+        { id: 'video-streaming', label: 'Video Streaming', path: '/workflows/video-streaming' },
+        { id: 'call-widget-live', label: 'Call Widget', path: '/workflows/call-widget' },
       ]},
     ],
   },
@@ -96,11 +108,18 @@ export const navigationTree: NavigationTree = [
     label: 'Hooks',
     basePath: '/hooks',
     groups: [
-      { id: 'hooks-main', label: '', items: [
+      { id: 'hooks-core', label: 'Core', items: [
         { id: 'hooks-connection', label: 'Connection', path: '/hooks/connection' },
-        { id: 'hooks-collaboration', label: 'Collaboration', path: '/hooks/collaboration' },
-        { id: 'hooks-documents', label: 'Documents', path: '/hooks/documents' },
         { id: 'hooks-ui', label: 'UI & Interaction', path: '/hooks/ui' },
+      ]},
+      { id: 'hooks-collab', label: 'Collaboration', items: [
+        { id: 'hooks-documents', label: 'Documents', path: '/hooks/documents' },
+        { id: 'hooks-collaboration', label: 'Real-time', path: '/hooks/collaboration' },
+      ]},
+      { id: 'hooks-agents', label: 'Agents', items: [
+        { id: 'hooks-ag-ui-stream', label: 'AG-UI Stream', path: '/hooks/ag-ui-stream' },
+        { id: 'hooks-agent-registry', label: 'Agent Registry', path: '/hooks/agent-registry' },
+        { id: 'hooks-a2a-session', label: 'A2A Sessions', path: '/hooks/a2a-session' },
       ]},
     ],
   },

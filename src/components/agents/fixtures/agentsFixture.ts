@@ -1,0 +1,163 @@
+import type {
+  AgentDefinition,
+  AgentMetrics,
+  TraceTimeline,
+  TraceSpan,
+} from '../../../types/agents';
+
+export const fixtureAgents: AgentDefinition[] = [
+  {
+    id: 'orgiq-supervisor',
+    name: 'Supervisor',
+    status: 'healthy',
+    protocol: 'a2a',
+    model: 'claude-sonnet-4-6',
+    tools: ['route-to-agent', 'summarize'],
+    guardrails: ['orgiq-content-filter'],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-supervisor',
+    description: 'Orchestrates sub-agents via A2A protocol',
+    avgLatencyMs: 1240,
+    invocationsLast24h: 47,
+  },
+  {
+    id: 'orgiq-search',
+    name: 'Search Agent',
+    status: 'healthy',
+    protocol: 'a2a',
+    model: 'claude-sonnet-4-6',
+    tools: ['knowledge-base-query', 'graph-traversal'],
+    guardrails: ['orgiq-content-filter', 'orgiq-pii-filter'],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-search',
+    description: 'Conversational search across org knowledge',
+    avgLatencyMs: 2100,
+    invocationsLast24h: 123,
+  },
+  {
+    id: 'orgiq-scoring',
+    name: 'Scoring Agent',
+    status: 'healthy',
+    protocol: 'direct',
+    model: 'claude-haiku-4-5',
+    tools: ['graph-query', 'compute-pagerank', 'write-scores'],
+    guardrails: [],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-scoring',
+    description: 'Computes expertise and influence scores',
+    avgLatencyMs: 890,
+    invocationsLast24h: 12,
+  },
+  {
+    id: 'orgiq-ingestion',
+    name: 'Ingestion Agent',
+    status: 'degraded',
+    protocol: 'direct',
+    model: 'claude-haiku-4-5',
+    tools: ['parse-document', 'chunk-text', 'embed-chunks', 'write-kb'],
+    guardrails: ['orgiq-pii-filter'],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-ingestion',
+    description: 'Ingests and processes documents into knowledge base',
+    avgLatencyMs: 3400,
+    invocationsLast24h: 8,
+    lastInvocation: '2026-05-08T14:23:00Z',
+  },
+  {
+    id: 'orgiq-graph-builder',
+    name: 'Graph Builder',
+    status: 'healthy',
+    protocol: 'direct',
+    model: 'claude-sonnet-4-6',
+    tools: ['extract-entities', 'resolve-entities', 'write-graph'],
+    guardrails: [],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-graph-builder',
+    description: 'Extracts entities and relationships into Neptune graph',
+    avgLatencyMs: 4200,
+    invocationsLast24h: 5,
+  },
+  {
+    id: 'orgiq-advisor',
+    name: 'Advisor Agent',
+    status: 'offline',
+    protocol: 'a2a',
+    model: 'claude-sonnet-4-6',
+    tools: ['search-agent', 'scoring-agent', 'generate-recommendation'],
+    guardrails: ['orgiq-content-filter'],
+    endpoint: 'https://runtime.agentcore.us-east-1.amazonaws.com/agents/orgiq-advisor',
+    description: 'Provides strategic recommendations based on org intelligence',
+    avgLatencyMs: 0,
+    invocationsLast24h: 0,
+  },
+];
+
+export const fixtureMetrics: AgentMetrics[] = [
+  {
+    agentId: 'orgiq-supervisor',
+    invocationsTotal: 1247,
+    invocationsLast24h: 47,
+    errorsLast24h: 2,
+    avgLatencyMs: 1240,
+    p99LatencyMs: 3800,
+    tokensInLast24h: 42000,
+    tokensOutLast24h: 18500,
+    guardrailBlocksLast24h: 1,
+    asOf: '2026-05-08T15:00:00Z',
+  },
+  {
+    agentId: 'orgiq-search',
+    invocationsTotal: 3892,
+    invocationsLast24h: 123,
+    errorsLast24h: 5,
+    avgLatencyMs: 2100,
+    p99LatencyMs: 6200,
+    tokensInLast24h: 156000,
+    tokensOutLast24h: 89000,
+    guardrailBlocksLast24h: 3,
+    asOf: '2026-05-08T15:00:00Z',
+  },
+  {
+    agentId: 'orgiq-scoring',
+    invocationsTotal: 456,
+    invocationsLast24h: 12,
+    errorsLast24h: 0,
+    avgLatencyMs: 890,
+    p99LatencyMs: 2100,
+    tokensInLast24h: 8400,
+    tokensOutLast24h: 3200,
+    guardrailBlocksLast24h: 0,
+    asOf: '2026-05-08T15:00:00Z',
+  },
+];
+
+const now = new Date('2026-05-08T15:00:00Z');
+
+function span(overrides: Partial<TraceSpan> & Pick<TraceSpan, 'spanId' | 'name' | 'kind'>): TraceSpan {
+  const start = overrides.startTime ?? now.toISOString();
+  const dur = overrides.durationMs ?? 100;
+  const end = overrides.endTime ?? new Date(new Date(start).getTime() + dur).toISOString();
+  return {
+    traceId: 'trace-001',
+    parentSpanId: undefined,
+    status: 'ok',
+    attributes: {},
+    ...overrides,
+    startTime: start,
+    endTime: end,
+    durationMs: dur,
+  };
+}
+
+export const fixtureTrace: TraceTimeline = {
+  traceId: 'trace-001',
+  rootSpanId: 'span-root',
+  agentId: 'orgiq-supervisor',
+  startedAt: now.toISOString(),
+  totalDurationMs: 3200,
+  spans: [
+    span({ spanId: 'span-root', name: 'supervisor.invoke', kind: 'agent', durationMs: 3200 }),
+    span({ spanId: 'span-guard', parentSpanId: 'span-root', name: 'guardrail.evaluate', kind: 'guardrail', durationMs: 120, startTime: new Date(now.getTime() + 50).toISOString() }),
+    span({ spanId: 'span-route', parentSpanId: 'span-root', name: 'supervisor.route', kind: 'internal', durationMs: 80, startTime: new Date(now.getTime() + 180).toISOString() }),
+    span({ spanId: 'span-search', parentSpanId: 'span-root', name: 'search-agent.invoke', kind: 'agent', durationMs: 2100, startTime: new Date(now.getTime() + 270).toISOString() }),
+    span({ spanId: 'span-kb', parentSpanId: 'span-search', name: 'knowledge-base.retrieve', kind: 'retrieval', durationMs: 450, startTime: new Date(now.getTime() + 300).toISOString() }),
+    span({ spanId: 'span-llm', parentSpanId: 'span-search', name: 'bedrock.invoke_model', kind: 'llm', durationMs: 1400, startTime: new Date(now.getTime() + 800).toISOString() }),
+    span({ spanId: 'span-graph', parentSpanId: 'span-search', name: 'neptune.execute_query', kind: 'tool', durationMs: 200, startTime: new Date(now.getTime() + 2250).toISOString() }),
+    span({ spanId: 'span-summary', parentSpanId: 'span-root', name: 'supervisor.summarize', kind: 'llm', durationMs: 700, startTime: new Date(now.getTime() + 2450).toISOString() }),
+  ],
+};

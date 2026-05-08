@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehn/ui-components",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -46,6 +46,10 @@
     "./identity": {
       "types": "./dist/identity.d.ts",
       "import": "./dist/identity.js"
+    },
+    "./agents": {
+      "types": "./dist/agents.d.ts",
+      "import": "./dist/agents.js"
     },
     "./styles.css": "./dist/ui-components.css"
   },
