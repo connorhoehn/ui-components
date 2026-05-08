@@ -62,8 +62,8 @@ export function LoginPage({
     setLoading(true);
     try {
       await onLogin(loginEmail, loginPassword);
-    } catch (err: any) {
-      setLocalError(err?.message || 'Login failed');
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -85,8 +85,8 @@ export function LoginPage({
         familyName: regFamilyName || undefined,
         enableMfa: regEnableMfa || undefined,
       });
-    } catch (err: any) {
-      setLocalError(err?.message || 'Registration failed');
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -99,8 +99,8 @@ export function LoginPage({
     try {
       await onForgotPassword(forgotEmail);
       setForgotSuccess(true);
-    } catch (err: any) {
-      setLocalError(err?.message || 'Request failed');
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Request failed');
     } finally {
       setLoading(false);
     }
@@ -113,59 +113,62 @@ export function LoginPage({
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
+    <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
+      <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
         <header className="flex flex-col items-center gap-3 mb-6">
           {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
-          {clientName && <h1 className="text-xl font-bold text-text-primary m-0">{clientName}</h1>}
+          {clientName && <h1 className="text-xl font-bold text-slate-800 m-0">{clientName}</h1>}
         </header>
 
-        <nav className="flex border-b border-border mb-6" role="tablist" aria-label="Authentication method">
-          <button
+        <nav className="flex border-b border-slate-200 mb-6" role="tablist" aria-label="Authentication method">
+          <Button
+            variant="ghost"
+            size="sm"
             role="tab"
             aria-selected={tab === 'signin'}
             className={cn(
-              'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+              'flex-1 rounded-none border-b-2',
               tab === 'signin'
-                ? 'border-b-primary text-primary font-semibold'
-                : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
+                ? 'border-b-[#3b82f6] text-blue-600 font-semibold'
+                : 'border-b-transparent text-slate-500 font-normal'
             )}
             onClick={() => switchTab('signin')}
-            type="button"
           >
             Sign In
-          </button>
+          </Button>
           {registrationEnabled && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               role="tab"
               aria-selected={tab === 'register'}
               className={cn(
-                'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                'flex-1 rounded-none border-b-2',
                 tab === 'register'
-                  ? 'border-b-primary text-primary font-semibold'
-                  : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
+                  ? 'border-b-[#3b82f6] text-blue-600 font-semibold'
+                  : 'border-b-transparent text-slate-500 font-normal'
               )}
               onClick={() => switchTab('register')}
-              type="button"
             >
               Register
-            </button>
+            </Button>
           )}
           {forgotPasswordEnabled && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               role="tab"
               aria-selected={tab === 'forgot'}
               className={cn(
-                'flex-1 px-3 py-3 bg-transparent border-none border-b-2 text-sm cursor-pointer font-[inherit] transition-[color,border-color] duration-150',
+                'flex-1 rounded-none border-b-2',
                 tab === 'forgot'
-                  ? 'border-b-primary text-primary font-semibold'
-                  : 'border-b-transparent text-text-secondary font-normal hover:text-text-primary'
+                  ? 'border-b-[#3b82f6] text-blue-600 font-semibold'
+                  : 'border-b-transparent text-slate-500 font-normal'
               )}
               onClick={() => switchTab('forgot')}
-              type="button"
             >
               Forgot Password
-            </button>
+            </Button>
           )}
         </nav>
 
@@ -287,7 +290,7 @@ export function LoginPage({
               </Banner>
             ) : (
               <>
-                <p className="text-sm text-text-secondary mb-4 mt-0 leading-relaxed">
+                <p className="text-sm text-slate-500 mb-4 mt-0 leading-relaxed">
                   Enter your email address and we'll send you a link to reset your password.
                 </p>
                 <FormField

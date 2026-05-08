@@ -1,5 +1,3 @@
-// Identity audit hook — query audit logs and entity history.
-
 import { useState, useCallback } from 'react';
 import { useIdentityContext } from '../contexts/IdentityContext';
 import { apiFetch } from './identityApi';

@@ -4,6 +4,7 @@
 // Sidebar collapses on narrow viewports via a toggle button.
 
 import { useState, useCallback } from 'react';
+import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
 
 export interface IdentityAdminLayoutProps {
@@ -48,13 +49,14 @@ function NavLink({
       <button
         type="button"
         className={cn(
-          'flex items-center gap-2 w-full text-left px-4 py-2 text-sm font-[inherit] border-none transition-colors duration-150',
-          'border-l-[3px]',
+          'flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer',
+          'border-none rounded-none border-l-[3px] transition-colors',
           active
-            ? 'bg-surface-hover text-primary font-semibold border-l-primary'
-            : 'bg-transparent text-text-primary font-normal border-l-transparent hover:bg-surface-hover'
+            ? 'bg-slate-50 text-blue-600 font-semibold border-l-blue-600'
+            : 'bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]'
         )}
         onClick={() => onNavigate(item.path)}
+        aria-current={active ? 'page' : undefined}
       >
         <span>{item.icon}</span>
         <span>{item.label}</span>
@@ -79,17 +81,17 @@ export function IdentityAdminLayout({
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
 
   return (
-    <div className="flex min-h-screen bg-surface-panel font-[inherit]">
+    <div className="flex min-h-screen bg-slate-50 font-[inherit]">
       <aside
         className={cn(
-          'bg-surface border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
+          'bg-white border-r border-slate-200 flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
           sidebarOpen ? 'w-60' : 'w-0 border-r-0'
         )}
       >
-        <div className="p-4 font-bold text-lg text-primary border-b border-border">
+        <div className="p-4 font-bold text-lg text-blue-600 border-b border-slate-200">
           Identity Admin
         </div>
-        <ul className="list-none m-0 py-2 flex-1">
+        <ul className="list-none m-0 p-0 py-2 flex-1">
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.path}
@@ -102,30 +104,26 @@ export function IdentityAdminLayout({
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center justify-between px-4 py-2 bg-surface border-b border-border">
-          <button
-            type="button"
-            className="bg-transparent border-none text-xl cursor-pointer text-text-primary px-2 py-1"
+        <header className="flex items-center justify-between px-4 py-2 bg-white border-b border-slate-200">
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? '←' : '→'}
-          </button>
+          </Button>
 
           <div className="flex items-center gap-4">
             {adminEmail && (
-              <span className="text-sm text-text-secondary">
+              <span className="text-sm text-slate-500">
                 {adminEmail}
               </span>
             )}
             {onLogout && (
-              <button
-                type="button"
-                className="px-3.5 py-1.5 text-sm bg-danger text-white border-none rounded-sm cursor-pointer"
-                onClick={onLogout}
-              >
+              <Button variant="danger-solid" size="sm" onClick={onLogout}>
                 Logout
-              </button>
+              </Button>
             )}
           </div>
         </header>

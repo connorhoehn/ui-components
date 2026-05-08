@@ -182,19 +182,19 @@ function Modal({
         aria-modal="true"
         aria-label={title}
         className={cn(
-          'bg-surface rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]',
+          'bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]',
         )}
         style={{ maxWidth, ...cardStyle }}
         onClick={e => e.stopPropagation()}
       >
         {title && (
-          <div className="text-base font-semibold text-text-primary mb-2.5">
+          <div className="text-base font-semibold text-slate-900 mb-2.5">
             {title}
           </div>
         )}
         {rawChildren
           ? children
-          : <div className="text-[13px] text-text-secondary">{children}</div>}
+          : <div className="text-[13px] text-[#475569]">{children}</div>}
         {footer && (
           <div className="flex gap-2 justify-end mt-5">
             {footer}

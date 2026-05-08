@@ -18,3 +18,6 @@ export type { StatusStripProps } from './StatusStrip';
 
 export { ViewerCount } from './ViewerCount';
 export type { ViewerCountProps } from './ViewerCount';
+
+export { CallWidget } from './CallWidget';
+export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode } from './CallWidget';

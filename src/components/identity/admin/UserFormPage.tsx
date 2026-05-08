@@ -4,7 +4,10 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 
 export interface UserFormPageProps {
   user?: {
@@ -20,7 +23,15 @@ export interface UserFormPageProps {
   isEdit: boolean;
   poolId: string;
   customAttributeDefinitions?: Record<string, string>;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: {
+    email: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    website?: string;
+    customAttributes?: Record<string, unknown>;
+  }) => Promise<void>;
   onCancel: () => void;
   error?: string | null;
 }
@@ -78,10 +89,10 @@ export function UserFormPage({
   );
 
   return (
-    <div className="max-w-[640px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit User' : 'Create User'}</h1>
+    <PageSection title={isEdit ? 'Edit User' : 'Create User'} className="max-w-[640px]">
+      {error && <Banner variant="error">{error}</Banner>}
 
-      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
+      <Card padding="md">
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -150,7 +161,7 @@ export function UserFormPage({
         {/* Custom Attributes */}
         {customAttributeDefinitions && Object.keys(customAttributeDefinitions).length > 0 && (
           <section>
-            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Custom Attributes</h3>
+            <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Custom Attributes</h3>
             {Object.entries(customAttributeDefinitions).map(([key, type]) => (
               <FormField
                 key={key}
@@ -165,23 +176,16 @@ export function UserFormPage({
           </section>
         )}
 
-        <div className="flex gap-2 mt-6">
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={submitting}
-          >
+        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}
-          </button>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
-            onClick={onCancel}
-          >
+          </Button>
+          <Button variant="ghost" size="lg" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageSection>
   );
 }

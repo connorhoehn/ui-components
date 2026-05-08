@@ -4,8 +4,10 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
-import { StatusBadge } from '../shared/StatusBadge';
-import { cn } from '../../../lib/cn';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Chip from '../../shared/Chip';
+import ConfirmDialog from '../../shared/ConfirmDialog';
 
 export interface GroupListPageProps {
   groups: Array<{
@@ -62,9 +64,9 @@ export function GroupListPage({
         render: (item) => (
           <div className="flex flex-wrap gap-1">
             {item.permissions.length === 0
-              ? <span className="text-text-tertiary">None</span>
+              ? <span className="text-slate-400 text-xs">None</span>
               : item.permissions.map((p) => (
-                  <StatusBadge key={p} status={p} variant="info" />
+                  <Chip key={p} tone="info" size="xs">{p}</Chip>
                 ))}
           </div>
         ),
@@ -74,65 +76,28 @@ export function GroupListPage({
   );
 
   const renderActions = useCallback(
-    (item: GroupRow) => {
-      if (confirmingId === item.groupId) {
-        return (
-          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
-            Are you sure?
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
-              onClick={() => handleDelete(item.groupId)}
-              disabled={deleting}
-            >
-              {deleting ? '...' : 'Yes'}
-            </button>
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-              onClick={() => setConfirmingId(null)}
-            >
-              No
-            </button>
-          </span>
-        );
-      }
-
-      return (
-        <>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onEditGroup(item.groupId)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
-            onClick={() => setConfirmingId(item.groupId)}
-          >
-            Delete
-          </button>
-        </>
-      );
-    },
-    [confirmingId, deleting, handleDelete, onEditGroup],
+    (item: GroupRow) => (
+      <>
+        <Button variant="ghost" size="sm" onClick={() => onEditGroup(item.groupId)}>
+          Edit
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.groupId)}>
+          Delete
+        </Button>
+      </>
+    ),
+    [onEditGroup],
   );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold text-text-primary">Groups — {poolName}</h1>
-        <button
-          type="button"
-          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
-          onClick={onCreateGroup}
-        >
+    <PageSection
+      title={`Groups — ${poolName}`}
+      actions={
+        <Button variant="primary" size="lg" onClick={onCreateGroup}>
           Create Group
-        </button>
-      </div>
-
+        </Button>
+      }
+    >
       <EntityTable<GroupRow>
         columns={columns}
         data={groups}
@@ -140,7 +105,19 @@ export function GroupListPage({
         actions={renderActions}
         loading={loading}
         emptyMessage="No groups in this pool yet."
+        emptyIcon="👥"
       />
-    </div>
+
+      <ConfirmDialog
+        open={!!confirmingId}
+        onConfirm={() => confirmingId && handleDelete(confirmingId)}
+        onCancel={() => setConfirmingId(null)}
+        title="Delete Group"
+        body="This action cannot be undone. Members will lose their group permissions."
+        tone="destructive"
+        confirmLabel="Delete"
+        confirmDisabled={deleting}
+      />
+    </PageSection>
   );
 }

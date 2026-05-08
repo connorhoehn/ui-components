@@ -5,7 +5,7 @@
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -16,16 +16,17 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-[#3b82f6] text-white border-none hover:bg-[#2563eb]',
-  secondary: 'bg-[#6b7280] text-white border-none hover:bg-[#4b5563]',
-  ghost: 'bg-transparent text-[#374151] border border-border-field hover:bg-[#f3f4f6]',
-  danger: 'bg-[#ef4444] text-white border-none hover:bg-[#dc2626]',
+  primary: 'bg-[#2563eb] text-white border-none hover:bg-[#1d4ed8]',
+  secondary: 'bg-[#f1f5f9] text-[#334155] border border-[#e2e8f0] hover:bg-[#e2e8f0]',
+  ghost: 'bg-transparent text-[#334155] border border-[#d1d5db] hover:bg-[#f1f5f9]',
+  danger: 'bg-transparent text-[#dc2626] border border-[#fecaca] hover:bg-[#fef2f2]',
+  'danger-solid': 'bg-[#dc2626] text-white border-none hover:bg-[#b91c1c]',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: 'px-2.5 py-1 text-xs',
-  md: 'px-3.5 py-1.5 text-[13px]',
-  lg: 'px-[18px] py-2 text-sm',
+  md: 'px-4 py-2 text-sm',
+  lg: 'px-5 py-2.5 text-sm',
 };
 
 export function Button({

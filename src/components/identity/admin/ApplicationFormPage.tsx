@@ -4,7 +4,10 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 
 export interface ApplicationFormPageProps {
   application?: {
@@ -19,7 +22,15 @@ export interface ApplicationFormPageProps {
   };
   isEdit: boolean;
   pools: Array<{ poolId: string; poolName: string }>;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: {
+    clientName: string;
+    poolId: string;
+    redirectUris: string[];
+    postLogoutRedirectUris: string[];
+    grantTypes: string[];
+    responseTypes: string[];
+    scope: string;
+  }) => Promise<void>;
   onCancel: () => void;
   error?: string | null;
 }
@@ -46,33 +57,25 @@ function MultiInput({
 
   return (
     <div className="mb-4">
-      <label className="block mb-1 text-sm font-semibold text-text-primary">
+      <label className="block mb-1 text-sm font-semibold text-slate-800">
         {label}
       </label>
       {values.map((val, idx) => (
         <div key={idx} className="flex gap-2 items-center mb-1.5">
           <input
-            className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
+            className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
             value={val}
             onChange={(e) => handleChange(idx, e.target.value)}
             placeholder={placeholder}
           />
-          <button
-            type="button"
-            className="px-2.5 py-1.5 border border-danger rounded-sm bg-transparent text-danger cursor-pointer text-sm"
-            onClick={() => handleRemove(idx)}
-          >
+          <Button variant="danger" size="sm" onClick={() => handleRemove(idx)}>
             Remove
-          </button>
+          </Button>
         </div>
       ))}
-      <button
-        type="button"
-        className="px-3 py-1.5 border border-border rounded-sm bg-surface text-text-primary cursor-pointer text-sm"
-        onClick={handleAdd}
-      >
+      <Button variant="ghost" size="sm" onClick={handleAdd}>
         + Add
-      </button>
+      </Button>
     </div>
   );
 }
@@ -140,10 +143,10 @@ export function ApplicationFormPage({
   );
 
   return (
-    <div className="max-w-[640px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Application' : 'New Application'}</h1>
+    <PageSection title={isEdit ? 'Edit Application' : 'New Application'} className="max-w-[640px]">
+      {error && <Banner variant="error">{error}</Banner>}
 
-      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
+      <Card padding="md">
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -182,10 +185,10 @@ export function ApplicationFormPage({
 
         {/* Grant Types */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Grant Types</h3>
+          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Grant Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
-              <label key={gt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
+              <label key={gt} className="flex items-center gap-2 text-base text-slate-800 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={grantTypes.includes(gt)}
@@ -199,10 +202,10 @@ export function ApplicationFormPage({
 
         {/* Response Types */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Response Types</h3>
+          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Response Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {RESPONSE_TYPE_OPTIONS.map((rt) => (
-              <label key={rt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
+              <label key={rt} className="flex items-center gap-2 text-base text-slate-800 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={responseTypes.includes(rt)}
@@ -223,23 +226,16 @@ export function ApplicationFormPage({
           helpText="Space-separated list of scopes."
         />
 
-        <div className="flex gap-2 mt-6">
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={submitting}
-          >
+        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Application' : 'Create Application'}
-          </button>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
-            onClick={onCancel}
-          >
+          </Button>
+          <Button variant="ghost" size="lg" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageSection>
   );
 }

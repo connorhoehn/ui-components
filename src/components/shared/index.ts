@@ -1,5 +1,11 @@
 import '../../styles.css';
 
+export * from '../ui/Button';
+export * from '../ui/Card';
+export * from '../ui/Table';
+export * from '../ui/PageSection';
+export * from '../ui/IconButton';
+
 export { default as Banner } from './Banner';
 export * from './Banner';
 export * from './Chart';

@@ -4,6 +4,7 @@
 // Provides breadcrumb navigation and tab sub-nav.
 
 import { useCallback } from 'react';
+import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
 
 export interface PoolScopedLayoutProps {
@@ -35,19 +36,21 @@ function Tab({
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="sm"
       className={cn(
-        'px-4 py-2 cursor-pointer font-[inherit] text-sm bg-transparent border-none -mb-[2px]',
-        'border-b-2',
+        'rounded-none -mb-[2px] border-b-2',
         active
-          ? 'font-semibold text-primary border-b-primary'
-          : 'font-normal text-text-secondary border-b-transparent'
+          ? 'font-semibold text-blue-600 border-b-[#3b82f6]'
+          : 'font-normal text-slate-500 border-b-transparent'
       )}
       onClick={onClick}
+      aria-selected={active}
+      role="tab"
     >
       {label}
-    </button>
+    </Button>
   );
 }
 
@@ -77,16 +80,18 @@ export function PoolScopedLayout({
   return (
     <div className="flex flex-col gap-4">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-text-tertiary">
-        <button
-          type="button"
-          className="text-primary cursor-pointer bg-transparent border-none p-0 font-[inherit] text-sm underline"
+      <nav className="flex items-center gap-1.5 text-sm text-slate-400" aria-label="Breadcrumb">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="p-0 underline text-blue-600"
           onClick={onBack}
+          aria-label="Navigate to Pools"
         >
           Pools
-        </button>
+        </Button>
         <span>/</span>
-        <span className="text-text-primary font-medium">{poolName}</span>
+        <span className="text-slate-800 font-medium">{poolName}</span>
         {activeSection && (
           <>
             <span>/</span>
@@ -97,17 +102,13 @@ export function PoolScopedLayout({
 
       {/* Back button */}
       <div>
-        <button
-          type="button"
-          className="bg-transparent border border-border rounded-sm px-3 py-1.5 text-sm text-text-primary cursor-pointer"
-          onClick={onBack}
-        >
+        <Button variant="secondary" size="sm" onClick={onBack}>
           &larr; Back to Pools
-        </button>
+        </Button>
       </div>
 
       {/* Tab bar */}
-      <div className="flex border-b-2 border-border">
+      <div className="flex border-b-2 border-slate-200">
         {TABS.map((tab) => (
           <Tab
             key={tab.key}

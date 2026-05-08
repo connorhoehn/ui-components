@@ -4,7 +4,11 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
-import { cn } from '../../../lib/cn';
+import { FormField } from '../shared/FormField';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import ConfirmDialog from '../../shared/ConfirmDialog';
+import Modal from '../../shared/Modal';
 
 export interface EmailTemplateListPageProps {
   templates: Array<{ templateId: string; name: string; subject: string }>;
@@ -69,72 +73,31 @@ export function EmailTemplateListPage({
   );
 
   const renderActions = useCallback(
-    (item: TemplateRow) => {
-      if (confirmingId === item.templateId) {
-        return (
-          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
-            Are you sure?
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
-              onClick={() => handleDelete(item.templateId)}
-              disabled={deleting}
-            >
-              {deleting ? '...' : 'Yes'}
-            </button>
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-              onClick={() => setConfirmingId(null)}
-            >
-              No
-            </button>
-          </span>
-        );
-      }
-
-      return (
-        <>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onEditTemplate(item.templateId)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-info rounded-sm bg-surface text-info cursor-pointer mr-1.5"
-            onClick={() => { setTestModalId(item.templateId); setTestEmail(''); }}
-          >
-            Test Send
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
-            onClick={() => setConfirmingId(item.templateId)}
-          >
-            Delete
-          </button>
-        </>
-      );
-    },
-    [confirmingId, deleting, handleDelete, onEditTemplate],
+    (item: TemplateRow) => (
+      <>
+        <Button variant="ghost" size="sm" onClick={() => onEditTemplate(item.templateId)}>
+          Edit
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => { setTestModalId(item.templateId); setTestEmail(''); }}>
+          Test Send
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.templateId)}>
+          Delete
+        </Button>
+      </>
+    ),
+    [onEditTemplate],
   );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold text-text-primary">Email Templates</h1>
-        <button
-          type="button"
-          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
-          onClick={onCreateTemplate}
-        >
+    <PageSection
+      title="Email Templates"
+      actions={
+        <Button variant="primary" size="lg" onClick={onCreateTemplate}>
           Create Template
-        </button>
-      </div>
-
+        </Button>
+      }
+    >
       <EntityTable<TemplateRow>
         columns={columns}
         data={templates}
@@ -142,50 +105,44 @@ export function EmailTemplateListPage({
         actions={renderActions}
         loading={loading}
         emptyMessage="No email templates configured."
+        emptyIcon="✉️"
       />
 
-      {/* Test send modal */}
-      {testModalId && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-[1000]"
-          onClick={() => setTestModalId(null)}
-        >
-          <div
-            className="bg-surface rounded-md p-6 shadow-md min-w-[320px] max-w-[90vw]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3 className="text-base font-semibold text-text-primary mb-4">Send Test Email</h3>
-            <input
-              className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary box-border mb-4"
-              type="email"
-              placeholder="recipient@example.com"
-              value={testEmail}
-              onChange={(e) => setTestEmail(e.target.value)}
-              autoFocus
-            />
-            <div className="flex gap-2 justify-end">
-              <button
-                type="button"
-                className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer"
-                onClick={() => setTestModalId(null)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className={cn(
-                  "bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer",
-                  (sending || !testEmail.trim()) && "opacity-60"
-                )}
-                onClick={handleTestSend}
-                disabled={sending || !testEmail.trim()}
-              >
-                {sending ? 'Sending...' : 'Send'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal
+        open={!!testModalId}
+        onClose={() => setTestModalId(null)}
+        title="Send Test Email"
+        footer={
+          <>
+            <Button variant="ghost" size="md" onClick={() => setTestModalId(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="md" onClick={handleTestSend} disabled={sending || !testEmail.trim()}>
+              {sending ? 'Sending...' : 'Send'}
+            </Button>
+          </>
+        }
+      >
+        <FormField
+          label="Recipient Email"
+          name="test-email"
+          type="email"
+          value={testEmail}
+          onChange={(v) => setTestEmail(String(v))}
+          placeholder="recipient@example.com"
+        />
+      </Modal>
+
+      <ConfirmDialog
+        open={!!confirmingId}
+        onConfirm={() => confirmingId && handleDelete(confirmingId)}
+        onCancel={() => setConfirmingId(null)}
+        title="Delete Template"
+        body="This action cannot be undone. The template will be permanently removed."
+        tone="destructive"
+        confirmLabel="Delete"
+        confirmDisabled={deleting}
+      />
+    </PageSection>
   );
 }

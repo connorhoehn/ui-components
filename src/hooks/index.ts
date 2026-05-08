@@ -9,6 +9,7 @@ export { useIdentityDiagnostics } from './useIdentityDiagnostics';
 export { useIdentityEmailTemplates } from './useIdentityEmailTemplates';
 export { useIdentityGroups } from './useIdentityGroups';
 export { useIdentityMfa } from './useIdentityMfa';
+export { useIdentityResource } from './useIdentityResource';
 export { useIdentityMfaAdmin } from './useIdentityMfaAdmin';
 export { useIdentityPools } from './useIdentityPools';
 export { useIdentitySetupStatus } from './useIdentitySetupStatus';

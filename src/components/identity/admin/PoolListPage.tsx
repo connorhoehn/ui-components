@@ -4,7 +4,9 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
-import { cn } from '../../../lib/cn';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import ConfirmDialog from '../../shared/ConfirmDialog';
 
 export interface PoolListPageProps {
   pools: Array<{ poolId: string; poolName: string; clientId: string; createdAt: string }>;
@@ -55,72 +57,31 @@ export function PoolListPage({
   );
 
   const renderActions = useCallback(
-    (item: PoolRow) => {
-      if (confirmingId === item.poolId) {
-        return (
-          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
-            Are you sure?
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
-              onClick={() => handleDelete(item.poolId)}
-              disabled={deleting}
-            >
-              {deleting ? '...' : 'Yes'}
-            </button>
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-              onClick={() => setConfirmingId(null)}
-            >
-              No
-            </button>
-          </span>
-        );
-      }
-
-      return (
-        <>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onViewPool(item.poolId)}
-          >
-            View
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onEditPool(item.poolId)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
-            onClick={() => setConfirmingId(item.poolId)}
-          >
-            Delete
-          </button>
-        </>
-      );
-    },
-    [confirmingId, deleting, handleDelete, onEditPool, onViewPool],
+    (item: PoolRow) => (
+      <>
+        <Button variant="ghost" size="sm" onClick={() => onViewPool(item.poolId)}>
+          View
+        </Button>
+        <Button variant="ghost" size="sm" onClick={() => onEditPool(item.poolId)}>
+          Edit
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.poolId)}>
+          Delete
+        </Button>
+      </>
+    ),
+    [onEditPool, onViewPool],
   );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold text-text-primary">User Pools</h1>
-        <button
-          type="button"
-          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
-          onClick={onCreatePool}
-        >
+    <PageSection
+      title="User Pools"
+      actions={
+        <Button variant="primary" size="lg" onClick={onCreatePool}>
           Create Pool
-        </button>
-      </div>
-
+        </Button>
+      }
+    >
       <EntityTable<PoolRow>
         columns={columns}
         data={pools}
@@ -128,7 +89,19 @@ export function PoolListPage({
         actions={renderActions}
         loading={loading}
         emptyMessage="No user pools found. Create one to get started."
+        emptyIcon="🏊"
       />
-    </div>
+
+      <ConfirmDialog
+        open={!!confirmingId}
+        onConfirm={() => confirmingId && handleDelete(confirmingId)}
+        onCancel={() => setConfirmingId(null)}
+        title="Delete Pool"
+        body="This action cannot be undone. All users in this pool will be affected."
+        tone="destructive"
+        confirmLabel="Delete"
+        confirmDisabled={deleting}
+      />
+    </PageSection>
   );
 }

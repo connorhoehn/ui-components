@@ -4,17 +4,25 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
+import type { PoolSettings } from '../../../types/identity';
 
 export interface PoolFormPageProps {
   pool?: {
     poolId?: string;
     poolName: string;
     customAttributes: Record<string, string>;
-    settings: any;
+    settings: PoolSettings;
   };
   isEdit: boolean;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: {
+    poolName: string;
+    customAttributes: Record<string, string>;
+    settings: PoolSettings;
+  }) => Promise<void>;
   onCancel: () => void;
   error?: string | null;
 }
@@ -25,7 +33,7 @@ export interface PoolFormPageProps {
 
 export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFormPageProps) {
   const [poolName, setPoolName] = useState(pool?.poolName ?? '');
-  const [mfaConfig, setMfaConfig] = useState<string>(pool?.settings?.mfaConfiguration ?? 'OFF');
+  const [mfaConfig, setMfaConfig] = useState<'OFF' | 'OPTIONAL' | 'REQUIRED'>(pool?.settings?.mfaConfiguration ?? 'OFF');
   const [minLength, setMinLength] = useState<number>(pool?.settings?.passwordPolicy?.minLength ?? 8);
   const [requireUppercase, setRequireUppercase] = useState<boolean>(pool?.settings?.passwordPolicy?.requireUppercase ?? true);
   const [requireLowercase, setRequireLowercase] = useState<boolean>(pool?.settings?.passwordPolicy?.requireLowercase ?? true);
@@ -81,10 +89,10 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
   );
 
   return (
-    <div className="max-w-[640px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Pool' : 'Create Pool'}</h1>
+    <PageSection title={isEdit ? 'Edit Pool' : 'Create Pool'} className="max-w-[640px]">
+      {error && <Banner variant="error">{error}</Banner>}
 
-      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
+      <Card padding="md">
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -97,13 +105,13 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         />
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-text-primary mb-2">MFA Configuration</h3>
+          <h3 className="text-base font-semibold text-slate-800 mb-2">MFA Configuration</h3>
           <FormField
             label="MFA Mode"
             name="mfaConfig"
             type="select"
             value={mfaConfig}
-            onChange={(v) => setMfaConfig(String(v))}
+            onChange={(v) => setMfaConfig(String(v) as 'OFF' | 'OPTIONAL' | 'REQUIRED')}
             options={[
               { value: 'OFF', label: 'Off' },
               { value: 'OPTIONAL', label: 'Optional' },
@@ -113,7 +121,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         </section>
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-text-primary mb-2">Password Policy</h3>
+          <h3 className="text-base font-semibold text-slate-800 mb-2">Password Policy</h3>
           <FormField
             label="Minimum Length"
             name="minLength"
@@ -152,56 +160,41 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         </section>
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
+          <h3 className="text-base font-semibold text-slate-800 mb-2">Custom Attributes</h3>
           {customAttrs.map((attr, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-2">
               <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
+                className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
               <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
+                className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}
               />
-              <button
-                type="button"
-                className="px-2.5 py-1.5 border border-danger rounded-sm bg-transparent text-danger cursor-pointer text-sm"
-                onClick={() => handleRemoveAttr(idx)}
-              >
+              <Button variant="danger" size="sm" onClick={() => handleRemoveAttr(idx)}>
                 Remove
-              </button>
+              </Button>
             </div>
           ))}
-          <button
-            type="button"
-            className="px-3 py-1.5 border border-border rounded-sm bg-surface text-text-primary cursor-pointer text-sm"
-            onClick={handleAddAttr}
-          >
+          <Button variant="ghost" size="sm" onClick={handleAddAttr}>
             + Add Attribute
-          </button>
+          </Button>
         </section>
 
-        <div className="flex gap-2 mt-6">
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={submitting}
-          >
+        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Pool' : 'Create Pool'}
-          </button>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
-            onClick={onCancel}
-          >
+          </Button>
+          <Button variant="ghost" size="lg" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageSection>
   );
 }

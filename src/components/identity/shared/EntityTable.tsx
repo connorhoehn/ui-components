@@ -1,16 +1,19 @@
 // src/components/identity/shared/EntityTable.tsx
 //
-// Generic sortable data table with loading skeleton, empty state,
-// optional row click, and per-row action buttons.
+// Generic sortable data table composing the base Table and Card components.
+// Provides loading skeleton, empty state, sorting, and per-row actions.
 
 import { useState, useCallback, useMemo } from 'react';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { Table, TableHead, TableBody, TableRow, TableTh, TableTd } from '../../ui/Table';
 
 export interface Column<T> {
   key: string;
   header: string;
   render?: (item: T) => React.ReactNode;
   sortable?: boolean;
+  width?: string;
+  align?: 'left' | 'right' | 'center';
 }
 
 export interface EntityTableProps<T> {
@@ -20,6 +23,7 @@ export interface EntityTableProps<T> {
   onRowClick?: (item: T) => void;
   actions?: (item: T) => React.ReactNode;
   emptyMessage?: string;
+  emptyIcon?: string;
   loading?: boolean;
 }
 
@@ -34,6 +38,7 @@ export function EntityTable<T extends Record<string, unknown>>({
   onRowClick,
   actions,
   emptyMessage = 'No records found.',
+  emptyIcon = '📋',
   loading = false,
 }: EntityTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -63,97 +68,95 @@ export function EntityTable<T extends Record<string, unknown>>({
 
   if (loading) {
     return (
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none"
-              >
-                {col.header}
-              </th>
-            ))}
-            {actions && (
-              <th className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none">
-                Actions
-              </th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <tr key={i}>
+      <Card>
+        <Table>
+          <TableHead>
+            <tr>
               {columns.map((col) => (
-                <td key={col.key} className="px-4 py-2 border-b border-border text-text-primary align-middle">
-                  <div className="h-5 rounded-sm bg-border opacity-50 animate-pulse" />
-                </td>
+                <TableTh key={col.key} style={col.width ? { width: col.width } : undefined}>
+                  {col.header}
+                </TableTh>
               ))}
-              {actions && (
-                <td className="px-4 py-2 border-b border-border text-text-primary align-middle">
-                  <div className="h-5 rounded-sm bg-border opacity-50 animate-pulse" />
-                </td>
-              )}
+              {actions && <TableTh className="text-right">Actions</TableTh>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </TableHead>
+          <TableBody>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={i}>
+                {columns.map((col) => (
+                  <TableTd key={col.key}>
+                    <div className="h-4 rounded bg-slate-100 animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
+                  </TableTd>
+                ))}
+                {actions && (
+                  <TableTd className="text-right">
+                    <div className="h-4 w-20 rounded bg-slate-100 animate-pulse ml-auto" />
+                  </TableTd>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
     );
   }
 
   if (data.length === 0) {
-    return <p className="p-6 text-center text-text-tertiary">{emptyMessage}</p>;
+    return (
+      <Card className="flex flex-col items-center justify-center min-h-[220px] p-8">
+        <span className="text-[42px] mb-3">{emptyIcon}</span>
+        <p className="text-sm font-medium text-slate-500 text-center max-w-[280px] m-0">{emptyMessage}</p>
+      </Card>
+    );
   }
 
   return (
-    <table className="w-full border-collapse text-sm">
-      <thead>
-        <tr>
-          {columns.map((col) => (
-            <th
-              key={col.key}
-              className={cn(
-                'text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none',
-                col.sortable ? 'cursor-pointer' : 'cursor-default'
-              )}
-              onClick={col.sortable ? () => handleSort(col.key) : undefined}
-            >
-              {col.header}
-              {col.sortable && sortKey === col.key && (
-                <span className="ml-1">{sortDir === 'asc' ? '▲' : '▼'}</span>
-              )}
-            </th>
-          ))}
-          {actions && (
-            <th className="text-left px-4 py-2 border-b-2 border-border text-text-secondary font-semibold text-xs whitespace-nowrap select-none">
-              Actions
-            </th>
-          )}
-        </tr>
-      </thead>
-      <tbody>
-        {sortedData.map((item) => (
-          <tr
-            key={String(item[keyField])}
-            className={cn(onRowClick && 'cursor-pointer')}
-            onClick={onRowClick ? () => onRowClick(item) : undefined}
-          >
+    <Card>
+      <Table>
+        <TableHead>
+          <tr>
             {columns.map((col) => (
-              <td key={col.key} className="px-4 py-2 border-b border-border text-text-primary align-middle">
-                {col.render ? col.render(item) : String(item[col.key] ?? '')}
-              </td>
-            ))}
-            {actions && (
-              <td
-                className="px-4 py-2 border-b border-border text-text-primary align-middle"
-                onClick={(e) => e.stopPropagation()}
+              <TableTh
+                key={col.key}
+                sortable={col.sortable}
+                sortDirection={col.sortable && sortKey === col.key ? sortDir : null}
+                style={col.width ? { width: col.width } : undefined}
+                className={col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : undefined}
+                onClick={col.sortable ? () => handleSort(col.key) : undefined}
               >
-                {actions(item)}
-              </td>
-            )}
+                {col.header}
+              </TableTh>
+            ))}
+            {actions && <TableTh className="text-right">Actions</TableTh>}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </TableHead>
+        <TableBody>
+          {sortedData.map((item) => (
+            <TableRow
+              key={String(item[keyField])}
+              clickable={!!onRowClick}
+              onClick={onRowClick ? () => onRowClick(item) : undefined}
+            >
+              {columns.map((col) => (
+                <TableTd
+                  key={col.key}
+                  style={col.width ? { width: col.width } : undefined}
+                  className={col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : undefined}
+                >
+                  {col.render ? col.render(item) : String(item[col.key] ?? '')}
+                </TableTd>
+              ))}
+              {actions && (
+                <TableTd className="text-right" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-end gap-2">
+                    {actions(item)}
+                  </div>
+                </TableTd>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

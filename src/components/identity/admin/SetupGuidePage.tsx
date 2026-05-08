@@ -3,6 +3,9 @@
 // Step-by-step setup checklist with expandable details and progress indicator.
 
 import { useState, useMemo, useCallback } from 'react';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
 
 export interface SetupGuidePageProps {
@@ -48,21 +51,17 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Create User Pool',
         done: status.hasUserPools,
         content: (
-          <div>
-            {status.hasUserPools ? (
-              <p>
-                {status.poolCount} pool(s) configured.
-              </p>
-            ) : (
-              <p>No user pools yet.</p>
-            )}
-            <button
-              type="button"
-              className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
-              onClick={() => onNavigate('/identity/admin/pools/new')}
-            >
-              Create a User Pool
-            </button>
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-sm text-slate-600">
+              {status.hasUserPools
+                ? `${status.poolCount} pool(s) configured.`
+                : 'No user pools yet.'}
+            </p>
+            <div>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate('/identity/admin/pools/new')}>
+                Create a User Pool
+              </Button>
+            </div>
           </div>
         ),
       },
@@ -70,19 +69,17 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Register Application',
         done: status.hasClients,
         content: (
-          <div>
-            {status.hasClients ? (
-              <p>{status.clientCount} application(s) registered.</p>
-            ) : (
-              <p>No applications registered.</p>
-            )}
-            <button
-              type="button"
-              className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
-              onClick={() => onNavigate('/identity/admin/applications/new')}
-            >
-              Register an Application
-            </button>
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-sm text-slate-600">
+              {status.hasClients
+                ? `${status.clientCount} application(s) registered.`
+                : 'No applications registered.'}
+            </p>
+            <div>
+              <Button variant="ghost" size="sm" onClick={() => onNavigate('/identity/admin/applications/new')}>
+                Register an Application
+              </Button>
+            </div>
           </div>
         ),
       },
@@ -90,23 +87,21 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Create Admin User',
         done: status.hasAdminUser,
         content: (
-          <div>
+          <div className="flex flex-col gap-2">
             {status.hasAdminUser ? (
               <>
-                <p>Admin users: {status.adminEmails.join(', ')}</p>
-                <p>{status.totalUsers} total user(s) across all pools.</p>
+                <p className="m-0 text-sm text-slate-600">Admin users: {status.adminEmails.join(', ')}</p>
+                <p className="m-0 text-sm text-slate-600">{status.totalUsers} total user(s) across all pools.</p>
               </>
             ) : (
-              <p>No admin user found. Create one in a user pool.</p>
+              <p className="m-0 text-sm text-slate-600">No admin user found. Create one in a user pool.</p>
             )}
             {status.firstPoolId && (
-              <button
-                type="button"
-                className="bg-transparent border-none text-primary cursor-pointer text-sm p-0 underline"
-                onClick={() => onNavigate(`/identity/admin/pools/${status.firstPoolId}/users/new`)}
-              >
-                Create Admin User
-              </button>
+              <div>
+                <Button variant="ghost" size="sm" onClick={() => onNavigate(`/identity/admin/pools/${status.firstPoolId}/users/new`)}>
+                  Create Admin User
+                </Button>
+              </div>
             )}
           </div>
         ),
@@ -115,25 +110,25 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Configure SMTP',
         done: status.smtpConfigured,
         content: (
-          <div>
-            {status.smtpConfigured ? (
-              <p>SMTP configured: {status.smtpHost}</p>
-            ) : (
-              <p>SMTP is not yet configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS environment variables.</p>
-            )}
-          </div>
+          <p className="m-0 text-sm text-slate-600">
+            {status.smtpConfigured
+              ? `SMTP configured: ${status.smtpHost}`
+              : 'SMTP is not yet configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS environment variables.'}
+          </p>
         ),
       },
       {
         title: 'Configure Issuer',
         done: status.issuerConfigured,
         content: (
-          <div>
-            <p>Issuer: <code>{status.issuer || 'Not set'}</code></p>
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-sm text-slate-600">
+              Issuer: <code className="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">{status.issuer || 'Not set'}</code>
+            </p>
             {status.wellKnownUrl && (
-              <p>
+              <p className="m-0 text-sm text-slate-600">
                 Well-known URL:{' '}
-                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-primary">
+                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
                   {status.wellKnownUrl}
                 </a>
               </p>
@@ -145,12 +140,14 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Test Integration',
         done: status.hasUserPools && status.hasClients && status.issuerConfigured,
         content: (
-          <div>
+          <div className="flex flex-col gap-3">
             {status.firstClientId ? (
               <>
-                <p>Client ID: <code>{status.firstClientId}</code></p>
-                <p>Use this code snippet to test the OIDC authorization flow:</p>
-                <pre className="px-4 py-2 bg-surface-inset border border-border rounded-sm font-mono text-sm overflow-x-auto whitespace-pre mt-2">{`// OIDC Authorization Code Flow
+                <p className="m-0 text-sm text-slate-600">
+                  Client ID: <code className="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">{status.firstClientId}</code>
+                </p>
+                <p className="m-0 text-sm text-slate-600">Use this code snippet to test the OIDC authorization flow:</p>
+                <pre className="px-4 py-3 bg-slate-900 text-slate-200 rounded-md font-mono text-xs overflow-x-auto whitespace-pre m-0">{`// OIDC Authorization Code Flow
 const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
   client_id: '${status.firstClientId}',
   response_type: 'code',
@@ -161,7 +158,7 @@ const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
 window.location.href = authUrl;`}</pre>
               </>
             ) : (
-              <p>Complete the previous steps first to test the integration.</p>
+              <p className="m-0 text-sm text-slate-600">Complete the previous steps first to test the integration.</p>
             )}
           </div>
         ),
@@ -174,51 +171,55 @@ window.location.href = authUrl;`}</pre>
   const progressPercent = Math.round((completedCount / steps.length) * 100);
 
   return (
-    <div className="max-w-[720px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-2">Setup Guide</h1>
-
-      {/* Progress */}
-      <p className="text-sm text-text-secondary mb-1.5">
-        {completedCount} of {steps.length} steps completed ({progressPercent}%)
-      </p>
-      <div className="h-2 bg-border rounded-sm overflow-hidden mb-6">
+    <PageSection
+      title="Setup Guide"
+      description={`${completedCount} of ${steps.length} steps completed (${progressPercent}%)`}
+    >
+      {/* Progress bar */}
+      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-success rounded-sm transition-[width] duration-300 ease-in-out"
+          className="h-full bg-green-500 rounded-full transition-[width] duration-300 ease-in-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
 
       {/* Steps */}
-      {steps.map((step, idx) => (
-        <div key={idx} className="border border-border rounded-md mb-2 overflow-hidden bg-surface">
-          <div
-            className="flex items-center justify-between p-4 cursor-pointer select-none"
-            onClick={() => toggleStep(idx)}
-          >
-            <div className="flex items-center flex-1">
-              <div
-                className={cn(
-                  "w-6 h-6 rounded-full flex items-center justify-center font-bold text-[14px] shrink-0",
-                  step.done
-                    ? "bg-success text-white"
-                    : "bg-border text-text-tertiary"
-                )}
-              >
-                {step.done ? '✓' : idx + 1}
+      <div className="flex flex-col gap-2">
+        {steps.map((step, idx) => (
+          <Card key={idx}>
+            <div
+              className="flex items-center justify-between px-5 py-4 cursor-pointer select-none"
+              onClick={() => toggleStep(idx)}
+              role="button"
+              aria-expanded={expanded === idx}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    'w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0',
+                    step.done
+                      ? 'bg-green-500 text-white'
+                      : 'bg-slate-100 text-slate-400'
+                  )}
+                >
+                  {step.done ? '✓' : idx + 1}
+                </div>
+                <span className="text-sm font-medium text-slate-800">{step.title}</span>
               </div>
-              <span className="flex-1 ml-3 text-base font-medium text-text-primary">{step.title}</span>
+              <span className="text-slate-400 text-sm">
+                {expanded === idx ? '▲' : '▼'}
+              </span>
             </div>
-            <span className="text-text-tertiary text-[18px]">
-              {expanded === idx ? '▲' : '▼'}
-            </span>
-          </div>
-          {expanded === idx && (
-            <div className="px-4 pb-4 text-sm text-text-secondary leading-relaxed">
-              {step.content}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+            {expanded === idx && (
+              <div className="px-5 pb-5 pt-0 border-t border-slate-100">
+                <div className="pt-4">
+                  {step.content}
+                </div>
+              </div>
+            )}
+          </Card>
+        ))}
+      </div>
+    </PageSection>
   );
 }

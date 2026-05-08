@@ -3,7 +3,10 @@
 // Overview dashboard showing stats cards, pool list, and quick-action links.
 
 import { useMemo } from 'react';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import EmptyState from '../../shared/EmptyState';
 
 export interface AdminDashboardPageProps {
   stats: { userPools: number; clients: number; totalUsers: number };
@@ -28,89 +31,72 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-border rounded-md h-[60px] opacity-50"
-            />
+            <Card key={i} padding="md">
+              <div className="h-5 w-12 rounded bg-slate-100 animate-pulse mb-2" />
+              <div className="h-3 w-20 rounded bg-slate-100 animate-pulse" />
+            </Card>
           ))}
         </div>
-        <div className="bg-border rounded-md h-[60px] opacity-50" />
+        <Card className="h-[200px] animate-pulse" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <PageSection title="Dashboard">
       {/* Stats */}
       <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {statsCards.map((s) => (
-          <div key={s.label} className="bg-surface border border-border rounded-md p-4 shadow-sm">
-            <div className="text-[2rem] font-bold text-primary mb-1">{s.value}</div>
-            <div className="text-sm text-text-secondary">{s.label}</div>
-          </div>
+          <Card key={s.label} padding="md">
+            <div className="text-[2rem] font-bold text-blue-600 mb-1">{s.value}</div>
+            <div className="text-sm text-slate-500">{s.label}</div>
+          </Card>
         ))}
       </section>
 
       {/* Pools */}
-      <section>
-        <h2 className="text-lg font-semibold text-text-primary mb-2">User Pools</h2>
-        <div className="bg-surface border border-border rounded-md p-0 overflow-hidden shadow-sm">
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-slate-900 m-0">User Pools</h2>
+        <Card>
           {pools.length === 0 ? (
-            <p className="p-4 text-text-tertiary text-center">
-              No pools created yet.
-            </p>
+            <EmptyState title="No pools created yet" actionLabel="Create Pool" onAction={() => onNavigate('/identity/admin/pools/new')} />
           ) : (
-            pools.map((pool) => (
-              <div key={pool.poolId} className="flex items-center justify-between px-4 py-2 border-b border-border">
-                <div>
-                  <span className="font-medium text-text-primary">{pool.poolName}</span>
-                  <span className="ml-3 text-sm text-text-tertiary">
-                    {pool.createdAt}
-                  </span>
+            pools.map((pool, i) => (
+              <div
+                key={pool.poolId}
+                className={`flex items-center justify-between px-4 py-3 ${i < pools.length - 1 ? 'border-b border-slate-100' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-slate-800">{pool.poolName}</span>
+                  <span className="text-xs text-slate-400">{pool.createdAt}</span>
                 </div>
-                <button
-                  type="button"
-                  className="bg-transparent border-none text-primary cursor-pointer text-sm font-medium p-0 underline"
-                  onClick={() => onNavigate(`/identity/admin/pools/${pool.poolId}`)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => onNavigate(`/identity/admin/pools/${pool.poolId}`)}>
                   View
-                </button>
+                </Button>
               </div>
             ))
           )}
-        </div>
+        </Card>
       </section>
 
       {/* Quick Links */}
-      <section>
-        <h2 className="text-lg font-semibold text-text-primary mb-2">Quick Actions</h2>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
-            onClick={() => onNavigate('/identity/admin/pools/new')}
-          >
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-slate-900 m-0">Quick Actions</h2>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="secondary" size="lg" onClick={() => onNavigate('/identity/admin/pools/new')}>
             Create Pool
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
-            onClick={() => onNavigate('/identity/admin/applications/new')}
-          >
+          </Button>
+          <Button variant="secondary" size="lg" onClick={() => onNavigate('/identity/admin/applications/new')}>
             Create Application
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 rounded-sm border border-primary bg-transparent text-primary text-sm font-medium cursor-pointer"
-            onClick={() => onNavigate('/identity/admin/setup')}
-          >
+          </Button>
+          <Button variant="secondary" size="lg" onClick={() => onNavigate('/identity/admin/setup')}>
             Setup Guide
-          </button>
+          </Button>
         </div>
       </section>
-    </div>
+    </PageSection>
   );
 }

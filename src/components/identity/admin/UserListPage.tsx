@@ -5,7 +5,9 @@
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
 import { StatusBadge } from '../shared/StatusBadge';
-import { cn } from '../../../lib/cn';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import ConfirmDialog from '../../shared/ConfirmDialog';
 
 export interface UserListPageProps {
   users: Array<{
@@ -61,11 +63,12 @@ export function UserListPage({
         key: 'name',
         header: 'Name',
         render: (item) =>
-          [item.givenName, item.familyName].filter(Boolean).join(' ') || '-',
+          [item.givenName, item.familyName].filter(Boolean).join(' ') || '—',
       },
       {
         key: 'status',
         header: 'Status',
+        width: '180px',
         render: (item) => <StatusBadge status={item.status} />,
       },
       { key: 'createdAt', header: 'Created', sortable: true },
@@ -74,65 +77,28 @@ export function UserListPage({
   );
 
   const renderActions = useCallback(
-    (item: UserRow) => {
-      if (confirmingId === item.userId) {
-        return (
-          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
-            Are you sure?
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
-              onClick={() => handleDelete(item.userId)}
-              disabled={deleting}
-            >
-              {deleting ? '...' : 'Yes'}
-            </button>
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-              onClick={() => setConfirmingId(null)}
-            >
-              No
-            </button>
-          </span>
-        );
-      }
-
-      return (
-        <>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onEditUser(item.userId)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
-            onClick={() => setConfirmingId(item.userId)}
-          >
-            Delete
-          </button>
-        </>
-      );
-    },
-    [confirmingId, deleting, handleDelete, onEditUser],
+    (item: UserRow) => (
+      <>
+        <Button variant="ghost" size="sm" onClick={() => onEditUser(item.userId)}>
+          Edit
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.userId)}>
+          Delete
+        </Button>
+      </>
+    ),
+    [onEditUser],
   );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-semibold text-text-primary">Users — {poolName}</h1>
-        <button
-          type="button"
-          className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
-          onClick={onCreateUser}
-        >
+    <PageSection
+      title={`Users — ${poolName}`}
+      actions={
+        <Button variant="primary" size="lg" onClick={onCreateUser}>
           Create User
-        </button>
-      </div>
-
+        </Button>
+      }
+    >
       <EntityTable<UserRow>
         columns={columns}
         data={users}
@@ -140,7 +106,19 @@ export function UserListPage({
         actions={renderActions}
         loading={loading}
         emptyMessage="No users in this pool yet."
+        emptyIcon="👤"
       />
-    </div>
+
+      <ConfirmDialog
+        open={!!confirmingId}
+        onConfirm={() => confirmingId && handleDelete(confirmingId)}
+        onCancel={() => setConfirmingId(null)}
+        title="Delete User"
+        body="This action cannot be undone. The user will be permanently removed."
+        tone="destructive"
+        confirmLabel="Delete"
+        confirmDisabled={deleting}
+      />
+    </PageSection>
   );
 }

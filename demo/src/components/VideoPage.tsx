@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { PageHeader, ExampleBlock, PropsTable, useRegisterToc } from '../shared';
 import {
   VideoPlayer,
@@ -9,16 +9,21 @@ import {
   ReactionPicker,
   StatusStrip,
   ViewerCount,
+  CallWidget,
 } from '@/components/video';
 import type {
   StreamMetrics,
   Reaction,
   Participant,
   NetworkQuality,
+  CallWidgetState,
+  CallMode,
+  CallWidgetParticipant,
 } from '@/components/video';
 
 export default function VideoPage() {
   useRegisterToc([
+    { id: 'call-widget', label: 'CallWidget', level: 2 },
     { id: 'video-player', label: 'VideoPlayer', level: 2 },
     { id: 'video-grid', label: 'VideoGrid', level: 2 },
     { id: 'reactions', label: 'Reactions', level: 2 },
@@ -37,6 +42,7 @@ export default function VideoPage() {
         importPath="import { VideoPlayer, VideoGrid, ... } from '@connorhoehn/ui-components/video'"
       />
 
+      <CallWidgetExample />
       <VideoPlayerExample />
       <VideoGridExample />
       <ReactionsExample />
@@ -46,6 +52,113 @@ export default function VideoPage() {
       <ViewerCountExample />
       <PropsSection />
     </div>
+  );
+}
+
+const mockCallParticipants: CallWidgetParticipant[] = [
+  { id: '1', displayName: 'Sarah Chen', isSpeaking: false, isMuted: false },
+  { id: '2', displayName: 'Marcus Johnson', isSpeaking: true, isMuted: false },
+  { id: '3', displayName: 'Alex Rivera', isSpeaking: false, isMuted: true },
+];
+
+function CallWidgetExample() {
+  const [state, setState] = useState<CallWidgetState>('idle');
+  const [mode, setMode] = useState<CallMode>('audio');
+  const [minimized, setMinimized] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval>>();
+
+  useEffect(() => {
+    if (state === 'active') {
+      setDuration(0);
+      timerRef.current = setInterval(() => setDuration(d => d + 1), 1000);
+    } else {
+      clearInterval(timerRef.current);
+    }
+    return () => clearInterval(timerRef.current);
+  }, [state]);
+
+  return (
+    <ExampleBlock
+      id="call-widget"
+      title="CallWidget"
+      description="Floating, draggable call control for audio/video calls. Supports incoming ring, active call with controls (mute, camera, screen share, add participant, end), minimized pill, and upgrade from audio to video. Click a button below to see different states."
+      code={`<CallWidget
+  state="active"
+  mode="audio"
+  participants={participants}
+  localParticipant={localUser}
+  duration={elapsed}
+  isMuted={isMuted}
+  draggable
+  onToggleMute={() => setIsMuted(m => !m)}
+  onUpgradeToVideo={() => setMode('video')}
+  onAddParticipant={() => openPicker()}
+  onEndCall={() => endCall()}
+  onMinimize={() => setMinimized(m => !m)}
+/>`}
+      background="#0f172a"
+    >
+      <div style={{ minHeight: 320, position: 'relative' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+          {(['audio', 'video'] as const).map(m => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => { setMode(m); setState('connecting'); setTimeout(() => setState('active'), 1200); }}
+              style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#e2e8f0', cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, fontWeight: 600 }}
+            >
+              Start {m} call
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setState('ringing')}
+            style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#e2e8f0', cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, fontWeight: 600 }}
+          >
+            Simulate incoming
+          </button>
+          <button
+            type="button"
+            onClick={() => { setState('idle'); setMinimized(false); }}
+            style={{ padding: '6px 14px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#e2e8f0', cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, fontWeight: 600 }}
+          >
+            Reset
+          </button>
+        </div>
+        <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 12 }}>
+          State: <strong style={{ color: '#e2e8f0' }}>{state}</strong> &middot; Mode: <strong style={{ color: '#e2e8f0' }}>{mode}</strong> &middot; Minimized: <strong style={{ color: '#e2e8f0' }}>{minimized ? 'yes' : 'no'}</strong>
+        </div>
+
+        <CallWidget
+          state={state}
+          mode={mode}
+          participants={state === 'active' ? mockCallParticipants : []}
+          localParticipant={{ id: 'local', displayName: 'You', isMuted, isSpeaking: false }}
+          callerName="Sarah Chen"
+          duration={state === 'active' ? duration : undefined}
+          minimized={minimized}
+          isMuted={isMuted}
+          isCameraOn={isCameraOn}
+          isScreenSharing={isScreenSharing}
+          draggable={false}
+          onAnswer={() => { setState('connecting'); setTimeout(() => setState('active'), 1200); }}
+          onDecline={() => setState('idle')}
+          onEndCall={() => { setState('idle'); setMinimized(false); }}
+          onToggleMute={() => setIsMuted(m => !m)}
+          onToggleCamera={() => setIsCameraOn(c => !c)}
+          onToggleScreenShare={() => setIsScreenSharing(s => !s)}
+          onUpgradeToVideo={() => setMode('video')}
+          onAddParticipant={() => console.log('[CallWidget] Add participant')}
+          onMinimize={() => setMinimized(m => !m)}
+          style={{ position: 'static', transform: 'none' }}
+          className="relative z-auto"
+        />
+      </div>
+    </ExampleBlock>
   );
 }
 

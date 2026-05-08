@@ -1,5 +1,3 @@
-// Identity diagnostics hook — cluster health, rates, and DLQ management.
-
 import { useState, useCallback } from 'react';
 import { useIdentityContext } from '../contexts/IdentityContext';
 import { apiFetch } from './identityApi';

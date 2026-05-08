@@ -4,7 +4,10 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 
 export interface EmailTemplateFormPageProps {
   template?: {
@@ -16,7 +19,7 @@ export interface EmailTemplateFormPageProps {
     variables: string[];
   };
   isEdit: boolean;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: { name: string; subject: string; htmlBody: string; textBody: string; variables: string[] }) => Promise<void>;
   onCancel: () => void;
   error?: string | null;
 }
@@ -73,10 +76,10 @@ export function EmailTemplateFormPage({
   );
 
   return (
-    <div className="max-w-[800px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Email Template' : 'Create Email Template'}</h1>
+    <PageSection title={isEdit ? 'Edit Email Template' : 'Create Email Template'} className="max-w-[800px]">
+      {error && <Banner variant="error">{error}</Banner>}
 
-      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
+      <Card padding="md">
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -100,27 +103,23 @@ export function EmailTemplateFormPage({
         {/* HTML Body */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1">
-            <label className="text-sm font-semibold text-text-primary">
+            <label className="text-sm font-semibold text-slate-800">
               HTML Body
             </label>
-            <button
-              type="button"
-              className="px-3.5 py-1.5 border border-border rounded-sm bg-surface text-text-primary cursor-pointer text-sm"
-              onClick={() => setShowPreview((v) => !v)}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setShowPreview((v) => !v)}>
               {showPreview ? 'Hide Preview' : 'Show Preview'}
-            </button>
+            </Button>
           </div>
           <textarea
             value={htmlBody}
             onChange={(e) => setHtmlBody(e.target.value)}
             placeholder="<html><body>...</body></html>"
             rows={10}
-            className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary resize-y box-border font-mono"
+            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 resize-y box-border font-mono"
           />
           {showPreview && (
             <div
-              className="border border-border rounded-sm p-4 bg-white min-h-[200px] mt-2"
+              className="border border-slate-200 rounded-sm p-4 bg-white min-h-[200px] mt-2"
               dangerouslySetInnerHTML={{ __html: htmlBody }}
             />
           )}
@@ -137,23 +136,25 @@ export function EmailTemplateFormPage({
 
         {/* Variables */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Variables</h3>
+          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Variables</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {variables.map((v) => (
-              <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
+              <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500 text-white text-sm font-medium">
                 {'{{' + v + '}}'}
-                <button
-                  type="button"
-                  className="bg-transparent border-none text-white cursor-pointer text-[14px] leading-none px-0.5"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-0 text-white text-[14px] leading-none min-w-0 min-h-0"
                   onClick={() => removeVariable(v)}
+                  aria-label={`Remove variable ${v}`}
                 >
                   x
-                </button>
+                </Button>
               </span>
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary box-border"
+            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 box-border"
             placeholder="Type variable name and press Enter"
             value={varInput}
             onChange={(e) => setVarInput(e.target.value)}
@@ -161,23 +162,16 @@ export function EmailTemplateFormPage({
           />
         </section>
 
-        <div className="flex gap-2 mt-6">
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={submitting}
-          >
+        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Template' : 'Create Template'}
-          </button>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
-            onClick={onCancel}
-          >
+          </Button>
+          <Button variant="ghost" size="lg" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageSection>
   );
 }

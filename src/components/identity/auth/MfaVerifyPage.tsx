@@ -27,8 +27,8 @@ export function MfaVerifyPage({
     setLoading(true);
     try {
       await onVerify(code);
-    } catch (err: any) {
-      setLocalError(err?.message || 'Verification failed');
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Verification failed');
     } finally {
       setLoading(false);
     }
@@ -41,28 +41,28 @@ export function MfaVerifyPage({
     setLoading(true);
     try {
       await onVerifyBackup(backupCode.trim());
-    } catch (err: any) {
-      setLocalError(err?.message || 'Verification failed');
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Verification failed');
     } finally {
       setLoading(false);
     }
   }, [backupCode, onVerifyBackup]);
 
   return (
-    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[440px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="Multi-factor verification">
-        <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-info-bg flex items-center justify-center">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-info">
+    <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
+      <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Multi-factor verification">
+        <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
 
-        <h1 className="text-xl font-bold text-text-primary mb-2 mt-0 text-center">Verify Your Identity</h1>
+        <h1 className="text-xl font-bold text-slate-800 mb-2 mt-0 text-center">Verify Your Identity</h1>
 
         {mode === 'totp' ? (
           <>
-            <p className="text-sm text-text-secondary mb-6 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-slate-500 mb-6 mt-0 text-center leading-relaxed">
               Enter the 6-digit code from your authenticator app
             </p>
 
@@ -79,19 +79,20 @@ export function MfaVerifyPage({
               autoFocus
             />
 
-            {loading && <p className="text-center text-sm text-text-tertiary mt-3">Verifying...</p>}
+            {loading && <p className="text-center text-sm text-slate-400 mt-3">Verifying...</p>}
 
-            <button
-              type="button"
-              className="block text-center mt-6 text-sm text-primary bg-transparent border-none cursor-pointer font-[inherit] underline mx-auto hover:opacity-80"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="block mt-6 mx-auto underline text-blue-600"
               onClick={() => { setMode('backup'); setLocalError(null); }}
             >
               Use a backup code instead
-            </button>
+            </Button>
           </>
         ) : (
           <>
-            <p className="text-sm text-text-secondary mb-6 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-slate-500 mb-6 mt-0 text-center leading-relaxed">
               Enter one of your backup codes
             </p>
 
@@ -122,13 +123,14 @@ export function MfaVerifyPage({
               </Button>
             </form>
 
-            <button
-              type="button"
-              className="block text-center mt-6 text-sm text-primary bg-transparent border-none cursor-pointer font-[inherit] underline mx-auto hover:opacity-80"
+            <Button
+              variant="ghost"
+              size="sm"
+              className="block mt-6 mx-auto underline text-blue-600"
               onClick={() => { setMode('totp'); setLocalError(null); }}
             >
               Use authenticator code instead
-            </button>
+            </Button>
           </>
         )}
       </div>

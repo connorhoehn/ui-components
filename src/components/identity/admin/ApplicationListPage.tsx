@@ -4,7 +4,10 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
-import { cn } from '../../../lib/cn';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Chip from '../../shared/Chip';
+import ConfirmDialog from '../../shared/ConfirmDialog';
 
 export interface ApplicationListPageProps {
   applications: Array<{
@@ -54,20 +57,24 @@ export function ApplicationListPage({
   const columns: Column<AppRow>[] = useMemo(
     () => [
       { key: 'clientName', header: 'Name', sortable: true },
-      { key: 'clientId', header: 'Client ID' },
+      {
+        key: 'clientId',
+        header: 'Client ID',
+        render: (item) => (
+          <span className="font-mono text-xs text-slate-500">{item.clientId}</span>
+        ),
+      },
       { key: 'poolName', header: 'Pool', render: (item) => item.poolName || item.poolId },
       {
         key: 'redirectUris',
         header: 'Redirect URIs',
         render: (item) => (
-          <div className="flex flex-col gap-0.5 text-sm text-text-secondary">
+          <div className="flex flex-wrap gap-1">
             {item.redirectUris.slice(0, 2).map((uri) => (
-              <span key={uri}>{uri}</span>
+              <Chip key={uri} tone="neutral" size="xs">{uri}</Chip>
             ))}
             {item.redirectUris.length > 2 && (
-              <span className="text-text-tertiary">
-                +{item.redirectUris.length - 2} more
-              </span>
+              <Chip tone="neutral" size="xs">+{item.redirectUris.length - 2} more</Chip>
             )}
           </div>
         ),
@@ -77,74 +84,33 @@ export function ApplicationListPage({
   );
 
   const renderActions = useCallback(
-    (item: AppRow) => {
-      if (confirmingId === item.clientId) {
-        return (
-          <span className="inline-flex items-center gap-1.5 text-sm text-danger">
-            Are you sure?
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer font-semibold mr-1.5"
-              onClick={() => handleDelete(item.clientId)}
-              disabled={deleting}
-            >
-              {deleting ? '...' : 'Yes'}
-            </button>
-            <button
-              type="button"
-              className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-              onClick={() => setConfirmingId(null)}
-            >
-              No
-            </button>
-          </span>
-        );
-      }
-
-      return (
-        <>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer mr-1.5"
-            onClick={() => onEditApp(item.clientId)}
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer mr-1.5"
-            onClick={() => setConfirmingId(item.clientId)}
-          >
-            Delete
-          </button>
-        </>
-      );
-    },
-    [confirmingId, deleting, handleDelete, onEditApp],
+    (item: AppRow) => (
+      <>
+        <Button variant="ghost" size="sm" onClick={() => onEditApp(item.clientId)}>
+          Edit
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.clientId)}>
+          Delete
+        </Button>
+      </>
+    ),
+    [onEditApp],
   );
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h1 className="text-lg font-semibold text-text-primary">Applications</h1>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover cursor-pointer"
-            onClick={onCreateApp}
-          >
+    <PageSection
+      title="Applications"
+      actions={
+        <>
+          <Button variant="primary" size="lg" onClick={onCreateApp}>
             New Application
-          </button>
-          <button
-            type="button"
-            className="bg-transparent border border-primary text-primary font-medium rounded-sm px-4 py-2 text-sm cursor-pointer"
-            onClick={onCreateAppWithPool}
-          >
+          </Button>
+          <Button variant="secondary" size="lg" onClick={onCreateAppWithPool}>
             New App + Pool
-          </button>
-        </div>
-      </div>
-
+          </Button>
+        </>
+      }
+    >
       <EntityTable<AppRow>
         columns={columns}
         data={applications}
@@ -152,7 +118,19 @@ export function ApplicationListPage({
         actions={renderActions}
         loading={loading}
         emptyMessage="No applications registered yet."
+        emptyIcon="🔐"
       />
-    </div>
+
+      <ConfirmDialog
+        open={!!confirmingId}
+        onConfirm={() => confirmingId && handleDelete(confirmingId)}
+        onCancel={() => setConfirmingId(null)}
+        title="Delete Application"
+        body="This action cannot be undone. The application will lose access immediately."
+        tone="destructive"
+        confirmLabel="Delete"
+        confirmDisabled={deleting}
+      />
+    </PageSection>
   );
 }

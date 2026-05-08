@@ -1,47 +1,44 @@
 // src/components/identity/shared/StatusBadge.tsx
 //
-// Pill-shaped status badge with color variants.
-// Auto-maps common identity statuses to appropriate colors.
+// Status indicator using the shared Chip component.
+// Auto-maps common identity statuses to appropriate tones.
 
-import { cn } from '../../../lib/cn';
+import Chip, { type ChipTone } from '../../shared/Chip';
 
 export interface StatusBadgeProps {
   status: string;
   variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
 }
 
-const STATUS_VARIANT_MAP: Record<string, StatusBadgeProps['variant']> = {
+const STATUS_TONE_MAP: Record<string, ChipTone> = {
   CONFIRMED: 'success',
   ACTIVE: 'success',
   ENABLED: 'success',
   UNCONFIRMED: 'warning',
   PENDING: 'warning',
-  FORCE_CHANGE_PASSWORD: 'danger',
+  FORCE_CHANGE_PASSWORD: 'caution',
   DISABLED: 'danger',
   COMPROMISED: 'danger',
   ARCHIVED: 'neutral',
   UNKNOWN: 'neutral',
 };
 
-const variantClasses: Record<string, string> = {
-  success: 'bg-success text-white',
-  warning: 'bg-warning text-white',
-  danger: 'bg-danger text-white',
-  info: 'bg-info text-white',
-  neutral: 'bg-border text-text-primary',
+const VARIANT_TO_TONE: Record<string, ChipTone> = {
+  success: 'success',
+  warning: 'warning',
+  danger: 'danger',
+  info: 'info',
+  neutral: 'neutral',
 };
 
 export function StatusBadge({ status, variant }: StatusBadgeProps) {
-  const resolvedVariant = variant || STATUS_VARIANT_MAP[status] || 'neutral';
+  const tone: ChipTone = variant
+    ? VARIANT_TO_TONE[variant] || 'neutral'
+    : STATUS_TONE_MAP[status] || 'neutral';
 
   return (
-    <span
-      className={cn(
-        'inline-block px-2.5 py-0.5 rounded-full text-sm font-semibold leading-relaxed whitespace-nowrap',
-        variantClasses[resolvedVariant]
-      )}
-    >
+    <Chip tone={tone} size="sm">
       {status}
-    </span>
+    </Chip>
   );
 }

@@ -1,5 +1,3 @@
-// Identity MFA admin hook — aggregate MFA metrics across pools.
-
 import { useState, useCallback } from 'react';
 import { useIdentityContext } from '../contexts/IdentityContext';
 import { apiFetch } from './identityApi';

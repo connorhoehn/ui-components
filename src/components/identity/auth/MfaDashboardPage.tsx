@@ -80,12 +80,12 @@ export function MfaDashboardPage({
   };
 
   return (
-    <div className="min-h-full flex items-start justify-center p-6 bg-surface-panel">
-      <div className="w-full max-w-[600px] bg-surface rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
+    <div className="min-h-full flex items-start justify-center p-6 bg-slate-50">
+      <div className="w-full max-w-[600px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-bold text-text-primary m-0">MFA Devices</h1>
-            {userEmail && <p className="text-sm text-text-secondary m-0">{userEmail}</p>}
+            <h1 className="text-xl font-bold text-slate-800 m-0">MFA Devices</h1>
+            {userEmail && <p className="text-sm text-slate-500 m-0">{userEmail}</p>}
           </div>
           <div className="flex items-center gap-3">
             <Chip tone={mfaEnabled ? 'success' : 'warning'}>
@@ -98,7 +98,7 @@ export function MfaDashboardPage({
         </div>
 
         {loading && (
-          <p className="text-center text-text-tertiary text-sm py-8">
+          <p className="text-center text-slate-400 text-sm py-8">
             Loading devices...
           </p>
         )}
@@ -116,7 +116,7 @@ export function MfaDashboardPage({
         {!loading && devices.length > 0 && (
           <div className="flex flex-col gap-3" role="list" aria-label="MFA devices">
             {devices.map(device => (
-              <div key={device.deviceId} className="p-5 border border-border rounded-lg bg-surface" role="listitem">
+              <div key={device.deviceId} className="p-5 border border-slate-200 rounded-lg bg-white" role="listitem">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2.5">
                     {renaming === device.deviceId ? (
@@ -140,7 +140,7 @@ export function MfaDashboardPage({
                       </form>
                     ) : (
                       <>
-                        <h3 className="text-[15px] font-semibold text-text-primary m-0">{device.deviceName}</h3>
+                        <h3 className="text-[15px] font-semibold text-slate-800 m-0">{device.deviceName}</h3>
                         <StatusBadge
                           status={device.isVerified ? 'CONFIRMED' : 'UNCONFIRMED'}
                         />
@@ -148,7 +148,7 @@ export function MfaDashboardPage({
                     )}
                   </div>
                 </div>
-                <p className="text-[11px] text-text-tertiary m-0 mb-3">
+                <p className="text-[11px] text-slate-400 m-0 mb-3">
                   Type: {device.deviceType} &middot; Added: {formatDate(device.createdAt)}
                   {device.lastUsed && ` · Last used: ${formatDate(device.lastUsed)}`}
                 </p>

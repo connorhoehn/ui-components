@@ -2,10 +2,12 @@
 //
 // MFA overview with adoption metrics, user MFA status table, and pool filter.
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
 import { StatusBadge } from '../shared/StatusBadge';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
 
 export interface MfaManagementPageProps {
   metrics?: {
@@ -48,77 +50,75 @@ export function MfaManagementPage({
       {
         key: 'mfaEnabled',
         header: 'MFA Status',
+        width: '140px',
         render: (item) => (
           <StatusBadge
-            status={item.mfaEnabled ? 'Enabled' : 'Disabled'}
+            status={item.mfaEnabled ? 'ENABLED' : 'DISABLED'}
             variant={item.mfaEnabled ? 'success' : 'warning'}
           />
         ),
       },
-      { key: 'deviceCount', header: 'Devices' },
+      { key: 'deviceCount', header: 'Devices', width: '100px' },
     ],
     [],
   );
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-6">
+      <PageSection title="MFA Management">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-border rounded-md h-[60px] opacity-50" />
+            <Card key={i} padding="md">
+              <div className="h-5 w-12 rounded bg-slate-100 animate-pulse mb-2" />
+              <div className="h-3 w-20 rounded bg-slate-100 animate-pulse" />
+            </Card>
           ))}
         </div>
-        <div className="bg-border rounded-md h-[60px] opacity-50" />
-      </div>
+        <Card className="h-[200px] animate-pulse" />
+      </PageSection>
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-text-primary">MFA Management</h1>
-        <button
-          type="button"
-          className="px-4 py-2 border border-border rounded-sm bg-surface text-text-primary text-sm cursor-pointer"
-          onClick={onRefresh}
-        >
-          Refresh
-        </button>
-      </div>
+  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-shadow';
 
+  return (
+    <PageSection
+      title="MFA Management"
+      actions={
+        <Button variant="ghost" size="lg" onClick={onRefresh}>
+          Refresh
+        </Button>
+      }
+    >
       {/* Metrics */}
       {metrics && (
         <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
-          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
-            <div className="text-[1.75rem] font-bold text-primary mb-1">{metrics.totalUsers}</div>
-            <div className="text-sm text-text-secondary">Total Users</div>
-          </div>
-          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
-            <div className="text-[1.75rem] font-bold text-success mb-1">{metrics.mfaEnabled}</div>
-            <div className="text-sm text-text-secondary">MFA Enabled</div>
-          </div>
-          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
-            <div className="text-[1.75rem] font-bold text-warning mb-1">{metrics.mfaDisabled}</div>
-            <div className="text-sm text-text-secondary">MFA Disabled</div>
-          </div>
-          <div className="bg-surface border border-border rounded-md p-4 shadow-sm">
-            <div className="text-[1.75rem] font-bold text-primary mb-1">{metrics.adoptionRate}%</div>
-            <div className="text-sm text-text-secondary">Adoption Rate</div>
-          </div>
+          <Card padding="md">
+            <div className="text-[1.75rem] font-bold text-blue-600 mb-1">{metrics.totalUsers}</div>
+            <div className="text-sm text-slate-500">Total Users</div>
+          </Card>
+          <Card padding="md">
+            <div className="text-[1.75rem] font-bold text-green-600 mb-1">{metrics.mfaEnabled}</div>
+            <div className="text-sm text-slate-500">MFA Enabled</div>
+          </Card>
+          <Card padding="md">
+            <div className="text-[1.75rem] font-bold text-amber-600 mb-1">{metrics.mfaDisabled}</div>
+            <div className="text-sm text-slate-500">MFA Disabled</div>
+          </Card>
+          <Card padding="md">
+            <div className="text-[1.75rem] font-bold text-blue-600 mb-1">{metrics.adoptionRate}%</div>
+            <div className="text-sm text-slate-500">Adoption Rate</div>
+          </Card>
         </section>
       )}
 
       {/* Pool filter */}
       {pools && pools.length > 0 && (
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-text-secondary">
-            Filter by pool:
+        <div className="flex items-center gap-3">
+          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+            Filter by pool
           </label>
-          <select
-            className="p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
-            value={selectedPool}
-            onChange={(e) => setSelectedPool(e.target.value)}
-          >
+          <select className={inputClass} value={selectedPool} onChange={(e) => setSelectedPool(e.target.value)}>
             <option value="">All Pools</option>
             {pools.map((p) => (
               <option key={p.poolId} value={p.poolId}>
@@ -135,7 +135,8 @@ export function MfaManagementPage({
         data={filteredUsers}
         keyField="userId"
         emptyMessage="No user MFA data available."
+        emptyIcon="🔑"
       />
-    </div>
+    </PageSection>
   );
 }

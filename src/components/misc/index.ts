@@ -6,6 +6,4 @@ export { EventLog } from './EventLog';
 export { TabbedEventLog } from './TabbedEventLog';
 export { BigBrotherPanel } from './BigBrotherPanel';
 export { default as PanelsView } from './PanelsView';
-export { LoginForm } from './LoginForm';
-export { SignupForm } from './SignupForm';
 export { DisconnectReconnect } from './DisconnectReconnect';

@@ -20,7 +20,7 @@ export default function MfaVerifyDemo() {
   onVerifyBackup={async (code) => { ... }}
 />`}
       >
-        <div className="border border-border rounded-lg overflow-hidden h-[480px]">
+        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[480px]">
           <MfaVerifyPage
             error={null}
             onVerify={async (code) => {
@@ -45,7 +45,7 @@ export default function MfaVerifyDemo() {
   onVerifyBackup={async (code) => { ... }}
 />`}
       >
-        <div className="border border-border rounded-lg overflow-hidden h-[520px]">
+        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[520px]">
           <MfaVerifyPage
             error="Invalid verification code. Please try again."
             onVerify={async (code) => {

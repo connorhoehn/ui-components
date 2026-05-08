@@ -27,6 +27,7 @@ const NodeEditorPage = lazy(() => import('./components/NodeEditorPage'));
 const CollaborationPage = lazy(() => import('./components/CollaborationPage'));
 const RealTimeEditingPage = lazy(() => import('./components/RealTimeEditingPage'));
 const VideoPage = lazy(() => import('./components/VideoPage'));
+const CallWidgetPage = lazy(() => import('./components/CallWidgetPage'));
 
 // Live demo pages (lazy)
 const PipelineEditor = lazy(() => import('./demos/pipeline-editor'));
@@ -37,6 +38,8 @@ const SocialPanel = lazy(() => import('./demos/social-panel'));
 const Collaboration = lazy(() => import('./demos/collaboration'));
 const NodeEditorLive = lazy(() => import('./demos/node-editor-live'));
 const VideoStreaming = lazy(() => import('./demos/video-streaming'));
+const CallWidgetDemo = lazy(() => import('./demos/video-streaming/CallWidgetDemo'));
+const CallWidgetLive = lazy(() => import('./demos/call-widget-live'));
 const SharedComponents = lazy(() => import('./demos/shared-components'));
 
 // Identity demos (lazy)
@@ -95,6 +98,7 @@ export default function App() {
           <Route path="collaboration" element={<S><CollaborationPage /></S>} />
           <Route path="real-time-editing" element={<S><RealTimeEditingPage /></S>} />
           <Route path="video" element={<S><VideoPage /></S>} />
+          <Route path="call-widget" element={<S><CallWidgetPage /></S>} />
         </Route>
 
         {/* Pages (live demos) */}
@@ -108,6 +112,8 @@ export default function App() {
           <Route path="collaboration" element={<S><Collaboration /></S>} />
           <Route path="node-editor-live" element={<S><NodeEditorLive /></S>} />
           <Route path="video-streaming" element={<S><VideoStreaming /></S>} />
+          <Route path="call-widget" element={<S><CallWidgetDemo /></S>} />
+          <Route path="call-widget-live" element={<S><CallWidgetLive /></S>} />
           <Route path="shared-components" element={<S><SharedComponents /></S>} />
         </Route>
 

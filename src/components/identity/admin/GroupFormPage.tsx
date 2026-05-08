@@ -4,7 +4,10 @@
 
 import { useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
-import { cn } from '../../../lib/cn';
+import { Card } from '../../ui/Card';
+import { PageSection } from '../../ui/PageSection';
+import { Button } from '../../ui/Button';
+import Banner from '../../shared/Banner';
 
 export interface GroupFormPageProps {
   group?: {
@@ -17,7 +20,7 @@ export interface GroupFormPageProps {
   poolId: string;
   members?: Array<{ userId: string; email: string }>;
   availableUsers?: Array<{ userId: string; email: string }>;
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: { groupName: string; description: string; permissions: string[] }) => Promise<void>;
   onAddMember?: (userId: string) => Promise<void>;
   onRemoveMember?: (userId: string) => Promise<void>;
   onCancel: () => void;
@@ -85,10 +88,10 @@ export function GroupFormPage({
   );
 
   return (
-    <div className="max-w-[640px]">
-      <h1 className="text-lg font-semibold text-text-primary mb-4">{isEdit ? 'Edit Group' : 'Create Group'}</h1>
+    <PageSection title={isEdit ? 'Edit Group' : 'Create Group'} className="max-w-[640px]">
+      {error && <Banner variant="error">{error}</Banner>}
 
-      {error && <div className="px-4 py-2 bg-danger text-white rounded-sm mb-4 text-sm">{error}</div>}
+      <Card padding="md">
 
       <form onSubmit={handleSubmit}>
         <FormField
@@ -111,23 +114,25 @@ export function GroupFormPage({
 
         {/* Permissions tag input */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
+          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Permissions</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {permissions.map((perm) => (
-              <span key={perm} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
+              <span key={perm} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500 text-white text-sm font-medium">
                 {perm}
-                <button
-                  type="button"
-                  className="bg-transparent border-none text-white cursor-pointer text-[14px] leading-none px-0.5"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="p-0 text-white text-[14px] leading-none min-w-0 min-h-0"
                   onClick={() => removePermission(perm)}
+                  aria-label={`Remove permission ${perm}`}
                 >
                   x
-                </button>
+                </Button>
               </span>
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-surface text-text-primary box-border"
+            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 box-border"
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -138,23 +143,19 @@ export function GroupFormPage({
         {/* Members section (edit mode only) */}
         {isEdit && members && (
           <section>
-            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
+            <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
-              <p className="text-text-tertiary text-sm">
+              <p className="text-slate-400 text-sm">
                 No members yet.
               </p>
             ) : (
               members.map((m) => (
-                <div key={m.userId} className="flex items-center justify-between py-1.5 border-b border-border">
+                <div key={m.userId} className="flex items-center justify-between py-1.5 border-b border-slate-200">
                   <span className="text-base">{m.email}</span>
                   {onRemoveMember && (
-                    <button
-                      type="button"
-                      className="px-2.5 py-1 text-sm border border-danger rounded-sm bg-surface text-danger cursor-pointer"
-                      onClick={() => onRemoveMember(m.userId)}
-                    >
+                    <Button variant="danger" size="sm" onClick={() => onRemoveMember(m.userId)}>
                       Remove
-                    </button>
+                    </Button>
                   )}
                 </div>
               ))
@@ -164,7 +165,7 @@ export function GroupFormPage({
             {availableUsers && availableUsers.length > 0 && onAddMember && (
               <div className="flex gap-2 mt-2">
                 <select
-                  className="flex-1 p-2 text-base border border-border rounded-sm bg-surface text-text-primary"
+                  className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >
@@ -175,36 +176,24 @@ export function GroupFormPage({
                     </option>
                   ))}
                 </select>
-                <button
-                  type="button"
-                  className="px-2.5 py-1 text-sm border border-border rounded-sm bg-surface text-text-primary cursor-pointer"
-                  onClick={handleAddMember}
-                  disabled={!selectedUser}
-                >
+                <Button variant="ghost" size="sm" onClick={handleAddMember} disabled={!selectedUser}>
                   Add
-                </button>
+                </Button>
               </div>
             )}
           </section>
         )}
 
-        <div className="flex gap-2 mt-6">
-          <button
-            type="submit"
-            className="bg-primary text-white font-semibold rounded-md px-4 py-2 text-sm hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={submitting}
-          >
+        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+          <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Group' : 'Create Group'}
-          </button>
-          <button
-            type="button"
-            className="px-5 py-2.5 bg-transparent border border-border rounded-sm text-base text-text-primary cursor-pointer"
-            onClick={onCancel}
-          >
+          </Button>
+          <Button variant="ghost" size="lg" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+      </Card>
+    </PageSection>
   );
 }

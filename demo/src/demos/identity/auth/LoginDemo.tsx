@@ -34,7 +34,7 @@ export default function LoginDemo() {
             <input type="checkbox" checked={showError} onChange={(e) => setShowError(e.target.checked)} />
             Show error state
           </label>
-          <div className="border border-border rounded-lg overflow-hidden h-[550px]">
+          <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[550px]">
             <LoginPage
               uid="demo-uid-12345"
               interactionUrl="/interaction/demo-uid-12345"
@@ -74,7 +74,7 @@ export default function LoginDemo() {
   onForgotPassword={async () => {}}
 />`}
       >
-        <div className="border border-border rounded-lg overflow-hidden h-[400px]">
+        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[400px]">
           <LoginPage
             uid="demo-uid"
             interactionUrl="/interaction/demo-uid"

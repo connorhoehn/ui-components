@@ -18,13 +18,13 @@ export function DocsLayout() {
           {!isPageDemo && <TocSidebar />}
           <main style={{
             marginLeft: 240,
-            paddingTop: 56,
+            paddingTop: isPageDemo ? 0 : 56,
             minHeight: 'calc(100vh - 56px)',
             display: isPageDemo ? 'flex' : 'block',
             flexDirection: 'column',
           }}>
             {isPageDemo ? (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: 'calc(100vh - 56px)', overflow: 'hidden' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
                 <Outlet />
               </div>
             ) : (

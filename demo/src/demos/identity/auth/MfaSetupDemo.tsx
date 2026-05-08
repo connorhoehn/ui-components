@@ -26,7 +26,7 @@ export default function MfaSetupDemo() {
   onComplete={() => { ... }}
 />`}
       >
-        <div className="border border-border rounded-lg overflow-hidden h-[560px]">
+        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[560px]">
           <MfaSetupPage
             userEmail="alice@acme.com"
             onSetup={async (deviceName) => {

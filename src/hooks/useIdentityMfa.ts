@@ -1,8 +1,5 @@
-// Identity MFA hook — user-facing MFA device management.
-
-import { useState, useCallback } from 'react';
-import { useIdentityContext } from '../contexts/IdentityContext';
-import { apiFetch } from './identityApi';
+import { useCallback } from 'react';
+import { useIdentityResource } from './useIdentityResource';
 import type { MfaDevice, MfaSetupResult } from '../types/identity';
 
 export interface UseIdentityMfaReturn {
@@ -17,53 +14,26 @@ export interface UseIdentityMfaReturn {
 }
 
 export function useIdentityMfa(): UseIdentityMfaReturn {
-  const { idToken } = useIdentityContext();
-  const [devices, setDevices] = useState<MfaDevice[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { data: devices, loading, error, setData: setDevices, mutate } =
+    useIdentityResource<MfaDevice[]>([], { url: null, fetchOnMount: false });
 
   const refresh = useCallback(async (poolId: string, userId: string) => {
-    if (!idToken) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await apiFetch<MfaDevice[]>(
-        `/api/pools/${poolId}/users/${userId}/mfa/devices`,
-        idToken,
-      );
-      setDevices(data);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }, [idToken]);
+    const result = await mutate<MfaDevice[]>(`/api/pools/${poolId}/users/${userId}/mfa/devices`, {
+      method: 'GET',
+    });
+    if (result) setDevices(result);
+  }, [mutate, setDevices]);
 
   const setupDevice = useCallback(async (
     poolId: string,
     userId: string,
     deviceName: string,
   ): Promise<MfaSetupResult | null> => {
-    if (!idToken) return null;
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await apiFetch<MfaSetupResult>(
-        `/api/pools/${poolId}/users/${userId}/mfa/setup`,
-        idToken,
-        {
-          method: 'POST',
-          body: JSON.stringify({ deviceName }),
-        },
-      );
-      return result;
-    } catch (err) {
-      setError((err as Error).message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [idToken]);
+    return await mutate<MfaSetupResult>(
+      `/api/pools/${poolId}/users/${userId}/mfa/setup`,
+      { method: 'POST', body: JSON.stringify({ deviceName }) },
+    );
+  }, [mutate]);
 
   const verifySetup = useCallback(async (
     poolId: string,
@@ -71,26 +41,18 @@ export function useIdentityMfa(): UseIdentityMfaReturn {
     deviceId: string,
     code: string,
   ): Promise<boolean> => {
-    if (!idToken) return false;
-    setError(null);
-    try {
-      await apiFetch<void>(
-        `/api/pools/${poolId}/users/${userId}/mfa/verify`,
-        idToken,
-        {
-          method: 'POST',
-          body: JSON.stringify({ deviceId, code }),
-        },
-      );
+    const result = await mutate<void>(
+      `/api/pools/${poolId}/users/${userId}/mfa/verify`,
+      { method: 'POST', body: JSON.stringify({ deviceId, code }) },
+    );
+    if (result !== null) {
       setDevices((prev) =>
         prev.map((d) => (d.deviceId === deviceId ? { ...d, isVerified: true } : d)),
       );
       return true;
-    } catch (err) {
-      setError((err as Error).message);
-      return false;
     }
-  }, [idToken]);
+    return false;
+  }, [mutate, setDevices]);
 
   const renameDevice = useCallback(async (
     poolId: string,
@@ -98,43 +60,30 @@ export function useIdentityMfa(): UseIdentityMfaReturn {
     deviceId: string,
     newName: string,
   ): Promise<void> => {
-    if (!idToken) return;
-    setError(null);
-    try {
-      await apiFetch<void>(
-        `/api/pools/${poolId}/users/${userId}/mfa/devices/${deviceId}`,
-        idToken,
-        {
-          method: 'PUT',
-          body: JSON.stringify({ deviceName: newName }),
-        },
-      );
+    const result = await mutate<void>(
+      `/api/pools/${poolId}/users/${userId}/mfa/devices/${deviceId}`,
+      { method: 'PUT', body: JSON.stringify({ deviceName: newName }) },
+    );
+    if (result !== null) {
       setDevices((prev) =>
         prev.map((d) => (d.deviceId === deviceId ? { ...d, deviceName: newName } : d)),
       );
-    } catch (err) {
-      setError((err as Error).message);
     }
-  }, [idToken]);
+  }, [mutate, setDevices]);
 
   const removeDevice = useCallback(async (
     poolId: string,
     userId: string,
     deviceId: string,
   ): Promise<void> => {
-    if (!idToken) return;
-    setError(null);
-    try {
-      await apiFetch<void>(
-        `/api/pools/${poolId}/users/${userId}/mfa/devices/${deviceId}`,
-        idToken,
-        { method: 'DELETE' },
-      );
+    const result = await mutate<void>(
+      `/api/pools/${poolId}/users/${userId}/mfa/devices/${deviceId}`,
+      { method: 'DELETE' },
+    );
+    if (result !== null) {
       setDevices((prev) => prev.filter((d) => d.deviceId !== deviceId));
-    } catch (err) {
-      setError((err as Error).message);
     }
-  }, [idToken]);
+  }, [mutate, setDevices]);
 
   return { devices, loading, error, setupDevice, verifySetup, renameDevice, removeDevice, refresh };
 }
