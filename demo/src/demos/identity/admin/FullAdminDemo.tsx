@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { PageHeader, ExampleBlock } from '../../../shared';
 import {
   IdentityAdminLayout,
   AdminDashboardPage,
@@ -119,15 +120,38 @@ export default function FullAdminDemo() {
   };
 
   return (
-    <div className="h-[800px] border border-gray-200 rounded-lg overflow-hidden">
-      <IdentityAdminLayout
-        activePath={activePath}
-        adminEmail="admin@acme.com"
-        onNavigate={navigate}
-        onLogout={() => console.log('[FullAdminDemo] Logout')}
+    <div>
+      <PageHeader
+        title="Full Admin (Live)"
+        description="Complete identity admin UI with working sidebar navigation. Click through the sidebar to navigate between all admin pages with mock data. This is the full experience as it would appear in production."
+        importPath="import { IdentityAdminLayout } from '@connorhoehn/ui-components/identity'"
+      />
+
+      <ExampleBlock
+        id="full-admin"
+        title="Interactive Admin Panel"
+        description="Navigate the sidebar to explore all admin pages. Data is mocked — actions log to console."
+        code={`<IdentityAdminLayout
+  activePath="/identity/admin"
+  adminEmail="admin@acme.com"
+  onNavigate={(path) => { ... }}
+  onLogout={() => { ... }}
+>
+  {/* Page content renders here based on route */}
+</IdentityAdminLayout>`}
+        background="#ffffff"
       >
-        {renderView()}
-      </IdentityAdminLayout>
+        <div className="h-[700px] border border-border rounded-lg overflow-hidden">
+          <IdentityAdminLayout
+            activePath={activePath}
+            adminEmail="admin@acme.com"
+            onNavigate={navigate}
+            onLogout={() => console.log('[FullAdminDemo] Logout')}
+          >
+            {renderView()}
+          </IdentityAdminLayout>
+        </div>
+      </ExampleBlock>
     </div>
   );
 }
