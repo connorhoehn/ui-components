@@ -3,9 +3,7 @@ import { cn } from '../../lib/cn';
 import { useAgentsContext } from './context/AgentsContext';
 import { useAgUiStream } from './hooks/useAgUiStream';
 import { StreamingChatPanel } from './components/StreamingChatPanel';
-import { TraceTimeline } from './components/TraceTimeline';
-import type { AgUiEvent, TraceTimeline as TraceTimelineType } from '../../types/agents';
-import { fixtureTrace } from './fixtures/agentsFixture';
+import type { AgUiEvent } from '../../types/agents';
 
 interface AgentInvokePageProps {
   defaultAgentId?: string;
@@ -17,7 +15,6 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
   const { agents } = useAgentsContext();
   const [selectedId, setSelectedId] = useState(defaultAgentId ?? agents[0]?.id ?? '');
   const [events, setEvents] = useState<AgUiEvent[]>([]);
-  const [showTrace, setShowTrace] = useState(false);
 
   const invokeUrl = `${baseUrl}/${selectedId}/invoke`;
   const { messages, isStreaming, currentToolCall, error, sendMessage, cancelStream, reset } =
@@ -27,89 +24,151 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
     });
 
   const selectedAgent = agents.find((a) => a.id === selectedId);
-  const trace: TraceTimelineType | null = showTrace ? fixtureTrace : null;
 
   return (
-    <div className={cn('space-y-4', className)}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-slate-900">Invoke Agent</h2>
-          <p className="text-xs text-slate-500">Interactive streaming invocation via AG-UI protocol</p>
+    <div className={cn('flex h-full', className)} style={{ minHeight: 500 }}>
+      {/* Left panel — agent selector & info */}
+      <div style={{
+        width: 240,
+        borderRight: '1px solid #e2e8f0',
+        background: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: '12px 16px',
+          borderBottom: '1px solid #e2e8f0',
+          fontWeight: 600,
+          fontSize: 13,
+          color: '#64748b',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}>
+          Agents
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowTrace(!showTrace)}
-            className={cn(
-              'text-xs px-2 py-1 rounded border transition-colors',
-              showTrace ? 'bg-blue-50 border-blue-300 text-blue-700' : 'border-slate-200 text-slate-500 hover:bg-slate-50',
+
+        {/* Agent list */}
+        <div style={{ flex: 1, padding: '8px 0', overflowY: 'auto' }}>
+          {agents.map((agent) => (
+            <div
+              key={agent.id}
+              onClick={() => { setSelectedId(agent.id); reset(); setEvents([]); }}
+              style={{
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: agent.status === 'offline' ? 'not-allowed' : 'pointer',
+                opacity: agent.status === 'offline' ? 0.5 : 1,
+                background: selectedId === agent.id ? '#f1f5f9' : 'transparent',
+                borderLeft: selectedId === agent.id ? '3px solid #6366f1' : '3px solid transparent',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 14, color: '#1a1a2e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {agent.name}
+                </div>
+                <div style={{ fontSize: 11, color: '#94a3b8' }}>
+                  {agent.protocol.toUpperCase()} · {agent.model}
+                </div>
+              </div>
+              <span style={{
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: agent.status === 'healthy' ? '#10b981' : agent.status === 'degraded' ? '#f59e0b' : '#ef4444',
+                flexShrink: 0,
+              }} />
+            </div>
+          ))}
+        </div>
+
+        {/* Agent details */}
+        {selectedAgent && (
+          <div style={{ padding: '12px 16px', borderTop: '1px solid #e2e8f0', fontSize: 11 }}>
+            <div style={{ color: '#64748b', marginBottom: 6 }}>Tools:</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+              {selectedAgent.tools.map((t) => (
+                <span key={t} style={{
+                  padding: '2px 6px',
+                  background: '#f1f5f9',
+                  borderRadius: 4,
+                  fontSize: 10,
+                  color: '#475569',
+                  fontFamily: 'monospace',
+                }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+            {selectedAgent.guardrails.length > 0 && (
+              <div style={{ marginTop: 8 }}>
+                <div style={{ color: '#64748b', marginBottom: 4 }}>Guardrails:</div>
+                {selectedAgent.guardrails.map((g) => (
+                  <div key={g} style={{ fontSize: 10, color: '#d97706', fontFamily: 'monospace' }}>
+                    🛡️ {g}
+                  </div>
+                ))}
+              </div>
             )}
-          >
-            {showTrace ? 'Hide Trace' : 'Show Trace'}
-          </button>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div style={{ padding: '8px 16px', borderTop: '1px solid #e2e8f0' }}>
           <button
             onClick={() => { reset(); setEvents([]); }}
-            className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-500 hover:bg-slate-50"
+            style={{
+              width: '100%',
+              padding: '6px 0',
+              fontSize: 12,
+              color: '#64748b',
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: 6,
+              cursor: 'pointer',
+            }}
           >
-            Reset
+            Reset Session
           </button>
         </div>
       </div>
 
-      {/* Agent selector */}
-      <div className="flex items-center gap-3">
-        <label className="text-xs text-slate-500">Agent:</label>
-        <select
-          value={selectedId}
-          onChange={(e) => { setSelectedId(e.target.value); reset(); setEvents([]); }}
-          className="text-sm border border-slate-200 rounded px-2 py-1 bg-white"
-        >
-          {agents.map((a) => (
-            <option key={a.id} value={a.id} disabled={a.status === 'offline'}>
-              {a.name} ({a.status})
-            </option>
-          ))}
-        </select>
-        {selectedAgent && (
-          <span className="text-xs text-slate-400">
-            {selectedAgent.protocol.toUpperCase()} · {selectedAgent.model}
-          </span>
+      {/* Main chat area */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <StreamingChatPanel
+          messages={messages}
+          isStreaming={isStreaming}
+          currentToolCall={currentToolCall}
+          error={error}
+          onSend={sendMessage}
+          onCancel={cancelStream}
+          className="flex-1 border-0 rounded-none"
+        />
+
+        {/* Event log footer */}
+        {events.length > 0 && (
+          <details style={{ borderTop: '1px solid #e2e8f0', background: '#f8fafc' }}>
+            <summary style={{ padding: '8px 16px', fontSize: 12, color: '#64748b', cursor: 'pointer', fontWeight: 500 }}>
+              Event Log ({events.length} events)
+            </summary>
+            <div style={{ maxHeight: 150, overflowY: 'auto', padding: '4px 16px 8px', fontFamily: 'monospace', fontSize: 10 }}>
+              {events.map((ev, i) => (
+                <div key={i} style={{ display: 'flex', gap: 8, color: '#475569', padding: '1px 0' }}>
+                  <span style={{ color: '#94a3b8', width: 20, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
+                  <span style={{ color: '#1e293b', width: 150, flexShrink: 0, fontWeight: 500 }}>{ev.type}</span>
+                  <span style={{ color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {ev.delta ? `"${ev.delta.slice(0, 60)}"` : ev.toolName ?? ev.error ?? ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </details>
         )}
       </div>
-
-      {/* Chat */}
-      <StreamingChatPanel
-        messages={messages}
-        isStreaming={isStreaming}
-        currentToolCall={currentToolCall}
-        error={error}
-        onSend={sendMessage}
-        onCancel={cancelStream}
-        className="h-[400px]"
-      />
-
-      {/* Event log */}
-      {events.length > 0 && (
-        <details className="border border-slate-200 rounded-lg overflow-hidden">
-          <summary className="px-3 py-2 bg-slate-50 text-xs font-medium text-slate-600 cursor-pointer">
-            Event Log ({events.length} events)
-          </summary>
-          <div className="max-h-[200px] overflow-y-auto p-2 space-y-0.5 font-mono text-[10px]">
-            {events.map((ev, i) => (
-              <div key={i} className="flex gap-2 text-slate-600">
-                <span className="text-slate-400 shrink-0 w-6 text-right">{i + 1}</span>
-                <span className="font-medium text-slate-700 shrink-0 w-[160px]">{ev.type}</span>
-                <span className="truncate text-slate-500">
-                  {ev.delta ? `"${ev.delta.slice(0, 60)}"` : ev.toolName ?? ev.error ?? ''}
-                </span>
-              </div>
-            ))}
-          </div>
-        </details>
-      )}
-
-      {/* Trace */}
-      {trace && <TraceTimeline trace={trace} />}
     </div>
   );
 }

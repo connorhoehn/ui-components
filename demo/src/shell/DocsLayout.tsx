@@ -7,7 +7,9 @@ import { TocProvider, useToc, TableOfContents, useScrollSpy } from '../shared';
 
 export function DocsLayout() {
   const { pathname } = useLocation();
-  const isPageDemo = pathname.startsWith('/pages/') && pathname !== '/pages';
+  const isPageDemo = (pathname.startsWith('/pages/') && pathname !== '/pages')
+    || (pathname.startsWith('/workflows/') && pathname !== '/workflows')
+    || (pathname.startsWith('/identity/') && pathname !== '/identity');
 
   return (
     <MockProviders>
@@ -28,7 +30,7 @@ export function DocsLayout() {
                 <Outlet />
               </div>
             ) : (
-              <div style={{ padding: '24px 40px', maxWidth: 820, marginRight: 240 }}>
+              <div style={{ padding: '24px 40px' }}>
                 <Breadcrumbs />
                 <Outlet />
               </div>

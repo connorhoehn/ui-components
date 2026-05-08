@@ -3,7 +3,7 @@ import { fixtureTrace } from '../../../../src/components/agents/fixtures/agentsF
 
 export default function DetailDemo() {
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflow: 'auto', flex: 1 }}>
       <AgentsLayout>
         <AgentDetailPage
           agentId="orgiq-supervisor"

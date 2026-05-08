@@ -17,7 +17,7 @@ interface StreamingChatPanelProps {
 function formatTime(iso: string): string {
   try {
     const d = new Date(iso);
-    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   } catch {
     return '';
   }
@@ -51,47 +51,131 @@ export function StreamingChatPanel({
 
   return (
     <div className={cn('flex flex-col border border-slate-200 rounded-lg bg-white overflow-hidden', className)}>
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+        <span className="font-semibold text-sm text-slate-800">Agent Chat</span>
+        {isStreaming && (
+          <span className="flex items-center gap-1.5 text-xs text-blue-600">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+            Streaming
+          </span>
+        )}
+      </div>
+
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[200px] max-h-[500px]">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 min-h-[300px] max-h-[500px]" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {messages.length === 0 && !isStreaming && (
-          <div className="text-sm text-slate-400 text-center py-8">
-            No messages yet. Send a prompt to invoke the agent.
+          <div className="text-sm text-slate-400 text-center" style={{ marginTop: 60 }}>
+            Messages will appear here as you interact with the agent...
           </div>
         )}
 
         {messages.map((msg) => (
-          <div key={msg.id} className={cn('flex flex-col', msg.role === 'user' ? 'items-end' : 'items-start')}>
+          <div key={msg.id} style={{ display: 'flex', gap: 10 }}>
+            {/* Avatar */}
             <div
-              className={cn(
-                'max-w-[80%] rounded-lg px-3 py-2 text-sm',
-                msg.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-slate-100 text-slate-800',
-              )}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: msg.role === 'user' ? '#6366f1' : '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
             >
-              <div className="whitespace-pre-wrap">{msg.content}</div>
-              {msg.isStreaming && (
-                <span className="inline-block animate-pulse ml-0.5">▊</span>
-              )}
+              {msg.role === 'user' ? 'U' : 'AI'}
             </div>
 
-            {msg.toolCalls.length > 0 && (
-              <div className="mt-1 max-w-[80%] space-y-1">
-                {msg.toolCalls.map((tc) => (
-                  <ToolCallRenderer key={tc.id} toolCall={tc} />
-                ))}
+            {/* Content */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span style={{ fontWeight: 600, fontSize: 13, color: '#1a1a2e' }}>
+                  {msg.role === 'user' ? 'You' : 'Agent'}
+                </span>
+                <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                  {formatTime(msg.timestamp)}
+                </span>
               </div>
-            )}
+              <div
+                style={{
+                  marginTop: 4,
+                  padding: '8px 12px',
+                  background: msg.role === 'user' ? '#eef2ff' : '#f1f5f9',
+                  borderRadius: msg.role === 'user' ? '12px 4px 12px 12px' : '4px 12px 12px 12px',
+                  fontSize: 14,
+                  color: '#334155',
+                  lineHeight: 1.5,
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                }}
+              >
+                {msg.content}
+                {msg.isStreaming && (
+                  <span className="inline-block animate-pulse ml-0.5 text-blue-500">▊</span>
+                )}
+              </div>
 
-            <span className="text-[10px] text-slate-400 mt-0.5 px-1">
-              {formatTime(msg.timestamp)}
-            </span>
+              {/* Tool calls */}
+              {msg.toolCalls.length > 0 && (
+                <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {msg.toolCalls.map((tc) => (
+                    <ToolCallRenderer key={tc.id} toolCall={tc} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ))}
 
+        {/* Active tool call */}
         {currentToolCall && (
-          <div className="flex items-start">
-            <ToolCallRenderer toolCall={currentToolCall} />
+          <div style={{ display: 'flex', gap: 10 }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
+            >
+              AI
+            </div>
+            <div style={{ flex: 1 }}>
+              <ToolCallRenderer toolCall={currentToolCall} />
+            </div>
+          </div>
+        )}
+
+        {/* Typing indicator */}
+        {isStreaming && !currentToolCall && messages.length > 0 && !messages[messages.length - 1]?.isStreaming && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: 3,
+                padding: '6px 12px',
+                background: '#f1f5f9',
+                borderRadius: 12,
+              }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+            </div>
+            <span style={{ fontSize: 12, color: '#64748b' }}>Agent is thinking...</span>
           </div>
         )}
       </div>
@@ -103,15 +187,8 @@ export function StreamingChatPanel({
         </div>
       )}
 
-      {/* Streaming indicator */}
-      {isStreaming && !currentToolCall && (
-        <div className="px-4 py-1 text-xs text-slate-400 border-t border-slate-100">
-          <span className="animate-pulse">Agent is responding...</span>
-        </div>
-      )}
-
       {/* Input */}
-      <div className="flex items-center gap-2 p-3 border-t border-slate-200">
+      <div className="flex items-center gap-2 p-3 border-t border-slate-200 bg-slate-50/50">
         <input
           type="text"
           value={input}
@@ -120,14 +197,14 @@ export function StreamingChatPanel({
           disabled={isStreaming}
           placeholder={isStreaming ? 'Waiting for response...' : placeholder}
           className={cn(
-            'flex-1 text-sm px-3 py-2 border border-slate-200 rounded-md outline-none focus:border-blue-400 transition-colors',
+            'flex-1 text-sm px-3 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all bg-white',
             isStreaming && 'bg-slate-50 text-slate-400',
           )}
         />
         {isStreaming && onCancel ? (
           <button
             onClick={onCancel}
-            className="text-sm px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+            className="text-sm px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
           >
             Stop
           </button>
@@ -136,7 +213,7 @@ export function StreamingChatPanel({
             onClick={handleSend}
             disabled={!input.trim() || isStreaming}
             className={cn(
-              'text-sm px-3 py-2 rounded-md transition-colors',
+              'text-sm px-4 py-2.5 rounded-lg transition-colors font-medium',
               !input.trim() || isStreaming
                 ? 'bg-slate-100 text-slate-400 cursor-default'
                 : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer',
