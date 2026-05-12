@@ -59,6 +59,16 @@ export interface CallWidgetProps {
   /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */
   contained?: boolean;
   draggable?: boolean;
+  /**
+   * Optional render slot that replaces the default video area (local fullscreen
+   * + single remote PiP). When provided, the widget renders this node in the
+   * video area while preserving its own header, controls, drag/minimize, and
+   * call-state machine. Use for multi-person hangout layouts (pair with
+   * `HangoutLayout` from the same module).
+   *
+   * Absent → the widget renders today's single-PiP layout (backwards compatible).
+   */
+  layoutComponent?: ReactNode;
   className?: string;
   style?: CSSProperties;
 }
@@ -330,6 +340,7 @@ function ActiveCallContent({
   onAddParticipant,
   availableParticipants,
   onEndCall,
+  layoutComponent,
 }: Pick<
   CallWidgetProps,
   | 'mode'
@@ -346,6 +357,7 @@ function ActiveCallContent({
   | 'onAddParticipant'
   | 'availableParticipants'
   | 'onEndCall'
+  | 'layoutComponent'
 >) {
   const showVideo = mode === 'video' && isCameraOn;
   const [showPicker, setShowPicker] = useState(false);
@@ -355,8 +367,15 @@ function ActiveCallContent({
 
   return (
     <div className="flex flex-col">
-      {/* Video area */}
-      {mode === 'video' && (
+      {/* Video area — caller-provided layout takes precedence over the
+       * default single-PiP layout. Wrap in the same mx-3/mt-3 container so
+       * external layouts don't have to know the widget's outer padding. */}
+      {mode === 'video' && layoutComponent && (
+        <div className="mx-3 mt-3 rounded-lg overflow-hidden">
+          {layoutComponent}
+        </div>
+      )}
+      {mode === 'video' && !layoutComponent && (
         <div className="relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3">
           {localParticipant?.videoStream && showVideo ? (
             <VideoTile stream={localParticipant.videoStream} muted />
@@ -790,6 +809,7 @@ export function CallWidget({
   onAddParticipant,
   availableParticipants,
   onMinimize,
+  layoutComponent,
   minimized = false,
   position = 'bottom-right',
   contained = false,
@@ -927,6 +947,7 @@ export function CallWidget({
                 onAddParticipant={onAddParticipant}
                 availableParticipants={availableParticipants}
                 onEndCall={onEndCall}
+                layoutComponent={layoutComponent}
               />
             )}
           </>

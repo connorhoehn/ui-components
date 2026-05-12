@@ -21,3 +21,12 @@ export type { ViewerCountProps } from './ViewerCount';
 
 export { CallWidget } from './CallWidget';
 export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode } from './CallWidget';
+
+export { ParticipantTile } from './ParticipantTile';
+export type { ParticipantTileProps } from './ParticipantTile';
+
+export { HangoutLayout } from './HangoutLayout';
+export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from './HangoutLayout';
+
+export { CallStartedBanner } from './CallStartedBanner';
+export type { CallStartedBannerProps } from './CallStartedBanner';
