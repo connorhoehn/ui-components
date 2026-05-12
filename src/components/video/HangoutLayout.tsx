@@ -72,10 +72,13 @@ export function HangoutLayout({
   const effectiveMode: HangoutMode = spotlightContent ? 'spotlight' : mode;
   const stableSpotlightId = useStableActiveSpeaker(activeSpeakerId, speakerHysteresisMs);
 
-  // For grid mode: include localParticipant inline when 3+ remote
-  // participants (matches Meet/Teams behavior). At N≤2 remote, local is
-  // rendered as a small PiP overlay so the remote(s) fill the canvas.
+  // Local placement:
+  //   N=0 remotes → local fills the canvas (you alone, no PiP, no grid).
+  //   N=1-2 remotes → local renders as a small PiP overlay so the remote(s)
+  //                   get the main canvas area.
+  //   N>=3 remotes → local joins the grid inline as another tile.
   const remoteCount = participants.length;
+  const showLocalSolo = !!localParticipant && remoteCount === 0;
   const showLocalInline = !!localParticipant && remoteCount >= 3;
   const showLocalPip = !!localParticipant && remoteCount > 0 && remoteCount <= 2;
 
@@ -93,12 +96,14 @@ export function HangoutLayout({
     );
   }
 
-  // Auto-grid path
+  // Auto-grid path. Solo case: render local as the only tile (no
+  // "Waiting for others" placeholder, since YOU are in the call).
   const inlineParticipants = useMemo<HangoutLayoutParticipant[]>(() => {
+    if (showLocalSolo && localParticipant) return [{ ...localParticipant, isLocal: true }];
     const list = [...participants];
     if (showLocalInline && localParticipant) list.push({ ...localParticipant, isLocal: true });
     return list;
-  }, [participants, showLocalInline, localParticipant]);
+  }, [participants, showLocalSolo, showLocalInline, localParticipant]);
 
   const cols = gridCols(inlineParticipants.length);
 
@@ -121,7 +126,9 @@ export function HangoutLayout({
         />
       ))}
 
-      {/* Empty-state when alone (no remotes AND no local — defensive) */}
+      {/* Empty-state only when there's NO local AND NO remotes (truly
+       * uninitialized call). When you're alone, your own tile fills the
+       * canvas via showLocalSolo. */}
       {inlineParticipants.length === 0 && (
         <div className="aspect-video flex items-center justify-center text-white/40 text-sm">
           Waiting for others to join…
