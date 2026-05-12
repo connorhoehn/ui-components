@@ -23,6 +23,7 @@ export default defineConfig({
         shared: resolve(__dirname, 'src/components/shared/index.ts'),
         identity: resolve(__dirname, 'src/components/identity/index.ts'),
         agents: resolve(__dirname, 'src/components/agents/index.ts'),
+        video: resolve(__dirname, 'src/video.ts'),
       },
       formats: ['es', 'cjs'],
     },

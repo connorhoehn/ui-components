@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehn/ui-components",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -50,6 +50,10 @@
     "./agents": {
       "types": "./dist/agents.d.ts",
       "import": "./dist/agents.js"
+    },
+    "./video": {
+      "types": "./dist/video.d.ts",
+      "import": "./dist/video.js"
     },
     "./styles.css": "./dist/ui-components.css"
   },

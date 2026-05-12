@@ -23,14 +23,21 @@ export interface TagEditorProps {
   onChange: (tags: string[]) => void;
   placeholder?: string;
   suggestions?: string[];
+  /**
+   * Lowercase tags before insertion. Defaults to true to preserve historical
+   * behavior. Set false when you need case-sensitive identifiers (e.g. Cedar
+   * action names like `ViewSalary`).
+   */
+  lowercase?: boolean;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function normalize(raw: string): string {
-  return raw.trim().toLowerCase();
+function normalize(raw: string, lowercase: boolean): string {
+  const trimmed = raw.trim();
+  return lowercase ? trimmed.toLowerCase() : trimmed;
 }
 
 // ---------------------------------------------------------------------------
@@ -42,13 +49,14 @@ export default function TagEditor({
   onChange,
   placeholder = 'add tag...',
   suggestions,
+  lowercase = true,
 }: TagEditorProps) {
   const [draft, setDraft] = useState('');
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const addTag = (raw: string) => {
-    const normalized = normalize(raw);
+    const normalized = normalize(raw, lowercase);
     if (!normalized) return;
     if (value.includes(normalized)) {
       setDraft('');
