@@ -29,4 +29,4 @@ export { HangoutLayout } from './HangoutLayout';
 export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from './HangoutLayout';
 
 export { CallStartedBanner } from './CallStartedBanner';
-export type { CallStartedBannerProps } from './CallStartedBanner';
+export type { CallStartedBannerProps, CallStartedBannerMode } from './CallStartedBanner';

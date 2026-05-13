@@ -2,14 +2,24 @@ import { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
+export type CallStartedBannerMode = 'started' | 'calling';
+
 export interface CallStartedBannerProps {
-  /** Display name of the user who started the call. */
+  /** Display name of the user who started / is making the call. */
   callerName: string;
   /** Optional avatar URL — falls back to an initial-circle. */
   callerAvatarUrl?: string;
   /** Optional channel / room context shown under the caller name
    * (e.g. "in #general", "in this document"). */
   context?: string;
+  /**
+   * Copy framing:
+   *   - 'started' (default) — "Name started a call". Use for broadcast /
+   *     ambient hangouts where multiple people might be invited.
+   *   - 'calling'           — "Name is calling you". Use for direct 1:1
+   *     calls where the recipient is specifically targeted.
+   */
+  mode?: CallStartedBannerMode;
   /** Click handler for the "Join" action. */
   onJoin?: () => void;
   /** Click handler for the dismiss / decline action. Banner self-hides
@@ -38,6 +48,7 @@ export function CallStartedBanner({
   callerName,
   callerAvatarUrl,
   context,
+  mode = 'started',
   onJoin,
   onDismiss,
   autoExpireSec = 30,
@@ -71,7 +82,9 @@ export function CallStartedBanner({
       <Avatar name={callerName} avatarUrl={callerAvatarUrl} />
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold m-0 truncate">{callerName} started a call</p>
+        <p className="text-sm font-semibold m-0 truncate">
+          {mode === 'calling' ? `${callerName} is calling you` : `${callerName} started a call`}
+        </p>
         {context && <p className="text-xs text-white/60 m-0 truncate">{context}</p>}
       </div>
 
