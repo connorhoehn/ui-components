@@ -24,6 +24,7 @@ export default defineConfig({
         identity: resolve(__dirname, 'src/components/identity/index.ts'),
         agents: resolve(__dirname, 'src/components/agents/index.ts'),
         video: resolve(__dirname, 'src/video.ts'),
+        'video-ivs': resolve(__dirname, 'src/video-ivs.ts'),
       },
       formats: ['es', 'cjs'],
     },

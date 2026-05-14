@@ -6,7 +6,7 @@
  * No HTTP calls, no auth — the token is provided by the consumer.
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, type RefObject } from 'react';
 import { Stage, type StageStrategy, SubscribeType, StageEvents, LocalStageStream } from 'amazon-ivs-web-broadcast';
 import type { HangoutParticipant } from './types';
 
@@ -21,7 +21,7 @@ export interface UseHangoutEmbedOptions {
 
 export interface UseHangoutEmbedReturn {
   /** Ref to attach to a <video> element for local camera preview. */
-  localVideoRef: React.RefObject<HTMLVideoElement | null>;
+  localVideoRef: RefObject<HTMLVideoElement | null>;
   /** All participants (including local user). */
   participants: HangoutParticipant[];
   /** True once the Stage has been successfully joined. */

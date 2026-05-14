@@ -5,11 +5,20 @@ export type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'err
 
 export interface VideoPlayerProps {
   src?: string;
+  /**
+   * MediaStream source for WebRTC playback (WHEP, RTCPeerConnection.ontrack,
+   * getUserMedia, etc.). When set, attached to the underlying <video>'s
+   * `srcObject`. Takes precedence over `src` if both are supplied. Pass
+   * `null` to clear.
+   */
+  stream?: MediaStream | null;
   autoPlay?: boolean;
   muted?: boolean;
   loop?: boolean;
+  controls?: boolean;
   poster?: string;
   phase?: PlayerPhase;
+  className?: string;
   style?: CSSProperties;
   onPhaseChange?: (phase: PlayerPhase) => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
@@ -25,11 +34,14 @@ const overlayLabels: Record<PlayerPhase, string> = {
 
 export function VideoPlayer({
   src,
+  stream,
   autoPlay = false,
   muted = true,
   loop = false,
+  controls = false,
   poster,
   phase: controlledPhase,
+  className,
   style,
   onPhaseChange,
   onTimeUpdate,
@@ -54,17 +66,32 @@ export function VideoPlayer({
     return () => handlers.forEach(([evt, fn]) => el.removeEventListener(evt, fn));
   }, [onPhaseChange, onTimeUpdate]);
 
+  // Attach MediaStream (WebRTC) imperatively — srcObject is the only way to
+  // bind a live stream to <video>. Setting null clears it so the element
+  // releases its media graph when the parent disposes the stream.
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    if (stream !== undefined) {
+      el.srcObject = stream;
+    }
+  }, [stream]);
+
   const showOverlay = phase !== 'playing';
   const overlayText = overlayLabels[phase];
 
   return (
-    <div className={cn('relative bg-black rounded-lg overflow-hidden aspect-video')} style={style}>
+    <div
+      className={cn('relative bg-black rounded-lg overflow-hidden aspect-video', className)}
+      style={style}
+    >
       <video
         ref={videoRef}
-        src={src}
+        src={stream ? undefined : src}
         autoPlay={autoPlay}
         muted={muted}
         loop={loop}
+        controls={controls}
         poster={poster}
         playsInline
         className={cn('w-full h-full object-contain block')}

@@ -55,6 +55,10 @@
       "types": "./dist/video.d.ts",
       "import": "./dist/video.js"
     },
+    "./video-ivs": {
+      "types": "./dist/video-ivs.d.ts",
+      "import": "./dist/video-ivs.js"
+    },
     "./styles.css": "./dist/ui-components.css"
   },
   "files": [
