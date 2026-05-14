@@ -19,6 +19,8 @@ export { useA2ASession } from './hooks/useA2ASession';
 // Components
 export { AgentCard } from './components/AgentCard';
 export { AgentFlowCanvas } from './components/AgentFlowCanvas';
+export { AgUiReasoningBlock } from './components/AgUiReasoningBlock';
+export type { AgUiReasoningBlockProps } from './components/AgUiReasoningBlock';
 export { StreamingChatPanel } from './components/StreamingChatPanel';
 export { ToolCallRenderer } from './components/ToolCallRenderer';
 export { TraceTimeline } from './components/TraceTimeline';

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { cn } from '../../../lib/cn';
 import type { AgUiMessage, AgUiToolCall } from '../../../types/agents';
 import { ToolCallRenderer } from './ToolCallRenderer';
+import { AgUiReasoningBlock } from './AgUiReasoningBlock';
 
 interface StreamingChatPanelProps {
   messages: AgUiMessage[];
@@ -92,6 +93,13 @@ export function StreamingChatPanel({
                   {msg.role === 'user' ? 'You' : 'Agent'}
                 </span>
               </div>
+              {msg.role === 'assistant' && msg.reasoning && (
+                <AgUiReasoningBlock
+                  reasoning={msg.reasoning}
+                  isStreaming={msg.isStreaming && isStreaming}
+                  defaultOpen={false}
+                />
+              )}
               <div
                 style={{
                   marginTop: 4,
