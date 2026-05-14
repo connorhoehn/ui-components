@@ -694,8 +694,13 @@ export type PipelineEventMap = {
     originalFailedStepId?: string;
     at: string;
   };
-  /** @deprecated Use `pipeline.run.resumed-from-step`. Kept for stale callers. */
-  'pipeline.run.resumeFromStep': {
+  /**
+   * Canonical colon-form request event emitted by the gateway's local fallback
+   * when no PipelineModule is wired. Wire name: `pipeline:run:resumeFromStep`.
+   * The past-tense `pipeline.run.resumed-from-step` (DC-sourced) is the
+   * producer-backed form; this key covers the gateway-local stub path.
+   */
+  'pipeline:run:resumeFromStep': {
     runId: string;
     fromNodeId: string;
     at: string;

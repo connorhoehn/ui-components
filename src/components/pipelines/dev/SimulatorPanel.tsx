@@ -53,7 +53,7 @@ const EVENT_TYPES = [
   // Pause / resume / retry
   'pipeline.run.paused',
   'pipeline.run.resumed',
-  'pipeline.run.resumeFromStep',
+  'pipeline:run:resumeFromStep',
   'pipeline.run.retry',
   // External webhook (Phase 4 producer)
   'pipeline.webhook.triggered',
@@ -197,7 +197,7 @@ function skeletonFor(eventType: EventKey): Record<string, unknown> {
       return { runId: 'run-sim-1', atStepIds: ['step-1'], at: isoNow() };
     case 'pipeline.run.resumed':
       return { runId: 'run-sim-1', at: isoNow() };
-    case 'pipeline.run.resumeFromStep':
+    case 'pipeline:run:resumeFromStep':
       return { runId: 'run-sim-1', fromNodeId: 'step-1', at: isoNow() };
     case 'pipeline.run.retry':
       return { newRunId: 'run-sim-2', previousRunId: 'run-sim-1', at: isoNow() };

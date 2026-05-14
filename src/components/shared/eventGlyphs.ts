@@ -40,7 +40,7 @@ export const eventGlyphs: Record<string, EventGlyph> = {
   'pipeline.run.reassigned':     { icon: '↔', color: C_INFO,    severity: 'info' },
   'pipeline.run.paused':         { icon: '⏸', color: C_WARNING, severity: 'warning' },
   'pipeline.run.resumed':        { icon: '▶', color: C_INFO,    severity: 'info' },
-  'pipeline.run.resumeFromStep': { icon: '↻', color: C_INFO,    severity: 'info' },
+  'pipeline:run:resumeFromStep': { icon: '↻', color: C_INFO,    severity: 'info' },
   'pipeline.run.resumed-from-step': { icon: '↻', color: C_INFO, severity: 'info' },
   'pipeline.run.retry':          { icon: '↻', color: C_INFO,    severity: 'info' },
 

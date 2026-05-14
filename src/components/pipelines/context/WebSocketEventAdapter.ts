@@ -37,24 +37,20 @@ import type { GatewayMessage, PipelineEventFrame } from '../../../types/gateway'
 // on its EventBus. The websocket-gateway's `mapBusEventToWireEvent` performs a
 // naïve `:` → `.` substitution, which yields the kebab-form
 // `pipeline.run.resume-from-step` — a name the frontend's PipelineEventMap
-// (and therefore PipelineRunsContext / SimulatorPanel / eventGlyphs) does NOT
-// recognise.
+// does NOT recognise directly.
 //
-// Until DC's deprecation window closed, the frontend only saw this event via
-// the dual-emitted dot-form alias `pipeline.run.resumeFromStep` (camelCase).
-// The gateway bridge now suppresses dual-emit deprecated aliases (hub#2210),
-// so without normalisation here this event would be silently dropped.
+// The gateway's local fallback (handleResumeFromStep without PipelineModule)
+// emits `pipeline:run:resumeFromStep` (colon-form) on the plain EventEmitter;
+// the bridge forwards the `eventType` field unchanged, so the wire carries the
+// colon-form directly. The PipelineEventMap key was renamed to match:
+// `pipeline:run:resumeFromStep` (colon-form, wave10-e).
 //
-// Resolution: accept the canonical kebab-form at the wire boundary and rename
-// it to the in-app canonical (camelCase) so downstream consumers continue to
-// work unchanged. Either form arriving on the wire produces the same in-app
-// envelope. New callers should treat the kebab form as the canonical wire name.
-//
-// Keep this map small — only events whose colon→dot canonicalisation produces
-// a name that doesn't match a PipelineEventMap key need an entry here.
+// This map normalises both wire shapes to the single in-app key.
+// Keep this map small — only events whose wire name doesn't match a
+// PipelineEventMap key need an entry here.
 const WIRE_EVENTTYPE_ALIASES: Readonly<Record<string, keyof PipelineEventMap>> = Object.freeze({
-  // Legacy reserved (no producer in DC) — Phase 5 placeholder.
-  'pipeline.run.resume-from-step': 'pipeline.run.resumeFromStep',
+  // DC-sourced kebab form (after bridge's `:` → `.` mapping) → colon-form in-app key.
+  'pipeline.run.resume-from-step': 'pipeline:run:resumeFromStep',
   // hub#2223: producer-backed canonical past-tense form. Kebab-from-the-wire
   // already maps directly into the PipelineEventMap key, but keep an explicit
   // identity entry here for documentation purposes (the function below
@@ -123,9 +119,8 @@ export function useWebSocketPipelineEvents({
       if (!rawEventType) return;
 
       // Apply wire-form alias map (e.g. kebab `pipeline.run.resume-from-step`
-      // → camel `pipeline.run.resumeFromStep`) so downstream listeners that
-      // key on PipelineEventMap names continue to fire after DC drops the
-      // dual-emitted deprecated dot-form aliases. See WIRE_EVENTTYPE_ALIASES.
+      // → colon-form `pipeline:run:resumeFromStep`) so downstream listeners
+      // that key on PipelineEventMap names continue to fire. See WIRE_EVENTTYPE_ALIASES.
       const eventType = normaliseWireEventType(rawEventType as string);
 
       const envelope: PipelineWireEvent<keyof PipelineEventMap> = {

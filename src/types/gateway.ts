@@ -41,16 +41,15 @@ export interface SessionMessage extends GatewayMessage {
  *
  * Most events use the same name on the wire as in `PipelineEventMap` (the
  * gateway bridge canonicalises distributed-core's colon-form `:` to dot-form
- * `.` to align with the in-app map keys). One known divergence:
+ * `.` to align with the in-app map keys). Known divergences:
  *
  *  - `pipeline.run.resume-from-step` (wire, kebab) ↔
- *    `pipeline.run.resumeFromStep` (in-app, camel)
+ *    `pipeline:run:resumeFromStep` (in-app, colon-form)
  *
- * The kebab form is the canonical wire name post-DC-deprecation-window
- * (hub#2209). `WebSocketEventAdapter` normalises it back to the camelCase
- * in-app key before dispatch, so subscribers continue to key on
- * `PipelineEventMap`. The type below admits both shapes so that frame
- * decoders don't fail typecheck on receipt of the kebab form.
+ * The kebab form is the canonical wire name from DC post-deprecation-window
+ * (hub#2209). `WebSocketEventAdapter` normalises it before dispatch, so
+ * subscribers key on `PipelineEventMap`. The type below admits both shapes so
+ * that frame decoders don't fail typecheck on receipt of the kebab form.
  */
 export type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
 

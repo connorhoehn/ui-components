@@ -30,7 +30,7 @@ const EVENT_TYPES = [
   'pipeline.approval.recorded',
   'pipeline.run.paused',
   'pipeline.run.resumed',
-  'pipeline.run.resumeFromStep',
+  'pipeline:run:resumeFromStep',
   'pipeline.run.retry',
   'pipeline.webhook.triggered',
   'pipeline.join.waiting',
