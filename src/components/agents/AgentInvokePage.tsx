@@ -17,7 +17,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
   const [events, setEvents] = useState<AgUiEvent[]>([]);
 
   const invokeUrl = `${baseUrl}/${selectedId}/invoke`;
-  const { messages, isStreaming, currentToolCall, error, sendMessage, cancelStream, reset } =
+  const { messages, isStreaming, streamingText, activeToolCalls, error, sendMessage, cancelStream, reset } =
     useAgUiStream({
       url: invokeUrl,
       onEvent: (event) => setEvents((prev) => [...prev, event]),
@@ -142,7 +142,8 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
         <StreamingChatPanel
           messages={messages}
           isStreaming={isStreaming}
-          currentToolCall={currentToolCall}
+          streamingText={streamingText}
+          activeToolCalls={activeToolCalls}
           error={error}
           onSend={sendMessage}
           onCancel={cancelStream}
@@ -161,7 +162,13 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                   <span style={{ color: '#94a3b8', width: 20, textAlign: 'right', flexShrink: 0 }}>{i + 1}</span>
                   <span style={{ color: '#1e293b', width: 150, flexShrink: 0, fontWeight: 500 }}>{ev.type}</span>
                   <span style={{ color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {ev.delta ? `"${ev.delta.slice(0, 60)}"` : ev.toolName ?? ev.error ?? ''}
+                    {(() => {
+                      if (ev.type === 'TEXT_MESSAGE_CONTENT' || ev.type === 'TOOL_CALL_ARGS') return `"${ev.delta.slice(0, 60)}"`;
+                      if (ev.type === 'TEXT_MESSAGE_CHUNK' && ev.delta) return `"${ev.delta.slice(0, 60)}"`;
+                      if (ev.type === 'TOOL_CALL_START') return ev.toolCallName;
+                      if (ev.type === 'RUN_ERROR') return ev.message;
+                      return '';
+                    })()}
                   </span>
                 </div>
               ))}

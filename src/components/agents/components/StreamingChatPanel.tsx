@@ -6,7 +6,8 @@ import { ToolCallRenderer } from './ToolCallRenderer';
 interface StreamingChatPanelProps {
   messages: AgUiMessage[];
   isStreaming: boolean;
-  currentToolCall: AgUiToolCall | null;
+  streamingText?: string;
+  activeToolCalls?: AgUiToolCall[];
   error: string | null;
   onSend: (content: string) => void;
   onCancel?: () => void;
@@ -14,19 +15,12 @@ interface StreamingChatPanelProps {
   className?: string;
 }
 
-function formatTime(iso: string): string {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  } catch {
-    return '';
-  }
-}
 
 export function StreamingChatPanel({
   messages,
   isStreaming,
-  currentToolCall,
+  streamingText = '',
+  activeToolCalls = [],
   error,
   onSend,
   onCancel,
@@ -40,7 +34,7 @@ export function StreamingChatPanel({
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, currentToolCall]);
+  }, [messages, activeToolCalls, streamingText]);
 
   function handleSend() {
     const content = input.trim();
@@ -97,9 +91,6 @@ export function StreamingChatPanel({
                 <span style={{ fontWeight: 600, fontSize: 13, color: '#1a1a2e' }}>
                   {msg.role === 'user' ? 'You' : 'Agent'}
                 </span>
-                <span style={{ fontSize: 11, color: '#94a3b8' }}>
-                  {formatTime(msg.timestamp)}
-                </span>
               </div>
               <div
                 style={{
@@ -133,8 +124,8 @@ export function StreamingChatPanel({
           </div>
         ))}
 
-        {/* Active tool call */}
-        {currentToolCall && (
+        {/* Active tool calls */}
+        {activeToolCalls.length > 0 && (
           <div style={{ display: 'flex', gap: 10 }}>
             <div
               style={{
@@ -153,14 +144,56 @@ export function StreamingChatPanel({
             >
               AI
             </div>
-            <div style={{ flex: 1 }}>
-              <ToolCallRenderer toolCall={currentToolCall} />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {activeToolCalls.map((tc) => (
+                <ToolCallRenderer key={tc.id} toolCall={tc} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Live streaming text (in-progress assistant turn, not yet in messages) */}
+        {streamingText && !messages.some((m) => m.isStreaming) && (
+          <div style={{ display: 'flex', gap: 10 }}>
+            <div
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: 11,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
+            >
+              AI
+            </div>
+            <div
+              style={{
+                flex: 1,
+                marginTop: 4,
+                padding: '8px 12px',
+                background: '#f1f5f9',
+                borderRadius: '4px 12px 12px 12px',
+                fontSize: 14,
+                color: '#334155',
+                lineHeight: 1.5,
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {streamingText}
+              <span className="inline-block animate-pulse ml-0.5 text-blue-500">▊</span>
             </div>
           </div>
         )}
 
         {/* Typing indicator */}
-        {isStreaming && !currentToolCall && messages.length > 0 && !messages[messages.length - 1]?.isStreaming && (
+        {isStreaming && activeToolCalls.length === 0 && !streamingText && messages.length > 0 && !messages[messages.length - 1]?.isStreaming && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
             <div
               style={{
