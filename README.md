@@ -14,6 +14,7 @@ import { VideoPlayer, VideoGrid, ReactionOverlay } from '@connorhoehn/ui-compone
 
 ## Components
 
+- **Agents** — AG-UI streaming chat, reasoning blocks, tool-call renderer, agent registry, A2A flow canvas. See [`src/components/agents/README.md`](src/components/agents/README.md).
 - **Video** — Player, participant grid, reactions, stream stats, network quality badges
 - **Collaboration** — Presence panels, multi-mode cursors, activity feeds, avatar stacks
 - **Node Editor** — Composable graph components for workflow/pipeline UIs

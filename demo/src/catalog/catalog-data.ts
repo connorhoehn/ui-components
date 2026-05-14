@@ -7,6 +7,8 @@ export interface CatalogEntry {
   category: string;
   type: EntryType;
   thumbnail?: string;
+  /** Override the auto-generated link path (useful for nested routes). */
+  path?: string;
 }
 
 export const entries: CatalogEntry[] = [
@@ -54,6 +56,40 @@ export const entries: CatalogEntry[] = [
     type: 'demo',
   },
 
+  // Agents demos
+  {
+    id: 'agents-dashboard',
+    title: 'Agents Dashboard',
+    description: 'Agents dashboard — grid of registered agents with status badges',
+    category: 'Agents',
+    type: 'demo',
+    path: '/workflows/agents/dashboard',
+  },
+  {
+    id: 'agents-flow',
+    title: 'Agent Flow Canvas',
+    description: 'Agent flow canvas — A2A connections visualized with xyflow',
+    category: 'Agents',
+    type: 'demo',
+    path: '/workflows/agents/flow',
+  },
+  {
+    id: 'agents-invoke',
+    title: 'Streaming Agent Invoke',
+    description: 'Streaming agent invoke — AG-UI chat with reasoning, tool calls, and state',
+    category: 'Agents',
+    type: 'demo',
+    path: '/workflows/agents/invoke',
+  },
+  {
+    id: 'agents-detail',
+    title: 'Agent Detail',
+    description: 'Per-agent detail — trace timeline, guardrails, memory, policy decisions',
+    category: 'Agents',
+    type: 'demo',
+    path: '/workflows/agents/detail',
+  },
+
   // Component pages
   {
     id: 'buttons',
@@ -95,5 +131,6 @@ export const entries: CatalogEntry[] = [
 export const categories = [
   { id: 'all', label: 'All' },
   { id: 'Pages', label: 'Pages' },
+  { id: 'Agents', label: 'Agents' },
   { id: 'Components', label: 'Components' },
 ] as const;

@@ -3,12 +3,17 @@ import type { CatalogEntry } from './catalog-data';
 
 const categoryColors: Record<string, string> = {
   Pages: '#6366f1',
+  Agents: '#0ea5e9',
   Components: '#475569',
 };
 
 export function DemoCard({ entry }: { entry: CatalogEntry }) {
   const color = categoryColors[entry.category] ?? '#64748b';
-  const linkPath = entry.type === 'demo' ? `/demo/${entry.id}` : `/components/${entry.id}`;
+  const linkPath = entry.path
+    ? entry.path
+    : entry.type === 'demo'
+    ? `/demo/${entry.id}`
+    : `/components/${entry.id}`;
 
   return (
     <Link to={linkPath} style={{ textDecoration: 'none' }}>
