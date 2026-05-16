@@ -73,8 +73,8 @@ function MessageBubble({ post, isOwn, showSender }: MessageBubbleProps) {
       className={cn(
         'flex items-end gap-2',
         isOwn ? 'flex-row-reverse' : 'flex-row',
+        showSender ? 'pt-2 px-4 pb-0.5' : 'py-px px-4',
       )}
-      style={{ padding: showSender ? '8px 16px 2px' : '1px 16px' }}
     >
       {/* Avatar — left side only, shown for first in group */}
       <div className="w-8 shrink-0 self-end">
@@ -106,8 +106,8 @@ function MessageBubble({ post, isOwn, showSender }: MessageBubbleProps) {
             isOwn
               ? 'bg-primary text-white rounded-[18px_18px_4px_18px]'
               : 'bg-surface-hover text-text-primary rounded-[4px_18px_18px_18px]',
+            post._fadeIn ? 'opacity-0' : 'opacity-100',
           )}
-          style={{ opacity: post._fadeIn ? 0 : 1 }}
         >
           {post.content}
         </div>

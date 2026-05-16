@@ -117,7 +117,7 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
   const commentInitials = comment.authorId.slice(0, 2).toUpperCase();
 
   const inner = (
-    <div style={{ opacity, transition: 'opacity 200ms ease' }}>
+    <div style={{ opacity }} className="transition-opacity duration-200 ease-[ease]">
       <div className="flex items-start gap-2">
         <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold text-text-primary shrink-0">
           {commentInitials}

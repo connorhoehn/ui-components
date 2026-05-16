@@ -260,9 +260,11 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
         <span className="text-[13px] text-text-primary min-w-[42px]">{visibility === 'public' ? 'Public' : 'Private'}</span>
         <button type="button" role="switch" aria-checked={visibility === 'private'}
           onClick={() => setVisibility(v => v === 'public' ? 'private' : 'public')}
-          className="relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200"
-          style={{ background: visibility === 'private' ? '#646cff' : '#d1d5db' }}>
-          <span className="absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow-sm transition-[left] duration-200" style={{ left: visibility === 'private' ? 23 : 3 }} />
+          className={cn(
+            'relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200',
+            visibility === 'private' ? 'bg-primary' : 'bg-state-idle',
+          )}>
+          <span className={cn('absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white shadow-sm transition-[left] duration-200', visibility === 'private' ? 'left-[23px]' : 'left-[3px]')} />
         </button>
         <span className="text-xs text-text-tertiary">{visibility === 'public' ? 'Visible to everyone' : 'Invite only'}</span>
       </div>

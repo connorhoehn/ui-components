@@ -204,7 +204,7 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
   const postInitials = post.authorId.slice(0, 2).toUpperCase();
 
   return (
-    <div style={{ opacity, transition: 'opacity 200ms ease' }} className="border-b border-surface-hover pb-4 mb-4">
+    <div style={{ opacity }} className="border-b border-surface-hover pb-4 mb-4 transition-opacity duration-200 ease-[ease]">
       {/* Header */}
       <div className="flex items-center gap-2 mb-2">
         <div className="w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold text-text-primary shrink-0">
