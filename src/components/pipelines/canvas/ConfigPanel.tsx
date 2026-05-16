@@ -371,35 +371,6 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
             )}
             {tab === 'docs' && (
               <div className="pipeline-docs-pane p-4 text-[13px] text-[#0f172a] leading-snug">
-                {/* Scoped prose styles */}
-                <style>{`
-                  .pipeline-docs-pane h4 {
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: #0f172a;
-                    margin: 16px 0 8px;
-                    padding-bottom: 4px;
-                    border-bottom: 1px solid #e2e8f0;
-                  }
-                  .pipeline-docs-pane h4:first-child {
-                    margin-top: 0;
-                  }
-                  .pipeline-docs-pane p {
-                    margin: 0 0 8px;
-                  }
-                  .pipeline-docs-pane ul {
-                    margin: 0 0 8px;
-                    padding-left: 18px;
-                  }
-                  .pipeline-docs-pane li {
-                    margin-bottom: 4px;
-                  }
-                  .pipeline-docs-pane code {
-                    font-size: 12px;
-                    color: #475569;
-                    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-                  }
-                `}</style>
                 {docsContent[selectedNode.type] ?? (
                   <p className="text-text-secondary">
                     No docs available for this node type.
