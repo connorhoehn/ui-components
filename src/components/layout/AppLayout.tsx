@@ -85,9 +85,11 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
           className={cn(
             'bg-surface border border-border rounded-lg px-4 py-3',
             'flex items-center justify-between font-sans shadow-md',
-            'animate-[slideInRight_0.3s_ease-out]'
+            'animate-[slideInRight_0.3s_ease-out]',
+            n.type === 'mention'
+              ? 'border-l-[3px] border-l-[#3b82f6]'
+              : 'border-l-[3px] border-l-primary',
           )}
-          style={{ borderLeft: `3px solid ${n.type === 'mention' ? '#3b82f6' : '#646cff'}` }}
         >
           <span
             role={isClickable(n) ? 'button' : undefined}
