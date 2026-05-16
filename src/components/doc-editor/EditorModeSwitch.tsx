@@ -181,10 +181,7 @@ export default function EditorModeSwitch({
 
           {/* Center: section content */}
           <div
-            className="flex-1 min-w-0"
-            style={{
-              paddingRight: commentSidebarOpen ? 0 : (showTOC && sections.length > 1 && mode === 'editor' ? 192 : 48),
-            }}
+            className={cn('flex-1 min-w-0', commentSidebarOpen ? 'pr-0' : showTOC && sections.length > 1 && mode === 'editor' ? 'pr-48' : 'pr-12')}
           >
             <SectionList
               sections={sections.map(s => {

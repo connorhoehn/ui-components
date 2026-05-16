@@ -290,11 +290,7 @@ export default function ReaderMode({
 
   return (
     <div
-      className={cn('grid gap-4 mx-auto')}
-      style={{
-        gridTemplateColumns: showToc ? '200px 1fr 280px' : '1fr 280px',
-        maxWidth: showToc ? 1300 : 1100,
-      }}
+      className={cn('grid gap-4 mx-auto', showToc ? '[grid-template-columns:200px_1fr_280px] max-w-[1300px]' : '[grid-template-columns:1fr_280px] max-w-[1100px]')}
     >
       {/* Header spanning all columns */}
       <HeaderBanner meta={meta} participantCount={participants.length} />
