@@ -24,7 +24,7 @@ export default function PolicyNode({ id, data, selected }: NodeProps<PolicyFlowN
       icon="📜"
       subtitle={subtitle}
       state={state}
-      body={<span style={{ fontSize: 11 }}>{data.principal} → {data.resource}</span>}
+      body={<span className="text-[11px]">{data.principal} → {data.resource}</span>}
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}

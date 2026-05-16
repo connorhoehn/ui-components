@@ -25,7 +25,7 @@ export default function AgentNode({ id, data, selected }: NodeProps<AgentFlowNod
       icon="🤖"
       subtitle={subtitle}
       state={state}
-      body={<span style={{ fontSize: 11 }}>{body}</span>}
+      body={<span className="text-[11px]">{body}</span>}
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}

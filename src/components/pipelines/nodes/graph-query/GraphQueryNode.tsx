@@ -25,7 +25,7 @@ export default function GraphQueryNode({ id, data, selected }: NodeProps<GraphFl
       icon="🕸️"
       subtitle={subtitle}
       state={state}
-      body={<span style={{ fontSize: 11, fontFamily: 'monospace' }}>{preview}</span>}
+      body={<span className="text-[11px] font-mono">{preview}</span>}
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}

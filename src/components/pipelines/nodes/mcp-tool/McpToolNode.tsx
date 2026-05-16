@@ -24,7 +24,7 @@ export default function McpToolNode({ id, data, selected }: NodeProps<McpToolFlo
       icon="🔌"
       subtitle={subtitle}
       state={state}
-      body={data.gatewayUrl ? <span style={{ fontSize: 11 }}>{data.gatewayUrl}</span> : undefined}
+      body={data.gatewayUrl ? <span className="text-[11px]">{data.gatewayUrl}</span> : undefined}
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}

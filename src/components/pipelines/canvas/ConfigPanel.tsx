@@ -129,7 +129,7 @@ type AnyConfig = (props: {
 }) => ReactElement;
 
 const PlaceholderConfig: AnyConfig = ({ data }) => (
-  <div style={{ padding: 12, fontSize: 13, color: '#64748b' }}>
+  <div className="p-3 text-[13px] text-[#64748b]">
     Configuration for <strong>{data.type}</strong> — coming in Phase C.
   </div>
 );

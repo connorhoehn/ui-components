@@ -23,8 +23,8 @@ export default function AgUiOutputNode({ id, data, selected }: NodeProps<AgUiFlo
       icon="📡"
       subtitle={subtitle}
       state={state}
-      body={<span style={{ fontSize: 11 }}>Source: {data.sourceField}</span>}
-      footer={<span style={{ fontSize: 10, color: '#6366f1' }}>Terminal — streams to AG-UI frontend</span>}
+      body={<span className="text-[11px]">Source: {data.sourceField}</span>}
+      footer={<span className="text-[10px] text-[#6366f1]">Terminal — streams to AG-UI frontend</span>}
       selected={selected}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
