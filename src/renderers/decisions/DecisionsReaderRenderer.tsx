@@ -1,3 +1,4 @@
+import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 
@@ -11,43 +12,23 @@ const STATUS_META: Record<string, { label: string; icon: string; color: string; 
 function DecisionRow({ item }: { item: TaskItem }) {
   const meta = STATUS_META[item.status] ?? STATUS_META.pending;
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-      <span style={{
-        width: 18,
-        height: 18,
-        borderRadius: '50%',
-        background: meta.bg,
-        color: meta.color,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 10,
-        fontWeight: 700,
-        flexShrink: 0,
-        marginTop: 2,
-        userSelect: 'none',
-      }}>
+    <div className="flex items-start gap-2 py-1.5 border-b border-slate-100">
+      <span
+        className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 select-none"
+        style={{ background: meta.bg, color: meta.color }}
+      >
         {meta.icon}
       </span>
-      <span style={{
-        flex: 1,
-        fontSize: 13,
-        color: item.status === 'rejected' ? '#94a3b8' : '#1e293b',
-        textDecoration: item.status === 'rejected' ? 'line-through' : 'none',
-        lineHeight: 1.4,
-      }}>
-        {item.text || <span style={{ color: '#cbd5e1', fontStyle: 'italic' }}>Untitled decision</span>}
+      <span className={cn(
+        'flex-1 text-[13px] leading-[1.4]',
+        item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-slate-800',
+      )}>
+        {item.text || <span className="text-text-disabled italic">Untitled decision</span>}
       </span>
-      <span style={{
-        fontSize: 10,
-        fontWeight: 600,
-        padding: '2px 8px',
-        borderRadius: 10,
-        background: meta.bg,
-        color: meta.color,
-        whiteSpace: 'nowrap',
-        flexShrink: 0,
-      }}>
+      <span
+        className="text-[10px] font-semibold px-2 py-0.5 rounded-[10px] whitespace-nowrap shrink-0"
+        style={{ background: meta.bg, color: meta.color }}
+      >
         {meta.label}
       </span>
     </div>
@@ -56,8 +37,8 @@ function DecisionRow({ item }: { item: TaskItem }) {
 
 function StatusGroup({ label, color, items }: { label: string; color: string; items: TaskItem[] }) {
   return (
-    <div style={{ marginBottom: 8 }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 2 }}>
+    <div className="mb-2">
+      <div className="text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5" style={{ color }}>
         {label}
       </div>
       {items.map(item => <DecisionRow key={item.id} item={item} />)}
@@ -70,7 +51,7 @@ export default function DecisionsReaderRenderer({ section, onNavigateToEditor }:
 
   if (items.length === 0) {
     return (
-      <div style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, padding: '4px 0' }}>
+      <div className="text-text-tertiary italic text-[13px] py-1">
         No decisions recorded.
       </div>
     );
@@ -90,7 +71,7 @@ export default function DecisionsReaderRenderer({ section, onNavigateToEditor }:
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          style={{ marginTop: 6, background: 'none', border: 'none', color: '#3b82f6', fontSize: 12, cursor: 'pointer', padding: 0, fontFamily: 'inherit' }}
+          className="mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

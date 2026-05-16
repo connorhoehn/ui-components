@@ -6,27 +6,27 @@ export default function FileUploadReaderRenderer({ section }: SectionRendererPro
   const m = (section.metadata ?? {}) as { fileName?: string; fileDataUrl?: string; fileSize?: number };
   if (!m.fileName) {
     return (
-      <div data-testid={`file-upload-reader-empty-${section.id}`} style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>
+      <div data-testid={`file-upload-reader-empty-${section.id}`} className="text-text-tertiary text-[13px] italic">
         No file uploaded.
       </div>
     );
   }
   return (
-    <div data-testid={`file-upload-reader-${section.id}`} style={{
-      display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px',
-      borderRadius: 6, background: '#f8fafc', border: '1px solid #e2e8f0', fontSize: 13,
-    }}>
-      <span style={{ fontSize: 16 }}>📎</span>
+    <div
+      data-testid={`file-upload-reader-${section.id}`}
+      className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]"
+    >
+      <span className="text-base">📎</span>
       <a
         href={m.fileDataUrl ?? '#'}
         download={m.fileName}
         data-testid={`file-upload-link-${section.id}`}
-        style={{ color: '#646cff', fontWeight: 500, textDecoration: 'none' }}
+        className="text-primary font-medium no-underline"
       >
         Download {m.fileName}
       </a>
       {typeof m.fileSize === 'number' && (
-        <span style={{ fontSize: 11, color: '#94a3b8' }}>
+        <span className="text-[11px] text-text-tertiary">
           ({(m.fileSize / 1024).toFixed(1)} kB)
         </span>
       )}

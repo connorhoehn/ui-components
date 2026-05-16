@@ -30,7 +30,7 @@ export default function TasksEditorRenderer({
   };
 
   return (
-    <div style={{ padding: '4px 0' }}>
+    <div className="py-1">
       {section.items.length > 0 || editable ? (
         <TaskList
           items={section.items}
@@ -42,7 +42,7 @@ export default function TasksEditorRenderer({
       ) : null}
 
       {section.items.length === 0 && !editable && (
-        <p style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic', margin: '8px 0' }}>
+        <p className="text-text-tertiary text-[13px] italic my-2">
           No items yet.
         </p>
       )}
@@ -51,17 +51,7 @@ export default function TasksEditorRenderer({
         <button
           type="button"
           onClick={handleAddItem}
-          style={{
-            marginTop: 8,
-            padding: '6px 14px',
-            fontSize: 13,
-            border: '1px dashed #cbd5e1',
-            borderRadius: 6,
-            background: 'transparent',
-            color: '#64748b',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-slate-500 cursor-pointer font-inherit"
         >
           + Add item
         </button>
