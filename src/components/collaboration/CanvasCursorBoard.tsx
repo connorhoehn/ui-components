@@ -189,14 +189,8 @@ export function CanvasCursorBoard({
       <div
         ref={boardRef}
         onMouseMove={handleMouseMove}
-        className="relative border-2 border-gray-200 rounded overflow-hidden cursor-crosshair"
-        style={{
-          width,
-          height,
-          backgroundImage:
-            'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-        }}
+        className="relative border-2 border-gray-200 rounded overflow-hidden cursor-crosshair cursor-canvas-grid"
+        style={{ width, height }}
       >
         {/* Board label */}
         <span className="absolute top-1 left-1 text-gray-400 text-xs p-1 pointer-events-none select-none">
