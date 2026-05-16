@@ -165,3 +165,14 @@
   0%   { opacity: 1; transform: translateX(0) translateY(0); }
   100% { opacity: 0; transform: translateX(-20px) translateY(-120px); }
 }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes mentionPulse {
+  0%   { background-color: rgba(59, 130, 246, 0.18); }
+  50%  { background-color: rgba(59, 130, 246, 0.08); }
+  100% { background-color: rgba(59, 130, 246, 0.18); }
+}

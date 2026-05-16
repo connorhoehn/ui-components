@@ -59,31 +59,6 @@ export interface CollapsibleSidebarProps {
 }
 
 // ---------------------------------------------------------------------------
-// Keyframes (injected once)
-// ---------------------------------------------------------------------------
-
-const STYLE_ID = '__collapsible-sidebar-keyframes';
-
-function ensureKeyframes() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = STYLE_ID;
-  style.textContent = `
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(-6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes mentionPulse {
-      0%   { background-color: rgba(59,130,246,0.18); }
-      50%  { background-color: rgba(59,130,246,0.08); }
-      100% { background-color: rgba(59,130,246,0.18); }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -176,8 +151,10 @@ function CollapsibleSection({
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(v => !v); } }}
       >
         <span
-          className="inline-block transition-transform duration-200 ease-in-out text-[10px]"
-          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          className={cn(
+            'inline-block transition-transform duration-200 ease-in-out text-[10px]',
+            expanded ? 'rotate-90' : 'rotate-0',
+          )}
         >
           {'▸'}
         </span>
@@ -190,8 +167,10 @@ function CollapsibleSection({
         )}
       </div>
       <div
-        className="overflow-hidden transition-[max-height] duration-[250ms] ease-in-out"
-        style={{ maxHeight: expanded ? 600 : 0 }}
+        className={cn(
+          'overflow-hidden transition-[max-height] duration-[250ms] ease-in-out',
+          expanded ? 'max-h-[600px]' : 'max-h-0',
+        )}
       >
         {children}
       </div>
@@ -220,8 +199,6 @@ export function CollapsibleSidebar({
   onSeeAllPipelines,
   videoSlot,
 }: CollapsibleSidebarProps) {
-  ensureKeyframes();
-
   const isConnected = connectionState === 'connected';
   const recentEvents = useMemo(() => activityEvents.slice(0, 5), [activityEvents]);
   const recentDocs = useMemo(() => documents.slice(0, 5), [documents]);
@@ -342,13 +319,10 @@ export function CollapsibleSidebar({
                 key={event.id}
                 className={cn(
                   'flex items-start gap-1.5 px-1 py-[3px] rounded text-xs font-sans',
-                  isMention && 'bg-[rgba(59,130,246,0.10)]'
+                  isMention
+                    ? 'bg-[rgba(59,130,246,0.10)] [animation:mentionPulse_2s_ease-in-out_3,fadeSlideIn_0.3s_ease-out]'
+                    : '[animation:fadeSlideIn_0.3s_ease-out]',
                 )}
-                style={{
-                  animation: isMention
-                    ? 'mentionPulse 2s ease-in-out 3, fadeSlideIn 0.3s ease-out'
-                    : 'fadeSlideIn 0.3s ease-out',
-                }}
               >
                 <span className="shrink-0 w-4 text-center text-text-tertiary">
                   {eventIcon(event.eventType)}
