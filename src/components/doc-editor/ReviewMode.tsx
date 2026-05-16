@@ -109,11 +109,8 @@ export default function ReviewMode({
         </div>
         <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden')}>
           <div
-            className={cn('h-full rounded transition-[width] duration-300 ease-in-out')}
-            style={{
-              width: `${pct}%`,
-              background: reviewedByMe === sections.length ? '#16a34a' : '#3b82f6',
-            }}
+            className={cn('h-full rounded transition-[width] duration-300 ease-in-out', reviewedByMe === sections.length ? 'bg-success' : 'bg-blue-500')}
+            style={{ width: `${pct}%` }}
           />
         </div>
       </div>
@@ -199,11 +196,7 @@ export default function ReviewMode({
                           )}
                           {item.priority && item.priority !== 'medium' && (
                             <span
-                              className={cn('text-[10px] font-semibold ml-1.5 px-1.5 py-px rounded')}
-                              style={{
-                                background: item.priority === 'high' ? '#fef2f2' : '#f0fdf4',
-                                color: item.priority === 'high' ? '#dc2626' : '#16a34a',
-                              }}
+                              className={cn('text-[10px] font-semibold ml-1.5 px-1.5 py-px rounded', item.priority === 'high' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-700')}
                             >
                               {item.priority}
                             </span>

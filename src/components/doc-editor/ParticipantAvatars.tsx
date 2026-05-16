@@ -150,8 +150,7 @@ function AvatarItem({
             <div
               role="button"
               onClick={(e) => { e.stopPropagation(); onFollowUser(participant); }}
-              className={cn('mt-1 text-[11px] font-semibold cursor-pointer')}
-              style={{ color: isFollowing ? '#f59e0b' : '#60a5fa' }}
+              className={cn('mt-1 text-[11px] font-semibold cursor-pointer', isFollowing ? 'text-amber-400' : 'text-blue-400')}
             >
               {isFollowing ? 'Stop following' : 'Follow'}
             </div>
@@ -162,10 +161,9 @@ function AvatarItem({
       {/* Avatar circle with gradient + online dot */}
       <div className={cn('relative inline-block')}>
         <div
-          className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out')}
+          className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out', hovered ? 'scale-110' : 'scale-100')}
           style={{
             background: `linear-gradient(135deg, ${baseColor}, ${darkenColor(baseColor, 0.2)})`,
-            transform: hovered ? 'scale(1.1)' : 'scale(1)',
             boxShadow: hovered ? `0 0 0 2px ${baseColor}40` : 'none',
           }}
         >
@@ -174,11 +172,8 @@ function AvatarItem({
 
         {/* Status dot: green = active, yellow = away/idle */}
         <div
-          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white')}
-          style={{
-            background: participant.idle ? '#f59e0b' : '#10b981',
-            animation: participant.idle ? 'none' : 'presencePulse 2s infinite',
-          }}
+          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-amber-400' : 'bg-emerald-500')}
+          style={{ animation: participant.idle ? 'none' : 'presencePulse 2s infinite' }}
         />
       </div>
 
