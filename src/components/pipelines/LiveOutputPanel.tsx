@@ -346,17 +346,12 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
           <span>Live Output</span>
           {hasActiveStream && (
             <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: '50%',
-                background: '#a6e3a1',
-                animation: 'live-output-blink 1.2s ease-in-out infinite',
-              }}
+              className="w-1.5 h-1.5 rounded-full bg-[#a6e3a1]"
+              style={{ animation: 'live-output-blink 1.2s ease-in-out infinite' }}
             />
           )}
           {runId && (
-            <span style={{ fontSize: 10, color: '#6c7086', fontWeight: 400, textTransform: 'none' }}>
+            <span className="text-[10px] text-[#6c7086] font-normal normal-case">
               {runId.slice(0, 8)}...
             </span>
           )}
@@ -388,12 +383,12 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
                   if (e.key === 'Enter' || e.key === ' ') toggleCollapse(step.stepId);
                 }}
               >
-                <span style={{ fontSize: 10 }}>
+                <span className="text-[10px]">
                   {step.collapsed ? '▶' : '▼'}
                 </span>
                 <span>{step.stepId}</span>
                 {step.active && (
-                  <span style={{ color: '#a6e3a1', fontSize: 10 }}>streaming</span>
+                  <span className="text-[#a6e3a1] text-[10px]">streaming</span>
                 )}
               </div>
 

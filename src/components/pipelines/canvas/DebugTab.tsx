@@ -106,9 +106,9 @@ function formatJSON(value: unknown): string {
 export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
   if (!stepExecution) {
     return (
-      <div style={{ padding: '24px 16px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>
+      <div className="px-4 py-6 text-center text-[#94a3b8] text-[13px]">
         <p>No execution data available for this node.</p>
-        <p style={{ marginTop: 8, fontSize: 12 }}>
+        <p className="mt-2 text-xs">
           Run the pipeline to see debug information.
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
         <div style={labelStyle}>Status</div>
         <div style={statusBadgeStyle(status)}>{status}</div>
 
-        <div style={{ marginTop: 12 }}>
+        <div className="mt-3">
           <div style={metricStyle}>
             <span style={metricLabelStyle}>Started</span>
             <span style={metricValueStyle}>{formatTimestamp(startedAt)}</span>
@@ -185,15 +185,15 @@ export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
           )}
 
           {llm.prompt && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{ ...labelStyle, marginBottom: 8 }}>Prompt</div>
+            <div className="mt-3">
+              <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Prompt</div>
               <pre style={valueStyle}>{llm.prompt}</pre>
             </div>
           )}
 
           {llm.response && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{ ...labelStyle, marginBottom: 8 }}>Response</div>
+            <div className="mt-3">
+              <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Response</div>
               <pre style={valueStyle}>{llm.response}</pre>
             </div>
           )}
