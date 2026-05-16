@@ -7,8 +7,8 @@ apps — see **Consumer list** below.
 ## Quick commands
 
 ```bash
-npm test           # vitest run (107 tests; only src/components/shared has tests)
-npm run lint       # tsc --noEmit (5 pre-existing errors — see Known issues)
+npm test           # vitest run (129 tests; shared + agents hooks have coverage)
+npm run lint       # tsc --noEmit (0 errors as of commit 33d6ec1)
 npm run build      # vite build (lib mode, multi-entry)
 npm run demo       # vite dev server at http://localhost:5174
 npm run test:e2e   # playwright (tests/e2e/)
@@ -75,18 +75,16 @@ src/
   api/            API client helpers
 ```
 
-## Known issues (pre-existing — do not fix silently)
+## Known issues
 
-```
-src/hooks/useComments.ts(8,37): Cannot find module '../../types/gateway'
-src/hooks/useLikes.ts(9,37):    Cannot find module '../../types/gateway'
-src/hooks/usePosts.ts(8,37):    Cannot find module '../../types/gateway'
-src/index.ts(6,1):              duplicate export 'ThemeProvider'
-src/index.ts(6,1):              duplicate export 'useTheme'
-```
+All 5 pre-existing TypeScript errors were resolved in commit `33d6ec1`:
 
-These predate the Tailwind migration. Fix them as a dedicated task; don't
-block other PRs on them.
+- `useComments/useLikes/usePosts`: import path corrected from `../../types/gateway`
+  to `../types/gateway`
+- `src/index.ts` duplicate exports: `ThemeProvider` renamed to `ColorSchemeProvider`;
+  `useTheme` renamed to `useColorScheme` in `ThemeContext.tsx`
+
+`npm run lint` (`tsc --noEmit`) now reports **0 errors**.
 
 ## Active migrations
 
