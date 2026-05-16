@@ -13,7 +13,7 @@ export default function LinkBlockReaderRenderer({ section }: SectionRendererProp
     return (
       <div
         data-testid={`link-block-reader-empty-${section.id}`}
-        style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}
+        className="text-text-tertiary text-[13px] italic"
       >
         No links.
       </div>
@@ -23,15 +23,15 @@ export default function LinkBlockReaderRenderer({ section }: SectionRendererProp
   return (
     <ul
       data-testid={`link-block-reader-${section.id}`}
-      style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 4 }}
+      className="list-none m-0 p-0 flex flex-col gap-1"
     >
       {links.map((l, idx) => (
-        <li key={idx} style={{ fontSize: 13 }}>
+        <li key={idx} className="text-[13px]">
           <a
             href={l.url}
             target="_blank"
             rel="noreferrer noopener"
-            style={{ color: '#646cff', fontWeight: 500, textDecoration: 'none' }}
+            className="text-primary font-medium no-underline"
           >
             {l.label || l.url}
           </a>

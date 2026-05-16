@@ -54,17 +54,7 @@ export default function DefaultRenderer({
         <button
           type="button"
           onClick={handleAddItem}
-          style={{
-            marginTop: 8,
-            padding: '6px 14px',
-            fontSize: 13,
-            border: '1px dashed #cbd5e1',
-            borderRadius: 6,
-            background: 'transparent',
-            color: '#64748b',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-slate-500 cursor-pointer font-inherit"
         >
           + Add item
         </button>

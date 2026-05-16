@@ -6,20 +6,20 @@ export default function DiagramReaderRenderer({ section }: SectionRendererProps)
   const m = (section.metadata ?? {}) as { imageDataUrl?: string; alt?: string };
   if (!m.imageDataUrl) {
     return (
-      <div data-testid={`diagram-reader-empty-${section.id}`} style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>
+      <div data-testid={`diagram-reader-empty-${section.id}`} className="text-text-tertiary text-[13px] italic">
         No diagram uploaded.
       </div>
     );
   }
   return (
-    <figure data-testid={`diagram-reader-${section.id}`} style={{ margin: 0 }}>
+    <figure data-testid={`diagram-reader-${section.id}`} className="m-0">
       <img
         src={m.imageDataUrl}
         alt={m.alt ?? ''}
-        style={{ maxWidth: '100%', maxHeight: 480, borderRadius: 6, border: '1px solid #e2e8f0' }}
+        className="max-w-full max-h-[480px] rounded-md border border-border"
       />
       {m.alt && (
-        <figcaption style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, textAlign: 'center' }}>
+        <figcaption className="text-[11px] text-text-tertiary mt-1 text-center">
           {m.alt}
         </figcaption>
       )}

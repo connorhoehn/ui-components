@@ -17,7 +17,7 @@ export default function RichTextEditorRenderer({
 }: SectionRendererProps) {
   if (!fragment || !ydoc) {
     return (
-      <div style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, padding: '8px 0' }}>
+      <div className="text-text-tertiary italic text-[13px] py-2">
         No content yet.
       </div>
     );
