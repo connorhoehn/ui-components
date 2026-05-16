@@ -6,7 +6,7 @@
 // All requests use Authorization: Bearer idToken against VITE_PLATFORM_API_URL.
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GatewayMessage } from '../../types/gateway';
+import type { GatewayMessage } from '../types/gateway';
 import type { PublicProfile } from './useFriends';
 
 // ---------------------------------------------------------------------------

@@ -11,7 +11,7 @@ const ThemeContext = createContext<ThemeContextValue>({ theme: 'light', toggleTh
 
 const STORAGE_KEY = 'wsg-theme';
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ColorSchemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -36,6 +36,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useTheme() {
+export function useColorScheme() {
   return useContext(ThemeContext);
 }

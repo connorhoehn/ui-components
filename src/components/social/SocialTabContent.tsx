@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import type { RoomItem } from '../../hooks/useRooms';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { GatewayMessage } from '../../types/gateway';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useColorScheme } from '../../contexts/ThemeContext';
 import { cn } from '../../lib/cn';
 
 import { RoomList } from './RoomList';
@@ -132,7 +132,7 @@ export default function SocialTabContent({
   activeRoomId,
   onMessage,
 }: SocialTabContentProps) {
-  const { theme } = useTheme();
+  const { theme } = useColorScheme();
   const isDark = theme === 'dark';
 
   // ---- Sidebar collapse ----
