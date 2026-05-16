@@ -241,7 +241,7 @@ export default function StepTimeline({
                   solid
                   mono
                   size="xs"
-                  style={{ marginLeft: 4, padding: '0 4px', fontSize: 9 }}
+                  className="ml-1 px-1 py-0 text-[9px]"
                   title={`${step.attemptCount} attempts (${step.failedAttempts} failed before success)`}
                 >
                   ×{step.attemptCount}
