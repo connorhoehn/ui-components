@@ -21,11 +21,11 @@ export interface ToastProps {
   onDismiss: (id: string) => void;
 }
 
-const ACCENT_COLOR: Record<ToastType, string> = {
-  info:    '#2563eb',
-  success: '#16a34a',
-  warning: '#d97706',
-  error:   '#dc2626',
+const ACCENT_TEXT_CLASS: Record<ToastType, string> = {
+  info:    'text-info',
+  success: 'text-success',
+  warning: 'text-warning',
+  error:   'text-danger',
 };
 
 const ACCENT_BORDER: Record<ToastType, string> = {
@@ -36,7 +36,6 @@ const ACCENT_BORDER: Record<ToastType, string> = {
 };
 
 function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps) {
-  const accent = ACCENT_COLOR[type];
   const reduceMotion = usePrefersReducedMotion();
 
   const animationClass = reduceMotion
@@ -66,8 +65,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
         {actionLabel && onAction && (
           <button
             onClick={() => { onAction(); onDismiss(id); }}
-            className="bg-transparent border-none text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]"
-            style={{ color: accent }}
+            className={cn('bg-transparent border-none text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]', ACCENT_TEXT_CLASS[type])}
           >
             {actionLabel}
           </button>

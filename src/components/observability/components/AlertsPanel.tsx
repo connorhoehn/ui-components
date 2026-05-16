@@ -21,11 +21,18 @@ export interface AlertsPanelProps {
   onDismiss?: (id: string) => void;
 }
 
-const SEVERITY_COLOR: Record<AlertSeverity, string> = {
-  info: '#2563eb',
-  warning: '#f59e0b',
-  error: '#dc2626',
-  critical: '#dc2626',
+const SEVERITY_TEXT_CLASS: Record<AlertSeverity, string> = {
+  info:     'text-info',
+  warning:  'text-state-awaiting',
+  error:    'text-danger',
+  critical: 'text-danger',
+};
+
+const SEVERITY_BORDER_CLASS: Record<AlertSeverity, string> = {
+  info:     'border-l-info',
+  warning:  'border-l-state-awaiting',
+  error:    'border-l-danger',
+  critical: 'border-l-danger',
 };
 
 const SEVERITY_ICON: Record<AlertSeverity, string> = {
@@ -61,7 +68,6 @@ function AlertItem({
   alert: Alert;
   onDismiss?: (id: string) => void;
 }) {
-  const color = SEVERITY_COLOR[alert.severity];
   const icon = SEVERITY_ICON[alert.severity];
 
   return (
@@ -69,14 +75,13 @@ function AlertItem({
       data-testid="alert-item"
       className={cn(
         'flex items-start gap-2.5 px-3 py-2.5',
-        'bg-surface border border-border rounded-md font-[inherit]'
+        'bg-surface border border-border border-l-[3px] rounded-md font-[inherit]',
+        SEVERITY_BORDER_CLASS[alert.severity],
       )}
-      style={{ borderLeft: `3px solid ${color}` }}
     >
       <span
         aria-hidden="true"
-        className="text-sm leading-5 shrink-0 w-4 text-center"
-        style={{ color }}
+        className={cn('text-sm leading-5 shrink-0 w-4 text-center', SEVERITY_TEXT_CLASS[alert.severity])}
       >
         {icon}
       </span>
