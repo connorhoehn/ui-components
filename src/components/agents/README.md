@@ -250,7 +250,110 @@ To render reasoning in a custom UI:
 
 ---
 
-## Event reference (summary)
+## Event reference — v0.1.x stable contract
+
+All events are JSON objects with a `type` discriminant (and optional base fields `timestamp?: number`, `rawEvent?: unknown`). The tables below list every field for each stable event type. **Bold** fields are required.
+
+### Lifecycle
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `RUN_STARTED` | **`threadId`**, **`runId`** | `parentRunId`, `input` | Seed `threadId` into subsequent `sendMessage` calls for thread continuity |
+| `RUN_FINISHED` | — | `outcome`, `result` | Hook sets `isStreaming: false`; in-progress message is closed |
+| `RUN_ERROR` | **`message`** | `code` | Hook stores `message` in `error` state and clears `isStreaming` |
+| `STEP_STARTED` | **`stepName`** | — | Forwarded via `onEvent`; no built-in state change |
+| `STEP_FINISHED` | **`stepName`** | — | Forwarded via `onEvent`; no built-in state change |
+
+### Text messages — verbose form
+
+Three events make up a complete assistant turn:
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `TEXT_MESSAGE_START` | **`messageId`**, **`role`** | — | Creates a new `AgUiMessage` with `isStreaming: true` |
+| `TEXT_MESSAGE_CONTENT` | **`messageId`**, **`delta`** | — | Appends `delta` to `message.content` and `streamingText` |
+| `TEXT_MESSAGE_END` | **`messageId`** | — | Marks message `isStreaming: false`; clears `streamingText` |
+
+### Text messages — compact form
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `TEXT_MESSAGE_CHUNK` | — | `messageId`, `role`, `delta` | Lazy-creates a message on first chunk for a `messageId`; accumulates `delta` |
+
+### Tool calls
+
+> **Critical field names** — these differ from common alternatives in agent runtimes:
+>
+> - Use `toolCallName` (not `toolName`) on `TOOL_CALL_START`
+> - Use `delta` (not `args`) on `TOOL_CALL_ARGS`
+> - `TOOL_CALL_RESULT` is a **separate** event after `TOOL_CALL_END`, not inlined on `TOOL_CALL_END`
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `TOOL_CALL_START` | **`toolCallId`**, **`toolCallName`** | `parentMessageId` | Creates `AgUiToolCall` with `status: 'streaming'`; attaches to current message |
+| `TOOL_CALL_ARGS` | **`toolCallId`**, **`delta`** | — | Appends `delta` to `toolCall.args` |
+| `TOOL_CALL_END` | **`toolCallId`** | — | Sets `status: 'completed'`; moves from `activeToolCalls` to message |
+| `TOOL_CALL_RESULT` | **`messageId`**, **`toolCallId`**, **`content`** | `role` | Sets `toolCall.result`; arrives after `TOOL_CALL_END` |
+| `TOOL_CALL_CHUNK` | — | `toolCallId`, `toolCallName`, `parentMessageId`, `delta` | Compact form; lazy-creates tool call on first chunk |
+
+### State management
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `STATE_SNAPSHOT` | **`snapshot`** | — | Replaces entire `state` value |
+| `STATE_DELTA` | **`delta`** (`JsonPatchOp[]`) | — | Applies RFC 6902 ops (`add`, `replace`, `remove`, `move`, `copy`, `test`); failed `test` warns |
+| `MESSAGES_SNAPSHOT` | **`messages`** | — | Bulk-replaces the entire `messages` array |
+
+### Activity
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `ACTIVITY_SNAPSHOT` | **`messageId`**, **`activityType`**, **`content`** | `replace` | Forwarded via `onEvent`; no built-in state mutation |
+| `ACTIVITY_DELTA` | **`messageId`**, **`activityType`**, **`patch`** | — | Forwarded via `onEvent`; no built-in state mutation |
+
+### Reasoning (chain-of-thought)
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `REASONING_MESSAGE_START` | **`messageId`**, **`role`** (`"reasoning"`) | — | Initialises `message.reasoning = ''` on the current message |
+| `REASONING_MESSAGE_CONTENT` | **`messageId`**, **`delta`** | — | Appends `delta` to `message.reasoning` |
+| `REASONING_MESSAGE_END` | **`messageId`** | — | No-op; content already accumulated |
+| `REASONING_MESSAGE_CHUNK` | **`messageId`** | `delta` | Compact form |
+| `REASONING_START` / `REASONING_END` | **`messageId`** | — | Forwarded via `onEvent` only |
+| `REASONING_ENCRYPTED_VALUE` | **`subtype`**, **`entityId`**, **`encryptedValue`** | — | Forwarded via `onEvent` only |
+
+### Extension events
+
+| Event | Required fields | Optional fields | Notes |
+|-------|-----------------|-----------------|-------|
+| `CUSTOM` | **`name`**, **`value`** | — | Application-defined; consume via `onEvent` |
+| `RAW` | **`event`** | `source` | Wraps a raw vendor event; consume via `onEvent` |
+| `META_EVENT` | **`metaType`**, **`payload`** | — | Draft; consume via `onEvent` |
+
+---
+
+## `useAgUiStream` return shape
+
+```ts
+interface UseAgUiStreamReturn {
+  messages: AgUiMessage[];          // All messages (user + assistant); includes toolCalls and reasoning
+  streamingText: string;            // Current assistant turn accumulator; cleared on TEXT_MESSAGE_END
+  activeToolCalls: AgUiToolCall[];  // Tool calls still in flight (status: 'streaming')
+  state: unknown;                   // Driven by STATE_SNAPSHOT / STATE_DELTA
+  threadId: string | null;          // Set from RUN_STARTED; sent with every subsequent POST
+  runId: string | null;             // Set from RUN_STARTED
+  isStreaming: boolean;             // True between sendMessage and RUN_FINISHED/RUN_ERROR
+  error: string | null;             // Set from RUN_ERROR.message or HTTP/network errors
+  sendMessage(content, opts?): void; // Aborts any in-flight stream before starting a new one
+  cancelStream(): void;             // AbortController.abort() — preserves partial message content
+  reset(): void;                    // Clears all state (messages, threadId, error, state)
+  loadHistory(threadId, messages): void; // Seed past messages without a network request
+}
+```
+
+---
+
+## Event reference (summary table)
 
 | Category | Event types |
 |----------|-------------|
