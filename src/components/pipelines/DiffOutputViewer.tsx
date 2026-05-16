@@ -190,7 +190,7 @@ function StepOutputDiff({
         <span className="font-mono text-[10px] text-text-tertiary">
           {nodeId}
         </span>
-        <Chip tone="warning" size="xs" style={{ marginLeft: 'auto' }}>
+        <Chip tone="warning" size="xs" className="ml-auto">
           {changedCount} difference{changedCount === 1 ? '' : 's'}
         </Chip>
       </div>

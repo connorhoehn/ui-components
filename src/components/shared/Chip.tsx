@@ -37,6 +37,7 @@ export interface ChipProps {
   mono?: boolean;
   children: ReactNode;
   title?: string;
+  className?: string;
   style?: CSSProperties;
   'data-testid'?: string;
   'aria-label'?: string;
@@ -49,6 +50,7 @@ export default function Chip({
   mono = false,
   children,
   title,
+  className,
   style,
   'data-testid': testId,
   'aria-label': ariaLabel,
@@ -64,6 +66,7 @@ export default function Chip({
         SIZE_CLASSES[size],
         paletteClasses,
         mono && 'font-mono',
+        className,
       )}
       style={style}
     >

@@ -172,7 +172,7 @@ export default function RunsTable({
                     size="xs"
                     data-testid={`run-stuck-badge-${r.id}`}
                     title={`No pipeline events since ${new Date(r.stuckAt).toLocaleTimeString()}`}
-                    style={{ marginLeft: 6 }}
+                    className="ml-1.5"
                   >
                     Stuck
                   </Chip>
@@ -183,7 +183,7 @@ export default function RunsTable({
                     size="xs"
                     data-testid={`run-error-category-${r.id}`}
                     title={r.error.message}
-                    style={{ marginLeft: 6 }}
+                    className="ml-1.5"
                   >
                     {ERROR_CATEGORY_SHORT[r.error.errorCategory] ?? r.error.errorCategory}
                   </Chip>

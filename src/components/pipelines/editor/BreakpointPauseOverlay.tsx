@@ -125,8 +125,7 @@ export default function BreakpointPauseOverlay({
 
       {/* Body: ContextInspector (editable) + Patch history side panel */}
       <div
-        className="grid gap-3 min-h-[280px] max-h-[calc(100vh-220px)]"
-        style={{ gridTemplateColumns: 'minmax(0, 1fr) 240px' }}
+        className="grid [grid-template-columns:minmax(0,1fr)_240px] gap-3 min-h-[280px] max-h-[calc(100vh-220px)]"
       >
         <div className="border border-border rounded-md bg-surface-inset overflow-hidden min-h-0">
           {pausedRun ? (

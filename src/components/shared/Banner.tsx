@@ -16,18 +16,23 @@ export interface BannerProps {
   title?: string;
   onDismiss?: () => void;
   children?: ReactNode;
+  className?: string;
   style?: CSSProperties;
+  'data-testid'?: string;
 }
 
 export default function Banner({
-  variant = 'error', title, onDismiss, children, style,
+  variant = 'error', title, onDismiss, children, className, style,
+  'data-testid': testId,
 }: BannerProps) {
   return (
     <div
       role="alert"
+      data-testid={testId}
       className={cn(
         'px-3.5 py-2.5 rounded-lg text-[13px] flex items-center gap-2 border',
         VARIANT_CLASSES[variant],
+        className,
       )}
       style={style}
     >

@@ -463,13 +463,13 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           </div>
 
           {retryError && (
-            <Banner title="Retry failed:" style={{ marginBottom: 16 }}>
+            <Banner title="Retry failed:" className="mb-4">
               {retryError}
             </Banner>
           )}
 
           {resumeError && (
-            <Banner title="Resume failed:" style={{ marginBottom: 16 }} data-testid="resume-error-banner">
+            <Banner title="Resume failed:" className="mb-4" data-testid="resume-error-banner">
               {resumeError}
             </Banner>
           )}
@@ -479,7 +479,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           {(run.replayAttempts ?? 0) > 0 && (
             <Banner
               title="Resumed from a previous failure"
-              style={{ marginBottom: 16 }}
+              className="mb-4"
               data-testid="resume-history-banner"
             >
               <div className="flex flex-col gap-1.5">
@@ -513,13 +513,13 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           )}
 
           {resumeToast && (
-            <Banner title="Resumed" style={{ marginBottom: 16 }} data-testid="resume-toast">
+            <Banner title="Resumed" className="mb-4" data-testid="resume-toast">
               {resumeToast}
             </Banner>
           )}
 
           {run.error && (
-            <Banner title="Run failed:" style={{ marginBottom: 16 }}>
+            <Banner title="Run failed:" className="mb-4">
               {run.error.message}
               {run.error.nodeId && run.error.nodeId !== 'unknown' && (
                 <span className="ml-2 text-[11px] text-[#b91c1c]">

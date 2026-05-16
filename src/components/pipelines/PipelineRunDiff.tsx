@@ -102,7 +102,7 @@ function CollapsibleSection({
         </span>
         <span className="text-[13px] font-bold text-text-primary">{title}</span>
         {badge && (
-          <Chip tone="info" style={{ marginLeft: 'auto' }}>
+          <Chip tone="info" className="ml-auto">
             {badge}
           </Chip>
         )}
