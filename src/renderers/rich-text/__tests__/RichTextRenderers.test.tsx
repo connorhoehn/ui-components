@@ -12,7 +12,7 @@ vi.mock('../../../components/doc-editor/TiptapEditor', () => ({
 
 const makeSection = (): Section => ({
   id: 'rt1',
-  type: 'rich-text',
+  type: 'custom',
   title: 'Notes',
   collapsed: false,
   items: [],
