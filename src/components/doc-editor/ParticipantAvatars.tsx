@@ -3,7 +3,7 @@
 // Interactive presence strip with clickable avatars, online dots, mode badges,
 // section indicators, and tooltips.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
 
@@ -68,28 +68,6 @@ function modeBadgeColor(mode: Participant['mode']): { bg: string; text: string }
     default:
       return { bg: '#f1f5f9', text: '#64748b' };
   }
-}
-
-/* ---- pulse keyframe injection (once) ------------------------------------ */
-
-const PULSE_STYLE_ID = 'presence-pulse-keyframe';
-function ensurePulseKeyframe() {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(PULSE_STYLE_ID)) return;
-  const style = document.createElement('style');
-  style.id = PULSE_STYLE_ID;
-  style.textContent = `
-    @keyframes presencePulse {
-      0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-      70%  { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-    @keyframes presenceFadeIn {
-      from { opacity: 0; transform: scale(0.7); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-  `;
-  document.head.appendChild(style);
 }
 
 /* ---- component ---------------------------------------------------------- */
@@ -172,8 +150,7 @@ function AvatarItem({
 
         {/* Status dot: green = active, yellow = away/idle */}
         <div
-          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-amber-400' : 'bg-emerald-500')}
-          style={{ animation: participant.idle ? 'none' : 'presencePulse 2s infinite' }}
+          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-amber-400' : 'bg-emerald-500 [animation:presencePulse_2s_infinite]')}
         />
       </div>
 
@@ -212,9 +189,6 @@ export default function ParticipantAvatars({
   onFollowUser,
   followingUserId,
 }: ParticipantAvatarsProps) {
-  useEffect(() => {
-    ensurePulseKeyframe();
-  }, []);
 
   const sectionMap = new Map<string, string>();
   if (sections) {

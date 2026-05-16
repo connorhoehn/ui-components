@@ -60,42 +60,6 @@ interface RemoteCursorInfo {
   head: number | null;
 }
 
-// Inject global ProseMirror styles once
-const PROSEMIRROR_STYLE_ID = 'tiptap-prosemirror-style';
-if (typeof document !== 'undefined' && !document.getElementById(PROSEMIRROR_STYLE_ID)) {
-  const style = document.createElement('style');
-  style.id = PROSEMIRROR_STYLE_ID;
-  style.textContent = `
-    .ProseMirror {
-      min-height: 80px;
-      outline: none;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .ProseMirror p { margin: 0 0 0.5em; }
-    .ProseMirror:focus { outline: none; }
-    .ProseMirror .is-empty::before {
-      content: attr(data-placeholder);
-      color: #94a3b8;
-      pointer-events: none;
-      float: left;
-      height: 0;
-    }
-    .ProseMirror .mention {
-      color: #3b82f6;
-      font-weight: 600;
-      background: #eff6ff;
-      padding: 0 2px;
-      border-radius: 2px;
-    }
-    @keyframes cursorBlink {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 0.3; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 // ---------------------------------------------------------------------------
 // Helper: get pixel coordinates for a ProseMirror position
 // ---------------------------------------------------------------------------

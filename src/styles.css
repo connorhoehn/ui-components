@@ -192,3 +192,128 @@
   0%, 100% { opacity: 1;    transform: scale(1);    }
   50%      { opacity: 0.55; transform: scale(1.25); }
 }
+
+@keyframes sync-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes executor-log-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.35; }
+}
+
+@keyframes presencePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70%  { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes presenceFadeIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ackPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  50%  { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes rejectPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  50%  { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+@keyframes slideCollapse {
+  0%   { opacity: 1; max-height: 200px; transform: scale(1); margin-bottom: 0.5rem; }
+  60%  { opacity: 0.5; max-height: 200px; transform: scale(0.98); }
+  100% { opacity: 0; max-height: 0; transform: scale(0.95); margin-bottom: 0; padding: 0; border-width: 0; overflow: hidden; }
+}
+
+@keyframes cursorBlink {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 0.3; }
+}
+
+/* TipTap ProseMirror editor */
+.ProseMirror {
+  min-height: 80px;
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.ProseMirror p { margin: 0 0 0.5em; }
+.ProseMirror:focus { outline: none; }
+.ProseMirror .is-empty::before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+.ProseMirror .mention {
+  color: #3b82f6;
+  font-weight: 600;
+  background: #eff6ff;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* react-flow controls theme overrides (PipelineCanvas) */
+.react-flow__controls button {
+  background: transparent;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-text-secondary, #475569);
+}
+.react-flow__controls button:hover {
+  background: var(--color-surface-hover, #f1f5f9);
+  color: var(--color-text-primary, #0f172a);
+}
+.react-flow__controls button:last-child {
+  border-bottom: none;
+}
+.react-flow__controls-interactive.active {
+  color: var(--color-primary, #646cff);
+}
+
+@keyframes node-error-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
+}
+.react-flow__node.node-error {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+  animation: node-error-pulse 2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.node-error {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.4);
+  }
+}
+
+@keyframes node-replay-active-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15); }
+}
+.react-flow__node.node-replay-active {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  animation: node-replay-active-pulse 1.5s ease-in-out infinite;
+}
+.react-flow__node.node-replay-completed {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
+}
+.react-flow__node.node-replay-failed {
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.node-replay-active {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+  }
+}

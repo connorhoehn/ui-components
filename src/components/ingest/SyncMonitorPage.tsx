@@ -3,20 +3,11 @@
 // Real-time sync monitor page for the ingest subsystem. Shows active syncs
 // with progress bars, a scrollable event log, and quick stats.
 
-import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useIngestProgress } from '../../hooks/useIngestProgress';
 import type { ActiveSync, IngestProgressEvent } from '../../hooks/useIngestProgress';
 import { cn } from '../../lib/cn';
-
-// Inject keyframe animation for the pulsing dot
-const pulseKeyframes = `
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-`;
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -156,15 +147,12 @@ export default function SyncMonitorPage() {
 
   return (
     <div data-testid="sync-monitor-page" className="p-6 flex flex-col gap-3">
-      {/* Inject pulse keyframes */}
-      <style>{pulseKeyframes}</style>
-
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Monitor</h2>
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-[#16a34a] rounded-full border border-[#bbf7d0]">
-            <span className="w-[7px] h-[7px] rounded-full bg-[#16a34a] animate-[pulse_1.5s_ease-in-out_infinite]" />
+            <span className="w-[7px] h-[7px] rounded-full bg-[#16a34a] animate-[sync-pulse_1.5s_ease-in-out_infinite]" />
             Live
           </span>
         </div>

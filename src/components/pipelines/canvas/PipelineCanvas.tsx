@@ -90,62 +90,6 @@ interface CanvasNodeData extends Record<string, unknown> {
 
 const edgeTypes = { animated: AnimatedEdge };
 
-const controlsStyleOverrides = `
-  .react-flow__controls button {
-    background: transparent;
-    border-bottom: 1px solid var(--color-border, #e2e8f0);
-    color: var(--color-text-secondary, #475569);
-  }
-  .react-flow__controls button:hover {
-    background: var(--color-surface-hover, #f1f5f9);
-    color: var(--color-text-primary, #0f172a);
-  }
-  .react-flow__controls button:last-child {
-    border-bottom: none;
-  }
-  .react-flow__controls-interactive.active {
-    color: var(--color-primary, #646cff);
-  }
-  @keyframes node-error-pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
-    50%      { box-shadow: 0 0 0 8px rgba(220, 38, 38, 0); }
-  }
-  .react-flow__node.node-error {
-    border-radius: 8px;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
-    animation: node-error-pulse 2s ease-in-out infinite;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .react-flow__node.node-error {
-      animation: none;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.4);
-    }
-  }
-  @keyframes node-replay-active-pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35); }
-    50%      { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.15); }
-  }
-  .react-flow__node.node-replay-active {
-    border-radius: 8px;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
-    animation: node-replay-active-pulse 1.5s ease-in-out infinite;
-  }
-  .react-flow__node.node-replay-completed {
-    border-radius: 8px;
-    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.3);
-  }
-  .react-flow__node.node-replay-failed {
-    border-radius: 8px;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.3);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .react-flow__node.node-replay-active {
-      animation: none;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
-    }
-  }
-`;
-
 const resolvedNodeTypes = registeredNodeTypes as unknown as NodeTypes;
 
 function toRFNode(n: PipelineNode): Node {
@@ -545,7 +489,6 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
       onDrop={handleDrop}
       onDoubleClick={handlePaneDoubleClick}
     >
-      <style>{controlsStyleOverrides}</style>
       <ReactFlow
         nodes={nodes}
         edges={edges}

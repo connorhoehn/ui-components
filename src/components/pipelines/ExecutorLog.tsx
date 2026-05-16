@@ -131,23 +131,6 @@ function formatRelative(iso: string, nowMs: number = Date.now()): string {
 }
 
 // ---------------------------------------------------------------------------
-// Pulse keyframes
-// ---------------------------------------------------------------------------
-
-const KEYFRAMES_ID = 'executor-log-pulse-keyframes';
-function ensurePulseKeyframes(): void {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(KEYFRAMES_ID)) return;
-  const style = document.createElement('style');
-  style.id = KEYFRAMES_ID;
-  style.textContent = `@keyframes executor-log-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
-  }`;
-  document.head.appendChild(style);
-}
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -156,8 +139,6 @@ export default function ExecutorLog({
   runId,
   onStepClick,
 }: ExecutorLogProps) {
-  ensurePulseKeyframes();
-
   const result: UsePipelineRunAuditLogResult = usePipelineRunAuditLog(pipelineId, runId);
   const { items, error, hasMore, loadMore, loading } = result;
 
@@ -232,10 +213,6 @@ export default function ExecutorLog({
   );
 
   // ── Live indicator ─────────────────────────────────────────────────
-  const liveDotStyle = useMemo(() => ({
-    background: error ? undefined : '#22c55e',
-    animation: error ? 'none' : 'executor-log-pulse 1.6s ease-in-out infinite',
-  }), [error]);
 
   return (
     <div
@@ -255,9 +232,9 @@ export default function ExecutorLog({
           <span
             className={cn(
               'inline-block w-2 h-2 rounded-full mr-1.5 align-middle',
-              error ? 'bg-text-tertiary' : '',
+              error ? 'bg-text-tertiary' : '[animation:executor-log-pulse_1.6s_ease-in-out_infinite]',
             )}
-            style={liveDotStyle}
+            style={{ background: error ? undefined : '#22c55e' }}
             aria-hidden
           />
           Live

@@ -6,31 +6,6 @@ import { useState, useEffect, useRef } from 'react';
 import type { TaskItem } from '../../types/document';
 import { cn } from '../../lib/cn';
 
-// Inject keyframes for the status transition effects
-const REVIEW_ANIM_STYLE_ID = 'reviewable-item-animations';
-if (typeof document !== 'undefined' && !document.getElementById(REVIEW_ANIM_STYLE_ID)) {
-  const style = document.createElement('style');
-  style.id = REVIEW_ANIM_STYLE_ID;
-  style.textContent = `
-    @keyframes ackPulse {
-      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-      50% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-    }
-    @keyframes rejectPulse {
-      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-      50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-    }
-    @keyframes slideCollapse {
-      0% { opacity: 1; max-height: 200px; transform: scale(1); margin-bottom: 0.5rem; }
-      60% { opacity: 0.5; max-height: 200px; transform: scale(0.98); }
-      100% { opacity: 0; max-height: 0; transform: scale(0.95); margin-bottom: 0; padding: 0; border-width: 0; overflow: hidden; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 interface ReviewableItemProps {
   item: TaskItem;
   onAck: (notes?: string) => void;
