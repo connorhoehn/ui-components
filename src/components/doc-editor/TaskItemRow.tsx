@@ -174,8 +174,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         checked={item.status === 'done'}
         onChange={toggleStatus}
         disabled={!editable}
-        className={cn('w-4 h-4 accent-[#3b82f6]')}
-        style={{ cursor: editable ? 'pointer' : 'default' }}
+        className={cn('w-4 h-4 accent-[#3b82f6]', editable ? 'cursor-pointer' : 'cursor-default')}
       />
 
       <input
@@ -185,23 +184,22 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.text}
         onChange={(e) => onUpdate({ text: e.target.value })}
         readOnly={!editable}
-        className={cn('flex-1 border-none outline-none text-sm font-[inherit] bg-transparent px-1 py-0.5')}
-        style={{
-          textDecoration: item.status === 'done' ? 'line-through' : 'none',
-          color: item.status === 'done' ? '#94a3b8' : '#1e293b',
-        }}
+        className={cn(
+          'flex-1 border-none outline-none text-sm font-[inherit] bg-transparent px-1 py-0.5',
+          item.status === 'done' ? 'line-through text-text-tertiary' : 'text-[#1e293b]',
+        )}
       />
 
       {/* Due date badge */}
       {item.dueDate && (
         <span
           title={item.dueDate}
-          className={cn('inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug')}
-          style={{
-            background: overdue ? '#fef2f2' : '#f0f9ff',
-            color: overdue ? '#dc2626' : '#64748b',
-            border: overdue ? '1px solid #fecaca' : '1px solid #e0f2fe',
-          }}
+          className={cn(
+            'inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border',
+            overdue
+              ? 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]'
+              : 'bg-[#f0f9ff] text-[#64748b] border-[#e0f2fe]',
+          )}
         >
           {overdue ? '⚠ ' : ''}Due: {formatDueDate(item.dueDate)}
         </span>
@@ -277,8 +275,10 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
                 type="button"
                 onClick={() => selectUser(user)}
                 onMouseEnter={() => setHighlightIdx(idx)}
-                className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]')}
-                style={{ background: idx === highlightIdx ? '#f1f5f9' : 'transparent' }}
+                className={cn(
+                  'flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]',
+                  idx === highlightIdx ? 'bg-surface-hover' : 'bg-transparent',
+                )}
               >
                 <span
                   className={cn('w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}

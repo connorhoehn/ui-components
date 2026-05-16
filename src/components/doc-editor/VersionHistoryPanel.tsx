@@ -141,11 +141,14 @@ export default function VersionHistoryPanel({
                   {formatRelativeTime(v.age)}
                   {v.type && v.type !== 'manual' && (
                     <span
-                      className={cn('text-[10px] font-medium px-[5px] py-px rounded-[3px] ml-1.5')}
-                      style={{
-                        background: v.type === 'pre-restore' ? '#fef3c7' : v.type === 'auto' ? '#f3f4f6' : '#e0f2fe',
-                        color: v.type === 'pre-restore' ? '#92400e' : v.type === 'auto' ? '#94a3b8' : '#0369a1',
-                      }}
+                      className={cn(
+                        'text-[10px] font-medium px-[5px] py-px rounded-[3px] ml-1.5',
+                        v.type === 'pre-restore'
+                          ? 'bg-[#fef3c7] text-[#92400e]'
+                          : v.type === 'auto'
+                          ? 'bg-[#f3f4f6] text-text-tertiary'
+                          : 'bg-[#e0f2fe] text-[#0369a1]',
+                      )}
                     >
                       {versionTypeLabel(v)}
                     </span>
@@ -197,13 +200,7 @@ export default function VersionHistoryPanel({
                 onClearCompare();
               }
             }}
-            style={{
-              width: '100%',
-              padding: '10px 16px',
-              fontSize: 14,
-              fontWeight: 600,
-              borderRadius: 8,
-            }}
+            className="w-full px-4 py-2.5 text-sm font-semibold rounded-lg"
           >
             Restore this version
           </Button>

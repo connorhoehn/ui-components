@@ -90,8 +90,7 @@ function AvatarStack({ participants }: { participants: Participant[] }) {
       ))}
       {overflow > 0 && (
         <div
-          className={cn('w-6 h-6 rounded-full bg-border text-[#64748b] flex items-center justify-center text-[9px] font-bold border-2 border-white relative')}
-          style={{ marginLeft: -8 }}
+          className={cn('w-6 h-6 rounded-full bg-border text-[#64748b] flex items-center justify-center text-[9px] font-bold border-2 border-white relative -ml-2')}
         >
           +{overflow}
         </div>
@@ -166,11 +165,10 @@ export default function SectionBlock({
           onClick={(e) => { e.stopPropagation(); onOpenComments(section.id); }}
           onMouseEnter={() => setCommentHovered(true)}
           onMouseLeave={() => setCommentHovered(false)}
-          className={cn('absolute top-1/2 -right-[52px] -translate-y-1/2 w-10 h-10 rounded-full border border-border flex items-center justify-center text-xl leading-none p-0 z-[1] shadow-sm cursor-pointer transition-[opacity,background] duration-150 ease-in-out')}
-          style={{
-            background: commentHovered ? '#f1f5f9' : '#fff',
-            opacity: commentHovered ? 0.9 : 0.4,
-          }}
+          className={cn(
+            'absolute top-1/2 -right-[52px] -translate-y-1/2 w-10 h-10 rounded-full border border-border flex items-center justify-center text-xl leading-none p-0 z-[1] shadow-sm cursor-pointer transition-[opacity,background] duration-150 ease-in-out',
+            commentHovered ? 'bg-surface-hover opacity-90' : 'bg-white opacity-40',
+          )}
           title="Open comments"
         >
           <span className={cn('pointer-events-none')}>💬</span>
@@ -199,8 +197,10 @@ export default function SectionBlock({
         <button
           type="button"
           onClick={toggleCollapse}
-          className={cn('border-none bg-transparent cursor-pointer text-xs p-1 text-[#64748b] leading-none rounded inline-flex items-center justify-center transition-[background,transform] duration-200 ease-in-out hover:bg-border')}
-          style={{ transform: collapsed ? 'rotate(-90deg)' : 'rotate(0deg)' }}
+          className={cn(
+            'border-none bg-transparent cursor-pointer text-xs p-1 text-[#64748b] leading-none rounded inline-flex items-center justify-center transition-[background,transform] duration-200 ease-in-out hover:bg-border',
+            collapsed ? '-rotate-90' : 'rotate-0',
+          )}
           title={collapsed ? 'Expand section' : 'Collapse section'}
         >
           {/* Chevron down SVG — rotated -90deg when collapsed */}
