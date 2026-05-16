@@ -650,4 +650,150 @@ describe('useAgUiStream', () => {
       expect(mockFetch).not.toHaveBeenCalled();
     });
   });
+
+  // ── TEXT_MESSAGE_CHUNK (compact form) ────────────────────────────────────────
+
+  describe('TEXT_MESSAGE_CHUNK (compact form)', () => {
+    it('assembles a complete assistant message from chunk events', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_CHUNK', messageId: 'mc1', role: 'assistant', delta: 'Hello ' });
+      await send({ type: 'TEXT_MESSAGE_CHUNK', messageId: 'mc1', delta: 'world' });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      expect(result.current.messages).toHaveLength(2);
+      expect(result.current.messages[1].content).toBe('Hello world');
+      expect(result.current.streamingText).toBe('');
+    });
+  });
+
+  // ── TOOL_CALL_CHUNK (compact form) ───────────────────────────────────────────
+
+  describe('TOOL_CALL_CHUNK (compact form)', () => {
+    it('creates and accumulates a tool call from chunk events', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      // First chunk creates the tool call with name + initial args delta
+      await send({ type: 'TOOL_CALL_CHUNK', toolCallId: 'tc1', toolCallName: 'search', delta: '{"q":' });
+      // Second chunk accumulates remaining args
+      await send({ type: 'TOOL_CALL_CHUNK', toolCallId: 'tc1', delta: '"hello"}' });
+      await send({ type: 'TEXT_MESSAGE_END', messageId: 'm1' });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      const toolCall = result.current.messages[1]?.toolCalls[0];
+      expect(toolCall?.name).toBe('search');
+      expect(toolCall?.args).toBe('{"q":"hello"}');
+    });
+  });
+
+  // ── Mid-stream read error ────────────────────────────────────────────────────
+
+  describe('Mid-stream read error', () => {
+    it('sets error and clears isStreaming when the stream errors after a 200 OK', async () => {
+      const encoder = new TextEncoder();
+      let ctrl!: ReadableStreamDefaultController<Uint8Array>;
+      const stream = new ReadableStream<Uint8Array>({ start(c) { ctrl = c; } });
+
+      globalThis.fetch = vi.fn().mockResolvedValue(
+        new Response(stream, { status: 200, headers: { 'Content-Type': 'text/event-stream' } }),
+      ) as unknown as typeof fetch;
+
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      // One valid event before the stream tears
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify(RUN_STARTED)}\n\n`));
+      });
+      // Error the underlying stream (simulates mid-stream network drop)
+      await act(async () => {
+        ctrl.error(new TypeError('connection reset'));
+      });
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.error).toBe('connection reset');
+    });
+  });
+
+  // ── reset ────────────────────────────────────────────────────────────────────
+
+  describe('reset', () => {
+    it('clears all state after a completed stream', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { x: 1 } });
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'Hello' });
+      await send({ type: 'TEXT_MESSAGE_END', messageId: 'm1' });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.messages).toHaveLength(2);
+
+      act(() => { result.current.reset(); });
+
+      expect(result.current.messages).toHaveLength(0);
+      expect(result.current.threadId).toBeNull();
+      expect(result.current.runId).toBeNull();
+      expect(result.current.streamingText).toBe('');
+      expect(result.current.error).toBeNull();
+      expect(result.current.state).toBeUndefined();
+    });
+  });
+
+  // ── JSON Patch copy / move ops ───────────────────────────────────────────────
+
+  describe('STATE_DELTA — copy and move ops', () => {
+    it('copy op duplicates a value to a new path', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 42, b: 0 } });
+      await send({ type: 'STATE_DELTA', delta: [{ op: 'copy', path: '/c', from: '/a' }] });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ a: 42, b: 0, c: 42 });
+    });
+
+    it('move op relocates a value and removes the source path', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 99, b: 0 } });
+      await send({ type: 'STATE_DELTA', delta: [{ op: 'move', path: '/c', from: '/a' }] });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ b: 0, c: 99 });
+    });
+  });
 });
