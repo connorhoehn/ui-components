@@ -33,17 +33,17 @@ export default function LinkBlockEditorRenderer({
   };
 
   return (
-    <div data-testid={`link-block-editor-${section.id}`} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+    <div data-testid={`link-block-editor-${section.id}`} className="flex flex-col gap-1.5">
       {links.length === 0 && (
         <div
           data-testid={`link-block-empty-${section.id}`}
-          style={{ color: '#94a3b8', fontSize: 12, fontStyle: 'italic', padding: '4px 0' }}
+          className="text-text-tertiary text-xs italic py-1"
         >
           No links yet.
         </div>
       )}
       {links.map((l, idx) => (
-        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div key={idx} className="flex items-center gap-1.5">
           <input
             type="text"
             data-testid={`link-block-label-${section.id}-${idx}`}
@@ -51,7 +51,7 @@ export default function LinkBlockEditorRenderer({
             placeholder="Label"
             onChange={(e) => updateLink(idx, { label: e.target.value })}
             disabled={!editable}
-            style={{ flex: 1, padding: '4px 8px', fontSize: 13, border: '1px solid #cbd5e1', borderRadius: 4 }}
+            className="flex-1 px-2 py-1 text-[13px] border border-border-emphasis rounded"
           />
           <input
             type="url"
@@ -60,14 +60,14 @@ export default function LinkBlockEditorRenderer({
             placeholder="https://example.com"
             onChange={(e) => updateLink(idx, { url: e.target.value })}
             disabled={!editable}
-            style={{ flex: 2, padding: '4px 8px', fontSize: 13, border: '1px solid #cbd5e1', borderRadius: 4 }}
+            className="flex-[2] px-2 py-1 text-[13px] border border-border-emphasis rounded"
           />
           {editable && (
             <button
               type="button"
               data-testid={`link-block-remove-${section.id}-${idx}`}
               onClick={() => removeLink(idx)}
-              style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 14, padding: '2px 6px' }}
+              className="border-none bg-transparent text-red-500 cursor-pointer text-sm px-1.5 py-0.5"
             >
               ×
             </button>
@@ -79,10 +79,7 @@ export default function LinkBlockEditorRenderer({
           type="button"
           data-testid={`link-block-add-${section.id}`}
           onClick={addLink}
-          style={{
-            alignSelf: 'flex-start', marginTop: 4, padding: '4px 12px', fontSize: 12,
-            background: 'none', border: '1px dashed #cbd5e1', color: '#646cff', borderRadius: 6, cursor: 'pointer',
-          }}
+          className="self-start mt-1 px-3 py-1 text-xs bg-transparent border border-dashed border-border-emphasis text-primary rounded-md cursor-pointer"
         >
           + Add link
         </button>

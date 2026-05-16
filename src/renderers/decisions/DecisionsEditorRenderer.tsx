@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
@@ -32,21 +33,11 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
   }, [autoFocus, onDidAutoFocus]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-      <span style={{
-        width: 20,
-        height: 20,
-        borderRadius: '50%',
-        background: meta.bg,
-        color: meta.color,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: 11,
-        fontWeight: 700,
-        flexShrink: 0,
-        userSelect: 'none',
-      }}>
+    <div className="flex items-center gap-2 py-1.5 border-b border-slate-100">
+      <span
+        className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 select-none"
+        style={{ background: meta.bg, color: meta.color }}
+      >
         {meta.icon}
       </span>
 
@@ -57,37 +48,21 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         onChange={(e) => onUpdate({ text: e.target.value })}
         readOnly={!editable}
         placeholder="Describe the decision..."
-        style={{
-          flex: 1,
-          border: 'none',
-          outline: 'none',
-          fontSize: 14,
-          fontFamily: 'inherit',
-          background: 'transparent',
-          color: item.status === 'rejected' ? '#94a3b8' : '#1e293b',
-          textDecoration: item.status === 'rejected' ? 'line-through' : 'none',
-          padding: '2px 4px',
-        }}
+        className={cn(
+          'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
+          item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-slate-800',
+        )}
       />
 
       {editable && (
         <select
           value={item.status === 'done' ? 'acked' : item.status}
           onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
+          className="text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none"
           style={{
-            fontSize: 10,
-            padding: '2px 8px',
-            borderRadius: 10,
             border: `1px solid ${meta.color}`,
             background: meta.bg,
             color: meta.color,
-            fontWeight: 600,
-            cursor: 'pointer',
-            outline: 'none',
-            fontFamily: 'inherit',
-            flexShrink: 0,
-            appearance: 'none',
-            WebkitAppearance: 'none',
           }}
         >
           <option value="pending">Open</option>
@@ -100,7 +75,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         <button
           type="button"
           onClick={onRemove}
-          style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 16, padding: '2px 6px', lineHeight: 1 }}
+          className="border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none"
         >
           ×
         </button>
@@ -144,7 +119,7 @@ export default function DecisionsEditorRenderer({
       )}
 
       {section.items.length === 0 && !editable && (
-        <div style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, padding: '4px 0' }}>No decisions yet.</div>
+        <div className="text-text-tertiary italic text-[13px] py-1">No decisions yet.</div>
       )}
 
       <div>
@@ -185,17 +160,7 @@ export default function DecisionsEditorRenderer({
         <button
           type="button"
           onClick={handleAdd}
-          style={{
-            marginTop: 8,
-            padding: '6px 14px',
-            fontSize: 13,
-            border: '1px dashed #cbd5e1',
-            borderRadius: 6,
-            background: 'transparent',
-            color: '#64748b',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-slate-500 cursor-pointer font-inherit"
         >
           + Add decision
         </button>

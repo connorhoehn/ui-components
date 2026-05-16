@@ -5,6 +5,7 @@
 // Supports inline status updates when onUpdateItem is provided.
 
 import { useState } from 'react';
+import { cn } from '../../lib/cn';
 import type { TaskItem } from '../../types/document';
 import type { SectionRendererProps } from '../types';
 
@@ -54,14 +55,8 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '6px 0',
-        borderBottom: '1px solid #f1f5f9',
-        opacity: isDone ? 0.65 : 1,
-      }}
+      className="flex items-center gap-2 py-1.5 border-b border-slate-100"
+      style={{ opacity: isDone ? 0.65 : 1 }}
     >
       {/* Priority dot */}
       <span
@@ -106,33 +101,15 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
       </button>
 
       {/* Text */}
-      <span style={{
-        flex: 1,
-        fontSize: 13,
-        color: isDone ? '#94a3b8' : '#1e293b',
-        textDecoration: isDone ? 'line-through' : 'none',
-        lineHeight: 1.4,
-      }}>
-        {item.text || <span style={{ color: '#cbd5e1', fontStyle: 'italic' }}>Untitled item</span>}
+      <span className={cn('flex-1 text-[13px] leading-[1.4]', isDone ? 'text-text-tertiary line-through' : 'text-slate-800')}>
+        {item.text || <span className="text-text-disabled italic">Untitled item</span>}
       </span>
 
       {/* Assignee */}
       {item.assignee && (
         <span
           title={item.assignee}
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: '50%',
-            background: '#e0e7ff',
-            color: '#4338ca',
-            fontSize: 9,
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
+          className="w-[22px] h-[22px] rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold flex items-center justify-center shrink-0"
         >
           {getInitials(item.assignee)}
         </span>
@@ -190,7 +167,7 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
 
   if (items.length === 0) {
     return (
-      <div style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 13, padding: '4px 0' }}>
+      <div className="text-text-tertiary italic text-[13px] py-1">
         No items.
       </div>
     );
@@ -203,14 +180,14 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
   return (
     <div>
       {pending.length > 0 && (
-        <div style={{ marginBottom: 4 }}>
+        <div className="mb-1">
           {pending.map(item => (
             <ItemRow key={item.id} item={item} onUpdateItem={onUpdateItem} />
           ))}
         </div>
       )}
       {done.length > 0 && (
-        <div style={{ marginBottom: 4 }}>
+        <div className="mb-1">
           {done.map(item => (
             <ItemRow key={item.id} item={item} onUpdateItem={onUpdateItem} />
           ))}
@@ -228,16 +205,7 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          style={{
-            marginTop: 6,
-            background: 'none',
-            border: 'none',
-            color: '#3b82f6',
-            fontSize: 12,
-            cursor: 'pointer',
-            padding: 0,
-            fontFamily: 'inherit',
-          }}
+          className="mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

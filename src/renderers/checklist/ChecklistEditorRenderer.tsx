@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
@@ -24,13 +25,13 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
   }, [autoFocus, onDidAutoFocus]);
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid #f1f5f9' }}>
+    <div className="flex items-center gap-2 py-[5px] border-b border-slate-100">
       <input
         type="checkbox"
         checked={done}
         onChange={() => onUpdate({ status: done ? 'pending' : 'done' })}
         disabled={!editable}
-        style={{ width: 15, height: 15, accentColor: '#10b981', cursor: editable ? 'pointer' : 'default', flexShrink: 0 }}
+        className={cn('w-[15px] h-[15px] accent-emerald-500 shrink-0', editable ? 'cursor-pointer' : 'cursor-default')}
       />
       <input
         ref={inputRef}
@@ -39,23 +40,16 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         onChange={(e) => onUpdate({ text: e.target.value })}
         readOnly={!editable}
         placeholder="Checklist item..."
-        style={{
-          flex: 1,
-          border: 'none',
-          outline: 'none',
-          fontSize: 14,
-          fontFamily: 'inherit',
-          background: 'transparent',
-          color: done ? '#94a3b8' : '#1e293b',
-          textDecoration: done ? 'line-through' : 'none',
-          padding: '2px 4px',
-        }}
+        className={cn(
+          'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
+          done ? 'text-text-tertiary line-through' : 'text-slate-800',
+        )}
       />
       {editable && (
         <button
           type="button"
           onClick={onRemove}
-          style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 16, padding: '2px 6px', lineHeight: 1 }}
+          className="border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none"
         >
           ×
         </button>
@@ -102,7 +96,7 @@ export default function ChecklistEditorRenderer({
       )}
 
       {total > 0 && (
-        <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, marginBottom: 6 }}>
+        <div className="text-[11px] text-slate-500 font-semibold mb-1.5">
           {doneCount} / {total} done
         </div>
       )}
@@ -129,17 +123,7 @@ export default function ChecklistEditorRenderer({
         <button
           type="button"
           onClick={handleAdd}
-          style={{
-            marginTop: 8,
-            padding: '6px 14px',
-            fontSize: 13,
-            border: '1px dashed #cbd5e1',
-            borderRadius: 6,
-            background: 'transparent',
-            color: '#64748b',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-slate-500 cursor-pointer font-inherit"
         >
           + Add item
         </button>
