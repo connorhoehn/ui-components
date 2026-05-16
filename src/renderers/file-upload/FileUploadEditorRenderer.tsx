@@ -7,6 +7,7 @@
 // is stored.
 
 import { useState } from 'react';
+import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 
 interface FileMeta {
@@ -58,15 +59,11 @@ export default function FileUploadEditorRenderer({
   return (
     <div data-testid={`file-upload-editor-${section.id}`}>
       {meta.fileName ? (
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '8px 12px', borderRadius: 6, background: '#f8fafc',
-          border: '1px solid #e2e8f0', fontSize: 13,
-        }}>
-          <span style={{ fontSize: 16 }}>📎</span>
-          <span style={{ flex: 1, fontWeight: 500, color: '#0f172a' }}>{meta.fileName}</span>
+        <div className="flex items-center gap-2.5 px-3 py-2 rounded-md bg-surface-panel border border-border text-[13px]">
+          <span className="text-base">📎</span>
+          <span className="flex-1 font-medium text-text-primary">{meta.fileName}</span>
           {typeof meta.fileSize === 'number' && (
-            <span style={{ fontSize: 11, color: '#94a3b8' }}>
+            <span className="text-[11px] text-text-tertiary">
               {(meta.fileSize / 1024).toFixed(1)} kB
             </span>
           )}
@@ -75,10 +72,7 @@ export default function FileUploadEditorRenderer({
               type="button"
               data-testid={`file-upload-remove-${section.id}`}
               onClick={clear}
-              style={{
-                border: 'none', background: 'none', color: '#ef4444',
-                cursor: 'pointer', fontSize: 14, padding: '2px 6px',
-              }}
+              className="border-none bg-transparent text-red-500 cursor-pointer text-sm px-1.5 py-0.5"
             >
               ×
             </button>
@@ -87,24 +81,17 @@ export default function FileUploadEditorRenderer({
       ) : (
         <label
           data-testid={`file-upload-empty-${section.id}`}
-          style={{
-            display: 'block',
-            padding: '14px 16px',
-            border: '1px dashed #cbd5e1',
-            borderRadius: 8,
-            color: '#64748b',
-            fontSize: 13,
-            textAlign: 'center',
-            cursor: editable ? 'pointer' : 'default',
-            background: '#fafbfc',
-          }}
+          className={cn(
+            'block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-slate-500 text-[13px] text-center bg-surface-inset',
+            editable ? 'cursor-pointer' : 'cursor-default',
+          )}
         >
           {busy ? 'Reading file…' : (section.placeholder ?? 'Click to upload a file')}
           <input
             type="file"
             data-testid={`file-upload-input-${section.id}`}
             disabled={!editable}
-            style={{ display: 'none' }}
+            className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) handleFile(f);

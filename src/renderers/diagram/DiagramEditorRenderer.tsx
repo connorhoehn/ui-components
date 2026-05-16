@@ -5,6 +5,7 @@
 // the file input and renders a thumbnail preview when set.
 
 import { useState } from 'react';
+import { cn } from '../../lib/cn';
 import type { SectionRendererProps } from '../types';
 
 interface DiagramMeta {
@@ -50,28 +51,28 @@ export default function DiagramEditorRenderer({
   return (
     <div data-testid={`diagram-editor-${section.id}`}>
       {meta.imageDataUrl ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="flex flex-col gap-2">
           <img
             data-testid={`diagram-image-${section.id}`}
             src={meta.imageDataUrl}
             alt={meta.alt ?? ''}
-            style={{ maxWidth: '100%', maxHeight: 320, borderRadius: 6, border: '1px solid #e2e8f0' }}
+            className="max-w-full max-h-[320px] rounded-md border border-border"
           />
           {editable && (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div className="flex gap-2 items-center">
               <input
                 type="text"
                 data-testid={`diagram-alt-${section.id}`}
                 value={meta.alt ?? ''}
                 placeholder="Alt text"
                 onChange={(e) => setAlt(e.target.value)}
-                style={{ flex: 1, padding: '4px 8px', fontSize: 12, border: '1px solid #cbd5e1', borderRadius: 4 }}
+                className="flex-1 px-2 py-1 text-xs border border-border-emphasis rounded"
               />
               <button
                 type="button"
                 data-testid={`diagram-remove-${section.id}`}
                 onClick={clear}
-                style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: 13 }}
+                className="bg-transparent border-none text-red-500 cursor-pointer text-[13px]"
               >
                 Remove
               </button>
@@ -81,12 +82,10 @@ export default function DiagramEditorRenderer({
       ) : (
         <label
           data-testid={`diagram-empty-${section.id}`}
-          style={{
-            display: 'block', padding: '14px 16px',
-            border: '1px dashed #cbd5e1', borderRadius: 8,
-            color: '#64748b', fontSize: 13, textAlign: 'center',
-            cursor: editable ? 'pointer' : 'default', background: '#fafbfc',
-          }}
+          className={cn(
+            'block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-slate-500 text-[13px] text-center bg-surface-inset',
+            editable ? 'cursor-pointer' : 'cursor-default',
+          )}
         >
           {busy ? 'Reading image…' : (section.placeholder ?? 'Upload an image (PNG / JPG / SVG)')}
           <input
@@ -94,7 +93,7 @@ export default function DiagramEditorRenderer({
             accept="image/*"
             data-testid={`diagram-input-${section.id}`}
             disabled={!editable}
-            style={{ display: 'none' }}
+            className="hidden"
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (f) handleFile(f);
