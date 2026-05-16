@@ -8,7 +8,7 @@
 // — the palette stays stable across selection changes. `disabledTypes`
 // covers cases like Trigger-already-placed.
 import { useMemo, useState } from 'react';
-import type { CSSProperties, DragEvent } from 'react';
+import type { DragEvent } from 'react';
 import { cn } from '../../../lib/cn';
 import type { NodeType } from '../../../types/pipeline';
 
@@ -102,73 +102,6 @@ const CATEGORIES: PaletteCategory[] = [
 export const PALETTE_ITEMS: ReadonlyArray<{ type: NodeType; name: string }> =
   CATEGORIES.flatMap((c) => c.items.map((i) => ({ type: i.type, name: i.name })));
 
-const containerStyle: CSSProperties = {
-  width: 220,
-  flexShrink: 0,
-  height: '100%',
-  borderRight: '1px solid #e2e8f0',
-  background: '#ffffff',
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const searchWrapStyle: CSSProperties = {
-  padding: '10px 12px',
-  borderBottom: '1px solid #e2e8f0',
-  flexShrink: 0,
-};
-
-const searchStyle: CSSProperties = {
-  width: '100%',
-  boxSizing: 'border-box',
-  border: '1px solid #d1d5db',
-  borderRadius: 6,
-  padding: '6px 10px',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  background: '#f9fafb',
-  color: '#0f172a',
-  outline: 'none',
-};
-
-const scrollStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '8px 0',
-};
-
-const categoryLabelStyle: CSSProperties = {
-  padding: '8px 14px 4px',
-  fontSize: 10,
-  fontWeight: 700,
-  letterSpacing: 0.6,
-  textTransform: 'uppercase',
-  color: '#94a3b8',
-  fontFamily: 'inherit',
-};
-
-const cardBaseStyle: CSSProperties = {
-  height: 44,
-  boxSizing: 'border-box',
-  margin: '2px 8px',
-  padding: '6px 10px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-  borderRadius: 6,
-  background: 'transparent',
-  border: '1px solid transparent',
-  fontFamily: 'inherit',
-};
-
-const footerStyle: CSSProperties = {
-  padding: '8px 12px',
-  borderTop: '1px solid #e2e8f0',
-  fontSize: 10,
-  color: '#94a3b8',
-  fontFamily: 'inherit',
-  flexShrink: 0,
-};
 
 function matches(item: PaletteItem, query: string): boolean {
   if (!query) return true;
@@ -207,17 +140,17 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
   };
 
   return (
-    <div style={containerStyle} data-testid="node-palette">
-      <div style={searchWrapStyle}>
+    <div className="w-[220px] shrink-0 h-full border-r border-[#e2e8f0] bg-white flex flex-col" data-testid="node-palette">
+      <div className="py-[10px] px-3 border-b border-[#e2e8f0] shrink-0">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search nodes…"
-          style={searchStyle}
+          className="w-full box-border border border-[#d1d5db] rounded-[6px] py-1.5 px-[10px] text-[13px] font-[inherit] bg-[#f9fafb] text-[#0f172a] outline-none"
         />
       </div>
-      <div style={scrollStyle}>
+      <div className="flex-1 overflow-y-auto py-2">
         {filtered.length === 0 ? (
           <div className="px-3.5 py-4 text-xs text-[#94a3b8]">
             No nodes match "{query}"
@@ -225,7 +158,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
         ) : (
           filtered.map((cat) => (
             <div key={cat.name}>
-              <div style={categoryLabelStyle}>{cat.name}</div>
+              <div className="pt-2 px-[14px] pb-1 text-[10px] font-bold tracking-[0.6px] uppercase text-[#94a3b8] font-[inherit]">{cat.name}</div>
               {cat.items.map((item) => {
                 const isDisabled = disabledSet.has(item.type);
                 const isHovered = hoveredType === item.type && !isDisabled;
@@ -233,12 +166,6 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
                 // digit so the visible number always matches the keyboard.
                 const flatIdx = PALETTE_ITEMS.findIndex((p) => p.type === item.type);
                 const shortcutDigit = flatIdx >= 0 && flatIdx < 9 ? flatIdx + 1 : null;
-                const style: CSSProperties = {
-                  ...cardBaseStyle,
-                  cursor: isDisabled ? 'not-allowed' : 'grab',
-                  opacity: isDisabled ? 0.45 : 1,
-                  background: isHovered ? '#f1f5f9' : 'transparent',
-                };
                 return (
                   <div
                     key={item.type}
@@ -246,7 +173,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
                     onDragStart={onDragStart(item)}
                     onMouseEnter={() => setHoveredType(item.type)}
                     onMouseLeave={() => setHoveredType(null)}
-                    style={style}
+                    className={cn(
+                      'h-11 box-border my-0.5 mx-2 py-1.5 px-[10px] flex items-center gap-[10px] rounded-[6px] border border-transparent font-[inherit]',
+                      isDisabled ? 'cursor-not-allowed opacity-[0.45]' : 'cursor-grab',
+                      isHovered ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                    )}
                     title={
                       isDisabled
                         ? `${item.name} is already placed`
@@ -286,7 +217,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           ))
         )}
       </div>
-      <div style={footerStyle}>Press 1–8 to insert at center</div>
+      <div className="py-2 px-3 border-t border-[#e2e8f0] text-[10px] text-[#94a3b8] font-[inherit] shrink-0">Press 1–8 to insert at center</div>
     </div>
   );
 }
