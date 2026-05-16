@@ -9,6 +9,7 @@
 // covers cases like Trigger-already-placed.
 import { useMemo, useState } from 'react';
 import type { CSSProperties, DragEvent } from 'react';
+import { cn } from '../../../lib/cn';
 import type { NodeType } from '../../../types/pipeline';
 
 export interface NodePaletteProps {
@@ -218,14 +219,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
       </div>
       <div style={scrollStyle}>
         {filtered.length === 0 ? (
-          <div
-            style={{
-              padding: '16px 14px',
-              fontSize: 12,
-              color: '#94a3b8',
-              fontFamily: 'inherit',
-            }}
-          >
+          <div className="px-3.5 py-4 text-xs text-[#94a3b8]">
             No nodes match "{query}"
           </div>
         ) : (
@@ -264,61 +258,24 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
                     data-disabled={isDisabled || undefined}
                   >
                     <span
-                      style={{
-                        fontSize: 18,
-                        lineHeight: 1,
-                        width: 22,
-                        textAlign: 'center',
-                        flexShrink: 0,
-                      }}
+                      className="text-[18px] leading-none w-[22px] text-center shrink-0"
                       aria-hidden
                     >
                       {item.icon}
                     </span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 600,
-                          color: '#0f172a',
-                          textDecoration: isDisabled ? 'line-through' : 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                        }}
-                      >
+                    <div className="flex-1 min-w-0">
+                      <div className={cn('text-[13px] font-semibold text-text-primary flex items-center gap-1.5', isDisabled && 'line-through')}>
                         <span>{item.name}</span>
                         {shortcutDigit !== null && (
                           <kbd
                             data-testid={`palette-shortcut-${item.type}`}
-                            style={{
-                              fontSize: 10,
-                              fontWeight: 600,
-                              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                              color: '#64748b',
-                              background: '#f1f5f9',
-                              border: '1px solid #e2e8f0',
-                              borderRadius: 4,
-                              padding: '0 5px',
-                              lineHeight: '14px',
-                              minWidth: 14,
-                              textAlign: 'center',
-                              opacity: isDisabled ? 0.5 : 1,
-                            }}
+                            className={cn('text-[10px] font-semibold font-mono text-[#64748b] bg-[#f1f5f9] border border-[#e2e8f0] rounded px-[5px] leading-[14px] min-w-[14px] text-center', isDisabled ? 'opacity-50' : 'opacity-100')}
                           >
                             {shortcutDigit}
                           </kbd>
                         )}
                       </div>
-                      <div
-                        style={{
-                          fontSize: 11,
-                          color: '#64748b',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                        }}
-                      >
+                      <div className="text-[11px] text-[#64748b] whitespace-nowrap overflow-hidden text-ellipsis">
                         {isDisabled ? 'Placed' : item.description}
                       </div>
                     </div>
