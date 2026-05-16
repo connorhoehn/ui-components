@@ -3,83 +3,23 @@
 // Debug tab for ConfigPanel showing step execution details during replay.
 // Displays input/output/errors/duration/LLM metadata from StepExecution.
 
-import type { CSSProperties } from 'react';
 import type { StepExecution } from '../../../types/pipeline';
 import { formatDuration } from '../utils/formatTime';
+import { cn } from '../../../lib/cn';
 
 export interface DebugTabProps {
   stepExecution: StepExecution | null | undefined;
   nodeId: string;
 }
 
-const sectionStyle: CSSProperties = {
-  padding: '12px 16px',
-  borderBottom: '1px solid #e2e8f0',
+const STATUS_BADGE_CLASSES: Record<string, string> = {
+  completed: 'bg-[#f0fdf4] text-[#16a34a]',
+  failed:    'bg-[#fef2f2] text-[#dc2626]',
+  cancelled: 'bg-[#f1f5f9] text-[#475569]',
+  running:   'bg-[#eff6ff] text-[#2563eb]',
+  pending:   'bg-[#f1f5f9] text-[#475569]',
+  skipped:   'bg-[#fafafa] text-[#71717a]',
 };
-
-const labelStyle: CSSProperties = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: '#64748b',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-  marginBottom: 6,
-};
-
-const valueStyle: CSSProperties = {
-  fontSize: 13,
-  color: '#0f172a',
-  fontFamily: 'monospace',
-  whiteSpace: 'pre-wrap',
-  wordBreak: 'break-word',
-};
-
-const errorStyle: CSSProperties = {
-  ...valueStyle,
-  color: '#dc2626',
-  background: '#fef2f2',
-  padding: 8,
-  borderRadius: 4,
-  border: '1px solid #fecaca',
-};
-
-const statusBadgeStyle = (status: string): CSSProperties => {
-  const colors: Record<string, { bg: string; fg: string }> = {
-    completed: { bg: '#f0fdf4', fg: '#16a34a' },
-    failed: { bg: '#fef2f2', fg: '#dc2626' },
-    cancelled: { bg: '#f1f5f9', fg: '#475569' },
-    running: { bg: '#eff6ff', fg: '#2563eb' },
-    pending: { bg: '#f1f5f9', fg: '#475569' },
-    skipped: { bg: '#fafafa', fg: '#71717a' },
-  };
-  const c = colors[status] || colors.pending;
-  return {
-    display: 'inline-block',
-    padding: '2px 8px',
-    fontSize: 11,
-    fontWeight: 600,
-    borderRadius: 4,
-    background: c.bg,
-    color: c.fg,
-  };
-};
-
-const metricStyle: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  padding: '4px 0',
-  fontSize: 12,
-};
-
-const metricLabelStyle: CSSProperties = {
-  color: '#64748b',
-};
-
-const metricValueStyle: CSSProperties = {
-  fontWeight: 600,
-  color: '#0f172a',
-};
-
 
 function formatTimestamp(iso: string | undefined): string {
   if (!iso) return '—';
@@ -120,81 +60,85 @@ export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
   return (
     <div>
       {/* Status & Timing */}
-      <div style={sectionStyle}>
-        <div style={labelStyle}>Status</div>
-        <div style={statusBadgeStyle(status)}>{status}</div>
+      <div className="px-4 py-3 border-b border-[#e2e8f0]">
+        <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Status</div>
+        <div className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded', STATUS_BADGE_CLASSES[status] ?? STATUS_BADGE_CLASSES.pending)}>
+          {status}
+        </div>
 
         <div className="mt-3">
-          <div style={metricStyle}>
-            <span style={metricLabelStyle}>Started</span>
-            <span style={metricValueStyle}>{formatTimestamp(startedAt)}</span>
+          <div className="flex justify-between py-1 text-xs">
+            <span className="text-[#64748b]">Started</span>
+            <span className="font-semibold text-[#0f172a]">{formatTimestamp(startedAt)}</span>
           </div>
-          <div style={metricStyle}>
-            <span style={metricLabelStyle}>Completed</span>
-            <span style={metricValueStyle}>{formatTimestamp(completedAt)}</span>
+          <div className="flex justify-between py-1 text-xs">
+            <span className="text-[#64748b]">Completed</span>
+            <span className="font-semibold text-[#0f172a]">{formatTimestamp(completedAt)}</span>
           </div>
-          <div style={metricStyle}>
-            <span style={metricLabelStyle}>Duration</span>
-            <span style={metricValueStyle}>{formatDuration(durationMs)}</span>
+          <div className="flex justify-between py-1 text-xs">
+            <span className="text-[#64748b]">Duration</span>
+            <span className="font-semibold text-[#0f172a]">{formatDuration(durationMs)}</span>
           </div>
         </div>
       </div>
 
       {/* Error (if present) */}
       {error && (
-        <div style={sectionStyle}>
-          <div style={labelStyle}>Error</div>
-          <div style={errorStyle}>{error}</div>
+        <div className="px-4 py-3 border-b border-[#e2e8f0]">
+          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Error</div>
+          <div className="text-[13px] font-mono whitespace-pre-wrap break-words text-[#dc2626] bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
+            {error}
+          </div>
         </div>
       )}
 
       {/* Input */}
       {input !== undefined && (
-        <div style={sectionStyle}>
-          <div style={labelStyle}>Input</div>
-          <pre style={valueStyle}>{formatJSON(input)}</pre>
+        <div className="px-4 py-3 border-b border-[#e2e8f0]">
+          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Input</div>
+          <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{formatJSON(input)}</pre>
         </div>
       )}
 
       {/* Output */}
       {output !== undefined && (
-        <div style={sectionStyle}>
-          <div style={labelStyle}>Output</div>
-          <pre style={valueStyle}>{formatJSON(output)}</pre>
+        <div className="px-4 py-3 border-b border-[#e2e8f0]">
+          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Output</div>
+          <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{formatJSON(output)}</pre>
         </div>
       )}
 
       {/* LLM Metadata (if present) */}
       {llm && (
-        <div style={sectionStyle}>
-          <div style={labelStyle}>LLM Details</div>
+        <div className="px-4 py-3 border-b border-[#e2e8f0]">
+          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">LLM Details</div>
 
-          <div style={metricStyle}>
-            <span style={metricLabelStyle}>Tokens In</span>
-            <span style={metricValueStyle}>{llm.tokensIn.toLocaleString()}</span>
+          <div className="flex justify-between py-1 text-xs">
+            <span className="text-[#64748b]">Tokens In</span>
+            <span className="font-semibold text-[#0f172a]">{llm.tokensIn.toLocaleString()}</span>
           </div>
-          <div style={metricStyle}>
-            <span style={metricLabelStyle}>Tokens Out</span>
-            <span style={metricValueStyle}>{llm.tokensOut.toLocaleString()}</span>
+          <div className="flex justify-between py-1 text-xs">
+            <span className="text-[#64748b]">Tokens Out</span>
+            <span className="font-semibold text-[#0f172a]">{llm.tokensOut.toLocaleString()}</span>
           </div>
           {llm.firstTokenLatencyMs !== undefined && (
-            <div style={metricStyle}>
-              <span style={metricLabelStyle}>First Token Latency</span>
-              <span style={metricValueStyle}>{formatDuration(llm.firstTokenLatencyMs)}</span>
+            <div className="flex justify-between py-1 text-xs">
+              <span className="text-[#64748b]">First Token Latency</span>
+              <span className="font-semibold text-[#0f172a]">{formatDuration(llm.firstTokenLatencyMs)}</span>
             </div>
           )}
 
           {llm.prompt && (
             <div className="mt-3">
               <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Prompt</div>
-              <pre style={valueStyle}>{llm.prompt}</pre>
+              <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{llm.prompt}</pre>
             </div>
           )}
 
           {llm.response && (
             <div className="mt-3">
               <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Response</div>
-              <pre style={valueStyle}>{llm.response}</pre>
+              <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{llm.response}</pre>
             </div>
           )}
         </div>
