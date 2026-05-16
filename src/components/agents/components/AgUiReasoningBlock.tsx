@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { cn } from '../../../lib/cn';
 
 export interface AgUiReasoningBlockProps {
   /** Reasoning text accumulated from REASONING_MESSAGE_CONTENT events. */
@@ -28,115 +29,41 @@ export function AgUiReasoningBlock({
 
   return (
     <div
-      className={className}
-      style={{
-        border: '1px dashed var(--color-border, #cbd5e1)',
-        padding: '8px 10px',
-        borderRadius: 4,
-        maxWidth: '100%',
-        marginBottom: 6,
-      }}
+      className={cn(
+        'border border-dashed border-border-emphasis py-2 px-2.5 rounded max-w-full mb-1.5',
+        className,
+      )}
     >
-      <style>{`
-        @keyframes agui-reasoning-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        .agui-reasoning-cursor {
-          display: inline-block;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: var(--color-text-secondary, #64748b);
-          margin-left: 4px;
-          vertical-align: middle;
-          animation: agui-reasoning-pulse 1.4s ease-in-out infinite;
-        }
-      `}</style>
-
       {/* Header toggle button */}
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          width: '100%',
-          background: 'none',
-          border: 'none',
-          padding: 0,
-          cursor: 'pointer',
-          gap: 6,
-          textAlign: 'left',
-        }}
+        className="flex items-center w-full bg-transparent border-none p-0 cursor-pointer gap-1.5 text-left"
       >
         {/* Chevron icon */}
-        <span
-          style={{
-            fontSize: 10,
-            color: 'var(--color-text-secondary, #64748b)',
-            userSelect: 'none',
-            lineHeight: 1,
-            width: 12,
-            display: 'inline-block',
-            flexShrink: 0,
-          }}
-        >
+        <span className="text-[10px] text-text-secondary select-none leading-none w-3 inline-block shrink-0">
           {open ? '▾' : '▸'}
         </span>
 
         {/* Label */}
-        <span
-          style={{
-            fontSize: 12,
-            fontWeight: 500,
-            color: 'var(--color-text-primary, #334155)',
-            flex: 1,
-            userSelect: 'none',
-          }}
-        >
+        <span className="text-[12px] font-medium text-text-primary flex-1 select-none">
           {isStreaming ? 'Thinking…' : 'Reasoning'}
         </span>
 
         {/* Token count chip */}
-        <span
-          style={{
-            fontSize: 11,
-            color: 'var(--color-text-tertiary, #94a3b8)',
-            background: 'var(--color-surface, #f8fafc)',
-            border: '1px solid var(--color-border, #cbd5e1)',
-            borderRadius: 10,
-            padding: '1px 7px',
-            userSelect: 'none',
-            flexShrink: 0,
-          }}
-        >
+        <span className="text-[11px] text-text-tertiary bg-surface border border-border rounded-[10px] py-px px-[7px] select-none shrink-0">
           {tokenCount} tok
         </span>
       </button>
 
       {/* Body — shown when open */}
       {open && (
-        <div
-          style={{
-            maxHeight: 240,
-            overflowY: 'auto',
-            padding: '8px 0 0 0',
-          }}
-        >
-          <pre
-            style={{
-              margin: 0,
-              fontFamily: 'inherit',
-              fontSize: 12,
-              color: 'var(--color-text-secondary, #64748b)',
-              whiteSpace: 'pre-wrap',
-              wordBreak: 'break-word',
-              lineHeight: 1.6,
-            }}
-          >
+        <div className="max-h-[240px] overflow-y-auto pt-2">
+          <pre className="m-0 font-[inherit] text-[12px] text-text-secondary whitespace-pre-wrap break-words leading-[1.6]">
             {reasoning}
-            {isStreaming && <span className="agui-reasoning-cursor" />}
+            {isStreaming && (
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-text-secondary ml-1 align-middle [animation:agui-reasoning-pulse_1.4s_ease-in-out_infinite]" />
+            )}
           </pre>
         </div>
       )}
