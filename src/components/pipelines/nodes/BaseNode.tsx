@@ -138,13 +138,6 @@ export default function BaseNode(props: BaseNodeProps) {
       data-node-state={state}
       data-pipeline-node="true"
     >
-      {/* Keyframes for the pending/running dot pulse */}
-      <style>{`
-        @keyframes basenode-pulse {
-          0%, 100% { opacity: 1;   transform: scale(1);   }
-          50%      { opacity: 0.55; transform: scale(1.25); }
-        }
-      `}</style>
       {hasBreakpoint && (
         <span
           aria-label="breakpoint"

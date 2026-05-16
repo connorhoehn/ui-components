@@ -53,13 +53,6 @@ export function ReactionOverlay({ reactions, style }: ReactionOverlayProps) {
           {r.emoji}
         </span>
       ))}
-      <style>{`
-        @keyframes floatUp {
-          0% { transform: translateY(0) scale(1); opacity: 1; }
-          70% { opacity: 1; }
-          100% { transform: translateY(-300px) scale(0.6); opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 }

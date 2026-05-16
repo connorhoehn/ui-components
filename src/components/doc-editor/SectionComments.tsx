@@ -108,14 +108,6 @@ export default function SectionComments({
 
   return (
     <div>
-      {/* Inject keyframes for slide-down animation */}
-      <style>{`
-        @keyframes sectionCommentsSlideDown {
-          from { max-height: 0; opacity: 0; }
-          to { max-height: 500px; opacity: 1; }
-        }
-      `}</style>
-
       {/* Toggle button */}
       <button
         type="button"

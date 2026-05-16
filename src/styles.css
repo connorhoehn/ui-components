@@ -176,3 +176,19 @@
   50%  { background-color: rgba(59, 130, 246, 0.08); }
   100% { background-color: rgba(59, 130, 246, 0.18); }
 }
+
+@keyframes floatUp {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translateY(-300px) scale(0.6); opacity: 0; }
+}
+
+@keyframes sectionCommentsSlideDown {
+  from { max-height: 0; opacity: 0; }
+  to   { max-height: 500px; opacity: 1; }
+}
+
+@keyframes basenode-pulse {
+  0%, 100% { opacity: 1;    transform: scale(1);    }
+  50%      { opacity: 0.55; transform: scale(1.25); }
+}
