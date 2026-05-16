@@ -148,7 +148,7 @@ describe('StreamingChatPanel', () => {
         role: 'assistant',
         content: 'Let me search',
         toolCalls: [
-          { id: 'tc1', name: 'search_kb', args: '{}', status: 'completed' },
+          { id: 'tc1', name: 'search_kb', args: '{}', status: 'completed', startedAt: 0 },
         ],
       }),
     ];

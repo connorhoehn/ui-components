@@ -204,7 +204,7 @@ function CommentThreadNode({
   // Resolved banner (shown for resolved root threads)
   if (isResolved && !resolvedExpanded) {
     return (
-      <div style={{ marginLeft: cappedDepth > 0 ? 20 : 0 }}>
+      <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>
         <div
           className={cn('bg-[#f0fdf4] border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(true)}
@@ -239,7 +239,7 @@ function CommentThreadNode({
   }
 
   return (
-    <div style={{ marginLeft: cappedDepth > 0 ? 20 : 0, opacity: isResolved ? 0.6 : 1 }}>
+    <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0', isResolved ? 'opacity-60' : '')}>
       {/* Resolved banner (expanded) */}
       {isResolved && resolvedExpanded && (
         <div

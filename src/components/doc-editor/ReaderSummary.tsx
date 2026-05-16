@@ -105,8 +105,7 @@ export function HeaderBanner({
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
   return (
     <div
-      className={cn('border-t-[3px] border-t-[#3b82f6] rounded-t-lg pt-5 pb-4 px-6 mb-4')}
-      style={{ background: 'linear-gradient(180deg, #f8fafc 0%, #fff 100%)', gridColumn: '1 / -1' }}
+      className={cn('border-t-[3px] border-t-[#3b82f6] rounded-t-lg pt-5 pb-4 px-6 mb-4 bg-gradient-to-b from-slate-50 to-white col-span-full')}
     >
       <div className={cn('flex items-center gap-3 mb-1.5')}>
         <h1 className={cn('text-xl font-bold m-0 text-text-primary flex-1')}>

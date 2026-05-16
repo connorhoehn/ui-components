@@ -81,8 +81,7 @@ function CollapsibleGroup({
         className={cn('bg-transparent border-none cursor-pointer flex items-center gap-1.5 py-1 px-0 text-[13px] font-semibold text-[#334155] font-[inherit] w-full')}
       >
         <span
-          className={cn('inline-block text-[10px] transition-transform duration-150 ease-in-out')}
-          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          className={cn('inline-block text-[10px] transition-transform duration-150 ease-in-out', open ? 'rotate-90' : 'rotate-0')}
         >
           {'▶'}
         </span>
@@ -119,11 +118,8 @@ function ItemRow({
 
   return (
     <div
-      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r')}
-      style={{
-        borderLeft: `3px solid ${borderColor}`,
-        background: variant === 'pending' ? '#fffbeb' : '#fff',
-      }}
+      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r', variant === 'pending' ? 'bg-amber-50' : 'bg-white')}
+      style={{ borderLeft: `3px solid ${borderColor}` }}
     >
       <span className={cn('text-[13px] flex-1')}>
         <span
@@ -315,8 +311,7 @@ export function SectionSummariesCard({
                   )}
                 >
                   <span
-                    className={cn('text-[10px] transition-transform duration-150 ease-in-out shrink-0')}
-                    style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                    className={cn('text-[10px] transition-transform duration-150 ease-in-out shrink-0', isOpen ? 'rotate-90' : 'rotate-0')}
                   >
                     {'▶'}
                   </span>
