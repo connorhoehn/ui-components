@@ -10,6 +10,7 @@
 import { EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
 import type { EdgeProps } from '@xyflow/react';
 import { usePrefersReducedMotion } from '../../../../hooks/usePrefersReducedMotion';
+import { cn } from '../../../../lib/cn';
 
 export type EdgeState =
   | 'default'
@@ -90,7 +91,7 @@ export default function AnimatedEdge({
         fill="none"
         stroke="transparent"
         strokeWidth={12}
-        style={{ pointerEvents: 'stroke' }}
+        className="[pointer-events:stroke]"
       />
       <path
         id={id}
@@ -100,7 +101,7 @@ export default function AnimatedEdge({
         strokeWidth={strokeWidth}
         strokeDasharray={animateFlow ? spec.strokeDasharray : undefined}
         markerEnd={markerEnd}
-        style={{ pointerEvents: 'none' }}
+        className="pointer-events-none"
       >
         {animateFlow ? (
           <animate
@@ -115,23 +116,15 @@ export default function AnimatedEdge({
       {edgeData.label ? (
         <EdgeLabelRenderer>
           <div
+            className={cn(
+              'absolute pointer-events-auto px-2 py-0.5 rounded-full text-[10px] font-semibold leading-[1.4]',
+              'bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap',
+              'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
+            )}
             style={{
-              position: 'absolute',
               // Pull the pill slightly downstream of the source handle so it
               // sits inside the edge route rather than on top of the node.
               transform: `translate(-50%, -50%) translate(${sourceX + 28}px, ${sourceY}px)`,
-              pointerEvents: 'all',
-              padding: '2px 8px',
-              borderRadius: 999,
-              fontSize: 10,
-              fontWeight: 600,
-              lineHeight: 1.4,
-              background: '#ffffff',
-              color: '#475569',
-              border: '1px solid #e2e8f0',
-              fontFamily: 'inherit',
-              whiteSpace: 'nowrap',
-              boxShadow: '0 1px 2px rgba(15, 23, 42, 0.06)',
             }}
           >
             {edgeData.label}
