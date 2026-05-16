@@ -10,13 +10,14 @@ export const thClass =
 export const tdClass =
   'px-2 py-[5px] text-[11px] text-text-secondary align-top';
 
-export function eventChipClass(color: string): string {
-  return `inline-block px-1.5 py-px rounded-[3px] text-[10px] font-semibold`;
-}
+const EVENT_CHIP_COLORS: Record<string, string> = {
+  '#2563eb': 'bg-blue-600/10 text-blue-600',
+  '#7c3aed': 'bg-violet-600/10 text-violet-600',
+  '#16a34a': 'bg-green-600/10 text-green-600',
+  '#dc2626': 'bg-red-600/10 text-red-600',
+};
 
-export function eventChipStyle(color: string): { background: string; color: string } {
-  return {
-    background: color + '18',
-    color,
-  };
+export function eventChipClass(color: string): string {
+  const colorClasses = EVENT_CHIP_COLORS[color] ?? '';
+  return `inline-block px-1.5 py-px rounded-[3px] text-[10px] font-semibold ${colorClasses}`.trimEnd();
 }

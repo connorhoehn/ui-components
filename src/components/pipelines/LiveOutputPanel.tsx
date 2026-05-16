@@ -231,8 +231,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
       {/* Body */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-[#cdd6f4]"
-        style={{ fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace' }}
+        className="flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-[#cdd6f4] font-code"
         onScroll={handleScroll}
       >
         {stepEntries.length === 0 ? (

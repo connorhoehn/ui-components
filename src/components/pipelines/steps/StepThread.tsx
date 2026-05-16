@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { cn } from '../../../lib/cn';
 import type { StepExecution } from '../../../types/pipeline';
 import { StepSection } from './StepSection';
-import { codeBlockClass, proseBlockClass, thClass, tdClass, eventChipClass, eventChipStyle } from './stepStyles';
+import { codeBlockClass, proseBlockClass, thClass, tdClass, eventChipClass } from './stepStyles';
 
 export interface StepThreadProps {
   stepId: string;
@@ -107,28 +107,28 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               <tbody>
                 {step.startedAt && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#2563eb')} style={eventChipStyle('#2563eb')}>started</span></td>
+                    <td className={tdClass}><span className={eventChipClass('#2563eb')}>started</span></td>
                     <td className={tdClass}>{new Date(step.startedAt).toLocaleTimeString()}</td>
                     <td className={tdClass}>Node {stepId.slice(0, 8)} ({nodeType}) began execution</td>
                   </tr>
                 )}
                 {llmData?.streamOpened && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#7c3aed')} style={eventChipStyle('#7c3aed')}>stream.opened</span></td>
+                    <td className={tdClass}><span className={eventChipClass('#7c3aed')}>stream.opened</span></td>
                     <td className={tdClass}>—</td>
                     <td className={tdClass}>LLM stream connection established</td>
                   </tr>
                 )}
                 {llmData?.firstTokenLatencyMs != null && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#7c3aed')} style={eventChipStyle('#7c3aed')}>first.token</span></td>
+                    <td className={tdClass}><span className={eventChipClass('#7c3aed')}>first.token</span></td>
                     <td className={tdClass}>+{llmData.firstTokenLatencyMs}ms</td>
                     <td className={tdClass}>First token received from LLM</td>
                   </tr>
                 )}
                 {step.completedAt && step.status === 'completed' && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#16a34a')} style={eventChipStyle('#16a34a')}>completed</span></td>
+                    <td className={tdClass}><span className={eventChipClass('#16a34a')}>completed</span></td>
                     <td className={tdClass}>{new Date(step.completedAt).toLocaleTimeString()}</td>
                     <td className={tdClass}>
                       Finished in {step.durationMs != null ? (step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`) : '—'}
@@ -137,7 +137,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                 )}
                 {step.status === 'failed' && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#dc2626')} style={eventChipStyle('#dc2626')}>failed</span></td>
+                    <td className={tdClass}><span className={eventChipClass('#dc2626')}>failed</span></td>
                     <td className={tdClass}>{step.completedAt ? new Date(step.completedAt).toLocaleTimeString() : '—'}</td>
                     <td className={tdClass}>{step.error ?? 'Unknown error'}</td>
                   </tr>
