@@ -31,8 +31,8 @@ export default function GuardrailNode({ id, data, selected }: NodeProps<Guardrai
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
       <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="pass" style={{ top: '40%', background: '#16a34a' }} />
-      <Handle type="source" position={Position.Right} id="block" style={{ top: '60%', background: '#dc2626' }} />
+      <Handle type="source" position={Position.Right} id="pass" className="!top-[40%] !bg-green-600" />
+      <Handle type="source" position={Position.Right} id="block" className="!top-[60%] !bg-red-600" />
     </BaseNode>
   );
 }

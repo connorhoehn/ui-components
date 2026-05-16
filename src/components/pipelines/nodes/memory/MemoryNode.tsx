@@ -32,8 +32,8 @@ export default function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
       <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="out" style={{ top: '40%' }} />
-      <Handle type="source" position={Position.Right} id="error" style={{ top: '60%', background: '#dc2626' }} />
+      <Handle type="source" position={Position.Right} id="out" className="!top-[40%]" />
+      <Handle type="source" position={Position.Right} id="error" className="!top-[60%] !bg-red-600" />
     </BaseNode>
   );
 }

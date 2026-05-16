@@ -49,9 +49,9 @@ export default function ConditionNode(props: NodeProps<ConditionFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    style={{ background: '#cbd5e1', width: 10, height: 10 }} />
-      <Handle type="source" position={Position.Right} id="true"  style={{ background: '#16a34a', width: 10, height: 10, top: '40%' }} />
-      <Handle type="source" position={Position.Right} id="false" style={{ background: '#f59e0b', width: 10, height: 10, top: '60%' }} />
+      <Handle type="target" position={Position.Left}  id="in"    className="!bg-slate-300 !w-2.5 !h-2.5" />
+      <Handle type="source" position={Position.Right} id="true"  className="!bg-green-600 !w-2.5 !h-2.5 !top-[40%]" />
+      <Handle type="source" position={Position.Right} id="false" className="!bg-amber-500 !w-2.5 !h-2.5 !top-[60%]" />
     </BaseNode>
   );
 }

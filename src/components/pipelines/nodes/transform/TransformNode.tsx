@@ -49,8 +49,8 @@ export default function TransformNode(props: NodeProps<TransformFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"  style={{ background: '#cbd5e1', width: 10, height: 10 }} />
-      <Handle type="source" position={Position.Right} id="out" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="target" position={Position.Left}  id="in"  className="!bg-slate-300 !w-2.5 !h-2.5" />
+      <Handle type="source" position={Position.Right} id="out" className="!bg-slate-300 !w-2.5 !h-2.5" />
     </BaseNode>
   );
 }

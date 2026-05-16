@@ -72,11 +72,12 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
             type="target"
             position={Position.Left}
             id={`in-${i}`}
-            style={{ background: '#cbd5e1', width: 10, height: 10, top: `${pct}%` }}
+            className="!bg-slate-300 !w-2.5 !h-2.5"
+            style={{ top: `${pct}%` }}
           />
         );
       })}
-      <Handle type="source" position={Position.Right} id="out" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="source" position={Position.Right} id="out" className="!bg-slate-300 !w-2.5 !h-2.5" />
     </BaseNode>
   );
 }

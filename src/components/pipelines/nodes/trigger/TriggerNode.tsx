@@ -71,7 +71,7 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
         type="source"
         position={Position.Right}
         id="out"
-        style={{ background: '#cbd5e1', width: 10, height: 10 }}
+        className="!bg-slate-300 !w-2.5 !h-2.5"
       />
     </BaseNode>
   );

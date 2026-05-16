@@ -18,7 +18,6 @@ type ForkData = ForkNodeData & {
 
 type ForkFlowNode = Node<ForkData, 'fork'>;
 
-const BRANCH_HANDLE_COLOR = '#2563eb'; // blue per §18.4.4 handles spec
 
 export default function ForkNode(props: NodeProps<ForkFlowNode>) {
   const { id, data, selected } = props;
@@ -54,7 +53,7 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left} id="in" style={{ background: '#cbd5e1', width: 10, height: 10 }} />
+      <Handle type="target" position={Position.Left} id="in" className="!bg-slate-300 !w-2.5 !h-2.5" />
       {labels.map((_label, i) => {
         // Evenly spaced in the vertical axis (leave 0% and 100% as margins).
         const pct = ((i + 1) / (count + 1)) * 100;
@@ -64,7 +63,8 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
             type="source"
             position={Position.Right}
             id={`branch-${i}`}
-            style={{ background: BRANCH_HANDLE_COLOR, width: 10, height: 10, top: `${pct}%` }}
+            className="!bg-blue-600 !w-2.5 !h-2.5"
+            style={{ top: `${pct}%` }}
           />
         );
       })}

@@ -31,8 +31,8 @@ export default function PolicyNode({ id, data, selected }: NodeProps<PolicyFlowN
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
       <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="allow" style={{ top: '40%', background: '#16a34a' }} />
-      <Handle type="source" position={Position.Right} id="deny" style={{ top: '60%', background: '#dc2626' }} />
+      <Handle type="source" position={Position.Right} id="allow" className="!top-[40%] !bg-green-600" />
+      <Handle type="source" position={Position.Right} id="deny" className="!top-[60%] !bg-red-600" />
     </BaseNode>
   );
 }
