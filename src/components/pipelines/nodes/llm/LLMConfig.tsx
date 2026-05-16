@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import type { LLMNodeData, LLMProvider } from '../../../../types/pipeline';
-import { ConfigField, ConfigSection } from '../shared';
+import { ConfigField, ConfigSection, NodeConfigShell } from '../shared';
 import { cn } from '../../../../lib/cn';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
@@ -73,7 +73,7 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Provider */}
       <ConfigField label="Provider" required>
         <select
@@ -218,6 +218,6 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
           </div>
         </div>
       )}
-    </div>
+    </NodeConfigShell>
   );
 }

@@ -7,7 +7,7 @@
 // to branchCount so downstream consumers can index safely.
 
 import type { ForkNodeData } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 
 export interface ForkConfigProps {
   data: ForkNodeData;
@@ -43,7 +43,7 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Branch count */}
       <ConfigField
         label="Branch count"
@@ -89,6 +89,6 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
           ))}
         </div>
       </ConfigField>
-    </div>
+    </NodeConfigShell>
   );
 }

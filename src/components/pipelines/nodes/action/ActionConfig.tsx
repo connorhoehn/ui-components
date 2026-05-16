@@ -14,7 +14,7 @@
 // represented as a halt with an attached retry budget in config.
 
 import type { ActionNodeData, ActionType } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 
 export interface ActionConfigProps {
@@ -96,7 +96,7 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Action type */}
       <ConfigField label="Action type" required>
         <select
@@ -221,6 +221,6 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
           </label>
         </div>
       </ConfigField>
-    </div>
+    </NodeConfigShell>
   );
 }

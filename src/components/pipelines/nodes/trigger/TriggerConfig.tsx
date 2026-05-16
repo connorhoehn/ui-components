@@ -10,7 +10,7 @@
 import { useContext, useMemo, useState } from 'react';
 import type { TriggerNodeData, TriggerType } from '../../../../types/pipeline';
 import { cn } from '../../../../lib/cn';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 import { parseCron, nextFires } from '../../cron/cronUtils';
 import { useToast } from '../../../shared/ToastProvider';
 import { PipelineEditorContext } from '../../context/PipelineEditorContext';
@@ -119,7 +119,7 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
     data.triggerType === 'document.comment'  ? 'On comment added' : '';
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Trigger type */}
       <ConfigField label="Trigger type" required>
         <select
@@ -287,6 +287,6 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
           </div>
         </div>
       )}
-    </div>
+    </NodeConfigShell>
   );
 }

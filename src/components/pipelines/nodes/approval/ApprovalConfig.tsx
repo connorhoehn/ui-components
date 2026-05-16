@@ -10,7 +10,7 @@
 
 import { useState } from 'react';
 import type { ApprovalNodeData, Approver, ApprovalTimeoutAction } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 import UserPicker from '../../../shared/UserPicker';
 import { cn } from '../../../../lib/cn';
 
@@ -88,7 +88,7 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
   const requiredCountMax = Math.max(1, approvers.length);
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Approvers */}
       <ConfigField
         label="Approvers"
@@ -208,6 +208,6 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
           placeholder="Please review the summary before it's posted to the document."
         />
       </ConfigField>
-    </div>
+    </NodeConfigShell>
   );
 }

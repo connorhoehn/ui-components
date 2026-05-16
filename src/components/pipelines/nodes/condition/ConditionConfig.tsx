@@ -6,7 +6,7 @@
 // node face on the canvas so the author can distinguish multiple branches.
 
 import type { ConditionNodeData } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
 
 export interface ConditionConfigProps {
@@ -21,7 +21,7 @@ export default function ConditionConfig({ data, onChange }: ConditionConfigProps
   const expressionMissing = !data.expression?.trim();
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       <ConfigField
         label="Expression"
         required
@@ -54,6 +54,6 @@ export default function ConditionConfig({ data, onChange }: ConditionConfigProps
       >
         ▶ Preview with sample context
       </button>
-    </div>
+    </NodeConfigShell>
   );
 }

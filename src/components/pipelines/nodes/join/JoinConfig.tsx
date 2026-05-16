@@ -6,7 +6,7 @@
 // renders a placeholder string so the layout matches the design.
 
 import type { JoinNodeData, JoinMode, JoinMergeStrategy } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 
 export interface JoinConfigProps {
   data: JoinNodeData;
@@ -27,7 +27,7 @@ const STRATEGY_OPTIONS: Array<{ value: JoinMergeStrategy; label: string; hint: s
 
 export default function JoinConfig({ data, onChange }: JoinConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Mode */}
       <ConfigField label="Mode" required>
         <div className="flex flex-col gap-1.5">
@@ -88,6 +88,6 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
         Current inputs: <strong>TBD</strong>
         <div className="text-[11px] text-text-tertiary mt-0.5">Derived from incoming edges once the canvas is connected.</div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

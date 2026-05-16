@@ -7,7 +7,7 @@
 // "sample input | sample output" preview area (not yet implemented).
 
 import type { TransformNodeData, TransformType } from '../../../../types/pipeline';
-import { ConfigField } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 
@@ -30,7 +30,7 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
   const expressionMissing = !data.expression?.trim();
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Type */}
       <ConfigField label="Type" required>
         <div className="flex flex-col gap-1.5">
@@ -114,6 +114,6 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
           </div>
         </div>
       </ConfigField>
-    </div>
+    </NodeConfigShell>
   );
 }
