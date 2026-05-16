@@ -55,8 +55,10 @@ function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, chi
         className="flex items-center gap-1 w-full px-3 py-1.5 bg-transparent border-none cursor-pointer font-[inherit] text-left"
       >
         <span
-          className="text-[10px] text-[#6b7280] inline-block w-3 transition-transform duration-150"
-          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          className={cn(
+            'text-[10px] text-[#6b7280] inline-block w-3 transition-transform duration-150',
+            open ? 'rotate-90' : 'rotate-0',
+          )}
         >
           ▶
         </span>
@@ -89,14 +91,13 @@ function SidebarRoomRow({ room, isActive, unread, onClick }: {
     <button
       onClick={onClick}
       className={cn(
-        'flex items-center gap-1.5 w-full border-none rounded-[5px] py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
+        'flex items-center gap-1.5 w-full border-none rounded-[5px] pt-1.5 pb-1.5 pr-2 pl-6 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
         isActive
           ? 'bg-[rgba(100,108,255,0.15)] text-[#a5b4fc] font-semibold'
           : unread > 0
             ? 'bg-transparent text-surface-hover font-semibold'
             : 'bg-transparent text-text-tertiary font-normal',
       )}
-      style={{ padding: '6px 8px 6px 24px' }}
     >
       <span className={cn('text-[13px] shrink-0', isActive ? 'text-[#a5b4fc]' : 'text-[#6b7280]')}>
         {room.type === 'dm' ? '●' : '#'}
@@ -216,7 +217,7 @@ export default function SocialTabContent({
             borderBottom: `1px solid ${sidebarBorder}`,
           }}
         >
-          <div className="w-7 h-7 rounded-md flex items-center justify-center text-white font-bold text-[11px] shrink-0" style={{ background: 'linear-gradient(135deg, #646cff, #9b59b6)' }}>
+          <div className="w-7 h-7 rounded-md flex items-center justify-center text-white font-bold text-[11px] shrink-0 bg-[linear-gradient(135deg,#646cff,#9b59b6)]">
             {initials}
           </div>
           <div className="flex-1 min-w-0">

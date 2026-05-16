@@ -591,10 +591,10 @@ export default function SourceDetailPage() {
               <span className="flex items-center gap-2.5">
                 <Chip tone={statusTone(source.status)} size="sm">{source.status}</Chip>
                 <button
-                  className="px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer font-[inherit] border-none text-white"
-                  style={{
-                    background: source.status === 'paused' ? 'var(--color-state-completed)' : 'var(--color-state-awaiting)',
-                  }}
+                  className={cn(
+                    'px-3.5 py-1.5 text-xs font-medium rounded-md cursor-pointer font-[inherit] border-none text-white',
+                    source.status === 'paused' ? 'bg-state-completed' : 'bg-state-awaiting',
+                  )}
                   onClick={() => void handleTogglePause()}
                 >
                   {source.status === 'paused' ? 'Resume' : 'Pause'}

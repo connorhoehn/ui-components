@@ -17,8 +17,7 @@ export function QrCodeDisplay({ value, size = 200, label }: QrCodeDisplayProps) 
         alt={label || 'QR Code'}
         width={size}
         height={size}
-        className="block rounded-sm"
-        style={{ imageRendering: 'pixelated' }}
+        className="block rounded-sm [image-rendering:pixelated]"
       />
       {label && (
         <figcaption className="text-sm text-slate-500 text-center">

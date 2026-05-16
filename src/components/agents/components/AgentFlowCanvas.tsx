@@ -1,3 +1,4 @@
+import { cn } from '../../../lib/cn';
 import {
   ReactFlow,
   Background,
@@ -102,7 +103,7 @@ export function AgentFlowCanvas({
   };
 
   return (
-    <div className={className} style={{ width: '100%', height: 500 }}>
+    <div className={cn('w-full h-[500px]', className)}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

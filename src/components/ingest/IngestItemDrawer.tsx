@@ -254,8 +254,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
               {failed && (
                 <div className="flex items-start gap-3 relative py-1.5">
                   <span
-                    className="w-3 h-3 rounded-full shrink-0 mt-1 border-2"
-                    style={{ background: 'var(--color-state-failed)', borderColor: 'var(--color-state-failed)' }}
+                    className="w-3 h-3 rounded-full shrink-0 mt-1 border-2 bg-state-failed border-state-failed"
                   />
                   <div>
                     <div className="text-[13px] font-medium text-[var(--color-state-failed)]">failed</div>
