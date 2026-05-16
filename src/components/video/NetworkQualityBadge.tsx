@@ -15,6 +15,13 @@ const colors: Record<NetworkQuality, string> = {
   dead: '#ef4444',
 };
 
+const textColorClasses: Record<NetworkQuality, string> = {
+  good: 'text-green-500',
+  medium: 'text-yellow-500',
+  poor: 'text-orange-500',
+  dead: 'text-red-500',
+};
+
 const labels: Record<NetworkQuality, string> = {
   good: 'Good',
   medium: 'Fair',
@@ -41,7 +48,7 @@ export function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps
           />
         ))}
       </svg>
-      <span style={{ color }}>{labels[quality]}</span>
+      <span className={textColorClasses[quality]}>{labels[quality]}</span>
     </div>
   );
 }

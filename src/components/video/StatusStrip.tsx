@@ -23,31 +23,34 @@ function formatDuration(sec: number): string {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-const phaseColors: Record<string, string> = {
-  live: '#22c55e',
-  playing: '#22c55e',
-  connecting: '#eab308',
-  reconnecting: '#eab308',
-  buffering: '#eab308',
-  idle: '#94a3b8',
-  error: '#ef4444',
+const phaseDotClasses: Record<string, string> = {
+  live: 'bg-green-500 shadow-[0_0_6px_#22c55e]',
+  playing: 'bg-green-500 shadow-[0_0_6px_#22c55e]',
+  connecting: 'bg-yellow-500',
+  reconnecting: 'bg-yellow-500',
+  buffering: 'bg-yellow-500',
+  idle: 'bg-slate-400',
+  error: 'bg-red-500',
+};
+
+const phaseTextClasses: Record<string, string> = {
+  live: 'text-green-500',
+  playing: 'text-green-500',
+  connecting: 'text-yellow-500',
+  reconnecting: 'text-yellow-500',
+  buffering: 'text-yellow-500',
+  idle: 'text-slate-400',
+  error: 'text-red-500',
 };
 
 export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps) {
-  const color = phaseColors[phase] || '#94a3b8';
   const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();
 
   return (
     <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono')} style={style}>
       <span className={cn('flex items-center gap-1')}>
-        <span
-          className={cn('w-[7px] h-[7px] rounded-full')}
-          style={{
-            background: color,
-            boxShadow: phase === 'live' || phase === 'playing' ? `0 0 6px ${color}` : 'none',
-          }}
-        />
-        <span className={cn('font-semibold')} style={{ color }}>{label}</span>
+        <span className={cn('w-[7px] h-[7px] rounded-full', phaseDotClasses[phase] ?? 'bg-slate-400')} />
+        <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-slate-400')}>{label}</span>
       </span>
       {bitrateBps !== undefined && <span>{formatBitrate(bitrateBps)}</span>}
       {duration !== undefined && <span>{formatDuration(duration)}</span>}
