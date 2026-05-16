@@ -12,10 +12,10 @@
 //  - Dark terminal-style background for code-like readability
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
 import type { PipelineEventMap } from '../../types/pipeline';
 import { useEventStream } from './context/EventStreamContext';
 import type { WildcardEvent } from './context/EventStreamContext';
+import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -46,131 +46,6 @@ interface StepStream {
 }
 
 // ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const panelStyle = (visible: boolean): CSSProperties => ({
-  display: visible ? 'flex' : 'none',
-  flexDirection: 'column',
-  background: '#1e1e2e',
-  borderTop: '1px solid #313244',
-  maxHeight: 320,
-  minHeight: 160,
-  overflow: 'hidden',
-  position: 'relative',
-  transition: 'max-height 0.2s ease',
-});
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '8px 14px',
-  background: '#181825',
-  borderBottom: '1px solid #313244',
-  flexShrink: 0,
-};
-
-const headerTitleStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 700,
-  color: '#cdd6f4',
-  letterSpacing: '0.04em',
-  textTransform: 'uppercase',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-};
-
-const bodyStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '10px 14px',
-  fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace',
-  fontSize: 13,
-  lineHeight: 1.6,
-  color: '#cdd6f4',
-};
-
-const sectionHeaderStyle = (active: boolean): CSSProperties => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '6px 0',
-  cursor: 'pointer',
-  userSelect: 'none',
-  fontSize: 11,
-  fontWeight: 600,
-  color: active ? '#89b4fa' : '#a6adc8',
-  borderBottom: '1px solid #313244',
-  marginBottom: 6,
-});
-
-const tokenAreaStyle: CSSProperties = {
-  whiteSpace: 'pre-wrap',
-  wordBreak: 'break-word',
-  margin: '0 0 12px 0',
-  padding: 0,
-  color: '#cdd6f4',
-};
-
-const summaryStyle: CSSProperties = {
-  fontSize: 11,
-  color: '#a6e3a1',
-  fontWeight: 600,
-  padding: '4px 0 8px 0',
-  borderBottom: '1px solid #313244',
-  marginBottom: 8,
-};
-
-const emptyStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100%',
-  color: '#6c7086',
-  fontSize: 13,
-  fontStyle: 'italic',
-};
-
-const closeBtnStyle: CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: '#6c7086',
-  cursor: 'pointer',
-  fontSize: 14,
-  padding: '2px 6px',
-  borderRadius: 4,
-  lineHeight: 1,
-};
-
-const cursorStyle: CSSProperties = {
-  display: 'inline-block',
-  width: 2,
-  height: 14,
-  background: '#89b4fa',
-  marginLeft: 1,
-  verticalAlign: 'text-bottom',
-  animation: 'live-output-blink 1s step-end infinite',
-};
-
-// Inject the blink keyframes once into the document.
-const KEYFRAMES_ID = 'live-output-panel-keyframes';
-function ensureKeyframes(): void {
-  if (typeof document === 'undefined') return;
-  if (document.getElementById(KEYFRAMES_ID)) return;
-  const style = document.createElement('style');
-  style.id = KEYFRAMES_ID;
-  style.textContent = `
-    @keyframes live-output-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -179,11 +54,6 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const pinnedRef = useRef(true);
   const prevRunIdRef = useRef<string | null>(null);
-
-  // Inject CSS keyframes for the blinking cursor.
-  useEffect(() => {
-    ensureKeyframes();
-  }, []);
 
   // Reset state when runId changes.
   useEffect(() => {
@@ -339,16 +209,16 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
   if (!visible) return null;
 
   return (
-    <div style={panelStyle(visible)} data-testid="live-output-panel">
+    <div
+      className="flex flex-col bg-[#1e1e2e] border-t border-[#313244] max-h-[320px] min-h-[160px] overflow-hidden relative"
+      data-testid="live-output-panel"
+    >
       {/* Header */}
-      <div style={headerStyle}>
-        <div style={headerTitleStyle}>
+      <div className="flex items-center justify-between py-2 px-[14px] bg-[#181825] border-b border-[#313244] shrink-0">
+        <div className="text-xs font-bold text-[#cdd6f4] tracking-[0.04em] uppercase flex items-center gap-2">
           <span>Live Output</span>
           {hasActiveStream && (
-            <span
-              className="w-1.5 h-1.5 rounded-full bg-[#a6e3a1]"
-              style={{ animation: 'live-output-blink 1.2s ease-in-out infinite' }}
-            />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#a6e3a1] [animation:live-output-blink_1.2s_ease-in-out_infinite]" />
           )}
           {runId && (
             <span className="text-[10px] text-[#6c7086] font-normal normal-case">
@@ -361,11 +231,12 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
       {/* Body */}
       <div
         ref={scrollRef}
-        style={bodyStyle}
+        className="flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-[#cdd6f4]"
+        style={{ fontFamily: '"JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace' }}
         onScroll={handleScroll}
       >
         {stepEntries.length === 0 ? (
-          <div style={emptyStyle}>
+          <div className="flex items-center justify-center h-full text-[#6c7086] text-[13px] italic">
             {runId
               ? 'Waiting for LLM output...'
               : 'No active run'}
@@ -375,7 +246,10 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
             <div key={step.stepId}>
               {/* Section header */}
               <div
-                style={sectionHeaderStyle(step.active)}
+                className={cn(
+                  'flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-[#313244] mb-1.5',
+                  step.active ? 'text-[#89b4fa]' : 'text-[#a6adc8]',
+                )}
                 onClick={() => toggleCollapse(step.stepId)}
                 role="button"
                 tabIndex={0}
@@ -396,13 +270,15 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
               {!step.collapsed && (
                 <>
                   {step.text.length > 0 && (
-                    <div style={tokenAreaStyle}>
+                    <div className="whitespace-pre-wrap break-words m-0 mb-3 p-0 text-[#cdd6f4]">
                       {step.text}
-                      {step.active && <span style={cursorStyle} />}
+                      {step.active && (
+                        <span className="inline-block w-0.5 h-[14px] bg-[#89b4fa] ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" />
+                      )}
                     </div>
                   )}
                   {step.summary && (
-                    <div style={summaryStyle}>
+                    <div className="text-[11px] text-[#a6e3a1] font-semibold pt-1 pb-2 border-b border-[#313244] mb-2">
                       {'✓'} {step.summary}
                     </div>
                   )}
