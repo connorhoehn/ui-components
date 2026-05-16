@@ -78,7 +78,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
         padding: 0,
       }}
     >
-      <div onKeyDown={handleKeyDown} style={{ display: 'contents' }}>
+      <div onKeyDown={handleKeyDown} className="contents">
         {/* Header */}
         <h2 className={cn('m-0 px-6 pt-6 pb-4 text-lg font-bold text-[#1e293b] shrink-0')}>
           Create New Document

@@ -143,8 +143,7 @@ function PresenceAvatars({
       })}
       {overflow > 0 && (
         <div
-          className={cn('w-8 h-8 rounded-full bg-[#94a3b8] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white')}
-          style={{ marginLeft: -6 }}
+          className={cn('w-8 h-8 rounded-full bg-[#94a3b8] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5')}
         >
           +{overflow}
         </div>

@@ -97,7 +97,7 @@ function ScreenShareTile({ stream, userId, cameraStream, isLocal }: {
   }, [cameraStream]);
 
   return (
-    <div className={cn('relative bg-black rounded-[10px] overflow-hidden border-2 border-[#3b82f6]')} style={{ aspectRatio: '16 / 9' }}>
+    <div className={cn('relative bg-black rounded-[10px] overflow-hidden border-2 border-[#3b82f6] aspect-video')}>
       <video
         ref={screenRef}
         autoPlay
@@ -112,8 +112,7 @@ function ScreenShareTile({ stream, userId, cameraStream, isLocal }: {
           autoPlay
           playsInline
           muted
-          className={cn('absolute bottom-2 right-2 w-36 object-cover rounded-lg border-2 border-white/30')}
-          style={{ aspectRatio: '16 / 9' }}
+          className={cn('absolute bottom-2 right-2 w-36 object-cover rounded-lg border-2 border-white/30 aspect-video')}
         />
       )}
       <div className={cn('absolute bottom-1.5 left-1.5 bg-[rgba(59,130,246,0.8)] text-white text-[11px] font-medium px-2 py-[3px] rounded-full')}>
@@ -165,7 +164,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
       <div className={cn('p-4 text-center text-[#dc2626] text-[13px]')}>
         {error}
         <br />
-        <Button onClick={onEndCall} style={{ marginTop: 12 }}>Close</Button>
+        <Button onClick={onEndCall} className="mt-3">Close</Button>
       </div>
     );
   }
@@ -198,10 +197,9 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
       {/* Video tiles — responsive grid */}
       <div
-        className={cn('flex-1 grid gap-1 p-1.5')}
+        className={cn('flex-1 grid gap-1 p-1.5 content-start')}
         style={{
           gridTemplateColumns: participantsWithSpeaking.length <= 1 ? '1fr' : '1fr 1fr',
-          alignContent: 'start',
         }}
       >
         {participantsWithSpeaking.map(p => (
