@@ -346,3 +346,19 @@
     linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+/* VideoCallPanel participant tile shadow states */
+.video-tile-speaking {
+  box-shadow: 0 0 0 3px #10b981, 0 8px 20px rgba(16, 185, 129, 0.2);
+}
+.video-tile-idle {
+  box-shadow: 0 0 0 1px rgba(55, 65, 81, 0.4);
+}
+
+/* doc-editor select elements with custom chevron arrow */
+.doc-select-arrow {
+  background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23fff'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  background-size: 8px 5px;
+}

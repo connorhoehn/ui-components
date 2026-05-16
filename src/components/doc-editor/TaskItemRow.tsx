@@ -303,14 +303,10 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.priority}
         disabled={!editable}
         onChange={(e) => onUpdate({ priority: e.target.value as TaskItem['priority'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4')}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow')}
         style={{
           backgroundColor: priorityColors[item.priority],
           cursor: editable ? 'pointer' : 'default',
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'5\' viewBox=\'0 0 8 5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23fff\'/%3E%3C/svg%3E")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 5px center',
-          backgroundSize: '8px 5px',
         }}
         title={`Priority: ${item.priority}`}
       >
@@ -323,14 +319,10 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.status}
         disabled={!editable}
         onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4')}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow')}
         style={{
           backgroundColor: statusColors[item.status],
           cursor: editable ? 'pointer' : 'default',
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'5\' viewBox=\'0 0 8 5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0l4 5 4-5z\' fill=\'%23fff\'/%3E%3C/svg%3E")',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 5px center',
-          backgroundSize: '8px 5px',
         }}
         title={`Status: ${item.status}`}
       >

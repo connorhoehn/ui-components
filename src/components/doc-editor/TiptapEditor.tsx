@@ -153,7 +153,7 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
         }
 
         return (
-          <div key={c.clientId} style={{ pointerEvents: 'none' }}>
+          <div key={c.clientId} className="pointer-events-none">
             {selectionEls}
             {/* Cursor caret */}
             <div

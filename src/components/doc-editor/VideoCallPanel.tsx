@@ -47,12 +47,7 @@ function ParticipantTile({ participant, isSpeaking }: { participant: HangoutPart
 
   return (
     <div
-      className={cn('relative bg-[#111827] rounded-lg overflow-hidden transition-shadow duration-300')}
-      style={{
-        boxShadow: isSpeaking
-          ? '0 0 0 3px #10b981, 0 8px 20px rgba(16, 185, 129, 0.2)'
-          : '0 0 0 1px rgba(55, 65, 81, 0.4)',
-      }}
+      className={cn('relative bg-[#111827] rounded-lg overflow-hidden transition-shadow duration-300', isSpeaking ? 'video-tile-speaking' : 'video-tile-idle')}
     >
       <video
         ref={videoRef}
@@ -197,10 +192,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
       {/* Video tiles — responsive grid */}
       <div
-        className={cn('flex-1 grid gap-1 p-1.5 content-start')}
-        style={{
-          gridTemplateColumns: participantsWithSpeaking.length <= 1 ? '1fr' : '1fr 1fr',
-        }}
+        className={cn('flex-1 grid gap-1 p-1.5 content-start', participantsWithSpeaking.length <= 1 ? 'grid-cols-1' : 'grid-cols-2')}
       >
         {participantsWithSpeaking.map(p => (
           <ParticipantTile key={p.participantId} participant={p} isSpeaking={p.isSpeaking} />
@@ -209,8 +201,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
       {/* Controls */}
       <div
-        className={cn('flex justify-center gap-1 px-2 py-1.5 border-t border-[#374151] shrink-0 transition-opacity duration-200')}
-        style={{ opacity: showControls ? 1 : 0 }}
+        className={cn('flex justify-center gap-1 px-2 py-1.5 border-t border-[#374151] shrink-0 transition-opacity duration-200', showControls ? 'opacity-100' : 'opacity-0')}
       >
         <IconButton onClick={() => { setIsMuted(!isMuted); toggleMute(!isMuted); }}
           title={isMuted ? 'Unmute' : 'Mute'} active={isMuted}
