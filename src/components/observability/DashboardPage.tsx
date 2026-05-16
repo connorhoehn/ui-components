@@ -135,8 +135,7 @@ function LiveToggle({
       )}
     >
       <span
-        className="w-2 h-2 rounded-full"
-        style={{ background: live ? '#16a34a' : '#94a3b8' }}
+        className={cn('w-2 h-2 rounded-full', live ? 'bg-success' : 'bg-text-tertiary')}
       />
       {live ? 'Live' : 'Paused'}
     </button>

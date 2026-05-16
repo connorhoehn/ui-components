@@ -101,9 +101,8 @@ function EventDetailPane({ event }: EventDetailPaneProps) {
         className={cn(
           'm-0 px-3.5 py-3 flex-1 overflow-auto',
           'bg-surface-inset font-mono text-xs text-text-primary',
-          'leading-normal whitespace-pre'
+          'leading-normal whitespace-pre [tab-size:2]'
         )}
-        style={{ tabSize: 2 }}
       >
         {body}
       </pre>
