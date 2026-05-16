@@ -488,6 +488,142 @@ describe('useAgUiStream', () => {
     });
   });
 
+  // ── HTTP errors ──────────────────────────────────────────────────────────────
+
+  describe('HTTP errors', () => {
+    it('sets error and clears isStreaming on non-OK response', async () => {
+      globalThis.fetch = vi.fn().mockResolvedValue(
+        new Response(null, { status: 500, statusText: 'Internal Server Error' }),
+      ) as unknown as typeof fetch;
+
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      expect(result.current.error).toMatch(/HTTP 500/);
+      expect(result.current.messages).toHaveLength(1); // user message only
+    });
+
+    it('sets error and clears isStreaming on fetch network failure', async () => {
+      globalThis.fetch = vi.fn().mockRejectedValue(
+        new TypeError('Failed to fetch'),
+      ) as unknown as typeof fetch;
+
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      expect(result.current.error).toBe('Failed to fetch');
+    });
+  });
+
+  // ── Malformed SSE ────────────────────────────────────────────────────────────
+
+  describe('Malformed SSE data', () => {
+    it('skips invalid JSON lines and still processes valid events', async () => {
+      const encoder = new TextEncoder();
+      let ctrl!: ReadableStreamDefaultController<Uint8Array>;
+      const stream = new ReadableStream<Uint8Array>({ start(c) { ctrl = c; } });
+
+      globalThis.fetch = vi.fn().mockResolvedValue(
+        new Response(stream, { status: 200, headers: { 'Content-Type': 'text/event-stream' } }),
+      ) as unknown as typeof fetch;
+
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify(RUN_STARTED)}\n\n`));
+      });
+      await act(async () => {
+        // Malformed line between two valid events
+        ctrl.enqueue(encoder.encode('data: {not valid json}\n\n'));
+      });
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' })}\n\n`));
+      });
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'ok' })}\n\n`));
+      });
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'TEXT_MESSAGE_END', messageId: 'm1' })}\n\n`));
+      });
+      await act(async () => {
+        ctrl.enqueue(encoder.encode(`data: ${JSON.stringify(RUN_FINISHED)}\n\n`));
+      });
+      await act(async () => { ctrl.close(); });
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      // Valid events were processed; no error set
+      expect(result.current.error).toBeNull();
+      expect(result.current.messages).toHaveLength(2);
+      expect(result.current.messages[1].content).toBe('ok');
+    });
+  });
+
+  // ── Concurrent sendMessage ───────────────────────────────────────────────────
+
+  describe('Concurrent sendMessage', () => {
+    it('aborts the first stream when a second sendMessage fires', async () => {
+      const encoder = new TextEncoder();
+
+      // First stream — stays open indefinitely
+      let ctrl1!: ReadableStreamDefaultController<Uint8Array>;
+      const stream1 = new ReadableStream<Uint8Array>({ start(c) { ctrl1 = c; } });
+
+      // Second stream — completes normally
+      let ctrl2!: ReadableStreamDefaultController<Uint8Array>;
+      const stream2 = new ReadableStream<Uint8Array>({ start(c) { ctrl2 = c; } });
+
+      let callCount = 0;
+      const signals: AbortSignal[] = [];
+
+      globalThis.fetch = vi.fn().mockImplementation((_url: string, init: RequestInit) => {
+        signals.push(init.signal as AbortSignal);
+        callCount += 1;
+        const stream = callCount === 1 ? stream1 : stream2;
+        return Promise.resolve(new Response(stream, {
+          status: 200,
+          headers: { 'Content-Type': 'text/event-stream' },
+        }));
+      }) as unknown as typeof fetch;
+
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      // First send
+      act(() => { result.current.sendMessage('first'); });
+      await waitFor(() => expect(result.current.isStreaming).toBe(true));
+
+      // Second send while first is in flight
+      act(() => { result.current.sendMessage('second'); });
+
+      // Drive second stream to completion
+      await act(async () => {
+        ctrl2.enqueue(encoder.encode(`data: ${JSON.stringify(RUN_STARTED)}\n\n`));
+      });
+      await act(async () => {
+        ctrl2.enqueue(encoder.encode(`data: ${JSON.stringify(RUN_FINISHED)}\n\n`));
+      });
+      await act(async () => { ctrl2.close(); });
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      // First stream's AbortSignal should have been aborted by the second sendMessage
+      expect(signals[0].aborted).toBe(true);
+      // Second stream's signal should be live (or aborted only if hook unmounted)
+      expect(callCount).toBe(2);
+
+      // Clean up first stream
+      try { ctrl1.close(); } catch { /* already errored */ }
+    });
+  });
+
   // ── loadHistory ──────────────────────────────────────────────────────────────
 
   describe('loadHistory', () => {
