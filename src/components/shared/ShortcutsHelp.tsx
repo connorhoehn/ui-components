@@ -4,7 +4,7 @@
 // (shift+/) anywhere outside a text input. Sections mirror the shortcut map
 // in PIPELINES_PLAN.md §18.13.
 
-import type { CSSProperties } from 'react';
+import { cn } from '../../lib/cn';
 import Modal from './Modal';
 
 export interface ShortcutsHelpProps {
@@ -94,59 +94,6 @@ const SECTIONS: Section[] = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Styles (inline, matching app conventions)
-// ---------------------------------------------------------------------------
-
-const sectionHeadingStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 700,
-  color: '#0f172a',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  margin: '16px 0 6px',
-  paddingTop: 6,
-  borderTop: '1px solid #f1f5f9',
-};
-
-const firstSectionHeadingStyle: CSSProperties = {
-  ...sectionHeadingStyle,
-  marginTop: 0,
-  paddingTop: 0,
-  borderTop: 'none',
-};
-
-const rowStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'baseline',
-  justifyContent: 'space-between',
-  padding: '4px 0',
-  fontSize: 13,
-  gap: 16,
-};
-
-const keyStyle: CSSProperties = {
-  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-  color: '#0f172a',
-  background: '#f1f5f9',
-  border: '1px solid #e2e8f0',
-  borderRadius: 4,
-  padding: '2px 6px',
-  fontSize: 12,
-  whiteSpace: 'nowrap',
-  flexShrink: 0,
-};
-
-const actionStyle: CSSProperties = {
-  color: '#64748b',
-  textAlign: 'right',
-  flex: 1,
-};
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
   return (
     <Modal
@@ -157,40 +104,44 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       cardStyle={{ maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}
       rawChildren
     >
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+      <div className="text-base font-semibold text-[#0f172a] mb-2.5">
         Keyboard shortcuts
       </div>
-      <div style={{ overflowY: 'auto', paddingRight: 4 }}>
+      <div className="overflow-y-auto pr-1">
         {SECTIONS.map((section, sectionIdx) => (
           <div key={section.title}>
-            <div style={sectionIdx === 0 ? firstSectionHeadingStyle : sectionHeadingStyle}>
+            <div
+              className={cn(
+                'text-[12px] font-bold text-[#0f172a] uppercase tracking-[0.05em] mb-1.5',
+                sectionIdx === 0
+                  ? 'mt-0 pt-0'
+                  : 'mt-4 pt-1.5 border-t border-[#f1f5f9]',
+              )}
+            >
               {section.title}
             </div>
             <div>
               {section.rows.map((row, rowIdx) => (
-                <div key={`${section.title}-${rowIdx}`} style={rowStyle}>
-                  <span style={keyStyle}>{row.keys}</span>
-                  <span style={actionStyle}>{row.action}</span>
+                <div
+                  key={`${section.title}-${rowIdx}`}
+                  className="flex items-baseline justify-between py-1 text-[13px] gap-4"
+                >
+                  <span className="font-mono text-[12px] text-[#0f172a] bg-[#f1f5f9] border border-[#e2e8f0] rounded px-1.5 py-px whitespace-nowrap shrink-0">
+                    {row.keys}
+                  </span>
+                  <span className="text-[#64748b] text-right flex-1">
+                    {row.action}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 18 }}>
+      <div className="flex justify-end mt-[18px]">
         <button
           onClick={onClose}
-          style={{
-            padding: '6px 14px',
-            fontSize: 13,
-            fontWeight: 600,
-            border: '1px solid #e2e8f0',
-            borderRadius: 6,
-            background: '#fff',
-            color: '#374151',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
+          className="py-1.5 px-3.5 text-[13px] font-semibold border border-[#e2e8f0] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]"
         >
           Close
         </button>
