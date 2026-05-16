@@ -10,7 +10,8 @@
 // any candidate and pressing Enter accepts the raw string as a userId.
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from 'react';
+import type { KeyboardEvent as ReactKeyboardEvent } from 'react';
+import { cn } from '../../lib/cn';
 import { usePresenceContext } from '../../contexts/PresenceContext';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 
@@ -44,80 +45,6 @@ function extractDisplayName(metadata: Record<string, unknown>, fallbackId: strin
   if (typeof dn === 'string' && dn.length > 0) return dn;
   return fallbackId.slice(0, 8);
 }
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const containerStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-  fontFamily: 'inherit',
-};
-
-const chipRowStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 6,
-};
-
-const chipStyle: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 4,
-  background: '#eef2ff',
-  border: '1px solid #c7d2fe',
-  color: '#3730a3',
-  borderRadius: 999,
-  padding: '2px 8px 2px 10px',
-  fontSize: 12,
-  fontWeight: 500,
-};
-
-const chipRemoveStyle: CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: '#3730a3',
-  cursor: 'pointer',
-  fontSize: 14,
-  lineHeight: 1,
-  padding: '0 2px',
-};
-
-const inputStyle: CSSProperties = {
-  width: '100%',
-  padding: '6px 10px',
-  fontSize: 13,
-  border: '1px solid #e2e8f0',
-  borderRadius: 6,
-  fontFamily: 'inherit',
-  boxSizing: 'border-box',
-  outline: 'none',
-};
-
-const dropdownStyle: CSSProperties = {
-  position: 'absolute',
-  top: '100%',
-  left: 0,
-  right: 0,
-  background: '#ffffff',
-  border: '1px solid #e2e8f0',
-  borderRadius: 6,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-  marginTop: 4,
-  maxHeight: 200,
-  overflowY: 'auto',
-  zIndex: 10,
-};
-
-const optionStyle = (active: boolean): CSSProperties => ({
-  padding: '6px 10px',
-  fontSize: 13,
-  color: '#374151',
-  cursor: 'pointer',
-  background: active ? '#f1f5f9' : 'transparent',
-});
 
 // ---------------------------------------------------------------------------
 // Component
@@ -264,17 +191,21 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
   };
 
   return (
-    <div style={containerStyle}>
+    <div className="flex flex-col gap-1.5 font-[inherit]">
       {value.length > 0 && (
-        <div style={chipRowStyle}>
+        <div className="flex flex-wrap gap-1.5">
           {value.map(userId => (
-            <span key={userId} style={chipStyle}>
+            <span
+              key={userId}
+              className="inline-flex items-center gap-1 bg-[#eef2ff] border border-[#c7d2fe] text-[#3730a3] rounded-full py-0.5 pr-2 pl-2.5 text-[12px] font-medium"
+            >
               {chipLabel(userId)}
               <button
                 type="button"
                 onClick={() => removeUser(userId)}
-                aria-label={`Remove ${chipLabel(userId)}`}
-                style={chipRemoveStyle}
+                aria-label={`Remove ${chipLabel(userId)}`
+                }
+                className="bg-transparent border-none text-[#3730a3] cursor-pointer text-[14px] leading-none px-0.5 py-0"
               >
                 ×
               </button>
@@ -283,7 +214,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
         </div>
       )}
 
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         <input
           ref={inputRef}
           type="text"
@@ -297,11 +228,11 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
             blurTimer.current = setTimeout(() => setOpen(false), 120);
           }}
           onKeyDown={handleKeyDown}
-          style={inputStyle}
+          className="w-full py-1.5 px-2.5 text-[13px] border border-[#e2e8f0] rounded-md font-[inherit] box-border outline-none"
         />
         {open && !atMax && filtered.length > 0 && (
           <div
-            style={dropdownStyle}
+            className="absolute top-full left-0 right-0 bg-white border border-[#e2e8f0] rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10"
             onMouseDown={e => {
               // Prevent input blur from dismissing before click fires.
               e.preventDefault();
@@ -311,13 +242,16 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
             {filtered.map((c, idx) => (
               <div
                 key={c.userId}
-                style={optionStyle(idx === activeIdx)}
+                className={cn(
+                  'py-1.5 px-2.5 text-[13px] text-[#374151] cursor-pointer',
+                  idx === activeIdx ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                )}
                 onMouseEnter={() => setActiveIdx(idx)}
                 onClick={() => { addUser(c.userId); inputRef.current?.focus(); }}
               >
-                <span style={{ fontWeight: 500 }}>{c.displayName}</span>
+                <span className="font-medium">{c.displayName}</span>
                 {c.displayName !== c.userId && (
-                  <span style={{ color: '#94a3b8', marginLeft: 8, fontSize: 11, fontFamily: 'ui-monospace, monospace' }}>
+                  <span className="text-[#94a3b8] ml-2 text-[11px] font-mono">
                     {c.userId.slice(0, 12)}
                   </span>
                 )}
