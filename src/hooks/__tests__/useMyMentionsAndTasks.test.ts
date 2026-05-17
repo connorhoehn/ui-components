@@ -9,7 +9,21 @@ import type { Section, CommentThread } from '../../types/document';
 const ME = { userId: 'u-alice', displayName: 'Alice' };
 
 function makeSection(id: string, items: Section['items'] = []): Section {
-  return { id, type: 'tasks', title: `Section ${id}`, items };
+  return { id, type: 'tasks', title: `Section ${id}`, collapsed: false, items };
+}
+
+function makeTask(overrides: Partial<Section['items'][number]>): Section['items'][number] {
+  return {
+    id: 'i1',
+    text: '',
+    status: 'pending',
+    priority: 'medium',
+    assignee: '',
+    ackedBy: '',
+    ackedAt: '',
+    notes: '',
+    ...overrides,
+  };
 }
 
 function makeThread(
@@ -133,7 +147,7 @@ describe('task assignments', () => {
   it('picks up a task assigned to the displayName (case-insensitive)', () => {
     const sections = [
       makeSection('s1', [
-        { id: 'i1', text: 'Fix bug', assignee: 'alice', status: 'pending', priority: 'high', assignees: [] },
+        makeTask({ id: 'i1', text: 'Fix bug', assignee: 'alice', status: 'pending', priority: 'high' }),
       ]),
     ];
     const { result } = renderHook(() =>
@@ -150,7 +164,7 @@ describe('task assignments', () => {
   it('picks up a task assigned to userId', () => {
     const sections = [
       makeSection('s1', [
-        { id: 'i1', text: 'Deploy', assignee: ME.userId, status: 'done', priority: 'low', assignees: [] },
+        makeTask({ id: 'i1', text: 'Deploy', assignee: ME.userId, status: 'done', priority: 'low' }),
       ]),
     ];
     const { result } = renderHook(() =>
@@ -163,7 +177,7 @@ describe('task assignments', () => {
   it('ignores tasks assigned to other users', () => {
     const sections = [
       makeSection('s1', [
-        { id: 'i1', text: 'Bob task', assignee: 'bob', status: 'pending', priority: 'medium', assignees: [] },
+        makeTask({ id: 'i1', text: 'Bob task', assignee: 'bob', status: 'pending', priority: 'medium' }),
       ]),
     ];
     const { result } = renderHook(() =>
@@ -181,7 +195,7 @@ describe('ordering', () => {
   it('returns mentions before tasks in the result', () => {
     const sections = [
       makeSection('s1', [
-        { id: 'i1', text: 'My task', assignee: 'Alice', status: 'pending', priority: 'low', assignees: [] },
+        makeTask({ id: 'i1', text: 'My task', assignee: 'Alice', status: 'pending', priority: 'low' }),
       ]),
     ];
     const comments = { s1: [makeThread('c1', 'Hey @Alice')] };

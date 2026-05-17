@@ -89,7 +89,7 @@ describe('setupDevice', () => {
     let setup: MfaSetupResult | null = null;
     await act(async () => { setup = await result.current.setupDevice(POOL_ID, USER_ID, 'Phone'); });
 
-    expect(setup?.deviceId).toBe('d2');
+    expect((setup as MfaSetupResult | null)?.deviceId).toBe('d2');
     const [url, opts] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toContain(`/api/pools/${POOL_ID}/users/${USER_ID}/mfa/setup`);
     expect(opts.method).toBe('POST');

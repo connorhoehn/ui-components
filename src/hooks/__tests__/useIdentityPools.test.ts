@@ -97,7 +97,7 @@ describe('createPool', () => {
     let created: IdentityPool | null = null;
     await act(async () => { created = await result.current.createPool({ poolName: 'Main Pool' }); });
 
-    expect(created?.poolId).toBe('p1');
+    expect((created as IdentityPool | null)?.poolId).toBe('p1');
     expect(result.current.pools).toHaveLength(1);
     const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
     expect(postCall[0]).toContain('/api/pools');

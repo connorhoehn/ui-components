@@ -101,7 +101,7 @@ describe('createUser', () => {
     let created: IdentityUser | null = null;
     await act(async () => { created = await result.current.createUser({ email: 'alice@test.com' }); });
 
-    expect(created?.email).toBe('alice@test.com');
+    expect((created as IdentityUser | null)?.email).toBe('alice@test.com');
     expect(result.current.users).toHaveLength(1);
     const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
     expect(postCall[0]).toContain(`/api/pools/${POOL_ID}/users`);

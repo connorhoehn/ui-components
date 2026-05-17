@@ -168,8 +168,8 @@ describe('useIngestItems', () => {
       expect(result.current.items[0].status).toBe('queued');
       expect(result.current.items[0].error).toBeNull();
 
-      const retryCalls = mockFetch.mock.calls.filter(([url]: [string]) =>
-        (url as string).includes('/retry'),
+      const retryCalls = mockFetch.mock.calls.filter(
+        (call) => String(call[0]).includes('/retry'),
       );
       expect(retryCalls).toHaveLength(1);
       expect(retryCalls[0][0]).toContain('/api/ingest/items/item-1/retry');

@@ -12,6 +12,7 @@ function makeSection(overrides: Partial<Section> = {}): Section {
     id: 's1',
     type: 'tasks',
     title: 'My Tasks',
+    collapsed: false,
     items: [],
     ...overrides,
   };
@@ -23,7 +24,10 @@ function makeItem(overrides: Partial<TaskItem> = {}): TaskItem {
     text: 'Do the thing',
     status: 'pending',
     priority: 'medium',
-    assignees: [],
+    assignee: '',
+    ackedBy: '',
+    ackedAt: '',
+    notes: '',
     ...overrides,
   };
 }

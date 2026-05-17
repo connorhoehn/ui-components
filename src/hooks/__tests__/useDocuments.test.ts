@@ -92,7 +92,7 @@ describe('connect / disconnect lifecycle', () => {
     const { result, rerender } = renderHook(
       ({ state }: { state: 'connected' | 'disconnected' }) =>
         useDocuments({ sendMessage: ws.sendMessage, onMessage: ws.onMessage, connectionState: state }),
-      { initialProps: { state: 'connected' as const } },
+      { initialProps: { state: 'connected' as 'connected' | 'disconnected' } },
     );
 
     // Populate documents via WS event

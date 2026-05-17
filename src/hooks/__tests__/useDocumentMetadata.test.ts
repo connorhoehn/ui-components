@@ -24,10 +24,10 @@ describe('useDocumentMetadata', () => {
 
   it('reads existing meta from the Y.Doc immediately', () => {
     const ydoc = new Y.Doc();
-    seedMeta(ydoc, { title: 'Hello', status: 'active' });
+    seedMeta(ydoc, { title: 'Hello', status: 'final' });
     const { result } = renderHook(() => useDocumentMetadata(ydoc));
     expect(result.current.meta?.title).toBe('Hello');
-    expect(result.current.meta?.status).toBe('active');
+    expect(result.current.meta?.status).toBe('final');
   });
 
   it('updates state when meta changes via updateMeta', () => {
@@ -42,13 +42,13 @@ describe('useDocumentMetadata', () => {
 
   it('updateMeta merges fields without clearing others', () => {
     const ydoc = new Y.Doc();
-    seedMeta(ydoc, { title: 'Doc', status: 'active' });
+    seedMeta(ydoc, { title: 'Doc', status: 'draft' });
     const { result } = renderHook(() => useDocumentMetadata(ydoc));
 
-    act(() => { result.current.updateMeta({ status: 'archived' }); });
+    act(() => { result.current.updateMeta({ status: 'review' }); });
 
     expect(result.current.meta?.title).toBe('Doc');
-    expect(result.current.meta?.status).toBe('archived');
+    expect(result.current.meta?.status).toBe('review');
   });
 
   it('updateMeta is a no-op when ydoc is null', () => {

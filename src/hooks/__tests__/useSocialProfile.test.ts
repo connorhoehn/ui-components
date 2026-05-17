@@ -169,7 +169,7 @@ describe('viewProfile', () => {
       ok: true, status: 200, json: () => Promise.resolve(PROFILE),
     } as unknown as Response));
 
-    let viewed: typeof PROFILE | null = null;
+    let viewed: unknown = null;
     await act(async () => { viewed = await result.current.viewProfile('u2'); });
 
     expect(viewed).toEqual(PROFILE);
