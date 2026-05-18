@@ -45,10 +45,31 @@ the value depends on **runtime state that cannot be expressed as a Tailwind clas
 - ✅ **Convert** if the value is a string literal or only varies between a fixed enum of class-expressible options (`isOpen ? 'flex' : 'none'` → `flex` vs `hidden`).
 - ❌ **Keep inline** if the value involves arithmetic, runtime measurement, prop pass-through, theme-mode JS branching, or hex colors derived from data.
 
-A future drift check could grep for `style={{}}` blocks where **every** key-value
-pair has a string-literal RHS — those are the only legitimate new migration
-targets. See `.planning/tailwind-w3-inventory.md` for the 2026-05-18 audit that
-applied this heuristic to all 65 then-remaining files.
+## Drift check (CI)
+
+`npm run lint:static-styles` runs `scripts/check-static-styles.mjs`, which
+compares the current set of files containing `style={{}}` against the
+grandfathered allowlist at `scripts/check-static-styles.allowlist.txt`. The
+script fails if a **new** file appears with inline styles.
+
+**When to update the allowlist:**
+
+- ✅ A file is being intentionally added with truly dynamic styles (cursor
+  positions, theme-mode-derived colors, prop-driven sizing). Add its path to
+  the allowlist in the same PR.
+- ✅ A file in the allowlist no longer uses `style={{}}` because someone
+  migrated it. Remove its path from the allowlist (the script prints these as
+  "may be removed" notes).
+- ❌ **Never** add a file to silence a regression where the styles could have
+  been Tailwind classes. Fix the styles instead.
+
+The script intentionally uses a file-list lock rather than per-block static
+detection. Per-block parsing would need an AST and would be brittle; file-list
+lock catches the most common drift (a new file with hardcoded styles) and is
+easy to reason about.
+
+See `.planning/tailwind-w3-inventory.md` for the 2026-05-18 audit that
+classified the original 65 files using the heuristic above.
 
 ## Refactoring opportunities (separate from this migration)
 

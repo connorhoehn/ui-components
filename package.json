@@ -71,6 +71,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
+    "lint:static-styles": "node scripts/check-static-styles.mjs",
     "demo": "vite --config demo/vite.config.ts",
     "test:e2e": "playwright test"
   },
