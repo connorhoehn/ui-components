@@ -192,30 +192,25 @@ export default function SocialTabContent({
 
   return (
     <div
-      className="flex overflow-hidden rounded-lg transition-colors duration-200"
+      className="flex overflow-hidden rounded-lg transition-colors duration-200 h-[calc(100vh-120px)]"
       style={{
-        height: 'calc(100vh - 120px)',
         background: chatBg,
         border: `1px solid ${sidebarBorder}`,
       }}
     >
       {/* Left sidebar */}
       <div
-        className="shrink-0 flex-col overflow-hidden transition-[width] duration-[180ms]"
+        className={cn('shrink-0 flex-col overflow-hidden transition-[width] duration-[180ms]', chatSidebarOpen ? 'flex' : 'hidden')}
         style={{
           width: CHAT_SIDEBAR_WIDTH,
-          display: chatSidebarOpen ? 'flex' : 'none',
           borderRight: `1px solid ${sidebarBorder}`,
           background: sidebarBg,
         }}
       >
         {/* Workspace header */}
         <div
-          className="flex items-center gap-2 shrink-0"
-          style={{
-            padding: '14px 14px 12px',
-            borderBottom: `1px solid ${sidebarBorder}`,
-          }}
+          className="flex items-center gap-2 shrink-0 px-[14px] pt-[14px] pb-3"
+          style={{ borderBottom: `1px solid ${sidebarBorder}` }}
         >
           <div className="w-7 h-7 rounded-md flex items-center justify-center text-white font-bold text-[11px] shrink-0 bg-[linear-gradient(135deg,#646cff,#9b59b6)]">
             {initials}
@@ -261,8 +256,8 @@ export default function SocialTabContent({
               )}
               <button
                 onClick={() => setShowNewRoom(v => !v)}
-                className="flex items-center gap-1.5 w-full bg-transparent border-none cursor-pointer text-xs font-[inherit] rounded"
-                style={{ padding: '5px 8px 5px 24px', color: sidebarTextSecondary }}
+                className="flex items-center gap-1.5 w-full bg-transparent border-none cursor-pointer text-xs font-[inherit] rounded pt-[5px] pr-2 pb-[5px] pl-6"
+                style={{ color: sidebarTextSecondary }}
               >
                 <span className="text-sm leading-none">+</span> Add channel
               </button>
@@ -323,8 +318,8 @@ export default function SocialTabContent({
         {/* Toggle bar when sidebar is collapsed */}
         {!chatSidebarOpen && (
           <div
-            className="flex items-center gap-2"
-            style={{ padding: '6px 12px', borderBottom: `1px solid ${sidebarBorder}` }}
+            className="flex items-center gap-2 px-3 py-1.5"
+            style={{ borderBottom: `1px solid ${sidebarBorder}` }}
           >
             <button
               onClick={() => setChatSidebarOpen(true)}

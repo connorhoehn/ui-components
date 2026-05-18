@@ -232,9 +232,8 @@ export default function ExecutorLog({
           <span
             className={cn(
               'inline-block w-2 h-2 rounded-full mr-1.5 align-middle',
-              error ? 'bg-text-tertiary' : '[animation:executor-log-pulse_1.6s_ease-in-out_infinite]',
+              error ? 'bg-text-tertiary' : 'bg-[#22c55e] [animation:executor-log-pulse_1.6s_ease-in-out_infinite]',
             )}
-            style={{ background: error ? undefined : '#22c55e' }}
             aria-hidden
           />
           Live

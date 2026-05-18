@@ -303,11 +303,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.priority}
         disabled={!editable}
         onChange={(e) => onUpdate({ priority: e.target.value as TaskItem['priority'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow')}
-        style={{
-          backgroundColor: priorityColors[item.priority],
-          cursor: editable ? 'pointer' : 'default',
-        }}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
+        style={{ backgroundColor: priorityColors[item.priority] }}
         title={`Priority: ${item.priority}`}
       >
         <option value="low">low</option>
@@ -319,11 +316,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         value={item.status}
         disabled={!editable}
         onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow')}
-        style={{
-          backgroundColor: statusColors[item.status],
-          cursor: editable ? 'pointer' : 'default',
-        }}
+        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
+        style={{ backgroundColor: statusColors[item.status] }}
         title={`Status: ${item.status}`}
       >
         <option value="pending">pending</option>

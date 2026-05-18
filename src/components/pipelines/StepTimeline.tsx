@@ -253,29 +253,20 @@ export default function StepTimeline({
             <div className="flex-1 h-5 relative bg-[#fafbfc] rounded-[3px] overflow-hidden">
               {/* Main execution bar */}
               <div
+                className={cn('absolute top-0.5 bottom-0.5 rounded-[3px] flex overflow-hidden transition-opacity duration-100', isHovered ? 'opacity-100' : 'opacity-[0.85]')}
                 style={{
-                  position: 'absolute',
                   left: `${offsetPct}%`,
-                  top: 2,
-                  bottom: 2,
                   width: `${widthPct}%`,
-                  borderRadius: 3,
                   background: barColor,
-                  opacity: isHovered ? 1 : 0.85,
-                  transition: 'opacity 0.1s',
-                  display: 'flex',
-                  overflow: 'hidden',
                 }}
               >
                 {/* LLM first-token wait sub-section */}
                 {waitWidthPct > 0 && (
                   <div
+                    className="h-full rounded-l-[3px] opacity-70"
                     style={{
                       width: `${waitWidthPct}%`,
-                      height: '100%',
                       background: lightColor,
-                      borderRadius: '3px 0 0 3px',
-                      opacity: 0.7,
                     }}
                     title={`First token wait: ${formatDuration(step.firstTokenLatencyMs!)}`}
                   />

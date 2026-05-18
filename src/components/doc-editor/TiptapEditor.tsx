@@ -130,17 +130,13 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
                 selectionEls.push(
                   <div
                     key={`sel-${c.clientId}-${pos}`}
+                    className="absolute rounded-sm pointer-events-none opacity-[0.12] z-[5]"
                     style={{
-                      position: 'absolute',
                       top: lineY,
                       left,
                       width: Math.max(right - left, 4),
                       height: lineStart.height || 18,
                       background: c.color,
-                      opacity: 0.12,
-                      borderRadius: 2,
-                      pointerEvents: 'none',
-                      zIndex: 5,
                     }}
                   />
                 );
@@ -157,52 +153,31 @@ function CursorOverlay({ cursors, editorView, containerEl }: {
             {selectionEls}
             {/* Cursor caret */}
             <div
+              className="absolute w-0.5 opacity-40 rounded-[1px] pointer-events-none z-10 [animation:cursorBlink_1.2s_ease-in-out_infinite]"
               style={{
-                position: 'absolute',
                 top: coords.top,
                 left: coords.left - 1,
-                width: 2,
                 height: coords.height || 18,
                 background: c.color,
-                opacity: 0.4,
-                borderRadius: 1,
-                pointerEvents: 'none',
-                zIndex: 10,
-                animation: 'cursorBlink 1.2s ease-in-out infinite',
               }}
             />
             {/* Ghost glow */}
             <div
+              className="absolute w-2 opacity-[0.06] rounded pointer-events-none z-[9]"
               style={{
-                position: 'absolute',
                 top: coords.top,
                 left: coords.left - 4,
-                width: 8,
                 height: coords.height || 18,
                 background: c.color,
-                opacity: 0.06,
-                borderRadius: 4,
-                pointerEvents: 'none',
-                zIndex: 9,
               }}
             />
             {/* Name badge */}
             <div
+              className="absolute text-white text-[10px] font-bold py-px px-[5px] rounded-[4px_4px_4px_0] whitespace-nowrap pointer-events-none z-[11] opacity-[0.55] shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
               style={{
-                position: 'absolute',
                 top: coords.top - 18,
                 left: coords.left - 2,
                 background: c.color,
-                color: '#fff',
-                fontSize: 10,
-                fontWeight: 700,
-                padding: '1px 5px',
-                borderRadius: '4px 4px 4px 0',
-                whiteSpace: 'nowrap',
-                pointerEvents: 'none',
-                zIndex: 11,
-                opacity: 0.55,
-                boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
               }}
               title={c.name}
             >

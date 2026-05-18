@@ -32,8 +32,8 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
   return (
     <div className="relative pl-9 mb-1">
       <div
-        className="absolute left-[10px] top-[14px] w-3 h-3 rounded-full border-2 border-white z-[1]"
-        style={{ background: statusColor, boxShadow: '0 0 0 1px #e2e8f0' }}
+        className="absolute left-[10px] top-[14px] w-3 h-3 rounded-full border-2 border-white z-[1] shadow-[0_0_0_1px_#e2e8f0]"
+        style={{ background: statusColor }}
       />
 
       <div
