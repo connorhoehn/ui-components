@@ -13,6 +13,8 @@ export { default as Chip } from './Chip';
 export * from './Chip';
 export { default as CodeEditor } from './CodeEditor';
 export * from './CodeEditor';
+export { default as CommandPalette } from './CommandPalette';
+export * from './CommandPalette';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export * from './ConfirmDialog';
 export { default as EmptyState } from './EmptyState';
