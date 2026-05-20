@@ -67,7 +67,7 @@
   "scripts": {
     "build": "vite build",
     "build:types": "tsc --project tsconfig.build.json",
-    "prepare": "vite build && tsc --project tsconfig.build.json",
+    "prepare": "test -f dist/index.js || (vite build && tsc --project tsconfig.build.json)",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",
