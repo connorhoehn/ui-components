@@ -1,0 +1,1 @@
+"use strict";const i=require("react/jsx-runtime"),e=require("react"),n=e.createContext(null);function o({value:t,children:r}){return i.jsx(n.Provider,{value:t,children:r})}function u(){const t=e.useContext(n);if(!t)throw new Error("useIdentityContext must be used within an <IdentityProvider>");return t}exports.IdentityProvider=o;exports.useIdentityContext=u;

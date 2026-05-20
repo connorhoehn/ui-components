@@ -1,0 +1,4215 @@
+import { Awareness } from 'y-protocols/awareness';
+import { ButtonHTMLAttributes } from 'react';
+import { CSSProperties } from 'react';
+import { HTMLAttributes } from 'react';
+import { JSX } from 'react/jsx-runtime';
+import { JSX as JSX_2 } from 'react';
+import { Observable } from 'lib0/observable';
+import { ReactNode } from 'react';
+import { ReactPortal } from 'react';
+import { RefObject } from 'react';
+import { TdHTMLAttributes } from 'react';
+import { ThHTMLAttributes } from 'react';
+import { XmlFragment } from 'yjs';
+import * as Y from 'yjs';
+
+export declare interface A2AMessage {
+    id: string;
+    from: string;
+    to: string;
+    content: string;
+    protocol: 'a2a';
+    timestamp: string;
+    metadata?: Record<string, unknown>;
+}
+
+export declare interface A2ASession {
+    sessionId: string;
+    participants: AgentDefinition[];
+    messages: A2AMessage[];
+    startedAt: string;
+    status: 'active' | 'completed' | 'failed';
+}
+
+export declare interface ActionNodeData {
+    type: 'action';
+    actionType: ActionType;
+    /** Shape varies per `actionType`; refined in Phase 2. */
+    config: Record<string, unknown>;
+    idempotent?: boolean;
+    /**
+     * Dedup scope when `idempotent: true`.
+     * - `per-step` (default): fire at most once per step across all retries.
+     * - `per-attempt`: fire once per attempt; retries get a fresh dedup window.
+     */
+    idempotencyMode?: 'per-attempt' | 'per-step';
+    onError?: 'route-error' | 'fail-run';
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
+
+declare interface ActiveSync {
+    sourceId: string;
+    sourceName: string;
+    fileCount: number;
+    filesFetched: number;
+    itemsMapped: number;
+    itemsMaterialized: number;
+    startedAt: string;
+}
+
+declare interface ActivityEvent {
+    id: string;
+    eventType: string;
+    detail: Record<string, unknown>;
+    timestamp: string;
+    userId?: string;
+    displayName?: string;
+    color?: string;
+    source: 'local' | 'remote';
+}
+
+export declare interface AgentDefinition {
+    id: string;
+    name: string;
+    status: AgentStatus;
+    protocol: AgentProtocol;
+    model: string;
+    tools: string[];
+    guardrails: string[];
+    endpoint: string;
+    description?: string;
+    lastInvocation?: string;
+    avgLatencyMs?: number;
+    invocationsLast24h?: number;
+}
+
+export declare type AgentInvokeProtocol = 'a2a' | 'direct';
+
+export declare interface AgentMetrics {
+    agentId: string;
+    invocationsTotal: number;
+    invocationsLast24h: number;
+    errorsLast24h: number;
+    avgLatencyMs: number;
+    p99LatencyMs: number;
+    tokensInLast24h: number;
+    tokensOutLast24h: number;
+    guardrailBlocksLast24h: number;
+    asOf: string;
+}
+
+export declare interface AgentNodeData {
+    type: 'agent';
+    agentId: string;
+    agentName?: string;
+    protocol: AgentInvokeProtocol;
+    inputTemplate: string;
+    streaming: boolean;
+    timeoutMs?: number;
+    outputKey?: string;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type AgentProtocol = 'a2a' | 'direct';
+
+export declare type AgentStatus = 'healthy' | 'degraded' | 'offline' | 'deploying';
+
+export declare interface AgUiActivityDeltaEvent extends AgUiEventBase {
+    type: 'ACTIVITY_DELTA';
+    messageId: string;
+    activityType: string;
+    patch: JsonPatchOp[];
+}
+
+export declare interface AgUiActivitySnapshotEvent extends AgUiEventBase {
+    type: 'ACTIVITY_SNAPSHOT';
+    messageId: string;
+    activityType: string;
+    content: unknown;
+    replace?: boolean;
+}
+
+export declare interface AgUiCustomEvent extends AgUiEventBase {
+    type: 'CUSTOM';
+    name: string;
+    value: unknown;
+}
+
+export declare type AgUiEvent = AgUiRunStartedEvent | AgUiRunFinishedEvent | AgUiRunErrorEvent | AgUiStepStartedEvent | AgUiStepFinishedEvent | AgUiTextMessageStartEvent | AgUiTextMessageContentEvent | AgUiTextMessageEndEvent | AgUiTextMessageChunkEvent | AgUiToolCallStartEvent | AgUiToolCallArgsEvent | AgUiToolCallEndEvent | AgUiToolCallResultEvent | AgUiToolCallChunkEvent | AgUiStateSnapshotEvent | AgUiStateDeltaEvent | AgUiMessagesSnapshotEvent | AgUiActivitySnapshotEvent | AgUiActivityDeltaEvent | AgUiReasoningStartEvent | AgUiReasoningMessageStartEvent | AgUiReasoningMessageContentEvent | AgUiReasoningMessageEndEvent | AgUiReasoningMessageChunkEvent | AgUiReasoningEndEvent | AgUiReasoningEncryptedValueEvent | AgUiRawEvent | AgUiCustomEvent | AgUiMetaEvent;
+
+declare interface AgUiEventBase {
+    timestamp?: number;
+    rawEvent?: unknown;
+}
+
+export declare type AgUiEventType = AgUiEvent['type'];
+
+export declare interface AgUiMessage {
+    id: string;
+    role: AgUiRole;
+    content: string;
+    isStreaming: boolean;
+    toolCalls: AgUiToolCall[];
+    reasoning?: string;
+}
+
+export declare interface AgUiMessagesSnapshotEvent extends AgUiEventBase {
+    type: 'MESSAGES_SNAPSHOT';
+    messages: unknown[];
+}
+
+export declare interface AgUiMetaEvent extends AgUiEventBase {
+    type: 'META_EVENT';
+    metaType: string;
+    payload: unknown;
+}
+
+export declare type AgUiOutputEventType = 'TEXT_MESSAGE_CONTENT' | 'STATE_DELTA' | 'CUSTOM';
+
+export declare interface AgUiOutputNodeData {
+    type: 'ag-ui-output';
+    sourceField: string;
+    eventType: AgUiOutputEventType;
+    terminal: boolean;
+    customEventName?: string;
+}
+
+export declare interface AgUiRawEvent extends AgUiEventBase {
+    type: 'RAW';
+    event: unknown;
+    source?: string;
+}
+
+export declare interface AgUiReasoningEncryptedValueEvent extends AgUiEventBase {
+    type: 'REASONING_ENCRYPTED_VALUE';
+    subtype: 'message' | 'tool-call';
+    entityId: string;
+    encryptedValue: string;
+}
+
+export declare interface AgUiReasoningEndEvent extends AgUiEventBase {
+    type: 'REASONING_END';
+    messageId: string;
+}
+
+export declare interface AgUiReasoningMessageChunkEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_CHUNK';
+    messageId: string;
+    delta?: string;
+}
+
+export declare interface AgUiReasoningMessageContentEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_CONTENT';
+    messageId: string;
+    delta: string;
+}
+
+export declare interface AgUiReasoningMessageEndEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_END';
+    messageId: string;
+}
+
+export declare interface AgUiReasoningMessageStartEvent extends AgUiEventBase {
+    type: 'REASONING_MESSAGE_START';
+    messageId: string;
+    role: 'reasoning';
+}
+
+export declare interface AgUiReasoningStartEvent extends AgUiEventBase {
+    type: 'REASONING_START';
+    messageId: string;
+}
+
+export declare type AgUiRole = 'developer' | 'system' | 'assistant' | 'user' | 'tool';
+
+export declare interface AgUiRunErrorEvent extends AgUiEventBase {
+    type: 'RUN_ERROR';
+    message: string;
+    code?: string;
+}
+
+export declare interface AgUiRunFinishedEvent extends AgUiEventBase {
+    type: 'RUN_FINISHED';
+    outcome?: {
+        type: 'success';
+    } | {
+        type: 'interrupt';
+        interrupts: unknown[];
+    };
+    result?: unknown;
+}
+
+export declare interface AgUiRunStartedEvent extends AgUiEventBase {
+    type: 'RUN_STARTED';
+    threadId: string;
+    runId: string;
+    parentRunId?: string;
+    input?: unknown;
+}
+
+export declare interface AgUiSession {
+    threadId: string;
+    runId: string | null;
+    messages: AgUiMessage[];
+    state: unknown;
+}
+
+export declare interface AgUiStateDeltaEvent extends AgUiEventBase {
+    type: 'STATE_DELTA';
+    delta: JsonPatchOp[];
+}
+
+export declare interface AgUiStateSnapshotEvent extends AgUiEventBase {
+    type: 'STATE_SNAPSHOT';
+    snapshot: unknown;
+}
+
+export declare interface AgUiStepFinishedEvent extends AgUiEventBase {
+    type: 'STEP_FINISHED';
+    stepName: string;
+}
+
+export declare interface AgUiStepStartedEvent extends AgUiEventBase {
+    type: 'STEP_STARTED';
+    stepName: string;
+}
+
+export declare interface AgUiTextMessageChunkEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_CHUNK';
+    messageId?: string;
+    role?: AgUiRole;
+    delta?: string;
+}
+
+export declare interface AgUiTextMessageContentEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_CONTENT';
+    messageId: string;
+    delta: string;
+}
+
+export declare interface AgUiTextMessageEndEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_END';
+    messageId: string;
+}
+
+export declare interface AgUiTextMessageStartEvent extends AgUiEventBase {
+    type: 'TEXT_MESSAGE_START';
+    messageId: string;
+    role: AgUiRole;
+}
+
+export declare interface AgUiToolCall {
+    id: string;
+    name: string;
+    args: string;
+    result?: unknown;
+    status: 'streaming' | 'completed' | 'error';
+    startedAt: number;
+    endedAt?: number;
+    parentMessageId?: string;
+}
+
+export declare interface AgUiToolCallArgsEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_ARGS';
+    toolCallId: string;
+    delta: string;
+}
+
+export declare interface AgUiToolCallChunkEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_CHUNK';
+    toolCallId?: string;
+    toolCallName?: string;
+    parentMessageId?: string;
+    delta?: string;
+}
+
+export declare interface AgUiToolCallEndEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_END';
+    toolCallId: string;
+}
+
+export declare interface AgUiToolCallResultEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_RESULT';
+    messageId: string;
+    toolCallId: string;
+    content: unknown;
+    role?: string;
+}
+
+export declare interface AgUiToolCallStartEvent extends AgUiEventBase {
+    type: 'TOOL_CALL_START';
+    toolCallId: string;
+    toolCallName: string;
+    parentMessageId?: string;
+}
+
+declare interface ApiCallState<T> {
+    data: T | null;
+    loading: boolean;
+    error: string | null;
+    execute: (...args: unknown[]) => Promise<void>;
+    retry: () => Promise<void>;
+    reset: () => void;
+}
+
+declare interface ApiHealthCheck {
+    status: 'ok' | 'error' | string;
+    latencyMs?: number;
+    error?: string;
+}
+
+declare interface ApiHealthSnapshot {
+    status: ApiHealthStatus;
+    checks: Record<string, ApiHealthCheck>;
+    /** Names of failing dependencies (status !== 'ok'). Empty when healthy or unknown. */
+    failing: string[];
+}
+
+declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
+
+/**
+ * Apply a paused-context patch. Resolves the executor's `PatchResult` on a
+ * 200. Throws `PatchValidationRejectedError` on a 422 (carrying the executor
+ * rejection reason). Throws `PatchHttpError` on any other non-2xx.
+ */
+export declare function applyPatch(pipelineId: string, runId: string, stepId: string, patch: ContextPatch, appliedBy?: string): Promise<PatchResult>;
+
+export declare interface ApprovalNodeData {
+    type: 'approval';
+    approvers: Approver[];
+    /** n-of-m — how many approvals required to pass. */
+    requiredCount: number;
+    timeoutMs?: number;
+    timeoutAction?: ApprovalTimeoutAction;
+    /** Message shown to the approver. */
+    message?: string;
+}
+
+export declare interface ApprovalRecord {
+    userId: string;
+    decision: 'approve' | 'reject';
+    comment?: string;
+    at: string;
+}
+
+export declare type ApprovalTimeoutAction = 'reject' | 'approve' | 'escalate';
+
+export declare interface Approver {
+    type: 'user' | 'role';
+    value: string;
+}
+
+export declare interface AuditActor {
+    type: 'admin' | 'user' | 'system';
+    email?: string;
+    userId?: string;
+    reason?: string;
+}
+
+export declare interface AuditFilters {
+    /** ISO 8601 lower bound on `timestamp`. */
+    since?: string;
+    /** ISO 8601 upper bound on `timestamp`. */
+    until?: string;
+    /** Action types to keep — comma-joined for the query string. */
+    actions?: string[];
+    /** Page size (1..1000). Server defaults to 100. */
+    limit?: number;
+    /** Opaque pagination token from a previous response. */
+    cursor?: string;
+}
+
+export declare interface AuditPage {
+    items: AuditRow[];
+    nextCursor?: string;
+}
+
+export declare interface AuditQueryParams {
+    entityType?: string;
+    entityId?: string;
+    fromTime?: number;
+    toTime?: number;
+    limit?: number;
+    cursor?: string;
+}
+
+export declare interface AuditRecord {
+    timestamp: number;
+    actor: AuditActor;
+    entityType: string;
+    entityId: string;
+    operation: string;
+    before?: Record<string, unknown>;
+    after?: Record<string, unknown>;
+}
+
+/**
+ * Mirrors `StoredAuditEvent` from social-api/src/pipeline/audit-repository.ts.
+ * Re-declared here as a plain TS interface (per project conventions — no
+ * runtime schema lib) so the frontend doesn't pull a backend module across
+ * the Vite/TSX boundary.
+ */
+export declare interface AuditRow {
+    auditId: string;
+    timestamp: string;
+    action: string;
+    actorUserId: string;
+    pipelineId: string;
+    runId?: string;
+    decision?: 'approved' | 'rejected' | 'cancelled' | 'failed' | 'completed' | 'success' | 'error';
+    outcome?: 'success' | 'error' | 'rejected';
+    details?: Record<string, unknown>;
+    before?: Record<string, unknown>;
+    after?: Record<string, unknown>;
+    trace?: Record<string, unknown>;
+    ttlEpoch?: number;
+}
+
+/**
+ * Identity attached to every request handled by the pipeline router. The
+ * host (social-api today, distributed-core later) populates this from its
+ * own auth middleware and injects a getter into the router factory; the
+ * route handlers themselves never speak to Cognito / IAM / etc.
+ *
+ * `userId` is a stable opaque identifier — no assumption about format.
+ * `scopes` is an optional capability list; routes that need fine-grained
+ * authorization should check membership rather than guess from `userId`.
+ */
+export declare interface AuthContext {
+    userId: string;
+    scopes?: readonly string[];
+}
+
+declare interface AuthState {
+    status: 'loading' | 'unauthenticated' | 'authenticated';
+    idToken: string | null;
+    email: string | null;
+    error: string | null;
+}
+
+declare interface AwarenessFields {
+    userId: string;
+    displayName: string;
+    color: string;
+    mode: string;
+    currentSectionId: string | null;
+    lastSeen: number;
+    idle: boolean;
+    /** Tiptap cursor display name (may differ from displayName in edge cases). */
+    name?: string;
+}
+
+declare interface AwarenessUpdaters {
+    updateSection: (sectionId: string | null) => void;
+    updateMode: (mode: string) => void;
+    updateIdle: (idle: boolean) => void;
+    /** Merge Tiptap-specific cursor info (name, color) without clobbering other fields. */
+    updateCursorInfo: (name: string, color: string) => void;
+}
+
+export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
+
+export declare interface BannerProps {
+    variant?: BannerVariant;
+    /** Bold prefix label shown before children. */
+    title?: string;
+    onDismiss?: () => void;
+    children?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type BannerVariant = 'error' | 'warning' | 'info' | 'success';
+
+export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: {
+    data: Array<Record<string, unknown>>;
+    height?: number;
+    xKey: string;
+    yKey: string;
+    color?: string;
+    yFormat?: (v: number) => string;
+}): JSX_2.Element;
+
+export declare const borderRadius: {
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+    readonly full: string;
+};
+
+export declare function Button({ variant, size, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
+
+export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    variant?: ButtonVariant;
+    size?: ButtonSize;
+    fullWidth?: boolean;
+    children: ReactNode;
+}
+
+export declare type ButtonSize = 'sm' | 'md' | 'lg';
+
+export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
+
+declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
+
+declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
+
+export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
+
+export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
+
+export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
+    children?: ReactNode;
+    padding?: CardPadding;
+}
+
+declare interface ChatMessage {
+    id?: string;
+    clientId: string;
+    content: string;
+    timestamp: string;
+    displayName?: string;
+}
+
+export declare function Chip({ tone, size, solid, mono, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+
+export declare interface ChipProps {
+    tone?: ChipTone;
+    size?: 'sm' | 'xs';
+    /** Solid fill (dark bg + white text) instead of soft tint. */
+    solid?: boolean;
+    /** Monospace font — for count badges. */
+    mono?: boolean;
+    children: ReactNode;
+    title?: string;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+export declare type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
+
+export declare function CodeEditor({ value, onChange, language: _language, // Phase 1: accepted but not applied yet
+    placeholder, minLines, maxLines, readOnly, variables, 'aria-label': ariaLabel, }: CodeEditorProps): JSX.Element;
+
+export declare interface CodeEditorProps {
+    value: string;
+    onChange: (next: string) => void;
+    /** Hint for future syntax highlighting. Phase 1: purely cosmetic / no-op. */
+    language?: 'jsonpath' | 'javascript' | 'template' | 'plain';
+    placeholder?: string;
+    /** Minimum visible lines. Default 4. */
+    minLines?: number;
+    /** Maximum visible lines before the editor starts scrolling. Default 20. */
+    maxLines?: number;
+    readOnly?: boolean;
+    /** Available context variables — rendered as clickable insert pills. */
+    variables?: string[];
+    'aria-label'?: string;
+}
+
+/** Minimal provider shape needed by awareness. */
+declare interface CollaborationProvider {
+    awareness: Awareness;
+}
+
+export declare const colors: {
+    readonly primary: string;
+    readonly primaryDark: string;
+    readonly primaryLight: string;
+    readonly danger: string;
+    readonly dangerLight: string;
+    readonly success: string;
+    readonly successLight: string;
+    readonly warning: string;
+    readonly warningLight: string;
+    readonly info: string;
+    readonly infoLight: string;
+    readonly textPrimary: string;
+    readonly textSecondary: string;
+    readonly textMuted: string;
+    readonly textInverse: string;
+    readonly border: string;
+    readonly borderLight: string;
+    readonly background: string;
+    readonly surface: string;
+    readonly surfaceRaised: string;
+    readonly surfaceOverlay: string;
+};
+
+export declare function ColorSchemeProvider({ children }: {
+    children: React.ReactNode;
+}): JSX.Element;
+
+export declare interface Command {
+    id: string;
+    label: string;
+    group?: string;
+    hint?: string;
+    keywords?: string[];
+    icon?: ReactNode;
+    /** Display-only shortcut glyphs rendered right-aligned in the item. */
+    shortcut?: string[];
+    /** Visibility predicate — when returns false, the command is filtered out. */
+    when?: () => boolean;
+    /** Action invoked when the item is selected. */
+    run: () => void | Promise<void>;
+}
+
+export declare function CommandPalette({ placeholder, emptyState, className, }?: CommandPaletteProps): JSX.Element;
+
+export declare interface CommandPaletteController {
+    open: () => void;
+    close: () => void;
+    toggle: () => void;
+    isOpen: boolean;
+    query: string;
+}
+
+export declare function CommandPaletteHint({ className }?: CommandPaletteHintProps): JSX.Element;
+
+export declare interface CommandPaletteHintProps {
+    className?: string;
+}
+
+export declare interface CommandPaletteProps {
+    placeholder?: string;
+    emptyState?: ReactNode;
+    className?: string;
+}
+
+export declare function CommandPaletteProvider({ commands, getDynamicCommands, children, }: CommandPaletteProviderProps): JSX.Element;
+
+export declare interface CommandPaletteProviderProps {
+    commands: Command[];
+    /**
+     * Synchronous derivation hook for query-dependent commands (URL paste,
+     * UUID detection, etc.). Results are merged with the static `commands`
+     * list before cmdk runs its own filter.
+     */
+    getDynamicCommands?: (query: string) => Command[];
+    /**
+     * Future hook — currently the keybinding is always cmd/ctrl + K. Accepted
+     * for API forward-compat; ignored in v1.
+     */
+    toggleShortcut?: string[];
+    children: ReactNode;
+}
+
+/** A flat comment as stored in Y.js. */
+export declare interface CommentData {
+    id: string;
+    text: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    timestamp: string;
+    parentCommentId: string | null;
+    resolved?: boolean;
+    resolvedBy?: string;
+    resolvedAt?: string;
+}
+
+declare interface CommentItem {
+    postId: string;
+    commentId: string;
+    authorId: string;
+    content: string;
+    parentCommentId?: string;
+    createdAt: string;
+    _fadeIn?: boolean;
+}
+
+/** A comment with nested replies, assembled client-side. */
+export declare interface CommentThread extends CommentData {
+    replies: CommentThread[];
+}
+
+export declare interface ConditionNodeData {
+    type: 'condition';
+    /** JSONPath or boolean expression evaluated over context. */
+    expression: string;
+    /** UI label shown on the node. */
+    label?: string;
+}
+
+export declare function ConfirmDialog({ open, onConfirm, onCancel, title, body, confirmLabel, cancelLabel, confirmDisabled, tone, children, }: ConfirmDialogProps): JSX.Element;
+
+export declare interface ConfirmDialogProps {
+    open: boolean;
+    onConfirm: () => void;
+    onCancel: () => void;
+    title?: string;
+    body?: string;
+    confirmLabel?: string;
+    cancelLabel?: string;
+    confirmDisabled?: boolean;
+    /** Visual tone for the confirm button. Defaults to 'info' (primary blue). */
+    tone?: 'destructive' | 'caution' | 'info';
+    /** Preview slot — extra content rendered between body and footer. */
+    children?: React.ReactNode;
+}
+
+export declare interface ConflictField {
+    /** Field key (path within the typed document — e.g. "title", "body.text"). */
+    field: string;
+    /** Value as it currently exists in the source system. */
+    sourceValue: unknown;
+    /** Value as it currently exists in the platform CRDT. */
+    platformValue: unknown;
+    /** Optional auto-merge proposal (if the engine produced one). */
+    mergedValue?: unknown;
+}
+
+export declare interface ConflictResolution {
+    /** Which side wins as a whole — used when fieldChoices is empty. */
+    pick: ConflictSide;
+    /**
+     * Optional per-field override map. Keys are field paths matching
+     * ConflictField.field; values are 'source' | 'platform' | 'merged' or a
+     * literal value supplied by the operator.
+     */
+    fieldChoices?: Record<string, ConflictSide | {
+        custom: unknown;
+    }>;
+    /** Operator note explaining the pick. */
+    note?: string;
+}
+
+export declare type ConflictSide = 'source' | 'platform' | 'merged';
+
+/** Connection lifecycle states */
+export declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+export declare type ContextPatch = ContextPatchMerge | ContextPatchJsonPatch;
+
+export declare interface ContextPatchJsonPatch {
+    mode: 'jsonPatch';
+    ops: Array<{
+        op: 'add' | 'remove' | 'replace' | 'move' | 'copy' | 'test';
+        path: string;
+        value?: unknown;
+        from?: string;
+    }>;
+}
+
+export declare interface ContextPatchMerge {
+    mode: 'merge';
+    values: Record<string, unknown>;
+}
+
+export declare interface CreateClientInput {
+    clientName: string;
+    poolId: string;
+    redirectUris: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes?: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface CreateClientWithPoolInput {
+    clientName: string;
+    poolName: string;
+    redirectUris: string[];
+    grantTypes?: string[];
+}
+
+export declare interface CreateEmailTemplateInput {
+    name: string;
+    subject: string;
+    htmlBody: string;
+    textBody: string;
+    variables?: string[];
+}
+
+export declare interface CreateGroupInput {
+    groupName: string;
+    description?: string;
+    permissions?: string[];
+}
+
+export declare interface CreatePoolInput {
+    poolName: string;
+    customAttributes?: Record<string, string>;
+    settings?: Partial<PoolSettings>;
+}
+
+export declare interface CreateUserInput {
+    email: string;
+    password?: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    customAttributes?: Record<string, unknown>;
+}
+
+/**
+ * Returns a `var(--ui-...)` reference for use in inline styles or CSS-in-JS.
+ *
+ * Usage:
+ *   style={{ color: cssVar('textPrimary') }}
+ *   // → "var(--ui-text-primary)"
+ */
+export declare function cssVar(token: keyof ThemeTokens): string;
+
+declare type CursorMode = 'freeform' | 'table' | 'text' | 'canvas';
+
+export declare const CUSTOM_FIELD_TYPE_STORAGE_KEY = "ws_field_types_v1";
+
+export declare interface CustomFieldType {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    /**
+     * Primitive storage type — e.g. 'long_text_and_summary', 'list_text'.
+     * Identifies the Drupal-style data storage class the user selected.
+     * Optional for backward-compat with records persisted before this field was added.
+     */
+    primitiveType?: string;
+    /**
+     * Which built-in renderer to delegate to for display.
+     * Derived from primitiveType at creation time.
+     */
+    baseType: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+/** Dark theme preset — proper dark UI design, not simply inverted. */
+export declare const darkTheme: ThemeTokens;
+
+export declare const DEFAULT_PIPELINE_ICONS: string[];
+
+export declare interface DiagnosticsInfo {
+    node: Record<string, unknown>;
+    cluster: Record<string, unknown>;
+    resources: Record<string, unknown>;
+}
+
+export declare interface DLQEntry {
+    messageId: string;
+    eventType: string;
+    eventPayload: unknown;
+    lastError: string;
+    failedAt: string;
+    totalAttempts: number;
+    errorKind: string | null;
+}
+
+export declare interface DlqEntry {
+    id: string;
+    payload: unknown;
+    error: string;
+    failedAt: string;
+    retryCount: number;
+}
+
+declare interface DLQEntryRow {
+    /** Envelope id — primary key for replay / purge. */
+    id: string;
+    /** Failed payload, T-untyped. The page renders a few well-known fields. */
+    envelope: {
+        id?: string;
+        body?: unknown;
+    };
+    lastError: string;
+    failedAtMs: number;
+    totalAttempts: number;
+}
+
+export declare interface DLQListResponse {
+    items: DLQEntry[];
+    cursor?: string;
+}
+
+export declare interface DLQPurgeResponse {
+    purged: string[];
+    notFound: string[];
+}
+
+export declare interface DLQRedriveResponse {
+    redriven: string[];
+    notFound: string[];
+}
+
+declare interface DocTypeProposalRow {
+    proposalId: string;
+    sourceId: string;
+    signature: string;
+    sampleIngestIds: string[];
+    proposedName: string;
+    proposedDescription: string;
+    proposedFields: ProposedField[];
+    reasoning: string;
+    status: 'pending' | 'promoted' | 'rejected';
+    createdAt: string;
+}
+
+export declare const DOCUMENT_TYPE_ICONS: string[];
+
+export declare interface DocumentData {
+    meta: DocumentMeta;
+    sections: Section[];
+}
+
+declare interface DocumentInfo {
+    id: string;
+    title: string;
+    type: string;
+    status: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    icon: string;
+    description?: string;
+    activeCallSessionId?: string;
+}
+
+export declare interface DocumentMeta {
+    id: string;
+    title: string;
+    sourceType: 'transcript' | 'meeting' | 'notes' | 'custom';
+    sourceId: string;
+    createdBy: string;
+    createdByName?: string;
+    createdAt: string;
+    aiModel: string;
+    status: 'draft' | 'review' | 'final';
+    documentType?: string;
+    updatedAt?: string;
+    activeCallSessionId?: string;
+}
+
+declare interface DocumentPresenceUser {
+    userId: string;
+    displayName: string;
+    color: string;
+    mode?: string;
+    idle?: boolean;
+}
+
+declare interface DocumentType_2 {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    fields: DocumentTypeField[];
+    /** Phase 51 / hub#66 — multi-page layout. Optional; absent = single-page (legacy). */
+    pages?: DocumentTypePage[];
+    /** Phase 51 / hub#66 — page-level configuration. Only meaningful when pages.length > 1. */
+    pageConfig?: DocumentTypePageConfig;
+    createdAt: string;
+    updatedAt: string;
+}
+export { DocumentType_2 as DocumentType }
+
+export declare interface DocumentTypeField {
+    id: string;
+    name: string;
+    sectionType: string;
+    required: boolean;
+    defaultCollapsed: boolean;
+    placeholder: string;
+    hiddenInModes: ViewMode[];
+    rendererOverrides: Partial<Record<ViewMode, string>>;
+}
+
+export declare interface DocumentTypePage {
+    id: string;
+    title?: string;
+    sectionIds: string[];
+}
+
+export declare interface DocumentTypePageConfig {
+    showTableOfContents: boolean;
+}
+
+export declare interface EmailTemplate {
+    templateId: string;
+    name: string;
+    subject: string;
+    htmlBody: string;
+    textBody: string;
+    variables: string[];
+}
+
+export declare function EmptyState({ icon, title, body, actionLabel, onAction, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+
+export declare interface EmptyStateProps {
+    icon?: string;
+    title: string;
+    body?: string;
+    actionLabel?: string;
+    onAction?: () => void;
+    /**
+     * Optional testid for the container (defaults to "empty-state").
+     * Callers with existing tests targeting a specific id can pass it here.
+     */
+    testId?: string;
+    /**
+     * Optional testid for the action button (defaults to "empty-state-action").
+     */
+    actionTestId?: string;
+}
+
+declare interface EphemeralReaction {
+    id: string;
+    emoji: string;
+    x: number;
+    y: number;
+    timestamp: string;
+}
+
+export declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
+
+export declare interface EventGlyph {
+    icon: string;
+    color: string;
+    severity: 'info' | 'success' | 'warning' | 'error' | 'neutral';
+}
+
+export declare const eventGlyphs: Record<string, EventGlyph>;
+
+export declare interface EventRowProps {
+    timestamp: string;
+    type: string;
+    summary: string;
+    severity?: 'info' | 'warning' | 'error' | 'success';
+    onClick?: () => void;
+    selected?: boolean;
+}
+
+declare interface FieldTypeDefinition {
+    /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
+    type: string;
+    label: string;
+    icon: string;
+    description: string;
+    /** Available renderer keys per view mode, e.g. { editor: ['tasks:editor'] } */
+    rendererKeys: Partial<Record<ViewMode, string[]>>;
+    /** Human-readable label for each renderer key */
+    rendererLabels: Record<string, string>;
+    /**
+     * When set, renderer resolution uses this type's renderers instead of `type`.
+     * User-defined field types set this to the built-in type they wrap.
+     */
+    rendererType?: string;
+}
+
+export declare const fontSize: {
+    readonly xs: string;
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+};
+
+export declare function forceFail(pipelineId: string, runId: string): Promise<ForceFailResponse>;
+
+export declare interface ForceFailResponse {
+    runId: string;
+    status: string;
+    hint: string;
+    at: string;
+}
+
+export declare interface ForkNodeData {
+    type: 'fork';
+    /** Number of parallel output branches (2..8). */
+    branchCount: number;
+    branchLabels?: string[];
+}
+
+/**
+ * Labeled wrapper around an input control. Wires `<label htmlFor>` →
+ * `<input id>`, plus `aria-describedby` for hints/errors and `aria-invalid`
+ * for the error state. Use the render-prop API so we don't have to wrap
+ * every kind of input the library ships.
+ */
+export declare function FormField({ label, hint, error, required, layout, children, className, style, 'data-testid': testId, }: FormFieldProps): JSX.Element;
+
+export declare type FormFieldLayout = 'stacked' | 'inline';
+
+export declare interface FormFieldProps {
+    label: string;
+    /** Helper text shown under the control. */
+    hint?: string;
+    /** Error message; when present, replaces the hint and adds a danger border. */
+    error?: string;
+    /** Renders an asterisk after the label. Does NOT enforce validation. */
+    required?: boolean;
+    layout?: FormFieldLayout;
+    /**
+     * Pass-through render. The function receives an `id` and the wiring
+     * (`aria-describedby` / `aria-invalid`) you should spread onto the input
+     * so the label associates correctly:
+     *
+     *   <FormField label="Name">
+     *     {(p) => <input {...p} value={...} onChange={...} />}
+     *   </FormField>
+     *
+     * For controls that take an explicit `id` prop (Switch's `aria-labelledby`),
+     * `wiring.labelId` exposes the label's id.
+     */
+    children: (wiring: {
+        id: string;
+        labelId: string;
+        'aria-describedby'?: string;
+        'aria-invalid'?: boolean;
+    }) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+/** Runtime configuration read from env vars */
+export declare interface GatewayConfig {
+    wsUrl: string;
+    cognitoToken: string;
+    defaultChannel: string;
+}
+
+/** Error received from the gateway (matches server error-codes.js format) */
+export declare interface GatewayError {
+    /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
+    code: string;
+    /** Human-readable description for display */
+    message: string;
+    timestamp: string;
+}
+
+/** A raw message received over the WebSocket */
+export declare interface GatewayMessage {
+    type: string;
+    action?: string;
+    channel?: string;
+    error?: GatewayError;
+    [key: string]: unknown;
+}
+
+declare class GatewayProvider extends Observable<string> {
+    readonly doc: Y.Doc;
+    readonly channel: string;
+    readonly awareness: Awareness;
+    private readonly _sendMessage;
+    private _synced;
+    private _awarenessTimer;
+    private readonly _updateHandler;
+    constructor(doc: Y.Doc, channel: string, sendMessage: SendMessage);
+    /** Whether we have received at least one snapshot from the server. */
+    get synced(): boolean;
+    /**
+     * Apply a remote Y.js document update received from the gateway.
+     * Uses `this` as origin so the update handler above skips re-sending it.
+     */
+    applyRemoteUpdate(b64: string): void;
+    /**
+     * Apply the initial document snapshot from the server.
+     * Functionally identical to applyRemoteUpdate but marks the provider as synced.
+     */
+    applySnapshot(b64: string): void;
+    /**
+     * Apply a remote awareness update received from the gateway.
+     */
+    applyAwarenessUpdate(b64: string): void;
+    destroy(): void;
+}
+
+/**
+ * Maps an event type prefix to a category for filter UIs.
+ * Used by ExecutionLog + Observability EventsPage to group filters.
+ */
+export declare function getEventCategory(type: string): 'lifecycle' | 'step' | 'llm' | 'approval' | 'activity' | 'social' | 'other';
+
+/**
+ * Look up a glyph for an event type, falling back to a neutral bullet.
+ */
+export declare function getEventGlyph(type: string): EventGlyph;
+
+export declare function getFieldType(type: string): FieldTypeDefinition | undefined;
+
+export declare function getFieldTypes(): FieldTypeDefinition[];
+
+/**
+ * Returns a fresh page-config (with safe defaults) when the stored
+ * config is undefined. Used by the wizard so toggles always have a
+ * value to bind to.
+ */
+export declare function getPageConfig(type: DocumentType_2): DocumentTypePageConfig;
+
+/**
+ * Migration helper. Returns the type's `pages` if present, otherwise
+ * derives a single page that wraps every field. Pure function — does
+ * NOT mutate the input. Existing code paths that don't know about
+ * pages can keep reading `fields`; the wizard reads via this helper.
+ */
+export declare function getPagesView(type: DocumentType_2): DocumentTypePage[];
+
+/**
+ * Fetch a single pipeline run by runId from the dedicated v2 endpoint.
+ * The v2 handler does live-then-stored fallback so historical runs (no
+ * longer in the runtime's in-memory state) resolve correctly. Returns
+ * null on 404 or transport failure.
+ *
+ * Wire shape comes from `PipelineRunDetailResponse` in
+ * frontend/src/types/pipeline-contracts.ts — kept in lockstep with
+ * social-api/src/pipeline/http/contracts.ts.
+ */
+export declare function getPipelineRun(pipelineId: string, runId: string): Promise<PipelineRun | null>;
+
+export declare function getRenderer(sectionType: string | null | undefined, viewMode: ViewMode): SectionRenderer | null;
+
+/**
+ * Per-run audit timeline. Returns a single page; callers paginate with
+ * `nextCursor`. The backend route returns `{ items: [], nextCursor }`
+ * with rows newest-first.
+ */
+export declare function getRunAuditLog(pipelineId: string, runId: string, filters?: AuditFilters): Promise<AuditPage>;
+
+export declare interface GraphQueryNodeData {
+    type: 'graph-query';
+    graphId: string;
+    query: string;
+    parameters?: Record<string, string>;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+declare interface GroupItem {
+    groupId: string;
+    name: string;
+    description?: string;
+    visibility: 'public' | 'private';
+    ownerId: string;
+    createdAt: string;
+}
+
+export declare type GuardrailAction = 'block' | 'mask' | 'warn';
+
+export declare interface GuardrailNodeData {
+    type: 'guardrail';
+    guardrailId: string;
+    guardrailVersion?: string;
+    inputField: string;
+    action: GuardrailAction;
+    label?: string;
+}
+
+export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, size, className, ...rest }: IconButtonProps): JSX.Element;
+
+export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
+    'aria-label': string;
+    icon?: ReactNode;
+    children?: ReactNode;
+    variant?: 'ghost' | 'primary' | 'danger';
+    size?: 'sm' | 'md' | 'lg';
+}
+
+export declare interface IconPickerProps {
+    value: string;
+    onChange: (emoji: string) => void;
+    curated?: string[];
+}
+
+export declare const IDENTITY_BASE_URL: string;
+
+export declare function identityApiFetch<T>(path: string, idToken: string | null, options?: RequestInit): Promise<T>;
+
+export declare interface IdentityClient {
+    clientId: string;
+    clientName: string;
+    clientSecret?: string;
+    poolId: string;
+    poolName?: string;
+    redirectUris: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface IdentityContextValue {
+    userId: string;
+    displayName: string;
+    userEmail: string | null;
+    idToken: string | null;
+    onSignOut: () => void;
+}
+
+export declare interface IdentityGroup {
+    groupId: string;
+    poolId: string;
+    groupName: string;
+    description?: string;
+    permissions: string[];
+    members?: string[];
+}
+
+export declare interface IdentityPool {
+    poolId: string;
+    poolName: string;
+    clientId: string;
+    customAttributes: Record<string, string>;
+    settings: PoolSettings;
+    createdAt: string;
+}
+
+export declare function IdentityProvider({ value, children, }: {
+    value: IdentityContextValue;
+    children: ReactNode;
+}): JSX.Element;
+
+export declare interface IdentityUser {
+    userId: string;
+    poolId: string;
+    email: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    website?: string;
+    status: 'CONFIRMED' | 'UNCONFIRMED' | 'FORCE_CHANGE_PASSWORD' | 'ARCHIVED' | 'COMPROMISED' | 'UNKNOWN';
+    emailVerified?: boolean;
+    mfaEnabled: boolean;
+    groups: string[];
+    customAttributes: Record<string, unknown>;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+declare interface IngestAuditEntry {
+    auditId: string;
+    createdAt: string;
+    actor: string;
+    eventType: IngestAuditEventType;
+    targetType: 'source' | 'item' | 'document';
+    targetId: string;
+    summary: string;
+    detail: Record<string, unknown>;
+}
+
+declare type IngestAuditEventType = 'mapping.decided' | 'source.created' | 'source.updated' | 'source.paused' | 'source.resumed' | 'writeback.attempted' | 'writeback.failed';
+
+declare interface IngestAuditFilters {
+    since?: string;
+    until?: string;
+    actor?: string;
+    eventType?: IngestAuditEventType;
+    targetId?: string;
+    limit?: number;
+}
+
+export declare interface IngestItem {
+    itemId: string;
+    sourceId: string;
+    sourcePath: string;
+    status: IngestItemStatus;
+    documentTypeId: string | null;
+    documentId: string | null;
+    pipelineRunId: string | null;
+    mappingMethod: IngestMappingMethod | null;
+    /** Confidence in the mapping decision (0..1). Null when no mapping attempted. */
+    mappingConfidence?: number | null;
+    /** Retry attempts so far. Optional — backend may omit. */
+    attempts?: number;
+    error: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export declare type IngestItemStatus = 'queued' | 'mapping' | 'materializing' | 'triggering' | 'done' | 'failed';
+
+export declare type IngestMappingMethod = 'rule' | 'llm-match' | 'llm-generate';
+
+declare interface IngestProgressEvent {
+    type: string;
+    timestamp: string;
+    [key: string]: unknown;
+}
+
+export declare interface IngestSource {
+    sourceId: string;
+    name: string;
+    type: IngestSourceType;
+    config: Record<string, unknown>;
+    syncSchedule: string | null;
+    mappingRules: MappingRule[];
+    defaultPipelineId: string | null;
+    /**
+     * Per-DocType pipeline override. Keys are `targetTypeId` (the DocType id
+     * a mapping rule resolved to); values are pipeline ids that should run
+     * instead of `defaultPipelineId` for items of that type. Absent / empty
+     * map ⇒ use defaultPipelineId for everything. AGENTIC_ETL_VISION §C.
+     */
+    pipelineByDocType?: Record<string, string>;
+    status: IngestSourceStatus;
+    lastSyncAt: string | null;
+    lastSyncStats: SyncStats | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export declare type IngestSourceStatus = 'active' | 'paused' | 'error';
+
+export declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhook';
+
+/**
+ * Returns a CSS string for injecting into a <style> tag or :root selector.
+ *
+ * Example output:
+ *   :root {
+ *     --ui-primary: #3b82f6;
+ *     --ui-primary-dark: #1d4ed8;
+ *     ...
+ *   }
+ */
+export declare function injectThemeVars(tokens: ThemeTokens): string;
+
+/**
+ * Inline pipeline definition shipped on a trigger request. Optional: when
+ * absent, the server resolves the definition from its persistent store.
+ *
+ * Carrying the full definition is keyed by `id`; everything else is
+ * adapter-/version-specific and stays opaque from the contracts layer.
+ */
+export declare interface InlinePipelineDefinition {
+    id: string;
+    [key: string]: unknown;
+}
+
+export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
+
+export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
+
+export declare type JoinMode = 'all' | 'any' | 'n_of_m';
+
+export declare interface JoinNodeData {
+    type: 'join';
+    mode: JoinMode;
+    /** Required when `mode === 'n_of_m'`. */
+    n?: number;
+    mergeStrategy: JoinMergeStrategy;
+}
+
+export declare interface JsonPatchOp {
+    op: string;
+    path: string;
+    value?: unknown;
+    from?: string;
+}
+
+declare interface KeyboardShortcut {
+    /** Key to match (case-insensitive, e.g., 's', 'Enter', 'Escape') */
+    key: string;
+    /** Require Cmd/Ctrl modifier */
+    meta?: boolean;
+    /** Require Shift modifier */
+    shift?: boolean;
+    /** Require Alt/Option modifier */
+    alt?: boolean;
+    /** Callback to invoke when shortcut matches */
+    handler: (e: KeyboardEvent) => void;
+    /** Prevent default browser action (default: true) */
+    preventDefault?: boolean;
+}
+
+export declare interface KnowledgeBaseNodeData {
+    type: 'knowledge-base';
+    knowledgeBaseId: string;
+    queryTemplate: string;
+    topK: number;
+    scoreThreshold?: number;
+    outputKey?: string;
+    retryPolicy?: RetryPolicy;
+}
+
+/** Default light theme — derived from the original hardcoded tokens. */
+export declare const lightTheme: ThemeTokens;
+
+export declare function LineChart({ series, height, yFormat, xFormat, }: {
+    series: LineSeries[];
+    height?: number;
+    yFormat?: (v: number) => string;
+    xFormat?: (v: number | string) => string;
+}): JSX_2.Element;
+
+export declare interface LineSeries {
+    label: string;
+    data: Array<{
+        x: number | string;
+        y: number;
+    }>;
+    color?: string;
+}
+
+/**
+ * Fetch DLQ entries with optional filters.
+ */
+export declare function listDLQEntries(options?: {
+    limit?: number;
+    cursor?: string;
+    errorKind?: string;
+    sinceMs?: number;
+}): Promise<DLQListResponse>;
+
+/**
+ * Fetch pipeline run history from the backend API.
+ * Falls back gracefully when the endpoint is unavailable.
+ */
+export declare function listPipelineRuns(pipelineId: string, options?: {
+    limit?: number;
+    cursor?: string;
+}): Promise<ListRunsResponse>;
+
+/** Returns all registered (sectionType, viewMode) pairs — useful for debug / config UIs. */
+export declare function listRegisteredRenderers(): Array<{
+    sectionType: string;
+    viewMode: string;
+    component: SectionRenderer;
+}>;
+
+export declare interface ListRunsResponse {
+    runs: PipelineRun[];
+    nextCursor?: string;
+}
+
+export declare interface LLMNodeData {
+    type: 'llm';
+    provider: LLMProvider;
+    /** Model identifier, e.g. 'claude-sonnet-4-6'. */
+    model: string;
+    systemPrompt: string;
+    /** Supports `{{context.foo}}` substitution. */
+    userPromptTemplate: string;
+    temperature?: number;
+    maxTokens?: number;
+    streaming: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type LLMProvider = 'anthropic' | 'bedrock' | 'claude-code';
+
+export declare function makeEmptyField(sectionType: string): DocumentTypeField;
+
+export declare interface MappingRule {
+    /** Glob or regex pattern matching source file paths. */
+    pattern: string;
+    /** Document type to assign when pattern matches. */
+    documentTypeId: string;
+    /** Optional pipeline to trigger on ingest. Overrides source-level default. */
+    pipelineId?: string;
+    /** Priority when multiple rules match — higher wins. */
+    priority: number;
+}
+
+export declare interface McpToolNodeData {
+    type: 'mcp-tool';
+    gatewayUrl: string;
+    toolName: string;
+    inputTemplate: string;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+declare interface MemberItem {
+    groupId: string;
+    userId: string;
+    role: 'owner' | 'admin' | 'member';
+    joinedAt: string;
+    displayName?: string;
+    status?: string;
+}
+
+export declare type MemoryMode = 'read' | 'write';
+
+export declare interface MemoryNodeData {
+    type: 'memory';
+    mode: MemoryMode;
+    scope: MemoryScope;
+    namespace: string;
+    keyExpression: string;
+    valueField?: string;
+    outputKey?: string;
+}
+
+export declare type MemoryScope = 'session' | 'long-term';
+
+declare interface MentionItem {
+    kind: 'mention';
+    sectionId: string;
+    sectionTitle: string;
+    commentId: string;
+    authorName: string;
+    authorColor: string;
+    commentText: string;
+    timestamp: string;
+}
+
+declare interface MentionUser {
+    userId: string;
+    displayName: string;
+    color: string;
+    online: boolean;
+    mode?: string;
+    type: 'user' | 'group';
+    memberCount?: number;
+}
+
+export declare interface MfaDevice {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    isVerified: boolean;
+    createdAt: string;
+    lastUsed?: string;
+}
+
+export declare interface MfaMetrics {
+    totalUsers: number;
+    mfaEnabled: number;
+    mfaDisabled: number;
+    adoptionRate: number;
+}
+
+export declare interface MfaSetupResult {
+    deviceId: string;
+    qrCode: string;
+    secret: string;
+    backupCodes: string[];
+}
+
+export declare function Modal({ open, onClose, title, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+
+export declare interface ModalProps {
+    open: boolean;
+    onClose: () => void;
+    title?: string;
+    maxWidth?: number;
+    children: React.ReactNode;
+    footer?: React.ReactNode;
+    /**
+     * Optional overrides for the backdrop testid (defaults to "modal-backdrop").
+     * Callers that need a specific testid on the backdrop — e.g. existing tests
+     * that assert `getByTestId('delete-modal')` and click it to trigger
+     * backdrop-close — can pass it through here.
+     */
+    backdropTestId?: string;
+    /**
+     * Optional override for the backdrop background. Defaults to the standard
+     * rgba(0,0,0,0.45) overlay used across the app.
+     */
+    backdropStyle?: React.CSSProperties;
+    /**
+     * Optional override for the inner card container style. Spread over the
+     * default 12px-radius, 28px/24px-padded, shadowed white card.
+     */
+    cardStyle?: React.CSSProperties;
+    /**
+     * Optional z-index for the backdrop. Defaults to 10000.
+     */
+    zIndex?: number;
+    /**
+     * When true, render children directly inside the card without the default
+     * text-sm text-text-secondary wrapper div. Useful for modals that manage
+     * their own full-layout and need the card to be a flex container.
+     */
+    rawChildren?: boolean;
+}
+
+declare type MyItem = MentionItem | TaskAssignment;
+
+export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
+
+export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output';
+
+declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_3 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_4 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_5 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+export declare function PageSection({ title, description, actions, children, className, }: PageSectionProps): JSX.Element;
+
+export declare interface PageSectionProps {
+    title: string;
+    description?: string;
+    actions?: ReactNode;
+    children: ReactNode;
+    className?: string;
+}
+
+export declare interface Participant {
+    clientId: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    mode: 'editor' | 'reviewer' | 'reader';
+    currentSectionId: string | null;
+    lastSeen?: number;
+    idle?: boolean;
+}
+
+export declare interface PasswordPolicy {
+    minLength: number;
+    requireUppercase: boolean;
+    requireLowercase: boolean;
+    requireNumbers: boolean;
+    requireSymbols: boolean;
+}
+
+/**
+ * hub#2226 — single entry in `StepExecution.patches`. Mirrors the
+ * distributed-core `PatchEntry` shape but stays decoupled from the
+ * type pin (consumers care about `patchId`, `appliedAt`, `revertedAt`,
+ * `unvalidated`; `beforeContext`/`patch` are optional bookkeeping the
+ * frontend doesn't need today).
+ */
+export declare interface PatchEntry {
+    patchId: string;
+    appliedAt: string;
+    appliedBy?: string;
+    /** Mirror of `ContextPatch['mode']`. */
+    mode?: 'merge' | 'jsonPatch';
+    /** Set on a successful revert. */
+    revertedAt?: string;
+    /** True when no validator was registered for the paused step's node type. */
+    unvalidated?: boolean;
+}
+
+/**
+ * Thrown for non-2xx/422 transport errors (404, 409, 500, 503, ...).
+ * `status` is the HTTP status; `body` is the parsed JSON body when present.
+ */
+export declare class PatchHttpError extends Error {
+    readonly status: number;
+    readonly body?: unknown;
+    constructor(status: number, message: string, body?: unknown);
+}
+
+export declare interface PatchResult {
+    patchId: string;
+    before: Record<string, unknown>;
+    after: Record<string, unknown>;
+    validation: {
+        ok: true;
+    } | {
+        ok: false;
+        reason: string;
+    };
+}
+
+/**
+ * Thrown when the executor's `ContextValidator` rejected a paused-context
+ * patch. The patch was NOT applied; the UI should keep the dirty buffer
+ * intact and show `reason` to the user.
+ */
+export declare class PatchValidationRejectedError extends Error {
+    readonly reason: string;
+    readonly result?: PatchResult;
+    constructor(reason: string, result?: PatchResult);
+}
+
+export declare interface PipelineApprovalResolveRequest {
+    stepId: string;
+    decision: 'approve' | 'reject';
+    /** Optional free-form note recorded alongside the decision. */
+    comment?: string;
+}
+
+/** 204 No Content on success. No structured response body. */
+export declare type PipelineApprovalResolveResponse = void;
+
+export declare interface PipelineCancelRequest {
+    /** Optional reason recorded in the audit log. */
+    reason?: string;
+}
+
+/** 204 No Content on success. */
+export declare type PipelineCancelResponse = void;
+
+export declare interface PipelineDefinition {
+    id: string;
+    name: string;
+    description?: string;
+    /** Free-form labels for filtering / grouping in the list view. Stored normalized (lowercase, trimmed). */
+    tags?: string[];
+    icon?: string;
+    /** Bumped on each save. */
+    version: number;
+    status: PipelineStatus;
+    /** Snapshot of `version` at last publish; runs trigger on this version. */
+    publishedVersion?: number;
+    /**
+     * Deep clone of the definition as it existed at the last `publishPipeline`
+     * call (minus this field, to avoid recursion). Enables the VersionDiffModal
+     * to show real per-node/edge differences between the current draft and the
+     * last-published state. Populated by `publishPipeline`.
+     */
+    publishedSnapshot?: Omit<PipelineDefinition, 'publishedSnapshot'>;
+    /** Cached for fast lookup by trigger dispatch. */
+    triggerBinding?: TriggerBinding;
+    nodes: PipelineNode[];
+    edges: PipelineEdge[];
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
+}
+
+declare interface PipelineDefSummary {
+    id: string;
+    name: string;
+    status?: string;
+    icon?: string;
+}
+
+export declare interface PipelineEdge {
+    id: string;
+    source: string;
+    /** 'out', 'true'/'false', 'branch-N', 'approved'/'rejected', 'error'. */
+    sourceHandle: string;
+    target: string;
+    /** 'in' or 'in-N' for Join. */
+    targetHandle: string;
+}
+
+/** Structured error body returned on bridge / framework failures. */
+export declare interface PipelineErrorBody {
+    error: string;
+    /** Logical action attempted ("trigger", "cancel", "resolveApproval", ...). */
+    action: string;
+}
+
+/** Pipeline event frame received via WebSocket (type === 'pipeline:event') */
+export declare interface PipelineEventFrame extends GatewayMessage {
+    type: 'pipeline:event';
+    eventType: PipelineWireEventType;
+    payload: unknown;
+    seq?: number;
+    sourceNodeId?: string;
+    emittedAt?: number;
+    channel?: string;
+}
+
+export declare type PipelineEventMap = {
+    'pipeline.run.started': {
+        runId: string;
+        pipelineId: string;
+        triggeredBy: PipelineRunTrigger;
+        at: string;
+    };
+    'pipeline.run.completed': {
+        runId: string;
+        durationMs: number;
+        at: string;
+    };
+    'pipeline.run.failed': {
+        runId: string;
+        error: PipelineRunError;
+        at: string;
+    };
+    'pipeline.run.cancelled': {
+        runId: string;
+        at: string;
+    };
+    'pipeline.run.orphaned': {
+        runId: string;
+        previousOwner: string;
+        at: string;
+    };
+    'pipeline.run.reassigned': {
+        runId: string;
+        from: string;
+        to: string;
+        at: string;
+    };
+    'pipeline.step.started': {
+        runId: string;
+        stepId: string;
+        nodeType: NodeType;
+        at: string;
+    };
+    'pipeline.step.completed': {
+        runId: string;
+        stepId: string;
+        durationMs: number;
+        output?: unknown;
+        at: string;
+    };
+    'pipeline.step.failed': {
+        runId: string;
+        stepId: string;
+        error: string;
+        at: string;
+    };
+    'pipeline.step.skipped': {
+        runId: string;
+        stepId: string;
+        reason: string;
+        at: string;
+    };
+    'pipeline.step.cancelled': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    'pipeline.step.breakpoint': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    /** Patch was applied AND validated by a registered ContextValidator. */
+    'pipeline.step.context.patched': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        /** Mirror of `ContextPatch['mode']`. */
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** Patch was applied but no validator was registered for this step's node type. */
+    'pipeline.step.context.patched-unvalidated': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** A previously-applied patch was reverted while still paused at the same step. */
+    'pipeline.step.context.patch-reverted': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        at: string;
+    };
+    'pipeline.llm.prompt': {
+        runId: string;
+        stepId: string;
+        model: string;
+        prompt: string;
+        at: string;
+    };
+    'pipeline.llm.stream.opened': {
+        runId: string;
+        stepId: string;
+        model: string;
+        openedAt: string;
+    };
+    'pipeline.llm.token': {
+        runId: string;
+        stepId: string;
+        token: string;
+        at: string;
+    };
+    'pipeline.llm.response': {
+        runId: string;
+        stepId: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        at: string;
+    };
+    'pipeline.approval.requested': {
+        runId: string;
+        stepId: string;
+        approvers: ApprovalNodeData['approvers'];
+        at: string;
+    };
+    'pipeline.approval.recorded': {
+        runId: string;
+        stepId: string;
+        userId: string;
+        decision: 'approve' | 'reject';
+        at: string;
+    };
+    'pipeline.run.paused': {
+        runId: string;
+        atStepIds: string[];
+        at: string;
+    };
+    'pipeline.run.resumed': {
+        runId: string;
+        at: string;
+    };
+    /**
+     * hub#2223: emitted by the executor when a previously-failed run is
+     * restarted from `fromNodeId` via `PipelineModule.resumeFromStep`. The
+     * canonical wire name is `pipeline:run:resumed-from-step` (DC source);
+     * after the gateway's `:` → `.` mapping that becomes
+     * `pipeline.run.resumed-from-step`. The legacy alias
+     * `pipeline.run.resumeFromStep` (camelCase) was a placeholder for the
+     * pre-producer Phase 5 stub and has no producer; the past-tense kebab
+     * form is the one consumers should key on.
+     */
+    'pipeline.run.resumed-from-step': {
+        runId: string;
+        fromNodeId: string;
+        /** The stepId that originally failed and triggered this resumption, if known. */
+        originalFailedStepId?: string;
+        at: string;
+    };
+    /**
+     * Canonical colon-form request event emitted by the gateway's local fallback
+     * when no PipelineModule is wired. Wire name: `pipeline:run:resumeFromStep`.
+     * The past-tense `pipeline.run.resumed-from-step` (DC-sourced) is the
+     * producer-backed form; this key covers the gateway-local stub path.
+     */
+    'pipeline:run:resumeFromStep': {
+        runId: string;
+        fromNodeId: string;
+        at: string;
+    };
+    'pipeline.run.retry': {
+        newRunId: string;
+        previousRunId: string;
+        at: string;
+    };
+    'pipeline.webhook.triggered': {
+        webhookPath: string;
+        body: unknown;
+        headers: Record<string, string>;
+        at: string;
+    };
+    'pipeline.join.waiting': {
+        runId: string;
+        stepId: string;
+        received: number;
+        required: number;
+        at: string;
+    };
+    'pipeline.join.fired': {
+        runId: string;
+        stepId: string;
+        inputs: string[];
+        at: string;
+    };
+};
+
+export declare interface PipelineNode {
+    id: string;
+    type: NodeType;
+    position: {
+        x: number;
+        y: number;
+    };
+    /** Discriminated union keyed on `data.type`. */
+    data: NodeData;
+}
+
+export declare interface PipelinePendingApproval {
+    runId: string;
+    pipelineId: string;
+    stepId: string;
+    approvers: readonly PipelinePendingApprover[];
+    /** Display message authored on the approval node. */
+    message?: string;
+    /** ISO 8601 of the first request. */
+    requestedAt: string;
+    /** Number of approvals required to advance the step. Default 1. */
+    requiredCount?: number;
+    /** Approvals already recorded against the step. */
+    recordedCount?: number;
+}
+
+export declare interface PipelinePendingApprovalsResponse {
+    approvals: readonly PipelinePendingApproval[];
+}
+
+export declare interface PipelinePendingApprover {
+    type: 'role' | 'user';
+    value: string;
+}
+
+export declare interface PipelineRun {
+    id: string;
+    pipelineId: string;
+    pipelineVersion: number;
+    status: RunStatus;
+    triggeredBy: PipelineRunTrigger;
+    /** Distributed-core ResourceRouter owner. */
+    ownerNodeId: string;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    /** Active frontier — can be > 1 with Fork. */
+    currentStepIds: string[];
+    steps: Record<string, StepExecution>;
+    /** Accumulated as the run progresses. */
+    context: Record<string, unknown>;
+    error?: PipelineRunError;
+    /** Per-model token usage accumulated during the run. */
+    tokenUsage?: Record<string, TokenUsageByModel>;
+    /** Estimated total cost in USD for this run. */
+    estimatedCostUsd?: number;
+    /** ISO timestamp set by StuckRunDetector when the run hasn't emitted events past the threshold. */
+    stuckAt?: string;
+    /**
+     * hub#2223: monotonic count of `resumeFromStep` invocations against this
+     * run. Defaults to undefined / 0 on a fresh run; the executor increments
+     * it each time the run is restarted from a specific step. Surfaces in the
+     * run-detail page so operators can see at a glance that a run was replayed.
+     */
+    replayAttempts?: number;
+    /**
+     * hub#2223: history of resume-from-step invocations on this run. Populated
+     * by the `pipeline:run:resumed-from-step` event handler in
+     * PipelineRunsContext so the run-detail banner can render an at-a-glance
+     * timeline of replays.
+     */
+    resumeHistory?: ResumeFromStepEntry[];
+}
+
+/**
+ * Full run snapshot. Same shape as `PipelineRunSummary` today; kept as a
+ * distinct alias because the detail endpoint may grow fields that aren't
+ * meaningful in list responses (full step input/output, attempt history,
+ * audit trail) without churning the list shape.
+ */
+export declare type PipelineRunDetailResponse = PipelineRunSummary;
+
+export declare interface PipelineRunError {
+    nodeId: string;
+    message: string;
+    stack?: string;
+    errorCategory?: ErrorCategory;
+}
+
+export declare interface PipelineRunsListQuery {
+    /** Page size, clamped server-side to [1, 100]. */
+    limit?: number;
+    /** Opaque cursor returned by a prior page. */
+    cursor?: string;
+}
+
+export declare interface PipelineRunsListResponse {
+    runs: readonly PipelineRunSummary[];
+    /** Present when more pages exist; pass to the next call as `cursor`. */
+    nextCursor?: string;
+}
+
+export declare interface PipelineRunSummary {
+    runId: string;
+    pipelineId: string;
+    status: 'running' | 'succeeded' | 'failed' | 'canceled' | 'interrupted';
+    startedAt: string;
+    completedAt?: string;
+    triggeredBy: {
+        userId?: string;
+        triggerType: string;
+        payload?: Record<string, unknown>;
+    };
+    triggerType?: string;
+    /** Per-step state map. Keyed by node ID; shape evolves with the framework. */
+    steps?: Record<string, unknown>;
+    /** Structured terminal-error envelope. Absent on non-failed runs. */
+    error?: {
+        nodeId: string;
+        message: string;
+        errorCategory?: string;
+        retryability?: string;
+        [key: string]: unknown;
+    };
+}
+
+export declare interface PipelineRunTrigger {
+    userId?: string;
+    triggerType: string;
+    payload: Record<string, unknown>;
+}
+
+export declare type PipelineStatus = 'draft' | 'published' | 'archived';
+
+export declare interface PipelineTriggerRequest {
+    /** Optional inline definition. When absent, server reads from store. */
+    definition?: InlinePipelineDefinition;
+    /** Free-form key/value passed to the trigger node's evaluation context. */
+    triggerPayload?: Record<string, unknown>;
+    /** Node IDs at which the run should pause for step-by-step debugging. */
+    breakpoints?: readonly string[];
+}
+
+export declare interface PipelineTriggerResponse {
+    runId: string;
+    pipelineId: string;
+    triggeredBy: {
+        userId: string;
+        triggerType: string;
+    };
+    /** ISO 8601 timestamp the server stamped the trigger acknowledgement. */
+    at: string;
+}
+
+/**
+ * Wire envelope that wraps every PipelineEventMap event as it crosses the
+ * network boundary (mock adapter in Phase 1, WebSocket in Phase 4+). Carries
+ * ordering metadata that lets the frontend dedupe replayed events after a
+ * ResourceRouter-orphaned run is resumed on a new owner.
+ */
+export declare interface PipelineWireEvent<K extends keyof PipelineEventMap = keyof PipelineEventMap> {
+    eventType: K;
+    payload: PipelineEventMap[K];
+    /** Monotonic per-run sequence — starts at 0, increments on each emit. Stable across replays. */
+    seq: number;
+    /** Node id that emitted the event. For observability + debugging. */
+    sourceNodeId: string;
+    /** Wall-clock emission time (ms). Re-stamped on replay — NEVER use for dedupe. */
+    emittedAt: number;
+}
+
+/**
+ * Wire-form event type carried on the gateway's `pipeline:event` frame.
+ *
+ * Most events use the same name on the wire as in `PipelineEventMap` (the
+ * gateway bridge canonicalises distributed-core's colon-form `:` to dot-form
+ * `.` to align with the in-app map keys). Known divergences:
+ *
+ *  - `pipeline.run.resume-from-step` (wire, kebab) ↔
+ *    `pipeline:run:resumeFromStep` (in-app, colon-form)
+ *
+ * The kebab form is the canonical wire name from DC post-deprecation-window
+ * (hub#2209). `WebSocketEventAdapter` normalises it before dispatch, so
+ * subscribers key on `PipelineEventMap`. The type below admits both shapes so
+ * that frame decoders don't fail typecheck on receipt of the kebab form.
+ */
+export declare type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
+
+export declare interface PolicyNodeData {
+    type: 'policy';
+    policyStoreId: string;
+    principal: string;
+    action: string;
+    resource: string;
+    contextEntities?: string;
+    label?: string;
+}
+
+export declare interface PoolSettings {
+    passwordPolicy?: PasswordPolicy;
+    mfaConfiguration: 'OFF' | 'OPTIONAL' | 'REQUIRED';
+    accountRecovery?: {
+        email: boolean;
+        sms: boolean;
+    };
+}
+
+export declare interface PoolStats {
+    userCount: number;
+    poolId: string;
+    poolName: string;
+}
+
+declare interface PostItem {
+    roomId: string;
+    postId: string;
+    authorId: string;
+    content: string;
+    createdAt: string;
+    updatedAt: string;
+    _fadeIn?: boolean;
+}
+
+export declare interface PresenceContextValue {
+    presenceUsers: PresenceUser[];
+    currentClientId: string | null;
+    setTyping: (isTyping: boolean) => void;
+}
+
+export declare function PresenceProvider({ value, children, }: {
+    value: PresenceContextValue;
+    children: ReactNode;
+}): JSX.Element;
+
+declare interface PresenceUser {
+    clientId: string;
+    status: string;
+    metadata: Record<string, unknown>;
+}
+
+declare interface ProfileItem {
+    userId: string;
+    displayName: string;
+    bio?: string;
+    avatarUrl?: string;
+    visibility: 'public' | 'private';
+    createdAt: string;
+    updatedAt: string;
+}
+
+declare interface ProposedField {
+    name: string;
+    sectionType: string;
+    required: boolean;
+}
+
+declare interface PublicProfile {
+    userId: string;
+    displayName: string;
+    avatarUrl?: string;
+    visibility: 'public' | 'private';
+}
+
+/**
+ * Purge (permanently delete) one or more DLQ entries.
+ */
+export declare function purgeDLQEntries(ids: string[], options?: {
+    preview?: boolean;
+}): Promise<DLQPurgeResponse>;
+
+export declare interface RateInfo {
+    [key: string]: unknown;
+}
+
+export declare const rawBorderRadius: {
+    readonly sm: 4;
+    readonly md: 6;
+    readonly lg: 8;
+    readonly xl: 12;
+    readonly full: 9999;
+};
+
+export declare const rawColors: {
+    readonly primary: "#3b82f6";
+    readonly primaryDark: "#1d4ed8";
+    readonly primaryLight: "#93c5fd";
+    readonly danger: "#dc2626";
+    readonly dangerLight: "#fca5a5";
+    readonly success: "#10b981";
+    readonly successLight: "#6ee7b7";
+    readonly warning: "#f59e0b";
+    readonly warningLight: "#fcd34d";
+    readonly info: "#0ea5e9";
+    readonly infoLight: "#7dd3fc";
+    readonly textPrimary: "#1e293b";
+    readonly textSecondary: "#64748b";
+    readonly textMuted: "#94a3b8";
+    readonly textInverse: "#ffffff";
+    readonly border: "#e2e8f0";
+    readonly borderLight: "#f1f5f9";
+    readonly background: "#f8fafc";
+    readonly surface: "#ffffff";
+    readonly surfaceRaised: "#ffffff";
+    readonly surfaceOverlay: "rgba(15, 23, 42, 0.5)";
+};
+
+export declare const rawFontSize: {
+    readonly xs: 11;
+    readonly sm: 13;
+    readonly md: 14;
+    readonly lg: 16;
+    readonly xl: 22;
+};
+
+export declare const rawSpacing: {
+    readonly xs: 4;
+    readonly sm: 8;
+    readonly md: 16;
+    readonly lg: 24;
+    readonly xl: 32;
+};
+
+export declare const rawTokens: {
+    readonly colors: {
+        readonly primary: "#3b82f6";
+        readonly primaryDark: "#1d4ed8";
+        readonly primaryLight: "#93c5fd";
+        readonly danger: "#dc2626";
+        readonly dangerLight: "#fca5a5";
+        readonly success: "#10b981";
+        readonly successLight: "#6ee7b7";
+        readonly warning: "#f59e0b";
+        readonly warningLight: "#fcd34d";
+        readonly info: "#0ea5e9";
+        readonly infoLight: "#7dd3fc";
+        readonly textPrimary: "#1e293b";
+        readonly textSecondary: "#64748b";
+        readonly textMuted: "#94a3b8";
+        readonly textInverse: "#ffffff";
+        readonly border: "#e2e8f0";
+        readonly borderLight: "#f1f5f9";
+        readonly background: "#f8fafc";
+        readonly surface: "#ffffff";
+        readonly surfaceRaised: "#ffffff";
+        readonly surfaceOverlay: "rgba(15, 23, 42, 0.5)";
+    };
+    readonly spacing: {
+        readonly xs: 4;
+        readonly sm: 8;
+        readonly md: 16;
+        readonly lg: 24;
+        readonly xl: 32;
+    };
+    readonly fontSize: {
+        readonly xs: 11;
+        readonly sm: 13;
+        readonly md: 14;
+        readonly lg: 16;
+        readonly xl: 22;
+    };
+    readonly borderRadius: {
+        readonly sm: 4;
+        readonly md: 6;
+        readonly lg: 8;
+        readonly xl: 12;
+        readonly full: 9999;
+    };
+};
+
+/**
+ * Redrive one or more DLQ entries (re-publish them to the event bus).
+ */
+export declare function redriveDLQEntries(ids: string[], options?: {
+    resetAttempts?: boolean;
+    preview?: boolean;
+}): Promise<DLQRedriveResponse>;
+
+export declare function registerFieldType(def: FieldTypeDefinition): void;
+
+export declare function registerRenderer(sectionType: string, viewMode: ViewMode | '*', component: SectionRenderer): void;
+
+declare interface RemoteCursor {
+    clientId: string;
+    position: Record<string, unknown>;
+    metadata: Record<string, unknown>;
+}
+
+export declare function resumeFromStep(pipelineId: string, runId: string, fromNodeId: string, options?: ResumeFromStepOptions): Promise<ResumeFromStepResponse>;
+
+/** A single resume-from-step entry on a PipelineRun (hub#2223). */
+export declare interface ResumeFromStepEntry {
+    fromNodeId: string;
+    /** The step that originally failed when this resumption was triggered, if known. */
+    originalFailedStepId?: string;
+    at: string;
+}
+
+export declare interface ResumeFromStepOptions {
+    /** When true, allow resuming a `succeeded`/`done` run for diagnostic re-execution. */
+    allowCompleted?: boolean;
+    /** Optional list of node ids to break on during the resumed dispatch loop. */
+    breakpoints?: string[];
+}
+
+export declare interface ResumeFromStepResponse {
+    runId: string;
+    fromNodeId: string;
+    /** The stepId that originally failed, when surfaceable. */
+    originalFailedStepId?: string;
+    /** Monotonic count of `resumeFromStep` invocations on this run. */
+    replayAttempts: number;
+    at: string;
+}
+
+export declare function retryFromNode(pipelineId: string, runId: string, nodeId: string, inputs?: Record<string, unknown>, snapshotInput?: boolean): Promise<RetryFromNodeResponse>;
+
+export declare interface RetryFromNodeResponse {
+    newRunId: string;
+    originalRunId: string;
+    pipelineId: string;
+    retryFromNodeId: string;
+    skippedNodes: string[];
+    at: string;
+}
+
+export declare interface RetryPolicy {
+    maxAttempts: number;
+    backoffMs: number;
+    backoffMultiplier: number;
+}
+
+/**
+ * Revert a previously-applied paused-context patch. Throws `PatchHttpError`
+ * for non-204 (typically 409 once the run has resumed past the breakpoint).
+ */
+export declare function revertPatch(pipelineId: string, runId: string, stepId: string, patchId: string): Promise<void>;
+
+declare interface RoomItem {
+    roomId: string;
+    channelId: string;
+    name: string;
+    type: 'standalone' | 'group' | 'dm';
+    ownerId: string;
+    groupId?: string;
+    dmPeerUserId?: string;
+    createdAt: string;
+}
+
+declare interface RoomMemberItem {
+    roomId: string;
+    userId: string;
+    displayName?: string;
+    joinedAt: string;
+}
+
+export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+
+/**
+ * Cross-run audit search. At least one of `actor` / `pipelineId` is required;
+ * the backend returns 400 otherwise.
+ */
+export declare function searchAudit(filters: SearchAuditFilters): Promise<AuditPage>;
+
+export declare interface SearchAuditFilters extends AuditFilters {
+    /** Either `actor` or `pipelineId` is required. */
+    actor?: string;
+    /** Either `actor` or `pipelineId` is required. */
+    pipelineId?: string;
+}
+
+export declare interface Section {
+    id: string;
+    type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
+    title: string;
+    collapsed: boolean;
+    items: TaskItem[];
+    sectionType?: string;
+    metadata?: Record<string, unknown>;
+    placeholder?: string;
+}
+
+declare type SectionRenderer = React.ComponentType<SectionRendererProps>;
+
+declare interface SectionRendererProps {
+    section: Section;
+    viewMode: ViewMode;
+    editable: boolean;
+    fragment?: XmlFragment | null;
+    ydoc?: Y.Doc | null;
+    provider?: CollaborationProvider | null;
+    user?: {
+        name: string;
+        color: string;
+    };
+    onUpdateSection?: (patch: Partial<Section>) => void;
+    onAddItem?: (item: Omit<TaskItem, 'id'>) => void;
+    onUpdateItem?: (itemId: string, patch: Partial<TaskItem>) => void;
+    onRemoveItem?: (itemId: string) => void;
+    participants?: Participant[];
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    comments?: CommentThread[];
+    commentCount?: number;
+    onOpenComments?: (sectionId: string) => void;
+    onNavigateToEditor?: (sectionId: string) => void;
+}
+
+/** Per-section review status (DocuSign-style acknowledgement). */
+export declare interface SectionReview {
+    userId: string;
+    displayName: string;
+    status: 'reviewed' | 'approved' | 'changes_requested';
+    timestamp: string;
+    comment?: string;
+}
+
+/** Specialized section renderer type — extends beyond the base `type` for richer UIs. */
+export declare type SectionType = 'tasks' | 'rich-text' | 'decisions' | 'timeline' | 'checklist' | 'rating' | 'voting';
+
+declare type SendMessage = (msg: Record<string, unknown>) => void;
+
+/** Server welcome message (type === 'session') */
+export declare interface SessionMessage extends GatewayMessage {
+    type: 'session';
+    clientId: string;
+    sessionToken: string;
+    restored: boolean;
+}
+
+export declare interface SetupStatus {
+    hasUserPools: boolean;
+    poolCount: number;
+    hasClients: boolean;
+    clientCount: number;
+    hasAdminUser: boolean;
+    totalUsers: number;
+    adminEmails: string[];
+    firstPoolId?: string;
+    smtpConfigured: boolean;
+    smtpHost?: string;
+    smtpPort?: string;
+    smtpFrom?: string;
+    issuer: string;
+    externalIssuer?: string;
+    issuerIsCustom: boolean;
+    issuerConfigured: boolean;
+    wellKnownUrl?: string;
+    firstClientId?: string;
+}
+
+export declare const shadows: {
+    /** Subtle shadow for cards, panels */
+    readonly sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)";
+    /** Medium shadow for dropdowns, popovers */
+    readonly md: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)";
+    /** Strong shadow for modals, dialogs */
+    readonly lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)";
+    /** Extra strong shadow for elevated modals */
+    readonly xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)";
+};
+
+export declare interface ShortcutsHelpProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+export declare function SkeletonCard({ width, height }: SkeletonCardProps): JSX.Element;
+
+export declare interface SkeletonCardProps {
+    width?: number | string;
+    height?: number | string;
+}
+
+declare interface SloPoint {
+    at: string;
+    value: number | null;
+}
+
+declare type SloWindow = '15m' | '1h' | '6h' | '24h';
+
+/** Plain-object snapshot of a section for diffing (no Y.js references). */
+declare interface SnapshotSection {
+    id: string;
+    type: string;
+    title: string;
+    /** Plain text extracted from the section's rich-text content. */
+    textContent: string;
+    items: Array<{
+        id: string;
+        text: string;
+        status: string;
+        assignee: string;
+        priority: string;
+    }>;
+}
+
+declare interface SourceSloMetrics {
+    sourceId: string;
+    window: string;
+    bucketSizeMs: number;
+    latencyP95: SloPoint[];
+    errorRate: SloPoint[];
+    queueDepth: SloPoint[];
+}
+
+export declare const spacing: {
+    readonly xs: string;
+    readonly sm: string;
+    readonly md: string;
+    readonly lg: string;
+    readonly xl: string;
+};
+
+export declare type SpanKind = 'agent' | 'tool' | 'llm' | 'retrieval' | 'guardrail' | 'internal';
+
+export declare type SpanStatus = 'ok' | 'error' | 'unset';
+
+export declare function Sparkline({ data, width, height, color }: SparklineProps): JSX.Element;
+
+export declare interface SparklineProps {
+    data: number[];
+    width?: number;
+    height?: number;
+    color?: string;
+}
+
+export declare function StackedAreaChart({ series, height, }: {
+    series: LineSeries[];
+    height?: number;
+}): JSX_2.Element;
+
+/**
+ * One execution attempt of a step. Hub task #1280.
+ *
+ * `StepExecution` retains its top-level `status`/`error`/`output`/timing fields
+ * — they always reflect the LATEST attempt, so existing single-attempt readers
+ * are unaffected. `attempts[]` carries the full history for retry-aware UI
+ * (history view, compare-attempts diff). See ADR-DURABLE-PIPELINE-EXECUTION.
+ */
+export declare interface StepAttempt {
+    attemptNumber: number;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    errorCategory?: ErrorCategory;
+    /** Backoff delay applied before the next attempt; only set on retryable failures. */
+    retryAfterMs?: number;
+    /** `${runId}:${nodeId}:${attemptNumber}` (per-attempt) or `${runId}:${nodeId}` (per-step idempotent). */
+    idempotencyKey: string;
+}
+
+export declare interface StepExecution {
+    nodeId: string;
+    status: StepStatus;
+    startedAt?: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    /** Full per-attempt history. Absent on rows persisted before hub#1280. */
+    attempts?: StepAttempt[];
+    llm?: {
+        prompt: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        /** True between `pipeline.llm.stream.opened` and the first token; cleared when tokensOut > 0. */
+        streamOpened?: boolean;
+        /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
+        firstTokenLatencyMs?: number;
+    };
+    approvals?: ApprovalRecord[];
+    /**
+     * hub#2226: edit-and-continue patch history applied while the run was
+     * paused at this step's breakpoint. Append-only at apply time;
+     * `revertedAt` is set when a patch is undone via `revertContextPatch`.
+     * Empty/undefined for steps that were never paused-and-patched.
+     */
+    patches?: PatchEntry[];
+}
+
+export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+/**
+ * Accessible on/off toggle. Renders as a `role="switch"` button so screen
+ * readers announce the state. Use inside `FormField` for a labeled row, or
+ * pass `aria-label` directly for inline use.
+ */
+export declare function Switch({ checked, onChange, disabled, size, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, className, style, 'data-testid': testId, }: SwitchProps): JSX.Element;
+
+export declare interface SwitchProps {
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    disabled?: boolean;
+    size?: SwitchSize;
+    /** Accessible label — required for screen readers when no visible label is wired. */
+    'aria-label'?: string;
+    /** When using <FormField label="..."><Switch ...></FormField>, set this to the label's id. */
+    'aria-labelledby'?: string;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare type SwitchSize = 'sm' | 'md';
+
+export declare interface SyncConflict {
+    conflictId: string;
+    sourceId: string;
+    documentId: string;
+    documentTypeId: string | null;
+    /** Stable identity in the source system (e.g. Drive file id). */
+    sourceRef: string;
+    /** Free-form short summary, e.g. "title and body changed remotely". */
+    summary: string;
+    fields: ConflictField[];
+    status: SyncConflictStatus;
+    /** Last edit time from the platform side. */
+    platformUpdatedAt: string;
+    /** Last edit time from the source side. */
+    sourceUpdatedAt: string;
+    detectedAt: string;
+    resolvedAt?: string | null;
+}
+
+export declare type SyncConflictStatus = 'pending' | 'resolved' | 'discarded';
+
+declare type SyncOp = 'create' | 'update' | 'delete';
+
+export declare interface SyncStats {
+    /** Total files the adapter saw on the source. */
+    filesFound: number;
+    /** Newly-ingested files (not seen before). */
+    filesNew: number;
+    /** Existing files whose hash changed since last sync. */
+    filesUpdated: number;
+    /** Files skipped (already-seen + unchanged). */
+    filesSkipped: number;
+    /** Errors during this sync (per-file failures). */
+    errors: number;
+    /** Sync duration in ms. */
+    durationMs: number;
+}
+
+declare interface SyncStatus {
+    /** Operation that triggered the most recent sync. */
+    op: SyncOp;
+    /** Whether the server round-trip succeeded. */
+    ok: boolean;
+    /** Increases on every recorded sync so UI keys can react. */
+    key: number;
+    /** Optional error message for failed syncs. */
+    error?: string;
+}
+
+export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
+
+export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
+
+export declare interface TableBodyProps extends HTMLAttributes<HTMLTableSectionElement> {
+    children: ReactNode;
+}
+
+export declare function TableHead({ children, className, ...rest }: TableHeadProps): JSX.Element;
+
+export declare interface TableHeadProps extends HTMLAttributes<HTMLTableSectionElement> {
+    children: ReactNode;
+}
+
+export declare interface TableProps extends HTMLAttributes<HTMLTableElement> {
+    children: ReactNode;
+}
+
+export declare function TableRow({ children, clickable, className, ...rest }: TableRowProps): JSX.Element;
+
+export declare interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+    children: ReactNode;
+    clickable?: boolean;
+}
+
+export declare function TableTd({ children, className, ...rest }: TableTdProps): JSX.Element;
+
+export declare interface TableTdProps extends TdHTMLAttributes<HTMLTableCellElement> {
+    children?: ReactNode;
+}
+
+export declare function TableTh({ children, sortable, sortDirection, className, ...rest }: TableThProps): JSX.Element;
+
+export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElement> {
+    children?: ReactNode;
+    sortable?: boolean;
+    sortDirection?: 'asc' | 'desc' | null;
+}
+
+export declare function TagEditor({ value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
+
+export declare interface TagEditorProps {
+    value: string[];
+    onChange: (tags: string[]) => void;
+    placeholder?: string;
+    suggestions?: string[];
+    /**
+     * Lowercase tags before insertion. Defaults to true to preserve historical
+     * behavior. Set false when you need case-sensitive identifiers (e.g. Cedar
+     * action names like `ViewSalary`).
+     */
+    lowercase?: boolean;
+}
+
+declare interface TaskAssignment {
+    kind: 'task';
+    sectionId: string;
+    sectionTitle: string;
+    itemId: string;
+    taskText: string;
+    status: string;
+    priority: string;
+}
+
+export declare interface TaskItem {
+    id: string;
+    text: string;
+    status: 'pending' | 'acked' | 'done' | 'rejected';
+    assignee: string;
+    ackedBy: string;
+    ackedAt: string;
+    priority: 'low' | 'medium' | 'high';
+    notes: string;
+    dueDate?: string;
+    category?: string;
+}
+
+declare interface TextSelectionData {
+    start: number;
+    end: number;
+    text: string;
+}
+
+declare type Theme = 'light' | 'dark';
+
+declare interface ThemeContextValue {
+    theme: Theme;
+    toggleTheme: () => void;
+}
+
+/**
+ * Provides a resolved theme via React context and injects CSS custom properties
+ * on the document root so that `var(--ui-*)` references work globally.
+ *
+ * Works without wrapping — once mounted, any component using `cssVar()` in
+ * inline styles will pick up the values. Wrapping in ThemeProvider enables
+ * programmatic access via `useTheme()` and scoped overrides.
+ */
+export declare function ThemeProvider({ children, preset, theme }: ThemeProviderProps): JSX.Element;
+
+export declare interface ThemeProviderProps {
+    children?: ReactNode;
+    /** Base preset to use. Defaults to 'light'. */
+    preset?: 'light' | 'dark';
+    /** Partial overrides merged on top of the preset. */
+    theme?: Partial<ThemeTokens>;
+}
+
+/**
+ * Returns all ThemeTokens as a Record mapping CSS variable names to their values.
+ */
+export declare function themeToCssVars(tokens: ThemeTokens): Record<string, string>;
+
+/** The full set of design tokens exposed as CSS custom properties. */
+export declare interface ThemeTokens {
+    primary: string;
+    primaryDark: string;
+    primaryLight: string;
+    danger: string;
+    dangerLight: string;
+    success: string;
+    successLight: string;
+    warning: string;
+    warningLight: string;
+    info: string;
+    infoLight: string;
+    textPrimary: string;
+    textSecondary: string;
+    textMuted: string;
+    textInverse: string;
+    background: string;
+    surface: string;
+    surfaceRaised: string;
+    surfaceOverlay: string;
+    border: string;
+    borderLight: string;
+    spaceXs: string;
+    spaceSm: string;
+    spaceMd: string;
+    spaceLg: string;
+    spaceXl: string;
+    fontXs: string;
+    fontSm: string;
+    fontMd: string;
+    fontLg: string;
+    fontXl: string;
+    radiusSm: string;
+    radiusMd: string;
+    radiusLg: string;
+    radiusXl: string;
+    radiusFull: string;
+    shadowSm: string;
+    shadowMd: string;
+    shadowLg: string;
+    shadowXl: string;
+}
+
+export declare interface ToastContextValue {
+    toast: (message: string, opts?: ToastOptions) => void;
+}
+
+export declare interface ToastOptions {
+    type?: ToastType;
+    durationMs?: number;
+    actionLabel?: string;
+    onAction?: () => void;
+}
+
+export declare interface ToastProps {
+    id: string;
+    message: string;
+    type: ToastType;
+    /** Exit state drives fade-out animation before removal from the DOM. */
+    exiting?: boolean;
+    actionLabel?: string;
+    onAction?: () => void;
+    onDismiss: (id: string) => void;
+}
+
+export declare function ToastProvider({ children }: {
+    children: ReactNode;
+}): JSX.Element;
+
+export declare type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+/**
+ * Convert a camelCase token key to a CSS variable name with --ui- prefix.
+ *
+ * Examples:
+ *   'primary'      → '--ui-primary'
+ *   'primaryDark'  → '--ui-primary-dark'
+ *   'textPrimary'  → '--ui-text-primary'
+ *   'spaceXs'      → '--ui-space-xs'
+ */
+export declare function tokenToCssVarName(token: keyof ThemeTokens): string;
+
+export declare interface TokenUsageByModel {
+    tokensIn: number;
+    tokensOut: number;
+}
+
+export declare interface TraceSpan {
+    traceId: string;
+    spanId: string;
+    parentSpanId?: string;
+    name: string;
+    kind: SpanKind;
+    startTime: string;
+    endTime: string;
+    durationMs: number;
+    status: SpanStatus;
+    attributes: Record<string, string | number | boolean>;
+}
+
+export declare interface TraceTimeline {
+    traceId: string;
+    rootSpanId: string;
+    spans: TraceSpan[];
+    totalDurationMs: number;
+    agentId: string;
+    startedAt: string;
+}
+
+export declare interface TransformNodeData {
+    type: 'transform';
+    transformType: TransformType;
+    expression: string;
+    /** Where in context to write the result; defaults to merging into root. */
+    outputKey?: string;
+    /** Marks this node as an intentional terminal/sink — silences DEAD_END lint. */
+    terminal?: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+export declare type TransformType = 'jsonpath' | 'template' | 'javascript';
+
+export declare interface TriggerBinding {
+    event: TriggerType;
+    documentTypeId?: string;
+    schedule?: string;
+    webhookPath?: string;
+    /**
+     * 32-byte hex secret used to verify HMAC-SHA256 signatures on incoming
+     * webhook payloads. Generated server-side by social-api the first time a
+     * webhook trigger binding is saved (see
+     * `social-api/src/routes/pipelineDefinitions.ts`). The frontend never
+     * mints this — it only displays it so the user can copy it into the
+     * external webhook source's "secret" field. Absent → the route falls
+     * back to Phase-1 unsigned-OK behavior.
+     */
+    webhookSecret?: string;
+}
+
+export declare interface TriggerNodeData {
+    type: 'trigger';
+    triggerType: TriggerType;
+    /** Required for `document.*` triggers. */
+    documentTypeId?: string;
+    /** Cron expression; required when `triggerType === 'schedule'`. */
+    schedule?: string;
+    /** Required when `triggerType === 'webhook'`. */
+    webhookPath?: string;
+}
+
+export declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
+
+declare interface TypedDocument {
+    documentId: string;
+    typeId: string;
+    values: Record<string, TypedDocumentValue>;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+declare type TypedDocumentValue = string | string[] | number | number[] | boolean;
+
+export declare interface UpdateClientInput {
+    clientName?: string;
+    redirectUris?: string[];
+    postLogoutRedirectUris?: string[];
+    grantTypes?: string[];
+    responseTypes?: string[];
+    scope?: string;
+}
+
+export declare interface UpdateEmailTemplateInput {
+    name?: string;
+    subject?: string;
+    htmlBody?: string;
+    textBody?: string;
+    variables?: string[];
+}
+
+export declare interface UpdateGroupInput {
+    groupName?: string;
+    description?: string;
+    permissions?: string[];
+}
+
+export declare interface UpdatePoolInput {
+    poolName?: string;
+    customAttributes?: Record<string, string>;
+    settings?: Partial<PoolSettings>;
+}
+
+export declare interface UpdateUserInput {
+    email?: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    website?: string;
+    customAttributes?: Record<string, unknown>;
+}
+
+declare interface UrlFilterState<T extends Record<string, string | undefined>> {
+    filters: T;
+    setFilter: <K extends keyof T>(key: K, value: T[K]) => void;
+    clearFilters: () => void;
+}
+
+export declare function useActivityBus(options: UseActivityBusOptions): UseActivityBusReturn;
+
+declare interface UseActivityBusOptions {
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+    connectionState: ConnectionState;
+    userId: string;
+    displayName: string;
+    color?: string;
+    maxItems?: number;
+}
+
+declare interface UseActivityBusReturn {
+    events: ActivityEvent[];
+    publish: (eventType: string, detail: Record<string, unknown>) => void;
+    isLive: boolean;
+}
+
+/**
+ * Wrap an async function with loading/error/retry state.
+ * Useful for API calls in components that need to show loading spinners,
+ * error messages, and retry buttons.
+ *
+ * @param fn Async function to wrap
+ * @returns { data, loading, error, execute, retry, reset }
+     *
+     * @example
+     * const { data, loading, error, execute, retry } = useApiCall(
+     *   async (pipelineId: string) => {
+     *     const res = await fetch(`/api/pipelines/${pipelineId}`);
+     *     return res.json();
+     *   }
+     * );
+     *
+     * useEffect(() => { execute(pipelineId); }, [pipelineId]);
+     */
+ export declare function useApiCall<T>(fn: (...args: unknown[]) => Promise<T>): ApiCallState<T>;
+
+ /**
+  * Polls /health every `pollMs`. The first sample lands as soon as the network
+  * round-trip completes; the hook starts in `unknown` so callers don't flash
+  * "degraded" before the first response.
+  */
+ export declare function useApiHealth(pollMs?: number): ApiHealthSnapshot;
+
+ export declare function useAuth(): UseAuthReturn;
+
+ declare interface UseAuthReturn extends AuthState {
+     signIn: (email: string, password: string) => Promise<void>;
+     signUp: (email: string, password: string) => Promise<void>;
+     signOut: () => void;
+ }
+
+ export declare function useAwareness(provider: GatewayProvider | null, opts: UseAwarenessOptions): UseAwarenessReturn;
+
+ declare interface UseAwarenessOptions {
+     userId: string;
+     displayName: string;
+     color: string;
+     mode: ViewMode;
+ }
+
+ declare interface UseAwarenessReturn {
+     awareness: AwarenessUpdaters;
+     participants: Participant[];
+ }
+
+ export declare function useAwarenessState(provider: GatewayProvider | null, initial: Omit<AwarenessFields, 'lastSeen' | 'idle'>): AwarenessUpdaters;
+
+ export declare function useChat(options: UseChatOptions): UseChatReturn;
+
+ declare interface UseChatOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     displayName: string;
+ }
+
+ declare interface UseChatReturn {
+     messages: ChatMessage[];
+     send: (content: string) => void;
+ }
+
+ /**
+  * Invoke `onClickOutside` when a mousedown occurs outside the ref element.
+  * Useful for closing popovers, dropdowns, and modals on outside click.
+  *
+  * @param ref React ref to the element that should not trigger the callback
+  * @param onClickOutside Callback invoked on outside click
+  * @param enabled Enable/disable the listener (default: true)
+  *
+  * @example
+  * const menuRef = useRef<HTMLDivElement>(null);
+  * useClickOutside(menuRef, () => setMenuOpen(false), menuOpen);
+  */
+ export declare function useClickOutside<T extends HTMLElement>(ref: RefObject<T>, onClickOutside: () => void, enabled?: boolean): void;
+
+ export declare function useCollaborativeDoc(options: UseCollaborativeDocOptions): UseCollaborativeDocReturn;
+
+ declare interface UseCollaborativeDocOptions {
+     documentId: string;
+     mode: ViewMode;
+     ws: UseWebSocketReturn;
+     userId: string;
+     displayName: string;
+     color: string;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+ }
+
+ declare interface UseCollaborativeDocReturn {
+     meta: DocumentMeta | null;
+     sections: Section[];
+     synced: boolean;
+     updateMeta: (partial: Partial<DocumentMeta>) => void;
+     addSection: (section: Section) => void;
+     updateSection: (sectionId: string, partial: Partial<Section>) => void;
+     removeSection: (sectionId: string) => void;
+     addItem: (sectionId: string, item: TaskItem) => void;
+     updateItem: (sectionId: string, itemId: string, partial: Partial<TaskItem>) => void;
+     ackItem: (sectionId: string, itemId: string, userId: string) => void;
+     rejectItem: (sectionId: string, itemId: string, userId: string) => void;
+     removeItem: (sectionId: string, itemId: string) => void;
+     getSectionFragment: (sectionId: string) => Y.XmlFragment | null;
+     ydoc: Y.Doc | null;
+     provider: GatewayProvider | null;
+     loadFromMarkdown: (markdown: string) => void;
+     exportJSON: () => DocumentData | null;
+     participants: Participant[];
+     comments: Record<string, CommentThread[]>;
+     addComment: (sectionId: string, opts: {
+         text: string;
+         userId: string;
+         displayName: string;
+         color: string;
+         parentCommentId?: string | null;
+     }) => void;
+     resolveThread: (sectionId: string, commentId: string, resolverDisplayName: string) => void;
+     unresolveThread: (sectionId: string, commentId: string) => void;
+     sectionReviews: Record<string, SectionReview[]>;
+     reviewSection: (sectionId: string, status: SectionReview['status'], comment?: string) => void;
+     awareness: AwarenessUpdaters;
+ }
+
+ export declare function useColorScheme(): ThemeContextValue;
+
+ export declare function useCommandPalette(): CommandPaletteController;
+
+ export declare function useComments({ idToken, roomId, postId, onMessage }: UseCommentsOptions): UseCommentsReturn;
+
+ declare interface UseCommentsOptions {
+     idToken: string | null;
+     roomId: string | null;
+     postId: string | null;
+     onMessage: OnMessageFn;
+ }
+
+ declare interface UseCommentsReturn {
+     comments: CommentItem[];
+     createComment: (content: string, parentCommentId?: string) => Promise<void>;
+     deleteComment: (commentId: string) => Promise<void>;
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useCRDT(options: UseCRDTOptions): UseCRDTReturn;
+
+ declare interface UseCRDTOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseCRDTReturn {
+     content: string;
+     applyLocalEdit: (newText: string) => void;
+     hasConflict: boolean;
+     dismissConflict: () => void;
+ }
+
+ export declare function useCursors(options: UseCursorsOptions): UseCursorsReturn;
+
+ declare interface UseCursorsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     clientId: string | null;
+     displayName: string;
+ }
+
+ declare interface UseCursorsReturn {
+     cursors: Map<string, RemoteCursor>;
+     localCursor: RemoteCursor | null;
+     activeMode: CursorMode;
+     sendFreeformUpdate: (x: number, y: number) => void;
+     sendTableUpdate: (row: number, col: number) => void;
+     sendTextUpdate: (position: number, selectionData: TextSelectionData | null, hasSelection: boolean) => void;
+     sendCanvasUpdate: (x: number, y: number, tool: CanvasTool, color: string, size: number) => void;
+     switchMode: (mode: CursorMode) => void;
+ }
+
+ export declare function useCustomFieldTypes(): UseCustomFieldTypesReturn;
+
+ declare interface UseCustomFieldTypesReturn {
+     types: CustomFieldType[];
+     createType: (draft: Omit<CustomFieldType, 'id' | 'createdAt' | 'updatedAt'>) => CustomFieldType;
+     updateType: (id: string, patch: Partial<Omit<CustomFieldType, 'id' | 'createdAt'>>) => void;
+     deleteType: (id: string) => void;
+ }
+
+ export declare function useDocTypeProposals(): UseDocTypeProposalsResult;
+
+ declare interface UseDocTypeProposalsResult {
+     proposals: DocTypeProposalRow[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     promote: (proposalId: string) => Promise<void>;
+     reject: (proposalId: string) => Promise<void>;
+ }
+
+ export declare function useDocumentComments(options: UseDocumentCommentsOptions): UseDocumentCommentsReturn;
+
+ declare interface UseDocumentCommentsOptions {
+     documentId: string;
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentCommentsReturn {
+     comments: Record<string, CommentThread[]>;
+     addComment: (sectionId: string, text: string, parentCommentId?: string | null) => Promise<void>;
+     resolveThread: (sectionId: string, commentId: string) => Promise<void>;
+     unresolveThread: (sectionId: string, commentId: string) => Promise<void>;
+     loading: boolean;
+ }
+
+ export declare function useDocumentExport(ydoc: Y.Doc | null): UseDocumentExportReturn;
+
+ declare interface UseDocumentExportReturn {
+     exportJSON: () => DocumentData | null;
+ }
+
+ export declare function useDocumentItems(options: UseDocumentItemsOptions): UseDocumentItemsReturn;
+
+ declare interface UseDocumentItemsOptions {
+     documentId: string;
+     /** Section IDs to load items for. Items are fetched per-section. */
+     sectionIds: string[];
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentItemsReturn {
+     items: Record<string, TaskItem[]>;
+     addItem: (sectionId: string, item: Partial<TaskItem>) => Promise<void>;
+     updateItem: (sectionId: string, itemId: string, updates: Partial<TaskItem>) => Promise<void>;
+     removeItem: (sectionId: string, itemId: string) => Promise<void>;
+     ackItem: (sectionId: string, itemId: string) => Promise<void>;
+     loading: boolean;
+ }
+
+ export declare function useDocumentMetadata(ydoc: Y.Doc | null): UseDocumentMetadataReturn;
+
+ declare interface UseDocumentMetadataReturn {
+     meta: DocumentMeta | null;
+     updateMeta: (partial: Partial<DocumentMeta>) => void;
+ }
+
+ export declare function useDocumentReviews(options: UseDocumentReviewsOptions): UseDocumentReviewsReturn;
+
+ declare interface UseDocumentReviewsOptions {
+     documentId: string;
+     idToken: string | null;
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: string;
+ }
+
+ declare interface UseDocumentReviewsReturn {
+     sectionReviews: Record<string, SectionReview[]>;
+     reviewSection: (sectionId: string, status: string, comment?: string) => Promise<void>;
+     loading: boolean;
+ }
+
+ export declare function useDocuments(options: UseDocumentsOptions): UseDocumentsReturn;
+
+ declare interface UseDocumentsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseDocumentsReturn {
+     documents: DocumentInfo[];
+     presence: Record<string, DocumentPresenceUser[]>;
+     loading: boolean;
+     createDocument: (meta: {
+         title: string;
+         type: string;
+         description?: string;
+     }) => void;
+     deleteDocument: (documentId: string) => void;
+     updateDocumentMeta: (documentId: string, meta: Partial<DocumentInfo>) => void;
+     refreshDocuments: () => void;
+     refreshPresence: () => void;
+ }
+
+ export declare function useDocumentTypes(options?: UseDocumentTypesOptions): UseDocumentTypesReturn;
+
+ declare interface UseDocumentTypesOptions {
+     /** Cognito ID token. When present, saves dual-write to the server. */
+     idToken?: string | null;
+ }
+
+ declare interface UseDocumentTypesReturn {
+     types: DocumentType_2[];
+     createType: (data: Omit<DocumentType_2, 'id' | 'createdAt' | 'updatedAt'>) => DocumentType_2;
+     updateType: (id: string, patch: Partial<Omit<DocumentType_2, 'id' | 'createdAt'>>) => void;
+     deleteType: (id: string) => void;
+     getType: (id: string) => DocumentType_2 | undefined;
+     /** Most recent server-sync outcome. null until the first sync attempt. */
+     lastSync: SyncStatus | null;
+ }
+
+ export declare function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn;
+
+ declare interface UseFriendsOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseFriendsReturn {
+     followers: PublicProfile[];
+     following: PublicProfile[];
+     friends: PublicProfile[];
+     follow: (userId: string) => Promise<void>;
+     unfollow: (userId: string) => Promise<void>;
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn;
+
+ declare interface UseGroupsOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseGroupsReturn {
+     groups: GroupItem[];
+     createGroup: (name: string, description?: string, visibility?: 'public' | 'private') => Promise<void>;
+     deleteGroup: (groupId: string) => Promise<void>;
+     joinGroup: (groupId: string) => Promise<void>;
+     leaveGroup: (groupId: string) => Promise<void>;
+     inviteUser: (groupId: string, userId: string) => Promise<void>;
+     acceptInvite: (groupId: string, accept: boolean) => Promise<void>;
+     loadMembers: (groupId: string) => Promise<void>;
+     members: MemberItem[];
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useIdentityAdmin(): UseIdentityAdminReturn;
+
+ declare interface UseIdentityAdminReturn {
+     authenticated: boolean;
+     loading: boolean;
+     error: string | null;
+     login: (email: string, password: string) => Promise<void>;
+     logout: () => Promise<void>;
+     checkSession: () => Promise<void>;
+ }
+
+ export declare function useIdentityAudit(): UseIdentityAuditReturn;
+
+ declare interface UseIdentityAuditReturn {
+     records: AuditRecord[];
+     loading: boolean;
+     error: string | null;
+     query: (params: AuditQueryParams) => Promise<void>;
+     getEntityHistory: (entityType: string, entityId: string) => Promise<AuditRecord[]>;
+     getStateAtTime: (entityId: string, timestamp: number) => Promise<Record<string, unknown> | null>;
+ }
+
+ export declare function useIdentityClients(): UseIdentityClientsReturn;
+
+ declare interface UseIdentityClientsReturn {
+     clients: IdentityClient[];
+     loading: boolean;
+     error: string | null;
+     createClient: (input: CreateClientInput) => Promise<IdentityClient | null>;
+     updateClient: (clientId: string, input: UpdateClientInput) => Promise<IdentityClient | null>;
+     deleteClient: (clientId: string) => Promise<void>;
+     createWithPool: (input: CreateClientWithPoolInput) => Promise<IdentityClient | null>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityContext(): IdentityContextValue;
+
+ export declare function useIdentityDiagnostics(): UseIdentityDiagnosticsReturn;
+
+ declare interface UseIdentityDiagnosticsReturn {
+     diagnostics: DiagnosticsInfo | null;
+     rates: RateInfo | null;
+     dlq: DlqEntry[];
+     loading: boolean;
+     error: string | null;
+     redriveDlq: (id: string) => Promise<void>;
+     purgeDlq: (id: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityEmailTemplates(): UseIdentityEmailTemplatesReturn;
+
+ declare interface UseIdentityEmailTemplatesReturn {
+     templates: EmailTemplate[];
+     loading: boolean;
+     error: string | null;
+     createTemplate: (input: CreateEmailTemplateInput) => Promise<EmailTemplate | null>;
+     updateTemplate: (templateId: string, input: UpdateEmailTemplateInput) => Promise<EmailTemplate | null>;
+     deleteTemplate: (templateId: string) => Promise<void>;
+     testSend: (templateId: string, recipientEmail: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityGroups(poolId: string | null): UseIdentityGroupsReturn;
+
+ declare interface UseIdentityGroupsReturn {
+     groups: IdentityGroup[];
+     loading: boolean;
+     error: string | null;
+     createGroup: (input: CreateGroupInput) => Promise<IdentityGroup | null>;
+     updateGroup: (groupId: string, input: UpdateGroupInput) => Promise<IdentityGroup | null>;
+     deleteGroup: (groupId: string) => Promise<void>;
+     addMember: (groupId: string, userId: string) => Promise<void>;
+     removeMember: (groupId: string, userId: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityMfa(): UseIdentityMfaReturn;
+
+ export declare function useIdentityMfaAdmin(): UseIdentityMfaAdminReturn;
+
+ declare interface UseIdentityMfaAdminReturn {
+     metrics: MfaMetrics | null;
+     users: IdentityUser[];
+     pools: IdentityPool[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ declare interface UseIdentityMfaReturn {
+     devices: MfaDevice[];
+     loading: boolean;
+     error: string | null;
+     setupDevice: (poolId: string, userId: string, deviceName: string) => Promise<MfaSetupResult | null>;
+     verifySetup: (poolId: string, userId: string, deviceId: string, code: string) => Promise<boolean>;
+     renameDevice: (poolId: string, userId: string, deviceId: string, newName: string) => Promise<void>;
+     removeDevice: (poolId: string, userId: string, deviceId: string) => Promise<void>;
+     refresh: (poolId: string, userId: string) => Promise<void>;
+ }
+
+ export declare function useIdentityPools(): UseIdentityPoolsReturn;
+
+ declare interface UseIdentityPoolsReturn {
+     pools: IdentityPool[];
+     loading: boolean;
+     error: string | null;
+     createPool: (input: CreatePoolInput) => Promise<IdentityPool | null>;
+     updatePool: (poolId: string, input: UpdatePoolInput) => Promise<IdentityPool | null>;
+     deletePool: (poolId: string) => Promise<void>;
+     getStats: () => Promise<PoolStats[]>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityResource<T>(initialData: T, opts: UseIdentityResourceOptions): UseIdentityResourceReturn<T>;
+
+ declare interface UseIdentityResourceOptions {
+     url: string | null;
+     fetchOnMount?: boolean;
+ }
+
+ declare interface UseIdentityResourceReturn<T> {
+     data: T;
+     loading: boolean;
+     error: string | null;
+     setData: React.Dispatch<React.SetStateAction<T>>;
+     refresh: () => Promise<void>;
+     mutate: <R>(url: string, options?: RequestInit) => Promise<R | null>;
+ }
+
+ export declare function useIdentitySetupStatus(): UseIdentitySetupStatusReturn;
+
+ declare interface UseIdentitySetupStatusReturn {
+     status: SetupStatus | null;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdentityUsers(poolId: string | null): UseIdentityUsersReturn;
+
+ declare interface UseIdentityUsersReturn {
+     users: IdentityUser[];
+     loading: boolean;
+     error: string | null;
+     createUser: (input: CreateUserInput) => Promise<IdentityUser | null>;
+     updateUser: (userId: string, input: UpdateUserInput) => Promise<IdentityUser | null>;
+     deleteUser: (userId: string) => Promise<void>;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIdleDetector(options?: UseIdleDetectorOptions): UseIdleDetectorReturn;
+
+ declare interface UseIdleDetectorOptions {
+     /** Idle timeout in milliseconds (default: 120000 = 2 minutes). */
+     timeoutMs?: number;
+ }
+
+ declare interface UseIdleDetectorReturn {
+     isIdle: boolean;
+ }
+
+ export declare function useIngestAudit(filters?: IngestAuditFilters): UseIngestAuditResult;
+
+ declare interface UseIngestAuditResult {
+     entries: IngestAuditEntry[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useIngestDLQ(): UseIngestDLQResult;
+
+ declare interface UseIngestDLQResult {
+     entries: DLQEntryRow[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     replay: (id: string) => Promise<void>;
+     drop: (id: string) => Promise<void>;
+ }
+
+ export declare function useIngestItems(options?: UseIngestItemsOptions): UseIngestItemsReturn;
+
+ declare interface UseIngestItemsOptions {
+     sourceId?: string | null;
+     status?: IngestItemStatus | null;
+ }
+
+ declare interface UseIngestItemsReturn {
+     items: IngestItem[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     retryItem: (itemId: string) => Promise<boolean>;
+     skipItem: (itemId: string) => Promise<boolean>;
+ }
+
+ export declare function useIngestProgress(): UseIngestProgressResult;
+
+ declare interface UseIngestProgressResult {
+     events: IngestProgressEvent[];
+     activeSyncs: Map<string, ActiveSync>;
+     clearEvents: () => void;
+ }
+
+ export declare function useIngestSources(): UseIngestSourcesReturn;
+
+ declare interface UseIngestSourcesReturn {
+     sources: IngestSource[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     createSource: (data: Omit<IngestSource, 'sourceId' | 'createdAt' | 'updatedAt' | 'lastSyncAt' | 'lastSyncStats'>) => Promise<IngestSource | null>;
+     deleteSource: (sourceId: string) => Promise<boolean>;
+     triggerSync: (sourceId: string) => Promise<boolean>;
+ }
+
+ /**
+  * Register keyboard shortcuts with automatic cleanup.
+  * Shortcuts are skipped when typing in input/textarea/contentEditable elements.
+  *
+  * @example
+  * useKeyboardShortcuts([
+  *   { key: 's', meta: true, handler: save },
+  *   { key: 'Enter', meta: true, handler: run },
+  *   { key: 'Escape', handler: clearSelection, preventDefault: false },
+  * ]);
+  */
+ export declare function useKeyboardShortcuts(shortcuts: KeyboardShortcut[]): void;
+
+ export declare function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseLikesOptions): UseLikesReturn;
+
+ declare interface UseLikesOptions {
+     idToken: string | null;
+     roomId: string | null;
+     postId: string | null;
+     commentId?: string | null;
+     onMessage: OnMessageFn_2;
+ }
+
+ declare interface UseLikesReturn {
+     isLiked: boolean;
+     likeCount: number;
+     whoLiked: PublicProfile[];
+     toggle: () => Promise<void>;
+     reactWithEmoji: (emoji: string) => Promise<void>;
+     loading: boolean;
+     error: string | null;
+ }
+
+ export declare function useMappingReviewQueue(): UseMappingReviewQueueResult;
+
+ declare interface UseMappingReviewQueueResult {
+     items: IngestItem[];
+     threshold: number;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+     remap: (itemId: string, typeId: string) => Promise<void>;
+     skip: (itemId: string) => Promise<void>;
+ }
+
+ /**
+  * Aggregate mention-able users from awareness (online) + user directory (offline) + groups.
+  * Online users appear first, then offline users, then groups.
+  */
+ export declare function useMentionUsers(participants: Participant[]): MentionUser[];
+
+ export declare function useMyMentionsAndTasks({ sections, comments, displayName, userId, }: UseMyMentionsAndTasksArgs): MyItem[];
+
+ declare interface UseMyMentionsAndTasksArgs {
+     sections: Section[];
+     comments: Record<string, CommentThread[]>;
+     displayName: string;
+     userId: string;
+ }
+
+ export declare function usePipelineDefs(): UsePipelineDefsReturn;
+
+ declare interface UsePipelineDefsReturn {
+     pipelines: PipelineDefSummary[];
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePostsReturn;
+
+ declare interface UsePostsOptions {
+     idToken: string | null;
+     roomId: string | null;
+     onMessage: OnMessageFn_3;
+ }
+
+ declare interface UsePostsReturn {
+     posts: PostItem[];
+     createPost: (content: string) => Promise<void>;
+     editPost: (postId: string, content: string) => Promise<void>;
+     deletePost: (postId: string) => Promise<void>;
+     getUserPosts: (userId: string) => Promise<PostItem[]>;
+     loading: boolean;
+     error: string | null;
+     hasMore: boolean;
+     loadMore: () => Promise<void>;
+ }
+
+ export declare function usePrefersReducedMotion(): boolean;
+
+ export declare function usePresence(options: UsePresenceOptions): UsePresenceReturn;
+
+ export declare function usePresenceContext(): PresenceContextValue;
+
+ declare interface UsePresenceOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+     displayName: string;
+ }
+
+ declare interface UsePresenceReturn {
+     users: PresenceUser[];
+     setTyping: (isTyping: boolean) => void;
+ }
+
+ export declare function useReactions(options: UseReactionsOptions): UseReactionsReturn;
+
+ declare interface UseReactionsOptions {
+     sendMessage: (msg: Record<string, unknown>) => void;
+     onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+     currentChannel: string;
+     connectionState: ConnectionState;
+ }
+
+ declare interface UseReactionsReturn {
+     activeReactions: EphemeralReaction[];
+     react: (emoji: string) => void;
+ }
+
+ export declare function useRooms({ idToken, onMessage }: UseRoomsOptions): UseRoomsReturn;
+
+ declare interface UseRoomsOptions {
+     idToken: string | null;
+     onMessage: OnMessageFn_4;
+ }
+
+ declare interface UseRoomsReturn {
+     rooms: RoomItem[];
+     activeRoom: RoomItem | null;
+     setActiveRoom: (room: RoomItem | null) => void;
+     createRoom: (name: string) => Promise<void>;
+     createDM: (peerId: string) => Promise<void>;
+     createGroupRoom: (groupId: string, name: string) => Promise<void>;
+     joinRoom: (roomId: string) => Promise<void>;
+     leaveRoom: (roomId: string) => Promise<void>;
+     loadMembers: (roomId: string) => Promise<void>;
+     members: RoomMemberItem[];
+     loading: boolean;
+     error: string | null;
+     /** Retry the GET /api/rooms hydrate after a fetch failure. */
+     retry: () => void;
+ }
+
+ export declare interface UserPickerProps {
+     value: string[];
+     onChange: (userIds: string[]) => void;
+     placeholder?: string;
+     maxSelect?: number;
+ }
+
+ export declare function useSectionList(ydoc: Y.Doc | null): UseSectionListReturn;
+
+ declare interface UseSectionListReturn {
+     sections: Section[];
+     comments: Record<string, CommentThread[]>;
+     addSection: (section: Section) => void;
+     updateSection: (sectionId: string, partial: Partial<Section>) => void;
+     removeSection: (sectionId: string) => void;
+     addItem: (sectionId: string, item: TaskItem) => void;
+     updateItem: (sectionId: string, itemId: string, partial: Partial<TaskItem>) => void;
+     removeItem: (sectionId: string, itemId: string) => void;
+     ackItem: (sectionId: string, itemId: string, userId: string) => void;
+     rejectItem: (sectionId: string, itemId: string, userId: string) => void;
+     getSectionFragment: (sectionId: string) => Y.XmlFragment | null;
+     addComment: (sectionId: string, opts: {
+         text: string;
+         userId: string;
+         displayName: string;
+         color: string;
+         parentCommentId?: string | null;
+     }) => void;
+     resolveThread: (sectionId: string, commentId: string, resolverDisplayName: string) => void;
+     unresolveThread: (sectionId: string, commentId: string) => void;
+ }
+
+ export declare function useSocialProfile({ idToken }: UseSocialProfileOptions): UseSocialProfileReturn;
+
+ declare interface UseSocialProfileOptions {
+     idToken: string | null;
+ }
+
+ declare interface UseSocialProfileReturn {
+     profile: ProfileItem | null;
+     loading: boolean;
+     error: string | null;
+     updateProfile: (updates: Partial<ProfileItem>) => Promise<void>;
+     viewProfile: (userId: string) => Promise<ProfileItem | null>;
+ }
+
+ export declare function useSourceSloMetrics(sourceId: string | undefined, window?: SloWindow): UseSourceSloMetricsResult;
+
+ declare interface UseSourceSloMetricsResult {
+     metrics: SourceSloMetrics | null;
+     loading: boolean;
+     error: string | null;
+     refresh: () => Promise<void>;
+ }
+
+ export declare function useSyncConflicts(): UseSyncConflictsReturn;
+
+ declare interface UseSyncConflictsReturn {
+     conflicts: SyncConflict[];
+     loading: boolean;
+     error: string | null;
+     /** True when the data came from the local mock fallback. */
+     usingMock: boolean;
+     refresh: () => Promise<void>;
+     resolveConflict: (id: string, resolution: ConflictResolution) => Promise<boolean>;
+     discardConflict: (id: string) => Promise<boolean>;
+ }
+
+ /**
+  * Returns the current resolved theme tokens from the nearest ThemeProvider.
+  * Falls back to the default light theme if no provider is present.
+  */
+ export declare function useTheme(): ThemeTokens;
+
+ /**
+  * Returns the current resolved theme tokens from the nearest ThemeProvider.
+  * Falls back to the light theme if no provider is present.
+  */
+ export declare function useThemeContext(): ThemeTokens;
+
+ export declare function useToast(): ToastContextValue;
+
+ export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
+
+ declare interface UseTypedDocumentsOptions {
+     idToken: string | null;
+     typeId: string | null;
+ }
+
+ declare interface UseTypedDocumentsReturn {
+     documents: TypedDocument[];
+     loading: boolean;
+     error: string | null;
+     createDocument: (values: Record<string, TypedDocumentValue>) => Promise<TypedDocument>;
+     refresh: () => void;
+ }
+
+ /**
+  * Sync filter state with URL search params for shareable filter links.
+  * Each filter key maps to a query param; undefined values are omitted.
+  *
+  * @param defaults Default filter values (used when param is missing)
+  * @returns { filters, setFilter, clearFilters }
+      *
+      * @example
+      * const { filters, setFilter } = useUrlFilterState({
+      *   status: 'all',
+      *   search: undefined,
+      * });
+      *
+      * // URL: /pipelines?status=running&search=test
+      * // filters = { status: 'running', search: 'test' }
+      */
+  export declare function useUrlFilterState<T extends Record<string, string | undefined>>(defaults: T): UrlFilterState<T>;
+
+  export declare function useVersionHistory(options: UseVersionHistoryOptions): UseVersionHistoryReturn;
+
+  declare interface UseVersionHistoryOptions {
+      channel: string;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+  }
+
+  declare interface UseVersionHistoryReturn {
+      versions: VersionEntry[];
+      loading: boolean;
+      fetchVersions: () => void;
+      previewVersion: (timestamp: number) => void;
+      restoreVersion: (timestamp: number) => void;
+      previewDoc: Y.Doc | null;
+      previewTimestamp: number | null;
+      clearPreview: () => void;
+      /** Save a named version snapshot. */
+      saveVersion: (name: string) => void;
+      /** Extract sections as plain JSON from a Y.Doc (live or preview). */
+      extractSections: (doc: Y.Doc) => SnapshotSection[];
+      /** Compare sections: load preview for a given timestamp, returns sections via callback. */
+      compareSections: SnapshotSection[] | null;
+      compareTimestamp: number | null;
+      compareVersion: (timestamp: number) => void;
+      clearCompare: () => void;
+  }
+
+  export declare function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn;
+
+  declare interface UseVideoCallOptions {
+      documentId: string;
+      idToken: string | null;
+      /** Current document meta (from Y.js). */
+      meta: DocumentMeta | null;
+      /** Update document meta (writes to Y.js). */
+      updateMeta: (partial: Partial<DocumentMeta>) => void;
+      /** Send WebSocket message to gateway (for document list metadata sync). */
+      sendMessage: (msg: Record<string, unknown>) => void;
+      /** Display name for participant tracking. */
+      displayName?: string;
+  }
+
+  declare interface UseVideoCallReturn {
+      callState: CallState;
+      sessionId: string | null;
+      stageToken: string | null;
+      participantId: string | null;
+      userId: string | null;
+      error: string | null;
+      /** Whether another user started a call (detected via Y.js meta). */
+      hasActiveCall: boolean;
+      /** Start a new call (creates session + joins). */
+      startCall: () => Promise<void>;
+      /** Join an existing call by sessionId. */
+      joinCall: (sessionId: string) => Promise<void>;
+      /** End/leave the call. */
+      endCall: () => Promise<void>;
+  }
+
+  export declare function useVideoSessions(documentId: string, idToken: string | null): {
+      sessions: VideoSession[];
+      loading: boolean;
+      fetchSessions: () => Promise<void>;
+  };
+
+  export declare function useWebSocket(options: UseWebSocketOptions): UseWebSocketReturn;
+
+  export declare function useWebSocketContext(): WebSocketContextValue;
+
+  declare interface UseWebSocketOptions {
+      config: GatewayConfig;
+      onMessage?: (msg: GatewayMessage) => void;
+  }
+
+  declare interface UseWebSocketReturn {
+      connectionState: ConnectionState;
+      lastError: GatewayError | null;
+      sessionToken: string | null;
+      clientId: string | null;
+      currentChannel: string;
+      switchChannel: (channel: string) => void;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      disconnect: () => void;
+      reconnect: () => void;
+  }
+
+  export declare function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn;
+
+  declare interface UseYjsDocOptions {
+      documentId: string;
+      ws: UseWebSocketReturn;
+      onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+      /**
+       * Optional callback fired when the server replaces the document
+       * (e.g. via version restore) and we rebuild the Y.Doc + provider.
+       * Consumers (observers in sibling hooks) can use it to re-attach.
+       */
+      onDocReplaced?: (ydoc: Y.Doc, provider: GatewayProvider) => void;
+  }
+
+  declare interface UseYjsDocReturn {
+      ydoc: Y.Doc | null;
+      provider: GatewayProvider | null;
+      synced: boolean;
+      /**
+       * Bumped every time the underlying Y.Doc / provider is recreated
+       * (initial mount counts as 0). Sibling hooks can depend on this
+       * to re-run their observer setup.
+       */
+      docVersion: number;
+  }
+
+  export declare type ValidationCode = 'NO_TRIGGER' | 'MULTIPLE_TRIGGERS' | 'CYCLE_DETECTED' | 'INVALID_HANDLE' | 'MISSING_CONFIG' | 'APPROVAL_NO_APPROVERS' | 'JOIN_INSUFFICIENT_INPUTS' | 'ORPHAN_NODE' | 'DEAD_END' | 'UNUSED_FORK_BRANCH' | 'UNUSED_CONDITION_BRANCH' | 'NO_ERROR_HANDLER' | 'LLM_NO_MAX_TOKENS' | 'UNGUARDED_APPROVAL_TIMEOUT' | 'LARGE_FORK' | 'DEEP_CHAIN' | 'DUPLICATE_NODE_NAME' | 'LOW_TEMPERATURE_NON_DETERMINISTIC_PROMPT' | 'NO_PUBLISHED_VERSION_BUT_TRIGGER_SCHEDULED' | 'UNREACHABLE_AFTER_CONDITION_FALSE' | 'FORK_WITHOUT_MATCHING_JOIN';
+
+  export declare interface ValidationIssue {
+      code: ValidationCode;
+      message: string;
+      severity: 'error' | 'warning';
+      nodeId?: string;
+      edgeId?: string;
+      /** For config errors — which field on the node is at fault. */
+      field?: string;
+  }
+
+  export declare interface ValidationResult {
+      errors: ValidationIssue[];
+      warnings: ValidationIssue[];
+      /** `errors.length === 0`. */
+      isValid: boolean;
+      /** `errors.length === 0` — blocks publish (and therefore run), not save. */
+      canPublish: boolean;
+  }
+
+  declare interface VersionEntry {
+      timestamp: number;
+      age: number;
+      name?: string;
+      author?: string;
+      type?: 'manual' | 'auto' | 'pre-restore';
+  }
+
+  declare interface VideoSession {
+      documentId: string;
+      sessionId: string;
+      vnlSessionId: string;
+      status: 'active' | 'ended';
+      startedAt: string;
+      endedAt?: string;
+      startedBy: string;
+      participants: VideoSessionParticipant[];
+      transcriptStatus?: 'pending' | 'processing' | 'available' | 'failed';
+      transcript?: string;
+      aiSummary?: string;
+  }
+
+  declare interface VideoSessionParticipant {
+      userId: string;
+      displayName: string;
+      joinedAt: string;
+  }
+
+  export declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+  export declare interface WebSocketContextValue {
+      connectionState: ConnectionState;
+      sendMessage: (msg: Record<string, unknown>) => void;
+      onMessage: OnMessageFn_5;
+      ws: UseWebSocketReturn;
+      clientId: string | null;
+      sessionToken: string | null;
+  }
+
+  export declare function WebSocketProvider({ value, children, }: {
+      value: WebSocketContextValue;
+      children: ReactNode;
+  }): JSX.Element;
+
+  export declare const zIndex: {
+      /** Sticky headers, fixed toolbars */
+      readonly sticky: 20;
+      /** Dropdowns, popovers, tooltips */
+      readonly dropdown: 50;
+      /** Modals, dialogs, overlays */
+      readonly modal: 100;
+      /** Toast notifications (above modals) */
+      readonly toast: 200;
+  };
+
+  export { }

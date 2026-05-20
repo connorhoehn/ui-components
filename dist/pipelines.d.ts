@@ -1,0 +1,1097 @@
+import { default as default_2 } from 'react';
+import { JSX } from 'react/jsx-runtime';
+import { Node as Node_2 } from '@xyflow/react';
+import { NodeProps } from '@xyflow/react';
+import { ReactNode } from 'react';
+
+declare type ActionData = ActionNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ActionFlowNode = Node_2<ActionData, 'action'>;
+
+export declare function ActionNode(props: NodeProps<ActionFlowNode>): JSX.Element;
+
+declare interface ActionNodeData {
+    type: 'action';
+    actionType: ActionType;
+    /** Shape varies per `actionType`; refined in Phase 2. */
+    config: Record<string, unknown>;
+    idempotent?: boolean;
+    /**
+     * Dedup scope when `idempotent: true`.
+     * - `per-step` (default): fire at most once per step across all retries.
+     * - `per-attempt`: fire once per attempt; retries get a fresh dedup window.
+     */
+    idempotencyMode?: 'per-attempt' | 'per-step';
+    onError?: 'route-error' | 'fail-run';
+    retryPolicy?: RetryPolicy;
+}
+
+declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
+
+declare type AgentData = AgentNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type AgentFlowNode = Node_2<AgentData, 'agent'>;
+
+declare type AgentInvokeProtocol = 'a2a' | 'direct';
+
+declare function AgentNode({ id, data, selected }: NodeProps<AgentFlowNode>): JSX.Element;
+
+declare interface AgentNodeData {
+    type: 'agent';
+    agentId: string;
+    agentName?: string;
+    protocol: AgentInvokeProtocol;
+    inputTemplate: string;
+    streaming: boolean;
+    timeoutMs?: number;
+    outputKey?: string;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type AgUiData = AgUiOutputNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type AgUiFlowNode = Node_2<AgUiData, 'ag-ui-output'>;
+
+declare type AgUiOutputEventType = 'TEXT_MESSAGE_CONTENT' | 'STATE_DELTA' | 'CUSTOM';
+
+declare function AgUiOutputNode({ id, data, selected }: NodeProps<AgUiFlowNode>): JSX.Element;
+
+declare interface AgUiOutputNodeData {
+    type: 'ag-ui-output';
+    sourceField: string;
+    eventType: AgUiOutputEventType;
+    terminal: boolean;
+    customEventName?: string;
+}
+
+export declare function AllRunsPage(): JSX.Element;
+
+declare type ApprovalData = ApprovalNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ApprovalFlowNode = Node_2<ApprovalData, 'approval'>;
+
+export declare function ApprovalNode(props: NodeProps<ApprovalFlowNode>): JSX.Element;
+
+declare interface ApprovalNodeData {
+    type: 'approval';
+    approvers: Approver[];
+    /** n-of-m — how many approvals required to pass. */
+    requiredCount: number;
+    timeoutMs?: number;
+    timeoutAction?: ApprovalTimeoutAction;
+    /** Message shown to the approver. */
+    message?: string;
+}
+
+declare interface ApprovalRecord {
+    userId: string;
+    decision: 'approve' | 'reject';
+    comment?: string;
+    at: string;
+}
+
+declare type ApprovalTimeoutAction = 'reject' | 'approve' | 'escalate';
+
+declare interface Approver {
+    type: 'user' | 'role';
+    value: string;
+}
+
+export declare function BaseNode(props: BaseNodeProps): JSX.Element;
+
+declare interface BaseNodeProps {
+    icon: string;
+    subtitle?: string;
+    state: NodeExecutionState;
+    body?: ReactNode;
+    footer?: ReactNode;
+    selected?: boolean;
+    /**
+     * When provided AND `state === 'failed'`, renders a small "⟳ Retry from
+     * here" pill inline below the header. The click handler is invoked with
+     * propagation stopped so the canvas doesn't also receive a node-select.
+     * Per PIPELINES_PLAN.md §18.4.4 / §17.6.
+     */
+    onRetry?: () => void;
+    /** Show a red breakpoint dot in the top-left corner of the card. */
+    hasBreakpoint?: boolean;
+    /** Highlight the card with an orange border/glow (run is paused here). */
+    pausedAtBreakpoint?: boolean;
+    /**
+     * Optional override for the accessible name. When omitted we synthesize one
+     * from `subtitle` + `state`. Callers (per node-type) can pass a richer
+     * string (e.g. "LLM node, Claude Opus 4, system prompt: …") for screen
+     * reader users.
+     */
+    ariaLabel?: string;
+    children?: ReactNode;
+}
+
+declare type ConditionData = ConditionNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ConditionFlowNode = Node_2<ConditionData, 'condition'>;
+
+export declare function ConditionNode(props: NodeProps<ConditionFlowNode>): JSX.Element;
+
+declare interface ConditionNodeData {
+    type: 'condition';
+    /** JSONPath or boolean expression evaluated over context. */
+    expression: string;
+    /** UI label shown on the node. */
+    label?: string;
+}
+
+declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
+
+export declare function EventStreamProvider({ children, }: EventStreamProviderProps): JSX.Element;
+
+export declare interface EventStreamProviderProps {
+    children: default_2.ReactNode;
+}
+
+export declare interface EventStreamValue {
+    subscribe<K extends keyof PipelineEventMap>(type: K | '*', handler: (payload: PipelineEventMap[K] | WildcardEvent) => void): () => void;
+    /**
+     * Convenience shim for tests / synthetic event sources. Synthesizes a
+     * `PipelineWireEvent` (auto-incrementing local `seq`, `sourceNodeId =
+     * 'local'`, `emittedAt = Date.now()`) and forwards to `dispatchEnvelope`
+     * so synthetic and WS-sourced events share the exact same dedupe +
+     * fan-out pipeline.
+     */
+    dispatch<K extends keyof PipelineEventMap>(type: K, payload: PipelineEventMap[K]): void;
+    /**
+     * Primary entry point for any envelope-aware producer. Used by the
+     * WebSocket adapter to forward server-supplied envelopes verbatim. Dedupes
+     * on `(runId, stepId, seq)` so replays after a ResourceRouter-orphaned run
+     * is resumed on a new owner don't double-count. Timestamps are re-stamped
+     * on replay — never use them for dedupe.
+     */
+    dispatchEnvelope<K extends keyof PipelineEventMap>(envelope: PipelineWireEvent<K>): void;
+    subscribeToRun(runId: string): () => void;
+    subscribeToAll(): () => void;
+    subscribeToApprovals(): () => void;
+}
+
+declare type ForkData = ForkNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ForkFlowNode = Node_2<ForkData, 'fork'>;
+
+export declare function ForkNode(props: NodeProps<ForkFlowNode>): JSX.Element;
+
+declare interface ForkNodeData {
+    type: 'fork';
+    /** Number of parallel output branches (2..8). */
+    branchCount: number;
+    branchLabels?: string[];
+}
+
+declare type GraphData = GraphQueryNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type GraphFlowNode = Node_2<GraphData, 'graph-query'>;
+
+declare function GraphQueryNode({ id, data, selected }: NodeProps<GraphFlowNode>): JSX.Element;
+
+declare interface GraphQueryNodeData {
+    type: 'graph-query';
+    graphId: string;
+    query: string;
+    parameters?: Record<string, string>;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type GuardrailAction = 'block' | 'mask' | 'warn';
+
+declare type GuardrailData = GuardrailNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type GuardrailFlowNode = Node_2<GuardrailData, 'guardrail'>;
+
+declare function GuardrailNode({ id, data, selected }: NodeProps<GuardrailFlowNode>): JSX.Element;
+
+declare interface GuardrailNodeData {
+    type: 'guardrail';
+    guardrailId: string;
+    guardrailVersion?: string;
+    inputField: string;
+    action: GuardrailAction;
+    label?: string;
+}
+
+declare type JoinData = JoinNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type JoinFlowNode = Node_2<JoinData, 'join'>;
+
+declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
+
+declare type JoinMode = 'all' | 'any' | 'n_of_m';
+
+export declare function JoinNode(props: NodeProps<JoinFlowNode>): JSX.Element;
+
+declare interface JoinNodeData {
+    type: 'join';
+    mode: JoinMode;
+    /** Required when `mode === 'n_of_m'`. */
+    n?: number;
+    mergeStrategy: JoinMergeStrategy;
+}
+
+declare type KBData = KnowledgeBaseNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type KBFlowNode = Node_2<KBData, 'knowledge-base'>;
+
+declare function KnowledgeBaseNode({ id, data, selected }: NodeProps<KBFlowNode>): JSX.Element;
+
+declare interface KnowledgeBaseNodeData {
+    type: 'knowledge-base';
+    knowledgeBaseId: string;
+    queryTemplate: string;
+    topK: number;
+    scoreThreshold?: number;
+    outputKey?: string;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type LLMData = LLMNodeData & {
+    _state?: NodeExecutionState;
+    _llmResponse?: LLMResponseInfo;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type LLMFlowNode = Node_2<LLMData, 'llm'>;
+
+export declare function LLMNode(props: NodeProps<LLMFlowNode>): JSX.Element;
+
+declare interface LLMNodeData {
+    type: 'llm';
+    provider: LLMProvider;
+    /** Model identifier, e.g. 'claude-sonnet-4-6'. */
+    model: string;
+    systemPrompt: string;
+    /** Supports `{{context.foo}}` substitution. */
+    userPromptTemplate: string;
+    temperature?: number;
+    maxTokens?: number;
+    streaming: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type LLMProvider = 'anthropic' | 'bedrock' | 'claude-code';
+
+declare interface LLMResponseInfo {
+    response: string;
+    tokensIn?: number;
+    tokensOut?: number;
+    /** True while tokens are actively arriving (tokensOut > 0 and step still running). */
+    streaming?: boolean;
+    /**
+     * True between `pipeline.llm.stream.opened` and the first token. Distinct
+     * from `streaming` — this is the open-but-no-tokens window and is the
+     * visual signal that latency is being measured. Cleared as soon as the
+     * first token lands.
+     */
+    streamOpening?: boolean;
+}
+
+declare type McpToolData = McpToolNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type McpToolFlowNode = Node_2<McpToolData, 'mcp-tool'>;
+
+declare function McpToolNode({ id, data, selected }: NodeProps<McpToolFlowNode>): JSX.Element;
+
+declare interface McpToolNodeData {
+    type: 'mcp-tool';
+    gatewayUrl: string;
+    toolName: string;
+    inputTemplate: string;
+    outputKey?: string;
+    timeoutMs?: number;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type MemData = MemoryNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type MemFlowNode = Node_2<MemData, 'memory'>;
+
+declare type MemoryMode = 'read' | 'write';
+
+declare function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode>): JSX.Element;
+
+declare interface MemoryNodeData {
+    type: 'memory';
+    mode: MemoryMode;
+    scope: MemoryScope;
+    namespace: string;
+    keyExpression: string;
+    valueField?: string;
+    outputKey?: string;
+}
+
+declare type MemoryScope = 'session' | 'long-term';
+
+declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
+
+export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
+
+declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output';
+
+export declare const nodeTypes: {
+    readonly trigger: typeof TriggerNode;
+    readonly llm: typeof LLMNode;
+    readonly transform: typeof TransformNode;
+    readonly condition: typeof ConditionNode;
+    readonly action: typeof ActionNode;
+    readonly fork: typeof ForkNode;
+    readonly join: typeof JoinNode;
+    readonly approval: typeof ApprovalNode;
+    readonly agent: typeof AgentNode;
+    readonly 'mcp-tool': typeof McpToolNode;
+    readonly 'knowledge-base': typeof KnowledgeBaseNode;
+    readonly 'graph-query': typeof GraphQueryNode;
+    readonly memory: typeof MemoryNode;
+    readonly guardrail: typeof GuardrailNode;
+    readonly policy: typeof PolicyNode;
+    readonly 'ag-ui-output': typeof AgUiOutputNode;
+};
+
+/**
+ * hub#2226 — single entry in `StepExecution.patches`. Mirrors the
+ * distributed-core `PatchEntry` shape but stays decoupled from the
+ * type pin (consumers care about `patchId`, `appliedAt`, `revertedAt`,
+ * `unvalidated`; `beforeContext`/`patch` are optional bookkeeping the
+ * frontend doesn't need today).
+ */
+declare interface PatchEntry {
+    patchId: string;
+    appliedAt: string;
+    appliedBy?: string;
+    /** Mirror of `ContextPatch['mode']`. */
+    mode?: 'merge' | 'jsonPatch';
+    /** Set on a successful revert. */
+    revertedAt?: string;
+    /** True when no validator was registered for the paused step's node type. */
+    unvalidated?: boolean;
+}
+
+export declare function PendingApprovalsPage(): JSX.Element;
+
+export declare function PipelineCanvas({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdgeStates, replayNodeClasses, breakpoints, onToggleBreakpoint, pausedAtNodeId }?: PipelineCanvasProps): JSX.Element;
+
+export declare interface PipelineCanvasProps {
+    onFilterLog?: (nodeId: string) => void;
+    errorNodeId?: string | null;
+    onErrorNodePosition?: (pos: {
+        x: number;
+        y: number;
+    } | null) => void;
+    replayEdgeStates?: Record<string, string>;
+    replayNodeClasses?: Record<string, string>;
+    breakpoints?: Set<string>;
+    onToggleBreakpoint?: (nodeId: string) => void;
+    pausedAtNodeId?: string | null;
+}
+
+declare interface PipelineDefinition {
+    id: string;
+    name: string;
+    description?: string;
+    /** Free-form labels for filtering / grouping in the list view. Stored normalized (lowercase, trimmed). */
+    tags?: string[];
+    icon?: string;
+    /** Bumped on each save. */
+    version: number;
+    status: PipelineStatus;
+    /** Snapshot of `version` at last publish; runs trigger on this version. */
+    publishedVersion?: number;
+    /**
+     * Deep clone of the definition as it existed at the last `publishPipeline`
+     * call (minus this field, to avoid recursion). Enables the VersionDiffModal
+     * to show real per-node/edge differences between the current draft and the
+     * last-published state. Populated by `publishPipeline`.
+     */
+    publishedSnapshot?: Omit<PipelineDefinition, 'publishedSnapshot'>;
+    /** Cached for fast lookup by trigger dispatch. */
+    triggerBinding?: TriggerBinding;
+    nodes: PipelineNode[];
+    edges: PipelineEdge[];
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
+}
+
+declare interface PipelineEdge {
+    id: string;
+    source: string;
+    /** 'out', 'true'/'false', 'branch-N', 'approved'/'rejected', 'error'. */
+    sourceHandle: string;
+    target: string;
+    /** 'in' or 'in-N' for Join. */
+    targetHandle: string;
+}
+
+export declare const PipelineEditorContext: default_2.Context<PipelineEditorValue | null>;
+
+export declare function PipelineEditorPage(): JSX.Element;
+
+export declare function PipelineEditorProvider({ pipelineId, children, }: PipelineEditorProviderProps): JSX.Element;
+
+export declare interface PipelineEditorProviderProps {
+    pipelineId: string;
+    children: default_2.ReactNode;
+}
+
+export declare interface PipelineEditorValue {
+    definition: PipelineDefinition | null;
+    dirty: boolean;
+    selectedNodeId: string | null;
+    setSelectedNodeId: (id: string | null) => void;
+    addNode: (type: NodeType, position: {
+        x: number;
+        y: number;
+    }) => string;
+    updateNode: (id: string, patch: Partial<PipelineNode>) => void;
+    updateNodeData: (id: string, patch: Partial<NodeData>) => void;
+    removeNode: (id: string) => void;
+    duplicateNodes: (ids: string[]) => string[];
+    addEdge: (edge: Omit<PipelineEdge, 'id'>) => string;
+    removeEdge: (id: string) => void;
+    setPositions: (updates: Array<{
+        id: string;
+        position: {
+            x: number;
+            y: number;
+        };
+    }>) => void;
+    save: () => void;
+    publish: () => void;
+    revert: () => void;
+    undo: () => void;
+    redo: () => void;
+    canUndo: boolean;
+    canRedo: boolean;
+    /**
+     * Rename the pipeline. Metadata-only mutation — not tracked by undo/redo
+     * (consistent with the top-level contract that history covers nodes/edges).
+     */
+    rename: (name: string) => void;
+    /** Set the pipeline icon (emoji). Metadata-only, not tracked by undo/redo. */
+    setIcon: (icon: string) => void;
+    /** Replace the pipeline's tag list. Metadata-only, not tracked by undo/redo. */
+    setTags: (tags: string[]) => void;
+}
+
+declare type PipelineEventMap = {
+    'pipeline.run.started': {
+        runId: string;
+        pipelineId: string;
+        triggeredBy: PipelineRunTrigger;
+        at: string;
+    };
+    'pipeline.run.completed': {
+        runId: string;
+        durationMs: number;
+        at: string;
+    };
+    'pipeline.run.failed': {
+        runId: string;
+        error: PipelineRunError;
+        at: string;
+    };
+    'pipeline.run.cancelled': {
+        runId: string;
+        at: string;
+    };
+    'pipeline.run.orphaned': {
+        runId: string;
+        previousOwner: string;
+        at: string;
+    };
+    'pipeline.run.reassigned': {
+        runId: string;
+        from: string;
+        to: string;
+        at: string;
+    };
+    'pipeline.step.started': {
+        runId: string;
+        stepId: string;
+        nodeType: NodeType;
+        at: string;
+    };
+    'pipeline.step.completed': {
+        runId: string;
+        stepId: string;
+        durationMs: number;
+        output?: unknown;
+        at: string;
+    };
+    'pipeline.step.failed': {
+        runId: string;
+        stepId: string;
+        error: string;
+        at: string;
+    };
+    'pipeline.step.skipped': {
+        runId: string;
+        stepId: string;
+        reason: string;
+        at: string;
+    };
+    'pipeline.step.cancelled': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    'pipeline.step.breakpoint': {
+        runId: string;
+        stepId: string;
+        at: string;
+    };
+    /** Patch was applied AND validated by a registered ContextValidator. */
+    'pipeline.step.context.patched': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        /** Mirror of `ContextPatch['mode']`. */
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** Patch was applied but no validator was registered for this step's node type. */
+    'pipeline.step.context.patched-unvalidated': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        mode: 'merge' | 'jsonPatch';
+        at: string;
+    };
+    /** A previously-applied patch was reverted while still paused at the same step. */
+    'pipeline.step.context.patch-reverted': {
+        runId: string;
+        stepId: string;
+        patchId: string;
+        at: string;
+    };
+    'pipeline.llm.prompt': {
+        runId: string;
+        stepId: string;
+        model: string;
+        prompt: string;
+        at: string;
+    };
+    'pipeline.llm.stream.opened': {
+        runId: string;
+        stepId: string;
+        model: string;
+        openedAt: string;
+    };
+    'pipeline.llm.token': {
+        runId: string;
+        stepId: string;
+        token: string;
+        at: string;
+    };
+    'pipeline.llm.response': {
+        runId: string;
+        stepId: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        at: string;
+    };
+    'pipeline.approval.requested': {
+        runId: string;
+        stepId: string;
+        approvers: ApprovalNodeData['approvers'];
+        at: string;
+    };
+    'pipeline.approval.recorded': {
+        runId: string;
+        stepId: string;
+        userId: string;
+        decision: 'approve' | 'reject';
+        at: string;
+    };
+    'pipeline.run.paused': {
+        runId: string;
+        atStepIds: string[];
+        at: string;
+    };
+    'pipeline.run.resumed': {
+        runId: string;
+        at: string;
+    };
+    /**
+     * hub#2223: emitted by the executor when a previously-failed run is
+     * restarted from `fromNodeId` via `PipelineModule.resumeFromStep`. The
+     * canonical wire name is `pipeline:run:resumed-from-step` (DC source);
+     * after the gateway's `:` → `.` mapping that becomes
+     * `pipeline.run.resumed-from-step`. The legacy alias
+     * `pipeline.run.resumeFromStep` (camelCase) was a placeholder for the
+     * pre-producer Phase 5 stub and has no producer; the past-tense kebab
+     * form is the one consumers should key on.
+     */
+    'pipeline.run.resumed-from-step': {
+        runId: string;
+        fromNodeId: string;
+        /** The stepId that originally failed and triggered this resumption, if known. */
+        originalFailedStepId?: string;
+        at: string;
+    };
+    /**
+     * Canonical colon-form request event emitted by the gateway's local fallback
+     * when no PipelineModule is wired. Wire name: `pipeline:run:resumeFromStep`.
+     * The past-tense `pipeline.run.resumed-from-step` (DC-sourced) is the
+     * producer-backed form; this key covers the gateway-local stub path.
+     */
+    'pipeline:run:resumeFromStep': {
+        runId: string;
+        fromNodeId: string;
+        at: string;
+    };
+    'pipeline.run.retry': {
+        newRunId: string;
+        previousRunId: string;
+        at: string;
+    };
+    'pipeline.webhook.triggered': {
+        webhookPath: string;
+        body: unknown;
+        headers: Record<string, string>;
+        at: string;
+    };
+    'pipeline.join.waiting': {
+        runId: string;
+        stepId: string;
+        received: number;
+        required: number;
+        at: string;
+    };
+    'pipeline.join.fired': {
+        runId: string;
+        stepId: string;
+        inputs: string[];
+        at: string;
+    };
+};
+
+declare interface PipelineNode {
+    id: string;
+    type: NodeType;
+    position: {
+        x: number;
+        y: number;
+    };
+    /** Discriminated union keyed on `data.type`. */
+    data: NodeData;
+}
+
+declare interface PipelineRun {
+    id: string;
+    pipelineId: string;
+    pipelineVersion: number;
+    status: RunStatus;
+    triggeredBy: PipelineRunTrigger;
+    /** Distributed-core ResourceRouter owner. */
+    ownerNodeId: string;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    /** Active frontier — can be > 1 with Fork. */
+    currentStepIds: string[];
+    steps: Record<string, StepExecution>;
+    /** Accumulated as the run progresses. */
+    context: Record<string, unknown>;
+    error?: PipelineRunError;
+    /** Per-model token usage accumulated during the run. */
+    tokenUsage?: Record<string, TokenUsageByModel>;
+    /** Estimated total cost in USD for this run. */
+    estimatedCostUsd?: number;
+    /** ISO timestamp set by StuckRunDetector when the run hasn't emitted events past the threshold. */
+    stuckAt?: string;
+    /**
+     * hub#2223: monotonic count of `resumeFromStep` invocations against this
+     * run. Defaults to undefined / 0 on a fresh run; the executor increments
+     * it each time the run is restarted from a specific step. Surfaces in the
+     * run-detail page so operators can see at a glance that a run was replayed.
+     */
+    replayAttempts?: number;
+    /**
+     * hub#2223: history of resume-from-step invocations on this run. Populated
+     * by the `pipeline:run:resumed-from-step` event handler in
+     * PipelineRunsContext so the run-detail banner can render an at-a-glance
+     * timeline of replays.
+     */
+    resumeHistory?: ResumeFromStepEntry[];
+}
+
+export declare function PipelineRunComparePage(): JSX.Element;
+
+export declare function PipelineRunDiff(): JSX.Element;
+
+declare interface PipelineRunError {
+    nodeId: string;
+    message: string;
+    stack?: string;
+    errorCategory?: ErrorCategory;
+}
+
+export declare function PipelineRunReplayPage(): JSX.Element;
+
+export declare function PipelineRunsPage(): JSX.Element;
+
+export declare function PipelineRunsProvider({ children }: PipelineRunsProviderProps): JSX.Element;
+
+export declare interface PipelineRunsProviderProps {
+    children: default_2.ReactNode;
+}
+
+declare interface PipelineRunsValue {
+    runs: Record<string, PipelineRun>;
+    activeRunIds: string[];
+    triggerRun: (pipelineId: string, payload?: Record<string, unknown>) => Promise<string>;
+    /**
+     * Trigger a run with debug breakpoints. Passes `breakpoints` as node IDs
+     * where execution should pause for inspection before proceeding.
+     */
+    triggerDebugRun: (pipelineId: string, breakpoints: string[], payload?: Record<string, unknown>) => Promise<string>;
+    cancelRun: (runId: string) => void;
+    resolveApproval: (runId: string, stepId: string, decision: 'approve' | 'reject', comment?: string) => void;
+    /**
+     * Resolve a debug breakpoint, resuming execution from the paused node.
+     * @param action  — 'continue' resumes to the next breakpoint;
+     *                  'resume_all' ignores all remaining breakpoints
+     */
+    resolveBreakpoint: (runId: string, stepId: string, action?: 'continue' | 'resume_all') => void;
+    /**
+     * hub#2226 — edit-and-continue: apply a paused-context patch via
+     * social-api. Resolves the executor's `PatchResult` (`{ patchId, before,
+     * after, validation }`); on a 422 the resolved value's
+     * `validation.ok === false` and the caller can show the rejection reason.
+     * Throws on non-2xx/422 transport / 404 / 409 errors.
+     */
+    applyContextPatch: (runId: string, stepId: string, patch: {
+        mode: 'merge';
+        values: Record<string, unknown>;
+    }, appliedBy?: string) => Promise<{
+        patchId: string;
+        before: Record<string, unknown>;
+        after: Record<string, unknown>;
+        validation: {
+            ok: true;
+        } | {
+            ok: false;
+            reason: string;
+        };
+    }>;
+    /**
+     * hub#2226 — revert a paused-context patch by id. Throws if the run has
+     * already resumed past `pausedAtNodeId` (server returns 409).
+     */
+    revertContextPatch: (runId: string, stepId: string, patchId: string) => Promise<void>;
+    /**
+     * Retry the most recent failed run from a specific step (per §18.4.4 / §17.6).
+     * Finds the newest run that contained `nodeId` AND ended in `failed` AND had
+     * `nodeId` itself fail; calls the backend retry-from-node API to spawn a new
+     * run that resumes traversal at `nodeId` and skips upstream nodes. No-op +
+     * console.warn when no eligible run is found.
+     */
+    retryFromStep: (nodeId: string) => Promise<void>;
+    /**
+     * Merge a polled PipelineRun into the in-memory runs map. Used by the
+     * poll-based live status visualizer to inject fresh run data fetched from
+     * the API. Safe to call repeatedly — newer step data wins.
+     */
+    ingestRun: (run: PipelineRun) => void;
+}
+
+declare interface PipelineRunTrigger {
+    userId?: string;
+    triggerType: string;
+    payload: Record<string, unknown>;
+}
+
+export declare function PipelinesPage(): JSX.Element;
+
+export declare function PipelineStatsPage(): JSX.Element;
+
+declare type PipelineStatus = 'draft' | 'published' | 'archived';
+
+/**
+ * Wire envelope that wraps every PipelineEventMap event as it crosses the
+ * network boundary (mock adapter in Phase 1, WebSocket in Phase 4+). Carries
+ * ordering metadata that lets the frontend dedupe replayed events after a
+ * ResourceRouter-orphaned run is resumed on a new owner.
+ */
+declare interface PipelineWireEvent<K extends keyof PipelineEventMap = keyof PipelineEventMap> {
+    eventType: K;
+    payload: PipelineEventMap[K];
+    /** Monotonic per-run sequence — starts at 0, increments on each emit. Stable across replays. */
+    seq: number;
+    /** Node id that emitted the event. For observability + debugging. */
+    sourceNodeId: string;
+    /** Wall-clock emission time (ms). Re-stamped on replay — NEVER use for dedupe. */
+    emittedAt: number;
+}
+
+declare type PolicyData = PolicyNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type PolicyFlowNode = Node_2<PolicyData, 'policy'>;
+
+declare function PolicyNode({ id, data, selected }: NodeProps<PolicyFlowNode>): JSX.Element;
+
+declare interface PolicyNodeData {
+    type: 'policy';
+    policyStoreId: string;
+    principal: string;
+    action: string;
+    resource: string;
+    contextEntities?: string;
+    label?: string;
+}
+
+/** A single resume-from-step entry on a PipelineRun (hub#2223). */
+declare interface ResumeFromStepEntry {
+    fromNodeId: string;
+    /** The step that originally failed when this resumption was triggered, if known. */
+    originalFailedStepId?: string;
+    at: string;
+}
+
+declare interface RetryPolicy {
+    maxAttempts: number;
+    backoffMs: number;
+    backoffMultiplier: number;
+}
+
+declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
+
+/**
+ * One execution attempt of a step. Hub task #1280.
+ *
+ * `StepExecution` retains its top-level `status`/`error`/`output`/timing fields
+ * — they always reflect the LATEST attempt, so existing single-attempt readers
+ * are unaffected. `attempts[]` carries the full history for retry-aware UI
+ * (history view, compare-attempts diff). See ADR-DURABLE-PIPELINE-EXECUTION.
+ */
+declare interface StepAttempt {
+    attemptNumber: number;
+    startedAt: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    errorCategory?: ErrorCategory;
+    /** Backoff delay applied before the next attempt; only set on retryable failures. */
+    retryAfterMs?: number;
+    /** `${runId}:${nodeId}:${attemptNumber}` (per-attempt) or `${runId}:${nodeId}` (per-step idempotent). */
+    idempotencyKey: string;
+}
+
+declare interface StepExecution {
+    nodeId: string;
+    status: StepStatus;
+    startedAt?: string;
+    completedAt?: string;
+    durationMs?: number;
+    input?: unknown;
+    output?: unknown;
+    error?: string;
+    /** Full per-attempt history. Absent on rows persisted before hub#1280. */
+    attempts?: StepAttempt[];
+    llm?: {
+        prompt: string;
+        response: string;
+        tokensIn: number;
+        tokensOut: number;
+        /** True between `pipeline.llm.stream.opened` and the first token; cleared when tokensOut > 0. */
+        streamOpened?: boolean;
+        /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
+        firstTokenLatencyMs?: number;
+    };
+    approvals?: ApprovalRecord[];
+    /**
+     * hub#2226: edit-and-continue patch history applied while the run was
+     * paused at this step's breakpoint. Append-only at apply time;
+     * `revertedAt` is set when a patch is undone via `revertContextPatch`.
+     * Empty/undefined for steps that were never paused-and-patched.
+     */
+    patches?: PatchEntry[];
+}
+
+declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+declare interface TokenUsageByModel {
+    tokensIn: number;
+    tokensOut: number;
+}
+
+declare type TransformData = TransformNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type TransformFlowNode = Node_2<TransformData, 'transform'>;
+
+export declare function TransformNode(props: NodeProps<TransformFlowNode>): JSX.Element;
+
+declare interface TransformNodeData {
+    type: 'transform';
+    transformType: TransformType;
+    expression: string;
+    /** Where in context to write the result; defaults to merging into root. */
+    outputKey?: string;
+    /** Marks this node as an intentional terminal/sink — silences DEAD_END lint. */
+    terminal?: boolean;
+    retryPolicy?: RetryPolicy;
+}
+
+declare type TransformType = 'jsonpath' | 'template' | 'javascript';
+
+declare interface TriggerBinding {
+    event: TriggerType;
+    documentTypeId?: string;
+    schedule?: string;
+    webhookPath?: string;
+    /**
+     * 32-byte hex secret used to verify HMAC-SHA256 signatures on incoming
+     * webhook payloads. Generated server-side by social-api the first time a
+     * webhook trigger binding is saved (see
+     * `social-api/src/routes/pipelineDefinitions.ts`). The frontend never
+     * mints this — it only displays it so the user can copy it into the
+     * external webhook source's "secret" field. Absent → the route falls
+     * back to Phase-1 unsigned-OK behavior.
+     */
+    webhookSecret?: string;
+}
+
+declare type TriggerData = TriggerNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type TriggerFlowNode = Node_2<TriggerData, 'trigger'>;
+
+export declare function TriggerNode(props: NodeProps<TriggerFlowNode>): JSX.Element;
+
+declare interface TriggerNodeData {
+    type: 'trigger';
+    triggerType: TriggerType;
+    /** Required for `document.*` triggers. */
+    documentTypeId?: string;
+    /** Cron expression; required when `triggerType === 'schedule'`. */
+    schedule?: string;
+    /** Required when `triggerType === 'webhook'`. */
+    webhookPath?: string;
+}
+
+declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
+
+/**
+ * Lifecycle-safe subscription. The `handler` ref is kept latest so callers
+ * can use inline closures without re-subscribing on every render. Cleanup
+ * removes the listener when the component unmounts or `type` changes.
+ */
+export declare function useEventStream<K extends keyof PipelineEventMap>(type: K | '*', handler: (payload: PipelineEventMap[K] | WildcardEvent) => void): void;
+
+/**
+ * Access the raw EventStream context. Throws if used outside a provider.
+ * Prefer `useEventStream(type, handler)` for subscription use cases.
+ */
+export declare function useEventStreamContext(): EventStreamValue;
+
+/**
+ * Lookup the most recent run that contains a step matching `nodeId`, and
+ * return that step. Used by per-node visuals (LLMNode etc.) to surface live
+ * runtime state on the canvas without each node having to fold over all
+ * runs itself.
+ *
+ * "Most recent" is defined as max(run.startedAt). Active runs are NOT
+ * preferred over completed — the visual is the *latest observed* state of
+ * this node, regardless of whether the run is still running. The streaming
+ * indicators rely on freshness anyway: streamOpened is cleared on the
+ * first token and never re-set, so a stale streamOpened from a completed
+ * run would imply the run never received its first token (which is
+ * accurate state to render).
+ *
+ * Returns null when no run has executed this node yet (the common case
+ * for nodes that haven't run, or for the editor view when no run has been
+ * triggered).
+ */
+export declare function useLatestStepForNode(nodeId: string): StepExecution | null;
+
+export declare function usePipelineEditor(): PipelineEditorValue;
+
+export declare function usePipelineRuns(): PipelineRunsValue;
+
+/**
+ * Ergonomic shortcut: returns just the `retryFromStep` callback so per-node
+ * components don't have to destructure the whole runs value. See §17.6.
+ *
+ * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
+ * standalone visual renders (storybook, isolated unit tests) don't throw just
+ * for asking for the retry handler.
+ */
+export declare function useRetryFromStep(): (nodeId: string) => Promise<void>;
+
+declare type WildcardEvent = {
+    eventType: string;
+    payload: unknown;
+};
+
+export { }

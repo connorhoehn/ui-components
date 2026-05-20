@@ -1,0 +1,539 @@
+import { JSX } from 'react/jsx-runtime';
+
+export declare function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminDashboardPageProps): JSX.Element;
+
+export declare interface AdminDashboardPageProps {
+    stats: {
+        userPools: number;
+        clients: number;
+        totalUsers: number;
+    };
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        createdAt: string;
+    }>;
+    onNavigate: (path: string) => void;
+    loading?: boolean;
+}
+
+export declare function ApplicationFormPage({ application, isEdit, pools, onSubmit, onCancel, error, }: ApplicationFormPageProps): JSX.Element;
+
+export declare interface ApplicationFormPageProps {
+    application?: {
+        clientId?: string;
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris?: string[];
+        grantTypes: string[];
+        responseTypes?: string[];
+        scope?: string;
+    };
+    isEdit: boolean;
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+    }>;
+    onSubmit: (data: {
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris: string[];
+        grantTypes: string[];
+        responseTypes: string[];
+        scope: string;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function ApplicationListPage({ applications, onCreateApp, onCreateAppWithPool, onEditApp, onDeleteApp, loading, }: ApplicationListPageProps): JSX.Element;
+
+export declare interface ApplicationListPageProps {
+    applications: Array<{
+        clientId: string;
+        clientName: string;
+        poolId: string;
+        poolName?: string;
+        redirectUris: string[];
+    }>;
+    onCreateApp: () => void;
+    onCreateAppWithPool: () => void;
+    onEditApp: (clientId: string) => void;
+    onDeleteApp: (clientId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function ApplicationPoolFormPage({ onSubmit, onCancel, error }: ApplicationPoolFormPageProps): JSX.Element;
+
+export declare interface ApplicationPoolFormPageProps {
+    onSubmit: (data: {
+        clientName: string;
+        poolName: string;
+        redirectUris: string[];
+        grantTypes?: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function AuditPage({ records, onQuery, onViewEntity, onReplay, loading, totalRecords, }: AuditPageProps): JSX.Element;
+
+export declare interface AuditPageProps {
+    records: Array<{
+        timestamp: number;
+        actor: {
+            id?: string;
+            email?: string;
+        } | string;
+        entityType: string;
+        entityId: string;
+        operation: string;
+    }>;
+    onQuery: (params: {
+        entityType?: string;
+        entityId?: string;
+        fromTime?: number;
+        toTime?: number;
+        limit?: number;
+    }) => Promise<void>;
+    onViewEntity: (entityType: string, entityId: string) => void;
+    onReplay: (entityId: string, atTime: number) => Promise<Record<string, unknown> | null>;
+    loading?: boolean;
+    totalRecords?: number;
+}
+
+export declare function CodeInput({ length, onComplete, error, disabled, autoFocus, }: CodeInputProps): JSX.Element;
+
+export declare interface CodeInputProps {
+    length?: number;
+    onComplete: (code: string) => void;
+    error?: string | null;
+    disabled?: boolean;
+    autoFocus?: boolean;
+}
+
+export declare interface Column<T> {
+    key: string;
+    header: string;
+    render?: (item: T) => React.ReactNode;
+    sortable?: boolean;
+    width?: string;
+    align?: 'left' | 'right' | 'center';
+}
+
+export declare function ConsentPage({ clientName, scopes, redirectUri, onAuthorize, onDeny, logoUrl, }: ConsentPageProps): JSX.Element;
+
+export declare interface ConsentPageProps {
+    clientName: string;
+    scopes: string[];
+    redirectUri?: string;
+    onAuthorize: () => Promise<void>;
+    onDeny: () => Promise<void>;
+    logoUrl?: string;
+}
+
+export declare function DiagnosticsPage({ diagnostics, rates, dlq, onRedrive, onPurge, onRefresh, loading, }: DiagnosticsPageProps): JSX.Element;
+
+export declare interface DiagnosticsPageProps {
+    diagnostics?: Record<string, unknown>;
+    rates?: Record<string, unknown>;
+    dlq?: Array<{
+        id: string;
+        payload: unknown;
+        error: string;
+        failedAt: string;
+        retryCount: number;
+    }>;
+    onRedrive: (id: string) => Promise<void>;
+    onPurge: (id: string) => Promise<void>;
+    onRefresh: () => void;
+    loading?: boolean;
+}
+
+export declare function EmailTemplateFormPage({ template, isEdit, onSubmit, onCancel, error, }: EmailTemplateFormPageProps): JSX.Element;
+
+export declare interface EmailTemplateFormPageProps {
+    template?: {
+        templateId?: string;
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function EmailTemplateListPage({ templates, onCreateTemplate, onEditTemplate, onDeleteTemplate, onTestSend, loading, }: EmailTemplateListPageProps): JSX.Element;
+
+export declare interface EmailTemplateListPageProps {
+    templates: Array<{
+        templateId: string;
+        name: string;
+        subject: string;
+    }>;
+    onCreateTemplate: () => void;
+    onEditTemplate: (templateId: string) => void;
+    onDeleteTemplate: (templateId: string) => Promise<void>;
+    onTestSend: (templateId: string, email: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function EntityTable<T extends Record<string, unknown>>({ columns, data, keyField, onRowClick, actions, emptyMessage, emptyIcon, loading, }: EntityTableProps<T>): JSX.Element;
+
+export declare interface EntityTableProps<T> {
+    columns: Column<T>[];
+    data: T[];
+    keyField: string;
+    onRowClick?: (item: T) => void;
+    actions?: (item: T) => React.ReactNode;
+    emptyMessage?: string;
+    emptyIcon?: string;
+    loading?: boolean;
+}
+
+export declare function ErrorPage({ title, message, error, onRetry, onBack, }: ErrorPageProps): JSX.Element;
+
+export declare interface ErrorPageProps {
+    title?: string;
+    message: string;
+    error?: string;
+    onRetry?: () => void;
+    onBack?: () => void;
+}
+
+export declare function FormField({ label, name, type, value, onChange, error, required, placeholder, options, helpText, disabled, }: FormFieldProps): JSX.Element;
+
+export declare interface FormFieldProps {
+    label: string;
+    name: string;
+    type?: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'checkbox' | 'number';
+    value: string | boolean | number;
+    onChange: (value: string | boolean | number) => void;
+    error?: string;
+    required?: boolean;
+    placeholder?: string;
+    options?: Array<{
+        value: string;
+        label: string;
+    }>;
+    helpText?: string;
+    disabled?: boolean;
+}
+
+export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
+
+export declare interface GroupFormPageProps {
+    group?: {
+        groupId?: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    };
+    isEdit: boolean;
+    poolId: string;
+    members?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    availableUsers?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    onSubmit: (data: {
+        groupName: string;
+        description: string;
+        permissions: string[];
+    }) => Promise<void>;
+    onAddMember?: (userId: string) => Promise<void>;
+    onRemoveMember?: (userId: string) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function GroupListPage({ groups, poolName, onCreateGroup, onEditGroup, onDeleteGroup, loading, }: GroupListPageProps): JSX.Element;
+
+export declare interface GroupListPageProps {
+    groups: Array<{
+        groupId: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    }>;
+    poolId: string;
+    poolName: string;
+    onCreateGroup: () => void;
+    onEditGroup: (groupId: string) => void;
+    onDeleteGroup: (groupId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, }: IdentityAdminLayoutProps): JSX.Element;
+
+export declare interface IdentityAdminLayoutProps {
+    children: React.ReactNode;
+    activePath?: string;
+    adminEmail?: string;
+    onNavigate: (path: string) => void;
+    onLogout?: () => void;
+}
+
+export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, }: LoginPageProps): JSX.Element;
+
+export declare interface LoginPageProps {
+    uid: string;
+    interactionUrl: string;
+    clientName?: string;
+    logoUrl?: string;
+    error?: string | null;
+    onLogin: (email: string, password: string) => Promise<void>;
+    onRegister: (data: {
+        email: string;
+        password: string;
+        givenName?: string;
+        familyName?: string;
+        enableMfa?: boolean;
+    }) => Promise<void>;
+    onForgotPassword: (email: string) => Promise<void>;
+    registrationEnabled?: boolean;
+    forgotPasswordEnabled?: boolean;
+}
+
+export declare function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps): JSX.Element;
+
+export declare interface LogoutPageProps {
+    onConfirm: () => void;
+    onCancel?: () => void;
+    clientName?: string;
+}
+
+export declare function MfaDashboardPage({ devices, userEmail, mfaEnabled, onAddDevice, onRenameDevice, onRemoveDevice, loading, }: MfaDashboardPageProps): JSX.Element;
+
+export declare interface MfaDashboardPageProps {
+    devices: MfaDevice[];
+    userEmail?: string;
+    mfaEnabled: boolean;
+    onAddDevice: () => void;
+    onRenameDevice: (deviceId: string, newName: string) => Promise<void>;
+    onRemoveDevice: (deviceId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare interface MfaDevice {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    isVerified: boolean;
+    createdAt: string;
+    lastUsed?: string;
+}
+
+export declare function MfaManagementPage({ metrics, users, pools, onRefresh, loading, }: MfaManagementPageProps): JSX.Element;
+
+export declare interface MfaManagementPageProps {
+    metrics?: {
+        totalUsers: number;
+        mfaEnabled: number;
+        mfaDisabled: number;
+        adoptionRate: number;
+    };
+    users?: Array<{
+        userId: string;
+        email: string;
+        mfaEnabled: boolean;
+        deviceCount: number;
+    }>;
+    pools?: Array<{
+        poolId: string;
+        poolName: string;
+        userCount: number;
+    }>;
+    onRefresh: () => void;
+    loading?: boolean;
+}
+
+export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, }: MfaSetupPageProps): JSX.Element;
+
+export declare interface MfaSetupPageProps {
+    onSetup: (deviceName: string) => Promise<{
+        deviceId: string;
+        qrCode: string;
+        secret: string;
+        backupCodes: string[];
+    }>;
+    onVerify: (deviceId: string, code: string) => Promise<{
+        success: boolean;
+        backupCodes?: string[];
+    }>;
+    onComplete: () => void;
+    userEmail?: string;
+}
+
+export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, }: MfaVerifyPageProps): JSX.Element;
+
+export declare interface MfaVerifyPageProps {
+    onVerify: (code: string) => Promise<void>;
+    onVerifyBackup: (code: string) => Promise<void>;
+    error?: string | null;
+}
+
+declare interface PasswordPolicy {
+    minLength: number;
+    requireUppercase: boolean;
+    requireLowercase: boolean;
+    requireNumbers: boolean;
+    requireSymbols: boolean;
+}
+
+export declare function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFormPageProps): JSX.Element;
+
+export declare interface PoolFormPageProps {
+    pool?: {
+        poolId?: string;
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function PoolListPage({ pools, onCreatePool, onEditPool, onDeletePool, onViewPool, loading, }: PoolListPageProps): JSX.Element;
+
+export declare interface PoolListPageProps {
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        clientId: string;
+        createdAt: string;
+    }>;
+    onCreatePool: () => void;
+    onEditPool: (poolId: string) => void;
+    onDeletePool: (poolId: string) => Promise<void>;
+    onViewPool: (poolId: string) => void;
+    loading?: boolean;
+}
+
+export declare function PoolScopedLayout({ children, poolId, poolName, activeSection, onNavigate, onBack, }: PoolScopedLayoutProps): JSX.Element;
+
+export declare interface PoolScopedLayoutProps {
+    children: React.ReactNode;
+    poolId: string;
+    poolName: string;
+    activeSection?: 'users' | 'groups' | 'mfa';
+    onNavigate: (path: string) => void;
+    onBack: () => void;
+}
+
+declare interface PoolSettings {
+    passwordPolicy?: PasswordPolicy;
+    mfaConfiguration: 'OFF' | 'OPTIONAL' | 'REQUIRED';
+    accountRecovery?: {
+        email: boolean;
+        sms: boolean;
+    };
+}
+
+export declare function QrCodeDisplay({ value, size, label }: QrCodeDisplayProps): JSX.Element;
+
+export declare interface QrCodeDisplayProps {
+    value: string;
+    size?: number;
+    label?: string;
+}
+
+export declare function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps): JSX.Element;
+
+export declare interface SetupGuidePageProps {
+    status: {
+        hasUserPools: boolean;
+        poolCount: number;
+        hasClients: boolean;
+        clientCount: number;
+        hasAdminUser: boolean;
+        totalUsers: number;
+        adminEmails: string[];
+        smtpConfigured: boolean;
+        smtpHost?: string;
+        issuer: string;
+        issuerConfigured: boolean;
+        wellKnownUrl?: string;
+        firstPoolId?: string;
+        firstClientId?: string;
+    };
+    onNavigate: (path: string) => void;
+}
+
+export declare function StatusBadge({ status, variant }: StatusBadgeProps): JSX.Element;
+
+export declare interface StatusBadgeProps {
+    status: string;
+    variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+}
+
+export declare function UserFormPage({ user, isEdit, customAttributeDefinitions, onSubmit, onCancel, error, }: UserFormPageProps): JSX.Element;
+
+export declare interface UserFormPageProps {
+    user?: {
+        userId?: string;
+        email: string;
+        givenName?: string;
+        familyName?: string;
+        nickname?: string;
+        picture?: string;
+        website?: string;
+        customAttributes?: Record<string, unknown>;
+    };
+    isEdit: boolean;
+    poolId: string;
+    customAttributeDefinitions?: Record<string, string>;
+    onSubmit: (data: {
+        email: string;
+        givenName?: string;
+        familyName?: string;
+        nickname?: string;
+        picture?: string;
+        website?: string;
+        customAttributes?: Record<string, unknown>;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function UserListPage({ users, poolName, onCreateUser, onEditUser, onDeleteUser, loading, }: UserListPageProps): JSX.Element;
+
+export declare interface UserListPageProps {
+    users: Array<{
+        userId: string;
+        email: string;
+        givenName?: string;
+        familyName?: string;
+        status: string;
+        createdAt: string;
+    }>;
+    poolId: string;
+    poolName: string;
+    onCreateUser: () => void;
+    onEditUser: (userId: string) => void;
+    onDeleteUser: (userId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export { }

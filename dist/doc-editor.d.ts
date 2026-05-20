@@ -1,0 +1,741 @@
+import { Awareness } from 'y-protocols/awareness';
+import { default as default_2 } from 'react';
+import { Editor } from '@tiptap/react';
+import { JSX } from 'react/jsx-runtime';
+import { MutableRefObject } from 'react';
+import { XmlFragment } from 'yjs';
+import * as Y from 'yjs';
+
+export declare function AckMode({ sections, onAckItem, onRejectItem, participants, onSectionFocus, jumpToIndex, onJumpComplete, getSectionFragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread }: AckModeProps): JSX.Element;
+
+declare interface AckModeProps {
+    sections: Section[];
+    onAckItem: (sectionId: string, itemId: string, notes?: string) => void;
+    onRejectItem: (sectionId: string, itemId: string, reason: string) => void;
+    participants: Participant[];
+    onSectionFocus?: (sectionId: string) => void;
+    /** Jump to a specific section page (set by handleJumpToUser) */
+    jumpToIndex?: number | null;
+    onJumpComplete?: () => void;
+    getSectionFragment: (sectionId: string) => XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    comments?: Record<string, CommentThread[]>;
+    onAddComment?: (sectionId: string, text: string, parentCommentId?: string | null) => void;
+    onResolveThread?: (sectionId: string, commentId: string) => void;
+    onUnresolveThread?: (sectionId: string, commentId: string) => void;
+}
+
+export declare function ActionItemsCard({ allItems }: {
+    allItems: TaskItem[];
+}): JSX.Element;
+
+declare interface ActivityEvent {
+    id: string;
+    eventType: string;
+    detail: Record<string, unknown>;
+    timestamp: string;
+    userId?: string;
+    displayName?: string;
+    color?: string;
+    source: 'local' | 'remote';
+}
+
+export declare function ActivityFeed({ events, participants }: ActivityFeedProps): JSX.Element;
+
+declare interface ActivityFeedProps {
+    events: ActivityEvent[];
+    participants: Participant[];
+}
+
+export declare function AttachmentsPanel({ documentId, editable }: AttachmentsPanelProps): JSX.Element;
+
+declare interface AttachmentsPanelProps {
+    documentId: string;
+    editable: boolean;
+}
+
+export declare function ChunkViewer({ section, onAckItem, onRejectItem, fragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread, participants }: ChunkViewerProps): JSX.Element;
+
+declare interface ChunkViewerProps {
+    section: Section;
+    onAckItem: (itemId: string, notes?: string) => void;
+    onRejectItem: (itemId: string, reason: string) => void;
+    fragment: XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    comments?: CommentThread[];
+    onAddComment?: (text: string, parentCommentId?: string | null) => void;
+    onResolveThread?: (commentId: string) => void;
+    onUnresolveThread?: (commentId: string) => void;
+    participants?: Participant[];
+}
+
+/** Minimal provider shape needed by awareness. */
+declare interface CollaborationProvider {
+    awareness: Awareness;
+}
+
+/** A flat comment as stored in Y.js. */
+declare interface CommentData {
+    id: string;
+    text: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    timestamp: string;
+    parentCommentId: string | null;
+    resolved?: boolean;
+    resolvedBy?: string;
+    resolvedAt?: string;
+}
+
+/** A comment with nested replies, assembled client-side. */
+declare interface CommentThread extends CommentData {
+    replies: CommentThread[];
+}
+
+/** Connection lifecycle states */
+declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+export declare function countAllComments(threads: CommentThread[]): number;
+
+export declare function DiffViewer({ oldSections, newSections, onClose }: DiffViewerProps): JSX.Element;
+
+declare interface DiffViewerProps {
+    /** Sections from the historical (older) version. */
+    oldSections: SnapshotSection[];
+    /** Sections from the current (newer) version. */
+    newSections: SnapshotSection[];
+    /** Called when the user dismisses the diff view. */
+    onClose: () => void;
+}
+
+export declare function DocumentEditorPage({ documentId, documentType, ws, userId, displayName, color, onMessage, activityPublish, onBack, isVideoDocked, onDockVideo, onUndockVideo, }: DocumentEditorPageProps): JSX.Element;
+
+declare interface DocumentEditorPageProps {
+    documentId: string;
+    documentType?: string;
+    ws: UseWebSocketReturn;
+    userId: string;
+    displayName: string;
+    color?: string;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+    activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
+    activityEvents: ActivityEvent[];
+    onBack?: () => void;
+    /** Whether the video call is docked to the left sidebar (managed by AppLayout) */
+    isVideoDocked?: boolean;
+    /** Dock the video panel to the left sidebar */
+    onDockVideo?: () => void;
+    /** Undock the video panel from the left sidebar */
+    onUndockVideo?: () => void;
+}
+
+export declare function DocumentHeader({ meta, mode, onModeChange, participants, onUpdateMeta, onExport, onToggleHistory, onToggleVideoCall, onToggleVideoHistory, isCallActive, onClearDocument, onJumpToUser, sections, onToggleMyItems, myItemCount, commentCount, onBack, onFollowUser, followingUserId, onFinalize, onUnlock, pastCallsCount, }: DocumentHeaderProps): JSX.Element;
+
+declare interface DocumentHeaderProps {
+    meta: DocumentMeta;
+    mode: ViewMode;
+    onModeChange: (mode: ViewMode) => void;
+    participants: Participant[];
+    onUpdateMeta: (patch: Partial<DocumentMeta>) => void;
+    onExport: (format: 'markdown' | 'pdf' | 'json') => void;
+    onToggleHistory: () => void;
+    onToggleVideoCall?: () => void;
+    onToggleVideoHistory?: () => void;
+    isCallActive?: boolean;
+    onClearDocument: () => void;
+    onJumpToUser?: (participant: Participant) => void;
+    sections?: {
+        id: string;
+        title: string;
+    }[];
+    onToggleMyItems?: () => void;
+    myItemCount?: number;
+    commentCount?: number;
+    onBack?: () => void;
+    onFollowUser?: (participant: Participant) => void;
+    followingUserId?: string | null;
+    onFinalize?: () => void;
+    onUnlock?: () => void;
+    pastCallsCount?: number;
+}
+
+declare interface DocumentInfo {
+    id: string;
+    title: string;
+    type: string;
+    status: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    icon: string;
+    description?: string;
+    activeCallSessionId?: string;
+}
+
+export declare function DocumentListPage({ documents, presence, onOpenDocument, onCreateDocument, onDeleteDocument, onJumpToUser, hideHeader, }: DocumentListPageProps): JSX.Element;
+
+declare interface DocumentListPageProps {
+    documents: DocumentInfo[];
+    presence: Record<string, PresenceInfo[]>;
+    onOpenDocument: (documentId: string) => void;
+    onCreateDocument: (meta: {
+        title: string;
+        type: string;
+        description?: string;
+    }) => void;
+    onDeleteDocument: (documentId: string) => void;
+    onJumpToUser: (documentId: string, userId: string) => void;
+    hideHeader?: boolean;
+}
+
+declare interface DocumentMeta {
+    id: string;
+    title: string;
+    sourceType: 'transcript' | 'meeting' | 'notes' | 'custom';
+    sourceId: string;
+    createdBy: string;
+    createdByName?: string;
+    createdAt: string;
+    aiModel: string;
+    status: 'draft' | 'review' | 'final';
+    documentType?: string;
+    updatedAt?: string;
+    activeCallSessionId?: string;
+}
+
+export declare function EditorToolbar({ editor }: EditorToolbarProps): JSX.Element | null;
+
+declare interface EditorToolbarProps {
+    editor: Editor | null;
+}
+
+export declare function ExecutiveSummaryCard({ bullets, contentText, fragment, ydoc, provider, }: {
+    bullets: string[];
+    contentText?: string;
+    fragment?: XmlFragment | null;
+    ydoc?: Y.Doc | null;
+    provider?: CollaborationProvider | null;
+}): JSX.Element;
+
+export declare function FollowModeBar({ followingUserId, participants, onStopFollow, }: FollowModeBarProps): JSX.Element | null;
+
+declare interface FollowModeBarProps {
+    followingUserId: string | null;
+    participants: Participant[];
+    onStopFollow: () => void;
+}
+
+/** Error received from the gateway (matches server error-codes.js format) */
+declare interface GatewayError {
+    /** Standardized error code (e.g. AUTH_TOKEN_EXPIRED, AUTHZ_CHANNEL_DENIED) */
+    code: string;
+    /** Human-readable description for display */
+    message: string;
+    timestamp: string;
+}
+
+/** A raw message received over the WebSocket */
+declare interface GatewayMessage {
+    type: string;
+    action?: string;
+    channel?: string;
+    error?: GatewayError;
+    [key: string]: unknown;
+}
+
+export declare function generateSummaryBullets(allItems: TaskItem[], sections: Section[]): string[];
+
+export declare function getInitials(name: string): string;
+
+export declare function HeaderBanner({ meta, participantCount, }: {
+    meta: DocumentMeta;
+    participantCount: number;
+}): JSX.Element;
+
+export declare function KeyDecisionsCard({ sections }: {
+    sections: Section[];
+}): JSX.Element;
+
+export declare const MentionDropdown: default_2.ForwardRefExoticComponent<MentionDropdownProps & default_2.RefAttributes<MentionDropdownHandle>>;
+
+declare interface MentionDropdownHandle {
+    /** Forward a keydown event from the parent input. Returns true if the dropdown consumed it. */
+    handleKeyDown: (e: default_2.KeyboardEvent | KeyboardEvent) => boolean;
+}
+
+declare interface MentionDropdownProps {
+    query: string;
+    users: MentionUser[];
+    position: {
+        top: number;
+        left: number;
+    };
+    onSelect: (user: MentionUser) => void;
+    onDismiss: () => void;
+}
+
+declare interface MentionItem {
+    kind: 'mention';
+    sectionId: string;
+    sectionTitle: string;
+    commentId: string;
+    authorName: string;
+    authorColor: string;
+    commentText: string;
+    timestamp: string;
+}
+
+declare interface MentionUser {
+    userId: string;
+    displayName: string;
+    color: string;
+    online: boolean;
+    mode?: string;
+    type: 'user' | 'group';
+    memberCount?: number;
+}
+
+declare type MyItem = MentionItem | TaskAssignment;
+
+export declare function MyMentionsPanel({ items, onNavigateToSection, onClose, }: MyMentionsPanelProps): JSX.Element;
+
+declare interface MyMentionsPanelProps {
+    items: MyItem[];
+    onNavigateToSection: (sectionId: string) => void;
+    onClose: () => void;
+}
+
+export declare function NewDocumentModal({ open, onClose, onCreate }: NewDocumentModalProps): JSX.Element | null;
+
+declare interface NewDocumentModalProps {
+    open: boolean;
+    onClose: () => void;
+    onCreate: (meta: {
+        title: string;
+        type: string;
+        description?: string;
+        icon: string;
+        documentTypeId: string;
+    }) => void;
+}
+
+declare interface Participant {
+    clientId: string;
+    userId: string;
+    displayName: string;
+    color: string;
+    mode: 'editor' | 'reviewer' | 'reader';
+    currentSectionId: string | null;
+    lastSeen?: number;
+    idle?: boolean;
+}
+
+export declare function ParticipantAvatars({ participants, sections, onJumpToUser, onFollowUser, followingUserId, }: ParticipantAvatarsProps): JSX.Element | null;
+
+declare interface ParticipantAvatarsProps {
+    participants: Participant[];
+    sections?: {
+        id: string;
+        title: string;
+    }[];
+    onJumpToUser?: (participant: Participant) => void;
+    onFollowUser?: (participant: Participant) => void;
+    followingUserId?: string | null;
+}
+
+declare interface PresenceInfo {
+    userId: string;
+    displayName: string;
+    color: string;
+    mode?: string;
+    idle?: boolean;
+}
+
+export declare function ReaderMode({ sections, participants, meta, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: ReaderModeProps): JSX.Element;
+
+declare interface ReaderModeProps {
+    sections: Section[];
+    participants: Participant[];
+    meta: DocumentMeta;
+    commentCounts?: Record<string, number>;
+    /** Plain-text content extracted from each section's Y.XmlFragment */
+    sectionContentTexts?: Record<string, string>;
+    /** Threaded comments per section */
+    comments?: Record<string, CommentThread[]>;
+    /** Y.js fragment getter for rich-text rendering */
+    getSectionFragment?: (sectionId: string) => XmlFragment | null;
+    /** Y.Doc instance for collaboration */
+    ydoc?: Y.Doc | null;
+    /** Collaboration provider for awareness */
+    provider?: CollaborationProvider | null;
+}
+
+export declare function relativeTime(iso: string): string;
+
+export declare function ReviewableItem({ item, onAck, onReject }: ReviewableItemProps): JSX.Element;
+
+declare interface ReviewableItemProps {
+    item: TaskItem;
+    onAck: (notes?: string) => void;
+    onReject: (reason: string) => void;
+}
+
+export declare function ReviewMode({ sections, participants, userId, getSectionFragment, ydoc, provider, sectionReviews, reviewSection, comments, onAddComment, onResolveThread, onUnresolveThread, onSectionFocus, }: ReviewModeProps): JSX.Element;
+
+declare interface ReviewModeProps {
+    sections: Section[];
+    participants: Participant[];
+    userId: string;
+    getSectionFragment: (sectionId: string) => XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    sectionReviews: Record<string, SectionReview[]>;
+    reviewSection: (sectionId: string, status: SectionReview['status'], comment?: string) => void;
+    comments?: Record<string, CommentThread[]>;
+    onAddComment?: (sectionId: string, text: string, parentCommentId?: string | null) => void;
+    onResolveThread?: (sectionId: string, commentId: string) => void;
+    onUnresolveThread?: (sectionId: string, commentId: string) => void;
+    onSectionFocus?: (sectionId: string) => void;
+}
+
+export declare function ReviewProgress({ current, total }: ReviewProgressProps): JSX.Element;
+
+declare interface ReviewProgressProps {
+    current: number;
+    total: number;
+}
+
+declare interface Section {
+    id: string;
+    type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
+    title: string;
+    collapsed: boolean;
+    items: TaskItem[];
+    sectionType?: string;
+    metadata?: Record<string, unknown>;
+    placeholder?: string;
+}
+
+declare interface Section_2 {
+    id: string;
+    title: string;
+}
+
+export declare function SectionBlock({ section, fragment, ydoc, provider, user, editable, onUpdateSection, onAddItem, onUpdateItem, onRemoveItem, participants, onFocus, isFocused, comments, onUpdateCursorInfo, commentCount, onOpenComments, commentPresence, }: SectionBlockProps): JSX.Element;
+
+declare interface SectionBlockProps {
+    section: Section;
+    fragment: XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable: boolean;
+    onUpdateSection: (patch: Partial<Section>) => void;
+    onAddItem: (item: Omit<TaskItem, 'id'>) => void;
+    onUpdateItem: (itemId: string, patch: Partial<TaskItem>) => void;
+    onRemoveItem: (itemId: string) => void;
+    participants?: Participant[];
+    onFocus?: () => void;
+    isFocused?: boolean;
+    comments?: CommentThread[];
+    onAddComment?: (text: string, parentCommentId?: string | null) => void;
+    onResolveThread?: (commentId: string) => void;
+    onUnresolveThread?: (commentId: string) => void;
+    /** Merge-safe awareness updater for Tiptap cursor info. */
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    /** Number of comments for this section (used for badge on comment icon). */
+    commentCount?: number;
+    /** Called when the user clicks the comment icon to open the sidebar. */
+    onOpenComments?: (sectionId: string) => void;
+    /** Participants who currently have comments open for this section. */
+    commentPresence?: Participant[];
+}
+
+export declare function SectionComments({ comments, onAddComment, participants, onResolveThread, onUnresolveThread, }: SectionCommentsProps): JSX.Element;
+
+declare interface SectionCommentsProps {
+    comments: CommentThread[];
+    onAddComment: (text: string, parentCommentId?: string | null) => void;
+    participants?: Participant[];
+    onResolveThread?: (commentId: string) => void;
+    onUnresolveThread?: (commentId: string) => void;
+}
+
+export declare function SectionList({ sections, getSectionFragment, ydoc, provider, user, editable, onUpdateSection, onAddItem, onUpdateItem, onRemoveItem, participants, onSectionFocus, focusedSectionId, comments, onAddComment, onResolveThread, onUnresolveThread, onUpdateCursorInfo, onOpenComments, }: SectionListProps): JSX.Element;
+
+declare interface SectionListProps {
+    sections: Section[];
+    getSectionFragment: (sectionId: string) => XmlFragment | null;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable: boolean;
+    onUpdateSection: (sectionId: string, patch: Partial<Section>) => void;
+    onAddItem: (sectionId: string, item: Omit<TaskItem, 'id'>) => void;
+    onUpdateItem: (sectionId: string, itemId: string, patch: Partial<TaskItem>) => void;
+    onRemoveItem: (sectionId: string, itemId: string) => void;
+    participants?: Participant[];
+    onSectionFocus?: (sectionId: string) => void;
+    focusedSectionId?: string | null;
+    comments?: Record<string, CommentThread[]>;
+    onAddComment?: (sectionId: string, text: string, parentCommentId?: string | null) => void;
+    onResolveThread?: (sectionId: string, commentId: string) => void;
+    onUnresolveThread?: (sectionId: string, commentId: string) => void;
+    /** Merge-safe awareness updater for Tiptap cursor info. */
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+    /** Called when user clicks a section's comment icon to open the sidebar. */
+    onOpenComments?: (sectionId: string) => void;
+}
+
+/** Per-section review status (DocuSign-style acknowledgement). */
+declare interface SectionReview {
+    userId: string;
+    displayName: string;
+    status: 'reviewed' | 'approved' | 'changes_requested';
+    timestamp: string;
+    comment?: string;
+}
+
+export declare function SectionSummariesCard({ sections, commentCounts, sectionContentTexts, comments, getSectionFragment, ydoc, provider, }: {
+    sections: Section[];
+    commentCounts?: Record<string, number>;
+    sectionContentTexts?: Record<string, string>;
+    comments?: Record<string, CommentThread[]>;
+    getSectionFragment?: (sectionId: string) => XmlFragment | null;
+    ydoc?: Y.Doc | null;
+    provider?: CollaborationProvider | null;
+}): JSX.Element;
+
+declare type SidebarPanel = 'history' | 'myItems' | 'videoHistory';
+
+/** Plain-object snapshot of a section for diffing (no Y.js references). */
+declare interface SnapshotSection {
+    id: string;
+    type: string;
+    title: string;
+    /** Plain text extracted from the section's rich-text content. */
+    textContent: string;
+    items: Array<{
+        id: string;
+        text: string;
+        status: string;
+        assignee: string;
+        priority: string;
+    }>;
+}
+
+export declare function TableOfContents({ sections, focusedSectionId }: TableOfContentsProps): JSX.Element | null;
+
+declare interface TableOfContentsProps {
+    sections: Section_2[];
+    focusedSectionId: string | null;
+}
+
+declare interface TaskAssignment {
+    kind: 'task';
+    sectionId: string;
+    sectionTitle: string;
+    itemId: string;
+    taskText: string;
+    status: string;
+    priority: string;
+}
+
+declare interface TaskItem {
+    id: string;
+    text: string;
+    status: 'pending' | 'acked' | 'done' | 'rejected';
+    assignee: string;
+    ackedBy: string;
+    ackedAt: string;
+    priority: 'low' | 'medium' | 'high';
+    notes: string;
+    dueDate?: string;
+    category?: string;
+}
+
+export declare function TaskItemRow({ item, editable, onUpdate, onRemove, autoFocusText, onDidAutoFocus }: TaskItemRowProps): JSX.Element;
+
+declare interface TaskItemRowProps {
+    item: TaskItem;
+    editable: boolean;
+    onUpdate: (patch: Partial<TaskItem>) => void;
+    onRemove: () => void;
+    /** When true, auto-focus the text input on mount. */
+    autoFocusText?: boolean;
+    /** Called after auto-focus completes so parent can reset the flag. */
+    onDidAutoFocus?: () => void;
+}
+
+export declare function TaskList({ items, editable, onUpdateItem, onRemoveItem, focusLastItem }: TaskListProps): JSX.Element;
+
+declare interface TaskListProps {
+    items: TaskItem[];
+    editable: boolean;
+    onUpdateItem: (itemId: string, patch: Partial<TaskItem>) => void;
+    onRemoveItem: (itemId: string) => void;
+    /** When true, auto-focus the text input of the last item (reset after use). */
+    focusLastItem?: MutableRefObject<boolean>;
+}
+
+export declare function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, }: TiptapEditorProps): JSX.Element;
+
+declare interface TiptapEditorProps {
+    fragment: XmlFragment;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    placeholder?: string;
+    /** Section ID — used to filter cursor overlay to only show cursors in this section */
+    sectionId?: string;
+    /** Merge-safe awareness updater for cursor display info (name + color).
+     *  When provided, replaces the direct setLocalStateField write. */
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+}
+
+export declare function useDocumentActions({ documentId, userId, ws, updateMeta, addSection, exportJSON, getSectionFragment, comments, }: UseDocumentActionsArgs): {
+    demoLoaded: boolean;
+    handleLoadDemo: () => void;
+    handleClearDocument: () => void;
+    handleExport: (format: "markdown" | "pdf" | "json") => void;
+};
+
+declare interface UseDocumentActionsArgs {
+    documentId: string;
+    userId: string;
+    ws: UseWebSocketReturn;
+    updateMeta: (meta: DocumentMeta) => void;
+    addSection: (section: Section) => void;
+    exportJSON: () => {
+        meta: DocumentMeta;
+        sections: Section[];
+    } | null;
+    getSectionFragment: (sectionId: string) => XmlFragment | null;
+    comments: Record<string, CommentThread[]>;
+}
+
+export declare function useSidebarPanels(options?: UseSidebarPanelsOptions): UseSidebarPanelsReturn;
+
+declare interface UseSidebarPanelsOptions {
+    initialPanel?: SidebarPanel | null;
+}
+
+declare interface UseSidebarPanelsReturn {
+    activePanel: SidebarPanel | null;
+    showHistory: boolean;
+    showMyItems: boolean;
+    showVideoHistory: boolean;
+    toggleHistory: () => void;
+    toggleMyItems: () => void;
+    toggleVideoHistory: () => void;
+    openPanel: (panel: SidebarPanel) => void;
+    closePanel: () => void;
+}
+
+declare interface UseWebSocketReturn {
+    connectionState: ConnectionState;
+    lastError: GatewayError | null;
+    sessionToken: string | null;
+    clientId: string | null;
+    currentChannel: string;
+    switchChannel: (channel: string) => void;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    disconnect: () => void;
+    reconnect: () => void;
+}
+
+declare interface VersionEntry {
+    timestamp: number;
+    age: number;
+    name?: string;
+    author?: string;
+    type?: 'manual' | 'auto' | 'pre-restore';
+}
+
+export declare function VersionHistoryPanel({ versions, loading, previewTimestamp, onFetch: _onFetch, onPreview, onClearPreview, onClose, onSaveVersion, onCompare, onClearCompare, compareSections, compareTimestamp, currentSections, onRestore, }: VersionHistoryPanelProps): JSX.Element;
+
+declare interface VersionHistoryPanelProps {
+    versions: VersionEntry[];
+    loading: boolean;
+    previewTimestamp: number | null;
+    onFetch: () => void;
+    onPreview: (timestamp: number) => void;
+    onClearPreview: () => void;
+    onClose: () => void;
+    /** Save a named version. */
+    onSaveVersion: (name: string) => void;
+    /** Trigger comparison for a version timestamp. */
+    onCompare: (timestamp: number) => void;
+    /** Dismiss the diff view. */
+    onClearCompare: () => void;
+    /** Sections from the compared historical version (null when no compare active). */
+    compareSections: SnapshotSection[] | null;
+    /** Currently compared timestamp. */
+    compareTimestamp: number | null;
+    /** Current document sections for diff. */
+    currentSections: SnapshotSection[];
+    /** Restore to a historical version. */
+    onRestore?: (timestamp: number) => void;
+}
+
+export declare function VideoCallPanel({ documentId, userId, idToken, meta, updateMeta, sendMessage, onClose, onDockToSidebar, isDocked, onUndock, onCallEnd, }: VideoCallPanelProps): JSX.Element;
+
+declare interface VideoCallPanelProps {
+    documentId: string;
+    userId: string;
+    idToken: string | null;
+    meta: DocumentMeta | null;
+    updateMeta: (partial: Partial<DocumentMeta>) => void;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onClose: () => void;
+    onDockToSidebar?: () => void;
+    isDocked?: boolean;
+    onUndock?: () => void;
+    onCallEnd?: () => void;
+}
+
+export declare function VideoHistoryPanel({ sessions, loading, onFetch, onClose }: VideoHistoryPanelProps): JSX.Element;
+
+declare interface VideoHistoryPanelProps {
+    sessions: VideoSession[];
+    loading: boolean;
+    onFetch: () => void;
+    onClose: () => void;
+}
+
+declare interface VideoSession {
+    documentId: string;
+    sessionId: string;
+    vnlSessionId: string;
+    status: 'active' | 'ended';
+    startedAt: string;
+    endedAt?: string;
+    startedBy: string;
+    participants: VideoSessionParticipant[];
+    transcriptStatus?: 'pending' | 'processing' | 'available' | 'failed';
+    transcript?: string;
+    aiSummary?: string;
+}
+
+declare interface VideoSessionParticipant {
+    userId: string;
+    displayName: string;
+    joinedAt: string;
+}
+
+declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+export { }
