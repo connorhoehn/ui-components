@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
+import { default as default_2 } from 'react';
 import { HTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
@@ -7,6 +8,27 @@ import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
+
+export declare function Avatar({ name, size, color, className, style, title, }: AvatarProps): JSX.Element;
+
+export declare function AvatarGroup({ names, maxVisible, size, className, }: AvatarGroupProps): JSX.Element;
+
+export declare interface AvatarGroupProps {
+    names: string[];
+    maxVisible?: number;
+    size?: number;
+    className?: string;
+}
+
+export declare interface AvatarProps {
+    name: string;
+    size?: number;
+    /** Override the auto-computed color. */
+    color?: string;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+}
 
 export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
@@ -47,11 +69,49 @@ export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
+export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): JSX.Element;
+
+export declare interface CardHeaderProps {
+    title: string;
+    /** Small text below the title. */
+    subtitle?: string;
+    /** Extra content rendered immediately to the right of the title (badges/chips). */
+    meta?: default_2.ReactNode;
+    /** Right-aligned action area (buttons, menus). */
+    action?: default_2.ReactNode;
+    className?: string;
+}
+
 export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 
 export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     children?: ReactNode;
     padding?: CardPadding;
+}
+
+/**
+ * Chat input with send button. Stateless — value/onChange controlled by parent.
+ *
+ * - Enter submits (Shift+Enter inserts newline in multiline mode).
+ * - Submit disabled when `disabled` or value is empty/whitespace.
+ */
+export declare function ChatComposer({ value, onChange, onSubmit, disabled, multiline, placeholder, submitLabel, className, style, autoFocus, maxRows, }: ChatComposerProps): JSX.Element;
+
+export declare interface ChatComposerProps {
+    value: string;
+    onChange: (value: string) => void;
+    onSubmit: () => void;
+    disabled?: boolean;
+    /** false: single-line input, true: textarea (default false) */
+    multiline?: boolean;
+    placeholder?: string;
+    /** default '→' */
+    submitLabel?: string | ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    autoFocus?: boolean;
+    /** for multiline, max rows before scroll (default 4) */
+    maxRows?: number;
 }
 
 export declare function Chip({ tone, size, solid, mono, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
@@ -90,6 +150,19 @@ export declare interface CodeEditorProps {
     /** Available context variables — rendered as clickable insert pills. */
     variables?: string[];
     'aria-label'?: string;
+}
+
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): JSX.Element;
+
+export declare interface CollapsibleSectionProps {
+    title: string;
+    defaultOpen?: boolean;
+    /** Optional element rendered on the right side of the header (e.g. a count chip). */
+    badge?: default_2.ReactNode;
+    children: default_2.ReactNode;
+    className?: string;
+    /** If provided, the open state is persisted to localStorage under this key. */
+    storageKey?: string;
 }
 
 export declare interface Command {
@@ -166,6 +239,20 @@ export declare interface ConfirmDialogProps {
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
 
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
+
+export declare interface DrawerProps {
+    open: boolean;
+    onClose: () => void;
+    title?: string;
+    subtitle?: string;
+    /** Panel width in pixels. Defaults to 460. */
+    width?: number;
+    children: default_2.ReactNode;
+    footer?: default_2.ReactNode;
+    'data-testid'?: string;
+}
+
 export declare function EmptyState({ icon, title, body, actionLabel, onAction, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateProps {
@@ -185,6 +272,20 @@ export declare interface EmptyStateProps {
     actionTestId?: string;
 }
 
+export declare function EntityCell({ label, id, href, mono, className, labelClassName, }: EntityCellProps): JSX.Element;
+
+export declare interface EntityCellProps {
+    label: string;
+    /** Secondary monospace subline (e.g. ID or slug). */
+    id?: string;
+    /** Makes the label a link. */
+    href?: string;
+    /** Extra monospace styling on the ID subline (already monospace by default; this is reserved for callers needing emphasis). */
+    mono?: boolean;
+    className?: string;
+    labelClassName?: string;
+}
+
 export declare interface EventGlyph {
     icon: string;
     color: string;
@@ -200,6 +301,36 @@ export declare interface EventRowProps {
     severity?: 'info' | 'warning' | 'error' | 'success';
     onClick?: () => void;
     selected?: boolean;
+}
+
+export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, }: FilterChipProps): JSX.Element;
+
+export declare interface FilterChipProps {
+    active: boolean;
+    onClick: () => void;
+    /** Dot color (for colored department/status dots); also tints the active state. */
+    color?: string;
+    /** Show a colored dot before the label. */
+    dot?: boolean;
+    size?: 'sm' | 'xs';
+    children: ReactNode;
+    className?: string;
+    disabled?: boolean;
+}
+
+/**
+ * A strip of clickable follow-up suggestion chips, with optional refresh button.
+ */
+export declare function FollowUpChips({ suggestions, onSelect, onRefresh, label, className, }: FollowUpChipsProps): JSX.Element;
+
+export declare interface FollowUpChipsProps {
+    suggestions: string[];
+    onSelect: (suggestion: string) => void;
+    /** if provided, shows a ↻ refresh button */
+    onRefresh?: () => void;
+    /** optional label before chips, e.g. "Follow up:" */
+    label?: string;
+    className?: string;
 }
 
 /**
@@ -271,6 +402,17 @@ export declare interface IconPickerProps {
     curated?: string[];
 }
 
+export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): JSX.Element;
+
+export declare interface InlineAlertProps {
+    tone: InlineAlertTone;
+    children: default_2.ReactNode;
+    onDismiss?: () => void;
+    className?: string;
+}
+
+export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
+
 export declare function LineChart({ series, height, yFormat, xFormat, }: {
     series: LineSeries[];
     height?: number;
@@ -285,6 +427,30 @@ export declare interface LineSeries {
         y: number;
     }>;
     color?: string;
+}
+
+/**
+ * A chat message bubble for user/assistant messages.
+ *
+ * Stateless — accepts content + tool calls as props. Renders a role label,
+ * an optional tool-call strip, and the message body (markdown for assistants
+ * when `renderMarkdown` is supplied, plain `whitespace-pre-wrap` otherwise).
+ */
+export declare function MessageBubble({ role, content, toolCalls, streaming, agentName, userName, renderMarkdown, className, }: MessageBubbleProps): JSX.Element;
+
+export declare interface MessageBubbleProps {
+    role: 'user' | 'assistant';
+    content: string;
+    toolCalls?: ToolCallItem[];
+    /** shows ThinkingDots when content is empty */
+    streaming?: boolean;
+    /** label shown for assistant (default 'Assistant') */
+    agentName?: string;
+    /** label shown for user (default 'You') */
+    userName?: string;
+    /** inject markdown renderer */
+    renderMarkdown?: (content: string) => ReactNode;
+    className?: string;
 }
 
 export declare function Modal({ open, onClose, title, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
@@ -325,6 +491,30 @@ export declare interface ModalProps {
     rawChildren?: boolean;
 }
 
+export declare function nameToColor(name: string): string;
+
+export declare function nameToInitials(name: string): string;
+
+export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
+
+export declare interface PageHeaderBack {
+    label: string;
+    to: string;
+    onClick?: (e: default_2.MouseEvent<HTMLAnchorElement>) => void;
+}
+
+export declare interface PageHeaderProps {
+    title: string;
+    description?: string;
+    /** Right-aligned action area (buttons, menus). */
+    actions?: default_2.ReactNode;
+    /** Optional back link rendered above the title. */
+    back?: PageHeaderBack;
+    /** Badge or status pill rendered to the right of the title. */
+    badge?: default_2.ReactNode;
+    className?: string;
+}
+
 export declare function PageSection({ title, description, actions, children, className, }: PageSectionProps): JSX.Element;
 
 export declare interface PageSectionProps {
@@ -333,6 +523,77 @@ export declare interface PageSectionProps {
     actions?: ReactNode;
     children: ReactNode;
     className?: string;
+}
+
+export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
+
+export declare interface ProgressBarProps {
+    value: number;
+    /** Maximum value. Defaults to 100. */
+    max?: number;
+    /** Fill color. Defaults to var(--color-primary). */
+    color?: string;
+    size?: ProgressBarSize;
+    label?: ReactNode;
+    /** When true (default), shows "{value}/{max}". Otherwise shows percentage. */
+    showRatio?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+export declare type ProgressBarSize = 'sm' | 'md';
+
+export declare interface QuickPrompt {
+    label: string;
+    hint?: string;
+}
+
+/**
+ * Empty-state grid of prompt suggestion cards. Each card is a button calling
+ * `onSelect(label)`.
+ */
+export declare function QuickPromptGrid({ prompts, onSelect, columns, title, className, }: QuickPromptGridProps): JSX.Element;
+
+export declare interface QuickPromptGridProps {
+    prompts: QuickPrompt[];
+    onSelect: (label: string) => void;
+    /** default auto-fit (responsive 220px min column width) */
+    columns?: number;
+    /** optional heading above, e.g. "Try asking:" */
+    title?: string;
+    className?: string;
+}
+
+export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): JSX.Element;
+
+export declare interface SearchInputProps {
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+    /** Called after the value is cleared via the clear button. */
+    onClear?: () => void;
+    className?: string;
+    style?: default_2.CSSProperties;
+    autoFocus?: boolean;
+    'aria-label'?: string;
+}
+
+export declare function SegmentedControl({ options, value, onChange, size, className, }: SegmentedControlProps): JSX.Element;
+
+export declare interface SegmentedControlProps {
+    options: SegmentOption[];
+    value: string;
+    onChange: (value: string) => void;
+    size?: 'sm' | 'md';
+    className?: string;
+}
+
+export declare interface SegmentOption {
+    label: string;
+    value: string;
+    icon?: ReactNode;
 }
 
 export declare interface ShortcutsHelpProps {
@@ -356,10 +617,56 @@ export declare interface SparklineProps {
     color?: string;
 }
 
+export declare function Spinner({ size, color, className, style, 'aria-label': ariaLabel, 'data-testid': testId, }: SpinnerProps): JSX.Element;
+
+export declare interface SpinnerProps {
+    size?: SpinnerSize;
+    /** Arc color. Defaults to var(--color-primary). */
+    color?: string;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    'data-testid'?: string;
+}
+
+export declare type SpinnerSize = 'sm' | 'md' | 'lg';
+
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
 }): JSX_2.Element;
+
+export declare function StatCard({ label, value, accent, danger, hint, to, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+
+export declare interface StatCardProps {
+    label: ReactNode;
+    value: ReactNode;
+    accent?: boolean;
+    danger?: boolean;
+    hint?: ReactNode;
+    to?: string;
+    mono?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
+export declare function StatusDot({ color, pulse, size, label, className, style, title, 'data-testid': testId, 'aria-label': ariaLabel, }: StatusDotProps): JSX.Element;
+
+export declare interface StatusDotProps {
+    /** Dot color. Defaults to var(--color-text-tertiary). */
+    color?: string;
+    pulse?: boolean;
+    size?: StatusDotSize;
+    label?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+    'aria-label'?: string;
+}
+
+export declare type StatusDotSize = 'xs' | 'sm' | 'md';
 
 /**
  * Accessible on/off toggle. Renders as a `role="switch"` button so screen
@@ -438,6 +745,39 @@ export declare interface TagEditorProps {
     lowercase?: boolean;
 }
 
+/**
+ * A collapsible `<details>` block for showing chain-of-thought reasoning.
+ *
+ * Pair with a parser that strips `<thinking>...</thinking>` from the assistant
+ * message and feeds the extracted text into `content`.
+ */
+export declare function ThinkingBlock({ content, streaming, defaultOpen, className, }: ThinkingBlockProps): JSX.Element;
+
+export declare interface ThinkingBlockProps {
+    /** the thinking/reasoning text */
+    content: string;
+    /** if true, show "Thinking…" and ThinkingDots when content empty */
+    streaming?: boolean;
+    /** default false (collapsed) */
+    defaultOpen?: boolean;
+    className?: string;
+}
+
+/**
+ * Animated 3-dot typing/thinking indicator.
+ *
+ * Uses inline `<style>` for keyframes to avoid global CSS dependency.
+ */
+export declare function ThinkingDots({ size, color, className }: ThinkingDotsProps): JSX.Element;
+
+export declare interface ThinkingDotsProps {
+    /** sm: 4px dots, md: 6px dots (default md) */
+    size?: 'sm' | 'md';
+    /** dot color, default var(--color-text-tertiary) */
+    color?: string;
+    className?: string;
+}
+
 export declare interface ToastContextValue {
     toast: (message: string, opts?: ToastOptions) => void;
 }
@@ -465,6 +805,41 @@ export declare function ToastProvider({ children }: {
 }): JSX.Element;
 
 export declare type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+export declare interface ToolCall {
+    id: string;
+    name: string;
+    done: boolean;
+    args?: string;
+}
+
+export declare interface ToolCallItem {
+    id: string;
+    name: string;
+    done: boolean;
+    args?: string;
+}
+
+/**
+ * A single pill rendering one tool call's name + done/pending state.
+ */
+export declare function ToolCallPill({ name, done, className }: ToolCallPillProps): JSX.Element;
+
+export declare interface ToolCallPillProps {
+    name: string;
+    done: boolean;
+    className?: string;
+}
+
+/**
+ * A compact strip of tool call pills.
+ */
+export declare function ToolCallStrip({ toolCalls, className }: ToolCallStripProps): JSX.Element;
+
+export declare interface ToolCallStripProps {
+    toolCalls: ToolCall[];
+    className?: string;
+}
 
 export declare function useCommandPalette(): CommandPaletteController;
 

@@ -28,6 +28,9 @@ const CollaborationPage = lazy(() => import('./components/CollaborationPage'));
 const RealTimeEditingPage = lazy(() => import('./components/RealTimeEditingPage'));
 const VideoPage = lazy(() => import('./components/VideoPage'));
 const CallWidgetPage = lazy(() => import('./components/CallWidgetPage'));
+const PrimitivesPage = lazy(() => import('./components/PrimitivesPage'));
+const ChatPage = lazy(() => import('./components/ChatPage'));
+const PatternsPage = lazy(() => import('./components/PatternsPage'));
 
 // Live demo pages (lazy)
 const PipelineEditor = lazy(() => import('./demos/pipeline-editor'));
@@ -105,6 +108,9 @@ export default function App() {
           <Route path="real-time-editing" element={<S><RealTimeEditingPage /></S>} />
           <Route path="video" element={<S><VideoPage /></S>} />
           <Route path="call-widget" element={<S><CallWidgetPage /></S>} />
+          <Route path="primitives" element={<S><PrimitivesPage /></S>} />
+          <Route path="chat" element={<S><ChatPage /></S>} />
+          <Route path="patterns" element={<S><PatternsPage /></S>} />
         </Route>
 
         {/* Workflows (domain demos) */}

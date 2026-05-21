@@ -126,6 +126,30 @@ export const entries: CatalogEntry[] = [
     category: 'Components',
     type: 'component',
   },
+  {
+    id: 'primitives',
+    title: 'Primitives',
+    description: 'StatCard, FilterChip, Spinner, Avatar, ProgressBar, and more',
+    category: 'Components',
+    type: 'component',
+    path: '/components/primitives',
+  },
+  {
+    id: 'chat',
+    title: 'Chat & Thread',
+    description: 'MessageBubble, ChatComposer, ToolCallStrip, ThinkingDots and more',
+    category: 'Components',
+    type: 'component',
+    path: '/components/chat',
+  },
+  {
+    id: 'patterns',
+    title: 'Patterns',
+    description: 'Drawer, CollapsibleSection, PageHeader, CardHeader',
+    category: 'Components',
+    type: 'component',
+    path: '/components/patterns',
+  },
 ];
 
 export const categories = [

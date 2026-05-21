@@ -1,31 +1,31 @@
-import { DOCUMENT_TYPE_ICONS as Q, getPageConfig as z, getPagesView as G, makeEmptyField as H } from "./types.js";
-import { C as Y, i as q } from "./fieldType-BJfRz7mO.js";
-import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as ue, j as de, k as ce, l as pe, m as fe, n as xe, o as ge, p as me, q as le, r as be, s as ye, t as he, v as Se, w as Le, x as Ce, y as we, z as Te, A as Pe, C as ve, D as Ie, E as ke } from "./useWebSocket-xoTVPcp0.js";
-import { u as De, a as Ee, b as Re, c as Ae, d as Fe, e as Oe, f as Xe, g as je, h as $e, i as Be, j as Ve, k as _e, l as Ne, m as Ue, n as Qe, o as ze } from "./useVideoSessions-hr67KvHn.js";
-import { u as He, a as Ke, b as Ye, c as qe, d as We, e as Je } from "./useSocialProfile-D-SUgbn2.js";
-import { u as es, a as ss, b as as, c as rs, d as ts, e as os, f as is, g as ns, h as us, i as ds } from "./useSyncConflicts-DruS2duy.js";
+import { DOCUMENT_TYPE_ICONS as Q, getPageConfig as G, getPagesView as H, makeEmptyField as q } from "./types.js";
+import { C as K, i as Y } from "./fieldType-BJfRz7mO.js";
+import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as de, j as ue, k as ce, l as pe, m as fe, n as le, o as ge, p as xe, q as me, r as be, s as he, t as ye, v as Se, w as Ce, x as Le, y as Te, z as Pe, A as we, C as ke, D as ve, E as Ie } from "./useWebSocket-xoTVPcp0.js";
+import { u as Me, a as Ee, b as Re, c as Ae, d as Fe, e as Oe, f as je, g as Xe, h as Be, i as $e, j as Ve, k as _e, l as Ne, m as Ue, n as Qe, o as Ge } from "./useVideoSessions-hr67KvHn.js";
+import { u as qe, a as ze, b as Ke, c as Ye, d as We, e as Je } from "./useSocialProfile-D-SUgbn2.js";
+import { u as es, a as ss, b as as, c as rs, d as ts, e as os, f as is, g as ns, h as ds, i as us } from "./useSyncConflicts-DruS2duy.js";
 import { u as ps } from "./useDocumentTypes-C29MkgPl.js";
-import { T as xs, u as gs, a as ms } from "./ToastProvider-aHBNxMTO.js";
-import { W as bs, u as ys } from "./WebSocketContext-DPGFyPeZ.js";
-import { I as Ss, u as Ls } from "./IdentityContext-CLalsm_M.js";
-import { C as ws, D as Ts, I as Ps, P as vs, T as Is, u as ks } from "./TagEditor-CuaVtW7o.js";
-import { C as Ds, u as Es } from "./ThemeContext-Bi6AQuIL.js";
-import { C as As, a as Fs, b as Os, F as Xs, S as js, u as $s } from "./Switch-C8FGRY3F.js";
-import { B as Vs, a as _s, C as Ns } from "./ConfirmDialog-C1XfACNk.js";
-import { C as Qs, P as zs, T as Gs, a as Hs, b as Ks, c as Ys, d as qs, e as Ws } from "./PageSection-B_nBFSjK.js";
-import { B as Zs, L as ea, S as sa } from "./Chart-ByoxeiYX.js";
-import { C as ra } from "./Chip-BXdhqVFm.js";
-import { E as oa } from "./EmptyState-C3KCJ6Ae.js";
-import { S as na, e as ua, g as da, a as ca } from "./Sparkline-B8POanAQ.js";
+import { T as ls, u as gs, a as xs } from "./ToastProvider-aHBNxMTO.js";
+import { W as bs, u as hs } from "./WebSocketContext-DPGFyPeZ.js";
+import { I as Ss, u as Cs } from "./IdentityContext-CLalsm_M.js";
+import { C as Ts, D as Ps, I as ws, P as ks, T as vs, u as Is } from "./TagEditor-CuaVtW7o.js";
+import { C as Ms, u as Es } from "./ThemeContext-Bi6AQuIL.js";
+import { A as As, a as Fs, C as Os, b as js, c as Xs, d as Bs, e as $s, f as Vs, D as _s, E as Ns, F as Us, g as Qs, h as Gs, I as Hs, M as qs, P as zs, i as Ks, Q as Ys, S as Ws, j as Js, k as Zs, l as ea, m as sa, n as aa, T as ra, o as ta, p as oa, q as ia, r as na, s as da, u as ua } from "./FollowUpChips-NqdK_Ex0.js";
+import { B as pa, a as fa, C as la } from "./ConfirmDialog-C1XfACNk.js";
+import { C as xa, P as ma, T as ba, a as ha, b as ya, c as Sa, d as Ca, e as La } from "./PageSection-B_nBFSjK.js";
+import { B as Pa, L as wa, S as ka } from "./Chart-ByoxeiYX.js";
+import { C as Ia } from "./Chip-BXdhqVFm.js";
+import { E as Ma } from "./EmptyState-C3KCJ6Ae.js";
+import { S as Ra, e as Aa, g as Fa, a as Oa } from "./Sparkline-B8POanAQ.js";
 import { jsx as f } from "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as fa } from "./Modal-2jg4229_.js";
-import { S as ga } from "./SkeletonCard-C89GWQ3p.js";
-import { createContext as x, useMemo as g, useEffect as m, useContext as l } from "react";
-import { P as la, a as ba, b as ya, f as ha, g as Sa, c as La, l as Ca, r as wa, d as Ta, e as Pa, s as va } from "./pipelineAudit-HIi3aStK.js";
+import { M as Xa } from "./Modal-2jg4229_.js";
+import { S as $a } from "./SkeletonCard-C89GWQ3p.js";
+import { createContext as l, useMemo as g, useEffect as x, useContext as m } from "react";
+import { P as _a, a as Na, b as Ua, f as Qa, g as Ga, c as Ha, l as qa, r as za, d as Ka, e as Ya, s as Wa } from "./pipelineAudit-HIi3aStK.js";
 import "./index-BhrGxmJW.js";
-import { g as ka, a as Ma, b as Da, l as Ea, r as Ra, c as Aa } from "./registry-BZU57zws.js";
+import { g as Za, a as er, b as sr, l as ar, r as rr, c as tr } from "./registry-BZU57zws.js";
 function n(s) {
   return `--ui-${s.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
 }
@@ -35,7 +35,7 @@ function b(s) {
     a[n(r)] = s[r];
   return a;
 }
-function M(s) {
+function D(s) {
   const a = b(s);
   return `:root {
 ${Object.entries(a).map(([t, o]) => `  ${t}: ${o};`).join(`
@@ -45,7 +45,7 @@ ${Object.entries(a).map(([t, o]) => `  ${t}: ${o};`).join(`
 function e(s) {
   return `var(${n(s)})`;
 }
-const y = {
+const h = {
   primary: "#3b82f6",
   primaryDark: "#1d4ed8",
   primaryLight: "#93c5fd",
@@ -67,11 +67,11 @@ const y = {
   surface: "#ffffff",
   surfaceRaised: "#ffffff",
   surfaceOverlay: "rgba(15, 23, 42, 0.5)"
-}, h = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, S = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, L = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, D = {
-  colors: y,
-  spacing: h,
+}, y = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, S = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, C = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, M = {
+  colors: h,
+  spacing: y,
   fontSize: S,
-  borderRadius: L
+  borderRadius: C
 }, E = {
   primary: e("primary"),
   primaryDark: e("primaryDark"),
@@ -160,7 +160,7 @@ const y = {
   shadowMd: "0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)",
   shadowLg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
   shadowXl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, C = {
+}, L = {
   // Colors
   primary: "#60a5fa",
   primaryDark: "#3b82f6",
@@ -208,29 +208,29 @@ const y = {
   shadowMd: "0 4px 6px rgba(0,0,0,0.25), 0 2px 4px rgba(0,0,0,0.15)",
   shadowLg: "0 10px 15px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.15)",
   shadowXl: "0 20px 25px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.2)"
-}, p = x(c);
+}, p = l(c);
 function O({ children: s, preset: a = "light", theme: r }) {
-  const t = a === "dark" ? C : c, o = g(
+  const t = a === "dark" ? L : c, o = g(
     () => ({ ...t, ...r }),
     [t, r]
   );
-  return m(() => {
-    const u = document.documentElement, d = Object.keys(o);
-    for (const i of d)
-      u.style.setProperty(n(i), o[i]);
+  return x(() => {
+    const d = document.documentElement, u = Object.keys(o);
+    for (const i of u)
+      d.style.setProperty(n(i), o[i]);
     return () => {
-      for (const i of d)
-        u.style.removeProperty(n(i));
+      for (const i of u)
+        d.style.removeProperty(n(i));
     };
   }, [o]), /* @__PURE__ */ f(p.Provider, { value: o, children: s });
 }
-function w() {
-  return l(p);
+function T() {
+  return m(p);
 }
-function X() {
-  return w();
+function j() {
+  return T();
 }
-const j = {
+const X = {
   /** Subtle shadow for cards, panels */
   sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
   /** Medium shadow for dropdowns, popovers */
@@ -239,7 +239,7 @@ const j = {
   lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
   /** Extra strong shadow for elevated modals */
   xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, $ = {
+}, B = {
   /** Sticky headers, fixed toolbars */
   sticky: 20,
   /** Dropdowns, popovers, tooltips */
@@ -249,7 +249,7 @@ const j = {
   /** Toast notifications (above modals) */
   toast: 200
 };
-async function B(s) {
+async function $(s) {
   const a = new URLSearchParams();
   s?.limit && a.set("limit", String(s.limit)), s?.cursor && a.set("cursor", s.cursor), s?.errorKind && a.set("errorKind", s.errorKind), s?.sinceMs && a.set("sinceMs", String(s.sinceMs));
   const r = `/api/pipelines/dlq${a.toString() ? `?${a}` : ""}`, t = await fetch(r, {
@@ -298,84 +298,109 @@ async function _(s, a) {
   return r.json();
 }
 export {
-  Vs as Banner,
-  Zs as BarChart,
-  _s as Button,
-  Y as CUSTOM_FIELD_TYPE_STORAGE_KEY,
-  Qs as Card,
-  ra as Chip,
-  ws as CodeEditor,
-  Ds as ColorSchemeProvider,
-  As as CommandPalette,
-  Fs as CommandPaletteHint,
-  Os as CommandPaletteProvider,
-  Ns as ConfirmDialog,
-  Ts as DEFAULT_PIPELINE_ICONS,
+  As as Avatar,
+  Fs as AvatarGroup,
+  pa as Banner,
+  Pa as BarChart,
+  fa as Button,
+  K as CUSTOM_FIELD_TYPE_STORAGE_KEY,
+  xa as Card,
+  Os as CardHeader,
+  js as ChatComposer,
+  Ia as Chip,
+  Ts as CodeEditor,
+  Xs as CollapsibleSection,
+  Ms as ColorSchemeProvider,
+  Bs as CommandPalette,
+  $s as CommandPaletteHint,
+  Vs as CommandPaletteProvider,
+  la as ConfirmDialog,
+  Ps as DEFAULT_PIPELINE_ICONS,
   Q as DOCUMENT_TYPE_ICONS,
-  oa as EmptyState,
-  Xs as FormField,
+  _s as Drawer,
+  Ma as EmptyState,
+  Ns as EntityCell,
+  Us as FilterChip,
+  Qs as FollowUpChips,
+  Gs as FormField,
   J as IDENTITY_BASE_URL,
-  Ps as IconButton,
+  ws as IconButton,
   Ss as IdentityProvider,
-  ea as LineChart,
-  fa as Modal,
-  zs as PageSection,
-  la as PatchHttpError,
-  ba as PatchValidationRejectedError,
-  vs as PresenceProvider,
-  ga as SkeletonCard,
-  na as Sparkline,
-  sa as StackedAreaChart,
-  js as Switch,
-  Gs as Table,
-  Hs as TableBody,
-  Ks as TableHead,
-  Ys as TableRow,
-  qs as TableTd,
-  Ws as TableTh,
-  Is as TagEditor,
+  Hs as InlineAlert,
+  wa as LineChart,
+  qs as MessageBubble,
+  Xa as Modal,
+  zs as PageHeader,
+  ma as PageSection,
+  _a as PatchHttpError,
+  Na as PatchValidationRejectedError,
+  ks as PresenceProvider,
+  Ks as ProgressBar,
+  Ys as QuickPromptGrid,
+  Ws as SearchInput,
+  Js as SegmentedControl,
+  $a as SkeletonCard,
+  Ra as Sparkline,
+  Zs as Spinner,
+  ka as StackedAreaChart,
+  ea as StatCard,
+  sa as StatusDot,
+  aa as Switch,
+  ba as Table,
+  ha as TableBody,
+  ya as TableHead,
+  Sa as TableRow,
+  Ca as TableTd,
+  La as TableTh,
+  vs as TagEditor,
   O as ThemeProvider,
-  xs as ToastProvider,
+  ra as ThinkingBlock,
+  ta as ThinkingDots,
+  ls as ToastProvider,
+  oa as ToolCallPill,
+  ia as ToolCallStrip,
   bs as WebSocketProvider,
-  ya as applyPatch,
+  Ua as applyPatch,
   F as borderRadius,
   E as colors,
   e as cssVar,
-  C as darkTheme,
-  ua as eventGlyphs,
+  L as darkTheme,
+  Aa as eventGlyphs,
   A as fontSize,
-  ha as forceFail,
-  da as getEventCategory,
-  ca as getEventGlyph,
-  ka as getFieldType,
-  Ma as getFieldTypes,
-  z as getPageConfig,
-  G as getPagesView,
-  Sa as getPipelineRun,
-  Da as getRenderer,
-  La as getRunAuditLog,
+  Qa as forceFail,
+  Fa as getEventCategory,
+  Oa as getEventGlyph,
+  Za as getFieldType,
+  er as getFieldTypes,
+  G as getPageConfig,
+  H as getPagesView,
+  Ga as getPipelineRun,
+  sr as getRenderer,
+  Ha as getRunAuditLog,
   Z as identityApiFetch,
-  M as injectThemeVars,
-  q as isValidCustomFieldType,
+  D as injectThemeVars,
+  Y as isValidCustomFieldType,
   c as lightTheme,
-  B as listDLQEntries,
-  Ca as listPipelineRuns,
-  Ea as listRegisteredRenderers,
-  H as makeEmptyField,
+  $ as listDLQEntries,
+  qa as listPipelineRuns,
+  ar as listRegisteredRenderers,
+  q as makeEmptyField,
+  na as nameToColor,
+  da as nameToInitials,
   _ as purgeDLQEntries,
-  L as rawBorderRadius,
-  y as rawColors,
+  C as rawBorderRadius,
+  h as rawColors,
   S as rawFontSize,
-  h as rawSpacing,
-  D as rawTokens,
+  y as rawSpacing,
+  M as rawTokens,
   V as redriveDLQEntries,
-  Ra as registerFieldType,
-  Aa as registerRenderer,
-  wa as resumeFromStep,
-  Ta as retryFromNode,
-  Pa as revertPatch,
-  va as searchAudit,
-  j as shadows,
+  rr as registerFieldType,
+  tr as registerRenderer,
+  za as resumeFromStep,
+  Ka as retryFromNode,
+  Ya as revertPatch,
+  Wa as searchAudit,
+  X as shadows,
   R as spacing,
   b as themeToCssVars,
   n as tokenToCssVarName,
@@ -383,72 +408,72 @@ export {
   se as useApiCall,
   ae as useApiHealth,
   re as useAuth,
-  De as useAwareness,
+  Me as useAwareness,
   Ee as useAwarenessState,
   te as useCRDT,
   oe as useChat,
   ie as useClickOutside,
   Re as useCollaborativeDoc,
   Es as useColorScheme,
-  $s as useCommandPalette,
-  He as useComments,
+  ua as useCommandPalette,
+  qe as useComments,
   ne as useCursors,
-  ue as useCustomFieldTypes,
+  de as useCustomFieldTypes,
   es as useDocTypeProposals,
   Ae as useDocumentComments,
   Fe as useDocumentExport,
   Oe as useDocumentItems,
-  Xe as useDocumentMetadata,
-  je as useDocumentReviews,
+  je as useDocumentMetadata,
+  Xe as useDocumentReviews,
   ps as useDocumentTypes,
-  de as useDocuments,
-  Ke as useFriends,
-  Ye as useGroups,
+  ue as useDocuments,
+  ze as useFriends,
+  Ke as useGroups,
   ce as useIdentityAdmin,
   pe as useIdentityAudit,
   fe as useIdentityClients,
-  Ls as useIdentityContext,
-  xe as useIdentityDiagnostics,
+  Cs as useIdentityContext,
+  le as useIdentityDiagnostics,
   ge as useIdentityEmailTemplates,
-  me as useIdentityGroups,
-  le as useIdentityMfa,
+  xe as useIdentityGroups,
+  me as useIdentityMfa,
   be as useIdentityMfaAdmin,
-  ye as useIdentityPools,
-  he as useIdentityResource,
+  he as useIdentityPools,
+  ye as useIdentityResource,
   Se as useIdentitySetupStatus,
-  Le as useIdentityUsers,
-  $e as useIdleDetector,
+  Ce as useIdentityUsers,
+  Be as useIdleDetector,
   ss as useIngestAudit,
   as as useIngestDLQ,
   rs as useIngestItems,
   ts as useIngestProgress,
   os as useIngestSources,
-  Ce as useKeyboardShortcuts,
-  qe as useLikes,
+  Le as useKeyboardShortcuts,
+  Ye as useLikes,
   is as useMappingReviewQueue,
-  Be as useMentionUsers,
+  $e as useMentionUsers,
   Ve as useMyMentionsAndTasks,
   ns as usePipelineDefs,
   We as usePosts,
   gs as usePrefersReducedMotion,
-  we as usePresence,
-  ks as usePresenceContext,
-  Te as useReactions,
-  Pe as useRooms,
+  Te as usePresence,
+  Is as usePresenceContext,
+  Pe as useReactions,
+  we as useRooms,
   _e as useSectionList,
   Je as useSocialProfile,
-  us as useSourceSloMetrics,
-  ds as useSyncConflicts,
-  X as useTheme,
-  w as useThemeContext,
-  ms as useToast,
-  ve as useTypedDocuments,
-  Ie as useUrlFilterState,
+  ds as useSourceSloMetrics,
+  us as useSyncConflicts,
+  j as useTheme,
+  T as useThemeContext,
+  xs as useToast,
+  ke as useTypedDocuments,
+  ve as useUrlFilterState,
   Ne as useVersionHistory,
   Ue as useVideoCall,
   Qe as useVideoSessions,
-  ke as useWebSocket,
-  ys as useWebSocketContext,
-  ze as useYjsDoc,
-  $ as zIndex
+  Ie as useWebSocket,
+  hs as useWebSocketContext,
+  Ge as useYjsDoc,
+  B as zIndex
 };
