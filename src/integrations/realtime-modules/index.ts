@@ -17,12 +17,15 @@ export type {
   RMFileUploadState,
   RMHangoutParticipant,
   RMHangoutSession,
+  RMNotificationEntry,
+  RMCapabilityHookResult,
   RMUseChatReturn,
   RMUsePresenceReturn,
   RMUseReactionsReturn,
   RMUseActivityReturn,
   RMUseFileUploadReturn,
   RMUseVideoHangoutReturn,
+  RMUseNotificationsReturn,
 } from './types';
 
 // Adapters
@@ -39,6 +42,8 @@ export {
   adaptFileUploads,
   adaptHangoutParticipant,
   adaptHangoutParticipants,
+  adaptNotification,
+  adaptNotifications,
 } from './adapters';
 export type { FileUploadSummary } from './adapters';
 
@@ -60,3 +65,9 @@ export type { WrappedFileUploadDropProps } from './WrappedFileUploadDrop';
 
 export { WrappedHangoutLayout } from './WrappedHangoutLayout';
 export type { WrappedHangoutLayoutProps } from './WrappedHangoutLayout';
+
+export { WrappedNotificationCenter } from './WrappedNotificationCenter';
+export type { WrappedNotificationCenterProps } from './WrappedNotificationCenter';
+
+export { CapabilityBoundary } from './CapabilityBoundary';
+export type { CapabilityBoundaryProps } from './CapabilityBoundary';

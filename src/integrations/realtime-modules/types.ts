@@ -83,6 +83,32 @@ export interface RMHangoutSession {
   createdAt: string;
 }
 
+/** Mirror of realtime-modules/src/client/useNotifications.ts NotificationHookEntry */
+export interface RMNotificationEntry {
+  id: string;
+  type: string;
+  title: string;
+  body?: string;
+  timestamp: string;
+  read?: boolean;
+  channel?: string;
+  payload?: Record<string, unknown>;
+}
+
+/** Mirror of realtime-modules/src/client/useCapability.ts CapabilityHookResult */
+export interface RMCapabilityHookResult {
+  capability: {
+    name: string;
+    enabled: boolean;
+    channel?: string;
+    version?: string;
+    metadata?: Record<string, unknown>;
+  } | null;
+  enabled: boolean;
+  isLoading: boolean;
+  error?: Error;
+}
+
 // ---------------------------------------------------------------------------
 // Hook return shapes (structural — satisfies the real hook returns)
 // ---------------------------------------------------------------------------
@@ -126,4 +152,13 @@ export interface RMUseVideoHangoutReturn {
   end(): Promise<void>;
   toggleVideo(): void;
   toggleAudio(): void;
+}
+
+export interface RMUseNotificationsReturn {
+  notifications: RMNotificationEntry[];
+  unreadCount: number;
+  markAsRead: (id: string) => void;
+  markAllRead: () => void;
+  remove: (id: string) => void;
+  clearAll: () => void;
 }

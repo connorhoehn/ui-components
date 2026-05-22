@@ -14,6 +14,7 @@ import type {
   RMActivityEvent,
   RMFileUploadState,
   RMHangoutParticipant,
+  RMNotificationEntry,
 } from './types';
 
 import type { ChatMessage as UIChatMessage } from '../../hooks/useChat';
@@ -21,6 +22,7 @@ import type { PresenceUser as UIPresenceUser } from '../../components/shared/Pre
 import type { EphemeralReaction as UIEphemeralReaction } from '../../hooks/useReactions';
 import type { ActivityFeedItem } from '../../components/shared/ActivityFeed';
 import type { HangoutLayoutParticipant } from '../../components/video/HangoutLayout';
+import type { NotificationItem as UINotificationItem } from '../../components/shared/NotificationCenter';
 
 // ---------------------------------------------------------------------------
 // Chat adapters
@@ -236,4 +238,35 @@ export function adaptHangoutParticipants(
   localClientId?: string | null,
 ): HangoutLayoutParticipant[] {
   return participants.map((p) => adaptHangoutParticipant(p, localClientId));
+}
+
+// ---------------------------------------------------------------------------
+// Notification adapters
+//
+// realtime-modules NotificationEntry → NotificationCenter NotificationItem
+//
+// Mapping:
+//   id           → id
+//   type         → category (used for grouping / colouring)
+//   title        → title
+//   body         → body
+//   timestamp    → timestamp
+//   read         → read (defaults false when absent)
+//   payload.icon → icon (optional decoration)
+// ---------------------------------------------------------------------------
+
+export function adaptNotification(n: RMNotificationEntry): UINotificationItem {
+  return {
+    id: n.id,
+    title: n.title,
+    body: n.body,
+    timestamp: n.timestamp,
+    read: n.read ?? false,
+    category: n.type,
+    icon: typeof n.payload?.icon === 'string' ? n.payload.icon : undefined,
+  };
+}
+
+export function adaptNotifications(entries: RMNotificationEntry[]): UINotificationItem[] {
+  return entries.map(adaptNotification);
 }
