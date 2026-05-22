@@ -44,6 +44,28 @@ Wave10 landed: canonical event types, `useAgUiStream` rewrite, `AgUiReasoningBlo
 
 ---
 
+## Track D — Developer experience ✅ COMPLETE
+
+### D1 — Storybook 10 setup ✅ SHIPPED
+
+Storybook 10.4.0 + `@storybook/react-vite` installed. 10 seed stories covering one
+component from each category:
+
+- `src/components/ui/Button.stories.tsx` — all variants, sizes, disabled, full-width
+- `src/components/shared/Avatar.stories.tsx` — initials, custom colour, AvatarGroup overflow
+- `src/components/shared/Banner.stories.tsx` — error/warning/info/success, dismissible
+- `src/components/shared/ChannelHeader.stories.tsx` — basic, online indicator, with actions
+- `src/components/shared/PresenceAvatars.stories.tsx` — 3/5/10/20 users, mixed online
+- `src/components/shared/FileUploadDrop.stories.tsx` — images, maxSize, multiple, disabled
+- `src/components/shared/NotificationCenter.stories.tsx` — empty, unread, all-read
+- `src/components/layout/AppShell.stories.tsx` — with/without sidebar, degraded banner, loading
+- `src/components/shared/PageHeader.stories.tsx` — title, description, back link, badge, actions
+- `src/components/video/CallWidget.stories.tsx` — ringing, connecting, audio/video active, minimized
+
+Run `npm run storybook` to browse. Run `npm run build-storybook` for static output.
+
+---
+
 ## Track S — Stability
 
 ### S1 — Fix pre-existing TypeScript errors

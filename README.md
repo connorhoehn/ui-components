@@ -24,14 +24,28 @@ import { VideoPlayer, VideoGrid, ReactionOverlay } from '@connorhoehn/ui-compone
 - **Data Display** — Tables, cards, badges, metrics
 - **Layout** — Panels, sidebars, split views
 
+## Storybook
+
+```bash
+npm run storybook
+```
+
+Opens at `http://localhost:6006`. Browse 10 seed stories covering Button, Avatar, Banner, ChannelHeader, PresenceAvatars, FileUploadDrop, NotificationCenter, AppShell, PageHeader, and CallWidget — each component in isolation with knob-driven variants.
+
+To build a static Storybook:
+
+```bash
+npm run build-storybook
+```
+
 ## Demo Site
 
 ```bash
 npm install
-npm run dev:demo
+npm run demo
 ```
 
-Opens at `http://localhost:5174` with live component docs and interactive demo pages.
+Opens at `http://localhost:5174` with product-shaped interactive flows.
 
 ## Tech Stack
 

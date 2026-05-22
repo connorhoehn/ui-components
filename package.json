@@ -74,7 +74,9 @@
     "lint": "tsc --noEmit",
     "lint:static-styles": "node scripts/check-static-styles.mjs",
     "demo": "vite --config demo/vite.config.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -102,6 +104,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@playwright/test": "^1.59.1",
+    "@storybook/react-vite": "^10.4.0",
     "@tailwindcss/vite": "^4.2.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.0.0",
@@ -123,6 +126,7 @@
     "react-dom": "^19.2.0",
     "react-router": "^7.14.1",
     "recharts": "^3.8.1",
+    "storybook": "^10.4.0",
     "tailwindcss": "^4.2.4",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
