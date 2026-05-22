@@ -88,6 +88,27 @@ export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: 
     yFormat?: (v: number) => string;
 }): JSX_2.Element;
 
+export declare interface BreadcrumbItem {
+    label: string;
+    href?: string;
+    onClick?: (e: React.MouseEvent) => void;
+}
+
+export declare function Breadcrumbs({ items, separator, maxItems, className, 'data-testid': testId, }: BreadcrumbsProps): JSX.Element | null;
+
+export declare interface BreadcrumbsProps {
+    items: BreadcrumbItem[];
+    /** Custom separator rendered between items (default: "/") */
+    separator?: ReactNode;
+    /**
+     * When set, truncate the middle of the list to fit this many visible items.
+     * The first and last are always shown; middle items collapse to "…".
+     */
+    maxItems?: number;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function Button({ variant, size, disabled, fullWidth, children, type, className, ...rest }: ButtonProps): JSX.Element;
 
 export declare interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
@@ -121,6 +142,26 @@ export declare type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     children?: ReactNode;
     padding?: CardPadding;
+}
+
+export declare function ChannelHeader({ name, memberCount, description, actions, avatarUrl, online, onMembersClick, className, }: ChannelHeaderProps): JSX.Element;
+
+export declare interface ChannelHeaderProps {
+    /** Display name of the channel or user */
+    name: string;
+    /** Number of members in the channel */
+    memberCount?: number;
+    /** Short description shown below the name */
+    description?: string;
+    /** Right-aligned action area */
+    actions?: ReactNode;
+    /** Avatar URL; falls back to name initials */
+    avatarUrl?: string;
+    /** Show green online indicator */
+    online?: boolean;
+    /** Called when member-count area is clicked */
+    onMembersClick?: () => void;
+    className?: string;
 }
 
 /**
@@ -337,6 +378,23 @@ export declare interface EventRowProps {
     selected?: boolean;
 }
 
+export declare function FileUploadDrop({ accept, maxSize, multiple, onFiles, onError, disabled, label, className, 'data-testid': testId, }: FileUploadDropProps): JSX.Element;
+
+export declare interface FileUploadDropProps {
+    /** Comma-separated MIME types or extensions, e.g. "image/*,.pdf" */
+    accept?: string;
+    /** Max individual file size in bytes */
+    maxSize?: number;
+    multiple?: boolean;
+    onFiles: (files: File[]) => void;
+    onError?: (message: string) => void;
+    disabled?: boolean;
+    /** Custom drop-zone label */
+    label?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, }: FilterChipProps): JSX.Element;
 
 export declare interface FilterChipProps {
@@ -529,6 +587,29 @@ export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
 
+export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
+
+export declare interface NotificationCenterProps {
+    items: NotificationItem[];
+    onItemClick?: (item: NotificationItem) => void;
+    onMarkAllRead?: () => void;
+    onClearAll?: () => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface NotificationItem {
+    id: string;
+    title: string;
+    body?: string;
+    timestamp?: string | number;
+    read?: boolean;
+    /** Optional icon / emoji / ReactNode prefix */
+    icon?: string;
+    /** Optional grouping / category label */
+    category?: string;
+}
+
 export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
 
 export declare interface PageHeaderBack {
@@ -557,6 +638,28 @@ export declare interface PageSectionProps {
     actions?: ReactNode;
     children: ReactNode;
     className?: string;
+}
+
+export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, className, }: PresenceAvatarsProps): JSX.Element;
+
+export declare interface PresenceAvatarsProps {
+    users: PresenceAvatarUser[];
+    /** Maximum avatars to render before "+N" chip (default 5) */
+    maxVisible?: number;
+    /** Avatar diameter in px (default 28) */
+    size?: number;
+    /** Called when the "+N" overflow chip is clicked */
+    onMoreClick?: () => void;
+    className?: string;
+}
+
+export declare interface PresenceAvatarUser {
+    /** Unique identifier for the user */
+    id: string;
+    name: string;
+    /** Optional avatar image URL */
+    avatarUrl?: string;
+    online?: boolean;
 }
 
 export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
@@ -778,8 +881,8 @@ export declare interface SubNavItem {
     onClick?: () => void;
     /** Optional left-side accent color (action items often want danger/warning). */
     accent?: 'default' | 'danger' | 'warning' | 'success';
-    /** If set on any item in a group, the group's item list scrolls after this
-     *  many visible items (approximate — based on standard item height). */
+    /** If any item in a group specifies groupScrollAfter, cap the visible
+     *  height at that many items and make the rest scrollable. */
     groupScrollAfter?: number;
 }
 
@@ -1010,6 +1113,31 @@ export declare interface ToolCallStripProps {
 }
 
 export declare function useCommandPalette(): CommandPaletteController;
+
+export declare function UserMenu({ user, items, className, 'data-testid': testId }: UserMenuProps): JSX.Element;
+
+export declare interface UserMenuItem {
+    label: string;
+    icon?: ReactNode;
+    onClick: () => void;
+    /** Render a divider above this item */
+    separator?: boolean;
+    /** Style this item as destructive */
+    danger?: boolean;
+}
+
+export declare interface UserMenuProps {
+    user: UserMenuUser;
+    items: UserMenuItem[];
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface UserMenuUser {
+    name: string;
+    email: string;
+    avatarUrl?: string;
+}
 
 export declare interface UserPickerProps {
     value: string[];

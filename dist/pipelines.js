@@ -3,7 +3,7 @@ import Yn, { useState as R, useRef as oe, useMemo as F, useEffect as G, createCo
 import { useNavigate as Ee, useParams as at, Navigate as lt, useSearchParams as Rt } from "react-router";
 import "@schemas/pipeline.schema.json";
 import { u as Pe, a as Qn } from "./EventStreamContext-DEaDWFtC.js";
-import { E as pd } from "./EventStreamContext-DEaDWFtC.js";
+import { E as ud } from "./EventStreamContext-DEaDWFtC.js";
 import { l as Yt, d as Xt, b as Ir, a as Sr, P as dn, e as Tr, f as Ar, c as pn, r as Dr, g as Rr } from "./pipelineAudit-HIi3aStK.js";
 import { u as $t } from "./IdentityContext-CLalsm_M.js";
 import { u as Zn } from "./WebSocketContext-DPGFyPeZ.js";
@@ -16,9 +16,10 @@ import "tailwind-merge";
 import { M as ze } from "./Modal-2jg4229_.js";
 import "react-dom";
 import { u as Hr, I as ht, a as zr, C as Zt, T as Kr } from "./TagEditor-CuaVtW7o.js";
-import { a as Fe, C as zt, B as rt } from "./ConfirmDialog-DCCuBtRb.js";
+import { B as Fe, C as zt } from "./ConfirmDialog-Ch54mLuZ.js";
 import { C as xe } from "./Chip-BXdhqVFm.js";
 import { E as _e } from "./EmptyState-C3KCJ6Ae.js";
+import { B as rt } from "./Banner-DKb3JiLs.js";
 import { B as Wr, L as kt } from "./Chart-ByoxeiYX.js";
 import { S as Ut } from "./SkeletonCard-C89GWQ3p.js";
 const Vr = "";
@@ -8793,7 +8794,7 @@ function Na(e) {
   const t = e.tagName;
   return !!(t === "INPUT" || t === "TEXTAREA" || t === "SELECT" || e.isContentEditable);
 }
-function ed() {
+function td() {
   const { pipelineId: e } = at(), t = F(() => e ? Re(e) !== null : !1, [e]);
   return !e || !t ? /* @__PURE__ */ n(lt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ n(sr, { pipelineId: e, children: /* @__PURE__ */ n(ka, { pipelineId: e }) });
 }
@@ -11036,7 +11037,7 @@ function sl({
     }
   );
 }
-function td() {
+function nd() {
   const e = Ee(), { userId: t } = $t(), { toast: r } = Pt(), { triggerRun: s, isTriggering: i } = lr(), [o, d] = Rt(), [c, a] = R([]), [p, f] = R(""), [h, m] = R("all"), [x, g] = R("updated"), u = F(
     () => tl(o.get("status")),
     [o]
@@ -12212,7 +12213,7 @@ function Nl({
     }
   );
 }
-function nd() {
+function rd() {
   const { pipelineId: e } = at(), t = Ee(), [r, s] = Rt(), [i, o] = R([]), [d, c] = R(null), [a, p] = R([]), [f, h] = R(() => /* @__PURE__ */ new Set()), [m, x] = R(null), [g, u] = R(!1), [v, w] = R(null), [N, C] = R(!1), y = M((j) => {
     const X = j.error?.nodeId;
     if (!X || X === "unknown") return;
@@ -13202,7 +13203,7 @@ function ql({
     }
   );
 }
-function rd() {
+function od() {
   const { pipelineId: e, runId: t } = at();
   return !e || !t ? /* @__PURE__ */ n(lt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ n(sr, { pipelineId: e, children: /* @__PURE__ */ n(go, { children: /* @__PURE__ */ n(Hl, { pipelineId: e, runId: t }) }) });
 }
@@ -13902,7 +13903,7 @@ function Hn({
     }
   );
 }
-function od() {
+function sd() {
   const { pipelineId: e, runIdA: t, runIdB: r } = at(), s = Ee(), i = F(
     () => e ? Re(e) : null,
     [e]
@@ -14566,11 +14567,11 @@ function xc({ pipelineId: e, runIdA: t, runIdB: r }) {
     }
   );
 }
-function sd() {
+function id() {
   const { pipelineId: e } = at(), [t] = Rt(), r = t.get("a"), s = t.get("b");
   return !e || !r || !s ? /* @__PURE__ */ n(lt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ n(xc, { pipelineId: e, runIdA: r, runIdB: s });
 }
-function id() {
+function ad() {
   const e = Ee(), [t, r] = Rt(), [s, i] = R([]), { runs: o } = nt();
   G(() => {
     let N = !1;
@@ -14802,7 +14803,7 @@ function Ic(e) {
     { label: "Tokens out", data: s, color: "#16a34a" }
   ];
 }
-function ad() {
+function ld() {
   const { pipelineId: e } = at(), t = Ee(), [r, s] = R(null), [i, o] = R([]), [d, c] = R("50");
   G(() => {
     e && (s(Re(e)), o(et(e)));
@@ -15347,7 +15348,7 @@ function $c({ row: e, onSubmit: t, onOpenPipeline: r }) {
     ] })
   ] });
 }
-function ld() {
+function cd() {
   const e = Ee(), { approvals: t, isLoading: r, error: s, retry: i } = Sc(), { resolveApproval: o, runs: d } = nt(), [c, a] = R(
     () => /* @__PURE__ */ new Set()
   );
@@ -15433,26 +15434,26 @@ function ld() {
 }
 export {
   Uo as ActionNode,
-  id as AllRunsPage,
+  ad as AllRunsPage,
   qo as ApprovalNode,
   Ce as BaseNode,
   Eo as ConditionNode,
-  pd as EventStreamProvider,
+  ud as EventStreamProvider,
   _o as ForkNode,
   Fo as JoinNode,
   Ro as LLMNode,
-  ld as PendingApprovalsPage,
+  cd as PendingApprovalsPage,
   ks as PipelineCanvas,
   Et as PipelineEditorContext,
-  ed as PipelineEditorPage,
+  td as PipelineEditorPage,
   sr as PipelineEditorProvider,
-  od as PipelineRunComparePage,
-  sd as PipelineRunDiff,
-  rd as PipelineRunReplayPage,
-  nd as PipelineRunsPage,
+  sd as PipelineRunComparePage,
+  id as PipelineRunDiff,
+  od as PipelineRunReplayPage,
+  rd as PipelineRunsPage,
   go as PipelineRunsProvider,
-  ad as PipelineStatsPage,
-  td as PipelinesPage,
+  ld as PipelineStatsPage,
+  nd as PipelinesPage,
   Po as TransformNode,
   To as TriggerNode,
   Xo as nodeTypes,

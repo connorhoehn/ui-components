@@ -1,80 +1,88 @@
-import { A as i, a as n, b as m, C as p, c as C, d, e as T, f as S, g as P, D as h, E as g, F as f, h as b, i as c, I as u, M as x, P as E, j as v, k as B, Q as I, S as k, l as y, m as A, n as D, o as F, p as w, q as L, T as G, r as H, s as M, t as N, u as j, v as Q, w as U } from "./SubNavLayout-1ySGqOdk.js";
-import { B as q, a as O, C as R } from "./ConfirmDialog-DCCuBtRb.js";
-import { C as J, P as K, T as V, a as W, b as X, c as Y, d as Z, e as $ } from "./PageSection-B_nBFSjK.js";
-import { C as ea, D as sa, I as oa, T as ta } from "./TagEditor-CuaVtW7o.js";
-import { B as la, L as ia, S as na } from "./Chart-ByoxeiYX.js";
-import { C as pa } from "./Chip-BXdhqVFm.js";
-import { E as da } from "./EmptyState-C3KCJ6Ae.js";
-import { S as Sa, e as Pa, g as ha, a as ga } from "./Sparkline-B8POanAQ.js";
+import { B as i, C as n, a as m, b as p, c as C, d, e as T, f as S, D as P, E as c, F as f, g as h, h as b, I as g, M as u, N as x, P as B, i as E, j as v, k as F, Q as I, S as k, l as y, m as A, n as D, o as H, p as L, q as M, T as N, r as U, s as w, t as G, U as j, u as Q } from "./SubNavLayout-DNCBpliH.js";
+import { B as q, C as O } from "./ConfirmDialog-Ch54mLuZ.js";
+import { C as z, P as J, T as K, a as V, b as W, c as X, d as Y, e as Z } from "./PageSection-B_nBFSjK.js";
+import { C as aa, D as ea, I as sa, T as oa } from "./TagEditor-CuaVtW7o.js";
+import { B as ta } from "./Banner-DKb3JiLs.js";
+import { B as ia, L as na, S as ma } from "./Chart-ByoxeiYX.js";
+import { C as Ca } from "./Chip-BXdhqVFm.js";
+import { E as Ta } from "./EmptyState-C3KCJ6Ae.js";
+import { S as Pa, e as ca, g as fa, a as ha } from "./Sparkline-B8POanAQ.js";
 import "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as ba } from "./Modal-2jg4229_.js";
-import { S as ua } from "./SkeletonCard-C89GWQ3p.js";
+import { M as ga } from "./Modal-2jg4229_.js";
+import { S as xa } from "./SkeletonCard-C89GWQ3p.js";
 import "react";
 import { T as Ea, a as va } from "./ToastProvider-aHBNxMTO.js";
 import "./IdentityContext-CLalsm_M.js";
+import { A as Ia, a as ka, b as ya, F as Aa, n as Da, c as Ha } from "./ActivityFeed-BmTHbekH.js";
 export {
-  i as ActivityFeed,
-  n as Avatar,
-  m as AvatarGroup,
-  q as Banner,
-  la as BarChart,
-  O as Button,
-  J as Card,
-  p as CardHeader,
-  C as ChatComposer,
-  pa as Chip,
-  ea as CodeEditor,
-  d as CollapsibleSection,
-  T as CommandPalette,
-  S as CommandPaletteHint,
-  P as CommandPaletteProvider,
-  R as ConfirmDialog,
-  sa as DEFAULT_PIPELINE_ICONS,
-  h as Drawer,
-  da as EmptyState,
-  g as EntityCell,
+  Ia as ActivityFeed,
+  ka as Avatar,
+  ya as AvatarGroup,
+  ta as Banner,
+  ia as BarChart,
+  i as Breadcrumbs,
+  q as Button,
+  z as Card,
+  n as CardHeader,
+  m as ChannelHeader,
+  p as ChatComposer,
+  Ca as Chip,
+  aa as CodeEditor,
+  C as CollapsibleSection,
+  d as CommandPalette,
+  T as CommandPaletteHint,
+  S as CommandPaletteProvider,
+  O as ConfirmDialog,
+  ea as DEFAULT_PIPELINE_ICONS,
+  P as Drawer,
+  Ta as EmptyState,
+  c as EntityCell,
+  Aa as FileUploadDrop,
   f as FilterChip,
-  b as FollowUpChips,
-  c as FormField,
-  oa as IconButton,
-  u as InlineAlert,
-  ia as LineChart,
-  x as MessageBubble,
-  ba as Modal,
-  E as PageHeader,
-  K as PageSection,
+  h as FollowUpChips,
+  b as FormField,
+  sa as IconButton,
+  g as InlineAlert,
+  na as LineChart,
+  u as MessageBubble,
+  ga as Modal,
+  x as NotificationCenter,
+  B as PageHeader,
+  J as PageSection,
+  E as PresenceAvatars,
   v as ProgressBar,
-  B as ProjectCard,
+  F as ProjectCard,
   I as QuickPromptGrid,
   k as SearchInput,
   y as SegmentedControl,
-  ua as SkeletonCard,
-  Sa as Sparkline,
+  xa as SkeletonCard,
+  Pa as Sparkline,
   A as Spinner,
-  na as StackedAreaChart,
+  ma as StackedAreaChart,
   D as StatCard,
-  F as StatusDot,
-  w as SubNavLayout,
-  L as Switch,
-  V as Table,
-  W as TableBody,
-  X as TableHead,
-  Y as TableRow,
-  Z as TableTd,
-  $ as TableTh,
-  ta as TagEditor,
-  G as ThinkingBlock,
-  H as ThinkingDots,
+  H as StatusDot,
+  L as SubNavLayout,
+  M as Switch,
+  K as Table,
+  V as TableBody,
+  W as TableHead,
+  X as TableRow,
+  Y as TableTd,
+  Z as TableTh,
+  oa as TagEditor,
+  N as ThinkingBlock,
+  U as ThinkingDots,
   Ea as ToastProvider,
-  M as ToolCallPill,
-  N as ToolCallStrip,
-  Pa as eventGlyphs,
-  ha as getEventCategory,
-  ga as getEventGlyph,
-  j as nameToColor,
-  Q as nameToInitials,
-  U as useCommandPalette,
+  w as ToolCallPill,
+  G as ToolCallStrip,
+  j as UserMenu,
+  ca as eventGlyphs,
+  fa as getEventCategory,
+  ha as getEventGlyph,
+  Da as nameToColor,
+  Ha as nameToInitials,
+  Q as useCommandPalette,
   va as useToast
 };

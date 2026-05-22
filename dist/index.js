@@ -1,31 +1,33 @@
-import { DOCUMENT_TYPE_ICONS as Q, getPageConfig as G, getPagesView as H, makeEmptyField as q } from "./types.js";
+import { DOCUMENT_TYPE_ICONS as H, getPageConfig as Q, getPagesView as G, makeEmptyField as q } from "./types.js";
 import { C as K, i as Y } from "./fieldType-BJfRz7mO.js";
-import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as de, j as ue, k as ce, l as pe, m as fe, n as le, o as ge, p as xe, q as me, r as be, s as he, t as ye, v as Se, w as Ce, x as Le, y as Te, z as Pe, A as we, C as ve, D as ke, E as Ie } from "./useWebSocket-xoTVPcp0.js";
-import { u as Me, a as Ee, b as Re, c as Ae, d as Fe, e as je, f as Oe, g as Xe, h as Be, i as $e, j as Ne, k as Ve, l as _e, m as Ue, n as Qe, o as Ge } from "./useVideoSessions-hr67KvHn.js";
+import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as de, j as ue, k as ce, l as pe, m as fe, n as le, o as ge, p as me, q as xe, r as be, s as he, t as ye, v as Ce, w as Se, x as Le, y as Te, z as Pe, A as we, C as ve, D as ke, E as Ie } from "./useWebSocket-xoTVPcp0.js";
+import { u as Me, a as Ee, b as Ae, c as Re, d as Fe, e as je, f as Oe, g as Be, h as Xe, i as $e, j as Ne, k as Ue, l as Ve, m as _e, n as He, o as Qe } from "./useVideoSessions-hr67KvHn.js";
 import { u as qe, a as ze, b as Ke, c as Ye, d as We, e as Je } from "./useSocialProfile-D-SUgbn2.js";
 import { u as es, a as ss, b as as, c as rs, d as ts, e as os, f as is, g as ns, h as ds, i as us } from "./useSyncConflicts-DruS2duy.js";
 import { u as ps } from "./useDocumentTypes-C29MkgPl.js";
-import { T as ls, u as gs, a as xs } from "./ToastProvider-aHBNxMTO.js";
+import { T as ls, u as gs, a as ms } from "./ToastProvider-aHBNxMTO.js";
 import { W as bs, u as hs } from "./WebSocketContext-DPGFyPeZ.js";
-import { I as Ss, u as Cs } from "./IdentityContext-CLalsm_M.js";
+import { I as Cs, u as Ss } from "./IdentityContext-CLalsm_M.js";
 import { C as Ts, D as Ps, I as ws, P as vs, T as ks, u as Is } from "./TagEditor-CuaVtW7o.js";
 import { C as Ms, u as Es } from "./ThemeContext-Bi6AQuIL.js";
-import { A as As, a as Fs, b as js, C as Os, c as Xs, d as Bs, e as $s, f as Ns, g as Vs, D as _s, E as Us, F as Qs, h as Gs, i as Hs, I as qs, M as zs, P as Ks, j as Ys, k as Ws, Q as Js, S as Zs, l as ea, m as sa, n as aa, o as ra, p as ta, q as oa, T as ia, r as na, s as da, t as ua, u as ca, v as pa, w as fa } from "./SubNavLayout-1ySGqOdk.js";
-import { B as ga, a as xa, C as ma } from "./ConfirmDialog-DCCuBtRb.js";
-import { C as ha, P as ya, T as Sa, a as Ca, b as La, c as Ta, d as Pa, e as wa } from "./PageSection-B_nBFSjK.js";
-import { B as ka, L as Ia, S as Da } from "./Chart-ByoxeiYX.js";
-import { C as Ea } from "./Chip-BXdhqVFm.js";
-import { E as Aa } from "./EmptyState-C3KCJ6Ae.js";
-import { S as ja, e as Oa, g as Xa, a as Ba } from "./Sparkline-B8POanAQ.js";
+import { B as Rs, C as Fs, a as js, b as Os, c as Bs, d as Xs, e as $s, f as Ns, D as Us, E as Vs, F as _s, g as Hs, h as Qs, I as Gs, M as qs, N as zs, P as Ks, i as Ys, j as Ws, k as Js, Q as Zs, S as ea, l as sa, m as aa, n as ra, o as ta, p as oa, q as ia, T as na, r as da, s as ua, t as ca, U as pa, u as fa } from "./SubNavLayout-DNCBpliH.js";
+import { B as ga, C as ma } from "./ConfirmDialog-Ch54mLuZ.js";
+import { C as ba, P as ha, T as ya, a as Ca, b as Sa, c as La, d as Ta, e as Pa } from "./PageSection-B_nBFSjK.js";
+import { B as va } from "./Banner-DKb3JiLs.js";
+import { B as Ia, L as Da, S as Ma } from "./Chart-ByoxeiYX.js";
+import { C as Aa } from "./Chip-BXdhqVFm.js";
+import { E as Fa } from "./EmptyState-C3KCJ6Ae.js";
+import { S as Oa, e as Ba, g as Xa, a as $a } from "./Sparkline-B8POanAQ.js";
 import { jsx as f } from "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as Na } from "./Modal-2jg4229_.js";
+import { M as Ua } from "./Modal-2jg4229_.js";
 import { S as _a } from "./SkeletonCard-C89GWQ3p.js";
-import { createContext as l, useMemo as g, useEffect as x, useContext as m } from "react";
-import { P as Qa, a as Ga, b as Ha, f as qa, g as za, c as Ka, l as Ya, r as Wa, d as Ja, e as Za, s as er } from "./pipelineAudit-HIi3aStK.js";
+import { createContext as l, useMemo as g, useEffect as m, useContext as x } from "react";
+import { A as Qa, a as Ga, b as qa, F as za, n as Ka, c as Ya } from "./ActivityFeed-BmTHbekH.js";
+import { P as Ja, a as Za, b as er, f as sr, g as ar, c as rr, l as tr, r as or, d as ir, e as nr, s as dr } from "./pipelineAudit-HIi3aStK.js";
 import "./index-BhrGxmJW.js";
-import { g as ar, a as rr, b as tr, l as or, r as ir, c as nr } from "./registry-BZU57zws.js";
+import { g as cr, a as pr, b as fr, l as lr, r as gr, c as mr } from "./registry-BZU57zws.js";
 function n(s) {
   return `--ui-${s.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
 }
@@ -67,11 +69,11 @@ const h = {
   surface: "#ffffff",
   surfaceRaised: "#ffffff",
   surfaceOverlay: "rgba(15, 23, 42, 0.5)"
-}, y = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, S = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, C = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, M = {
+}, y = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, C = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, S = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, M = {
   colors: h,
   spacing: y,
-  fontSize: S,
-  borderRadius: C
+  fontSize: C,
+  borderRadius: S
 }, E = {
   primary: e("primary"),
   primaryDark: e("primaryDark"),
@@ -94,13 +96,13 @@ const h = {
   surface: e("surface"),
   surfaceRaised: e("surfaceRaised"),
   surfaceOverlay: e("surfaceOverlay")
-}, R = {
+}, A = {
   xs: e("spaceXs"),
   sm: e("spaceSm"),
   md: e("spaceMd"),
   lg: e("spaceLg"),
   xl: e("spaceXl")
-}, A = {
+}, R = {
   xs: e("fontXs"),
   sm: e("fontSm"),
   md: e("fontMd"),
@@ -214,7 +216,7 @@ function j({ children: s, preset: a = "light", theme: r }) {
     () => ({ ...t, ...r }),
     [t, r]
   );
-  return x(() => {
+  return m(() => {
     const d = document.documentElement, u = Object.keys(o);
     for (const i of u)
       d.style.setProperty(n(i), o[i]);
@@ -225,12 +227,12 @@ function j({ children: s, preset: a = "light", theme: r }) {
   }, [o]), /* @__PURE__ */ f(p.Provider, { value: o, children: s });
 }
 function T() {
-  return m(p);
+  return x(p);
 }
 function O() {
   return T();
 }
-const X = {
+const B = {
   /** Subtle shadow for cards, panels */
   sm: "0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
   /** Medium shadow for dropdowns, popovers */
@@ -239,7 +241,7 @@ const X = {
   lg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
   /** Extra strong shadow for elevated modals */
   xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
-}, B = {
+}, X = {
   /** Sticky headers, fixed toolbars */
   sticky: 20,
   /** Dropdowns, popovers, tooltips */
@@ -281,7 +283,7 @@ async function N(s, a) {
   }
   return r.json();
 }
-async function V(s, a) {
+async function U(s, a) {
   const r = await fetch("/api/pipelines/dlq/purge", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -298,113 +300,119 @@ async function V(s, a) {
   return r.json();
 }
 export {
-  As as ActivityFeed,
-  Fs as Avatar,
-  js as AvatarGroup,
-  ga as Banner,
-  ka as BarChart,
-  xa as Button,
+  Qa as ActivityFeed,
+  Ga as Avatar,
+  qa as AvatarGroup,
+  va as Banner,
+  Ia as BarChart,
+  Rs as Breadcrumbs,
+  ga as Button,
   K as CUSTOM_FIELD_TYPE_STORAGE_KEY,
-  ha as Card,
-  Os as CardHeader,
-  Xs as ChatComposer,
-  Ea as Chip,
+  ba as Card,
+  Fs as CardHeader,
+  js as ChannelHeader,
+  Os as ChatComposer,
+  Aa as Chip,
   Ts as CodeEditor,
   Bs as CollapsibleSection,
   Ms as ColorSchemeProvider,
-  $s as CommandPalette,
-  Ns as CommandPaletteHint,
-  Vs as CommandPaletteProvider,
+  Xs as CommandPalette,
+  $s as CommandPaletteHint,
+  Ns as CommandPaletteProvider,
   ma as ConfirmDialog,
   Ps as DEFAULT_PIPELINE_ICONS,
-  Q as DOCUMENT_TYPE_ICONS,
-  _s as Drawer,
-  Aa as EmptyState,
-  Us as EntityCell,
-  Qs as FilterChip,
-  Gs as FollowUpChips,
-  Hs as FormField,
+  H as DOCUMENT_TYPE_ICONS,
+  Us as Drawer,
+  Fa as EmptyState,
+  Vs as EntityCell,
+  za as FileUploadDrop,
+  _s as FilterChip,
+  Hs as FollowUpChips,
+  Qs as FormField,
   J as IDENTITY_BASE_URL,
   ws as IconButton,
-  Ss as IdentityProvider,
-  qs as InlineAlert,
-  Ia as LineChart,
-  zs as MessageBubble,
-  Na as Modal,
+  Cs as IdentityProvider,
+  Gs as InlineAlert,
+  Da as LineChart,
+  qs as MessageBubble,
+  Ua as Modal,
+  zs as NotificationCenter,
   Ks as PageHeader,
-  ya as PageSection,
-  Qa as PatchHttpError,
-  Ga as PatchValidationRejectedError,
+  ha as PageSection,
+  Ja as PatchHttpError,
+  Za as PatchValidationRejectedError,
+  Ys as PresenceAvatars,
   vs as PresenceProvider,
-  Ys as ProgressBar,
-  Ws as ProjectCard,
-  Js as QuickPromptGrid,
-  Zs as SearchInput,
-  ea as SegmentedControl,
+  Ws as ProgressBar,
+  Js as ProjectCard,
+  Zs as QuickPromptGrid,
+  ea as SearchInput,
+  sa as SegmentedControl,
   _a as SkeletonCard,
-  ja as Sparkline,
-  sa as Spinner,
-  Da as StackedAreaChart,
-  aa as StatCard,
-  ra as StatusDot,
-  ta as SubNavLayout,
-  oa as Switch,
-  Sa as Table,
+  Oa as Sparkline,
+  aa as Spinner,
+  Ma as StackedAreaChart,
+  ra as StatCard,
+  ta as StatusDot,
+  oa as SubNavLayout,
+  ia as Switch,
+  ya as Table,
   Ca as TableBody,
-  La as TableHead,
-  Ta as TableRow,
-  Pa as TableTd,
-  wa as TableTh,
+  Sa as TableHead,
+  La as TableRow,
+  Ta as TableTd,
+  Pa as TableTh,
   ks as TagEditor,
   j as ThemeProvider,
-  ia as ThinkingBlock,
-  na as ThinkingDots,
+  na as ThinkingBlock,
+  da as ThinkingDots,
   ls as ToastProvider,
-  da as ToolCallPill,
-  ua as ToolCallStrip,
+  ua as ToolCallPill,
+  ca as ToolCallStrip,
+  pa as UserMenu,
   bs as WebSocketProvider,
-  Ha as applyPatch,
+  er as applyPatch,
   F as borderRadius,
   E as colors,
   e as cssVar,
   L as darkTheme,
-  Oa as eventGlyphs,
-  A as fontSize,
-  qa as forceFail,
+  Ba as eventGlyphs,
+  R as fontSize,
+  sr as forceFail,
   Xa as getEventCategory,
-  Ba as getEventGlyph,
-  ar as getFieldType,
-  rr as getFieldTypes,
-  G as getPageConfig,
-  H as getPagesView,
-  za as getPipelineRun,
-  tr as getRenderer,
-  Ka as getRunAuditLog,
+  $a as getEventGlyph,
+  cr as getFieldType,
+  pr as getFieldTypes,
+  Q as getPageConfig,
+  G as getPagesView,
+  ar as getPipelineRun,
+  fr as getRenderer,
+  rr as getRunAuditLog,
   Z as identityApiFetch,
   D as injectThemeVars,
   Y as isValidCustomFieldType,
   c as lightTheme,
   $ as listDLQEntries,
-  Ya as listPipelineRuns,
-  or as listRegisteredRenderers,
+  tr as listPipelineRuns,
+  lr as listRegisteredRenderers,
   q as makeEmptyField,
-  ca as nameToColor,
-  pa as nameToInitials,
-  V as purgeDLQEntries,
-  C as rawBorderRadius,
+  Ka as nameToColor,
+  Ya as nameToInitials,
+  U as purgeDLQEntries,
+  S as rawBorderRadius,
   h as rawColors,
-  S as rawFontSize,
+  C as rawFontSize,
   y as rawSpacing,
   M as rawTokens,
   N as redriveDLQEntries,
-  ir as registerFieldType,
-  nr as registerRenderer,
-  Wa as resumeFromStep,
-  Ja as retryFromNode,
-  Za as revertPatch,
-  er as searchAudit,
-  X as shadows,
-  R as spacing,
+  gr as registerFieldType,
+  mr as registerRenderer,
+  or as resumeFromStep,
+  ir as retryFromNode,
+  nr as revertPatch,
+  dr as searchAudit,
+  B as shadows,
+  A as spacing,
   b as themeToCssVars,
   n as tokenToCssVarName,
   ee as useActivityBus,
@@ -416,18 +424,18 @@ export {
   te as useCRDT,
   oe as useChat,
   ie as useClickOutside,
-  Re as useCollaborativeDoc,
+  Ae as useCollaborativeDoc,
   Es as useColorScheme,
   fa as useCommandPalette,
   qe as useComments,
   ne as useCursors,
   de as useCustomFieldTypes,
   es as useDocTypeProposals,
-  Ae as useDocumentComments,
+  Re as useDocumentComments,
   Fe as useDocumentExport,
   je as useDocumentItems,
   Oe as useDocumentMetadata,
-  Xe as useDocumentReviews,
+  Be as useDocumentReviews,
   ps as useDocumentTypes,
   ue as useDocuments,
   ze as useFriends,
@@ -435,17 +443,17 @@ export {
   ce as useIdentityAdmin,
   pe as useIdentityAudit,
   fe as useIdentityClients,
-  Cs as useIdentityContext,
+  Ss as useIdentityContext,
   le as useIdentityDiagnostics,
   ge as useIdentityEmailTemplates,
-  xe as useIdentityGroups,
-  me as useIdentityMfa,
+  me as useIdentityGroups,
+  xe as useIdentityMfa,
   be as useIdentityMfaAdmin,
   he as useIdentityPools,
   ye as useIdentityResource,
-  Se as useIdentitySetupStatus,
-  Ce as useIdentityUsers,
-  Be as useIdleDetector,
+  Ce as useIdentitySetupStatus,
+  Se as useIdentityUsers,
+  Xe as useIdleDetector,
   ss as useIngestAudit,
   as as useIngestDLQ,
   rs as useIngestItems,
@@ -463,20 +471,20 @@ export {
   Is as usePresenceContext,
   Pe as useReactions,
   we as useRooms,
-  Ve as useSectionList,
+  Ue as useSectionList,
   Je as useSocialProfile,
   ds as useSourceSloMetrics,
   us as useSyncConflicts,
   O as useTheme,
   T as useThemeContext,
-  xs as useToast,
+  ms as useToast,
   ve as useTypedDocuments,
   ke as useUrlFilterState,
-  _e as useVersionHistory,
-  Ue as useVideoCall,
-  Qe as useVideoSessions,
+  Ve as useVersionHistory,
+  _e as useVideoCall,
+  He as useVideoSessions,
   Ie as useWebSocket,
   hs as useWebSocketContext,
-  Ge as useYjsDoc,
-  B as zIndex
+  Qe as useYjsDoc,
+  X as zIndex
 };

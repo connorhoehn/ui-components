@@ -25,6 +25,7 @@ export default defineConfig({
         agents: resolve(__dirname, 'src/components/agents/index.ts'),
         video: resolve(__dirname, 'src/video.ts'),
         'video-ivs': resolve(__dirname, 'src/video-ivs.ts'),
+        'integrations/realtime-modules': resolve(__dirname, 'src/integrations/realtime-modules/index.ts'),
       },
       formats: ['es', 'cjs'],
     },

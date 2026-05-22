@@ -1,12 +1,13 @@
 import { jsxs as t, jsx as e, Fragment as j } from "react/jsx-runtime";
 import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as ce, useEffect as de } from "react";
-import { C as U, P as F, T as J, b as Z, e as B, a as ee, c as te, d as q } from "./PageSection-B_nBFSjK.js";
-import { a as f, C as H, B as V } from "./ConfirmDialog-DCCuBtRb.js";
+import { C as U, P as F, T as J, b as Z, e as _, a as ee, c as te, d as q } from "./PageSection-B_nBFSjK.js";
+import { B as f, C as H } from "./ConfirmDialog-Ch54mLuZ.js";
 import { E as me } from "./EmptyState-C3KCJ6Ae.js";
 import { c as O } from "./cn-B6yFEsav.js";
+import { B as V } from "./Banner-DKb3JiLs.js";
 import { C as K } from "./Chip-BXdhqVFm.js";
 import { M as ye } from "./Modal-2jg4229_.js";
-function We({ stats: a, pools: r, onNavigate: i, loading: u }) {
+function Ke({ stats: a, pools: r, onNavigate: i, loading: u }) {
   const b = G(
     () => [
       { label: "User Pools", value: a.userPools },
@@ -74,8 +75,8 @@ function X({
   }) : r, [r, s, g]);
   return m ? /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      a.map((d) => /* @__PURE__ */ e(B, { style: d.width ? { width: d.width } : void 0, children: d.header }, d.key)),
-      b && /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
+      a.map((d) => /* @__PURE__ */ e(_, { style: d.width ? { width: d.width } : void 0, children: d.header }, d.key)),
+      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: Array.from({ length: 5 }).map((d, x) => /* @__PURE__ */ t(te, { children: [
       a.map((A) => /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e("div", { className: "h-4 rounded bg-slate-100 animate-pulse", style: { width: `${60 + Math.random() * 30}%` } }) }, A.key)),
@@ -87,7 +88,7 @@ function X({
   ] }) : /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
       a.map((d) => /* @__PURE__ */ e(
-        B,
+        _,
         {
           sortable: d.sortable,
           sortDirection: d.sortable && s === d.key ? g : null,
@@ -98,7 +99,7 @@ function X({
         },
         d.key
       )),
-      b && /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
+      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: n.map((d) => /* @__PURE__ */ t(
       te,
@@ -122,7 +123,7 @@ function X({
     )) })
   ] }) });
 }
-function Ke({
+function Xe({
   pools: a,
   onCreatePool: r,
   onEditPool: i,
@@ -281,24 +282,24 @@ function D({
     p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-slate-400", children: p })
   ] });
 }
-function Xe({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
+function He({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
   const [c, h] = o(a?.poolName ?? ""), [m, s] = o(a?.settings?.mfaConfiguration ?? "OFF"), [p, g] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [N, l] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [n, d] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [x, A] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [E, y] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [P, I] = o(
     Object.entries(a?.customAttributes ?? {}).map(([S, k]) => ({ key: S, value: k }))
   ), [M, R] = o(!1), T = w(() => {
     I((S) => [...S, { key: "", value: "" }]);
   }, []), z = w((S) => {
-    I((k) => k.filter((_, $) => $ !== S));
-  }, []), v = w((S, k, _) => {
+    I((k) => k.filter((B, $) => $ !== S));
+  }, []), v = w((S, k, B) => {
     I(
-      ($) => $.map((Q, Y) => Y === S ? { ...Q, [k]: _ } : Q)
+      ($) => $.map((Q, Y) => Y === S ? { ...Q, [k]: B } : Q)
     );
   }, []), C = w(
     async (S) => {
       S.preventDefault(), R(!0);
       try {
         const k = {};
-        for (const { key: _, value: $ } of P)
-          _.trim() && (k[_.trim()] = $);
+        for (const { key: B, value: $ } of P)
+          B.trim() && (k[B.trim()] = $);
         await i({
           poolName: c,
           customAttributes: k,
@@ -413,7 +414,7 @@ function Xe({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
               className: "flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800",
               placeholder: "Attribute name",
               value: S.key,
-              onChange: (_) => v(k, "key", _.target.value)
+              onChange: (B) => v(k, "key", B.target.value)
             }
           ),
           /* @__PURE__ */ e(
@@ -422,7 +423,7 @@ function Xe({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
               className: "flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800",
               placeholder: "Type (string, number, etc.)",
               value: S.value,
-              onChange: (_) => v(k, "value", _.target.value)
+              onChange: (B) => v(k, "value", B.target.value)
             }
           ),
           /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => z(k), children: "Remove" })
@@ -458,7 +459,7 @@ function le({ status: a, variant: r }) {
   const i = r ? Ce[r] || "neutral" : we[a] || "neutral";
   return /* @__PURE__ */ e(K, { tone: i, size: "sm", children: a });
 }
-function He({
+function Ye({
   users: a,
   poolName: r,
   onCreateUser: i,
@@ -535,7 +536,7 @@ function He({
     }
   );
 }
-function Ye({
+function Qe({
   user: a,
   isEdit: r,
   customAttributeDefinitions: i,
@@ -669,7 +670,7 @@ function Ye({
     ] }) })
   ] });
 }
-function Qe({
+function Je({
   groups: a,
   poolName: r,
   onCreateGroup: i,
@@ -740,7 +741,7 @@ function Qe({
     }
   );
 }
-function Je({
+function Ze({
   group: a,
   isEdit: r,
   members: i,
@@ -856,7 +857,7 @@ function Je({
     ] }) })
   ] });
 }
-function Ze({
+function et({
   applications: a,
   onCreateApp: r,
   onCreateAppWithPool: i,
@@ -971,7 +972,7 @@ const ke = [
   "client_credentials",
   "refresh_token"
 ], Se = ["code", "token", "id_token"];
-function et({
+function tt({
   application: a,
   isEdit: r,
   pools: i,
@@ -1098,7 +1099,7 @@ function et({
   ] });
 }
 const Ae = ["authorization_code", "client_credentials", "refresh_token"];
-function tt({ onSubmit: a, onCancel: r, error: i }) {
+function at({ onSubmit: a, onCancel: r, error: i }) {
   const [u, b] = o(""), [c, h] = o(""), [m, s] = o([""]), [p, g] = o(["authorization_code"]), [N, l] = o(!1), n = w((y) => {
     g(
       (P) => P.includes(y) ? P.filter((I) => I !== y) : [...P, y]
@@ -1187,7 +1188,7 @@ function tt({ onSubmit: a, onCancel: r, error: i }) {
     ] }) })
   ] });
 }
-function at({
+function lt({
   templates: a,
   onCreateTemplate: r,
   onEditTemplate: i,
@@ -1288,7 +1289,7 @@ function at({
     }
   );
 }
-function lt({
+function nt({
   template: a,
   isEdit: r,
   onSubmit: i,
@@ -1410,7 +1411,7 @@ function lt({
     ] }) })
   ] });
 }
-function nt({
+function it({
   metrics: a,
   users: r,
   pools: i,
@@ -1496,7 +1497,7 @@ function nt({
   );
 }
 const Ie = ["", "user", "pool", "client", "group", "template"];
-function it({
+function rt({
   records: a,
   onQuery: r,
   onViewEntity: i,
@@ -1613,7 +1614,7 @@ function it({
     ] })
   ] });
 }
-function rt({ status: a, onNavigate: r }) {
+function st({ status: a, onNavigate: r }) {
   const [i, u] = o(null), b = w((s) => {
     u((p) => p === s ? null : s);
   }, []), c = G(
@@ -1746,8 +1747,8 @@ function Te({ rates: a }) {
   const r = Object.entries(a);
   return r.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-slate-400 text-sm m-0", children: "No rate limiter data available." }) : /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      /* @__PURE__ */ e(B, { children: "Key" }),
-      /* @__PURE__ */ e(B, { children: "Value" })
+      /* @__PURE__ */ e(_, { children: "Key" }),
+      /* @__PURE__ */ e(_, { children: "Value" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: r.map(([i, u]) => /* @__PURE__ */ t(te, { children: [
       /* @__PURE__ */ e(q, { className: "font-mono text-xs", children: i }),
@@ -1755,7 +1756,7 @@ function Te({ rates: a }) {
     ] }, i)) })
   ] });
 }
-function st({
+function ot({
   diagnostics: a,
   rates: r,
   dlq: i,
@@ -1811,11 +1812,11 @@ function st({
           /* @__PURE__ */ e("div", { className: "px-5 py-3 border-b border-slate-200 bg-slate-50", children: /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-slate-700 m-0", children: "Dead Letter Queue" }) }),
           !i || i.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-slate-400 text-sm m-0", children: "Dead letter queue is empty." }) : /* @__PURE__ */ t(J, { children: [
             /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-              /* @__PURE__ */ e(B, { children: "ID" }),
-              /* @__PURE__ */ e(B, { children: "Error" }),
-              /* @__PURE__ */ e(B, { children: "Failed At" }),
-              /* @__PURE__ */ e(B, { children: "Retries" }),
-              /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
+              /* @__PURE__ */ e(_, { children: "ID" }),
+              /* @__PURE__ */ e(_, { children: "Error" }),
+              /* @__PURE__ */ e(_, { children: "Failed At" }),
+              /* @__PURE__ */ e(_, { children: "Retries" }),
+              /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
             ] }) }),
             /* @__PURE__ */ e(ee, { children: i.map((l) => /* @__PURE__ */ t(te, { children: [
               /* @__PURE__ */ t(q, { className: "font-mono text-xs", children: [
@@ -1836,7 +1837,7 @@ function st({
     }
   );
 }
-function ot({
+function ct({
   uid: a,
   interactionUrl: r,
   clientName: i,
@@ -1848,7 +1849,7 @@ function ot({
   registrationEnabled: s = !0,
   forgotPasswordEnabled: p = !0
 }) {
-  const [g, N] = o("signin"), [l, n] = o(!1), [d, x] = o(null), [A, E] = o(""), [y, P] = o(""), [I, M] = o(""), [R, T] = o(""), [z, v] = o(""), [C, S] = o(""), [k, _] = o(""), [$, Q] = o(!1), [Y, ue] = o(""), [pe, ne] = o(!1), ie = b || d, fe = w(async (L) => {
+  const [g, N] = o("signin"), [l, n] = o(!1), [d, x] = o(null), [A, E] = o(""), [y, P] = o(""), [I, M] = o(""), [R, T] = o(""), [z, v] = o(""), [C, S] = o(""), [k, B] = o(""), [$, Q] = o(!1), [Y, ue] = o(""), [pe, ne] = o(!1), ie = b || d, fe = w(async (L) => {
     L.preventDefault(), x(null), n(!0);
     try {
       await c(A, y);
@@ -2011,7 +2012,7 @@ function ot({
             label: "Family Name",
             name: "reg-family",
             value: k,
-            onChange: (L) => _(String(L)),
+            onChange: (L) => B(String(L)),
             disabled: l
           }
         ) })
@@ -2103,7 +2104,7 @@ const De = {
 function ze(a) {
   return De[a] || `Access: ${a}`;
 }
-function ct({
+function dt({
   clientName: a,
   scopes: r,
   redirectUri: i,
@@ -2294,7 +2295,7 @@ function he({
   ] });
 }
 const se = ["name", "scan", "verify", "backup"], Re = ["Name", "Scan", "Verify", "Backup"];
-function dt({
+function mt({
   onSetup: a,
   onVerify: r,
   onComplete: i,
@@ -2462,7 +2463,7 @@ function dt({
     ] })
   ] }) });
 }
-function mt({
+function ht({
   onVerify: a,
   onVerifyBackup: r,
   error: i = null
@@ -2573,7 +2574,7 @@ function oe(a) {
     return a;
   }
 }
-function ht({
+function ut({
   devices: a,
   userEmail: r,
   mfaEnabled: i,
@@ -2684,7 +2685,7 @@ function ht({
     )
   ] }) });
 }
-function ut({ onConfirm: a, onCancel: r, clientName: i }) {
+function pt({ onConfirm: a, onCancel: r, clientName: i }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-slate-50", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Sign out confirmation", children: [
     /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-red-600", children: [
       /* @__PURE__ */ e("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
@@ -2706,7 +2707,7 @@ function ut({ onConfirm: a, onCancel: r, clientName: i }) {
     ] })
   ] }) });
 }
-function pt({
+function ft({
   title: a = "Something went wrong",
   message: r,
   error: i,
@@ -2760,7 +2761,7 @@ function Le({
     }
   ) });
 }
-function ft({
+function gt({
   children: a,
   activePath: r,
   adminEmail: i,
@@ -2837,7 +2838,7 @@ function Fe({
     }
   );
 }
-function gt({
+function bt({
   children: a,
   poolId: r,
   poolName: i,
@@ -2885,34 +2886,34 @@ function gt({
   ] });
 }
 export {
-  We as AdminDashboardPage,
-  et as ApplicationFormPage,
-  Ze as ApplicationListPage,
-  tt as ApplicationPoolFormPage,
-  it as AuditPage,
+  Ke as AdminDashboardPage,
+  tt as ApplicationFormPage,
+  et as ApplicationListPage,
+  at as ApplicationPoolFormPage,
+  rt as AuditPage,
   he as CodeInput,
-  ct as ConsentPage,
-  st as DiagnosticsPage,
-  lt as EmailTemplateFormPage,
-  at as EmailTemplateListPage,
+  dt as ConsentPage,
+  ot as DiagnosticsPage,
+  nt as EmailTemplateFormPage,
+  lt as EmailTemplateListPage,
   X as EntityTable,
-  pt as ErrorPage,
+  ft as ErrorPage,
   D as FormField,
-  Je as GroupFormPage,
-  Qe as GroupListPage,
-  ft as IdentityAdminLayout,
-  ot as LoginPage,
-  ut as LogoutPage,
-  ht as MfaDashboardPage,
-  nt as MfaManagementPage,
-  dt as MfaSetupPage,
-  mt as MfaVerifyPage,
-  Xe as PoolFormPage,
-  Ke as PoolListPage,
-  gt as PoolScopedLayout,
+  Ze as GroupFormPage,
+  Je as GroupListPage,
+  gt as IdentityAdminLayout,
+  ct as LoginPage,
+  pt as LogoutPage,
+  ut as MfaDashboardPage,
+  it as MfaManagementPage,
+  mt as MfaSetupPage,
+  ht as MfaVerifyPage,
+  He as PoolFormPage,
+  Xe as PoolListPage,
+  bt as PoolScopedLayout,
   Ee as QrCodeDisplay,
-  rt as SetupGuidePage,
+  st as SetupGuidePage,
   le as StatusBadge,
-  Ye as UserFormPage,
-  He as UserListPage
+  Qe as UserFormPage,
+  Ye as UserListPage
 };
