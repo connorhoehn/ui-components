@@ -5,48 +5,17 @@ advance in parallel.
 
 ---
 
-## Track T — Tailwind CSS v4 migration
+## Track T — Tailwind CSS v4 migration ✅ COMPLETE
 
-### T-W3a — Small domains (current)
+All waves shipped. See `TAILWIND_MIGRATION.md` for full record.
 
-Convert the six smallest wave-3 domains. Each is small enough for one commit.
+- **W1** (f0ad1ed) — Infrastructure + shared components (19 files)
+- **W2** (b033c53) — Layout, UI, misc, identity, social, ingest (71 files)
+- **W3a–W3b** — observability, video, collaboration, doc-types, field-types, typed-documents, doc-editor
+- **W3c–W3d (pipelines)** — all 92 pipeline files use Tailwind; remaining `style={{}}` are legitimately dynamic (canvas anchors, status colors, timeline geometry). Allowlist locked at 79 files.
+- **Drift guard** — `npm run lint:static-styles` enforces the allowlist on every commit.
 
-- **observability** — 12 files, ~5.3K lines
-- **video** — 7 files, ~560 lines
-- **collaboration** — 8 files (keep dynamic cursor positioning as `style`)
-- **doc-types** — 3 files
-- **field-types** — 1 file
-- **typed-documents** — 2 files
-
-Acceptance: `npm test && npm run build` green. Zero new inline style usages.
-
-### T-W3b — doc-editor
-
-37 files, ~9.8K lines. TipTap-owned styles (editor content, ProseMirror internals)
-must stay as `style` props or targeted CSS rules — do not blindly convert them.
-
-### T-W3c — Pipelines refactor (prerequisite for W3d)
-
-Extract shared patterns before converting 64 files of inline styles:
-
-1. `PipelinePage` layout wrapper — used by AllRunsPage, PipelineRunsPage, PipelineStatsPage, PendingApprovalsPage
-2. `NodeConfigShell` — used by all `*Config.tsx` panels (card + fieldset + save/cancel buttons)
-3. `DataTable` primitive — used by RunsTable, ActiveRunsTable, and list pages
-4. Consolidate `src/components/pipelines/ui/Button.tsx` + `IconButton.tsx` into `src/components/ui/`
-
-Acceptance: component count unchanged, tests green, no visual regression in demo.
-
-### T-W3d — Pipelines conversion
-
-Convert the remaining ~38K lines (post-refactor estimate ~25K) to Tailwind.
-Split into 2 parallel agents if available (see `TAILWIND_MIGRATION.md` Approach A).
-
-### T-CLEANUP
-
-After T-W3d:
-- `grep -r "constants/styles" src/` → if zero results, delete `src/constants/styles.ts`
-- Consolidate `src/components/pipelines/ui/` into `src/components/ui/` if not done in W3c
-- Final `tsc --noEmit` — only 5 pre-existing errors allowed
+No further wave work scheduled. Revisit if `lint:static-styles` catches a regression.
 
 ---
 

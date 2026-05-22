@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
+import { cn } from '../../lib/cn';
 
 // Shared "section with left-rail" layout. Pattern mirrors the InvokePage
 // session sidebar — slim rail, section title at top, NavLink items with
@@ -33,8 +34,8 @@ export interface SubNavItem {
   onClick?: () => void;
   /** Optional left-side accent color (action items often want danger/warning). */
   accent?: 'default' | 'danger' | 'warning' | 'success';
-  /** If set on any item in a group, the group's item list scrolls after this
-   *  many visible items (approximate — based on standard item height). */
+  /** If any item in a group specifies groupScrollAfter, cap the visible
+   *  height at that many items and make the rest scrollable. */
   groupScrollAfter?: number;
 }
 
@@ -128,7 +129,7 @@ function RailNav({
   const groups = useMemo(() => buildGroups(items), [items]);
   const isGrouped = groups.some((g) => g.name !== null);
   return (
-    <nav style={navList}>
+    <nav className="flex-1 overflow-y-auto py-1">
       {isGrouped ? (
         groups.map((g) =>
           g.name === null ? (
@@ -167,22 +168,36 @@ export function SubNavLayout({
   const hasSecondary = secondaryItems && secondaryItems.length > 0;
 
   return (
-    <div style={layout}>
-      {/* Primary rail */}
-      <aside style={{ ...rail, width: railWidth }}>
-        <div style={railHead}>
-          <span style={railTitle}>{title}</span>
+    <div className="flex h-full min-h-0">
+      {/* Primary rail — width is prop-driven, keep inline */}
+      <aside
+        className="flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden"
+        style={{ width: railWidth }}
+      >
+        <div className="flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]">
+          <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+            {title}
+          </span>
           {titleAction}
         </div>
-        {railHeader && <div style={railHeaderSlot}>{railHeader}</div>}
+        {railHeader && (
+          <div className="px-3 py-2 border-b border-[var(--color-border)]">
+            {railHeader}
+          </div>
+        )}
         <RailNav items={items} storageKey={storageKey} title={title} renderNavItem={renderNavItem} />
       </aside>
 
-      {/* Secondary rail (section-specific items) */}
+      {/* Secondary rail — width is prop-driven, keep inline */}
       {hasSecondary && (
-        <aside style={{ ...rail, width: secondaryRailWidth }}>
-          <div style={railHead}>
-            <span style={railTitle}>{secondaryTitle ?? ''}</span>
+        <aside
+          className="flex-none border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col overflow-hidden"
+          style={{ width: secondaryRailWidth }}
+        >
+          <div className="flex items-center justify-between px-4 py-[14px] border-b border-[var(--color-border)]">
+            <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-[0.05em]">
+              {secondaryTitle ?? ''}
+            </span>
           </div>
           <RailNav
             items={secondaryItems}
@@ -193,7 +208,7 @@ export function SubNavLayout({
         </aside>
       )}
 
-      <main style={content}>
+      <main className="flex-1 min-w-0 overflow-auto p-6">
         {children}
       </main>
     </div>
@@ -240,21 +255,26 @@ function GroupSection({
   // If any item in this group specifies groupScrollAfter, cap the visible
   // height at that many items and make the rest scrollable.
   const scrollAfter = items.find((i) => i.groupScrollAfter)?.groupScrollAfter;
+  // scrollAfter * 38px per item — dynamic computed, keep inline
   const listStyle: CSSProperties | undefined = scrollAfter
     ? { maxHeight: scrollAfter * 38, overflowY: 'auto' }
     : undefined;
 
   return (
-    <section style={groupSection}>
+    <section className="border-b border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setCollapsed((v) => !v)}
-        style={groupHeader}
+        className="flex items-center gap-1.5 w-full px-3 py-2 bg-transparent border-none cursor-pointer text-[var(--color-text-tertiary)] text-[10px] font-bold tracking-[0.05em] uppercase text-left"
         aria-expanded={!collapsed}
       >
-        <span style={groupCaret} aria-hidden="true">{collapsed ? '▸' : '▾'}</span>
-        <span style={groupTitle}>{name}</span>
-        <span style={groupCount}>{items.length}</span>
+        <span className="text-[10px] w-[10px] inline-block" aria-hidden="true">
+          {collapsed ? '▸' : '▾'}
+        </span>
+        <span className="flex-1">{name}</span>
+        <span className="text-[9px] font-medium text-[var(--color-text-tertiary)] bg-[var(--color-bg)] px-[5px] py-px rounded-[6px] border border-[var(--color-border)]">
+          {items.length}
+        </span>
       </button>
       {!collapsed && (
         <div style={listStyle}>
@@ -282,19 +302,45 @@ function ItemLink({
 
   const body = (
     <>
-      <div style={navLabelRow}>
-        <span style={{ ...navLabel, color: accentColor ?? navLabel.color }}>{item.label}</span>
+      <div className="flex items-center justify-between gap-2">
+        {/* accent color is runtime-derived, keep inline for the override */}
+        <span
+          className="text-[13px] font-medium text-[var(--color-text-secondary)]"
+          style={accentColor ? { color: accentColor } : undefined}
+        >
+          {item.label}
+        </span>
         {item.count !== undefined && (
-          <span style={navCount}>{item.count}</span>
+          <span className="text-[10px] font-medium text-[var(--color-text-tertiary)] bg-[var(--color-surface)] px-[6px] py-px rounded-[8px] border border-[var(--color-border)]">
+            {item.count}
+          </span>
         )}
       </div>
-      {item.hint && <div style={navHint}>{item.hint}</div>}
+      {item.hint && (
+        <div className="text-[10px] text-[var(--color-text-tertiary)] mt-0.5">
+          {item.hint}
+        </div>
+      )}
     </>
   );
 
+  // Base inactive style passed to renderNavItem for router consumers (NavLink isActive).
+  const baseStyle: CSSProperties = {
+    display: 'block',
+    padding: '8px 14px',
+    borderLeft: '3px solid transparent',
+    color: 'var(--color-text-secondary)',
+    textDecoration: 'none',
+    cursor: 'pointer',
+  };
+
   if (item.onClick) {
     return (
-      <button type="button" onClick={item.onClick} style={navItemButtonStyle()}>
+      <button
+        type="button"
+        onClick={item.onClick}
+        className="block w-full px-[14px] py-2 border-l-[3px] border-transparent border-t-0 border-r-0 border-b-0 bg-transparent text-[var(--color-text-secondary)] text-left cursor-pointer font-[inherit]"
+      >
         {body}
       </button>
     );
@@ -306,160 +352,25 @@ function ItemLink({
   // hint + count) is passed as children so the renderer doesn't have to
   // reconstruct it.
   if (renderNavItem) {
-    return <>{renderNavItem(item, body, navItemStyle(false))}</>;
+    return <>{renderNavItem(item, body, baseStyle)}</>;
   }
 
   // Default: plain anchor, no active-state detection.
   return (
-    <a href={item.path} style={navItemStyle(false)}>
+    <a
+      href={item.path}
+      className="block px-[14px] py-2 border-l-[3px] border-transparent text-[var(--color-text-secondary)] no-underline cursor-pointer"
+    >
       {body}
     </a>
   );
 }
 
-// ── styles ────────────────────────────────────────────────────────────────────
-
-const layout: CSSProperties = {
-  display: 'flex',
-  height: '100%',
-  minHeight: 0,
+// Exported for consumers that use renderNavItem and want to apply the active style.
+export const activeNavItemStyle: CSSProperties = {
+  borderLeft: '3px solid var(--color-primary)',
+  background: 'var(--color-surface-hover)',
+  color: 'var(--color-text-primary)',
 };
 
-const rail: CSSProperties = {
-  flex: '0 0 auto',
-  borderRight: '1px solid var(--color-border)',
-  background: 'var(--color-surface)',
-  display: 'flex',
-  flexDirection: 'column',
-  overflow: 'hidden',
-};
-
-const railHead: CSSProperties = {
-  padding: '14px 16px',
-  borderBottom: '1px solid var(--color-border)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-};
-
-const railTitle: CSSProperties = {
-  fontSize: 11,
-  fontWeight: 600,
-  color: 'var(--color-text-tertiary)',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-};
-
-const railHeaderSlot: CSSProperties = {
-  padding: '8px 12px',
-  borderBottom: '1px solid var(--color-border)',
-};
-
-const navList: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '4px 0',
-};
-
-const groupSection: CSSProperties = {
-  borderBottom: '1px solid var(--color-border)',
-};
-
-const groupHeader: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  width: '100%',
-  padding: '8px 12px',
-  background: 'transparent',
-  border: 'none',
-  cursor: 'pointer',
-  color: 'var(--color-text-tertiary)',
-  fontSize: 10,
-  fontWeight: 700,
-  letterSpacing: '0.05em',
-  textTransform: 'uppercase',
-  textAlign: 'left',
-};
-
-const groupCaret: CSSProperties = {
-  fontSize: 10,
-  width: 10,
-  display: 'inline-block',
-};
-
-const groupTitle: CSSProperties = {
-  flex: 1,
-};
-
-const groupCount: CSSProperties = {
-  fontSize: 9,
-  fontWeight: 500,
-  color: 'var(--color-text-tertiary)',
-  background: 'var(--color-bg)',
-  padding: '1px 5px',
-  borderRadius: 6,
-  border: '1px solid var(--color-border)',
-};
-
-function navItemStyle(isActive: boolean): CSSProperties {
-  return {
-    display: 'block',
-    padding: '8px 14px',
-    borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
-    background: isActive ? 'var(--color-surface-hover)' : undefined,
-    color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-    textDecoration: 'none',
-    cursor: 'pointer',
-  };
-}
-
-function navItemButtonStyle(): CSSProperties {
-  return {
-    display: 'block',
-    width: '100%',
-    padding: '8px 14px',
-    borderLeft: '3px solid transparent',
-    border: 'none',
-    background: 'transparent',
-    color: 'var(--color-text-secondary)',
-    textAlign: 'left',
-    cursor: 'pointer',
-    font: 'inherit',
-  };
-}
-
-const navLabelRow: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  gap: 8,
-};
-
-const navLabel: CSSProperties = {
-  fontSize: 13,
-  fontWeight: 500,
-};
-
-const navCount: CSSProperties = {
-  fontSize: 10,
-  fontWeight: 500,
-  color: 'var(--color-text-tertiary)',
-  background: 'var(--color-surface)',
-  padding: '1px 6px',
-  borderRadius: 8,
-  border: '1px solid var(--color-border)',
-};
-
-const navHint: CSSProperties = {
-  fontSize: 10,
-  color: 'var(--color-text-tertiary)',
-  marginTop: 2,
-};
-
-const content: CSSProperties = {
-  flex: 1,
-  minWidth: 0,
-  overflow: 'auto',
-  padding: 24,
-};
+export { cn };

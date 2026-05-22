@@ -5,6 +5,7 @@
 // a mini Avatar, actor name, action verb, a monospace badge, subject, and timestamp.
 
 import { useEffect, useRef, useState } from 'react';
+import { cn } from '../../lib/cn';
 import { Avatar } from './Avatar';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -75,70 +76,34 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
   return (
     <div
-      className="uc-activity-row"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 6,
-        padding: '3.5px 0',
-        opacity,
-        transition: 'opacity 0.38s ease',
-        overflow: 'hidden',
-        minWidth: 0,
-      }}
+      className="uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out"
+      style={{ opacity }}
     >
-      {/* Type dot */}
+      {/* Type dot — color is dynamic per-entity, keep inline */}
       <span
-        style={{
-          width: 5,
-          height: 5,
-          borderRadius: '50%',
-          background: dotColor,
-          flexShrink: 0,
-        }}
+        className="w-[5px] h-[5px] rounded-full shrink-0"
+        style={{ background: dotColor }}
       />
 
       {/* Mini avatar */}
       <Avatar name={item.actor} size={17} />
 
       {/* "Alex C. merged" */}
-      <span style={{ fontSize: 11, color: '#374151', fontWeight: 500, flexShrink: 0 }}>
+      <span className="text-[11px] text-[#374151] font-medium shrink-0">
         {shortName(item.actor)}
       </span>
-      <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0 }}>{item.action}</span>
+      <span className="text-[11px] text-[#9ca3af] shrink-0">{item.action}</span>
 
       {/* Ticket badge */}
       {item.ticketId && (
-        <span
-          style={{
-            fontSize: 10,
-            fontWeight: 700,
-            fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, monospace',
-            color: '#4f46e5',
-            background: '#eef2ff',
-            border: '1px solid #c7d2fe',
-            borderRadius: 3,
-            padding: '1px 5px',
-            flexShrink: 0,
-            letterSpacing: '0.01em',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <span className="text-[10px] font-bold font-mono text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap">
           {item.ticketId}
         </span>
       )}
 
       {/* Subject */}
       <span
-        style={{
-          fontSize: 11,
-          color: '#6b7280',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-          flex: 1,
-          minWidth: 0,
-        }}
+        className="text-[11px] text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
         title={item.subject}
       >
         {truncSubject}
@@ -146,7 +111,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Timestamp */}
       {item.timeLabel && (
-        <span style={{ fontSize: 10, color: '#d1d5db', flexShrink: 0, whiteSpace: 'nowrap' }}>
+        <span className="text-[10px] text-[#d1d5db] shrink-0 whitespace-nowrap">
           {item.timeLabel}
         </span>
       )}
@@ -204,17 +169,14 @@ export function ActivityFeed({
 
   if (visible.length === 0) {
     return (
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center' }} className={className}>
-        <span style={{ fontSize: 11, color: '#e5e7eb' }}>No recent activity</span>
+      <div className={cn('flex-1 flex items-center', className)}>
+        <span className="text-[11px] text-[#e5e7eb]">No recent activity</span>
       </div>
     );
   }
 
   return (
-    <div
-      className={className}
-      style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 0, overflow: 'hidden' }}
-    >
+    <div className={cn('flex-1 flex flex-col overflow-hidden', className)}>
       {visible.map((item, i) => (
         <ActivityRow
           key={item.id}
