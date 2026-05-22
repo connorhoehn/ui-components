@@ -1,6 +1,7 @@
 import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
+import { ElementType } from 'react';
 import { HTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
@@ -636,7 +637,7 @@ export declare function StackedAreaChart({ series, height, }: {
     height?: number;
 }): JSX_2.Element;
 
-export declare function StatCard({ label, value, accent, danger, hint, to, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+export declare function StatCard({ label, value, accent, danger, hint, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
 export declare interface StatCardProps {
     label: ReactNode;
@@ -644,7 +645,20 @@ export declare interface StatCardProps {
     accent?: boolean;
     danger?: boolean;
     hint?: ReactNode;
+    /** Destination URL / path. When provided the card renders as a link. */
     to?: string;
+    /**
+     * Override the link element. Defaults to a plain `<a>` (passes `href`).
+     * Pass your router's Link component to get client-side navigation — the `to`
+     * prop is forwarded directly so it matches React Router's `<Link to>` API.
+     *
+     * @example
+     * import { Link } from 'react-router';
+     * <StatCard to="/admin/capabilities" as={Link} label="…" value={0} />
+     */
+    as?: ElementType<any>;
+    /** Click handler — renders a <button> wrapper if no `to` is given. */
+    onClick?: () => void;
     mono?: boolean;
     className?: string;
     style?: CSSProperties;

@@ -16,7 +16,7 @@ import "tailwind-merge";
 import { M as ze } from "./Modal-2jg4229_.js";
 import "react-dom";
 import { u as Hr, I as ht, a as zr, C as Zt, T as Kr } from "./TagEditor-CuaVtW7o.js";
-import { a as Fe, C as zt, B as rt } from "./ConfirmDialog-C1XfACNk.js";
+import { a as Fe, C as zt, B as rt } from "./ConfirmDialog-DCCuBtRb.js";
 import { C as xe } from "./Chip-BXdhqVFm.js";
 import { E as _e } from "./EmptyState-C3KCJ6Ae.js";
 import { B as Wr, L as kt } from "./Chart-ByoxeiYX.js";
