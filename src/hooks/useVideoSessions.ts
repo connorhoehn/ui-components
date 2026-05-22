@@ -14,7 +14,7 @@ export interface VideoSessionParticipant {
 export interface VideoSession {
   documentId: string;
   sessionId: string;
-  vnlSessionId: string;
+  vnlSessionId: string;  // legacy field name from VNL era; wire-visible in DDB, do not rename without migration
   status: 'active' | 'ended';
   startedAt: string;
   endedAt?: string;

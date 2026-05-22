@@ -58,13 +58,13 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
     const handleUnload = () => {
       const sid = sessionIdRef.current;
       if (sid) {
-        // End the VNL session — best-effort via sendBeacon
+        // End the LVS session — best-effort via sendBeacon
         navigator.sendBeacon(
           `${SOCIAL_API_URL}/api/video/sessions/${sid}/end`,
           new Blob([JSON.stringify({ documentId })], { type: 'application/json' }),
         );
         // Note: Y.js meta and Redis metadata can't be cleared via sendBeacon
-        // (no REST endpoint). The VNL end handler will clean up server-side.
+        // (no REST endpoint). The LVS end handler will clean up server-side.
         // Stale activeCallSessionId is handled by the frontend checking session validity.
       }
     };
@@ -98,7 +98,7 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
       if (!res.ok) {
         const body = await res.json().catch(() => ({ error: 'Join failed' }));
         const status = res.status;
-        // If session doesn't exist on VNL (404/410), clear stale meta
+        // If session doesn't exist on LVS (404/410), clear stale meta
         if (status === 404 || status === 410) {
           console.warn('[useVideoCall] Session', sid, 'no longer exists, clearing stale meta');
           updateMeta({ activeCallSessionId: '' });
@@ -126,7 +126,7 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
     setCallState('creating');
     setError(null);
     try {
-      // Create session on VNL
+      // Create session on LVS via platform-api
       const createRes = await fetch(
         `${SOCIAL_API_URL}/api/video/sessions`,
         { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ documentId, displayName }) },

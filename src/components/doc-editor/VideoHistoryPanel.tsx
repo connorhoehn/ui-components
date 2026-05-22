@@ -1,7 +1,7 @@
 // frontend/src/components/doc-editor/VideoHistoryPanel.tsx
 //
 // Shows past video call sessions for a document — participants, duration,
-// and future transcript/summary once the VNL pipeline populates them.
+// and future transcript/summary once the video pipeline populates them.
 
 import { useEffect } from 'react';
 import { Panel, PanelHeader, PanelBody } from '../ui/Panel';
