@@ -76,6 +76,20 @@ export * from './ThinkingBlock';
 export * from './QuickPromptGrid';
 export * from './FollowUpChips';
 
+// ── Shell composites (2026-05) ──
+export { ChannelHeader } from './ChannelHeader';
+export type { ChannelHeaderProps } from './ChannelHeader';
+export { PresenceAvatars } from './PresenceAvatars';
+export type { PresenceAvatarsProps, PresenceUser as PresenceAvatarUser } from './PresenceAvatars';
+export { FileUploadDrop } from './FileUploadDrop';
+export type { FileUploadDropProps } from './FileUploadDrop';
+export { NotificationCenter } from './NotificationCenter';
+export type { NotificationCenterProps, NotificationItem } from './NotificationCenter';
+export { UserMenu } from './UserMenu';
+export type { UserMenuProps, UserMenuUser, UserMenuItem } from './UserMenu';
+export { Breadcrumbs } from './Breadcrumbs';
+export type { BreadcrumbsProps, BreadcrumbItem } from './Breadcrumbs';
+
 // ── Project-management components (2025-05) ──
 export { ActivityFeed } from './ActivityFeed';
 export type { ActivityFeedItem, ActivityFeedProps, ActivityKind } from './ActivityFeed';
