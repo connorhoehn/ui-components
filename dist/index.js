@@ -1,31 +1,31 @@
 import { DOCUMENT_TYPE_ICONS as Q, getPageConfig as G, getPagesView as H, makeEmptyField as q } from "./types.js";
 import { C as K, i as Y } from "./fieldType-BJfRz7mO.js";
-import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as de, j as ue, k as ce, l as pe, m as fe, n as le, o as ge, p as xe, q as me, r as be, s as he, t as ye, v as Se, w as Ce, x as Le, y as Te, z as Pe, A as we, C as ke, D as ve, E as Ie } from "./useWebSocket-xoTVPcp0.js";
-import { u as Me, a as Ee, b as Re, c as Ae, d as Fe, e as Oe, f as je, g as Xe, h as Be, i as $e, j as Ve, k as _e, l as Ne, m as Ue, n as Qe, o as Ge } from "./useVideoSessions-hr67KvHn.js";
+import { B as J, a as Z, u as ee, b as se, c as ae, d as re, e as te, f as oe, g as ie, h as ne, i as de, j as ue, k as ce, l as pe, m as fe, n as le, o as ge, p as xe, q as me, r as be, s as he, t as ye, v as Se, w as Ce, x as Le, y as Te, z as Pe, A as we, C as ve, D as ke, E as Ie } from "./useWebSocket-xoTVPcp0.js";
+import { u as Me, a as Ee, b as Re, c as Ae, d as Fe, e as je, f as Oe, g as Xe, h as Be, i as $e, j as Ne, k as Ve, l as _e, m as Ue, n as Qe, o as Ge } from "./useVideoSessions-hr67KvHn.js";
 import { u as qe, a as ze, b as Ke, c as Ye, d as We, e as Je } from "./useSocialProfile-D-SUgbn2.js";
 import { u as es, a as ss, b as as, c as rs, d as ts, e as os, f as is, g as ns, h as ds, i as us } from "./useSyncConflicts-DruS2duy.js";
 import { u as ps } from "./useDocumentTypes-C29MkgPl.js";
 import { T as ls, u as gs, a as xs } from "./ToastProvider-aHBNxMTO.js";
 import { W as bs, u as hs } from "./WebSocketContext-DPGFyPeZ.js";
 import { I as Ss, u as Cs } from "./IdentityContext-CLalsm_M.js";
-import { C as Ts, D as Ps, I as ws, P as ks, T as vs, u as Is } from "./TagEditor-CuaVtW7o.js";
+import { C as Ts, D as Ps, I as ws, P as vs, T as ks, u as Is } from "./TagEditor-CuaVtW7o.js";
 import { C as Ms, u as Es } from "./ThemeContext-Bi6AQuIL.js";
-import { A as As, a as Fs, C as Os, b as js, c as Xs, d as Bs, e as $s, f as Vs, D as _s, E as Ns, F as Us, g as Qs, h as Gs, I as Hs, M as qs, P as zs, i as Ks, Q as Ys, S as Ws, j as Js, k as Zs, l as ea, m as sa, n as aa, T as ra, o as ta, p as oa, q as ia, r as na, s as da, u as ua } from "./FollowUpChips-cF1GdP_r.js";
-import { B as pa, a as fa, C as la } from "./ConfirmDialog-DCCuBtRb.js";
-import { C as xa, P as ma, T as ba, a as ha, b as ya, c as Sa, d as Ca, e as La } from "./PageSection-B_nBFSjK.js";
-import { B as Pa, L as wa, S as ka } from "./Chart-ByoxeiYX.js";
-import { C as Ia } from "./Chip-BXdhqVFm.js";
-import { E as Ma } from "./EmptyState-C3KCJ6Ae.js";
-import { S as Ra, e as Aa, g as Fa, a as Oa } from "./Sparkline-B8POanAQ.js";
+import { A as As, a as Fs, b as js, C as Os, c as Xs, d as Bs, e as $s, f as Ns, g as Vs, D as _s, E as Us, F as Qs, h as Gs, i as Hs, I as qs, M as zs, P as Ks, j as Ys, k as Ws, Q as Js, S as Zs, l as ea, m as sa, n as aa, o as ra, p as ta, q as oa, T as ia, r as na, s as da, t as ua, u as ca, v as pa, w as fa } from "./SubNavLayout-1ySGqOdk.js";
+import { B as ga, a as xa, C as ma } from "./ConfirmDialog-DCCuBtRb.js";
+import { C as ha, P as ya, T as Sa, a as Ca, b as La, c as Ta, d as Pa, e as wa } from "./PageSection-B_nBFSjK.js";
+import { B as ka, L as Ia, S as Da } from "./Chart-ByoxeiYX.js";
+import { C as Ea } from "./Chip-BXdhqVFm.js";
+import { E as Aa } from "./EmptyState-C3KCJ6Ae.js";
+import { S as ja, e as Oa, g as Xa, a as Ba } from "./Sparkline-B8POanAQ.js";
 import { jsx as f } from "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as Xa } from "./Modal-2jg4229_.js";
-import { S as $a } from "./SkeletonCard-C89GWQ3p.js";
+import { M as Na } from "./Modal-2jg4229_.js";
+import { S as _a } from "./SkeletonCard-C89GWQ3p.js";
 import { createContext as l, useMemo as g, useEffect as x, useContext as m } from "react";
-import { P as _a, a as Na, b as Ua, f as Qa, g as Ga, c as Ha, l as qa, r as za, d as Ka, e as Ya, s as Wa } from "./pipelineAudit-HIi3aStK.js";
+import { P as Qa, a as Ga, b as Ha, f as qa, g as za, c as Ka, l as Ya, r as Wa, d as Ja, e as Za, s as er } from "./pipelineAudit-HIi3aStK.js";
 import "./index-BhrGxmJW.js";
-import { g as Za, a as er, b as sr, l as ar, r as rr, c as tr } from "./registry-BZU57zws.js";
+import { g as ar, a as rr, b as tr, l as or, r as ir, c as nr } from "./registry-BZU57zws.js";
 function n(s) {
   return `--ui-${s.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
 }
@@ -209,7 +209,7 @@ const h = {
   shadowLg: "0 10px 15px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.15)",
   shadowXl: "0 20px 25px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.2)"
 }, p = l(c);
-function O({ children: s, preset: a = "light", theme: r }) {
+function j({ children: s, preset: a = "light", theme: r }) {
   const t = a === "dark" ? L : c, o = g(
     () => ({ ...t, ...r }),
     [t, r]
@@ -227,7 +227,7 @@ function O({ children: s, preset: a = "light", theme: r }) {
 function T() {
   return m(p);
 }
-function j() {
+function O() {
   return T();
 }
 const X = {
@@ -264,7 +264,7 @@ async function $(s) {
   }
   return t.json();
 }
-async function V(s, a) {
+async function N(s, a) {
   const r = await fetch("/api/pipelines/dlq/redrive", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -281,7 +281,7 @@ async function V(s, a) {
   }
   return r.json();
 }
-async function _(s, a) {
+async function V(s, a) {
   const r = await fetch("/api/pipelines/dlq/purge", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -298,108 +298,111 @@ async function _(s, a) {
   return r.json();
 }
 export {
-  As as Avatar,
-  Fs as AvatarGroup,
-  pa as Banner,
-  Pa as BarChart,
-  fa as Button,
+  As as ActivityFeed,
+  Fs as Avatar,
+  js as AvatarGroup,
+  ga as Banner,
+  ka as BarChart,
+  xa as Button,
   K as CUSTOM_FIELD_TYPE_STORAGE_KEY,
-  xa as Card,
+  ha as Card,
   Os as CardHeader,
-  js as ChatComposer,
-  Ia as Chip,
+  Xs as ChatComposer,
+  Ea as Chip,
   Ts as CodeEditor,
-  Xs as CollapsibleSection,
+  Bs as CollapsibleSection,
   Ms as ColorSchemeProvider,
-  Bs as CommandPalette,
-  $s as CommandPaletteHint,
+  $s as CommandPalette,
+  Ns as CommandPaletteHint,
   Vs as CommandPaletteProvider,
-  la as ConfirmDialog,
+  ma as ConfirmDialog,
   Ps as DEFAULT_PIPELINE_ICONS,
   Q as DOCUMENT_TYPE_ICONS,
   _s as Drawer,
-  Ma as EmptyState,
-  Ns as EntityCell,
-  Us as FilterChip,
-  Qs as FollowUpChips,
-  Gs as FormField,
+  Aa as EmptyState,
+  Us as EntityCell,
+  Qs as FilterChip,
+  Gs as FollowUpChips,
+  Hs as FormField,
   J as IDENTITY_BASE_URL,
   ws as IconButton,
   Ss as IdentityProvider,
-  Hs as InlineAlert,
-  wa as LineChart,
-  qs as MessageBubble,
-  Xa as Modal,
-  zs as PageHeader,
-  ma as PageSection,
-  _a as PatchHttpError,
-  Na as PatchValidationRejectedError,
-  ks as PresenceProvider,
-  Ks as ProgressBar,
-  Ys as QuickPromptGrid,
-  Ws as SearchInput,
-  Js as SegmentedControl,
-  $a as SkeletonCard,
-  Ra as Sparkline,
-  Zs as Spinner,
-  ka as StackedAreaChart,
-  ea as StatCard,
-  sa as StatusDot,
-  aa as Switch,
-  ba as Table,
-  ha as TableBody,
-  ya as TableHead,
-  Sa as TableRow,
-  Ca as TableTd,
-  La as TableTh,
-  vs as TagEditor,
-  O as ThemeProvider,
-  ra as ThinkingBlock,
-  ta as ThinkingDots,
+  qs as InlineAlert,
+  Ia as LineChart,
+  zs as MessageBubble,
+  Na as Modal,
+  Ks as PageHeader,
+  ya as PageSection,
+  Qa as PatchHttpError,
+  Ga as PatchValidationRejectedError,
+  vs as PresenceProvider,
+  Ys as ProgressBar,
+  Ws as ProjectCard,
+  Js as QuickPromptGrid,
+  Zs as SearchInput,
+  ea as SegmentedControl,
+  _a as SkeletonCard,
+  ja as Sparkline,
+  sa as Spinner,
+  Da as StackedAreaChart,
+  aa as StatCard,
+  ra as StatusDot,
+  ta as SubNavLayout,
+  oa as Switch,
+  Sa as Table,
+  Ca as TableBody,
+  La as TableHead,
+  Ta as TableRow,
+  Pa as TableTd,
+  wa as TableTh,
+  ks as TagEditor,
+  j as ThemeProvider,
+  ia as ThinkingBlock,
+  na as ThinkingDots,
   ls as ToastProvider,
-  oa as ToolCallPill,
-  ia as ToolCallStrip,
+  da as ToolCallPill,
+  ua as ToolCallStrip,
   bs as WebSocketProvider,
-  Ua as applyPatch,
+  Ha as applyPatch,
   F as borderRadius,
   E as colors,
   e as cssVar,
   L as darkTheme,
-  Aa as eventGlyphs,
+  Oa as eventGlyphs,
   A as fontSize,
-  Qa as forceFail,
-  Fa as getEventCategory,
-  Oa as getEventGlyph,
-  Za as getFieldType,
-  er as getFieldTypes,
+  qa as forceFail,
+  Xa as getEventCategory,
+  Ba as getEventGlyph,
+  ar as getFieldType,
+  rr as getFieldTypes,
   G as getPageConfig,
   H as getPagesView,
-  Ga as getPipelineRun,
-  sr as getRenderer,
-  Ha as getRunAuditLog,
+  za as getPipelineRun,
+  tr as getRenderer,
+  Ka as getRunAuditLog,
   Z as identityApiFetch,
   D as injectThemeVars,
   Y as isValidCustomFieldType,
   c as lightTheme,
   $ as listDLQEntries,
-  qa as listPipelineRuns,
-  ar as listRegisteredRenderers,
+  Ya as listPipelineRuns,
+  or as listRegisteredRenderers,
   q as makeEmptyField,
-  na as nameToColor,
-  da as nameToInitials,
-  _ as purgeDLQEntries,
+  ca as nameToColor,
+  pa as nameToInitials,
+  V as purgeDLQEntries,
   C as rawBorderRadius,
   h as rawColors,
   S as rawFontSize,
   y as rawSpacing,
   M as rawTokens,
-  V as redriveDLQEntries,
-  rr as registerFieldType,
-  tr as registerRenderer,
-  za as resumeFromStep,
-  Ka as retryFromNode,
-  Ya as revertPatch,
-  Wa as searchAudit,
+  N as redriveDLQEntries,
+  ir as registerFieldType,
+  nr as registerRenderer,
+  Wa as resumeFromStep,
+  Ja as retryFromNode,
+  Za as revertPatch,
+  er as searchAudit,
   X as shadows,
   R as spacing,
   b as themeToCssVars,
@@ -415,15 +418,15 @@ export {
   ie as useClickOutside,
   Re as useCollaborativeDoc,
   Es as useColorScheme,
-  ua as useCommandPalette,
+  fa as useCommandPalette,
   qe as useComments,
   ne as useCursors,
   de as useCustomFieldTypes,
   es as useDocTypeProposals,
   Ae as useDocumentComments,
   Fe as useDocumentExport,
-  Oe as useDocumentItems,
-  je as useDocumentMetadata,
+  je as useDocumentItems,
+  Oe as useDocumentMetadata,
   Xe as useDocumentReviews,
   ps as useDocumentTypes,
   ue as useDocuments,
@@ -452,7 +455,7 @@ export {
   Ye as useLikes,
   is as useMappingReviewQueue,
   $e as useMentionUsers,
-  Ve as useMyMentionsAndTasks,
+  Ne as useMyMentionsAndTasks,
   ns as usePipelineDefs,
   We as usePosts,
   gs as usePrefersReducedMotion,
@@ -460,16 +463,16 @@ export {
   Is as usePresenceContext,
   Pe as useReactions,
   we as useRooms,
-  _e as useSectionList,
+  Ve as useSectionList,
   Je as useSocialProfile,
   ds as useSourceSloMetrics,
   us as useSyncConflicts,
-  j as useTheme,
+  O as useTheme,
   T as useThemeContext,
   xs as useToast,
-  ke as useTypedDocuments,
-  ve as useUrlFilterState,
-  Ne as useVersionHistory,
+  ve as useTypedDocuments,
+  ke as useUrlFilterState,
+  _e as useVersionHistory,
   Ue as useVideoCall,
   Qe as useVideoSessions,
   Ie as useWebSocket,

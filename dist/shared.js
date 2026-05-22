@@ -1,77 +1,80 @@
-import { A as i, a as n, C as m, b as p, c as C, d, e as T, f as S, D as h, E as P, F as g, g as f, h as b, I as x, M as E, P as c, i as u, Q as B, S as I, j as k, k as v, l as D, m as y, n as A, T as F, o as w, p as G, q as H, r as L, s as M, u as N } from "./FollowUpChips-cF1GdP_r.js";
-import { B as U, a as _, C as j } from "./ConfirmDialog-DCCuBtRb.js";
-import { C as O, P as R, T as z, a as J, b as K, c as V, d as W, e as X } from "./PageSection-B_nBFSjK.js";
-import { C as Z, D as $, I as aa, T as ea } from "./TagEditor-CuaVtW7o.js";
-import { B as oa, L as ta, S as ra } from "./Chart-ByoxeiYX.js";
-import { C as ia } from "./Chip-BXdhqVFm.js";
-import { E as ma } from "./EmptyState-C3KCJ6Ae.js";
-import { S as Ca, e as da, g as Ta, a as Sa } from "./Sparkline-B8POanAQ.js";
+import { A as i, a as n, b as m, C as p, c as C, d, e as T, f as S, g as P, D as h, E as g, F as f, h as b, i as c, I as u, M as x, P as E, j as v, k as B, Q as I, S as k, l as y, m as A, n as D, o as F, p as w, q as L, T as G, r as H, s as M, t as N, u as j, v as Q, w as U } from "./SubNavLayout-1ySGqOdk.js";
+import { B as q, a as O, C as R } from "./ConfirmDialog-DCCuBtRb.js";
+import { C as J, P as K, T as V, a as W, b as X, c as Y, d as Z, e as $ } from "./PageSection-B_nBFSjK.js";
+import { C as ea, D as sa, I as oa, T as ta } from "./TagEditor-CuaVtW7o.js";
+import { B as la, L as ia, S as na } from "./Chart-ByoxeiYX.js";
+import { C as pa } from "./Chip-BXdhqVFm.js";
+import { E as da } from "./EmptyState-C3KCJ6Ae.js";
+import { S as Sa, e as Pa, g as ha, a as ga } from "./Sparkline-B8POanAQ.js";
 import "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as Pa } from "./Modal-2jg4229_.js";
-import { S as fa } from "./SkeletonCard-C89GWQ3p.js";
+import { M as ba } from "./Modal-2jg4229_.js";
+import { S as ua } from "./SkeletonCard-C89GWQ3p.js";
 import "react";
-import { T as xa, a as Ea } from "./ToastProvider-aHBNxMTO.js";
+import { T as Ea, a as va } from "./ToastProvider-aHBNxMTO.js";
 import "./IdentityContext-CLalsm_M.js";
 export {
-  i as Avatar,
-  n as AvatarGroup,
-  U as Banner,
-  oa as BarChart,
-  _ as Button,
-  O as Card,
-  m as CardHeader,
-  p as ChatComposer,
-  ia as Chip,
-  Z as CodeEditor,
-  C as CollapsibleSection,
-  d as CommandPalette,
-  T as CommandPaletteHint,
-  S as CommandPaletteProvider,
-  j as ConfirmDialog,
-  $ as DEFAULT_PIPELINE_ICONS,
+  i as ActivityFeed,
+  n as Avatar,
+  m as AvatarGroup,
+  q as Banner,
+  la as BarChart,
+  O as Button,
+  J as Card,
+  p as CardHeader,
+  C as ChatComposer,
+  pa as Chip,
+  ea as CodeEditor,
+  d as CollapsibleSection,
+  T as CommandPalette,
+  S as CommandPaletteHint,
+  P as CommandPaletteProvider,
+  R as ConfirmDialog,
+  sa as DEFAULT_PIPELINE_ICONS,
   h as Drawer,
-  ma as EmptyState,
-  P as EntityCell,
-  g as FilterChip,
-  f as FollowUpChips,
-  b as FormField,
-  aa as IconButton,
-  x as InlineAlert,
-  ta as LineChart,
-  E as MessageBubble,
-  Pa as Modal,
-  c as PageHeader,
-  R as PageSection,
-  u as ProgressBar,
-  B as QuickPromptGrid,
-  I as SearchInput,
-  k as SegmentedControl,
-  fa as SkeletonCard,
-  Ca as Sparkline,
-  v as Spinner,
-  ra as StackedAreaChart,
+  da as EmptyState,
+  g as EntityCell,
+  f as FilterChip,
+  b as FollowUpChips,
+  c as FormField,
+  oa as IconButton,
+  u as InlineAlert,
+  ia as LineChart,
+  x as MessageBubble,
+  ba as Modal,
+  E as PageHeader,
+  K as PageSection,
+  v as ProgressBar,
+  B as ProjectCard,
+  I as QuickPromptGrid,
+  k as SearchInput,
+  y as SegmentedControl,
+  ua as SkeletonCard,
+  Sa as Sparkline,
+  A as Spinner,
+  na as StackedAreaChart,
   D as StatCard,
-  y as StatusDot,
-  A as Switch,
-  z as Table,
-  J as TableBody,
-  K as TableHead,
-  V as TableRow,
-  W as TableTd,
-  X as TableTh,
-  ea as TagEditor,
-  F as ThinkingBlock,
-  w as ThinkingDots,
-  xa as ToastProvider,
-  G as ToolCallPill,
-  H as ToolCallStrip,
-  da as eventGlyphs,
-  Ta as getEventCategory,
-  Sa as getEventGlyph,
-  L as nameToColor,
-  M as nameToInitials,
-  N as useCommandPalette,
-  Ea as useToast
+  F as StatusDot,
+  w as SubNavLayout,
+  L as Switch,
+  V as Table,
+  W as TableBody,
+  X as TableHead,
+  Y as TableRow,
+  Z as TableTd,
+  $ as TableTh,
+  ta as TagEditor,
+  G as ThinkingBlock,
+  H as ThinkingDots,
+  Ea as ToastProvider,
+  M as ToolCallPill,
+  N as ToolCallStrip,
+  Pa as eventGlyphs,
+  ha as getEventCategory,
+  ga as getEventGlyph,
+  j as nameToColor,
+  Q as nameToInitials,
+  U as useCommandPalette,
+  va as useToast
 };

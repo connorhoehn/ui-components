@@ -75,3 +75,11 @@ export * from './ToolCallStrip';
 export * from './ThinkingBlock';
 export * from './QuickPromptGrid';
 export * from './FollowUpChips';
+
+// ── Project-management components (2025-05) ──
+export { ActivityFeed } from './ActivityFeed';
+export type { ActivityFeedItem, ActivityFeedProps, ActivityKind } from './ActivityFeed';
+export { ProjectCard } from './ProjectCard';
+export type { ProjectCardProps, StatusColors } from './ProjectCard';
+export { SubNavLayout } from './SubNavLayout';
+export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';

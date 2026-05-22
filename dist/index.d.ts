@@ -72,6 +72,39 @@ declare interface ActivityEvent {
     source: 'local' | 'remote';
 }
 
+export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
+
+export declare interface ActivityFeedItem {
+    id: string;
+    /** Display name of the person who performed the action, e.g. "Alex Chen". */
+    actor: string;
+    /** Verb phrase, e.g. "completed". */
+    action: string;
+    /** Jira-style ticket ID badge, e.g. "K8S-182". */
+    ticketId?: string;
+    /** Short description/title of the work item. */
+    subject: string;
+    /** Human-readable relative timestamp, e.g. "2m ago". */
+    timeLabel?: string;
+    /** Controls the type-dot color. */
+    kind?: ActivityKind;
+}
+
+export declare interface ActivityFeedProps {
+    items: ActivityFeedItem[];
+    /** Number of items visible at once (default: 3). */
+    visibleCount?: number;
+    /** Auto-rotation interval in ms (default: 4200). Set 0 to disable. */
+    rotateMs?: number;
+    /** Delay before the first rotation fires, for stagger between sibling feeds (ms). */
+    staggerMs?: number;
+    /** Override dot colors per kind. Merged over the built-in palette. */
+    kindColors?: Record<string, string>;
+    className?: string;
+}
+
+export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
+
 export declare interface AgentDefinition {
     id: string;
     name: string;
@@ -2558,6 +2591,43 @@ export declare interface ProgressBarProps {
 
 export declare type ProgressBarSize = 'sm' | 'md';
 
+export declare function ProjectCard({ name, id, status, statusColors, contributorNames, contributorCount, activityItems, presenceDotColor, activityLabel, cardIndex, onClick, className, style, minHeight, }: ProjectCardProps): JSX.Element;
+
+export declare interface ProjectCardProps {
+    /** Primary display name. */
+    name: string;
+    /** Optional monospace slug shown below the name (e.g. "proj-k8s"). */
+    id?: string;
+    /**
+     * Status key used for accent color. Built-in keys: active, in_progress,
+     * completed, archived, planning, paused. Supply `statusColors` to extend.
+     */
+    status?: string;
+    /** Override or extend the built-in status → color map. */
+    statusColors?: Record<string, StatusColors>;
+    /** Names used for AvatarGroup in the footer. */
+    contributorNames?: string[];
+    /** Total contributor count — used to compute the "+N more" overflow label. */
+    contributorCount?: number;
+    /** Activity ticker items. */
+    activityItems?: ActivityFeedItem[];
+    /**
+     * Color of the presence dot in the footer (e.g. '#22c55e' for green).
+     * Default: '#d1d5db' (grey = unknown).
+     */
+    presenceDotColor?: string;
+    /** Human-readable "last active" label shown next to the presence dot. */
+    activityLabel?: string;
+    /** Index used to stagger the activity rotation offset. */
+    cardIndex?: number;
+    /** Click handler. */
+    onClick?: () => void;
+    className?: string;
+    style?: CSSProperties;
+    /** Minimum card height (default: 190). */
+    minHeight?: number;
+}
+
 declare interface ProposedField {
     name: string;
     sectionType: string;
@@ -3031,6 +3101,13 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
+export declare interface StatusColors {
+    bg: string;
+    border: string;
+    text: string;
+    accent: string;
+}
+
 export declare function StatusDot({ color, pulse, size, label, className, style, title, 'data-testid': testId, 'aria-label': ariaLabel, }: StatusDotProps): JSX.Element;
 
 export declare interface StatusDotProps {
@@ -3103,6 +3180,83 @@ export declare interface StepExecution {
 }
 
 export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+export declare interface SubNavItem {
+    /** Path relative to the section root, e.g. "summary" or "crawl". For action
+     *  items (onClick set), this is just used as a React key — provide something
+     *  unique like "halt" or "manual". */
+    path: string;
+    label: string;
+    /** Optional small badge (e.g. live count) shown right-aligned. */
+    count?: number | string;
+    /** Optional dim subtitle below the label. */
+    hint?: string;
+    /** Optional group heading. When set on any item, the layout renders
+     *  collapsible sections by group. Items without a group go into an
+     *  un-headered first section. */
+    group?: string;
+    /** If set, the item renders as a button that calls onClick instead of a
+     *  link that navigates. Use for in-page actions like Halt or toggle. */
+    onClick?: () => void;
+    /** Optional left-side accent color (action items often want danger/warning). */
+    accent?: 'default' | 'danger' | 'warning' | 'success';
+    /** If set on any item in a group, the group's item list scrolls after this
+     *  many visible items (approximate — based on standard item height). */
+    groupScrollAfter?: number;
+}
+
+export declare function SubNavLayout({ title, items, titleAction, railHeader, railWidth, storageKey, secondaryTitle, secondaryItems, secondaryStorageKey, secondaryRailWidth, renderNavItem, children, }: SubNavLayoutProps): JSX.Element;
+
+export declare interface SubNavLayoutProps {
+    /** Section title shown at top of the rail. */
+    title: string;
+    items: SubNavItem[];
+    /** Optional element rendered next to the title (e.g. a help "?" button). */
+    titleAction?: ReactNode;
+    /** Optional content rendered above the nav items (e.g. a [+ New] button). */
+    railHeader?: ReactNode;
+    /** Override the default rail width. */
+    railWidth?: number;
+    /** Storage key prefix for collapsed-section persistence (default 'subnav'). */
+    storageKey?: string;
+    /** Secondary rail — rendered between the primary rail and main content.
+     *  Keeps section-specific items separate from the top-level nav. */
+    secondaryTitle?: string;
+    secondaryItems?: SubNavItem[];
+    secondaryStorageKey?: string;
+    secondaryRailWidth?: number;
+    /**
+     * Custom renderer for navigation link items (items without an onClick).
+     * Receives the item, its pre-built body content (label + hint + count), and
+     * the base inactive CSSProperties to apply to the link element.
+     *
+     * Use this to integrate with your router's NavLink (e.g. React Router v7):
+     * ```tsx
+     * renderNavItem={(item, children, baseStyle) => (
+     *   <NavLink
+     *     to={item.path}
+     *     style={({ isActive }) =>
+     *       isActive
+     *         ? { ...baseStyle, borderLeft: '3px solid var(--color-primary)', background: 'var(--color-surface-hover)', color: 'var(--color-text-primary)' }
+     *         : baseStyle
+     *     }
+     *   >
+     *     {children}
+     *   </NavLink>
+     * )}
+     * ```
+     *
+     * If not provided, a plain `<a href={item.path}>` is rendered with no
+     * active-state detection.
+     */
+    renderNavItem?: (item: SubNavItem, children: ReactNode, baseStyle: CSSProperties) => ReactNode;
+    /**
+     * The main content area. When used with React Router, omit this and pass an
+     * `<Outlet />` as children, or leave empty if the router renders children
+     * directly. Defaults to rendering children.
+     */
+    children?: ReactNode;
+}
 
 /**
  * Accessible on/off toggle. Renders as a `role="switch"` button so screen
