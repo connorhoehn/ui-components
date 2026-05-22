@@ -45,6 +45,13 @@ const CallWidgetDemo = lazy(() => import('./demos/video-streaming/CallWidgetDemo
 const CallWidgetLive = lazy(() => import('./demos/call-widget-live'));
 const SharedComponents = lazy(() => import('./demos/shared-components'));
 
+// Hook integration demos (lazy)
+const HookChatIntegration = lazy(() => import('./demos/hook-chat-integration'));
+const HookPresenceIntegration = lazy(() => import('./demos/hook-presence-integration'));
+const HookReactionsIntegration = lazy(() => import('./demos/hook-reactions-integration'));
+const HookFileUploadIntegration = lazy(() => import('./demos/hook-fileupload-integration'));
+const HookVideoHangoutIntegration = lazy(() => import('./demos/hook-videohangout-integration'));
+
 // Agent demos (lazy)
 const AgentDashboard = lazy(() => import('./demos/agents/DashboardDemo'));
 const AgentFlow = lazy(() => import('./demos/agents/FlowDemo'));
@@ -134,6 +141,12 @@ export default function App() {
           <Route path="social" element={<S><SocialPanel /></S>} />
           <Route path="video-streaming" element={<S><VideoStreaming /></S>} />
           <Route path="call-widget" element={<S><CallWidgetLive /></S>} />
+          {/* Hook integrations */}
+          <Route path="hook-chat" element={<S><HookChatIntegration /></S>} />
+          <Route path="hook-presence" element={<S><HookPresenceIntegration /></S>} />
+          <Route path="hook-reactions" element={<S><HookReactionsIntegration /></S>} />
+          <Route path="hook-fileupload" element={<S><HookFileUploadIntegration /></S>} />
+          <Route path="hook-videohangout" element={<S><HookVideoHangoutIntegration /></S>} />
         </Route>
 
         {/* Legacy /pages routes → redirect to /workflows */}

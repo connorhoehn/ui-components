@@ -56,6 +56,48 @@ export const entries: CatalogEntry[] = [
     type: 'demo',
   },
 
+  // Hook integration demos
+  {
+    id: 'hook-chat',
+    title: 'ChatPanel + useChat',
+    description: 'ChatPanel wired to useChat() from realtime-modules. Mock mode fires synthetic messages; set VITE_GATEWAY_URL to go live.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-chat',
+  },
+  {
+    id: 'hook-presence',
+    title: 'PresencePanel + usePresence',
+    description: 'PresencePanel wired to usePresence(). Simulates join/away/return events in mock mode.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-presence',
+  },
+  {
+    id: 'hook-reactions',
+    title: 'ReactionButtons + useReactions',
+    description: 'ReactionButtons and ReactionsOverlay wired to useReactions(). Auto-fires emoji in mock mode.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-reactions',
+  },
+  {
+    id: 'hook-fileupload',
+    title: 'FileUploadDrop + useFileUpload',
+    description: 'FileUploadDrop wired to useFileUpload(). Simulates presign → XHR → AV-scan lifecycle.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-fileupload',
+  },
+  {
+    id: 'hook-videohangout',
+    title: 'HangoutLayout + useVideoHangout',
+    description: 'HangoutLayout wired to useVideoHangout(). Mock participants join with stagger; joinToken displayed.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-videohangout',
+  },
+
   // Agents demos
   {
     id: 'agents-dashboard',
@@ -156,5 +198,6 @@ export const categories = [
   { id: 'all', label: 'All' },
   { id: 'Pages', label: 'Pages' },
   { id: 'Agents', label: 'Agents' },
+  { id: 'Hook Integrations', label: 'Hook Integrations' },
   { id: 'Components', label: 'Components' },
 ] as const;

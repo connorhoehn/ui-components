@@ -64,6 +64,13 @@ export const navigationTree: NavigationTree = [
         { id: 'video-streaming', label: 'Video Streaming', path: '/workflows/video-streaming' },
         { id: 'call-widget-live', label: 'Call Widget', path: '/workflows/call-widget' },
       ]},
+      { id: 'wf-hooks', label: 'Hook Integrations', items: [
+        { id: 'hook-chat', label: 'ChatPanel + useChat', path: '/workflows/hook-chat' },
+        { id: 'hook-presence', label: 'PresencePanel + usePresence', path: '/workflows/hook-presence' },
+        { id: 'hook-reactions', label: 'ReactionButtons + useReactions', path: '/workflows/hook-reactions' },
+        { id: 'hook-fileupload', label: 'FileUploadDrop + useFileUpload', path: '/workflows/hook-fileupload' },
+        { id: 'hook-videohangout', label: 'HangoutLayout + useVideoHangout', path: '/workflows/hook-videohangout' },
+      ]},
     ],
   },
   {

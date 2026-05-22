@@ -18,6 +18,10 @@ export default defineConfig({
       '@connorhoehn/ui-components/types': resolve(__dirname, '../src/types/index.ts'),
       '@connorhoehn/ui-components/shared': resolve(__dirname, '../src/components/shared/index.ts'),
       '@connorhoehn/ui-components': resolve(__dirname, '../src'),
+      // realtime-modules: alias subpaths to TS source so Vite/Rollup can process ESM.
+      // The dist/ is CJS-only; pointing at src/ avoids the "not exported" Rollup error.
+      '@connorhoehn/realtime-modules/client': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/index.ts'),
+      '@connorhoehn/realtime-modules': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/index.ts'),
       '@': resolve(__dirname, '../src'),
     },
   },

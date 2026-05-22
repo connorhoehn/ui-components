@@ -47,6 +47,29 @@ npm run demo
 
 Opens at `http://localhost:5174` with product-shaped interactive flows.
 
+## Composing with realtime-modules hooks
+
+Five demos in `demo/src/demos/` show how ui-components composites wire directly to
+hooks from `@connorhoehn/realtime-modules` v0.7.x. Each runs in **mock mode** by
+default (no gateway required) and switches to live mode when `VITE_GATEWAY_URL` is set.
+
+| Demo route | Component | Hook |
+|---|---|---|
+| `/workflows/hook-chat` | `<ChatPanel>` | `useChat(channel)` |
+| `/workflows/hook-presence` | `<PresencePanel>` | `usePresence(channel)` |
+| `/workflows/hook-reactions` | `<ReactionButtons>` + `<ReactionsOverlay>` | `useReactions(channel)` |
+| `/workflows/hook-fileupload` | `<FileUploadDrop>` | `useFileUpload(channel)` |
+| `/workflows/hook-videohangout` | `<HangoutLayout>` | `useVideoHangout(channel)` |
+
+To run a demo against a live gateway:
+
+```bash
+VITE_GATEWAY_URL=ws://localhost:4000 npm run demo
+```
+
+The mock wiring uses `GatewayContext.Provider` directly with a synthetic message bus
+so no real WebSocket is needed for local development.
+
 ## Tech Stack
 
 - React 19
