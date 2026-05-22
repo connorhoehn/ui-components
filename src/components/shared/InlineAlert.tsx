@@ -30,7 +30,8 @@ const TONE_CLASSES: Record<InlineAlertTone, string> = {
 function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps) {
   return (
     <div
-      role="alert"
+      role={tone === 'error' || tone === 'warning' ? 'alert' : 'status'}
+      aria-live={tone === 'error' || tone === 'warning' ? 'assertive' : 'polite'}
       className={cn(
         'flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm',
         TONE_CLASSES[tone],

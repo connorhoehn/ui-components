@@ -27,7 +27,8 @@ export default function Banner({
 }: BannerProps) {
   return (
     <div
-      role="alert"
+      role={variant === 'error' || variant === 'warning' ? 'alert' : 'status'}
+      aria-live={variant === 'error' || variant === 'warning' ? 'assertive' : 'polite'}
       data-testid={testId}
       className={cn(
         'px-3.5 py-2.5 rounded-lg text-[13px] flex items-center gap-2 border',
