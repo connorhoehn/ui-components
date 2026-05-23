@@ -90,6 +90,8 @@ export function RecordingList({
             key={r.id}
             type="button"
             onClick={() => onSelect(r.id)}
+            data-testid="recording-row"
+            data-recording-id={r.id}
             className={cn(
               'text-left rounded-lg border bg-[var(--color-surface)] p-3 transition-colors',
               'hover:border-[var(--color-primary)] hover:bg-white/[0.02]',
