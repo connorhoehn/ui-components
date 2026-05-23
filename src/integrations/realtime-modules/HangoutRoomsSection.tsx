@@ -23,6 +23,7 @@
 //   - else                → up to `maxVisible` rows + "Browse all" link
 
 import { useMemo, useState, type MouseEvent } from 'react';
+import type { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
 import { SidebarSection } from '../../components/sidebar/SidebarSection';
 import { SidebarRow } from '../../components/sidebar/SidebarRow';
 import EmptyState from '../../components/shared/EmptyState';
@@ -39,8 +40,16 @@ import type {
 export interface HangoutRoomsSectionProps {
   /** Return value of `useHangoutRooms()` from realtime-modules. */
   rooms: RMUseHangoutRoomsReturn;
-  /** Resolves the latest occupancy snapshot for one slug. */
+  /** Resolves the latest occupancy snapshot for one slug. Legacy
+   *  pattern — when `occupancyAdapter` is supplied, that adapter wins
+   *  and this callback is ignored on a per-row basis. */
   occupancyFor?: (slug: string) => RMRoomOccupancy | null;
+  /** Live gateway adapter — when provided, each row drives its own
+   *  `useRoomOccupancy(slug)` off this subscriber and the static
+   *  `occupancyFor` lookup is bypassed. The expected shape matches the
+   *  `subscribeRoomsIndex` adapter returned by `useRoomsSubscription`
+   *  in the gateway frontend. */
+  occupancyAdapter?: RoomsIndexSubscriber;
   /** Per-tab participantId — used to highlight rooms this tab is in. */
   participantId?: string;
   /** Called when a row is clicked. Caller opens the hangout overlay. */
@@ -62,6 +71,7 @@ export interface HangoutRoomsSectionProps {
 export function HangoutRoomsSection({
   rooms,
   occupancyFor,
+  occupancyAdapter,
   participantId,
   onJoinRoom,
   onContextMenu,
@@ -158,7 +168,12 @@ export function HangoutRoomsSection({
                 slug={room.slug}
                 name={room.name}
                 participantId={participantId}
-                occupancy={occupancyFor?.(room.slug) ?? null}
+                // Live adapter wins; the static snapshot is the fallback
+                // for legacy callers that still drive occupancyFor.
+                subscribeRoomsIndex={occupancyAdapter}
+                occupancy={
+                  occupancyAdapter ? null : (occupancyFor?.(room.slug) ?? null)
+                }
                 onClick={onJoinRoom ? () => onJoinRoom(room) : undefined}
                 onContextMenu={
                   onContextMenu ? (e) => onContextMenu(room, e) : undefined

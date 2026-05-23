@@ -49,6 +49,11 @@ export default defineConfig({
         // hls.js is dynamic-imported by RecordingPlayer; the consumer
         // app installs it. Externalized to keep this lib bundle lean.
         'hls.js',
+        // realtime-modules is a peer dep. The hangout-rooms composites
+        // import its hooks at runtime; keeping the package external
+        // avoids bundling its CJS dist (which Rollup can't tree-shake)
+        // and lets the consumer app's resolution win at runtime.
+        /^@connorhoehn\/realtime-modules(\/.*)?$/,
       ],
     },
   },

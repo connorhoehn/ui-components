@@ -5,11 +5,19 @@
 // Composes:
 //   SidebarRow · #-icon · room name · PresenceAvatars · Badge
 //
-// Occupancy comes from a RoomOccupancy snapshot (the caller wires the
-// realtime-modules `useRoomOccupancy(slug)` hook and forwards the
-// result). This keeps the composite decoupled from any specific WS
-// adapter — matching the pattern used by `WrappedChatPanel` /
-// `WrappedPresencePanel`.
+// Occupancy resolution (two modes, mutually-compatible — adapter wins):
+//
+//   1. `subscribeRoomsIndex` adapter — when provided, the row calls
+//      `useRoomOccupancy(slug, { subscribeRoomsIndex })` from realtime-
+//      modules internally. This is the live mode and matches the
+//      end-to-end wiring used by AppLayout.
+//
+//   2. `occupancy` snapshot prop — back-compat: caller supplies the
+//      latest `RMRoomOccupancy | null` directly (legacy `occupancyFor`
+//      callback flow). Used when no adapter is wired.
+//
+// The adapter takes precedence whenever it's defined; the snapshot prop
+// is the fallback.
 //
 // Active-state derivation:
 //   - If `participantId` is provided AND it appears in the occupancy
@@ -22,6 +30,7 @@
 //   - count == 0 or no occupancy yet  → nothing
 
 import { useMemo, type MouseEvent } from 'react';
+import { useRoomOccupancy, type RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
 import { SidebarRow } from '../../components/sidebar/SidebarRow';
 import { PresenceAvatars } from '../../components/shared/PresenceAvatars';
 import { Badge } from '../../components/shared/Badge';
@@ -36,8 +45,13 @@ export interface HangoutRoomRowProps {
    *  the `active` highlight and the "Just you" pulse. */
   participantId?: string;
   /** Latest occupancy snapshot for this room, or null when not yet
-   *  received from the gateway. */
+   *  received from the gateway. Ignored when `subscribeRoomsIndex` is
+   *  provided. */
   occupancy?: RMRoomOccupancy | null;
+  /** Live adapter wiring the gateway's `rooms:index` stream into
+   *  `useRoomOccupancy(slug)`. When set, takes precedence over the
+   *  static `occupancy` prop. */
+  subscribeRoomsIndex?: RoomsIndexSubscriber;
   /** Fired on row click — caller opens the hangout overlay. */
   onClick?: () => void;
   /** Fired on right-click — caller can show a context menu. */
@@ -53,14 +67,25 @@ export function HangoutRoomRow({
   name,
   participantId,
   occupancy,
+  subscribeRoomsIndex,
   onClick,
   onContextMenu,
   kebab,
   className,
   'data-testid': testId = 'hangout-room-row',
 }: HangoutRoomRowProps) {
-  const count = occupancy?.count ?? 0;
-  const members = occupancy?.members ?? [];
+  // Live mode: drive occupancy off the realtime-modules hook so this
+  // row updates in-place as `occupancy-delta` frames arrive. Falls back
+  // to the `occupancy` prop when no adapter is wired (back-compat with
+  // the legacy occupancyFor pattern).
+  const live = useRoomOccupancy(subscribeRoomsIndex ? slug : null, {
+    subscribeRoomsIndex,
+  });
+  const effective: RMRoomOccupancy | null = subscribeRoomsIndex
+    ? (live.occupancy ?? null)
+    : (occupancy ?? null);
+  const count = effective?.count ?? 0;
+  const members = effective?.members ?? [];
 
   const selfIncluded = useMemo(() => {
     if (!participantId) return false;

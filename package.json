@@ -69,9 +69,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && npm run build:fix-subpath-dts",
+    "build:fix-subpath-dts": "node -e \"const fs=require('fs');const src='dist/realtime-modules.d.ts';const dst='dist/integrations/realtime-modules.d.ts';if(fs.existsSync(src))fs.copyFileSync(src,dst);\"",
     "build:types": "tsc --project tsconfig.build.json",
-    "prepare": "test -f dist/index.js || (vite build && tsc --project tsconfig.build.json)",
+    "prepare": "test -f dist/index.js || (vite build && npm run build:fix-subpath-dts && tsc --project tsconfig.build.json)",
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",
