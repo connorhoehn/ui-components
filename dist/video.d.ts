@@ -48,7 +48,7 @@ export declare interface CallStartedBannerProps {
     style?: CSSProperties;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, minimized, position, contained, draggable, className, style, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 export declare interface CallWidgetParticipant {
     id: string;
@@ -97,6 +97,11 @@ export declare interface CallWidgetProps {
     layoutComponent?: ReactNode;
     className?: string;
     style?: CSSProperties;
+    /** Arbitrary `data-*` attributes to spread onto the root element.
+     *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
+     *  lobby/callId metadata without an extra wrapper div that would
+     *  conflict with the widget's own `position: fixed` placement. */
+    dataAttrs?: Record<string, string | number | undefined>;
 }
 
 export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
@@ -197,7 +202,7 @@ export declare interface Participant {
  * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
  * a green border is the agreed-on cue.
  */
-export declare function ParticipantTile({ displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, className, style, }: ParticipantTileProps): JSX.Element;
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, className, style, }: ParticipantTileProps): JSX.Element;
 
 export declare interface ParticipantTileProps {
     /** Unique identifier for keying / pin actions. */

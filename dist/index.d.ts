@@ -2937,6 +2937,51 @@ declare interface RemoteCursor {
     metadata: Record<string, unknown>;
 }
 
+export declare function ResumeCallDialog({ open, onClose, onReconnect, callerName, lobbyName, elapsedMs, participants, loading, }: ResumeCallDialogProps): JSX.Element;
+
+export declare interface ResumeCallDialogProps {
+    /** Visibility — when false the modal is unmounted entirely. */
+    open: boolean;
+    /** Backdrop click / Esc / Dismiss button → caller decides whether to
+     *  hide (typically yes) and whether to remember the dismissal. */
+    onClose: () => void;
+    /** Reconnect button. May be async; the dialog spins while pending
+     *  IF `loading` is also true (the caller controls that state). */
+    onReconnect: () => void | Promise<void>;
+    /** Display name of the user who originally started the call. Pass
+     *  safeDisplayName output — must never be a raw UUID. */
+    callerName: string;
+    /** Human-readable lobby name shown in the dialog subtitle. */
+    lobbyName: string;
+    /** Elapsed ms at MOUNT time. The dialog re-derives the displayed
+     *  duration from a per-second tick so the parent never has to re-
+     *  render to advance the clock. Pass `Date.now() - call.startedAtMs`
+     *  (or just `call.durationMs` from the API). */
+    elapsedMs: number;
+    /** Other participants currently in the call (excludes self). When
+     *  empty the dialog still renders — the prompt becomes
+     *  "you were in a call" with no chip row — but the parent should
+     *  generally not show the dialog with zero participants (see
+     *  useActiveCallResume's filter). */
+    participants: ResumeCallParticipant[];
+    /** True while a reconnect attempt is in flight. Disables the buttons
+     *  and replaces the Reconnect label with "Reconnecting…". */
+    loading?: boolean;
+}
+
+/** Resume-dialog participant shape. Independent of any hangout-internal
+ *  type so callers can pass thin {id,name} objects without dragging in
+ *  PresenceUser / SfuParticipant. */
+export declare interface ResumeCallParticipant {
+    /** Stable identifier — used as React key + safeDisplayName fallback. */
+    userId: string;
+    /** Pre-resolved display name. Caller MUST pass safeDisplayName output
+     *  so a raw UUID never reaches the dialog. */
+    name: string;
+    /** Optional avatar URL — Avatar falls back to initials when absent. */
+    avatarUrl?: string;
+}
+
 export declare function resumeFromStep(pipelineId: string, runId: string, fromNodeId: string, options?: ResumeFromStepOptions): Promise<ResumeFromStepResponse>;
 
 /** A single resume-from-step entry on a PipelineRun (hub#2223). */
@@ -3145,7 +3190,7 @@ export declare interface ShortcutsHelpProps {
     onClose: () => void;
 }
 
-export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, }: SidebarRowProps): JSX.Element;
+export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, dataAttrs, }: SidebarRowProps): JSX.Element;
 
 export declare interface SidebarRowProps {
     /** Leading icon. */
@@ -3168,6 +3213,11 @@ export declare interface SidebarRowProps {
     'aria-label'?: string;
     className?: string;
     'data-testid'?: string;
+    /** Arbitrary `data-*` attributes spread onto the root element.
+     *  Used by e2e tooling to expose row-level metadata (e.g.
+     *  `data-room-slug`) without bespoke wrapper divs that interfere
+     *  with the row layout. */
+    dataAttrs?: Record<string, string | number | undefined>;
 }
 
 export declare function SidebarSection({ title, actions, collapsible, defaultCollapsed, storageKey, children, className, 'data-testid': testId, }: SidebarSectionProps): JSX.Element;

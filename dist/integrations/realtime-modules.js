@@ -1,13 +1,13 @@
-import { jsx as a, jsxs as d, Fragment as _ } from "react/jsx-runtime";
+import { jsx as a, jsxs as c, Fragment as _ } from "react/jsx-runtime";
 import { C as U, P as F } from "../PresencePanel-DHgUm0vc.js";
-import { A as O, F as W, N as B, P as j, B as R, c as $ } from "../Badge-CSuOT81L.js";
+import { A as O, F as W, N as B, P, B as R, c as $ } from "../Badge-CCsRykoK.js";
 import { useState as N, useEffect as z, useMemo as C } from "react";
 import { c as H } from "../cn-B6yFEsav.js";
-import { H as V } from "../HangoutLayout-DntwKebh.js";
+import { H as V } from "../HangoutLayout-DTIq3ne2.js";
 import { useRoomOccupancy as q } from "@connorhoehn/realtime-modules/client/hangout-rooms";
-import { S as D, a as X } from "../SidebarRow-Dw9aePkr.js";
+import { S as D, a as X } from "../SidebarRow-Cw4xIxer.js";
 import { E as K } from "../EmptyState-PM9wTjxk.js";
-import { a as P } from "../Banner-B8AcwPH_.js";
+import { a as j } from "../Banner-B8AcwPH_.js";
 import { I as Y } from "../IconButton-Da1kJ5WO.js";
 import { M as G } from "../Modal-2jg4229_.js";
 function J(e) {
@@ -30,7 +30,7 @@ function Z(e) {
     online: e.status !== "offline"
   };
 }
-function Pe(e) {
+function je(e) {
   return e.map(Z);
 }
 const E = [15, 25, 35, 45, 55, 65, 75, 85], M = [20, 35, 50, 65, 80];
@@ -44,7 +44,7 @@ function T(e, t) {
     timestamp: e.timestamp
   };
 }
-function je(e) {
+function Pe(e) {
   return e.map(T);
 }
 function ee(e) {
@@ -110,10 +110,10 @@ function le(e, t) {
     isLocal: t != null ? e.clientId === t : void 0
   };
 }
-function ce(e, t) {
+function de(e, t) {
   return e.map((n) => le(n, t));
 }
-function de(e) {
+function ce(e) {
   return {
     id: e.id,
     title: e.title,
@@ -125,7 +125,7 @@ function de(e) {
   };
 }
 function ue(e) {
-  return e.map(de);
+  return e.map(ce);
 }
 function $e({
   chat: e,
@@ -133,8 +133,8 @@ function $e({
   disabled: n,
   typingUsers: i
 }) {
-  const o = Q(e.messages), r = i ?? t?.roster.filter((c) => c.metadata?.isTyping === !0).map(
-    (c) => c.metadata?.displayName ?? c.clientId.slice(0, 8)
+  const o = Q(e.messages), r = i ?? t?.roster.filter((d) => d.metadata?.isTyping === !0).map(
+    (d) => d.metadata?.displayName ?? d.clientId.slice(0, 8)
   ) ?? [];
   return /* @__PURE__ */ a(
     U,
@@ -165,11 +165,11 @@ function Le({
   kindColors: o,
   className: r
 }) {
-  const c = ie(e.events);
+  const d = ie(e.events);
   return /* @__PURE__ */ a(
     O,
     {
-      items: c,
+      items: d,
       visibleCount: t,
       rotateMs: n,
       staggerMs: i,
@@ -213,10 +213,10 @@ function ze({
   const [n, i] = N([]), o = e.reactions;
   return z(() => {
     if (o.length === 0) return;
-    const r = o[o.length - 1], c = T(r, o.length - 1);
-    i((m) => m.some((u) => u.id === c.id) ? m : [...m, c]);
+    const r = o[o.length - 1], d = T(r, o.length - 1);
+    i((m) => m.some((u) => u.id === d.id) ? m : [...m, d]);
     const h = setTimeout(() => {
-      i((m) => m.filter((u) => u.id !== c.id));
+      i((m) => m.filter((u) => u.id !== d.id));
     }, t);
     return () => clearTimeout(h);
   }, [o, t]), /* @__PURE__ */ a(pe, { reactions: n });
@@ -228,7 +228,7 @@ function De({
   multiple: i,
   disabled: o,
   label: r,
-  className: c,
+  className: d,
   uploadMetadata: h,
   onError: m
 }) {
@@ -242,7 +242,7 @@ function De({
         }
       );
   }
-  return /* @__PURE__ */ d("div", { children: [
+  return /* @__PURE__ */ c("div", { children: [
     /* @__PURE__ */ a(
       W,
       {
@@ -251,7 +251,7 @@ function De({
         multiple: i,
         disabled: o,
         label: r,
-        className: c,
+        className: d,
         onFiles: b,
         onError: m
       }
@@ -260,7 +260,7 @@ function De({
       "ul",
       {
         style: { margin: "8px 0 0", padding: 0, listStyle: "none", fontSize: 13 },
-        children: u.map((l) => /* @__PURE__ */ d(
+        children: u.map((l) => /* @__PURE__ */ c(
           "li",
           {
             style: {
@@ -323,11 +323,11 @@ function Te({
   mode: i,
   spotlightContent: o,
   activeSpeakerId: r,
-  speakerHysteresisMs: c,
+  speakerHysteresisMs: d,
   onParticipantClick: h,
   className: m
 }) {
-  const u = ce(e.participants, t), b = t != null ? u.find((s) => s.id === t) ?? null : null, l = t != null ? u.filter((s) => s.id !== t) : u;
+  const u = de(e.participants, t), b = t != null ? u.find((s) => s.id === t) ?? null : null, l = t != null ? u.filter((s) => s.id !== t) : u;
   function p(s) {
     return n ? s.map((f) => ({
       ...f,
@@ -342,7 +342,7 @@ function Te({
       mode: i,
       spotlightContent: o,
       activeSpeakerId: r,
-      speakerHysteresisMs: c,
+      speakerHysteresisMs: d,
       onParticipantClick: h,
       className: m
     }
@@ -382,10 +382,12 @@ function ge({
   occupancy: i,
   subscribeRoomsIndex: o,
   onClick: r,
-  onContextMenu: c,
+  onContextMenu: d,
   kebab: h,
   className: m,
-  "data-testid": u = "hangout-room-row"
+  // Default testid is `room-row` — matches the e2e RoomsSidebar page-
+  // object's selectors. Callers can still override via the prop.
+  "data-testid": u = "room-row"
 }) {
   const b = q(o ? e : null, {
     subscribeRoomsIndex: o
@@ -398,8 +400,8 @@ function ge({
     [s]
   );
   let y = null;
-  return p > 1 ? y = /* @__PURE__ */ d(_, { children: [
-    /* @__PURE__ */ a(j, { users: w, maxVisible: 3, size: 18 }),
+  return p > 1 ? y = /* @__PURE__ */ c(_, { children: [
+    /* @__PURE__ */ a(P, { users: w, maxVisible: 3, size: 18 }),
     /* @__PURE__ */ a(R, { variant: "count", value: p, color: "muted" })
   ] }) : p === 1 && f ? y = /* @__PURE__ */ a(
     R,
@@ -409,8 +411,8 @@ function ge({
       "aria-label": "Just you in this room",
       "data-testid": `${u}-self-pulse`
     }
-  ) : p === 1 && (y = /* @__PURE__ */ d(_, { children: [
-    /* @__PURE__ */ a(j, { users: w, maxVisible: 1, size: 18 }),
+  ) : p === 1 && (y = /* @__PURE__ */ c(_, { children: [
+    /* @__PURE__ */ a(P, { users: w, maxVisible: 1, size: 18 }),
     /* @__PURE__ */ a(R, { variant: "count", value: 1, color: "muted" })
   ] })), /* @__PURE__ */ a(
     D,
@@ -421,10 +423,16 @@ function ge({
       trailing: y,
       active: x,
       onClick: r,
-      onContextMenu: c,
+      onContextMenu: d,
       kebab: h,
       "aria-label": `${t} room`,
-      className: m
+      className: m,
+      dataAttrs: {
+        "data-room-slug": e,
+        "data-room-name": t,
+        "data-room-active-count": p,
+        "data-joined": x ? "true" : "false"
+      }
     }
   );
 }
@@ -443,9 +451,9 @@ function xe({
   onCreated: i,
   defaultVisibility: o
 }) {
-  const [r, c] = N(""), [h, m] = N(""), [u, b] = N(!1), [l, p] = N(!1), [s, f] = N(!1), [x, w] = N(null);
+  const [r, d] = N(""), [h, m] = N(""), [u, b] = N(!1), [l, p] = N(!1), [s, f] = N(!1), [x, w] = N(null);
   z(() => {
-    e && (c(""), m(""), b(!1), p(!1), f(!1), w(null));
+    e && (d(""), m(""), b(!1), p(!1), f(!1), w(null));
   }, [e]);
   const y = C(() => be(r), [r]), v = C(() => he(r), [r]), g = !y && !s;
   async function A(S) {
@@ -478,8 +486,8 @@ function xe({
       rawChildren: !0,
       backdropTestId: "new-hangout-room-dialog",
       footer: null,
-      children: /* @__PURE__ */ d("form", { onSubmit: A, className: "flex flex-col gap-4", children: [
-        /* @__PURE__ */ d("label", { className: "flex flex-col gap-1", children: [
+      children: /* @__PURE__ */ c("form", { onSubmit: A, className: "flex flex-col gap-4", children: [
+        /* @__PURE__ */ c("label", { className: "flex flex-col gap-1", children: [
           /* @__PURE__ */ a("span", { className: "text-[12px] font-semibold text-slate-700", children: "Name" }),
           /* @__PURE__ */ a(
             "input",
@@ -488,14 +496,14 @@ function xe({
               "data-testid": "new-hangout-room-name",
               type: "text",
               value: r,
-              onChange: (S) => c(S.target.value),
+              onChange: (S) => d(S.target.value),
               placeholder: "Team standup",
               maxLength: I + 10,
               disabled: s,
               className: "w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             }
           ),
-          /* @__PURE__ */ d("div", { className: "flex items-center justify-between text-[11px] text-slate-400", children: [
+          /* @__PURE__ */ c("div", { className: "flex items-center justify-between text-[11px] text-slate-400", children: [
             /* @__PURE__ */ a("span", { "data-testid": "new-hangout-room-slug-preview", children: v ? `#${v}` : "Slug preview appears here" }),
             /* @__PURE__ */ a("span", { children: `${r.trim().length}/${I}` })
           ] }),
@@ -508,8 +516,8 @@ function xe({
             }
           )
         ] }),
-        /* @__PURE__ */ d("label", { className: "flex flex-col gap-1", children: [
-          /* @__PURE__ */ d("span", { className: "text-[12px] font-semibold text-slate-700", children: [
+        /* @__PURE__ */ c("label", { className: "flex flex-col gap-1", children: [
+          /* @__PURE__ */ c("span", { className: "text-[12px] font-semibold text-slate-700", children: [
             "Description ",
             /* @__PURE__ */ a("span", { className: "font-normal text-slate-400", children: "(optional)" })
           ] }),
@@ -526,9 +534,9 @@ function xe({
             }
           )
         ] }),
-        /* @__PURE__ */ d("div", { className: "flex flex-col gap-3", children: [
-          /* @__PURE__ */ d("label", { className: "flex items-center justify-between gap-3", children: [
-            /* @__PURE__ */ d("span", { className: "flex flex-col", children: [
+        /* @__PURE__ */ c("div", { className: "flex flex-col gap-3", children: [
+          /* @__PURE__ */ c("label", { className: "flex items-center justify-between gap-3", children: [
+            /* @__PURE__ */ c("span", { className: "flex flex-col", children: [
               /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Audio only" }),
               /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Skip video tracks — voice-only room." })
             ] }),
@@ -543,8 +551,8 @@ function xe({
               }
             )
           ] }),
-          /* @__PURE__ */ d("label", { className: "flex items-center justify-between gap-3", children: [
-            /* @__PURE__ */ d("span", { className: "flex flex-col", children: [
+          /* @__PURE__ */ c("label", { className: "flex items-center justify-between gap-3", children: [
+            /* @__PURE__ */ c("span", { className: "flex flex-col", children: [
               /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Recording enabled" }),
               /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Allow server-side recording of sessions." })
             ] }),
@@ -569,9 +577,9 @@ function xe({
             children: x
           }
         ),
-        /* @__PURE__ */ d("div", { className: "flex justify-end gap-2 pt-1", children: [
+        /* @__PURE__ */ c("div", { className: "flex justify-end gap-2 pt-1", children: [
           /* @__PURE__ */ a(
-            P,
+            j,
             {
               type: "button",
               variant: "ghost",
@@ -581,7 +589,7 @@ function xe({
             }
           ),
           /* @__PURE__ */ a(
-            P,
+            j,
             {
               type: "submit",
               variant: "primary",
@@ -602,7 +610,7 @@ function Oe({
   participantId: i,
   onJoinRoom: o,
   onContextMenu: r,
-  onBrowseAll: c,
+  onBrowseAll: d,
   maxVisible: h = 10,
   title: m = "Rooms",
   storageKey: u,
@@ -615,8 +623,8 @@ function Oe({
     () => x.slice(0, h),
     [x, h]
   ), y = x.length - w.length;
-  return /* @__PURE__ */ d(_, { children: [
-    /* @__PURE__ */ d(
+  return /* @__PURE__ */ c(_, { children: [
+    /* @__PURE__ */ c(
       X,
       {
         title: m,
@@ -628,10 +636,10 @@ function Oe({
             size: "sm",
             onClick: s,
             icon: /* @__PURE__ */ a("span", { "aria-hidden": "true", className: "text-[14px] leading-none font-bold", children: "+" }),
-            "data-testid": "hangout-rooms-section-new"
+            "data-testid": "new-room-button"
           }
         ),
-        "data-testid": "hangout-rooms-section",
+        "data-testid": "rooms-section",
         children: [
           e.isLoading && /* @__PURE__ */ a("div", { className: "flex flex-col gap-1 px-1 py-1", "data-testid": "hangout-rooms-loading", children: [0, 1, 2].map((g) => /* @__PURE__ */ a(
             "div",
@@ -641,7 +649,7 @@ function Oe({
             },
             g
           )) }),
-          !e.isLoading && e.error && /* @__PURE__ */ d(
+          !e.isLoading && e.error && /* @__PURE__ */ c(
             "div",
             {
               role: "alert",
@@ -669,10 +677,10 @@ function Oe({
               testId: "hangout-rooms-empty",
               title: "No rooms yet",
               description: "Create one to start an ongoing hangout.",
-              action: /* @__PURE__ */ a(P, { onClick: s, variant: "primary", size: "sm", children: "Create room" })
+              action: /* @__PURE__ */ a(j, { onClick: s, variant: "primary", size: "sm", children: "Create room" })
             }
           ),
-          !e.isLoading && !e.error && x.length > 0 && /* @__PURE__ */ d("div", { className: "flex flex-col gap-0.5", children: [
+          !e.isLoading && !e.error && x.length > 0 && /* @__PURE__ */ c("div", { className: "flex flex-col gap-0.5", children: [
             w.map((g) => /* @__PURE__ */ a(
               ge,
               {
@@ -690,12 +698,12 @@ function Oe({
               D,
               {
                 "data-testid": "hangout-rooms-browse-all",
-                label: /* @__PURE__ */ d("span", { className: "text-[12px] text-slate-500", children: [
+                label: /* @__PURE__ */ c("span", { className: "text-[12px] text-slate-500", children: [
                   "Browse all (",
                   x.length,
                   ")"
                 ] }),
-                onClick: c
+                onClick: d
               }
             )
           ] })
@@ -734,12 +742,12 @@ export {
   re as adaptFileUploadState,
   se as adaptFileUploads,
   le as adaptHangoutParticipant,
-  ce as adaptHangoutParticipants,
-  de as adaptNotification,
+  de as adaptHangoutParticipants,
+  ce as adaptNotification,
   ue as adaptNotifications,
   Z as adaptPresenceEntry,
-  Pe as adaptPresenceRoster,
+  je as adaptPresenceRoster,
   T as adaptReaction,
-  je as adaptReactions,
+  Pe as adaptReactions,
   he as slugifyRoomName
 };
