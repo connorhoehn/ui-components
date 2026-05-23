@@ -6,6 +6,7 @@ import { ElementType } from 'react';
 import { HTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
+import { MouseEvent as MouseEvent_2 } from 'react';
 import { Observable } from 'lib0/observable';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
@@ -564,6 +565,24 @@ declare interface AwarenessUpdaters {
     /** Merge Tiptap-specific cursor info (name, color) without clobbering other fields. */
     updateCursorInfo: (name: string, color: string) => void;
 }
+
+export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, className, 'data-testid': testId, }: BadgeProps): JSX.Element;
+
+export declare type BadgeColor = 'accent' | 'success' | 'danger' | 'muted';
+
+export declare interface BadgeProps {
+    variant: BadgeVariant;
+    /** Required for variant="count". Ignored otherwise. */
+    value?: number;
+    color?: BadgeColor;
+    /** Optional override label for screen readers. */
+    'aria-label'?: string;
+    className?: string;
+    /** Optional testid. */
+    'data-testid'?: string;
+}
+
+export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
 export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
@@ -1202,14 +1221,19 @@ export declare interface EmailTemplate {
     variables: string[];
 }
 
-export declare function EmptyState({ icon, title, body, actionLabel, onAction, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateProps {
-    icon?: string;
+    icon?: ReactNode;
     title: string;
+    /** Plain-text body (preferred when no markup is needed). */
     body?: string;
+    /** Alias for `body` — accepts any ReactNode for richer copy. */
+    description?: ReactNode;
     actionLabel?: string;
     onAction?: () => void;
+    /** Custom action node (overrides actionLabel/onAction when present). */
+    action?: ReactNode;
     /**
      * Optional testid for the container (defaults to "empty-state").
      * Callers with existing tests targeting a specific id can pass it here.
@@ -1717,6 +1741,30 @@ export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 export declare interface InlinePipelineDefinition {
     id: string;
     [key: string]: unknown;
+}
+
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, children, }: InlinePopoverProps): ReactPortal | null;
+
+export declare type InlinePopoverPlacement = 'bottom-start' | 'right';
+
+export declare interface InlinePopoverProps {
+    /** Ref to the anchor element (the visible trigger). */
+    trigger: RefObject<HTMLElement | null>;
+    /** Whether the popover is currently open. Controlled by the caller. */
+    open: boolean;
+    /** Fires when the popover should dismiss (outside click / Esc / tab-out). */
+    onClose: () => void;
+    /** Placement relative to the trigger. Defaults to 'bottom-start'. */
+    placement?: InlinePopoverPlacement;
+    /** Pixel gap between trigger and panel. Default 6. */
+    offset?: number;
+    /** Optional className for the panel. */
+    className?: string;
+    /** Optional z-index (default 9500 — under modals at 10000). */
+    zIndex?: number;
+    /** Optional testid for the panel. Default 'inline-popover'. */
+    'data-testid'?: string;
+    children: ReactNode;
 }
 
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
@@ -3095,6 +3143,52 @@ export declare const shadows: {
 export declare interface ShortcutsHelpProps {
     open: boolean;
     onClose: () => void;
+}
+
+export declare function SidebarRow({ icon, label, trailing, active, onClick, onContextMenu, href, kebab, disabled, 'aria-label': ariaLabel, className, 'data-testid': testId, }: SidebarRowProps): JSX.Element;
+
+export declare interface SidebarRowProps {
+    /** Leading icon. */
+    icon?: ReactNode;
+    /** Primary label (string or ReactNode). */
+    label: ReactNode;
+    /** Right-side slot for badges, avatar stacks, etc. */
+    trailing?: ReactNode;
+    /** Highlighted state. */
+    active?: boolean;
+    onClick?: () => void;
+    onContextMenu?: (e: MouseEvent_2<HTMLElement>) => void;
+    /** When set, the row renders as an <a href>. Click handling still fires. */
+    href?: string;
+    /** Optional kebab-menu trigger node (typically an IconButton). */
+    kebab?: ReactNode;
+    /** Disabled state — non-interactive, muted styling. */
+    disabled?: boolean;
+    /** Accessibility label override (when `label` isn't a string). */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare function SidebarSection({ title, actions, collapsible, defaultCollapsed, storageKey, children, className, 'data-testid': testId, }: SidebarSectionProps): JSX.Element;
+
+export declare interface SidebarSectionProps {
+    /** Visible section label. Used to derive the localStorage key. */
+    title: string;
+    /** Right-aligned slot in the header (e.g. an IconButton). */
+    actions?: ReactNode;
+    /** When true (default), header click toggles collapse. */
+    collapsible?: boolean;
+    /** Initial collapsed state. Defaults to false (open). */
+    defaultCollapsed?: boolean;
+    /** Optional explicit localStorage key. Defaults to `sidebar-section:${title}`. */
+    storageKey?: string;
+    /** Section body. */
+    children?: ReactNode;
+    /** Extra classes for the outer wrapper. */
+    className?: string;
+    /** Test id (defaults to "sidebar-section"). */
+    'data-testid'?: string;
 }
 
 export declare function SkeletonCard({ width, height }: SkeletonCardProps): JSX.Element;

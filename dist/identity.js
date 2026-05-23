@@ -1,10 +1,10 @@
 import { jsxs as t, jsx as e, Fragment as j } from "react/jsx-runtime";
 import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as ce, useEffect as de } from "react";
-import { C as U, P as F, T as J, b as Z, e as _, a as ee, c as te, d as q } from "./PageSection-B_nBFSjK.js";
-import { B as f, C as H } from "./ConfirmDialog-Ch54mLuZ.js";
-import { E as me } from "./EmptyState-C3KCJ6Ae.js";
+import { C as U, P as F, T as J, b as Z, e as B, a as ee, c as te, d as q } from "./PageSection-B_nBFSjK.js";
+import { a as f, B as V } from "./Banner-B8AcwPH_.js";
+import { E as me } from "./EmptyState-PM9wTjxk.js";
+import { C as H } from "./ConfirmDialog-CNoxvYGu.js";
 import { c as O } from "./cn-B6yFEsav.js";
-import { B as V } from "./Banner-DKb3JiLs.js";
 import { C as K } from "./Chip-BXdhqVFm.js";
 import { M as ye } from "./Modal-2jg4229_.js";
 function Ke({ stats: a, pools: r, onNavigate: i, loading: u }) {
@@ -75,8 +75,8 @@ function X({
   }) : r, [r, s, g]);
   return m ? /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      a.map((d) => /* @__PURE__ */ e(_, { style: d.width ? { width: d.width } : void 0, children: d.header }, d.key)),
-      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
+      a.map((d) => /* @__PURE__ */ e(B, { style: d.width ? { width: d.width } : void 0, children: d.header }, d.key)),
+      b && /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: Array.from({ length: 5 }).map((d, x) => /* @__PURE__ */ t(te, { children: [
       a.map((A) => /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e("div", { className: "h-4 rounded bg-slate-100 animate-pulse", style: { width: `${60 + Math.random() * 30}%` } }) }, A.key)),
@@ -88,7 +88,7 @@ function X({
   ] }) : /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
       a.map((d) => /* @__PURE__ */ e(
-        _,
+        B,
         {
           sortable: d.sortable,
           sortDirection: d.sortable && s === d.key ? g : null,
@@ -99,7 +99,7 @@ function X({
         },
         d.key
       )),
-      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
+      b && /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: n.map((d) => /* @__PURE__ */ t(
       te,
@@ -288,18 +288,18 @@ function He({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
   ), [M, R] = o(!1), T = w(() => {
     I((S) => [...S, { key: "", value: "" }]);
   }, []), z = w((S) => {
-    I((k) => k.filter((B, $) => $ !== S));
-  }, []), v = w((S, k, B) => {
+    I((k) => k.filter((_, $) => $ !== S));
+  }, []), v = w((S, k, _) => {
     I(
-      ($) => $.map((Q, Y) => Y === S ? { ...Q, [k]: B } : Q)
+      ($) => $.map((Q, Y) => Y === S ? { ...Q, [k]: _ } : Q)
     );
   }, []), C = w(
     async (S) => {
       S.preventDefault(), R(!0);
       try {
         const k = {};
-        for (const { key: B, value: $ } of P)
-          B.trim() && (k[B.trim()] = $);
+        for (const { key: _, value: $ } of P)
+          _.trim() && (k[_.trim()] = $);
         await i({
           poolName: c,
           customAttributes: k,
@@ -414,7 +414,7 @@ function He({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
               className: "flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800",
               placeholder: "Attribute name",
               value: S.key,
-              onChange: (B) => v(k, "key", B.target.value)
+              onChange: (_) => v(k, "key", _.target.value)
             }
           ),
           /* @__PURE__ */ e(
@@ -423,7 +423,7 @@ function He({ pool: a, isEdit: r, onSubmit: i, onCancel: u, error: b }) {
               className: "flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800",
               placeholder: "Type (string, number, etc.)",
               value: S.value,
-              onChange: (B) => v(k, "value", B.target.value)
+              onChange: (_) => v(k, "value", _.target.value)
             }
           ),
           /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => z(k), children: "Remove" })
@@ -1747,8 +1747,8 @@ function Te({ rates: a }) {
   const r = Object.entries(a);
   return r.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-slate-400 text-sm m-0", children: "No rate limiter data available." }) : /* @__PURE__ */ t(J, { children: [
     /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      /* @__PURE__ */ e(_, { children: "Key" }),
-      /* @__PURE__ */ e(_, { children: "Value" })
+      /* @__PURE__ */ e(B, { children: "Key" }),
+      /* @__PURE__ */ e(B, { children: "Value" })
     ] }) }),
     /* @__PURE__ */ e(ee, { children: r.map(([i, u]) => /* @__PURE__ */ t(te, { children: [
       /* @__PURE__ */ e(q, { className: "font-mono text-xs", children: i }),
@@ -1812,11 +1812,11 @@ function ot({
           /* @__PURE__ */ e("div", { className: "px-5 py-3 border-b border-slate-200 bg-slate-50", children: /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-slate-700 m-0", children: "Dead Letter Queue" }) }),
           !i || i.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-slate-400 text-sm m-0", children: "Dead letter queue is empty." }) : /* @__PURE__ */ t(J, { children: [
             /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-              /* @__PURE__ */ e(_, { children: "ID" }),
-              /* @__PURE__ */ e(_, { children: "Error" }),
-              /* @__PURE__ */ e(_, { children: "Failed At" }),
-              /* @__PURE__ */ e(_, { children: "Retries" }),
-              /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
+              /* @__PURE__ */ e(B, { children: "ID" }),
+              /* @__PURE__ */ e(B, { children: "Error" }),
+              /* @__PURE__ */ e(B, { children: "Failed At" }),
+              /* @__PURE__ */ e(B, { children: "Retries" }),
+              /* @__PURE__ */ e(B, { className: "text-right", children: "Actions" })
             ] }) }),
             /* @__PURE__ */ e(ee, { children: i.map((l) => /* @__PURE__ */ t(te, { children: [
               /* @__PURE__ */ t(q, { className: "font-mono text-xs", children: [
@@ -1849,7 +1849,7 @@ function ct({
   registrationEnabled: s = !0,
   forgotPasswordEnabled: p = !0
 }) {
-  const [g, N] = o("signin"), [l, n] = o(!1), [d, x] = o(null), [A, E] = o(""), [y, P] = o(""), [I, M] = o(""), [R, T] = o(""), [z, v] = o(""), [C, S] = o(""), [k, B] = o(""), [$, Q] = o(!1), [Y, ue] = o(""), [pe, ne] = o(!1), ie = b || d, fe = w(async (L) => {
+  const [g, N] = o("signin"), [l, n] = o(!1), [d, x] = o(null), [A, E] = o(""), [y, P] = o(""), [I, M] = o(""), [R, T] = o(""), [z, v] = o(""), [C, S] = o(""), [k, _] = o(""), [$, Q] = o(!1), [Y, ue] = o(""), [pe, ne] = o(!1), ie = b || d, fe = w(async (L) => {
     L.preventDefault(), x(null), n(!0);
     try {
       await c(A, y);
@@ -2012,7 +2012,7 @@ function ct({
             label: "Family Name",
             name: "reg-family",
             value: k,
-            onChange: (L) => B(String(L)),
+            onChange: (L) => _(String(L)),
             disabled: l
           }
         ) })

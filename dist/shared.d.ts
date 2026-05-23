@@ -7,6 +7,7 @@ import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
+import { RefObject } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
 
@@ -63,6 +64,24 @@ export declare interface AvatarProps {
     style?: CSSProperties;
     title?: string;
 }
+
+export declare function Badge({ variant, value, color, 'aria-label': ariaLabel, className, 'data-testid': testId, }: BadgeProps): JSX.Element;
+
+export declare type BadgeColor = 'accent' | 'success' | 'danger' | 'muted';
+
+export declare interface BadgeProps {
+    variant: BadgeVariant;
+    /** Required for variant="count". Ignored otherwise. */
+    value?: number;
+    color?: BadgeColor;
+    /** Optional override label for screen readers. */
+    'aria-label'?: string;
+    className?: string;
+    /** Optional testid. */
+    'data-testid'?: string;
+}
+
+export declare type BadgeVariant = 'count' | 'dot' | 'pulse';
 
 export declare function Banner({ variant, title, onDismiss, children, className, style, 'data-testid': testId, }: BannerProps): JSX.Element;
 
@@ -328,14 +347,19 @@ export declare interface DrawerProps {
     'data-testid'?: string;
 }
 
-export declare function EmptyState({ icon, title, body, actionLabel, onAction, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateProps {
-    icon?: string;
+    icon?: ReactNode;
     title: string;
+    /** Plain-text body (preferred when no markup is needed). */
     body?: string;
+    /** Alias for `body` — accepts any ReactNode for richer copy. */
+    description?: ReactNode;
     actionLabel?: string;
     onAction?: () => void;
+    /** Custom action node (overrides actionLabel/onAction when present). */
+    action?: ReactNode;
     /**
      * Optional testid for the container (defaults to "empty-state").
      * Callers with existing tests targeting a specific id can pass it here.
@@ -504,6 +528,30 @@ export declare interface InlineAlertProps {
 }
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
+
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, children, }: InlinePopoverProps): ReactPortal | null;
+
+export declare type InlinePopoverPlacement = 'bottom-start' | 'right';
+
+export declare interface InlinePopoverProps {
+    /** Ref to the anchor element (the visible trigger). */
+    trigger: RefObject<HTMLElement | null>;
+    /** Whether the popover is currently open. Controlled by the caller. */
+    open: boolean;
+    /** Fires when the popover should dismiss (outside click / Esc / tab-out). */
+    onClose: () => void;
+    /** Placement relative to the trigger. Defaults to 'bottom-start'. */
+    placement?: InlinePopoverPlacement;
+    /** Pixel gap between trigger and panel. Default 6. */
+    offset?: number;
+    /** Optional className for the panel. */
+    className?: string;
+    /** Optional z-index (default 9500 — under modals at 10000). */
+    zIndex?: number;
+    /** Optional testid for the panel. Default 'inline-popover'. */
+    'data-testid'?: string;
+    children: ReactNode;
+}
 
 export declare function LineChart({ series, height, yFormat, xFormat, }: {
     series: LineSeries[];

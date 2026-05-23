@@ -6,7 +6,7 @@ import { u as yn } from "./IdentityContext-CLalsm_M.js";
 import { l as xt } from "./useDocumentTypes-C29MkgPl.js";
 import { c as e } from "./cn-B6yFEsav.js";
 import { u as wn } from "./useHangoutEmbed-DyGzEiRt.js";
-import { u as vn } from "./useActiveSpeaker-Xyga4KBG.js";
+import { u as vn } from "./useActiveSpeaker-BOwJ262O.js";
 import { D as Nn, T as fe } from "./index-BhrGxmJW.js";
 import { E as So, a as Io, b as To } from "./index-BhrGxmJW.js";
 import { b as kn } from "./registry-BZU57zws.js";

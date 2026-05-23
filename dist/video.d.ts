@@ -101,6 +101,17 @@ export declare interface CallWidgetProps {
 
 export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
 
+export declare interface CaptionLine {
+    id: string;
+    speakerId: string;
+    speakerName?: string;
+    text: string;
+    /** ISO timestamp of caption emission. Used for fade-out + ordering. */
+    at: string;
+    /** True if the caption is still being updated (interim) vs final. */
+    interim?: boolean;
+}
+
 /**
  * Multi-person hangout layout with two modes:
  *
@@ -213,12 +224,27 @@ export declare interface ParticipantTileProps {
 }
 
 /**
- * useActiveSpeaker hook - detects active speaker using Web Audio API
- * Monitors audio levels via AnalyserNode and returns the loudest participant above threshold
+ * useActiveSpeaker — detects the loudest currently-speaking participant
+ * via Web Audio API analysis of each MediaStream.
+ *
+ * Wave 7 refactor: previously created one `AudioContext` per
+ * participant, which (a) Chrome warns about past 6 contexts and (b)
+ * hits a hard browser limit around 25. Now uses a SINGLE shared
+ * AudioContext + per-participant `MediaStreamAudioSourceNode →
+ * AnalyserNode`. Drops N contexts → 1 with no semantic change.
  */
 declare interface ParticipantWithStreams {
     participantId: string;
     streams: MediaStream[];
+}
+
+export declare function PiPButton({ getVideoElement, className, title, }: PiPButtonProps): JSX.Element;
+
+export declare interface PiPButtonProps {
+    /** Callback to obtain the `<video>` element to enter PiP with. */
+    getVideoElement: () => HTMLVideoElement | null;
+    className?: string;
+    title?: string;
 }
 
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
@@ -243,6 +269,69 @@ export declare interface ReactionPickerProps {
     onReact: (emoji: string) => void;
     emojis?: string[];
     style?: CSSProperties;
+}
+
+export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, className, }: RecordingListProps): JSX.Element;
+
+export declare interface RecordingListItem {
+    id: string;
+    startIso: string;
+    endIso: string;
+    durationSec: number;
+    participantCount?: number;
+    thumbnailUrl?: string;
+    /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
+    label?: string;
+}
+
+export declare interface RecordingListProps {
+    recordings: RecordingListItem[];
+    selectedId?: string;
+    onSelect: (id: string) => void;
+    loading?: boolean;
+    emptyState?: ReactNode;
+    className?: string;
+}
+
+export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, }: RecordingPlayerProps): JSX.Element;
+
+export declare interface RecordingPlayerProps {
+    playlistUrl: string | null;
+    poster?: string;
+    autoPlay?: boolean;
+    muted?: boolean;
+    onLoadedMetadata?: (durationSec: number) => void;
+    onTimeUpdate?: (currentTime: number, duration: number) => void;
+    onError?: (err: Error) => void;
+    /** Hide the download button (private channels). Default false. */
+    hideDownload?: boolean;
+    className?: string;
+}
+
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, className, }: RosterPanelProps): JSX.Element;
+
+export declare interface RosterPanelProps {
+    participants: RosterParticipant[];
+    activeSpeakerId?: string | null;
+    /** Click handler per row — e.g. promote to spotlight. */
+    onParticipantClick?: (id: string) => void;
+    /** Total-participants count shown in header. Defaults to participants.length. */
+    count?: number;
+    /** Optional header — e.g. "In this call". Default "Participants". */
+    title?: string;
+    /** Optional footer — e.g. an "+ Add" button. */
+    footer?: ReactNode;
+    className?: string;
+}
+
+export declare interface RosterParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    isScreenSharing?: boolean;
+    handRaised?: boolean;
 }
 
 export declare function StatsCard({ metrics, style }: StatsCardProps): JSX.Element;
@@ -273,7 +362,18 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function useActiveSpeaker({ participants, threshold, smoothingTimeConstant, }: UseActiveSpeakerOptions): {
+export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;
+
+export declare interface TranscriptOverlayProps {
+    lines: CaptionLine[];
+    /** How many recent lines to show simultaneously. Default 3. */
+    maxLines?: number;
+    /** Fade-out duration ms. Default 8000. */
+    fadeAfterMs?: number;
+    className?: string;
+}
+
+export declare function useActiveSpeaker({ participants, threshold, smoothingTimeConstant, pollIntervalMs, }: UseActiveSpeakerOptions): {
     activeSpeakerId: string | null;
 };
 
@@ -281,6 +381,20 @@ declare interface UseActiveSpeakerOptions {
     participants: ParticipantWithStreams[];
     threshold?: number;
     smoothingTimeConstant?: number;
+    pollIntervalMs?: number;
+}
+
+export declare function useMuteWhileTalking({ localStream, isMuted, threshold, triggerMs, cooldownMs, }: UseMuteWhileTalkingOptions): boolean;
+
+declare interface UseMuteWhileTalkingOptions {
+    localStream: MediaStream | null;
+    isMuted: boolean;
+    /** dB threshold for "talking". Default -45 — well above ambient. */
+    threshold?: number;
+    /** Sustained talking duration (ms) before the toast fires. Default 1500. */
+    triggerMs?: number;
+    /** Cool-down between toast fires (ms). Default 6000. */
+    cooldownMs?: number;
 }
 
 /**
