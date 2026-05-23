@@ -47,6 +47,12 @@ export function PresenceAvatars({
           role="listitem"
           className="relative shrink-0"
           title={user.name}
+          // E2E hooks: presence-avatar (testid) + the user identity
+          // pair (id + name) so test-driven assertions can find a
+          // specific user without scraping aria-labels.
+          data-testid="presence-avatar"
+          data-presence-user={user.name}
+          data-presence-user-id={user.id}
           style={{
             marginLeft: index > 0 ? overlap : 0,
           }}

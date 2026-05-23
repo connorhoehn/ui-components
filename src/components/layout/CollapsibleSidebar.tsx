@@ -272,6 +272,12 @@ export function CollapsibleSidebar({
               return (
                 <div
                   key={user.clientId}
+                  // E2E hooks: presence-avatar (testid) + the resolved
+                  // display name on a dedicated attr so the suite can
+                  // walk the sidebar roster without scraping inline text.
+                  data-testid="presence-avatar"
+                  data-presence-user={name}
+                  data-presence-user-id={user.clientId}
                   className={cn(
                     'flex items-center gap-2 py-[3px] text-[13px] font-sans',
                     isSelf ? 'text-text-primary' : 'text-text-secondary'
