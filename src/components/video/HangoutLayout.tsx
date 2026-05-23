@@ -69,18 +69,41 @@ export function HangoutLayout({
   className,
   style,
 }: HangoutLayoutProps) {
-  const effectiveMode: HangoutMode = spotlightContent ? 'spotlight' : mode;
+  // Auto-flip to spotlight + filmstrip at N≥10. Beyond 9 participants
+  // a 4×4 grid renders each tile so small that nobody is legible.
+  const autoSpotlightThreshold = 10;
+  const totalCount = participants.length + (localParticipant ? 1 : 0);
+  const effectiveMode: HangoutMode = spotlightContent
+    ? 'spotlight'
+    : (mode === 'auto' && totalCount >= autoSpotlightThreshold)
+      ? 'spotlight'
+      : mode;
   const stableSpotlightId = useStableActiveSpeaker(activeSpeakerId, speakerHysteresisMs);
 
   // Local placement:
   //   N=0 remotes → local fills the canvas (you alone, no PiP, no grid).
-  //   N=1-2 remotes → local renders as a small PiP overlay so the remote(s)
-  //                   get the main canvas area.
-  //   N>=3 remotes → local joins the grid inline as another tile.
+  //   N=1 remote  → local renders as a small PiP overlay so the remote
+  //                 gets the full canvas (1:1 call convention).
+  //   N>=2 remotes → local joins the grid inline as another tile, so a
+  //                  3-person call shows a 3-tile 2×2 grid (you visible
+  //                  to yourself, matching Meet/Teams behaviour).
   const remoteCount = participants.length;
   const showLocalSolo = !!localParticipant && remoteCount === 0;
-  const showLocalInline = !!localParticipant && remoteCount >= 3;
-  const showLocalPip = !!localParticipant && remoteCount > 0 && remoteCount <= 2;
+  const showLocalInline = !!localParticipant && remoteCount >= 2;
+  const showLocalPip = !!localParticipant && remoteCount === 1;
+
+  // CRITICAL: this useMemo MUST run on every render regardless of which
+  // branch we ultimately take below. If we hoist it below the
+  // `effectiveMode === 'spotlight'` early return, React sees a different
+  // hook count between auto-grid and spotlight renders ("Rendered fewer
+  // hooks than expected") and unmounts the tree. This bit when screen-
+  // share / tab-share toggled spotlight on mid-call.
+  const inlineParticipants = useMemo<HangoutLayoutParticipant[]>(() => {
+    if (showLocalSolo && localParticipant) return [{ ...localParticipant, isLocal: true }];
+    const list = [...participants];
+    if (showLocalInline && localParticipant) list.push({ ...localParticipant, isLocal: true });
+    return list;
+  }, [participants, showLocalSolo, showLocalInline, localParticipant]);
 
   if (effectiveMode === 'spotlight') {
     return (
@@ -98,13 +121,6 @@ export function HangoutLayout({
 
   // Auto-grid path. Solo case: render local as the only tile (no
   // "Waiting for others" placeholder, since YOU are in the call).
-  const inlineParticipants = useMemo<HangoutLayoutParticipant[]>(() => {
-    if (showLocalSolo && localParticipant) return [{ ...localParticipant, isLocal: true }];
-    const list = [...participants];
-    if (showLocalInline && localParticipant) list.push({ ...localParticipant, isLocal: true });
-    return list;
-  }, [participants, showLocalSolo, showLocalInline, localParticipant]);
-
   const cols = gridCols(inlineParticipants.length);
 
   return (
@@ -207,7 +223,7 @@ function SpotlightLayout({
 
       {/* Filmstrip */}
       {filmstrip.length > 0 && (
-        <div className="flex gap-1 overflow-x-auto px-1 pb-1">
+        <div className="flex gap-1 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
           {filmstrip.map(p => (
             <div key={p.id} className="w-32 shrink-0">
               <ParticipantTile

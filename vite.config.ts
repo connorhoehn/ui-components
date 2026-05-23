@@ -46,6 +46,9 @@ export default defineConfig({
         'amazon-cognito-identity-js',
         'amazon-ivs-web-broadcast',
         '@schemas/pipeline.schema.json',
+        // hls.js is dynamic-imported by RecordingPlayer; the consumer
+        // app installs it. Externalized to keep this lib bundle lean.
+        'hls.js',
       ],
     },
   },

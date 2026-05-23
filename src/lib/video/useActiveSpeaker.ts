@@ -1,9 +1,15 @@
 /**
- * useActiveSpeaker hook - detects active speaker using Web Audio API
- * Monitors audio levels via AnalyserNode and returns the loudest participant above threshold
+ * useActiveSpeaker — detects the loudest currently-speaking participant
+ * via Web Audio API analysis of each MediaStream.
+ *
+ * Wave 7 refactor: previously created one `AudioContext` per
+ * participant, which (a) Chrome warns about past 6 contexts and (b)
+ * hits a hard browser limit around 25. Now uses a SINGLE shared
+ * AudioContext + per-participant `MediaStreamAudioSourceNode →
+ * AnalyserNode`. Drops N contexts → 1 with no semantic change.
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ParticipantWithStreams {
   participantId: string;
@@ -12,84 +18,73 @@ interface ParticipantWithStreams {
 
 interface UseActiveSpeakerOptions {
   participants: ParticipantWithStreams[];
-  threshold?: number; // dB threshold for "speaking" detection
-  smoothingTimeConstant?: number; // Frequency smoothing
+  threshold?: number;
+  smoothingTimeConstant?: number;
+  pollIntervalMs?: number;
+}
+
+let sharedAudioContext: AudioContext | null = null;
+function getSharedAudioContext(): AudioContext | null {
+  if (sharedAudioContext) return sharedAudioContext;
+  try {
+    sharedAudioContext = new AudioContext();
+    return sharedAudioContext;
+  } catch {
+    return null;
+  }
 }
 
 export function useActiveSpeaker({
   participants,
   threshold = -40,
   smoothingTimeConstant = 0.8,
+  pollIntervalMs = 200,
 }: UseActiveSpeakerOptions) {
   const [activeSpeakerId, setActiveSpeakerId] = useState<string | null>(null);
 
   useEffect(() => {
-    const audioContextMap = new Map<string, AudioContext>();
+    const ctx = getSharedAudioContext();
+    if (!ctx) return;
     const analyserMap = new Map<string, AnalyserNode>();
-    let intervalId: ReturnType<typeof setInterval>;
+    const sourceMap = new Map<string, MediaStreamAudioSourceNode>();
 
-    // Set up audio analyzers for each participant with audio tracks
-    participants.forEach((participant) => {
-      if (participant.streams.length === 0) return;
-
-      const audioTracks = participant.streams[0].getAudioTracks();
-      if (audioTracks.length === 0) return;
-
+    for (const p of participants) {
+      const stream = p.streams[0];
+      if (!stream || stream.getAudioTracks().length === 0) continue;
       try {
-        // Create AudioContext and AnalyserNode
-        const audioContext = new AudioContext();
-        const analyser = audioContext.createAnalyser();
+        const source = ctx.createMediaStreamSource(stream);
+        const analyser = ctx.createAnalyser();
         analyser.fftSize = 512;
         analyser.smoothingTimeConstant = smoothingTimeConstant;
-
-        // Create media stream source and connect to analyser
-        const source = audioContext.createMediaStreamSource(participant.streams[0]);
         source.connect(analyser);
-
-        audioContextMap.set(participant.participantId, audioContext);
-        analyserMap.set(participant.participantId, analyser);
-      } catch (error) {
-        console.error('Failed to create audio analyzer:', error);
+        analyserMap.set(p.participantId, analyser);
+        sourceMap.set(p.participantId, source);
+      } catch {
+        // Most common: stream already connected in StrictMode double-mount.
       }
-    });
+    }
 
-    // Poll audio levels every 100ms
-    intervalId = setInterval(() => {
-      let loudestParticipantId: string | null = null;
-      let maxVolume = threshold;
-
-      analyserMap.forEach((analyser, participantId) => {
-        const dataArray = new Float32Array(analyser.frequencyBinCount);
-        analyser.getFloatTimeDomainData(dataArray);
-
-        // Calculate RMS volume
+    const intervalId = setInterval(() => {
+      let loudestId: string | null = null;
+      let maxDb = threshold;
+      analyserMap.forEach((analyser, pid) => {
+        const data = new Float32Array(analyser.frequencyBinCount);
+        analyser.getFloatTimeDomainData(data);
         let sumSquares = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sumSquares += dataArray[i] * dataArray[i];
-        }
-        const rms = Math.sqrt(sumSquares / dataArray.length);
-
-        // Convert to dB
+        for (let i = 0; i < data.length; i++) sumSquares += data[i] * data[i];
+        const rms = Math.sqrt(sumSquares / data.length);
         const db = 20 * Math.log10(rms);
-
-        // Track loudest participant above threshold
-        if (db > maxVolume) {
-          maxVolume = db;
-          loudestParticipantId = participantId;
-        }
+        if (db > maxDb) { maxDb = db; loudestId = pid; }
       });
+      setActiveSpeakerId(loudestId);
+    }, pollIntervalMs);
 
-      setActiveSpeakerId(loudestParticipantId);
-    }, 100);
-
-    // Cleanup
     return () => {
       clearInterval(intervalId);
-      audioContextMap.forEach((audioContext) => {
-        audioContext.close().catch(console.error);
-      });
+      sourceMap.forEach((s) => { try { s.disconnect(); } catch { /* */ } });
+      analyserMap.forEach((a) => { try { a.disconnect(); } catch { /* */ } });
     };
-  }, [participants, threshold, smoothingTimeConstant]);
+  }, [participants, threshold, smoothingTimeConstant, pollIntervalMs]);
 
   return { activeSpeakerId };
 }

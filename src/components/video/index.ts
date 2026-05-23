@@ -30,3 +30,20 @@ export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from '
 
 export { CallStartedBanner } from './CallStartedBanner';
 export type { CallStartedBannerProps, CallStartedBannerMode } from './CallStartedBanner';
+
+export { RecordingPlayer } from './RecordingPlayer';
+export type { RecordingPlayerProps } from './RecordingPlayer';
+
+export { RecordingList } from './RecordingList';
+export type { RecordingListProps, RecordingListItem } from './RecordingList';
+
+export { PiPButton } from './PiPButton';
+export type { PiPButtonProps } from './PiPButton';
+
+export { RosterPanel } from './RosterPanel';
+export type { RosterPanelProps, RosterParticipant } from './RosterPanel';
+
+export { useMuteWhileTalking } from '../../lib/video/useMuteWhileTalking';
+
+export { TranscriptOverlay } from './TranscriptOverlay';
+export type { TranscriptOverlayProps, CaptionLine } from './TranscriptOverlay';
