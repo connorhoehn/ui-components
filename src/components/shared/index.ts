@@ -97,3 +97,11 @@ export { ProjectCard } from './ProjectCard';
 export type { ProjectCardProps, StatusColors } from './ProjectCard';
 export { SubNavLayout } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
+
+// ── Sidebar primitives (2026-05) ──
+// Re-exported here as well as `src/index.ts` so apps importing from the
+// shared subpath can find them in one place.
+export { Badge } from './Badge';
+export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
+export { InlinePopover } from './InlinePopover';
+export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';

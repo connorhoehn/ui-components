@@ -162,3 +162,71 @@ export interface RMUseNotificationsReturn {
   remove: (id: string) => void;
   clearAll: () => void;
 }
+
+// ---------------------------------------------------------------------------
+// Hangout rooms (mirrors realtime-modules/src/client/hangout-rooms/types.ts)
+// Kept structurally identical so any real hook return satisfies these.
+// ---------------------------------------------------------------------------
+
+export type RMRoomVisibility = 'org' | 'private';
+export type RMRoomState = 'active' | 'archived';
+
+export interface RMRoomSettings {
+  audioOnly: boolean;
+  recordingEnabled: boolean;
+  softCap: number;
+}
+
+export interface RMRoom {
+  orgId: string;
+  roomId: string;
+  slug: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdAt: string;
+  visibility: RMRoomVisibility;
+  settings: RMRoomSettings;
+  state: RMRoomState;
+  lastActiveAt: string;
+}
+
+export interface RMRoomOccupancyMember {
+  userId: string;
+  displayName?: string;
+  participantId: string;
+}
+
+export interface RMRoomOccupancy {
+  slug: string;
+  count: number;
+  members: RMRoomOccupancyMember[];
+}
+
+export interface RMCreateRoomInput {
+  name: string;
+  description?: string;
+  visibility?: RMRoomVisibility;
+  settings?: Partial<RMRoomSettings>;
+}
+
+export interface RMJoinRoomResult {
+  room: RMRoom;
+  sessionId: string;
+  token: string;
+  participantId: string;
+}
+
+export interface RMUseHangoutRoomsReturn {
+  rooms: RMRoom[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+  createRoom: (input: RMCreateRoomInput) => Promise<RMRoom>;
+  archiveRoom: (slug: string) => Promise<void>;
+  joinRoom: (slug: string) => Promise<RMJoinRoomResult>;
+}
+
+export interface RMUseRoomOccupancyReturn {
+  occupancy: RMRoomOccupancy | null;
+}

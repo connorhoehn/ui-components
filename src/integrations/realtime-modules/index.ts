@@ -26,6 +26,17 @@ export type {
   RMUseFileUploadReturn,
   RMUseVideoHangoutReturn,
   RMUseNotificationsReturn,
+  // Hangout rooms (new in 2026-05)
+  RMRoomVisibility,
+  RMRoomState,
+  RMRoomSettings,
+  RMRoom,
+  RMRoomOccupancyMember,
+  RMRoomOccupancy,
+  RMCreateRoomInput,
+  RMJoinRoomResult,
+  RMUseHangoutRoomsReturn,
+  RMUseRoomOccupancyReturn,
 } from './types';
 
 // Adapters
@@ -71,3 +82,13 @@ export type { WrappedNotificationCenterProps } from './WrappedNotificationCenter
 
 export { CapabilityBoundary } from './CapabilityBoundary';
 export type { CapabilityBoundaryProps } from './CapabilityBoundary';
+
+// ── Hangout rooms composites (2026-05) ──
+export { HangoutRoomRow } from './HangoutRoomRow';
+export type { HangoutRoomRowProps } from './HangoutRoomRow';
+
+export { HangoutRoomsSection } from './HangoutRoomsSection';
+export type { HangoutRoomsSectionProps } from './HangoutRoomsSection';
+
+export { NewHangoutRoomDialog, slugifyRoomName } from './NewHangoutRoomDialog';
+export type { NewHangoutRoomDialogProps } from './NewHangoutRoomDialog';
