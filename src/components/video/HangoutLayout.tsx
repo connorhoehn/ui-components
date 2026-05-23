@@ -199,26 +199,33 @@ function SpotlightLayout({
 
   return (
     <div className={cn('flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden', className)} style={style}>
-      {/* Main spotlight slot */}
+      {/* Main spotlight slot. Resolution order:
+       *   1. Explicit spotlightContent (e.g. screen share <video>) — wins.
+       *   2. The stable active-speaker tile, if that pid is in participants.
+       *   3. Fallback to the FIRST remote participant so the slot is never
+       *      a blank black square in spotlight mode (previously: an empty
+       *      bg-black aspect-video sat there until somebody spoke, which
+       *      read as "the call is broken"). */}
       <div className="flex-1 bg-black aspect-video relative">
-        {spotlightContent ?? (
-          // Fall back to the active speaker if no explicit spotlight content.
-          spotlightParticipantId && (() => {
-            const p = participants.find(x => x.id === spotlightParticipantId);
-            return p ? (
-              <ParticipantTile
-                id={p.id}
-                displayName={p.displayName}
-                avatarUrl={p.avatarUrl}
-                isMuted={p.isMuted}
-                isLocal={p.isLocal}
-                isSpotlight
-                videoElement={p.videoElement}
-                className="w-full h-full"
-              />
-            ) : null;
-          })()
-        )}
+        {spotlightContent ?? (() => {
+          const speaker = spotlightParticipantId
+            ? participants.find(x => x.id === spotlightParticipantId) ?? null
+            : null;
+          const tileSource = speaker ?? participants[0] ?? localParticipant;
+          if (!tileSource) return null;
+          return (
+            <ParticipantTile
+              id={tileSource.id}
+              displayName={tileSource.displayName}
+              avatarUrl={tileSource.avatarUrl}
+              isMuted={tileSource.isMuted}
+              isLocal={tileSource.isLocal}
+              isSpotlight
+              videoElement={tileSource.videoElement}
+              className="w-full h-full"
+            />
+          );
+        })()}
       </div>
 
       {/* Filmstrip */}

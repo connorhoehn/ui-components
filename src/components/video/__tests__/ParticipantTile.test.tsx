@@ -13,9 +13,21 @@ describe('ParticipantTile', () => {
     expect(screen.queryByText('Connor')).not.toBeInTheDocument();
   });
 
-  it('uses the uppercase first character of displayName as the avatar fallback', () => {
+  it('uses the uppercase first character of a single-word displayName as the avatar fallback', () => {
     render(<ParticipantTile id="a" displayName="alice" />);
+    // Single word → one-letter initial. Two text nodes match "A" (the avatar
+    // chip and the bottom badge "alice" starts with a) — use getAllByText.
     expect(screen.getByText('A')).toBeInTheDocument();
+  });
+
+  it('uses first+last letter initials for a multi-word displayName', () => {
+    render(<ParticipantTile id="a" displayName="Alice Smith" />);
+    expect(screen.getByText('AS')).toBeInTheDocument();
+  });
+
+  it('renders "?" when displayName is empty (avoiding a blank avatar)', () => {
+    render(<ParticipantTile id="a" displayName="" />);
+    expect(screen.getByText('?')).toBeInTheDocument();
   });
 
   it('renders a videoElement instead of the avatar fallback when supplied', () => {
@@ -27,7 +39,7 @@ describe('ParticipantTile', () => {
       />,
     );
     expect(screen.getByTestId('custom-video')).toBeInTheDocument();
-    // Avatar initial should NOT be rendered when videoElement is provided
+    // Avatar initials should NOT be rendered when videoElement is provided
     expect(screen.queryByText('A')).not.toBeInTheDocument();
   });
 
@@ -55,9 +67,15 @@ describe('ParticipantTile', () => {
     expect(container.querySelector('svg path[stroke="#ef4444"]')).not.toBeNull();
   });
 
-  it('does not render the muted glyph when isMuted is false', () => {
+  it('renders the muted corner badge with aria-label when isMuted', () => {
+    render(<ParticipantTile id="a" displayName="Alice" isMuted />);
+    expect(screen.getByLabelText('Microphone muted')).toBeInTheDocument();
+  });
+
+  it('does not render the muted glyph or corner badge when isMuted is false', () => {
     const { container } = render(<ParticipantTile id="a" displayName="Alice" />);
     expect(container.querySelector('svg path[stroke="#ef4444"]')).toBeNull();
+    expect(screen.queryByLabelText('Microphone muted')).toBeNull();
   });
 
   it('exposes a button role only when onClick is set', () => {

@@ -384,9 +384,33 @@ function ActiveCallContent({
               {localParticipant && <Avatar participant={localParticipant} size={48} />}
             </div>
           )}
-          {participants.length > 0 && participants[0].videoStream && (
-            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20">
-              <VideoTile stream={participants[0].videoStream} />
+          {/* Remote PiP. Always rendered when there's at least one remote
+           * participant — falls back to an Avatar when the videoStream is
+           * null/undefined (e.g. peer toggled their camera off via the
+           * participant-state cameraOn flag). Before this fix, the PiP
+           * tile disappeared entirely, which read as "the peer left" even
+           * when they were still in the call with audio only. */}
+          {participants.length > 0 && (
+            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-[#1e293b]">
+              {participants[0].videoStream ? (
+                <VideoTile stream={participants[0].videoStream} />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <Avatar participant={participants[0]} size={28} />
+                </div>
+              )}
+              {participants[0].isMuted && (
+                <div
+                  className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-red-500/90 flex items-center justify-center text-white"
+                  aria-label="Microphone muted"
+                >
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <line x1="3" y1="3" x2="21" y2="21" />
+                    <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
+                    <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" />
+                  </svg>
+                </div>
+              )}
             </div>
           )}
         </div>

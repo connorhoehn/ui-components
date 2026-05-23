@@ -62,34 +62,83 @@ export function ParticipantTile({
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
     >
       {videoElement ?? (
+        // Avatar fallback. Fills the tile with the deterministic name-hashed
+        // color so even when the consumer passes a null/undefined videoElement
+        // (e.g. peer toggled camera off) the participant is unambiguously
+        // present — never an empty black square. The colored backdrop spans
+        // the whole tile; the initials chip sits centered on top.
         <div
-          className={cn('rounded-full flex items-center justify-center text-white font-semibold',
-            isSpotlight ? 'w-16 h-16 text-2xl' : 'w-10 h-10 text-base')}
+          className="absolute inset-0 flex items-center justify-center"
           style={{ background: stringToColor(displayName) }}
         >
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="" className={cn('w-full h-full rounded-full object-cover')} />
-          ) : (
-            displayName.charAt(0).toUpperCase()
-          )}
+          <div
+            className={cn(
+              'rounded-full flex items-center justify-center text-white font-semibold bg-black/25 backdrop-blur-sm shadow-inner',
+              isSpotlight ? 'w-24 h-24 text-4xl' : 'w-14 h-14 text-xl',
+            )}
+          >
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="" className={cn('w-full h-full rounded-full object-cover')} />
+            ) : (
+              getInitials(displayName)
+            )}
+          </div>
         </div>
       )}
 
-      <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden')}>
-        {isLocal && <span className={cn('text-[#60a5fa] truncate')}>You</span>}
-        {!isLocal && <span className="truncate">{displayName}</span>}
+      {/* Bottom name badge — opaque-ish background + drop-shadow text so the
+       * label stays legible against either the colored Avatar backdrop or
+       * a noisy video frame. */}
+      <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow')}>
+        {isLocal && <span className={cn('text-[#60a5fa] truncate font-medium')}>You</span>}
+        {!isLocal && <span className="truncate font-medium">{displayName}</span>}
         {isMuted && (
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
             <path d="M1 1l8 8M5 1v4.5" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" />
           </svg>
         )}
       </div>
+
+      {/* Muted corner badge — a clearer red mic-with-slash circle in the
+       * top-left so the mute state is recognizable even when the bottom
+       * name strip is hidden (small filmstrip tiles) or competing with a
+       * busy video frame. Complements the inline glyph in the name badge. */}
+      {isMuted && (
+        <div
+          className={cn(
+            'absolute top-1 left-1 flex items-center justify-center rounded-full bg-red-500/90 text-white shadow-md',
+            isSpotlight ? 'w-7 h-7' : 'w-5 h-5',
+          )}
+          aria-label="Microphone muted"
+        >
+          <svg width={isSpotlight ? 16 : 12} height={isSpotlight ? 16 : 12} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <line x1="3" y1="3" x2="21" y2="21" />
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
+            <path d="M15 9.34V5a3 3 0 0 0-5.68-1.33" />
+            <path d="M19 10v2a7 7 0 0 1-.11 1.23" />
+            <path d="M5 10v2a7 7 0 0 0 12 5.29" />
+          </svg>
+        </div>
+      )}
 
       {isSpeaking && (
         <div className={cn('absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]')} />
       )}
     </div>
   );
+}
+
+/**
+ * Two-letter initials from a display name. "Alice Smith" → "AS",
+ * "alice" → "A", "alice smith jones" → "AS" (first + last bucket).
+ * Empty input returns "?" so an empty Avatar never silently renders.
+ */
+function getInitials(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed) return '?';
+  const words = trimmed.split(/\s+/);
+  if (words.length === 1) return words[0].charAt(0).toUpperCase();
+  return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
 }
 
 function stringToColor(str: string): string {
