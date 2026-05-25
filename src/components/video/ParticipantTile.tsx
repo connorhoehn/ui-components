@@ -35,6 +35,7 @@ export interface ParticipantTileProps {
  * a green border is the agreed-on cue.
  */
 export function ParticipantTile({
+  id,
   displayName,
   avatarUrl,
   isSpeaking = false,
@@ -46,6 +47,11 @@ export function ParticipantTile({
   className,
   style,
 }: ParticipantTileProps) {
+  // E2E hook: `remote-tile` for non-local tiles, `local-tile` for self.
+  // `data-peer-name` carries the resolved display name (NOT the raw msid /
+  // dev-sub) so dm-invite-accept can assert tile labels are human-readable.
+  // `data-peer-id` keeps the SFU participantId for de-duplication.
+  const testId = isLocal ? 'local-tile' : 'remote-tile';
   return (
     <div
       className={cn(
@@ -60,6 +66,13 @@ export function ParticipantTile({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
+      data-testid={testId}
+      data-peer-id={id}
+      data-peer-name={displayName}
+      data-is-local={isLocal ? 'true' : 'false'}
+      data-is-spotlight={isSpotlight ? 'true' : 'false'}
+      data-is-muted={isMuted ? 'true' : 'false'}
+      data-track-kind={videoElement ? 'camera' : 'avatar'}
     >
       {videoElement ?? (
         // Avatar fallback. Fills the tile with the deterministic name-hashed

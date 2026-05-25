@@ -48,6 +48,11 @@ export interface SidebarRowProps {
   'aria-label'?: string;
   className?: string;
   'data-testid'?: string;
+  /** Arbitrary `data-*` attributes spread onto the root element.
+   *  Used by e2e tooling to expose row-level metadata (e.g.
+   *  `data-room-slug`) without bespoke wrapper divs that interfere
+   *  with the row layout. */
+  dataAttrs?: Record<string, string | number | undefined>;
 }
 
 export function SidebarRow({
@@ -63,7 +68,15 @@ export function SidebarRow({
   'aria-label': ariaLabel,
   className,
   'data-testid': testId = 'sidebar-row',
+  dataAttrs,
 }: SidebarRowProps) {
+  // Filter undefined values so they don't render as `data-foo="undefined"`.
+  const extraDataAttrs: Record<string, string | number> = {};
+  if (dataAttrs) {
+    for (const [k, v] of Object.entries(dataAttrs)) {
+      if (v !== undefined && v !== null && v !== '') extraDataAttrs[k] = v;
+    }
+  }
   const rowRef = useRef<HTMLElement | null>(null);
 
   const handleClick = useCallback(() => {
@@ -140,6 +153,7 @@ export function SidebarRow({
         aria-label={ariaLabel}
         data-testid={testId}
         data-active={active ? 'true' : 'false'}
+        {...extraDataAttrs}
         className={baseClass}
         onClick={(e) => {
           if (disabled) {
@@ -171,6 +185,7 @@ export function SidebarRow({
       aria-label={ariaLabel}
       data-testid={testId}
       data-active={active ? 'true' : 'false'}
+      {...extraDataAttrs}
       className={baseClass}
       onClick={handleClick}
       onContextMenu={handleContextMenu}

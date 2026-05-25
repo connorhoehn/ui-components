@@ -106,7 +106,8 @@ export function HangoutRoomsSection({
           +
         </span>
       }
-      data-testid="hangout-rooms-section-new"
+      // Aligns with the RoomsSidebar page-object's `new-room-button` lookup.
+      data-testid="new-room-button"
     />
   );
 
@@ -116,7 +117,7 @@ export function HangoutRoomsSection({
         title={title}
         storageKey={storageKey}
         actions={actions}
-        data-testid="hangout-rooms-section"
+        data-testid="rooms-section"
       >
         {rooms.isLoading && (
           <div className="flex flex-col gap-1 px-1 py-1" data-testid="hangout-rooms-loading">

@@ -71,6 +71,11 @@ export interface CallWidgetProps {
   layoutComponent?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  /** Arbitrary `data-*` attributes to spread onto the root element.
+   *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
+   *  lobby/callId metadata without an extra wrapper div that would
+   *  conflict with the widget's own `position: fixed` placement. */
+  dataAttrs?: Record<string, string | number | undefined>;
 }
 
 // ---------------------------------------------------------------------------
@@ -135,6 +140,7 @@ function ControlButton({
   danger = false,
   onClick,
   disabled = false,
+  testId,
 }: {
   icon: ReactNode;
   label: string;
@@ -142,6 +148,8 @@ function ControlButton({
   danger?: boolean;
   onClick?: () => void;
   disabled?: boolean;
+  /** Stable data-testid (e2e hook) — defaults to none. */
+  testId?: string;
 }) {
   return (
     <button
@@ -150,6 +158,7 @@ function ControlButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
+      data-testid={testId}
       className={cn(
         'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
         danger && 'bg-red-500 text-white hover:bg-red-600',
@@ -446,12 +455,13 @@ function ActiveCallContent({
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-center gap-2 px-3 pb-3">
+      <div className="flex items-center justify-center gap-2 px-3 pb-3" data-testid="call-controls">
         <ControlButton
           icon={isMuted ? icons.micOff : icons.mic}
           label={isMuted ? 'Unmute' : 'Mute'}
           active={isMuted}
           onClick={onToggleMute}
+          testId="mute-button"
         />
         {mode === 'video' && (
           <ControlButton
@@ -459,6 +469,7 @@ function ActiveCallContent({
             label={isCameraOn ? 'Turn off camera' : 'Turn on camera'}
             active={!isCameraOn}
             onClick={onToggleCamera}
+            testId="camera-button"
           />
         )}
         {mode === 'audio' && onUpgradeToVideo && (
@@ -466,6 +477,7 @@ function ActiveCallContent({
             icon={icons.videoUpgrade}
             label="Switch to video"
             onClick={onUpgradeToVideo}
+            testId="upgrade-to-video-button"
           />
         )}
         <ControlButton
@@ -473,6 +485,7 @@ function ActiveCallContent({
           label={isScreenSharing ? 'Stop sharing' : 'Share screen'}
           active={isScreenSharing}
           onClick={onToggleScreenShare}
+          testId="screenshare-button"
         />
         {onAddParticipant && (
           <ControlButton
@@ -480,6 +493,7 @@ function ActiveCallContent({
             label="Add participant"
             active={showPicker}
             onClick={() => setShowPicker(v => !v)}
+            testId="add-participant-button"
           />
         )}
         <ControlButton
@@ -487,6 +501,7 @@ function ActiveCallContent({
           label="End call"
           danger
           onClick={onEndCall}
+          testId="hangup-button"
         />
       </div>
 
@@ -840,8 +855,16 @@ export function CallWidget({
   draggable = true,
   className,
   style,
+  dataAttrs,
 }: CallWidgetProps) {
   const { offset, handleMouseDown, resetOffset, snapToCorner, isDragging, isAnimating, hasMoved, widgetRef } = useDrag(draggable, position);
+  // Filter undefined values so `data-x="undefined"` never leaks.
+  const extraDataAttrs: Record<string, string | number> = {};
+  if (dataAttrs) {
+    for (const [k, v] of Object.entries(dataAttrs)) {
+      if (v !== undefined && v !== null && v !== '') extraDataAttrs[k] = v;
+    }
+  }
 
   const positionClasses = useMemo(() => {
     switch (position) {
@@ -869,6 +892,7 @@ export function CallWidget({
           transition: isAnimating ? 'transform 0.2s ease-out' : undefined,
           ...style,
         }}
+        {...extraDataAttrs}
       >
       <div
         className={cn(

@@ -206,27 +206,41 @@ function SpotlightLayout({
        *      a blank black square in spotlight mode (previously: an empty
        *      bg-black aspect-video sat there until somebody spoke, which
        *      read as "the call is broken"). */}
-      <div className="flex-1 bg-black aspect-video relative">
-        {spotlightContent ?? (() => {
-          const speaker = spotlightParticipantId
-            ? participants.find(x => x.id === spotlightParticipantId) ?? null
-            : null;
-          const tileSource = speaker ?? participants[0] ?? localParticipant;
-          if (!tileSource) return null;
-          return (
-            <ParticipantTile
-              id={tileSource.id}
-              displayName={tileSource.displayName}
-              avatarUrl={tileSource.avatarUrl}
-              isMuted={tileSource.isMuted}
-              isLocal={tileSource.isLocal}
-              isSpotlight
-              videoElement={tileSource.videoElement}
-              className="w-full h-full"
-            />
-          );
-        })()}
-      </div>
+      {(() => {
+        // E2E hook: tag the spotlight wrapper with data-spotlight-type/user so
+        // page-objects can read `screen` vs `camera` without inspecting the
+        // child <video>'s srcObject.
+        const speaker = spotlightParticipantId
+          ? participants.find(x => x.id === spotlightParticipantId) ?? null
+          : null;
+        const tileSource = speaker ?? participants[0] ?? localParticipant;
+        const spotlightType: 'screen' | 'camera' = spotlightContent ? 'screen' : 'camera';
+        const spotlightUser = tileSource?.displayName ?? '';
+        return (
+          <div
+            className="flex-1 bg-black aspect-video relative"
+            data-testid="hangout-spotlight"
+            data-spotlight-type={spotlightType}
+            data-spotlight-user={spotlightUser}
+          >
+            {spotlightContent ?? (() => {
+              if (!tileSource) return null;
+              return (
+                <ParticipantTile
+                  id={tileSource.id}
+                  displayName={tileSource.displayName}
+                  avatarUrl={tileSource.avatarUrl}
+                  isMuted={tileSource.isMuted}
+                  isLocal={tileSource.isLocal}
+                  isSpotlight
+                  videoElement={tileSource.videoElement}
+                  className="w-full h-full"
+                />
+              );
+            })()}
+          </div>
+        );
+      })()}
 
       {/* Filmstrip */}
       {filmstrip.length > 0 && (

@@ -72,6 +72,9 @@ export function CallStartedBanner({
     <div
       role="status"
       aria-live="polite"
+      data-testid="incoming-call-toast"
+      data-call-mode={mode}
+      data-caller-name={callerName}
       className={cn(
         'flex items-center gap-3 px-3 py-2 rounded-lg shadow-lg',
         'bg-[#1e293b] text-white border border-white/10',
@@ -95,6 +98,7 @@ export function CallStartedBanner({
             onClick={() => { setVisible(false); onDismiss(); }}
             className="text-xs text-white/60 hover:text-white px-2 py-1 rounded"
             aria-label="Dismiss call invitation"
+            data-testid="incoming-call-dismiss"
           >
             Dismiss
           </button>
@@ -105,6 +109,7 @@ export function CallStartedBanner({
             onClick={() => { setVisible(false); onJoin(); }}
             className="text-xs font-semibold bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded"
             aria-label="Join call"
+            data-testid="incoming-call-join"
           >
             Join
           </button>

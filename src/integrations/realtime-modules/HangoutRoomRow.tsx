@@ -72,7 +72,9 @@ export function HangoutRoomRow({
   onContextMenu,
   kebab,
   className,
-  'data-testid': testId = 'hangout-room-row',
+  // Default testid is `room-row` — matches the e2e RoomsSidebar page-
+  // object's selectors. Callers can still override via the prop.
+  'data-testid': testId = 'room-row',
 }: HangoutRoomRowProps) {
   // Live mode: drive occupancy off the realtime-modules hook so this
   // row updates in-place as `occupancy-delta` frames arrive. Falls back
@@ -145,6 +147,15 @@ export function HangoutRoomRow({
       kebab={kebab}
       aria-label={`${name} room`}
       className={className}
+      // E2E hooks: room slug + live occupancy + joined-state flags so the
+      // RoomsSidebar page-object can locate rows + assert presence
+      // transitions without scraping CSS.
+      dataAttrs={{
+        'data-room-slug': slug,
+        'data-room-name': name,
+        'data-room-active-count': count,
+        'data-joined': active ? 'true' : 'false',
+      }}
     />
   );
 }
