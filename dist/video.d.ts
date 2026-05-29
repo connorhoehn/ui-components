@@ -356,6 +356,14 @@ export declare interface StatusStripProps {
     style?: CSSProperties;
 }
 
+/**
+ * Companion utility: returns true when the stream has at least one
+ * paintable video track (live + enabled + not muted). Pair with
+ * useTrackStateBump in the same component so the boolean re-derives on
+ * every track transition.
+ */
+export declare function streamHasUsableVideo(stream: MediaStream | undefined | null): boolean;
+
 export declare interface StreamMetrics {
     bitrateBps: number;
     fps: number;
@@ -401,6 +409,8 @@ declare interface UseMuteWhileTalkingOptions {
     /** Cool-down between toast fires (ms). Default 6000. */
     cooldownMs?: number;
 }
+
+export declare function useTrackStateBump(stream: MediaStream | undefined | null, participantLabel: string): number;
 
 /**
  * Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant

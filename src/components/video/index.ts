@@ -44,6 +44,7 @@ export { RosterPanel } from './RosterPanel';
 export type { RosterPanelProps, RosterParticipant } from './RosterPanel';
 
 export { useMuteWhileTalking } from '../../lib/video/useMuteWhileTalking';
+export { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrackStateBump';
 
 export { TranscriptOverlay } from './TranscriptOverlay';
 export type { TranscriptOverlayProps, CaptionLine } from './TranscriptOverlay';
