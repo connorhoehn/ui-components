@@ -1,6 +1,16 @@
 import { CSSProperties } from 'react';
 import { JSX } from 'react/jsx-runtime';
+import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
+
+export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
+
+export declare interface CallingStatusPillProps {
+    /** Show/hide gate — the parent decides ringing semantics. */
+    show: boolean;
+    /** Label for the callee(s). E.g. "Alice", "Alice & Bob", "3 people". */
+    label: string;
+}
 
 export declare type CallMode = 'audio' | 'video';
 
@@ -174,6 +184,14 @@ export declare interface HangoutLayoutProps {
 
 export declare type HangoutMode = 'auto' | 'spotlight';
 
+export declare function MuteWhileTalkingToast({ show, label, }: MuteWhileTalkingToastProps): JSX.Element | null;
+
+export declare interface MuteWhileTalkingToastProps {
+    show: boolean;
+    /** Optional label override. */
+    label?: string;
+}
+
 export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
 export declare function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps): JSX.Element;
@@ -276,6 +294,14 @@ export declare interface ReactionPickerProps {
     style?: CSSProperties;
 }
 
+export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
+
+export declare interface ReconnectingBannerProps {
+    show: boolean;
+    /** Optional label override. Default: "Reconnecting…". */
+    label?: string;
+}
+
 export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, className, }: RecordingListProps): JSX.Element;
 
 export declare interface RecordingListItem {
@@ -311,6 +337,17 @@ export declare interface RecordingPlayerProps {
     /** Hide the download button (private channels). Default false. */
     hideDownload?: boolean;
     className?: string;
+}
+
+export declare function RemoteTileSlot({ stream, displayName, cameraOn, avatarSize, }: RemoteTileSlotProps): JSX.Element;
+
+export declare interface RemoteTileSlotProps {
+    stream: MediaStream | undefined;
+    displayName: string;
+    /** Camera enabled by sender. False → show avatar even if a stream exists. */
+    cameraOn: boolean;
+    /** Avatar size when fallback renders. Default 96. */
+    avatarSize?: number;
 }
 
 export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, className, }: RosterPanelProps): JSX.Element;
@@ -373,6 +410,18 @@ export declare interface StreamMetrics {
     };
     packetsLost: number;
     jitter?: number;
+}
+
+export declare function StreamVideo({ stream, muted, videoRef, className, }: StreamVideoProps): JSX.Element;
+
+export declare interface StreamVideoProps {
+    stream: MediaStream;
+    muted?: boolean;
+    /** Optional external ref. Lets callers reach the underlying <video>
+     *  for OS-level Picture-in-Picture. */
+    videoRef?: MutableRefObject<HTMLVideoElement | null>;
+    /** Tailwind class overrides. Defaults to `h-full w-full object-cover`. */
+    className?: string;
 }
 
 export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;

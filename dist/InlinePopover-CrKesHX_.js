@@ -5,7 +5,8 @@ import * as hr from "react-dom";
 import br, { createPortal as Nt } from "react-dom";
 import { c as E } from "./cn-B6yFEsav.js";
 import { M as gr } from "./Modal-2jg4229_.js";
-import { a as kt, S as xr, A as yr, b as wr } from "./Badge-CCsRykoK.js";
+import { A as kt, a as xr } from "./Avatar-Q-j4vnWn.js";
+import { S as yr, A as wr } from "./Badge-FT03wujO.js";
 import "clsx";
 import "tailwind-merge";
 var it = 1, Er = 0.9, Cr = 0.8, Sr = 0.17, Te = 0.1, Me = 0.999, Nr = 0.9999, kr = 0.99, Rr = /[\\\/_+.#"@\[\(\{&]/, Pr = /[\\\/_+.#"@\[\(\{&]/g, Ar = /[\s-]/, Rt = /[\s-]/g;
@@ -1381,7 +1382,7 @@ vo.displayName = Jt;
 function Qe(e) {
   return e ? "open" : "closed";
 }
-var er = "DialogTitleWarning", [Na, tr] = Or(er, {
+var er = "DialogTitleWarning", [ka, tr] = Or(er, {
   contentName: Z,
   titleName: Ze,
   docsSlug: "dialog"
@@ -1777,11 +1778,11 @@ function et() {
     );
   return e;
 }
-function ka() {
+function Ra() {
   const { open: e, close: t, toggle: r, isOpen: n, query: o } = et();
   return { open: e, close: t, toggle: r, isOpen: n, query: o };
 }
-function Ra({
+function Pa({
   commands: e,
   getDynamicCommands: t,
   children: r
@@ -1820,7 +1821,7 @@ function Go(e) {
     items: n
   }));
 }
-function Pa({
+function Aa({
   placeholder: e = "Type a command or search…",
   emptyState: t,
   className: r
@@ -1909,7 +1910,7 @@ function Pa({
     }
   );
 }
-function Aa({ className: e } = {}) {
+function Da({ className: e } = {}) {
   const { toggle: t } = et();
   return /* @__PURE__ */ g(
     "button",
@@ -1932,7 +1933,7 @@ function Aa({ className: e } = {}) {
     }
   );
 }
-function Da({
+function Oa({
   label: e,
   hint: t,
   error: r,
@@ -1993,7 +1994,7 @@ function Da({
     }
   );
 }
-function Oa({
+function Ia({
   label: e,
   value: t,
   accent: r = !1,
@@ -2045,7 +2046,7 @@ const Yo = {
   md: "w-[20px] h-[20px]",
   lg: "w-[28px] h-[28px]"
 };
-function Ia({
+function La({
   size: e = "md",
   color: t,
   className: r,
@@ -2073,7 +2074,7 @@ const qo = {
   sm: "h-1.5",
   md: "h-2"
 };
-function La({
+function Ta({
   value: e,
   max: t = 100,
   color: r,
@@ -2118,7 +2119,7 @@ const Xo = {
   sm: "px-2.5 py-0.5 text-[11px]",
   xs: "px-2 py-px text-[10px]"
 }, Zo = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", Qo = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", Jo = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
-function Ta({
+function Ma({
   active: e,
   onClick: t,
   color: r,
@@ -2161,7 +2162,7 @@ const ea = {
   sm: "px-2.5 py-1 text-xs",
   md: "px-3 py-1.5 text-sm"
 }, ta = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", ra = "bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
-function Ma({
+function _a({
   options: e,
   value: t,
   onChange: r,
@@ -2200,7 +2201,7 @@ function Ma({
     }
   );
 }
-function _a({
+function Fa({
   label: e,
   id: t,
   href: r,
@@ -2248,7 +2249,7 @@ const na = [
   '[tabindex]:not([tabindex="-1"])',
   '[contenteditable="true"]'
 ].join(",");
-function Fa({
+function $a({
   open: e,
   onClose: t,
   title: r,
@@ -2337,7 +2338,7 @@ function oa(e, t) {
     return t;
   }
 }
-function $a({
+function Wa({
   title: e,
   defaultOpen: t = !1,
   badge: r,
@@ -2404,7 +2405,7 @@ function $a({
     }
   );
 }
-function Wa({
+function Ba({
   value: e,
   onChange: t,
   placeholder: r,
@@ -2492,7 +2493,7 @@ const aa = {
   info: "bg-[var(--color-info-bg,#eff6ff)] border-[var(--color-info,#2563eb)] text-[var(--color-info,#2563eb)]",
   warning: "bg-[var(--color-warning-bg,#fffbeb)] border-[var(--color-warning,#f59e0b)] text-[var(--color-warning,#f59e0b)]"
 };
-function Ba({ tone: e, children: t, onDismiss: r, className: n }) {
+function ja({ tone: e, children: t, onDismiss: r, className: n }) {
   return /* @__PURE__ */ g(
     "div",
     {
@@ -2519,7 +2520,7 @@ function Ba({ tone: e, children: t, onDismiss: r, className: n }) {
     }
   );
 }
-function ja({ title: e, subtitle: t, meta: r, action: n, className: o }) {
+function Ua({ title: e, subtitle: t, meta: r, action: n, className: o }) {
   return /* @__PURE__ */ g("div", { className: E("flex items-center justify-between gap-4", o), children: [
     /* @__PURE__ */ g("div", { className: "min-w-0", children: [
       /* @__PURE__ */ g("div", { className: "flex items-center gap-2 min-w-0", children: [
@@ -2531,7 +2532,7 @@ function ja({ title: e, subtitle: t, meta: r, action: n, className: o }) {
     n && /* @__PURE__ */ c("div", { className: "flex-shrink-0", children: n })
   ] });
 }
-function Ua({
+function Va({
   title: e,
   description: t,
   actions: r,
@@ -2606,7 +2607,7 @@ function Ye({ size: e = "md", color: t, className: r }) {
     )) })
   ] });
 }
-function Va({
+function Ka({
   value: e,
   onChange: t,
   onSubmit: r,
@@ -2704,7 +2705,7 @@ function ia({ name: e, done: t, className: r }) {
 function la({ toolCalls: e, className: t }) {
   return /* @__PURE__ */ c("div", { className: E("flex flex-wrap gap-1.5 py-1", t), children: e.map((r) => /* @__PURE__ */ c(ia, { name: r.name, done: r.done }, r.id)) });
 }
-function Ka({
+function za({
   role: e,
   content: t,
   toolCalls: r,
@@ -2721,7 +2722,7 @@ function Ka({
     e === "user" ? /* @__PURE__ */ c("div", { className: "text-sm text-[var(--color-text-primary)] whitespace-pre-wrap", children: t }) : /* @__PURE__ */ c("div", { className: "text-sm text-[var(--color-text-primary)] prose-sm max-w-none", children: t ? l ? l(t) : /* @__PURE__ */ c("span", { className: "whitespace-pre-wrap", children: t }) : n ? /* @__PURE__ */ c(Ye, {}) : null })
   ] });
 }
-function za({
+function Ha({
   content: e,
   streaming: t = !1,
   defaultOpen: r = !1,
@@ -2764,7 +2765,7 @@ function za({
     }
   );
 }
-function Ha({
+function Ga({
   prompts: e,
   onSelect: t,
   columns: r,
@@ -2789,7 +2790,7 @@ function Ha({
     )) })
   ] });
 }
-function Ga({
+function Ya({
   suggestions: e,
   onSelect: t,
   onRefresh: r,
@@ -2820,7 +2821,7 @@ function Ga({
     )
   ] });
 }
-function Ya({
+function qa({
   name: e,
   memberCount: t,
   description: r,
@@ -2850,7 +2851,7 @@ function Ya({
               }
             ) : /* @__PURE__ */ c(kt, { name: e, size: 36 }),
             a !== void 0 && /* @__PURE__ */ c("span", { className: "absolute -bottom-0.5 -right-0.5", children: /* @__PURE__ */ c(
-              xr,
+              yr,
               {
                 color: a ? "#22c55e" : "#94a3b8",
                 size: "sm",
@@ -2889,7 +2890,7 @@ function Ya({
     }
   );
 }
-function qa({ user: e, items: t, className: r, "data-testid": n }) {
+function Xa({ user: e, items: t, className: r, "data-testid": n }) {
   const [o, a] = X(!1), l = Ne(null), i = se(() => a(!1), []);
   return F(() => {
     if (!o) return;
@@ -3017,7 +3018,7 @@ function ca(e, t) {
   const r = e.slice(0, 1), n = e.slice(-(t - 2 > 0 ? t - 2 : 1));
   return [...r, null, ...n];
 }
-function Xa({
+function Za({
   items: e,
   separator: t = "/",
   maxItems: r,
@@ -3089,7 +3090,7 @@ function fa({ status: e, colors: t }) {
     }
   );
 }
-function Za({
+function Qa({
   name: e,
   id: t,
   status: r,
@@ -3180,7 +3181,7 @@ function Za({
             ]
           }
         ),
-        /* @__PURE__ */ c(yr, { items: l, staggerMs: R }),
+        /* @__PURE__ */ c(wr, { items: l, staggerMs: R }),
         /* @__PURE__ */ g(
           "div",
           {
@@ -3194,7 +3195,7 @@ function Za({
             },
             children: [
               /* @__PURE__ */ g("div", { style: { display: "flex", alignItems: "center", gap: 8, minWidth: 0 }, children: [
-                o.length > 0 ? /* @__PURE__ */ c(wr, { names: o, maxVisible: 5, size: 24 }) : /* @__PURE__ */ g("span", { style: { fontSize: 12, color: "#9ca3af" }, children: [
+                o.length > 0 ? /* @__PURE__ */ c(xr, { names: o, maxVisible: 5, size: 24 }) : /* @__PURE__ */ g("span", { style: { fontSize: 12, color: "#9ca3af" }, children: [
                   /* @__PURE__ */ c("strong", { style: { color: "#374151" }, children: a ?? 0 }),
                   " contributors"
                 ] }),
@@ -3259,7 +3260,7 @@ function Et({
     )
   ) : /* @__PURE__ */ c(Ct, { items: e, renderNavItem: n }) });
 }
-function Qa({
+function Ja({
   title: e,
   items: t,
   titleAction: r,
@@ -3414,7 +3415,7 @@ function ha(e, t, r) {
     left: e.left
   };
 }
-function Ja({
+function ei({
   trigger: e,
   open: t,
   onClose: r,
@@ -3506,35 +3507,35 @@ function Ja({
   );
 }
 export {
-  Xa as B,
-  ja as C,
-  Fa as D,
-  _a as E,
-  Ta as F,
-  Ba as I,
-  Ka as M,
-  Ua as P,
-  Ha as Q,
-  Wa as S,
-  za as T,
-  qa as U,
-  Ya as a,
-  Va as b,
-  $a as c,
-  Pa as d,
-  Aa as e,
-  Ra as f,
-  Ga as g,
-  Da as h,
-  Ja as i,
-  La as j,
-  Za as k,
-  Ma as l,
-  Ia as m,
-  Oa as n,
-  Qa as o,
+  Za as B,
+  Ua as C,
+  $a as D,
+  Fa as E,
+  Ma as F,
+  ja as I,
+  za as M,
+  Va as P,
+  Ga as Q,
+  Ba as S,
+  Ha as T,
+  Xa as U,
+  qa as a,
+  Ka as b,
+  Wa as c,
+  Aa as d,
+  Da as e,
+  Pa as f,
+  Ya as g,
+  Oa as h,
+  ei as i,
+  Ta as j,
+  Qa as k,
+  _a as l,
+  La as m,
+  Ia as n,
+  Ja as o,
   Ye as p,
   ia as q,
   la as r,
-  ka as u
+  Ra as u
 };

@@ -46,5 +46,20 @@ export type { RosterPanelProps, RosterParticipant } from './RosterPanel';
 export { useMuteWhileTalking } from '../../lib/video/useMuteWhileTalking';
 export { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrackStateBump';
 
+export { StreamVideo } from './StreamVideo';
+export type { StreamVideoProps } from './StreamVideo';
+
+export { RemoteTileSlot } from './RemoteTileSlot';
+export type { RemoteTileSlotProps } from './RemoteTileSlot';
+
+export { CallingStatusPill } from './CallingStatusPill';
+export type { CallingStatusPillProps } from './CallingStatusPill';
+
+export { ReconnectingBanner } from './ReconnectingBanner';
+export type { ReconnectingBannerProps } from './ReconnectingBanner';
+
+export { MuteWhileTalkingToast } from './MuteWhileTalkingToast';
+export type { MuteWhileTalkingToastProps } from './MuteWhileTalkingToast';
+
 export { TranscriptOverlay } from './TranscriptOverlay';
 export type { TranscriptOverlayProps, CaptionLine } from './TranscriptOverlay';
