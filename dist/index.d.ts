@@ -3665,6 +3665,23 @@ export declare interface PresenceContextValue {
     setTyping: (isTyping: boolean) => void;
 }
 
+export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;
+
+export declare interface PresenceDotProps {
+    state: PresenceState;
+    /** Override the auto-computed accessible label. */
+    ariaLabel?: string;
+    /** Visible text label after the dot. */
+    label?: ReactNode;
+    /** Pulse animation. Defaults to true when state === 'online'. */
+    pulse?: boolean;
+    size?: StatusDotSize;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+}
+
 export declare function PresencePanel({ users, currentClientId }: PresencePanelProps): JSX.Element;
 
 declare interface PresencePanelProps {
@@ -3676,6 +3693,8 @@ export declare function PresenceProvider({ value, children, }: {
     value: PresenceContextValue;
     children: ReactNode;
 }): JSX.Element;
+
+export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
 
 declare interface PresenceUser {
     clientId: string;
@@ -5977,6 +5996,26 @@ declare interface UseActivityBusReturn {
  declare interface UsePresenceReturn {
      users: PresenceUser[];
      setTyping: (isTyping: boolean) => void;
+ }
+
+ export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, 'data-testid': testId, }: UserChipProps): JSX.Element;
+
+ export declare interface UserChipProps {
+     name: string;
+     /** Optional display label (e.g. "@alice"); defaults to `name`. */
+     label?: string;
+     /** Avatar pixel size. Defaults to 20. */
+     avatarSize?: number;
+     /** Override the avatar background color. */
+     avatarColor?: string;
+     /** Show a presence indicator after the name. */
+     presence?: PresenceState;
+     /** Make the whole chip clickable. */
+     onClick?: (e: MouseEvent_2<HTMLElement>) => void;
+     className?: string;
+     style?: CSSProperties;
+     title?: string;
+     'data-testid'?: string;
  }
 
  export declare function useReactions(options: UseReactionsOptions): UseReactionsReturn;

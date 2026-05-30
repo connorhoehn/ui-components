@@ -5,6 +5,7 @@ import { ElementType } from 'react';
 import { HTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
+import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { RefObject } from 'react';
@@ -802,6 +803,25 @@ export declare interface PresenceAvatarUser {
     online?: boolean;
 }
 
+export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;
+
+export declare interface PresenceDotProps {
+    state: PresenceState;
+    /** Override the auto-computed accessible label. */
+    ariaLabel?: string;
+    /** Visible text label after the dot. */
+    label?: ReactNode;
+    /** Pulse animation. Defaults to true when state === 'online'. */
+    pulse?: boolean;
+    size?: StatusDotSize;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+}
+
+export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
+
 export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
 
 export declare interface ProgressBarProps {
@@ -1310,6 +1330,26 @@ export declare interface TypingIndicatorProps {
 }
 
 export declare function useCommandPalette(): CommandPaletteController;
+
+export declare function UserChip({ name, label, avatarSize, avatarColor, presence, onClick, className, style, title, 'data-testid': testId, }: UserChipProps): JSX.Element;
+
+export declare interface UserChipProps {
+    name: string;
+    /** Optional display label (e.g. "@alice"); defaults to `name`. */
+    label?: string;
+    /** Avatar pixel size. Defaults to 20. */
+    avatarSize?: number;
+    /** Override the avatar background color. */
+    avatarColor?: string;
+    /** Show a presence indicator after the name. */
+    presence?: PresenceState;
+    /** Make the whole chip clickable. */
+    onClick?: (e: MouseEvent_2<HTMLElement>) => void;
+    className?: string;
+    style?: CSSProperties;
+    title?: string;
+    'data-testid'?: string;
+}
 
 export declare function UserMenu({ user, items, className, 'data-testid': testId }: UserMenuProps): JSX.Element;
 
