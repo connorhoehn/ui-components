@@ -11,6 +11,8 @@ export * from './Banner';
 export * from './Chart';
 export { default as Chip } from './Chip';
 export * from './Chip';
+export { default as CodeBlock } from './CodeBlock';
+export * from './CodeBlock';
 export { default as CodeEditor } from './CodeEditor';
 export * from './CodeEditor';
 export { default as CommandPalette } from './CommandPalette';
