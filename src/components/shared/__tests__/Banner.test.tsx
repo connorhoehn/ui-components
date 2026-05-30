@@ -28,13 +28,13 @@ describe('Banner', () => {
 
   it('renders with info variant styling', () => {
     render(<Banner variant="info">Info message</Banner>);
-    const alert = screen.getByRole('alert');
+    const alert = screen.getByRole('status');
     expect(alert).toHaveClass('bg-info-bg', 'border-info-border');
   });
 
   it('renders with success variant styling', () => {
     render(<Banner variant="success">Success message</Banner>);
-    const alert = screen.getByRole('alert');
+    const alert = screen.getByRole('status');
     expect(alert).toHaveClass('bg-success-bg', 'border-success-border');
   });
 
