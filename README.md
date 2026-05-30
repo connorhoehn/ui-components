@@ -76,3 +76,4 @@ so no real WebSocket is needed for local development.
 - TypeScript 5.9 (strict)
 - Vite 7 (library mode, multi-entry)
 - Vitest + Playwright for testing
+- Autonomy Charter (see [docs/AUTONOMY_CHARTER.md](docs/AUTONOMY_CHARTER.md))
