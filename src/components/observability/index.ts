@@ -8,3 +8,6 @@ export { default as MetricTimeSeriesPanel } from './components/MetricTimeSeriesP
 export { default as AlertList, AlertItem } from './components/AlertList';
 export type { AlertListProps, AlertListEntry } from './components/AlertList';
 export type { AlertItemProps, AlertSeverity } from './components/AlertItem';
+export { default as HealthGrid, HealthCell } from './components/HealthGrid';
+export type { HealthGridProps, HealthGridEntry, HealthGridColumns } from './components/HealthGrid';
+export type { HealthCellProps, HealthStatus } from './components/HealthCell';
