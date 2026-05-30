@@ -4,6 +4,7 @@ export * from './contexts';
 export * from './components/shared';
 export * from './components/sidebar';
 export * from './components/hangout';
+export * from './components/layout';
 export * from './styles';
 export * from './theme';
 export * from './api';

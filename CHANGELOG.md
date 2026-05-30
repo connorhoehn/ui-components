@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Root barrel (`src/index.ts`) now re-exports `./components/layout`, so
+  `AppShell`, `AppLayout`, `CollapsibleSidebar`, `ConnectionStatus`,
+  `ApiDegradedBanner`, and `CollapsedIconStrip` are reachable via
+  `import { ... } from '@connorhoehn/ui-components'` (previously only
+  available through deep imports under `…/components/layout`). Additive;
+  no name collisions with shared/sidebar/hangout barrels. Refs hub#1021.
+
 ## [2.9.1] — 2026-05-28
 
 ### Fixed
