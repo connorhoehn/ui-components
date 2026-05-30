@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { KPIGrid, StatCard } from '@/components/shared';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
 
@@ -51,42 +52,12 @@ export function IngestKPIs() {
     return unsubscribe;
   }, [onMessage]);
 
-  const cards: { label: string; value: number; color: string }[] = [
-    { label: 'Active Syncs', value: kpis.activeSyncs, color: '#6366f1' },
-    { label: 'Items Processed', value: kpis.itemsProcessed, color: '#10b981' },
-    { label: 'Conflicts', value: kpis.conflicts, color: '#f59e0b' },
-    { label: 'DLQ Items', value: kpis.dlqItems, color: '#ef4444' },
-  ];
-
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-      {cards.map((card) => (
-        <div
-          key={card.label}
-          style={{
-            background: '#fff',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            padding: '16px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 4,
-          }}
-        >
-          <span style={{ fontSize: 12, color: '#64748b', fontWeight: 500 }}>{card.label}</span>
-          <span
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              color: card.color,
-              lineHeight: 1.2,
-              fontVariantNumeric: 'tabular-nums',
-            }}
-          >
-            {card.value.toLocaleString()}
-          </span>
-        </div>
-      ))}
-    </div>
+    <KPIGrid>
+      <StatCard label="Active Syncs" value={kpis.activeSyncs.toLocaleString()} accent />
+      <StatCard label="Items Processed" value={kpis.itemsProcessed.toLocaleString()} mono />
+      <StatCard label="Conflicts" value={kpis.conflicts.toLocaleString()} />
+      <StatCard label="DLQ Items" value={kpis.dlqItems.toLocaleString()} danger />
+    </KPIGrid>
   );
 }

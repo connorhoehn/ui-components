@@ -52,6 +52,8 @@ export * from './UserPicker';
 // ── New primitives (2025-05) ──
 export { default as StatCard } from './StatCard';
 export * from './StatCard';
+export { default as KPIGrid } from './KPIGrid';
+export * from './KPIGrid';
 export { default as Spinner } from './Spinner';
 export * from './Spinner';
 export { default as ProgressBar } from './ProgressBar';
