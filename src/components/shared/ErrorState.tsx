@@ -1,0 +1,78 @@
+// src/components/shared/ErrorState.tsx
+//
+// Centered error-state card — companion to EmptyState. Same vertical card
+// shape, danger-tinted copy, optional retry CTA. Use for "we couldn't load
+// this" surfaces — failed fetches, broken renders, etc.
+
+import type { ReactNode } from 'react';
+import { cn } from '../../lib/cn';
+
+export interface ErrorStateProps {
+  /** Override the default ⚠️ glyph. Pass a string emoji or a ReactNode. */
+  icon?: ReactNode;
+  title: string;
+  /** Plain-text body (preferred when no markup is needed). */
+  body?: string;
+  /** Alias for `body` — accepts any ReactNode for richer copy (stack traces, links). */
+  description?: ReactNode;
+  actionLabel?: string;
+  onAction?: () => void;
+  /** Custom action node (overrides actionLabel/onAction when present). */
+  action?: ReactNode;
+  testId?: string;
+  actionTestId?: string;
+}
+
+function ErrorState({
+  icon = '⚠️',
+  title,
+  body,
+  description,
+  actionLabel,
+  onAction,
+  action,
+  testId = 'error-state',
+  actionTestId = 'error-state-action',
+}: ErrorStateProps) {
+  const resolvedDescription = description ?? body;
+  return (
+    <div
+      role="alert"
+      data-testid={testId}
+      className={cn(
+        'flex flex-col items-center justify-center min-h-[220px]',
+        'text-text-secondary gap-2 p-8 font-[inherit]',
+      )}
+    >
+      {icon && (
+        typeof icon === 'string'
+          ? <div className="text-[52px] mb-2" aria-hidden>{icon}</div>
+          : <div className="mb-2">{icon}</div>
+      )}
+      <div className="text-[17px] font-semibold text-[var(--color-state-error,#dc2626)]">{title}</div>
+      {resolvedDescription && (
+        <div className="text-[13px] text-center max-w-[340px] text-text-secondary leading-normal">
+          {resolvedDescription}
+        </div>
+      )}
+      {action
+        ? <div className="mt-2.5">{action}</div>
+        : actionLabel && onAction && (
+            <button
+              data-testid={actionTestId}
+              onClick={onAction}
+              type="button"
+              className={cn(
+                'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
+                'bg-surface text-text-primary border border-border rounded-lg cursor-pointer font-[inherit]',
+                'hover:bg-slate-50',
+              )}
+            >
+              {actionLabel}
+            </button>
+          )}
+    </div>
+  );
+}
+
+export default ErrorState;

@@ -1792,6 +1792,24 @@ export declare interface ErrorPageProps {
     onBack?: () => void;
 }
 
+export declare function ErrorState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: ErrorStateProps): JSX.Element;
+
+export declare interface ErrorStateProps {
+    /** Override the default ⚠️ glyph. Pass a string emoji or a ReactNode. */
+    icon?: ReactNode;
+    title: string;
+    /** Plain-text body (preferred when no markup is needed). */
+    body?: string;
+    /** Alias for `body` — accepts any ReactNode for richer copy (stack traces, links). */
+    description?: ReactNode;
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Custom action node (overrides actionLabel/onAction when present). */
+    action?: ReactNode;
+    testId?: string;
+    actionTestId?: string;
+}
+
 export declare interface EventGlyph {
     icon: string;
     color: string;
@@ -2554,6 +2572,18 @@ export declare interface LLMNodeData {
 }
 
 export declare type LLMProvider = 'anthropic' | 'bedrock' | 'claude-code';
+
+export declare function LoadingState({ label, description, spinnerSize, spinnerColor, testId, }: LoadingStateProps): JSX.Element;
+
+export declare interface LoadingStateProps {
+    /** Primary label. Defaults to "Loading…". */
+    label?: string;
+    /** Optional secondary copy below the label. */
+    description?: ReactNode;
+    spinnerSize?: SpinnerSize;
+    spinnerColor?: string;
+    testId?: string;
+}
 
 declare interface LogEntry {
     id: string;
