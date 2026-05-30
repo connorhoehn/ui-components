@@ -79,6 +79,8 @@ export * from './CardHeader';
 export { default as PageHeader } from './PageHeader';
 export * from './PageHeader';
 export * from './ThinkingDots';
+export { default as TypingIndicator } from './TypingIndicator';
+export * from './TypingIndicator';
 export * from './ChatComposer';
 export * from './MessageBubble';
 export * from './ToolCallStrip';

@@ -526,6 +526,9 @@ export declare interface FollowUpChipsProps {
     className?: string;
 }
 
+/** Formats a list of typing user names. Trims to a max of 2 explicit names + "+N others". */
+export declare function formatTypingBanner(names: string[]): string;
+
 /**
  * Labeled wrapper around an input control. Wires `<label htmlFor>` →
  * `<input id>`, plus `aria-describedby` for hints/errors and `aria-invalid`
@@ -1286,6 +1289,24 @@ export declare function ToolCallStrip({ toolCalls, className }: ToolCallStripPro
 export declare interface ToolCallStripProps {
     toolCalls: ToolCall[];
     className?: string;
+}
+
+export declare function TypingIndicator({ names, compact, color, size, className, 'data-testid': testId, }: TypingIndicatorProps): JSX.Element | null;
+
+export declare interface TypingIndicatorProps {
+    /**
+     * Names currently typing. Empty array → renders nothing (component returns null
+     * so callers don't have to wrap it in a conditional).
+     */
+    names: string[];
+    /** Render only the animated dots, with no banner text. Default: false. */
+    compact?: boolean;
+    /** Dot color override (passes through to ThinkingDots). */
+    color?: string;
+    /** Dot size (passes through to ThinkingDots). Default 'sm'. */
+    size?: 'sm' | 'md';
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function useCommandPalette(): CommandPaletteController;
