@@ -35,6 +35,8 @@ export { default as Sparkline } from './Sparkline';
 export * from './Sparkline';
 export { default as Switch } from './Switch';
 export * from './Switch';
+export { default as Tabs } from './Tabs';
+export * from './Tabs';
 export { default as TagEditor } from './TagEditor';
 export * from './TagEditor';
 export * from './Toast';
