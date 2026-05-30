@@ -1,5 +1,7 @@
 node_modules
 # dist/ is intentionally tracked so github: tag installs work without a build toolchain
+# demo/dist/ is a Vite dev-server build artifact for the local showcase; NOT shipped to consumers
+demo/dist
 *.local
 .vite
 coverage

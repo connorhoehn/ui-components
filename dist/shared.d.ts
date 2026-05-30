@@ -227,6 +227,24 @@ export declare interface ChipProps {
 
 export declare type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
 
+export declare function CodeBlock({ code, language, theme, copyButton, showLineNumbers, className, style, 'data-testid': testId, ariaLabel, }: CodeBlockProps): JSX.Element;
+
+export declare type CodeBlockLanguage = 'tsx' | 'ts' | 'jsx' | 'js' | 'json' | 'bash' | 'sh' | 'text';
+
+export declare interface CodeBlockProps {
+    code: string;
+    language?: CodeBlockLanguage;
+    theme?: CodeBlockTheme;
+    copyButton?: boolean;
+    showLineNumbers?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    ariaLabel?: string;
+}
+
+export declare type CodeBlockTheme = 'dark' | 'light';
+
 export declare function CodeEditor({ value, onChange, language: _language, // Phase 1: accepted but not applied yet
     placeholder, minLines, maxLines, readOnly, variables, 'aria-label': ariaLabel, }: CodeEditorProps): JSX.Element;
 
@@ -1010,6 +1028,14 @@ export declare interface SwitchProps {
 
 export declare type SwitchSize = 'sm' | 'md';
 
+export declare interface TabItem {
+    id: string;
+    label: ReactNode;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
 export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
 
 export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
@@ -1048,6 +1074,37 @@ export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElem
     sortable?: boolean;
     sortDirection?: 'asc' | 'desc' | null;
 }
+
+export declare function TabPanel({ id, when, idPrefix, className, style, children }: TabPanelProps): JSX.Element | null;
+
+export declare interface TabPanelProps {
+    /** The tab id this panel is associated with. */
+    id: string;
+    /** Currently-active tab id. Panel renders only when these match. */
+    when: string;
+    /** Must match the Tabs `idPrefix` for accessibility wiring. Auto-generated tabs without an idPrefix should pass it through. */
+    idPrefix?: string;
+    className?: string;
+    style?: CSSProperties;
+    children?: ReactNode;
+}
+
+export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, }: TabsProps): JSX.Element;
+
+export declare interface TabsProps {
+    items: TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    variant?: TabsVariant;
+    size?: 'sm' | 'md';
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    /** Shared id used to wire <TabPanel> regions to their <tab> triggers. Auto-generated if omitted. */
+    idPrefix?: string;
+}
+
+export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
 
 export declare function TagEditor({ value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
 

@@ -1,7 +1,39 @@
 import { jsxs as o, jsx as r } from "react/jsx-runtime";
 import { useState as F, useRef as f, useEffect as x } from "react";
 import { c as u } from "./cn-B6yFEsav.js";
+const p = [
+  "#FF6B6B",
+  "#4ECDC4",
+  "#45B7D1",
+  "#96CEB4",
+  "#FECA57",
+  "#FF9FF3",
+  "#54A0FF",
+  "#5F27CD",
+  "#00D2D3",
+  "#FF9F43",
+  "#1DD1A1",
+  "#F368E0",
+  "#3742FA",
+  "#2F3542",
+  "#FF3838"
+];
 function v(e) {
+  let n = 0;
+  for (let t = 0; t < e.length; t++)
+    n = e.charCodeAt(t) + ((n << 5) - n);
+  return p[Math.abs(n) % p.length];
+}
+function C(e) {
+  if (!e) return "?";
+  const n = e.trim().split(/\s+/);
+  if (n.length >= 2) {
+    const t = n[0][0] ?? "", a = n[n.length - 1][0] ?? "";
+    return (t + a).toUpperCase();
+  }
+  return e.slice(0, 2).toUpperCase();
+}
+function T(e) {
   try {
     const n = new Date(e), t = n.getHours().toString().padStart(2, "0"), a = n.getMinutes().toString().padStart(2, "0");
     return `${t}:${a}`;
@@ -9,7 +41,7 @@ function v(e) {
     return "";
   }
 }
-function C(e) {
+function w(e) {
   if (e.length === 0) return "";
   if (e.length === 1) return `${e[0]} is typing...`;
   if (e.length === 2) return `${e[0]} and ${e[1]} are typing...`;
@@ -36,14 +68,14 @@ function E({ messages: e, onSend: n, disabled: t = !1, onTyping: a, typingUsers:
       e.length,
       ")"
     ] }),
-    d.length > 0 && /* @__PURE__ */ r("div", { className: "text-[0.7rem] text-text-tertiary italic mb-1", children: C(d) }),
+    d.length > 0 && /* @__PURE__ */ r("div", { className: "text-[0.7rem] text-text-tertiary italic mb-1", children: w(d) }),
     /* @__PURE__ */ r(
       "div",
       {
         ref: s,
         className: "max-h-[200px] overflow-y-auto mb-2",
         children: e.length === 0 ? /* @__PURE__ */ r("div", { className: "text-text-tertiary text-xs", children: "No messages yet" }) : e.map((i, g) => {
-          const N = i.displayName ?? i.clientId.slice(0, 8), b = v(i.timestamp);
+          const N = i.displayName ?? i.clientId.slice(0, 8), b = T(i.timestamp);
           return /* @__PURE__ */ o(
             "div",
             {
@@ -90,38 +122,6 @@ function E({ messages: e, onSend: n, disabled: t = !1, onTyping: a, typingUsers:
     ] })
   ] });
 }
-const p = [
-  "#FF6B6B",
-  "#4ECDC4",
-  "#45B7D1",
-  "#96CEB4",
-  "#FECA57",
-  "#FF9FF3",
-  "#54A0FF",
-  "#5F27CD",
-  "#00D2D3",
-  "#FF9F43",
-  "#1DD1A1",
-  "#F368E0",
-  "#3742FA",
-  "#2F3542",
-  "#FF3838"
-];
-function T(e) {
-  let n = 0;
-  for (let t = 0; t < e.length; t++)
-    n = e.charCodeAt(t) + ((n << 5) - n);
-  return p[Math.abs(n) % p.length];
-}
-function w(e) {
-  if (!e) return "?";
-  const n = e.trim().split(/\s+/);
-  if (n.length >= 2) {
-    const t = n[0][0] ?? "", a = n[n.length - 1][0] ?? "";
-    return (t + a).toUpperCase();
-  }
-  return e.slice(0, 2).toUpperCase();
-}
 function S({ users: e, currentClientId: n }) {
   return /* @__PURE__ */ o("div", { className: "border border-border rounded p-3 font-mono", children: [
     /* @__PURE__ */ o("div", { className: "text-[0.8rem] font-bold mb-2 text-text-primary", children: [
@@ -130,9 +130,9 @@ function S({ users: e, currentClientId: n }) {
       ")"
     ] }),
     e.length === 0 ? /* @__PURE__ */ r("div", { className: "text-text-tertiary text-xs", children: "No other users connected" }) : /* @__PURE__ */ r("div", { children: e.map((t) => {
-      const a = T(
+      const a = v(
         t.metadata.email ?? t.clientId
-      ), d = w(
+      ), d = C(
         t.metadata.displayName ?? t.clientId.slice(0, 2)
       ), l = t.metadata.isTyping === !0, m = t.clientId === n, s = t.metadata.displayName ?? (t.clientId.length > 12 ? t.clientId.slice(0, 12) + "..." : t.clientId);
       return /* @__PURE__ */ o(
@@ -160,5 +160,7 @@ function S({ users: e, currentClientId: n }) {
 }
 export {
   E as C,
-  S as P
+  S as P,
+  C as a,
+  v as i
 };

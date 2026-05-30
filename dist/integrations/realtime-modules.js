@@ -1,16 +1,15 @@
-import { jsx as a, jsxs as c, Fragment as _ } from "react/jsx-runtime";
-import { C as U, P as F } from "../PresencePanel-DHgUm0vc.js";
-import { A as O, F as W, N as B, P, B as R, a as $ } from "../Badge-FT03wujO.js";
-import { useState as N, useEffect as z, useMemo as C } from "react";
-import { c as H } from "../cn-B6yFEsav.js";
-import { H as V } from "../HangoutLayout-DTIq3ne2.js";
-import { useRoomOccupancy as q } from "@connorhoehn/realtime-modules/client/hangout-rooms";
-import { S as D, a as X } from "../SidebarRow-Cw4xIxer.js";
+import { jsx as a, jsxs as c, Fragment as C } from "react/jsx-runtime";
+import { C as T, P as W } from "../PresencePanel-snLbTN9f.js";
+import { A as O, F as B, N as H, P as $, B as E, a as M } from "../Badge-FT03wujO.js";
+import { useState as w, useEffect as U, useMemo as S } from "react";
+import { R as _, S as z, a as V } from "../ReactionsOverlay-CoaX3hRz.js";
+import { H as q } from "../HangoutLayout-DTIq3ne2.js";
+import { useRoomOccupancy as X } from "@connorhoehn/realtime-modules/client/hangout-rooms";
 import { E as K } from "../EmptyState-PM9wTjxk.js";
 import { a as j } from "../Banner-B8AcwPH_.js";
 import { I as Y } from "../IconButton-Da1kJ5WO.js";
 import { M as G } from "../Modal-2jg4229_.js";
-function J(e) {
+function Q(e) {
   return {
     id: e.id,
     clientId: e.clientId,
@@ -19,10 +18,10 @@ function J(e) {
     displayName: e.metadata?.displayName ?? void 0
   };
 }
-function Q(e) {
-  return e.map(J);
-}
 function Z(e) {
+  return e.map(Q);
+}
+function J(e) {
   return {
     id: e.clientId,
     name: e.metadata?.displayName ?? e.clientId.slice(0, 12),
@@ -30,12 +29,12 @@ function Z(e) {
     online: e.status !== "offline"
   };
 }
-function je(e) {
-  return e.map(Z);
+function Ae(e) {
+  return e.map(J);
 }
-const E = [15, 25, 35, 45, 55, 65, 75, 85], M = [20, 35, 50, 65, 80];
-function T(e, t) {
-  const n = E[t % E.length] ?? 50, i = M[Math.floor(t / E.length) % M.length] ?? 50, o = e.position != null && typeof e.position == "object" ? e.position : null;
+const P = [15, 25, 35, 45, 55, 65, 75, 85], D = [20, 35, 50, 65, 80];
+function F(e, t) {
+  const n = P[t % P.length] ?? 50, i = D[Math.floor(t / P.length) % D.length] ?? 50, o = e.position != null && typeof e.position == "object" ? e.position : null;
   return {
     id: e.id,
     emoji: e.emoji,
@@ -44,8 +43,8 @@ function T(e, t) {
     timestamp: e.timestamp
   };
 }
-function Pe(e) {
-  return e.map(T);
+function Ee(e) {
+  return e.map(F);
 }
 function ee(e) {
   try {
@@ -127,17 +126,17 @@ function ce(e) {
 function ue(e) {
   return e.map(ce);
 }
-function $e({
+function Pe({
   chat: e,
   presence: t,
   disabled: n,
   typingUsers: i
 }) {
-  const o = Q(e.messages), r = i ?? t?.roster.filter((d) => d.metadata?.isTyping === !0).map(
+  const o = Z(e.messages), r = i ?? t?.roster.filter((d) => d.metadata?.isTyping === !0).map(
     (d) => d.metadata?.displayName ?? d.clientId.slice(0, 8)
   ) ?? [];
   return /* @__PURE__ */ a(
-    U,
+    T,
     {
       messages: o,
       onSend: e.sendMessage,
@@ -146,7 +145,7 @@ function $e({
     }
   );
 }
-function Me({
+function je({
   presence: e,
   currentClientId: t
 }) {
@@ -155,9 +154,9 @@ function Me({
     status: i.status,
     metadata: i.metadata
   }));
-  return /* @__PURE__ */ a(F, { users: n, currentClientId: t });
+  return /* @__PURE__ */ a(W, { users: n, currentClientId: t });
 }
-function Le({
+function $e({
   activity: e,
   visibleCount: t,
   rotateMs: n,
@@ -178,48 +177,20 @@ function Le({
     }
   );
 }
-const me = {
-  "❤️": "[animation:reaction-heart_2.5s_ease-out_forwards]",
-  "😂": "[animation:reaction-laugh_2.5s_ease-out_forwards]",
-  "👍": "[animation:reaction-thumbsup_2.5s_ease-out_forwards]",
-  "👎": "[animation:reaction-thumbsdown_2.5s_ease-out_forwards]",
-  "😮": "[animation:reaction-wow_2.5s_ease-out_forwards]",
-  "😢": "[animation:reaction-cry_2.5s_ease-out_forwards]",
-  "😡": "[animation:reaction-angry_1.8s_ease-out_forwards]",
-  "🎉": "[animation:reaction-party_2.5s_ease-out_forwards]",
-  "🔥": "[animation:reaction-fire_2.5s_ease-out_forwards]",
-  "⚡": "[animation:reaction-lightning_1.5s_ease-out_forwards]",
-  "💯": "[animation:reaction-hundred_2.0s_ease-out_forwards]",
-  "🚀": "[animation:reaction-rocket_2.0s_ease-out_forwards]"
-};
-function pe({ reactions: e }) {
-  return /* @__PURE__ */ a("div", { className: "fixed inset-0 w-full h-full pointer-events-none z-[9999]", children: e.map((t) => /* @__PURE__ */ a(
-    "span",
-    {
-      className: H(
-        "absolute text-[2rem] select-none",
-        me[t.emoji] ?? "[animation:reaction-fade-up_2.5s_ease-out_forwards]"
-      ),
-      style: { left: `${t.x}%`, top: `${t.y}%` },
-      children: t.emoji
-    },
-    t.id
-  )) });
-}
-function ze({
+function Me({
   reactions: e,
   ttlMs: t = 2500
 }) {
-  const [n, i] = N([]), o = e.reactions;
-  return z(() => {
+  const [n, i] = w([]), o = e.reactions;
+  return U(() => {
     if (o.length === 0) return;
-    const r = o[o.length - 1], d = T(r, o.length - 1);
+    const r = o[o.length - 1], d = F(r, o.length - 1);
     i((m) => m.some((u) => u.id === d.id) ? m : [...m, d]);
     const h = setTimeout(() => {
       i((m) => m.filter((u) => u.id !== d.id));
     }, t);
     return () => clearTimeout(h);
-  }, [o, t]), /* @__PURE__ */ a(pe, { reactions: n });
+  }, [o, t]), /* @__PURE__ */ a(_, { reactions: n });
 }
 function De({
   fileUpload: e,
@@ -244,7 +215,7 @@ function De({
   }
   return /* @__PURE__ */ c("div", { children: [
     /* @__PURE__ */ a(
-      W,
+      B,
       {
         accept: t,
         maxSize: n,
@@ -272,7 +243,7 @@ function De({
             },
             children: [
               /* @__PURE__ */ a("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: l.filename }),
-              /* @__PURE__ */ a("span", { style: { color: fe(l.status), fontWeight: 600, fontSize: 12 }, children: l.status === "uploading" ? `${l.progress}%` : l.status }),
+              /* @__PURE__ */ a("span", { style: { color: me(l.status), fontWeight: 600, fontSize: 12 }, children: l.status === "uploading" ? `${l.progress}%` : l.status }),
               (l.status === "completed" || l.status === "clean") && l.downloadUrl && /* @__PURE__ */ a(
                 "a",
                 {
@@ -300,7 +271,7 @@ function De({
     )
   ] });
 }
-function fe(e) {
+function me(e) {
   switch (e) {
     case "completed":
     case "clean":
@@ -316,7 +287,7 @@ function fe(e) {
       return "#94a3b8";
   }
 }
-function Te({
+function Le({
   hangout: e,
   localClientId: t,
   videoElements: n,
@@ -335,7 +306,7 @@ function Te({
     })) : s;
   }
   return /* @__PURE__ */ a(
-    V,
+    q,
     {
       participants: p(l),
       localParticipant: b ? p([b])[0] : null,
@@ -355,7 +326,7 @@ function Ue({
 }) {
   const i = ue(e.notifications);
   return /* @__PURE__ */ a(
-    B,
+    H,
     {
       items: i,
       onItemClick: (r) => {
@@ -367,15 +338,15 @@ function Ue({
     }
   );
 }
-function Fe({
+function ze({
   capability: e,
   loading: t,
   fallback: n,
   children: i
 }) {
-  return e.isLoading ? /* @__PURE__ */ a(_, { children: t ?? null }) : e.enabled ? /* @__PURE__ */ a(_, { children: i }) : /* @__PURE__ */ a(_, { children: n ?? null });
+  return e.isLoading ? /* @__PURE__ */ a(C, { children: t ?? null }) : e.enabled ? /* @__PURE__ */ a(C, { children: i }) : /* @__PURE__ */ a(C, { children: n ?? null });
 }
-function ge({
+function pe({
   slug: e,
   name: t,
   participantId: n,
@@ -389,33 +360,33 @@ function ge({
   // object's selectors. Callers can still override via the prop.
   "data-testid": u = "room-row"
 }) {
-  const b = q(o ? e : null, {
+  const b = X(o ? e : null, {
     subscribeRoomsIndex: o
-  }), l = o ? b.occupancy ?? null : i ?? null, p = l?.count ?? 0, s = l?.members ?? [], f = C(() => n ? s.some((v) => v.participantId === n) : !1, [s, n]), x = f, w = C(
-    () => s.slice(0, 3).map((v) => ({
-      id: v.participantId,
-      name: v.displayName ?? v.userId,
+  }), l = o ? b.occupancy ?? null : i ?? null, p = l?.count ?? 0, s = l?.members ?? [], f = S(() => n ? s.some((N) => N.participantId === n) : !1, [s, n]), x = f, v = S(
+    () => s.slice(0, 3).map((N) => ({
+      id: N.participantId,
+      name: N.displayName ?? N.userId,
       online: !0
     })),
     [s]
   );
   let y = null;
-  return p > 1 ? y = /* @__PURE__ */ c(_, { children: [
-    /* @__PURE__ */ a(P, { users: w, maxVisible: 3, size: 18 }),
-    /* @__PURE__ */ a(R, { variant: "count", value: p, color: "muted" })
+  return p > 1 ? y = /* @__PURE__ */ c(C, { children: [
+    /* @__PURE__ */ a($, { users: v, maxVisible: 3, size: 18 }),
+    /* @__PURE__ */ a(E, { variant: "count", value: p, color: "muted" })
   ] }) : p === 1 && f ? y = /* @__PURE__ */ a(
-    R,
+    E,
     {
       variant: "pulse",
       color: "accent",
       "aria-label": "Just you in this room",
       "data-testid": `${u}-self-pulse`
     }
-  ) : p === 1 && (y = /* @__PURE__ */ c(_, { children: [
-    /* @__PURE__ */ a(P, { users: w, maxVisible: 1, size: 18 }),
-    /* @__PURE__ */ a(R, { variant: "count", value: 1, color: "muted" })
+  ) : p === 1 && (y = /* @__PURE__ */ c(C, { children: [
+    /* @__PURE__ */ a($, { users: v, maxVisible: 1, size: 18 }),
+    /* @__PURE__ */ a(E, { variant: "count", value: 1, color: "muted" })
   ] })), /* @__PURE__ */ a(
-    D,
+    z,
     {
       "data-testid": u,
       icon: /* @__PURE__ */ a("span", { "aria-hidden": "true", className: "font-semibold text-slate-400", children: "#" }),
@@ -437,30 +408,30 @@ function ge({
   );
 }
 const L = 3, I = 48;
-function he(e) {
+function fe(e) {
   return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
-function be(e) {
+function ge(e) {
   const t = e.trim();
   return t.length === 0 ? "Name is required." : t.length < L ? `Name must be at least ${L} characters.` : t.length > I ? `Name must be at most ${I} characters.` : null;
 }
-function xe({
+function he({
   open: e,
   onClose: t,
   onCreate: n,
   onCreated: i,
   defaultVisibility: o
 }) {
-  const [r, d] = N(""), [h, m] = N(""), [u, b] = N(!1), [l, p] = N(!1), [s, f] = N(!1), [x, w] = N(null);
-  z(() => {
-    e && (d(""), m(""), b(!1), p(!1), f(!1), w(null));
+  const [r, d] = w(""), [h, m] = w(""), [u, b] = w(!1), [l, p] = w(!1), [s, f] = w(!1), [x, v] = w(null);
+  U(() => {
+    e && (d(""), m(""), b(!1), p(!1), f(!1), v(null));
   }, [e]);
-  const y = C(() => be(r), [r]), v = C(() => he(r), [r]), g = !y && !s;
-  async function A(S) {
-    if (S.preventDefault(), !!g) {
-      f(!0), w(null);
+  const y = S(() => ge(r), [r]), N = S(() => fe(r), [r]), g = !y && !s;
+  async function A(k) {
+    if (k.preventDefault(), !!g) {
+      f(!0), v(null);
       try {
-        const k = await n({
+        const R = await n({
           name: r.trim(),
           description: h.trim() || void 0,
           visibility: o,
@@ -469,9 +440,9 @@ function xe({
             recordingEnabled: l
           }
         });
-        i?.(k), t();
-      } catch (k) {
-        w(k instanceof Error ? k.message : "Failed to create room."), f(!1);
+        i?.(R), t();
+      } catch (R) {
+        v(R instanceof Error ? R.message : "Failed to create room."), f(!1);
       }
     }
   }
@@ -496,7 +467,7 @@ function xe({
               "data-testid": "new-hangout-room-name",
               type: "text",
               value: r,
-              onChange: (S) => d(S.target.value),
+              onChange: (k) => d(k.target.value),
               placeholder: "Team standup",
               maxLength: I + 10,
               disabled: s,
@@ -504,7 +475,7 @@ function xe({
             }
           ),
           /* @__PURE__ */ c("div", { className: "flex items-center justify-between text-[11px] text-slate-400", children: [
-            /* @__PURE__ */ a("span", { "data-testid": "new-hangout-room-slug-preview", children: v ? `#${v}` : "Slug preview appears here" }),
+            /* @__PURE__ */ a("span", { "data-testid": "new-hangout-room-slug-preview", children: N ? `#${N}` : "Slug preview appears here" }),
             /* @__PURE__ */ a("span", { children: `${r.trim().length}/${I}` })
           ] }),
           y && r.length > 0 && /* @__PURE__ */ a(
@@ -526,7 +497,7 @@ function xe({
             {
               "data-testid": "new-hangout-room-description",
               value: h,
-              onChange: (S) => m(S.target.value),
+              onChange: (k) => m(k.target.value),
               placeholder: "What's this room for?",
               rows: 2,
               disabled: s,
@@ -541,7 +512,7 @@ function xe({
               /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Skip video tracks — voice-only room." })
             ] }),
             /* @__PURE__ */ a(
-              $,
+              M,
               {
                 checked: u,
                 onChange: b,
@@ -557,7 +528,7 @@ function xe({
               /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Allow server-side recording of sessions." })
             ] }),
             /* @__PURE__ */ a(
-              $,
+              M,
               {
                 checked: l,
                 onChange: p,
@@ -603,7 +574,7 @@ function xe({
     }
   );
 }
-function Oe({
+function Fe({
   rooms: e,
   occupancyFor: t,
   occupancyAdapter: n,
@@ -616,16 +587,16 @@ function Oe({
   storageKey: u,
   renderCreateDialog: b
 }) {
-  const [l, p] = N(!1), s = () => p(!0), f = () => p(!1), x = C(
+  const [l, p] = w(!1), s = () => p(!0), f = () => p(!1), x = S(
     () => e.rooms.filter((g) => g.state === "active"),
     [e.rooms]
-  ), w = C(
+  ), v = S(
     () => x.slice(0, h),
     [x, h]
-  ), y = x.length - w.length;
-  return /* @__PURE__ */ c(_, { children: [
+  ), y = x.length - v.length;
+  return /* @__PURE__ */ c(C, { children: [
     /* @__PURE__ */ c(
-      X,
+      V,
       {
         title: m,
         storageKey: u,
@@ -681,8 +652,8 @@ function Oe({
             }
           ),
           !e.isLoading && !e.error && x.length > 0 && /* @__PURE__ */ c("div", { className: "flex flex-col gap-0.5", children: [
-            w.map((g) => /* @__PURE__ */ a(
-              ge,
+            v.map((g) => /* @__PURE__ */ a(
+              pe,
               {
                 slug: g.slug,
                 name: g.name,
@@ -695,7 +666,7 @@ function Oe({
               g.slug
             )),
             y > 0 && /* @__PURE__ */ a(
-              D,
+              z,
               {
                 "data-testid": "hangout-rooms-browse-all",
                 label: /* @__PURE__ */ c("span", { className: "text-[12px] text-slate-500", children: [
@@ -711,7 +682,7 @@ function Oe({
       }
     ),
     b ? b({ open: l, onClose: f }) : /* @__PURE__ */ a(
-      xe,
+      he,
       {
         open: l,
         onClose: f,
@@ -724,30 +695,30 @@ function Oe({
   ] });
 }
 export {
-  Fe as CapabilityBoundary,
-  ge as HangoutRoomRow,
-  Oe as HangoutRoomsSection,
-  xe as NewHangoutRoomDialog,
-  Le as WrappedActivityPanel,
-  $e as WrappedChatPanel,
+  ze as CapabilityBoundary,
+  pe as HangoutRoomRow,
+  Fe as HangoutRoomsSection,
+  he as NewHangoutRoomDialog,
+  $e as WrappedActivityPanel,
+  Pe as WrappedChatPanel,
   De as WrappedFileUploadDrop,
-  Te as WrappedHangoutLayout,
+  Le as WrappedHangoutLayout,
   Ue as WrappedNotificationCenter,
-  Me as WrappedPresencePanel,
-  ze as WrappedReactionsOverlay,
+  je as WrappedPresencePanel,
+  Me as WrappedReactionsOverlay,
   oe as adaptActivityEvent,
   ie as adaptActivityEvents,
-  J as adaptChatMessage,
-  Q as adaptChatMessages,
+  Q as adaptChatMessage,
+  Z as adaptChatMessages,
   re as adaptFileUploadState,
   se as adaptFileUploads,
   le as adaptHangoutParticipant,
   de as adaptHangoutParticipants,
   ce as adaptNotification,
   ue as adaptNotifications,
-  Z as adaptPresenceEntry,
-  je as adaptPresenceRoster,
-  T as adaptReaction,
-  Pe as adaptReactions,
-  he as slugifyRoomName
+  J as adaptPresenceEntry,
+  Ae as adaptPresenceRoster,
+  F as adaptReaction,
+  Ee as adaptReactions,
+  fe as slugifyRoomName
 };

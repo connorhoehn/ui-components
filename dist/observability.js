@@ -1,21 +1,22 @@
 import { jsxs as i, jsx as t, Fragment as z } from "react/jsx-runtime";
 import { Outlet as de, useNavigate as ce } from "react-router";
-import { createContext as pe, useContext as ue, useState as b, useRef as T, useCallback as W, useEffect as O, useMemo as D } from "react";
-import { u as xe } from "./EventStreamContext-DEaDWFtC.js";
-import { u as me } from "./IdentityContext-CLalsm_M.js";
-import { a as fe, S as ee } from "./Sparkline-B8POanAQ.js";
+import { useState as b, useRef as T, useCallback as W, useEffect as O, useMemo as _ } from "react";
+import { u as J, d as ee } from "./ObservabilityContext-mvmEXnGv.js";
+import { u as pe } from "./IdentityContext-CLalsm_M.js";
+import { a as ue, S as te } from "./Sparkline-B8POanAQ.js";
 import { c as h } from "./cn-B6yFEsav.js";
-import { S as he, L as $, B as be } from "./Chart-ByoxeiYX.js";
-import { E as ge } from "./EmptyState-PM9wTjxk.js";
-import { M as ye } from "./Modal-2jg4229_.js";
-const ve = {
+import { S as xe, L as $, B as me } from "./Chart-ByoxeiYX.js";
+import { a as fe } from "./EventStreamContext-CjzSHXy-.js";
+import { E as he } from "./EmptyState-PM9wTjxk.js";
+import { M as be } from "./Modal-2jg4229_.js";
+const ge = {
   info: "text-slate-500",
   warning: "text-amber-600",
   error: "text-red-600",
   success: "text-green-600"
 };
-function te({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: s, selected: c }) {
-  const l = fe(r);
+function re({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: s, selected: c }) {
+  const l = ue(r);
   return /* @__PURE__ */ i(
     "div",
     {
@@ -29,56 +30,27 @@ function te({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: 
       children: [
         /* @__PURE__ */ t("span", { className: "text-sm shrink-0", style: { color: l.color }, children: l.icon }),
         /* @__PURE__ */ t("span", { className: "text-[11px] text-slate-400 shrink-0 w-[70px]", children: e }),
-        /* @__PURE__ */ t("span", { className: h("text-xs font-semibold shrink-0", ve[a]), children: r }),
+        /* @__PURE__ */ t("span", { className: h("text-xs font-semibold shrink-0", ge[a]), children: r }),
         /* @__PURE__ */ t("span", { className: "flex-1 overflow-hidden text-ellipsis whitespace-nowrap", children: n })
       ]
     }
   );
 }
-function Ft() {
+function Et() {
   return /* @__PURE__ */ t(de, {});
 }
-const re = {
-  overview: {
-    totalNodes: 3,
-    healthyNodes: 3,
-    totalResources: 0,
-    totalConnections: 0,
-    messagesPerSecond: 0,
-    averageLatency: 0,
-    clusterHealth: "healthy"
-  },
-  regions: {},
-  alerts: []
-}, Ne = {
-  dashboard: null,
-  loading: !1,
-  error: null,
-  lastUpdatedAt: null,
-  live: !0,
-  setLive: () => {
-  },
-  refreshDashboard: async () => {
-  },
-  recentEvents: [],
-  activeRunsCount: 0,
-  isLiveData: !1
-}, we = pe(Ne);
-function J() {
-  return ue(we);
-}
-function ke() {
+function ye() {
   return J().dashboard;
 }
-const Ce = "", Se = 1e4, Me = 1e3, Re = 2, Le = 3e4;
-function Ae(e) {
+const ve = "", Ne = 1e4, we = 1e3, ke = 2, Ce = 3e4;
+function Se(e) {
   const r = Math.max(0, e - 1);
   return Math.min(
-    Me * Math.pow(Re, r),
-    Le
+    we * Math.pow(ke, r),
+    Ce
   );
 }
-function Ie() {
+function Me() {
   return {
     runsStarted: null,
     runsCompleted: null,
@@ -94,7 +66,7 @@ function Ie() {
     source: "error"
   };
 }
-function Ee(e) {
+function Re(e) {
   const r = e ?? {}, n = (c) => typeof c == "number" && Number.isFinite(c) ? c : null, a = r.source, s = a === "bridge" || a === "stub" || a === "error" ? a : (
     // Backwards-compat: legacy responses without a discriminator are
     // assumed to be stub-shaped (full numbers), since the previous
@@ -120,7 +92,7 @@ function Ee(e) {
   };
 }
 function ne() {
-  const { idToken: e } = me(), [r, n] = b(null), [a, s] = b(!0), [c, l] = b(null), [u, x] = b(null), [d, p] = b(!1), y = T(null), L = T(!0), A = T(!1), M = T(0), v = W(async () => {
+  const { idToken: e } = pe(), [r, n] = b(null), [a, s] = b(!0), [c, l] = b(null), [u, x] = b(null), [d, p] = b(!1), y = T(null), L = T(!0), A = T(!1), M = T(0), v = W(async () => {
     y.current && y.current.abort();
     const N = new AbortController();
     y.current = N;
@@ -129,19 +101,19 @@ function ne() {
         "Content-Type": "application/json"
       };
       e && (k.Authorization = `Bearer ${e}`);
-      const R = await fetch(`${Ce}/api/pipelines/metrics`, {
+      const R = await fetch(`${ve}/api/pipelines/metrics`, {
         method: "GET",
         headers: k,
         signal: N.signal
       });
       if (!R.ok)
         throw new Error(`HTTP ${R.status}`);
-      const o = Ee(await R.json());
+      const o = Re(await R.json());
       if (!L.current || N.signal.aborted) return;
       n(o), x((/* @__PURE__ */ new Date()).toISOString()), l(null), p(!0), A.current = !1, M.current = 0;
     } catch (k) {
       if (k.name === "AbortError" || !L.current) return;
-      l(k.message || "Failed to fetch pipeline metrics"), p(!1), M.current += 1, n((R) => R ?? Ie()), A.current || (console.warn(
+      l(k.message || "Failed to fetch pipeline metrics"), p(!1), M.current += 1, n((R) => R ?? Me()), A.current || (console.warn(
         "[usePipelineMetrics] /api/pipelines/metrics unreachable — using fallback",
         k
       ), A.current = !0);
@@ -156,7 +128,7 @@ function ne() {
       N !== null && (clearTimeout(N), N = null);
     }, R = () => {
       if (!L.current || document.hidden) return;
-      const g = M.current > 0 ? Ae(M.current) : Se;
+      const g = M.current > 0 ? Se(M.current) : Ne;
       N = setTimeout(() => {
         N = null, v().finally(() => {
           R();
@@ -186,7 +158,7 @@ function ne() {
     source: r?.source ?? null
   };
 }
-function Te(e) {
+function Le(e) {
   return typeof e == "number" ? e.toLocaleString() : e;
 }
 function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
@@ -212,9 +184,9 @@ function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
       children: [
         /* @__PURE__ */ t("div", { className: "text-xs font-semibold text-text-secondary tracking-[0.2px]", children: e }),
         /* @__PURE__ */ i("div", { className: "flex items-baseline justify-between gap-2", children: [
-          /* @__PURE__ */ t("div", { className: "text-[28px] font-bold text-text-primary leading-[1.1]", children: Te(r) }),
+          /* @__PURE__ */ t("div", { className: "text-[28px] font-bold text-text-primary leading-[1.1]", children: Le(r) }),
           a && a.length > 0 && /* @__PURE__ */ t(
-            ee,
+            te,
             {
               data: a,
               width: 80,
@@ -242,7 +214,7 @@ function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
     }
   );
 }
-function Pe({
+function Ae({
   runsToday: e,
   runsSparkline: r,
   activeNow: n,
@@ -302,13 +274,13 @@ const Y = {
   degraded: "border-state-awaiting",
   dead: "border-state-failed",
   idle: "border-state-idle"
-}, Fe = {
+}, Ie = {
   healthy: "bg-state-completed",
   degraded: "bg-state-awaiting",
   dead: "bg-state-failed",
   idle: "bg-state-idle"
 };
-function $e(e) {
+function Ee(e) {
   return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
 function B({ label: e, value: r }) {
@@ -317,7 +289,7 @@ function B({ label: e, value: r }) {
     /* @__PURE__ */ t("span", { className: "text-text-primary font-mono text-[11px]", children: r })
   ] });
 }
-function De({ node: e, selected: r, onClick: n, onKill: a }) {
+function Te({ node: e, selected: r, onClick: n, onKill: a }) {
   const [s, c] = b(!1), l = e.activeRuns > 0 ? `${e.activeRuns}` : "— idle";
   return /* @__PURE__ */ i(
     "div",
@@ -348,19 +320,19 @@ function De({ node: e, selected: r, onClick: n, onKill: a }) {
             {
               role: "img",
               "aria-label": `status ${e.status}`,
-              className: h("w-2 h-2 rounded-full shrink-0", Fe[e.status])
+              className: h("w-2 h-2 rounded-full shrink-0", Ie[e.status])
             }
           )
         ] }),
         (e.role || e.region) && /* @__PURE__ */ t("div", { className: "text-[11px] text-text-tertiary font-[inherit]", children: [e.role, e.region].filter(Boolean).join(" · ") }),
         /* @__PURE__ */ i("div", { className: "flex flex-col gap-0.5", children: [
           /* @__PURE__ */ t(B, { label: "CPU", value: `${Math.round(e.cpu)}%` }),
-          /* @__PURE__ */ t(B, { label: "MEM", value: $e(e.memoryMb) }),
+          /* @__PURE__ */ t(B, { label: "MEM", value: Ee(e.memoryMb) }),
           /* @__PURE__ */ t(B, { label: "CONN", value: `${e.connections}` }),
           /* @__PURE__ */ t(B, { label: "RUNS", value: l })
         ] }),
         /* @__PURE__ */ t("div", { className: "mt-auto", children: /* @__PURE__ */ t(
-          ee,
+          te,
           {
             data: e.cpuHistory,
             width: 176,
@@ -397,7 +369,7 @@ function ae({ nodes: e, onSelect: r, selectedId: n }) {
       "data-testid": "node-grid",
       className: h("flex flex-wrap gap-4 font-[inherit]"),
       children: e.map((a) => /* @__PURE__ */ t(
-        De,
+        Te,
         {
           node: a,
           selected: n === a.id,
@@ -408,7 +380,7 @@ function ae({ nodes: e, onSelect: r, selectedId: n }) {
     }
   );
 }
-function _e({
+function Pe({
   run: e,
   onClick: r,
   onCancel: n
@@ -466,7 +438,7 @@ function _e({
     }
   );
 }
-function Oe({ runs: e, onRowClick: r, onCancelRun: n }) {
+function Fe({ runs: e, onRowClick: r, onCancelRun: n }) {
   return !e || e.length === 0 ? /* @__PURE__ */ t(
     "div",
     {
@@ -488,7 +460,7 @@ function Oe({ runs: e, onRowClick: r, onCancelRun: n }) {
           n && /* @__PURE__ */ t("th", { className: "text-right px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border" })
         ] }) }),
         /* @__PURE__ */ t("tbody", { children: e.map((a) => /* @__PURE__ */ t(
-          _e,
+          Pe,
           {
             run: a,
             onClick: r,
@@ -500,23 +472,23 @@ function Oe({ runs: e, onRowClick: r, onCancelRun: n }) {
     }
   );
 }
-const je = {
+const $e = {
   info: "text-info",
   warning: "text-state-awaiting",
   error: "text-danger",
   critical: "text-danger"
-}, He = {
+}, _e = {
   info: "border-l-info",
   warning: "border-l-state-awaiting",
   error: "border-l-danger",
   critical: "border-l-danger"
-}, Ue = {
+}, De = {
   info: "ℹ",
   warning: "⚠",
   error: "✕",
   critical: "✕"
 };
-function Be(e) {
+function Oe(e) {
   const r = Date.parse(e);
   if (Number.isNaN(r)) return e;
   const n = Math.max(0, Math.floor((Date.now() - r) / 1e3));
@@ -534,11 +506,11 @@ function Be(e) {
     return e;
   }
 }
-function Ke({
+function je({
   alert: e,
   onDismiss: r
 }) {
-  const n = Ue[e.severity];
+  const n = De[e.severity];
   return /* @__PURE__ */ i(
     "div",
     {
@@ -546,14 +518,14 @@ function Ke({
       className: h(
         "flex items-start gap-2.5 px-3 py-2.5",
         "bg-surface border border-border border-l-[3px] rounded-md font-[inherit]",
-        He[e.severity]
+        _e[e.severity]
       ),
       children: [
         /* @__PURE__ */ t(
           "span",
           {
             "aria-hidden": "true",
-            className: h("text-sm leading-5 shrink-0 w-4 text-center", je[e.severity]),
+            className: h("text-sm leading-5 shrink-0 w-4 text-center", $e[e.severity]),
             children: n
           }
         ),
@@ -561,7 +533,7 @@ function Ke({
           /* @__PURE__ */ t("div", { className: "text-[13px] text-text-primary leading-[1.4]", children: e.message }),
           /* @__PURE__ */ i("div", { className: "text-[11px] text-text-tertiary mt-0.5", children: [
             e.category ? `${e.category} · ` : "",
-            Be(e.timestamp)
+            Oe(e.timestamp)
           ] })
         ] }),
         r && /* @__PURE__ */ t(
@@ -578,7 +550,7 @@ function Ke({
     }
   );
 }
-function Ve({ alerts: e, onDismiss: r }) {
+function He({ alerts: e, onDismiss: r }) {
   return !e || e.length === 0 ? /* @__PURE__ */ t(
     "div",
     {
@@ -591,15 +563,15 @@ function Ve({ alerts: e, onDismiss: r }) {
     {
       "data-testid": "alerts-panel",
       className: "flex flex-col gap-2",
-      children: e.map((n) => /* @__PURE__ */ t(Ke, { alert: n, onDismiss: r }, n.id))
+      children: e.map((n) => /* @__PURE__ */ t(je, { alert: n, onDismiss: r }, n.id))
     }
   );
 }
 const U = "—";
-function Ge(e) {
+function Ue(e) {
   return typeof e != "number" || !Number.isFinite(e) ? U : e < 1e3 ? `${Math.round(e)} ms` : `${(e / 1e3).toFixed(1)}s`;
 }
-function ze(e) {
+function Be(e) {
   const r = Math.max(0, e.totalNodes ?? 0), n = (a) => Array.from(
     { length: 12 },
     (s, c) => Math.max(0, Math.round(10 + Math.sin(a + c / 2) * 4 + c * 0.3))
@@ -616,7 +588,7 @@ function ze(e) {
   }));
 }
 const X = [];
-function We({ source: e }) {
+function Ke({ source: e }) {
   if (e === null || e === "bridge") return null;
   const r = e === "error";
   return /* @__PURE__ */ t(
@@ -633,7 +605,7 @@ function We({ source: e }) {
     }
   );
 }
-function Je({
+function Ve({
   live: e,
   onChange: r
 }) {
@@ -659,7 +631,7 @@ function Je({
     }
   );
 }
-function Ye({
+function Ge({
   nodes: e,
   healthyCount: r,
   totalCount: n,
@@ -690,7 +662,7 @@ function Ye({
     /* @__PURE__ */ t(ae, { nodes: e, onSelect: a })
   ] });
 }
-function Xe({
+function ze({
   events: e,
   onViewAll: r
 }) {
@@ -708,7 +680,7 @@ function Xe({
       )
     ] }),
     e.length === 0 ? /* @__PURE__ */ t("div", { className: "p-4 text-center text-text-tertiary text-[13px]", children: "No recent events" }) : /* @__PURE__ */ t("div", { className: "flex flex-col gap-0.5", children: e.slice(0, 20).map((n) => /* @__PURE__ */ t(
-      te,
+      re,
       {
         timestamp: n.timestamp,
         type: n.type,
@@ -719,8 +691,8 @@ function Xe({
     )) })
   ] });
 }
-function $t() {
-  const e = ce(), r = T(null), { live: n, setLive: a, recentEvents: s, activeRunsCount: c, isLiveData: l } = J(), x = ke() ?? re, { metrics: d, source: p } = ne(), y = x?.overview ?? {}, L = D(() => ze(y), [y]), A = d?.runsStarted ?? U, M = [0, 0, 0, 0, 0, 0, 0, 0], v = c > 0 ? c : d?.runsActive ?? U, N = d?.runsAwaitingApproval ?? U, k = d?.runsFailed ?? U, R = d?.avgFirstTokenLatencyMs ?? null, o = Ge(R), f = Array.isArray(x?.alerts) ? x.alerts : [], g = () => {
+function Tt() {
+  const e = ce(), r = T(null), { live: n, setLive: a, recentEvents: s, activeRunsCount: c, isLiveData: l } = J(), x = ye() ?? ee, { metrics: d, source: p } = ne(), y = x?.overview ?? {}, L = _(() => Be(y), [y]), A = d?.runsStarted ?? U, M = [0, 0, 0, 0, 0, 0, 0, 0], v = c > 0 ? c : d?.runsActive ?? U, N = d?.runsAwaitingApproval ?? U, k = d?.runsFailed ?? U, R = d?.avgFirstTokenLatencyMs ?? null, o = Ue(R), f = Array.isArray(x?.alerts) ? x.alerts : [], g = () => {
     r.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, S = () => {
     e("/pipelines");
@@ -752,12 +724,12 @@ function $t() {
                 children: l ? "live data" : "fixture"
               }
             ),
-            /* @__PURE__ */ t(We, { source: p }),
-            /* @__PURE__ */ t(Je, { live: n, onChange: a })
+            /* @__PURE__ */ t(Ke, { source: p }),
+            /* @__PURE__ */ t(Ve, { live: n, onChange: a })
           ] })
         ] }),
         /* @__PURE__ */ t(
-          Pe,
+          Ae,
           {
             runsToday: A,
             runsSparkline: M,
@@ -771,7 +743,7 @@ function $t() {
           }
         ),
         /* @__PURE__ */ t(
-          Ye,
+          Ge,
           {
             nodes: L,
             healthyCount: y.healthyNodes ?? 0,
@@ -786,7 +758,7 @@ function $t() {
             ")"
           ] }),
           /* @__PURE__ */ t(
-            Oe,
+            Fe,
             {
               runs: X,
               onRowClick: (F) => e(`/pipelines/${F.pipelineId}/runs/${F.runId}`)
@@ -794,7 +766,7 @@ function $t() {
           )
         ] }),
         /* @__PURE__ */ t(
-          Xe,
+          ze,
           {
             events: s,
             onViewAll: m
@@ -806,23 +778,23 @@ function $t() {
             f.length,
             ")"
           ] }),
-          /* @__PURE__ */ t(Ve, { alerts: f })
+          /* @__PURE__ */ t(He, { alerts: f })
         ] })
       ]
     }
   );
 }
-function qe(e = 60) {
+function We(e = 60) {
   const { dashboard: r } = J(), [n, a] = b([]);
   return O(() => {
     r && a((s) => [...s, r].slice(-e));
   }, [r, e]), n;
 }
-const Qe = "", Ze = 1e4;
-function et() {
+const Je = "", Ye = 1e4;
+function Xe() {
   const [e, r] = b(null), [n, a] = b(!0), [s, c] = b(null), l = T(!1), u = W(async () => {
     try {
-      const x = await fetch(`${Qe}/api/pipelines/dashboard-data`, {
+      const x = await fetch(`${Je}/api/pipelines/dashboard-data`, {
         credentials: "same-origin"
       });
       if (!x.ok) {
@@ -843,7 +815,7 @@ function et() {
     l.current = !1, u();
     const x = window.setInterval(() => {
       document.hidden || u();
-    }, Ze);
+    }, Ye);
     return () => {
       l.current = !0, window.clearInterval(x);
     };
@@ -892,13 +864,13 @@ const q = [
   { value: "1h", label: "Last 1h" },
   { value: "24h", label: "Last 24h" },
   { value: "7d", label: "Last 7d" }
-], tt = [
+], qe = [
   { value: "off", label: "Off" },
   { value: "5s", label: "5s" },
   { value: "30s", label: "30s" },
   { value: "60s", label: "60s" }
 ];
-function rt({
+function Qe({
   seeds: e,
   liveSeries: r,
   cols: n,
@@ -927,7 +899,7 @@ function rt({
           value: u,
           onChange: (p) => x(p.target.value),
           className: "min-w-[100px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
-          children: tt.map((p) => /* @__PURE__ */ i("option", { value: p.value, children: [
+          children: qe.map((p) => /* @__PURE__ */ i("option", { value: p.value, children: [
             "Refresh: ",
             p.label
           ] }, p.value))
@@ -984,7 +956,7 @@ function rt({
         style: { gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` },
         children: [
           /* @__PURE__ */ t(E, { title: "Runs per minute", timeRange: d, children: /* @__PURE__ */ t(
-            he,
+            xe,
             {
               series: r?.runsPerMinute ?? e.runsPerMinute,
               height: 180
@@ -1038,7 +1010,7 @@ function rt({
             }
           ) }),
           /* @__PURE__ */ t(E, { title: "Failure rate by type", timeRange: d, children: /* @__PURE__ */ t(
-            be,
+            me,
             {
               data: e.failureRate,
               xKey: "x",
@@ -1074,17 +1046,17 @@ function C(e, r, n) {
     data: r.map((a, s) => ({ x: s, y: a }))
   };
 }
-const _ = {
+const D = {
   primary: "#646cff",
   completed: "#16a34a",
   failed: "#dc2626"
 };
-function nt() {
+function Ze() {
   return {
     runsPerMinute: [
-      C("started", w(3, 30, 40), _.primary),
-      C("completed", w(7, 30, 40), _.completed),
-      C("failed", w(11, 30, 20), _.failed)
+      C("started", w(3, 30, 40), D.primary),
+      C("completed", w(7, 30, 40), D.completed),
+      C("failed", w(11, 30, 20), D.failed)
     ],
     stepDuration: [
       C("p50", w(17, 30, 400)),
@@ -1123,7 +1095,7 @@ function nt() {
     approvalLatency: [C("seconds", w(97, 30, 120))]
   };
 }
-function at() {
+function et() {
   const [e, r] = b(() => typeof window > "u" ? 2 : window.innerWidth >= 1600 ? 3 : 2);
   return O(() => {
     if (typeof window > "u") return;
@@ -1133,8 +1105,8 @@ function at() {
     return window.addEventListener("resize", n), () => window.removeEventListener("resize", n);
   }, []), e;
 }
-function st() {
-  const { data: e, loading: r, error: n } = et();
+function tt() {
+  const { data: e, loading: r, error: n } = Xe();
   return r && !e ? /* @__PURE__ */ t(
     "div",
     {
@@ -1204,14 +1176,14 @@ function st() {
     }
   );
 }
-function Dt() {
-  const e = D(nt, []), r = at();
-  qe(60);
+function Pt() {
+  const e = _(Ze, []), r = et();
+  We(60);
   const { metrics: n, isLiveData: a } = ne(), [s, c] = b([]);
   O(() => {
     n && c((u) => [...u, n].slice(-30));
   }, [n]);
-  const l = D(() => {
+  const l = _(() => {
     if (s.length < 2) return null;
     const u = (N) => {
       const k = [];
@@ -1228,9 +1200,9 @@ function Dt() {
       ] : null,
       llmCost: x(L) ? [{ label: "USD", data: L }] : null,
       runsPerMinute: x(A) && x(M) && x(v) ? [
-        { label: "started", color: _.primary, data: A },
-        { label: "completed", color: _.completed, data: M },
-        { label: "failed", color: _.failed, data: v }
+        { label: "started", color: D.primary, data: A },
+        { label: "completed", color: D.completed, data: M },
+        { label: "failed", color: D.failed, data: v }
       ] : null
     };
   }, [s]);
@@ -1241,21 +1213,21 @@ function Dt() {
       className: "flex flex-col h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface",
       children: [
         /* @__PURE__ */ t(
-          rt,
+          Qe,
           {
             seeds: e,
             liveSeries: l,
             cols: r,
             isLiveData: a,
-            failedColor: _.failed
+            failedColor: D.failed
           }
         ),
-        /* @__PURE__ */ t(st, {})
+        /* @__PURE__ */ t(tt, {})
       ]
     }
   );
 }
-function it({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
+function rt({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
   const s = T(null), [c, l] = b(!1);
   O(() => {
     if (!a || c) return;
@@ -1272,7 +1244,7 @@ function it({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
     d && (d.scrollTop = d.scrollHeight, l(!1));
   };
   return e.length === 0 ? /* @__PURE__ */ t("div", { className: "flex-1 flex", children: /* @__PURE__ */ t(
-    ge,
+    he,
     {
       icon: "📡",
       title: "No events yet",
@@ -1291,7 +1263,7 @@ function it({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
             onScroll: u,
             className: "flex-1 overflow-y-auto py-1.5 font-[inherit]",
             children: e.map((d) => /* @__PURE__ */ t(
-              te,
+              re,
               {
                 timestamp: d.timestamp,
                 type: d.type,
@@ -1323,14 +1295,14 @@ function it({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
     }
   );
 }
-function ot(e) {
+function nt(e) {
   try {
     return JSON.stringify(e, null, 2);
   } catch {
     return String(e);
   }
 }
-function lt({ event: e }) {
+function at({ event: e }) {
   if (!e)
     return /* @__PURE__ */ t(
       "div",
@@ -1343,7 +1315,7 @@ function lt({ event: e }) {
         children: "Select an event to see details"
       }
     );
-  const r = ot(e.payload ?? e), n = () => {
+  const r = nt(e.payload ?? e), n = () => {
     typeof navigator < "u" && navigator.clipboard && navigator.clipboard.writeText(r).catch(() => {
       console.warn("[EventDetailPane] clipboard copy failed");
     });
@@ -1407,7 +1379,7 @@ function lt({ event: e }) {
     }
   );
 }
-const Q = 500, dt = ["All", "Errors", "LLM", "Approvals", "Lifecycle"], ct = [
+const Q = 500, st = ["All", "Errors", "LLM", "Approvals", "Lifecycle"], it = [
   { value: "15m", label: "Last 15m" },
   { value: "1h", label: "Last 1h" },
   { value: "6h", label: "Last 6h" },
@@ -1419,20 +1391,20 @@ const Q = 500, dt = ["All", "Errors", "LLM", "Approvals", "Lifecycle"], ct = [
   "error",
   "success"
 ];
-function pt(e) {
+function ot(e) {
   return e.includes("failed") || e.includes("error") ? "error" : e.includes("completed") ? "success" : e.includes("warn") || e.includes("awaiting") ? "warning" : "info";
 }
-function ut(e) {
+function lt(e) {
   return e.includes("failed") || e.includes("error") ? "Errors" : e.startsWith("llm.") || e.includes(".llm.") ? "LLM" : e.includes("approval") ? "Approvals" : (e.includes("run.") || e.includes("pipeline."), "Lifecycle");
 }
-function xt(e, r) {
+function dt(e, r) {
   if (r && typeof r == "object") {
     const n = r, a = [];
     if (typeof n.runId == "string" && a.push(`run ${n.runId}`), typeof n.pipelineId == "string" && a.push(`pipeline ${n.pipelineId}`), typeof n.nodeId == "string" && a.push(`node ${n.nodeId}`), a.length > 0) return a.join(" · ");
   }
   return e;
 }
-function mt(e = /* @__PURE__ */ new Date()) {
+function ct(e = /* @__PURE__ */ new Date()) {
   const r = String(e.getHours()).padStart(2, "0"), n = String(e.getMinutes()).padStart(2, "0"), a = String(e.getSeconds()).padStart(2, "0"), s = String(e.getMilliseconds()).padStart(3, "0");
   return `${r}:${n}:${a}.${s}`;
 }
@@ -1444,7 +1416,7 @@ const Z = {
   severities: new Set(ie),
   timeRange: "1h"
 };
-function ft() {
+function pt() {
   const [e, r] = b([]), [n, a] = b(null), [s, c] = b(!1), [l, u] = b(Z), [x, d] = b(!1), p = T(s);
   p.current = s;
   const y = T(0), L = W((o) => {
@@ -1453,10 +1425,10 @@ function ft() {
     y.current += 1;
     const P = {
       id: `ev-${Date.now()}-${y.current}`,
-      timestamp: mt(),
+      timestamp: ct(),
       type: g,
-      summary: xt(g, S),
-      severity: pt(g),
+      summary: dt(g, S),
+      severity: ot(g),
       payload: S
     };
     r((I) => {
@@ -1464,12 +1436,12 @@ function ft() {
       return m.length > Q ? m.slice(m.length - Q) : m;
     });
   }, []);
-  xe("*", L);
-  const A = D(() => {
+  fe("*", L);
+  const A = _(() => {
     const o = l.runIds.split(",").map((S) => S.trim()).filter(Boolean), f = l.pipelineIds.split(",").map((S) => S.trim()).filter(Boolean), g = l.groups.has("All");
     return e.filter((S) => {
       if (!g) {
-        const I = ut(S.type);
+        const I = lt(S.type);
         if (!l.groups.has(I)) return !1;
       }
       if (S.severity && !l.severities.has(S.severity)) return !1;
@@ -1484,7 +1456,7 @@ function ft() {
       const P = S.payload?.nodeId;
       return !(P && !l.nodes.has(P));
     });
-  }, [e, l]), M = D(
+  }, [e, l]), M = _(
     () => A.find((o) => o.id === n) ?? null,
     [A, n]
   ), v = (o) => {
@@ -1530,7 +1502,7 @@ function ft() {
               value: l.timeRange,
               onChange: (o) => u((f) => ({ ...f, timeRange: o.target.value })),
               className: "min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
-              children: ct.map((o) => /* @__PURE__ */ t("option", { value: o.value, children: o.label }, o.value))
+              children: it.map((o) => /* @__PURE__ */ t("option", { value: o.value, children: o.label }, o.value))
             }
           ),
           /* @__PURE__ */ i("div", { className: "ml-auto text-xs text-text-tertiary", children: [
@@ -1566,7 +1538,7 @@ function ft() {
                 !x && /* @__PURE__ */ i(z, { children: [
                   /* @__PURE__ */ i("div", { className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border", children: [
                     /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase", children: "Event type" }),
-                    dt.map((o) => /* @__PURE__ */ i(
+                    st.map((o) => /* @__PURE__ */ i(
                       "label",
                       {
                         className: "flex items-center gap-1.5 text-xs",
@@ -1669,7 +1641,7 @@ function ft() {
             }
           ),
           /* @__PURE__ */ t("section", { className: "flex-1 min-w-0 flex flex-col", children: /* @__PURE__ */ t(
-            it,
+            rt,
             {
               events: A,
               selectedId: n,
@@ -1677,14 +1649,14 @@ function ft() {
               live: !s
             }
           ) }),
-          /* @__PURE__ */ t("aside", { className: "w-80 shrink-0 border-l border-border bg-surface", children: /* @__PURE__ */ t(lt, { event: M }) })
+          /* @__PURE__ */ t("aside", { className: "w-80 shrink-0 border-l border-border bg-surface", children: /* @__PURE__ */ t(at, { event: M }) })
         ] })
       ]
     }
   );
 }
-function _t() {
-  return /* @__PURE__ */ t(ft, {});
+function Ft() {
+  return /* @__PURE__ */ t(pt, {});
 }
 const oe = {
   injectedLatencyMs: 0,
@@ -1693,7 +1665,7 @@ const oe = {
 };
 let K = { ...oe };
 const G = /* @__PURE__ */ new Set();
-function ht() {
+function ut() {
   return K;
 }
 function j(e) {
@@ -1705,20 +1677,20 @@ function j(e) {
     }
   });
 }
-function bt() {
+function xt() {
   j(oe);
 }
-function gt(e) {
+function mt(e) {
   return G.add(e), () => {
     G.delete(e);
   };
 }
-const yt = [
+const ft = [
   { id: "node-0" },
   { id: "node-1" },
   { id: "node-2" }
 ];
-function vt(e) {
+function ht(e) {
   const {
     onInjectLatency: r = (m) => j({ injectedLatencyMs: Math.max(0, m) }),
     onInjectPartition: n = (m) => (
@@ -1734,10 +1706,10 @@ function vt(e) {
       })
     ),
     onKillAll: s = () => j({ paused: !0 }),
-    onReset: c = () => bt(),
-    availableNodes: l = yt
-  } = e, [u, x] = b("0"), [d, p] = b("0"), [y, L] = b([]), [A, M] = b(!1), [v, N] = b(() => ht());
-  O(() => gt((m) => N(m)), []);
+    onReset: c = () => xt(),
+    availableNodes: l = ft
+  } = e, [u, x] = b("0"), [d, p] = b("0"), [y, L] = b([]), [A, M] = b(!1), [v, N] = b(() => ut());
+  O(() => mt((m) => N(m)), []);
   const k = (m) => {
     L(
       (F) => F.includes(m) ? F.filter((le) => le !== m) : [...F, m]
@@ -1754,7 +1726,7 @@ function vt(e) {
     s(), M(!1);
   }, S = () => {
     j({ paused: !v.paused });
-  }, P = D(() => l, [l]), I = v.injectedLatencyMs > 0 || v.injectedFailureRate > 0 || v.paused;
+  }, P = _(() => l, [l]), I = v.injectedLatencyMs > 0 || v.injectedFailureRate > 0 || v.paused;
   return /* @__PURE__ */ i(
     "div",
     {
@@ -1913,7 +1885,7 @@ function vt(e) {
           )
         ] }),
         /* @__PURE__ */ t(
-          ye,
+          be,
           {
             open: A,
             onClose: () => M(!1),
@@ -1952,7 +1924,7 @@ function V(e) {
     n = (n * 9301 + 49297) % 233280, r.push(Math.abs(n % 40) + 5);
   return r;
 }
-function Nt() {
+function bt() {
   return [
     {
       id: "node-0",
@@ -1989,8 +1961,8 @@ function Nt() {
     }
   ];
 }
-function wt() {
-  const e = re?.regions ?? {}, r = [];
+function gt() {
+  const e = ee?.regions ?? {}, r = [];
   for (const n of Object.keys(e)) {
     const a = e[n];
     if (a?.nodes && Array.isArray(a.nodes))
@@ -2007,13 +1979,13 @@ function wt() {
           cpuHistory: s.cpuHistory ?? V(r.length + 1)
         });
   }
-  return r.length > 0 ? r : Nt();
+  return r.length > 0 ? r : bt();
 }
-function kt(e) {
+function yt(e) {
   return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
-function Ot() {
-  const e = D(wt, []), [r, n] = b(null), a = D(
+function $t() {
+  const e = _(gt, []), [r, n] = b(null), a = _(
     () => e.find((s) => s.id === r) ?? null,
     [e, r]
   );
@@ -2029,7 +2001,7 @@ function Ot() {
             title: "Stub: writes to local chaosState; real cluster injection ships in Phase 5",
             "data-testid": "chaos-rail-stub-wrapper",
             children: /* @__PURE__ */ t(
-              vt,
+              ht,
               {
                 availableNodes: e.map((s) => ({ id: s.id, label: s.id }))
               }
@@ -2071,7 +2043,7 @@ function Ot() {
                 /* @__PURE__ */ t("table", { className: "w-full text-xs border-collapse", children: /* @__PURE__ */ t("tbody", { children: [
                   ["Status", a.status],
                   ["CPU", `${Math.round(a.cpu)}%`],
-                  ["Memory", kt(a.memoryMb)],
+                  ["Memory", yt(a.memoryMb)],
                   ["Connections", String(a.connections)],
                   ["Active runs", String(a.activeRuns)],
                   ["Region", a.region ?? "—"],
@@ -2125,11 +2097,11 @@ function Ot() {
   );
 }
 export {
-  Pe as DashboardKPIStrip,
-  $t as DashboardPage,
-  _t as EventsPage,
-  rt as MetricTimeSeriesPanel,
-  Dt as MetricsPage,
-  Ot as NodesPage,
-  Ft as ObservabilityLayout
+  Ae as DashboardKPIStrip,
+  Tt as DashboardPage,
+  Ft as EventsPage,
+  Qe as MetricTimeSeriesPanel,
+  Pt as MetricsPage,
+  $t as NodesPage,
+  Et as ObservabilityLayout
 };

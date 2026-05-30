@@ -1,3 +1,4 @@
+import { AnchorHTMLAttributes } from 'react';
 import { Awareness } from 'y-protocols/awareness';
 import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
@@ -7,6 +8,7 @@ import { HTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
+import { MutableRefObject } from 'react';
 import { Observable } from 'lib0/observable';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
@@ -105,6 +107,32 @@ export declare interface ActivityFeedProps {
 }
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
+
+export declare function ActivityPanel({ idToken, sendMessage, onMessage, connectionState }: ActivityPanelProps): JSX.Element;
+
+declare interface ActivityPanelProps {
+    idToken: string | null;
+    sendMessage: (msg: Record<string, unknown>) => void;
+    onMessage: OnMessageFn_11;
+    connectionState: ConnectionState_4;
+}
+
+export declare function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminDashboardPageProps): JSX.Element;
+
+export declare interface AdminDashboardPageProps {
+    stats: {
+        userPools: number;
+        clients: number;
+        totalUsers: number;
+    };
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        createdAt: string;
+    }>;
+    onNavigate: (path: string) => void;
+    loading?: boolean;
+}
 
 export declare interface AgentDefinition {
     id: string;
@@ -390,6 +418,12 @@ declare interface ApiCallState<T> {
     reset: () => void;
 }
 
+export declare function ApiDegradedBanner({ health }: ApiDegradedBannerProps): JSX.Element | null;
+
+declare interface ApiDegradedBannerProps {
+    health: ApiHealthSnapshot;
+}
+
 declare interface ApiHealthCheck {
     status: 'ok' | 'error' | string;
     latencyMs?: number;
@@ -404,6 +438,89 @@ declare interface ApiHealthSnapshot {
 }
 
 declare type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
+
+/**
+ * Wraps the layout body in the pipelines event-stream + runs providers so
+ * the cross-pipeline approvals page and the document-trigger hook can
+ * share a single runs store for the whole app. Events are sourced from the
+ * gateway WS bridge — there is no other producer.
+ */
+export declare function AppLayout(props: AppLayoutProps): JSX.Element;
+
+declare interface AppLayoutProps {
+    currentChannel: string;
+    onSwitchChannel: (channel: string) => void;
+    onDisconnect: () => void;
+    onReconnect: () => void;
+    activeReactions: EphemeralReaction[];
+    logEntries: LogEntry[];
+    errors: GatewayError[];
+    lastError: GatewayError | null;
+    activityEvents: ActivityEvent[];
+    activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
+    activityIsLive: boolean;
+}
+
+export declare function ApplicationFormPage({ application, isEdit, pools, onSubmit, onCancel, error, }: ApplicationFormPageProps): JSX.Element;
+
+export declare interface ApplicationFormPageProps {
+    application?: {
+        clientId?: string;
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris?: string[];
+        grantTypes: string[];
+        responseTypes?: string[];
+        scope?: string;
+    };
+    isEdit: boolean;
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+    }>;
+    onSubmit: (data: {
+        clientName: string;
+        poolId: string;
+        redirectUris: string[];
+        postLogoutRedirectUris: string[];
+        grantTypes: string[];
+        responseTypes: string[];
+        scope: string;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function ApplicationListPage({ applications, onCreateApp, onCreateAppWithPool, onEditApp, onDeleteApp, loading, }: ApplicationListPageProps): JSX.Element;
+
+export declare interface ApplicationListPageProps {
+    applications: Array<{
+        clientId: string;
+        clientName: string;
+        poolId: string;
+        poolName?: string;
+        redirectUris: string[];
+    }>;
+    onCreateApp: () => void;
+    onCreateAppWithPool: () => void;
+    onEditApp: (clientId: string) => void;
+    onDeleteApp: (clientId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function ApplicationPoolFormPage({ onSubmit, onCancel, error }: ApplicationPoolFormPageProps): JSX.Element;
+
+export declare interface ApplicationPoolFormPageProps {
+    onSubmit: (data: {
+        clientName: string;
+        poolName: string;
+        redirectUris: string[];
+        grantTypes?: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
 
 /**
  * Apply a paused-context patch. Resolves the executor's `PatchResult` on a
@@ -437,6 +554,30 @@ export declare interface Approver {
     value: string;
 }
 
+/**
+ * AppShell wraps its children in a ToastProvider by default.
+ * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
+ */
+export declare function AppShell({ sidebar, header, children, toastRegion, loading, apiDegraded, className, sidebarWidth, }: AppShellProps): JSX.Element;
+
+export declare interface AppShellProps {
+    /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
+    sidebar?: ReactNode;
+    /** Slot: fixed top header bar */
+    header: ReactNode;
+    /** Page content */
+    children: ReactNode;
+    /** Slot: override default ToastProvider region (pass null to suppress) */
+    toastRegion?: ReactNode | null;
+    /** When truthy, renders a full-screen loading overlay */
+    loading?: boolean | ReactNode;
+    /** When truthy, renders an API-degraded banner below the header */
+    apiDegraded?: ReactNode;
+    className?: string;
+    /** Width of the sidebar slot in px (default 260) */
+    sidebarWidth?: number;
+}
+
 export declare interface AuditActor {
     type: 'admin' | 'user' | 'system';
     email?: string;
@@ -460,6 +601,30 @@ export declare interface AuditFilters {
 export declare interface AuditPage {
     items: AuditRow[];
     nextCursor?: string;
+}
+
+export declare interface AuditPageProps {
+    records: Array<{
+        timestamp: number;
+        actor: {
+            id?: string;
+            email?: string;
+        } | string;
+        entityType: string;
+        entityId: string;
+        operation: string;
+    }>;
+    onQuery: (params: {
+        entityType?: string;
+        entityId?: string;
+        fromTime?: number;
+        toTime?: number;
+        limit?: number;
+    }) => Promise<void>;
+    onViewEntity: (entityType: string, entityId: string) => void;
+    onReplay: (entityId: string, atTime: number) => Promise<Record<string, unknown> | null>;
+    loading?: boolean;
+    totalRecords?: number;
 }
 
 export declare interface AuditQueryParams {
@@ -650,9 +815,133 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
+export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
+
+export declare interface CallingStatusPillProps {
+    /** Show/hide gate — the parent decides ringing semantics. */
+    show: boolean;
+    /** Label for the callee(s). E.g. "Alice", "Alice & Bob", "3 people". */
+    label: string;
+}
+
+export declare type CallMode = 'audio' | 'video';
+
+/**
+ * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
+ * inline (not modal), low-friction: click "Join" to enter the call,
+ * click dismiss to ignore. No system-level ringing.
+ *
+ * Pure presentational — the consumer mounts it (typically near the top of
+ * the app shell or inside a notifications stack) and wires `onJoin` /
+ * `onDismiss` to actual behavior (joining the lobby, declining the invite).
+ *
+ * Auto-dismisses after `autoExpireSec` seconds (default 30) to avoid
+ * stale-banner spam if the call is over by the time the recipient looks.
+ */
+export declare function CallStartedBanner({ callerName, callerAvatarUrl, context, mode, onJoin, onDismiss, autoExpireSec, className, style, }: CallStartedBannerProps): JSX.Element | null;
+
+export declare type CallStartedBannerMode = 'started' | 'calling';
+
+export declare interface CallStartedBannerProps {
+    /** Display name of the user who started / is making the call. */
+    callerName: string;
+    /** Optional avatar URL — falls back to an initial-circle. */
+    callerAvatarUrl?: string;
+    /** Optional channel / room context shown under the caller name
+     * (e.g. "in #general", "in this document"). */
+    context?: string;
+    /**
+     * Copy framing:
+     *   - 'started' (default) — "Name started a call". Use for broadcast /
+     *     ambient hangouts where multiple people might be invited.
+     *   - 'calling'           — "Name is calling you". Use for direct 1:1
+     *     calls where the recipient is specifically targeted.
+     */
+    mode?: CallStartedBannerMode;
+    /** Click handler for the "Join" action. */
+    onJoin?: () => void;
+    /** Click handler for the dismiss / decline action. Banner self-hides
+     * via the autoExpireSec timeout if not provided. */
+    onDismiss?: () => void;
+    /** Auto-expire after this many seconds. Set to 0 to disable. Default 30. */
+    autoExpireSec?: number;
+    /** Escape hatches. */
+    className?: string;
+    style?: CSSProperties;
+}
+
 declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
 
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+
+export declare interface CallWidgetParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isSpeaking?: boolean;
+    videoStream?: MediaStream | null;
+}
+
+export declare interface CallWidgetProps {
+    state: CallWidgetState;
+    mode: CallMode;
+    participants: CallWidgetParticipant[];
+    localParticipant?: CallWidgetParticipant;
+    callerName?: string;
+    duration?: number;
+    isMuted?: boolean;
+    isCameraOn?: boolean;
+    isScreenSharing?: boolean;
+    onAnswer?: () => void;
+    onDecline?: () => void;
+    onEndCall?: () => void;
+    onToggleMute?: () => void;
+    onToggleCamera?: () => void;
+    onToggleScreenShare?: () => void;
+    onUpgradeToVideo?: () => void;
+    onAddParticipant?: (participantId: string) => void;
+    /** List of people available to add to the call */
+    availableParticipants?: CallWidgetParticipant[];
+    onMinimize?: () => void;
+    minimized?: boolean;
+    position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */
+    contained?: boolean;
+    draggable?: boolean;
+    /**
+     * Optional render slot that replaces the default video area (local fullscreen
+     * + single remote PiP). When provided, the widget renders this node in the
+     * video area while preserving its own header, controls, drag/minimize, and
+     * call-state machine. Use for multi-person hangout layouts (pair with
+     * `HangoutLayout` from the same module).
+     *
+     * Absent → the widget renders today's single-PiP layout (backwards compatible).
+     */
+    layoutComponent?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    /** Arbitrary `data-*` attributes to spread onto the root element.
+     *  Lets callers (e.g. HangoutOverlay) attach e2e-friendly testids and
+     *  lobby/callId metadata without an extra wrapper div that would
+     *  conflict with the widget's own `position: fixed` placement. */
+    dataAttrs?: Record<string, string | number | undefined>;
+}
+
+export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'active' | 'ended';
+
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
+
+export declare interface CaptionLine {
+    id: string;
+    speakerId: string;
+    speakerName?: string;
+    text: string;
+    /** ISO timestamp of caption emission. Used for fade-out + ordering. */
+    at: string;
+    /** True if the caption is still being updated (interim) vs final. */
+    interim?: boolean;
+}
 
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
@@ -729,6 +1018,25 @@ declare interface ChatMessage {
     displayName?: string;
 }
 
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers }: ChatPanelProps): JSX.Element;
+
+declare interface ChatPanelProps {
+    messages: ChatMessage[];
+    onSend: (content: string) => void;
+    disabled?: boolean;
+    onTyping?: (isTyping: boolean) => void;
+    typingUsers?: string[];
+}
+
+export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
+
+declare interface ChatRoomProps {
+    idToken: string | null;
+    roomId: string;
+    roomName: string;
+    onMessage: OnMessageFn_9;
+}
+
 export declare function Chip({ tone, size, solid, mono, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 export declare interface ChipProps {
@@ -747,6 +1055,24 @@ export declare interface ChipProps {
 }
 
 export declare type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
+
+export declare function CodeBlock({ code, language, theme, copyButton, showLineNumbers, className, style, 'data-testid': testId, ariaLabel, }: CodeBlockProps): JSX.Element;
+
+export declare type CodeBlockLanguage = 'tsx' | 'ts' | 'jsx' | 'js' | 'json' | 'bash' | 'sh' | 'text';
+
+export declare interface CodeBlockProps {
+    code: string;
+    language?: CodeBlockLanguage;
+    theme?: CodeBlockTheme;
+    copyButton?: boolean;
+    showLineNumbers?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+    ariaLabel?: string;
+}
+
+export declare type CodeBlockTheme = 'dark' | 'light';
 
 export declare function CodeEditor({ value, onChange, language: _language, // Phase 1: accepted but not applied yet
     placeholder, minLines, maxLines, readOnly, variables, 'aria-label': ariaLabel, }: CodeEditorProps): JSX.Element;
@@ -767,9 +1093,29 @@ export declare interface CodeEditorProps {
     'aria-label'?: string;
 }
 
+export declare function CodeInput({ length, onComplete, error, disabled, autoFocus, }: CodeInputProps): JSX.Element;
+
+export declare interface CodeInputProps {
+    length?: number;
+    onComplete: (code: string) => void;
+    error?: string | null;
+    disabled?: boolean;
+    autoFocus?: boolean;
+}
+
 /** Minimal provider shape needed by awareness. */
 declare interface CollaborationProvider {
     awareness: Awareness;
+}
+
+export declare function CollapsedIconStrip({ connectionState, onExpand, onDocuments, onPipelines, onObservability, }: CollapsedIconStripProps): JSX.Element;
+
+declare interface CollapsedIconStripProps {
+    connectionState: ConnectionState_3;
+    onExpand: () => void;
+    onDocuments: () => void;
+    onPipelines: () => void;
+    onObservability: () => void;
 }
 
 export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): JSX.Element;
@@ -783,6 +1129,26 @@ export declare interface CollapsibleSectionProps {
     className?: string;
     /** If provided, the open state is persisted to localStorage under this key. */
     storageKey?: string;
+}
+
+export declare function CollapsibleSidebar({ connectionState, onDisconnect, onReconnect, onCollapse, presenceUsers, currentClientId, currentChannel, activityEvents, userId, documents, onOpenDocument, pipelines, onOpenPipeline, onSeeAllPipelines, videoSlot, }: CollapsibleSidebarProps): JSX.Element;
+
+declare interface CollapsibleSidebarProps {
+    connectionState: ConnectionState_2;
+    onDisconnect: () => void;
+    onReconnect: () => void;
+    onCollapse?: () => void;
+    presenceUsers: PresenceUser_2[];
+    currentClientId: string;
+    currentChannel: string;
+    activityEvents: ActivityEvent[];
+    userId: string;
+    documents: DocumentInfo[];
+    onOpenDocument: (id: string) => void;
+    pipelines?: PipelineSidebarEntry[];
+    onOpenPipeline?: (id: string) => void;
+    onSeeAllPipelines?: () => void;
+    videoSlot?: React.ReactNode;
 }
 
 export declare const colors: {
@@ -812,6 +1178,15 @@ export declare const colors: {
 export declare function ColorSchemeProvider({ children }: {
     children: React.ReactNode;
 }): JSX.Element;
+
+export declare interface Column<T> {
+    key: string;
+    header: string;
+    render?: (item: T) => React.ReactNode;
+    sortable?: boolean;
+    width?: string;
+    align?: 'left' | 'right' | 'center';
+}
 
 export declare interface Command {
     id: string;
@@ -897,6 +1272,15 @@ export declare interface CommentThread extends CommentData {
     replies: CommentThread[];
 }
 
+export declare function CommentThreadPanel({ idToken, roomId, postId, onMessage }: CommentThreadProps): JSX.Element;
+
+declare interface CommentThreadProps {
+    idToken: string | null;
+    roomId: string | null;
+    postId: string | null;
+    onMessage: OnMessageFn;
+}
+
 export declare interface ConditionNodeData {
     type: 'condition';
     /** JSONPath or boolean expression evaluated over context. */
@@ -952,6 +1336,25 @@ export declare type ConflictSide = 'source' | 'platform' | 'merged';
 
 /** Connection lifecycle states */
 export declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_2 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_3 = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+declare type ConnectionState_4 = 'connected' | 'connecting' | 'disconnected';
+
+export declare function ConnectionStatus({ state }: Props): JSX.Element;
+
+export declare function ConsentPage({ clientName, scopes, redirectUri, onAuthorize, onDeny, logoUrl, }: ConsentPageProps): JSX.Element;
+
+export declare interface ConsentPageProps {
+    clientName: string;
+    scopes: string[];
+    redirectUri?: string;
+    onAuthorize: () => Promise<void>;
+    onDeny: () => Promise<void>;
+    logoUrl?: string;
+}
 
 export declare type ContextPatch = ContextPatchMerge | ContextPatchJsonPatch;
 
@@ -1058,6 +1461,24 @@ export declare interface DiagnosticsInfo {
     node: Record<string, unknown>;
     cluster: Record<string, unknown>;
     resources: Record<string, unknown>;
+}
+
+export declare function DiagnosticsPage({ diagnostics, rates, dlq, onRedrive, onPurge, onRefresh, loading, }: DiagnosticsPageProps): JSX.Element;
+
+export declare interface DiagnosticsPageProps {
+    diagnostics?: Record<string, unknown>;
+    rates?: Record<string, unknown>;
+    dlq?: Array<{
+        id: string;
+        payload: unknown;
+        error: string;
+        failedAt: string;
+        retryCount: number;
+    }>;
+    onRedrive: (id: string) => Promise<void>;
+    onPurge: (id: string) => Promise<void>;
+    onRefresh: () => void;
+    loading?: boolean;
 }
 
 export declare interface DLQEntry {
@@ -1221,6 +1642,44 @@ export declare interface EmailTemplate {
     variables: string[];
 }
 
+export declare function EmailTemplateFormPage({ template, isEdit, onSubmit, onCancel, error, }: EmailTemplateFormPageProps): JSX.Element;
+
+export declare interface EmailTemplateFormPageProps {
+    template?: {
+        templateId?: string;
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        name: string;
+        subject: string;
+        htmlBody: string;
+        textBody: string;
+        variables: string[];
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function EmailTemplateListPage({ templates, onCreateTemplate, onEditTemplate, onDeleteTemplate, onTestSend, loading, }: EmailTemplateListPageProps): JSX.Element;
+
+export declare interface EmailTemplateListPageProps {
+    templates: Array<{
+        templateId: string;
+        name: string;
+        subject: string;
+    }>;
+    onCreateTemplate: () => void;
+    onEditTemplate: (templateId: string) => void;
+    onDeleteTemplate: (templateId: string) => Promise<void>;
+    onTestSend: (templateId: string, email: string) => Promise<void>;
+    loading?: boolean;
+}
+
 export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateProps {
@@ -1259,6 +1718,19 @@ export declare interface EntityCellProps {
     labelClassName?: string;
 }
 
+export declare function EntityTable<T extends Record<string, unknown>>({ columns, data, keyField, onRowClick, actions, emptyMessage, emptyIcon, loading, }: EntityTableProps<T>): JSX.Element;
+
+export declare interface EntityTableProps<T> {
+    columns: Column<T>[];
+    data: T[];
+    keyField: string;
+    onRowClick?: (item: T) => void;
+    actions?: (item: T) => React.ReactNode;
+    emptyMessage?: string;
+    emptyIcon?: string;
+    loading?: boolean;
+}
+
 declare interface EphemeralReaction {
     id: string;
     emoji: string;
@@ -1268,6 +1740,16 @@ declare interface EphemeralReaction {
 }
 
 export declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
+
+export declare function ErrorPage({ title, message, error, onRetry, onBack, }: ErrorPageProps): JSX.Element;
+
+export declare interface ErrorPageProps {
+    title?: string;
+    message: string;
+    error?: string;
+    onRetry?: () => void;
+    onBack?: () => void;
+}
 
 export declare interface EventGlyph {
     icon: string;
@@ -1441,6 +1923,13 @@ export declare interface GatewayMessage {
     [key: string]: unknown;
 }
 
+declare interface GatewayMessage_2 {
+    type: string;
+    channel?: string;
+    payload?: unknown;
+    [key: string]: unknown;
+}
+
 declare class GatewayProvider extends Observable<string> {
     readonly doc: Y.Doc;
     readonly channel: string;
@@ -1530,6 +2019,36 @@ export declare interface GraphQueryNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
+
+export declare interface GroupFormPageProps {
+    group?: {
+        groupId?: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    };
+    isEdit: boolean;
+    poolId: string;
+    members?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    availableUsers?: Array<{
+        userId: string;
+        email: string;
+    }>;
+    onSubmit: (data: {
+        groupName: string;
+        description: string;
+        permissions: string[];
+    }) => Promise<void>;
+    onAddMember?: (userId: string) => Promise<void>;
+    onRemoveMember?: (userId: string) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
 declare interface GroupItem {
     groupId: string;
     name: string;
@@ -1537,6 +2056,34 @@ declare interface GroupItem {
     visibility: 'public' | 'private';
     ownerId: string;
     createdAt: string;
+}
+
+export declare function GroupListPage({ groups, poolName, onCreateGroup, onEditGroup, onDeleteGroup, loading, }: GroupListPageProps): JSX.Element;
+
+export declare interface GroupListPageProps {
+    groups: Array<{
+        groupId: string;
+        groupName: string;
+        description?: string;
+        permissions: string[];
+    }>;
+    poolId: string;
+    poolName: string;
+    onCreateGroup: () => void;
+    onEditGroup: (groupId: string) => void;
+    onDeleteGroup: (groupId: string) => Promise<void>;
+    loading?: boolean;
+}
+
+export declare function GroupPanel({ idToken, rooms, createGroupRoom, onRoomSelect, roomsLoading, compact }: GroupPanelProps): JSX.Element;
+
+declare interface GroupPanelProps {
+    idToken: string | null;
+    rooms: RoomItem[];
+    createGroupRoom: (groupId: string, name: string) => Promise<void>;
+    onRoomSelect?: (room: RoomItem) => void;
+    roomsLoading: boolean;
+    compact?: boolean;
 }
 
 export declare type GuardrailAction = 'block' | 'mask' | 'warn';
@@ -1549,6 +2096,63 @@ export declare interface GuardrailNodeData {
     action: GuardrailAction;
     label?: string;
 }
+
+/**
+ * Multi-person hangout layout with two modes:
+ *
+ *   - **auto-grid** (`mode="auto"`, no spotlight): N=1 single tile / N=2
+ *     50:50 split / N=3-4 2×2 / N=5-9 3×3 / N=10+ paginated 3×3.
+ *     Active speaker is indicated by border highlight only — no reflow.
+ *
+ *   - **spotlight** (`mode="spotlight"` OR `spotlightContent` provided):
+ *     a large main slot (active speaker or shared screen) plus a horizontal
+ *     filmstrip of the remaining participants along the bottom. Spotlight
+ *     swaps obey `speakerHysteresisMs` to prevent flicker.
+ *
+ * Pure presentational — no media wiring. Caller passes a `videoElement` per
+ * participant (typically a `<video>` with srcObject already attached) and the
+ * layout decides where to render each one.
+ */
+export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, onParticipantClick, className, style, }: HangoutLayoutProps): JSX.Element;
+
+export declare interface HangoutLayoutParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
+    videoElement?: ReactNode;
+}
+
+export declare interface HangoutLayoutProps {
+    /** Remote participants (callers should NOT include the local user here). */
+    participants: HangoutLayoutParticipant[];
+    /** The local user. Rendered as a tile in the grid at N≥3 (per Meet/Teams convention)
+     * or as a small PiP overlay at N≤2. Pass null/undefined to suppress entirely. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** 'auto' = grid view; 'spotlight' = main slot + filmstrip. Spotlight is
+     * forced on whenever `spotlightContent` is non-null regardless of mode. */
+    mode?: HangoutMode;
+    /** Active speaker id — drives the spotlight slot (in spotlight mode) and
+     * the green-border highlight (in any mode). Hysteresis is applied
+     * internally (default 750ms) so brief speech bursts don't flicker the
+     * main slot. */
+    activeSpeakerId?: string | null;
+    /** Override the hysteresis window (ms) before the spotlight slot swaps.
+     * 0 disables hysteresis (immediate swap). Default 750. */
+    speakerHysteresisMs?: number;
+    /** Content for the spotlight main slot — typically a `<video>` for a
+     * shared screen, or a `<ParticipantTile>` clone. When provided, the
+     * layout switches to spotlight regardless of `mode`. */
+    spotlightContent?: ReactNode;
+    /** Click handler per tile (e.g. pin / promote to spotlight). */
+    onParticipantClick?: (id: string) => void;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare type HangoutMode = 'auto' | 'spotlight';
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, size, className, ...rest }: IconButtonProps): JSX.Element;
 
@@ -1568,7 +2172,19 @@ export declare interface IconPickerProps {
 
 export declare const IDENTITY_BASE_URL: string;
 
+export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, }: IdentityAdminLayoutProps): JSX.Element;
+
+export declare interface IdentityAdminLayoutProps {
+    children: React.ReactNode;
+    activePath?: string;
+    adminEmail?: string;
+    onNavigate: (path: string) => void;
+    onLogout?: () => void;
+}
+
 export declare function identityApiFetch<T>(path: string, idToken: string | null, options?: RequestInit): Promise<T>;
+
+export declare function IdentityAuditPage({ records, onQuery, onViewEntity, onReplay, loading, totalRecords, }: AuditPageProps): JSX.Element;
 
 export declare interface IdentityClient {
     clientId: string;
@@ -1589,6 +2205,25 @@ export declare interface IdentityContextValue {
     userEmail: string | null;
     idToken: string | null;
     onSignOut: () => void;
+}
+
+export declare function IdentityFormField({ label, name, type, value, onChange, error, required, placeholder, options, helpText, disabled, }: IdentityFormFieldProps): JSX.Element;
+
+export declare interface IdentityFormFieldProps {
+    label: string;
+    name: string;
+    type?: 'text' | 'email' | 'password' | 'textarea' | 'select' | 'checkbox' | 'number';
+    value: string | boolean | number;
+    onChange: (value: string | boolean | number) => void;
+    error?: string;
+    required?: boolean;
+    placeholder?: string;
+    options?: Array<{
+        value: string;
+        label: string;
+    }>;
+    helpText?: string;
+    disabled?: boolean;
 }
 
 export declare interface IdentityGroup {
@@ -1879,6 +2514,42 @@ export declare interface LLMNodeData {
 
 export declare type LLMProvider = 'anthropic' | 'bedrock' | 'claude-code';
 
+declare interface LogEntry {
+    id: string;
+    direction: 'sent' | 'received';
+    message: GatewayMessage | Record<string, unknown>;
+    timestamp: string;
+}
+
+export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, }: LoginPageProps): JSX.Element;
+
+export declare interface LoginPageProps {
+    uid: string;
+    interactionUrl: string;
+    clientName?: string;
+    logoUrl?: string;
+    error?: string | null;
+    onLogin: (email: string, password: string) => Promise<void>;
+    onRegister: (data: {
+        email: string;
+        password: string;
+        givenName?: string;
+        familyName?: string;
+        enableMfa?: boolean;
+    }) => Promise<void>;
+    onForgotPassword: (email: string) => Promise<void>;
+    registrationEnabled?: boolean;
+    forgotPasswordEnabled?: boolean;
+}
+
+export declare function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps): JSX.Element;
+
+export declare interface LogoutPageProps {
+    onConfirm: () => void;
+    onCancel?: () => void;
+    clientName?: string;
+}
+
 export declare function makeEmptyField(sectionType: string): DocumentTypeField;
 
 export declare interface MappingRule {
@@ -1970,6 +2641,18 @@ export declare interface MessageBubbleProps {
     className?: string;
 }
 
+export declare function MfaDashboardPage({ devices, userEmail, mfaEnabled, onAddDevice, onRenameDevice, onRemoveDevice, loading, }: MfaDashboardPageProps): JSX.Element;
+
+export declare interface MfaDashboardPageProps {
+    devices: MfaDevice_2[];
+    userEmail?: string;
+    mfaEnabled: boolean;
+    onAddDevice: () => void;
+    onRenameDevice: (deviceId: string, newName: string) => Promise<void>;
+    onRemoveDevice: (deviceId: string) => Promise<void>;
+    loading?: boolean;
+}
+
 export declare interface MfaDevice {
     deviceId: string;
     deviceName: string;
@@ -1979,6 +2662,39 @@ export declare interface MfaDevice {
     lastUsed?: string;
 }
 
+declare interface MfaDevice_2 {
+    deviceId: string;
+    deviceName: string;
+    deviceType: string;
+    isVerified: boolean;
+    createdAt: string;
+    lastUsed?: string;
+}
+
+export declare function MfaManagementPage({ metrics, users, pools, onRefresh, loading, }: MfaManagementPageProps): JSX.Element;
+
+export declare interface MfaManagementPageProps {
+    metrics?: {
+        totalUsers: number;
+        mfaEnabled: number;
+        mfaDisabled: number;
+        adoptionRate: number;
+    };
+    users?: Array<{
+        userId: string;
+        email: string;
+        mfaEnabled: boolean;
+        deviceCount: number;
+    }>;
+    pools?: Array<{
+        poolId: string;
+        poolName: string;
+        userCount: number;
+    }>;
+    onRefresh: () => void;
+    loading?: boolean;
+}
+
 export declare interface MfaMetrics {
     totalUsers: number;
     mfaEnabled: number;
@@ -1986,11 +2702,36 @@ export declare interface MfaMetrics {
     adoptionRate: number;
 }
 
+export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, }: MfaSetupPageProps): JSX.Element;
+
+export declare interface MfaSetupPageProps {
+    onSetup: (deviceName: string) => Promise<{
+        deviceId: string;
+        qrCode: string;
+        secret: string;
+        backupCodes: string[];
+    }>;
+    onVerify: (deviceId: string, code: string) => Promise<{
+        success: boolean;
+        backupCodes?: string[];
+    }>;
+    onComplete: () => void;
+    userEmail?: string;
+}
+
 export declare interface MfaSetupResult {
     deviceId: string;
     qrCode: string;
     secret: string;
     backupCodes: string[];
+}
+
+export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, }: MfaVerifyPageProps): JSX.Element;
+
+export declare interface MfaVerifyPageProps {
+    onVerify: (code: string) => Promise<void>;
+    onVerifyBackup: (code: string) => Promise<void>;
+    error?: string | null;
 }
 
 export declare function Modal({ open, onClose, title, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
@@ -2031,11 +2772,40 @@ export declare interface ModalProps {
     rawChildren?: boolean;
 }
 
+export declare function MuteWhileTalkingToast({ show, label, }: MuteWhileTalkingToastProps): JSX.Element | null;
+
+export declare interface MuteWhileTalkingToastProps {
+    show: boolean;
+    /** Optional label override. */
+    label?: string;
+}
+
 declare type MyItem = MentionItem | TaskAssignment;
 
 export declare function nameToColor(name: string): string;
 
 export declare function nameToInitials(name: string): string;
+
+/** Sub-section navigation: link-based underline tab strip (no state — consumer routes via activeHref). */
+export declare function NavTabs({ items, activeHref, renderLink, className, style, 'aria-label': ariaLabel, }: NavTabsProps): JSX.Element;
+
+export declare interface NavTabsProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
+
+export declare function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps): JSX.Element;
+
+export declare interface NetworkQualityBadgeProps {
+    quality: NetworkQuality;
+    style?: CSSProperties;
+}
 
 export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
 
@@ -2066,6 +2836,10 @@ export declare interface NotificationItem {
 
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
+declare type OnMessageFn_10 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_11 = (handler: (msg: GatewayMessage_2) => void) => () => void;
+
 declare type OnMessageFn_2 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type OnMessageFn_3 = (handler: (msg: GatewayMessage) => void) => () => void;
@@ -2073,6 +2847,14 @@ declare type OnMessageFn_3 = (handler: (msg: GatewayMessage) => void) => () => v
 declare type OnMessageFn_4 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 declare type OnMessageFn_5 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_6 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_7 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => void;
+
+declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
 export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
 
@@ -2113,6 +2895,41 @@ export declare interface Participant {
     currentSectionId: string | null;
     lastSeen?: number;
     idle?: boolean;
+}
+
+/**
+ * Single-participant tile used in `VideoGrid` and `HangoutLayout`. Pure
+ * presentational — no media wiring, no signaling — caller owns the `<video>`
+ * element via `videoElement` and the speaking/mute booleans.
+ *
+ * The speaking border is intentionally just a border (no reflow): per industry
+ * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
+ * a green border is the agreed-on cue.
+ */
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, className, style, }: ParticipantTileProps): JSX.Element;
+
+export declare interface ParticipantTileProps {
+    /** Unique identifier for keying / pin actions. */
+    id: string;
+    /** Name shown in the bottom badge. */
+    displayName: string;
+    /** Optional avatar URL — used as fallback when no videoElement is provided. */
+    avatarUrl?: string;
+    /** Whether to render with a speaking-indicator green border + corner dot. */
+    isSpeaking?: boolean;
+    /** Whether to overlay a muted-mic glyph in the badge. */
+    isMuted?: boolean;
+    /** Whether this tile represents the local user — replaces the displayName label with "You". */
+    isLocal?: boolean;
+    /** When true, applies the "main / spotlight" emphasis style (larger border, taller aspect). */
+    isSpotlight?: boolean;
+    /** A pre-rendered media element (a `<video>` typically) — the consumer manages srcObject. */
+    videoElement?: ReactNode;
+    /** Click handler — used by HangoutLayout for pin / spotlight selection. */
+    onClick?: () => void;
+    /** Escape hatches. */
+    className?: string;
+    style?: CSSProperties;
 }
 
 export declare interface PasswordPolicy {
@@ -2173,6 +2990,15 @@ export declare class PatchValidationRejectedError extends Error {
     readonly reason: string;
     readonly result?: PatchResult;
     constructor(reason: string, result?: PatchResult);
+}
+
+export declare function PiPButton({ getVideoElement, className, title, }: PiPButtonProps): JSX.Element;
+
+export declare interface PiPButtonProps {
+    /** Callback to obtain the `<video>` element to enter PiP with. */
+    getVideoElement: () => HTMLVideoElement | null;
+    className?: string;
+    title?: string;
 }
 
 export declare interface PipelineApprovalResolveRequest {
@@ -2582,6 +3408,14 @@ export declare interface PipelineRunTrigger {
     payload: Record<string, unknown>;
 }
 
+declare interface PipelineSidebarEntry {
+    id: string;
+    name: string;
+    status: 'draft' | 'published' | 'archived';
+    updatedAt: string;
+    icon?: string;
+}
+
 export declare type PipelineStatus = 'draft' | 'published' | 'archived';
 
 export declare interface PipelineTriggerRequest {
@@ -2638,6 +3472,8 @@ export declare interface PipelineWireEvent<K extends keyof PipelineEventMap = ke
  */
 export declare type PipelineWireEventType = keyof PipelineEventMap | 'pipeline.run.resume-from-step';
 
+export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
+
 export declare interface PolicyNodeData {
     type: 'policy';
     policyStoreId: string;
@@ -2646,6 +3482,52 @@ export declare interface PolicyNodeData {
     resource: string;
     contextEntities?: string;
     label?: string;
+}
+
+export declare function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFormPageProps): JSX.Element;
+
+export declare interface PoolFormPageProps {
+    pool?: {
+        poolId?: string;
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    };
+    isEdit: boolean;
+    onSubmit: (data: {
+        poolName: string;
+        customAttributes: Record<string, string>;
+        settings: PoolSettings;
+    }) => Promise<void>;
+    onCancel: () => void;
+    error?: string | null;
+}
+
+export declare function PoolListPage({ pools, onCreatePool, onEditPool, onDeletePool, onViewPool, loading, }: PoolListPageProps): JSX.Element;
+
+export declare interface PoolListPageProps {
+    pools: Array<{
+        poolId: string;
+        poolName: string;
+        clientId: string;
+        createdAt: string;
+    }>;
+    onCreatePool: () => void;
+    onEditPool: (poolId: string) => void;
+    onDeletePool: (poolId: string) => Promise<void>;
+    onViewPool: (poolId: string) => void;
+    loading?: boolean;
+}
+
+export declare function PoolScopedLayout({ children, poolId, poolName, activeSection, onNavigate, onBack, }: PoolScopedLayoutProps): JSX.Element;
+
+export declare interface PoolScopedLayoutProps {
+    children: React.ReactNode;
+    poolId: string;
+    poolName: string;
+    activeSection?: 'users' | 'groups' | 'mfa';
+    onNavigate: (path: string) => void;
+    onBack: () => void;
 }
 
 export declare interface PoolSettings {
@@ -2661,6 +3543,14 @@ export declare interface PoolStats {
     userCount: number;
     poolId: string;
     poolName: string;
+}
+
+export declare function PostFeed({ idToken, roomId, onMessage }: PostFeedProps): JSX.Element;
+
+declare interface PostFeedProps {
+    idToken: string | null;
+    roomId: string | null;
+    onMessage: OnMessageFn_10;
 }
 
 declare interface PostItem {
@@ -2701,6 +3591,13 @@ export declare interface PresenceContextValue {
     setTyping: (isTyping: boolean) => void;
 }
 
+export declare function PresencePanel({ users, currentClientId }: PresencePanelProps): JSX.Element;
+
+declare interface PresencePanelProps {
+    users: PresenceUser[];
+    currentClientId: string | null;
+}
+
 export declare function PresenceProvider({ value, children, }: {
     value: PresenceContextValue;
     children: ReactNode;
@@ -2709,6 +3606,11 @@ export declare function PresenceProvider({ value, children, }: {
 declare interface PresenceUser {
     clientId: string;
     status: string;
+    metadata: Record<string, unknown>;
+}
+
+declare interface PresenceUser_2 {
+    clientId: string;
     metadata: Record<string, unknown>;
 }
 
@@ -2785,6 +3687,10 @@ declare interface ProposedField {
     required: boolean;
 }
 
+declare interface Props {
+    state: ConnectionState;
+}
+
 declare interface PublicProfile {
     userId: string;
     displayName: string;
@@ -2798,6 +3704,14 @@ declare interface PublicProfile {
 export declare function purgeDLQEntries(ids: string[], options?: {
     preview?: boolean;
 }): Promise<DLQPurgeResponse>;
+
+export declare function QrCodeDisplay({ value, size, label }: QrCodeDisplayProps): JSX.Element;
+
+export declare interface QrCodeDisplayProps {
+    value: string;
+    size?: number;
+    label?: string;
+}
 
 export declare interface QuickPrompt {
     label: string;
@@ -2919,6 +3833,73 @@ export declare const rawTokens: {
     };
 };
 
+export declare interface Reaction {
+    id: string;
+    emoji: string;
+    userId?: string;
+    displayName?: string;
+}
+
+export declare function ReactionOverlay({ reactions, style }: ReactionOverlayProps): JSX.Element;
+
+export declare interface ReactionOverlayProps {
+    reactions: Reaction[];
+    style?: CSSProperties;
+}
+
+export declare function ReactionPicker({ onReact, emojis, style }: ReactionPickerProps): JSX.Element;
+
+export declare interface ReactionPickerProps {
+    onReact: (emoji: string) => void;
+    emojis?: string[];
+    style?: CSSProperties;
+}
+
+export declare function ReconnectingBanner({ show, label }: ReconnectingBannerProps): JSX.Element | null;
+
+export declare interface ReconnectingBannerProps {
+    show: boolean;
+    /** Optional label override. Default: "Reconnecting…". */
+    label?: string;
+}
+
+export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, className, }: RecordingListProps): JSX.Element;
+
+export declare interface RecordingListItem {
+    id: string;
+    startIso: string;
+    endIso: string;
+    durationSec: number;
+    participantCount?: number;
+    thumbnailUrl?: string;
+    /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
+    label?: string;
+}
+
+export declare interface RecordingListProps {
+    recordings: RecordingListItem[];
+    selectedId?: string;
+    onSelect: (id: string) => void;
+    loading?: boolean;
+    emptyState?: ReactNode;
+    className?: string;
+}
+
+export declare function RecordingPlayer({ playlistUrl, poster, autoPlay, muted, onLoadedMetadata, onTimeUpdate, onError, hideDownload, className, }: RecordingPlayerProps): JSX.Element;
+
+export declare interface RecordingPlayerProps {
+    playlistUrl: string | null;
+    poster?: string;
+    autoPlay?: boolean;
+    muted?: boolean;
+    onLoadedMetadata?: (durationSec: number) => void;
+    onTimeUpdate?: (currentTime: number, duration: number) => void;
+    onError?: (err: Error) => void;
+    /** Hide the download button (private channels). Default false. */
+    hideDownload?: boolean;
+    className?: string;
+}
+
 /**
  * Redrive one or more DLQ entries (re-publish them to the event bus).
  */
@@ -2935,6 +3916,17 @@ declare interface RemoteCursor {
     clientId: string;
     position: Record<string, unknown>;
     metadata: Record<string, unknown>;
+}
+
+export declare function RemoteTileSlot({ stream, displayName, cameraOn, avatarSize, }: RemoteTileSlotProps): JSX.Element;
+
+export declare interface RemoteTileSlotProps {
+    stream: MediaStream | undefined;
+    displayName: string;
+    /** Camera enabled by sender. False → show avatar even if a stream exists. */
+    cameraOn: boolean;
+    /** Avatar size when fallback renders. Default 96. */
+    avatarSize?: number;
 }
 
 export declare function ResumeCallDialog({ open, onClose, onReconnect, callerName, lobbyName, elapsedMs, participants, loading, }: ResumeCallDialogProps): JSX.Element;
@@ -3043,11 +4035,53 @@ declare interface RoomItem {
     createdAt: string;
 }
 
+export declare function RoomList({ idToken, rooms, createRoom, createDM, loading, error, onRetry, onRoomSelect, activeRoomId, compact }: RoomListProps): JSX.Element;
+
+declare interface RoomListProps {
+    idToken: string | null;
+    rooms: RoomItem[];
+    createRoom: (name: string) => Promise<void>;
+    createDM: (peerId: string) => Promise<void>;
+    loading: boolean;
+    /** Inline-render an error + retry control instead of the empty state when set. */
+    error?: string | null;
+    onRetry?: () => void;
+    onRoomSelect: (room: RoomItem) => void;
+    activeRoomId?: string | null;
+    compact?: boolean;
+}
+
 declare interface RoomMemberItem {
     roomId: string;
     userId: string;
     displayName?: string;
     joinedAt: string;
+}
+
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, className, }: RosterPanelProps): JSX.Element;
+
+export declare interface RosterPanelProps {
+    participants: RosterParticipant[];
+    activeSpeakerId?: string | null;
+    /** Click handler per row — e.g. promote to spotlight. */
+    onParticipantClick?: (id: string) => void;
+    /** Total-participants count shown in header. Defaults to participants.length. */
+    count?: number;
+    /** Optional header — e.g. "In this call". Default "Participants". */
+    title?: string;
+    /** Optional footer — e.g. an "+ Add" button. */
+    footer?: ReactNode;
+    className?: string;
+}
+
+export declare interface RosterParticipant {
+    id: string;
+    displayName: string;
+    avatarUrl?: string;
+    isMuted?: boolean;
+    isLocal?: boolean;
+    isScreenSharing?: boolean;
+    handRaised?: boolean;
 }
 
 export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
@@ -3151,6 +4185,28 @@ export declare interface SessionMessage extends GatewayMessage {
     clientId: string;
     sessionToken: string;
     restored: boolean;
+}
+
+export declare function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps): JSX.Element;
+
+export declare interface SetupGuidePageProps {
+    status: {
+        hasUserPools: boolean;
+        poolCount: number;
+        hasClients: boolean;
+        clientCount: number;
+        hasAdminUser: boolean;
+        totalUsers: number;
+        adminEmails: string[];
+        smtpConfigured: boolean;
+        smtpHost?: string;
+        issuer: string;
+        issuerConfigured: boolean;
+        wellKnownUrl?: string;
+        firstPoolId?: string;
+        firstClientId?: string;
+    };
+    onNavigate: (path: string) => void;
 }
 
 export declare interface SetupStatus {
@@ -3271,6 +4327,32 @@ declare interface SnapshotSection {
     }>;
 }
 
+export declare function SocialPanel({ idToken, onMessage }: {
+    idToken: string | null;
+    onMessage: OnMessageFn_7;
+}): JSX.Element;
+
+export declare function SocialTabContent({ userId, displayName, idToken, rooms, createRoom, createDM, createGroupRoom, roomsLoading, roomsError, onRoomsRetry, handleRoomSelect, activeRoomId, onMessage, }: SocialTabContentProps): JSX.Element;
+
+declare interface SocialTabContentProps {
+    userId: string;
+    displayName: string;
+    userEmail: string;
+    connectionState: string;
+    idToken: string | null;
+    rooms: RoomItem[];
+    createRoom: (name: string) => Promise<void>;
+    createDM: (targetUserId: string) => Promise<void>;
+    createGroupRoom: (groupId: string, name: string) => Promise<void>;
+    roomsLoading: boolean;
+    roomsError?: string | null;
+    onRoomsRetry?: () => void;
+    handleRoomSelect: (room: RoomItem) => void;
+    activeRoomId: string | null;
+    activityEvents: ActivityEvent[];
+    onMessage: OnMessageFn_8;
+}
+
 declare interface SourceSloMetrics {
     sourceId: string;
     window: string;
@@ -3348,6 +4430,20 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
+export declare function StatsCard({ metrics, style }: StatsCardProps): JSX.Element;
+
+export declare interface StatsCardProps {
+    metrics: StreamMetrics | null;
+    style?: CSSProperties;
+}
+
+export declare function StatusBadge({ status, variant }: StatusBadgeProps): JSX.Element;
+
+export declare interface StatusBadgeProps {
+    status: string;
+    variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+}
+
 export declare interface StatusColors {
     bg: string;
     border: string;
@@ -3371,6 +4467,16 @@ export declare interface StatusDotProps {
 }
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
+
+export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps): JSX.Element;
+
+export declare interface StatusStripProps {
+    phase: PlayerPhase | 'live' | 'reconnecting';
+    bitrateBps?: number;
+    viewerCount?: number;
+    duration?: number;
+    style?: CSSProperties;
+}
 
 /**
  * One execution attempt of a step. Hub task #1280.
@@ -3427,6 +4533,37 @@ export declare interface StepExecution {
 }
 
 export declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
+
+/**
+ * Companion utility: returns true when the stream has at least one
+ * paintable video track (live + enabled + not muted). Pair with
+ * useTrackStateBump in the same component so the boolean re-derives on
+ * every track transition.
+ */
+export declare function streamHasUsableVideo(stream: MediaStream | undefined | null): boolean;
+
+export declare interface StreamMetrics {
+    bitrateBps: number;
+    fps: number;
+    resolution: {
+        width: number;
+        height: number;
+    };
+    packetsLost: number;
+    jitter?: number;
+}
+
+export declare function StreamVideo({ stream, muted, videoRef, className, }: StreamVideoProps): JSX.Element;
+
+export declare interface StreamVideoProps {
+    stream: MediaStream;
+    muted?: boolean;
+    /** Optional external ref. Lets callers reach the underlying <video>
+     *  for OS-level Picture-in-Picture. */
+    videoRef?: MutableRefObject<HTMLVideoElement | null>;
+    /** Tailwind class overrides. Defaults to `h-full w-full object-cover`. */
+    className?: string;
+}
 
 export declare interface SubNavItem {
     /** Path relative to the section root, e.g. "summary" or "crawl". For action
@@ -3577,6 +4714,14 @@ declare interface SyncStatus {
     error?: string;
 }
 
+export declare interface TabItem {
+    id: string;
+    label: ReactNode;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
 export declare function Table({ children, className, ...rest }: TableProps): JSX.Element;
 
 export declare function TableBody({ children, className, ...rest }: TableBodyProps): JSX.Element;
@@ -3615,6 +4760,37 @@ export declare interface TableThProps extends ThHTMLAttributes<HTMLTableCellElem
     sortable?: boolean;
     sortDirection?: 'asc' | 'desc' | null;
 }
+
+export declare function TabPanel({ id, when, idPrefix, className, style, children }: TabPanelProps): JSX.Element | null;
+
+export declare interface TabPanelProps {
+    /** The tab id this panel is associated with. */
+    id: string;
+    /** Currently-active tab id. Panel renders only when these match. */
+    when: string;
+    /** Must match the Tabs `idPrefix` for accessibility wiring. Auto-generated tabs without an idPrefix should pass it through. */
+    idPrefix?: string;
+    className?: string;
+    style?: CSSProperties;
+    children?: ReactNode;
+}
+
+export declare function Tabs({ items, value, onValueChange, variant, size, className, style, 'aria-label': ariaLabel, idPrefix: idPrefixProp, }: TabsProps): JSX.Element;
+
+export declare interface TabsProps {
+    items: TabItem[];
+    value: string;
+    onValueChange: (id: string) => void;
+    variant?: TabsVariant;
+    size?: 'sm' | 'md';
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+    /** Shared id used to wire <TabPanel> regions to their <tab> triggers. Auto-generated if omitted. */
+    idPrefix?: string;
+}
+
+export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
 
 export declare function TagEditor({ value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
 
@@ -3846,6 +5022,33 @@ export declare interface ToolCallStripProps {
     className?: string;
 }
 
+export declare function TopNav({ items, activeHref, brand, rightSlot, renderLink, maxVisible, className, style, 'aria-label': ariaLabel, }: TopNavProps): JSX.Element;
+
+export declare interface TopNavItem {
+    label: ReactNode;
+    to: string;
+    icon?: ReactNode;
+    badge?: ReactNode;
+    disabled?: boolean;
+}
+
+export declare interface TopNavProps {
+    items: TopNavItem[];
+    /** Active href — typically the current pathname. An item is active when activeHref === item.to OR activeHref.startsWith(item.to + '/'). */
+    activeHref?: string;
+    /** Brand/logo slot rendered at the left. */
+    brand?: ReactNode;
+    /** Optional right-aligned slot (search, user menu, profile, etc.). */
+    rightSlot?: ReactNode;
+    /** Render function for link elements. Defaults to <a>. Use this to plug in react-router <Link>, next/link, etc. */
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    /** Maximum number of items to render inline before collapsing the rest into a "More" menu. Default: render all. */
+    maxVisible?: number;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
 export declare interface TraceSpan {
     traceId: string;
     spanId: string;
@@ -3866,6 +5069,17 @@ export declare interface TraceTimeline {
     totalDurationMs: number;
     agentId: string;
     startedAt: string;
+}
+
+export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;
+
+export declare interface TranscriptOverlayProps {
+    lines: CaptionLine[];
+    /** How many recent lines to show simultaneously. Default 3. */
+    maxLines?: number;
+    /** Fade-out duration ms. Default 8000. */
+    fadeAfterMs?: number;
+    className?: string;
 }
 
 export declare interface TransformNodeData {
@@ -4121,7 +5335,7 @@ declare interface UseActivityBusReturn {
      idToken: string | null;
      roomId: string | null;
      postId: string | null;
-     onMessage: OnMessageFn;
+     onMessage: OnMessageFn_2;
  }
 
  declare interface UseCommentsReturn {
@@ -4572,7 +5786,7 @@ declare interface UseActivityBusReturn {
      roomId: string | null;
      postId: string | null;
      commentId?: string | null;
-     onMessage: OnMessageFn_2;
+     onMessage: OnMessageFn_3;
  }
 
  declare interface UseLikesReturn {
@@ -4603,6 +5817,19 @@ declare interface UseActivityBusReturn {
   */
  export declare function useMentionUsers(participants: Participant[]): MentionUser[];
 
+ export declare function useMuteWhileTalking({ localStream, isMuted, threshold, triggerMs, cooldownMs, }: UseMuteWhileTalkingOptions): boolean;
+
+ declare interface UseMuteWhileTalkingOptions {
+     localStream: MediaStream | null;
+     isMuted: boolean;
+     /** dB threshold for "talking". Default -45 — well above ambient. */
+     threshold?: number;
+     /** Sustained talking duration (ms) before the toast fires. Default 1500. */
+     triggerMs?: number;
+     /** Cool-down between toast fires (ms). Default 6000. */
+     cooldownMs?: number;
+ }
+
  export declare function useMyMentionsAndTasks({ sections, comments, displayName, userId, }: UseMyMentionsAndTasksArgs): MyItem[];
 
  declare interface UseMyMentionsAndTasksArgs {
@@ -4626,7 +5853,7 @@ declare interface UseActivityBusReturn {
  declare interface UsePostsOptions {
      idToken: string | null;
      roomId: string | null;
-     onMessage: OnMessageFn_3;
+     onMessage: OnMessageFn_4;
  }
 
  declare interface UsePostsReturn {
@@ -4674,6 +5901,54 @@ declare interface UseActivityBusReturn {
      react: (emoji: string) => void;
  }
 
+ export declare function UserFormPage({ user, isEdit, customAttributeDefinitions, onSubmit, onCancel, error, }: UserFormPageProps): JSX.Element;
+
+ export declare interface UserFormPageProps {
+     user?: {
+         userId?: string;
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         nickname?: string;
+         picture?: string;
+         website?: string;
+         customAttributes?: Record<string, unknown>;
+     };
+     isEdit: boolean;
+     poolId: string;
+     customAttributeDefinitions?: Record<string, string>;
+     onSubmit: (data: {
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         nickname?: string;
+         picture?: string;
+         website?: string;
+         customAttributes?: Record<string, unknown>;
+     }) => Promise<void>;
+     onCancel: () => void;
+     error?: string | null;
+ }
+
+ export declare function UserListPage({ users, poolName, onCreateUser, onEditUser, onDeleteUser, loading, }: UserListPageProps): JSX.Element;
+
+ export declare interface UserListPageProps {
+     users: Array<{
+         userId: string;
+         email: string;
+         givenName?: string;
+         familyName?: string;
+         status: string;
+         createdAt: string;
+     }>;
+     poolId: string;
+     poolName: string;
+     onCreateUser: () => void;
+     onEditUser: (userId: string) => void;
+     onDeleteUser: (userId: string) => Promise<void>;
+     loading?: boolean;
+ }
+
  export declare function UserMenu({ user, items, className, 'data-testid': testId }: UserMenuProps): JSX.Element;
 
  export declare interface UserMenuItem {
@@ -4703,7 +5978,7 @@ declare interface UseActivityBusReturn {
 
  declare interface UseRoomsOptions {
      idToken: string | null;
-     onMessage: OnMessageFn_4;
+     onMessage: OnMessageFn_5;
  }
 
  declare interface UseRoomsReturn {
@@ -4804,6 +6079,8 @@ declare interface UseActivityBusReturn {
  export declare function useThemeContext(): ThemeTokens;
 
  export declare function useToast(): ToastContextValue;
+
+ export declare function useTrackStateBump(stream: MediaStream | undefined | null, participantLabel: string): number;
 
  export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
 
@@ -4980,6 +6257,52 @@ declare interface UseActivityBusReturn {
       type?: 'manual' | 'auto' | 'pre-restore';
   }
 
+  /**
+   * Static N-way grid: 1 / 2×2 / 3×3 / 4×4 column count based on participant
+   * count. Tiles do NOT reflow on speaker change — speaking is indicated via
+   * border highlight on the tile only (see ParticipantTile). For an
+   * active-speaker-aware spotlight layout, use `HangoutLayout` instead.
+   */
+  export declare function VideoGrid({ participants, style }: VideoGridProps): JSX.Element;
+
+  export declare interface VideoGridProps {
+      participants: VideoParticipant[];
+      style?: CSSProperties;
+  }
+
+  export declare interface VideoParticipant {
+      id: string;
+      displayName: string;
+      avatarUrl?: string;
+      isSpeaking?: boolean;
+      isMuted?: boolean;
+      isLocal?: boolean;
+      videoElement?: ReactNode;
+  }
+
+  export declare function VideoPlayer({ src, stream, autoPlay, muted, loop, controls, poster, phase: controlledPhase, className, style, onPhaseChange, onTimeUpdate, }: VideoPlayerProps): JSX.Element;
+
+  export declare interface VideoPlayerProps {
+      src?: string;
+      /**
+       * MediaStream source for WebRTC playback (WHEP, RTCPeerConnection.ontrack,
+       * getUserMedia, etc.). When set, attached to the underlying <video>'s
+       * `srcObject`. Takes precedence over `src` if both are supplied. Pass
+       * `null` to clear.
+       */
+      stream?: MediaStream | null;
+      autoPlay?: boolean;
+      muted?: boolean;
+      loop?: boolean;
+      controls?: boolean;
+      poster?: string;
+      phase?: PlayerPhase;
+      className?: string;
+      style?: CSSProperties;
+      onPhaseChange?: (phase: PlayerPhase) => void;
+      onTimeUpdate?: (currentTime: number, duration: number) => void;
+  }
+
   declare interface VideoSession {
       documentId: string;
       sessionId: string;
@@ -5000,12 +6323,19 @@ declare interface UseActivityBusReturn {
       joinedAt: string;
   }
 
+  export declare function ViewerCount({ count, style }: ViewerCountProps): JSX.Element;
+
+  export declare interface ViewerCountProps {
+      count: number;
+      style?: CSSProperties;
+  }
+
   export declare type ViewMode = 'editor' | 'ack' | 'reader';
 
   export declare interface WebSocketContextValue {
       connectionState: ConnectionState;
       sendMessage: (msg: Record<string, unknown>) => void;
-      onMessage: OnMessageFn_5;
+      onMessage: OnMessageFn_6;
       ws: UseWebSocketReturn;
       clientId: string | null;
       sessionToken: string | null;
