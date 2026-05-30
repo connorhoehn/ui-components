@@ -1,13 +1,14 @@
 import { jsxs as t, jsx as e, Fragment as j } from "react/jsx-runtime";
 import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as ce, useEffect as de } from "react";
-import { C as U, P as F, T as J, b as Z, e as q, a as ee, c as te, d as B } from "./PageSection-B_nBFSjK.js";
+import { C as U } from "./Card-B2uO9v1w.js";
+import { P as F, T as J, b as Z, e as q, a as ee, c as te, d as B } from "./PageSection-Dj8r4YIt.js";
 import { a as f, B as V } from "./Banner-B8AcwPH_.js";
 import { E as me } from "./EmptyState-PM9wTjxk.js";
 import { C as H } from "./ConfirmDialog-CNoxvYGu.js";
 import { C as K } from "./Chip-BXdhqVFm.js";
 import { M as ye } from "./Modal-2jg4229_.js";
 import { c as O } from "./cn-B6yFEsav.js";
-function Ke({ stats: a, pools: s, onNavigate: i, loading: u }) {
+function Xe({ stats: a, pools: s, onNavigate: i, loading: u }) {
   const b = G(
     () => [
       { label: "User Pools", value: a.userPools },
@@ -123,7 +124,7 @@ function X({
     )) })
   ] }) });
 }
-function Xe({
+function He({
   pools: a,
   onCreatePool: s,
   onEditPool: i,
@@ -282,7 +283,7 @@ function D({
     p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-slate-400", children: p })
   ] });
 }
-function He({ pool: a, isEdit: s, onSubmit: i, onCancel: u, error: b }) {
+function Qe({ pool: a, isEdit: s, onSubmit: i, onCancel: u, error: b }) {
   const [c, h] = o(a?.poolName ?? ""), [m, r] = o(a?.settings?.mfaConfiguration ?? "OFF"), [p, g] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [N, l] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [n, d] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [x, A] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [E, y] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [P, I] = o(
     Object.entries(a?.customAttributes ?? {}).map(([S, k]) => ({ key: S, value: k }))
   ), [M, R] = o(!1), T = w(() => {
@@ -459,7 +460,7 @@ function le({ status: a, variant: s }) {
   const i = s ? Ce[s] || "neutral" : we[a] || "neutral";
   return /* @__PURE__ */ e(K, { tone: i, size: "sm", children: a });
 }
-function Qe({
+function Ye({
   users: a,
   poolName: s,
   onCreateUser: i,
@@ -536,7 +537,7 @@ function Qe({
     }
   );
 }
-function Ye({
+function Je({
   user: a,
   isEdit: s,
   customAttributeDefinitions: i,
@@ -670,7 +671,7 @@ function Ye({
     ] }) })
   ] });
 }
-function Je({
+function Ze({
   groups: a,
   poolName: s,
   onCreateGroup: i,
@@ -741,7 +742,7 @@ function Je({
     }
   );
 }
-function Ze({
+function et({
   group: a,
   isEdit: s,
   members: i,
@@ -857,7 +858,7 @@ function Ze({
     ] }) })
   ] });
 }
-function et({
+function tt({
   applications: a,
   onCreateApp: s,
   onCreateAppWithPool: i,
@@ -972,7 +973,7 @@ const ke = [
   "client_credentials",
   "refresh_token"
 ], Se = ["code", "token", "id_token"];
-function tt({
+function at({
   application: a,
   isEdit: s,
   pools: i,
@@ -1099,7 +1100,7 @@ function tt({
   ] });
 }
 const Ae = ["authorization_code", "client_credentials", "refresh_token"];
-function at({ onSubmit: a, onCancel: s, error: i }) {
+function lt({ onSubmit: a, onCancel: s, error: i }) {
   const [u, b] = o(""), [c, h] = o(""), [m, r] = o([""]), [p, g] = o(["authorization_code"]), [N, l] = o(!1), n = w((y) => {
     g(
       (P) => P.includes(y) ? P.filter((I) => I !== y) : [...P, y]
@@ -1188,7 +1189,7 @@ function at({ onSubmit: a, onCancel: s, error: i }) {
     ] }) })
   ] });
 }
-function lt({
+function nt({
   templates: a,
   onCreateTemplate: s,
   onEditTemplate: i,
@@ -1289,7 +1290,7 @@ function lt({
     }
   );
 }
-function nt({
+function it({
   template: a,
   isEdit: s,
   onSubmit: i,
@@ -1411,7 +1412,7 @@ function nt({
     ] }) })
   ] });
 }
-function it({
+function st({
   metrics: a,
   users: s,
   pools: i,
@@ -1497,7 +1498,7 @@ function it({
   );
 }
 const Ie = ["", "user", "pool", "client", "group", "template"];
-function st({
+function rt({
   records: a,
   onQuery: s,
   onViewEntity: i,
@@ -1614,7 +1615,7 @@ function st({
     ] })
   ] });
 }
-function rt({ status: a, onNavigate: s }) {
+function ot({ status: a, onNavigate: s }) {
   const [i, u] = o(null), b = w((r) => {
     u((p) => p === r ? null : r);
   }, []), c = G(
@@ -1756,7 +1757,7 @@ function Te({ rates: a }) {
     ] }, i)) })
   ] });
 }
-function ot({
+function ct({
   diagnostics: a,
   rates: s,
   dlq: i,
@@ -1837,7 +1838,7 @@ function ot({
     }
   );
 }
-function ct({
+function dt({
   uid: a,
   interactionUrl: s,
   clientName: i,
@@ -2104,7 +2105,7 @@ const De = {
 function ze(a) {
   return De[a] || `Access: ${a}`;
 }
-function dt({
+function mt({
   clientName: a,
   scopes: s,
   redirectUri: i,
@@ -2295,7 +2296,7 @@ function he({
   ] });
 }
 const re = ["name", "scan", "verify", "backup"], Re = ["Name", "Scan", "Verify", "Backup"];
-function mt({
+function ht({
   onSetup: a,
   onVerify: s,
   onComplete: i,
@@ -2463,7 +2464,7 @@ function mt({
     ] })
   ] }) });
 }
-function ht({
+function ut({
   onVerify: a,
   onVerifyBackup: s,
   error: i = null
@@ -2574,7 +2575,7 @@ function oe(a) {
     return a;
   }
 }
-function ut({
+function pt({
   devices: a,
   userEmail: s,
   mfaEnabled: i,
@@ -2685,7 +2686,7 @@ function ut({
     )
   ] }) });
 }
-function pt({ onConfirm: a, onCancel: s, clientName: i }) {
+function ft({ onConfirm: a, onCancel: s, clientName: i }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-slate-50", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Sign out confirmation", children: [
     /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-red-600", children: [
       /* @__PURE__ */ e("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
@@ -2707,7 +2708,7 @@ function pt({ onConfirm: a, onCancel: s, clientName: i }) {
     ] })
   ] }) });
 }
-function ft({
+function gt({
   title: a = "Something went wrong",
   message: s,
   error: i,
@@ -2761,7 +2762,7 @@ function Le({
     }
   ) });
 }
-function gt({
+function bt({
   children: a,
   activePath: s,
   adminEmail: i,
@@ -2838,7 +2839,7 @@ function Fe({
     }
   );
 }
-function bt({
+function xt({
   children: a,
   poolId: s,
   poolName: i,
@@ -2886,34 +2887,34 @@ function bt({
   ] });
 }
 export {
-  Ke as A,
+  Xe as A,
   he as C,
-  ot as D,
-  nt as E,
+  ct as D,
+  it as E,
   D as F,
-  Ze as G,
-  gt as I,
-  ct as L,
-  ut as M,
-  He as P,
+  et as G,
+  bt as I,
+  dt as L,
+  pt as M,
+  Qe as P,
   Ee as Q,
-  rt as S,
-  Ye as U,
-  tt as a,
-  et as b,
-  at as c,
-  st as d,
-  dt as e,
-  lt as f,
+  ot as S,
+  Je as U,
+  at as a,
+  tt as b,
+  lt as c,
+  rt as d,
+  mt as e,
+  nt as f,
   X as g,
-  ft as h,
-  Je as i,
-  pt as j,
-  it as k,
-  mt as l,
-  ht as m,
-  Xe as n,
-  bt as o,
+  gt as h,
+  Ze as i,
+  ft as j,
+  st as k,
+  ht as l,
+  ut as m,
+  He as n,
+  xt as o,
   le as p,
-  Qe as q
+  Ye as q
 };

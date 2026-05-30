@@ -2510,6 +2510,22 @@ export declare interface KnowledgeBaseNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+export declare function KPIGrid({ children, columns, dense, className, style, 'data-testid': testId, }: KPIGridProps): JSX.Element;
+
+export declare type KPIGridColumns = 1 | 2 | 3 | 4;
+
+export declare interface KPIGridProps {
+    /** Children — expected to be <StatCard> instances. */
+    children: ReactNode;
+    /** Number of columns at >=640px. Default 4. Always collapses to 1 below. */
+    columns?: KPIGridColumns;
+    /** Tighter gap (8px vs 16px). Default false. */
+    dense?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
 /** Default light theme — derived from the original hardcoded tokens. */
 export declare const lightTheme: ThemeTokens;
 
@@ -4495,7 +4511,30 @@ export declare function StackedAreaChart({ series, height, }: {
     height?: number;
 }): JSX_2.Element;
 
-export declare function StatCard({ label, value, accent, danger, hint, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+export declare function StatCard({ label, value, accent, danger, hint, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
+
+export declare interface StatCardDelta {
+    /** Magnitude of the change. Rendered with a sign derived from `direction`. */
+    value: number;
+    /** Trend direction. Drives the arrow glyph (▲/▼) and default sign. */
+    direction: 'up' | 'down';
+    /**
+     * Color tone for the delta line. Defaults:
+     *   - up   → positive (success/green)
+     *   - down → negative (danger/red)
+     *
+     * Pass explicitly to override — e.g. on a "Failed events" KPI, a
+     * downward trend is actually positive, so `tone: 'positive'`.
+     */
+    tone?: 'positive' | 'negative' | 'neutral';
+    /**
+     * Suffix appended to the numeric value. Default `'%'`. Pass `''` for raw
+     * counts (e.g. `+12` errors), or `' ms'` etc. for units.
+     */
+    suffix?: string;
+    /** Optional aria-label override for the delta line. */
+    'aria-label'?: string;
+}
 
 export declare interface StatCardProps {
     label: ReactNode;
@@ -4503,6 +4542,16 @@ export declare interface StatCardProps {
     accent?: boolean;
     danger?: boolean;
     hint?: ReactNode;
+    /**
+     * Trend delta rendered below the value (▲ +12% / ▼ -4%, colored by tone).
+     * Pass `null` or omit to hide.
+     */
+    delta?: StatCardDelta | null;
+    /**
+     * Inline sparkline drawn to the right of the value. Pass the raw number
+     * series — the card sizes it at 80×20 by default. Omit to hide.
+     */
+    sparklineData?: number[];
     /** Destination URL / path. When provided the card renders as a link. */
     to?: string;
     /**

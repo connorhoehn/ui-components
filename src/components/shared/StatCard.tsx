@@ -1,17 +1,44 @@
 // StatCard — metric display card.
 //
 // Renders a labeled value tile (e.g. "Active Users · 1,284"). Variants:
-//   - accent: tinted primary background + left accent border.
-//   - danger: tinted danger background + left danger border.
-//   - hint:   tiny italic helper text below the value.
-//   - to:     wraps the card in a link. Defaults to <a href>; pass `as={Link}`
-//             (e.g. React Router's Link) for client-side navigation — the `to`
-//             string is forwarded as-is so the router's prop name matches.
-//   - mono:   renders the value in a monospace font (good for counts/IDs).
-//   - onClick: clickable card without a URL (uses <button>).
+//   - accent:        tinted primary background + left accent border.
+//   - danger:        tinted danger background + left danger border.
+//   - hint:          tiny italic helper text below the value.
+//   - to:            wraps the card in a link. Defaults to <a href>; pass
+//                    `as={Link}` (e.g. React Router's Link) for client-side
+//                    navigation — the `to` string is forwarded as-is so the
+//                    router's prop name matches.
+//   - mono:          renders the value in a monospace font (good for counts/IDs).
+//   - onClick:       clickable card without a URL (uses <button>).
+//   - delta:         trend indicator (▲/▼ + percent) shown below the value.
+//   - sparklineData: small inline trend line rendered next to the value.
 
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import Sparkline from './Sparkline';
+
+export interface StatCardDelta {
+  /** Magnitude of the change. Rendered with a sign derived from `direction`. */
+  value: number;
+  /** Trend direction. Drives the arrow glyph (▲/▼) and default sign. */
+  direction: 'up' | 'down';
+  /**
+   * Color tone for the delta line. Defaults:
+   *   - up   → positive (success/green)
+   *   - down → negative (danger/red)
+   *
+   * Pass explicitly to override — e.g. on a "Failed events" KPI, a
+   * downward trend is actually positive, so `tone: 'positive'`.
+   */
+  tone?: 'positive' | 'negative' | 'neutral';
+  /**
+   * Suffix appended to the numeric value. Default `'%'`. Pass `''` for raw
+   * counts (e.g. `+12` errors), or `' ms'` etc. for units.
+   */
+  suffix?: string;
+  /** Optional aria-label override for the delta line. */
+  'aria-label'?: string;
+}
 
 export interface StatCardProps {
   label: ReactNode;
@@ -19,6 +46,16 @@ export interface StatCardProps {
   accent?: boolean;
   danger?: boolean;
   hint?: ReactNode;
+  /**
+   * Trend delta rendered below the value (▲ +12% / ▼ -4%, colored by tone).
+   * Pass `null` or omit to hide.
+   */
+  delta?: StatCardDelta | null;
+  /**
+   * Inline sparkline drawn to the right of the value. Pass the raw number
+   * series — the card sizes it at 80×20 by default. Omit to hide.
+   */
+  sparklineData?: number[];
   /** Destination URL / path. When provided the card renders as a link. */
   to?: string;
   /**
@@ -40,12 +77,24 @@ export interface StatCardProps {
   'data-testid'?: string;
 }
 
+const DELTA_TONE_CLASS: Record<NonNullable<StatCardDelta['tone']>, string> = {
+  positive: 'text-[var(--color-success)]',
+  negative: 'text-[var(--color-danger)]',
+  neutral: 'text-[var(--color-text-secondary)]',
+};
+
+function resolveDeltaTone(delta: StatCardDelta): NonNullable<StatCardDelta['tone']> {
+  return delta.tone ?? (delta.direction === 'up' ? 'positive' : 'negative');
+}
+
 export function StatCard({
   label,
   value,
   accent = false,
   danger = false,
   hint,
+  delta,
+  sparklineData,
   to,
   as: As,
   onClick,
@@ -63,19 +112,49 @@ export function StatCard({
     className,
   );
 
+  const sparkline = sparklineData && sparklineData.length > 0 ? sparklineData : null;
+
+  let deltaNode: ReactNode = null;
+  if (delta) {
+    const tone = resolveDeltaTone(delta);
+    const arrow = delta.direction === 'up' ? '▲' : '▼';
+    const sign = delta.direction === 'up' ? '+' : '-';
+    const suffix = delta.suffix ?? '%';
+    const magnitude = Math.abs(delta.value);
+    const deltaAriaLabel = delta['aria-label'] ?? `${delta.direction} ${magnitude}${suffix}`;
+    deltaNode = (
+      <div
+        data-testid="stat-card-delta"
+        data-direction={delta.direction}
+        data-tone={tone}
+        aria-label={deltaAriaLabel}
+        className={cn('mt-1 text-[12px] font-medium leading-tight', DELTA_TONE_CLASS[tone])}
+      >
+        <span aria-hidden="true">{arrow} </span>
+        {sign}
+        {magnitude}
+        {suffix}
+      </div>
+    );
+  }
+
   const content = (
     <>
       <div className="text-[12px] uppercase tracking-wide text-[var(--color-text-tertiary)]">
         {label}
       </div>
-      <div
-        className={cn(
-          'mt-1 text-[24px] font-bold leading-tight text-[var(--color-text-primary)]',
-          mono && 'font-mono',
-        )}
-      >
-        {value}
+      <div className="mt-1 flex items-center gap-2">
+        <div
+          className={cn(
+            'text-[24px] font-bold leading-tight text-[var(--color-text-primary)]',
+            mono && 'font-mono',
+          )}
+        >
+          {value}
+        </div>
+        {sparkline && <Sparkline data={sparkline} width={80} height={20} />}
       </div>
+      {deltaNode}
       {hint != null && (
         <div className="mt-1 text-[11px] italic text-[var(--color-text-tertiary)]">
           {hint}

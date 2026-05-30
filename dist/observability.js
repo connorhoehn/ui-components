@@ -1,56 +1,59 @@
 import { jsxs as i, jsx as t, Fragment as z } from "react/jsx-runtime";
-import { Outlet as de, useNavigate as ce } from "react-router";
-import { useState as b, useRef as T, useCallback as W, useEffect as O, useMemo as _ } from "react";
-import { u as J, d as ee } from "./ObservabilityContext-mvmEXnGv.js";
-import { u as pe } from "./IdentityContext-CLalsm_M.js";
-import { a as ue, S as te } from "./Sparkline-B8POanAQ.js";
-import { c as h } from "./cn-B6yFEsav.js";
-import { S as xe, L as $, B as me } from "./Chart-ByoxeiYX.js";
-import { a as fe } from "./EventStreamContext-CjzSHXy-.js";
-import { E as he } from "./EmptyState-PM9wTjxk.js";
-import { M as be } from "./Modal-2jg4229_.js";
-const ge = {
+import { Outlet as xe, useNavigate as me } from "react-router";
+import { useState as g, useRef as T, useCallback as Y, useEffect as O, useMemo as D } from "react";
+import { u as W, d as ee } from "./ObservabilityContext-mvmEXnGv.js";
+import { u as fe } from "./IdentityContext-CLalsm_M.js";
+import { a as he, S as te, C as re } from "./CardHeader-DuyI9Sk3.js";
+import { c as f } from "./cn-B6yFEsav.js";
+import { S as be, L as _, B as ge } from "./Chart-ByoxeiYX.js";
+import { a as ye } from "./EventStreamContext-CjzSHXy-.js";
+import { E as ve } from "./EmptyState-PM9wTjxk.js";
+import { M as Ne } from "./Modal-2jg4229_.js";
+import { C as ne } from "./Card-B2uO9v1w.js";
+import { C as ae } from "./Chip-BXdhqVFm.js";
+import { S as se } from "./StatusDot-BC7B1tTr.js";
+const we = {
   info: "text-slate-500",
   warning: "text-amber-600",
   error: "text-red-600",
   success: "text-green-600"
 };
-function re({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: s, selected: c }) {
-  const l = ue(r);
+function ie({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: s, selected: l }) {
+  const o = he(r);
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": "event-row",
       onClick: s,
-      className: h(
+      className: f(
         "flex items-center gap-2 px-2.5 py-1.5 text-[13px] font-[inherit] rounded-md text-slate-900",
-        c ? "bg-violet-100" : "bg-transparent",
+        l ? "bg-violet-100" : "bg-transparent",
         s ? "cursor-pointer" : "cursor-default"
       ),
       children: [
-        /* @__PURE__ */ t("span", { className: "text-sm shrink-0", style: { color: l.color }, children: l.icon }),
+        /* @__PURE__ */ t("span", { className: "text-sm shrink-0", style: { color: o.color }, children: o.icon }),
         /* @__PURE__ */ t("span", { className: "text-[11px] text-slate-400 shrink-0 w-[70px]", children: e }),
-        /* @__PURE__ */ t("span", { className: h("text-xs font-semibold shrink-0", ge[a]), children: r }),
+        /* @__PURE__ */ t("span", { className: f("text-xs font-semibold shrink-0", we[a]), children: r }),
         /* @__PURE__ */ t("span", { className: "flex-1 overflow-hidden text-ellipsis whitespace-nowrap", children: n })
       ]
     }
   );
 }
-function Et() {
-  return /* @__PURE__ */ t(de, {});
+function Jt() {
+  return /* @__PURE__ */ t(xe, {});
 }
-function ye() {
-  return J().dashboard;
+function ke() {
+  return W().dashboard;
 }
-const ve = "", Ne = 1e4, we = 1e3, ke = 2, Ce = 3e4;
-function Se(e) {
+const Ce = "", Se = 1e4, Me = 1e3, Re = 2, Le = 3e4;
+function Ae(e) {
   const r = Math.max(0, e - 1);
   return Math.min(
-    we * Math.pow(ke, r),
-    Ce
+    Me * Math.pow(Re, r),
+    Le
   );
 }
-function Me() {
+function Ee() {
   return {
     runsStarted: null,
     runsCompleted: null,
@@ -66,8 +69,8 @@ function Me() {
     source: "error"
   };
 }
-function Re(e) {
-  const r = e ?? {}, n = (c) => typeof c == "number" && Number.isFinite(c) ? c : null, a = r.source, s = a === "bridge" || a === "stub" || a === "error" ? a : (
+function Ie(e) {
+  const r = e ?? {}, n = (l) => typeof l == "number" && Number.isFinite(l) ? l : null, a = r.source, s = a === "bridge" || a === "stub" || a === "error" ? a : (
     // Backwards-compat: legacy responses without a discriminator are
     // assumed to be stub-shaped (full numbers), since the previous
     // backend always synthesized values.
@@ -91,29 +94,29 @@ function Re(e) {
     source: s
   };
 }
-function ne() {
-  const { idToken: e } = pe(), [r, n] = b(null), [a, s] = b(!0), [c, l] = b(null), [u, x] = b(null), [d, p] = b(!1), y = T(null), L = T(!0), A = T(!1), M = T(0), v = W(async () => {
-    y.current && y.current.abort();
+function oe() {
+  const { idToken: e } = fe(), [r, n] = g(null), [a, s] = g(!0), [l, o] = g(null), [x, u] = g(null), [d, p] = g(!1), h = T(null), L = T(!0), A = T(!1), M = T(0), v = Y(async () => {
+    h.current && h.current.abort();
     const N = new AbortController();
-    y.current = N;
+    h.current = N;
     try {
       const k = {
         "Content-Type": "application/json"
       };
       e && (k.Authorization = `Bearer ${e}`);
-      const R = await fetch(`${ve}/api/pipelines/metrics`, {
+      const R = await fetch(`${Ce}/api/pipelines/metrics`, {
         method: "GET",
         headers: k,
         signal: N.signal
       });
       if (!R.ok)
         throw new Error(`HTTP ${R.status}`);
-      const o = Re(await R.json());
+      const c = Ie(await R.json());
       if (!L.current || N.signal.aborted) return;
-      n(o), x((/* @__PURE__ */ new Date()).toISOString()), l(null), p(!0), A.current = !1, M.current = 0;
+      n(c), u((/* @__PURE__ */ new Date()).toISOString()), o(null), p(!0), A.current = !1, M.current = 0;
     } catch (k) {
       if (k.name === "AbortError" || !L.current) return;
-      l(k.message || "Failed to fetch pipeline metrics"), p(!1), M.current += 1, n((R) => R ?? Me()), A.current || (console.warn(
+      o(k.message || "Failed to fetch pipeline metrics"), p(!1), M.current += 1, n((R) => R ?? Ee()), A.current || (console.warn(
         "[usePipelineMetrics] /api/pipelines/metrics unreachable — using fallback",
         k
       ), A.current = !0);
@@ -128,63 +131,63 @@ function ne() {
       N !== null && (clearTimeout(N), N = null);
     }, R = () => {
       if (!L.current || document.hidden) return;
-      const g = M.current > 0 ? Se(M.current) : Ne;
+      const y = M.current > 0 ? Ae(M.current) : Se;
       N = setTimeout(() => {
         N = null, v().finally(() => {
           R();
         });
-      }, g);
-    }, o = () => {
+      }, y);
+    }, c = () => {
       N === null && R();
     };
     v().finally(() => {
-      document.hidden || o();
+      document.hidden || c();
     });
-    const f = () => {
+    const b = () => {
       document.hidden ? k() : (k(), v().finally(() => {
-        document.hidden || o();
+        document.hidden || c();
       }));
     };
-    return document.addEventListener("visibilitychange", f), () => {
-      L.current = !1, k(), document.removeEventListener("visibilitychange", f), y.current && (y.current.abort(), y.current = null);
+    return document.addEventListener("visibilitychange", b), () => {
+      L.current = !1, k(), document.removeEventListener("visibilitychange", b), h.current && (h.current.abort(), h.current = null);
     };
   }, [v]), {
     metrics: r,
     loading: a,
-    error: c,
-    lastUpdatedAt: u,
+    error: l,
+    lastUpdatedAt: x,
     refresh: v,
     isLiveData: d,
     source: r?.source ?? null
   };
 }
-function Le(e) {
+function Te(e) {
   return typeof e == "number" ? e.toLocaleString() : e;
 }
 function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
-  const [c, l] = b(!1), u = !!s;
+  const [l, o] = g(!1), x = !!s;
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": "kpi-card",
       onClick: s,
-      onMouseEnter: () => l(!0),
-      onMouseLeave: () => l(!1),
-      role: u ? "button" : void 0,
-      tabIndex: u ? 0 : void 0,
-      onKeyDown: u ? (x) => {
-        (x.key === "Enter" || x.key === " ") && (x.preventDefault(), s?.());
+      onMouseEnter: () => o(!0),
+      onMouseLeave: () => o(!1),
+      role: x ? "button" : void 0,
+      tabIndex: x ? 0 : void 0,
+      onKeyDown: x ? (u) => {
+        (u.key === "Enter" || u.key === " ") && (u.preventDefault(), s?.());
       } : void 0,
-      className: h(
+      className: f(
         "flex-1 min-w-[180px] bg-surface border rounded-[10px] p-4",
         "flex flex-col gap-1.5 font-[inherit] transition-[border-color] duration-[120ms] ease-linear",
-        u ? "cursor-pointer" : "cursor-default",
-        c && u ? "border-primary" : "border-border"
+        x ? "cursor-pointer" : "cursor-default",
+        l && x ? "border-primary" : "border-border"
       ),
       children: [
         /* @__PURE__ */ t("div", { className: "text-xs font-semibold text-text-secondary tracking-[0.2px]", children: e }),
         /* @__PURE__ */ i("div", { className: "flex items-baseline justify-between gap-2", children: [
-          /* @__PURE__ */ t("div", { className: "text-[28px] font-bold text-text-primary leading-[1.1]", children: Le(r) }),
+          /* @__PURE__ */ t("div", { className: "text-[28px] font-bold text-text-primary leading-[1.1]", children: Te(r) }),
           a && a.length > 0 && /* @__PURE__ */ t(
             te,
             {
@@ -198,7 +201,7 @@ function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
         n && /* @__PURE__ */ i(
           "div",
           {
-            className: h(
+            className: f(
               "text-[11px] font-semibold font-[inherit]",
               n.direction === "up" ? "text-state-completed" : "text-state-failed"
             ),
@@ -214,16 +217,16 @@ function H({ title: e, value: r, delta: n, sparklineData: a, onClick: s }) {
     }
   );
 }
-function Ae({
+function Pe({
   runsToday: e,
   runsSparkline: r,
   activeNow: n,
   pendingApprovals: a,
   failed24h: s,
-  avgFirstTokenLatency: c,
-  onScrollToActive: l,
-  onGoToPipelines: u,
-  onGoToFailedEvents: x
+  avgFirstTokenLatency: l,
+  onScrollToActive: o,
+  onGoToPipelines: x,
+  onGoToFailedEvents: u
 }) {
   return /* @__PURE__ */ i("div", { className: "grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-4", children: [
     /* @__PURE__ */ t(
@@ -240,7 +243,7 @@ function Ae({
       {
         title: "Active now",
         value: n,
-        onClick: l
+        onClick: o
       }
     ),
     /* @__PURE__ */ t(
@@ -248,7 +251,7 @@ function Ae({
       {
         title: "Pending approvals",
         value: a,
-        onClick: u
+        onClick: x
       }
     ),
     /* @__PURE__ */ t(
@@ -257,30 +260,30 @@ function Ae({
         title: "Failed (24h)",
         value: s,
         delta: typeof s == "number" ? { value: 4, direction: "down" } : void 0,
-        onClick: x
+        onClick: u
       }
     ),
     /* @__PURE__ */ t(
       H,
       {
         title: "Avg first-token latency",
-        value: c
+        value: l
       }
     )
   ] });
 }
-const Y = {
+const J = {
   healthy: "border-state-completed",
   degraded: "border-state-awaiting",
   dead: "border-state-failed",
   idle: "border-state-idle"
-}, Ie = {
+}, $e = {
   healthy: "bg-state-completed",
   degraded: "bg-state-awaiting",
   dead: "bg-state-failed",
   idle: "bg-state-idle"
 };
-function Ee(e) {
+function _e(e) {
   return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
 function B({ label: e, value: r }) {
@@ -289,21 +292,21 @@ function B({ label: e, value: r }) {
     /* @__PURE__ */ t("span", { className: "text-text-primary font-mono text-[11px]", children: r })
   ] });
 }
-function Te({ node: e, selected: r, onClick: n, onKill: a }) {
-  const [s, c] = b(!1), l = e.activeRuns > 0 ? `${e.activeRuns}` : "— idle";
+function De({ node: e, selected: r, onClick: n, onKill: a }) {
+  const [s, l] = g(!1), o = e.activeRuns > 0 ? `${e.activeRuns}` : "— idle";
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": "node-grid-tile",
       onClick: n,
-      onMouseEnter: () => c(!0),
-      onMouseLeave: () => c(!1),
-      className: h(
+      onMouseEnter: () => l(!0),
+      onMouseLeave: () => l(!1),
+      className: f(
         "w-[200px] h-[200px] bg-surface rounded-[10px] p-3",
         "flex flex-col gap-1.5 font-[inherit] box-border border",
         "transition-[box-shadow,border-color] duration-[120ms] ease-linear",
         n ? "cursor-pointer" : "cursor-default",
-        r ? "border-primary shadow-[0_0_0_4px_rgba(100,108,255,0.18)]" : s ? h(Y[e.status], "shadow-[0_2px_8px_rgba(100,108,255,0.10)]") : Y[e.status]
+        r ? "border-primary shadow-[0_0_0_4px_rgba(100,108,255,0.18)]" : s ? f(J[e.status], "shadow-[0_2px_8px_rgba(100,108,255,0.10)]") : J[e.status]
       ),
       children: [
         /* @__PURE__ */ i("div", { className: "flex justify-between items-center", children: [
@@ -320,16 +323,16 @@ function Te({ node: e, selected: r, onClick: n, onKill: a }) {
             {
               role: "img",
               "aria-label": `status ${e.status}`,
-              className: h("w-2 h-2 rounded-full shrink-0", Ie[e.status])
+              className: f("w-2 h-2 rounded-full shrink-0", $e[e.status])
             }
           )
         ] }),
         (e.role || e.region) && /* @__PURE__ */ t("div", { className: "text-[11px] text-text-tertiary font-[inherit]", children: [e.role, e.region].filter(Boolean).join(" · ") }),
         /* @__PURE__ */ i("div", { className: "flex flex-col gap-0.5", children: [
           /* @__PURE__ */ t(B, { label: "CPU", value: `${Math.round(e.cpu)}%` }),
-          /* @__PURE__ */ t(B, { label: "MEM", value: Ee(e.memoryMb) }),
+          /* @__PURE__ */ t(B, { label: "MEM", value: _e(e.memoryMb) }),
           /* @__PURE__ */ t(B, { label: "CONN", value: `${e.connections}` }),
-          /* @__PURE__ */ t(B, { label: "RUNS", value: l })
+          /* @__PURE__ */ t(B, { label: "RUNS", value: o })
         ] }),
         /* @__PURE__ */ t("div", { className: "mt-auto", children: /* @__PURE__ */ t(
           te,
@@ -344,8 +347,8 @@ function Te({ node: e, selected: r, onClick: n, onKill: a }) {
           "button",
           {
             "data-testid": "node-kill-btn",
-            onClick: (u) => {
-              u.stopPropagation(), a();
+            onClick: (x) => {
+              x.stopPropagation(), a();
             },
             className: "self-start px-2 py-0.5 text-[11px] font-semibold bg-transparent text-text-tertiary border border-border rounded-sm cursor-pointer font-[inherit]",
             children: "● kill"
@@ -355,21 +358,21 @@ function Te({ node: e, selected: r, onClick: n, onKill: a }) {
     }
   );
 }
-function ae({ nodes: e, onSelect: r, selectedId: n }) {
+function le({ nodes: e, onSelect: r, selectedId: n }) {
   return !e || e.length === 0 ? /* @__PURE__ */ t(
     "div",
     {
       "data-testid": "node-grid-empty",
-      className: h("p-6 text-center text-text-tertiary text-[13px] font-[inherit]"),
+      className: f("p-6 text-center text-text-tertiary text-[13px] font-[inherit]"),
       children: "No nodes connected"
     }
   ) : /* @__PURE__ */ t(
     "div",
     {
       "data-testid": "node-grid",
-      className: h("flex flex-wrap gap-4 font-[inherit]"),
+      className: f("flex flex-wrap gap-4 font-[inherit]"),
       children: e.map((a) => /* @__PURE__ */ t(
-        Te,
+        De,
         {
           node: a,
           selected: n === a.id,
@@ -380,28 +383,28 @@ function ae({ nodes: e, onSelect: r, selectedId: n }) {
     }
   );
 }
-function Pe({
+function Fe({
   run: e,
   onClick: r,
   onCancel: n
 }) {
-  const [a, s] = b(!1), c = !!r, l = c ? `Open run ${e.runId} of pipeline ${e.pipelineName}` : void 0, u = (p) => {
+  const [a, s] = g(!1), l = !!r, o = l ? `Open run ${e.runId} of pipeline ${e.pipelineName}` : void 0, x = (p) => {
     r && (p.key === "Enter" || p.key === " " || p.key === "Spacebar") && (p.preventDefault(), r(e));
-  }, x = (p) => {
+  }, u = (p) => {
     p.stopPropagation(), n && n(e);
   }, d = !!n && e.status === "running";
   return /* @__PURE__ */ i(
     "tr",
     {
       "data-testid": "active-run-row",
-      role: c ? "button" : void 0,
-      "aria-label": l,
-      tabIndex: c ? 0 : void 0,
+      role: l ? "button" : void 0,
+      "aria-label": o,
+      tabIndex: l ? 0 : void 0,
       onClick: r ? () => r(e) : void 0,
-      onKeyDown: c ? u : void 0,
+      onKeyDown: l ? x : void 0,
       onMouseEnter: () => s(!0),
       onMouseLeave: () => s(!1),
-      className: h(
+      className: f(
         "outline-none",
         r ? "cursor-pointer" : "cursor-default",
         a ? "bg-surface-hover" : "bg-transparent"
@@ -409,7 +412,7 @@ function Pe({
       children: [
         /* @__PURE__ */ t("td", { className: "px-3 py-2 text-[13px] text-text-primary font-[inherit] border-b border-border font-semibold", children: /* @__PURE__ */ i("span", { className: "inline-flex items-center gap-1.5", children: [
           e.pipelineName,
-          a && c && /* @__PURE__ */ t(
+          a && l && /* @__PURE__ */ t(
             "span",
             {
               "data-testid": "active-run-link-icon",
@@ -428,7 +431,7 @@ function Pe({
             "data-testid": "active-run-cancel",
             type: "button",
             "aria-label": `Cancel run ${e.runId}`,
-            onClick: x,
+            onClick: u,
             onKeyDown: (p) => p.stopPropagation(),
             className: "px-2 py-0.5 text-[11px] font-semibold bg-transparent text-state-failed border border-border rounded-sm cursor-pointer font-[inherit]",
             children: "Cancel"
@@ -438,7 +441,7 @@ function Pe({
     }
   );
 }
-function Fe({ runs: e, onRowClick: r, onCancelRun: n }) {
+function Oe({ runs: e, onRowClick: r, onCancelRun: n }) {
   return !e || e.length === 0 ? /* @__PURE__ */ t(
     "div",
     {
@@ -460,7 +463,7 @@ function Fe({ runs: e, onRowClick: r, onCancelRun: n }) {
           n && /* @__PURE__ */ t("th", { className: "text-right px-3 py-2 text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px] bg-surface-inset border-b border-border" })
         ] }) }),
         /* @__PURE__ */ t("tbody", { children: e.map((a) => /* @__PURE__ */ t(
-          Pe,
+          Fe,
           {
             run: a,
             onClick: r,
@@ -472,23 +475,23 @@ function Fe({ runs: e, onRowClick: r, onCancelRun: n }) {
     }
   );
 }
-const $e = {
+const je = {
   info: "text-info",
   warning: "text-state-awaiting",
   error: "text-danger",
   critical: "text-danger"
-}, _e = {
+}, He = {
   info: "border-l-info",
   warning: "border-l-state-awaiting",
   error: "border-l-danger",
   critical: "border-l-danger"
-}, De = {
+}, Ue = {
   info: "ℹ",
   warning: "⚠",
   error: "✕",
   critical: "✕"
 };
-function Oe(e) {
+function Be(e) {
   const r = Date.parse(e);
   if (Number.isNaN(r)) return e;
   const n = Math.max(0, Math.floor((Date.now() - r) / 1e3));
@@ -506,26 +509,26 @@ function Oe(e) {
     return e;
   }
 }
-function je({
+function Ge({
   alert: e,
   onDismiss: r
 }) {
-  const n = De[e.severity];
+  const n = Ue[e.severity];
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": "alert-item",
-      className: h(
+      className: f(
         "flex items-start gap-2.5 px-3 py-2.5",
         "bg-surface border border-border border-l-[3px] rounded-md font-[inherit]",
-        _e[e.severity]
+        He[e.severity]
       ),
       children: [
         /* @__PURE__ */ t(
           "span",
           {
             "aria-hidden": "true",
-            className: h("text-sm leading-5 shrink-0 w-4 text-center", $e[e.severity]),
+            className: f("text-sm leading-5 shrink-0 w-4 text-center", je[e.severity]),
             children: n
           }
         ),
@@ -533,7 +536,7 @@ function je({
           /* @__PURE__ */ t("div", { className: "text-[13px] text-text-primary leading-[1.4]", children: e.message }),
           /* @__PURE__ */ i("div", { className: "text-[11px] text-text-tertiary mt-0.5", children: [
             e.category ? `${e.category} · ` : "",
-            Oe(e.timestamp)
+            Be(e.timestamp)
           ] })
         ] }),
         r && /* @__PURE__ */ t(
@@ -550,7 +553,7 @@ function je({
     }
   );
 }
-function He({ alerts: e, onDismiss: r }) {
+function Ve({ alerts: e, onDismiss: r }) {
   return !e || e.length === 0 ? /* @__PURE__ */ t(
     "div",
     {
@@ -563,18 +566,18 @@ function He({ alerts: e, onDismiss: r }) {
     {
       "data-testid": "alerts-panel",
       className: "flex flex-col gap-2",
-      children: e.map((n) => /* @__PURE__ */ t(je, { alert: n, onDismiss: r }, n.id))
+      children: e.map((n) => /* @__PURE__ */ t(Ge, { alert: n, onDismiss: r }, n.id))
     }
   );
 }
 const U = "—";
-function Ue(e) {
+function Ke(e) {
   return typeof e != "number" || !Number.isFinite(e) ? U : e < 1e3 ? `${Math.round(e)} ms` : `${(e / 1e3).toFixed(1)}s`;
 }
-function Be(e) {
+function ze(e) {
   const r = Math.max(0, e.totalNodes ?? 0), n = (a) => Array.from(
     { length: 12 },
-    (s, c) => Math.max(0, Math.round(10 + Math.sin(a + c / 2) * 4 + c * 0.3))
+    (s, l) => Math.max(0, Math.round(10 + Math.sin(a + l / 2) * 4 + l * 0.3))
   );
   return Array.from({ length: r }, (a, s) => ({
     id: `node-${s}`,
@@ -588,7 +591,7 @@ function Be(e) {
   }));
 }
 const X = [];
-function Ke({ source: e }) {
+function Ye({ source: e }) {
   if (e === null || e === "bridge") return null;
   const r = e === "error";
   return /* @__PURE__ */ t(
@@ -597,7 +600,7 @@ function Ke({ source: e }) {
       "data-testid": "pipeline-metrics-source-pill",
       "data-source": e,
       title: r ? "/api/pipelines/metrics returned an error — values are placeholders" : "No pipeline bridge wired — metrics are synthesized fixture data",
-      className: h(
+      className: f(
         "inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold",
         r ? "bg-danger-bg text-state-failed" : "bg-warning-bg text-state-awaiting"
       ),
@@ -605,7 +608,7 @@ function Ke({ source: e }) {
     }
   );
 }
-function Ve({
+function We({
   live: e,
   onChange: r
 }) {
@@ -614,7 +617,7 @@ function Ve({
     {
       "data-testid": "live-toggle",
       onClick: () => r(!e),
-      className: h(
+      className: f(
         "inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold",
         "rounded-md cursor-pointer font-[inherit]",
         e ? "bg-surface border border-primary text-primary" : "bg-surface-inset border border-border text-text-secondary"
@@ -623,7 +626,7 @@ function Ve({
         /* @__PURE__ */ t(
           "span",
           {
-            className: h("w-2 h-2 rounded-full", e ? "bg-success" : "bg-text-tertiary")
+            className: f("w-2 h-2 rounded-full", e ? "bg-success" : "bg-text-tertiary")
           }
         ),
         e ? "Live" : "Paused"
@@ -631,7 +634,7 @@ function Ve({
     }
   );
 }
-function Ge({
+function Je({
   nodes: e,
   healthyCount: r,
   totalCount: n,
@@ -645,7 +648,7 @@ function Ge({
         "span",
         {
           "data-testid": "cluster-health-chip",
-          className: h(
+          className: f(
             "inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold",
             s ? "bg-success-bg text-state-completed" : "bg-warning-bg text-state-awaiting"
           ),
@@ -659,10 +662,10 @@ function Ge({
         }
       )
     ] }),
-    /* @__PURE__ */ t(ae, { nodes: e, onSelect: a })
+    /* @__PURE__ */ t(le, { nodes: e, onSelect: a })
   ] });
 }
-function ze({
+function Xe({
   events: e,
   onViewAll: r
 }) {
@@ -680,7 +683,7 @@ function ze({
       )
     ] }),
     e.length === 0 ? /* @__PURE__ */ t("div", { className: "p-4 text-center text-text-tertiary text-[13px]", children: "No recent events" }) : /* @__PURE__ */ t("div", { className: "flex flex-col gap-0.5", children: e.slice(0, 20).map((n) => /* @__PURE__ */ t(
-      re,
+      ie,
       {
         timestamp: n.timestamp,
         type: n.type,
@@ -691,15 +694,15 @@ function ze({
     )) })
   ] });
 }
-function Tt() {
-  const e = ce(), r = T(null), { live: n, setLive: a, recentEvents: s, activeRunsCount: c, isLiveData: l } = J(), x = ye() ?? ee, { metrics: d, source: p } = ne(), y = x?.overview ?? {}, L = _(() => Be(y), [y]), A = d?.runsStarted ?? U, M = [0, 0, 0, 0, 0, 0, 0, 0], v = c > 0 ? c : d?.runsActive ?? U, N = d?.runsAwaitingApproval ?? U, k = d?.runsFailed ?? U, R = d?.avgFirstTokenLatencyMs ?? null, o = Ue(R), f = Array.isArray(x?.alerts) ? x.alerts : [], g = () => {
+function Xt() {
+  const e = me(), r = T(null), { live: n, setLive: a, recentEvents: s, activeRunsCount: l, isLiveData: o } = W(), u = ke() ?? ee, { metrics: d, source: p } = oe(), h = u?.overview ?? {}, L = D(() => ze(h), [h]), A = d?.runsStarted ?? U, M = [0, 0, 0, 0, 0, 0, 0, 0], v = l > 0 ? l : d?.runsActive ?? U, N = d?.runsAwaitingApproval ?? U, k = d?.runsFailed ?? U, R = d?.avgFirstTokenLatencyMs ?? null, c = Ke(R), b = Array.isArray(u?.alerts) ? u.alerts : [], y = () => {
     r.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, S = () => {
     e("/pipelines");
   }, P = () => {
     e("/observability/events?filter=errors");
-  }, I = (F) => {
-    e(`/observability/nodes?selected=${encodeURIComponent(F)}`);
+  }, E = ($) => {
+    e(`/observability/nodes?selected=${encodeURIComponent($)}`);
   }, m = () => {
     e("/observability/events");
   };
@@ -716,39 +719,39 @@ function Tt() {
               "span",
               {
                 "data-testid": "dashboard-data-source",
-                title: l ? "Connected to /api/observability/dashboard" : "Backend unreachable — using fixture data",
-                className: h(
+                title: o ? "Connected to /api/observability/dashboard" : "Backend unreachable — using fixture data",
+                className: f(
                   "text-[11px] font-semibold",
-                  l ? "text-state-completed" : "text-text-tertiary"
+                  o ? "text-state-completed" : "text-text-tertiary"
                 ),
-                children: l ? "live data" : "fixture"
+                children: o ? "live data" : "fixture"
               }
             ),
-            /* @__PURE__ */ t(Ke, { source: p }),
-            /* @__PURE__ */ t(Ve, { live: n, onChange: a })
+            /* @__PURE__ */ t(Ye, { source: p }),
+            /* @__PURE__ */ t(We, { live: n, onChange: a })
           ] })
         ] }),
         /* @__PURE__ */ t(
-          Ae,
+          Pe,
           {
             runsToday: A,
             runsSparkline: M,
             activeNow: v,
             pendingApprovals: N,
             failed24h: k,
-            avgFirstTokenLatency: o,
-            onScrollToActive: g,
+            avgFirstTokenLatency: c,
+            onScrollToActive: y,
             onGoToPipelines: S,
             onGoToFailedEvents: P
           }
         ),
         /* @__PURE__ */ t(
-          Ge,
+          Je,
           {
             nodes: L,
-            healthyCount: y.healthyNodes ?? 0,
-            totalCount: y.totalNodes ?? 0,
-            onSelect: I
+            healthyCount: h.healthyNodes ?? 0,
+            totalCount: h.totalNodes ?? 0,
+            onSelect: E
           }
         ),
         /* @__PURE__ */ i("div", { ref: r, children: [
@@ -758,15 +761,15 @@ function Tt() {
             ")"
           ] }),
           /* @__PURE__ */ t(
-            Fe,
+            Oe,
             {
               runs: X,
-              onRowClick: (F) => e(`/pipelines/${F.pipelineId}/runs/${F.runId}`)
+              onRowClick: ($) => e(`/pipelines/${$.pipelineId}/runs/${$.runId}`)
             }
           )
         ] }),
         /* @__PURE__ */ t(
-          ze,
+          Xe,
           {
             events: s,
             onViewAll: m
@@ -775,58 +778,58 @@ function Tt() {
         /* @__PURE__ */ i("div", { children: [
           /* @__PURE__ */ i("div", { className: "text-sm font-semibold text-text-primary mb-2 font-[inherit]", children: [
             "Alerts (",
-            f.length,
+            b.length,
             ")"
           ] }),
-          /* @__PURE__ */ t(He, { alerts: f })
+          /* @__PURE__ */ t(Ve, { alerts: b })
         ] })
       ]
     }
   );
 }
-function We(e = 60) {
-  const { dashboard: r } = J(), [n, a] = b([]);
+function qe(e = 60) {
+  const { dashboard: r } = W(), [n, a] = g([]);
   return O(() => {
     r && a((s) => [...s, r].slice(-e));
   }, [r, e]), n;
 }
-const Je = "", Ye = 1e4;
-function Xe() {
-  const [e, r] = b(null), [n, a] = b(!0), [s, c] = b(null), l = T(!1), u = W(async () => {
+const Qe = "", Ze = 1e4;
+function et() {
+  const [e, r] = g(null), [n, a] = g(!0), [s, l] = g(null), o = T(!1), x = Y(async () => {
     try {
-      const x = await fetch(`${Je}/api/pipelines/dashboard-data`, {
+      const u = await fetch(`${Qe}/api/pipelines/dashboard-data`, {
         credentials: "same-origin"
       });
-      if (!x.ok) {
-        const y = (await x.json().catch(() => null))?.error ?? `HTTP ${x.status}`;
-        l.current || c(y);
+      if (!u.ok) {
+        const h = (await u.json().catch(() => null))?.error ?? `HTTP ${u.status}`;
+        o.current || l(h);
         return;
       }
-      const d = await x.json();
-      l.current || (r(d), c(null));
-    } catch (x) {
-      const d = x instanceof Error ? x.message : String(x);
-      l.current || c(d);
+      const d = await u.json();
+      o.current || (r(d), l(null));
+    } catch (u) {
+      const d = u instanceof Error ? u.message : String(u);
+      o.current || l(d);
     } finally {
-      l.current || a(!1);
+      o.current || a(!1);
     }
   }, []);
   return O(() => {
-    l.current = !1, u();
-    const x = window.setInterval(() => {
-      document.hidden || u();
-    }, Ye);
+    o.current = !1, x();
+    const u = window.setInterval(() => {
+      document.hidden || x();
+    }, Ze);
     return () => {
-      l.current = !0, window.clearInterval(x);
+      o.current = !0, window.clearInterval(u);
     };
-  }, [u]), { data: e, loading: n, error: s, refresh: u };
+  }, [x]), { data: e, loading: n, error: s, refresh: x };
 }
-function E({ title: e, timeRange: r, children: n, onMaximize: a }) {
+function I({ title: e, timeRange: r, children: n, onMaximize: a }) {
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": "metric-card",
-      className: h(
+      className: f(
         "bg-surface border border-border rounded-[10px] p-4",
         "flex flex-col gap-2.5 font-[inherit]"
       ),
@@ -864,20 +867,20 @@ const q = [
   { value: "1h", label: "Last 1h" },
   { value: "24h", label: "Last 24h" },
   { value: "7d", label: "Last 7d" }
-], qe = [
+], tt = [
   { value: "off", label: "Off" },
   { value: "5s", label: "5s" },
   { value: "30s", label: "30s" },
   { value: "60s", label: "60s" }
 ];
-function Qe({
+function rt({
   seeds: e,
   liveSeries: r,
   cols: n,
   isLiveData: a,
   failedColor: s
 }) {
-  const [c, l] = b("1h"), [u, x] = b("30s"), d = q.find((p) => p.value === c)?.label ?? "";
+  const [l, o] = g("1h"), [x, u] = g("30s"), d = q.find((p) => p.value === l)?.label ?? "";
   return /* @__PURE__ */ i(z, { children: [
     /* @__PURE__ */ i("div", { className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel", children: [
       /* @__PURE__ */ t(
@@ -885,8 +888,8 @@ function Qe({
         {
           "data-testid": "metrics-time-range",
           "aria-label": "Time range",
-          value: c,
-          onChange: (p) => l(p.target.value),
+          value: l,
+          onChange: (p) => o(p.target.value),
           className: "min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
           children: q.map((p) => /* @__PURE__ */ t("option", { value: p.value, children: p.label }, p.value))
         }
@@ -896,10 +899,10 @@ function Qe({
         {
           "data-testid": "metrics-refresh-interval",
           "aria-label": "Refresh interval",
-          value: u,
-          onChange: (p) => x(p.target.value),
+          value: x,
+          onChange: (p) => u(p.target.value),
           className: "min-w-[100px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
-          children: qe.map((p) => /* @__PURE__ */ i("option", { value: p.value, children: [
+          children: tt.map((p) => /* @__PURE__ */ i("option", { value: p.value, children: [
             "Refresh: ",
             p.label
           ] }, p.value))
@@ -933,7 +936,7 @@ function Qe({
               "span",
               {
                 title: a ? "Connected to /api/pipelines/metrics" : "Backend unreachable — using seeded fixture",
-                className: h(
+                className: f(
                   "font-semibold",
                   a ? "text-state-completed" : "text-text-tertiary"
                 ),
@@ -955,62 +958,62 @@ function Qe({
         className: "gap-4 p-4 overflow-y-auto flex-1 grid",
         style: { gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` },
         children: [
-          /* @__PURE__ */ t(E, { title: "Runs per minute", timeRange: d, children: /* @__PURE__ */ t(
-            xe,
+          /* @__PURE__ */ t(I, { title: "Runs per minute", timeRange: d, children: /* @__PURE__ */ t(
+            be,
             {
               series: r?.runsPerMinute ?? e.runsPerMinute,
               height: 180
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Step duration (p50/p95/p99)", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "Step duration (p50/p95/p99)", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: e.stepDuration,
               height: 180,
               yFormat: (p) => `${Math.round(p)}ms`
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "LLM tokens", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "LLM tokens", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: r?.llmTokens ?? e.llmTokens,
               height: 180
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "LLM cost", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "LLM cost", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: r?.llmCost ?? e.llmCost,
               height: 180,
               yFormat: (p) => `$${p.toFixed(2)}`
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Cluster CPU", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "Cluster CPU", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: e.clusterCpu,
               height: 180,
               yFormat: (p) => `${Math.round(p)}%`
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Cluster memory", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "Cluster memory", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: e.clusterMemory,
               height: 180,
               yFormat: (p) => `${Math.round(p)}MB`
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Event rate", timeRange: d, children: /* @__PURE__ */ t($, { series: e.eventRate, height: 180 }) }),
-          /* @__PURE__ */ t(E, { title: "Active runs over time", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "Event rate", timeRange: d, children: /* @__PURE__ */ t(_, { series: e.eventRate, height: 180 }) }),
+          /* @__PURE__ */ t(I, { title: "Active runs over time", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: r?.activeRuns ?? e.activeRuns,
               height: 180
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Failure rate by type", timeRange: d, children: /* @__PURE__ */ t(
-            me,
+          /* @__PURE__ */ t(I, { title: "Failure rate by type", timeRange: d, children: /* @__PURE__ */ t(
+            ge,
             {
               data: e.failureRate,
               xKey: "x",
@@ -1019,8 +1022,8 @@ function Qe({
               height: 180
             }
           ) }),
-          /* @__PURE__ */ t(E, { title: "Approval latency", timeRange: d, children: /* @__PURE__ */ t(
-            $,
+          /* @__PURE__ */ t(I, { title: "Approval latency", timeRange: d, children: /* @__PURE__ */ t(
+            _,
             {
               series: e.approvalLatency,
               height: 180,
@@ -1035,7 +1038,7 @@ function Qe({
 function w(e, r = 30, n = 60) {
   const a = [];
   let s = e;
-  for (let c = 0; c < r; c++)
+  for (let l = 0; l < r; l++)
     s = (s * 9301 + 49297) % 233280, a.push(Math.abs(s % n));
   return a;
 }
@@ -1046,17 +1049,17 @@ function C(e, r, n) {
     data: r.map((a, s) => ({ x: s, y: a }))
   };
 }
-const D = {
+const F = {
   primary: "#646cff",
   completed: "#16a34a",
   failed: "#dc2626"
 };
-function Ze() {
+function nt() {
   return {
     runsPerMinute: [
-      C("started", w(3, 30, 40), D.primary),
-      C("completed", w(7, 30, 40), D.completed),
-      C("failed", w(11, 30, 20), D.failed)
+      C("started", w(3, 30, 40), F.primary),
+      C("completed", w(7, 30, 40), F.completed),
+      C("failed", w(11, 30, 20), F.failed)
     ],
     stepDuration: [
       C("p50", w(17, 30, 400)),
@@ -1095,8 +1098,8 @@ function Ze() {
     approvalLatency: [C("seconds", w(97, 30, 120))]
   };
 }
-function et() {
-  const [e, r] = b(() => typeof window > "u" ? 2 : window.innerWidth >= 1600 ? 3 : 2);
+function at() {
+  const [e, r] = g(() => typeof window > "u" ? 2 : window.innerWidth >= 1600 ? 3 : 2);
   return O(() => {
     if (typeof window > "u") return;
     const n = () => {
@@ -1105,8 +1108,8 @@ function et() {
     return window.addEventListener("resize", n), () => window.removeEventListener("resize", n);
   }, []), e;
 }
-function tt() {
-  const { data: e, loading: r, error: n } = Xe();
+function st() {
+  const { data: e, loading: r, error: n } = et();
   return r && !e ? /* @__PURE__ */ t(
     "div",
     {
@@ -1149,7 +1152,7 @@ function tt() {
         e.alerts && e.alerts.length > 0 ? /* @__PURE__ */ t("div", { "data-testid": "modules-section-alerts", className: "flex flex-col gap-1", children: e.alerts.map((a, s) => /* @__PURE__ */ i(
           "div",
           {
-            className: h(
+            className: f(
               "text-xs px-2.5 py-1.5 rounded-md bg-surface-inset",
               a.level === "critical" || a.level === "error" ? "text-state-failed" : "text-text-primary"
             ),
@@ -1176,33 +1179,33 @@ function tt() {
     }
   );
 }
-function Pt() {
-  const e = _(Ze, []), r = et();
-  We(60);
-  const { metrics: n, isLiveData: a } = ne(), [s, c] = b([]);
+function qt() {
+  const e = D(nt, []), r = at();
+  qe(60);
+  const { metrics: n, isLiveData: a } = oe(), [s, l] = g([]);
   O(() => {
-    n && c((u) => [...u, n].slice(-30));
+    n && l((x) => [...x, n].slice(-30));
   }, [n]);
-  const l = _(() => {
+  const o = D(() => {
     if (s.length < 2) return null;
-    const u = (N) => {
+    const x = (N) => {
       const k = [];
-      return s.forEach((R, o) => {
-        const f = R[N];
-        typeof f == "number" && Number.isFinite(f) && k.push({ x: o, y: f });
+      return s.forEach((R, c) => {
+        const b = R[N];
+        typeof b == "number" && Number.isFinite(b) && k.push({ x: c, y: b });
       }), k;
-    }, x = (N) => N.length >= 2, d = u("runsActive"), p = u("llmTokensIn"), y = u("llmTokensOut"), L = u("estimatedCostUsd"), A = u("runsStarted"), M = u("runsCompleted"), v = u("runsFailed");
+    }, u = (N) => N.length >= 2, d = x("runsActive"), p = x("llmTokensIn"), h = x("llmTokensOut"), L = x("estimatedCostUsd"), A = x("runsStarted"), M = x("runsCompleted"), v = x("runsFailed");
     return {
-      activeRuns: x(d) ? [{ label: "active", data: d }] : null,
-      llmTokens: x(p) && x(y) ? [
+      activeRuns: u(d) ? [{ label: "active", data: d }] : null,
+      llmTokens: u(p) && u(h) ? [
         { label: "input", data: p },
-        { label: "output", data: y }
+        { label: "output", data: h }
       ] : null,
-      llmCost: x(L) ? [{ label: "USD", data: L }] : null,
-      runsPerMinute: x(A) && x(M) && x(v) ? [
-        { label: "started", color: D.primary, data: A },
-        { label: "completed", color: D.completed, data: M },
-        { label: "failed", color: D.failed, data: v }
+      llmCost: u(L) ? [{ label: "USD", data: L }] : null,
+      runsPerMinute: u(A) && u(M) && u(v) ? [
+        { label: "started", color: F.primary, data: A },
+        { label: "completed", color: F.completed, data: M },
+        { label: "failed", color: F.failed, data: v }
       ] : null
     };
   }, [s]);
@@ -1213,38 +1216,38 @@ function Pt() {
       className: "flex flex-col h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface",
       children: [
         /* @__PURE__ */ t(
-          Qe,
+          rt,
           {
             seeds: e,
-            liveSeries: l,
+            liveSeries: o,
             cols: r,
             isLiveData: a,
-            failedColor: D.failed
+            failedColor: F.failed
           }
         ),
-        /* @__PURE__ */ t(tt, {})
+        /* @__PURE__ */ t(st, {})
       ]
     }
   );
 }
-function rt({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
-  const s = T(null), [c, l] = b(!1);
+function it({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
+  const s = T(null), [l, o] = g(!1);
   O(() => {
-    if (!a || c) return;
+    if (!a || l) return;
     const d = s.current;
     d && (d.scrollTop = d.scrollHeight);
-  }, [e, a, c]);
-  const u = () => {
+  }, [e, a, l]);
+  const x = () => {
     const d = s.current;
     if (!d) return;
     const p = d.scrollHeight - d.scrollTop - d.clientHeight < 24;
-    l(!p);
-  }, x = () => {
+    o(!p);
+  }, u = () => {
     const d = s.current;
-    d && (d.scrollTop = d.scrollHeight, l(!1));
+    d && (d.scrollTop = d.scrollHeight, o(!1));
   };
   return e.length === 0 ? /* @__PURE__ */ t("div", { className: "flex-1 flex", children: /* @__PURE__ */ t(
-    he,
+    ve,
     {
       icon: "📡",
       title: "No events yet",
@@ -1260,10 +1263,10 @@ function rt({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
           "div",
           {
             ref: s,
-            onScroll: u,
+            onScroll: x,
             className: "flex-1 overflow-y-auto py-1.5 font-[inherit]",
             children: e.map((d) => /* @__PURE__ */ t(
-              re,
+              ie,
               {
                 timestamp: d.timestamp,
                 type: d.type,
@@ -1276,12 +1279,12 @@ function rt({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
             ))
           }
         ),
-        a && c && /* @__PURE__ */ t(
+        a && l && /* @__PURE__ */ t(
           "button",
           {
             "data-testid": "jump-to-live",
-            onClick: x,
-            className: h(
+            onClick: u,
+            className: f(
               "absolute bottom-3 left-1/2 -translate-x-1/2",
               "px-3.5 py-1.5 text-xs font-semibold",
               "bg-primary text-white",
@@ -1295,34 +1298,34 @@ function rt({ events: e, selectedId: r, onSelect: n, live: a = !1 }) {
     }
   );
 }
-function nt(e) {
+function ot(e) {
   try {
     return JSON.stringify(e, null, 2);
   } catch {
     return String(e);
   }
 }
-function at({ event: e }) {
+function lt({ event: e }) {
   if (!e)
     return /* @__PURE__ */ t(
       "div",
       {
         "data-testid": "event-detail-empty",
-        className: h(
+        className: f(
           "flex items-center justify-center h-full text-[13px] text-text-tertiary",
           "p-6 text-center font-[inherit]"
         ),
         children: "Select an event to see details"
       }
     );
-  const r = nt(e.payload ?? e), n = () => {
+  const r = ot(e.payload ?? e), n = () => {
     typeof navigator < "u" && navigator.clipboard && navigator.clipboard.writeText(r).catch(() => {
       console.warn("[EventDetailPane] clipboard copy failed");
     });
   }, a = () => {
     if (typeof window > "u") return;
-    const s = new Blob([r], { type: "application/json" }), c = URL.createObjectURL(s), l = document.createElement("a");
-    l.href = c, l.download = `${e.type}-${e.id}.json`, document.body.appendChild(l), l.click(), document.body.removeChild(l), URL.revokeObjectURL(c);
+    const s = new Blob([r], { type: "application/json" }), l = URL.createObjectURL(s), o = document.createElement("a");
+    o.href = l, o.download = `${e.type}-${e.id}.json`, document.body.appendChild(o), o.click(), document.body.removeChild(o), URL.revokeObjectURL(l);
   };
   return /* @__PURE__ */ i(
     "div",
@@ -1340,7 +1343,7 @@ function at({ event: e }) {
             {
               "data-testid": "event-detail-copy",
               onClick: n,
-              className: h(
+              className: f(
                 "px-2.5 py-[5px] text-xs font-semibold",
                 "bg-surface-hover text-text-secondary",
                 "border border-border rounded-md",
@@ -1354,7 +1357,7 @@ function at({ event: e }) {
             {
               "data-testid": "event-detail-download",
               onClick: a,
-              className: h(
+              className: f(
                 "px-2.5 py-[5px] text-xs font-semibold",
                 "bg-surface-hover text-text-secondary",
                 "border border-border rounded-md",
@@ -1367,7 +1370,7 @@ function at({ event: e }) {
         /* @__PURE__ */ t(
           "pre",
           {
-            className: h(
+            className: f(
               "m-0 px-3.5 py-3 flex-1 overflow-auto",
               "bg-surface-inset font-mono text-xs text-text-primary",
               "leading-normal whitespace-pre [tab-size:2]"
@@ -1379,32 +1382,32 @@ function at({ event: e }) {
     }
   );
 }
-const Q = 500, st = ["All", "Errors", "LLM", "Approvals", "Lifecycle"], it = [
+const Q = 500, dt = ["All", "Errors", "LLM", "Approvals", "Lifecycle"], ct = [
   { value: "15m", label: "Last 15m" },
   { value: "1h", label: "Last 1h" },
   { value: "6h", label: "Last 6h" },
   { value: "24h", label: "Last 24h" },
   { value: "custom", label: "Custom" }
-], se = ["node-0", "node-1", "node-2"], ie = [
+], de = ["node-0", "node-1", "node-2"], ce = [
   "info",
   "warning",
   "error",
   "success"
 ];
-function ot(e) {
+function pt(e) {
   return e.includes("failed") || e.includes("error") ? "error" : e.includes("completed") ? "success" : e.includes("warn") || e.includes("awaiting") ? "warning" : "info";
 }
-function lt(e) {
+function ut(e) {
   return e.includes("failed") || e.includes("error") ? "Errors" : e.startsWith("llm.") || e.includes(".llm.") ? "LLM" : e.includes("approval") ? "Approvals" : (e.includes("run.") || e.includes("pipeline."), "Lifecycle");
 }
-function dt(e, r) {
+function xt(e, r) {
   if (r && typeof r == "object") {
     const n = r, a = [];
     if (typeof n.runId == "string" && a.push(`run ${n.runId}`), typeof n.pipelineId == "string" && a.push(`pipeline ${n.pipelineId}`), typeof n.nodeId == "string" && a.push(`node ${n.nodeId}`), a.length > 0) return a.join(" · ");
   }
   return e;
 }
-function ct(e = /* @__PURE__ */ new Date()) {
+function mt(e = /* @__PURE__ */ new Date()) {
   const r = String(e.getHours()).padStart(2, "0"), n = String(e.getMinutes()).padStart(2, "0"), a = String(e.getSeconds()).padStart(2, "0"), s = String(e.getMilliseconds()).padStart(3, "0");
   return `${r}:${n}:${a}.${s}`;
 }
@@ -1412,69 +1415,69 @@ const Z = {
   groups: /* @__PURE__ */ new Set(["All"]),
   runIds: "",
   pipelineIds: "",
-  nodes: new Set(se),
-  severities: new Set(ie),
+  nodes: new Set(de),
+  severities: new Set(ce),
   timeRange: "1h"
 };
-function pt() {
-  const [e, r] = b([]), [n, a] = b(null), [s, c] = b(!1), [l, u] = b(Z), [x, d] = b(!1), p = T(s);
+function ft() {
+  const [e, r] = g([]), [n, a] = g(null), [s, l] = g(!1), [o, x] = g(Z), [u, d] = g(!1), p = T(s);
   p.current = s;
-  const y = T(0), L = W((o) => {
+  const h = T(0), L = Y((c) => {
     if (p.current) return;
-    const f = o, g = f?.eventType ?? "unknown", S = f?.payload ?? f;
-    y.current += 1;
+    const b = c, y = b?.eventType ?? "unknown", S = b?.payload ?? b;
+    h.current += 1;
     const P = {
-      id: `ev-${Date.now()}-${y.current}`,
-      timestamp: ct(),
-      type: g,
-      summary: dt(g, S),
-      severity: ot(g),
+      id: `ev-${Date.now()}-${h.current}`,
+      timestamp: mt(),
+      type: y,
+      summary: xt(y, S),
+      severity: pt(y),
       payload: S
     };
-    r((I) => {
-      const m = [...I, P];
+    r((E) => {
+      const m = [...E, P];
       return m.length > Q ? m.slice(m.length - Q) : m;
     });
   }, []);
-  fe("*", L);
-  const A = _(() => {
-    const o = l.runIds.split(",").map((S) => S.trim()).filter(Boolean), f = l.pipelineIds.split(",").map((S) => S.trim()).filter(Boolean), g = l.groups.has("All");
+  ye("*", L);
+  const A = D(() => {
+    const c = o.runIds.split(",").map((S) => S.trim()).filter(Boolean), b = o.pipelineIds.split(",").map((S) => S.trim()).filter(Boolean), y = o.groups.has("All");
     return e.filter((S) => {
-      if (!g) {
-        const I = lt(S.type);
-        if (!l.groups.has(I)) return !1;
+      if (!y) {
+        const E = ut(S.type);
+        if (!o.groups.has(E)) return !1;
       }
-      if (S.severity && !l.severities.has(S.severity)) return !1;
-      if (o.length > 0) {
-        const I = S.payload?.runId;
-        if (!I || !o.some((m) => I.includes(m))) return !1;
+      if (S.severity && !o.severities.has(S.severity)) return !1;
+      if (c.length > 0) {
+        const E = S.payload?.runId;
+        if (!E || !c.some((m) => E.includes(m))) return !1;
       }
-      if (f.length > 0) {
-        const I = S.payload?.pipelineId;
-        if (!I || !f.some((m) => I.includes(m))) return !1;
+      if (b.length > 0) {
+        const E = S.payload?.pipelineId;
+        if (!E || !b.some((m) => E.includes(m))) return !1;
       }
       const P = S.payload?.nodeId;
-      return !(P && !l.nodes.has(P));
+      return !(P && !o.nodes.has(P));
     });
-  }, [e, l]), M = _(
-    () => A.find((o) => o.id === n) ?? null,
+  }, [e, o]), M = D(
+    () => A.find((c) => c.id === n) ?? null,
     [A, n]
-  ), v = (o) => {
-    u((f) => {
-      const g = new Set(f.groups);
-      return g.has(o) ? g.delete(o) : g.add(o), { ...f, groups: g };
+  ), v = (c) => {
+    x((b) => {
+      const y = new Set(b.groups);
+      return y.has(c) ? y.delete(c) : y.add(c), { ...b, groups: y };
     });
-  }, N = (o) => {
-    u((f) => {
-      const g = new Set(f.nodes);
-      return g.has(o) ? g.delete(o) : g.add(o), { ...f, nodes: g };
+  }, N = (c) => {
+    x((b) => {
+      const y = new Set(b.nodes);
+      return y.has(c) ? y.delete(c) : y.add(c), { ...b, nodes: y };
     });
-  }, k = (o) => {
-    u((f) => {
-      const g = new Set(f.severities);
-      return g.has(o) ? g.delete(o) : g.add(o), { ...f, severities: g };
+  }, k = (c) => {
+    x((b) => {
+      const y = new Set(b.severities);
+      return y.has(c) ? y.delete(c) : y.add(c), { ...b, severities: y };
     });
-  }, R = () => u(Z);
+  }, R = () => x(Z);
   return /* @__PURE__ */ i(
     "div",
     {
@@ -1485,9 +1488,9 @@ function pt() {
           /* @__PURE__ */ t(
             "button",
             {
-              onClick: () => c((o) => !o),
+              onClick: () => l((c) => !c),
               "data-testid": "events-live-toggle",
-              className: h(
+              className: f(
                 "px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer font-[inherit]",
                 s ? "bg-surface-hover text-text-secondary border border-border" : "bg-state-completed text-white border border-state-completed"
               ),
@@ -1499,10 +1502,10 @@ function pt() {
             {
               "data-testid": "events-time-range",
               "aria-label": "Time range",
-              value: l.timeRange,
-              onChange: (o) => u((f) => ({ ...f, timeRange: o.target.value })),
+              value: o.timeRange,
+              onChange: (c) => x((b) => ({ ...b, timeRange: c.target.value })),
               className: "min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
-              children: it.map((o) => /* @__PURE__ */ t("option", { value: o.value, children: o.label }, o.value))
+              children: ct.map((c) => /* @__PURE__ */ t("option", { value: c.value, children: c.label }, c.value))
             }
           ),
           /* @__PURE__ */ i("div", { className: "ml-auto text-xs text-text-tertiary", children: [
@@ -1518,27 +1521,27 @@ function pt() {
             "aside",
             {
               "data-testid": "events-filter-rail",
-              className: h(
+              className: f(
                 "shrink-0 border-r border-border bg-surface-panel overflow-y-auto transition-[width] duration-150 ease-in-out",
-                x ? "w-9" : "w-60"
+                u ? "w-9" : "w-60"
               ),
               children: [
                 /* @__PURE__ */ i("div", { className: "flex items-center justify-between px-3.5 py-2.5 border-b border-border", children: [
-                  !x && /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary", children: "FILTERS" }),
+                  !u && /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary", children: "FILTERS" }),
                   /* @__PURE__ */ t(
                     "button",
                     {
-                      onClick: () => d((o) => !o),
-                      "aria-label": x ? "Expand filters" : "Collapse filters",
+                      onClick: () => d((c) => !c),
+                      "aria-label": u ? "Expand filters" : "Collapse filters",
                       className: "border-none bg-transparent text-text-tertiary cursor-pointer text-xs p-0.5 font-[inherit]",
-                      children: x ? "›" : "‹"
+                      children: u ? "›" : "‹"
                     }
                   )
                 ] }),
-                !x && /* @__PURE__ */ i(z, { children: [
+                !u && /* @__PURE__ */ i(z, { children: [
                   /* @__PURE__ */ i("div", { className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border", children: [
                     /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase", children: "Event type" }),
-                    st.map((o) => /* @__PURE__ */ i(
+                    dt.map((c) => /* @__PURE__ */ i(
                       "label",
                       {
                         className: "flex items-center gap-1.5 text-xs",
@@ -1547,14 +1550,14 @@ function pt() {
                             "input",
                             {
                               type: "checkbox",
-                              checked: l.groups.has(o),
-                              onChange: () => v(o)
+                              checked: o.groups.has(c),
+                              onChange: () => v(c)
                             }
                           ),
-                          o
+                          c
                         ]
                       },
-                      o
+                      c
                     ))
                   ] }),
                   /* @__PURE__ */ i("div", { className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border", children: [
@@ -1565,8 +1568,8 @@ function pt() {
                         "data-testid": "events-filter-runs",
                         type: "text",
                         placeholder: "runId (comma-separated)",
-                        value: l.runIds,
-                        onChange: (o) => u((f) => ({ ...f, runIds: o.target.value })),
+                        value: o.runIds,
+                        onChange: (c) => x((b) => ({ ...b, runIds: c.target.value })),
                         className: "flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
                       }
                     )
@@ -1579,15 +1582,15 @@ function pt() {
                         "data-testid": "events-filter-pipelines",
                         type: "text",
                         placeholder: "pipelineId (comma-separated)",
-                        value: l.pipelineIds,
-                        onChange: (o) => u((f) => ({ ...f, pipelineIds: o.target.value })),
+                        value: o.pipelineIds,
+                        onChange: (c) => x((b) => ({ ...b, pipelineIds: c.target.value })),
                         className: "flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
                       }
                     )
                   ] }),
                   /* @__PURE__ */ i("div", { className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border", children: [
                     /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase", children: "Nodes" }),
-                    se.map((o) => /* @__PURE__ */ i(
+                    de.map((c) => /* @__PURE__ */ i(
                       "label",
                       {
                         className: "flex items-center gap-1.5 text-xs",
@@ -1596,19 +1599,19 @@ function pt() {
                             "input",
                             {
                               type: "checkbox",
-                              checked: l.nodes.has(o),
-                              onChange: () => N(o)
+                              checked: o.nodes.has(c),
+                              onChange: () => N(c)
                             }
                           ),
-                          o
+                          c
                         ]
                       },
-                      o
+                      c
                     ))
                   ] }),
                   /* @__PURE__ */ i("div", { className: "flex flex-col gap-1.5 px-3.5 py-3 border-b border-border", children: [
                     /* @__PURE__ */ t("div", { className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase", children: "Severity" }),
-                    ie.map((o) => /* @__PURE__ */ i(
+                    ce.map((c) => /* @__PURE__ */ i(
                       "label",
                       {
                         className: "flex items-center gap-1.5 text-xs",
@@ -1617,14 +1620,14 @@ function pt() {
                             "input",
                             {
                               type: "checkbox",
-                              checked: l.severities.has(o),
-                              onChange: () => k(o)
+                              checked: o.severities.has(c),
+                              onChange: () => k(c)
                             }
                           ),
-                          o
+                          c
                         ]
                       },
-                      o
+                      c
                     ))
                   ] }),
                   /* @__PURE__ */ t("div", { className: "px-3.5 py-3", children: /* @__PURE__ */ t(
@@ -1641,7 +1644,7 @@ function pt() {
             }
           ),
           /* @__PURE__ */ t("section", { className: "flex-1 min-w-0 flex flex-col", children: /* @__PURE__ */ t(
-            rt,
+            it,
             {
               events: A,
               selectedId: n,
@@ -1649,48 +1652,48 @@ function pt() {
               live: !s
             }
           ) }),
-          /* @__PURE__ */ t("aside", { className: "w-80 shrink-0 border-l border-border bg-surface", children: /* @__PURE__ */ t(at, { event: M }) })
+          /* @__PURE__ */ t("aside", { className: "w-80 shrink-0 border-l border-border bg-surface", children: /* @__PURE__ */ t(lt, { event: M }) })
         ] })
       ]
     }
   );
 }
-function Ft() {
-  return /* @__PURE__ */ t(pt, {});
+function Qt() {
+  return /* @__PURE__ */ t(ft, {});
 }
-const oe = {
+const pe = {
   injectedLatencyMs: 0,
   injectedFailureRate: 0,
   paused: !1
 };
-let K = { ...oe };
-const G = /* @__PURE__ */ new Set();
-function ut() {
-  return K;
+let G = { ...pe };
+const K = /* @__PURE__ */ new Set();
+function ht() {
+  return G;
 }
 function j(e) {
-  K = { ...K, ...e }, G.forEach((r) => {
+  G = { ...G, ...e }, K.forEach((r) => {
     try {
-      r(K);
+      r(G);
     } catch (n) {
       console.error("[chaosState] listener threw", n);
     }
   });
 }
-function xt() {
-  j(oe);
+function bt() {
+  j(pe);
 }
-function mt(e) {
-  return G.add(e), () => {
-    G.delete(e);
+function gt(e) {
+  return K.add(e), () => {
+    K.delete(e);
   };
 }
-const ft = [
+const yt = [
   { id: "node-0" },
   { id: "node-1" },
   { id: "node-2" }
 ];
-function ht(e) {
+function vt(e) {
   const {
     onInjectLatency: r = (m) => j({ injectedLatencyMs: Math.max(0, m) }),
     onInjectPartition: n = (m) => (
@@ -1706,27 +1709,27 @@ function ht(e) {
       })
     ),
     onKillAll: s = () => j({ paused: !0 }),
-    onReset: c = () => xt(),
-    availableNodes: l = ft
-  } = e, [u, x] = b("0"), [d, p] = b("0"), [y, L] = b([]), [A, M] = b(!1), [v, N] = b(() => ut());
-  O(() => mt((m) => N(m)), []);
+    onReset: l = () => bt(),
+    availableNodes: o = yt
+  } = e, [x, u] = g("0"), [d, p] = g("0"), [h, L] = g([]), [A, M] = g(!1), [v, N] = g(() => ht());
+  O(() => gt((m) => N(m)), []);
   const k = (m) => {
     L(
-      (F) => F.includes(m) ? F.filter((le) => le !== m) : [...F, m]
+      ($) => $.includes(m) ? $.filter((ue) => ue !== m) : [...$, m]
     );
   }, R = () => {
-    const m = Number.parseInt(u, 10);
+    const m = Number.parseInt(x, 10);
     Number.isFinite(m) && r(m);
-  }, o = () => {
+  }, c = () => {
     const m = Number.parseInt(d, 10);
     Number.isFinite(m) && a(m);
-  }, f = () => {
-    n(y);
-  }, g = () => {
+  }, b = () => {
+    n(h);
+  }, y = () => {
     s(), M(!1);
   }, S = () => {
     j({ paused: !v.paused });
-  }, P = _(() => l, [l]), I = v.injectedLatencyMs > 0 || v.injectedFailureRate > 0 || v.paused;
+  }, P = D(() => o, [o]), E = v.injectedLatencyMs > 0 || v.injectedFailureRate > 0 || v.paused;
   return /* @__PURE__ */ i(
     "div",
     {
@@ -1738,9 +1741,9 @@ function ht(e) {
           "div",
           {
             "data-testid": "chaos-state-readout",
-            className: h(
+            className: f(
               "flex flex-col gap-1.5 pb-3 mb-3 border-b border-border",
-              I && "bg-[#fffbeb] p-2 rounded-md border border-[#fde68a]"
+              E && "bg-[#fffbeb] p-2 rounded-md border border-[#fde68a]"
             ),
             children: [
               /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]", children: "Current state" }),
@@ -1784,8 +1787,8 @@ function ht(e) {
                 "data-testid": "chaos-latency-input",
                 type: "number",
                 min: 0,
-                value: u,
-                onChange: (m) => x(m.target.value),
+                value: x,
+                onChange: (m) => u(m.target.value),
                 className: "flex-1 min-w-[60px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
                 "aria-label": "Latency in milliseconds"
               }
@@ -1813,7 +1816,7 @@ function ht(e) {
                   "input",
                   {
                     type: "checkbox",
-                    checked: y.includes(m.id),
+                    checked: h.includes(m.id),
                     onChange: () => k(m.id)
                   }
                 ),
@@ -1826,12 +1829,12 @@ function ht(e) {
             "button",
             {
               "data-testid": "chaos-partition-inject",
-              onClick: f,
-              className: h(
+              onClick: b,
+              className: f(
                 "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md font-[inherit] shrink-0",
-                y.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                h.length === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
               ),
-              disabled: y.length === 0,
+              disabled: h.length === 0,
               children: "Inject"
             }
           )
@@ -1858,7 +1861,7 @@ function ht(e) {
             "button",
             {
               "data-testid": "chaos-drop-apply",
-              onClick: o,
+              onClick: c,
               className: "px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0",
               children: "Apply"
             }
@@ -1878,14 +1881,14 @@ function ht(e) {
             "button",
             {
               "data-testid": "chaos-reset",
-              onClick: c,
+              onClick: l,
               className: "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0",
               children: "Reset"
             }
           )
         ] }),
         /* @__PURE__ */ t(
-          be,
+          Ne,
           {
             open: A,
             onClose: () => M(!1),
@@ -1904,7 +1907,7 @@ function ht(e) {
                 "button",
                 {
                   "data-testid": "chaos-kill-confirm",
-                  onClick: g,
+                  onClick: y,
                   className: "px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]",
                   children: "Kill all"
                 }
@@ -1924,7 +1927,7 @@ function V(e) {
     n = (n * 9301 + 49297) % 233280, r.push(Math.abs(n % 40) + 5);
   return r;
 }
-function bt() {
+function Nt() {
   return [
     {
       id: "node-0",
@@ -1961,7 +1964,7 @@ function bt() {
     }
   ];
 }
-function gt() {
+function wt() {
   const e = ee?.regions ?? {}, r = [];
   for (const n of Object.keys(e)) {
     const a = e[n];
@@ -1979,13 +1982,13 @@ function gt() {
           cpuHistory: s.cpuHistory ?? V(r.length + 1)
         });
   }
-  return r.length > 0 ? r : bt();
+  return r.length > 0 ? r : Nt();
 }
-function yt(e) {
+function kt(e) {
   return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
-function $t() {
-  const e = _(gt, []), [r, n] = b(null), a = _(
+function Zt() {
+  const e = D(wt, []), [r, n] = g(null), a = D(
     () => e.find((s) => s.id === r) ?? null,
     [e, r]
   );
@@ -2001,7 +2004,7 @@ function $t() {
             title: "Stub: writes to local chaosState; real cluster injection ships in Phase 5",
             "data-testid": "chaos-rail-stub-wrapper",
             children: /* @__PURE__ */ t(
-              ht,
+              vt,
               {
                 availableNodes: e.map((s) => ({ id: s.id, label: s.id }))
               }
@@ -2009,7 +2012,7 @@ function $t() {
           }
         ),
         /* @__PURE__ */ t("section", { className: "flex-1 min-w-0 overflow-auto p-6", children: /* @__PURE__ */ t(
-          ae,
+          le,
           {
             nodes: e,
             selectedId: r ?? void 0,
@@ -2043,14 +2046,14 @@ function $t() {
                 /* @__PURE__ */ t("table", { className: "w-full text-xs border-collapse", children: /* @__PURE__ */ t("tbody", { children: [
                   ["Status", a.status],
                   ["CPU", `${Math.round(a.cpu)}%`],
-                  ["Memory", yt(a.memoryMb)],
+                  ["Memory", kt(a.memoryMb)],
                   ["Connections", String(a.connections)],
                   ["Active runs", String(a.activeRuns)],
                   ["Region", a.region ?? "—"],
                   ["Role", a.role ?? "—"]
-                ].map(([s, c]) => /* @__PURE__ */ i("tr", { children: [
+                ].map(([s, l]) => /* @__PURE__ */ i("tr", { children: [
                   /* @__PURE__ */ t("td", { className: "text-text-tertiary py-[3px] w-[45%]", children: s }),
-                  /* @__PURE__ */ t("td", { className: "text-text-primary py-[3px]", children: c })
+                  /* @__PURE__ */ t("td", { className: "text-text-primary py-[3px]", children: l })
                 ] }, s)) }) })
               ] }),
               /* @__PURE__ */ i("div", { className: "px-3.5 py-3 border-b border-border flex flex-col gap-2", children: [
@@ -2096,12 +2099,222 @@ function $t() {
     }
   );
 }
+const Ct = {
+  critical: "var(--color-danger)",
+  warning: "var(--color-warning)",
+  info: "var(--color-info)"
+}, St = {
+  critical: "bg-[var(--color-danger-bg)]",
+  warning: "bg-[var(--color-warning-bg)]",
+  info: "bg-[var(--color-info-bg)]"
+}, Mt = {
+  critical: "border-l-[var(--color-danger)]",
+  warning: "border-l-[var(--color-warning)]",
+  info: "border-l-[var(--color-info)]"
+};
+function Rt({
+  severity: e,
+  title: r,
+  description: n,
+  timestamp: a,
+  resolved: s = !1,
+  action: l,
+  className: o,
+  style: x,
+  "data-testid": u = `alert-${e}`
+}) {
+  return /* @__PURE__ */ i(
+    "div",
+    {
+      role: "listitem",
+      "data-testid": u,
+      "data-resolved": s || void 0,
+      className: f(
+        "rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300",
+        s ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : f(St[e], Mt[e]),
+        o
+      ),
+      style: x,
+      children: [
+        /* @__PURE__ */ i("div", { className: "flex items-center gap-1.5", children: [
+          /* @__PURE__ */ t(
+            se,
+            {
+              size: "xs",
+              color: s ? "var(--color-text-tertiary)" : Ct[e],
+              "aria-label": s ? "Resolved" : e
+            }
+          ),
+          /* @__PURE__ */ t("span", { className: "text-[12px] font-semibold text-[var(--color-text-primary)]", children: r }),
+          s && /* @__PURE__ */ t(ae, { tone: "success", size: "xs", className: "ml-1", children: "Resolved" }),
+          a != null && /* @__PURE__ */ t("span", { className: "ml-auto text-[10px] text-[var(--color-text-tertiary)]", children: a }),
+          l && /* @__PURE__ */ t("span", { className: "ml-1 shrink-0", children: l })
+        ] }),
+        n != null && /* @__PURE__ */ t("div", { className: "mt-1 text-[11px] leading-snug text-[var(--color-text-secondary)]", children: n })
+      ]
+    }
+  );
+}
+const Lt = /* @__PURE__ */ t("div", { className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8", children: "No alerts." }), At = /* @__PURE__ */ t("div", { className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8", children: "Loading alerts…" });
+function er({
+  items: e,
+  title: r = "Alerts",
+  headerSlot: n,
+  loading: a = !1,
+  empty: s,
+  maxHeight: l,
+  className: o,
+  style: x,
+  "data-testid": u = "alert-list"
+}) {
+  const d = e.filter((h) => !h.resolved).length, p = d > 0 ? /* @__PURE__ */ i(ae, { tone: "danger", size: "xs", "data-testid": "alert-list-active-count", children: [
+    d,
+    " active"
+  ] }) : null;
+  return /* @__PURE__ */ i(
+    ne,
+    {
+      "data-testid": u,
+      className: f("flex flex-col", o),
+      style: x,
+      children: [
+        /* @__PURE__ */ t("div", { className: "px-4 py-3 border-b border-[var(--color-border)]", children: /* @__PURE__ */ t(re, { title: r, meta: n ?? p }) }),
+        /* @__PURE__ */ t(
+          "div",
+          {
+            role: "list",
+            "data-testid": `${u}-rows`,
+            className: "flex-1 overflow-y-auto p-2 space-y-1.5",
+            style: { maxHeight: l },
+            children: a ? At : e.length === 0 ? s ?? Lt : e.map((h) => /* @__PURE__ */ t(
+              Rt,
+              {
+                severity: h.severity,
+                title: h.title,
+                description: h.description,
+                timestamp: h.timestamp,
+                resolved: h.resolved,
+                action: h.action
+              },
+              `${h.id}-${h.resolved ? "resolved" : "active"}`
+            ))
+          }
+        )
+      ]
+    }
+  );
+}
+const Et = {
+  healthy: "var(--color-success)",
+  degraded: "var(--color-warning)",
+  down: "var(--color-danger)",
+  unknown: "var(--color-text-tertiary)"
+}, It = {
+  healthy: "bg-[var(--color-success-bg)] border-[var(--color-success-border)]",
+  degraded: "bg-[var(--color-warning-bg)] border-[var(--color-warning-border)]",
+  down: "bg-[var(--color-danger-bg)] border-[var(--color-danger-border)]",
+  unknown: "bg-[var(--color-surface)] border-[var(--color-border)]"
+};
+function Tt({
+  status: e,
+  label: r,
+  reason: n,
+  dense: a = !1,
+  className: s,
+  style: l,
+  "data-testid": o = `health-cell-${e}`
+}) {
+  return /* @__PURE__ */ i(
+    "div",
+    {
+      "data-testid": o,
+      "data-status": e,
+      className: f(
+        "rounded-md border transition-colors duration-300",
+        a ? "px-2.5 py-2" : "px-3 py-2.5",
+        It[e],
+        s
+      ),
+      style: l,
+      children: [
+        /* @__PURE__ */ i("div", { className: "flex items-center gap-1.5", children: [
+          /* @__PURE__ */ t(se, { size: "xs", color: Et[e], "aria-label": e }),
+          /* @__PURE__ */ t("span", { className: "text-[11px] font-semibold text-[var(--color-text-primary)]", children: r })
+        ] }),
+        /* @__PURE__ */ t("div", { className: "mt-1 text-[10px] text-[var(--color-text-tertiary)]", children: n ?? e })
+      ]
+    }
+  );
+}
+const Pt = {
+  1: "sm:grid-cols-1",
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-4",
+  6: "sm:grid-cols-6"
+}, $t = /* @__PURE__ */ t("div", { className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8", children: "No nodes reporting." });
+function tr({
+  items: e,
+  columns: r = 3,
+  dense: n = !1,
+  title: a,
+  headerSlot: s,
+  empty: l,
+  className: o,
+  style: x,
+  "data-testid": u = "health-grid"
+}) {
+  const d = e.length === 0 ? l ?? $t : /* @__PURE__ */ t(
+    "div",
+    {
+      role: "list",
+      className: f(
+        "grid grid-cols-1",
+        Pt[r],
+        n ? "gap-1.5" : "gap-2"
+      ),
+      children: e.map((p) => /* @__PURE__ */ t("div", { role: "listitem", children: /* @__PURE__ */ t(
+        Tt,
+        {
+          status: p.status,
+          label: p.label,
+          reason: p.reason,
+          dense: n
+        }
+      ) }, p.id))
+    }
+  );
+  return a ? /* @__PURE__ */ i(
+    ne,
+    {
+      "data-testid": u,
+      className: f("flex flex-col", o),
+      style: x,
+      children: [
+        /* @__PURE__ */ t("div", { className: "px-4 py-3 border-b border-[var(--color-border)]", children: /* @__PURE__ */ t(re, { title: a, meta: s }) }),
+        /* @__PURE__ */ t("div", { className: f(n ? "p-2" : "p-3"), children: d })
+      ]
+    }
+  ) : /* @__PURE__ */ t(
+    "div",
+    {
+      "data-testid": u,
+      className: f(n ? "p-2" : "p-3", o),
+      style: x,
+      children: d
+    }
+  );
+}
 export {
-  Ae as DashboardKPIStrip,
-  Tt as DashboardPage,
-  Ft as EventsPage,
-  Qe as MetricTimeSeriesPanel,
-  Pt as MetricsPage,
-  $t as NodesPage,
-  Et as ObservabilityLayout
+  Rt as AlertItem,
+  er as AlertList,
+  Pe as DashboardKPIStrip,
+  Xt as DashboardPage,
+  Qt as EventsPage,
+  Tt as HealthCell,
+  tr as HealthGrid,
+  rt as MetricTimeSeriesPanel,
+  qt as MetricsPage,
+  Zt as NodesPage,
+  Jt as ObservabilityLayout
 };
