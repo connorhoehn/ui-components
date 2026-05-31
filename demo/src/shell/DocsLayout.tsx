@@ -1,14 +1,20 @@
-import { Outlet, useLocation, Link } from 'react-router';
+import { useMemo } from 'react';
+import { Outlet, useLocation, useNavigate, Link } from 'react-router';
 import {
   DocsShell,
   DocsSidebar,
   DocsTopNav,
   type DocsSidebarSection,
 } from '@connorhoehn/ui-components/layout';
+import {
+  CommandPalette,
+  CommandPaletteHint,
+  CommandPaletteProvider,
+} from '@connorhoehn/ui-components/shared';
 import { Breadcrumbs } from './Breadcrumbs';
 import { MockProviders } from '../mock/providers';
 import { TocProvider, useToc, TableOfContents, useScrollSpy } from '../shared';
-import { navigationTree } from '../navigation';
+import { buildNavCommands, navigationTree } from '../navigation';
 
 const TOPNAV_BRAND = 'UI Components';
 
@@ -43,42 +49,58 @@ function isPageDemoPath(pathname: string): boolean {
 
 export function DocsLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const isPageDemo = isPageDemoPath(pathname);
+
+  // Walking the nav tree once per session is plenty — it doesn't change.
+  // We do depend on `navigate` (stable per router instance) so each
+  // command's run() captures the right closure.
+  const navCommands = useMemo(
+    () => buildNavCommands(navigationTree, navigate),
+    [navigate],
+  );
 
   return (
     <MockProviders>
-      <TocProvider>
-        <DocsShell
-          topNav={
-            <DocsTopNav
-              items={TOPNAV_ITEMS}
-              activeHref={pathname}
-              brand={TOPNAV_BRAND}
-              renderLink={(item, props) => (
-                <Link to={item.to} {...props}>
-                  {props.children}
-                </Link>
-              )}
-            />
-          }
-          sidebar={
-            <DocsSidebar
-              sections={SIDEBAR_SECTIONS}
-              activeHref={pathname}
-              renderLink={({ to }, props) => (
-                <Link to={to} {...props}>
-                  {props.children}
-                </Link>
-              )}
-            />
-          }
-          rightRail={!isPageDemo ? <TocRail /> : undefined}
-          fullBleed={isPageDemo}
-          preContent={!isPageDemo ? <Breadcrumbs /> : undefined}
-        >
-          <Outlet />
-        </DocsShell>
-      </TocProvider>
+      <CommandPaletteProvider commands={navCommands}>
+        <TocProvider>
+          <DocsShell
+            topNav={
+              <DocsTopNav
+                items={TOPNAV_ITEMS}
+                activeHref={pathname}
+                brand={TOPNAV_BRAND}
+                search={<CommandPaletteHint />}
+                renderLink={(item, props) => (
+                  <Link to={item.to} {...props}>
+                    {props.children}
+                  </Link>
+                )}
+              />
+            }
+            sidebar={
+              <DocsSidebar
+                sections={SIDEBAR_SECTIONS}
+                activeHref={pathname}
+                renderLink={({ to }, props) => (
+                  <Link to={to} {...props}>
+                    {props.children}
+                  </Link>
+                )}
+              />
+            }
+            rightRail={!isPageDemo ? <TocRail /> : undefined}
+            fullBleed={isPageDemo}
+            preContent={!isPageDemo ? <Breadcrumbs /> : undefined}
+          >
+            <Outlet />
+          </DocsShell>
+        </TocProvider>
+        <CommandPalette
+          placeholder="Search components, hooks, demos…"
+          emptyState="No matches. Try component, hook, or demo names."
+        />
+      </CommandPaletteProvider>
     </MockProviders>
   );
 }

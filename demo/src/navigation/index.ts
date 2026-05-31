@@ -1,3 +1,4 @@
 export { navigationTree } from './nav-tree';
 export { useActiveNav } from './use-active-nav';
+export { buildNavCommands } from './build-nav-commands';
 export type { NavItem, NavGroup, NavSection, NavigationTree } from './types';
