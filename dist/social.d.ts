@@ -1,4 +1,7 @@
+import { CSSProperties } from 'react';
 import { JSX } from 'react/jsx-runtime';
+import { ReactNode } from 'react';
+import { RefObject } from 'react';
 
 declare interface ActivityEvent {
     id: string;
@@ -58,6 +61,8 @@ declare interface CommentThreadProps {
 }
 
 declare type ConnectionState = 'connected' | 'connecting' | 'disconnected';
+
+export declare const DEFAULT_PICKER_EMOJIS: readonly ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯", "😀", "😅", "😉", "😍", "😘", "🤣", "🥰", "😇", "🤔", "😎", "😢", "😡", "🤯", "😱", "🙃", "🤩", "🙏", "🤝", "👋", "👌", "✌️", "🤞", "🤘", "🫶", "✨", "⭐", "💫", "🌟", "⚡", "💥", "☀️", "🌈", "🚀", "🎯", "🏆", "💪", "🎊", "🎈", "🥳", "🎁", "☕", "🍕", "🍔", "🍩", "🍦", "🍓", "🍻", "🍷", "👀", "🤖", "👻", "😺", "🐶", "🦄", "🐝", "🌸"];
 
 /** Error received from the gateway (matches server error-codes.js format) */
 declare interface GatewayError {
@@ -126,6 +131,62 @@ declare interface PresenceUser {
     clientId: string;
     status: string;
     metadata: Record<string, unknown>;
+}
+
+export declare function ReactionPickerPopover({ open, onSelect, onClose, triggerRef, emojis, showSearch, className, style, }: ReactionPickerPopoverProps): JSX.Element | null;
+
+export declare interface ReactionPickerPopoverProps {
+    /** Controls visibility. */
+    open: boolean;
+    /** Fires with the chosen emoji. */
+    onSelect: (emoji: string) => void;
+    /** Fires when the popover should close (Escape, click outside, select). */
+    onClose: () => void;
+    /**
+     * Trigger element to anchor against. When provided, the popover positions
+     * itself above the trigger; otherwise it falls back to absolute centering
+     * at top:auto/left:0 (useful inside a relatively-positioned container).
+     */
+    triggerRef?: RefObject<HTMLElement | null>;
+    /** Override the emoji list. Defaults to 64. */
+    emojis?: readonly string[];
+    /** Render a search input above the grid. Defaults to true. */
+    showSearch?: boolean;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function ReactionsBar({ reactions, onReact, disabled, pickerEmojis, addTriggerLabel, hideAddTrigger, className, }: ReactionsBarProps): JSX.Element;
+
+export declare interface ReactionsBarProps {
+    reactions: ReactionSummary[];
+    /**
+     * Called when the viewer clicks a chip (toggle) OR picks an emoji from
+     * the popover. The consumer decides whether this is an add or a remove
+     * based on the `mine` flag of the matching chip.
+     */
+    onReact: (emoji: string) => void;
+    /**
+     * Disables both the chips and the add-reaction trigger (e.g. when the
+     * connection is not 'connected'). Defaults to false.
+     */
+    disabled?: boolean;
+    /**
+     * Override the popover emoji set. Defaults to the 64-emoji 8x8 grid.
+     */
+    pickerEmojis?: readonly string[];
+    /** Override the add-reaction trigger label. Defaults to a "+" plus emoji. */
+    addTriggerLabel?: ReactNode;
+    /** Hide the add-reaction trigger entirely (read-only mode). */
+    hideAddTrigger?: boolean;
+    className?: string;
+}
+
+export declare interface ReactionSummary {
+    emoji: string;
+    count: number;
+    /** True if the local viewer is one of the reactors. */
+    mine?: boolean;
 }
 
 declare interface RoomItem {

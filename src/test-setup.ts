@@ -13,3 +13,19 @@ if (typeof window !== 'undefined' && (window as unknown as Record<string, unknow
     configurable: true,
   });
 }
+
+// jsdom doesn't ship ResizeObserver or Element.scrollIntoView; cmdk's
+// internal layout effects need both. No-op polyfills are sufficient for
+// any test that doesn't assert on layout.
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  class ResizeObserverMock {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  (globalThis as unknown as { ResizeObserver: typeof ResizeObserverMock }).ResizeObserver =
+    ResizeObserverMock;
+}
+if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = function scrollIntoView() {};
+}

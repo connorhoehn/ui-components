@@ -8,3 +8,9 @@ export { GroupPanel } from './GroupPanel';
 export { CommentThread } from './CommentThread';
 export { PresencePanel } from './PresencePanel';
 export { ActivityPanel } from './ActivityPanel';
+
+export { ReactionsBar } from './ReactionsBar';
+export type { ReactionsBarProps, ReactionSummary } from './ReactionsBar';
+
+export { ReactionPickerPopover, DEFAULT_PICKER_EMOJIS } from './ReactionPickerPopover';
+export type { ReactionPickerPopoverProps } from './ReactionPickerPopover';

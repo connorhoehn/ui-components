@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **`<ReactionsBar>` + `<ReactionPickerPopover>`** (`/social`). Chip bar
+  showing existing reactions with counts (mine highlighted via
+  `aria-pressed`) plus an "add reaction" trigger that opens a cmdk-driven
+  popover with a default 64-emoji 8×8 grid, search input, Escape-to-close,
+  and click-outside dismissal. Replaces the gateway's hand-rolled trigger
+  UI that previously paired with `<WrappedReactionsOverlay>`'s floating
+  animation. `DEFAULT_PICKER_EMOJIS` is also exported for consumers that
+  want to build their own bar. Refs hub#988.
+- **Global test setup** now polyfills no-op `ResizeObserver` +
+  `Element.prototype.scrollIntoView` so any future cmdk consumer's tests
+  work without copy-pasting the polyfill. `CommandPalette.test.tsx`'s
+  local polyfill is still in place and harmless.
+
 - **`<RecordingRow>`** (`/video`). Extracted from `<RecordingList>` as a
   standalone, presentational primitive so consumers can build custom
   recordings layouts without rebuilding the row. Adds a `status?:
