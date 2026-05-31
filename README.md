@@ -1,79 +1,125 @@
 # @connorhoehn/ui-components
 
-React component library for building real-time collaborative applications with video streaming, node-based editors, and WebSocket-driven UIs.
+React component library for real-time collaborative applications. Published
+to GitHub Packages as `@connorhoehn/ui-components` (current `2.19.0`).
+Consumed by `event-catalog`, `websocket-gateway`, and `vnl-ads`.
 
-## Quick Start
+## Install
 
 ```bash
 npm install @connorhoehn/ui-components
 ```
 
+This is a multi-entry-point library — pick the surface you need. The root
+import is fine for most consumers; sub-paths exist for code-splitting and
+for surfaces that have not yet graduated to stable.
+
 ```tsx
-import { VideoPlayer, VideoGrid, ReactionOverlay } from '@connorhoehn/ui-components/components/video';
+// Root — shared primitives, layout, hooks, social, video, identity, types
+import {
+  Button,
+  AppShell,
+  ChannelHeader,
+  ChatPanel,
+  HangoutLayout,
+  CallWidget,
+  PresenceAvatars,
+  PageHeader,
+} from '@connorhoehn/ui-components';
+
+// Sub-paths for in-flux or specialised surfaces
+import { TipTapEditor, StandaloneTiptap } from '@connorhoehn/ui-components/doc-editor';
+import { PipelineEditor } from '@connorhoehn/ui-components/pipelines';
+import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehn/ui-components/agents';
+import { ObservabilityDashboard } from '@connorhoehn/ui-components/observability';
+import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
+import '@connorhoehn/ui-components/styles.css';
 ```
 
-## Components
+See `CLAUDE.md` for the full exports/stability map.
 
-- **Agents** — AG-UI streaming chat, reasoning blocks, tool-call renderer, agent registry, A2A flow canvas. See [`src/components/agents/README.md`](src/components/agents/README.md).
-- **Video** — Player, participant grid, reactions, stream stats, network quality badges
-- **Collaboration** — Presence panels, multi-mode cursors, activity feeds, avatar stacks
-- **Node Editor** — Composable graph components for workflow/pipeline UIs
-- **Forms & Inputs** — Text fields, selects, toggles, sliders
-- **Buttons** — Primary, secondary, icon buttons with variants
-- **Feedback** — Toasts, alerts, progress indicators
-- **Data Display** — Tables, cards, badges, metrics
-- **Layout** — Panels, sidebars, split views
+## Surfaces
 
-## Storybook
+| Sub-path | What's there | Stability |
+|---|---|---|
+| `/` (root) | Shared primitives, hooks, contexts, types, layout, social, video, identity, theme, renderers | **Stable** |
+| `/shared` | Core primitives — Button, Card, Modal, Toast, Table, TagEditor, CodeEditor, CodeBlock, EmptyState, PageHeader, ChannelHeader, NotificationCenter, FileUploadDrop, Breadcrumbs, PresenceAvatars, ConnectionPill, LogStream, ThumbnailCard, StackDiagram, StatCard, KPIGrid, DataTable, Tabs, TypingIndicator, ErrorState/LoadingState, etc. | **Stable** |
+| `/layout` | AppShell, AppLayout, CollapsibleSidebar, DocsShell + DocsSidebar + DocsTopNav, SettingsLayout | **Stable** |
+| `/social` | ChatPanel, ChatRoom, RoomList, PostFeed, ReactionsBar, ReactionPickerPopover, MessageRow, MessageGroup, GroupPanel, PresencePanel, ActivityPanel | **Stable** |
+| `/video` | VideoPlayer, VideoGrid, CallWidget, CallControls, CallParticipantStrip, CallStatsOverlay, HangoutLayout, HangoutGrid, HangoutSpotlight, RosterPanel, StreamVideo, AutoplayGate, RecordingPlayer, RecordingList, RecordingRow, TranscriptOverlay | **Stable** |
+| `/identity` | Auth flows (Login, Logout, MFA, Consent), admin identity panels, `IdentityContext` | **Stable** |
+| `/hooks` | `useWebSocket`, `useComments`, `useLikes`, `usePosts`, `useSocialProfile`, etc. | **Stable** |
+| `/styles.css` | Tailwind v4 `@theme` tokens + keyframes | **Stable** |
+| `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehn/realtime-modules` hooks (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
+| `/doc-editor` | TipTap collaborative rich-text editor + self-bootstrapping `StandaloneTiptap`, document modes (Ack/Review/Reader), comments, mentions, video panel | **In-flux** (graduation: hub #1066) |
+| `/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
+| `/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A flow canvas | **In-flux** (graduation: hub #1069) |
+| `/observability` | Dashboard, events, metrics, node pages | **In-flux** |
+| `/ingest` | Data-ingest UI primitives | **In-flux** |
 
-```bash
-npm run storybook
-```
-
-Opens at `http://localhost:6006`. Browse 10 seed stories covering Button, Avatar, Banner, ChannelHeader, PresenceAvatars, FileUploadDrop, NotificationCenter, AppShell, PageHeader, and CallWidget — each component in isolation with knob-driven variants.
-
-To build a static Storybook:
-
-```bash
-npm run build-storybook
-```
-
-## Demo Site
+## Local development
 
 ```bash
 npm install
-npm run demo
+npm test            # vitest run (190+ files, 2000+ tests)
+npm run lint        # tsc --noEmit
+npm run build       # vite build (lib mode, multi-entry) + fix-subpath-dts
+npm run demo        # demo site at http://localhost:5174
+npm run storybook   # Storybook 10 at http://localhost:6006
+npm run test:e2e    # playwright (tests/e2e/)
 ```
 
-Opens at `http://localhost:5174` with product-shaped interactive flows.
+### Storybook
 
-## Composing with realtime-modules hooks
+37 stories across `shared/`, `layout/`, `social/`, `video/`, `doc-editor/`,
+and `integrations/`. Each variant renders in isolation with knob-driven
+args.
 
-Five demos in `demo/src/demos/` show how ui-components composites wire directly to
-hooks from `@connorhoehn/realtime-modules` v0.7.x. Each runs in **mock mode** by
-default (no gateway required) and switches to live mode when `VITE_GATEWAY_URL` is set.
+### Demo site
 
-| Demo route | Component | Hook |
-|---|---|---|
-| `/workflows/hook-chat` | `<ChatPanel>` | `useChat(channel)` |
-| `/workflows/hook-presence` | `<PresencePanel>` | `usePresence(channel)` |
-| `/workflows/hook-reactions` | `<ReactionButtons>` + `<ReactionsOverlay>` | `useReactions(channel)` |
-| `/workflows/hook-fileupload` | `<FileUploadDrop>` | `useFileUpload(channel)` |
-| `/workflows/hook-videohangout` | `<HangoutLayout>` | `useVideoHangout(channel)` |
+The demo site at `http://localhost:5174` hosts a catalog of in-context
+flows. Highlights:
 
-To run a demo against a live gateway:
+| Route | What it shows |
+|---|---|
+| `/workflows/hook-chat` | `<ChatPanel>` driven by `useChat(channel)` |
+| `/workflows/hook-presence` | `<PresencePanel>` driven by `usePresence(channel)` |
+| `/workflows/hook-reactions` | `<ReactionsBar>` + `<ReactionsOverlay>` driven by `useReactions(channel)` |
+| `/workflows/hook-fileupload` | `<FileUploadDrop>` driven by `useFileUpload(channel)` |
+| `/workflows/hook-videohangout` | `<HangoutLayout>` driven by `useVideoHangout(channel)` |
+| `/workflows/hook-hangoutrooms` | `<HangoutRoomsList>` driven by `useHangoutRooms` |
+| `/workflows/wrapped-components` | Showcase of the integrations adapter layer |
+| `/workflows/document-workspace` | Doc-editor with comments, sections, reader/review modes |
+| `/workflows/pipeline-editor` | Live pipeline editor + runs UI |
+| `/workflows/social-panel`, `/observability-shell`, `/ingest-dashboard`, `/identity`, `/video-streaming`, `/call-widget-live`, `/agents/*` | Domain-shaped showcases |
+
+Each hook integration runs in **mock mode** by default (no gateway
+required) and switches to live mode when `VITE_GATEWAY_URL` is set:
 
 ```bash
 VITE_GATEWAY_URL=ws://localhost:4000 npm run demo
 ```
 
-The mock wiring uses `GatewayContext.Provider` directly with a synthetic message bus
-so no real WebSocket is needed for local development.
+The mock wiring uses a synthetic message bus so no real WebSocket is
+needed for local development.
 
-## Tech Stack
+## Operating model
 
-- React 19
-- TypeScript 5.9 (strict)
-- Vite 7 (library mode, multi-entry)
-- Vitest + Playwright for testing
-- Autonomy Charter (see [docs/AUTONOMY_CHARTER.md](docs/AUTONOMY_CHARTER.md))
+This repo runs under an autonomous operating model. The
+[`docs/AUTONOMY_CHARTER.md`](docs/AUTONOMY_CHARTER.md) governs what an
+agent may change without operator approval, the version-bump rules, and
+the no-touch list of cross-repo contracts. The constitution at
+[`.agent/CONSTITUTION.md`](.agent/CONSTITUTION.md) sets the
+self-driven backlog and per-task LOC cap.
+
+See [`ROADMAP.md`](ROADMAP.md) for the current 5-wave plan.
+
+## Tech stack
+
+- React 19, TypeScript 5.9 (strict)
+- Vite 7 (library mode, multi-entry) + Vitest
+- Tailwind v4 (`@theme` tokens, `cn()` for class composition)
+- TipTap + Yjs for collaborative editing
+- `@xyflow/react` for pipeline + A2A canvases
+- AWS IVS for `/video-ivs`
+- Storybook 10 + Playwright
