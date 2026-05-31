@@ -7,3 +7,5 @@ export { AppShell } from './AppShell';
 export type { AppShellProps } from './AppShell';
 export { TopNav, NavTabs } from './TopNav';
 export type { TopNavProps, TopNavItem, NavTabsProps } from './TopNav';
+export { SettingsLayout } from './SettingsLayout';
+export type { SettingsLayoutProps, SettingsSection } from './SettingsLayout';
