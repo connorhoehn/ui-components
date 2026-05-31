@@ -4,41 +4,16 @@
 // Mock mode: synthetic join/leave events injected on a timer.
 // Live mode: set VITE_GATEWAY_URL.
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { PresencePanel } from '@/components/social/PresencePanel';
-import type { PresenceUser } from '@/hooks/usePresence';
+import { useEffect, useRef, useCallback, useMemo, type ReactNode } from 'react';
+import { WrappedPresencePanel } from '@/integrations/realtime-modules/WrappedPresencePanel';
 import {
   GatewaySocketProvider,
   usePresence,
   GatewayContext,
 } from '@connorhoehn/realtime-modules/client';
-import { useContext, useMemo, createContext, type ReactNode } from 'react';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const IS_MOCK = !GATEWAY_URL;
-
-// ---------------------------------------------------------------------------
-// Adapt PresenceEntry (realtime-modules) → PresenceUser (ui-components)
-// ---------------------------------------------------------------------------
-
-interface RMPresenceEntry {
-  clientId: string;
-  status: string;
-  metadata: Record<string, unknown>;
-  channels: string[];
-  nodeId: string;
-  timestamp: string;
-  lastSeen: string;
-  lastHeartbeat: number;
-}
-
-function adaptEntry(e: RMPresenceEntry): PresenceUser {
-  return {
-    clientId: e.clientId,
-    status: e.status,
-    metadata: e.metadata,
-  };
-}
 
 // ---------------------------------------------------------------------------
 // Mock provider — same pattern as chat integration
@@ -150,10 +125,8 @@ function makePresenceFrame(
 // ---------------------------------------------------------------------------
 
 function PresenceViewInner({ channel }: { channel: string }) {
-  const { roster } = usePresence(channel);
-  const users: PresenceUser[] = roster.map(adaptEntry);
-
-  return <PresencePanel users={users} currentClientId="demo-client-001" />;
+  const presence = usePresence(channel);
+  return <WrappedPresencePanel presence={presence} currentClientId="demo-client-001" />;
 }
 
 // ---------------------------------------------------------------------------
