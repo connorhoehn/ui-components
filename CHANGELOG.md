@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **`<HangoutGrid>` + `<HangoutSpotlight>`** (`/video`). Extracted
+  from `<HangoutLayout>` as standalone presentational primitives so
+  consumers can build alternative call surfaces (PiP-only viewer, a
+  screen-share kiosk, a moderator panel) without recomposing the
+  hangout shell. `<HangoutGrid>` owns the auto-grid sizing rules and
+  local-PiP-vs-inline placement (`gridCols` helper also exported).
+  `<HangoutSpotlight>` owns the spotlight slot resolution
+  (`spotlightContent` > stable active speaker > first remote) and
+  the filmstrip; `useStableActiveSpeaker` hysteresis hook is exported
+  too. `<HangoutLayout>` now dispatches to one or the other based on
+  `mode` / `spotlightContent` / participant count. Render output
+  unchanged. Refs hub#1224.
+
 - **`<AutoplayGate>` + `playState` tracking on `<StreamVideo>`**
   (`/video`). Chrome and Safari silently reject non-muted autoplay on
   remote tiles when a user joins a call from a background tab

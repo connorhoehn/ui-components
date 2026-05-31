@@ -28,6 +28,12 @@ export type { ParticipantTileProps } from './ParticipantTile';
 export { HangoutLayout } from './HangoutLayout';
 export type { HangoutLayoutProps, HangoutLayoutParticipant, HangoutMode } from './HangoutLayout';
 
+export { HangoutGrid, gridCols } from './HangoutGrid';
+export type { HangoutGridProps } from './HangoutGrid';
+
+export { HangoutSpotlight, useStableActiveSpeaker } from './HangoutSpotlight';
+export type { HangoutSpotlightProps } from './HangoutSpotlight';
+
 export { CallStartedBanner } from './CallStartedBanner';
 export type { CallStartedBannerProps, CallStartedBannerMode } from './CallStartedBanner';
 

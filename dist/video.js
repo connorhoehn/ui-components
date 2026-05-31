@@ -1,33 +1,37 @@
-import { A as s, C as t, a as i, b as r, M as o, N as l, P as n, R as u, c, d, e as g, f as P, g as R, h as S, i as p, S as m, j as T, k, T as y, V as C, l as V, m as B, s as f, u as h, n as v } from "./TranscriptOverlay-DtAyFZIc.js";
-import { H as x, P as A } from "./HangoutLayout-DTIq3ne2.js";
-import { u as M } from "./useActiveSpeaker-BOwJ262O.js";
+import { A as s, C as t, a as i, b as r, M as o, N as l, P as n, R as u, c as g, d, e as c, f as S, g as p, h as P, i as R, S as k, j as m, k as T, T as y, V as C, l as V, m as B, s as H, u as b, n as f } from "./TranscriptOverlay-0kqwoBnC.js";
+import { H as v, a as A, b as w, P as x, g as G, u as M } from "./HangoutLayout-BT6X2zG6.js";
+import { u as L } from "./useActiveSpeaker-BOwJ262O.js";
 export {
   s as AutoplayGate,
   t as CallStartedBanner,
   i as CallWidget,
   r as CallingStatusPill,
-  x as HangoutLayout,
+  v as HangoutGrid,
+  A as HangoutLayout,
+  w as HangoutSpotlight,
   o as MuteWhileTalkingToast,
   l as NetworkQualityBadge,
-  A as ParticipantTile,
+  x as ParticipantTile,
   n as PiPButton,
   u as ReactionOverlay,
-  c as ReactionPicker,
+  g as ReactionPicker,
   d as ReconnectingBanner,
-  g as RecordingList,
-  P as RecordingPlayer,
-  R as RecordingRow,
-  S as RemoteTileSlot,
-  p as RosterPanel,
-  m as StatsCard,
-  T as StatusStrip,
-  k as StreamVideo,
+  c as RecordingList,
+  S as RecordingPlayer,
+  p as RecordingRow,
+  P as RemoteTileSlot,
+  R as RosterPanel,
+  k as StatsCard,
+  m as StatusStrip,
+  T as StreamVideo,
   y as TranscriptOverlay,
   C as VideoGrid,
   V as VideoPlayer,
   B as ViewerCount,
-  f as streamHasUsableVideo,
-  M as useActiveSpeaker,
-  h as useMuteWhileTalking,
-  v as useTrackStateBump
+  G as gridCols,
+  H as streamHasUsableVideo,
+  L as useActiveSpeaker,
+  b as useMuteWhileTalking,
+  M as useStableActiveSpeaker,
+  f as useTrackStateBump
 };

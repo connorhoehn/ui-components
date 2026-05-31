@@ -2219,6 +2219,8 @@ export declare interface GraphQueryNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+export declare function gridCols(count: number): number;
+
 export declare function GroupFormPage({ group, isEdit, members, availableUsers, onSubmit, onAddMember, onRemoveMember, onCancel, error, }: GroupFormPageProps): JSX.Element;
 
 export declare interface GroupFormPageProps {
@@ -2297,22 +2299,22 @@ export declare interface GuardrailNodeData {
     label?: string;
 }
 
-/**
- * Multi-person hangout layout with two modes:
- *
- *   - **auto-grid** (`mode="auto"`, no spotlight): N=1 single tile / N=2
- *     50:50 split / N=3-4 2×2 / N=5-9 3×3 / N=10+ paginated 3×3.
- *     Active speaker is indicated by border highlight only — no reflow.
- *
- *   - **spotlight** (`mode="spotlight"` OR `spotlightContent` provided):
- *     a large main slot (active speaker or shared screen) plus a horizontal
- *     filmstrip of the remaining participants along the bottom. Spotlight
- *     swaps obey `speakerHysteresisMs` to prevent flicker.
- *
- * Pure presentational — no media wiring. Caller passes a `videoElement` per
- * participant (typically a `<video>` with srcObject already attached) and the
- * layout decides where to render each one.
- */
+export declare function HangoutGrid({ participants, localParticipant, activeSpeakerId, onParticipantClick, className, style, }: HangoutGridProps): JSX.Element;
+
+export declare interface HangoutGridProps {
+    /** Remote participants. Caller should NOT include the local user here. */
+    participants: HangoutLayoutParticipant[];
+    /** The local user. Placed in-grid at N≥2, as PiP at N=1, solo at N=0,
+     *  or omitted entirely if null/undefined. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** Active speaker id — drives the green-border highlight (no reflow). */
+    activeSpeakerId?: string | null;
+    /** Click handler per tile (e.g. pin / promote to spotlight). */
+    onParticipantClick?: (id: string) => void;
+    className?: string;
+    style?: CSSProperties;
+}
+
 export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, onParticipantClick, className, style, }: HangoutLayoutProps): JSX.Element;
 
 export declare interface HangoutLayoutParticipant {
@@ -2328,8 +2330,9 @@ export declare interface HangoutLayoutParticipant {
 export declare interface HangoutLayoutProps {
     /** Remote participants (callers should NOT include the local user here). */
     participants: HangoutLayoutParticipant[];
-    /** The local user. Rendered as a tile in the grid at N≥3 (per Meet/Teams convention)
-     * or as a small PiP overlay at N≤2. Pass null/undefined to suppress entirely. */
+    /** The local user. Rendered as a tile in the grid at N≥3 (per Meet/Teams
+     * convention) or as a small PiP overlay at N≤2. Pass null/undefined to
+     * suppress entirely. */
     localParticipant?: HangoutLayoutParticipant | null;
     /** 'auto' = grid view; 'spotlight' = main slot + filmstrip. Spotlight is
      * forced on whenever `spotlightContent` is non-null regardless of mode. */
@@ -2353,6 +2356,26 @@ export declare interface HangoutLayoutProps {
 }
 
 export declare type HangoutMode = 'auto' | 'spotlight';
+
+export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, activeSpeakerId, speakerHysteresisMs, onParticipantClick, className, style, }: HangoutSpotlightProps): JSX.Element;
+
+export declare interface HangoutSpotlightProps {
+    /** Remote participants. Caller should NOT include the local user here. */
+    participants: HangoutLayoutParticipant[];
+    /** The local user — always renders in the filmstrip in spotlight mode. */
+    localParticipant?: HangoutLayoutParticipant | null;
+    /** Content for the main slot — typically a screen-share `<video>`. When
+     *  provided, takes priority over the active-speaker tile. */
+    spotlightContent?: ReactNode;
+    /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
+    activeSpeakerId?: string | null;
+    /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */
+    speakerHysteresisMs?: number;
+    /** Click handler per filmstrip tile. */
+    onParticipantClick?: (id: string) => void;
+    className?: string;
+    style?: CSSProperties;
+}
 
 export declare function IconButton({ 'aria-label': ariaLabel, icon, children, disabled, variant, size, className, ...rest }: IconButtonProps): JSX.Element;
 
@@ -6664,6 +6687,13 @@ declare interface UseActivityBusReturn {
      error: string | null;
      refresh: () => Promise<void>;
  }
+
+ /**
+  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
+  * speaker has been talking for at least `hysteresisMs`. Without this,
+  * every cough, laugh, or short interjection causes flicker.
+  */
+ export declare function useStableActiveSpeaker(activeSpeakerId: string | null | undefined, hysteresisMs: number): string | null;
 
  export declare function useSyncConflicts(): UseSyncConflictsReturn;
 

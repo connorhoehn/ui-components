@@ -1,7 +1,7 @@
 import { jsxs as a, jsx as e, Fragment as X } from "react/jsx-runtime";
 import { useRef as R, useState as S, useEffect as B, useMemo as ee, useCallback as z } from "react";
 import { c as f } from "./cn-B6yFEsav.js";
-import { P as ie } from "./HangoutLayout-DTIq3ne2.js";
+import { P as ie } from "./HangoutLayout-BT6X2zG6.js";
 import { A as oe } from "./Avatar-BvKIaNVE.js";
 const ae = {
   idle: "Ready",
