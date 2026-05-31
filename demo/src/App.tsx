@@ -42,9 +42,8 @@ const SocialPanel = lazy(() => import('./demos/social-panel'));
 const Collaboration = lazy(() => import('./demos/collaboration'));
 const NodeEditorLive = lazy(() => import('./demos/node-editor-live'));
 const VideoStreaming = lazy(() => import('./demos/video-streaming'));
-const CallWidgetDemo = lazy(() => import('./demos/video-streaming/CallWidgetDemo'));
 const CallWidgetLive = lazy(() => import('./demos/call-widget-live'));
-const SharedComponents = lazy(() => import('./demos/shared-components'));
+const WrappedComponentsDemo = lazy(() => import('./demos/wrapped-components/demo'));
 
 // Hook integration demos (lazy)
 const HookChatIntegration = lazy(() => import('./demos/hook-chat-integration'));
@@ -133,7 +132,6 @@ export default function App() {
           <Route index element={<PagesOverviewPage />} />
           {/* Pipelines */}
           <Route path="pipeline-editor" element={<S><PipelineEditor /></S>} />
-          <Route path="pipeline-runs" element={<S><PipelineEditor /></S>} />
           {/* Agents */}
           <Route path="agents/dashboard" element={<S><AgentDashboard /></S>} />
           <Route path="agents/flow" element={<S><AgentFlow /></S>} />
@@ -155,6 +153,7 @@ export default function App() {
           <Route path="hook-reactions" element={<S><HookReactionsIntegration /></S>} />
           <Route path="hook-fileupload" element={<S><HookFileUploadIntegration /></S>} />
           <Route path="hook-videohangout" element={<S><HookVideoHangoutIntegration /></S>} />
+          <Route path="wrapped-components" element={<S><WrappedComponentsDemo /></S>} />
           {/* Identity (Auth + Admin) */}
           <Route path="identity">
             <Route index element={<Navigate to="login" replace />} />
@@ -188,7 +187,7 @@ export default function App() {
           <Route path="video-streaming" element={<Navigate to="/workflows/video-streaming" replace />} />
           <Route path="call-widget" element={<Navigate to="/workflows/call-widget" replace />} />
           <Route path="call-widget-live" element={<Navigate to="/workflows/call-widget" replace />} />
-          <Route path="shared-components" element={<S><SharedComponents /></S>} />
+          <Route path="shared-components" element={<Navigate to="/components" replace />} />
         </Route>
 
         {/* Legacy /identity/* → redirect to /workflows/identity/* */}

@@ -97,6 +97,14 @@ export const entries: CatalogEntry[] = [
     type: 'demo',
     path: '/workflows/hook-videohangout',
   },
+  {
+    id: 'wrapped-components',
+    title: 'Raw vs Wrapped (overview)',
+    description: 'Side-by-side comparison: raw hook wiring vs WrappedChatPanel + WrappedPresencePanel. Read this first if you are choosing between adapter styles.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/wrapped-components',
+  },
 
   // Agents demos
   {

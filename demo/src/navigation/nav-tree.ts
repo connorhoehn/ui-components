@@ -64,7 +64,6 @@ export const navigationTree: NavigationTree = [
     groups: [
       { id: 'wf-pipelines', label: 'Pipelines', items: [
         { id: 'pipeline-editor', label: 'Pipeline Editor', path: '/workflows/pipeline-editor' },
-        { id: 'pipeline-runs', label: 'Pipeline Runs', path: '/workflows/pipeline-runs' },
       ]},
       { id: 'wf-agents', label: 'Agents', items: [
         { id: 'agent-dashboard', label: 'Agent Dashboard', path: '/workflows/agents/dashboard' },
@@ -145,6 +144,7 @@ export const navigationTree: NavigationTree = [
         { id: 'embedding-modules', label: 'Embedding Modules', path: '/patterns/embedding-modules' },
       ]},
       { id: 'ref-integrations', label: 'Integrations (realtime-modules)', items: [
+        { id: 'wrapped-components', label: 'Raw vs Wrapped (overview)', path: '/workflows/wrapped-components' },
         { id: 'hook-chat', label: 'ChatPanel + useChat', path: '/workflows/hook-chat' },
         { id: 'hook-presence', label: 'PresencePanel + usePresence', path: '/workflows/hook-presence' },
         { id: 'hook-reactions', label: 'ReactionButtons + useReactions', path: '/workflows/hook-reactions' },
