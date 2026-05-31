@@ -11,7 +11,27 @@ interface PipelineEvent {
   detail?: string;
 }
 
+const STATUS_TEXT_CLASSES: Record<string, string> = {
+  running: 'text-amber-500',
+  completed: 'text-emerald-500',
+  failed: 'text-red-500',
+};
+
+function statusTextClass(status?: string) {
+  return (status && STATUS_TEXT_CLASSES[status]) || 'text-slate-400';
+}
+
+function actionIcon(action: string) {
+  if (action.includes('run.started')) return '⚡';
+  if (action.includes('started')) return '▶';
+  if (action.includes('completed')) return '✔';
+  if (action.includes('failed')) return '✘';
+  if (action.includes('stream')) return '…';
+  return '•';
+}
+
 export function PipelineEventLog({ compact }: { compact?: boolean } = {}) {
+  void compact;
   const { onMessage } = useWebSocketContext();
   const [events, setEvents] = useState<PipelineEvent[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -48,93 +68,33 @@ export function PipelineEventLog({ compact }: { compact?: boolean } = {}) {
     }
   }, [events]);
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'running': return '#f59e0b';
-      case 'completed': return '#10b981';
-      case 'failed': return '#ef4444';
-      default: return '#94a3b8';
-    }
-  };
-
-  const getActionIcon = (action: string) => {
-    if (action.includes('started')) return '▶';
-    if (action.includes('completed')) return '✔';
-    if (action.includes('failed')) return '✘';
-    if (action.includes('stream')) return '…';
-    if (action.includes('run.started')) return '⚡';
-    return '•';
-  };
-
   return (
-    <div style={{
-      background: '#0f172a',
-      borderRadius: 8,
-      border: '1px solid #1e293b',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-    }}>
-      <div style={{
-        padding: '10px 14px',
-        borderBottom: '1px solid #1e293b',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-      }}>
-        <span style={{ color: '#10b981', fontSize: 8 }}>{'●'}</span>
-        <span style={{ color: '#e2e8f0', fontSize: 12, fontWeight: 600 }}>Event Stream</span>
-        <span style={{ color: '#64748b', fontSize: 11, marginLeft: 'auto' }}>
-          {events.length} events
-        </span>
+    <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex flex-col h-full">
+      <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center gap-2">
+        <span className="text-emerald-500 text-[8px]">●</span>
+        <span className="text-slate-200 text-xs font-semibold">Event Stream</span>
+        <span className="text-slate-500 text-[11px] ml-auto">{events.length} events</span>
       </div>
-      <div
-        ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '8px 0',
-          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-          fontSize: 11,
-        }}
-      >
+      <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 font-mono text-[11px]">
         {events.length === 0 && (
-          <div style={{ color: '#475569', textAlign: 'center', padding: 24, fontSize: 12 }}>
+          <div className="text-slate-600 text-center py-6 text-xs">
             Waiting for pipeline events...
           </div>
         )}
         {events.map((event) => (
-          <div
-            key={event.id}
-            style={{
-              padding: '4px 14px',
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 8,
-              animation: 'fadeIn 0.2s ease-in',
-            }}
-          >
-            <span style={{ color: '#475569', flexShrink: 0 }}>{event.timestamp}</span>
-            <span style={{ color: getStatusColor(event.status), flexShrink: 0 }}>
-              {getActionIcon(event.action)}
+          <div key={event.id} className="px-3.5 py-1 flex items-baseline gap-2">
+            <span className="text-slate-600 shrink-0">{event.timestamp}</span>
+            <span className={`shrink-0 ${statusTextClass(event.status)}`}>
+              {actionIcon(event.action)}
             </span>
-            <span style={{ color: '#cbd5e1' }}>{event.action}</span>
+            <span className="text-slate-300">{event.action}</span>
             {event.nodeId && (
-              <span style={{
-                color: '#7dd3fc',
-                background: '#0c4a6e',
-                padding: '1px 6px',
-                borderRadius: 3,
-                fontSize: 10,
-              }}>
+              <span className="text-sky-300 bg-sky-950 px-1.5 py-px rounded-sm text-[10px]">
                 {event.nodeId}
               </span>
             )}
             {event.detail && (
-              <span style={{ color: '#94a3b8', marginLeft: 'auto', fontSize: 10 }}>
-                {event.detail}
-              </span>
+              <span className="text-slate-400 ml-auto text-[10px]">{event.detail}</span>
             )}
           </div>
         ))}

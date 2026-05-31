@@ -10,6 +10,30 @@ interface KPI {
   severity?: 'normal' | 'warning' | 'critical';
 }
 
+const SEVERITY_CLASSES: Record<NonNullable<KPI['severity']>, string> = {
+  normal: 'bg-green-50 border-green-200',
+  warning: 'bg-amber-50 border-amber-200',
+  critical: 'bg-red-50 border-red-200',
+};
+
+const SEVERITY_TEXT: Record<NonNullable<KPI['severity']>, string> = {
+  normal: 'text-green-800',
+  warning: 'text-amber-800',
+  critical: 'text-red-800',
+};
+
+const TREND_ARROW: Record<NonNullable<KPI['trend']>, string> = {
+  up: '↑',
+  down: '↓',
+  stable: '→',
+};
+
+const TREND_COLOR: Record<NonNullable<KPI['trend']>, string> = {
+  up: 'text-red-600',
+  down: 'text-green-600',
+  stable: 'text-slate-400',
+};
+
 export function MetricsPanel() {
   const { onMessage } = useWebSocketContext();
   const [kpis, setKpis] = useState<KPI[]>([
@@ -55,51 +79,26 @@ export function MetricsPanel() {
     return unsubscribe;
   }, [onMessage]);
 
-  const severityColors: Record<string, { bg: string; border: string; text: string }> = {
-    normal: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534' },
-    warning: { bg: '#fffbeb', border: '#fde68a', text: '#92400e' },
-    critical: { bg: '#fef2f2', border: '#fecaca', text: '#991b1b' },
-  };
-
-  const trendArrow: Record<string, string> = {
-    up: '↑',
-    down: '↓',
-    stable: '→',
-  };
-
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+    <div className="grid grid-cols-4 gap-3.5">
       {kpis.map((kpi) => {
-        const colors = severityColors[kpi.severity ?? 'normal'];
+        const severity = kpi.severity ?? 'normal';
         return (
           <div
             key={kpi.label}
-            style={{
-              background: colors.bg,
-              border: `1px solid ${colors.border}`,
-              borderRadius: 10,
-              padding: '16px 18px',
-              transition: 'all 0.3s ease',
-            }}
+            className={`rounded-[10px] border px-[18px] py-4 transition-all ${SEVERITY_CLASSES[severity]}`}
           >
-            <div style={{ fontSize: 11, color: '#64748b', fontWeight: 500, marginBottom: 8 }}>
+            <div className="text-[11px] font-medium text-slate-500 mb-2">
               {kpi.label}
             </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-              <span style={{ fontSize: 24, fontWeight: 700, color: colors.text }}>
+            <div className="flex items-baseline gap-1.5">
+              <span className={`text-2xl font-bold ${SEVERITY_TEXT[severity]}`}>
                 {kpi.value}
               </span>
-              {kpi.unit && (
-                <span style={{ fontSize: 12, color: '#64748b' }}>{kpi.unit}</span>
-              )}
+              {kpi.unit && <span className="text-xs text-slate-500">{kpi.unit}</span>}
               {kpi.trend && kpi.trend !== 'stable' && (
-                <span style={{
-                  fontSize: 14,
-                  color: kpi.trend === 'up' ? '#dc2626' : '#16a34a',
-                  marginLeft: 'auto',
-                  fontWeight: 600,
-                }}>
-                  {trendArrow[kpi.trend]}
+                <span className={`ml-auto text-sm font-semibold ${TREND_COLOR[kpi.trend]}`}>
+                  {TREND_ARROW[kpi.trend]}
                 </span>
               )}
             </div>

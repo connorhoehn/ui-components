@@ -54,10 +54,6 @@ const workflowEdges: WorkflowEdge[] = [
   { from: 'health-check', to: 'notify-team' },
 ];
 
-// ---------------------------------------------------------------------------
-// Helper: compute bezier edge path between two nodes
-// ---------------------------------------------------------------------------
-
 const NODE_WIDTH = 180;
 const NODE_HEIGHT = 64;
 
@@ -67,10 +63,7 @@ function computeEdgePath(from: WorkflowNode, to: WorkflowNode): string {
   const x2 = to.x;
   const y2 = to.y + NODE_HEIGHT / 2;
 
-  // If we need to go left-to-right on a new row, come out of the bottom-right
-  // and into top-left. Otherwise standard horizontal bezier.
   if (to.y > from.y + NODE_HEIGHT) {
-    // Going to next row — exit bottom, enter top
     const exitX = from.x + NODE_WIDTH / 2;
     const exitY = from.y + NODE_HEIGHT;
     const enterX = to.x + NODE_WIDTH / 2;
@@ -80,7 +73,6 @@ function computeEdgePath(from: WorkflowNode, to: WorkflowNode): string {
   }
 
   if (to.x < from.x) {
-    // Wrapping to next row (left)
     const exitX = from.x + NODE_WIDTH / 2;
     const exitY = from.y + NODE_HEIGHT;
     const enterX = to.x + NODE_WIDTH / 2;
@@ -89,14 +81,9 @@ function computeEdgePath(from: WorkflowNode, to: WorkflowNode): string {
     return `M ${exitX} ${exitY} C ${exitX} ${exitY + cpOffset}, ${enterX} ${enterY - cpOffset}, ${enterX} ${enterY}`;
   }
 
-  // Normal horizontal connection
   const cpX = (x2 - x1) * 0.4;
   return `M ${x1} ${y1} C ${x1 + cpX} ${y1}, ${x2 - cpX} ${y2}, ${x2} ${y2}`;
 }
-
-// ---------------------------------------------------------------------------
-// Edge component
-// ---------------------------------------------------------------------------
 
 function EdgePath({ edge, fromStatus, toStatus }: {
   edge: WorkflowEdge;
@@ -123,11 +110,8 @@ function EdgePath({ edge, fromStatus, toStatus }: {
         strokeWidth={2}
         strokeDasharray={isFlowing || isActive ? '6 4' : 'none'}
         opacity={fromStatus === 'idle' && toStatus === 'idle' ? 0.4 : 1}
-        style={{
-          animation: isFlowing ? 'dashFlow 0.8s linear infinite' : 'none',
-        }}
+        className={isFlowing ? 'node-editor-dash-flow' : ''}
       />
-      {/* Arrowhead */}
       <circle
         cx={to.x + (to.y > from.y + NODE_HEIGHT || to.x < from.x ? NODE_WIDTH / 2 : 0)}
         cy={to.y + (to.y > from.y + NODE_HEIGHT || to.x < from.x ? 0 : NODE_HEIGHT / 2)}
@@ -138,111 +122,65 @@ function EdgePath({ edge, fromStatus, toStatus }: {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Node component
-// ---------------------------------------------------------------------------
+const NODE_BORDER_CLASSES: Record<NodeStatus, string> = {
+  idle: 'border-slate-200 shadow-sm',
+  running: 'border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+  completed: 'border-emerald-500 shadow-sm',
+  failed: 'border-red-500 shadow-sm',
+};
+
+const STATUS_DOT_CLASSES: Record<NodeStatus, string> = {
+  idle: 'bg-slate-400',
+  running: 'bg-amber-500 animate-pulse',
+  completed: 'bg-emerald-500',
+  failed: 'bg-red-500',
+};
+
+const STATUS_TEXT_CLASSES: Record<NodeStatus, string> = {
+  idle: 'text-slate-400',
+  running: 'text-amber-500',
+  completed: 'text-emerald-500',
+  failed: 'text-red-500',
+};
+
+const KIND_BADGE_CLASSES: Record<WorkflowNode['kind'], string> = {
+  trigger: 'text-violet-500 bg-violet-500/15',
+  task: 'text-blue-500 bg-blue-500/15',
+  approval: 'text-amber-500 bg-amber-500/15',
+};
 
 function WorkflowNodeCard({ node, status, streamTokens }: {
   node: WorkflowNode;
   status: NodeStatus;
   streamTokens: string[];
 }) {
-  const borderColor = {
-    idle: '#e2e8f0',
-    running: '#f59e0b',
-    completed: '#10b981',
-    failed: '#ef4444',
-  }[status];
-
-  const dotColor = {
-    idle: '#94a3b8',
-    running: '#f59e0b',
-    completed: '#10b981',
-    failed: '#ef4444',
-  }[status];
-
-  const kindBadgeColor = {
-    trigger: '#8b5cf6',
-    task: '#3b82f6',
-    approval: '#f59e0b',
-  }[node.kind];
-
   return (
-    <div style={{
-      position: 'absolute',
-      left: node.x,
-      top: node.y,
-      width: NODE_WIDTH,
-      background: '#ffffff',
-      borderRadius: 8,
-      border: `2px solid ${borderColor}`,
-      boxShadow: status === 'running'
-        ? `0 0 12px ${borderColor}40`
-        : '0 1px 3px rgba(0,0,0,0.08)',
-      overflow: 'hidden',
-      transition: 'border-color 0.3s, box-shadow 0.3s',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-      }}>
-        <span style={{
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: dotColor,
-          flexShrink: 0,
-          animation: status === 'running' ? 'pulse 1.2s ease-in-out infinite' : 'none',
-        }} />
-        <span style={{ fontSize: 14, flexShrink: 0 }}>{node.icon}</span>
-        <span style={{
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#1e293b',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}>
+    <div
+      className={`absolute bg-white rounded-lg border-2 overflow-hidden transition-all duration-300 ${NODE_BORDER_CLASSES[status]}`}
+      style={{ left: node.x, top: node.y, width: NODE_WIDTH }}
+    >
+      <div className="flex items-center gap-2 px-3 py-2">
+        <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT_CLASSES[status]}`} />
+        <span className="text-sm shrink-0">{node.icon}</span>
+        <span className="text-xs font-semibold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis">
           {node.label}
         </span>
       </div>
-      {/* Kind badge */}
-      <div style={{ padding: '0 12px 6px', display: 'flex', alignItems: 'center', gap: 6 }}>
-        <span style={{
-          fontSize: 9,
-          fontWeight: 600,
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-          color: kindBadgeColor,
-          background: `${kindBadgeColor}15`,
-          padding: '2px 6px',
-          borderRadius: 3,
-        }}>
+      <div className="px-3 pb-1.5 flex items-center gap-1.5">
+        <span
+          className={`text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${KIND_BADGE_CLASSES[node.kind]}`}
+        >
           {node.kind}
         </span>
         {status !== 'idle' && (
-          <span style={{ fontSize: 9, color: dotColor, fontWeight: 500 }}>{status}</span>
+          <span className={`text-[9px] font-medium ${STATUS_TEXT_CLASSES[status]}`}>{status}</span>
         )}
       </div>
-      {/* Stream tokens */}
       {status === 'running' && streamTokens.length > 0 && (
-        <div style={{
-          padding: '4px 12px 6px',
-          borderTop: '1px solid #f1f5f9',
-          maxHeight: 44,
-          overflow: 'hidden',
-        }}>
-          <div style={{
-            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-            fontSize: 9,
-            color: '#64748b',
-            lineHeight: '13px',
-          }}>
+        <div className="px-3 pt-1 pb-1.5 border-t border-slate-100 max-h-11 overflow-hidden">
+          <div className="font-mono text-[9px] text-slate-500 leading-[13px]">
             {streamTokens.slice(-3).map((token, i) => (
-              <div key={i} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div key={i} className="whitespace-nowrap overflow-hidden text-ellipsis">
                 {token}
               </div>
             ))}
@@ -253,9 +191,11 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Main canvas (inner component that consumes WebSocket context)
-// ---------------------------------------------------------------------------
+const WORKFLOW_STATUS_DOT_CLASSES: Record<'idle' | 'running' | 'completed', string> = {
+  idle: 'bg-slate-400',
+  running: 'bg-amber-500 animate-pulse',
+  completed: 'bg-emerald-500',
+};
 
 function WorkflowCanvas() {
   const { onMessage } = useWebSocketContext();
@@ -274,7 +214,6 @@ function WorkflowCanvas() {
       const nodeId = msg.nodeId as string | undefined;
 
       if (action === 'run.started') {
-        // Reset everything
         const reset: Record<string, NodeStatus> = {};
         workflowNodes.forEach((n) => { reset[n.id] = 'idle'; });
         setNodeStatuses(reset);
@@ -305,100 +244,42 @@ function WorkflowCanvas() {
     return 'Deploying...';
   }, [workflowStatus]);
 
-  const statusDotColor = useMemo(() => {
-    if (workflowStatus === 'idle') return '#94a3b8';
-    if (workflowStatus === 'completed') return '#10b981';
-    return '#f59e0b';
-  }, [workflowStatus]);
-
   const handleDeploy = useCallback(() => {
-    // The SimulatedProvider handles playback — this is a visual-only trigger.
-    // In a real app this would send a message to the server.
+    // SimulatedProvider drives playback; this is visual-only.
   }, []);
 
-  // Compute SVG viewBox to fit all nodes
   const svgWidth = Math.max(...workflowNodes.map((n) => n.x + NODE_WIDTH)) + 60;
   const svgHeight = Math.max(...workflowNodes.map((n) => n.y + NODE_HEIGHT + 80)) + 40;
 
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      background: '#f8fafc',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        padding: '12px 20px',
-        background: '#0f172a',
-        gap: 16,
-        flexShrink: 0,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 18 }}>⚙</span>
-          <h1 style={{
-            margin: 0,
-            fontSize: 15,
-            fontWeight: 700,
-            color: '#f1f5f9',
-            letterSpacing: '-0.01em',
-          }}>
+    <div className="flex flex-col h-full bg-slate-50">
+      <div className="flex items-center px-5 py-3 bg-slate-900 gap-4 shrink-0">
+        <div className="flex items-center gap-2.5">
+          <span className="text-lg">⚙</span>
+          <h1 className="m-0 text-[15px] font-bold text-slate-100 tracking-tight">
             CI/CD Deployment Workflow
           </h1>
         </div>
-
         <button
           onClick={handleDeploy}
-          style={{
-            marginLeft: 24,
-            padding: '6px 16px',
-            background: '#6366f1',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 6,
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
+          type="button"
+          className="ml-6 px-4 py-1.5 bg-indigo-500 text-white border-none rounded-md text-xs font-semibold cursor-pointer hover:bg-indigo-600 transition-colors"
         >
           Deploy
         </button>
-
-        {/* Status indicator */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          marginLeft: 'auto',
-        }}>
-          <span style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: statusDotColor,
-            animation: workflowStatus === 'running' ? 'pulse 1.2s ease-in-out infinite' : 'none',
-          }} />
-          <span style={{ color: '#94a3b8', fontSize: 12, fontWeight: 500 }}>
-            {statusLabel}
-          </span>
+        <div className="flex items-center gap-1.5 ml-auto">
+          <span
+            className={`w-2 h-2 rounded-full ${WORKFLOW_STATUS_DOT_CLASSES[workflowStatus]}`}
+          />
+          <span className="text-slate-400 text-xs font-medium">{statusLabel}</span>
         </div>
       </div>
 
-      {/* Body */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Canvas */}
-        <div style={{
-          flex: 1,
-          overflow: 'auto',
-          position: 'relative',
-          backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)',
-          backgroundSize: '20px 20px',
-        }}>
-          {/* SVG edges layer */}
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-1 overflow-auto relative bg-[radial-gradient(circle,#cbd5e1_1px,transparent_1px)] bg-[size:20px_20px]">
           <svg
-            style={{ position: 'absolute', top: 0, left: 0, width: svgWidth, height: svgHeight, pointerEvents: 'none' }}
+            className="absolute top-0 left-0 pointer-events-none"
+            style={{ width: svgWidth, height: svgHeight }}
           >
             {workflowEdges.map((edge) => (
               <EdgePath
@@ -409,7 +290,6 @@ function WorkflowCanvas() {
               />
             ))}
           </svg>
-          {/* Node cards layer */}
           {workflowNodes.map((node) => (
             <WorkflowNodeCard
               key={node.id}
@@ -418,43 +298,26 @@ function WorkflowCanvas() {
               streamTokens={streamTokens[node.id] ?? []}
             />
           ))}
-          {/* Spacer to ensure scroll area covers all nodes */}
-          <div style={{ width: svgWidth, height: svgHeight, pointerEvents: 'none' }} />
+          <div className="pointer-events-none" style={{ width: svgWidth, height: svgHeight }} />
         </div>
 
-        {/* Right panel — Deployment Log */}
-        <div style={{
-          width: 280,
-          borderLeft: '1px solid #e2e8f0',
-          flexShrink: 0,
-          overflow: 'hidden',
-        }}>
+        <div className="w-[280px] border-l border-slate-200 shrink-0 overflow-hidden">
           <DeploymentLog />
         </div>
       </div>
 
-      {/* CSS keyframes */}
       <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.6; transform: scale(1.3); }
-        }
         @keyframes dashFlow {
           0% { stroke-dashoffset: 0; }
           100% { stroke-dashoffset: -20; }
         }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to { opacity: 1; transform: translateY(0); }
+        .node-editor-dash-flow {
+          animation: dashFlow 0.8s linear infinite;
         }
       `}</style>
     </div>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Page export (wraps canvas in SimulatedProvider)
-// ---------------------------------------------------------------------------
 
 export default function NodeEditorLiveDemo() {
   return (

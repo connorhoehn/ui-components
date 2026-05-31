@@ -11,6 +11,32 @@ interface DeploymentEvent {
   detail?: string;
 }
 
+const STATUS_DOT_COLOR: Record<string, string> = {
+  stream: 'text-violet-400',
+  running: 'text-amber-500',
+  completed: 'text-emerald-500',
+  failed: 'text-red-500',
+};
+
+function statusDotColor(action: string, status?: string) {
+  if (action === 'stream') return STATUS_DOT_COLOR.stream;
+  if (status && STATUS_DOT_COLOR[status]) return STATUS_DOT_COLOR[status];
+  return 'text-slate-400';
+}
+
+function actionIcon(action: string) {
+  if (action === 'run.started') return '⚡';
+  if (action === 'run.completed') return '✔';
+  if (action === 'step.started') return '▶';
+  if (action === 'step.completed') return '✔';
+  if (action === 'stream') return '»';
+  return '•';
+}
+
+function formatNodeId(nodeId: string) {
+  return nodeId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function DeploymentLog() {
   const { onMessage } = useWebSocketContext();
   const [events, setEvents] = useState<DeploymentEvent[]>([]);
@@ -48,111 +74,37 @@ export function DeploymentLog() {
     }
   }, [events]);
 
-  const getStatusColor = (action: string, status?: string) => {
-    if (action === 'stream') return '#a78bfa';
-    switch (status) {
-      case 'running': return '#f59e0b';
-      case 'completed': return '#10b981';
-      case 'failed': return '#ef4444';
-      default: return '#94a3b8';
-    }
-  };
-
-  const getActionIcon = (action: string) => {
-    if (action === 'run.started') return '⚡';
-    if (action === 'run.completed') return '✔';
-    if (action === 'step.started') return '▶';
-    if (action === 'step.completed') return '✔';
-    if (action === 'stream') return '»';
-    return '•';
-  };
-
-  const formatNodeId = (nodeId: string) => {
-    return nodeId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-  };
-
   return (
-    <div style={{
-      background: '#0f172a',
-      borderRadius: 8,
-      border: '1px solid #1e293b',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-    }}>
-      <div style={{
-        padding: '10px 14px',
-        borderBottom: '1px solid #1e293b',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-      }}>
-        <span style={{ color: '#6366f1', fontSize: 8 }}>{'●'}</span>
-        <span style={{ color: '#e2e8f0', fontSize: 12, fontWeight: 600 }}>Deployment Log</span>
-        <span style={{ color: '#64748b', fontSize: 11, marginLeft: 'auto' }}>
-          {events.length} events
-        </span>
+    <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex flex-col h-full">
+      <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center gap-2">
+        <span className="text-indigo-500 text-[8px]">●</span>
+        <span className="text-slate-200 text-xs font-semibold">Deployment Log</span>
+        <span className="text-slate-500 text-[11px] ml-auto">{events.length} events</span>
       </div>
-      <div
-        ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '8px 0',
-          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
-          fontSize: 11,
-        }}
-      >
+      <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 font-mono text-[11px]">
         {events.length === 0 && (
-          <div style={{ color: '#475569', textAlign: 'center', padding: 24, fontSize: 12 }}>
+          <div className="text-slate-600 text-center py-6 text-xs">
             Waiting for deployment events...
           </div>
         )}
         {events.map((event) => (
-          <div
-            key={event.id}
-            style={{
-              padding: '3px 14px',
-              display: 'flex',
-              alignItems: 'baseline',
-              gap: 8,
-              animation: 'fadeIn 0.2s ease-in',
-            }}
-          >
-            <span style={{ color: '#475569', flexShrink: 0, fontSize: 10 }}>
-              {event.timestamp}
-            </span>
-            <span style={{
-              color: getStatusColor(event.action, event.status),
-              flexShrink: 0,
-              width: 14,
-              textAlign: 'center',
-            }}>
-              {getActionIcon(event.action)}
+          <div key={event.id} className="px-3.5 py-0.5 flex items-baseline gap-2">
+            <span className="text-slate-600 shrink-0 text-[10px]">{event.timestamp}</span>
+            <span className={`shrink-0 w-3.5 text-center ${statusDotColor(event.action, event.status)}`}>
+              {actionIcon(event.action)}
             </span>
             {event.action === 'stream' ? (
-              <span style={{ color: '#c4b5fd', fontStyle: 'italic' }}>
-                {event.detail}
-              </span>
+              <span className="text-violet-300 italic">{event.detail}</span>
             ) : (
               <>
-                <span style={{ color: '#cbd5e1' }}>
-                  {event.action}
-                </span>
+                <span className="text-slate-300">{event.action}</span>
                 {event.nodeId && (
-                  <span style={{
-                    color: '#7dd3fc',
-                    background: '#0c4a6e',
-                    padding: '1px 6px',
-                    borderRadius: 3,
-                    fontSize: 10,
-                  }}>
+                  <span className="text-sky-300 bg-sky-950 px-1.5 py-px rounded-sm text-[10px]">
                     {formatNodeId(event.nodeId)}
                   </span>
                 )}
-                {event.detail && event.action !== 'stream' && (
-                  <span style={{ color: '#94a3b8', marginLeft: 'auto', fontSize: 10, flexShrink: 0 }}>
+                {event.detail && (
+                  <span className="text-slate-400 ml-auto text-[10px] shrink-0">
                     {event.detail}
                   </span>
                 )}
