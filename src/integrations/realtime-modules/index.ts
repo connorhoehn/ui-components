@@ -83,6 +83,15 @@ export type { WrappedNotificationCenterProps } from './WrappedNotificationCenter
 export { CapabilityBoundary } from './CapabilityBoundary';
 export type { CapabilityBoundaryProps } from './CapabilityBoundary';
 
+export { ReconnectingShim } from './ReconnectingShim';
+export type {
+  ReconnectingShimProps,
+  ReconnectingShimConnectionState,
+} from './ReconnectingShim';
+
+export { NetworkErrorBoundary } from './NetworkErrorBoundary';
+export type { NetworkErrorBoundaryProps } from './NetworkErrorBoundary';
+
 // ── Hangout rooms composites (2026-05) ──
 export { HangoutRoomRow } from './HangoutRoomRow';
 export type { HangoutRoomRowProps } from './HangoutRoomRow';
