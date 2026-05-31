@@ -8,6 +8,7 @@ import { useEffect, useRef, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { ReactionButtons } from '@/components/collaboration/ReactionButtons';
 import { WrappedReactionsOverlay } from '@/integrations/realtime-modules/WrappedReactionsOverlay';
+import type { RMReaction } from '@/integrations/realtime-modules/types';
 import { GatewaySocketProvider, useReactions, GatewayContext } from '@connorhoehn/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
@@ -104,7 +105,7 @@ function ReactionsViewInner({ channel, isMock }: { channel: string; isMock: bool
           </p>
         ) : (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {rmReactions.slice(-20).map((r) => (
+            {rmReactions.slice(-20).map((r: RMReaction) => (
               <span
                 key={r.id}
                 style={{
