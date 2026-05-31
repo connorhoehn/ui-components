@@ -4,11 +4,10 @@
 // Mock mode: auto-fires emoji reactions every ~2 s.
 // Live mode: set VITE_GATEWAY_URL.
 
-import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { ReactionButtons } from '@/components/collaboration/ReactionButtons';
-import { ReactionsOverlay } from '@/components/collaboration/ReactionsOverlay';
-import type { EphemeralReaction } from '@/hooks/useReactions';
+import { WrappedReactionsOverlay } from '@/integrations/realtime-modules/WrappedReactionsOverlay';
 import { GatewaySocketProvider, useReactions, GatewayContext } from '@connorhoehn/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
@@ -83,59 +82,19 @@ function MockGatewayProvider({
 }
 
 // ---------------------------------------------------------------------------
-// Adapt realtime-modules Reaction → ui-components EphemeralReaction
-// ---------------------------------------------------------------------------
-
-interface RMReaction {
-  id: string;
-  clientId: string;
-  channel: string;
-  emoji: string;
-  effect: string;
-  position: unknown;
-  metadata: Record<string, unknown>;
-  timestamp: string;
-}
-
-function adaptReaction(r: RMReaction, index: number): EphemeralReaction {
-  // Spread reactions across a grid pattern (10% increments)
-  const x = 15 + (index % 8) * 10;
-  const y = 20 + Math.floor(index / 8) * 15;
-  return {
-    id: r.id,
-    emoji: r.emoji,
-    x,
-    y,
-    timestamp: r.timestamp,
-  };
-}
-
-// ---------------------------------------------------------------------------
 // Inner view
 // ---------------------------------------------------------------------------
 
 const AUTO_EMOJIS = ['❤️', '🎉', '🔥', '👍', '😂', '🚀', '💯', '⚡'];
 
 function ReactionsViewInner({ channel, isMock }: { channel: string; isMock: boolean }) {
-  const { reactions: rmReactions, react } = useReactions(channel);
-  const [visible, setVisible] = useState<EphemeralReaction[]>([]);
-
-  // Map RM reactions → ephemeral overlay entries (auto-expire after 2.5s)
-  useEffect(() => {
-    if (rmReactions.length === 0) return;
-    const latest = rmReactions[rmReactions.length - 1];
-    const adapted = adaptReaction(latest as RMReaction, rmReactions.length - 1);
-    setVisible((prev) => [...prev, adapted]);
-    const t = setTimeout(() => {
-      setVisible((prev) => prev.filter((r) => r.id !== adapted.id));
-    }, 2500);
-    return () => clearTimeout(t);
-  }, [rmReactions]);
+  const reactionsHook = useReactions(channel);
+  const { reactions: rmReactions, react } = reactionsHook;
 
   return (
     <div>
       <ReactionButtons onReact={react} disabled={false} />
-      <ReactionsOverlay reactions={visible} />
+      <WrappedReactionsOverlay reactions={reactionsHook} />
 
       {/* Reaction history strip */}
       <div style={{ marginTop: 16, minHeight: 40 }}>
