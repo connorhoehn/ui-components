@@ -529,10 +529,12 @@ export function exportPipelineJSON(id: string): string | null {
 // JSON Schema validation (AJV) for importPipelineJSON.
 //
 // The authoritative schema lives at `/schemas/pipeline.schema.json` (Draft
-// 2020-12). The installed AJV (v6) targets Draft-07, which is a superset of
-// what we use here (refs, enum, const, oneOf, required, type); we strip the
-// `$schema` / `$id` URLs so AJV doesn't reject the unknown meta-schema.
-// Compilation is lazy so the cost isn't paid at module import time.
+// 2020-12). We strip the `$schema` / `$id` URLs so AJV doesn't try to fetch
+// the remote meta-schema, and strip `discriminator` (an OpenAPI 3 extension
+// inside NodeData.oneOf) which AJV doesn't recognize as a keyword.
+// `strict: false` lets us keep the schema declarative without registering
+// every format used. Compilation is lazy so the cost isn't paid at module
+// import time.
 // ---------------------------------------------------------------------------
 
 let cachedValidate: ValidateFunction | null = null;
@@ -541,25 +543,14 @@ function getValidator(): ValidateFunction {
   if (cachedValidate) return cachedValidate;
   // Clone so we don't mutate the imported schema object.
   const schema = JSON.parse(JSON.stringify(pipelineSchema)) as Record<string, unknown>;
-  // AJV 6 only understands draft-07's meta-schema URL. Drop the 2020-12
-  // reference + $id so validateSchema doesn't trip on them.
   delete schema.$schema;
   delete schema.$id;
-  // Also strip `discriminator` (an OpenAPI 3 extension inside NodeData.oneOf)
-  // which AJV 6 doesn't recognize as a keyword.
   const defs = schema.$defs as Record<string, unknown> | undefined;
   if (defs && typeof defs === 'object') {
     const nodeData = defs.NodeData as Record<string, unknown> | undefined;
     if (nodeData) delete nodeData.discriminator;
   }
-  const ajv = new Ajv({
-    allErrors: true,
-    schemaId: '$id',
-    meta: true,
-    // AJV 6 has no `strict` option; `unknownFormats: 'ignore'` is the closest
-    // opt-out we need for date-time (which we don't want to reject on).
-    unknownFormats: 'ignore',
-  } as any);
+  const ajv = new Ajv({ allErrors: true, strict: false });
   cachedValidate = ajv.compile(schema);
   return cachedValidate;
 }

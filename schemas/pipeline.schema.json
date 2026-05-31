@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://connorhoehn.dev/ui-components/schemas/pipeline.schema.json",
+  "title": "PipelineDefinition",
+  "description": "Authoritative JSON Schema for a persisted pipeline definition. Mirrors src/types/pipeline.ts. Consumed by importPipelineJSON via AJV.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "version",
+    "status",
+    "nodes",
+    "edges",
+    "createdAt",
+    "updatedAt",
+    "createdBy"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "icon": { "type": "string" },
+    "version": { "type": "integer", "minimum": 0 },
+    "status": { "enum": ["draft", "published", "archived"] },
+    "publishedVersion": { "type": "integer", "minimum": 0 },
+    "publishedSnapshot": { "type": "object" },
+    "triggerBinding": { "$ref": "#/$defs/TriggerBinding" },
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PipelineNode" }
+    },
+    "edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/PipelineEdge" }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" },
+    "createdBy": { "type": "string" }
+  },
+  "$defs": {
+    "NodeType": {
+      "enum": [
+        "trigger",
+        "llm",
+        "transform",
+        "condition",
+        "action",
+        "fork",
+        "join",
+        "approval",
+        "agent",
+        "mcp-tool",
+        "knowledge-base",
+        "graph-query",
+        "memory",
+        "guardrail",
+        "policy",
+        "ag-ui-output"
+      ]
+    },
+    "TriggerType": {
+      "enum": [
+        "manual",
+        "document.finalize",
+        "document.comment",
+        "document.submit",
+        "schedule",
+        "webhook"
+      ]
+    },
+    "TriggerBinding": {
+      "type": "object",
+      "required": ["event"],
+      "properties": {
+        "event": { "$ref": "#/$defs/TriggerType" },
+        "documentTypeId": { "type": "string" },
+        "schedule": { "type": "string" },
+        "webhookPath": { "type": "string" },
+        "webhookSecret": { "type": "string" }
+      }
+    },
+    "RetryPolicy": {
+      "type": "object",
+      "required": ["maxAttempts", "backoffMs", "backoffMultiplier"],
+      "properties": {
+        "maxAttempts": { "type": "integer", "minimum": 1 },
+        "backoffMs": { "type": "integer", "minimum": 0 },
+        "backoffMultiplier": { "type": "number", "minimum": 0 }
+      }
+    },
+    "Position": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "PipelineNode": {
+      "type": "object",
+      "required": ["id", "type", "position", "data"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/$defs/NodeType" },
+        "position": { "$ref": "#/$defs/Position" },
+        "data": { "$ref": "#/$defs/NodeData" }
+      }
+    },
+    "PipelineEdge": {
+      "type": "object",
+      "required": ["id", "source", "sourceHandle", "target", "targetHandle"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "sourceHandle": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "targetHandle": { "type": "string", "minLength": 1 }
+      }
+    },
+    "NodeData": {
+      "discriminator": { "propertyName": "type" },
+      "oneOf": [
+        { "$ref": "#/$defs/TriggerNodeData" },
+        { "$ref": "#/$defs/LLMNodeData" },
+        { "$ref": "#/$defs/TransformNodeData" },
+        { "$ref": "#/$defs/ConditionNodeData" },
+        { "$ref": "#/$defs/ActionNodeData" },
+        { "$ref": "#/$defs/ForkNodeData" },
+        { "$ref": "#/$defs/JoinNodeData" },
+        { "$ref": "#/$defs/ApprovalNodeData" },
+        { "$ref": "#/$defs/AgentNodeData" },
+        { "$ref": "#/$defs/GuardrailNodeData" },
+        { "$ref": "#/$defs/McpToolNodeData" },
+        { "$ref": "#/$defs/KnowledgeBaseNodeData" },
+        { "$ref": "#/$defs/GraphQueryNodeData" },
+        { "$ref": "#/$defs/MemoryNodeData" },
+        { "$ref": "#/$defs/PolicyNodeData" },
+        { "$ref": "#/$defs/AgUiOutputNodeData" }
+      ]
+    },
+    "TriggerNodeData": {
+      "type": "object",
+      "required": ["type", "triggerType"],
+      "properties": {
+        "type": { "const": "trigger" },
+        "triggerType": { "$ref": "#/$defs/TriggerType" },
+        "documentTypeId": { "type": "string" },
+        "schedule": { "type": "string" },
+        "webhookPath": { "type": "string" }
+      }
+    },
+    "LLMNodeData": {
+      "type": "object",
+      "required": ["type", "provider", "model", "systemPrompt", "userPromptTemplate", "streaming"],
+      "properties": {
+        "type": { "const": "llm" },
+        "provider": { "enum": ["anthropic", "bedrock", "claude-code"] },
+        "model": { "type": "string" },
+        "systemPrompt": { "type": "string" },
+        "userPromptTemplate": { "type": "string" },
+        "temperature": { "type": "number" },
+        "maxTokens": { "type": "integer", "minimum": 1 },
+        "streaming": { "type": "boolean" },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "TransformNodeData": {
+      "type": "object",
+      "required": ["type", "transformType", "expression"],
+      "properties": {
+        "type": { "const": "transform" },
+        "transformType": { "enum": ["jsonpath", "template", "javascript"] },
+        "expression": { "type": "string" },
+        "outputKey": { "type": "string" },
+        "terminal": { "type": "boolean" },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "ConditionNodeData": {
+      "type": "object",
+      "required": ["type", "expression"],
+      "properties": {
+        "type": { "const": "condition" },
+        "expression": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    },
+    "ActionNodeData": {
+      "type": "object",
+      "required": ["type", "actionType", "config"],
+      "properties": {
+        "type": { "const": "action" },
+        "actionType": {
+          "enum": [
+            "update-document",
+            "post-comment",
+            "notify",
+            "webhook",
+            "mcp-tool",
+            "sync-back"
+          ]
+        },
+        "config": { "type": "object" },
+        "idempotent": { "type": "boolean" },
+        "idempotencyMode": { "enum": ["per-attempt", "per-step"] },
+        "onError": { "enum": ["route-error", "fail-run"] },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "ForkNodeData": {
+      "type": "object",
+      "required": ["type", "branchCount"],
+      "properties": {
+        "type": { "const": "fork" },
+        "branchCount": { "type": "integer", "minimum": 2, "maximum": 8 },
+        "branchLabels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "JoinNodeData": {
+      "type": "object",
+      "required": ["type", "mode", "mergeStrategy"],
+      "properties": {
+        "type": { "const": "join" },
+        "mode": { "enum": ["all", "any", "n_of_m"] },
+        "n": { "type": "integer", "minimum": 1 },
+        "mergeStrategy": { "enum": ["deep-merge", "array-collect", "last-writer-wins"] }
+      }
+    },
+    "Approver": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "enum": ["user", "role"] },
+        "value": { "type": "string" }
+      }
+    },
+    "ApprovalNodeData": {
+      "type": "object",
+      "required": ["type", "approvers", "requiredCount"],
+      "properties": {
+        "type": { "const": "approval" },
+        "approvers": { "type": "array", "items": { "$ref": "#/$defs/Approver" } },
+        "requiredCount": { "type": "integer", "minimum": 1 },
+        "timeoutMs": { "type": "integer", "minimum": 0 },
+        "timeoutAction": { "enum": ["reject", "approve", "escalate"] },
+        "message": { "type": "string" }
+      }
+    },
+    "AgentNodeData": {
+      "type": "object",
+      "required": ["type", "agentId", "protocol", "inputTemplate", "streaming"],
+      "properties": {
+        "type": { "const": "agent" },
+        "agentId": { "type": "string" },
+        "agentName": { "type": "string" },
+        "protocol": { "enum": ["a2a", "direct"] },
+        "inputTemplate": { "type": "string" },
+        "streaming": { "type": "boolean" },
+        "timeoutMs": { "type": "integer", "minimum": 0 },
+        "outputKey": { "type": "string" },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "GuardrailNodeData": {
+      "type": "object",
+      "required": ["type", "guardrailId", "inputField", "action"],
+      "properties": {
+        "type": { "const": "guardrail" },
+        "guardrailId": { "type": "string" },
+        "guardrailVersion": { "type": "string" },
+        "inputField": { "type": "string" },
+        "action": { "enum": ["block", "mask", "warn"] },
+        "label": { "type": "string" }
+      }
+    },
+    "McpToolNodeData": {
+      "type": "object",
+      "required": ["type", "gatewayUrl", "toolName", "inputTemplate"],
+      "properties": {
+        "type": { "const": "mcp-tool" },
+        "gatewayUrl": { "type": "string" },
+        "toolName": { "type": "string" },
+        "inputTemplate": { "type": "string" },
+        "outputKey": { "type": "string" },
+        "timeoutMs": { "type": "integer", "minimum": 0 },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "KnowledgeBaseNodeData": {
+      "type": "object",
+      "required": ["type", "knowledgeBaseId", "queryTemplate", "topK"],
+      "properties": {
+        "type": { "const": "knowledge-base" },
+        "knowledgeBaseId": { "type": "string" },
+        "queryTemplate": { "type": "string" },
+        "topK": { "type": "integer", "minimum": 1 },
+        "scoreThreshold": { "type": "number" },
+        "outputKey": { "type": "string" },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "GraphQueryNodeData": {
+      "type": "object",
+      "required": ["type", "graphId", "query"],
+      "properties": {
+        "type": { "const": "graph-query" },
+        "graphId": { "type": "string" },
+        "query": { "type": "string" },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "outputKey": { "type": "string" },
+        "timeoutMs": { "type": "integer", "minimum": 0 },
+        "retryPolicy": { "$ref": "#/$defs/RetryPolicy" }
+      }
+    },
+    "MemoryNodeData": {
+      "type": "object",
+      "required": ["type", "mode", "scope", "namespace", "keyExpression"],
+      "properties": {
+        "type": { "const": "memory" },
+        "mode": { "enum": ["read", "write"] },
+        "scope": { "enum": ["session", "long-term"] },
+        "namespace": { "type": "string" },
+        "keyExpression": { "type": "string" },
+        "valueField": { "type": "string" },
+        "outputKey": { "type": "string" }
+      }
+    },
+    "PolicyNodeData": {
+      "type": "object",
+      "required": ["type", "policyStoreId", "principal", "action", "resource"],
+      "properties": {
+        "type": { "const": "policy" },
+        "policyStoreId": { "type": "string" },
+        "principal": { "type": "string" },
+        "action": { "type": "string" },
+        "resource": { "type": "string" },
+        "contextEntities": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    },
+    "AgUiOutputNodeData": {
+      "type": "object",
+      "required": ["type", "sourceField", "eventType", "terminal"],
+      "properties": {
+        "type": { "const": "ag-ui-output" },
+        "sourceField": { "type": "string" },
+        "eventType": { "enum": ["TEXT_MESSAGE_CONTENT", "STATE_DELTA", "CUSTOM"] },
+        "terminal": { "type": "boolean" },
+        "customEventName": { "type": "string" }
+      }
+    }
+  }
+}

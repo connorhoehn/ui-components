@@ -10,6 +10,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
+      '@schemas': resolve(__dirname, 'schemas'),
       // hls.js is an optional peer dep (consumer apps install it). Vitest's
       // import-analysis tries to resolve dynamic-import targets even with
       // `/* @vite-ignore */`, so point it at a stub for tests.

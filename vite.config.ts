@@ -7,7 +7,10 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
   resolve: {
-    alias: { '@': resolve(__dirname, 'src') },
+    alias: {
+      '@': resolve(__dirname, 'src'),
+      '@schemas': resolve(__dirname, 'schemas'),
+    },
   },
   build: {
     lib: {
@@ -45,7 +48,6 @@ export default defineConfig({
         'lib0',
         'amazon-cognito-identity-js',
         'amazon-ivs-web-broadcast',
-        '@schemas/pipeline.schema.json',
         // hls.js is dynamic-imported by RecordingPlayer; the consumer
         // app installs it. Externalized to keep this lib bundle lean.
         'hls.js',

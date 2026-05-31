@@ -26,6 +26,7 @@ export default defineConfig({
       '@connorhoehn/realtime-modules/client': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/index.ts'),
       '@connorhoehn/realtime-modules': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/index.ts'),
       '@': resolve(__dirname, '../src'),
+      '@schemas': resolve(__dirname, '../schemas'),
     },
   },
   server: {
