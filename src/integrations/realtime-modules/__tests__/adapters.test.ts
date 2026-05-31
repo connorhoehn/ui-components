@@ -114,7 +114,17 @@ describe('adaptChatMessage', () => {
     const noMeta: RMChatMessage = { ...rmChat, metadata: undefined };
     const result = adaptChatMessage(noMeta);
     expect(result.displayName).toBeUndefined();
+    expect(result.avatarUrl).toBeUndefined();
     expect(result.content).toBe('Hello world');
+  });
+
+  it('lifts avatarUrl from metadata when present', () => {
+    const withAvatar: RMChatMessage = {
+      ...rmChat,
+      metadata: { displayName: 'Alice', avatarUrl: 'https://example.com/alice.png' },
+    };
+    const result = adaptChatMessage(withAvatar);
+    expect(result.avatarUrl).toBe('https://example.com/alice.png');
   });
 
   it('handles empty messages array', () => {

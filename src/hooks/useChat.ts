@@ -20,6 +20,7 @@ export interface ChatMessage {
   content: string;
   timestamp: string;  // ISO string from server
   displayName?: string;
+  avatarUrl?: string; // optional profile image URL — falls back to initials
 }
 
 export interface UseChatOptions {
@@ -71,12 +72,13 @@ export function useChat(options: UseChatOptions): UseChatReturn {
       if (msg.type === 'chat' && msg.action === 'history') {
         // Only process history for the current channel
         if (msg.channel !== currentChannelRef.current) return;
-        const incoming = (msg.messages as Array<{ clientId: string; message: string; timestamp: string; metadata?: { displayName?: string } }> | undefined) ?? [];
+        const incoming = (msg.messages as Array<{ clientId: string; message: string; timestamp: string; metadata?: { displayName?: string; avatarUrl?: string } }> | undefined) ?? [];
         setMessages(incoming.map((m) => ({
           clientId: m.clientId,
           content: m.message,
           timestamp: m.timestamp,
           displayName: m.metadata?.displayName,
+          avatarUrl: m.metadata?.avatarUrl,
         })));
         return;
       }
@@ -84,7 +86,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
       if (msg.type === 'chat' && msg.action === 'message') {
         // Only process messages for the current channel
         if (msg.channel !== currentChannelRef.current) return;
-        const messageData = msg.message as { id?: string; clientId: string; message: string; timestamp: string; channel: string; metadata?: { displayName?: string } } | undefined;
+        const messageData = msg.message as { id?: string; clientId: string; message: string; timestamp: string; channel: string; metadata?: { displayName?: string; avatarUrl?: string } } | undefined;
         if (!messageData) return;
         const incoming: ChatMessage = {
           id: messageData.id,
@@ -92,6 +94,7 @@ export function useChat(options: UseChatOptions): UseChatReturn {
           content: messageData.message,
           timestamp: messageData.timestamp,
           displayName: messageData.metadata?.displayName,
+          avatarUrl: messageData.metadata?.avatarUrl,
         };
         setMessages((prev) => {
           // Deduplicate by server message ID

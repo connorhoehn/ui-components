@@ -1,7 +1,7 @@
 import { jsx as a, jsxs as c, Fragment as C } from "react/jsx-runtime";
-import { C as T, P as W } from "../PresencePanel-snLbTN9f.js";
-import { A as O, F as B, N as H, P as $, B as E, S as M } from "../Badge-bX8Pfywg.js";
-import { useState as w, useEffect as U, useMemo as S } from "react";
+import { C as T, P as W } from "../PresencePanel-BJS1cx3V.js";
+import { A as O, F as B, N as H, P as $, B as E, S as M } from "../Badge-tH4NRy5U.js";
+import { useState as w, useEffect as L, useMemo as S } from "react";
 import { R as _, S as z, a as V } from "../ReactionsOverlay-CoaX3hRz.js";
 import { H as q } from "../HangoutLayout-DTIq3ne2.js";
 import { useRoomOccupancy as X } from "@connorhoehn/realtime-modules/client/hangout-rooms";
@@ -15,7 +15,8 @@ function Q(e) {
     clientId: e.clientId,
     content: e.message,
     timestamp: e.timestamp,
-    displayName: e.metadata?.displayName ?? void 0
+    displayName: e.metadata?.displayName ?? void 0,
+    avatarUrl: e.metadata?.avatarUrl ?? void 0
   };
 }
 function Z(e) {
@@ -32,9 +33,9 @@ function J(e) {
 function Ae(e) {
   return e.map(J);
 }
-const P = [15, 25, 35, 45, 55, 65, 75, 85], D = [20, 35, 50, 65, 80];
+const P = [15, 25, 35, 45, 55, 65, 75, 85], U = [20, 35, 50, 65, 80];
 function F(e, t) {
-  const n = P[t % P.length] ?? 50, i = D[Math.floor(t / P.length) % D.length] ?? 50, o = e.position != null && typeof e.position == "object" ? e.position : null;
+  const n = P[t % P.length] ?? 50, i = U[Math.floor(t / P.length) % U.length] ?? 50, o = e.position != null && typeof e.position == "object" ? e.position : null;
   return {
     id: e.id,
     emoji: e.emoji,
@@ -98,10 +99,10 @@ function re(e) {
     error: e.error
   };
 }
-function se(e) {
+function le(e) {
   return e.map(re);
 }
-function le(e, t) {
+function se(e, t) {
   return {
     id: e.clientId,
     displayName: e.displayName ?? e.clientId.slice(0, 12),
@@ -110,7 +111,7 @@ function le(e, t) {
   };
 }
 function de(e, t) {
-  return e.map((n) => le(n, t));
+  return e.map((n) => se(n, t));
 }
 function ce(e) {
   return {
@@ -182,7 +183,7 @@ function Me({
   ttlMs: t = 2500
 }) {
   const [n, i] = w([]), o = e.reactions;
-  return U(() => {
+  return L(() => {
     if (o.length === 0) return;
     const r = o[o.length - 1], d = F(r, o.length - 1);
     i((m) => m.some((u) => u.id === d.id) ? m : [...m, d]);
@@ -192,7 +193,7 @@ function Me({
     return () => clearTimeout(h);
   }, [o, t]), /* @__PURE__ */ a(_, { reactions: n });
 }
-function De({
+function Ue({
   fileUpload: e,
   accept: t,
   maxSize: n,
@@ -203,12 +204,12 @@ function De({
   uploadMetadata: h,
   onError: m
 }) {
-  const u = se(e.uploads);
-  function b(l) {
-    for (const p of l)
+  const u = le(e.uploads);
+  function b(s) {
+    for (const p of s)
       e.upload(p, h ? { metadata: h } : void 0).catch(
-        (s) => {
-          const f = s instanceof Error ? s.message : "Upload failed";
+        (l) => {
+          const f = l instanceof Error ? l.message : "Upload failed";
           m?.(f);
         }
       );
@@ -231,7 +232,7 @@ function De({
       "ul",
       {
         style: { margin: "8px 0 0", padding: 0, listStyle: "none", fontSize: 13 },
-        children: u.map((l) => /* @__PURE__ */ c(
+        children: u.map((s) => /* @__PURE__ */ c(
           "li",
           {
             style: {
@@ -242,19 +243,19 @@ function De({
               borderBottom: "1px solid #e2e8f0"
             },
             children: [
-              /* @__PURE__ */ a("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: l.filename }),
-              /* @__PURE__ */ a("span", { style: { color: me(l.status), fontWeight: 600, fontSize: 12 }, children: l.status === "uploading" ? `${l.progress}%` : l.status }),
-              (l.status === "completed" || l.status === "clean") && l.downloadUrl && /* @__PURE__ */ a(
+              /* @__PURE__ */ a("span", { style: { flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: s.filename }),
+              /* @__PURE__ */ a("span", { style: { color: me(s.status), fontWeight: 600, fontSize: 12 }, children: s.status === "uploading" ? `${s.progress}%` : s.status }),
+              (s.status === "completed" || s.status === "clean") && s.downloadUrl && /* @__PURE__ */ a(
                 "a",
                 {
-                  href: l.downloadUrl,
+                  href: s.downloadUrl,
                   target: "_blank",
                   rel: "noreferrer",
                   style: { fontSize: 12, color: "#3b82f6" },
                   children: "Download"
                 }
               ),
-              (l.status === "failed" || l.status === "infected") && /* @__PURE__ */ a(
+              (s.status === "failed" || s.status === "infected") && /* @__PURE__ */ a(
                 "button",
                 {
                   type: "button",
@@ -265,7 +266,7 @@ function De({
               )
             ]
           },
-          l.id
+          s.id
         ))
       }
     )
@@ -287,7 +288,7 @@ function me(e) {
       return "#94a3b8";
   }
 }
-function Le({
+function De({
   hangout: e,
   localClientId: t,
   videoElements: n,
@@ -298,17 +299,17 @@ function Le({
   onParticipantClick: h,
   className: m
 }) {
-  const u = de(e.participants, t), b = t != null ? u.find((s) => s.id === t) ?? null : null, l = t != null ? u.filter((s) => s.id !== t) : u;
-  function p(s) {
-    return n ? s.map((f) => ({
+  const u = de(e.participants, t), b = t != null ? u.find((l) => l.id === t) ?? null : null, s = t != null ? u.filter((l) => l.id !== t) : u;
+  function p(l) {
+    return n ? l.map((f) => ({
       ...f,
       videoElement: n[f.id] ?? f.videoElement
-    })) : s;
+    })) : l;
   }
   return /* @__PURE__ */ a(
     q,
     {
-      participants: p(l),
+      participants: p(s),
       localParticipant: b ? p([b])[0] : null,
       mode: i,
       spotlightContent: o,
@@ -319,7 +320,7 @@ function Le({
     }
   );
 }
-function Ue({
+function Le({
   notifications: e,
   onItemClick: t,
   ...n
@@ -362,13 +363,13 @@ function pe({
 }) {
   const b = X(o ? e : null, {
     subscribeRoomsIndex: o
-  }), l = o ? b.occupancy ?? null : i ?? null, p = l?.count ?? 0, s = l?.members ?? [], f = S(() => n ? s.some((N) => N.participantId === n) : !1, [s, n]), x = f, v = S(
-    () => s.slice(0, 3).map((N) => ({
+  }), s = o ? b.occupancy ?? null : i ?? null, p = s?.count ?? 0, l = s?.members ?? [], f = S(() => n ? l.some((N) => N.participantId === n) : !1, [l, n]), x = f, v = S(
+    () => l.slice(0, 3).map((N) => ({
       id: N.participantId,
       name: N.displayName ?? N.userId,
       online: !0
     })),
-    [s]
+    [l]
   );
   let y = null;
   return p > 1 ? y = /* @__PURE__ */ c(C, { children: [
@@ -407,13 +408,13 @@ function pe({
     }
   );
 }
-const L = 3, I = 48;
+const D = 3, I = 48;
 function fe(e) {
   return e.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 48);
 }
 function ge(e) {
   const t = e.trim();
-  return t.length === 0 ? "Name is required." : t.length < L ? `Name must be at least ${L} characters.` : t.length > I ? `Name must be at most ${I} characters.` : null;
+  return t.length === 0 ? "Name is required." : t.length < D ? `Name must be at least ${D} characters.` : t.length > I ? `Name must be at most ${I} characters.` : null;
 }
 function he({
   open: e,
@@ -422,11 +423,11 @@ function he({
   onCreated: i,
   defaultVisibility: o
 }) {
-  const [r, d] = w(""), [h, m] = w(""), [u, b] = w(!1), [l, p] = w(!1), [s, f] = w(!1), [x, v] = w(null);
-  U(() => {
+  const [r, d] = w(""), [h, m] = w(""), [u, b] = w(!1), [s, p] = w(!1), [l, f] = w(!1), [x, v] = w(null);
+  L(() => {
     e && (d(""), m(""), b(!1), p(!1), f(!1), v(null));
   }, [e]);
-  const y = S(() => ge(r), [r]), N = S(() => fe(r), [r]), g = !y && !s;
+  const y = S(() => ge(r), [r]), N = S(() => fe(r), [r]), g = !y && !l;
   async function A(k) {
     if (k.preventDefault(), !!g) {
       f(!0), v(null);
@@ -437,7 +438,7 @@ function he({
           visibility: o,
           settings: {
             audioOnly: u,
-            recordingEnabled: l
+            recordingEnabled: s
           }
         });
         i?.(R), t();
@@ -450,7 +451,7 @@ function he({
     G,
     {
       open: e,
-      onClose: s ? () => {
+      onClose: l ? () => {
       } : t,
       title: "New room",
       maxWidth: 440,
@@ -470,7 +471,7 @@ function he({
               onChange: (k) => d(k.target.value),
               placeholder: "Team standup",
               maxLength: I + 10,
-              disabled: s,
+              disabled: l,
               className: "w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             }
           ),
@@ -500,7 +501,7 @@ function he({
               onChange: (k) => m(k.target.value),
               placeholder: "What's this room for?",
               rows: 2,
-              disabled: s,
+              disabled: l,
               className: "w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             }
           )
@@ -516,7 +517,7 @@ function he({
               {
                 checked: u,
                 onChange: b,
-                disabled: s,
+                disabled: l,
                 "aria-label": "Audio only",
                 "data-testid": "new-hangout-room-audio-only"
               }
@@ -530,9 +531,9 @@ function he({
             /* @__PURE__ */ a(
               M,
               {
-                checked: l,
+                checked: s,
                 onChange: p,
-                disabled: s,
+                disabled: l,
                 "aria-label": "Recording enabled",
                 "data-testid": "new-hangout-room-recording"
               }
@@ -555,7 +556,7 @@ function he({
               type: "button",
               variant: "ghost",
               onClick: t,
-              disabled: s,
+              disabled: l,
               children: "Cancel"
             }
           ),
@@ -566,7 +567,7 @@ function he({
               variant: "primary",
               disabled: !g,
               "data-testid": "new-hangout-room-submit",
-              children: s ? "Creating…" : "Create room"
+              children: l ? "Creating…" : "Create room"
             }
           )
         ] })
@@ -587,7 +588,7 @@ function Fe({
   storageKey: u,
   renderCreateDialog: b
 }) {
-  const [l, p] = w(!1), s = () => p(!0), f = () => p(!1), x = S(
+  const [s, p] = w(!1), l = () => p(!0), f = () => p(!1), x = S(
     () => e.rooms.filter((g) => g.state === "active"),
     [e.rooms]
   ), v = S(
@@ -605,7 +606,7 @@ function Fe({
           {
             "aria-label": "New room",
             size: "sm",
-            onClick: s,
+            onClick: l,
             icon: /* @__PURE__ */ a("span", { "aria-hidden": "true", className: "text-[14px] leading-none font-bold", children: "+" }),
             "data-testid": "new-room-button"
           }
@@ -648,7 +649,7 @@ function Fe({
               testId: "hangout-rooms-empty",
               title: "No rooms yet",
               description: "Create one to start an ongoing hangout.",
-              action: /* @__PURE__ */ a(j, { onClick: s, variant: "primary", size: "sm", children: "Create room" })
+              action: /* @__PURE__ */ a(j, { onClick: l, variant: "primary", size: "sm", children: "Create room" })
             }
           ),
           !e.isLoading && !e.error && x.length > 0 && /* @__PURE__ */ c("div", { className: "flex flex-col gap-0.5", children: [
@@ -681,10 +682,10 @@ function Fe({
         ]
       }
     ),
-    b ? b({ open: l, onClose: f }) : /* @__PURE__ */ a(
+    b ? b({ open: s, onClose: f }) : /* @__PURE__ */ a(
       he,
       {
-        open: l,
+        open: s,
         onClose: f,
         onCreate: e.createRoom,
         onCreated: (g) => {
@@ -701,9 +702,9 @@ export {
   he as NewHangoutRoomDialog,
   $e as WrappedActivityPanel,
   Pe as WrappedChatPanel,
-  De as WrappedFileUploadDrop,
-  Le as WrappedHangoutLayout,
-  Ue as WrappedNotificationCenter,
+  Ue as WrappedFileUploadDrop,
+  De as WrappedHangoutLayout,
+  Le as WrappedNotificationCenter,
   je as WrappedPresencePanel,
   Me as WrappedReactionsOverlay,
   oe as adaptActivityEvent,
@@ -711,8 +712,8 @@ export {
   Q as adaptChatMessage,
   Z as adaptChatMessages,
   re as adaptFileUploadState,
-  se as adaptFileUploads,
-  le as adaptHangoutParticipant,
+  le as adaptFileUploads,
+  se as adaptHangoutParticipant,
   de as adaptHangoutParticipants,
   ce as adaptNotification,
   ue as adaptNotifications,

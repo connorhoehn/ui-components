@@ -81,6 +81,7 @@ declare interface ChatMessage {
     content: string;
     timestamp: string;
     displayName?: string;
+    avatarUrl?: string;
 }
 
 declare interface EphemeralReaction {

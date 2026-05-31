@@ -2,7 +2,7 @@ import { jsxs as a, jsx as e, Fragment as X } from "react/jsx-runtime";
 import { useRef as D, useState as T, useEffect as P, useMemo as ee, useCallback as K } from "react";
 import { c as d } from "./cn-B6yFEsav.js";
 import { P as ne } from "./HangoutLayout-DTIq3ne2.js";
-import { A as ie } from "./Avatar-Q-j4vnWn.js";
+import { A as ie } from "./Avatar-BvKIaNVE.js";
 const oe = {
   idle: "Ready",
   connecting: "Connecting…",

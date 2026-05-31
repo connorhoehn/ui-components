@@ -1,6 +1,6 @@
 import { jsx as r, jsxs as c } from "react/jsx-runtime";
 import { c as d } from "./cn-B6yFEsav.js";
-import { A as T } from "./Avatar-Q-j4vnWn.js";
+import { A as T } from "./Avatar-BvKIaNVE.js";
 import { S as U } from "./StatusDot-BC7B1tTr.js";
 import { useState as k, useRef as A, useCallback as w, useEffect as j } from "react";
 import { B as _ } from "./Banner-B8AcwPH_.js";

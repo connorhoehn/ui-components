@@ -111,6 +111,7 @@ declare interface ChatMessage {
     content: string;
     timestamp: string;
     displayName?: string;
+    avatarUrl?: string;
 }
 
 /** A flat comment as stored in Y.js. */

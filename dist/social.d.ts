@@ -26,6 +26,7 @@ declare interface ChatMessage {
     content: string;
     timestamp: string;
     displayName?: string;
+    avatarUrl?: string;
 }
 
 export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers }: ChatPanelProps): JSX.Element;

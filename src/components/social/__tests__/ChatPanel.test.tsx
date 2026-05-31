@@ -8,6 +8,7 @@ function msg(overrides: Partial<ChatMessage> & { clientId: string; content: stri
     content: overrides.content,
     timestamp: overrides.timestamp ?? '2026-01-01T12:34:00.000Z',
     displayName: overrides.displayName,
+    avatarUrl: overrides.avatarUrl,
   };
 }
 
@@ -114,6 +115,37 @@ describe('ChatPanel', () => {
   it('does not render the typing banner when no users are typing', () => {
     render(<ChatPanel messages={[]} onSend={vi.fn()} />);
     expect(screen.queryByText(/typing\.\.\./)).not.toBeInTheDocument();
+  });
+
+  it('renders an avatar with initials for each message', () => {
+    render(
+      <ChatPanel
+        messages={[msg({ clientId: 'a', content: 'hi', displayName: 'Alice Smith' })]}
+        onSend={vi.fn()}
+      />
+    );
+    // Avatar derives "AS" from "Alice Smith"
+    expect(screen.getByTitle('Alice Smith')).toBeInTheDocument();
+    expect(screen.getByText('AS')).toBeInTheDocument();
+  });
+
+  it('renders an avatar image when avatarUrl is provided', () => {
+    render(
+      <ChatPanel
+        messages={[
+          msg({
+            clientId: 'a',
+            content: 'hi',
+            displayName: 'Alice',
+            avatarUrl: 'https://example.com/alice.png',
+          }),
+        ]}
+        onSend={vi.fn()}
+      />
+    );
+    const img = screen.getByAltText('Alice') as HTMLImageElement;
+    expect(img.tagName).toBe('IMG');
+    expect(img.src).toBe('https://example.com/alice.png');
   });
 
   it('fires onTyping(true) on keydown and onTyping(false) on send', () => {

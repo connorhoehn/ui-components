@@ -6,6 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
+import { Avatar } from '../shared/Avatar';
 import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
@@ -121,17 +122,25 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
             return (
               <div
                 key={index}
-                className="flex items-baseline gap-1.5 py-0.5 flex-wrap"
+                className="flex items-start gap-1.5 py-0.5"
               >
-                <span className="text-[0.7rem] text-text-secondary shrink-0">
-                  {author}
-                </span>
-                <span className="text-[0.8rem] text-text-primary grow">
-                  {message.content}
-                </span>
-                <span className="text-[0.65rem] text-text-tertiary shrink-0">
-                  {time}
-                </span>
+                <Avatar
+                  name={author}
+                  src={message.avatarUrl}
+                  size={20}
+                  className="mt-0.5"
+                />
+                <div className="flex items-baseline gap-1.5 grow flex-wrap min-w-0">
+                  <span className="text-[0.7rem] text-text-secondary shrink-0">
+                    {author}
+                  </span>
+                  <span className="text-[0.8rem] text-text-primary grow">
+                    {message.content}
+                  </span>
+                  <span className="text-[0.65rem] text-text-tertiary shrink-0">
+                    {time}
+                  </span>
+                </div>
               </div>
             );
           })

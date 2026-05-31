@@ -29,6 +29,7 @@ import type { NotificationItem as UINotificationItem } from '../../components/sh
 //
 // realtime-modules ChatMessage.message (string) → ui-components ChatMessage.content
 // realtime-modules ChatMessage.metadata?.displayName → ChatMessage.displayName
+// realtime-modules ChatMessage.metadata?.avatarUrl → ChatMessage.avatarUrl
 // ---------------------------------------------------------------------------
 
 export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
@@ -38,6 +39,7 @@ export function adaptChatMessage(msg: RMChatMessage): UIChatMessage {
     content: msg.message,
     timestamp: msg.timestamp,
     displayName: (msg.metadata?.displayName as string | undefined) ?? undefined,
+    avatarUrl: (msg.metadata?.avatarUrl as string | undefined) ?? undefined,
   };
 }
 

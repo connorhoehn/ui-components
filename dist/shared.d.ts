@@ -45,7 +45,7 @@ export declare interface ActivityFeedProps {
 
 export declare type ActivityKind = 'task' | 'pr' | 'decision' | 'comment' | 'status' | string;
 
-export declare function Avatar({ name, size, color, className, style, title, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, color, src, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, maxVisible, size, className, }: AvatarGroupProps): JSX.Element;
 
@@ -61,6 +61,8 @@ export declare interface AvatarProps {
     size?: number;
     /** Override the auto-computed color. */
     color?: string;
+    /** Optional profile image URL. Falls back to initials if absent or load fails. */
+    src?: string;
     className?: string;
     style?: CSSProperties;
     title?: string;

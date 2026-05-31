@@ -42,6 +42,8 @@ export interface AvatarProps {
   size?: number;
   /** Override the auto-computed color. */
   color?: string;
+  /** Optional profile image URL. Falls back to initials if absent or load fails. */
+  src?: string;
   className?: string;
   style?: CSSProperties;
   title?: string;
@@ -51,6 +53,7 @@ export function Avatar({
   name,
   size = 28,
   color,
+  src,
   className,
   style,
   title,
@@ -61,7 +64,7 @@ export function Avatar({
     <div
       title={title ?? name}
       className={cn(
-        'inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none',
+        'inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none overflow-hidden',
         className,
       )}
       style={{
@@ -73,7 +76,17 @@ export function Avatar({
         ...style,
       }}
     >
-      {initials}
+      {src ? (
+        <img
+          src={src}
+          alt={name}
+          width={size}
+          height={size}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        initials
+      )}
     </div>
   );
 }

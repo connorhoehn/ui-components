@@ -40,9 +40,9 @@ function Ae(e) {
   const h = D(f);
   I(() => {
     h.current = f;
-  }, [f]), I(() => a((b) => {
-    if (b.type === "activity:event") {
-      const w = b.payload;
+  }, [f]), I(() => a((v) => {
+    if (v.type === "activity:event") {
+      const w = v.payload;
       if (!w) return;
       p((C) => {
         const $ = new Date(w.timestamp).getTime();
@@ -61,8 +61,8 @@ function Ae(e) {
       });
       return;
     }
-    if (b.type === "activity" && b.action === "history") {
-      const w = b.events;
+    if (v.type === "activity" && v.action === "history") {
+      const w = v.events;
       if (!w || w.length === 0) return;
       p((C) => C.length > 0 ? C : w.map((N) => ({
         id: K(),
@@ -97,11 +97,11 @@ function Ae(e) {
     };
   }, [r]);
   const R = y(
-    (M, b) => {
+    (M, v) => {
       const w = (/* @__PURE__ */ new Date()).toISOString(), $ = {
         id: K(),
         eventType: M,
-        detail: b,
+        detail: v,
         timestamp: w,
         userId: c.current,
         displayName: d.current,
@@ -111,7 +111,7 @@ function Ae(e) {
       p((N) => [$, ...N].slice(0, h.current)), t.current({
         service: "activity",
         action: "publish",
-        event: { eventType: M, detail: b }
+        event: { eventType: M, detail: v }
       });
     },
     []
@@ -681,7 +681,8 @@ function Ve(e) {
         clientId: l.clientId,
         content: l.message,
         timestamp: l.timestamp,
-        displayName: l.metadata?.displayName
+        displayName: l.metadata?.displayName,
+        avatarUrl: l.metadata?.avatarUrl
       })));
       return;
     }
@@ -694,7 +695,8 @@ function Ve(e) {
         clientId: d.clientId,
         content: d.message,
         timestamp: d.timestamp,
-        displayName: d.metadata?.displayName
+        displayName: d.metadata?.displayName,
+        avatarUrl: d.metadata?.avatarUrl
       };
       f((h) => l.id && h.some((R) => R.id === l.id) ? h : [...h, l]);
       return;
@@ -750,10 +752,10 @@ function Xe(e) {
   }, [r]), I(() => a((M) => {
     if (M.type === "crdt:snapshot") {
       if (M.channel !== d.current) return;
-      const b = M.snapshot;
-      if (!b) return;
+      const v = M.snapshot;
+      if (!v) return;
       try {
-        const w = Q(b);
+        const w = Q(v);
         X(s.current, w), u(t.current.toString());
       } catch {
       }
@@ -761,10 +763,10 @@ function Xe(e) {
     }
     if (M.type === "crdt:update") {
       if (M.channel !== d.current) return;
-      const b = M.update;
-      if (!b) return;
+      const v = M.update;
+      if (!v) return;
       try {
-        const w = Q(b);
+        const w = Q(v);
         X(s.current, w), u(t.current.toString());
       } catch {
       }
@@ -788,12 +790,12 @@ function Xe(e) {
     s.current.transact(() => {
       t.current.delete(0, t.current.length), t.current.insert(0, R);
     });
-    const M = ae(s.current), b = Te(M);
+    const M = ae(s.current), v = Te(M);
     c.current({
       service: "crdt",
       action: "update",
       channel: d.current,
-      update: b
+      update: v
     });
   }, []);
   return { content: m, applyLocalEdit: h, hasConflict: f, dismissConflict: l };
@@ -811,27 +813,27 @@ function Qe(e) {
   I(() => {
     M.current = m;
   }, [m]);
-  const b = D(u);
+  const v = D(u);
   I(() => {
-    b.current = u;
-  }, [u]), I(() => a((v) => {
-    if (v.type !== "cursor") return;
-    const E = v.action;
+    v.current = u;
+  }, [u]), I(() => a((b) => {
+    if (b.type !== "cursor") return;
+    const E = b.action;
     if (E === "subscribed") {
-      const S = v.cursors ?? [], P = /* @__PURE__ */ new Map();
+      const S = b.cursors ?? [], P = /* @__PURE__ */ new Map();
       for (const _ of S)
         _.clientId !== M.current && P.set(_.clientId, _);
       f.current = P, p(new Map(P));
       return;
     }
     if (E === "update") {
-      const S = v.cursor;
+      const S = b.cursor;
       if (!S || S.clientId === M.current) return;
       f.current.set(S.clientId, S), p(new Map(f.current));
       return;
     }
     if (E === "remove") {
-      const S = v.clientId;
+      const S = b.clientId;
       if (!S) return;
       f.current.delete(S), p(new Map(f.current));
     }
@@ -851,9 +853,9 @@ function Qe(e) {
       };
   }, [r, i, t, n]);
   const w = y(
-    (O, v) => {
+    (O, b) => {
       if (R.current !== "connected" || l.current !== null) return;
-      const E = { x: O, y: v }, S = { mode: "freeform", displayName: b.current };
+      const E = { x: O, y: b }, S = { mode: "freeform", displayName: v.current };
       n({
         service: "cursor",
         action: "update",
@@ -870,9 +872,9 @@ function Qe(e) {
     },
     [n]
   ), C = y(
-    (O, v) => {
+    (O, b) => {
       if (R.current !== "connected") return;
-      const E = { row: O, col: v }, S = { mode: "table", displayName: b.current };
+      const E = { row: O, col: b }, S = { mode: "table", displayName: v.current };
       n({
         service: "cursor",
         action: "update",
@@ -887,9 +889,9 @@ function Qe(e) {
     },
     [n]
   ), $ = y(
-    (O, v, E) => {
+    (O, b, E) => {
       if (R.current !== "connected") return;
-      const S = { position: O }, P = { mode: "text", selection: v, hasSelection: E, displayName: b.current };
+      const S = { position: O }, P = { mode: "text", selection: b, hasSelection: E, displayName: v.current };
       n({
         service: "cursor",
         action: "update",
@@ -904,9 +906,9 @@ function Qe(e) {
     },
     [n]
   ), N = y(
-    (O, v, E, S, P) => {
+    (O, b, E, S, P) => {
       if (R.current !== "connected" || !h.current) return;
-      const _ = { x: O, y: v }, V = { mode: "canvas", tool: E, color: S, size: P, displayName: b.current };
+      const _ = { x: O, y: b }, V = { mode: "canvas", tool: E, color: S, size: P, displayName: v.current };
       n({
         service: "cursor",
         action: "update",
@@ -1060,9 +1062,9 @@ function et(e) {
   }), [a]), I(() => {
     if (r !== "connected") return;
     t.current = !1;
-    const b = setTimeout(() => {
+    const v = setTimeout(() => {
       c.current({ service: "crdt", action: "listDocuments" }), c.current({ service: "crdt", action: "getDocumentPresence" });
-    }, 100), w = () => clearTimeout(b);
+    }, 100), w = () => clearTimeout(v);
     return o.current = setTimeout(() => {
       t.current || (s.current = setInterval(() => {
         c.current({ service: "crdt", action: "getDocumentPresence" });
@@ -1072,18 +1074,18 @@ function et(e) {
     };
   }, [r]);
   const d = y(
-    (b) => {
-      c.current({ service: "crdt", action: "createDocument", meta: b });
+    (v) => {
+      c.current({ service: "crdt", action: "createDocument", meta: v });
     },
     []
-  ), l = y((b) => {
-    c.current({ service: "crdt", action: "deleteDocument", documentId: b });
+  ), l = y((v) => {
+    c.current({ service: "crdt", action: "deleteDocument", documentId: v });
   }, []), h = y(
-    (b, w) => {
+    (v, w) => {
       c.current({
         service: "crdt",
         action: "updateDocumentMeta",
-        documentId: b,
+        documentId: v,
         meta: w
       });
     },
@@ -1141,26 +1143,26 @@ function nt(e) {
     if (h.type === "presence") {
       if (h.action === "subscribed") {
         const R = h.presence ?? h.users ?? [], M = /* @__PURE__ */ new Map();
-        for (const b of R)
-          M.set(b.clientId, b);
+        for (const v of R)
+          M.set(v.clientId, v);
         f(M);
         return;
       }
       if (h.action === "update") {
         const R = h.presence, M = R?.clientId ?? h.clientId;
         if (!M) return;
-        const b = R?.status ?? "online", w = R?.metadata ?? {};
+        const v = R?.status ?? "online", w = R?.metadata ?? {};
         f((C) => {
           const $ = new Map(C);
-          return $.set(M, { clientId: M, status: b, metadata: w }), $;
+          return $.set(M, { clientId: M, status: v, metadata: w }), $;
         });
         return;
       }
       if (h.action === "offline") {
         const R = h.clientId;
         f((M) => {
-          const b = new Map(M);
-          return b.delete(R), b;
+          const v = new Map(M);
+          return v.delete(R), v;
         });
       }
     }
@@ -1256,7 +1258,7 @@ function rt(e) {
   return { activeReactions: m, react: p };
 }
 function st({ idToken: e, onMessage: n }) {
-  const [a, r] = T([]), [i, m] = T(null), [u, f] = T([]), [g, p] = T(!1), [s, o] = T(null), [t, c] = T(0), { toast: d } = de(), l = "", h = y(() => c((v) => v + 1), []), R = D(n);
+  const [a, r] = T([]), [i, m] = T(null), [u, f] = T([]), [g, p] = T(!1), [s, o] = T(null), [t, c] = T(0), { toast: d } = de(), l = "", h = y(() => c((b) => b + 1), []), R = D(n);
   I(() => {
     R.current = n;
   }, [n]);
@@ -1274,10 +1276,10 @@ function st({ idToken: e, onMessage: n }) {
       }
     ]) : E.type === "social:member_left" && S.roomId === M.current && f((P) => P.filter((_) => _.userId !== S.userId));
   }), []);
-  const b = y(async (v) => {
+  const v = y(async (b) => {
     if (e)
       try {
-        const E = await fetch(`${l}/api/rooms/${v}/members`, {
+        const E = await fetch(`${l}/api/rooms/${b}/members`, {
           headers: { Authorization: `Bearer ${e}` }
         });
         if (!E.ok) throw new Error(`Failed to load members (${E.status})`);
@@ -1286,14 +1288,14 @@ function st({ idToken: e, onMessage: n }) {
       } catch (E) {
         o(E.message);
       }
-  }, [e, l]), w = y((v) => {
-    M.current = v?.roomId ?? null, m(v), v && b(v.roomId);
-  }, [b]), C = y(async (v) => {
+  }, [e, l]), w = y((b) => {
+    M.current = b?.roomId ?? null, m(b), b && v(b.roomId);
+  }, [v]), C = y(async (b) => {
     {
       o("Social API not configured");
       return;
     }
-  }, [e, l]), $ = y(async (v) => {
+  }, [e, l]), $ = y(async (b) => {
     if (e) {
       p(!0), o(null);
       try {
@@ -1303,7 +1305,7 @@ function st({ idToken: e, onMessage: n }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${e}`
           },
-          body: JSON.stringify({ peerId: v })
+          body: JSON.stringify({ peerId: b })
         });
         if (!E.ok) throw new Error(`Failed to create DM (${E.status})`);
         const S = await E.json();
@@ -1314,11 +1316,11 @@ function st({ idToken: e, onMessage: n }) {
         p(!1);
       }
     }
-  }, [e, l]), N = y(async (v) => {
+  }, [e, l]), N = y(async (b) => {
     if (e) {
       o(null);
       try {
-        const E = await fetch(`${l}/api/rooms/${v}/join`, {
+        const E = await fetch(`${l}/api/rooms/${b}/join`, {
           method: "POST",
           headers: { Authorization: `Bearer ${e}` }
         });
@@ -1327,25 +1329,25 @@ function st({ idToken: e, onMessage: n }) {
         o(E.message);
       }
     }
-  }, [e, l]), A = y(async (v) => {
+  }, [e, l]), A = y(async (b) => {
     if (e) {
       o(null);
       try {
-        const E = await fetch(`${l}/api/rooms/${v}/leave`, {
+        const E = await fetch(`${l}/api/rooms/${b}/leave`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${e}` }
         });
         if (!E.ok) throw new Error(`Failed to leave room (${E.status})`);
-        r((S) => S.filter((P) => P.roomId !== v));
+        r((S) => S.filter((P) => P.roomId !== b));
       } catch (E) {
         o(E.message);
       }
     }
-  }, [e, l]), O = y(async (v, E) => {
+  }, [e, l]), O = y(async (b, E) => {
     if (e) {
       p(!0), o(null);
       try {
-        const S = await fetch(`${l}/api/groups/${v}/rooms`, {
+        const S = await fetch(`${l}/api/groups/${b}/rooms`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1372,7 +1374,7 @@ function st({ idToken: e, onMessage: n }) {
     createGroupRoom: O,
     joinRoom: N,
     leaveRoom: A,
-    loadMembers: b,
+    loadMembers: v,
     members: u,
     loading: g,
     error: s,
@@ -1450,8 +1452,8 @@ function ct(e) {
   }, [a]);
   return { filters: r, setFilter: i, clearFilters: m };
 }
-const B = 5, be = 1e3;
-function ve(e, n) {
+const B = 5, ve = 1e3;
+function be(e, n) {
   const a = new URL(e.wsUrl);
   return n && a.searchParams.set("sessionToken", n), a.toString();
 }
@@ -1471,16 +1473,16 @@ function at(e) {
   I(() => {
     M.current = f;
   }, [f]);
-  const b = D(() => {
+  const v = D(() => {
   }), w = y(() => {
     if (c.current && (c.current.readyState === WebSocket.OPEN || c.current.readyState === WebSocket.CONNECTING))
       return;
     i("connecting");
-    const O = ve(n, M.current), v = new WebSocket(O, [De, n.cognitoToken]);
-    c.current = v, v.onopen = () => {
-      c.current === v && (d.current = 0, i("connected"));
-    }, v.onmessage = (E) => {
-      if (c.current !== v) return;
+    const O = be(n, M.current), b = new WebSocket(O, [De, n.cognitoToken]);
+    c.current = b, b.onopen = () => {
+      c.current === b && (d.current = 0, i("connected"));
+    }, b.onmessage = (E) => {
+      if (c.current !== b) return;
       let S;
       try {
         S = JSON.parse(E.data);
@@ -1492,13 +1494,13 @@ function at(e) {
         g(P.sessionToken), s(P.clientId), M.current = P.sessionToken, sessionStorage.setItem("ws_session_token", P.sessionToken), sessionStorage.setItem("ws_client_id", P.clientId);
       }
       S.type === "error" && S.error && u(S.error), R.current?.(S);
-    }, v.onclose = () => {
-      if (c.current === v)
+    }, b.onclose = () => {
+      if (c.current === b)
         if (d.current < B) {
           d.current === 0 ? console.warn("[useWebSocket] connection lost, retrying with backoff") : console.debug("[useWebSocket] reconnect attempt", d.current + 1, "of", B), i("reconnecting");
-          const E = be * Math.pow(2, d.current);
+          const E = ve * Math.pow(2, d.current);
           d.current += 1, l.current = setTimeout(() => {
-            b.current();
+            v.current();
           }, E);
         } else
           i("disconnected"), h.current || u({
@@ -1506,8 +1508,8 @@ function at(e) {
             message: `Lost connection to gateway after ${B} retries`,
             timestamp: (/* @__PURE__ */ new Date()).toISOString()
           });
-    }, v.onerror = (E) => {
-      if (c.current !== v) return;
+    }, b.onerror = (E) => {
+      if (c.current !== b) return;
       const S = E;
       S.message && u({
         code: "CONNECTION_ERROR",
@@ -1517,7 +1519,7 @@ function at(e) {
     };
   }, [n]);
   I(() => {
-    b.current = w;
+    v.current = w;
   }, [w]), I(() => (w(), () => {
     l.current !== null && (clearTimeout(l.current), l.current = null), c.current?.close(), c.current = null;
   }), []);

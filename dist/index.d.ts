@@ -690,7 +690,7 @@ declare interface AuthState {
     error: string | null;
 }
 
-export declare function Avatar({ name, size, color, className, style, title, }: AvatarProps): JSX.Element;
+export declare function Avatar({ name, size, color, src, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, maxVisible, size, className, }: AvatarGroupProps): JSX.Element;
 
@@ -706,6 +706,8 @@ export declare interface AvatarProps {
     size?: number;
     /** Override the auto-computed color. */
     color?: string;
+    /** Optional profile image URL. Falls back to initials if absent or load fails. */
+    src?: string;
     className?: string;
     style?: CSSProperties;
     title?: string;
@@ -1032,6 +1034,7 @@ declare interface ChatMessage {
     content: string;
     timestamp: string;
     displayName?: string;
+    avatarUrl?: string;
 }
 
 export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers }: ChatPanelProps): JSX.Element;

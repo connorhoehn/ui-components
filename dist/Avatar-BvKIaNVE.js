@@ -1,6 +1,6 @@
-import { jsx as h, jsxs as c } from "react/jsx-runtime";
+import { jsx as c, jsxs as a } from "react/jsx-runtime";
 import { c as d } from "./cn-B6yFEsav.js";
-const a = [
+const h = [
   "#4f7cff",
   "#22c55e",
   "#f59e0b",
@@ -14,8 +14,8 @@ function u(r) {
   let t = 5381;
   for (let n = 0; n < r.length; n++)
     t = t * 33 ^ r.charCodeAt(n);
-  const e = Math.abs(t) % a.length;
-  return a[e];
+  const e = Math.abs(t) % h.length;
+  return h[e];
 }
 function m(r) {
   const t = r.trim();
@@ -30,18 +30,19 @@ function p({
   name: r,
   size: t = 28,
   color: e,
-  className: n,
-  style: i,
-  title: o
+  src: n,
+  className: l,
+  style: o,
+  title: i
 }) {
-  const s = e || u(r), l = m(r);
-  return /* @__PURE__ */ h(
+  const s = e || u(r), f = m(r);
+  return /* @__PURE__ */ c(
     "div",
     {
-      title: o ?? r,
+      title: i ?? r,
       className: d(
-        "inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none",
-        n
+        "inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none overflow-hidden",
+        l
       ),
       style: {
         width: t,
@@ -49,9 +50,18 @@ function p({
         background: s,
         color: "#fff",
         fontSize: t * 0.38,
-        ...i
+        ...o
       },
-      children: l
+      children: n ? /* @__PURE__ */ c(
+        "img",
+        {
+          src: n,
+          alt: r,
+          width: t,
+          height: t,
+          className: "w-full h-full object-cover"
+        }
+      ) : f
     }
   );
 }
@@ -61,21 +71,21 @@ function x({
   size: e = 28,
   className: n
 }) {
-  const i = r.slice(0, t), o = r.length - i.length, s = -(e * 0.3);
-  return /* @__PURE__ */ c("div", { className: d("inline-flex items-center", n), children: [
-    i.map((l, f) => /* @__PURE__ */ h(
+  const l = r.slice(0, t), o = r.length - l.length, i = -(e * 0.3);
+  return /* @__PURE__ */ a("div", { className: d("inline-flex items-center", n), children: [
+    l.map((s, f) => /* @__PURE__ */ c(
       p,
       {
-        name: l,
+        name: s,
         size: e,
         style: {
-          marginLeft: f > 0 ? s : 0,
+          marginLeft: f > 0 ? i : 0,
           border: "2px solid white"
         }
       },
-      `${l}-${f}`
+      `${s}-${f}`
     )),
-    o > 0 && /* @__PURE__ */ c(
+    o > 0 && /* @__PURE__ */ a(
       "div",
       {
         className: "inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none bg-slate-200 text-slate-600",
@@ -83,7 +93,7 @@ function x({
           width: e,
           height: e,
           fontSize: e * 0.38,
-          marginLeft: s,
+          marginLeft: i,
           border: "2px solid white"
         },
         title: `+${o} more`,
