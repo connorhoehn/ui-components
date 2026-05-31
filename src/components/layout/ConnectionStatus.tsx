@@ -1,25 +1,15 @@
-// frontend/src/components/ConnectionStatus.tsx
-import type { ConnectionState } from '../../types/gateway';
-import { cn } from '../../lib/cn';
+// src/components/layout/ConnectionStatus.tsx
+//
+// @deprecated since 2.14 — use `ConnectionPill` from
+// `@connorhoehn/ui-components/shared`. This alias is scheduled for removal
+// in 2.15.
 
-interface Props {
-  state: ConnectionState;
-}
+import { ConnectionPill, type ConnectionPillProps } from '../shared/ConnectionPill';
 
-const STATE_CONFIG: Record<ConnectionState, { label: string; colorClass: string; dot: string }> = {
-  idle:          { label: 'Idle',          colorClass: 'text-[#6b7280]', dot: '⬤' },
-  connecting:    { label: 'Connecting…',   colorClass: 'text-[#f59e0b]', dot: '⬤' },
-  connected:     { label: 'Connected',     colorClass: 'text-[#10b981]', dot: '⬤' },
-  reconnecting:  { label: 'Reconnecting…', colorClass: 'text-[#f59e0b]', dot: '⬤' },
-  disconnected:  { label: 'Disconnected',  colorClass: 'text-[#ef4444]', dot: '⬤' },
-};
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+export type ConnectionStatusProps = Pick<ConnectionPillProps, 'state'>;
 
-export function ConnectionStatus({ state }: Props) {
-  const cfg = STATE_CONFIG[state];
-  return (
-    <span className="inline-flex items-center gap-1.5 font-mono">
-      <span className={cfg.colorClass}>{cfg.dot}</span>
-      <span className={cn(cfg.colorClass, 'font-semibold')}>{cfg.label}</span>
-    </span>
-  );
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+export function ConnectionStatus(props: ConnectionStatusProps) {
+  return <ConnectionPill {...props} />;
 }

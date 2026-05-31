@@ -87,6 +87,8 @@ export * from './PageHeader';
 export * from './ThinkingDots';
 export { default as TypingIndicator } from './TypingIndicator';
 export * from './TypingIndicator';
+export { default as ConnectionPill } from './ConnectionPill';
+export * from './ConnectionPill';
 export { default as LogStream, TerminalLog } from './LogStream';
 export type { LogStreamProps, LogLine, LogLevel } from './LogStream';
 export { default as ThumbnailCard } from './ThumbnailCard';
