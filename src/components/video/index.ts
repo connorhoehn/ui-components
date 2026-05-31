@@ -37,6 +37,9 @@ export type { RecordingPlayerProps } from './RecordingPlayer';
 export { RecordingList } from './RecordingList';
 export type { RecordingListProps, RecordingListItem } from './RecordingList';
 
+export { RecordingRow } from './RecordingRow';
+export type { RecordingRowProps, RecordingStatus } from './RecordingRow';
+
 export { PiPButton } from './PiPButton';
 export type { PiPButtonProps } from './PiPButton';
 

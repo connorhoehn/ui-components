@@ -54,8 +54,11 @@ describe('RecordingList', () => {
     const rows = screen.getAllByTestId('recording-row');
     expect(rows[0]).toHaveAttribute('aria-pressed', 'false');
     expect(rows[1]).toHaveAttribute('aria-pressed', 'true');
-    expect(rows[1].className).toContain('ring-2');
-    expect(rows[0].className).not.toContain('ring-2');
+    // Selection ring class is `ring-[var(--color-primary)]/40` — the
+    // focus-visible ring uses a different color and only applies on
+    // keyboard focus, so we assert on the selection-specific token.
+    expect(rows[1].className).toContain('ring-[var(--color-primary)]/40');
+    expect(rows[0].className).not.toContain('ring-[var(--color-primary)]/40');
   });
 
   it('fires onSelect with the clicked row id', () => {

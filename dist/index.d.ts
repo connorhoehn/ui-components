@@ -4139,7 +4139,7 @@ export declare interface ReconnectingBannerProps {
     label?: string;
 }
 
-export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, className, }: RecordingListProps): JSX.Element;
+export declare function RecordingList({ recordings, selectedId, onSelect, loading, emptyState, renderActions, className, }: RecordingListProps): JSX.Element;
 
 export declare interface RecordingListItem {
     id: string;
@@ -4150,6 +4150,8 @@ export declare interface RecordingListItem {
     thumbnailUrl?: string;
     /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
     label?: string;
+    /** Defaults to 'ready'. Forwarded to RecordingRow. */
+    status?: RecordingStatus;
 }
 
 export declare interface RecordingListProps {
@@ -4158,6 +4160,8 @@ export declare interface RecordingListProps {
     onSelect: (id: string) => void;
     loading?: boolean;
     emptyState?: ReactNode;
+    /** Render a per-row actions slot (e.g. download/share buttons). */
+    renderActions?: (item: RecordingListItem) => ReactNode;
     className?: string;
 }
 
@@ -4175,6 +4179,28 @@ export declare interface RecordingPlayerProps {
     hideDownload?: boolean;
     className?: string;
 }
+
+export declare function RecordingRow({ id, startIso, durationSec, participantCount, thumbnailUrl, label, status, selected, onClick, actions, className, }: RecordingRowProps): JSX.Element;
+
+export declare interface RecordingRowProps {
+    id: string;
+    startIso: string;
+    endIso?: string;
+    durationSec: number;
+    participantCount?: number;
+    thumbnailUrl?: string;
+    /** Optional human label — e.g. "Hank & Alice" or "Global hangout". */
+    label?: string;
+    /** Defaults to 'ready'. 'processing' shows a spinner badge; 'failed' shows an error badge. */
+    status?: RecordingStatus;
+    selected?: boolean;
+    onClick?: (id: string) => void;
+    /** Slot rendered in the row footer (e.g. a download or share button). */
+    actions?: ReactNode;
+    className?: string;
+}
+
+export declare type RecordingStatus = 'ready' | 'processing' | 'failed';
 
 /**
  * Redrive one or more DLQ entries (re-publish them to the event bus).

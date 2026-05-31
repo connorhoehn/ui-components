@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **`<RecordingRow>`** (`/video`). Extracted from `<RecordingList>` as a
+  standalone, presentational primitive so consumers can build custom
+  recordings layouts without rebuilding the row. Adds a `status?:
+  'ready' | 'processing' | 'failed'` field (with badge), an `actions?`
+  slot for per-row buttons, and full keyboard support (Enter/Space
+  activate, focus-visible ring). `<RecordingList>` now composes it
+  internally and gains an optional `renderActions?: (item) => ReactNode`
+  prop. `RecordingListItem.status` is forwarded to each row. Refs hub#987.
+
+### Changed
+
+- `<RecordingList>` rows now render as `<div role="button">` instead of
+  `<button>`. This is required for the new `actions` slot (button-in-
+  button is invalid HTML). Behavior is preserved: rows are still
+  keyboard-activatable, `aria-pressed` still reflects selection, and the
+  `data-testid="recording-row"` + `data-recording-id` attributes are
+  unchanged. Selection ring class moved from generic `ring-2` to the
+  more specific `ring-[var(--color-primary)]/40` token.
+
 ## [2.14.0] — 2026-05-31
 
 ### Added
