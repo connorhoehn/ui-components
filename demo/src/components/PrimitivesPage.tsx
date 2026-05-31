@@ -39,10 +39,13 @@ const tocItems: TocItem[] = [
 
 const TEAM = ['Alice Chen', 'Bobby Knox', 'Carmen Diaz', 'Devon Lee', 'Erin Pope', 'Fai Wong'];
 
+const SAMPLE_COL = 'flex flex-col items-center gap-1.5';
+const SAMPLE_CAPTION = 'text-[11px] text-slate-500';
+const SAMPLE_LABEL = 'flex items-center gap-2';
+
 export default function PrimitivesPage() {
   useRegisterToc(tocItems);
 
-  // FilterChip state
   const [filters, setFilters] = React.useState<Record<string, boolean>>({
     all: true,
     open: false,
@@ -51,14 +54,12 @@ export default function PrimitivesPage() {
   });
   const toggle = (key: string) => setFilters((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  // SearchInput state
   const [query, setQuery] = React.useState('');
 
-  // SegmentedControl state
   const [view, setView] = React.useState<'grid' | 'list'>('grid');
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="max-w-[960px] mx-auto">
       <PageHeader
         title="Primitives"
         description="Small atomic UI primitives: stat tiles, spinners, progress bars, status dots, filter chips, avatars, search inputs, segmented controls, inline alerts, entity cells, and card headers."
@@ -79,7 +80,7 @@ export default function PrimitivesPage() {
   hint="rolling 24h"
 />`}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-3">
           <StatCard label="Active Users" value="1,284" />
           <StatCard label="Open Tickets" value="42" accent />
           <StatCard label="Failures" value="7" danger />
@@ -97,22 +98,22 @@ export default function PrimitivesPage() {
 <Spinner size="lg" />
 <Spinner size="md" color="#16a34a" />`}
       >
-        <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <div className="flex gap-7 items-center">
+          <div className={SAMPLE_COL}>
             <Spinner size="sm" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>sm</span>
+            <span className={SAMPLE_CAPTION}>sm</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div className={SAMPLE_COL}>
             <Spinner size="md" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>md</span>
+            <span className={SAMPLE_CAPTION}>md</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div className={SAMPLE_COL}>
             <Spinner size="lg" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>lg</span>
+            <span className={SAMPLE_CAPTION}>lg</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div className={SAMPLE_COL}>
             <Spinner size="md" color="#16a34a" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>custom</span>
+            <span className={SAMPLE_CAPTION}>custom</span>
           </div>
         </div>
       </ExampleBlock>
@@ -126,7 +127,7 @@ export default function PrimitivesPage() {
 <ProgressBar value={66} label="Indexing" color="#f59e0b" showRatio={false} />
 <ProgressBar value={100} label="Complete" color="#16a34a" showRatio={false} />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 420 }}>
+        <div className="flex flex-col gap-4 max-w-[420px]">
           <ProgressBar value={25} label="Uploading" showRatio={false} />
           <ProgressBar value={66} label="Indexing" color="#f59e0b" showRatio={false} />
           <ProgressBar value={100} label="Complete" color="#16a34a" showRatio={false} />
@@ -146,22 +147,22 @@ export default function PrimitivesPage() {
 <StatusDot color="#16a34a" label="Online" />
 <StatusDot color="#dc2626" pulse label="Live" />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'flex', gap: 18, alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-[18px] items-center">
+            <div className={SAMPLE_LABEL}>
               <StatusDot size="xs" color="#16a34a" />
-              <span style={{ fontSize: 11, color: '#64748b' }}>xs</span>
+              <span className={SAMPLE_CAPTION}>xs</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={SAMPLE_LABEL}>
               <StatusDot size="sm" color="#d97706" />
-              <span style={{ fontSize: 11, color: '#64748b' }}>sm</span>
+              <span className={SAMPLE_CAPTION}>sm</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className={SAMPLE_LABEL}>
               <StatusDot size="md" color="#dc2626" />
-              <span style={{ fontSize: 11, color: '#64748b' }}>md</span>
+              <span className={SAMPLE_CAPTION}>md</span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 18, alignItems: 'center' }}>
+          <div className="flex gap-[18px] items-center">
             <StatusDot color="#16a34a" label="Online" />
             <StatusDot color="#64748b" label="Idle" />
             <StatusDot color="#dc2626" pulse label="Live" />
@@ -186,7 +187,7 @@ export default function PrimitivesPage() {
   Production
 </FilterChip>`}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+        <div className="flex flex-wrap gap-2 items-center">
           <FilterChip active={filters.all} onClick={() => toggle('all')}>All</FilterChip>
           <FilterChip active={filters.open} onClick={() => toggle('open')}>Open</FilterChip>
           <FilterChip active={filters.closed} onClick={() => toggle('closed')}>Closed</FilterChip>
@@ -211,15 +212,15 @@ export default function PrimitivesPage() {
   size={32}
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2 items-center">
             <Avatar name="Alice Chen" size={36} />
             <Avatar name="Bobby Knox" size={36} />
             <Avatar name="Carmen Diaz" size={36} />
             <Avatar name="Devon Lee" size={36} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>
+            <div className="text-[11px] font-semibold text-slate-500 mb-1.5">
               AvatarGroup (maxVisible=4)
             </div>
             <AvatarGroup names={TEAM} maxVisible={4} size={32} />
@@ -240,14 +241,14 @@ export default function PrimitivesPage() {
   placeholder="Search projects…"
 />`}
       >
-        <div style={{ maxWidth: 360 }}>
+        <div className="max-w-[360px]">
           <SearchInput
             value={query}
             onChange={setQuery}
             placeholder="Search projects…"
           />
           {query && (
-            <div style={{ fontSize: 12, color: '#64748b', marginTop: 8 }}>
+            <div className="text-xs text-slate-500 mt-2">
               Searching for: <strong>{query}</strong>
             </div>
           )}
@@ -270,7 +271,7 @@ export default function PrimitivesPage() {
   ]}
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+        <div className="flex flex-col gap-3 items-start">
           <SegmentedControl
             value={view}
             onChange={(v) => setView(v as 'grid' | 'list')}
@@ -279,7 +280,7 @@ export default function PrimitivesPage() {
               { label: 'List', value: 'list' },
             ]}
           />
-          <div style={{ fontSize: 12, color: '#64748b' }}>
+          <div className="text-xs text-slate-500">
             Current view: <strong>{view}</strong>
           </div>
         </div>
@@ -295,7 +296,7 @@ export default function PrimitivesPage() {
 <InlineAlert tone="info">2 records skipped (duplicates).</InlineAlert>
 <InlineAlert tone="warning">API key expires in 3 days.</InlineAlert>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 480 }}>
+        <div className="flex flex-col gap-2.5 max-w-[480px]">
           <InlineAlert tone="error">Sync failed: connection timeout.</InlineAlert>
           <InlineAlert tone="success">Settings saved.</InlineAlert>
           <InlineAlert tone="info">2 records skipped (duplicates).</InlineAlert>
@@ -315,26 +316,18 @@ export default function PrimitivesPage() {
   href="/agents/supervisor"
 />`}
       >
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            overflow: 'hidden',
-            background: '#fff',
-            maxWidth: 420,
-          }}
-        >
-          <div style={{ padding: '10px 14px', borderBottom: '1px solid #f1f5f9' }}>
+        <div className="border border-slate-200 rounded-lg overflow-hidden bg-white max-w-[420px]">
+          <div className="px-3.5 py-2.5 border-b border-slate-100">
             <EntityCell label="orgiq-search" id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2A" />
           </div>
-          <div style={{ padding: '10px 14px', borderBottom: '1px solid #f1f5f9' }}>
+          <div className="px-3.5 py-2.5 border-b border-slate-100">
             <EntityCell
               label="orgiq-supervisor"
               id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2B"
               href="#supervisor"
             />
           </div>
-          <div style={{ padding: '10px 14px' }}>
+          <div className="px-3.5 py-2.5">
             <EntityCell label="orgiq-news-researcher" id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2C" />
           </div>
         </div>
@@ -355,15 +348,7 @@ export default function PrimitivesPage() {
   </div>
 </Card>`}
       >
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            padding: 16,
-            background: '#fff',
-            maxWidth: 480,
-          }}
-        >
+        <div className="border border-slate-200 rounded-lg p-4 bg-white max-w-[480px]">
           <CardHeader
             title="Active Runs"
             subtitle="Past 24 hours"
@@ -377,8 +362,8 @@ export default function PrimitivesPage() {
       </ExampleBlock>
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
-      <div id="props" style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 24 }}>
+      <div id="props" className="mt-12">
+        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
           API Reference
         </h2>
 

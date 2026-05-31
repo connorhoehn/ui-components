@@ -43,6 +43,14 @@ const FOLLOW_UPS = [
   'Find a backup on-call',
 ];
 
+const COMPOSER_FRAME =
+  'border border-slate-200 rounded-lg overflow-hidden bg-white';
+const COMPOSER_LABEL =
+  'px-3 py-2 text-[11px] font-semibold text-slate-500';
+const SUBTLE_SEP = 'border-t border-slate-100';
+const COL = 'flex flex-col items-center gap-1.5';
+const CAPTION = 'text-[11px] text-slate-500';
+
 interface MockMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -54,12 +62,9 @@ interface MockMessage {
 export default function ChatPage() {
   useRegisterToc(tocItems);
 
-  // ChatComposer single-line state
   const [draft, setDraft] = React.useState('');
-  // ChatComposer multiline state
   const [longDraft, setLongDraft] = React.useState('');
 
-  // Mini chat composition state
   const [composeDraft, setComposeDraft] = React.useState('');
   const [messages, setMessages] = React.useState<MockMessage[]>([
     { id: 'm1', role: 'user', content: 'Who knows the most about our auth service?' },
@@ -90,7 +95,6 @@ export default function ChatPage() {
     };
     setMessages((prev) => [...prev, userMsg, assistantStub]);
     setComposeDraft('');
-    // Simulate streaming reply
     window.setTimeout(() => {
       setMessages((prev) =>
         prev.map((m) =>
@@ -108,7 +112,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="max-w-[960px] mx-auto">
       <PageHeader
         title="Chat & Thread"
         description="Components for building agent chat UIs: message bubbles, composer, tool-call strips, thinking indicators, quick prompts, and follow-up chips."
@@ -124,18 +128,18 @@ export default function ChatPage() {
 <ThinkingDots size="md" />
 <ThinkingDots color="#16a34a" />`}
       >
-        <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+        <div className="flex gap-7 items-center">
+          <div className={COL}>
             <ThinkingDots size="sm" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>sm</span>
+            <span className={CAPTION}>sm</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div className={COL}>
             <ThinkingDots size="md" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>md (default)</span>
+            <span className={CAPTION}>md (default)</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div className={COL}>
             <ThinkingDots color="#16a34a" />
-            <span style={{ fontSize: 11, color: '#64748b' }}>custom color</span>
+            <span className={CAPTION}>custom color</span>
           </div>
         </div>
       </ExampleBlock>
@@ -165,18 +169,9 @@ export default function ChatPage() {
   placeholder="Long message…"
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              overflow: 'hidden',
-              background: '#fff',
-            }}
-          >
-            <div style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, color: '#64748b' }}>
-              Single-line
-            </div>
+        <div className="flex flex-col gap-4">
+          <div className={COMPOSER_FRAME}>
+            <div className={COMPOSER_LABEL}>Single-line</div>
             <ChatComposer
               value={draft}
               onChange={setDraft}
@@ -184,17 +179,8 @@ export default function ChatPage() {
               placeholder="Ask anything…"
             />
           </div>
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              overflow: 'hidden',
-              background: '#fff',
-            }}
-          >
-            <div style={{ padding: '8px 12px', fontSize: 11, fontWeight: 600, color: '#64748b' }}>
-              Multiline (Shift+Enter for newline)
-            </div>
+          <div className={COMPOSER_FRAME}>
+            <div className={COMPOSER_LABEL}>Multiline (Shift+Enter for newline)</div>
             <ChatComposer
               value={longDraft}
               onChange={setLongDraft}
@@ -225,18 +211,9 @@ export default function ChatPage() {
 
 <MessageBubble role="assistant" content="" streaming />`}
       >
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            padding: '0 16px',
-            background: '#fff',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
+        <div className="border border-slate-200 rounded-lg px-4 bg-white flex flex-col">
           <MessageBubble role="user" content="Who knows auth best?" />
-          <div style={{ borderTop: '1px solid #f1f5f9' }} />
+          <div className={SUBTLE_SEP} />
           <MessageBubble
             role="assistant"
             content="Alice, Devon, and Erin are the top three experts on our auth service based on recent contributions and on-call rotations."
@@ -245,7 +222,7 @@ export default function ChatPage() {
               { id: 't2', name: 'scoring.expertise', done: true },
             ]}
           />
-          <div style={{ borderTop: '1px solid #f1f5f9' }} />
+          <div className={SUBTLE_SEP} />
           <MessageBubble role="assistant" content="" streaming />
         </div>
       </ExampleBlock>
@@ -267,7 +244,7 @@ export default function ChatPage() {
 <ToolCallPill name="kb.query" done={true} />
 <ToolCallPill name="aurora.execute" done={false} />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="flex flex-col gap-3.5">
           <ToolCallStrip
             toolCalls={[
               { id: '1', name: 'graph.search_people', done: true },
@@ -275,7 +252,7 @@ export default function ChatPage() {
               { id: '3', name: 'rag.lookup', done: false },
             ]}
           />
-          <div style={{ display: 'flex', gap: 8 }}>
+          <div className="flex gap-2">
             <ToolCallPill name="kb.query" done />
             <ToolCallPill name="aurora.execute" done={false} />
             <ToolCallPill name="guardrail.check" done />
@@ -295,7 +272,7 @@ export default function ChatPage() {
   defaultOpen
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           <ThinkingBlock content="Let me search the graph first to find people associated with the auth service." defaultOpen={false} />
           <ThinkingBlock
             content={`Step 1: Query people by skill='auth'
@@ -372,38 +349,12 @@ Step 4: Rank and return top 3`}
   </div>
 </div>`}
       >
-        <div
-          style={{
-            display: 'flex',
-            height: 700,
-            border: '1px solid #e2e8f0',
-            borderRadius: 12,
-            overflow: 'hidden',
-            background: '#fff',
-          }}
-        >
-          {/* Sidebar (mock SessionSidebar) */}
-          <aside
-            style={{
-              width: 220,
-              borderRight: '1px solid #e2e8f0',
-              background: '#f8fafc',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div
-              style={{
-                padding: '14px 16px',
-                borderBottom: '1px solid #e2e8f0',
-                fontSize: 13,
-                fontWeight: 600,
-                color: '#0f172a',
-              }}
-            >
+        <div className="flex h-[700px] border border-slate-200 rounded-xl overflow-hidden bg-white">
+          <aside className="w-[220px] border-r border-slate-200 bg-slate-50 flex flex-col">
+            <div className="px-4 py-3.5 border-b border-slate-200 text-[13px] font-semibold text-slate-900">
               Sessions
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 8px' }}>
+            <div className="flex-1 overflow-y-auto p-2">
               {[
                 { id: 's1', name: 'Auth expertise lookup', selected: true, user: 'You' },
                 { id: 's2', name: 'Q3 roadmap update', selected: false, user: 'You' },
@@ -412,28 +363,12 @@ Step 4: Rank and return top 3`}
               ].map((s) => (
                 <div
                   key={s.id}
-                  style={{
-                    padding: '8px 10px',
-                    borderRadius: 6,
-                    marginBottom: 2,
-                    background: s.selected ? '#e2e8f0' : 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    gap: 8,
-                    alignItems: 'center',
-                  }}
+                  className={`px-2.5 py-2 rounded-md mb-0.5 cursor-pointer flex gap-2 items-center ${
+                    s.selected ? 'bg-slate-200' : 'bg-transparent'
+                  }`}
                 >
                   <Avatar name={s.name} size={22} />
-                  <span
-                    style={{
-                      fontSize: 12,
-                      color: '#334155',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      flex: 1,
-                    }}
-                  >
+                  <span className="text-xs text-slate-700 overflow-hidden text-ellipsis whitespace-nowrap flex-1">
                     {s.name}
                   </span>
                 </div>
@@ -441,21 +376,11 @@ Step 4: Rank and return top 3`}
             </div>
           </aside>
 
-          {/* Conversation column */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <div
-              style={{
-                padding: '12px 20px',
-                borderBottom: '1px solid #e2e8f0',
-                fontSize: 13,
-                fontWeight: 600,
-                color: '#0f172a',
-                background: '#fff',
-              }}
-            >
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="px-5 py-3 border-b border-slate-200 text-[13px] font-semibold text-slate-900 bg-white">
               Auth expertise lookup
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 24px' }}>
+            <div className="flex-1 overflow-y-auto px-6">
               {messages.map((m) => (
                 <MessageBubble
                   key={m.id}
@@ -485,8 +410,8 @@ Step 4: Rank and return top 3`}
       </ExampleBlock>
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
-      <div id="props" style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 24 }}>
+      <div id="props" className="mt-12">
+        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
           API Reference
         </h2>
 
