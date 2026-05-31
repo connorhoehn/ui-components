@@ -1,8 +1,7 @@
 // MockChatView.tsx — useChat wired to a mock provider with timer-injected messages.
 
 import { useEffect, useRef, useCallback } from 'react';
-import { ChatPanel } from '@/components/social/ChatPanel';
-import type { ChatMessage as UIChatMessage } from '@/hooks/useChat';
+import { WrappedChatPanel } from '@/integrations/realtime-modules/WrappedChatPanel';
 import { MockGatewayProvider, type DispatchFrame } from './MockGatewayContext';
 import { useChat } from '@connorhoehn/realtime-modules/client';
 
@@ -14,28 +13,9 @@ const MOCK_MESSAGES = [
   { author: 'bob-002', name: 'Bob', text: 'Nice separation of concerns.' },
 ];
 
-// Adapt realtime-modules ChatMessage → ui-components ChatMessage
-function adaptMessage(rm: {
-  id: string;
-  clientId: string;
-  channel: string;
-  message: string;
-  metadata?: Record<string, unknown>;
-  timestamp: string;
-}): UIChatMessage {
-  return {
-    id: rm.id,
-    clientId: rm.clientId,
-    content: rm.message,
-    timestamp: rm.timestamp,
-    displayName: rm.metadata?.displayName as string | undefined,
-  };
-}
-
 function ChatViewInner({ channel }: { channel: string }) {
-  const { messages: rmMessages, sendMessage } = useChat(channel);
-  const messages: UIChatMessage[] = rmMessages.map(adaptMessage);
-  return <ChatPanel messages={messages} onSend={sendMessage} />;
+  const chat = useChat(channel);
+  return <WrappedChatPanel chat={chat} />;
 }
 
 interface MockChatViewProps {

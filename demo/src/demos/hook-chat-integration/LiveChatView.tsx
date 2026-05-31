@@ -1,23 +1,11 @@
 // LiveChatView.tsx — useChat wired to real GatewaySocketProvider.
 
-import { ChatPanel } from '@/components/social/ChatPanel';
-import type { ChatMessage as UIChatMessage } from '@/hooks/useChat';
+import { WrappedChatPanel } from '@/integrations/realtime-modules/WrappedChatPanel';
 import { GatewaySocketProvider, useChat } from '@connorhoehn/realtime-modules/client';
 
-function adaptMessage(rm: { id: string; clientId: string; channel: string; message: string; metadata?: Record<string, unknown>; timestamp: string }): UIChatMessage {
-  return {
-    id: rm.id,
-    clientId: rm.clientId,
-    content: rm.message,
-    timestamp: rm.timestamp,
-    displayName: rm.metadata?.displayName as string | undefined,
-  };
-}
-
 function ChatViewInner({ channel }: { channel: string }) {
-  const { messages: rmMessages, sendMessage } = useChat(channel);
-  const messages: UIChatMessage[] = rmMessages.map(adaptMessage);
-  return <ChatPanel messages={messages} onSend={sendMessage} />;
+  const chat = useChat(channel);
+  return <WrappedChatPanel chat={chat} />;
 }
 
 interface LiveChatViewProps {

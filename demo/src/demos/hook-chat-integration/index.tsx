@@ -7,9 +7,6 @@
 //
 // In LIVE mode (VITE_GATEWAY_URL set), a real GatewaySocketProvider connects.
 
-import { useEffect, useRef, useState } from 'react';
-import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
-import { MockGatewayProvider, type DispatchFrame } from './MockGatewayContext';
 import { LiveChatView } from './LiveChatView';
 import { MockChatView } from './MockChatView';
 
