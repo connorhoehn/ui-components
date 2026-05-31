@@ -8,7 +8,13 @@ const maxWorkers = process.env.VITEST_MAX_WORKERS ?? '25%';
 
 export default defineConfig({
   resolve: {
-    alias: { '@': resolve(__dirname, 'src') },
+    alias: {
+      '@': resolve(__dirname, 'src'),
+      // hls.js is an optional peer dep (consumer apps install it). Vitest's
+      // import-analysis tries to resolve dynamic-import targets even with
+      // `/* @vite-ignore */`, so point it at a stub for tests.
+      'hls.js': resolve(__dirname, 'src/test-stubs/hls.js-stub.ts'),
+    },
   },
   test: {
     environment: 'jsdom',
