@@ -22,6 +22,22 @@ export type { ViewerCountProps } from './ViewerCount';
 export { CallWidget } from './CallWidget';
 export type { CallWidgetProps, CallWidgetParticipant, CallWidgetState, CallMode } from './CallWidget';
 
+export { CallControls } from './CallControls';
+export type { CallControlsProps, CallControlsMode } from './CallControls';
+
+export { CallParticipantStrip } from './CallParticipantStrip';
+export type {
+  CallParticipantStripProps,
+  CallStripParticipant,
+} from './CallParticipantStrip';
+
+export { CallStatsOverlay } from './CallStatsOverlay';
+export type {
+  CallStatsOverlayProps,
+  CallStatsOverlayStats,
+  CallStatsOverlayPosition,
+} from './CallStatsOverlay';
+
 export { ParticipantTile } from './ParticipantTile';
 export type { ParticipantTileProps } from './ParticipantTile';
 

@@ -10,6 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **`<CallControls>` + `<CallParticipantStrip>` + `<CallStatsOverlay>`**
+  (`/video`). Extracted from the 1009-LOC `<CallWidget>` monolith so
+  consumers can compose alternative call surfaces (PiP-only viewer,
+  dialer modal, screen-share kiosk header, diagnostics-on-tile overlay)
+  without re-wiring the full widget shell. `<CallControls>` is the
+  pure-presentational bottom bar (mute / camera / screen-share /
+  upgrade / add-participant picker / end-call) — caller owns the
+  toggle state. `<CallParticipantStrip>` is the compact avatar roster
+  used by audio-only mode, with `maxVisible` collapsing into a `+N`
+  chip. `<CallStatsOverlay>` is the optional network-quality /
+  bitrate / latency / packet-loss diagnostics dock, with a built-in
+  empty-state gate (renders `null` when no metric is set). `CallWidget`
+  now composes the three pieces internally and is down to 825 LOC;
+  render output, props, and behaviour are unchanged for every existing
+  consumer. New per-piece tests (47) cover toggle wiring, picker
+  dedupe, avatar overflow, empty-stats gating, and corner positioning.
+  Refs hub#1205.
+
 - **`<HangoutGrid>` + `<HangoutSpotlight>`** (`/video`). Extracted
   from `<HangoutLayout>` as standalone presentational primitives so
   consumers can build alternative call surfaces (PiP-only viewer, a

@@ -828,6 +828,33 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
+export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, className, }: CallControlsProps): JSX.Element;
+
+export declare type CallControlsMode = 'audio' | 'video';
+
+export declare interface CallControlsProps {
+    mode: CallControlsMode;
+    isMuted?: boolean;
+    isCameraOn?: boolean;
+    isScreenSharing?: boolean;
+    onToggleMute?: () => void;
+    onToggleCamera?: () => void;
+    onToggleScreenShare?: () => void;
+    onUpgradeToVideo?: () => void;
+    onEndCall?: () => void;
+    /** When provided, shows the "add participant" button + picker popover. */
+    onAddParticipant?: (participantId: string) => void;
+    /**
+     * People who can still be added. Participants already in the call
+     * should be filtered out by the caller — or pass `currentParticipantIds`
+     * and let CallControls dedupe.
+     */
+    availableParticipants?: CallStripParticipant[];
+    /** Optional explicit set of ids already in the call to dedupe against. */
+    currentParticipantIds?: ReadonlyArray<string>;
+    className?: string;
+}
+
 export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
 
 export declare interface CallingStatusPillProps {
@@ -838,6 +865,26 @@ export declare interface CallingStatusPillProps {
 }
 
 export declare type CallMode = 'audio' | 'video';
+
+export declare function CallParticipantStrip({ participants, localFallback, maxVisible, avatarSize, testId, className, style, }: CallParticipantStripProps): JSX.Element;
+
+export declare interface CallParticipantStripProps {
+    /** Participants in the call. */
+    participants: CallStripParticipant[];
+    /**
+     * Optional fallback shown when `participants` is empty (e.g. the local
+     * user before any remote joins). Rendered as a single Avatar tile.
+     */
+    localFallback?: CallStripParticipant;
+    /** Max avatars to render inline before collapsing into a `+N` indicator. */
+    maxVisible?: number;
+    /** Avatar diameter in px. Defaults to 36. */
+    avatarSize?: number;
+    /** Stable data-testid (e2e hook). Defaults to `call-participant-strip`. */
+    testId?: string;
+    className?: string;
+    style?: CSSProperties;
+}
 
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
@@ -885,14 +932,39 @@ export declare interface CallStartedBannerProps {
 
 declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallStatsOverlay({ stats, position, testId, className, style, }: CallStatsOverlayProps): JSX.Element | null;
 
-export declare interface CallWidgetParticipant {
+export declare type CallStatsOverlayPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+export declare interface CallStatsOverlayProps {
+    /** When undefined or empty (no fields set), the overlay renders nothing. */
+    stats?: CallStatsOverlayStats;
+    /** Corner to dock the overlay against its positioned parent. */
+    position?: CallStatsOverlayPosition;
+    /** Stable data-testid (e2e hook). Defaults to `call-stats-overlay`. */
+    testId?: string;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare interface CallStatsOverlayStats {
+    networkQuality?: NetworkQuality;
+    bitrateKbps?: number;
+    latencyMs?: number;
+    packetLossPct?: number;
+}
+
+export declare interface CallStripParticipant {
     id: string;
     displayName: string;
     avatarUrl?: string;
     isMuted?: boolean;
     isSpeaking?: boolean;
+}
+
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+
+export declare interface CallWidgetParticipant extends CallStripParticipant {
     videoStream?: MediaStream | null;
 }
 
@@ -932,6 +1004,11 @@ export declare interface CallWidgetProps {
      * Absent → the widget renders today's single-PiP layout (backwards compatible).
      */
     layoutComponent?: ReactNode;
+    /**
+     * Optional diagnostics stats. When provided (and at least one field is
+     * set), CallWidget renders a `<CallStatsOverlay>` inside the video area.
+     */
+    callStats?: CallStatsOverlayStats;
     className?: string;
     style?: CSSProperties;
     /** Arbitrary `data-*` attributes to spread onto the root element.
