@@ -192,6 +192,14 @@ export const entries: CatalogEntry[] = [
     type: 'component',
     path: '/components/patterns',
   },
+  {
+    id: 'shell-composites',
+    title: 'Shell Composites',
+    description: 'ChannelHeader, PresenceAvatars, NotificationCenter, UserMenu, Breadcrumbs, PageHeader',
+    category: 'Foundations',
+    type: 'component',
+    path: '/components/shell',
+  },
 ];
 
 export const categories = [

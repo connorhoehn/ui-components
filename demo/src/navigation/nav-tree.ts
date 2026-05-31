@@ -45,6 +45,9 @@ export const navigationTree: NavigationTree = [
       { id: 'foundations-chat', label: 'Chat & Thread', items: [
         { id: 'chat', label: 'Chat & Thread', path: '/components/chat' },
       ]},
+      { id: 'foundations-shell', label: 'Shell Composites', items: [
+        { id: 'shell-composites', label: 'Shell Composites', path: '/components/shell' },
+      ]},
       { id: 'foundations-video', label: 'Video Primitives', items: [
         { id: 'video', label: 'Video Primitives', path: '/components/video' },
       ]},

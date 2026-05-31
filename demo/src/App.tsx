@@ -31,6 +31,7 @@ const CallWidgetPage = lazy(() => import('./components/CallWidgetPage'));
 const PrimitivesPage = lazy(() => import('./components/PrimitivesPage'));
 const ChatPage = lazy(() => import('./components/ChatPage'));
 const PatternsPage = lazy(() => import('./components/PatternsPage'));
+const ShellCompositesPage = lazy(() => import('./components/ShellCompositesPage'));
 
 // Live demo pages (lazy)
 const PipelineEditor = lazy(() => import('./demos/pipeline-editor'));
@@ -124,6 +125,7 @@ export default function App() {
           <Route path="primitives" element={<S><PrimitivesPage /></S>} />
           <Route path="chat" element={<S><ChatPage /></S>} />
           <Route path="patterns" element={<S><PatternsPage /></S>} />
+          <Route path="shell" element={<S><ShellCompositesPage /></S>} />
         </Route>
 
         {/* Workflows (domain demos) */}
