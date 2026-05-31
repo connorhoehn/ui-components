@@ -6,3 +6,5 @@ demo/dist
 .vite
 coverage
 storybook-static
+test-results
+playwright-report
