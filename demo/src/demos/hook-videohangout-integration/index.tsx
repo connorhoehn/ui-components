@@ -5,12 +5,10 @@
 // Live mode: set VITE_GATEWAY_URL. Real video media is NOT wired (no MediaStream).
 // joinToken is displayed so the consumer can pass it to their media stack.
 
-import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { HangoutLayout } from '@/components/video/HangoutLayout';
-import type { HangoutLayoutParticipant } from '@/components/video/HangoutLayout';
+import { WrappedHangoutLayout } from '@/integrations/realtime-modules/WrappedHangoutLayout';
 import { GatewaySocketProvider, useVideoHangout, GatewayContext } from '@connorhoehn/realtime-modules/client';
-import type { HangoutParticipant, HangoutSession } from '@connorhoehn/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const IS_MOCK = !GATEWAY_URL;
@@ -84,18 +82,6 @@ function MockGatewayProvider({
 }
 
 // ---------------------------------------------------------------------------
-// Adapt HangoutParticipant (RM) → HangoutLayoutParticipant (UI)
-// ---------------------------------------------------------------------------
-
-function adaptParticipant(p: HangoutParticipant): HangoutLayoutParticipant {
-  return {
-    id: p.clientId,
-    displayName: p.displayName ?? p.clientId.slice(0, 12),
-    isMuted: !p.audioOn,
-  };
-}
-
-// ---------------------------------------------------------------------------
 // Inner view using useVideoHangout
 // ---------------------------------------------------------------------------
 
@@ -111,10 +97,9 @@ const TOKEN_STYLE: React.CSSProperties = {
 };
 
 function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolean }) {
+  const hangout = useVideoHangout(channel);
   const { session, participants, joinToken, start, leave, end, toggleVideo, toggleAudio } =
-    useVideoHangout(channel);
-
-  const layoutParticipants: HangoutLayoutParticipant[] = participants.map(adaptParticipant);
+    hangout;
 
   return (
     <div>
@@ -219,10 +204,10 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
       {/* HangoutLayout */}
       {session && (
         <div style={{ marginTop: 20, height: 360, border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
-          <HangoutLayout
-            participants={layoutParticipants}
-            localParticipant={{ id: 'demo-client-001', displayName: 'You', isLocal: true }}
-            style={{ height: '100%' }}
+          <WrappedHangoutLayout
+            hangout={hangout}
+            localClientId="demo-client-001"
+            className="h-full"
           />
         </div>
       )}
