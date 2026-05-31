@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -14,83 +13,22 @@ const tocItems: TocItem[] = [
   { id: 'props', label: 'Props', level: 2 },
 ];
 
-// Shared inline styles for demo buttons
-const baseBtn: CSSProperties = {
-  fontWeight: 600,
-  borderRadius: 6,
-  cursor: 'pointer',
-  fontFamily: 'inherit',
-  transition: 'background 0.15s ease',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 6,
-};
+const BTN_BASE =
+  'font-semibold rounded-md cursor-pointer inline-flex items-center gap-1.5 transition-colors';
+const BTN_PRIMARY = `${BTN_BASE} bg-blue-600 text-white border-none px-4 py-2 text-sm hover:bg-blue-700`;
+const BTN_SECONDARY = `${BTN_BASE} bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 text-sm hover:bg-slate-200`;
+const BTN_GHOST = `${BTN_BASE} bg-transparent text-slate-700 border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100`;
+const BTN_DANGER = `${BTN_BASE} bg-red-600 text-white border-none px-4 py-2 text-sm hover:bg-red-700`;
+const BTN_OUTLINE = `${BTN_BASE} bg-transparent text-blue-600 border border-blue-600 px-4 py-2 text-sm hover:bg-blue-50`;
 
-const primaryBtn: CSSProperties = {
-  ...baseBtn,
-  background: '#2563eb',
-  color: '#fff',
-  border: 'none',
-  padding: '8px 16px',
-  fontSize: 14,
-};
+const BTN_SM = 'px-2.5 py-1 text-xs';
+const BTN_MD = 'px-4 py-2 text-sm';
+const BTN_LG = 'px-6 py-3 text-base';
 
-const secondaryBtn: CSSProperties = {
-  ...baseBtn,
-  background: '#f1f5f9',
-  color: '#334155',
-  border: '1px solid #e2e8f0',
-  padding: '8px 16px',
-  fontSize: 14,
-};
+const ROW = 'flex flex-wrap gap-3 items-center';
 
-const ghostBtn: CSSProperties = {
-  ...baseBtn,
-  background: 'transparent',
-  color: '#334155',
-  border: '1px solid #d1d5db',
-  padding: '8px 16px',
-  fontSize: 14,
-};
-
-const dangerBtn: CSSProperties = {
-  ...baseBtn,
-  background: '#dc2626',
-  color: '#fff',
-  border: 'none',
-  padding: '8px 16px',
-  fontSize: 14,
-};
-
-const outlineBtn: CSSProperties = {
-  ...baseBtn,
-  background: 'transparent',
-  color: '#2563eb',
-  border: '1px solid #2563eb',
-  padding: '8px 16px',
-  fontSize: 14,
-};
-
-const smBtn: CSSProperties = { padding: '4px 10px', fontSize: 12 };
-const mdBtn: CSSProperties = { padding: '8px 16px', fontSize: 14 };
-const lgBtn: CSSProperties = { padding: '12px 24px', fontSize: 16 };
-
-const rowStyle: CSSProperties = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: 12,
-  alignItems: 'center',
-};
-
-const iconBtnBase: CSSProperties = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: 'none',
-  borderRadius: 6,
-  cursor: 'pointer',
-  transition: 'background 0.15s ease',
-};
+const ICON_BTN_BASE =
+  'inline-flex items-center justify-center border-none rounded-md cursor-pointer transition-colors';
 
 export default function ButtonsPage() {
   useRegisterToc(tocItems);
@@ -103,7 +41,6 @@ export default function ButtonsPage() {
         importPath="import { Button } from '@connorhoehnslalom/ui-components'"
       />
 
-      {/* Basic usage */}
       <ExampleBlock
         id="basic"
         title="Basic usage"
@@ -118,14 +55,11 @@ function App() {
   );
 }`}
       >
-        <div style={rowStyle}>
-          <button type="button" style={primaryBtn}>
-            Click me
-          </button>
+        <div className={ROW}>
+          <button type="button" className={BTN_PRIMARY}>Click me</button>
         </div>
       </ExampleBlock>
 
-      {/* Variants */}
       <ExampleBlock
         id="variants"
         title="Variants"
@@ -136,16 +70,15 @@ function App() {
 <Button variant="danger">Danger</Button>
 <Button variant="outline">Outline</Button>`}
       >
-        <div style={rowStyle}>
-          <button type="button" style={primaryBtn}>Primary</button>
-          <button type="button" style={secondaryBtn}>Secondary</button>
-          <button type="button" style={ghostBtn}>Ghost</button>
-          <button type="button" style={dangerBtn}>Danger</button>
-          <button type="button" style={outlineBtn}>Outline</button>
+        <div className={ROW}>
+          <button type="button" className={BTN_PRIMARY}>Primary</button>
+          <button type="button" className={BTN_SECONDARY}>Secondary</button>
+          <button type="button" className={BTN_GHOST}>Ghost</button>
+          <button type="button" className={BTN_DANGER}>Danger</button>
+          <button type="button" className={BTN_OUTLINE}>Outline</button>
         </div>
       </ExampleBlock>
 
-      {/* Sizes */}
       <ExampleBlock
         id="sizes"
         title="Sizes"
@@ -154,14 +87,13 @@ function App() {
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>`}
       >
-        <div style={rowStyle}>
-          <button type="button" style={{ ...primaryBtn, ...smBtn }}>Small</button>
-          <button type="button" style={{ ...primaryBtn, ...mdBtn }}>Medium</button>
-          <button type="button" style={{ ...primaryBtn, ...lgBtn }}>Large</button>
+        <div className={ROW}>
+          <button type="button" className={`${BTN_PRIMARY} ${BTN_SM}`}>Small</button>
+          <button type="button" className={`${BTN_PRIMARY} ${BTN_MD}`}>Medium</button>
+          <button type="button" className={`${BTN_PRIMARY} ${BTN_LG}`}>Large</button>
         </div>
       </ExampleBlock>
 
-      {/* Disabled state */}
       <ExampleBlock
         id="disabled"
         title="Disabled state"
@@ -171,23 +103,22 @@ function App() {
 <Button variant="ghost" disabled>Ghost</Button>
 <Button variant="danger" disabled>Danger</Button>`}
       >
-        <div style={rowStyle}>
-          <button type="button" style={{ ...primaryBtn, opacity: 0.5, cursor: 'not-allowed' }} disabled>
+        <div className={ROW}>
+          <button type="button" className={`${BTN_PRIMARY} opacity-50 cursor-not-allowed`} disabled>
             Primary
           </button>
-          <button type="button" style={{ ...secondaryBtn, opacity: 0.5, cursor: 'not-allowed' }} disabled>
+          <button type="button" className={`${BTN_SECONDARY} opacity-50 cursor-not-allowed`} disabled>
             Secondary
           </button>
-          <button type="button" style={{ ...ghostBtn, opacity: 0.5, cursor: 'not-allowed' }} disabled>
+          <button type="button" className={`${BTN_GHOST} opacity-50 cursor-not-allowed`} disabled>
             Ghost
           </button>
-          <button type="button" style={{ ...dangerBtn, opacity: 0.5, cursor: 'not-allowed' }} disabled>
+          <button type="button" className={`${BTN_DANGER} opacity-50 cursor-not-allowed`} disabled>
             Danger
           </button>
         </div>
       </ExampleBlock>
 
-      {/* Full width */}
       <ExampleBlock
         id="full-width"
         title="Full width"
@@ -199,17 +130,16 @@ function App() {
   Cancel
 </Button>`}
       >
-        <div style={{ maxWidth: 400, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <button type="button" style={{ ...primaryBtn, width: '100%', justifyContent: 'center' }}>
+        <div className="max-w-[400px] flex flex-col gap-2">
+          <button type="button" className={`${BTN_PRIMARY} w-full justify-center`}>
             Submit form
           </button>
-          <button type="button" style={{ ...ghostBtn, width: '100%', justifyContent: 'center' }}>
+          <button type="button" className={`${BTN_GHOST} w-full justify-center`}>
             Cancel
           </button>
         </div>
       </ExampleBlock>
 
-      {/* With icons */}
       <ExampleBlock
         id="with-icons"
         title="With icons"
@@ -224,15 +154,15 @@ function App() {
   <TrashIcon /> Delete
 </Button>`}
       >
-        <div style={rowStyle}>
-          <button type="button" style={primaryBtn}>
+        <div className={ROW}>
+          <button type="button" className={BTN_PRIMARY}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             Add item
           </button>
-          <button type="button" style={secondaryBtn}>
+          <button type="button" className={BTN_SECONDARY}>
             Download
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -240,7 +170,7 @@ function App() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
           </button>
-          <button type="button" style={dangerBtn}>
+          <button type="button" className={BTN_DANGER}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <polyline points="3 6 5 6 21 6" />
               <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
@@ -252,7 +182,6 @@ function App() {
         </div>
       </ExampleBlock>
 
-      {/* IconButton */}
       <ExampleBlock
         id="icon-button"
         title="IconButton"
@@ -264,11 +193,11 @@ function App() {
 <IconButton aria-label="Remove" icon={<XIcon />} variant="danger" />
 <IconButton aria-label="Star" icon={<StarIcon />} variant="primary" size="lg" />`}
       >
-        <div style={rowStyle}>
+        <div className={ROW}>
           <button
             type="button"
             aria-label="Menu"
-            style={{ ...iconBtnBase, width: 32, height: 32, background: 'transparent', color: '#374151' }}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-transparent text-slate-700 hover:bg-slate-100`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="3" y1="6" x2="21" y2="6" />
@@ -279,7 +208,7 @@ function App() {
           <button
             type="button"
             aria-label="Confirm"
-            style={{ ...iconBtnBase, width: 32, height: 32, background: '#2563eb', color: '#fff' }}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-blue-600 text-white hover:bg-blue-700`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <polyline points="20 6 9 17 4 12" />
@@ -288,7 +217,7 @@ function App() {
           <button
             type="button"
             aria-label="Remove"
-            style={{ ...iconBtnBase, width: 32, height: 32, background: '#dc2626', color: '#fff' }}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-red-600 text-white hover:bg-red-700`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -298,7 +227,7 @@ function App() {
           <button
             type="button"
             aria-label="Star"
-            style={{ ...iconBtnBase, width: 40, height: 40, background: '#2563eb', color: '#fff', fontSize: 18 }}
+            className={`${ICON_BTN_BASE} w-10 h-10 bg-blue-600 text-white text-lg hover:bg-blue-700`}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" />
@@ -307,7 +236,6 @@ function App() {
         </div>
       </ExampleBlock>
 
-      {/* Button group */}
       <ExampleBlock
         id="button-group"
         title="Button group"
@@ -324,56 +252,32 @@ function App() {
   </Button>
 </div>`}
       >
-        <div style={rowStyle}>
-          <div style={{ display: 'inline-flex' }}>
+        <div className={ROW}>
+          <div className="inline-flex">
             <button
               type="button"
-              style={{
-                ...secondaryBtn,
-                borderRadius: '6px 0 0 6px',
-                borderRight: 'none',
-              }}
+              className={`${BTN_SECONDARY} rounded-r-none border-r-0`}
             >
               Left
             </button>
-            <button
-              type="button"
-              style={{
-                ...secondaryBtn,
-                borderRadius: 0,
-              }}
-            >
+            <button type="button" className={`${BTN_SECONDARY} rounded-none`}>
               Center
             </button>
             <button
               type="button"
-              style={{
-                ...secondaryBtn,
-                borderRadius: '0 6px 6px 0',
-                borderLeft: 'none',
-              }}
+              className={`${BTN_SECONDARY} rounded-l-none border-l-0`}
             >
               Right
             </button>
           </div>
 
-          <div style={{ display: 'inline-flex', marginLeft: 24 }}>
-            <button
-              type="button"
-              style={{
-                ...primaryBtn,
-                borderRadius: '6px 0 0 6px',
-              }}
-            >
+          <div className="inline-flex ml-6">
+            <button type="button" className={`${BTN_PRIMARY} rounded-r-none`}>
               Save
             </button>
             <button
               type="button"
-              style={{
-                ...primaryBtn,
-                borderRadius: '0 6px 6px 0',
-                borderLeft: '1px solid rgba(255,255,255,0.3)',
-              }}
+              className={`${BTN_PRIMARY} rounded-l-none border-l border-white/30`}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                 <polyline points="6 9 12 15 18 9" />
@@ -383,113 +287,33 @@ function App() {
         </div>
       </ExampleBlock>
 
-      {/* Props table */}
-      <div id="props" style={{ marginTop: 48 }}>
+      <div id="props" className="mt-12">
         <PropsTable
           componentName="Button"
           props={[
-            {
-              name: 'variant',
-              type: "'primary' | 'secondary' | 'ghost' | 'danger'",
-              default: "'primary'",
-              description: 'Visual style of the button that communicates its intent.',
-            },
-            {
-              name: 'size',
-              type: "'sm' | 'md' | 'lg'",
-              default: "'md'",
-              description: 'Controls padding and font size of the button.',
-            },
-            {
-              name: 'disabled',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, the button is non-interactive and visually dimmed.',
-            },
-            {
-              name: 'fullWidth',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, the button expands to fill the width of its container.',
-            },
-            {
-              name: 'children',
-              type: 'ReactNode',
-              required: true,
-              description: 'Content rendered inside the button (text, icons, or both).',
-            },
-            {
-              name: 'onClick',
-              type: '() => void',
-              description: 'Callback fired when the button is clicked.',
-            },
-            {
-              name: 'type',
-              type: "'button' | 'submit' | 'reset'",
-              default: "'button'",
-              description: 'HTML button type attribute.',
-            },
-            {
-              name: 'style',
-              type: 'CSSProperties',
-              description: 'Inline styles merged onto the button element.',
-            },
-            {
-              name: 'className',
-              type: 'string',
-              description: 'CSS class name applied to the button element.',
-            },
+            { name: 'variant', type: "'primary' | 'secondary' | 'ghost' | 'danger'", default: "'primary'", description: 'Visual style of the button that communicates its intent.' },
+            { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Controls padding and font size of the button.' },
+            { name: 'disabled', type: 'boolean', default: 'false', description: 'When true, the button is non-interactive and visually dimmed.' },
+            { name: 'fullWidth', type: 'boolean', default: 'false', description: 'When true, the button expands to fill the width of its container.' },
+            { name: 'children', type: 'ReactNode', required: true, description: 'Content rendered inside the button (text, icons, or both).' },
+            { name: 'onClick', type: '() => void', description: 'Callback fired when the button is clicked.' },
+            { name: 'type', type: "'button' | 'submit' | 'reset'", default: "'button'", description: 'HTML button type attribute.' },
+            { name: 'style', type: 'CSSProperties', description: 'Inline styles merged onto the button element.' },
+            { name: 'className', type: 'string', description: 'CSS class name applied to the button element.' },
           ]}
         />
 
         <PropsTable
           componentName="IconButton"
           props={[
-            {
-              name: 'aria-label',
-              type: 'string',
-              required: true,
-              description: 'Accessible label for screen readers (required for icon-only buttons).',
-            },
-            {
-              name: 'icon',
-              type: 'ReactNode',
-              required: true,
-              description: 'The icon element to render inside the button.',
-            },
-            {
-              name: 'variant',
-              type: "'ghost' | 'primary' | 'danger'",
-              default: "'ghost'",
-              description: 'Visual style of the icon button.',
-            },
-            {
-              name: 'size',
-              type: "'sm' | 'md' | 'lg'",
-              default: "'md'",
-              description: 'Controls the width/height of the button (24px, 32px, 40px).',
-            },
-            {
-              name: 'disabled',
-              type: 'boolean',
-              default: 'false',
-              description: 'When true, the button is non-interactive and visually dimmed.',
-            },
-            {
-              name: 'onClick',
-              type: '() => void',
-              description: 'Callback fired when the button is clicked.',
-            },
-            {
-              name: 'style',
-              type: 'CSSProperties',
-              description: 'Inline styles merged onto the button element.',
-            },
-            {
-              name: 'className',
-              type: 'string',
-              description: 'CSS class name applied to the button element.',
-            },
+            { name: 'aria-label', type: 'string', required: true, description: 'Accessible label for screen readers (required for icon-only buttons).' },
+            { name: 'icon', type: 'ReactNode', required: true, description: 'The icon element to render inside the button.' },
+            { name: 'variant', type: "'ghost' | 'primary' | 'danger'", default: "'ghost'", description: 'Visual style of the icon button.' },
+            { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Controls the width/height of the button (24px, 32px, 40px).' },
+            { name: 'disabled', type: 'boolean', default: 'false', description: 'When true, the button is non-interactive and visually dimmed.' },
+            { name: 'onClick', type: '() => void', description: 'Callback fired when the button is clicked.' },
+            { name: 'style', type: 'CSSProperties', description: 'Inline styles merged onto the button element.' },
+            { name: 'className', type: 'string', description: 'CSS class name applied to the button element.' },
           ]}
         />
       </div>

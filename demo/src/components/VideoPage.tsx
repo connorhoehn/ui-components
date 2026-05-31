@@ -63,7 +63,7 @@ function VideoPlayerExample() {
   onPhaseChange={(phase) => console.log(phase)}
 />`}
     >
-      <div style={{ maxWidth: 500 }}>
+      <div className="max-w-[500px]">
         <VideoPlayer
           src="/assets/sample.mp4"
           autoPlay
@@ -100,7 +100,9 @@ function VideoGridExample() {
 <VideoGrid participants={participants} />`}
       background="#0f0f0f"
     >
-      <VideoGrid participants={participants} style={{ maxWidth: 600 }} />
+      <div className="max-w-[600px]">
+        <VideoGrid participants={participants} />
+      </div>
     </ExampleBlock>
   );
 }
@@ -138,7 +140,7 @@ function ReactionsExample() {
 </div>`}
       background="#0f0f0f"
     >
-      <div style={{ position: 'relative', height: 220, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center' }}>
+      <div className="relative h-[220px] flex flex-col justify-end items-center">
         <ReactionOverlay reactions={reactions} />
         <ReactionPicker onReact={handleReact} />
       </div>
@@ -182,7 +184,7 @@ function StatsCardExample() {
 }} />`}
       background="#0f172a"
     >
-      <div style={{ maxWidth: 240 }}>
+      <div className="max-w-[240px]">
         <StatsCard metrics={metrics} />
       </div>
     </ExampleBlock>
@@ -203,7 +205,7 @@ function NetworkQualityExample() {
 <NetworkQualityBadge quality="dead" />`}
       background="#1e293b"
     >
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <div className="flex gap-3 flex-wrap">
         {qualities.map(q => (
           <NetworkQualityBadge key={q} quality={q} />
         ))}
@@ -226,7 +228,7 @@ function StatusStripExample() {
       description="Compact broadcast status indicator showing live state, bitrate, elapsed duration, and viewer count."
       code={`<StatusStrip phase="live" bitrateBps={2_500_000} viewerCount={842} duration={elapsed} />`}
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="flex flex-col gap-2">
         <StatusStrip phase="live" bitrateBps={2_500_000} viewerCount={842} duration={elapsed} />
         <StatusStrip phase="connecting" />
         <StatusStrip phase="error" />
@@ -245,7 +247,7 @@ function ViewerCountExample() {
 <ViewerCount count={47} />`}
       background="#1e293b"
     >
-      <div style={{ display: 'flex', gap: 12 }}>
+      <div className="flex gap-3">
         <ViewerCount count={1342} />
         <ViewerCount count={47} />
       </div>
@@ -255,8 +257,8 @@ function ViewerCountExample() {
 
 function PropsSection() {
   return (
-    <div id="props" style={{ marginTop: 48 }}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 20, color: '#0f172a' }}>Props Reference</h2>
+    <div id="props" className="mt-12">
+      <h2 className="text-[22px] font-bold mb-5 text-slate-900">Props Reference</h2>
 
       <PropsTable componentName="VideoPlayer" props={[
         { name: 'src', type: 'string', default: '—', description: 'Video source URL (MP4, HLS)' },

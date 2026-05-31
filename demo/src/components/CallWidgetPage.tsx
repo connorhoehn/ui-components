@@ -22,6 +22,9 @@ const availableToAdd: CallWidgetParticipant[] = [
   { id: '6', displayName: 'Casey Lee', isMuted: false, isSpeaking: false },
 ];
 
+const DEMO_BUTTON_CLASSES =
+  'px-4 py-2 rounded-md border border-slate-200 bg-white cursor-pointer text-[13px] font-semibold hover:bg-slate-50';
+
 function LiveDemo() {
   const [state, setState] = useState<CallWidgetState>('idle');
   const [mode, setMode] = useState<CallMode>('audio');
@@ -50,24 +53,31 @@ function LiveDemo() {
   };
 
   return (
-    <div style={{ position: 'relative', minHeight: 320 }}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-        <button type="button" onClick={() => startCall('audio')} style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 600 }}>
+    <div className="relative min-h-[320px]">
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button type="button" onClick={() => startCall('audio')} className={DEMO_BUTTON_CLASSES}>
           Start Audio Call
         </button>
-        <button type="button" onClick={() => startCall('video')} style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 600 }}>
+        <button type="button" onClick={() => startCall('video')} className={DEMO_BUTTON_CLASSES}>
           Start Video Call
         </button>
-        <button type="button" onClick={() => setState('ringing')} style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 600 }}>
+        <button type="button" onClick={() => setState('ringing')} className={DEMO_BUTTON_CLASSES}>
           Simulate Incoming
         </button>
-        <button type="button" onClick={() => { setState('idle'); setMinimized(false); setParticipants(mockParticipants); }} style={{ padding: '8px 16px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: 600 }}>
+        <button
+          type="button"
+          onClick={() => { setState('idle'); setMinimized(false); setParticipants(mockParticipants); }}
+          className={DEMO_BUTTON_CLASSES}
+        >
           Reset
         </button>
       </div>
 
-      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 8 }}>
-        State: <strong>{state}</strong> | Mode: <strong>{mode}</strong> | Minimized: <strong>{minimized ? 'yes' : 'no'}</strong> | Screen share: <strong>{isScreenSharing ? 'on' : 'off'}</strong> | Participants: <strong>{participants.length}</strong>
+      <div className="text-xs text-slate-500 mb-2">
+        State: <strong>{state}</strong> | Mode: <strong>{mode}</strong> | Minimized:{' '}
+        <strong>{minimized ? 'yes' : 'no'}</strong> | Screen share:{' '}
+        <strong>{isScreenSharing ? 'on' : 'off'}</strong> | Participants:{' '}
+        <strong>{participants.length}</strong>
       </div>
 
       <CallWidget
@@ -153,7 +163,7 @@ export default function CallWidgetPage() {
   onDecline={() => dismiss()}
 />`}
       >
-        <div style={{ position: 'relative', minHeight: 240, background: '#0f172a', borderRadius: 8 }}>
+        <div className="relative min-h-[240px] bg-slate-900 rounded-lg">
           <CallWidget
             state="ringing"
             mode="audio"
@@ -184,7 +194,7 @@ export default function CallWidgetPage() {
   onEndCall={() => endCall()}
 />`}
       >
-        <div style={{ position: 'relative', minHeight: 80, background: '#0f172a', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="relative min-h-[80px] bg-slate-900 rounded-lg flex items-center justify-center">
           <CallWidget
             state="active"
             mode="audio"
@@ -232,11 +242,11 @@ export default function CallWidgetPage() {
   onMinimize?: () => void;
 }`}
       >
-        <div style={{ padding: 16, fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
-          <p style={{ margin: '0 0 8px' }}><strong>contained</strong> — Uses <code>position: absolute</code> within a <code>relative</code> parent instead of fixed to the viewport.</p>
-          <p style={{ margin: '0 0 8px' }}><strong>availableParticipants</strong> — Populates the "Add person" picker. Only shows people not already in the call.</p>
-          <p style={{ margin: '0 0 8px' }}><strong>draggable</strong> — Enables drag-to-move. Snap zones appear near corners. A snap-back button shows when dragged away from default position.</p>
-          <p style={{ margin: 0 }}><strong>onAddParticipant(id)</strong> — Called with the selected participant's ID when picked from the popover.</p>
+        <div className="p-4 text-[13px] text-slate-600 leading-relaxed">
+          <p className="m-0 mb-2"><strong>contained</strong> — Uses <code>position: absolute</code> within a <code>relative</code> parent instead of fixed to the viewport.</p>
+          <p className="m-0 mb-2"><strong>availableParticipants</strong> — Populates the "Add person" picker. Only shows people not already in the call.</p>
+          <p className="m-0 mb-2"><strong>draggable</strong> — Enables drag-to-move. Snap zones appear near corners. A snap-back button shows when dragged away from default position.</p>
+          <p className="m-0"><strong>onAddParticipant(id)</strong> — Called with the selected participant's ID when picked from the popover.</p>
         </div>
       </ExampleBlock>
     </div>
