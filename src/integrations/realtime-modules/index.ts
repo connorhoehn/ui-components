@@ -80,6 +80,13 @@ export type { WrappedHangoutLayoutProps } from './WrappedHangoutLayout';
 export { WrappedNotificationCenter } from './WrappedNotificationCenter';
 export type { WrappedNotificationCenterProps } from './WrappedNotificationCenter';
 
+export { WrappedConnectionPill } from './WrappedConnectionPill';
+export type {
+  WrappedConnectionPillProps,
+  RMConnectionState,
+  RMConnectionStateSource,
+} from './WrappedConnectionPill';
+
 export { CapabilityBoundary } from './CapabilityBoundary';
 export type { CapabilityBoundaryProps } from './CapabilityBoundary';
 

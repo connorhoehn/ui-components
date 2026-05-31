@@ -80,6 +80,9 @@ const ROUTES: ReadonlyArray<Route> = [
   { path: '/workflows/hook-reactions', skipReason: SKIP_RM },
   { path: '/workflows/hook-fileupload', skipReason: SKIP_RM },
   { path: '/workflows/hook-videohangout', skipReason: SKIP_RM },
+  { path: '/workflows/hook-activity', skipReason: SKIP_RM },
+  { path: '/workflows/hook-notifications', skipReason: SKIP_RM },
+  { path: '/workflows/hook-capability' },
 
   // Identity — Auth flows
   { path: '/identity/login' },

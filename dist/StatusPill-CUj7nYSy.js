@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 import { jsxs as i, jsx as t, Fragment as P } from "react/jsx-runtime";
 import { useState as T, useCallback as A, createContext as ie, useMemo as O, useEffect as _, useRef as D, useContext as ce, useId as te, useLayoutEffect as de } from "react";
 import { c as u } from "./cn-B6yFEsav.js";
@@ -15,6 +16,25 @@ import { A as we } from "./Badge-CgxZp81E.js";
 import "clsx";
 import "tailwind-merge";
 const Ne = [
+========
+import { jsxs as i, jsx as r, Fragment as j } from "react/jsx-runtime";
+import { useState as E, useCallback as T, createContext as se, useMemo as R, useEffect as $, useRef as D, useContext as ie, useId as ee, useLayoutEffect as ce } from "react";
+import { c as d } from "./cn-B6yFEsav.js";
+import { _ as O } from "./index-DvoJowRO.js";
+import { M as de } from "./Modal-2jg4229_.js";
+import { T as ue, b as pe, e as V, a as fe, c as W, d as P } from "./PageSection-Dj8r4YIt.js";
+import { E as xe } from "./EmptyState-D_CN3LUx.js";
+import { S as me, C as be } from "./CardHeader-DuyI9Sk3.js";
+import { A as G, a as he } from "./Avatar-BvKIaNVE.js";
+import { S as te } from "./StatusDot-BC7B1tTr.js";
+import { createPortal as re } from "react-dom";
+import { C as ve } from "./Card-B2uO9v1w.js";
+import { C as ge } from "./Chip-BXdhqVFm.js";
+import { A as ye } from "./Badge-B6JMh-Y-.js";
+import "clsx";
+import "tailwind-merge";
+const we = [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   "import",
   "export",
   "from",
@@ -62,7 +82,11 @@ const Ne = [
   "readonly",
   "static",
   "enum"
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 ], ke = [
+========
+], Ne = [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   "if",
   "then",
   "else",
@@ -78,7 +102,11 @@ const Ne = [
   "export",
   "local",
   "in"
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 ], Ce = [
+========
+], ke = [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   "cd",
   "ls",
   "echo",
@@ -106,25 +134,42 @@ const Ne = [
   "curl",
   "wget"
 ];
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Se(e) {
   return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 function $e(e, r) {
   let a = e.replace(/(\/\/.*?)(\n|$)/g, `<span style="color:${r.comment}">$1</span>$2`);
   a = a.replace(/(\/\*[\s\S]*?\*\/)/g, `<span style="color:${r.comment}">$1</span>`), a = a.replace(
+========
+function Ce(e) {
+  return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+function Se(e, t) {
+  let a = e.replace(/(\/\/.*?)(\n|$)/g, `<span style="color:${t.comment}">$1</span>$2`);
+  a = a.replace(/(\/\*[\s\S]*?\*\/)/g, `<span style="color:${t.comment}">$1</span>`), a = a.replace(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g,
     `<span style="color:${r.string}">$1</span>`
   );
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const n = new RegExp(`\\b(${Ne.join("|")})\\b`, "g");
   return a = a.replace(n, `<span style="color:${r.keyword}">$1</span>`), a = a.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span style="color:${r.number}">$1</span>`), a;
 }
 function Ee(e, r) {
+========
+  const o = new RegExp(`\\b(${we.join("|")})\\b`, "g");
+  return a = a.replace(o, `<span style="color:${t.keyword}">$1</span>`), a = a.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span style="color:${t.number}">$1</span>`), a;
+}
+function $e(e, t) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   let a = e.replace(
     /("(?:[^"\\]|\\.)*")(\s*:)/g,
     `<span style="color:${r.property}">$1</span>$2`
   );
   return a = a.replace(/("(?:[^"\\]|\\.)*")/g, `<span style="color:${r.string}">$1</span>`), a = a.replace(/\b(true|false|null)\b/g, `<span style="color:${r.keyword}">$1</span>`), a = a.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span style="color:${r.number}">$1</span>`), a;
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Le(e, r) {
   let a = e.replace(/(#.*?)(\n|$)/g, `<span style="color:${r.comment}">$1</span>$2`);
   a = a.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span style="color:${r.string}">$1</span>`);
@@ -134,6 +179,17 @@ function Le(e, r) {
   return a = a.replace(o, `<span style="color:${r.builtin}">$1</span>`), a = a.replace(/(\$\w+|\$\{[^}]+\})/g, `<span style="color:${r.variable}">$1</span>`), a;
 }
 const Te = {
+========
+function Le(e, t) {
+  let a = e.replace(/(#.*?)(\n|$)/g, `<span style="color:${t.comment}">$1</span>$2`);
+  a = a.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span style="color:${t.string}">$1</span>`);
+  const o = new RegExp(`\\b(${Ne.join("|")})\\b`, "g");
+  a = a.replace(o, `<span style="color:${t.keyword}">$1</span>`);
+  const n = new RegExp(`\\b(${ke.join("|")})\\b`, "g");
+  return a = a.replace(n, `<span style="color:${t.builtin}">$1</span>`), a = a.replace(/(\$\w+|\$\{[^}]+\})/g, `<span style="color:${t.variable}">$1</span>`), a;
+}
+const Ee = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   comment: "#6b7280",
   string: "#4ade80",
   keyword: "#93c5fd",
@@ -141,7 +197,11 @@ const Te = {
   property: "#7dd3fc",
   builtin: "#c4b5fd",
   variable: "#fbbf24"
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 }, Ae = {
+========
+}, Te = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   comment: "#64748b",
   string: "#15803d",
   keyword: "#1d4ed8",
@@ -150,6 +210,7 @@ const Te = {
   builtin: "#7c3aed",
   variable: "#a16207"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function V(e, r, a) {
   const n = a === "dark" ? Te : Ae, o = Se(e);
   switch (r) {
@@ -158,13 +219,30 @@ function V(e, r, a) {
     case "bash":
     case "sh":
       return Le(o, n);
+========
+function Y(e, t, a) {
+  const o = a === "dark" ? Ee : Te, n = Ce(e);
+  switch (t) {
+    case "json":
+      return $e(n, o);
+    case "bash":
+    case "sh":
+      return Le(n, o);
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     case "text":
       return o;
     default:
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
       return $e(o, n);
   }
 }
 function It({
+========
+      return Se(n, o);
+  }
+}
+function Bt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   code: e,
   language: r = "tsx",
   theme: a = "dark",
@@ -268,12 +346,21 @@ function U() {
     );
   return e;
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Kt() {
   const { open: e, close: r, toggle: a, isOpen: n, query: o } = U();
   return { open: e, close: r, toggle: a, isOpen: n, query: o };
 }
 function Oe(e, r) {
   const a = r.toLowerCase().split("+").map((g) => g.trim()).filter(Boolean);
+========
+function Pt() {
+  const { open: e, close: t, toggle: a, isOpen: o, query: n } = U();
+  return { open: e, close: t, toggle: a, isOpen: o, query: n };
+}
+function Ae(e, t) {
+  const a = t.toLowerCase().split("+").map((b) => b.trim()).filter(Boolean);
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   if (a.length === 0) return !1;
   const n = a[a.length - 1], o = new Set(a.slice(0, -1)), l = o.has("cmd") || o.has("meta"), s = o.has("ctrl"), d = o.has("mod"), p = o.has("shift"), f = o.has("alt");
   if (d) {
@@ -281,7 +368,11 @@ function Oe(e, r) {
   } else if (l !== e.metaKey || s !== e.ctrlKey) return !1;
   return p !== e.shiftKey || f !== e.altKey ? !1 : e.key.toLowerCase() === n;
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Ht({
+========
+function It({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   commands: e,
   getDynamicCommands: r,
   recentsKey: a = _e,
@@ -323,6 +414,7 @@ function Ht({
     };
     return window.addEventListener("keydown", $, !0), () => window.removeEventListener("keydown", $, !0);
   }, []);
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const y = O(() => {
     const $ = r ? r(d) : [];
     return [...e ?? [], ...$, ...f.values()].filter((E) => E.when ? E.when() : !0);
@@ -333,6 +425,18 @@ function Ht({
         for (const E of S.current)
           if (E.hotkey && Oe(k, E.hotkey)) {
             k.preventDefault(), Promise.resolve().then(() => E.run());
+========
+  const g = R(() => {
+    const h = t ? t(l) : [];
+    return [...e ?? [], ...h, ...c.values()].filter((m) => m.when ? m.when() : !0);
+  }, [e, t, l, c]), p = D(g);
+  p.current = g, $(() => {
+    const h = (N) => {
+      if (!((N.metaKey || N.ctrlKey) && N.key.toLowerCase() === "k")) {
+        for (const m of p.current)
+          if (m.hotkey && Ae(N, m.hotkey)) {
+            N.preventDefault(), Promise.resolve().then(() => m.run());
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
             return;
           }
       }
@@ -354,12 +458,21 @@ function Ht({
   };
   return /* @__PURE__ */ t(ne.Provider, { value: I, children: o });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Ft(e) {
   const { registerCommand: r, unregisterCommand: a } = U();
   _(() => (r(e), () => a(e.id)), [e, r, a]);
 }
 function je(e) {
   const r = /* @__PURE__ */ new Map();
+========
+function Kt(e) {
+  const { registerCommand: t, unregisterCommand: a } = U();
+  $(() => (t(e), () => a(e.id)), [e, t, a]);
+}
+function _e(e) {
+  const t = /* @__PURE__ */ new Map();
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   for (const a of e) {
     const n = a.group ?? null, o = r.get(n);
     o ? o.push(a) : r.set(n, [a]);
@@ -369,11 +482,16 @@ function je(e) {
     items: n
   }));
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Ut({
+========
+function Ft({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   placeholder: e = "Type a command or search…",
   emptyState: r,
   className: a
 } = {}) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const {
     isOpen: n,
     close: o,
@@ -389,6 +507,11 @@ function Ut({
   }, [d, l, p]), N = O(() => je(d), [d]), b = A(
     (x) => {
       f(x.id), o(), Promise.resolve().then(() => x.run());
+========
+  const { isOpen: o, close: n, query: l, setQuery: s, mergedCommands: c } = U(), u = R(() => _e(c), [c]), f = T(
+    (b) => {
+      n(), Promise.resolve().then(() => b.run());
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     },
     [o, f]
   );
@@ -401,15 +524,24 @@ function Ut({
       rawChildren: !0,
       backdropTestId: "command-palette-backdrop",
       children: /* @__PURE__ */ i(
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         M,
+========
+        O,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         {
           label: "Command palette",
           value: void 0,
           className: u("flex flex-col gap-0 w-full", a),
           "data-testid": "command-palette",
           children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
             /* @__PURE__ */ t(
               M.Input,
+========
+            /* @__PURE__ */ r(
+              O.Input,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
               {
                 value: l,
                 onValueChange: s,
@@ -422,6 +554,7 @@ function Ut({
                 "data-testid": "command-palette-input"
               }
             ),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
             /* @__PURE__ */ i(M.List, { className: "max-h-[360px] overflow-y-auto py-2", children: [
               /* @__PURE__ */ t(M.Empty, { className: "px-3 py-6 text-center text-sm text-text-tertiary", children: r ?? "No results." }),
               g.length > 0 && /* @__PURE__ */ t(M.Group, { heading: "Recent", "data-testid": "command-palette-group-recent", children: g.map((x) => /* @__PURE__ */ i(
@@ -448,6 +581,16 @@ function Ut({
                   heading: x ?? void 0,
                   children: m.map((c) => /* @__PURE__ */ i(
                     M.Item,
+========
+            /* @__PURE__ */ i(O.List, { className: "max-h-[360px] overflow-y-auto py-2", children: [
+              /* @__PURE__ */ r(O.Empty, { className: "px-3 py-6 text-center text-sm text-text-tertiary", children: t ?? "No results." }),
+              u.map(({ groupName: b, items: k }) => /* @__PURE__ */ r(
+                O.Group,
+                {
+                  heading: b ?? void 0,
+                  children: k.map((x) => /* @__PURE__ */ i(
+                    O.Item,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
                     {
                       value: `${c.id} ${c.label} ${(c.keywords ?? []).join(" ")}`,
                       keywords: c.keywords,
@@ -488,8 +631,13 @@ function Ut({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Gt({ className: e } = {}) {
   const { toggle: r } = U();
+========
+function Ht({ className: e } = {}) {
+  const { toggle: t } = U();
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return /* @__PURE__ */ i(
     "button",
     {
@@ -511,11 +659,19 @@ function Gt({ className: e } = {}) {
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function W(e) {
   if (e === "right") return "text-right";
   if (e === "center") return "text-center";
 }
 function Wt({
+========
+function z(e) {
+  if (e === "right") return "text-right";
+  if (e === "center") return "text-center";
+}
+function Ut({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   data: e,
   columns: r,
   keyField: a,
@@ -530,14 +686,23 @@ function Wt({
   className: N,
   "data-testid": b
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const [x, m] = T(null), [c, h] = T("asc"), [v, C] = T(""), [y, S] = T(0), I = (w) => {
     x === w ? h((R) => R === "asc" ? "desc" : "asc") : (m(w), h("asc"));
   }, $ = O(() => {
     if (!l || v.trim() === "") return e;
     const w = v.trim().toLowerCase();
+========
+  const [v, g] = E(null), [p, w] = E("asc"), [h, N] = E(""), [m, C] = E(0), I = (y) => {
+    v === y ? w((L) => L === "asc" ? "desc" : "asc") : (g(y), w("asc"));
+  }, _ = R(() => {
+    if (!l || h.trim() === "") return e;
+    const y = h.trim().toLowerCase();
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     return e.filter(
       (R) => r.some((L) => L.filterable === !1 ? !1 : (L.getFilterText ? L.getFilterText(R) : String(R[L.key] ?? "")).toLowerCase().includes(w))
     );
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   }, [e, r, v, l]), k = O(() => {
     if (!x) return $;
     const w = r.find((B) => B.key === x);
@@ -554,6 +719,24 @@ function Wt({
   }, [k, d, j]);
   return /* @__PURE__ */ i("div", { className: u("flex flex-col gap-3", N), "data-testid": b, children: [
     l && /* @__PURE__ */ t(
+========
+  }, [e, t, h, l]), A = R(() => {
+    if (!v) return _;
+    const y = t.find((M) => M.key === v);
+    if (!y || !y.sortable) return _;
+    const L = y.compare ?? ((M, F) => {
+      const oe = String(M[y.key] ?? ""), le = String(F[y.key] ?? "");
+      return oe.localeCompare(le);
+    }), S = [..._];
+    return S.sort((M, F) => p === "asc" ? L(M, F) : -L(M, F)), S;
+  }, [_, t, v, p]), K = c && c > 0 ? Math.max(1, Math.ceil(A.length / c)) : 1, B = Math.min(m, K - 1), q = R(() => {
+    if (!c || c <= 0) return A;
+    const y = B * c;
+    return A.slice(y, y + c);
+  }, [A, c, B]);
+  return /* @__PURE__ */ i("div", { className: d("flex flex-col gap-3", k), "data-testid": x, children: [
+    l && /* @__PURE__ */ r(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       "input",
       {
         type: "text",
@@ -567,6 +750,7 @@ function Wt({
         className: "w-full max-w-xs rounded-md border border-border-field bg-surface px-3 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
       }
     ),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
     /* @__PURE__ */ i(pe, { className: "border border-border rounded-lg overflow-hidden", children: [
       /* @__PURE__ */ t(fe, { children: /* @__PURE__ */ i("tr", { children: [
         r.map((w) => {
@@ -581,10 +765,27 @@ function Wt({
               onClick: w.sortable ? () => I(w.key) : void 0,
               "data-testid": w.sortable ? `datatable-header-${w.key}` : void 0,
               children: w.header
+========
+    /* @__PURE__ */ i(ue, { className: "border border-border rounded-lg overflow-hidden", children: [
+      /* @__PURE__ */ r(pe, { children: /* @__PURE__ */ i("tr", { children: [
+        t.map((y) => {
+          const L = y.sortable && v === y.key;
+          return /* @__PURE__ */ r(
+            V,
+            {
+              sortable: y.sortable,
+              sortDirection: L ? p : null,
+              style: y.width ? { width: y.width } : void 0,
+              className: d(z(y.align), y.className),
+              onClick: y.sortable ? () => I(y.key) : void 0,
+              "data-testid": y.sortable ? `datatable-header-${y.key}` : void 0,
+              children: y.header
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
             },
             w.key
           );
         }),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         o && /* @__PURE__ */ t(Y, { className: "text-right", children: "Actions" })
       ] }) }),
       /* @__PURE__ */ t(xe, { children: f ? Array.from({ length: g }).map((w, R) => /* @__PURE__ */ i(G, { "data-testid": "datatable-loading-row", children: [
@@ -592,13 +793,27 @@ function Wt({
         o && /* @__PURE__ */ t(K, { className: "text-right", children: /* @__PURE__ */ t("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-slate-100" }) })
       ] }, `skeleton-${R}`)) : q.length === 0 ? /* @__PURE__ */ t(G, { children: /* @__PURE__ */ t(
         K,
+========
+        n && /* @__PURE__ */ r(V, { className: "text-right", children: "Actions" })
+      ] }) }),
+      /* @__PURE__ */ r(fe, { children: f ? Array.from({ length: b }).map((y, L) => /* @__PURE__ */ i(W, { "data-testid": "datatable-loading-row", children: [
+        t.map((S) => /* @__PURE__ */ r(P, { className: z(S.align), children: /* @__PURE__ */ r("div", { className: "h-4 w-3/4 animate-pulse rounded bg-slate-100" }) }, S.key)),
+        n && /* @__PURE__ */ r(P, { className: "text-right", children: /* @__PURE__ */ r("div", { className: "ml-auto h-4 w-16 animate-pulse rounded bg-slate-100" }) })
+      ] }, `skeleton-${L}`)) : q.length === 0 ? /* @__PURE__ */ r(W, { children: /* @__PURE__ */ r(
+        P,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         {
           colSpan: r.length + (o ? 1 : 0),
           className: "text-center text-text-secondary py-8",
           children: p
         }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
       ) }) : q.map((w, R) => /* @__PURE__ */ i(
         G,
+========
+      ) }) : q.map((y, L) => /* @__PURE__ */ i(
+        W,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         {
           clickable: !!n,
           onClick: n ? () => n(w) : void 0,
@@ -606,8 +821,13 @@ function Wt({
             r.map((L) => /* @__PURE__ */ t(
               K,
               {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
                 className: u(W(L.align), L.className),
                 children: L.render ? L.render(w, R) : String(w[L.key] ?? "")
+========
+                className: d(z(S.align), S.className),
+                children: S.render ? S.render(y, L) : String(y[S.key] ?? "")
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
               },
               L.key
             )),
@@ -654,6 +874,34 @@ function Wt({
     ] })
   ] });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
+========
+const Me = "🔒";
+function Wt({
+  capabilityName: e,
+  title: t,
+  description: a,
+  actionLabel: o,
+  onAction: n,
+  actions: l,
+  icon: s,
+  testId: c = "capability-denied-fallback"
+}) {
+  const u = t ?? (e ? `${e} is unavailable` : "Feature unavailable"), f = a ?? (e ? `${e} is not enabled for this workspace. Contact your administrator to request access.` : "This feature is not enabled for your account. Contact your administrator to request access.");
+  return /* @__PURE__ */ r(
+    xe,
+    {
+      icon: s === null ? void 0 : s ?? Me,
+      title: u,
+      description: f,
+      actionLabel: o,
+      onAction: n,
+      actions: l,
+      testId: c
+    }
+  );
+}
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
 function zt({
   icon: e = "⚠️",
   title: r,
@@ -697,7 +945,40 @@ function zt({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function qt({
+========
+const Re = {
+  sm: "w-[14px] h-[14px]",
+  md: "w-[20px] h-[20px]",
+  lg: "w-[28px] h-[28px]"
+};
+function De({
+  size: e = "md",
+  color: t,
+  className: a,
+  style: o,
+  "aria-label": n = "Loading",
+  "data-testid": l
+}) {
+  const s = t ?? "var(--color-primary)";
+  return /* @__PURE__ */ r(
+    "div",
+    {
+      role: "status",
+      "aria-label": n,
+      "data-testid": l,
+      className: d(
+        "inline-block rounded-full border-2 border-transparent animate-spin",
+        Re[e],
+        a
+      ),
+      style: { borderTopColor: s, ...o }
+    }
+  );
+}
+function Gt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   label: e = "Loading…",
   description: r,
   spinnerSize: a = "lg",
@@ -715,14 +996,24 @@ function qt({
         "text-text-secondary gap-3 p-8 font-[inherit]"
       ),
       children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         /* @__PURE__ */ t(me, { size: a, color: n, "aria-label": e }),
         /* @__PURE__ */ t("div", { className: "text-[15px] font-medium text-text-primary", children: e }),
         r && /* @__PURE__ */ t("div", { className: "text-[13px] text-center max-w-[340px] text-text-secondary leading-normal", children: r })
+========
+        /* @__PURE__ */ r(De, { size: a, color: o, "aria-label": e }),
+        /* @__PURE__ */ r("div", { className: "text-[15px] font-medium text-text-primary", children: e }),
+        t && /* @__PURE__ */ r("div", { className: "text-[13px] text-center max-w-[340px] text-text-secondary leading-normal", children: t })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ]
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Yt({
+========
+function qt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   label: e,
   hint: r,
   error: a,
@@ -783,11 +1074,19 @@ function Yt({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Be = {
   sm: "px-2.5 py-1 text-xs",
   md: "px-3 py-1.5 text-sm"
 };
 function Pe(e) {
+========
+const Oe = {
+  sm: "px-2.5 py-1 text-xs",
+  md: "px-3 py-1.5 text-sm"
+};
+function je(e) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   switch (e) {
     case "underline":
       return "inline-flex items-center gap-1 border-b border-[var(--color-border)]";
@@ -797,8 +1096,13 @@ function Pe(e) {
       return "inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5";
   }
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Ie(e, r, a) {
   return e === "underline" ? u(
+========
+function Be(e, t, a) {
+  return e === "underline" ? d(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     "-mb-px border-b-2 rounded-none",
     r ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]",
     a && "opacity-50 cursor-not-allowed hover:text-[var(--color-text-secondary)]"
@@ -823,6 +1127,7 @@ function Vt({
   "aria-label": d,
   idPrefix: p
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const f = te(), g = p ?? f, N = D(/* @__PURE__ */ new Map()), b = O(() => e.filter((c) => !c.disabled).map((c) => c.id), [e]), x = A((c) => {
     N.current.get(c)?.focus();
   }, []), m = A(
@@ -831,6 +1136,16 @@ function Vt({
       const v = b.indexOf(h);
       let C = null;
       switch (c.key) {
+========
+  const f = ee(), b = u ?? f, k = D(/* @__PURE__ */ new Map()), x = R(() => e.filter((p) => !p.disabled).map((p) => p.id), [e]), v = T((p) => {
+    k.current.get(p)?.focus();
+  }, []), g = T(
+    (p, w) => {
+      if (x.length === 0) return;
+      const h = x.indexOf(w);
+      let N = null;
+      switch (p.key) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         case "ArrowRight":
         case "ArrowDown":
           C = v === -1 ? 0 : (v + 1) % b.length;
@@ -864,8 +1179,13 @@ function Vt({
     "div",
     {
       role: "tablist",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
       "aria-label": d,
       className: u(Pe(n), l),
+========
+      "aria-label": c,
+      className: d(je(o), l),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       style: s,
       children: e.map((c) => {
         const h = c.id === r;
@@ -887,8 +1207,13 @@ function Vt({
             onKeyDown: (v) => m(v, c.id),
             className: u(
               "inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
               Be[o],
               Ie(n, h, !!c.disabled)
+========
+              Oe[n],
+              Be(o, w, !!p.disabled)
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
             ),
             children: [
               c.icon,
@@ -911,8 +1236,13 @@ function Vt({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Jt({ id: e, when: r, idPrefix: a, className: n, style: o, children: l }) {
   return e !== r ? null : /* @__PURE__ */ t(
+========
+function Yt({ id: e, when: t, idPrefix: a, className: o, style: n, children: l }) {
+  return e !== t ? null : /* @__PURE__ */ r(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     "div",
     {
       role: "tabpanel",
@@ -925,12 +1255,20 @@ function Jt({ id: e, when: r, idPrefix: a, className: n, style: o, children: l }
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Ke = {
+========
+const Pe = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   positive: "text-[var(--color-success)]",
   negative: "text-[var(--color-danger)]",
   neutral: "text-[var(--color-text-secondary)]"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function He(e) {
+========
+function Ie(e) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return e.tone ?? (e.direction === "up" ? "positive" : "negative");
 }
 function Qt({
@@ -959,15 +1297,26 @@ function Qt({
   ), c = s && s.length > 0 ? s : null;
   let h = null;
   if (l) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
     const C = He(l), y = l.direction === "up" ? "▲" : "▼", S = l.direction === "up" ? "+" : "-", I = l.suffix ?? "%", $ = Math.abs(l.value), k = l["aria-label"] ?? `${l.direction} ${$}${I}`;
     h = /* @__PURE__ */ i(
+========
+    const N = Ie(l), m = l.direction === "up" ? "▲" : "▼", C = l.direction === "up" ? "+" : "-", I = l.suffix ?? "%", _ = Math.abs(l.value), A = l["aria-label"] ?? `${l.direction} ${_}${I}`;
+    w = /* @__PURE__ */ i(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       "div",
       {
         "data-testid": "stat-card-delta",
         "data-direction": l.direction,
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         "data-tone": C,
         "aria-label": k,
         className: u("mt-1 text-[12px] font-medium leading-tight", Ke[C]),
+========
+        "data-tone": N,
+        "aria-label": A,
+        className: d("mt-1 text-[12px] font-medium leading-tight", Pe[N]),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         children: [
           /* @__PURE__ */ i("span", { "aria-hidden": "true", children: [
             y,
@@ -980,8 +1329,13 @@ function Qt({
       }
     );
   }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const v = /* @__PURE__ */ i(P, { children: [
     /* @__PURE__ */ t("div", { className: "text-[12px] uppercase tracking-wide text-[var(--color-text-tertiary)]", children: e }),
+========
+  const h = /* @__PURE__ */ i(j, { children: [
+    /* @__PURE__ */ r("div", { className: "text-[12px] uppercase tracking-wide text-[var(--color-text-tertiary)]", children: e }),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     /* @__PURE__ */ i("div", { className: "mt-1 flex items-center gap-2", children: [
       /* @__PURE__ */ t(
         "div",
@@ -993,7 +1347,11 @@ function Qt({
           children: r
         }
       ),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
       c && /* @__PURE__ */ t(be, { data: c, width: 80, height: 20 })
+========
+      p && /* @__PURE__ */ r(me, { data: p, width: 80, height: 20 })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     ] }),
     h,
     o != null && /* @__PURE__ */ t("div", { className: "mt-1 text-[11px] italic text-[var(--color-text-tertiary)]", children: o })
@@ -1010,13 +1368,21 @@ function Qt({
     }
   ) : /* @__PURE__ */ t("div", { "data-testid": x, className: m, style: b, children: v });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Fe = {
+========
+const Ke = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   1: "sm:grid-cols-1",
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-3",
   4: "sm:grid-cols-4"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Zt({
+========
+function Jt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   children: e,
   columns: r = 4,
   dense: a = !1,
@@ -1030,7 +1396,11 @@ function Zt({
       "data-testid": l,
       className: u(
         "grid grid-cols-1",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         Fe[r],
+========
+        Ke[t],
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         a ? "gap-2" : "gap-4",
         n
       ),
@@ -1039,11 +1409,19 @@ function Zt({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Ue = {
   sm: "h-1.5",
   md: "h-2"
 };
 function Xt({
+========
+const Fe = {
+  sm: "h-1.5",
+  md: "h-2"
+};
+function Zt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   value: e,
   max: r = 100,
   color: a,
@@ -1071,7 +1449,11 @@ function Xt({
         "aria-label": f,
         className: u(
           "w-full rounded-full overflow-hidden bg-[var(--color-surface-hover)]",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
           Ue[n]
+========
+          Fe[o]
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         ),
         children: /* @__PURE__ */ t(
           "div",
@@ -1084,20 +1466,32 @@ function Xt({
     )
   ] });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Ge = {
+========
+const He = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   online: "var(--color-success, #22c55e)",
   away: "var(--color-state-pending, #f59e0b)",
   busy: "var(--color-state-error, #ef4444)",
   offline: "var(--color-text-tertiary, #94a3b8)",
   unknown: "var(--color-text-tertiary, #94a3b8)"
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 }, We = {
+========
+}, Ue = {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   online: "Online",
   away: "Away",
   busy: "Busy",
   offline: "Offline",
   unknown: "Unknown presence"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function ze({
+========
+function We({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   state: e,
   ariaLabel: r,
   label: a,
@@ -1108,11 +1502,19 @@ function ze({
   title: d,
   "data-testid": p
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const f = n ?? e === "online", g = r ?? We[e];
   return /* @__PURE__ */ t(
     re,
     {
       color: Ge[e],
+========
+  const f = o ?? e === "online", b = t ?? Ue[e];
+  return /* @__PURE__ */ r(
+    te,
+    {
+      color: He[e],
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       pulse: f,
       size: o,
       label: a,
@@ -1124,7 +1526,11 @@ function ze({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function er({
+========
+function Xt({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   name: e,
   label: r,
   avatarSize: a = 20,
@@ -1151,17 +1557,73 @@ function er({
       ),
       style: d,
       children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         /* @__PURE__ */ t(z, { name: e, size: a, color: n }),
         /* @__PURE__ */ t("span", { className: "font-medium leading-none", children: r ?? e }),
         o && /* @__PURE__ */ t(ze, { state: o, size: "xs" })
+========
+        /* @__PURE__ */ r(G, { name: e, size: a, color: o }),
+        /* @__PURE__ */ r("span", { className: "font-medium leading-none", children: t ?? e }),
+        n && /* @__PURE__ */ r(We, { state: n, size: "xs" })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ]
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const qe = {
   sm: "px-2.5 py-1 text-xs",
   md: "px-3 py-1.5 text-sm"
 }, Ye = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", Ve = "bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
+========
+const ze = {
+  sm: "px-2.5 py-0.5 text-[11px]",
+  xs: "px-2 py-px text-[10px]"
+}, Ge = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", qe = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", Ve = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
+function er({
+  active: e,
+  onClick: t,
+  color: a,
+  dot: o = !1,
+  size: n = "sm",
+  children: l,
+  className: s,
+  disabled: c = !1
+}) {
+  const u = e && !!a, f = u ? { background: `${a}22`, borderColor: `${a}66`, color: a } : void 0;
+  return /* @__PURE__ */ i(
+    "button",
+    {
+      type: "button",
+      onClick: t,
+      disabled: c,
+      "aria-pressed": e,
+      className: d(
+        "inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none",
+        ze[n],
+        e ? u ? Ve : qe : Ge,
+        c && "opacity-50 cursor-not-allowed",
+        s
+      ),
+      style: f,
+      children: [
+        o && /* @__PURE__ */ r(
+          "span",
+          {
+            className: "w-1.5 h-1.5 rounded-full flex-shrink-0",
+            style: { background: a || "currentColor" }
+          }
+        ),
+        l
+      ]
+    }
+  );
+}
+const Ye = {
+  sm: "px-2.5 py-1 text-xs",
+  md: "px-3 py-1.5 text-sm"
+}, Qe = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", Je = "bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
 function tr({
   options: e,
   value: r,
@@ -1187,8 +1649,13 @@ function tr({
             "aria-pressed": s,
             className: u(
               "inline-flex items-center gap-1.5 rounded-md font-medium transition-all cursor-pointer",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
               qe[n],
               s ? Ve : Ye
+========
+              Ye[o],
+              s ? Je : Qe
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
             ),
             children: [
               l.icon,
@@ -1240,7 +1707,11 @@ function rr({
     )
   ] });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Je = [
+========
+const Ze = [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -1259,8 +1730,13 @@ function ar({
   footer: s,
   "data-testid": d
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const p = D(null);
   return _(() => {
+========
+  const u = D(null);
+  return $(() => {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     if (!e) return;
     const f = (g) => {
       g.key === "Escape" && r();
@@ -1270,11 +1746,19 @@ function ar({
     if (!e) return;
     const f = p.current;
     if (!f) return;
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
     const g = f.querySelector(Je);
     g ? g.focus() : (f.setAttribute("tabindex", "-1"), f.focus());
   }, [e]), e ? ae(
     /* @__PURE__ */ i("div", { className: "fixed inset-0 z-[9000]", "data-testid": d, children: [
       /* @__PURE__ */ t(
+========
+    const b = f.querySelector(Ze);
+    b ? b.focus() : (f.setAttribute("tabindex", "-1"), f.focus());
+  }, [e]), e ? re(
+    /* @__PURE__ */ i("div", { className: "fixed inset-0 z-[9000]", "data-testid": c, children: [
+      /* @__PURE__ */ r(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         "div",
         {
           className: "absolute inset-0 bg-black/30 backdrop-blur-[1px]",
@@ -1329,8 +1813,13 @@ function ar({
     document.body
   ) : null;
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Qe(e, r) {
   if (!e || typeof window > "u") return r;
+========
+function Xe(e, t) {
+  if (!e || typeof window > "u") return t;
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   try {
     const a = window.localStorage.getItem(e);
     return a === null ? r : a === "true";
@@ -1346,8 +1835,13 @@ function nr({
   className: o,
   storageKey: l
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const [s, d] = T(
     () => Qe(l, r)
+========
+  const [s, c] = E(
+    () => Xe(l, t)
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   );
   return _(() => {
     if (l && !(typeof window > "u"))
@@ -1487,13 +1981,17 @@ function or({
     }
   );
 }
-const Ze = {
+const et = {
   error: "bg-[var(--color-danger-bg,#fef2f2)] border-[var(--color-danger,#dc2626)] text-[var(--color-danger,#dc2626)]",
   success: "bg-[var(--color-success-bg,#f0fdf4)] border-[var(--color-success,#16a34a)] text-[var(--color-success,#16a34a)]",
   info: "bg-[var(--color-info-bg,#eff6ff)] border-[var(--color-info,#2563eb)] text-[var(--color-info,#2563eb)]",
   warning: "bg-[var(--color-warning-bg,#fffbeb)] border-[var(--color-warning,#f59e0b)] text-[var(--color-warning,#f59e0b)]"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function lr({ tone: e, children: r, onDismiss: a, className: n }) {
+========
+function lr({ tone: e, children: t, onDismiss: a, className: o }) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return /* @__PURE__ */ i(
     "div",
     {
@@ -1501,8 +1999,13 @@ function lr({ tone: e, children: r, onDismiss: a, className: n }) {
       "aria-live": e === "error" || e === "warning" ? "assertive" : "polite",
       className: u(
         "flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         Ze[e],
         n
+========
+        et[e],
+        o
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ),
       children: [
         /* @__PURE__ */ t("span", { className: "flex-1", children: r }),
@@ -1570,10 +2073,17 @@ function sr({
     r && /* @__PURE__ */ t("p", { className: "text-sm text-[var(--color-text-secondary)]", children: r })
   ] });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function F({ size: e = "md", color: r, className: a }) {
   const n = e === "sm" ? 4 : 6, o = r || "var(--color-text-tertiary, #94a3b8)";
   return /* @__PURE__ */ i(P, { children: [
     /* @__PURE__ */ t("style", { children: `
+========
+function H({ size: e = "md", color: t, className: a }) {
+  const o = e === "sm" ? 4 : 6, n = t || "var(--color-text-tertiary, #94a3b8)";
+  return /* @__PURE__ */ i(j, { children: [
+    /* @__PURE__ */ r("style", { children: `
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         @keyframes thinkDot {
           0%, 80%, 100% { transform: scale(1); opacity: 0.4; }
           40% { transform: scale(1.3); opacity: 1; }
@@ -1595,7 +2105,7 @@ function F({ size: e = "md", color: r, className: a }) {
     )) })
   ] });
 }
-function Xe(e) {
+function tt(e) {
   if (e.length === 0) return "";
   if (e.length === 1) return `${e[0]} is typing…`;
   if (e.length === 2) return `${e[0]} and ${e[1]} are typing…`;
@@ -1621,6 +2131,7 @@ function ir({
         o
       ),
       children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         /* @__PURE__ */ t(F, { size: n, color: a }),
         !r && /* @__PURE__ */ t("span", { children: Xe(e) })
       ]
@@ -1655,6 +2166,10 @@ function cr({
       children: [
         /* @__PURE__ */ t("span", { "aria-hidden": "true", className: s.colorClass, children: "⬤" }),
         p && /* @__PURE__ */ t("span", { className: u(s.colorClass, "font-semibold"), children: d })
+========
+        /* @__PURE__ */ r(H, { size: o, color: a }),
+        !t && /* @__PURE__ */ r("span", { children: tt(e) })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ]
     }
   );
@@ -1664,13 +2179,13 @@ const J = {
   info: "INFO",
   warn: "WARN",
   error: "ERROR"
-}, tt = {
+}, rt = {
   debug: "text-[var(--color-text-tertiary)]",
   info: "text-[var(--color-info,#3b82f6)]",
   warn: "text-[var(--color-warning,#d97706)]",
   error: "text-[var(--color-danger,#dc2626)]"
 };
-function rt({
+function at({
   lines: e,
   follow: r = !0,
   showTimestamp: a = !0,
@@ -1685,6 +2200,7 @@ function rt({
   style: N,
   "data-testid": b = "log-stream"
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const x = D(null), [m, c] = T(!1);
   _(() => {
     if (!r || m) return;
@@ -1700,6 +2216,23 @@ function rt({
     const y = x.current;
     y && (y.scrollTop = y.scrollHeight, c(!1));
   }, C = /* @__PURE__ */ i("div", { className: "flex items-center gap-2", children: [
+========
+  const v = D(null), [g, p] = E(!1);
+  $(() => {
+    if (!t || g) return;
+    const m = v.current;
+    m && (m.scrollTop = m.scrollHeight);
+  }, [e, t, g]);
+  const w = () => {
+    const m = v.current;
+    if (!m) return;
+    const C = m.scrollHeight - m.scrollTop - m.clientHeight < 24;
+    p(!C);
+  }, h = () => {
+    const m = v.current;
+    m && (m.scrollTop = m.scrollHeight, p(!1));
+  }, N = /* @__PURE__ */ i("div", { className: "flex items-center gap-2", children: [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     /* @__PURE__ */ i(
       "span",
       {
@@ -1735,7 +2268,11 @@ function rt({
       className: u("flex flex-col", g),
       style: N,
       children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         l !== null && /* @__PURE__ */ t("div", { className: "px-4 py-3 border-b border-[var(--color-border)]", children: /* @__PURE__ */ t(he, { title: l, meta: s ?? C }) }),
+========
+        l !== null && /* @__PURE__ */ r("div", { className: "px-4 py-3 border-b border-[var(--color-border)]", children: /* @__PURE__ */ r(be, { title: l, meta: s ?? N }) }),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         /* @__PURE__ */ i("div", { className: "relative flex-1 min-h-0 flex", children: [
           /* @__PURE__ */ t(
             "div",
@@ -1775,7 +2312,11 @@ function rt({
                         {
                           className: u(
                             "shrink-0 font-semibold uppercase text-[10px] w-[44px]",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
                             tt[S]
+========
+                            rt[C]
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
                           ),
                           "aria-label": `level ${J[S].toLowerCase()}`,
                           children: J[S]
@@ -1814,8 +2355,13 @@ function rt({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const dr = rt;
 function ur({
+========
+const cr = at;
+function dr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   title: e,
   description: r,
   category: a,
@@ -1835,9 +2381,15 @@ function ur({
     "group block w-full text-left bg-[var(--color-surface,#fff)]",
     "rounded-xl border border-[var(--color-border)] overflow-hidden",
     "transition-[box-shadow,transform] duration-150",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
     (d || p) && "cursor-pointer hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-0.5",
     N
   ), h = /* @__PURE__ */ i(P, { children: [
+========
+    (c || u) && "cursor-pointer hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-0.5",
+    k
+  ), w = /* @__PURE__ */ i(j, { children: [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     /* @__PURE__ */ i(
       "div",
       {
@@ -1870,8 +2422,13 @@ function ur({
     ),
     /* @__PURE__ */ i("div", { className: "px-4 py-3", children: [
       /* @__PURE__ */ i("div", { className: "flex items-center gap-2 mb-1.5", children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         a && /* @__PURE__ */ t(ye, { tone: n, size: "xs", "data-testid": `${x}-category`, children: a }),
         g && /* @__PURE__ */ t("span", { className: "ml-auto", children: g })
+========
+        a && /* @__PURE__ */ r(ge, { tone: o, size: "xs", "data-testid": `${v}-category`, children: a }),
+        b && /* @__PURE__ */ r("span", { className: "ml-auto", children: b })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ] }),
       /* @__PURE__ */ t("div", { className: "text-[14px] font-semibold text-[var(--color-text-primary)] leading-snug", children: e }),
       r && /* @__PURE__ */ t("div", { className: "mt-1 text-[12px] text-[var(--color-text-secondary)] leading-snug", children: r })
@@ -1899,14 +2456,18 @@ function ur({
     }
   ) : /* @__PURE__ */ t("div", { "data-testid": x, className: c, style: b, children: h });
 }
-const at = {
+const nt = {
   1: "sm:grid-cols-1",
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-2 lg:grid-cols-3",
   4: "sm:grid-cols-2 lg:grid-cols-4",
   5: "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function pr({
+========
+function ur({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   children: e,
   columns: r = 3,
   dense: a = !1,
@@ -1921,7 +2482,11 @@ function pr({
       "data-columns": r,
       className: u(
         "grid grid-cols-1",
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
         at[r],
+========
+        nt[t],
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         a ? "gap-3" : "gap-5",
         n
       ),
@@ -1930,7 +2495,7 @@ function pr({
     }
   );
 }
-const nt = {
+const ot = {
   neutral: "bg-slate-50",
   success: "bg-green-50",
   warning: "bg-amber-50",
@@ -1938,7 +2503,7 @@ const nt = {
   info: "bg-blue-50",
   caution: "bg-orange-50",
   purple: "bg-purple-50"
-}, ot = {
+}, lt = {
   neutral: "border-slate-200",
   success: "border-green-300",
   warning: "border-amber-300",
@@ -1946,7 +2511,7 @@ const nt = {
   info: "border-blue-300",
   caution: "border-orange-300",
   purple: "border-purple-300"
-}, lt = {
+}, st = {
   neutral: "text-slate-800",
   success: "text-green-800",
   warning: "text-amber-800",
@@ -1955,7 +2520,7 @@ const nt = {
   caution: "text-orange-800",
   purple: "text-purple-800"
 };
-function st({
+function it({
   orientation: e,
   variant: r
 }) {
@@ -1974,7 +2539,7 @@ function st({
     }
   );
 }
-function it({
+function ct({
   layers: e,
   orientation: r = "vertical",
   connector: a = "arrow",
@@ -2005,28 +2570,44 @@ function it({
               "data-tone": f,
               className: u(
                 "rounded-md border px-3 py-2",
-                nt[f],
                 ot[f],
+                lt[f],
                 !s && "min-w-[140px]"
               ),
               children: [
                 /* @__PURE__ */ i("div", { className: "flex items-center gap-2", children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
                   d.icon != null && /* @__PURE__ */ t("span", { className: "shrink-0 text-[14px] leading-none", "aria-hidden": !0, children: d.icon }),
                   /* @__PURE__ */ t("span", { className: u("text-[12px] font-semibold", lt[f]), children: d.label }),
                   d.meta != null && /* @__PURE__ */ t("span", { className: "ml-auto text-[10px] text-[var(--color-text-tertiary)] shrink-0", children: d.meta })
+========
+                  c.icon != null && /* @__PURE__ */ r("span", { className: "shrink-0 text-[14px] leading-none", "aria-hidden": !0, children: c.icon }),
+                  /* @__PURE__ */ r("span", { className: d("text-[12px] font-semibold", st[f]), children: c.label }),
+                  c.meta != null && /* @__PURE__ */ r("span", { className: "ml-auto text-[10px] text-[var(--color-text-tertiary)] shrink-0", children: c.meta })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
                 ] }),
                 d.description != null && /* @__PURE__ */ t("div", { className: "mt-0.5 text-[11px] leading-snug text-[var(--color-text-secondary)]", children: d.description })
               ]
             }
           ),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
           p < e.length - 1 && /* @__PURE__ */ t(st, { orientation: r, variant: a })
         ] }, d.id);
+========
+          u < e.length - 1 && /* @__PURE__ */ r(it, { orientation: t, variant: a })
+        ] }, c.id);
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       })
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const fr = it;
 function xr({
+========
+const pr = ct;
+function fr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   value: e,
   onChange: r,
   onSubmit: a,
@@ -2105,7 +2686,11 @@ function xr({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function ct({ name: e, done: r, className: a }) {
+========
+function dt({ name: e, done: t, className: a }) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return /* @__PURE__ */ i(
     "span",
     {
@@ -2121,10 +2706,17 @@ function ct({ name: e, done: r, className: a }) {
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function dt({ toolCalls: e, className: r }) {
   return /* @__PURE__ */ t("div", { className: u("flex flex-wrap gap-1.5 py-1", r), children: e.map((a) => /* @__PURE__ */ t(ct, { name: a.name, done: a.done }, a.id)) });
 }
 function mr({
+========
+function ut({ toolCalls: e, className: t }) {
+  return /* @__PURE__ */ r("div", { className: d("flex flex-wrap gap-1.5 py-1", t), children: e.map((a) => /* @__PURE__ */ r(dt, { name: a.name, done: a.done }, a.id)) });
+}
+function xr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   role: e,
   content: r,
   toolCalls: a,
@@ -2134,6 +2726,7 @@ function mr({
   renderMarkdown: s,
   className: d
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const p = e === "user" ? l || "You" : o || "Assistant";
   return /* @__PURE__ */ i("div", { className: u("flex flex-col gap-1.5 py-3", d), children: [
     /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]", children: p }),
@@ -2142,6 +2735,16 @@ function mr({
   ] });
 }
 function br({
+========
+  const u = e === "user" ? l || "You" : n || "Assistant";
+  return /* @__PURE__ */ i("div", { className: d("flex flex-col gap-1.5 py-3", c), children: [
+    /* @__PURE__ */ r("div", { className: "text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]", children: u }),
+    a && a.length > 0 && /* @__PURE__ */ r(ut, { toolCalls: a }),
+    e === "user" ? /* @__PURE__ */ r("div", { className: "text-sm text-[var(--color-text-primary)] whitespace-pre-wrap", children: t }) : /* @__PURE__ */ r("div", { className: "text-sm text-[var(--color-text-primary)] prose-sm max-w-none", children: t ? s ? s(t) : /* @__PURE__ */ r("span", { className: "whitespace-pre-wrap", children: t }) : o ? /* @__PURE__ */ r(H, {}) : null })
+  ] });
+}
+function mr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   content: e,
   streaming: r = !1,
   defaultOpen: a = !1,
@@ -2176,15 +2779,26 @@ function br({
               )
             }
           ),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
           /* @__PURE__ */ t("span", { className: "text-[11px] font-semibold uppercase tracking-wide", children: l }),
           r && !e && /* @__PURE__ */ t(F, { size: "sm" })
         ] }),
         /* @__PURE__ */ t("div", { className: "px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-white whitespace-pre-wrap leading-relaxed", children: e || /* @__PURE__ */ t(F, {}) })
+========
+          /* @__PURE__ */ r("span", { className: "text-[11px] font-semibold uppercase tracking-wide", children: l }),
+          t && !e && /* @__PURE__ */ r(H, { size: "sm" })
+        ] }),
+        /* @__PURE__ */ r("div", { className: "px-3 py-2 text-xs text-[var(--color-text-secondary)] italic border-t border-[var(--color-border)] bg-white whitespace-pre-wrap leading-relaxed", children: e || /* @__PURE__ */ r(H, {}) })
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       ]
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function hr({
+========
+function br({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   prompts: e,
   onSelect: r,
   columns: a,
@@ -2209,7 +2823,11 @@ function hr({
     )) })
   ] });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function gr({
+========
+function hr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   suggestions: e,
   onSelect: r,
   onRefresh: a,
@@ -2268,9 +2886,15 @@ function vr({
                 alt: e,
                 className: "w-9 h-9 rounded-full object-cover"
               }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
             ) : /* @__PURE__ */ t(z, { name: e, size: 36 }),
             l !== void 0 && /* @__PURE__ */ t("span", { className: "absolute -bottom-0.5 -right-0.5", children: /* @__PURE__ */ t(
               re,
+========
+            ) : /* @__PURE__ */ r(G, { name: e, size: 36 }),
+            l !== void 0 && /* @__PURE__ */ r("span", { className: "absolute -bottom-0.5 -right-0.5", children: /* @__PURE__ */ r(
+              te,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
               {
                 color: l ? "#22c55e" : "#94a3b8",
                 size: "sm",
@@ -2309,12 +2933,21 @@ function vr({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function yr({ user: e, items: r, className: a, "data-testid": n }) {
   const [o, l] = T(!1), s = D(null), d = A(() => l(!1), []);
   return _(() => {
     if (!o) return;
     const p = (f) => {
       s.current && !s.current.contains(f.target) && d();
+========
+function gr({ user: e, items: t, className: a, "data-testid": o }) {
+  const [n, l] = E(!1), s = D(null), c = T(() => l(!1), []);
+  return $(() => {
+    if (!n) return;
+    const u = (f) => {
+      s.current && !s.current.contains(f.target) && c();
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     };
     return document.addEventListener("mousedown", p), () => document.removeEventListener("mousedown", p);
   }, [o, d]), _(() => {
@@ -2351,7 +2984,11 @@ function yr({ user: e, items: r, className: a, "data-testid": n }) {
                   alt: e.name,
                   className: "w-8 h-8 rounded-full object-cover"
                 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
               ) : /* @__PURE__ */ t(z, { name: e.name, size: 32 }),
+========
+              ) : /* @__PURE__ */ r(G, { name: e.name, size: 32 }),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
               /* @__PURE__ */ i("div", { className: "flex flex-col items-start text-left min-w-0 hidden sm:flex", children: [
                 /* @__PURE__ */ t("span", { className: "text-sm font-medium text-[var(--color-text-primary)] leading-tight truncate max-w-[120px]", children: e.name }),
                 /* @__PURE__ */ t("span", { className: "text-xs text-[var(--color-text-tertiary)] leading-tight truncate max-w-[120px]", children: e.email })
@@ -2417,8 +3054,13 @@ function yr({ user: e, items: r, className: a, "data-testid": n }) {
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function ut({ item: e, isLast: r }) {
   const a = u(
+========
+function pt({ item: e, isLast: t }) {
+  const a = d(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     "text-sm leading-snug transition-colors duration-100",
     r ? "text-[var(--color-text-primary)] font-medium cursor-default" : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] font-normal"
   );
@@ -2432,12 +3074,21 @@ function ut({ item: e, isLast: r }) {
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function pt(e, r) {
   if (e.length <= r) return e;
   const a = e.slice(0, 1), n = e.slice(-(r - 2 > 0 ? r - 2 : 1));
   return [...a, null, ...n];
 }
 function wr({
+========
+function ft(e, t) {
+  if (e.length <= t) return e;
+  const a = e.slice(0, 1), o = e.slice(-(t - 2 > 0 ? t - 2 : 1));
+  return [...a, null, ...o];
+}
+function yr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   items: e,
   separator: r = "/",
   maxItems: a,
@@ -2445,9 +3096,15 @@ function wr({
   "data-testid": o
 }) {
   if (e.length === 0) return null;
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const l = a != null ? pt(e, a) : e;
   return /* @__PURE__ */ t("nav", { "aria-label": "Breadcrumb", "data-testid": o, className: u("flex items-center", n), children: /* @__PURE__ */ t("ol", { className: "flex items-center gap-1 flex-wrap list-none m-0 p-0", children: l.map((s, d) => {
     const p = d === l.length - 1;
+========
+  const l = a != null ? ft(e, a) : e;
+  return /* @__PURE__ */ r("nav", { "aria-label": "Breadcrumb", "data-testid": n, className: d("flex items-center", o), children: /* @__PURE__ */ r("ol", { className: "flex items-center gap-1 flex-wrap list-none m-0 p-0", children: l.map((s, c) => {
+    const u = c === l.length - 1;
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     return /* @__PURE__ */ i("li", { className: "flex items-center gap-1", children: [
       s === null ? /* @__PURE__ */ t(
         "span",
@@ -2457,8 +3114,13 @@ function wr({
           title: "Some items are hidden",
           children: "…"
         }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
       ) : /* @__PURE__ */ t(ut, { item: s, isLast: p }),
       !p && /* @__PURE__ */ t(
+========
+      ) : /* @__PURE__ */ r(pt, { item: s, isLast: u }),
+      !u && /* @__PURE__ */ r(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         "span",
         {
           className: "text-[var(--color-text-tertiary)] text-sm select-none",
@@ -2469,20 +3131,24 @@ function wr({
     ] }, d);
   }) }) });
 }
-const ft = {
+const xt = {
   active: { bg: "#f0fdf4", border: "#86efac", text: "#166534", accent: "#16a34a" },
   in_progress: { bg: "#eff6ff", border: "#93c5fd", text: "#1e40af", accent: "#3b82f6" },
   completed: { bg: "#f0fdf4", border: "#86efac", text: "#166534", accent: "#16a34a" },
   archived: { bg: "#f9fafb", border: "#d1d5db", text: "#6b7280", accent: "#9ca3af" },
   planning: { bg: "#fefce8", border: "#fde047", text: "#713f12", accent: "#eab308" },
   paused: { bg: "#fff7ed", border: "#fdba74", text: "#9a3412", accent: "#f97316" }
-}, xt = {
+}, mt = {
   bg: "#f3f4f6",
   border: "#d1d5db",
   text: "#374151",
   accent: "#6b7280"
 };
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function mt({ status: e, colors: r }) {
+========
+function bt({ status: e, colors: t }) {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return /* @__PURE__ */ i(
     "span",
     {
@@ -2509,7 +3175,11 @@ function mt({ status: e, colors: r }) {
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function Nr({
+========
+function wr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   name: e,
   id: r,
   status: a,
@@ -2525,7 +3195,11 @@ function Nr({
   style: b,
   minHeight: x = 190
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const m = { ...ft, ...n }, c = (a ?? "unknown").toLowerCase().replace(/ /g, "_"), h = m[c] ?? xt, v = l !== void 0 ? Math.max(0, l - o.length) : 0, C = f % 8 * 525;
+========
+  const g = { ...xt, ...o }, p = (a ?? "unknown").toLowerCase().replace(/ /g, "_"), w = g[p] ?? mt, h = l !== void 0 ? Math.max(0, l - n.length) : 0, N = f % 8 * 525;
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   return /* @__PURE__ */ i(
     "button",
     {
@@ -2596,11 +3270,19 @@ function Nr({
                   }
                 )
               ] }),
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
               a && /* @__PURE__ */ t(mt, { status: a, colors: h })
             ]
           }
         ),
         /* @__PURE__ */ t(we, { items: s, staggerMs: C }),
+========
+              a && /* @__PURE__ */ r(bt, { status: a, colors: w })
+            ]
+          }
+        ),
+        /* @__PURE__ */ r(ye, { items: s, staggerMs: N }),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
         /* @__PURE__ */ i(
           "div",
           {
@@ -2614,8 +3296,13 @@ function Nr({
             },
             children: [
               /* @__PURE__ */ i("div", { style: { display: "flex", alignItems: "center", gap: 8, minWidth: 0 }, children: [
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
                 o.length > 0 ? /* @__PURE__ */ t(ge, { names: o, maxVisible: 5, size: 24 }) : /* @__PURE__ */ i("span", { style: { fontSize: 12, color: "#9ca3af" }, children: [
                   /* @__PURE__ */ t("strong", { style: { color: "#374151" }, children: l ?? 0 }),
+========
+                n.length > 0 ? /* @__PURE__ */ r(he, { names: n, maxVisible: 5, size: 24 }) : /* @__PURE__ */ i("span", { style: { fontSize: 12, color: "#9ca3af" }, children: [
+                  /* @__PURE__ */ r("strong", { style: { color: "#374151" }, children: l ?? 0 }),
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
                   " contributors"
                 ] }),
                 o.length > 0 && v > 0 && /* @__PURE__ */ i("span", { style: { fontSize: 11, color: "#9ca3af" }, children: [
@@ -2646,12 +3333,21 @@ function Nr({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function bt(e) {
   const r = [], a = /* @__PURE__ */ new Map();
   for (const n of e) {
     const o = n.group ?? null;
     if (o === null) {
       (r.length === 0 || r[0].name !== null) && (r.unshift({ name: null, items: [] }), a.forEach((s, d) => a.set(d, s + 1))), r[0].items.push(n);
+========
+function ht(e) {
+  const t = [], a = /* @__PURE__ */ new Map();
+  for (const o of e) {
+    const n = o.group ?? null;
+    if (n === null) {
+      (t.length === 0 || t[0].name !== null) && (t.unshift({ name: null, items: [] }), a.forEach((s, c) => a.set(c, s + 1))), t[0].items.push(o);
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       continue;
     }
     let l = a.get(o);
@@ -2665,10 +3361,17 @@ function Q({
   title: a,
   renderNavItem: n
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const o = O(() => bt(e), [e]), l = o.some((s) => s.name !== null);
   return /* @__PURE__ */ t("nav", { className: "flex-1 overflow-y-auto py-1", children: l ? o.map(
     (s) => s.name === null ? /* @__PURE__ */ t(Z, { items: s.items, renderNavItem: n }, "__ungrouped") : /* @__PURE__ */ t(
       ht,
+========
+  const n = R(() => ht(e), [e]), l = n.some((s) => s.name !== null);
+  return /* @__PURE__ */ r("nav", { className: "flex-1 overflow-y-auto py-1", children: l ? n.map(
+    (s) => s.name === null ? /* @__PURE__ */ r(Z, { items: s.items, renderNavItem: o }, "__ungrouped") : /* @__PURE__ */ r(
+      vt,
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       {
         name: s.name,
         items: s.items,
@@ -2679,7 +3382,11 @@ function Q({
     )
   ) : /* @__PURE__ */ t(Z, { items: e, renderNavItem: n }) });
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function kr({
+========
+function Nr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   title: e,
   items: r,
   titleAction: a,
@@ -2736,9 +3443,13 @@ function Z({
   items: e,
   renderNavItem: r
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   return /* @__PURE__ */ t(P, { children: e.map((a) => /* @__PURE__ */ t(oe, { item: a, renderNavItem: r }, a.path)) });
+========
+  return /* @__PURE__ */ r(j, { children: e.map((a) => /* @__PURE__ */ r(ne, { item: a, renderNavItem: t }, a.path)) });
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
 }
-function ht({
+function vt({
   name: e,
   items: r,
   storageKey: a,
@@ -2771,7 +3482,11 @@ function oe({
   item: e,
   renderNavItem: r
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const a = e.accent === "danger" ? "#dc2626" : e.accent === "warning" ? "#d97706" : e.accent === "success" ? "#16a34a" : void 0, n = /* @__PURE__ */ i(P, { children: [
+========
+  const a = e.accent === "danger" ? "#dc2626" : e.accent === "warning" ? "#d97706" : e.accent === "success" ? "#16a34a" : void 0, o = /* @__PURE__ */ i(j, { children: [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     /* @__PURE__ */ i("div", { className: "flex items-center justify-between gap-2", children: [
       /* @__PURE__ */ t(
         "span",
@@ -2800,7 +3515,11 @@ function oe({
       className: "block w-full px-[14px] py-2 border-l-[3px] border-transparent border-t-0 border-r-0 border-b-0 bg-transparent text-[var(--color-text-secondary)] text-left cursor-pointer font-[inherit]",
       children: n
     }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   ) : r ? /* @__PURE__ */ t(P, { children: r(e, n, o) }) : /* @__PURE__ */ t(
+========
+  ) : t ? /* @__PURE__ */ r(j, { children: t(e, o, n) }) : /* @__PURE__ */ r(
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     "a",
     {
       href: e.path,
@@ -2809,11 +3528,15 @@ function oe({
     }
   );
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 const Cr = {
   borderLeft: "3px solid var(--color-primary)",
   background: "var(--color-surface-hover)",
   color: "var(--color-text-primary)"
 }, gt = [
+========
+const gt = [
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -2824,11 +3547,19 @@ const Cr = {
 ].join(",");
 function X(e) {
   return Array.from(e.querySelectorAll(gt)).filter(
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
     (r) => r.getAttribute("aria-hidden") !== "true"
   );
 }
 function vt(e, r, a) {
   return r === "right" ? {
+========
+    (t) => t.getAttribute("aria-hidden") !== "true"
+  );
+}
+function yt(e, t, a) {
+  return t === "right" ? {
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
     position: "fixed",
     top: e.top,
     left: e.right + a
@@ -2843,7 +3574,11 @@ function vt(e, r, a) {
     left: e.left
   };
 }
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
 function yt({
+========
+function kr({
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
   trigger: e,
   open: r,
   onClose: a,
@@ -2854,6 +3589,7 @@ function yt({
   "data-testid": d = "inline-popover",
   children: p
 }) {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   const f = D(null), [g, N] = T(null), b = D(null), x = A(() => {
     const m = e.current;
     if (!m) return;
@@ -2863,6 +3599,17 @@ function yt({
   return de(() => {
     if (!r) {
       N(null);
+========
+  const f = D(null), [b, k] = E(null), x = D(null), v = T(() => {
+    const g = e.current;
+    if (!g) return;
+    const p = g.getBoundingClientRect();
+    k(yt(p, o, n));
+  }, [e, o, n]);
+  return ce(() => {
+    if (!t) {
+      k(null);
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
       return;
     }
     x();
@@ -3116,6 +3863,7 @@ function $r({
   );
 }
 export {
+<<<<<<<< HEAD:dist/StatusPill-CUj7nYSy.js
   F as A,
   wr as B,
   pr as C,
@@ -3167,4 +3915,56 @@ export {
   Vt as x,
   dr as y,
   br as z
+========
+  H as A,
+  yr as B,
+  Wt as C,
+  Ut as D,
+  rr as E,
+  er as F,
+  dr as G,
+  dt as H,
+  lr as I,
+  ut as J,
+  Jt as K,
+  pr as L,
+  xr as M,
+  ir as N,
+  gr as O,
+  sr as P,
+  br as Q,
+  tt as R,
+  or as S,
+  Yt as T,
+  Xt as U,
+  Ae as V,
+  Pt as W,
+  Kt as X,
+  ur as a,
+  vr as b,
+  fr as c,
+  Bt as d,
+  nr as e,
+  Ft as f,
+  Ht as g,
+  It as h,
+  ar as i,
+  zt as j,
+  hr as k,
+  qt as l,
+  kr as m,
+  Gt as n,
+  at as o,
+  We as p,
+  Zt as q,
+  wr as r,
+  tr as s,
+  De as t,
+  ct as u,
+  Qt as v,
+  Nr as w,
+  Vt as x,
+  cr as y,
+  mr as z
+>>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/InlinePopover-CWXnsorO.js
 };

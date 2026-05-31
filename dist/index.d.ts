@@ -1081,6 +1081,32 @@ export declare type CallWidgetState = 'idle' | 'ringing' | 'connecting' | 'activ
 
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
 
+export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
+
+export declare interface CapabilityDeniedFallbackProps {
+    /**
+     * Capability name as the user would recognize it (e.g. "Chat",
+     * "Recording", "AI Assistant"). Used in the default title.
+     */
+    capabilityName?: string;
+    /** Override the default title entirely. */
+    title?: string;
+    /** Body copy explaining why the feature is unavailable / how to enable it. */
+    description?: ReactNode;
+    /**
+     * Optional CTA — typically a "Request access" or "Upgrade plan" link.
+     * For multiple CTAs use `actions` instead.
+     */
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Multi-action variant. Takes precedence over actionLabel/onAction. */
+    actions?: EmptyStateAction[];
+    /** Override the default lock icon. Pass `null` to remove the icon. */
+    icon?: ReactNode | null;
+    /** Test id (defaults to `capability-denied-fallback`). */
+    testId?: string;
+}
+
 export declare interface CaptionLine {
     id: string;
     speakerId: string;
@@ -2086,7 +2112,34 @@ export declare interface EmailTemplateListPageProps {
     loading?: boolean;
 }
 
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, }: EmptyStateProps): JSX.Element;
+
+export declare interface EmptyStateAction {
+    /** Visible label on the action button or link. */
+    label: string;
+    /** Click handler — required when `href` is not set. */
+    onClick?: () => void;
+    /** External / internal link — required when `onClick` is not set. */
+    href?: string;
+    /**
+     * Visual variant.
+     * `primary`   — solid indigo, used for the first/most important step
+     * `secondary` — outlined, used for additional steps
+     * Defaults to `primary` for the first action, `secondary` for the rest.
+     */
+    variant?: 'primary' | 'secondary';
+    /**
+     * When true (and `href` is set), opens in a new tab with
+     * `target=_blank rel=noopener noreferrer` and an sr-only
+     * "(opens in new tab)" hint.
+     */
+    external?: boolean;
+    /**
+     * Optional copy-to-clipboard CLI snippet rendered in a monospaced
+     * `<pre>` underneath the action button.
+     */
+    code?: string;
+}
 
 export declare interface EmptyStateProps {
     icon?: ReactNode;
@@ -2099,6 +2152,12 @@ export declare interface EmptyStateProps {
     onAction?: () => void;
     /** Custom action node (overrides actionLabel/onAction when present). */
     action?: ReactNode;
+    /**
+     * Multi-action "what to do next" list. When provided, takes precedence
+     * over `action` / `actionLabel`+`onAction`. Each entry renders a
+     * button or link, with an optional copyable code snippet underneath.
+     */
+    actions?: EmptyStateAction[];
     /**
      * Optional testid for the container (defaults to "empty-state").
      * Callers with existing tests targeting a specific id can pass it here.

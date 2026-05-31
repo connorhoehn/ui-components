@@ -52,6 +52,9 @@ const HookReactionsIntegration = lazy(() => import('./demos/hook-reactions-integ
 const HookFileUploadIntegration = lazy(() => import('./demos/hook-fileupload-integration'));
 const HookVideoHangoutIntegration = lazy(() => import('./demos/hook-videohangout-integration'));
 const HookHangoutRoomsIntegration = lazy(() => import('./demos/hook-hangoutrooms-integration'));
+const HookActivityIntegration = lazy(() => import('./demos/hook-activity-integration'));
+const HookNotificationsIntegration = lazy(() => import('./demos/hook-notifications-integration'));
+const HookCapabilityIntegration = lazy(() => import('./demos/hook-capability-integration'));
 
 // Agent demos (lazy)
 const AgentDashboard = lazy(() => import('./demos/agents/DashboardDemo'));
@@ -155,6 +158,9 @@ export default function App() {
           <Route path="hook-fileupload" element={<S><HookFileUploadIntegration /></S>} />
           <Route path="hook-videohangout" element={<S><HookVideoHangoutIntegration /></S>} />
           <Route path="hook-hangoutrooms" element={<S><HookHangoutRoomsIntegration /></S>} />
+          <Route path="hook-activity" element={<S><HookActivityIntegration /></S>} />
+          <Route path="hook-notifications" element={<S><HookNotificationsIntegration /></S>} />
+          <Route path="hook-capability" element={<S><HookCapabilityIntegration /></S>} />
           <Route path="wrapped-components" element={<S><WrappedComponentsDemo /></S>} />
           {/* Identity (Auth + Admin) */}
           <Route path="identity">

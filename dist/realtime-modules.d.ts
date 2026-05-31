@@ -1,5 +1,6 @@
-import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
-import { JSX } from 'react';
+import { Component } from 'react';
+import { ErrorInfo } from 'react';
+import { JSX } from 'react/jsx-runtime';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
@@ -63,6 +64,13 @@ export declare function adaptReaction(reaction: RMReaction, index: number): Ephe
 
 export declare function adaptReactions(reactions: RMReaction[]): EphemeralReaction[];
 
+/**
+ * Wrap `node` in NetworkErrorBoundary + ReconnectingShim when `opts` is
+ * provided; otherwise return `node` unchanged. Used by Wrapped* adapters
+ * as a one-line opt-in for the standard connection-resiliency UI.
+ */
+export declare function applyNetworkShim(node: ReactNode, opts: NetworkShimOptions | undefined): ReactNode;
+
 export declare function CapabilityBoundary({ capability, loading, fallback, children, }: CapabilityBoundaryProps): JSX.Element;
 
 export declare interface CapabilityBoundaryProps {
@@ -84,6 +92,21 @@ declare interface ChatMessage {
     displayName?: string;
     avatarUrl?: string;
 }
+
+declare interface ConnectionPillProps {
+    state: ConnectionState;
+    /** Dot-only rendering — no label text. Default false. */
+    compact?: boolean;
+    /** Render the text label next to the dot. Default true. Set false for dot-only. */
+    withLabel?: boolean;
+    /** Override label text per state (e.g. localized strings). */
+    labels?: Partial<Record<ConnectionState, string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Connection lifecycle states */
+declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
 declare interface EphemeralReaction {
     id: string;
@@ -111,12 +134,6 @@ declare interface HangoutLayoutParticipant {
     isLocal?: boolean;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
-    /** Pre-rendered screen-share video element. When ANY participant supplies
-     *  this, `<HangoutLayout>` auto-flips to spotlight mode and
-     *  `<HangoutSpotlight>` promotes this element into the main slot (the
-     *  sharer's camera tile stays visible in the filmstrip). An explicit
-     *  `spotlightContent` prop on `<HangoutLayout>` still wins. */
-    screenElement?: ReactNode;
 }
 
 declare type HangoutMode = 'auto' | 'spotlight';
@@ -185,6 +202,82 @@ export declare interface HangoutRoomsSectionProps {
     }) => React.ReactNode;
 }
 
+export declare class NetworkErrorBoundary extends Component<NetworkErrorBoundaryProps, NetworkErrorBoundaryState> {
+    state: NetworkErrorBoundaryState;
+    static getDerivedStateFromError(error: Error): NetworkErrorBoundaryState;
+    componentDidCatch(error: Error, info: ErrorInfo): void;
+    reset: () => void;
+    render(): ReactNode;
+}
+
+export declare interface NetworkErrorBoundaryProps {
+    children: ReactNode;
+    /**
+     * Render override. Receives the caught error + a reset callback that
+     * resets the boundary state. Use when you want a custom error UI
+     * (e.g. inline alert vs. full empty-state card).
+     */
+    fallback?: (error: Error, reset: () => void) => ReactNode;
+    /**
+     * Optional callback fired when the caller clicks the retry button.
+     * Use to re-run the underlying hook (e.g. gateway.reconnect()) BEFORE
+     * the boundary resets so the next render has a fresh attempt.
+     */
+    onRetry?: () => void;
+    /**
+     * Logging hook called on caught errors. Defaults to `console.error`.
+     * Override to forward to a telemetry sink without losing the stack.
+     */
+    onError?: (error: Error, info: ErrorInfo) => void;
+    /** Title shown in the default fallback. Default: "Something went wrong". */
+    title?: string;
+    /** Body shown in the default fallback. Defaults to the caught error message. */
+    description?: string;
+    /** Retry button label. Default: "Retry". */
+    retryLabel?: string;
+}
+
+declare interface NetworkErrorBoundaryState {
+    error: Error | null;
+}
+
+export declare interface NetworkShimOptions {
+    /** Current connection lifecycle state from the caller's gateway/hook layer. */
+    connectionState: ReconnectingShimConnectionState;
+    /**
+     * Single retry callback re-used by:
+     *   - ReconnectingShim's "Try again" CTA when disconnected
+     *   - NetworkErrorBoundary's retry CTA when a hook throws
+     * Omit if reconnect is fully automatic — both CTAs hide instead of showing.
+     */
+    onRetry?: () => void;
+    reconnectingLabel?: string;
+    disconnectedTitle?: string;
+    disconnectedDescription?: string;
+    /** Label for the retry CTA (used in both ReconnectingShim + boundary). */
+    retryLabel?: string;
+    /** Override for the connecting-state placeholder. */
+    connectingPlaceholder?: ReactNode;
+    /**
+     * Replace the disconnected-state node entirely. When provided,
+     * `disconnectedTitle`/`description`/`retryLabel` are ignored.
+     */
+    disconnectedFallback?: ReactNode;
+    /** Title shown in the boundary's default fallback. */
+    errorTitle?: string;
+    /** Body shown in the boundary's default fallback. */
+    errorDescription?: string;
+    /** Forwarded to NetworkErrorBoundary.onError. */
+    onError?: NetworkErrorBoundaryProps['onError'];
+    /**
+     * Custom render override for the boundary fallback. When provided,
+     * `errorTitle`/`errorDescription`/`retryLabel` are ignored.
+     */
+    errorFallback?: NetworkErrorBoundaryProps['fallback'];
+    /** className forwarded to ReconnectingShim's outer wrapper. */
+    className?: string;
+}
+
 export declare function NewHangoutRoomDialog({ open, onClose, onCreate, onCreated, defaultVisibility, }: NewHangoutRoomDialogProps): JSX.Element;
 
 export declare interface NewHangoutRoomDialogProps {
@@ -219,27 +312,45 @@ declare interface NotificationItem {
     category?: string;
 }
 
-declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
-
 declare interface PresenceUser {
-    /** Unique identifier for the user. Passed back to `onUserClick`. */
+    /** Unique identifier for the user */
     id: string;
     name: string;
-    /** Optional avatar image URL. Wins over `color` when present. */
+    /** Optional avatar image URL */
     avatarUrl?: string;
-    /** Online flag. Drives the status dot when `idle` is not set:
-     *  `undefined`/`true` → green; `false` → gray. */
     online?: boolean;
-    /** Override the auto-computed avatar background. Useful when the
-     *  user identity needs to match a CRDT cursor color elsewhere. */
-    color?: string;
-    /** Present but away. Dims the avatar (alpha-blends `color` when
-     *  provided, otherwise drops opacity) and flips the status dot to
-     *  amber. Wins over `online` for the dot color. */
-    idle?: boolean;
-    /** Optional editing mode — renders a small mode badge on the
-     *  upper-right of the avatar (pencil / check / eye). */
-    mode?: PresenceMode;
+}
+
+export declare function ReconnectingShim({ connectionState, children, onRetry, reconnectingLabel, disconnectedTitle, disconnectedDescription, retryLabel, connectingPlaceholder, disconnectedFallback, className, }: ReconnectingShimProps): JSX.Element;
+
+export declare type ReconnectingShimConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+export declare interface ReconnectingShimProps {
+    /** Current connection lifecycle state from the gateway / hook layer. */
+    connectionState: ReconnectingShimConnectionState;
+    children: ReactNode;
+    /**
+     * Invoked when the user clicks the disconnected-state retry button.
+     * Omit to hide the button (e.g. when reconnect is automatic-only).
+     */
+    onRetry?: () => void;
+    /** Label override for the reconnecting overlay. Default: "Reconnecting…". */
+    reconnectingLabel?: string;
+    /** Title shown in the disconnected EmptyState. Default: "Disconnected". */
+    disconnectedTitle?: string;
+    /** Description shown in the disconnected EmptyState. */
+    disconnectedDescription?: string;
+    /** Retry button label. Default: "Try again". */
+    retryLabel?: string;
+    /** Optional override for the connecting-state placeholder (e.g. a custom skeleton). */
+    connectingPlaceholder?: ReactNode;
+    /**
+     * Optional override for the disconnected-state node. When provided,
+     * replaces the built-in EmptyState (`disconnectedTitle`/`description`/
+     * `retryLabel`/`onRetry` are ignored).
+     */
+    disconnectedFallback?: ReactNode;
+    className?: string;
 }
 
 /** Mirror of realtime-modules/src/client/types.ts ActivityEvent */
@@ -274,6 +385,18 @@ export declare interface RMChatMessage {
     message: string;
     metadata?: Record<string, unknown>;
     timestamp: string;
+}
+
+/**
+ * Structural mirror of @connorhoehn/realtime-modules's `ConnectionState`.
+ * Kept here (not imported) so the integration subpath compiles without a
+ * runtime dep on realtime-modules.
+ */
+export declare type RMConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
+/** Minimum shape needed from useWebSocket() / useGateway(). */
+export declare interface RMConnectionStateSource {
+    connectionState: RMConnectionState;
 }
 
 export declare interface RMCreateRoomInput {
@@ -463,6 +586,8 @@ export declare interface RMUseVideoHangoutReturn {
     toggleAudio(): void;
 }
 
+declare type RoomsIndexSubscriber_2 = NonNullable<HangoutRoomsSectionProps['occupancyAdapter']>;
+
 /** Strip non-alphanumeric, lowercase, hyphenate. Mirrors typical
  *  server-side slug generation closely enough for a preview UI. */
 export declare function slugifyRoomName(input: string): string;
@@ -480,7 +605,7 @@ export declare interface WrappedActivityPanelProps {
     className?: string;
 }
 
-export declare function WrappedChatPanel({ chat, presence, disabled, typingUsers: typingUsersOverride, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, disabled, typingUsers: typingUsersOverride, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -491,6 +616,22 @@ export declare interface WrappedChatPanelProps {
     disabled?: boolean;
     /** Override typing banner (supersedes presence-derived list) */
     typingUsers?: string[];
+    /**
+     * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
+     * ReconnectingShim using the supplied connection state and retry
+     * callback. Omit for no wrapping (default).
+     */
+    wrapWithNetworkShim?: NetworkShimOptions;
+}
+
+export declare function WrappedConnectionPill({ socket, ...rest }: WrappedConnectionPillProps): JSX.Element;
+
+export declare interface WrappedConnectionPillProps extends Omit<ConnectionPillProps, 'state'> {
+    /**
+     * Hook return that exposes `connectionState`. Typically
+     * `useWebSocket(...)` or `useGateway()` from realtime-modules.
+     */
+    socket: RMConnectionStateSource;
 }
 
 export declare function WrappedFileUploadDrop({ fileUpload, accept, maxSize, multiple, disabled, label, className, uploadMetadata, onError, }: WrappedFileUploadDropProps): JSX.Element;
@@ -529,73 +670,56 @@ export declare interface WrappedHangoutLayoutProps {
     className?: string;
 }
 
-/**
- * Snapshot of the wrapper's live hangout state, surfaced to the
- * consumer's `overlay` render-prop so they can render reconnecting /
- * failed / empty backdrops without subscribing to useLVSHangout
- * themselves.
- */
-export declare interface WrappedHangoutState {
-    connectionState: HangoutConnectionState;
-    error: string | null;
-    participantCount: number;
-    remoteCount: number;
-}
+export declare function WrappedHangoutRoomsList({ hangoutRooms, subscribeRoomsIndex, occupancyFor, participantId, onJoin, onContextMenu, onBrowseAll, maxVisible, title, storageKey, renderEmpty, renderCreateDialog, wrapWithNetworkShim, }: WrappedHangoutRoomsListProps): JSX.Element;
 
-export declare function WrappedLVSHangoutLayout({ stageToken, participantId, userId, localClientId, getStageToken, overlay, spotlightContent, onParticipantClick, mode, activeSpeakerStrategy: _activeSpeakerStrategy, localTileLabel, showLocalAsTile, className, 'data-testid': testId, }: WrappedLVSHangoutLayoutProps): JSX.Element;
-
-export declare interface WrappedLVSHangoutLayoutProps {
-    /** Participant token from platform-api `/api/video/sessions/:id/join`.
-     *  Decoded for the channel ARN claim. */
-    stageToken: string;
-    /** SFU-issued participant id (per-tab unique). */
-    participantId: string;
-    /** Display name for the local user. Falls back to participantId.slice(0,8). */
-    userId?: string;
-    /** Optional override for the local tile's "client id" — most consumers
-     *  use the same value as participantId. Reserved for future per-device
-     *  multiplexing scenarios. */
-    localClientId?: string;
+export declare interface WrappedHangoutRoomsListProps {
+    /** Return value of `useHangoutRooms()` from realtime-modules. */
+    hangoutRooms: RMUseHangoutRoomsReturn;
     /**
-     * Async callback the wrapper calls when it needs a fresh stage token:
-     * on initial connect, after a token-rejected close, and (optionally) on
-     * a TTL-based schedule. Mirrors the SDK `getAuthToken` pattern.
-     *
-     * When omitted, the wrapper uses `stageToken` for the session lifetime
-     * and surfaces a token-expired error via the overlay render prop.
+     * Live gateway adapter for room occupancy — typically the
+     * `subscribeRoomsIndex` returned by `useRoomsSubscription()`. When
+     * provided, every row drives its own `useRoomOccupancy(slug)` off
+     * this subscriber so presence indicators stay live without the
+     * caller wiring per-row occupancy.
      */
-    getStageToken?: () => Promise<string>;
+    subscribeRoomsIndex?: RoomsIndexSubscriber_2;
     /**
-     * Render-prop slot rendered absolute-positioned over the tile grid.
-     * Receives the wrapper's live hangout state so the consumer can render
-     * reconnecting / failed / empty overlays.
-     *
-     * Example:
-     *   overlay={({ connectionState, error, remoteCount }) => (
-     *     <>
-     *       {connectionState === 'reconnecting' && <YourReconnectingBanner />}
-     *       {error && <YourFailedScreen error={error} />}
-     *       {remoteCount === 0 && <YourEmptyBackdrop />}
-     *     </>
-     *   )}
+     * Back-compat / static-snapshot lookup. Used only when
+     * `subscribeRoomsIndex` is NOT provided. Returns the latest occupancy
+     * snapshot for a slug.
      */
-    overlay?: (state: WrappedHangoutState) => ReactNode;
-    /** Forwarded to <HangoutLayout spotlightContent>. */
-    spotlightContent?: ReactNode;
-    /** Forwarded to <HangoutLayout onParticipantClick>. */
-    onParticipantClick?: (participantId: string) => void;
-    /** Forwarded to <HangoutLayout mode>. Default 'auto'. */
-    mode?: HangoutMode;
-    /** Optional active speaker driver. Default 'audio-level' (the layout
-     *  computes from MediaStream audio energy). */
-    activeSpeakerStrategy?: 'audio-level' | 'producer-state' | 'off';
-    /** Override the local tile's display name. Default: "You". */
-    localTileLabel?: string;
-    /** When false, the local user does NOT appear as a tile (e.g. they
-     *  only host the call). Default true (Meet-style). */
-    showLocalAsTile?: boolean;
-    className?: string;
-    'data-testid'?: string;
+    occupancyFor?: (slug: string) => RMRoomOccupancy | null;
+    /** This tab's participantId — drives the row "active" highlight. */
+    participantId?: string;
+    /** Convenience: fires with the room slug when a row is clicked. */
+    onJoin?: (slug: string) => void;
+    /** Right-click on a row. */
+    onContextMenu?: (room: RMRoom, e: MouseEvent_2<HTMLElement>) => void;
+    /** Fired when "Browse all" overflow link is clicked. */
+    onBrowseAll?: () => void;
+    /** Max inline rows. Defaults to 10. */
+    maxVisible?: number;
+    /** Section title override. Defaults to "Rooms". */
+    title?: string;
+    /** Section storageKey override (collapse persistence). */
+    storageKey?: string;
+    /**
+     * Custom empty-state slot. When the active rooms list is empty AND
+     * the hook is not loading AND there is no error, this slot REPLACES
+     * the entire section render. Use it when the host page wants full
+     * control over the no-rooms UI (e.g. an onboarding upsell).
+     */
+    renderEmpty?: ReactNode;
+    /** Custom create-dialog renderer — forwarded to HangoutRoomsSection. */
+    renderCreateDialog?: (props: {
+        open: boolean;
+        onClose: () => void;
+    }) => ReactNode;
+    /**
+     * Opt-in: wrap the rendered section in NetworkErrorBoundary +
+     * ReconnectingShim. Pass `connectionState` from the gateway layer.
+     */
+    wrapWithNetworkShim?: NetworkShimOptions;
 }
 
 export declare function WrappedNotificationCenter({ notifications, onItemClick, ...rest }: WrappedNotificationCenterProps): JSX.Element;
@@ -607,13 +731,19 @@ export declare interface WrappedNotificationCenterProps extends Omit<Notificatio
     onItemClick?: (item: NotificationItem) => void;
 }
 
-export declare function WrappedPresencePanel({ presence, currentClientId, }: WrappedPresencePanelProps): JSX.Element;
+export declare function WrappedPresencePanel({ presence, currentClientId, wrapWithNetworkShim, }: WrappedPresencePanelProps): JSX.Element;
 
 export declare interface WrappedPresencePanelProps {
     /** Return value of usePresence(channel) from realtime-modules */
     presence: RMUsePresenceReturn;
     /** The local user's clientId (from useGateway().clientId) */
     currentClientId: string | null;
+    /**
+     * Opt-in: wrap the rendered PresencePanel in a NetworkErrorBoundary +
+     * ReconnectingShim using the supplied connection state and retry
+     * callback. Omit for no wrapping (default).
+     */
+    wrapWithNetworkShim?: NetworkShimOptions;
 }
 
 export declare function WrappedReactionsOverlay({ reactions: reactionsHook, ttlMs, }: WrappedReactionsOverlayProps): JSX.Element;

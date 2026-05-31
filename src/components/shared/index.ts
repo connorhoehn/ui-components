@@ -23,6 +23,8 @@ export { default as DataTable } from './DataTable';
 export * from './DataTable';
 export { default as EmptyState } from './EmptyState';
 export * from './EmptyState';
+export { default as CapabilityDeniedFallback } from './CapabilityDeniedFallback';
+export * from './CapabilityDeniedFallback';
 export { default as ErrorState } from './ErrorState';
 export * from './ErrorState';
 export { default as LoadingState } from './LoadingState';

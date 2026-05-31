@@ -1,123 +1,115 @@
-import { B as n, C as l, a as m, b as p, c as d, d as C, e as S, f as T, g, h as P, D as c, i as f, j as x, E as h, k as u, F as b, l as B, I, m as v, K as y, L as k, n as D, o as E, M as L, P as A, p as F, q as G, r as H, Q as N, S as w, s as M, t as U, u as R, v as j, w as K, T as O, x as Q, y as _, z as q, A as z, G as J, H as V, J as W, N as X, U as Y, O as Z, R as $, V as aa, W as ea, X as sa, Y as ra } from "./StatusPill-CUj7nYSy.js";
-import { B as ta } from "./Button-Qsbxqsl9.js";
+import { B as n, C as l, a as m, b as p, c as C, d, e as T, f as S, g as c, h as g, D as P, i as f, E as b, j as h, F as x, k as u, l as B, I as y, m as k, K as v, L as D, n as E, o as I, M as A, P as F, p as L, q as G, r as H, Q as N, S as U, s as w, t as M, u as R, v as j, w as K, T as O, x as Q, y as _, z as q, A as z, G as J, H as V, J as W, N as X, U as Y, O as Z, R as $, V as aa, W as ea, X as sa } from "./InlinePopover-CWXnsorO.js";
+import { B as ra, a as ta } from "./Banner-B8AcwPH_.js";
 import { C as na } from "./Card-B2uO9v1w.js";
-import { P as ma, T as pa, a as da, b as Ca, c as Sa, d as Ta, e as ga } from "./Table-BOmVFX6H.js";
-import { F as ca, I as fa } from "./FileUploadDrop-Cmz3XANg.js";
-import { B as ha } from "./Banner-DKb3JiLs.js";
-import { B as ba, L as Ba, S as Ia } from "./Chart-ByoxeiYX.js";
-import { C as ya } from "./Chip-CAS9vOWq.js";
-import { C as Da, D as Ea, F as La, I as Aa, S as Fa, T as Ga, a as Ha } from "./TrendSparkline-DDTJK2ia.js";
-import { C as wa } from "./ConfirmDialog-CNoxvYGu.js";
-import { E as Ua } from "./EmptyState-PM9wTjxk.js";
-import { C as ja, S as Ka, e as Oa, g as Qa, a as _a } from "./CardHeader-CHxrs92b.js";
+import { P as ma, T as pa, a as Ca, b as da, c as Ta, d as Sa, e as ca } from "./PageSection-Dj8r4YIt.js";
+import { I as Pa } from "./IconButton-Da1kJ5WO.js";
+import { B as ba, L as ha, S as xa } from "./Chart-ByoxeiYX.js";
+import { C as Ba } from "./Chip-BXdhqVFm.js";
+import { C as ka, D as va, T as Da } from "./TagEditor-Dc6-WL1y.js";
+import { C as Ia } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as Fa } from "./EmptyState-D_CN3LUx.js";
+import { C as Ga, S as Ha, e as Na, g as Ua, a as wa } from "./CardHeader-DuyI9Sk3.js";
 import "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as za } from "./Modal-2jg4229_.js";
-import { S as Va } from "./SkeletonCard-C89GWQ3p.js";
-import { A as Xa, B as Ya, N as Za, P as $a, S as ae } from "./Badge-CgxZp81E.js";
+import { M as Ra } from "./Modal-2jg4229_.js";
+import { S as Ka } from "./SkeletonCard-C89GWQ3p.js";
+import { A as Qa, B as _a, C as qa, F as za, N as Ja, P as Va, S as Wa } from "./Badge-B6JMh-Y-.js";
 import "react";
-import { T as se, u as re } from "./ToastProvider-wpvjc3pD.js";
+import { T as Ya, a as Za } from "./ToastProvider-aHBNxMTO.js";
 import "./IdentityContext-CLalsm_M.js";
-import { P as te, S as ie } from "./PermissionDeniedCard-B9U2evs3.js";
-import { S as le } from "./StatusDot-BC7B1tTr.js";
-import { A as pe, a as de, n as Ce, b as Se } from "./Avatar-BvKIaNVE.js";
+import { S as ae } from "./StatusDot-BC7B1tTr.js";
+import { A as se, a as oe, n as re, b as te } from "./Avatar-BvKIaNVE.js";
 export {
-  Xa as ActivityFeed,
-  pe as Avatar,
-  de as AvatarGroup,
-  Ya as Badge,
-  ha as Banner,
+  Qa as ActivityFeed,
+  se as Avatar,
+  oe as AvatarGroup,
+  _a as Badge,
+  ra as Banner,
   ba as BarChart,
   n as Breadcrumbs,
   ta as Button,
+  l as CapabilityDeniedFallback,
   na as Card,
-  ja as CardHeader,
-  l as CatalogGrid,
-  m as ChannelHeader,
-  p as ChatComposer,
-  ya as Chip,
+  Ga as CardHeader,
+  m as CatalogGrid,
+  p as ChannelHeader,
+  C as ChatComposer,
+  Ba as Chip,
   d as CodeBlock,
-  Da as CodeEditor,
-  C as CollapsibleSection,
+  ka as CodeEditor,
+  T as CollapsibleSection,
   S as CommandPalette,
-  T as CommandPaletteHint,
+  c as CommandPaletteHint,
   g as CommandPaletteProvider,
-  wa as ConfirmDialog,
-  P as ConnectionPill,
-  Ea as DEFAULT_PIPELINE_ICONS,
-  c as DataTable,
+  Ia as ConfirmDialog,
+  qa as ConnectionPill,
+  va as DEFAULT_PIPELINE_ICONS,
+  P as DataTable,
   f as Drawer,
-  x as DropdownMenu,
-  Ua as EmptyState,
-  h as EntityCell,
-  u as ErrorState,
-  ca as FileUploadDrop,
-  La as FilterChip,
-  b as FollowUpChips,
+  Fa as EmptyState,
+  b as EntityCell,
+  h as ErrorState,
+  za as FileUploadDrop,
+  x as FilterChip,
+  u as FollowUpChips,
   B as FormField,
-  fa as IconButton,
-  Aa as ImageLightbox,
-  I as InlineAlert,
-  v as InlinePopover,
-  y as KPIGrid,
-  k as LayerStack,
-  Ba as LineChart,
-  D as LoadingState,
-  E as LogStream,
-  L as MessageBubble,
-  za as Modal,
-  Za as NotificationCenter,
-  A as PageHeader,
+  Pa as IconButton,
+  y as InlineAlert,
+  k as InlinePopover,
+  v as KPIGrid,
+  D as LayerStack,
+  ha as LineChart,
+  E as LoadingState,
+  I as LogStream,
+  A as MessageBubble,
+  Ra as Modal,
+  Ja as NotificationCenter,
+  F as PageHeader,
   ma as PageSection,
-  te as PermissionDeniedCard,
-  $a as PresenceAvatars,
-  F as PresenceDot,
+  Va as PresenceAvatars,
+  L as PresenceDot,
   G as ProgressBar,
   H as ProjectCard,
   N as QuickPromptGrid,
-  Fa as ScoreBarGauge,
-  w as SearchInput,
-  M as SegmentedControl,
-  Va as SkeletonCard,
-  Ka as Sparkline,
-  ie as Spinner,
-  U as StackDiagram,
-  Ia as StackedAreaChart,
-  R as StatCard,
-  le as StatusDot,
-  j as StatusPill,
+  U as SearchInput,
+  w as SegmentedControl,
+  Ka as SkeletonCard,
+  Ha as Sparkline,
+  M as Spinner,
+  R as StackDiagram,
+  xa as StackedAreaChart,
+  j as StatCard,
+  ae as StatusDot,
   K as SubNavLayout,
-  ae as Switch,
+  Wa as Switch,
   O as TabPanel,
   pa as Table,
-  da as TableBody,
-  Ca as TableHead,
-  Sa as TableRow,
-  Ta as TableTd,
-  ga as TableTh,
+  Ca as TableBody,
+  da as TableHead,
+  Ta as TableRow,
+  Sa as TableTd,
+  ca as TableTh,
   Q as Tabs,
-  Ga as TagEditor,
+  Da as TagEditor,
   _ as TerminalLog,
   q as ThinkingBlock,
   z as ThinkingDots,
   J as ThumbnailCard,
-  se as ToastProvider,
+  Ya as ToastProvider,
   V as ToolCallPill,
   W as ToolCallStrip,
-  Ha as TrendSparkline,
   X as TypingIndicator,
   Y as UserChip,
   Z as UserMenu,
-  $ as activeNavItemStyle,
-  Oa as eventGlyphs,
-  aa as formatTypingBanner,
-  Qa as getEventCategory,
-  _a as getEventGlyph,
-  ea as matchHotkey,
-  Ce as nameToColor,
-  Se as nameToInitials,
-  sa as useCommandPalette,
-  ra as useRegisterCommand,
-  re as useToast
+  Na as eventGlyphs,
+  $ as formatTypingBanner,
+  Ua as getEventCategory,
+  wa as getEventGlyph,
+  aa as matchHotkey,
+  re as nameToColor,
+  te as nameToInitials,
+  ea as useCommandPalette,
+  sa as useRegisterCommand,
+  Za as useToast
 };

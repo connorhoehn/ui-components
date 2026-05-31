@@ -3,15 +3,14 @@ import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { ElementType } from 'react';
 import { HTMLAttributes } from 'react';
-import { JSX } from 'react';
+import { JSX } from 'react/jsx-runtime';
+import { JSX as JSX_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { RefObject } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
-
-export declare const activeNavItemStyle: CSSProperties;
 
 export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
 
@@ -109,7 +108,7 @@ export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: 
     yKey: string;
     color?: string;
     yFormat?: (v: number) => string;
-}): JSX.Element;
+}): JSX_2.Element;
 
 export declare interface BreadcrumbItem {
     label: string;
@@ -145,9 +144,35 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
+export declare function CapabilityDeniedFallback({ capabilityName, title, description, actionLabel, onAction, actions, icon, testId, }: CapabilityDeniedFallbackProps): JSX.Element;
+
+export declare interface CapabilityDeniedFallbackProps {
+    /**
+     * Capability name as the user would recognize it (e.g. "Chat",
+     * "Recording", "AI Assistant"). Used in the default title.
+     */
+    capabilityName?: string;
+    /** Override the default title entirely. */
+    title?: string;
+    /** Body copy explaining why the feature is unavailable / how to enable it. */
+    description?: ReactNode;
+    /**
+     * Optional CTA — typically a "Request access" or "Upgrade plan" link.
+     * For multiple CTAs use `actions` instead.
+     */
+    actionLabel?: string;
+    onAction?: () => void;
+    /** Multi-action variant. Takes precedence over actionLabel/onAction. */
+    actions?: EmptyStateAction[];
+    /** Override the default lock icon. Pass `null` to remove the icon. */
+    icon?: ReactNode | null;
+    /** Test id (defaults to `capability-denied-fallback`). */
+    testId?: string;
+}
+
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
-export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
+export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): JSX.Element;
 
 export declare interface CardHeaderProps {
     title: string;
@@ -228,7 +253,7 @@ export declare interface ChatComposerProps {
     maxRows?: number;
 }
 
-export declare function Chip({ tone, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, size, solid, mono, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 export declare interface ChipProps {
     tone?: ChipTone;
@@ -237,14 +262,6 @@ export declare interface ChipProps {
     solid?: boolean;
     /** Monospace font — for count badges. */
     mono?: boolean;
-    /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
-     *  with an animated outer ping (matches Badge variant="pulse"). */
-    dot?: 'static' | 'pulse';
-    /** Uppercase the label with letter-spacing — the "REC" / "LIVE"
-     *  pattern common to status pills. */
-    uppercase?: boolean;
-    /** Optional leading icon (SVG element). Sized by the chip's `size`. */
-    icon?: ReactNode;
     children: ReactNode;
     title?: string;
     className?: string;
@@ -292,7 +309,7 @@ export declare interface CodeEditorProps {
     'aria-label'?: string;
 }
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     title: string;
@@ -350,7 +367,7 @@ export declare interface CommandPaletteProps {
     className?: string;
 }
 
-export declare function CommandPaletteProvider({ commands, getDynamicCommands, recentsKey, recentsLimit, children, }: CommandPaletteProviderProps): JSX.Element;
+export declare function CommandPaletteProvider({ commands, getDynamicCommands, children, }: CommandPaletteProviderProps): JSX.Element;
 
 export declare interface CommandPaletteProviderProps {
     /**
@@ -369,14 +386,6 @@ export declare interface CommandPaletteProviderProps {
      * for API forward-compat; ignored in v1.
      */
     toggleShortcut?: string[];
-    /**
-     * localStorage key for the most-recently-used command id list. Pass
-     * `null` to disable persistence (useful for tests and SSR). Defaults
-     * to `'cui:command-palette:recents'`.
-     */
-    recentsKey?: string | null;
-    /** Maximum number of recent command ids to remember. Default: 5. */
-    recentsLimit?: number;
     children: ReactNode;
 }
 
@@ -471,50 +480,34 @@ export declare interface DrawerProps {
     'data-testid'?: string;
 }
 
-export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, actions, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
-export declare interface DropdownMenuItem {
-    /** Visible item label. */
+export declare interface EmptyStateAction {
+    /** Visible label on the action button or link. */
     label: string;
-    /** Optional leading icon / glyph. */
-    icon?: ReactNode;
-    /** Highlight this item as the currently-active selection. */
-    active?: boolean;
-    /** Style this item as destructive. */
-    danger?: boolean;
-    /** Fires on click / Enter; the menu closes afterwards. */
-    onSelect: () => void;
-}
-
-export declare interface DropdownMenuProps {
-    /** Content of the built-in trigger button (icon, glyph, text…). */
-    trigger: ReactNode;
-    /** Accessible label for the trigger button. Default 'Open menu'. */
-    triggerLabel?: string;
-    /** Optional title attribute (hover tooltip) for the trigger button. */
-    triggerTitle?: string;
-    /** Optional className for the trigger button. */
-    triggerClassName?: string;
+    /** Click handler — required when `href` is not set. */
+    onClick?: () => void;
+    /** External / internal link — required when `onClick` is not set. */
+    href?: string;
     /**
-     * Panel alignment relative to the trigger. 'start' (default) anchors the
-     * panel's left edge to the trigger's left edge; 'end' anchors the panel's
-     * RIGHT edge to the trigger's right edge.
+     * Visual variant.
+     * `primary`   — solid indigo, used for the first/most important step
+     * `secondary` — outlined, used for additional steps
+     * Defaults to `primary` for the first action, `secondary` for the rest.
      */
-    align?: 'start' | 'end';
-    sections: DropdownMenuSection[];
-    /** Optional className for the dropdown panel. */
-    className?: string;
-    /** Optional testid for the panel. Default 'dropdown-menu'. */
-    'data-testid'?: string;
+    variant?: 'primary' | 'secondary';
+    /**
+     * When true (and `href` is set), opens in a new tab with
+     * `target=_blank rel=noopener noreferrer` and an sr-only
+     * "(opens in new tab)" hint.
+     */
+    external?: boolean;
+    /**
+     * Optional copy-to-clipboard CLI snippet rendered in a monospaced
+     * `<pre>` underneath the action button.
+     */
+    code?: string;
 }
-
-export declare interface DropdownMenuSection {
-    /** Optional uppercase section heading. */
-    label?: string;
-    items: DropdownMenuItem[];
-}
-
-export declare function EmptyState({ icon, title, body, description, actionLabel, onAction, action, testId, actionTestId, }: EmptyStateProps): JSX.Element;
 
 export declare interface EmptyStateProps {
     icon?: ReactNode;
@@ -527,6 +520,12 @@ export declare interface EmptyStateProps {
     onAction?: () => void;
     /** Custom action node (overrides actionLabel/onAction when present). */
     action?: ReactNode;
+    /**
+     * Multi-action "what to do next" list. When provided, takes precedence
+     * over `action` / `actionLabel`+`onAction`. Each entry renders a
+     * button or link, with an optional copyable code snippet underneath.
+     */
+    actions?: EmptyStateAction[];
     /**
      * Optional testid for the container (defaults to "empty-state").
      * Callers with existing tests targeting a specific id can pass it here.
@@ -604,7 +603,7 @@ export declare interface FileUploadDropProps {
     'data-testid'?: string;
 }
 
-export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, }: FilterChipProps): JSX.Element;
+export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, }: FilterChipProps): JSX.Element;
 
 export declare interface FilterChipProps {
     active: boolean;
@@ -617,8 +616,6 @@ export declare interface FilterChipProps {
     children: ReactNode;
     className?: string;
     disabled?: boolean;
-    /** Forwarded to the underlying <button> for test selectors. */
-    'data-testid'?: string;
 }
 
 /**
@@ -708,28 +705,7 @@ export declare interface IconPickerProps {
     curated?: string[];
 }
 
-export declare function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageLightboxProps): ReactPortal | null;
-
-export declare interface ImageLightboxImage {
-    src: string;
-    alt?: string;
-    caption?: string;
-}
-
-export declare interface ImageLightboxProps {
-    images: ImageLightboxImage[];
-    /** Index of the open image, or null when the lightbox is closed. */
-    openIndex: number | null;
-    onClose: () => void;
-    /**
-     * Controlled navigation callback. When provided, prev/next/arrow-keys
-     * call this and the parent is expected to update `openIndex`. When
-     * omitted, the lightbox navigates with internal fallback state.
-     */
-    onNavigate?: (index: number) => void;
-}
-
-export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
+export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): JSX.Element;
 
 export declare interface InlineAlertProps {
     tone: InlineAlertTone;
@@ -742,7 +718,7 @@ export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
 export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, children, }: InlinePopoverProps): ReactPortal | null;
 
-export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
+export declare type InlinePopoverPlacement = 'bottom-start' | 'right';
 
 export declare interface InlinePopoverProps {
     /** Ref to the anchor element (the visible trigger). */
@@ -788,7 +764,7 @@ export declare function LineChart({ series, height, yFormat, xFormat, }: {
     height?: number;
     yFormat?: (v: number) => string;
     xFormat?: (v: number | string) => string;
-}): JSX.Element;
+}): JSX_2.Element;
 
 export declare interface LineSeries {
     label: string;
@@ -943,7 +919,7 @@ export declare interface NotificationItem {
     category?: string;
 }
 
-export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -973,31 +949,7 @@ export declare interface PageSectionProps {
     className?: string;
 }
 
-export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
-
-export declare interface PermissionDeniedCardProps {
-    /** Which underlying capability was denied. Drives the default copy + icon. */
-    kind: PermissionKind;
-    state: PermissionState_2;
-    /** Optional verbatim error message (browser-specific text). When omitted
-     *  the card renders default copy keyed on `state`. */
-    message?: string | null;
-    /** Optional retry action. Hidden when omitted. */
-    onRetry?: () => void;
-    /** Optional override label for the retry button (default: "Try again"). */
-    retryLabel?: string;
-    /** Optional override icon (replaces the default per-kind glyph). */
-    icon?: ReactNode;
-    className?: string;
-    'data-testid'?: string;
-}
-
-export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
-
-declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
-export { PermissionState_2 as PermissionState }
-
-export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, className, }: PresenceAvatarsProps): JSX.Element;
+export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, className, }: PresenceAvatarsProps): JSX.Element;
 
 export declare interface PresenceAvatarsProps {
     users: PresenceAvatarUser[];
@@ -1007,33 +959,16 @@ export declare interface PresenceAvatarsProps {
     size?: number;
     /** Called when the "+N" overflow chip is clicked */
     onMoreClick?: () => void;
-    /** Called with the user's `id` when an avatar is clicked. When set,
-     *  each avatar becomes a `<button>` for keyboard + screen-reader
-     *  accessibility; when omitted, items render as `<div>` (back-compat
-     *  with consumers that just want a static row). */
-    onUserClick?: (id: string) => void;
     className?: string;
 }
 
 export declare interface PresenceAvatarUser {
-    /** Unique identifier for the user. Passed back to `onUserClick`. */
+    /** Unique identifier for the user */
     id: string;
     name: string;
-    /** Optional avatar image URL. Wins over `color` when present. */
+    /** Optional avatar image URL */
     avatarUrl?: string;
-    /** Online flag. Drives the status dot when `idle` is not set:
-     *  `undefined`/`true` → green; `false` → gray. */
     online?: boolean;
-    /** Override the auto-computed avatar background. Useful when the
-     *  user identity needs to match a CRDT cursor color elsewhere. */
-    color?: string;
-    /** Present but away. Dims the avatar (alpha-blends `color` when
-     *  provided, otherwise drops opacity) and flips the status dot to
-     *  amber. Wins over `online` for the dot color. */
-    idle?: boolean;
-    /** Optional editing mode — renders a small mode badge on the
-     *  upper-right of the avatar (pencil / check / eye). */
-    mode?: PresenceMode;
 }
 
 export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;
@@ -1053,16 +988,7 @@ export declare interface PresenceDotProps {
     'data-testid'?: string;
 }
 
-export declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
-
 export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
-
-/**
- * @deprecated Renamed to `PresenceAvatarUser` (the barrel-exported name for
- * the `PresenceAvatars` user shape). Import `PresenceAvatarUser` instead;
- * this back-compat alias will be removed in the next major.
- */
-export declare type PresenceUser = PresenceAvatarUser;
 
 export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
 
@@ -1142,37 +1068,7 @@ export declare interface QuickPromptGridProps {
     className?: string;
 }
 
-/**
- * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
- * composites for per-criterion + overall scores, but generic enough to be
- * reused elsewhere (rate-limit budget, processing progress, etc.).
- *
- * a11y: rendered with `role="meter"`, `aria-valuenow / -valuemin / -valuemax`.
- */
-export declare function ScoreBarGauge({ value, threshold, tone, size, showLabel, formatLabel, ariaLabel, className, }: ScoreBarGaugeProps): JSX.Element;
-
-export declare interface ScoreBarGaugeProps {
-    /** 0..1 value. Out-of-range inputs are clamped, NaN renders an empty gauge. */
-    value: number;
-    /** Threshold at which the gauge flips from "below threshold" tone to "above". 0..1, default 0.5. */
-    threshold?: number;
-    /** Override tone selection; otherwise derived from `value` vs `threshold`. */
-    tone?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
-    /** Default 'md'. */
-    size?: 'sm' | 'md' | 'lg';
-    /** Render the percentage label inline (right-aligned). Default true. */
-    showLabel?: boolean;
-    /** Custom label formatter — receives the clamped 0..1 value. Default: percent. */
-    formatLabel?: (value: number) => string;
-    /**
-     * aria-label override. When omitted, the component synthesizes a label
-     * from value + threshold + pass state.
-     */
-    ariaLabel?: string;
-    className?: string;
-}
-
-export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -1257,7 +1153,7 @@ export declare interface StackDiagramProps {
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
-}): JSX.Element;
+}): JSX_2.Element;
 
 export declare interface StackLayerSpec {
     id: string;
@@ -1354,22 +1250,6 @@ export declare interface StatusDotProps {
 }
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
-
-export declare function StatusPill({ state, label, icon, size, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
-
-export declare interface StatusPillProps {
-    state: StatusPillState;
-    label: string;
-    /** Optional icon placed to the left of the label. */
-    icon?: ReactNode;
-    size?: StatusPillSize;
-    className?: string;
-    'data-testid'?: string;
-}
-
-export declare type StatusPillSize = 'sm' | 'md';
-
-export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
 
 export declare interface SubNavItem {
     /** Path relative to the section root, e.g. "summary" or "crawl". For action
@@ -1693,41 +1573,6 @@ export declare function ToolCallStrip({ toolCalls, className }: ToolCallStripPro
 
 export declare interface ToolCallStripProps {
     toolCalls: ToolCall[];
-    className?: string;
-}
-
-/**
- * Generic 0..N-point sparkline. Pure SVG, no canvas / chart library.
- * Used by the judge trend chart, but generic enough to be reused
- * elsewhere (request-rate strips, latency mini-charts, etc.).
- *
- * a11y: rendered with `role="img"` + aria-label. The actual SVG is
- * marked `aria-hidden` because polylines aren't screen-reader-meaningful.
- */
-export declare function TrendSparkline({ points, yMin, yMax, width, height, stroke, strokeWidth, showLastPoint, showFill, ariaLabel, className, }: TrendSparklineProps): JSX.Element;
-
-export declare interface TrendSparklineProps {
-    /** Y-values, oldest → newest. Empty array renders an empty placeholder. */
-    points: number[];
-    /** Optional fixed Y-axis bounds. Defaults to data extent + 5% padding. */
-    yMin?: number;
-    yMax?: number;
-    /** Pixel width / height for the SVG viewbox. Default 120x32. */
-    width?: number;
-    height?: number;
-    /** Stroke color — default uses CSS var so tone can be tinted by parent. */
-    stroke?: string;
-    /** Stroke width in viewbox units. Default 1.5. */
-    strokeWidth?: number;
-    /** Render the last-point dot. Default true. */
-    showLastPoint?: boolean;
-    /** Render a fill under the line. Default true. */
-    showFill?: boolean;
-    /**
-     * aria-label override. When omitted, the component synthesizes a label
-     * from point count + first/last values.
-     */
-    ariaLabel?: string;
     className?: string;
 }
 
