@@ -5,7 +5,7 @@
 // to the hook's upload() method, and renders a progress list below.
 
 import type { RMUseFileUploadReturn } from './types';
-import { adaptFileUploads } from './adapters';
+import { adaptFileUploads, type FileUploadSummary } from './adapters';
 import { FileUploadDrop } from '../../components/shared/FileUploadDrop';
 
 export interface WrappedFileUploadDropProps {
@@ -63,66 +63,72 @@ export function WrappedFileUploadDrop({
       />
 
       {summaries.length > 0 && (
-        <ul
-          style={{ margin: '8px 0 0', padding: 0, listStyle: 'none', fontSize: 13 }}
-        >
-          {summaries.map((s) => (
-            <li
-              key={s.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '4px 0',
-                borderBottom: '1px solid #e2e8f0',
-              }}
-            >
-              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {s.filename}
-              </span>
-              <span style={{ color: statusColor(s.status), fontWeight: 600, fontSize: 12 }}>
-                {s.status === 'uploading' ? `${s.progress}%` : s.status}
-              </span>
-              {(s.status === 'completed' || s.status === 'clean') && s.downloadUrl && (
-                <a
-                  href={s.downloadUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ fontSize: 12, color: '#3b82f6' }}
-                >
-                  Download
-                </a>
-              )}
-              {(s.status === 'failed' || s.status === 'infected') && (
-                <button
-                  type="button"
-                  onClick={() => fileUpload.removeCompleted()}
-                  style={{ fontSize: 12, color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
-                >
-                  Dismiss
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
+        <UploadProgressList
+          summaries={summaries}
+          onDismiss={() => fileUpload.removeCompleted()}
+        />
       )}
     </div>
   );
 }
 
-function statusColor(status: string): string {
+interface UploadProgressListProps {
+  summaries: FileUploadSummary[];
+  onDismiss: () => void;
+}
+
+function UploadProgressList({ summaries, onDismiss }: UploadProgressListProps) {
+  return (
+    <ul className="mt-2 p-0 list-none text-[13px]">
+      {summaries.map((s) => (
+        <li
+          key={s.id}
+          className="flex items-center gap-2 py-1 border-b border-border"
+        >
+          <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
+            {s.filename}
+          </span>
+          <span className={`text-xs font-semibold ${statusClass(s.status)}`}>
+            {s.status === 'uploading' ? `${s.progress}%` : s.status}
+          </span>
+          {(s.status === 'completed' || s.status === 'clean') && s.downloadUrl && (
+            <a
+              href={s.downloadUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-info"
+            >
+              Download
+            </a>
+          )}
+          {(s.status === 'failed' || s.status === 'infected') && (
+            <button
+              type="button"
+              onClick={onDismiss}
+              className="text-xs text-danger bg-transparent border-0 cursor-pointer p-0"
+            >
+              Dismiss
+            </button>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function statusClass(status: FileUploadSummary['status']): string {
   switch (status) {
     case 'completed':
     case 'clean':
-      return '#22c55e';
+      return 'text-state-completed';
     case 'failed':
     case 'infected':
-      return '#ef4444';
+      return 'text-state-failed';
     case 'scanning':
-      return '#f59e0b';
+      return 'text-state-awaiting';
     case 'uploading':
-      return '#3b82f6';
+      return 'text-state-running';
     default:
-      return '#94a3b8';
+      return 'text-text-tertiary';
   }
 }
