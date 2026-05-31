@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { TypingIndicator } from '@connorhoehn/ui-components/shared';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
 
@@ -210,60 +211,11 @@ export function ChatMessages() {
 
         {/* Typing indicator */}
         {typingUser && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0' }}>
-            <div
-              style={{
-                display: 'flex',
-                gap: 3,
-                padding: '6px 12px',
-                background: '#f1f5f9',
-                borderRadius: 12,
-              }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: '#94a3b8',
-                  animation: 'typingBounce 1.2s infinite',
-                  animationDelay: '0ms',
-                }}
-              />
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: '#94a3b8',
-                  animation: 'typingBounce 1.2s infinite',
-                  animationDelay: '200ms',
-                }}
-              />
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: '#94a3b8',
-                  animation: 'typingBounce 1.2s infinite',
-                  animationDelay: '400ms',
-                }}
-              />
-            </div>
-            <span style={{ fontSize: 12, color: '#64748b' }}>
-              {typingUser} is typing...
-            </span>
+          <div style={{ padding: '4px 0' }}>
+            <TypingIndicator names={[typingUser]} />
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes typingBounce {
-          0%, 60%, 100% { transform: translateY(0); }
-          30% { transform: translateY(-4px); }
-        }
-      `}</style>
     </div>
   );
 }
