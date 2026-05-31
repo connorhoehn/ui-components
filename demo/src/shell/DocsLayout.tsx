@@ -1,57 +1,94 @@
-import { Outlet, useLocation } from 'react-router';
-import { TopNav } from './TopNav';
-import { Sidebar } from './Sidebar';
+import { Outlet, useLocation, Link } from 'react-router';
+import {
+  DocsShell,
+  DocsSidebar,
+  DocsTopNav,
+  type DocsSidebarSection,
+} from '@connorhoehn/ui-components/layout';
 import { Breadcrumbs } from './Breadcrumbs';
 import { MockProviders } from '../mock/providers';
 import { TocProvider, useToc, TableOfContents, useScrollSpy } from '../shared';
+import { navigationTree } from '../navigation';
+
+const TOPNAV_BRAND = 'UI Components';
+
+const TOPNAV_ITEMS = navigationTree.map((s) => ({
+  label: s.label,
+  to: s.basePath,
+}));
+
+const SIDEBAR_SECTIONS: DocsSidebarSection[] = navigationTree.map((section) => ({
+  id: section.id,
+  label: section.label,
+  basePath: section.basePath,
+  groups: section.groups.map((group) => ({
+    id: group.id,
+    label: group.label,
+    to: group.path,
+    items: group.items.map((item) => ({
+      id: item.id,
+      label: item.label,
+      to: item.path,
+    })),
+  })),
+}));
+
+function isPageDemoPath(pathname: string): boolean {
+  return (
+    (pathname.startsWith('/pages/') && pathname !== '/pages') ||
+    (pathname.startsWith('/workflows/') && pathname !== '/workflows') ||
+    (pathname.startsWith('/identity/') && pathname !== '/identity')
+  );
+}
 
 export function DocsLayout() {
   const { pathname } = useLocation();
-  const isPageDemo = (pathname.startsWith('/pages/') && pathname !== '/pages')
-    || (pathname.startsWith('/workflows/') && pathname !== '/workflows')
-    || (pathname.startsWith('/identity/') && pathname !== '/identity');
+  const isPageDemo = isPageDemoPath(pathname);
 
   return (
     <MockProviders>
       <TocProvider>
-        <div style={{ minHeight: '100vh' }}>
-          <TopNav />
-          <Sidebar />
-          {!isPageDemo && <TocSidebar />}
-          <main style={{
-            marginLeft: 240,
-            paddingTop: isPageDemo ? 0 : 56,
-            minHeight: 'calc(100vh - 56px)',
-            display: isPageDemo ? 'flex' : 'block',
-            flexDirection: 'column',
-          }}>
-            {isPageDemo ? (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-                <Outlet />
-              </div>
-            ) : (
-              <div style={{ padding: '24px 40px' }}>
-                <Breadcrumbs />
-                <Outlet />
-              </div>
-            )}
-          </main>
-        </div>
+        <DocsShell
+          topNav={
+            <DocsTopNav
+              items={TOPNAV_ITEMS}
+              activeHref={pathname}
+              brand={TOPNAV_BRAND}
+              renderLink={(item, props) => (
+                <Link to={item.to} {...props}>
+                  {props.children}
+                </Link>
+              )}
+            />
+          }
+          sidebar={
+            <DocsSidebar
+              sections={SIDEBAR_SECTIONS}
+              activeHref={pathname}
+              renderLink={({ to }, props) => (
+                <Link to={to} {...props}>
+                  {props.children}
+                </Link>
+              )}
+            />
+          }
+          rightRail={!isPageDemo ? <TocRail /> : undefined}
+          fullBleed={isPageDemo}
+          preContent={!isPageDemo ? <Breadcrumbs /> : undefined}
+        >
+          <Outlet />
+        </DocsShell>
       </TocProvider>
     </MockProviders>
   );
 }
 
-function TocSidebar() {
+function TocRail() {
   const { items } = useToc();
   const ids = items.map((i: { id: string }) => i.id);
   const activeId = useScrollSpy(ids);
 
   if (items.length === 0) return null;
 
-  return (
-    <div style={{ position: 'fixed', top: 80, right: 40, width: 200 }}>
-      <TableOfContents items={items} activeId={activeId} />
-    </div>
-  );
+  return <TableOfContents items={items} activeId={activeId} />;
 }

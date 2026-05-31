@@ -9,3 +9,14 @@ export { TopNav, NavTabs } from './TopNav';
 export type { TopNavProps, TopNavItem, NavTabsProps } from './TopNav';
 export { SettingsLayout } from './SettingsLayout';
 export type { SettingsLayoutProps, SettingsSection } from './SettingsLayout';
+export { DocsShell } from './DocsShell';
+export type { DocsShellProps } from './DocsShell';
+export { DocsSidebar } from './DocsSidebar';
+export type {
+  DocsSidebarProps,
+  DocsSidebarSection,
+  DocsSidebarGroup,
+  DocsSidebarItem,
+} from './DocsSidebar';
+export { DocsTopNav } from './DocsTopNav';
+export type { DocsTopNavProps } from './DocsTopNav';
