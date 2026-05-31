@@ -46,7 +46,7 @@ npm run test:e2e   # playwright (tests/e2e/)
 | `…/styles.css` | Tailwind design tokens + keyframes | **Stable** |
 | `…/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A canvas | **In-flux** (graduation: hub #1069) |
 | `…/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
-| `…/doc-editor` | TipTap collaborative rich-text editor | **In-flux** (graduation: hub #1066) |
+| `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **In-flux** (graduation: hub #1066 — `StandaloneTiptap` shipped; Tailwind wave 3 still pending) |
 | `…/observability` | Dashboard, events, metrics, node pages | **In-flux** |
 
 ### Reachability gap (load-bearing)

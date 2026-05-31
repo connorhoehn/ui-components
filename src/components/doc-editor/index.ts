@@ -4,6 +4,13 @@ export { default as NewDocumentModal } from './NewDocumentModal';
 export { default as DocumentHeader } from './DocumentHeader';
 export { default as EditorToolbar } from './EditorToolbar';
 export { default as TiptapEditor } from './TiptapEditor';
+export { default as StandaloneTiptap } from './StandaloneTiptap';
+export type {
+  StandaloneTiptapProps,
+  StandaloneTiptapUser,
+  StandaloneTiptapBootstrapProps,
+  StandaloneTiptapEscapeHatchProps,
+} from './StandaloneTiptap';
 export { default as SectionBlock } from './SectionBlock';
 export { default as SectionList } from './SectionList';
 export { default as SectionComments } from './SectionComments';
