@@ -3,7 +3,7 @@ import { useState as R, useRef as A, useEffect as S, useMemo as ne, useCallback 
 import { l as ae } from "./useDocumentTypes-C29MkgPl.js";
 import { M as ie } from "./Modal-2jg4229_.js";
 import { c as s } from "./cn-B6yFEsav.js";
-import { r as L, c as v } from "./registry-BZU57zws.js";
+import { r as L, a as v } from "./registry-D1eP6Kby.js";
 import { useEditor as oe, EditorContent as se } from "@tiptap/react";
 import le from "@tiptap/starter-kit";
 import de from "@tiptap/extension-task-list";

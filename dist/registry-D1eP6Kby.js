@@ -26,10 +26,10 @@ function f() {
   });
 }
 export {
-  g as a,
-  p as b,
-  d as c,
-  a as g,
+  d as a,
+  a as b,
+  g as c,
+  p as g,
   f as l,
   u as r
 };

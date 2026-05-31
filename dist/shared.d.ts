@@ -366,6 +366,23 @@ export declare interface ConfirmDialogProps {
     children?: React.ReactNode;
 }
 
+export declare function ConnectionPill({ state, compact, withLabel, labels, className, 'data-testid': testId, }: ConnectionPillProps): JSX.Element;
+
+export declare interface ConnectionPillProps {
+    state: ConnectionState;
+    /** Dot-only rendering — no label text. Default false. */
+    compact?: boolean;
+    /** Render the text label next to the dot. Default true. Set false for dot-only. */
+    withLabel?: boolean;
+    /** Override label text per state (e.g. localized strings). */
+    labels?: Partial<Record<ConnectionState, string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
+/** Connection lifecycle states */
+declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+
 export declare function DataTable<T>({ data, columns, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {

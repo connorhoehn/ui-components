@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.14.0] — 2026-05-31
+
+### Added
+
+- **`<ConnectionPill>`** (`/shared`). Canonical 5-state connection-status
+  pill (idle/connecting/connected/reconnecting/disconnected) with `compact`
+  + `withLabel` variants, `aria-live="polite"` for transition announcements,
+  and per-state `labels` override for localisation. Promoted from
+  `layout/ConnectionStatus` so chat, gateway sidebar, and admin shells all
+  share one source. Refs hub#984.
+- **`<DocsShell>` + `<DocsSidebar>` + `<DocsTopNav>`** (`/layout`). Trio of
+  documentation-shell primitives: collapsible-section sidebar with
+  active-route highlight, sticky topnav with brand + search-hotkey slot,
+  and a composition shell with optional TOC right-rail. The demo's hand-
+  rolled `shell/Sidebar.tsx` + `shell/TopNav.tsx` (245 LOC of inline-styled
+  divs) drop out entirely; `shell/DocsLayout.tsx` is now a thin adapter
+  that maps the demo's `navigationTree` to library props and plugs in
+  react-router's `<Link>` via `renderLink`. Refs hub#1018.
+
+### Changed
+
+- `layout/ConnectionStatus` now re-exports the new `<ConnectionPill>` and
+  is marked `@deprecated`. Scheduled for removal in 2.15.
+
+### Migrated
+
+- `demo/src/demos/social-panel/ChatMessages.tsx` typing-indicator block
+  now uses the shared `<TypingIndicator>` primitive — the inline
+  `@keyframes typingBounce` injection and three hand-rolled animated
+  `<span>` dots are gone. Refs hub#1034.
+
 ## [2.13.0] — 2026-05-30
 
 ### Added

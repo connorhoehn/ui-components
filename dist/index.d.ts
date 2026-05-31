@@ -1350,6 +1350,20 @@ export declare interface ConflictResolution {
 
 export declare type ConflictSide = 'source' | 'platform' | 'merged';
 
+export declare function ConnectionPill({ state, compact, withLabel, labels, className, 'data-testid': testId, }: ConnectionPillProps): JSX.Element;
+
+export declare interface ConnectionPillProps {
+    state: ConnectionState;
+    /** Dot-only rendering — no label text. Default false. */
+    compact?: boolean;
+    /** Render the text label next to the dot. Default true. Set false for dot-only. */
+    withLabel?: boolean;
+    /** Override label text per state (e.g. localized strings). */
+    labels?: Partial<Record<ConnectionState, string>>;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /** Connection lifecycle states */
 export declare type ConnectionState = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -1359,7 +1373,11 @@ declare type ConnectionState_3 = 'idle' | 'connecting' | 'connected' | 'reconnec
 
 declare type ConnectionState_4 = 'connected' | 'connecting' | 'disconnected';
 
-export declare function ConnectionStatus({ state }: Props): JSX.Element;
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+export declare function ConnectionStatus(props: ConnectionStatusProps): JSX.Element;
+
+/** @deprecated Use `ConnectionPill` from `/shared`. Alias retained for one minor. */
+declare type ConnectionStatusProps = Pick<ConnectionPillProps, 'state'>;
 
 export declare function ConsentPage({ clientName, scopes, redirectUri, onAuthorize, onDeny, logoUrl, }: ConsentPageProps): JSX.Element;
 
@@ -1582,6 +1600,91 @@ export declare interface DLQPurgeResponse {
 export declare interface DLQRedriveResponse {
     redriven: string[];
     notFound: string[];
+}
+
+export declare function DocsShell({ topNav, sidebar, rightRail, children, fullBleed, preContent, className, style, }: DocsShellProps): JSX.Element;
+
+export declare interface DocsShellProps {
+    /** Sticky top navigation. Typically <DocsTopNav>. */
+    topNav: ReactNode;
+    /** Left sidebar. Typically <DocsSidebar>. */
+    sidebar: ReactNode;
+    /** Optional right rail. Typically <TableOfContents>. */
+    rightRail?: ReactNode;
+    /** Main content. */
+    children: ReactNode;
+    /**
+     * Full-bleed mode skips the centered content padding so a hosted
+     * application demo (e.g. a chat panel filling the viewport) can
+     * occupy the entire content rectangle.
+     */
+    fullBleed?: boolean;
+    /** Pre-content slot (breadcrumbs, page header). Skipped when fullBleed. */
+    preContent?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+}
+
+export declare function DocsSidebar({ sections, activeHref, defaultCollapsedSections, renderLink, className, style, 'aria-label': ariaLabel, }: DocsSidebarProps): JSX.Element;
+
+export declare interface DocsSidebarGroup {
+    id: string;
+    label?: ReactNode;
+    /** When set, the group label itself is rendered as a direct link instead of a section. */
+    to?: string;
+    items: DocsSidebarItem[];
+}
+
+export declare interface DocsSidebarItem {
+    id: string;
+    label: ReactNode;
+    to: string;
+    badge?: ReactNode;
+}
+
+export declare interface DocsSidebarProps {
+    sections: DocsSidebarSection[];
+    /** Current pathname — drives the active-item highlight. */
+    activeHref?: string;
+    /** Section ids that should start collapsed. */
+    defaultCollapsedSections?: string[];
+    /** Plug a routing library's Link. Defaults to <a href>. */
+    renderLink?: LinkRenderer;
+    className?: string;
+    style?: CSSProperties;
+    'aria-label'?: string;
+}
+
+export declare interface DocsSidebarSection {
+    id: string;
+    label: ReactNode;
+    /** Used to detect "section active" highlighting in section header. */
+    basePath?: string;
+    groups: DocsSidebarGroup[];
+}
+
+export declare function DocsTopNav({ items, activeHref, brand, brandTo, search, showSearchPlaceholder, rightSlot, renderLink, className, style, }: DocsTopNavProps): JSX.Element;
+
+export declare interface DocsTopNavProps {
+    items: TopNavItem[];
+    activeHref?: string;
+    /** Brand/logo. A string renders as a bold title; ReactNode is rendered as-is. */
+    brand?: ReactNode;
+    /** Optional href for the brand to link to. Default "/". Pass null to render brand as a static span. */
+    brandTo?: string | null;
+    /**
+     * Search affordance. Convention: a button that opens a CommandPalette.
+     * Falls back to a styled "Search… ⌘K" placeholder when omitted but
+     * `showSearchPlaceholder` is true.
+     */
+    search?: ReactNode;
+    /** Renders a static "Search… ⌘K" pill when `search` is omitted. Default true. */
+    showSearchPlaceholder?: boolean;
+    /** Right-side slot for auxiliary links (GitHub, version, theme switcher). */
+    rightSlot?: ReactNode;
+    renderLink?: (item: TopNavItem, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
+    className?: string;
+    style?: CSSProperties;
 }
 
 declare interface DocTypeProposalRow {
@@ -2563,6 +2666,11 @@ export declare interface LineSeries {
     }>;
     color?: string;
 }
+
+declare type LinkRenderer = (item: {
+    to: string;
+    id: string;
+}, props: AnchorHTMLAttributes<HTMLAnchorElement>) => ReactNode;
 
 /**
  * Fetch DLQ entries with optional filters.
@@ -3854,10 +3962,6 @@ declare interface ProposedField {
     name: string;
     sectionType: string;
     required: boolean;
-}
-
-declare interface Props {
-    state: ConnectionState;
 }
 
 declare interface PublicProfile {
