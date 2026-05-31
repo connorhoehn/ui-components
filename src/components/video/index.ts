@@ -50,7 +50,10 @@ export { useMuteWhileTalking } from '../../lib/video/useMuteWhileTalking';
 export { useTrackStateBump, streamHasUsableVideo } from '../../lib/video/useTrackStateBump';
 
 export { StreamVideo } from './StreamVideo';
-export type { StreamVideoProps } from './StreamVideo';
+export type { StreamVideoProps, StreamVideoPlayState } from './StreamVideo';
+
+export { AutoplayGate } from './AutoplayGate';
+export type { AutoplayGateProps } from './AutoplayGate';
 
 export { RemoteTileSlot } from './RemoteTileSlot';
 export type { RemoteTileSlotProps } from './RemoteTileSlot';

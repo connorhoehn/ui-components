@@ -690,6 +690,17 @@ declare interface AuthState {
     error: string | null;
 }
 
+export declare function AutoplayGate({ chipLabel, chipClassName, wrapperClassName, onPlayStateChange, ...streamProps }: AutoplayGateProps): JSX.Element;
+
+export declare interface AutoplayGateProps extends StreamVideoProps {
+    /** Chip label. Default: "Tap to unmute". */
+    chipLabel?: string;
+    /** Override the chip's Tailwind classes. */
+    chipClassName?: string;
+    /** Wrapper class for the relatively-positioned container. */
+    wrapperClassName?: string;
+}
+
 export declare function Avatar({ name, size, color, src, className, style, title, }: AvatarProps): JSX.Element;
 
 export declare function AvatarGroup({ names, maxVisible, size, className, }: AvatarGroupProps): JSX.Element;
@@ -5075,7 +5086,9 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamVideo({ stream, muted, videoRef, className, }: StreamVideoProps): JSX.Element;
+export declare function StreamVideo({ stream, muted, videoRef, className, onPlayStateChange, }: StreamVideoProps): JSX.Element;
+
+export declare type StreamVideoPlayState = 'playing' | 'paused-by-autoplay' | 'ended';
 
 export declare interface StreamVideoProps {
     stream: MediaStream;
@@ -5085,6 +5098,9 @@ export declare interface StreamVideoProps {
     videoRef?: MutableRefObject<HTMLVideoElement | null>;
     /** Tailwind class overrides. Defaults to `h-full w-full object-cover`. */
     className?: string;
+    /** Notifies on playback state transitions. Fires `paused-by-autoplay`
+     *  when the browser rejects autoplay with `NotAllowedError`. */
+    onPlayStateChange?: (state: StreamVideoPlayState) => void;
 }
 
 export declare interface SubNavItem {

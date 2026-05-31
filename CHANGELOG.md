@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **`<AutoplayGate>` + `playState` tracking on `<StreamVideo>`**
+  (`/video`). Chrome and Safari silently reject non-muted autoplay on
+  remote tiles when a user joins a call from a background tab
+  (notification click, hash-link) — the user sees a permanently black
+  tile and has no recovery affordance. `<StreamVideo>` gains an
+  optional `onPlayStateChange?: (state: 'playing' | 'paused-by-autoplay'
+  | 'ended') => void` prop that fires `paused-by-autoplay` when
+  `play()` rejects with `NotAllowedError`. New `<AutoplayGate>`
+  composite wraps `<StreamVideo>` and, on rejection, overlays a single
+  tap-to-unmute chip. On click it unmutes the wrapped tile, plays it,
+  AND walks `document.querySelectorAll('video')` calling `play()` on
+  every paused tile — one user gesture clears every blocked remote at
+  once. SSR-safe. Refs gateway hub#1257.
+
 - **`<MessageRow>` + `<MessageGroup>`** (`/social`). Extracted from
   `ChatPanel` as standalone presentational primitives so consumers can
   build alternate chat layouts (thread panel, dense feed, search-result

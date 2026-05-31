@@ -3,6 +3,17 @@ import { JSX } from 'react/jsx-runtime';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
 
+export declare function AutoplayGate({ chipLabel, chipClassName, wrapperClassName, onPlayStateChange, ...streamProps }: AutoplayGateProps): JSX.Element;
+
+export declare interface AutoplayGateProps extends StreamVideoProps {
+    /** Chip label. Default: "Tap to unmute". */
+    chipLabel?: string;
+    /** Override the chip's Tailwind classes. */
+    chipClassName?: string;
+    /** Wrapper class for the relatively-positioned container. */
+    wrapperClassName?: string;
+}
+
 export declare function CallingStatusPill({ show, label }: CallingStatusPillProps): JSX.Element | null;
 
 export declare interface CallingStatusPillProps {
@@ -438,7 +449,9 @@ export declare interface StreamMetrics {
     jitter?: number;
 }
 
-export declare function StreamVideo({ stream, muted, videoRef, className, }: StreamVideoProps): JSX.Element;
+export declare function StreamVideo({ stream, muted, videoRef, className, onPlayStateChange, }: StreamVideoProps): JSX.Element;
+
+export declare type StreamVideoPlayState = 'playing' | 'paused-by-autoplay' | 'ended';
 
 export declare interface StreamVideoProps {
     stream: MediaStream;
@@ -448,6 +461,9 @@ export declare interface StreamVideoProps {
     videoRef?: MutableRefObject<HTMLVideoElement | null>;
     /** Tailwind class overrides. Defaults to `h-full w-full object-cover`. */
     className?: string;
+    /** Notifies on playback state transitions. Fires `paused-by-autoplay`
+     *  when the browser rejects autoplay with `NotAllowedError`. */
+    onPlayStateChange?: (state: StreamVideoPlayState) => void;
 }
 
 export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;
