@@ -38,6 +38,10 @@ import '@connorhoehn/ui-components/styles.css';
 
 See `CLAUDE.md` for the full exports/stability map.
 
+New to the library? Start with [`docs/consumer-adoption.md`](docs/consumer-adoption.md) —
+the composite index, decision tree, and three before/after refactors that map
+common hand-rolled patterns onto the canonical ui-components composites.
+
 ## Surfaces
 
 | Sub-path | What's there | Stability |
