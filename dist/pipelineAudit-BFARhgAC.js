@@ -1,10 +1,9 @@
 import { createContext as ge, useState as N, useRef as L, useEffect as F, useCallback as y, useMemo as V, useContext as W } from "react";
 import { a as Pe, u as Re } from "./EventStreamContext-CjzSHXy-.js";
 import { jsx as ye } from "react/jsx-runtime";
-import "@schemas/pipeline.schema.json";
 import { u as $e } from "./IdentityContext-CLalsm_M.js";
 import { u as se } from "./WebSocketContext-DPGFyPeZ.js";
-async function dt(e, n) {
+async function ut(e, n) {
   const r = `/api/pipelines/${e}/runs/${n}/force-fail`, o = await fetch(r, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -52,14 +51,14 @@ function ae(e) {
     return [];
   }
 }
-function pt(e, n) {
+function dt(e, n) {
   return ae(e).find((o) => o.id === n) ?? null;
 }
 function Ce(e, n) {
   const r = ae(e).filter((a) => a.id !== n.id), o = [n, ...r].sort((a, t) => t.startedAt.localeCompare(a.startedAt)).slice(0, Ee);
   Ue(ie(e), JSON.stringify(o));
 }
-function lt(e) {
+function pt(e) {
   try {
     localStorage.removeItem(ie(e));
   } catch {
@@ -107,7 +106,7 @@ async function De(e, n) {
     return console.error("[pipelineRuns] Failed to fetch run:", o), null;
   }
 }
-const mt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const lt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   getPipelineRun: De,
   listPipelineRuns: he
@@ -179,7 +178,7 @@ function Fe(e) {
   }
   Ne(e);
 }
-function ft(e) {
+function mt(e) {
   const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), o = crypto.randomUUID(), a = crypto.randomUUID(), t = crypto.randomUUID(), s = crypto.randomUUID(), i = crypto.randomUUID(), c = crypto.randomUUID(), g = crypto.randomUUID(), $ = crypto.randomUUID(), w = crypto.randomUUID(), l = crypto.randomUUID(), S = crypto.randomUUID(), m = { type: "trigger", triggerType: "manual" }, P = {
     type: "llm",
     provider: "bedrock",
@@ -325,7 +324,7 @@ function ft(e) {
   };
   return H(M), M;
 }
-function gt(e, n) {
+function ft(e, n) {
   const r = B(e);
   if (!r) return null;
   const o = /* @__PURE__ */ new Map(), a = r.nodes.map((c) => {
@@ -353,7 +352,7 @@ function gt(e, n) {
   };
   return H(i), i;
 }
-function yt(e) {
+function gt(e) {
   const n = B(e);
   return n ? JSON.stringify(n, null, 2) : null;
 }
@@ -412,7 +411,7 @@ function J(e) {
   const n = e.message || String(e);
   return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
 }
-async function ht() {
+async function yt() {
   try {
     return await Le();
   } catch (e) {
@@ -438,7 +437,7 @@ async function ne(e) {
     throw n;
   }
 }
-async function It(e) {
+async function ht(e) {
   Fe(e);
   try {
     await He(e);
@@ -456,7 +455,7 @@ async function Ke(e) {
     throw n;
   }
 }
-async function wt(e) {
+async function It(e) {
   const n = (/* @__PURE__ */ new Date()).toISOString(), r = {
     id: crypto.randomUUID(),
     type: "trigger",
@@ -582,7 +581,7 @@ function z() {
   return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 const de = ge(null);
-function bt({
+function wt({
   pipelineId: e,
   children: n
 }) {
@@ -816,7 +815,7 @@ function bt({
   );
   return /* @__PURE__ */ ye(de.Provider, { value: K, children: n });
 }
-function vt() {
+function bt() {
   const e = W(de);
   if (!e)
     throw new Error(
@@ -874,7 +873,7 @@ const Ye = Object.freeze({
 function ze(e) {
   return Ye[e] ?? e;
 }
-function St({
+function vt({
   channel: e = "pipeline:all",
   onEvent: n,
   enabled: r = !1
@@ -991,7 +990,7 @@ function Ge() {
     requestResumeFromStep: $
   };
 }
-function xt(e, n = {}) {
+function St(e, n = {}) {
   const { enabled: r = !0 } = n, { connectionState: o, sendMessage: a } = se();
   F(() => {
     if (!r || !e || o !== "connected") return;
@@ -1026,7 +1025,7 @@ function Ze(e) {
   for (const i of t) s[i.id] = i;
   return s;
 }
-function Tt({ children: e }) {
+function xt({ children: e }) {
   const n = W(de), { triggerRun: r } = Xe(), o = Ge(), [a, t] = N({}), [s, i] = N(!1), c = L(/* @__PURE__ */ new Set()), g = L(null);
   F(() => {
     const d = n?.definition?.id;
@@ -1519,11 +1518,11 @@ function tt() {
     );
   return e;
 }
-function Pt() {
+function Tt() {
   return W(ee)?.retryFromStep ?? (async () => {
   });
 }
-function Rt(e) {
+function Pt(e) {
   const n = W(ee);
   return V(() => {
     if (!n) return null;
@@ -1690,7 +1689,7 @@ function nt() {
   }, []);
   return { approvals: l, isLoading: a, error: s, retry: S };
 }
-function $t() {
+function Rt() {
   const { approvals: e } = nt();
   return e;
 }
@@ -1712,7 +1711,7 @@ function Se(e, n, r, o) {
   const t = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/breakpoint/${encodeURIComponent(r)}/patch`;
   return o ? `${t}/${encodeURIComponent(o)}` : `${t}`;
 }
-async function At(e, n, r, o, a) {
+async function $t(e, n, r, o, a) {
   const t = await fetch(Se(e, n, r), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1739,7 +1738,7 @@ async function At(e, n, r, o, a) {
     i
   );
 }
-async function kt(e, n, r, o) {
+async function At(e, n, r, o) {
   const a = await fetch(Se(e, n, r, o), {
     method: "DELETE",
     credentials: "include"
@@ -1758,7 +1757,7 @@ async function kt(e, n, r, o) {
     s
   );
 }
-async function Et(e, n, r, o) {
+async function kt(e, n, r, o) {
   const a = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(a, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1782,7 +1781,7 @@ function xe(e) {
         n.push(`${encodeURIComponent(r)}=${encodeURIComponent(String(o))}`);
   return n.length > 0 ? `?${n.join("&")}` : "";
 }
-async function Ut(e, n, r = {}) {
+async function Et(e, n, r = {}) {
   const o = xe({
     since: r.since,
     until: r.until,
@@ -1799,7 +1798,7 @@ async function Ut(e, n, r = {}) {
   }
   return t.json();
 }
-async function Ct(e) {
+async function Ut(e) {
   if (!e.actor && !e.pipelineId)
     throw new Error("searchAudit requires at least one of `actor` or `pipelineId`");
   const r = `/api/pipelines/audit/search${xe({
@@ -1824,42 +1823,42 @@ export {
   H as A,
   Xe as B,
   me as C,
-  wt as D,
-  ft as E,
+  It as D,
+  mt as E,
   ne as F,
-  It as G,
+  ht as G,
   Ke as H,
   ae as I,
   Ce as J,
-  xt as K,
-  pt as L,
+  St as K,
+  dt as L,
   nt as M,
-  mt as N,
-  Tt as P,
+  lt as N,
+  xt as P,
   B as a,
-  ht as b,
-  St as c,
-  $t as d,
+  yt as b,
+  vt as c,
+  Rt as d,
   ve as e,
   rt as f,
-  At as g,
-  dt as h,
+  $t as g,
+  ut as h,
   De as i,
-  Ut as j,
+  Et as j,
   he as k,
   _e as l,
   Ae as m,
-  kt as n,
-  Rt as o,
-  Pt as p,
-  vt as q,
-  Et as r,
-  Ct as s,
+  At as n,
+  Pt as o,
+  Tt as p,
+  bt as q,
+  kt as r,
+  Ut as s,
   de as t,
   tt as u,
-  bt as v,
-  gt as w,
-  yt as x,
-  lt as y,
+  wt as v,
+  ft as w,
+  gt as x,
+  pt as y,
   Fe as z
 };

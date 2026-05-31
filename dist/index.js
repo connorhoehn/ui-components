@@ -1,8 +1,8 @@
 import { DOCUMENT_TYPE_ICONS as ra, getPageConfig as aa, getPagesView as sa, makeEmptyField as na } from "./types.js";
 import { C as ia, i as la } from "./fieldType-BJfRz7mO.js";
-import { c as Qe, A as Ye, j as Je } from "./useWebSocket-CsRH7UCS.js";
-import { B as da, a as pa, u as ua, b as ma, d as fa, e as xa, f as ba, g as ha, h as ga, i as ya, k as va, l as Na, m as wa, n as ka, o as Ca, p as Sa, q as Ta, r as Ia, s as Ea, t as Da, v as Pa, w as Aa, x as La, y as Ra, z as Ma, C as _a, D as Oa, E as $a } from "./useWebSocket-CsRH7UCS.js";
-import { u as ja, a as Ba, b as Ua, c as Va, d as Wa, e as Ga, f as za, g as Ha, h as Xa, i as Ka, j as qa, k as Qa, l as Ya, m as Ja, n as Za, o as es } from "./useVideoSessions-hr67KvHn.js";
+import { c as Qe, A as Ye, j as Je } from "./useUrlFilterState-CFH6EOoa.js";
+import { B as da, a as pa, u as ua, b as ma, d as fa, e as xa, f as ba, g as ha, h as ga, i as ya, k as va, l as Na, m as wa, n as ka, o as Ca, p as Sa, q as Ta, r as Ia, s as Ea, t as Da, v as Pa, w as Aa, x as La, y as Ra, z as Ma, C as _a, D as Oa } from "./useUrlFilterState-CFH6EOoa.js";
+import { u as Fa, a as ja, b as Ba, c as Ua, d as Va, e as Wa, f as Ga, g as za, h as Ha, i as Xa, j as Ka, k as qa, l as Qa, m as Ya, n as Ja, o as Za, p as es } from "./useWebSocket-CRbD5UIz.js";
 import { u as rs, a as as, b as ss, c as ns, d as os, e as is } from "./useSocialProfile-D-SUgbn2.js";
 import { u as cs, a as ds, b as ps, c as us, d as ms, e as fs, f as xs, g as bs, h as hs, i as gs } from "./useSyncConflicts-DruS2duy.js";
 import { u as vs } from "./useDocumentTypes-C29MkgPl.js";
@@ -15,8 +15,8 @@ import { I as Ts } from "./IdentityContext-CLalsm_M.js";
 import { u as rt } from "./TagEditor-Dc6-WL1y.js";
 import { C as Es, D as Ds, P as Ps, T as As } from "./TagEditor-Dc6-WL1y.js";
 import { A as Rs, C as Ms, e as _s, a as Os, a as $s, D as Fs, G as js, M as Bs, P as Us, R as Vs, b as Ws, c as Gs, S as zs, d as Hs, u as Xs } from "./ReactionsBar-B2BqJPj3.js";
-import { h as at } from "./InlinePopover-DWFwvepu.js";
-import { B as qs, C as Qs, a as Ys, b as Js, c as Zs, d as en, e as tn, f as rn, g as an, D as sn, i as nn, E as on, j as ln, F as cn, k as dn, l as pn, I as un, m as mn, K as fn, L as xn, n as bn, o as hn, M as gn, P as yn, p as vn, q as Nn, r as wn, Q as kn, S as Cn, s as Sn, t as Tn, u as In, v as En, w as Dn, T as Pn, x as An, y as Ln, z as Rn, A as Mn, G as _n, H as On, J as $n, N as Fn, U as jn, O as Bn, R as Un, V as Vn, W as Wn, X as Gn } from "./InlinePopover-DWFwvepu.js";
+import { h as at } from "./InlinePopover-D1tWQaUI.js";
+import { B as qs, C as Qs, a as Ys, b as Js, c as Zs, d as en, e as tn, f as rn, g as an, D as sn, i as nn, E as on, j as ln, F as cn, k as dn, l as pn, I as un, m as mn, K as fn, L as xn, n as bn, o as hn, M as gn, P as yn, p as vn, q as Nn, r as wn, Q as kn, S as Cn, s as Sn, t as Tn, u as In, v as En, w as Dn, T as Pn, x as An, y as Ln, z as Rn, A as Mn, G as _n, H as On, J as $n, N as Fn, U as jn, O as Bn, R as Un, V as Vn, W as Wn, X as Gn } from "./InlinePopover-D1tWQaUI.js";
 import { a as Ne } from "./Banner-B8AcwPH_.js";
 import { B as Hn } from "./Banner-B8AcwPH_.js";
 import { C as Kn } from "./Card-B2uO9v1w.js";
@@ -43,15 +43,15 @@ import { useNavigate as Ae, useLocation as dt, Outlet as pt } from "react-router
 import { c as f } from "./cn-B6yFEsav.js";
 import { i as ut, a as mt } from "./PresencePanel-mBtTn35O.js";
 import { C as Uo, M as Vo, P as Wo, f as Go } from "./PresencePanel-mBtTn35O.js";
-import { N as ft } from "./index-DvQShsdF.js";
+import { N as ft } from "./index-arbn-S4b.js";
 import { a as xt, u as Le, E as bt } from "./EventStreamContext-CjzSHXy-.js";
-import { u as Re, l as Me, a as _e, P as ht, b as gt, c as yt, d as vt } from "./pipelineAudit-CRdqcwiW.js";
-import { e as Ho, f as Xo, g as Ko, h as qo, i as Qo, j as Yo, k as Jo, r as Zo, m as ei, n as ti, s as ri } from "./pipelineAudit-CRdqcwiW.js";
+import { u as Re, l as Me, a as _e, P as ht, b as gt, c as yt, d as vt } from "./pipelineAudit-BFARhgAC.js";
+import { e as Ho, f as Xo, g as Ko, h as qo, i as Qo, j as Yo, k as Jo, r as Zo, m as ei, n as ti, s as ri } from "./pipelineAudit-BFARhgAC.js";
 import { u as Nt, O as wt } from "./ObservabilityContext-mvmEXnGv.js";
 import { A as si, C as ni, a as oi, b as ii, c as li, d as ci, e as di, M as pi, N as ui, P as mi, R as fi, f as xi, g as bi, h as hi, i as gi, j as yi, k as vi, l as Ni, S as wi, m as ki, n as Ci, T as Si, V as Ti, o as Ii, p as Ei, s as Di, u as Pi, q as Ai } from "./TranscriptOverlay-BFMRa_zT.js";
 import { H as Ri, a as Mi, b as _i, P as Oi, g as $i, u as Fi } from "./HangoutLayout-BT6X2zG6.js";
 import { A as Bi, a as Ui, b as Vi, c as Wi, d as Gi, C as zi, e as Hi, D as Xi, E as Ki, f as qi, g as Qi, h as Yi, G as Ji, i as Zi, I as el, d as tl, F as rl, L as al, j as sl, M as nl, k as ol, l as il, m as ll, P as cl, n as dl, o as pl, Q as ul, S as ml, p as fl, U as xl, q as bl } from "./PoolScopedLayout-CUNfNOxZ.js";
-import { b as gl, c as yl, g as vl, l as Nl, r as wl, a as kl } from "./registry-D1eP6Kby.js";
+import { g as gl, c as yl, b as vl, l as Nl, r as wl, a as kl } from "./registry-qR57lair.js";
 const kt = [
   {
     title: "Global",
@@ -1019,7 +1019,7 @@ function Ht() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Xt = nt(() => import("./DocumentEditorPage-D-vJCtK2.js").then((t) => t.o));
+const Xt = nt(() => import("./DocumentEditorPage-D8JmjZFh.js").then((t) => t.o));
 function Kt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;
@@ -2641,23 +2641,23 @@ export {
   ma as useApiCall,
   Qe as useApiHealth,
   fa as useAuth,
-  ja as useAwareness,
-  Ba as useAwarenessState,
+  Fa as useAwareness,
+  ja as useAwarenessState,
   xa as useCRDT,
   ba as useChat,
   ha as useClickOutside,
-  Ua as useCollaborativeDoc,
+  Ba as useCollaborativeDoc,
   Xs as useColorScheme,
   Wn as useCommandPalette,
   rs as useComments,
   ga as useCursors,
   ya as useCustomFieldTypes,
   cs as useDocTypeProposals,
-  Va as useDocumentComments,
-  Wa as useDocumentExport,
-  Ga as useDocumentItems,
-  za as useDocumentMetadata,
-  Ha as useDocumentReviews,
+  Ua as useDocumentComments,
+  Va as useDocumentExport,
+  Wa as useDocumentItems,
+  Ga as useDocumentMetadata,
+  za as useDocumentReviews,
   vs as useDocumentTypes,
   Je as useDocuments,
   as as useFriends,
@@ -2675,7 +2675,7 @@ export {
   Da as useIdentityResource,
   Pa as useIdentitySetupStatus,
   Aa as useIdentityUsers,
-  Xa as useIdleDetector,
+  Ha as useIdleDetector,
   ds as useIngestAudit,
   ps as useIngestDLQ,
   us as useIngestItems,
@@ -2684,9 +2684,9 @@ export {
   La as useKeyboardShortcuts,
   ns as useLikes,
   xs as useMappingReviewQueue,
-  Ka as useMentionUsers,
+  Xa as useMentionUsers,
   Pi as useMuteWhileTalking,
-  qa as useMyMentionsAndTasks,
+  Ka as useMyMentionsAndTasks,
   bs as usePipelineDefs,
   os as usePosts,
   ws as usePrefersReducedMotion,
@@ -2695,7 +2695,7 @@ export {
   Ma as useReactions,
   Gn as useRegisterCommand,
   Ye as useRooms,
-  Qa as useSectionList,
+  qa as useSectionList,
   is as useSocialProfile,
   hs as useSourceSloMetrics,
   Fi as useStableActiveSpeaker,
@@ -2706,10 +2706,10 @@ export {
   Ai as useTrackStateBump,
   _a as useTypedDocuments,
   Oa as useUrlFilterState,
-  Ya as useVersionHistory,
-  Ja as useVideoCall,
-  Za as useVideoSessions,
-  $a as useWebSocket,
+  Qa as useVersionHistory,
+  Ya as useVideoCall,
+  Ja as useVideoSessions,
+  Za as useWebSocket,
   et as useWebSocketContext,
   es as useYjsDoc,
   Qr as zIndex

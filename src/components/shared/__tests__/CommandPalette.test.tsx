@@ -376,6 +376,184 @@ describe('CommandPalette', () => {
     expect(screen.getByTestId('probe-open')).toHaveTextContent('true');
   });
 
+  // ── Recents / localStorage persistence ──────────────────────────────
+
+  describe('recents', () => {
+    const KEY = 'cui:test:recents';
+
+    beforeEach(() => {
+      window.localStorage.removeItem(KEY);
+    });
+
+    it('persists selected command id to localStorage', async () => {
+      const commands: Command[] = [
+        { id: 'one', label: 'One', run: vi.fn() },
+        { id: 'two', label: 'Two', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider commands={commands} recentsKey={KEY}>
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      act(() => controller!.open());
+      fireEvent.click(await screen.findByTestId('command-palette-item-two'));
+      await Promise.resolve();
+
+      const stored = window.localStorage.getItem(KEY);
+      expect(stored).toBe(JSON.stringify(['two']));
+    });
+
+    it('renders a Recent group at top with the persisted ids on next open', async () => {
+      window.localStorage.setItem(KEY, JSON.stringify(['two']));
+
+      const commands: Command[] = [
+        { id: 'one', label: 'One', run: vi.fn() },
+        { id: 'two', label: 'Two', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider commands={commands} recentsKey={KEY}>
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      act(() => controller!.open());
+      expect(
+        await screen.findByTestId('command-palette-group-recent'),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('command-palette-recent-two'),
+      ).toBeInTheDocument();
+    });
+
+    it('caps the persisted list at recentsLimit and de-dupes', async () => {
+      const commands: Command[] = [
+        { id: 'a', label: 'A', run: vi.fn() },
+        { id: 'b', label: 'B', run: vi.fn() },
+        { id: 'c', label: 'C', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider
+          commands={commands}
+          recentsKey={KEY}
+          recentsLimit={2}
+        >
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      const select = async (id: string) => {
+        act(() => controller!.open());
+        fireEvent.click(await screen.findByTestId(`command-palette-item-${id}`));
+        await Promise.resolve();
+      };
+
+      await select('a');
+      await select('b');
+      await select('c');
+      // Most recent first, capped at 2.
+      expect(window.localStorage.getItem(KEY)).toBe(JSON.stringify(['c', 'b']));
+
+      // Re-selecting 'b' moves it to the front, no duplication.
+      await select('b');
+      expect(window.localStorage.getItem(KEY)).toBe(JSON.stringify(['b', 'c']));
+    });
+
+    it('hides the Recent group while a query is active', async () => {
+      window.localStorage.setItem(KEY, JSON.stringify(['one']));
+
+      const commands: Command[] = [
+        { id: 'one', label: 'One', run: vi.fn() },
+        { id: 'two', label: 'Two', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider commands={commands} recentsKey={KEY}>
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      act(() => controller!.open());
+      expect(
+        await screen.findByTestId('command-palette-group-recent'),
+      ).toBeInTheDocument();
+
+      fireEvent.change(screen.getByTestId('command-palette-input'), {
+        target: { value: 'two' },
+      });
+      expect(
+        screen.queryByTestId('command-palette-group-recent'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('recentsKey={null} disables localStorage entirely', async () => {
+      window.localStorage.setItem(KEY, JSON.stringify(['stale']));
+
+      const commands: Command[] = [
+        { id: 'one', label: 'One', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider commands={commands} recentsKey={null}>
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      act(() => controller!.open());
+      fireEvent.click(await screen.findByTestId('command-palette-item-one'));
+      await Promise.resolve();
+
+      // The stale value under KEY is untouched (the provider's null key
+      // means "don't read or write any storage at all").
+      expect(window.localStorage.getItem(KEY)).toBe(JSON.stringify(['stale']));
+      // And no Recent group is rendered.
+      act(() => controller!.open());
+      expect(
+        screen.queryByTestId('command-palette-group-recent'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('omits commands from Recent that are no longer present in the merged list', async () => {
+      window.localStorage.setItem(
+        KEY,
+        JSON.stringify(['ghost', 'live']),
+      );
+
+      const commands: Command[] = [
+        { id: 'live', label: 'Live', run: vi.fn() },
+      ];
+
+      let controller: ReturnType<typeof useCommandPalette> | undefined;
+      render(
+        <CommandPaletteProvider commands={commands} recentsKey={KEY}>
+          <CommandPalette />
+          <ControllerProbe onController={(c) => (controller = c)} />
+        </CommandPaletteProvider>,
+      );
+
+      act(() => controller!.open());
+      expect(
+        await screen.findByTestId('command-palette-recent-live'),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('command-palette-recent-ghost'),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   it('matchHotkey parses common shapes', () => {
     const ev = (init: KeyboardEventInit) =>
       new KeyboardEvent('keydown', init);

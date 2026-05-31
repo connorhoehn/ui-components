@@ -60,6 +60,14 @@ export interface CommandPaletteProviderProps {
    * for API forward-compat; ignored in v1.
    */
   toggleShortcut?: string[];
+  /**
+   * localStorage key for the most-recently-used command id list. Pass
+   * `null` to disable persistence (useful for tests and SSR). Defaults
+   * to `'cui:command-palette:recents'`.
+   */
+  recentsKey?: string | null;
+  /** Maximum number of recent command ids to remember. Default: 5. */
+  recentsLimit?: number;
   children: ReactNode;
 }
 
@@ -89,6 +97,33 @@ interface InternalContext extends CommandPaletteController {
   mergedCommands: Command[];
   registerCommand: (cmd: Command) => void;
   unregisterCommand: (id: string) => void;
+  recents: string[];
+  noteSelection: (id: string) => void;
+}
+
+const DEFAULT_RECENTS_KEY = 'cui:command-palette:recents';
+const DEFAULT_RECENTS_LIMIT = 5;
+
+function readRecents(key: string | null, limit: number): string[] {
+  if (!key || typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((v): v is string => typeof v === 'string').slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+function writeRecents(key: string | null, ids: string[]): void {
+  if (!key || typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(ids));
+  } catch {
+    // Privacy mode / quota / disabled storage — silently drop persistence.
+  }
 }
 
 const Ctx = createContext<InternalContext | null>(null);
@@ -148,6 +183,8 @@ export function matchHotkey(e: KeyboardEvent, spec: string): boolean {
 export function CommandPaletteProvider({
   commands,
   getDynamicCommands,
+  recentsKey = DEFAULT_RECENTS_KEY,
+  recentsLimit = DEFAULT_RECENTS_LIMIT,
   children,
 }: CommandPaletteProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -158,6 +195,26 @@ export function CommandPaletteProvider({
   // instead of duplicating list entries.
   const [registered, setRegistered] = useState<ReadonlyMap<string, Command>>(
     () => new Map(),
+  );
+  const [recents, setRecents] = useState<string[]>(
+    () => readRecents(recentsKey, recentsLimit),
+  );
+
+  const noteSelection = useCallback(
+    (id: string) => {
+      // Null key disables the feature entirely — no in-memory list, no
+      // persistence, no Recent group.
+      if (recentsKey === null) return;
+      setRecents((prev) => {
+        const next = [id, ...prev.filter((existing) => existing !== id)].slice(
+          0,
+          recentsLimit,
+        );
+        writeRecents(recentsKey, next);
+        return next;
+      });
+    },
+    [recentsKey, recentsLimit],
   );
 
   const open = useCallback(() => setIsOpen(true), []);
@@ -244,6 +301,8 @@ export function CommandPaletteProvider({
     mergedCommands,
     registerCommand,
     unregisterCommand,
+    recents,
+    noteSelection,
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
@@ -294,7 +353,26 @@ export function CommandPalette({
   emptyState,
   className,
 }: CommandPaletteProps = {}) {
-  const { isOpen, close, query, setQuery, mergedCommands } = useInternal();
+  const {
+    isOpen,
+    close,
+    query,
+    setQuery,
+    mergedCommands,
+    recents,
+    noteSelection,
+  } = useInternal();
+
+  // When the query is empty, surface the user's most-recently-selected
+  // commands in a "Recent" group at the top — but only those still present
+  // in the merged list (a registered command's page may have unmounted).
+  const recentGroup = useMemo<Command[]>(() => {
+    if (query.trim() !== '' || recents.length === 0) return [];
+    const byId = new Map(mergedCommands.map((c) => [c.id, c]));
+    return recents
+      .map((id) => byId.get(id))
+      .filter((c): c is Command => Boolean(c));
+  }, [mergedCommands, query, recents]);
 
   const grouped = useMemo(() => groupCommands(mergedCommands), [mergedCommands]);
 
@@ -303,11 +381,12 @@ export function CommandPalette({
   // committed.
   const handleSelect = useCallback(
     (cmd: Command) => {
+      noteSelection(cmd.id);
       close();
       // Defer to the next microtask so the close() state flush lands first.
       void Promise.resolve().then(() => cmd.run());
     },
-    [close],
+    [close, noteSelection],
   );
 
   return (
@@ -341,6 +420,30 @@ export function CommandPalette({
           <Cmdk.Empty className="px-3 py-6 text-center text-sm text-text-tertiary">
             {emptyState ?? 'No results.'}
           </Cmdk.Empty>
+          {recentGroup.length > 0 && (
+            <Cmdk.Group heading="Recent" data-testid="command-palette-group-recent">
+              {recentGroup.map((cmd) => (
+                <Cmdk.Item
+                  key={`recent-${cmd.id}`}
+                  value={`recent-${cmd.id} ${cmd.label}`}
+                  keywords={cmd.keywords}
+                  onSelect={() => handleSelect(cmd)}
+                  data-testid={`command-palette-recent-${cmd.id}`}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 mx-1 rounded-md cursor-pointer text-sm',
+                    'text-text-primary aria-selected:bg-surface-hover',
+                  )}
+                >
+                  {cmd.icon && (
+                    <span className="shrink-0 text-text-secondary">
+                      {cmd.icon}
+                    </span>
+                  )}
+                  <span className="flex-1 truncate">{cmd.label}</span>
+                </Cmdk.Item>
+              ))}
+            </Cmdk.Group>
+          )}
           {grouped.map(({ groupName, items }) => (
             <Cmdk.Group
               key={groupName ?? '__ungrouped__'}

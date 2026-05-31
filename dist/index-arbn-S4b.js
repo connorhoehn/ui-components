@@ -3,7 +3,7 @@ import { useState as R, useRef as A, useEffect as S, useMemo as ne, useCallback 
 import { l as ae } from "./useDocumentTypes-C29MkgPl.js";
 import { M as ie } from "./Modal-2jg4229_.js";
 import { c as s } from "./cn-B6yFEsav.js";
-import { r as L, a as v } from "./registry-D1eP6Kby.js";
+import { r as L, a as v } from "./registry-qR57lair.js";
 import { useEditor as oe, EditorContent as se } from "@tiptap/react";
 import le from "@tiptap/starter-kit";
 import de from "@tiptap/extension-task-list";
@@ -12,7 +12,7 @@ import ue from "@tiptap/extension-placeholder";
 import pe from "@tiptap/extension-collaboration";
 import * as z from "yjs";
 import { ySyncPluginKey as _, relativePositionToAbsolutePosition as M, absolutePositionToRelativePosition as V } from "@tiptap/y-tiptap";
-import { D as H, p as he } from "./useVideoSessions-hr67KvHn.js";
+import { D as H, q as he } from "./useWebSocket-CRbD5UIz.js";
 function ht({ open: e, onClose: r, onCreate: n }) {
   const [a, o] = R([]), [d, l] = R(null), [i, p] = R(""), [c, f] = R(""), x = A(null);
   if (S(() => {
@@ -815,7 +815,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: a, autoFocusText: o, 
     )
   ] });
 }
-function Y({ items: e, editable: r, onUpdateItem: n, onRemoveItem: a, focusLastItem: o }) {
+function q({ items: e, editable: r, onUpdateItem: n, onRemoveItem: a, focusLastItem: o }) {
   if (e.length === 0)
     return /* @__PURE__ */ t("div", { className: s("text-text-tertiary text-[13px] italic py-2"), children: "No tasks yet." });
   const d = o?.current ?? !1;
@@ -864,7 +864,7 @@ function Le({
       }
     ),
     (e.items.length > 0 || d) && /* @__PURE__ */ t(
-      Y,
+      q,
       {
         items: e.items,
         editable: d,
@@ -907,7 +907,7 @@ function Te({
     }
   );
 }
-function q({
+function Y({
   section: e,
   fragment: r,
   ydoc: n,
@@ -957,7 +957,7 @@ function Ee({
   };
   return /* @__PURE__ */ u("div", { className: "py-1", children: [
     e.items.length > 0 || r ? /* @__PURE__ */ t(
-      Y,
+      q,
       {
         items: e.items,
         editable: r,
@@ -1533,7 +1533,7 @@ function Z({ section: e, onNavigateToEditor: r }) {
 function Je(e) {
   return e.metadata ?? {};
 }
-function Ye({
+function qe({
   section: e,
   editable: r,
   onUpdateSection: n
@@ -1636,7 +1636,7 @@ function ee({ section: e }) {
     }
   ) : /* @__PURE__ */ t("div", { "data-testid": `file-upload-reader-empty-${e.id}`, className: "text-text-tertiary text-[13px] italic", children: "No file uploaded." });
 }
-function qe({
+function Ye({
   section: e,
   editable: r,
   onUpdateSection: n
@@ -1848,8 +1848,8 @@ L(ye);
 L(ke);
 v("*", "*", Le);
 v("rich-text", "editor", Te);
-v("rich-text", "ack", q);
-v("rich-text", "reader", q);
+v("rich-text", "ack", Y);
+v("rich-text", "reader", Y);
 v("tasks", "editor", Ee);
 v("tasks", "ack", Q);
 v("tasks", "reader", Q);
@@ -1859,10 +1859,10 @@ v("checklist", "reader", X);
 v("decisions", "editor", We);
 v("decisions", "ack", Z);
 v("decisions", "reader", Z);
-v("file-upload", "editor", Ye);
+v("file-upload", "editor", qe);
 v("file-upload", "ack", ee);
 v("file-upload", "reader", ee);
-v("diagram", "editor", qe);
+v("diagram", "editor", Ye);
 v("diagram", "ack", te);
 v("diagram", "reader", te);
 v("link-block", "editor", Xe);
@@ -1874,5 +1874,5 @@ export {
   ht as N,
   T,
   $e as a,
-  Y as b
+  q as b
 };

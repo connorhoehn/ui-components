@@ -341,7 +341,7 @@ export declare interface CommandPaletteProps {
     className?: string;
 }
 
-export declare function CommandPaletteProvider({ commands, getDynamicCommands, children, }: CommandPaletteProviderProps): JSX.Element;
+export declare function CommandPaletteProvider({ commands, getDynamicCommands, recentsKey, recentsLimit, children, }: CommandPaletteProviderProps): JSX.Element;
 
 export declare interface CommandPaletteProviderProps {
     /**
@@ -360,6 +360,14 @@ export declare interface CommandPaletteProviderProps {
      * for API forward-compat; ignored in v1.
      */
     toggleShortcut?: string[];
+    /**
+     * localStorage key for the most-recently-used command id list. Pass
+     * `null` to disable persistence (useful for tests and SSR). Defaults
+     * to `'cui:command-palette:recents'`.
+     */
+    recentsKey?: string | null;
+    /** Maximum number of recent command ids to remember. Default: 5. */
+    recentsLimit?: number;
     children: ReactNode;
 }
 

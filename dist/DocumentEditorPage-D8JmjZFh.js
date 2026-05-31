@@ -1,14 +1,14 @@
 import { jsxs as d, jsx as n, Fragment as K } from "react/jsx-runtime";
 import { useState as M, useCallback as A, useEffect as U, useRef as F, useMemo as at, forwardRef as en, useImperativeHandle as tn } from "react";
 import nn, { createPortal as lt } from "react-dom";
-import { n as rn, b as on, c as sn, g as an, e as ln, j as dn, l as cn, m as mn, i as pn } from "./useVideoSessions-hr67KvHn.js";
+import { n as rn, b as on, c as sn, g as an, e as ln, j as dn, l as cn, m as mn, i as pn } from "./useWebSocket-CRbD5UIz.js";
 import { u as un } from "./IdentityContext-CLalsm_M.js";
 import { l as fn } from "./useDocumentTypes-C29MkgPl.js";
 import { c as e } from "./cn-B6yFEsav.js";
 import { u as xn } from "./useHangoutEmbed-DyGzEiRt.js";
 import { u as hn } from "./useActiveSpeaker-BOwJ262O.js";
-import { D as bn, T as De } from "./index-DvQShsdF.js";
-import { g as gn } from "./registry-D1eP6Kby.js";
+import { D as bn, T as De } from "./index-arbn-S4b.js";
+import { b as gn } from "./registry-qR57lair.js";
 function $e() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
