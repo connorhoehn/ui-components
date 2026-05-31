@@ -558,7 +558,7 @@ export declare interface Approver {
  * AppShell wraps its children in a ToastProvider by default.
  * Pass `toastRegion={null}` to opt out (e.g. parent already has one).
  */
-export declare function AppShell({ sidebar, header, children, toastRegion, loading, apiDegraded, className, sidebarWidth, }: AppShellProps): JSX.Element;
+export declare function AppShell({ sidebar, header, children, toastRegion, loading, apiDegraded, commandPalette, className, sidebarWidth, }: AppShellProps): JSX.Element;
 
 export declare interface AppShellProps {
     /** Slot: full-height left sidebar (CollapsibleSidebar etc.) */
@@ -573,6 +573,13 @@ export declare interface AppShellProps {
     loading?: boolean | ReactNode;
     /** When truthy, renders an API-degraded banner below the header */
     apiDegraded?: ReactNode;
+    /**
+     * Slot: a global command palette (e.g. `<CommandPalette />`). Rendered
+     * once at the shell level so any page can open it via `useCommandPalette`.
+     * Wrap the AppShell in `<CommandPaletteProvider>` so the palette and the
+     * pages inside share the same registry.
+     */
+    commandPalette?: ReactNode;
     className?: string;
     /** Width of the sidebar slot in px (default 260) */
     sidebarWidth?: number;
@@ -1304,6 +1311,14 @@ export declare interface Command {
     icon?: ReactNode;
     /** Display-only shortcut glyphs rendered right-aligned in the item. */
     shortcut?: string[];
+    /**
+     * Active global hotkey that invokes `run()` without opening the palette.
+     * Format: `[mod+|cmd+|meta+|ctrl+|shift+|alt+]<key>`. `mod` resolves to
+     * cmd on macOS and ctrl elsewhere. The key portion is matched against
+     * `KeyboardEvent.key` lowercased — so `?`, `/`, `k`, `arrowdown` all
+     * work; multi-key chords are not supported in v1.
+     */
+    hotkey?: string;
     /** Visibility predicate — when returns false, the command is filtered out. */
     when?: () => boolean;
     /** Action invoked when the item is selected. */
@@ -1335,7 +1350,11 @@ export declare interface CommandPaletteProps {
 export declare function CommandPaletteProvider({ commands, getDynamicCommands, children, }: CommandPaletteProviderProps): JSX.Element;
 
 export declare interface CommandPaletteProviderProps {
-    commands: Command[];
+    /**
+     * Static command list. Optional: pure-registry consumers can pass
+     * nothing and have pages contribute commands via `useRegisterCommand`.
+     */
+    commands?: Command[];
     /**
      * Synchronous derivation hook for query-dependent commands (URL paste,
      * UUID detection, etc.). Results are merged with the static `commands`
@@ -2939,6 +2958,8 @@ export declare interface MappingRule {
     /** Priority when multiple rules match — higher wins. */
     priority: number;
 }
+
+export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
 
 export declare interface McpToolNodeData {
     type: 'mcp-tool';
@@ -6612,6 +6633,15 @@ declare interface UseActivityBusReturn {
      activeReactions: EphemeralReaction[];
      react: (emoji: string) => void;
  }
+
+ /**
+  * Register a command into the active CommandPaletteProvider for the lifetime
+  * of the calling component. Registers on mount, unregisters on unmount.
+  *
+  * Re-registers whenever the `command` reference changes — wrap in `useMemo`
+  * (or define the command outside the component) to avoid churn.
+  */
+ export declare function useRegisterCommand(command: Command): void;
 
  export declare function UserFormPage({ user, isEdit, customAttributeDefinitions, onSubmit, onCancel, error, }: UserFormPageProps): JSX.Element;
 

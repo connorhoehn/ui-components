@@ -12,6 +12,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -28,6 +29,14 @@ export interface Command {
   icon?: ReactNode;
   /** Display-only shortcut glyphs rendered right-aligned in the item. */
   shortcut?: string[];
+  /**
+   * Active global hotkey that invokes `run()` without opening the palette.
+   * Format: `[mod+|cmd+|meta+|ctrl+|shift+|alt+]<key>`. `mod` resolves to
+   * cmd on macOS and ctrl elsewhere. The key portion is matched against
+   * `KeyboardEvent.key` lowercased — so `?`, `/`, `k`, `arrowdown` all
+   * work; multi-key chords are not supported in v1.
+   */
+  hotkey?: string;
   /** Visibility predicate — when returns false, the command is filtered out. */
   when?: () => boolean;
   /** Action invoked when the item is selected. */
@@ -35,7 +44,11 @@ export interface Command {
 }
 
 export interface CommandPaletteProviderProps {
-  commands: Command[];
+  /**
+   * Static command list. Optional: pure-registry consumers can pass
+   * nothing and have pages contribute commands via `useRegisterCommand`.
+   */
+  commands?: Command[];
   /**
    * Synchronous derivation hook for query-dependent commands (URL paste,
    * UUID detection, etc.). Results are merged with the static `commands`
@@ -74,6 +87,8 @@ export interface CommandPaletteController {
 interface InternalContext extends CommandPaletteController {
   setQuery: (q: string) => void;
   mergedCommands: Command[];
+  registerCommand: (cmd: Command) => void;
+  unregisterCommand: (id: string) => void;
 }
 
 const Ctx = createContext<InternalContext | null>(null);
@@ -95,6 +110,41 @@ export function useCommandPalette(): CommandPaletteController {
   return { open, close, toggle, isOpen, query };
 }
 
+// ── Hotkey matching ──────────────────────────────────────────────────────
+// Exported as a side-door for tests; not part of the public surface.
+//
+// Matching is strict: an extra unlisted modifier disqualifies the match.
+// Otherwise `ctrl+p` would fire on `ctrl+shift+p`, which is the typical
+// browser DevTools shortcut — a recipe for accidental triggers. The one
+// exception is `mod`, which is intentionally loose (matches either cmd
+// OR ctrl) so the same hotkey works for both Mac and Windows/Linux
+// consumers without platform-specific spec strings.
+
+export function matchHotkey(e: KeyboardEvent, spec: string): boolean {
+  const parts = spec.toLowerCase().split('+').map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 0) return false;
+  const key = parts[parts.length - 1];
+  const modifiers = new Set(parts.slice(0, -1));
+
+  const wantsMeta = modifiers.has('cmd') || modifiers.has('meta');
+  const wantsCtrl = modifiers.has('ctrl');
+  const wantsMod = modifiers.has('mod');
+  const wantsShift = modifiers.has('shift');
+  const wantsAlt = modifiers.has('alt');
+
+  if (wantsMod) {
+    // Either cmd or ctrl satisfies `mod`; we don't care which one.
+    if (!e.metaKey && !e.ctrlKey) return false;
+  } else {
+    if (wantsMeta !== e.metaKey) return false;
+    if (wantsCtrl !== e.ctrlKey) return false;
+  }
+  if (wantsShift !== e.shiftKey) return false;
+  if (wantsAlt !== e.altKey) return false;
+
+  return e.key.toLowerCase() === key;
+}
+
 export function CommandPaletteProvider({
   commands,
   getDynamicCommands,
@@ -102,6 +152,13 @@ export function CommandPaletteProvider({
 }: CommandPaletteProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
+  // Registry of commands contributed via useRegisterCommand. Kept in a Map
+  // keyed by id so re-registration of the same id (e.g. when a caller's
+  // command object identity changes between renders) overwrites cleanly
+  // instead of duplicating list entries.
+  const [registered, setRegistered] = useState<ReadonlyMap<string, Command>>(
+    () => new Map(),
+  );
 
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => {
@@ -111,6 +168,23 @@ export function CommandPaletteProvider({
     setQuery('');
   }, []);
   const toggle = useCallback(() => setIsOpen((v) => !v), []);
+
+  const registerCommand = useCallback((cmd: Command) => {
+    setRegistered((prev) => {
+      const next = new Map(prev);
+      next.set(cmd.id, cmd);
+      return next;
+    });
+  }, []);
+
+  const unregisterCommand = useCallback((id: string) => {
+    setRegistered((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
+  }, []);
 
   // ── Global keybinding: cmd/ctrl + K, capture phase ─────────────────────
   // Capture-phase so we beat input-level handlers in consumer apps that might
@@ -131,9 +205,34 @@ export function CommandPaletteProvider({
   // stable `commands` array don't re-render every keystroke unnecessarily.
   const mergedCommands = useMemo(() => {
     const dynamic = getDynamicCommands ? getDynamicCommands(query) : [];
-    const all = [...commands, ...dynamic];
+    const all = [...(commands ?? []), ...dynamic, ...registered.values()];
     return all.filter((c) => (c.when ? c.when() : true));
-  }, [commands, getDynamicCommands, query]);
+  }, [commands, getDynamicCommands, query, registered]);
+
+  // ── Per-command hotkeys ───────────────────────────────────────────────
+  // Bound via a ref so we can rebind whenever the merged list changes
+  // without re-attaching the global listener (the listener stays stable;
+  // it reads the latest snapshot via the ref).
+  const cmdsRef = useRef(mergedCommands);
+  cmdsRef.current = mergedCommands;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Skip if the cmd-K toggle already fired this event.
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') return;
+      for (const cmd of cmdsRef.current) {
+        if (!cmd.hotkey) continue;
+        if (matchHotkey(e, cmd.hotkey)) {
+          e.preventDefault();
+          // Defer to a microtask so any setState in run() lands after the
+          // synchronous keydown handler returns.
+          void Promise.resolve().then(() => cmd.run());
+          return;
+        }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const value: InternalContext = {
     open,
@@ -143,9 +242,26 @@ export function CommandPaletteProvider({
     query,
     setQuery,
     mergedCommands,
+    registerCommand,
+    unregisterCommand,
   };
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+/**
+ * Register a command into the active CommandPaletteProvider for the lifetime
+ * of the calling component. Registers on mount, unregisters on unmount.
+ *
+ * Re-registers whenever the `command` reference changes — wrap in `useMemo`
+ * (or define the command outside the component) to avoid churn.
+ */
+export function useRegisterCommand(command: Command): void {
+  const { registerCommand, unregisterCommand } = useInternal();
+  useEffect(() => {
+    registerCommand(command);
+    return () => unregisterCommand(command.id);
+  }, [command, registerCommand, unregisterCommand]);
 }
 
 // ── <CommandPalette /> — the dialog itself ───────────────────────────────

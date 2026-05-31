@@ -305,6 +305,14 @@ export declare interface Command {
     icon?: ReactNode;
     /** Display-only shortcut glyphs rendered right-aligned in the item. */
     shortcut?: string[];
+    /**
+     * Active global hotkey that invokes `run()` without opening the palette.
+     * Format: `[mod+|cmd+|meta+|ctrl+|shift+|alt+]<key>`. `mod` resolves to
+     * cmd on macOS and ctrl elsewhere. The key portion is matched against
+     * `KeyboardEvent.key` lowercased — so `?`, `/`, `k`, `arrowdown` all
+     * work; multi-key chords are not supported in v1.
+     */
+    hotkey?: string;
     /** Visibility predicate — when returns false, the command is filtered out. */
     when?: () => boolean;
     /** Action invoked when the item is selected. */
@@ -336,7 +344,11 @@ export declare interface CommandPaletteProps {
 export declare function CommandPaletteProvider({ commands, getDynamicCommands, children, }: CommandPaletteProviderProps): JSX.Element;
 
 export declare interface CommandPaletteProviderProps {
-    commands: Command[];
+    /**
+     * Static command list. Optional: pure-registry consumers can pass
+     * nothing and have pages contribute commands via `useRegisterCommand`.
+     */
+    commands?: Command[];
     /**
      * Synchronous derivation hook for query-dependent commands (URL paste,
      * UUID detection, etc.). Results are merged with the static `commands`
@@ -756,6 +768,8 @@ export declare interface LogStreamProps {
     style?: CSSProperties;
     'data-testid'?: string;
 }
+
+export declare function matchHotkey(e: KeyboardEvent, spec: string): boolean;
 
 /**
  * A chat message bubble for user/assistant messages.
@@ -1542,6 +1556,15 @@ export declare interface UserChipProps {
     title?: string;
     'data-testid'?: string;
 }
+
+/**
+ * Register a command into the active CommandPaletteProvider for the lifetime
+ * of the calling component. Registers on mount, unregisters on unmount.
+ *
+ * Re-registers whenever the `command` reference changes — wrap in `useMemo`
+ * (or define the command outside the component) to avoid churn.
+ */
+export declare function useRegisterCommand(command: Command): void;
 
 export declare function UserMenu({ user, items, className, 'data-testid': testId }: UserMenuProps): JSX.Element;
 

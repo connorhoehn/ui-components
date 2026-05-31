@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   CommandPalette,
   CommandPaletteProvider,
+  matchHotkey,
   useCommandPalette,
+  useRegisterCommand,
   type Command,
 } from '../CommandPalette';
 
@@ -218,6 +220,175 @@ describe('CommandPalette', () => {
     expect(
       screen.queryByTestId('command-palette-item-hidden'),
     ).not.toBeInTheDocument();
+  });
+
+  // ── useRegisterCommand registry ─────────────────────────────────────
+
+  it('useRegisterCommand makes the command visible in the palette', async () => {
+    function Page() {
+      const cmd = useMemo<Command>(
+        () => ({ id: 'page-cmd', label: 'Page Command', run: vi.fn() }),
+        [],
+      );
+      useRegisterCommand(cmd);
+      return null;
+    }
+
+    let controller: ReturnType<typeof useCommandPalette> | undefined;
+    render(
+      <CommandPaletteProvider>
+        <CommandPalette />
+        <Page />
+        <ControllerProbe onController={(c) => (controller = c)} />
+      </CommandPaletteProvider>,
+    );
+
+    act(() => controller!.open());
+    expect(
+      await screen.findByTestId('command-palette-item-page-cmd'),
+    ).toBeInTheDocument();
+  });
+
+  it('useRegisterCommand removes the command on unmount', async () => {
+    function Page() {
+      const cmd = useMemo<Command>(
+        () => ({ id: 'transient', label: 'Transient', run: vi.fn() }),
+        [],
+      );
+      useRegisterCommand(cmd);
+      return null;
+    }
+
+    function Host({ show }: { show: boolean }) {
+      return (
+        <CommandPaletteProvider>
+          <CommandPalette />
+          {show && <Page />}
+          <ControllerProbe />
+        </CommandPaletteProvider>
+      );
+    }
+
+    const { rerender } = render(<Host show={true} />);
+
+    // Open and confirm visible.
+    fireEvent.click(screen.getByTestId('probe-open-btn'));
+    expect(
+      await screen.findByTestId('command-palette-item-transient'),
+    ).toBeInTheDocument();
+
+    // Close, unmount the Page, reopen — the command should be gone.
+    fireEvent.click(screen.getByTestId('probe-close'));
+    rerender(<Host show={false} />);
+    fireEvent.click(screen.getByTestId('probe-open-btn'));
+    expect(
+      screen.queryByTestId('command-palette-item-transient'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('merges static commands prop with useRegisterCommand registrations', async () => {
+    const staticCmd: Command = {
+      id: 'from-prop',
+      label: 'From Prop',
+      run: vi.fn(),
+    };
+
+    function Page() {
+      const cmd = useMemo<Command>(
+        () => ({ id: 'from-hook', label: 'From Hook', run: vi.fn() }),
+        [],
+      );
+      useRegisterCommand(cmd);
+      return null;
+    }
+
+    let controller: ReturnType<typeof useCommandPalette> | undefined;
+    render(
+      <CommandPaletteProvider commands={[staticCmd]}>
+        <CommandPalette />
+        <Page />
+        <ControllerProbe onController={(c) => (controller = c)} />
+      </CommandPaletteProvider>,
+    );
+
+    act(() => controller!.open());
+    expect(
+      await screen.findByTestId('command-palette-item-from-prop'),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByTestId('command-palette-item-from-hook'),
+    ).toBeInTheDocument();
+  });
+
+  // ── Per-command hotkeys ────────────────────────────────────────────
+
+  it('hotkey invokes run() without opening the palette', async () => {
+    const perform = vi.fn();
+    const commands: Command[] = [
+      { id: 'jump', label: 'Jump', hotkey: 'mod+j', run: perform },
+    ];
+
+    render(<Harness commands={commands} />);
+    expect(screen.getByTestId('probe-open')).toHaveTextContent('false');
+
+    fireEvent.keyDown(window, { key: 'j', metaKey: true });
+    await Promise.resolve();
+    expect(perform).toHaveBeenCalledTimes(1);
+    // Hotkey path should NOT toggle the palette.
+    expect(screen.getByTestId('probe-open')).toHaveTextContent('false');
+  });
+
+  it('hotkey on a useRegisterCommand-registered command fires', async () => {
+    const perform = vi.fn();
+
+    function Page() {
+      const cmd = useMemo<Command>(
+        () => ({ id: 'hk', label: 'HK', hotkey: 'shift+?', run: perform }),
+        [],
+      );
+      useRegisterCommand(cmd);
+      return null;
+    }
+
+    render(
+      <CommandPaletteProvider>
+        <CommandPalette />
+        <Page />
+      </CommandPaletteProvider>,
+    );
+
+    fireEvent.keyDown(window, { key: '?', shiftKey: true });
+    await Promise.resolve();
+    expect(perform).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not double-fire when Cmd+K is the trigger', async () => {
+    const perform = vi.fn();
+    const commands: Command[] = [
+      { id: 'wrong', label: 'Wrong', hotkey: 'mod+k', run: perform },
+    ];
+
+    render(<Harness commands={commands} />);
+    fireEvent.keyDown(window, { key: 'k', metaKey: true });
+    await Promise.resolve();
+    // Cmd+K opens the palette; the hotkey loop bails for that exact combo.
+    expect(perform).not.toHaveBeenCalled();
+    expect(screen.getByTestId('probe-open')).toHaveTextContent('true');
+  });
+
+  it('matchHotkey parses common shapes', () => {
+    const ev = (init: KeyboardEventInit) =>
+      new KeyboardEvent('keydown', init);
+
+    expect(matchHotkey(ev({ key: '/' }), '/')).toBe(true);
+    expect(matchHotkey(ev({ key: 'P', ctrlKey: true }), 'ctrl+p')).toBe(true);
+    expect(matchHotkey(ev({ key: '?', shiftKey: true }), 'shift+?')).toBe(true);
+    expect(matchHotkey(ev({ key: 'p' }), 'ctrl+p')).toBe(false);
+    expect(matchHotkey(ev({ key: 'p', ctrlKey: true, shiftKey: true }), 'ctrl+p')).toBe(
+      false,
+    );
+    // Empty spec is a no-match, not a runtime error.
+    expect(matchHotkey(ev({ key: 'a' }), '')).toBe(false);
   });
 
   it('restores focus to the previously-focused element on close', () => {

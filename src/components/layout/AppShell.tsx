@@ -21,6 +21,13 @@ export interface AppShellProps {
   loading?: boolean | ReactNode;
   /** When truthy, renders an API-degraded banner below the header */
   apiDegraded?: ReactNode;
+  /**
+   * Slot: a global command palette (e.g. `<CommandPalette />`). Rendered
+   * once at the shell level so any page can open it via `useCommandPalette`.
+   * Wrap the AppShell in `<CommandPaletteProvider>` so the palette and the
+   * pages inside share the same registry.
+   */
+  commandPalette?: ReactNode;
   className?: string;
   /** Width of the sidebar slot in px (default 260) */
   sidebarWidth?: number;
@@ -54,6 +61,7 @@ export function AppShell({
   toastRegion,
   loading,
   apiDegraded,
+  commandPalette,
   className,
   sidebarWidth = 260,
 }: AppShellProps) {
@@ -95,6 +103,10 @@ export function AppShell({
           {typeof loading !== 'boolean' ? loading : undefined}
         </LoadingOverlay>
       )}
+
+      {/* Command palette — mounts at the shell root so pages can open it
+          from anywhere via useCommandPalette() / Cmd+K. */}
+      {commandPalette}
     </div>
   );
 

@@ -65,4 +65,16 @@ describe('AppShell', () => {
     );
     expect(screen.queryByRole('status', { name: 'Loading' })).not.toBeInTheDocument();
   });
+
+  it('renders commandPalette slot when provided', () => {
+    render(
+      <AppShell
+        header={<div>H</div>}
+        commandPalette={<div data-testid="cmd-palette">palette here</div>}
+      >
+        <div>Content</div>
+      </AppShell>,
+    );
+    expect(screen.getByTestId('cmd-palette')).toBeInTheDocument();
+  });
 });

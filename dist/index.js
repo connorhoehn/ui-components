@@ -2,7 +2,7 @@ import { DOCUMENT_TYPE_ICONS as ra, getPageConfig as aa, getPagesView as sa, mak
 import { C as ia, i as la } from "./fieldType-BJfRz7mO.js";
 import { c as Qe, A as Ye, j as Je } from "./useWebSocket-CsRH7UCS.js";
 import { B as da, a as pa, u as ua, b as ma, d as fa, e as xa, f as ba, g as ha, h as ga, i as ya, k as va, l as Na, m as wa, n as ka, o as Ca, p as Sa, q as Ta, r as Ia, s as Ea, t as Da, v as Pa, w as Aa, x as La, y as Ra, z as Ma, C as _a, D as Oa, E as $a } from "./useWebSocket-CsRH7UCS.js";
-import { u as ja, a as Ba, b as Ua, c as Va, d as Wa, e as Ga, f as za, g as Ha, h as Ka, i as Xa, j as qa, k as Qa, l as Ya, m as Ja, n as Za, o as es } from "./useVideoSessions-hr67KvHn.js";
+import { u as ja, a as Ba, b as Ua, c as Va, d as Wa, e as Ga, f as za, g as Ha, h as Xa, i as Ka, j as qa, k as Qa, l as Ya, m as Ja, n as Za, o as es } from "./useVideoSessions-hr67KvHn.js";
 import { u as rs, a as as, b as ss, c as ns, d as os, e as is } from "./useSocialProfile-D-SUgbn2.js";
 import { u as cs, a as ds, b as ps, c as us, d as ms, e as fs, f as xs, g as bs, h as hs, i as gs } from "./useSyncConflicts-DruS2duy.js";
 import { u as vs } from "./useDocumentTypes-C29MkgPl.js";
@@ -14,44 +14,44 @@ import { u as tt } from "./IdentityContext-CLalsm_M.js";
 import { I as Ts } from "./IdentityContext-CLalsm_M.js";
 import { u as rt } from "./TagEditor-Dc6-WL1y.js";
 import { C as Es, D as Ds, P as Ps, T as As } from "./TagEditor-Dc6-WL1y.js";
-import { A as Rs, C as Ms, e as _s, a as Os, a as $s, D as Fs, G as js, M as Bs, P as Us, R as Vs, b as Ws, c as Gs, S as zs, d as Hs, u as Ks } from "./ReactionsBar-B2BqJPj3.js";
-import { h as at } from "./InlinePopover-Do51rBee.js";
-import { B as qs, C as Qs, a as Ys, b as Js, c as Zs, d as en, e as tn, f as rn, g as an, D as sn, i as nn, E as on, j as ln, F as cn, k as dn, l as pn, I as un, m as mn, K as fn, L as xn, n as bn, o as hn, M as gn, P as yn, p as vn, q as Nn, r as wn, Q as kn, S as Cn, s as Sn, t as Tn, u as In, v as En, w as Dn, T as Pn, x as An, y as Ln, z as Rn, A as Mn, G as _n, H as On, J as $n, N as Fn, U as jn, O as Bn, R as Un, V as Vn } from "./InlinePopover-Do51rBee.js";
+import { A as Rs, C as Ms, e as _s, a as Os, a as $s, D as Fs, G as js, M as Bs, P as Us, R as Vs, b as Ws, c as Gs, S as zs, d as Hs, u as Xs } from "./ReactionsBar-B2BqJPj3.js";
+import { h as at } from "./InlinePopover-DWFwvepu.js";
+import { B as qs, C as Qs, a as Ys, b as Js, c as Zs, d as en, e as tn, f as rn, g as an, D as sn, i as nn, E as on, j as ln, F as cn, k as dn, l as pn, I as un, m as mn, K as fn, L as xn, n as bn, o as hn, M as gn, P as yn, p as vn, q as Nn, r as wn, Q as kn, S as Cn, s as Sn, t as Tn, u as In, v as En, w as Dn, T as Pn, x as An, y as Ln, z as Rn, A as Mn, G as _n, H as On, J as $n, N as Fn, U as jn, O as Bn, R as Un, V as Vn, W as Wn, X as Gn } from "./InlinePopover-DWFwvepu.js";
 import { a as Ne } from "./Banner-B8AcwPH_.js";
-import { B as Gn } from "./Banner-B8AcwPH_.js";
-import { C as Hn } from "./Card-B2uO9v1w.js";
-import { P as Xn, T as qn, a as Qn, b as Yn, c as Jn, d as Zn, e as eo } from "./PageSection-Dj8r4YIt.js";
-import { I as ro } from "./IconButton-Da1kJ5WO.js";
-import { B as so, L as no, S as oo } from "./Chart-ByoxeiYX.js";
-import { C as lo } from "./Chip-BXdhqVFm.js";
-import { C as po } from "./ConfirmDialog-CNoxvYGu.js";
-import { E as mo } from "./EmptyState-PM9wTjxk.js";
-import { C as xo, S as bo, e as ho, g as go, a as yo } from "./CardHeader-DuyI9Sk3.js";
+import { B as Hn } from "./Banner-B8AcwPH_.js";
+import { C as Kn } from "./Card-B2uO9v1w.js";
+import { P as Qn, T as Yn, a as Jn, b as Zn, c as eo, d as to, e as ro } from "./PageSection-Dj8r4YIt.js";
+import { I as so } from "./IconButton-Da1kJ5WO.js";
+import { B as oo, L as io, S as lo } from "./Chart-ByoxeiYX.js";
+import { C as po } from "./Chip-BXdhqVFm.js";
+import { C as mo } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as xo } from "./EmptyState-PM9wTjxk.js";
+import { C as ho, S as go, e as yo, g as vo, a as No } from "./CardHeader-DuyI9Sk3.js";
 import { jsxs as n, jsx as e, Fragment as $ } from "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
 import { M as Pe } from "./Modal-2jg4229_.js";
-import { S as No } from "./SkeletonCard-C89GWQ3p.js";
-import { A as ko, B as Co, F as So, N as To, P as Io, S as Eo } from "./Badge-tH4NRy5U.js";
+import { S as ko } from "./SkeletonCard-C89GWQ3p.js";
+import { A as So, B as To, F as Io, N as Eo, P as Do, S as Po } from "./Badge-tH4NRy5U.js";
 import { useState as D, useEffect as E, useMemo as Y, useRef as A, Component as st, lazy as nt, useCallback as we, Suspense as ke, createContext as ot, useContext as it } from "react";
-import { S as Po } from "./StatusDot-BC7B1tTr.js";
+import { S as Lo } from "./StatusDot-BC7B1tTr.js";
 import { A as lt } from "./Avatar-BvKIaNVE.js";
-import { a as Lo, n as Ro, b as Mo } from "./Avatar-BvKIaNVE.js";
+import { a as Mo, n as _o, b as Oo } from "./Avatar-BvKIaNVE.js";
 import { R as ct } from "./ReactionsOverlay-CoaX3hRz.js";
-import { S as Oo, a as $o } from "./ReactionsOverlay-CoaX3hRz.js";
+import { S as Fo, a as jo } from "./ReactionsOverlay-CoaX3hRz.js";
 import { useNavigate as Ae, useLocation as dt, Outlet as pt } from "react-router";
 import { c as f } from "./cn-B6yFEsav.js";
 import { i as ut, a as mt } from "./PresencePanel-mBtTn35O.js";
-import { C as jo, M as Bo, P as Uo, f as Vo } from "./PresencePanel-mBtTn35O.js";
+import { C as Uo, M as Vo, P as Wo, f as Go } from "./PresencePanel-mBtTn35O.js";
 import { N as ft } from "./index-DvQShsdF.js";
 import { a as xt, u as Le, E as bt } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Re, l as Me, a as _e, P as ht, b as gt, c as yt, d as vt } from "./pipelineAudit-CRdqcwiW.js";
-import { e as Go, f as zo, g as Ho, h as Ko, i as Xo, j as qo, k as Qo, r as Yo, m as Jo, n as Zo, s as ei } from "./pipelineAudit-CRdqcwiW.js";
+import { e as Ho, f as Xo, g as Ko, h as qo, i as Qo, j as Yo, k as Jo, r as Zo, m as ei, n as ti, s as ri } from "./pipelineAudit-CRdqcwiW.js";
 import { u as Nt, O as wt } from "./ObservabilityContext-mvmEXnGv.js";
-import { A as ri, C as ai, a as si, b as ni, c as oi, d as ii, e as li, M as ci, N as di, P as pi, R as ui, f as mi, g as fi, h as xi, i as bi, j as hi, k as gi, l as yi, S as vi, m as Ni, n as wi, T as ki, V as Ci, o as Si, p as Ti, s as Ii, u as Ei, q as Di } from "./TranscriptOverlay-BFMRa_zT.js";
-import { H as Ai, a as Li, b as Ri, P as Mi, g as _i, u as Oi } from "./HangoutLayout-BT6X2zG6.js";
-import { A as Fi, a as ji, b as Bi, c as Ui, d as Vi, C as Wi, e as Gi, D as zi, E as Hi, f as Ki, g as Xi, h as qi, G as Qi, i as Yi, I as Ji, d as Zi, F as el, L as tl, j as rl, M as al, k as sl, l as nl, m as ol, P as il, n as ll, o as cl, Q as dl, S as pl, p as ul, U as ml, q as fl } from "./PoolScopedLayout-CUNfNOxZ.js";
-import { b as bl, c as hl, g as gl, l as yl, r as vl, a as Nl } from "./registry-D1eP6Kby.js";
+import { A as si, C as ni, a as oi, b as ii, c as li, d as ci, e as di, M as pi, N as ui, P as mi, R as fi, f as xi, g as bi, h as hi, i as gi, j as yi, k as vi, l as Ni, S as wi, m as ki, n as Ci, T as Si, V as Ti, o as Ii, p as Ei, s as Di, u as Pi, q as Ai } from "./TranscriptOverlay-BFMRa_zT.js";
+import { H as Ri, a as Mi, b as _i, P as Oi, g as $i, u as Fi } from "./HangoutLayout-BT6X2zG6.js";
+import { A as Bi, a as Ui, b as Vi, c as Wi, d as Gi, C as zi, e as Hi, D as Xi, E as Ki, f as qi, g as Qi, h as Yi, G as Ji, i as Zi, I as el, d as tl, F as rl, L as al, j as sl, M as nl, k as ol, l as il, m as ll, P as cl, n as dl, o as pl, Q as ul, S as ml, p as fl, U as xl, q as bl } from "./PoolScopedLayout-CUNfNOxZ.js";
+import { b as gl, c as yl, g as vl, l as Nl, r as wl, a as kl } from "./registry-D1eP6Kby.js";
 const kt = [
   {
     title: "Global",
@@ -181,14 +181,14 @@ function Rr({
   participants: c,
   loading: d = !1
 }) {
-  const [u, v] = D(null), [m, h] = D(() => Date.now());
+  const [u, h] = D(null), [m, g] = D(() => Date.now());
   E(() => {
     if (!t) {
-      v(null);
+      h(null);
       return;
     }
-    v(Date.now()), h(Date.now());
-    const k = setInterval(() => h(Date.now()), 1e3);
+    h(Date.now()), g(Date.now());
+    const k = setInterval(() => g(Date.now()), 1e3);
     return () => clearInterval(k);
   }, [t]);
   const P = u !== null ? i + (m - u) : i;
@@ -417,14 +417,14 @@ function At({
   currentChannel: c,
   activityEvents: d,
   userId: u,
-  documents: v,
+  documents: h,
   onOpenDocument: m,
-  pipelines: h,
+  pipelines: g,
   onOpenPipeline: P,
   onSeeAllPipelines: C,
   videoSlot: k
 }) {
-  const p = t === "connected", I = Y(() => d.slice(0, 5), [d]), M = Y(() => v.slice(0, 5), [v]), _ = h ?? [], U = Y(() => _.slice(0, 12), [_]), G = h !== void 0;
+  const p = t === "connected", I = Y(() => d.slice(0, 5), [d]), M = Y(() => h.slice(0, 5), [h]), _ = g ?? [], U = Y(() => _.slice(0, 12), [_]), G = g !== void 0;
   return /* @__PURE__ */ n("div", { className: "flex flex-col gap-0", children: [
     /* @__PURE__ */ n("div", { className: "pt-1 pb-2 flex items-center gap-2", children: [
       /* @__PURE__ */ e(
@@ -482,9 +482,9 @@ function At({
       ] }),
       /* @__PURE__ */ n("div", { className: "flex flex-col gap-0.5", children: [
         o.map((x) => {
-          const N = x.metadata.displayName ?? x.clientId.slice(0, 8), y = x.clientId === i, F = ut(
+          const N = x.metadata.displayName ?? x.clientId.slice(0, 8), v = x.clientId === i, F = ut(
             x.metadata.email ?? x.clientId
-          ), K = mt(N);
+          ), X = mt(N);
           return /* @__PURE__ */ n(
             "div",
             {
@@ -493,7 +493,7 @@ function At({
               "data-presence-user-id": x.clientId,
               className: f(
                 "flex items-center gap-2 py-[3px] text-[13px] font-sans",
-                y ? "text-text-primary" : "text-text-secondary"
+                v ? "text-text-primary" : "text-text-secondary"
               ),
               children: [
                 /* @__PURE__ */ e(
@@ -501,12 +501,12 @@ function At({
                   {
                     className: "w-[22px] h-[22px] rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0",
                     style: { background: F },
-                    children: K
+                    children: X
                   }
                 ),
-                /* @__PURE__ */ n("span", { className: y ? "font-semibold" : "font-normal", children: [
+                /* @__PURE__ */ n("span", { className: v ? "font-semibold" : "font-normal", children: [
                   N,
-                  y ? " (you)" : ""
+                  v ? " (you)" : ""
                 ] })
               ]
             },
@@ -888,19 +888,19 @@ function Ft(t) {
     s.current = t[0].id, i.reverse();
     const d = Me().filter((u) => u.status === "published").map((u) => _e(u.id)).filter((u) => u !== null);
     for (const u of i) {
-      const v = Ot[u.eventType];
-      if (!v) continue;
-      const m = u.detail ?? {}, h = typeof m.documentId == "string" ? m.documentId : void 0, P = typeof m.documentTypeId == "string" ? m.documentTypeId : void 0;
+      const h = Ot[u.eventType];
+      if (!h) continue;
+      const m = u.detail ?? {}, g = typeof m.documentId == "string" ? m.documentId : void 0, P = typeof m.documentTypeId == "string" ? m.documentTypeId : void 0;
       for (const C of d) {
         const k = C.triggerBinding;
-        if (!k || k.event !== v || k.documentTypeId && k.documentTypeId !== P)
+        if (!k || k.event !== h || k.documentTypeId && k.documentTypeId !== P)
           continue;
         const p = Date.now(), I = o.current.get(C.id) ?? 0;
         if (p - I < $t) continue;
         o.current.set(C.id, p);
         const M = {
-          event: v,
-          documentId: h,
+          event: h,
+          documentId: g,
           documentTypeId: P,
           userId: u.userId
         };
@@ -923,16 +923,16 @@ function Bt() {
     const d = Me();
     for (const u of d) {
       if (u.status !== "published") continue;
-      const v = _e(u.id);
-      if (!v) continue;
-      const m = v.triggerBinding;
-      m && m.event === "webhook" && m.webhookPath === o && t(v.id, {
+      const h = _e(u.id);
+      if (!h) continue;
+      const m = h.triggerBinding;
+      m && m.event === "webhook" && m.webhookPath === o && t(h.id, {
         event: "webhook",
         webhookPath: o,
         body: a.body,
         headers: a.headers
-      }).catch((h) => {
-        console.error("[useWebhookTriggers] triggerRun failed", v.id, h);
+      }).catch((g) => {
+        console.error("[useWebhookTriggers] triggerRun failed", h.id, g);
       });
     }
   });
@@ -1019,8 +1019,8 @@ function Ht() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Kt = nt(() => import("./DocumentEditorPage-D-vJCtK2.js").then((t) => t.o));
-function Xt({ notifications: t, onDismiss: r, onClick: s }) {
+const Xt = nt(() => import("./DocumentEditorPage-D-vJCtK2.js").then((t) => t.o));
+function Kt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;
   return /* @__PURE__ */ e("div", { className: "fixed top-16 right-4 w-80 z-[1000] flex flex-col gap-2", children: t.map((o) => /* @__PURE__ */ n(
@@ -1077,42 +1077,42 @@ function qt({
   activityEvents: d,
   activityPublish: u
 }) {
-  const { connectionState: v, sendMessage: m, onMessage: h, ws: P, clientId: C, sessionToken: k } = et(), { userId: p, displayName: I, userEmail: M, idToken: _, onSignOut: U } = tt(), { presenceUsers: G, currentClientId: x } = rt(), N = Ae(), y = dt(), F = Qe(), { toast: K } = De(), de = A(null);
+  const { connectionState: h, sendMessage: m, onMessage: g, ws: P, clientId: C, sessionToken: k } = et(), { userId: p, displayName: I, userEmail: M, idToken: _, onSignOut: U } = tt(), { presenceUsers: G, currentClientId: x } = rt(), N = Ae(), v = dt(), F = Qe(), { toast: X } = De(), de = A(null);
   E(() => {
-    c?.code === "RECONNECT_EXHAUSTED" && de.current !== "RECONNECT_EXHAUSTED" && K(c.message, {
+    c?.code === "RECONNECT_EXHAUSTED" && de.current !== "RECONNECT_EXHAUSTED" && X(c.message, {
       type: "error",
       actionLabel: "Reconnect",
       onAction: () => s()
     }), de.current = c?.code ?? null;
-  }, [c, K, s]);
-  const L = y.pathname.startsWith("/pipelines") ? "pipelines" : y.pathname.startsWith("/ingest") ? "ingest" : y.pathname.startsWith("/observability") ? "observability" : y.pathname.startsWith("/documents") ? "doc-editor" : y.pathname.startsWith("/social") ? "social" : y.pathname.startsWith("/dashboard") ? "dashboard" : y.pathname.startsWith("/document-types") ? "doc-types" : y.pathname.startsWith("/field-types") ? "field-types" : "panels", [X] = D(null), [pe, ue] = D(!1), [me, j] = D(!1), [Ue, ee] = D(!1), [Ve, fe] = D(!1), [V, te] = D(null), [re, xe] = D(!0), ae = re ? 260 : 56, { rooms: q } = Ye({ idToken: _, onMessage: h }), { documents: We, createDocument: Ge } = Je({
+  }, [c, X, s]);
+  const L = v.pathname.startsWith("/pipelines") ? "pipelines" : v.pathname.startsWith("/ingest") ? "ingest" : v.pathname.startsWith("/observability") ? "observability" : v.pathname.startsWith("/documents") ? "doc-editor" : v.pathname.startsWith("/social") ? "social" : v.pathname.startsWith("/dashboard") ? "dashboard" : v.pathname.startsWith("/document-types") ? "doc-types" : v.pathname.startsWith("/field-types") ? "field-types" : "panels", [K] = D(null), [pe, ue] = D(!1), [me, j] = D(!1), [Ue, ee] = D(!1), [Ve, fe] = D(!1), [V, te] = D(null), [re, xe] = D(!0), ae = re ? 260 : 56, { rooms: q } = Ye({ idToken: _, onMessage: g }), { documents: We, createDocument: Ge } = Je({
     sendMessage: m,
-    onMessage: h,
-    connectionState: v
+    onMessage: g,
+    connectionState: h
   }), [ze, He] = D([]);
   E(() => {
     gt().then(He);
   }, []), Ft(d), Bt();
-  const { dispatchEnvelope: Ke } = Le();
+  const { dispatchEnvelope: Xe } = Le();
   yt({
     channel: "pipeline:all",
-    onEvent: (g) => Ke(g),
+    onEvent: (y) => Xe(y),
     enabled: !0
   });
   const be = vt().length;
   Wt(u), Ht();
-  const [z, se] = D([]), he = A(X);
+  const [z, se] = D([]), he = A(K);
   E(() => {
-    he.current = X;
-  }, [X]);
+    he.current = K;
+  }, [K]);
   const ne = A(q);
   E(() => {
     ne.current = q;
   }, [q]);
-  const ge = A(h);
+  const ge = A(g);
   E(() => {
-    ge.current = h;
-  }, [h]);
+    ge.current = g;
+  }, [g]);
   const ye = A(I);
   E(() => {
     ye.current = I;
@@ -1153,16 +1153,16 @@ function qt({
     }
   }), []), E(() => {
     if (z.length === 0) return;
-    const g = z[z.length - 1], l = Date.now() - g.timestamp, w = Math.max(0, 4e3 - l), T = setTimeout(() => {
+    const y = z[z.length - 1], l = Date.now() - y.timestamp, w = Math.max(0, 4e3 - l), T = setTimeout(() => {
       se((R) => R.slice(0, -1));
     }, w);
     return () => clearTimeout(T);
   }, [z]);
-  const ie = we((g) => {
-    se((l) => l.filter((w) => w.id !== g));
+  const ie = we((y) => {
+    se((l) => l.filter((w) => w.id !== y));
   }, []);
   E(() => {
-    const g = (l) => {
+    const y = (l) => {
       if (l.key !== "?") return;
       const w = l.target;
       if (w) {
@@ -1171,30 +1171,30 @@ function qt({
       }
       l.preventDefault(), fe(!0);
     };
-    return window.addEventListener("keydown", g), () => window.removeEventListener("keydown", g);
+    return window.addEventListener("keydown", y), () => window.removeEventListener("keydown", y);
   }, []);
-  const Xe = we((g) => {
-    g.sectionId && (N("/documents"), ie(g.id), setTimeout(() => {
-      document.getElementById(`section-${g.sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  const Ke = we((y) => {
+    y.sectionId && (N("/documents"), ie(y.id), setTimeout(() => {
+      document.getElementById(`section-${y.sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 300));
-  }, [ie]), W = (g) => f(
+  }, [ie]), W = (y) => f(
     "block w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel",
-    g ? "bg-surface-hover text-text-primary font-semibold" : "bg-transparent text-[#374151] font-normal"
-  ), qe = (g) => f(
+    y ? "bg-surface-hover text-text-primary font-semibold" : "bg-transparent text-[#374151] font-normal"
+  ), qe = (y) => f(
     "px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out",
-    g ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
-  ), le = (g) => f(
+    y ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
+  ), le = (y) => f(
     "px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out",
-    g ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
+    y ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
   );
   return /* @__PURE__ */ n("div", { className: "relative min-h-screen font-sans bg-surface-panel", children: [
     /* @__PURE__ */ e(ct, { reactions: a }),
-    /* @__PURE__ */ e(Xt, { notifications: z, onDismiss: ie, onClick: Xe }),
+    /* @__PURE__ */ e(Kt, { notifications: z, onDismiss: ie, onClick: Ke }),
     /* @__PURE__ */ n("div", { className: "flex items-center justify-between px-6 py-3 bg-surface border-b border-border gap-4 sticky top-0 z-50", children: [
       /* @__PURE__ */ e("span", { className: "text-base font-semibold text-text-primary shrink-0", children: "WebSocket Gateway" }),
       /* @__PURE__ */ n("div", { className: "flex items-center gap-4 flex-1 justify-center", children: [
-        /* @__PURE__ */ e(Tt, { state: v }),
-        /* @__PURE__ */ e("span", { className: "text-sm text-[#64748b] font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1", children: q.find((g) => g.roomId === X)?.name ?? t })
+        /* @__PURE__ */ e(Tt, { state: h }),
+        /* @__PURE__ */ e("span", { className: "text-sm text-[#64748b] font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1", children: q.find((y) => y.roomId === K)?.name ?? t })
       ] }),
       /* @__PURE__ */ n("div", { className: "flex items-center gap-3 shrink-0", children: [
         M && /* @__PURE__ */ e("span", { className: "text-sm text-[#64748b]", children: M }),
@@ -1210,7 +1210,7 @@ function qt({
           /* @__PURE__ */ e(
             "button",
             {
-              onClick: () => j((g) => !g),
+              onClick: () => j((y) => !y),
               className: f(
                 "border border-border rounded-md px-2 py-1 cursor-pointer text-base text-[#64748b] leading-none",
                 me ? "bg-surface-hover" : "bg-none"
@@ -1282,7 +1282,7 @@ function qt({
               "button",
               {
                 onClick: () => {
-                  ue((g) => !g), j(!1);
+                  ue((y) => !y), j(!1);
                 },
                 className: W(pe),
                 children: "🔧 Dev Tools"
@@ -1304,7 +1304,7 @@ function qt({
           children: re ? /* @__PURE__ */ e(
             At,
             {
-              connectionState: v,
+              connectionState: h,
               onDisconnect: r,
               onReconnect: s,
               onCollapse: () => xe(!1),
@@ -1314,18 +1314,18 @@ function qt({
               activityEvents: d,
               userId: p,
               documents: We,
-              onOpenDocument: (g) => {
-                N(`/documents/${g}`);
+              onOpenDocument: (y) => {
+                N(`/documents/${y}`);
               },
               pipelines: ze,
-              onOpenPipeline: (g) => N(`/pipelines/${g}`),
+              onOpenPipeline: (y) => N(`/pipelines/${y}`),
               onSeeAllPipelines: () => N("/pipelines"),
               videoSlot: V ? /* @__PURE__ */ e("div", { id: "sidebar-video-slot" }) : void 0
             }
           ) : /* @__PURE__ */ e(
             Lt,
             {
-              connectionState: v,
+              connectionState: h,
               onExpand: () => xe(!0),
               onPipelines: () => N("/pipelines"),
               onObservability: () => N("/observability"),
@@ -1344,7 +1344,7 @@ function qt({
           },
           children: [
             (() => {
-              const g = L === "doc-editor" || L === "doc-types" || L === "field-types";
+              const y = L === "doc-editor" || L === "doc-types" || L === "field-types";
               return /* @__PURE__ */ n("div", { className: "sticky top-[53px] bg-surface-panel z-[33] px-8", children: [
                 /* @__PURE__ */ n("div", { className: "flex items-center gap-1 px-1 py-1.5 border-b border-border", children: [
                   [
@@ -1358,12 +1358,12 @@ function qt({
                     "button",
                     {
                       onClick: () => N(l),
-                      className: f(qe(w === "doc-editor" ? g : L === w), "text-sm"),
+                      className: f(qe(w === "doc-editor" ? y : L === w), "text-sm"),
                       children: T
                     },
                     w
                   )),
-                  L === "doc-editor" && y.pathname === "/documents" && /* @__PURE__ */ e(
+                  L === "doc-editor" && v.pathname === "/documents" && /* @__PURE__ */ e(
                     "button",
                     {
                       "data-testid": "new-document-btn",
@@ -1373,7 +1373,7 @@ function qt({
                     }
                   )
                 ] }),
-                g && /* @__PURE__ */ e("div", { className: "flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel", children: [
+                y && /* @__PURE__ */ e("div", { className: "flex items-center gap-1 px-1 py-1.5 border-b border-border bg-surface-panel", children: [
                   ["/documents", "doc-editor", "Documents"],
                   ["/document-types", "doc-types", "Document Types"],
                   ["/field-types", "field-types", "Data Types"]
@@ -1391,7 +1391,7 @@ function qt({
                   ["/pipelines/approvals", "Pending approvals", (l) => l === "/pipelines/approvals"],
                   ["/pipelines/runs", "Runs", (l) => l === "/pipelines/runs"]
                 ].map(([l, w, T]) => {
-                  const R = T(y.pathname), S = l === "/pipelines/approvals" && be > 0;
+                  const R = T(v.pathname), S = l === "/pipelines/approvals" && be > 0;
                   return /* @__PURE__ */ n(
                     "button",
                     {
@@ -1423,7 +1423,7 @@ function qt({
                   ["/ingest/doctype-proposals", "Proposals", (l) => l === "/ingest/doctype-proposals"],
                   ["/ingest/audit", "Audit", (l) => l === "/ingest/audit"]
                 ].map(([l, w, T]) => {
-                  const R = T(y.pathname);
+                  const R = T(v.pathname);
                   return /* @__PURE__ */ e(
                     "button",
                     {
@@ -1440,7 +1440,7 @@ function qt({
                   ["/observability/events", "Events", (l) => l === "/observability/events"],
                   ["/observability/metrics", "Metrics", (l) => l === "/observability/metrics"]
                 ].map(([l, w, T]) => {
-                  const R = T(y.pathname);
+                  const R = T(v.pathname);
                   return /* @__PURE__ */ e(
                     "button",
                     {
@@ -1460,14 +1460,14 @@ function qt({
               /* @__PURE__ */ e(It, { health: F }),
               /* @__PURE__ */ e(Te, { name: "RouteContent", children: /* @__PURE__ */ e(ke, { fallback: /* @__PURE__ */ e("div", { children: "Loading..." }), children: /* @__PURE__ */ e(pt, { context: { dockedVideoDocId: V, setDockedVideoDocId: te } }) }) })
             ] }),
-            V && y.pathname !== `/documents/${V}` && /* @__PURE__ */ e(Te, { name: "DockedVideoEditor", children: /* @__PURE__ */ e(ke, { fallback: /* @__PURE__ */ e("div", { children: "Loading..." }), children: /* @__PURE__ */ e("div", { className: "hidden", children: /* @__PURE__ */ e(
-              Kt,
+            V && v.pathname !== `/documents/${V}` && /* @__PURE__ */ e(Te, { name: "DockedVideoEditor", children: /* @__PURE__ */ e(ke, { fallback: /* @__PURE__ */ e("div", { children: "Loading..." }), children: /* @__PURE__ */ e("div", { className: "hidden", children: /* @__PURE__ */ e(
+              Xt,
               {
                 documentId: V,
                 ws: P,
                 userId: p,
                 displayName: I,
-                onMessage: h,
+                onMessage: g,
                 activityPublish: u,
                 activityEvents: d,
                 onBack: () => N("/documents"),
@@ -1509,8 +1509,8 @@ function qt({
       {
         open: Ue,
         onClose: () => ee(!1),
-        onCreate: (g) => {
-          Ge(g), ee(!1);
+        onCreate: (y) => {
+          Ge(y), ee(!1);
         }
       }
     ),
@@ -1544,10 +1544,11 @@ function _r({
   toastRegion: a,
   loading: o,
   apiDegraded: i,
-  className: c,
-  sidebarWidth: d = 260
+  commandPalette: c,
+  className: d,
+  sidebarWidth: u = 260
 }) {
-  const u = /* @__PURE__ */ n("div", { className: f("relative min-h-screen font-sans bg-[var(--color-surface-panel)]", c), children: [
+  const h = /* @__PURE__ */ n("div", { className: f("relative min-h-screen font-sans bg-[var(--color-surface-panel)]", d), children: [
     /* @__PURE__ */ n("div", { className: "sticky top-0 z-50", children: [
       r,
       i && /* @__PURE__ */ e("div", { className: "border-b border-[var(--color-border)]", children: i })
@@ -1557,7 +1558,7 @@ function _r({
         "aside",
         {
           className: "shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col fixed top-[var(--app-shell-header-h,53px)] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40",
-          style: { width: d },
+          style: { width: u },
           children: t
         }
       ),
@@ -1565,17 +1566,18 @@ function _r({
         "main",
         {
           className: "flex-1 flex flex-col min-h-0",
-          style: t ? { marginLeft: d } : void 0,
+          style: t ? { marginLeft: u } : void 0,
           children: s
         }
       )
     ] }),
-    o && /* @__PURE__ */ e(Qt, { children: typeof o != "boolean" ? o : void 0 })
+    o && /* @__PURE__ */ e(Qt, { children: typeof o != "boolean" ? o : void 0 }),
+    c
   ] });
-  return a === null ? u : a !== void 0 ? /* @__PURE__ */ n($, { children: [
-    u,
+  return a === null ? h : a !== void 0 ? /* @__PURE__ */ n($, { children: [
+    h,
     a
-  ] }) : /* @__PURE__ */ e(Ze, { children: u });
+  ] }) : /* @__PURE__ */ e(Ze, { children: h });
 }
 function J(t, r) {
   return t ? t === r ? !0 : r === "/" ? !1 : t.startsWith(r + "/") : !1;
@@ -1616,14 +1618,14 @@ function Yt({
   style: d,
   "aria-label": u = "Main navigation"
 }) {
-  const [v, m] = D(!1), h = A(null);
+  const [h, m] = D(!1), g = A(null);
   E(() => {
-    if (!v) return;
+    if (!h) return;
     function p(I) {
-      h.current && !h.current.contains(I.target) && m(!1);
+      g.current && !g.current.contains(I.target) && m(!1);
     }
     return document.addEventListener("mousedown", p), () => document.removeEventListener("mousedown", p);
-  }, [v]);
+  }, [h]);
   const P = i !== void 0 ? t.slice(0, i) : t, C = i !== void 0 ? t.slice(i) : [], k = C.some((p) => J(r, p.to));
   return /* @__PURE__ */ n(
     "nav",
@@ -1646,14 +1648,14 @@ function Yt({
             },
             p.to
           )),
-          C.length > 0 && /* @__PURE__ */ n("div", { className: "relative", ref: h, children: [
+          C.length > 0 && /* @__PURE__ */ n("div", { className: "relative", ref: g, children: [
             /* @__PURE__ */ n(
               "button",
               {
                 type: "button",
                 onClick: () => m((p) => !p),
                 "aria-haspopup": "menu",
-                "aria-expanded": v,
+                "aria-expanded": h,
                 "data-testid": "topnav-more",
                 className: f(
                   "inline-flex items-center gap-1.5 px-3 h-10 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer bg-transparent border-l-0 border-r-0 border-t-0",
@@ -1665,7 +1667,7 @@ function Yt({
                 ]
               }
             ),
-            v && /* @__PURE__ */ e(
+            h && /* @__PURE__ */ e(
               "div",
               {
                 role: "menu",
@@ -1737,9 +1739,9 @@ function $r({
   saveLabel: c = "Save changes",
   cancelLabel: d = "Cancel",
   onSave: u,
-  onCancel: v,
+  onCancel: h,
   saving: m = !1,
-  saveBarSlot: h,
+  saveBarSlot: g,
   railWidth: P = 220,
   className: C,
   style: k,
@@ -1749,8 +1751,8 @@ function $r({
   E(() => {
     a == null && I && M == null && _(I);
   }, [a, I, M]);
-  const x = s.find((y) => y.id === U) ?? s[0], N = (y) => {
-    a == null && _(y), o?.(y);
+  const x = s.find((v) => v.id === U) ?? s[0], N = (v) => {
+    a == null && _(v), o?.(v);
   };
   return /* @__PURE__ */ n(
     "div",
@@ -1778,16 +1780,16 @@ function $r({
                   /* @__PURE__ */ e("div", { className: "text-[14px] font-semibold text-[var(--color-text-primary)] leading-tight", children: t }),
                   r != null && /* @__PURE__ */ e("div", { className: "mt-0.5 text-[11px] text-[var(--color-text-secondary)] leading-snug", children: r })
                 ] }),
-                /* @__PURE__ */ e("nav", { className: "flex flex-col gap-0.5", children: s.map((y) => {
-                  const F = y.id === U;
+                /* @__PURE__ */ e("nav", { className: "flex flex-col gap-0.5", children: s.map((v) => {
+                  const F = v.id === U;
                   return /* @__PURE__ */ n(
                     "button",
                     {
                       type: "button",
                       "data-testid": `${p}-rail-item`,
-                      "data-section-id": y.id,
+                      "data-section-id": v.id,
                       "data-active": F || void 0,
-                      onClick: () => N(y.id),
+                      onClick: () => N(v.id),
                       className: f(
                         "flex flex-col items-start gap-0.5 px-3 py-2 rounded-md text-left",
                         "border-l-[2px] cursor-pointer",
@@ -1795,22 +1797,22 @@ function $r({
                       ),
                       children: [
                         /* @__PURE__ */ n("span", { className: "flex items-center gap-1.5 text-[12px] font-semibold", children: [
-                          y.icon != null && /* @__PURE__ */ e("span", { className: "shrink-0", "aria-hidden": !0, children: y.icon }),
-                          y.label
+                          v.icon != null && /* @__PURE__ */ e("span", { className: "shrink-0", "aria-hidden": !0, children: v.icon }),
+                          v.label
                         ] }),
-                        y.description != null && /* @__PURE__ */ e(
+                        v.description != null && /* @__PURE__ */ e(
                           "span",
                           {
                             className: f(
                               "text-[10px] leading-snug",
                               F ? "text-[var(--color-primary,#4338ca)] opacity-80" : "text-[var(--color-text-tertiary)]"
                             ),
-                            children: y.description
+                            children: v.description
                           }
                         )
                       ]
                     },
-                    y.id
+                    v.id
                   );
                 }) })
               ]
@@ -1848,13 +1850,13 @@ function $r({
             ),
             children: [
               /* @__PURE__ */ e("span", { className: "text-[12px] text-[var(--color-text-secondary)]", children: "You have unsaved changes." }),
-              h != null && /* @__PURE__ */ e("span", { className: "text-[11px] text-[var(--color-text-tertiary)]", children: h }),
+              g != null && /* @__PURE__ */ e("span", { className: "text-[11px] text-[var(--color-text-tertiary)]", children: g }),
               /* @__PURE__ */ n("div", { className: "ml-auto flex items-center gap-2", children: [
-                v && /* @__PURE__ */ e(
+                h && /* @__PURE__ */ e(
                   "button",
                   {
                     type: "button",
-                    onClick: v,
+                    onClick: h,
                     "data-testid": `${p}-cancel`,
                     className: f(
                       "px-3 py-1.5 text-[12px] font-semibold rounded-md",
@@ -1953,9 +1955,9 @@ function jr({
 }) {
   const [d, u] = D(() => {
     const m = {};
-    for (const h of s ?? []) m[h] = !0;
+    for (const g of s ?? []) m[g] = !0;
     return m;
-  }), v = (m) => u((h) => ({ ...h, [m]: !h[m] }));
+  }), h = (m) => u((g) => ({ ...g, [m]: !g[m] }));
   return /* @__PURE__ */ e(
     "aside",
     {
@@ -1967,14 +1969,14 @@ function jr({
       ),
       style: i,
       children: t.map((m) => {
-        const h = d[m.id] ?? !1, P = r && m.basePath ? r.startsWith(m.basePath) : !1;
+        const g = d[m.id] ?? !1, P = r && m.basePath ? r.startsWith(m.basePath) : !1;
         return /* @__PURE__ */ n("div", { className: "mb-2", children: [
           /* @__PURE__ */ n(
             "button",
             {
               type: "button",
-              onClick: () => v(m.id),
-              "aria-expanded": !h,
+              onClick: () => h(m.id),
+              "aria-expanded": !g,
               "data-testid": `docs-sidebar-section-${m.id}`,
               className: f(
                 "flex w-full items-center gap-1.5 border-0 bg-transparent px-5 py-2 text-[11px] font-bold uppercase tracking-wider cursor-pointer",
@@ -1987,7 +1989,7 @@ function jr({
                     "aria-hidden": "true",
                     className: "inline-block text-[10px] transition-transform",
                     style: {
-                      transform: h ? "rotate(-90deg)" : "rotate(0deg)"
+                      transform: g ? "rotate(-90deg)" : "rotate(0deg)"
                     },
                     children: "▼"
                   }
@@ -1996,7 +1998,7 @@ function jr({
               ]
             }
           ),
-          !h && /* @__PURE__ */ e("div", { children: m.groups.map((C) => /* @__PURE__ */ e(
+          !g && /* @__PURE__ */ e("div", { children: m.groups.map((C) => /* @__PURE__ */ e(
             Zt,
             {
               group: C,
@@ -2107,9 +2109,9 @@ function Br({
   rightSlot: c,
   renderLink: d,
   className: u,
-  style: v
+  style: h
 }) {
-  const m = s ? a ? er(a, s) : /* @__PURE__ */ e("span", { className: "text-base font-bold text-[var(--color-text-primary)] whitespace-nowrap", children: s }) : void 0, h = /* @__PURE__ */ n($, { children: [
+  const m = s ? a ? er(a, s) : /* @__PURE__ */ e("span", { className: "text-base font-bold text-[var(--color-text-primary)] whitespace-nowrap", children: s }) : void 0, g = /* @__PURE__ */ n($, { children: [
     o ?? (i ? /* @__PURE__ */ e(tr, {}) : null),
     c
   ] });
@@ -2118,14 +2120,14 @@ function Br({
     {
       "data-testid": "docs-topnav",
       className: f("sticky top-0 z-[1000] bg-[var(--color-surface,#fff)]", u),
-      style: v,
+      style: h,
       children: /* @__PURE__ */ e(
         Yt,
         {
           items: t,
           activeHref: r,
           brand: m,
-          rightSlot: h,
+          rightSlot: g,
           renderLink: d,
           "aria-label": "Documentation navigation"
         }
@@ -2316,7 +2318,7 @@ const ar = {
   shadowLg: "0 10px 15px rgba(0,0,0,0.3), 0 4px 6px rgba(0,0,0,0.15)",
   shadowXl: "0 20px 25px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.2)"
 }, Be = ot(je);
-function Kr({ children: t, preset: r = "light", theme: s }) {
+function Xr({ children: t, preset: r = "light", theme: s }) {
   const a = r === "dark" ? ir : je, o = Y(
     () => ({ ...a, ...s }),
     [a, s]
@@ -2334,7 +2336,7 @@ function Kr({ children: t, preset: r = "light", theme: s }) {
 function lr() {
   return it(Be);
 }
-function Xr() {
+function Kr() {
   return lr();
 }
 const qr = {
@@ -2405,42 +2407,42 @@ async function Zr(t, r) {
   return s.json();
 }
 export {
-  ko as ActivityFeed,
+  So as ActivityFeed,
   Rs as ActivityPanel,
-  Fi as AdminDashboardPage,
+  Bi as AdminDashboardPage,
   It as ApiDegradedBanner,
   Mr as AppLayout,
   _r as AppShell,
-  ji as ApplicationFormPage,
-  Bi as ApplicationListPage,
-  Ui as ApplicationPoolFormPage,
-  Vi as AuditPage,
-  ri as AutoplayGate,
+  Ui as ApplicationFormPage,
+  Vi as ApplicationListPage,
+  Wi as ApplicationPoolFormPage,
+  Gi as AuditPage,
+  si as AutoplayGate,
   lt as Avatar,
-  Lo as AvatarGroup,
-  Co as Badge,
-  Gn as Banner,
-  so as BarChart,
+  Mo as AvatarGroup,
+  To as Badge,
+  Hn as Banner,
+  oo as BarChart,
   qs as Breadcrumbs,
   Ne as Button,
   ia as CUSTOM_FIELD_TYPE_STORAGE_KEY,
-  ai as CallControls,
-  si as CallParticipantStrip,
-  ni as CallStartedBanner,
-  oi as CallStatsOverlay,
-  ii as CallWidget,
-  li as CallingStatusPill,
-  Hn as Card,
-  xo as CardHeader,
+  ni as CallControls,
+  oi as CallParticipantStrip,
+  ii as CallStartedBanner,
+  li as CallStatsOverlay,
+  ci as CallWidget,
+  di as CallingStatusPill,
+  Kn as Card,
+  ho as CardHeader,
   Qs as CatalogGrid,
   Ys as ChannelHeader,
   Js as ChatComposer,
-  jo as ChatPanel,
+  Uo as ChatPanel,
   Ms as ChatRoom,
-  lo as Chip,
+  po as Chip,
   Zs as CodeBlock,
   Es as CodeEditor,
-  Wi as CodeInput,
+  zi as CodeInput,
   Lt as CollapsedIconStrip,
   en as CollapsibleSection,
   At as CollapsibleSidebar,
@@ -2450,125 +2452,125 @@ export {
   an as CommandPaletteProvider,
   Os as CommentThread,
   $s as CommentThreadPanel,
-  po as ConfirmDialog,
+  mo as ConfirmDialog,
   at as ConnectionPill,
   Tt as ConnectionStatus,
-  Gi as ConsentPage,
+  Hi as ConsentPage,
   Fs as DEFAULT_PICKER_EMOJIS,
   Ds as DEFAULT_PIPELINE_ICONS,
   ra as DOCUMENT_TYPE_ICONS,
   sn as DataTable,
-  zi as DiagnosticsPage,
+  Xi as DiagnosticsPage,
   Fr as DocsShell,
   jr as DocsSidebar,
   Br as DocsTopNav,
   nn as Drawer,
-  Hi as EmailTemplateFormPage,
-  Ki as EmailTemplateListPage,
-  mo as EmptyState,
+  Ki as EmailTemplateFormPage,
+  qi as EmailTemplateListPage,
+  xo as EmptyState,
   on as EntityCell,
-  Xi as EntityTable,
-  qi as ErrorPage,
+  Qi as EntityTable,
+  Yi as ErrorPage,
   ln as ErrorState,
-  So as FileUploadDrop,
+  Io as FileUploadDrop,
   cn as FilterChip,
   dn as FollowUpChips,
   pn as FormField,
-  Qi as GroupFormPage,
-  Yi as GroupListPage,
+  Ji as GroupFormPage,
+  Zi as GroupListPage,
   js as GroupPanel,
-  Ai as HangoutGrid,
-  Li as HangoutLayout,
-  Ri as HangoutSpotlight,
+  Ri as HangoutGrid,
+  Mi as HangoutLayout,
+  _i as HangoutSpotlight,
   da as IDENTITY_BASE_URL,
-  ro as IconButton,
-  Ji as IdentityAdminLayout,
-  Zi as IdentityAuditPage,
-  el as IdentityFormField,
+  so as IconButton,
+  el as IdentityAdminLayout,
+  tl as IdentityAuditPage,
+  rl as IdentityFormField,
   Ts as IdentityProvider,
   un as InlineAlert,
   mn as InlinePopover,
   fn as KPIGrid,
   xn as LayerStack,
-  no as LineChart,
+  io as LineChart,
   bn as LoadingState,
   hn as LogStream,
-  tl as LoginPage,
-  rl as LogoutPage,
+  al as LoginPage,
+  sl as LogoutPage,
   gn as MessageBubble,
   Bs as MessageGroup,
-  Bo as MessageRow,
-  al as MfaDashboardPage,
-  sl as MfaManagementPage,
-  nl as MfaSetupPage,
-  ol as MfaVerifyPage,
+  Vo as MessageRow,
+  nl as MfaDashboardPage,
+  ol as MfaManagementPage,
+  il as MfaSetupPage,
+  ll as MfaVerifyPage,
   Pe as Modal,
-  ci as MuteWhileTalkingToast,
+  pi as MuteWhileTalkingToast,
   Or as NavTabs,
-  di as NetworkQualityBadge,
-  To as NotificationCenter,
+  ui as NetworkQualityBadge,
+  Eo as NotificationCenter,
   yn as PageHeader,
-  Xn as PageSection,
-  Mi as ParticipantTile,
-  Go as PatchHttpError,
-  zo as PatchValidationRejectedError,
-  pi as PiPButton,
-  il as PoolFormPage,
-  ll as PoolListPage,
-  cl as PoolScopedLayout,
+  Qn as PageSection,
+  Oi as ParticipantTile,
+  Ho as PatchHttpError,
+  Xo as PatchValidationRejectedError,
+  mi as PiPButton,
+  cl as PoolFormPage,
+  dl as PoolListPage,
+  pl as PoolScopedLayout,
   Us as PostFeed,
-  Io as PresenceAvatars,
+  Do as PresenceAvatars,
   vn as PresenceDot,
-  Uo as PresencePanel,
+  Wo as PresencePanel,
   Ps as PresenceProvider,
   Nn as ProgressBar,
   wn as ProjectCard,
-  dl as QrCodeDisplay,
+  ul as QrCodeDisplay,
   kn as QuickPromptGrid,
-  ui as ReactionOverlay,
-  mi as ReactionPicker,
+  fi as ReactionOverlay,
+  xi as ReactionPicker,
   Vs as ReactionPickerPopover,
   Ws as ReactionsBar,
-  fi as ReconnectingBanner,
-  xi as RecordingList,
-  bi as RecordingPlayer,
-  hi as RecordingRow,
-  gi as RemoteTileSlot,
+  bi as ReconnectingBanner,
+  hi as RecordingList,
+  gi as RecordingPlayer,
+  yi as RecordingRow,
+  vi as RemoteTileSlot,
   Rr as ResumeCallDialog,
   Gs as RoomList,
-  yi as RosterPanel,
+  Ni as RosterPanel,
   Cn as SearchInput,
   Sn as SegmentedControl,
   $r as SettingsLayout,
-  pl as SetupGuidePage,
-  Oo as SidebarRow,
-  $o as SidebarSection,
-  No as SkeletonCard,
+  ml as SetupGuidePage,
+  Fo as SidebarRow,
+  jo as SidebarSection,
+  ko as SkeletonCard,
   zs as SocialPanel,
   Hs as SocialTabContent,
-  bo as Sparkline,
+  go as Sparkline,
   Tn as Spinner,
   In as StackDiagram,
-  oo as StackedAreaChart,
+  lo as StackedAreaChart,
   En as StatCard,
-  vi as StatsCard,
-  ul as StatusBadge,
-  Po as StatusDot,
-  Ni as StatusStrip,
-  wi as StreamVideo,
+  wi as StatsCard,
+  fl as StatusBadge,
+  Lo as StatusDot,
+  ki as StatusStrip,
+  Ci as StreamVideo,
   Dn as SubNavLayout,
-  Eo as Switch,
+  Po as Switch,
   Pn as TabPanel,
-  qn as Table,
-  Qn as TableBody,
-  Yn as TableHead,
-  Jn as TableRow,
-  Zn as TableTd,
-  eo as TableTh,
+  Yn as Table,
+  Jn as TableBody,
+  Zn as TableHead,
+  eo as TableRow,
+  to as TableTd,
+  ro as TableTh,
   An as Tabs,
   As as TagEditor,
   Ln as TerminalLog,
-  Kr as ThemeProvider,
+  Xr as ThemeProvider,
   Rn as ThinkingBlock,
   Mn as ThinkingDots,
   _n as ThumbnailCard,
@@ -2576,46 +2578,47 @@ export {
   On as ToolCallPill,
   $n as ToolCallStrip,
   Yt as TopNav,
-  ki as TranscriptOverlay,
+  Si as TranscriptOverlay,
   Fn as TypingIndicator,
   jn as UserChip,
-  ml as UserFormPage,
-  fl as UserListPage,
+  xl as UserFormPage,
+  bl as UserListPage,
   Bn as UserMenu,
-  Ci as VideoGrid,
-  Si as VideoPlayer,
-  Ti as ViewerCount,
+  Ti as VideoGrid,
+  Ii as VideoPlayer,
+  Ei as ViewerCount,
   Cs as WebSocketProvider,
-  Ho as applyPatch,
+  Ko as applyPatch,
   Hr as borderRadius,
   Wr as colors,
   b as cssVar,
   ir as darkTheme,
-  ho as eventGlyphs,
+  yo as eventGlyphs,
   zr as fontSize,
-  Ko as forceFail,
-  Vo as formatChatTime,
+  qo as forceFail,
+  Go as formatChatTime,
   Un as formatTypingBanner,
-  go as getEventCategory,
-  yo as getEventGlyph,
-  bl as getFieldType,
-  hl as getFieldTypes,
+  vo as getEventCategory,
+  No as getEventGlyph,
+  gl as getFieldType,
+  yl as getFieldTypes,
   aa as getPageConfig,
   sa as getPagesView,
-  Xo as getPipelineRun,
-  gl as getRenderer,
-  qo as getRunAuditLog,
-  _i as gridCols,
+  Qo as getPipelineRun,
+  vl as getRenderer,
+  Yo as getRunAuditLog,
+  $i as gridCols,
   pa as identityApiFetch,
   Ur as injectThemeVars,
   la as isValidCustomFieldType,
   je as lightTheme,
   Yr as listDLQEntries,
-  Qo as listPipelineRuns,
-  yl as listRegisteredRenderers,
+  Jo as listPipelineRuns,
+  Nl as listRegisteredRenderers,
   na as makeEmptyField,
-  Ro as nameToColor,
-  Mo as nameToInitials,
+  Vn as matchHotkey,
+  _o as nameToColor,
+  Oo as nameToInitials,
   Zr as purgeDLQEntries,
   or as rawBorderRadius,
   ar as rawColors,
@@ -2623,15 +2626,15 @@ export {
   sr as rawSpacing,
   Vr as rawTokens,
   Jr as redriveDLQEntries,
-  vl as registerFieldType,
-  Nl as registerRenderer,
-  Yo as resumeFromStep,
-  Jo as retryFromNode,
-  Zo as revertPatch,
-  ei as searchAudit,
+  wl as registerFieldType,
+  kl as registerRenderer,
+  Zo as resumeFromStep,
+  ei as retryFromNode,
+  ti as revertPatch,
+  ri as searchAudit,
   qr as shadows,
   Gr as spacing,
-  Ii as streamHasUsableVideo,
+  Di as streamHasUsableVideo,
   rr as themeToCssVars,
   Z as tokenToCssVarName,
   ua as useActivityBus,
@@ -2644,8 +2647,8 @@ export {
   ba as useChat,
   ha as useClickOutside,
   Ua as useCollaborativeDoc,
-  Ks as useColorScheme,
-  Vn as useCommandPalette,
+  Xs as useColorScheme,
+  Wn as useCommandPalette,
   rs as useComments,
   ga as useCursors,
   ya as useCustomFieldTypes,
@@ -2672,7 +2675,7 @@ export {
   Da as useIdentityResource,
   Pa as useIdentitySetupStatus,
   Aa as useIdentityUsers,
-  Ka as useIdleDetector,
+  Xa as useIdleDetector,
   ds as useIngestAudit,
   ps as useIngestDLQ,
   us as useIngestItems,
@@ -2681,8 +2684,8 @@ export {
   La as useKeyboardShortcuts,
   ns as useLikes,
   xs as useMappingReviewQueue,
-  Xa as useMentionUsers,
-  Ei as useMuteWhileTalking,
+  Ka as useMentionUsers,
+  Pi as useMuteWhileTalking,
   qa as useMyMentionsAndTasks,
   bs as usePipelineDefs,
   os as usePosts,
@@ -2690,16 +2693,17 @@ export {
   Ra as usePresence,
   rt as usePresenceContext,
   Ma as useReactions,
+  Gn as useRegisterCommand,
   Ye as useRooms,
   Qa as useSectionList,
   is as useSocialProfile,
   hs as useSourceSloMetrics,
-  Oi as useStableActiveSpeaker,
+  Fi as useStableActiveSpeaker,
   gs as useSyncConflicts,
-  Xr as useTheme,
+  Kr as useTheme,
   lr as useThemeContext,
   De as useToast,
-  Di as useTrackStateBump,
+  Ai as useTrackStateBump,
   _a as useTypedDocuments,
   Oa as useUrlFilterState,
   Ya as useVersionHistory,
