@@ -164,6 +164,22 @@ export declare interface CardProps extends HTMLAttributes<HTMLDivElement> {
     padding?: CardPadding;
 }
 
+export declare function CatalogGrid({ children, columns, dense, className, style, 'data-testid': testId, }: CatalogGridProps): JSX.Element;
+
+export declare type CatalogGridColumns = 1 | 2 | 3 | 4 | 5;
+
+export declare interface CatalogGridProps {
+    /** Children — expected to be <ThumbnailCard> instances (any node accepted). */
+    children: ReactNode;
+    /** Target column count at >=640px. Default 3. Always collapses to 1 below. */
+    columns?: CatalogGridColumns;
+    /** Tighter gap (12px vs 20px). Default false. */
+    dense?: boolean;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
 export declare function ChannelHeader({ name, memberCount, description, actions, avatarUrl, online, onMembersClick, className, }: ChannelHeaderProps): JSX.Element;
 
 export declare interface ChannelHeaderProps {
@@ -650,6 +666,9 @@ export declare interface KPIGridProps {
     'data-testid'?: string;
 }
 
+/** Alias kept for diagrams better described as a stack of horizontal layers. */
+export declare const LayerStack: typeof StackDiagram;
+
 export declare function LineChart({ series, height, yFormat, xFormat, }: {
     series: LineSeries[];
     height?: number;
@@ -676,6 +695,47 @@ export declare interface LoadingStateProps {
     spinnerSize?: SpinnerSize;
     spinnerColor?: string;
     testId?: string;
+}
+
+export declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+export declare interface LogLine {
+    id: string;
+    /** Pre-formatted timestamp string (e.g. "10:48:21.024"). Optional. */
+    timestamp?: string;
+    /** Severity. Drives glyph + color. */
+    level?: LogLevel;
+    /** Optional source/component prefix (e.g. "auth-svc", "pipeline-7"). */
+    source?: string;
+    /** The log message body. */
+    message: ReactNode;
+}
+
+export declare function LogStream({ lines, follow, showTimestamp, showLevel, showSource, title, headerSlot, emptyMessage, maxHeight, onClear, className, style, 'data-testid': testId, }: LogStreamProps): JSX.Element;
+
+export declare interface LogStreamProps {
+    lines: LogLine[];
+    /** When true, autoscroll to the latest line as new lines arrive. Default true. */
+    follow?: boolean;
+    /** When true, render the small timestamp column. Default true. */
+    showTimestamp?: boolean;
+    /** When true, render the level glyph. Default true. */
+    showLevel?: boolean;
+    /** When true, render the source prefix column. Default true. */
+    showSource?: boolean;
+    /** Header title. Default: "Log stream". Set to null to hide the header. */
+    title?: string | null;
+    /** Optional right-side meta slot in the header (overrides default line count). */
+    headerSlot?: ReactNode;
+    /** Empty-state message when lines is empty. */
+    emptyMessage?: ReactNode;
+    /** Optional max-height for the scroll region. */
+    maxHeight?: string;
+    /** When provided, renders a "Clear" button in the header. */
+    onClear?: () => void;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
 }
 
 /**
@@ -981,10 +1041,38 @@ export declare interface SpinnerProps {
 
 export declare type SpinnerSize = 'sm' | 'md' | 'lg';
 
+export declare function StackDiagram({ layers, orientation, connector, className, style, 'data-testid': testId, }: StackDiagramProps): JSX.Element;
+
+export declare type StackDiagramConnector = 'arrow' | 'line' | 'none';
+
+export declare type StackDiagramOrientation = 'vertical' | 'horizontal';
+
+export declare interface StackDiagramProps {
+    layers: StackLayerSpec[];
+    /** Vertical stacks top-to-bottom (default); horizontal flows left-to-right. */
+    orientation?: StackDiagramOrientation;
+    /** Connector glyph between layers. Default 'arrow'. */
+    connector?: StackDiagramConnector;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
+}
+
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
 }): JSX_2.Element;
+
+export declare interface StackLayerSpec {
+    id: string;
+    label: ReactNode;
+    description?: ReactNode;
+    icon?: ReactNode;
+    /** Color tone (matches <Chip> tones). Default 'neutral'. */
+    tone?: ChipTone;
+    /** Optional right-aligned meta slot (badge, version chip). */
+    meta?: ReactNode;
+}
 
 export declare function StatCard({ label, value, accent, danger, hint, delta, sparklineData, to, as: As, onClick, mono, className, style, 'data-testid': testId, }: StatCardProps): JSX.Element;
 
@@ -1264,6 +1352,9 @@ export declare interface TagEditorProps {
     lowercase?: boolean;
 }
 
+/** Alias kept for clarity in contexts where "terminal log" reads better. */
+export declare const TerminalLog: typeof LogStream;
+
 /**
  * A collapsible `<details>` block for showing chain-of-thought reasoning.
  *
@@ -1295,6 +1386,39 @@ export declare interface ThinkingDotsProps {
     /** dot color, default var(--color-text-tertiary) */
     color?: string;
     className?: string;
+}
+
+export declare function ThumbnailCard({ title, description, category, categoryTone, thumbnail, icon, thumbnailHeight, href, onClick, badge, meta, className, style, 'data-testid': testId, }: ThumbnailCardProps): JSX.Element;
+
+export declare interface ThumbnailCardProps {
+    /** Card title (required). */
+    title: ReactNode;
+    /** Short description. */
+    description?: ReactNode;
+    /** Optional category label. Shows as a Chip in the content area. */
+    category?: ReactNode;
+    /** Tone for the category chip. Default 'neutral'. */
+    categoryTone?: ChipTone;
+    /**
+     * Optional thumbnail image URL. When omitted, an icon/emoji placeholder is
+     * rendered against a tonal gradient background.
+     */
+    thumbnail?: string;
+    /** Fallback glyph rendered when no thumbnail is provided. */
+    icon?: ReactNode;
+    /** Pixel height of the thumbnail strip. Default 160. */
+    thumbnailHeight?: number;
+    /** When provided, renders as an <a> wrapping the card. */
+    href?: string;
+    /** Optional click handler (renders as a button if no href). */
+    onClick?: () => void;
+    /** When provided, renders a small badge in the top-right of the thumbnail. */
+    badge?: ReactNode;
+    /** Optional render function for a custom right-side meta in the content. */
+    meta?: ReactNode;
+    className?: string;
+    style?: CSSProperties;
+    'data-testid'?: string;
 }
 
 export declare interface ToastContextValue {

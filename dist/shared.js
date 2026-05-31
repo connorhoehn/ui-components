@@ -1,105 +1,111 @@
-import { B as i, C as l, a as p, b as m, c as C, d, e as T, f as S, D as P, g as f, E as c, h as g, F as x, i as b, j as h, I as B, k as u, K as v, L as E, M as I, P as y, l as A, m as D, n as k, Q as F, S as L, o as U, p as w, q as G, r as H, T as M, s as N, t as j, u as K, v as Q, w as _, x as q, U as z, y as O, z as R, A as J } from "./InlinePopover-J51uAKYo.js";
-import { B as W, a as X } from "./Banner-B8AcwPH_.js";
-import { C as Z } from "./Card-B2uO9v1w.js";
-import { P as aa, T as ea, a as sa, b as oa, c as ra, d as ta, e as na } from "./PageSection-Dj8r4YIt.js";
-import { I as la } from "./IconButton-Da1kJ5WO.js";
-import { B as ma, L as Ca, S as da } from "./Chart-ByoxeiYX.js";
-import { C as Sa } from "./Chip-BXdhqVFm.js";
-import { C as fa, D as ca, T as ga } from "./TagEditor-Dc6-WL1y.js";
-import { C as ba } from "./ConfirmDialog-CNoxvYGu.js";
-import { E as Ba } from "./EmptyState-PM9wTjxk.js";
-import { C as va, S as Ea, e as Ia, g as ya, a as Aa } from "./CardHeader-DuyI9Sk3.js";
+import { B as n, C as l, a as m, b as p, c as C, d, e as T, f as S, g, D as P, h as f, E as c, i as b, F as h, j as x, k as B, I as u, l as v, K as y, L as E, m as I, n as k, M as D, P as A, o as L, p as F, q as G, Q as H, S as N, r as U, s as w, t as M, u as j, v as K, T as O, w as Q, x as R, y as _, z as q, A as z, G as J, H as V, J as W, U as X, N as Y, O as Z, R as $ } from "./InlinePopover-Cl5oG8JH.js";
+import { B as ea, a as sa } from "./Banner-B8AcwPH_.js";
+import { C as oa } from "./Card-B2uO9v1w.js";
+import { P as ia, T as na, a as la, b as ma, c as pa, d as Ca, e as da } from "./PageSection-Dj8r4YIt.js";
+import { I as Sa } from "./IconButton-Da1kJ5WO.js";
+import { B as Pa, L as fa, S as ca } from "./Chart-ByoxeiYX.js";
+import { C as ha } from "./Chip-BXdhqVFm.js";
+import { C as Ba, D as ua, T as va } from "./TagEditor-Dc6-WL1y.js";
+import { C as Ea } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as ka } from "./EmptyState-PM9wTjxk.js";
+import { C as Aa, S as La, e as Fa, g as Ga, a as Ha } from "./CardHeader-DuyI9Sk3.js";
 import "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as ka } from "./Modal-2jg4229_.js";
-import { S as La } from "./SkeletonCard-C89GWQ3p.js";
-import { A as wa, B as Ga, F as Ha, N as Ma, P as Na, S as ja } from "./Badge-bX8Pfywg.js";
+import { M as Ua } from "./Modal-2jg4229_.js";
+import { S as Ma } from "./SkeletonCard-C89GWQ3p.js";
+import { A as Ka, B as Oa, F as Qa, N as Ra, P as _a, S as qa } from "./Badge-bX8Pfywg.js";
 import "react";
-import { T as Qa, a as _a } from "./ToastProvider-aHBNxMTO.js";
+import { T as Ja, a as Va } from "./ToastProvider-aHBNxMTO.js";
 import "./IdentityContext-CLalsm_M.js";
-import { S as za } from "./StatusDot-BC7B1tTr.js";
-import { A as Ra, a as Ja, n as Va, b as Wa } from "./Avatar-Q-j4vnWn.js";
+import { S as Xa } from "./StatusDot-BC7B1tTr.js";
+import { A as Za, a as $a, n as ae, b as ee } from "./Avatar-Q-j4vnWn.js";
 export {
-  wa as ActivityFeed,
-  Ra as Avatar,
-  Ja as AvatarGroup,
-  Ga as Badge,
-  W as Banner,
-  ma as BarChart,
-  i as Breadcrumbs,
-  X as Button,
-  Z as Card,
-  va as CardHeader,
-  l as ChannelHeader,
+  Ka as ActivityFeed,
+  Za as Avatar,
+  $a as AvatarGroup,
+  Oa as Badge,
+  ea as Banner,
+  Pa as BarChart,
+  n as Breadcrumbs,
+  sa as Button,
+  oa as Card,
+  Aa as CardHeader,
+  l as CatalogGrid,
+  m as ChannelHeader,
   p as ChatComposer,
-  Sa as Chip,
-  m as CodeBlock,
-  fa as CodeEditor,
-  C as CollapsibleSection,
-  d as CommandPalette,
-  T as CommandPaletteHint,
-  S as CommandPaletteProvider,
-  ba as ConfirmDialog,
-  ca as DEFAULT_PIPELINE_ICONS,
+  ha as Chip,
+  C as CodeBlock,
+  Ba as CodeEditor,
+  d as CollapsibleSection,
+  T as CommandPalette,
+  S as CommandPaletteHint,
+  g as CommandPaletteProvider,
+  Ea as ConfirmDialog,
+  ua as DEFAULT_PIPELINE_ICONS,
   P as DataTable,
   f as Drawer,
-  Ba as EmptyState,
+  ka as EmptyState,
   c as EntityCell,
-  g as ErrorState,
-  Ha as FileUploadDrop,
-  x as FilterChip,
-  b as FollowUpChips,
-  h as FormField,
-  la as IconButton,
-  B as InlineAlert,
-  u as InlinePopover,
-  v as KPIGrid,
-  Ca as LineChart,
-  E as LoadingState,
-  I as MessageBubble,
-  ka as Modal,
-  Ma as NotificationCenter,
-  y as PageHeader,
-  aa as PageSection,
-  Na as PresenceAvatars,
-  A as PresenceDot,
-  D as ProgressBar,
-  k as ProjectCard,
-  F as QuickPromptGrid,
-  L as SearchInput,
+  b as ErrorState,
+  Qa as FileUploadDrop,
+  h as FilterChip,
+  x as FollowUpChips,
+  B as FormField,
+  Sa as IconButton,
+  u as InlineAlert,
+  v as InlinePopover,
+  y as KPIGrid,
+  E as LayerStack,
+  fa as LineChart,
+  I as LoadingState,
+  k as LogStream,
+  D as MessageBubble,
+  Ua as Modal,
+  Ra as NotificationCenter,
+  A as PageHeader,
+  ia as PageSection,
+  _a as PresenceAvatars,
+  L as PresenceDot,
+  F as ProgressBar,
+  G as ProjectCard,
+  H as QuickPromptGrid,
+  N as SearchInput,
   U as SegmentedControl,
-  La as SkeletonCard,
-  Ea as Sparkline,
+  Ma as SkeletonCard,
+  La as Sparkline,
   w as Spinner,
-  da as StackedAreaChart,
-  G as StatCard,
-  za as StatusDot,
-  H as SubNavLayout,
-  ja as Switch,
-  M as TabPanel,
-  ea as Table,
-  sa as TableBody,
-  oa as TableHead,
-  ra as TableRow,
-  ta as TableTd,
-  na as TableTh,
-  N as Tabs,
-  ga as TagEditor,
-  j as ThinkingBlock,
-  K as ThinkingDots,
-  Qa as ToastProvider,
-  Q as ToolCallPill,
-  _ as ToolCallStrip,
-  q as TypingIndicator,
-  z as UserChip,
-  O as UserMenu,
-  Ia as eventGlyphs,
-  R as formatTypingBanner,
-  ya as getEventCategory,
-  Aa as getEventGlyph,
-  Va as nameToColor,
-  Wa as nameToInitials,
-  J as useCommandPalette,
-  _a as useToast
+  M as StackDiagram,
+  ca as StackedAreaChart,
+  j as StatCard,
+  Xa as StatusDot,
+  K as SubNavLayout,
+  qa as Switch,
+  O as TabPanel,
+  na as Table,
+  la as TableBody,
+  ma as TableHead,
+  pa as TableRow,
+  Ca as TableTd,
+  da as TableTh,
+  Q as Tabs,
+  va as TagEditor,
+  R as TerminalLog,
+  _ as ThinkingBlock,
+  q as ThinkingDots,
+  z as ThumbnailCard,
+  Ja as ToastProvider,
+  J as ToolCallPill,
+  V as ToolCallStrip,
+  W as TypingIndicator,
+  X as UserChip,
+  Y as UserMenu,
+  Fa as eventGlyphs,
+  Z as formatTypingBanner,
+  Ga as getEventCategory,
+  Ha as getEventGlyph,
+  ae as nameToColor,
+  ee as nameToInitials,
+  $ as useCommandPalette,
+  Va as useToast
 };

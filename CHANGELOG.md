@@ -8,6 +8,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.13.0] — 2026-05-30
+
+### Added
+
+- **`<LogStream>` / `<TerminalLog>`** (`/shared`). Monospace terminal-style
+  log panel with timestamp/level/source columns, follow-tail autoscroll,
+  jump-to-live pill when the user has scrolled up, a line-count chip in
+  the header, and an optional Clear button. Composes `<Card>` +
+  `<CardHeader>` — no inline styles. Exposes `role="log"` with
+  `aria-live="polite"` by default. Refs hub#1020.
+- **`<ThumbnailCard>` + `<CatalogGrid>`** (`/shared`). Catalog/gallery
+  card with hover lift, tonal category chip, thumbnail-image or
+  icon-fallback, and an optional top-right badge. Renders as `<a>`,
+  `<button>`, or static `<div>` based on props. Companion `<CatalogGrid>`
+  standardises the responsive 1/2/3/4/5-column tile layout used by
+  component galleries and demo catalogs. Unblocks Wave 2 audience-first
+  landing (#1060). Refs hub#1019.
+- **`<StackDiagram>` / `<LayerStack>`** (`/shared`). Data-driven layered
+  architecture diagram for docs/showcase pages. Layers render as tonal
+  boxes connected by arrow, line, or no connector; vertical or
+  horizontal orientation. Tones match `<Chip>` (primary/success/
+  warning/danger/info/caution/purple/neutral). Refs hub#1038.
+- **`<SettingsLayout>`** (`/layout`). Section-rail + content + sticky-
+  save-bar shell for identity/admin settings pages. Sections are
+  data-driven; rail supports controlled and uncontrolled active-section
+  state. Save bar appears only when `dirty` and exposes Save/Cancel
+  slots with saving state and an optional meta slot for dirty-field
+  count. Refs hub#1044.
+
+### Wave 1 status
+
+- Atoms shipped: TypingIndicator, Tabs, ErrorState/LoadingState,
+  PresenceDot/UserChip.
+- Composites shipped: DataTable, TopNav/NavTabs, CodeBlock, StatCard
+  (with delta/sparkline), KPIGrid.
+- Domain primitives shipped: HealthGrid/HealthCell, AlertList/AlertItem,
+  CodeBlock, LogStream (this release), ThumbnailCard/CatalogGrid (this
+  release), StackDiagram (this release), SettingsLayout (this release).
+- Still open: hub#1018 DocsShell trio, #1040 CommandPalette wrapper,
+  #984 ConnectionPill canonical, #985 MessageRow/MessageGroup, #982
+  ChatPanel avatar slot, #987 RecordingRow/List, #988 ReactionsBar,
+  #1057 CapabilityDeniedFallback, #1061 ReconnectingShim, #986
+  WrappedConnectionPill.
+
+## [2.12.0]
+
 ### Added
 
 - Root barrel (`src/index.ts`) now re-exports `./components/layout`, so
