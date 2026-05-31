@@ -21,13 +21,23 @@ const tocItems: TocItem[] = [
   { id: 'props', label: 'API Reference', level: 2 },
 ];
 
+const CARD = 'border border-slate-200 rounded-lg bg-white';
+const CARD_LG = `${CARD} px-5 py-4`;
+const CARD_PAD = `${CARD} p-4`;
+const PILL_DANGER =
+  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-red-600/10 text-red-600';
+const PILL_WARN =
+  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-amber-600/10 text-amber-600';
+const LABEL =
+  'text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5';
+
 export default function PatternsPage() {
   useRegisterToc(tocItems);
 
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="max-w-[960px] mx-auto">
       <PageHeader
         title="Patterns"
         description="Layout-level components that compose primitives into recurring page patterns: page headers, card headers, side drawers, and collapsible sections."
@@ -70,30 +80,14 @@ export default function PatternsPage() {
   }
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          {/* Variant 1: title + description */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              padding: '16px 20px',
-              background: '#fff',
-            }}
-          >
+        <div className="flex flex-col gap-6">
+          <div className={CARD_LG}>
             <PageHeader
               title="Active Pipelines"
               description="Currently running ingest and transform jobs."
             />
           </div>
-          {/* Variant 2: with back link */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              padding: '16px 20px',
-              background: '#fff',
-            }}
-          >
+          <div className={CARD_LG}>
             <PageHeader
               title="Pipeline Detail"
               description="View run history and step graph."
@@ -104,15 +98,7 @@ export default function PatternsPage() {
               }}
             />
           </div>
-          {/* Variant 3: with actions */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              padding: '16px 20px',
-              background: '#fff',
-            }}
-          >
+          <div className={CARD_LG}>
             <PageHeader
               title="Settings"
               description="Manage workspace preferences."
@@ -156,27 +142,11 @@ export default function PatternsPage() {
   />
 </Card>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Card 1: title only */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              background: '#fff',
-              padding: 16,
-            }}
-          >
+        <div className="flex flex-col gap-3.5">
+          <div className={CARD_PAD}>
             <CardHeader title="Active Runs" />
           </div>
-          {/* Card 2: title + subtitle + action */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              background: '#fff',
-              padding: 16,
-            }}
-          >
+          <div className={CARD_PAD}>
             <CardHeader
               title="Recent Activity"
               subtitle="Last 24 hours"
@@ -187,32 +157,10 @@ export default function PatternsPage() {
               }
             />
           </div>
-          {/* Card 3: title + meta badge + action */}
-          <div
-            style={{
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              background: '#fff',
-              padding: 16,
-            }}
-          >
+          <div className={CARD_PAD}>
             <CardHeader
               title="Failed Jobs"
-              meta={
-                <span
-                  style={{
-                    display: 'inline-block',
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: '1px 8px',
-                    borderRadius: 999,
-                    background: 'rgba(220,38,38,0.1)',
-                    color: '#dc2626',
-                  }}
-                >
-                  3
-                </span>
-              }
+              meta={<span className={PILL_DANGER}>3</span>}
               action={
                 <Button variant="ghost" size="sm" onClick={() => undefined}>
                   Retry all
@@ -250,11 +198,11 @@ export default function PatternsPage() {
   <p>Detail content here…</p>
 </Drawer>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-start' }}>
+        <div className="flex flex-col gap-3 items-start">
           <Button variant="primary" size="md" onClick={() => setDrawerOpen(true)}>
             Open Drawer
           </Button>
-          <span style={{ fontSize: 12, color: '#64748b' }}>
+          <span className="text-xs text-slate-500">
             Drawer is portal-rendered to document.body, so it sits above the docs layout.
           </span>
         </div>
@@ -266,7 +214,7 @@ export default function PatternsPage() {
           subtitle="ingest-orders · run #4521"
           width={460}
           footer={
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <div className="flex justify-end gap-2">
               <Button variant="secondary" size="sm" onClick={() => setDrawerOpen(false)}>
                 Close
               </Button>
@@ -276,36 +224,14 @@ export default function PatternsPage() {
             </div>
           }
         >
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="flex flex-col gap-4">
             <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: 6,
-                }}
-              >
-                Status
-              </div>
-              <div style={{ fontSize: 14, color: '#0f172a' }}>Completed in 2m 14s</div>
+              <div className={LABEL}>Status</div>
+              <div className="text-sm text-slate-900">Completed in 2m 14s</div>
             </div>
             <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: 6,
-                }}
-              >
-                Steps
-              </div>
-              <ol style={{ paddingLeft: 18, margin: 0, fontSize: 13, color: '#334155', lineHeight: 1.6 }}>
+              <div className={LABEL}>Steps</div>
+              <ol className="pl-[18px] m-0 text-[13px] text-slate-700 leading-relaxed">
                 <li>Extract from source — 320 records</li>
                 <li>Validate schema — 0 errors</li>
                 <li>Transform — 320 records</li>
@@ -313,30 +239,8 @@ export default function PatternsPage() {
               </ol>
             </div>
             <div>
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  color: '#64748b',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  marginBottom: 6,
-                }}
-              >
-                Logs
-              </div>
-              <pre
-                style={{
-                  background: '#0f172a',
-                  color: '#e2e8f0',
-                  padding: 12,
-                  borderRadius: 6,
-                  fontSize: 11,
-                  fontFamily: 'monospace',
-                  margin: 0,
-                  overflowX: 'auto',
-                }}
-              >
+              <div className={LABEL}>Logs</div>
+              <pre className="bg-slate-900 text-slate-200 p-3 rounded-md text-[11px] font-mono m-0 overflow-x-auto">
 {`[09:14:22] starting run #4521
 [09:14:23] extract: 320 records
 [09:14:55] transform: ok
@@ -370,59 +274,24 @@ export default function PatternsPage() {
   <div style={{ padding: 16 }}>2 warnings to review.</div>
 </CollapsibleSection>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           <CollapsibleSection title="General" defaultOpen>
-            <div
-              style={{
-                padding: 16,
-                fontSize: 13,
-                color: '#334155',
-                lineHeight: 1.5,
-              }}
-            >
+            <div className="p-4 text-[13px] text-slate-700 leading-normal">
               Workspace name, time zone, and other general preferences. Always open by default.
             </div>
           </CollapsibleSection>
           <CollapsibleSection title="Advanced" storageKey="demo.patterns.advanced.open">
-            <div
-              style={{
-                padding: 16,
-                fontSize: 13,
-                color: '#334155',
-                lineHeight: 1.5,
-              }}
-            >
+            <div className="p-4 text-[13px] text-slate-700 leading-normal">
               Reload the page — this section's open/closed state will be remembered via localStorage
               (key <code>demo.patterns.advanced.open</code>).
             </div>
           </CollapsibleSection>
           <CollapsibleSection
             title="Warnings"
-            badge={
-              <span
-                style={{
-                  display: 'inline-block',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  padding: '1px 8px',
-                  borderRadius: 999,
-                  background: 'rgba(217,119,6,0.1)',
-                  color: '#d97706',
-                }}
-              >
-                2
-              </span>
-            }
+            badge={<span className={PILL_WARN}>2</span>}
           >
-            <div
-              style={{
-                padding: 16,
-                fontSize: 13,
-                color: '#334155',
-                lineHeight: 1.5,
-              }}
-            >
-              <ul style={{ margin: 0, paddingLeft: 18 }}>
+            <div className="p-4 text-[13px] text-slate-700 leading-normal">
+              <ul className="m-0 pl-[18px]">
                 <li>Storage usage above 80%</li>
                 <li>2 API keys expiring within 7 days</li>
               </ul>
@@ -432,8 +301,8 @@ export default function PatternsPage() {
       </ExampleBlock>
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
-      <div id="props" style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 24 }}>
+      <div id="props" className="mt-12">
+        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
           API Reference
         </h2>
 

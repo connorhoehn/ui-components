@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react';
-
 interface PropDef {
   name: string;
   type: string;
@@ -13,86 +11,42 @@ interface PropsTableProps {
   props: PropDef[];
 }
 
-const styles: Record<string, CSSProperties> = {
-  wrapper: {
-    marginBottom: 32,
-    width: '100%',
-    overflowX: 'auto',
-  },
-  heading: {
-    fontSize: 18,
-    fontWeight: 600,
-    marginBottom: 12,
-    color: '#0f172a',
-  },
-  table: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    fontSize: 14,
-  },
-  th: {
-    textAlign: 'left',
-    padding: '10px 14px',
-    background: '#f1f5f9',
-    fontWeight: 600,
-    borderBottom: '1px solid #e2e8f0',
-    color: '#334155',
-  },
-  tdName: {
-    fontFamily: 'monospace',
-    fontWeight: 700,
-    padding: '10px 14px',
-    borderBottom: '1px solid #e2e8f0',
-  },
-  tdType: {
-    fontFamily: 'monospace',
-    color: '#7c3aed',
-    padding: '10px 14px',
-    borderBottom: '1px solid #e2e8f0',
-  },
-  tdDefault: {
-    fontFamily: 'monospace',
-    padding: '10px 14px',
-    borderBottom: '1px solid #e2e8f0',
-    color: '#64748b',
-  },
-  tdDesc: {
-    padding: '10px 14px',
-    borderBottom: '1px solid #e2e8f0',
-    color: '#334155',
-  },
-};
+const TH = 'text-left px-3.5 py-2.5 bg-slate-100 font-semibold border-b border-slate-200 text-slate-700';
+const TD_BASE = 'px-3.5 py-2.5 border-b border-slate-200';
+const TD_NAME = `${TD_BASE} font-mono font-bold`;
+const TD_TYPE = `${TD_BASE} font-mono text-violet-600`;
+const TD_DEFAULT = `${TD_BASE} font-mono text-slate-500`;
+const TD_DESC = `${TD_BASE} text-slate-700`;
 
 export function PropsTable({ componentName, props }: PropsTableProps) {
   return (
-    <div style={styles.wrapper}>
-      <h3 style={styles.heading}>{componentName} Props</h3>
-      <table style={styles.table}>
+    <div className="mb-8 w-full overflow-x-auto">
+      <h3 className="text-lg font-semibold mb-3 text-slate-900">
+        {componentName} Props
+      </h3>
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr>
-            <th style={styles.th}>Name</th>
-            <th style={styles.th}>Type</th>
-            <th style={styles.th}>Default</th>
-            <th style={styles.th}>Description</th>
+            <th className={TH}>Name</th>
+            <th className={TH}>Type</th>
+            <th className={TH}>Default</th>
+            <th className={TH}>Description</th>
           </tr>
         </thead>
         <tbody>
-          {props.map((prop, i) => {
-            const rowBg = i % 2 === 0 ? '#fff' : '#f8fafc';
-            return (
-              <tr key={prop.name} style={{ background: rowBg }}>
-                <td style={styles.tdName}>
-                  {prop.name}
-                  {prop.required && (
-                    <span style={{ color: '#dc2626', marginLeft: 4 }}>*</span>
-                  )}
-                </td>
-                <td style={styles.tdType}>{prop.type}</td>
-                <td style={styles.tdDefault}>{prop.default ?? '-'}</td>
-                <td style={styles.tdDesc}>{prop.description}</td>
-              </tr>
-            );
-          })}
+          {props.map((prop, i) => (
+            <tr key={prop.name} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+              <td className={TD_NAME}>
+                {prop.name}
+                {prop.required && (
+                  <span className="text-red-600 ml-1">*</span>
+                )}
+              </td>
+              <td className={TD_TYPE}>{prop.type}</td>
+              <td className={TD_DEFAULT}>{prop.default ?? '-'}</td>
+              <td className={TD_DESC}>{prop.description}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
