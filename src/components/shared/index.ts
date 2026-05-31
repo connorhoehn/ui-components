@@ -93,6 +93,13 @@ export { default as ThumbnailCard } from './ThumbnailCard';
 export type { ThumbnailCardProps } from './ThumbnailCard';
 export { default as CatalogGrid } from './CatalogGrid';
 export type { CatalogGridProps, CatalogGridColumns } from './CatalogGrid';
+export { default as StackDiagram, LayerStack } from './StackDiagram';
+export type {
+  StackDiagramProps,
+  StackLayerSpec,
+  StackDiagramOrientation,
+  StackDiagramConnector,
+} from './StackDiagram';
 export * from './ChatComposer';
 export * from './MessageBubble';
 export * from './ToolCallStrip';
