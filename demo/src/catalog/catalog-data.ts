@@ -40,6 +40,7 @@ export const entries: CatalogEntry[] = [
     description: 'Cluster monitoring with metrics, alerts, chaos panel, and active runs table.',
     category: 'Workflows',
     type: 'demo',
+    path: '/workflows/observability',
   },
   {
     id: 'social-panel',
@@ -47,6 +48,7 @@ export const entries: CatalogEntry[] = [
     description: 'Chat rooms, post feed, presence indicators, and group management.',
     category: 'Workflows',
     type: 'demo',
+    path: '/workflows/social',
   },
   {
     id: 'collaboration',

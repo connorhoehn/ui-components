@@ -1,55 +1,64 @@
 import { useState } from 'react';
+import { FilterChip } from '@connorhoehn/ui-components/shared';
 import { entries, categories } from './catalog-data';
 import { DemoCard } from './DemoCard';
+import { AudienceHero } from './AudienceHero';
 
 export function DemoCatalog() {
   const [activeCategory, setActiveCategory] = useState('all');
-  const filtered = activeCategory === 'all' ? entries : entries.filter(e => e.category === activeCategory);
+  const filtered =
+    activeCategory === 'all'
+      ? entries
+      : entries.filter((e) => e.category === activeCategory);
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: '40px 24px' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Component Demos</h1>
-        <p style={{ fontSize: 15, color: '#64748b', maxWidth: 600 }}>
-          Interactive demonstrations of the @connorhoehnslalom/ui-components library.
-          Each demo showcases a domain module with mock data.
+    <div className="max-w-[1200px] mx-auto px-6 py-10 flex flex-col gap-12">
+      <header className="flex flex-col gap-3 max-w-3xl">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          @connorhoehnslalom/ui-components
+        </span>
+        <h1 className="text-3xl font-bold text-slate-900 m-0 leading-tight">
+          Build real-time apps fast.
+        </h1>
+        <p className="text-base text-slate-600 m-0 leading-relaxed">
+          A React component library for collaborative apps — chat, calls, docs,
+          pipelines, and admin consoles. Pick a path below to see the hooks and
+          composites you would actually use, or browse the full catalog.
         </p>
-      </div>
+      </header>
 
-      {/* Category filter chips */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 32, flexWrap: 'wrap' }}>
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: 20,
-              border: activeCategory === cat.id ? '2px solid #6366f1' : '1px solid #e2e8f0',
-              background: activeCategory === cat.id ? '#6366f1' : '#fff',
-              color: activeCategory === cat.id ? '#fff' : '#475569',
-              fontSize: 13,
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
+      <AudienceHero />
+
+      <section aria-labelledby="catalog-heading" className="flex flex-col gap-6">
+        <div className="flex flex-col gap-1.5 max-w-2xl">
+          <h2
+            id="catalog-heading"
+            className="text-xl font-semibold text-slate-900 m-0"
           >
-            {cat.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Demo grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: 24,
-      }}>
-        {filtered.map(entry => (
-          <DemoCard key={entry.id} entry={entry} />
-        ))}
-      </div>
+            Browse all demos
+          </h2>
+          <p className="text-sm text-slate-500 m-0">
+            {entries.length} interactive demos across workflows, agents, hook
+            integrations, and foundations.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((cat) => (
+            <FilterChip
+              key={cat.id}
+              active={activeCategory === cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+            >
+              {cat.label}
+            </FilterChip>
+          ))}
+        </div>
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((entry) => (
+            <DemoCard key={entry.id} entry={entry} />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
