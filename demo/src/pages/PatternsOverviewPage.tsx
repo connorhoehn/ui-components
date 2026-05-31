@@ -2,8 +2,11 @@ import { Link } from 'react-router';
 import { navigationTree } from '../navigation';
 
 export default function PatternsOverviewPage() {
-  const patternsSection = navigationTree.find((s) => s.id === 'patterns');
-  if (!patternsSection) return null;
+  const referenceSection = navigationTree.find((s) => s.id === 'reference');
+  const patternGroups = referenceSection?.groups.filter((g) =>
+    g.items.length > 0 && g.items.every((item) => item.path.startsWith('/patterns/')),
+  ) ?? [];
+  if (patternGroups.length === 0) return null;
 
   return (
     <div>
@@ -23,7 +26,7 @@ export default function PatternsOverviewPage() {
         theming, custom renderers, and embedding modules in your application.
       </p>
 
-      {patternsSection.groups.map((group) => (
+      {patternGroups.map((group) => (
         <div key={group.id} style={{ marginBottom: 32 }}>
           {group.label && (
             <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>

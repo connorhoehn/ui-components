@@ -23,13 +23,13 @@ export default function HookDocPage() {
 
   const description = hookName ? hookDescriptions[hookName] : undefined;
 
-  // Find which group this hook belongs to
-  const hooksSection = navigationTree.find(s => s.id === 'hooks');
+  // Find which group this hook belongs to (within Reference)
+  const referenceSection = navigationTree.find(s => s.id === 'reference');
   let groupLabel = '';
-  if (hooksSection && hookName) {
-    for (const group of hooksSection.groups) {
+  if (referenceSection && hookName) {
+    for (const group of referenceSection.groups) {
       if (group.items.some(item => item.path === `/hooks/${hookName}`)) {
-        groupLabel = group.label;
+        groupLabel = group.label.replace(/^Hooks\s+[—-]\s+/, '');
         break;
       }
     }

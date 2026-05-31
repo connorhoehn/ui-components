@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import { navigationTree } from '../navigation';
 
 export default function ComponentsOverviewPage() {
-  const componentsSection = navigationTree.find(s => s.id === 'components');
+  const componentsSection = navigationTree.find(s => s.id === 'foundations');
   if (!componentsSection) return null;
 
   return (

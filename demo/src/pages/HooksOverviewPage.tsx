@@ -2,8 +2,11 @@ import { Link } from 'react-router';
 import { navigationTree } from '../navigation';
 
 export default function HooksOverviewPage() {
-  const hooksSection = navigationTree.find(s => s.id === 'hooks');
-  if (!hooksSection) return null;
+  const referenceSection = navigationTree.find(s => s.id === 'reference');
+  const hookGroups = referenceSection?.groups.filter(g =>
+    g.items.length > 0 && g.items.every(item => item.path.startsWith('/hooks/')),
+  ) ?? [];
+  if (hookGroups.length === 0) return null;
 
   return (
     <div>
@@ -15,10 +18,10 @@ export default function HooksOverviewPage() {
         and UI interactions.
       </p>
 
-      {hooksSection.groups.map(group => (
+      {hookGroups.map(group => (
         <div key={group.id} style={{ marginBottom: 32 }}>
           <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
-            {group.label}
+            {group.label.replace(/^Hooks\s+[—-]\s+/, '')}
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
             {group.items.map(item => (

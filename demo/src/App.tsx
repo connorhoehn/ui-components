@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useParams } from 'react-router';
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router';
 import { lazy, Suspense } from 'react';
 import { DocsLayout } from './shell/DocsLayout';
 import { DemoCatalog } from './catalog/DemoCatalog';
@@ -87,6 +87,12 @@ function RedirectToPages() {
   return <Navigate to={`/workflows/${id}`} replace />;
 }
 
+function RedirectIdentityToWorkflows() {
+  const { pathname, search, hash } = useLocation();
+  const target = pathname.replace(/^\/identity/, '/workflows/identity') + search + hash;
+  return <Navigate to={target} replace />;
+}
+
 export default function App() {
   return (
     <Routes>
@@ -147,6 +153,24 @@ export default function App() {
           <Route path="hook-reactions" element={<S><HookReactionsIntegration /></S>} />
           <Route path="hook-fileupload" element={<S><HookFileUploadIntegration /></S>} />
           <Route path="hook-videohangout" element={<S><HookVideoHangoutIntegration /></S>} />
+          {/* Identity (Auth + Admin) */}
+          <Route path="identity">
+            <Route index element={<Navigate to="login" replace />} />
+            <Route path="login" element={<S><IdentityLoginDemo /></S>} />
+            <Route path="consent" element={<S><IdentityConsentDemo /></S>} />
+            <Route path="mfa-verify" element={<S><IdentityMfaVerifyDemo /></S>} />
+            <Route path="mfa-setup" element={<S><IdentityMfaSetupDemo /></S>} />
+            <Route path="logout" element={<S><IdentityLogoutDemo /></S>} />
+            <Route path="admin" element={<S><IdentityDashboardDemo /></S>} />
+            <Route path="admin/pools" element={<S><IdentityPoolsDemo /></S>} />
+            <Route path="admin/users" element={<S><IdentityUsersDemo /></S>} />
+            <Route path="admin/groups" element={<S><IdentityGroupsDemo /></S>} />
+            <Route path="admin/applications" element={<S><IdentityApplicationsDemo /></S>} />
+            <Route path="admin/email-templates" element={<S><IdentityEmailTemplatesDemo /></S>} />
+            <Route path="admin/mfa" element={<S><IdentityMfaDemo /></S>} />
+            <Route path="admin/audit" element={<S><IdentityAuditDemo /></S>} />
+            <Route path="admin/full" element={<S><IdentityFullAdminDemo /></S>} />
+          </Route>
         </Route>
 
         {/* Legacy /pages routes → redirect to /workflows */}
@@ -165,23 +189,10 @@ export default function App() {
           <Route path="shared-components" element={<S><SharedComponents /></S>} />
         </Route>
 
-        {/* Identity */}
+        {/* Legacy /identity/* → redirect to /workflows/identity/* */}
         <Route path="identity">
-          <Route index element={<Navigate to="login" replace />} />
-          <Route path="login" element={<S><IdentityLoginDemo /></S>} />
-          <Route path="consent" element={<S><IdentityConsentDemo /></S>} />
-          <Route path="mfa-verify" element={<S><IdentityMfaVerifyDemo /></S>} />
-          <Route path="mfa-setup" element={<S><IdentityMfaSetupDemo /></S>} />
-          <Route path="logout" element={<S><IdentityLogoutDemo /></S>} />
-          <Route path="admin" element={<S><IdentityDashboardDemo /></S>} />
-          <Route path="admin/pools" element={<S><IdentityPoolsDemo /></S>} />
-          <Route path="admin/users" element={<S><IdentityUsersDemo /></S>} />
-          <Route path="admin/groups" element={<S><IdentityGroupsDemo /></S>} />
-          <Route path="admin/applications" element={<S><IdentityApplicationsDemo /></S>} />
-          <Route path="admin/email-templates" element={<S><IdentityEmailTemplatesDemo /></S>} />
-          <Route path="admin/mfa" element={<S><IdentityMfaDemo /></S>} />
-          <Route path="admin/audit" element={<S><IdentityAuditDemo /></S>} />
-          <Route path="admin/full" element={<S><IdentityFullAdminDemo /></S>} />
+          <Route index element={<Navigate to="/workflows/identity" replace />} />
+          <Route path="*" element={<RedirectIdentityToWorkflows />} />
         </Route>
 
         {/* Patterns */}

@@ -10,19 +10,26 @@ export function useActiveNav() {
   let activeItem: NavItem | null = null;
 
   for (const section of navigationTree) {
-    if (pathname.startsWith(section.basePath)) {
-      activeSection = section;
-      for (const group of section.groups) {
-        for (const item of group.items) {
-          if (pathname === item.path) {
-            activeGroup = group;
-            activeItem = item;
-            break;
-          }
+    for (const group of section.groups) {
+      for (const item of group.items) {
+        if (pathname === item.path) {
+          activeSection = section;
+          activeGroup = group;
+          activeItem = item;
+          break;
         }
-        if (activeItem) break;
       }
-      break;
+      if (activeItem) break;
+    }
+    if (activeItem) break;
+  }
+
+  if (!activeSection) {
+    for (const section of navigationTree) {
+      if (pathname.startsWith(section.basePath)) {
+        activeSection = section;
+        break;
+      }
     }
   }
 

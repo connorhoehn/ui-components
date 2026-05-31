@@ -13,8 +13,8 @@ const patternDescriptions: Record<string, string> = {
 export default function PatternPage() {
   const { slug } = useParams();
 
-  const patternsSection = navigationTree.find(s => s.id === 'patterns');
-  const patternItem = patternsSection?.groups
+  const referenceSection = navigationTree.find(s => s.id === 'reference');
+  const patternItem = referenceSection?.groups
     .flatMap(g => g.items)
     .find(item => item.path === `/patterns/${slug}`);
 

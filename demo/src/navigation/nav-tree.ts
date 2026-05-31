@@ -1,6 +1,9 @@
 import type { NavigationTree } from './types';
 
 export const navigationTree: NavigationTree = [
+  // ============================================================
+  // 1. Get Started
+  // ============================================================
   {
     id: 'get-started',
     label: 'Get Started',
@@ -14,28 +17,43 @@ export const navigationTree: NavigationTree = [
       ]},
     ],
   },
+
+  // ============================================================
+  // 2. Foundations — component primitives
+  // ============================================================
   {
     id: 'foundations',
     label: 'Foundations',
     basePath: '/components',
     groups: [
-      { id: 'comp-main', label: '', items: [
-        { id: 'buttons', label: 'Buttons', path: '/components/buttons' },
-        { id: 'feedback', label: 'Feedback', path: '/components/feedback' },
-        { id: 'data-display', label: 'Data Display', path: '/components/data-display' },
-        { id: 'forms', label: 'Forms & Inputs', path: '/components/forms' },
-        { id: 'layout', label: 'Layout', path: '/components/layout' },
-        { id: 'node-editor', label: 'Node Editor', path: '/components/node-editor' },
-        { id: 'collaboration', label: 'Collaboration', path: '/components/collaboration' },
-        { id: 'real-time-editing', label: 'Real-time Editing', path: '/components/real-time-editing' },
-        { id: 'video', label: 'Video & Streaming', path: '/components/video' },
-        { id: 'call-widget', label: 'Call Widget', path: '/components/call-widget' },
+      { id: 'foundations-primitives', label: 'Primitives', items: [
         { id: 'primitives', label: 'Primitives', path: '/components/primitives' },
+        { id: 'buttons', label: 'Buttons', path: '/components/buttons' },
+      ]},
+      { id: 'foundations-forms', label: 'Forms & Inputs', items: [
+        { id: 'forms', label: 'Forms & Inputs', path: '/components/forms' },
+      ]},
+      { id: 'foundations-layout', label: 'Layout', items: [
+        { id: 'layout', label: 'Layout', path: '/components/layout' },
+      ]},
+      { id: 'foundations-feedback', label: 'Feedback', items: [
+        { id: 'feedback', label: 'Feedback', path: '/components/feedback' },
+      ]},
+      { id: 'foundations-data', label: 'Data Display', items: [
+        { id: 'data-display', label: 'Data Display', path: '/components/data-display' },
+      ]},
+      { id: 'foundations-chat', label: 'Chat & Thread', items: [
         { id: 'chat', label: 'Chat & Thread', path: '/components/chat' },
-        { id: 'patterns', label: 'Patterns', path: '/components/patterns' },
+      ]},
+      { id: 'foundations-video', label: 'Video Primitives', items: [
+        { id: 'video', label: 'Video Primitives', path: '/components/video' },
       ]},
     ],
   },
+
+  // ============================================================
+  // 3. Workflows — full-domain demos
+  // ============================================================
   {
     id: 'workflows',
     label: 'Workflows',
@@ -53,57 +71,69 @@ export const navigationTree: NavigationTree = [
       ]},
       { id: 'wf-documents', label: 'Documents', items: [
         { id: 'document-workspace', label: 'Document Workspace', path: '/workflows/document-workspace' },
-        { id: 'wf-collaboration', label: 'Collaboration', path: '/workflows/collaboration' },
       ]},
       { id: 'wf-data', label: 'Data', items: [
         { id: 'ingest-dashboard', label: 'Ingest Dashboard', path: '/workflows/ingest-dashboard' },
         { id: 'observability', label: 'Observability', path: '/workflows/observability' },
       ]},
-      { id: 'wf-social', label: 'Social', items: [
+      { id: 'wf-collab-rt', label: 'Collaboration & Real-time Editing', items: [
+        { id: 'wf-collaboration', label: 'Collaboration', path: '/workflows/collaboration' },
+        { id: 'real-time-editing', label: 'Real-time Editing', path: '/components/real-time-editing' },
+        { id: 'collaboration-primitives', label: 'Collaboration Primitives', path: '/components/collaboration' },
+      ]},
+      { id: 'wf-social', label: 'Social & Chat', items: [
         { id: 'social-chat', label: 'Social & Chat', path: '/workflows/social' },
+      ]},
+      { id: 'wf-video', label: 'Video & Streaming', items: [
         { id: 'video-streaming', label: 'Video Streaming', path: '/workflows/video-streaming' },
         { id: 'call-widget-live', label: 'Call Widget', path: '/workflows/call-widget' },
+        { id: 'call-widget-primitive', label: 'Call Widget Primitive', path: '/components/call-widget' },
+        { id: 'node-editor-live', label: 'Node Editor Live', path: '/pages/node-editor-live' },
+        { id: 'node-editor-primitive', label: 'Node Editor Primitive', path: '/components/node-editor' },
       ]},
-      { id: 'wf-hooks', label: 'Hook Integrations', items: [
-        { id: 'hook-chat', label: 'ChatPanel + useChat', path: '/workflows/hook-chat' },
-        { id: 'hook-presence', label: 'PresencePanel + usePresence', path: '/workflows/hook-presence' },
-        { id: 'hook-reactions', label: 'ReactionButtons + useReactions', path: '/workflows/hook-reactions' },
-        { id: 'hook-fileupload', label: 'FileUploadDrop + useFileUpload', path: '/workflows/hook-fileupload' },
-        { id: 'hook-videohangout', label: 'HangoutLayout + useVideoHangout', path: '/workflows/hook-videohangout' },
+      { id: 'wf-identity-auth', label: 'Identity — Auth', items: [
+        { id: 'identity-login', label: 'Login', path: '/workflows/identity/login' },
+        { id: 'identity-consent', label: 'Consent', path: '/workflows/identity/consent' },
+        { id: 'identity-mfa-verify', label: 'MFA Verify', path: '/workflows/identity/mfa-verify' },
+        { id: 'identity-mfa-setup', label: 'MFA Setup', path: '/workflows/identity/mfa-setup' },
+        { id: 'identity-logout', label: 'Logout', path: '/workflows/identity/logout' },
       ]},
-    ],
-  },
-  {
-    id: 'identity',
-    label: 'Identity',
-    basePath: '/identity',
-    groups: [
-      { id: 'identity-auth', label: 'Auth Pages', items: [
-        { id: 'identity-login', label: 'Login', path: '/identity/login' },
-        { id: 'identity-consent', label: 'Consent', path: '/identity/consent' },
-        { id: 'identity-mfa-verify', label: 'MFA Verify', path: '/identity/mfa-verify' },
-        { id: 'identity-mfa-setup', label: 'MFA Setup', path: '/identity/mfa-setup' },
-        { id: 'identity-logout', label: 'Logout', path: '/identity/logout' },
-      ]},
-      { id: 'identity-admin', label: 'Admin Pages', items: [
-        { id: 'identity-admin-dashboard', label: 'Dashboard', path: '/identity/admin' },
-        { id: 'identity-admin-pools', label: 'Pool Management', path: '/identity/admin/pools' },
-        { id: 'identity-admin-users', label: 'User Management', path: '/identity/admin/users' },
-        { id: 'identity-admin-groups', label: 'Group Management', path: '/identity/admin/groups' },
-        { id: 'identity-admin-apps', label: 'Applications', path: '/identity/admin/applications' },
-        { id: 'identity-admin-email', label: 'Email Templates', path: '/identity/admin/email-templates' },
-        { id: 'identity-admin-mfa', label: 'MFA Management', path: '/identity/admin/mfa' },
-        { id: 'identity-admin-audit', label: 'Audit Log', path: '/identity/admin/audit' },
-        { id: 'identity-admin-full', label: 'Full Admin (Live)', path: '/identity/admin/full' },
+      { id: 'wf-identity-admin', label: 'Identity — Admin', items: [
+        { id: 'identity-admin-dashboard', label: 'Dashboard', path: '/workflows/identity/admin' },
+        { id: 'identity-admin-pools', label: 'Pool Management', path: '/workflows/identity/admin/pools' },
+        { id: 'identity-admin-users', label: 'User Management', path: '/workflows/identity/admin/users' },
+        { id: 'identity-admin-groups', label: 'Group Management', path: '/workflows/identity/admin/groups' },
+        { id: 'identity-admin-apps', label: 'Applications', path: '/workflows/identity/admin/applications' },
+        { id: 'identity-admin-email', label: 'Email Templates', path: '/workflows/identity/admin/email-templates' },
+        { id: 'identity-admin-mfa', label: 'MFA Management', path: '/workflows/identity/admin/mfa' },
+        { id: 'identity-admin-audit', label: 'Audit Log', path: '/workflows/identity/admin/audit' },
+        { id: 'identity-admin-full', label: 'Full Admin (Live)', path: '/workflows/identity/admin/full' },
       ]},
     ],
   },
+
+  // ============================================================
+  // 4. Reference — hooks, patterns, integrations
+  // ============================================================
   {
-    id: 'patterns',
-    label: 'Patterns',
-    basePath: '/patterns',
+    id: 'reference',
+    label: 'Reference',
+    basePath: '/hooks',
     groups: [
-      { id: 'patterns-main', label: '', items: [
+      { id: 'ref-hooks-core', label: 'Hooks — Core', items: [
+        { id: 'hooks-connection', label: 'Connection', path: '/hooks/connection' },
+        { id: 'hooks-ui', label: 'UI & Interaction', path: '/hooks/ui' },
+      ]},
+      { id: 'ref-hooks-collab', label: 'Hooks — Collaboration', items: [
+        { id: 'hooks-documents', label: 'Documents', path: '/hooks/documents' },
+        { id: 'hooks-collaboration', label: 'Real-time', path: '/hooks/collaboration' },
+      ]},
+      { id: 'ref-hooks-agents', label: 'Hooks — Agents', items: [
+        { id: 'hooks-ag-ui-stream', label: 'AG-UI Stream', path: '/hooks/ag-ui-stream' },
+        { id: 'hooks-agent-registry', label: 'Agent Registry', path: '/hooks/agent-registry' },
+        { id: 'hooks-a2a-session', label: 'A2A Sessions', path: '/hooks/a2a-session' },
+      ]},
+      { id: 'ref-patterns', label: 'Patterns', items: [
         { id: 'websocket-provider', label: 'WebSocket Provider', path: '/patterns/websocket-provider' },
         { id: 'auth-integration', label: 'Auth Integration', path: '/patterns/auth-integration' },
         { id: 'theming-pattern', label: 'Theming', path: '/patterns/theming' },
@@ -111,25 +141,12 @@ export const navigationTree: NavigationTree = [
         { id: 'simulations', label: 'Simulations', path: '/patterns/simulations' },
         { id: 'embedding-modules', label: 'Embedding Modules', path: '/patterns/embedding-modules' },
       ]},
-    ],
-  },
-  {
-    id: 'hooks',
-    label: 'Hooks',
-    basePath: '/hooks',
-    groups: [
-      { id: 'hooks-core', label: 'Core', items: [
-        { id: 'hooks-connection', label: 'Connection', path: '/hooks/connection' },
-        { id: 'hooks-ui', label: 'UI & Interaction', path: '/hooks/ui' },
-      ]},
-      { id: 'hooks-collab', label: 'Collaboration', items: [
-        { id: 'hooks-documents', label: 'Documents', path: '/hooks/documents' },
-        { id: 'hooks-collaboration', label: 'Real-time', path: '/hooks/collaboration' },
-      ]},
-      { id: 'hooks-agents', label: 'Agents', items: [
-        { id: 'hooks-ag-ui-stream', label: 'AG-UI Stream', path: '/hooks/ag-ui-stream' },
-        { id: 'hooks-agent-registry', label: 'Agent Registry', path: '/hooks/agent-registry' },
-        { id: 'hooks-a2a-session', label: 'A2A Sessions', path: '/hooks/a2a-session' },
+      { id: 'ref-integrations', label: 'Integrations (realtime-modules)', items: [
+        { id: 'hook-chat', label: 'ChatPanel + useChat', path: '/workflows/hook-chat' },
+        { id: 'hook-presence', label: 'PresencePanel + usePresence', path: '/workflows/hook-presence' },
+        { id: 'hook-reactions', label: 'ReactionButtons + useReactions', path: '/workflows/hook-reactions' },
+        { id: 'hook-fileupload', label: 'FileUploadDrop + useFileUpload', path: '/workflows/hook-fileupload' },
+        { id: 'hook-videohangout', label: 'HangoutLayout + useVideoHangout', path: '/workflows/hook-videohangout' },
       ]},
     ],
   },
