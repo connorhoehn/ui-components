@@ -1,52 +1,52 @@
 import { Link } from 'react-router';
-import { navigationTree } from '../navigation';
+import { Card } from '@connorhoehn/ui-components/shared';
+import { hookDocsByGroup } from '../hooks-registry/hook-docs';
 
 export default function HooksOverviewPage() {
-  const referenceSection = navigationTree.find(s => s.id === 'reference');
-  const hookGroups = referenceSection?.groups.filter(g =>
-    g.items.length > 0 && g.items.every(item => item.path.startsWith('/hooks/')),
-  ) ?? [];
-  if (hookGroups.length === 0) return null;
+  const groups = hookDocsByGroup().filter((g) => g.docs.length > 0);
+  const total = groups.reduce((acc, g) => acc + g.docs.length, 0);
 
   return (
-    <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
-        Hooks
-      </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6, maxWidth: 640 }}>
-        Custom React hooks for WebSocket connections, real-time collaboration, document management,
-        and UI interactions.
-      </p>
+    <div className="flex flex-col gap-10 max-w-4xl">
+      <header className="flex flex-col gap-2">
+        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Reference
+        </span>
+        <h1 className="text-2xl font-bold text-slate-900 m-0">Hooks</h1>
+        <p className="text-base text-slate-600 m-0 leading-relaxed max-w-2xl">
+          {total} documented hooks for WebSocket connections, real-time
+          collaboration, document management, and UI utilities. Pick one for a
+          full signature, parameter table, and live example.
+        </p>
+      </header>
 
-      {hookGroups.map(group => (
-        <div key={group.id} style={{ marginBottom: 32 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
-            {group.label.replace(/^Hooks\s+[—-]\s+/, '')}
+      {groups.map((group) => (
+        <section key={group.group} className="flex flex-col gap-4">
+          <h2 className="text-lg font-semibold text-slate-900 m-0">
+            {group.label}
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
-            {group.items.map(item => (
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {group.docs.map((doc) => (
               <Link
-                key={item.id}
-                to={item.path}
-                style={{
-                  display: 'block',
-                  padding: '14px 18px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  textDecoration: 'none',
-                  color: '#0f172a',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
-                  transition: 'border-color 0.15s, background 0.15s',
-                  background: '#fff',
-                }}
+                key={doc.name}
+                to={`/hooks/${doc.name}`}
+                className="no-underline group"
               >
-                {item.label}
+                <Card
+                  padding="md"
+                  className="h-full flex flex-col gap-2 group-hover:border-indigo-300 group-hover:shadow-sm transition-all"
+                >
+                  <h3 className="text-sm font-semibold text-slate-900 m-0 font-mono">
+                    {doc.name}
+                  </h3>
+                  <p className="text-[13px] text-slate-600 leading-relaxed m-0">
+                    {doc.summary}
+                  </p>
+                </Card>
               </Link>
             ))}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );

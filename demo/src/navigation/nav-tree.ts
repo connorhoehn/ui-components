@@ -122,13 +122,28 @@ export const navigationTree: NavigationTree = [
     label: 'Reference',
     basePath: '/hooks',
     groups: [
-      { id: 'ref-hooks-core', label: 'Hooks — Core', items: [
-        { id: 'hooks-connection', label: 'Connection', path: '/hooks/connection' },
-        { id: 'hooks-ui', label: 'UI & Interaction', path: '/hooks/ui' },
+      { id: 'ref-hooks-connection', label: 'Hooks — Connection', items: [
+        { id: 'hooks-useWebSocket', label: 'useWebSocket', path: '/hooks/useWebSocket' },
+        { id: 'hooks-useApiCall', label: 'useApiCall', path: '/hooks/useApiCall' },
+        { id: 'hooks-useApiHealth', label: 'useApiHealth', path: '/hooks/useApiHealth' },
       ]},
-      { id: 'ref-hooks-collab', label: 'Hooks — Collaboration', items: [
-        { id: 'hooks-documents', label: 'Documents', path: '/hooks/documents' },
-        { id: 'hooks-collaboration', label: 'Real-time', path: '/hooks/collaboration' },
+      { id: 'ref-hooks-realtime', label: 'Hooks — Real-time', items: [
+        { id: 'hooks-useChat', label: 'useChat', path: '/hooks/useChat' },
+        { id: 'hooks-usePresence', label: 'usePresence', path: '/hooks/usePresence' },
+        { id: 'hooks-useReactions', label: 'useReactions', path: '/hooks/useReactions' },
+        { id: 'hooks-useCursors', label: 'useCursors', path: '/hooks/useCursors' },
+        { id: 'hooks-useActivityBus', label: 'useActivityBus', path: '/hooks/useActivityBus' },
+      ]},
+      { id: 'ref-hooks-documents', label: 'Hooks — Documents', items: [
+        { id: 'hooks-useCollaborativeDoc', label: 'useCollaborativeDoc', path: '/hooks/useCollaborativeDoc' },
+        { id: 'hooks-useCRDT', label: 'useCRDT', path: '/hooks/useCRDT' },
+        { id: 'hooks-useDocuments', label: 'useDocuments', path: '/hooks/useDocuments' },
+        { id: 'hooks-useDocumentComments', label: 'useDocumentComments', path: '/hooks/useDocumentComments' },
+      ]},
+      { id: 'ref-hooks-ui', label: 'Hooks — UI & Interaction', items: [
+        { id: 'hooks-useClickOutside', label: 'useClickOutside', path: '/hooks/useClickOutside' },
+        { id: 'hooks-useKeyboardShortcuts', label: 'useKeyboardShortcuts', path: '/hooks/useKeyboardShortcuts' },
+        { id: 'hooks-useIdleDetector', label: 'useIdleDetector', path: '/hooks/useIdleDetector' },
       ]},
       { id: 'ref-hooks-agents', label: 'Hooks — Agents', items: [
         { id: 'hooks-ag-ui-stream', label: 'AG-UI Stream', path: '/hooks/ag-ui-stream' },
