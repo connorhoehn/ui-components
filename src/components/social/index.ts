@@ -1,6 +1,10 @@
 export { SocialPanel } from './SocialPanel';
 export { default as SocialTabContent } from './SocialTabContent';
 export { ChatPanel } from './ChatPanel';
+export { MessageRow, formatChatTime } from './MessageRow';
+export type { MessageRowProps } from './MessageRow';
+export { MessageGroup } from './MessageGroup';
+export type { MessageGroupProps, MessageGroupItem } from './MessageGroup';
 export { ChatRoom } from './ChatRoom';
 export { RoomList } from './RoomList';
 export { PostFeed } from './PostFeed';

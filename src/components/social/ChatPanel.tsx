@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
-import { Avatar } from '../shared/Avatar';
+import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
@@ -24,18 +24,6 @@ interface ChatPanelProps {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/** Formats an ISO timestamp string to HH:MM local time. */
-function formatTime(isoString: string): string {
-  try {
-    const d = new Date(isoString);
-    const hh = d.getHours().toString().padStart(2, '0');
-    const mm = d.getMinutes().toString().padStart(2, '0');
-    return `${hh}:${mm}`;
-  } catch {
-    return '';
-  }
-}
 
 /** Formats a list of typing user names for display. */
 function formatTypingBanner(users: string[]): string {
@@ -118,30 +106,14 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
         ) : (
           messages.map((message, index) => {
             const author = message.displayName ?? message.clientId.slice(0, 8);
-            const time = formatTime(message.timestamp);
             return (
-              <div
+              <MessageRow
                 key={index}
-                className="flex items-start gap-1.5 py-0.5"
-              >
-                <Avatar
-                  name={author}
-                  src={message.avatarUrl}
-                  size={20}
-                  className="mt-0.5"
-                />
-                <div className="flex items-baseline gap-1.5 grow flex-wrap min-w-0">
-                  <span className="text-[0.7rem] text-text-secondary shrink-0">
-                    {author}
-                  </span>
-                  <span className="text-[0.8rem] text-text-primary grow">
-                    {message.content}
-                  </span>
-                  <span className="text-[0.65rem] text-text-tertiary shrink-0">
-                    {time}
-                  </span>
-                </div>
-              </div>
+                author={author}
+                content={message.content}
+                timestamp={message.timestamp}
+                avatarUrl={message.avatarUrl}
+              />
             );
           })
         )}

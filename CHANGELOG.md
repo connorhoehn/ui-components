@@ -10,6 +10,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- **`<MessageRow>` + `<MessageGroup>`** (`/social`). Extracted from
+  `ChatPanel` as standalone presentational primitives so consumers can
+  build alternate chat layouts (thread panel, dense feed, search-result
+  card) without recomposing the row. `<MessageRow>` accepts a
+  `ReactNode` content slot (mentions, inline media), an optional
+  `footer` slot (e.g. a `<ReactionsBar>` per message), `hideAvatar` /
+  `hideAuthor` toggles for use inside a group, and a `mine` flag
+  surfaced as `data-mine` for styling hooks. `<MessageGroup>` stacks
+  consecutive messages from the same author and renders avatar +
+  author label only on the first row. ChatPanel now composes
+  `<MessageRow>` directly; render output is unchanged. The
+  `formatChatTime(iso)` helper is also exported. Refs hub#985.
+
 - **`<ReactionsBar>` + `<ReactionPickerPopover>`** (`/social`). Chip bar
   showing existing reactions with counts (mine highlighted via
   `aria-pressed`) plus an "add reaction" trigger that opens a cmdk-driven

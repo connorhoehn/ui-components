@@ -1,5 +1,5 @@
 import { jsx as a, jsxs as c, Fragment as C } from "react/jsx-runtime";
-import { C as T, P as W } from "../PresencePanel-BJS1cx3V.js";
+import { C as T, P as W } from "../PresencePanel-mBtTn35O.js";
 import { A as O, F as B, N as H, P as $, B as E, S as M } from "../Badge-tH4NRy5U.js";
 import { useState as w, useEffect as L, useMemo as S } from "react";
 import { R as _, S as z, a as V } from "../ReactionsOverlay-CoaX3hRz.js";
