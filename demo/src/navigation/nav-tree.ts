@@ -150,6 +150,7 @@ export const navigationTree: NavigationTree = [
         { id: 'hook-reactions', label: 'ReactionButtons + useReactions', path: '/workflows/hook-reactions' },
         { id: 'hook-fileupload', label: 'FileUploadDrop + useFileUpload', path: '/workflows/hook-fileupload' },
         { id: 'hook-videohangout', label: 'HangoutLayout + useVideoHangout', path: '/workflows/hook-videohangout' },
+        { id: 'hook-hangoutrooms', label: 'HangoutRoomsList + useHangoutRooms', path: '/workflows/hook-hangoutrooms' },
       ]},
     ],
   },

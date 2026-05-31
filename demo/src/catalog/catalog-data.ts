@@ -98,6 +98,14 @@ export const entries: CatalogEntry[] = [
     path: '/workflows/hook-videohangout',
   },
   {
+    id: 'hook-hangoutrooms',
+    title: 'HangoutRoomsList + useHangoutRooms',
+    description: 'WrappedHangoutRoomsList wired to useHangoutRooms() — sidebar with live occupancy badges and an auto-wired subscribeRoomsIndex adapter.',
+    category: 'Hook Integrations',
+    type: 'demo',
+    path: '/workflows/hook-hangoutrooms',
+  },
+  {
     id: 'wrapped-components',
     title: 'Raw vs Wrapped (overview)',
     description: 'Side-by-side comparison: raw hook wiring vs WrappedChatPanel + WrappedPresencePanel. Read this first if you are choosing between adapter styles.',

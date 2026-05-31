@@ -111,3 +111,6 @@ export type {
   WrappedLVSHangoutLayoutProps,
   WrappedHangoutState,
 } from './WrappedLVSHangoutLayout';
+
+export { WrappedHangoutRoomsList } from './WrappedHangoutRoomsList';
+export type { WrappedHangoutRoomsListProps } from './WrappedHangoutRoomsList';

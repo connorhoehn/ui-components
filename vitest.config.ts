@@ -15,6 +15,16 @@ export default defineConfig({
       // import-analysis tries to resolve dynamic-import targets even with
       // `/* @vite-ignore */`, so point it at a stub for tests.
       'hls.js': resolve(__dirname, 'src/test-stubs/hls.js-stub.ts'),
+      // The realtime-modules /client/hangout-rooms subpath has not been
+      // shipped yet (see CLAUDE.md "Known issues"). The HangoutRoomRow /
+      // HangoutRoomsSection / WrappedHangoutRoomsList integration code
+      // imports `useRoomOccupancy` + `RoomsIndexSubscriber` from there;
+      // this alias points vitest at a structural stub so the test suite
+      // can exercise the integration wrappers without the real package.
+      '@connorhoehn/realtime-modules/client/hangout-rooms': resolve(
+        __dirname,
+        'tests/stubs/realtime-modules-hangout-rooms.ts',
+      ),
     },
   },
   test: {

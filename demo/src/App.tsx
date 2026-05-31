@@ -51,6 +51,7 @@ const HookPresenceIntegration = lazy(() => import('./demos/hook-presence-integra
 const HookReactionsIntegration = lazy(() => import('./demos/hook-reactions-integration'));
 const HookFileUploadIntegration = lazy(() => import('./demos/hook-fileupload-integration'));
 const HookVideoHangoutIntegration = lazy(() => import('./demos/hook-videohangout-integration'));
+const HookHangoutRoomsIntegration = lazy(() => import('./demos/hook-hangoutrooms-integration'));
 
 // Agent demos (lazy)
 const AgentDashboard = lazy(() => import('./demos/agents/DashboardDemo'));
@@ -153,6 +154,7 @@ export default function App() {
           <Route path="hook-reactions" element={<S><HookReactionsIntegration /></S>} />
           <Route path="hook-fileupload" element={<S><HookFileUploadIntegration /></S>} />
           <Route path="hook-videohangout" element={<S><HookVideoHangoutIntegration /></S>} />
+          <Route path="hook-hangoutrooms" element={<S><HookHangoutRoomsIntegration /></S>} />
           <Route path="wrapped-components" element={<S><WrappedComponentsDemo /></S>} />
           {/* Identity (Auth + Admin) */}
           <Route path="identity">
