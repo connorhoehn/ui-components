@@ -56,3 +56,26 @@ export const CustomAction: Story = {
     ),
   },
 };
+
+export const WithGuidedActions: Story = {
+  name: 'With guided actions (multi-step + copyable code)',
+  args: {
+    icon: '🤖',
+    title: 'No invocations yet',
+    description: 'Once agents start running, traces will show up here. Try one of these to get started.',
+    actions: [
+      {
+        label: 'Run a test invocation',
+        onClick: () => alert('navigate to /admin/agents/invoke'),
+        variant: 'primary',
+        code: "agentcore invoke --agent orgiq-supervisor --prompt 'hello world'",
+      },
+      {
+        label: 'Read the AgentCore docs',
+        href: 'https://docs.aws.amazon.com/bedrock/agentcore/',
+        external: true,
+        variant: 'secondary',
+      },
+    ],
+  },
+};

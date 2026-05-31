@@ -4,14 +4,50 @@
 // DocumentTypesPage: 52px emoji, 17px/600 slate-600 headline, 13px/slate-400
 // body capped at 340px, optional indigo primary CTA.
 //
-// Backwards-compat API:
-//   - `body` + `actionLabel` + `onAction` — original simple API
-//   - `description` + `action` (ReactNode) — new composable API, used by
-//     sections that want to pass a custom button or link as the CTA.
-// The new fields take precedence when both are provided.
+// API surface (additive — all three paths backwards-compat):
+//   - `body` + `actionLabel` + `onAction`         — original simple API
+//   - `description` + `action` (ReactNode)        — composable single-CTA API
+//   - `actions` (EmptyStateAction[])              — multi-action "what to do
+//                                                   next" API; each action may
+//                                                   optionally carry a copy-
+//                                                   to-clipboard code snippet
+// Precedence when more than one is supplied:
+//   actions[]  >  action (ReactNode)  >  actionLabel + onAction
+//
+// Multi-action API ships per blocker #54 → handoff #470 (operator picked
+// Option A — extend EmptyState rather than ship a separate GuidedEmptyState
+// composite). Replaces the bespoke portal `<SmartEmptyState>` (209 LOC) so
+// every observability empty-state page can use the shared primitive.
 
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+
+export interface EmptyStateAction {
+  /** Visible label on the action button or link. */
+  label: string;
+  /** Click handler — required when `href` is not set. */
+  onClick?: () => void;
+  /** External / internal link — required when `onClick` is not set. */
+  href?: string;
+  /**
+   * Visual variant.
+   * `primary`   — solid indigo, used for the first/most important step
+   * `secondary` — outlined, used for additional steps
+   * Defaults to `primary` for the first action, `secondary` for the rest.
+   */
+  variant?: 'primary' | 'secondary';
+  /**
+   * When true (and `href` is set), opens in a new tab with
+   * `target=_blank rel=noopener noreferrer` and an sr-only
+   * "(opens in new tab)" hint.
+   */
+  external?: boolean;
+  /**
+   * Optional copy-to-clipboard CLI snippet rendered in a monospaced
+   * `<pre>` underneath the action button.
+   */
+  code?: string;
+}
 
 export interface EmptyStateProps {
   icon?: ReactNode;
@@ -25,6 +61,12 @@ export interface EmptyStateProps {
   /** Custom action node (overrides actionLabel/onAction when present). */
   action?: ReactNode;
   /**
+   * Multi-action "what to do next" list. When provided, takes precedence
+   * over `action` / `actionLabel`+`onAction`. Each entry renders a
+   * button or link, with an optional copyable code snippet underneath.
+   */
+  actions?: EmptyStateAction[];
+  /**
    * Optional testid for the container (defaults to "empty-state").
    * Callers with existing tests targeting a specific id can pass it here.
    */
@@ -36,7 +78,7 @@ export interface EmptyStateProps {
 }
 
 function EmptyState({
-  icon, title, body, description, actionLabel, onAction, action,
+  icon, title, body, description, actionLabel, onAction, action, actions,
   testId = 'empty-state', actionTestId = 'empty-state-action',
 }: EmptyStateProps) {
   const resolvedDescription = description ?? body;
@@ -59,20 +101,134 @@ function EmptyState({
           {resolvedDescription}
         </div>
       )}
-      {action
-        ? <div className="mt-2.5">{action}</div>
-        : actionLabel && onAction && (
-            <button
-              data-testid={actionTestId}
-              onClick={onAction}
-              className={cn(
-                'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
-                'bg-primary text-white border-none rounded-lg cursor-pointer font-[inherit]',
-              )}
-            >
-              {actionLabel}
-            </button>
-          )}
+      {actions && actions.length > 0
+        ? <GuidedActionList actions={actions} />
+        : action
+          ? <div className="mt-2.5">{action}</div>
+          : actionLabel && onAction && (
+              <button
+                data-testid={actionTestId}
+                onClick={onAction}
+                className={cn(
+                  'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
+                  'bg-primary text-white border-none rounded-lg cursor-pointer font-[inherit]',
+                )}
+              >
+                {actionLabel}
+              </button>
+            )}
+    </div>
+  );
+}
+
+function GuidedActionList({ actions }: { actions: EmptyStateAction[] }) {
+  return (
+    <ul
+      data-testid="empty-state-actions"
+      className="mt-3 flex flex-col gap-3 w-full max-w-[420px]"
+    >
+      {actions.map((a, i) => (
+        <li key={`${a.label}-${i}`} className="flex flex-col gap-1.5">
+          <GuidedAction
+            action={a}
+            defaultVariant={i === 0 ? 'primary' : 'secondary'}
+          />
+          {a.code && <CopyableCode code={a.code} />}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function GuidedAction({
+  action,
+  defaultVariant,
+}: {
+  action: EmptyStateAction;
+  defaultVariant: 'primary' | 'secondary';
+}) {
+  const variant = action.variant ?? defaultVariant;
+  const className = cn(
+    'inline-flex items-center justify-center self-stretch',
+    'px-[18px] py-[8px] text-sm font-semibold rounded-lg cursor-pointer',
+    'transition-colors font-[inherit]',
+    variant === 'primary'
+      ? 'bg-primary text-white border border-transparent hover:bg-primary/90'
+      : 'bg-transparent text-slate-700 border border-slate-300 hover:bg-slate-50',
+  );
+
+  if (action.href) {
+    const external = action.external === true;
+    return (
+      <a
+        data-testid="empty-state-actions-link"
+        href={action.href}
+        onClick={action.onClick}
+        className={className}
+        {...(external
+          ? {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            }
+          : null)}
+      >
+        {action.label}
+        {external && <span className="sr-only"> (opens in new tab)</span>}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      data-testid="empty-state-actions-button"
+      onClick={action.onClick}
+      className={className}
+    >
+      {action.label}
+    </button>
+  );
+}
+
+function CopyableCode({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard API not available (insecure context, denied permission,
+      // etc.) — swallow; the snippet is still visible for manual copy.
+    }
+  };
+
+  return (
+    <div
+      data-testid="empty-state-action-code"
+      className={cn(
+        'relative flex items-start gap-2 rounded-md',
+        'bg-slate-900 text-slate-100 text-[12px] font-mono leading-snug',
+        'px-3 py-2',
+      )}
+    >
+      <pre className="flex-1 overflow-x-auto whitespace-pre-wrap break-all m-0">
+        {code}
+      </pre>
+      <button
+        type="button"
+        onClick={copy}
+        aria-label={copied ? 'Copied to clipboard' : 'Copy code to clipboard'}
+        data-testid="empty-state-action-code-copy"
+        className={cn(
+          'shrink-0 self-start text-[11px] font-semibold px-2 py-1 rounded',
+          'border border-slate-600 hover:bg-slate-700 cursor-pointer',
+          copied ? 'text-emerald-300 border-emerald-400/50' : 'text-slate-100',
+        )}
+      >
+        {copied ? 'Copied' : 'Copy'}
+      </button>
     </div>
   );
 }
