@@ -6,6 +6,7 @@
 import type { RMUseChatReturn, RMUsePresenceReturn } from './types';
 import { adaptChatMessages } from './adapters';
 import { ChatPanel } from '../../components/social/ChatPanel';
+import { applyNetworkShim, type NetworkShimOptions } from './networkShim';
 
 export interface WrappedChatPanelProps {
   /** Return value of useChat(channel) from realtime-modules */
@@ -16,6 +17,12 @@ export interface WrappedChatPanelProps {
   disabled?: boolean;
   /** Override typing banner (supersedes presence-derived list) */
   typingUsers?: string[];
+  /**
+   * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
+   * ReconnectingShim using the supplied connection state and retry
+   * callback. Omit for no wrapping (default).
+   */
+  wrapWithNetworkShim?: NetworkShimOptions;
 }
 
 export function WrappedChatPanel({
@@ -23,6 +30,7 @@ export function WrappedChatPanel({
   presence,
   disabled,
   typingUsers: typingUsersOverride,
+  wrapWithNetworkShim,
 }: WrappedChatPanelProps) {
   const messages = adaptChatMessages(chat.messages);
 
@@ -37,7 +45,7 @@ export function WrappedChatPanel({
           u.clientId.slice(0, 8),
       ) ?? []);
 
-  return (
+  const panel = (
     <ChatPanel
       messages={messages}
       onSend={chat.sendMessage}
@@ -45,4 +53,6 @@ export function WrappedChatPanel({
       typingUsers={typingUsers}
     />
   );
+
+  return <>{applyNetworkShim(panel, wrapWithNetworkShim)}</>;
 }

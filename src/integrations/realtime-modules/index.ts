@@ -92,6 +92,9 @@ export type {
 export { NetworkErrorBoundary } from './NetworkErrorBoundary';
 export type { NetworkErrorBoundaryProps } from './NetworkErrorBoundary';
 
+export { applyNetworkShim } from './networkShim';
+export type { NetworkShimOptions } from './networkShim';
+
 // ── Hangout rooms composites (2026-05) ──
 export { HangoutRoomRow } from './HangoutRoomRow';
 export type { HangoutRoomRowProps } from './HangoutRoomRow';
