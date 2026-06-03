@@ -158,7 +158,11 @@ export function VideoPlayerModal({
               const isActive = i === activeIdx;
               return (
                 <button
-                  key={s.url}
+                  // Index participates in the key so a caller passing
+                  // duplicate URLs (e.g. multiple per-peer recording legs
+                  // pointing at the same file) doesn't trip React's
+                  // "two children with the same key" warning.
+                  key={`${i}:${s.url}`}
                   type="button"
                   onClick={() => setActiveIdx(i)}
                   className={cn(

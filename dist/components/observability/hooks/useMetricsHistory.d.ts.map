@@ -1,0 +1,1 @@
+{"version":3,"file":"useMetricsHistory.d.ts","sourceRoot":"","sources":["../../../../src/components/observability/hooks/useMetricsHistory.ts"],"names":[],"mappings":"AACA,OAAO,EAEL,KAAK,gBAAgB,EACtB,MAAM,iCAAiC,CAAC;AAEzC;;;;GAIG;AACH,wBAAgB,iBAAiB,CAAC,UAAU,SAAK,GAAG,gBAAgB,EAAE,CAUrE;AAED,eAAe,iBAAiB,CAAC"}
