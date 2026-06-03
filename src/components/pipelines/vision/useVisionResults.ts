@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useEventStream } from '../context/EventStreamContext';
 import type { WildcardEvent } from '../context/EventStreamContext';
 import type { VisionResult } from './types';
@@ -73,11 +73,22 @@ export function useVisionResults(opts: UseVisionResultsOptions = {}): VisionStep
   // subscription effect doesn't churn on every setRecords.
   const indexRef = useRef<Map<string, number>>(new Map());
 
+  // Late-arriving events after unmount would otherwise trigger setState
+  // on an unmounted component — fall through silently.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
   // Subscribe to the wildcard event stream. The WildcardEvent envelope
   // shape is `{ eventType, payload }` — the type system can't narrow on
   // string event names without further plumbing, so we accept the union
   // and pick the wildcard-shape arm.
   useEventStream('*', (event) => {
+    if (!mountedRef.current) return;
     const env = event as WildcardEvent;
     if (!env || typeof env.eventType !== 'string') return;
     const type = env.eventType;

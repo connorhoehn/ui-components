@@ -1,3 +1,4 @@
+import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 
 export interface TagsPanelProps {
@@ -7,14 +8,13 @@ export interface TagsPanelProps {
 }
 
 /**
- * Wrap-flow chip cloud for vision tags. Optional click handler enables
- * tag-filter navigation downstream (e.g. "find all images tagged 'beach'").
+ * Wrap-flow chip cloud for vision tags.
  */
 export function TagsPanel({ tags, onTagClick, className }: TagsPanelProps) {
   if (!tags || tags.length === 0) return null;
   return (
-    <section className={['flex flex-col gap-1.5', className].filter(Boolean).join(' ')}>
-      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted,#64748b)]">
+    <section className={cn('flex flex-col gap-1.5', className)}>
+      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         Tags
       </h4>
       <div className="flex flex-wrap gap-1.5">
@@ -25,7 +25,8 @@ export function TagsPanel({ tags, onTagClick, className }: TagsPanelProps) {
               type="button"
               onClick={() => onTagClick(t)}
               title={`Filter by ${t}`}
-              className="appearance-none border-0 bg-transparent p-0"
+              aria-label={`Filter by ${t}`}
+              className="appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded-full"
             >
               <Chip tone="info" size="sm">#{t}</Chip>
             </button>

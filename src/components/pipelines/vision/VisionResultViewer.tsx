@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { cn } from '../../../lib/cn';
 import CaptionPanel from './CaptionPanel';
 import ImageWithBBoxOverlay, { imageOverlayPropsFrom } from './ImageWithBBoxOverlay';
 import PeoplePanel from './PeoplePanel';
@@ -27,14 +28,6 @@ export interface VisionResultViewerProps {
 /**
  * Top-level vision-result composite. Renders every populated section of a
  * `VisionResult`, gracefully omitting sections the model didn't emit.
- *
- * Layout: two-column on `md+` (image left, panels right), single-column on
- * mobile. Selecting a person in the people list highlights the corresponding
- * bbox on the image and vice versa.
- *
- * Designed to be embedded in `PipelineRunsPage` as the expanded view of a
- * `pipeline.image.vision.completed` step, OR rendered standalone for direct
- * vision-model exploration.
  */
 export function VisionResultViewer({
   result,
@@ -58,14 +51,7 @@ export function VisionResultViewer({
   const overlayProps = imageOverlayPropsFrom(result);
 
   return (
-    <div
-      className={[
-        'flex w-full flex-col gap-4 text-[var(--color-text,#0f172a)]',
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
+    <div className={cn('flex w-full flex-col gap-4 text-text-primary', className)}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
         {showImage ? (
           <div className="md:col-span-7">
@@ -75,8 +61,8 @@ export function VisionResultViewer({
               alt={result.caption ?? 'Vision result'}
             />
             {result.model ? (
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-[var(--color-text-muted,#64748b)]">
-                <span className="font-medium text-[var(--color-text,#0f172a)]">{result.model.endpointId}</span>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary">
+                <span className="font-medium text-text-primary">{result.model.endpointId}</span>
                 <span>·</span>
                 <span>latency {result.model.latencyMs}ms</span>
                 {typeof result.model.tokensOut === 'number' ? (
@@ -89,7 +75,7 @@ export function VisionResultViewer({
             ) : null}
           </div>
         ) : null}
-        <div className={['flex flex-col gap-4', showImage ? 'md:col-span-5' : 'md:col-span-12'].join(' ')}>
+        <div className={cn('flex flex-col gap-4', showImage ? 'md:col-span-5' : 'md:col-span-12')}>
           {showCaption ? <CaptionPanel result={result} /> : null}
           {showPeople && result.people && result.people.length > 0 ? (
             <PeoplePanel
@@ -122,14 +108,14 @@ export function VisionResultViewer({
 
       {result.text && result.text.length > 0 ? (
         <section className="flex flex-col gap-1.5">
-          <h4 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted,#64748b)]">
+          <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
             Text (OCR)
           </h4>
           <ul className="flex flex-col gap-1">
             {result.text.map((line, i) => (
               <li
                 key={i}
-                className="rounded border border-[var(--color-border,#e2e8f0)] bg-[var(--color-surface,#fff)] px-2 py-1 font-mono text-[12px]"
+                className="rounded border border-border bg-surface px-2 py-1 font-mono text-[12px]"
               >
                 {line}
               </li>
@@ -143,12 +129,12 @@ export function VisionResultViewer({
           <button
             type="button"
             onClick={() => setShowRaw((v) => !v)}
-            className="self-start text-[11px] font-medium text-[var(--color-text-muted,#64748b)] hover:underline"
+            className="self-start text-[11px] font-medium text-text-tertiary hover:underline"
           >
             {showRaw ? '▾' : '▸'} Raw model output
           </button>
           {showRaw ? (
-            <pre className="overflow-x-auto rounded-md border border-[var(--color-border,#e2e8f0)] bg-[var(--color-surface-muted,#f8fafc)] p-2 font-mono text-[11px] leading-snug text-[var(--color-text-muted,#475569)]">
+            <pre className="overflow-x-auto rounded-lg border border-border bg-surface-panel p-2 font-mono text-[11px] leading-snug text-text-secondary">
               {result.rawText}
             </pre>
           ) : null}

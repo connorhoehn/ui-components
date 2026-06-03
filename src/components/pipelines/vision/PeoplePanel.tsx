@@ -1,3 +1,4 @@
+import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 import type { VisionPerson } from './types';
 
@@ -10,33 +11,28 @@ export interface PeoplePanelProps {
 }
 
 /**
- * Per-person detail rows: bbox indicator (badge), demographics chips,
- * activity verb, clothing description. Tight rows so 4-8 people fit
- * without scrolling, expands gracefully for larger groups.
+ * Per-person detail rows.
  */
 export function PeoplePanel({ people, highlightedIndex, onSelect, className }: PeoplePanelProps) {
   if (!people || people.length === 0) return null;
   return (
-    <section className={['flex flex-col gap-1.5', className].filter(Boolean).join(' ')}>
-      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted,#64748b)]">
+    <section className={cn('flex flex-col gap-1.5', className)}>
+      <h4 className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
         People ({people.length})
       </h4>
       <ul className="flex flex-col gap-1.5">
         {people.map((p) => {
           const isHighlighted = highlightedIndex === p.index;
           const activity = p.activity?.replace(/^::\s*/, '');
-          return (
-            <li
-              key={p.index}
-              className={[
-                'group flex flex-col gap-1 rounded-md border px-2.5 py-2 text-sm transition-colors',
-                isHighlighted
-                  ? 'border-indigo-400 bg-indigo-50/70 ring-1 ring-indigo-300'
-                  : 'border-[var(--color-border,#e2e8f0)] bg-[var(--color-surface,#fff)] hover:bg-[var(--color-surface-hover,#f8fafc)]',
-                onSelect ? 'cursor-pointer' : '',
-              ].join(' ')}
-              onClick={onSelect ? () => onSelect(p) : undefined}
-            >
+          const rowClasses = cn(
+            'group flex w-full flex-col gap-1 rounded-lg border px-2.5 py-2 text-left text-sm transition-colors',
+            isHighlighted
+              ? 'border-indigo-400 bg-indigo-50/70 ring-1 ring-indigo-300'
+              : 'border-border bg-surface hover:bg-surface-hover',
+          );
+
+          const content = (
+            <>
               <div className="flex flex-wrap items-center gap-1.5">
                 <span
                   aria-hidden
@@ -52,15 +48,38 @@ export function PeoplePanel({ people, highlightedIndex, onSelect, className }: P
                 {p.expression ? <Chip tone="info" size="sm">{p.expression}</Chip> : null}
               </div>
               {activity ? (
-                <div className="text-[13px] text-[var(--color-text,#0f172a)]">
-                  <span className="text-[var(--color-text-muted,#64748b)]">activity:</span> {activity}
+                <div className="text-[13px] text-text-primary">
+                  <span className="text-text-tertiary">activity:</span> {activity}
                 </div>
               ) : null}
               {p.clothing ? (
-                <div className="text-[12px] text-[var(--color-text-muted,#475569)]">
-                  <span className="text-[var(--color-text-muted,#94a3b8)]">wearing:</span> {p.clothing}
+                <div className="text-[12px] text-text-secondary">
+                  <span className="text-text-tertiary">wearing:</span> {p.clothing}
                 </div>
               ) : null}
+            </>
+          );
+
+          if (onSelect) {
+            return (
+              <li key={p.index}>
+                <button
+                  type="button"
+                  onClick={() => onSelect(p)}
+                  className={cn(
+                    rowClasses,
+                    'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                  )}
+                  aria-pressed={isHighlighted}
+                >
+                  {content}
+                </button>
+              </li>
+            );
+          }
+          return (
+            <li key={p.index} className={rowClasses}>
+              {content}
             </li>
           );
         })}

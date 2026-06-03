@@ -1,3 +1,4 @@
+import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 import type { VisionResult } from './types';
 
@@ -23,9 +24,6 @@ export interface VisionRunCardProps {
  * Compact summary card for the activity stream. Shows endpoint + status +
  * a caption snippet + 3-4 top tags. Click to expand into the full
  * VisionResultViewer.
- *
- * The visual is intentionally small (~80px tall) so an activity log can
- * stack many of these without scrolling fatigue.
  */
 export function VisionRunCard({
   status,
@@ -39,25 +37,13 @@ export function VisionRunCard({
 }: VisionRunCardProps) {
   const endpoint = endpointLabel ?? result?.model?.endpointId ?? 'vision-model';
   const effectiveLatency = latencyMs ?? result?.model?.latencyMs;
-  const captionSnippet =
-    result?.caption && result.caption.length > 96 ? `${result.caption.slice(0, 93)}…` : result?.caption;
+  const caption = result?.caption;
   const topTags = (result?.tags ?? []).slice(0, 5);
 
-  return (
-    <article
-      className={[
-        'flex flex-col gap-1.5 rounded-md border bg-[var(--color-surface,#fff)] p-3 text-sm',
-        status === 'running' ? 'border-indigo-300 ring-1 ring-indigo-200' : 'border-[var(--color-border,#e2e8f0)]',
-        status === 'failed' ? 'border-red-300' : '',
-        onOpen ? 'cursor-pointer hover:bg-[var(--color-surface-hover,#f8fafc)]' : '',
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      onClick={onOpen}
-    >
+  const body = (
+    <>
       <header className="flex flex-wrap items-center gap-2">
-        <span className="font-mono text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted,#475569)]">
+        <span className="font-mono text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
           {endpoint}
         </span>
         {status === 'running' ? (
@@ -70,12 +56,12 @@ export function VisionRunCard({
           <Chip tone="danger" size="sm">failed</Chip>
         )}
         {typeof effectiveLatency === 'number' ? (
-          <span className="font-mono text-[11px] text-[var(--color-text-muted,#94a3b8)]">
+          <span className="font-mono text-[11px] text-text-tertiary">
             {effectiveLatency.toFixed(0)}ms
           </span>
         ) : null}
         {runId ? (
-          <span className="ml-auto truncate font-mono text-[10px] text-[var(--color-text-muted,#94a3b8)]">
+          <span className="ml-auto truncate font-mono text-[10px] text-text-tertiary">
             {runId}
           </span>
         ) : null}
@@ -83,8 +69,8 @@ export function VisionRunCard({
       {status === 'failed' && error ? (
         <p className="text-[13px] text-red-700">{error}</p>
       ) : (
-        <p className="line-clamp-2 text-[13px] text-[var(--color-text,#0f172a)]">
-          {captionSnippet ?? (status === 'running' ? 'Analyzing image…' : 'No caption produced.')}
+        <p className="line-clamp-2 text-left text-[13px] text-text-primary">
+          {caption ?? (status === 'running' ? 'Analyzing image…' : 'No caption produced.')}
         </p>
       )}
       {topTags.length > 0 ? (
@@ -94,6 +80,37 @@ export function VisionRunCard({
           ))}
         </div>
       ) : null}
+    </>
+  );
+
+  const baseClasses = cn(
+    'flex w-full flex-col gap-1.5 rounded-lg border bg-surface p-3 text-sm text-left',
+    status === 'running'
+      ? 'border-indigo-300 ring-1 ring-indigo-200'
+      : status === 'failed'
+        ? 'border-red-300'
+        : 'border-border',
+  );
+
+  if (onOpen) {
+    return (
+      <button
+        type="button"
+        onClick={onOpen}
+        className={cn(
+          baseClasses,
+          'cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1',
+          className,
+        )}
+      >
+        {body}
+      </button>
+    );
+  }
+
+  return (
+    <article className={cn(baseClasses, className)}>
+      {body}
     </article>
   );
 }

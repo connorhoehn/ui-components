@@ -110,4 +110,115 @@ describe('VisionRunCard', () => {
     fireEvent.click(screen.getByText('Four women at the beach.'));
     expect(opened).toBe(true);
   });
+
+  it('renders as a real <button> when onOpen is provided (keyboard a11y)', () => {
+    const { container } = render(
+      <VisionRunCard status="completed" result={rich} onOpen={() => {}} />,
+    );
+    const button = container.querySelector('button');
+    expect(button).not.toBeNull();
+    expect(button?.getAttribute('type')).toBe('button');
+  });
+
+  it('renders as a non-interactive <article> when onOpen is omitted', () => {
+    const { container } = render(<VisionRunCard status="completed" result={rich} />);
+    expect(container.querySelector('article')).not.toBeNull();
+    // No top-level button when there's no click target.
+    const buttons = container.querySelectorAll('button');
+    // chips are spans, no button expected
+    expect(buttons.length).toBe(0);
+  });
+
+  it('shows the full caption (no slice-truncation) and relies on line-clamp', () => {
+    const longCap =
+      'This is a very long caption that previously was sliced before render, hurting screen readers. The component now hands the full text to the DOM and lets CSS line-clamp handle visual truncation.';
+    render(
+      <VisionRunCard
+        status="completed"
+        result={{ ...rich, caption: longCap }}
+      />,
+    );
+    // Full text in DOM (not sliced) — SR sees everything.
+    expect(screen.getByText(longCap)).toBeInTheDocument();
+  });
+});
+
+describe('ImageWithBBoxOverlay — bbox guards (vision wave 1)', () => {
+  it('skips boxes when imageWidth = 0 (degenerate dims)', () => {
+    const { container } = render(
+      <VisionResultViewer
+        result={{
+          imageUrl: 'https://example.com/x.jpg',
+          imageWidth: 0,
+          imageHeight: 1024,
+          caption: 'c',
+          objects: [{ label: 'cat', bbox: { x1: 0, y1: 0, x2: 100, y2: 100 } }],
+        }}
+      />,
+    );
+    // The overlay container exists but no bbox <button> is rendered.
+    const overlayButtons = container.querySelectorAll('button[title="cat"]');
+    expect(overlayButtons.length).toBe(0);
+  });
+
+  it('skips inverted / NaN bboxes', () => {
+    const { container } = render(
+      <VisionResultViewer
+        result={{
+          imageUrl: 'https://example.com/x.jpg',
+          imageWidth: 100,
+          imageHeight: 100,
+          caption: 'c',
+          objects: [
+            { label: 'inv', bbox: { x1: 50, y1: 50, x2: 10, y2: 10 } }, // inverted
+            { label: 'nan', bbox: { x1: NaN, y1: 0, x2: 50, y2: 50 } }, // NaN
+          ],
+        }}
+      />,
+    );
+    expect(container.querySelectorAll('button[title="inv"]').length).toBe(0);
+    expect(container.querySelectorAll('button[title="nan"]').length).toBe(0);
+  });
+
+  it('renders bboxes with aria-label for screen readers', () => {
+    const { container } = render(
+      <VisionResultViewer
+        result={{
+          imageUrl: 'https://example.com/x.jpg',
+          imageWidth: 100,
+          imageHeight: 100,
+          caption: 'c',
+          objects: [{ label: 'umbrella', bbox: { x1: 0, y1: 0, x2: 50, y2: 50 } }],
+        }}
+      />,
+    );
+    const button = container.querySelector('button[title="umbrella"]');
+    expect(button?.getAttribute('aria-label')).toBe('Object bounding box: umbrella');
+  });
+});
+
+describe('EditRecommendationsPanel — label-prefix verdicts (vision wave 1, A11Y)', () => {
+  it('prefixes correct/normal/neutral verdicts with "OK · " for color-blind users', () => {
+    render(
+      <VisionResultViewer
+        result={{
+          caption: 'c',
+          exposure: { verdict: 'correct', evAdjustment: 0, rationale: 'r' },
+        }}
+      />,
+    );
+    expect(screen.getByText('OK · correct')).toBeInTheDocument();
+  });
+
+  it('prefixes off-verdicts with "ADJUST · "', () => {
+    render(
+      <VisionResultViewer
+        result={{
+          caption: 'c',
+          exposure: { verdict: 'overexposed', evAdjustment: -0.5, rationale: 'r' },
+        }}
+      />,
+    );
+    expect(screen.getByText('ADJUST · overexposed')).toBeInTheDocument();
+  });
 });

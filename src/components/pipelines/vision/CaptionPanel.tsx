@@ -1,3 +1,4 @@
+import { cn } from '../../../lib/cn';
 import Chip from '../../shared/Chip';
 import type { VisionResult } from './types';
 
@@ -7,9 +8,7 @@ export interface CaptionPanelProps {
 }
 
 /**
- * Caption + scene metadata header. Renders compactly even when the model
- * only filled `caption`; setting/location/tod/mood/colors are individually
- * optional and each renders as a chip.
+ * Caption + scene metadata header.
  */
 export function CaptionPanel({ result, className }: CaptionPanelProps) {
   const { caption, setting, location, timeOfDay, mood, colors } = result;
@@ -17,9 +16,9 @@ export function CaptionPanel({ result, className }: CaptionPanelProps) {
     return null;
   }
   return (
-    <section className={['flex flex-col gap-2', className].filter(Boolean).join(' ')}>
+    <section className={cn('flex flex-col gap-2', className)}>
       {caption ? (
-        <p className="text-base leading-relaxed text-[var(--color-text,#0f172a)]">{caption}</p>
+        <p className="text-base leading-relaxed text-text-primary">{caption}</p>
       ) : null}
       <div className="flex flex-wrap gap-1.5">
         {setting ? <Chip tone="neutral" size="sm" title="Scene setting">setting: {setting}</Chip> : null}
@@ -29,7 +28,7 @@ export function CaptionPanel({ result, className }: CaptionPanelProps) {
         {(colors ?? []).map((c) => (
           <span
             key={c}
-            className="inline-flex items-center gap-1 rounded-full border border-[var(--color-border,#e2e8f0)] bg-[var(--color-surface,#fff)] px-2 py-0.5 text-[11px] text-[var(--color-text-muted,#475569)]"
+            className="inline-flex items-center gap-1 rounded-full border border-border bg-surface px-2 py-0.5 text-[11px] text-text-secondary"
             title={`Dominant color: ${c}`}
           >
             <span

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { cn } from '../../../lib/cn';
 import type { VisionObject, VisionPerson, VisionResult } from './types';
 
 export interface ImageWithBBoxOverlayProps {
@@ -25,9 +26,6 @@ export interface ImageWithBBoxOverlayProps {
  * (indigo) and objects (amber). Boxes scale with the rendered image size
  * via percentage-based positioning, so the component is responsive without
  * needing a canvas. Hovering a box surfaces the label tooltip.
- *
- * The image element is `object-contain` inside an aspect-ratio container so
- * boxes line up regardless of how the image is sized by the parent.
  */
 export function ImageWithBBoxOverlay({
   imageUrl,
@@ -54,9 +52,12 @@ export function ImageWithBBoxOverlay({
     }
   }, [imageWidth, imageHeight]);
 
+  // Reject degenerate dims to avoid NaN% via div-by-zero downstream.
   const dims = useMemo(() => {
-    if (imageWidth && imageHeight) return { w: imageWidth, h: imageHeight };
-    if (naturalSize) return naturalSize;
+    if (imageWidth && imageHeight && imageWidth > 0 && imageHeight > 0) {
+      return { w: imageWidth, h: imageHeight };
+    }
+    if (naturalSize && naturalSize.w > 0 && naturalSize.h > 0) return naturalSize;
     return null;
   }, [imageWidth, imageHeight, naturalSize]);
 
@@ -68,10 +69,17 @@ export function ImageWithBBoxOverlay({
     key?: string,
   ) => {
     if (!dims) return null;
-    const left = (bbox.x1 / dims.w) * 100;
-    const top = (bbox.y1 / dims.h) * 100;
-    const width = ((bbox.x2 - bbox.x1) / dims.w) * 100;
-    const height = ((bbox.y2 - bbox.y1) / dims.h) * 100;
+    // Clamp coordinates to the image frame; reject inverted or NaN bboxes.
+    const x1 = Math.max(0, Math.min(bbox.x1, dims.w));
+    const y1 = Math.max(0, Math.min(bbox.y1, dims.h));
+    const x2 = Math.max(0, Math.min(bbox.x2, dims.w));
+    const y2 = Math.max(0, Math.min(bbox.y2, dims.h));
+    if (!Number.isFinite(x1) || !Number.isFinite(y1) || !Number.isFinite(x2) || !Number.isFinite(y2)) return null;
+    if (x2 <= x1 || y2 <= y1) return null;
+    const left = (x1 / dims.w) * 100;
+    const top = (y1 / dims.h) * 100;
+    const width = ((x2 - x1) / dims.w) * 100;
+    const height = ((y2 - y1) / dims.h) * 100;
     const palette =
       tone === 'people'
         ? { stroke: '#4f46e5', fill: 'rgba(79,70,229,0.10)', text: 'bg-indigo-600 text-white' }
@@ -82,6 +90,7 @@ export function ImageWithBBoxOverlay({
         type="button"
         onClick={onClick}
         title={label}
+        aria-label={`${tone === 'people' ? 'Person' : 'Object'} bounding box: ${label}`}
         className="group absolute m-0 cursor-pointer border-0 p-0 outline-none focus:ring-2 focus:ring-offset-1"
         style={{
           left: `${left}%`,
@@ -94,10 +103,10 @@ export function ImageWithBBoxOverlay({
         }}
       >
         <span
-          className={[
+          className={cn(
             'pointer-events-none absolute -top-5 left-0 inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold leading-none shadow',
             palette.text,
-          ].join(' ')}
+          )}
         >
           {label}
         </span>
@@ -108,12 +117,10 @@ export function ImageWithBBoxOverlay({
   if (!src) {
     return (
       <div
-        className={[
-          'flex aspect-video w-full items-center justify-center rounded-md border border-dashed border-[var(--color-border,#cbd5e1)] bg-[var(--color-surface-muted,#f8fafc)] text-xs text-[var(--color-text-muted,#64748b)]',
+        className={cn(
+          'flex aspect-video w-full items-center justify-center rounded-lg border border-dashed border-border-emphasis bg-surface-panel text-xs text-text-tertiary',
           className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        )}
       >
         (no image)
       </div>
@@ -122,12 +129,10 @@ export function ImageWithBBoxOverlay({
 
   return (
     <div
-      className={[
-        'relative w-full overflow-hidden rounded-md border border-[var(--color-border,#e2e8f0)] bg-black/5',
+      className={cn(
+        'relative w-full overflow-hidden rounded-lg border border-border bg-black/5',
         className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      )}
     >
       <img
         ref={imgRef}
