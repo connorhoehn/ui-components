@@ -1,8 +1,0 @@
-import type { PresenceUser } from '../../hooks/usePresence';
-interface PresencePanelProps {
-    users: PresenceUser[];
-    currentClientId: string | null;
-}
-export declare function PresencePanel({ users, currentClientId }: PresencePanelProps): import("react/jsx-runtime").JSX.Element;
-export {};
-//# sourceMappingURL=PresencePanel.d.ts.map

@@ -35,6 +35,8 @@ export * from './IconPicker';
 export { default as Modal } from './Modal';
 export * from './Modal';
 export * from './ShortcutsHelp';
+export { default as ScoreBarGauge } from './ScoreBarGauge';
+export * from './ScoreBarGauge';
 export { default as SkeletonCard } from './SkeletonCard';
 export * from './SkeletonCard';
 export { default as Sparkline } from './Sparkline';

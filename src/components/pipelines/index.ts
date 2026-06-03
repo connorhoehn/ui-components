@@ -59,3 +59,10 @@ export type { NodeExecutionState } from './nodes';
 // activity-log entry: <VisionRunCard>. See `vision/index.ts` for the full
 // surface + usage notes.
 export * from './vision';
+
+// ─── Judge-step visualization (LLM-as-judge) ─────────────────────────────────
+//
+// Top-level: <JudgmentResultViewer>. Sub-composites: <VerdictPanel>,
+// <CriteriaPanel>. Realtime hook: useJudgmentResults(). Mirrors the vision
+// surface — see `judge/index.ts` for the full surface + usage notes.
+export * from './judge';

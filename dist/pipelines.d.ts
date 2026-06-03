@@ -144,9 +144,7 @@ declare interface BaseNodeProps {
 }
 
 /**
- * Caption + scene metadata header. Renders compactly even when the model
- * only filled `caption`; setting/location/tod/mood/colors are individually
- * optional and each renders as a chip.
+ * Caption + scene metadata header.
  */
 export declare function CaptionPanel({ result, className }: CaptionPanelProps): JSX.Element | null;
 
@@ -174,10 +172,28 @@ declare interface ConditionNodeData {
 }
 
 /**
- * Photographer-style edit panel: exposure / WB / contrast verdicts +
- * actionable edit suggestions. Each edit row has an optional "Apply" hook
- * for downstream pipelines (e.g. queueing an `image:edit-apply` step).
+ * Per-criterion rows: id + raw score + verdict chip + 0..1 gauge +
+ * rationale. The rubric prompt sits inline so users can see the question
+ * the model was answering without flipping tabs.
  */
+export declare function CriteriaPanel({ result, className }: CriteriaPanelProps): JSX.Element | null;
+
+export declare interface CriteriaPanelProps {
+    /** Subset of JudgmentResult — pass `result` directly OR pluck just what you need. */
+    result: Pick<JudgmentResult, 'criteria' | 'rubricSnapshot'>;
+    className?: string;
+}
+
+export declare interface CriterionScore {
+    criterionId: string;
+    /** Normalized 0..1 for display. */
+    score: number;
+    /** Verbatim score from the model (might be 1-5, "pass", etc.). */
+    rawScore: number | string;
+    rationale: string;
+    passed: boolean;
+}
+
 export declare function EditRecommendationsPanel({ exposure, whiteBalance, contrast, composition, edits, onApplyEdit, className, }: EditRecommendationsPanelProps): JSX.Element | null;
 
 export declare interface EditRecommendationsPanelProps {
@@ -294,9 +310,6 @@ export declare function imageOverlayPropsFrom(result: VisionResult): {
  * (indigo) and objects (amber). Boxes scale with the rendered image size
  * via percentage-based positioning, so the component is responsive without
  * needing a canvas. Hovering a box surfaces the label tooltip.
- *
- * The image element is `object-contain` inside an aspect-ratio container so
- * boxes line up regardless of how the image is sized by the parent.
  */
 export declare function ImageWithBBoxOverlay({ imageUrl, imageDataUrl, imageWidth, imageHeight, people, objects, show, onSelectPerson, onSelectObject, className, alt, }: ImageWithBBoxOverlayProps): JSX.Element;
 
@@ -340,6 +353,111 @@ declare interface JoinNodeData {
     n?: number;
     mergeStrategy: JoinMergeStrategy;
 }
+
+/** Failure-mode tag for `useJudgmentResults` records. */
+export declare type JudgeFailureReason = 'input-resolution' | 'malformed' | 'aborted' | 'budget-exhausted' | 'unknown';
+
+export declare type JudgeMode = 'absolute' | 'comparison';
+
+export declare type JudgeScale = 'binary' | '1-5' | '1-10' | 'pass-fail';
+
+export declare type JudgmentAggregation = 'weighted-mean' | 'min' | 'all-pass';
+
+export declare interface JudgmentCriterion {
+    id: string;
+    prompt: string;
+    scale: JudgeScale;
+    weight?: number;
+    failThreshold?: number;
+    anchors?: string[];
+}
+
+/** The structured judgment payload — top-level render shape. */
+export declare interface JudgmentResult {
+    judgmentId: string;
+    runId: string;
+    stepId: string;
+    pipelineId: string;
+    rubricId: string;
+    rubricVersion: number;
+    /** Pinned rubric snapshot — historical record never reinterprets when rubric edits later. */
+    rubricSnapshot: JudgmentRubric;
+    mode: JudgeMode;
+    overallScore: number;
+    overallVerdict: JudgmentVerdict;
+    overallPassed: boolean;
+    confidence?: number;
+    criteria: CriterionScore[];
+    rawModelText?: string;
+    model: string;
+    tokensIn: number;
+    tokensOut: number;
+    cacheReadTokens?: number;
+    cacheCreationTokens?: number;
+    latencyMs: number;
+    costUsd: number;
+    cacheHit: boolean;
+    /** ISO-8601 wall-clock for the judge call. */
+    judgedAt: string;
+}
+
+/**
+ * Top-level composite for a `JudgmentResult` — verdict header + per-criterion
+ * scores + cost/latency/model footer. Drop into a
+ * `pipeline.judge.scored` step's expanded view OR render standalone for
+ * direct judgment exploration.
+ *
+ * Layout: stacked single column — the criteria list is the dense surface,
+ * everything else is a thin wrapper. Embedding consumers can hide
+ * sections via the `show*` flags.
+ */
+export declare function JudgmentResultViewer({ result, showVerdict, showCriteria, showMetadata, showRawText, className, }: JudgmentResultViewerProps): JSX.Element;
+
+export declare interface JudgmentResultViewerProps {
+    result: JudgmentResult;
+    /** Render the top-level verdict header. Default true. */
+    showVerdict?: boolean;
+    /** Render the per-criterion section. Default true. */
+    showCriteria?: boolean;
+    /** Render the model / token / cost footer. Default true. */
+    showMetadata?: boolean;
+    /** Render an expandable raw-model-text section. Default false. */
+    showRawText?: boolean;
+    className?: string;
+}
+
+export declare interface JudgmentRubric {
+    id: string;
+    version: number;
+    criteria: JudgmentCriterion[];
+    overall: JudgmentAggregation;
+    passThreshold?: number;
+}
+
+export declare interface JudgmentStepRecord {
+    runId: string;
+    stepId: string;
+    pipelineId?: string;
+    status: JudgmentStepStatus;
+    result?: JudgmentResult;
+    error?: string;
+    failureReason?: JudgeFailureReason;
+    /** Wall-clock ms since the step's `started` event. */
+    elapsedMs?: number;
+    /** Rubric id from the started event. */
+    rubricId?: string;
+    /** Model id from the started or scored event. */
+    judgeModel?: string;
+    startedAt?: number;
+    completedAt?: number;
+    costUsd?: number;
+    tokensIn?: number;
+    tokensOut?: number;
+}
+
+export declare type JudgmentStepStatus = 'running' | 'scored' | 'failed' | 'budget-exceeded';
+
+export declare type JudgmentVerdict = 'pass' | 'fail' | 'inconclusive';
 
 declare type KBData = KnowledgeBaseNodeData & {
     _state?: NodeExecutionState;
@@ -473,9 +591,7 @@ export declare const nodeTypes: {
 };
 
 /**
- * Compact 2-column list of detected objects with bbox preview chips. Each
- * row shows label + coordinates so you can correlate to the image overlay
- * without hovering.
+ * Compact 2-column list of detected objects with bbox preview chips.
  */
 export declare function ObjectsPanel({ objects, onSelect, className }: ObjectsPanelProps): JSX.Element | null;
 
@@ -507,9 +623,7 @@ declare interface PatchEntry {
 export declare function PendingApprovalsPage(): JSX.Element;
 
 /**
- * Per-person detail rows: bbox indicator (badge), demographics chips,
- * activity verb, clothing description. Tight rows so 4-8 people fit
- * without scrolling, expands gracefully for larger groups.
+ * Per-person detail rows.
  */
 export declare function PeoplePanel({ people, highlightedIndex, onSelect, className }: PeoplePanelProps): JSX.Element | null;
 
@@ -850,6 +964,62 @@ export declare interface PipelineImageVisionStartedPayload {
     at?: number;
 }
 
+export declare interface PipelineJudgeBudgetExceededPayload {
+    runId: string;
+    stepId: string;
+    pipelineId?: string;
+    at?: number | string;
+}
+
+export declare interface PipelineJudgeFailedPayload {
+    runId: string;
+    stepId: string;
+    pipelineId?: string;
+    reason: JudgeFailureReason;
+    error: string;
+    costUsd?: number;
+    latencyMs?: number;
+    tokensIn?: number;
+    tokensOut?: number;
+    at?: number | string;
+}
+
+export declare interface PipelineJudgeScoredPayload {
+    runId: string;
+    stepId: string;
+    pipelineId?: string;
+    judgmentId?: string;
+    rubricId?: string;
+    judgeModel?: string;
+    result: JudgmentResult;
+    costUsd?: number;
+    latencyMs?: number;
+    usage?: {
+        inputTokens?: number;
+        outputTokens?: number;
+    };
+    at?: number | string;
+}
+
+/**
+ * Wire-event payload contract for the four `pipeline.judge.*` events. The
+ * gateway delivers colon-form (`pipeline:judge:scored`) over the WS bus;
+ * the EventStreamContext normalizes to dot-form (`pipeline.judge.scored`)
+ * before delivery, matching the existing vision-hook convention.
+ *
+ * Permissive shapes — only the required envelope fields are typed; the
+ * payload otherwise matches platform-api's JudgeStepHandler emits +
+ * event-catalog's pipeline-judge schema.
+ */
+export declare interface PipelineJudgeStartedPayload {
+    runId: string;
+    stepId: string;
+    pipelineId?: string;
+    rubricId?: string;
+    judgeModel?: string;
+    at?: number | string;
+}
+
 declare interface PipelineNode {
     id: string;
     type: NodeType;
@@ -1102,8 +1272,7 @@ declare interface StepExecution {
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
 /**
- * Wrap-flow chip cloud for vision tags. Optional click handler enables
- * tag-filter navigation downstream (e.g. "find all images tagged 'beach'").
+ * Wrap-flow chip cloud for vision tags.
  */
 export declare function TagsPanel({ tags, onTagClick, className }: TagsPanelProps): JSX.Element | null;
 
@@ -1195,6 +1364,27 @@ export declare function useEventStream<K extends keyof PipelineEventMap>(type: K
 export declare function useEventStreamContext(): EventStreamValue;
 
 /**
+ * Hook that subscribes to the pipeline event stream and folds the four
+ * `pipeline.judge.*` events into a per-step record map. Stable identity
+ * per (runId, stepId) — `scored`/`failed`/`budget-exceeded` mutate the
+ * existing record rather than creating a new one, so a downstream card
+ * smoothly transitions running → scored without unmounting.
+ *
+ * Pure observer: never publishes, never owns state outside React. Designed
+ * to be embedded in the existing PipelinesPage / PipelineRunsPanel without
+ * disturbing their context tree. Mirrors useVisionResults' shape so
+ * consumers can fold both into one activity stream component.
+ */
+export declare function useJudgmentResults(opts?: UseJudgmentResultsOptions): JudgmentStepRecord[];
+
+export declare interface UseJudgmentResultsOptions {
+    /** Limit accumulated records to the most recent N. Default 50. */
+    maxRecords?: number;
+    /** When set, only records for this runId are kept. */
+    runId?: string;
+}
+
+/**
  * Lookup the most recent run that contains a step matching `nodeId`, and
  * return that step. Used by per-node visuals (LLMNode etc.) to surface live
  * runtime state on the canvas without each node having to fold over all
@@ -1247,6 +1437,22 @@ export declare interface UseVisionResultsOptions {
     maxRecords?: number;
     /** When set, only records for this runId are kept. */
     runId?: string;
+}
+
+/**
+ * The header card for a `JudgmentResult` — overall score gauge + verdict
+ * chip + rubric + model + mode metadata. Drop at the top of a
+ * `JudgmentResultViewer` or use standalone alongside a CriteriaPanel.
+ *
+ * Label-prefix verdict tones ("PASS · …") follow the same color-blind-safe
+ * convention the vision audit established for EditRecommendationsPanel.
+ */
+export declare function VerdictPanel({ result, className }: VerdictPanelProps): JSX.Element;
+
+export declare interface VerdictPanelProps {
+    /** Subset of JudgmentResult — pass `result` directly OR pluck just what you need. */
+    result: Pick<JudgmentResult, 'overallScore' | 'overallVerdict' | 'overallPassed' | 'confidence' | 'rubricSnapshot' | 'model' | 'mode'>;
+    className?: string;
 }
 
 export declare type VisionAgeBucket = 'infant' | 'child' | 'teen' | 'young_adult' | 'adult' | 'senior';
@@ -1331,14 +1537,6 @@ export declare interface VisionResult {
 /**
  * Top-level vision-result composite. Renders every populated section of a
  * `VisionResult`, gracefully omitting sections the model didn't emit.
- *
- * Layout: two-column on `md+` (image left, panels right), single-column on
- * mobile. Selecting a person in the people list highlights the corresponding
- * bbox on the image and vice versa.
- *
- * Designed to be embedded in `PipelineRunsPage` as the expanded view of a
- * `pipeline.image.vision.completed` step, OR rendered standalone for direct
- * vision-model exploration.
  */
 export declare function VisionResultViewer({ result, showImage, showCaption, showPeople, showObjects, showTags, showEdits, showRawText, onTagClick, onApplyEdit, className, }: VisionResultViewerProps): JSX.Element;
 
@@ -1363,9 +1561,6 @@ export declare interface VisionResultViewerProps {
  * Compact summary card for the activity stream. Shows endpoint + status +
  * a caption snippet + 3-4 top tags. Click to expand into the full
  * VisionResultViewer.
- *
- * The visual is intentionally small (~80px tall) so an activity log can
- * stack many of these without scrolling fatigue.
  */
 export declare function VisionRunCard({ status, result, runId, endpointLabel, error, latencyMs, onOpen, className, }: VisionRunCardProps): JSX.Element;
 
