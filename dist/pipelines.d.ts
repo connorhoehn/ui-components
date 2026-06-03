@@ -143,6 +143,18 @@ declare interface BaseNodeProps {
     children?: ReactNode;
 }
 
+/**
+ * Caption + scene metadata header. Renders compactly even when the model
+ * only filled `caption`; setting/location/tod/mood/colors are individually
+ * optional and each renders as a chip.
+ */
+export declare function CaptionPanel({ result, className }: CaptionPanelProps): JSX.Element | null;
+
+export declare interface CaptionPanelProps {
+    result: Pick<VisionResult, 'caption' | 'setting' | 'location' | 'timeOfDay' | 'mood' | 'colors'>;
+    className?: string;
+}
+
 declare type ConditionData = ConditionNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -159,6 +171,23 @@ declare interface ConditionNodeData {
     expression: string;
     /** UI label shown on the node. */
     label?: string;
+}
+
+/**
+ * Photographer-style edit panel: exposure / WB / contrast verdicts +
+ * actionable edit suggestions. Each edit row has an optional "Apply" hook
+ * for downstream pipelines (e.g. queueing an `image:edit-apply` step).
+ */
+export declare function EditRecommendationsPanel({ exposure, whiteBalance, contrast, composition, edits, onApplyEdit, className, }: EditRecommendationsPanelProps): JSX.Element | null;
+
+export declare interface EditRecommendationsPanelProps {
+    exposure?: VisionResult['exposure'];
+    whiteBalance?: VisionResult['whiteBalance'];
+    contrast?: VisionResult['contrast'];
+    composition?: VisionResult['composition'];
+    edits?: VisionResult['edits'];
+    onApplyEdit?: (edit: string) => void;
+    className?: string;
 }
 
 declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
@@ -248,6 +277,46 @@ declare interface GuardrailNodeData {
     inputField: string;
     action: GuardrailAction;
     label?: string;
+}
+
+/** Convenience: pull all the bbox-related props out of a `VisionResult`. */
+export declare function imageOverlayPropsFrom(result: VisionResult): {
+    imageUrl: string | undefined;
+    imageDataUrl: string | undefined;
+    imageWidth: number | undefined;
+    imageHeight: number | undefined;
+    people: VisionPerson[] | undefined;
+    objects: VisionObject[] | undefined;
+};
+
+/**
+ * Renders a source image with overlaid bounding boxes for detected people
+ * (indigo) and objects (amber). Boxes scale with the rendered image size
+ * via percentage-based positioning, so the component is responsive without
+ * needing a canvas. Hovering a box surfaces the label tooltip.
+ *
+ * The image element is `object-contain` inside an aspect-ratio container so
+ * boxes line up regardless of how the image is sized by the parent.
+ */
+export declare function ImageWithBBoxOverlay({ imageUrl, imageDataUrl, imageWidth, imageHeight, people, objects, show, onSelectPerson, onSelectObject, className, alt, }: ImageWithBBoxOverlayProps): JSX.Element;
+
+export declare interface ImageWithBBoxOverlayProps {
+    imageUrl?: string;
+    imageDataUrl?: string;
+    /** Pixel dimensions of the source image. Required for bbox scaling. If
+     *  omitted, the component infers them from the natural image size on load. */
+    imageWidth?: number;
+    imageHeight?: number;
+    people?: VisionPerson[];
+    objects?: VisionObject[];
+    /** Whether to render people, objects, or both. Default: both. */
+    show?: 'people' | 'objects' | 'both';
+    /** Called when the user clicks a person box. */
+    onSelectPerson?: (person: VisionPerson) => void;
+    /** Called when the user clicks an object box. */
+    onSelectObject?: (object: VisionObject) => void;
+    className?: string;
+    alt?: string;
 }
 
 declare type JoinData = JoinNodeData & {
@@ -404,6 +473,19 @@ export declare const nodeTypes: {
 };
 
 /**
+ * Compact 2-column list of detected objects with bbox preview chips. Each
+ * row shows label + coordinates so you can correlate to the image overlay
+ * without hovering.
+ */
+export declare function ObjectsPanel({ objects, onSelect, className }: ObjectsPanelProps): JSX.Element | null;
+
+export declare interface ObjectsPanelProps {
+    objects: VisionObject[];
+    onSelect?: (object: VisionObject) => void;
+    className?: string;
+}
+
+/**
  * hub#2226 — single entry in `StepExecution.patches`. Mirrors the
  * distributed-core `PatchEntry` shape but stays decoupled from the
  * type pin (consumers care about `patchId`, `appliedAt`, `revertedAt`,
@@ -423,6 +505,21 @@ declare interface PatchEntry {
 }
 
 export declare function PendingApprovalsPage(): JSX.Element;
+
+/**
+ * Per-person detail rows: bbox indicator (badge), demographics chips,
+ * activity verb, clothing description. Tight rows so 4-8 people fit
+ * without scrolling, expands gracefully for larger groups.
+ */
+export declare function PeoplePanel({ people, highlightedIndex, onSelect, className }: PeoplePanelProps): JSX.Element | null;
+
+export declare interface PeoplePanelProps {
+    people: VisionPerson[];
+    /** Highlight a specific person (from a click on the image overlay). */
+    highlightedIndex?: number;
+    onSelect?: (person: VisionPerson) => void;
+    className?: string;
+}
 
 export declare function PipelineCanvas({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdgeStates, replayNodeClasses, breakpoints, onToggleBreakpoint, pausedAtNodeId }?: PipelineCanvasProps): JSX.Element;
 
@@ -723,6 +820,36 @@ declare type PipelineEventMap = {
     };
 };
 
+export declare interface PipelineImageVisionCompletedPayload {
+    runId: string;
+    stepId: string;
+    result: VisionResult;
+    at?: number;
+}
+
+export declare interface PipelineImageVisionFailedPayload {
+    runId: string;
+    stepId: string;
+    error: string;
+    at?: number;
+}
+
+/**
+ * Wire-event payload contract for the vision-step events the platform-api
+ * `image:vision-analyze` handler emits. Mirrors the `event-catalog`
+ * declarations (see platform-api/src/types/image-pipeline.ts).
+ *
+ * We use a permissive shape so this hook stays useful even if the catalog
+ * adds optional fields. The hook only requires `runId`, `stepId`, and on
+ * completed events, the `result` payload.
+ */
+export declare interface PipelineImageVisionStartedPayload {
+    runId: string;
+    stepId: string;
+    endpointId?: string;
+    at?: number;
+}
+
 declare interface PipelineNode {
     id: string;
     type: NodeType;
@@ -974,6 +1101,18 @@ declare interface StepExecution {
 
 declare type StepStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped' | 'cancelled' | 'awaiting';
 
+/**
+ * Wrap-flow chip cloud for vision tags. Optional click handler enables
+ * tag-filter navigation downstream (e.g. "find all images tagged 'beach'").
+ */
+export declare function TagsPanel({ tags, onTagClick, className }: TagsPanelProps): JSX.Element | null;
+
+export declare interface TagsPanelProps {
+    tags: string[];
+    onTagClick?: (tag: string) => void;
+    className?: string;
+}
+
 declare interface TokenUsageByModel {
     tokensIn: number;
     tokensOut: number;
@@ -1088,6 +1227,187 @@ export declare function usePipelineRuns(): PipelineRunsValue;
  * for asking for the retry handler.
  */
 export declare function useRetryFromStep(): (nodeId: string) => Promise<void>;
+
+/**
+ * Hook that subscribes to the pipeline event stream (the same stream the
+ * existing runs page consumes) and folds `pipeline.image.vision.*` events
+ * into a per-step record map. Stable record identity per (runId, stepId)
+ * — completion mutates the existing record rather than creating a new one,
+ * so a downstream `<VisionRunCard>` smoothly transitions running → completed
+ * without unmounting.
+ *
+ * Pure observer: never publishes, never owns state outside React. Designed
+ * to be embedded in the existing PipelinesPage / PipelineRunsPanel without
+ * disturbing their context tree.
+ */
+export declare function useVisionResults(opts?: UseVisionResultsOptions): VisionStepRecord[];
+
+export declare interface UseVisionResultsOptions {
+    /** Limit accumulated records to the most recent N. Default: 50. */
+    maxRecords?: number;
+    /** When set, only records for this runId are kept. */
+    runId?: string;
+}
+
+export declare type VisionAgeBucket = 'infant' | 'child' | 'teen' | 'young_adult' | 'adult' | 'senior';
+
+export declare interface VisionBBox {
+    /** Pixel coordinates relative to the source image. */
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+}
+
+export declare type VisionContrastVerdict = 'low' | 'normal' | 'high';
+
+export declare interface VisionExposure {
+    verdict: 'underexposed' | 'correct' | 'overexposed' | string;
+    evAdjustment: number;
+    rationale: string;
+}
+
+export declare interface VisionObject {
+    label: string;
+    bbox: VisionBBox;
+    confidence?: number;
+}
+
+export declare interface VisionPerson {
+    /** 1-based index within the PEOPLE list. Used as the badge label. */
+    index: number;
+    bbox: VisionBBox;
+    ageBucket?: VisionAgeBucket;
+    gender?: string;
+    /** 'toward_camera' / 'profile_left' / 'away' / etc. — free string. */
+    faceOrientation?: string;
+    /** 'smiling' / 'neutral' / 'concentrating' / etc. */
+    expression?: string;
+    /** ':: walking on the beach' — a short verb phrase. */
+    activity?: string;
+    /** Comma-separated free description of clothing. */
+    clothing?: string;
+}
+
+/**
+ * Full structured result of a single vision-step run. Every section is
+ * optional — different model endpoints fill different subsets. The
+ * `imageUrl` (or `imageDataUrl`) is required for any panel that overlays
+ * bounding boxes on the source image.
+ */
+export declare interface VisionResult {
+    /** Source image used during analysis. Either a URL or a data: URI. */
+    imageUrl?: string;
+    imageDataUrl?: string;
+    /** Pixel dimensions of the source image. Required for bbox scaling. */
+    imageWidth?: number;
+    imageHeight?: number;
+    caption?: string;
+    setting?: string;
+    location?: string;
+    timeOfDay?: string;
+    mood?: string;
+    colors?: string[];
+    people?: VisionPerson[];
+    objects?: VisionObject[];
+    text?: string[];
+    tags?: string[];
+    exposure?: VisionExposure;
+    whiteBalance?: VisionWhiteBalance;
+    contrast?: VisionContrastVerdict;
+    composition?: string;
+    edits?: string[];
+    /** Free-form raw text returned by the model. Useful for re-parse on
+     *  schema bumps and for replay/debug views. */
+    rawText?: string;
+    model?: {
+        endpointId: string;
+        latencyMs: number;
+        tokensIn?: number;
+        tokensOut?: number;
+    };
+}
+
+/**
+ * Top-level vision-result composite. Renders every populated section of a
+ * `VisionResult`, gracefully omitting sections the model didn't emit.
+ *
+ * Layout: two-column on `md+` (image left, panels right), single-column on
+ * mobile. Selecting a person in the people list highlights the corresponding
+ * bbox on the image and vice versa.
+ *
+ * Designed to be embedded in `PipelineRunsPage` as the expanded view of a
+ * `pipeline.image.vision.completed` step, OR rendered standalone for direct
+ * vision-model exploration.
+ */
+export declare function VisionResultViewer({ result, showImage, showCaption, showPeople, showObjects, showTags, showEdits, showRawText, onTagClick, onApplyEdit, className, }: VisionResultViewerProps): JSX.Element;
+
+export declare interface VisionResultViewerProps {
+    result: VisionResult;
+    /** Whether to render the image overlay + per-section panels. Default: true. */
+    showImage?: boolean;
+    showCaption?: boolean;
+    showPeople?: boolean;
+    showObjects?: boolean;
+    showTags?: boolean;
+    showEdits?: boolean;
+    showRawText?: boolean;
+    /** Fires when a tag is clicked (e.g. to filter the activity stream). */
+    onTagClick?: (tag: string) => void;
+    /** Fires when "Apply" is clicked on an edit recommendation. */
+    onApplyEdit?: (edit: string) => void;
+    className?: string;
+}
+
+/**
+ * Compact summary card for the activity stream. Shows endpoint + status +
+ * a caption snippet + 3-4 top tags. Click to expand into the full
+ * VisionResultViewer.
+ *
+ * The visual is intentionally small (~80px tall) so an activity log can
+ * stack many of these without scrolling fatigue.
+ */
+export declare function VisionRunCard({ status, result, runId, endpointLabel, error, latencyMs, onOpen, className, }: VisionRunCardProps): JSX.Element;
+
+export declare interface VisionRunCardProps {
+    status: VisionRunStatus;
+    /** Required when status === 'completed'. */
+    result?: VisionResult;
+    /** Optional run identifier displayed in the header. */
+    runId?: string;
+    /** Optional model / endpoint name override (falls back to result.model.endpointId). */
+    endpointLabel?: string;
+    error?: string;
+    /** Latency in ms — shown in the header. Derived from result.model if absent. */
+    latencyMs?: number;
+    /** Click handler to expand into the full VisionResultViewer. */
+    onOpen?: () => void;
+    className?: string;
+}
+
+export declare type VisionRunStatus = 'running' | 'completed' | 'failed';
+
+export declare interface VisionStepRecord {
+    runId: string;
+    stepId: string;
+    status: VisionStepStatus;
+    result?: VisionResult;
+    error?: string;
+    /** Wall-clock ms since the step's `started` event. */
+    elapsedMs?: number;
+    /** Endpoint id reported by the started event (e.g. 'ec2-vision-qwen'). */
+    endpointId?: string;
+    startedAt?: number;
+    completedAt?: number;
+}
+
+export declare type VisionStepStatus = 'running' | 'completed' | 'failed';
+
+export declare interface VisionWhiteBalance {
+    verdict: 'cool' | 'neutral' | 'warm' | string;
+    kelvinShift: number;
+    rationale: string;
+}
 
 declare type WildcardEvent = {
     eventType: string;

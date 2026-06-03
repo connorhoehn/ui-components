@@ -52,3 +52,10 @@ export {
   nodeTypes,
 } from './nodes';
 export type { NodeExecutionState } from './nodes';
+
+// ─── Vision-step visualization ───────────────────────────────────────────────
+//
+// Top-level: <VisionResultViewer>. Realtime hook: useVisionResults(). Compact
+// activity-log entry: <VisionRunCard>. See `vision/index.ts` for the full
+// surface + usage notes.
+export * from './vision';
