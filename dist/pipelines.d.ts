@@ -56,6 +56,46 @@ declare interface AgentNodeData {
     retryPolicy?: RetryPolicy;
 }
 
+/**
+ * One day's rollup for a (pipelineId, rubricId) pair. Mirrors the row
+ * shape platform-api's JudgmentAggregateRepository emits over
+ * `GET /api/judgments/aggregates`. UI consumers MUST NOT depend on
+ * fields outside this contract — the trend chart degrades when fields
+ * are absent (e.g. min/max may be undefined on rows written before the
+ * extremum tracker landed).
+ */
+export declare interface AggregateRow {
+    aggregateKey: string;
+    pipelineId: string;
+    rubricId: string;
+    /** yyyy-mm-dd UTC. */
+    dayBucket: string;
+    numJudgments: number;
+    numPassed: number;
+    numFailed: number;
+    sumOverallScore: number;
+    sumTokensIn: number;
+    sumTokensOut: number;
+    sumCostUsd: number;
+    minOverallScore?: number;
+    maxOverallScore?: number;
+    firstJudgedAt: string;
+    lastJudgedAt: string;
+}
+
+/**
+ * Single-row summary card for one day's rollup. Pass-rate as a gauge,
+ * verdict tone derived from numPassed/numJudgments, totals on the right.
+ *
+ * No fetch. No URL knowledge. Renders whatever `aggregate` it receives.
+ */
+export declare function AggregateSummaryCard({ aggregate, className }: AggregateSummaryCardProps): JSX.Element;
+
+export declare interface AggregateSummaryCardProps {
+    aggregate: AggregateRow;
+    className?: string;
+}
+
 declare type AgUiData = AgUiOutputNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -237,6 +277,24 @@ export declare interface EventStreamValue {
     subscribeToApprovals(): () => void;
 }
 
+/** Query options for the aggregate-list fetcher. */
+export declare interface FetchAggregatesParams {
+    /** Exactly one of pipelineId / rubricId must be present. */
+    pipelineId?: string;
+    rubricId?: string;
+    /** yyyy-mm-dd inclusive bounds. */
+    since?: string;
+    until?: string;
+    /** Page size cap. Default + max enforced server-side. */
+    limit?: number;
+}
+
+/** Response envelope for the aggregate-list fetcher. */
+export declare interface FetchAggregatesResult {
+    items: AggregateRow[];
+    nextCursor?: string;
+}
+
 declare type ForkData = ForkNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -363,6 +421,33 @@ export declare type JudgeScale = 'binary' | '1-5' | '1-10' | 'pass-fail';
 
 export declare type JudgmentAggregation = 'weighted-mean' | 'min' | 'all-pass';
 
+/**
+ * The judge data-fetcher contract. Implementations live in the consumer
+ * (gateway frontend has `src/api/judgments.ts`); the UI is fully
+ * decoupled from URL conventions, auth headers, retry semantics, etc.
+ */
+export declare interface JudgmentApi {
+    /**
+     * Lazy-fetches the full rawModelText for a judgment. Returns null
+     * when the body is unavailable (404 from the server, S3 spillover not
+     * configured, network error — the impl normalizes all 3).
+     */
+    fetchRawText(judgmentId: string): Promise<string | null>;
+    /**
+     * Lists per-day aggregate rollups. Throws on validation errors
+     * (missing partition key, malformed date). Returns an empty `items`
+     * array when there's no data in range.
+     */
+    fetchAggregates(params: FetchAggregatesParams): Promise<FetchAggregatesResult>;
+}
+
+export declare function JudgmentApiProvider({ value, children }: JudgmentApiProviderProps): JSX.Element;
+
+export declare interface JudgmentApiProviderProps {
+    value: JudgmentApi;
+    children: ReactNode;
+}
+
 export declare interface JudgmentCriterion {
     id: string;
     prompt: string;
@@ -389,6 +474,12 @@ export declare interface JudgmentResult {
     confidence?: number;
     criteria: CriterionScore[];
     rawModelText?: string;
+    /**
+     * True when `rawModelText` was stripped at persist time for being
+     * ≥ the inline cap (32KB). The full body is recoverable via
+     * `JudgmentApi.fetchRawText(judgmentId)` when configured server-side.
+     */
+    rawTextTruncated?: boolean;
     model: string;
     tokensIn: number;
     tokensOut: number;
@@ -407,9 +498,13 @@ export declare interface JudgmentResult {
  * `pipeline.judge.scored` step's expanded view OR render standalone for
  * direct judgment exploration.
  *
- * Layout: stacked single column — the criteria list is the dense surface,
- * everything else is a thin wrapper. Embedding consumers can hide
- * sections via the `show*` flags.
+ * Raw text resolution order (when `showRawText` is true):
+ *   1. `result.rawModelText` (inline body) — shown immediately
+ *   2. `result.rawTextTruncated && <JudgmentApiProvider>` is mounted —
+ *      "Show raw" triggers a lazy fetch via `api.fetchRawText(judgmentId)`
+ *   3. Neither — show "raw output unavailable" message
+ *
+ * The viewer never knows about URLs or fetch impls; the provider does.
  */
 export declare function JudgmentResultViewer({ result, showVerdict, showCriteria, showMetadata, showRawText, className, }: JudgmentResultViewerProps): JSX.Element;
 
@@ -456,6 +551,34 @@ export declare interface JudgmentStepRecord {
 }
 
 export declare type JudgmentStepStatus = 'running' | 'scored' | 'failed' | 'budget-exceeded';
+
+/**
+ * Trend visualization for per-day judgment rollups:
+ *   - top: sparkline of pass-rate per day
+ *   - bottom: per-day table — date, pass-rate, mean score, cost
+ *
+ * Pure rendering — accepts `aggregates` as a prop, no fetch. Pair with
+ * `useJudgmentAggregates({ pipelineId | rubricId })` at the call site
+ * for live data; the hook lives in this folder for symmetry but isn't
+ * required to render the chart.
+ *
+ * The chart works equally well for per-pipeline trends and per-rubric
+ * trends — it doesn't know which axis the caller used.
+ */
+export declare function JudgmentTrendChart({ aggregates, sortOrder, caption, loading, className, }: JudgmentTrendChartProps): JSX.Element;
+
+export declare interface JudgmentTrendChartProps {
+    aggregates: AggregateRow[];
+    /**
+     * Sort direction for the table view. Default 'desc' (newest first).
+     */
+    sortOrder?: 'asc' | 'desc';
+    /** Caption — defaults to `${count} days` if omitted. */
+    caption?: string;
+    /** Optional loading hint shown when aggregates is empty AND `loading=true`. */
+    loading?: boolean;
+    className?: string;
+}
 
 export declare type JudgmentVerdict = 'pass' | 'fail' | 'inconclusive';
 
@@ -1362,6 +1485,52 @@ export declare function useEventStream<K extends keyof PipelineEventMap>(type: K
  * Prefer `useEventStream(type, handler)` for subscription use cases.
  */
 export declare function useEventStreamContext(): EventStreamValue;
+
+/**
+ * Fetches per-day judgment-aggregate rows via the `JudgmentApi` injected
+ * via context. Pure data hook — does no rendering.
+ *
+ * Lifecycle:
+ *   - On mount, fires one fetch with the given params.
+ *   - On params change (deep-equal-ish via JSON.stringify), re-fetches.
+ *   - When `refreshIntervalMs > 0`, polls on a setInterval.
+ *   - On unmount, in-flight updates are dropped (mountedRef pattern).
+ *
+ * Without a provider, returns `{ aggregates: [], loading: false, error: null, reload: noop }`.
+ */
+export declare function useJudgmentAggregates(options: UseJudgmentAggregatesOptions): UseJudgmentAggregatesReturn;
+
+export declare interface UseJudgmentAggregatesOptions extends FetchAggregatesParams {
+    /**
+     * Auto-refresh interval in ms. Default 0 (no polling). When set, the
+     * hook re-fetches at this cadence after the initial load lands.
+     * Useful for live trend panels; consumers that ALSO render
+     * `useJudgmentResults` (event-stream) can leave this 0 since the
+     * aggregator subscriber writes happen in-process and would be
+     * eventually-consistent within seconds.
+     */
+    refreshIntervalMs?: number;
+    /**
+     * When true, skip fetching entirely. Useful for conditional
+     * mounting / hidden panels. Default false.
+     */
+    paused?: boolean;
+}
+
+export declare interface UseJudgmentAggregatesReturn {
+    aggregates: AggregateRow[];
+    loading: boolean;
+    error: Error | null;
+    /** Trigger a fresh fetch on demand (e.g. after a manual refresh button). */
+    reload: () => void;
+}
+
+/**
+ * Hook for components that REQUIRE the API to function (the trend chart
+ * + hooks). Returns `null` when no provider is mounted; callers should
+ * render an empty state in that case rather than throwing.
+ */
+export declare function useJudgmentApi(): JudgmentApi | null;
 
 /**
  * Hook that subscribes to the pipeline event stream and folds the four

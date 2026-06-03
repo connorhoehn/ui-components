@@ -39,6 +39,8 @@ export { default as ScoreBarGauge } from './ScoreBarGauge';
 export * from './ScoreBarGauge';
 export { default as SkeletonCard } from './SkeletonCard';
 export * from './SkeletonCard';
+export { default as TrendSparkline } from './TrendSparkline';
+export * from './TrendSparkline';
 export { default as Sparkline } from './Sparkline';
 export * from './Sparkline';
 export { default as Switch } from './Switch';

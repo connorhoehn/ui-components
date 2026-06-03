@@ -1,9 +1,10 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { JudgmentResultViewer } from '../JudgmentResultViewer';
 import { VerdictPanel } from '../VerdictPanel';
 import { CriteriaPanel } from '../CriteriaPanel';
-import type { JudgmentResult } from '../types';
+import { JudgmentApiProvider } from '../JudgmentApiContext';
+import type { JudgmentApi, JudgmentResult } from '../types';
 
 const fixture: JudgmentResult = {
   judgmentId: 'jdg_1',
@@ -130,5 +131,80 @@ describe('JudgmentResultViewer', () => {
     render(<JudgmentResultViewer result={fixture} />);
     expect(screen.getByText(/cache/)).toBeInTheDocument();
     expect(screen.getByText('1500')).toBeInTheDocument();
+  });
+});
+
+describe('JudgmentResultViewer — raw text lazy fetch (H.2)', () => {
+  const truncatedFixture: JudgmentResult = {
+    ...fixture,
+    rawModelText: undefined,
+    rawTextTruncated: true,
+  };
+
+  it('hides the toggle entirely when rawText is neither inline nor truncated', () => {
+    const { container } = render(
+      <JudgmentResultViewer result={{ ...fixture, rawModelText: undefined }} showRawText />,
+    );
+    expect(container.textContent).not.toMatch(/Raw model output/);
+  });
+
+  it('shows fallback hint when truncated AND no provider mounted', () => {
+    render(<JudgmentResultViewer result={truncatedFixture} showRawText />);
+    fireEvent.click(screen.getByText(/Raw model output/));
+    expect(screen.getByText(/no JudgmentApi provider is wired/)).toBeInTheDocument();
+  });
+
+  it('lazy-fetches via context.fetchRawText when truncated + provider mounted', async () => {
+    const api: JudgmentApi = {
+      fetchRawText: vi.fn().mockResolvedValue('recovered from S3'),
+      fetchAggregates: vi.fn(),
+    };
+    render(
+      <JudgmentApiProvider value={api}>
+        <JudgmentResultViewer result={truncatedFixture} showRawText />
+      </JudgmentApiProvider>,
+    );
+
+    // Initially the fetcher hasn't been called.
+    expect(api.fetchRawText).not.toHaveBeenCalled();
+
+    // Open the toggle — fires the fetch.
+    fireEvent.click(screen.getByText(/Raw model output/));
+    await waitFor(() => expect(api.fetchRawText).toHaveBeenCalledWith('jdg_1'));
+    expect(await screen.findByText('recovered from S3')).toBeInTheDocument();
+  });
+
+  it('shows an error surface when the lazy fetch rejects', async () => {
+    const api: JudgmentApi = {
+      fetchRawText: vi.fn().mockRejectedValue(new Error('s3 denied')),
+      fetchAggregates: vi.fn(),
+    };
+    render(
+      <JudgmentApiProvider value={api}>
+        <JudgmentResultViewer result={truncatedFixture} showRawText />
+      </JudgmentApiProvider>,
+    );
+
+    fireEvent.click(screen.getByText(/Raw model output/));
+    await waitFor(() =>
+      expect(screen.getByText(/Failed to fetch raw text/)).toBeInTheDocument(),
+    );
+    expect(screen.getByText(/s3 denied/)).toBeInTheDocument();
+  });
+
+  it('does NOT fetch when inline rawText is already present (no over-fetch)', async () => {
+    const api: JudgmentApi = {
+      fetchRawText: vi.fn().mockResolvedValue('should-not-be-called'),
+      fetchAggregates: vi.fn(),
+    };
+    render(
+      <JudgmentApiProvider value={api}>
+        <JudgmentResultViewer result={fixture} showRawText />
+      </JudgmentApiProvider>,
+    );
+    fireEvent.click(screen.getByText(/Raw model output/));
+    // Wait a tick to ensure no fetch fires.
+    await new Promise((r) => setTimeout(r, 20));
+    expect(api.fetchRawText).not.toHaveBeenCalled();
   });
 });
