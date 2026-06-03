@@ -1,6 +1,6 @@
-import { A as s, C as t, a as i, b as r, c as l, d as o, e as n, M as u, N as g, P as c, R as d, f as S, g as p, h as C, i as P, j as R, k, l as m, S as y, m as T, n as V, T as v, V as B, o as H, p as b, s as f, u as h, q as A } from "./TranscriptOverlay-BFMRa_zT.js";
-import { H as x, a as G, b as M, P as O, g as W, u as L } from "./HangoutLayout-BT6X2zG6.js";
-import { u as j } from "./useActiveSpeaker-BOwJ262O.js";
+import { A as s, C as t, a as i, b as r, c as l, d as o, e as n, M as u, N as d, P as g, R as c, f as S, g as p, h as P, i as C, j as R, k as y, l as k, S as m, m as T, n as V, T as v, V as B, o as H, p as b, q as f, s as h, u as A, r as M } from "./TranscriptOverlay-Cha_sJUp.js";
+import { H as x, a as G, b as O, P as W, g as L, u as N } from "./HangoutLayout-BT6X2zG6.js";
+import { u as q } from "./useActiveSpeaker-BOwJ262O.js";
 export {
   s as AutoplayGate,
   t as CallControls,
@@ -11,30 +11,31 @@ export {
   n as CallingStatusPill,
   x as HangoutGrid,
   G as HangoutLayout,
-  M as HangoutSpotlight,
+  O as HangoutSpotlight,
   u as MuteWhileTalkingToast,
-  g as NetworkQualityBadge,
-  O as ParticipantTile,
-  c as PiPButton,
-  d as ReactionOverlay,
+  d as NetworkQualityBadge,
+  W as ParticipantTile,
+  g as PiPButton,
+  c as ReactionOverlay,
   S as ReactionPicker,
   p as ReconnectingBanner,
-  C as RecordingList,
-  P as RecordingPlayer,
+  P as RecordingList,
+  C as RecordingPlayer,
   R as RecordingRow,
-  k as RemoteTileSlot,
-  m as RosterPanel,
-  y as StatsCard,
+  y as RemoteTileSlot,
+  k as RosterPanel,
+  m as StatsCard,
   T as StatusStrip,
   V as StreamVideo,
   v as TranscriptOverlay,
   B as VideoGrid,
   H as VideoPlayer,
-  b as ViewerCount,
-  W as gridCols,
-  f as streamHasUsableVideo,
-  j as useActiveSpeaker,
-  h as useMuteWhileTalking,
-  L as useStableActiveSpeaker,
-  A as useTrackStateBump
+  b as VideoPlayerModal,
+  f as ViewerCount,
+  L as gridCols,
+  h as streamHasUsableVideo,
+  q as useActiveSpeaker,
+  A as useMuteWhileTalking,
+  N as useStableActiveSpeaker,
+  M as useTrackStateBump
 };

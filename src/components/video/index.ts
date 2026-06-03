@@ -1,6 +1,9 @@
 export { VideoPlayer } from './VideoPlayer';
 export type { VideoPlayerProps, PlayerPhase } from './VideoPlayer';
 
+export { VideoPlayerModal } from './VideoPlayerModal';
+export type { VideoPlayerModalProps, VideoPlayerSource } from './VideoPlayerModal';
+
 export { StatsCard } from './StatsCard';
 export type { StatsCardProps, StreamMetrics } from './StatsCard';
 

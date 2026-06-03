@@ -1,0 +1,1 @@
+{"version":3,"file":"identityApi.d.ts","sourceRoot":"","sources":["../../src/hooks/identityApi.ts"],"names":[],"mappings":"AAEA,QAAA,MAAM,QAAQ,QAA0E,CAAC;AAEzF,OAAO,EAAE,QAAQ,EAAE,CAAC;AAEpB,wBAAsB,QAAQ,CAAC,CAAC,EAC9B,IAAI,EAAE,MAAM,EACZ,OAAO,EAAE,MAAM,GAAG,IAAI,EACtB,OAAO,CAAC,EAAE,WAAW,GACpB,OAAO,CAAC,CAAC,CAAC,CAcZ"}
