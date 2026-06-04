@@ -93,10 +93,12 @@ export function VisionRunCard({
   );
 
   if (onOpen) {
+    const captionPreview = caption ? caption.slice(0, 60) : 'no caption';
     return (
       <button
         type="button"
         onClick={onOpen}
+        aria-label={`Open vision result: ${endpoint}, ${status}, ${captionPreview}`}
         className={cn(
           baseClasses,
           'cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1',

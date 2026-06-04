@@ -1,1 +1,0 @@
-{"version":3,"file":"QrCodeDisplay.d.ts","sourceRoot":"","sources":["../../../../src/components/identity/shared/QrCodeDisplay.tsx"],"names":[],"mappings":"AAKA,MAAM,WAAW,kBAAkB;IACjC,KAAK,EAAE,MAAM,CAAC;IACd,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,KAAK,CAAC,EAAE,MAAM,CAAC;CAChB;AAED,wBAAgB,aAAa,CAAC,EAAE,KAAK,EAAE,IAAU,EAAE,KAAK,EAAE,EAAE,kBAAkB,2CAiB7E;AAED,eAAe,aAAa,CAAC"}

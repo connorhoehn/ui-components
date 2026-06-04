@@ -2,6 +2,19 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { cn } from '../../../lib/cn';
 import type { VisionObject, VisionPerson, VisionResult } from './types';
 
+/**
+ * Bounding-box palette. Hex values are load-bearing here because Tailwind
+ * utility classes don't substitute into the `style={}` attribute (used
+ * for SVG-like overlay positioning on top of an <img>). The hex values
+ * mirror the Tailwind `indigo-600` / `amber-600` defaults exactly — when
+ * the design system shifts, update both the constant and the utility
+ * class (`text`) below together.
+ */
+const BBOX_PALETTE = {
+  people: { stroke: '#4f46e5', fill: 'rgba(79,70,229,0.10)', text: 'bg-indigo-600 text-white' },
+  object: { stroke: '#d97706', fill: 'rgba(217,119,6,0.10)', text: 'bg-amber-600 text-white' },
+} as const;
+
 export interface ImageWithBBoxOverlayProps {
   imageUrl?: string;
   imageDataUrl?: string;
@@ -80,10 +93,7 @@ export function ImageWithBBoxOverlay({
     const top = (y1 / dims.h) * 100;
     const width = ((x2 - x1) / dims.w) * 100;
     const height = ((y2 - y1) / dims.h) * 100;
-    const palette =
-      tone === 'people'
-        ? { stroke: '#4f46e5', fill: 'rgba(79,70,229,0.10)', text: 'bg-indigo-600 text-white' }
-        : { stroke: '#d97706', fill: 'rgba(217,119,6,0.10)', text: 'bg-amber-600 text-white' };
+    const palette = BBOX_PALETTE[tone];
     return (
       <button
         key={key}

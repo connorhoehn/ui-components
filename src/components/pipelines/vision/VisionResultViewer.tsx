@@ -129,7 +129,9 @@ export function VisionResultViewer({
           <button
             type="button"
             onClick={() => setShowRaw((v) => !v)}
-            className="self-start text-[11px] font-medium text-text-tertiary hover:underline"
+            aria-expanded={showRaw}
+            aria-label={`${showRaw ? 'Hide' : 'Show'} raw model output`}
+            className="self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded"
           >
             {showRaw ? '▾' : '▸'} Raw model output
           </button>

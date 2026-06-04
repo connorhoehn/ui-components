@@ -13,7 +13,7 @@ import "react-dom";
 import "./WebSocketContext-DPGFyPeZ.js";
 import { u as Pr, I as Er, C as Bt, T as Or, S as Ft, a as Lr } from "./TagEditor-BmL7k5D2.js";
 import { a as Re, u as _r } from "./EventStreamContext-CjzSHXy-.js";
-import { E as oc } from "./EventStreamContext-CjzSHXy-.js";
+import { E as sc } from "./EventStreamContext-CjzSHXy-.js";
 import { B as Ue } from "./Button-Qsbxqsl9.js";
 import { I as ct } from "./IconButton-Da1kJ5WO.js";
 import { u as jt } from "./IdentityContext-CLalsm_M.js";
@@ -7381,7 +7381,7 @@ function Ki(e) {
   const n = e.tagName;
   return !!(n === "INPUT" || n === "TEXTAREA" || n === "SELECT" || e.isContentEditable);
 }
-function Ud() {
+function Bd() {
   const { pipelineId: e } = nt(), n = L(() => e ? Ye(e) !== null : !1, [e]);
   return !e || !n ? /* @__PURE__ */ t(rt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(On, { pipelineId: e, children: /* @__PURE__ */ t(Wi, { pipelineId: e }) });
 }
@@ -9624,7 +9624,7 @@ function Aa({
     }
   );
 }
-function Bd() {
+function Fd() {
   const e = Me(), { userId: n } = jt(), { toast: r } = Ct(), { triggerRun: o, isTriggering: i } = dr(), [a, c] = kt(), [d, l] = R([]), [p, m] = R(""), [x, f] = R("all"), [h, g] = R("updated"), u = L(
     () => Ca(a.get("status")),
     [a]
@@ -10800,7 +10800,7 @@ function Ka({
     }
   );
 }
-function Fd() {
+function jd() {
   const { pipelineId: e } = nt(), n = Me(), [r, o] = kt(), [i, a] = R([]), [c, d] = R(null), [l, p] = R([]), [m, x] = R(() => /* @__PURE__ */ new Set()), [f, h] = R(null), [g, u] = R(!1), [y, N] = R(null), [v, C] = R(!1), b = P((F) => {
     const J = F.error?.nodeId;
     if (!J || J === "unknown") return;
@@ -11790,7 +11790,7 @@ function pl({
     }
   );
 }
-function jd() {
+function zd() {
   const { pipelineId: e, runId: n } = nt();
   return !e || !n ? /* @__PURE__ */ t(rt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(On, { pipelineId: e, children: /* @__PURE__ */ t(xr, { children: /* @__PURE__ */ t(ul, { pipelineId: e, runId: n }) }) });
 }
@@ -12490,7 +12490,7 @@ function In({
     }
   );
 }
-function zd() {
+function qd() {
   const { pipelineId: e, runIdA: n, runIdB: r } = nt(), o = Me(), i = L(
     () => e ? Ye(e) : null,
     [e]
@@ -13154,11 +13154,11 @@ function Bl({ pipelineId: e, runIdA: n, runIdB: r }) {
     }
   );
 }
-function qd() {
+function Hd() {
   const { pipelineId: e } = nt(), [n] = kt(), r = n.get("a"), o = n.get("b");
   return !e || !r || !o ? /* @__PURE__ */ t(rt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(Bl, { pipelineId: e, runIdA: r, runIdB: o });
 }
-function Hd() {
+function Kd() {
   const e = Me(), [n, r] = kt(), [o, i] = R([]), { runs: a } = st();
   K(() => {
     let v = !1;
@@ -13390,7 +13390,7 @@ function Vl(e) {
     { label: "Tokens out", data: o, color: "#16a34a" }
   ];
 }
-function Kd() {
+function Wd() {
   const { pipelineId: e } = nt(), n = Me(), [r, o] = R(null), [i, a] = R([]), [c, d] = R("50");
   K(() => {
     e && (o(Ye(e)), a(vt(e)));
@@ -13780,7 +13780,7 @@ function Zl({ row: e, onSubmit: n, onOpenPipeline: r }) {
     ] })
   ] });
 }
-function Wd() {
+function Jd() {
   const e = Me(), { approvals: n, isLoading: r, error: o, retry: i } = yr(), { resolveApproval: a, runs: c } = st(), [d, l] = R(
     () => /* @__PURE__ */ new Set()
   );
@@ -13907,7 +13907,11 @@ function ed({ result: e, className: n }) {
     ] })
   ] });
 }
-function td({
+const td = {
+  people: { stroke: "#4f46e5", fill: "rgba(79,70,229,0.10)", text: "bg-indigo-600 text-white" },
+  object: { stroke: "#d97706", fill: "rgba(217,119,6,0.10)", text: "bg-amber-600 text-white" }
+};
+function nd({
   imageUrl: e,
   imageDataUrl: n,
   imageWidth: r,
@@ -13927,7 +13931,7 @@ function td({
     if (!y) return null;
     const D = Math.max(0, Math.min(v.x1, y.w)), S = Math.max(0, Math.min(v.y1, y.h)), A = Math.max(0, Math.min(v.x2, y.w)), $ = Math.max(0, Math.min(v.y2, y.h));
     if (!Number.isFinite(D) || !Number.isFinite(S) || !Number.isFinite(A) || !Number.isFinite($) || A <= D || $ <= S) return null;
-    const q = D / y.w * 100, V = S / y.h * 100, Q = (A - D) / y.w * 100, ae = ($ - S) / y.h * 100, le = b === "people" ? { stroke: "#4f46e5", fill: "rgba(79,70,229,0.10)", text: "bg-indigo-600 text-white" } : { stroke: "#d97706", fill: "rgba(217,119,6,0.10)", text: "bg-amber-600 text-white" };
+    const q = D / y.w * 100, V = S / y.h * 100, Q = (A - D) / y.w * 100, ae = ($ - S) / y.h * 100, le = td[b];
     return /* @__PURE__ */ t(
       "button",
       {
@@ -14011,7 +14015,7 @@ function td({
     }
   );
 }
-function nd(e) {
+function rd(e) {
   return {
     imageUrl: e.imageUrl,
     imageDataUrl: e.imageDataUrl,
@@ -14021,7 +14025,7 @@ function nd(e) {
     objects: e.objects
   };
 }
-function rd({ people: e, highlightedIndex: n, onSelect: r, className: o }) {
+function od({ people: e, highlightedIndex: n, onSelect: r, className: o }) {
   return !e || e.length === 0 ? null : /* @__PURE__ */ s("section", { className: I("flex flex-col gap-1.5", o), children: [
     /* @__PURE__ */ s("h4", { className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary", children: [
       "People (",
@@ -14074,7 +14078,7 @@ function rd({ people: e, highlightedIndex: n, onSelect: r, className: o }) {
     }) })
   ] });
 }
-function od({ objects: e, onSelect: n, className: r }) {
+function sd({ objects: e, onSelect: n, className: r }) {
   return !e || e.length === 0 ? null : /* @__PURE__ */ s("section", { className: I("flex flex-col gap-1.5", r), children: [
     /* @__PURE__ */ s("h4", { className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary", children: [
       "Objects (",
@@ -14113,7 +14117,7 @@ function od({ objects: e, onSelect: n, className: r }) {
     }) })
   ] });
 }
-function sd({ tags: e, onTagClick: n, className: r }) {
+function id({ tags: e, onTagClick: n, className: r }) {
   return !e || e.length === 0 ? null : /* @__PURE__ */ s("section", { className: I("flex flex-col gap-1.5", r), children: [
     /* @__PURE__ */ t("h4", { className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary", children: "Tags" }),
     /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-1.5", children: e.map(
@@ -14145,7 +14149,7 @@ function Mt(e) {
   const n = yt(e);
   return n === "success" ? `OK · ${e}` : n === "warning" ? `ADJUST · ${e}` : e ?? "";
 }
-function id({
+function ad({
   exposure: e,
   whiteBalance: n,
   contrast: r,
@@ -14212,7 +14216,7 @@ function id({
     )) }) : null
   ] });
 }
-function Jd({
+function Vd({
   result: e,
   showImage: n = !0,
   showCaption: r = !0,
@@ -14225,12 +14229,12 @@ function Jd({
   onApplyEdit: p,
   className: m
 }) {
-  const [x, f] = R(), [h, g] = R(!1), u = (N) => f(x === N.index ? void 0 : N.index), y = nd(e);
+  const [x, f] = R(), [h, g] = R(!1), u = (N) => f(x === N.index ? void 0 : N.index), y = rd(e);
   return /* @__PURE__ */ s("div", { className: I("flex w-full flex-col gap-4 text-text-primary", m), children: [
     /* @__PURE__ */ s("div", { className: "grid grid-cols-1 gap-4 md:grid-cols-12", children: [
       n ? /* @__PURE__ */ s("div", { className: "md:col-span-7", children: [
         /* @__PURE__ */ t(
-          td,
+          nd,
           {
             ...y,
             onSelectPerson: u,
@@ -14257,7 +14261,7 @@ function Jd({
       /* @__PURE__ */ s("div", { className: I("flex flex-col gap-4", n ? "md:col-span-5" : "md:col-span-12"), children: [
         r ? /* @__PURE__ */ t(ed, { result: e }) : null,
         o && e.people && e.people.length > 0 ? /* @__PURE__ */ t(
-          rd,
+          od,
           {
             people: e.people,
             highlightedIndex: x,
@@ -14266,10 +14270,10 @@ function Jd({
         ) : null
       ] })
     ] }),
-    i && e.objects && e.objects.length > 0 ? /* @__PURE__ */ t(od, { objects: e.objects }) : null,
-    a && e.tags && e.tags.length > 0 ? /* @__PURE__ */ t(sd, { tags: e.tags, onTagClick: l }) : null,
+    i && e.objects && e.objects.length > 0 ? /* @__PURE__ */ t(sd, { objects: e.objects }) : null,
+    a && e.tags && e.tags.length > 0 ? /* @__PURE__ */ t(id, { tags: e.tags, onTagClick: l }) : null,
     c ? /* @__PURE__ */ t(
-      id,
+      ad,
       {
         exposure: e.exposure,
         whiteBalance: e.whiteBalance,
@@ -14296,7 +14300,9 @@ function Jd({
         {
           type: "button",
           onClick: () => g((N) => !N),
-          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline",
+          "aria-expanded": h,
+          "aria-label": `${h ? "Hide" : "Show"} raw model output`,
+          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded",
           children: [
             h ? "▾" : "▸",
             " Raw model output"
@@ -14307,7 +14313,7 @@ function Jd({
     ] }) : null
   ] });
 }
-function Vd({
+function Gd({
   status: e,
   result: n,
   runId: r,
@@ -14339,21 +14345,26 @@ function Vd({
     "flex w-full flex-col gap-1.5 rounded-lg border bg-surface p-3 text-sm text-left",
     e === "running" ? "border-indigo-300 ring-1 ring-indigo-200" : e === "failed" ? "border-red-300" : "border-border"
   );
-  return c ? /* @__PURE__ */ t(
-    "button",
-    {
-      type: "button",
-      onClick: c,
-      className: I(
-        h,
-        "cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
-        d
-      ),
-      children: f
-    }
-  ) : /* @__PURE__ */ t("article", { className: I(h, d), children: f });
+  if (c) {
+    const g = m ? m.slice(0, 60) : "no caption";
+    return /* @__PURE__ */ t(
+      "button",
+      {
+        type: "button",
+        onClick: c,
+        "aria-label": `Open vision result: ${l}, ${e}, ${g}`,
+        className: I(
+          h,
+          "cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
+          d
+        ),
+        children: f
+      }
+    );
+  }
+  return /* @__PURE__ */ t("article", { className: I(h, d), children: f });
 }
-function Gd(e = {}) {
+function Yd(e = {}) {
   const { maxRecords: n = 50, runId: r } = e, [o, i] = R([]), a = ee(/* @__PURE__ */ new Map()), c = ee(!0);
   return K(() => (c.current = !0, () => {
     c.current = !1;
@@ -14412,11 +14423,11 @@ function Gd(e = {}) {
     });
   }), L(() => o, [o]);
 }
-function ad(e) {
+function ld(e) {
   return e === "pass" ? "success" : e === "fail" ? "danger" : "warning";
 }
-function ld({ result: e, className: n }) {
-  const r = ad(e.overallVerdict), o = r === "success" ? "PASS" : r === "danger" ? "FAIL" : "INCONCLUSIVE", i = e.rubricSnapshot.passThreshold ?? 0.5;
+function dd({ result: e, className: n }) {
+  const r = ld(e.overallVerdict), o = r === "success" ? "PASS" : r === "danger" ? "FAIL" : "INCONCLUSIVE", i = e.rubricSnapshot.passThreshold ?? 0.5;
   return /* @__PURE__ */ s(
     "section",
     {
@@ -14466,7 +14477,7 @@ function ld({ result: e, className: n }) {
     }
   );
 }
-function dd({ result: e, className: n }) {
+function cd({ result: e, className: n }) {
   if (!e.criteria || e.criteria.length === 0) return null;
   const r = /* @__PURE__ */ new Map();
   for (const o of e.rubricSnapshot.criteria) r.set(o.id, o);
@@ -14476,10 +14487,10 @@ function dd({ result: e, className: n }) {
       e.criteria.length,
       ")"
     ] }),
-    /* @__PURE__ */ t("ul", { className: "flex flex-col gap-1.5", children: e.criteria.map((o) => /* @__PURE__ */ t(cd, { score: o, def: r.get(o.criterionId) }, o.criterionId)) })
+    /* @__PURE__ */ t("ul", { className: "flex flex-col gap-1.5", children: e.criteria.map((o) => /* @__PURE__ */ t(pd, { score: o, def: r.get(o.criterionId) }, o.criterionId)) })
   ] });
 }
-function cd({
+function pd({
   score: e,
   def: n
 }) {
@@ -14517,13 +14528,13 @@ function cd({
   ] });
 }
 const er = nr(null);
-function Yd({ value: e, children: n }) {
+function Xd({ value: e, children: n }) {
   return /* @__PURE__ */ t(er.Provider, { value: e, children: n });
 }
 function tr() {
   return Pn(er);
 }
-function Xd({
+function Qd({
   result: e,
   showVerdict: n = !0,
   showCriteria: r = !0,
@@ -14550,8 +14561,8 @@ function Xd({
   }, [d, e.rawModelText, e.rawTextTruncated, e.judgmentId, c, p, x]);
   const y = e.rawModelText ?? p ?? null, N = !!e.rawModelText || !!e.rawTextTruncated;
   return /* @__PURE__ */ s("div", { className: I("flex w-full flex-col gap-3 text-text-primary", a), children: [
-    n ? /* @__PURE__ */ t(ld, { result: e }) : null,
-    r ? /* @__PURE__ */ t(dd, { result: e }) : null,
+    n ? /* @__PURE__ */ t(dd, { result: e }) : null,
+    r ? /* @__PURE__ */ t(cd, { result: e }) : null,
     o ? /* @__PURE__ */ s("section", { className: "flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary", children: [
       /* @__PURE__ */ s("span", { children: [
         "tokens ",
@@ -14600,7 +14611,7 @@ function Xd({
         }
       ),
       d ? /* @__PURE__ */ t(
-        pd,
+        ud,
         {
           text: y,
           loading: x,
@@ -14611,7 +14622,7 @@ function Xd({
     ] }) : null
   ] });
 }
-function pd({
+function ud({
   text: e,
   loading: n,
   error: r,
@@ -14622,7 +14633,7 @@ function pd({
     r.message
   ] }) : e === null || e.length === 0 ? /* @__PURE__ */ t("div", { className: "rounded-lg border border-border bg-surface-panel p-2 text-[11px] text-text-tertiary", children: o ?? "Raw text not available." }) : /* @__PURE__ */ t("pre", { className: "overflow-x-auto rounded-lg border border-border bg-surface-panel p-2 font-mono text-[11px] leading-snug text-text-secondary", children: e });
 }
-function Qd({ aggregate: e, className: n }) {
+function Zd({ aggregate: e, className: n }) {
   const r = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, o = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, i = r >= 0.9 ? "success" : r >= 0.6 ? "warning" : "danger", a = i === "success" ? "HEALTHY" : i === "warning" ? "MIXED" : "FAILING";
   return /* @__PURE__ */ s(
     "section",
@@ -14695,7 +14706,7 @@ function Qd({ aggregate: e, className: n }) {
     }
   );
 }
-function Zd({
+function ec({
   aggregates: e,
   sortOrder: n = "desc",
   caption: r,
@@ -14761,11 +14772,11 @@ function Zd({
         /* @__PURE__ */ t("th", { scope: "col", className: "py-1 pr-2 text-right", children: "judgments" }),
         /* @__PURE__ */ t("th", { scope: "col", className: "py-1 pl-2 text-right", children: "cost" })
       ] }) }),
-      /* @__PURE__ */ t("tbody", { children: a.map((x) => /* @__PURE__ */ t(ud, { row: x }, x.aggregateKey)) })
+      /* @__PURE__ */ t("tbody", { children: a.map((x) => /* @__PURE__ */ t(md, { row: x }, x.aggregateKey)) })
     ] })
   ] });
 }
-function ud({ row: e }) {
+function md({ row: e }) {
   const n = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, r = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, o = n >= 0.9 ? "success" : n >= 0.6 ? "warning" : "danger";
   return /* @__PURE__ */ s("tr", { className: "border-t border-border", children: [
     /* @__PURE__ */ t("td", { className: "py-1 pr-2 font-mono", children: e.dayBucket }),
@@ -14784,7 +14795,7 @@ function ud({ row: e }) {
     ] })
   ] });
 }
-function md(e) {
+function fd(e) {
   if (typeof e == "number") return e;
   if (typeof e == "string") {
     const n = Date.parse(e);
@@ -14792,7 +14803,7 @@ function md(e) {
   }
   return Date.now();
 }
-function ec(e = {}) {
+function tc(e = {}) {
   const { maxRecords: n = 50, runId: r } = e, [o, i] = R([]), a = ee(/* @__PURE__ */ new Map()), c = ee(!0);
   return K(() => (c.current = !0, () => {
     c.current = !1;
@@ -14806,7 +14817,7 @@ function ec(e = {}) {
     if (!m || typeof m.runId != "string" || typeof m.stepId != "string" || r && m.runId !== r) return;
     const x = `${m.runId}::${m.stepId}`;
     i((f) => {
-      const h = a.current.get(x), g = md(m.at), u = (y) => {
+      const h = a.current.get(x), g = fd(m.at), u = (y) => {
         if (typeof h == "number" && h >= 0 && h < f.length) {
           const C = f.slice();
           return C[h] = { ...f[h], ...y }, C;
@@ -14873,7 +14884,7 @@ function ec(e = {}) {
     });
   }), L(() => o, [o]);
 }
-function tc(e) {
+function nc(e) {
   const n = tr(), [r, o] = R([]), [i, a] = R(!1), [c, d] = R(null), l = ee(!0), p = ee(() => {
   }), { pipelineId: m, rubricId: x, since: f, until: h, limit: g, refreshIntervalMs: u = 0, paused: y = !1 } = e, N = `${m ?? ""}|${x ?? ""}|${f ?? ""}|${h ?? ""}|${g ?? ""}|${y ? "1" : "0"}`;
   return K(() => (l.current = !0, () => {
@@ -14930,52 +14941,52 @@ function tc(e) {
 }
 export {
   oo as ActionNode,
-  Qd as AggregateSummaryCard,
-  Hd as AllRunsPage,
+  Zd as AggregateSummaryCard,
+  Kd as AllRunsPage,
   po as ApprovalNode,
   Ce as BaseNode,
   ed as CaptionPanel,
   no as ConditionNode,
-  dd as CriteriaPanel,
-  id as EditRecommendationsPanel,
-  oc as EventStreamProvider,
+  cd as CriteriaPanel,
+  ad as EditRecommendationsPanel,
+  sc as EventStreamProvider,
   so as ForkNode,
-  td as ImageWithBBoxOverlay,
+  nd as ImageWithBBoxOverlay,
   lo as JoinNode,
-  Yd as JudgmentApiProvider,
-  Xd as JudgmentResultViewer,
-  Zd as JudgmentTrendChart,
+  Xd as JudgmentApiProvider,
+  Qd as JudgmentResultViewer,
+  ec as JudgmentTrendChart,
   Qr as LLMNode,
-  od as ObjectsPanel,
-  Wd as PendingApprovalsPage,
-  rd as PeoplePanel,
+  sd as ObjectsPanel,
+  Jd as PendingApprovalsPage,
+  od as PeoplePanel,
   Wo as PipelineCanvas,
   ir as PipelineEditorContext,
-  Ud as PipelineEditorPage,
+  Bd as PipelineEditorPage,
   On as PipelineEditorProvider,
-  zd as PipelineRunComparePage,
-  qd as PipelineRunDiff,
-  jd as PipelineRunReplayPage,
-  Fd as PipelineRunsPage,
+  qd as PipelineRunComparePage,
+  Hd as PipelineRunDiff,
+  zd as PipelineRunReplayPage,
+  jd as PipelineRunsPage,
   xr as PipelineRunsProvider,
-  Kd as PipelineStatsPage,
-  Bd as PipelinesPage,
-  sd as TagsPanel,
+  Wd as PipelineStatsPage,
+  Fd as PipelinesPage,
+  id as TagsPanel,
   eo as TransformNode,
   Gr as TriggerNode,
-  ld as VerdictPanel,
-  Jd as VisionResultViewer,
-  Vd as VisionRunCard,
-  nd as imageOverlayPropsFrom,
+  dd as VerdictPanel,
+  Vd as VisionResultViewer,
+  Gd as VisionRunCard,
+  rd as imageOverlayPropsFrom,
   vo as nodeTypes,
   Re as useEventStream,
   _r as useEventStreamContext,
-  tc as useJudgmentAggregates,
+  nc as useJudgmentAggregates,
   tr as useJudgmentApi,
-  ec as useJudgmentResults,
+  tc as useJudgmentResults,
   ke as useLatestStepForNode,
   ot as usePipelineEditor,
   st as usePipelineRuns,
   Te as useRetryFromStep,
-  Gd as useVisionResults
+  Yd as useVisionResults
 };
