@@ -114,11 +114,11 @@ function projectToLayoutShape(
   const displayName = isLocal
     ? (localTileLabel ?? p.displayName ?? 'You')
     : (p.displayName || p.participantId.slice(0, 8));
-  // Map primary stream → tile videoElement. Screenshare promotion
-  // (p.screenStream → spotlight tile) is a known follow-up: it requires
-  // extending HangoutLayoutParticipant + the HangoutGrid/Spotlight
-  // render paths, which is out of scope for this wrapper's first cut.
+  // Map streams[0] → camera tile videoElement. Map screenStream →
+  // screenElement; HangoutLayout will auto-promote it to spotlight and
+  // keep the camera tile in the filmstrip so you still see the sharer.
   const stream = p.streams[0];
+  const screen = p.screenStream;
   return {
     id: p.participantId,
     displayName,
@@ -137,6 +137,18 @@ function projectToLayoutShape(
         <Avatar name={displayName} size={64} src={avatarUrl(displayName)} />
       </div>
     ),
+    // Screens are never mirrored — that would flip the content. Local
+    // screen output is muted to prevent echo on shares that include
+    // system audio; remotes play at normal volume.
+    screenElement: screen ? (
+      <video
+        autoPlay
+        playsInline
+        muted={isLocal}
+        ref={(el) => { if (el && el.srcObject !== screen) el.srcObject = screen; }}
+        className="w-full h-full object-contain bg-black"
+      />
+    ) : undefined,
   };
 }
 

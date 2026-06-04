@@ -60,4 +60,35 @@ describe('HangoutLayout — orchestrator', () => {
     );
     expect(screen.queryByTestId('hangout-spotlight')).not.toBeInTheDocument();
   });
+
+  it('auto-flips to spotlight when ANY participant supplies screenElement (remote)', () => {
+    render(
+      <HangoutLayout
+        participants={[
+          p('a'),
+          { ...p('b', 'Bob'), screenElement: <div data-testid="screen">s</div> },
+        ]}
+        mode="auto"
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('hangout-spotlight')).toBeInTheDocument();
+    expect(screen.getByTestId('screen')).toBeInTheDocument();
+  });
+
+  it('auto-flips to spotlight when the LOCAL participant supplies screenElement', () => {
+    render(
+      <HangoutLayout
+        participants={[p('a'), p('b')]}
+        localParticipant={{
+          ...p('me', 'Me'),
+          screenElement: <div data-testid="my-screen">my</div>,
+        }}
+        mode="auto"
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('hangout-spotlight')).toBeInTheDocument();
+    expect(screen.getByTestId('my-screen')).toBeInTheDocument();
+  });
 });

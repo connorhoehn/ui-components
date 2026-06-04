@@ -4,16 +4,20 @@
 // horizontal filmstrip of the remaining participants. Spotlight slot
 // resolves in priority order:
 //   1. Explicit `spotlightContent` (e.g. screen share <video>) — wins.
-//   2. The stable active-speaker tile, if that pid is in participants.
-//   3. The first remote participant (fallback so the slot is never blank).
+//   2. The first participant exposing a `screenElement` (auto-promoted
+//      screen-share). The sharer's CAMERA tile stays visible in the
+//      filmstrip so you still see them while they're presenting.
+//   3. The stable active-speaker tile, if that pid is in participants.
+//   4. The first remote participant (fallback so the slot is never blank).
 //
 // `useStableActiveSpeaker` debounces `activeSpeakerId` so the spotlight
 // only swaps after a new speaker has been talking for at least
 // `speakerHysteresisMs` (default 750ms) — prevents flicker on coughs,
 // laughs, brief interjections.
 //
-// Pure presentational. Caller provides `videoElement` per participant.
-// Extracted from `HangoutLayout.tsx`.
+// Pure presentational. Caller provides `videoElement` (camera) and
+// optional `screenElement` (screen-share) per participant. Extracted
+// from `HangoutLayout.tsx`.
 
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -51,23 +55,70 @@ export function HangoutSpotlight({
 }: HangoutSpotlightProps) {
   const spotlightParticipantId = useStableActiveSpeaker(activeSpeakerId, speakerHysteresisMs);
 
-  // Filmstrip = everyone except the participant currently in the spotlight slot.
-  // Local always appears in the filmstrip.
+  // Resolve who (if anyone) is auto-promoted to the spotlight via
+  // their screenElement. Remotes are checked first so a remote share
+  // wins over a local one if both are present at the same instant
+  // (rare but possible during a hand-off). Explicit spotlightContent
+  // still overrides this — that's why this is gated below.
+  const screenShareSharer = useMemo<HangoutLayoutParticipant | null>(() => {
+    const remoteSharer = participants.find((p) => p.screenElement);
+    if (remoteSharer) return remoteSharer;
+    if (localParticipant && localParticipant.screenElement) {
+      return { ...localParticipant, isLocal: true };
+    }
+    return null;
+  }, [participants, localParticipant]);
+
+  // Filmstrip = everyone except the participant whose CAMERA is currently
+  // in the spotlight slot. When auto-promoted by a screen-share, the
+  // sharer's camera tile STAYS in the filmstrip — you still want to see
+  // the person while they present. Local always appears in the filmstrip.
   const filmstrip = useMemo<HangoutLayoutParticipant[]>(() => {
-    const list = participants.filter(p => p.id !== spotlightParticipantId);
+    // If a screen-share is driving the spotlight, no camera tile is
+    // displaced from the filmstrip; everyone gets a strip slot.
+    const removedCameraId = (spotlightContent || screenShareSharer)
+      ? null
+      : spotlightParticipantId;
+    const list = participants.filter((p) => p.id !== removedCameraId);
     if (localParticipant) list.push({ ...localParticipant, isLocal: true });
     return list;
-  }, [participants, spotlightParticipantId, localParticipant]);
+  }, [participants, spotlightParticipantId, localParticipant, spotlightContent, screenShareSharer]);
 
-  // E2E hook: tag the spotlight wrapper with data-spotlight-type/user so
-  // page-objects can read `screen` vs `camera` without inspecting the
-  // child <video>'s srcObject.
+  // Pick the spotlight slot content + the e2e data-* attrs in one place.
   const speaker = spotlightParticipantId
-    ? participants.find(x => x.id === spotlightParticipantId) ?? null
+    ? participants.find((x) => x.id === spotlightParticipantId) ?? null
     : null;
-  const tileSource = speaker ?? participants[0] ?? localParticipant ?? null;
-  const spotlightType: 'screen' | 'camera' = spotlightContent ? 'screen' : 'camera';
-  const spotlightUser = tileSource?.displayName ?? '';
+  const cameraTileSource = speaker ?? participants[0] ?? localParticipant ?? null;
+  let spotlightType: 'screen' | 'camera';
+  let spotlightUser: string;
+  let spotlightSlot: ReactNode = null;
+  if (spotlightContent) {
+    spotlightType = 'screen';
+    spotlightUser = cameraTileSource?.displayName ?? '';
+    spotlightSlot = spotlightContent;
+  } else if (screenShareSharer) {
+    spotlightType = 'screen';
+    spotlightUser = screenShareSharer.displayName;
+    spotlightSlot = screenShareSharer.screenElement;
+  } else if (cameraTileSource) {
+    spotlightType = 'camera';
+    spotlightUser = cameraTileSource.displayName;
+    spotlightSlot = (
+      <ParticipantTile
+        id={cameraTileSource.id}
+        displayName={cameraTileSource.displayName}
+        avatarUrl={cameraTileSource.avatarUrl}
+        isMuted={cameraTileSource.isMuted}
+        isLocal={cameraTileSource.isLocal}
+        isSpotlight
+        videoElement={cameraTileSource.videoElement}
+        className="w-full h-full"
+      />
+    );
+  } else {
+    spotlightType = 'camera';
+    spotlightUser = '';
+  }
 
   return (
     <div
@@ -80,18 +131,7 @@ export function HangoutSpotlight({
         data-spotlight-type={spotlightType}
         data-spotlight-user={spotlightUser}
       >
-        {spotlightContent ?? (tileSource && (
-          <ParticipantTile
-            id={tileSource.id}
-            displayName={tileSource.displayName}
-            avatarUrl={tileSource.avatarUrl}
-            isMuted={tileSource.isMuted}
-            isLocal={tileSource.isLocal}
-            isSpotlight
-            videoElement={tileSource.videoElement}
-            className="w-full h-full"
-          />
-        ))}
+        {spotlightSlot}
       </div>
 
       {filmstrip.length > 0 && (

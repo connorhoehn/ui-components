@@ -79,6 +79,105 @@ describe('HangoutSpotlight', () => {
     expect(tiles.length).toBe(2); // Bob + Me
   });
 
+  it('auto-promotes a remote screen-share into the spotlight', () => {
+    render(
+      <HangoutSpotlight
+        participants={[
+          p('alice', 'Alice'),
+          {
+            ...p('bob', 'Bob'),
+            screenElement: <div data-testid="bob-screen">bob screen</div>,
+          },
+          p('carol', 'Carol'),
+        ]}
+        activeSpeakerId="alice"
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('bob-screen')).toBeInTheDocument();
+    const spotlight = screen.getByTestId('hangout-spotlight');
+    expect(spotlight.getAttribute('data-spotlight-type')).toBe('screen');
+    expect(spotlight.getAttribute('data-spotlight-user')).toBe('Bob');
+  });
+
+  it('keeps the sharer’s camera tile in the filmstrip while their screen is spotlit', () => {
+    const { container } = render(
+      <HangoutSpotlight
+        participants={[
+          p('alice', 'Alice'),
+          {
+            ...p('bob', 'Bob'),
+            screenElement: <div data-testid="bob-screen">bob screen</div>,
+          },
+          p('carol', 'Carol'),
+        ]}
+        speakerHysteresisMs={0}
+      />,
+    );
+    const filmstrip = container.querySelector('.flex.gap-1.overflow-x-auto')!;
+    expect(filmstrip.textContent ?? '').toContain('Alice');
+    expect(filmstrip.textContent ?? '').toContain('Bob');
+    expect(filmstrip.textContent ?? '').toContain('Carol');
+    // All three remotes have filmstrip slots — nothing was displaced.
+    const tiles = filmstrip.querySelectorAll('.w-32');
+    expect(tiles.length).toBe(3);
+  });
+
+  it('auto-promotes a local screen-share into the spotlight', () => {
+    render(
+      <HangoutSpotlight
+        participants={[p('alice', 'Alice')]}
+        localParticipant={{
+          ...p('me', 'Me'),
+          screenElement: <div data-testid="my-screen">my screen</div>,
+        }}
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('my-screen')).toBeInTheDocument();
+    const spotlight = screen.getByTestId('hangout-spotlight');
+    expect(spotlight.getAttribute('data-spotlight-type')).toBe('screen');
+    expect(spotlight.getAttribute('data-spotlight-user')).toBe('Me');
+  });
+
+  it('explicit spotlightContent overrides screenElement auto-promotion', () => {
+    render(
+      <HangoutSpotlight
+        participants={[
+          {
+            ...p('bob', 'Bob'),
+            screenElement: <div data-testid="bob-screen">bob screen</div>,
+          },
+        ]}
+        spotlightContent={<div data-testid="custom-content">custom</div>}
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('custom-content')).toBeInTheDocument();
+    expect(screen.queryByTestId('bob-screen')).not.toBeInTheDocument();
+  });
+
+  it('with multiple screen-shares, the first remote sharer wins', () => {
+    render(
+      <HangoutSpotlight
+        participants={[
+          {
+            ...p('bob', 'Bob'),
+            screenElement: <div data-testid="bob-screen">bob</div>,
+          },
+          {
+            ...p('carol', 'Carol'),
+            screenElement: <div data-testid="carol-screen">carol</div>,
+          },
+        ]}
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(screen.getByTestId('bob-screen')).toBeInTheDocument();
+    expect(screen.queryByTestId('carol-screen')).not.toBeInTheDocument();
+    expect(screen.getByTestId('hangout-spotlight').getAttribute('data-spotlight-user')).toBe('Bob');
+  });
+
   it('hysteresis delays the spotlight swap', async () => {
     vi.useFakeTimers();
     try {

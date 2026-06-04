@@ -209,4 +209,46 @@ describe('WrappedLVSHangoutLayout', () => {
     );
     expect(screen.getByTestId('spot')).toBeInTheDocument();
   });
+
+  it('projects a remote screenStream into the spotlight slot', () => {
+    mockState.current.participants = [
+      makeLocal('me'),
+      makeRemote('alice', {
+        displayName: 'Alice',
+        screenStream: new MediaStream(),
+      }),
+    ];
+    render(
+      <WrappedLVSHangoutLayout
+        stageToken="t"
+        participantId="me"
+        data-testid="wrap"
+      />,
+    );
+    const spotlight = screen.getByTestId('hangout-spotlight');
+    expect(spotlight.getAttribute('data-spotlight-type')).toBe('screen');
+    expect(spotlight.getAttribute('data-spotlight-user')).toBe('Alice');
+  });
+
+  it('projects a local screenStream into the spotlight slot', () => {
+    mockState.current.participants = [
+      {
+        ...makeLocal('me'),
+        displayName: 'Me',
+        screenStream: new MediaStream(),
+      },
+      makeRemote('alice', { displayName: 'Alice' }),
+    ];
+    render(
+      <WrappedLVSHangoutLayout
+        stageToken="t"
+        participantId="me"
+        localTileLabel="Me"
+        data-testid="wrap"
+      />,
+    );
+    const spotlight = screen.getByTestId('hangout-spotlight');
+    expect(spotlight.getAttribute('data-spotlight-type')).toBe('screen');
+    expect(spotlight.getAttribute('data-spotlight-user')).toBe('Me');
+  });
 });

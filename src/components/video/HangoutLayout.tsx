@@ -3,6 +3,7 @@
 //
 // Mode resolution:
 //   - `spotlightContent` non-null → spotlight (regardless of `mode`).
+//   - Any participant has `screenElement` → spotlight (auto-promotion).
 //   - `mode="spotlight"` → spotlight.
 //   - `mode="auto"` + totalCount ≥ 10 → auto-flip to spotlight (a 4×4
 //     grid is too small to be legible past 9 participants).
@@ -60,11 +61,16 @@ export function HangoutLayout({
   style,
 }: HangoutLayoutProps) {
   const totalCount = participants.length + (localParticipant ? 1 : 0);
+  const hasScreenShare =
+    participants.some((p) => p.screenElement) ||
+    !!(localParticipant && localParticipant.screenElement);
   const effectiveMode: HangoutMode = spotlightContent
     ? 'spotlight'
-    : mode === 'auto' && totalCount >= AUTO_SPOTLIGHT_THRESHOLD
+    : hasScreenShare
       ? 'spotlight'
-      : mode;
+      : mode === 'auto' && totalCount >= AUTO_SPOTLIGHT_THRESHOLD
+        ? 'spotlight'
+        : mode;
 
   if (effectiveMode === 'spotlight') {
     return (

@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.26.0] — 2026-06-04
+
+### Added
+
+- **Screen-share auto-promotion in `<HangoutLayout>` / `<HangoutSpotlight>`**.
+  `HangoutLayoutParticipant` gains an optional `screenElement?: ReactNode`
+  slot. When ANY participant (remote or local) supplies it,
+  `<HangoutLayout>` auto-flips to spotlight mode and `<HangoutSpotlight>`
+  promotes the screen-share into the main slot. The sharer's CAMERA tile
+  stays visible in the filmstrip — you still see the person while they're
+  presenting. An explicit `spotlightContent` prop still wins (consumers
+  rendering REC indicators / pinned-tile UI are unaffected). With
+  multiple concurrent screen-shares (rare, but possible during a hand-off)
+  the first remote sharer is promoted; a local share loses to any remote
+  one. The spotlight wrapper's `data-spotlight-type` / `data-spotlight-user`
+  attributes reflect the screen vs camera state so e2e specs can target
+  without reading `srcObject`.
+
+- **`<WrappedLVSHangoutLayout>` now projects `HangoutParticipant.screenStream`
+  into `screenElement`** so consumers of the LVS adapter get
+  screen-share spotlight promotion for free. The pre-2.26.0 behaviour
+  (drop `screenStream`) is gone — this was the known follow-up flagged
+  in the 2.24.0 changelog. Screen `<video>` is `object-contain` (no
+  crop), never mirrored, and `muted` for local shares to prevent echo
+  on system-audio shares.
+
+### Notes
+
+- New tests: +5 (`HangoutSpotlight` — remote auto-promote, sharer-camera
+  stays in filmstrip, local auto-promote, explicit-content override,
+  multi-sharer tie-break), +2 (`HangoutLayout` — auto-flip on remote
+  screenElement, auto-flip on local screenElement), +2
+  (`WrappedLVSHangoutLayout` — remote `screenStream` projection, local
+  `screenStream` projection). Full suite 2247 tests pass, `tsc --noEmit`
+  clean. No breaking changes — `screenElement` is optional everywhere.
+
 ## [2.25.0] — 2026-06-04
 
 ### Added
