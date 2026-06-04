@@ -72,6 +72,8 @@ export { default as FilterChip } from './FilterChip';
 export * from './FilterChip';
 export { default as SegmentedControl } from './SegmentedControl';
 export * from './SegmentedControl';
+export { default as PermissionDeniedCard } from './PermissionDeniedCard';
+export * from './PermissionDeniedCard';
 export { default as Avatar } from './Avatar';
 export * from './Avatar';
 export { default as EntityCell } from './EntityCell';

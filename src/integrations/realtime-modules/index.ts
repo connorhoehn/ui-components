@@ -92,3 +92,10 @@ export type { HangoutRoomsSectionProps } from './HangoutRoomsSection';
 
 export { NewHangoutRoomDialog, slugifyRoomName } from './NewHangoutRoomDialog';
 export type { NewHangoutRoomDialogProps } from './NewHangoutRoomDialog';
+
+// ── LVS hangout adapter (2026-06, gateway-locked contract) ──
+export { default as WrappedLVSHangoutLayout } from './WrappedLVSHangoutLayout';
+export type {
+  WrappedLVSHangoutLayoutProps,
+  WrappedHangoutState,
+} from './WrappedLVSHangoutLayout';

@@ -94,3 +94,11 @@ export type { MuteWhileTalkingToastProps } from './MuteWhileTalkingToast';
 
 export { TranscriptOverlay } from './TranscriptOverlay';
 export type { TranscriptOverlayProps, CaptionLine } from './TranscriptOverlay';
+
+export { default as HangoutPreJoinShell } from './HangoutPreJoinShell';
+export type {
+  HangoutPreJoinShellProps,
+  PreJoinPermission,
+  PreJoinReadyState,
+  PreJoinRosterEntry,
+} from './HangoutPreJoinShell';

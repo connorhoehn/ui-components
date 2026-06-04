@@ -8,6 +8,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.24.0] — 2026-06-04
+
+### Added
+
+- **`<HangoutPreJoinShell>`** (`/video`). Google Meet-style "green
+  room" composite for the hangout pre-join flow. Channel-name header,
+  live camera preview tile, mic/cam circular toggles, ready-state
+  roster (with `live` / `connecting` chip per participant), and the
+  Join button. Consumer-provides the `previewStream`, `permission`
+  state, audio/video toggle handlers, and an `onJoin({ audio, video })`
+  callback — the shell owns no media APIs itself. Permission failures
+  render the new `<PermissionDeniedCard>` inline with a `Try again`
+  affordance wired to `onRetryPermission`. The roster auto-truncates to
+  8 entries with a `+N more` overflow chip; `readyLoading` swaps the
+  roster for a `Checking room…` spinner. Used by the `websocket-gateway`
+  hangout app per the gateway-locked contract finalized 2026-06-03.
+
+- **`<WrappedLVSHangoutLayout>`** (`/integrations/realtime-modules`).
+  Drop-in adapter that connects `useLVSHangout` from
+  `@connorhoehn/realtime-modules/client/video` to `<HangoutLayout>`.
+  Per the gateway-locked boundary decisions, the wrapper:
+  - exposes connection state via an `overlay({ connectionState, error,
+    participantCount, remoteCount })` render-prop slot — consumers
+    supply their own reconnecting / failed / empty backdrops;
+  - forwards a consumer `spotlightContent` slot for REC indicators,
+    pinned-tile UI, or recording badges (the wrapper does NOT
+    subscribe to recording lifecycle);
+  - takes an async `getStageToken` callback mirroring the SDK
+    `getAuthToken` pattern so token renewal stays consumer-managed;
+  - does NOT render a Leave button — leave affordance lives on the
+    sibling `<MediaControlsBar>` composite (coming next).
+
+  Maps `HangoutParticipant.streams[]` to per-tile `videoElement`s with
+  `srcObject` binding via ref; `isLocal` tiles get muted + mirrored.
+  Screenshare promotion (`screenStream` → spotlight) is a known
+  follow-up that requires extending `HangoutLayoutParticipant` +
+  `HangoutGrid/Spotlight` render paths.
+
+- **`<PermissionDeniedCard>`** (`/shared`). New fallback primitive for
+  media-device permission failures. Props: `kind: 'camera' | 'microphone'
+  | 'screen'`, `state: 'denied' | 'blocked' | 'no-device' | 'unavailable'`,
+  optional `message`, `onRetry`, `retryLabel`, `icon`. Default copy is
+  keyed on `state`; default per-kind SVG is provided. Used by
+  `<HangoutPreJoinShell>` but exported standalone for any consumer that
+  needs to surface a getUserMedia rejection.
+
+### Notes
+
+- New tests: 7 (`PermissionDeniedCard`) + 16
+  (`HangoutPreJoinShell`) + 7 (`WrappedLVSHangoutLayout`) — full suite
+  2218 tests pass, `tsc --noEmit` clean. `@connorhoehn/realtime-modules`
+  is consumed via the existing peer-dep + `file:` pin; no new runtime
+  deps.
+
 ### Added
 
 - **`<CallControls>` + `<CallParticipantStrip>` + `<CallStatsOverlay>`**
