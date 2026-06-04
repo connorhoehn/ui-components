@@ -10,7 +10,7 @@ import { a as ye } from "./EventStreamContext-CjzSHXy-.js";
 import { E as ve } from "./EmptyState-PM9wTjxk.js";
 import { M as Ne } from "./Modal-2jg4229_.js";
 import { C as ne } from "./Card-B2uO9v1w.js";
-import { C as ae } from "./Chip-BXdhqVFm.js";
+import { C as ae } from "./Chip-CAS9vOWq.js";
 import { S as se } from "./StatusDot-BC7B1tTr.js";
 const we = {
   info: "text-slate-500",

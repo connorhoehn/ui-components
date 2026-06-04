@@ -227,7 +227,7 @@ export declare interface ChatComposerProps {
     maxRows?: number;
 }
 
-export declare function Chip({ tone, size, solid, mono, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
+export declare function Chip({ tone, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 export declare interface ChipProps {
     tone?: ChipTone;
@@ -236,6 +236,14 @@ export declare interface ChipProps {
     solid?: boolean;
     /** Monospace font — for count badges. */
     mono?: boolean;
+    /** Indicator dot. 'static' = filled circle, 'pulse' = filled circle
+     *  with an animated outer ping (matches Badge variant="pulse"). */
+    dot?: 'static' | 'pulse';
+    /** Uppercase the label with letter-spacing — the "REC" / "LIVE"
+     *  pattern common to status pills. */
+    uppercase?: boolean;
+    /** Optional leading icon (SVG element). Sized by the chip's `size`. */
+    icon?: ReactNode;
     children: ReactNode;
     title?: string;
     className?: string;
@@ -897,6 +905,30 @@ export declare interface PageSectionProps {
     children: ReactNode;
     className?: string;
 }
+
+export declare function PermissionDeniedCard({ kind, state, message, onRetry, retryLabel, icon, className, 'data-testid': testId, }: PermissionDeniedCardProps): JSX.Element;
+
+export declare interface PermissionDeniedCardProps {
+    /** Which underlying capability was denied. Drives the default copy + icon. */
+    kind: PermissionKind;
+    state: PermissionState_2;
+    /** Optional verbatim error message (browser-specific text). When omitted
+     *  the card renders default copy keyed on `state`. */
+    message?: string | null;
+    /** Optional retry action. Hidden when omitted. */
+    onRetry?: () => void;
+    /** Optional override label for the retry button (default: "Try again"). */
+    retryLabel?: string;
+    /** Optional override icon (replaces the default per-kind glyph). */
+    icon?: ReactNode;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
+
+declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
+export { PermissionState_2 as PermissionState }
 
 export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, className, }: PresenceAvatarsProps): JSX.Element;
 
