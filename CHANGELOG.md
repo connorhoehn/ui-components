@@ -8,6 +8,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.25.0] — 2026-06-04
+
+### Added
+
+- **`<MediaControlsBar>`** (`/video`). Bottom control bar for an active
+  hangout call: round mic / camera / screen-share toggles plus the
+  red Leave button. Built on the new `<CircularIconToggle>` +
+  `MediaIcons`. Per the gateway-locked boundary, this is the
+  composite that owns the Leave-call affordance — sister composites
+  (`<WrappedLVSHangoutLayout>`, `<HangoutRoomHeader>`) deliberately
+  do not render Leave. Screen-share is opt-in: omit
+  `onToggleScreenShare` and the third toggle is not rendered. An
+  `extras` slot sits between the screen-share toggle and Leave for
+  things like raise-hand / captions / settings.
+
+- **`<HangoutRoomHeader>`** (`/video`). Top bar for an active hangout
+  call. Renders the channel name, a subtitle, an optional inline
+  `RecordingPill` (Chip uppercase + danger dot when active), an
+  optional elapsed-time chip (clock-icon + tabular-nums), an optional
+  right-side `PhaseChip` (idle / joining / joined / reconnecting /
+  ended / failed), and an actions slot for consumer-supplied controls
+  (Debug button, etc.). Like its sibling composites, Leave is NOT on
+  this header — it lives on `<MediaControlsBar>`.
+
+- **`<CircularIconToggle>`** (`/video`). Round on/off button primitive
+  used by `<HangoutPreJoinShell>`, `<MediaControlsBar>`, and any other
+  Meet-style media toggle surface. Consumer-supplied `iconOn` / `iconOff`
+  pair; state reflected via `aria-pressed`; visual flips between an
+  active soft-slate palette and an off red-soft palette (or
+  neutral-soft via `offTone="neutral"` for non-media toggles like
+  screen-share).
+
+- **`MediaIcons`** (`/video`). Small set of stroke-based SVG primitives
+  (`MicIcon`, `MicOffIcon`, `VideoIcon`, `VideoOffIcon`,
+  `ScreenShareIcon`, `ScreenShareOffIcon`, `PhoneOffIcon`,
+  `MoreHorizontalIcon`). Pure SVG — no external icon-pack dep added
+  to the library. Each accepts a `size` prop (default 20) and
+  passes through all standard SVG props; color inherits via
+  `currentColor`. The set is intentionally narrow (only icons the
+  hangout composites use); add new ones as composites require them.
+
+### Changed
+
+- **`<HangoutPreJoinShell>`** now uses `<CircularIconToggle>` + the
+  new `MediaIcons` instead of its inline `ToggleButton` + handcrafted
+  Mic / Cam SVGs. Public props unchanged.
+
+### Notes
+
+- New tests: 5 (`CircularIconToggle`) + 8 (`HangoutRoomHeader`) + 7
+  (`MediaControlsBar`) — full suite 2238 tests pass, `tsc --noEmit`
+  clean.
+
 ## [2.24.0] — 2026-06-04
 
 ### Added

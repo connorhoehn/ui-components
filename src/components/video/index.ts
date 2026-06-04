@@ -102,3 +102,32 @@ export type {
   PreJoinReadyState,
   PreJoinRosterEntry,
 } from './HangoutPreJoinShell';
+
+export { default as HangoutRoomHeader } from './HangoutRoomHeader';
+export type {
+  HangoutRoomHeaderProps,
+  HangoutRoomHeaderRecording,
+  HangoutPhase,
+} from './HangoutRoomHeader';
+
+export { default as CircularIconToggle } from './CircularIconToggle';
+export type {
+  CircularIconToggleProps,
+  CircularIconToggleTone,
+  CircularIconToggleSize,
+} from './CircularIconToggle';
+
+export { default as MediaControlsBar } from './MediaControlsBar';
+export type { MediaControlsBarProps } from './MediaControlsBar';
+
+export {
+  MicIcon,
+  MicOffIcon,
+  VideoIcon,
+  VideoOffIcon,
+  ScreenShareIcon,
+  ScreenShareOffIcon,
+  PhoneOffIcon,
+  MoreHorizontalIcon,
+} from './MediaIcons';
+export type { IconProps } from './MediaIcons';

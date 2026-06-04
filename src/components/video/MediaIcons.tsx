@@ -1,0 +1,115 @@
+// MediaIcons — small SVG primitives used by the hangout / call composites.
+//
+// Pure SVG, no external dep. Each icon accepts `size` (default 20) and
+// passes any additional SVG props through. Stroke-based, so they
+// inherit color via currentColor — pair with `text-*` classes.
+
+import type { SVGProps } from 'react';
+
+export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'children'> {
+  size?: number;
+}
+
+function base(size: number, rest: Omit<SVGProps<SVGSVGElement>, 'children'>) {
+  return {
+    width: size,
+    height: size,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 2,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true as const,
+    focusable: false as const,
+    ...rest,
+  };
+}
+
+export function MicIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="9" y="3" width="6" height="11" rx="3" />
+      <path d="M5 11a7 7 0 0 0 14 0" />
+      <line x1="12" y1="18" x2="12" y2="22" />
+      <line x1="8" y1="22" x2="16" y2="22" />
+    </svg>
+  );
+}
+
+export function MicOffIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <line x1="3" y1="3" x2="21" y2="21" />
+      <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
+      <path d="M15 9.34V6a3 3 0 0 0-5.94-.6" />
+      <path d="M17 16.95A7 7 0 0 1 5 11" />
+      <path d="M19 11a7 7 0 0 1-.11 1.23" />
+      <line x1="12" y1="18" x2="12" y2="22" />
+      <line x1="8" y1="22" x2="16" y2="22" />
+    </svg>
+  );
+}
+
+export function VideoIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M22 8l-6 4 6 4V8z" />
+      <rect x="2" y="6" width="14" height="12" rx="2" />
+    </svg>
+  );
+}
+
+export function VideoOffIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <line x1="3" y1="3" x2="21" y2="21" />
+      <path d="M16 16H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2l10 10z" />
+      <path d="M22 8l-6 4 6 4V8z" />
+    </svg>
+  );
+}
+
+export function ScreenShareIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="2" y="4" width="20" height="12" rx="2" />
+      <line x1="8" y1="20" x2="16" y2="20" />
+      <line x1="12" y1="16" x2="12" y2="20" />
+      <polyline points="9 10 12 7 15 10" />
+      <line x1="12" y1="7" x2="12" y2="13" />
+    </svg>
+  );
+}
+
+export function ScreenShareOffIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <line x1="3" y1="3" x2="21" y2="21" />
+      <path d="M22 14V6a2 2 0 0 0-2-2H6" />
+      <path d="M2 6v8a2 2 0 0 0 2 2h12" />
+      <line x1="8" y1="20" x2="16" y2="20" />
+      <line x1="12" y1="16" x2="12" y2="20" />
+    </svg>
+  );
+}
+
+export function PhoneOffIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.49-2.86" />
+      <path d="M5 5l-1.27 1.27a2 2 0 0 0-.45 2.11 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11" />
+      <line x1="22" y1="2" x2="2" y2="22" />
+    </svg>
+  );
+}
+
+export function MoreHorizontalIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <circle cx="12" cy="12" r="1" />
+      <circle cx="19" cy="12" r="1" />
+      <circle cx="5" cy="12" r="1" />
+    </svg>
+  );
+}

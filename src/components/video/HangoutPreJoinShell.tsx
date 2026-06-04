@@ -27,6 +27,8 @@ import Spinner from '../shared/Spinner';
 import PermissionDeniedCard, {
   type PermissionState,
 } from '../shared/PermissionDeniedCard';
+import CircularIconToggle from './CircularIconToggle';
+import { MicIcon, MicOffIcon, VideoIcon, VideoOffIcon } from './MediaIcons';
 
 export type PreJoinPermission =
   | 'pending'
@@ -214,20 +216,24 @@ export default function HangoutPreJoinShell({
 
           {/* Pre-flight mic/cam toggles */}
           <div className="mt-4 flex items-center justify-center gap-3">
-            <ToggleButton
-              active={audioEnabled}
+            <CircularIconToggle
+              on={audioEnabled}
               onClick={onToggleAudio}
               disabled={!isCamReady}
-              label={audioEnabled ? 'Mute mic before joining' : 'Unmute mic before joining'}
-              icon={audioEnabled ? <MicOnIcon /> : <MicOffIcon />}
+              aria-label={audioEnabled ? 'Mute mic before joining' : 'Unmute mic before joining'}
+              title={audioEnabled ? 'Mute mic before joining' : 'Unmute mic before joining'}
+              iconOn={<MicIcon size={18} />}
+              iconOff={<MicOffIcon size={18} />}
               data-testid="prejoin-toggle-audio"
             />
-            <ToggleButton
-              active={videoEnabled}
+            <CircularIconToggle
+              on={videoEnabled}
               onClick={onToggleVideo}
               disabled={!isCamReady}
-              label={videoEnabled ? 'Turn camera off before joining' : 'Turn camera on before joining'}
-              icon={videoEnabled ? <CamOnIcon /> : <CamOffIcon />}
+              aria-label={videoEnabled ? 'Turn camera off before joining' : 'Turn camera on before joining'}
+              title={videoEnabled ? 'Turn camera off before joining' : 'Turn camera on before joining'}
+              iconOn={<VideoIcon size={18} />}
+              iconOff={<VideoOffIcon size={18} />}
               data-testid="prejoin-toggle-video"
             />
           </div>
@@ -318,79 +324,3 @@ function RosterList({
   );
 }
 
-function ToggleButton({
-  active, onClick, label, icon, disabled,
-  'data-testid': testId,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  icon: React.ReactNode;
-  disabled?: boolean;
-  'data-testid'?: string;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-pressed={active}
-      title={label}
-      onClick={onClick}
-      disabled={disabled}
-      data-testid={testId}
-      className={cn(
-        'inline-flex items-center justify-center h-11 w-11 rounded-full transition-colors border',
-        active
-          ? 'bg-slate-100 hover:bg-slate-200 text-slate-900 border-slate-200'
-          : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-200',
-        disabled && 'opacity-40 cursor-not-allowed',
-      )}
-    >
-      {icon}
-    </button>
-  );
-}
-
-// Inlined icons — will be replaced by MediaIcons from /icons subpath
-// when that ships. Keep them here so HangoutPreJoinShell is shippable
-// today without the icon subpath as a hard dependency.
-
-function MicOnIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-      <line x1="12" y1="19" x2="12" y2="22" />
-    </svg>
-  );
-}
-function MicOffIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <line x1="2" y1="2" x2="22" y2="22" />
-      <path d="M9 9v3a3 3 0 0 0 5.12 2.12" />
-      <path d="M15 9.34V5a3 3 0 0 0-5.94-.6" />
-      <path d="M17 16.95A7 7 0 0 1 5 12v-2" />
-      <path d="M19 10v2a7 7 0 0 1-.11 1.23" />
-      <line x1="12" y1="19" x2="12" y2="22" />
-    </svg>
-  );
-}
-function CamOnIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="m22 8-6 4 6 4V8Z" />
-      <rect x="2" y="6" width="14" height="12" rx="2" ry="2" />
-    </svg>
-  );
-}
-function CamOffIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <line x1="2" y1="2" x2="22" y2="22" />
-      <path d="M10.5 6.5h3.5a2 2 0 0 1 2 2v2.5" />
-      <path d="M2 6.5v9a2 2 0 0 0 2 2h7" />
-      <path d="m22 8-6 4 6 4V8Z" />
-    </svg>
-  );
-}
