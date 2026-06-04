@@ -58,4 +58,62 @@ describe('Chip', () => {
       unmount();
     }
   });
+
+  // v2 — dot/uppercase/icon extension for the status-pill pattern
+  it('renders a static dot when dot="static"', () => {
+    render(<Chip dot="static" tone="success" data-testid="chip">Live</Chip>);
+    const chip = screen.getByTestId('chip');
+    const dot = chip.querySelector('[aria-hidden]');
+    expect(dot).toBeInTheDocument();
+    // Inner ping should NOT exist for static dot
+    expect(chip.querySelector('.animate-ping')).toBeNull();
+  });
+
+  it('renders a pulsing dot when dot="pulse"', () => {
+    render(<Chip dot="pulse" tone="danger" data-testid="chip">Rec</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip.querySelector('.animate-ping')).toBeInTheDocument();
+  });
+
+  it('dot uses the tone color', () => {
+    render(<Chip dot="static" tone="warning" data-testid="chip">Pending</Chip>);
+    const chip = screen.getByTestId('chip');
+    // First aria-hidden is the dot wrapper; it carries the amber swatch
+    const dot = chip.querySelector('[aria-hidden]');
+    expect(dot).toHaveClass('bg-amber-500');
+  });
+
+  it('uppercases the label when uppercase is true', () => {
+    render(<Chip uppercase data-testid="chip">rec</Chip>);
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('uppercase', 'tracking-wide');
+  });
+
+  it('renders an icon when provided', () => {
+    render(
+      <Chip icon={<svg data-testid="leading-icon" />} data-testid="chip">
+        Grid
+      </Chip>,
+    );
+    expect(screen.getByTestId('leading-icon')).toBeInTheDocument();
+  });
+
+  it('combines dot + icon + uppercase + tone consistently', () => {
+    render(
+      <Chip
+        dot="pulse"
+        icon={<svg data-testid="ico" />}
+        uppercase
+        tone="danger"
+        size="xs"
+        data-testid="chip"
+      >
+        Rec
+      </Chip>,
+    );
+    const chip = screen.getByTestId('chip');
+    expect(chip).toHaveClass('bg-red-50', 'text-red-600', 'uppercase', 'tracking-wide', 'gap-1');
+    expect(chip.querySelector('.animate-ping')).toBeInTheDocument();
+    expect(screen.getByTestId('ico')).toBeInTheDocument();
+  });
 });
