@@ -45,6 +45,20 @@ export function StreamVideo({
     if (el.srcObject !== stream) el.srcObject = stream;
     if (videoRef) videoRef.current = el;
 
+    const snapshotTracks = (label: string) => {
+      console.info(`[StreamVideo] ${label}`, {
+        streamId: stream.id,
+        tracks: stream.getTracks().map(t => ({
+          kind: t.kind,
+          id: t.id,
+          ready: t.readyState,
+          muted: t.muted,
+          enabled: t.enabled,
+        })),
+      });
+    };
+    snapshotTracks('bind');
+
     const emit = (state: StreamVideoPlayState) => {
       callbackRef.current?.(state);
     };
@@ -70,7 +84,8 @@ export function StreamVideo({
     // path: WHEP delivers audio first → srcObject bound → play()
     // succeeds → video track arrives via stream.addTrack() → tile
     // would stay black without this.
-    const handleStreamMutation = () => {
+    const handleStreamMutation = (ev: Event) => {
+      snapshotTracks(`stream ${ev.type}`);
       el.srcObject = null;
       el.srcObject = stream;
       tryPlay();
