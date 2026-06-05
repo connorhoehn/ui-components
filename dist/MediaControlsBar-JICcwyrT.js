@@ -823,7 +823,7 @@ function He({
     ] })
   ] });
 }
-function De({
+function Oe({
   mode: t,
   participants: n,
   localParticipant: r,
@@ -901,7 +901,7 @@ function De({
     )
   ] });
 }
-function Fe({
+function De({
   state: t,
   mode: n,
   duration: r,
@@ -975,7 +975,7 @@ function Fe({
     }
   );
 }
-function Oe(t) {
+function Fe(t) {
   const [n, r] = E({ x: 0, y: 0 }), [o, a] = E(!1), [c, l] = E(!1), s = A(!1), d = A({ x: 0, y: 0 }), h = A({ x: 0, y: 0 }), p = A(null), g = U(
     (w) => {
       t && (s.current = !0, a(!0), l(!1), d.current = { x: w.clientX, y: w.clientY }, h.current = { ...n }, w.preventDefault());
@@ -1029,8 +1029,8 @@ function Oe(t) {
         const B = y.getBoundingClientRect();
         S = B.width, M = B.height;
       }
-      const P = b.getBoundingClientRect(), j = y ? y.getBoundingClientRect() : { left: 0, top: 0 }, $ = P.left - j.left, I = P.top - j.top, R = S - ($ + P.width), F = M - (I + P.height), H = $ < L, O = R < L, k = I < L, C = F < L;
-      k && H ? x.current("top-left") : k && O ? x.current("top-right") : C && H ? x.current("bottom-left") : C && O && x.current("bottom-right");
+      const P = b.getBoundingClientRect(), j = y ? y.getBoundingClientRect() : { left: 0, top: 0 }, $ = P.left - j.left, I = P.top - j.top, R = S - ($ + P.width), D = M - (I + P.height), H = $ < L, F = R < L, k = I < L, C = D < L;
+      k && H ? x.current("top-left") : k && F ? x.current("top-right") : C && H ? x.current("bottom-left") : C && F && x.current("bottom-right");
     };
     return document.addEventListener("mousemove", w), document.addEventListener("mouseup", N), () => {
       document.removeEventListener("mousemove", w), document.removeEventListener("mouseup", N);
@@ -1090,7 +1090,7 @@ function $t({
   style: I,
   dataAttrs: R
 }) {
-  const { offset: F, handleMouseDown: H, resetOffset: O, snapToCorner: k, isDragging: C, isAnimating: B, hasMoved: D, widgetRef: ee } = Oe(j), W = {};
+  const { offset: D, handleMouseDown: H, resetOffset: F, snapToCorner: k, isDragging: C, isAnimating: B, hasMoved: O, widgetRef: ee } = Fe(j), W = {};
   if (R)
     for (const [xe, J] of Object.entries(R))
       J != null && J !== "" && (W[xe] = J);
@@ -1120,7 +1120,7 @@ function $t({
           $
         ),
         style: {
-          transform: `translate(${F.x}px, ${F.y}px)`,
+          transform: `translate(${D.x}px, ${D.y}px)`,
           transition: B ? "transform 0.2s ease-out" : void 0,
           ...I
         },
@@ -1147,11 +1147,11 @@ function $t({
                       /* @__PURE__ */ e("span", { className: "text-white/80 text-xs font-medium", children: n === "video" ? "Video Call" : "Audio Call" })
                     ] }),
                     /* @__PURE__ */ i("div", { className: "flex items-center gap-1", children: [
-                      D && /* @__PURE__ */ e(
+                      O && /* @__PURE__ */ e(
                         "button",
                         {
                           type: "button",
-                          onClick: O,
+                          onClick: F,
                           className: "w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors",
                           "aria-label": "Snap back to corner",
                           title: "Snap back to corner",
@@ -1178,7 +1178,7 @@ function $t({
                   className: m(j && "cursor-grab active:cursor-grabbing"),
                   onMouseDown: H,
                   children: /* @__PURE__ */ e(
-                    Fe,
+                    De,
                     {
                       state: t,
                       mode: n,
@@ -1213,7 +1213,7 @@ function $t({
                   }
                 ),
                 t === "active" && /* @__PURE__ */ e(
-                  De,
+                  Oe,
                   {
                     mode: n,
                     participants: r,
@@ -1370,8 +1370,8 @@ function Rt({
           j("HLS playback is not supported in this browser."), M(!1);
           return;
         }
-        const D = new B({ enableWorker: !0 });
-        p.current = D, D.attachMedia(k), D.on(B.Events.MEDIA_ATTACHED, () => D.loadSource(t)), D.on(B.Events.ERROR, (ee, W) => {
+        const O = new B({ enableWorker: !0 });
+        p.current = O, O.attachMedia(k), O.on(B.Events.MEDIA_ATTACHED, () => O.loadSource(t)), O.on(B.Events.ERROR, (ee, W) => {
           W.fatal && (j(`HLS error: ${W.type}`), l?.(new Error(`HLS fatal: ${W.type}`)));
         });
       } catch (B) {
@@ -1400,7 +1400,7 @@ function Rt({
     if (!C) return;
     const B = Number(k.target.value);
     C.volume = B, b(B);
-  }, F = (k) => {
+  }, D = (k) => {
     const C = h.current;
     if (!C) return;
     const B = Number(k.target.value);
@@ -1408,7 +1408,7 @@ function Rt({
   }, H = () => {
     const k = h.current;
     k && (document.fullscreenElement ? document.exitFullscreen() : k.requestFullscreen?.());
-  }, O = q(
+  }, F = q(
     () => v > 0 ? Math.min(100, f / v * 100) : 0,
     [f, v]
   );
@@ -1454,7 +1454,7 @@ function Rt({
             value: f,
             onChange: I,
             className: "flex-1 h-1 accent-white/90 cursor-pointer",
-            style: { "--progress": `${O}%` }
+            style: { "--progress": `${F}%` }
           }
         ),
         /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12 text-right", children: ie(v) })
@@ -1493,7 +1493,7 @@ function Rt({
           "select",
           {
             value: y,
-            onChange: F,
+            onChange: D,
             className: "bg-white/10 hover:bg-white/20 text-white text-xs rounded px-2 py-1 border-0 outline-none",
             "aria-label": "Playback speed",
             children: [
@@ -1828,7 +1828,7 @@ function Xe() {
     return null;
   }
 }
-function Dt({
+function Ot({
   localStream: t,
   isMuted: n,
   threshold: r = -45,
@@ -1927,7 +1927,7 @@ function de({
         v?.name === "NotAllowedError" && d("paused-by-autoplay");
       });
     }, f = () => {
-      s.srcObject = t, u();
+      s.srcObject = null, s.srcObject = t, u();
     };
     return s.addEventListener("play", h), s.addEventListener("ended", p), s.addEventListener("pause", g), t.addEventListener("addtrack", f), t.addEventListener("removetrack", f), u(), () => {
       s.removeEventListener("play", h), s.removeEventListener("ended", p), s.removeEventListener("pause", g), t.removeEventListener("addtrack", f), t.removeEventListener("removetrack", f), r && r.current === s && (r.current = null);
@@ -1954,7 +1954,7 @@ function tt() {
     }
   });
 }
-function Ft({
+function Dt({
   chipLabel: t = "Tap to unmute",
   chipClassName: n,
   wrapperClassName: r,
@@ -1997,7 +1997,7 @@ function Ft({
     ) })
   ] });
 }
-function Ot({
+function Ft({
   stream: t,
   displayName: n,
   cameraOn: r,
@@ -2606,12 +2606,12 @@ function Gt({
   );
 }
 export {
-  Ft as A,
+  Dt as A,
   jt as B,
   Ie as C,
   At as D,
   qe as E,
-  Dt as F,
+  Ot as F,
   Qe as G,
   Jt as H,
   Gt as M,
@@ -2638,7 +2638,7 @@ export {
   zt as o,
   Rt as p,
   Ye as q,
-  Ot as r,
+  Ft as r,
   Ht as s,
   st as t,
   St as u,

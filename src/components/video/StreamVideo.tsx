@@ -65,11 +65,13 @@ export function StreamVideo({
     };
 
     // Chrome doesn't paint frames from tracks added after a <video> is
-    // already playing — re-pointing srcObject and calling play() forces
-    // the renderer to pick up the late track. Hit path: WHEP delivers
-    // audio first → srcObject bound → play() succeeds → video track
-    // arrives via stream.addTrack() → tile would stay black without this.
+    // already playing, and `el.srcObject = sameStream` is a no-op — so
+    // we have to null first to break the reference, then rebind. Hit
+    // path: WHEP delivers audio first → srcObject bound → play()
+    // succeeds → video track arrives via stream.addTrack() → tile
+    // would stay black without this.
     const handleStreamMutation = () => {
+      el.srcObject = null;
       el.srcObject = stream;
       tryPlay();
     };
