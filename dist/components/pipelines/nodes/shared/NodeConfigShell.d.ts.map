@@ -1,1 +1,0 @@
-{"version":3,"file":"NodeConfigShell.d.ts","sourceRoot":"","sources":["../../../../../src/components/pipelines/nodes/shared/NodeConfigShell.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,OAAO,CAAC;AAGvC,MAAM,WAAW,oBAAoB;IACnC,QAAQ,EAAE,SAAS,CAAC;IACpB,SAAS,CAAC,EAAE,MAAM,CAAC;CACpB;AAED,MAAM,CAAC,OAAO,UAAU,eAAe,CAAC,EAAE,QAAQ,EAAE,SAAS,EAAE,EAAE,oBAAoB,2CAMpF"}

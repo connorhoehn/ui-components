@@ -51,28 +51,42 @@ export function StreamVideo({
     const handlePlay = () => emit('playing');
     const handleEnded = () => emit('ended');
     const handlePause = () => {
-      // A pause that isn't an end is either a user pause or an autoplay
-      // rejection. The play().catch below distinguishes the autoplay
-      // case explicitly; a bare pause event after a successful play is
-      // a user pause and we don't model it as a separate state today.
       if (el.ended) emit('ended');
+    };
+
+    const tryPlay = () => {
+      const result = el.play();
+      if (result && typeof result.catch === 'function') {
+        result.catch((err: unknown) => {
+          const name = (err as { name?: string } | null)?.name;
+          if (name === 'NotAllowedError') emit('paused-by-autoplay');
+        });
+      }
+    };
+
+    // Chrome doesn't paint frames from tracks added after a <video> is
+    // already playing — re-pointing srcObject and calling play() forces
+    // the renderer to pick up the late track. Hit path: WHEP delivers
+    // audio first → srcObject bound → play() succeeds → video track
+    // arrives via stream.addTrack() → tile would stay black without this.
+    const handleStreamMutation = () => {
+      el.srcObject = stream;
+      tryPlay();
     };
     el.addEventListener('play', handlePlay);
     el.addEventListener('ended', handleEnded);
     el.addEventListener('pause', handlePause);
+    stream.addEventListener('addtrack', handleStreamMutation);
+    stream.addEventListener('removetrack', handleStreamMutation);
 
-    const result = el.play();
-    if (result && typeof result.catch === 'function') {
-      result.catch((err: unknown) => {
-        const name = (err as { name?: string } | null)?.name;
-        if (name === 'NotAllowedError') emit('paused-by-autoplay');
-      });
-    }
+    tryPlay();
 
     return () => {
       el.removeEventListener('play', handlePlay);
       el.removeEventListener('ended', handleEnded);
       el.removeEventListener('pause', handlePause);
+      stream.removeEventListener('addtrack', handleStreamMutation);
+      stream.removeEventListener('removetrack', handleStreamMutation);
       if (videoRef && videoRef.current === el) videoRef.current = null;
     };
   }, [stream, videoRef]);
