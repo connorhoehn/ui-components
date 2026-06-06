@@ -20,6 +20,7 @@ import ActionConfig from '../nodes/action/ActionConfig';
 import ForkConfig from '../nodes/fork/ForkConfig';
 import JoinConfig from '../nodes/join/JoinConfig';
 import ApprovalConfig from '../nodes/approval/ApprovalConfig';
+import ScatterConfig from '../nodes/scatter/ScatterConfig';
 import docsContent from '../nodes/docsContent';
 
 // ---------------------------------------------------------------------------
@@ -117,6 +118,11 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
     name: 'Save Image',
     docs: 'Writes a produced image to a named file in the artifact store. Configure the source image path and output filename template.',
   },
+  scatter: {
+    icon: '🔀',
+    name: 'Scatter',
+    docs: 'Fans out over a collection — runs downstream nodes once per item in the scatter set.',
+  },
 };
 
 type Tab = 'config' | 'runs' | 'docs';
@@ -163,6 +169,7 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   'ag-ui-output': PlaceholderConfig,
   'image-source': PlaceholderConfig,
   'image:save': PlaceholderConfig,
+  scatter: ScatterConfig as unknown as AnyConfig,
 };
 
 function renderConfig(

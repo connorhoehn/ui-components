@@ -29,7 +29,8 @@ export type NodeType =
   | 'policy'
   | 'ag-ui-output'
   | 'image-source'
-  | 'image:save';
+  | 'image:save'
+  | 'scatter';
 
 export type TriggerType =
   | 'manual'
@@ -273,6 +274,25 @@ export interface ImageSaveNodeData {
   filenameTemplate?: string;
 }
 
+export interface ScatterNodeData {
+  type: 'scatter';
+  /**
+   * JSONPath into pipeline context that resolves to an array. Each element
+   * becomes one scatter arm. E.g. `$.steps.visionAnalyze.output.regions`.
+   */
+  itemsPath: string;
+  /**
+   * Key written to each per-arm context (default: 'item'). Downstream nodes
+   * read `$.scatter.<itemAlias>` to get the per-arm payload.
+   */
+  itemAlias?: string;
+  /**
+   * Maximum number of arms executing concurrently (default: 4). Guards
+   * against saturating Anthropic rate limits or the Sharp thread pool.
+   */
+  maxConcurrency?: number;
+}
+
 export type NodeData =
   | TriggerNodeData
   | LLMNodeData
@@ -291,7 +311,8 @@ export type NodeData =
   | PolicyNodeData
   | AgUiOutputNodeData
   | ImageSourceNodeData
-  | ImageSaveNodeData;
+  | ImageSaveNodeData
+  | ScatterNodeData;
 
 // ---------------------------------------------------------------------------
 // Definition (template) — persisted, versioned, published
