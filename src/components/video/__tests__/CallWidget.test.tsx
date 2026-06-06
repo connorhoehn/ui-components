@@ -120,3 +120,41 @@ describe('CallWidget — state composition', () => {
     expect(screen.getByLabelText('Expand call widget')).toBeInTheDocument();
   });
 });
+
+describe('CallWidget — onExpand prop', () => {
+  it('Expand button not rendered when onExpand is undefined', () => {
+    const { queryByTestId } = render(
+      <CallWidget state="active" mode="video" participants={[p('alice', 'Alice')]} />,
+    );
+    expect(queryByTestId('call-widget-expand-button')).toBeNull();
+  });
+
+  it('Expand button rendered when onExpand is provided', () => {
+    const { getByTestId } = render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('alice', 'Alice')]}
+        onExpand={vi.fn()}
+      />,
+    );
+    const btn = getByTestId('call-widget-expand-button');
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveAttribute('aria-label', 'Expand to window');
+    expect(btn).toHaveAttribute('title', 'Expand');
+  });
+
+  it('clicking the Expand button fires onExpand', () => {
+    const onExpand = vi.fn();
+    const { getByTestId } = render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('alice', 'Alice')]}
+        onExpand={onExpand}
+      />,
+    );
+    getByTestId('call-widget-expand-button').click();
+    expect(onExpand).toHaveBeenCalledTimes(1);
+  });
+});
