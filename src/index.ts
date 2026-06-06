@@ -13,13 +13,19 @@ export * from './theme';
 export * from './api';
 export * from './renderers';
 
-// ── Form primitives (Phase 5) ──
+// ── Form primitives (Phase 5 + Phase 6) ──
 export { Input } from './components/forms/Input';
 export type { InputProps, InputSize, InputType } from './components/forms/Input';
 export { Select } from './components/forms/Select';
 export type { SelectProps, SelectSize, SelectOption } from './components/forms/Select';
 export { Textarea } from './components/forms/Textarea';
 export type { TextareaProps } from './components/forms/Textarea';
+export { JsonPathInput } from './components/forms/JsonPathInput';
+export type { JsonPathInputProps, JsonPathSample } from './components/forms/JsonPathInput';
+export { NumberInput } from './components/forms/NumberInput';
+export type { NumberInputProps } from './components/forms/NumberInput';
+export { RadioGroup } from './components/forms/RadioGroup';
+export type { RadioGroupProps, RadioOption } from './components/forms/RadioGroup';
 
 // ── Image primitives (Phase 5) ──
 export { ImageThumbnail } from './components/image/ImageThumbnail';

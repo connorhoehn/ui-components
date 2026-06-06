@@ -19,6 +19,8 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
   suffix?: ReactNode;
   /** When true, applies a danger-colored border. */
   invalid?: boolean;
+  /** When true, renders the input value in a monospace font (e.g. JSONPath, code). */
+  mono?: boolean;
   'data-testid'?: string;
 }
 
@@ -40,6 +42,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     suffix,
     invalid = false,
     disabled = false,
+    mono = false,
     className,
     'data-testid': testId,
     ...rest
@@ -65,6 +68,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           invalid
             ? 'border-red-500 focus:border-red-500 focus:ring-red-500/40'
             : 'border-slate-300',
+          mono && 'font-mono',
           sizeClasses[size],
           className,
         )}
@@ -108,6 +112,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           hasPrefix ? 'pl-0' : sizeClasses[size].split(' ')[1],
           hasSuffix ? 'pr-0' : sizeClasses[size].split(' ')[2],
           size === 'sm' ? 'h-7 text-[12px]' : 'h-9 text-[13px]',
+          mono && 'font-mono',
           className,
         )}
         {...rest}
