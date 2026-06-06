@@ -351,6 +351,257 @@ const docsContent: Record<NodeType, ReactNode> = {
       <p>One input <code>in</code>. One output <code>out</code> that fires once per item in the scatter collection.</p>
     </>
   ),
+
+  'image:resize': (
+    <>
+      <h4>What it does</h4>
+      <p>Resizes an image to the target dimensions using sharp.resize().</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>width</code> / <code>height</code> — target dimensions in pixels.</li>
+        <li><code>fit</code> — <code>cover</code>, <code>contain</code>, <code>fill</code>, <code>inside</code>, or <code>outside</code> (default: <code>cover</code>).</li>
+        <li><code>background</code> — hex fill colour used by <code>contain</code> / <code>inside</code> when padding is needed.</li>
+        <li><code>withoutEnlargement</code> — skip resize if image is already smaller than target.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:transform': (
+    <>
+      <h4>What it does</h4>
+      <p>Applies a sequential chain of geometric operations to an image.</p>
+      <h4>Operations</h4>
+      <ul>
+        <li><code>rotate</code> — rotate by degrees (e.g. 90, 180, 270).</li>
+        <li><code>flip</code> — mirror vertically.</li>
+        <li><code>flop</code> — mirror horizontally.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:format-convert': (
+    <>
+      <h4>What it does</h4>
+      <p>Converts the image to a new format using sharp.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>format</code> — target format: <code>jpeg</code>, <code>png</code>, <code>webp</code>, <code>avif</code>, <code>tiff</code>, <code>gif</code>.</li>
+        <li><code>quality</code> — 1–100 for lossy formats.</li>
+        <li><code>lossless</code> — force lossless for WebP/AVIF.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:sharpen': (
+    <>
+      <h4>What it does</h4>
+      <p>Applies unsharp mask sharpening via sharp.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sigma</code> — Gaussian sigma (0.5–3). Controls radius of the blur before differencing.</li>
+        <li><code>m1</code> — flat area threshold (default 1.0).</li>
+        <li><code>m2</code> — jagged area threshold (default 2.0).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:watermark': (
+    <>
+      <h4>What it does</h4>
+      <p>Composites an overlay image (watermark / logo) atop the source.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>overlayImageId</code> — the watermark image stored in the blob store.</li>
+        <li><code>gravity</code> — placement: <code>northwest</code>, <code>north</code>, <code>northeast</code>, <code>west</code>, <code>center</code>, <code>east</code>, <code>southwest</code>, <code>south</code>, <code>southeast</code>.</li>
+        <li><code>opacity</code> — 0.0–1.0 (default 1.0).</li>
+        <li><code>offsetX</code> / <code>offsetY</code> — pixel nudge from gravity anchor.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:crop': (
+    <>
+      <h4>What it does</h4>
+      <p>Crops a rectangular region from the source image using a bounding box resolved from pipeline context.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceImagePath</code> — JSONPath to the source imageId (default: <code>$.trigger.imageRef</code>).</li>
+        <li><code>bboxPath</code> — JSONPath to a <code>{'{ x, y, width, height }'}</code> object in context.</li>
+        <li><code>materialize</code> — if true, saves the cropped image to the blob store; otherwise returns inline.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>.</p>
+    </>
+  ),
+
+  'image:adjust-bw': (
+    <>
+      <h4>What it does</h4>
+      <p>Converts a colour image to greyscale with an adjustable contrast.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>algorithm</code> — <code>luminosity</code> (default), <code>average</code>, or <code>lightness</code>.</li>
+        <li><code>contrast</code> — multiplier applied after greyscale conversion (default 1.0).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:adjust-layer': (
+    <>
+      <h4>What it does</h4>
+      <p>Applies a composable stack of colour and filter adjustments in sequence.</p>
+      <h4>Layer kinds</h4>
+      <ul>
+        <li><code>brightness</code> / <code>contrast</code> / <code>saturation</code> — multiplicative factor (1.0 = no change).</li>
+        <li><code>hue</code> — degrees to rotate the hue wheel.</li>
+        <li><code>blur</code> — Gaussian blur radius in pixels.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:vision-analyze': (
+    <>
+      <h4>What it does</h4>
+      <p>Analyzes an image with a Claude vision model. Supports free-form caption mode (leave schema blank) or structured JSON extraction (provide a JSON Schema).</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>imageRefPath</code> — JSONPath to the imageId (default: <code>$.trigger.imageRef</code>).</li>
+        <li><code>userPrompt</code> — required. What to ask the model about the image.</li>
+        <li><code>outputSchema</code> — optional JSON Schema; presence switches to structured extraction mode.</li>
+        <li><code>model</code> — default <code>claude-sonnet-4-6</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>.</p>
+    </>
+  ),
+
+  'image:vision-classify': (
+    <>
+      <h4>What it does</h4>
+      <p>Classifies an image into one of a configured label set.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>labels</code> — array of candidate labels (e.g. <code>['cat', 'dog', 'bird']</code>).</li>
+        <li><code>model</code> — default <code>claude-haiku-4-5</code>.</li>
+      </ul>
+      <h4>Output</h4>
+      <p>Produces <code>{'{ label, confidence }'}</code> in context.</p>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:vision-describe': (
+    <>
+      <h4>What it does</h4>
+      <p>Generates a natural-language caption for an image via Claude Haiku.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>imageRefPath</code> — JSONPath to the imageId.</li>
+        <li><code>userPrompt</code> — optional override (default: describe the image).</li>
+        <li><code>systemPrompt</code> — optional system context.</li>
+        <li><code>maxOutputTokens</code> — cap on response length.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:vision-tag': (
+    <>
+      <h4>What it does</h4>
+      <p>Extracts ranked tags from an image. Open-vocabulary or guided by a candidate tag list.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>candidateTags</code> — optional array to guide tagging. Leave blank for open-vocabulary.</li>
+        <li><code>maxTags</code> — maximum number of tags to return (default 10).</li>
+        <li><code>model</code> — default <code>claude-haiku-4-5</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:vision-extract-text': (
+    <>
+      <h4>What it does</h4>
+      <p>Extracts text from an image via Claude vision (OCR).</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>imageRefPath</code> — JSONPath to the imageId.</li>
+        <li><code>model</code> — default <code>claude-sonnet-4-6</code>.</li>
+        <li><code>systemPrompt</code> — optional instruction for the extraction task.</li>
+        <li><code>maxOutputTokens</code> — response length cap.</li>
+      </ul>
+      <h4>Output</h4>
+      <p>Produces <code>{'{ text, lines }'}</code> in context.</p>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:generate': (
+    <>
+      <h4>What it does</h4>
+      <p>Generates images from a text prompt using Amazon Bedrock Titan Image Generator.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>prompt</code> — required. Describes what to generate.</li>
+        <li><code>model</code> — default <code>amazon.titan-image-generator-v1</code>.</li>
+        <li><code>width</code> / <code>height</code> — output dimensions.</li>
+        <li><code>seed</code> — optional for reproducible generation.</li>
+        <li><code>numImages</code> — 1–4 images to produce.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:variation': (
+    <>
+      <h4>What it does</h4>
+      <p>Generates variations of a source image using Nova Canvas. Always fans out — each variation becomes a separate downstream arm.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceImagePath</code> — JSONPath to the source imageId.</li>
+        <li><code>numVariations</code> — 1–8 variations to generate (default 1).</li>
+        <li><code>similarity</code> — 0.0–1.0 how closely each variation resembles the source (default 0.7).</li>
+        <li><code>model</code> — default <code>amazon.nova-canvas-v1:0</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code> (fires once per variation), error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:edit-prompt': (
+    <>
+      <h4>What it does</h4>
+      <p>Inpaints or outpaints a region of an image using Nova Canvas.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>prompt</code> — required. Describes what to generate in the edited region.</li>
+        <li><code>sourceImagePath</code> — JSONPath to the source imageId.</li>
+        <li><code>maskImagePath</code> — optional JSONPath to a mask imageId (white = edit, black = preserve). Omit for outpainting.</li>
+        <li><code>model</code> — default <code>amazon.nova-canvas-v1:0</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Input <code>in</code>, output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
 };
 
 export default docsContent;

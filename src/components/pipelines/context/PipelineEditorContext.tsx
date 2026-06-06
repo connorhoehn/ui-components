@@ -177,6 +177,44 @@ function defaultNodeData(type: NodeType): NodeData {
         eventType: 'TEXT_MESSAGE_CONTENT',
         terminal: true,
       };
+    case 'image-source':
+      return { type: 'image-source' };
+    case 'image:save':
+      return { type: 'image:save' };
+    case 'scatter':
+      return { type: 'scatter', itemsPath: '' };
+    case 'image:resize':
+      return { type: 'image:resize' };
+    case 'image:transform':
+      return { type: 'image:transform', operations: [] };
+    case 'image:format-convert':
+      return { type: 'image:format-convert', format: 'jpeg' };
+    case 'image:sharpen':
+      return { type: 'image:sharpen' };
+    case 'image:watermark':
+      return { type: 'image:watermark', overlayImageId: '' };
+    case 'image:crop':
+      return { type: 'image:crop' };
+    case 'image:adjust-bw':
+      return { type: 'image:adjust-bw' };
+    case 'image:adjust-layer':
+      return { type: 'image:adjust-layer', layers: [] };
+    case 'image:vision-analyze':
+      return { type: 'image:vision-analyze', userPrompt: '', imageRefPath: '$.trigger.imageRef' };
+    case 'image:vision-classify':
+      return { type: 'image:vision-classify', labels: [], imageRefPath: '$.trigger.imageRef' };
+    case 'image:vision-describe':
+      return { type: 'image:vision-describe', imageRefPath: '$.trigger.imageRef', userPrompt: 'Describe this image.' };
+    case 'image:vision-tag':
+      return { type: 'image:vision-tag', imageRefPath: '$.trigger.imageRef' };
+    case 'image:vision-extract-text':
+      return { type: 'image:vision-extract-text', imageRefPath: '$.trigger.imageRef' };
+    case 'image:generate':
+      return { type: 'image:generate', prompt: '' };
+    case 'image:variation':
+      return { type: 'image:variation' };
+    case 'image:edit-prompt':
+      return { type: 'image:edit-prompt', prompt: '' };
   }
 }
 

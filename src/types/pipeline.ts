@@ -30,7 +30,27 @@ export type NodeType =
   | 'ag-ui-output'
   | 'image-source'
   | 'image:save'
-  | 'scatter';
+  | 'scatter'
+  // Sharp transform nodes
+  | 'image:resize'
+  | 'image:transform'
+  | 'image:format-convert'
+  | 'image:sharpen'
+  | 'image:watermark'
+  // Crop / adjust nodes
+  | 'image:crop'
+  | 'image:adjust-bw'
+  | 'image:adjust-layer'
+  // Vision analysis
+  | 'image:vision-analyze'
+  | 'image:vision-classify'
+  | 'image:vision-describe'
+  | 'image:vision-tag'
+  | 'image:vision-extract-text'
+  // Generative AI
+  | 'image:generate'
+  | 'image:variation'
+  | 'image:edit-prompt';
 
 export type TriggerType =
   | 'manual'
@@ -293,6 +313,190 @@ export interface ScatterNodeData {
   maxConcurrency?: number;
 }
 
+// ---------------------------------------------------------------------------
+// BBox — shared by image:crop and step output
+// ---------------------------------------------------------------------------
+
+export interface BBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+// ---------------------------------------------------------------------------
+// Sharp transform node data interfaces
+// ---------------------------------------------------------------------------
+
+export type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+
+export interface ImageResizeNodeData {
+  type: 'image:resize';
+  sourceImagePath?: string;
+  width?: number;
+  height?: number;
+  fit?: ResizeFit;
+  withoutEnlargement?: boolean;
+  background?: string;
+}
+
+export type GeometricOpRotate = { op: 'rotate'; degrees: number; background?: string; trimAfter?: boolean };
+export type GeometricOpFlip  = { op: 'flip' };
+export type GeometricOpFlop  = { op: 'flop' };
+export type GeometricOp = GeometricOpRotate | GeometricOpFlip | GeometricOpFlop;
+
+export interface ImageTransformNodeData {
+  type: 'image:transform';
+  sourceImagePath?: string;
+  operations: GeometricOp[];
+}
+
+export type ImageFormat = 'jpeg' | 'png' | 'webp' | 'avif';
+
+export interface ImageFormatConvertNodeData {
+  type: 'image:format-convert';
+  sourceImagePath?: string;
+  format: ImageFormat;
+  quality?: number;
+  lossless?: boolean;
+  stripMetadata?: boolean;
+}
+
+export interface ImageSharpenNodeData {
+  type: 'image:sharpen';
+  sourceImagePath?: string;
+  sigma?: number;
+  m1?: number;
+  m2?: number;
+}
+
+export type WatermarkGravity =
+  | 'northwest' | 'north' | 'northeast'
+  | 'west'      | 'center' | 'east'
+  | 'southwest' | 'south' | 'southeast';
+
+export interface ImageWatermarkNodeData {
+  type: 'image:watermark';
+  sourceImagePath?: string;
+  overlayImageId: string;
+  gravity?: WatermarkGravity;
+  opacity?: number;
+  offsetX?: number;
+  offsetY?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Crop / adjust node data interfaces
+// ---------------------------------------------------------------------------
+
+export interface ImageCropNodeData {
+  type: 'image:crop';
+  sourceImagePath?: string;
+  bboxPath?: string;
+  bbox?: BBox;
+  materialize?: boolean;
+}
+
+export interface ImageAdjustBwNodeData {
+  type: 'image:adjust-bw';
+  sourceImagePath?: string;
+  algorithm?: 'luminosity' | 'average' | 'desaturate';
+  contrast?: number;
+}
+
+export type AdjustLayer =
+  | { kind: 'brightness'; value: number }
+  | { kind: 'contrast'; value: number }
+  | { kind: 'saturation'; value: number }
+  | { kind: 'hue'; degrees: number }
+  | { kind: 'blur'; radiusPx: number };
+
+export interface ImageAdjustLayerNodeData {
+  type: 'image:adjust-layer';
+  sourceImagePath?: string;
+  layers: AdjustLayer[];
+}
+
+// ---------------------------------------------------------------------------
+// Vision analysis node data interfaces
+// ---------------------------------------------------------------------------
+
+export interface ImageVisionAnalyzeNodeData {
+  type: 'image:vision-analyze';
+  model?: string;
+  systemPrompt?: string;
+  userPrompt: string;
+  imageRefPath: string;
+  outputSchema?: Record<string, unknown>;
+  maxOutputTokens?: number;
+}
+
+export interface ImageVisionClassifyNodeData {
+  type: 'image:vision-classify';
+  model?: string;
+  imageRefPath: string;
+  labels: string[];
+  systemPrompt?: string;
+  maxOutputTokens?: number;
+}
+
+export interface ImageVisionDescribeNodeData {
+  type: 'image:vision-describe';
+  model?: string;
+  imageRefPath: string;
+  userPrompt: string;
+  systemPrompt?: string;
+  maxOutputTokens?: number;
+}
+
+export interface ImageVisionTagNodeData {
+  type: 'image:vision-tag';
+  model?: string;
+  imageRefPath: string;
+  candidateTags?: string[];
+  maxTags?: number;
+  systemPrompt?: string;
+  maxOutputTokens?: number;
+}
+
+export interface ImageVisionExtractTextNodeData {
+  type: 'image:vision-extract-text';
+  model?: string;
+  imageRefPath: string;
+  systemPrompt?: string;
+  maxOutputTokens?: number;
+}
+
+// ---------------------------------------------------------------------------
+// Generative AI node data interfaces
+// ---------------------------------------------------------------------------
+
+export interface ImageGenerateNodeData {
+  type: 'image:generate';
+  prompt: string;
+  model?: string;
+  width?: number;
+  height?: number;
+  seed?: number;
+  numImages?: number;
+}
+
+export interface ImageVariationNodeData {
+  type: 'image:variation';
+  sourceImagePath?: string;
+  numVariations?: number;
+  similarity?: number;
+  model?: string;
+}
+
+export interface ImageEditPromptNodeData {
+  type: 'image:edit-prompt';
+  sourceImagePath?: string;
+  maskImagePath?: string;
+  prompt: string;
+  model?: string;
+}
+
 export type NodeData =
   | TriggerNodeData
   | LLMNodeData
@@ -312,7 +516,27 @@ export type NodeData =
   | AgUiOutputNodeData
   | ImageSourceNodeData
   | ImageSaveNodeData
-  | ScatterNodeData;
+  | ScatterNodeData
+  // Sharp transforms
+  | ImageResizeNodeData
+  | ImageTransformNodeData
+  | ImageFormatConvertNodeData
+  | ImageSharpenNodeData
+  | ImageWatermarkNodeData
+  // Crop / adjust
+  | ImageCropNodeData
+  | ImageAdjustBwNodeData
+  | ImageAdjustLayerNodeData
+  // Vision analysis
+  | ImageVisionAnalyzeNodeData
+  | ImageVisionClassifyNodeData
+  | ImageVisionDescribeNodeData
+  | ImageVisionTagNodeData
+  | ImageVisionExtractTextNodeData
+  // Generative AI
+  | ImageGenerateNodeData
+  | ImageVariationNodeData
+  | ImageEditPromptNodeData;
 
 // ---------------------------------------------------------------------------
 // Definition (template) — persisted, versioned, published
@@ -471,6 +695,21 @@ export interface StepExecution {
   }>;
   // Approval-specific
   approvals?: ApprovalRecord[];
+  /**
+   * Vision-specific streaming data — populated as `image:vision-analyze`
+   * events arrive (pipeline:step:vision:*). `analyzed` flips to true once
+   * the model has finished outputting tokens.
+   */
+  vision?: {
+    response: string;
+    tokensIn?: number;
+    tokensOut?: number;
+    tokensSeen: number;
+    analyzed: boolean;
+    failure?: { reason: string; error: string };
+    imageId?: string;
+    costUsd?: number;
+  };
   /**
    * hub#2226: edit-and-continue patch history applied while the run was
    * paused at this step's breakpoint. Append-only at apply time;

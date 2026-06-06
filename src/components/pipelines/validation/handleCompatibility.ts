@@ -31,6 +31,22 @@ const OUTPUT_HANDLES: Record<NodeType, readonly string[] | 'fork'> = {
   'image-source': ['out'],
   'image:save': ['out', 'error'],
   scatter: ['out'],
+  'image:resize': ['out', 'error'],
+  'image:transform': ['out', 'error'],
+  'image:format-convert': ['out', 'error'],
+  'image:sharpen': ['out', 'error'],
+  'image:watermark': ['out', 'error'],
+  'image:crop': ['out'],
+  'image:adjust-bw': ['out', 'error'],
+  'image:adjust-layer': ['out', 'error'],
+  'image:vision-analyze': ['out'],
+  'image:vision-classify': ['out', 'error'],
+  'image:vision-describe': ['out', 'error'],
+  'image:vision-tag': ['out', 'error'],
+  'image:vision-extract-text': ['out', 'error'],
+  'image:generate': ['out', 'error'],
+  'image:variation': ['out', 'error'],
+  'image:edit-prompt': ['out', 'error'],
 };
 
 /** Valid input handle ids for each node type. `null` means the type has no input. */
@@ -54,6 +70,22 @@ const INPUT_HANDLES: Record<NodeType, readonly string[] | 'join' | null> = {
   'image-source': null, // image-source has no inputs — it is a source node
   'image:save': ['in'],
   scatter: ['in'],
+  'image:resize': ['in'],
+  'image:transform': ['in'],
+  'image:format-convert': ['in'],
+  'image:sharpen': ['in'],
+  'image:watermark': ['in'],
+  'image:crop': ['in'],
+  'image:adjust-bw': ['in'],
+  'image:adjust-layer': ['in'],
+  'image:vision-analyze': ['in'],
+  'image:vision-classify': ['in'],
+  'image:vision-describe': ['in'],
+  'image:vision-tag': ['in'],
+  'image:vision-extract-text': ['in'],
+  'image:generate': ['in'],
+  'image:variation': ['in'],
+  'image:edit-prompt': ['in'],
 };
 
 // ---------------------------------------------------------------------------

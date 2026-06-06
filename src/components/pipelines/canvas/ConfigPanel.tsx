@@ -21,6 +21,22 @@ import ForkConfig from '../nodes/fork/ForkConfig';
 import JoinConfig from '../nodes/join/JoinConfig';
 import ApprovalConfig from '../nodes/approval/ApprovalConfig';
 import ScatterConfig from '../nodes/scatter/ScatterConfig';
+import ResizeConfig from '../nodes/resize/ResizeConfig';
+import TransformGeoConfig from '../nodes/transform-geo/TransformGeoConfig';
+import FormatConvertConfig from '../nodes/format-convert/FormatConvertConfig';
+import SharpenConfig from '../nodes/sharpen/SharpenConfig';
+import WatermarkConfig from '../nodes/watermark/WatermarkConfig';
+import CropConfig from '../nodes/crop/CropConfig';
+import AdjustBwConfig from '../nodes/adjust-bw/AdjustBwConfig';
+import AdjustLayerConfig from '../nodes/adjust-layer/AdjustLayerConfig';
+import VisionConfig from '../nodes/vision/VisionConfig';
+import VisionClassifyConfig from '../nodes/vision-classify/VisionClassifyConfig';
+import VisionDescribeConfig from '../nodes/vision-describe/VisionDescribeConfig';
+import VisionTagConfig from '../nodes/vision-tag/VisionTagConfig';
+import VisionExtractTextConfig from '../nodes/vision-extract-text/VisionExtractTextConfig';
+import GenerateConfig from '../nodes/generate/GenerateConfig';
+import VariationConfig from '../nodes/variation/VariationConfig';
+import EditPromptConfig from '../nodes/edit-prompt/EditPromptConfig';
 import docsContent from '../nodes/docsContent';
 
 // ---------------------------------------------------------------------------
@@ -123,6 +139,86 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
     name: 'Scatter',
     docs: 'Fans out over a collection — runs downstream nodes once per item in the scatter set.',
   },
+  'image:resize': {
+    icon: '⥂',
+    name: 'Resize',
+    docs: 'Resize an image to target dimensions using sharp.resize(). Supports fit modes: cover, contain, fill, inside, outside.',
+  },
+  'image:transform': {
+    icon: '↻',
+    name: 'Transform (Geo)',
+    docs: 'Apply a chain of geometric operations — rotate, flip (vertical), flop (horizontal) — using sharp.',
+  },
+  'image:format-convert': {
+    icon: '⇌',
+    name: 'Format Convert',
+    docs: 'Convert image format (JPEG, PNG, WebP, AVIF, TIFF, GIF). Configure quality or lossless for supported formats.',
+  },
+  'image:sharpen': {
+    icon: '◈',
+    name: 'Sharpen',
+    docs: 'Sharpen an image using the unsharp mask algorithm. Configure sigma, m1, and m2 parameters.',
+  },
+  'image:watermark': {
+    icon: '⊕',
+    name: 'Watermark',
+    docs: 'Composite a watermark / overlay image atop the source. Configure gravity, opacity, and offset.',
+  },
+  'image:crop': {
+    icon: '✂',
+    name: 'Crop',
+    docs: 'Crop a region from the source image using a bounding box pulled from pipeline context via JSONPath.',
+  },
+  'image:adjust-bw': {
+    icon: '◐',
+    name: 'Adjust B/W',
+    docs: 'Convert an image to greyscale. Choose algorithm (luminosity, average, lightness) and contrast multiplier.',
+  },
+  'image:adjust-layer': {
+    icon: '𝍩',
+    name: 'Adjust Layers',
+    docs: 'Apply a composable stack of colour and filter adjustments — brightness, contrast, saturation, hue, blur.',
+  },
+  'image:vision-analyze': {
+    icon: '📷',
+    name: 'Vision Analyze',
+    docs: 'Analyze an image with a Claude vision model. Supports free-form caption mode and structured JSON extraction.',
+  },
+  'image:vision-classify': {
+    icon: '🏷',
+    name: 'Vision Classify',
+    docs: 'Classify an image into one of a configured label set. Returns label + confidence score.',
+  },
+  'image:vision-describe': {
+    icon: '💬',
+    name: 'Vision Describe',
+    docs: 'Generate a natural-language caption for an image via Claude Haiku. Supports custom system and user prompts.',
+  },
+  'image:vision-tag': {
+    icon: '🔖',
+    name: 'Vision Tag',
+    docs: 'Extract ranked tags from an image. Supports open-vocabulary tagging or a guided candidate-tag list.',
+  },
+  'image:vision-extract-text': {
+    icon: '📝',
+    name: 'Vision Extract Text',
+    docs: 'OCR / text extraction from an image via a Claude vision model. Returns extracted text lines.',
+  },
+  'image:generate': {
+    icon: '✦',
+    name: 'Generate Image',
+    docs: 'Generate images from a text prompt using Bedrock Titan Image Generator. Configure dimensions and image count.',
+  },
+  'image:variation': {
+    icon: '⊞',
+    name: 'Variation',
+    docs: 'Generate variations of a source image using Nova Canvas. Always fans out — each variation becomes a separate pipeline arm.',
+  },
+  'image:edit-prompt': {
+    icon: '✎',
+    name: 'Edit Prompt',
+    docs: 'Inpaint or outpaint a region of an image using Nova Canvas. Provide an optional mask (white = edit, black = preserve).',
+  },
 };
 
 type Tab = 'config' | 'runs' | 'docs';
@@ -170,6 +266,22 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   'image-source': PlaceholderConfig,
   'image:save': PlaceholderConfig,
   scatter: ScatterConfig as unknown as AnyConfig,
+  'image:resize': ResizeConfig as unknown as AnyConfig,
+  'image:transform': TransformGeoConfig as unknown as AnyConfig,
+  'image:format-convert': FormatConvertConfig as unknown as AnyConfig,
+  'image:sharpen': SharpenConfig as unknown as AnyConfig,
+  'image:watermark': WatermarkConfig as unknown as AnyConfig,
+  'image:crop': CropConfig as unknown as AnyConfig,
+  'image:adjust-bw': AdjustBwConfig as unknown as AnyConfig,
+  'image:adjust-layer': AdjustLayerConfig as unknown as AnyConfig,
+  'image:vision-analyze': VisionConfig as unknown as AnyConfig,
+  'image:vision-classify': VisionClassifyConfig as unknown as AnyConfig,
+  'image:vision-describe': VisionDescribeConfig as unknown as AnyConfig,
+  'image:vision-tag': VisionTagConfig as unknown as AnyConfig,
+  'image:vision-extract-text': VisionExtractTextConfig as unknown as AnyConfig,
+  'image:generate': GenerateConfig as unknown as AnyConfig,
+  'image:variation': VariationConfig as unknown as AnyConfig,
+  'image:edit-prompt': EditPromptConfig as unknown as AnyConfig,
 };
 
 function renderConfig(
