@@ -1262,6 +1262,22 @@ export declare interface StatusDotProps {
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
 
+export declare function StatusPill({ state, label, icon, size, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+
+export declare interface StatusPillProps {
+    state: StatusPillState;
+    label: string;
+    /** Optional icon placed to the left of the label. */
+    icon?: ReactNode;
+    size?: StatusPillSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type StatusPillSize = 'sm' | 'md';
+
+export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
+
 export declare interface SubNavItem {
     /** Path relative to the section root, e.g. "summary" or "crawl". For action
      *  items (onClick set), this is just used as a React key — provide something

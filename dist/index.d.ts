@@ -4,7 +4,9 @@ import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { ElementType } from 'react';
+import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { InputHTMLAttributes } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { JSX as JSX_2 } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
@@ -13,9 +15,12 @@ import { Observable } from 'lib0/observable';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { Ref } from 'react';
+import { RefAttributes } from 'react';
 import { RefObject } from 'react';
+import { SelectHTMLAttributes } from 'react';
 import { SVGProps } from 'react';
 import { TdHTMLAttributes } from 'react';
+import { TextareaHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';
@@ -2765,6 +2770,45 @@ export declare interface IdentityUser {
     updatedAt?: string;
 }
 
+export declare interface ImageSaveNodeData {
+    type: 'image:save';
+    /** JSONPath to the source imageId in context. */
+    sourceImagePath?: string;
+    /**
+     * Output filename template. Supports `{{scatter.item.label}}`,
+     * `{{scatter.index}}`, and `{{scatter.parentImageId}}` substitutions.
+     * Default: 'crop-{{scatter.index}}.png'.
+     */
+    filenameTemplate?: string;
+}
+
+export declare interface ImageSourceNodeData {
+    type: 'image-source';
+    /** imageId to inject into the pipeline context. */
+    imageId?: string;
+    /** Key under which the imageId is written to context. Default: 'imageRef'. */
+    outputKey?: string;
+}
+
+export declare function ImageThumbnail({ src, alt, size, aspectRatio, rounded, fallback, loading, className, 'data-testid': testId, }: ImageThumbnailProps): JSX.Element;
+
+export declare type ImageThumbnailAspect = 'square' | 'video' | 'auto';
+
+export declare interface ImageThumbnailProps {
+    src: string;
+    alt: string;
+    size?: ImageThumbnailSize;
+    aspectRatio?: ImageThumbnailAspect;
+    rounded?: boolean;
+    /** Rendered when the image fails to load. Defaults to a broken-image icon. */
+    fallback?: ReactNode;
+    loading?: 'lazy' | 'eager';
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type ImageThumbnailSize = 'sm' | 'md' | 'lg';
+
 declare interface IngestAuditEntry {
     auditId: string;
     createdAt: string;
@@ -2900,6 +2944,26 @@ export declare interface InlinePopoverProps {
     children: ReactNode;
 }
 
+export declare const Input: ForwardRefExoticComponent<InputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'prefix'> {
+    type?: InputType;
+    size?: InputSize;
+    /** Node rendered inside the left edge of the input (icon, currency symbol, etc.) */
+    prefix?: ReactNode;
+    /** Node rendered inside the right edge of the input (unit, clear button, etc.) */
+    suffix?: ReactNode;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    /** When true, renders the input value in a monospace font (e.g. JSONPath, code). */
+    mono?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type InputSize = 'sm' | 'md';
+
+export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search';
+
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 
 export declare type JoinMergeStrategy = 'deep-merge' | 'array-collect' | 'last-writer-wins';
@@ -2919,6 +2983,33 @@ export declare interface JsonPatchOp {
     path: string;
     value?: unknown;
     from?: string;
+}
+
+export declare const JsonPathInput: ForwardRefExoticComponent<JsonPathInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface JsonPathInputProps {
+    value: string;
+    onChange: (value: string) => void;
+    samples?: JsonPathSample[];
+    placeholder?: string;
+    invalid?: boolean;
+    errorMessage?: string;
+    disabled?: boolean;
+    size?: 'sm' | 'md';
+    /**
+     * When true, validate that value starts with '$.' on blur and surface the
+     * error via the errorMessage slot (caller receives the validated value
+     * unchanged — validation is display-only here).
+     */
+    enforcePrefix?: boolean;
+    'data-testid'?: string;
+}
+
+export declare interface JsonPathSample {
+    /** Short display label, e.g. '$.trigger.imageRef' */
+    label: string;
+    /** The value to paste into the input when clicked */
+    value: string;
 }
 
 declare interface KeyboardShortcut {
@@ -3465,9 +3556,30 @@ export declare interface NetworkQualityBadgeProps {
     style?: CSSProperties;
 }
 
-export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
+export declare function NodeCard({ icon, label, subtitle, status, statusLabel, body, selected, accentClass, className, onClick, }: NodeCardProps): JSX.Element;
 
-export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output';
+export declare interface NodeCardProps {
+    /** Emoji or short string icon for the node type. */
+    icon: string;
+    label: string;
+    subtitle?: string;
+    /** Maps to StatusPill state — drives the pill and border accent. */
+    status?: StatusPillState;
+    /** Status label shown in the pill. Defaults to a capitalized form of status. */
+    statusLabel?: string;
+    /** Body content slot (preview text, stats, etc.). */
+    body?: ReactNode;
+    /** Whether the card appears selected (elevated shadow). */
+    selected?: boolean;
+    /** Accent color for the left border strip (Tailwind bg-* class). */
+    accentClass?: string;
+    className?: string;
+    onClick?: () => void;
+}
+
+export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData;
+
+export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter';
 
 export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
@@ -3490,6 +3602,23 @@ export declare interface NotificationItem {
     icon?: string;
     /** Optional grouping / category label */
     category?: string;
+}
+
+export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface NumberInputProps {
+    value: number;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Rendered as a right-edge suffix: 'px' | '°' | '%' | … */
+    unit?: string;
+    placeholder?: string;
+    invalid?: boolean;
+    disabled?: boolean;
+    size?: 'sm' | 'md';
+    'data-testid'?: string;
 }
 
 declare type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
@@ -3761,6 +3890,30 @@ export declare interface PipelineEdge {
     /** 'in' or 'in-N' for Join. */
     targetHandle: string;
 }
+
+export declare interface PipelineEditorServices {
+    /**
+     * Resolve an imageId to a browser-loadable URL. Used by every node body
+     * that renders `<img src=...>` for a produced image (crop, adjust, save,
+     * generate, etc.). The host is responsible for any auth wrangling — the
+     * URL must work with a bare `<img>` tag (cookie session, signed URL,
+     * permissive route, etc.).
+     */
+    getImageUrl(imageId: string): string;
+    /**
+     * Optional upload helper used by image-source / image picker primitives.
+     * Hosts that mount an upload UI implement this against their backend.
+     * Nodes that just render produced images do NOT need this method.
+     */
+    uploadImage?(input: File | {
+        url: string;
+    }): Promise<PipelineUploadedImage>;
+}
+
+export declare function PipelineEditorServicesProvider({ services, children, }: {
+    services: PipelineEditorServices;
+    children: ReactNode;
+}): JSX.Element;
 
 /** Structured error body returned on bridge / framework failures. */
 export declare interface PipelineErrorBody {
@@ -4136,6 +4289,14 @@ export declare interface PipelineTriggerResponse {
     at: string;
 }
 
+export declare interface PipelineUploadedImage {
+    imageId: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    sizeBytes: number;
+}
+
 /**
  * Wire envelope that wraps every PipelineEventMap event as it crosses the
  * network boundary (mock adapter in Phase 1, WebSocket in Phase 4+). Carries
@@ -4460,6 +4621,27 @@ export declare interface QuickPromptGridProps {
     /** optional heading above, e.g. "Try asking:" */
     title?: string;
     className?: string;
+}
+
+export declare function RadioGroup<T extends string = string>({ name, value, onChange, options, disabled, orientation, 'data-testid': testId, }: RadioGroupProps<T>): JSX.Element;
+
+export declare interface RadioGroupProps<T extends string = string> {
+    /** Used as the HTML radio group name and as a stable ID base for labels. */
+    name: string;
+    value: T;
+    onChange: (value: T) => void;
+    options: RadioOption<T>[];
+    disabled?: boolean;
+    /** @default 'vertical' */
+    orientation?: 'vertical' | 'horizontal';
+    'data-testid'?: string;
+}
+
+export declare interface RadioOption<T extends string = string> {
+    value: T;
+    label: string;
+    /** Short caption rendered below the label in muted text. */
+    description?: string;
 }
 
 export declare interface RateInfo {
@@ -4896,6 +5078,25 @@ export declare interface RosterParticipant {
 
 export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
 
+export declare interface ScatterNodeData {
+    type: 'scatter';
+    /**
+     * JSONPath into pipeline context that resolves to an array. Each element
+     * becomes one scatter arm. E.g. `$.steps.visionAnalyze.output.regions`.
+     */
+    itemsPath: string;
+    /**
+     * Key written to each per-arm context (default: 'item'). Downstream nodes
+     * read `$.scatter.<itemAlias>` to get the per-arm payload.
+     */
+    itemAlias?: string;
+    /**
+     * Maximum number of arms executing concurrently (default: 4). Guards
+     * against saturating Anthropic rate limits or the Sharp thread pool.
+     */
+    maxConcurrency?: number;
+}
+
 /**
  * Horizontal progress-bar gauge for 0..1 scores. Used by the judge
  * composites for per-criterion + overall scores, but generic enough to be
@@ -5020,6 +5221,26 @@ export declare interface SegmentOption {
     value: string;
     icon?: ReactNode;
 }
+
+export declare const Select: ForwardRefExoticComponent<SelectProps & RefAttributes<HTMLSelectElement>>;
+
+export declare interface SelectOption {
+    value: string;
+    label: string;
+    disabled?: boolean;
+}
+
+export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+    options: SelectOption[];
+    /** Shown as a disabled placeholder option when no value is selected. */
+    placeholder?: string;
+    size?: SelectSize;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
+
+export declare type SelectSize = 'sm' | 'md';
 
 declare type SendMessage = (msg: Record<string, unknown>) => void;
 
@@ -5422,6 +5643,22 @@ export declare interface StatusDotProps {
 
 export declare type StatusDotSize = 'xs' | 'sm' | 'md';
 
+export declare function StatusPill({ state, label, icon, size, className, 'data-testid': testId, }: StatusPillProps): JSX.Element;
+
+export declare interface StatusPillProps {
+    state: StatusPillState;
+    label: string;
+    /** Optional icon placed to the left of the label. */
+    icon?: ReactNode;
+    size?: StatusPillSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare type StatusPillSize = 'sm' | 'md';
+
+export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
+
 export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps): JSX.Element;
 
 export declare interface StatusStripProps {
@@ -5476,6 +5713,23 @@ export declare interface StepExecution {
         /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
         firstTokenLatencyMs?: number;
     };
+    /**
+     * Image previews produced by steps that emit `pipeline:step:image:produced`
+     * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
+     * resolves through the host's `getImageUrl` service.
+     */
+    images?: Array<{
+        imageId: string;
+        width: number;
+        height: number;
+        mimeType: string;
+        bbox?: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        };
+    }>;
     approvals?: ApprovalRecord[];
     /**
      * hub#2226: edit-and-continue patch history applied while the run was
@@ -5791,6 +6045,22 @@ export declare interface TaskItem {
 
 /** Alias kept for clarity in contexts where "terminal log" reads better. */
 export declare const TerminalLog: typeof LogStream;
+
+export declare const Textarea: ForwardRefExoticComponent<TextareaProps & RefAttributes<HTMLTextAreaElement>>;
+
+export declare interface TextareaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'rows'> {
+    /** Fixed row count. Mutually exclusive with autoResize. */
+    rows?: number;
+    /** Minimum visible rows (used with autoResize). Default: 2. */
+    minRows?: number;
+    /** Maximum rows before the box scrolls (used with autoResize). */
+    maxRows?: number;
+    /** Grow to fit content automatically. Default: false. */
+    autoResize?: boolean;
+    /** When true, applies a danger-colored border. */
+    invalid?: boolean;
+    'data-testid'?: string;
+}
 
 declare interface TextSelectionData {
     start: number;
@@ -6773,6 +7043,14 @@ declare interface UseActivityBusReturn {
      isIdle: boolean;
  }
 
+ /**
+  * Returns the host-provided `getImageUrl(imageId): string` callback.
+  * Throws when called outside a provider — catches the "I forgot to mount
+  * the services provider" misuse at first render rather than first
+  * thumbnail.
+  */
+ export declare function useImageUrl(): (imageId: string) => string;
+
  export declare function useIngestAudit(filters?: IngestAuditFilters): UseIngestAuditResult;
 
  declare interface UseIngestAuditResult {
@@ -6910,6 +7188,8 @@ declare interface UseActivityBusReturn {
      error: string | null;
      refresh: () => Promise<void>;
  }
+
+ export declare function usePipelineEditorServices(): PipelineEditorServices;
 
  export declare function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePostsReturn;
 

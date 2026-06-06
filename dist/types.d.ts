@@ -701,6 +701,26 @@ export declare interface IdentityUser {
     updatedAt?: string;
 }
 
+export declare interface ImageSaveNodeData {
+    type: 'image:save';
+    /** JSONPath to the source imageId in context. */
+    sourceImagePath?: string;
+    /**
+     * Output filename template. Supports `{{scatter.item.label}}`,
+     * `{{scatter.index}}`, and `{{scatter.parentImageId}}` substitutions.
+     * Default: 'crop-{{scatter.index}}.png'.
+     */
+    filenameTemplate?: string;
+}
+
+export declare interface ImageSourceNodeData {
+    type: 'image-source';
+    /** imageId to inject into the pipeline context. */
+    imageId?: string;
+    /** Key under which the imageId is written to context. Default: 'imageRef'. */
+    outputKey?: string;
+}
+
 export declare interface IngestItem {
     itemId: string;
     sourceId: string;
@@ -868,9 +888,9 @@ export declare interface MfaSetupResult {
     backupCodes: string[];
 }
 
-export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
+export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData;
 
-export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output';
+export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter';
 
 export declare interface Participant {
     clientId: string;
@@ -1411,6 +1431,25 @@ export declare interface RetryPolicy {
 
 export declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
 
+export declare interface ScatterNodeData {
+    type: 'scatter';
+    /**
+     * JSONPath into pipeline context that resolves to an array. Each element
+     * becomes one scatter arm. E.g. `$.steps.visionAnalyze.output.regions`.
+     */
+    itemsPath: string;
+    /**
+     * Key written to each per-arm context (default: 'item'). Downstream nodes
+     * read `$.scatter.<itemAlias>` to get the per-arm payload.
+     */
+    itemAlias?: string;
+    /**
+     * Maximum number of arms executing concurrently (default: 4). Guards
+     * against saturating Anthropic rate limits or the Sharp thread pool.
+     */
+    maxConcurrency?: number;
+}
+
 export declare interface Section {
     id: string;
     type: 'summary' | 'tasks' | 'decisions' | 'notes' | 'custom';
@@ -1511,6 +1550,23 @@ export declare interface StepExecution {
         /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
         firstTokenLatencyMs?: number;
     };
+    /**
+     * Image previews produced by steps that emit `pipeline:step:image:produced`
+     * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
+     * resolves through the host's `getImageUrl` service.
+     */
+    images?: Array<{
+        imageId: string;
+        width: number;
+        height: number;
+        mimeType: string;
+        bbox?: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        };
+    }>;
     approvals?: ApprovalRecord[];
     /**
      * hub#2226: edit-and-continue patch history applied while the run was

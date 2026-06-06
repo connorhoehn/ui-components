@@ -363,6 +363,43 @@ export declare function imageOverlayPropsFrom(result: VisionResult): {
     objects: VisionObject[] | undefined;
 };
 
+declare interface ImageSaveNodeData {
+    type: 'image:save';
+    /** JSONPath to the source imageId in context. */
+    sourceImagePath?: string;
+    /**
+     * Output filename template. Supports `{{scatter.item.label}}`,
+     * `{{scatter.index}}`, and `{{scatter.parentImageId}}` substitutions.
+     * Default: 'crop-{{scatter.index}}.png'.
+     */
+    filenameTemplate?: string;
+}
+
+export declare function ImageSourceConfig({ data, onChange }: ImageSourceConfigProps): JSX.Element;
+
+export declare interface ImageSourceConfigProps {
+    data: ImageSourceNodeData;
+    onChange: (patch: Partial<ImageSourceNodeData>) => void;
+}
+
+declare type ImageSourceData = ImageSourceNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ImageSourceFlowNode = Node_2<ImageSourceData, 'image-source'>;
+
+export declare function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>): JSX.Element;
+
+declare interface ImageSourceNodeData {
+    type: 'image-source';
+    /** imageId to inject into the pipeline context. */
+    imageId?: string;
+    /** Key under which the imageId is written to context. Default: 'imageRef'. */
+    outputKey?: string;
+}
+
 /**
  * Renders a source image with overlaid bounding boxes for detected people
  * (indigo) and objects (amber). Boxes scale with the rendered image size
@@ -688,11 +725,11 @@ declare interface MemoryNodeData {
 
 declare type MemoryScope = 'session' | 'long-term';
 
-declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData;
+declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData;
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
 
-declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output';
+declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter';
 
 export declare const nodeTypes: {
     readonly trigger: typeof TriggerNode;
@@ -711,6 +748,8 @@ export declare const nodeTypes: {
     readonly guardrail: typeof GuardrailNode;
     readonly policy: typeof PolicyNode;
     readonly 'ag-ui-output': typeof AgUiOutputNode;
+    readonly 'image-source': typeof ImageSourceNode;
+    readonly 'image:save': typeof SaveNode;
 };
 
 /**
@@ -822,6 +861,30 @@ export declare interface PipelineEditorProviderProps {
     pipelineId: string;
     children: default_2.ReactNode;
 }
+
+export declare interface PipelineEditorServices {
+    /**
+     * Resolve an imageId to a browser-loadable URL. Used by every node body
+     * that renders `<img src=...>` for a produced image (crop, adjust, save,
+     * generate, etc.). The host is responsible for any auth wrangling — the
+     * URL must work with a bare `<img>` tag (cookie session, signed URL,
+     * permissive route, etc.).
+     */
+    getImageUrl(imageId: string): string;
+    /**
+     * Optional upload helper used by image-source / image picker primitives.
+     * Hosts that mount an upload UI implement this against their backend.
+     * Nodes that just render produced images do NOT need this method.
+     */
+    uploadImage?(input: File | {
+        url: string;
+    }): Promise<PipelineUploadedImage>;
+}
+
+export declare function PipelineEditorServicesProvider({ services, children, }: {
+    services: PipelineEditorServices;
+    children: ReactNode;
+}): JSX.Element;
 
 export declare interface PipelineEditorValue {
     definition: PipelineDefinition | null;
@@ -1285,6 +1348,14 @@ export declare function PipelineStatsPage(): JSX.Element;
 
 declare type PipelineStatus = 'draft' | 'published' | 'archived';
 
+export declare interface PipelineUploadedImage {
+    imageId: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    sizeBytes: number;
+}
+
 /**
  * Wire envelope that wraps every PipelineEventMap event as it crosses the
  * network boundary (mock adapter in Phase 1, WebSocket in Phase 4+). Carries
@@ -1338,6 +1409,42 @@ declare interface RetryPolicy {
 
 declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
 
+export declare function SaveConfig({ data, onChange }: SaveConfigProps): JSX.Element;
+
+export declare interface SaveConfigProps {
+    data: ImageSaveNodeData;
+    onChange: (patch: Partial<ImageSaveNodeData>) => void;
+}
+
+declare type SaveData = ImageSaveNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type SaveFlowNode = Node_2<SaveData, 'image:save'>;
+
+export declare function SaveNode(props: NodeProps<SaveFlowNode>): JSX.Element;
+
+declare interface ScatterNodeData {
+    type: 'scatter';
+    /**
+     * JSONPath into pipeline context that resolves to an array. Each element
+     * becomes one scatter arm. E.g. `$.steps.visionAnalyze.output.regions`.
+     */
+    itemsPath: string;
+    /**
+     * Key written to each per-arm context (default: 'item'). Downstream nodes
+     * read `$.scatter.<itemAlias>` to get the per-arm payload.
+     */
+    itemAlias?: string;
+    /**
+     * Maximum number of arms executing concurrently (default: 4). Guards
+     * against saturating Anthropic rate limits or the Sharp thread pool.
+     */
+    maxConcurrency?: number;
+}
+
 /**
  * One execution attempt of a step. Hub task #1280.
  *
@@ -1382,6 +1489,23 @@ declare interface StepExecution {
         /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
         firstTokenLatencyMs?: number;
     };
+    /**
+     * Image previews produced by steps that emit `pipeline:step:image:produced`
+     * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
+     * resolves through the host's `getImageUrl` service.
+     */
+    images?: Array<{
+        imageId: string;
+        width: number;
+        height: number;
+        mimeType: string;
+        bbox?: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        };
+    }>;
     approvals?: ApprovalRecord[];
     /**
      * hub#2226: edit-and-continue patch history applied while the run was
@@ -1487,6 +1611,14 @@ export declare function useEventStream<K extends keyof PipelineEventMap>(type: K
 export declare function useEventStreamContext(): EventStreamValue;
 
 /**
+ * Returns the host-provided `getImageUrl(imageId): string` callback.
+ * Throws when called outside a provider — catches the "I forgot to mount
+ * the services provider" misuse at first render rather than first
+ * thumbnail.
+ */
+export declare function useImageUrl(): (imageId: string) => string;
+
+/**
  * Fetches per-day judgment-aggregate rows via the `JudgmentApi` injected
  * via context. Pure data hook — does no rendering.
  *
@@ -1574,6 +1706,8 @@ export declare interface UseJudgmentResultsOptions {
 export declare function useLatestStepForNode(nodeId: string): StepExecution | null;
 
 export declare function usePipelineEditor(): PipelineEditorValue;
+
+export declare function usePipelineEditorServices(): PipelineEditorServices;
 
 export declare function usePipelineRuns(): PipelineRunsValue;
 
