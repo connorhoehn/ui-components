@@ -58,6 +58,7 @@ export interface CallWidgetProps {
   /** List of people available to add to the call */
   availableParticipants?: CallWidgetParticipant[];
   onMinimize?: () => void;
+  onExpand?: () => void;
 
   minimized?: boolean;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -654,6 +655,7 @@ export function CallWidget({
   onAddParticipant,
   availableParticipants,
   onMinimize,
+  onExpand,
   layoutComponent,
   callStats,
   minimized = false,
@@ -738,6 +740,18 @@ export function CallWidget({
                     title="Snap back to corner"
                   >
                     {icons.snapBack}
+                  </button>
+                )}
+                {onExpand && (
+                  <button
+                    type="button"
+                    onClick={onExpand}
+                    className="w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors"
+                    aria-label="Expand to window"
+                    title="Expand"
+                    data-testid="call-widget-expand-button"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 5V2h3M12 5V2H9M2 9v3h3M12 9v3H9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
                   </button>
                 )}
                 {onMinimize && (
