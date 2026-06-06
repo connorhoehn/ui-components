@@ -4,3 +4,6 @@ export type {
   ImageThumbnailSize,
   ImageThumbnailAspect,
 } from './ImageThumbnail';
+
+export { ImageUploader } from './ImageUploader';
+export type { ImageUploaderProps, ImageUploaderValue } from './ImageUploader';
