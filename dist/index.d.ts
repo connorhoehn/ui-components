@@ -971,7 +971,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 export declare type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
 
@@ -1000,6 +1000,7 @@ export declare interface CallWidgetProps {
     /** List of people available to add to the call */
     availableParticipants?: CallWidgetParticipant[];
     onMinimize?: () => void;
+    onExpand?: () => void;
     minimized?: boolean;
     position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
     /** When true, uses absolute positioning within a relative parent instead of fixed to viewport */

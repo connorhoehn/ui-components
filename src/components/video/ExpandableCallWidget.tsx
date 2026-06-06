@@ -98,8 +98,17 @@ export function ExpandableCallWidget({
   zIndex = 9999,
   className,
 }: ExpandableCallWidgetProps) {
-  // Resolve initial mini position from defaultCorner.
-  const initialPos = useMemo(() => cornerPosition(defaultCorner), [defaultCorner]);
+  // Resolve initial position from defaultMode + defaultCorner — mini
+  // mode snaps to a corner, docked mode centers on the viewport
+  // (using the docked default dimensions, not the mini ones — otherwise
+  // a docked widget initialized with mini-mode coords would render
+  // partially off-screen on first mount).
+  const initialPos = useMemo(() => {
+    if (defaultMode === 'docked') {
+      return centerPosition(DOCKED_DEFAULT_WIDTH, DOCKED_DEFAULT_HEIGHT);
+    }
+    return cornerPosition(defaultCorner);
+  }, [defaultMode, defaultCorner]);
 
   const { state, setState } = useCallWidgetPersistence({
     persistKey,
@@ -126,7 +135,8 @@ export function ExpandableCallWidget({
   const programmaticExitRef = useRef(false);
   useEffect(() => {
     const onChange = () => {
-      const inFs = document.fullscreenElement === rootRef.current;
+      const fsEl = document.fullscreenElement ?? (document as any).webkitFullscreenElement;
+      const inFs = fsEl === rootRef.current;
       if (!inFs && fsActive) {
         // User-driven exit (Esc / chrome). If they were programmatic,
         // honor the requested target; otherwise default to docked.
@@ -138,22 +148,29 @@ export function ExpandableCallWidget({
       }
     };
     document.addEventListener('fullscreenchange', onChange);
-    return () => document.removeEventListener('fullscreenchange', onChange);
+    document.addEventListener('webkitfullscreenchange', onChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onChange);
+      document.removeEventListener('webkitfullscreenchange', onChange);
+    };
   }, [fsActive, setState]);
 
   const enterFullscreen = useCallback(() => {
     const el = rootRef.current;
-    if (!el || !el.requestFullscreen) return;
-    el.requestFullscreen().then(
+    const requestFs = el?.requestFullscreen ?? (el as any)?.webkitRequestFullscreen?.bind(el);
+    if (!el || !requestFs) return;
+    requestFs().then(
       () => setFsActive(true),
       () => { /* browser denied — stay in current mode */ },
     );
   }, []);
 
   const exitFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) return;
+    const fsEl = document.fullscreenElement ?? (document as any).webkitFullscreenElement;
+    if (!fsEl) return;
     programmaticExitRef.current = true;
-    void document.exitFullscreen().catch(() => { /* */ });
+    const exitFs = document.exitFullscreen?.bind(document) ?? (document as any).webkitExitFullscreen?.bind(document);
+    void exitFs?.().catch(() => { /* */ });
   }, []);
 
   const setMode = useCallback((next: CallWidgetMode) => {
@@ -169,8 +186,24 @@ export function ExpandableCallWidget({
       setState({ mode: next });
       return;
     }
+    // Crossing a mode boundary where the widget size changes — re-pick
+    // a position appropriate to the new size, otherwise we render
+    // partially off-screen (mini → docked: 320 corner-snap coords don't
+    // work for a 960-wide widget). Re-clamp against viewport even if
+    // the user has dragged the mini widget; the swap is rare enough
+    // that resetting position is fine UX.
+    if (next === 'docked' && effectiveMode === 'mini') {
+      const c = centerPosition(state.width, state.height);
+      setState({ mode: next, x: c.x, y: c.y });
+      return;
+    }
+    if (next === 'mini' && effectiveMode === 'docked') {
+      const c = cornerPosition(defaultCorner);
+      setState({ mode: next, x: c.x, y: c.y });
+      return;
+    }
     setState({ mode: next });
-  }, [effectiveMode, enterFullscreen, exitFullscreen, setState]);
+  }, [effectiveMode, enterFullscreen, exitFullscreen, setState, state.width, state.height, defaultCorner]);
 
   useEffect(() => {
     onModeChange?.(effectiveMode);
@@ -182,6 +215,10 @@ export function ExpandableCallWidget({
   const dragStateRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
   const onHeaderPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (effectiveMode !== 'docked') return;
+    // Skip drag setup when the pointer landed on (or inside) a button —
+    // capturing the pointer on the header steals all events from
+    // descendants, so the buttons would never fire their onClick.
+    if ((e.target as HTMLElement).closest('button')) return;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     dragStateRef.current = {
       startX: e.clientX,
@@ -411,6 +448,14 @@ function ExpandIcon() {
 }
 
 // ---- Geometry helpers ----
+
+function centerPosition(width: number, height: number): { x: number; y: number } {
+  if (typeof window === 'undefined') return { x: 16, y: 16 };
+  return {
+    x: Math.max(VIEWPORT_MARGIN, Math.floor((window.innerWidth - width) / 2)),
+    y: Math.max(VIEWPORT_MARGIN, Math.floor((window.innerHeight - height) / 2)),
+  };
+}
 
 function cornerPosition(corner: ExpandableCallWidgetProps['defaultCorner']): { x: number; y: number } {
   if (typeof window === 'undefined') return { x: 16, y: 16 };
