@@ -13,6 +13,22 @@ export * from './theme';
 export * from './api';
 export * from './renderers';
 
+// ── Form primitives (Phase 5) ──
+export { Input } from './components/forms/Input';
+export type { InputProps, InputSize, InputType } from './components/forms/Input';
+export { Select } from './components/forms/Select';
+export type { SelectProps, SelectSize, SelectOption } from './components/forms/Select';
+export { Textarea } from './components/forms/Textarea';
+export type { TextareaProps } from './components/forms/Textarea';
+
+// ── Image primitives (Phase 5) ──
+export { ImageThumbnail } from './components/image/ImageThumbnail';
+export type { ImageThumbnailProps, ImageThumbnailSize, ImageThumbnailAspect } from './components/image/ImageThumbnail';
+
+// ── Pipeline node composites (Phase 5) ──
+export { NodeCard } from './components/pipelines/nodes/NodeCard';
+export type { NodeCardProps } from './components/pipelines/nodes/NodeCard';
+
 // Disambiguators for names that collide between domains.
 // Each line below resolves a TS2308 by picking the pre-existing canonical
 // source at root (so existing consumers see no change). New-domain

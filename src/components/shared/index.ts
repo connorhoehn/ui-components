@@ -144,3 +144,7 @@ export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
+
+// ── Status primitives (Phase 5) ──
+export { StatusPill } from './StatusPill';
+export type { StatusPillProps, StatusPillState, StatusPillSize } from './StatusPill';
