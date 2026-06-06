@@ -43,6 +43,15 @@ export interface HangoutLayoutProps {
   spotlightContent?: ReactNode;
   /** Click handler per tile (e.g. pin / promote to spotlight). */
   onParticipantClick?: (id: string) => void;
+  /** Fill parent dimensions — propagates down through grid/spotlight/tile
+   *  so the layout adapts to docked/fullscreen containers instead of
+   *  enforcing aspect-video against an unsized parent. */
+  fillParent?: boolean;
+  /** Local-PiP width (grid mode) — defaults to 96 for mini, override for
+   *  larger widget modes. */
+  pipWidth?: number;
+  /** Filmstrip tile width (spotlight mode) — defaults to 128 for mini. */
+  filmstripTileWidth?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -57,6 +66,9 @@ export function HangoutLayout({
   speakerHysteresisMs = 750,
   spotlightContent,
   onParticipantClick,
+  fillParent = false,
+  pipWidth,
+  filmstripTileWidth,
   className,
   style,
 }: HangoutLayoutProps) {
@@ -81,6 +93,8 @@ export function HangoutLayout({
         activeSpeakerId={activeSpeakerId}
         speakerHysteresisMs={speakerHysteresisMs}
         onParticipantClick={onParticipantClick}
+        fillParent={fillParent}
+        filmstripTileWidth={filmstripTileWidth}
         className={className}
         style={style}
       />
@@ -93,6 +107,8 @@ export function HangoutLayout({
       localParticipant={localParticipant}
       activeSpeakerId={activeSpeakerId}
       onParticipantClick={onParticipantClick}
+      fillParent={fillParent}
+      pipWidth={pipWidth}
       className={className}
       style={style}
     />

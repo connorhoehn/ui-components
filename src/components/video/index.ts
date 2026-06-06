@@ -80,6 +80,19 @@ export type { StreamVideoProps, StreamVideoPlayState } from './StreamVideo';
 export { AutoplayGate } from './AutoplayGate';
 export type { AutoplayGateProps } from './AutoplayGate';
 
+export { ExpandableCallWidget } from './ExpandableCallWidget';
+export type {
+  ExpandableCallWidgetProps,
+  ExpandableCallWidgetHandle,
+  CallWidgetMode,
+} from './ExpandableCallWidget';
+export { useCallWidgetPersistence } from './useCallWidgetPersistence';
+export type {
+  PersistedWidgetState,
+  PersistedWidgetMode,
+  UseCallWidgetPersistenceOptions,
+} from './useCallWidgetPersistence';
+
 export { RemoteTileSlot } from './RemoteTileSlot';
 export type { RemoteTileSlotProps } from './RemoteTileSlot';
 

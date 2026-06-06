@@ -26,6 +26,13 @@ export interface HangoutGridProps {
   activeSpeakerId?: string | null;
   /** Click handler per tile (e.g. pin / promote to spotlight). */
   onParticipantClick?: (id: string) => void;
+  /** Fill parent dimensions instead of letting tiles drive height via
+   *  aspect-video. Used in docked + fullscreen widget modes where the
+   *  outer container owns dimensions. */
+  fillParent?: boolean;
+  /** Local-PiP width (px) — defaults to 96 (small widget). Larger sizes
+   *  for docked (128) and fullscreen (192). */
+  pipWidth?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -35,6 +42,8 @@ export function HangoutGrid({
   localParticipant = null,
   activeSpeakerId = null,
   onParticipantClick,
+  fillParent = false,
+  pipWidth = 96,
   className,
   style,
 }: HangoutGridProps) {
@@ -51,11 +60,21 @@ export function HangoutGrid({
   }, [participants, showLocalSolo, showLocalInline, localParticipant]);
 
   const cols = gridCols(inlineParticipants.length);
+  // When fillParent, also constrain rows so tiles share height equally.
+  const rows = Math.max(1, Math.ceil(inlineParticipants.length / cols));
 
   return (
     <div
-      className={cn('relative grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden', className)}
-      style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...style }}
+      className={cn(
+        'relative grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden',
+        fillParent && 'h-full w-full',
+        className,
+      )}
+      style={{
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        ...(fillParent ? { gridTemplateRows: `repeat(${rows}, 1fr)` } : {}),
+        ...style,
+      }}
     >
       {inlineParticipants.map((p) => (
         <ParticipantTile
@@ -67,18 +86,25 @@ export function HangoutGrid({
           isMuted={p.isMuted}
           isLocal={p.isLocal}
           videoElement={p.videoElement}
+          fillParent={fillParent}
           onClick={onParticipantClick ? () => onParticipantClick(p.id) : undefined}
         />
       ))}
 
       {inlineParticipants.length === 0 && (
-        <div className="aspect-video flex items-center justify-center text-white/40 text-sm">
+        <div className={cn(
+          'flex items-center justify-center text-white/40 text-sm',
+          fillParent ? 'h-full w-full' : 'aspect-video',
+        )}>
           Waiting for others to join…
         </div>
       )}
 
       {showLocalPip && localParticipant && (
-        <div className="absolute bottom-2 right-2 w-24 aspect-video rounded overflow-hidden border border-white/20 shadow-lg z-10">
+        <div
+          className="absolute bottom-2 right-2 aspect-video rounded overflow-hidden border border-white/20 shadow-lg z-10"
+          style={{ width: pipWidth }}
+        >
           <ParticipantTile
             id={localParticipant.id}
             displayName={localParticipant.displayName}

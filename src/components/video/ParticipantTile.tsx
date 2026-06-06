@@ -20,6 +20,10 @@ export interface ParticipantTileProps {
   videoElement?: ReactNode;
   /** Click handler — used by HangoutLayout for pin / spotlight selection. */
   onClick?: () => void;
+  /** When true, the tile fills its parent (`w-full h-full`) instead of
+   *  enforcing its own `aspect-video`. Used by ExpandableCallWidget's
+   *  docked + fullscreen modes where the parent owns dimensions. */
+  fillParent?: boolean;
   /** Escape hatches. */
   className?: string;
   style?: CSSProperties;
@@ -44,6 +48,7 @@ export function ParticipantTile({
   isSpotlight = false,
   videoElement,
   onClick,
+  fillParent = false,
   className,
   style,
 }: ParticipantTileProps) {
@@ -56,7 +61,10 @@ export function ParticipantTile({
     <div
       className={cn(
         'relative bg-[#1a1a2e] flex items-center justify-center rounded overflow-hidden border-2 transition-colors',
-        isSpotlight ? 'aspect-video' : 'aspect-video',
+        // fillParent: defer sizing to the parent grid cell. Default:
+        // enforce 16:9 so the tile renders correctly even in a parent
+        // with no explicit height (the mini-widget case).
+        fillParent ? 'w-full h-full' : 'aspect-video',
         isSpeaking ? 'border-[#22c55e]' : 'border-transparent',
         onClick && 'cursor-pointer hover:border-white/30',
         className,

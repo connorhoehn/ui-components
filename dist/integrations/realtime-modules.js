@@ -3,7 +3,7 @@ import { C as T, P as W } from "../PresencePanel-mBtTn35O.js";
 import { A as B, F as H, N as _, P as L, B as R, S as $ } from "../Badge-D2m7pGPU.js";
 import { useState as w, useEffect as z, useMemo as S } from "react";
 import { R as V, S as O, a as q } from "../ReactionsOverlay-CoaX3hRz.js";
-import { a as D } from "../HangoutLayout-B677w0az.js";
+import { a as D } from "../HangoutLayout-ddC4Y1h7.js";
 import { useRoomOccupancy as X } from "@connorhoehn/realtime-modules/client/hangout-rooms";
 import { E as Y } from "../EmptyState-PM9wTjxk.js";
 import { B as E } from "../Button-Qsbxqsl9.js";

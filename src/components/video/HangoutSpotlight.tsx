@@ -39,6 +39,12 @@ export interface HangoutSpotlightProps {
   speakerHysteresisMs?: number;
   /** Click handler per filmstrip tile. */
   onParticipantClick?: (id: string) => void;
+  /** Fill parent dimensions instead of letting the spotlight slot drive
+   *  height via aspect-video. Used in docked + fullscreen widget modes. */
+  fillParent?: boolean;
+  /** Filmstrip tile width (px). Default 128 (Tailwind w-32). Larger for
+   *  docked/fullscreen so small thumbs don't dominate a wide canvas. */
+  filmstripTileWidth?: number;
   className?: string;
   style?: CSSProperties;
 }
@@ -50,6 +56,8 @@ export function HangoutSpotlight({
   activeSpeakerId = null,
   speakerHysteresisMs = 750,
   onParticipantClick,
+  fillParent = false,
+  filmstripTileWidth = 128,
   className,
   style,
 }: HangoutSpotlightProps) {
@@ -111,6 +119,7 @@ export function HangoutSpotlight({
         isMuted={cameraTileSource.isMuted}
         isLocal={cameraTileSource.isLocal}
         isSpotlight
+        fillParent
         videoElement={cameraTileSource.videoElement}
         className="w-full h-full"
       />
@@ -122,11 +131,20 @@ export function HangoutSpotlight({
 
   return (
     <div
-      className={cn('flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden', className)}
+      className={cn(
+        'flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden',
+        fillParent && 'h-full w-full',
+        className,
+      )}
       style={style}
     >
       <div
-        className="flex-1 bg-black aspect-video relative"
+        className={cn(
+          'bg-black relative',
+          // fillParent: spotlight stretches with flexbox; otherwise it
+          // enforces 16:9 against width (the mini-widget case).
+          fillParent ? 'flex-1 min-h-0' : 'flex-1 aspect-video',
+        )}
         data-testid="hangout-spotlight"
         data-spotlight-type={spotlightType}
         data-spotlight-user={spotlightUser}
@@ -135,9 +153,13 @@ export function HangoutSpotlight({
       </div>
 
       {filmstrip.length > 0 && (
-        <div className="flex gap-1 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
+        <div className="flex gap-1 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] shrink-0">
           {filmstrip.map(p => (
-            <div key={p.id} className="w-32 shrink-0">
+            <div
+              key={p.id}
+              className="shrink-0"
+              style={{ width: filmstripTileWidth }}
+            >
               <ParticipantTile
                 id={p.id}
                 displayName={p.displayName}

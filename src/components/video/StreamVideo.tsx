@@ -46,6 +46,9 @@ export function StreamVideo({
     if (videoRef) videoRef.current = el;
 
     const snapshotTracks = (label: string) => {
+      // Guarded — test stubs sometimes pass `{}` as the stream and have
+      // no getTracks(); production MediaStream always does.
+      if (typeof stream?.getTracks !== 'function') return;
       console.info(`[StreamVideo] ${label}`, {
         streamId: stream.id,
         tracks: stream.getTracks().map(t => ({
@@ -93,8 +96,12 @@ export function StreamVideo({
     el.addEventListener('play', handlePlay);
     el.addEventListener('ended', handleEnded);
     el.addEventListener('pause', handlePause);
-    stream.addEventListener('addtrack', handleStreamMutation);
-    stream.addEventListener('removetrack', handleStreamMutation);
+    // Guarded — test stubs sometimes pass `{}` as the stream.
+    const streamHasEvents = typeof stream?.addEventListener === 'function';
+    if (streamHasEvents) {
+      stream.addEventListener('addtrack', handleStreamMutation);
+      stream.addEventListener('removetrack', handleStreamMutation);
+    }
 
     tryPlay();
 
@@ -102,8 +109,10 @@ export function StreamVideo({
       el.removeEventListener('play', handlePlay);
       el.removeEventListener('ended', handleEnded);
       el.removeEventListener('pause', handlePause);
-      stream.removeEventListener('addtrack', handleStreamMutation);
-      stream.removeEventListener('removetrack', handleStreamMutation);
+      if (streamHasEvents) {
+        stream.removeEventListener('addtrack', handleStreamMutation);
+        stream.removeEventListener('removetrack', handleStreamMutation);
+      }
       if (videoRef && videoRef.current === el) videoRef.current = null;
     };
   }, [stream, videoRef]);

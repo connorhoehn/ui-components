@@ -12,6 +12,7 @@ import { MutableRefObject } from 'react';
 import { Observable } from 'lib0/observable';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
+import { Ref } from 'react';
 import { RefObject } from 'react';
 import { SVGProps } from 'react';
 import { TdHTMLAttributes } from 'react';
@@ -971,6 +972,8 @@ export declare interface CallStripParticipant {
 }
 
 export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, onMinimize, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+
+export declare type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
 
 export declare interface CallWidgetParticipant extends CallStripParticipant {
     videoStream?: MediaStream | null;
@@ -2098,6 +2101,45 @@ export declare interface EventRowProps {
     selected?: boolean;
 }
 
+export declare function ExpandableCallWidget({ title, subtitle, children, controls, defaultMode, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
+
+export declare interface ExpandableCallWidgetHandle {
+    mode: CallWidgetMode;
+    setMode: (m: CallWidgetMode) => void;
+}
+
+export declare interface ExpandableCallWidgetProps {
+    /** Header label (left side of chrome). */
+    title?: ReactNode;
+    /** Optional status line shown under the title (e.g. "0:36 • 3 in call"). */
+    subtitle?: ReactNode;
+    /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
+    children: ReactNode;
+    /** Optional controls strip rendered below the body. Stays inside the
+     *  widget chrome in mini mode (compact); spans full width in docked
+     *  and fullscreen modes. */
+    controls?: ReactNode;
+    /** Initial mode. Persisted modes override this once `persistKey` is
+     *  set and storage has a prior value. Default: 'mini'. */
+    defaultMode?: PersistedWidgetMode;
+    /** Fires after every settled mode change (programmatic or via UI). */
+    onModeChange?: (mode: CallWidgetMode) => void;
+    /** localStorage key for `{mode,x,y,width,height}`. Omit to opt out
+     *  (state lives only in memory). */
+    persistKey?: string;
+    /** Imperative handle — `apiRef.current.setMode('fullscreen')`. */
+    apiRef?: Ref<ExpandableCallWidgetHandle>;
+    /** Initial corner-snap for mini mode (only used if no persisted
+     *  position exists). Default 'bottom-right'. */
+    defaultCorner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+    /** Hide the expand affordances (useful for read-only viewers). */
+    expandable?: boolean;
+    /** z-index for the floating modes. Default 9999. */
+    zIndex?: number;
+    /** Class on the root. */
+    className?: string;
+}
+
 declare interface FieldTypeDefinition {
     /** Unique key — matches SectionType for built-ins; UUID for user-defined types */
     type: string;
@@ -2435,7 +2477,7 @@ export declare interface GuardrailNodeData {
     label?: string;
 }
 
-export declare function HangoutGrid({ participants, localParticipant, activeSpeakerId, onParticipantClick, className, style, }: HangoutGridProps): JSX.Element;
+export declare function HangoutGrid({ participants, localParticipant, activeSpeakerId, onParticipantClick, fillParent, pipWidth, className, style, }: HangoutGridProps): JSX.Element;
 
 export declare interface HangoutGridProps {
     /** Remote participants. Caller should NOT include the local user here. */
@@ -2447,11 +2489,18 @@ export declare interface HangoutGridProps {
     activeSpeakerId?: string | null;
     /** Click handler per tile (e.g. pin / promote to spotlight). */
     onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions instead of letting tiles drive height via
+     *  aspect-video. Used in docked + fullscreen widget modes where the
+     *  outer container owns dimensions. */
+    fillParent?: boolean;
+    /** Local-PiP width (px) — defaults to 96 (small widget). Larger sizes
+     *  for docked (128) and fullscreen (192). */
+    pipWidth?: number;
     className?: string;
     style?: CSSProperties;
 }
 
-export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, onParticipantClick, className, style, }: HangoutLayoutProps): JSX.Element;
+export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, onParticipantClick, fillParent, pipWidth, filmstripTileWidth, className, style, }: HangoutLayoutProps): JSX.Element;
 
 export declare interface HangoutLayoutParticipant {
     id: string;
@@ -2493,6 +2542,15 @@ export declare interface HangoutLayoutProps {
     spotlightContent?: ReactNode;
     /** Click handler per tile (e.g. pin / promote to spotlight). */
     onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions — propagates down through grid/spotlight/tile
+     *  so the layout adapts to docked/fullscreen containers instead of
+     *  enforcing aspect-video against an unsized parent. */
+    fillParent?: boolean;
+    /** Local-PiP width (grid mode) — defaults to 96 for mini, override for
+     *  larger widget modes. */
+    pipWidth?: number;
+    /** Filmstrip tile width (spotlight mode) — defaults to 128 for mini. */
+    filmstripTileWidth?: number;
     className?: string;
     style?: CSSProperties;
 }
@@ -2563,7 +2621,7 @@ export declare interface HangoutRoomHeaderRecording {
     active: boolean;
 }
 
-export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, activeSpeakerId, speakerHysteresisMs, onParticipantClick, className, style, }: HangoutSpotlightProps): JSX.Element;
+export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
 
 export declare interface HangoutSpotlightProps {
     /** Remote participants. Caller should NOT include the local user here. */
@@ -2579,6 +2637,12 @@ export declare interface HangoutSpotlightProps {
     speakerHysteresisMs?: number;
     /** Click handler per filmstrip tile. */
     onParticipantClick?: (id: string) => void;
+    /** Fill parent dimensions instead of letting the spotlight slot drive
+     *  height via aspect-video. Used in docked + fullscreen widget modes. */
+    fillParent?: boolean;
+    /** Filmstrip tile width (px). Default 128 (Tailwind w-32). Larger for
+     *  docked/fullscreen so small thumbs don't dominate a wide canvas. */
+    filmstripTileWidth?: number;
     className?: string;
     style?: CSSProperties;
 }
@@ -3499,7 +3563,7 @@ export declare interface Participant {
  * convention (Meet/Teams/Zoom), reflowing tiles on speaker change is jarring;
  * a green border is the agreed-on cue.
  */
-export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, className, style, }: ParticipantTileProps): JSX.Element;
+export declare function ParticipantTile({ id, displayName, avatarUrl, isSpeaking, isMuted, isLocal, isSpotlight, videoElement, onClick, fillParent, className, style, }: ParticipantTileProps): JSX.Element;
 
 export declare interface ParticipantTileProps {
     /** Unique identifier for keying / pin actions. */
@@ -3520,6 +3584,10 @@ export declare interface ParticipantTileProps {
     videoElement?: ReactNode;
     /** Click handler — used by HangoutLayout for pin / spotlight selection. */
     onClick?: () => void;
+    /** When true, the tile fills its parent (`w-full h-full`) instead of
+     *  enforcing its own `aspect-video`. Used by ExpandableCallWidget's
+     *  docked + fullscreen modes where the parent owns dimensions. */
+    fillParent?: boolean;
     /** Escape hatches. */
     className?: string;
     style?: CSSProperties;
@@ -3608,6 +3676,16 @@ export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
 
 declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
 export { PermissionState_2 as PermissionState }
+
+export declare type PersistedWidgetMode = 'mini' | 'docked';
+
+export declare interface PersistedWidgetState {
+    mode: PersistedWidgetMode;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
 
 export declare function PhoneOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
@@ -6218,6 +6296,21 @@ declare interface UseActivityBusReturn {
  }
 
  export declare function useAwarenessState(provider: GatewayProvider | null, initial: Omit<AwarenessFields, 'lastSeen' | 'idle'>): AwarenessUpdaters;
+
+ export declare function useCallWidgetPersistence({ persistKey, defaults, debounceMs, }: UseCallWidgetPersistenceOptions): {
+     state: PersistedWidgetState;
+     setState: (next: Partial<PersistedWidgetState>) => void;
+ };
+
+ export declare interface UseCallWidgetPersistenceOptions {
+     /** localStorage key. When undefined, the hook is a no-op (state lives
+      *  only in memory) — useful for tests and for ephemeral consumers. */
+     persistKey: string | undefined;
+     /** Defaults written if no key exists yet (or storage is empty). */
+     defaults: PersistedWidgetState;
+     /** Debounce window for writes. Default 200ms. */
+     debounceMs?: number;
+ }
 
  export declare function useChat(options: UseChatOptions): UseChatReturn;
 
