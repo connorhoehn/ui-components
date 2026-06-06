@@ -342,6 +342,15 @@ const docsContent: Record<NodeType, ReactNode> = {
       <p>One input <code>in</code>, one output <code>out</code>, one error handle <code>error</code>.</p>
     </>
   ),
+
+  scatter: (
+    <>
+      <h4>What it does</h4>
+      <p>Fans out over a collection — runs downstream nodes once per item in the scatter set. Results are collected by a downstream Join or Save node.</p>
+      <h4>Wiring</h4>
+      <p>One input <code>in</code>. One output <code>out</code> that fires once per item in the scatter collection.</p>
+    </>
+  ),
 };
 
 export default docsContent;

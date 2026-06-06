@@ -52,6 +52,7 @@ const NODE_TYPE_COLORS: Record<NodeType, string> = {
   'ag-ui-output':   '#6366f1',
   'image-source':   '#6b7280',
   'image:save':     '#0369a1',
+  scatter:          '#ca8a04',
 };
 
 const NODE_TYPE_COLORS_LIGHT: Record<NodeType, string> = {
@@ -73,6 +74,7 @@ const NODE_TYPE_COLORS_LIGHT: Record<NodeType, string> = {
   'ag-ui-output':   '#c7d2fe',
   'image-source':   '#d1d5db',
   'image:save':     '#bae6fd',
+  scatter:          '#fde047',
 };
 
 // ---------------------------------------------------------------------------
