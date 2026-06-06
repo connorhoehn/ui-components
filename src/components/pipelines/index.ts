@@ -49,9 +49,17 @@ export {
   JoinNode,
   ApprovalNode,
   BaseNode,
+  ImageSourceNode,
+  SaveNode,
   nodeTypes,
 } from './nodes';
 export type { NodeExecutionState } from './nodes';
+
+// ─── Per-node config panels ──────────────────────────────────────────────────
+export { default as ImageSourceConfig } from './nodes/image-source/ImageSourceConfig';
+export type { ImageSourceConfigProps } from './nodes/image-source/ImageSourceConfig';
+export { default as SaveConfig } from './nodes/save/SaveConfig';
+export type { SaveConfigProps } from './nodes/save/SaveConfig';
 
 // ─── Vision-step visualization ───────────────────────────────────────────────
 //
@@ -66,3 +74,18 @@ export * from './vision';
 // <CriteriaPanel>. Realtime hook: useJudgmentResults(). Mirrors the vision
 // surface — see `judge/index.ts` for the full surface + usage notes.
 export * from './judge';
+
+// ─── Pipeline editor services seam ───────────────────────────────────────────
+//
+// Host editors mount <PipelineEditorServicesProvider> to inject
+// host-specific callbacks (getImageUrl, uploadImage). Node components call
+// useImageUrl() / usePipelineEditorServices() — no direct host-module imports.
+export {
+  PipelineEditorServicesProvider,
+  useImageUrl,
+  usePipelineEditorServices,
+} from './services';
+export type {
+  UploadedImage as PipelineUploadedImage,
+  PipelineEditorServices,
+} from './services';

@@ -107,6 +107,16 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
     name: 'AG-UI Output',
     docs: 'Stream output to the AG-UI frontend. Terminal node — emits AG-UI protocol events for real-time display.',
   },
+  'image-source': {
+    icon: '🖼',
+    name: 'Image Source',
+    docs: 'Injects an existing image into the pipeline context. Provide an imageId or leave blank to receive the image from the trigger or a preceding step at runtime.',
+  },
+  'image:save': {
+    icon: '⬇',
+    name: 'Save Image',
+    docs: 'Writes a produced image to a named file in the artifact store. Configure the source image path and output filename template.',
+  },
 };
 
 type Tab = 'config' | 'runs' | 'docs';
@@ -151,6 +161,8 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   guardrail: PlaceholderConfig,
   policy: PlaceholderConfig,
   'ag-ui-output': PlaceholderConfig,
+  'image-source': PlaceholderConfig,
+  'image:save': PlaceholderConfig,
 };
 
 function renderConfig(

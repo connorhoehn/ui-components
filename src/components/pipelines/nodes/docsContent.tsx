@@ -314,6 +314,34 @@ const docsContent: Record<NodeType, ReactNode> = {
       <p>One input handle <code>in</code>. No output — this is the endpoint.</p>
     </>
   ),
+
+  'image-source': (
+    <>
+      <h4>What it does</h4>
+      <p>Injects an existing image into the pipeline context. Use this as the entry point for image-processing pipelines when the image is already stored in the blob store.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>imageId</code> — optional; can be set at run time by the trigger or a preceding step.</li>
+        <li><code>outputKey</code> — the key written to pipeline context (default: <code>imageRef</code>).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>One output handle <code>out</code>. No inputs — this is a source node.</p>
+    </>
+  ),
+
+  'image:save': (
+    <>
+      <h4>What it does</h4>
+      <p>Writes a produced image to a named file in the artifact store. Dispatched server-side by the SaveStepHandler.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceImagePath</code> — JSONPath to the imageId to save (default: <code>$.scatter.parentImageId</code>).</li>
+        <li><code>filenameTemplate</code> — output filename; supports <code>{'{{scatter.item.label}}'}</code>, <code>{'{{scatter.index}}'}</code>, <code>{'{{scatter.parentImageId}}'}</code>.</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>One input <code>in</code>, one output <code>out</code>, one error handle <code>error</code>.</p>
+    </>
+  ),
 };
 
 export default docsContent;

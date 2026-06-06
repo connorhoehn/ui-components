@@ -1,4 +1,4 @@
-// frontend/src/components/pipelines/nodes/index.ts
+// src/components/pipelines/nodes/index.ts
 //
 // Registry of React Flow node components for the pipeline editor canvas.
 // Consumed by the editor via `<ReactFlow nodeTypes={nodeTypes} />`.
@@ -19,6 +19,8 @@ import MemoryNode from './memory/MemoryNode';
 import GuardrailNode from './guardrail/GuardrailNode';
 import PolicyNode from './policy/PolicyNode';
 import AgUiOutputNode from './ag-ui-output/AgUiOutputNode';
+import ImageSourceNode from './image-source/ImageSourceNode';
+import SaveNode from './save/SaveNode';
 
 export {
   TriggerNode,
@@ -37,6 +39,8 @@ export {
   GuardrailNode,
   PolicyNode,
   AgUiOutputNode,
+  ImageSourceNode,
+  SaveNode,
 };
 
 export { default as BaseNode, type NodeExecutionState } from './BaseNode';
@@ -58,4 +62,6 @@ export const nodeTypes = {
   guardrail:        GuardrailNode,
   policy:           PolicyNode,
   'ag-ui-output':   AgUiOutputNode,
+  'image-source':   ImageSourceNode,
+  'image:save':     SaveNode,
 } as const;

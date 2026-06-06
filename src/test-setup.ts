@@ -14,6 +14,25 @@ if (typeof window !== 'undefined' && (window as unknown as Record<string, unknow
   });
 }
 
+// jsdom doesn't implement window.matchMedia. Provide a no-op polyfill so
+// components that call usePrefersReducedMotion (via BaseNode) can render in
+// tests without crashing. Always returns `matches: false` (no preference).
+if (typeof window !== 'undefined' && typeof window.matchMedia === 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    configurable: true,
+    value: (_query: string) => ({
+      matches: false,
+      media: _query,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
 // jsdom doesn't ship ResizeObserver or Element.scrollIntoView; cmdk's
 // internal layout effects need both. No-op polyfills are sufficient for
 // any test that doesn't assert on layout.

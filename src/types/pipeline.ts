@@ -27,7 +27,9 @@ export type NodeType =
   | 'memory'
   | 'guardrail'
   | 'policy'
-  | 'ag-ui-output';
+  | 'ag-ui-output'
+  | 'image-source'
+  | 'image:save';
 
 export type TriggerType =
   | 'manual'
@@ -247,6 +249,30 @@ export interface AgUiOutputNodeData {
   customEventName?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Vision pipeline node data interfaces (image-source, image:save)
+// ---------------------------------------------------------------------------
+
+export interface ImageSourceNodeData {
+  type: 'image-source';
+  /** imageId to inject into the pipeline context. */
+  imageId?: string;
+  /** Key under which the imageId is written to context. Default: 'imageRef'. */
+  outputKey?: string;
+}
+
+export interface ImageSaveNodeData {
+  type: 'image:save';
+  /** JSONPath to the source imageId in context. */
+  sourceImagePath?: string;
+  /**
+   * Output filename template. Supports `{{scatter.item.label}}`,
+   * `{{scatter.index}}`, and `{{scatter.parentImageId}}` substitutions.
+   * Default: 'crop-{{scatter.index}}.png'.
+   */
+  filenameTemplate?: string;
+}
+
 export type NodeData =
   | TriggerNodeData
   | LLMNodeData
@@ -263,7 +289,9 @@ export type NodeData =
   | GraphQueryNodeData
   | MemoryNodeData
   | PolicyNodeData
-  | AgUiOutputNodeData;
+  | AgUiOutputNodeData
+  | ImageSourceNodeData
+  | ImageSaveNodeData;
 
 // ---------------------------------------------------------------------------
 // Definition (template) — persisted, versioned, published
@@ -408,6 +436,18 @@ export interface StepExecution {
     /** Wall-clock ms from stream open to first token (DC v0.3.7+). */
     firstTokenLatencyMs?: number;
   };
+  /**
+   * Image previews produced by steps that emit `pipeline:step:image:produced`
+   * events (e.g. CropNode, SaveNode). Each entry carries an imageId that
+   * resolves through the host's `getImageUrl` service.
+   */
+  images?: Array<{
+    imageId: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    bbox?: { x: number; y: number; width: number; height: number };
+  }>;
   // Approval-specific
   approvals?: ApprovalRecord[];
   /**

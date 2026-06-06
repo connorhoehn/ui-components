@@ -28,6 +28,8 @@ const OUTPUT_HANDLES: Record<NodeType, readonly string[] | 'fork'> = {
   guardrail: ['pass', 'block'],
   policy: ['allow', 'deny'],
   'ag-ui-output': [],
+  'image-source': ['out'],
+  'image:save': ['out', 'error'],
 };
 
 /** Valid input handle ids for each node type. `null` means the type has no input. */
@@ -48,6 +50,8 @@ const INPUT_HANDLES: Record<NodeType, readonly string[] | 'join' | null> = {
   guardrail: ['in'],
   policy: ['in'],
   'ag-ui-output': ['in'],
+  'image-source': null, // image-source has no inputs — it is a source node
+  'image:save': ['in'],
 };
 
 // ---------------------------------------------------------------------------

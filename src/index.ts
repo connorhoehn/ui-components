@@ -35,6 +35,17 @@ export type { ImageThumbnailProps, ImageThumbnailSize, ImageThumbnailAspect } fr
 export { NodeCard } from './components/pipelines/nodes/NodeCard';
 export type { NodeCardProps } from './components/pipelines/nodes/NodeCard';
 
+// ── Pipeline editor services seam ──
+export {
+  PipelineEditorServicesProvider,
+  useImageUrl,
+  usePipelineEditorServices,
+} from './components/pipelines/services';
+export type {
+  PipelineEditorServices,
+} from './components/pipelines/services';
+export type { UploadedImage as PipelineUploadedImage } from './components/pipelines/services';
+
 // Disambiguators for names that collide between domains.
 // Each line below resolves a TS2308 by picking the pre-existing canonical
 // source at root (so existing consumers see no change). New-domain
