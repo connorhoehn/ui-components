@@ -157,12 +157,23 @@ export function ExpandableCallWidget({
 
   const enterFullscreen = useCallback(() => {
     const el = rootRef.current;
-    const requestFs = el?.requestFullscreen ?? (el as any)?.webkitRequestFullscreen?.bind(el);
-    if (!el || !requestFs) return;
-    requestFs().then(
-      () => setFsActive(true),
-      () => { /* browser denied — stay in current mode */ },
-    );
+    if (!el) return;
+    // requestFullscreen must be bound to the element it's called on
+    // (otherwise `this` is window → "Illegal invocation" → silent
+    // Promise rejection that looks like the user denying).
+    const requestFs = el.requestFullscreen?.bind(el)
+      ?? (el as unknown as { webkitRequestFullscreen?: () => Promise<void> }).webkitRequestFullscreen?.bind(el);
+    if (!requestFs) return;
+    const result = requestFs();
+    // Older webkit variants return undefined instead of a Promise.
+    if (result && typeof result.then === 'function') {
+      result.then(
+        () => setFsActive(true),
+        () => { /* browser denied — stay in current mode */ },
+      );
+    } else {
+      setFsActive(true);
+    }
   }, []);
 
   const exitFullscreen = useCallback(() => {

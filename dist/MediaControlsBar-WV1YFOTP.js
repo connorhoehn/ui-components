@@ -1,5 +1,5 @@
 import { jsxs as i, jsx as e, Fragment as re } from "react/jsx-runtime";
-import { useRef as A, useState as j, useEffect as T, useMemo as J, useCallback as H, useImperativeHandle as Pe, useLayoutEffect as Te } from "react";
+import { useRef as B, useState as j, useEffect as A, useMemo as J, useCallback as R, useImperativeHandle as Pe, useLayoutEffect as Te } from "react";
 import { c as v } from "./cn-B6yFEsav.js";
 import { P as Ae } from "./HangoutLayout-ddC4Y1h7.js";
 import { A as ye } from "./Avatar-BvKIaNVE.js";
@@ -27,8 +27,8 @@ function Jt({
   onPhaseChange: x,
   onTimeUpdate: w
 }) {
-  const f = A(null), [l, m] = j("idle"), b = c ?? l;
-  T(() => {
+  const f = B(null), [l, m] = j("idle"), b = c ?? l;
+  A(() => {
     const N = f.current;
     if (!N) return;
     const C = [
@@ -49,11 +49,11 @@ function Jt({
       }]
     ];
     return C.forEach(([E, I]) => N.addEventListener(E, I)), () => C.forEach(([E, I]) => N.removeEventListener(E, I));
-  }, [x, w]), T(() => {
+  }, [x, w]), A(() => {
     const N = f.current;
     N && n !== void 0 && (N.srcObject = n);
   }, [n]);
-  const k = b !== "playing", g = He[b];
+  const y = b !== "playing", g = He[b];
   return /* @__PURE__ */ i(
     "div",
     {
@@ -74,7 +74,7 @@ function Jt({
             className: v("w-full h-full object-contain block")
           }
         ),
-        k && g && /* @__PURE__ */ i("div", { className: v("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"), children: [
+        y && g && /* @__PURE__ */ i("div", { className: v("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"), children: [
           b === "buffering" && /* @__PURE__ */ e(Re, {}),
           /* @__PURE__ */ e("span", { className: v(b === "buffering" ? "ml-2" : ""), children: g })
         ] })
@@ -104,7 +104,7 @@ function Zt({
   className: p
 }) {
   const x = J(() => n.filter((m) => !!m.url), [n]), [w, f] = j(0), l = x[w];
-  return T(() => {
+  return A(() => {
     const m = (b) => {
       b.key === "Escape" && t();
     };
@@ -172,7 +172,7 @@ function Zt({
                 ),
                 "aria-label": "Segments",
                 children: x.map((m, b) => {
-                  const k = b === w;
+                  const y = b === w;
                   return /* @__PURE__ */ e(
                     "button",
                     {
@@ -180,9 +180,9 @@ function Zt({
                       onClick: () => f(b),
                       className: v(
                         "px-2.5 py-1 rounded transition-colors",
-                        k ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface-alt,rgba(255,255,255,0.05))] hover:bg-white/10"
+                        y ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface-alt,rgba(255,255,255,0.05))] hover:bg-white/10"
                       ),
-                      "aria-current": k ? "true" : void 0,
+                      "aria-current": y ? "true" : void 0,
                       title: m.sizeBytes != null ? $e(m.sizeBytes) : void 0,
                       children: m.label || `Segment ${b + 1}`
                     },
@@ -285,7 +285,7 @@ function Qt({ participants: t, style: n }) {
 }
 function en({ reactions: t, style: n }) {
   const [r, a] = j([]);
-  return T(() => {
+  return A(() => {
     if (t.length === 0) return;
     const o = t[t.length - 1], d = {
       id: o.id + "-" + Date.now(),
@@ -294,7 +294,7 @@ function en({ reactions: t, style: n }) {
       createdAt: Date.now()
     };
     a((s) => [...s.slice(-20), d]);
-  }, [t]), T(() => {
+  }, [t]), A(() => {
     const o = setInterval(() => {
       a((d) => d.filter((s) => Date.now() - s.createdAt < 3e3));
     }, 500);
@@ -578,7 +578,7 @@ function Ze({
   currentParticipantIds: w,
   className: f
 }) {
-  const [l, m] = j(!1), b = new Set(w ?? []), k = (x ?? []).filter((g) => !b.has(g.id));
+  const [l, m] = j(!1), b = new Set(w ?? []), y = (x ?? []).filter((g) => !b.has(g.id));
   return /* @__PURE__ */ i("div", { className: v("flex flex-col", f), children: [
     /* @__PURE__ */ i(
       "div",
@@ -667,13 +667,13 @@ function Ze({
               }
             )
           ] }),
-          k.length === 0 ? /* @__PURE__ */ e("div", { className: "px-3 pb-2.5 text-xs text-white/40 text-center", children: "Everyone is already in the call" }) : /* @__PURE__ */ e("div", { className: "max-h-[120px] overflow-y-auto pb-1", children: k.map((g) => /* @__PURE__ */ i(
+          y.length === 0 ? /* @__PURE__ */ e("div", { className: "px-3 pb-2.5 text-xs text-white/40 text-center", children: "Everyone is already in the call" }) : /* @__PURE__ */ e("div", { className: "max-h-[120px] overflow-y-auto pb-1", children: y.map((g) => /* @__PURE__ */ i(
             "button",
             {
               type: "button",
               className: "w-full flex items-center gap-2.5 px-3 py-1.5 border-none bg-transparent text-left cursor-pointer hover:bg-white/10 transition-colors",
               onClick: () => {
-                p(g.id), k.length <= 1 && m(!1);
+                p(g.id), y.length <= 1 && m(!1);
               },
               children: [
                 /* @__PURE__ */ e(Z, { participant: g, size: 22 }),
@@ -756,8 +756,8 @@ function ue({
   muted: n = !1,
   className: r
 }) {
-  const a = A(null);
-  return T(() => {
+  const a = B(null);
+  return A(() => {
     const o = a.current;
     o && o.srcObject !== t && (o.srcObject = t);
   }, [t]), /* @__PURE__ */ e(
@@ -841,14 +841,14 @@ function nt({
   layoutComponent: m,
   callStats: b
 }) {
-  const k = t === "video" && d;
+  const y = t === "video" && d;
   return /* @__PURE__ */ i("div", { className: "flex flex-col", children: [
     t === "video" && m && /* @__PURE__ */ i("div", { className: "mx-3 mt-3 rounded-lg overflow-hidden relative", children: [
       m,
       /* @__PURE__ */ e(de, { stats: b, position: "bottom-left" })
     ] }),
     t === "video" && !m && /* @__PURE__ */ i("div", { className: "relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3", children: [
-      r?.videoStream && k ? /* @__PURE__ */ e(ue, { stream: r.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-[#1e293b]", children: r && /* @__PURE__ */ e(Z, { participant: r, size: 48 }) }),
+      r?.videoStream && y ? /* @__PURE__ */ e(ue, { stream: r.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-[#1e293b]", children: r && /* @__PURE__ */ e(Z, { participant: r, size: 48 }) }),
       n.length > 0 && /* @__PURE__ */ i("div", { className: "absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-[#1e293b]", children: [
         n[0].videoStream ? /* @__PURE__ */ e(ue, { stream: n[0].videoStream }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center", children: /* @__PURE__ */ e(Z, { participant: n[0], size: 28 }) }),
         n[0].isMuted && /* @__PURE__ */ e(
@@ -976,44 +976,44 @@ function rt({
   );
 }
 function it(t) {
-  const [n, r] = j({ x: 0, y: 0 }), [a, o] = j(!1), [d, s] = j(!1), c = A(!1), u = A({ x: 0, y: 0 }), p = A({ x: 0, y: 0 }), x = A(null), w = H(
-    (k) => {
-      t && (c.current = !0, o(!0), s(!1), u.current = { x: k.clientX, y: k.clientY }, p.current = { ...n }, k.preventDefault());
+  const [n, r] = j({ x: 0, y: 0 }), [a, o] = j(!1), [d, s] = j(!1), c = B(!1), u = B({ x: 0, y: 0 }), p = B({ x: 0, y: 0 }), x = B(null), w = R(
+    (y) => {
+      t && (c.current = !0, o(!0), s(!1), u.current = { x: y.clientX, y: y.clientY }, p.current = { ...n }, y.preventDefault());
     },
     [t, n]
-  ), f = H(() => {
+  ), f = R(() => {
     s(!0), r({ x: 0, y: 0 }), setTimeout(() => s(!1), 200);
-  }, []), l = H(
-    (k) => {
+  }, []), l = R(
+    (y) => {
       const g = x.current;
       if (!g) return;
       const N = g.offsetParent, C = 16;
       let E = window.innerWidth, I = window.innerHeight;
       N && (E = N.clientWidth, I = N.clientHeight);
       const L = g.getBoundingClientRect(), P = N ? N.getBoundingClientRect() : { left: 0, top: 0 };
-      let S, B;
-      switch (k) {
+      let S, H;
+      switch (y) {
         case "top-left":
-          S = C, B = C;
+          S = C, H = C;
           break;
         case "top-right":
-          S = E - L.width - C, B = C;
+          S = E - L.width - C, H = C;
           break;
         case "bottom-left":
-          S = C, B = I - L.height - C;
+          S = C, H = I - L.height - C;
           break;
         default:
-          S = E - L.width - C, B = I - L.height - C;
+          S = E - L.width - C, H = I - L.height - C;
           break;
       }
       const D = L.left - P.left - n.x, F = L.top - P.top - n.y;
-      s(!0), r({ x: S - D, y: B - F }), setTimeout(() => s(!1), 200);
+      s(!0), r({ x: S - D, y: H - F }), setTimeout(() => s(!1), 200);
     },
     [n]
-  ), m = A(l);
-  m.current = l, T(() => {
+  ), m = B(l);
+  m.current = l, A(() => {
     if (!t) return;
-    const k = (N) => {
+    const y = (N) => {
       c.current && r({
         x: p.current.x + (N.clientX - u.current.x),
         y: p.current.y + (N.clientY - u.current.y)
@@ -1026,14 +1026,14 @@ function it(t) {
       const C = N.offsetParent, E = 80;
       let I = window.innerWidth, L = window.innerHeight;
       if (C) {
-        const y = C.getBoundingClientRect();
-        I = y.width, L = y.height;
+        const k = C.getBoundingClientRect();
+        I = k.width, L = k.height;
       }
-      const P = N.getBoundingClientRect(), S = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, B = P.left - S.left, D = P.top - S.top, F = I - (B + P.width), O = L - (D + P.height), z = B < E, W = F < E, M = D < E, h = O < E;
+      const P = N.getBoundingClientRect(), S = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, H = P.left - S.left, D = P.top - S.top, F = I - (H + P.width), O = L - (D + P.height), z = H < E, W = F < E, M = D < E, h = O < E;
       M && z ? m.current("top-left") : M && W ? m.current("top-right") : h && z ? m.current("bottom-left") : h && W && m.current("bottom-right");
     };
-    return document.addEventListener("mousemove", k), document.addEventListener("mouseup", g), () => {
-      document.removeEventListener("mousemove", k), document.removeEventListener("mouseup", g);
+    return document.addEventListener("mousemove", y), document.addEventListener("mouseup", g), () => {
+      document.removeEventListener("mousemove", y), document.removeEventListener("mouseup", g);
     };
   }, [t]);
   const b = n.x !== 0 || n.y !== 0;
@@ -1077,7 +1077,7 @@ function on({
   onToggleCamera: l,
   onToggleScreenShare: m,
   onUpgradeToVideo: b,
-  onAddParticipant: k,
+  onAddParticipant: y,
   availableParticipants: g,
   onMinimize: N,
   onExpand: C,
@@ -1086,12 +1086,12 @@ function on({
   minimized: L = !1,
   position: P = "bottom-right",
   contained: S = !1,
-  draggable: B = !0,
+  draggable: H = !0,
   className: D,
   style: F,
   dataAttrs: O
 }) {
-  const { offset: z, handleMouseDown: W, resetOffset: M, snapToCorner: h, isDragging: y, isAnimating: R, hasMoved: X, widgetRef: V } = it(B), Y = {};
+  const { offset: z, handleMouseDown: W, resetOffset: M, snapToCorner: h, isDragging: k, isAnimating: T, hasMoved: X, widgetRef: V } = it(H), Y = {};
   if (O)
     for (const [Ie, q] of Object.entries(O))
       q != null && q !== "" && (Y[Ie] = q);
@@ -1108,7 +1108,7 @@ function on({
     }
   }, [P]);
   return t === "idle" || t === "ended" ? null : /* @__PURE__ */ i(re, { children: [
-    y && /* @__PURE__ */ e(ot, { onSnap: h, contained: S }),
+    k && /* @__PURE__ */ e(ot, { onSnap: h, contained: S }),
     /* @__PURE__ */ e(
       "div",
       {
@@ -1122,7 +1122,7 @@ function on({
         ),
         style: {
           transform: `translate(${z.x}px, ${z.y}px)`,
-          transition: R ? "transform 0.2s ease-out" : void 0,
+          transition: T ? "transform 0.2s ease-out" : void 0,
           ...F
         },
         ...Y,
@@ -1139,7 +1139,7 @@ function on({
                 {
                   className: v(
                     "flex items-center justify-between px-3 py-2 border-b border-white/5",
-                    B && "cursor-grab active:cursor-grabbing"
+                    H && "cursor-grab active:cursor-grabbing"
                   ),
                   onMouseDown: W,
                   children: [
@@ -1188,7 +1188,7 @@ function on({
               L && /* @__PURE__ */ e(
                 "div",
                 {
-                  className: v(B && "cursor-grab active:cursor-grabbing"),
+                  className: v(H && "cursor-grab active:cursor-grabbing"),
                   onMouseDown: W,
                   children: /* @__PURE__ */ e(
                     rt,
@@ -1239,7 +1239,7 @@ function on({
                     onToggleCamera: l,
                     onToggleScreenShare: m,
                     onUpgradeToVideo: b,
-                    onAddParticipant: k,
+                    onAddParticipant: y,
                     availableParticipants: g,
                     onEndCall: w,
                     layoutComponent: E,
@@ -1266,7 +1266,7 @@ function an({
   style: u
 }) {
   const [p, x] = j(!0);
-  return T(() => {
+  return A(() => {
     if (!s || s <= 0) return;
     const w = setTimeout(() => {
       x(!1), d?.();
@@ -1363,8 +1363,8 @@ function ln({
   hideDownload: c = !1,
   className: u
 }) {
-  const p = A(null), x = A(null), [w, f] = j(!1), [l, m] = j(0), [b, k] = j(0), [g, N] = j(1), [C, E] = j(1), [I, L] = j(!1), [P, S] = j(null);
-  T(() => {
+  const p = B(null), x = B(null), [w, f] = j(!1), [l, m] = j(0), [b, y] = j(0), [g, N] = j(1), [C, E] = j(1), [I, L] = j(!1), [P, S] = j(null);
+  A(() => {
     const M = p.current;
     if (!M || !t) return;
     if (S(null), L(!0), M.canPlayType("application/vnd.apple.mpegurl"))
@@ -1374,22 +1374,22 @@ function ln({
     let h = !1;
     return (async () => {
       try {
-        const y = (await import(
+        const k = (await import(
           /* @vite-ignore */
           "hls.js"
         )).default;
         if (h) return;
-        if (!y.isSupported()) {
+        if (!k.isSupported()) {
           S("HLS playback is not supported in this browser."), L(!1);
           return;
         }
-        const R = new y({ enableWorker: !0 });
-        x.current = R, R.attachMedia(M), R.on(y.Events.MEDIA_ATTACHED, () => R.loadSource(t)), R.on(y.Events.ERROR, (X, V) => {
+        const T = new k({ enableWorker: !0 });
+        x.current = T, T.attachMedia(M), T.on(k.Events.MEDIA_ATTACHED, () => T.loadSource(t)), T.on(k.Events.ERROR, (X, V) => {
           V.fatal && (S(`HLS error: ${V.type}`), s?.(new Error(`HLS fatal: ${V.type}`)));
         });
-      } catch (y) {
+      } catch (k) {
         if (h) return;
-        S(`Failed to load hls.js — install it in the consumer app: ${y?.message ?? y}`);
+        S(`Failed to load hls.js — install it in the consumer app: ${k?.message ?? k}`);
       }
     })(), () => {
       if (h = !0, x.current) {
@@ -1401,7 +1401,7 @@ function ln({
       }
     };
   }, [t, s]);
-  const B = () => {
+  const H = () => {
     const M = p.current;
     M && (M.paused ? M.play().catch(() => {
     }) : M.pause());
@@ -1411,13 +1411,13 @@ function ln({
   }, F = (M) => {
     const h = p.current;
     if (!h) return;
-    const y = Number(M.target.value);
-    h.volume = y, N(y);
+    const k = Number(M.target.value);
+    h.volume = k, N(k);
   }, O = (M) => {
     const h = p.current;
     if (!h) return;
-    const y = Number(M.target.value);
-    h.playbackRate = y, E(y);
+    const k = Number(M.target.value);
+    h.playbackRate = k, E(k);
   }, z = () => {
     const M = p.current;
     M && (document.fullscreenElement ? document.exitFullscreen() : M.requestFullscreen?.());
@@ -1439,7 +1439,7 @@ function ln({
         onPause: () => f(!1),
         onLoadedMetadata: (M) => {
           const h = M.currentTarget;
-          k(h.duration), L(!1), o?.(h.duration);
+          y(h.duration), L(!1), o?.(h.duration);
         },
         onTimeUpdate: (M) => {
           const h = M.currentTarget;
@@ -1477,7 +1477,7 @@ function ln({
           "button",
           {
             type: "button",
-            onClick: B,
+            onClick: H,
             className: "w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center",
             "aria-label": w ? "Pause" : "Play",
             children: w ? /* @__PURE__ */ i("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: [
@@ -1699,15 +1699,15 @@ function cn({
   title: r
 }) {
   const [a, o] = j(!1), [d, s] = j(!1);
-  T(() => {
+  A(() => {
     s(typeof document < "u" && document.pictureInPictureEnabled === !0);
-  }, []), T(() => {
+  }, []), A(() => {
     const p = () => o(!1), x = () => o(!0);
     return document.addEventListener("leavepictureinpicture", p), document.addEventListener("enterpictureinpicture", x), () => {
       document.removeEventListener("leavepictureinpicture", p), document.removeEventListener("enterpictureinpicture", x);
     };
   }, []);
-  const c = H(async () => {
+  const c = R(async () => {
     if (d)
       try {
         if (document.pictureInPictureElement) {
@@ -1849,8 +1849,8 @@ function un({
   cooldownMs: o = 6e3
 }) {
   const [d, s] = j(!1);
-  return T(() => {
-    if (!n || !t || t.getAudioTracks().filter((k) => k.readyState === "live").length === 0) return;
+  return A(() => {
+    if (!n || !t || t.getAudioTracks().filter((y) => y.readyState === "live").length === 0) return;
     const u = ft();
     if (!u) return;
     let p, x;
@@ -1863,9 +1863,9 @@ function un({
     const m = new Float32Array(x.frequencyBinCount), b = setInterval(() => {
       if (l) return;
       x.getFloatTimeDomainData(m);
-      let k = 0;
-      for (let C = 0; C < m.length; C++) k += m[C] * m[C];
-      const g = 20 * Math.log10(Math.sqrt(k / m.length)), N = Date.now();
+      let y = 0;
+      for (let C = 0; C < m.length; C++) y += m[C] * m[C];
+      const g = 20 * Math.log10(Math.sqrt(y / m.length)), N = Date.now();
       g > r ? (w == null && (w = N), N - w >= a && N - f > o && (s(!0), f = N, setTimeout(() => {
         l || s(!1);
       }, 3e3), w = null)) : w = null;
@@ -1881,13 +1881,13 @@ function un({
       } catch {
       }
     };
-  }, [t, n, r, a, o]), T(() => {
+  }, [t, n, r, a, o]), A(() => {
     n || s(!1);
   }, [n]), d;
 }
 function mt(t, n) {
   const [r, a] = j(0);
-  return T(() => {
+  return A(() => {
     if (!t) return;
     const o = (f, l) => {
       console.info("[useTrackStateBump] remote track", f, {
@@ -1925,13 +1925,13 @@ function Ce({
   className: a = "h-full w-full object-cover",
   onPlayStateChange: o
 }) {
-  const d = A(null), s = A(o);
-  return s.current = o, T(() => {
+  const d = B(null), s = B(o);
+  return s.current = o, A(() => {
     const c = d.current;
     if (!c) return;
     c.srcObject !== t && (c.srcObject = t), r && (r.current = c);
-    const u = (k) => {
-      typeof t?.getTracks == "function" && console.info(`[StreamVideo] ${k}`, {
+    const u = (y) => {
+      typeof t?.getTracks == "function" && console.info(`[StreamVideo] ${y}`, {
         streamId: t.id,
         tracks: t.getTracks().map((g) => ({
           kind: g.kind,
@@ -1943,17 +1943,17 @@ function Ce({
       });
     };
     u("bind");
-    const p = (k) => {
-      s.current?.(k);
+    const p = (y) => {
+      s.current?.(y);
     }, x = () => p("playing"), w = () => p("ended"), f = () => {
       c.ended && p("ended");
     }, l = () => {
-      const k = c.play();
-      k && typeof k.catch == "function" && k.catch((g) => {
+      const y = c.play();
+      y && typeof y.catch == "function" && y.catch((g) => {
         g?.name === "NotAllowedError" && p("paused-by-autoplay");
       });
-    }, m = (k) => {
-      u(`stream ${k.type}`), c.srcObject = null, c.srcObject = t, l();
+    }, m = (y) => {
+      u(`stream ${y.type}`), c.srcObject = null, c.srcObject = t, l();
     };
     c.addEventListener("play", x), c.addEventListener("ended", w), c.addEventListener("pause", f);
     const b = typeof t?.addEventListener == "function";
@@ -1989,12 +1989,12 @@ function hn({
   onPlayStateChange: a,
   ...o
 }) {
-  const [d, s] = j(!1), c = A(null), p = o.videoRef ?? c, x = H(
+  const [d, s] = j(!1), c = B(null), p = o.videoRef ?? c, x = R(
     (f) => {
       f === "paused-by-autoplay" ? s(!0) : f === "playing" && s(!1), a?.(f);
     },
     [a]
-  ), w = H(() => {
+  ), w = R(() => {
     const f = p.current;
     if (f) {
       f.muted = !1;
@@ -2051,8 +2051,8 @@ function vt({
       }
       return n;
     }
-  }), d = A(null);
-  T(() => {
+  }), d = B(null);
+  A(() => {
     if (!(!t || typeof window > "u"))
       return d.current && clearTimeout(d.current), d.current = setTimeout(() => {
         try {
@@ -2064,7 +2064,7 @@ function vt({
         d.current && clearTimeout(d.current);
       };
   }, [t, a, r]);
-  const s = H((c) => {
+  const s = R((c) => {
     o((u) => ({ ...u, ...c }));
   }, []);
   return { state: a, setState: s };
@@ -2096,27 +2096,31 @@ function fn({
       width: pe,
       height: ge
     }
-  }), [b, k] = j(!1), g = b ? "fullscreen" : l.mode, N = A(null), C = A(!1);
-  T(() => {
+  }), [b, y] = j(!1), g = b ? "fullscreen" : l.mode, N = B(null), C = B(!1);
+  A(() => {
     const h = () => {
-      !((document.fullscreenElement ?? document.webkitFullscreenElement) === N.current) && b && (k(!1), C.current || m({ mode: "docked" }), C.current = !1);
+      !((document.fullscreenElement ?? document.webkitFullscreenElement) === N.current) && b && (y(!1), C.current || m({ mode: "docked" }), C.current = !1);
     };
     return document.addEventListener("fullscreenchange", h), document.addEventListener("webkitfullscreenchange", h), () => {
       document.removeEventListener("fullscreenchange", h), document.removeEventListener("webkitfullscreenchange", h);
     };
   }, [b, m]);
-  const E = H(() => {
-    const h = N.current, y = h?.requestFullscreen ?? h?.webkitRequestFullscreen?.bind(h);
-    !h || !y || y().then(
-      () => k(!0),
+  const E = R(() => {
+    const h = N.current;
+    if (!h) return;
+    const k = h.requestFullscreen?.bind(h) ?? h.webkitRequestFullscreen?.bind(h);
+    if (!k) return;
+    const T = k();
+    T && typeof T.then == "function" ? T.then(
+      () => y(!0),
       () => {
       }
-    );
-  }, []), I = H(() => {
+    ) : y(!0);
+  }, []), I = R(() => {
     if (!(document.fullscreenElement ?? document.webkitFullscreenElement)) return;
     C.current = !0, (document.exitFullscreen?.bind(document) ?? document.webkitExitFullscreen?.bind(document))?.().catch(() => {
     });
-  }, []), L = H((h) => {
+  }, []), L = R((h) => {
     if (h !== g) {
       if (h === "fullscreen") {
         E();
@@ -2127,55 +2131,55 @@ function fn({
         return;
       }
       if (h === "docked" && g === "mini") {
-        const y = ve(l.width, l.height);
-        m({ mode: h, x: y.x, y: y.y });
+        const k = ve(l.width, l.height);
+        m({ mode: h, x: k.x, y: k.y });
         return;
       }
       if (h === "mini" && g === "docked") {
-        const y = be(u);
-        m({ mode: h, x: y.x, y: y.y });
+        const k = be(u);
+        m({ mode: h, x: k.x, y: k.y });
         return;
       }
       m({ mode: h });
     }
   }, [g, E, I, m, l.width, l.height, u]);
-  T(() => {
+  A(() => {
     d?.(g);
   }, [g, d]), Pe(c, () => ({ mode: g, setMode: L }), [g, L]);
-  const P = A(null), S = H((h) => {
+  const P = B(null), S = R((h) => {
     g === "docked" && (h.target.closest("button") || (h.currentTarget.setPointerCapture(h.pointerId), P.current = {
       startX: h.clientX,
       startY: h.clientY,
       origX: l.x,
       origY: l.y
     }));
-  }, [g, l.x, l.y]), B = H((h) => {
-    const y = P.current;
-    if (!y) return;
-    const R = h.clientX - y.startX, X = h.clientY - y.startY, V = te(y.origX + R, l.width, window.innerWidth), Y = te(y.origY + X, l.height, window.innerHeight);
+  }, [g, l.x, l.y]), H = R((h) => {
+    const k = P.current;
+    if (!k) return;
+    const T = h.clientX - k.startX, X = h.clientY - k.startY, V = te(k.origX + T, l.width, window.innerWidth), Y = te(k.origY + X, l.height, window.innerHeight);
     m({ x: V, y: Y });
-  }, [m, l.width, l.height]), D = H((h) => {
+  }, [m, l.width, l.height]), D = R((h) => {
     h.currentTarget.releasePointerCapture(h.pointerId), P.current = null;
-  }, []), F = A(null), O = H((h) => {
+  }, []), F = B(null), O = R((h) => {
     g === "docked" && (h.stopPropagation(), h.currentTarget.setPointerCapture(h.pointerId), F.current = {
       startX: h.clientX,
       startY: h.clientY,
       origW: l.width,
       origH: l.height
     });
-  }, [g, l.width, l.height]), z = H((h) => {
-    const y = F.current;
-    if (!y) return;
-    const R = h.clientX - y.startX, X = h.clientY - y.startY, V = se(y.origW + R, bt, Math.min(yt, window.innerWidth - $ * 2)), Y = se(y.origH + X, wt, Math.min(kt, window.innerHeight - $ * 2));
+  }, [g, l.width, l.height]), z = R((h) => {
+    const k = F.current;
+    if (!k) return;
+    const T = h.clientX - k.startX, X = h.clientY - k.startY, V = se(k.origW + T, bt, Math.min(yt, window.innerWidth - $ * 2)), Y = se(k.origH + X, wt, Math.min(kt, window.innerHeight - $ * 2));
     m({ width: V, height: Y });
-  }, [m]), W = H((h) => {
+  }, [m]), W = R((h) => {
     h.currentTarget.releasePointerCapture(h.pointerId), F.current = null;
   }, []);
   Te(() => {
     if (g !== "docked") return;
     const h = () => {
-      const y = te(l.x, l.width, window.innerWidth), R = te(l.y, l.height, window.innerHeight);
-      (y !== l.x || R !== l.y) && m({ x: y, y: R });
+      const k = te(l.x, l.width, window.innerWidth), T = te(l.y, l.height, window.innerHeight);
+      (k !== l.x || T !== l.y) && m({ x: k, y: T });
     };
     return window.addEventListener("resize", h), () => window.removeEventListener("resize", h);
   }, [g, l.x, l.y, l.width, l.height, m]);
@@ -2221,7 +2225,7 @@ function fn({
             ),
             style: { height: xe, minHeight: xe },
             onPointerDown: S,
-            onPointerMove: B,
+            onPointerMove: H,
             onPointerUp: D,
             onPointerCancel: D,
             children: [
@@ -2594,15 +2598,15 @@ function wn({
   onCancel: l,
   joinLabel: m,
   joinDisabled: b,
-  subtitleOverride: k,
+  subtitleOverride: y,
   className: g,
   "data-testid": N
 }) {
-  const C = A(null);
-  T(() => {
+  const C = B(null);
+  A(() => {
     C.current && n && (C.current.srcObject = n);
   }, [n]);
-  const E = r === "granted", I = Ht(r), L = b ?? !E, P = m ?? (L && !E ? "Allow camera to join" : "Join now"), S = k ?? Bt(p, x, w);
+  const E = r === "granted", I = Ht(r), L = b ?? !E, P = m ?? (L && !E ? "Allow camera to join" : "Join now"), S = y ?? Bt(p, x, w);
   return /* @__PURE__ */ i(
     "div",
     {
