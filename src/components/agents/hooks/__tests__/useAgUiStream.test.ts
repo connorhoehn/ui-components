@@ -796,4 +796,107 @@ describe('useAgUiStream', () => {
       expect(result.current.state).toEqual({ b: 0, c: 99 });
     });
   });
+
+  // ── JSON Patch test-op, unknown-op, and partial application ──────────────────
+
+  describe('STATE_DELTA — test op and partial application', () => {
+    it('test op succeeds when value matches — no warn, state unchanged at path', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 1, b: 'two' } });
+      await send({ type: 'STATE_DELTA', delta: [{ op: 'test', path: '/a', value: 1 }] });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ a: 1, b: 'two' });
+      expect(warnSpy).not.toHaveBeenCalledWith(
+        expect.stringContaining('JSON Patch test op failed'),
+        expect.anything(),
+      );
+    });
+
+    it('test op failure warns with path info and leaves state unchanged', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 1 } });
+      await send({ type: 'STATE_DELTA', delta: [{ op: 'test', path: '/a', value: 999 }] });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ a: 1 });
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('JSON Patch test op failed'),
+        '/a',
+      );
+    });
+
+    it('unknown op type warns and does not throw', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 1 } });
+      // 'invent' is not a valid RFC 6902 op — the applier's default branch warns.
+      await send({ type: 'STATE_DELTA', delta: [{ op: 'invent', path: '/a', value: 42 }] });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ a: 1 });
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Unsupported JSON Patch op'),
+        'invent',
+      );
+    });
+
+    it('partial application: valid ops land even when sibling ops are invalid', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'STATE_SNAPSHOT', snapshot: { a: 1, b: 2 } });
+      // Mix of: failing test, valid add, unknown op, valid replace.
+      // Each invalid op should warn but not block the others from landing.
+      await send({
+        type: 'STATE_DELTA',
+        delta: [
+          { op: 'test', path: '/a', value: 999 },     // fails — warns
+          { op: 'add', path: '/c', value: 3 },        // lands
+          { op: 'bogus', path: '/d', value: 4 },      // unknown — warns
+          { op: 'replace', path: '/b', value: 20 },   // lands
+        ],
+      });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.state).toEqual({ a: 1, b: 20, c: 3 });
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('JSON Patch test op failed'),
+        '/a',
+      );
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Unsupported JSON Patch op'),
+        'bogus',
+      );
+    });
+  });
 });
