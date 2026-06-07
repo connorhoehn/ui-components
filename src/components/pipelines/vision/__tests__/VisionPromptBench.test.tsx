@@ -183,7 +183,7 @@ describe('VisionPromptBench', () => {
     renderBench();
 
     fireEvent.change(screen.getByTestId('bench-schema-preset'), {
-      target: { value: '4' }, // index 4 = Face detection
+      target: { value: '5' }, // index 5 = Face detection
     });
 
     const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
@@ -199,7 +199,7 @@ describe('VisionPromptBench', () => {
     renderBench();
 
     fireEvent.change(screen.getByTestId('bench-schema-preset'), {
-      target: { value: '5' }, // index 5 = Color palette
+      target: { value: '6' }, // index 6 = Color palette
     });
 
     const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
@@ -215,7 +215,7 @@ describe('VisionPromptBench', () => {
     renderBench();
 
     fireEvent.change(screen.getByTestId('bench-schema-preset'), {
-      target: { value: '6' }, // index 6 = Image quality rating
+      target: { value: '7' }, // index 7 = Image quality rating
     });
 
     const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
@@ -226,6 +226,21 @@ describe('VisionPromptBench', () => {
     const sys = screen.getByTestId('bench-system-prompt') as HTMLTextAreaElement;
     expect(sys.value).toMatch(/Rate this image/);
     expect(sys.value).toMatch(/30\/30\/40/);
+  });
+
+  it('classification-enum preset pre-fills enum schema + system prompt', async () => {
+    renderBench();
+
+    fireEvent.change(screen.getByTestId('bench-schema-preset'), {
+      target: { value: '4' }, // index 4 = Classification (enum)
+    });
+
+    const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
+    expect(schema.value).toMatch(/"enum"/);
+    expect(schema.value).toMatch(/"label"/);
+
+    const sys = screen.getByTestId('bench-system-prompt') as HTMLTextAreaElement;
+    expect(sys.value).toMatch(/classification assistant/i);
   });
 
   it('save button calls onSave with current prompt values', async () => {

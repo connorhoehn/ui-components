@@ -12216,6 +12216,21 @@ const qd = [
     }
   },
   {
+    label: "Classification (enum)",
+    systemPrompt: "You are a precise image classification assistant. Return the single best label from the enum that describes the image. Edit the schema below to set your label set.",
+    value: {
+      type: "object",
+      required: ["label"],
+      properties: {
+        label: {
+          type: "string",
+          enum: ["red", "green", "blue"]
+        },
+        confidence: { type: "number", minimum: 0, maximum: 1 }
+      }
+    }
+  },
+  {
     label: "Face detection",
     systemPrompt: "You are a face detection vision model. Identify all human faces in the image and return their bounding boxes (normalized [0,1] coordinates) with optional age/expression/gaze attributes when clearly visible. Return JSON conforming to the schema. Do NOT detect non-human faces.",
     value: {
