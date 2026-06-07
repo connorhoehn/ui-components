@@ -560,7 +560,7 @@ export declare interface FileUploadDropProps {
     'data-testid'?: string;
 }
 
-export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, }: FilterChipProps): JSX.Element;
+export declare function FilterChip({ active, onClick, color, dot, size, children, className, disabled, 'data-testid': dataTestId, }: FilterChipProps): JSX.Element;
 
 export declare interface FilterChipProps {
     active: boolean;
@@ -573,6 +573,8 @@ export declare interface FilterChipProps {
     children: ReactNode;
     className?: string;
     disabled?: boolean;
+    /** Forwarded to the underlying <button> for test selectors. */
+    'data-testid'?: string;
 }
 
 /**

@@ -12,6 +12,8 @@ export interface FilterChipProps {
   children: ReactNode;
   className?: string;
   disabled?: boolean;
+  /** Forwarded to the underlying <button> for test selectors. */
+  'data-testid'?: string;
 }
 
 const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
@@ -37,6 +39,7 @@ export function FilterChip({
   children,
   className,
   disabled = false,
+  'data-testid': dataTestId,
 }: FilterChipProps) {
   const useColoredActive = active && !!color;
 
@@ -50,6 +53,7 @@ export function FilterChip({
       onClick={onClick}
       disabled={disabled}
       aria-pressed={active}
+      data-testid={dataTestId}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none',
         SIZE_CLASSES[size],

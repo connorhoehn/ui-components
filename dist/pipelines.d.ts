@@ -268,6 +268,8 @@ export declare interface CaptionPanelProps {
     className?: string;
 }
 
+export declare function clearImageLineageCache(): void;
+
 declare type ConditionData = ConditionNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -561,6 +563,31 @@ declare interface ImageGenerateNodeData {
     height?: number;
     seed?: number;
     numImages?: number;
+}
+
+export declare interface ImageLineageEntry {
+    imageId: string;
+    producedByStepId: string;
+    producedByNodeKind: string;
+    parentImageId?: string;
+    width: number;
+    height: number;
+    mimeType: string;
+    bbox?: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+    at: string;
+}
+
+export declare function ImageLineageGraph({ entries, selectedImageId, onSelect, }: ImageLineageGraphProps): JSX.Element;
+
+export declare interface ImageLineageGraphProps {
+    entries: ImageLineageEntry[];
+    selectedImageId?: string;
+    onSelect?: (imageId: string) => void;
 }
 
 /** Convenience: pull all the bbox-related props out of a `VisionResult`. */
@@ -1033,6 +1060,13 @@ declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | Cond
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
 
+export declare function NodePalette({ disabledTypes }: NodePaletteProps): JSX.Element;
+
+export declare interface NodePaletteProps {
+    /** Types that already exist once and cannot be added again (e.g. Trigger). */
+    disabledTypes?: NodeType[];
+}
+
 declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
 export declare const nodeTypes: {
@@ -1082,6 +1116,20 @@ export declare interface ObjectsPanelProps {
     objects: VisionObject[];
     onSelect?: (object: VisionObject) => void;
     className?: string;
+}
+
+export declare const PALETTE_ITEMS: ReadonlyArray<{
+    type: NodeType;
+    name: string;
+}>;
+
+export declare interface PaletteItem {
+    type: NodeType;
+    icon: string;
+    name: string;
+    description: string;
+    /** Category key, used for filter chip matching. */
+    category: string;
 }
 
 /**
@@ -1714,6 +1762,12 @@ declare interface PolicyNodeData {
     label?: string;
 }
 
+/**
+ * Record that a node of `type` was added. Prepends to the ring buffer (max 5,
+ * MRU order, no duplicates). Call this from the consumer's addNode handler.
+ */
+export declare function recordRecentType(type: NodeType): void;
+
 export declare function ResizeConfig({ data, onChange }: ResizeConfigProps): JSX.Element;
 
 declare interface ResizeConfigProps {
@@ -2018,6 +2072,15 @@ export declare function useEventStream<K extends keyof PipelineEventMap>(type: K
  * Prefer `useEventStream(type, handler)` for subscription use cases.
  */
 export declare function useEventStreamContext(): EventStreamValue;
+
+export declare function useImageLineage(runId: string | null | undefined, pipelineId: string | null | undefined): UseImageLineageResult;
+
+export declare interface UseImageLineageResult {
+    entries: ImageLineageEntry[];
+    loading: boolean;
+    error: string | null;
+    refetch: () => void;
+}
 
 /**
  * Returns the host-provided `getImageUrl(imageId): string` callback.

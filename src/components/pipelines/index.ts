@@ -38,6 +38,9 @@ export type { PipelineEditorValue, PipelineEditorProviderProps } from './context
 export { default as PipelineCanvas } from './canvas/PipelineCanvas';
 export type { PipelineCanvasProps } from './canvas/PipelineCanvas';
 
+export { default as NodePalette, PALETTE_ITEMS, recordRecentType } from './canvas/NodePalette';
+export type { NodePaletteProps, PaletteItem } from './canvas/NodePalette';
+
 // ─── Node types ──────────────────────────────────────────────────────────────
 export {
   // Canonical
