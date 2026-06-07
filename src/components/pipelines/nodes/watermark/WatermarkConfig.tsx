@@ -3,6 +3,7 @@
 // Config panel for image:watermark.
 
 import type { ImageWatermarkNodeData, WatermarkGravity } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface WatermarkConfigProps {
   data: ImageWatermarkNodeData;
@@ -45,7 +46,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function WatermarkConfig({ data, onChange }: WatermarkConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="watermark-source-image-path" className={labelCls}>
@@ -149,6 +150,6 @@ export default function WatermarkConfig({ data, onChange }: WatermarkConfigProps
           />
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

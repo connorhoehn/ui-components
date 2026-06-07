@@ -6,6 +6,7 @@
 import type { ImageSaveNodeData } from '../../../../types/pipeline';
 import { Input } from '../../../forms/Input';
 import { cn } from '../../../../lib/cn';
+import { NodeConfigShell } from '../shared';
 
 export interface SaveConfigProps {
   data: ImageSaveNodeData;
@@ -54,7 +55,7 @@ function SamplePills({
 
 export default function SaveConfig({ data, onChange }: SaveConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label
@@ -127,6 +128,6 @@ export default function SaveConfig({ data, onChange }: SaveConfigProps) {
           />
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

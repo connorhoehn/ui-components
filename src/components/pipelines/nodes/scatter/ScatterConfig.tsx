@@ -12,6 +12,7 @@ import { useMemo } from 'react';
 import type { ScatterNodeData } from '../../../../types/pipeline';
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { ScatterPathPicker } from './ScatterPathPicker';
+import { NodeConfigShell } from '../shared';
 
 export interface ScatterConfigProps {
   data: ScatterNodeData;
@@ -52,7 +53,7 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
   const rawConcurrency = data.maxConcurrency ?? '';
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Items path — schema-aware picker */}
       <div>
         <label className={labelCls}>
@@ -126,6 +127,6 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
           Maximum number of arms executing concurrently.
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

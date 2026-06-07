@@ -3,6 +3,7 @@
 // Config panel for image:vision-describe.
 
 import type { ImageVisionDescribeNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface VisionDescribeConfigProps {
   data: ImageVisionDescribeNodeData;
@@ -44,7 +45,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function VisionDescribeConfig({ data, onChange }: VisionDescribeConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Image ref path */}
       <div>
         <label htmlFor="vision-describe-image-ref-path" className={labelCls}>Image ref path</label>
@@ -126,6 +127,6 @@ export default function VisionDescribeConfig({ data, onChange }: VisionDescribeC
           }}
         />
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

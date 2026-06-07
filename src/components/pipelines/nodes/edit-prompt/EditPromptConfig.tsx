@@ -3,6 +3,7 @@
 // Config panel for image:edit-prompt (Nova Canvas inpaint).
 
 import type { ImageEditPromptNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface EditPromptConfigProps {
   data: ImageEditPromptNodeData;
@@ -48,7 +49,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function EditPromptConfig({ data, onChange }: EditPromptConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="edit-prompt-source-image-path" className={labelCls}>
@@ -115,6 +116,6 @@ export default function EditPromptConfig({ data, onChange }: EditPromptConfigPro
           ))}
         </select>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

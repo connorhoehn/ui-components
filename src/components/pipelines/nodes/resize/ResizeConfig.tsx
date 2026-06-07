@@ -3,6 +3,7 @@
 // Config panel for the image:resize node.
 
 import type { ImageResizeNodeData, ResizeFit } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface ResizeConfigProps {
   data: ImageResizeNodeData;
@@ -40,7 +41,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function ResizeConfig({ data, onChange }: ResizeConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="resize-source-image-path" className={labelCls}>
@@ -142,6 +143,6 @@ export default function ResizeConfig({ data, onChange }: ResizeConfigProps) {
           Hex colour used to fill letterbox padding. Only applies when fit is <code>contain</code> or <code>fill</code>.
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import type { ImageVisionTagNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface VisionTagConfigProps {
   data: ImageVisionTagNodeData;
@@ -59,7 +60,7 @@ export default function VisionTagConfig({ data, onChange }: VisionTagConfigProps
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Image ref path */}
       <div>
         <label htmlFor="vision-tag-image-ref-path" className={labelCls}>Image ref path</label>
@@ -192,6 +193,6 @@ export default function VisionTagConfig({ data, onChange }: VisionTagConfigProps
           }}
         />
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

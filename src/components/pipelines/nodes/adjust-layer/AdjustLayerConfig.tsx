@@ -8,6 +8,7 @@ import type { ImageAdjustLayerNodeData, AdjustLayer } from '../../../../types/pi
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
+import { NodeConfigShell } from '../shared';
 
 export interface AdjustLayerConfigProps {
   data: ImageAdjustLayerNodeData;
@@ -80,7 +81,7 @@ function AdjustLayerConfigInner({
   const layers = data.layers ?? [];
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="adjust-layer-source-image-path" className={labelCls}>
@@ -114,7 +115,7 @@ function AdjustLayerConfigInner({
           }
         />
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }
 

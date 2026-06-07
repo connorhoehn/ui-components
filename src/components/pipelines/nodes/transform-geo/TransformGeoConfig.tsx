@@ -3,6 +3,7 @@
 // Config panel for image:transform — chain editor for geometric ops.
 
 import type { ImageTransformNodeData, GeometricOp, GeometricOpRotate } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface TransformGeoConfigProps {
   data: ImageTransformNodeData;
@@ -138,7 +139,7 @@ export default function TransformGeoConfig({ data, onChange }: TransformGeoConfi
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="transform-geo-source-image-path" className={labelCls}>
@@ -189,6 +190,6 @@ export default function TransformGeoConfig({ data, onChange }: TransformGeoConfi
           Supported: Rotate (any angle), Flip (top-to-bottom mirror), Flop (left-to-right mirror).
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

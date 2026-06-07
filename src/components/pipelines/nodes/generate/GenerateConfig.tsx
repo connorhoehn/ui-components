@@ -3,6 +3,7 @@
 // Config panel for image:generate (Bedrock Titan).
 
 import type { ImageGenerateNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface GenerateConfigProps {
   data: ImageGenerateNodeData;
@@ -20,7 +21,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function GenerateConfig({ data, onChange }: GenerateConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Prompt */}
       <div>
         <label htmlFor="generate-prompt" className={labelCls}>Prompt</label>
@@ -129,6 +130,6 @@ export default function GenerateConfig({ data, onChange }: GenerateConfigProps) 
           When &gt; 1, the step fans out with one arm per image. Each arm carries one imageId.
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

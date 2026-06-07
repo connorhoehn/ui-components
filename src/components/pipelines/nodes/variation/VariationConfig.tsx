@@ -3,6 +3,7 @@
 // Config panel for image:variation (Nova Canvas).
 
 import type { ImageVariationNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface VariationConfigProps {
   data: ImageVariationNodeData;
@@ -43,7 +44,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function VariationConfig({ data, onChange }: VariationConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="variation-source-image-path" className={labelCls}>
@@ -117,6 +118,6 @@ export default function VariationConfig({ data, onChange }: VariationConfigProps
         />
         <div className={helpCls}>0 = very different, 1 = nearly identical. 0.7 is a good starting point.</div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

@@ -5,6 +5,7 @@
 import { useCallback, useState } from 'react';
 import type { AuthoringBBox, ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
+import { NodeConfigShell } from '../shared';
 
 export interface VisionConfigProps {
   data: ImageVisionAnalyzeNodeData;
@@ -90,7 +91,7 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Model */}
       <div>
         <label htmlFor="vision-model" className={labelCls}>Model</label>
@@ -251,6 +252,6 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
           </div>
         )}
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

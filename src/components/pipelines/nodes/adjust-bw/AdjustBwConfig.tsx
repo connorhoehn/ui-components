@@ -3,6 +3,7 @@
 // Config panel for the image:adjust-bw node.
 
 import type { ImageAdjustBwNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface AdjustBwConfigProps {
   data: ImageAdjustBwNodeData;
@@ -41,7 +42,7 @@ export default function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps) 
   const contrast = data.contrast ?? 1;
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="adjust-bw-source-image-path" className={labelCls}>
@@ -100,6 +101,6 @@ export default function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps) 
           Applied after greyscale conversion. 1 = no change, {'<'}1 = lower contrast,{' >'}1 = higher contrast. Range 0–4.
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

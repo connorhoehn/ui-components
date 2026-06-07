@@ -3,6 +3,7 @@
 // Config panel for image:format-convert.
 
 import type { ImageFormatConvertNodeData, ImageFormat } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface FormatConvertConfigProps {
   data: ImageFormatConvertNodeData;
@@ -48,7 +49,7 @@ export default function FormatConvertConfig({ data, onChange }: FormatConvertCon
   const isLossyFormat = data.format === 'jpeg' || data.format === 'webp' || data.format === 'avif';
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="format-convert-source-image-path" className={labelCls}>
@@ -139,6 +140,6 @@ export default function FormatConvertConfig({ data, onChange }: FormatConvertCon
           Removes camera EXIF, GPS, copyright tags etc. Reduces file size; recommended for web delivery.
         </div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

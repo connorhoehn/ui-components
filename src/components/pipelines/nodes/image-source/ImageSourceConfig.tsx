@@ -4,6 +4,7 @@
 
 import type { ImageSourceNodeData } from '../../../../types/pipeline';
 import { Input } from '../../../forms/Input';
+import { NodeConfigShell } from '../shared';
 
 export interface ImageSourceConfigProps {
   data: ImageSourceNodeData;
@@ -12,7 +13,7 @@ export interface ImageSourceConfigProps {
 
 export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Image ID */}
       <div>
         <label
@@ -66,6 +67,6 @@ export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigP
           <code>$.trigger.{'<key>'}</code> by downstream steps).
         </p>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

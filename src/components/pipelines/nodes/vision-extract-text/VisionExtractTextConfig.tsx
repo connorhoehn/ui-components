@@ -3,6 +3,7 @@
 // Config panel for image:vision-extract-text (OCR).
 
 import type { ImageVisionExtractTextNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface VisionExtractTextConfigProps {
   data: ImageVisionExtractTextNodeData;
@@ -44,7 +45,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function VisionExtractTextConfig({ data, onChange }: VisionExtractTextConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Image ref path */}
       <div>
         <label htmlFor="vision-extract-text-image-ref-path" className={labelCls}>Image ref path</label>
@@ -113,6 +114,6 @@ export default function VisionExtractTextConfig({ data, onChange }: VisionExtrac
         />
         <div className={helpCls}>Increase for documents with large amounts of text.</div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

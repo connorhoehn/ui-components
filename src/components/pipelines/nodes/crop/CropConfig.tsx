@@ -3,6 +3,7 @@
 // Config panel for the image:crop node.
 
 import type { ImageCropNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface CropConfigProps {
   data: ImageCropNodeData;
@@ -46,7 +47,7 @@ export default function CropConfig({ data, onChange }: CropConfigProps) {
   const materialize = data.materialize !== false;
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="crop-source-image-path" className={labelCls}>
@@ -105,6 +106,6 @@ export default function CropConfig({ data, onChange }: CropConfigProps) {
       <div className={helpCls}>
         When enabled (default), the cropped image is saved to the ImageBlobStore.
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

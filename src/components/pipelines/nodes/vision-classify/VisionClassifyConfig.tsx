@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import type { ImageVisionClassifyNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface VisionClassifyConfigProps {
   data: ImageVisionClassifyNodeData;
@@ -59,7 +60,7 @@ export default function VisionClassifyConfig({ data, onChange }: VisionClassifyC
   };
 
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Image ref path */}
       <div>
         <label htmlFor="vision-classify-image-ref-path" className={labelCls}>Image ref path</label>
@@ -170,6 +171,6 @@ export default function VisionClassifyConfig({ data, onChange }: VisionClassifyC
           }}
         />
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }

@@ -3,6 +3,7 @@
 // Config panel for image:sharpen.
 
 import type { ImageSharpenNodeData } from '../../../../types/pipeline';
+import { NodeConfigShell } from '../shared';
 
 export interface SharpenConfigProps {
   data: ImageSharpenNodeData;
@@ -38,7 +39,7 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function SharpenConfig({ data, onChange }: SharpenConfigProps) {
   return (
-    <div className="flex flex-col gap-3 px-4 py-3">
+    <NodeConfigShell>
       {/* Source image path */}
       <div>
         <label htmlFor="sharpen-source-image-path" className={labelCls}>
@@ -123,6 +124,6 @@ export default function SharpenConfig({ data, onChange }: SharpenConfigProps) {
         />
         <div className={helpCls}>Level of sharpening applied to jagged (edge) areas of the image.</div>
       </div>
-    </div>
+    </NodeConfigShell>
   );
 }
