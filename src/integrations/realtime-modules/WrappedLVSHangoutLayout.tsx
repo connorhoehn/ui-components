@@ -23,6 +23,8 @@ import { useMemo } from 'react';
 // the peer dep installed get a clearer error than a deep import fail.
 import { useLVSHangout, type HangoutParticipant, type HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 import { HangoutLayout, type HangoutLayoutParticipant, type HangoutMode } from '../../components/video/HangoutLayout';
+import { RemoteTileSlot } from '../../components/video/RemoteTileSlot';
+import { StreamVideo } from '../../components/video/StreamVideo';
 import { Avatar } from '../../components/shared/Avatar';
 
 /**
@@ -97,13 +99,39 @@ export interface WrappedLVSHangoutLayoutProps {
   'data-testid'?: string;
 }
 
-function avatarUrl(displayName: string): string | undefined {
-  if (!displayName) return undefined;
-  // Avatar component already does palette+initials internally; we don't
-  // need to provide a URL. The hangout participant shape just doesn't
-  // currently carry one. Keeping this hook so a future iteration can
-  // resolve from a profile-resolver prop without an API break.
-  return undefined;
+/**
+ * Local-user camera tile. Stays inline because the local user needs
+ * two behaviours `<RemoteTileSlot>` deliberately doesn't:
+ *   - mirrored preview (`scale-x-[-1]`) so selfie video matches the
+ *     user's mental model
+ *   - `muted` to prevent feedback from the user's own audio playing
+ *     back into their own mic
+ * Avatar fallback when no stream is present.
+ */
+function LocalCameraTile({
+  stream,
+  displayName,
+}: {
+  stream: MediaStream | undefined;
+  displayName: string;
+}) {
+  if (!stream) {
+    return (
+      <div className="w-full h-full grid place-items-center bg-slate-200" data-testid="local-camera-avatar">
+        {/* Initials-only avatar — sized to fit the tile via Avatar's size prop. */}
+        <Avatar name={displayName} size={64} />
+      </div>
+    );
+  }
+  return (
+    <video
+      autoPlay
+      playsInline
+      muted
+      ref={(el) => { if (el && el.srcObject !== stream) el.srcObject = stream; }}
+      className="w-full h-full object-cover scale-x-[-1]"
+    />
+  );
 }
 
 function projectToLayoutShape(
@@ -114,41 +142,33 @@ function projectToLayoutShape(
   const displayName = isLocal
     ? (localTileLabel ?? p.displayName ?? 'You')
     : (p.displayName || p.participantId.slice(0, 8));
-  // Map streams[0] → camera tile videoElement. Map screenStream →
-  // screenElement; HangoutLayout will auto-promote it to spotlight and
-  // keep the camera tile in the filmstrip so you still see the sharer.
   const stream = p.streams[0];
   const screen = p.screenStream;
+  // Camera tile:
+  //   - Local: inline (needs mirror + muted; see LocalCameraTile).
+  //   - Remote: <RemoteTileSlot>. Inherits the avatar fallback,
+  //     useTrackStateBump live-tracking, and the audio-from-t=0 hidden
+  //     <audio> binding shipped in 2.29.0 — so consumers don't
+  //     rediscover bug class #3.
+  const cameraTile = isLocal
+    ? <LocalCameraTile stream={stream} displayName={displayName} />
+    : <RemoteTileSlot stream={stream} displayName={displayName} cameraOn={p.hasVideo} />;
+  // Screen tile: <StreamVideo> (inherits proper srcObject lifecycle +
+  // addtrack/removetrack rebind that fixes the "subscribed audio first,
+  // video never paints" bug class in the hand-rolled inline path).
+  // Local screen output is muted to prevent echo on shares that include
+  // system audio; remotes play at normal volume.
+  // Screens are never mirrored — flipping the content reverses any text.
+  const screenTile = screen
+    ? <StreamVideo stream={screen} muted={isLocal} className="w-full h-full object-contain bg-black" />
+    : undefined;
   return {
     id: p.participantId,
     displayName,
     isLocal,
     isMuted: !p.hasAudio,
-    videoElement: stream ? (
-      <video
-        autoPlay
-        playsInline
-        muted={isLocal}
-        ref={(el) => { if (el && el.srcObject !== stream) el.srcObject = stream; }}
-        className={`w-full h-full object-cover ${isLocal ? 'scale-x-[-1]' : ''}`}
-      />
-    ) : (
-      <div className="w-full h-full grid place-items-center bg-slate-200">
-        <Avatar name={displayName} size={64} src={avatarUrl(displayName)} />
-      </div>
-    ),
-    // Screens are never mirrored — that would flip the content. Local
-    // screen output is muted to prevent echo on shares that include
-    // system audio; remotes play at normal volume.
-    screenElement: screen ? (
-      <video
-        autoPlay
-        playsInline
-        muted={isLocal}
-        ref={(el) => { if (el && el.srcObject !== screen) el.srcObject = screen; }}
-        className="w-full h-full object-contain bg-black"
-      />
-    ) : undefined,
+    videoElement: cameraTile,
+    screenElement: screenTile,
   };
 }
 

@@ -8,6 +8,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.30.0] — 2026-06-07
+
+### Changed
+
+- **`<WrappedLVSHangoutLayout>` adopts ui-components composites for tile
+  rendering.** The hand-rolled inline `<video>` elements that the adapter
+  used to project `HangoutParticipant` into `HangoutLayoutParticipant`
+  are replaced with the proper composites:
+
+  - Remote camera tiles render via `<RemoteTileSlot>`. Inherits the
+    avatar fallback, `useTrackStateBump` live-tracking, AND the
+    audio-from-t=0 hidden `<audio>` binding shipped in 2.29.0 — so
+    every wrapper consumer gets bug class #3 closed automatically.
+  - Screen tiles (both local and remote) render via `<StreamVideo>`.
+    Inherits the proper `srcObject` lifecycle, `addtrack`/`removetrack`
+    rebind that fixes the "audio first, video never paints" bug
+    class, and autoplay-rejection callback wiring.
+  - Local camera tiles STAY inline as `<LocalCameraTile>`. The local
+    user needs mirrored preview (`scale-x-[-1]`) and `muted` (to
+    prevent feedback), neither of which fits `<RemoteTileSlot>`'s
+    remote-tile semantics. Encapsulated as a file-private component
+    rather than reopening the public composite.
+  - Removed the `avatarUrl()` stub that always returned `undefined`
+    — dead code, the Avatar component's initials fallback covers
+    the no-URL case already.
+
+  Behaviour change: REMOTE TILES NOW PLAY AUDIO during the cold-WHEP
+  window (avatar fallback rendering). Before this release, a consumer
+  that adopted `<WrappedLVSHangoutLayout>` would silently rediscover
+  bug class #3 — the inline `<video>` only attached `srcObject` when
+  a stream existed, but during the 5-15s pre-first-video-frame window
+  with a video-track-muted=true stream, that translated to a `<div>`
+  placeholder rendering with no media binding. Now the hidden `<audio>`
+  inside `<RemoteTileSlot>` carries the audio track immediately.
+
+  3 new test cases pin the contract: remote tile uses
+  `<RemoteTileSlot>` (with the `remote-tile-hidden-audio` testid
+  asserting the binding present); local tile is inline and does NOT
+  render `<RemoteTileSlot>` testids; local-no-stream falls to the
+  inline avatar tile (testid `local-camera-avatar`) not the remote
+  branch. 12/12 wrapper tests green, 2866/2867 library total green
+  (1 pre-existing skip).
+
+  The MediaStream shim in the wrapper's test file also gained
+  `EventTarget` (`addEventListener`/`removeEventListener`/
+  `dispatchEvent`) so `useTrackStateBump` and `StreamVideo`'s
+  mutation-rebind paths can run without TypeErrors during the test
+  environment's mount.
+
 ## [2.29.0] — 2026-06-07
 
 ### Added

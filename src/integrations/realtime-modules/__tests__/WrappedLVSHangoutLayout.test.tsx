@@ -3,13 +3,31 @@ import { vi } from 'vitest';
 import type { HangoutParticipant, HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 
 // jsdom doesn't ship a MediaStream — supply a minimal shim sufficient
-// for the wrapper's `el.srcObject = stream` assignment.
+// for the wrapper's `el.srcObject = stream` assignment AND for
+// useTrackStateBump's `stream.addEventListener('addtrack', ...)` /
+// StreamVideo's mutation-rebind path. Both surface needs are
+// EventTarget-shaped; we satisfy them with a tiny in-memory dispatcher.
 if (typeof (globalThis as any).MediaStream === 'undefined') {
   class MediaStreamShim {
     id = Math.random().toString(36).slice(2);
-    getTracks() { return []; }
-    getAudioTracks() { return []; }
-    getVideoTracks() { return []; }
+    _listeners = new Map<string, Set<EventListener>>();
+    getTracks(): MediaStreamTrack[] { return []; }
+    getAudioTracks(): MediaStreamTrack[] { return []; }
+    getVideoTracks(): MediaStreamTrack[] { return []; }
+    addEventListener(type: string, handler: EventListener) {
+      let s = this._listeners.get(type);
+      if (!s) { s = new Set(); this._listeners.set(type, s); }
+      s.add(handler);
+    }
+    removeEventListener(type: string, handler: EventListener) {
+      const s = this._listeners.get(type);
+      if (s) s.delete(handler);
+    }
+    dispatchEvent(event: Event) {
+      const s = this._listeners.get(event.type);
+      if (s) for (const h of s) h(event);
+      return true;
+    }
   }
   (globalThis as any).MediaStream = MediaStreamShim;
 }
@@ -228,6 +246,60 @@ describe('WrappedLVSHangoutLayout', () => {
     const spotlight = screen.getByTestId('hangout-spotlight');
     expect(spotlight.getAttribute('data-spotlight-type')).toBe('screen');
     expect(spotlight.getAttribute('data-spotlight-user')).toBe('Alice');
+  });
+
+  // ── composite-discipline tests (2.30.0 refinement) ───────────────────
+  // The wrapper now delegates to <RemoteTileSlot> for remote camera
+  // tiles and <StreamVideo> for screen tiles, so consumers inherit the
+  // avatar-fallback + audio-from-t=0 behaviour without per-consumer
+  // wiring. These tests pin that contract.
+
+  it('renders remote camera tiles via <RemoteTileSlot> (audio-from-t=0 inheritance)', () => {
+    mockState.current.participants = [
+      makeLocal('me'),
+      makeRemote('alice', { displayName: 'Alice', hasVideo: false }),
+    ];
+    render(
+      <WrappedLVSHangoutLayout
+        stageToken="t"
+        participantId="me"
+        data-testid="wrap"
+      />,
+    );
+    // hasVideo=false → RemoteTileSlot takes the avatar branch, and
+    // that branch renders the hidden <audio> binding shipped in 2.29.0.
+    expect(screen.getByTestId('remote-tile-avatar-branch')).toBeInTheDocument();
+    expect(screen.getByTestId('remote-tile-hidden-audio')).toBeInTheDocument();
+  });
+
+  it('renders the local camera tile inline (not via RemoteTileSlot) so it can mirror + mute', () => {
+    mockState.current.participants = [makeLocal('me')];
+    render(
+      <WrappedLVSHangoutLayout
+        stageToken="t"
+        participantId="me"
+        data-testid="wrap"
+      />,
+    );
+    // Local-only roster — there's no remote, so no RemoteTileSlot.
+    expect(screen.queryByTestId('remote-tile-avatar-branch')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('remote-tile-hidden-audio')).not.toBeInTheDocument();
+  });
+
+  it('local-camera fallback (no stream) renders the avatar tile, not RemoteTileSlot', () => {
+    mockState.current.participants = [
+      { ...makeLocal('me'), streams: [], hasVideo: false },
+    ];
+    render(
+      <WrappedLVSHangoutLayout
+        stageToken="t"
+        participantId="me"
+        data-testid="wrap"
+      />,
+    );
+    expect(screen.getByTestId('local-camera-avatar')).toBeInTheDocument();
+    // No remote-tile testids in the local branch.
+    expect(screen.queryByTestId('remote-tile-avatar-branch')).not.toBeInTheDocument();
   });
 
   it('projects a local screenStream into the spotlight slot', () => {
