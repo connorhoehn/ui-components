@@ -315,7 +315,7 @@ export declare interface CriterionScore {
     passed: boolean;
 }
 
-export declare function CropConfig({ data, onChange }: CropConfigProps): JSX.Element;
+export declare function CropConfig(props: CropConfigProps): JSX.Element;
 
 declare interface CropConfigProps {
     data: ImageCropNodeData;
