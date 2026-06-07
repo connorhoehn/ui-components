@@ -75,7 +75,8 @@ function AdjustLayerConfigInner({
   onChange,
   currentNodeId,
 }: AdjustLayerConfigProps & { currentNodeId: string | null }) {
-  const sourceImageId = useUpstreamImageId(currentNodeId);
+  const autoSourceImageId = useUpstreamImageId(currentNodeId);
+  const pinnedSourceImageId = data.previewSourceImageId;
   const layers = data.layers ?? [];
 
   return (
@@ -106,7 +107,11 @@ function AdjustLayerConfigInner({
         <AdjustLayerSliderPanel
           layers={layers}
           onChange={(next: AdjustLayer[]) => onChange({ layers: next })}
-          sourceImageId={sourceImageId}
+          autoSourceImageId={autoSourceImageId}
+          pinnedSourceImageId={pinnedSourceImageId}
+          onPinnedSourceImageIdChange={(next) =>
+            onChange({ previewSourceImageId: next })
+          }
         />
       </div>
     </div>

@@ -150,4 +150,74 @@ describe('AdjustLayerSliderPanel', () => {
       expect(screen.getByTestId(`layer-row-${i}`)).toBeInTheDocument();
     }
   });
+
+  // -------------------------------------------------------------------------
+  // Source attribution caption + manual override (hub task #1377)
+  // -------------------------------------------------------------------------
+
+  it('empty state: with no upstream image and no pin, shows "No source image" and no caption chip', () => {
+    render(
+      <AdjustLayerSliderPanel
+        layers={[]}
+        onChange={vi.fn()}
+        autoSourceImageId={undefined}
+        pinnedSourceImageId={undefined}
+        onPinnedSourceImageIdChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('adjust-layer-no-source')).toBeInTheDocument();
+    expect(screen.queryByTestId('adjust-layer-source-chip-auto')).toBeNull();
+    expect(screen.queryByTestId('adjust-layer-source-chip-pinned')).toBeNull();
+  });
+
+  it('auto-wired state: upstream imageId renders info caption + preview thumb', async () => {
+    render(
+      <AdjustLayerSliderPanel
+        layers={[{ kind: 'brightness', value: 1.0 }]}
+        onChange={vi.fn()}
+        autoSourceImageId="img_upstream_run_42_abcdef"
+        onPinnedSourceImageIdChange={vi.fn()}
+      />,
+    );
+
+    const chip = screen.getByTestId('adjust-layer-source-chip-auto');
+    expect(chip).toBeInTheDocument();
+    // 8-char prefix + ellipsis
+    expect(chip.textContent).toContain('img_upst…');
+    expect(chip.textContent?.toLowerCase()).toContain('from upstream run');
+    expect(screen.getByTestId('adjust-layer-preview-thumb')).toBeInTheDocument();
+    expect(screen.queryByTestId('adjust-layer-no-source')).toBeNull();
+  });
+
+  it('overridden state: pin wins over auto-wire — caption shows pinned + preview uses pinned id in fetch', async () => {
+    render(
+      <AdjustLayerSliderPanel
+        layers={[{ kind: 'brightness', value: 1.0 }]}
+        onChange={vi.fn()}
+        autoSourceImageId="img_upstream_run_42_abcdef"
+        pinnedSourceImageId="img_user_pin_99_ghijkl"
+        onPinnedSourceImageIdChange={vi.fn()}
+      />,
+    );
+
+    const chip = screen.getByTestId('adjust-layer-source-chip-pinned');
+    expect(chip).toBeInTheDocument();
+    expect(chip.textContent).toContain('pinned');
+    expect(chip.textContent).toContain('img_user…');
+    // Auto chip must not also render
+    expect(screen.queryByTestId('adjust-layer-source-chip-auto')).toBeNull();
+    // Clear-pin "x" affordance is present
+    expect(screen.getByTestId('adjust-layer-source-clear-pin')).toBeInTheDocument();
+
+    // Preview fetch is issued with the pinned imageId, not the auto one
+    await waitFor(
+      () => {
+        expect(mockFetch).toHaveBeenCalled();
+        const body = JSON.parse((mockFetch.mock.calls[0][1] as RequestInit).body as string);
+        expect(body.imageId).toBe('img_user_pin_99_ghijkl');
+      },
+      { timeout: 500 },
+    );
+  });
 });

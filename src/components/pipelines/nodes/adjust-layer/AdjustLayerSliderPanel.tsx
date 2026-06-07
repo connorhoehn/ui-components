@@ -9,6 +9,10 @@ import { cn } from '../../../../lib/cn';
 import { NumberInput } from '../../../forms/NumberInput';
 import { Select } from '../../../forms/Select';
 import { ImageThumbnail } from '../../../image/ImageThumbnail';
+import { ImageUploader } from '../../../image/ImageUploader';
+import Chip from '../../../shared/Chip';
+import { Button } from '../../../ui/Button';
+import type { UploadedImage } from '../../services';
 import type { AdjustLayer } from '../../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -19,7 +23,27 @@ export interface AdjustLayerSliderPanelProps {
   /** Current layer stack from node.data.layers. Controlled. */
   layers: AdjustLayer[];
   onChange: (next: AdjustLayer[]) => void;
-  /** Source imageId for the live preview (from the upstream step output). */
+  /**
+   * Auto-wired source imageId resolved from the upstream run's latest step
+   * output. May be undefined if no run exists yet.
+   */
+  autoSourceImageId?: string;
+  /**
+   * Manual pin (from node.data.previewSourceImageId). When set, wins over
+   * `autoSourceImageId`.
+   */
+  pinnedSourceImageId?: string;
+  /**
+   * Called when the user pins or clears a manual override. Writes through
+   * to `nodeData.previewSourceImageId` in the host editor.
+   */
+  onPinnedSourceImageIdChange?: (next: string | undefined) => void;
+  /**
+   * Deprecated single-source prop kept for backwards compatibility. If
+   * neither `autoSourceImageId` nor `pinnedSourceImageId` is supplied, this
+   * is treated as the auto-wired source.
+   * @deprecated Use `autoSourceImageId` + `pinnedSourceImageId`.
+   */
   sourceImageId?: string;
   /** Base URL for the platform-api. Defaults to '' (same origin). */
   apiBase?: string;
@@ -260,14 +284,41 @@ function useAdjustPreview(
 // AdjustLayerSliderPanel
 // ---------------------------------------------------------------------------
 
+function shortenImageId(id: string): string {
+  if (id.length <= 8) return id;
+  return `${id.slice(0, 8)}…`;
+}
+
 export default function AdjustLayerSliderPanel({
   layers,
   onChange,
+  autoSourceImageId,
+  pinnedSourceImageId,
+  onPinnedSourceImageIdChange,
   sourceImageId,
   apiBase = '',
 }: AdjustLayerSliderPanelProps) {
   const [newKind, setNewKind] = useState<LayerKind>('brightness');
-  const { previewSrc, loading } = useAdjustPreview(sourceImageId, layers, apiBase);
+  const [showUploader, setShowUploader] = useState(false);
+
+  // Resolve effective source: pin wins over auto-wire; legacy
+  // `sourceImageId` prop is treated as auto-wired for back-compat.
+  const effectiveAutoId = autoSourceImageId ?? sourceImageId;
+  const effectiveSourceId = pinnedSourceImageId ?? effectiveAutoId;
+  const isPinned = !!pinnedSourceImageId;
+
+  const { previewSrc, loading } = useAdjustPreview(effectiveSourceId, layers, apiBase);
+
+  const handleClearPin = () => {
+    onPinnedSourceImageIdChange?.(undefined);
+  };
+
+  const handleUploaderChange = (next: UploadedImage | null) => {
+    if (next?.imageId) {
+      onPinnedSourceImageIdChange?.(next.imageId);
+      setShowUploader(false);
+    }
+  };
 
   const updateLayer = (index: number, updated: AdjustLayer) => {
     onChange(layers.map((l, i) => (i === index ? updated : l)));
@@ -328,9 +379,73 @@ export default function AdjustLayerSliderPanel({
       </div>
 
       {/* Right: live preview */}
-      <div className="shrink-0 flex flex-col items-center gap-1.5">
+      <div className="shrink-0 flex flex-col items-stretch gap-1.5">
         <div className="text-[11px] font-semibold text-text-tertiary">Preview</div>
-        {sourceImageId ? (
+
+        {/* Source attribution caption + override controls */}
+        <div
+          className={cn('flex items-center gap-1.5 flex-wrap')}
+          data-testid="adjust-layer-source-caption-row"
+        >
+          {isPinned && effectiveSourceId ? (
+            <Chip
+              tone="neutral"
+              size="xs"
+              data-testid="adjust-layer-source-chip-pinned"
+            >
+              <span>Source: pinned ({shortenImageId(effectiveSourceId)})</span>
+              <button
+                type="button"
+                onClick={handleClearPin}
+                aria-label="Clear pinned source image"
+                data-testid="adjust-layer-source-clear-pin"
+                className={cn(
+                  'ml-1 inline-flex items-center justify-center',
+                  'w-3 h-3 rounded-full text-[10px] leading-none',
+                  'bg-transparent border-none cursor-pointer text-current',
+                  'hover:bg-slate-200',
+                )}
+              >
+                ×
+              </button>
+            </Chip>
+          ) : effectiveAutoId ? (
+            <Chip
+              tone="info"
+              size="xs"
+              data-testid="adjust-layer-source-chip-auto"
+            >
+              Source: {shortenImageId(effectiveAutoId)} from upstream run
+            </Chip>
+          ) : null}
+
+          {onPinnedSourceImageIdChange && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowUploader((v) => !v)}
+              data-testid="adjust-layer-override-btn"
+            >
+              Override
+            </Button>
+          )}
+        </div>
+
+        {/* Optional inline uploader. Mounted only when user clicks Override. */}
+        {showUploader && onPinnedSourceImageIdChange && (
+          <div
+            className="w-48"
+            data-testid="adjust-layer-override-uploader-wrap"
+          >
+            <ImageUploader
+              value={null}
+              onChange={handleUploaderChange}
+              data-testid="adjust-layer-override-uploader"
+            />
+          </div>
+        )}
+
+        {effectiveSourceId ? (
           <div className="relative">
             <ImageThumbnail
               src={previewSrc ?? ''}
