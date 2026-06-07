@@ -35,7 +35,11 @@ import {
 } from 'react';
 import { cn } from '../../../lib/cn';
 import Banner from '../../shared/Banner';
+import Chip from '../../shared/Chip';
 import ConfirmDialog from '../../shared/ConfirmDialog';
+import Modal from '../../shared/Modal';
+import { Button } from '../../ui/Button';
+import { IconButton } from '../../ui/IconButton';
 import { useImageUrl } from '../services';
 import type { ImageLineageEntry } from './useImageLineage';
 
@@ -313,6 +317,151 @@ function windowMostRecent(
 }
 
 // ---------------------------------------------------------------------------
+// Artifact preview modal — click-to-inspect full-res image with metadata
+// chips and arrow-key navigation across DAG entries (sorted by `at`).
+// ---------------------------------------------------------------------------
+
+function shortId(id: string): string {
+  return id.length > 10 ? `${id.slice(0, 8)}…` : id;
+}
+
+interface ArtifactPreviewModalProps {
+  /** All entries available for navigation; ordered by `at` ascending. */
+  navEntries: ImageLineageEntry[];
+  /** Currently-shown entry's imageId. */
+  imageId: string;
+  onClose: () => void;
+  onNavigate: (imageId: string) => void;
+  getImageUrl: (imageId: string) => string;
+}
+
+function ArtifactPreviewModal({
+  navEntries,
+  imageId,
+  onClose,
+  onNavigate,
+  getImageUrl,
+}: ArtifactPreviewModalProps) {
+  const entry = navEntries.find((e) => e.imageId === imageId);
+  const [copied, setCopied] = useState(false);
+
+  // Reset the copied-confirmation when the modal target changes.
+  useEffect(() => {
+    setCopied(false);
+  }, [imageId]);
+
+  // Arrow-key navigation. Wraps at both ends. Listens at window so we don't
+  // depend on Modal's internal focus being on a specific element.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      if (navEntries.length === 0) return;
+      const idx = navEntries.findIndex((x) => x.imageId === imageId);
+      if (idx === -1) return;
+      const len = navEntries.length;
+      const nextIdx = e.key === 'ArrowRight'
+        ? (idx + 1) % len
+        : (idx - 1 + len) % len;
+      e.preventDefault();
+      onNavigate(navEntries[nextIdx].imageId);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [imageId, navEntries, onNavigate]);
+
+  const handleCopy = useCallback(() => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      void navigator.clipboard.writeText(imageId).then(
+        () => {
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 1200);
+        },
+        () => {
+          // Clipboard write failed (permissions / insecure context).
+          // Silently no-op — user can still read the id chip.
+        },
+      );
+    }
+  }, [imageId]);
+
+  if (!entry) return null;
+
+  const dimText = entry.width && entry.height
+    ? `${entry.width}×${entry.height}`
+    : null;
+
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title={`Artifact ${shortId(entry.imageId)}`}
+      maxWidth={760}
+      rawChildren
+      backdropTestId="lineage-preview-backdrop"
+      footer={
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onClose}
+          data-testid="lineage-preview-close"
+        >
+          Close
+        </Button>
+      }
+    >
+      <div
+        className="flex flex-col gap-3"
+        data-testid="lineage-preview-modal"
+      >
+        <div
+          className={cn(
+            'flex items-center justify-center bg-surface-inset rounded-md overflow-hidden',
+            'max-h-[70vh] min-h-[200px]',
+          )}
+        >
+          <img
+            src={getImageUrl(entry.imageId)}
+            alt={`Artifact ${entry.imageId}`}
+            className="max-w-full max-h-[70vh] object-contain"
+            data-testid={`lineage-preview-image-${entry.imageId}`}
+          />
+        </div>
+        <div
+          className="flex flex-wrap items-center gap-2 pt-1"
+          data-testid="lineage-preview-meta"
+        >
+          <Chip tone="neutral" size="sm" mono title={entry.imageId}>
+            id: {shortId(entry.imageId)}
+          </Chip>
+          <IconButton
+            aria-label={copied ? 'Image id copied' : 'Copy image id'}
+            size="sm"
+            variant="ghost"
+            onClick={handleCopy}
+            data-testid="lineage-preview-copy"
+          >
+            {copied ? '✓' : '⧉'}
+          </IconButton>
+          {entry.mimeType && (
+            <Chip tone="info" size="sm">
+              {entry.mimeType}
+            </Chip>
+          )}
+          {dimText && (
+            <Chip tone="neutral" size="sm" mono>
+              {dimText}
+            </Chip>
+          )}
+          <Chip tone="purple" size="sm" mono title={entry.producedByStepId}>
+            step: {shortId(entry.producedByStepId)}
+          </Chip>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -326,6 +475,7 @@ export function ImageLineageGraph({
 
   const [showAll, setShowAll] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [previewImageId, setPreviewImageId] = useState<string | null>(null);
 
   const totalCount = entries.length;
   const clipped = !showAll && totalCount > maxRenderedNodes;
@@ -345,6 +495,14 @@ export function ImageLineageGraph({
 
   const layout = useMemo(() => computeLayout(visibleEntries), [visibleEntries]);
 
+  const handleNodeActivate = useCallback(
+    (imageId: string) => {
+      onSelect?.(imageId);
+      setPreviewImageId(imageId);
+    },
+    [onSelect],
+  );
+
   const initialNodes: RFNode<LineageNodeData>[] = useMemo(
     () =>
       visibleEntries.map((entry) => {
@@ -357,14 +515,14 @@ export function ImageLineageGraph({
             entry,
             highlighted: ancestors.has(entry.imageId),
             selected: entry.imageId === selectedImageId,
-            onSelect: onSelect ?? (() => {}),
+            onSelect: handleNodeActivate,
             getImageUrl,
           },
           style: { width: NODE_W, height: NODE_H },
         };
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [visibleEntries, selectedImageId, ancestors, onSelect, getImageUrl],
+    [visibleEntries, selectedImageId, ancestors, handleNodeActivate, getImageUrl],
   );
 
   const visibleIds = useMemo(
@@ -396,9 +554,9 @@ export function ImageLineageGraph({
 
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: RFNode) => {
-      onSelect?.(node.id);
+      handleNodeActivate(node.id);
     },
-    [onSelect],
+    [handleNodeActivate],
   );
 
   const handleShowAllClick = useCallback(() => {
@@ -417,6 +575,25 @@ export function ImageLineageGraph({
   const handleCancel = useCallback(() => {
     setConfirmOpen(false);
   }, []);
+
+  // Stable ascending-by-`at` ordering for arrow-key navigation. Falls back to
+  // imageId for ties so the order is deterministic.
+  const navEntries = useMemo(() => {
+    const copy = visibleEntries.slice();
+    copy.sort((a, b) => {
+      const ta = Date.parse(a.at);
+      const tb = Date.parse(b.at);
+      if (ta !== tb) return ta - tb;
+      return a.imageId.localeCompare(b.imageId);
+    });
+    return copy;
+  }, [visibleEntries]);
+
+  const handlePreviewClose = useCallback(() => setPreviewImageId(null), []);
+  const handlePreviewNavigate = useCallback(
+    (id: string) => setPreviewImageId(id),
+    [],
+  );
 
   if (totalCount === 0) {
     return <EmptyState />;
@@ -484,6 +661,15 @@ export function ImageLineageGraph({
         confirmLabel="Show all"
         tone="caution"
       />
+      {previewImageId && (
+        <ArtifactPreviewModal
+          navEntries={navEntries}
+          imageId={previewImageId}
+          onClose={handlePreviewClose}
+          onNavigate={handlePreviewNavigate}
+          getImageUrl={getImageUrl}
+        />
+      )}
     </div>
   );
 }

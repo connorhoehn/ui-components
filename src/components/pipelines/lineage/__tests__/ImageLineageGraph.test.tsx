@@ -247,6 +247,70 @@ describe('ImageLineageGraph', () => {
     expect(screen.queryByTestId('lineage-graph-clip-banner')).not.toBeInTheDocument();
   });
 
+  it('opens the preview modal with the right imageId when a thumb is clicked', () => {
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+
+    // No modal initially.
+    expect(screen.queryByTestId('lineage-preview-modal')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('rf-node-img-crop-2'));
+
+    // Modal renders with the chosen artifact's image.
+    expect(screen.getByTestId('lineage-preview-modal')).toBeInTheDocument();
+    expect(
+      screen.getByTestId('lineage-preview-image-img-crop-2'),
+    ).toHaveAttribute('src', '/test-thumb/img-crop-2');
+  });
+
+  it('closes the preview modal when Escape is pressed', () => {
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByTestId('rf-node-img-crop-1'));
+    expect(screen.getByTestId('lineage-preview-modal')).toBeInTheDocument();
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'Escape' });
+    });
+
+    expect(screen.queryByTestId('lineage-preview-modal')).not.toBeInTheDocument();
+  });
+
+  it('ArrowRight advances the preview to the next artifact by `at`', () => {
+    // Just two entries: source (00:00:00) and crop-1 (00:00:01).
+    const twoEntries = [sourceEntry, cropEntry1];
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={twoEntries} />
+      </Wrapper>,
+    );
+
+    // Open on the source (earliest by `at`).
+    fireEvent.click(screen.getByTestId('rf-node-img-source'));
+    expect(
+      screen.getByTestId('lineage-preview-image-img-source'),
+    ).toBeInTheDocument();
+
+    // ArrowRight → next in `at`-asc order is img-crop-1.
+    act(() => {
+      fireEvent.keyDown(window, { key: 'ArrowRight' });
+    });
+
+    expect(
+      screen.getByTestId('lineage-preview-image-img-crop-1'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByTestId('lineage-preview-image-img-source'),
+    ).not.toBeInTheDocument();
+  });
+
   it('windows to 100 of 150 entries and expands on Show all click', () => {
     const entries = makeEntries(150);
     render(
