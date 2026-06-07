@@ -74,9 +74,9 @@ describe('HangoutSpotlight', () => {
     // Alice is spotlit (excluded), Bob + Me are in the filmstrip.
     expect(filmstrip.textContent ?? '').toContain('Bob');
     // Local participant's tile shows "You" not the displayName (per
-    // ParticipantTile convention), so check the participant tile count.
-    const tiles = filmstrip.querySelectorAll('.w-32');
-    expect(tiles.length).toBe(2); // Bob + Me
+    // ParticipantTile convention), so check the participant tile count
+    // via filmstrip's direct children (one wrapper div per tile).
+    expect(filmstrip.children.length).toBe(2); // Bob + Me
   });
 
   it('auto-promotes a remote screen-share into the spotlight', () => {
@@ -119,8 +119,7 @@ describe('HangoutSpotlight', () => {
     expect(filmstrip.textContent ?? '').toContain('Bob');
     expect(filmstrip.textContent ?? '').toContain('Carol');
     // All three remotes have filmstrip slots — nothing was displaced.
-    const tiles = filmstrip.querySelectorAll('.w-32');
-    expect(tiles.length).toBe(3);
+    expect(filmstrip.children.length).toBe(3);
   });
 
   it('auto-promotes a local screen-share into the spotlight', () => {
