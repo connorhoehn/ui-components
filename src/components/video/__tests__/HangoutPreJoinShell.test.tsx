@@ -189,4 +189,97 @@ describe('HangoutPreJoinShell', () => {
     expect(screen.queryByText('p-08')).not.toBeInTheDocument();
     expect(screen.getByText('+4 more')).toBeInTheDocument();
   });
+
+  // ── camera-off identity tile (Meet/Teams parity) ───────────────────────
+  // When `localIdentity` is provided, the camera-off branch renders an
+  // avatar + name tile instead of the bare "Camera off" text. The bare
+  // fallback is preserved for legacy consumers that don't pass identity.
+
+  it('renders the identity tile (avatar + name + "Camera off") when localIdentity provided and camera toggled off', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          videoEnabled: false,
+          localIdentity: { displayName: 'Alice Liddell' },
+        })}
+      />,
+    );
+    expect(screen.getByTestId('prejoin-identity-tile')).toBeInTheDocument();
+    expect(screen.getByText('Alice Liddell')).toBeInTheDocument();
+    expect(screen.getByText('Camera off')).toBeInTheDocument();
+    // The bare text fallback must NOT also render — only one or the other.
+    expect(screen.queryByTestId('prejoin-camera-off-fallback')).not.toBeInTheDocument();
+  });
+
+  it('falls back to the bare "Camera off" text when localIdentity is omitted (legacy consumer)', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ videoEnabled: false /* no localIdentity */ })}
+      />,
+    );
+    expect(screen.getByTestId('prejoin-camera-off-fallback')).toBeInTheDocument();
+    expect(screen.getByText('Camera off')).toBeInTheDocument();
+    expect(screen.queryByTestId('prejoin-identity-tile')).not.toBeInTheDocument();
+  });
+
+  it('renders neither identity tile nor bare fallback when the camera is ON', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          videoEnabled: true,
+          localIdentity: { displayName: 'Alice Liddell' },
+        })}
+      />,
+    );
+    expect(screen.queryByTestId('prejoin-identity-tile')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('prejoin-camera-off-fallback')).not.toBeInTheDocument();
+  });
+
+  it('renders avatar image when avatarSrc is provided', () => {
+    const { container } = render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          videoEnabled: false,
+          localIdentity: {
+            displayName: 'Alice Liddell',
+            avatarSrc: 'https://example.test/alice.png',
+          },
+        })}
+      />,
+    );
+    const img = container.querySelector('img[src="https://example.test/alice.png"]');
+    expect(img).not.toBeNull();
+    expect(img).toHaveAttribute('alt', 'Alice Liddell');
+  });
+
+  it('falls back to initials when avatarSrc is absent', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          videoEnabled: false,
+          localIdentity: { displayName: 'Alice Liddell' },
+        })}
+      />,
+    );
+    // Avatar with no src renders nameToInitials(name) — 'AL' for two words.
+    const tile = screen.getByTestId('prejoin-identity-tile');
+    expect(tile.textContent).toContain('AL');
+  });
+
+  it('camera-off identity tile suppresses the permission-pending spinner state', () => {
+    // Edge case: localIdentity + permission='granted' + videoEnabled=false
+    // is the ONLY combination that yields the identity tile. permission
+    // != 'granted' takes a different render path entirely (permission
+    // card / pending spinner), so the tile must not bleed across.
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          videoEnabled: false,
+          permission: 'pending',
+          localIdentity: { displayName: 'Alice Liddell' },
+        })}
+      />,
+    );
+    expect(screen.queryByTestId('prejoin-identity-tile')).not.toBeInTheDocument();
+  });
 });

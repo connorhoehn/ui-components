@@ -51,9 +51,23 @@ export interface PreJoinRosterEntry {
   kinds?: string[];
 }
 
+export interface PreJoinLocalIdentity {
+  /** Display name shown on the avatar tile when the camera is off. */
+  displayName: string;
+  /** Optional avatar image URL. Falls back to initials if absent. */
+  avatarSrc?: string;
+}
+
 export interface HangoutPreJoinShellProps {
   /** Channel display name surfaced at the top of the shell. */
   channelName: string;
+
+  // ── Local identity (consumer-provided, optional) ──────────────────────
+  /** When set, the camera-off preview renders a Meet/Teams-style identity
+   *  tile (avatar + display name) instead of the bare "Camera off" text.
+   *  Backward-compatible — omitted = legacy text fallback, so existing
+   *  consumers that don't pass identity are unaffected. */
+  localIdentity?: PreJoinLocalIdentity;
 
   // ── Camera state (consumer-provided) ──────────────────────────────────
   /** Live MediaStream for the camera preview. Null when not yet acquired
@@ -125,6 +139,7 @@ function permissionToFallbackState(p: PreJoinPermission): PermissionState | null
 
 export default function HangoutPreJoinShell({
   channelName,
+  localIdentity,
   previewStream,
   permission,
   permissionMessage,
@@ -192,9 +207,36 @@ export default function HangoutPreJoinShell({
               />
             )}
             {isCamReady && !videoEnabled && (
-              <div className="absolute inset-0 grid place-items-center text-slate-300 text-sm">
-                Camera off
-              </div>
+              localIdentity ? (
+                // Meet/Teams-style identity tile: large avatar + display
+                // name + "Camera off" subtitle. Avatar falls back to
+                // initials when avatarSrc is absent.
+                <div
+                  data-testid="prejoin-identity-tile"
+                  className="absolute inset-0 grid place-items-center bg-slate-900/95"
+                >
+                  <div className="flex flex-col items-center gap-3 px-6 text-center">
+                    <Avatar
+                      name={localIdentity.displayName}
+                      src={localIdentity.avatarSrc}
+                      size={96}
+                    />
+                    <div className="flex flex-col gap-1">
+                      <span className="text-white text-base font-medium truncate max-w-[16rem]">
+                        {localIdentity.displayName}
+                      </span>
+                      <span className="text-slate-300 text-xs">Camera off</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  data-testid="prejoin-camera-off-fallback"
+                  className="absolute inset-0 grid place-items-center text-slate-300 text-sm"
+                >
+                  Camera off
+                </div>
+              )
             )}
             {permission === 'pending' && (
               <div className="absolute inset-0 grid place-items-center">

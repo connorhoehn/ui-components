@@ -8,6 +8,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.28.0] — 2026-06-07
+
+### Added
+
+- **`<HangoutPreJoinShell>` identity tile for the camera-off path.** New
+  optional `localIdentity?: { displayName: string; avatarSrc?: string }`
+  prop. When provided AND the user toggles the camera off pre-join
+  (`videoEnabled=false` + `permission='granted'`), the preview tile
+  renders a Meet/Teams-style identity card: large `<Avatar>` (size 96)
+  + display name + "Camera off" subtitle. Avatar falls back to initials
+  when `avatarSrc` is absent. Backward-compatible — consumers that
+  don't pass `localIdentity` see the existing bare "Camera off" text,
+  so existing call sites (websocket-gateway `HangoutRoom.tsx:195`) are
+  unaffected until they opt in.
+
+  Closes the audit gap flagged by the operator on 2026-06-04: when the
+  gateway wires PreJoin into a real route, users who toggle cam off
+  pre-join were seeing bare slate text instead of an identity tile,
+  inconsistent with every modern conferencing UI.
+
+  6 new test cases (`HangoutPreJoinShell.test.tsx`): identity-tile
+  render path, legacy text-fallback path, no-tile-when-camera-on,
+  avatarSrc → `<img>`, no-src → initials, identity-tile suppression
+  in non-granted permission states. 23/23 total green.
+
+
+
 ## [2.26.0] — 2026-06-04
 
 ### Added

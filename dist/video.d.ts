@@ -367,11 +367,16 @@ export declare type HangoutMode = 'auto' | 'spotlight';
 
 export declare type HangoutPhase = 'idle' | 'joining' | 'joined' | 'reconnecting' | 'ended' | 'failed';
 
-export declare function HangoutPreJoinShell({ channelName, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
+export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
 
 export declare interface HangoutPreJoinShellProps {
     /** Channel display name surfaced at the top of the shell. */
     channelName: string;
+    /** When set, the camera-off preview renders a Meet/Teams-style identity
+     *  tile (avatar + display name) instead of the bare "Camera off" text.
+     *  Backward-compatible — omitted = legacy text fallback, so existing
+     *  consumers that don't pass identity are unaffected. */
+    localIdentity?: PreJoinLocalIdentity;
     /** Live MediaStream for the camera preview. Null when not yet acquired
      *  or when permission is anything but 'granted'. */
     previewStream: MediaStream | null;
@@ -594,6 +599,13 @@ export declare interface PiPButtonProps {
 }
 
 export declare type PlayerPhase = 'idle' | 'connecting' | 'buffering' | 'playing' | 'error';
+
+declare interface PreJoinLocalIdentity {
+    /** Display name shown on the avatar tile when the camera is off. */
+    displayName: string;
+    /** Optional avatar image URL. Falls back to initials if absent. */
+    avatarSrc?: string;
+}
 
 export declare type PreJoinPermission = 'pending' | 'granted' | 'denied' | 'blocked' | 'no-device' | 'unavailable';
 
