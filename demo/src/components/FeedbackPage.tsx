@@ -22,11 +22,11 @@ const tocItems: TocItem[] = [
 
 /* ─── Toast preview helpers ─────────────────────────────────────────────── */
 
-const TOAST_COLORS: Record<string, string> = {
-  info: '#2563eb',
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
+const TOAST_TONE: Record<string, { accent: string; iconColor: string; actionText: string }> = {
+  info: { accent: 'border-l-blue-600', iconColor: 'text-blue-600', actionText: 'text-blue-600' },
+  success: { accent: 'border-l-emerald-500', iconColor: 'text-emerald-500', actionText: 'text-emerald-500' },
+  warning: { accent: 'border-l-amber-500', iconColor: 'text-amber-500', actionText: 'text-amber-500' },
+  error: { accent: 'border-l-red-500', iconColor: 'text-red-500', actionText: 'text-red-500' },
 };
 
 const TOAST_ICONS: Record<string, string> = {
@@ -45,57 +45,28 @@ function ToastPreview({
   message: string;
   actionLabel?: string;
 }) {
-  const color = TOAST_COLORS[type];
+  const tone = TOAST_TONE[type];
   return (
     <div
-      style={{
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderLeft: `4px solid ${color}`,
-        borderRadius: 8,
-        padding: '12px 16px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12,
-        maxWidth: 380,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
+      className={`bg-white border border-slate-200 border-l-4 ${tone.accent} rounded-lg px-4 py-3 flex items-center gap-3 max-w-[380px] shadow-md`}
     >
-      <span style={{ fontSize: 16, color, flexShrink: 0 }}>
+      <span className={`text-base ${tone.iconColor} flex-shrink-0`}>
         {TOAST_ICONS[type]}
       </span>
-      <span style={{ fontSize: 14, color: '#374151', flex: 1, lineHeight: 1.4 }}>
+      <span className="text-sm text-slate-700 flex-1 leading-snug">
         {message}
       </span>
       {actionLabel && (
         <button
           type="button"
-          style={{
-            background: 'none',
-            border: 'none',
-            color,
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: 'pointer',
-            padding: '2px 6px',
-            fontFamily: 'inherit',
-          }}
+          className={`bg-transparent border-none ${tone.actionText} text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]`}
         >
           {actionLabel}
         </button>
       )}
       <button
         type="button"
-        style={{
-          fontSize: 18,
-          color: '#94a3b8',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          padding: '0 4px',
-          lineHeight: 1,
-        }}
+        className="text-lg text-slate-400 bg-transparent border-none cursor-pointer px-1 leading-none"
       >
         &times;
       </button>
@@ -105,11 +76,11 @@ function ToastPreview({
 
 /* ─── Banner preview helper ─────────────────────────────────────────────── */
 
-const BANNER_STYLES: Record<string, { bg: string; border: string; text: string; icon: string }> = {
-  error: { bg: '#fef2f2', border: '#fecaca', text: '#991b1b', icon: '✕' },
-  warning: { bg: '#fffbeb', border: '#fde68a', text: '#92400e', icon: '⚠' },
-  info: { bg: '#eff6ff', border: '#bfdbfe', text: '#1e40af', icon: 'ℹ' },
-  success: { bg: '#f0fdf4', border: '#bbf7d0', text: '#166534', icon: '✓' },
+const BANNER_STYLES: Record<string, { wrapper: string; icon: string }> = {
+  error: { wrapper: 'bg-red-50 border-red-200 text-red-800', icon: '✕' },
+  warning: { wrapper: 'bg-amber-50 border-amber-200 text-amber-800', icon: '⚠' },
+  info: { wrapper: 'bg-blue-50 border-blue-200 text-blue-800', icon: 'ℹ' },
+  success: { wrapper: 'bg-green-50 border-green-200 text-green-800', icon: '✓' },
 };
 
 function BannerPreview({
@@ -126,36 +97,17 @@ function BannerPreview({
   const s = BANNER_STYLES[variant];
   return (
     <div
-      style={{
-        background: s.bg,
-        border: `1px solid ${s.border}`,
-        borderRadius: 8,
-        padding: '10px 14px',
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: 8,
-        fontSize: 13,
-        color: s.text,
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
+      className={`border rounded-lg px-3.5 py-2.5 flex items-start gap-2 text-[13px] ${s.wrapper}`}
     >
-      <span style={{ fontSize: 14, flexShrink: 0, marginTop: 1 }}>{s.icon}</span>
-      <div style={{ flex: 1 }}>
-        {title && <strong style={{ display: 'block', marginBottom: 2 }}>{title}</strong>}
+      <span className="text-sm flex-shrink-0 mt-px">{s.icon}</span>
+      <div className="flex-1">
+        {title && <strong className="block mb-0.5">{title}</strong>}
         <span>{message}</span>
       </div>
       {dismissible && (
         <button
           type="button"
-          style={{
-            background: 'none',
-            border: 'none',
-            color: s.text,
-            cursor: 'pointer',
-            fontSize: 16,
-            padding: 0,
-            lineHeight: 1,
-          }}
+          className="bg-transparent border-none cursor-pointer text-base p-0 leading-none text-current"
         >
           &times;
         </button>
@@ -170,43 +122,20 @@ function ModalPreview({
   title,
   body,
   footer,
-  maxWidth = 380,
 }: {
   title: string;
   body: string;
   footer?: React.ReactNode;
-  maxWidth?: number;
 }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        background: 'rgba(0,0,0,0.25)',
-        borderRadius: 8,
-        padding: 32,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 200,
-      }}
-    >
-      <div
-        style={{
-          background: '#fff',
-          borderRadius: 12,
-          padding: '28px 24px',
-          maxWidth,
-          width: '100%',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}
-      >
-        <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+    <div className="relative bg-black/25 rounded-lg p-8 flex items-center justify-center min-h-[200px]">
+      <div className="bg-white rounded-xl px-6 py-7 w-full max-w-[380px] shadow-lg">
+        <div className="text-base font-semibold text-slate-900 mb-2.5">
           {title}
         </div>
-        <div style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5 }}>{body}</div>
+        <div className="text-[13px] text-slate-500 leading-normal">{body}</div>
         {footer && (
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 22 }}>
+          <div className="flex gap-2 justify-end mt-5">
             {footer}
           </div>
         )}
@@ -217,11 +146,16 @@ function ModalPreview({
 
 /* ─── ConfirmDialog preview helper ──────────────────────────────────────── */
 
-const CONFIRM_COLORS: Record<string, string> = {
-  info: '#3b82f6',
-  caution: '#d97706',
-  destructive: '#dc2626',
+const CONFIRM_BTN: Record<string, string> = {
+  info: 'bg-blue-500 hover:bg-blue-600',
+  caution: 'bg-amber-600 hover:bg-amber-700',
+  destructive: 'bg-red-600 hover:bg-red-700',
 };
+
+const MODAL_BTN_BASE =
+  'px-4 py-1.5 text-[13px] rounded-md cursor-pointer font-[inherit] border-none';
+const MODAL_BTN_CANCEL =
+  'px-4 py-1.5 text-[13px] rounded-md cursor-pointer font-[inherit] border border-slate-200 bg-white text-slate-500';
 
 function ConfirmPreview({
   title,
@@ -235,64 +169,21 @@ function ConfirmPreview({
   confirmLabel: string;
 }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        background: 'rgba(0,0,0,0.25)',
-        borderRadius: 8,
-        padding: 24,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 180,
-      }}
-    >
-      <div
-        style={{
-          background: '#fff',
-          borderRadius: 12,
-          padding: '28px 24px',
-          maxWidth: 420,
-          width: '100%',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-        }}
-      >
-        <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 10 }}>
+    <div className="relative bg-black/25 rounded-lg p-6 flex items-center justify-center min-h-[180px]">
+      <div className="bg-white rounded-xl px-6 py-7 max-w-[420px] w-full shadow-lg">
+        <div className="text-base font-semibold text-slate-900 mb-2.5">
           {title}
         </div>
-        <p style={{ fontSize: 13, color: '#64748b', margin: '0 0 22px', lineHeight: 1.5 }}>
+        <p className="text-[13px] text-slate-500 mb-5 leading-normal">
           {body}
         </p>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button
-            type="button"
-            style={{
-              padding: '7px 16px',
-              fontSize: 13,
-              border: '1px solid #e2e8f0',
-              background: '#fff',
-              color: '#64748b',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
+        <div className="flex gap-2 justify-end">
+          <button type="button" className={MODAL_BTN_CANCEL}>
             Cancel
           </button>
           <button
             type="button"
-            style={{
-              padding: '7px 16px',
-              fontSize: 13,
-              fontWeight: 600,
-              border: 'none',
-              background: CONFIRM_COLORS[tone],
-              color: '#fff',
-              borderRadius: 6,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
+            className={`${MODAL_BTN_BASE} font-semibold text-white ${CONFIRM_BTN[tone]}`}
           >
             {confirmLabel}
           </button>
@@ -308,7 +199,7 @@ export default function FeedbackPage() {
   useRegisterToc(tocItems);
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <div className="max-w-[900px] mx-auto">
       <PageHeader
         title="Feedback"
         description="Components for communicating system state and user actions: toast notifications, inline banners, modals, and confirmation dialogs."
@@ -337,7 +228,7 @@ function MyComponent() {
   );
 }`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           <ToastPreview type="info" message="A new version is available." />
           <ToastPreview type="success" message="Changes saved successfully." />
           <ToastPreview type="warning" message="Your session will expire in 5 minutes." />
@@ -364,7 +255,7 @@ toast('Deployment complete.', {
   onAction: () => navigate('/deployments'),
 });`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div className="flex flex-col gap-3">
           <ToastPreview type="info" message="Message archived." actionLabel="Undo" />
           <ToastPreview type="success" message="Deployment complete." actionLabel="View" />
         </div>
@@ -391,7 +282,7 @@ toast('Deployment complete.', {
   All systems operational.
 </Banner>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           <BannerPreview variant="error" message="Payment method declined. Please update your billing info." />
           <BannerPreview variant="warning" message="Storage usage is above 90%." />
           <BannerPreview variant="info" message="Scheduled maintenance tonight at 11 PM UTC." />
@@ -416,7 +307,7 @@ toast('Deployment complete.', {
   Try our new keyboard shortcuts for faster navigation.
 </Banner>`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-2.5">
           <BannerPreview
             variant="error"
             title="Sync Failed"
@@ -465,32 +356,13 @@ toast('Deployment complete.', {
             <>
               <button
                 type="button"
-                style={{
-                  padding: '7px 16px',
-                  fontSize: 13,
-                  border: '1px solid #e2e8f0',
-                  background: '#f8fafc',
-                  color: '#64748b',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
+                className="px-4 py-1.5 text-[13px] border border-slate-200 bg-slate-50 text-slate-500 rounded-md cursor-pointer font-[inherit]"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                style={{
-                  padding: '7px 16px',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  border: 'none',
-                  background: '#3b82f6',
-                  color: '#fff',
-                  borderRadius: 6,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
+                className="px-4 py-1.5 text-[13px] font-semibold border-none bg-blue-500 text-white rounded-md cursor-pointer font-[inherit] hover:bg-blue-600"
               >
                 Save Changes
               </button>
@@ -516,27 +388,20 @@ toast('Deployment complete.', {
   <p>Wide layout for complex content or tables.</p>
 </Modal>`}
       >
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+        <div className="flex gap-4 flex-wrap items-start">
           {[
-            { label: 'Small (400px)', width: 180 },
-            { label: 'Medium (560px)', width: 240 },
-            { label: 'Large (720px)', width: 300 },
-          ].map(({ label, width }) => (
+            { label: 'Small (400px)', wClass: 'w-[180px]' },
+            { label: 'Medium (560px)', wClass: 'w-[240px]' },
+            { label: 'Large (720px)', wClass: 'w-[300px]' },
+          ].map(({ label, wClass }) => (
             <div
               key={label}
-              style={{
-                width,
-                border: '2px dashed #cbd5e1',
-                borderRadius: 12,
-                padding: '20px 16px',
-                textAlign: 'center',
-                background: '#fff',
-              }}
+              className={`border-2 border-dashed border-slate-300 rounded-xl px-4 py-5 text-center bg-white ${wClass}`}
             >
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>
+              <div className="text-xs font-semibold text-slate-900 mb-1.5">
                 {label}
               </div>
-              <div style={{ fontSize: 11, color: '#94a3b8' }}>Modal container</div>
+              <div className="text-[11px] text-slate-400">Modal container</div>
             </div>
           ))}
         </div>
@@ -567,7 +432,7 @@ toast('Deployment complete.', {
   tone="caution"
 />`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div className="flex flex-col gap-4">
           <ConfirmPreview
             title="Publish Changes"
             body="This will deploy your changes to production immediately."

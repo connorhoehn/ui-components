@@ -10,21 +10,29 @@ const tocItems: TocItem[] = [
   { id: 'props', label: 'API Reference', level: 2 },
 ];
 
+const PANEL_FRAME_LIGHT =
+  'border border-slate-200 rounded-lg overflow-hidden bg-white w-[320px] shadow';
+const PANEL_FRAME_DARK =
+  'border border-white/10 rounded-lg overflow-hidden bg-[#111827] w-[320px] shadow';
+const PANEL_HEAD_LIGHT =
+  'flex items-center justify-between px-3.5 py-2.5 border-b border-slate-200';
+const PANEL_HEAD_DARK =
+  'flex items-center justify-between px-3.5 py-2.5 border-b border-white/10';
+const CODE_INLINE =
+  'bg-slate-100 px-1 py-px rounded-sm text-xs';
+
 export default function LayoutPage() {
   useRegisterToc(tocItems);
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="max-w-[960px] mx-auto">
       <PageHeader
         title="Layout"
         description="Structural components for building application shells, side panels, content areas, and responsive grids. These primitives compose together to form complete page layouts."
         importPath="import { Panel, PanelHeader, PanelBody } from '@your-org/ui-components'"
       />
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  PANEL LIGHT                                                       */}
-      {/* ------------------------------------------------------------------ */}
-
+      {/* ─── PANEL LIGHT ──────────────────────────────────────────────── */}
       <ExampleBlock
         id="panel-light"
         title="Panel (Light)"
@@ -47,49 +55,27 @@ function DetailPanel({ onClose }) {
   );
 }`}
       >
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            overflow: 'hidden',
-            background: '#fff',
-            width: 320,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              borderBottom: '1px solid #e2e8f0',
-            }}
-          >
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Item Details</span>
-            <span style={{ fontSize: 18, color: '#94a3b8', cursor: 'pointer', lineHeight: 1 }}>×</span>
+        <div className={PANEL_FRAME_LIGHT}>
+          <div className={PANEL_HEAD_LIGHT}>
+            <span className="text-sm font-semibold text-slate-900">Item Details</span>
+            <span className="text-lg text-slate-400 cursor-pointer leading-none">×</span>
           </div>
-          {/* Body */}
-          <div style={{ padding: '14px 14px', fontSize: 13, color: '#475569', lineHeight: 1.6 }}>
-            <p style={{ margin: '0 0 10px 0' }}>
+          <div className="p-3.5 text-[13px] text-slate-600 leading-relaxed">
+            <p className="mb-2.5">
               This is a light-themed panel. It renders fixed to the right edge of the viewport via a React portal.
             </p>
-            <p style={{ margin: '0 0 10px 0' }}>
-              The <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>Panel</code> component accepts <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>variant</code> and <code style={{ background: '#f1f5f9', padding: '1px 4px', borderRadius: 3, fontSize: 12 }}>width</code> props.
+            <p className="mb-2.5">
+              The <code className={CODE_INLINE}>Panel</code> component accepts <code className={CODE_INLINE}>variant</code> and <code className={CODE_INLINE}>width</code> props.
             </p>
-            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12, color: '#64748b' }}>
-              <li style={{ marginBottom: 4 }}>PanelHeader: title, close button, optional actions</li>
-              <li style={{ marginBottom: 4 }}>PanelBody: scrollable content area</li>
+            <ul className="m-0 pl-[18px] text-xs text-slate-500">
+              <li className="mb-1">PanelHeader: title, close button, optional actions</li>
+              <li className="mb-1">PanelBody: scrollable content area</li>
             </ul>
           </div>
         </div>
       </ExampleBlock>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  PANEL DARK                                                        */}
-      {/* ------------------------------------------------------------------ */}
-
+      {/* ─── PANEL DARK ───────────────────────────────────────────────── */}
       <ExampleBlock
         id="panel-dark"
         title="Panel (Dark)"
@@ -116,56 +102,23 @@ function TerminalPanel({ onClose }) {
   );
 }`}
       >
-        <div
-          style={{
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8,
-            overflow: 'hidden',
-            background: '#111827',
-            width: 320,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '10px 14px',
-              borderBottom: '1px solid rgba(255,255,255,0.1)',
-            }}
-          >
-            <span style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>Terminal</span>
-            <span style={{ fontSize: 18, color: '#6b7280', cursor: 'pointer', lineHeight: 1 }}>×</span>
+        <div className={PANEL_FRAME_DARK}>
+          <div className={PANEL_HEAD_DARK}>
+            <span className="text-sm font-semibold text-white">Terminal</span>
+            <span className="text-lg text-gray-500 cursor-pointer leading-none">×</span>
           </div>
-          {/* Body */}
-          <div style={{ padding: '14px 14px' }}>
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 6,
-                padding: 12,
-                fontFamily: 'monospace',
-                fontSize: 11,
-                color: '#a5b4fc',
-                lineHeight: 1.7,
-              }}
-            >
-              <div><span style={{ color: '#6ee7b7' }}>$</span> npm run build</div>
-              <div style={{ color: '#94a3b8' }}>Building for production...</div>
-              <div style={{ color: '#94a3b8' }}>Bundling 42 modules...</div>
-              <div style={{ color: '#6ee7b7' }}>Done in 3.2s</div>
+          <div className="p-3.5">
+            <div className="bg-white/[0.04] border border-white/10 rounded-md p-3 font-mono text-[11px] text-indigo-300 leading-loose">
+              <div><span className="text-emerald-300">$</span> npm run build</div>
+              <div className="text-slate-400">Building for production...</div>
+              <div className="text-slate-400">Bundling 42 modules...</div>
+              <div className="text-emerald-300">Done in 3.2s</div>
             </div>
           </div>
         </div>
       </ExampleBlock>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  SIDEBAR LAYOUT                                                    */}
-      {/* ------------------------------------------------------------------ */}
-
+      {/* ─── SIDEBAR LAYOUT ───────────────────────────────────────────── */}
       <ExampleBlock
         id="sidebar-layout"
         title="Sidebar + Content"
@@ -184,59 +137,37 @@ function TerminalPanel({ onClose }) {
   </main>
 </div>`}
       >
-        <div
-          style={{
-            display: 'flex',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            overflow: 'hidden',
-            height: 300,
-            background: '#fff',
-          }}
-        >
-          {/* Sidebar */}
-          <div
-            style={{
-              width: 200,
-              background: '#f8fafc',
-              borderRight: '1px solid #e2e8f0',
-              padding: 14,
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+        <div className="flex border border-slate-200 rounded-lg overflow-hidden h-[300px] bg-white">
+          <div className="w-[200px] bg-slate-50 border-r border-slate-200 p-3.5 flex flex-col">
+            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">
               Navigation
             </div>
             {['Dashboard', 'Pipelines', 'Documents', 'Integrations', 'Settings'].map((item, i) => (
               <div
                 key={item}
-                style={{
-                  padding: '7px 10px',
-                  borderRadius: 5,
-                  fontSize: 13,
-                  color: i === 0 ? '#2563eb' : '#475569',
-                  background: i === 0 ? '#eff6ff' : 'transparent',
-                  fontWeight: i === 0 ? 600 : 400,
-                  marginBottom: 2,
-                  cursor: 'pointer',
-                }}
+                className={`px-2.5 py-1.5 rounded mb-0.5 text-[13px] cursor-pointer ${
+                  i === 0
+                    ? 'text-blue-600 bg-blue-50 font-semibold'
+                    : 'text-slate-600 bg-transparent'
+                }`}
               >
                 {item}
               </div>
             ))}
           </div>
-          {/* Content */}
-          <div style={{ flex: 1, padding: 20, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', marginBottom: 8 }}>Dashboard</div>
-            <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: '0 0 16px 0' }}>
+          <div className="flex-1 p-5 flex flex-col">
+            <div className="text-base font-semibold text-slate-900 mb-2">Dashboard</div>
+            <p className="text-[13px] text-slate-500 leading-normal mb-4">
               Main content area with flexible width. The sidebar remains fixed at 200px while this region adapts to the available space.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, flex: 1 }}>
+            <div className="grid grid-cols-2 gap-2.5 flex-1">
               {['Requests', 'Latency', 'Errors', 'Throughput'].map((label) => (
-                <div key={label} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: 12, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 4 }}>{label}</div>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>--</div>
+                <div
+                  key={label}
+                  className="bg-slate-50 border border-slate-200 rounded-md p-3 flex flex-col justify-center"
+                >
+                  <div className="text-[11px] text-slate-400 mb-1">{label}</div>
+                  <div className="text-lg font-bold text-slate-900">--</div>
                 </div>
               ))}
             </div>
@@ -244,10 +175,7 @@ function TerminalPanel({ onClose }) {
         </div>
       </ExampleBlock>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  HEADER BODY FOOTER                                                */}
-      {/* ------------------------------------------------------------------ */}
-
+      {/* ─── HEADER BODY FOOTER ───────────────────────────────────────── */}
       <ExampleBlock
         id="header-body-footer"
         title="Header / Body / Footer"
@@ -268,77 +196,43 @@ function TerminalPanel({ onClose }) {
   </footer>
 </div>`}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            overflow: 'hidden',
-            height: 300,
-            background: '#fff',
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              padding: '10px 16px',
-              borderBottom: '1px solid #e2e8f0',
-              background: '#f8fafc',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexShrink: 0,
-            }}
-          >
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Application Header</span>
-            <div style={{ display: 'flex', gap: 12, fontSize: 12, color: '#64748b' }}>
+        <div className="flex flex-col border border-slate-200 rounded-lg overflow-hidden h-[300px] bg-white">
+          <div className="px-4 py-2.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between flex-shrink-0">
+            <span className="text-sm font-bold text-slate-900">Application Header</span>
+            <div className="flex gap-3 text-xs text-slate-500 items-center">
               <span>Docs</span>
               <span>Settings</span>
-              <span style={{ width: 24, height: 24, borderRadius: 12, background: '#e2e8f0', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 600, color: '#475569' }}>CH</span>
+              <span className="w-6 h-6 rounded-full bg-slate-200 inline-flex items-center justify-center text-[10px] font-semibold text-slate-600">
+                CH
+              </span>
             </div>
           </div>
-          {/* Body */}
-          <div style={{ flex: 1, padding: 16, overflowY: 'auto', fontSize: 13, color: '#64748b', lineHeight: 1.6 }}>
-            <p style={{ margin: '0 0 10px 0' }}>
+          <div className="flex-1 p-4 overflow-y-auto text-[13px] text-slate-500 leading-relaxed">
+            <p className="mb-2.5">
               This body area grows to fill all available vertical space between the header and footer. When content overflows, it scrolls independently.
             </p>
-            <p style={{ margin: '0 0 10px 0' }}>
+            <p className="mb-2.5">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
-            <p style={{ margin: '0 0 10px 0' }}>
+            <p className="mb-2.5">
               Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
             </p>
-            <p style={{ margin: 0 }}>
+            <p className="m-0">
               Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
             </p>
           </div>
-          {/* Footer */}
-          <div
-            style={{
-              padding: '10px 16px',
-              borderTop: '1px solid #e2e8f0',
-              background: '#f8fafc',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: 8,
-              flexShrink: 0,
-            }}
-          >
-            <button style={{ padding: '5px 12px', fontSize: 12, border: '1px solid #e2e8f0', borderRadius: 5, background: '#fff', color: '#475569', cursor: 'pointer', fontFamily: 'inherit' }}>
+          <div className="px-4 py-2.5 border-t border-slate-200 bg-slate-50 flex justify-end gap-2 flex-shrink-0">
+            <button className="px-3 py-1.5 text-xs border border-slate-200 rounded bg-white text-slate-600 cursor-pointer font-[inherit]">
               Cancel
             </button>
-            <button style={{ padding: '5px 12px', fontSize: 12, border: 'none', borderRadius: 5, background: '#3b82f6', color: '#fff', cursor: 'pointer', fontWeight: 600, fontFamily: 'inherit' }}>
+            <button className="px-3 py-1.5 text-xs border-none rounded bg-blue-500 text-white cursor-pointer font-semibold font-[inherit]">
               Save Changes
             </button>
           </div>
         </div>
       </ExampleBlock>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  CARD GRID                                                         */}
-      {/* ------------------------------------------------------------------ */}
-
+      {/* ─── CARD GRID ────────────────────────────────────────────────── */}
       <ExampleBlock
         id="card-grid"
         title="Card Grid"
@@ -361,13 +255,7 @@ function TerminalPanel({ onClose }) {
   ))}
 </div>`}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 12,
-          }}
-        >
+        <div className="grid grid-cols-3 gap-3">
           {[
             { title: 'Analytics', desc: 'Real-time metrics and dashboards for your application.', icon: '📊' },
             { title: 'Pipelines', desc: 'Automated data processing and ETL workflows.', icon: '🔄' },
@@ -378,27 +266,19 @@ function TerminalPanel({ onClose }) {
           ].map((card) => (
             <div
               key={card.title}
-              style={{
-                border: '1px solid #e2e8f0',
-                borderRadius: 8,
-                padding: 16,
-                background: '#fff',
-              }}
+              className="border border-slate-200 rounded-lg p-4 bg-white"
             >
-              <div style={{ fontSize: 22, marginBottom: 8 }}>{card.icon}</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 4 }}>{card.title}</div>
-              <p style={{ fontSize: 12, color: '#64748b', margin: 0, lineHeight: 1.4 }}>{card.desc}</p>
+              <div className="text-[22px] mb-2">{card.icon}</div>
+              <div className="text-sm font-semibold text-slate-900 mb-1">{card.title}</div>
+              <p className="text-xs text-slate-500 m-0 leading-snug">{card.desc}</p>
             </div>
           ))}
         </div>
       </ExampleBlock>
 
-      {/* ------------------------------------------------------------------ */}
-      {/*  PROPS TABLE                                                       */}
-      {/* ------------------------------------------------------------------ */}
-
-      <div id="props" style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 24 }}>API Reference</h2>
+      {/* ─── PROPS TABLE ──────────────────────────────────────────────── */}
+      <div id="props" className="mt-12">
+        <h2 className="text-[22px] font-bold text-slate-900 mb-6">API Reference</h2>
 
         <PropsTable
           componentName="Panel"
