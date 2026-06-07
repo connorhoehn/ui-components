@@ -530,6 +530,12 @@ declare interface ImageAdjustLayerNodeData {
     type: 'image:adjust-layer';
     sourceImagePath?: string;
     layers: AdjustLayer[];
+    /**
+     * Optional manual override for the live-preview source. When set, this
+     * pinned imageId wins over the auto-wired upstream-run image resolved by
+     * `useLatestStepForNode`. Cleared via the caption "x" affordance.
+     */
+    previewSourceImageId?: string;
 }
 
 declare interface ImageCropNodeData {
@@ -586,12 +592,18 @@ export declare interface ImageLineageEntry {
     at: string;
 }
 
-export declare function ImageLineageGraph({ entries, selectedImageId, onSelect, }: ImageLineageGraphProps): JSX.Element;
+export declare function ImageLineageGraph({ entries, selectedImageId, onSelect, maxRenderedNodes, }: ImageLineageGraphProps): JSX.Element;
 
 export declare interface ImageLineageGraphProps {
     entries: ImageLineageEntry[];
     selectedImageId?: string;
     onSelect?: (imageId: string) => void;
+    /**
+     * Maximum number of nodes to render initially. When `entries.length`
+     * exceeds this, only the most-recent-first window is rendered and a
+     * banner offers "Show all". Defaults to 100.
+     */
+    maxRenderedNodes?: number;
 }
 
 /** Convenience: pull all the bbox-related props out of a `VisionResult`. */

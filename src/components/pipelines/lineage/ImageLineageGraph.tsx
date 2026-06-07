@@ -7,6 +7,12 @@
 //
 // Selecting a node highlights its full ancestry chain (highlighted class on
 // edges and ancestor nodes).
+//
+// Virtualization (task #1379):
+//  - Windows entries to `maxRenderedNodes` (default 100), most-recent-first.
+//  - "Show all" banner + ConfirmDialog warning above 500 entries.
+//  - xyflow `onlyRenderVisibleElements` viewport culling.
+//  - Per-node IntersectionObserver lazy thumbnail src via <LazyThumb>.
 
 import {
   ReactFlow,
@@ -20,8 +26,16 @@ import {
   useNodesState,
   useEdgesState,
 } from '@xyflow/react';
-import { useCallback, useMemo } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { cn } from '../../../lib/cn';
+import Banner from '../../shared/Banner';
+import ConfirmDialog from '../../shared/ConfirmDialog';
 import { useImageUrl } from '../services';
 import type { ImageLineageEntry } from './useImageLineage';
 
@@ -33,7 +47,16 @@ export interface ImageLineageGraphProps {
   entries: ImageLineageEntry[];
   selectedImageId?: string;
   onSelect?: (imageId: string) => void;
+  /**
+   * Maximum number of nodes to render initially. When `entries.length`
+   * exceeds this, only the most-recent-first window is rendered and a
+   * banner offers "Show all". Defaults to 100.
+   */
+  maxRenderedNodes?: number;
 }
+
+const DEFAULT_MAX_RENDERED_NODES = 100;
+const PERF_WARN_THRESHOLD = 500;
 
 // ---------------------------------------------------------------------------
 // Layout helpers
@@ -131,6 +154,65 @@ function ancestorSet(
 }
 
 // ---------------------------------------------------------------------------
+// LazyThumb — defers `src` set until the wrapping node enters the viewport.
+// ---------------------------------------------------------------------------
+
+interface LazyThumbProps {
+  src: string;
+  alt: string;
+  testId?: string;
+}
+
+function LazyThumb({ src, alt, testId }: LazyThumbProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      // Fallback: no observer available, eagerly show.
+      setVisible(true);
+      return;
+    }
+    const node = ref.current;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className="w-full h-full flex items-center justify-center bg-surface-inset"
+    >
+      {visible ? (
+        <img
+          src={src}
+          alt={alt}
+          className="w-full h-full object-cover"
+          loading="lazy"
+          data-testid={testId}
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          className="w-full h-full animate-pulse bg-surface-inset"
+          data-testid={testId ? `${testId}-placeholder` : undefined}
+        />
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Custom node component
 // ---------------------------------------------------------------------------
 
@@ -167,12 +249,10 @@ function LineageNode({ data }: NodeProps<RFNode<LineageNodeData>>) {
         data-testid={`lineage-node-${entry.imageId}`}
       >
         <div className="flex-1 min-h-0 overflow-hidden bg-surface-inset flex items-center justify-center">
-          <img
+          <LazyThumb
             src={getImageUrl(entry.imageId)}
             alt={`Artifact ${entry.imageId.slice(0, 8)}`}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            data-testid={`lineage-thumb-${entry.imageId}`}
+            testId={`lineage-thumb-${entry.imageId}`}
           />
         </div>
         <div className="px-1.5 py-1 flex flex-col gap-0.5 flex-shrink-0">
@@ -213,6 +293,26 @@ function EmptyState() {
 }
 
 // ---------------------------------------------------------------------------
+// Windowing — most-recent-first by `at` timestamp.
+// ---------------------------------------------------------------------------
+
+function windowMostRecent(
+  entries: ImageLineageEntry[],
+  limit: number,
+): ImageLineageEntry[] {
+  if (entries.length <= limit) return entries;
+  // Pair with original index so the sort is stable even if `at` ties.
+  const indexed = entries.map((e, i) => ({ e, i }));
+  indexed.sort((a, b) => {
+    const ta = Date.parse(a.e.at);
+    const tb = Date.parse(b.e.at);
+    if (tb !== ta) return tb - ta;
+    return b.i - a.i;
+  });
+  return indexed.slice(0, limit).map((x) => x.e);
+}
+
+// ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
 
@@ -220,19 +320,34 @@ export function ImageLineageGraph({
   entries,
   selectedImageId,
   onSelect,
+  maxRenderedNodes = DEFAULT_MAX_RENDERED_NODES,
 }: ImageLineageGraphProps) {
   const getImageUrl = useImageUrl();
 
-  const ancestors = useMemo(
-    () => (selectedImageId ? ancestorSet(selectedImageId, entries) : new Set<string>()),
-    [selectedImageId, entries],
+  const [showAll, setShowAll] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const totalCount = entries.length;
+  const clipped = !showAll && totalCount > maxRenderedNodes;
+
+  const visibleEntries = useMemo(
+    () => (clipped ? windowMostRecent(entries, maxRenderedNodes) : entries),
+    [entries, clipped, maxRenderedNodes],
   );
 
-  const layout = useMemo(() => computeLayout(entries), [entries]);
+  const ancestors = useMemo(
+    () =>
+      selectedImageId
+        ? ancestorSet(selectedImageId, visibleEntries)
+        : new Set<string>(),
+    [selectedImageId, visibleEntries],
+  );
+
+  const layout = useMemo(() => computeLayout(visibleEntries), [visibleEntries]);
 
   const initialNodes: RFNode<LineageNodeData>[] = useMemo(
     () =>
-      entries.map((entry) => {
+      visibleEntries.map((entry) => {
         const pos = layout.get(entry.imageId) ?? { x: 0, y: 0 };
         return {
           id: entry.imageId,
@@ -249,13 +364,20 @@ export function ImageLineageGraph({
         };
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [entries, selectedImageId, ancestors, onSelect, getImageUrl],
+    [visibleEntries, selectedImageId, ancestors, onSelect, getImageUrl],
+  );
+
+  const visibleIds = useMemo(
+    () => new Set(visibleEntries.map((e) => e.imageId)),
+    [visibleEntries],
   );
 
   const initialEdges: RFEdge[] = useMemo(
     () =>
-      entries
-        .filter((e) => e.parentImageId)
+      visibleEntries
+        .filter(
+          (e) => e.parentImageId && visibleIds.has(e.parentImageId),
+        )
         .map((e) => ({
           id: `${e.parentImageId}->${e.imageId}`,
           source: e.parentImageId!,
@@ -266,7 +388,7 @@ export function ImageLineageGraph({
             ? 'stroke-primary stroke-2'
             : 'stroke-border',
         })),
-    [entries, ancestors],
+    [visibleEntries, visibleIds, ancestors],
   );
 
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
@@ -279,33 +401,89 @@ export function ImageLineageGraph({
     [onSelect],
   );
 
-  if (entries.length === 0) {
+  const handleShowAllClick = useCallback(() => {
+    if (totalCount > PERF_WARN_THRESHOLD) {
+      setConfirmOpen(true);
+    } else {
+      setShowAll(true);
+    }
+  }, [totalCount]);
+
+  const handleConfirm = useCallback(() => {
+    setShowAll(true);
+    setConfirmOpen(false);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    setConfirmOpen(false);
+  }, []);
+
+  if (totalCount === 0) {
     return <EmptyState />;
   }
 
   return (
     <div
-      className="relative w-full h-full"
+      className="relative w-full h-full flex flex-col"
       data-testid="lineage-graph"
     >
-      {/* xyflow requires absolute positioning for its internal elements */}
-      <style>{`.react-flow__node { position: absolute; }`}</style>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onNodeClick={handleNodeClick}
-        nodeTypes={nodeTypes}
-        fitView
-        fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.3}
-        maxZoom={2}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background gap={16} size={1} className="bg-surface-inset" />
-        <Controls showInteractive={false} className="bg-surface border border-border rounded" />
-      </ReactFlow>
+      {clipped && (
+        <div className="p-2 flex-shrink-0">
+          <Banner
+            variant="info"
+            data-testid="lineage-graph-clip-banner"
+          >
+            <span className="flex-1">
+              Showing {visibleEntries.length} of {totalCount} artifacts
+            </span>
+            <button
+              type="button"
+              onClick={handleShowAllClick}
+              data-testid="lineage-graph-show-all"
+              className={cn(
+                'ml-2 px-2 py-1 text-[12px] font-medium rounded',
+                'border border-current bg-transparent cursor-pointer',
+                'hover:bg-current/10',
+              )}
+            >
+              Show all
+            </button>
+          </Banner>
+        </div>
+      )}
+      <div className="flex-1 min-h-0 relative">
+        {/* xyflow requires absolute positioning for its internal elements */}
+        <style>{`.react-flow__node { position: absolute; }`}</style>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodeClick={handleNodeClick}
+          nodeTypes={nodeTypes}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.3}
+          maxZoom={2}
+          onlyRenderVisibleElements
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background gap={16} size={1} className="bg-surface-inset" />
+          <Controls showInteractive={false} className="bg-surface border border-border rounded" />
+        </ReactFlow>
+      </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+        title="Show all artifacts?"
+        body={
+          `Rendering all ${totalCount} artifacts may slow down the lineage tab. ` +
+          `Continue?`
+        }
+        confirmLabel="Show all"
+        tone="caution"
+      />
     </div>
   );
 }

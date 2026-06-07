@@ -770,6 +770,12 @@ export declare interface ImageAdjustLayerNodeData {
     type: 'image:adjust-layer';
     sourceImagePath?: string;
     layers: AdjustLayer[];
+    /**
+     * Optional manual override for the live-preview source. When set, this
+     * pinned imageId wins over the auto-wired upstream-run image resolved by
+     * `useLatestStepForNode`. Cleared via the caption "x" affordance.
+     */
+    previewSourceImageId?: string;
 }
 
 export declare interface ImageCropNodeData {

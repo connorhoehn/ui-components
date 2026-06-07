@@ -1,7 +1,7 @@
 // src/components/pipelines/lineage/__tests__/ImageLineageGraph.test.tsx
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { ImageLineageGraph } from '../ImageLineageGraph';
 import {
   PipelineEditorServicesProvider,
@@ -10,27 +10,33 @@ import {
 import type { ImageLineageEntry } from '../useImageLineage';
 
 // ---------------------------------------------------------------------------
-// Mock xyflow — provides just enough API surface for the component to render
+// Mock xyflow — provides just enough API surface for the component to render.
+// Captures props so we can assert virtualization flags like
+// `onlyRenderVisibleElements`.
 // ---------------------------------------------------------------------------
 
+const rfPropsCapture: { last: Record<string, unknown> | null } = { last: null };
+
 vi.mock('@xyflow/react', () => ({
-  ReactFlow: ({
-    nodes,
-    onNodeClick,
-  }: {
+  ReactFlow: (props: {
     nodes: Array<{ id: string; data: Record<string, unknown> }>;
     onNodeClick?: (e: React.MouseEvent, node: { id: string }) => void;
-  }) => (
-    <div data-testid="rf-canvas">
-      {nodes.map((n) => (
-        <div
-          key={n.id}
-          data-testid={`rf-node-${n.id}`}
-          onClick={(e) => onNodeClick?.(e, { id: n.id })}
-        />
-      ))}
-    </div>
-  ),
+    onlyRenderVisibleElements?: boolean;
+  }) => {
+    rfPropsCapture.last = props as unknown as Record<string, unknown>;
+    const { nodes, onNodeClick } = props;
+    return (
+      <div data-testid="rf-canvas">
+        {nodes.map((n) => (
+          <div
+            key={n.id}
+            data-testid={`rf-node-${n.id}`}
+            onClick={(e) => onNodeClick?.(e, { id: n.id })}
+          />
+        ))}
+      </div>
+    );
+  },
   Background: () => <div data-testid="rf-bg" />,
   Controls: () => <div data-testid="rf-controls" />,
   Handle: ({ id }: { id: string }) => <div data-testid={`handle-${id}`} />,
@@ -107,9 +113,68 @@ const fourEntries = [sourceEntry, cropEntry1, cropEntry2, cropEntry3];
 // Tests
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// jsdom does not implement IntersectionObserver — provide a minimal stub
+// for the LazyThumb wrapper. The stub fires immediately so thumbs render.
+// ---------------------------------------------------------------------------
+
+class StubIntersectionObserver {
+  private cb: IntersectionObserverCallback;
+  constructor(cb: IntersectionObserverCallback) {
+    this.cb = cb;
+  }
+  observe(target: Element) {
+    this.cb(
+      [
+        {
+          isIntersecting: true,
+          target,
+          intersectionRatio: 1,
+          time: 0,
+          boundingClientRect: {} as DOMRectReadOnly,
+          intersectionRect: {} as DOMRectReadOnly,
+          rootBounds: null,
+        } as IntersectionObserverEntry,
+      ],
+      this as unknown as IntersectionObserver,
+    );
+  }
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+(globalThis as unknown as { IntersectionObserver: typeof IntersectionObserver })
+  .IntersectionObserver = StubIntersectionObserver as unknown as typeof IntersectionObserver;
+
+// ---------------------------------------------------------------------------
+// Synthetic fixture generator — for windowing / perf tests
+// ---------------------------------------------------------------------------
+
+function makeEntries(n: number): ImageLineageEntry[] {
+  const out: ImageLineageEntry[] = [];
+  for (let i = 0; i < n; i++) {
+    out.push({
+      imageId: `img-${i}`,
+      producedByStepId: `step-${i % 4}`,
+      producedByNodeKind: `kind-${i % 4}`,
+      parentImageId: i === 0 ? undefined : `img-${i - 1}`,
+      width: 256,
+      height: 256,
+      mimeType: 'image/png',
+      // Monotonically-increasing timestamps so windowMostRecent picks the tail.
+      at: new Date(2026, 0, 1, 0, 0, i).toISOString(),
+    });
+  }
+  return out;
+}
+
 describe('ImageLineageGraph', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    rfPropsCapture.last = null;
   });
 
   it('renders 4 RF nodes for source + 3 crops', () => {
@@ -156,5 +221,84 @@ describe('ImageLineageGraph', () => {
     );
     expect(screen.getByTestId('lineage-graph-empty')).toBeInTheDocument();
     expect(screen.queryByTestId('rf-canvas')).not.toBeInTheDocument();
+  });
+
+  it('passes onlyRenderVisibleElements to <ReactFlow> for viewport culling', () => {
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={fourEntries} />
+      </Wrapper>,
+    );
+    expect(rfPropsCapture.last).not.toBeNull();
+    expect(rfPropsCapture.last?.onlyRenderVisibleElements).toBe(true);
+  });
+
+  it('renders all entries when count is below maxRenderedNodes (60 < 100 default)', () => {
+    const entries = makeEntries(60);
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={entries} />
+      </Wrapper>,
+    );
+    // All 60 RF nodes present, no clip banner.
+    for (let i = 0; i < 60; i++) {
+      expect(screen.getByTestId(`rf-node-img-${i}`)).toBeInTheDocument();
+    }
+    expect(screen.queryByTestId('lineage-graph-clip-banner')).not.toBeInTheDocument();
+  });
+
+  it('windows to 100 of 150 entries and expands on Show all click', () => {
+    const entries = makeEntries(150);
+    render(
+      <Wrapper>
+        <ImageLineageGraph entries={entries} />
+      </Wrapper>,
+    );
+
+    // Initial render: only 100 nodes (the most-recent-first window: img-50..img-149).
+    const initial = screen.getAllByTestId(/^rf-node-img-/);
+    expect(initial).toHaveLength(100);
+
+    // Banner reports the clip count.
+    const banner = screen.getByTestId('lineage-graph-clip-banner');
+    expect(banner.textContent).toContain('Showing 100 of 150 artifacts');
+
+    // Show all (totalCount 150 < perf threshold 500 → no confirm dialog).
+    act(() => {
+      fireEvent.click(screen.getByTestId('lineage-graph-show-all'));
+    });
+
+    const expanded = screen.getAllByTestId(/^rf-node-img-/);
+    expect(expanded).toHaveLength(150);
+    expect(screen.queryByTestId('lineage-graph-clip-banner')).not.toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Performance benchmark — skipped by default; run manually with
+//   vitest --testNamePattern=perf
+// to verify p99 first-paint < 300ms for a 500-entry synthetic case.
+// ---------------------------------------------------------------------------
+
+describe.skip('perf', () => {
+  it('renders 500 entries in under 300ms (p99)', () => {
+    const entries = makeEntries(500);
+    const samples: number[] = [];
+    for (let i = 0; i < 20; i++) {
+      const t0 = performance.now();
+      const { unmount } = render(
+        <Wrapper>
+          <ImageLineageGraph entries={entries} maxRenderedNodes={500} />
+        </Wrapper>,
+      );
+      const t1 = performance.now();
+      samples.push(t1 - t0);
+      unmount();
+    }
+    samples.sort((a, b) => a - b);
+    const p99 = samples[Math.floor(samples.length * 0.99) - 1] ?? samples[samples.length - 1];
+    // eslint-disable-next-line no-console
+    console.log('[perf] 500-entry render p99:', p99, 'ms', 'samples:', samples);
+    expect(p99).toBeLessThan(300);
   });
 });
