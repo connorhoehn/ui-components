@@ -18,7 +18,11 @@ export { useA2ASession } from './hooks/useA2ASession';
 
 // Components
 export { AgentCard } from './components/AgentCard';
+export { AgentDirectory } from './components/AgentDirectory';
+export type { AgentDirectoryProps } from './components/AgentDirectory';
 export { AgentFlowCanvas } from './components/AgentFlowCanvas';
+export { ConversationHistory } from './components/ConversationHistory';
+export type { ConversationHistoryProps } from './components/ConversationHistory';
 export { AgUiReasoningBlock } from './components/AgUiReasoningBlock';
 export type { AgUiReasoningBlockProps } from './components/AgUiReasoningBlock';
 export { StreamingChatPanel } from './components/StreamingChatPanel';

@@ -2,6 +2,24 @@
 //
 // Type definitions for the Agents domain module — covers agent registry,
 // AG-UI streaming protocol, OTEL traces, and A2A session management.
+//
+// ============================================================================
+// AG-UI v0.1.x STABLE CONTRACT — FROZEN 2026-06-06
+// ============================================================================
+// The AG-UI event taxonomy below (AgUiEvent, AgUiEventType, AgUiMessage,
+// AgUiToolCall, AgUiSession, AgUiRole) is the canonical v0.1.x surface
+// (spec: https://docs.ag-ui.com/concepts/events). It is considered STABLE.
+//
+// Consumers (websocket-gateway and others) depend on these shapes. Any
+// breaking change (renaming a discriminant, removing a field, narrowing a
+// union) requires:
+//   1. A major version bump on @connorhoehn/ui-components
+//   2. A create_handoff to each consumer agent that imports from /agents
+//   3. A blocker raised for operator review BEFORE the breaking commit
+//
+// Additive changes (new optional fields, new event variants in the union)
+// are allowed at minor versions and do not require consumer handoffs.
+// ============================================================================
 
 // ---------------------------------------------------------------------------
 // Agent Registry

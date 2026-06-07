@@ -44,7 +44,7 @@ npm run test:e2e   # playwright (tests/e2e/)
 | `…/video` | VideoPlayer, VideoGrid, HangoutLayout, participant tiles, recordings, transcript | **Stable API**, minor churn |
 | `…/video-ivs` | AWS IVS-specific video implementation | **Stable API** |
 | `…/styles.css` | Tailwind design tokens + keyframes | **Stable** |
-| `…/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A canvas | **In-flux** (graduation: hub #1069) |
+| `…/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A canvas, `AgentDirectory`, `ConversationHistory` | **Stable API** (AG-UI v0.1.x types frozen 2026-06-06; see `src/types/agents.ts` header) |
 | `…/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
 | `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **In-flux** (graduation: hub #1066 — `StandaloneTiptap` shipped; Tailwind wave 3 still pending) |
 | `…/observability` | Dashboard, events, metrics, node pages | **In-flux** |
