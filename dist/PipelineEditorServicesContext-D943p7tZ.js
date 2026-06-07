@@ -1,4 +1,4 @@
-import { createContext as ce, useState as j, useRef as J, useEffect as q, useCallback as w, useMemo as Y, useContext as H, forwardRef as ve, useId as Ue } from "react";
+import { createContext as ce, useState as j, useRef as J, useEffect as q, useCallback as w, useMemo as X, useContext as H, forwardRef as ve, useId as Ue } from "react";
 import { a as Ce, u as De } from "./EventStreamContext-CjzSHXy-.js";
 import { jsx as F, jsxs as xe } from "react/jsx-runtime";
 import { u as Oe } from "./IdentityContext-CLalsm_M.js";
@@ -123,7 +123,7 @@ function pe(e, n) {
     he || (he = !0, console.warn("[pipelineStorage] localStorage write failed", r));
   }
 }
-function fe() {
+function me() {
   try {
     const e = localStorage.getItem(Pe);
     if (!e) return [];
@@ -133,11 +133,11 @@ function fe() {
     return [];
   }
 }
-function Te(e) {
+function Re(e) {
   pe(Pe, JSON.stringify(e));
 }
 function Je(e) {
-  const n = fe(), r = {
+  const n = me(), r = {
     id: e.id,
     name: e.name,
     status: e.status,
@@ -149,14 +149,14 @@ function Je(e) {
     const a = e.icon ?? n[o].icon, t = e.tags ?? n[o].tags, s = { ...r };
     a && (s.icon = a), t && t.length > 0 && (s.tags = [...t]), n[o] = s;
   }
-  Te(n);
+  Re(n);
 }
 function Be(e) {
-  const n = fe().filter((r) => r.id !== e);
-  Te(n);
+  const n = me().filter((r) => r.id !== e);
+  Re(n);
 }
 function He() {
-  return fe();
+  return me();
 }
 function B(e) {
   try {
@@ -180,7 +180,7 @@ function We(e) {
   Be(e);
 }
 function St(e) {
-  const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), o = crypto.randomUUID(), a = crypto.randomUUID(), t = crypto.randomUUID(), s = crypto.randomUUID(), i = crypto.randomUUID(), c = crypto.randomUUID(), m = crypto.randomUUID(), R = crypto.randomUUID(), h = crypto.randomUUID(), p = crypto.randomUUID(), I = crypto.randomUUID(), f = { type: "trigger", triggerType: "manual" }, S = {
+  const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), o = crypto.randomUUID(), a = crypto.randomUUID(), t = crypto.randomUUID(), s = crypto.randomUUID(), i = crypto.randomUUID(), c = crypto.randomUUID(), f = crypto.randomUUID(), T = crypto.randomUUID(), h = crypto.randomUUID(), p = crypto.randomUUID(), I = crypto.randomUUID(), m = { type: "trigger", triggerType: "manual" }, S = {
     type: "llm",
     provider: "bedrock",
     model: "claude-sonnet-4-6",
@@ -227,15 +227,15 @@ function St(e) {
     config: { summary: "{{context.steps." + o + ".response}}" },
     onError: "route-error"
   }, A = [
-    { id: r, type: "trigger", position: { x: 40, y: 200 }, data: f },
+    { id: r, type: "trigger", position: { x: 40, y: 200 }, data: m },
     { id: o, type: "llm", position: { x: 320, y: 200 }, data: S },
     { id: a, type: "condition", position: { x: 620, y: 200 }, data: y },
     { id: t, type: "fork", position: { x: 900, y: 120 }, data: v },
     { id: s, type: "action", position: { x: 1180, y: 60 }, data: x },
     { id: i, type: "action", position: { x: 1180, y: 180 }, data: k },
     { id: c, type: "join", position: { x: 1480, y: 120 }, data: U },
-    { id: m, type: "approval", position: { x: 1780, y: 120 }, data: C },
-    { id: R, type: "action", position: { x: 2080, y: 120 }, data: d },
+    { id: f, type: "approval", position: { x: 1780, y: 120 }, data: C },
+    { id: T, type: "action", position: { x: 2080, y: 120 }, data: d },
     { id: h, type: "action", position: { x: 900, y: 320 }, data: {
       type: "action",
       actionType: "mcp-tool",
@@ -264,10 +264,10 @@ function St(e) {
       outputKey: "pipelineCompletion",
       terminal: !0
     } }
-  ], E = (_, X, l, u) => ({
+  ], E = (_, z, l, u) => ({
     id: crypto.randomUUID(),
     source: _,
-    sourceHandle: X,
+    sourceHandle: z,
     target: l,
     targetHandle: u
   }), L = [
@@ -280,16 +280,16 @@ function St(e) {
     E(t, "branch-1", i, "in"),
     E(s, "out", c, "in-0"),
     E(i, "out", c, "in-1"),
-    E(c, "out", m, "in"),
-    E(m, "approved", R, "in"),
+    E(c, "out", f, "in"),
+    E(f, "approved", T, "in"),
     // Terminal `out` paths converge on the final sink. Each leaf wires `out`
     // so DEAD_END only fires for the sink itself.
-    E(R, "out", I, "in"),
+    E(T, "out", I, "in"),
     E(h, "out", I, "in"),
     // Approval rejection routes through the shared error handler. Wiring
     // `rejected` is hygiene only — there is no UNUSED_APPROVAL_BRANCH lint —
     // but it keeps the rejection path observable.
-    E(m, "rejected", p, "in"),
+    E(f, "rejected", p, "in"),
     // Every llm/action `error` handle routes to the shared error handler so
     // NO_ERROR_HANDLER stays silent on each one. Exception: the two actions
     // *inside* the fork (postComment, notifyBranch) intentionally leave their
@@ -301,7 +301,7 @@ function St(e) {
     // AND upstream-of-Join) covers these two nodes, so the demo stays
     // lint-clean while preserving fork-join 'all' runtime semantics.
     E(o, "error", p, "in"),
-    E(R, "error", p, "in"),
+    E(T, "error", p, "in"),
     E(h, "error", p, "in"),
     // The error handler itself drains into the final sink on both handles
     // so it is not a dead end and its own `error` handle is wired (silencing
@@ -329,8 +329,8 @@ function Pt(e, n) {
   const r = B(e);
   if (!r) return null;
   const o = /* @__PURE__ */ new Map(), a = r.nodes.map((c) => {
-    const m = crypto.randomUUID();
-    return o.set(c.id, m), { ...c, id: m, data: { ...c.data } };
+    const f = crypto.randomUUID();
+    return o.set(c.id, f), { ...c, id: f, data: { ...c.data } };
   }), t = r.edges.map((c) => ({
     ...c,
     id: crypto.randomUUID(),
@@ -353,16 +353,16 @@ function Pt(e, n) {
   };
   return W(i), i;
 }
-function Tt(e) {
+function Rt(e) {
   const n = B(e);
   return n ? JSON.stringify(n, null, 2) : null;
 }
-function G(e = "") {
+function Y(e = "") {
   return `/api/pipelines/defs${e}`;
 }
 const Ve = { "Content-Type": "application/json" };
-async function Xe() {
-  const e = await fetch(G("/"), { credentials: "include" });
+async function ze() {
+  const e = await fetch(Y("/"), { credentials: "include" });
   if (!e.ok) throw new Error(`listPipelinesRemote failed (${e.status})`);
   return ((await e.json()).pipelines ?? []).map((r) => ({
     id: r.id,
@@ -373,16 +373,16 @@ async function Xe() {
     ...r.tags && r.tags.length > 0 ? { tags: [...r.tags] } : {}
   }));
 }
-async function Ye(e) {
-  const n = await fetch(G(`/${encodeURIComponent(e)}`), {
+async function Xe(e) {
+  const n = await fetch(Y(`/${encodeURIComponent(e)}`), {
     credentials: "include"
   });
   if (n.status === 404) return null;
   if (!n.ok) throw new Error(`loadPipelineRemote failed (${n.status})`);
   return await n.json();
 }
-async function Re(e) {
-  const n = await fetch(G(`/${encodeURIComponent(e.id)}`), {
+async function Te(e) {
+  const n = await fetch(Y(`/${encodeURIComponent(e.id)}`), {
     method: "PUT",
     headers: Ve,
     credentials: "include",
@@ -391,16 +391,16 @@ async function Re(e) {
   if (!n.ok) throw new Error(`savePipelineRemote failed (${n.status})`);
   return await n.json();
 }
-async function Ge(e) {
-  const n = await fetch(G(`/${encodeURIComponent(e)}`), {
+async function Ye(e) {
+  const n = await fetch(Y(`/${encodeURIComponent(e)}`), {
     method: "DELETE",
     credentials: "include"
   });
   if (!n.ok && n.status !== 404)
     throw new Error(`deletePipelineRemote failed (${n.status})`);
 }
-async function ze(e) {
-  const n = await fetch(G(`/${encodeURIComponent(e)}/publish`), {
+async function Ge(e) {
+  const n = await fetch(Y(`/${encodeURIComponent(e)}/publish`), {
     method: "POST",
     credentials: "include"
   });
@@ -412,9 +412,9 @@ function V(e) {
   const n = e.message || String(e);
   return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
 }
-async function Rt() {
+async function Tt() {
   try {
-    return await Xe();
+    return await ze();
   } catch (e) {
     if (V(e)) return He();
     throw e;
@@ -422,7 +422,7 @@ async function Rt() {
 }
 async function Ie(e) {
   try {
-    const n = await Ye(e);
+    const n = await Xe(e);
     return n && W(n), n ?? B(e);
   } catch (n) {
     if (V(n)) return B(e);
@@ -432,7 +432,7 @@ async function Ie(e) {
 async function oe(e) {
   e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), W(e);
   try {
-    return await Re(e);
+    return await Te(e);
   } catch (n) {
     if (V(n)) return e;
     throw n;
@@ -441,7 +441,7 @@ async function oe(e) {
 async function $t(e) {
   We(e);
   try {
-    await Ge(e);
+    await Ye(e);
   } catch (n) {
     if (V(n)) return;
     throw n;
@@ -449,7 +449,7 @@ async function $t(e) {
 }
 async function Qe(e) {
   try {
-    const n = await ze(e);
+    const n = await Ge(e);
     return n && W(n), n;
   } catch (n) {
     if (V(n)) return null;
@@ -480,7 +480,7 @@ async function Et(e) {
   };
   W(o);
   try {
-    await Re(o);
+    await Te(o);
   } catch (a) {
     if (!V(a)) throw a;
   }
@@ -576,20 +576,58 @@ function et(e) {
         eventType: "TEXT_MESSAGE_CONTENT",
         terminal: !0
       };
+    case "image-source":
+      return { type: "image-source" };
+    case "image:save":
+      return { type: "image:save" };
+    case "scatter":
+      return { type: "scatter", itemsPath: "" };
+    case "image:resize":
+      return { type: "image:resize" };
+    case "image:transform":
+      return { type: "image:transform", operations: [] };
+    case "image:format-convert":
+      return { type: "image:format-convert", format: "jpeg" };
+    case "image:sharpen":
+      return { type: "image:sharpen" };
+    case "image:watermark":
+      return { type: "image:watermark", overlayImageId: "" };
+    case "image:crop":
+      return { type: "image:crop" };
+    case "image:adjust-bw":
+      return { type: "image:adjust-bw" };
+    case "image:adjust-layer":
+      return { type: "image:adjust-layer", layers: [] };
+    case "image:vision-analyze":
+      return { type: "image:vision-analyze", userPrompt: "", imageRefPath: "$.trigger.imageRef" };
+    case "image:vision-classify":
+      return { type: "image:vision-classify", labels: [], imageRefPath: "$.trigger.imageRef" };
+    case "image:vision-describe":
+      return { type: "image:vision-describe", imageRefPath: "$.trigger.imageRef", userPrompt: "Describe this image." };
+    case "image:vision-tag":
+      return { type: "image:vision-tag", imageRefPath: "$.trigger.imageRef" };
+    case "image:vision-extract-text":
+      return { type: "image:vision-extract-text", imageRefPath: "$.trigger.imageRef" };
+    case "image:generate":
+      return { type: "image:generate", prompt: "" };
+    case "image:variation":
+      return { type: "image:variation" };
+    case "image:edit-prompt":
+      return { type: "image:edit-prompt", prompt: "" };
   }
 }
 function Q() {
   return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
-const me = ce(null);
+const fe = ce(null);
 function kt({
   pipelineId: e,
   children: n
 }) {
-  const [r, o] = j(null), [a, t] = j(!1), [s, i] = j(null), [c, m] = j([]), [R, h] = j([]), p = J(null);
+  const [r, o] = j(null), [a, t] = j(!1), [s, i] = j(null), [c, f] = j([]), [T, h] = j([]), p = J(null);
   q(() => {
     let l = !1;
-    return o(null), t(!1), i(null), m([]), h([]), Ie(e).then((u) => {
+    return o(null), t(!1), i(null), f([]), h([]), Ie(e).then((u) => {
       l || (u && (u.nodes = u.nodes ?? [], u.edges = u.edges ?? []), o(u));
     }), () => {
       l = !0;
@@ -603,14 +641,14 @@ function kt({
       };
   }, [r, a]);
   const I = w((l) => {
-    m((u) => {
+    f((u) => {
       const g = [
         ...u,
         { nodes: l.nodes, edges: l.edges }
       ];
       return g.length > we && g.shift(), g;
     }), h([]);
-  }, []), f = w(
+  }, []), m = w(
     (l) => {
       let u = null;
       return o((g) => {
@@ -624,7 +662,7 @@ function kt({
   ), S = w(
     (l, u) => {
       const g = Q();
-      return f(($) => ({
+      return m(($) => ({
         ...$,
         nodes: [
           ...$.nodes,
@@ -632,18 +670,18 @@ function kt({
         ]
       })), g;
     },
-    [f]
+    [m]
   ), y = w(
     (l, u) => {
-      f((g) => ({
+      m((g) => ({
         ...g,
         nodes: g.nodes.map(($) => $.id === l ? { ...$, ...u } : $)
       }));
     },
-    [f]
+    [m]
   ), v = w(
     (l, u) => {
-      f((g) => ({
+      m((g) => ({
         ...g,
         nodes: g.nodes.map(($) => {
           if ($.id !== l) return $;
@@ -652,21 +690,21 @@ function kt({
         })
       }));
     },
-    [f]
+    [m]
   ), x = w(
     (l) => {
-      f((u) => ({
+      m((u) => ({
         ...u,
         nodes: u.nodes.filter((g) => g.id !== l),
         edges: u.edges.filter((g) => g.source !== l && g.target !== l)
       })), i((u) => u === l ? null : u);
     },
-    [f]
+    [m]
   ), k = w(
     (l) => {
       const u = [];
-      return f((g) => {
-        const $ = new Set(l), O = /* @__PURE__ */ new Map(), z = g.nodes.filter((D) => $.has(D.id)).map((D) => {
+      return m((g) => {
+        const $ = new Set(l), O = /* @__PURE__ */ new Map(), G = g.nodes.filter((D) => $.has(D.id)).map((D) => {
           const re = Q();
           return O.set(D.id, re), u.push(re), {
             ...D,
@@ -682,29 +720,29 @@ function kt({
         }));
         return {
           ...g,
-          nodes: [...g.nodes, ...z],
+          nodes: [...g.nodes, ...G],
           edges: [...g.edges, ...Ae]
         };
       }), u;
     },
-    [f]
+    [m]
   ), U = w(
     (l) => {
       const u = Q();
-      return f((g) => ({
+      return m((g) => ({
         ...g,
         edges: [...g.edges, { id: u, ...l }]
       })), u;
     },
-    [f]
+    [m]
   ), C = w(
     (l) => {
-      f((u) => ({
+      m((u) => ({
         ...u,
         edges: u.edges.filter((g) => g.id !== l)
       }));
     },
-    [f]
+    [m]
   ), d = w(
     (l) => {
       l.length !== 0 && o((u) => {
@@ -712,8 +750,8 @@ function kt({
         const g = new Map(l.map((O) => [O.id, O.position])), $ = {
           ...u,
           nodes: u.nodes.map((O) => {
-            const z = g.get(O.id);
-            return z ? { ...O, position: z } : O;
+            const G = g.get(O.id);
+            return G ? { ...O, position: G } : O;
           })
         };
         return Ke($), $;
@@ -729,9 +767,9 @@ function kt({
       const u = await Qe(r.id);
       u && o(u);
     })();
-  }, [r, a]), T = w(() => {
+  }, [r, a]), R = w(() => {
     Ie(e).then((l) => {
-      o(l), t(!1), m([]), h([]);
+      o(l), t(!1), f([]), h([]);
     });
   }, [e]), A = w((l) => {
     const u = l.trim();
@@ -745,7 +783,7 @@ function kt({
       return g.length === l.length && g.every(($, O) => $ === l[O]) ? u : { ...u, tags: [...l] };
     }), t(!0);
   }, []), M = w(() => {
-    m((l) => {
+    f((l) => {
       if (l.length === 0 || !r) return l;
       const u = l[l.length - 1];
       return h((g) => [
@@ -757,7 +795,7 @@ function kt({
     h((l) => {
       if (l.length === 0 || !r) return l;
       const u = l[l.length - 1];
-      return m((g) => {
+      return f((g) => {
         const $ = [
           ...g,
           { nodes: r.nodes, edges: r.edges }
@@ -765,7 +803,7 @@ function kt({
         return $.length > we && $.shift(), $;
       }), o({ ...r, nodes: u.nodes, edges: u.edges }), t(!0), l.slice(0, -1);
     });
-  }, [r]), X = Y(
+  }, [r]), z = X(
     () => ({
       definition: r,
       dirty: a,
@@ -781,11 +819,11 @@ function kt({
       setPositions: d,
       save: b,
       publish: P,
-      revert: T,
+      revert: R,
       undo: M,
       redo: _,
       canUndo: c.length > 0,
-      canRedo: R.length > 0,
+      canRedo: T.length > 0,
       rename: A,
       setIcon: E,
       setTags: L
@@ -804,20 +842,20 @@ function kt({
       d,
       b,
       P,
-      T,
+      R,
       M,
       _,
       c.length,
-      R.length,
+      T.length,
       A,
       E,
       L
     ]
   );
-  return /* @__PURE__ */ F(me.Provider, { value: X, children: n });
+  return /* @__PURE__ */ F(fe.Provider, { value: z, children: n });
 }
 function At() {
-  const e = H(me);
+  const e = H(fe);
   if (!e)
     throw new Error(
       "usePipelineEditor must be used within a PipelineEditorProvider"
@@ -827,21 +865,21 @@ function At() {
 function tt() {
   const { idToken: e } = Oe(), [n, r] = j(!1), [o, a] = j(null), [t, s] = j(!1), i = "";
   return { triggerRun: w(
-    async (m, R, h) => {
+    async (f, T, h) => {
       r(!0), a(null), s(!1);
       try {
-        const p = B(m), I = {};
-        R && (I.triggerPayload = R), p && (I.definition = p);
-        const f = {
+        const p = B(f), I = {};
+        T && (I.triggerPayload = T), p && (I.definition = p);
+        const m = {
           "Content-Type": "application/json",
           ...e ? { Authorization: `Bearer ${e}` } : {}
         };
-        h?.idempotencyKey && (f["Idempotency-Key"] = h.idempotencyKey);
+        h?.idempotencyKey && (m["Idempotency-Key"] = h.idempotencyKey);
         const S = await fetch(
-          `${i}/api/pipelines/${encodeURIComponent(m)}/runs`,
+          `${i}/api/pipelines/${encodeURIComponent(f)}/runs`,
           {
             method: "POST",
-            headers: f,
+            headers: m,
             body: JSON.stringify(I)
           }
         );
@@ -887,14 +925,14 @@ function Ut({
     a({ service: "pipeline", action: "subscribe", channel: e });
     const i = t((c) => {
       if (c.type !== "pipeline:event") return;
-      const m = c, R = m.eventType;
-      if (!R) return;
+      const f = c, T = f.eventType;
+      if (!T) return;
       const p = {
-        eventType: rt(R),
-        payload: m.payload,
-        seq: typeof m.seq == "number" ? m.seq : 0,
-        sourceNodeId: typeof m.sourceNodeId == "string" ? m.sourceNodeId : "unknown",
-        emittedAt: typeof m.emittedAt == "number" ? m.emittedAt : Date.now()
+        eventType: rt(T),
+        payload: f.payload,
+        seq: typeof f.seq == "number" ? f.seq : 0,
+        sourceNodeId: typeof f.sourceNodeId == "string" ? f.sourceNodeId : "unknown",
+        emittedAt: typeof f.emittedAt == "number" ? f.emittedAt : Date.now()
       };
       try {
         s.current(p);
@@ -950,31 +988,31 @@ function ot() {
       return e({ service: "pipeline", action: "cancel", runId: h, correlationId: I }), I;
     },
     [e]
-  ), m = w(
-    (h, p, I, f = {}) => {
-      const S = f.correlationId ?? Z();
+  ), f = w(
+    (h, p, I, m = {}) => {
+      const S = m.correlationId ?? Z();
       return e({
         service: "pipeline",
         action: "resolveApproval",
         runId: h,
         stepId: p,
         decision: I,
-        ...f.comment ? { comment: f.comment } : {},
-        ...f.decidedBy ? { decidedBy: f.decidedBy } : {},
+        ...m.comment ? { comment: m.comment } : {},
+        ...m.decidedBy ? { decidedBy: m.decidedBy } : {},
         correlationId: S
       }), S;
     },
     [e]
-  ), R = w(
+  ), T = w(
     (h, p, I) => {
-      const f = I ?? Z();
+      const m = I ?? Z();
       return e({
         service: "pipeline",
         action: "resumeFromStep",
         runId: h,
         fromNodeId: p,
-        correlationId: f
-      }), f;
+        correlationId: m
+      }), m;
     },
     [e]
   );
@@ -987,8 +1025,8 @@ function ot() {
     unsubscribeFromApprovals: s,
     triggerRun: i,
     cancelRun: c,
-    resolveApproval: m,
-    requestResumeFromStep: R
+    resolveApproval: f,
+    requestResumeFromStep: T
   };
 }
 function Ct(e, n = {}) {
@@ -1027,27 +1065,27 @@ function it(e) {
   return s;
 }
 function Dt({ children: e }) {
-  const n = H(me), { triggerRun: r } = tt(), o = ot(), [a, t] = j({}), [s, i] = j(!1), c = J(/* @__PURE__ */ new Set()), m = J(null);
+  const n = H(fe), { triggerRun: r } = tt(), o = ot(), [a, t] = j({}), [s, i] = j(!1), c = J(/* @__PURE__ */ new Set()), f = J(null);
   q(() => {
     const d = n?.definition?.id;
-    !d || m.current === d || (m.current = d, i(!0), Se(d, { limit: ae }).then((b) => {
+    !d || f.current === d || (f.current = d, i(!0), Se(d, { limit: ae }).then((b) => {
       t((P) => {
-        const T = { ...P };
+        const R = { ...P };
         for (const A of b.runs)
-          T[A.id] || (T[A.id] = A);
-        return T;
+          R[A.id] || (R[A.id] = A);
+        return R;
       });
     }).catch((b) => {
       console.error("[PipelineRuns] Failed to load history from API", b), t((P) => {
-        const T = { ...P };
+        const R = { ...P };
         for (const A of le(d))
-          T[A.id] || (T[A.id] = A);
-        return T;
+          R[A.id] || (R[A.id] = A);
+        return R;
       });
     }).finally(() => i(!1)));
   }, [n?.definition?.id]), Ce("*", (d) => {
     const { eventType: b, payload: P } = d;
-    t((T) => at(T, b, P));
+    t((R) => at(R, b, P));
   }), q(() => {
     for (const d of Object.values(a))
       if ((d.status === "completed" || d.status === "failed" || d.status === "cancelled") && !c.current.has(d.id)) {
@@ -1059,7 +1097,7 @@ function Dt({ children: e }) {
         }
       }
   }, [a]);
-  const R = w(
+  const T = w(
     async (d, b) => {
       const P = await r(d, b);
       if (!P)
@@ -1073,17 +1111,17 @@ function Dt({ children: e }) {
     },
     [o]
   ), p = w(
-    (d, b, P, T) => {
-      o.resolveApproval(d, b, P, { comment: T });
+    (d, b, P, R) => {
+      o.resolveApproval(d, b, P, { comment: R });
     },
     [o]
   ), I = J(a);
   q(() => {
     I.current = a;
   }, [a]);
-  const f = w(
+  const m = w(
     async (d) => {
-      const P = Object.values(I.current).filter((T) => T.status === "failed").filter((T) => T.steps[d]?.status === "failed").sort((T, A) => A.startedAt.localeCompare(T.startedAt))[0];
+      const P = Object.values(I.current).filter((R) => R.status === "failed").filter((R) => R.steps[d]?.status === "failed").sort((R, A) => A.startedAt.localeCompare(R.startedAt))[0];
       if (!P) {
         console.warn(
           "[PipelineRuns] retryFromStep — no failed run found for node",
@@ -1093,17 +1131,17 @@ function Dt({ children: e }) {
       }
       try {
         await Ne(P.pipelineId, P.id, d);
-      } catch (T) {
-        console.error("[PipelineRuns] retryFromNode API failed", T);
+      } catch (R) {
+        console.error("[PipelineRuns] retryFromNode API failed", R);
       }
     },
     []
   ), S = w(
     async (d, b, P) => {
-      const T = { ...P ?? {}, __breakpoints: b };
-      return R(d, T);
+      const R = { ...P ?? {}, __breakpoints: b };
+      return T(d, R);
     },
-    [R]
+    [T]
   ), y = w(
     (d, b, P = "continue") => {
       const E = I.current[d]?.pipelineId ?? "unknown";
@@ -1120,11 +1158,11 @@ function Dt({ children: e }) {
     },
     []
   ), v = w(
-    async (d, b, P, T) => {
+    async (d, b, P, R) => {
       const L = I.current[d]?.pipelineId ?? "unknown", M = `/api/pipelines/${encodeURIComponent(L)}/runs/${encodeURIComponent(d)}/breakpoint/${encodeURIComponent(b)}/patch`, _ = await fetch(M, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patch: P, ...T ? { appliedBy: T } : {} })
+        body: JSON.stringify({ patch: P, ...R ? { appliedBy: R } : {} })
       });
       if (_.status === 200)
         return await _.json();
@@ -1137,8 +1175,8 @@ function Dt({ children: e }) {
           validation: { ok: !1, reason: l.error ?? "patch rejected" }
         };
       }
-      const X = await _.text().catch(() => "");
-      throw new Error(`applyContextPatch HTTP ${_.status}: ${X}`);
+      const z = await _.text().catch(() => "");
+      throw new Error(`applyContextPatch HTTP ${_.status}: ${z}`);
     },
     []
   ), x = w(
@@ -1154,41 +1192,41 @@ function Dt({ children: e }) {
     t((b) => {
       const P = b[d.id];
       if (P && P.status === d.status) {
-        const T = Object.keys(P.steps).length, A = Object.keys(d.steps).length;
-        if (T >= A) return b;
+        const R = Object.keys(P.steps).length, A = Object.keys(d.steps).length;
+        if (R >= A) return b;
       }
       return { ...b, [d.id]: d };
     });
-  }, []), U = Y(
+  }, []), U = X(
     () => Object.values(a).filter(
       (d) => d.status === "running" || d.status === "pending" || d.status === "awaiting_approval" || d.status === "paused_at_breakpoint"
     ).map((d) => d.id),
     [a]
-  ), C = Y(
+  ), C = X(
     () => ({
       runs: a,
       activeRunIds: U,
-      triggerRun: R,
+      triggerRun: T,
       triggerDebugRun: S,
       cancelRun: h,
       resolveApproval: p,
       resolveBreakpoint: y,
       applyContextPatch: v,
       revertContextPatch: x,
-      retryFromStep: f,
+      retryFromStep: m,
       ingestRun: k
     }),
     [
       a,
       U,
-      R,
+      T,
       S,
       h,
       p,
       y,
       v,
       x,
-      f,
+      m,
       k
     ]
   );
@@ -1361,7 +1399,7 @@ function at(e, n, r) {
       return s ? {
         ...e,
         [t.runId]: N(s, t.stepId, (i) => {
-          const c = Date.parse(t.openedAt), m = {
+          const c = Date.parse(t.openedAt), f = {
             ...i,
             llm: {
               prompt: i.llm?.prompt ?? "",
@@ -1372,7 +1410,7 @@ function at(e, n, r) {
               ...i.llm?.firstTokenLatencyMs !== void 0 ? { firstTokenLatencyMs: i.llm.firstTokenLatencyMs } : {}
             }
           };
-          return m.llm._streamOpenedAtMs = Number.isFinite(c) ? c : Date.now(), m;
+          return f.llm._streamOpenedAtMs = Number.isFinite(c) ? c : Date.now(), f;
         })
       } : e;
     }
@@ -1381,7 +1419,7 @@ function at(e, n, r) {
       return s ? {
         ...e,
         [t.runId]: N(s, t.stepId, (i) => {
-          const c = i.llm?.tokensOut ?? 0, m = c === 0, R = i.llm?._streamOpenedAtMs, h = Date.parse(t.at), p = m && typeof R == "number" && Number.isFinite(h) ? Math.max(0, h - R) : i.llm?.firstTokenLatencyMs;
+          const c = i.llm?.tokensOut ?? 0, f = c === 0, T = i.llm?._streamOpenedAtMs, h = Date.parse(t.at), p = f && typeof T == "number" && Number.isFinite(h) ? Math.max(0, h - T) : i.llm?.firstTokenLatencyMs;
           return {
             ...i,
             llm: {
@@ -1442,9 +1480,9 @@ function at(e, n, r) {
       };
       return {
         ...e,
-        [t.runId]: N(s, t.stepId, (m) => ({
-          ...m,
-          patches: [...m.patches ?? [], c]
+        [t.runId]: N(s, t.stepId, (f) => ({
+          ...f,
+          patches: [...f.patches ?? [], c]
         }))
       };
     }
@@ -1525,7 +1563,7 @@ function Ot() {
 }
 function Nt(e) {
   const n = H(ne);
-  return Y(() => {
+  return X(() => {
     if (!n) return null;
     let r = null, o = "";
     for (const a of Object.values(n.runs)) {
@@ -1552,7 +1590,7 @@ function se(e, n) {
 function ut() {
   const e = De(), n = ct(), [r, o] = j(
     () => {
-      const f = {};
+      const m = {};
       for (const S in n.runs) {
         const y = n.runs[S];
         if (y.status === "awaiting_approval")
@@ -1560,7 +1598,7 @@ function ut() {
             const x = y.steps[v];
             if (x.status !== "awaiting") continue;
             const k = se(y.pipelineId, v), C = B(y.pipelineId)?.nodes.find((b) => b.id === v), d = C && C.data.type === "approval" ? C.data.approvers : [];
-            f[ee(S, v)] = {
+            m[ee(S, v)] = {
               runId: S,
               pipelineId: y.pipelineId,
               stepId: v,
@@ -1572,15 +1610,15 @@ function ut() {
             };
           }
       }
-      return f;
+      return m;
     }
-  ), [a, t] = j(!0), [s, i] = j(null), [c, m] = j(0), R = J(n.runs);
+  ), [a, t] = j(!0), [s, i] = j(null), [c, f] = j(0), T = J(n.runs);
   q(() => {
-    R.current = n.runs;
+    T.current = n.runs;
   }, [n.runs]);
   const h = J(/* @__PURE__ */ new Map());
   q(() => {
-    let f = !1;
+    let m = !1;
     t(!0), i(null);
     const S = async () => {
       try {
@@ -1600,7 +1638,7 @@ function ut() {
     return (async () => {
       try {
         const y = await S();
-        if (f) return;
+        if (m) return;
         if (y?.pendingApprovals) {
           const v = {};
           for (const x of y.pendingApprovals) {
@@ -1620,25 +1658,25 @@ function ut() {
         }
         t(!1);
       } catch (y) {
-        if (f) return;
+        if (m) return;
         console.error(
           "[usePendingApprovals] /api/observability/dashboard?include=pendingApprovals failed:",
           y
         ), i(y.message ?? "Failed to load pending approvals"), t(!1);
       }
     })(), () => {
-      f = !0;
+      m = !0;
     };
   }, [c]), q(() => {
-    const f = [];
-    f.push(
+    const m = [];
+    m.push(
       e.subscribe("pipeline.run.started", (y) => {
         const v = y;
         h.current.set(v.runId, v.pipelineId);
       })
-    ), f.push(
+    ), m.push(
       e.subscribe("pipeline.approval.requested", (y) => {
-        const v = y, x = h.current.get(v.runId) ?? R.current[v.runId]?.pipelineId ?? "", k = se(x, v.stepId);
+        const v = y, x = h.current.get(v.runId) ?? T.current[v.runId]?.pipelineId ?? "", k = se(x, v.stepId);
         o((U) => {
           const C = ee(v.runId, v.stepId);
           return U[C] ? U : {
@@ -1656,7 +1694,7 @@ function ut() {
           };
         });
       })
-    ), f.push(
+    ), m.push(
       e.subscribe("pipeline.approval.recorded", (y) => {
         const v = y, x = ee(v.runId, v.stepId);
         o((k) => {
@@ -1679,14 +1717,14 @@ function ut() {
       })
     );
     const S = e.subscribeToApprovals();
-    return f.push(S), () => {
-      for (const y of f) y();
+    return m.push(S), () => {
+      for (const y of m) y();
     };
   }, [e]);
-  const p = Y(() => Object.values(r).sort(
-    (f, S) => S.requestedAt.localeCompare(f.requestedAt)
+  const p = X(() => Object.values(r).sort(
+    (m, S) => S.requestedAt.localeCompare(m.requestedAt)
   ), [r]), I = w(() => {
-    m((f) => f + 1);
+    f((m) => m + 1);
   }, []);
   return { approvals: p, isLoading: a, error: s, retry: I };
 }
@@ -1723,8 +1761,8 @@ async function _t(e, n, r, o, a) {
     return await t.json();
   if (t.status === 422) {
     const c = await t.json().catch(() => ({}));
-    let m = "patch rejected by validator";
-    throw c.result && c.result.validation && c.result.validation.ok === !1 && typeof c.result.validation.reason == "string" ? m = c.result.validation.reason : typeof c.error == "string" && (m = c.error), new dt(m, c.result);
+    let f = "patch rejected by validator";
+    throw c.result && c.result.validation && c.result.validation.ok === !1 && typeof c.result.validation.reason == "string" ? f = c.result.validation.reason : typeof c.error == "string" && (f = c.error), new dt(f, c.result);
   }
   const s = await t.text().catch(() => "");
   let i;
@@ -1835,8 +1873,8 @@ const ie = {
   disabled: s = !1,
   mono: i = !1,
   className: c,
-  "data-testid": m,
-  ...R
+  "data-testid": f,
+  ...T
 }, h) {
   const p = o != null, I = a != null;
   return !p && !I ? /* @__PURE__ */ F(
@@ -1845,7 +1883,7 @@ const ie = {
       ref: h,
       type: n,
       disabled: s,
-      "data-testid": m,
+      "data-testid": f,
       className: K(
         "w-full rounded-md border bg-slate-50 font-inherit text-slate-900",
         "outline-none transition-colors duration-150",
@@ -1857,7 +1895,7 @@ const ie = {
         ie[r],
         c
       ),
-      ...R
+      ...T
     }
   ) : /* @__PURE__ */ xe(
     "div",
@@ -1887,7 +1925,7 @@ const ie = {
             ref: h,
             type: n,
             disabled: s,
-            "data-testid": m,
+            "data-testid": f,
             className: K(
               "flex-1 min-w-0 bg-transparent font-inherit text-slate-900 outline-none",
               "placeholder:text-slate-400",
@@ -1898,7 +1936,7 @@ const ie = {
               i && "font-mono",
               c
             ),
-            ...R
+            ...T
           }
         ),
         I && /* @__PURE__ */ F(
@@ -1928,10 +1966,10 @@ const ie = {
     errorMessage: s,
     disabled: i = !1,
     size: c = "md",
-    enforcePrefix: m = !1,
-    "data-testid": R
+    enforcePrefix: f = !1,
+    "data-testid": T
   }, h) {
-    const p = Ue(), I = m && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, f = t || I != null, S = s ?? I;
+    const p = Ue(), I = f && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, m = t || I != null, S = s ?? I;
     return /* @__PURE__ */ xe("div", { className: "flex flex-col gap-1 w-full", children: [
       /* @__PURE__ */ F(
         lt,
@@ -1943,11 +1981,11 @@ const ie = {
           value: n,
           onChange: (y) => r(y.target.value),
           placeholder: a,
-          invalid: f,
+          invalid: m,
           disabled: i,
-          "data-testid": R,
+          "data-testid": T,
           "aria-describedby": S ? p : void 0,
-          "aria-invalid": f || void 0
+          "aria-invalid": m || void 0
         }
       ),
       o && o.length > 0 && /* @__PURE__ */ F("div", { className: "flex flex-wrap gap-1", children: o.map((y) => /* @__PURE__ */ F(
@@ -2003,7 +2041,7 @@ function Kt() {
   return e;
 }
 export {
-  Tt as A,
+  Rt as A,
   vt as B,
   We as C,
   W as D,
@@ -2024,7 +2062,7 @@ export {
   ut as S,
   xt as T,
   B as a,
-  Rt as b,
+  Tt as b,
   Ut as c,
   jt as d,
   $e as e,
@@ -2046,7 +2084,7 @@ export {
   ct as u,
   Ot as v,
   At as w,
-  me as x,
+  fe as x,
   kt as y,
   Pt as z
 };

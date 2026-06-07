@@ -34,6 +34,23 @@ export declare interface ActionNodeData {
 
 export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
 
+export declare type AdjustLayer = {
+    kind: 'brightness';
+    value: number;
+} | {
+    kind: 'contrast';
+    value: number;
+} | {
+    kind: 'saturation';
+    value: number;
+} | {
+    kind: 'hue';
+    degrees: number;
+} | {
+    kind: 'blur';
+    radiusPx: number;
+};
+
 export declare interface AgentDefinition {
     id: string;
     name: string;
@@ -375,6 +392,30 @@ export declare interface AuthContext {
     scopes?: readonly string[];
 }
 
+/**
+ * Authoring bounding-box painted by the user in BBoxAuthoringCanvas.
+ * These are forwarded to the vision call as a system-prompt hint.
+ */
+export declare interface AuthoringBBox {
+    /** Stable client-side id (uuid). */
+    id: string;
+    /** Pixel x of the box origin (post-resize). */
+    x: number;
+    /** Pixel y of the box origin (post-resize). */
+    y: number;
+    width: number;
+    height: number;
+    /** Free-form label entered by the author. */
+    label?: string;
+}
+
+export declare interface BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
 /** A flat comment as stored in Y.js. */
 export declare interface CommentData {
     id: string;
@@ -616,6 +657,23 @@ export declare interface GatewayMessage {
     [key: string]: unknown;
 }
 
+export declare type GeometricOp = GeometricOpRotate | GeometricOpFlip | GeometricOpFlop;
+
+export declare type GeometricOpFlip = {
+    op: 'flip';
+};
+
+export declare type GeometricOpFlop = {
+    op: 'flop';
+};
+
+export declare type GeometricOpRotate = {
+    op: 'rotate';
+    degrees: number;
+    background?: string;
+    trimAfter?: boolean;
+};
+
 /**
  * Returns a fresh page-config (with safe defaults) when the stored
  * config is undefined. Used by the wizard so toggles always have a
@@ -701,6 +759,66 @@ export declare interface IdentityUser {
     updatedAt?: string;
 }
 
+export declare interface ImageAdjustBwNodeData {
+    type: 'image:adjust-bw';
+    sourceImagePath?: string;
+    algorithm?: 'luminosity' | 'average' | 'desaturate';
+    contrast?: number;
+}
+
+export declare interface ImageAdjustLayerNodeData {
+    type: 'image:adjust-layer';
+    sourceImagePath?: string;
+    layers: AdjustLayer[];
+}
+
+export declare interface ImageCropNodeData {
+    type: 'image:crop';
+    sourceImagePath?: string;
+    bboxPath?: string;
+    bbox?: BBox;
+    materialize?: boolean;
+}
+
+export declare interface ImageEditPromptNodeData {
+    type: 'image:edit-prompt';
+    sourceImagePath?: string;
+    maskImagePath?: string;
+    prompt: string;
+    model?: string;
+}
+
+export declare type ImageFormat = 'jpeg' | 'png' | 'webp' | 'avif';
+
+export declare interface ImageFormatConvertNodeData {
+    type: 'image:format-convert';
+    sourceImagePath?: string;
+    format: ImageFormat;
+    quality?: number;
+    lossless?: boolean;
+    stripMetadata?: boolean;
+}
+
+export declare interface ImageGenerateNodeData {
+    type: 'image:generate';
+    prompt: string;
+    model?: string;
+    width?: number;
+    height?: number;
+    seed?: number;
+    numImages?: number;
+}
+
+export declare interface ImageResizeNodeData {
+    type: 'image:resize';
+    sourceImagePath?: string;
+    width?: number;
+    height?: number;
+    fit?: ResizeFit;
+    withoutEnlargement?: boolean;
+    background?: string;
+}
+
 export declare interface ImageSaveNodeData {
     type: 'image:save';
     /** JSONPath to the source imageId in context. */
@@ -713,12 +831,96 @@ export declare interface ImageSaveNodeData {
     filenameTemplate?: string;
 }
 
+export declare interface ImageSharpenNodeData {
+    type: 'image:sharpen';
+    sourceImagePath?: string;
+    sigma?: number;
+    m1?: number;
+    m2?: number;
+}
+
 export declare interface ImageSourceNodeData {
     type: 'image-source';
     /** imageId to inject into the pipeline context. */
     imageId?: string;
     /** Key under which the imageId is written to context. Default: 'imageRef'. */
     outputKey?: string;
+}
+
+export declare interface ImageTransformNodeData {
+    type: 'image:transform';
+    sourceImagePath?: string;
+    operations: GeometricOp[];
+}
+
+export declare interface ImageVariationNodeData {
+    type: 'image:variation';
+    sourceImagePath?: string;
+    numVariations?: number;
+    similarity?: number;
+    model?: string;
+}
+
+export declare interface ImageVisionAnalyzeNodeData {
+    type: 'image:vision-analyze';
+    model?: string;
+    systemPrompt?: string;
+    userPrompt: string;
+    imageRefPath: string;
+    outputSchema?: Record<string, unknown>;
+    maxOutputTokens?: number;
+    /**
+     * Optional seed regions painted by the user in the BBoxAuthoringCanvas.
+     * Rendered when outputSchema matches the 'detection-regions' preset.
+     * Forwarded to platform-api's vision handler as focus hints.
+     */
+    seedRegions?: AuthoringBBox[];
+}
+
+export declare interface ImageVisionClassifyNodeData {
+    type: 'image:vision-classify';
+    model?: string;
+    imageRefPath: string;
+    labels: string[];
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionDescribeNodeData {
+    type: 'image:vision-describe';
+    model?: string;
+    imageRefPath: string;
+    userPrompt: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionExtractTextNodeData {
+    type: 'image:vision-extract-text';
+    model?: string;
+    imageRefPath: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageVisionTagNodeData {
+    type: 'image:vision-tag';
+    model?: string;
+    imageRefPath: string;
+    candidateTags?: string[];
+    maxTags?: number;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+export declare interface ImageWatermarkNodeData {
+    type: 'image:watermark';
+    sourceImagePath?: string;
+    overlayImageId: string;
+    gravity?: WatermarkGravity;
+    opacity?: number;
+    offsetX?: number;
+    offsetY?: number;
 }
 
 export declare interface IngestItem {
@@ -888,9 +1090,9 @@ export declare interface MfaSetupResult {
     backupCodes: string[];
 }
 
-export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData;
+export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
 
-export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter';
+export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
 export declare interface Participant {
     clientId: string;
@@ -1415,6 +1617,8 @@ export declare interface RateInfo {
     [key: string]: unknown;
 }
 
+export declare type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+
 /** A single resume-from-step entry on a PipelineRun (hub#2223). */
 export declare interface ResumeFromStepEntry {
     fromNodeId: string;
@@ -1568,6 +1772,24 @@ export declare interface StepExecution {
         };
     }>;
     approvals?: ApprovalRecord[];
+    /**
+     * Vision-specific streaming data — populated as `image:vision-analyze`
+     * events arrive (pipeline:step:vision:*). `analyzed` flips to true once
+     * the model has finished outputting tokens.
+     */
+    vision?: {
+        response: string;
+        tokensIn?: number;
+        tokensOut?: number;
+        tokensSeen: number;
+        analyzed: boolean;
+        failure?: {
+            reason: string;
+            error: string;
+        };
+        imageId?: string;
+        costUsd?: number;
+    };
     /**
      * hub#2226: edit-and-continue patch history applied while the run was
      * paused at this step's breakpoint. Append-only at apply time;
@@ -1759,5 +1981,7 @@ export declare interface ValidationResult {
 }
 
 export declare type ViewMode = 'editor' | 'ack' | 'reader';
+
+export declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
 
 export { }

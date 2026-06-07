@@ -32,6 +32,57 @@ declare interface ActionNodeData {
 
 declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
 
+export declare function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps): JSX.Element;
+
+declare interface AdjustBwConfigProps {
+    data: ImageAdjustBwNodeData;
+    onChange: (patch: Partial<ImageAdjustBwNodeData>) => void;
+}
+
+declare type AdjustBwData = ImageAdjustBwNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type AdjustBwFlowNode = Node_2<AdjustBwData, 'image:adjust-bw'>;
+
+export declare function AdjustBwNode(props: NodeProps<AdjustBwFlowNode>): JSX.Element;
+
+declare type AdjustLayer = {
+    kind: 'brightness';
+    value: number;
+} | {
+    kind: 'contrast';
+    value: number;
+} | {
+    kind: 'saturation';
+    value: number;
+} | {
+    kind: 'hue';
+    degrees: number;
+} | {
+    kind: 'blur';
+    radiusPx: number;
+};
+
+export declare function AdjustLayerConfig({ data, onChange }: AdjustLayerConfigProps): JSX.Element;
+
+declare interface AdjustLayerConfigProps {
+    data: ImageAdjustLayerNodeData;
+    onChange: (patch: Partial<ImageAdjustLayerNodeData>) => void;
+}
+
+declare type AdjustLayerData = ImageAdjustLayerNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type AdjustLayerFlowNode = Node_2<AdjustLayerData, 'image:adjust-layer'>;
+
+export declare function AdjustLayerNode(props: NodeProps<AdjustLayerFlowNode>): JSX.Element;
+
 declare type AgentData = AgentNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -42,7 +93,7 @@ declare type AgentFlowNode = Node_2<AgentData, 'agent'>;
 
 declare type AgentInvokeProtocol = 'a2a' | 'direct';
 
-declare function AgentNode({ id, data, selected }: NodeProps<AgentFlowNode>): JSX.Element;
+export declare function AgentNode({ id, data, selected }: NodeProps<AgentFlowNode>): JSX.Element;
 
 declare interface AgentNodeData {
     type: 'agent';
@@ -106,7 +157,7 @@ declare type AgUiFlowNode = Node_2<AgUiData, 'ag-ui-output'>;
 
 declare type AgUiOutputEventType = 'TEXT_MESSAGE_CONTENT' | 'STATE_DELTA' | 'CUSTOM';
 
-declare function AgUiOutputNode({ id, data, selected }: NodeProps<AgUiFlowNode>): JSX.Element;
+export declare function AgUiOutputNode({ id, data, selected }: NodeProps<AgUiFlowNode>): JSX.Element;
 
 declare interface AgUiOutputNodeData {
     type: 'ag-ui-output';
@@ -153,6 +204,23 @@ declare interface Approver {
     value: string;
 }
 
+/**
+ * Authoring bounding-box painted by the user in BBoxAuthoringCanvas.
+ * These are forwarded to the vision call as a system-prompt hint.
+ */
+declare interface AuthoringBBox {
+    /** Stable client-side id (uuid). */
+    id: string;
+    /** Pixel x of the box origin (post-resize). */
+    x: number;
+    /** Pixel y of the box origin (post-resize). */
+    y: number;
+    width: number;
+    height: number;
+    /** Free-form label entered by the author. */
+    label?: string;
+}
+
 export declare function BaseNode(props: BaseNodeProps): JSX.Element;
 
 declare interface BaseNodeProps {
@@ -181,6 +249,13 @@ declare interface BaseNodeProps {
      */
     ariaLabel?: string;
     children?: ReactNode;
+}
+
+declare interface BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 
 /**
@@ -233,6 +308,40 @@ export declare interface CriterionScore {
     rationale: string;
     passed: boolean;
 }
+
+export declare function CropConfig({ data, onChange }: CropConfigProps): JSX.Element;
+
+declare interface CropConfigProps {
+    data: ImageCropNodeData;
+    onChange: (patch: Partial<ImageCropNodeData>) => void;
+}
+
+declare type CropData = ImageCropNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type CropFlowNode = Node_2<CropData, 'image:crop'>;
+
+export declare function CropNode(props: NodeProps<CropFlowNode>): JSX.Element;
+
+export declare function EditPromptConfig({ data, onChange }: EditPromptConfigProps): JSX.Element;
+
+declare interface EditPromptConfigProps {
+    data: ImageEditPromptNodeData;
+    onChange: (patch: Partial<ImageEditPromptNodeData>) => void;
+}
+
+declare type EditPromptData = ImageEditPromptNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type EditPromptFlowNode = Node_2<EditPromptData, 'image:edit-prompt'>;
+
+export declare function EditPromptNode(props: NodeProps<EditPromptFlowNode>): JSX.Element;
 
 export declare function EditRecommendationsPanel({ exposure, whiteBalance, contrast, composition, edits, onApplyEdit, className, }: EditRecommendationsPanelProps): JSX.Element | null;
 
@@ -312,6 +421,57 @@ declare interface ForkNodeData {
     branchLabels?: string[];
 }
 
+export declare function FormatConvertConfig({ data, onChange }: FormatConvertConfigProps): JSX.Element;
+
+declare interface FormatConvertConfigProps {
+    data: ImageFormatConvertNodeData;
+    onChange: (patch: Partial<ImageFormatConvertNodeData>) => void;
+}
+
+declare type FormatConvertData = ImageFormatConvertNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type FormatConvertFlowNode = Node_2<FormatConvertData, 'image:format-convert'>;
+
+export declare function FormatConvertNode(props: NodeProps<FormatConvertFlowNode>): JSX.Element;
+
+export declare function GenerateConfig({ data, onChange }: GenerateConfigProps): JSX.Element;
+
+declare interface GenerateConfigProps {
+    data: ImageGenerateNodeData;
+    onChange: (patch: Partial<ImageGenerateNodeData>) => void;
+}
+
+declare type GenerateData = ImageGenerateNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type GenerateFlowNode = Node_2<GenerateData, 'image:generate'>;
+
+export declare function GenerateNode(props: NodeProps<GenerateFlowNode>): JSX.Element;
+
+declare type GeometricOp = GeometricOpRotate | GeometricOpFlip | GeometricOpFlop;
+
+declare type GeometricOpFlip = {
+    op: 'flip';
+};
+
+declare type GeometricOpFlop = {
+    op: 'flop';
+};
+
+declare type GeometricOpRotate = {
+    op: 'rotate';
+    degrees: number;
+    background?: string;
+    trimAfter?: boolean;
+};
+
 declare type GraphData = GraphQueryNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -320,7 +480,7 @@ declare type GraphData = GraphQueryNodeData & {
 
 declare type GraphFlowNode = Node_2<GraphData, 'graph-query'>;
 
-declare function GraphQueryNode({ id, data, selected }: NodeProps<GraphFlowNode>): JSX.Element;
+export declare function GraphQueryNode({ id, data, selected }: NodeProps<GraphFlowNode>): JSX.Element;
 
 declare interface GraphQueryNodeData {
     type: 'graph-query';
@@ -342,7 +502,7 @@ declare type GuardrailData = GuardrailNodeData & {
 
 declare type GuardrailFlowNode = Node_2<GuardrailData, 'guardrail'>;
 
-declare function GuardrailNode({ id, data, selected }: NodeProps<GuardrailFlowNode>): JSX.Element;
+export declare function GuardrailNode({ id, data, selected }: NodeProps<GuardrailFlowNode>): JSX.Element;
 
 declare interface GuardrailNodeData {
     type: 'guardrail';
@@ -351,6 +511,56 @@ declare interface GuardrailNodeData {
     inputField: string;
     action: GuardrailAction;
     label?: string;
+}
+
+declare interface ImageAdjustBwNodeData {
+    type: 'image:adjust-bw';
+    sourceImagePath?: string;
+    algorithm?: 'luminosity' | 'average' | 'desaturate';
+    contrast?: number;
+}
+
+declare interface ImageAdjustLayerNodeData {
+    type: 'image:adjust-layer';
+    sourceImagePath?: string;
+    layers: AdjustLayer[];
+}
+
+declare interface ImageCropNodeData {
+    type: 'image:crop';
+    sourceImagePath?: string;
+    bboxPath?: string;
+    bbox?: BBox;
+    materialize?: boolean;
+}
+
+declare interface ImageEditPromptNodeData {
+    type: 'image:edit-prompt';
+    sourceImagePath?: string;
+    maskImagePath?: string;
+    prompt: string;
+    model?: string;
+}
+
+declare type ImageFormat = 'jpeg' | 'png' | 'webp' | 'avif';
+
+declare interface ImageFormatConvertNodeData {
+    type: 'image:format-convert';
+    sourceImagePath?: string;
+    format: ImageFormat;
+    quality?: number;
+    lossless?: boolean;
+    stripMetadata?: boolean;
+}
+
+declare interface ImageGenerateNodeData {
+    type: 'image:generate';
+    prompt: string;
+    model?: string;
+    width?: number;
+    height?: number;
+    seed?: number;
+    numImages?: number;
 }
 
 /** Convenience: pull all the bbox-related props out of a `VisionResult`. */
@@ -363,6 +573,16 @@ export declare function imageOverlayPropsFrom(result: VisionResult): {
     objects: VisionObject[] | undefined;
 };
 
+declare interface ImageResizeNodeData {
+    type: 'image:resize';
+    sourceImagePath?: string;
+    width?: number;
+    height?: number;
+    fit?: ResizeFit;
+    withoutEnlargement?: boolean;
+    background?: string;
+}
+
 declare interface ImageSaveNodeData {
     type: 'image:save';
     /** JSONPath to the source imageId in context. */
@@ -373,6 +593,14 @@ declare interface ImageSaveNodeData {
      * Default: 'crop-{{scatter.index}}.png'.
      */
     filenameTemplate?: string;
+}
+
+declare interface ImageSharpenNodeData {
+    type: 'image:sharpen';
+    sourceImagePath?: string;
+    sigma?: number;
+    m1?: number;
+    m2?: number;
 }
 
 export declare function ImageSourceConfig({ data, onChange }: ImageSourceConfigProps): JSX.Element;
@@ -398,6 +626,82 @@ declare interface ImageSourceNodeData {
     imageId?: string;
     /** Key under which the imageId is written to context. Default: 'imageRef'. */
     outputKey?: string;
+}
+
+declare interface ImageTransformNodeData {
+    type: 'image:transform';
+    sourceImagePath?: string;
+    operations: GeometricOp[];
+}
+
+declare interface ImageVariationNodeData {
+    type: 'image:variation';
+    sourceImagePath?: string;
+    numVariations?: number;
+    similarity?: number;
+    model?: string;
+}
+
+declare interface ImageVisionAnalyzeNodeData {
+    type: 'image:vision-analyze';
+    model?: string;
+    systemPrompt?: string;
+    userPrompt: string;
+    imageRefPath: string;
+    outputSchema?: Record<string, unknown>;
+    maxOutputTokens?: number;
+    /**
+     * Optional seed regions painted by the user in the BBoxAuthoringCanvas.
+     * Rendered when outputSchema matches the 'detection-regions' preset.
+     * Forwarded to platform-api's vision handler as focus hints.
+     */
+    seedRegions?: AuthoringBBox[];
+}
+
+declare interface ImageVisionClassifyNodeData {
+    type: 'image:vision-classify';
+    model?: string;
+    imageRefPath: string;
+    labels: string[];
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+declare interface ImageVisionDescribeNodeData {
+    type: 'image:vision-describe';
+    model?: string;
+    imageRefPath: string;
+    userPrompt: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+declare interface ImageVisionExtractTextNodeData {
+    type: 'image:vision-extract-text';
+    model?: string;
+    imageRefPath: string;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+declare interface ImageVisionTagNodeData {
+    type: 'image:vision-tag';
+    model?: string;
+    imageRefPath: string;
+    candidateTags?: string[];
+    maxTags?: number;
+    systemPrompt?: string;
+    maxOutputTokens?: number;
+}
+
+declare interface ImageWatermarkNodeData {
+    type: 'image:watermark';
+    sourceImagePath?: string;
+    overlayImageId: string;
+    gravity?: WatermarkGravity;
+    opacity?: number;
+    offsetX?: number;
+    offsetY?: number;
 }
 
 /**
@@ -627,7 +931,7 @@ declare type KBData = KnowledgeBaseNodeData & {
 
 declare type KBFlowNode = Node_2<KBData, 'knowledge-base'>;
 
-declare function KnowledgeBaseNode({ id, data, selected }: NodeProps<KBFlowNode>): JSX.Element;
+export declare function KnowledgeBaseNode({ id, data, selected }: NodeProps<KBFlowNode>): JSX.Element;
 
 declare interface KnowledgeBaseNodeData {
     type: 'knowledge-base';
@@ -689,7 +993,7 @@ declare type McpToolData = McpToolNodeData & {
 
 declare type McpToolFlowNode = Node_2<McpToolData, 'mcp-tool'>;
 
-declare function McpToolNode({ id, data, selected }: NodeProps<McpToolFlowNode>): JSX.Element;
+export declare function McpToolNode({ id, data, selected }: NodeProps<McpToolFlowNode>): JSX.Element;
 
 declare interface McpToolNodeData {
     type: 'mcp-tool';
@@ -711,7 +1015,7 @@ declare type MemFlowNode = Node_2<MemData, 'memory'>;
 
 declare type MemoryMode = 'read' | 'write';
 
-declare function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode>): JSX.Element;
+export declare function MemoryNode({ id, data, selected }: NodeProps<MemFlowNode>): JSX.Element;
 
 declare interface MemoryNodeData {
     type: 'memory';
@@ -725,11 +1029,11 @@ declare interface MemoryNodeData {
 
 declare type MemoryScope = 'session' | 'long-term';
 
-declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData;
+declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
 
-declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter';
+declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
 export declare const nodeTypes: {
     readonly trigger: typeof TriggerNode;
@@ -750,6 +1054,23 @@ export declare const nodeTypes: {
     readonly 'ag-ui-output': typeof AgUiOutputNode;
     readonly 'image-source': typeof ImageSourceNode;
     readonly 'image:save': typeof SaveNode;
+    readonly scatter: typeof ScatterNode;
+    readonly 'image:resize': typeof ResizeNode;
+    readonly 'image:transform': typeof TransformGeoNode;
+    readonly 'image:format-convert': typeof FormatConvertNode;
+    readonly 'image:sharpen': typeof SharpenNode;
+    readonly 'image:watermark': typeof WatermarkNode;
+    readonly 'image:crop': typeof CropNode;
+    readonly 'image:adjust-bw': typeof AdjustBwNode;
+    readonly 'image:adjust-layer': typeof AdjustLayerNode;
+    readonly 'image:vision-analyze': typeof VisionNode;
+    readonly 'image:vision-classify': typeof VisionClassifyNode;
+    readonly 'image:vision-describe': typeof VisionDescribeNode;
+    readonly 'image:vision-tag': typeof VisionTagNode;
+    readonly 'image:vision-extract-text': typeof VisionExtractTextNode;
+    readonly 'image:generate': typeof GenerateNode;
+    readonly 'image:variation': typeof VariationNode;
+    readonly 'image:edit-prompt': typeof EditPromptNode;
 };
 
 /**
@@ -1381,7 +1702,7 @@ declare type PolicyData = PolicyNodeData & {
 
 declare type PolicyFlowNode = Node_2<PolicyData, 'policy'>;
 
-declare function PolicyNode({ id, data, selected }: NodeProps<PolicyFlowNode>): JSX.Element;
+export declare function PolicyNode({ id, data, selected }: NodeProps<PolicyFlowNode>): JSX.Element;
 
 declare interface PolicyNodeData {
     type: 'policy';
@@ -1392,6 +1713,25 @@ declare interface PolicyNodeData {
     contextEntities?: string;
     label?: string;
 }
+
+export declare function ResizeConfig({ data, onChange }: ResizeConfigProps): JSX.Element;
+
+declare interface ResizeConfigProps {
+    data: ImageResizeNodeData;
+    onChange: (patch: Partial<ImageResizeNodeData>) => void;
+}
+
+declare type ResizeData = ImageResizeNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ResizeFit = 'cover' | 'contain' | 'fill' | 'inside' | 'outside';
+
+declare type ResizeFlowNode = Node_2<ResizeData, 'image:resize'>;
+
+export declare function ResizeNode(props: NodeProps<ResizeFlowNode>): JSX.Element;
 
 /** A single resume-from-step entry on a PipelineRun (hub#2223). */
 declare interface ResumeFromStepEntry {
@@ -1426,6 +1766,23 @@ declare type SaveFlowNode = Node_2<SaveData, 'image:save'>;
 
 export declare function SaveNode(props: NodeProps<SaveFlowNode>): JSX.Element;
 
+export declare function ScatterConfig({ data, onChange }: ScatterConfigProps): JSX.Element;
+
+declare interface ScatterConfigProps {
+    data: ScatterNodeData;
+    onChange: (patch: Partial<ScatterNodeData>) => void;
+}
+
+declare type ScatterData = ScatterNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type ScatterFlowNode = Node_2<ScatterData, 'scatter'>;
+
+export declare function ScatterNode(props: NodeProps<ScatterFlowNode>): JSX.Element;
+
 declare interface ScatterNodeData {
     type: 'scatter';
     /**
@@ -1444,6 +1801,23 @@ declare interface ScatterNodeData {
      */
     maxConcurrency?: number;
 }
+
+export declare function SharpenConfig({ data, onChange }: SharpenConfigProps): JSX.Element;
+
+declare interface SharpenConfigProps {
+    data: ImageSharpenNodeData;
+    onChange: (patch: Partial<ImageSharpenNodeData>) => void;
+}
+
+declare type SharpenData = ImageSharpenNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type SharpenFlowNode = Node_2<SharpenData, 'image:sharpen'>;
+
+export declare function SharpenNode(props: NodeProps<SharpenFlowNode>): JSX.Element;
 
 /**
  * One execution attempt of a step. Hub task #1280.
@@ -1508,6 +1882,24 @@ declare interface StepExecution {
     }>;
     approvals?: ApprovalRecord[];
     /**
+     * Vision-specific streaming data — populated as `image:vision-analyze`
+     * events arrive (pipeline:step:vision:*). `analyzed` flips to true once
+     * the model has finished outputting tokens.
+     */
+    vision?: {
+        response: string;
+        tokensIn?: number;
+        tokensOut?: number;
+        tokensSeen: number;
+        analyzed: boolean;
+        failure?: {
+            reason: string;
+            error: string;
+        };
+        imageId?: string;
+        costUsd?: number;
+    };
+    /**
      * hub#2226: edit-and-continue patch history applied while the run was
      * paused at this step's breakpoint. Append-only at apply time;
      * `revertedAt` is set when a patch is undone via `revertContextPatch`.
@@ -1541,6 +1933,23 @@ declare type TransformData = TransformNodeData & {
 } & Record<string, unknown>;
 
 declare type TransformFlowNode = Node_2<TransformData, 'transform'>;
+
+export declare function TransformGeoConfig({ data, onChange }: TransformGeoConfigProps): JSX.Element;
+
+declare interface TransformGeoConfigProps {
+    data: ImageTransformNodeData;
+    onChange: (patch: Partial<ImageTransformNodeData>) => void;
+}
+
+declare type TransformGeoData = ImageTransformNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type TransformGeoFlowNode = Node_2<TransformGeoData, 'image:transform'>;
+
+export declare function TransformGeoNode(props: NodeProps<TransformGeoFlowNode>): JSX.Element;
 
 export declare function TransformNode(props: NodeProps<TransformFlowNode>): JSX.Element;
 
@@ -1742,6 +2151,23 @@ export declare interface UseVisionResultsOptions {
     runId?: string;
 }
 
+export declare function VariationConfig({ data, onChange }: VariationConfigProps): JSX.Element;
+
+declare interface VariationConfigProps {
+    data: ImageVariationNodeData;
+    onChange: (patch: Partial<ImageVariationNodeData>) => void;
+}
+
+declare type VariationData = ImageVariationNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type VariationFlowNode = Node_2<VariationData, 'image:variation'>;
+
+export declare function VariationNode(props: NodeProps<VariationFlowNode>): JSX.Element;
+
 /**
  * The header card for a `JudgmentResult` — overall score gauge + verdict
  * chip + rubric + model + mode metadata. Drop at the top of a
@@ -1768,13 +2194,81 @@ export declare interface VisionBBox {
     y2: number;
 }
 
+export declare function VisionClassifyConfig({ data, onChange }: VisionClassifyConfigProps): JSX.Element;
+
+declare interface VisionClassifyConfigProps {
+    data: ImageVisionClassifyNodeData;
+    onChange: (patch: Partial<ImageVisionClassifyNodeData>) => void;
+}
+
+declare type VisionClassifyData = ImageVisionClassifyNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type VisionClassifyFlowNode = Node_2<VisionClassifyData, 'image:vision-classify'>;
+
+export declare function VisionClassifyNode(props: NodeProps<VisionClassifyFlowNode>): JSX.Element;
+
+export declare function VisionConfig({ data, onChange }: VisionConfigProps): JSX.Element;
+
+declare interface VisionConfigProps {
+    data: ImageVisionAnalyzeNodeData;
+    onChange: (patch: Partial<ImageVisionAnalyzeNodeData>) => void;
+}
+
 export declare type VisionContrastVerdict = 'low' | 'normal' | 'high';
+
+declare type VisionData = ImageVisionAnalyzeNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+export declare function VisionDescribeConfig({ data, onChange }: VisionDescribeConfigProps): JSX.Element;
+
+declare interface VisionDescribeConfigProps {
+    data: ImageVisionDescribeNodeData;
+    onChange: (patch: Partial<ImageVisionDescribeNodeData>) => void;
+}
+
+declare type VisionDescribeData = ImageVisionDescribeNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type VisionDescribeFlowNode = Node_2<VisionDescribeData, 'image:vision-describe'>;
+
+export declare function VisionDescribeNode(props: NodeProps<VisionDescribeFlowNode>): JSX.Element;
 
 export declare interface VisionExposure {
     verdict: 'underexposed' | 'correct' | 'overexposed' | string;
     evAdjustment: number;
     rationale: string;
 }
+
+export declare function VisionExtractTextConfig({ data, onChange }: VisionExtractTextConfigProps): JSX.Element;
+
+declare interface VisionExtractTextConfigProps {
+    data: ImageVisionExtractTextNodeData;
+    onChange: (patch: Partial<ImageVisionExtractTextNodeData>) => void;
+}
+
+declare type VisionExtractTextData = ImageVisionExtractTextNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type VisionExtractTextFlowNode = Node_2<VisionExtractTextData, 'image:vision-extract-text'>;
+
+export declare function VisionExtractTextNode(props: NodeProps<VisionExtractTextFlowNode>): JSX.Element;
+
+declare type VisionFlowNode = Node_2<VisionData, 'image:vision-analyze'>;
+
+export declare function VisionNode(props: NodeProps<VisionFlowNode>): JSX.Element;
 
 export declare interface VisionObject {
     label: string;
@@ -1901,11 +2395,47 @@ export declare interface VisionStepRecord {
 
 export declare type VisionStepStatus = 'running' | 'completed' | 'failed';
 
+export declare function VisionTagConfig({ data, onChange }: VisionTagConfigProps): JSX.Element;
+
+declare interface VisionTagConfigProps {
+    data: ImageVisionTagNodeData;
+    onChange: (patch: Partial<ImageVisionTagNodeData>) => void;
+}
+
+declare type VisionTagData = ImageVisionTagNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type VisionTagFlowNode = Node_2<VisionTagData, 'image:vision-tag'>;
+
+export declare function VisionTagNode(props: NodeProps<VisionTagFlowNode>): JSX.Element;
+
 export declare interface VisionWhiteBalance {
     verdict: 'cool' | 'neutral' | 'warm' | string;
     kelvinShift: number;
     rationale: string;
 }
+
+export declare function WatermarkConfig({ data, onChange }: WatermarkConfigProps): JSX.Element;
+
+declare interface WatermarkConfigProps {
+    data: ImageWatermarkNodeData;
+    onChange: (patch: Partial<ImageWatermarkNodeData>) => void;
+}
+
+declare type WatermarkData = ImageWatermarkNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type WatermarkFlowNode = Node_2<WatermarkData, 'image:watermark'>;
+
+declare type WatermarkGravity = 'northwest' | 'north' | 'northeast' | 'west' | 'center' | 'east' | 'southwest' | 'south' | 'southeast';
+
+export declare function WatermarkNode(props: NodeProps<WatermarkFlowNode>): JSX.Element;
 
 declare type WildcardEvent = {
     eventType: string;

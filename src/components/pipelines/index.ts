@@ -40,6 +40,7 @@ export type { PipelineCanvasProps } from './canvas/PipelineCanvas';
 
 // ─── Node types ──────────────────────────────────────────────────────────────
 export {
+  // Canonical
   TriggerNode,
   LLMNode,
   TransformNode,
@@ -48,9 +49,35 @@ export {
   ForkNode,
   JoinNode,
   ApprovalNode,
+  AgentNode,
+  McpToolNode,
+  KnowledgeBaseNode,
+  GraphQueryNode,
+  MemoryNode,
+  GuardrailNode,
+  PolicyNode,
+  AgUiOutputNode,
   BaseNode,
+  // Image pipeline (Phase 1 + Phase 2b+2c)
   ImageSourceNode,
   SaveNode,
+  ScatterNode,
+  ResizeNode,
+  TransformGeoNode,
+  FormatConvertNode,
+  SharpenNode,
+  WatermarkNode,
+  CropNode,
+  AdjustBwNode,
+  AdjustLayerNode,
+  VisionNode,
+  VisionClassifyNode,
+  VisionDescribeNode,
+  VisionTagNode,
+  VisionExtractTextNode,
+  GenerateNode,
+  VariationNode,
+  EditPromptNode,
   nodeTypes,
 } from './nodes';
 export type { NodeExecutionState } from './nodes';
@@ -60,6 +87,23 @@ export { default as ImageSourceConfig } from './nodes/image-source/ImageSourceCo
 export type { ImageSourceConfigProps } from './nodes/image-source/ImageSourceConfig';
 export { default as SaveConfig } from './nodes/save/SaveConfig';
 export type { SaveConfigProps } from './nodes/save/SaveConfig';
+export { default as ScatterConfig } from './nodes/scatter/ScatterConfig';
+export { default as ResizeConfig } from './nodes/resize/ResizeConfig';
+export { default as TransformGeoConfig } from './nodes/transform-geo/TransformGeoConfig';
+export { default as FormatConvertConfig } from './nodes/format-convert/FormatConvertConfig';
+export { default as SharpenConfig } from './nodes/sharpen/SharpenConfig';
+export { default as WatermarkConfig } from './nodes/watermark/WatermarkConfig';
+export { default as CropConfig } from './nodes/crop/CropConfig';
+export { default as AdjustBwConfig } from './nodes/adjust-bw/AdjustBwConfig';
+export { default as AdjustLayerConfig } from './nodes/adjust-layer/AdjustLayerConfig';
+export { default as VisionConfig } from './nodes/vision/VisionConfig';
+export { default as VisionClassifyConfig } from './nodes/vision-classify/VisionClassifyConfig';
+export { default as VisionDescribeConfig } from './nodes/vision-describe/VisionDescribeConfig';
+export { default as VisionTagConfig } from './nodes/vision-tag/VisionTagConfig';
+export { default as VisionExtractTextConfig } from './nodes/vision-extract-text/VisionExtractTextConfig';
+export { default as GenerateConfig } from './nodes/generate/GenerateConfig';
+export { default as VariationConfig } from './nodes/variation/VariationConfig';
+export { default as EditPromptConfig } from './nodes/edit-prompt/EditPromptConfig';
 
 // ─── Vision-step visualization ───────────────────────────────────────────────
 //
