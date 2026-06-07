@@ -1,13 +1,13 @@
 import { jsx as a, jsxs as u, Fragment as C } from "react/jsx-runtime";
 import { C as T, P as W } from "../PresencePanel-mBtTn35O.js";
-import { A as B, F as H, N as _, P as L, B as R, S as $ } from "../Badge-D2m7pGPU.js";
+import { A as B, N as H, P as L, B as R, S as $ } from "../Badge-DfLjuUrl.js";
 import { useState as w, useEffect as z, useMemo as S } from "react";
-import { R as V, S as O, a as q } from "../ReactionsOverlay-CoaX3hRz.js";
+import { R as _, S as O, a as V } from "../ReactionsOverlay-CoaX3hRz.js";
+import { F as q, I as X } from "../FileUploadDrop-Cmz3XANg.js";
 import { a as D } from "../HangoutLayout-ddC4Y1h7.js";
-import { useRoomOccupancy as X } from "@connorhoehn/realtime-modules/client/hangout-rooms";
-import { E as Y } from "../EmptyState-PM9wTjxk.js";
+import { useRoomOccupancy as Y } from "@connorhoehn/realtime-modules/client/hangout-rooms";
+import { E as K } from "../EmptyState-PM9wTjxk.js";
 import { B as E } from "../Button-Qsbxqsl9.js";
-import { I as K } from "../IconButton-Da1kJ5WO.js";
 import { M as G } from "../Modal-2jg4229_.js";
 import { useLVSHangout as Q } from "@connorhoehn/realtime-modules/client/video";
 import { A as Z } from "../Avatar-BvKIaNVE.js";
@@ -193,7 +193,7 @@ function De({
       r((m) => m.filter((p) => p.id !== s.id));
     }, t);
     return () => clearTimeout(h);
-  }, [o, t]), /* @__PURE__ */ a(V, { reactions: n });
+  }, [o, t]), /* @__PURE__ */ a(_, { reactions: n });
 }
 function Fe({
   fileUpload: e,
@@ -218,7 +218,7 @@ function Fe({
   }
   return /* @__PURE__ */ u("div", { children: [
     /* @__PURE__ */ a(
-      H,
+      q,
       {
         accept: t,
         maxSize: n,
@@ -329,7 +329,7 @@ function We({
 }) {
   const r = pe(e.notifications);
   return /* @__PURE__ */ a(
-    _,
+    H,
     {
       items: r,
       onItemClick: (i) => {
@@ -363,7 +363,7 @@ function ge({
   // object's selectors. Callers can still override via the prop.
   "data-testid": p = "room-row"
 }) {
-  const b = X(o ? e : null, {
+  const b = Y(o ? e : null, {
     subscribeRoomsIndex: o
   }), l = o ? b.occupancy ?? null : r ?? null, g = l?.count ?? 0, c = l?.members ?? [], d = S(() => n ? c.some((x) => x.participantId === n) : !1, [c, n]), y = d, N = S(
     () => c.slice(0, 3).map((x) => ({
@@ -599,12 +599,12 @@ function He({
   ), v = y.length - N.length;
   return /* @__PURE__ */ u(C, { children: [
     /* @__PURE__ */ u(
-      q,
+      V,
       {
         title: m,
         storageKey: p,
         actions: /* @__PURE__ */ a(
-          K,
+          X,
           {
             "aria-label": "New room",
             size: "sm",
@@ -646,7 +646,7 @@ function He({
             }
           ),
           !e.isLoading && !e.error && y.length === 0 && /* @__PURE__ */ a(
-            Y,
+            K,
             {
               testId: "hangout-rooms-empty",
               title: "No rooms yet",

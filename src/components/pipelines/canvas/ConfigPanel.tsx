@@ -38,6 +38,7 @@ import GenerateConfig from '../nodes/generate/GenerateConfig';
 import VariationConfig from '../nodes/variation/VariationConfig';
 import EditPromptConfig from '../nodes/edit-prompt/EditPromptConfig';
 import docsContent from '../nodes/docsContent';
+import VisionPromptBench from '../vision/VisionPromptBench';
 
 // ---------------------------------------------------------------------------
 // Per-type icon + display name (matches NodePalette).
@@ -221,7 +222,15 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
   },
 };
 
-type Tab = 'config' | 'runs' | 'docs';
+type Tab = 'config' | 'runs' | 'docs' | 'bench';
+
+const VISION_NODE_TYPES = new Set<NodeType>([
+  'image:vision-analyze',
+  'image:vision-classify',
+  'image:vision-describe',
+  'image:vision-tag',
+  'image:vision-extract-text',
+]);
 
 export interface ConfigPanelProps {
   /**
@@ -452,7 +461,10 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
             aria-label="Node configuration tabs"
             className="h-9 flex border-b border-[#e2e8f0] shrink-0"
             onKeyDown={(e) => {
-              const order: Tab[] = ['config', 'runs', 'docs'];
+              const showBench = selectedNode && VISION_NODE_TYPES.has(selectedNode.type);
+              const order: Tab[] = showBench
+                ? ['config', 'runs', 'docs', 'bench']
+                : ['config', 'runs', 'docs'];
               const idx = order.indexOf(tab);
               let next: Tab | null = null;
               if (e.key === 'ArrowRight') next = order[(idx + 1) % order.length];
@@ -469,9 +481,18 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               }
             }}
           >
-            {(['config', 'runs', 'docs'] as Tab[]).map((key) => {
+            {((): Tab[] => {
+              const showBench = selectedNode && VISION_NODE_TYPES.has(selectedNode.type);
+              return showBench
+                ? ['config', 'runs', 'docs', 'bench']
+                : ['config', 'runs', 'docs'];
+            })().map((key) => {
               const active = tab === key;
-              const label = key === 'config' ? 'Config' : key === 'runs' ? 'Runs' : 'Docs';
+              const label =
+                key === 'config' ? 'Config'
+                : key === 'runs' ? 'Runs'
+                : key === 'docs' ? 'Docs'
+                : 'Bench';
               return (
                 <button
                   key={key}
@@ -509,6 +530,26 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                 )}
               </div>
             )}
+            {tab === 'bench' && VISION_NODE_TYPES.has(selectedNode.type) && (() => {
+              // Extract current node data for vision prompts.
+              const vd = selectedNode.data as unknown as {
+                systemPrompt?: string;
+                userPrompt?: string;
+                outputSchema?: Record<string, unknown>;
+                model?: string;
+              };
+              return (
+                <VisionPromptBench
+                  systemPrompt={vd.systemPrompt ?? ''}
+                  userPrompt={vd.userPrompt ?? ''}
+                  outputSchema={vd.outputSchema}
+                  model={vd.model}
+                  onSave={(values) => {
+                    onChange(values as Partial<NodeData>);
+                  }}
+                />
+              );
+            })()}
           </div>
           <div className="h-10 px-3 flex items-center justify-between gap-2 border-t border-[#e2e8f0] shrink-0">
             <button

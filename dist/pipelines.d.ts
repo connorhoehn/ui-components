@@ -66,7 +66,11 @@ declare type AdjustLayer = {
     radiusPx: number;
 };
 
-export declare function AdjustLayerConfig({ data, onChange }: AdjustLayerConfigProps): JSX.Element;
+/**
+ * Outer config component. Reads selectedNodeId from the editor context so
+ * AdjustLayerConfigInner can call the upstream-image hook.
+ */
+export declare function AdjustLayerConfig(props: AdjustLayerConfigProps): JSX.Element;
 
 declare interface AdjustLayerConfigProps {
     data: ImageAdjustLayerNodeData;
