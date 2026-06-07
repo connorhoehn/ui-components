@@ -8,7 +8,7 @@ const meta = {
   parameters: { layout: 'fullscreen' },
   decorators: [
     (Story) => (
-      <div style={{ width: '100%', height: '500px', position: 'relative', background: '#f8fafc' }}>
+      <div className="relative w-full h-[500px] bg-slate-50">
         <Story />
       </div>
     ),

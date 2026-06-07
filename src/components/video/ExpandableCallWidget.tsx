@@ -82,7 +82,6 @@ const DOCKED_MAX_HEIGHT = 900;
 const DOCKED_DEFAULT_WIDTH = 960;
 const DOCKED_DEFAULT_HEIGHT = 600;
 const VIEWPORT_MARGIN = 8;
-const HEADER_HEIGHT = 32;
 
 export function ExpandableCallWidget({
   title,
@@ -330,10 +329,9 @@ export function ExpandableCallWidget({
     >
       <div
         className={cn(
-          'flex items-center justify-between gap-2 px-3 border-b border-white/5 select-none',
+          'flex items-center justify-between gap-2 px-3 h-8 min-h-8 border-b border-white/5 select-none',
           effectiveMode === 'docked' ? 'cursor-grab active:cursor-grabbing' : '',
         )}
-        style={{ height: HEADER_HEIGHT, minHeight: HEADER_HEIGHT }}
         onPointerDown={onHeaderPointerDown}
         onPointerMove={onHeaderPointerMove}
         onPointerUp={onHeaderPointerUp}
