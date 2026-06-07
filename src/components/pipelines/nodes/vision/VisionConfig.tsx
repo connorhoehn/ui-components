@@ -2,8 +2,9 @@
 //
 // Config panel for image:vision-analyze. Model, image-ref path, prompt, schema.
 
-import { useState } from 'react';
-import type { ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
+import { useCallback, useState } from 'react';
+import type { AuthoringBBox, ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
+import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
 
 export interface VisionConfigProps {
   data: ImageVisionAnalyzeNodeData;
@@ -21,6 +22,19 @@ const REF_PATH_SAMPLES = [
   '$.trigger.image',
   '$.steps.upload.output.imageId',
 ];
+
+/**
+ * Returns true when the outputSchema matches the detection-regions preset
+ * (i.e. it has a `properties.regions` array field). Used to gate the
+ * BBoxAuthoringCanvas below the prompt textarea.
+ */
+function isDetectionRegionsPreset(schema: Record<string, unknown> | undefined): boolean {
+  if (!schema) return false;
+  const props = schema['properties'];
+  if (!props || typeof props !== 'object' || Array.isArray(props)) return false;
+  const regions = (props as Record<string, unknown>)['regions'];
+  return typeof regions === 'object' && regions !== null;
+}
 
 function tryParseSchema(text: string): { ok: true; value: Record<string, unknown> | undefined } | { ok: false; error: string } {
   const trimmed = text.trim();
@@ -54,6 +68,15 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
   const userMissing = !data.userPrompt?.trim();
   const refMissing = !data.imageRefPath?.trim();
   const refMalformed = !!data.imageRefPath && !data.imageRefPath.startsWith('$.');
+
+  const showBBoxCanvas = isDetectionRegionsPreset(data.outputSchema);
+
+  const onSeedRegionsChange = useCallback(
+    (next: AuthoringBBox[]) => {
+      onChange({ seedRegions: next });
+    },
+    [onChange],
+  );
 
   const onSchemaTextChange = (next: string) => {
     setSchemaText(next);
@@ -140,6 +163,29 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
           <div className={helpCls}>Supports {'{{ context.* }}'} substitution.</div>
         )}
       </div>
+
+      {/* Seed regions (detection-regions preset only) */}
+      {showBBoxCanvas && (
+        <div>
+          <div className={labelCls}>Focus regions (optional)</div>
+          <div className={helpCls}>
+            Drag on the image to paint focus boxes. The next vision pass will use these as analysis hints.
+          </div>
+          <BBoxAuthoringCanvas
+            imageUrl=""
+            imageWidth={800}
+            imageHeight={600}
+            boxes={data.seedRegions ?? []}
+            onChange={onSeedRegionsChange}
+            className="mt-1"
+          />
+          {(data.seedRegions?.length ?? 0) > 0 && (
+            <div className={helpCls}>
+              {data.seedRegions!.length} region{data.seedRegions!.length !== 1 ? 's' : ''} defined.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Output schema */}
       <div>

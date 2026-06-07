@@ -418,6 +418,27 @@ export interface ImageAdjustLayerNodeData {
 }
 
 // ---------------------------------------------------------------------------
+// BBox authoring — user-painted focus hints for vision passes
+// ---------------------------------------------------------------------------
+
+/**
+ * Authoring bounding-box painted by the user in BBoxAuthoringCanvas.
+ * These are forwarded to the vision call as a system-prompt hint.
+ */
+export interface AuthoringBBox {
+  /** Stable client-side id (uuid). */
+  id: string;
+  /** Pixel x of the box origin (post-resize). */
+  x: number;
+  /** Pixel y of the box origin (post-resize). */
+  y: number;
+  width: number;
+  height: number;
+  /** Free-form label entered by the author. */
+  label?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Vision analysis node data interfaces
 // ---------------------------------------------------------------------------
 
@@ -429,6 +450,12 @@ export interface ImageVisionAnalyzeNodeData {
   imageRefPath: string;
   outputSchema?: Record<string, unknown>;
   maxOutputTokens?: number;
+  /**
+   * Optional seed regions painted by the user in the BBoxAuthoringCanvas.
+   * Rendered when outputSchema matches the 'detection-regions' preset.
+   * Forwarded to platform-api's vision handler as focus hints.
+   */
+  seedRegions?: AuthoringBBox[];
 }
 
 export interface ImageVisionClassifyNodeData {
