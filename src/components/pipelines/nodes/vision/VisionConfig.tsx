@@ -181,7 +181,7 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
             className="mt-1"
           />
           {(data.seedRegions?.length ?? 0) > 0 && (
-            <div className={helpCls}>
+            <div className={helpCls} data-testid="bbox-region-count">
               {data.seedRegions!.length} region{data.seedRegions!.length !== 1 ? 's' : ''} defined.
             </div>
           )}

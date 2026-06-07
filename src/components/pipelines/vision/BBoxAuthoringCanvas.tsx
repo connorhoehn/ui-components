@@ -500,6 +500,7 @@ export function BBoxAuthoringCanvas({
     <div
       className={cn('relative w-full select-none overflow-hidden rounded-lg border border-border bg-black/5', className)}
       aria-label="Bounding box authoring canvas"
+      data-testid="bbox-authoring-canvas"
     >
       <img
         src={imageUrl}
@@ -511,6 +512,7 @@ export function BBoxAuthoringCanvas({
       {/* Overlay layer */}
       <div
         ref={containerRef}
+        data-testid="bbox-authoring-overlay"
         className={cn(
           'absolute inset-0',
           readOnly ? 'pointer-events-none' : 'cursor-crosshair',

@@ -9394,6 +9394,7 @@ function Kc({
     {
       className: I("relative w-full select-none overflow-hidden rounded-lg border border-border bg-black/5", d),
       "aria-label": "Bounding box authoring canvas",
+      "data-testid": "bbox-authoring-canvas",
       children: [
         /* @__PURE__ */ e(
           "img",
@@ -9408,6 +9409,7 @@ function Kc({
           "div",
           {
             ref: c,
+            "data-testid": "bbox-authoring-overlay",
             className: I(
               "absolute inset-0",
               s ? "pointer-events-none" : "cursor-crosshair"
@@ -9557,7 +9559,7 @@ function td({ data: t, onChange: n }) {
           className: "mt-1"
         }
       ),
-      (t.seedRegions?.length ?? 0) > 0 && /* @__PURE__ */ o("div", { className: Je, children: [
+      (t.seedRegions?.length ?? 0) > 0 && /* @__PURE__ */ o("div", { className: Je, "data-testid": "bbox-region-count", children: [
         t.seedRegions.length,
         " region",
         t.seedRegions.length !== 1 ? "s" : "",
