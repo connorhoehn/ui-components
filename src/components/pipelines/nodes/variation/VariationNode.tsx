@@ -8,6 +8,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ImageVariationNodeData } from '../../../../types/pipeline';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
+import { ImageThumbnail } from '../../../image/ImageThumbnail';
 
 type VariationData = ImageVariationNodeData & {
   _state?: NodeExecutionState;
@@ -40,15 +41,16 @@ export default function VariationNode(props: NodeProps<VariationFlowNode>) {
     <div>
       {badge}
       {firstImage ? (
-        <img
+        <ImageThumbnail
           src={getImageUrl(firstImage.imageId)}
           alt="Variation output"
-          className="w-full h-18 object-cover rounded border border-border bg-surface-inset block"
+          aspectRatio="auto"
+          className="w-24 h-16 border border-border"
           data-testid="variation-output-thumb"
         />
       ) : (
         <div
-          className="w-full h-20 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center text-[11px] text-text-tertiary"
+          className="w-24 h-16 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center text-[11px] text-text-tertiary"
           data-testid="variation-placeholder"
         >
           Awaiting input

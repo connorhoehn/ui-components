@@ -8,6 +8,7 @@ import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import type { ImageEditPromptNodeData } from '../../../../types/pipeline';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
+import { ImageThumbnail } from '../../../image/ImageThumbnail';
 
 type EditPromptData = ImageEditPromptNodeData & {
   _state?: NodeExecutionState;
@@ -35,15 +36,16 @@ export default function EditPromptNode(props: NodeProps<EditPromptFlowNode>) {
   const firstImage = liveStep?.images?.[0] ?? null;
 
   const body = firstImage ? (
-    <img
+    <ImageThumbnail
       src={getImageUrl(firstImage.imageId)}
       alt="Edit output"
-      className="w-full h-20 object-cover rounded border border-border bg-surface-inset block"
+      aspectRatio="auto"
+      className="w-24 h-16 border border-border"
       data-testid="edit-prompt-output-thumb"
     />
   ) : (
     <div
-      className="w-full h-20 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center px-2 text-center text-[11px] text-text-tertiary"
+      className="w-24 h-16 rounded border border-dashed border-border bg-surface-inset flex items-center justify-center px-2 text-center text-[11px] text-text-tertiary"
       data-testid="edit-prompt-placeholder"
     >
       {promptPreview(data.prompt)}

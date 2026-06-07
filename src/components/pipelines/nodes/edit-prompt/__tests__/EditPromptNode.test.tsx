@@ -13,6 +13,11 @@ vi.mock('@xyflow/react', () => ({
   Position: { Left: 'left', Right: 'right' },
 }));
 
+const mockLatestStep = vi.fn(() => null);
+vi.mock('../../../context/PipelineRunsContext', () => ({
+  useLatestStepForNode: () => mockLatestStep(),
+}));
+
 const stubServices: PipelineEditorServices = {
   getImageUrl: (id) => `/test/${id}`,
 };
@@ -41,6 +46,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 
 describe('EditPromptNode', () => {
   it('renders "No prompt set" placeholder when prompt is empty', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <EditPromptNode {...makeProps()} />
@@ -52,6 +58,7 @@ describe('EditPromptNode', () => {
   });
 
   it('shows prompt preview in placeholder when prompt is configured', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <EditPromptNode
@@ -61,5 +68,26 @@ describe('EditPromptNode', () => {
     );
     const placeholder = screen.getByTestId('edit-prompt-placeholder');
     expect(placeholder.textContent).toContain('Replace the background');
+  });
+
+  it('renders the last-produced image thumbnail when the latest step has an image', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockLatestStep.mockReturnValue({
+      nodeId: 'node-edit-prompt',
+      status: 'completed',
+      images: [
+        { imageId: 'img_edit_001', width: 1024, height: 1024, mimeType: 'image/png' },
+      ],
+    } as any);
+    render(
+      <Wrapper>
+        <EditPromptNode {...makeProps({ prompt: 'anything' })} />
+      </Wrapper>,
+    );
+    const thumb = screen.getByTestId('edit-prompt-output-thumb');
+    expect(thumb).toBeInTheDocument();
+    const img = thumb.querySelector('img') as HTMLImageElement;
+    expect(img.src).toContain('/test/img_edit_001');
+    expect(screen.queryByTestId('edit-prompt-placeholder')).not.toBeInTheDocument();
   });
 });

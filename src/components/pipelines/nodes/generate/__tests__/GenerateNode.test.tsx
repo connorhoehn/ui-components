@@ -13,6 +13,12 @@ vi.mock('@xyflow/react', () => ({
   Position: { Left: 'left', Right: 'right' },
 }));
 
+// Mock the runs context hook so individual tests can drive the live-step path.
+const mockLatestStep = vi.fn(() => null);
+vi.mock('../../../context/PipelineRunsContext', () => ({
+  useLatestStepForNode: () => mockLatestStep(),
+}));
+
 const stubServices: PipelineEditorServices = {
   getImageUrl: (id) => `/test/${id}`,
 };
@@ -41,6 +47,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 
 describe('GenerateNode', () => {
   it('renders "No prompt set" placeholder when prompt is empty', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <GenerateNode {...makeProps()} />
@@ -52,6 +59,7 @@ describe('GenerateNode', () => {
   });
 
   it('shows prompt preview in placeholder when prompt is configured', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <GenerateNode {...makeProps({ prompt: 'A golden sunset over the ocean.' })} />
@@ -59,5 +67,26 @@ describe('GenerateNode', () => {
     );
     const placeholder = screen.getByTestId('generate-placeholder');
     expect(placeholder.textContent).toContain('golden sunset');
+  });
+
+  it('renders the last-produced image thumbnail when the latest step has an image', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockLatestStep.mockReturnValue({
+      nodeId: 'node-generate',
+      status: 'completed',
+      images: [
+        { imageId: 'img_gen_001', width: 1024, height: 1024, mimeType: 'image/png' },
+      ],
+    } as any);
+    render(
+      <Wrapper>
+        <GenerateNode {...makeProps({ prompt: 'anything' })} />
+      </Wrapper>,
+    );
+    const thumb = screen.getByTestId('generate-output-thumb');
+    expect(thumb).toBeInTheDocument();
+    const img = thumb.querySelector('img') as HTMLImageElement;
+    expect(img.src).toContain('/test/img_gen_001');
+    expect(screen.queryByTestId('generate-placeholder')).not.toBeInTheDocument();
   });
 });

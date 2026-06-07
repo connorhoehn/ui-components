@@ -13,6 +13,11 @@ vi.mock('@xyflow/react', () => ({
   Position: { Left: 'left', Right: 'right' },
 }));
 
+const mockLatestStep = vi.fn(() => null);
+vi.mock('../../../context/PipelineRunsContext', () => ({
+  useLatestStepForNode: () => mockLatestStep(),
+}));
+
 const stubServices: PipelineEditorServices = {
   getImageUrl: (id) => `/test/${id}`,
 };
@@ -41,6 +46,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 
 describe('VariationNode', () => {
   it('renders "Awaiting input" placeholder when no image has been produced', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <VariationNode {...makeProps({ numVariations: 3 })} />
@@ -51,11 +57,33 @@ describe('VariationNode', () => {
   });
 
   it('shows the variation count badge reflecting numVariations', () => {
+    mockLatestStep.mockReturnValue(null);
     render(
       <Wrapper>
         <VariationNode {...makeProps({ numVariations: 4 })} />
       </Wrapper>,
     );
     expect(screen.getByText('×4 variations')).toBeInTheDocument();
+  });
+
+  it('renders the last-produced image thumbnail when the latest step has an image', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockLatestStep.mockReturnValue({
+      nodeId: 'node-variation',
+      status: 'completed',
+      images: [
+        { imageId: 'img_var_001', width: 1024, height: 1024, mimeType: 'image/png' },
+      ],
+    } as any);
+    render(
+      <Wrapper>
+        <VariationNode {...makeProps({ numVariations: 2 })} />
+      </Wrapper>,
+    );
+    const thumb = screen.getByTestId('variation-output-thumb');
+    expect(thumb).toBeInTheDocument();
+    const img = thumb.querySelector('img') as HTMLImageElement;
+    expect(img.src).toContain('/test/img_var_001');
+    expect(screen.queryByTestId('variation-placeholder')).not.toBeInTheDocument();
   });
 });
