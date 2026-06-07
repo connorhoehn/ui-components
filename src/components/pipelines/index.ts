@@ -119,6 +119,22 @@ export * from './vision';
 // surface — see `judge/index.ts` for the full surface + usage notes.
 export * from './judge';
 
+// ─── Image lineage DAG ────────────────────────────────────────────────────────
+//
+// <ImageLineageGraph> renders the per-run image artifact DAG (xyflow-based).
+// useImageLineage() fetches /api/pipeline/runs/:runId/image-lineage with a
+// module-level cache so multiple consumers share the same fetch.
+export {
+  ImageLineageGraph,
+  useImageLineage,
+  clearImageLineageCache,
+} from './lineage';
+export type {
+  ImageLineageGraphProps,
+  ImageLineageEntry,
+  UseImageLineageResult,
+} from './lineage';
+
 // ─── Pipeline editor services seam ───────────────────────────────────────────
 //
 // Host editors mount <PipelineEditorServicesProvider> to inject
