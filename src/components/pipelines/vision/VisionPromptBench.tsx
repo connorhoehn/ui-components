@@ -46,7 +46,18 @@ const MODELS = [
 
 const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
-const SCHEMA_PRESETS: { label: string; value: Record<string, unknown> | undefined }[] = [
+interface SchemaPreset {
+  label: string;
+  value: Record<string, unknown> | undefined;
+  /**
+   * Optional canned system prompt — selecting the preset overwrites the
+   * bench's system-prompt textarea with this string (mirrors the canonical
+   * PRESET_DEFAULT_PROMPTS map in platform-api/visionSchemaPresets.ts).
+   */
+  systemPrompt?: string;
+}
+
+const SCHEMA_PRESETS: SchemaPreset[] = [
   { label: '— None —', value: undefined },
   {
     label: 'Detection regions',
@@ -89,6 +100,83 @@ const SCHEMA_PRESETS: { label: string; value: Record<string, unknown> | undefine
         mood: { type: 'string' },
       },
       required: ['caption'],
+    },
+  },
+  {
+    label: 'Face detection',
+    systemPrompt:
+      'You are a face detection vision model. Identify all human faces in the image and return their bounding boxes (normalized [0,1] coordinates) with optional age/expression/gaze attributes when clearly visible. Return JSON conforming to the schema. Do NOT detect non-human faces.',
+    value: {
+      type: 'object',
+      required: ['faces'],
+      properties: {
+        faces: {
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['bbox', 'confidence'],
+            properties: {
+              bbox: {
+                type: 'object',
+                required: ['x', 'y', 'width', 'height'],
+                properties: {
+                  x: { type: 'number', minimum: 0, maximum: 1 },
+                  y: { type: 'number', minimum: 0, maximum: 1 },
+                  width: { type: 'number', minimum: 0, maximum: 1 },
+                  height: { type: 'number', minimum: 0, maximum: 1 },
+                },
+              },
+              confidence: { type: 'number', minimum: 0, maximum: 1 },
+              age: { type: 'string' },
+              expression: { type: 'string' },
+              gaze: { type: 'string' },
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    label: 'Color palette',
+    systemPrompt:
+      'Analyze the dominant colors in this image. Return the top 5 colors as hex codes with their approximate percentage coverage. Classify the overall temperature as warm/cool/neutral.',
+    value: {
+      type: 'object',
+      required: ['dominant', 'temperature'],
+      properties: {
+        dominant: {
+          type: 'array',
+          maxItems: 5,
+          items: {
+            type: 'object',
+            required: ['hex', 'percentage'],
+            properties: {
+              hex: { type: 'string' },
+              percentage: { type: 'number', minimum: 0, maximum: 100 },
+            },
+          },
+        },
+        temperature: {
+          type: 'string',
+          enum: ['warm', 'cool', 'neutral'],
+        },
+      },
+    },
+  },
+  {
+    label: 'Image quality rating',
+    systemPrompt:
+      "Rate this image's technical and aesthetic quality on focus (sharpness), exposure (lighting), composition (framing/balance) — each 0-10. Provide an overall score 0-10 weighted as 30/30/40. Add one sentence rationale.",
+    value: {
+      type: 'object',
+      required: ['focus', 'exposure', 'composition', 'overallScore', 'rationale'],
+      properties: {
+        focus: { type: 'integer', minimum: 0, maximum: 10 },
+        exposure: { type: 'integer', minimum: 0, maximum: 10 },
+        composition: { type: 'integer', minimum: 0, maximum: 10 },
+        overallScore: { type: 'integer', minimum: 0, maximum: 10 },
+        rationale: { type: 'string' },
+      },
     },
   },
 ];
@@ -169,18 +257,24 @@ export default function VisionPromptBench({
     const preset = SCHEMA_PRESETS[idx];
     if (!preset) return;
     setSchemaText(preset.value ? JSON.stringify(preset.value, null, 2) : '');
+    if (preset.systemPrompt !== undefined) {
+      setSysPrompt(preset.systemPrompt);
+    }
   }, []);
 
   // ── Image URL resolution ────────────────────────────────────────────────
+  //
+  // `imageUrl` is only used to render the thumbnail in the result panel —
+  // the send payload now ships `imageId` directly so the backend can resolve
+  // it from the platform-managed image store (task #1375).
 
-  const imageUrl = uploadedImage
-    ? services.getImageUrl(uploadedImage.imageId)
-    : null;
+  const imageId = uploadedImage?.imageId ?? null;
+  const imageUrl = imageId ? services.getImageUrl(imageId) : null;
 
   // ── Try call ─────────────────────────────────────────────────────────
 
   const handleTry = useCallback(async () => {
-    if (!imageUrl) {
+    if (!imageId) {
       setError('Upload or paste a sample image URL first.');
       return;
     }
@@ -200,7 +294,7 @@ export default function VisionPromptBench({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          imageUrl,
+          imageId,
           systemPrompt: sysPrompt.trim() || undefined,
           userPrompt: usrPrompt.trim(),
           outputSchema: parsedSchema,
@@ -228,9 +322,10 @@ export default function VisionPromptBench({
         return;
       }
 
-      // Build a VisionResult for the viewer
+      // Build a VisionResult for the viewer — imageUrl is for the thumb only,
+      // the backend already received imageId in the payload above.
       const visionResult: VisionResult = {
-        imageUrl,
+        imageUrl: imageUrl ?? '',
         caption: json.caption ?? '',
         rawText: typeof json.extracted === 'object' && json.extracted
           ? JSON.stringify(json.extracted, null, 2)
@@ -255,7 +350,7 @@ export default function VisionPromptBench({
     } finally {
       setRunning(false);
     }
-  }, [imageUrl, usrPrompt, sysPrompt, model, parseSchema, apiBase]);
+  }, [imageId, imageUrl, usrPrompt, sysPrompt, model, parseSchema, apiBase]);
 
   // ── Save to node ──────────────────────────────────────────────────────
 

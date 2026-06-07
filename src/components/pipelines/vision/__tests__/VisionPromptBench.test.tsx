@@ -151,6 +151,83 @@ describe('VisionPromptBench', () => {
     expect(screen.getByTestId('mock-vision-viewer')).toHaveTextContent('A mountain landscape.');
   });
 
+  it('sends imageId (not imageUrl) in the fetch body', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        caption: 'ok',
+        usage: { inputTokens: 1, outputTokens: 1 },
+        latencyMs: 10,
+        costUsd: 0.0001,
+      }),
+    });
+
+    renderBench({ userPrompt: 'go' });
+
+    fireEvent.click(screen.getByTestId('uploader-trigger'));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('bench-try-btn'));
+    });
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled();
+    });
+
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body.imageId).toBe('mock-img-id');
+    expect(body.imageUrl).toBeUndefined();
+  });
+
+  it('face-detection preset pre-fills schema + system prompt', async () => {
+    renderBench();
+
+    fireEvent.change(screen.getByTestId('bench-schema-preset'), {
+      target: { value: '4' }, // index 4 = Face detection
+    });
+
+    const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
+    expect(schema.value).toMatch(/"faces"/);
+    expect(schema.value).toMatch(/"bbox"/);
+
+    const sys = screen.getByTestId('bench-system-prompt') as HTMLTextAreaElement;
+    expect(sys.value).toMatch(/face detection vision model/i);
+    expect(sys.value).toMatch(/Do NOT detect non-human/);
+  });
+
+  it('color-palette preset pre-fills schema + system prompt', async () => {
+    renderBench();
+
+    fireEvent.change(screen.getByTestId('bench-schema-preset'), {
+      target: { value: '5' }, // index 5 = Color palette
+    });
+
+    const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
+    expect(schema.value).toMatch(/"dominant"/);
+    expect(schema.value).toMatch(/"temperature"/);
+
+    const sys = screen.getByTestId('bench-system-prompt') as HTMLTextAreaElement;
+    expect(sys.value).toMatch(/dominant colors/i);
+    expect(sys.value).toMatch(/warm\/cool\/neutral/);
+  });
+
+  it('image-quality-rating preset pre-fills schema + system prompt', async () => {
+    renderBench();
+
+    fireEvent.change(screen.getByTestId('bench-schema-preset'), {
+      target: { value: '6' }, // index 6 = Image quality rating
+    });
+
+    const schema = screen.getByTestId('bench-schema-textarea') as HTMLTextAreaElement;
+    expect(schema.value).toMatch(/"focus"/);
+    expect(schema.value).toMatch(/"overallScore"/);
+    expect(schema.value).toMatch(/"rationale"/);
+
+    const sys = screen.getByTestId('bench-system-prompt') as HTMLTextAreaElement;
+    expect(sys.value).toMatch(/Rate this image/);
+    expect(sys.value).toMatch(/30\/30\/40/);
+  });
+
   it('save button calls onSave with current prompt values', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
