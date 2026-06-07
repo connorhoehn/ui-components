@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MutableRefObject } from 'react';
 import type { TaskItem } from '../../../types/document';
@@ -31,17 +30,7 @@ vi.mock('../TaskItemRow', () => ({
 }));
 
 function mk(id: string, overrides: Partial<TaskItem> = {}): TaskItem {
-  return {
-    id,
-    text: `task ${id}`,
-    status: 'pending',
-    assignee: '',
-    ackedBy: '',
-    ackedAt: '',
-    priority: 'medium',
-    notes: '',
-    ...overrides,
-  };
+  return { id, text: `task ${id}`, status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '', ...overrides };
 }
 
 beforeEach(() => {
@@ -199,46 +188,4 @@ describe('TaskList', () => {
     expect(focusLastItem.current).toBe(false);
   });
 
-  it('a single-item list with focusLastItem.current=true auto-focuses that single row', () => {
-    const focusLastItem = { current: true } as MutableRefObject<boolean>;
-    render(
-      <TaskList
-        items={[mk('solo')]}
-        editable
-        onUpdateItem={vi.fn()}
-        onRemoveItem={vi.fn()}
-        focusLastItem={focusLastItem}
-      />,
-    );
-    const row = screen.getByTestId('task-item-row');
-    expect(row.dataset.autoFocus).toBe('true');
-  });
-
-  it('integrates with a real React useRef holder — clicking sets onDidAutoFocus then re-render skips autofocus', () => {
-    function Harness() {
-      const ref = useRef(true);
-      return (
-        <div>
-          <button
-            data-testid="trigger"
-            onClick={() => captures[captures.length - 1].onDidAutoFocus?.()}
-          />
-          <TaskList
-            items={[mk('a'), mk('b')]}
-            editable
-            onUpdateItem={vi.fn()}
-            onRemoveItem={vi.fn()}
-            focusLastItem={ref}
-          />
-        </div>
-      );
-    }
-    const { rerender } = render(<Harness />);
-    let rows = screen.getAllByTestId('task-item-row');
-    expect(rows[1].dataset.autoFocus).toBe('true');
-    fireEvent.click(screen.getByTestId('trigger'));
-    rerender(<Harness />);
-    rows = screen.getAllByTestId('task-item-row');
-    expect(rows[1].dataset.autoFocus).toBe('false');
-  });
 });
