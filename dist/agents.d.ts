@@ -52,6 +52,21 @@ declare interface AgentDetailPageProps {
     className?: string;
 }
 
+export declare function AgentDirectory({ agents, metricsById, filters, selectedId, onSelect, emptyMessage, className, }: AgentDirectoryProps): JSX.Element;
+
+export declare interface AgentDirectoryProps {
+    agents: AgentDefinition[];
+    metricsById?: Record<string, AgentMetrics>;
+    /** Status values shown in the filter chip row. Defaults to all four. */
+    filters?: AgentStatus[];
+    /** Selected agent id (controlled). */
+    selectedId?: string | null;
+    onSelect?: (agent: AgentDefinition) => void;
+    /** Override the empty-state copy. */
+    emptyMessage?: string;
+    className?: string;
+}
+
 export declare function AgentFlowCanvas({ agents, edges: edgeDefs, onAgentClick, className, }: AgentFlowCanvasProps): JSX.Element;
 
 declare interface AgentFlowCanvasProps {
@@ -367,6 +382,18 @@ declare interface AgUiToolCallStartEvent extends AgUiEventBase {
     toolCallId: string;
     toolCallName: string;
     parentMessageId?: string;
+}
+
+export declare function ConversationHistory({ sessions, activeThreadId, onResume, onDelete, emptyMessage, className, }: ConversationHistoryProps): JSX.Element;
+
+export declare interface ConversationHistoryProps {
+    sessions: AgUiSession[];
+    /** Active thread (highlighted). */
+    activeThreadId?: string | null;
+    onResume?: (session: AgUiSession) => void;
+    onDelete?: (session: AgUiSession) => void;
+    emptyMessage?: string;
+    className?: string;
 }
 
 export declare const fixtureAgents: AgentDefinition[];
