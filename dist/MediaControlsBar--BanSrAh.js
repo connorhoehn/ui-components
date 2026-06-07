@@ -1,7 +1,7 @@
 import { jsxs as i, jsx as e, Fragment as re } from "react/jsx-runtime";
-import { useRef as H, useState as j, useEffect as B, useMemo as J, useCallback as R, useImperativeHandle as Pe, useLayoutEffect as Te } from "react";
+import { useRef as H, useState as E, useEffect as T, useMemo as J, useCallback as R, useImperativeHandle as Pe, useLayoutEffect as Ie } from "react";
 import { c as v } from "./cn-B6yFEsav.js";
-import { P as Ie } from "./HangoutLayout-ddC4Y1h7.js";
+import { P as Te } from "./HangoutLayout-ddC4Y1h7.js";
 import { A as ce } from "./Avatar-BvKIaNVE.js";
 import { B as de } from "./Button-Qsbxqsl9.js";
 import { C as ne } from "./Chip-CAS9vOWq.js";
@@ -13,7 +13,7 @@ const Be = {
   playing: "",
   error: "Playback Error"
 };
-function Gt({
+function Jt({
   src: t,
   stream: n,
   autoPlay: r = !1,
@@ -27,8 +27,8 @@ function Gt({
   onPhaseChange: x,
   onTimeUpdate: w
 }) {
-  const f = H(null), [l, m] = j("idle"), b = c ?? l;
-  B(() => {
+  const f = H(null), [l, m] = E("idle"), b = c ?? l;
+  T(() => {
     const N = f.current;
     if (!N) return;
     const C = [
@@ -48,8 +48,8 @@ function Gt({
         w?.(N.currentTime, N.duration);
       }]
     ];
-    return C.forEach(([E, S]) => N.addEventListener(E, S)), () => C.forEach(([E, S]) => N.removeEventListener(E, S));
-  }, [x, w]), B(() => {
+    return C.forEach(([S, j]) => N.addEventListener(S, j)), () => C.forEach(([S, j]) => N.removeEventListener(S, j));
+  }, [x, w]), T(() => {
     const N = f.current;
     N && n !== void 0 && (N.srcObject = n);
   }, [n]);
@@ -91,7 +91,7 @@ function He() {
 function Re(t) {
   return t < 1024 ? `${t} B` : t < 1024 * 1024 ? `${(t / 1024).toFixed(1)} KB` : t < 1024 * 1024 * 1024 ? `${(t / (1024 * 1024)).toFixed(1)} MB` : `${(t / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
-function Jt({
+function Zt({
   onClose: t,
   sources: n,
   title: r,
@@ -103,8 +103,8 @@ function Jt({
   footer: u,
   className: p
 }) {
-  const x = J(() => n.filter((m) => !!m.url), [n]), [w, f] = j(0), l = x[w];
-  return B(() => {
+  const x = J(() => n.filter((m) => !!m.url), [n]), [w, f] = E(0), l = x[w];
+  return T(() => {
     const m = (b) => {
       b.key === "Escape" && t();
     };
@@ -212,7 +212,7 @@ function Jt({
 function $e(t) {
   return t >= 1e6 ? `${(t / 1e6).toFixed(1)} Mbps` : t >= 1e3 ? `${(t / 1e3).toFixed(0)} Kbps` : `${t} bps`;
 }
-function Zt({ metrics: t, style: n }) {
+function qt({ metrics: t, style: n }) {
   if (!t)
     return /* @__PURE__ */ e("div", { className: v("p-3 bg-[#1e293b] rounded-lg text-[#94a3b8] text-xs"), style: n, children: "No stream data" });
   const r = [
@@ -260,7 +260,7 @@ function We({ quality: t, style: n }) {
     /* @__PURE__ */ e("span", { className: ze[t], children: Fe[t] })
   ] });
 }
-function qt({ participants: t, style: n }) {
+function Qt({ participants: t, style: n }) {
   const r = t.length, o = r <= 1 ? 1 : r <= 4 ? 2 : r <= 9 ? 3 : 4;
   return /* @__PURE__ */ e(
     "div",
@@ -268,7 +268,7 @@ function qt({ participants: t, style: n }) {
       className: v("grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden"),
       style: { gridTemplateColumns: `repeat(${o}, 1fr)`, ...n },
       children: t.map((a) => /* @__PURE__ */ e(
-        Ie,
+        Te,
         {
           id: a.id,
           displayName: a.displayName,
@@ -283,9 +283,9 @@ function qt({ participants: t, style: n }) {
     }
   );
 }
-function Qt({ reactions: t, style: n }) {
-  const [r, o] = j([]);
-  return B(() => {
+function en({ reactions: t, style: n }) {
+  const [r, o] = E([]);
+  return T(() => {
     if (t.length === 0) return;
     const a = t[t.length - 1], d = {
       id: a.id + "-" + Date.now(),
@@ -294,7 +294,7 @@ function Qt({ reactions: t, style: n }) {
       createdAt: Date.now()
     };
     o((s) => [...s.slice(-20), d]);
-  }, [t]), B(() => {
+  }, [t]), T(() => {
     const a = setInterval(() => {
       o((d) => d.filter((s) => Date.now() - s.createdAt < 3e3));
     }, 500);
@@ -309,8 +309,8 @@ function Qt({ reactions: t, style: n }) {
     a.id
   )) });
 }
-const Ve = ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯"];
-function en({ onReact: t, emojis: n = Ve, style: r }) {
+const Oe = ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯"];
+function tn({ onReact: t, emojis: n = Oe, style: r }) {
   return /* @__PURE__ */ e("div", { className: v("flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]"), style: r, children: n.map((o) => /* @__PURE__ */ e(
     "button",
     {
@@ -325,7 +325,7 @@ function en({ onReact: t, emojis: n = Ve, style: r }) {
     o
   )) });
 }
-function Oe(t) {
+function Ve(t) {
   return t >= 1e6 ? `${(t / 1e6).toFixed(1)} Mbps` : `${(t / 1e3).toFixed(0)} Kbps`;
 }
 function _e(t) {
@@ -349,14 +349,14 @@ const Ue = {
   idle: "text-slate-400",
   error: "text-red-500"
 };
-function tn({ phase: t, bitrateBps: n, viewerCount: r, duration: o, style: a }) {
+function nn({ phase: t, bitrateBps: n, viewerCount: r, duration: o, style: a }) {
   const d = t === "playing" ? "LIVE" : t.toUpperCase();
   return /* @__PURE__ */ i("div", { className: v("inline-flex items-center gap-4 px-4 py-2 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono"), style: a, children: [
     /* @__PURE__ */ i("span", { className: v("flex items-center gap-1"), children: [
       /* @__PURE__ */ e("span", { className: v("w-[7px] h-[7px] rounded-full", Ue[t] ?? "bg-slate-400") }),
       /* @__PURE__ */ e("span", { className: v("font-semibold", Xe[t] ?? "text-slate-400"), children: d })
     ] }),
-    n !== void 0 && /* @__PURE__ */ e("span", { children: Oe(n) }),
+    n !== void 0 && /* @__PURE__ */ e("span", { children: Ve(n) }),
     o !== void 0 && /* @__PURE__ */ e("span", { children: _e(o) }),
     r !== void 0 && /* @__PURE__ */ i("span", { className: v("flex items-center gap-[3px]"), children: [
       /* @__PURE__ */ i("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: [
@@ -367,7 +367,7 @@ function tn({ phase: t, bitrateBps: n, viewerCount: r, duration: o, style: a }) 
     ] })
   ] });
 }
-function nn({ count: t, style: n }) {
+function rn({ count: t, style: n }) {
   const r = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
   return /* @__PURE__ */ i("div", { className: v("inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-black/70 text-white text-xs font-medium"), style: n, children: [
     /* @__PURE__ */ i("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", children: [
@@ -578,7 +578,7 @@ function Je({
   currentParticipantIds: w,
   className: f
 }) {
-  const [l, m] = j(!1), b = new Set(w ?? []), y = (x ?? []).filter((g) => !b.has(g.id));
+  const [l, m] = E(!1), b = new Set(w ?? []), y = (x ?? []).filter((g) => !b.has(g.id));
   return /* @__PURE__ */ i("div", { className: v("flex flex-col", f), children: [
     /* @__PURE__ */ i(
       "div",
@@ -757,7 +757,7 @@ function he({
   className: r
 }) {
   const o = H(null);
-  return B(() => {
+  return T(() => {
     const a = o.current;
     a && a.srcObject !== t && (a.srcObject = t);
   }, [t]), /* @__PURE__ */ e(
@@ -976,7 +976,7 @@ function nt({
   );
 }
 function rt(t) {
-  const [n, r] = j({ x: 0, y: 0 }), [o, a] = j(!1), [d, s] = j(!1), c = H(!1), u = H({ x: 0, y: 0 }), p = H({ x: 0, y: 0 }), x = H(null), w = R(
+  const [n, r] = E({ x: 0, y: 0 }), [o, a] = E(!1), [d, s] = E(!1), c = H(!1), u = H({ x: 0, y: 0 }), p = H({ x: 0, y: 0 }), x = H(null), w = R(
     (y) => {
       t && (c.current = !0, a(!0), s(!1), u.current = { x: y.clientX, y: y.clientY }, p.current = { ...n }, y.preventDefault());
     },
@@ -988,30 +988,30 @@ function rt(t) {
       const g = x.current;
       if (!g) return;
       const N = g.offsetParent, C = 16;
-      let E = window.innerWidth, S = window.innerHeight;
-      N && (E = N.clientWidth, S = N.clientHeight);
+      let S = window.innerWidth, j = window.innerHeight;
+      N && (S = N.clientWidth, j = N.clientHeight);
       const L = g.getBoundingClientRect(), P = N ? N.getBoundingClientRect() : { left: 0, top: 0 };
-      let T, I;
+      let I, A;
       switch (y) {
         case "top-left":
-          T = C, I = C;
+          I = C, A = C;
           break;
         case "top-right":
-          T = E - L.width - C, I = C;
+          I = S - L.width - C, A = C;
           break;
         case "bottom-left":
-          T = C, I = S - L.height - C;
+          I = C, A = j - L.height - C;
           break;
         default:
-          T = E - L.width - C, I = S - L.height - C;
+          I = S - L.width - C, A = j - L.height - C;
           break;
       }
       const D = L.left - P.left - n.x, z = L.top - P.top - n.y;
-      s(!0), r({ x: T - D, y: I - z }), setTimeout(() => s(!1), 200);
+      s(!0), r({ x: I - D, y: A - z }), setTimeout(() => s(!1), 200);
     },
     [n]
   ), m = H(l);
-  m.current = l, B(() => {
+  m.current = l, T(() => {
     if (!t) return;
     const y = (N) => {
       c.current && r({
@@ -1023,13 +1023,13 @@ function rt(t) {
       c.current = !1, a(!1);
       const N = x.current;
       if (!N) return;
-      const C = N.offsetParent, E = 80;
-      let S = window.innerWidth, L = window.innerHeight;
+      const C = N.offsetParent, S = 80;
+      let j = window.innerWidth, L = window.innerHeight;
       if (C) {
         const k = C.getBoundingClientRect();
-        S = k.width, L = k.height;
+        j = k.width, L = k.height;
       }
-      const P = N.getBoundingClientRect(), T = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, I = P.left - T.left, D = P.top - T.top, z = S - (I + P.width), O = L - (D + P.height), W = I < E, F = z < E, M = D < E, h = O < E;
+      const P = N.getBoundingClientRect(), I = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, A = P.left - I.left, D = P.top - I.top, z = j - (A + P.width), V = L - (D + P.height), W = A < S, F = z < S, M = D < S, h = V < S;
       M && W ? m.current("top-left") : M && F ? m.current("top-right") : h && W ? m.current("bottom-left") : h && F && m.current("bottom-right");
     };
     return document.addEventListener("mousemove", y), document.addEventListener("mouseup", g), () => {
@@ -1060,7 +1060,7 @@ function it({
     o
   )) });
 }
-function rn({
+function on({
   state: t,
   mode: n,
   participants: r,
@@ -1081,21 +1081,21 @@ function rn({
   availableParticipants: g,
   onMinimize: N,
   onExpand: C,
-  layoutComponent: E,
-  callStats: S,
+  layoutComponent: S,
+  callStats: j,
   minimized: L = !1,
   position: P = "bottom-right",
-  contained: T = !1,
-  draggable: I = !0,
+  contained: I = !1,
+  draggable: A = !0,
   className: D,
   style: z,
-  dataAttrs: O
+  dataAttrs: V
 }) {
-  const { offset: W, handleMouseDown: F, resetOffset: M, snapToCorner: h, isDragging: k, isAnimating: A, hasMoved: X, widgetRef: V } = rt(I), Y = {};
-  if (O)
-    for (const [je, q] of Object.entries(O))
-      q != null && q !== "" && (Y[je] = q);
-  const Ee = J(() => {
+  const { offset: W, handleMouseDown: F, resetOffset: M, snapToCorner: h, isDragging: k, isAnimating: B, hasMoved: X, widgetRef: O } = rt(A), Y = {};
+  if (V)
+    for (const [Ee, q] of Object.entries(V))
+      q != null && q !== "" && (Y[Ee] = q);
+  const Se = J(() => {
     switch (P) {
       case "bottom-left":
         return "bottom-4 left-4";
@@ -1108,21 +1108,21 @@ function rn({
     }
   }, [P]);
   return t === "idle" || t === "ended" ? null : /* @__PURE__ */ i(re, { children: [
-    k && /* @__PURE__ */ e(it, { onSnap: h, contained: T }),
+    k && /* @__PURE__ */ e(it, { onSnap: h, contained: I }),
     /* @__PURE__ */ e(
       "div",
       {
-        ref: V,
+        ref: O,
         "data-testid": "call-widget",
         "data-call-state": t,
         className: v(
-          T ? "absolute z-50" : "fixed z-[9999]",
-          Ee,
+          I ? "absolute z-50" : "fixed z-[9999]",
+          Se,
           D
         ),
         style: {
           transform: `translate(${W.x}px, ${W.y}px)`,
-          transition: A ? "transform 0.2s ease-out" : void 0,
+          transition: B ? "transform 0.2s ease-out" : void 0,
           ...z
         },
         ...Y,
@@ -1139,7 +1139,7 @@ function rn({
                 {
                   className: v(
                     "flex items-center justify-between px-3 py-2 border-b border-white/5",
-                    I && "cursor-grab active:cursor-grabbing"
+                    A && "cursor-grab active:cursor-grabbing"
                   ),
                   onMouseDown: F,
                   children: [
@@ -1188,7 +1188,7 @@ function rn({
               L && /* @__PURE__ */ e(
                 "div",
                 {
-                  className: v(I && "cursor-grab active:cursor-grabbing"),
+                  className: v(A && "cursor-grab active:cursor-grabbing"),
                   onMouseDown: F,
                   children: /* @__PURE__ */ e(
                     nt,
@@ -1242,8 +1242,8 @@ function rn({
                     onAddParticipant: y,
                     availableParticipants: g,
                     onEndCall: w,
-                    layoutComponent: E,
-                    callStats: S
+                    layoutComponent: S,
+                    callStats: j
                   }
                 )
               ] })
@@ -1254,7 +1254,7 @@ function rn({
     )
   ] });
 }
-function on({
+function an({
   callerName: t,
   callerAvatarUrl: n,
   context: r,
@@ -1265,8 +1265,8 @@ function on({
   className: c,
   style: u
 }) {
-  const [p, x] = j(!0);
-  return B(() => {
+  const [p, x] = E(!0);
+  return T(() => {
     if (!s || s <= 0) return;
     const w = setTimeout(() => {
       x(!1), d?.();
@@ -1352,7 +1352,7 @@ function fe(t) {
   const n = Math.floor(t / 3600), r = Math.floor(t % 3600 / 60), o = Math.floor(t % 60), a = n > 0 ? String(r).padStart(2, "0") : String(r), d = String(o).padStart(2, "0");
   return n > 0 ? `${n}:${a}:${d}` : `${a}:${d}`;
 }
-function an({
+function ln({
   playlistUrl: t,
   poster: n,
   autoPlay: r = !1,
@@ -1363,11 +1363,11 @@ function an({
   hideDownload: c = !1,
   className: u
 }) {
-  const p = H(null), x = H(null), [w, f] = j(!1), [l, m] = j(0), [b, y] = j(0), [g, N] = j(1), [C, E] = j(1), [S, L] = j(!1), [P, T] = j(null);
-  B(() => {
+  const p = H(null), x = H(null), [w, f] = E(!1), [l, m] = E(0), [b, y] = E(0), [g, N] = E(1), [C, S] = E(1), [j, L] = E(!1), [P, I] = E(null);
+  T(() => {
     const M = p.current;
     if (!M || !t) return;
-    if (T(null), L(!0), M.canPlayType("application/vnd.apple.mpegurl"))
+    if (I(null), L(!0), M.canPlayType("application/vnd.apple.mpegurl"))
       return M.src = t, () => {
         M.removeAttribute("src"), M.load();
       };
@@ -1380,16 +1380,16 @@ function an({
         )).default;
         if (h) return;
         if (!k.isSupported()) {
-          T("HLS playback is not supported in this browser."), L(!1);
+          I("HLS playback is not supported in this browser."), L(!1);
           return;
         }
-        const A = new k({ enableWorker: !0 });
-        x.current = A, A.attachMedia(M), A.on(k.Events.MEDIA_ATTACHED, () => A.loadSource(t)), A.on(k.Events.ERROR, (X, V) => {
-          V.fatal && (T(`HLS error: ${V.type}`), s?.(new Error(`HLS fatal: ${V.type}`)));
+        const B = new k({ enableWorker: !0 });
+        x.current = B, B.attachMedia(M), B.on(k.Events.MEDIA_ATTACHED, () => B.loadSource(t)), B.on(k.Events.ERROR, (X, O) => {
+          O.fatal && (I(`HLS error: ${O.type}`), s?.(new Error(`HLS fatal: ${O.type}`)));
         });
       } catch (k) {
         if (h) return;
-        T(`Failed to load hls.js — install it in the consumer app: ${k?.message ?? k}`);
+        I(`Failed to load hls.js — install it in the consumer app: ${k?.message ?? k}`);
       }
     })(), () => {
       if (h = !0, x.current) {
@@ -1401,7 +1401,7 @@ function an({
       }
     };
   }, [t, s]);
-  const I = () => {
+  const A = () => {
     const M = p.current;
     M && (M.paused ? M.play().catch(() => {
     }) : M.pause());
@@ -1413,11 +1413,11 @@ function an({
     if (!h) return;
     const k = Number(M.target.value);
     h.volume = k, N(k);
-  }, O = (M) => {
+  }, V = (M) => {
     const h = p.current;
     if (!h) return;
     const k = Number(M.target.value);
-    h.playbackRate = k, E(k);
+    h.playbackRate = k, S(k);
   }, W = () => {
     const M = p.current;
     M && (document.fullscreenElement ? document.exitFullscreen() : M.requestFullscreen?.());
@@ -1448,11 +1448,11 @@ function an({
         onWaiting: () => L(!0),
         onCanPlay: () => L(!1),
         onError: () => {
-          T("Playback error."), s?.(new Error("video element error")), L(!1);
+          I("Playback error."), s?.(new Error("video element error")), L(!1);
         }
       }
     ),
-    S && !P && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm", children: "Loading…" }),
+    j && !P && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm", children: "Loading…" }),
     P && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center", children: P }),
     /* @__PURE__ */ i("div", { className: "absolute bottom-0 left-0 right-0 px-3 pt-8 pb-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200", children: [
       /* @__PURE__ */ i("div", { className: "flex items-center gap-2 mb-2", children: [
@@ -1477,7 +1477,7 @@ function an({
           "button",
           {
             type: "button",
-            onClick: I,
+            onClick: A,
             className: "w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center",
             "aria-label": w ? "Pause" : "Play",
             children: w ? /* @__PURE__ */ i("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: [
@@ -1506,7 +1506,7 @@ function an({
           "select",
           {
             value: C,
-            onChange: O,
+            onChange: V,
             className: "bg-white/10 hover:bg-white/20 text-white text-xs rounded px-2 py-1 border-0 outline-none",
             "aria-label": "Playback speed",
             children: [
@@ -1656,7 +1656,7 @@ function dt({
     }
   );
 }
-function ln({
+function sn({
   recordings: t,
   selectedId: n,
   onSelect: r,
@@ -1693,15 +1693,15 @@ function ln({
     c.id
   )) });
 }
-function sn({
+function cn({
   getVideoElement: t,
   className: n,
   title: r
 }) {
-  const [o, a] = j(!1), [d, s] = j(!1);
-  B(() => {
+  const [o, a] = E(!1), [d, s] = E(!1);
+  T(() => {
     s(typeof document < "u" && document.pictureInPictureEnabled === !0);
-  }, []), B(() => {
+  }, []), T(() => {
     const p = () => a(!1), x = () => a(!0);
     return document.addEventListener("leavepictureinpicture", p), document.addEventListener("enterpictureinpicture", x), () => {
       document.removeEventListener("leavepictureinpicture", p), document.removeEventListener("enterpictureinpicture", x);
@@ -1743,7 +1743,7 @@ function ut(t) {
   const n = t.trim().split(/\s+/);
   return n.length === 1 ? n[0].slice(0, 2).toUpperCase() : (n[0].charAt(0) + n[n.length - 1].charAt(0)).toUpperCase();
 }
-function cn({
+function dn({
   participants: t,
   activeSpeakerId: n,
   onParticipantClick: r,
@@ -1841,15 +1841,15 @@ function ht() {
     return null;
   }
 }
-function dn({
+function un({
   localStream: t,
   isMuted: n,
   threshold: r = -45,
   triggerMs: o = 1500,
   cooldownMs: a = 6e3
 }) {
-  const [d, s] = j(!1);
-  return B(() => {
+  const [d, s] = E(!1);
+  return T(() => {
     if (!n || !t || t.getAudioTracks().filter((y) => y.readyState === "live").length === 0) return;
     const u = ht();
     if (!u) return;
@@ -1881,13 +1881,13 @@ function dn({
       } catch {
       }
     };
-  }, [t, n, r, o, a]), B(() => {
+  }, [t, n, r, o, a]), T(() => {
     n || s(!1);
   }, [n]), d;
 }
 function ft(t, n) {
-  const [r, o] = j(0);
-  return B(() => {
+  const [r, o] = E(0);
+  return T(() => {
     if (!t) return;
     const a = (f, l) => {
       console.info("[useTrackStateBump] remote track", f, {
@@ -1926,7 +1926,7 @@ function Ne({
   onPlayStateChange: a
 }) {
   const d = H(null), s = H(a);
-  return s.current = a, B(() => {
+  return s.current = a, T(() => {
     const c = d.current;
     if (!c) return;
     c.srcObject !== t && (c.srcObject = t), r && (r.current = c);
@@ -1982,14 +1982,14 @@ function gt() {
     }
   });
 }
-function un({
+function hn({
   chipLabel: t = "Tap to unmute",
   chipClassName: n,
   wrapperClassName: r,
   onPlayStateChange: o,
   ...a
 }) {
-  const [d, s] = j(!1), c = H(null), p = a.videoRef ?? c, x = R(
+  const [d, s] = E(!1), c = H(null), p = a.videoRef ?? c, x = R(
     (f) => {
       f === "paused-by-autoplay" ? s(!0) : f === "playing" && s(!1), o?.(f);
     },
@@ -2031,7 +2031,7 @@ function xt({
   defaults: n,
   debounceMs: r = 200
 }) {
-  const [o, a] = j(() => {
+  const [o, a] = E(() => {
     if (!t || typeof window > "u") return n;
     try {
       const c = window.localStorage.getItem(t);
@@ -2052,7 +2052,7 @@ function xt({
       return n;
     }
   }), d = H(null);
-  B(() => {
+  T(() => {
     if (!(!t || typeof window > "u"))
       return d.current && clearTimeout(d.current), d.current = setTimeout(() => {
         try {
@@ -2073,7 +2073,7 @@ function ee(t, n) {
   return typeof t == "number" && Number.isFinite(t) ? t : n;
 }
 const ae = 320, le = 200, vt = 640, bt = 400, wt = 1440, yt = 900, ge = 960, xe = 600, $ = 8;
-function hn({
+function fn({
   title: t,
   subtitle: n,
   children: r,
@@ -2096,8 +2096,8 @@ function hn({
       width: ge,
       height: xe
     }
-  }), [b, y] = j(!1), g = b ? "fullscreen" : l.mode, N = H(null), C = H(!1);
-  B(() => {
+  }), [b, y] = E(!1), g = b ? "fullscreen" : l.mode, N = H(null), C = H(!1);
+  T(() => {
     const h = () => {
       !((document.fullscreenElement ?? document.webkitFullscreenElement) === N.current) && b && (y(!1), C.current || m({ mode: "docked" }), C.current = !1);
     };
@@ -2105,29 +2105,29 @@ function hn({
       document.removeEventListener("fullscreenchange", h), document.removeEventListener("webkitfullscreenchange", h);
     };
   }, [b, m]);
-  const E = R(() => {
+  const S = R(() => {
     const h = N.current;
     if (!h) return;
     const k = h.requestFullscreen?.bind(h) ?? h.webkitRequestFullscreen?.bind(h);
     if (!k) return;
-    const A = k();
-    A && typeof A.then == "function" ? A.then(
+    const B = k();
+    B && typeof B.then == "function" ? B.then(
       () => y(!0),
       () => {
       }
     ) : y(!0);
-  }, []), S = R(() => {
+  }, []), j = R(() => {
     if (!(document.fullscreenElement ?? document.webkitFullscreenElement)) return;
     C.current = !0, (document.exitFullscreen?.bind(document) ?? document.webkitExitFullscreen?.bind(document))?.().catch(() => {
     });
   }, []), L = R((h) => {
     if (h !== g) {
       if (h === "fullscreen") {
-        E();
+        S();
         return;
       }
       if (g === "fullscreen") {
-        S(), m({ mode: h });
+        j(), m({ mode: h });
         return;
       }
       if (h === "docked" && g === "mini") {
@@ -2142,25 +2142,25 @@ function hn({
       }
       m({ mode: h });
     }
-  }, [g, E, S, m, l.width, l.height, u]);
-  B(() => {
+  }, [g, S, j, m, l.width, l.height, u]);
+  T(() => {
     d?.(g);
   }, [g, d]), Pe(c, () => ({ mode: g, setMode: L }), [g, L]);
-  const P = H(null), T = R((h) => {
+  const P = H(null), I = R((h) => {
     g === "docked" && (h.target.closest("button") || (h.currentTarget.setPointerCapture(h.pointerId), P.current = {
       startX: h.clientX,
       startY: h.clientY,
       origX: l.x,
       origY: l.y
     }));
-  }, [g, l.x, l.y]), I = R((h) => {
+  }, [g, l.x, l.y]), A = R((h) => {
     const k = P.current;
     if (!k) return;
-    const A = h.clientX - k.startX, X = h.clientY - k.startY, V = te(k.origX + A, l.width, window.innerWidth), Y = te(k.origY + X, l.height, window.innerHeight);
-    m({ x: V, y: Y });
+    const B = h.clientX - k.startX, X = h.clientY - k.startY, O = te(k.origX + B, l.width, window.innerWidth), Y = te(k.origY + X, l.height, window.innerHeight);
+    m({ x: O, y: Y });
   }, [m, l.width, l.height]), D = R((h) => {
     h.currentTarget.releasePointerCapture(h.pointerId), P.current = null;
-  }, []), z = H(null), O = R((h) => {
+  }, []), z = H(null), V = R((h) => {
     g === "docked" && (h.stopPropagation(), h.currentTarget.setPointerCapture(h.pointerId), z.current = {
       startX: h.clientX,
       startY: h.clientY,
@@ -2170,16 +2170,16 @@ function hn({
   }, [g, l.width, l.height]), W = R((h) => {
     const k = z.current;
     if (!k) return;
-    const A = h.clientX - k.startX, X = h.clientY - k.startY, V = se(k.origW + A, vt, Math.min(wt, window.innerWidth - $ * 2)), Y = se(k.origH + X, bt, Math.min(yt, window.innerHeight - $ * 2));
-    m({ width: V, height: Y });
+    const B = h.clientX - k.startX, X = h.clientY - k.startY, O = se(k.origW + B, vt, Math.min(wt, window.innerWidth - $ * 2)), Y = se(k.origH + X, bt, Math.min(yt, window.innerHeight - $ * 2));
+    m({ width: O, height: Y });
   }, [m]), F = R((h) => {
     h.currentTarget.releasePointerCapture(h.pointerId), z.current = null;
   }, []);
-  Te(() => {
+  Ie(() => {
     if (g !== "docked") return;
     const h = () => {
-      const k = te(l.x, l.width, window.innerWidth), A = te(l.y, l.height, window.innerHeight);
-      (k !== l.x || A !== l.y) && m({ x: k, y: A });
+      const k = te(l.x, l.width, window.innerWidth), B = te(l.y, l.height, window.innerHeight);
+      (k !== l.x || B !== l.y) && m({ x: k, y: B });
     };
     return window.addEventListener("resize", h), () => window.removeEventListener("resize", h);
   }, [g, l.x, l.y, l.width, l.height, m]);
@@ -2223,8 +2223,8 @@ function hn({
               "flex items-center justify-between gap-2 px-3 h-8 min-h-8 border-b border-white/5 select-none",
               g === "docked" ? "cursor-grab active:cursor-grabbing" : ""
             ),
-            onPointerDown: T,
-            onPointerMove: I,
+            onPointerDown: I,
+            onPointerMove: A,
             onPointerUp: D,
             onPointerCancel: D,
             children: [
@@ -2274,7 +2274,7 @@ function hn({
           "div",
           {
             className: "absolute bottom-0 right-0 w-4 h-4 cursor-se-resize",
-            onPointerDown: O,
+            onPointerDown: V,
             onPointerMove: W,
             onPointerUp: F,
             onPointerCancel: F,
@@ -2346,7 +2346,31 @@ function se(t, n, r) {
 function te(t, n, r) {
   return se(t, $, Math.max($, r - n - $));
 }
-function fn({
+function Mt({ stream: t }) {
+  const n = H(null);
+  return T(() => {
+    const r = n.current;
+    if (!r) return;
+    if (!t) {
+      r.srcObject && (r.srcObject = null);
+      return;
+    }
+    r.srcObject !== t && (r.srcObject = t);
+    const o = r.play();
+    o && typeof o.catch == "function" && o.catch(() => {
+    });
+  }, [t]), /* @__PURE__ */ e(
+    "audio",
+    {
+      ref: n,
+      autoPlay: !0,
+      playsInline: !0,
+      style: { display: "none" },
+      "data-testid": "remote-tile-hidden-audio"
+    }
+  );
+}
+function mn({
   stream: t,
   displayName: n,
   cameraOn: r,
@@ -2354,9 +2378,19 @@ function fn({
 }) {
   ft(t, n);
   const a = mt(t);
-  return !r || !a || !t ? /* @__PURE__ */ e("div", { className: "flex items-center justify-center w-full h-full bg-[var(--color-surface-inset,#0f172a)]", children: /* @__PURE__ */ e(ce, { name: n, size: o }) }) : /* @__PURE__ */ e(Ne, { stream: t });
+  return !r || !a || !t ? /* @__PURE__ */ i(
+    "div",
+    {
+      className: "flex items-center justify-center w-full h-full bg-[var(--color-surface-inset,#0f172a)]",
+      "data-testid": "remote-tile-avatar-branch",
+      children: [
+        /* @__PURE__ */ e(ce, { name: n, size: o }),
+        t && /* @__PURE__ */ e(Mt, { stream: t })
+      ]
+    }
+  ) : /* @__PURE__ */ e(Ne, { stream: t });
 }
-function mn({ show: t, label: n }) {
+function pn({ show: t, label: n }) {
   return t ? /* @__PURE__ */ i(
     "div",
     {
@@ -2371,7 +2405,7 @@ function mn({ show: t, label: n }) {
     }
   ) : null;
 }
-function pn({ show: t, label: n = "Reconnecting…" }) {
+function gn({ show: t, label: n = "Reconnecting…" }) {
   return t ? /* @__PURE__ */ e(
     "div",
     {
@@ -2383,7 +2417,7 @@ function pn({ show: t, label: n = "Reconnecting…" }) {
     }
   ) : null;
 }
-function gn({
+function xn({
   show: t,
   label: n = "You're muted — tap mic to unmute"
 }) {
@@ -2405,12 +2439,12 @@ const we = [
   "#a78bfa",
   "#fb7185"
 ];
-function Mt(t) {
+function Lt(t) {
   let n = 0;
   for (let r = 0; r < t.length; r++) n = n * 31 + t.charCodeAt(r) | 0;
   return we[Math.abs(n) % we.length];
 }
-function xn({
+function vn({
   lines: t,
   maxLines: n = 3,
   fadeAfterMs: r = 8e3,
@@ -2443,7 +2477,7 @@ function xn({
               "span",
               {
                 className: "font-medium text-xs shrink-0",
-                style: { color: Mt(s.speakerId) },
+                style: { color: Lt(s.speakerId) },
                 children: s.speakerName ?? s.speakerId.slice(0, 6)
               }
             ),
@@ -2455,11 +2489,11 @@ function xn({
     }
   );
 }
-const Lt = {
+const jt = {
   sm: "h-9 w-9",
   md: "h-11 w-11",
   lg: "h-14 w-14"
-}, St = "bg-slate-200 text-slate-900 hover:bg-slate-300", Et = "bg-slate-100 text-slate-500 hover:bg-slate-200", jt = "bg-red-100 text-red-700 hover:bg-red-200";
+}, St = "bg-slate-200 text-slate-900 hover:bg-slate-300", Et = "bg-slate-100 text-slate-500 hover:bg-slate-200", Pt = "bg-red-100 text-red-700 hover:bg-red-200";
 function G({
   on: t,
   iconOn: n,
@@ -2471,7 +2505,7 @@ function G({
   className: c,
   ...u
 }) {
-  const p = t ? St : a === "danger" ? jt : Et;
+  const p = t ? St : a === "danger" ? Pt : Et;
   return /* @__PURE__ */ e(
     "button",
     {
@@ -2481,7 +2515,7 @@ function G({
       disabled: s,
       className: v(
         "rounded-full grid place-items-center transition-colors duration-150",
-        Lt[d],
+        jt[d],
         p,
         s && "opacity-40 cursor-not-allowed",
         !s && "cursor-pointer",
@@ -2532,14 +2566,14 @@ function Le({ size: t = 20, ...n }) {
     /* @__PURE__ */ e("rect", { x: "2", y: "6", width: "14", height: "12", rx: "2" })
   ] });
 }
-function Se({ size: t = 20, ...n }) {
+function je({ size: t = 20, ...n }) {
   return /* @__PURE__ */ i("svg", { ...U(t, n), children: [
     /* @__PURE__ */ e("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
     /* @__PURE__ */ e("path", { d: "M16 16H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2l10 10z" }),
     /* @__PURE__ */ e("path", { d: "M22 8l-6 4 6 4V8z" })
   ] });
 }
-function Pt({ size: t = 20, ...n }) {
+function It({ size: t = 20, ...n }) {
   return /* @__PURE__ */ i("svg", { ...U(t, n), children: [
     /* @__PURE__ */ e("rect", { x: "2", y: "4", width: "20", height: "12", rx: "2" }),
     /* @__PURE__ */ e("line", { x1: "8", y1: "20", x2: "16", y2: "20" }),
@@ -2557,30 +2591,30 @@ function Tt({ size: t = 20, ...n }) {
     /* @__PURE__ */ e("line", { x1: "12", y1: "16", x2: "12", y2: "20" })
   ] });
 }
-function It({ size: t = 20, ...n }) {
+function At({ size: t = 20, ...n }) {
   return /* @__PURE__ */ i("svg", { ...U(t, n), children: [
     /* @__PURE__ */ e("path", { d: "M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.49-2.86" }),
     /* @__PURE__ */ e("path", { d: "M5 5l-1.27 1.27a2 2 0 0 0-.45 2.11 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11" }),
     /* @__PURE__ */ e("line", { x1: "22", y1: "2", x2: "2", y2: "22" })
   ] });
 }
-function vn({ size: t = 20, ...n }) {
+function bn({ size: t = 20, ...n }) {
   return /* @__PURE__ */ i("svg", { ...U(t, n), children: [
     /* @__PURE__ */ e("circle", { cx: "12", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "19", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "5", cy: "12", r: "1" })
   ] });
 }
-function At(t, n, r) {
+function Bt(t, n, r) {
   if (r) return "Checking room…";
   if (!n || n === "empty") return "You'll be the first one in this room";
   const o = t?.length ?? 0;
   return n === "ready" ? o === 1 ? "1 person is in this call" : `${o} people are in this call` : o === 1 ? "1 person is joining (connecting…)" : `${o} people are joining (connecting…)`;
 }
-function Bt(t) {
+function Ht(t) {
   return t === "denied" ? "denied" : t === "blocked" ? "blocked" : t === "no-device" ? "no-device" : t === "unavailable" ? "unavailable" : null;
 }
-function bn({
+function wn({
   channelName: t,
   localIdentity: n,
   previewStream: r,
@@ -2602,11 +2636,11 @@ function bn({
   className: N,
   "data-testid": C
 }) {
-  const E = H(null);
-  B(() => {
-    E.current && r && (E.current.srcObject = r);
+  const S = H(null);
+  T(() => {
+    S.current && r && (S.current.srcObject = r);
   }, [r]);
-  const S = o === "granted", L = Bt(o), P = y ?? !S, T = b ?? (P && !S ? "Allow camera to join" : "Join now"), I = g ?? At(x, w, f);
+  const j = o === "granted", L = Ht(o), P = y ?? !j, I = b ?? (P && !j ? "Allow camera to join" : "Join now"), A = g ?? Bt(x, w, f);
   return /* @__PURE__ */ i(
     "div",
     {
@@ -2619,17 +2653,17 @@ function bn({
         /* @__PURE__ */ i("header", { className: "flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white", children: [
           /* @__PURE__ */ i("div", { className: "min-w-0 flex-1", children: [
             /* @__PURE__ */ e("h1", { className: "text-lg font-semibold truncate", children: t }),
-            /* @__PURE__ */ e("p", { className: "text-xs text-slate-500 mt-0.5", children: I })
+            /* @__PURE__ */ e("p", { className: "text-xs text-slate-500 mt-0.5", children: A })
           ] }),
           /* @__PURE__ */ e(de, { variant: "ghost", size: "sm", onClick: m, children: "Cancel" })
         ] }),
         /* @__PURE__ */ i("main", { className: "flex-1 min-h-0 flex flex-col lg:flex-row gap-6 p-6 max-w-6xl mx-auto w-full", children: [
           /* @__PURE__ */ i("section", { className: "lg:flex-1 min-h-0", children: [
             /* @__PURE__ */ i("div", { className: "relative aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-black", children: [
-              r && S && /* @__PURE__ */ e(
+              r && j && /* @__PURE__ */ e(
                 "video",
                 {
-                  ref: E,
+                  ref: S,
                   autoPlay: !0,
                   playsInline: !0,
                   muted: !0,
@@ -2639,7 +2673,7 @@ function bn({
                   )
                 }
               ),
-              S && !s && (n ? (
+              j && !s && (n ? (
                 // Meet/Teams-style identity tile: large avatar + display
                 // name + "Camera off" subtitle. Avatar falls back to
                 // initials when avatarSrc is absent.
@@ -2690,7 +2724,7 @@ function bn({
                 {
                   on: d,
                   onClick: c,
-                  disabled: !S,
+                  disabled: !j,
                   "aria-label": d ? "Mute mic before joining" : "Unmute mic before joining",
                   title: d ? "Mute mic before joining" : "Unmute mic before joining",
                   iconOn: /* @__PURE__ */ e(Ce, { size: 18 }),
@@ -2703,11 +2737,11 @@ function bn({
                 {
                   on: s,
                   onClick: u,
-                  disabled: !S,
+                  disabled: !j,
                   "aria-label": s ? "Turn camera off before joining" : "Turn camera on before joining",
                   title: s ? "Turn camera off before joining" : "Turn camera on before joining",
                   iconOn: /* @__PURE__ */ e(Le, { size: 18 }),
-                  iconOff: /* @__PURE__ */ e(Se, { size: 18 }),
+                  iconOff: /* @__PURE__ */ e(je, { size: 18 }),
                   "data-testid": "prejoin-toggle-video"
                 }
               )
@@ -2716,8 +2750,8 @@ function bn({
           /* @__PURE__ */ i("section", { className: "lg:w-96 flex flex-col", children: [
             /* @__PURE__ */ i("div", { className: "flex-1", children: [
               /* @__PURE__ */ e("h2", { className: "text-2xl font-semibold mb-2", children: "Ready to join?" }),
-              /* @__PURE__ */ e("p", { className: "text-sm text-slate-500 mb-6", children: I }),
-              /* @__PURE__ */ e(Ht, { participants: x, loading: f }),
+              /* @__PURE__ */ e("p", { className: "text-sm text-slate-500 mb-6", children: A }),
+              /* @__PURE__ */ e(Rt, { participants: x, loading: f }),
               w === "pending" && !f && /* @__PURE__ */ i("p", { className: "mt-4 text-xs text-amber-600 flex items-center gap-2", children: [
                 /* @__PURE__ */ e("span", { className: "h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" }),
                 "Other publishers are still connecting — you can join anyway."
@@ -2732,7 +2766,7 @@ function bn({
                   onClick: () => l({ audio: d, video: s }),
                   disabled: P,
                   "data-testid": "prejoin-join-button",
-                  children: T
+                  children: I
                 }
               ),
               /* @__PURE__ */ e(
@@ -2751,7 +2785,7 @@ function bn({
     }
   );
 }
-function Ht({
+function Rt({
   participants: t,
   loading: n
 }) {
@@ -2787,14 +2821,14 @@ function Ht({
     ] })
   ] });
 }
-const Rt = {
+const $t = {
   idle: "neutral",
   joining: "warning",
   joined: "success",
   reconnecting: "warning",
   ended: "neutral",
   failed: "danger"
-}, $t = {
+}, Dt = {
   idle: "Idle",
   joining: "Joining…",
   joined: "Live",
@@ -2802,7 +2836,7 @@ const Rt = {
   ended: "Ended",
   failed: "Failed"
 };
-function Dt() {
+function zt() {
   return /* @__PURE__ */ i(
     "svg",
     {
@@ -2822,7 +2856,7 @@ function Dt() {
     }
   );
 }
-function wn({
+function yn({
   channelName: t,
   subtitle: n,
   recording: r,
@@ -2862,7 +2896,7 @@ function wn({
               {
                 tone: "neutral",
                 size: "xs",
-                icon: /* @__PURE__ */ e(Dt, {}),
+                icon: /* @__PURE__ */ e(zt, {}),
                 title: "Time since you joined this room",
                 "data-testid": "hangout-room-header-elapsed",
                 children: /* @__PURE__ */ e("span", { className: "tabular-nums", children: o })
@@ -2874,11 +2908,11 @@ function wn({
           a && /* @__PURE__ */ e(
             ne,
             {
-              tone: Rt[a],
+              tone: $t[a],
               size: "sm",
               dot: a === "reconnecting" ? "pulse" : "static",
               "data-testid": "hangout-room-header-phase",
-              children: $t[a]
+              children: Dt[a]
             }
           ),
           d
@@ -2887,16 +2921,16 @@ function wn({
     }
   );
 }
-const zt = {
+const Ft = {
   sm: "h-9 w-9",
   md: "h-11 w-11",
   lg: "h-14 w-14"
-}, Ft = {
+}, Wt = {
   sm: 16,
   md: 20,
   lg: 24
 };
-function yn({
+function kn({
   audioOn: t,
   videoOn: n,
   screenSharing: r = !1,
@@ -2947,7 +2981,7 @@ function yn({
             "aria-label": n ? "Turn off camera" : "Turn on camera",
             title: n ? "Turn off camera" : "Turn on camera",
             iconOn: /* @__PURE__ */ e(Le, { size: b }),
-            iconOff: /* @__PURE__ */ e(Se, { size: b }),
+            iconOff: /* @__PURE__ */ e(je, { size: b }),
             "data-testid": "media-controls-cam"
           }
         ),
@@ -2961,7 +2995,7 @@ function yn({
             offTone: "neutral",
             "aria-label": r ? "Stop sharing screen" : "Share screen",
             title: r ? "Stop sharing screen" : "Share screen",
-            iconOn: /* @__PURE__ */ e(Pt, { size: b }),
+            iconOn: /* @__PURE__ */ e(It, { size: b }),
             iconOff: /* @__PURE__ */ e(Tt, { size: b }),
             "data-testid": "media-controls-screenshare"
           }
@@ -2977,10 +3011,10 @@ function yn({
             "data-testid": "media-controls-leave",
             className: v(
               "rounded-full grid place-items-center transition-colors duration-150",
-              zt[f],
+              Ft[f],
               "bg-red-600 text-white hover:bg-red-700 cursor-pointer"
             ),
-            children: /* @__PURE__ */ e(It, { size: Ft[f] })
+            children: /* @__PURE__ */ e(At, { size: Wt[f] })
           }
         )
       ]
@@ -2988,47 +3022,47 @@ function yn({
   );
 }
 export {
-  un as A,
-  Jt as B,
+  hn as A,
+  Zt as B,
   Je as C,
-  nn as D,
-  hn as E,
+  rn as D,
+  fn as E,
   mt as F,
   xt as G,
-  bn as H,
-  dn as I,
+  wn as H,
+  un as I,
   ft as J,
-  yn as M,
+  kn as M,
   We as N,
-  It as P,
-  Qt as R,
-  Pt as S,
-  xn as T,
-  qt as V,
+  At as P,
+  en as R,
+  It as S,
+  vn as T,
+  Qt as V,
   Ge as a,
-  on as b,
+  an as b,
   ue as c,
-  rn as d,
-  mn as e,
+  on as d,
+  pn as e,
   G as f,
-  wn as g,
+  yn as g,
   Ce as h,
   Me as i,
-  vn as j,
-  gn as k,
-  sn as l,
-  en as m,
-  pn as n,
-  ln as o,
-  an as p,
+  bn as j,
+  xn as k,
+  cn as l,
+  tn as m,
+  gn as n,
+  sn as o,
+  ln as p,
   dt as q,
-  fn as r,
-  cn as s,
+  mn as r,
+  dn as s,
   Tt as t,
-  Zt as u,
-  tn as v,
+  qt as u,
+  nn as v,
   Ne as w,
   Le as x,
-  Se as y,
-  Gt as z
+  je as y,
+  Jt as z
 };

@@ -8,6 +8,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.29.0] — 2026-06-07
+
+### Added
+
+- **`<RemoteTileSlot>` audio-from-t=0**. The avatar fallback branch
+  (no usable video) now renders a hidden `<audio>` bound to the same
+  `MediaStream`, so the inbound audio track plays the moment its RTP
+  arrives — independent of whether a `<video>` element is currently
+  decoding frames. Closes bug class #3 ("~10s silence before audio
+  plays") at the SHARED layer rather than letting each consumer
+  rediscover the fix.
+
+  Upstream of websocket-gateway commit `a923d6b` (introduced
+  `RemoteAudioAttachment` inline in `HangoutOverlay`). With this
+  release, every `<RemoteTileSlot>` consumer (current: WSG
+  HangoutOverlay; future: VideoCallPanel, HangoutDemoPage,
+  anything new) inherits the fix without per-consumer wiring.
+
+  Important guard: the hidden `<audio>` is rendered ONLY in the
+  avatar branch. When `<RemoteTileSlot>` is showing `<StreamVideo>`,
+  the video element handles audio playback natively — adding a
+  second `<audio>` bound to the same MediaStream's audio track
+  would risk playback duplication in some browsers. The test suite
+  pins this invariant (`renders <StreamVideo> branch (no avatar, no
+  hidden audio)`).
+
+  Pure backward-compatible: `RemoteTileSlotProps` is unchanged.
+  9 new test cases (`RemoteTileSlot.test.tsx` — new file): avatar
+  branch + audio binding under no-stream / camera-off / cold-WHEP
+  conditions, no-binding guard for the video branch, rebind-on-
+  stream-change, cleanup-on-stream-undef, display-name preservation,
+  avatarSize prop. 9/9 green.
+
 ## [2.28.0] — 2026-06-07
 
 ### Added
