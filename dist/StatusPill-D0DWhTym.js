@@ -11,7 +11,7 @@ import { S as re } from "./StatusDot-BC7B1tTr.js";
 import { createPortal as ae } from "react-dom";
 import { C as ve } from "./Card-B2uO9v1w.js";
 import { C as ye } from "./Chip-CAS9vOWq.js";
-import { A as we } from "./Badge-DfLjuUrl.js";
+import { A as we } from "./Badge-CgxZp81E.js";
 import "clsx";
 import "tailwind-merge";
 const Ne = [

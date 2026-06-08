@@ -8,6 +8,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.31.0] — 2026-06-08
+
+### Added
+
+- **`<PresenceAvatars>` gains 4 additive props** so it covers the
+  real-time-collab feature surface that downstream consumers (notably
+  websocket-gateway's doc-editor `DocumentListPage`) were rolling by
+  hand. The hand-rolled versions can now be retired in favour of the
+  composite without losing UX.
+
+  New `PresenceUser` fields (all optional):
+  - `color?: string` — overrides the auto-computed avatar background.
+    Use to match a CRDT cursor color so the same identity stays
+    visually consistent across cursor, selection halo, and avatar.
+  - `idle?: boolean` — present but away. Dims the avatar
+    (alpha-blends `color` to `#RRGGBB99` when in hex form, or drops
+    opacity to 0.6 as a fallback) and flips the status dot from
+    green → amber. Takes precedence over `online` for dot color.
+  - `mode?: 'editor' | 'reviewer' | 'reader'` — renders a small
+    badge on the upper-right of the avatar (pencil / check / eye).
+    `aria-label` carries the human-readable verb ("Editing" /
+    "Reviewing" / "Viewing"). Composite badge sizes scale with the
+    avatar `size`.
+
+  New `PresenceAvatarsProps` field:
+  - `onUserClick?: (id: string) => void` — per-user click. When
+    set, each avatar renders as a `<button>` (focusable + keyboard +
+    screen-reader accessible); when omitted, items stay as `<div>`
+    (back-compat with consumers that want a static row). Click
+    `event.stopPropagation()` is fired so parent click handlers
+    don't fire when an avatar is clicked.
+
+  New e2e selectors: `data-presence-idle="true"` and
+  `data-presence-mode="<mode>"` on each avatar wrapper;
+  `data-testid="presence-mode-badge"` on the badge itself.
+
+  Title text composition: `<name> — Away` when idle (wins);
+  `<name> — <mode label>` when mode set; `<name>` otherwise.
+
+  Behaviour fully backward-compatible: every new field is optional
+  and existing consumers (no color, no idle, no mode, no
+  onUserClick) get identical rendering. 19 new test cases
+  (27/27 PresenceAvatars green; full library suite 2885/2886
+  passing — 1 pre-existing skip).
+
+  Closes the operator-weigh-in question from 2026-06-07 on whether
+  to swap WSG's hand-rolled `PresenceAvatars` (115 LOC of inline-
+  styled tinted-circle code in `DocumentListPage.tsx`). With this
+  release the swap becomes a straight pass-through with no feature
+  loss.
+
 ## [2.30.0] — 2026-06-07
 
 ### Changed

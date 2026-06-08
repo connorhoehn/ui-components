@@ -58,4 +58,176 @@ describe('PresenceAvatars', () => {
     expect(screen.getByLabelText('7 more users')).toBeInTheDocument();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
   });
+
+  // ── v2 surface (color / idle / mode / onUserClick) ─────────────────────
+
+  describe('custom color', () => {
+    it('passes color through to the Avatar background', () => {
+      // Avatar applies background inline. We assert via the rendered
+      // style on the inner Avatar div — the testid `presence-avatar`
+      // sits on the outer wrapper, so the first child is the Avatar.
+      const { container } = render(
+        <PresenceAvatars users={[{ id: 'u1', name: 'Alice', color: '#ff0080' }]} />,
+      );
+      const wrapper = container.querySelector('[data-testid="presence-avatar"]');
+      expect(wrapper).not.toBeNull();
+      const avatarEl = wrapper!.firstElementChild as HTMLElement;
+      expect(avatarEl.style.background).toMatch(/#ff0080|rgb\(255,\s*0,\s*128\)/i);
+    });
+
+    it('color is ignored when avatarUrl wins', () => {
+      // Image override beats color — the consumer's preference.
+      const { container } = render(
+        <PresenceAvatars users={[{ id: 'u1', name: 'Alice', color: '#ff0080', avatarUrl: 'https://x.test/a.png' }]} />,
+      );
+      const img = container.querySelector('img');
+      expect(img).not.toBeNull();
+      expect(img!.getAttribute('src')).toBe('https://x.test/a.png');
+    });
+  });
+
+  describe('idle state', () => {
+    it('flips the status dot to amber when idle=true', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', idle: true }]} />);
+      // The status-dot label reflects the away state.
+      expect(screen.getByLabelText('Alice away')).toBeInTheDocument();
+      // No green "online" / gray "offline" labels.
+      expect(screen.queryByLabelText('Alice online')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Alice offline')).not.toBeInTheDocument();
+    });
+
+    it('idle takes precedence over online (online+idle = away)', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', online: true, idle: true }]} />);
+      expect(screen.getByLabelText('Alice away')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Alice online')).not.toBeInTheDocument();
+    });
+
+    it('dims the avatar color via hex+alpha when both color and idle are set', () => {
+      const { container } = render(
+        <PresenceAvatars users={[{ id: 'u1', name: 'Alice', color: '#ff0080', idle: true }]} />,
+      );
+      const avatarEl = container.querySelector('[data-testid="presence-avatar"] > :first-child') as HTMLElement;
+      // #ff0080 → #ff008099 (60% alpha) when idle is true. jsdom
+      // normalises the inline-style hex+alpha into rgba(), so accept
+      // either textual form.
+      const bg = avatarEl.style.background.toLowerCase();
+      const acceptsHex = bg.includes('#ff008099');
+      const acceptsRgba = bg.replace(/\s+/g, '') === 'rgba(255,0,128,0.6)';
+      expect(acceptsHex || acceptsRgba).toBe(true);
+    });
+
+    it('drops opacity when idle is set without a color (Avatar uses name-derived bg)', () => {
+      const { container } = render(
+        <PresenceAvatars users={[{ id: 'u1', name: 'Alice', idle: true /* no color */ }]} />,
+      );
+      const avatarEl = container.querySelector('[data-testid="presence-avatar"] > :first-child') as HTMLElement;
+      // Opacity fallback path — wrapper-level opacity rather than alpha-blended color.
+      expect(avatarEl.style.opacity).toBe('0.6');
+    });
+
+    it('sets data-presence-idle="true" for e2e selectors', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', idle: true }]} />);
+      const item = screen.getByTestId('presence-avatar');
+      expect(item.getAttribute('data-presence-idle')).toBe('true');
+    });
+
+    it('omits data-presence-idle when idle is absent (no spurious attribute)', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice' }]} />);
+      const item = screen.getByTestId('presence-avatar');
+      expect(item.getAttribute('data-presence-idle')).toBe(null);
+    });
+  });
+
+  describe('mode badge', () => {
+    it('renders the pencil badge for mode="editor"', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'editor' }]} />);
+      const badge = screen.getByTestId('presence-mode-badge');
+      expect(badge).toBeInTheDocument();
+      expect(badge.textContent).toContain('✏');
+      expect(badge.getAttribute('aria-label')).toBe('Editing');
+    });
+
+    it('renders the check badge for mode="reviewer"', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'reviewer' }]} />);
+      const badge = screen.getByTestId('presence-mode-badge');
+      expect(badge.textContent).toContain('✔');
+      expect(badge.getAttribute('aria-label')).toBe('Reviewing');
+    });
+
+    it('renders the eye badge for mode="reader"', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'reader' }]} />);
+      const badge = screen.getByTestId('presence-mode-badge');
+      expect(badge.textContent).toContain('👁');
+      expect(badge.getAttribute('aria-label')).toBe('Viewing');
+    });
+
+    it('does not render the badge when mode is omitted', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice' }]} />);
+      expect(screen.queryByTestId('presence-mode-badge')).not.toBeInTheDocument();
+    });
+
+    it('sets data-presence-mode for e2e selectors', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'reviewer' }]} />);
+      const item = screen.getByTestId('presence-avatar');
+      expect(item.getAttribute('data-presence-mode')).toBe('reviewer');
+    });
+  });
+
+  describe('onUserClick', () => {
+    it('renders avatars as buttons when onUserClick is provided', () => {
+      const onUserClick = vi.fn();
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice' }]} onUserClick={onUserClick} />);
+      const item = screen.getByTestId('presence-avatar');
+      expect(item.tagName).toBe('BUTTON');
+      expect(item.getAttribute('type')).toBe('button');
+    });
+
+    it('renders avatars as divs when onUserClick is absent (back-compat)', () => {
+      render(<PresenceAvatars users={[{ id: 'u1', name: 'Alice' }]} />);
+      const item = screen.getByTestId('presence-avatar');
+      expect(item.tagName).toBe('DIV');
+    });
+
+    it('fires onUserClick with the user id', () => {
+      const onUserClick = vi.fn();
+      render(<PresenceAvatars users={[{ id: 'alice-uid', name: 'Alice' }]} onUserClick={onUserClick} />);
+      fireEvent.click(screen.getByTestId('presence-avatar'));
+      expect(onUserClick).toHaveBeenCalledTimes(1);
+      expect(onUserClick).toHaveBeenCalledWith('alice-uid');
+    });
+
+    it('stops propagation so parent click handlers do not also fire', () => {
+      const parentClick = vi.fn();
+      const onUserClick = vi.fn();
+      render(
+        <div onClick={parentClick}>
+          <PresenceAvatars users={[{ id: 'u1', name: 'Alice' }]} onUserClick={onUserClick} />
+        </div>,
+      );
+      fireEvent.click(screen.getByTestId('presence-avatar'));
+      expect(onUserClick).toHaveBeenCalled();
+      expect(parentClick).not.toHaveBeenCalled();
+    });
+  });
+
+  it('title text reflects mode label when set, falling back to bare name', () => {
+    render(
+      <PresenceAvatars
+        users={[
+          { id: 'u1', name: 'Alice', mode: 'editor' },
+          { id: 'u2', name: 'Bob' },
+        ]}
+      />,
+    );
+    const items = screen.getAllByTestId('presence-avatar');
+    expect(items[0].getAttribute('title')).toBe('Alice — Editing');
+    expect(items[1].getAttribute('title')).toBe('Bob');
+  });
+
+  it('title text says "Away" for idle (overriding mode label)', () => {
+    render(
+      <PresenceAvatars users={[{ id: 'u1', name: 'Alice', mode: 'editor', idle: true }]} />,
+    );
+    expect(screen.getByTestId('presence-avatar').getAttribute('title')).toBe('Alice — Away');
+  });
 });

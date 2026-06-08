@@ -932,7 +932,7 @@ export declare type PermissionKind = 'camera' | 'microphone' | 'screen';
 declare type PermissionState_2 = 'denied' | 'blocked' | 'no-device' | 'unavailable';
 export { PermissionState_2 as PermissionState }
 
-export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, className, }: PresenceAvatarsProps): JSX.Element;
+export declare function PresenceAvatars({ users, maxVisible, size, onMoreClick, onUserClick, className, }: PresenceAvatarsProps): JSX.Element;
 
 export declare interface PresenceAvatarsProps {
     users: PresenceAvatarUser[];
@@ -942,16 +942,33 @@ export declare interface PresenceAvatarsProps {
     size?: number;
     /** Called when the "+N" overflow chip is clicked */
     onMoreClick?: () => void;
+    /** Called with the user's `id` when an avatar is clicked. When set,
+     *  each avatar becomes a `<button>` for keyboard + screen-reader
+     *  accessibility; when omitted, items render as `<div>` (back-compat
+     *  with consumers that just want a static row). */
+    onUserClick?: (id: string) => void;
     className?: string;
 }
 
 export declare interface PresenceAvatarUser {
-    /** Unique identifier for the user */
+    /** Unique identifier for the user. Passed back to `onUserClick`. */
     id: string;
     name: string;
-    /** Optional avatar image URL */
+    /** Optional avatar image URL. Wins over `color` when present. */
     avatarUrl?: string;
+    /** Online flag. Drives the status dot when `idle` is not set:
+     *  `undefined`/`true` → green; `false` → gray. */
     online?: boolean;
+    /** Override the auto-computed avatar background. Useful when the
+     *  user identity needs to match a CRDT cursor color elsewhere. */
+    color?: string;
+    /** Present but away. Dims the avatar (alpha-blends `color` when
+     *  provided, otherwise drops opacity) and flips the status dot to
+     *  amber. Wins over `online` for the dot color. */
+    idle?: boolean;
+    /** Optional editing mode — renders a small mode badge on the
+     *  upper-right of the avatar (pencil / check / eye). */
+    mode?: PresenceMode;
 }
 
 export declare function PresenceDot({ state, ariaLabel, label, pulse, size, className, style, title, 'data-testid': testId, }: PresenceDotProps): JSX.Element;
@@ -970,6 +987,8 @@ export declare interface PresenceDotProps {
     title?: string;
     'data-testid'?: string;
 }
+
+declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
 export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
 
