@@ -65,6 +65,12 @@ export type { RecordingListProps, RecordingListItem } from './RecordingList';
 export { RecordingRow } from './RecordingRow';
 export type { RecordingRowProps, RecordingStatus } from './RecordingRow';
 
+export { TranscriptPanel } from './TranscriptPanel';
+export type { TranscriptPanelProps, TranscriptSegment, TranscriptStatus } from './TranscriptPanel';
+
+export { SummaryPanel } from './SummaryPanel';
+export type { SummaryPanelProps } from './SummaryPanel';
+
 export { PiPButton } from './PiPButton';
 export type { PiPButtonProps } from './PiPButton';
 
