@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.33.1] — 2026-06-10
+
+### Fixed
+
+- **`PresenceMode` now exported from `./shared` and root** (hub #1494).
+  The `shared` barrel exported `PresenceAvatarsProps` (which references
+  `PresenceMode` via its `mode` prop) without exporting `PresenceMode`
+  itself, so the 2.33.0 d.ts rollup emitted it as
+  `declare type PresenceMode = …` (declared-but-not-exported) and
+  consumers couldn't import it. Source-barrel bug, not a
+  vite-plugin-dts artifact. Found by websocket-gateway's 2.33.0 bump
+  (gateway commit `18c47e2` carries the downstream workaround).
+- **Deprecated `PresenceUser` back-compat alias** for
+  `PresenceAvatarUser` re-added to `./shared` and root
+  (`export type PresenceUser = PresenceAvatarUser`, tagged
+  `@deprecated`). The barrel has renamed `PresenceAvatars`' user shape
+  to `PresenceAvatarUser` since 2026-05-21, but earlier d.ts shapes
+  still let consumers import `PresenceUser`; 2.33.0's rollup broke
+  those imports with no alias. Migrate to `PresenceAvatarUser` — the
+  alias goes away in the next major.
+
 ## [2.33.0] — 2026-06-10
 
 ### Added

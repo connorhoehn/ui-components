@@ -121,7 +121,18 @@ export * from './FollowUpChips';
 export { ChannelHeader } from './ChannelHeader';
 export type { ChannelHeaderProps } from './ChannelHeader';
 export { PresenceAvatars } from './PresenceAvatars';
-export type { PresenceAvatarsProps, PresenceUser as PresenceAvatarUser } from './PresenceAvatars';
+export type {
+  PresenceAvatarsProps,
+  PresenceMode,
+  PresenceUser as PresenceAvatarUser,
+} from './PresenceAvatars';
+import type { PresenceUser as PresenceAvatarUserAlias } from './PresenceAvatars';
+/**
+ * @deprecated Renamed to `PresenceAvatarUser` (the barrel-exported name for
+ * the `PresenceAvatars` user shape). Import `PresenceAvatarUser` instead;
+ * this back-compat alias will be removed in the next major.
+ */
+export type PresenceUser = PresenceAvatarUserAlias;
 export { FileUploadDrop } from './FileUploadDrop';
 export type { FileUploadDropProps } from './FileUploadDrop';
 export { NotificationCenter } from './NotificationCenter';

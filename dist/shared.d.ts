@@ -1009,9 +1009,16 @@ export declare interface PresenceDotProps {
     'data-testid'?: string;
 }
 
-declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
+export declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
 export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
+
+/**
+ * @deprecated Renamed to `PresenceAvatarUser` (the barrel-exported name for
+ * the `PresenceAvatars` user shape). Import `PresenceAvatarUser` instead;
+ * this back-compat alias will be removed in the next major.
+ */
+export declare type PresenceUser = PresenceAvatarUser;
 
 export declare function ProgressBar({ value, max, color, size, label, showRatio, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ProgressBarProps): JSX.Element;
 

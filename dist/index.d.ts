@@ -1334,7 +1334,7 @@ declare interface CollapsibleSidebarProps {
     onDisconnect: () => void;
     onReconnect: () => void;
     onCollapse?: () => void;
-    presenceUsers: PresenceUser_2[];
+    presenceUsers: PresenceUser_3[];
     currentClientId: string;
     currentChannel: string;
     activityEvents: ActivityEvent[];
@@ -4735,7 +4735,7 @@ export declare interface PresenceAvatarUser {
 }
 
 export declare interface PresenceContextValue {
-    presenceUsers: PresenceUser[];
+    presenceUsers: PresenceUser_2[];
     currentClientId: string | null;
     setTyping: (isTyping: boolean) => void;
 }
@@ -4757,12 +4757,12 @@ export declare interface PresenceDotProps {
     'data-testid'?: string;
 }
 
-declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
+export declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
 
 export declare function PresencePanel({ users, currentClientId }: PresencePanelProps): JSX.Element;
 
 declare interface PresencePanelProps {
-    users: PresenceUser[];
+    users: PresenceUser_2[];
     currentClientId: string | null;
 }
 
@@ -4773,13 +4773,20 @@ export declare function PresenceProvider({ value, children, }: {
 
 export declare type PresenceState = 'online' | 'away' | 'busy' | 'offline' | 'unknown';
 
-declare interface PresenceUser {
+/**
+ * @deprecated Renamed to `PresenceAvatarUser` (the barrel-exported name for
+ * the `PresenceAvatars` user shape). Import `PresenceAvatarUser` instead;
+ * this back-compat alias will be removed in the next major.
+ */
+export declare type PresenceUser = PresenceAvatarUser;
+
+declare interface PresenceUser_2 {
     clientId: string;
     status: string;
     metadata: Record<string, unknown>;
 }
 
-declare interface PresenceUser_2 {
+declare interface PresenceUser_3 {
     clientId: string;
     metadata: Record<string, unknown>;
 }
@@ -7573,7 +7580,7 @@ declare interface UseActivityBusReturn {
  }
 
  declare interface UsePresenceReturn {
-     users: PresenceUser[];
+     users: PresenceUser_2[];
      setTyping: (isTyping: boolean) => void;
  }
 
