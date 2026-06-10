@@ -27,6 +27,17 @@ export {
 } from './context/PipelineRunsContext';
 export type { PipelineRunsProviderProps } from './context/PipelineRunsContext';
 
+// Host-injection seam: feed node components live run state from a host-owned
+// runs store without mounting the bundled PipelineRunsProvider stack.
+export {
+  PipelineNodeRuntimeProvider,
+  usePipelineNodeRuntime,
+} from './context/PipelineNodeRuntimeContext';
+export type {
+  PipelineNodeRuntimeValue,
+  PipelineNodeRuntimeProviderProps,
+} from './context/PipelineNodeRuntimeContext';
+
 export {
   PipelineEditorContext,
   PipelineEditorProvider,

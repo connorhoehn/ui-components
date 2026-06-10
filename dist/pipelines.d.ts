@@ -1653,6 +1653,36 @@ declare interface PipelineNode {
     data: NodeData;
 }
 
+/**
+ * Mount around any subtree containing ui-components pipeline nodes to feed
+ * them live run state from a host-owned store, without mounting the bundled
+ * `PipelineRunsProvider` (and its WebSocketProvider / social-api stack).
+ */
+export declare function PipelineNodeRuntimeProvider({ value, children, }: PipelineNodeRuntimeProviderProps): JSX.Element;
+
+export declare interface PipelineNodeRuntimeProviderProps {
+    value: PipelineNodeRuntimeValue;
+    children: ReactNode;
+}
+
+/**
+ * Value the host supplies to drive node-level live state.
+ */
+export declare interface PipelineNodeRuntimeValue {
+    /**
+     * Resolve the most recent `StepExecution` observed for a node, or null when
+     * the node has never run. MUST be re-created (new identity) whenever the
+     * host's runs store changes — consumers memoize on this function's identity.
+     */
+    getLatestStepForNode: (nodeId: string) => StepExecution | null;
+    /**
+     * Optional retry handler. When provided, `useRetryFromStep()` returns a
+     * wrapper around this instead of the bundled retry path. May be sync or
+     * async; the hook normalizes the return to a Promise.
+     */
+    retryFromStep?: (nodeId: string) => void | Promise<void>;
+}
+
 declare interface PipelineRun {
     id: string;
     pipelineId: string;
@@ -2247,12 +2277,24 @@ export declare interface UseJudgmentResultsOptions {
  * Returns null when no run has executed this node yet (the common case
  * for nodes that haven't run, or for the editor view when no run has been
  * triggered).
+ *
+ * Host seam: when a `PipelineNodeRuntimeProvider` is mounted, its
+ * `getLatestStepForNode` is consulted INSTEAD of the bundled runs store —
+ * even if a `PipelineRunsProvider` is also in scope. The host lookup is
+ * memoized on the function's identity, so hosts must hand us a fresh
+ * function whenever their store changes (see PipelineNodeRuntimeContext).
  */
 export declare function useLatestStepForNode(nodeId: string): StepExecution | null;
 
 export declare function usePipelineEditor(): PipelineEditorValue;
 
 export declare function usePipelineEditorServices(): PipelineEditorServices;
+
+/**
+ * Accessor for the host seam. Returns null when no host runtime provider is
+ * mounted (the common case inside apps that use the bundled runs store).
+ */
+export declare function usePipelineNodeRuntime(): PipelineNodeRuntimeValue | null;
 
 export declare function usePipelineRuns(): PipelineRunsValue;
 
@@ -2263,6 +2305,11 @@ export declare function usePipelineRuns(): PipelineRunsValue;
  * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
  * standalone visual renders (storybook, isolated unit tests) don't throw just
  * for asking for the retry handler.
+ *
+ * Host seam: when a `PipelineNodeRuntimeProvider` is mounted AND its value
+ * supplies `retryFromStep`, that handler wins over the bundled one (wrapped
+ * so callers always get a Promise back). A mounted seam WITHOUT a
+ * `retryFromStep` falls through to the bundled handler / no-op as before.
  */
 export declare function useRetryFromStep(): (nodeId: string) => Promise<void>;
 

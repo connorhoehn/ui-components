@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.34.0] — 2026-06-10
+
+### Added
+
+- **`PipelineNodeRuntimeProvider` — host-injection seam for live node
+  state** (`/pipelines`, additive). Node components (VisionNode,
+  GenerateNode, LLMNode, …) read live execution state via
+  `useLatestStepForNode(nodeId)` / `useRetryFromStep()`, which until now
+  only consulted the bundled `PipelineRunsProvider` — a provider that
+  hard-requires this library's WebSocketProvider + the
+  `VITE_SOCIAL_API_URL` HTTP seam. Host apps that maintain their own
+  runs store (websocket-gateway) can't mount it, so every
+  ui-components-imported node rendered `liveStep = null` there — dark
+  thumbnails and streaming footers. This is the gateway image-node
+  live-state gap introduced when the nodes moved into ui-components in
+  Phase 2b/2c. Hosts now mount
+  `<PipelineNodeRuntimeProvider value={{ getLatestStepForNode, retryFromStep? }}>`
+  around the canvas; when the seam is in scope the node-facing hooks
+  read IT instead of the bundled runs store (bundled provider, if also
+  mounted, is ignored for these two hooks). Contract: re-create
+  `getLatestStepForNode` (new function identity) whenever the host
+  store changes — consumers memoize on the identity. `retryFromStep`
+  is optional (sync or async; normalized to a Promise); when omitted
+  the bundled handler / no-op fallback applies as before. New exports:
+  `PipelineNodeRuntimeProvider`, `usePipelineNodeRuntime`,
+  `PipelineNodeRuntimeValue`, `PipelineNodeRuntimeProviderProps`.
+  Absent the seam, behavior is byte-identical to 2.33.x (regression
+  tests cover both paths; 11 new tests).
+
 ## [2.33.1] — 2026-06-10
 
 ### Fixed

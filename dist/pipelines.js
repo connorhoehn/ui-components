@@ -1,8 +1,8 @@
 import { jsxs as o, jsx as e, Fragment as K } from "react/jsx-runtime";
 import go, { useState as S, useRef as le, useMemo as q, useEffect as ne, memo as Zo, useCallback as E, useContext as xo, createContext as ea } from "react";
 import { useNavigate as Be, useParams as gt, Navigate as xt, useSearchParams as an } from "react-router";
-import { v as he, w as Ae, q as Re, G as Vn, x as Ue, u as bt, i as ta, g as na, f as nr, p as ra, y as oa, J as cn, t as bo, I as yo, e as Bt, S as en, N as aa, T as dn, n as vo, a as ot, z as No, A as Wn, B as En, C as wo, D as ia, E as sa, F as la, b as ca, H as at, K as da, L as pa, M as it, O as rr, Q as ua, j as ma, o as ko, R as tn, U as ha, m as or, P as fa, V as ga, r as xa, W as nn, l as ar, X as ba, k as ya } from "./PipelineEditorServicesContext-D_ZyIOs7.js";
-import { h as lf } from "./PipelineEditorServicesContext-D_ZyIOs7.js";
+import { v as he, w as Ae, q as Re, G as Vn, x as Ue, u as bt, i as ta, g as na, f as nr, p as ra, y as oa, J as cn, t as bo, I as yo, e as Bt, S as en, N as aa, T as dn, n as vo, a as ot, z as No, A as Wn, B as En, C as wo, D as ia, E as sa, F as la, b as ca, H as at, K as da, L as pa, M as it, O as rr, Q as ua, j as ma, o as ko, R as tn, U as ha, m as or, P as fa, V as ga, r as xa, W as nn, l as ar, X as ba, k as ya } from "./PipelineEditorServicesContext-MxfvQVLe.js";
+import { h as lf, Y as cf, Z as df } from "./PipelineEditorServicesContext-MxfvQVLe.js";
 import { Handle as U, Position as F, useNodeConnections as va, getSmoothStepPath as Na, EdgeLabelRenderer as ir, ReactFlowProvider as wa, useReactFlow as ka, useNodesState as Co, useEdgesState as Io, ReactFlow as So, Background as $o, BackgroundVariant as Ca, Controls as To, MiniMap as Ia } from "@xyflow/react";
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
@@ -14,7 +14,7 @@ import { M as He } from "./Modal-2jg4229_.js";
 import "react-dom";
 import "./WebSocketContext-DPGFyPeZ.js";
 import { a as Ee, u as Pa } from "./EventStreamContext-CjzSHXy-.js";
-import { E as df } from "./EventStreamContext-CjzSHXy-.js";
+import { E as uf } from "./EventStreamContext-CjzSHXy-.js";
 import { B as Oe } from "./Button-Qsbxqsl9.js";
 import { I as mt, F as Ma } from "./FileUploadDrop-Cmz3XANg.js";
 import { u as Kn } from "./IdentityContext-CLalsm_M.js";
@@ -18400,7 +18400,7 @@ function tm({ pipelineId: t, runId: n }) {
   const r = Be(), a = Ue(), i = bt(), { definition: s } = a, [d, c] = S(null);
   ne(() => {
     let j = !1;
-    return import("./PipelineEditorServicesContext-D_ZyIOs7.js").then((ce) => ce.Y).then(({ getPipelineRun: ce }) => {
+    return import("./PipelineEditorServicesContext-MxfvQVLe.js").then((ce) => ce._).then(({ getPipelineRun: ce }) => {
       ce(t, n).then((we) => {
         !j && we && c(we);
       });
@@ -21785,7 +21785,7 @@ export {
   np as EditPromptConfig,
   Yi as EditPromptNode,
   pp as EditRecommendationsPanel,
-  df as EventStreamProvider,
+  uf as EventStreamProvider,
   ri as ForkNode,
   Bc as FormatConvertConfig,
   Si as FormatConvertNode,
@@ -21818,6 +21818,7 @@ export {
   Lh as PipelineEditorPage,
   No as PipelineEditorProvider,
   lf as PipelineEditorServicesProvider,
+  cf as PipelineNodeRuntimeProvider,
   jh as PipelineRunComparePage,
   zh as PipelineRunDiff,
   Fh as PipelineRunReplayPage,
@@ -21872,6 +21873,7 @@ export {
   he as useLatestStepForNode,
   Ue as usePipelineEditor,
   bo as usePipelineEditorServices,
+  df as usePipelineNodeRuntime,
   bt as usePipelineRuns,
   Ae as useRetryFromStep,
   Kh as useVisionResults

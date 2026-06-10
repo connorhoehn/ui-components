@@ -30,6 +30,7 @@ import { listPipelineRuns } from '../../../api/pipelineRuns';
 import { PipelineEditorContext } from './PipelineEditorContext';
 import { useTriggerRun } from '../hooks/useTriggerRun';
 import { usePipelineWsCommands } from './WebSocketEventAdapter';
+import { usePipelineNodeRuntime } from './PipelineNodeRuntimeContext';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -908,10 +909,25 @@ export function usePipelineRuns(): PipelineRunsValue {
  * Graceful when no `PipelineRunsProvider` is in scope — returns a no-op so
  * standalone visual renders (storybook, isolated unit tests) don't throw just
  * for asking for the retry handler.
+ *
+ * Host seam: when a `PipelineNodeRuntimeProvider` is mounted AND its value
+ * supplies `retryFromStep`, that handler wins over the bundled one (wrapped
+ * so callers always get a Promise back). A mounted seam WITHOUT a
+ * `retryFromStep` falls through to the bundled handler / no-op as before.
  */
 export function useRetryFromStep(): (nodeId: string) => Promise<void> {
+  const host = usePipelineNodeRuntime();
   const ctx = useContext(PipelineRunsContext);
-  return ctx?.retryFromStep ?? (async () => {});
+  const hostRetry = host?.retryFromStep;
+  const bundledRetry = ctx?.retryFromStep;
+  return useMemo(() => {
+    if (hostRetry) {
+      return async (nodeId: string) => {
+        await hostRetry(nodeId);
+      };
+    }
+    return bundledRetry ?? (async () => {});
+  }, [hostRetry, bundledRetry]);
 }
 
 /**
@@ -931,10 +947,24 @@ export function useRetryFromStep(): (nodeId: string) => Promise<void> {
  * Returns null when no run has executed this node yet (the common case
  * for nodes that haven't run, or for the editor view when no run has been
  * triggered).
+ *
+ * Host seam: when a `PipelineNodeRuntimeProvider` is mounted, its
+ * `getLatestStepForNode` is consulted INSTEAD of the bundled runs store —
+ * even if a `PipelineRunsProvider` is also in scope. The host lookup is
+ * memoized on the function's identity, so hosts must hand us a fresh
+ * function whenever their store changes (see PipelineNodeRuntimeContext).
  */
 export function useLatestStepForNode(nodeId: string): StepExecution | null {
+  const host = usePipelineNodeRuntime();
   const ctx = useContext(PipelineRunsContext);
-  return useMemo(() => {
+  const hostGet = host?.getLatestStepForNode;
+
+  // Both memos run unconditionally (rules-of-hooks); selection happens after.
+  const hostStep = useMemo(
+    () => (hostGet ? hostGet(nodeId) : null),
+    [hostGet, nodeId],
+  );
+  const bundledStep = useMemo(() => {
     if (!ctx) return null;
     let latest: StepExecution | null = null;
     let latestStartedAt = '';
@@ -948,4 +978,6 @@ export function useLatestStepForNode(nodeId: string): StepExecution | null {
     }
     return latest;
   }, [ctx, nodeId]);
+
+  return hostGet ? hostStep : bundledStep;
 }
