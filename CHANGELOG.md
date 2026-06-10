@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.33.0] — 2026-06-10
+
+### Added
+
+- **`/pipelines` + `/doc-editor` graduate to stable / API-frozen**
+  (hub #1062 + #1066). Both barrels' public surfaces (everything their
+  `index.ts` files export) are now frozen: breaking changes require a
+  major bump + consumer handoff per the charter. Internal,
+  non-barrel modules (pipelines `chaos/`/`dev/`/`replay/`/persistence
+  internals; doc-editor `useDocumentEditorState`/`EditorModeSwitch`/
+  `EditorSidebarManager`) stay private and may change freely. Full
+  enumeration in `CLAUDE.md` → "API freeze" section.
+- **Pipelines test floor** (was 1 test / 91 files at audit time):
+  behavior tests for `PipelineEditorPage` (full provider-stack mount:
+  stale-URL redirect, top-bar/palette/canvas composition, Cmd+S save
+  toast, draft-run gating, single-trigger palette invariant),
+  `PipelineEditorContext` (load, node/edge mutations, duplicate,
+  undo/redo history, dirty tracking, save seam, drag repositioning,
+  metadata-off-history contract) and `EventStreamContext` (typed +
+  wildcard fan-out, `(runId, stepId, seq)` envelope dedupe, unsubscribe,
+  throwing-handler isolation). 24 new tests across 3 files; the page
+  test mounts the real xyflow canvas.
+- **Doc-editor test floor**: `DocumentEditorPage` composition tests
+  running the real Yjs stack (Y.Doc + GatewayProvider over a stub
+  gateway): page frame + header mode switcher + empty state, mode
+  switching, demo-load markdown → Y.Doc → SectionList/Tiptap rendering,
+  and meta propagation into the header title. 4 new tests;
+  `StandaloneTiptap` and 21 other doc-editor suites already existed.
+
+### Notes
+
+- The four "missing" Wrapped* stories (hub #989 — `WrappedActivityPanel`,
+  `WrappedReactionsOverlay`, `WrappedFileUploadDrop`,
+  `WrappedHangoutLayout`) shipped earlier in commit 597d440; this
+  release closes the tracking item and corrects the stale coverage
+  notes in `CLAUDE.md`.
+
 ## [2.32.0] — 2026-06-10
 
 ### Added

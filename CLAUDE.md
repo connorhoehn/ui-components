@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehn/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehn/ui-components` (currently `2.32.0`). Consumed by
+GitHub Packages as `@connorhoehn/ui-components` (currently `2.33.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 ## Operating mode (autonomous, 2026-05-30 → ~2026-06-20)
@@ -22,7 +22,7 @@ Wave order (don't pick across waves): **0** charter + reachability →
 ## Quick commands
 
 ```bash
-npm test           # vitest run (156 test files)
+npm test           # vitest run (286 test files)
 npm run lint       # tsc --noEmit (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
@@ -45,9 +45,51 @@ npm run test:e2e   # playwright (tests/e2e/)
 | `…/video-ivs` | AWS IVS-specific video implementation | **Stable API** |
 | `…/styles.css` | Tailwind design tokens + keyframes | **Stable** |
 | `…/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A canvas, `AgentDirectory`, `ConversationHistory` | **Stable API** (AG-UI v0.1.x types frozen 2026-06-06; see `src/types/agents.ts` header) |
-| `…/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
-| `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **In-flux** (graduation: hub #1066 — `StandaloneTiptap` shipped; Tailwind wave 3 still pending) |
+| `…/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **Stable — API frozen 2026-06-10** (hub #1062; see freeze note below) |
+| `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **Stable — API frozen 2026-06-10** (hub #1066; internal Tailwind wave 3 may still land — no API impact) |
 | `…/observability` | Dashboard, events, metrics, node pages | **In-flux** |
+
+### API freeze: `/pipelines` + `/doc-editor` (2026-06-10, v2.33.0)
+
+Both barrels are now **frozen public API** — breaking changes require a
+major bump + consumer handoff per the charter (event-catalog imports
+`…/pipelines` admin views; websocket-gateway consumes both).
+
+**Frozen `/pipelines` surface** (everything `src/components/pipelines/index.ts`
+exports):
+
+- Pages: `PipelineEditorPage`, `PipelinesPage`, `PipelineRunsPage`,
+  `PipelineRunReplayPage`, `PipelineRunComparePage`, `PipelineRunDiff`,
+  `AllRunsPage`, `PipelineStatsPage`, `PendingApprovalsPage`
+- Contexts/providers + hooks: `EventStreamProvider` / `useEventStream(Context)`,
+  `PipelineRunsProvider` / `usePipelineRuns` / `useRetryFromStep` /
+  `useLatestStepForNode`, `PipelineEditorContext` / `PipelineEditorProvider` /
+  `usePipelineEditor` (+ their exported prop/value types)
+- Canvas: `PipelineCanvas`, `NodePalette` (+ `PALETTE_ITEMS`, `recordRecentType`)
+- All node components + `nodeTypes` map, all per-node `*Config` panels
+- Vision/judge/lineage sub-surfaces (`./vision`, `./judge`, `./lineage`
+  re-exports — frozen at their own `index.ts` barrels)
+- Services seam: `PipelineEditorServicesProvider`, `useImageUrl`,
+  `usePipelineEditorServices`
+
+**Frozen `/doc-editor` surface** (everything `src/components/doc-editor/index.ts`
+exports): `DocumentEditorPage` (+ `DocumentEditorPageProps`),
+`DocumentListPage`, `StandaloneTiptap` (+ its prop types), `TiptapEditor`,
+`DocumentHeader`, `EditorToolbar`, section/review/reader composites,
+sidebar panels, `useDocumentActions`, `useSidebarPanels`, and the
+`CommentThread` / `ReaderSectionCard` / `ReaderSummary` helpers.
+
+**Deliberately OUTSIDE the freeze** (not exported by the barrels — internal,
+may change without a major bump):
+
+- `/pipelines`: `chaos/`, `dev/` (SimulatorPanel, dev editor bridge),
+  `context-inspector/`, `replay/`, `cost/`, `cron/`, `persistence/`
+  internals (`pipelineStorage*`, `runHistory`), `WebSocketEventAdapter`
+  internals, validation/lint internals, and non-barrel one-off components
+  (`RunsTable`, `RunDetailDrawer`, filter/bulk bars, `StepTimeline`, …)
+- `/doc-editor`: `useDocumentEditorState`, `EditorModeSwitch`,
+  `EditorSidebarManager` (page-internal orchestration — kept private on
+  purpose so the page can be re-composed without an API break)
 
 ### Reachability gap (CLOSED 2026-06-10 — hub #1021 + #1058, v2.32.0)
 
@@ -154,15 +196,23 @@ tests/e2e/         Playwright (6 specs; expansion tracked in hub #1046)
 See `TAILWIND_MIGRATION.md` for conversion rules and token mappings.
 
 ### Test coverage (audit #5)
-Zero-test folders: `collaboration/` (8 components), `doc-editor/` (33),
-`doc-types/` (5), `misc/` (8). Lowest ratio: `pipelines/` 1/91. Tracked
-under hub #1051. Large untested exports — `CallWidget` 1009 LOC,
-`AppLayout` 837, `CollapsibleSidebar` 454 — tracked under #1041.
+Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066): `pipelines/`
+now has ~45 test files (was 1/91) including the editor mounting path
+(`PipelineEditorPage`), editor/event-stream contexts, `NodePalette`, and
+20+ node components; `doc-editor/` has 23 (was 0) including the full
+`DocumentEditorPage` Yjs composition path and `StandaloneTiptap`.
+Remaining zero-test folders: `collaboration/` (8 components),
+`doc-types/` (5), `misc/` (8) — tracked under hub #1051. Large untested
+exports — `CallWidget` 1009 LOC, `AppLayout` 837, `CollapsibleSidebar`
+454 — tracked under #1041.
 
 ### Story coverage (audit #4, audit #5)
-15 stories vs hundreds of components. `WrappedActivityPanel`,
-`WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout` —
-no stories (hub #989). 51 `shared/` components, 7 stories (hub #1059).
+Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,
+`WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`,
+`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedNotificationCenter`,
+`CapabilityBoundary`, and the Hangout composites all have stories driven by
+mocked `RM*` hook-return shapes (no realtime-modules runtime needed).
+Still thin elsewhere: 51 `shared/` components, 7 stories (hub #1059).
 
 ## Publishing
 
