@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.32.0] — 2026-06-10
+
+### Added
+
+- **Root-export reachability gap closed** (hub #1021 + #1058): the root
+  entry (`@connorhoehn/ui-components`) now re-exports the full public
+  surfaces of `layout/` (AppShell, AppLayout, CollapsibleSidebar,
+  SettingsLayout, TopNav, DocsShell, …), `social/` (ChatPanel, PostFeed,
+  ReactionsBar, PresencePanel, ActivityPanel, …) and `video/`
+  (HangoutLayout, VideoGrid, VideoPlayer, CallWidget, RecordingList,
+  TranscriptPanel, …) alongside the existing shared/sidebar/hangout
+  exports. `import { AppShell, ChatPanel, HangoutLayout } from
+  '@connorhoehn/ui-components'` now works. Subpath imports (`/social`,
+  `/video`, `/identity`, …) are unchanged; note `layout/` has no
+  subpath — root is its only import path.
+
+  Name collisions keep the pre-existing root symbol canonical; the
+  newcomer is aliased at root and unaliased on its subpath:
+  social `CommentThread` → `CommentThreadPanel`, video `Participant` →
+  `VideoParticipant`, identity `FormField`/`FormFieldProps` →
+  `IdentityFormField`/`IdentityFormFieldProps`, identity `AuditPage` →
+  `IdentityAuditPage`.
+
 ## [2.31.0] — 2026-06-08
 
 ### Added

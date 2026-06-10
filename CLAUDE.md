@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehn/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehn/ui-components` (currently `2.11.0`). Consumed by
+GitHub Packages as `@connorhoehn/ui-components` (currently `2.32.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 ## Operating mode (autonomous, 2026-05-30 → ~2026-06-20)
@@ -33,14 +33,14 @@ npm run test:e2e   # playwright (tests/e2e/)
 
 | Export path | Contents | Stability |
 |---|---|---|
-| `@connorhoehn/ui-components` | Root: types, hooks, contexts, shared, sidebar, hangout, styles, theme, api, renderers | **Stable** |
+| `@connorhoehn/ui-components` | Root: types, hooks, contexts, shared, sidebar, hangout, layout, social, video, identity, forms, styles, theme, api, renderers | **Stable** |
 | `…/types` | Core TypeScript types | **Stable** |
 | `…/shared` | Button, Card, Modal, Toast, Table, TagEditor, CodeEditor, EmptyState, PageHeader, ChannelHeader, NotificationCenter, FileUploadDrop, Breadcrumbs, PresenceAvatars | **Stable** |
 | `…/hooks` | useWebSocket, useComments, useLikes, usePosts, useSocialProfile, etc. | **Stable** |
 | `…/identity` | Auth flows, admin user management, IdentityContext | **Stable** |
 | `…/social` | Posts, reactions, follow graph, ChatPanel | **Stable** |
 | `…/ingest` | Data-ingest UI primitives | **Stable** |
-| `…/layout` | AppShell, AppLayout, CollapsibleSidebar | **Stable** (NOT yet re-exported from root — see Reachability gap) |
+| `…/layout` | AppShell, AppLayout, CollapsibleSidebar | **Stable** — root-export only; there is NO `…/layout` subpath in the exports map. Import from the root. |
 | `…/video` | VideoPlayer, VideoGrid, HangoutLayout, participant tiles, recordings, transcript | **Stable API**, minor churn |
 | `…/video-ivs` | AWS IVS-specific video implementation | **Stable API** |
 | `…/styles.css` | Tailwind design tokens + keyframes | **Stable** |
@@ -49,15 +49,21 @@ npm run test:e2e   # playwright (tests/e2e/)
 | `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **In-flux** (graduation: hub #1066 — `StandaloneTiptap` shipped; Tailwind wave 3 still pending) |
 | `…/observability` | Dashboard, events, metrics, node pages | **In-flux** |
 
-### Reachability gap (load-bearing)
+### Reachability gap (CLOSED 2026-06-10 — hub #1021 + #1058, v2.32.0)
 
-The global CLAUDE.md mandates that consumer pages use composites like
-`AppShell`, `AppLayout`, `ChatPanel`, `HangoutLayout`. **Today, root
-`src/index.ts` only re-exports `shared/`, `sidebar/`, `hangout/`** — the
-other four are reachable ONLY via subpath imports (`@connorhoehn/ui-components/layout`,
-`/social`, `/video`). Until **hub #1021 + #1058** land in Wave 0, the safe import
-path for those composites is the subpath form. Don't recommend root imports for
-them.
+Root `src/index.ts` now re-exports `layout/`, `social/`, `video/`, and
+`identity/` alongside `shared/`, `sidebar/`, `hangout/`, so
+`import { AppShell, ChatPanel, HangoutLayout } from '@connorhoehn/ui-components'`
+works. Subpaths (`/social`, `/video`, `/identity`, …) remain intact; note
+`layout/` never had its own subpath — root is its only import path.
+
+Name collisions are resolved in `src/index.ts` (see the disambiguator block):
+the pre-existing root symbol keeps its name; the newcomer is root-reachable
+under an alias and unaliased via its subpath —
+`CommentThread` (types) vs social's `CommentThread` → `CommentThreadPanel`;
+`Participant` (types) vs video's → `VideoParticipant`;
+`FormField`/`FormFieldProps` (shared) vs identity's → `IdentityFormField`/`IdentityFormFieldProps`;
+`AuditPage` (api/pipelineAudit type) vs identity's component → `IdentityAuditPage`.
 
 ## Consumer list
 
