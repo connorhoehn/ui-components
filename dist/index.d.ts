@@ -1995,6 +1995,49 @@ export declare interface DrawerProps {
     'data-testid'?: string;
 }
 
+export declare function DropdownMenu({ trigger, triggerLabel, triggerTitle, triggerClassName, align, sections, className, 'data-testid': testId, }: DropdownMenuProps): JSX.Element;
+
+export declare interface DropdownMenuItem {
+    /** Visible item label. */
+    label: string;
+    /** Optional leading icon / glyph. */
+    icon?: ReactNode;
+    /** Highlight this item as the currently-active selection. */
+    active?: boolean;
+    /** Style this item as destructive. */
+    danger?: boolean;
+    /** Fires on click / Enter; the menu closes afterwards. */
+    onSelect: () => void;
+}
+
+export declare interface DropdownMenuProps {
+    /** Content of the built-in trigger button (icon, glyph, text…). */
+    trigger: ReactNode;
+    /** Accessible label for the trigger button. Default 'Open menu'. */
+    triggerLabel?: string;
+    /** Optional title attribute (hover tooltip) for the trigger button. */
+    triggerTitle?: string;
+    /** Optional className for the trigger button. */
+    triggerClassName?: string;
+    /**
+     * Panel alignment relative to the trigger. 'start' (default) anchors the
+     * panel's left edge to the trigger's left edge; 'end' anchors the panel's
+     * RIGHT edge to the trigger's right edge.
+     */
+    align?: 'start' | 'end';
+    sections: DropdownMenuSection[];
+    /** Optional className for the dropdown panel. */
+    className?: string;
+    /** Optional testid for the panel. Default 'dropdown-menu'. */
+    'data-testid'?: string;
+}
+
+export declare interface DropdownMenuSection {
+    /** Optional uppercase section heading. */
+    label?: string;
+    items: DropdownMenuItem[];
+}
+
 export declare interface EmailTemplate {
     templateId: string;
     name: string;
@@ -3173,7 +3216,7 @@ export declare interface InlinePipelineDefinition {
 
 export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, children, }: InlinePopoverProps): ReactPortal | null;
 
-export declare type InlinePopoverPlacement = 'bottom-start' | 'right';
+export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
 export declare interface InlinePopoverProps {
     /** Ref to the anchor element (the visible trigger). */

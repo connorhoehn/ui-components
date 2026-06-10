@@ -8,6 +8,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.35.0] — 2026-06-10
+
+### Added
+
+- **`DropdownMenu` — generic trigger + dropdown menu composite**
+  (`/shared` + root, additive; hub#1498). UserMenu's dropdown surface
+  minus the identity coupling: arbitrary trigger content, sectioned
+  items (`sections: [{ label?, items: [{ icon?, label, active?,
+  danger?, onSelect }] }]`) with uppercase headings, active-item
+  highlighting, and `align: 'start' | 'end'`. `align="end"` anchors the
+  panel's top-right corner to the trigger's bottom-right so app-level
+  hamburger menus at the viewport's right edge don't overflow. Built on
+  InlinePopover (portal, outside-click + Escape dismiss, focus
+  capture/restore, Tab cycling) and adds `role="menu"`/`menuitem`
+  semantics plus ArrowUp/ArrowDown/Home/End focus movement. New
+  exports: `DropdownMenu`, `DropdownMenuProps`, `DropdownMenuSection`,
+  `DropdownMenuItem`. 11 tests + Storybook story.
+- **`InlinePopover` `placement: 'bottom-end'`** (additive). Anchors the
+  panel's top-RIGHT corner to the trigger's bottom-right (existing
+  placements: `bottom-start`, `right`). Used by `DropdownMenu`
+  `align="end"`.
+
 ## [2.34.0] — 2026-06-10
 
 ### Added

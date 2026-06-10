@@ -1,121 +1,122 @@
-import { B as n, C as l, a as m, b as p, c as C, d, e as S, f as T, g, h as P, D as c, i as f, E as x, j as h, F as b, k as u, I as B, l as I, K as k, L as y, m as v, n as D, M as E, P as L, o as A, p as F, q as G, Q as H, S as N, r as U, s as w, t as M, u as R, v as j, T as K, w as O, x as Q, y as _, z as q, A as z, G as J, H as V, J as W, U as X, N as Y, O as Z, R as $, V as aa, W as ea } from "./StatusPill-D0DWhTym.js";
-import { B as ra } from "./Button-Qsbxqsl9.js";
-import { C as ta } from "./Card-B2uO9v1w.js";
-import { P as na, T as la, a as ma, b as pa, c as Ca, d as da, e as Sa } from "./PageSection-Dj8r4YIt.js";
-import { F as ga, I as Pa } from "./FileUploadDrop-Cmz3XANg.js";
-import { B as fa } from "./Banner-DKb3JiLs.js";
-import { B as ha, L as ba, S as ua } from "./Chart-ByoxeiYX.js";
-import { C as Ia } from "./Chip-CAS9vOWq.js";
-import { C as ya, D as va, F as Da, I as Ea, S as La, T as Aa, a as Fa } from "./FilterChip-BvY6ESrs.js";
-import { C as Ha } from "./ConfirmDialog-CNoxvYGu.js";
-import { E as Ua } from "./EmptyState-PM9wTjxk.js";
-import { C as Ma, S as Ra, e as ja, g as Ka, a as Oa } from "./CardHeader-DuyI9Sk3.js";
+import { B as i, C as l, a as m, b as p, c as d, d as C, e as S, f as T, g, h as P, D as c, i as f, j as x, E as h, k as b, F as u, l as B, I, m as k, K as y, L as D, n as v, o as E, M as L, P as A, p as F, q as G, r as H, Q as w, S as M, s as N, t as U, u as R, v as j, w as K, T as O, x as Q, y as _, z as q, A as z, G as J, H as V, J as W, N as X, U as Y, O as Z, R as $, V as aa, W as ea, X as sa } from "./StatusPill-Caoc72Uh.js";
+import { B as oa } from "./Button-Qsbxqsl9.js";
+import { C as na } from "./Card-B2uO9v1w.js";
+import { P as la, T as ma, a as pa, b as da, c as Ca, d as Sa, e as Ta } from "./PageSection-Dj8r4YIt.js";
+import { F as Pa, I as ca } from "./FileUploadDrop-Cmz3XANg.js";
+import { B as xa } from "./Banner-DKb3JiLs.js";
+import { B as ba, L as ua, S as Ba } from "./Chart-ByoxeiYX.js";
+import { C as ka } from "./Chip-CAS9vOWq.js";
+import { C as Da, D as va, F as Ea, I as La, S as Aa, T as Fa, a as Ga } from "./FilterChip-BvY6ESrs.js";
+import { C as wa } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as Na } from "./EmptyState-PM9wTjxk.js";
+import { C as Ra, S as ja, e as Ka, g as Oa, a as Qa } from "./CardHeader-DuyI9Sk3.js";
 import "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as _a } from "./Modal-2jg4229_.js";
-import { S as za } from "./SkeletonCard-C89GWQ3p.js";
-import { A as Va, B as Wa, N as Xa, P as Ya, S as Za } from "./Badge-CgxZp81E.js";
+import { M as qa } from "./Modal-2jg4229_.js";
+import { S as Ja } from "./SkeletonCard-C89GWQ3p.js";
+import { A as Wa, B as Xa, N as Ya, P as Za, S as $a } from "./Badge-CgxZp81E.js";
 import "react";
-import { T as ae, a as ee } from "./ToastProvider-aHBNxMTO.js";
+import { T as ee, a as se } from "./ToastProvider-aHBNxMTO.js";
 import "./IdentityContext-CLalsm_M.js";
-import { P as re, S as oe } from "./PermissionDeniedCard-B9U2evs3.js";
+import { P as oe, S as te } from "./PermissionDeniedCard-B9U2evs3.js";
 import { S as ie } from "./StatusDot-BC7B1tTr.js";
-import { A as le, a as me, n as pe, b as Ce } from "./Avatar-BvKIaNVE.js";
+import { A as me, a as pe, n as de, b as Ce } from "./Avatar-BvKIaNVE.js";
 export {
-  Va as ActivityFeed,
-  le as Avatar,
-  me as AvatarGroup,
-  Wa as Badge,
-  fa as Banner,
-  ha as BarChart,
-  n as Breadcrumbs,
-  ra as Button,
-  ta as Card,
-  Ma as CardHeader,
+  Wa as ActivityFeed,
+  me as Avatar,
+  pe as AvatarGroup,
+  Xa as Badge,
+  xa as Banner,
+  ba as BarChart,
+  i as Breadcrumbs,
+  oa as Button,
+  na as Card,
+  Ra as CardHeader,
   l as CatalogGrid,
   m as ChannelHeader,
   p as ChatComposer,
-  Ia as Chip,
-  C as CodeBlock,
-  ya as CodeEditor,
-  d as CollapsibleSection,
+  ka as Chip,
+  d as CodeBlock,
+  Da as CodeEditor,
+  C as CollapsibleSection,
   S as CommandPalette,
   T as CommandPaletteHint,
   g as CommandPaletteProvider,
-  Ha as ConfirmDialog,
+  wa as ConfirmDialog,
   P as ConnectionPill,
   va as DEFAULT_PIPELINE_ICONS,
   c as DataTable,
   f as Drawer,
-  Ua as EmptyState,
-  x as EntityCell,
-  h as ErrorState,
-  ga as FileUploadDrop,
-  Da as FilterChip,
-  b as FollowUpChips,
-  u as FormField,
-  Pa as IconButton,
-  Ea as ImageLightbox,
-  B as InlineAlert,
-  I as InlinePopover,
-  k as KPIGrid,
-  y as LayerStack,
-  ba as LineChart,
+  x as DropdownMenu,
+  Na as EmptyState,
+  h as EntityCell,
+  b as ErrorState,
+  Pa as FileUploadDrop,
+  Ea as FilterChip,
+  u as FollowUpChips,
+  B as FormField,
+  ca as IconButton,
+  La as ImageLightbox,
+  I as InlineAlert,
+  k as InlinePopover,
+  y as KPIGrid,
+  D as LayerStack,
+  ua as LineChart,
   v as LoadingState,
-  D as LogStream,
-  E as MessageBubble,
-  _a as Modal,
-  Xa as NotificationCenter,
-  L as PageHeader,
-  na as PageSection,
-  re as PermissionDeniedCard,
-  Ya as PresenceAvatars,
-  A as PresenceDot,
-  F as ProgressBar,
-  G as ProjectCard,
-  H as QuickPromptGrid,
-  La as ScoreBarGauge,
-  N as SearchInput,
-  U as SegmentedControl,
-  za as SkeletonCard,
-  Ra as Sparkline,
-  oe as Spinner,
-  w as StackDiagram,
-  ua as StackedAreaChart,
-  M as StatCard,
+  E as LogStream,
+  L as MessageBubble,
+  qa as Modal,
+  Ya as NotificationCenter,
+  A as PageHeader,
+  la as PageSection,
+  oe as PermissionDeniedCard,
+  Za as PresenceAvatars,
+  F as PresenceDot,
+  G as ProgressBar,
+  H as ProjectCard,
+  w as QuickPromptGrid,
+  Aa as ScoreBarGauge,
+  M as SearchInput,
+  N as SegmentedControl,
+  Ja as SkeletonCard,
+  ja as Sparkline,
+  te as Spinner,
+  U as StackDiagram,
+  Ba as StackedAreaChart,
+  R as StatCard,
   ie as StatusDot,
-  R as StatusPill,
-  j as SubNavLayout,
-  Za as Switch,
-  K as TabPanel,
-  la as Table,
-  ma as TableBody,
-  pa as TableHead,
+  j as StatusPill,
+  K as SubNavLayout,
+  $a as Switch,
+  O as TabPanel,
+  ma as Table,
+  pa as TableBody,
+  da as TableHead,
   Ca as TableRow,
-  da as TableTd,
-  Sa as TableTh,
-  O as Tabs,
-  Aa as TagEditor,
-  Q as TerminalLog,
-  _ as ThinkingBlock,
-  q as ThinkingDots,
-  z as ThumbnailCard,
-  ae as ToastProvider,
-  J as ToolCallPill,
-  V as ToolCallStrip,
-  Fa as TrendSparkline,
-  W as TypingIndicator,
-  X as UserChip,
-  Y as UserMenu,
-  ja as eventGlyphs,
-  Z as formatTypingBanner,
-  Ka as getEventCategory,
-  Oa as getEventGlyph,
-  $ as matchHotkey,
-  pe as nameToColor,
+  Sa as TableTd,
+  Ta as TableTh,
+  Q as Tabs,
+  Fa as TagEditor,
+  _ as TerminalLog,
+  q as ThinkingBlock,
+  z as ThinkingDots,
+  J as ThumbnailCard,
+  ee as ToastProvider,
+  V as ToolCallPill,
+  W as ToolCallStrip,
+  Ga as TrendSparkline,
+  X as TypingIndicator,
+  Y as UserChip,
+  Z as UserMenu,
+  Ka as eventGlyphs,
+  $ as formatTypingBanner,
+  Oa as getEventCategory,
+  Qa as getEventGlyph,
+  aa as matchHotkey,
+  de as nameToColor,
   Ce as nameToInitials,
-  aa as useCommandPalette,
-  ea as useRegisterCommand,
-  ee as useToast
+  ea as useCommandPalette,
+  sa as useRegisterCommand,
+  se as useToast
 };

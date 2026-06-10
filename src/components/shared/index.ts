@@ -157,6 +157,8 @@ export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
+export { DropdownMenu } from './DropdownMenu';
+export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from './DropdownMenu';
 
 // ── Status primitives (Phase 5) ──
 export { StatusPill } from './StatusPill';

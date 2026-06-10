@@ -9,9 +9,11 @@
 // Focus is moved into the panel on open and restored to the trigger on
 // close (basic focus trap; Tab/Shift+Tab cycle within the panel).
 //
-// Two placements: 'bottom-start' (default) anchors the top-left of the
-// popover to the bottom-left of the trigger. 'right' anchors the left
-// edge to the trigger's right edge, top-aligned.
+// Three placements: 'bottom-start' (default) anchors the top-left of the
+// popover to the bottom-left of the trigger. 'bottom-end' anchors the
+// top-RIGHT of the popover to the bottom-right of the trigger (for
+// triggers sitting at the viewport's right edge). 'right' anchors the
+// left edge to the trigger's right edge, top-aligned.
 
 import {
   type CSSProperties,
@@ -26,7 +28,7 @@ import {
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 
-export type InlinePopoverPlacement = 'bottom-start' | 'right';
+export type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
 export interface InlinePopoverProps {
   /** Ref to the anchor element (the visible trigger). */
@@ -74,6 +76,16 @@ function computePosition(
       position: 'fixed',
       top: anchor.top,
       left: anchor.right + offset,
+    };
+  }
+  if (placement === 'bottom-end') {
+    // Anchor the panel's top-RIGHT corner to the trigger's bottom-right:
+    // left edge at anchor.right, then shift back by the panel's own width.
+    return {
+      position: 'fixed',
+      top: anchor.bottom + offset,
+      left: anchor.right,
+      transform: 'translateX(-100%)',
     };
   }
   // bottom-start
