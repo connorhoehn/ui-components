@@ -20,6 +20,7 @@
 import { useState, type MouseEvent, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
+import type { NodeCategory } from './categories';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -59,6 +60,14 @@ export interface BaseNodeProps {
    * reader users.
    */
   ariaLabel?: string;
+  /**
+   * Node-category visual channel (NODE-VISUALS-AUDIT §3.1). When provided,
+   * renders a 3px category-colored left accent bar plus a shaped/tinted
+   * 20px icon chip in the header. Orthogonal to `state`, which keeps sole
+   * ownership of the card border + background. When omitted, rendering is
+   * byte-for-byte identical to the pre-category BaseNode.
+   */
+  category?: NodeCategory;
   children?: ReactNode;
 }
 
@@ -82,12 +91,44 @@ const STATE_TOKENS: Record<NodeExecutionState, StateTokens> = {
 };
 
 // ---------------------------------------------------------------------------
+// Per-category visual tokens (NODE-VISUALS-AUDIT §3.1)
+//
+// Category is an additive channel: a 3px left accent bar in the category
+// color, plus a 20px icon chip whose SHAPE encodes the category —
+//   source            → circle
+//   transform / sink  → rounded square
+//   control           → diamond (rotated square; glyph counter-rotated)
+//   ai                → rounded square with a subtle violet gradient
+//   human             → pill (rounded-full, slightly wider)
+// Execution state keeps sole ownership of border + background above.
+// ---------------------------------------------------------------------------
+
+interface CategoryTokens {
+  /** Accent-bar background color. */
+  bar: string;
+  /** Icon-chip shape + tint classes. */
+  chip: string;
+  /** Extra classes on the glyph inside the chip (e.g. counter-rotation). */
+  glyph?: string;
+}
+
+const CATEGORY_TOKENS: Record<NodeCategory, CategoryTokens> = {
+  source:    { bar: 'bg-cat-source',    chip: 'w-5 h-5 rounded-full bg-cat-source/15' },
+  transform: { bar: 'bg-cat-transform', chip: 'w-5 h-5 rounded-md bg-cat-transform/15' },
+  ai:        { bar: 'bg-cat-ai',        chip: 'w-5 h-5 rounded-md bg-gradient-to-br from-cat-ai/25 to-cat-ai/5' },
+  control:   { bar: 'bg-cat-control',   chip: 'w-5 h-5 rounded-[4px] bg-cat-control/15 rotate-45', glyph: '-rotate-45' },
+  sink:      { bar: 'bg-cat-sink',      chip: 'w-5 h-5 rounded-md bg-cat-sink/15' },
+  human:     { bar: 'bg-cat-human',     chip: 'w-7 h-5 rounded-full bg-cat-human/15' },
+};
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
 export default function BaseNode(props: BaseNodeProps) {
-  const { icon, subtitle, state, body, footer, selected, onRetry, hasBreakpoint, pausedAtBreakpoint, ariaLabel, children } = props;
+  const { icon, subtitle, state, body, footer, selected, onRetry, hasBreakpoint, pausedAtBreakpoint, ariaLabel, category, children } = props;
   const tokens = STATE_TOKENS[state];
+  const catTokens = category ? CATEGORY_TOKENS[category] : undefined;
   const reduceMotion = usePrefersReducedMotion();
   const [retryHover, setRetryHover] = useState(false);
 
@@ -136,8 +177,19 @@ export default function BaseNode(props: BaseNodeProps) {
       aria-selected={!!selected}
       data-state={state}
       data-node-state={state}
+      data-node-category={category}
       data-pipeline-node="true"
     >
+      {catTokens && (
+        <span
+          aria-hidden="true"
+          data-testid="category-accent"
+          className={cn(
+            'absolute left-0 top-0 bottom-0 w-[3px] rounded-l-[7px] pointer-events-none',
+            catTokens.bar,
+          )}
+        />
+      )}
       {hasBreakpoint && (
         <span
           aria-label="breakpoint"
@@ -149,7 +201,17 @@ export default function BaseNode(props: BaseNodeProps) {
         'flex items-center gap-2 h-7 px-2.5',
         hasDividerAfterHeader && 'border-b border-border',
       )}>
-        <span className="text-sm leading-none shrink-0" aria-hidden="true">{icon}</span>
+        {catTokens ? (
+          <span
+            aria-hidden="true"
+            data-testid="category-chip"
+            className={cn('flex items-center justify-center shrink-0', catTokens.chip)}
+          >
+            <span className={cn('text-xs leading-none', catTokens.glyph)}>{icon}</span>
+          </span>
+        ) : (
+          <span className="text-sm leading-none shrink-0" aria-hidden="true">{icon}</span>
+        )}
         <span className="flex-1 min-w-0 text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{subtitle}</span>
         <span
           className={cn('w-2 h-2 rounded-full shrink-0', tokens.dot, pulseAnim)}

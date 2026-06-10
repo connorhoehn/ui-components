@@ -3,17 +3,19 @@
 // Image save node — writes a produced image to a named file in the artifact
 // store. Dispatched server-side by platform-api's SaveStepHandler.
 //
-// Body: produced thumbnail + filename badge when resolved. Falls back to
-// placeholder.
+// Body: NodeThumbStrip over ALL saved artifacts (with built-in lightbox)
+// + filename badge when resolved. Falls back to placeholder.
 // Footer: filename template summary.
 // Icon: down-arrow (save/download).
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ImageSaveNodeData } from '../../../../types/pipeline';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
-import { useImageUrl } from '../../services';
 import { cn } from '../../../../lib/cn';
+import { NodeThumbStrip } from '../shared/NodeThumbStrip';
 
 type SaveData = ImageSaveNodeData & {
   _state?: NodeExecutionState;
@@ -32,26 +34,17 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
   const replayState = data._state && data._state !== 'idle' ? data._state : undefined;
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
-  const getImageUrl = useImageUrl();
-  const producedImage = liveStep?.images?.[0] ?? null;
+  const producedImages = liveStep?.images ?? [];
 
   // The step output may carry the resolved filename.
   type StepOutput = { filename?: string } | undefined;
   const stepOutput = liveStep?.output as StepOutput;
   const resolvedFilename = stepOutput?.filename ?? null;
 
-  const body = producedImage ? (
+  const body = producedImages.length > 0 ? (
     <div>
-      {/* eslint-disable-next-line jsx-a11y/alt-text */}
-      <img
-        src={getImageUrl(producedImage.imageId)}
-        alt="Saved image"
-        className={cn(
-          'w-full h-20 object-cover rounded block',
-          'border border-[#d1d5db] bg-[#f3f4f6]',
-        )}
-        data-testid="save-output-thumb"
-      />
+      {/* Saved artifacts — all of them; the strip owns lightbox + propagation guards. */}
+      <NodeThumbStrip images={producedImages} data-testid="save-thumb-strip" />
       {resolvedFilename && (
         <div
           className="mt-1 text-[10px] font-mono text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap"
@@ -96,6 +89,7 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
       icon="&#x2B07;"
       subtitle={subtitle}
       state={state}
+      category={categoryFor('image:save')}
       body={body}
       footer={footer}
       selected={selected}
@@ -107,19 +101,19 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
         type="target"
         position={Position.Left}
         id="in"
-        className="!w-2.5 !h-2.5 !bg-[#6b7280]"
+        className={portCls('image')}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="out"
-        className="!w-2.5 !h-2.5 !bg-[#6b7280]"
+        className={portCls('image')}
       />
       <Handle
         type="source"
         position={Position.Right}
         id="error"
-        className="!w-2.5 !h-2.5 !bg-[#6b7280] !top-[75%]"
+        className={`${portCls('error')} !top-[75%]`}
       />
     </BaseNode>
   );

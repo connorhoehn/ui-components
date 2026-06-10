@@ -118,6 +118,37 @@ editor.connect(joinId, nextNodeId); // Join uses standard 'out' source handle
 
 ---
 
+## Payload-Typed Port Styling
+
+Ports (handles) can advertise the payload type they carry via a shared
+class map in `shared/ports.ts`:
+
+```typescript
+import { portCls, PORT_CLS, type PortPayload } from './shared/ports';
+
+<Handle type="source" position={Position.Right} id="out" className={portCls('image')} />
+```
+
+| Payload   | Style                                              |
+|-----------|----------------------------------------------------|
+| `image`   | Violet (`#7c3aed`) **square** (`!rounded-sm`)      |
+| `text`    | Gray circle (`!bg-slate-300`) — today's default    |
+| `data`    | Slate-blue circle (`#94a3b8`)                      |
+| `control` | Amber circle, slightly smaller (branch/gate)       |
+| `error`   | Red (`red-600`) circle, slightly smaller           |
+
+Class strings use `!`-prefixed Tailwind utilities so they override React
+Flow's built-in handle CSS (same convention as the existing
+`!bg-slate-300 !w-2.5 !h-2.5` handle classNames).
+
+This pairs with the edge-side payload semantics: `AnimatedEdge` accepts
+`data.payload` (`'image' | 'text' | 'data' | 'control'`) and
+`data.volume` (fan-out multiplicity, renders a `×N` pill and scales
+stroke width). Execution state remains the dominant visual channel on
+edges; payload only adjusts base width, idle tint, and idle dash.
+
+---
+
 ## E2E Test Helpers
 
 ### `connectNodes` helper (pipeline-mega.spec.ts)

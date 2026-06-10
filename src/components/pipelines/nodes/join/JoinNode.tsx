@@ -10,6 +10,8 @@ import {
   type NodeProps, type Node,
 } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { JoinNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -58,6 +60,7 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
       icon="⑃"
       subtitle={modeSubtitle(data)}
       state={state}
+      category={categoryFor('join')}
       body={<span className="italic">{mergeLabel(data.mergeStrategy)}</span>}
       selected={selected}
       onRetry={onRetry}
@@ -72,12 +75,12 @@ export default function JoinNode(props: NodeProps<JoinFlowNode>) {
             type="target"
             position={Position.Left}
             id={`in-${i}`}
-            className="!bg-slate-300 !w-2.5 !h-2.5"
+            className={portCls('control')}
             style={{ top: `${pct}%` }}
           />
         );
       })}
-      <Handle type="source" position={Position.Right} id="out" className="!bg-slate-300 !w-2.5 !h-2.5" />
+      <Handle type="source" position={Position.Right} id="out" className={portCls('data')} />
     </BaseNode>
   );
 }

@@ -1,4 +1,5 @@
 import { default as default_2 } from 'react';
+import { EdgeProps } from '@xyflow/react';
 import { JSX } from 'react/jsx-runtime';
 import { Node as Node_2 } from '@xyflow/react';
 import { NodeProps } from '@xyflow/react';
@@ -173,6 +174,17 @@ declare interface AgUiOutputNodeData {
 
 export declare function AllRunsPage(): JSX.Element;
 
+export declare function AnimatedEdge({ id, sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, data, markerEnd, selected, }: EdgeProps): JSX.Element;
+
+export declare interface AnimatedEdgeData {
+    state?: EdgeState;
+    label?: string;
+    /** Payload type carried over this edge. 'text'/'data'/unset → no change. */
+    payload?: EdgePayload;
+    /** Fan-out multiplicity; >= 2 scales width and shows a ×N midpoint pill. */
+    volume?: number;
+}
+
 declare type ApprovalData = ApprovalNodeData & {
     _state?: NodeExecutionState;
     _hasBreakpoint?: boolean;
@@ -252,6 +264,14 @@ declare interface BaseNodeProps {
      * reader users.
      */
     ariaLabel?: string;
+    /**
+     * Node-category visual channel (NODE-VISUALS-AUDIT §3.1). When provided,
+     * renders a 3px category-colored left accent bar plus a shaped/tinted
+     * 20px icon chip in the header. Orthogonal to `state`, which keeps sole
+     * ownership of the card border + background. When omitted, rendering is
+     * byte-for-byte identical to the pre-category BaseNode.
+     */
+    category?: NodeCategory;
     children?: ReactNode;
 }
 
@@ -271,6 +291,9 @@ export declare interface CaptionPanelProps {
     result: Pick<VisionResult, 'caption' | 'setting' | 'location' | 'timeOfDay' | 'mood' | 'colors'>;
     className?: string;
 }
+
+/** Look up the category for a node type; undefined for unknown types. */
+export declare function categoryFor(nodeType: string): NodeCategory | undefined;
 
 export declare function clearImageLineageCache(): void;
 
@@ -331,6 +354,10 @@ declare type CropData = ImageCropNodeData & {
 declare type CropFlowNode = Node_2<CropData, 'image:crop'>;
 
 export declare function CropNode(props: NodeProps<CropFlowNode>): JSX.Element;
+
+export declare type EdgePayload = 'image' | 'text' | 'data' | 'control';
+
+export declare type EdgeState = 'default' | 'active' | 'traversed-success' | 'traversed-failure';
 
 export declare function EditPromptConfig({ data, onChange }: EditPromptConfigProps): JSX.Element;
 
@@ -1072,6 +1099,14 @@ declare interface MemoryNodeData {
 
 declare type MemoryScope = 'session' | 'long-term';
 
+/**
+ * Category assignment for every node type registered in `nodeTypes`
+ * (see ./index.ts). Keys are the exact React Flow type strings.
+ */
+export declare const NODE_CATEGORIES: Record<string, NodeCategory>;
+
+export declare type NodeCategory = 'source' | 'transform' | 'ai' | 'control' | 'sink' | 'human';
+
 declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
@@ -1081,6 +1116,20 @@ export declare function NodePalette({ disabledTypes }: NodePaletteProps): JSX.El
 export declare interface NodePaletteProps {
     /** Types that already exist once and cannot be added again (e.g. Trigger). */
     disabledTypes?: NodeType[];
+}
+
+export declare function NodeThumbStrip({ images, max, 'data-testid': testId, }: NodeThumbStripProps): JSX.Element | null;
+
+export declare interface NodeThumbStripImage {
+    imageId: string;
+    alt?: string;
+}
+
+export declare interface NodeThumbStripProps {
+    images: NodeThumbStripImage[];
+    /** Maximum tiles in the row (including the "+N" tile). Default 4. */
+    max?: number;
+    'data-testid'?: string;
 }
 
 declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
@@ -1146,6 +1195,8 @@ export declare interface PaletteItem {
     description: string;
     /** Category key, used for filter chip matching. */
     category: string;
+    /** Node-category key from NODE_CATEGORIES (drives the accent color). */
+    nodeCategory?: NodeCategory;
 }
 
 /**
@@ -1777,6 +1828,12 @@ declare interface PolicyNodeData {
     contextEntities?: string;
     label?: string;
 }
+
+export declare const PORT_CLS: Record<PortPayload, string>;
+
+export declare function portCls(payload: PortPayload): string;
+
+export declare type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error';
 
 /**
  * Record that a node of `type` was added. Prepends to the ring buffer (max 5,

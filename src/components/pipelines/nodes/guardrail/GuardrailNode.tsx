@@ -1,5 +1,7 @@
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { GuardrailNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -24,15 +26,16 @@ export default function GuardrailNode({ id, data, selected }: NodeProps<Guardrai
       icon="🛡️"
       subtitle={subtitle}
       state={state}
+      category={categoryFor('guardrail')}
       body={<span className="text-[11px]">Action: {data.action}</span>}
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left} id="in" />
-      <Handle type="source" position={Position.Right} id="pass" className="!top-[40%] !bg-green-600" />
-      <Handle type="source" position={Position.Right} id="block" className="!top-[60%] !bg-red-600" />
+      <Handle type="target" position={Position.Left} id="in" className={portCls('data')} />
+      <Handle type="source" position={Position.Right} id="pass" className={`${portCls('control')} !top-[40%]`} />
+      <Handle type="source" position={Position.Right} id="block" className={`${portCls('control')} !top-[60%]`} />
     </BaseNode>
   );
 }

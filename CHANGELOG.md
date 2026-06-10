@@ -36,6 +36,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   switching, demo-load markdown → Y.Doc → SectionList/Tiptap rendering,
   and meta propagation into the header title. 4 new tests;
   `StandaloneTiptap` and 21 other doc-editor suites already existed.
+- **Pipeline node visual system** (gateway node-visuals audit
+  2026-06-10). `BaseNode` gains an optional `category` prop
+  (`source | transform | ai | control | sink | human`) rendering a
+  3px category-colored left accent bar + a shaped icon chip (circle =
+  source, rounded square = transform/sink, diamond = control, violet
+  gradient = ai, pill = human); execution state keeps sole ownership
+  of border/background. New `nodes/categories.ts` registry
+  (`NODE_CATEGORIES`, `categoryFor()`) maps all 35 node types; every
+  node component now passes its category, and `NodePalette` derives
+  its section grouping + accent dots from the same map (exported
+  `PALETTE_ITEMS` shape unchanged, `PaletteItem` gains optional
+  `nodeCategory`). Six `--color-cat-*` theme tokens added.
+- **Payload-typed edges + ports.** `AnimatedEdge` data gains optional
+  `payload: 'image' | 'text' | 'data' | 'control'` and `volume`
+  (fan-out multiplicity): image edges render 2.5px with violet idle
+  tint and an SMIL `animateMotion` "packet" dot while active; control
+  edges render dotted 1.5px; `volume ≥ 2` scales width
+  `min(4, base + log2(n))` and renders an `×N` midpoint pill. New
+  `nodes/shared/ports.ts` (`PORT_CLS`, `portCls()`) styles `<Handle>`
+  elements by payload (image = violet square, error = red, control =
+  amber); all node handles adopted. `AnimatedEdge` + types now
+  exported from the `/pipelines` barrel. All animation respects
+  reduced motion.
+- **Generative image visuals.** New `GenerativeImagePreview`
+  (`/image` + root): indeterminate shimmer + elapsed-time chip while
+  `synthesizing` (deliberately no fake percent — no progress event
+  exists on the wire), blur-up reveal on completion. New
+  `ImageLightbox` (`/shared` + root): full-screen viewer with
+  keyboard nav + wraparound. New `NodeThumbStrip` (`/pipelines`):
+  ≤4 thumbs + `+N` overflow, click-to-lightbox, React-Flow-safe
+  propagation guards. Adopted by Generate/Variation/EditPrompt
+  (synthesizing → reveal → full multi-image strip, no longer just
+  `images[0]`), Save (saved-artifact strip), Vision (input thumb now
+  opens the lightbox instead of inline resize), ImageSource (prefers
+  the run-injected image over design-time config; click-to-lightbox).
 
 ### Notes
 

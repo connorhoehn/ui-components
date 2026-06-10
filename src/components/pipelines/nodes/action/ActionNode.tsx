@@ -6,6 +6,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ActionNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -61,15 +63,16 @@ export default function ActionNode(props: NodeProps<ActionFlowNode>) {
       icon="⚡"
       subtitle={data.actionType}
       state={state}
+      category={categoryFor('action')}
       body={<span className="italic">{describe(data)}</span>}
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    className="!bg-slate-300 !w-2.5 !h-2.5" />
-      <Handle type="source" position={Position.Right} id="out"   className="!bg-slate-300 !w-2.5 !h-2.5 !top-[40%]" />
-      <Handle type="source" position={Position.Right} id="error" className="!bg-red-600 !w-2.5 !h-2.5 !top-[60%]" />
+      <Handle type="target" position={Position.Left}  id="in"    className={portCls('data')} />
+      <Handle type="source" position={Position.Right} id="out"   className={`${portCls('data')} !top-[40%]`} />
+      <Handle type="source" position={Position.Right} id="error" className={`${portCls('error')} !top-[60%]`} />
     </BaseNode>
   );
 }

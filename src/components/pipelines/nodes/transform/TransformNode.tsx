@@ -6,6 +6,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { TransformNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -39,6 +41,7 @@ export default function TransformNode(props: NodeProps<TransformFlowNode>) {
       icon="✨"
       subtitle={data.transformType}
       state={state}
+      category={categoryFor('transform')}
       body={
         <span className="font-mono text-xs text-text-primary bg-surface-inset px-1.5 py-0.5 rounded inline-block max-w-full overflow-hidden text-ellipsis whitespace-nowrap">
           {snippet(data.expression)}
@@ -49,8 +52,8 @@ export default function TransformNode(props: NodeProps<TransformFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"  className="!bg-slate-300 !w-2.5 !h-2.5" />
-      <Handle type="source" position={Position.Right} id="out" className="!bg-slate-300 !w-2.5 !h-2.5" />
+      <Handle type="target" position={Position.Left}  id="in"  className={portCls('data')} />
+      <Handle type="source" position={Position.Right} id="out" className={portCls('data')} />
     </BaseNode>
   );
 }

@@ -85,6 +85,16 @@ export {
 } from './nodes';
 export type { NodeExecutionState } from './nodes';
 
+// ─── Node visual system (categories, ports, edges, thumbs) ──────────────────
+export { NODE_CATEGORIES, categoryFor } from './nodes/categories';
+export type { NodeCategory } from './nodes/categories';
+export { PORT_CLS, portCls } from './nodes/shared/ports';
+export type { PortPayload } from './nodes/shared/ports';
+export { default as NodeThumbStrip } from './nodes/shared/NodeThumbStrip';
+export type { NodeThumbStripProps, NodeThumbStripImage } from './nodes/shared/NodeThumbStrip';
+export { default as AnimatedEdge } from './canvas/edges/AnimatedEdge';
+export type { AnimatedEdgeData, EdgeState, EdgePayload } from './canvas/edges/AnimatedEdge';
+
 // ─── Per-node config panels ──────────────────────────────────────────────────
 export { default as ImageSourceConfig } from './nodes/image-source/ImageSourceConfig';
 export type { ImageSourceConfigProps } from './nodes/image-source/ImageSourceConfig';

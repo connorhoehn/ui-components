@@ -1,14 +1,18 @@
 // src/components/pipelines/nodes/vision/VisionNode.tsx
 //
 // Vision node — image:vision-analyze. Streaming response footer,
-// inline thumbnail, retry on failure.
+// inline thumbnail (click-to-lightbox), retry on failure.
 
 import { memo, useState } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
+import { cn } from '../../../../lib/cn';
 import type { ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
+import { ImageLightbox } from '../../../shared/ImageLightbox';
 
 type VisionData = ImageVisionAnalyzeNodeData & {
   _state?: NodeExecutionState;
@@ -45,8 +49,13 @@ function previewPrompt(template: string): string {
   return out.length > 120 ? `${out.slice(0, 117)}…` : out;
 }
 
+// React Flow selects/drag-starts nodes on mousedown — interactive elements
+// inside the node must stop propagation on both mousedown and click.
+const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
+
 const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info: VisionFooterInfo }) {
   const [open, setOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (info.failure) {
     const isRefusal = info.failure.reason === 'refusal';
@@ -129,13 +138,33 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
         </button>
       )}
       {info.imageId && (
-        <img
-          src={info.getImageUrl(info.imageId)}
-          alt="Vision input"
-          className="mt-1.5 object-cover rounded border border-border bg-surface-inset cursor-zoom-in block"
-          style={{ width: open ? 160 : 56, height: open ? 120 : 56 }}
-          data-testid="vision-input-thumb"
-        />
+        <>
+          <button
+            type="button"
+            aria-label="View vision input image"
+            className={cn(
+              'mt-1.5 block h-14 w-14 overflow-hidden rounded border border-border bg-surface-inset',
+              'p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+            )}
+            onMouseDown={stopMouseDown}
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxOpen(true);
+            }}
+          >
+            <img
+              src={info.getImageUrl(info.imageId)}
+              alt="Vision input"
+              className="h-full w-full object-cover"
+              data-testid="vision-input-thumb"
+            />
+          </button>
+          <ImageLightbox
+            images={[{ src: info.getImageUrl(info.imageId), alt: 'Vision input', caption: 'Vision input' }]}
+            openIndex={lightboxOpen ? 0 : null}
+            onClose={() => setLightboxOpen(false)}
+          />
+        </>
       )}
       <div
         className="mt-1 font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words"
@@ -190,13 +219,13 @@ export default function VisionNode(props: NodeProps<VisionFlowNode>) {
   const subtitle = data.model || 'claude-sonnet-4-6';
   const mode = data.outputSchema ? 'extract' : 'caption';
   const ariaLabel = `Vision node, model ${subtitle}, mode ${mode}, state: ${state}`;
-  const handleCls = 'bg-border-emphasis w-2.5 h-2.5';
 
   return (
     <BaseNode
       icon="📷"
       subtitle={`${subtitle} · ${mode}`}
       state={state}
+      category={categoryFor('image:vision-analyze')}
       body={body}
       footer={footer}
       selected={selected}
@@ -205,8 +234,8 @@ export default function VisionNode(props: NodeProps<VisionFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"  className={handleCls} />
-      <Handle type="source" position={Position.Right} id="out" className={handleCls} />
+      <Handle type="target" position={Position.Left}  id="in"  className={portCls('image')} />
+      <Handle type="source" position={Position.Right} id="out" className={portCls('data')} />
     </BaseNode>
   );
 }

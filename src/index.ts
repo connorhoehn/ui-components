@@ -30,6 +30,8 @@ export type { RadioGroupProps, RadioOption } from './components/forms/RadioGroup
 // ── Image primitives (Phase 5) ──
 export { ImageThumbnail } from './components/image/ImageThumbnail';
 export type { ImageThumbnailProps, ImageThumbnailSize, ImageThumbnailAspect } from './components/image/ImageThumbnail';
+export { GenerativeImagePreview } from './components/image/GenerativeImagePreview';
+export type { GenerativeImagePreviewProps, GenerativeImagePreviewStatus } from './components/image/GenerativeImagePreview';
 
 // ── Pipeline node composites (Phase 5) ──
 export { NodeCard } from './components/pipelines/nodes/NodeCard';

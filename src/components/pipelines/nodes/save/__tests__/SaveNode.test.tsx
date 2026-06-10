@@ -66,7 +66,7 @@ describe('SaveNode', () => {
     expect(screen.queryByTestId('save-output-thumb')).not.toBeInTheDocument();
   });
 
-  it('renders a thumbnail using the stub getImageUrl when a step has images', () => {
+  it('renders a NodeThumbStrip resolving via the stub getImageUrl when a step has images', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockLatestStep.mockReturnValue({
       nodeId: 'node-save-1',
@@ -80,10 +80,51 @@ describe('SaveNode', () => {
         <SaveNode {...makeProps({ filenameTemplate: 'output.png' })} />
       </Wrapper>,
     );
-    const img = screen.getByTestId('save-output-thumb') as HTMLImageElement;
-    expect(img).toBeInTheDocument();
+    expect(screen.getByTestId('save-thumb-strip')).toBeInTheDocument();
+    const img = screen
+      .getByTestId('save-thumb-strip-thumb-0')
+      .querySelector('img') as HTMLImageElement;
     expect(img.src).toContain('/test/img_saved_001');
     expect(screen.queryByTestId('save-placeholder')).not.toBeInTheDocument();
+  });
+
+  it('renders ALL saved artifacts in the strip, not just the first', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockLatestStep.mockReturnValue({
+      nodeId: 'node-save-1',
+      status: 'completed',
+      images: [
+        { imageId: 'img_saved_001', width: 800, height: 600, mimeType: 'image/jpeg' },
+        { imageId: 'img_saved_002', width: 800, height: 600, mimeType: 'image/jpeg' },
+        { imageId: 'img_saved_003', width: 800, height: 600, mimeType: 'image/jpeg' },
+      ],
+    } as any);
+    render(
+      <Wrapper>
+        <SaveNode {...makeProps({ filenameTemplate: 'output.png' })} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('save-thumb-strip-thumb-0')).toBeInTheDocument();
+    expect(screen.getByTestId('save-thumb-strip-thumb-1')).toBeInTheDocument();
+    expect(screen.getByTestId('save-thumb-strip-thumb-2')).toBeInTheDocument();
+  });
+
+  it('keeps the resolved-filename badge alongside the strip', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockLatestStep.mockReturnValue({
+      nodeId: 'node-save-1',
+      status: 'completed',
+      output: { filename: 'crop-3.png' },
+      images: [
+        { imageId: 'img_saved_001', width: 800, height: 600, mimeType: 'image/jpeg' },
+      ],
+    } as any);
+    render(
+      <Wrapper>
+        <SaveNode {...makeProps({ filenameTemplate: 'crop-{{scatter.index}}.png' })} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('save-filename-badge').textContent).toBe('crop-3.png');
   });
 
   it('shows the footer with the filename template', () => {

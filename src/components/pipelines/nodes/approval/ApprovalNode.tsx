@@ -7,6 +7,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ApprovalNodeData, Approver } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -66,15 +68,16 @@ export default function ApprovalNode(props: NodeProps<ApprovalFlowNode>) {
       icon="✋"
       subtitle={subtitle}
       state={state}
+      category={categoryFor('approval')}
       body={body}
       selected={selected}
       onRetry={onRetry}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"       className="!bg-slate-300 !w-2.5 !h-2.5" />
-      <Handle type="source" position={Position.Right} id="approved" className="!bg-green-600 !w-2.5 !h-2.5 !top-[40%]" />
-      <Handle type="source" position={Position.Right} id="rejected" className="!bg-red-600 !w-2.5 !h-2.5 !top-[60%]" />
+      <Handle type="target" position={Position.Left}  id="in"       className={portCls('data')} />
+      <Handle type="source" position={Position.Right} id="approved" className={`${portCls('data')} !top-[40%]`} />
+      <Handle type="source" position={Position.Right} id="rejected" className={`${portCls('data')} !top-[60%]`} />
     </BaseNode>
   );
 }

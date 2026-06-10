@@ -5,6 +5,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ImageFormatConvertNodeData } from '../../../../types/pipeline';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
@@ -58,13 +60,13 @@ export default function FormatConvertNode(props: NodeProps<FormatConvertFlowNode
     </span>
   ) : undefined;
 
-  const handleCls = 'bg-border-emphasis w-2.5 h-2.5';
 
   return (
     <BaseNode
       icon="⇌"
       subtitle="image:format-convert"
       state={state}
+      category={categoryFor('image:format-convert')}
       body={body}
       footer={footer}
       selected={selected}
@@ -72,9 +74,9 @@ export default function FormatConvertNode(props: NodeProps<FormatConvertFlowNode
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    className={handleCls} />
-      <Handle type="source" position={Position.Right} id="out"   className={handleCls} />
-      <Handle type="source" position={Position.Right} id="error" className={handleCls} style={{ bottom: 8, top: 'auto' }} />
+      <Handle type="target" position={Position.Left}  id="in"    className={portCls('image')} />
+      <Handle type="source" position={Position.Right} id="out"   className={portCls('image')} />
+      <Handle type="source" position={Position.Right} id="error" className={portCls('error')} style={{ bottom: 8, top: 'auto' }} />
     </BaseNode>
   );
 }

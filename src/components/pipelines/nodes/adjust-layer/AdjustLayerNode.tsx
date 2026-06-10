@@ -5,6 +5,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ImageAdjustLayerNodeData, AdjustLayer } from '../../../../types/pipeline';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import { useImageUrl } from '../../services';
@@ -80,13 +82,13 @@ export default function AdjustLayerNode(props: NodeProps<AdjustLayerFlowNode>) {
   );
 
   const ariaLabel = `Adjust Layer node, ${layers.length} layer${layers.length === 1 ? '' : 's'}, state: ${state}`;
-  const handleCls = 'bg-border-emphasis w-2.5 h-2.5';
 
   return (
     <BaseNode
       icon="𝍩"
       subtitle="image:adjust-layer"
       state={state}
+      category={categoryFor('image:adjust-layer')}
       body={body}
       footer={footer}
       selected={selected}
@@ -94,9 +96,9 @@ export default function AdjustLayerNode(props: NodeProps<AdjustLayerFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left}  id="in"    className={handleCls} />
-      <Handle type="source" position={Position.Right} id="out"   className={handleCls} />
-      <Handle type="source" position={Position.Right} id="error" className={handleCls} style={{ top: '75%' }} />
+      <Handle type="target" position={Position.Left}  id="in"    className={portCls('image')} />
+      <Handle type="source" position={Position.Right} id="out"   className={portCls('image')} />
+      <Handle type="source" position={Position.Right} id="error" className={portCls('error')} style={{ top: '75%' }} />
     </BaseNode>
   );
 }

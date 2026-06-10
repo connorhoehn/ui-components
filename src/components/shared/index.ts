@@ -32,6 +32,8 @@ export * from './FormField';
 export * from './eventGlyphs';
 export * from './EventRow';
 export * from './IconPicker';
+export { default as ImageLightbox } from './ImageLightbox';
+export * from './ImageLightbox';
 export { default as Modal } from './Modal';
 export * from './Modal';
 export * from './ShortcutsHelp';

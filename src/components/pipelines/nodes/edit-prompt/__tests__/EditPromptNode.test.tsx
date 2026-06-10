@@ -44,6 +44,12 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function step(overrides: Record<string, unknown>) {
+  return { nodeId: 'node-edit-prompt', ...overrides } as any;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 describe('EditPromptNode', () => {
   it('renders "No prompt set" placeholder when prompt is empty', () => {
     mockLatestStep.mockReturnValue(null);
@@ -54,7 +60,7 @@ describe('EditPromptNode', () => {
     );
     expect(screen.getByTestId('edit-prompt-placeholder')).toBeInTheDocument();
     expect(screen.getByTestId('edit-prompt-placeholder').textContent).toBe('No prompt set');
-    expect(screen.queryByTestId('edit-prompt-output-thumb')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('generative-image-preview')).not.toBeInTheDocument();
   });
 
   it('shows prompt preview in placeholder when prompt is configured', () => {
@@ -70,24 +76,71 @@ describe('EditPromptNode', () => {
     expect(placeholder.textContent).toContain('Replace the background');
   });
 
-  it('renders the last-produced image thumbnail when the latest step has an image', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockLatestStep.mockReturnValue({
-      nodeId: 'node-edit-prompt',
-      status: 'completed',
-      images: [
-        { imageId: 'img_edit_001', width: 1024, height: 1024, mimeType: 'image/png' },
-      ],
-    } as any);
+  it('shows the synthesizing preview while running with no images yet', () => {
+    mockLatestStep.mockReturnValue(
+      step({ status: 'running', startedAt: new Date().toISOString() }),
+    );
     render(
       <Wrapper>
         <EditPromptNode {...makeProps({ prompt: 'anything' })} />
       </Wrapper>,
     );
-    const thumb = screen.getByTestId('edit-prompt-output-thumb');
-    expect(thumb).toBeInTheDocument();
-    const img = thumb.querySelector('img') as HTMLImageElement;
-    expect(img.src).toContain('/test/img_edit_001');
+    const preview = screen.getByTestId('generative-image-preview');
+    expect(preview.getAttribute('data-status')).toBe('synthesizing');
+    expect(screen.getByTestId('generative-image-preview-elapsed')).toBeInTheDocument();
     expect(screen.queryByTestId('edit-prompt-placeholder')).not.toBeInTheDocument();
+  });
+
+  it('flips the SAME preview to done when the image lands (reveal path)', () => {
+    mockLatestStep.mockReturnValue(
+      step({ status: 'running', startedAt: new Date().toISOString() }),
+    );
+    const { rerender } = render(
+      <Wrapper>
+        <EditPromptNode {...makeProps({ prompt: 'anything' })} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('generative-image-preview').getAttribute('data-status')).toBe(
+      'synthesizing',
+    );
+
+    mockLatestStep.mockReturnValue(
+      step({
+        status: 'completed',
+        images: [{ imageId: 'img_edit_001', width: 1024, height: 1024, mimeType: 'image/png' }],
+      }),
+    );
+    rerender(
+      <Wrapper>
+        <EditPromptNode {...makeProps({ prompt: 'anything' })} />
+      </Wrapper>,
+    );
+
+    expect(screen.getByTestId('generative-image-preview').getAttribute('data-status')).toBe(
+      'done',
+    );
+    const img = screen.getByTestId('generative-image-preview-img') as HTMLImageElement;
+    expect(img.src).toContain('/test/img_edit_001');
+  });
+
+  it('renders a NodeThumbStrip when the step produced multiple images', () => {
+    mockLatestStep.mockReturnValue(
+      step({
+        status: 'completed',
+        images: [
+          { imageId: 'img_edit_a', width: 1024, height: 1024, mimeType: 'image/png' },
+          { imageId: 'img_edit_b', width: 1024, height: 1024, mimeType: 'image/png' },
+        ],
+      }),
+    );
+    render(
+      <Wrapper>
+        <EditPromptNode {...makeProps({ prompt: 'anything' })} />
+      </Wrapper>,
+    );
+    expect(screen.getByTestId('edit-prompt-thumb-strip')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-prompt-thumb-strip-thumb-0')).toBeInTheDocument();
+    expect(screen.getByTestId('edit-prompt-thumb-strip-thumb-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('edit-prompt-output-preview')).not.toBeInTheDocument();
   });
 });

@@ -2385,6 +2385,21 @@ declare class GatewayProvider extends Observable<string> {
     destroy(): void;
 }
 
+export declare function GenerativeImagePreview({ status, src, alt, startedAt, className, }: GenerativeImagePreviewProps): JSX.Element;
+
+export declare interface GenerativeImagePreviewProps {
+    status: GenerativeImagePreviewStatus;
+    /** Produced-image URL; rendered when status is 'done'. */
+    src?: string;
+    alt?: string;
+    /** Epoch ms when synthesis started — enables the elapsed-time chip. */
+    startedAt?: number;
+    /** Caller controls size (width/height/aspect), like ImageThumbnail. */
+    className?: string;
+}
+
+export declare type GenerativeImagePreviewStatus = 'synthesizing' | 'done';
+
 export declare type GeometricOp = GeometricOpRotate | GeometricOpFlip | GeometricOpFlop;
 
 export declare type GeometricOpFlip = {
@@ -2889,6 +2904,27 @@ export declare interface ImageGenerateNodeData {
     height?: number;
     seed?: number;
     numImages?: number;
+}
+
+export declare function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageLightboxProps): ReactPortal | null;
+
+export declare interface ImageLightboxImage {
+    src: string;
+    alt?: string;
+    caption?: string;
+}
+
+export declare interface ImageLightboxProps {
+    images: ImageLightboxImage[];
+    /** Index of the open image, or null when the lightbox is closed. */
+    openIndex: number | null;
+    onClose: () => void;
+    /**
+     * Controlled navigation callback. When provided, prev/next/arrow-keys
+     * call this and the parent is expected to update `openIndex`. When
+     * omitted, the lightbox navigates with internal fallback state.
+     */
+    onNavigate?: (index: number) => void;
 }
 
 export declare interface ImageResizeNodeData {

@@ -6,6 +6,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { TriggerNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -60,6 +62,7 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
       icon="▶"
       subtitle={subtitleFor(data)}
       state={state}
+      category={categoryFor('trigger')}
       body={<span className="italic">{bodyFor(data)}</span>}
       selected={selected}
       onRetry={onRetry}
@@ -71,7 +74,7 @@ export default function TriggerNode(props: NodeProps<TriggerFlowNode>) {
         type="source"
         position={Position.Right}
         id="out"
-        className="!bg-slate-300 !w-2.5 !h-2.5"
+        className={portCls('data')}
       />
     </BaseNode>
   );

@@ -7,6 +7,8 @@
 
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
+import { categoryFor } from '../categories';
+import { portCls } from '../shared/ports';
 import type { ForkNodeData } from '../../../../types/pipeline';
 import { useRetryFromStep, useLatestStepForNode } from '../../context/PipelineRunsContext';
 
@@ -41,6 +43,7 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
       icon="⑂"
       subtitle={`${count} branches`}
       state={state}
+      category={categoryFor('fork')}
       body={
         <ul className="m-0 p-0 list-none flex flex-col gap-0.5 text-xs text-text-secondary">
           {labels.map((label, i) => (
@@ -53,7 +56,7 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
-      <Handle type="target" position={Position.Left} id="in" className="!bg-slate-300 !w-2.5 !h-2.5" />
+      <Handle type="target" position={Position.Left} id="in" className={portCls('data')} />
       {labels.map((_label, i) => {
         // Evenly spaced in the vertical axis (leave 0% and 100% as margins).
         const pct = ((i + 1) / (count + 1)) * 100;
@@ -63,7 +66,7 @@ export default function ForkNode(props: NodeProps<ForkFlowNode>) {
             type="source"
             position={Position.Right}
             id={`branch-${i}`}
-            className="!bg-blue-600 !w-2.5 !h-2.5"
+            className={portCls('control')}
             style={{ top: `${pct}%` }}
           />
         );

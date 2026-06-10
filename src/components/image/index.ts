@@ -7,3 +7,9 @@ export type {
 
 export { ImageUploader } from './ImageUploader';
 export type { ImageUploaderProps, ImageUploaderValue } from './ImageUploader';
+
+export { GenerativeImagePreview } from './GenerativeImagePreview';
+export type {
+  GenerativeImagePreviewProps,
+  GenerativeImagePreviewStatus,
+} from './GenerativeImagePreview';

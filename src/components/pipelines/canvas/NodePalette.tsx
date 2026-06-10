@@ -1,7 +1,10 @@
 // frontend/src/components/pipelines/canvas/NodePalette.tsx
 //
-// Left-rail palette per PIPELINES_PLAN.md §18.4.2. Taxonomy: Triggers /
-// Vision / AI / Image Processing / Logic / Storage / Data / Tools.
+// Left-rail palette per PIPELINES_PLAN.md §18.4.2. Sections are grouped by
+// node category (NODE_CATEGORIES in ../nodes/categories — the same map that
+// drives BaseNode's accent bar): Sources / Transform / AI / Control /
+// Sinks / Human. Each section header and item carries a small
+// category-colored accent dot (bg-cat-* theme tokens).
 //
 // Features:
 //   - Search input at top (name + type + description, case-insensitive)
@@ -25,6 +28,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DragEvent } from 'react';
 import { cn } from '../../../lib/cn';
 import { FilterChip } from '../../shared/FilterChip';
+import { categoryFor, type NodeCategory } from '../nodes/categories';
 import type { NodeType } from '../../../types/pipeline';
 
 // ---------------------------------------------------------------------------
@@ -43,95 +47,93 @@ export interface PaletteItem {
   description: string;
   /** Category key, used for filter chip matching. */
   category: string;
+  /** Node-category key from NODE_CATEGORIES (drives the accent color). */
+  nodeCategory?: NodeCategory;
 }
 
 interface PaletteCategory {
+  /** Node-category key (NODE_CATEGORIES) this section maps to. */
+  key: NodeCategory;
   /** Human-readable category name (also the chip label). */
   name: string;
   items: PaletteItem[];
 }
 
 // ---------------------------------------------------------------------------
-// Taxonomy — user's stated mental model; do not improvise.
+// Item definitions + category-derived grouping.
+//
+// Items are declared flat; sections are derived from NODE_CATEGORIES via
+// categoryFor() so the palette grouping can never drift from the canvas
+// accent bars. Within a section, items keep their declaration order below.
 // ---------------------------------------------------------------------------
 
-const CATEGORIES: PaletteCategory[] = [
-  {
-    name: 'Triggers',
-    items: [
-      { type: 'trigger', icon: '⚡', name: 'Trigger', description: 'Starts the pipeline', category: 'Triggers' },
-    ],
-  },
-  {
-    name: 'Vision',
-    items: [
-      { type: 'image:vision-analyze',      icon: '📷', name: 'Vision Analyze',       description: 'Analyze an image with a multimodal LLM',           category: 'Vision' },
-      { type: 'image:vision-classify',     icon: '🏷',  name: 'Vision Classify',      description: 'Classify image into a label set',                  category: 'Vision' },
-      { type: 'image:vision-describe',     icon: '💬', name: 'Vision Describe',      description: 'Generate a natural-language caption of an image',   category: 'Vision' },
-      { type: 'image:vision-tag',          icon: '🔖', name: 'Vision Tag',           description: 'Extract ranked tags from an image',                 category: 'Vision' },
-      { type: 'image:vision-extract-text', icon: '📝', name: 'Vision Extract Text',  description: 'OCR / text extraction from an image',               category: 'Vision' },
-    ],
-  },
-  {
-    name: 'AI',
-    items: [
-      { type: 'llm',               icon: '🧠', name: 'LLM',            description: 'Call an LLM model',                                   category: 'AI' },
-      { type: 'image:generate',    icon: '✦',  name: 'Generate',       description: 'Generate an image from a text prompt via Bedrock',    category: 'AI' },
-      { type: 'image:variation',   icon: '⊞',  name: 'Variation',      description: 'Generate variations of a source image via Nova Canvas', category: 'AI' },
-      { type: 'image:edit-prompt', icon: '✎',  name: 'Edit Prompt',    description: 'Inpaint or outpaint a region via Nova Canvas',        category: 'AI' },
-    ],
-  },
-  {
-    name: 'Image Processing',
-    items: [
-      { type: 'image:crop',           icon: '✂',  name: 'Crop',           description: 'Crop a region from an image using a bbox',             category: 'Image Processing' },
-      { type: 'image:resize',         icon: '⤢',  name: 'Resize',         description: 'Resize an image to target dimensions',                 category: 'Image Processing' },
-      { type: 'image:transform',      icon: '↻',  name: 'Transform',      description: 'Rotate, flip or flop an image',                        category: 'Image Processing' },
-      { type: 'image:format-convert', icon: '⇌',  name: 'Format Convert', description: 'Convert image to JPEG, PNG, WebP or AVIF',             category: 'Image Processing' },
-      { type: 'image:sharpen',        icon: '◈',  name: 'Sharpen',        description: 'Apply unsharp-mask sharpening',                        category: 'Image Processing' },
-      { type: 'image:watermark',      icon: '⊕',  name: 'Watermark',      description: 'Composite an overlay image onto the source',           category: 'Image Processing' },
-      { type: 'image:adjust-bw',      icon: '◐',  name: 'Adjust B/W',    description: 'Convert image to black and white',                     category: 'Image Processing' },
-      { type: 'image:adjust-layer',   icon: '𝍩',  name: 'Adjust Layers', description: 'Apply stacked colour/filter adjustments',              category: 'Image Processing' },
-    ],
-  },
-  {
-    name: 'Logic',
-    items: [
-      { type: 'condition', icon: '🔀', name: 'Condition', description: 'Branch on an expression',            category: 'Logic' },
-      { type: 'fork',      icon: '🍴', name: 'Fork',      description: 'Split into parallel branches',       category: 'Logic' },
-      { type: 'join',      icon: '🔗', name: 'Join',      description: 'Combine parallel branches',          category: 'Logic' },
-      { type: 'scatter',   icon: '⑂',  name: 'Scatter',   description: 'Fan out over an array — one arm per item', category: 'Logic' },
-      { type: 'approval',  icon: '✅', name: 'Approval',  description: 'Wait for a human decision',          category: 'Logic' },
-      { type: 'transform', icon: '🔧', name: 'Transform', description: 'Reshape the context',                category: 'Logic' },
-    ],
-  },
-  {
-    name: 'Storage',
-    items: [
-      { type: 'image-source', icon: '🖼',  name: 'Image Source', description: 'Inject an image into the pipeline context',  category: 'Storage' },
-      { type: 'image:save',   icon: '⬇',  name: 'Save Image',   description: 'Write produced image to artifact store',     category: 'Storage' },
-      { type: 'action',       icon: '🎯', name: 'Action',       description: 'Produce a side effect',                      category: 'Storage' },
-    ],
-  },
-  {
-    name: 'Data',
-    items: [
-      { type: 'knowledge-base', icon: '📚', name: 'Knowledge Base', description: 'RAG retrieval from Bedrock KB',    category: 'Data' },
-      { type: 'graph-query',    icon: '🕸️', name: 'Graph Query',    description: 'Neptune openCypher query',         category: 'Data' },
-      { type: 'memory',         icon: '💾', name: 'Memory',         description: 'AgentCore Memory read/write',      category: 'Data' },
-    ],
-  },
-  {
-    name: 'Tools',
-    items: [
-      { type: 'mcp-tool',     icon: '🔌', name: 'MCP Tool',    description: 'Invoke an MCP Gateway tool',           category: 'Tools' },
-      { type: 'agent',        icon: '🤖', name: 'Agent',       description: 'Invoke a Strands agent via A2A',       category: 'Tools' },
-      { type: 'guardrail',    icon: '🛡️', name: 'Guardrail',   description: 'Bedrock Guardrails content filter',    category: 'Tools' },
-      { type: 'policy',       icon: '📜', name: 'Policy',      description: 'Cedar authorization policy',           category: 'Tools' },
-      { type: 'ag-ui-output', icon: '📡', name: 'AG-UI Output', description: 'Stream to AG-UI frontend',           category: 'Tools' },
-    ],
-  },
+type PaletteItemDef = Omit<PaletteItem, 'category' | 'nodeCategory'>;
+
+const ITEM_DEFS: PaletteItemDef[] = [
+  { type: 'trigger',                   icon: '⚡', name: 'Trigger',             description: 'Starts the pipeline' },
+  { type: 'image-source',              icon: '🖼',  name: 'Image Source',        description: 'Inject an image into the pipeline context' },
+  { type: 'knowledge-base',            icon: '📚', name: 'Knowledge Base',      description: 'RAG retrieval from Bedrock KB' },
+  { type: 'graph-query',               icon: '🕸️', name: 'Graph Query',         description: 'Neptune openCypher query' },
+  { type: 'llm',                       icon: '🧠', name: 'LLM',                 description: 'Call an LLM model' },
+  { type: 'agent',                     icon: '🤖', name: 'Agent',               description: 'Invoke a Strands agent via A2A' },
+  { type: 'mcp-tool',                  icon: '🔌', name: 'MCP Tool',            description: 'Invoke an MCP Gateway tool' },
+  { type: 'image:vision-analyze',      icon: '📷', name: 'Vision Analyze',      description: 'Analyze an image with a multimodal LLM' },
+  { type: 'image:vision-classify',     icon: '🏷',  name: 'Vision Classify',     description: 'Classify image into a label set' },
+  { type: 'image:vision-describe',     icon: '💬', name: 'Vision Describe',     description: 'Generate a natural-language caption of an image' },
+  { type: 'image:vision-tag',          icon: '🔖', name: 'Vision Tag',          description: 'Extract ranked tags from an image' },
+  { type: 'image:vision-extract-text', icon: '📝', name: 'Vision Extract Text', description: 'OCR / text extraction from an image' },
+  { type: 'image:generate',            icon: '✦',  name: 'Generate',            description: 'Generate an image from a text prompt via Bedrock' },
+  { type: 'image:variation',           icon: '⊞',  name: 'Variation',           description: 'Generate variations of a source image via Nova Canvas' },
+  { type: 'image:edit-prompt',         icon: '✎',  name: 'Edit Prompt',         description: 'Inpaint or outpaint a region via Nova Canvas' },
+  { type: 'transform',                 icon: '🔧', name: 'Transform',           description: 'Reshape the context' },
+  { type: 'memory',                    icon: '💾', name: 'Memory',              description: 'AgentCore Memory read/write' },
+  { type: 'image:crop',                icon: '✂',  name: 'Crop',                description: 'Crop a region from an image using a bbox' },
+  { type: 'image:resize',              icon: '⤢',  name: 'Resize',              description: 'Resize an image to target dimensions' },
+  { type: 'image:transform',           icon: '↻',  name: 'Transform Image',     description: 'Rotate, flip or flop an image' },
+  { type: 'image:format-convert',      icon: '⇌',  name: 'Format Convert',      description: 'Convert image to JPEG, PNG, WebP or AVIF' },
+  { type: 'image:sharpen',             icon: '◈',  name: 'Sharpen',             description: 'Apply unsharp-mask sharpening' },
+  { type: 'image:watermark',           icon: '⊕',  name: 'Watermark',           description: 'Composite an overlay image onto the source' },
+  { type: 'image:adjust-bw',           icon: '◐',  name: 'Adjust B/W',          description: 'Convert image to black and white' },
+  { type: 'image:adjust-layer',        icon: '𝍩',  name: 'Adjust Layers',       description: 'Apply stacked colour/filter adjustments' },
+  { type: 'condition',                 icon: '🔀', name: 'Condition',           description: 'Branch on an expression' },
+  { type: 'fork',                      icon: '🍴', name: 'Fork',                description: 'Split into parallel branches' },
+  { type: 'join',                      icon: '🔗', name: 'Join',                description: 'Combine parallel branches' },
+  { type: 'scatter',                   icon: '⑂',  name: 'Scatter',             description: 'Fan out over an array — one arm per item' },
+  { type: 'guardrail',                 icon: '🛡️', name: 'Guardrail',           description: 'Bedrock Guardrails content filter' },
+  { type: 'policy',                    icon: '📜', name: 'Policy',              description: 'Cedar authorization policy' },
+  { type: 'action',                    icon: '🎯', name: 'Action',              description: 'Produce a side effect' },
+  { type: 'ag-ui-output',              icon: '📡', name: 'AG-UI Output',        description: 'Stream to AG-UI frontend' },
+  { type: 'image:save',                icon: '⬇',  name: 'Save Image',          description: 'Write produced image to artifact store' },
+  { type: 'approval',                  icon: '✅', name: 'Approval',            description: 'Wait for a human decision' },
 ];
+
+/** Section order + human-readable labels for the six node categories. */
+const CATEGORY_SECTIONS: ReadonlyArray<{ key: NodeCategory; name: string }> = [
+  { key: 'source',    name: 'Sources' },
+  { key: 'transform', name: 'Transform' },
+  { key: 'ai',        name: 'AI' },
+  { key: 'control',   name: 'Control' },
+  { key: 'sink',      name: 'Sinks' },
+  { key: 'human',     name: 'Human' },
+];
+
+/** Category accent color tokens (static strings so Tailwind sees them). */
+const CAT_ACCENT: Record<NodeCategory, string> = {
+  source:    'bg-cat-source',
+  transform: 'bg-cat-transform',
+  ai:        'bg-cat-ai',
+  control:   'bg-cat-control',
+  sink:      'bg-cat-sink',
+  human:     'bg-cat-human',
+};
+
+const CATEGORIES: PaletteCategory[] = CATEGORY_SECTIONS.map(({ key, name }) => ({
+  key,
+  name,
+  items: ITEM_DEFS
+    .filter((def) => categoryFor(def.type) === key)
+    .map((def) => ({ ...def, category: name, nodeCategory: key })),
+})).filter((cat) => cat.items.length > 0);
 
 // Flat ordered list — the stable base for keyboard shortcuts (before recents
 // float to the top). Exported so QuickInsertLayer can import without re-work.
@@ -407,6 +409,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           data-disabled={isDisabled || undefined}
           data-testid={`palette-item-${item.type}`}
         >
+          <span
+            aria-hidden
+            data-testid={`palette-accent-${item.type}`}
+            className={cn('w-1.5 h-1.5 rounded-full shrink-0', item.nodeCategory && CAT_ACCENT[item.nodeCategory])}
+          />
           <span className="text-base leading-none w-5 text-center shrink-0" aria-hidden>
             {item.icon}
           </span>
@@ -451,6 +458,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
         data-disabled={isDisabled || undefined}
         data-testid={`palette-item-${item.type}`}
       >
+        <span
+          aria-hidden
+          data-testid={`palette-accent-${item.type}`}
+          className={cn('w-1.5 h-1.5 rounded-full shrink-0', item.nodeCategory && CAT_ACCENT[item.nodeCategory])}
+        />
         <span className="text-lg leading-none w-[22px] text-center shrink-0" aria-hidden>
           {item.icon}
         </span>
@@ -601,6 +613,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
                   aria-expanded={!isCollapsed}
                 >
                   <Chevron expanded={!isCollapsed} />
+                  <span
+                    aria-hidden
+                    data-testid={`palette-section-accent-${cat.key}`}
+                    className={cn('w-1.5 h-1.5 rounded-full shrink-0', CAT_ACCENT[cat.key])}
+                  />
                   {cat.name}
                 </button>
                 {!isCollapsed && (

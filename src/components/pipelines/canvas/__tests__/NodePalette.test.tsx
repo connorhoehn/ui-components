@@ -7,6 +7,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import NodePalette, { recordRecentType } from '../NodePalette';
+import { categoryFor } from '../../nodes/categories';
 
 // ---------------------------------------------------------------------------
 // localStorage stub
@@ -118,31 +119,32 @@ describe('category chip filter', () => {
   it('activating a chip narrows to that category', () => {
     renderPalette();
     const chips = screen.getByTestId('palette-category-chips');
-    const visionChip = within(chips).getByText('Vision');
-    fireEvent.click(visionChip);
+    const aiChip = within(chips).getByText('AI');
+    fireEvent.click(aiChip);
     const types = getAllVisibleNodeTypes();
     expect(types.some((t) => t.includes('vision'))).toBe(true);
+    expect(types).toContain('llm');
     expect(types).not.toContain('trigger');
-    expect(types).not.toContain('llm');
+    expect(types).not.toContain('condition');
   });
 
   it('activating two chips shows both categories', () => {
     renderPalette();
     const chips = screen.getByTestId('palette-category-chips');
-    fireEvent.click(within(chips).getByText('Vision'));
     fireEvent.click(within(chips).getByText('AI'));
+    fireEvent.click(within(chips).getByText('Sources'));
     const types = getAllVisibleNodeTypes();
-    expect(types.some((t) => t.includes('vision'))).toBe(true);
     expect(types).toContain('llm');
-    expect(types).not.toContain('trigger');
+    expect(types).toContain('trigger');
+    expect(types).not.toContain('condition');
   });
 
   it('deactivating a chip removes the filter', () => {
     renderPalette();
     const chips = screen.getByTestId('palette-category-chips');
-    const triggerChip = within(chips).getByText('Triggers');
-    fireEvent.click(triggerChip);
-    fireEvent.click(triggerChip); // toggle off
+    const sourcesChip = within(chips).getByText('Sources');
+    fireEvent.click(sourcesChip);
+    fireEvent.click(sourcesChip); // toggle off
     const types = getAllVisibleNodeTypes();
     expect(types.length).toBeGreaterThanOrEqual(27);
   });
@@ -161,8 +163,8 @@ describe('collapsible sections', () => {
 
   it('clicking a category header collapses its items', () => {
     renderPalette();
-    const triggerSection = screen.getByTestId('palette-category-Triggers');
-    const header = triggerSection.querySelector('button')!;
+    const sourcesSection = screen.getByTestId('palette-category-Sources');
+    const header = sourcesSection.querySelector('button')!;
     // Starts expanded — trigger is visible
     expect(getAllVisibleNodeTypes()).toContain('trigger');
     fireEvent.click(header);
@@ -172,8 +174,8 @@ describe('collapsible sections', () => {
 
   it('clicking collapsed header re-expands the section', () => {
     renderPalette();
-    const triggerSection = screen.getByTestId('palette-category-Triggers');
-    const header = triggerSection.querySelector('button')!;
+    const sourcesSection = screen.getByTestId('palette-category-Sources');
+    const header = sourcesSection.querySelector('button')!;
     fireEvent.click(header); // collapse
     fireEvent.click(header); // expand
     expect(getAllVisibleNodeTypes()).toContain('trigger');
@@ -181,11 +183,11 @@ describe('collapsible sections', () => {
 
   it('persists collapsed state to localStorage', () => {
     renderPalette();
-    const triggerSection = screen.getByTestId('palette-category-Triggers');
-    const header = triggerSection.querySelector('button')!;
+    const sourcesSection = screen.getByTestId('palette-category-Sources');
+    const header = sourcesSection.querySelector('button')!;
     fireEvent.click(header); // collapse
     expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      'pipeline.palette.collapsed.Triggers',
+      'pipeline.palette.collapsed.Sources',
       'true',
     );
   });
@@ -233,7 +235,7 @@ describe('recently used', () => {
     localStorageData['pipeline.palette.recents'] = JSON.stringify(['llm']);
     renderPalette();
     const chips = screen.getByTestId('palette-category-chips');
-    fireEvent.click(within(chips).getByText('Vision'));
+    fireEvent.click(within(chips).getByText('AI'));
     expect(screen.queryByTestId('palette-recents')).toBeNull();
   });
 });
@@ -259,7 +261,7 @@ describe('clear filters', () => {
   it('clear-filters also resets active category chips', () => {
     renderPalette();
     const chips = screen.getByTestId('palette-category-chips');
-    fireEvent.click(within(chips).getByText('Vision'));
+    fireEvent.click(within(chips).getByText('AI'));
     typeSearch('zzznomatch');
     fireEvent.click(screen.getByTestId('palette-clear-filters'));
     // All items visible (chips reset)
@@ -342,10 +344,10 @@ describe('drag handoff', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Taxonomy correctness
+// Category-grouped sections (NODE_CATEGORIES-driven)
 // ---------------------------------------------------------------------------
 
-describe('taxonomy', () => {
+describe('category-grouped sections', () => {
   const expectInCategory = (nodeType: string, categoryName: string) => {
     renderPalette();
     const section = screen.getByTestId(`palette-category-${categoryName}`);
@@ -355,18 +357,75 @@ describe('taxonomy', () => {
     expect(types).toContain(nodeType);
   };
 
-  it('trigger is in Triggers', () => expectInCategory('trigger', 'Triggers'));
+  it('trigger is in Sources', () => expectInCategory('trigger', 'Sources'));
+  it('image-source is in Sources', () => expectInCategory('image-source', 'Sources'));
+  it('knowledge-base is in Sources', () => expectInCategory('knowledge-base', 'Sources'));
+  it('transform is in Transform', () => expectInCategory('transform', 'Transform'));
+  it('memory is in Transform', () => expectInCategory('memory', 'Transform'));
+  it('image:crop is in Transform', () => expectInCategory('image:crop', 'Transform'));
+  it('image:resize is in Transform', () => expectInCategory('image:resize', 'Transform'));
   it('llm is in AI', () => expectInCategory('llm', 'AI'));
+  it('agent is in AI', () => expectInCategory('agent', 'AI'));
   it('image:generate is in AI', () => expectInCategory('image:generate', 'AI'));
-  it('image:vision-analyze is in Vision', () => expectInCategory('image:vision-analyze', 'Vision'));
-  it('image:crop is in Image Processing', () => expectInCategory('image:crop', 'Image Processing'));
-  it('image:resize is in Image Processing', () => expectInCategory('image:resize', 'Image Processing'));
-  it('condition is in Logic', () => expectInCategory('condition', 'Logic'));
-  it('transform is in Logic', () => expectInCategory('transform', 'Logic'));
-  it('scatter is in Logic', () => expectInCategory('scatter', 'Logic'));
-  it('image-source is in Storage', () => expectInCategory('image-source', 'Storage'));
-  it('image:save is in Storage', () => expectInCategory('image:save', 'Storage'));
-  it('knowledge-base is in Data', () => expectInCategory('knowledge-base', 'Data'));
-  it('agent is in Tools', () => expectInCategory('agent', 'Tools'));
-  it('guardrail is in Tools', () => expectInCategory('guardrail', 'Tools'));
+  it('image:vision-analyze is in AI', () => expectInCategory('image:vision-analyze', 'AI'));
+  it('condition is in Control', () => expectInCategory('condition', 'Control'));
+  it('scatter is in Control', () => expectInCategory('scatter', 'Control'));
+  it('guardrail is in Control', () => expectInCategory('guardrail', 'Control'));
+  it('action is in Sinks', () => expectInCategory('action', 'Sinks'));
+  it('image:save is in Sinks', () => expectInCategory('image:save', 'Sinks'));
+  it('approval is in Human', () => expectInCategory('approval', 'Human'));
+
+  it('every palette item sits in the section matching categoryFor(type)', () => {
+    renderPalette();
+    const LABELS: Record<string, string> = {
+      source: 'Sources',
+      transform: 'Transform',
+      ai: 'AI',
+      control: 'Control',
+      sink: 'Sinks',
+      human: 'Human',
+    };
+    const items = getScrollBody().querySelectorAll('[data-node-type]');
+    expect(items.length).toBeGreaterThanOrEqual(27);
+    for (const el of Array.from(items)) {
+      const type = el.getAttribute('data-node-type')!;
+      const cat = categoryFor(type);
+      expect(cat, `no category for palette item "${type}"`).toBeDefined();
+      const section = el.closest(`[data-testid="palette-category-${LABELS[cat!]}"]`);
+      expect(section, `"${type}" not inside ${LABELS[cat!]} section`).not.toBeNull();
+    }
+  });
+
+  it('renders all six category section headers in order', () => {
+    renderPalette();
+    const sections = Array.from(
+      getScrollBody().querySelectorAll('[data-testid^="palette-category-"]'),
+    ).map((el) => el.getAttribute('data-testid'));
+    expect(sections).toEqual([
+      'palette-category-Sources',
+      'palette-category-Transform',
+      'palette-category-AI',
+      'palette-category-Control',
+      'palette-category-Sinks',
+      'palette-category-Human',
+    ]);
+  });
+
+  it('section headers carry a category-colored accent dot', () => {
+    renderPalette();
+    for (const key of ['source', 'transform', 'ai', 'control', 'sink', 'human']) {
+      const dot = screen.getByTestId(`palette-section-accent-${key}`);
+      expect(dot.className).toContain(`bg-cat-${key}`);
+    }
+  });
+
+  it('items carry a category-colored accent dot', () => {
+    renderPalette();
+    expect(screen.getByTestId('palette-accent-trigger').className).toContain('bg-cat-source');
+    expect(screen.getByTestId('palette-accent-llm').className).toContain('bg-cat-ai');
+    expect(screen.getByTestId('palette-accent-image:resize').className).toContain('bg-cat-transform');
+    expect(screen.getByTestId('palette-accent-condition').className).toContain('bg-cat-control');
+    expect(screen.getByTestId('palette-accent-image:save').className).toContain('bg-cat-sink');
+    expect(screen.getByTestId('palette-accent-approval').className).toContain('bg-cat-human');
+  });
 });

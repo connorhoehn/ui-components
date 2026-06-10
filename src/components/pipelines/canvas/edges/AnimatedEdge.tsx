@@ -5,8 +5,17 @@
 // optional branch label pill rendered near the source end (true/false/
 // approved/rejected/branch-N/error).
 //
+// Payload semantics (NODE-VISUALS-AUDIT §3.4): edges may additionally carry
+// `payload` ('image' | 'text' | 'data' | 'control') and `volume` (fan-out
+// multiplicity). Execution state stays the DOMINANT visual channel — payload
+// only adjusts base width / idle tint / idle dash, and volume scales width
+// (log2, capped 4px) plus a ×N pill at the path midpoint. With neither field
+// set, rendering is identical to the pre-payload behavior.
+//
 // Stroke + animation is applied as a plain <path>; the dashoffset SMIL
-// animation is what gives 'active' the flow effect.
+// animation is what gives 'active' the flow effect. Active image edges also
+// get a small "packet" circle traveling the path via <animateMotion>. All
+// animation is gated behind prefers-reduced-motion.
 import { EdgeLabelRenderer, getSmoothStepPath } from '@xyflow/react';
 import type { EdgeProps } from '@xyflow/react';
 import { usePrefersReducedMotion } from '../../../../hooks/usePrefersReducedMotion';
@@ -18,9 +27,15 @@ export type EdgeState =
   | 'traversed-success'
   | 'traversed-failure';
 
+export type EdgePayload = 'image' | 'text' | 'data' | 'control';
+
 export interface AnimatedEdgeData {
   state?: EdgeState;
   label?: string;
+  /** Payload type carried over this edge. 'text'/'data'/unset → no change. */
+  payload?: EdgePayload;
+  /** Fan-out multiplicity; >= 2 scales width and shows a ×N midpoint pill. */
+  volume?: number;
 }
 
 interface StrokeSpec {
@@ -29,6 +44,10 @@ interface StrokeSpec {
   strokeDasharray?: string;
   animate?: boolean;
 }
+
+// Idle tint for image edges: violet-300 — same lightness band as the slate
+// default so it stays subordinate to the execution-state colors.
+const IMAGE_IDLE_STROKE = '#c4b5fd';
 
 function strokeFor(state: EdgeState | undefined): StrokeSpec {
   switch (state) {
@@ -63,7 +82,7 @@ export default function AnimatedEdge({
 }: EdgeProps) {
   const edgeData = (data ?? {}) as AnimatedEdgeData;
   const reduceMotion = usePrefersReducedMotion();
-  const [edgePath] = getSmoothStepPath({
+  const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
     targetX,
@@ -72,16 +91,42 @@ export default function AnimatedEdge({
     targetPosition,
   });
   const spec = strokeFor(edgeData.state);
+  const isIdle = (edgeData.state ?? 'default') === 'default';
+  const payload = edgeData.payload;
   // §18.12 reduced-motion: keep the active-edge color but drop the SMIL
   // sweep so the path reads as a solid colored line instead of flowing
   // dashes. The stroke width stays at 2 to preserve the visual weight
   // difference between `default` and `active`.
   const animateFlow = spec.animate && !reduceMotion;
 
+  // ---- payload adjustments (state colors stay dominant) -------------------
+  let baseStroke = spec.stroke;
+  let baseWidth = spec.strokeWidth;
+  let dasharray = animateFlow ? spec.strokeDasharray : undefined;
+  if (payload === 'image') {
+    baseWidth = 2.5;
+    if (isIdle) baseStroke = IMAGE_IDLE_STROKE;
+  } else if (payload === 'control') {
+    baseWidth = 1.5;
+    if (isIdle) dasharray = '2 4';
+  }
+
+  // ---- fan-out volume: width scales log2, capped at 4px -------------------
+  const volume = edgeData.volume;
+  const showVolume = typeof volume === 'number' && volume >= 2;
+  if (showVolume) {
+    baseWidth = Math.min(4, baseWidth + Math.log2(volume));
+  }
+
   // When the edge is selected (clicked), show a highlight so the user knows
   // they can press Delete/Backspace to remove it.
-  const strokeColor = selected ? '#646cff' : spec.stroke;
-  const strokeWidth = selected ? 2.5 : spec.strokeWidth;
+  const strokeColor = selected ? '#646cff' : baseStroke;
+  const strokeWidth = selected ? Math.max(2.5, baseWidth) : baseWidth;
+
+  // Active image edges get a traveling "packet" dot on top of the dash
+  // scroll. Gated behind reduced-motion like every other animation here.
+  const showPacket =
+    payload === 'image' && edgeData.state === 'active' && !reduceMotion;
 
   return (
     <>
@@ -99,7 +144,7 @@ export default function AnimatedEdge({
         fill="none"
         stroke={strokeColor}
         strokeWidth={strokeWidth}
-        strokeDasharray={animateFlow ? spec.strokeDasharray : undefined}
+        strokeDasharray={dasharray}
         markerEnd={markerEnd}
         className="pointer-events-none"
       >
@@ -113,6 +158,11 @@ export default function AnimatedEdge({
           />
         ) : null}
       </path>
+      {showPacket ? (
+        <circle r={3} fill={strokeColor} className="pointer-events-none">
+          <animateMotion dur="1.2s" repeatCount="indefinite" path={edgePath} />
+        </circle>
+      ) : null}
       {edgeData.label ? (
         <EdgeLabelRenderer>
           <div
@@ -128,6 +178,24 @@ export default function AnimatedEdge({
             }}
           >
             {edgeData.label}
+          </div>
+        </EdgeLabelRenderer>
+      ) : null}
+      {showVolume ? (
+        <EdgeLabelRenderer>
+          <div
+            className={cn(
+              'absolute pointer-events-none px-1.5 py-px rounded-full text-[9px] font-semibold leading-[1.4]',
+              'bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap',
+              'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
+            )}
+            style={{
+              // Midpoint of the smooth-step path, as reported by
+              // getSmoothStepPath's labelX/labelY.
+              transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
+            }}
+          >
+            {`×${volume}`}
           </div>
         </EdgeLabelRenderer>
       ) : null}

@@ -26,6 +26,13 @@
   --color-state-failed: #dc2626;
   --color-state-skipped: #d1d5db;
 
+  --color-cat-source: #0d9488;
+  --color-cat-transform: #64748b;
+  --color-cat-ai: #7c3aed;
+  --color-cat-control: #d97706;
+  --color-cat-sink: #2563eb;
+  --color-cat-human: #db2777;
+
   --color-success: #16a34a;
   --color-warning: #d97706;
   --color-danger: #dc2626;
