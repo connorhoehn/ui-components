@@ -41,6 +41,7 @@ export const NODE_CATEGORIES: Record<string, NodeCategory> = {
   'image:crop':                'transform',
   'image:adjust-bw':           'transform',
   'image:adjust-layer':        'transform',
+  'image:dimensions':          'transform',
 
   // -- ai: model-backed steps (LLM, agents, vision, generative) --------
   llm:                         'ai',
@@ -54,6 +55,7 @@ export const NODE_CATEGORIES: Record<string, NodeCategory> = {
   'image:generate':            'ai',
   'image:variation':           'ai',
   'image:edit-prompt':         'ai',
+  'image:upscale':             'ai',
 
   // -- control: branching / fan-out / gating ---------------------------
   condition:                   'control',

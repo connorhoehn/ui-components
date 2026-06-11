@@ -30,6 +30,8 @@ import WatermarkNode from './watermark/WatermarkNode';
 import CropNode from './crop/CropNode';
 import AdjustBwNode from './adjust-bw/AdjustBwNode';
 import AdjustLayerNode from './adjust-layer/AdjustLayerNode';
+import DimensionsNode from './dimensions/DimensionsNode';
+import UpscaleNode from './upscale/UpscaleNode';
 import VisionNode from './vision/VisionNode';
 import VisionClassifyNode from './vision-classify/VisionClassifyNode';
 import VisionDescribeNode from './vision-describe/VisionDescribeNode';
@@ -67,6 +69,8 @@ export {
   CropNode,
   AdjustBwNode,
   AdjustLayerNode,
+  DimensionsNode,
+  UpscaleNode,
   VisionNode,
   VisionClassifyNode,
   VisionDescribeNode,
@@ -107,6 +111,8 @@ export const nodeTypes = {
   'image:crop':              CropNode,
   'image:adjust-bw':         AdjustBwNode,
   'image:adjust-layer':      AdjustLayerNode,
+  'image:dimensions':        DimensionsNode,
+  'image:upscale':           UpscaleNode,
   'image:vision-analyze':    VisionNode,
   'image:vision-classify':   VisionClassifyNode,
   'image:vision-describe':   VisionDescribeNode,

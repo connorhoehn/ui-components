@@ -41,6 +41,9 @@ export type NodeType =
   | 'image:crop'
   | 'image:adjust-bw'
   | 'image:adjust-layer'
+  // Dimensions / super-resolution nodes
+  | 'image:dimensions'
+  | 'image:upscale'
   // Vision analysis
   | 'image:vision-analyze'
   | 'image:vision-classify'
@@ -424,6 +427,30 @@ export interface ImageAdjustLayerNodeData {
 }
 
 // ---------------------------------------------------------------------------
+// Dimensions / super-resolution node data interfaces
+// ---------------------------------------------------------------------------
+
+export interface ImageDimensionsNodeData {
+  type: 'image:dimensions';
+  sourceImagePath?: string;
+  /**
+   * Longest-edge target used to derive generation dimensions. The handler
+   * reads the source image's natural size and emits width/height/aspectRatio
+   * plus genWidth/genHeight scaled to fit within `maxEdge`. Default: 1024.
+   */
+  maxEdge?: number;
+}
+
+export interface ImageUpscaleNodeData {
+  type: 'image:upscale';
+  sourceImagePath?: string;
+  /** Optional prompt forwarded to the self-hosted x4 upscaler. */
+  prompt?: string;
+  /** Longest-edge cap applied before super-resolution. Default: 1024. */
+  maxEdge?: number;
+}
+
+// ---------------------------------------------------------------------------
 // BBox authoring — user-painted focus hints for vision passes
 // ---------------------------------------------------------------------------
 
@@ -560,6 +587,9 @@ export type NodeData =
   | ImageCropNodeData
   | ImageAdjustBwNodeData
   | ImageAdjustLayerNodeData
+  // Dimensions / super-resolution
+  | ImageDimensionsNodeData
+  | ImageUpscaleNodeData
   // Vision analysis
   | ImageVisionAnalyzeNodeData
   | ImageVisionClassifyNodeData

@@ -29,6 +29,8 @@ import WatermarkConfig from '../nodes/watermark/WatermarkConfig';
 import CropConfig from '../nodes/crop/CropConfig';
 import AdjustBwConfig from '../nodes/adjust-bw/AdjustBwConfig';
 import AdjustLayerConfig from '../nodes/adjust-layer/AdjustLayerConfig';
+import DimensionsConfig from '../nodes/dimensions/DimensionsConfig';
+import UpscaleConfig from '../nodes/upscale/UpscaleConfig';
 import VisionConfig from '../nodes/vision/VisionConfig';
 import VisionClassifyConfig from '../nodes/vision-classify/VisionClassifyConfig';
 import VisionDescribeConfig from '../nodes/vision-describe/VisionDescribeConfig';
@@ -180,6 +182,16 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
     name: 'Adjust Layers',
     docs: 'Apply a composable stack of colour and filter adjustments — brightness, contrast, saturation, hue, blur.',
   },
+  'image:dimensions': {
+    icon: '📐',
+    name: 'Dimensions',
+    docs: "Read a source image's natural size and emit width/height/aspectRatio plus genWidth/genHeight scaled to fit maxEdge. Wire the derived dimensions into Generate.",
+  },
+  'image:upscale': {
+    icon: '⤢',
+    name: 'Upscale',
+    docs: '4× super-resolution of a source image via a self-hosted upscaler. Outputs a new, higher-resolution image.',
+  },
   'image:vision-analyze': {
     icon: '📷',
     name: 'Vision Analyze',
@@ -283,6 +295,8 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   'image:crop': CropConfig as unknown as AnyConfig,
   'image:adjust-bw': AdjustBwConfig as unknown as AnyConfig,
   'image:adjust-layer': AdjustLayerConfig as unknown as AnyConfig,
+  'image:dimensions': DimensionsConfig as unknown as AnyConfig,
+  'image:upscale': UpscaleConfig as unknown as AnyConfig,
   'image:vision-analyze': VisionConfig as unknown as AnyConfig,
   'image:vision-classify': VisionClassifyConfig as unknown as AnyConfig,
   'image:vision-describe': VisionDescribeConfig as unknown as AnyConfig,

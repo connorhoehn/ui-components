@@ -95,6 +95,8 @@ const ITEM_DEFS: PaletteItemDef[] = [
   { type: 'image:watermark',           icon: '⊕',  name: 'Watermark',           description: 'Composite an overlay image onto the source' },
   { type: 'image:adjust-bw',           icon: '◐',  name: 'Adjust B/W',          description: 'Convert image to black and white' },
   { type: 'image:adjust-layer',        icon: '𝍩',  name: 'Adjust Layers',       description: 'Apply stacked colour/filter adjustments' },
+  { type: 'image:dimensions',          icon: '📐', name: 'Dimensions',          description: "Read an image's size → feed generate" },
+  { type: 'image:upscale',             icon: '⤢',  name: 'Upscale',             description: '4× super-resolution (self-hosted)' },
   { type: 'condition',                 icon: '🔀', name: 'Condition',           description: 'Branch on an expression' },
   { type: 'fork',                      icon: '🍴', name: 'Fork',                description: 'Split into parallel branches' },
   { type: 'join',                      icon: '🔗', name: 'Join',                description: 'Combine parallel branches' },

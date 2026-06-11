@@ -211,7 +211,7 @@ function Dt(e) {
       message: "Your document summary is ready for review."
     },
     onError: "route-error"
-  }, k = {
+  }, E = {
     type: "join",
     mode: "all",
     mergeStrategy: "deep-merge"
@@ -234,7 +234,7 @@ function Dt(e) {
     { id: t, type: "fork", position: { x: 900, y: 120 }, data: b },
     { id: s, type: "action", position: { x: 1180, y: 60 }, data: g },
     { id: i, type: "action", position: { x: 1180, y: 180 }, data: C },
-    { id: c, type: "join", position: { x: 1480, y: 120 }, data: k },
+    { id: c, type: "join", position: { x: 1480, y: 120 }, data: E },
     { id: u, type: "approval", position: { x: 1780, y: 120 }, data: N },
     { id: x, type: "action", position: { x: 2080, y: 120 }, data: p },
     { id: h, type: "action", position: { x: 900, y: 320 }, data: {
@@ -599,6 +599,10 @@ function st(e) {
       return { type: "image:adjust-bw" };
     case "image:adjust-layer":
       return { type: "image:adjust-layer", layers: [] };
+    case "image:dimensions":
+      return { type: "image:dimensions", maxEdge: 1024 };
+    case "image:upscale":
+      return { type: "image:upscale", maxEdge: 1024 };
     case "image:vision-analyze":
       return { type: "image:vision-analyze", userPrompt: "", imageRefPath: "$.trigger.imageRef" };
     case "image:vision-classify":
@@ -655,18 +659,18 @@ function qt({
       return o((I) => {
         if (!I) return I;
         v(I);
-        const E = m(I);
-        return l = E, E;
+        const k = m(I);
+        return l = k, k;
       }), t(!0), l;
     },
     [v]
   ), P = w(
     (m, l) => {
       const I = ee();
-      return f((E) => ({
-        ...E,
+      return f((k) => ({
+        ...k,
         nodes: [
-          ...E.nodes,
+          ...k.nodes,
           { id: I, type: m, position: l, data: st(m) }
         ]
       })), I;
@@ -676,7 +680,7 @@ function qt({
     (m, l) => {
       f((I) => ({
         ...I,
-        nodes: I.nodes.map((E) => E.id === m ? { ...E, ...l } : E)
+        nodes: I.nodes.map((k) => k.id === m ? { ...k, ...l } : k)
       }));
     },
     [f]
@@ -684,10 +688,10 @@ function qt({
     (m, l) => {
       f((I) => ({
         ...I,
-        nodes: I.nodes.map((E) => {
-          if (E.id !== m) return E;
-          const _ = { ...E.data, ...l };
-          return { ...E, data: _ };
+        nodes: I.nodes.map((k) => {
+          if (k.id !== m) return k;
+          const _ = { ...k.data, ...l };
+          return { ...k, data: _ };
         })
       }));
     },
@@ -705,7 +709,7 @@ function qt({
     (m) => {
       const l = [];
       return f((I) => {
-        const E = new Set(m), _ = /* @__PURE__ */ new Map(), Z = I.nodes.filter((O) => E.has(O.id)).map((O) => {
+        const k = new Set(m), _ = /* @__PURE__ */ new Map(), Z = I.nodes.filter((O) => k.has(O.id)).map((O) => {
           const ie = ee();
           return _.set(O.id, ie), l.push(ie), {
             ...O,
@@ -713,7 +717,7 @@ function qt({
             position: { x: O.position.x + 40, y: O.position.y + 40 },
             data: { ...O.data }
           };
-        }), Ne = I.edges.filter((O) => E.has(O.source) && E.has(O.target)).map((O) => ({
+        }), Ne = I.edges.filter((O) => k.has(O.source) && k.has(O.target)).map((O) => ({
           ...O,
           id: ee(),
           source: _.get(O.source) ?? O.source,
@@ -727,7 +731,7 @@ function qt({
       }), l;
     },
     [f]
-  ), k = w(
+  ), E = w(
     (m) => {
       const l = ee();
       return f((I) => ({
@@ -748,14 +752,14 @@ function qt({
     (m) => {
       m.length !== 0 && o((l) => {
         if (!l) return l;
-        const I = new Map(m.map((_) => [_.id, _.position])), E = {
+        const I = new Map(m.map((_) => [_.id, _.position])), k = {
           ...l,
           nodes: l.nodes.map((_) => {
             const Z = I.get(_.id);
             return Z ? { ..._, position: Z } : _;
           })
         };
-        return Xe(E), E;
+        return Xe(k), k;
       });
     },
     []
@@ -781,7 +785,7 @@ function qt({
     o((l) => {
       if (!l) return l;
       const I = l.tags ?? [];
-      return I.length === m.length && I.every((E, _) => E === m[_]) ? l : { ...l, tags: [...m] };
+      return I.length === m.length && I.every((k, _) => k === m[_]) ? l : { ...l, tags: [...m] };
     }), t(!0);
   }, []), L = w(() => {
     u((m) => {
@@ -797,11 +801,11 @@ function qt({
       if (m.length === 0 || !r) return m;
       const l = m[m.length - 1];
       return u((I) => {
-        const E = [
+        const k = [
           ...I,
           { nodes: r.nodes, edges: r.edges }
         ];
-        return E.length > we && E.shift(), E;
+        return k.length > we && k.shift(), k;
       }), o({ ...r, nodes: l.nodes, edges: l.edges }), t(!0), m.slice(0, -1);
     });
   }, [r]), X = W(
@@ -815,7 +819,7 @@ function qt({
       updateNodeData: b,
       removeNode: g,
       duplicateNodes: C,
-      addEdge: k,
+      addEdge: E,
       removeEdge: N,
       setPositions: p,
       save: S,
@@ -838,7 +842,7 @@ function qt({
       b,
       g,
       C,
-      k,
+      E,
       N,
       p,
       S,
@@ -1047,7 +1051,7 @@ function Jt({
 }) {
   return /* @__PURE__ */ R(Re.Provider, { value: e, children: n });
 }
-function ke() {
+function Ee() {
   return J(Re);
 }
 const de = 20, se = re(null);
@@ -1208,7 +1212,7 @@ function Wt({ children: e }) {
       }
       return { ...S, [p.id]: p };
     });
-  }, []), k = W(
+  }, []), E = W(
     () => Object.values(a).filter(
       (p) => p.status === "running" || p.status === "pending" || p.status === "awaiting_approval" || p.status === "paused_at_breakpoint"
     ).map((p) => p.id),
@@ -1216,7 +1220,7 @@ function Wt({ children: e }) {
   ), N = W(
     () => ({
       runs: a,
-      activeRunIds: k,
+      activeRunIds: E,
       triggerRun: x,
       triggerDebugRun: P,
       cancelRun: h,
@@ -1229,7 +1233,7 @@ function Wt({ children: e }) {
     }),
     [
       a,
-      k,
+      E,
       x,
       P,
       h,
@@ -1569,14 +1573,14 @@ function mt() {
   return e;
 }
 function Kt() {
-  const e = ke(), n = J(se), r = e?.retryFromStep, o = n?.retryFromStep;
+  const e = Ee(), n = J(se), r = e?.retryFromStep, o = n?.retryFromStep;
   return W(() => r ? async (a) => {
     await r(a);
   } : o ?? (async () => {
   }), [r, o]);
 }
 function Vt(e) {
-  const n = ke(), r = J(se), o = n?.getLatestStepForNode, a = W(
+  const n = Ee(), r = J(se), o = n?.getLatestStepForNode, a = W(
     () => o ? o(e) : null,
     [o, e]
   ), t = W(() => {
@@ -1694,10 +1698,10 @@ function ft() {
     ), f.push(
       e.subscribe("pipeline.approval.requested", (y) => {
         const b = y, g = h.current.get(b.runId) ?? x.current[b.runId]?.pipelineId ?? "", C = ce(g, b.stepId);
-        o((k) => {
+        o((E) => {
           const N = ne(b.runId, b.stepId);
-          return k[N] ? k : {
-            ...k,
+          return E[N] ? E : {
+            ...E,
             [N]: {
               runId: b.runId,
               pipelineId: g,
@@ -1715,20 +1719,20 @@ function ft() {
       e.subscribe("pipeline.approval.recorded", (y) => {
         const b = y, g = ne(b.runId, b.stepId);
         o((C) => {
-          const k = C[g];
-          if (!k) return C;
+          const E = C[g];
+          if (!E) return C;
           if (b.decision === "reject") {
             const S = { ...C };
             return delete S[g], S;
           }
-          const N = (k.recordedCount ?? 0) + 1, p = k.requiredCount ?? 1;
+          const N = (E.recordedCount ?? 0) + 1, p = E.requiredCount ?? 1;
           if (N >= p) {
             const S = { ...C };
             return delete S[g], S;
           }
           return {
             ...C,
-            [g]: { ...k, recordedCount: N }
+            [g]: { ...E, recordedCount: N }
           };
         });
       })
@@ -1756,7 +1760,7 @@ class gt extends Error {
     super(n), this.name = "PatchValidationRejectedError", this.reason = n, this.result = r;
   }
 }
-class Ee extends Error {
+class ke extends Error {
   status;
   body;
   constructor(n, r, o) {
@@ -1788,7 +1792,7 @@ async function Yt(e, n, r, o, a) {
   } catch {
     i = s;
   }
-  throw new Ee(
+  throw new ke(
     t.status,
     `applyPatch HTTP ${t.status}: ${s}`,
     i
@@ -1807,7 +1811,7 @@ async function Xt(e, n, r, o) {
   } catch {
     s = t;
   }
-  throw new Ee(
+  throw new ke(
     a.status,
     `revertPatch HTTP ${a.status}: ${t}`,
     s
@@ -2028,23 +2032,23 @@ const ue = {
     ...h
   }, d) {
     const v = B(null), f = w(
-      (k) => {
-        v.current = k, typeof d == "function" ? d(k) : d && (d.current = k);
+      (E) => {
+        v.current = E, typeof d == "function" ? d(E) : d && (d.current = E);
       },
       [d]
     ), P = 20, y = 12, b = w(() => {
-      const k = v.current;
-      if (!k || !a) return;
-      k.style.height = "auto";
-      const N = r * P + y, p = k.scrollHeight, S = o ? o * P + y : 1 / 0;
-      k.style.height = `${Math.min(Math.max(p, N), S)}px`, k.style.overflowY = p > S ? "auto" : "hidden";
+      const E = v.current;
+      if (!E || !a) return;
+      E.style.height = "auto";
+      const N = r * P + y, p = E.scrollHeight, S = o ? o * P + y : 1 / 0;
+      E.style.height = `${Math.min(Math.max(p, N), S)}px`, E.style.overflowY = p > S ? "auto" : "hidden";
     }, [a, r, o]);
     F(() => {
       b();
     }, [c, b]);
     const g = w(
-      (k) => {
-        b(), i?.(k);
+      (E) => {
+        b(), i?.(E);
       },
       [i, b]
     );
@@ -2421,14 +2425,14 @@ export {
   Ut as W,
   ft as X,
   Jt as Y,
-  ke as Z,
+  Ee as Z,
   Nt as _,
   K as a,
   _t as b,
   Ht as c,
   zt as d,
   Ae as e,
-  Ee as f,
+  ke as f,
   gt as g,
   an as h,
   Yt as i,

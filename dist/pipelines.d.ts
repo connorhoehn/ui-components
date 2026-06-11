@@ -355,6 +355,23 @@ declare type CropFlowNode = Node_2<CropData, 'image:crop'>;
 
 export declare function CropNode(props: NodeProps<CropFlowNode>): JSX.Element;
 
+export declare function DimensionsConfig({ data, onChange }: DimensionsConfigProps): JSX.Element;
+
+export declare interface DimensionsConfigProps {
+    data: ImageDimensionsNodeData;
+    onChange: (patch: Partial<ImageDimensionsNodeData>) => void;
+}
+
+declare type DimensionsData = ImageDimensionsNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type DimensionsFlowNode = Node_2<DimensionsData, 'image:dimensions'>;
+
+export declare function DimensionsNode(props: NodeProps<DimensionsFlowNode>): JSX.Element;
+
 export declare type EdgePayload = 'image' | 'text' | 'data' | 'control';
 
 export declare type EdgeState = 'default' | 'active' | 'traversed-success' | 'traversed-failure';
@@ -573,6 +590,17 @@ declare interface ImageCropNodeData {
     materialize?: boolean;
 }
 
+declare interface ImageDimensionsNodeData {
+    type: 'image:dimensions';
+    sourceImagePath?: string;
+    /**
+     * Longest-edge target used to derive generation dimensions. The handler
+     * reads the source image's natural size and emits width/height/aspectRatio
+     * plus genWidth/genHeight scaled to fit within `maxEdge`. Default: 1024.
+     */
+    maxEdge?: number;
+}
+
 declare interface ImageEditPromptNodeData {
     type: 'image:edit-prompt';
     sourceImagePath?: string;
@@ -702,6 +730,15 @@ declare interface ImageTransformNodeData {
     type: 'image:transform';
     sourceImagePath?: string;
     operations: GeometricOp[];
+}
+
+declare interface ImageUpscaleNodeData {
+    type: 'image:upscale';
+    sourceImagePath?: string;
+    /** Optional prompt forwarded to the self-hosted x4 upscaler. */
+    prompt?: string;
+    /** Longest-edge cap applied before super-resolution. Default: 1024. */
+    maxEdge?: number;
 }
 
 declare interface ImageVariationNodeData {
@@ -1107,7 +1144,7 @@ export declare const NODE_CATEGORIES: Record<string, NodeCategory>;
 
 export declare type NodeCategory = 'source' | 'transform' | 'ai' | 'control' | 'sink' | 'human';
 
-declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
+declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageDimensionsNodeData | ImageUpscaleNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
 
@@ -1132,7 +1169,7 @@ export declare interface NodeThumbStripProps {
     'data-testid'?: string;
 }
 
-declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
+declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:dimensions' | 'image:upscale' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
 export declare const nodeTypes: {
     readonly trigger: typeof TriggerNode;
@@ -1162,6 +1199,8 @@ export declare const nodeTypes: {
     readonly 'image:crop': typeof CropNode;
     readonly 'image:adjust-bw': typeof AdjustBwNode;
     readonly 'image:adjust-layer': typeof AdjustLayerNode;
+    readonly 'image:dimensions': typeof DimensionsNode;
+    readonly 'image:upscale': typeof UpscaleNode;
     readonly 'image:vision-analyze': typeof VisionNode;
     readonly 'image:vision-classify': typeof VisionClassifyNode;
     readonly 'image:vision-describe': typeof VisionDescribeNode;
@@ -2162,6 +2201,23 @@ declare interface TriggerNodeData {
 }
 
 declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
+
+export declare function UpscaleConfig({ data, onChange }: UpscaleConfigProps): JSX.Element;
+
+export declare interface UpscaleConfigProps {
+    data: ImageUpscaleNodeData;
+    onChange: (patch: Partial<ImageUpscaleNodeData>) => void;
+}
+
+declare type UpscaleData = ImageUpscaleNodeData & {
+    _state?: NodeExecutionState;
+    _hasBreakpoint?: boolean;
+    _pausedAtBreakpoint?: boolean;
+} & Record<string, unknown>;
+
+declare type UpscaleFlowNode = Node_2<UpscaleData, 'image:upscale'>;
+
+export declare function UpscaleNode(props: NodeProps<UpscaleFlowNode>): JSX.Element;
 
 /**
  * Lifecycle-safe subscription. The `handler` ref is kept latest so callers

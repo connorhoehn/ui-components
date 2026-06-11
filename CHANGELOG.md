@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.36.0] — 2026-06-11
+
+### Added
+
+- **Two new pipeline image node types — `image:dimensions` and
+  `image:upscale`** (additive; mirrors the existing Sharp/generative
+  image nodes). Both ship a canvas node + config panel, register in
+  `nodeTypes`, the node category map, the palette, the editor
+  default-data factory, the config-panel dispatch / docs, the step-timeline
+  colour maps, and the handle-compatibility table.
+  - **`image:dimensions`** (category `transform`, icon `📐`). Reads a
+    source image and emits dimension data
+    (`width`/`height`/`aspectRatio`/`genWidth`/`genHeight`) into context —
+    it does **not** output an image. Handles: image-in `in`, data-out
+    `out`, error `error`. Node data:
+    `{ type, sourceImagePath?, maxEdge? }` (maxEdge default 1024). Wire its
+    `out` into `image:generate`'s width/height.
+  - **`image:upscale`** (category `ai`, icon `⤢`). Super-resolves a source
+    image via a self-hosted x4 upscaler and outputs a new image. Handles:
+    image-in `in`, image-out `out`, error `error`. Node data:
+    `{ type, sourceImagePath?, prompt?, maxEdge? }` (maxEdge default 1024).
+  - New barrel exports: `DimensionsNode`, `UpscaleNode`, `DimensionsConfig`
+    (+ `DimensionsConfigProps`), `UpscaleConfig` (+ `UpscaleConfigProps`).
+
 ## [2.35.0] — 2026-06-10
 
 ### Added

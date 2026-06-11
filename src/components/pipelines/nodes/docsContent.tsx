@@ -473,6 +473,35 @@ const docsContent: Record<NodeType, ReactNode> = {
     </>
   ),
 
+  'image:dimensions': (
+    <>
+      <h4>What it does</h4>
+      <p>Reads a source image&apos;s natural size and emits dimension data — <code>width</code>, <code>height</code>, <code>aspectRatio</code>, plus <code>genWidth</code>/<code>genHeight</code> scaled to fit within <code>maxEdge</code>. It does <em>not</em> output an image.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceImagePath</code> — JSONPath to the source image (optional; defaults to the upstream image).</li>
+        <li><code>maxEdge</code> — longest-edge cap used to derive the generation dimensions (default 1024).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Image input <code>in</code>, data output <code>out</code> (wire into Generate&apos;s width/height), error handle <code>error</code>.</p>
+    </>
+  ),
+
+  'image:upscale': (
+    <>
+      <h4>What it does</h4>
+      <p>Super-resolves a source image via a self-hosted x4 upscaler and outputs a new, higher-resolution image.</p>
+      <h4>Fields</h4>
+      <ul>
+        <li><code>sourceImagePath</code> — JSONPath to the source image (optional; defaults to the upstream image).</li>
+        <li><code>prompt</code> — optional guidance forwarded to the upscaler.</li>
+        <li><code>maxEdge</code> — longest-edge cap applied before the 4× pass (default 1024).</li>
+      </ul>
+      <h4>Wiring</h4>
+      <p>Image input <code>in</code>, image output <code>out</code>, error handle <code>error</code>.</p>
+    </>
+  ),
+
   'image:vision-analyze': (
     <>
       <h4>What it does</h4>

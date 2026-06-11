@@ -84,6 +84,8 @@ export {
   CropNode,
   AdjustBwNode,
   AdjustLayerNode,
+  DimensionsNode,
+  UpscaleNode,
   VisionNode,
   VisionClassifyNode,
   VisionDescribeNode,
@@ -120,6 +122,10 @@ export { default as WatermarkConfig } from './nodes/watermark/WatermarkConfig';
 export { default as CropConfig } from './nodes/crop/CropConfig';
 export { default as AdjustBwConfig } from './nodes/adjust-bw/AdjustBwConfig';
 export { default as AdjustLayerConfig } from './nodes/adjust-layer/AdjustLayerConfig';
+export { default as DimensionsConfig } from './nodes/dimensions/DimensionsConfig';
+export type { DimensionsConfigProps } from './nodes/dimensions/DimensionsConfig';
+export { default as UpscaleConfig } from './nodes/upscale/UpscaleConfig';
+export type { UpscaleConfigProps } from './nodes/upscale/UpscaleConfig';
 export { default as VisionConfig } from './nodes/vision/VisionConfig';
 export { default as VisionClassifyConfig } from './nodes/vision-classify/VisionClassifyConfig';
 export { default as VisionDescribeConfig } from './nodes/vision-describe/VisionDescribeConfig';

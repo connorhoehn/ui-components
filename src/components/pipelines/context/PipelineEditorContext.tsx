@@ -199,6 +199,10 @@ function defaultNodeData(type: NodeType): NodeData {
       return { type: 'image:adjust-bw' };
     case 'image:adjust-layer':
       return { type: 'image:adjust-layer', layers: [] };
+    case 'image:dimensions':
+      return { type: 'image:dimensions', maxEdge: 1024 };
+    case 'image:upscale':
+      return { type: 'image:upscale', maxEdge: 1024 };
     case 'image:vision-analyze':
       return { type: 'image:vision-analyze', userPrompt: '', imageRefPath: '$.trigger.imageRef' };
     case 'image:vision-classify':
