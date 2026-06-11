@@ -66,6 +66,19 @@ describe('ImageSourceNode', () => {
     expect(screen.queryByTestId('image-source-thumb')).not.toBeInTheDocument();
   });
 
+  it('exposes an input handle so it is reachable from the trigger (trigger → image-source)', () => {
+    mockLatestStep.mockReturnValue(null);
+    render(
+      <Wrapper>
+        <ImageSourceNode {...makeProps()} />
+      </Wrapper>,
+    );
+    // 'in' (inbound from trigger) + 'out' (image to downstream). Without the
+    // 'in' handle image-source is unreachable and the executor skips it.
+    expect(screen.getByTestId('handle-in')).toBeInTheDocument();
+    expect(screen.getByTestId('handle-out')).toBeInTheDocument();
+  });
+
   it('renders a thumbnail using the stub getImageUrl when imageId is set', () => {
     mockLatestStep.mockReturnValue(null);
     render(

@@ -224,8 +224,10 @@ const ja = {
   guardrail: ["in"],
   policy: ["in"],
   "ag-ui-output": ["in"],
-  "image-source": null,
-  // image-source has no inputs — it is a source node
+  // image-source runs downstream of the trigger (default mode reads the
+  // trigger payload), so it accepts an inbound 'in' edge: trigger →
+  // image-source → … . Matches the backend contract + VisionPipelineE2E.
+  "image-source": ["in"],
   "image:save": ["in"],
   scatter: ["in"],
   "image:resize": ["in"],
@@ -1010,7 +1012,7 @@ function ki(t) {
     h.slice(0, 16),
     "…"
   ] }) : void 0;
-  return /* @__PURE__ */ e(
+  return /* @__PURE__ */ o(
     ge,
     {
       icon: "🖼",
@@ -1023,15 +1025,26 @@ function ki(t) {
       ariaLabel: `Image Source node, state: ${p}`,
       hasBreakpoint: n._hasBreakpoint,
       pausedAtBreakpoint: n._pausedAtBreakpoint,
-      children: /* @__PURE__ */ e(
-        L,
-        {
-          type: "source",
-          position: B.Right,
-          id: "out",
-          className: F("image")
-        }
-      )
+      children: [
+        /* @__PURE__ */ e(
+          L,
+          {
+            type: "target",
+            position: B.Left,
+            id: "in",
+            className: F("control")
+          }
+        ),
+        /* @__PURE__ */ e(
+          L,
+          {
+            type: "source",
+            position: B.Right,
+            id: "out",
+            className: F("image")
+          }
+        )
+      ]
     }
   );
 }

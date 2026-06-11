@@ -69,7 +69,10 @@ const INPUT_HANDLES: Record<NodeType, readonly string[] | 'join' | null> = {
   guardrail: ['in'],
   policy: ['in'],
   'ag-ui-output': ['in'],
-  'image-source': null, // image-source has no inputs — it is a source node
+  // image-source runs downstream of the trigger (default mode reads the
+  // trigger payload), so it accepts an inbound 'in' edge: trigger →
+  // image-source → … . Matches the backend contract + VisionPipelineE2E.
+  'image-source': ['in'],
   'image:save': ['in'],
   scatter: ['in'],
   'image:resize': ['in'],

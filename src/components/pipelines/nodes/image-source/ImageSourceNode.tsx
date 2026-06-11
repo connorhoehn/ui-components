@@ -113,6 +113,18 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}
     >
+      {/* Input handle — image-source runs DOWNSTREAM of the trigger (its
+          default mode reads $.trigger.imageRef from the trigger payload),
+          so it must be reachable: trigger → image-source → … . The handler
+          + executor have always supported this (see VisionPipelineE2E
+          test: trigger → image-source via targetHandle 'in'); the node was
+          missing the handle, which left image-source unreachable/skipped. */}
+      <Handle
+        type="target"
+        position={Position.Left}
+        id="in"
+        className={portCls('control')}
+      />
       <Handle
         type="source"
         position={Position.Right}

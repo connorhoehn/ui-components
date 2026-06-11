@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.37.0] — 2026-06-11
+
+### Fixed
+
+- **`image-source` is now reachable from the trigger.** The node was a
+  pure source (no input handle), so `trigger → image-source` couldn't be
+  drawn and the executor (which only traverses from the trigger) marked
+  image-source — and everything downstream — as `skipped`. But the
+  backend handler + executor have always supported `trigger →
+  image-source` (its default `mode:'trigger'` reads `$.trigger.imageRef`;
+  `VisionPipelineE2E` wires `trigger → image-source` via `targetHandle:
+  'in'` and passes). The UI contradicted the tested contract. Added the
+  `'in'` target handle to `ImageSourceNode` and set
+  `INPUT_HANDLES['image-source'] = ['in']` in handleCompatibility, so
+  `trigger → image-source → …` pipelines build and run. No executor
+  change — purely aligning the node UI with the backend.
+
 ## [2.36.0] — 2026-06-11
 
 ### Added
