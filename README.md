@@ -1,13 +1,13 @@
-# @connorhoehn/ui-components
+# @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published
-to GitHub Packages as `@connorhoehn/ui-components` (current `2.19.0`).
+to GitHub Packages as `@connorhoehnslalom/ui-components` (current `2.19.0`).
 Consumed by `event-catalog`, `websocket-gateway`, and `vnl-ads`.
 
 ## Install
 
 ```bash
-npm install @connorhoehn/ui-components
+npm install @connorhoehnslalom/ui-components
 ```
 
 This is a multi-entry-point library — pick the surface you need. The root
@@ -25,15 +25,15 @@ import {
   CallWidget,
   PresenceAvatars,
   PageHeader,
-} from '@connorhoehn/ui-components';
+} from '@connorhoehnslalom/ui-components';
 
 // Sub-paths for in-flux or specialised surfaces
-import { TipTapEditor, StandaloneTiptap } from '@connorhoehn/ui-components/doc-editor';
-import { PipelineEditor } from '@connorhoehn/ui-components/pipelines';
-import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehn/ui-components/agents';
-import { ObservabilityDashboard } from '@connorhoehn/ui-components/observability';
-import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
-import '@connorhoehn/ui-components/styles.css';
+import { TipTapEditor, StandaloneTiptap } from '@connorhoehnslalom/ui-components/doc-editor';
+import { PipelineEditor } from '@connorhoehnslalom/ui-components/pipelines';
+import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehnslalom/ui-components/agents';
+import { ObservabilityDashboard } from '@connorhoehnslalom/ui-components/observability';
+import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+import '@connorhoehnslalom/ui-components/styles.css';
 ```
 
 See `CLAUDE.md` for the full exports/stability map.
@@ -54,7 +54,7 @@ common hand-rolled patterns onto the canonical ui-components composites.
 | `/identity` | Auth flows (Login, Logout, MFA, Consent), admin identity panels, `IdentityContext` | **Stable** |
 | `/hooks` | `useWebSocket`, `useComments`, `useLikes`, `usePosts`, `useSocialProfile`, etc. | **Stable** |
 | `/styles.css` | Tailwind v4 `@theme` tokens + keyframes | **Stable** |
-| `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehn/realtime-modules` hooks (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
+| `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehnslalom/realtime-modules` hooks (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
 | `/doc-editor` | TipTap collaborative rich-text editor + self-bootstrapping `StandaloneTiptap`, document modes (Ack/Review/Reader), comments, mentions, video panel | **In-flux** (graduation: hub #1066) |
 | `/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
 | `/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A flow canvas | **In-flux** (graduation: hub #1069) |

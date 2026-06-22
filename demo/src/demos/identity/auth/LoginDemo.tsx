@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { LoginPage } from '@connorhoehn/ui-components/identity';
+import { LoginPage } from '@connorhoehnslalom/ui-components/identity';
 
 export default function LoginDemo() {
   const [showError, setShowError] = useState(false);
@@ -10,7 +10,7 @@ export default function LoginDemo() {
       <PageHeader
         title="Login Page"
         description="Tabbed authentication page supporting sign in, registration, and forgot password flows. Props-driven with async handlers — no internal routing or API calls."
-        importPath="import { LoginPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { LoginPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

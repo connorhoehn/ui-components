@@ -1,6 +1,6 @@
 import { default as default_2 } from 'react';
 import { EdgeProps } from '@xyflow/react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { Node as Node_2 } from '@xyflow/react';
 import { NodeProps } from '@xyflow/react';
 import { ReactNode } from 'react';
@@ -407,7 +407,7 @@ export declare interface EditRecommendationsPanelProps {
 
 declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
 
-export declare function EventStreamProvider({ children, }: EventStreamProviderProps): JSX.Element;
+export declare function EventStreamProvider({ children, }: EventStreamProviderProps): default_2.JSX.Element;
 
 export declare interface EventStreamProviderProps {
     children: default_2.ReactNode;
@@ -1330,7 +1330,7 @@ export declare const PipelineEditorContext: default_2.Context<PipelineEditorValu
 
 export declare function PipelineEditorPage(): JSX.Element;
 
-export declare function PipelineEditorProvider({ pipelineId, children, }: PipelineEditorProviderProps): JSX.Element;
+export declare function PipelineEditorProvider({ pipelineId, children, }: PipelineEditorProviderProps): default_2.JSX.Element;
 
 export declare interface PipelineEditorProviderProps {
     pipelineId: string;
@@ -1697,7 +1697,7 @@ declare interface PipelineNode {
  * them live run state from a host-owned store, without mounting the bundled
  * `PipelineRunsProvider` (and its WebSocketProvider / social-api stack).
  */
-export declare function PipelineNodeRuntimeProvider({ value, children, }: PipelineNodeRuntimeProviderProps): JSX.Element;
+export declare function PipelineNodeRuntimeProvider({ value, children, }: PipelineNodeRuntimeProviderProps): default_2.JSX.Element;
 
 export declare interface PipelineNodeRuntimeProviderProps {
     value: PipelineNodeRuntimeValue;
@@ -1772,11 +1772,11 @@ declare interface PipelineRunError {
     errorCategory?: ErrorCategory;
 }
 
-export declare function PipelineRunReplayPage(): JSX.Element;
+export declare function PipelineRunReplayPage(): default_2.JSX.Element;
 
 export declare function PipelineRunsPage(): JSX.Element;
 
-export declare function PipelineRunsProvider({ children }: PipelineRunsProviderProps): JSX.Element;
+export declare function PipelineRunsProvider({ children }: PipelineRunsProviderProps): default_2.JSX.Element;
 
 export declare interface PipelineRunsProviderProps {
     children: default_2.ReactNode;

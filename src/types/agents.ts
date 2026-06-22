@@ -13,7 +13,7 @@
 // Consumers (websocket-gateway and others) depend on these shapes. Any
 // breaking change (renaming a discriminant, removing a field, narrowing a
 // union) requires:
-//   1. A major version bump on @connorhoehn/ui-components
+//   1. A major version bump on @connorhoehnslalom/ui-components
 //   2. A create_handoff to each consumer agent that imports from /agents
 //   3. A blocker raised for operator review BEFORE the breaking commit
 //

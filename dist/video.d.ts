@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 import { CSSProperties } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';

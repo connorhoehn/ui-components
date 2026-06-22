@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { ChatPanel } from '@/components/social/ChatPanel';
 import type { ChatMessage as UIChatMessage } from '@/hooks/useChat';
 import { MockGatewayProvider, type DispatchFrame } from './MockGatewayContext';
-import { useChat } from '@connorhoehn/realtime-modules/client';
+import { useChat } from '@connorhoehnslalom/realtime-modules/client';
 
 const MOCK_MESSAGES = [
   { author: 'alice-001', name: 'Alice', text: 'Hey everyone, the new ChatPanel is live!' },

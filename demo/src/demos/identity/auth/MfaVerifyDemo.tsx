@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { MfaVerifyPage } from '@connorhoehn/ui-components/identity';
+import { MfaVerifyPage } from '@connorhoehnslalom/ui-components/identity';
 
 export default function MfaVerifyDemo() {
   return (
@@ -7,7 +7,7 @@ export default function MfaVerifyDemo() {
       <PageHeader
         title="MFA Verify Page"
         description="Multi-factor authentication verification page. Supports both TOTP (authenticator app) code entry and backup code fallback with mode switching."
-        importPath="import { MfaVerifyPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { MfaVerifyPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

@@ -5,7 +5,7 @@ a node palette, an SVG canvas, and a config panel.
 
 ## Library primitives used
 
-This demo composes only `@connorhoehn/ui-components` primitives — no
+This demo composes only `@connorhoehnslalom/ui-components` primitives — no
 hand-rolled inline styles for UI chrome.
 
 | Component | Source | Purpose |

@@ -27,7 +27,7 @@ export default function QuickStartPage() {
         Import a component and render it inside your app:
       </p>
       <pre style={codeBlockStyle}>
-{`import { Button } from '@connorhoehn/ui-components';
+{`import { Button } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -47,9 +47,9 @@ function App() {
         To use collaboration hooks, wrap your app in the required context providers:
       </p>
       <pre style={codeBlockStyle}>
-{`import { WebSocketProvider } from '@connorhoehn/ui-components';
-import { IdentityProvider } from '@connorhoehn/ui-components';
-import { PresenceProvider } from '@connorhoehn/ui-components';
+{`import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
+import { IdentityProvider } from '@connorhoehnslalom/ui-components';
+import { PresenceProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -68,7 +68,7 @@ function App() {
         Using hooks
       </h2>
       <pre style={codeBlockStyle}>
-{`import { usePresence, useChat } from '@connorhoehn/ui-components';
+{`import { usePresence, useChat } from '@connorhoehnslalom/ui-components';
 
 function CollabPanel() {
   const { presenceUsers } = usePresence();

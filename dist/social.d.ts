@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { ReactNode } from 'react';
 import { RefObject } from 'react';
 

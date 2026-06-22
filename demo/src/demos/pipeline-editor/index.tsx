@@ -10,7 +10,7 @@ import {
 import { PipelineEventLog } from './PipelineEventLog';
 
 // ui-components layout / shell
-import { AppShell } from '@connorhoehn/ui-components/layout';
+import { AppShell } from '@connorhoehnslalom/ui-components/layout';
 
 // ui-components shared primitives
 import {
@@ -18,7 +18,7 @@ import {
   Tabs,
   StatusPill,
   type StatusPillState,
-} from '@connorhoehn/ui-components/shared';
+} from '@connorhoehnslalom/ui-components/shared';
 
 // ui-components UI primitives (Button, Card)
 import { Button } from '@/components/ui/Button';

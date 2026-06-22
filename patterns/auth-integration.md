@@ -26,7 +26,7 @@ All fields are required. Set `userEmail` and `idToken` to `null` if not applicab
 For development or static auth scenarios:
 
 ```tsx
-import { IdentityProvider } from '@connorhoehn/ui-components';
+import { IdentityProvider } from '@connorhoehnslalom/ui-components';
 
 function App({ children }: { children: React.ReactNode }) {
   const identity = {
@@ -52,8 +52,8 @@ If your app uses Cognito, map the Cognito user attributes to `IdentityContextVal
 ```tsx
 import { useEffect, useState } from 'react';
 import { fetchAuthSession, getCurrentUser, signOut } from 'aws-amplify/auth';
-import { IdentityProvider } from '@connorhoehn/ui-components';
-import type { IdentityContextValue } from '@connorhoehn/ui-components';
+import { IdentityProvider } from '@connorhoehnslalom/ui-components';
+import type { IdentityContextValue } from '@connorhoehnslalom/ui-components';
 
 function AuthenticatedApp({ children }: { children: React.ReactNode }) {
   const [identity, setIdentity] = useState<IdentityContextValue | null>(null);
@@ -92,7 +92,7 @@ For any custom authentication system, construct the value from your auth state:
 
 ```tsx
 import { useMemo } from 'react';
-import { IdentityProvider } from '@connorhoehn/ui-components';
+import { IdentityProvider } from '@connorhoehnslalom/ui-components';
 import { useAuth } from './your-auth-hook';
 
 function AuthBridge({ children }: { children: React.ReactNode }) {
@@ -119,7 +119,7 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
 Any component within the provider tree can access identity via the `useIdentityContext` hook:
 
 ```tsx
-import { useIdentityContext } from '@connorhoehn/ui-components';
+import { useIdentityContext } from '@connorhoehnslalom/ui-components';
 
 function UserGreeting() {
   const { displayName, userEmail } = useIdentityContext();
@@ -174,7 +174,7 @@ function AuthBridge({ children }: { children: React.ReactNode }) {
 For collaborative presence (showing who is online, typing indicators), there is also a `<PresenceProvider>`:
 
 ```tsx
-import { PresenceProvider } from '@connorhoehn/ui-components';
+import { PresenceProvider } from '@connorhoehnslalom/ui-components';
 
 interface PresenceContextValue {
   presenceUsers: PresenceUser[];

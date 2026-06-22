@@ -1,4 +1,4 @@
-# Contributing — @connorhoehn/ui-components
+# Contributing — @connorhoehnslalom/ui-components
 
 This repo runs under an autonomous operating model. Most changes land
 through the agent-hub task queue rather than ad-hoc PRs. If you are a

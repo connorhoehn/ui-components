@@ -10,9 +10,9 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { GatewayContext, useChat, usePresence } from '@connorhoehn/realtime-modules/client';
-import { ChatPanel } from '@connorhoehn/ui-components/social';
-import type { ChatMessage as UIChatMessage } from '@connorhoehn/ui-components/hooks';
+import { GatewayContext, useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
+import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
+import type { ChatMessage as UIChatMessage } from '@connorhoehnslalom/ui-components/hooks';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
@@ -227,7 +227,7 @@ export default function WrappedComponentsDemo() {
         </code>{' '}
         from{' '}
         <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px' }}>
-          @connorhoehn/ui-components/integrations/realtime-modules
+          @connorhoehnslalom/ui-components/integrations/realtime-modules
         </code>.
       </p>
 

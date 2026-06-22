@@ -1,8 +1,8 @@
-# @connorhoehn/ui-components/integrations/realtime-modules
+# @connorhoehnslalom/ui-components/integrations/realtime-modules
 
 Adapter helpers and wrapped components that bridge the
-`@connorhoehn/realtime-modules` hook outputs to
-`@connorhoehn/ui-components` component prop shapes.
+`@connorhoehnslalom/realtime-modules` hook outputs to
+`@connorhoehnslalom/ui-components` component prop shapes.
 
 ## Why this exists
 
@@ -26,11 +26,11 @@ on ChatMessage) and ending up with a custom inline panel instead of
 
 ## Installation
 
-`@connorhoehn/realtime-modules` is a peer dependency listed as optional —
+`@connorhoehnslalom/realtime-modules` is a peer dependency listed as optional —
 install it if you use this subpath:
 
 ```sh
-npm install @connorhoehn/realtime-modules
+npm install @connorhoehnslalom/realtime-modules
 ```
 
 ## Usage
@@ -40,11 +40,11 @@ npm install @connorhoehn/realtime-modules
 Pass the hook return directly. Adaptation happens inside.
 
 ```tsx
-import { GatewaySocketProvider, useChat, usePresence } from '@connorhoehn/realtime-modules/client';
+import { GatewaySocketProvider, useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
-} from '@connorhoehn/ui-components/integrations/realtime-modules';
+} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
 
 function MyRoom({ channel }: { channel: string }) {
   const chat     = useChat(channel);
@@ -140,7 +140,7 @@ import {
   adaptActivityEvents,
   adaptFileUploads,
   adaptHangoutParticipants,
-} from '@connorhoehn/ui-components/integrations/realtime-modules';
+} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
 
 // single message
 const uiMsg = adaptChatMessage(chatHook.messages[0]);
@@ -155,13 +155,13 @@ const avatarUsers = adaptPresenceRoster(presenceHook.roster);
 import {
   GatewaySocketProvider,
   useChat, usePresence, useReactions, useActivity,
-} from '@connorhoehn/realtime-modules/client';
+} from '@connorhoehnslalom/realtime-modules/client';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
   WrappedActivityPanel,
   WrappedReactionsOverlay,
-} from '@connorhoehn/ui-components/integrations/realtime-modules';
+} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
 
 function CollaborationRoom({ url, channel, clientId }: Props) {
   return (

@@ -9,7 +9,7 @@
 // `/workflows/video-streaming` (Workflows → Video Streaming) without
 // either needing a hand-curated keyword list.
 
-import type { Command } from '@connorhoehn/ui-components/shared';
+import type { Command } from '@connorhoehnslalom/ui-components/shared';
 import type { NavigationTree } from './types';
 
 type Navigate = (to: string) => void;

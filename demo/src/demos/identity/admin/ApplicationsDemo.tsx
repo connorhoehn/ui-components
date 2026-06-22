@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { ApplicationListPage } from '@connorhoehn/ui-components/identity';
+import { ApplicationListPage } from '@connorhoehnslalom/ui-components/identity';
 import { mockClients } from '../mock-data';
 
 export default function ApplicationsDemo() {
@@ -11,7 +11,7 @@ export default function ApplicationsDemo() {
       <PageHeader
         title="Applications"
         description="OAuth/OIDC application registry. Each application has a client ID, associated pool, and redirect URIs. Supports creation, editing, and deletion with inline confirmation."
-        importPath="import { ApplicationListPage, ApplicationFormPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { ApplicationListPage, ApplicationFormPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

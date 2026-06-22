@@ -35,7 +35,7 @@ export default function InstallationPage() {
         2. Install the package
       </h2>
       <pre style={codeBlockStyle}>
-{`npm install @connorhoehn/ui-components`}
+{`npm install @connorhoehnslalom/ui-components`}
       </pre>
 
       <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
@@ -69,7 +69,7 @@ export default function InstallationPage() {
         4. Verify installation
       </h2>
       <pre style={codeBlockStyle}>
-{`import { Button } from '@connorhoehn/ui-components';
+{`import { Button } from '@connorhoehnslalom/ui-components';
 
 // If this compiles, you're good to go!
 console.log(Button);`}

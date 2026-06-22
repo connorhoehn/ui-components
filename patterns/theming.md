@@ -9,7 +9,7 @@ The library uses CSS custom properties (variables) for all visual tokens. The `<
 ## Basic Usage
 
 ```tsx
-import { ThemeProvider } from '@connorhoehn/ui-components';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -126,7 +126,7 @@ Token keys are converted from camelCase to kebab-case with a `--ui-` prefix:
 In custom components, use the `cssVar()` utility to reference tokens in inline styles:
 
 ```tsx
-import { cssVar } from '@connorhoehn/ui-components';
+import { cssVar } from '@connorhoehnslalom/ui-components';
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
@@ -152,7 +152,7 @@ Switch between presets via the `preset` prop:
 
 ```tsx
 import { useState } from 'react';
-import { ThemeProvider } from '@connorhoehn/ui-components';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
@@ -171,8 +171,8 @@ function App() {
 Override specific tokens while inheriting the rest from the preset:
 
 ```tsx
-import { ThemeProvider } from '@connorhoehn/ui-components';
-import type { ThemeTokens } from '@connorhoehn/ui-components';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
+import type { ThemeTokens } from '@connorhoehnslalom/ui-components';
 
 const brandOverrides: Partial<ThemeTokens> = {
   primary: '#7c3aed',       // violet-600
@@ -197,7 +197,7 @@ Only the tokens you specify are overridden; everything else comes from the base 
 Nest `<ThemeProvider>` components to apply different themes to subtrees. Each provider injects CSS variables at the document root level, so the **innermost** provider wins for overlapping tokens:
 
 ```tsx
-import { ThemeProvider } from '@connorhoehn/ui-components';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -216,7 +216,7 @@ function App() {
 For true visual scoping (where both themes are visible simultaneously), apply the CSS variables to a container element rather than `:root`. You can use the `themeToCssVars()` utility:
 
 ```tsx
-import { themeToCssVars, darkTheme } from '@connorhoehn/ui-components';
+import { themeToCssVars, darkTheme } from '@connorhoehnslalom/ui-components';
 
 function DarkPanel({ children }: { children: React.ReactNode }) {
   const vars = themeToCssVars(darkTheme);
@@ -234,7 +234,7 @@ function DarkPanel({ children }: { children: React.ReactNode }) {
 Access resolved token values in JavaScript:
 
 ```tsx
-import { useThemeContext } from '@connorhoehn/ui-components';
+import { useThemeContext } from '@connorhoehnslalom/ui-components';
 
 function DynamicChart() {
   const theme = useThemeContext();
@@ -253,7 +253,7 @@ function DynamicChart() {
 Import the preset objects directly when you need raw token values outside of React:
 
 ```tsx
-import { lightTheme, darkTheme } from '@connorhoehn/ui-components';
+import { lightTheme, darkTheme } from '@connorhoehnslalom/ui-components';
 
 // Use in tests, Storybook, or non-React contexts
 console.log(lightTheme.primary); // '#3b82f6'

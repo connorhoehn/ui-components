@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "types": ["vitest/globals"],
     "paths": {
-      "@connorhoehn/ui-components/*": ["../src/components/*/index.ts"],
-      "@connorhoehn/ui-components": ["../src/index.ts"],
+      "@connorhoehnslalom/ui-components/*": ["../src/components/*/index.ts"],
+      "@connorhoehnslalom/ui-components": ["../src/index.ts"],
       "@/*": ["../src/*"],
       "@schemas/*": ["../schemas/*"]
     }

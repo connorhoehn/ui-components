@@ -1,0 +1,25 @@
+import { XmlFragment } from 'yjs';
+import { Awareness } from 'y-protocols/awareness';
+import * as Y from 'yjs';
+/** Minimal provider shape needed by awareness. */
+export interface CollaborationProvider {
+    awareness: Awareness;
+}
+export interface TiptapEditorProps {
+    fragment: XmlFragment;
+    ydoc: Y.Doc;
+    provider: CollaborationProvider | null;
+    user: {
+        name: string;
+        color: string;
+    };
+    editable?: boolean;
+    placeholder?: string;
+    /** Section ID — used to filter cursor overlay to only show cursors in this section */
+    sectionId?: string;
+    /** Merge-safe awareness updater for cursor display info (name + color).
+     *  When provided, replaces the direct setLocalStateField write. */
+    onUpdateCursorInfo?: (name: string, color: string) => void;
+}
+export default function TiptapEditor({ fragment, ydoc, provider, user, editable, placeholder: placeholderText, sectionId, onUpdateCursorInfo, }: TiptapEditorProps): import("react").JSX.Element;
+//# sourceMappingURL=TiptapEditor.d.ts.map

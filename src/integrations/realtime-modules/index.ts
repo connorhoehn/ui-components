@@ -1,6 +1,6 @@
 // src/integrations/realtime-modules/index.ts
 //
-// Barrel for @connorhoehn/ui-components/integrations/realtime-modules
+// Barrel for @connorhoehnslalom/ui-components/integrations/realtime-modules
 //
 // Three categories of exports:
 //   1. Structural mirror types (RMChatMessage, RMPresenceEntry, …)

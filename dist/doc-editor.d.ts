@@ -1,7 +1,7 @@
 import { Awareness } from 'y-protocols/awareness';
 import { default as default_2 } from 'react';
 import { Editor } from '@tiptap/react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { MutableRefObject } from 'react';
 import { XmlFragment } from 'yjs';
 import * as Y from 'yjs';

@@ -17,14 +17,14 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const TSX_SAMPLE = `import { Button } from '@connorhoehn/ui-components';
+const TSX_SAMPLE = `import { Button } from '@connorhoehnslalom/ui-components';
 
 export function App() {
   return <Button variant="primary">Hello</Button>;
 }`;
 
 const JSON_SAMPLE = `{
-  "name": "@connorhoehn/ui-components",
+  "name": "@connorhoehnslalom/ui-components",
   "version": "2.11.0",
   "scripts": {
     "build": "vite build",

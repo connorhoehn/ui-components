@@ -1,4 +1,4 @@
-# Social — `@connorhoehn/ui-components/social`
+# Social — `@connorhoehnslalom/ui-components/social`
 
 Chat, presence, reactions, posts, and follow-graph composites for
 social surfaces. Root-reachable since v2.12.0 (hub#1058) under
@@ -16,7 +16,7 @@ import {
   PresencePanel,
   ActivityPanel,
   SocialPanel,
-} from '@connorhoehn/ui-components/social';
+} from '@connorhoehnslalom/ui-components/social';
 // also reachable from the root barrel.
 ```
 
@@ -43,7 +43,7 @@ Root-reachable since 2.12.0; `CommentThread` is aliased to
 
 ## Wrapped variants
 
-For consumer apps that use `@connorhoehn/realtime-modules` hooks
+For consumer apps that use `@connorhoehnslalom/realtime-modules` hooks
 (`useChat`, `usePresence`, `useReactions`, …), the
 [`integrations/realtime-modules`](../../integrations/realtime-modules)
 layer ships pre-wired wrappers — `<WrappedChatPanel>`,

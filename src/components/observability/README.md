@@ -1,4 +1,4 @@
-# Observability — `@connorhoehn/ui-components/observability`
+# Observability — `@connorhoehnslalom/ui-components/observability`
 
 Dashboard, events log, metrics, and per-node observability surfaces.
 
@@ -12,7 +12,7 @@ import {
   NodesPage,
   DashboardPage,
   ObservabilityLayout,
-} from '@connorhoehn/ui-components/observability';
+} from '@connorhoehnslalom/ui-components/observability';
 ```
 
 ## Layout

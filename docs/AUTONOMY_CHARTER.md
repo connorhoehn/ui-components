@@ -1,4 +1,4 @@
-# Autonomy Charter — @connorhoehn/ui-components
+# Autonomy Charter — @connorhoehnslalom/ui-components
 
 This charter governs the ui-components agent when running in self-driven mode (claiming tasks from the agent-hub without per-task human approval). It is binding. Violations require an immediate pause + human review.
 

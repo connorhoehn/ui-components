@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { MfaManagementPage } from '@connorhoehn/ui-components/identity';
+import { MfaManagementPage } from '@connorhoehnslalom/ui-components/identity';
 import { mockMfaMetrics, mockMfaUsers, mockPools } from '../mock-data';
 
 export default function MfaDemo() {
@@ -8,7 +8,7 @@ export default function MfaDemo() {
       <PageHeader
         title="MFA Management"
         description="Admin view of MFA adoption across the platform. Shows metrics (enrollment rate, verified devices, backup code usage) and a per-user device table."
-        importPath="import { MfaManagementPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { MfaManagementPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { MfaSetupPage } from '@connorhoehn/ui-components/identity';
+import { MfaSetupPage } from '@connorhoehnslalom/ui-components/identity';
 
 export default function MfaSetupDemo() {
   return (
@@ -7,7 +7,7 @@ export default function MfaSetupDemo() {
       <PageHeader
         title="MFA Setup Page"
         description="Multi-step wizard for setting up TOTP-based multi-factor authentication. Guides the user through naming their device, scanning a QR code, verifying, and saving backup codes."
-        importPath="import { MfaSetupPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { MfaSetupPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

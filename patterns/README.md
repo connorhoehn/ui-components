@@ -1,4 +1,4 @@
-# @connorhoehn/ui-components
+# @connorhoehnslalom/ui-components
 
 A modular React component library for building real-time collaborative applications. Provides pipeline editors, ingest dashboards, document workspaces, observability panels, and social features — all wired through WebSocket-driven state.
 
@@ -14,7 +14,7 @@ The package is published to GitHub Packages. Configure your `.npmrc` first:
 Then install:
 
 ```bash
-npm install @connorhoehn/ui-components
+npm install @connorhoehnslalom/ui-components
 ```
 
 ### Peer Dependencies
@@ -41,8 +41,8 @@ npm install react-router
 ## Quick Start
 
 ```tsx
-import { ThemeProvider } from '@connorhoehn/ui-components';
-import { PipelineCanvas } from '@connorhoehn/ui-components/pipelines';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
+import { PipelineCanvas } from '@connorhoehnslalom/ui-components/pipelines';
 
 function App() {
   return (
@@ -56,7 +56,7 @@ function App() {
 For real-time features, wrap your app in the required context providers:
 
 ```tsx
-import { WebSocketProvider, IdentityProvider } from '@connorhoehn/ui-components';
+import { WebSocketProvider, IdentityProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -77,39 +77,39 @@ Each module has its own export path for tree shaking. Import only what you need:
 
 | Entry Point | Import Path | Description |
 |---|---|---|
-| Main | `@connorhoehn/ui-components` | Core providers, contexts, theme |
-| Pipelines | `@connorhoehn/ui-components/pipelines` | Pipeline editor and flow canvas |
-| Ingest | `@connorhoehn/ui-components/ingest` | Data ingestion dashboard |
-| Observability | `@connorhoehn/ui-components/observability` | Metrics, logs, trace panels |
-| Doc Editor | `@connorhoehn/ui-components/doc-editor` | Collaborative document workspace |
-| Social | `@connorhoehn/ui-components/social` | Chat, reactions, presence UI |
-| Hooks | `@connorhoehn/ui-components/hooks` | Standalone hooks (useWebSocket, usePresence, etc.) |
-| Types | `@connorhoehn/ui-components/types` | TypeScript type definitions |
-| Shared | `@connorhoehn/ui-components/shared` | Shared utilities and base components |
+| Main | `@connorhoehnslalom/ui-components` | Core providers, contexts, theme |
+| Pipelines | `@connorhoehnslalom/ui-components/pipelines` | Pipeline editor and flow canvas |
+| Ingest | `@connorhoehnslalom/ui-components/ingest` | Data ingestion dashboard |
+| Observability | `@connorhoehnslalom/ui-components/observability` | Metrics, logs, trace panels |
+| Doc Editor | `@connorhoehnslalom/ui-components/doc-editor` | Collaborative document workspace |
+| Social | `@connorhoehnslalom/ui-components/social` | Chat, reactions, presence UI |
+| Hooks | `@connorhoehnslalom/ui-components/hooks` | Standalone hooks (useWebSocket, usePresence, etc.) |
+| Types | `@connorhoehnslalom/ui-components/types` | TypeScript type definitions |
+| Shared | `@connorhoehnslalom/ui-components/shared` | Shared utilities and base components |
 
 ### Per-Module Import Examples
 
 ```tsx
 // Pipeline editor only
-import { PipelineCanvas, NodePalette } from '@connorhoehn/ui-components/pipelines';
+import { PipelineCanvas, NodePalette } from '@connorhoehnslalom/ui-components/pipelines';
 
 // Ingest dashboard only
-import { IngestDashboard } from '@connorhoehn/ui-components/ingest';
+import { IngestDashboard } from '@connorhoehnslalom/ui-components/ingest';
 
 // Document editor only
-import { DocumentWorkspace } from '@connorhoehn/ui-components/doc-editor';
+import { DocumentWorkspace } from '@connorhoehnslalom/ui-components/doc-editor';
 
 // Observability only
-import { MetricsPanel, TraceViewer } from '@connorhoehn/ui-components/observability';
+import { MetricsPanel, TraceViewer } from '@connorhoehnslalom/ui-components/observability';
 
 // Social features only
-import { ChatPanel, PresenceAvatars } from '@connorhoehn/ui-components/social';
+import { ChatPanel, PresenceAvatars } from '@connorhoehnslalom/ui-components/social';
 
 // Hooks for custom integrations
-import { useWebSocket, usePresence } from '@connorhoehn/ui-components/hooks';
+import { useWebSocket, usePresence } from '@connorhoehnslalom/ui-components/hooks';
 
 // Type imports (zero runtime cost)
-import type { GatewayMessage, ConnectionState } from '@connorhoehn/ui-components/types';
+import type { GatewayMessage, ConnectionState } from '@connorhoehnslalom/ui-components/types';
 ```
 
 ## Pattern Documentation

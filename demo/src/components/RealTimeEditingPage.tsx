@@ -52,7 +52,7 @@ export default function RealTimeEditingPage() {
       <PageHeader
         title="Real-time Editing"
         description="CRDT-powered collaborative document editing with Y.js. Conflict-free real-time sync, awareness state for participant tracking, and rich-text collaboration with automatic merge resolution."
-        importPath="import { SharedTextEditor, useCollaborativeDoc, useYjsDoc } from '@connorhoehn/ui-components'"
+        importPath="import { SharedTextEditor, useCollaborativeDoc, useYjsDoc } from '@connorhoehnslalom/ui-components'"
       />
 
       {/* ─── 1. Architecture Overview ─────────────────────────────────────── */}
@@ -60,10 +60,10 @@ export default function RealTimeEditingPage() {
         id="overview"
         title="Architecture Overview"
         description="The CRDT system is layered into focused responsibilities. Each layer handles a single concern and delegates to the layer below."
-        code={`import { SharedTextEditor } from '@connorhoehn/ui-components'
-import { useCollaborativeDoc } from '@connorhoehn/ui-components'
-import { useYjsDoc } from '@connorhoehn/ui-components'
-import { GatewayProvider } from '@connorhoehn/ui-components'
+        code={`import { SharedTextEditor } from '@connorhoehnslalom/ui-components'
+import { useCollaborativeDoc } from '@connorhoehnslalom/ui-components'
+import { useYjsDoc } from '@connorhoehnslalom/ui-components'
+import { GatewayProvider } from '@connorhoehnslalom/ui-components'
 
 // Layer stack:
 // SharedTextEditor    — Rich-text UI (contentEditable)
@@ -103,8 +103,8 @@ import { GatewayProvider } from '@connorhoehn/ui-components'
         id="shared-editor"
         title="SharedTextEditor"
         description="A WYSIWYG rich-text editor bound to CRDT content. Toolbar provides formatting commands, and the editor surface syncs bidirectionally with the Y.js document."
-        code={`import { SharedTextEditor } from '@connorhoehn/ui-components'
-import { useCRDT } from '@connorhoehn/ui-components'
+        code={`import { SharedTextEditor } from '@connorhoehnslalom/ui-components'
+import { useCRDT } from '@connorhoehnslalom/ui-components'
 
 function Editor() {
   const { content, applyLocalEdit, hasConflict, dismissConflict } = useCRDT({
@@ -182,7 +182,7 @@ function Editor() {
         id="conflict-resolution"
         title="Merge Conflict Indicator"
         description="When remote edits merge into a document with local changes, a non-blocking banner informs the user. Conflicts are automatically resolved by Y.js — the banner is informational only."
-        code={`import { useCRDT } from '@connorhoehn/ui-components'
+        code={`import { useCRDT } from '@connorhoehnslalom/ui-components'
 
 function EditorWithConflicts() {
   const { content, applyLocalEdit, hasConflict, dismissConflict } = useCRDT({
@@ -257,7 +257,7 @@ function EditorWithConflicts() {
         id="awareness"
         title="Participant Awareness"
         description="Real-time presence tracking shows who is viewing the document, which section they are focused on, their role, and idle status."
-        code={`import { useAwareness } from '@connorhoehn/ui-components'
+        code={`import { useAwareness } from '@connorhoehnslalom/ui-components'
 
 function ParticipantsPanel({ provider }) {
   const { participants } = useAwareness(provider, {
@@ -343,7 +343,7 @@ function ParticipantsPanel({ provider }) {
         id="awareness-state"
         title="Awareness State Broadcasting"
         description="Each participant broadcasts their awareness state, which is merged (never overwritten) by the useAwarenessState hook. Fields include identity, role, focus, and idle status."
-        code={`import { useAwarenessState } from '@connorhoehn/ui-components'
+        code={`import { useAwarenessState } from '@connorhoehnslalom/ui-components'
 
 function MyEditor({ provider }) {
   const awareness = useAwarenessState(provider, {
@@ -395,7 +395,7 @@ function MyEditor({ provider }) {
         id="yjs-provider"
         title="Y.js Integration"
         description="The useYjsDoc hook manages the full lifecycle of a Y.Doc and its GatewayProvider, including subscription, snapshot application, and synced state tracking."
-        code={`import { useYjsDoc } from '@connorhoehn/ui-components'
+        code={`import { useYjsDoc } from '@connorhoehnslalom/ui-components'
 
 function DocumentView({ documentId, ws, onMessage }) {
   const { ydoc, provider, synced, docVersion } = useYjsDoc({
@@ -458,7 +458,7 @@ function DocumentView({ documentId, ws, onMessage }) {
         id="collaborative-doc"
         title="useCollaborativeDoc"
         description="The top-level orchestration hook that composes useYjsDoc, useDocumentMetadata, useSectionList, useAwareness, and useDocumentExport into a single API surface."
-        code={`import { useCollaborativeDoc } from '@connorhoehn/ui-components'
+        code={`import { useCollaborativeDoc } from '@connorhoehnslalom/ui-components'
 
 function DocumentEditor({ documentId }) {
   const {

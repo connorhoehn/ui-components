@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { TypingIndicator } from '@connorhoehn/ui-components/shared';
+import { TypingIndicator } from '@connorhoehnslalom/ui-components/shared';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
 

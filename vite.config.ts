@@ -55,7 +55,7 @@ export default defineConfig({
         // import its hooks at runtime; keeping the package external
         // avoids bundling its CJS dist (which Rollup can't tree-shake)
         // and lets the consumer app's resolution win at runtime.
-        /^@connorhoehn\/realtime-modules(\/.*)?$/,
+        /^@connorhoehnslalom\/realtime-modules(\/.*)?$/,
       ],
     },
   },

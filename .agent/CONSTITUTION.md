@@ -17,7 +17,7 @@ than a half-finished feature.
 ## Scope
 
 **This project IS:**
-- A multi-entry-point npm library (`@connorhoehn/ui-components`) published to GitHub Packages.
+- A multi-entry-point npm library (`@connorhoehnslalom/ui-components`) published to GitHub Packages.
 - The source of truth for shared UI primitives (Button, Card, Modal, Table, Toast, TagEditor, CodeEditor).
 - The owner of the AG-UI streaming chat surface (`/agents` entry point).
 - The pipeline editor + runtime UI surface (`/pipelines`), used by admin shells across repos.

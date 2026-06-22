@@ -1,0 +1,7 @@
+import { ApprovalNodeData } from '../../../../types/pipeline';
+export interface ApprovalConfigProps {
+    data: ApprovalNodeData;
+    onChange: (patch: Partial<ApprovalNodeData>) => void;
+}
+export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps): import("react").JSX.Element;
+//# sourceMappingURL=ApprovalConfig.d.ts.map

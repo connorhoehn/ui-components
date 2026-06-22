@@ -76,7 +76,7 @@ export default function HookDocPage() {
           overflow: 'auto',
           margin: 0,
         }}>
-{`import { ${hookName} } from '@connorhoehn/ui-components';
+{`import { ${hookName} } from '@connorhoehnslalom/ui-components';
 
 function MyComponent() {
   const result = ${hookName}();

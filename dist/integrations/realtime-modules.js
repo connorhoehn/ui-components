@@ -1,15 +1,15 @@
 import { jsx as a, jsxs as u, Fragment as C } from "react/jsx-runtime";
-import { C as F, P as W } from "../PresencePanel-mBtTn35O.js";
+import { C as F, P as W } from "../PresencePanel-DhsDetgi.js";
 import { A as B, N as H, P as L, B as j, S as $ } from "../Badge-CgxZp81E.js";
 import { useState as w, useEffect as U, useMemo as S } from "react";
 import { R as V, S as z, a as _ } from "../ReactionsOverlay-CoaX3hRz.js";
 import { F as q, I as X } from "../FileUploadDrop-Cmz3XANg.js";
 import { a as D, R as Y, S as K } from "../RemoteTileSlot-BXvSW4lr.js";
-import { useRoomOccupancy as G } from "@connorhoehn/realtime-modules/client/hangout-rooms";
+import { useRoomOccupancy as G } from "@connorhoehnslalom/realtime-modules/client/hangout-rooms";
 import { E as Q } from "../EmptyState-PM9wTjxk.js";
 import { B as P } from "../Button-Qsbxqsl9.js";
 import { M as Z } from "../Modal-2jg4229_.js";
-import { useLVSHangout as J } from "@connorhoehn/realtime-modules/client/video";
+import { useLVSHangout as J } from "@connorhoehnslalom/realtime-modules/client/video";
 import { A as ee } from "../Avatar-BvKIaNVE.js";
 function te(e) {
   return {

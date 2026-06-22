@@ -1,7 +1,7 @@
-# CLAUDE.md — @connorhoehn/ui-components
+# CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehn/ui-components` (currently `2.33.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.33.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 ## Operating mode (autonomous, 2026-05-30 → ~2026-06-20)
@@ -33,7 +33,7 @@ npm run test:e2e   # playwright (tests/e2e/)
 
 | Export path | Contents | Stability |
 |---|---|---|
-| `@connorhoehn/ui-components` | Root: types, hooks, contexts, shared, sidebar, hangout, layout, social, video, identity, forms, styles, theme, api, renderers | **Stable** |
+| `@connorhoehnslalom/ui-components` | Root: types, hooks, contexts, shared, sidebar, hangout, layout, social, video, identity, forms, styles, theme, api, renderers | **Stable** |
 | `…/types` | Core TypeScript types | **Stable** |
 | `…/shared` | Button, Card, Modal, Toast, Table, TagEditor, CodeEditor, EmptyState, PageHeader, ChannelHeader, NotificationCenter, FileUploadDrop, Breadcrumbs, PresenceAvatars | **Stable** |
 | `…/hooks` | useWebSocket, useComments, useLikes, usePosts, useSocialProfile, etc. | **Stable** |
@@ -95,7 +95,7 @@ may change without a major bump):
 
 Root `src/index.ts` now re-exports `layout/`, `social/`, `video/`, and
 `identity/` alongside `shared/`, `sidebar/`, `hangout/`, so
-`import { AppShell, ChatPanel, HangoutLayout } from '@connorhoehn/ui-components'`
+`import { AppShell, ChatPanel, HangoutLayout } from '@connorhoehnslalom/ui-components'`
 works. Subpaths (`/social`, `/video`, `/identity`, …) remain intact; note
 `layout/` never had its own subpath — root is its only import path.
 

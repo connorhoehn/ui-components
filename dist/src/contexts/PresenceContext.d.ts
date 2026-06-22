@@ -1,0 +1,13 @@
+import { ReactNode } from 'react';
+import { PresenceUser } from '../hooks/usePresence';
+export interface PresenceContextValue {
+    presenceUsers: PresenceUser[];
+    currentClientId: string | null;
+    setTyping: (isTyping: boolean) => void;
+}
+export declare function PresenceProvider({ value, children, }: {
+    value: PresenceContextValue;
+    children: ReactNode;
+}): import("react").JSX.Element;
+export declare function usePresenceContext(): PresenceContextValue;
+//# sourceMappingURL=PresenceContext.d.ts.map

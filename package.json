@@ -1,5 +1,5 @@
 {
-  "name": "@connorhoehn/ui-components",
+  "name": "@connorhoehnslalom/ui-components",
   "version": "2.37.0",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -88,7 +88,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/connorhoehn/ui-components.git"
+    "url": "https://github.com/connorhoehnslalom/ui-components.git"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -96,7 +96,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
-    "@connorhoehn/realtime-modules": ">=0.3.0",
+    "@connorhoehnslalom/realtime-modules": ">=0.3.0",
     "@tiptap/react": "^3.0.0",
     "@xyflow/react": "^12.0.0",
     "react": "^19.0.0",
@@ -106,12 +106,12 @@
     "yjs": "^13.6.0"
   },
   "peerDependenciesMeta": {
-    "@connorhoehn/realtime-modules": {
+    "@connorhoehnslalom/realtime-modules": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@connorhoehn/realtime-modules": "file:../realtime-modules",
+    "@connorhoehnslalom/realtime-modules": "file:../realtime-modules",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",

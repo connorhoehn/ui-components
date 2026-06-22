@@ -1,4 +1,4 @@
-# Roadmap — @connorhoehn/ui-components
+# Roadmap — @connorhoehnslalom/ui-components
 
 This document captures the active 5-wave plan adopted on 2026-05-30 (see
 `docs/AUTONOMY_CHARTER.md` and agent-hub task #1071). Earlier

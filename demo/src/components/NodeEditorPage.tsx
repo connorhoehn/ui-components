@@ -462,7 +462,7 @@ export default function NodeEditorPage() {
       <PageHeader
         title="Node Editor"
         description="Composable building blocks for node-based workflow editors. Build visual graph UIs for pipelines, state machines, DAGs, or any directed workflow — powered by React Flow."
-        importPath="import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoehn/ui-components/pipelines'"
+        importPath="import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoehnslalom/ui-components/pipelines'"
       />
 
       {/* ----------------------------------------------------------------- */}
@@ -480,7 +480,7 @@ export default function NodeEditorPage() {
 // 4. PipelineCanvas — React Flow wrapper with built-in handlers
 //
 // You compose them to build your specific editor:
-import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoehn/ui-components/pipelines';`}
+import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoehnslalom/ui-components/pipelines';`}
       >
         <ArchitectureDiagram />
       </ExampleBlock>
@@ -492,7 +492,7 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
         id="base-node"
         title="BaseNode"
         description="The core node component. BaseNode is a state-agnostic visual shell — you pass an icon, subtitle, execution state, and optional body/footer content. It renders a rounded card with colored border, header row, and status indicator. Wrap it to create domain-specific node types for your workflow."
-        code={`import { BaseNode } from '@connorhoehn/ui-components/pipelines';
+        code={`import { BaseNode } from '@connorhoehnslalom/ui-components/pipelines';
 
 // BaseNode is purely visual — pass icon, subtitle, and state:
 <BaseNode icon="🔧" subtitle="Transform Data" state="running" />
@@ -592,7 +592,7 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
         id="custom-nodes"
         title="Creating Custom Nodes"
         description="BaseNode is designed to be wrapped. Create domain-specific node components by passing your own icon, subtitle, body, and state. The BaseNode handles all visual state transitions, accessibility, and selection highlighting — you just provide the content."
-        code={`import { BaseNode } from '@connorhoehn/ui-components/pipelines';
+        code={`import { BaseNode } from '@connorhoehnslalom/ui-components/pipelines';
 import { Handle, Position } from '@xyflow/react';
 
 // Example 1: AWS Lambda node
@@ -695,7 +695,7 @@ const nodeTypes = {
         id="animated-edge"
         title="AnimatedEdge"
         description="A custom React Flow edge supporting four visual states: default (gray), active (blue dashed with flow animation), traversed-success (green), and traversed-failure (red). Edges can also display branch labels rendered as small pills near the source handle."
-        code={`import { AnimatedEdge } from '@connorhoehn/ui-components/pipelines';
+        code={`import { AnimatedEdge } from '@connorhoehnslalom/ui-components/pipelines';
 
 // Register as the default edge type:
 const edgeTypes = { default: AnimatedEdge };
@@ -721,7 +721,7 @@ const edges = [
         id="node-palette"
         title="NodePalette"
         description="A categorized, searchable sidebar of draggable node types. Users drag items from the palette onto the canvas. You can customize categories, items, and disable types that can only appear once (e.g., a trigger node). Keyboard shortcuts (1-8) allow quick insertion."
-        code={`import { NodePalette } from '@connorhoehn/ui-components/pipelines';
+        code={`import { NodePalette } from '@connorhoehnslalom/ui-components/pipelines';
 
 // Basic usage with default categories:
 <NodePalette />
@@ -749,7 +749,7 @@ const onDrop = (event) => {
         id="canvas-toolbar"
         title="CanvasToolbar"
         description="Floating toolbar buttons for canvas-level actions: auto-arrange (computes a DAG layout and repositions nodes) and fit-view (zooms to show all nodes). The toolbar connects to the canvas via React Flow's fitView and custom setPositions callbacks. Keyboard shortcut: Shift+A for auto-arrange."
-        code={`import { CanvasToolbar } from '@connorhoehn/ui-components/pipelines';
+        code={`import { CanvasToolbar } from '@connorhoehnslalom/ui-components/pipelines';
 import { useReactFlow } from '@xyflow/react';
 
 function MyCanvas() {
@@ -789,7 +789,7 @@ import {
   AnimatedEdge,
   NodePalette,
   CanvasToolbar,
-} from '@connorhoehn/ui-components/pipelines';
+} from '@connorhoehnslalom/ui-components/pipelines';
 
 // 1. Define custom node types by wrapping BaseNode
 const nodeTypes = {
@@ -854,7 +854,7 @@ function OrderWorkflowEditor() {
         id="step-functions"
         title="Use Case: Step Functions"
         description="These building blocks are well-suited for building an AWS Step Functions visualizer. Map Step Functions state types to custom node wrappers around BaseNode, then register them as React Flow node types."
-        code={`import { BaseNode } from '@connorhoehn/ui-components/pipelines';
+        code={`import { BaseNode } from '@connorhoehnslalom/ui-components/pipelines';
 import { Handle, Position } from '@xyflow/react';
 
 // Map Step Functions state types to custom nodes:

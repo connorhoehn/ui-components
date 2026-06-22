@@ -1,5 +1,5 @@
 import { useState, type CSSProperties, type ReactNode } from 'react';
-import { CodeBlock } from '@connorhoehn/ui-components/shared';
+import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
 
 interface ExampleBlockProps {
   id: string;

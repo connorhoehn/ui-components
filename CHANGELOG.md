@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `@connorhoehn/ui-components` will be documented here.
+All notable changes to `@connorhoehnslalom/ui-components` will be documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -198,14 +198,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - **Root-export reachability gap closed** (hub #1021 + #1058): the root
-  entry (`@connorhoehn/ui-components`) now re-exports the full public
+  entry (`@connorhoehnslalom/ui-components`) now re-exports the full public
   surfaces of `layout/` (AppShell, AppLayout, CollapsibleSidebar,
   SettingsLayout, TopNav, DocsShell, …), `social/` (ChatPanel, PostFeed,
   ReactionsBar, PresencePanel, ActivityPanel, …) and `video/`
   (HangoutLayout, VideoGrid, VideoPlayer, CallWidget, RecordingList,
   TranscriptPanel, …) alongside the existing shared/sidebar/hangout
   exports. `import { AppShell, ChatPanel, HangoutLayout } from
-  '@connorhoehn/ui-components'` now works. Subpath imports (`/social`,
+  '@connorhoehnslalom/ui-components'` now works. Subpath imports (`/social`,
   `/video`, `/identity`, …) are unchanged; note `layout/` has no
   subpath — root is its only import path.
 
@@ -484,7 +484,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - **`<WrappedLVSHangoutLayout>`** (`/integrations/realtime-modules`).
   Drop-in adapter that connects `useLVSHangout` from
-  `@connorhoehn/realtime-modules/client/video` to `<HangoutLayout>`.
+  `@connorhoehnslalom/realtime-modules/client/video` to `<HangoutLayout>`.
   Per the gateway-locked boundary decisions, the wrapper:
   - exposes connection state via an `overlay({ connectionState, error,
     participantCount, remoteCount })` render-prop slot — consumers
@@ -515,7 +515,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - New tests: 7 (`PermissionDeniedCard`) + 16
   (`HangoutPreJoinShell`) + 7 (`WrappedLVSHangoutLayout`) — full suite
-  2218 tests pass, `tsc --noEmit` clean. `@connorhoehn/realtime-modules`
+  2218 tests pass, `tsc --noEmit` clean. `@connorhoehnslalom/realtime-modules`
   is consumed via the existing peer-dep + `file:` pin; no new runtime
   deps.
 
@@ -693,7 +693,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Root barrel (`src/index.ts`) now re-exports `./components/layout`, so
   `AppShell`, `AppLayout`, `CollapsibleSidebar`, `ConnectionStatus`,
   `ApiDegradedBanner`, and `CollapsedIconStrip` are reachable via
-  `import { ... } from '@connorhoehn/ui-components'` (previously only
+  `import { ... } from '@connorhoehnslalom/ui-components'` (previously only
   available through deep imports under `…/components/layout`). Additive;
   no name collisions with shared/sidebar/hangout barrels. Refs hub#1021.
 - Root barrel now re-exports `./components/social`, `./components/video`,
@@ -703,7 +703,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   StreamVideo, RecordingPlayer, TranscriptOverlay, LoginPage, LogoutPage,
   MfaSetupPage, MfaVerifyPage, MfaDashboardPage, ConsentPage, ErrorPage,
   IdentityAdminLayout, PoolScopedLayout, EntityTable, CodeInput,
-  QrCodeDisplay, StatusBadge, ... } from '@connorhoehn/ui-components'`
+  QrCodeDisplay, StatusBadge, ... } from '@connorhoehnslalom/ui-components'`
   directly without subpath imports. Existing subpath imports continue to
   work. The `/agents` domain remains subpath-only pending its stable
   graduation (hub#1069). Refs hub#1058, resolves blocker #34 via operator

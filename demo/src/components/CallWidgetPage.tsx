@@ -107,7 +107,7 @@ export default function CallWidgetPage() {
       <PageHeader
         title="Call Widget"
         description="Floating, draggable audio/video call widget with incoming calls, active call controls (mute, camera, screen share, add participants), minimized pill view, participant picker, and upgrade from audio to video. Designed for embedding in any app — position it in a corner and drag it anywhere."
-        importPath="import { CallWidget } from '@connorhoehn/ui-components/video'"
+        importPath="import { CallWidget } from '@connorhoehnslalom/ui-components/video'"
       />
 
       <ExampleBlock

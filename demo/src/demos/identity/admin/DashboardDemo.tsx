@@ -1,5 +1,5 @@
 import { PageHeader, ExampleBlock } from '../../../shared';
-import { AdminDashboardPage } from '@connorhoehn/ui-components/identity';
+import { AdminDashboardPage } from '@connorhoehnslalom/ui-components/identity';
 import { mockStats, mockPools } from '../mock-data';
 
 export default function DashboardDemo() {
@@ -8,7 +8,7 @@ export default function DashboardDemo() {
       <PageHeader
         title="Admin Dashboard"
         description="Overview page showing system statistics (total pools, users, applications, active sessions) and a quick-access pool list. Entry point for the identity admin UI."
-        importPath="import { AdminDashboardPage } from '@connorhoehn/ui-components/identity'"
+        importPath="import { AdminDashboardPage } from '@connorhoehnslalom/ui-components/identity'"
       />
 
       <ExampleBlock

@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { ReactNode } from 'react';
 
 export declare function AlertItem({ severity, title, description, timestamp, resolved, action, className, style, 'data-testid': testId, }: AlertItemProps): JSX.Element;

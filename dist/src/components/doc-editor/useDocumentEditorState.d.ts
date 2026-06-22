@@ -1,0 +1,103 @@
+import { ViewMode, DocumentMeta, Participant } from '../../types/document';
+import { UseWebSocketReturn } from '../../hooks/useWebSocket';
+import { GatewayMessage } from '../../types/gateway';
+/**
+ * Extract plain text from a Y.XmlFragment.
+ */
+export declare function xmlFragmentToText(frag: {
+    toString(): string;
+}): string;
+export interface UseDocumentEditorStateOptions {
+    documentId: string;
+    documentType?: string;
+    ws: UseWebSocketReturn;
+    userId: string;
+    displayName: string;
+    color?: string;
+    onMessage: (handler: (msg: GatewayMessage) => void) => () => void;
+    activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
+    isVideoDocked?: boolean;
+    onDockVideo?: () => void;
+    onUndockVideo?: () => void;
+    onBack?: () => void;
+}
+export declare function useDocumentEditorState({ documentId, documentType, ws, userId, displayName, color, onMessage, activityPublish, isVideoDocked, onDockVideo, onUndockVideo, onBack, }: UseDocumentEditorStateOptions): {
+    mode: ViewMode;
+    handleModeChange: (newMode: ViewMode) => void;
+    meta: DocumentMeta | null;
+    headerMeta: DocumentMeta;
+    isFinalized: boolean;
+    handleFinalize: () => void;
+    handleUnlock: () => void;
+    updateMeta: (partial: Partial<DocumentMeta>) => void;
+    sections: import('../..').Section[];
+    updateSection: (sectionId: string, partial: Partial<import('../..').Section>) => void;
+    getSectionFragment: (sectionId: string) => import('yjs').XmlFragment | null;
+    ydoc: import('yjs').Doc | null;
+    provider: import('../../providers/GatewayProvider').GatewayProvider | null;
+    synced: boolean;
+    demoLoaded: boolean;
+    handleLoadDemo: () => void;
+    handleClearDocument: () => void;
+    handleExport: (format: "markdown" | "pdf" | "json") => void;
+    participants: Participant[];
+    awareness: import('../../hooks/useAwarenessState').AwarenessUpdaters;
+    focusedSectionId: string | null;
+    handleSectionFocus: (sectionId: string) => void;
+    handleJumpToUser: (participant: Participant) => void;
+    followingUserId: string | null;
+    handleFollowUser: (participant: Participant) => void;
+    handleStopFollow: () => void;
+    comments: Record<string, import('../..').CommentThread[]>;
+    commentSidebarOpen: boolean;
+    commentSectionId: string | null;
+    commentSidebarTop: number;
+    sectionListRef: import('react').RefObject<HTMLDivElement | null>;
+    handleOpenComments: (sectionId: string) => void;
+    handleCloseComments: () => void;
+    handleAddComment: (sectionId: string, text: string, parentCommentId?: string | null) => void;
+    handleResolveThread: (sectionId: string, commentId: string) => void;
+    handleUnresolveThread: (sectionId: string, commentId: string) => void;
+    restItems: Record<string, import('../..').TaskItem[]>;
+    handleAddItem: (sectionId: string, item: Omit<import('../../types/document').TaskItem, "id">) => void;
+    handleUpdateItem: (sectionId: string, itemId: string, patch: Partial<import('../../types/document').TaskItem>) => void;
+    handleRemoveItem: (sectionId: string, itemId: string) => void;
+    sectionReviews: Record<string, import('../..').SectionReview[]>;
+    restReviewSection: (sectionId: string, status: string, comment?: string) => Promise<void>;
+    showHistory: boolean;
+    showMyItems: boolean;
+    showVideoHistory: boolean;
+    handleToggleHistory: () => void;
+    handleToggleMyItems: () => void;
+    handleToggleVideoHistory: () => void;
+    closePanel: () => void;
+    showVideoCall: boolean;
+    setShowVideoCall: import('react').Dispatch<import('react').SetStateAction<boolean>>;
+    handleToggleVideoCall: () => void;
+    videoSessions: {
+        sessions: import('../../hooks/useVideoSessions').VideoSession[];
+        loading: boolean;
+        fetchSessions: () => Promise<void>;
+    };
+    isVideoDocked: boolean | undefined;
+    onDockVideo: (() => void) | undefined;
+    onUndockVideo: (() => void) | undefined;
+    showTOC: boolean;
+    showInlineVideo: boolean;
+    sidebarFixed: boolean;
+    videoSpacerRef: import('react').RefObject<HTMLDivElement | null>;
+    tocSpacerRef: import('react').RefObject<HTMLDivElement | null>;
+    videoLeft: number;
+    FIXED_TOP: number;
+    myItems: import('../../hooks/useMyMentionsAndTasks').MyItem[];
+    handleNavigateToSection: (sectionId: string) => void;
+    versionHistory: import('../../hooks/useVersionHistory').UseVersionHistoryReturn;
+    handleBack: () => void;
+    idToken: string | null;
+    activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
+    displayName: string;
+    color: string;
+    userId: string;
+    documentId: string;
+};
+//# sourceMappingURL=useDocumentEditorState.d.ts.map

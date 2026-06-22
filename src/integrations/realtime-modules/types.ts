@@ -3,7 +3,7 @@
 // Structural mirror types for realtime-modules hook outputs.
 //
 // We copy the shapes (not import them) so this integration subpath compiles
-// without a hard runtime dep on @connorhoehn/realtime-modules.
+// without a hard runtime dep on @connorhoehnslalom/realtime-modules.
 // The actual realtime-modules package declares identical interfaces —
 // structural typing means any real hook return value satisfies these types.
 

@@ -16,7 +16,7 @@ import {
   QuickPromptGrid,
   FollowUpChips,
   Avatar,
-} from '@connorhoehn/ui-components/shared';
+} from '@connorhoehnslalom/ui-components/shared';
 
 const tocItems: TocItem[] = [
   { id: 'thinking-dots', label: 'ThinkingDots', level: 2 },
@@ -112,7 +112,7 @@ export default function ChatPage() {
       <PageHeader
         title="Chat & Thread"
         description="Components for building agent chat UIs: message bubbles, composer, tool-call strips, thinking indicators, quick prompts, and follow-up chips."
-        importPath="import { MessageBubble, ChatComposer, ToolCallStrip, ThinkingDots } from '@connorhoehn/ui-components/shared'"
+        importPath="import { MessageBubble, ChatComposer, ToolCallStrip, ThinkingDots } from '@connorhoehnslalom/ui-components/shared'"
       />
 
       {/* ─── ThinkingDots ─────────────────────────────────────────────── */}

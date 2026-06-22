@@ -1,4 +1,4 @@
-# Layout — `@connorhoehn/ui-components/layout`
+# Layout — `@connorhoehnslalom/ui-components/layout`
 
 App-shell, documentation-shell, and settings-shell composites. Wraps
 shared primitives into the full-page compositions every consumer app
@@ -17,7 +17,7 @@ import {
   DocsTopNav,
   SettingsLayout,
   TopNav,
-} from '@connorhoehn/ui-components/layout';
+} from '@connorhoehnslalom/ui-components/layout';
 // also reachable from the root barrel.
 ```
 

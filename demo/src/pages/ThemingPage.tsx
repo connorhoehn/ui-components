@@ -24,7 +24,7 @@ export default function ThemingPage() {
         ThemeProvider setup
       </h2>
       <pre style={codeBlockStyle}>
-{`import { ThemeProvider } from '@connorhoehn/ui-components';
+{`import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -68,7 +68,7 @@ function App() {
       </p>
       <pre style={codeBlockStyle}>
 {`import { useState } from 'react';
-import { ThemeProvider } from '@connorhoehn/ui-components';
+import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');

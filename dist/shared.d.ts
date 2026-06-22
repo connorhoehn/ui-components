@@ -3,14 +3,15 @@ import { CSSProperties } from 'react';
 import { default as default_2 } from 'react';
 import { ElementType } from 'react';
 import { HTMLAttributes } from 'react';
-import { JSX } from 'react/jsx-runtime';
-import { JSX as JSX_2 } from 'react';
+import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { ReactPortal } from 'react';
 import { RefObject } from 'react';
 import { TdHTMLAttributes } from 'react';
 import { ThHTMLAttributes } from 'react';
+
+export declare const activeNavItemStyle: CSSProperties;
 
 export declare function ActivityFeed({ items, visibleCount, rotateMs, staggerMs, kindColors, className, }: ActivityFeedProps): JSX.Element;
 
@@ -108,7 +109,7 @@ export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: 
     yKey: string;
     color?: string;
     yFormat?: (v: number) => string;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface BreadcrumbItem {
     label: string;
@@ -146,7 +147,7 @@ export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
-export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): JSX.Element;
+export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
 
 export declare interface CardHeaderProps {
     title: string;
@@ -291,7 +292,7 @@ export declare interface CodeEditorProps {
     'aria-label'?: string;
 }
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     title: string;
@@ -728,7 +729,7 @@ export declare interface ImageLightboxProps {
     onNavigate?: (index: number) => void;
 }
 
-export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): JSX.Element;
+export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
 
 export declare interface InlineAlertProps {
     tone: InlineAlertTone;
@@ -787,7 +788,7 @@ export declare function LineChart({ series, height, yFormat, xFormat, }: {
     height?: number;
     yFormat?: (v: number) => string;
     xFormat?: (v: number | string) => string;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface LineSeries {
     label: string;
@@ -942,7 +943,7 @@ export declare interface NotificationItem {
     category?: string;
 }
 
-export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -1171,7 +1172,7 @@ export declare interface ScoreBarGaugeProps {
     className?: string;
 }
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -1256,7 +1257,7 @@ export declare interface StackDiagramProps {
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface StackLayerSpec {
     id: string;

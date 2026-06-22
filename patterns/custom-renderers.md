@@ -70,8 +70,8 @@ type SectionRenderer = React.ComponentType<SectionRendererProps>;
 Use `registerRenderer` to add your component to the registry:
 
 ```tsx
-import { registerRenderer } from '@connorhoehn/ui-components/doc-editor';
-import type { SectionRendererProps } from '@connorhoehn/ui-components/doc-editor';
+import { registerRenderer } from '@connorhoehnslalom/ui-components/doc-editor';
+import type { SectionRendererProps } from '@connorhoehnslalom/ui-components/doc-editor';
 
 // Register for both view modes
 registerRenderer('kanban', 'editor', KanbanEditor);
@@ -84,9 +84,9 @@ registerRenderer('kanban', '*', KanbanRenderer);
 ## Example: Creating a "kanban" Section Renderer
 
 ```tsx
-import { registerRenderer } from '@connorhoehn/ui-components/doc-editor';
-import type { SectionRendererProps } from '@connorhoehn/ui-components/doc-editor';
-import { cssVar } from '@connorhoehn/ui-components';
+import { registerRenderer } from '@connorhoehnslalom/ui-components/doc-editor';
+import type { SectionRendererProps } from '@connorhoehnslalom/ui-components/doc-editor';
+import { cssVar } from '@connorhoehnslalom/ui-components';
 
 function KanbanEditor({ section, onUpdateItem, onAddItem }: SectionRendererProps) {
   const columns = ['pending', 'acked', 'done'] as const;
@@ -167,7 +167,7 @@ registerRenderer('kanban', 'reader', KanbanReader);
 For richer integration (appearing in the section-type picker, having an icon and description), register a field type definition alongside your renderer:
 
 ```tsx
-import { registerFieldType } from '@connorhoehn/ui-components/doc-editor';
+import { registerFieldType } from '@connorhoehnslalom/ui-components/doc-editor';
 
 registerFieldType({
   type: 'kanban',
@@ -227,7 +227,7 @@ registerFieldType({
 For debug UIs or dynamic configuration:
 
 ```tsx
-import { listRegisteredRenderers, getFieldTypes } from '@connorhoehn/ui-components/doc-editor';
+import { listRegisteredRenderers, getFieldTypes } from '@connorhoehnslalom/ui-components/doc-editor';
 
 // List all registered renderer entries
 const renderers = listRegisteredRenderers();

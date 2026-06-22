@@ -2,7 +2,7 @@
 // hook demos run without a real WebSocket.
 
 import { createContext, useCallback, useRef, useMemo, useEffect, type ReactNode } from 'react';
-import { GatewayContext } from '@connorhoehn/realtime-modules/client';
+import { GatewayContext } from '@connorhoehnslalom/realtime-modules/client';
 
 // ---------------------------------------------------------------------------
 // Types

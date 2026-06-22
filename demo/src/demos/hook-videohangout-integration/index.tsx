@@ -9,8 +9,8 @@ import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { HangoutLayout } from '@/components/video/HangoutLayout';
 import type { HangoutLayoutParticipant } from '@/components/video/HangoutLayout';
-import { GatewaySocketProvider, useVideoHangout, GatewayContext } from '@connorhoehn/realtime-modules/client';
-import type { HangoutParticipant, HangoutSession } from '@connorhoehn/realtime-modules/client';
+import { GatewaySocketProvider, useVideoHangout, GatewayContext } from '@connorhoehnslalom/realtime-modules/client';
+import type { HangoutParticipant, HangoutSession } from '@connorhoehnslalom/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const IS_MOCK = !GATEWAY_URL;

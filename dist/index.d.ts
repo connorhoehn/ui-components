@@ -7,8 +7,7 @@ import { ElementType } from 'react';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { InputHTMLAttributes } from 'react';
-import { JSX } from 'react/jsx-runtime';
-import { JSX as JSX_2 } from 'react';
+import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { MutableRefObject } from 'react';
 import { Observable } from 'lib0/observable';
@@ -60,6 +59,8 @@ export declare interface ActionNodeData {
 }
 
 export declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
+
+export declare const activeNavItemStyle: CSSProperties;
 
 declare interface ActiveSync {
     sourceId: string;
@@ -832,7 +833,7 @@ export declare function BarChart({ data, height, xKey, yKey, color, yFormat, }: 
     yKey: string;
     color?: string;
     yFormat?: (v: number) => string;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface BBox {
     x: number;
@@ -1093,7 +1094,7 @@ export declare interface CaptionLine {
 
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
-export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): JSX.Element;
+export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;
 
 export declare interface CardHeaderProps {
     title: string;
@@ -1314,7 +1315,7 @@ declare interface CollapsedIconStripProps {
     onObservability: () => void;
 }
 
-export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): JSX.Element;
+export declare function CollapsibleSection({ title, defaultOpen, badge, children, className, storageKey, }: CollapsibleSectionProps): default_2.JSX.Element;
 
 export declare interface CollapsibleSectionProps {
     title: string;
@@ -3211,7 +3212,7 @@ export declare type IngestSourceType = 'local' | 's3' | 'google-drive' | 'webhoo
  */
 export declare function injectThemeVars(tokens: ThemeTokens): string;
 
-export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): JSX.Element;
+export declare function InlineAlert({ tone, children, onDismiss, className }: InlineAlertProps): default_2.JSX.Element;
 
 export declare interface InlineAlertProps {
     tone: InlineAlertTone;
@@ -3378,7 +3379,7 @@ export declare function LineChart({ series, height, yFormat, xFormat, }: {
     height?: number;
     yFormat?: (v: number) => string;
     xFormat?: (v: number | string) => string;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface LineSeries {
     label: string;
@@ -3957,7 +3958,7 @@ declare type OnMessageFn_8 = (handler: (msg: GatewayMessage) => void) => () => v
 
 declare type OnMessageFn_9 = (handler: (msg: GatewayMessage) => void) => () => void;
 
-export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): JSX.Element;
+export declare function PageHeader({ title, description, actions, back, badge, className, }: PageHeaderProps): default_2.JSX.Element;
 
 export declare interface PageHeaderBack {
     label: string;
@@ -5493,7 +5494,7 @@ export declare interface SearchAuditFilters extends AuditFilters {
     pipelineId?: string;
 }
 
-export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): JSX.Element;
+export declare function SearchInput({ value, onChange, placeholder, onClear, className, style, autoFocus, 'aria-label': ariaLabel, }: SearchInputProps): default_2.JSX.Element;
 
 export declare interface SearchInputProps {
     value: string;
@@ -5880,7 +5881,7 @@ export declare interface StackDiagramProps {
 export declare function StackedAreaChart({ series, height, }: {
     series: LineSeries[];
     height?: number;
-}): JSX_2.Element;
+}): JSX.Element;
 
 export declare interface StackLayerSpec {
     id: string;

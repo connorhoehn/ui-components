@@ -1,4 +1,4 @@
-import { JSX } from 'react/jsx-runtime';
+import { JSX } from 'react';
 import { ReactNode } from 'react';
 
 export declare interface A2AMessage {

@@ -1,1 +1,0 @@
-"use strict";const d=require("react/jsx-runtime"),o=require("./cn-IjLH3w2e.cjs"),t={none:"",sm:"p-4",md:"p-6",lg:"p-8"};function i({children:e,padding:n="none",className:r,...s}){return d.jsx("div",{className:o.cn("border border-slate-200 rounded-lg bg-white overflow-hidden",t[n],r),...s,children:e})}exports.Card=i;

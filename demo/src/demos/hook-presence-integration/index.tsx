@@ -1,6 +1,6 @@
 // demo/src/demos/hook-presence-integration/index.tsx
 //
-// PresencePanel wired to usePresence() from @connorhoehn/realtime-modules.
+// PresencePanel wired to usePresence() from @connorhoehnslalom/realtime-modules.
 // Mock mode: synthetic join/leave events injected on a timer.
 // Live mode: set VITE_GATEWAY_URL.
 
@@ -11,7 +11,7 @@ import {
   GatewaySocketProvider,
   usePresence,
   GatewayContext,
-} from '@connorhoehn/realtime-modules/client';
+} from '@connorhoehnslalom/realtime-modules/client';
 import { useContext, useMemo, createContext, type ReactNode } from 'react';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;

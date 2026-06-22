@@ -1,11 +1,11 @@
-import { S as W } from "./DocumentEditorPage-D8JmjZFh.js";
-import { A as we, a as Ne, D as ye, b as ve, c as ke, E as Ce, F as Me, H as Se, K as je, M as Ae, d as $e, P as Pe, R as Ee, e as _e, f as De, g as Ie, h as Te, T as Re, V as He, i as Le, j as Oe, k as Be, l as Ue, m as We, r as Fe, u as Ve, n as Xe } from "./DocumentEditorPage-D8JmjZFh.js";
+import { S as W } from "./DocumentEditorPage-COs0vMa7.js";
+import { A as we, a as Ne, D as ye, b as ve, c as ke, E as Ce, F as Me, H as Se, K as je, M as Ae, d as $e, P as Pe, R as Ee, e as _e, f as De, g as Ie, h as Te, T as Re, V as He, i as Le, j as Oe, k as Be, l as Ue, m as We, r as Fe, u as Ve, n as Xe } from "./DocumentEditorPage-COs0vMa7.js";
 import { jsxs as r, jsx as n, Fragment as $ } from "react/jsx-runtime";
 import { useState as j, useMemo as E, useCallback as I, useRef as _, useEffect as T } from "react";
-import { N as F, T as R } from "./index-arbn-S4b.js";
-import { E as qe, a as ze, b as Ge } from "./index-arbn-S4b.js";
+import { N as F, T as R } from "./NewDocumentModal-LkuoTwUS.js";
+import { E as qe, a as ze, b as Ge } from "./NewDocumentModal-LkuoTwUS.js";
 import { c as t } from "./cn-B6yFEsav.js";
-import { o as V, p as X } from "./useWebSocket-CRbD5UIz.js";
+import { o as V, p as X } from "./useWebSocket-Bn4OeUor.js";
 function K(e) {
   const i = Date.now(), d = new Date(e).getTime();
   if (isNaN(d)) return "";

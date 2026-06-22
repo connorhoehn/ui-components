@@ -1,6 +1,6 @@
 // demo/src/demos/hook-chat-integration/index.tsx
 //
-// ChatPanel wired to useChat() from @connorhoehn/realtime-modules.
+// ChatPanel wired to useChat() from @connorhoehnslalom/realtime-modules.
 //
 // In MOCK mode (no VITE_GATEWAY_URL), synthetic messages are injected on a
 // timer so the panel looks alive without a real WebSocket.
@@ -8,7 +8,7 @@
 // In LIVE mode (VITE_GATEWAY_URL set), a real GatewaySocketProvider connects.
 
 import { useEffect, useRef, useState } from 'react';
-import { ChatPanel } from '@connorhoehn/ui-components/social';
+import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
 import { MockGatewayProvider, type DispatchFrame } from './MockGatewayContext';
 import { LiveChatView } from './LiveChatView';
 import { MockChatView } from './MockChatView';

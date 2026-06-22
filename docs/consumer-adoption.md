@@ -1,6 +1,6 @@
 # Consumer adoption guide
 
-> Cheatsheet for picking the right `@connorhoehn/ui-components` primitive for
+> Cheatsheet for picking the right `@connorhoehnslalom/ui-components` primitive for
 > the page you're building. Pairs with the surfaces table in
 > [`README.md`](../README.md) and the entry-points table in
 > [`CLAUDE.md`](../CLAUDE.md).
@@ -177,7 +177,7 @@ applies anywhere.
 **After** (ui-components composites + Tailwind tokens):
 
 ```tsx
-import { PageHeader, Button } from '@connorhoehn/ui-components';
+import { PageHeader, Button } from '@connorhoehnslalom/ui-components';
 
 <PageHeader
   title="Sessions"
@@ -237,7 +237,7 @@ they break when the third user has the same initial as the first.
 **After:**
 
 ```tsx
-import { PresenceAvatars } from '@connorhoehn/ui-components';
+import { PresenceAvatars } from '@connorhoehnslalom/ui-components';
 
 <PresenceAvatars users={users} maxVisible={5} size={24} />
 ```
@@ -285,7 +285,7 @@ ordering. The library has a single component for it.
 **After** (pure):
 
 ```tsx
-import { ChatPanel } from '@connorhoehn/ui-components';
+import { ChatPanel } from '@connorhoehnslalom/ui-components';
 
 <ChatPanel
   messages={messages}
@@ -297,8 +297,8 @@ import { ChatPanel } from '@connorhoehn/ui-components';
 **After** (with realtime-modules hooks):
 
 ```tsx
-import { WrappedChatPanel } from '@connorhoehn/ui-components/integrations/realtime-modules';
-import { useChat, usePresence } from '@connorhoehn/realtime-modules/client';
+import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
+import { useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
 
 <WrappedChatPanel
   chat={useChat(channel)}

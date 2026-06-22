@@ -8,12 +8,12 @@ import {
   PageHeader as LibPageHeader,
   IconButton,
   Button,
-} from '@connorhoehn/ui-components/shared';
+} from '@connorhoehnslalom/ui-components/shared';
 import type {
   NotificationItem,
   PresenceUser,
   UserMenuItem,
-} from '@connorhoehn/ui-components/shared';
+} from '@connorhoehnslalom/ui-components/shared';
 import {
   ExampleBlock,
   PropsTable,
@@ -99,7 +99,7 @@ export default function ShellCompositesPage() {
       <PageHeader
         title="Shell Composites"
         description="Page-shell primitives that absorb the repetitive scaffolding around portal screens — header bars, presence rows, breadcrumbs, notification inboxes, and user menus. Use these instead of hand-rolled HTML to keep visual + accessibility behavior consistent across consumer apps."
-        importPath="import { ChannelHeader, PresenceAvatars, NotificationCenter, UserMenu, Breadcrumbs, PageHeader } from '@connorhoehn/ui-components/shared'"
+        importPath="import { ChannelHeader, PresenceAvatars, NotificationCenter, UserMenu, Breadcrumbs, PageHeader } from '@connorhoehnslalom/ui-components/shared'"
       />
 
       {/* ChannelHeader */}

@@ -52,7 +52,7 @@ export type { UploadedImage as PipelineUploadedImage } from './components/pipeli
 // Each line below resolves a TS2308 by picking the pre-existing canonical
 // source at root (so existing consumers see no change). New-domain
 // counterparts remain reachable via their subpath import (e.g.
-// `@connorhoehn/ui-components/social`), and are also re-exported here under
+// `@connorhoehnslalom/ui-components/social`), and are also re-exported here under
 // disambiguated aliases for root-import convenience.
 export type { CommentThread } from './types';
 export type { Participant } from './types';

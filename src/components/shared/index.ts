@@ -147,7 +147,7 @@ export { ActivityFeed } from './ActivityFeed';
 export type { ActivityFeedItem, ActivityFeedProps, ActivityKind } from './ActivityFeed';
 export { ProjectCard } from './ProjectCard';
 export type { ProjectCardProps, StatusColors } from './ProjectCard';
-export { SubNavLayout } from './SubNavLayout';
+export { SubNavLayout, activeNavItemStyle } from './SubNavLayout';
 export type { SubNavItem, SubNavLayoutProps } from './SubNavLayout';
 
 // ── Sidebar primitives (2026-05) ──

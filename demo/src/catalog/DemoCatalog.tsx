@@ -12,7 +12,7 @@ export function DemoCatalog() {
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8 }}>Component Demos</h1>
         <p style={{ fontSize: 15, color: '#64748b', maxWidth: 600 }}>
-          Interactive demonstrations of the @connorhoehn/ui-components library.
+          Interactive demonstrations of the @connorhoehnslalom/ui-components library.
           Each demo showcases a domain module with mock data.
         </p>
       </div>

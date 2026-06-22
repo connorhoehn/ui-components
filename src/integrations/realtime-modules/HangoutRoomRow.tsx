@@ -30,7 +30,7 @@
 //   - count == 0 or no occupancy yet  → nothing
 
 import { useMemo, type MouseEvent } from 'react';
-import { useRoomOccupancy, type RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
+import { useRoomOccupancy, type RoomsIndexSubscriber } from '@connorhoehnslalom/realtime-modules/client/hangout-rooms';
 import { SidebarRow } from '../../components/sidebar/SidebarRow';
 import { PresenceAvatars } from '../../components/shared/PresenceAvatars';
 import { Badge } from '../../components/shared/Badge';

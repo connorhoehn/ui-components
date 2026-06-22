@@ -1,6 +1,6 @@
 // demo/src/demos/hook-fileupload-integration/index.tsx
 //
-// FileUploadDrop wired to useFileUpload() from @connorhoehn/realtime-modules.
+// FileUploadDrop wired to useFileUpload() from @connorhoehnslalom/realtime-modules.
 // Mock mode: simulates the full presign → XHR → AV-scan lifecycle without a
 // real gateway or storage backend.
 // Live mode: set VITE_GATEWAY_URL.
@@ -8,8 +8,8 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { FileUploadDrop } from '@/components/shared/FileUploadDrop';
-import { GatewaySocketProvider, useFileUpload, GatewayContext } from '@connorhoehn/realtime-modules/client';
-import type { FileUploadState } from '@connorhoehn/realtime-modules/client';
+import { GatewaySocketProvider, useFileUpload, GatewayContext } from '@connorhoehnslalom/realtime-modules/client';
+import type { FileUploadState } from '@connorhoehnslalom/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const IS_MOCK = !GATEWAY_URL;
