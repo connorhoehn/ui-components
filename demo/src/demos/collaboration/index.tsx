@@ -254,7 +254,7 @@ function CollaborationCanvas() {
             <div className="text-[11px] text-text-tertiary mb-3 uppercase tracking-[0.5px] font-semibold">
               Shared Document
             </div>
-            <p style={{ fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.8, color: '#1e293b', margin: 0 }}>
+            <p className="font-[Georgia,_serif] text-[15px] leading-[1.8] text-[#1e293b] m-0">
               {docText}
             </p>
           </div>

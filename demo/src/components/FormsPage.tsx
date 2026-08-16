@@ -225,18 +225,8 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
           <div className="absolute top-[100%] left-0 mt-1 bg-surface border border-border rounded-md shadow-[0_6px_18px_rgba(15,23,42,0.10)] p-2 flex flex-wrap gap-[6px] max-w-80 z-[10]"
           >
             {['backend', 'devops', 'design', 'testing', 'mobile', 'cloud'].map((s) => (
-              <span
+              <span className="inline-block py-[3px] px-[10px] text-[12px] bg-surface-panel text-text-secondary border border-dashed border-text-disabled rounded cursor-pointer"
                 key={s}
-                style={{
-                  display: 'inline-block',
-                  padding: '3px 10px',
-                  fontSize: 12,
-                  background: '#f8fafc',
-                  color: '#475569',
-                  border: '1px dashed #cbd5e1',
-                  borderRadius: 4,
-                  cursor: 'pointer',
-                }}
               >
                 + {s}
               </span>

@@ -189,72 +189,17 @@ const overflow = users.length - visible.length;
           }}
         >
           {/* Local cursor */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 120,
-              top: 90,
-              transform: 'translate(-50%, -50%)',
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: '#3b82f6',
-              border: '2px dashed white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 9,
-              fontWeight: 700,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 11,
-            }}
+          <div className="absolute left-30 top-[90px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#3b82f6] border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[11]"
           >
             You
           </div>
           {/* Remote cursor: AS */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 320,
-              top: 60,
-              transform: 'translate(-50%, -50%)',
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: '#ec4899',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 10,
-              fontWeight: 700,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 10,
-            }}
+          <div className="absolute left-80 top-15 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#ec4899] flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
           >
             AS
           </div>
           {/* Remote cursor: MK */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 400,
-              top: 150,
-              transform: 'translate(-50%, -50%)',
-              width: 24,
-              height: 24,
-              borderRadius: '50%',
-              background: '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: 10,
-              fontWeight: 700,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              zIndex: 10,
-            }}
+          <div className="absolute left-100 top-[150px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#10b981] flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
           >
             MK
           </div>
@@ -292,48 +237,18 @@ const cursors = new Map([
           {'This is a shared document. Click '}
           {/* Alice's cursor at char 34 */}
           <span className="relative inline">
-            <span
-              style={{
-                position: 'absolute',
-                top: -14,
-                left: 0,
-                fontSize: 10,
-                background: '#ec4899',
-                color: 'white',
-                padding: '1px 3px',
-                borderRadius: 2,
-                whiteSpace: 'nowrap',
-              }}
+            <span className="absolute -top-[14px] left-0 text-[10px] bg-[#ec4899] text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
             >
               AS
             </span>
-            <span
-              style={{
-                display: 'inline-block',
-                width: 3,
-                height: 18,
-                background: '#ec4899',
-                verticalAlign: 'text-bottom',
-                marginRight: -1,
-              }}
+            <span className="inline-block w-[3px] h-[18px] bg-[#ec4899] align-text-bottom -mr-[1px]"
             />
           </span>
           {'here to set your '}
           {/* Marcus's selection highlight */}
           <span className="relative bg-[rgba(16,185,129,0.25)]"
           >
-            <span
-              style={{
-                position: 'absolute',
-                top: -14,
-                left: 0,
-                fontSize: 10,
-                background: '#10b981',
-                color: 'white',
-                padding: '1px 3px',
-                borderRadius: 2,
-                whiteSpace: 'nowrap',
-              }}
+            <span className="absolute -top-[14px] left-0 text-[10px] bg-[#10b981] text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
             >
               MK
             </span>
@@ -378,39 +293,14 @@ const cursors = new Map([
                     const isAlice = row === 1 && col === 3;
                     const isMarcus = row === 4 && col === 0;
                     return (
-                      <td
+                      <td className="relative w-20 h-8 border border-[#e5e7eb] p-[6px] bg-white"
                         key={col}
-                        style={{
-                          position: 'relative',
-                          width: 80,
-                          height: 32,
-                          border: '1px solid #e5e7eb',
-                          padding: 6,
-                          background: 'white',
-                        }}
                       >
                         {isLocal && (
                           <>
-                            <div
-                              style={{
-                                position: 'absolute',
-                                inset: 0,
-                                border: '2px dashed #3b82f6',
-                                borderRadius: 3,
-                                pointerEvents: 'none',
-                              }}
+                            <div className="absolute inset-0 border-2 border-dashed border-[#3b82f6] rounded-[3px] pointer-events-none"
                             />
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: -10,
-                                right: 0,
-                                fontSize: 10,
-                                background: '#3b82f6',
-                                color: 'white',
-                                padding: '1px 4px',
-                                borderRadius: 3,
-                              }}
+                            <div className="absolute -top-[10px] right-0 text-[10px] bg-[#3b82f6] text-white py-[1px] px-1 rounded-[3px]"
                             >
                               You
                             </div>
@@ -420,17 +310,7 @@ const cursors = new Map([
                           <>
                             <div className="absolute inset-0 border-3 border-[#ec4899] rounded-[3px] pointer-events-none"
                             />
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: -10,
-                                left: 0,
-                                fontSize: 10,
-                                background: '#ec4899',
-                                color: 'white',
-                                padding: '1px 4px',
-                                borderRadius: 3,
-                              }}
+                            <div className="absolute -top-[10px] left-0 text-[10px] bg-[#ec4899] text-white py-[1px] px-1 rounded-[3px]"
                             >
                               AS
                             </div>
@@ -440,17 +320,7 @@ const cursors = new Map([
                           <>
                             <div className="absolute inset-0 border-3 border-[#10b981] rounded-[3px] pointer-events-none"
                             />
-                            <div
-                              style={{
-                                position: 'absolute',
-                                top: -10,
-                                left: 0,
-                                fontSize: 10,
-                                background: '#10b981',
-                                color: 'white',
-                                padding: '1px 4px',
-                                borderRadius: 3,
-                              }}
+                            <div className="absolute -top-[10px] left-0 text-[10px] bg-[#10b981] text-white py-[1px] px-1 rounded-[3px]"
                             >
                               MK
                             </div>
@@ -490,19 +360,9 @@ const cursors = new Map([
           <div className="flex items-center gap-2 mb-2">
             <span className="text-[11px] text-[#6b7280]">Tool:</span>
             {['Brush', 'Pen', 'Eraser', 'Select'].map((t, i) => (
-              <button
+              <button className={`text-[12px] py-1 px-[10px] border rounded cursor-default ${i === 0 ? 'bg-[#007bff] text-white border-[#007bff]' : 'bg-white text-[#374151] border-[#ddd]'}`}
                 key={t}
                 type="button"
-                style={{
-                  fontSize: 12,
-                  padding: '4px 10px',
-                  border: '1px solid',
-                  borderRadius: 4,
-                  cursor: 'default',
-                  background: i === 0 ? '#007bff' : 'white',
-                  color: i === 0 ? 'white' : '#374151',
-                  borderColor: i === 0 ? '#007bff' : '#ddd',
-                }}
               >
                 {t}
               </button>
@@ -528,17 +388,7 @@ const cursors = new Map([
             <div className="absolute left-35 top-[70px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <div style={avatarCircle('#ec4899', 24)}>AS</div>
-              <div
-                style={{
-                  fontSize: 11,
-                  marginTop: 2,
-                  color: 'white',
-                  background: '#ec4899',
-                  borderRadius: 3,
-                  padding: '1px 4px',
-                  whiteSpace: 'nowrap',
-                  opacity: 0.85,
-                }}
+              <div className="text-[11px] mt-[2px] text-white bg-[#ec4899] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 brush
               </div>
@@ -548,17 +398,7 @@ const cursors = new Map([
             <div className="absolute left-75 top-30 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <div style={avatarCircle('#10b981', 24)}>MK</div>
-              <div
-                style={{
-                  fontSize: 11,
-                  marginTop: 2,
-                  color: 'white',
-                  background: '#10b981',
-                  borderRadius: 3,
-                  padding: '1px 4px',
-                  whiteSpace: 'nowrap',
-                  opacity: 0.85,
-                }}
+              <div className="text-[11px] mt-[2px] text-white bg-[#10b981] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 pen
               </div>
@@ -607,20 +447,9 @@ const [mode, setMode] = useState<CursorMode>('freeform');
       >
         <div className="flex gap-2">
           {['Freeform', 'Table', 'Text', 'Canvas'].map((label, i) => (
-            <button
+            <button className={`py-2 px-4 border-2 rounded-md cursor-default text-[14px] font-mono ${i === 0 ? 'bg-[#007bff] text-white border-[#007bff]' : 'bg-white text-[#374151] border-border-field'}`}
               key={label}
               type="button"
-              style={{
-                padding: '8px 16px',
-                border: '2px solid',
-                borderRadius: 6,
-                cursor: 'default',
-                fontSize: 14,
-                fontFamily: 'monospace',
-                background: i === 0 ? '#007bff' : 'white',
-                color: i === 0 ? 'white' : '#374151',
-                borderColor: i === 0 ? '#007bff' : '#d1d5db',
-              }}
             >
               {label}
             </button>
@@ -678,16 +507,7 @@ function handleReact(emoji: string) {
           </div>
 
           {/* Simulated overlay area */}
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: 100,
-              border: '1px dashed #e2e8f0',
-              borderRadius: 6,
-              overflow: 'hidden',
-              background: '#fafafa',
-            }}
+          <div className="relative w-full h-25 border border-dashed border-border rounded-md overflow-hidden bg-[#fafafa]"
           >
             <span className="absolute top-1 left-2 text-[11px] text-[#9ca3af]"
             >

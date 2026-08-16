@@ -191,14 +191,14 @@ function EdgePreview() {
 
       {/* Branch label example */}
       <rect x="440" y="68" width="46" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1" />
-      <text x="463" y="82" textAnchor="middle" style={{ fontSize: 10, fontWeight: 600, fill: '#475569', fontFamily: 'inherit' }}>true</text>
+      <text className="text-[10px] font-semibold fill-text-secondary font-[inherit]" x="463" y="82" textAnchor="middle">true</text>
       <path d="M490 78 C530 78, 520 78, 560 78" fill="none" stroke="#2563eb" strokeWidth="2" strokeDasharray="6 4" />
 
       <rect x="440" y="108" width="46" height="20" rx="10" fill="#ffffff" stroke="#e2e8f0" strokeWidth="1" />
-      <text x="463" y="122" textAnchor="middle" style={{ fontSize: 10, fontWeight: 600, fill: '#475569', fontFamily: 'inherit' }}>false</text>
+      <text className="text-[10px] font-semibold fill-text-secondary font-[inherit]" x="463" y="122" textAnchor="middle">false</text>
       <path d="M490 118 C530 118, 520 118, 560 118" fill="none" stroke="#dc2626" strokeWidth="2" />
 
-      <text x="440" y="50" style={{ fontSize: 11, fill: '#64748b', fontFamily: 'inherit' }}>Branch labels:</text>
+      <text className="text-[11px] fill-[#64748b] font-[inherit]" x="440" y="50">Branch labels:</text>
     </svg>
   );
 }
@@ -292,45 +292,18 @@ function PalettePreview() {
   ];
 
   return (
-    <div
-      style={{
-        width: 220,
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
-        background: '#ffffff',
-        fontFamily: 'inherit',
-        overflow: 'hidden',
-      }}
+    <div className="w-55 border border-border rounded-lg bg-white font-[inherit] overflow-hidden"
     >
       <div className="py-[10px] px-3 border-b border-border">
-        <input
+        <input className="w-full box-border border border-border-field rounded-md py-[6px] px-[10px] text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary"
           readOnly
           placeholder="Search nodes..."
-          style={{
-            width: '100%',
-            boxSizing: 'border-box',
-            border: '1px solid #d1d5db',
-            borderRadius: 6,
-            padding: '6px 10px',
-            fontSize: 13,
-            fontFamily: 'inherit',
-            background: '#f9fafb',
-            color: '#0f172a',
-          }}
         />
       </div>
       <div className="py-2 px-0">
         {categories.map((cat) => (
           <div key={cat.name}>
-            <div
-              style={{
-                padding: '8px 14px 4px',
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: 0.6,
-                textTransform: 'uppercase',
-                color: '#94a3b8',
-              }}
+            <div className="pt-2 px-[14px] pb-1 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary"
             >
               {cat.name}
             </div>
