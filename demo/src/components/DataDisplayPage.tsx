@@ -1,3 +1,4 @@
+import { StatusDot } from '@connorhoehnslalom/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -432,7 +433,7 @@ export default function DataDisplayPage() {
             <div className={`flex items-center gap-[10px] py-2 px-3 ${idx < 4 ? 'border-b border-surface-hover' : 'border-b-0'} ${idx === 2 ? 'bg-danger-bg' : 'bg-transparent'}`}
               key={idx}
             >
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: event.color, flexShrink: 0 }} />
+              <StatusDot size="sm" color={event.color} />
               <span className="text-[11px] text-text-tertiary font-mono w-16 shrink-0">{event.ts}</span>
               <span style={{ fontSize: 11, fontWeight: 600, color: event.color, flexShrink: 0, minWidth: 180 }}>{event.type}</span>
               <span className="text-[13px] text-[#334155] flex-[1] overflow-hidden text-ellipsis whitespace-nowrap">{event.summary}</span>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Avatar } from '@connorhoehnslalom/ui-components/shared';
 import { SimulatedProvider } from '../../engine/SimulatedProvider';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
@@ -225,11 +226,23 @@ function CollaborationCanvas() {
           </span>
           {/* Avatar stack */}
           <div className="flex items-center ml-auto">
-            <div style={{ ...avatarStyle('#6366f1'), zIndex: 10 }}>You</div>
+            <Avatar
+              name="You"
+              initials="You"
+              color="#6366f1"
+              size={24}
+              className="border-2 border-[#0f172a]"
+            />
             {Object.values(presenceUsers).slice(0, 5).map((u, i) => (
-              <div key={u.userId} style={{ ...avatarStyle(u.color), marginLeft: -8, zIndex: 9 - i }}>
-                {u.displayName.charAt(0)}
-              </div>
+              <Avatar
+                key={u.userId}
+                name={u.displayName}
+                initials={u.displayName.charAt(0)}
+                color={u.color}
+                size={24}
+                className="border-2 border-[#0f172a] -ml-2"
+                style={{ zIndex: 9 - i }}
+              />
             ))}
             {Object.keys(presenceUsers).length > 5 && (
               <span className="ml-[6px] text-[11px] text-text-tertiary">
@@ -348,12 +361,12 @@ function CollaborationCanvas() {
           </div>
           {/* Local user */}
           <div className="flex items-center gap-2 py-1 px-0 text-[12px]">
-            <div style={presenceAvatarStyle('#6366f1')}>Y</div>
+            <Avatar name="You" initials="Y" color="#6366f1" size={20} />
             <span className="text-[#374151] font-medium">You</span>
           </div>
           {Object.values(presenceUsers).map(u => (
             <div className="flex items-center gap-2 py-1 px-0 text-[12px]" key={u.userId}>
-              <div style={presenceAvatarStyle(u.color)}>{u.displayName.charAt(0)}</div>
+              <Avatar name={u.displayName} initials={u.displayName.charAt(0)} color={u.color} size={20} />
               <span className="text-[#374151]">{u.displayName}</span>
               {u.isTyping && <span className="text-text-tertiary italic text-[11px]">typing...</span>}
             </div>
@@ -370,9 +383,13 @@ function CollaborationCanvas() {
           )}
           {activity.map(entry => (
             <div className="flex items-start gap-2 py-[5px] px-0 text-[12px]" key={entry.id}>
-              <div style={{ ...presenceAvatarStyle(entry.color), flexShrink: 0, marginTop: 1 }}>
-                {entry.displayName.charAt(0)}
-              </div>
+              <Avatar
+                name={entry.displayName}
+                initials={entry.displayName.charAt(0)}
+                color={entry.color}
+                size={20}
+                className="mt-[1px]"
+              />
               <div>
                 <span className="font-semibold text-[#374151]">{entry.displayName}</span>{' '}
                 <span className="text-[#64748b]">{entry.action}</span>
@@ -415,37 +432,6 @@ function CollaborationCanvas() {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-function avatarStyle(color: string): React.CSSProperties {
-  return {
-    width: 24,
-    height: 24,
-    borderRadius: '50%',
-    background: color,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: 700,
-    border: '2px solid #0f172a',
-  };
-}
-
-function presenceAvatarStyle(color: string): React.CSSProperties {
-  return {
-    width: 20,
-    height: 20,
-    borderRadius: '50%',
-    background: color,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#fff',
-    fontSize: 9,
-    fontWeight: 700,
-  };
-}
 
 function formatTimeAgo(timestamp: number): string {
   const diff = Math.floor((Date.now() - timestamp) / 1000);

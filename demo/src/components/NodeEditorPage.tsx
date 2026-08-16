@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { StatusDot } from '@connorhoehnslalom/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -87,14 +88,9 @@ function MiniNode({
         >
           {subtitle}
         </span>
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: pausedAtBreakpoint ? '#d97706' : tokens.dot,
-            flexShrink: 0,
-          }}
+        <StatusDot
+          size="sm"
+          color={pausedAtBreakpoint ? '#d97706' : tokens.dot}
         />
       </div>
       {body && (
