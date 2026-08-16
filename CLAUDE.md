@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.38.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.38.1`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -47,7 +47,7 @@ npm test           # vitest run (306 test files, 3148 tests)
 npm run lint       # tsc --noEmit on src AND demo (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
-npm run test:e2e   # playwright (8 specs — 96 pass, 4 skip)
+npm run test:e2e   # playwright (8 specs — 100 pass, 0 skip)
 ```
 
 > `npm run lint` typechecks **both** projects — root `tsconfig.json`
@@ -66,6 +66,21 @@ npm run test:e2e   # playwright (8 specs — 96 pass, 4 skip)
 > **Playwright browsers drift.** If every e2e test dies at
 > `browserType.launch`, the pinned chromium build moved: run
 > `npx playwright install chromium`.
+
+**Every script in `package.json` passes as of v2.38.1** — including the two
+that are easy to forget because nothing chains them into the main gate:
+`npm run lint:static-styles` (inline-style drift guard) and
+`npm run build-storybook`. Both were red for the whole dormancy. If you add
+inline styles, the first one will catch you: convert static literals to
+Tailwind, and only allowlist values that are genuinely runtime-derived.
+
+> **`build` and `build:types` fight over `dist/index.d.ts`.** `npm run build`
+> (vite + `rollupTypes`) writes a self-contained ~291KB rollup; `npm run
+> build:types` (`tsc -p tsconfig.build.json`) overwrites it with a ~2.8KB
+> `export * from './src/…'` stub plus 1600 files under `dist/src/`. The
+> committed convention is the **rollup** output. Whenever you run
+> `build:types` — it is only wired into `prepare` — re-run `npm run build`
+> before committing, or you will ship the stub.
 
 ## Entry points / exports map
 

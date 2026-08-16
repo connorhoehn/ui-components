@@ -19,11 +19,9 @@ interface Route {
   skipReason?: string;
 }
 
-// Reason for the only remaining skips:
-// - hls.js: optional peer dep for HLS playback, deliberately not installed.
-//   RecordingPlayer.tsx dynamic-imports it and Vite fails import analysis
-//   even with @vite-ignore.
-const SKIP_HLS = 'optional dep hls.js not installed in this worktree';
+// No skips. hls.js and amazon-ivs-web-broadcast are now devDependencies, so
+// the video / call-widget routes are smoke-tested for real. Reintroduce a
+// skipReason only if a route genuinely cannot run in this environment.
 // SKIP_RM retired 2026-08-16: @connorhoehn/realtime-modules IS installed
 // (v0.16.0 via the file:../realtime-modules link), and demo/vite.config.ts now
 // aliases its /client/video and /client/hangout-rooms subpaths, so the
@@ -45,8 +43,8 @@ const ROUTES: ReadonlyArray<Route> = [
   { path: '/components/node-editor' },
   { path: '/components/collaboration' },
   { path: '/components/real-time-editing' },
-  { path: '/components/video', skipReason: SKIP_HLS },
-  { path: '/components/call-widget', skipReason: SKIP_HLS },
+  { path: '/components/video' },
+  { path: '/components/call-widget' },
   { path: '/components/primitives' },
   { path: '/components/chat' },
   { path: '/components/patterns' },
@@ -75,8 +73,8 @@ const ROUTES: ReadonlyArray<Route> = [
 
   // Workflows — Social / Video
   { path: '/workflows/social' },
-  { path: '/workflows/video-streaming', skipReason: SKIP_HLS },
-  { path: '/workflows/call-widget', skipReason: SKIP_HLS },
+  { path: '/workflows/video-streaming' },
+  { path: '/workflows/call-widget' },
 
   // Workflows — Hook Integrations (all import realtime-modules at runtime)
   { path: '/workflows/hook-chat' },

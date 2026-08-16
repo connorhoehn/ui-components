@@ -8,6 +8,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.38.1] — 2026-08-16
+
+Internal only — no public API change. Every npm script in the repo now
+passes; before this, three of them did not.
+
+### Fixed
+
+- **`npm run lint:static-styles` passes again** (was exiting 1). 42 files
+  had drifted past the allowlist, so the guard against inline-style
+  regressions was permanently red and therefore ignored. Triaged all 42
+  against `TAILWIND_MIGRATION.md`: **converted 23**, allowlisted 19 that
+  are genuinely runtime-derived (each with an inline note saying why).
+  The conversions include 17 React Flow `<Handle>` port overrides, now
+  `!bottom-2 !top-auto` / `!top-[75%]` — matching the `!top-[60%]` already
+  used by the older nodes; the `!` is what beats React Flow's own
+  stylesheet. Verified in `dist/ui-components.css` that these emit
+  `top:75%!important`, the same shape as the pre-existing rule.
+  Two bugs in the checker itself also fixed: it matched non-source files
+  (a JSX sample in a README counted as a violation), and its allowlist
+  parser broke on trailing `# why` comments.
+
+- **`npm run build-storybook` passes again** (was failing outright on
+  `"useRoomOccupancy" is not exported by …/dist/client/hangout-rooms`).
+  realtime-modules ships a CJS dist whose named exports Rollup can't see.
+  `.storybook/main.ts` now aliases the package to its TS source, the same
+  workaround `demo/vite.config.ts` uses, merged onto the inherited root
+  aliases so `@` and `@schemas` keep working.
+
+### Added
+
+- `hls.js` and `amazon-ivs-web-broadcast` as devDependencies. Both were
+  undeclared optional deps that `RecordingPlayer` and `useHangoutEmbed`
+  reach for, which meant 4 demo routes could not run locally. With them
+  installed the **e2e suite is 100 passed / 0 skipped** (was 96/4), and
+  the demo production build works for the first time. Both remain
+  `external` in the lib build — verified absent from `dist/index.js` and
+  `dist/video.js`, so the shipped bundle is unchanged.
+
 ## [2.38.0] — 2026-08-16
 
 ### Added

@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.38.0",
+  "version": "2.38.1",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -132,6 +132,8 @@
     "@tiptap/y-tiptap": "^3.0.3",
     "@vitejs/plugin-react": "^5.1.1",
     "@xyflow/react": "^12.10.2",
+    "amazon-ivs-web-broadcast": "^1.38.1",
+    "hls.js": "^1.7.0",
     "jsdom": "^28.1.0",
     "lib0": "^0.2.117",
     "react": "^19.2.0",
