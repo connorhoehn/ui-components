@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.37.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.38.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -44,11 +44,28 @@ Wave order (don't pick across waves): **0** charter + reachability →
 
 ```bash
 npm test           # vitest run (306 test files, 3148 tests)
-npm run lint       # tsc --noEmit (0 errors)
+npm run lint       # tsc --noEmit on src AND demo (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
-npm run test:e2e   # playwright (tests/e2e/)
+npm run test:e2e   # playwright (8 specs — 96 pass, 4 skip)
 ```
+
+> `npm run lint` typechecks **both** projects — root `tsconfig.json`
+> (`src`) and `demo/tsconfig.json`. Before v2.38.0 it ran only the root,
+> and because the root `include` is `["src", "schemas"]` the demo app was
+> never typechecked: the gate read 0 errors while `/workflows/hook-capability`
+> rendered a blank page from a bad `Switch` import. Do not narrow this back
+> to a single project.
+
+> **`npm run build` needs an 8GB heap** (wired into the script). The
+> `file:../realtime-modules` devDependency is a symlink, so api-extractor
+> resolves its `.d.ts` outside `node_modules`, treats it as local source,
+> and walks the whole type graph — the 4GB default OOMs during the dts
+> rollup.
+
+> **Playwright browsers drift.** If every e2e test dies at
+> `browserType.launch`, the pinned chromium build moved: run
+> `npx playwright install chromium`.
 
 ## Entry points / exports map
 
@@ -193,7 +210,9 @@ tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
    composite), or C (ship the primitive first — file a hub task and stop).
 
 2. **Verification gate** (every commit): `npm test && npm run lint && npm run build`
-   must all pass. No `--no-verify`, no skipping hooks.
+   must all pass. No `--no-verify`, no skipping hooks. Run `npm run test:e2e`
+   too when touching `demo/**` or `tests/e2e/**` — the unit gate cannot see a
+   route that mounts blank.
 
 3. **No-touch list** (handoff required before changing): `src/index.ts`,
    every `*/index.ts` barrel under stable subpaths, `social/ChatPanel.tsx`
