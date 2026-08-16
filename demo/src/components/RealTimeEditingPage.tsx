@@ -1,3 +1,4 @@
+import { Avatar, AvatarGroup } from '@connorhoehnslalom/ui-components/shared';
 import {
   ExampleBlock,
   PropsTable,
@@ -271,20 +272,12 @@ function ParticipantsPanel({ provider }) {
                 key={p.name}
               >
                 {/* Avatar */}
-                <div style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: '50%',
-                  background: p.color,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  fontSize: 12,
-                  fontWeight: 600,
-                }}>
-                  {p.name.charAt(0)}
-                </div>
+                <Avatar
+                  name={p.name}
+                  initials={p.name.charAt(0)}
+                  color={p.color}
+                  size={28}
+                />
                 {/* Name */}
                 <span className="text-[14px] font-medium text-text-primary min-w-25">{p.name}</span>
                 {/* Mode badge */}
@@ -482,11 +475,14 @@ function DocumentEditor({ documentId }) {
             {/* Participants */}
             <div className="flex items-center gap-[10px]">
               <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Participants:</span>
-              <div className="flex gap-[-4px]">
-                {['#6366f1', '#10b981', '#f59e0b'].map((c, i) => (
-                  <div key={i} style={{ width: 24, height: 24, borderRadius: '50%', background: c, border: '2px solid #fff', marginLeft: i > 0 ? -6 : 0 }} />
-                ))}
-              </div>
+              <AvatarGroup
+                size={24}
+                items={[
+                  { name: 'A', initials: '', color: '#6366f1' },
+                  { name: 'B', initials: '', color: '#10b981' },
+                  { name: 'C', initials: '', color: '#f59e0b' },
+                ]}
+              />
             </div>
             {/* Comments */}
             <div className="flex items-center gap-[10px]">

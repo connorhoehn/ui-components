@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { TypingIndicator } from '@connorhoehnslalom/ui-components/shared';
+import { Avatar, TypingIndicator } from '@connorhoehnslalom/ui-components/shared';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
 
@@ -109,23 +109,12 @@ export function ChatMessages() {
         {messages.map((msg) => (
           <div className="flex gap-[10px]" key={msg.messageId}>
             {/* Avatar */}
-            <div
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                background: avatarColors[msg.userId] || '#6366f1',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: 11,
-                fontWeight: 700,
-                flexShrink: 0,
-              }}
-            >
-              {getInitials(msg.displayName)}
-            </div>
+            <Avatar
+              name={msg.displayName}
+              initials={getInitials(msg.displayName)}
+              color={avatarColors[msg.userId] || '#6366f1'}
+              size={32}
+            />
 
             {/* Bubble */}
             <div className="flex-[1]">

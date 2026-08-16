@@ -1,3 +1,4 @@
+import { Avatar } from '@connorhoehnslalom/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -321,23 +322,12 @@ const [selected, setSelected] = useState<string[]>([]);
               <div className={`flex items-center gap-[10px] py-2 px-3 cursor-pointer border-b border-surface-hover ${user.active ? 'bg-surface-hover' : 'bg-transparent'}`}
                 key={user.initials}
               >
-                <div
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    background: user.color,
-                    color: '#ffffff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 600,
-                    flexShrink: 0,
-                  }}
-                >
-                  {user.initials}
-                </div>
+                <Avatar
+                  name={user.name}
+                  initials={user.initials}
+                  color={user.color}
+                  size={32}
+                />
                 <div className="flex-[1] min-w-0">
                   <div className="text-[13px] font-medium text-text-primary">
                     {user.name}
