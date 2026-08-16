@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import { ReactionButtons } from '@/components/collaboration/ReactionButtons';
 import { ReactionsOverlay } from '@/components/collaboration/ReactionsOverlay';
 import type { EphemeralReaction } from '@/hooks/useReactions';
-import { GatewaySocketProvider, useReactions, GatewayContext } from '@connorhoehnslalom/realtime-modules/client';
+import { GatewaySocketProvider, useReactions, GatewayContext } from '@connorhoehn/realtime-modules/client';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const IS_MOCK = !GATEWAY_URL;

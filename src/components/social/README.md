@@ -43,7 +43,7 @@ Root-reachable since 2.12.0; `CommentThread` is aliased to
 
 ## Wrapped variants
 
-For consumer apps that use `@connorhoehnslalom/realtime-modules` hooks
+For consumer apps that use `@connorhoehn/realtime-modules` hooks
 (`useChat`, `usePresence`, `useReactions`, …), the
 [`integrations/realtime-modules`](../../integrations/realtime-modules)
 layer ships pre-wired wrappers — `<WrappedChatPanel>`,

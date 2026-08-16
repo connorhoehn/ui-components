@@ -2,7 +2,7 @@
 
 import { ChatPanel } from '@/components/social/ChatPanel';
 import type { ChatMessage as UIChatMessage } from '@/hooks/useChat';
-import { GatewaySocketProvider, useChat } from '@connorhoehnslalom/realtime-modules/client';
+import { GatewaySocketProvider, useChat } from '@connorhoehn/realtime-modules/client';
 
 function adaptMessage(rm: { id: string; clientId: string; channel: string; message: string; metadata?: Record<string, unknown>; timestamp: string }): UIChatMessage {
   return {

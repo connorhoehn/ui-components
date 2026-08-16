@@ -1,7 +1,0 @@
-import { CSSProperties } from 'react';
-export interface ViewerCountProps {
-    count: number;
-    style?: CSSProperties;
-}
-export declare function ViewerCount({ count, style }: ViewerCountProps): import("react").JSX.Element;
-//# sourceMappingURL=ViewerCount.d.ts.map

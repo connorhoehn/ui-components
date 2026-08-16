@@ -21,7 +21,7 @@ import { useMemo } from 'react';
 // We need the realtime-modules surface to actually wire the hook.
 // Lazy-required so consumers that pull this file via subpath without
 // the peer dep installed get a clearer error than a deep import fail.
-import { useLVSHangout, type HangoutParticipant, type HangoutConnectionState } from '@connorhoehnslalom/realtime-modules/client/video';
+import { useLVSHangout, type HangoutParticipant, type HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 import { HangoutLayout, type HangoutLayoutParticipant, type HangoutMode } from '../../components/video/HangoutLayout';
 import { RemoteTileSlot } from '../../components/video/RemoteTileSlot';
 import { StreamVideo } from '../../components/video/StreamVideo';

@@ -1,1 +1,0 @@
-{"version":3,"file":"CallingStatusPill.d.ts","sourceRoot":"","sources":["../../../../src/components/video/CallingStatusPill.tsx"],"names":[],"mappings":"AASA,MAAM,WAAW,sBAAsB;IACrC,6DAA6D;IAC7D,IAAI,EAAE,OAAO,CAAC;IACd,wEAAwE;IACxE,KAAK,EAAE,MAAM,CAAC;CACf;AAED,wBAAgB,iBAAiB,CAAC,EAAE,IAAI,EAAE,KAAK,EAAE,EAAE,sBAAsB,sCAWxE"}

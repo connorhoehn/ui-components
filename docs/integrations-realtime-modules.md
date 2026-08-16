@@ -1,7 +1,7 @@
 # @connorhoehnslalom/ui-components/integrations/realtime-modules
 
 Adapter helpers and wrapped components that bridge the
-`@connorhoehnslalom/realtime-modules` hook outputs to
+`@connorhoehn/realtime-modules` hook outputs to
 `@connorhoehnslalom/ui-components` component prop shapes.
 
 ## Why this exists
@@ -26,11 +26,11 @@ on ChatMessage) and ending up with a custom inline panel instead of
 
 ## Installation
 
-`@connorhoehnslalom/realtime-modules` is a peer dependency listed as optional —
+`@connorhoehn/realtime-modules` is a peer dependency listed as optional —
 install it if you use this subpath:
 
 ```sh
-npm install @connorhoehnslalom/realtime-modules
+npm install @connorhoehn/realtime-modules
 ```
 
 ## Usage
@@ -40,7 +40,7 @@ npm install @connorhoehnslalom/realtime-modules
 Pass the hook return directly. Adaptation happens inside.
 
 ```tsx
-import { GatewaySocketProvider, useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
+import { GatewaySocketProvider, useChat, usePresence } from '@connorhoehn/realtime-modules/client';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
@@ -155,7 +155,7 @@ const avatarUsers = adaptPresenceRoster(presenceHook.roster);
 import {
   GatewaySocketProvider,
   useChat, usePresence, useReactions, useActivity,
-} from '@connorhoehnslalom/realtime-modules/client';
+} from '@connorhoehn/realtime-modules/client';
 import {
   WrappedChatPanel,
   WrappedPresencePanel,

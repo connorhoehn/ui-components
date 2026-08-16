@@ -1,1 +1,0 @@
-{"version":3,"file":"SkeletonCard.d.ts","sourceRoot":"","sources":["../../../../src/components/shared/SkeletonCard.tsx"],"names":[],"mappings":"AAOA,MAAM,WAAW,iBAAiB;IAChC,KAAK,CAAC,EAAE,MAAM,GAAG,MAAM,CAAC;IACxB,MAAM,CAAC,EAAE,MAAM,GAAG,MAAM,CAAC;CAC1B;AAED,iBAAS,YAAY,CAAC,EAAE,KAAc,EAAE,MAAW,EAAE,EAAE,iBAAiB,+BAWvE;AAED,eAAe,YAAY,CAAC"}

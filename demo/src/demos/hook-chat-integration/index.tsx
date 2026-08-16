@@ -1,6 +1,6 @@
 // demo/src/demos/hook-chat-integration/index.tsx
 //
-// ChatPanel wired to useChat() from @connorhoehnslalom/realtime-modules.
+// ChatPanel wired to useChat() from @connorhoehn/realtime-modules.
 //
 // In MOCK mode (no VITE_GATEWAY_URL), synthetic messages are injected on a
 // timer so the panel looks alive without a real WebSocket.

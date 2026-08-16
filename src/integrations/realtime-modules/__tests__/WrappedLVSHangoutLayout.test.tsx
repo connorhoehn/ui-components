@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
-import type { HangoutParticipant, HangoutConnectionState } from '@connorhoehnslalom/realtime-modules/client/video';
+import type { HangoutParticipant, HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
 
 // jsdom doesn't ship a MediaStream — supply a minimal shim sufficient
 // for the wrapper's `el.srcObject = stream` assignment AND for
@@ -50,9 +50,9 @@ const mockState = vi.hoisted(() => ({
   },
 }));
 
-vi.mock('@connorhoehnslalom/realtime-modules/client/video', async () => {
-  const actual = await vi.importActual<typeof import('@connorhoehnslalom/realtime-modules/client/video')>(
-    '@connorhoehnslalom/realtime-modules/client/video',
+vi.mock('@connorhoehn/realtime-modules/client/video', async () => {
+  const actual = await vi.importActual<typeof import('@connorhoehn/realtime-modules/client/video')>(
+    '@connorhoehn/realtime-modules/client/video',
   );
   return {
     ...actual,

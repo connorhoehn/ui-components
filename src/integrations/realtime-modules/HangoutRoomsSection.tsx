@@ -23,7 +23,7 @@
 //   - else                → up to `maxVisible` rows + "Browse all" link
 
 import { useMemo, useState, type MouseEvent } from 'react';
-import type { RoomsIndexSubscriber } from '@connorhoehnslalom/realtime-modules/client/hangout-rooms';
+import type { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
 import { SidebarSection } from '../../components/sidebar/SidebarSection';
 import { SidebarRow } from '../../components/sidebar/SidebarRow';
 import EmptyState from '../../components/shared/EmptyState';

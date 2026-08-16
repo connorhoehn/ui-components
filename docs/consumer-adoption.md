@@ -298,7 +298,7 @@ import { ChatPanel } from '@connorhoehnslalom/ui-components';
 
 ```tsx
 import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
-import { useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
+import { useChat, usePresence } from '@connorhoehn/realtime-modules/client';
 
 <WrappedChatPanel
   chat={useChat(channel)}

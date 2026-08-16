@@ -6,7 +6,7 @@
 // CONSUMER-PROVIDED. The shell is purely visual — it doesn't call
 // getUserMedia or fetch /ready directly. The reference hook lives at
 // live-video-streaming/ui/src/hooks/usePreJoinCamera.ts; lift verbatim
-// until it migrates to @connorhoehnslalom/realtime-modules.
+// until it migrates to @connorhoehn/realtime-modules.
 //
 // State machine for the Join button:
 //   permission != 'granted' → disabled, label "Allow camera to join"

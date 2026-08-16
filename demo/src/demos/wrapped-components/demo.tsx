@@ -10,7 +10,7 @@
 
 import { useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { GatewayContext, useChat, usePresence } from '@connorhoehnslalom/realtime-modules/client';
+import { GatewayContext, useChat, usePresence } from '@connorhoehn/realtime-modules/client';
 import { ChatPanel } from '@connorhoehnslalom/ui-components/social';
 import type { ChatMessage as UIChatMessage } from '@connorhoehnslalom/ui-components/hooks';
 import {
