@@ -70,7 +70,7 @@ function HiddenAudioBinding({ stream }: { stream: MediaStream | undefined }) {
       ref={ref}
       autoPlay
       playsInline
-      style={{ display: 'none' }}
+      className="hidden"
       data-testid="remote-tile-hidden-audio"
     />
   );

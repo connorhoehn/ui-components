@@ -1,8 +1,8 @@
 import { jsxs as g, jsx as o, Fragment as G } from "react/jsx-runtime";
 import { useRef as $, useState as S, useEffect as P, useMemo as A, createContext as V, useContext as Z } from "react";
 import { createPortal as q } from "react-dom";
-import { c as C } from "./cn-B6yFEsav.js";
-const j = C(
+import { c as N } from "./cn-B6yFEsav.js";
+const j = N(
   "absolute top-1/2 -translate-y-1/2 flex items-center justify-center",
   "w-10 h-10 rounded-full bg-black/50 text-white text-xl leading-none",
   "hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
@@ -63,7 +63,7 @@ function de({ images: e, openIndex: r, onClose: s, onNavigate: i }) {
               type: "button",
               "aria-label": "Close",
               "data-testid": "image-lightbox-close",
-              className: C(
+              className: N(
                 "absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full",
                 "bg-black/50 text-lg leading-none text-white hover:bg-black/70",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
@@ -107,7 +107,7 @@ function de({ images: e, openIndex: r, onClose: s, onNavigate: i }) {
                 type: "button",
                 "aria-label": "Previous image",
                 "data-testid": "image-lightbox-prev",
-                className: C(j, "left-3"),
+                className: N(j, "left-3"),
                 onClick: (t) => {
                   t.stopPropagation(), c(-1);
                 },
@@ -120,7 +120,7 @@ function de({ images: e, openIndex: r, onClose: s, onNavigate: i }) {
                 type: "button",
                 "aria-label": "Next image",
                 "data-testid": "image-lightbox-next",
-                className: C(j, "right-3"),
+                className: N(j, "right-3"),
                 onClick: (t) => {
                   t.stopPropagation(), c(1);
                 },
@@ -158,7 +158,7 @@ function ue({
       disabled: m,
       "aria-pressed": e,
       "data-testid": u,
-      className: C(
+      className: N(
         "inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none",
         U[l],
         e ? d ? J : Y : X,
@@ -338,7 +338,7 @@ function ee({
     {
       type: "button",
       onClick: () => s(e),
-      className: C(
+      className: N(
         "w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-[#f1f5f9]",
         r ? "border border-primary" : "border border-transparent"
       ),
@@ -447,8 +447,8 @@ function xe({
       r(v + a);
       return;
     }
-    const L = k.selectionStart ?? v.length, M = k.selectionEnd ?? v.length, N = v.slice(0, L) + a + v.slice(M);
-    r(N), queueMicrotask(() => {
+    const L = k.selectionStart ?? v.length, M = k.selectionEnd ?? v.length, C = v.slice(0, L) + a + v.slice(M);
+    r(C), queueMicrotask(() => {
       if (d.current) {
         const F = L + a.length;
         d.current.focus(), d.current.setSelectionRange(F, F);
@@ -485,7 +485,7 @@ function xe({
     /* @__PURE__ */ g(
       "div",
       {
-        className: C(
+        className: N(
           "flex border border-border-field rounded-md bg-[#fafbfc] overflow-hidden box-border",
           f && "border-primary shadow-[0_0_0_1px_#646cff]"
         ),
@@ -575,19 +575,19 @@ function he({
       "aria-valuemin": 0,
       "aria-valuemax": 1,
       "aria-label": h ?? `Score ${f} (threshold ${z(r)})`,
-      className: C("flex w-full items-center gap-2", m),
+      className: N("flex w-full items-center gap-2", m),
       children: [
         /* @__PURE__ */ o(
           "div",
           {
-            className: C(
+            className: N(
               "relative flex-1 overflow-hidden rounded-full bg-surface-panel",
               ae[i]
             ),
             children: /* @__PURE__ */ o(
               "div",
               {
-                className: C("absolute inset-y-0 left-0 rounded-full transition-[width]", oe[d]),
+                className: N("absolute inset-y-0 left-0 rounded-full transition-[width]", oe[d]),
                 style: { width: `${u * 100}%` }
               }
             )
@@ -614,14 +614,14 @@ function ge({
   ariaLabel: d,
   className: f
 }) {
-  const c = e.filter((N) => Number.isFinite(N));
+  const c = e.filter((C) => Number.isFinite(C));
   if (c.length === 0)
     return /* @__PURE__ */ o(
       "div",
       {
         role: "img",
         "aria-label": d ?? "No trend data",
-        className: C(
+        className: N(
           "inline-flex items-center justify-center text-[10px] text-text-tertiary",
           f
         ),
@@ -629,16 +629,16 @@ function ge({
         children: "—"
       }
     );
-  const b = Math.min(...c), y = Math.max(...c), t = r ?? (b === y ? b - 1 : b), n = s ?? (b === y ? y + 1 : y), x = Math.max(1e-9, n - t), w = c.length === 1 ? 0 : i / (c.length - 1), E = h, D = l - E * 2, a = c.map((N, F) => {
-    const B = c.length === 1 ? i / 2 : F * w, K = E + D - (N - t) / x * D;
+  const b = Math.min(...c), y = Math.max(...c), t = r ?? (b === y ? b - 1 : b), n = s ?? (b === y ? y + 1 : y), x = Math.max(1e-9, n - t), w = c.length === 1 ? 0 : i / (c.length - 1), E = h, D = l - E * 2, a = c.map((C, F) => {
+    const B = c.length === 1 ? i / 2 : F * w, K = E + D - (C - t) / x * D;
     return { x: B, y: K };
-  }), k = a.map((N, F) => `${F === 0 ? "M" : "L"}${N.x.toFixed(2)},${N.y.toFixed(2)}`).join(" "), v = `${k} L${a[a.length - 1].x.toFixed(2)},${(l - E).toFixed(2)} L${a[0].x.toFixed(2)},${(l - E).toFixed(2)} Z`, L = a[a.length - 1], M = `Trend, ${c.length} points, starts ${H(c[0])}, ends ${H(c[c.length - 1])}`;
+  }), k = a.map((C, F) => `${F === 0 ? "M" : "L"}${C.x.toFixed(2)},${C.y.toFixed(2)}`).join(" "), v = `${k} L${a[a.length - 1].x.toFixed(2)},${(l - E).toFixed(2)} L${a[0].x.toFixed(2)},${(l - E).toFixed(2)} Z`, L = a[a.length - 1], M = `Trend, ${c.length} points, starts ${H(c[0])}, ends ${H(c[c.length - 1])}`;
   return /* @__PURE__ */ o(
     "div",
     {
       role: "img",
       "aria-label": d ?? M,
-      className: C("inline-block align-middle text-text-secondary", f),
+      className: N("inline-block align-middle text-text-secondary", f),
       style: { width: i, height: l },
       children: /* @__PURE__ */ g(
         "svg",
@@ -647,7 +647,7 @@ function ge({
           viewBox: `0 0 ${i} ${l}`,
           width: i,
           height: l,
-          style: { display: "block" },
+          className: "block",
           children: [
             u ? /* @__PURE__ */ o("path", { d: v, fill: p, fillOpacity: 0.12, stroke: "none" }) : null,
             /* @__PURE__ */ o(

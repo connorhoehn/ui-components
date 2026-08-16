@@ -74,7 +74,7 @@ export default function VisionClassifyNode(props: NodeProps<VisionClassifyFlowNo
     >
       <Handle type="target" position={Position.Left}  id="in"    className={portCls('image')} />
       <Handle type="source" position={Position.Right} id="out"   className={portCls('data')} />
-      <Handle type="source" position={Position.Right} id="error" className={portCls('error')} style={{ bottom: 8, top: 'auto' }} />
+      <Handle type="source" position={Position.Right} id="error" className={`${portCls('error')} !bottom-2 !top-auto`} />
     </BaseNode>
   );
 }

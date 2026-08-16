@@ -167,8 +167,10 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
         </>
       )}
       <div
-        className="mt-1 font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words"
-        style={{ maxHeight: open ? 'none' : '1.4em', overflow: 'hidden' }}
+        className={cn(
+          'mt-1 overflow-hidden font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words',
+          open ? 'max-h-none' : 'max-h-[1.4em]',
+        )}
       >
         {text}
       </div>

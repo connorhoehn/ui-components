@@ -73,7 +73,35 @@ src/components/ui/Panel.tsx
 src/components/video/__tests__/VideoGrid.test.tsx
 src/components/video/CallStartedBanner.tsx
 src/components/video/CallWidget.tsx
-src/components/video/HangoutLayout.tsx
 src/components/video/ParticipantTile.tsx
 src/components/video/ReactionOverlay.tsx
 src/components/video/VideoGrid.tsx
+
+# ── Added 2026-08-16 ────────────────────────────────────────────────────
+# Grandfathered during the dormancy recovery. Every entry below was checked
+# individually: each remaining `style={{}}` is runtime-derived (measured
+# sizes, prop pass-through, percentage/HSL values computed from data) and
+# cannot be expressed as a Tailwind class. Files whose styles were static
+# literals were CONVERTED instead, not listed here — 23 of the 42 drifted
+# files, incl. all 17 React Flow <Handle> port overrides (now
+# `!bottom-2 !top-auto` / `!top-[75%]`, matching the existing `!top-[60%]`
+# precedent) and DocsSidebar's two-state rotate.
+src/components/layout/SettingsLayout.tsx          # width: railWidth (prop)
+src/components/observability/components/AlertList.tsx  # maxHeight (prop)
+src/components/pipelines/canvas/NodePalette.tsx   # spread of computed style
+src/components/pipelines/nodes/scatter/ScatterPathPicker.tsx  # depth arithmetic
+src/components/pipelines/vision/BBoxAuthoringCanvas.tsx  # measured bbox rects
+src/components/pipelines/vision/CaptionPanel.tsx  # background from data
+src/components/pipelines/vision/ImageWithBBoxOverlay.tsx  # % bbox + palette
+src/components/shared/InlinePopover.tsx           # computed position spread
+src/components/shared/LogStream.tsx               # maxHeight (prop)
+src/components/shared/ScoreBarGauge.tsx           # width: value * 100%
+src/components/shared/ThumbnailCard.tsx           # height (prop)
+src/components/shared/TrendSparkline.tsx          # svg width/height (props)
+src/components/social/ReactionPickerPopover.tsx   # position + style spread
+src/components/video/CallParticipantStrip.tsx     # size arithmetic + HSL
+src/components/video/HangoutGrid.tsx              # grid template from cols/rows
+src/components/video/HangoutSpotlight.tsx         # filmstrip tile width
+src/components/video/RecordingPlayer.tsx          # --progress CSS var
+src/components/video/TranscriptOverlay.tsx        # per-line opacity + speaker color
+src/components/video/TranscriptPanel.tsx          # HSL from speaker hash

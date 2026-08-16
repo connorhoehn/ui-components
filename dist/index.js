@@ -12,8 +12,8 @@ import { u as et } from "./WebSocketContext-DPGFyPeZ.js";
 import { W as Rs } from "./WebSocketContext-DPGFyPeZ.js";
 import { u as tt } from "./IdentityContext-CLalsm_M.js";
 import { I as Ms } from "./IdentityContext-CLalsm_M.js";
-import { u as rt } from "./TrendSparkline-DDTJK2ia.js";
-import { C as Os, D as $s, F as Fs, I as Bs, P as js, S as Us, T as Vs, a as Ws } from "./TrendSparkline-DDTJK2ia.js";
+import { u as rt } from "./TrendSparkline-rw33UoWS.js";
+import { C as Os, D as $s, F as Fs, I as Bs, P as js, S as Us, T as Vs, a as Ws } from "./TrendSparkline-rw33UoWS.js";
 import { A as zs, C as Hs, e as Xs, a as Ks, a as qs, D as Ys, G as Qs, M as Js, P as Zs, R as en, b as tn, c as rn, S as an, d as sn, u as nn } from "./ReactionsBar-DFuvLgNF.js";
 import { v as at } from "./StatusPill-L4mAOhJD.js";
 import { B as ln, C as cn, a as dn, b as pn, c as un, d as mn, e as fn, f as xn, g as bn, h as hn, D as gn, i as yn, j as vn, E as Nn, k as wn, F as kn, l as Cn, I as Sn, m as In, K as Tn, L as En, n as Pn, o as Dn, M as An, P as Rn, p as Ln, q as Mn, r as _n, Q as On, S as $n, s as Fn, t as Bn, u as jn, w as Un, T as Vn, x as Wn, y as Gn, z as zn, A as Hn, G as Xn, H as Kn, J as qn, N as Yn, U as Qn, O as Jn, R as Zn, V as eo, W as to, X as ro, Y as ao } from "./StatusPill-L4mAOhJD.js";
@@ -50,8 +50,8 @@ import { a as gt, u as Re, E as yt } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Le, l as Me, a as _e, P as vt, b as Nt, c as wt, d as kt } from "./usePendingApprovals-CeMbOPQk.js";
 import { G as oi, I as ii, e as li, J as ci, N as di, f as pi, g as ui, h as mi, S as fi, T as xi, i as bi, j as hi, k as gi, m as yi, n as vi, r as Ni, o as wi, p as ki, s as Ci, q as Si, t as Ii } from "./usePendingApprovals-CeMbOPQk.js";
 import { u as Ct, O as St } from "./ObservabilityContext-mvmEXnGv.js";
-import { A as Ei, C as Pi, a as Di, b as Ai, c as Ri, d as Li, e as Mi, f as _i, E as Oi, H as $i, g as Fi, M as Bi, h as ji, i as Ui, j as Vi, k as Wi, N as Gi, P as zi, l as Hi, R as Xi, m as Ki, n as qi, o as Yi, p as Qi, q as Ji, S as Zi, r as el, s as tl, t as rl, u as al, T as sl, v as nl, V as ol, w as il, x as ll, y as cl, z as dl, B as pl, D as ul, F as ml } from "./MediaControlsBar-CVIL5TgX.js";
-import { H as xl, a as bl, b as hl, P as gl, R as yl, c as vl, S as Nl, g as wl, s as kl, u as Cl, d as Sl } from "./ReconnectingBanner-DFqlwYyY.js";
+import { A as Ei, C as Pi, a as Di, b as Ai, c as Ri, d as Li, e as Mi, f as _i, E as Oi, H as $i, g as Fi, M as Bi, h as ji, i as Ui, j as Vi, k as Wi, N as Gi, P as zi, l as Hi, R as Xi, m as Ki, n as qi, o as Yi, p as Qi, q as Ji, S as Zi, r as el, s as tl, t as rl, u as al, T as sl, v as nl, V as ol, w as il, x as ll, y as cl, z as dl, B as pl, D as ul, F as ml } from "./MediaControlsBar-Bv5ProG3.js";
+import { H as xl, a as bl, b as hl, P as gl, R as yl, c as vl, S as Nl, g as wl, s as kl, u as Cl, d as Sl } from "./ReconnectingBanner-XXXykHhO.js";
 import { A as Tl, a as El, b as Pl, c as Dl, d as Al, C as Rl, e as Ll, D as Ml, E as _l, f as Ol, g as $l, h as Fl, G as Bl, i as jl, I as Ul, d as Vl, F as Wl, L as Gl, j as zl, M as Hl, k as Xl, l as Kl, m as ql, P as Yl, n as Ql, o as Jl, Q as Zl, S as ec, p as tc, U as rc, q as ac } from "./PoolScopedLayout-C8VdawDb.js";
 import { g as nc, c as oc, b as ic, l as lc, r as cc, a as dc } from "./registry-qR57lair.js";
 const It = [
@@ -1989,10 +1989,10 @@ function zr({
                   "span",
                   {
                     "aria-hidden": "true",
-                    className: "inline-block text-[10px] transition-transform",
-                    style: {
-                      transform: x ? "rotate(-90deg)" : "rotate(0deg)"
-                    },
+                    className: u(
+                      "inline-block text-[10px] transition-transform",
+                      x ? "-rotate-90" : "rotate-0"
+                    ),
                     children: "▼"
                   }
                 ),

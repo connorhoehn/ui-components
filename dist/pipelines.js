@@ -7,7 +7,7 @@ import { Handle as L, Position as B, useNodeConnections as Ia, getSmoothStepPath
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
 import { a as Gn, u as sn } from "./ToastProvider-wpvjc3pD.js";
-import { I as yt, F as Pa, b as Ma, C as Kn, u as Ea, T as Da, S as Yn, a as Oa } from "./TrendSparkline-DDTJK2ia.js";
+import { I as yt, F as Pa, b as Ma, C as Kn, u as Ea, T as Da, S as Yn, a as Oa } from "./TrendSparkline-rw33UoWS.js";
 import "clsx";
 import "tailwind-merge";
 import { M as He } from "./Modal-2jg4229_.js";
@@ -1128,7 +1128,7 @@ function Ii(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1176,7 +1176,7 @@ function $i(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1218,7 +1218,7 @@ function Ai(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1256,7 +1256,7 @@ function Ri(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1298,7 +1298,7 @@ function Pi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1399,7 +1399,7 @@ function Di(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { top: "75%" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !top-[75%]` })
       ]
     }
   );
@@ -1476,7 +1476,7 @@ function _i(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { top: "75%" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !top-[75%]` })
       ]
     }
   );
@@ -1524,7 +1524,7 @@ function Li(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("data") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1562,7 +1562,7 @@ function Bi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1673,8 +1673,10 @@ const ji = (t) => t.stopPropagation(), zi = oa(function({ info: r }) {
     /* @__PURE__ */ e(
       "div",
       {
-        className: "mt-1 font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words",
-        style: { maxHeight: n ? "none" : "1.4em", overflow: "hidden" },
+        className: I(
+          "mt-1 overflow-hidden font-mono text-[11px] leading-snug text-text-primary whitespace-pre-wrap break-words",
+          n ? "max-h-none" : "max-h-[1.4em]"
+        ),
         children: l
       }
     )
@@ -1751,7 +1753,7 @@ function Vi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("data") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1780,7 +1782,7 @@ function Wi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("data") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1809,7 +1811,7 @@ function Ji(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("data") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1845,7 +1847,7 @@ function Hi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("data") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -1924,7 +1926,7 @@ function Yi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("data") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -2011,7 +2013,7 @@ function Qi(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );
@@ -2093,7 +2095,7 @@ function ts(t) {
       children: [
         /* @__PURE__ */ e(L, { type: "target", position: B.Left, id: "in", className: F("image") }),
         /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "out", className: F("image") }),
-        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: F("error"), style: { bottom: 8, top: "auto" } })
+        /* @__PURE__ */ e(L, { type: "source", position: B.Right, id: "error", className: `${F("error")} !bottom-2 !top-auto` })
       ]
     }
   );

@@ -2,38 +2,18 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppShell } from './AppShell';
 
 const Header = () => (
-  <div style={{
-    height: 53,
-    background: 'var(--color-surface)',
-    borderBottom: '1px solid var(--color-border)',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 1.5rem',
-    fontWeight: 600,
-    fontSize: 15,
-    color: 'var(--color-text-primary)',
-  }}>
+  <div className="flex h-[53px] items-center border-b border-border bg-surface px-6 text-[15px] font-semibold text-text-primary">
     My App
   </div>
 );
 
 const Sidebar = () => (
-  <div style={{
-    padding: '1rem',
-    background: 'var(--color-surface)',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  }}>
+  <div className="flex h-full flex-col gap-2 bg-surface p-4">
     {['Dashboard', 'Projects', 'Messages', 'Settings'].map(item => (
-      <div key={item} style={{
-        padding: '0.5rem 0.75rem',
-        borderRadius: 6,
-        cursor: 'pointer',
-        color: 'var(--color-text-secondary)',
-        fontSize: 14,
-      }}>
+      <div
+        key={item}
+        className="cursor-pointer rounded-md px-3 py-2 text-sm text-text-secondary"
+      >
         {item}
       </div>
     ))}
@@ -41,9 +21,9 @@ const Sidebar = () => (
 );
 
 const Content = () => (
-  <div style={{ padding: '2rem', color: 'var(--color-text-primary)' }}>
-    <h1 style={{ fontSize: 20, fontWeight: 600, marginBottom: '1rem' }}>Page Content</h1>
-    <p style={{ color: 'var(--color-text-secondary)', fontSize: 14 }}>
+  <div className="p-8 text-text-primary">
+    <h1 className="mb-4 text-xl font-semibold">Page Content</h1>
+    <p className="text-sm text-text-secondary">
       Main content area. AppShell handles the layout chrome.
     </p>
   </div>
@@ -80,13 +60,7 @@ export const WithApiDegradedBanner: Story = {
   args: {
     sidebar: <Sidebar />,
     apiDegraded: (
-      <div style={{
-        background: '#fffbeb',
-        color: '#92400e',
-        padding: '0.5rem 1.5rem',
-        fontSize: 13,
-        borderTop: '1px solid #fde68a',
-      }}>
+      <div className="border-t border-amber-200 bg-amber-50 px-6 py-2 text-[13px] text-amber-800">
         API is experiencing degraded performance.
       </div>
     ),

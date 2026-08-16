@@ -423,7 +423,7 @@ function W({ stream: e }) {
       ref: t,
       autoPlay: !0,
       playsInline: !0,
-      style: { display: "none" },
+      className: "hidden",
       "data-testid": "remote-tile-hidden-audio"
     }
   );

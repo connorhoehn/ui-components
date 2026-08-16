@@ -98,7 +98,7 @@ export function TrendSparkline({
         viewBox={`0 0 ${width} ${height}`}
         width={width}
         height={height}
-        style={{ display: 'block' }}
+        className="block"
       >
         {showFill ? (
           <path d={fillPath} fill={stroke} fillOpacity={0.12} stroke="none" />

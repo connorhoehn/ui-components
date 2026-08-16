@@ -82,7 +82,7 @@ export default function AdjustBwNode(props: NodeProps<AdjustBwFlowNode>) {
     >
       <Handle type="target" position={Position.Left}  id="in"    className={portCls('image')} />
       <Handle type="source" position={Position.Right} id="out"   className={portCls('image')} />
-      <Handle type="source" position={Position.Right} id="error" className={portCls('error')} style={{ top: '75%' }} />
+      <Handle type="source" position={Position.Right} id="error" className={`${portCls('error')} !top-[75%]`} />
     </BaseNode>
   );
 }

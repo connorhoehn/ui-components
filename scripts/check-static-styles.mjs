@@ -19,15 +19,21 @@ const allowlistPath = resolve(scriptDir, 'check-static-styles.allowlist.txt');
 const allowed = new Set(
   readFileSync(allowlistPath, 'utf8')
     .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith('#'))
+    // Strip trailing `# why this is dynamic` notes so each entry can carry
+    // its own justification inline. Whole-line comments are dropped too.
+    .map((line) => line.replace(/#.*$/, '').trim())
+    .filter(Boolean)
 );
 
 let rawGrep = '';
 try {
-  rawGrep = execSync('grep -rl "style={{" src/components 2>/dev/null', {
-    encoding: 'utf8',
-  });
+  // --include: only real source files. A bare `grep -rl` also matches docs
+  // (e.g. a JSX sample inside pipelines/judge/README.md), which is a false
+  // positive the allowlist should never have to carry.
+  rawGrep = execSync(
+    'grep -rl --include="*.tsx" --include="*.ts" "style={{" src/components 2>/dev/null',
+    { encoding: 'utf8' },
+  );
 } catch (err) {
   if (err.status !== 1) throw err;
 }

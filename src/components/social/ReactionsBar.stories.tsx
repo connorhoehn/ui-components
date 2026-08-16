@@ -9,7 +9,7 @@ const meta = {
   parameters: { layout: 'padded' },
   decorators: [
     (Story) => (
-      <div style={{ minHeight: '20rem' }}>
+      <div className="min-h-80">
         <Story />
       </div>
     ),

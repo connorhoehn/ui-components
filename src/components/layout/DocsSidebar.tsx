@@ -118,10 +118,10 @@ export function DocsSidebar({
             >
               <span
                 aria-hidden="true"
-                className="inline-block text-[10px] transition-transform"
-                style={{
-                  transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
-                }}
+                className={cn(
+                  'inline-block text-[10px] transition-transform',
+                  isCollapsed ? '-rotate-90' : 'rotate-0',
+                )}
               >
                 ▼
               </span>
