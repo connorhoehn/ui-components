@@ -1,5 +1,24 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { InlineConfig } from 'vite';
+import { resolve } from 'node:path';
+
+// realtime-modules ships a CJS dist, so Rollup can't see its named exports
+// ("useRoomOccupancy is not exported by .../dist/client/hangout-rooms").
+// The lib build dodges this by marking the package external, but viteFinal
+// below clears `external` (a browser bundle must inline it), so point the
+// subpaths at the TS source instead — the same workaround demo/vite.config.ts
+// uses. Deeper subpaths first: Vite matches string aliases by prefix.
+const rmSrc = (p: string) =>
+  resolve(process.cwd(), 'node_modules/@connorhoehn/realtime-modules/src', p);
+
+const realtimeModulesAliases = {
+  '@connorhoehn/realtime-modules/client/video': rmSrc('client/video/index.ts'),
+  '@connorhoehn/realtime-modules/client/hangout-rooms': rmSrc(
+    'client/hangout-rooms/index.ts',
+  ),
+  '@connorhoehn/realtime-modules/client': rmSrc('client/index.ts'),
+  '@connorhoehn/realtime-modules': rmSrc('index.ts'),
+};
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
@@ -29,6 +48,13 @@ const config: StorybookConfig = {
     return {
       ...config,
       plugins: filterPlugins((config.plugins ?? []) as unknown[]) as InlineConfig['plugins'],
+      resolve: {
+        ...config.resolve,
+        alias: {
+          ...((config.resolve?.alias as Record<string, string>) ?? {}),
+          ...realtimeModulesAliases,
+        },
+      },
       build: {
         ...config.build,
         lib: undefined,

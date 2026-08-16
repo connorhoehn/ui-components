@@ -1,0 +1,1 @@
+{"version":3,"file":"StepSection.d.ts","sourceRoot":"","sources":["../../../../src/components/pipelines/steps/StepSection.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,OAAO,CAAC;AAE1B,MAAM,WAAW,gBAAgB;IAC/B,KAAK,EAAE,MAAM,CAAC;IACd,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAC;CAC3B;AAED,wBAAgB,WAAW,CAAC,EAAE,KAAK,EAAE,QAAQ,EAAE,EAAE,gBAAgB,qBAShE"}

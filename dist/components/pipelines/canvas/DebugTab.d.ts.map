@@ -1,0 +1,1 @@
+{"version":3,"file":"DebugTab.d.ts","sourceRoot":"","sources":["../../../../src/components/pipelines/canvas/DebugTab.tsx"],"names":[],"mappings":"AAKA,OAAO,KAAK,EAAE,aAAa,EAAE,MAAM,yBAAyB,CAAC;AAI7D,MAAM,WAAW,aAAa;IAC5B,aAAa,EAAE,aAAa,GAAG,IAAI,GAAG,SAAS,CAAC;IAChD,MAAM,EAAE,MAAM,CAAC;CAChB;AAiCD,MAAM,CAAC,OAAO,UAAU,QAAQ,CAAC,EAAE,aAAa,EAAE,MAAM,EAAE,EAAE,aAAa,+BAsGxE"}
