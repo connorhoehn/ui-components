@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.37.0",
+  "version": "2.38.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -76,7 +76,7 @@
     "dev": "vite build --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && tsc --noEmit -p demo/tsconfig.json",
     "lint:static-styles": "node scripts/check-static-styles.mjs",
     "demo": "vite --config demo/vite.config.ts",
     "test:e2e": "playwright test",

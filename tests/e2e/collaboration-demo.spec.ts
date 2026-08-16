@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Collaboration Demo', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/pages/collaboration');
+    await page.goto('/workflows/collaboration');
   });
 
   test('page renders with heading', async ({ page }) => {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Social Panel Demo', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/demo/social-panel');
+    await page.goto('/workflows/social');
   });
 
   test('room list is visible with channels', async ({ page }) => {

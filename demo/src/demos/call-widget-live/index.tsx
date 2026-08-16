@@ -191,7 +191,7 @@ export default function CallWidgetLiveDemo() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [extraParticipants, setExtraParticipants] = useState<string[]>([]);
   const [duration, setDuration] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   const msgCounter = useRef(0);
 
   const dispatch = useCallback((message: Record<string, unknown>) => {

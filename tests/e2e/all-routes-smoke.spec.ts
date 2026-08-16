@@ -19,15 +19,15 @@ interface Route {
   skipReason?: string;
 }
 
-// Reasons for current skips (2026-05):
-// - hls.js: optional peer dep for HLS playback; not installed in the
-//   ui-components-2 sibling worktree. RecordingPlayer.tsx tries to dynamic-
-//   import it and Vite fails analysis even with @vite-ignore.
-// - @connorhoehn/realtime-modules/client: file:../realtime-modules dep is
-//   only resolved in the base worktree where it was npm-installed; sibling
-//   worktrees don't share node_modules so the alias target is missing.
+// Reason for the only remaining skips:
+// - hls.js: optional peer dep for HLS playback, deliberately not installed.
+//   RecordingPlayer.tsx dynamic-imports it and Vite fails import analysis
+//   even with @vite-ignore.
 const SKIP_HLS = 'optional dep hls.js not installed in this worktree';
-const SKIP_RM = 'optional dep @connorhoehn/realtime-modules not installed in this worktree';
+// SKIP_RM retired 2026-08-16: @connorhoehn/realtime-modules IS installed
+// (v0.16.0 via the file:../realtime-modules link), and demo/vite.config.ts now
+// aliases its /client/video and /client/hangout-rooms subpaths, so the
+// hook-integration routes mount for real instead of being skipped.
 
 const ROUTES: ReadonlyArray<Route> = [
   // Get Started
@@ -53,7 +53,11 @@ const ROUTES: ReadonlyArray<Route> = [
 
   // Workflows — Pipelines
   { path: '/workflows/pipeline-editor' },
-  { path: '/workflows/pipeline-runs' },
+  // NOTE: no '/workflows/pipeline-runs' entry. The library exports
+  // PipelineRunsPage (frozen /pipelines surface) but the demo app has never
+  // routed it — no demo dir, no nav-tree entry, no catalog entry. This spec
+  // used to list the path and failed on a blank no-match render. Building
+  // that demo is a coverage gap, not a smoke-test fix.
 
   // Workflows — Agents
   { path: '/workflows/agents/dashboard' },
@@ -75,13 +79,13 @@ const ROUTES: ReadonlyArray<Route> = [
   { path: '/workflows/call-widget', skipReason: SKIP_HLS },
 
   // Workflows — Hook Integrations (all import realtime-modules at runtime)
-  { path: '/workflows/hook-chat', skipReason: SKIP_RM },
-  { path: '/workflows/hook-presence', skipReason: SKIP_RM },
-  { path: '/workflows/hook-reactions', skipReason: SKIP_RM },
-  { path: '/workflows/hook-fileupload', skipReason: SKIP_RM },
-  { path: '/workflows/hook-videohangout', skipReason: SKIP_RM },
-  { path: '/workflows/hook-activity', skipReason: SKIP_RM },
-  { path: '/workflows/hook-notifications', skipReason: SKIP_RM },
+  { path: '/workflows/hook-chat' },
+  { path: '/workflows/hook-presence' },
+  { path: '/workflows/hook-reactions' },
+  { path: '/workflows/hook-fileupload' },
+  { path: '/workflows/hook-videohangout' },
+  { path: '/workflows/hook-activity' },
+  { path: '/workflows/hook-notifications' },
   { path: '/workflows/hook-capability' },
 
   // Identity — Auth flows

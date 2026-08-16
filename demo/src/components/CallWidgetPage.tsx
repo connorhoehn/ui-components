@@ -34,7 +34,7 @@ function LiveDemo() {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [duration, setDuration] = useState(0);
   const [participants, setParticipants] = useState(mockParticipants);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
 
   useEffect(() => {
     if (state === 'active') {

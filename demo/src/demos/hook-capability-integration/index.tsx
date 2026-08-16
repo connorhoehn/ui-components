@@ -10,7 +10,7 @@ import { useState } from 'react';
 import type { RMCapabilityHookResult } from '@/integrations/realtime-modules/types';
 import { CapabilityBoundary } from '@/integrations/realtime-modules/CapabilityBoundary';
 import { CapabilityDeniedFallback } from '@/components/shared/CapabilityDeniedFallback';
-import { Switch } from '@/components/shared/Switch';
+import { Switch } from '@connorhoehnslalom/ui-components/shared';
 import { Card } from '@/components/ui/Card';
 
 type CapabilityKey = 'chat' | 'recording' | 'ai-assistant';

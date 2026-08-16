@@ -1201,7 +1201,7 @@ export declare interface ChatComposerProps {
     maxRows?: number;
 }
 
-declare interface ChatMessage {
+export declare interface ChatMessage {
     id?: string;
     clientId: string;
     content: string;

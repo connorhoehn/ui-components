@@ -36,18 +36,26 @@ test.describe('Demo Catalog', () => {
     expect(count).toBeGreaterThanOrEqual(6);
   });
 
+  // The docs sidebar renders section headers with the same labels as the
+  // catalog's filter chips ("Foundations", "Workflows", …), so an unscoped
+  // getByRole hits two elements and trips strict mode. Scope to the main
+  // content region, where only the chips live.
   test('category filter chips are shown', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('button', { name: 'All' })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Foundations', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Workflows', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Hook Integrations', exact: true })).toBeVisible();
+    const main = page.getByTestId('docs-shell-main');
+    await expect(main.getByRole('button', { name: 'All' })).toBeVisible();
+    await expect(main.getByRole('button', { name: 'Foundations', exact: true })).toBeVisible();
+    await expect(main.getByRole('button', { name: 'Workflows', exact: true })).toBeVisible();
+    await expect(main.getByRole('button', { name: 'Hook Integrations', exact: true })).toBeVisible();
   });
 
   test('clicking a category narrows the grid', async ({ page }) => {
     await page.goto('/');
     const cards = page.locator('a[href^="/components/"]:has(h3)');
-    await page.getByRole('button', { name: 'Foundations', exact: true }).click();
+    await page
+      .getByTestId('docs-shell-main')
+      .getByRole('button', { name: 'Foundations', exact: true })
+      .click();
     // After filtering to Foundations, every visible catalog card should be a component link.
     await expect(cards.first()).toBeVisible();
   });

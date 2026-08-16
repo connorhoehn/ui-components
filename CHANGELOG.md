@@ -8,6 +8,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.38.0] — 2026-08-16
+
+### Added
+
+- **`ChatMessage` is now exported from `…/hooks`.** The type appears in
+  `ChatPanel`'s public props but no barrel re-exported it, so consumers
+  could not name it (`src/hooks/index.ts` exported only the `useChat`
+  value). Additive — no existing import changes.
+
+### Fixed
+
+- **`npm run lint` now typechecks `demo/` as well as `src/`.** The root
+  `tsconfig.json` includes only `src`, so nothing ever ran
+  `demo/tsconfig.json`. The gate reported 0 errors while the demo app had
+  5 real type errors, one of which broke a route at runtime. Five fixes
+  landed with the gate change:
+  - `hook-capability-integration` named-imported `Switch` from a deep
+    `@/components/shared/Switch` path, but `Switch.tsx` only has a default
+    export — `/workflows/hook-capability` rendered a blank page. Now
+    imports from the `…/shared` barrel.
+  - `hook-hangoutrooms-integration`'s mock `subscribeRoomsIndex` emitted
+    `RoomOccupancy[]`; the real adapter delivers one room per call. The
+    mock now fans the snapshot out row by row.
+  - `wrapped-components` imported the previously unexported `ChatMessage`.
+  - `CallWidgetPage` and `call-widget-live` called `useRef()` with no
+    argument (required under the React 19 types).
+
+- **Demo e2e suite restored: 96 passing, 4 skipped, 0 failing** (was 67
+  passing / 23 failing / 11 skipped). The failures were stale specs, not
+  product regressions — see the spec files for per-case notes:
+  - Four specs still targeted the pre-restructure demo IA (`/demo/*`,
+    `/pages/*`); repointed at the canonical `/workflows/*` and
+    `/components/*` routes.
+  - `catalog` and `pipeline-demo` locators hit strict-mode violations
+    because the docs sidebar repeats the catalog's filter-chip labels;
+    scoped to the main region. `Runs` became a `role=tab`, not a button.
+  - `shared-demo` now covers `/components/feedback`. Its modal/toast/banner
+    *interaction* cases are not ported: that page renders hand-rolled
+    preview `div`s instead of mounting the real components.
+  - Retired the `SKIP_RM` skips — realtime-modules resolves again, so the
+    seven hook-integration routes are smoke-tested for real.
+  - Dropped the phantom `/workflows/pipeline-runs` entry: `PipelineRunsPage`
+    is exported but the demo app never routed it.
+
 ## [2.37.0] — 2026-06-11
 
 ### Fixed

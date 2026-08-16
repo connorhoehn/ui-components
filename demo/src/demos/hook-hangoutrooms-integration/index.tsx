@@ -24,7 +24,7 @@ const IS_MOCK = !GATEWAY_URL;
 const SELF_PARTICIPANT_ID = 'p-self';
 const ORG = 'demo-org';
 
-type RoomsIndexListener = (rows: RMRoomOccupancy[]) => void;
+type RoomsIndexListener = (occupancy: RMRoomOccupancy) => void;
 
 // ── Mock data ──────────────────────────────────────────────────────────
 
@@ -162,11 +162,17 @@ function useMockRoomsIndexSubscriber() {
         },
         // pairing + water-cooler intentionally empty most of the time
       ];
+      // subscribeRoomsIndex delivers ONE room's occupancy per call, not a
+      // batch — see realtime-modules useRoomOccupancy: `handler(occ)`. Fan
+      // the snapshot out row by row so each row's useRoomOccupancy(slug)
+      // matches on its own slug.
       listenersRef.current.forEach((l) => {
-        try {
-          l(rows);
-        } catch {
-          /* swallow */
+        for (const row of rows) {
+          try {
+            l(row);
+          } catch {
+            /* swallow */
+          }
         }
       });
     }, 2200);

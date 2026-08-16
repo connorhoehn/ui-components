@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Observability Demo', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/demo/observability-shell');
+    await page.goto('/workflows/observability');
   });
 
   test('page renders with heading', async ({ page }) => {

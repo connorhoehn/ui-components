@@ -105,7 +105,7 @@ declare type CallState = 'idle' | 'creating' | 'joining' | 'active' | 'error';
 
 declare type CanvasTool = 'brush' | 'pen' | 'eraser' | 'select';
 
-declare interface ChatMessage {
+export declare interface ChatMessage {
     id?: string;
     clientId: string;
     content: string;

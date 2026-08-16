@@ -18,6 +18,9 @@ export { useAuth } from './useAuth';
 export { useAwareness } from './useAwareness';
 export { useAwarenessState } from './useAwarenessState';
 export { useChat } from './useChat';
+// ChatMessage appears in ChatPanel's public props but had no barrel export,
+// so consumers could not name the type. Additive — see CHANGELOG 2.38.0.
+export type { ChatMessage } from './useChat';
 export { useClickOutside } from './useClickOutside';
 export { useCollaborativeDoc } from './useCollaborativeDoc';
 export { useComments } from './useComments';
