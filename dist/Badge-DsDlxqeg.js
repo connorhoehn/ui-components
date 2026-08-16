@@ -1,6 +1,6 @@
 import { jsx as t, jsxs as d, Fragment as E } from "react/jsx-runtime";
 import { c as s } from "./cn-B6yFEsav.js";
-import { A as j } from "./Avatar-BvKIaNVE.js";
+import { A as j } from "./Avatar-DIEPZUB9.js";
 import { S as O } from "./StatusDot-BC7B1tTr.js";
 import { useState as A, useRef as _, useEffect as C } from "react";
 import { E as D } from "./EmptyState-D_CN3LUx.js";

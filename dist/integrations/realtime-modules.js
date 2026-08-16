@@ -1,18 +1,18 @@
 import { jsx as a, jsxs as p, Fragment as w } from "react/jsx-runtime";
-import { C as H, P as z } from "../PresencePanel-DhsDetgi.js";
+import { C as H, P as z } from "../PresencePanel-BQDnRya1.js";
 import { Component as V, useState as C, useEffect as U, useMemo as S } from "react";
 import { E as j } from "../EmptyState-D_CN3LUx.js";
 import { c as _ } from "../cn-B6yFEsav.js";
-import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-XXXykHhO.js";
+import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-BQ0hb0DP.js";
 import { S as K } from "../SkeletonCard-C89GWQ3p.js";
-import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-BxoS25bM.js";
+import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-DsDlxqeg.js";
 import { R as J, S as B, a as ee } from "../ReactionsOverlay-CoaX3hRz.js";
 import { F as te, I as ae } from "../FileUploadDrop-Cmz3XANg.js";
 import { useRoomOccupancy as ne } from "@connorhoehn/realtime-modules/client/hangout-rooms";
 import { B as I } from "../Button-Qsbxqsl9.js";
 import { M as re } from "../Modal-2jg4229_.js";
 import { useLVSHangout as ie } from "@connorhoehn/realtime-modules/client/video";
-import { A as oe } from "../Avatar-BvKIaNVE.js";
+import { A as oe } from "../Avatar-DIEPZUB9.js";
 function se(e) {
   return {
     id: e.id,

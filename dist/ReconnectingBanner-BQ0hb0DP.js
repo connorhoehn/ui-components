@@ -1,7 +1,7 @@
 import { jsxs as k, jsx as s } from "react/jsx-runtime";
 import { useMemo as N, useState as j, useEffect as L, useRef as T } from "react";
 import { c as x } from "./cn-B6yFEsav.js";
-import { A as M } from "./Avatar-BvKIaNVE.js";
+import { A as M } from "./Avatar-DIEPZUB9.js";
 function p({
   id: e,
   displayName: t,

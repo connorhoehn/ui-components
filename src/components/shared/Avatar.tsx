@@ -40,6 +40,12 @@ export function nameToInitials(name: string): string {
 export interface AvatarProps {
   name: string;
   size?: number;
+  /**
+   * Override the derived initials. Use when the caller already has canonical
+   * initials (e.g. from a presence payload) and shouldn't re-derive them from
+   * a display name — deriving would turn "AS" into "As".
+   */
+  initials?: string;
   /** Override the auto-computed color. */
   color?: string;
   /** Optional profile image URL. Falls back to initials if absent or load fails. */
@@ -52,6 +58,7 @@ export interface AvatarProps {
 export function Avatar({
   name,
   size = 28,
+  initials: initialsProp,
   color,
   src,
   className,
@@ -59,7 +66,7 @@ export function Avatar({
   title,
 }: AvatarProps) {
   const bg = color || nameToColor(name);
-  const initials = nameToInitials(name);
+  const initials = initialsProp ?? nameToInitials(name);
   return (
     <div
       title={title ?? name}
@@ -91,45 +98,69 @@ export function Avatar({
   );
 }
 
+/** One person in an AvatarGroup, when a bare name isn't enough. */
+export interface AvatarGroupItem {
+  name: string;
+  initials?: string;
+  color?: string;
+  src?: string;
+}
+
 export interface AvatarGroupProps {
-  names: string[];
+  /** Convenience form — colors and initials are derived from the name. */
+  names?: string[];
+  /**
+   * Richer form, for callers that already know each person's brand color,
+   * canonical initials, or photo. Takes precedence over `names`. Without this,
+   * callers with per-user colors had to hand-roll the whole stack.
+   */
+  items?: AvatarGroupItem[];
   maxVisible?: number;
   size?: number;
   className?: string;
+  /**
+   * Total people, when it exceeds what was passed in. Lets a caller render
+   * "+3" without materialising three more entries.
+   */
+  total?: number;
 }
 
 export function AvatarGroup({
   names,
+  items,
   maxVisible = 5,
   size = 28,
   className,
+  total,
 }: AvatarGroupProps) {
-  const visible = names.slice(0, maxVisible);
-  const overflow = names.length - visible.length;
+  const people: AvatarGroupItem[] =
+    items ?? (names ?? []).map((name) => ({ name }));
+  const visible = people.slice(0, maxVisible);
+  const overflow = (total ?? people.length) - visible.length;
   const overlap = -(size * 0.3);
 
   return (
     <div className={cn('inline-flex items-center', className)}>
-      {visible.map((name, index) => (
+      {visible.map((person, index) => (
         <Avatar
-          key={`${name}-${index}`}
-          name={name}
+          key={`${person.name}-${index}`}
+          name={person.name}
+          initials={person.initials}
+          color={person.color}
+          src={person.src}
           size={size}
-          style={{
-            marginLeft: index > 0 ? overlap : 0,
-            border: '2px solid white',
-          }}
+          className="border-2 border-white"
+          style={{ marginLeft: index > 0 ? overlap : 0 }}
         />
       ))}
       {overflow > 0 && (
         <div
-          className="inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none bg-slate-200 text-slate-600"
+          className="inline-flex items-center justify-center rounded-full flex-shrink-0 font-semibold select-none bg-slate-200 text-slate-600 border-2 border-white"
           style={{
             width: size,
             height: size,
             fontSize: size * 0.38,
             marginLeft: overlap,
-            border: '2px solid white',
           }}
           title={`+${overflow} more`}
         >

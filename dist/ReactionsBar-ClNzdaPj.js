@@ -2,7 +2,7 @@ import { jsxs as n, jsx as e, Fragment as Q } from "react/jsx-runtime";
 import { useState as f, useEffect as R, createContext as ce, useContext as de, useCallback as O, useRef as A, useId as me, useMemo as pe, useLayoutEffect as ue } from "react";
 import { e as xe, a as Z, b as fe, d as ee, u as be, c as te } from "./useComments-Bocx7XyC.js";
 import { c as h } from "./cn-B6yFEsav.js";
-import { M as he } from "./PresencePanel-DhsDetgi.js";
+import { M as he } from "./PresencePanel-BQDnRya1.js";
 import { u as ye } from "./ToastProvider-wpvjc3pD.js";
 import { _ as M } from "./index-Bjylubtc.js";
 function K(t, s) {

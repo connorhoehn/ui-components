@@ -1,6 +1,6 @@
 import { jsxs as s, jsx as n } from "react/jsx-runtime";
 import { useState as b, useRef as u, useEffect as x } from "react";
-import { A as v } from "./Avatar-BvKIaNVE.js";
+import { A as v } from "./Avatar-DIEPZUB9.js";
 import { c as h } from "./cn-B6yFEsav.js";
 function w(t) {
   try {

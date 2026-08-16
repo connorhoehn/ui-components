@@ -366,7 +366,7 @@ export default function DataDisplayPage() {
       >
         <div className="flex gap-4 flex-wrap">
           {/* Empty state with action */}
-          <div className="flex-[1 1 260px] border border-border rounded-lg bg-surface">
+          <div className="flex-[1_1_260px] border border-border rounded-lg bg-surface">
             <div className="flex flex-col items-center justify-center min-h-50 p-6 text-center">
               <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 📋
@@ -381,7 +381,7 @@ export default function DataDisplayPage() {
             </div>
           </div>
           {/* Empty state without action */}
-          <div className="flex-[1 1 260px] border border-border rounded-lg bg-surface">
+          <div className="flex-[1_1_260px] border border-border rounded-lg bg-surface">
             <div className="flex flex-col items-center justify-center min-h-50 p-6 text-center">
               <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 🔍

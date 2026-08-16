@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { Avatar, AvatarGroup } from '@connorhoehnslalom/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -20,20 +20,6 @@ const tocItems: TocItem[] = [
 // ---------------------------------------------------------------------------
 
 const avatarColors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#ef4444'];
-
-const avatarCircle = (color: string, size = 30): CSSProperties => ({
-  width: size,
-  height: size,
-  borderRadius: '50%',
-  backgroundColor: color,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: '#fff',
-  fontSize: 11,
-  fontWeight: 700,
-  flexShrink: 0,
-});
 
 // ---------------------------------------------------------------------------
 // Component
@@ -83,7 +69,7 @@ export default function CollaborationPage() {
             <div className="flex items-center gap-2 py-1 px-0 text-[12px]"
               key={u.initials}
             >
-              <div style={avatarCircle(u.color, 20)}>{u.initials}</div>
+              <Avatar name={u.name} initials={u.initials} color={u.color} size={20} />
               <span className="text-[#374151]">{u.name}</span>
               {u.you && <span className="text-[#9ca3af]">(you)</span>}
               {u.typing && (
@@ -125,32 +111,17 @@ const overflow = users.length - visible.length;
   {overflow > 0 && <span style={{ marginLeft: 6 }}>+{overflow}</span>}
 </div>`}
       >
-        <div className="flex items-center">
-          {[
-            { initials: 'CH', color: avatarColors[0] },
-            { initials: 'AS', color: avatarColors[1] },
-            { initials: 'MK', color: avatarColors[2] },
-            { initials: 'JL', color: avatarColors[3] },
-            { initials: 'PP', color: avatarColors[4] },
-          ].map((u, i) => (
-            <div
-              key={u.initials}
-              style={{
-                ...avatarCircle(u.color, 32),
-                border: '2px solid white',
-                marginLeft: i === 0 ? 0 : -10,
-                zIndex: 5 - i,
-                position: 'relative',
-              }}
-            >
-              {u.initials}
-            </div>
-          ))}
-          <span className="ml-[6px] text-[13px] font-semibold text-[#64748b] bg-surface-hover rounded-xl py-[2px] px-2"
-          >
-            +3
-          </span>
-        </div>
+        <AvatarGroup
+          size={32}
+          total={8}
+          items={[
+            { name: 'CH', initials: 'CH', color: avatarColors[0] },
+            { name: 'AS', initials: 'AS', color: avatarColors[1] },
+            { name: 'MK', initials: 'MK', color: avatarColors[2] },
+            { name: 'JL', initials: 'JL', color: avatarColors[3] },
+            { name: 'PP', initials: 'PP', color: avatarColors[4] },
+          ]}
+        />
       </ExampleBlock>
 
       {/* ------------------------------------------------------------------ */}
@@ -265,16 +236,16 @@ const cursors = new Map([
           >
             <thead>
               <tr>
-                <th style={thStyle}></th>
+                <th className={TH_CLS} />
                 {['A', 'B', 'C', 'D'].map((h) => (
-                  <th key={h} style={thStyle}>{h}</th>
+                  <th key={h} className={TH_CLS}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {[1, 2, 3, 4, 5].map((row) => (
                 <tr key={row}>
-                  <th style={thStyle}>{row}</th>
+                  <th className={TH_CLS}>{row}</th>
                   {[0, 1, 2, 3].map((col) => {
                     const isLocal = row === 2 && col === 1;
                     const isAlice = row === 1 && col === 3;
@@ -366,7 +337,7 @@ const cursors = new Map([
             {/* Remote cursor 1: brush */}
             <div className="absolute left-35 top-[70px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
-              <div style={avatarCircle('#ec4899', 24)}>AS</div>
+              <Avatar name="AS" initials="AS" color="#ec4899" size={24} />
               <div className="text-[11px] mt-[2px] text-white bg-[#ec4899] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 brush
@@ -376,7 +347,7 @@ const cursors = new Map([
             {/* Remote cursor 2: pen */}
             <div className="absolute left-75 top-30 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
-              <div style={avatarCircle('#10b981', 24)}>MK</div>
+              <Avatar name="MK" initials="MK" color="#10b981" size={24} />
               <div className="text-[11px] mt-[2px] text-white bg-[#10b981] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 pen
@@ -735,12 +706,5 @@ function handleReact(emoji: string) {
 // Table helper style
 // ---------------------------------------------------------------------------
 
-const thStyle: CSSProperties = {
-  fontWeight: 700,
-  background: '#f9fafb',
-  padding: 6,
-  minWidth: 40,
-  textAlign: 'center',
-  border: '1px solid #e5e7eb',
-  fontSize: 12,
-};
+const TH_CLS =
+  'font-bold bg-[#f9fafb] p-1.5 min-w-10 text-center border border-[#e5e7eb] text-[12px]';
