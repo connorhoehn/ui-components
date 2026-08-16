@@ -1,10 +1,31 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.33.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.37.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
-## Operating mode (autonomous, 2026-05-30 → ~2026-06-20)
+> **Package scope — read before touching imports.** This library is
+> `@connorhoehnslalom/ui-components` (its repo is connorhoehnslalom-owned).
+> Its peer dependency is `@connorhoehn/realtime-modules` — a *different*,
+> connorhoehn-owned repo that was never renamed. Commit `a804d36`
+> (2026-06-22) rewrote both scopes together and broke main for two months
+> (lint, one test suite, and `npm run demo`); `ce60f6a` reverted the
+> peer-dep half. Do not "fix" `@connorhoehn/realtime-modules` to the
+> slalom scope — that package does not exist. Resolving the split
+> properly is hub **#1493** and needs all four repos moved at once.
+>
+> Nothing is published yet: **both** scopes 404 on the registry, so every
+> consumer is on a `file:`/git-SHA pin. #1493 is also the publish task.
+
+## Operating mode (autonomous, 2026-05-30 → ~2026-06-20 — LAPSED)
+
+> **Status 2026-08-16.** The repo went dormant after `a804d36` (2026-06-22)
+> left main red; see the scope note above. Main is green again and the 23
+> stranded commits from `agent/ui-components-2/wip` have been rebased in.
+> The autonomous window below has expired — treat the wave roadmap as a
+> backlog to pick from, not an active self-driving mandate, until the
+> operator re-charters it.
+
 
 A 5-agent Opus audit on 2026-05-30 produced a 5-wave roadmap that the
 `ui-components` agent self-drives against. **Read these before picking work:**
@@ -22,7 +43,7 @@ Wave order (don't pick across waves): **0** charter + reachability →
 ## Quick commands
 
 ```bash
-npm test           # vitest run (286 test files)
+npm test           # vitest run (306 test files, 3148 tests)
 npm run lint       # tsc --noEmit (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
@@ -160,14 +181,14 @@ demo/
     catalog/       Demo catalog grid
     navigation/    nav-tree.ts (single source of truth for sidebar IA)
 
-tests/e2e/         Playwright (6 specs; expansion tracked in hub #1046)
+tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
 ```
 
 ## Hard rules (do not violate)
 
 1. **Demo pages must NOT use `style={{}}`.** Per global CLAUDE.md, all
    `demo/src/**` must use ui-components composites + Tailwind v4 token classes.
-   Current violator count: **69 files** (eradication waves: #1045, #1050, #1055, #1067).
+   Current violator count: **46 files** (measured 2026-08-16; was 69).
    When you find a violation, classify A (token swap), B (use existing
    composite), or C (ship the primitive first — file a hub task and stop).
 
@@ -187,11 +208,16 @@ tests/e2e/         Playwright (6 specs; expansion tracked in hub #1046)
 ## Active migrations / coverage gaps
 
 ### Inline-style eradication (Tailwind v4)
-- `src/**`: 91 files remain (down from 122). Domain breakdown still
-  pipelines-dominant.
-- `demo/**`: 69 files (audit #2 backlog) — eradicated in waves #1045/#1050/#1055/#1067
-  AFTER the Wave-1 primitives ship (#1017 CodeBlock, #1018 DocsShell, #1020 LogStream,
-  #1023 AlertList, #1025 HealthGrid, #1030 KPIGrid, etc.).
+- `src/**`: **131 files** remain (measured 2026-08-16). This went *up* from
+  the 91 recorded here — the June pipelines work (node visual system, image
+  nodes) added inline styles faster than the waves removed them.
+- `demo/**`: **46 files** (was 69) — waves #1045/#1050/#1055/#1067 landed as
+  part of the wave-2/3 batches recovered from `agent/ui-components-2/wip`
+  on 2026-08-16.
+- **Deferred:** `demo/src/demos/pipeline-editor/index.tsx` — the branch's
+  wave-3 eradication of this file was dropped during that rebase because
+  main had already converted it, better (uses the `<Input>` composite and a
+  semantic `<aside>`; the branch used a bare `<input>`). No work owed.
 
 See `TAILWIND_MIGRATION.md` for conversion rules and token mappings.
 
