@@ -23,6 +23,11 @@ export default defineConfig({
       '@connorhoehnslalom/ui-components': resolve(__dirname, '../src'),
       // realtime-modules: alias subpaths to TS source so Vite/Rollup can process ESM.
       // The dist/ is CJS-only; pointing at src/ avoids the "not exported" Rollup error.
+      // Deeper subpaths must precede the '/client' entry — Vite matches string
+      // aliases by prefix, so '/client' would otherwise swallow them and
+      // resolve to '…/src/client/index.ts/video'.
+      '@connorhoehn/realtime-modules/client/video': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/video/index.ts'),
+      '@connorhoehn/realtime-modules/client/hangout-rooms': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/hangout-rooms/index.ts'),
       '@connorhoehn/realtime-modules/client': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/index.ts'),
       '@connorhoehn/realtime-modules': resolve(__dirname, '../node_modules/@connorhoehn/realtime-modules/src/index.ts'),
       '@': resolve(__dirname, '../src'),

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { CodeBlock, Chip } from '@connorhoehn/ui-components/shared';
+import { CodeBlock, Chip } from '@connorhoehnslalom/ui-components/shared';
 import { HOOK_GROUP_LABEL, type HookDoc as HookDocData } from './hook-docs';
 
 function SectionHeading({ children }: { children: React.ReactNode }) {

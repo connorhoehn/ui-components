@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilterChip } from '@connorhoehn/ui-components/shared';
+import { FilterChip } from '@connorhoehnslalom/ui-components/shared';
 import { entries, categories } from './catalog-data';
 import { DemoCard } from './DemoCard';
 import { AudienceHero } from './AudienceHero';

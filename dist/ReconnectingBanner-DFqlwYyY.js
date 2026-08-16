@@ -1,8 +1,8 @@
-import { jsxs as E, jsx as s } from "react/jsx-runtime";
-import { useMemo as N, useState as j, useEffect as p, useRef as T } from "react";
-import { c as k } from "./cn-B6yFEsav.js";
+import { jsxs as k, jsx as s } from "react/jsx-runtime";
+import { useMemo as N, useState as j, useEffect as L, useRef as T } from "react";
+import { c as x } from "./cn-B6yFEsav.js";
 import { A as M } from "./Avatar-BvKIaNVE.js";
-function L({
+function p({
   id: e,
   displayName: t,
   avatarUrl: n,
@@ -17,10 +17,10 @@ function L({
   style: v
 }) {
   const r = c ? "local-tile" : "remote-tile";
-  return /* @__PURE__ */ E(
+  return /* @__PURE__ */ k(
     "div",
     {
-      className: k(
+      className: x(
         "relative bg-[#1a1a2e] flex items-center justify-center rounded overflow-hidden border-2 transition-colors",
         // fillParent: defer sizing to the parent grid cell. Default:
         // enforce 16:9 so the tile renders correctly even in a parent
@@ -58,29 +58,29 @@ function L({
             children: /* @__PURE__ */ s(
               "div",
               {
-                className: k(
+                className: x(
                   "rounded-full flex items-center justify-center text-white font-semibold bg-black/25 backdrop-blur-sm shadow-inner",
                   h ? "w-24 h-24 text-4xl" : "w-14 h-14 text-xl"
                 ),
-                children: n ? /* @__PURE__ */ s("img", { src: n, alt: "", className: k("w-full h-full rounded-full object-cover") }) : U(t)
+                children: n ? /* @__PURE__ */ s("img", { src: n, alt: "", className: x("w-full h-full rounded-full object-cover") }) : U(t)
               }
             )
           }
         ),
-        /* @__PURE__ */ E("div", { className: k("absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow"), children: [
-          c && /* @__PURE__ */ s("span", { className: k("text-[#60a5fa] truncate font-medium"), children: "You" }),
+        /* @__PURE__ */ k("div", { className: x("absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow"), children: [
+          c && /* @__PURE__ */ s("span", { className: x("text-[#60a5fa] truncate font-medium"), children: "You" }),
           !c && /* @__PURE__ */ s("span", { className: "truncate font-medium", children: t }),
           l && /* @__PURE__ */ s("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ s("path", { d: "M1 1l8 8M5 1v4.5", stroke: "#ef4444", strokeWidth: "1.5", strokeLinecap: "round" }) })
         ] }),
         l && /* @__PURE__ */ s(
           "div",
           {
-            className: k(
+            className: x(
               "absolute top-1 left-1 flex items-center justify-center rounded-full bg-red-500/90 text-white shadow-md",
               h ? "w-7 h-7" : "w-5 h-5"
             ),
             "aria-label": "Microphone muted",
-            children: /* @__PURE__ */ E("svg", { width: h ? 16 : 12, height: h ? 16 : 12, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
+            children: /* @__PURE__ */ k("svg", { width: h ? 16 : 12, height: h ? 16 : 12, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
               /* @__PURE__ */ s("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
               /* @__PURE__ */ s("path", { d: "M9 9v3a3 3 0 0 0 5.12 2.12" }),
               /* @__PURE__ */ s("path", { d: "M15 9.34V5a3 3 0 0 0-5.68-1.33" }),
@@ -89,7 +89,7 @@ function L({
             ] })
           }
         ),
-        d && /* @__PURE__ */ s("div", { className: k("absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]") })
+        d && /* @__PURE__ */ s("div", { className: x("absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]") })
       ]
     }
   );
@@ -121,10 +121,10 @@ function O({
     const a = [...e];
     return m && t && a.push({ ...t, isLocal: !0 }), a;
   }, [e, g, m, t]), i = H(r.length), u = Math.max(1, Math.ceil(r.length / i));
-  return /* @__PURE__ */ E(
+  return /* @__PURE__ */ k(
     "div",
     {
-      className: k(
+      className: x(
         "relative grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden",
         l && "h-full w-full",
         h
@@ -136,7 +136,7 @@ function O({
       },
       children: [
         r.map((a) => /* @__PURE__ */ s(
-          L,
+          p,
           {
             id: a.id,
             displayName: a.displayName,
@@ -150,7 +150,7 @@ function O({
           },
           a.id
         )),
-        r.length === 0 && /* @__PURE__ */ s("div", { className: k(
+        r.length === 0 && /* @__PURE__ */ s("div", { className: x(
           "flex items-center justify-center text-white/40 text-sm",
           l ? "h-full w-full" : "aspect-video"
         ), children: "Waiting for others to join…" }),
@@ -160,7 +160,7 @@ function O({
             className: "absolute bottom-2 right-2 aspect-video rounded overflow-hidden border border-white/20 shadow-lg z-10",
             style: { width: c },
             children: /* @__PURE__ */ s(
-              L,
+              p,
               {
                 id: t.id,
                 displayName: t.displayName,
@@ -191,16 +191,16 @@ function V({
   className: f,
   style: g
 }) {
-  const m = I(d, l), v = N(() => {
-    const b = e.find((x) => x.screenElement);
+  const m = B(d, l), v = N(() => {
+    const b = e.find((E) => E.screenElement);
     return b || (t && t.screenElement ? { ...t, isLocal: !0 } : null);
   }, [e, t]), r = N(() => {
-    const b = n || v ? null : m, x = e.filter((S) => S.id !== b);
-    return t && x.push({ ...t, isLocal: !0 }), x;
+    const b = n || v ? null : m, E = e.filter((S) => S.id !== b);
+    return t && E.push({ ...t, isLocal: !0 }), E;
   }, [e, m, t, n, v]), u = (m ? e.find((b) => b.id === m) ?? null : null) ?? e[0] ?? t ?? null;
-  let a, y, w = null;
-  return n ? (a = "screen", y = u?.displayName ?? "", w = n) : v ? (a = "screen", y = v.displayName, w = v.screenElement) : u ? (a = "camera", y = u.displayName, w = /* @__PURE__ */ s(
-    L,
+  let a, w, y = null;
+  return n ? (a = "screen", w = u?.displayName ?? "", y = n) : v ? (a = "screen", w = v.displayName, y = v.screenElement) : u ? (a = "camera", w = u.displayName, y = /* @__PURE__ */ s(
+    p,
     {
       id: u.id,
       displayName: u.displayName,
@@ -212,10 +212,10 @@ function V({
       videoElement: u.videoElement,
       className: "w-full h-full"
     }
-  )) : (a = "camera", y = ""), /* @__PURE__ */ E(
+  )) : (a = "camera", w = ""), /* @__PURE__ */ k(
     "div",
     {
-      className: k(
+      className: x(
         "flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden",
         h && "h-full w-full",
         f
@@ -225,7 +225,7 @@ function V({
         /* @__PURE__ */ s(
           "div",
           {
-            className: k(
+            className: x(
               "bg-black relative",
               // fillParent: spotlight stretches with flexbox; otherwise it
               // enforces 16:9 against width (the mini-widget case).
@@ -233,8 +233,8 @@ function V({
             ),
             "data-testid": "hangout-spotlight",
             "data-spotlight-type": a,
-            "data-spotlight-user": y,
-            children: w
+            "data-spotlight-user": w,
+            children: y
           }
         ),
         r.length > 0 && /* @__PURE__ */ s("div", { className: "flex gap-1 overflow-x-auto px-1 pb-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none] shrink-0", children: r.map((b) => /* @__PURE__ */ s(
@@ -243,7 +243,7 @@ function V({
             className: "shrink-0",
             style: { width: o },
             children: /* @__PURE__ */ s(
-              L,
+              p,
               {
                 id: b.id,
                 displayName: b.displayName,
@@ -261,9 +261,9 @@ function V({
     }
   );
 }
-function I(e, t) {
+function B(e, t) {
   const [n, d] = j(e ?? null);
-  return p(() => {
+  return L(() => {
     const l = e ?? null;
     if (t <= 0) {
       d(l);
@@ -274,7 +274,7 @@ function I(e, t) {
     return () => clearTimeout(c);
   }, [e, t, n]), n;
 }
-const B = 10;
+const I = 10;
 function Y({
   participants: e,
   localParticipant: t = null,
@@ -290,7 +290,7 @@ function Y({
   style: v
 }) {
   const r = e.length + (t ? 1 : 0), i = e.some((a) => a.screenElement) || !!(t && t.screenElement);
-  return (c || i || n === "auto" && r >= B ? "spotlight" : n) === "spotlight" ? /* @__PURE__ */ s(
+  return (c || i || n === "auto" && r >= I ? "spotlight" : n) === "spotlight" ? /* @__PURE__ */ s(
     V,
     {
       participants: e,
@@ -320,7 +320,7 @@ function Y({
 }
 function _(e, t) {
   const [n, d] = j(0);
-  return p(() => {
+  return L(() => {
     if (!e) return;
     const l = (r, i) => {
       console.info("[useTrackStateBump] remote track", r, {
@@ -351,7 +351,7 @@ function $(e) {
   const t = e.getVideoTracks();
   return t.length === 0 ? !1 : t.some((n) => n.readyState === "live" && n.enabled && !n.muted);
 }
-function W({
+function R({
   stream: e,
   muted: t = !1,
   videoRef: n,
@@ -359,34 +359,34 @@ function W({
   onPlayStateChange: l
 }) {
   const c = T(null), h = T(l);
-  return h.current = l, p(() => {
+  return h.current = l, L(() => {
     const o = c.current;
     if (!o) return;
     o.srcObject !== e && (o.srcObject = e), n && (n.current = o);
-    const f = (y) => {
-      typeof e?.getTracks == "function" && console.info(`[StreamVideo] ${y}`, {
+    const f = (w) => {
+      typeof e?.getTracks == "function" && console.info(`[StreamVideo] ${w}`, {
         streamId: e.id,
-        tracks: e.getTracks().map((w) => ({
-          kind: w.kind,
-          id: w.id,
-          ready: w.readyState,
-          muted: w.muted,
-          enabled: w.enabled
+        tracks: e.getTracks().map((y) => ({
+          kind: y.kind,
+          id: y.id,
+          ready: y.readyState,
+          muted: y.muted,
+          enabled: y.enabled
         }))
       });
     };
     f("bind");
-    const g = (y) => {
-      h.current?.(y);
+    const g = (w) => {
+      h.current?.(w);
     }, m = () => g("playing"), v = () => g("ended"), r = () => {
       o.ended && g("ended");
     }, i = () => {
-      const y = o.play();
-      y && typeof y.catch == "function" && y.catch((w) => {
-        w?.name === "NotAllowedError" && g("paused-by-autoplay");
+      const w = o.play();
+      w && typeof w.catch == "function" && w.catch((y) => {
+        y?.name === "NotAllowedError" && g("paused-by-autoplay");
       });
-    }, u = (y) => {
-      f(`stream ${y.type}`), o.srcObject = null, o.srcObject = e, i();
+    }, u = (w) => {
+      f(`stream ${w.type}`), o.srcObject = null, o.srcObject = e, i();
     };
     o.addEventListener("play", m), o.addEventListener("ended", v), o.addEventListener("pause", r);
     const a = typeof e?.addEventListener == "function";
@@ -404,9 +404,9 @@ function W({
     }
   );
 }
-function z({ stream: e }) {
+function W({ stream: e }) {
   const t = T(null);
-  return p(() => {
+  return L(() => {
     const n = t.current;
     if (!n) return;
     if (!e) {
@@ -436,27 +436,40 @@ function q({
 }) {
   _(e, t);
   const l = $(e);
-  return !n || !l || !e ? /* @__PURE__ */ E(
+  return !n || !l || !e ? /* @__PURE__ */ k(
     "div",
     {
       className: "flex items-center justify-center w-full h-full bg-[var(--color-surface-inset,#0f172a)]",
       "data-testid": "remote-tile-avatar-branch",
       children: [
         /* @__PURE__ */ s(M, { name: t, size: d }),
-        e && /* @__PURE__ */ s(z, { stream: e })
+        e && /* @__PURE__ */ s(W, { stream: e })
       ]
     }
-  ) : /* @__PURE__ */ s(W, { stream: e });
+  ) : /* @__PURE__ */ s(R, { stream: e });
+}
+function F({ show: e, label: t = "Reconnecting…" }) {
+  return e ? /* @__PURE__ */ s(
+    "div",
+    {
+      "data-testid": "hangout-reconnecting-banner",
+      className: "pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-amber-500/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap",
+      role: "status",
+      "aria-live": "polite",
+      children: t
+    }
+  ) : null;
 }
 export {
   O as H,
-  L as P,
-  q as R,
-  W as S,
+  p as P,
+  F as R,
+  R as S,
   Y as a,
   V as b,
-  _ as c,
+  q as c,
+  _ as d,
   H as g,
   $ as s,
-  I as u
+  B as u
 };

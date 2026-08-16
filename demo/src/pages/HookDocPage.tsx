@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router';
-import { EmptyState } from '@connorhoehn/ui-components/shared';
+import { EmptyState } from '@connorhoehnslalom/ui-components/shared';
 import { HookDoc } from '../hooks-registry/HookDoc';
 import {
   getHookDoc,

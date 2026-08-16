@@ -16,7 +16,7 @@ import type { ChatMessage as UIChatMessage } from '@connorhoehnslalom/ui-compone
 import {
   WrappedChatPanel,
   WrappedPresencePanel,
-} from '../../src/integrations/realtime-modules';
+} from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL as string | undefined;
 const CHANNEL = 'demo:wrapped';

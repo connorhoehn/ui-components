@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Card } from '@connorhoehn/ui-components/shared';
+import { Card } from '@connorhoehnslalom/ui-components/shared';
 import { hookDocsByGroup } from '../hooks-registry/hook-docs';
 
 export default function HooksOverviewPage() {

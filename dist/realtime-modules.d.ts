@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { ErrorInfo } from 'react';
-import { JSX } from 'react/jsx-runtime';
+import { HangoutConnectionState } from '@connorhoehn/realtime-modules/client/video';
+import { JSX } from 'react';
 import { MouseEvent as MouseEvent_2 } from 'react';
 import { ReactNode } from 'react';
 import { RoomsIndexSubscriber } from '@connorhoehn/realtime-modules/client/hangout-rooms';
@@ -134,6 +135,12 @@ declare interface HangoutLayoutParticipant {
     isLocal?: boolean;
     /** Pre-rendered video element — typically `<video ref={…} autoPlay playsInline />`. */
     videoElement?: ReactNode;
+    /** Pre-rendered screen-share video element. When ANY participant supplies
+     *  this, `<HangoutLayout>` auto-flips to spotlight mode and
+     *  `<HangoutSpotlight>` promotes this element into the main slot (the
+     *  sharer's camera tile stays visible in the filmstrip). An explicit
+     *  `spotlightContent` prop on `<HangoutLayout>` still wins. */
+    screenElement?: ReactNode;
 }
 
 declare type HangoutMode = 'auto' | 'spotlight';
@@ -312,13 +319,27 @@ declare interface NotificationItem {
     category?: string;
 }
 
+declare type PresenceMode = 'editor' | 'reviewer' | 'reader';
+
 declare interface PresenceUser {
-    /** Unique identifier for the user */
+    /** Unique identifier for the user. Passed back to `onUserClick`. */
     id: string;
     name: string;
-    /** Optional avatar image URL */
+    /** Optional avatar image URL. Wins over `color` when present. */
     avatarUrl?: string;
+    /** Online flag. Drives the status dot when `idle` is not set:
+     *  `undefined`/`true` → green; `false` → gray. */
     online?: boolean;
+    /** Override the auto-computed avatar background. Useful when the
+     *  user identity needs to match a CRDT cursor color elsewhere. */
+    color?: string;
+    /** Present but away. Dims the avatar (alpha-blends `color` when
+     *  provided, otherwise drops opacity) and flips the status dot to
+     *  amber. Wins over `online` for the dot color. */
+    idle?: boolean;
+    /** Optional editing mode — renders a small mode badge on the
+     *  upper-right of the avatar (pencil / check / eye). */
+    mode?: PresenceMode;
 }
 
 export declare function ReconnectingShim({ connectionState, children, onRetry, reconnectingLabel, disconnectedTitle, disconnectedDescription, retryLabel, connectingPlaceholder, disconnectedFallback, className, }: ReconnectingShimProps): JSX.Element;
@@ -720,6 +741,75 @@ export declare interface WrappedHangoutRoomsListProps {
      * ReconnectingShim. Pass `connectionState` from the gateway layer.
      */
     wrapWithNetworkShim?: NetworkShimOptions;
+}
+
+/**
+ * Snapshot of the wrapper's live hangout state, surfaced to the
+ * consumer's `overlay` render-prop so they can render reconnecting /
+ * failed / empty backdrops without subscribing to useLVSHangout
+ * themselves.
+ */
+export declare interface WrappedHangoutState {
+    connectionState: HangoutConnectionState;
+    error: string | null;
+    participantCount: number;
+    remoteCount: number;
+}
+
+export declare function WrappedLVSHangoutLayout({ stageToken, participantId, userId, localClientId, getStageToken, overlay, spotlightContent, onParticipantClick, mode, activeSpeakerStrategy: _activeSpeakerStrategy, localTileLabel, showLocalAsTile, className, 'data-testid': testId, }: WrappedLVSHangoutLayoutProps): JSX.Element;
+
+export declare interface WrappedLVSHangoutLayoutProps {
+    /** Participant token from platform-api `/api/video/sessions/:id/join`.
+     *  Decoded for the channel ARN claim. */
+    stageToken: string;
+    /** SFU-issued participant id (per-tab unique). */
+    participantId: string;
+    /** Display name for the local user. Falls back to participantId.slice(0,8). */
+    userId?: string;
+    /** Optional override for the local tile's "client id" — most consumers
+     *  use the same value as participantId. Reserved for future per-device
+     *  multiplexing scenarios. */
+    localClientId?: string;
+    /**
+     * Async callback the wrapper calls when it needs a fresh stage token:
+     * on initial connect, after a token-rejected close, and (optionally) on
+     * a TTL-based schedule. Mirrors the SDK `getAuthToken` pattern.
+     *
+     * When omitted, the wrapper uses `stageToken` for the session lifetime
+     * and surfaces a token-expired error via the overlay render prop.
+     */
+    getStageToken?: () => Promise<string>;
+    /**
+     * Render-prop slot rendered absolute-positioned over the tile grid.
+     * Receives the wrapper's live hangout state so the consumer can render
+     * reconnecting / failed / empty overlays.
+     *
+     * Example:
+     *   overlay={({ connectionState, error, remoteCount }) => (
+     *     <>
+     *       {connectionState === 'reconnecting' && <YourReconnectingBanner />}
+     *       {error && <YourFailedScreen error={error} />}
+     *       {remoteCount === 0 && <YourEmptyBackdrop />}
+     *     </>
+     *   )}
+     */
+    overlay?: (state: WrappedHangoutState) => ReactNode;
+    /** Forwarded to <HangoutLayout spotlightContent>. */
+    spotlightContent?: ReactNode;
+    /** Forwarded to <HangoutLayout onParticipantClick>. */
+    onParticipantClick?: (participantId: string) => void;
+    /** Forwarded to <HangoutLayout mode>. Default 'auto'. */
+    mode?: HangoutMode;
+    /** Optional active speaker driver. Default 'audio-level' (the layout
+     *  computes from MediaStream audio energy). */
+    activeSpeakerStrategy?: 'audio-level' | 'producer-state' | 'off';
+    /** Override the local tile's display name. Default: "You". */
+    localTileLabel?: string;
+    /** When false, the local user does NOT appear as a tile (e.g. they
+     *  only host the call). Default true (Meet-style). */
+    showLocalAsTile?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 export declare function WrappedNotificationCenter({ notifications, onItemClick, ...rest }: WrappedNotificationCenterProps): JSX.Element;

@@ -1,15 +1,9 @@
 import { jsxs as t, jsx as e, Fragment as j } from "react/jsx-runtime";
 import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as ce, useEffect as de } from "react";
 import { C as U } from "./Card-B2uO9v1w.js";
-<<<<<<<< HEAD:dist/PoolScopedLayout-D5ax8jLT.js
 import { P as F, T as J, b as Z, e as _, a as ee, c as te, d as q } from "./Table-BOmVFX6H.js";
 import { B as f } from "./Button-Qsbxqsl9.js";
-import { E as me } from "./EmptyState-PM9wTjxk.js";
-========
-import { P as F, T as J, b as Z, e as q, a as ee, c as te, d as B } from "./PageSection-Dj8r4YIt.js";
-import { a as f, B as V } from "./Banner-B8AcwPH_.js";
 import { E as me } from "./EmptyState-D_CN3LUx.js";
->>>>>>>> 470a7a6 (feat(integrations): WrappedConnectionPill + CapabilityDeniedFallback + 3 hook-integration demos):dist/PoolScopedLayout-BkoRINt0.js
 import { C as H } from "./ConfirmDialog-CNoxvYGu.js";
 import { B as V } from "./Banner-DKb3JiLs.js";
 import { C as K } from "./Chip-CAS9vOWq.js";

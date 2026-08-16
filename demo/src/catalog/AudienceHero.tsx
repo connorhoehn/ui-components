@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Card, Chip } from '@connorhoehn/ui-components/shared';
+import { Card, Chip } from '@connorhoehnslalom/ui-components/shared';
 import { audiencePaths, type AudiencePath } from './audience-paths';
 
 const SPINE_CLASSES: Record<AudiencePath['accent'], string> = {
