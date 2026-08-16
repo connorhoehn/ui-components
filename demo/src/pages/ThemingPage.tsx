@@ -13,14 +13,14 @@ const codeBlockStyle: React.CSSProperties = {
 export default function ThemingPage() {
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         Theming
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6]">
         Customize the look and feel using design tokens. Supports light and dark modes out of the box.
       </p>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         ThemeProvider setup
       </h2>
       <pre style={codeBlockStyle}>
@@ -35,10 +35,10 @@ function App() {
 }`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Overriding tokens
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
+      <p className="text-[14px] text-text-secondary mb-3">
         Pass a partial token object to customize specific values:
       </p>
       <pre style={codeBlockStyle}>
@@ -60,10 +60,10 @@ function App() {
 </ThemeProvider>`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Dark mode
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
+      <p className="text-[14px] text-text-secondary mb-3">
         Toggle between modes dynamically:
       </p>
       <pre style={codeBlockStyle}>
@@ -84,14 +84,14 @@ function App() {
 }`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Available tokens
       </h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, marginBottom: 32 }}>
+      <table className="w-full border-collapse text-[14px] mb-8">
         <thead>
-          <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
-            <th style={{ textAlign: 'left', padding: '8px 12px', color: '#475569', fontWeight: 600 }}>Category</th>
-            <th style={{ textAlign: 'left', padding: '8px 12px', color: '#475569', fontWeight: 600 }}>Examples</th>
+          <tr className="border-b-2 border-border">
+            <th className="text-left py-2 px-3 text-text-secondary font-semibold">Category</th>
+            <th className="text-left py-2 px-3 text-text-secondary font-semibold">Examples</th>
           </tr>
         </thead>
         <tbody>
@@ -102,9 +102,9 @@ function App() {
             ['typography', 'fontFamily, fontSize (sm/md/lg), fontWeight (normal/medium/bold)'],
             ['shadows', 'sm, md, lg'],
           ].map(([cat, examples]) => (
-            <tr key={cat} style={{ borderBottom: '1px solid #f1f5f9' }}>
-              <td style={{ padding: '8px 12px', fontFamily: 'monospace', fontSize: 13, fontWeight: 500 }}>{cat}</td>
-              <td style={{ padding: '8px 12px', color: '#64748b' }}>{examples}</td>
+            <tr className="border-b border-surface-hover" key={cat}>
+              <td className="py-2 px-3 font-mono text-[13px] font-medium">{cat}</td>
+              <td className="py-2 px-3 text-[#64748b]">{examples}</td>
             </tr>
           ))}
         </tbody>

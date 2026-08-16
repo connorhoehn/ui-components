@@ -8,3 +8,8 @@ coverage
 storybook-static
 test-results
 playwright-report
+
+# Temporary: local-only visual baselines for the inline-style migration.
+# Darwin-specific PNGs; remove this block when the migration lands.
+tests/e2e/zz-visual.spec.ts
+tests/e2e/zz-visual.spec.ts-snapshots/

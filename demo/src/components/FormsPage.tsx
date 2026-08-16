@@ -19,7 +19,7 @@ export default function FormsPage() {
   useRegisterToc(tocItems);
 
   return (
-    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
+    <div className="p-8 max-w-225 mx-auto my-0">
       <PageHeader
         title="Forms & Inputs"
         description="Specialized form controls for code editing, tagging, icon selection, and user picking. These components handle complex input patterns with built-in validation, suggestions, and keyboard navigation."
@@ -47,44 +47,23 @@ const [code, setCode] = useState(\`function fibonacci(n) {
   minLines={5}
 />`}
       >
-        <div
-          style={{
-            background: '#1e293b',
-            borderRadius: 6,
-            overflow: 'hidden',
-            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
-            fontFamily: "'SF Mono', Menlo, monospace",
-            fontSize: 13,
-            lineHeight: 1.6,
-            display: 'flex',
-          }}
+        <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
         >
-          <div
-            style={{
-              width: 40,
-              padding: '12px 8px',
-              textAlign: 'right',
-              color: '#64748b',
-              borderRight: '1px solid #334155',
-              userSelect: 'none',
-              flexShrink: 0,
-              fontSize: 12,
-              lineHeight: 1.6,
-            }}
+          <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
           >
             {'1\n2\n3\n4\n5\n6\n7\n8'.split('\n').map((n, i) => (
               <div key={i}>{n}</div>
             ))}
           </div>
-          <div style={{ padding: '12px 16px', color: '#e2e8f0', flex: 1, whiteSpace: 'pre' }}>
-            <div><span style={{ color: '#93c5fd' }}>function</span> <span style={{ color: '#fbbf24' }}>fibonacci</span>(n) {'{'}</div>
-            <div>  <span style={{ color: '#93c5fd' }}>if</span> (n {'<='} 1) <span style={{ color: '#93c5fd' }}>return</span> n;</div>
-            <div>  <span style={{ color: '#93c5fd' }}>return</span> fibonacci(n - 1) + fibonacci(n - 2);</div>
+          <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
+            <div><span className="text-[#93c5fd]">function</span> <span className="text-[#fbbf24]">fibonacci</span>(n) {'{'}</div>
+            <div>  <span className="text-[#93c5fd]">if</span> (n {'<='} 1) <span className="text-[#93c5fd]">return</span> n;</div>
+            <div>  <span className="text-[#93c5fd]">return</span> fibonacci(n - 1) + fibonacci(n - 2);</div>
             <div>{'}'}</div>
             <div>&nbsp;</div>
-            <div><span style={{ color: '#93c5fd' }}>const</span> result = fibonacci(10);</div>
-            <div>console.<span style={{ color: '#fbbf24' }}>log</span>(<span style={{ color: '#4ade80' }}>"fib(10) ="</span>, result);</div>
-            <div style={{ color: '#64748b' }}>// Output: fib(10) = 55</div>
+            <div><span className="text-[#93c5fd]">const</span> result = fibonacci(10);</div>
+            <div>console.<span className="text-[#fbbf24]">log</span>(<span className="text-[#4ade80]">"fib(10) ="</span>, result);</div>
+            <div className="text-[#64748b]">// Output: fib(10) = 55</div>
           </div>
         </div>
       </ExampleBlock>
@@ -103,60 +82,24 @@ const [code, setCode] = useState(\`function fibonacci(n) {
   minLines={3}
 />`}
       >
-        <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              background: '#475569',
-              color: '#e2e8f0',
-              fontSize: 10,
-              fontWeight: 600,
-              padding: '2px 8px',
-              borderRadius: 4,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              zIndex: 1,
-            }}
+        <div className="relative">
+          <div className="absolute top-2 right-2 bg-text-secondary text-border text-[10px] font-semibold py-[2px] px-2 rounded uppercase tracking-[0.05em] z-[1]"
           >
             read-only
           </div>
-          <div
-            style={{
-              background: '#1e293b',
-              borderRadius: 6,
-              overflow: 'hidden',
-              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
-              fontFamily: "'SF Mono', Menlo, monospace",
-              fontSize: 13,
-              lineHeight: 1.6,
-              display: 'flex',
-              opacity: 0.85,
-            }}
+          <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex opacity-85"
           >
-            <div
-              style={{
-                width: 40,
-                padding: '12px 8px',
-                textAlign: 'right',
-                color: '#64748b',
-                borderRight: '1px solid #334155',
-                userSelect: 'none',
-                flexShrink: 0,
-                fontSize: 12,
-                lineHeight: 1.6,
-              }}
+            <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
               ))}
             </div>
-            <div style={{ padding: '12px 16px', color: '#e2e8f0', flex: 1, whiteSpace: 'pre' }}>
-              <div style={{ color: '#64748b' }}>// This editor is read-only</div>
-              <div><span style={{ color: '#93c5fd' }}>const</span> API_URL = <span style={{ color: '#4ade80' }}>"https://api.example.com/v2"</span>;</div>
-              <div><span style={{ color: '#93c5fd' }}>const</span> TIMEOUT = <span style={{ color: '#fb923c' }}>5000</span>;</div>
-              <div><span style={{ color: '#93c5fd' }}>export default</span> {'{ API_URL, TIMEOUT }'};</div>
+            <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
+              <div className="text-[#64748b]">// This editor is read-only</div>
+              <div><span className="text-[#93c5fd]">const</span> API_URL = <span className="text-[#4ade80]">"https://api.example.com/v2"</span>;</div>
+              <div><span className="text-[#93c5fd]">const</span> TIMEOUT = <span className="text-[#fb923c]">5000</span>;</div>
+              <div><span className="text-[#93c5fd]">export default</span> {'{ API_URL, TIMEOUT }'};</div>
             </div>
           </div>
         </div>
@@ -178,62 +121,30 @@ const [code, setCode] = useState(\`function fibonacci(n) {
       >
         <div>
           {/* Variable pills row */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 8 }}>
+          <div className="flex flex-wrap gap-1 mb-2">
             {['user.name', 'order.id', 'order.delivery_date', 'company.name'].map((v) => (
-              <span
+              <span className="inline-block py-[2px] px-2 text-[11px] font-mono bg-[#eef2ff] text-[#4338ca] border border-[#c7d2fe] rounded cursor-pointer"
                 key={v}
-                style={{
-                  display: 'inline-block',
-                  padding: '2px 8px',
-                  fontSize: 11,
-                  fontFamily: "'SF Mono', Menlo, monospace",
-                  background: '#eef2ff',
-                  color: '#4338ca',
-                  border: '1px solid #c7d2fe',
-                  borderRadius: 4,
-                  cursor: 'pointer',
-                }}
               >
                 {v}
               </span>
             ))}
           </div>
-          <div
-            style={{
-              background: '#1e293b',
-              borderRadius: 6,
-              overflow: 'hidden',
-              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
-              fontFamily: "'SF Mono', Menlo, monospace",
-              fontSize: 13,
-              lineHeight: 1.6,
-              display: 'flex',
-            }}
+          <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
           >
-            <div
-              style={{
-                width: 40,
-                padding: '12px 8px',
-                textAlign: 'right',
-                color: '#64748b',
-                borderRight: '1px solid #334155',
-                userSelect: 'none',
-                flexShrink: 0,
-                fontSize: 12,
-                lineHeight: 1.6,
-              }}
+            <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4\n5\n6'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
               ))}
             </div>
-            <div style={{ padding: '12px 16px', color: '#e2e8f0', flex: 1, whiteSpace: 'pre' }}>
-              <div>Hello <span style={{ background: '#fbbf2433', color: '#fbbf24', padding: '1px 4px', borderRadius: 3 }}>{'{{ user.name }}'}</span>,</div>
+            <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
+              <div>Hello <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ user.name }}'}</span>,</div>
               <div>&nbsp;</div>
-              <div>Your order #<span style={{ background: '#fbbf2433', color: '#fbbf24', padding: '1px 4px', borderRadius: 3 }}>{'{{ order.id }}'}</span> has been shipped.</div>
-              <div>Estimated delivery: <span style={{ background: '#fbbf2433', color: '#fbbf24', padding: '1px 4px', borderRadius: 3 }}>{'{{ order.delivery_date }}'}</span></div>
+              <div>Your order #<span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ order.id }}'}</span> has been shipped.</div>
+              <div>Estimated delivery: <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ order.delivery_date }}'}</span></div>
               <div>&nbsp;</div>
-              <div>Thanks, <span style={{ background: '#fbbf2433', color: '#fbbf24', padding: '1px 4px', borderRadius: 3 }}>{'{{ company.name }}'}</span></div>
+              <div>Thanks, <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ company.name }}'}</span></div>
             </div>
           </div>
         </div>
@@ -256,61 +167,23 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
   maxTags={10}
 />`}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: 6,
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            borderRadius: 6,
-            padding: '8px 10px',
-            minHeight: 40,
-          }}
+        <div className="flex flex-wrap items-center gap-[6px] bg-surface border border-border rounded-md py-2 px-[10px] min-h-10"
         >
           {['react', 'typescript', 'vite'].map((tag) => (
-            <span
+            <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
               key={tag}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-                background: '#dbeafe',
-                color: '#1e40af',
-                borderRadius: 999,
-                padding: '3px 10px',
-                fontSize: 12,
-                fontWeight: 500,
-              }}
             >
               {tag}
-              <span
-                style={{
-                  cursor: 'pointer',
-                  marginLeft: 2,
-                  fontSize: 14,
-                  lineHeight: 1,
-                  color: '#3b82f6',
-                }}
+              <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-[#3b82f6]"
               >
                 &times;
               </span>
             </span>
           ))}
-          <input
+          <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-[#64748b]"
             type="text"
             placeholder="Type and press Enter..."
             readOnly
-            style={{
-              border: 'none',
-              outline: 'none',
-              fontSize: 13,
-              flex: 1,
-              minWidth: 120,
-              background: 'transparent',
-              color: '#64748b',
-            }}
           />
         </div>
       </ExampleBlock>
@@ -328,83 +201,28 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
   placeholder="Type or pick a suggestion..."
 />`}
       >
-        <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              gap: 6,
-              background: '#ffffff',
-              border: '1px solid #3b82f6',
-              borderRadius: 6,
-              padding: '8px 10px',
-              minHeight: 40,
-              boxShadow: '0 0 0 1px #3b82f6',
-            }}
+        <div className="relative">
+          <div className="flex flex-wrap items-center gap-[6px] bg-surface border border-[#3b82f6] rounded-md py-2 px-[10px] min-h-10 shadow-[0_0_0_1px_#3b82f6]"
           >
             {['frontend'].map((tag) => (
-              <span
+              <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
                 key={tag}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  background: '#dbeafe',
-                  color: '#1e40af',
-                  borderRadius: 999,
-                  padding: '3px 10px',
-                  fontSize: 12,
-                  fontWeight: 500,
-                }}
               >
                 {tag}
-                <span
-                  style={{
-                    cursor: 'pointer',
-                    marginLeft: 2,
-                    fontSize: 14,
-                    lineHeight: 1,
-                    color: '#3b82f6',
-                  }}
+                <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-[#3b82f6]"
                 >
                   &times;
                 </span>
               </span>
             ))}
-            <input
+            <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-[#334155]"
               type="text"
               placeholder="Type or pick a suggestion..."
               readOnly
-              style={{
-                border: 'none',
-                outline: 'none',
-                fontSize: 13,
-                flex: 1,
-                minWidth: 120,
-                background: 'transparent',
-                color: '#334155',
-              }}
             />
           </div>
           {/* Suggestions dropdown */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              marginTop: 4,
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 6,
-              boxShadow: '0 6px 18px rgba(15,23,42,0.10)',
-              padding: 8,
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 6,
-              maxWidth: 320,
-              zIndex: 10,
-            }}
+          <div className="absolute top-[100%] left-0 mt-1 bg-surface border border-border rounded-md shadow-[0_6px_18px_rgba(15,23,42,0.10)] p-2 flex flex-wrap gap-[6px] max-w-80 z-[10]"
           >
             {['backend', 'devops', 'design', 'testing', 'mobile', 'cloud'].map((s) => (
               <span
@@ -443,12 +261,7 @@ const [icon, setIcon] = useState('rocket');
   columns={5}
 />`}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(5, 40px)',
-            gap: 6,
-          }}
+        <div className="grid grid-cols-[repeat(5,_40px)] gap-[6px]"
         >
           {[
             { emoji: '\u{1F680}', selected: true },
@@ -472,21 +285,8 @@ const [icon, setIcon] = useState('rocket');
             { emoji: '\u{1F4CB}', selected: false },
             { emoji: '\u{1F527}', selected: false },
           ].map(({ emoji, selected }, i) => (
-            <div
+            <div className={`w-10 h-10 flex items-center justify-center text-[20px] rounded-md cursor-pointer transition-[border-color] ${selected ? 'border-2 border-[#3b82f6] bg-info-bg' : 'border border-border bg-surface'}`}
               key={i}
-              style={{
-                width: 40,
-                height: 40,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 20,
-                borderRadius: 6,
-                border: selected ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-                background: selected ? '#eff6ff' : '#ffffff',
-                cursor: 'pointer',
-                transition: 'border-color 0.15s',
-              }}
             >
               {emoji}
             </div>
@@ -512,31 +312,14 @@ const [selected, setSelected] = useState<string[]>([]);
   placeholder="Search team members..."
 />`}
       >
-        <div style={{ maxWidth: 360 }}>
+        <div className="max-w-90">
           {/* Search input */}
-          <div
-            style={{
-              background: '#ffffff',
-              border: '1px solid #3b82f6',
-              borderRadius: 6,
-              padding: '8px 10px',
-              fontSize: 13,
-              color: '#334155',
-              boxShadow: '0 0 0 1px #3b82f6',
-              marginBottom: 4,
-            }}
+          <div className="bg-surface border border-[#3b82f6] rounded-md py-2 px-[10px] text-[13px] text-[#334155] shadow-[0_0_0_1px_#3b82f6] mb-1"
           >
-            <span style={{ color: '#94a3b8' }}>Search team members...</span>
+            <span className="text-text-tertiary">Search team members...</span>
           </div>
           {/* Dropdown list */}
-          <div
-            style={{
-              background: '#ffffff',
-              border: '1px solid #e2e8f0',
-              borderRadius: 6,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-              overflow: 'hidden',
-            }}
+          <div className="bg-surface border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] overflow-hidden"
           >
             {[
               { initials: 'AJ', name: 'Alice Johnson', email: 'alice@company.com', color: '#7c3aed', active: true },
@@ -545,17 +328,8 @@ const [selected, setSelected] = useState<string[]>([]);
               { initials: 'DM', name: 'David Martinez', email: 'd.martinez@company.com', color: '#2563eb', active: false },
               { initials: 'EW', name: 'Emma Wilson', email: 'emma.w@company.com', color: '#d97706', active: false },
             ].map((user) => (
-              <div
+              <div className={`flex items-center gap-[10px] py-2 px-3 cursor-pointer border-b border-surface-hover ${user.active ? 'bg-surface-hover' : 'bg-transparent'}`}
                 key={user.initials}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  padding: '8px 12px',
-                  background: user.active ? '#f1f5f9' : 'transparent',
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #f1f5f9',
-                }}
               >
                 <div
                   style={{
@@ -574,11 +348,11 @@ const [selected, setSelected] = useState<string[]>([]);
                 >
                   {user.initials}
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: '#0f172a' }}>
+                <div className="flex-[1] min-w-0">
+                  <div className="text-[13px] font-medium text-text-primary">
                     {user.name}
                   </div>
-                  <div style={{ fontSize: 11, color: '#94a3b8' }}>
+                  <div className="text-[11px] text-text-tertiary">
                     {user.email}
                   </div>
                 </div>

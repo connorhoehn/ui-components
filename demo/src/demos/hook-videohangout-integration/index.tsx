@@ -104,78 +104,32 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
   return (
     <div>
       {/* State strip */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+      <div className="flex gap-2 mb-4 flex-wrap">
         {!session ? (
-          <button
+          <button className="py-2 px-[18px] bg-[#6366f1] text-surface border-0 rounded-lg text-[14px] font-semibold cursor-pointer"
             onClick={() => start({ type: 'hangout' })}
-            style={{
-              padding: '8px 18px',
-              background: '#6366f1',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
           >
             Start Hangout
           </button>
         ) : (
           <>
-            <button
+            <button className="py-[6px] px-[14px] bg-surface-hover text-[#334155] border border-border rounded-lg text-[13px] cursor-pointer"
               onClick={toggleVideo}
-              style={{
-                padding: '6px 14px',
-                background: '#f1f5f9',
-                color: '#334155',
-                border: '1px solid #e2e8f0',
-                borderRadius: 8,
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
             >
               Toggle Video
             </button>
-            <button
+            <button className="py-[6px] px-[14px] bg-surface-hover text-[#334155] border border-border rounded-lg text-[13px] cursor-pointer"
               onClick={toggleAudio}
-              style={{
-                padding: '6px 14px',
-                background: '#f1f5f9',
-                color: '#334155',
-                border: '1px solid #e2e8f0',
-                borderRadius: 8,
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
             >
               Toggle Audio
             </button>
-            <button
+            <button className="py-[6px] px-[14px] bg-surface text-[#ef4444] border border-[#fca5a5] rounded-lg text-[13px] cursor-pointer"
               onClick={leave}
-              style={{
-                padding: '6px 14px',
-                background: '#fff',
-                color: '#ef4444',
-                border: '1px solid #fca5a5',
-                borderRadius: 8,
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
             >
               Leave
             </button>
-            <button
+            <button className="py-[6px] px-[14px] bg-[#fee2e2] text-[#991b1b] border border-[#fca5a5] rounded-lg text-[13px] cursor-pointer"
               onClick={end}
-              style={{
-                padding: '6px 14px',
-                background: '#fee2e2',
-                color: '#991b1b',
-                border: '1px solid #fca5a5',
-                borderRadius: 8,
-                fontSize: 13,
-                cursor: 'pointer',
-              }}
             >
               End for All
             </button>
@@ -185,8 +139,8 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
 
       {/* Session info */}
       {session && (
-        <div style={{ marginBottom: 16, fontSize: 13, color: '#64748b' }}>
-          Session: <code style={{ fontFamily: 'ui-monospace, monospace' }}>{session.id}</code>
+        <div className="mb-4 text-[13px] text-[#64748b]">
+          Session: <code className="font-mono">{session.id}</code>
           {' '}&middot; {participants.length} participant(s)
         </div>
       )}
@@ -194,7 +148,7 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
       {/* Join token display */}
       {joinToken && (
         <div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b', marginBottom: 4 }}>
+          <div className="text-[12px] font-semibold text-[#64748b] mb-1">
             joinToken (pass to your media stack / Stage component):
           </div>
           <div style={TOKEN_STYLE}>{joinToken}</div>
@@ -203,7 +157,7 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
 
       {/* HangoutLayout */}
       {session && (
-        <div style={{ marginTop: 20, height: 360, border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
+        <div className="mt-5 h-90 border border-border rounded-xl overflow-hidden">
           <WrappedHangoutLayout
             hangout={hangout}
             localClientId="demo-client-001"
@@ -213,7 +167,7 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
       )}
 
       {!session && !isMock && (
-        <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 8 }}>
+        <p className="text-[13px] text-text-tertiary mt-2">
           Click "Start Hangout" to initiate a session.
         </p>
       )}
@@ -299,33 +253,23 @@ function LiveHangoutView({ url, channel }: { url: string; channel: string }) {
 
 export default function HookVideoHangoutIntegrationDemo() {
   return (
-    <div style={{ padding: 32, maxWidth: 720, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-180 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         HangoutLayout + useVideoHangout
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 8, lineHeight: 1.6 }}>
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<HangoutLayout>'}
         </code>{' '}
         wired to{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           useVideoHangout('demo:hangout')
         </code>.
         Click "Start Hangout" — session creates, 3 mock participants join with stagger.
-        The <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>joinToken</code> is
+        The <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">joinToken</code> is
         displayed but real media is not wired (no MediaStream in mock mode).
       </p>
-      <div
-        style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: 12,
-          background: IS_MOCK ? '#fef9c3' : '#dcfce7',
-          color: IS_MOCK ? '#854d0e' : '#14532d',
-          fontSize: 12,
-          fontWeight: 600,
-          marginBottom: 24,
-        }}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
       >
         {IS_MOCK ? 'MOCK MODE — signaling only, no real media' : `LIVE — ${GATEWAY_URL}`}
       </div>

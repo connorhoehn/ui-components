@@ -79,7 +79,7 @@ const IdentityAuditDemo = lazy(() => import('./demos/identity/admin/AuditDemo'))
 const IdentityFullAdminDemo = lazy(() => import('./demos/identity/admin/FullAdminDemo'));
 
 function Loading() {
-  return <div style={{ padding: 40, color: '#64748b' }}>Loading...</div>;
+  return <div className="p-10 text-[#64748b]">Loading...</div>;
 }
 
 function S({ children }: { children: React.ReactNode }) {

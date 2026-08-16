@@ -19,45 +19,23 @@ const IS_MOCK = !GATEWAY_URL;
 
 export default function HookChatIntegrationDemo() {
   return (
-    <div style={{ padding: 32, maxWidth: 720, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-180 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         ChatPanel + useChat
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 8, lineHeight: 1.6 }}>
-        <code
-          style={{
-            background: '#f1f5f9',
-            borderRadius: 4,
-            padding: '1px 6px',
-            fontFamily: 'ui-monospace, monospace',
-          }}
+      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono"
         >
           {'<ChatPanel>'}
         </code>{' '}
         from <strong>ui-components</strong> wired to{' '}
-        <code
-          style={{
-            background: '#f1f5f9',
-            borderRadius: 4,
-            padding: '1px 6px',
-            fontFamily: 'ui-monospace, monospace',
-          }}
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono"
         >
           useChat('demo:chat')
         </code>{' '}
         from <strong>realtime-modules</strong>.
       </p>
-      <div
-        style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: 12,
-          background: IS_MOCK ? '#fef9c3' : '#dcfce7',
-          color: IS_MOCK ? '#854d0e' : '#14532d',
-          fontSize: 12,
-          fontWeight: 600,
-          marginBottom: 24,
-        }}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
       >
         {IS_MOCK
           ? 'MOCK MODE — set VITE_GATEWAY_URL to connect live'
@@ -71,21 +49,11 @@ export default function HookChatIntegrationDemo() {
       )}
 
       {IS_MOCK && (
-        <div
-          style={{
-            marginTop: 24,
-            padding: '12px 16px',
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            fontSize: 13,
-            color: '#475569',
-            lineHeight: 1.7,
-          }}
+        <div className="mt-6 py-3 px-4 bg-surface-panel border border-border rounded-lg text-[13px] text-text-secondary leading-[1.7]"
         >
           <strong>To connect a live gateway:</strong>
           <br />
-          <code style={{ fontFamily: 'ui-monospace, monospace' }}>
+          <code className="font-mono">
             VITE_GATEWAY_URL=ws://localhost:4000 npm run dev
           </code>
         </div>

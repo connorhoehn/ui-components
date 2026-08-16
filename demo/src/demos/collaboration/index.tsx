@@ -212,19 +212,19 @@ function CollaborationCanvas() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100%', background: '#f8fafc' }}>
+    <div className="flex h-full bg-surface-panel">
       {/* Main canvas area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="flex-[1] flex flex-col min-w-0">
         {/* Header */}
-        <div style={{ padding: '12px 20px', background: '#0f172a', flexShrink: 0, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <h1 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#f1f5f9' }}>
+        <div className="py-3 px-5 bg-text-primary shrink-0 flex items-center gap-4">
+          <h1 className="m-0 text-[15px] font-bold text-surface-hover">
             Real-time Collaboration
           </h1>
-          <span style={{ fontSize: 12, color: '#64748b' }}>
+          <span className="text-[12px] text-[#64748b]">
             {Object.keys(presenceUsers).length + 1} users online
           </span>
           {/* Avatar stack */}
-          <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+          <div className="flex items-center ml-auto">
             <div style={{ ...avatarStyle('#6366f1'), zIndex: 10 }}>You</div>
             {Object.values(presenceUsers).slice(0, 5).map((u, i) => (
               <div key={u.userId} style={{ ...avatarStyle(u.color), marginLeft: -8, zIndex: 9 - i }}>
@@ -232,7 +232,7 @@ function CollaborationCanvas() {
               </div>
             ))}
             {Object.keys(presenceUsers).length > 5 && (
-              <span style={{ marginLeft: 6, fontSize: 11, color: '#94a3b8' }}>
+              <span className="ml-[6px] text-[11px] text-text-tertiary">
                 +{Object.keys(presenceUsers).length - 5}
               </span>
             )}
@@ -240,7 +240,7 @@ function CollaborationCanvas() {
         </div>
 
         {/* Canvas with cursors */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <div className="flex-[1] relative overflow-hidden">
           {/* Dot grid background */}
           <div style={{
             position: 'absolute',
@@ -250,18 +250,8 @@ function CollaborationCanvas() {
           }} />
 
           {/* Document area */}
-          <div style={{
-            position: 'absolute',
-            top: 40,
-            left: 40,
-            right: 40,
-            background: '#fff',
-            borderRadius: 8,
-            border: '1px solid #e2e8f0',
-            padding: 24,
-            boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-          }}>
-            <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 12, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 600 }}>
+          <div className="absolute top-10 left-10 right-10 bg-surface rounded-lg border border-border p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+            <div className="text-[11px] text-text-tertiary mb-3 uppercase tracking-[0.5px] font-semibold">
               Shared Document
             </div>
             <p style={{ fontFamily: 'Georgia, serif', fontSize: 15, lineHeight: 1.8, color: '#1e293b', margin: 0 }}>
@@ -326,13 +316,7 @@ function CollaborationCanvas() {
                 {cursor.displayName}
               </div>
               {cursor.reaction && (
-                <div style={{
-                  position: 'absolute',
-                  top: -26,
-                  left: 4,
-                  fontSize: 20,
-                  animation: 'cursorReactionPop 0.3s ease-out',
-                }}>
+                <div className="absolute top-[-26px] left-1 text-[20px] animate-[cursorReactionPop_0.3s_ease-out]">
                   {cursor.reaction.emoji}
                 </div>
               )}
@@ -340,7 +324,7 @@ function CollaborationCanvas() {
           ))}
 
           {/* Floating reactions */}
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
             {floatingReactions.map(r => (
               <span
                 key={r.id}
@@ -361,43 +345,43 @@ function CollaborationCanvas() {
       </div>
 
       {/* Right sidebar */}
-      <div style={{ width: 260, borderLeft: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', background: '#fff' }}>
+      <div className="w-65 border-l border-border flex flex-col bg-surface">
         {/* Presence panel */}
-        <div style={{ padding: 16, borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <div className="p-4 border-b border-border">
+          <div className="text-[11px] font-bold text-[#64748b] mb-[10px] uppercase tracking-[0.5px]">
             Online
           </div>
           {/* Local user */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', fontSize: 12 }}>
+          <div className="flex items-center gap-2 py-1 px-0 text-[12px]">
             <div style={presenceAvatarStyle('#6366f1')}>Y</div>
-            <span style={{ color: '#374151', fontWeight: 500 }}>You</span>
+            <span className="text-[#374151] font-medium">You</span>
           </div>
           {Object.values(presenceUsers).map(u => (
-            <div key={u.userId} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', fontSize: 12 }}>
+            <div className="flex items-center gap-2 py-1 px-0 text-[12px]" key={u.userId}>
               <div style={presenceAvatarStyle(u.color)}>{u.displayName.charAt(0)}</div>
-              <span style={{ color: '#374151' }}>{u.displayName}</span>
-              {u.isTyping && <span style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: 11 }}>typing...</span>}
+              <span className="text-[#374151]">{u.displayName}</span>
+              {u.isTyping && <span className="text-text-tertiary italic text-[11px]">typing...</span>}
             </div>
           ))}
         </div>
 
         {/* Activity feed */}
-        <div style={{ flex: 1, overflow: 'auto', padding: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <div className="flex-[1] overflow-auto p-4">
+          <div className="text-[11px] font-bold text-[#64748b] mb-[10px] uppercase tracking-[0.5px]">
             Activity
           </div>
           {activity.length === 0 && (
-            <div style={{ fontSize: 12, color: '#94a3b8' }}>Waiting for events...</div>
+            <div className="text-[12px] text-text-tertiary">Waiting for events...</div>
           )}
           {activity.map(entry => (
-            <div key={entry.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '5px 0', fontSize: 12 }}>
+            <div className="flex items-start gap-2 py-[5px] px-0 text-[12px]" key={entry.id}>
               <div style={{ ...presenceAvatarStyle(entry.color), flexShrink: 0, marginTop: 1 }}>
                 {entry.displayName.charAt(0)}
               </div>
               <div>
-                <span style={{ fontWeight: 600, color: '#374151' }}>{entry.displayName}</span>{' '}
-                <span style={{ color: '#64748b' }}>{entry.action}</span>
-                <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 1 }}>
+                <span className="font-semibold text-[#374151]">{entry.displayName}</span>{' '}
+                <span className="text-[#64748b]">{entry.action}</span>
+                <div className="text-[10px] text-text-tertiary mt-[1px]">
                   {formatTimeAgo(entry.timestamp)}
                 </div>
               </div>
@@ -406,7 +390,7 @@ function CollaborationCanvas() {
         </div>
 
         {/* Reaction picker */}
-        <div style={{ padding: 12, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'center', gap: 4 }}>
+        <div className="p-3 border-t border-border flex justify-center gap-1">
           {['👍', '❤️', '🔥', '😂', '👏', '🎉'].map(emoji => (
             <button
               key={emoji}

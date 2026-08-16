@@ -7,36 +7,24 @@ export default function ComponentsOverviewPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         Components
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6, maxWidth: 640 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6] max-w-160">
         Interactive UI components for building real-time collaborative applications.
         Each component is fully typed, themeable, and designed for composition.
       </p>
 
       {componentsSection.groups.map(group => (
-        <div key={group.id} style={{ marginBottom: 32 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+        <div className="mb-8" key={group.id}>
+          <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
             {group.label}
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
+          <div className="grid grid-cols-[repeat(auto-fill,_minmax(240px,_1fr))] gap-3">
             {group.items.map(item => (
-              <Link
+              <Link className="block py-[14px] px-[18px] border border-border rounded-lg no-underline text-text-primary text-[14px] font-medium transition-[border-color] bg-surface"
                 key={item.id}
                 to={item.path}
-                style={{
-                  display: 'block',
-                  padding: '14px 18px',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  textDecoration: 'none',
-                  color: '#0f172a',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  transition: 'border-color 0.15s, background 0.15s',
-                  background: '#fff',
-                }}
               >
                 {item.label}
               </Link>

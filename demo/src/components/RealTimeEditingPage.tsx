@@ -72,11 +72,11 @@ import { GatewayProvider } from '@connorhoehnslalom/ui-components'
 // GatewayProvider     — Bridges Y.js updates to gateway messages
 // WebSocket Gateway   — Transport layer (binary updates over JSON)`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+        <div className="flex flex-col items-center gap-0">
           {LAYERS.map((layer, i) => (
-            <div key={layer.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div className="flex flex-col items-center" key={layer.label}>
               {i > 0 && (
-                <div style={{ fontSize: 20, color: '#94a3b8', lineHeight: '28px', userSelect: 'none' }}>
+                <div className="text-[20px] text-text-tertiary leading-[28px] select-none">
                   ↕
                 </div>
               )}
@@ -90,8 +90,8 @@ import { GatewayProvider } from '@connorhoehnslalom/ui-components'
                   textAlign: 'center',
                 }}
               >
-                <div style={{ fontWeight: 600, fontSize: 14, color: '#0f172a' }}>{layer.label}</div>
-                <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>{layer.sublabel}</div>
+                <div className="font-semibold text-[14px] text-text-primary">{layer.label}</div>
+                <div className="text-[12px] text-text-secondary mt-[2px]">{layer.sublabel}</div>
               </div>
             </div>
           ))}
@@ -125,9 +125,9 @@ function Editor() {
 }`}
         background="#ffffff"
       >
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
+        <div className="border border-border rounded-lg overflow-hidden">
           {/* Toolbar */}
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', padding: '8px 12px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', alignItems: 'center' }}>
+          <div className="flex gap-1 flex-wrap py-2 px-3 bg-surface-panel border-b border-border items-center">
             {[
               { label: 'B', style: { fontWeight: 700 } },
               { label: 'I', style: { fontStyle: 'italic' } },
@@ -154,23 +154,23 @@ function Editor() {
                 {btn.label}
               </div>
             ))}
-            <div style={{ width: 1, height: 20, background: '#e2e8f0', margin: '0 4px' }} />
-            <div style={{ fontSize: 12, border: '1px solid #d1d5db', borderRadius: 4, padding: '4px 8px', background: '#ffffff', color: '#374151' }}>
+            <div className="w-[1px] h-5 bg-border my-0 mx-1" />
+            <div className="text-[12px] border border-border-field rounded py-1 px-2 bg-surface text-[#374151]">
               Paragraph ▾
             </div>
           </div>
           {/* Content area */}
-          <div style={{ padding: '16px 20px', minHeight: 180, background: '#ffffff', fontSize: 14, lineHeight: 1.7, color: '#1e293b' }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: 18, fontWeight: 600 }}>Meeting Notes</h3>
-            <p style={{ margin: '0 0 8px 0' }}>
+          <div className="py-4 px-5 min-h-45 bg-surface text-[14px] leading-[1.7] text-[#1e293b]">
+            <h3 className="mt-0 mr-0 mb-2 ml-0 text-[18px] font-semibold">Meeting Notes</h3>
+            <p className="mt-0 mr-0 mb-2 ml-0">
               <strong>Date:</strong> May 7, 2026 — Sprint planning session
             </p>
-            <p style={{ margin: '0 0 12px 0', color: '#475569' }}>
+            <p className="mt-0 mr-0 mb-3 ml-0 text-text-secondary">
               Discussed the migration timeline and agreed on the phased approach for the new CRDT backend integration.
             </p>
-            <ul style={{ margin: 0, paddingLeft: 20 }}>
-              <li style={{ marginBottom: 4 }}>Finalize API contract by Friday</li>
-              <li style={{ marginBottom: 4 }}>Set up staging environment for load testing</li>
+            <ul className="m-0 pl-5">
+              <li className="mb-1">Finalize API contract by Friday</li>
+              <li className="mb-1">Set up staging environment for load testing</li>
               <li>Review awareness performance benchmarks</li>
             </ul>
           </div>
@@ -207,47 +207,25 @@ function EditorWithConflicts() {
 }`}
         background="#ffffff"
       >
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
+        <div className="border border-border rounded-lg overflow-hidden">
           {/* Toolbar (compact) */}
-          <div style={{ display: 'flex', gap: 4, padding: '8px 12px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+          <div className="flex gap-1 py-2 px-3 bg-surface-panel border-b border-border">
             {['B', 'I', 'U'].map((l) => (
-              <div key={l} style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #d1d5db', borderRadius: 4, background: '#fff', fontSize: 13, fontWeight: l === 'B' ? 700 : 400 }}>
+              <div className={`w-7 h-7 flex items-center justify-center border border-border-field rounded bg-surface text-[13px] ${l === 'B' ? 'font-bold' : 'font-normal'}`} key={l}>
                 {l}
               </div>
             ))}
           </div>
           {/* Conflict banner */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '10px 14px',
-            background: '#fefce8',
-            border: '1px solid #fde68a',
-            borderLeft: 'none',
-            borderRight: 'none',
-            fontSize: 13,
-            color: '#92400e',
-          }}>
+          <div className="flex items-center justify-between py-[10px] px-[14px] bg-[#fefce8] border border-warning-border border-l-0 border-r-0 text-[13px] text-[#92400e]">
             <span>⚠ Edits merged — your changes are preserved</span>
-            <div style={{
-              width: 22,
-              height: 22,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 4,
-              cursor: 'pointer',
-              fontSize: 14,
-              color: '#92400e',
-              fontWeight: 600,
-            }}>
+            <div className="w-[22px] h-[22px] flex items-center justify-center rounded cursor-pointer text-[14px] text-[#92400e] font-semibold">
               ✕
             </div>
           </div>
           {/* Content area */}
-          <div style={{ padding: '16px 20px', minHeight: 120, background: '#ffffff', fontSize: 14, lineHeight: 1.7, color: '#1e293b' }}>
-            <p style={{ margin: 0 }}>Both users edited the introduction paragraph simultaneously. Y.js merged both changes — no data was lost.</p>
+          <div className="py-4 px-5 min-h-30 bg-surface text-[14px] leading-[1.7] text-[#1e293b]">
+            <p className="m-0">Both users edited the introduction paragraph simultaneously. Y.js merged both changes — no data was lost.</p>
           </div>
         </div>
       </ExampleBlock>
@@ -283,20 +261,14 @@ function ParticipantsPanel({ provider }) {
   )
 }`}
       >
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 20 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', marginBottom: 16 }}>
+        <div className="bg-surface border border-border rounded-lg p-5">
+          <div className="text-[14px] font-semibold text-text-primary mb-4">
             3 participants
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {PARTICIPANTS.map((p) => (
-              <div
+              <div className={`flex items-center gap-[10px] ${p.idle ? 'opacity-50' : 'opacity-100'}`}
                 key={p.name}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  opacity: p.idle ? 0.5 : 1,
-                }}
               >
                 {/* Avatar */}
                 <div style={{
@@ -314,7 +286,7 @@ function ParticipantsPanel({ provider }) {
                   {p.name.charAt(0)}
                 </div>
                 {/* Name */}
-                <span style={{ fontSize: 14, fontWeight: 500, color: '#0f172a', minWidth: 100 }}>{p.name}</span>
+                <span className="text-[14px] font-medium text-text-primary min-w-25">{p.name}</span>
                 {/* Mode badge */}
                 <span style={{
                   fontSize: 11,
@@ -327,10 +299,10 @@ function ParticipantsPanel({ provider }) {
                   {p.mode}
                 </span>
                 {/* Section */}
-                <span style={{ fontSize: 12, color: '#64748b' }}>{'§'} {p.section}</span>
+                <span className="text-[12px] text-[#64748b]">{'§'} {p.section}</span>
                 {/* Idle label */}
                 {p.idle && (
-                  <span style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>idle</span>
+                  <span className="text-[11px] text-text-tertiary italic">idle</span>
                 )}
               </div>
             ))}
@@ -364,11 +336,11 @@ function MyEditor({ provider }) {
   awareness.updateIdle(false)
 }`}
       >
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div className="bg-surface border border-border rounded-lg p-5">
+          <div className="text-[13px] font-semibold text-text-secondary mb-3 uppercase tracking-[0.05em]">
             Awareness State (per client)
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="flex flex-col gap-2">
             {[
               { key: 'userId', value: '"user-123"', color: '#4ade80' },
               { key: 'displayName', value: '"Alice Smith"', color: '#4ade80' },
@@ -378,8 +350,8 @@ function MyEditor({ provider }) {
               { key: 'lastSeen', value: '1712345678000', color: '#fbbf24' },
               { key: 'idle', value: 'false', color: '#93c5fd' },
             ].map((field) => (
-              <div key={field.key} style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'monospace', fontSize: 13 }}>
-                <span style={{ color: '#7c3aed', fontWeight: 500, minWidth: 140 }}>{field.key}:</span>
+              <div className="flex items-center gap-2 font-mono text-[13px]" key={field.key}>
+                <span className="text-[#7c3aed] font-medium min-w-35">{field.key}:</span>
                 <span style={{ color: field.color }}>{field.value}</span>
                 {field.swatch && (
                   <span style={{ width: 14, height: 14, borderRadius: 3, background: field.swatch, display: 'inline-block', border: '1px solid #e2e8f0' }} />
@@ -412,9 +384,9 @@ function DocumentView({ documentId, ws, onMessage }) {
   return <Editor ydoc={ydoc} provider={provider} />
 }`}
       >
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 20 }}>
+        <div className="bg-surface border border-border rounded-lg p-5">
           {/* Connection states */}
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+          <div className="flex gap-3 mb-5 flex-wrap">
             {[
               { label: 'Connecting', color: '#f59e0b', bg: '#fef3c7' },
               { label: 'Synced', color: '#10b981', bg: '#dcfce7' },
@@ -433,20 +405,13 @@ function DocumentView({ documentId, ws, onMessage }) {
             ))}
           </div>
           {/* Flow diagram */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', fontFamily: 'monospace', fontSize: 12, color: '#475569' }}>
+          <div className="flex items-center gap-2 flex-wrap font-mono text-[12px] text-text-secondary">
             {['Connect', 'Subscribe', 'Receive Snapshot', 'Synced', 'Stream Updates'].map((step, i) => (
-              <span key={step} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  padding: '4px 10px',
-                  borderRadius: 4,
-                  background: i === 3 ? '#dcfce7' : '#f1f5f9',
-                  color: i === 3 ? '#10b981' : '#334155',
-                  fontWeight: 500,
-                  whiteSpace: 'nowrap',
-                }}>
+              <span className="flex items-center gap-2" key={step}>
+                <span className={`py-1 px-[10px] rounded font-medium whitespace-nowrap ${i === 3 ? 'bg-[#dcfce7] text-[#10b981]' : 'bg-surface-hover text-[#334155]'}`}>
                   {step}
                 </span>
-                {i < 4 && <span style={{ color: '#94a3b8' }}>{'→'}</span>}
+                {i < 4 && <span className="text-text-tertiary">{'→'}</span>}
               </span>
             ))}
           </div>
@@ -494,44 +459,44 @@ function DocumentEditor({ documentId }) {
   reviewSection('sec-2', 'approved', 'No issues found')
 }`}
       >
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginBottom: 16, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div className="bg-surface border border-border rounded-lg p-5">
+          <div className="text-[13px] font-semibold text-text-secondary mb-4 uppercase tracking-[0.05em]">
             Document State
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="flex flex-col gap-[14px]">
             {/* Meta */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 90 }}>Document:</span>
-              <span style={{ fontSize: 13, color: '#475569' }}>Sprint Planning Notes</span>
-              <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: '#dcfce7', color: '#10b981', fontWeight: 600 }}>synced</span>
+            <div className="flex items-center gap-[10px]">
+              <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Document:</span>
+              <span className="text-[13px] text-text-secondary">Sprint Planning Notes</span>
+              <span className="text-[11px] py-[2px] px-2 rounded-[10px] bg-[#dcfce7] text-[#10b981] font-semibold">synced</span>
             </div>
             {/* Sections */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 90 }}>Sections:</span>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <div className="flex items-start gap-[10px]">
+              <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Sections:</span>
+              <div className="flex flex-col gap-1">
                 {['Introduction', 'Action Items', 'Decisions'].map((s) => (
-                  <span key={s} style={{ fontSize: 13, color: '#475569' }}>{s}</span>
+                  <span className="text-[13px] text-text-secondary" key={s}>{s}</span>
                 ))}
               </div>
             </div>
             {/* Participants */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 90 }}>Participants:</span>
-              <div style={{ display: 'flex', gap: -4 }}>
+            <div className="flex items-center gap-[10px]">
+              <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Participants:</span>
+              <div className="flex gap-[-4px]">
                 {['#6366f1', '#10b981', '#f59e0b'].map((c, i) => (
                   <div key={i} style={{ width: 24, height: 24, borderRadius: '50%', background: c, border: '2px solid #fff', marginLeft: i > 0 ? -6 : 0 }} />
                 ))}
               </div>
             </div>
             {/* Comments */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 90 }}>Comments:</span>
-              <span style={{ fontSize: 13, color: '#475569' }}>4 threads</span>
+            <div className="flex items-center gap-[10px]">
+              <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Comments:</span>
+              <span className="text-[13px] text-text-secondary">4 threads</span>
             </div>
             {/* Reviews */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', minWidth: 90 }}>Reviews:</span>
-              <span style={{ fontSize: 13, color: '#475569' }}>2 sections reviewed</span>
+            <div className="flex items-center gap-[10px]">
+              <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Reviews:</span>
+              <span className="text-[13px] text-text-secondary">2 sections reviewed</span>
             </div>
           </div>
         </div>
@@ -557,44 +522,44 @@ ydoc.transact(() => {
   meta.set('updatedAt', new Date().toISOString())
 })`}
       >
-        <div style={{ background: '#1e293b', borderRadius: 8, padding: 20, fontFamily: 'monospace', fontSize: 13, lineHeight: 1.8 }}>
-          <div style={{ color: '#e2e8f0' }}>
-            <span style={{ color: '#93c5fd', fontWeight: 600 }}>Y.Doc</span>
+        <div className="bg-[#1e293b] rounded-lg p-5 font-mono text-[13px] leading-[1.8]">
+          <div className="text-border">
+            <span className="text-[#93c5fd] font-semibold">Y.Doc</span>
             {'\n'}
-            <span style={{ color: '#64748b' }}>{'├── '}</span>
-            <span style={{ color: '#c4b5fd' }}>Y.Map</span>
-            <span style={{ color: '#64748b' }}>(</span>
-            <span style={{ color: '#4ade80' }}>"meta"</span>
-            <span style={{ color: '#64748b' }}>)</span>
-            <span style={{ color: '#94a3b8' }}> {'→'} {'{'} title, description, ownerId, status, ... {'}'}</span>
+            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-[#64748b]">(</span>
+            <span className="text-[#4ade80]">"meta"</span>
+            <span className="text-[#64748b]">)</span>
+            <span className="text-text-tertiary"> {'→'} {'{'} title, description, ownerId, status, ... {'}'}</span>
             {'\n'}
-            <span style={{ color: '#64748b' }}>{'├── '}</span>
-            <span style={{ color: '#c4b5fd' }}>Y.Array</span>
-            <span style={{ color: '#64748b' }}>(</span>
-            <span style={{ color: '#4ade80' }}>"sections"</span>
-            <span style={{ color: '#64748b' }}>)</span>
-            <span style={{ color: '#94a3b8' }}> {'→'} [{'{'} id, title, type, items {'}'}]</span>
+            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-[#c4b5fd]">Y.Array</span>
+            <span className="text-[#64748b]">(</span>
+            <span className="text-[#4ade80]">"sections"</span>
+            <span className="text-[#64748b]">)</span>
+            <span className="text-text-tertiary"> {'→'} [{'{'} id, title, type, items {'}'}]</span>
             {'\n'}
-            <span style={{ color: '#64748b' }}>{'├── '}</span>
-            <span style={{ color: '#c4b5fd' }}>Y.Map</span>
-            <span style={{ color: '#64748b' }}>(</span>
-            <span style={{ color: '#4ade80' }}>"comments"</span>
-            <span style={{ color: '#64748b' }}>)</span>
-            <span style={{ color: '#94a3b8' }}> {'→'} {'{'} [sectionId]: CommentThread[] {'}'}</span>
+            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-[#64748b]">(</span>
+            <span className="text-[#4ade80]">"comments"</span>
+            <span className="text-[#64748b]">)</span>
+            <span className="text-text-tertiary"> {'→'} {'{'} [sectionId]: CommentThread[] {'}'}</span>
             {'\n'}
-            <span style={{ color: '#64748b' }}>{'├── '}</span>
-            <span style={{ color: '#c4b5fd' }}>Y.Map</span>
-            <span style={{ color: '#64748b' }}>(</span>
-            <span style={{ color: '#4ade80' }}>"sectionReviews"</span>
-            <span style={{ color: '#64748b' }}>)</span>
-            <span style={{ color: '#94a3b8' }}> {'→'} {'{'} [sectionId:userId]: SectionReview {'}'}</span>
+            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-[#64748b]">(</span>
+            <span className="text-[#4ade80]">"sectionReviews"</span>
+            <span className="text-[#64748b]">)</span>
+            <span className="text-text-tertiary"> {'→'} {'{'} [sectionId:userId]: SectionReview {'}'}</span>
             {'\n'}
-            <span style={{ color: '#64748b' }}>{'└── '}</span>
-            <span style={{ color: '#c4b5fd' }}>Y.XmlFragment</span>
-            <span style={{ color: '#64748b' }}>(</span>
-            <span style={{ color: '#4ade80' }}>"section:{'<id>'}"</span>
-            <span style={{ color: '#64748b' }}>)</span>
-            <span style={{ color: '#94a3b8' }}> {'→'} Rich-text content per section</span>
+            <span className="text-[#64748b]">{'└── '}</span>
+            <span className="text-[#c4b5fd]">Y.XmlFragment</span>
+            <span className="text-[#64748b]">(</span>
+            <span className="text-[#4ade80]">"section:{'<id>'}"</span>
+            <span className="text-[#64748b]">)</span>
+            <span className="text-text-tertiary"> {'→'} Rich-text content per section</span>
           </div>
         </div>
       </ExampleBlock>
@@ -622,7 +587,7 @@ ws.sendMessage({ service: 'crdt', action: 'update', channel: 'doc:abc-123', upda
 // 5. Awareness updates (debounced at 50ms)
 ws.sendMessage({ service: 'crdt', action: 'awareness', channel: 'doc:abc-123', update: 'base64...' })`}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="flex flex-col gap-[10px]">
           {[
             { direction: '→', label: 'Subscribe', msg: '{ service: \'crdt\', action: \'subscribe\', channel: \'doc-123\' }' },
             { direction: '←', label: 'Snapshot', msg: '{ type: \'crdt:snapshot\', channel: \'doc-123\', snapshot: \'base64...\' }' },
@@ -630,39 +595,14 @@ ws.sendMessage({ service: 'crdt', action: 'awareness', channel: 'doc:abc-123', u
             { direction: '→', label: 'Publish', msg: '{ service: \'crdt\', action: \'update\', channel: \'doc-123\', update: \'base64...\' }' },
             { direction: '→', label: 'Awareness', msg: '{ service: \'crdt\', action: \'awareness\', channel: \'doc-123\', update: \'base64...\' }' },
           ].map((item, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{
-                fontSize: 16,
-                color: item.direction === '→' ? '#3b82f6' : '#10b981',
-                fontWeight: 700,
-                width: 20,
-                textAlign: 'center',
-              }}>
+            <div className="flex items-center gap-[10px]" key={i}>
+              <span className={`text-[16px] font-bold w-5 text-center ${item.direction === '→' ? 'text-[#3b82f6]' : 'text-[#10b981]'}`}>
                 {item.direction}
               </span>
-              <span style={{
-                fontSize: 11,
-                fontWeight: 600,
-                padding: '2px 8px',
-                borderRadius: 4,
-                background: item.direction === '→' ? '#dbeafe' : '#dcfce7',
-                color: item.direction === '→' ? '#1d4ed8' : '#047857',
-                minWidth: 70,
-                textAlign: 'center',
-              }}>
+              <span className={`text-[11px] font-semibold py-[2px] px-2 rounded min-w-[70px] text-center ${item.direction === '→' ? 'bg-[#dbeafe] text-[#1d4ed8]' : 'bg-[#dcfce7] text-[#047857]'}`}>
                 {item.label}
               </span>
-              <code style={{
-                flex: 1,
-                fontSize: 12,
-                fontFamily: 'monospace',
-                background: '#1e293b',
-                color: '#e2e8f0',
-                padding: '6px 10px',
-                borderRadius: 4,
-                overflowX: 'auto',
-                whiteSpace: 'nowrap',
-              }}>
+              <code className="flex-[1] text-[12px] font-mono bg-[#1e293b] text-border py-[6px] px-[10px] rounded overflow-x-auto whitespace-nowrap">
                 {item.msg}
               </code>
             </div>
@@ -671,8 +611,8 @@ ws.sendMessage({ service: 'crdt', action: 'awareness', channel: 'doc:abc-123', u
       </ExampleBlock>
 
       {/* ─── 10. Props Reference ──────────────────────────────────────────── */}
-      <div id="props" style={{ marginBottom: 40 }}>
-        <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 20px 0', color: '#0f172a' }}>Props Reference</h3>
+      <div className="mb-10" id="props">
+        <h3 className="text-[18px] font-semibold mt-0 mr-0 mb-5 ml-0 text-text-primary">Props Reference</h3>
 
         <PropsTable
           componentName="SharedTextEditor"

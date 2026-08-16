@@ -13,17 +13,17 @@ const codeBlockStyle: React.CSSProperties = {
 export default function QuickStartPage() {
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         Quick Start
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6]">
         Get a component rendering in under 5 minutes.
       </p>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Minimal example
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
+      <p className="text-[14px] text-text-secondary mb-3">
         Import a component and render it inside your app:
       </p>
       <pre style={codeBlockStyle}>
@@ -40,10 +40,10 @@ function App() {
 }`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         With providers (for real-time features)
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
+      <p className="text-[14px] text-text-secondary mb-3">
         To use collaboration hooks, wrap your app in the required context providers:
       </p>
       <pre style={codeBlockStyle}>
@@ -64,7 +64,7 @@ function App() {
 }`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Using hooks
       </h2>
       <pre style={codeBlockStyle}>
@@ -88,15 +88,7 @@ function CollabPanel() {
 }`}
       </pre>
 
-      <div style={{
-        padding: 16,
-        background: '#eff6ff',
-        border: '1px solid #bfdbfe',
-        borderRadius: 8,
-        fontSize: 14,
-        color: '#1e40af',
-        lineHeight: 1.5,
-      }}>
+      <div className="p-4 bg-info-bg border border-info-border rounded-lg text-[14px] text-[#1e40af] leading-[1.5]">
         <strong>Next step:</strong> Explore the Components section in the sidebar to see interactive examples
         of every available component.
       </div>

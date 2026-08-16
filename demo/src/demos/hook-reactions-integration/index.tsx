@@ -98,23 +98,16 @@ function ReactionsViewInner({ channel, isMock }: { channel: string; isMock: bool
       <WrappedReactionsOverlay reactions={reactionsHook} />
 
       {/* Reaction history strip */}
-      <div style={{ marginTop: 16, minHeight: 40 }}>
+      <div className="mt-4 min-h-10">
         {rmReactions.length === 0 ? (
-          <p style={{ color: '#94a3b8', fontSize: 13 }}>
+          <p className="text-text-tertiary text-[13px]">
             {isMock ? 'Auto-reactions firing shortly...' : 'Click a reaction to send'}
           </p>
         ) : (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          <div className="flex flex-wrap gap-2">
             {rmReactions.slice(-20).map((r: RMReaction) => (
-              <span
+              <span className="py-1 px-[10px] bg-surface-hover border border-border rounded-2xl text-[18px]"
                 key={r.id}
-                style={{
-                  padding: '4px 10px',
-                  background: '#f1f5f9',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 16,
-                  fontSize: 18,
-                }}
               >
                 {r.emoji}
               </span>
@@ -122,7 +115,7 @@ function ReactionsViewInner({ channel, isMock }: { channel: string; isMock: bool
           </div>
         )}
       </div>
-      <p style={{ fontSize: 12, color: '#cbd5e1', marginTop: 8 }}>
+      <p className="text-[12px] text-text-disabled mt-2">
         {rmReactions.length} reaction(s) in channel (capped at 50)
       </p>
     </div>
@@ -201,35 +194,25 @@ function LiveReactionsView({ url, channel }: { url: string; channel: string }) {
 
 export default function HookReactionsIntegrationDemo() {
   return (
-    <div style={{ padding: 32, maxWidth: 640, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-160 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         ReactionButtons + ReactionsOverlay + useReactions
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 8, lineHeight: 1.6 }}>
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<ReactionButtons>'}
         </code>{' '}
         and{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<ReactionsOverlay>'}
         </code>{' '}
         wired to{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           useReactions('demo:reactions')
         </code>.
         Click any emoji button or watch the auto-fired reactions below.
       </p>
-      <div
-        style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: 12,
-          background: IS_MOCK ? '#fef9c3' : '#dcfce7',
-          color: IS_MOCK ? '#854d0e' : '#14532d',
-          fontSize: 12,
-          fontWeight: 600,
-          marginBottom: 24,
-        }}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
       >
         {IS_MOCK ? 'MOCK MODE' : `LIVE — ${GATEWAY_URL}`}
       </div>

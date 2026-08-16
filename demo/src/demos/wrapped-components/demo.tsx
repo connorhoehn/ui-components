@@ -166,10 +166,10 @@ function RawColumn() {
 
   return (
     <div>
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: '#374151', marginBottom: 8 }}>
+      <h3 className="text-[14px] font-bold text-[#374151] mb-2">
         Raw (manual adapter)
       </h3>
-      <code style={{ fontSize: 11, color: '#94a3b8', display: 'block', marginBottom: 12 }}>
+      <code className="text-[11px] text-text-tertiary block mb-3">
         content: m.message  // rename in every component
       </code>
       <ChatPanel
@@ -191,10 +191,10 @@ function WrappedColumn() {
 
   return (
     <div>
-      <h3 style={{ fontSize: 14, fontWeight: 700, color: '#374151', marginBottom: 8 }}>
+      <h3 className="text-[14px] font-bold text-[#374151] mb-2">
         Wrapped (adapter built-in)
       </h3>
-      <code style={{ fontSize: 11, color: '#94a3b8', display: 'block', marginBottom: 12 }}>
+      <code className="text-[11px] text-text-tertiary block mb-3">
         {'<WrappedChatPanel chat={chatHook} presence={presenceHook} />'}
       </code>
       <WrappedPresencePanel presence={presenceHook} currentClientId="demo-client-001" />
@@ -211,29 +211,29 @@ export default function WrappedComponentsDemo() {
   const dispatchRef = useRef<DispatchFrame | null>(null);
 
   return (
-    <div style={{ padding: 32, maxWidth: 900, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-225 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         Wrapped Components vs Raw Hook Wiring
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 24, lineHeight: 1.6 }}>
+      <p className="text-[14px] text-[#64748b] mb-6 leading-[1.6]">
         Both columns receive the same mock data. The "Raw" column shows the manual adapter
         every app currently writes. The "Wrapped" column uses{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px]">
           WrappedChatPanel
         </code>{' '}
         /{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px]">
           WrappedPresencePanel
         </code>{' '}
         from{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px]">
           @connorhoehnslalom/ui-components/integrations/realtime-modules
         </code>.
       </p>
 
       <MockGatewayProvider dispatchRef={dispatchRef}>
         <MockDataPump dispatchRef={dispatchRef} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+        <div className="grid grid-cols-[1fr_1fr] gap-8">
           <RawColumn />
           <WrappedColumn />
         </div>

@@ -88,7 +88,7 @@ function DemoSparkline({
     .join(' ');
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block' }}>
+    <svg className="block" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       <polyline fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" points={points} />
     </svg>
   );
@@ -121,7 +121,7 @@ export default function DataDisplayPage() {
   useRegisterToc(tocItems);
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <div className="max-w-240 mx-auto my-0">
       <style>{pulseKeyframes}</style>
 
       <PageHeader
@@ -154,11 +154,11 @@ export default function DataDisplayPage() {
 <Chip tone="danger" solid>Critical</Chip>`}
       >
         <div>
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+          <div className="mb-4">
+            <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.05em] mb-2">
               Soft (default)
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+            <div className="flex flex-wrap gap-2 items-center">
               <DemoChip color="blue">Active</DemoChip>
               <DemoChip color="green">Healthy</DemoChip>
               <DemoChip color="amber">Degraded</DemoChip>
@@ -168,10 +168,10 @@ export default function DataDisplayPage() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+            <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.05em] mb-2">
               Solid
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+            <div className="flex flex-wrap gap-2 items-center">
               <DemoChip color="blue" variant="solid">Active</DemoChip>
               <DemoChip color="green" variant="solid">Healthy</DemoChip>
               <DemoChip color="amber" variant="solid">Degraded</DemoChip>
@@ -198,17 +198,17 @@ export default function DataDisplayPage() {
 <Chip tone="info" size="xs">Extra small</Chip>
 <Chip tone="success" size="xs">Deployed</Chip>`}
       >
-        <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+        <div className="flex gap-6 items-center">
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>sm (default)</div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">sm (default)</div>
+            <div className="flex gap-[6px]">
               <DemoChip color="blue" size="sm">Default size</DemoChip>
               <DemoChip color="green" size="sm">Success</DemoChip>
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>xs</div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">xs</div>
+            <div className="flex gap-[6px]">
               <DemoChip color="blue" size="xs">Extra small</DemoChip>
               <DemoChip color="green" size="xs">Deployed</DemoChip>
               <DemoChip color="red" size="xs">Failed</DemoChip>
@@ -231,7 +231,7 @@ export default function DataDisplayPage() {
 <Chip tone="success" mono>128</Chip>
 <Chip tone="purple" mono solid>99+</Chip>`}
       >
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div className="flex gap-3 items-center">
           <DemoChip color="blue" mono>42</DemoChip>
           <DemoChip color="red" variant="solid" mono>3</DemoChip>
           <DemoChip color="green" mono>128</DemoChip>
@@ -259,28 +259,28 @@ export default function DataDisplayPage() {
 // Flat/stable (gray)
 <Sparkline data={[10, 11, 10, 10, 11, 10, 10, 11]} width={80} height={24} color="#64748b" />`}
       >
-        <div style={{ display: 'flex', gap: 32, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+        <div className="flex gap-8 items-end flex-wrap">
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>Upward trend</div>
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '8px 12px', display: 'inline-block' }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Upward trend</div>
+            <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <DemoSparkline data={[4, 6, 5, 8, 7, 12, 11, 15, 14, 18]} width={80} height={24} color="#16a34a" />
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>Downward trend</div>
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '8px 12px', display: 'inline-block' }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Downward trend</div>
+            <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <DemoSparkline data={[18, 16, 17, 14, 12, 13, 10, 9, 7, 5]} width={80} height={24} color="#dc2626" />
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>Flat / stable</div>
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '8px 12px', display: 'inline-block' }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Flat / stable</div>
+            <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <DemoSparkline data={[10, 11, 10, 10, 11, 10, 11, 10, 10, 11]} width={80} height={24} color="#64748b" />
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>Volatile (purple, wider)</div>
-            <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '8px 12px', display: 'inline-block' }}>
+            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Volatile (purple, wider)</div>
+            <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <DemoSparkline data={[3, 14, 8, 18, 5, 16, 2, 19, 7, 15, 4, 17]} width={120} height={24} color="#9333ea" />
             </div>
           </div>
@@ -313,24 +313,24 @@ export default function DataDisplayPage() {
   </div>
 </div>`}
       >
-        <div style={{ maxWidth: 420 }}>
+        <div className="max-w-105">
           {/* Card-style skeleton */}
-          <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, marginBottom: 12 }}>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
+          <div className="bg-surface border border-border rounded-lg p-4 mb-3">
+            <div className="flex gap-3 mb-[14px]">
               <SkeletonRect width={44} height={44} borderRadius={22} />
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+              <div className="flex-[1] flex flex-col gap-2 justify-center">
                 <SkeletonRect width="60%" height={14} />
                 <SkeletonRect width="40%" height={10} />
               </div>
             </div>
             <SkeletonRect width="100%" height={12} />
-            <div style={{ marginTop: 8 }} />
+            <div className="mt-2" />
             <SkeletonRect width="90%" height={12} />
-            <div style={{ marginTop: 8 }} />
+            <div className="mt-2" />
             <SkeletonRect width="70%" height={12} />
           </div>
           {/* Row skeletons */}
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div className="flex gap-[10px]">
             <SkeletonRect width={100} height={80} borderRadius={8} />
             <SkeletonRect width={100} height={80} borderRadius={8} />
             <SkeletonRect width={100} height={80} borderRadius={8} />
@@ -364,30 +364,30 @@ export default function DataDisplayPage() {
   onAction={() => clearFilters()}
 />`}
       >
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <div className="flex gap-4 flex-wrap">
           {/* Empty state with action */}
-          <div style={{ flex: '1 1 260px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 200, padding: 24, textAlign: 'center' }}>
-              <div style={{ width: 64, height: 64, borderRadius: 32, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, marginBottom: 12 }}>
+          <div className="flex-[1 1 260px] border border-border rounded-lg bg-surface">
+            <div className="flex flex-col items-center justify-center min-h-50 p-6 text-center">
+              <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 📋
               </div>
-              <div style={{ fontSize: 16, fontWeight: 600, color: '#334155', marginBottom: 4 }}>No items yet</div>
-              <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 240, lineHeight: 1.5, marginBottom: 14 }}>
+              <div className="text-[16px] font-semibold text-[#334155] mb-1">No items yet</div>
+              <div className="text-[13px] text-text-tertiary max-w-60 leading-[1.5] mb-[14px]">
                 Create your first item to get started with your project.
               </div>
-              <button style={{ padding: '8px 18px', fontSize: 13, fontWeight: 600, background: '#646cff', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
+              <button className="py-2 px-[18px] text-[13px] font-semibold bg-primary text-surface border-0 rounded-md cursor-pointer">
                 Create Item
               </button>
             </div>
           </div>
           {/* Empty state without action */}
-          <div style={{ flex: '1 1 260px', border: '1px solid #e2e8f0', borderRadius: 8, background: '#fff' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 200, padding: 24, textAlign: 'center' }}>
-              <div style={{ width: 64, height: 64, borderRadius: 32, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, marginBottom: 12 }}>
+          <div className="flex-[1 1 260px] border border-border rounded-lg bg-surface">
+            <div className="flex flex-col items-center justify-center min-h-50 p-6 text-center">
+              <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 🔍
               </div>
-              <div style={{ fontSize: 16, fontWeight: 600, color: '#334155', marginBottom: 4 }}>No results found</div>
-              <div style={{ fontSize: 13, color: '#94a3b8', maxWidth: 240, lineHeight: 1.5 }}>
+              <div className="text-[16px] font-semibold text-[#334155] mb-1">No results found</div>
+              <div className="text-[13px] text-text-tertiary max-w-60 leading-[1.5]">
                 Try adjusting your search or filter criteria to find what you need.
               </div>
             </div>
@@ -421,7 +421,7 @@ export default function DataDisplayPage() {
   onClick={() => showDetail(event)}
 />`}
       >
-        <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden', background: '#fff' }}>
+        <div className="border border-border rounded-lg overflow-hidden bg-surface">
           {[
             { severity: 'info', color: '#64748b', ts: '09:14:22', type: 'pipeline.run.started', summary: 'ETL pipeline began execution' },
             { severity: 'success', color: '#16a34a', ts: '09:14:28', type: 'pipeline.step.completed', summary: 'Extract step finished (240 records)' },
@@ -429,21 +429,13 @@ export default function DataDisplayPage() {
             { severity: 'warning', color: '#d97706', ts: '09:15:01', type: 'pipeline.approval.requested', summary: 'Manual retry requires approval' },
             { severity: 'success', color: '#16a34a', ts: '09:15:12', type: 'pipeline.run.completed', summary: 'Pipeline completed after retry' },
           ].map((event, idx) => (
-            <div
+            <div className={`flex items-center gap-[10px] py-2 px-3 ${idx < 4 ? 'border-b border-surface-hover' : 'border-b-0'} ${idx === 2 ? 'bg-danger-bg' : 'bg-transparent'}`}
               key={idx}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '8px 12px',
-                borderBottom: idx < 4 ? '1px solid #f1f5f9' : 'none',
-                background: idx === 2 ? '#fef2f2' : 'transparent',
-              }}
             >
               <span style={{ width: 8, height: 8, borderRadius: 4, background: event.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 11, color: '#94a3b8', fontFamily: 'monospace', width: 64, flexShrink: 0 }}>{event.ts}</span>
+              <span className="text-[11px] text-text-tertiary font-mono w-16 shrink-0">{event.ts}</span>
               <span style={{ fontSize: 11, fontWeight: 600, color: event.color, flexShrink: 0, minWidth: 180 }}>{event.type}</span>
-              <span style={{ fontSize: 13, color: '#334155', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{event.summary}</span>
+              <span className="text-[13px] text-[#334155] flex-[1] overflow-hidden text-ellipsis whitespace-nowrap">{event.summary}</span>
             </div>
           ))}
         </div>
@@ -453,8 +445,8 @@ export default function DataDisplayPage() {
       {/*  PROPS TABLE                                                       */}
       {/* ------------------------------------------------------------------ */}
 
-      <div id="props" style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 24 }}>API Reference</h2>
+      <div className="mt-12" id="props">
+        <h2 className="text-[22px] font-bold text-text-primary mb-6">API Reference</h2>
 
         <PropsTable
           componentName="Chip"

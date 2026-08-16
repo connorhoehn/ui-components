@@ -88,56 +88,26 @@ export function ChatMessages() {
   }, [messages, typingUser]);
 
   return (
-    <div
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        background: '#fff',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
-        overflow: 'hidden',
-      }}
+    <div className="flex-[1] flex flex-col bg-surface border border-border rounded-lg overflow-hidden"
     >
       {/* Header */}
-      <div
-        style={{
-          padding: '12px 16px',
-          borderBottom: '1px solid #e2e8f0',
-          fontWeight: 600,
-          fontSize: 14,
-          color: '#1a1a2e',
-        }}
+      <div className="py-3 px-4 border-b border-border font-semibold text-[14px] text-[#1a1a2e]"
       >
         # general
       </div>
 
       {/* Messages */}
-      <div
+      <div className="flex-[1] overflow-y-auto p-4 flex flex-col gap-3"
         ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: 16,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 12,
-        }}
       >
         {messages.length === 0 && (
-          <div
-            style={{
-              color: '#94a3b8',
-              fontSize: 13,
-              textAlign: 'center',
-              marginTop: 40,
-            }}
+          <div className="text-text-tertiary text-[13px] text-center mt-10"
           >
             Messages will appear here as the simulation runs...
           </div>
         )}
         {messages.map((msg) => (
-          <div key={msg.messageId} style={{ display: 'flex', gap: 10 }}>
+          <div className="flex gap-[10px]" key={msg.messageId}>
             {/* Avatar */}
             <div
               style={{
@@ -158,46 +128,29 @@ export function ChatMessages() {
             </div>
 
             {/* Bubble */}
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <span style={{ fontWeight: 600, fontSize: 13, color: '#1a1a2e' }}>
+            <div className="flex-[1]">
+              <div className="flex items-baseline gap-2">
+                <span className="font-semibold text-[13px] text-[#1a1a2e]">
                   {msg.displayName}
                 </span>
-                <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                <span className="text-[11px] text-text-tertiary">
                   {new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
                 </span>
               </div>
-              <div
-                style={{
-                  marginTop: 4,
-                  padding: '8px 12px',
-                  background: '#f1f5f9',
-                  borderRadius: '4px 12px 12px 12px',
-                  fontSize: 14,
-                  color: '#334155',
-                  lineHeight: 1.5,
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
-                }}
+              <div className="mt-1 py-2 px-3 bg-surface-hover rounded-tl rounded-tr-xl rounded-br-xl rounded-bl-xl text-[14px] text-[#334155] leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
               >
                 {msg.text}
               </div>
 
               {/* Reactions */}
               {msg.reactions.length > 0 && (
-                <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                <div className="flex gap-1 mt-1">
                   {msg.reactions.map((r, i) => (
-                    <span
+                    <span className="py-[2px] px-[6px] bg-surface-hover rounded-[10px] text-[12px] border border-border"
                       key={i}
-                      style={{
-                        padding: '2px 6px',
-                        background: '#f1f5f9',
-                        borderRadius: 10,
-                        fontSize: 12,
-                        border: '1px solid #e2e8f0',
-                      }}
                       title={`${r.displayName} reacted`}
                     >
                       {r.emoji}
@@ -211,7 +164,7 @@ export function ChatMessages() {
 
         {/* Typing indicator */}
         {typingUser && (
-          <div style={{ padding: '4px 0' }}>
+          <div className="py-1 px-0">
             <TypingIndicator names={[typingUser]} />
           </div>
         )}

@@ -130,22 +130,22 @@ export default function VideoStreamingDemo() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', height: '100%', background: '#0a0a0f', color: '#e2e8f0' }}>
+    <div className="flex h-full bg-[#0a0a0f] text-border">
       {/* Main video area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="flex-[1] flex flex-col min-w-0">
         {/* Top bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 16px', borderBottom: '1px solid #1e293b' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="flex items-center justify-between py-2 px-4 border-b border-[#1e293b]">
+          <div className="flex items-center gap-3">
             <StatusStrip phase="live" bitrateBps={metrics.bitrateBps} viewerCount={viewerCount} duration={elapsed} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="flex items-center gap-2">
             <NetworkQualityBadge quality={quality} />
           </div>
         </div>
 
         {/* Video player with reactions */}
-        <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ position: 'relative', width: '100%', maxWidth: 800 }}>
+        <div className="flex-[1] relative flex items-center justify-center p-4">
+          <div className="relative w-full max-w-200">
             <VideoPlayer
               src="/assets/sample.mp4"
               autoPlay
@@ -153,29 +153,29 @@ export default function VideoStreamingDemo() {
               loop
             />
             <ReactionOverlay reactions={reactions} />
-            <ViewerCount count={viewerCount} style={{ position: 'absolute', top: 8, left: 8 }} />
+            <ViewerCount className="absolute top-2 left-2" count={viewerCount} />
           </div>
         </div>
 
         {/* Reaction picker */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 16px', borderTop: '1px solid #1e293b' }}>
+        <div className="flex justify-center py-2 px-4 border-t border-[#1e293b]">
           <ReactionPicker onReact={handleReact} />
         </div>
       </div>
 
       {/* Right sidebar */}
-      <div style={{ width: 300, borderLeft: '1px solid #1e293b', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="w-75 border-l border-[#1e293b] flex flex-col overflow-hidden">
         {/* Participants grid */}
-        <div style={{ flex: 1, padding: 12, overflow: 'auto' }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <div className="flex-[1] p-3 overflow-auto">
+          <div className="text-[12px] font-semibold text-text-tertiary mb-2 uppercase tracking-[0.5px]">
             Participants ({participants.length})
           </div>
           <VideoGrid participants={participants} />
         </div>
 
         {/* Stats panel */}
-        <div style={{ padding: 12, borderTop: '1px solid #1e293b' }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#94a3b8', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+        <div className="p-3 border-t border-[#1e293b]">
+          <div className="text-[12px] font-semibold text-text-tertiary mb-2 uppercase tracking-[0.5px]">
             Stream Stats
           </div>
           <StatsCard metrics={metrics} />

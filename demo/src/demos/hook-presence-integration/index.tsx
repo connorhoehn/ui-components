@@ -200,31 +200,21 @@ function LivePresenceView({ url, channel }: { url: string; channel: string }) {
 
 export default function HookPresenceIntegrationDemo() {
   return (
-    <div style={{ padding: 32, maxWidth: 480, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-120 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         PresencePanel + usePresence
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 8, lineHeight: 1.6 }}>
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<PresencePanel>'}
         </code>{' '}
         wired to{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           usePresence('demo:presence')
         </code>.
         Users join with a stagger; Bob goes away at 6 s and returns at 9 s.
       </p>
-      <div
-        style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: 12,
-          background: IS_MOCK ? '#fef9c3' : '#dcfce7',
-          color: IS_MOCK ? '#854d0e' : '#14532d',
-          fontSize: 12,
-          fontWeight: 600,
-          marginBottom: 24,
-        }}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
       >
         {IS_MOCK ? 'MOCK MODE' : `LIVE — ${GATEWAY_URL}`}
       </div>

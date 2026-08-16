@@ -72,22 +72,9 @@ export default function CollaborationPage() {
 
 <PresencePanel users={users} currentClientId="client-1" />`}
       >
-        <div
-          style={{
-            border: '1px solid #e5e7eb',
-            borderRadius: 4,
-            padding: 12,
-            fontFamily: 'monospace',
-            maxWidth: 280,
-          }}
+        <div className="border border-[#e5e7eb] rounded p-3 font-mono max-w-70"
         >
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 700,
-              marginBottom: 8,
-              color: '#374151',
-            }}
+          <div className="text-[12px] font-bold mb-2 text-[#374151]"
           >
             Online &middot; 5
           </div>
@@ -98,21 +85,14 @@ export default function CollaborationPage() {
             { initials: 'JL', name: 'Jordan Lee', color: avatarColors[3], you: false, typing: false },
             { initials: 'PP', name: 'Priya Patel', color: avatarColors[4], you: false, typing: false },
           ].map((u) => (
-            <div
+            <div className="flex items-center gap-2 py-1 px-0 text-[12px]"
               key={u.initials}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '4px 0',
-                fontSize: 12,
-              }}
             >
               <div style={avatarCircle(u.color, 20)}>{u.initials}</div>
-              <span style={{ color: '#374151' }}>{u.name}</span>
-              {u.you && <span style={{ color: '#9ca3af' }}>(you)</span>}
+              <span className="text-[#374151]">{u.name}</span>
+              {u.you && <span className="text-[#9ca3af]">(you)</span>}
               {u.typing && (
-                <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>typing...</span>
+                <span className="text-[#9ca3af] italic">typing...</span>
               )}
             </div>
           ))}
@@ -150,7 +130,7 @@ const overflow = users.length - visible.length;
   {overflow > 0 && <span style={{ marginLeft: 6 }}>+{overflow}</span>}
 </div>`}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           {[
             { initials: 'CH', color: avatarColors[0] },
             { initials: 'AS', color: avatarColors[1] },
@@ -171,16 +151,7 @@ const overflow = users.length - visible.length;
               {u.initials}
             </div>
           ))}
-          <span
-            style={{
-              marginLeft: 6,
-              fontSize: 13,
-              fontWeight: 600,
-              color: '#64748b',
-              background: '#f1f5f9',
-              borderRadius: 12,
-              padding: '2px 8px',
-            }}
+          <span className="ml-[6px] text-[13px] font-semibold text-[#64748b] bg-surface-hover rounded-xl py-[2px] px-2"
           >
             +3
           </span>
@@ -288,16 +259,7 @@ const overflow = users.length - visible.length;
             MK
           </div>
           {/* Hint label */}
-          <span
-            style={{
-              position: 'absolute',
-              top: 4,
-              left: 6,
-              color: '#9ca3af',
-              fontSize: 11,
-              pointerEvents: 'none',
-              userSelect: 'none',
-            }}
+          <span className="absolute top-1 left-[6px] text-[#9ca3af] text-[11px] pointer-events-none select-none"
           >
             Move your mouse here
           </span>
@@ -325,23 +287,11 @@ const cursors = new Map([
   }}
 />`}
       >
-        <div
-          style={{
-            position: 'relative',
-            border: '1px solid #e5e7eb',
-            borderRadius: 4,
-            padding: 12,
-            fontFamily: 'monospace',
-            fontSize: 14,
-            lineHeight: 1.6,
-            minHeight: 80,
-            whiteSpace: 'pre-wrap',
-            color: '#1e293b',
-          }}
+        <div className="relative border border-[#e5e7eb] rounded p-3 font-mono text-[14px] leading-[1.6] min-h-20 whitespace-pre-wrap text-[#1e293b]"
         >
           {'This is a shared document. Click '}
           {/* Alice's cursor at char 34 */}
-          <span style={{ position: 'relative', display: 'inline' }}>
+          <span className="relative inline">
             <span
               style={{
                 position: 'absolute',
@@ -370,11 +320,7 @@ const cursors = new Map([
           </span>
           {'here to set your '}
           {/* Marcus's selection highlight */}
-          <span
-            style={{
-              position: 'relative',
-              background: 'rgba(16, 185, 129, 0.25)',
-            }}
+          <span className="relative bg-[rgba(16,185,129,0.25)]"
           >
             <span
               style={{
@@ -412,13 +358,8 @@ const cursors = new Map([
   onCellClick={(row, col) => broadcastCellFocus(row, col)}
 />`}
       >
-        <div style={{ overflow: 'auto' }}>
-          <table
-            style={{
-              borderCollapse: 'collapse',
-              fontFamily: 'monospace',
-              fontSize: 13,
-            }}
+        <div className="overflow-auto">
+          <table className="border-collapse font-mono text-[13px]"
           >
             <thead>
               <tr>
@@ -477,14 +418,7 @@ const cursors = new Map([
                         )}
                         {isAlice && (
                           <>
-                            <div
-                              style={{
-                                position: 'absolute',
-                                inset: 0,
-                                border: '3px solid #ec4899',
-                                borderRadius: 3,
-                                pointerEvents: 'none',
-                              }}
+                            <div className="absolute inset-0 border-3 border-[#ec4899] rounded-[3px] pointer-events-none"
                             />
                             <div
                               style={{
@@ -504,14 +438,7 @@ const cursors = new Map([
                         )}
                         {isMarcus && (
                           <>
-                            <div
-                              style={{
-                                position: 'absolute',
-                                inset: 0,
-                                border: '3px solid #10b981',
-                                borderRadius: 3,
-                                pointerEvents: 'none',
-                              }}
+                            <div className="absolute inset-0 border-3 border-[#10b981] rounded-[3px] pointer-events-none"
                             />
                             <div
                               style={{
@@ -560,8 +487,8 @@ const cursors = new Map([
       >
         <div>
           {/* Toolbar row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 11, color: '#6b7280' }}>Tool:</span>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[11px] text-[#6b7280]">Tool:</span>
             {['Brush', 'Pen', 'Eraser', 'Select'].map((t, i) => (
               <button
                 key={t}
@@ -580,15 +507,8 @@ const cursors = new Map([
                 {t}
               </button>
             ))}
-            <span style={{ fontSize: 11, color: '#6b7280', marginLeft: 8 }}>Color:</span>
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 4,
-                background: '#007bff',
-                border: '1px solid #ddd',
-              }}
+            <span className="text-[11px] text-[#6b7280] ml-2">Color:</span>
+            <div className="w-6 h-6 rounded bg-[#007bff] border border-[#ddd]"
             />
           </div>
 
@@ -605,18 +525,7 @@ const cursors = new Map([
             }}
           >
             {/* Remote cursor 1: brush */}
-            <div
-              style={{
-                position: 'absolute',
-                left: 140,
-                top: 70,
-                transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                zIndex: 10,
-                pointerEvents: 'none',
-              }}
+            <div className="absolute left-35 top-[70px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <div style={avatarCircle('#ec4899', 24)}>AS</div>
               <div
@@ -636,18 +545,7 @@ const cursors = new Map([
             </div>
 
             {/* Remote cursor 2: pen */}
-            <div
-              style={{
-                position: 'absolute',
-                left: 300,
-                top: 120,
-                transform: 'translate(-50%, -50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                zIndex: 10,
-                pointerEvents: 'none',
-              }}
+            <div className="absolute left-75 top-30 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <div style={avatarCircle('#10b981', 24)}>MK</div>
               <div
@@ -707,7 +605,7 @@ const [mode, setMode] = useState<CursorMode>('freeform');
 
 <CursorModeSelector activeMode={mode} onModeChange={setMode} />`}
       >
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="flex gap-2">
           {['Freeform', 'Table', 'Text', 'Canvas'].map((label, i) => (
             <button
               key={label}
@@ -757,7 +655,7 @@ function handleReact(emoji: string) {
       >
         <div>
           {/* Reaction buttons grid */}
-          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 16 }}>
+          <div className="flex gap-1 flex-wrap mb-4">
             {['❤️', '😂', '👍', '👎', '😮', '😢', '😡', '🎉', '🔥', '⚡', '💯', '🚀'].map(
               (emoji) => (
                 <button
@@ -791,14 +689,7 @@ function handleReact(emoji: string) {
               background: '#fafafa',
             }}
           >
-            <span
-              style={{
-                position: 'absolute',
-                top: 4,
-                left: 8,
-                fontSize: 11,
-                color: '#9ca3af',
-              }}
+            <span className="absolute top-1 left-2 text-[11px] text-[#9ca3af]"
             >
               Reactions overlay (simulated)
             </span>
@@ -843,36 +734,12 @@ function handleReact(emoji: string) {
   connectionState={connectionState}
 />`}
       >
-        <div
-          style={{
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            padding: '1.25rem',
-            maxWidth: 400,
-          }}
+        <div className="bg-surface border border-border rounded-lg p-5 max-w-100"
         >
-          <h2
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: '#64748b',
-              margin: '0 0 12px 0',
-            }}
+          <h2 className="text-[12px] font-semibold uppercase tracking-[0.05em] text-[#64748b] mt-0 mr-0 mb-3 ml-0"
           >
             Activity
-            <span
-              style={{
-                display: 'inline-block',
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: '#22c55e',
-                marginLeft: 8,
-                verticalAlign: 'middle',
-              }}
+            <span className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"
             />
           </h2>
           {[
@@ -882,22 +749,14 @@ function handleReact(emoji: string) {
             { icon: '❤️', text: 'Reaction sent', time: '12m ago' },
             { icon: '💤', text: 'User went idle', time: '15m ago' },
           ].map((item, idx, arr) => (
-            <div
+            <div className={`flex items-center gap-2 pt-2 pb-2 ${idx < arr.length - 1 ? 'border-b border-surface-hover' : 'border-b-0'}`}
               key={idx}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                paddingTop: 8,
-                paddingBottom: 8,
-                borderBottom: idx < arr.length - 1 ? '1px solid #f1f5f9' : 'none',
-              }}
             >
-              <span style={{ width: 20, flexShrink: 0, textAlign: 'center' }}>
+              <span className="w-5 shrink-0 text-center">
                 {item.icon}
               </span>
-              <span style={{ flex: 1, fontSize: 14, color: '#374151' }}>{item.text}</span>
-              <span style={{ fontSize: 12, color: '#9ca3af', flexShrink: 0 }}>
+              <span className="flex-[1] text-[14px] text-[#374151]">{item.text}</span>
+              <span className="text-[12px] text-[#9ca3af] shrink-0">
                 {item.time}
               </span>
             </div>
@@ -908,14 +767,8 @@ function handleReact(emoji: string) {
       {/* ------------------------------------------------------------------ */}
       {/* Props Reference */}
       {/* ------------------------------------------------------------------ */}
-      <div id="props" style={{ marginTop: 40 }}>
-        <h2
-          style={{
-            fontSize: 22,
-            fontWeight: 700,
-            margin: '0 0 24px 0',
-            color: '#0f172a',
-          }}
+      <div className="mt-10" id="props">
+        <h2 className="text-[22px] font-bold mt-0 mr-0 mb-6 ml-0 text-text-primary"
         >
           Props Reference
         </h2>

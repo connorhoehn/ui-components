@@ -7,23 +7,16 @@ export function Breadcrumbs() {
   if (breadcrumbs.length === 0) return null;
 
   return (
-    <nav style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 6,
-      marginBottom: 24,
-      fontSize: 13,
-      color: '#64748b',
-    }}>
+    <nav className="flex items-center gap-[6px] mb-6 text-[13px] text-[#64748b]">
       {breadcrumbs.map((crumb, i) => {
         const isLast = i === breadcrumbs.length - 1;
         return (
-          <span key={`${crumb.path}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            {i > 0 && <span style={{ color: '#cbd5e1' }}>/</span>}
+          <span className="flex items-center gap-[6px]" key={`${crumb.path}-${i}`}>
+            {i > 0 && <span className="text-text-disabled">/</span>}
             {isLast ? (
-              <span style={{ color: '#0f172a', fontWeight: 500 }}>{crumb.label}</span>
+              <span className="text-text-primary font-medium">{crumb.label}</span>
             ) : (
-              <Link to={crumb.path} style={{ color: '#64748b', textDecoration: 'none' }}>
+              <Link className="text-[#64748b] no-underline" to={crumb.path}>
                 {crumb.label}
               </Link>
             )}

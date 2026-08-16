@@ -56,11 +56,11 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
   return (
     <div style={panelStyle}>
       {/* Header */}
-      <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <span style={{ fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>
+      <div className="mb-2 flex justify-between items-center">
+        <span className="font-semibold text-[11px] uppercase tracking-[0.05em] text-text-tertiary">
           Simulation
         </span>
-        <span style={{ fontSize: 10, color: '#64748b' }}>{stateLabel}</span>
+        <span className="text-[10px] text-[#64748b]">{stateLabel}</span>
       </div>
 
       {/* Controls row */}
@@ -80,14 +80,14 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
         <button style={btnStyle} onClick={stepForward} title="Step Forward">
           &#9654;|
         </button>
-        <span style={{ marginLeft: 'auto', color: '#94a3b8', fontSize: 11 }}>
+        <span className="ml-auto text-text-tertiary text-[11px]">
           {progressText}
         </span>
       </div>
 
       {/* Speed selector */}
       <div style={{ ...rowStyle, marginBottom: eventDescription ? 8 : 0 }}>
-        <span style={{ color: '#64748b', fontSize: 10, marginRight: 4 }}>Speed:</span>
+        <span className="text-[#64748b] text-[10px] mr-1">Speed:</span>
         {speeds.map((s) => (
           <button
             key={s}
@@ -101,7 +101,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
 
       {/* Event description */}
       {eventDescription && (
-        <div style={{ color: '#94a3b8', fontSize: 10, borderTop: '1px solid rgba(148,163,184,0.15)', paddingTop: 6, marginTop: 2 }}>
+        <div className="text-text-tertiary text-[10px] border-t border-[rgba(148,163,184,0.15)] pt-[6px] mt-[2px]">
           {eventDescription}
         </div>
       )}

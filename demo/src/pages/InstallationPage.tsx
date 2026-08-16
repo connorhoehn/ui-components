@@ -13,42 +13,42 @@ const codeBlockStyle: React.CSSProperties = {
 export default function InstallationPage() {
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         Installation
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6]">
         Install the package and its peer dependencies to get started.
       </p>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         1. Configure registry (if private)
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
-        Add to your project's <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, fontSize: 13 }}>.npmrc</code>:
+      <p className="text-[14px] text-text-secondary mb-3">
+        Add to your project's <code className="bg-surface-hover py-[2px] px-[6px] rounded text-[13px]">.npmrc</code>:
       </p>
       <pre style={codeBlockStyle}>
 {`@connorhoehn:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=\${GITHUB_TOKEN}`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         2. Install the package
       </h2>
       <pre style={codeBlockStyle}>
 {`npm install @connorhoehnslalom/ui-components`}
       </pre>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         3. Peer dependencies
       </h2>
-      <p style={{ fontSize: 14, color: '#475569', marginBottom: 12 }}>
+      <p className="text-[14px] text-text-secondary mb-3">
         Ensure the following are installed in your project:
       </p>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14, marginBottom: 32 }}>
+      <table className="w-full border-collapse text-[14px] mb-8">
         <thead>
-          <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
-            <th style={{ textAlign: 'left', padding: '8px 12px', color: '#475569', fontWeight: 600 }}>Package</th>
-            <th style={{ textAlign: 'left', padding: '8px 12px', color: '#475569', fontWeight: 600 }}>Version</th>
+          <tr className="border-b-2 border-border">
+            <th className="text-left py-2 px-3 text-text-secondary font-semibold">Package</th>
+            <th className="text-left py-2 px-3 text-text-secondary font-semibold">Version</th>
           </tr>
         </thead>
         <tbody>
@@ -57,15 +57,15 @@ export default function InstallationPage() {
             ['react-dom', '^18.0.0 || ^19.0.0'],
             ['react-router', '^7.0.0'],
           ].map(([pkg, version]) => (
-            <tr key={pkg} style={{ borderBottom: '1px solid #f1f5f9' }}>
-              <td style={{ padding: '8px 12px', fontFamily: 'monospace', fontSize: 13 }}>{pkg}</td>
-              <td style={{ padding: '8px 12px', color: '#64748b' }}>{version}</td>
+            <tr className="border-b border-surface-hover" key={pkg}>
+              <td className="py-2 px-3 font-mono text-[13px]">{pkg}</td>
+              <td className="py-2 px-3 text-[#64748b]">{version}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>
+      <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         4. Verify installation
       </h2>
       <pre style={codeBlockStyle}>

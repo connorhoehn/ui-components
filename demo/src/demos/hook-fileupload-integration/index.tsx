@@ -157,16 +157,7 @@ function MockFileUploadView({ channel }: { channel: string }) {
   return (
     <MockGatewayProvider channel={channel} dispatchRef={dispatchRef} onSend={handleSend}>
       <FileUploadViewInner channel={channel} />
-      <div
-        style={{
-          marginTop: 12,
-          padding: '10px 14px',
-          background: '#f8fafc',
-          borderRadius: 8,
-          fontSize: 12,
-          color: '#94a3b8',
-          lineHeight: 1.6,
-        }}
+      <div className="mt-3 py-[10px] px-[14px] bg-surface-panel rounded-lg text-[12px] text-text-tertiary leading-[1.6]"
       >
         Note: In mock mode the XHR PUT is fired at a stub URL (will 404). The
         gateway lifecycle (presign ack, AV-scan transition) is simulated via
@@ -194,31 +185,21 @@ function LiveFileUploadView({ url, channel }: { url: string; channel: string }) 
 
 export default function HookFileUploadIntegrationDemo() {
   return (
-    <div style={{ padding: 32, maxWidth: 640, margin: '0 auto' }}>
-      <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: '#0f172a' }}>
+    <div className="p-8 max-w-160 mx-auto my-0">
+      <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         FileUploadDrop + useFileUpload
       </h2>
-      <p style={{ fontSize: 14, color: '#64748b', marginBottom: 8, lineHeight: 1.6 }}>
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<FileUploadDrop>'}
         </code>{' '}
         wired to{' '}
-        <code style={{ background: '#f1f5f9', borderRadius: 4, padding: '1px 6px', fontFamily: 'ui-monospace, monospace' }}>
+        <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           useFileUpload('demo:upload')
         </code>.
         Tracks presign, XHR progress, AV-scan, and clean/infected states.
       </p>
-      <div
-        style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: 12,
-          background: IS_MOCK ? '#fef9c3' : '#dcfce7',
-          color: IS_MOCK ? '#854d0e' : '#14532d',
-          fontSize: 12,
-          fontWeight: 600,
-          marginBottom: 24,
-        }}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
       >
         {IS_MOCK ? 'MOCK MODE' : `LIVE — ${GATEWAY_URL}`}
       </div>

@@ -80,51 +80,23 @@ export function IngestActivityLog() {
   }, [entries]);
 
   return (
-    <div
-      style={{
-        background: '#fff',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        height: 280,
-      }}
+    <div className="bg-surface border border-border rounded-lg overflow-hidden flex flex-col h-70"
     >
-      <div
-        style={{
-          padding: '10px 16px',
-          borderBottom: '1px solid #e2e8f0',
-          fontWeight: 600,
-          fontSize: 13,
-          color: '#1a1a2e',
-        }}
+      <div className="py-[10px] px-4 border-b border-border font-semibold text-[13px] text-[#1a1a2e]"
       >
         Activity Log
       </div>
-      <div
+      <div className="flex-[1] overflow-y-auto py-2 px-4"
         ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: 'auto',
-          padding: '8px 16px',
-        }}
       >
         {entries.length === 0 && (
-          <div style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', marginTop: 24 }}>
+          <div className="text-text-tertiary text-[13px] text-center mt-6">
             Events will appear here as the simulation runs...
           </div>
         )}
         {entries.map((entry) => (
-          <div
+          <div className="flex items-start gap-[10px] py-[6px] px-0 border-b border-[#f8f9fa]"
             key={entry.id}
-            style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 10,
-              padding: '6px 0',
-              borderBottom: '1px solid #f8f9fa',
-            }}
           >
             <span
               style={{
@@ -144,18 +116,12 @@ export function IngestActivityLog() {
             >
               {entry.icon}
             </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div
-                style={{
-                  fontSize: 13,
-                  color: '#334155',
-                  lineHeight: 1.4,
-                  wordBreak: 'break-word',
-                }}
+            <div className="flex-[1] min-w-0">
+              <div className="text-[13px] text-[#334155] leading-[1.4] break-words"
               >
                 {entry.description}
               </div>
-              <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+              <div className="text-[11px] text-text-tertiary mt-[2px]">
                 {new Date(entry.timestamp).toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',

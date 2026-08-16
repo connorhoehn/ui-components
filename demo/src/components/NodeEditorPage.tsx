@@ -78,33 +78,12 @@ function MiniNode({
   return (
     <div style={cardStyle}>
       {hasBreakpoint && (
-        <span
-          style={{
-            position: 'absolute',
-            top: -4,
-            left: -4,
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            background: '#ef4444',
-            border: '1.5px solid #ffffff',
-            zIndex: 1,
-          }}
+        <span className="absolute top-[-4px] left-[-4px] w-[10px] h-[10px] rounded-full bg-[#ef4444] border-1 border-surface z-[1]"
         />
       )}
       <div style={headerStyle}>
-        <span style={{ fontSize: 14, lineHeight: 1, flexShrink: 0 }}>{icon}</span>
-        <span
-          style={{
-            flex: 1,
-            minWidth: 0,
-            fontSize: 12,
-            fontWeight: 600,
-            color: '#0f172a',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+        <span className="text-[14px] leading-[1] shrink-0">{icon}</span>
+        <span className="flex-[1] min-w-0 text-[12px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"
         >
           {subtitle}
         </span>
@@ -119,7 +98,7 @@ function MiniNode({
         />
       </div>
       {body && (
-        <div style={{ padding: '8px 10px', fontSize: 12, lineHeight: 1.4, color: '#475569' }}>
+        <div className="py-2 px-[10px] text-[12px] leading-[1.4] text-text-secondary">
           {body}
         </div>
       )}
@@ -144,17 +123,17 @@ function ArchitectureDiagram() {
     whiteSpace: 'nowrap',
   };
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 0, flexWrap: 'wrap', justifyContent: 'center' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+    <div className="flex items-center gap-0 flex-wrap justify-center">
+      <div className="flex flex-col gap-2 items-center">
         <div style={{ ...boxStyle, background: '#eff6ff', border: '2px solid #2563eb', color: '#1e40af' }}>
           PipelineCanvas
         </div>
-        <div style={{ fontSize: 11, color: '#64748b' }}>React Flow wrapper</div>
+        <div className="text-[11px] text-[#64748b]">React Flow wrapper</div>
       </div>
-      <svg width="48" height="24" style={{ flexShrink: 0 }}>
+      <svg className="shrink-0" width="48" height="24">
         <path d="M4 12 H38 M34 7 L40 12 L34 17" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
       </svg>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div className="flex flex-col gap-2">
         <div style={{ ...boxStyle, background: '#f0fdf4', border: '1.5px solid #16a34a', color: '#166534' }}>
           BaseNode
         </div>
@@ -162,18 +141,18 @@ function ArchitectureDiagram() {
           AnimatedEdge
         </div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginLeft: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="flex flex-col gap-4 ml-8">
+        <div className="flex items-center gap-2">
           <div style={{ ...boxStyle, background: '#f1f5f9', border: '1.5px solid #64748b', color: '#334155' }}>
             NodePalette
           </div>
-          <span style={{ fontSize: 11, color: '#64748b' }}>drag to canvas</span>
+          <span className="text-[11px] text-[#64748b]">drag to canvas</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="flex items-center gap-2">
           <div style={{ ...boxStyle, background: '#f1f5f9', border: '1.5px solid #64748b', color: '#334155' }}>
             CanvasToolbar
           </div>
-          <span style={{ fontSize: 11, color: '#64748b' }}>canvas actions</span>
+          <span className="text-[11px] text-[#64748b]">canvas actions</span>
         </div>
       </div>
     </div>
@@ -191,7 +170,7 @@ function EdgePreview() {
     fill: '#475569',
   };
   return (
-    <svg width="100%" height="200" viewBox="0 0 640 200" style={{ maxWidth: 640 }}>
+    <svg className="max-w-160" width="100%" height="200" viewBox="0 0 640 200">
       {/* Default edge */}
       <path d="M40 40 C120 40, 100 40, 140 40" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
       <text x="160" y="44" style={labelStyle}>default (gray, 1.5px)</text>
@@ -236,10 +215,9 @@ function MiniGraph() {
   });
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: 360, overflow: 'hidden' }}>
+    <div className="relative w-full h-90 overflow-hidden">
       {/* SVG connections */}
-      <svg
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}
+      <svg className="absolute top-0 left-0 w-full h-full pointer-events-none"
       >
         {/* Order Received -> Validate Payment */}
         <path d="M 140 34 C 180 34, 200 94, 240 94" fill="none" stroke="#16a34a" strokeWidth="2" />
@@ -271,37 +249,11 @@ function MiniGraph() {
       </div>
 
       {/* Branch labels */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 520,
-          top: 128,
-          padding: '2px 8px',
-          borderRadius: 999,
-          fontSize: 10,
-          fontWeight: 600,
-          background: '#ffffff',
-          color: '#475569',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 1px 2px rgba(15, 23, 42, 0.06)',
-        }}
+      <div className="absolute left-130 top-32 py-[2px] px-2 rounded-[999px] text-[10px] font-semibold bg-surface text-text-secondary border border-border shadow-[0_1px_2px_rgba(15,_23,_42,_0.06)]"
       >
         true
       </div>
-      <div
-        style={{
-          position: 'absolute',
-          left: 520,
-          top: 218,
-          padding: '2px 8px',
-          borderRadius: 999,
-          fontSize: 10,
-          fontWeight: 600,
-          background: '#ffffff',
-          color: '#475569',
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 1px 2px rgba(15, 23, 42, 0.06)',
-        }}
+      <div className="absolute left-130 top-[218px] py-[2px] px-2 rounded-[999px] text-[10px] font-semibold bg-surface text-text-secondary border border-border shadow-[0_1px_2px_rgba(15,_23,_42,_0.06)]"
       >
         false
       </div>
@@ -350,7 +302,7 @@ function PalettePreview() {
         overflow: 'hidden',
       }}
     >
-      <div style={{ padding: '10px 12px', borderBottom: '1px solid #e2e8f0' }}>
+      <div className="py-[10px] px-3 border-b border-border">
         <input
           readOnly
           placeholder="Search nodes..."
@@ -367,7 +319,7 @@ function PalettePreview() {
           }}
         />
       </div>
-      <div style={{ padding: '8px 0' }}>
+      <div className="py-2 px-0">
         {categories.map((cat) => (
           <div key={cat.name}>
             <div
@@ -383,25 +335,15 @@ function PalettePreview() {
               {cat.name}
             </div>
             {cat.items.map((item) => (
-              <div
+              <div className="h-11 my-[2px] mx-2 py-[6px] px-[10px] flex items-center gap-[10px] rounded-md cursor-grab"
                 key={item.label}
-                style={{
-                  height: 44,
-                  margin: '2px 8px',
-                  padding: '6px 10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  borderRadius: 6,
-                  cursor: 'grab',
-                }}
               >
-                <span style={{ fontSize: 18, width: 22, textAlign: 'center', flexShrink: 0 }}>
+                <span className="text-[18px] w-[22px] text-center shrink-0">
                   {item.icon}
                 </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{item.label}</div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>{item.desc}</div>
+                <div className="flex-[1] min-w-0">
+                  <div className="text-[13px] font-semibold text-text-primary">{item.label}</div>
+                  <div className="text-[11px] text-[#64748b]">{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -434,7 +376,7 @@ function ToolbarPreview() {
     fontSize: 14,
   };
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+    <div className="flex gap-[6px] items-center">
       <button type="button" style={btnStyle} title="Auto-arrange (Shift+A)">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path d="M2 4h8M2 8h12M2 12h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -445,7 +387,7 @@ function ToolbarPreview() {
           <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <span style={{ fontSize: 12, color: '#94a3b8', marginLeft: 8 }}>Auto-arrange | Fit view</span>
+      <span className="text-[12px] text-text-tertiary ml-2">Auto-arrange | Fit view</span>
     </div>
   );
 }
@@ -507,7 +449,7 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
   body={<span>Model: claude-opus-4 | Tokens: 1,204</span>}
 />`}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-start' }}>
+        <div className="flex flex-wrap gap-4 items-start">
           <MiniNode icon="⚡" subtitle="Trigger" state="idle" />
           <MiniNode icon="🔧" subtitle="Transform Data" state="pending" />
           <MiniNode icon="🧠" subtitle="Generate Summary" state="running" body="Model: claude-opus-4" />
@@ -539,46 +481,46 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
 <BaseNode icon="🎯" subtitle="Deploy" state="running" pausedAtBreakpoint />`}
       >
         <div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-start', marginBottom: 24 }}>
-            <div style={{ textAlign: 'center' }}>
+          <div className="flex flex-wrap gap-4 items-start mb-6">
+            <div className="text-center">
               <MiniNode icon="⬜" subtitle="Idle" state="idle" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>gray, 1px solid</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">gray, 1px solid</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="⏳" subtitle="Pending" state="pending" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>blue, 1px dashed</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">blue, 1px dashed</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="▶" subtitle="Running" state="running" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>blue, 2px solid</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">blue, 2px solid</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="⏸" subtitle="Awaiting" state="awaiting" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>amber, 2px solid</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">amber, 2px solid</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="✓" subtitle="Completed" state="completed" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>green, 1px solid</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">green, 1px solid</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="✗" subtitle="Failed" state="failed" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>red, 2px solid</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">red, 2px solid</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon="⤳" subtitle="Skipped" state="skipped" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>gray, dashed, 50%</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">gray, dashed, 50%</div>
             </div>
           </div>
-          <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 12 }}>Breakpoint variants</div>
-            <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-              <div style={{ textAlign: 'center' }}>
+          <div className="border-t border-border pt-4">
+            <div className="text-[13px] font-semibold text-[#334155] mb-3">Breakpoint variants</div>
+            <div className="flex gap-4 items-start">
+              <div className="text-center">
                 <MiniNode icon="🎯" subtitle="With Breakpoint" state="idle" hasBreakpoint />
-                <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>hasBreakpoint (red dot)</div>
+                <div className="text-[11px] text-[#64748b] mt-[6px]">hasBreakpoint (red dot)</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
+              <div className="text-center">
                 <MiniNode icon="🎯" subtitle="Paused at BP" state="running" pausedAtBreakpoint hasBreakpoint />
-                <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>pausedAtBreakpoint (amber glow)</div>
+                <div className="text-[11px] text-[#64748b] mt-[6px]">pausedAtBreakpoint (amber glow)</div>
               </div>
             </div>
           </div>
@@ -657,33 +599,33 @@ const nodeTypes = {
   decision: DecisionNode,
 };`}
       >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-start' }}>
-          <div style={{ textAlign: 'center' }}>
+        <div className="flex flex-wrap gap-5 items-start">
+          <div className="text-center">
             <MiniNode
               icon={'λ'}
               subtitle="processOrder"
               state="completed"
               body="Runtime: Node.js 20 | Memory: 512MB"
             />
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Lambda Node</div>
+            <div className="text-[11px] text-[#64748b] mt-[6px]">Lambda Node</div>
           </div>
-          <div style={{ textAlign: 'center' }}>
+          <div className="text-center">
             <MiniNode
               icon={'↗'}
               subtitle="HTTP Request"
               state="running"
               body="POST api.stripe.com/charges"
             />
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>HTTP Request Node</div>
+            <div className="text-[11px] text-[#64748b] mt-[6px]">HTTP Request Node</div>
           </div>
-          <div style={{ textAlign: 'center' }}>
+          <div className="text-center">
             <MiniNode
               icon={'🔀'}
               subtitle="Payment Valid?"
               state="awaiting"
               body="amount > 0 && !expired"
             />
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Decision Node</div>
+            <div className="text-[11px] text-[#64748b] mt-[6px]">Decision Node</div>
           </div>
         </div>
       </ExampleBlock>
@@ -769,7 +711,7 @@ function MyCanvas() {
       >
         <div>
           <ToolbarPreview />
-          <div style={{ marginTop: 12, fontSize: 12, color: '#64748b' }}>
+          <div className="mt-3 text-[12px] text-[#64748b]">
             The toolbar renders as absolutely-positioned buttons in the top-right corner of the canvas container.
             Auto-arrange uses a Dagre-based layout algorithm to compute optimal node positions for readability.
           </div>
@@ -928,25 +870,25 @@ const nodeTypes = {
 };`}
       >
         <div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'flex-start' }}>
-            <div style={{ textAlign: 'center' }}>
+          <div className="flex flex-wrap gap-4 items-start">
+            <div className="text-center">
               <MiniNode icon={'⚙'} subtitle="ProcessPayment" state="completed" body="arn:aws:lambda:..." />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Task</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">Task</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon={'🔀'} subtitle="IsAmountValid?" state="running" body="3 branches" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Choice</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">Choice</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon={'≡'} subtitle="FanOutWorkers" state="pending" body="4 parallel branches" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Parallel</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">Parallel</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div className="text-center">
               <MiniNode icon={'⏱'} subtitle="CooldownPeriod" state="awaiting" body="Wait: 30s" />
-              <div style={{ fontSize: 11, color: '#64748b', marginTop: 6 }}>Wait</div>
+              <div className="text-[11px] text-[#64748b] mt-[6px]">Wait</div>
             </div>
           </div>
-          <div style={{ marginTop: 16, padding: '12px 14px', background: '#f1f5f9', borderRadius: 6, fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+          <div className="mt-4 py-3 px-[14px] bg-surface-hover rounded-md text-[12px] text-text-secondary leading-[1.5]">
             Each Step Functions state type maps naturally to a BaseNode wrapper. The execution state
             (idle/pending/running/completed/failed) can be driven by CloudWatch Events or the
             Step Functions execution history API, giving you a live visualization of running state machines.
@@ -957,8 +899,8 @@ const nodeTypes = {
       {/* ----------------------------------------------------------------- */}
       {/* PROPS REFERENCE */}
       {/* ----------------------------------------------------------------- */}
-      <div id="props" style={{ marginBottom: 40 }}>
-        <h3 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 24px 0', color: '#0f172a' }}>
+      <div className="mb-10" id="props">
+        <h3 className="text-[18px] font-semibold mt-0 mr-0 mb-6 ml-0 text-text-primary">
           Props Reference
         </h3>
 

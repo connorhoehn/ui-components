@@ -132,7 +132,7 @@ export function DocumentHeader({
             );
           })}
         </div>
-        <div style={{ flex: 1 }} />
+        <div className="flex-[1]" />
         <button style={actionButtonStyle}>My Items</button>
         <button style={actionButtonStyle}>Call</button>
         <button style={finalizeButtonStyle}>Finalize</button>

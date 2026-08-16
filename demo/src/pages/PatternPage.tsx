@@ -23,36 +23,22 @@ export default function PatternPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         {title}
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6, maxWidth: 640 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6] max-w-160">
         {description || `Pattern documentation for ${title}.`}
       </p>
 
-      <div style={{
-        padding: 24,
-        background: '#f8fafc',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
-        marginBottom: 24,
-      }}>
-        <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12, color: '#0f172a' }}>Overview</h3>
-        <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.6, margin: 0 }}>
+      <div className="p-6 bg-surface-panel border border-border rounded-lg mb-6">
+        <h3 className="text-[16px] font-semibold mb-3 text-text-primary">Overview</h3>
+        <p className="text-[14px] text-text-secondary leading-[1.6] m-0">
           This pattern demonstrates best practices for implementing {title.toLowerCase()} in your application.
           It covers setup, configuration, error handling, and testing strategies.
         </p>
       </div>
 
-      <div style={{
-        padding: 16,
-        background: '#fffbeb',
-        border: '1px solid #fde68a',
-        borderRadius: 8,
-        fontSize: 13,
-        color: '#92400e',
-        lineHeight: 1.5,
-      }}>
+      <div className="p-4 bg-warning-bg border border-warning-border rounded-lg text-[13px] text-[#92400e] leading-[1.5]">
         Full pattern documentation with code examples and interactive demos coming soon.
       </div>
     </div>

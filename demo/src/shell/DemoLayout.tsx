@@ -11,29 +11,14 @@ function DemoTopBar() {
     .join(' ');
 
   return (
-    <div
-      style={{
-        height: 40,
-        background: '#1e293b',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 16px',
-        flexShrink: 0,
-      }}
+    <div className="h-10 bg-[#1e293b] flex items-center justify-between py-0 px-4 shrink-0"
     >
-      <Link
+      <Link className="text-surface no-underline text-[13px] font-medium"
         to="/pages"
-        style={{
-          color: '#fff',
-          textDecoration: 'none',
-          fontSize: 13,
-          fontWeight: 500,
-        }}
       >
         &larr; Back to docs
       </Link>
-      <span style={{ color: '#cbd5e1', fontSize: 13, fontWeight: 500 }}>
+      <span className="text-text-disabled text-[13px] font-medium">
         {displayName}
       </span>
     </div>
@@ -43,9 +28,9 @@ function DemoTopBar() {
 export function DemoLayout() {
   return (
     <MockProviders>
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div className="h-screen flex flex-col">
         <DemoTopBar />
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div className="flex-[1] overflow-hidden">
           <Outlet />
         </div>
       </div>

@@ -39,62 +39,26 @@ export function RoomListPanel() {
   }, [onMessage]);
 
   return (
-    <div
-      style={{
-        width: 220,
-        background: '#fff',
-        border: '1px solid #e2e8f0',
-        borderRadius: 8,
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-      }}
+    <div className="w-55 bg-surface border border-border rounded-lg flex flex-col overflow-hidden"
     >
       {/* Header */}
-      <div
-        style={{
-          padding: '12px 16px',
-          borderBottom: '1px solid #e2e8f0',
-          fontWeight: 600,
-          fontSize: 13,
-          color: '#64748b',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}
+      <div className="py-3 px-4 border-b border-border font-semibold text-[13px] text-[#64748b] uppercase tracking-[0.05em]"
       >
         Channels
       </div>
 
       {/* Room list */}
-      <div style={{ flex: 1, padding: '8px 0' }}>
+      <div className="flex-[1] py-2 px-0">
         {rooms.map((room) => (
-          <div
+          <div className={`py-2 px-4 flex items-center justify-between cursor-pointer transition-[all] ${activeRoom === room.id ? 'bg-surface-hover border-l-3 border-[#6366f1]' : 'bg-transparent border-l-3 border-transparent'}`}
             key={room.id}
             onClick={() => setActiveRoom(room.id)}
-            style={{
-              padding: '8px 16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              cursor: 'pointer',
-              background: activeRoom === room.id ? '#f1f5f9' : 'transparent',
-              borderLeft:
-                activeRoom === room.id ? '3px solid #6366f1' : '3px solid transparent',
-              transition: 'all 0.15s ease',
-            }}
           >
-            <span style={{ fontSize: 14, color: '#1a1a2e' }}>
-              <span style={{ color: '#94a3b8', marginRight: 4 }}>{room.icon}</span>
+            <span className="text-[14px] text-[#1a1a2e]">
+              <span className="text-text-tertiary mr-1">{room.icon}</span>
               {room.name}
             </span>
-            <span
-              style={{
-                fontSize: 11,
-                color: '#64748b',
-                background: '#f1f5f9',
-                padding: '2px 6px',
-                borderRadius: 8,
-              }}
+            <span className="text-[11px] text-[#64748b] bg-surface-hover py-[2px] px-[6px] rounded-lg"
             >
               {room.online}
             </span>
@@ -104,24 +68,9 @@ export function RoomListPanel() {
 
       {/* Join indicator */}
       {joinIndicator && (
-        <div
-          style={{
-            padding: '8px 16px',
-            borderTop: '1px solid #e2e8f0',
-            fontSize: 11,
-            color: '#10b981',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
+        <div className="py-2 px-4 border-t border-border text-[11px] text-[#10b981] flex items-center gap-[6px]"
         >
-          <span
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              background: '#10b981',
-            }}
+          <span className="w-[6px] h-[6px] rounded-full bg-[#10b981]"
           />
           {joinIndicator} joined
         </div>

@@ -18,33 +18,24 @@ export default function PagesOverviewPage() {
 
   return (
     <div>
-      <h1 style={{ fontSize: 28, fontWeight: 700, marginBottom: 8, color: '#0f172a' }}>
+      <h1 className="text-[28px] font-bold mb-2 text-text-primary">
         Pages
       </h1>
-      <p style={{ fontSize: 15, color: '#475569', marginBottom: 32, lineHeight: 1.6, maxWidth: 640 }}>
+      <p className="text-[15px] text-text-secondary mb-8 leading-[1.6] max-w-160">
         Full-page demos combining multiple components into complete application UIs.
         Each page includes live simulations of WebSocket events driving real-time updates.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+      <div className="grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))] gap-4">
         {pagesSection.groups.flatMap(g => g.items).map(item => (
-          <Link
+          <Link className="block py-5 px-6 border border-border rounded-lg no-underline bg-surface transition-[border-color]"
             key={item.id}
             to={item.path}
-            style={{
-              display: 'block',
-              padding: '20px 24px',
-              border: '1px solid #e2e8f0',
-              borderRadius: 8,
-              textDecoration: 'none',
-              background: '#fff',
-              transition: 'border-color 0.15s, box-shadow 0.15s',
-            }}
           >
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', marginBottom: 6 }}>
+            <div className="text-[15px] font-semibold text-text-primary mb-[6px]">
               {item.label}
             </div>
-            <div style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5 }}>
+            <div className="text-[13px] text-[#64748b] leading-[1.5]">
               {descriptions[item.id] || 'Interactive demo page.'}
             </div>
           </Link>

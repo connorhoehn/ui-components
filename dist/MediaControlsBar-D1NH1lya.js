@@ -367,18 +367,28 @@ function tr({ phase: t, bitrateBps: r, viewerCount: n, duration: o, style: a }) 
     ] })
   ] });
 }
-function rr({ count: t, style: r }) {
-  const n = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
-  return /* @__PURE__ */ i("div", { className: h("inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-black/70 text-white text-xs font-medium"), style: r, children: [
-    /* @__PURE__ */ i("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", children: [
-      /* @__PURE__ */ e("circle", { cx: "6", cy: "4", r: "2.5", stroke: "currentColor", strokeWidth: "1.2" }),
-      /* @__PURE__ */ e("path", { d: "M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4", stroke: "currentColor", strokeWidth: "1.2", strokeLinecap: "round" })
-    ] }),
-    /* @__PURE__ */ i("span", { children: [
-      n,
-      " watching"
-    ] })
-  ] });
+function rr({ count: t, className: r, style: n }) {
+  const o = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
+  return /* @__PURE__ */ i(
+    "div",
+    {
+      className: h(
+        "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-black/70 text-white text-xs font-medium",
+        r
+      ),
+      style: n,
+      children: [
+        /* @__PURE__ */ i("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", children: [
+          /* @__PURE__ */ e("circle", { cx: "6", cy: "4", r: "2.5", stroke: "currentColor", strokeWidth: "1.2" }),
+          /* @__PURE__ */ e("path", { d: "M1.5 11c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4", stroke: "currentColor", strokeWidth: "1.2", strokeLinecap: "round" })
+        ] }),
+        /* @__PURE__ */ i("span", { children: [
+          o,
+          " watching"
+        ] })
+      ]
+    }
+  );
 }
 function Ye(t) {
   return t.split(" ").map((r) => r[0]).slice(0, 2).join("").toUpperCase();

@@ -28,7 +28,7 @@ export default function InvokeDemo() {
   }, [simulated]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="flex flex-col h-full">
       {/* Mode toggle banner */}
       <div
         style={{
@@ -41,16 +41,9 @@ export default function InvokeDemo() {
           fontSize: 13,
         }}
       >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: simulated ? '#22c55e' : '#f97316',
-            flexShrink: 0,
-          }}
+        <span className={`w-2 h-2 rounded-full shrink-0 ${simulated ? 'bg-[#22c55e]' : 'bg-[#f97316]'}`}
         />
-        <span style={{ color: simulated ? '#15803d' : '#c2410c', fontWeight: 500 }}>
+        <span className={`font-medium ${simulated ? 'text-[#15803d]' : 'text-[#c2410c]'}`}>
           {simulated ? 'Simulated mode — scripted AG-UI event stream' : 'Live mode — requires AgentCore runtime'}
         </span>
         <button
@@ -72,7 +65,7 @@ export default function InvokeDemo() {
       </div>
 
       {/* Page content */}
-      <div style={{ padding: 24, overflow: 'auto', flex: 1 }}>
+      <div className="p-6 overflow-auto flex-[1]">
         <AgentsLayout>
           <AgentInvokePage defaultAgentId="orgiq-supervisor" />
         </AgentsLayout>
