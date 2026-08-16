@@ -24,11 +24,7 @@ const panelStyle: React.CSSProperties = {
   border: '1px solid rgba(148, 163, 184, 0.15)',
 };
 
-const rowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-};
+const ROW_CLS = 'flex items-center gap-1.5';
 
 const btnStyle: React.CSSProperties = {
   background: 'rgba(148, 163, 184, 0.15)',
@@ -64,7 +60,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
       </div>
 
       {/* Controls row */}
-      <div style={{ ...rowStyle, marginBottom: 8 }}>
+      <div className={`${ROW_CLS} mb-2`}>
         {state === 'playing' ? (
           <button style={btnStyle} onClick={pause} title="Pause">
             &#9646;&#9646;
@@ -86,7 +82,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
       </div>
 
       {/* Speed selector */}
-      <div style={{ ...rowStyle, marginBottom: eventDescription ? 8 : 0 }}>
+      <div className={`${ROW_CLS} ${eventDescription ? 'mb-2' : 'mb-0'}`}>
         <span className="text-[#64748b] text-[10px] mr-1">Speed:</span>
         {speeds.map((s) => (
           <button

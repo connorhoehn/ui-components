@@ -242,12 +242,7 @@ function CollaborationCanvas() {
         {/* Canvas with cursors */}
         <div className="flex-[1] relative overflow-hidden">
           {/* Dot grid background */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle,_#cbd5e1_1px,_transparent_1px)] bg-[length:24px_24px]" />
 
           {/* Document area */}
           <div className="absolute top-10 left-10 right-10 bg-surface rounded-lg border border-border p-6 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
@@ -392,10 +387,9 @@ function CollaborationCanvas() {
         {/* Reaction picker */}
         <div className="p-3 border-t border-border flex justify-center gap-1">
           {['👍', '❤️', '🔥', '😂', '👏', '🎉'].map(emoji => (
-            <button
+            <button className="bg-none border-0 text-[18px] cursor-pointer py-[2px] px-1 rounded"
               key={emoji}
               type="button"
-              style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', padding: '2px 4px', borderRadius: 4 }}
             >
               {emoji}
             </button>

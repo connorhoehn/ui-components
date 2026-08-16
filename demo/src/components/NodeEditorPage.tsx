@@ -111,21 +111,13 @@ function MiniNode({
 // ---------------------------------------------------------------------------
 
 function ArchitectureDiagram() {
-  const boxStyle: CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '10px 18px',
-    borderRadius: 8,
-    fontWeight: 600,
-    fontSize: 13,
-    fontFamily: 'inherit',
-    whiteSpace: 'nowrap',
-  };
+  const BOX_CLS =
+    'flex items-center justify-center py-[10px] px-[18px] rounded-lg ' +
+    'font-semibold text-[13px] font-[inherit] whitespace-nowrap';
   return (
     <div className="flex items-center gap-0 flex-wrap justify-center">
       <div className="flex flex-col gap-2 items-center">
-        <div style={{ ...boxStyle, background: '#eff6ff', border: '2px solid #2563eb', color: '#1e40af' }}>
+        <div className={`${BOX_CLS} bg-info-bg border-2 border-info text-[#1e40af]`}>
           PipelineCanvas
         </div>
         <div className="text-[11px] text-[#64748b]">React Flow wrapper</div>
@@ -134,22 +126,22 @@ function ArchitectureDiagram() {
         <path d="M4 12 H38 M34 7 L40 12 L34 17" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
       </svg>
       <div className="flex flex-col gap-2">
-        <div style={{ ...boxStyle, background: '#f0fdf4', border: '1.5px solid #16a34a', color: '#166534' }}>
+        <div className={`${BOX_CLS} bg-success-bg border-[1.5px] border-success text-[#166534]`}>
           BaseNode
         </div>
-        <div style={{ ...boxStyle, background: '#fef3c7', border: '1.5px solid #f59e0b', color: '#92400e' }}>
+        <div className={`${BOX_CLS} bg-[#fef3c7] border-[1.5px] border-[#f59e0b] text-[#92400e]`}>
           AnimatedEdge
         </div>
       </div>
       <div className="flex flex-col gap-4 ml-8">
         <div className="flex items-center gap-2">
-          <div style={{ ...boxStyle, background: '#f1f5f9', border: '1.5px solid #64748b', color: '#334155' }}>
+          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
             NodePalette
           </div>
           <span className="text-[11px] text-[#64748b]">drag to canvas</span>
         </div>
         <div className="flex items-center gap-2">
-          <div style={{ ...boxStyle, background: '#f1f5f9', border: '1.5px solid #64748b', color: '#334155' }}>
+          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
             CanvasToolbar
           </div>
           <span className="text-[11px] text-[#64748b]">canvas actions</span>

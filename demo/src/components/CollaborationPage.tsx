@@ -35,11 +35,6 @@ const avatarCircle = (color: string, size = 30): CSSProperties => ({
   flexShrink: 0,
 });
 
-const gridBg: CSSProperties = {
-  backgroundImage: 'radial-gradient(circle, #d1d5db 1px, transparent 1px)',
-  backgroundSize: '20px 20px',
-};
-
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -178,15 +173,7 @@ const overflow = users.length - visible.length;
 </PresenceProvider>`}
       >
         <div
-          style={{
-            position: 'relative',
-            width: 500,
-            height: 200,
-            border: '2px solid #e5e7eb',
-            borderRadius: 4,
-            overflow: 'hidden',
-            ...gridBg,
-          }}
+          className="relative w-125 h-50 border-2 border-[#e5e7eb] rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
         >
           {/* Local cursor */}
           <div className="absolute left-30 top-[90px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#3b82f6] border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[11]"
@@ -374,15 +361,7 @@ const cursors = new Map([
 
           {/* Canvas area */}
           <div
-            style={{
-              position: 'relative',
-              width: 400,
-              height: 180,
-              border: '2px solid #e5e7eb',
-              borderRadius: 4,
-              overflow: 'hidden',
-              ...gridBg,
-            }}
+            className="relative w-100 h-45 border-2 border-[#e5e7eb] rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
           >
             {/* Remote cursor 1: brush */}
             <div className="absolute left-35 top-[70px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
@@ -487,18 +466,9 @@ function handleReact(emoji: string) {
           <div className="flex gap-1 flex-wrap mb-4">
             {['❤️', '😂', '👍', '👎', '😮', '😢', '😡', '🎉', '🔥', '⚡', '💯', '🚀'].map(
               (emoji) => (
-                <button
+                <button className="text-[18px] bg-none border border-border rounded-md cursor-default py-[3px] px-[6px] leading-[1]"
                   key={emoji}
                   type="button"
-                  style={{
-                    fontSize: 18,
-                    background: 'none',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: 6,
-                    cursor: 'default',
-                    padding: '3px 6px',
-                    lineHeight: 1,
-                  }}
                 >
                   {emoji}
                 </button>
