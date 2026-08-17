@@ -30,6 +30,7 @@ import { cn } from '../../../lib/cn';
 import { FilterChip } from '../../shared/FilterChip';
 import { categoryFor, type NodeCategory } from '../nodes/categories';
 import type { NodeType } from '../../../types/pipeline';
+import { useIsNodeTypeExecutable } from '../services/PipelineEditorServicesContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -382,8 +383,13 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
     e.dataTransfer.effectAllowed = 'move';
   };
 
+  const isExecutable = useIsNodeTypeExecutable();
+
   const renderItem = (item: PaletteItem, shortcutIdx: number | null) => {
     const isDisabled = disabledSet.has(item.type);
+    // Host-declared: this type has no executor handler in their deployment, so
+    // a pipeline using it would build fine and then never run that step.
+    const isPreview = !isExecutable(item.type);
     const isHovered = hoveredType === item.type && !isDisabled;
     const shortcutDigit = shortcutIdx !== null && shortcutIdx < 9 ? shortcutIdx + 1 : null;
 
@@ -403,10 +409,13 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           title={
             isDisabled
               ? `${item.name} is already placed`
-              : shortcutDigit
-                ? `${item.description} — press ${shortcutDigit}`
-                : item.description
+              : isPreview
+                ? `${item.name} — preview: this deployment has no executor for it yet, so the step will not run.`
+                : shortcutDigit
+                  ? `${item.description} — press ${shortcutDigit}`
+                  : item.description
           }
+          data-preview={isPreview || undefined}
           data-node-type={item.type}
           data-disabled={isDisabled || undefined}
           data-testid={`palette-item-${item.type}`}
@@ -452,10 +461,13 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
         title={
           isDisabled
             ? `${item.name} is already placed`
-            : shortcutDigit
-              ? `${item.description} — press ${shortcutDigit}`
-              : item.description
+            : isPreview
+              ? `${item.name} — preview: this deployment has no executor for it yet, so the step will not run.`
+              : shortcutDigit
+                ? `${item.description} — press ${shortcutDigit}`
+                : item.description
         }
+        data-preview={isPreview || undefined}
         data-node-type={item.type}
         data-disabled={isDisabled || undefined}
         data-testid={`palette-item-${item.type}`}
@@ -471,6 +483,15 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
         <div className="flex-1 min-w-0">
           <div className={cn('text-[13px] font-semibold text-text-primary flex items-center gap-1.5', isDisabled && 'line-through')}>
             <span className="truncate">{item.name}</span>
+            {isPreview && (
+              <span
+                data-testid={`palette-preview-${item.type}`}
+                className="shrink-0 rounded-full border border-warning-border bg-warning-bg px-1.5 text-[9px] font-semibold uppercase tracking-wide text-warning-fg"
+                title="No executor handler in this deployment"
+              >
+                preview
+              </span>
+            )}
             {shortcutDigit !== null && (
               <kbd
                 data-testid={`palette-shortcut-${item.type}`}
@@ -484,7 +505,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             )}
           </div>
           <div className="text-[11px] text-neutral truncate">
-            {isDisabled ? 'Placed' : item.description}
+            {isDisabled ? 'Placed' : isPreview ? 'Preview — no executor' : item.description}
           </div>
         </div>
       </div>

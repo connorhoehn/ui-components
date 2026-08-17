@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.44.0] — 2026-08-17
+
+### Added
+
+- **`executableNodeTypes` on `PipelineEditorServices`** — the host declares
+  which node types its executor can actually run, and the palette and node
+  cards mark the rest as **preview**.
+
+  The palette ships more node types than any given backend implements: a survey
+  against platform-api found **11 of 37 with no discoverable handler** (`agent`,
+  `approval`, `policy`, `guardrail`, `graph-query`, `ag-ui-output`, `mcp-tool`,
+  `knowledge-base`, and the control-flow trio `condition`/`fork`/`join`). An
+  author could drag one on, wire it up, and get a pipeline that silently never
+  ran that step.
+
+  The library deliberately does **not** hardcode the set. Which types execute is
+  a property of the *host's deployment*, not of a component library, and a baked
+  guess goes stale the moment a handler ships — so it is a seam, not a list.
+  Omit the field and nothing is marked (pre-2.44 behaviour).
+
+  Marking informs rather than blocks: a preview type is still draggable, and the
+  tooltip states the consequence ("the step will not run") rather than just
+  labelling it. An empty array means *nothing* executes, which is distinct from
+  omitting the field.
+
+- `useIsNodeTypeExecutable()` exported from `…/pipelines`.
+- `BaseNode` takes an optional `nodeType` so a placed card can mark itself —
+  more important than the palette entry, since by then the author has already
+  committed to the node.
+
+
 ## [2.43.0] — 2026-08-17
 
 Node-editor authoring for LLM and vision workflows now reflects the real graph.

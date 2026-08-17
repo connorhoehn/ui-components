@@ -279,6 +279,11 @@ declare interface BaseNodeProps {
      * Per PIPELINES_PLAN.md §18.4.4 / §17.6.
      */
     onRetry?: () => void;
+    /**
+     * The node's type, so the card can mark itself when the host's executor has
+     * no handler for it. Optional: without it the card simply isn't marked.
+     */
+    nodeType?: string;
     /** Show a red breakpoint dot in the top-left corner of the card. */
     hasBreakpoint?: boolean;
     /** Highlight the card with an orange border/glow (run is paused here). */
@@ -1434,6 +1439,24 @@ export declare interface PipelineEditorServices {
     uploadImage?(input: File | {
         url: string;
     }): Promise<PipelineUploadedImage>;
+    /**
+     * Node types this host's executor can actually run.
+     *
+     * The palette ships more node types than any given backend implements — a
+     * survey against platform-api found 11 of 37 with no discoverable handler
+     * (agent, approval, policy, guardrail, graph-query, ag-ui-output, mcp-tool,
+     * knowledge-base, and the control-flow trio). An author could drag one on,
+     * wire it up, and get a pipeline that silently never runs that step.
+     *
+     * The library deliberately does NOT hardcode this: which types execute is a
+     * property of the HOST's deployment, not of the component library, and
+     * baking in a guess would go stale the moment a handler ships. Declare the
+     * set here and the palette marks everything else as preview.
+     *
+     * Omit it entirely and nothing is marked — the pre-2.44 behaviour, for hosts
+     * that haven't wired this up yet.
+     */
+    executableNodeTypes?: readonly string[];
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {
@@ -2361,6 +2384,15 @@ export declare interface UseImageLineageResult {
  * thumbnail.
  */
 export declare function useImageUrl(): (imageId: string) => string;
+
+/**
+ * Whether the host's executor can run a given node type.
+ *
+ * Returns `true` for everything when the host hasn't declared
+ * `executableNodeTypes`, so an un-wired host sees no change and the library
+ * never asserts capability it cannot know.
+ */
+export declare function useIsNodeTypeExecutable(): (type: string) => boolean;
 
 /**
  * Fetches per-day judgment-aggregate rows via the `JudgmentApi` injected

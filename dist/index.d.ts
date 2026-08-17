@@ -4309,6 +4309,24 @@ export declare interface PipelineEditorServices {
     uploadImage?(input: File | {
         url: string;
     }): Promise<PipelineUploadedImage>;
+    /**
+     * Node types this host's executor can actually run.
+     *
+     * The palette ships more node types than any given backend implements — a
+     * survey against platform-api found 11 of 37 with no discoverable handler
+     * (agent, approval, policy, guardrail, graph-query, ag-ui-output, mcp-tool,
+     * knowledge-base, and the control-flow trio). An author could drag one on,
+     * wire it up, and get a pipeline that silently never runs that step.
+     *
+     * The library deliberately does NOT hardcode this: which types execute is a
+     * property of the HOST's deployment, not of the component library, and
+     * baking in a guess would go stale the moment a handler ships. Declare the
+     * set here and the palette marks everything else as preview.
+     *
+     * Omit it entirely and nothing is marked — the pre-2.44 behaviour, for hosts
+     * that haven't wired this up yet.
+     */
+    executableNodeTypes?: readonly string[];
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {

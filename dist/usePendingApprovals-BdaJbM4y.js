@@ -1,23 +1,23 @@
-import { jsx as R, jsxs as V, Fragment as De } from "react/jsx-runtime";
+import { jsx as E, jsxs as V, Fragment as De } from "react/jsx-runtime";
 import { createContext as re, useContext as J, useState as D, useRef as B, useEffect as F, useCallback as w, useMemo as W, forwardRef as G, useId as Oe } from "react";
 import { c as j } from "./cn-B6yFEsav.js";
 import { a as je } from "./ToastProvider-BMqraB3k.js";
 import { a as _e, u as Me } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Fe } from "./IdentityContext-CLalsm_M.js";
-import { u as le } from "./WebSocketContext-DPGFyPeZ.js";
+import { u as pe } from "./WebSocketContext-DPGFyPeZ.js";
 const Se = "ws_pipelines_v1_index", qe = "ws_pipelines_v1:";
 function oe(e) {
   return `${qe}${e}`;
 }
 let Ie = !1;
-function pe(e, n) {
+function me(e, n) {
   try {
     localStorage.setItem(e, n);
   } catch (r) {
     Ie || (Ie = !0, console.warn("[pipelineStorage] localStorage write failed", r));
   }
 }
-function me() {
+function fe() {
   try {
     const e = localStorage.getItem(Se);
     if (!e) return [];
@@ -28,10 +28,10 @@ function me() {
   }
 }
 function Pe(e) {
-  pe(Se, JSON.stringify(e));
+  me(Se, JSON.stringify(e));
 }
 function Le(e) {
-  const n = me(), r = {
+  const n = fe(), r = {
     id: e.id,
     name: e.name,
     status: e.status,
@@ -46,11 +46,11 @@ function Le(e) {
   Pe(n);
 }
 function He(e) {
-  const n = me().filter((r) => r.id !== e);
+  const n = fe().filter((r) => r.id !== e);
   Pe(n);
 }
 function Be() {
-  return me();
+  return fe();
 }
 function K(e) {
   try {
@@ -61,10 +61,10 @@ function K(e) {
   }
 }
 function z(e) {
-  e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), pe(oe(e.id), JSON.stringify(e)), Le(e);
+  e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), me(oe(e.id), JSON.stringify(e)), Le(e);
 }
 function Je(e) {
-  pe(oe(e.id), JSON.stringify(e));
+  me(oe(e.id), JSON.stringify(e));
 }
 function We(e) {
   try {
@@ -104,7 +104,7 @@ function Ct(e) {
       message: "Your document summary is ready for review."
     },
     onError: "route-error"
-  }, E = {
+  }, R = {
     type: "join",
     mode: "all",
     mergeStrategy: "deep-merge"
@@ -127,7 +127,7 @@ function Ct(e) {
     { id: t, type: "fork", position: { x: 900, y: 120 }, data: b },
     { id: s, type: "action", position: { x: 1180, y: 60 }, data: g },
     { id: i, type: "action", position: { x: 1180, y: 180 }, data: C },
-    { id: c, type: "join", position: { x: 1480, y: 120 }, data: E },
+    { id: c, type: "join", position: { x: 1480, y: 120 }, data: R },
     { id: u, type: "approval", position: { x: 1780, y: 120 }, data: N },
     { id: x, type: "action", position: { x: 2080, y: 120 }, data: p },
     { id: h, type: "action", position: { x: 900, y: 320 }, data: {
@@ -323,7 +323,7 @@ async function be(e) {
     throw n;
   }
 }
-async function ae(e) {
+async function ce(e) {
   e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), z(e);
   try {
     return await Te(e);
@@ -517,7 +517,7 @@ function Ze(e) {
 function ee() {
   return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
-const fe = re(null);
+const ge = re(null);
 function jt({
   pipelineId: e,
   children: n
@@ -533,7 +533,7 @@ function jt({
   }, [e]), F(() => {
     if (!(!a || !r))
       return d.current && clearTimeout(d.current), d.current = setTimeout(() => {
-        ae(r).then(() => t(!1));
+        ce(r).then(() => t(!1));
       }, Qe), () => {
         d.current && (clearTimeout(d.current), d.current = null);
       };
@@ -603,10 +603,10 @@ function jt({
       const l = [];
       return f((I) => {
         const k = new Set(m), _ = /* @__PURE__ */ new Map(), Z = I.nodes.filter((O) => k.has(O.id)).map((O) => {
-          const ie = ee();
-          return _.set(O.id, ie), l.push(ie), {
+          const ae = ee();
+          return _.set(O.id, ae), l.push(ae), {
             ...O,
-            id: ie,
+            id: ae,
             position: { x: O.position.x + 40, y: O.position.y + 40 },
             data: { ...O.data }
           };
@@ -624,7 +624,7 @@ function jt({
       }), l;
     },
     [f]
-  ), E = w(
+  ), R = w(
     (m) => {
       const l = ee();
       return f((I) => ({
@@ -657,11 +657,11 @@ function jt({
     },
     []
   ), S = w(() => {
-    r && (d.current && (clearTimeout(d.current), d.current = null), ae(r).then(() => t(!1)));
+    r && (d.current && (clearTimeout(d.current), d.current = null), ce(r).then(() => t(!1)));
   }, [r]), T = w(() => {
     if (!r) return;
     d.current && (clearTimeout(d.current), d.current = null), (async () => {
-      a && (await ae(r), t(!1));
+      a && (await ce(r), t(!1));
       const l = await Ge(r.id);
       l && o(l);
     })();
@@ -712,7 +712,7 @@ function jt({
       updateNodeData: b,
       removeNode: g,
       duplicateNodes: C,
-      addEdge: E,
+      addEdge: R,
       removeEdge: N,
       setPositions: p,
       save: S,
@@ -735,7 +735,7 @@ function jt({
       b,
       g,
       C,
-      E,
+      R,
       N,
       p,
       S,
@@ -750,10 +750,10 @@ function jt({
       H
     ]
   );
-  return /* @__PURE__ */ R(fe.Provider, { value: X, children: n });
+  return /* @__PURE__ */ E(ge.Provider, { value: X, children: n });
 }
 function _t() {
-  const e = J(fe);
+  const e = J(ge);
   if (!e)
     throw new Error(
       "usePipelineEditor must be used within a PipelineEditorProvider"
@@ -787,7 +787,7 @@ async function et(e, n, r, o, a) {
   return s.json();
 }
 const tt = "ws_pipeline_runs_v1:", nt = 50;
-function ge(e) {
+function he(e) {
   return `${tt}${e}`;
 }
 let we = !1;
@@ -798,9 +798,9 @@ function rt(e, n) {
     we || (we = !0, console.warn("[runHistory] localStorage write failed", r));
   }
 }
-function he(e) {
+function ye(e) {
   try {
-    const n = localStorage.getItem(ge(e));
+    const n = localStorage.getItem(he(e));
     if (!n) return [];
     const r = JSON.parse(n);
     return Array.isArray(r) ? r : [];
@@ -809,15 +809,15 @@ function he(e) {
   }
 }
 function Ft(e, n) {
-  return he(e).find((o) => o.id === n) ?? null;
+  return ye(e).find((o) => o.id === n) ?? null;
 }
 function ot(e, n) {
-  const r = he(e).filter((a) => a.id !== n.id), o = [n, ...r].sort((a, t) => t.startedAt.localeCompare(a.startedAt)).slice(0, nt);
-  rt(ge(e), JSON.stringify(o));
+  const r = ye(e).filter((a) => a.id !== n.id), o = [n, ...r].sort((a, t) => t.startedAt.localeCompare(a.startedAt)).slice(0, nt);
+  rt(he(e), JSON.stringify(o));
 }
 function qt(e) {
   try {
-    localStorage.removeItem(ge(e));
+    localStorage.removeItem(he(e));
   } catch {
   }
 }
@@ -923,7 +923,7 @@ function Ht({
   onEvent: n,
   enabled: r = !1
 }) {
-  const { connectionState: o, sendMessage: a, onMessage: t } = le(), s = B(n);
+  const { connectionState: o, sendMessage: a, onMessage: t } = pe(), s = B(n);
   F(() => {
     s.current = n;
   }, [n]), F(() => {
@@ -956,7 +956,7 @@ function te() {
   return e && typeof e.randomUUID == "function" ? e.randomUUID() : `ws-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 function ut() {
-  const { sendMessage: e } = le(), n = w(
+  const { sendMessage: e } = pe(), n = w(
     (h) => e({ service: "pipeline", action: "subscribe", channel: `pipeline:run:${h}` }),
     [e]
   ), r = w(
@@ -1036,7 +1036,7 @@ function ut() {
   };
 }
 function Bt(e, n = {}) {
-  const { enabled: r = !0 } = n, { connectionState: o, sendMessage: a } = le();
+  const { enabled: r = !0 } = n, { connectionState: o, sendMessage: a } = pe();
   F(() => {
     if (!r || !e || o !== "connected") return;
     const t = `pipeline:run:${e}`;
@@ -1045,17 +1045,17 @@ function Bt(e, n = {}) {
     };
   }, [r, e, o, a]);
 }
-const Re = re(null);
+const Ee = re(null);
 function Jt({
   value: e,
   children: n
 }) {
-  return /* @__PURE__ */ R(Re.Provider, { value: e, children: n });
+  return /* @__PURE__ */ E(Ee.Provider, { value: e, children: n });
 }
-function Ee() {
-  return J(Re);
+function Re() {
+  return J(Ee);
 }
-const de = 20, se = re(null);
+const le = 20, se = re(null);
 function dt(e, n) {
   return e.steps[n] ?? {
     nodeId: n,
@@ -1068,23 +1068,23 @@ function M(e, n, r) {
 }
 function lt(e) {
   const n = Object.values(e);
-  if (n.length <= de) return e;
+  if (n.length <= le) return e;
   const r = n.filter(
     (i) => i.status === "running" || i.status === "pending" || i.status === "awaiting_approval" || i.status === "paused_at_breakpoint"
   ), a = n.filter(
     (i) => i.status !== "running" && i.status !== "pending" && i.status !== "awaiting_approval" && i.status !== "paused_at_breakpoint"
   ).sort((i, c) => c.startedAt.localeCompare(i.startedAt)).slice(
     0,
-    Math.max(0, de - r.length)
+    Math.max(0, le - r.length)
   ), t = [...r, ...a], s = {};
   for (const i of t) s[i.id] = i;
   return s;
 }
 function Wt({ children: e }) {
-  const n = J(fe), { triggerRun: r } = it(), o = ut(), [a, t] = D({}), [s, i] = D(!1), c = B(/* @__PURE__ */ new Set()), u = B(null);
+  const n = J(ge), { triggerRun: r } = it(), o = ut(), [a, t] = D({}), [s, i] = D(!1), c = B(/* @__PURE__ */ new Set()), u = B(null);
   F(() => {
     const p = n?.definition?.id;
-    !p || u.current === p || (u.current = p, i(!0), $e(p, { limit: de }).then((S) => {
+    !p || u.current === p || (u.current = p, i(!0), $e(p, { limit: le }).then((S) => {
       t((T) => {
         const $ = { ...T };
         for (const A of S.runs)
@@ -1094,7 +1094,7 @@ function Wt({ children: e }) {
     }).catch((S) => {
       console.error("[PipelineRuns] Failed to load history from API", S), t((T) => {
         const $ = { ...T };
-        for (const A of he(p))
+        for (const A of ye(p))
           $[A.id] || ($[A.id] = A);
         return $;
       });
@@ -1213,7 +1213,7 @@ function Wt({ children: e }) {
       }
       return { ...S, [p.id]: p };
     });
-  }, []), E = W(
+  }, []), R = W(
     () => Object.values(a).filter(
       (p) => p.status === "running" || p.status === "pending" || p.status === "awaiting_approval" || p.status === "paused_at_breakpoint"
     ).map((p) => p.id),
@@ -1221,7 +1221,7 @@ function Wt({ children: e }) {
   ), N = W(
     () => ({
       runs: a,
-      activeRunIds: E,
+      activeRunIds: R,
       triggerRun: x,
       triggerDebugRun: P,
       cancelRun: h,
@@ -1234,7 +1234,7 @@ function Wt({ children: e }) {
     }),
     [
       a,
-      E,
+      R,
       x,
       P,
       h,
@@ -1246,7 +1246,7 @@ function Wt({ children: e }) {
       C
     ]
   );
-  return /* @__PURE__ */ R(se.Provider, { value: N, children: e });
+  return /* @__PURE__ */ E(se.Provider, { value: N, children: e });
 }
 function pt(e, n, r) {
   if (!r || typeof r != "object" || typeof r.runId != "string") return e;
@@ -1574,14 +1574,14 @@ function mt() {
   return e;
 }
 function Kt() {
-  const e = Ee(), n = J(se), r = e?.retryFromStep, o = n?.retryFromStep;
+  const e = Re(), n = J(se), r = e?.retryFromStep, o = n?.retryFromStep;
   return W(() => r ? async (a) => {
     await r(a);
   } : o ?? (async () => {
   }), [r, o]);
 }
 function Vt(e) {
-  const n = Ee(), r = J(se), o = n?.getLatestStepForNode, a = W(
+  const n = Re(), r = J(se), o = n?.getLatestStepForNode, a = W(
     () => o ? o(e) : null,
     [o, e]
   ), t = W(() => {
@@ -1595,15 +1595,15 @@ function Vt(e) {
   }, [r, e]);
   return o ? a : t;
 }
-const ye = re(null);
+const ie = re(null);
 function zt({
   services: e,
   children: n
 }) {
-  return /* @__PURE__ */ R(ye.Provider, { value: e, children: n });
+  return /* @__PURE__ */ E(ie.Provider, { value: e, children: n });
 }
 function Yt() {
-  const e = J(ye);
+  const e = J(ie);
   if (!e)
     throw new Error(
       "useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation."
@@ -1611,12 +1611,20 @@ function Yt() {
   return e.getImageUrl;
 }
 function Xt() {
-  const e = J(ye);
+  const e = J(ie);
   if (!e)
     throw new Error(
       "usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>."
     );
   return e;
+}
+function Gt() {
+  const n = J(ie)?.executableNodeTypes;
+  return W(() => {
+    if (!n) return () => !0;
+    const r = new Set(n);
+    return (o) => r.has(o);
+  }, [n]);
 }
 function ft(e) {
   if (e < 60) return `${e}s`;
@@ -1632,7 +1640,7 @@ function gt({ startedAt: e }) {
     o();
     const a = setInterval(o, 1e3);
     return () => clearInterval(a);
-  }, [e]), /* @__PURE__ */ R(
+  }, [e]), /* @__PURE__ */ E(
     "span",
     {
       "data-testid": "generative-image-preview-elapsed",
@@ -1641,7 +1649,7 @@ function gt({ startedAt: e }) {
     }
   );
 }
-function Gt({
+function Qt({
   status: e,
   src: n,
   alt: r = "",
@@ -1653,14 +1661,14 @@ function Gt({
     if (!i) return;
     const u = setTimeout(() => c(!1), 30);
     return () => clearTimeout(u);
-  }, [i]), /* @__PURE__ */ R(
+  }, [i]), /* @__PURE__ */ E(
     "div",
     {
       "data-testid": "generative-image-preview",
       "data-status": e,
       className: j("relative overflow-hidden rounded-md bg-surface-hover", a),
       children: e === "synthesizing" ? /* @__PURE__ */ V(De, { children: [
-        /* @__PURE__ */ R(
+        /* @__PURE__ */ E(
           "div",
           {
             "aria-hidden": "true",
@@ -1674,7 +1682,7 @@ function Gt({
             )
           }
         ),
-        !t && /* @__PURE__ */ R(
+        !t && /* @__PURE__ */ E(
           "div",
           {
             "aria-hidden": "true",
@@ -1687,7 +1695,7 @@ function Gt({
             )
           }
         ),
-        /* @__PURE__ */ R(
+        /* @__PURE__ */ E(
           "span",
           {
             className: j(
@@ -1697,8 +1705,8 @@ function Gt({
             children: "✦ synthesizing"
           }
         ),
-        o !== void 0 && /* @__PURE__ */ R(gt, { startedAt: o })
-      ] }) : n ? /* @__PURE__ */ R(
+        o !== void 0 && /* @__PURE__ */ E(gt, { startedAt: o })
+      ] }) : n ? /* @__PURE__ */ E(
         "img",
         {
           src: n,
@@ -1712,7 +1720,7 @@ function Gt({
         }
       ) : (
         // 'done' without a src — keep the neutral block rather than a broken img.
-        /* @__PURE__ */ R("div", { "aria-hidden": "true", className: "absolute inset-0 bg-surface-emphasis" })
+        /* @__PURE__ */ E("div", { "aria-hidden": "true", className: "absolute inset-0 bg-surface-emphasis" })
       )
     }
   );
@@ -1735,7 +1743,7 @@ function Ce(e, n, r, o) {
   const t = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/breakpoint/${encodeURIComponent(r)}/patch`;
   return o ? `${t}/${encodeURIComponent(o)}` : `${t}`;
 }
-async function Qt(e, n, r, o, a) {
+async function Zt(e, n, r, o, a) {
   const t = await fetch(Ce(e, n, r), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1762,7 +1770,7 @@ async function Qt(e, n, r, o, a) {
     i
   );
 }
-async function Zt(e, n, r, o) {
+async function en(e, n, r, o) {
   const a = await fetch(Ce(e, n, r, o), {
     method: "DELETE",
     credentials: "include"
@@ -1781,7 +1789,7 @@ async function Zt(e, n, r, o) {
     s
   );
 }
-const ce = {
+const ue = {
   sm: "h-7 px-2 text-[12px]",
   md: "h-9 px-2.5 text-[13px]"
 }, xe = {
@@ -1800,7 +1808,7 @@ const ce = {
   ...x
 }, h) {
   const d = o != null, v = a != null;
-  return !d && !v ? /* @__PURE__ */ R(
+  return !d && !v ? /* @__PURE__ */ E(
     "input",
     {
       ref: h,
@@ -1815,7 +1823,7 @@ const ce = {
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
         t ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
         i && "font-mono",
-        ce[r],
+        ue[r],
         c
       ),
       ...x
@@ -1831,7 +1839,7 @@ const ce = {
         s && "opacity-50 cursor-not-allowed bg-surface-hover"
       ),
       children: [
-        d && /* @__PURE__ */ R(
+        d && /* @__PURE__ */ E(
           "span",
           {
             "aria-hidden": "true",
@@ -1842,7 +1850,7 @@ const ce = {
             children: o
           }
         ),
-        /* @__PURE__ */ R(
+        /* @__PURE__ */ E(
           "input",
           {
             ref: h,
@@ -1853,8 +1861,8 @@ const ce = {
               "flex-1 min-w-0 bg-transparent font-inherit text-text-primary outline-none",
               "placeholder:text-text-tertiary",
               "disabled:cursor-not-allowed",
-              d ? "pl-0" : ce[r].split(" ")[1],
-              v ? "pr-0" : ce[r].split(" ")[2],
+              d ? "pl-0" : ue[r].split(" ")[1],
+              v ? "pr-0" : ue[r].split(" ")[2],
               r === "sm" ? "h-7 text-[12px]" : "h-9 text-[13px]",
               i && "font-mono",
               c
@@ -1862,7 +1870,7 @@ const ce = {
             ...x
           }
         ),
-        v && /* @__PURE__ */ R(
+        v && /* @__PURE__ */ E(
           "span",
           {
             "aria-hidden": "true",
@@ -1879,7 +1887,7 @@ const ce = {
 }), yt = {
   sm: "px-1.5 py-0.5 text-[11px]",
   md: "px-2 py-0.5 text-[12px]"
-}, en = G(
+}, tn = G(
   function({
     value: n,
     onChange: r,
@@ -1894,7 +1902,7 @@ const ce = {
   }, h) {
     const d = Oe(), v = u && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, f = t || v != null, P = s ?? v;
     return /* @__PURE__ */ V("div", { className: "flex flex-col gap-1 w-full", children: [
-      /* @__PURE__ */ R(
+      /* @__PURE__ */ E(
         Ue,
         {
           ref: h,
@@ -1911,7 +1919,7 @@ const ce = {
           "aria-invalid": f || void 0
         }
       ),
-      o && o.length > 0 && /* @__PURE__ */ R("div", { className: "flex flex-wrap gap-1", children: o.map((y) => /* @__PURE__ */ R(
+      o && o.length > 0 && /* @__PURE__ */ E("div", { className: "flex flex-wrap gap-1", children: o.map((y) => /* @__PURE__ */ E(
         "button",
         {
           type: "button",
@@ -1929,7 +1937,7 @@ const ce = {
         },
         y.value
       )) }),
-      P && /* @__PURE__ */ R(
+      P && /* @__PURE__ */ E(
         "p",
         {
           id: d,
@@ -1940,7 +1948,7 @@ const ce = {
       )
     ] });
   }
-), tn = G(
+), nn = G(
   function({
     value: n,
     onChange: r,
@@ -1976,7 +1984,7 @@ const ce = {
       },
       [v, r]
     );
-    return /* @__PURE__ */ R(
+    return /* @__PURE__ */ E(
       Ue,
       {
         ref: d,
@@ -1989,7 +1997,7 @@ const ce = {
         placeholder: i,
         invalid: c,
         disabled: u,
-        suffix: s ? /* @__PURE__ */ R("span", { className: "text-text-tertiary font-sans text-[12px] select-none", children: s }) : void 0,
+        suffix: s ? /* @__PURE__ */ E("span", { className: "text-text-tertiary font-sans text-[12px] select-none", children: s }) : void 0,
         "data-testid": h,
         onChange: f,
         onBlur: P
@@ -1999,7 +2007,7 @@ const ce = {
 ), It = {
   sm: "h-7 px-2 text-[12px]",
   md: "h-9 px-2.5 text-[13px]"
-}, nn = G(function({
+}, rn = G(function({
   options: n,
   placeholder: r,
   size: o = "md",
@@ -2034,8 +2042,8 @@ const ce = {
       ),
       ...u,
       children: [
-        r && /* @__PURE__ */ R("option", { value: "", disabled: !0, children: r }),
-        n.map((h) => /* @__PURE__ */ R("option", { value: h.value, disabled: h.disabled, children: h.label }, h.value))
+        r && /* @__PURE__ */ E("option", { value: "", disabled: !0, children: r }),
+        n.map((h) => /* @__PURE__ */ E("option", { value: h.value, disabled: h.disabled, children: h.label }, h.value))
       ]
     }
   );
@@ -2062,14 +2070,14 @@ function wt() {
       className: "w-6 h-6 text-text-tertiary",
       "aria-hidden": "true",
       children: [
-        /* @__PURE__ */ R("rect", { x: "3", y: "3", width: "18", height: "18", rx: "2", ry: "2" }),
-        /* @__PURE__ */ R("circle", { cx: "8.5", cy: "8.5", r: "1.5" }),
-        /* @__PURE__ */ R("path", { d: "M21 15l-5-5L5 21" })
+        /* @__PURE__ */ E("rect", { x: "3", y: "3", width: "18", height: "18", rx: "2", ry: "2" }),
+        /* @__PURE__ */ E("circle", { cx: "8.5", cy: "8.5", r: "1.5" }),
+        /* @__PURE__ */ E("path", { d: "M21 15l-5-5L5 21" })
       ]
     }
   );
 }
-function rn({
+function on({
   src: e,
   alt: n,
   size: r = "md",
@@ -2093,15 +2101,15 @@ function rn({
         i
       ),
       children: [
-        u === "loading" && /* @__PURE__ */ R(
+        u === "loading" && /* @__PURE__ */ E(
           "div",
           {
             "aria-hidden": "true",
             className: "absolute inset-0 animate-pulse bg-surface-emphasis"
           }
         ),
-        u === "error" && /* @__PURE__ */ R("div", { className: "absolute inset-0 flex items-center justify-center bg-surface-hover", children: t ?? /* @__PURE__ */ R(wt, {}) }),
-        /* @__PURE__ */ R(
+        u === "error" && /* @__PURE__ */ E("div", { className: "absolute inset-0 flex items-center justify-center bg-surface-hover", children: t ?? /* @__PURE__ */ E(wt, {}) }),
+        /* @__PURE__ */ E(
           "img",
           {
             src: e,
@@ -2119,7 +2127,7 @@ function rn({
     }
   );
 }
-const on = G(
+const sn = G(
   function({
     rows: n,
     minRows: r = 2,
@@ -2134,27 +2142,27 @@ const on = G(
     ...h
   }, d) {
     const v = B(null), f = w(
-      (E) => {
-        v.current = E, typeof d == "function" ? d(E) : d && (d.current = E);
+      (R) => {
+        v.current = R, typeof d == "function" ? d(R) : d && (d.current = R);
       },
       [d]
     ), P = 20, y = 12, b = w(() => {
-      const E = v.current;
-      if (!E || !a) return;
-      E.style.height = "auto";
-      const N = r * P + y, p = E.scrollHeight, S = o ? o * P + y : 1 / 0;
-      E.style.height = `${Math.min(Math.max(p, N), S)}px`, E.style.overflowY = p > S ? "auto" : "hidden";
+      const R = v.current;
+      if (!R || !a) return;
+      R.style.height = "auto";
+      const N = r * P + y, p = R.scrollHeight, S = o ? o * P + y : 1 / 0;
+      R.style.height = `${Math.min(Math.max(p, N), S)}px`, R.style.overflowY = p > S ? "auto" : "hidden";
     }, [a, r, o]);
     F(() => {
       b();
     }, [c, b]);
     const g = w(
-      (E) => {
-        b(), i?.(E);
+      (R) => {
+        b(), i?.(R);
       },
       [i, b]
     );
-    return /* @__PURE__ */ R(
+    return /* @__PURE__ */ E(
       "textarea",
       {
         ref: f,
@@ -2180,7 +2188,7 @@ const on = G(
     );
   }
 );
-async function sn(e, n, r, o) {
+async function an(e, n, r, o) {
   const a = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(a, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -2204,7 +2212,7 @@ function Ae(e) {
         n.push(`${encodeURIComponent(r)}=${encodeURIComponent(String(o))}`);
   return n.length > 0 ? `?${n.join("&")}` : "";
 }
-async function an(e, n, r = {}) {
+async function cn(e, n, r = {}) {
   const o = Ae({
     since: r.since,
     until: r.until,
@@ -2221,7 +2229,7 @@ async function an(e, n, r = {}) {
   }
   return t.json();
 }
-async function cn(e) {
+async function un(e) {
   if (!e.actor && !e.pipelineId)
     throw new Error("searchAudit requires at least one of `actor` or `pipelineId`");
   const r = `/api/pipelines/audit/search${Ae({
@@ -2245,7 +2253,7 @@ async function cn(e) {
 function ne(e, n) {
   return `${e}::${n}`;
 }
-function ue(e, n) {
+function de(e, n) {
   const r = K(e);
   if (!r) return { requiredCount: 1 };
   const o = r.nodes.find((t) => t.id === n);
@@ -2266,7 +2274,7 @@ function xt() {
           for (const b in y.steps) {
             const g = y.steps[b];
             if (g.status !== "awaiting") continue;
-            const C = ue(y.pipelineId, b), N = K(y.pipelineId)?.nodes.find((S) => S.id === b), p = N && N.data.type === "approval" ? N.data.approvers : [];
+            const C = de(y.pipelineId, b), N = K(y.pipelineId)?.nodes.find((S) => S.id === b), p = N && N.data.type === "approval" ? N.data.approvers : [];
             f[ne(P, b)] = {
               runId: P,
               pipelineId: y.pipelineId,
@@ -2311,7 +2319,7 @@ function xt() {
         if (y?.pendingApprovals) {
           const b = {};
           for (const g of y.pendingApprovals) {
-            const C = ue(g.pipelineId, g.stepId);
+            const C = de(g.pipelineId, g.stepId);
             b[ne(g.runId, g.stepId)] = {
               runId: g.runId,
               pipelineId: g.pipelineId,
@@ -2345,11 +2353,11 @@ function xt() {
       })
     ), f.push(
       e.subscribe("pipeline.approval.requested", (y) => {
-        const b = y, g = h.current.get(b.runId) ?? x.current[b.runId]?.pipelineId ?? "", C = ue(g, b.stepId);
-        o((E) => {
+        const b = y, g = h.current.get(b.runId) ?? x.current[b.runId]?.pipelineId ?? "", C = de(g, b.stepId);
+        o((R) => {
           const N = ne(b.runId, b.stepId);
-          return E[N] ? E : {
-            ...E,
+          return R[N] ? R : {
+            ...R,
             [N]: {
               runId: b.runId,
               pipelineId: g,
@@ -2367,20 +2375,20 @@ function xt() {
       e.subscribe("pipeline.approval.recorded", (y) => {
         const b = y, g = ne(b.runId, b.stepId);
         o((C) => {
-          const E = C[g];
-          if (!E) return C;
+          const R = C[g];
+          if (!R) return C;
           if (b.decision === "reject") {
             const S = { ...C };
             return delete S[g], S;
           }
-          const N = (E.recordedCount ?? 0) + 1, p = E.requiredCount ?? 1;
+          const N = (R.recordedCount ?? 0) + 1, p = R.requiredCount ?? 1;
           if (N >= p) {
             const S = { ...C };
             return delete S[g], S;
           }
           return {
             ...C,
-            [g]: { ...E, recordedCount: N }
+            [g]: { ...R, recordedCount: N }
           };
         });
       })
@@ -2397,62 +2405,63 @@ function xt() {
   }, []);
   return { approvals: d, isLoading: a, error: s, retry: v };
 }
-function un() {
+function dn() {
   const { approvals: e } = xt();
   return e;
 }
 export {
-  Ut as A,
-  At as B,
-  qt as C,
-  We as D,
-  z as E,
-  it as F,
-  Gt as G,
-  be as H,
-  rn as I,
-  en as J,
-  Ot as K,
-  Ct as L,
-  ae as M,
-  tn as N,
-  Dt as O,
+  Lt as $,
+  jt as A,
+  Ut as B,
+  At as C,
+  qt as D,
+  We as E,
+  z as F,
+  Qt as G,
+  it as H,
+  on as I,
+  tn as J,
+  be as K,
+  Ot as L,
+  Ct as M,
+  nn as N,
+  ce as O,
   Wt as P,
-  Ge as Q,
-  he as R,
-  nn as S,
-  on as T,
-  ot as U,
-  Bt as V,
-  Ft as W,
-  xt as X,
-  Jt as Y,
-  Ee as Z,
-  Lt as _,
+  Dt as Q,
+  Ge as R,
+  rn as S,
+  sn as T,
+  ye as U,
+  ot as V,
+  Bt as W,
+  Ft as X,
+  xt as Y,
+  Jt as Z,
+  Re as _,
   K as a,
   Nt as b,
   Ht as c,
-  un as d,
+  dn as d,
   Ue as e,
   ke as f,
   ht as g,
   zt as h,
-  Qt as i,
+  Zt as i,
   Mt as j,
   st as k,
   Be as l,
-  an as m,
+  cn as m,
   $e as n,
   et as o,
-  Zt as p,
+  en as p,
   Yt as q,
-  sn as r,
-  cn as s,
+  an as r,
+  un as s,
   Xt as t,
   mt as u,
-  Vt as v,
-  Kt as w,
-  _t as x,
-  fe as y,
-  jt as z
+  Gt as v,
+  Vt as w,
+  Kt as x,
+  _t as y,
+  ge as z
 };

@@ -5,7 +5,7 @@
 // root and pass their own implementations. Node components call the hooks
 // below — they never import from host-specific modules.
 
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode, useMemo } from 'react';
 
 export interface UploadedImage {
   imageId: string;
@@ -31,6 +31,25 @@ export interface PipelineEditorServices {
    * Nodes that just render produced images do NOT need this method.
    */
   uploadImage?(input: File | { url: string }): Promise<UploadedImage>;
+
+  /**
+   * Node types this host's executor can actually run.
+   *
+   * The palette ships more node types than any given backend implements — a
+   * survey against platform-api found 11 of 37 with no discoverable handler
+   * (agent, approval, policy, guardrail, graph-query, ag-ui-output, mcp-tool,
+   * knowledge-base, and the control-flow trio). An author could drag one on,
+   * wire it up, and get a pipeline that silently never runs that step.
+   *
+   * The library deliberately does NOT hardcode this: which types execute is a
+   * property of the HOST's deployment, not of the component library, and
+   * baking in a guess would go stale the moment a handler ships. Declare the
+   * set here and the palette marks everything else as preview.
+   *
+   * Omit it entirely and nothing is marked — the pre-2.44 behaviour, for hosts
+   * that haven't wired this up yet.
+   */
+  executableNodeTypes?: readonly string[];
 }
 
 const PipelineEditorServicesContext = createContext<PipelineEditorServices | null>(null);
@@ -75,4 +94,21 @@ export function usePipelineEditorServices(): PipelineEditorServices {
     );
   }
   return svc;
+}
+
+/**
+ * Whether the host's executor can run a given node type.
+ *
+ * Returns `true` for everything when the host hasn't declared
+ * `executableNodeTypes`, so an un-wired host sees no change and the library
+ * never asserts capability it cannot know.
+ */
+export function useIsNodeTypeExecutable(): (type: string) => boolean {
+  const svc = useContext(PipelineEditorServicesContext);
+  const declared = svc?.executableNodeTypes;
+  return useMemo(() => {
+    if (!declared) return () => true;
+    const set = new Set(declared);
+    return (type: string) => set.has(type);
+  }, [declared]);
 }

@@ -21,6 +21,7 @@ import { useState, type MouseEvent, type ReactNode } from 'react';
 import { cn } from '../../../lib/cn';
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
 import type { NodeCategory } from './categories';
+import { useIsNodeTypeExecutable } from '../services/PipelineEditorServicesContext';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -49,6 +50,11 @@ export interface BaseNodeProps {
    * Per PIPELINES_PLAN.md §18.4.4 / §17.6.
    */
   onRetry?: () => void;
+  /**
+   * The node's type, so the card can mark itself when the host's executor has
+   * no handler for it. Optional: without it the card simply isn't marked.
+   */
+  nodeType?: string;
   /** Show a red breakpoint dot in the top-left corner of the card. */
   hasBreakpoint?: boolean;
   /** Highlight the card with an orange border/glow (run is paused here). */
@@ -126,6 +132,8 @@ const CATEGORY_TOKENS: Record<NodeCategory, CategoryTokens> = {
 // ---------------------------------------------------------------------------
 
 export default function BaseNode(props: BaseNodeProps) {
+  const isExecutable = useIsNodeTypeExecutable();
+  const isPreview = props.nodeType ? !isExecutable(props.nodeType) : false;
   const { icon, subtitle, state, body, footer, selected, onRetry, hasBreakpoint, pausedAtBreakpoint, ariaLabel, category, children } = props;
   const tokens = STATE_TOKENS[state];
   const catTokens = category ? CATEGORY_TOKENS[category] : undefined;
@@ -213,6 +221,15 @@ export default function BaseNode(props: BaseNodeProps) {
           <span className="text-sm leading-none shrink-0" aria-hidden="true">{icon}</span>
         )}
         <span className="flex-1 min-w-0 text-xs font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">{subtitle}</span>
+        {isPreview && (
+          <span
+            data-testid="node-preview-badge"
+            title="This deployment has no executor for this node type — the step will not run."
+            className="shrink-0 rounded-full border border-warning-border bg-warning-bg px-1.5 text-[8px] font-semibold uppercase tracking-wide text-warning-fg"
+          >
+            preview
+          </span>
+        )}
         <span
           className={cn('w-2 h-2 rounded-full shrink-0', tokens.dot, pulseAnim)}
           aria-label={`state: ${state}`}

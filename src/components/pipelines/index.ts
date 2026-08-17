@@ -191,6 +191,10 @@ export {
 } from './context/upstreamContext';
 export type { ContextPath, ImageRefOption } from './context/upstreamContext';
 export { useUpstreamContext, useUpstreamImageRefs } from './context/useUpstreamContext';
+
+// Host-declared executor capability. The palette and node cards mark types the
+// host cannot run; omit `executableNodeTypes` and nothing is marked.
+export { useIsNodeTypeExecutable } from './services/PipelineEditorServicesContext';
 export type { UpstreamContext } from './context/useUpstreamContext';
 export { ContextVariablePicker } from './context/ContextVariablePicker';
 export type { ContextVariablePickerProps } from './context/ContextVariablePicker';
