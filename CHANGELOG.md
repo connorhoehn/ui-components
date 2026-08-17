@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.44.1] — 2026-08-17
+
+### Fixed
+
+- **A document editor no longer pulls in a video-broadcast SDK.**
+  `useHangoutEmbed` statically imported `amazon-ivs-web-broadcast`, which put it
+  in the module graph of anything reaching that hook — including
+  `…/doc-editor`, because `DocumentEditorPage` imports `VideoCallPanel`, which
+  imports the hook. The panel is only *rendered* behind
+  `state.showVideoCall`, but a static import is paid regardless.
+
+  The SDK is now dynamically imported (memoized at module scope, mirroring how
+  `RecordingPlayer` loads `hls.js`), and the type-only imports are `import
+  type` so they erase at compile time. `dist/doc-editor.js` no longer
+  references the SDK at all; it is isolated in its own lazily-loaded chunk.
+
+  This also resolves the 2.40.1 **Known** issue: `import
+  '@connorhoehnslalom/ui-components/doc-editor'` previously failed under Node
+  ESM because the SDK is CommonJS-only. **All 12 export subpaths now import
+  cleanly under Node ESM** (was 11 of 12), verified against a packed tarball.
+
+  `stopScreenShare` became `async` as a result — it awaits the SDK before
+  constructing a `LocalStageStream`.
+
+
 ## [2.44.0] — 2026-08-17
 
 ### Added

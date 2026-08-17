@@ -1022,7 +1022,7 @@ function qt() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Yt = it(() => import("./DocumentEditorPage-BZXJ8DSo.js").then((t) => t.o));
+const Yt = it(() => import("./DocumentEditorPage-DmFOcaSr.js").then((t) => t.o));
 function Qt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;

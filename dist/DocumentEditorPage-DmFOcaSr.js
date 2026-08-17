@@ -5,7 +5,7 @@ import { n as rn, b as on, c as sn, g as an, e as ln, j as dn, l as cn, m as mn,
 import { u as un } from "./IdentityContext-CLalsm_M.js";
 import { l as fn } from "./useDocumentTypes-C29MkgPl.js";
 import { c as e } from "./cn-B6yFEsav.js";
-import { u as xn } from "./useHangoutEmbed-DyGzEiRt.js";
+import { u as xn } from "./useHangoutEmbed-CENeXX6M.js";
 import { u as hn } from "./useActiveSpeaker-BOwJ262O.js";
 import { D as bn, T as De } from "./NewDocumentModal-PEMSfpvd.js";
 import { b as gn } from "./registry-qR57lair.js";

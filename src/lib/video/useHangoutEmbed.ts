@@ -7,7 +7,26 @@
  */
 
 import { useState, useEffect, useRef, useCallback, type RefObject } from 'react';
-import { Stage, type StageStrategy, SubscribeType, StageEvents, LocalStageStream } from 'amazon-ivs-web-broadcast';
+// TYPE-ONLY: erased at compile time, so importing this module does not pull the
+// IVS SDK into the graph. The runtime values are dynamically imported inside
+// joinStage() below — see the note there.
+import type {
+  Stage,
+  StageStrategy,
+  LocalStageStream,
+} from 'amazon-ivs-web-broadcast';
+
+/**
+ * Memoized dynamic load of the IVS SDK.
+ *
+ * Kept at module scope so the browser parses/evaluates the SDK once no matter
+ * how many hooks or call panels mount.
+ */
+let ivsPromise: Promise<typeof import('amazon-ivs-web-broadcast')> | null = null;
+function loadIvs() {
+  ivsPromise ??= import('amazon-ivs-web-broadcast');
+  return ivsPromise;
+}
 import type { HangoutParticipant } from './types';
 
 export interface UseHangoutEmbedOptions {
@@ -66,6 +85,21 @@ export function useHangoutEmbed({
     const joinStage = async () => {
       setError(null);
       try {
+        // Dynamic import, mirroring how RecordingPlayer loads hls.js.
+        //
+        // amazon-ivs-web-broadcast is a heavy, optional peer. Importing it
+        // statically put it in the module graph of anything that reached this
+        // hook — including `…/doc-editor`, because DocumentEditorPage imports
+        // VideoCallPanel, which imports this. A document editor pulled in a
+        // video-broadcast SDK, and `import '.../doc-editor'` failed outright
+        // under Node ESM (the package is CommonJS-only). Loading it here means
+        // the cost is paid only when a call is actually joined.
+        const {
+          Stage: StageCtor,
+          SubscribeType,
+          StageEvents,
+          LocalStageStream: LocalStageStreamCtor,
+        } = await loadIvs();
         // Acquire camera + microphone
         const localStream = await navigator.mediaDevices.getUserMedia({
           video: { width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -81,7 +115,7 @@ export function useHangoutEmbed({
 
         // Wrap tracks as LocalStageStream for IVS SDK
         const stageStreams = localStream.getTracks().map(
-          (track) => new LocalStageStream(track),
+          (track) => new LocalStageStreamCtor(track),
         );
         localStageStreamsRef.current = stageStreams;
 
@@ -97,7 +131,7 @@ export function useHangoutEmbed({
           shouldSubscribeToParticipant: () => SubscribeType.AUDIO_VIDEO,
         };
 
-        const stage = new Stage(stageToken, strategy);
+        const stage = new StageCtor(stageToken, strategy);
         stageRef.current = stage;
 
         // Participant joined
@@ -214,7 +248,7 @@ export function useHangoutEmbed({
   // Screen sharing SWAPS the published video track (camera → screen).
   // The camera stream stays in participants[].streams for local PiP display.
 
-  const stopScreenShare = useCallback(() => {
+  const stopScreenShare = useCallback(async () => {
     if (screenStreamRef.current) {
       screenStreamRef.current.getTracks().forEach((t) => t.stop());
       screenStreamRef.current = null;
@@ -223,7 +257,8 @@ export function useHangoutEmbed({
     if (localStreamRef.current) {
       const cameraVideoTrack = localStreamRef.current.getVideoTracks()[0];
       if (cameraVideoTrack) {
-        const cameraStageStream = new LocalStageStream(cameraVideoTrack);
+        const { LocalStageStream: Ctor } = await loadIvs();
+        const cameraStageStream = new Ctor(cameraVideoTrack);
         // Replace: keep audio, swap video back to camera
         localStageStreamsRef.current = [
           ...localStageStreamsRef.current.filter((lss) => lss.mediaStreamTrack.kind === 'audio'),
@@ -245,7 +280,8 @@ export function useHangoutEmbed({
       screenStreamRef.current = screenStream;
       const videoTrack = screenStream.getVideoTracks()[0];
       videoTrack.contentHint = 'detail';
-      const screenStageStream = new LocalStageStream(videoTrack);
+      const { LocalStageStream: Ctor } = await loadIvs();
+      const screenStageStream = new Ctor(videoTrack);
 
       // SWAP: replace camera video with screen video (keep audio)
       localStageStreamsRef.current = [
