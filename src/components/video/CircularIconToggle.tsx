@@ -43,7 +43,7 @@ const OFF_NEUTRAL =
   'bg-slate-100 text-slate-500 hover:bg-slate-200';
 
 const OFF_DANGER =
-  'bg-red-100 text-red-700 hover:bg-red-200';
+  'bg-danger-bg text-danger-fg hover:bg-danger-bg';
 
 export function CircularIconToggle({
   on,

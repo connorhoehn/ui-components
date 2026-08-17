@@ -50,7 +50,7 @@ export const WithBadge: Story = {
   args: {
     title: 'Pipeline Runs',
     badge: (
-      <span className="rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-[11px] font-semibold text-green-800">
+      <span className="rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-[11px] font-semibold text-success-fg">
         LIVE
       </span>
     ),

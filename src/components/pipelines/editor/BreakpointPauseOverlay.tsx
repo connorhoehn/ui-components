@@ -56,7 +56,7 @@ export default function BreakpointPauseOverlay({
       data-testid="breakpoint-pause-overlay"
       className={cn(
         'absolute top-14 left-1/2 -translate-x-1/2 z-30',
-        'bg-surface border-2 border-amber-600 rounded-lg',
+        'bg-surface border-2 border-warning rounded-lg',
         'px-4 py-3 shadow-[0_8px_24px_rgba(217,119,6,0.2)]',
         'flex flex-col gap-3 font-inherit',
         'w-[min(900px,92vw)] max-h-[calc(100vh-120px)]',
@@ -64,7 +64,7 @@ export default function BreakpointPauseOverlay({
     >
       {/* Toolbar row */}
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-[13px] font-semibold text-amber-600">
+        <span className="text-[13px] font-semibold text-warning-fg">
           Paused at: {lookupStepName(definition, pausedBreakpoint.stepId)}
         </span>
         {canApplyAndContinue && (
@@ -74,7 +74,7 @@ export default function BreakpointPauseOverlay({
             disabled={applyingPatch}
             data-testid="breakpoint-apply-continue-btn"
             className={cn(
-              'px-3 py-1 text-xs font-semibold bg-green-300 text-gray-900',
+              'px-3 py-1 text-xs font-semibold bg-success-bg text-gray-900',
               'border-none rounded cursor-pointer font-inherit',
               applyingPatch && 'cursor-wait opacity-70',
             )}
@@ -87,7 +87,7 @@ export default function BreakpointPauseOverlay({
           onClick={onContinue}
           disabled={applyingPatch}
           className={cn(
-            'px-3 py-1 text-xs font-semibold bg-amber-600 text-white',
+            'px-3 py-1 text-xs font-semibold bg-warning text-white',
             'border-none rounded font-inherit',
             applyingPatch ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
           )}
@@ -100,8 +100,8 @@ export default function BreakpointPauseOverlay({
           onClick={onStepOver}
           disabled={applyingPatch}
           className={cn(
-            'px-3 py-1 text-xs font-semibold bg-transparent text-amber-600',
-            'border border-amber-600 rounded font-inherit',
+            'px-3 py-1 text-xs font-semibold bg-transparent text-warning-fg',
+            'border border-warning rounded font-inherit',
             applyingPatch ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
           )}
           data-testid="breakpoint-step-over-btn"
@@ -113,8 +113,8 @@ export default function BreakpointPauseOverlay({
           onClick={onResumeAll}
           disabled={applyingPatch}
           className={cn(
-            'px-3 py-1 text-xs font-semibold bg-transparent text-amber-600',
-            'border border-amber-600 rounded font-inherit',
+            'px-3 py-1 text-xs font-semibold bg-transparent text-warning-fg',
+            'border border-warning rounded font-inherit',
             applyingPatch ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
           )}
           data-testid="breakpoint-resume-all-btn"
@@ -179,7 +179,7 @@ export default function BreakpointPauseOverlay({
                         <span
                           data-testid={`breakpoint-patch-unvalidated-${p.patchId}`}
                           title="No validator was registered for this step's node type"
-                          className="px-1 text-[9px] font-bold bg-orange-300/15 text-orange-300 rounded-sm"
+                          className="px-1 text-[9px] font-bold bg-caution-bg/15 text-caution-fg rounded-sm"
                         >
                           ⚠ Unvalidated
                         </span>
@@ -213,7 +213,7 @@ export default function BreakpointPauseOverlay({
                         className={cn(
                           'mt-1 px-2 py-0.5 text-[10px] font-semibold bg-transparent rounded-sm font-inherit',
                           revertAllowed
-                            ? 'text-red-400 border border-red-400 cursor-pointer'
+                            ? 'text-danger-fg border border-danger cursor-pointer'
                             : 'text-gray-700 border border-gray-700 cursor-not-allowed',
                           revertingPatchId === p.patchId && 'cursor-not-allowed',
                         )}

@@ -91,7 +91,7 @@ export default function VisionClassifyConfig({ data, onChange }: VisionClassifyC
                 <button
                   type="button"
                   onClick={() => removeLabel(idx)}
-                  className="bg-transparent border-none cursor-pointer p-0 text-red-600 text-[11px] leading-none"
+                  className="bg-transparent border-none cursor-pointer p-0 text-danger-fg text-[11px] leading-none"
                   aria-label={`Remove label ${lbl}`}
                 >
                   ✕

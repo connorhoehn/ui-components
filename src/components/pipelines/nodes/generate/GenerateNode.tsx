@@ -75,7 +75,7 @@ export default function GenerateNode(props: NodeProps<GenerateFlowNode>) {
           aria-label={src ? 'View generated image' : 'Image synthesizing'}
           className={cn(
             'block w-full rounded-md border-none bg-transparent p-0',
-            'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+            'focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
             src ? 'cursor-zoom-in' : 'cursor-default',
           )}
           onMouseDown={stopMouseDown}

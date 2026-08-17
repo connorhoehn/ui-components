@@ -31,7 +31,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         checked={done}
         onChange={() => onUpdate({ status: done ? 'pending' : 'done' })}
         disabled={!editable}
-        className={cn('w-[15px] h-[15px] accent-emerald-500 shrink-0', editable ? 'cursor-pointer' : 'cursor-default')}
+        className={cn('w-[15px] h-[15px] accent-success shrink-0', editable ? 'cursor-pointer' : 'cursor-default')}
       />
       <input
         ref={inputRef}
@@ -49,7 +49,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         <button
           type="button"
           onClick={onRemove}
-          className="border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none"
+          className="border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none"
         >
           ×
         </button>

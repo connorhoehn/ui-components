@@ -65,7 +65,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
           {isRefusal ? 'Content policy refusal' : `Failure: ${info.failure.reason}`}
         </output>
         <div className="flex items-start gap-1">
-          <span className="bg-transparent border-none p-0 text-[12px] text-red-600 font-medium text-left">
+          <span className="bg-transparent border-none p-0 text-[12px] text-danger-fg font-medium text-left">
             {isRefusal ? '✕ Content policy refusal' : `✕ ${info.failure.reason}`}
           </span>
           {info.onRetry && (
@@ -120,7 +120,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
           </span>
         )}
         {info.awaiting && (
-          <span className="ml-1.5 text-[11px] text-blue-600" data-testid="vision-awaiting">
+          <span className="ml-1.5 text-[11px] text-info-fg" data-testid="vision-awaiting">
             · waiting…
           </span>
         )}
@@ -144,7 +144,7 @@ const VisionResponseFooter = memo(function VisionResponseFooter({ info }: { info
             aria-label="View vision input image"
             className={cn(
               'mt-1.5 block h-14 w-14 overflow-hidden rounded border border-border bg-surface-inset',
-              'p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+              'p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
             )}
             onMouseDown={stopMouseDown}
             onClick={(e) => {

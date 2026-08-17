@@ -78,17 +78,17 @@ export function RadioGroup<T extends string = string>({
                 className={cn(
                   'block w-4 h-4 rounded-full border-2 transition-colors duration-150',
                   isChecked
-                    ? 'border-blue-600 bg-white'
+                    ? 'border-info bg-white'
                     : 'border-slate-300 bg-white',
-                  !disabled && !isChecked && 'peer-hover:border-blue-400',
-                  'peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/40 peer-focus-visible:ring-offset-1',
+                  !disabled && !isChecked && 'peer-hover:border-info',
+                  'peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1',
                 )}
               />
               {/* Inner dot — only rendered when checked */}
               {isChecked && (
                 <span
                   aria-hidden="true"
-                  className="absolute inset-0 m-auto block w-2 h-2 rounded-full bg-blue-600"
+                  className="absolute inset-0 m-auto block w-2 h-2 rounded-full bg-info"
                 />
               )}
             </span>

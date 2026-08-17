@@ -8,11 +8,11 @@ interface TraceTimelineProps {
 }
 
 const KIND_COLORS: Record<SpanKind, string> = {
-  agent: 'bg-blue-500',
-  tool: 'bg-purple-500',
-  llm: 'bg-amber-500',
-  retrieval: 'bg-emerald-500',
-  guardrail: 'bg-red-400',
+  agent: 'bg-info',
+  tool: 'bg-accent',
+  llm: 'bg-warning',
+  retrieval: 'bg-success',
+  guardrail: 'bg-danger',
   internal: 'bg-slate-400',
 };
 
@@ -42,7 +42,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
     <div
       className={cn(
         'flex items-center h-7 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-100',
-        selected && 'bg-blue-50',
+        selected && 'bg-info-bg',
       )}
       onClick={() => onSelect(span)}
     >
@@ -160,8 +160,8 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
             <div className="text-slate-500">Status</div>
             <div className={cn(
               'font-medium',
-              selectedSpan.status === 'ok' && 'text-emerald-600',
-              selectedSpan.status === 'error' && 'text-red-600',
+              selectedSpan.status === 'ok' && 'text-success-fg',
+              selectedSpan.status === 'error' && 'text-danger-fg',
             )}>{selectedSpan.status}</div>
             <div className="text-slate-500">Span ID</div>
             <div className="text-slate-700 font-mono">{selectedSpan.spanId}</div>

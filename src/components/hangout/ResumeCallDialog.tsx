@@ -16,7 +16,7 @@
 //
 // No inline styles — everything goes through Tailwind v4 design tokens
 // (same palette as ConfirmDialog: text-slate-900 / text-text-secondary /
-// bg-blue-50 chips).
+// bg-info-bg chips).
 
 import { useEffect, useState } from 'react';
 

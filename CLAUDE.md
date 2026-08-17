@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.39.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.40.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -305,10 +305,25 @@ Seven tones — `neutral`, `success`, `warning`, `danger`, `info`, `caution`,
 
 **Rules:**
 
-1. **Never name a raw palette colour inside a component.** No `bg-green-50`,
-   no `text-emerald-700`. Go through `src/components/shared/tones.ts`
-   (`TONE_SOFT`, `TONE_SOLID`, `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`,
-   `TONE_BG`), or the token classes directly (`bg-success-bg text-success-fg`).
+1. **Never name a raw palette colour, anywhere.** No `bg-green-50`, no
+   `text-emerald-700`, no `ring-blue-500`, no `from-indigo-50`. Go through
+   `src/components/shared/tones.ts` (`TONE_SOFT`, `TONE_SOLID`,
+   `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`, `TONE_BG`), or the token
+   classes directly (`bg-success-bg text-success-fg ring-primary`).
+
+   **Enforced with zero tolerance** by
+   `src/components/shared/__tests__/tones.test.ts`, which scans all of `src/`
+   — including `.stories.tsx`, since stories are what people copy from — for
+   every colour-taking utility prefix. It began as a baseline of 91 files;
+   all were converted, so there is no allowlist. If you need a colour the
+   scale doesn't express, **add a tone** (four CSS variables + a `tones.ts`
+   entry), don't add a literal.
+
+   Family → tone when converting: green/emerald→success, red/rose→danger,
+   amber/yellow→warning, blue/sky→info, indigo→primary, orange→caution,
+   purple/violet→accent. Shade → role: `bg-{50..300}`→`-bg`,
+   `bg-{400+}`→solid, `border-{50..300}`→`-border`, `border-{400+}`→solid,
+   `text-*`→`-fg`, `ring`/`fill`/`stroke`→solid.
 2. **Never define a second `Record<Tone, string>` palette.** That is exactly
    how this went wrong: Chip, Badge and StackDiagram each had one, and they
    disagreed — Chip's success was green-50/green-600, Badge's was

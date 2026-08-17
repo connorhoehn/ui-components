@@ -12,7 +12,7 @@
 //   data    → slate-blue circle  (structured/JSON payloads)
 //   control → amber circle, slightly smaller (branch/gate signals)
 //   error   → red circle, slightly smaller   (error outputs; matches the
-//             existing `!bg-red-600` error handles on LLM/graph-query/memory)
+//             existing `!bg-danger` error handles on LLM/graph-query/memory)
 
 export type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error';
 
@@ -20,8 +20,8 @@ export const PORT_CLS: Record<PortPayload, string> = {
   image: '!w-2.5 !h-2.5 !rounded-sm !bg-[#7c3aed] !border-[#6d28d9]',
   text: '!w-2.5 !h-2.5 !bg-slate-300',
   data: '!w-2.5 !h-2.5 !bg-[#94a3b8]',
-  control: '!w-2 !h-2 !bg-amber-500',
-  error: '!w-2 !h-2 !bg-red-600',
+  control: '!w-2 !h-2 !bg-warning',
+  error: '!w-2 !h-2 !bg-danger',
 };
 
 export function portCls(payload: PortPayload): string {

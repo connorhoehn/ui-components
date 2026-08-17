@@ -62,7 +62,7 @@ export function ConversationHistory({
             className={cn(
               'group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors',
               isActive
-                ? 'border-blue-500 bg-blue-50/60'
+                ? 'border-info bg-info-bg/60'
                 : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50',
             )}
           >
@@ -85,7 +85,7 @@ export function ConversationHistory({
                 type="button"
                 onClick={() => onDelete(session)}
                 aria-label={`Delete conversation ${title}`}
-                className="shrink-0 rounded-md px-2 py-1 text-xs text-slate-500 opacity-0 hover:bg-slate-100 hover:text-red-600 focus:opacity-100 group-hover:opacity-100"
+                className="shrink-0 rounded-md px-2 py-1 text-xs text-slate-500 opacity-0 hover:bg-slate-100 hover:text-danger-fg focus:opacity-100 group-hover:opacity-100"
               >
                 Delete
               </button>

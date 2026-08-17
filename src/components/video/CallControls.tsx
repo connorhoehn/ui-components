@@ -146,7 +146,7 @@ function ControlButton({
       data-testid={testId}
       className={cn(
         'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
-        danger && 'bg-red-500 text-white hover:bg-red-600',
+        danger && 'bg-danger text-white hover:bg-danger',
         active && !danger && 'bg-white/20 text-white',
         !active && !danger && 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
         disabled && 'opacity-40 cursor-not-allowed',
@@ -272,7 +272,7 @@ export function CallControls({
                 >
                   <CallAvatar participant={p} size={22} />
                   <span className="text-xs text-white/80">{p.displayName}</span>
-                  <span className="ml-auto text-[10px] text-indigo-400">+ Add</span>
+                  <span className="ml-auto text-[10px] text-primary-fg">+ Add</span>
                 </button>
               ))}
             </div>

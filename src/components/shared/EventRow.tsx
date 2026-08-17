@@ -17,9 +17,9 @@ export interface EventRowProps {
 
 const severityClass: Record<NonNullable<EventRowProps['severity']>, string> = {
   info: 'text-slate-500',
-  warning: 'text-amber-600',
-  error: 'text-red-600',
-  success: 'text-green-600',
+  warning: 'text-warning-fg',
+  error: 'text-danger-fg',
+  success: 'text-success-fg',
 };
 
 function EventRow({ timestamp, type, summary, severity = 'info', onClick, selected }: EventRowProps) {
@@ -31,7 +31,7 @@ function EventRow({ timestamp, type, summary, severity = 'info', onClick, select
       onClick={onClick}
       className={cn(
         'flex items-center gap-2 px-2.5 py-1.5 text-[13px] font-[inherit] rounded-md text-slate-900',
-        selected ? 'bg-violet-100' : 'bg-transparent',
+        selected ? 'bg-accent-bg' : 'bg-transparent',
         onClick ? 'cursor-pointer' : 'cursor-default',
       )}
     >

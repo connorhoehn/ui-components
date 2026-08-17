@@ -109,7 +109,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
       {item.assignee && (
         <span
           title={item.assignee}
-          className="w-[22px] h-[22px] rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold flex items-center justify-center shrink-0"
+          className="w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0"
         >
           {getInitials(item.assignee)}
         </span>
@@ -205,7 +205,7 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
+          className="mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

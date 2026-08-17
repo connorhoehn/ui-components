@@ -282,11 +282,11 @@ describe('ports.ts PORT_CLS mapping', () => {
     expect(PORT_CLS.data).not.toContain('!rounded-sm');
   });
 
-  it('control and error are slightly smaller circles (amber / red)', () => {
+  it('control and error are slightly smaller circles (warning / danger tones)', () => {
     expect(PORT_CLS.control).toContain('!w-2 ');
-    expect(PORT_CLS.control).toContain('!bg-amber-500');
+    expect(PORT_CLS.control).toContain('!bg-warning');
     expect(PORT_CLS.error).toContain('!w-2 ');
-    expect(PORT_CLS.error).toContain('!bg-red-600');
+    expect(PORT_CLS.error).toContain('!bg-danger');
   });
 
   it('portCls() returns the mapped class string for every payload', () => {

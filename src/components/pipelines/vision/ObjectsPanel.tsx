@@ -38,7 +38,7 @@ export function ObjectsPanel({ objects, onSelect, className }: ObjectsPanelProps
                   onClick={() => onSelect(o)}
                   className={cn(
                     rowClasses,
-                    'cursor-pointer hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                    'cursor-pointer hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                   )}
                 >
                   {content}

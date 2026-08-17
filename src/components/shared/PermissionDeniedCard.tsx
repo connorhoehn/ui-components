@@ -107,7 +107,7 @@ export default function PermissionDeniedCard({
       role="status"
       aria-live="polite"
     >
-      <div className="h-10 w-10 rounded-full bg-amber-100 text-amber-700 grid place-items-center">
+      <div className="h-10 w-10 rounded-full bg-warning-bg text-warning-fg grid place-items-center">
         {icon ?? <DefaultIcon kind={kind} />}
       </div>
       <div className="text-base font-semibold text-slate-900">

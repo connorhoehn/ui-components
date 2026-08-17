@@ -36,7 +36,7 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
               <span
                 className={cn(
                   'shrink-0 w-5 h-5 flex items-center justify-center rounded text-[10px] font-bold',
-                  d.decision === 'allow' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700',
+                  d.decision === 'allow' ? 'bg-success-bg text-success-fg' : 'bg-danger-bg text-danger-fg',
                 )}
               >
                 {d.decision === 'allow' ? '✓' : '✗'}

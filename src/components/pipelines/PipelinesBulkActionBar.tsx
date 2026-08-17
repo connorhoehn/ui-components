@@ -247,8 +247,8 @@ export default function PipelinesBulkActionBar({
                     onClick={() => onSubmitRemoveTag(tag)}
                     className={cn(
                       'px-2 py-0.5 text-xs font-medium',
-                      'bg-red-50 text-red-600',
-                      'border border-red-200 rounded-full',
+                      'bg-danger-bg text-danger-fg',
+                      'border border-danger-border rounded-full',
                       'cursor-pointer font-inherit',
                     )}
                   >
@@ -265,7 +265,7 @@ export default function PipelinesBulkActionBar({
         data-testid="bulk-delete"
         className={cn(
           'px-3 py-[5px] text-xs font-semibold',
-          'bg-red-600 text-white border-none rounded-md',
+          'bg-danger text-white border-none rounded-md',
           'cursor-pointer font-inherit ml-auto',
         )}
         onClick={onDelete}

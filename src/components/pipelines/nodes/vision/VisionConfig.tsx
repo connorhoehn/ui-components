@@ -52,12 +52,12 @@ function tryParseSchema(text: string): { ok: true; value: Record<string, unknown
 }
 
 const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const inputErrorCls = 'mt-1 w-full text-[12px] rounded border border-red-500 bg-white px-2 py-1 outline-none';
+const inputErrorCls = 'mt-1 w-full text-[12px] rounded border border-danger bg-white px-2 py-1 outline-none';
 const monoInputCls = `${inputCls} font-mono`;
 const monoInputErrorCls = `${inputErrorCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-const errorCls = 'text-[11px] text-red-600 mt-0.5';
+const errorCls = 'text-[11px] text-danger-fg mt-0.5';
 
 export default function VisionConfig({ data, onChange }: VisionConfigProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -111,7 +111,7 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
       {/* Image ref path */}
       <div>
         <label htmlFor="vision-image-ref-path" className={labelCls}>
-          Image reference path<span className="text-red-600 ml-1">●</span>
+          Image reference path<span className="text-danger-fg ml-1">●</span>
         </label>
         <input
           id="vision-image-ref-path"
@@ -148,7 +148,7 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
       {/* User prompt */}
       <div>
         <label htmlFor="vision-user-prompt" className={labelCls}>
-          User prompt<span className="text-red-600 ml-1">●</span>
+          User prompt<span className="text-danger-fg ml-1">●</span>
         </label>
         <textarea
           id="vision-user-prompt"

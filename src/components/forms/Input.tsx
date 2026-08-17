@@ -63,10 +63,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           'w-full rounded-md border bg-slate-50 font-inherit text-slate-900',
           'outline-none transition-colors duration-150',
           'placeholder:text-slate-400',
-          'focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40',
+          'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100',
           invalid
-            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/40'
+            ? 'border-danger focus:border-danger focus:ring-danger/40'
             : 'border-slate-300',
           mono && 'font-mono',
           sizeClasses[size],
@@ -82,9 +82,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       className={cn(
         'relative flex w-full items-center rounded-md border bg-slate-50',
         'transition-colors duration-150',
-        'focus-within:bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500/40',
+        'focus-within:bg-white focus-within:border-info focus-within:ring-1 focus-within:ring-info/40',
         invalid
-          ? 'border-red-500 focus-within:border-red-500 focus-within:ring-red-500/40'
+          ? 'border-danger focus-within:border-danger focus-within:ring-danger/40'
           : 'border-slate-300',
         disabled && 'opacity-50 cursor-not-allowed bg-slate-100',
       )}

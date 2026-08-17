@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.40.0] — 2026-08-17
+
+### Changed
+
+- **Every raw Tailwind palette colour in the codebase is now a tone token.**
+  354 occurrences across the 91 baselined files in `src/components`, plus
+  `src/renderers`, `src/integrations`, all `.stories.tsx`, and 155 more in
+  `demo/src`. Converted by family→tone and shade→role: green/emerald→success,
+  red/rose→danger, amber/yellow→warning, blue/sky→info, indigo→primary,
+  orange→caution, purple/violet→accent.
+
+  Scope went past `bg`/`text`/`border` to `ring`, `fill`, `stroke`, `divide`,
+  `outline`, `accent`, single-side borders and gradient stops — a focus ring
+  and an SVG fill are semantic choices too, and `ring-blue-500` appeared 21
+  times.
+
+  `src/` and `demo/src` now contain **zero** raw palette colours, so
+  overriding a tone's four CSS variables re-themes the whole library and every
+  demo.
+
+- The tone guard is now **zero tolerance**: the 91-file baseline and
+  `scripts/tone-palette.allowlist.txt` are deleted, and it scans all of `src/`
+  including stories.
+
+- ~30 test assertions pinned raw palette classes — they were locking in the
+  drift they should have caught. They now assert tone classes, and their titles
+  say "success tone" instead of "emerald".
+
+
 ## [2.39.0] — 2026-08-17
 
 ### Added

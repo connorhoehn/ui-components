@@ -34,7 +34,7 @@ export default function HooksOverviewPage() {
               >
                 <Card
                   padding="md"
-                  className="h-full flex flex-col gap-2 group-hover:border-indigo-300 group-hover:shadow-sm transition-all"
+                  className="h-full flex flex-col gap-2 group-hover:border-primary-border group-hover:shadow-sm transition-all"
                 >
                   <h3 className="text-sm font-semibold text-slate-900 m-0 font-mono">
                     {doc.name}

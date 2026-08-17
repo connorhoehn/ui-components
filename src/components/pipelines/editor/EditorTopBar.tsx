@@ -27,10 +27,10 @@ type ChipVariant = 'success' | 'info' | 'neutral' | 'warning' | 'danger';
 
 const chipVariantClasses: Record<ChipVariant, string> = {
   neutral: 'bg-slate-100 text-slate-600',
-  success: 'bg-green-50 text-green-600',
-  warning: 'bg-amber-50 text-amber-600',
-  danger: 'bg-red-50 text-red-600',
-  info: 'bg-blue-50 text-blue-600',
+  success: 'bg-success-bg text-success-fg',
+  warning: 'bg-warning-bg text-warning-fg',
+  danger: 'bg-danger-bg text-danger-fg',
+  info: 'bg-info-bg text-info-fg',
 };
 
 // ---------------------------------------------------------------------------
@@ -184,9 +184,9 @@ export default function EditorTopBar({
           : { text: '', variant: 'none' };
 
   const runStatusVariantClasses: Record<string, string> = {
-    running: 'bg-blue-50 text-blue-600',
-    success: 'bg-green-50 text-green-600',
-    error: 'bg-red-50 text-red-600',
+    running: 'bg-info-bg text-info-fg',
+    success: 'bg-success-bg text-success-fg',
+    error: 'bg-danger-bg text-danger-fg',
   };
 
   // Run button label
@@ -315,7 +315,7 @@ export default function EditorTopBar({
                 <span
                   className={cn(
                     'font-bold text-xs',
-                    issue.severity === 'error' ? 'text-red-600' : 'text-amber-600',
+                    issue.severity === 'error' ? 'text-danger-fg' : 'text-warning-fg',
                   )}
                 >
                   {issue.severity === 'error' ? '✗' : '⚠'}
@@ -382,7 +382,7 @@ export default function EditorTopBar({
           'px-3 py-1.5 text-[13px] font-semibold border-none rounded-md font-inherit shrink-0',
           isPublished
             ? 'bg-surface-hover text-text-tertiary cursor-default opacity-70'
-            : 'bg-green-600 text-white cursor-pointer',
+            : 'bg-success text-white cursor-pointer',
         )}
         data-testid="publish-button"
       >
@@ -396,7 +396,7 @@ export default function EditorTopBar({
         title={runTitle}
         className={cn(
           'px-3.5 py-1.5 text-[13px] font-semibold text-white border-none rounded-md font-inherit shrink-0',
-          isRunActive ? 'bg-red-600' : 'bg-primary',
+          isRunActive ? 'bg-danger' : 'bg-primary',
           (runDisabled || isTriggering) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         )}
         data-testid="run-button"
@@ -418,7 +418,7 @@ export default function EditorTopBar({
           disabled={runDisabled || isRunActive}
           title={`Debug run (${breakpoints.size} breakpoint${breakpoints.size > 1 ? 's' : ''})`}
           className={cn(
-            'px-3.5 py-1.5 text-[13px] font-semibold bg-amber-600 text-white',
+            'px-3.5 py-1.5 text-[13px] font-semibold bg-warning text-white',
             'border-none rounded-md font-inherit shrink-0',
             (runDisabled || isRunActive) ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
           )}

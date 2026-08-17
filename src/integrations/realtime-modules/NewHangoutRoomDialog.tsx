@@ -136,7 +136,7 @@ export function NewHangoutRoomDialog({
             placeholder="Team standup"
             maxLength={NAME_MAX + 10}
             disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info"
           />
           <div className="flex items-center justify-between text-[11px] text-slate-400">
             <span data-testid="new-hangout-room-slug-preview">
@@ -147,7 +147,7 @@ export function NewHangoutRoomDialog({
           {nameError && name.length > 0 && (
             <span
               data-testid="new-hangout-room-name-error"
-              className="text-[11px] text-rose-600"
+              className="text-[11px] text-danger-fg"
             >
               {nameError}
             </span>
@@ -165,7 +165,7 @@ export function NewHangoutRoomDialog({
             placeholder="What's this room for?"
             rows={2}
             disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
           />
         </label>
 
@@ -202,7 +202,7 @@ export function NewHangoutRoomDialog({
           <div
             data-testid="new-hangout-room-error"
             role="alert"
-            className="text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-md px-3 py-2"
+            className="text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded-md px-3 py-2"
           >
             {submitError}
           </div>

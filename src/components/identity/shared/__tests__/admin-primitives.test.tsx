@@ -60,7 +60,7 @@ describe('FormField', () => {
       />,
     );
     expect(screen.getByText('Required')).toBeInTheDocument();
-    expect(container.querySelector('input')).toHaveClass('border-red-500');
+    expect(container.querySelector('input')).toHaveClass('border-danger');
   });
 
   it('renders helpText only when no error is set', () => {

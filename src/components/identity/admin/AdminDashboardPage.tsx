@@ -51,7 +51,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
       <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
         {statsCards.map((s) => (
           <Card key={s.label} padding="md">
-            <div className="text-[2rem] font-bold text-blue-600 mb-1">{s.value}</div>
+            <div className="text-[2rem] font-bold text-info-fg mb-1">{s.value}</div>
             <div className="text-sm text-slate-500">{s.label}</div>
           </Card>
         ))}

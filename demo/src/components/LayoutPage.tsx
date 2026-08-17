@@ -108,11 +108,11 @@ function TerminalPanel({ onClose }) {
             <span className="text-lg text-gray-500 cursor-pointer leading-none">×</span>
           </div>
           <div className="p-3.5">
-            <div className="bg-white/[0.04] border border-white/10 rounded-md p-3 font-mono text-[11px] text-indigo-300 leading-loose">
-              <div><span className="text-emerald-300">$</span> npm run build</div>
+            <div className="bg-white/[0.04] border border-white/10 rounded-md p-3 font-mono text-[11px] text-primary-fg leading-loose">
+              <div><span className="text-success-fg">$</span> npm run build</div>
               <div className="text-slate-400">Building for production...</div>
               <div className="text-slate-400">Bundling 42 modules...</div>
-              <div className="text-emerald-300">Done in 3.2s</div>
+              <div className="text-success-fg">Done in 3.2s</div>
             </div>
           </div>
         </div>
@@ -147,7 +147,7 @@ function TerminalPanel({ onClose }) {
                 key={item}
                 className={`px-2.5 py-1.5 rounded mb-0.5 text-[13px] cursor-pointer ${
                   i === 0
-                    ? 'text-blue-600 bg-blue-50 font-semibold'
+                    ? 'text-info-fg bg-info-bg font-semibold'
                     : 'text-slate-600 bg-transparent'
                 }`}
               >
@@ -225,7 +225,7 @@ function TerminalPanel({ onClose }) {
             <button className="px-3 py-1.5 text-xs border border-slate-200 rounded bg-white text-slate-600 cursor-pointer font-[inherit]">
               Cancel
             </button>
-            <button className="px-3 py-1.5 text-xs border-none rounded bg-blue-500 text-white cursor-pointer font-semibold font-[inherit]">
+            <button className="px-3 py-1.5 text-xs border-none rounded bg-info text-white cursor-pointer font-semibold font-[inherit]">
               Save Changes
             </button>
           </div>

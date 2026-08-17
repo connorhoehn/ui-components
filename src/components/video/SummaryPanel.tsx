@@ -52,7 +52,7 @@ export function SummaryPanel({
       <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4', className)}>
         <header className="text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2">
           <span>{title}</span>
-          <span className="inline-block h-2 w-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+          <span className="inline-block h-2 w-2 rounded-full bg-warning animate-pulse" aria-hidden="true" />
         </header>
         <div className="text-sm text-[var(--color-text-secondary)]">
           {pendingMessage ?? 'Generating summary from the transcript. This typically completes within a minute of transcription finishing.'}

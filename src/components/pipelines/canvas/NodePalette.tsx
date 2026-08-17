@@ -511,7 +511,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             placeholder="Search nodes..."
             aria-label="Search nodes"
             data-testid="palette-search"
-            className="flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-200 placeholder:text-slate-400"
+            className="flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-slate-400"
           />
           <button
             type="button"
@@ -522,7 +522,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             className={cn(
               'shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors',
               compact
-                ? 'bg-blue-600 border-blue-600 text-white'
+                ? 'bg-info border-info text-white'
                 : 'bg-white border-slate-300 text-slate-500 hover:bg-slate-50',
             )}
           >
@@ -598,7 +598,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
               type="button"
               onClick={clearFilters}
               data-testid="palette-clear-filters"
-              className="text-[11px] font-semibold text-blue-600 hover:underline"
+              className="text-[11px] font-semibold text-info-fg hover:underline"
             >
               Clear filters
             </button>

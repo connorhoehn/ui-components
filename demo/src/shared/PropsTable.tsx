@@ -14,7 +14,7 @@ interface PropsTableProps {
 const TH = 'text-left px-3.5 py-2.5 bg-slate-100 font-semibold border-b border-slate-200 text-slate-700';
 const TD_BASE = 'px-3.5 py-2.5 border-b border-slate-200';
 const TD_NAME = `${TD_BASE} font-mono font-bold`;
-const TD_TYPE = `${TD_BASE} font-mono text-violet-600`;
+const TD_TYPE = `${TD_BASE} font-mono text-accent-fg`;
 const TD_DEFAULT = `${TD_BASE} font-mono text-slate-500`;
 const TD_DESC = `${TD_BASE} text-slate-700`;
 
@@ -39,7 +39,7 @@ export function PropsTable({ componentName, props }: PropsTableProps) {
               <td className={TD_NAME}>
                 {prop.name}
                 {prop.required && (
-                  <span className="text-red-600 ml-1">*</span>
+                  <span className="text-danger-fg ml-1">*</span>
                 )}
               </td>
               <td className={TD_TYPE}>{prop.type}</td>

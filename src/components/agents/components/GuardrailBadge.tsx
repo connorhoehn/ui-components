@@ -18,7 +18,7 @@ export function GuardrailBadge({ guardrails, className, compact }: GuardrailBadg
   if (compact) {
     return (
       <span className={cn('inline-flex items-center gap-1 text-[10px]', className)}>
-        <span className="text-amber-500">🛡️</span>
+        <span className="text-warning-fg">🛡️</span>
         <span className="text-slate-600">{guardrails.length}</span>
       </span>
     );
@@ -29,7 +29,7 @@ export function GuardrailBadge({ guardrails, className, compact }: GuardrailBadg
       {guardrails.map((g) => (
         <span
           key={g}
-          className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 rounded font-mono"
+          className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 bg-warning-bg border border-warning-border text-warning-fg rounded font-mono"
         >
           🛡️ {g}
         </span>

@@ -26,7 +26,7 @@ export function TagsPanel({ tags, onTagClick, className }: TagsPanelProps) {
               onClick={() => onTagClick(t)}
               title={`Filter by ${t}`}
               aria-label={`Filter by ${t}`}
-              className="appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded-full"
+              className="appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded-full"
             >
               <Chip tone="info" size="sm">#{t}</Chip>
             </button>

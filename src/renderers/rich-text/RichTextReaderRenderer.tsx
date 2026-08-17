@@ -18,7 +18,7 @@ export default function RichTextReaderRenderer({
   return (
     <div>
       {hasContent ? (
-        <div className="border border-sky-100 border-l-[3px] border-l-sky-400 rounded-md px-3.5 py-2.5 bg-sky-50 text-sm text-slate-800 leading-[1.6]">
+        <div className="border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-slate-800 leading-[1.6]">
           <TiptapEditor
             fragment={fragment}
             ydoc={ydoc}
@@ -36,7 +36,7 @@ export default function RichTextReaderRenderer({
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-2 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
+          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

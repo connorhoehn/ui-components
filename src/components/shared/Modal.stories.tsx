@@ -19,7 +19,7 @@ function Harness({ title, footer, children }: { title?: string; footer?: React.R
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white"
+        className="rounded bg-info px-3 py-1.5 text-sm font-semibold text-white"
       >
         Open
       </button>
@@ -52,7 +52,7 @@ export const WithFooter: Story = {
     footer: (
       <>
         <button type="button" className="rounded border border-slate-300 px-3 py-1 text-sm">Cancel</button>
-        <button type="button" className="rounded bg-rose-600 px-3 py-1 text-sm font-semibold text-white">Delete</button>
+        <button type="button" className="rounded bg-danger px-3 py-1 text-sm font-semibold text-white">Delete</button>
       </>
     ),
   },
@@ -61,7 +61,7 @@ export const WithFooter: Story = {
 export const Interactive: Story = {
   args: { open: true, onClose: () => {}, children: null },
   render: () => (
-    <Harness title="Interactive modal" footer={<button type="button" className="rounded bg-blue-600 px-3 py-1 text-sm font-semibold text-white">OK</button>}>
+    <Harness title="Interactive modal" footer={<button type="button" className="rounded bg-info px-3 py-1 text-sm font-semibold text-white">OK</button>}>
       <p>Click outside, press Escape, or click OK to close.</p>
     </Harness>
   ),

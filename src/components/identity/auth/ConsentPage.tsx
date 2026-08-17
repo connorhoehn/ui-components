@@ -82,7 +82,7 @@ export function ConsentPage({
                   i < scopes.length - 1 && 'border-b border-slate-200'
                 )}
               >
-                <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" aria-hidden="true" />
+                <span className="w-2 h-2 rounded-full bg-info shrink-0" aria-hidden="true" />
                 <span>{getScopeDescription(scope)}</span>
               </li>
             ))}

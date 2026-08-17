@@ -139,7 +139,7 @@ export function EmailTemplateFormPage({
           <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Variables</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {variables.map((v) => (
-              <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500 text-white text-sm font-medium">
+              <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
                 {'{{' + v + '}}'}
                 <Button
                   variant="ghost"

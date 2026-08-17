@@ -25,9 +25,9 @@ const CARD = 'border border-slate-200 rounded-lg bg-white';
 const CARD_LG = `${CARD} px-5 py-4`;
 const CARD_PAD = `${CARD} p-4`;
 const PILL_DANGER =
-  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-red-600/10 text-red-600';
+  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-danger/10 text-danger-fg';
 const PILL_WARN =
-  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-amber-600/10 text-amber-600';
+  'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-warning/10 text-warning-fg';
 const LABEL =
   'text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5';
 

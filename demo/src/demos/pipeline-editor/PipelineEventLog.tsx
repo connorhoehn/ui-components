@@ -12,9 +12,9 @@ interface PipelineEvent {
 }
 
 const STATUS_TEXT_CLASSES: Record<string, string> = {
-  running: 'text-amber-500',
-  completed: 'text-emerald-500',
-  failed: 'text-red-500',
+  running: 'text-warning-fg',
+  completed: 'text-success-fg',
+  failed: 'text-danger-fg',
 };
 
 function statusTextClass(status?: string) {
@@ -71,7 +71,7 @@ export function PipelineEventLog({ compact }: { compact?: boolean } = {}) {
   return (
     <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex flex-col h-full">
       <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center gap-2">
-        <span className="text-emerald-500 text-[8px]">●</span>
+        <span className="text-success-fg text-[8px]">●</span>
         <span className="text-slate-200 text-xs font-semibold">Event Stream</span>
         <span className="text-slate-500 text-[11px] ml-auto">{events.length} events</span>
       </div>
@@ -89,7 +89,7 @@ export function PipelineEventLog({ compact }: { compact?: boolean } = {}) {
             </span>
             <span className="text-slate-300">{event.action}</span>
             {event.nodeId && (
-              <span className="text-sky-300 bg-sky-950 px-1.5 py-px rounded-sm text-[10px]">
+              <span className="text-info-fg bg-info px-1.5 py-px rounded-sm text-[10px]">
                 {event.nodeId}
               </span>
             )}

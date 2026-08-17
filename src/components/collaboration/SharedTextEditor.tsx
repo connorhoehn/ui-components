@@ -81,12 +81,12 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
 
       {/* CRDT-03: Merge conflict indicator */}
       {hasConflict && (
-        <div className="flex items-center justify-between px-3 py-2 mb-2 bg-yellow-50 border border-yellow-300 rounded text-[0.8rem] text-yellow-800">
+        <div className="flex items-center justify-between px-3 py-2 mb-2 bg-warning-bg border border-warning-border rounded text-[0.8rem] text-warning-fg">
           <span>Edits merged — your changes are preserved</span>
           <button
             onClick={onDismissConflict}
             aria-label="Dismiss conflict indicator"
-            className="bg-transparent border-none cursor-pointer text-base text-yellow-800 pl-3 leading-none"
+            className="bg-transparent border-none cursor-pointer text-base text-warning-fg pl-3 leading-none"
           >
             x
           </button>

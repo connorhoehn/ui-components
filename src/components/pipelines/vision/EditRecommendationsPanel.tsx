@@ -105,7 +105,7 @@ export function EditRecommendationsPanel({
                 <button
                   type="button"
                   onClick={() => onApplyEdit(edit)}
-                  className="shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                  className="shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   Apply
                 </button>

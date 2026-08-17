@@ -105,7 +105,7 @@ export function AuditPage({
           <Button
             variant="ghost"
             size="sm"
-            className="p-0 underline text-blue-600 font-mono text-xs"
+            className="p-0 underline text-info-fg font-mono text-xs"
             onClick={() => onViewEntity(item.entityType, item.entityId)}
           >
             {item.entityId}
@@ -117,7 +117,7 @@ export function AuditPage({
     [onViewEntity],
   );
 
-  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection title="Audit Log">

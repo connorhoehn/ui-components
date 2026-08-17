@@ -96,7 +96,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Ticket badge */}
       {item.ticketId && (
-        <span className="text-[10px] font-bold font-mono text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap">
+        <span className="text-[10px] font-bold font-mono text-primary-fg bg-primary-bg border border-primary-border rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap">
           {item.ticketId}
         </span>
       )}

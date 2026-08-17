@@ -3,26 +3,26 @@ import { Card, Chip } from '@connorhoehnslalom/ui-components/shared';
 import { audiencePaths, type AudiencePath } from './audience-paths';
 
 const SPINE_CLASSES: Record<AudiencePath['accent'], string> = {
-  indigo: 'bg-indigo-500',
-  sky: 'bg-sky-500',
-  emerald: 'bg-emerald-500',
-  amber: 'bg-amber-500',
+  indigo: 'bg-primary',
+  sky: 'bg-info',
+  emerald: 'bg-success',
+  amber: 'bg-warning',
   slate: 'bg-slate-500',
 };
 
 const ICON_BG_CLASSES: Record<AudiencePath['accent'], string> = {
-  indigo: 'bg-indigo-50 text-indigo-700',
-  sky: 'bg-sky-50 text-sky-700',
-  emerald: 'bg-emerald-50 text-emerald-700',
-  amber: 'bg-amber-50 text-amber-700',
+  indigo: 'bg-primary-bg text-primary-fg',
+  sky: 'bg-info-bg text-info-fg',
+  emerald: 'bg-success-bg text-success-fg',
+  amber: 'bg-warning-bg text-warning-fg',
   slate: 'bg-slate-100 text-slate-700',
 };
 
 const PRIMARY_LINK_CLASSES: Record<AudiencePath['accent'], string> = {
-  indigo: 'text-indigo-700 hover:text-indigo-900',
-  sky: 'text-sky-700 hover:text-sky-900',
-  emerald: 'text-emerald-700 hover:text-emerald-900',
-  amber: 'text-amber-700 hover:text-amber-900',
+  indigo: 'text-primary-fg hover:text-primary-fg',
+  sky: 'text-info-fg hover:text-info-fg',
+  emerald: 'text-success-fg hover:text-success-fg',
+  amber: 'text-warning-fg hover:text-warning-fg',
   slate: 'text-slate-700 hover:text-slate-900',
 };
 
@@ -117,7 +117,7 @@ export function AudienceHero() {
   return (
     <section aria-labelledby="audience-hero-heading" className="flex flex-col gap-6">
       <div className="flex flex-col gap-2 max-w-2xl">
-        <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary-fg">
           Start here
         </span>
         <h2

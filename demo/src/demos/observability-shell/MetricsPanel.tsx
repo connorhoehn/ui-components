@@ -11,15 +11,15 @@ interface KPI {
 }
 
 const SEVERITY_CLASSES: Record<NonNullable<KPI['severity']>, string> = {
-  normal: 'bg-green-50 border-green-200',
-  warning: 'bg-amber-50 border-amber-200',
-  critical: 'bg-red-50 border-red-200',
+  normal: 'bg-success-bg border-success-border',
+  warning: 'bg-warning-bg border-warning-border',
+  critical: 'bg-danger-bg border-danger-border',
 };
 
 const SEVERITY_TEXT: Record<NonNullable<KPI['severity']>, string> = {
-  normal: 'text-green-800',
-  warning: 'text-amber-800',
-  critical: 'text-red-800',
+  normal: 'text-success-fg',
+  warning: 'text-warning-fg',
+  critical: 'text-danger-fg',
 };
 
 const TREND_ARROW: Record<NonNullable<KPI['trend']>, string> = {
@@ -29,8 +29,8 @@ const TREND_ARROW: Record<NonNullable<KPI['trend']>, string> = {
 };
 
 const TREND_COLOR: Record<NonNullable<KPI['trend']>, string> = {
-  up: 'text-red-600',
-  down: 'text-green-600',
+  up: 'text-danger-fg',
+  down: 'text-success-fg',
   stable: 'text-slate-400',
 };
 

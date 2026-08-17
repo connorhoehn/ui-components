@@ -7,9 +7,9 @@ import { NodeHealthGrid } from './NodeHealthGrid';
 const SPARKLINE_BARS = [35, 42, 38, 55, 90, 85, 45, 30, 28, 32, 38, 35, 40, 42, 36, 33, 38, 95, 72, 38];
 
 function sparklineBarColor(height: number) {
-  if (height > 80) return 'bg-red-300';
-  if (height > 60) return 'bg-amber-200';
-  return 'bg-green-200';
+  if (height > 80) return 'bg-danger-bg';
+  if (height > 60) return 'bg-warning-bg';
+  return 'bg-success-bg';
 }
 
 function ChartPlaceholder() {
@@ -46,7 +46,7 @@ export default function ObservabilityShellDemo() {
             <h2 className="text-xl font-bold text-slate-900 m-0">
               Observability Dashboard
             </h2>
-            <span className="text-[10px] font-semibold uppercase tracking-wider bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+            <span className="text-[10px] font-semibold uppercase tracking-wider bg-info-bg text-info-fg px-2 py-0.5 rounded">
               Live
             </span>
           </div>

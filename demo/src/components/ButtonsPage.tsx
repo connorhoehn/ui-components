@@ -15,11 +15,11 @@ const tocItems: TocItem[] = [
 
 const BTN_BASE =
   'font-semibold rounded-md cursor-pointer inline-flex items-center gap-1.5 transition-colors';
-const BTN_PRIMARY = `${BTN_BASE} bg-blue-600 text-white border-none px-4 py-2 text-sm hover:bg-blue-700`;
+const BTN_PRIMARY = `${BTN_BASE} bg-info text-white border-none px-4 py-2 text-sm hover:bg-info`;
 const BTN_SECONDARY = `${BTN_BASE} bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 text-sm hover:bg-slate-200`;
 const BTN_GHOST = `${BTN_BASE} bg-transparent text-slate-700 border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100`;
-const BTN_DANGER = `${BTN_BASE} bg-red-600 text-white border-none px-4 py-2 text-sm hover:bg-red-700`;
-const BTN_OUTLINE = `${BTN_BASE} bg-transparent text-blue-600 border border-blue-600 px-4 py-2 text-sm hover:bg-blue-50`;
+const BTN_DANGER = `${BTN_BASE} bg-danger text-white border-none px-4 py-2 text-sm hover:bg-danger`;
+const BTN_OUTLINE = `${BTN_BASE} bg-transparent text-info-fg border border-info px-4 py-2 text-sm hover:bg-info-bg`;
 
 const BTN_SM = 'px-2.5 py-1 text-xs';
 const BTN_MD = 'px-4 py-2 text-sm';
@@ -208,7 +208,7 @@ function App() {
           <button
             type="button"
             aria-label="Confirm"
-            className={`${ICON_BTN_BASE} w-8 h-8 bg-blue-600 text-white hover:bg-blue-700`}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-info text-white hover:bg-info`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <polyline points="20 6 9 17 4 12" />
@@ -217,7 +217,7 @@ function App() {
           <button
             type="button"
             aria-label="Remove"
-            className={`${ICON_BTN_BASE} w-8 h-8 bg-red-600 text-white hover:bg-red-700`}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-danger text-white hover:bg-danger`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -227,7 +227,7 @@ function App() {
           <button
             type="button"
             aria-label="Star"
-            className={`${ICON_BTN_BASE} w-10 h-10 bg-blue-600 text-white text-lg hover:bg-blue-700`}
+            className={`${ICON_BTN_BASE} w-10 h-10 bg-info text-white text-lg hover:bg-info`}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z" />

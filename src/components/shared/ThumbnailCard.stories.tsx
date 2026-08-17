@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 
 export const WithBadge: Story = {
-  args: { badge: <span className="rounded bg-amber-500 text-white text-[10px] px-1.5 py-0.5">NEW</span> },
+  args: { badge: <span className="rounded bg-warning text-white text-[10px] px-1.5 py-0.5">NEW</span> },
 };
 
 export const AsLink: Story = {

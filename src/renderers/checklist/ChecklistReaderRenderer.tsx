@@ -35,11 +35,11 @@ export default function ChecklistReaderRenderer({
         <div className="mb-2.5">
           <div className="flex justify-between mb-1">
             <span className="text-[11px] text-slate-500 font-semibold">{doneCount} / {total} done</span>
-            <span className={cn('text-[11px] font-semibold', pct === 100 ? 'text-emerald-500' : 'text-slate-500')}>{pct}%</span>
+            <span className={cn('text-[11px] font-semibold', pct === 100 ? 'text-success-fg' : 'text-slate-500')}>{pct}%</span>
           </div>
           <div className="h-1 bg-border rounded-sm overflow-hidden">
             <div
-              className={cn('h-full rounded-sm transition-[width] duration-300', pct === 100 ? 'bg-emerald-500' : 'bg-blue-500')}
+              className={cn('h-full rounded-sm transition-[width] duration-300', pct === 100 ? 'bg-success' : 'bg-info')}
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -61,7 +61,7 @@ export default function ChecklistReaderRenderer({
                   type="checkbox"
                   checked={done}
                   onChange={() => onUpdateItem?.(item.id, { status: done ? 'pending' : 'done' })}
-                  className={cn('w-3.5 h-3.5 accent-emerald-500 shrink-0', onUpdateItem ? 'cursor-pointer' : 'cursor-default')}
+                  className={cn('w-3.5 h-3.5 accent-success shrink-0', onUpdateItem ? 'cursor-pointer' : 'cursor-default')}
                   readOnly={!onUpdateItem}
                 />
                 <span className={cn('text-[13px] flex-1 leading-[1.4]', done ? 'text-text-tertiary line-through' : 'text-slate-800')}>
@@ -77,7 +77,7 @@ export default function ChecklistReaderRenderer({
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-2 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
+          className="mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

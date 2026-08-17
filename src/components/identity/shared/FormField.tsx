@@ -20,8 +20,8 @@ export interface FormFieldProps {
   disabled?: boolean;
 }
 
-const inputClasses = 'block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500';
-const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-red-500 rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-red-500/20 focus:border-red-500';
+const inputClasses = 'block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info';
+const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger';
 
 export function FormField({
   label,
@@ -66,7 +66,7 @@ export function FormField({
             disabled={disabled}
           />
           <span className="text-sm text-slate-800">
-            {label}{required && <span className="text-red-600"> *</span>}
+            {label}{required && <span className="text-danger-fg"> *</span>}
           </span>
         </label>
       );
@@ -128,7 +128,7 @@ export function FormField({
     return (
       <div className="mb-4">
         {renderInput()}
-        {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+        {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
         {helpText && !error && <p className="mt-1 text-sm text-slate-400">{helpText}</p>}
       </div>
     );
@@ -137,10 +137,10 @@ export function FormField({
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block mb-1 text-sm font-semibold text-slate-800">
-        {label}{required && <span className="text-red-600"> *</span>}
+        {label}{required && <span className="text-danger-fg"> *</span>}
       </label>
       {renderInput()}
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
       {helpText && !error && <p className="mt-1 text-sm text-slate-400">{helpText}</p>}
     </div>
   );

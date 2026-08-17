@@ -1811,9 +1811,9 @@ const ce = {
         "w-full rounded-md border bg-slate-50 font-inherit text-slate-900",
         "outline-none transition-colors duration-150",
         "placeholder:text-slate-400",
-        "focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40",
+        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100",
-        t ? "border-red-500 focus:border-red-500 focus:ring-red-500/40" : "border-slate-300",
+        t ? "border-danger focus:border-danger focus:ring-danger/40" : "border-slate-300",
         i && "font-mono",
         ce[r],
         c
@@ -1826,8 +1826,8 @@ const ce = {
       className: j(
         "relative flex w-full items-center rounded-md border bg-slate-50",
         "transition-colors duration-150",
-        "focus-within:bg-white focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500/40",
-        t ? "border-red-500 focus-within:border-red-500 focus-within:ring-red-500/40" : "border-slate-300",
+        "focus-within:bg-white focus-within:border-info focus-within:ring-1 focus-within:ring-info/40",
+        t ? "border-danger focus-within:border-danger focus-within:ring-danger/40" : "border-slate-300",
         s && "opacity-50 cursor-not-allowed bg-slate-100"
       ),
       children: [
@@ -1920,8 +1920,8 @@ const ce = {
           className: j(
             "rounded border border-slate-200 bg-slate-100 font-mono text-slate-600",
             "transition-colors duration-100",
-            "hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500/40",
+            "hover:bg-info-bg hover:border-info-border hover:text-info-fg",
+            "focus:outline-none focus:ring-2 focus:ring-info/40",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             yt[c]
           ),
@@ -1934,7 +1934,7 @@ const ce = {
         {
           id: d,
           role: "alert",
-          className: "text-[11px] text-red-600 leading-4",
+          className: "text-[11px] text-danger-fg leading-4",
           children: P
         }
       )
@@ -2026,9 +2026,9 @@ const ce = {
         // show through via a Tailwind `select` reset that keeps the arrow.
         // We use `appearance-auto` to restore the native arrow on modern browsers.
         "appearance-auto",
-        "focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40",
+        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
         "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100",
-        a ? "border-red-500 focus:border-red-500 focus:ring-red-500/40" : "border-slate-300",
+        a ? "border-danger focus:border-danger focus:ring-danger/40" : "border-slate-300",
         It[o],
         s
       ),
@@ -2167,11 +2167,11 @@ const on = G(
           "w-full rounded-md border bg-slate-50 font-inherit text-slate-900",
           "outline-none transition-colors duration-150 px-2.5 py-1.5 text-[13px] leading-5",
           "placeholder:text-slate-400",
-          "focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40",
+          "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100",
           !a && "resize-y",
           a && "resize-none overflow-hidden",
-          t ? "border-red-500 focus:border-red-500 focus:ring-red-500/40" : "border-slate-300",
+          t ? "border-danger focus:border-danger focus:ring-danger/40" : "border-slate-300",
           u
         ),
         style: a ? { minHeight: `${r * P + y}px` } : void 0,

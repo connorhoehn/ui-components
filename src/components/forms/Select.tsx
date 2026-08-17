@@ -58,10 +58,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         // show through via a Tailwind `select` reset that keeps the arrow.
         // We use `appearance-auto` to restore the native arrow on modern browsers.
         'appearance-auto',
-        'focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40',
+        'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100',
         invalid
-          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/40'
+          ? 'border-danger focus:border-danger focus:ring-danger/40'
           : 'border-slate-300',
         sizeClasses[size],
         className,

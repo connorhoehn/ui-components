@@ -46,23 +46,23 @@ describe('AgentCard', () => {
     expect(screen.getByText('Searches the docs')).toBeInTheDocument();
   });
 
-  it('healthy status renders emerald pill with status label', () => {
+  it('healthy status renders success-tone pill with status label', () => {
     render(<AgentCard agent={makeAgent({ status: 'healthy' })} />);
     const pill = screen.getByText('healthy');
-    expect(pill).toHaveClass('bg-emerald-100');
-    expect(pill).toHaveClass('text-emerald-800');
+    expect(pill).toHaveClass('bg-success-bg');
+    expect(pill).toHaveClass('text-success-fg');
   });
 
-  it('offline status renders red pill', () => {
+  it('offline status renders danger-tone pill', () => {
     render(<AgentCard agent={makeAgent({ status: 'offline' })} />);
     const pill = screen.getByText('offline');
-    expect(pill).toHaveClass('bg-red-100');
-    expect(pill).toHaveClass('text-red-800');
+    expect(pill).toHaveClass('bg-danger-bg');
+    expect(pill).toHaveClass('text-danger-fg');
   });
 
-  it('selected=true highlights the wrapper with the blue ring', () => {
+  it('selected=true highlights the wrapper with the info-tone ring', () => {
     const { container } = render(<AgentCard agent={makeAgent()} selected />);
-    expect(container.firstChild).toHaveClass('border-blue-500');
+    expect(container.firstChild).toHaveClass('border-info');
   });
 
   it('selected=false uses the slate border', () => {

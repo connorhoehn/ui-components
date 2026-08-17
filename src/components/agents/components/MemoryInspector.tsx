@@ -48,7 +48,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search keys/values..."
-          className="flex-1 text-[11px] px-2 py-1 border border-slate-200 rounded outline-none focus:border-blue-400"
+          className="flex-1 text-[11px] px-2 py-1 border border-slate-200 rounded outline-none focus:border-info"
         />
         <div className="flex text-[10px] border border-slate-200 rounded overflow-hidden">
           {(['all', 'session', 'long-term'] as const).map((f) => (
@@ -56,7 +56,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
               key={f}
               className={cn(
                 'px-2 py-0.5 transition-colors',
-                filter === f ? 'bg-blue-500 text-white' : 'text-slate-500 hover:bg-slate-100',
+                filter === f ? 'bg-info text-white' : 'text-slate-500 hover:bg-slate-100',
               )}
               onClick={() => setFilter(f)}
             >
@@ -80,7 +80,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                   <span
                     className={cn(
                       'text-[9px] uppercase px-1 py-0.5 rounded font-medium',
-                      entry.scope === 'session' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700',
+                      entry.scope === 'session' ? 'bg-info-bg text-info-fg' : 'bg-accent-bg text-accent-fg',
                     )}
                   >
                     {entry.scope}
@@ -92,7 +92,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                 </div>
                 {onDelete && (
                   <button
-                    className="text-[10px] text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={() => onDelete(entry.id)}
                   >
                     delete

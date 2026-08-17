@@ -143,7 +143,7 @@ export function MediaControlsBar({
         className={cn(
           'rounded-full grid place-items-center transition-colors duration-150',
           LEAVE_SIZE_CLASSES[size],
-          'bg-red-600 text-white hover:bg-red-700 cursor-pointer',
+          'bg-danger text-white hover:bg-danger cursor-pointer',
         )}
       >
         <PhoneOffIcon size={LEAVE_ICON_SIZE[size]} />

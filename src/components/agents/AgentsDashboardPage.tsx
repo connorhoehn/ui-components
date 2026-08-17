@@ -58,7 +58,7 @@ export function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboard
 }
 
 function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
-  const colorClass = color === 'emerald' ? 'text-emerald-600' : color === 'amber' ? 'text-amber-600' : color === 'red' ? 'text-red-600' : 'text-slate-800';
+  const colorClass = color === 'emerald' ? 'text-success-fg' : color === 'amber' ? 'text-warning-fg' : color === 'red' ? 'text-danger-fg' : 'text-slate-800';
   return (
     <div className="border border-slate-200 rounded-lg p-3 bg-white">
       <div className="text-[10px] uppercase text-slate-400 mb-1">{label}</div>

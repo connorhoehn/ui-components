@@ -93,8 +93,8 @@ export const JsonPathInput = forwardRef<HTMLInputElement, JsonPathInputProps>(
                 className={cn(
                   'rounded border border-slate-200 bg-slate-100 font-mono text-slate-600',
                   'transition-colors duration-100',
-                  'hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700',
-                  'focus:outline-none focus:ring-2 focus:ring-blue-500/40',
+                  'hover:bg-info-bg hover:border-info-border hover:text-info-fg',
+                  'focus:outline-none focus:ring-2 focus:ring-info/40',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
                   chipSizeClasses[size],
                 )}
@@ -109,7 +109,7 @@ export const JsonPathInput = forwardRef<HTMLInputElement, JsonPathInputProps>(
           <p
             id={errorId}
             role="alert"
-            className="text-[11px] text-red-600 leading-4"
+            className="text-[11px] text-danger-fg leading-4"
           >
             {displayError}
           </p>

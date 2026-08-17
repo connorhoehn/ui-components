@@ -48,7 +48,7 @@ export function VisionRunCard({
         </span>
         {status === 'running' ? (
           <Chip tone="info" size="sm">
-            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" /> running
+            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary" /> running
           </Chip>
         ) : status === 'completed' ? (
           <Chip tone="success" size="sm">ok</Chip>
@@ -67,7 +67,7 @@ export function VisionRunCard({
         ) : null}
       </header>
       {status === 'failed' && error ? (
-        <p className="text-[13px] text-red-700">{error}</p>
+        <p className="text-[13px] text-danger-fg">{error}</p>
       ) : (
         <p className="line-clamp-2 text-left text-[13px] text-text-primary">
           {caption ?? (status === 'running' ? 'Analyzing image…' : 'No caption produced.')}
@@ -86,9 +86,9 @@ export function VisionRunCard({
   const baseClasses = cn(
     'flex w-full flex-col gap-1.5 rounded-lg border bg-surface p-3 text-sm text-left',
     status === 'running'
-      ? 'border-indigo-300 ring-1 ring-indigo-200'
+      ? 'border-primary-border ring-1 ring-primary'
       : status === 'failed'
-        ? 'border-red-300'
+        ? 'border-danger-border'
         : 'border-border',
   );
 
@@ -101,7 +101,7 @@ export function VisionRunCard({
         aria-label={`Open vision result: ${endpoint}, ${status}, ${captionPreview}`}
         className={cn(
           baseClasses,
-          'cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1',
+          'cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1',
           className,
         )}
       >

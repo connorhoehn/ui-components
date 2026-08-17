@@ -60,9 +60,9 @@ export default function Switch({
       onClick={() => { if (!disabled) onChange(!checked); }}
       className={cn(
         'relative inline-flex items-center rounded-full border border-transparent transition-colors',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
         TRACK_SIZES[size],
-        checked ? 'bg-blue-600' : 'bg-gray-300',
+        checked ? 'bg-info' : 'bg-gray-300',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
         className,
       )}

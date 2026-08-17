@@ -23,10 +23,10 @@ const tocItems: TocItem[] = [
 /* ─── Toast preview helpers ─────────────────────────────────────────────── */
 
 const TOAST_TONE: Record<string, { accent: string; iconColor: string; actionText: string }> = {
-  info: { accent: 'border-l-blue-600', iconColor: 'text-blue-600', actionText: 'text-blue-600' },
-  success: { accent: 'border-l-emerald-500', iconColor: 'text-emerald-500', actionText: 'text-emerald-500' },
-  warning: { accent: 'border-l-amber-500', iconColor: 'text-amber-500', actionText: 'text-amber-500' },
-  error: { accent: 'border-l-red-500', iconColor: 'text-red-500', actionText: 'text-red-500' },
+  info: { accent: 'border-l-info', iconColor: 'text-info-fg', actionText: 'text-info-fg' },
+  success: { accent: 'border-l-success', iconColor: 'text-success-fg', actionText: 'text-success-fg' },
+  warning: { accent: 'border-l-warning', iconColor: 'text-warning-fg', actionText: 'text-warning-fg' },
+  error: { accent: 'border-l-danger', iconColor: 'text-danger-fg', actionText: 'text-danger-fg' },
 };
 
 const TOAST_ICONS: Record<string, string> = {
@@ -77,10 +77,10 @@ function ToastPreview({
 /* ─── Banner preview helper ─────────────────────────────────────────────── */
 
 const BANNER_STYLES: Record<string, { wrapper: string; icon: string }> = {
-  error: { wrapper: 'bg-red-50 border-red-200 text-red-800', icon: '✕' },
-  warning: { wrapper: 'bg-amber-50 border-amber-200 text-amber-800', icon: '⚠' },
-  info: { wrapper: 'bg-blue-50 border-blue-200 text-blue-800', icon: 'ℹ' },
-  success: { wrapper: 'bg-green-50 border-green-200 text-green-800', icon: '✓' },
+  error: { wrapper: 'bg-danger-bg border-danger-border text-danger-fg', icon: '✕' },
+  warning: { wrapper: 'bg-warning-bg border-warning-border text-warning-fg', icon: '⚠' },
+  info: { wrapper: 'bg-info-bg border-info-border text-info-fg', icon: 'ℹ' },
+  success: { wrapper: 'bg-success-bg border-success-border text-success-fg', icon: '✓' },
 };
 
 function BannerPreview({
@@ -147,9 +147,9 @@ function ModalPreview({
 /* ─── ConfirmDialog preview helper ──────────────────────────────────────── */
 
 const CONFIRM_BTN: Record<string, string> = {
-  info: 'bg-blue-500 hover:bg-blue-600',
-  caution: 'bg-amber-600 hover:bg-amber-700',
-  destructive: 'bg-red-600 hover:bg-red-700',
+  info: 'bg-info hover:bg-info',
+  caution: 'bg-warning hover:bg-warning',
+  destructive: 'bg-danger hover:bg-danger',
 };
 
 const MODAL_BTN_BASE =
@@ -362,7 +362,7 @@ toast('Deployment complete.', {
               </button>
               <button
                 type="button"
-                className="px-4 py-1.5 text-[13px] font-semibold border-none bg-blue-500 text-white rounded-md cursor-pointer font-[inherit] hover:bg-blue-600"
+                className="px-4 py-1.5 text-[13px] font-semibold border-none bg-info text-white rounded-md cursor-pointer font-[inherit] hover:bg-info"
               >
                 Save Changes
               </button>

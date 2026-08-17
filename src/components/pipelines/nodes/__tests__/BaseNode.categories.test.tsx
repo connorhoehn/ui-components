@@ -92,7 +92,7 @@ describe('category × state orthogonality', () => {
     expect(card(withCat).className).toBe(plainClasses);
   });
 
-  it('failed state keeps its red border + retry pill with a category present', () => {
+  it('failed state keeps its danger-tone border + retry pill with a category present', () => {
     renderNode({ state: 'failed', category: 'control', onRetry: () => {} });
     const node = screen.getByRole('button', { name: /Test node, state: failed/ });
     expect(node.className).toContain('border-[#dc2626]');

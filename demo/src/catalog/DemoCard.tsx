@@ -11,9 +11,9 @@ const CATEGORY_TONE: Record<string, 'info' | 'purple' | 'neutral' | 'success' | 
 };
 
 const THUMB_GRADIENT: Record<string, string> = {
-  Workflows: 'from-indigo-50 to-indigo-100/40',
-  Agents: 'from-purple-50 to-purple-100/40',
-  'Hook Integrations': 'from-emerald-50 to-emerald-100/40',
+  Workflows: 'from-primary-bg to-primary-bg/40',
+  Agents: 'from-accent-bg to-accent-bg/40',
+  'Hook Integrations': 'from-success-bg to-success-bg/40',
   Foundations: 'from-slate-50 to-slate-100/40',
 };
 

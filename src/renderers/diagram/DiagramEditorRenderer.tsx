@@ -72,7 +72,7 @@ export default function DiagramEditorRenderer({
                 type="button"
                 data-testid={`diagram-remove-${section.id}`}
                 onClick={clear}
-                className="bg-transparent border-none text-red-500 cursor-pointer text-[13px]"
+                className="bg-transparent border-none text-danger-fg cursor-pointer text-[13px]"
               >
                 Remove
               </button>

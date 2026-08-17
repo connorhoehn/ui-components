@@ -19,7 +19,7 @@ export function ReconnectingBanner({ show, label = 'Reconnecting…' }: Reconnec
   return (
     <div
       data-testid="hangout-reconnecting-banner"
-      className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-amber-500/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap"
+      className="pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-warning/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap"
       role="status"
       aria-live="polite"
     >

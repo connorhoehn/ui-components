@@ -21,7 +21,7 @@ export function MuteWhileTalkingToast({
   return (
     <div
       data-testid="mute-while-talking-toast"
-      className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full bg-red-500/95 px-3.5 py-2 text-[13px] font-medium text-white shadow-lg"
+      className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full bg-danger/95 px-3.5 py-2 text-[13px] font-medium text-white shadow-lg"
       role="alert"
     >
       {label}

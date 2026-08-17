@@ -25,7 +25,9 @@ import {
   toneVar,
 } from '../tones';
 
-const COMPONENTS_DIR = join(__dirname, '..', '..');
+// Scan all of src/ — renderers/ and integrations/ ship too, and both had
+// palette literals that a components-only scan missed.
+const SRC_DIR = join(__dirname, '..', '..', '..');
 
 /** Palette families that carry semantic meaning and therefore must be tokens. */
 const SEMANTIC_FAMILIES = [
@@ -33,10 +35,13 @@ const SEMANTIC_FAMILIES = [
   'blue', 'sky', 'indigo', 'orange', 'purple', 'violet',
 ];
 
-// Utility prefixes where a colour is a *semantic* choice. Deliberately not
-// exhaustive over all Tailwind utilities — `ring-`, `from-`/`to-` gradients and
-// one-off decorative accents are out of scope.
-const PREFIXES = ['bg', 'text', 'border'];
+// Any utility that takes a colour. A focus ring, an SVG fill and a gradient
+// stop are all semantic choices, so none of them get a pass.
+const PREFIXES = [
+  'bg', 'text', 'border', 'border-l', 'border-r', 'border-t', 'border-b',
+  'ring', 'fill', 'stroke', 'divide', 'outline', 'decoration', 'accent',
+  'caret', 'shadow', 'from', 'to', 'via',
+];
 
 const PALETTE_RE = new RegExp(
   `\\b(?:${PREFIXES.join('|')})-(?:${SEMANTIC_FAMILIES.join('|')})-\\d{2,3}\\b`,
@@ -49,10 +54,9 @@ function walk(dir: string, out: string[] = []): string[] {
     if (statSync(full).isDirectory()) {
       if (entry === '__tests__' || entry === 'node_modules') continue;
       walk(full, out);
-    } else if (
-      (entry.endsWith('.tsx') || entry.endsWith('.ts')) &&
-      !entry.endsWith('.stories.tsx')
-    ) {
+    } else if (entry.endsWith('.tsx') || entry.endsWith('.ts')) {
+      // Stories are included: they are what people copy from, so a raw
+      // palette colour in one teaches the wrong pattern.
       out.push(full);
     }
   }
@@ -97,48 +101,24 @@ describe('tone scale', () => {
   });
 });
 
-describe('no NEW component hardcodes a semantic palette colour', () => {
-  // 91 files predate the tone scale and are baselined in
-  // scripts/tone-palette.allowlist.txt. This guard fails on anything not on
-  // that list, so the backlog can shrink but not grow.
-  const baseline = new Set(
-    readFileSync(join(__dirname, '..', '..', '..', '..', 'scripts', 'tone-palette.allowlist.txt'), 'utf8')
-      .split('\n')
-      .map((l) => l.replace(/#.*$/, '').trim())
-      .filter(Boolean),
-  );
-
-  it('uses tone tokens, not bg-green-600 & friends', () => {
+describe('nothing hardcodes a semantic palette colour', () => {
+  // Zero tolerance. This started as a baseline of 91 files; all of them were
+  // converted, so the allowlist is gone and any new palette literal fails here.
+  // If you need a colour the tone scale does not express, add a tone (four CSS
+  // variables in styles.css + an entry in tones.ts) rather than a literal.
+  it('src/** uses tone tokens, not bg-green-600 & friends', () => {
     const offenders: string[] = [];
-    for (const file of walk(COMPONENTS_DIR)) {
+    for (const file of walk(SRC_DIR)) {
       const rel = file.slice(file.indexOf('src/'));
-      if (baseline.has(rel)) continue;
+      if (rel.endsWith('__tests__/tones.test.ts')) continue; // this file's own regex
       const hits = readFileSync(file, 'utf8').match(PALETTE_RE);
       if (hits) offenders.push(`${rel} -> ${[...new Set(hits)].join(', ')}`);
     }
     expect(
       offenders,
       `Use the tone scale (src/components/shared/tones.ts) or token classes\n` +
-        `(bg-success-bg, text-danger-fg, ...) instead of raw palette colours.\n` +
-        offenders.join('\n'),
+        `(bg-success-bg, text-danger-fg, ring-primary, ...) instead of raw\n` +
+        `palette colours.\n` + offenders.join('\n'),
     ).toEqual([]);
-  });
-
-  it('reports baseline entries that no longer need to be listed', () => {
-    const stale = [...baseline].filter((rel) => {
-      try {
-        return !PALETTE_RE.test(readFileSync(join(process.cwd(), rel), 'utf8'));
-      } catch {
-        return true; // file moved or deleted
-      }
-    });
-    // Informational, not a failure: shrinking the list is the goal.
-    if (stale.length) {
-      console.info(
-        `[tones] ${stale.length} baseline entr${stale.length === 1 ? 'y' : 'ies'} ` +
-          `can be removed from scripts/tone-palette.allowlist.txt:\n  ${stale.join('\n  ')}`,
-      );
-    }
-    expect(true).toBe(true);
   });
 });

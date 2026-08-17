@@ -13,13 +13,13 @@ describe('StatusStrip', () => {
   });
 
   it.each([
-    ['live', 'text-green-500'],
-    ['playing', 'text-green-500'],
-    ['connecting', 'text-yellow-500'],
-    ['reconnecting', 'text-yellow-500'],
-    ['buffering', 'text-yellow-500'],
+    ['live', 'text-success-fg'],
+    ['playing', 'text-success-fg'],
+    ['connecting', 'text-warning-fg'],
+    ['reconnecting', 'text-warning-fg'],
+    ['buffering', 'text-warning-fg'],
     ['idle', 'text-slate-400'],
-    ['error', 'text-red-500'],
+    ['error', 'text-danger-fg'],
   ] as const)('applies the %s text-color tier', (phase, klass) => {
     render(<StatusStrip phase={phase} />);
     const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();

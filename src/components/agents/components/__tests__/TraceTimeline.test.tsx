@@ -99,7 +99,7 @@ describe('TraceTimeline', () => {
     render(<TraceTimeline trace={trace} />);
     fireEvent.click(screen.getByText('root span'));
     const statusEl = screen.getByText('error');
-    expect(statusEl).toHaveClass('text-red-600');
+    expect(statusEl).toHaveClass('text-danger-fg');
   });
 
   it('Close button hides the detail panel', () => {
@@ -154,6 +154,6 @@ describe('TraceTimeline', () => {
     });
     const { container } = render(<TraceTimeline trace={trace} />);
     // amber bar in the spans area for kind='llm'
-    expect(container.querySelector('.bg-amber-500')).not.toBeNull();
+    expect(container.querySelector('.bg-warning')).not.toBeNull();
   });
 });

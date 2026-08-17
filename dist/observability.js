@@ -7,7 +7,7 @@ import { S as te, a as he, C as re } from "./CardHeader-CHxrs92b.js";
 import { c as f } from "./cn-B6yFEsav.js";
 import { S as be, L as _, B as ge } from "./Chart-ByoxeiYX.js";
 import { a as ye } from "./EventStreamContext-CjzSHXy-.js";
-import { E as ve } from "./EmptyState-D_CN3LUx.js";
+import { E as ve } from "./EmptyState-CSXnZFAs.js";
 import { M as Ne } from "./Modal-2jg4229_.js";
 import { C as ne } from "./Card-B2uO9v1w.js";
 import { C as ae } from "./Chip-BDT8ro4h.js";
@@ -545,9 +545,9 @@ function Ge({ alerts: e, onDismiss: r }) {
 }
 const Ve = {
   info: "text-slate-500",
-  warning: "text-amber-600",
-  error: "text-red-600",
-  success: "text-green-600"
+  warning: "text-warning-fg",
+  error: "text-danger-fg",
+  success: "text-success-fg"
 };
 function le({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: s, selected: l }) {
   const o = he(r);
@@ -558,7 +558,7 @@ function le({ timestamp: e, type: r, summary: n, severity: a = "info", onClick: 
       onClick: s,
       className: f(
         "flex items-center gap-2 px-2.5 py-1.5 text-[13px] font-[inherit] rounded-md text-slate-900",
-        l ? "bg-violet-100" : "bg-transparent",
+        l ? "bg-accent-bg" : "bg-transparent",
         s ? "cursor-pointer" : "cursor-default"
       ),
       children: [

@@ -338,7 +338,7 @@ export function ExpandableCallWidget({
         onPointerCancel={onHeaderPointerUp}
       >
         <div className="min-w-0 flex items-center gap-2 text-xs text-white/80">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" aria-hidden />
+          <span className="w-2 h-2 rounded-full bg-success" aria-hidden />
           <span className="truncate font-medium">{title}</span>
           {subtitle && <span className="truncate text-white/50">{subtitle}</span>}
         </div>

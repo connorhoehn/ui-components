@@ -128,7 +128,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
             {status.wellKnownUrl && (
               <p className="m-0 text-sm text-slate-600">
                 Well-known URL:{' '}
-                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-info-fg underline">
                   {status.wellKnownUrl}
                 </a>
               </p>
@@ -178,7 +178,7 @@ window.location.href = authUrl;`}</pre>
       {/* Progress bar */}
       <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-green-500 rounded-full transition-[width] duration-300 ease-in-out"
+          className="h-full bg-success rounded-full transition-[width] duration-300 ease-in-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -198,7 +198,7 @@ window.location.href = authUrl;`}</pre>
                   className={cn(
                     'w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0',
                     step.done
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-success text-white'
                       : 'bg-slate-100 text-slate-400'
                   )}
                 >

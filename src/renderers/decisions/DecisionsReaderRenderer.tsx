@@ -71,7 +71,7 @@ export default function DecisionsReaderRenderer({ section, onNavigateToEditor }:
         <button
           type="button"
           onClick={() => onNavigateToEditor(section.id)}
-          className="mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit"
+          className="mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit"
         >
           Edit in editor →
         </button>

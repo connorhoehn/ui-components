@@ -60,7 +60,7 @@ export const WithApiDegradedBanner: Story = {
   args: {
     sidebar: <Sidebar />,
     apiDegraded: (
-      <div className="border-t border-amber-200 bg-amber-50 px-6 py-2 text-[13px] text-amber-800">
+      <div className="border-t border-warning-border bg-warning-bg px-6 py-2 text-[13px] text-warning-fg">
         API is experiencing degraded performance.
       </div>
     ),

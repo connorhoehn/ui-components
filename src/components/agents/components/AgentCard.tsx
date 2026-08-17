@@ -9,17 +9,17 @@ interface AgentCardProps {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  healthy: 'bg-emerald-100 text-emerald-800',
-  degraded: 'bg-amber-100 text-amber-800',
-  offline: 'bg-red-100 text-red-800',
-  deploying: 'bg-blue-100 text-blue-800',
+  healthy: 'bg-success-bg text-success-fg',
+  degraded: 'bg-warning-bg text-warning-fg',
+  offline: 'bg-danger-bg text-danger-fg',
+  deploying: 'bg-info-bg text-info-fg',
 };
 
 const STATUS_DOT: Record<string, string> = {
-  healthy: 'bg-emerald-500',
-  degraded: 'bg-amber-500',
-  offline: 'bg-red-500',
-  deploying: 'bg-blue-500',
+  healthy: 'bg-success',
+  degraded: 'bg-warning',
+  offline: 'bg-danger',
+  deploying: 'bg-info',
 };
 
 export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps) {
@@ -28,7 +28,7 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
       className={cn(
         'border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
         selected
-          ? 'border-blue-500 bg-blue-50/50 shadow-sm'
+          ? 'border-info bg-info-bg/50 shadow-sm'
           : 'border-slate-200 bg-white hover:border-slate-300',
       )}
       onClick={onClick}
@@ -36,10 +36,10 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
       {/* Status bar — full width top */}
       <div className={cn(
         'flex items-center justify-end px-3 py-1.5',
-        agent.status === 'healthy' && 'bg-emerald-50',
-        agent.status === 'degraded' && 'bg-amber-50',
-        agent.status === 'offline' && 'bg-red-50',
-        agent.status === 'deploying' && 'bg-blue-50',
+        agent.status === 'healthy' && 'bg-success-bg',
+        agent.status === 'degraded' && 'bg-warning-bg',
+        agent.status === 'offline' && 'bg-danger-bg',
+        agent.status === 'deploying' && 'bg-info-bg',
       )}>
         <span
           className={cn(

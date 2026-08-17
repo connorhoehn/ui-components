@@ -409,7 +409,7 @@ export default function VisionPromptBench({
           />
         </div>
         <div>
-          <label className={labelCls}>User prompt <span className="text-red-500">*</span></label>
+          <label className={labelCls}>User prompt <span className="text-danger-fg">*</span></label>
           <Textarea
             value={usrPrompt}
             onChange={(e) => setUsrPrompt(e.target.value)}
@@ -470,7 +470,7 @@ export default function VisionPromptBench({
       {/* Error */}
       {error && (
         <div
-          className="text-[12px] text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2"
+          className="text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded px-3 py-2"
           data-testid="bench-error"
         >
           {error}

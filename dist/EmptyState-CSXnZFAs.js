@@ -5,15 +5,15 @@ function N({
   icon: e,
   title: r,
   body: a,
-  description: l,
-  actionLabel: s,
+  description: s,
+  actionLabel: l,
   onAction: d,
   action: c,
   actions: i,
   testId: m = "empty-state",
   actionTestId: x = "empty-state-action"
 }) {
-  const p = l ?? a;
+  const p = s ?? a;
   return /* @__PURE__ */ o(
     "div",
     {
@@ -26,7 +26,7 @@ function N({
         e && (typeof e == "string" ? /* @__PURE__ */ t("div", { className: "text-[52px] mb-2", children: e }) : /* @__PURE__ */ t("div", { className: "mb-2", children: e })),
         /* @__PURE__ */ t("div", { className: "text-[17px] font-semibold text-slate-500", children: r }),
         p && /* @__PURE__ */ t("div", { className: "text-[13px] text-center max-w-[340px] text-slate-400 leading-normal", children: p }),
-        i && i.length > 0 ? /* @__PURE__ */ t(b, { actions: i }) : c ? /* @__PURE__ */ t("div", { className: "mt-2.5", children: c }) : s && d && /* @__PURE__ */ t(
+        i && i.length > 0 ? /* @__PURE__ */ t(u, { actions: i }) : c ? /* @__PURE__ */ t("div", { className: "mt-2.5", children: c }) : l && d && /* @__PURE__ */ t(
           "button",
           {
             "data-testid": x,
@@ -35,14 +35,14 @@ function N({
               "mt-2.5 px-[22px] py-[9px] text-sm font-semibold",
               "bg-primary text-white border-none rounded-lg cursor-pointer font-[inherit]"
             ),
-            children: s
+            children: l
           }
         )
       ]
     }
   );
 }
-function b({ actions: e }) {
+function u({ actions: e }) {
   return /* @__PURE__ */ t(
     "ul",
     {
@@ -50,7 +50,7 @@ function b({ actions: e }) {
       className: "mt-3 flex flex-col gap-3 w-full max-w-[420px]",
       children: e.map((r, a) => /* @__PURE__ */ o("li", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ t(
-          u,
+          b,
           {
             action: r,
             defaultVariant: a === 0 ? "primary" : "secondary"
@@ -61,32 +61,32 @@ function b({ actions: e }) {
     }
   );
 }
-function u({
+function b({
   action: e,
   defaultVariant: r
 }) {
-  const a = e.variant ?? r, l = n(
+  const a = e.variant ?? r, s = n(
     "inline-flex items-center justify-center self-stretch",
     "px-[18px] py-[8px] text-sm font-semibold rounded-lg cursor-pointer",
     "transition-colors font-[inherit]",
     a === "primary" ? "bg-primary text-white border border-transparent hover:bg-primary/90" : "bg-transparent text-slate-700 border border-slate-300 hover:bg-slate-50"
   );
   if (e.href) {
-    const s = e.external === !0;
+    const l = e.external === !0;
     return /* @__PURE__ */ o(
       "a",
       {
         "data-testid": "empty-state-actions-link",
         href: e.href,
         onClick: e.onClick,
-        className: l,
-        ...s ? {
+        className: s,
+        ...l ? {
           target: "_blank",
           rel: "noopener noreferrer"
         } : null,
         children: [
           e.label,
-          s && /* @__PURE__ */ t("span", { className: "sr-only", children: " (opens in new tab)" })
+          l && /* @__PURE__ */ t("span", { className: "sr-only", children: " (opens in new tab)" })
         ]
       }
     );
@@ -97,13 +97,13 @@ function u({
       type: "button",
       "data-testid": "empty-state-actions-button",
       onClick: e.onClick,
-      className: l,
+      className: s,
       children: e.label
     }
   );
 }
 function h({ code: e }) {
-  const [r, a] = f(!1), l = async () => {
+  const [r, a] = f(!1), s = async () => {
     try {
       await navigator.clipboard.writeText(e), a(!0), setTimeout(() => a(!1), 1500);
     } catch {
@@ -124,13 +124,13 @@ function h({ code: e }) {
           "button",
           {
             type: "button",
-            onClick: l,
+            onClick: s,
             "aria-label": r ? "Copied to clipboard" : "Copy code to clipboard",
             "data-testid": "empty-state-action-code-copy",
             className: n(
               "shrink-0 self-start text-[11px] font-semibold px-2 py-1 rounded",
               "border border-slate-600 hover:bg-slate-700 cursor-pointer",
-              r ? "text-emerald-300 border-emerald-400/50" : "text-slate-100"
+              r ? "text-success-fg border-success/50" : "text-slate-100"
             ),
             children: r ? "Copied" : "Copy"
           }

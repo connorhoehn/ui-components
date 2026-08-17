@@ -63,7 +63,7 @@ function AppSidebar() {
             key={ch.id}
             className={`flex items-center justify-between px-4 py-1.5 text-[13px] cursor-pointer border-l-[3px] ${
               ch.active
-                ? 'text-slate-200 bg-indigo-500/10 border-l-indigo-500'
+                ? 'text-slate-200 bg-primary/10 border-l-primary'
                 : 'text-slate-400 border-l-transparent hover:bg-white/5'
             }`}
           >
@@ -79,7 +79,7 @@ function AppSidebar() {
         </div>
         {ONLINE_USERS.map(u => (
           <div key={u.id} className="flex items-center gap-2 px-4 py-1 text-[13px] text-slate-400">
-            <span className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-success shrink-0" />
             {u.displayName}
           </div>
         ))}
@@ -142,7 +142,7 @@ function ChatArea({ callActive, messages }: { callActive: boolean; messages: Cha
         {callActive && (
           <Chip tone="success" size="sm">
             <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
               Call in progress
             </span>
           </Chip>
@@ -169,7 +169,7 @@ function ChatArea({ callActive, messages }: { callActive: boolean; messages: Cha
           value={newMsg}
           onChange={e => setNewMsg(e.target.value)}
           placeholder="Type a message..."
-          className="w-full px-3.5 py-2.5 rounded-lg border border-slate-700 bg-[#1e293b] text-slate-200 text-[13px] font-[inherit] outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30"
+          className="w-full px-3.5 py-2.5 rounded-lg border border-slate-700 bg-[#1e293b] text-slate-200 text-[13px] font-[inherit] outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
         />
       </form>
     </div>

@@ -3,8 +3,8 @@ import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as c
 import { C as U } from "./Card-B2uO9v1w.js";
 import { P as F, T as J, b as Z, e as _, a as ee, c as te, d as q } from "./Table-BOmVFX6H.js";
 import { B as f } from "./Button-Qsbxqsl9.js";
-import { E as me } from "./EmptyState-D_CN3LUx.js";
-import { C as H } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as me } from "./EmptyState-CSXnZFAs.js";
+import { C as H } from "./ConfirmDialog-DkFFYdzP.js";
 import { B as V } from "./Banner-DKb3JiLs.js";
 import { C as K } from "./Chip-BDT8ro4h.js";
 import { M as ye } from "./Modal-2jg4229_.js";
@@ -26,7 +26,7 @@ function He({ stats: a, pools: s, onNavigate: i, loading: u }) {
     /* @__PURE__ */ e(U, { className: "h-[200px] animate-pulse" })
   ] }) : /* @__PURE__ */ t(F, { title: "Dashboard", children: [
     /* @__PURE__ */ e("section", { className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4", children: b.map((c) => /* @__PURE__ */ t(U, { padding: "md", children: [
-      /* @__PURE__ */ e("div", { className: "text-[2rem] font-bold text-blue-600 mb-1", children: c.value }),
+      /* @__PURE__ */ e("div", { className: "text-[2rem] font-bold text-info-fg mb-1", children: c.value }),
       /* @__PURE__ */ e("div", { className: "text-sm text-slate-500", children: c.label })
     ] }, c.label)) }),
     /* @__PURE__ */ t("section", { className: "flex flex-col gap-3", children: [
@@ -193,7 +193,7 @@ function Qe({
     }
   );
 }
-const ve = "block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500", Ne = "block w-full px-3 py-2 text-sm border border-red-500 rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-red-500/20 focus:border-red-500";
+const ve = "block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info", Ne = "block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger";
 function D({
   label: a,
   name: s,
@@ -226,7 +226,7 @@ function D({
     ),
     /* @__PURE__ */ t("span", { className: "text-sm text-slate-800", children: [
       a,
-      h && /* @__PURE__ */ e("span", { className: "text-red-600", children: " *" })
+      h && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
     ] })
   ] }) : i === "textarea" ? /* @__PURE__ */ e(
     "textarea",
@@ -272,15 +272,15 @@ function D({
   );
   return i === "checkbox" ? /* @__PURE__ */ t("div", { className: "mb-4", children: [
     d(),
-    c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-red-600", children: c }),
+    c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-danger-fg", children: c }),
     p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-slate-400", children: p })
   ] }) : /* @__PURE__ */ t("div", { className: "mb-4", children: [
     /* @__PURE__ */ t("label", { htmlFor: N, className: "block mb-1 text-sm font-semibold text-slate-800", children: [
       a,
-      h && /* @__PURE__ */ e("span", { className: "text-red-600", children: " *" })
+      h && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
     ] }),
     d(),
-    c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-red-600", children: c }),
+    c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-danger-fg", children: c }),
     p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-slate-400", children: p })
   ] });
 }
@@ -805,7 +805,7 @@ function tt({
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-slate-800 mt-6 mb-2", children: "Permissions" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((v) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500 text-white text-sm font-medium", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((v) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
           v,
           /* @__PURE__ */ e(
             f,
@@ -1381,7 +1381,7 @@ function st({
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-slate-800 mt-6 mb-2", children: "Variables" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((z) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-500 text-white text-sm font-medium", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((z) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
           "{{" + z + "}}",
           /* @__PURE__ */ e(
             f,
@@ -1453,19 +1453,19 @@ function rt({
       children: [
         a && /* @__PURE__ */ t("section", { className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4", children: [
           /* @__PURE__ */ t(U, { padding: "md", children: [
-            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-blue-600 mb-1", children: a.totalUsers }),
+            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-info-fg mb-1", children: a.totalUsers }),
             /* @__PURE__ */ e("div", { className: "text-sm text-slate-500", children: "Total Users" })
           ] }),
           /* @__PURE__ */ t(U, { padding: "md", children: [
-            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-green-600 mb-1", children: a.mfaEnabled }),
+            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-success-fg mb-1", children: a.mfaEnabled }),
             /* @__PURE__ */ e("div", { className: "text-sm text-slate-500", children: "MFA Enabled" })
           ] }),
           /* @__PURE__ */ t(U, { padding: "md", children: [
-            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-amber-600 mb-1", children: a.mfaDisabled }),
+            /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-warning-fg mb-1", children: a.mfaDisabled }),
             /* @__PURE__ */ e("div", { className: "text-sm text-slate-500", children: "MFA Disabled" })
           ] }),
           /* @__PURE__ */ t(U, { padding: "md", children: [
-            /* @__PURE__ */ t("div", { className: "text-[1.75rem] font-bold text-blue-600 mb-1", children: [
+            /* @__PURE__ */ t("div", { className: "text-[1.75rem] font-bold text-info-fg mb-1", children: [
               a.adoptionRate,
               "%"
             ] }),
@@ -1474,7 +1474,7 @@ function rt({
         ] }),
         i && i.length > 0 && /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-slate-500 uppercase tracking-wide", children: "Filter by pool" }),
-          /* @__PURE__ */ t("select", { className: "px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-shadow", value: c, onChange: (g) => h(g.target.value), children: [
+          /* @__PURE__ */ t("select", { className: "px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow", value: c, onChange: (g) => h(g.target.value), children: [
             /* @__PURE__ */ e("option", { value: "", children: "All Pools" }),
             i.map((g) => /* @__PURE__ */ t("option", { value: g.poolId, children: [
               g.poolName,
@@ -1547,7 +1547,7 @@ function ot({
           {
             variant: "ghost",
             size: "sm",
-            className: "p-0 underline text-blue-600 font-mono text-xs",
+            className: "p-0 underline text-info-fg font-mono text-xs",
             onClick: () => i(k.entityType, k.entityId),
             children: k.entityId
           }
@@ -1556,7 +1556,7 @@ function ot({
       { key: "operation", header: "Operation" }
     ],
     [i]
-  ), S = "px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-shadow";
+  ), S = "px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow";
   return /* @__PURE__ */ t(F, { title: "Audit Log", children: [
     /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-4 items-end", children: [
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
@@ -1670,7 +1670,7 @@ function ct({ status: a, onNavigate: s }) {
           a.wellKnownUrl && /* @__PURE__ */ t("p", { className: "m-0 text-sm text-slate-600", children: [
             "Well-known URL:",
             " ",
-            /* @__PURE__ */ e("a", { href: a.wellKnownUrl, target: "_blank", rel: "noopener noreferrer", className: "text-blue-600 underline", children: a.wellKnownUrl })
+            /* @__PURE__ */ e("a", { href: a.wellKnownUrl, target: "_blank", rel: "noopener noreferrer", className: "text-info-fg underline", children: a.wellKnownUrl })
           ] })
         ] })
       },
@@ -1706,7 +1706,7 @@ window.location.href = authUrl;` })
         /* @__PURE__ */ e("div", { className: "h-2 bg-slate-100 rounded-full overflow-hidden", children: /* @__PURE__ */ e(
           "div",
           {
-            className: "h-full bg-green-500 rounded-full transition-[width] duration-300 ease-in-out",
+            className: "h-full bg-success rounded-full transition-[width] duration-300 ease-in-out",
             style: { width: `${m}%` }
           }
         ) }),
@@ -1725,7 +1725,7 @@ window.location.href = authUrl;` })
                     {
                       className: O(
                         "w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0",
-                        r.done ? "bg-green-500 text-white" : "bg-slate-100 text-slate-400"
+                        r.done ? "bg-success text-white" : "bg-slate-100 text-slate-400"
                       ),
                       children: r.done ? "✓" : p + 1
                     }
@@ -1906,7 +1906,7 @@ function mt({
           "aria-selected": g === "signin",
           className: O(
             "flex-1 rounded-none border-b-2",
-            g === "signin" ? "border-b-[#3b82f6] text-blue-600 font-semibold" : "border-b-transparent text-slate-500 font-normal"
+            g === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-slate-500 font-normal"
           ),
           onClick: () => ae("signin"),
           children: "Sign In"
@@ -1921,7 +1921,7 @@ function mt({
           "aria-selected": g === "register",
           className: O(
             "flex-1 rounded-none border-b-2",
-            g === "register" ? "border-b-[#3b82f6] text-blue-600 font-semibold" : "border-b-transparent text-slate-500 font-normal"
+            g === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-slate-500 font-normal"
           ),
           onClick: () => ae("register"),
           children: "Register"
@@ -1936,7 +1936,7 @@ function mt({
           "aria-selected": g === "forgot",
           className: O(
             "flex-1 rounded-none border-b-2",
-            g === "forgot" ? "border-b-[#3b82f6] text-blue-600 font-semibold" : "border-b-transparent text-slate-500 font-normal"
+            g === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-slate-500 font-normal"
           ),
           onClick: () => ae("forgot"),
           children: "Forgot Password"
@@ -2154,7 +2154,7 @@ function ht({
                 N < s.length - 1 && "border-b border-slate-200"
               ),
               children: [
-                /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-blue-500 shrink-0", "aria-hidden": "true" }),
+                /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-info shrink-0", "aria-hidden": "true" }),
                 /* @__PURE__ */ e("span", { children: ze(g) })
               ]
             },
@@ -2276,10 +2276,10 @@ function he({
               "w-11 h-[52px] text-center text-lg font-semibold font-[inherit]",
               "rounded-md outline-none transition-[border-color,box-shadow] duration-150",
               "border-2",
-              i ? "border-red-500" : "border-slate-200",
+              i ? "border-danger" : "border-slate-200",
               u ? "bg-slate-50 cursor-not-allowed" : "bg-white cursor-text",
               "text-slate-800",
-              "focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              "focus:border-info focus:ring-2 focus:ring-info/20"
             )
           },
           n
@@ -2290,7 +2290,7 @@ function he({
       "p",
       {
         role: "alert",
-        className: "m-0 text-sm text-red-600",
+        className: "m-0 text-sm text-danger-fg",
         children: i
       }
     )
@@ -2343,7 +2343,7 @@ function ut({
         {
           className: O(
             "w-3 h-3 rounded-full transition-colors duration-200",
-            T < y ? "bg-green-500" : T === y ? "bg-blue-500" : "bg-slate-200"
+            T < y ? "bg-success" : T === y ? "bg-info" : "bg-slate-200"
           ),
           "aria-label": `Step ${T + 1}${T === y ? " (current)" : T < y ? " (completed)" : ""}`
         }
@@ -2439,7 +2439,7 @@ function ut({
       h && /* @__PURE__ */ e("p", { className: "text-center text-sm text-slate-400 mt-3", children: "Verifying..." })
     ] }),
     b === "backup" && /* @__PURE__ */ t("div", { children: [
-      /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center", children: /* @__PURE__ */ e("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-green-600", children: /* @__PURE__ */ e("polyline", { points: "20 6 9 17 4 12" }) }) }),
+      /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center", children: /* @__PURE__ */ e("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-success-fg", children: /* @__PURE__ */ e("polyline", { points: "20 6 9 17 4 12" }) }) }),
       /* @__PURE__ */ e("p", { className: "text-sm text-slate-500 mb-5 mt-0 text-center leading-relaxed", children: "Save these backup codes in a safe place. Each code can only be used once." }),
       /* @__PURE__ */ e("div", { className: "grid grid-cols-2 gap-2.5 mb-6", children: d.map((R, T) => /* @__PURE__ */ e("div", { className: "px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-md font-mono text-sm text-slate-800 text-center select-all", children: R }, T)) }),
       /* @__PURE__ */ e(
@@ -2492,7 +2492,7 @@ function pt({
     }
   }, [p, s]);
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-slate-50", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[440px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "Multi-factor verification", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-blue-500", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-info-fg", children: [
       /* @__PURE__ */ e("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2", ry: "2" }),
       /* @__PURE__ */ e("path", { d: "M7 11V7a5 5 0 0 1 10 0v4" })
     ] }) }),
@@ -2515,7 +2515,7 @@ function pt({
         {
           variant: "ghost",
           size: "sm",
-          className: "block mt-6 mx-auto underline text-blue-600",
+          className: "block mt-6 mx-auto underline text-info-fg",
           onClick: () => {
             b("backup"), r(null);
           },
@@ -2555,7 +2555,7 @@ function pt({
         {
           variant: "ghost",
           size: "sm",
-          className: "block mt-6 mx-auto underline text-blue-600",
+          className: "block mt-6 mx-auto underline text-info-fg",
           onClick: () => {
             b("totp"), r(null);
           },
@@ -2689,7 +2689,7 @@ function ft({
 }
 function gt({ onConfirm: a, onCancel: s, clientName: i }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-slate-50", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Sign out confirmation", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-red-600", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
       /* @__PURE__ */ e("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
       /* @__PURE__ */ e("polyline", { points: "16 17 21 12 16 7" }),
       /* @__PURE__ */ e("line", { x1: "21", y1: "12", x2: "9", y2: "12" })
@@ -2717,7 +2717,7 @@ function bt({
   onBack: b
 }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-slate-50", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Error", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 rounded-full bg-[#fef2f2] flex items-center justify-center mx-auto mb-5", "aria-hidden": "true", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-red-600", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 rounded-full bg-[#fef2f2] flex items-center justify-center mx-auto mb-5", "aria-hidden": "true", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
       /* @__PURE__ */ e("circle", { cx: "12", cy: "12", r: "10" }),
       /* @__PURE__ */ e("line", { x1: "15", y1: "9", x2: "9", y2: "15" }),
       /* @__PURE__ */ e("line", { x1: "9", y1: "9", x2: "15", y2: "15" })
@@ -2752,7 +2752,7 @@ function Le({
       className: O(
         "flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer",
         "border-none rounded-none border-l-[3px] transition-colors",
-        s ? "bg-slate-50 text-blue-600 font-semibold border-l-blue-600" : "bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]"
+        s ? "bg-slate-50 text-info-fg font-semibold border-l-info" : "bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]"
       ),
       onClick: () => i(a.path),
       "aria-current": s ? "page" : void 0,
@@ -2780,7 +2780,7 @@ function xt({
           c ? "w-60" : "w-0 border-r-0"
         ),
         children: [
-          /* @__PURE__ */ e("div", { className: "p-4 font-bold text-lg text-blue-600 border-b border-slate-200", children: "Identity Admin" }),
+          /* @__PURE__ */ e("div", { className: "p-4 font-bold text-lg text-info-fg border-b border-slate-200", children: "Identity Admin" }),
           /* @__PURE__ */ e("ul", { className: "list-none m-0 p-0 py-2 flex-1", children: Ue.map((r) => /* @__PURE__ */ e(
             Le,
             {
@@ -2831,7 +2831,7 @@ function Fe({
       size: "sm",
       className: O(
         "rounded-none -mb-[2px] border-b-2",
-        s ? "font-semibold text-blue-600 border-b-[#3b82f6]" : "font-normal text-slate-500 border-b-transparent"
+        s ? "font-semibold text-info-fg border-b-[#3b82f6]" : "font-normal text-slate-500 border-b-transparent"
       ),
       onClick: i,
       "aria-selected": s,
@@ -2861,7 +2861,7 @@ function yt({
         {
           variant: "ghost",
           size: "sm",
-          className: "p-0 underline text-blue-600",
+          className: "p-0 underline text-info-fg",
           onClick: c,
           "aria-label": "Navigate to Pools",
           children: "Pools"

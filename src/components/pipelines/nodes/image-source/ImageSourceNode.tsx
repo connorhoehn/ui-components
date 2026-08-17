@@ -56,7 +56,7 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
         aria-label="View source image"
         className={cn(
           'block w-full rounded border-none bg-transparent p-0 cursor-zoom-in',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
         )}
         onMouseDown={stopMouseDown}
         onClick={(e) => {

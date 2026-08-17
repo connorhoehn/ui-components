@@ -51,7 +51,7 @@ export default function ScatterNode(props: NodeProps<ScatterFlowNode>) {
   const armsCount = itemCount;
   const footer =
     armsCount !== null && state !== 'idle' ? (
-      <span className="inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-600 rounded-full px-2 py-0.5">
+      <span className="inline-block text-[11px] font-semibold text-info-fg bg-info-bg border border-info rounded-full px-2 py-0.5">
         Dispatched {armsCount} arm{armsCount === 1 ? '' : 's'}
       </span>
     ) : undefined;

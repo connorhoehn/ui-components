@@ -42,18 +42,18 @@ describe('PolicyDecisionLog', () => {
     expect(screen.getByText('2 total')).toBeInTheDocument();
   });
 
-  it('allow decision renders ✓ with emerald color', () => {
+  it('allow decision renders ✓ with success-tone color', () => {
     render(<PolicyDecisionLog decisions={[makeDecision({ decision: 'allow' })]} />);
     const indicator = screen.getByText('✓');
-    expect(indicator).toHaveClass('bg-emerald-100');
-    expect(indicator).toHaveClass('text-emerald-700');
+    expect(indicator).toHaveClass('bg-success-bg');
+    expect(indicator).toHaveClass('text-success-fg');
   });
 
-  it('deny decision renders ✗ with red color', () => {
+  it('deny decision renders ✗ with danger-tone color', () => {
     render(<PolicyDecisionLog decisions={[makeDecision({ decision: 'deny' })]} />);
     const indicator = screen.getByText('✗');
-    expect(indicator).toHaveClass('bg-red-100');
-    expect(indicator).toHaveClass('text-red-700');
+    expect(indicator).toHaveClass('bg-danger-bg');
+    expect(indicator).toHaveClass('text-danger-fg');
   });
 
   it('clamps visible decisions to maxItems but total count reflects full input', () => {

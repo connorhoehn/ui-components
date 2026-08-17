@@ -79,7 +79,7 @@ export function RosterPanel({
                   className={cn(
                     'relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium shrink-0',
                     'bg-[var(--color-primary)] text-white',
-                    isSpeaking && 'ring-2 ring-green-400 ring-offset-2 ring-offset-[var(--color-surface)]',
+                    isSpeaking && 'ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]',
                   )}
                 >
                   {p.avatarUrl ? (
@@ -90,7 +90,7 @@ export function RosterPanel({
                   {p.isScreenSharing && (
                     <span
                       title="Sharing screen"
-                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-blue-500 border border-[var(--color-surface)]"
+                      className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-info border border-[var(--color-surface)]"
                     />
                   )}
                 </div>

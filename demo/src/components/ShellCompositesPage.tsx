@@ -244,7 +244,7 @@ export default function ShellCompositesPage() {
   title="Pipeline runs"
   description="History of all executions across this workspace."
   back={{ label: 'Pipelines', to: '/workflows/pipelines' }}
-  badge={<span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800">12 active</span>}
+  badge={<span className="text-xs px-2 py-0.5 rounded bg-warning-bg text-warning-fg">12 active</span>}
   actions={
     <>
       <Button variant="ghost">Filter</Button>
@@ -258,7 +258,7 @@ export default function ShellCompositesPage() {
           description="History of all executions across this workspace."
           back={{ label: 'Pipelines', to: '#' }}
           badge={
-            <span className="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded bg-warning-bg text-warning-fg font-medium">
               12 active
             </span>
           }

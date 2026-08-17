@@ -22,9 +22,9 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
     <div
       className={cn(
         'border rounded text-xs font-mono overflow-hidden',
-        toolCall.status === 'streaming' && 'border-blue-200 bg-blue-50/50',
+        toolCall.status === 'streaming' && 'border-info-border bg-info-bg/50',
         toolCall.status === 'completed' && 'border-slate-200 bg-slate-50',
-        toolCall.status === 'error' && 'border-red-200 bg-red-50/50',
+        toolCall.status === 'error' && 'border-danger-border bg-danger-bg/50',
         className,
       )}
     >
@@ -34,8 +34,8 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
       >
         <span className={cn(
           toolCall.status === 'streaming' && 'animate-pulse',
-          toolCall.status === 'completed' && 'text-emerald-600',
-          toolCall.status === 'error' && 'text-red-600',
+          toolCall.status === 'completed' && 'text-success-fg',
+          toolCall.status === 'error' && 'text-danger-fg',
         )}>
           {STATUS_ICON[toolCall.status]}
         </span>

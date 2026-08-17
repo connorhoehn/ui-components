@@ -805,7 +805,7 @@ export default function PipelinesPage() {
               onClick={handleDeleteConfirm}
               className={cn(
                 'px-[18px] py-[7px] text-[13px] font-semibold',
-                'bg-red-600 text-white border-none rounded-[7px]',
+                'bg-danger text-white border-none rounded-[7px]',
                 'cursor-pointer font-inherit',
               )}
             >
@@ -843,7 +843,7 @@ export default function PipelinesPage() {
               onClick={handleBulkDeleteConfirm}
               className={cn(
                 'px-[18px] py-[7px] text-[13px] font-semibold',
-                'bg-red-600 text-white border-none rounded-[7px]',
+                'bg-danger text-white border-none rounded-[7px]',
                 'cursor-pointer font-inherit',
               )}
             >

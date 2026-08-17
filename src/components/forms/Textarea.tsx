@@ -101,12 +101,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           'w-full rounded-md border bg-slate-50 font-inherit text-slate-900',
           'outline-none transition-colors duration-150 px-2.5 py-1.5 text-[13px] leading-5',
           'placeholder:text-slate-400',
-          'focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/40',
+          'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
           'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100',
           !autoResize && 'resize-y',
           autoResize && 'resize-none overflow-hidden',
           invalid
-            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/40'
+            ? 'border-danger focus:border-danger focus:ring-danger/40'
             : 'border-slate-300',
           className,
         )}

@@ -127,7 +127,7 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
                 <span className={cn('text-[13px] font-medium text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
                   {user.type === 'group' ? `@${user.displayName.toLowerCase()}` : user.displayName}
                 </span>
-                {user.type === 'user' && <span className={cn('w-2 h-2 rounded-full shrink-0', user.online ? 'bg-emerald-500' : 'bg-text-disabled')} />}
+                {user.type === 'user' && <span className={cn('w-2 h-2 rounded-full shrink-0', user.online ? 'bg-success' : 'bg-text-disabled')} />}
                 {user.type === 'user' && user.mode && <span className={cn('text-[11px] text-text-tertiary shrink-0')}>{user.mode}</span>}
                 {user.type === 'group' && user.memberCount != null && (
                   <span className={cn('text-[11px] text-text-tertiary shrink-0')}>{user.memberCount} members</span>

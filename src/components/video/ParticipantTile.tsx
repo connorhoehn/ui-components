@@ -127,7 +127,7 @@ export function ParticipantTile({
       {isMuted && (
         <div
           className={cn(
-            'absolute top-1 left-1 flex items-center justify-center rounded-full bg-red-500/90 text-white shadow-md',
+            'absolute top-1 left-1 flex items-center justify-center rounded-full bg-danger/90 text-white shadow-md',
             isSpotlight ? 'w-7 h-7' : 'w-5 h-5',
           )}
           aria-label="Microphone muted"

@@ -176,7 +176,7 @@ function ImageUploaderInner({
       {error && (
         <p
           role="alert"
-          className="text-sm text-red-600"
+          className="text-sm text-danger-fg"
           data-testid={testId ? `${testId}-error` : undefined}
         >
           {error}

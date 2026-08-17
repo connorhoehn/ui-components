@@ -42,7 +42,7 @@ function Tab({
       className={cn(
         'rounded-none -mb-[2px] border-b-2',
         active
-          ? 'font-semibold text-blue-600 border-b-[#3b82f6]'
+          ? 'font-semibold text-info-fg border-b-[#3b82f6]'
           : 'font-normal text-slate-500 border-b-transparent'
       )}
       onClick={onClick}
@@ -84,7 +84,7 @@ export function PoolScopedLayout({
         <Button
           variant="ghost"
           size="sm"
-          className="p-0 underline text-blue-600"
+          className="p-0 underline text-info-fg"
           onClick={onBack}
           aria-label="Navigate to Pools"
         >

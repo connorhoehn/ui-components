@@ -224,7 +224,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
           <div className="pointer-events-none">
             {/* Local caret line (dashed) */}
             <div
-              className="absolute w-0.5 z-10 pointer-events-none opacity-70 border-r border-dashed border-blue-500"
+              className="absolute w-0.5 z-10 pointer-events-none opacity-70 border-r border-dashed border-info"
               style={{
                 top: coords.top + 12,
                 left: coords.left + 12,
@@ -234,7 +234,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
             />
             {/* "You" label */}
             <div
-              className="absolute text-[10px] bg-blue-500 text-white px-[3px] py-px rounded-sm z-[11] pointer-events-none whitespace-nowrap opacity-80"
+              className="absolute text-[10px] bg-info text-white px-[3px] py-px rounded-sm z-[11] pointer-events-none whitespace-nowrap opacity-80"
               style={{
                 top: coords.top + 12 - 14,
                 left: coords.left + 12,

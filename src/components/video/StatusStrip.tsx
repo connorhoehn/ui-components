@@ -24,23 +24,23 @@ function formatDuration(sec: number): string {
 }
 
 const phaseDotClasses: Record<string, string> = {
-  live: 'bg-green-500 shadow-[0_0_6px_#22c55e]',
-  playing: 'bg-green-500 shadow-[0_0_6px_#22c55e]',
-  connecting: 'bg-yellow-500',
-  reconnecting: 'bg-yellow-500',
-  buffering: 'bg-yellow-500',
+  live: 'bg-success shadow-[0_0_6px_#22c55e]',
+  playing: 'bg-success shadow-[0_0_6px_#22c55e]',
+  connecting: 'bg-warning',
+  reconnecting: 'bg-warning',
+  buffering: 'bg-warning',
   idle: 'bg-slate-400',
-  error: 'bg-red-500',
+  error: 'bg-danger',
 };
 
 const phaseTextClasses: Record<string, string> = {
-  live: 'text-green-500',
-  playing: 'text-green-500',
-  connecting: 'text-yellow-500',
-  reconnecting: 'text-yellow-500',
-  buffering: 'text-yellow-500',
+  live: 'text-success-fg',
+  playing: 'text-success-fg',
+  connecting: 'text-warning-fg',
+  reconnecting: 'text-warning-fg',
+  buffering: 'text-warning-fg',
   idle: 'text-slate-400',
-  error: 'text-red-500',
+  error: 'text-danger-fg',
 };
 
 export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps) {

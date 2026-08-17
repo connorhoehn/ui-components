@@ -3,7 +3,7 @@ import { c as s } from "./cn-B6yFEsav.js";
 import { A as $ } from "./Avatar-DIEPZUB9.js";
 import { S as _ } from "./StatusDot-BC7B1tTr.js";
 import { useState as j, useRef as D, useEffect as T } from "react";
-import { E as R } from "./EmptyState-D_CN3LUx.js";
+import { E as R } from "./EmptyState-CSXnZFAs.js";
 import { c as B, e as w } from "./tones-DknNcB3q.js";
 const F = {
   sm: "w-7 h-4",
@@ -41,9 +41,9 @@ function re({
       },
       className: s(
         "relative inline-flex items-center rounded-full border border-transparent transition-colors",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-info",
         F[n],
-        e ? "bg-blue-600" : "bg-gray-300",
+        e ? "bg-info" : "bg-gray-300",
         r ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
         i
       ),
@@ -189,7 +189,7 @@ function le({
           onClick: (I) => {
             I.stopPropagation(), f(a.id);
           },
-          className: "relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full",
+          className: "relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info rounded-full",
           title: v,
           "aria-label": v,
           ...S,
@@ -380,7 +380,7 @@ function Y({ item: e, opacity: l, dotColor: r }) {
         /* @__PURE__ */ t($, { name: e.actor, size: 17 }),
         /* @__PURE__ */ t("span", { className: "text-[11px] text-[#374151] font-medium shrink-0", children: Z(e.actor) }),
         /* @__PURE__ */ t("span", { className: "text-[11px] text-[#9ca3af] shrink-0", children: e.action }),
-        e.ticketId && /* @__PURE__ */ t("span", { className: "text-[10px] font-bold font-mono text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap", children: e.ticketId }),
+        e.ticketId && /* @__PURE__ */ t("span", { className: "text-[10px] font-bold font-mono text-primary-fg bg-primary-bg border border-primary-border rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap", children: e.ticketId }),
         /* @__PURE__ */ t(
           "span",
           {

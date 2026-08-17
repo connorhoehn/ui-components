@@ -110,7 +110,7 @@ export function TranscriptPanel({
       <section className={cn('rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4', className)}>
         <header className="text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2">
           <span>{title}</span>
-          <span className="inline-block h-2 w-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+          <span className="inline-block h-2 w-2 rounded-full bg-warning animate-pulse" aria-hidden="true" />
           <span className="text-xs font-normal text-[var(--color-text-tertiary,#737373)]">
             {status === 'pending' ? 'queued' : 'processing'}
           </span>

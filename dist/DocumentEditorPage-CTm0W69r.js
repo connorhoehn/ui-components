@@ -7,7 +7,7 @@ import { l as fn } from "./useDocumentTypes-C29MkgPl.js";
 import { c as e } from "./cn-B6yFEsav.js";
 import { u as xn } from "./useHangoutEmbed-DyGzEiRt.js";
 import { u as hn } from "./useActiveSpeaker-BOwJ262O.js";
-import { D as bn, T as De } from "./NewDocumentModal-LkuoTwUS.js";
+import { D as bn, T as De } from "./NewDocumentModal-BH7g4Hn1.js";
 import { b as gn } from "./registry-qR57lair.js";
 function $e() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -771,7 +771,7 @@ function Ln({
                   onClick: (w) => {
                     w.stopPropagation(), o(t);
                   },
-                  className: e("mt-1 text-[11px] font-semibold cursor-pointer", i ? "text-amber-400" : "text-blue-400"),
+                  className: e("mt-1 text-[11px] font-semibold cursor-pointer", i ? "text-warning-fg" : "text-info-fg"),
                   children: i ? "Stop following" : "Follow"
                 }
               )
@@ -793,7 +793,7 @@ function Ln({
           /* @__PURE__ */ n(
             "div",
             {
-              className: e("absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white", t.idle ? "bg-amber-400" : "bg-emerald-500 [animation:presencePulse_2s_infinite]")
+              className: e("absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white", t.idle ? "bg-warning" : "bg-success [animation:presencePulse_2s_infinite]")
             }
           )
         ] }),
@@ -1944,7 +1944,7 @@ const pt = en(
                 ),
                 /* @__PURE__ */ d("div", { className: e("flex items-center gap-1.5 flex-1 min-w-0"), children: [
                   /* @__PURE__ */ n("span", { className: e("text-[13px] font-medium text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: l.type === "group" ? `@${l.displayName.toLowerCase()}` : l.displayName }),
-                  l.type === "user" && /* @__PURE__ */ n("span", { className: e("w-2 h-2 rounded-full shrink-0", l.online ? "bg-emerald-500" : "bg-text-disabled") }),
+                  l.type === "user" && /* @__PURE__ */ n("span", { className: e("w-2 h-2 rounded-full shrink-0", l.online ? "bg-success" : "bg-text-disabled") }),
                   l.type === "user" && l.mode && /* @__PURE__ */ n("span", { className: e("text-[11px] text-text-tertiary shrink-0"), children: l.mode }),
                   l.type === "group" && l.memberCount != null && /* @__PURE__ */ d("span", { className: e("text-[11px] text-text-tertiary shrink-0"), children: [
                     l.memberCount,
@@ -2383,7 +2383,7 @@ function ir({
       /* @__PURE__ */ n("div", { className: e("h-2 bg-[#e5e7eb] rounded overflow-hidden"), children: /* @__PURE__ */ n(
         "div",
         {
-          className: e("h-full rounded transition-[width] duration-300 ease-in-out", S === t.length ? "bg-success" : "bg-blue-500"),
+          className: e("h-full rounded transition-[width] duration-300 ease-in-out", S === t.length ? "bg-success" : "bg-info"),
           style: { width: `${$}%` }
         }
       ) })
@@ -2443,7 +2443,7 @@ function ir({
                   g.priority && g.priority !== "medium" && /* @__PURE__ */ n(
                     "span",
                     {
-                      className: e("text-[10px] font-semibold ml-1.5 px-1.5 py-px rounded", g.priority === "high" ? "bg-red-50 text-red-600" : "bg-green-50 text-green-700"),
+                      className: e("text-[10px] font-semibold ml-1.5 px-1.5 py-px rounded", g.priority === "high" ? "bg-danger-bg text-danger-fg" : "bg-success-bg text-success-fg"),
                       children: g.priority
                     }
                   )
@@ -2825,7 +2825,7 @@ function Me({
   return /* @__PURE__ */ d(
     "div",
     {
-      className: e("flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r", r === "pending" ? "bg-amber-50" : "bg-white"),
+      className: e("flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r", r === "pending" ? "bg-warning-bg" : "bg-white"),
       style: { borderLeft: `3px solid ${s}` },
       children: [
         /* @__PURE__ */ n("span", { className: e("text-[13px] flex-1"), children: /* @__PURE__ */ n(

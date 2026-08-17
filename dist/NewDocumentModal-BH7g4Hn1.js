@@ -12,8 +12,8 @@ import { ySyncPluginKey as _, relativePositionToAbsolutePosition as M, absoluteP
 import { c as s } from "./cn-B6yFEsav.js";
 import { D as H, q as ue } from "./useWebSocket-Bn4OeUor.js";
 import { l as pe } from "./useDocumentTypes-C29MkgPl.js";
-import { M as he } from "./Modal-2jg4229_.js";
-const fe = {
+import { M as fe } from "./Modal-2jg4229_.js";
+const he = {
   type: "tasks",
   label: "Task List",
   icon: "✅",
@@ -256,21 +256,21 @@ function Ce({ cursors: e, editorView: r, containerEl: n }) {
     if (a.anchor != null && a.anchor !== a.head) {
       const i = Math.min(a.anchor, a.head), p = Math.max(a.anchor, a.head);
       try {
-        const f = r.dom.offsetWidth;
+        const h = r.dom.offsetWidth;
         let x = i;
         for (; x <= p; ) {
           const m = j(r, x, n);
           if (!m) break;
           let N = x;
           const g = m.top;
-          for (let h = x + 1; h <= p; h++) {
-            const y = j(r, h, n);
+          for (let f = x + 1; f <= p; f++) {
+            const y = j(r, f, n);
             if (!y || Math.abs(y.top - g) > 2) break;
-            N = h;
+            N = f;
           }
           const k = j(r, N, n);
           if (k) {
-            const h = x === i ? m.left : 0, y = N === p ? k.left + 4 : f;
+            const f = x === i ? m.left : 0, y = N === p ? k.left + 4 : h;
             l.push(
               /* @__PURE__ */ t(
                 "div",
@@ -278,8 +278,8 @@ function Ce({ cursors: e, editorView: r, containerEl: n }) {
                   className: "absolute rounded-sm pointer-events-none opacity-[0.12] z-[5]",
                   style: {
                     top: g,
-                    left: h,
-                    width: Math.max(y - h, 4),
+                    left: f,
+                    width: Math.max(y - f, 4),
                     height: m.height || 18,
                     background: a.color
                   }
@@ -355,7 +355,7 @@ function T({
   ], [r, e]), c = ae({
     extensions: p,
     editable: o
-  }, [p]), [f, x] = R([]), m = A(null);
+  }, [p]), [h, x] = R([]), m = A(null);
   S(() => {
     if (i)
       i(a.name, a.color);
@@ -370,7 +370,7 @@ function T({
   }, [n, a, i]);
   const N = E(() => {
     if (!n?.awareness || !c?.view) return;
-    const g = n.awareness.getStates(), k = n.awareness.clientID, h = [];
+    const g = n.awareness.getStates(), k = n.awareness.clientID, f = [];
     g.forEach((y, C) => {
       if (C === k) return;
       const w = y.user;
@@ -389,7 +389,7 @@ function T({
             z.createRelativePositionFromJSON(y.cursor.head),
             D.binding.mapping
           );
-          h.push({
+          f.push({
             clientId: C,
             name: w.name || `User ${C}`,
             color: w.color || "#3b82f6",
@@ -398,7 +398,7 @@ function T({
           });
         } catch {
         }
-    }), x(h);
+    }), x(f);
   }, [n, c]);
   return S(() => {
     if (!c?.view || !n?.awareness) return;
@@ -406,7 +406,7 @@ function T({
       try {
         const k = _.getState(c.view.state);
         if (!k?.type || !k?.binding?.mapping) return;
-        const { anchor: h, head: y } = c.view.state.selection, C = V(h, k.type, k.binding.mapping), w = V(y, k.type, k.binding.mapping);
+        const { anchor: f, head: y } = c.view.state.selection, C = V(f, k.type, k.binding.mapping), w = V(y, k.type, k.binding.mapping);
         n.awareness.setLocalStateField("cursor", { anchor: C, head: w, sectionId: l });
       } catch {
       }
@@ -424,7 +424,7 @@ function T({
     o && /* @__PURE__ */ t(Ne, { editor: c }),
     /* @__PURE__ */ u("div", { ref: m, className: s("px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative"), children: [
       /* @__PURE__ */ t(ie, { editor: c }),
-      /* @__PURE__ */ t(Ce, { cursors: f, editorView: c?.view, containerEl: m.current })
+      /* @__PURE__ */ t(Ce, { cursors: h, editorView: c?.view, containerEl: m.current })
     ] })
   ] });
 }
@@ -456,10 +456,10 @@ function W(e) {
   return e.split(/\s+/).map((r) => r[0]).join("").toUpperCase().slice(0, 2);
 }
 function $e({ item: e, editable: r, onUpdate: n, onRemove: a, autoFocusText: o, onDidAutoFocus: d }) {
-  const [l, i] = R(!1), [p, c] = R(""), [f, x] = R(0), m = A(null), N = A(null), g = A(null), k = () => {
+  const [l, i] = R(!1), [p, c] = R(""), [h, x] = R(0), m = A(null), N = A(null), g = A(null), k = () => {
     const b = e.status === "done" ? "pending" : "done";
     n({ status: b });
-  }, h = e.assignee ? H.find((b) => b.displayName === e.assignee) : void 0, y = p.trim() ? ue(p) : H, C = E(() => {
+  }, f = e.assignee ? H.find((b) => b.displayName === e.assignee) : void 0, y = p.trim() ? ue(p) : H, C = E(() => {
     r && (c(""), x(0), i(!0));
   }, [r]), w = E(() => {
     i(!1), c(""), x(0);
@@ -482,7 +482,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: a, autoFocusText: o, 
     o && g.current && (g.current.focus(), d?.());
   }, [o, d]);
   const B = (b) => {
-    b.key === "Escape" ? w() : b.key === "ArrowDown" ? (b.preventDefault(), x(($) => Math.min($ + 1, y.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), x(($) => Math.max($ - 1, 0))) : b.key === "Enter" && (b.preventDefault(), y[f] && D(y[f]));
+    b.key === "Escape" ? w() : b.key === "ArrowDown" ? (b.preventDefault(), x(($) => Math.min($ + 1, y.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), x(($) => Math.max($ - 1, 0))) : b.key === "Enter" && (b.preventDefault(), y[h] && D(y[h]));
   }, O = e.dueDate && e.status !== "done" ? Se(e.dueDate) : !1;
   return /* @__PURE__ */ u("div", { className: s("flex items-center gap-2 py-1.5 border-b border-[#f1f5f9]"), children: [
     /* @__PURE__ */ t(
@@ -557,7 +557,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: a, autoFocusText: o, 
               "span",
               {
                 className: s("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
-                style: { background: h?.color ?? "#94a3b8" },
+                style: { background: f?.color ?? "#94a3b8" },
                 children: W(e.assignee)
               }
             ),
@@ -598,7 +598,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: a, autoFocusText: o, 
             onMouseEnter: () => x($),
             className: s(
               "flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]",
-              $ === f ? "bg-surface-hover" : "bg-transparent"
+              $ === h ? "bg-surface-hover" : "bg-transparent"
             ),
             children: [
               /* @__PURE__ */ t(
@@ -693,8 +693,8 @@ function Le({
   onRemoveItem: p,
   onUpdateCursorInfo: c
 }) {
-  const f = A(!1), x = () => {
-    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), f.current = !0;
+  const h = A(!1), x = () => {
+    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
@@ -717,7 +717,7 @@ function Le({
         editable: d,
         onUpdateItem: (m, N) => i?.(m, N),
         onRemoveItem: (m) => p?.(m),
-        focusLastItem: f
+        focusLastItem: h
       }
     ),
     d && /* @__PURE__ */ t(
@@ -762,7 +762,7 @@ function Y({
   onNavigateToEditor: o
 }) {
   return /* @__PURE__ */ u("div", { children: [
-    !!r && !!n ? /* @__PURE__ */ t("div", { className: "border border-sky-100 border-l-[3px] border-l-sky-400 rounded-md px-3.5 py-2.5 bg-sky-50 text-sm text-slate-800 leading-[1.6]", children: /* @__PURE__ */ t(
+    !!r && !!n ? /* @__PURE__ */ t("div", { className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-slate-800 leading-[1.6]", children: /* @__PURE__ */ t(
       T,
       {
         fragment: r,
@@ -778,7 +778,7 @@ function Y({
       {
         type: "button",
         onClick: () => o(e.id),
-        className: "mt-2 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit",
+        className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
         children: "Edit in editor →"
       }
     )
@@ -902,7 +902,7 @@ function F({ item: e, onUpdateItem: r }) {
           "span",
           {
             title: e.assignee,
-            className: "w-[22px] h-[22px] rounded-full bg-indigo-100 text-indigo-700 text-[9px] font-bold flex items-center justify-center shrink-0",
+            className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
             children: Ue(e.assignee)
           }
         ),
@@ -965,7 +965,7 @@ function Q({ section: e, onUpdateItem: r, onNavigateToEditor: n }) {
       {
         type: "button",
         onClick: () => n(e.id),
-        className: "mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit",
+        className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
         children: "Edit in editor →"
       }
     )
@@ -983,7 +983,7 @@ function Pe({ item: e, editable: r, autoFocus: n, onDidAutoFocus: a, onUpdate: o
         checked: i,
         onChange: () => o({ status: i ? "pending" : "done" }),
         disabled: !r,
-        className: s("w-[15px] h-[15px] accent-emerald-500 shrink-0", r ? "cursor-pointer" : "cursor-default")
+        className: s("w-[15px] h-[15px] accent-success shrink-0", r ? "cursor-pointer" : "cursor-default")
       }
     ),
     /* @__PURE__ */ t(
@@ -1006,7 +1006,7 @@ function Pe({ item: e, editable: r, autoFocus: n, onDidAutoFocus: a, onUpdate: o
       {
         type: "button",
         onClick: d,
-        className: "border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none",
+        className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
         children: "×"
       }
     )
@@ -1024,8 +1024,8 @@ function Oe({
   onRemoveItem: p,
   onUpdateCursorInfo: c
 }) {
-  const f = A(!1), x = () => {
-    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), f.current = !0;
+  const h = A(!1), x = () => {
+    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   }, m = e.items.length, N = e.items.filter((g) => g.status === "done").length;
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
@@ -1048,7 +1048,7 @@ function Oe({
       " done"
     ] }),
     /* @__PURE__ */ t("div", { children: e.items.map((g, k) => {
-      const h = k === e.items.length - 1, y = f.current && h;
+      const f = k === e.items.length - 1, y = h.current && f;
       return /* @__PURE__ */ t(
         Pe,
         {
@@ -1056,7 +1056,7 @@ function Oe({
           editable: d,
           autoFocus: y,
           onDidAutoFocus: y ? () => {
-            f.current = !1;
+            h.current = !1;
           } : void 0,
           onUpdate: (C) => i?.(g.id, C),
           onRemove: () => p?.(g.id)
@@ -1083,7 +1083,7 @@ function X({
   onUpdateItem: o,
   onNavigateToEditor: d
 }) {
-  const l = e.items, i = l.length, p = l.filter((f) => f.status === "done").length, c = i > 0 ? Math.round(p / i * 100) : 0;
+  const l = e.items, i = l.length, p = l.filter((h) => h.status === "done").length, c = i > 0 ? Math.round(p / i * 100) : 0;
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t("div", { className: "mb-2.5", children: /* @__PURE__ */ t(
       T,
@@ -1104,7 +1104,7 @@ function X({
           i,
           " done"
         ] }),
-        /* @__PURE__ */ u("span", { className: s("text-[11px] font-semibold", c === 100 ? "text-emerald-500" : "text-slate-500"), children: [
+        /* @__PURE__ */ u("span", { className: s("text-[11px] font-semibold", c === 100 ? "text-success-fg" : "text-slate-500"), children: [
           c,
           "%"
         ] })
@@ -1112,13 +1112,13 @@ function X({
       /* @__PURE__ */ t("div", { className: "h-1 bg-border rounded-sm overflow-hidden", children: /* @__PURE__ */ t(
         "div",
         {
-          className: s("h-full rounded-sm transition-[width] duration-300", c === 100 ? "bg-emerald-500" : "bg-blue-500"),
+          className: s("h-full rounded-sm transition-[width] duration-300", c === 100 ? "bg-success" : "bg-info"),
           style: { width: `${c}%` }
         }
       ) })
     ] }),
-    i === 0 ? /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px]", children: "No items." }) : /* @__PURE__ */ t("div", { children: l.map((f) => {
-      const x = f.status === "done";
+    i === 0 ? /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px]", children: "No items." }) : /* @__PURE__ */ t("div", { children: l.map((h) => {
+      const x = h.status === "done";
       return /* @__PURE__ */ u(
         "div",
         {
@@ -1129,15 +1129,15 @@ function X({
               {
                 type: "checkbox",
                 checked: x,
-                onChange: () => o?.(f.id, { status: x ? "pending" : "done" }),
-                className: s("w-3.5 h-3.5 accent-emerald-500 shrink-0", o ? "cursor-pointer" : "cursor-default"),
+                onChange: () => o?.(h.id, { status: x ? "pending" : "done" }),
+                className: s("w-3.5 h-3.5 accent-success shrink-0", o ? "cursor-pointer" : "cursor-default"),
                 readOnly: !o
               }
             ),
-            /* @__PURE__ */ t("span", { className: s("text-[13px] flex-1 leading-[1.4]", x ? "text-text-tertiary line-through" : "text-slate-800"), children: f.text || /* @__PURE__ */ t("span", { className: "text-text-disabled italic", children: "Untitled" }) })
+            /* @__PURE__ */ t("span", { className: s("text-[13px] flex-1 leading-[1.4]", x ? "text-text-tertiary line-through" : "text-slate-800"), children: h.text || /* @__PURE__ */ t("span", { className: "text-text-disabled italic", children: "Untitled" }) })
           ]
         },
-        f.id
+        h.id
       );
     }) }),
     d && /* @__PURE__ */ t(
@@ -1145,7 +1145,7 @@ function X({
       {
         type: "button",
         onClick: () => d(e.id),
-        className: "mt-2 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit",
+        className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
         children: "Edit in editor →"
       }
     )
@@ -1246,7 +1246,7 @@ function Ke({ item: e, editable: r, autoFocus: n, onDidAutoFocus: a, onUpdate: o
       {
         type: "button",
         onClick: d,
-        className: "border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none",
+        className: "border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none",
         children: "×"
       }
     )
@@ -1264,8 +1264,8 @@ function We({
   onRemoveItem: p,
   onUpdateCursorInfo: c
 }) {
-  const f = A(!1), x = () => {
-    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), f.current = !0;
+  const h = A(!1), x = () => {
+    l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
@@ -1283,7 +1283,7 @@ function We({
     ),
     e.items.length === 0 && !d && /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No decisions yet." }),
     /* @__PURE__ */ t("div", { children: e.items.map((m, N) => {
-      const g = N === e.items.length - 1, k = f.current && g;
+      const g = N === e.items.length - 1, k = h.current && g;
       return /* @__PURE__ */ t(
         Ke,
         {
@@ -1291,12 +1291,12 @@ function We({
           editable: d,
           autoFocus: k,
           onDidAutoFocus: k ? () => {
-            f.current = !1;
+            h.current = !1;
           } : void 0,
-          onUpdate: (h) => {
+          onUpdate: (f) => {
             const y = m.status;
-            if (i?.(m.id, h), h.status && h.status !== y) {
-              const C = Ve(h.status);
+            if (i?.(m.id, f), f.status && f.status !== y) {
+              const C = Ve(f.status);
               C && He({
                 sectionId: e.id,
                 decision: C,
@@ -1371,7 +1371,7 @@ function Z({ section: e, onNavigateToEditor: r }) {
       {
         type: "button",
         onClick: () => r(e.id),
-        className: "mt-1.5 bg-transparent border-none text-blue-500 text-xs cursor-pointer p-0 font-inherit",
+        className: "mt-1.5 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
         children: "Edit in editor →"
       }
     )
@@ -1421,7 +1421,7 @@ function qe({
         type: "button",
         "data-testid": `file-upload-remove-${e.id}`,
         onClick: i,
-        className: "border-none bg-transparent text-red-500 cursor-pointer text-sm px-1.5 py-0.5",
+        className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
         children: "×"
       }
     )
@@ -1490,16 +1490,16 @@ function Ye({
 }) {
   const a = e.metadata ?? {}, [o, d] = R(!1), l = (c) => {
     d(!0);
-    const f = new FileReader();
-    f.onload = () => {
+    const h = new FileReader();
+    h.onload = () => {
       n?.({
         metadata: {
           ...e.metadata ?? {},
-          imageDataUrl: typeof f.result == "string" ? f.result : "",
+          imageDataUrl: typeof h.result == "string" ? h.result : "",
           alt: a.alt ?? c.name
         }
       }), d(!1);
-    }, f.onerror = () => d(!1), f.readAsDataURL(c);
+    }, h.onerror = () => d(!1), h.readAsDataURL(c);
   }, i = (c) => {
     n?.({
       metadata: { ...e.metadata ?? {}, alt: c }
@@ -1537,7 +1537,7 @@ function Ye({
           type: "button",
           "data-testid": `diagram-remove-${e.id}`,
           onClick: p,
-          className: "bg-transparent border-none text-red-500 cursor-pointer text-[13px]",
+          className: "bg-transparent border-none text-danger-fg cursor-pointer text-[13px]",
           children: "Remove"
         }
       )
@@ -1561,8 +1561,8 @@ function Ye({
             disabled: !r,
             className: "hidden",
             onChange: (c) => {
-              const f = c.target.files?.[0];
-              f && l(f);
+              const h = c.target.files?.[0];
+              h && l(h);
             }
           }
         )
@@ -1598,9 +1598,9 @@ function Xe({
       metadata: { ...e.metadata ?? {}, links: p }
     });
   }, d = () => o([...a, { label: "", url: "" }]), l = (p, c) => {
-    o(a.map((f, x) => x === p ? { ...f, ...c } : f));
+    o(a.map((h, x) => x === p ? { ...h, ...c } : h));
   }, i = (p) => {
-    o(a.filter((c, f) => f !== p));
+    o(a.filter((c, h) => h !== p));
   };
   return /* @__PURE__ */ u("div", { "data-testid": `link-block-editor-${e.id}`, className: "flex flex-col gap-1.5", children: [
     a.length === 0 && /* @__PURE__ */ t(
@@ -1619,7 +1619,7 @@ function Xe({
           "data-testid": `link-block-label-${e.id}-${c}`,
           value: p.label,
           placeholder: "Label",
-          onChange: (f) => l(c, { label: f.target.value }),
+          onChange: (h) => l(c, { label: h.target.value }),
           disabled: !r,
           className: "flex-1 px-2 py-1 text-[13px] border border-border-emphasis rounded"
         }
@@ -1631,7 +1631,7 @@ function Xe({
           "data-testid": `link-block-url-${e.id}-${c}`,
           value: p.url,
           placeholder: "https://example.com",
-          onChange: (f) => l(c, { url: f.target.value }),
+          onChange: (h) => l(c, { url: h.target.value }),
           disabled: !r,
           className: "flex-[2] px-2 py-1 text-[13px] border border-border-emphasis rounded"
         }
@@ -1642,7 +1642,7 @@ function Xe({
           type: "button",
           "data-testid": `link-block-remove-${e.id}-${c}`,
           onClick: () => i(c),
-          className: "border-none bg-transparent text-red-500 cursor-pointer text-sm px-1.5 py-0.5",
+          className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
           children: "×"
         }
       )
@@ -1686,7 +1686,7 @@ function re({ section: e }) {
     }
   );
 }
-L(fe);
+L(he);
 L(me);
 L(xe);
 L(be);
@@ -1715,27 +1715,27 @@ v("diagram", "reader", te);
 v("link-block", "editor", Xe);
 v("link-block", "ack", re);
 v("link-block", "reader", re);
-function ht({ open: e, onClose: r, onCreate: n }) {
-  const [a, o] = R([]), [d, l] = R(null), [i, p] = R(""), [c, f] = R(""), x = A(null);
+function ft({ open: e, onClose: r, onCreate: n }) {
+  const [a, o] = R([]), [d, l] = R(null), [i, p] = R(""), [c, h] = R(""), x = A(null);
   if (S(() => {
     if (!e) return;
-    const h = pe();
-    o(h), l(h[0]?.id ?? null), p(""), f(""), setTimeout(() => x.current?.focus(), 50);
+    const f = pe();
+    o(f), l(f[0]?.id ?? null), p(""), h(""), setTimeout(() => x.current?.focus(), 50);
   }, [e]), !e) return null;
-  const m = a.find((h) => h.id === d), N = () => {
-    const h = i.trim();
-    !h || !m || (n({
-      title: h,
+  const m = a.find((f) => f.id === d), N = () => {
+    const f = i.trim();
+    !f || !m || (n({
+      title: f,
       type: m.name,
       description: c.trim() || void 0,
       icon: m.icon,
       documentTypeId: m.id
     }), r());
-  }, g = (h) => {
-    h.key === "Enter" && !h.shiftKey && i.trim() && m && N();
+  }, g = (f) => {
+    f.key === "Enter" && !f.shiftKey && i.trim() && m && N();
   }, k = !!i.trim() && !!m;
   return /* @__PURE__ */ t(
-    he,
+    fe,
     {
       open: e,
       onClose: r,
@@ -1775,32 +1775,32 @@ function ht({ open: e, onClose: r, onCreate: n }) {
         ] }) : /* @__PURE__ */ u(P, { children: [
           /* @__PURE__ */ u("div", { className: s("mb-5"), children: [
             /* @__PURE__ */ t("label", { className: s("block text-[13px] font-semibold text-text-secondary mb-2"), children: "Document Type" }),
-            /* @__PURE__ */ t("div", { className: s("grid grid-cols-2 gap-2"), children: a.map((h) => {
-              const y = d === h.id;
+            /* @__PURE__ */ t("div", { className: s("grid grid-cols-2 gap-2"), children: a.map((f) => {
+              const y = d === f.id;
               return /* @__PURE__ */ u(
                 "button",
                 {
-                  "data-testid": `type-option-${h.id}`,
-                  onClick: () => l(h.id),
+                  "data-testid": `type-option-${f.id}`,
+                  onClick: () => l(f.id),
                   className: s(
                     "flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]",
                     y ? "bg-[#eff6ff] border-2 border-[#3b82f6]" : "bg-white border-2 border-border hover:bg-[#f8fafc]"
                   ),
                   children: [
-                    /* @__PURE__ */ t("span", { className: s("text-2xl shrink-0"), children: h.icon }),
+                    /* @__PURE__ */ t("span", { className: s("text-2xl shrink-0"), children: f.icon }),
                     /* @__PURE__ */ u("div", { className: s("min-w-0"), children: [
-                      /* @__PURE__ */ t("div", { className: s("text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: h.name }),
-                      h.description && /* @__PURE__ */ t("div", { className: s("text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: h.description }),
+                      /* @__PURE__ */ t("div", { className: s("text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: f.name }),
+                      f.description && /* @__PURE__ */ t("div", { className: s("text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: f.description }),
                       /* @__PURE__ */ u("div", { className: s("text-[11px] text-text-tertiary mt-0.5"), children: [
-                        h.fields.length,
+                        f.fields.length,
                         " section",
-                        h.fields.length !== 1 ? "s" : ""
+                        f.fields.length !== 1 ? "s" : ""
                       ] })
                     ] }),
                     y && /* @__PURE__ */ t("span", { className: s("absolute top-1.5 right-2 text-sm text-[#3b82f6] font-bold"), children: "✓" })
                   ]
                 },
-                h.id
+                f.id
               );
             }) })
           ] }),
@@ -1816,7 +1816,7 @@ function ht({ open: e, onClose: r, onCreate: n }) {
                 "data-testid": "new-doc-title",
                 type: "text",
                 value: i,
-                onChange: (h) => p(h.target.value),
+                onChange: (f) => p(f.target.value),
                 placeholder: m ? `e.g. Q2 ${m.name}` : "Document title…",
                 className: s("w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] box-border font-[inherit] focus:border-[#3b82f6]")
               }
@@ -1832,7 +1832,7 @@ function ht({ open: e, onClose: r, onCreate: n }) {
               {
                 "data-testid": "new-doc-description",
                 value: c,
-                onChange: (h) => f(h.target.value),
+                onChange: (f) => h(f.target.value),
                 placeholder: "Brief description of this document…",
                 rows: 3,
                 className: s("w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] resize-y box-border font-[inherit] focus:border-[#3b82f6]")
@@ -1871,7 +1871,7 @@ function ht({ open: e, onClose: r, onCreate: n }) {
 export {
   Le as D,
   Ne as E,
-  ht as N,
+  ft as N,
   T,
   $e as a,
   q as b

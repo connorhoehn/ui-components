@@ -53,7 +53,7 @@ export function CursorCanvas({
         const ly = localCursor.position.y as number;
         return (
           <div
-            className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-blue-500 border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md z-[11] pointer-events-none select-none opacity-80"
+            className="absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-info border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md z-[11] pointer-events-none select-none opacity-80"
             style={{ left: lx, top: ly }}
           >
             You

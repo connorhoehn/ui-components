@@ -56,7 +56,7 @@ function ApproverChip({ approver, idx }: { approver: Approver; idx: number }) {
   return (
     <span
       key={`${approver.type}:${approver.value}:${idx}`}
-      className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap"
+      className="inline-flex items-center gap-1 bg-info-bg text-info-fg px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap"
     >
       <span aria-hidden>{icon}</span>
       <span>{approver.value}</span>

@@ -33,12 +33,12 @@ export const Enabled: Story = {
       isLoading: false,
     },
     children: (
-      <div className="rounded border border-green-400 bg-green-50 p-4 text-sm text-green-800">
+      <div className="rounded border border-success bg-success-bg p-4 text-sm text-success-fg">
         Chat feature is <strong>enabled</strong> — this content is rendered.
       </div>
     ),
     fallback: (
-      <div className="rounded border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+      <div className="rounded border border-danger-border bg-danger-bg p-4 text-sm text-danger-fg">
         Fallback — chat disabled.
       </div>
     ),
@@ -58,7 +58,7 @@ export const Disabled: Story = {
       </div>
     ),
     fallback: (
-      <div className="rounded border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+      <div className="rounded border border-danger-border bg-danger-bg p-4 text-sm text-danger-fg">
         Chat feature is <strong>disabled</strong> — fallback rendered.
       </div>
     ),

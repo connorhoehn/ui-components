@@ -57,7 +57,7 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
       {/* Items path — schema-aware picker */}
       <div>
         <label className={labelCls}>
-          Items path<span className="text-red-600 ml-1" aria-hidden>*</span>
+          Items path<span className="text-danger-fg ml-1" aria-hidden>*</span>
         </label>
         <div className="mt-1">
           <ScatterPathPicker
@@ -67,12 +67,12 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
           />
         </div>
         {!data.itemsPath?.trim() && (
-          <div role="alert" className="text-[11px] text-red-600 mt-0.5">
+          <div role="alert" className="text-[11px] text-danger-fg mt-0.5">
             Items path is required.
           </div>
         )}
         {!!data.itemsPath && !data.itemsPath.startsWith('$.') && (
-          <div role="alert" className="text-[11px] text-red-600 mt-0.5">
+          <div role="alert" className="text-[11px] text-danger-fg mt-0.5">
             Path must start with <code>$.</code>
           </div>
         )}

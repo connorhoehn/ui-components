@@ -194,7 +194,7 @@ function RingingView({
         <button
           type="button"
           onClick={onDecline}
-          className="w-11 h-11 rounded-full bg-red-500 text-white border-none cursor-pointer flex items-center justify-center hover:bg-red-600 transition-colors"
+          className="w-11 h-11 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center hover:bg-danger transition-colors"
           aria-label="Decline call"
         >
           {icons.phoneEnd}
@@ -202,7 +202,7 @@ function RingingView({
         <button
           type="button"
           onClick={onAnswer}
-          className="w-11 h-11 rounded-full bg-green-500 text-white border-none cursor-pointer flex items-center justify-center hover:bg-green-600 transition-colors"
+          className="w-11 h-11 rounded-full bg-success text-white border-none cursor-pointer flex items-center justify-center hover:bg-success transition-colors"
           aria-label="Answer call"
         >
           {icons.phoneAnswer}
@@ -291,7 +291,7 @@ function ActiveCallContent({
               )}
               {participants[0].isMuted && (
                 <div
-                  className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-red-500/90 flex items-center justify-center text-white"
+                  className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-danger/90 flex items-center justify-center text-white"
                   aria-label="Microphone muted"
                 >
                   <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -384,7 +384,7 @@ function MinimizedPill({
       <span
         className={cn(
           'w-2 h-2 rounded-full shrink-0',
-          state === 'active' ? 'bg-green-400 animate-pulse' : 'bg-amber-400 animate-pulse',
+          state === 'active' ? 'bg-success animate-pulse' : 'bg-warning animate-pulse',
         )}
       />
 
@@ -410,7 +410,7 @@ function MinimizedPill({
             onClick={onToggleMute}
             className={cn(
               'w-6 h-6 rounded-full flex items-center justify-center border-none cursor-pointer transition-colors',
-              isMuted ? 'bg-red-500/20 text-red-400' : 'bg-white/10 text-white/70 hover:text-white',
+              isMuted ? 'bg-danger/20 text-danger-fg' : 'bg-white/10 text-white/70 hover:text-white',
             )}
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
@@ -434,7 +434,7 @@ function MinimizedPill({
         <button
           type="button"
           onClick={onEndCall}
-          className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center border-none cursor-pointer hover:bg-red-600 transition-colors"
+          className="w-6 h-6 rounded-full bg-danger text-white flex items-center justify-center border-none cursor-pointer hover:bg-danger transition-colors"
           aria-label="End call"
         >
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -618,7 +618,7 @@ function SnapZones({
       {corners.map(({ id, classes }) => (
         <div
           key={id}
-          className={`absolute ${classes} w-16 h-16 rounded-xl border-2 border-dashed border-white/30 bg-white/5 pointer-events-auto cursor-pointer flex items-center justify-center transition-all hover:border-indigo-400 hover:bg-indigo-500/10 hover:scale-110`}
+          className={`absolute ${classes} w-16 h-16 rounded-xl border-2 border-dashed border-white/30 bg-white/5 pointer-events-auto cursor-pointer flex items-center justify-center transition-all hover:border-primary hover:bg-primary/10 hover:scale-110`}
           onClick={() => onSnap(id)}
           title={`Snap to ${id.replace('-', ' ')}`}
         >
@@ -725,7 +725,7 @@ export function CallWidget({
               onMouseDown={handleMouseDown}
             >
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-400" />
+                <span className="w-2 h-2 rounded-full bg-success" />
                 <span className="text-white/80 text-xs font-medium">
                   {mode === 'video' ? 'Video Call' : 'Audio Call'}
                 </span>

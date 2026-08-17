@@ -4,8 +4,8 @@ import { c as u } from "./cn-B6yFEsav.js";
 import { _ as M } from "./index-Bjylubtc.js";
 import { M as ue } from "./Modal-2jg4229_.js";
 import { T as pe, b as fe, e as Y, a as xe, c as W, d as K } from "./Table-BOmVFX6H.js";
-import { E as me } from "./EmptyState-D_CN3LUx.js";
-import { S as be } from "./PermissionDeniedCard-B9U2evs3.js";
+import { E as me } from "./EmptyState-CSXnZFAs.js";
+import { S as be } from "./PermissionDeniedCard-CsM3MJvh.js";
 import { S as he, C as ve } from "./CardHeader-CHxrs92b.js";
 import { A as q, a as ge } from "./Avatar-DIEPZUB9.js";
 import { S as re } from "./StatusDot-BC7B1tTr.js";
@@ -13,7 +13,7 @@ import { createPortal as ae } from "react-dom";
 import { C as ye } from "./Card-B2uO9v1w.js";
 import { C as we } from "./Chip-BDT8ro4h.js";
 import { t as Ne, f as ke, b as Ce, a as Se } from "./tones-DknNcB3q.js";
-import { A as $e } from "./Badge-Cb2y1B62.js";
+import { A as $e } from "./Badge-Bcf9nJeZ.js";
 import "clsx";
 import "tailwind-merge";
 const Ee = [
@@ -2999,24 +2999,24 @@ function Tr({
 }
 const kt = {
   success: {
-    pill: "bg-emerald-100 border-emerald-200",
-    dot: "bg-emerald-500",
-    text: "text-emerald-800"
+    pill: "bg-success-bg border-success-border",
+    dot: "bg-success",
+    text: "text-success-fg"
   },
   error: {
-    pill: "bg-red-100 border-red-200",
-    dot: "bg-red-500",
-    text: "text-red-800"
+    pill: "bg-danger-bg border-danger-border",
+    dot: "bg-danger",
+    text: "text-danger-fg"
   },
   warning: {
-    pill: "bg-amber-100 border-amber-200",
-    dot: "bg-amber-500",
-    text: "text-amber-800"
+    pill: "bg-warning-bg border-warning-border",
+    dot: "bg-warning",
+    text: "text-warning-fg"
   },
   info: {
-    pill: "bg-blue-100 border-blue-200",
-    dot: "bg-blue-500",
-    text: "text-blue-800"
+    pill: "bg-info-bg border-info-border",
+    dot: "bg-info",
+    text: "text-info-fg"
   },
   neutral: {
     pill: "bg-slate-100 border-slate-200",
@@ -3024,9 +3024,9 @@ const kt = {
     text: "text-slate-700"
   },
   pending: {
-    pill: "bg-violet-100 border-violet-200",
-    dot: "bg-violet-500",
-    text: "text-violet-800"
+    pill: "bg-accent-bg border-accent-border",
+    dot: "bg-accent",
+    text: "text-accent-fg"
   }
 }, Ct = {
   sm: "px-1.5 py-0.5 text-[10px] gap-1",

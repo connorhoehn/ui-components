@@ -94,10 +94,10 @@ async function fetchOutputSchemas(): Promise<OutputSchemasResponse> {
 // ---------------------------------------------------------------------------
 
 const KIND_CHIP_CLASSES: Record<SchemaPath['kind'], string> = {
-  array:   'bg-indigo-50 text-indigo-700 border-indigo-200',
+  array:   'bg-primary-bg text-primary-fg border-primary-border',
   object:  'bg-slate-50 text-slate-600 border-slate-200',
-  string:  'bg-emerald-50 text-emerald-700 border-emerald-200',
-  number:  'bg-amber-50 text-amber-700 border-amber-200',
+  string:  'bg-success-bg text-success-fg border-success-border',
+  number:  'bg-warning-bg text-warning-fg border-warning-border',
   boolean: 'bg-pink-50 text-pink-700 border-pink-200',
   unknown: 'bg-slate-50 text-slate-400 border-slate-200',
 };
@@ -133,16 +133,16 @@ function PathRow({ entry, isSelected, onPick }: PathRowProps) {
       data-testid={`path-row-${entry.path}`}
       className={cn(
         'w-full flex items-center gap-2 px-2 py-1 rounded text-left transition-colors duration-100',
-        'hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-400/50',
-        isSelected && 'bg-indigo-50 ring-1 ring-inset ring-indigo-300',
-        entry.isArrayItems && !isSelected && 'hover:bg-indigo-50',
+        'hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/50',
+        isSelected && 'bg-primary-bg ring-1 ring-inset ring-primary',
+        entry.isArrayItems && !isSelected && 'hover:bg-primary-bg',
       )}
       style={{ paddingLeft: `${8 + entry.depth * 12}px` }}
     >
       <span
         className={cn(
           'flex-1 font-mono text-[12px] leading-5 truncate',
-          entry.isArrayItems ? 'text-indigo-700 font-semibold' : 'text-slate-700',
+          entry.isArrayItems ? 'text-primary-fg font-semibold' : 'text-slate-700',
         )}
       >
         {entry.path}
@@ -232,7 +232,7 @@ export function ScatterPathPicker({
           </p>
         )}
         {fetchState === 'error' && (
-          <p className="text-[11px] text-amber-600 leading-4">
+          <p className="text-[11px] text-warning-fg leading-4">
             Could not load schema — enter path manually.
           </p>
         )}
@@ -262,7 +262,7 @@ export function ScatterPathPicker({
         {hasMixedPaths && (
           <>
             {' '}
-            <span className="text-indigo-600 font-semibold">Indigo</span>
+            <span className="text-primary-fg font-semibold">Indigo</span>
             {' '}paths are arrays — valid scatter sources.
           </>
         )}

@@ -1,6 +1,6 @@
 import { jsxs as y, jsx as r, Fragment as D } from "react/jsx-runtime";
 import { useId as I, useState as j, useEffect as C, useRef as K, useCallback as N } from "react";
-import { c as f } from "./cn-B6yFEsav.js";
+import { c as u } from "./cn-B6yFEsav.js";
 function R(o, n) {
   if (typeof window > "u") return n;
   try {
@@ -20,16 +20,16 @@ function M({
   className: _,
   "data-testid": w = "sidebar-section"
 }) {
-  const e = I(), m = `${e}-label`, h = `${e}-body`, u = i ?? `sidebar-section:${o}`, [l, p] = j(
-    () => a ? R(u, s) : !1
+  const e = I(), m = `${e}-label`, h = `${e}-body`, f = i ?? `sidebar-section:${o}`, [l, p] = j(
+    () => a ? R(f, s) : !1
   );
   C(() => {
     if (a && !(typeof window > "u"))
       try {
-        window.localStorage.setItem(u, String(l));
+        window.localStorage.setItem(f, String(l));
       } catch {
       }
-  }, [l, a, u]);
+  }, [l, a, f]);
   const d = !l, v = () => {
     a && p((x) => !x);
   };
@@ -39,7 +39,7 @@ function M({
       "aria-labelledby": m,
       "data-testid": w,
       "data-collapsed": l ? "true" : "false",
-      className: f("flex flex-col", _),
+      className: u("flex flex-col", _),
       children: [
         /* @__PURE__ */ y("div", { className: "flex items-center justify-between gap-1 py-2 pr-1", children: [
           /* @__PURE__ */ y(
@@ -51,7 +51,7 @@ function M({
               "aria-controls": h,
               onClick: v,
               disabled: !a,
-              className: f(
+              className: u(
                 "flex items-center gap-1.5 min-w-0 flex-1",
                 "text-[11px] font-bold uppercase tracking-[0.5px]",
                 "text-slate-500 select-none text-left",
@@ -64,7 +64,7 @@ function M({
                   "span",
                   {
                     "aria-hidden": "true",
-                    className: f(
+                    className: u(
                       "inline-block text-[10px] leading-none transition-transform duration-150",
                       d ? "rotate-90" : "rotate-0"
                     ),
@@ -82,7 +82,7 @@ function M({
           {
             id: h,
             hidden: !d,
-            className: f("flex flex-col gap-0.5", d && "pb-1"),
+            className: u("flex flex-col gap-0.5", d && "pb-1"),
             children: c
           }
         )
@@ -102,7 +102,7 @@ function P({
   disabled: e = !1,
   "aria-label": m,
   className: h,
-  "data-testid": u = "sidebar-row",
+  "data-testid": f = "sidebar-row",
   dataAttrs: l
 }) {
   const p = {};
@@ -127,12 +127,12 @@ function P({
       e || c?.(t);
     },
     [e, c]
-  ), S = f(
+  ), S = u(
     "group relative flex items-center gap-2 w-full",
     "px-2 py-1.5 rounded-md text-sm leading-tight select-none",
     "transition-colors duration-100",
     !e && "cursor-pointer hover:bg-slate-100",
-    s && !e && "bg-blue-50 text-blue-900 hover:bg-blue-100",
+    s && !e && "bg-info-bg text-info-fg hover:bg-info-bg",
     !s && !e && "text-slate-700",
     e && "opacity-50 cursor-not-allowed text-slate-500",
     "no-underline",
@@ -159,7 +159,7 @@ function P({
       "aria-current": s ? "page" : void 0,
       "aria-disabled": e || void 0,
       "aria-label": m,
-      "data-testid": u,
+      "data-testid": f,
       "data-active": s ? "true" : "false",
       ...p,
       className: S,
@@ -183,7 +183,7 @@ function P({
       "aria-pressed": s,
       "aria-disabled": e || void 0,
       "aria-label": m,
-      "data-testid": u,
+      "data-testid": f,
       "data-active": s ? "true" : "false",
       ...p,
       className: S,
@@ -212,7 +212,7 @@ function z({ reactions: o }) {
   return /* @__PURE__ */ r("div", { className: "fixed inset-0 w-full h-full pointer-events-none z-[9999]", children: o.map((n) => /* @__PURE__ */ r(
     "span",
     {
-      className: f(
+      className: u(
         "absolute text-[2rem] select-none",
         $[n.emoji] ?? "[animation:reaction-fade-up_2.5s_ease-out_forwards]"
       ),

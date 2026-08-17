@@ -67,7 +67,7 @@ export default function LinkBlockEditorRenderer({
               type="button"
               data-testid={`link-block-remove-${section.id}-${idx}`}
               onClick={() => removeLink(idx)}
-              className="border-none bg-transparent text-red-500 cursor-pointer text-sm px-1.5 py-0.5"
+              className="border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5"
             >
               ×
             </button>

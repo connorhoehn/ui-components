@@ -205,7 +205,7 @@ export function PresenceAvatars({
                 e.stopPropagation();
                 onUserClick(user.id);
               }}
-              className="relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full"
+              className="relative shrink-0 p-0 bg-transparent border-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info rounded-full"
               title={title}
               aria-label={title}
               {...dataAttrs}

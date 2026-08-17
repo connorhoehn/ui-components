@@ -1,8 +1,8 @@
 import { jsxs as o, jsx as e, Fragment as G } from "react/jsx-runtime";
 import No, { useState as S, memo as oa, useRef as le, useEffect as ne, useMemo as q, useCallback as D, useContext as wo, createContext as aa } from "react";
 import { useNavigate as Be, useParams as gt, Navigate as xt, useSearchParams as an } from "react-router";
-import { v as me, w as Re, q as $e, G as Jn, x as Ue, u as bt, i as ia, g as sa, f as or, p as la, y as ca, J as cn, t as ko, I as Co, e as Bt, S as en, N as da, T as dn, n as Io, a as ot, z as So, A as Hn, B as On, C as $o, D as pa, E as ua, F as ma, b as ha, H as at, K as fa, L as ga, M as it, O as ar, Q as xa, j as ba, o as To, R as tn, U as ya, m as ir, P as va, V as Na, r as wa, W as nn, l as sr, X as ka, k as Ca } from "./usePendingApprovals-CeMbOPQk.js";
-import { h as kf, Y as Cf, Z as If } from "./usePendingApprovals-CeMbOPQk.js";
+import { v as me, w as Re, q as $e, G as Jn, x as Ue, u as bt, i as ia, g as sa, f as or, p as la, y as ca, J as cn, t as ko, I as Co, e as Bt, S as en, N as da, T as dn, n as Io, a as ot, z as So, A as Hn, B as On, C as $o, D as pa, E as ua, F as ma, b as ha, H as at, K as fa, L as ga, M as it, O as ar, Q as xa, j as ba, o as To, R as tn, U as ya, m as ir, P as va, V as Na, r as wa, W as nn, l as sr, X as ka, k as Ca } from "./usePendingApprovals-CV1PcpST.js";
+import { h as kf, Y as Cf, Z as If } from "./usePendingApprovals-CV1PcpST.js";
 import { Handle as L, Position as B, useNodeConnections as Ia, getSmoothStepPath as Sa, EdgeLabelRenderer as lr, ReactFlowProvider as $a, useReactFlow as Ta, useNodesState as Ao, useEdgesState as Ro, ReactFlow as Po, Background as Mo, BackgroundVariant as Aa, Controls as Eo, MiniMap as Ra } from "@xyflow/react";
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
@@ -20,8 +20,8 @@ import { I as mt, F as La } from "./FileUploadDrop-Cmz3XANg.js";
 import { u as Xn } from "./IdentityContext-CLalsm_M.js";
 import { B as Ze } from "./Banner-DKb3JiLs.js";
 import { C as se } from "./Chip-BDT8ro4h.js";
-import { E as ze } from "./EmptyState-D_CN3LUx.js";
-import { C as rn } from "./ConfirmDialog-CNoxvYGu.js";
+import { E as ze } from "./EmptyState-CSXnZFAs.js";
+import { C as rn } from "./ConfirmDialog-DkFFYdzP.js";
 import { B as Ba, L as qt } from "./Chart-ByoxeiYX.js";
 import { S as pn } from "./SkeletonCard-C89GWQ3p.js";
 const Ua = {
@@ -285,8 +285,8 @@ const Ga = {
   image: "!w-2.5 !h-2.5 !rounded-sm !bg-[#7c3aed] !border-[#6d28d9]",
   text: "!w-2.5 !h-2.5 !bg-slate-300",
   data: "!w-2.5 !h-2.5 !bg-[#94a3b8]",
-  control: "!w-2 !h-2 !bg-amber-500",
-  error: "!w-2 !h-2 !bg-red-600"
+  control: "!w-2 !h-2 !bg-warning",
+  error: "!w-2 !h-2 !bg-danger"
 };
 function F(t) {
   return Ga[t];
@@ -827,7 +827,7 @@ function Ni(t) {
         "aria-label": "View source image",
         className: I(
           "block w-full rounded border-none bg-transparent p-0 cursor-zoom-in",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-info"
         ),
         onMouseDown: vi,
         onClick: (m) => {
@@ -908,7 +908,7 @@ function Ni(t) {
 }
 const dr = (t) => t.stopPropagation(), pr = I(
   "h-[38px] w-[38px] shrink-0 overflow-hidden rounded border border-border bg-surface-inset",
-  "p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+  "p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info"
 );
 function ln({
   images: t,
@@ -1066,7 +1066,7 @@ function Ci(t) {
       p === 1 ? "" : "s",
       " resolved"
     ] })
-  ] }), f = p, h = f !== null && c !== "idle" ? /* @__PURE__ */ o("span", { className: "inline-block text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-600 rounded-full px-2 py-0.5", children: [
+  ] }), f = p, h = f !== null && c !== "idle" ? /* @__PURE__ */ o("span", { className: "inline-block text-[11px] font-semibold text-info-fg bg-info-bg border border-info rounded-full px-2 py-0.5", children: [
     "Dispatched ",
     f,
     " arm",
@@ -1583,7 +1583,7 @@ const ji = (t) => t.stopPropagation(), zi = oa(function({ info: r }) {
     return /* @__PURE__ */ o("div", { children: [
       /* @__PURE__ */ e("output", { "aria-live": "polite", className: "sr-only", children: u ? "Content policy refusal" : `Failure: ${r.failure.reason}` }),
       /* @__PURE__ */ o("div", { className: "flex items-start gap-1", children: [
-        /* @__PURE__ */ e("span", { className: "bg-transparent border-none p-0 text-[12px] text-red-600 font-medium text-left", children: u ? "✕ Content policy refusal" : `✕ ${r.failure.reason}` }),
+        /* @__PURE__ */ e("span", { className: "bg-transparent border-none p-0 text-[12px] text-danger-fg font-medium text-left", children: u ? "✕ Content policy refusal" : `✕ ${r.failure.reason}` }),
         r.onRetry && /* @__PURE__ */ e(
           "button",
           {
@@ -1622,7 +1622,7 @@ const ji = (t) => t.stopPropagation(), zi = oa(function({ info: r }) {
             r.tokensOut ?? 0,
             " tokens"
           ] }),
-          r.awaiting && /* @__PURE__ */ e("span", { className: "ml-1.5 text-[11px] text-blue-600", "data-testid": "vision-awaiting", children: "· waiting…" }),
+          r.awaiting && /* @__PURE__ */ e("span", { className: "ml-1.5 text-[11px] text-info-fg", "data-testid": "vision-awaiting", children: "· waiting…" }),
           r.streaming && !r.awaiting && /* @__PURE__ */ e("span", { className: "ml-1.5 text-[11px] text-text-tertiary", children: "· streaming…" })
         ]
       }
@@ -1644,7 +1644,7 @@ const ji = (t) => t.stopPropagation(), zi = oa(function({ info: r }) {
           "aria-label": "View vision input image",
           className: I(
             "mt-1.5 block h-14 w-14 overflow-hidden rounded border border-border bg-surface-inset",
-            "p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400"
+            "p-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-info"
           ),
           onMouseDown: ji,
           onClick: (u) => {
@@ -1872,7 +1872,7 @@ function Yi(t) {
           "aria-label": w ? "View generated image" : "Image synthesizing",
           className: I(
             "block w-full rounded-md border-none bg-transparent p-0",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-info",
             w ? "cursor-zoom-in" : "cursor-default"
           ),
           onMouseDown: Ki,
@@ -1953,7 +1953,7 @@ function Qi(t) {
           "aria-label": b ? "View variation image" : "Image synthesizing",
           className: I(
             "block w-full rounded-md border-none bg-transparent p-0",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-info",
             b ? "cursor-zoom-in" : "cursor-default"
           ),
           onMouseDown: Xi,
@@ -2038,7 +2038,7 @@ function ts(t) {
           "aria-label": y ? "View edited image" : "Image synthesizing",
           className: I(
             "block w-full rounded-md border-none bg-transparent p-0",
-            "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-info",
             y ? "cursor-zoom-in" : "cursor-default"
           ),
           onMouseDown: es,
@@ -2887,7 +2887,7 @@ function ws({ disabledTypes: t = [] }) {
                 placeholder: "Search nodes...",
                 "aria-label": "Search nodes",
                 "data-testid": "palette-search",
-                className: "flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-200 placeholder:text-slate-400"
+                className: "flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-slate-400"
               }
             ),
             /* @__PURE__ */ e(
@@ -2900,7 +2900,7 @@ function ws({ disabledTypes: t = [] }) {
                 "aria-pressed": p,
                 className: I(
                   "shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors",
-                  p ? "bg-blue-600 border-blue-600 text-white" : "bg-white border-slate-300 text-slate-500 hover:bg-slate-50"
+                  p ? "bg-info border-info text-white" : "bg-white border-slate-300 text-slate-500 hover:bg-slate-50"
                 ),
                 children: p ? /* @__PURE__ */ o("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "none", "aria-hidden": "true", children: [
                   /* @__PURE__ */ e("rect", { x: "1", y: "2", width: "12", height: "2", rx: "1", fill: "currentColor" }),
@@ -2967,7 +2967,7 @@ function ws({ disabledTypes: t = [] }) {
                     type: "button",
                     onClick: m,
                     "data-testid": "palette-clear-filters",
-                    className: "text-[11px] font-semibold text-blue-600 hover:underline",
+                    className: "text-[11px] font-semibold text-info-fg hover:underline",
                     children: "Clear filters"
                   }
                 )
@@ -5070,7 +5070,7 @@ function Al({
     "hover:bg-surface-hover"
   ), g = I(
     "block w-full text-left px-3.5 py-2 text-[13px]",
-    "border-none bg-transparent cursor-pointer font-inherit text-red-600",
+    "border-none bg-transparent cursor-pointer font-inherit text-danger-fg",
     "hover:bg-surface-hover"
   );
   return /* @__PURE__ */ o(
@@ -5159,10 +5159,10 @@ function Al({
 }
 const fn = {
   neutral: "bg-slate-100 text-slate-600",
-  success: "bg-green-50 text-green-600",
-  warning: "bg-amber-50 text-amber-600",
-  danger: "bg-red-50 text-red-600",
-  info: "bg-blue-50 text-blue-600"
+  success: "bg-success-bg text-success-fg",
+  warning: "bg-warning-bg text-warning-fg",
+  danger: "bg-danger-bg text-danger-fg",
+  info: "bg-info-bg text-info-fg"
 };
 function Rl({
   pipelineId: t,
@@ -5206,9 +5206,9 @@ function Rl({
   }, we = r.nodes.filter((oe) => oe.type !== "trigger").length, _e = l ? Object.values(l.steps).filter(
     (oe) => oe.status === "completed" || oe.status === "skipped"
   ).length : 0, Fe = ((l?.startedAt ? Date.now() - new Date(l.startedAt).getTime() : 0) / 1e3).toFixed(1), Ee = i && l ? { text: `Running (${_e}/${we} steps) · ${Fe}s`, variant: "running" } : l?.status === "completed" ? { text: `Completed in ${l.durationMs ? (l.durationMs / 1e3).toFixed(1) : "?"}s`, variant: "success" } : l?.status === "failed" ? { text: `Failed at ${Ot(r, l.error?.nodeId)}`, variant: "error" } : { text: "", variant: "none" }, qe = {
-    running: "bg-blue-50 text-blue-600",
-    success: "bg-green-50 text-green-600",
-    error: "bg-red-50 text-red-600"
+    running: "bg-info-bg text-info-fg",
+    success: "bg-success-bg text-success-fg",
+    error: "bg-danger-bg text-danger-fg"
   }, je = i ? "⏹ Stop" : l && l.status !== "running" ? "↻ Re-run" : "▶ Run", [Ve, Ie] = S(!1), xe = le(null);
   return ft(xe, () => Ie(!1), Ve), /* @__PURE__ */ o(
     "div",
@@ -5330,7 +5330,7 @@ function Rl({
                       {
                         className: I(
                           "font-bold text-xs",
-                          oe.severity === "error" ? "text-red-600" : "text-amber-600"
+                          oe.severity === "error" ? "text-danger-fg" : "text-warning-fg"
                         ),
                         children: oe.severity === "error" ? "✗" : "⚠"
                       }
@@ -5393,7 +5393,7 @@ function Rl({
             disabled: H,
             className: I(
               "px-3 py-1.5 text-[13px] font-semibold border-none rounded-md font-inherit shrink-0",
-              H ? "bg-surface-hover text-text-tertiary cursor-default opacity-70" : "bg-green-600 text-white cursor-pointer"
+              H ? "bg-surface-hover text-text-tertiary cursor-default opacity-70" : "bg-success text-white cursor-pointer"
             ),
             "data-testid": "publish-button",
             children: H ? "Published" : "Publish"
@@ -5408,7 +5408,7 @@ function Rl({
             title: c,
             className: I(
               "px-3.5 py-1.5 text-[13px] font-semibold text-white border-none rounded-md font-inherit shrink-0",
-              i ? "bg-red-600" : "bg-primary",
+              i ? "bg-danger" : "bg-primary",
               d || s ? "cursor-not-allowed opacity-50" : "cursor-pointer"
             ),
             "data-testid": "run-button",
@@ -5426,7 +5426,7 @@ function Rl({
             disabled: d || i,
             title: `Debug run (${p.size} breakpoint${p.size > 1 ? "s" : ""})`,
             className: I(
-              "px-3.5 py-1.5 text-[13px] font-semibold bg-amber-600 text-white",
+              "px-3.5 py-1.5 text-[13px] font-semibold bg-warning text-white",
               "border-none rounded-md font-inherit shrink-0",
               d || i ? "cursor-not-allowed opacity-50" : "cursor-pointer"
             ),
@@ -6271,14 +6271,14 @@ function jl({
       "data-testid": "breakpoint-pause-overlay",
       className: I(
         "absolute top-14 left-1/2 -translate-x-1/2 z-30",
-        "bg-surface border-2 border-amber-600 rounded-lg",
+        "bg-surface border-2 border-warning rounded-lg",
         "px-4 py-3 shadow-[0_8px_24px_rgba(217,119,6,0.2)]",
         "flex flex-col gap-3 font-inherit",
         "w-[min(900px,92vw)] max-h-[calc(100vh-120px)]"
       ),
       children: [
         /* @__PURE__ */ o("div", { className: "flex items-center gap-3 flex-wrap", children: [
-          /* @__PURE__ */ o("span", { className: "text-[13px] font-semibold text-amber-600", children: [
+          /* @__PURE__ */ o("span", { className: "text-[13px] font-semibold text-warning-fg", children: [
             "Paused at: ",
             Ot(t, r.stepId)
           ] }),
@@ -6290,7 +6290,7 @@ function jl({
               disabled: n,
               "data-testid": "breakpoint-apply-continue-btn",
               className: I(
-                "px-3 py-1 text-xs font-semibold bg-green-300 text-gray-900",
+                "px-3 py-1 text-xs font-semibold bg-success-bg text-gray-900",
                 "border-none rounded cursor-pointer font-inherit",
                 n && "cursor-wait opacity-70"
               ),
@@ -6304,7 +6304,7 @@ function jl({
               onClick: c,
               disabled: n,
               className: I(
-                "px-3 py-1 text-xs font-semibold bg-amber-600 text-white",
+                "px-3 py-1 text-xs font-semibold bg-warning text-white",
                 "border-none rounded font-inherit",
                 n ? "cursor-not-allowed opacity-60" : "cursor-pointer"
               ),
@@ -6319,8 +6319,8 @@ function jl({
               onClick: l,
               disabled: n,
               className: I(
-                "px-3 py-1 text-xs font-semibold bg-transparent text-amber-600",
-                "border border-amber-600 rounded font-inherit",
+                "px-3 py-1 text-xs font-semibold bg-transparent text-warning-fg",
+                "border border-warning rounded font-inherit",
                 n ? "cursor-not-allowed opacity-60" : "cursor-pointer"
               ),
               "data-testid": "breakpoint-step-over-btn",
@@ -6334,8 +6334,8 @@ function jl({
               onClick: p,
               disabled: n,
               className: I(
-                "px-3 py-1 text-xs font-semibold bg-transparent text-amber-600",
-                "border border-amber-600 rounded font-inherit",
+                "px-3 py-1 text-xs font-semibold bg-transparent text-warning-fg",
+                "border border-warning rounded font-inherit",
                 n ? "cursor-not-allowed opacity-60" : "cursor-pointer"
               ),
               "data-testid": "breakpoint-resume-all-btn",
@@ -6394,7 +6394,7 @@ function jl({
                                 {
                                   "data-testid": `breakpoint-patch-unvalidated-${w.patchId}`,
                                   title: "No validator was registered for this step's node type",
-                                  className: "px-1 text-[9px] font-bold bg-orange-300/15 text-orange-300 rounded-sm",
+                                  className: "px-1 text-[9px] font-bold bg-caution-bg/15 text-caution-fg rounded-sm",
                                   children: "⚠ Unvalidated"
                                 }
                               ),
@@ -6417,7 +6417,7 @@ function jl({
                                 title: v ? "Revert this patch" : "Run has progressed past this breakpoint — revert no longer allowed",
                                 className: I(
                                   "mt-1 px-2 py-0.5 text-[10px] font-semibold bg-transparent rounded-sm font-inherit",
-                                  v ? "text-red-400 border border-red-400 cursor-pointer" : "text-gray-700 border border-gray-700 cursor-not-allowed",
+                                  v ? "text-danger-fg border border-danger cursor-pointer" : "text-gray-700 border border-gray-700 cursor-not-allowed",
                                   a === w.patchId && "cursor-not-allowed"
                                 ),
                                 children: a === w.patchId ? "Reverting…" : "Revert"
@@ -7846,10 +7846,10 @@ async function wc() {
   })), kt);
 }
 const kc = {
-  array: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  array: "bg-primary-bg text-primary-fg border-primary-border",
   object: "bg-slate-50 text-slate-600 border-slate-200",
-  string: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  number: "bg-amber-50 text-amber-700 border-amber-200",
+  string: "bg-success-bg text-success-fg border-success-border",
+  number: "bg-warning-bg text-warning-fg border-warning-border",
   boolean: "bg-pink-50 text-pink-700 border-pink-200",
   unknown: "bg-slate-50 text-slate-400 border-slate-200"
 };
@@ -7874,9 +7874,9 @@ function Ic({ entry: t, isSelected: r, onPick: n }) {
       "data-testid": `path-row-${t.path}`,
       className: I(
         "w-full flex items-center gap-2 px-2 py-1 rounded text-left transition-colors duration-100",
-        "hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-400/50",
-        r && "bg-indigo-50 ring-1 ring-inset ring-indigo-300",
-        t.isArrayItems && !r && "hover:bg-indigo-50"
+        "hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/50",
+        r && "bg-primary-bg ring-1 ring-inset ring-primary",
+        t.isArrayItems && !r && "hover:bg-primary-bg"
       ),
       style: { paddingLeft: `${8 + t.depth * 12}px` },
       children: [
@@ -7885,7 +7885,7 @@ function Ic({ entry: t, isSelected: r, onPick: n }) {
           {
             className: I(
               "flex-1 font-mono text-[12px] leading-5 truncate",
-              t.isArrayItems ? "text-indigo-700 font-semibold" : "text-slate-700"
+              t.isArrayItems ? "text-primary-fg font-semibold" : "text-slate-700"
             ),
             children: t.path
           }
@@ -7941,7 +7941,7 @@ function Sc({
         n,
         "…"
       ] }),
-      i === "error" && /* @__PURE__ */ e("p", { className: "text-[11px] text-amber-600 leading-4", children: "Could not load schema — enter path manually." }),
+      i === "error" && /* @__PURE__ */ e("p", { className: "text-[11px] text-warning-fg leading-4", children: "Could not load schema — enter path manually." }),
       (i === "done" || a === null) && /* @__PURE__ */ o("p", { className: "text-[11px] text-slate-400 leading-4", children: [
         "Schema unavailable for ",
         /* @__PURE__ */ e("span", { className: "font-mono", children: n }),
@@ -7963,7 +7963,7 @@ function Sc({
       "Click a path to set itemsPath.",
       x && /* @__PURE__ */ o(G, { children: [
         " ",
-        /* @__PURE__ */ e("span", { className: "text-indigo-600 font-semibold", children: "Indigo" }),
+        /* @__PURE__ */ e("span", { className: "text-primary-fg font-semibold", children: "Indigo" }),
         " ",
         "paths are arrays — valid scatter sources."
       ] })
@@ -8016,7 +8016,7 @@ function Ac({ data: t, onChange: r }) {
     /* @__PURE__ */ o("div", { children: [
       /* @__PURE__ */ o("label", { className: xn, children: [
         "Items path",
-        /* @__PURE__ */ e("span", { className: "text-red-600 ml-1", "aria-hidden": !0, children: "*" })
+        /* @__PURE__ */ e("span", { className: "text-danger-fg ml-1", "aria-hidden": !0, children: "*" })
       ] }),
       /* @__PURE__ */ e("div", { className: "mt-1", children: /* @__PURE__ */ e(
         Sc,
@@ -8026,8 +8026,8 @@ function Ac({ data: t, onChange: r }) {
           upstreamKind: a
         }
       ) }),
-      !t.itemsPath?.trim() && /* @__PURE__ */ e("div", { role: "alert", className: "text-[11px] text-red-600 mt-0.5", children: "Items path is required." }),
-      !!t.itemsPath && !t.itemsPath.startsWith("$.") && /* @__PURE__ */ o("div", { role: "alert", className: "text-[11px] text-red-600 mt-0.5", children: [
+      !t.itemsPath?.trim() && /* @__PURE__ */ e("div", { role: "alert", className: "text-[11px] text-danger-fg mt-0.5", children: "Items path is required." }),
+      !!t.itemsPath && !t.itemsPath.startsWith("$.") && /* @__PURE__ */ o("div", { role: "alert", className: "text-[11px] text-danger-fg mt-0.5", children: [
         "Path must start with ",
         /* @__PURE__ */ e("code", { children: "$." })
       ] }),
@@ -8280,7 +8280,7 @@ function Uc({ op: t, index: r, onUpdate: n, onRemove: a }) {
         {
           type: "button",
           onClick: a,
-          className: "ml-auto text-[11px] font-semibold bg-transparent text-red-600 border border-transparent rounded px-2 py-0.5 cursor-pointer hover:bg-red-50",
+          className: "ml-auto text-[11px] font-semibold bg-transparent text-danger-fg border border-transparent rounded px-2 py-0.5 cursor-pointer hover:bg-danger-bg",
           "aria-label": `Remove op ${r + 1}`,
           children: "✕"
         }
@@ -9599,7 +9599,7 @@ function ud({
           "p",
           {
             role: "alert",
-            className: "text-sm text-red-600",
+            className: "text-sm text-danger-fg",
             "data-testid": p ? `${p}-error` : void 0,
             children: h
           }
@@ -9741,7 +9741,7 @@ function gd({ layer: t, index: r, onUpdate: n, onRemove: a }) {
             className: I(
               "shrink-0 w-6 h-6 flex items-center justify-center rounded",
               "text-[12px] text-text-tertiary bg-transparent border-none",
-              "cursor-pointer hover:text-red-600 hover:bg-red-50"
+              "cursor-pointer hover:text-danger-fg hover:bg-danger-bg"
             ),
             "aria-label": `Remove layer ${r + 1}`,
             "data-testid": `layer-remove-${r}`,
@@ -10204,7 +10204,7 @@ function Ld(t) {
     return { ok: !1, error: n.message };
   }
 }
-const pt = "mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary", qn = "mt-1 w-full text-[12px] rounded border border-red-500 bg-white px-2 py-1 outline-none", Bd = `${pt} font-mono`, Ud = `${qn} font-mono`, nt = "text-[12px] font-semibold text-text-secondary", Ke = "text-[11px] text-text-tertiary mt-0.5", Jt = "text-[11px] text-red-600 mt-0.5";
+const pt = "mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary", qn = "mt-1 w-full text-[12px] rounded border border-danger bg-white px-2 py-1 outline-none", Bd = `${pt} font-mono`, Ud = `${qn} font-mono`, nt = "text-[12px] font-semibold text-text-secondary", Ke = "text-[11px] text-text-tertiary mt-0.5", Jt = "text-[11px] text-danger-fg mt-0.5";
 function Fd({ data: t, onChange: r }) {
   const [n, a] = S(!1), [i, s] = S(
     t.outputSchema ? JSON.stringify(t.outputSchema, null, 2) : ""
@@ -10240,7 +10240,7 @@ function Fd({ data: t, onChange: r }) {
     /* @__PURE__ */ o("div", { children: [
       /* @__PURE__ */ o("label", { htmlFor: "vision-image-ref-path", className: nt, children: [
         "Image reference path",
-        /* @__PURE__ */ e("span", { className: "text-red-600 ml-1", children: "●" })
+        /* @__PURE__ */ e("span", { className: "text-danger-fg ml-1", children: "●" })
       ] }),
       /* @__PURE__ */ e(
         "input",
@@ -10274,7 +10274,7 @@ function Fd({ data: t, onChange: r }) {
     /* @__PURE__ */ o("div", { children: [
       /* @__PURE__ */ o("label", { htmlFor: "vision-user-prompt", className: nt, children: [
         "User prompt",
-        /* @__PURE__ */ e("span", { className: "text-red-600 ml-1", children: "●" })
+        /* @__PURE__ */ e("span", { className: "text-danger-fg ml-1", children: "●" })
       ] }),
       /* @__PURE__ */ e(
         "textarea",
@@ -10448,7 +10448,7 @@ function Wd({ data: t, onChange: r }) {
               {
                 type: "button",
                 onClick: () => d(l),
-                className: "bg-transparent border-none cursor-pointer p-0 text-red-600 text-[11px] leading-none",
+                className: "bg-transparent border-none cursor-pointer p-0 text-danger-fg text-[11px] leading-none",
                 "aria-label": `Remove label ${c}`,
                 children: "✕"
               }
@@ -10712,7 +10712,7 @@ function tp({ data: t, onChange: r }) {
               {
                 type: "button",
                 onClick: () => d(l),
-                className: "bg-transparent border-none cursor-pointer p-0 text-red-600 text-[11px] leading-none",
+                className: "bg-transparent border-none cursor-pointer p-0 text-danger-fg text-[11px] leading-none",
                 "aria-label": `Remove candidate tag ${c}`,
                 children: "✕"
               }
@@ -12579,8 +12579,8 @@ function yp({ result: t, className: r }) {
   ] });
 }
 const vp = {
-  people: { stroke: "#4f46e5", fill: "rgba(79,70,229,0.10)", text: "bg-indigo-600 text-white" },
-  object: { stroke: "#d97706", fill: "rgba(217,119,6,0.10)", text: "bg-amber-600 text-white" }
+  people: { stroke: "#4f46e5", fill: "rgba(79,70,229,0.10)", text: "bg-primary text-white" },
+  object: { stroke: "#d97706", fill: "rgba(217,119,6,0.10)", text: "bg-warning text-white" }
 };
 function Np({
   imageUrl: t,
@@ -12706,14 +12706,14 @@ function kp({ people: t, highlightedIndex: r, onSelect: n, className: a }) {
     /* @__PURE__ */ e("ul", { className: "flex flex-col gap-1.5", children: t.map((i) => {
       const s = r === i.index, d = i.activity?.replace(/^::\s*/, ""), c = I(
         "group flex w-full flex-col gap-1 rounded-lg border px-2.5 py-2 text-left text-sm transition-colors",
-        s ? "border-indigo-400 bg-indigo-50/70 ring-1 ring-indigo-300" : "border-border bg-surface hover:bg-surface-hover"
+        s ? "border-primary bg-primary-bg/70 ring-1 ring-primary" : "border-border bg-surface hover:bg-surface-hover"
       ), l = /* @__PURE__ */ o(G, { children: [
         /* @__PURE__ */ o("div", { className: "flex flex-wrap items-center gap-1.5", children: [
           /* @__PURE__ */ e(
             "span",
             {
               "aria-hidden": !0,
-              className: "inline-flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold leading-none text-white",
+              className: "inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-white",
               children: i.index
             }
           ),
@@ -12740,7 +12740,7 @@ function kp({ people: t, highlightedIndex: r, onSelect: n, className: a }) {
           onClick: () => n(i),
           className: I(
             c,
-            "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            "cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           ),
           "aria-pressed": s,
           children: l
@@ -12780,7 +12780,7 @@ function Cp({ objects: t, onSelect: r, className: n }) {
           onClick: () => r(a),
           className: I(
             s,
-            "cursor-pointer hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            "cursor-pointer hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           ),
           children: d
         }
@@ -12799,7 +12799,7 @@ function Ip({ tags: t, onTagClick: r, className: n }) {
           onClick: () => r(a),
           title: `Filter by ${a}`,
           "aria-label": `Filter by ${a}`,
-          className: "appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded-full",
+          className: "appearance-none border-0 bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded-full",
           children: /* @__PURE__ */ o(se, { tone: "info", size: "sm", children: [
             "#",
             a
@@ -12877,7 +12877,7 @@ function Sp({
             {
               type: "button",
               onClick: () => s(p),
-              className: "shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
+              className: "shrink-0 rounded-md border border-border bg-surface-hover px-2 py-0.5 text-[11px] font-medium text-text-primary hover:bg-surface-panel focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
               children: "Apply"
             }
           ) : null
@@ -12973,7 +12973,7 @@ function $p({
           onClick: () => x((y) => !y),
           "aria-expanded": g,
           "aria-label": `${g ? "Hide" : "Show"} raw model output`,
-          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded",
+          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded",
           children: [
             g ? "▾" : "▸",
             " Raw model output"
@@ -13243,7 +13243,7 @@ function Rp({
       /* @__PURE__ */ o("div", { children: [
         /* @__PURE__ */ o("label", { className: Y, children: [
           "User prompt ",
-          /* @__PURE__ */ e("span", { className: "text-red-500", children: "*" })
+          /* @__PURE__ */ e("span", { className: "text-danger-fg", children: "*" })
         ] }),
         /* @__PURE__ */ e(
           dn,
@@ -13318,7 +13318,7 @@ function Rp({
     k && /* @__PURE__ */ e(
       "div",
       {
-        className: "text-[12px] text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2",
+        className: "text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded px-3 py-2",
         "data-testid": "bench-error",
         children: k
       }
@@ -15115,8 +15115,8 @@ function nu({
                     onClick: () => g(T),
                     className: I(
                       "px-2 py-0.5 text-xs font-medium",
-                      "bg-red-50 text-red-600",
-                      "border border-red-200 rounded-full",
+                      "bg-danger-bg text-danger-fg",
+                      "border border-danger-border rounded-full",
                       "cursor-pointer font-inherit"
                     ),
                     children: [
@@ -15136,7 +15136,7 @@ function nu({
             "data-testid": "bulk-delete",
             className: I(
               "px-3 py-[5px] text-xs font-semibold",
-              "bg-red-600 text-white border-none rounded-md",
+              "bg-danger text-white border-none rounded-md",
               "cursor-pointer font-inherit ml-auto"
             ),
             onClick: l,
@@ -16990,7 +16990,7 @@ function Zh() {
                   onClick: Ie,
                   className: I(
                     "px-[18px] py-[7px] text-[13px] font-semibold",
-                    "bg-red-600 text-white border-none rounded-[7px]",
+                    "bg-danger text-white border-none rounded-[7px]",
                     "cursor-pointer font-inherit"
                   ),
                   children: "Delete"
@@ -17032,7 +17032,7 @@ function Zh() {
                   onClick: ue,
                   className: I(
                     "px-[18px] py-[7px] text-[13px] font-semibold",
-                    "bg-red-600 text-white border-none rounded-[7px]",
+                    "bg-danger text-white border-none rounded-[7px]",
                     "cursor-pointer font-inherit"
                   ),
                   children: [
@@ -18010,10 +18010,10 @@ function Qe({ title: t, children: r }) {
   ] });
 }
 const ro = "m-0 px-3 py-2 bg-[#fafbfc] border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto", oo = "px-3.5 py-2.5 bg-[#fafbfc] border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto", En = "text-left px-2 py-1 text-[10px] font-semibold text-text-tertiary uppercase", Me = "px-2 py-[5px] text-[11px] text-text-secondary align-top", Xu = {
-  "#2563eb": "bg-blue-600/10 text-blue-600",
-  "#7c3aed": "bg-violet-600/10 text-violet-600",
-  "#16a34a": "bg-green-600/10 text-green-600",
-  "#dc2626": "bg-red-600/10 text-red-600"
+  "#2563eb": "bg-info/10 text-info-fg",
+  "#7c3aed": "bg-accent/10 text-accent-fg",
+  "#16a34a": "bg-success/10 text-success-fg",
+  "#dc2626": "bg-danger/10 text-danger-fg"
 };
 function At(t) {
   return `inline-block px-1.5 py-px rounded-[3px] text-[10px] font-semibold ${Xu[t] ?? ""}`.trimEnd();
@@ -18740,7 +18740,7 @@ function gm({ pipelineId: t, runId: r }) {
   const n = Be(), a = Ue(), i = bt(), { definition: s } = a, [d, c] = S(null);
   ne(() => {
     let z = !1;
-    return import("./usePendingApprovals-CeMbOPQk.js").then((ce) => ce._).then(({ getPipelineRun: ce }) => {
+    return import("./usePendingApprovals-CV1PcpST.js").then((ce) => ce._).then(({ getPipelineRun: ce }) => {
       ce(t, r).then((we) => {
         !z && we && c(we);
       });
@@ -20611,7 +20611,7 @@ function th({ approver: t, idx: r }) {
   return /* @__PURE__ */ o(
     "span",
     {
-      className: "inline-flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap",
+      className: "inline-flex items-center gap-1 bg-info-bg text-info-fg px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap",
       children: [
         /* @__PURE__ */ e("span", { "aria-hidden": !0, children: n }),
         /* @__PURE__ */ e("span", { children: t.value })
@@ -21024,7 +21024,7 @@ function df({
     /* @__PURE__ */ o("header", { className: "flex flex-wrap items-center gap-2", children: [
       /* @__PURE__ */ e("span", { className: "font-mono text-[11px] font-semibold uppercase tracking-wide text-text-secondary", children: l }),
       t === "running" ? /* @__PURE__ */ o(se, { tone: "info", size: "sm", children: [
-        /* @__PURE__ */ e("span", { className: "inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-indigo-500" }),
+        /* @__PURE__ */ e("span", { className: "inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary" }),
         " running"
       ] }) : t === "completed" ? /* @__PURE__ */ e(se, { tone: "success", size: "sm", children: "ok" }) : /* @__PURE__ */ e(se, { tone: "danger", size: "sm", children: "failed" }),
       typeof p == "number" ? /* @__PURE__ */ o("span", { className: "font-mono text-[11px] text-text-tertiary", children: [
@@ -21033,14 +21033,14 @@ function df({
       ] }) : null,
       n ? /* @__PURE__ */ e("span", { className: "ml-auto truncate font-mono text-[10px] text-text-tertiary", children: n }) : null
     ] }),
-    t === "failed" && i ? /* @__PURE__ */ e("p", { className: "text-[13px] text-red-700", children: i }) : /* @__PURE__ */ e("p", { className: "line-clamp-2 text-left text-[13px] text-text-primary", children: u ?? (t === "running" ? "Analyzing image…" : "No caption produced.") }),
+    t === "failed" && i ? /* @__PURE__ */ e("p", { className: "text-[13px] text-danger-fg", children: i }) : /* @__PURE__ */ e("p", { className: "line-clamp-2 text-left text-[13px] text-text-primary", children: u ?? (t === "running" ? "Analyzing image…" : "No caption produced.") }),
     f.length > 0 ? /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1", children: f.map((x) => /* @__PURE__ */ o(se, { tone: "neutral", size: "sm", children: [
       "#",
       x
     ] }, x)) }) : null
   ] }), g = I(
     "flex w-full flex-col gap-1.5 rounded-lg border bg-surface p-3 text-sm text-left",
-    t === "running" ? "border-indigo-300 ring-1 ring-indigo-200" : t === "failed" ? "border-red-300" : "border-border"
+    t === "running" ? "border-primary-border ring-1 ring-primary" : t === "failed" ? "border-danger-border" : "border-border"
   );
   if (d) {
     const x = u ? u.slice(0, 60) : "no caption";
@@ -21052,7 +21052,7 @@ function df({
         "aria-label": `Open vision result: ${l}, ${t}, ${x}`,
         className: I(
           g,
-          "cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1",
+          "cursor-pointer transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1",
           c
         ),
         children: h
@@ -21299,7 +21299,7 @@ function mf({
         {
           type: "button",
           onClick: () => l((v) => !v),
-          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 rounded",
+          className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded",
           "aria-expanded": c,
           children: [
             c ? "▾" : "▸",

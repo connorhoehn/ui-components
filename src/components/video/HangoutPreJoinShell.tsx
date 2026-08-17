@@ -290,8 +290,8 @@ export default function HangoutPreJoinShell({
             <RosterList participants={participants} loading={readyLoading} />
 
             {readyState === 'pending' && !readyLoading && (
-              <p className="mt-4 text-xs text-amber-600 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <p className="mt-4 text-xs text-warning-fg flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />
                 Other publishers are still connecting — you can join anyway.
               </p>
             )}

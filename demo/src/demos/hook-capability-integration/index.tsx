@@ -42,7 +42,7 @@ const CAPABILITY_ROWS: CapabilityRow[] = [
     label: 'Chat',
     icon: '💬',
     enabledNode: (
-      <div className="rounded-md border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">
+      <div className="rounded-md border border-success-border bg-success-bg p-4 text-sm text-success-fg">
         <strong>Chat is enabled.</strong> The real app would render
         &lt;ChatPanel /&gt; here.
       </div>
@@ -56,7 +56,7 @@ const CAPABILITY_ROWS: CapabilityRow[] = [
     label: 'Recording',
     icon: '⏺️',
     enabledNode: (
-      <div className="rounded-md border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">
+      <div className="rounded-md border border-success-border bg-success-bg p-4 text-sm text-success-fg">
         <strong>Recording is enabled.</strong> The real app would render the
         recording controls and player here.
       </div>
@@ -70,7 +70,7 @@ const CAPABILITY_ROWS: CapabilityRow[] = [
     label: 'AI Assistant',
     icon: '🤖',
     enabledNode: (
-      <div className="rounded-md border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900">
+      <div className="rounded-md border border-success-border bg-success-bg p-4 text-sm text-success-fg">
         <strong>AI Assistant is enabled.</strong> The real app would render
         the agent chat surface here.
       </div>

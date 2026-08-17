@@ -48,22 +48,22 @@ describe('MemoryInspector', () => {
     expect(screen.getByText('2 session · 1 long-term')).toBeInTheDocument();
   });
 
-  it('session-scope chip uses blue color classes', () => {
+  it('session-scope chip uses info-tone color classes', () => {
     render(<MemoryInspector entries={[makeEntry({ scope: 'session' })]} />);
     // "session" appears in both the filter button and the scope chip — pick the chip via its bg class.
     const chips = screen.getAllByText('session');
-    const chip = chips.find((el) => el.className.includes('bg-blue-100'));
+    const chip = chips.find((el) => el.className.includes('bg-info-bg'));
     expect(chip).toBeDefined();
-    expect(chip).toHaveClass('text-blue-700');
+    expect(chip).toHaveClass('text-info-fg');
   });
 
-  it('long-term-scope chip uses purple color classes', () => {
+  it('long-term-scope chip uses accent-tone color classes', () => {
     render(<MemoryInspector entries={[makeEntry({ scope: 'long-term' })]} />);
     // there are two 'long-term' texts on the page: filter button + chip. Find the chip via class.
     const chips = screen.getAllByText('long-term');
-    const chip = chips.find((el) => el.className.includes('bg-purple-100'));
+    const chip = chips.find((el) => el.className.includes('bg-accent-bg'));
     expect(chip).toBeDefined();
-    expect(chip).toHaveClass('text-purple-700');
+    expect(chip).toHaveClass('text-accent-fg');
   });
 
   it('renders namespace prefix with trailing slash when present', () => {

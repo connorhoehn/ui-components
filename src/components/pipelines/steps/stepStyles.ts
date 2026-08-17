@@ -11,10 +11,10 @@ export const tdClass =
   'px-2 py-[5px] text-[11px] text-text-secondary align-top';
 
 const EVENT_CHIP_COLORS: Record<string, string> = {
-  '#2563eb': 'bg-blue-600/10 text-blue-600',
-  '#7c3aed': 'bg-violet-600/10 text-violet-600',
-  '#16a34a': 'bg-green-600/10 text-green-600',
-  '#dc2626': 'bg-red-600/10 text-red-600',
+  '#2563eb': 'bg-info/10 text-info-fg',
+  '#7c3aed': 'bg-accent/10 text-accent-fg',
+  '#16a34a': 'bg-success/10 text-success-fg',
+  '#dc2626': 'bg-danger/10 text-danger-fg',
 };
 
 export function eventChipClass(color: string): string {

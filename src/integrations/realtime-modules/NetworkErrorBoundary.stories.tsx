@@ -7,7 +7,7 @@ import { NetworkErrorBoundary } from './NetworkErrorBoundary';
 function Boom({ shouldThrow }: { shouldThrow: boolean }) {
   if (shouldThrow) throw new Error('useChat() lost gateway: code=GATEWAY_DISCONNECT');
   return (
-    <div className="rounded border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+    <div className="rounded border border-success-border bg-success-bg p-4 text-sm text-success-fg">
       Hook is healthy ✓
     </div>
   );
@@ -61,12 +61,12 @@ export const CustomFallback: Story = {
   args: {
     children: <Boom shouldThrow />,
     fallback: (err, reset) => (
-      <div className="rounded border border-red-300 bg-red-50 p-4 text-sm text-red-800">
+      <div className="rounded border border-danger-border bg-danger-bg p-4 text-sm text-danger-fg">
         <div className="mb-2 font-semibold">Inline error: {err.message}</div>
         <button
           type="button"
           onClick={reset}
-          className="rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white"
+          className="rounded bg-danger px-3 py-1 text-xs font-semibold text-white"
         >
           Reset
         </button>

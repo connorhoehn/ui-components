@@ -113,7 +113,7 @@ export function MfaSetupPage({
               <div
                 className={cn(
                   'w-3 h-3 rounded-full transition-colors duration-200',
-                  i < currentStepIndex ? 'bg-green-500' : i === currentStepIndex ? 'bg-blue-500' : 'bg-slate-200'
+                  i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-info' : 'bg-slate-200'
                 )}
                 aria-label={`Step ${i + 1}${i === currentStepIndex ? ' (current)' : i < currentStepIndex ? ' (completed)' : ''}`}
               />
@@ -228,7 +228,7 @@ export function MfaSetupPage({
         {step === 'backup' && (
           <div>
             <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success-fg">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>

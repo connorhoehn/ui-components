@@ -27,7 +27,7 @@ export function PeoplePanel({ people, highlightedIndex, onSelect, className }: P
           const rowClasses = cn(
             'group flex w-full flex-col gap-1 rounded-lg border px-2.5 py-2 text-left text-sm transition-colors',
             isHighlighted
-              ? 'border-indigo-400 bg-indigo-50/70 ring-1 ring-indigo-300'
+              ? 'border-primary bg-primary-bg/70 ring-1 ring-primary'
               : 'border-border bg-surface hover:bg-surface-hover',
           );
 
@@ -36,7 +36,7 @@ export function PeoplePanel({ people, highlightedIndex, onSelect, className }: P
               <div className="flex flex-wrap items-center gap-1.5">
                 <span
                   aria-hidden
-                  className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold leading-none text-white"
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold leading-none text-white"
                 >
                   {p.index}
                 </span>
@@ -68,7 +68,7 @@ export function PeoplePanel({ people, highlightedIndex, onSelect, className }: P
                   onClick={() => onSelect(p)}
                   className={cn(
                     rowClasses,
-                    'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                    'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                   )}
                   aria-pressed={isHighlighted}
                 >

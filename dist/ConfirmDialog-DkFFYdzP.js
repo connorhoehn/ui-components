@@ -1,9 +1,9 @@
-import { jsxs as n, jsx as t, Fragment as b } from "react/jsx-runtime";
-import { M as p } from "./Modal-2jg4229_.js";
+import { jsxs as n, jsx as t, Fragment as p } from "react/jsx-runtime";
+import { M as b } from "./Modal-2jg4229_.js";
 import { c as i } from "./cn-B6yFEsav.js";
 const x = {
   destructive: "bg-[#ef4444] hover:bg-[#dc2626]",
-  caution: "bg-amber-600 hover:bg-amber-700",
+  caution: "bg-warning hover:bg-warning",
   info: "bg-[#3b82f6] hover:bg-[#2563eb]"
 };
 function C({
@@ -13,19 +13,19 @@ function C({
   title: d,
   body: e,
   confirmLabel: s = "Confirm",
-  cancelLabel: m = "Cancel",
+  cancelLabel: f = "Cancel",
   confirmDisabled: r = !1,
-  tone: f = "info",
-  children: l
+  tone: l = "info",
+  children: m
 }) {
   return /* @__PURE__ */ n(
-    p,
+    b,
     {
       open: a,
       onClose: o,
       title: d,
       maxWidth: 420,
-      footer: /* @__PURE__ */ n(b, { children: [
+      footer: /* @__PURE__ */ n(p, { children: [
         /* @__PURE__ */ t(
           "button",
           {
@@ -37,7 +37,7 @@ function C({
               "border border-[#e2e8f0] bg-white text-[#475569]",
               "rounded-md cursor-pointer hover:bg-[#f8fafc]"
             ),
-            children: m
+            children: f
           }
         ),
         /* @__PURE__ */ t(
@@ -50,7 +50,7 @@ function C({
             className: i(
               "px-4 py-[7px] text-[13px] font-semibold font-[inherit]",
               "border-none text-white rounded-md transition-colors duration-150",
-              x[f],
+              x[l],
               r ? "cursor-not-allowed opacity-70" : "cursor-pointer opacity-100"
             ),
             children: s
@@ -59,7 +59,7 @@ function C({
       ] }),
       children: [
         e && /* @__PURE__ */ t("p", { className: "m-0 mb-3 text-[13px] text-[#475569]", children: e }),
-        l
+        m
       ]
     }
   );

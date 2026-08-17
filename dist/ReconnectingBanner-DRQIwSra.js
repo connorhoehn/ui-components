@@ -76,7 +76,7 @@ function p({
           "div",
           {
             className: x(
-              "absolute top-1 left-1 flex items-center justify-center rounded-full bg-red-500/90 text-white shadow-md",
+              "absolute top-1 left-1 flex items-center justify-center rounded-full bg-danger/90 text-white shadow-md",
               h ? "w-7 h-7" : "w-5 h-5"
             ),
             "aria-label": "Microphone muted",
@@ -453,7 +453,7 @@ function F({ show: e, label: t = "Reconnecting…" }) {
     "div",
     {
       "data-testid": "hangout-reconnecting-banner",
-      className: "pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-amber-500/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap",
+      className: "pointer-events-none absolute left-1/2 top-3 z-20 -translate-x-1/2 rounded-full bg-warning/95 px-3 py-1.5 text-xs font-medium text-white shadow-lg whitespace-nowrap",
       role: "status",
       "aria-live": "polite",
       children: t

@@ -135,13 +135,13 @@ export function HangoutRoomsSection({
           <div
             role="alert"
             data-testid="hangout-rooms-error"
-            className="mx-1 my-1 px-3 py-2 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-md flex items-center justify-between gap-2"
+            className="mx-1 my-1 px-3 py-2 text-[12px] text-danger-fg bg-danger-bg border border-danger-border rounded-md flex items-center justify-between gap-2"
           >
             <span className="truncate">Couldn't load rooms.</span>
             <button
               type="button"
               onClick={() => void rooms.refetch()}
-              className="text-rose-700 underline hover:text-rose-900 cursor-pointer"
+              className="text-danger-fg underline hover:text-danger-fg cursor-pointer"
             >
               Retry
             </button>

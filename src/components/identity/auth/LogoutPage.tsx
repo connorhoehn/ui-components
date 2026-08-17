@@ -11,7 +11,7 @@ export function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps)
     <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
       <div className="w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center" role="main" aria-label="Sign out confirmation">
         <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger-fg">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
             <polyline points="16 17 21 12 16 7" />
             <line x1="21" y1="12" x2="9" y2="12" />

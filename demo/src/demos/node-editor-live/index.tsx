@@ -124,29 +124,29 @@ function EdgePath({ edge, fromStatus, toStatus }: {
 
 const NODE_BORDER_CLASSES: Record<NodeStatus, string> = {
   idle: 'border-slate-200 shadow-sm',
-  running: 'border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)]',
-  completed: 'border-emerald-500 shadow-sm',
-  failed: 'border-red-500 shadow-sm',
+  running: 'border-warning shadow-[0_0_12px_rgba(245,158,11,0.4)]',
+  completed: 'border-success shadow-sm',
+  failed: 'border-danger shadow-sm',
 };
 
 const STATUS_DOT_CLASSES: Record<NodeStatus, string> = {
   idle: 'bg-slate-400',
-  running: 'bg-amber-500 animate-pulse',
-  completed: 'bg-emerald-500',
-  failed: 'bg-red-500',
+  running: 'bg-warning animate-pulse',
+  completed: 'bg-success',
+  failed: 'bg-danger',
 };
 
 const STATUS_TEXT_CLASSES: Record<NodeStatus, string> = {
   idle: 'text-slate-400',
-  running: 'text-amber-500',
-  completed: 'text-emerald-500',
-  failed: 'text-red-500',
+  running: 'text-warning-fg',
+  completed: 'text-success-fg',
+  failed: 'text-danger-fg',
 };
 
 const KIND_BADGE_CLASSES: Record<WorkflowNode['kind'], string> = {
-  trigger: 'text-violet-500 bg-violet-500/15',
-  task: 'text-blue-500 bg-blue-500/15',
-  approval: 'text-amber-500 bg-amber-500/15',
+  trigger: 'text-accent-fg bg-accent/15',
+  task: 'text-info-fg bg-info/15',
+  approval: 'text-warning-fg bg-warning/15',
 };
 
 function WorkflowNodeCard({ node, status, streamTokens }: {
@@ -193,8 +193,8 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
 
 const WORKFLOW_STATUS_DOT_CLASSES: Record<'idle' | 'running' | 'completed', string> = {
   idle: 'bg-slate-400',
-  running: 'bg-amber-500 animate-pulse',
-  completed: 'bg-emerald-500',
+  running: 'bg-warning animate-pulse',
+  completed: 'bg-success',
 };
 
 function WorkflowCanvas() {
@@ -263,7 +263,7 @@ function WorkflowCanvas() {
         <button
           onClick={handleDeploy}
           type="button"
-          className="ml-6 px-4 py-1.5 bg-indigo-500 text-white border-none rounded-md text-xs font-semibold cursor-pointer hover:bg-indigo-600 transition-colors"
+          className="ml-6 px-4 py-1.5 bg-primary text-white border-none rounded-md text-xs font-semibold cursor-pointer hover:bg-primary transition-colors"
         >
           Deploy
         </button>

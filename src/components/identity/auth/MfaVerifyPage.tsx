@@ -52,7 +52,7 @@ export function MfaVerifyPage({
     <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
       <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Multi-factor verification">
         <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-info-fg">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
@@ -84,7 +84,7 @@ export function MfaVerifyPage({
             <Button
               variant="ghost"
               size="sm"
-              className="block mt-6 mx-auto underline text-blue-600"
+              className="block mt-6 mx-auto underline text-info-fg"
               onClick={() => { setMode('backup'); setLocalError(null); }}
             >
               Use a backup code instead
@@ -126,7 +126,7 @@ export function MfaVerifyPage({
             <Button
               variant="ghost"
               size="sm"
-              className="block mt-6 mx-auto underline text-blue-600"
+              className="block mt-6 mx-auto underline text-info-fg"
               onClick={() => { setMode('totp'); setLocalError(null); }}
             >
               Use authenticator code instead

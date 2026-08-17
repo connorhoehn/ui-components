@@ -38,14 +38,14 @@ describe('ToolCallRenderer', () => {
     expect(icon).toHaveClass('animate-pulse');
   });
 
-  it('completed status renders ✓ icon with emerald color and duration when endedAt is set', () => {
+  it('completed status renders ✓ icon with success-tone color and duration when endedAt is set', () => {
     render(
       <ToolCallRenderer
         toolCall={makeToolCall({ status: 'completed', endedAt: 1_250 })}
       />,
     );
     const icon = screen.getByText('✓');
-    expect(icon).toHaveClass('text-emerald-600');
+    expect(icon).toHaveClass('text-success-fg');
     expect(screen.getByText('250ms')).toBeInTheDocument();
   });
 
@@ -54,10 +54,10 @@ describe('ToolCallRenderer', () => {
     expect(screen.queryByText(/ms$/)).not.toBeInTheDocument();
   });
 
-  it('error status renders ✗ icon with red color', () => {
+  it('error status renders ✗ icon with danger-tone color', () => {
     render(<ToolCallRenderer toolCall={makeToolCall({ status: 'error' })} />);
     const icon = screen.getByText('✗');
-    expect(icon).toHaveClass('text-red-600');
+    expect(icon).toHaveClass('text-danger-fg');
   });
 
   it('expanded with valid-JSON args renders pretty-printed JSON', () => {

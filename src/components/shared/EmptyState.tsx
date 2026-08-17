@@ -224,7 +224,7 @@ function CopyableCode({ code }: { code: string }) {
         className={cn(
           'shrink-0 self-start text-[11px] font-semibold px-2 py-1 rounded',
           'border border-slate-600 hover:bg-slate-700 cursor-pointer',
-          copied ? 'text-emerald-300 border-emerald-400/50' : 'text-slate-100',
+          copied ? 'text-success-fg border-success/50' : 'text-slate-100',
         )}
       >
         {copied ? 'Copied' : 'Copy'}

@@ -33,7 +33,7 @@ const stopMouseDown = (e: React.MouseEvent) => e.stopPropagation();
 
 const tileCls = cn(
   'h-[38px] w-[38px] shrink-0 overflow-hidden rounded border border-border bg-surface-inset',
-  'p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400',
+  'p-0 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
 );
 
 export function NodeThumbStrip({

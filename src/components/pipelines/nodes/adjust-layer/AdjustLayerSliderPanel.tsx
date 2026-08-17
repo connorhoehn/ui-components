@@ -208,7 +208,7 @@ function LayerRow({ layer, index, onUpdate, onRemove }: LayerRowProps) {
         className={cn(
           'shrink-0 w-6 h-6 flex items-center justify-center rounded',
           'text-[12px] text-text-tertiary bg-transparent border-none',
-          'cursor-pointer hover:text-red-600 hover:bg-red-50',
+          'cursor-pointer hover:text-danger-fg hover:bg-danger-bg',
         )}
         aria-label={`Remove layer ${index + 1}`}
         data-testid={`layer-remove-${index}`}

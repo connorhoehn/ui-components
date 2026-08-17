@@ -90,8 +90,8 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
                     {/* Local cursor cell highlight */}
                     {localCursorKey === key && (
                       <div>
-                        <div className="absolute inset-0 border-2 border-dashed border-blue-500 rounded pointer-events-none z-[9]" />
-                        <div className="absolute -top-2.5 right-0 text-[10px] bg-blue-500 text-white px-1 py-px rounded-[3px] pointer-events-none z-[19] whitespace-nowrap">
+                        <div className="absolute inset-0 border-2 border-dashed border-info rounded pointer-events-none z-[9]" />
+                        <div className="absolute -top-2.5 right-0 text-[10px] bg-info text-white px-1 py-px rounded-[3px] pointer-events-none z-[19] whitespace-nowrap">
                           You
                         </div>
                       </div>

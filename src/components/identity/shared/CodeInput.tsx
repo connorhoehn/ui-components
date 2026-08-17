@@ -129,10 +129,10 @@ export function CodeInput({
               'w-11 h-[52px] text-center text-lg font-semibold font-[inherit]',
               'rounded-md outline-none transition-[border-color,box-shadow] duration-150',
               'border-2',
-              error ? 'border-red-500' : 'border-slate-200',
+              error ? 'border-danger' : 'border-slate-200',
               disabled ? 'bg-slate-50 cursor-not-allowed' : 'bg-white cursor-text',
               'text-slate-800',
-              'focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+              'focus:border-info focus:ring-2 focus:ring-info/20'
             )}
           />
         ))}
@@ -140,7 +140,7 @@ export function CodeInput({
       {error && (
         <p
           role="alert"
-          className="m-0 text-sm text-red-600"
+          className="m-0 text-sm text-danger-fg"
         >
           {error}
         </p>

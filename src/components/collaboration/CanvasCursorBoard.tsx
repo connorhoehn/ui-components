@@ -207,10 +207,10 @@ export function CanvasCursorBoard({
               className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[11] pointer-events-none select-none opacity-70"
               style={{ left: lx, top: ly }}
             >
-              <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md">
+              <div className="w-6 h-6 rounded-full bg-info border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-md">
                 You
               </div>
-              <div className="text-[11px] mt-0.5 text-white bg-blue-500 opacity-85 rounded-[3px] px-1 py-px whitespace-nowrap">
+              <div className="text-[11px] mt-0.5 text-white bg-info opacity-85 rounded-[3px] px-1 py-px whitespace-nowrap">
                 You ({localTool})
               </div>
             </div>

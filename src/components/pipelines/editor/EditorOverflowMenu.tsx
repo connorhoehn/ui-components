@@ -43,7 +43,7 @@ export default function EditorOverflowMenu({
 
   const dangerItemClasses = cn(
     'block w-full text-left px-3.5 py-2 text-[13px]',
-    'border-none bg-transparent cursor-pointer font-inherit text-red-600',
+    'border-none bg-transparent cursor-pointer font-inherit text-danger-fg',
     'hover:bg-surface-hover',
   );
 

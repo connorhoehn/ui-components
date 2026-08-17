@@ -115,7 +115,7 @@ export function SidebarRow({
     'px-2 py-1.5 rounded-md text-sm leading-tight select-none',
     'transition-colors duration-100',
     !disabled && 'cursor-pointer hover:bg-slate-100',
-    active && !disabled && 'bg-blue-50 text-blue-900 hover:bg-blue-100',
+    active && !disabled && 'bg-info-bg text-info-fg hover:bg-info-bg',
     !active && !disabled && 'text-slate-700',
     disabled && 'opacity-50 cursor-not-allowed text-slate-500',
     'no-underline',

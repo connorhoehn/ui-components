@@ -51,7 +51,7 @@ export const CustomAction: Story = {
     action: (
       <div className="flex gap-2">
         <button type="button" className="rounded border border-slate-300 px-3 py-1 text-sm">Clear filters</button>
-        <button type="button" className="rounded bg-blue-600 px-3 py-1 text-sm font-semibold text-white">Browse all</button>
+        <button type="button" className="rounded bg-info px-3 py-1 text-sm font-semibold text-white">Browse all</button>
       </div>
     ),
   },

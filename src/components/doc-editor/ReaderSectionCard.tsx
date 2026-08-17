@@ -118,7 +118,7 @@ function ItemRow({
 
   return (
     <div
-      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r', variant === 'pending' ? 'bg-amber-50' : 'bg-white')}
+      className={cn('flex items-center gap-2 py-[5px] px-2 mb-1 rounded-r', variant === 'pending' ? 'bg-warning-bg' : 'bg-white')}
       style={{ borderLeft: `3px solid ${borderColor}` }}
     >
       <span className={cn('text-[13px] flex-1')}>

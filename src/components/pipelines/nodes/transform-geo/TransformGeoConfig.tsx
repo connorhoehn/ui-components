@@ -72,7 +72,7 @@ function OpCard({ op, index, onUpdate, onRemove }: OpCardProps) {
         <button
           type="button"
           onClick={onRemove}
-          className="ml-auto text-[11px] font-semibold bg-transparent text-red-600 border border-transparent rounded px-2 py-0.5 cursor-pointer hover:bg-red-50"
+          className="ml-auto text-[11px] font-semibold bg-transparent text-danger-fg border border-transparent rounded px-2 py-0.5 cursor-pointer hover:bg-danger-bg"
           aria-label={`Remove op ${index + 1}`}
         >
           ✕

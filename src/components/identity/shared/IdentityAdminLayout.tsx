@@ -52,7 +52,7 @@ function NavLink({
           'flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer',
           'border-none rounded-none border-l-[3px] transition-colors',
           active
-            ? 'bg-slate-50 text-blue-600 font-semibold border-l-blue-600'
+            ? 'bg-slate-50 text-info-fg font-semibold border-l-info'
             : 'bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]'
         )}
         onClick={() => onNavigate(item.path)}
@@ -88,7 +88,7 @@ export function IdentityAdminLayout({
           sidebarOpen ? 'w-60' : 'w-0 border-r-0'
         )}
       >
-        <div className="p-4 font-bold text-lg text-blue-600 border-b border-slate-200">
+        <div className="p-4 font-bold text-lg text-info-fg border-b border-slate-200">
           Identity Admin
         </div>
         <ul className="list-none m-0 p-0 py-2 flex-1">

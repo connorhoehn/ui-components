@@ -128,7 +128,7 @@ function AvatarItem({
             <div
               role="button"
               onClick={(e) => { e.stopPropagation(); onFollowUser(participant); }}
-              className={cn('mt-1 text-[11px] font-semibold cursor-pointer', isFollowing ? 'text-amber-400' : 'text-blue-400')}
+              className={cn('mt-1 text-[11px] font-semibold cursor-pointer', isFollowing ? 'text-warning-fg' : 'text-info-fg')}
             >
               {isFollowing ? 'Stop following' : 'Follow'}
             </div>
@@ -150,7 +150,7 @@ function AvatarItem({
 
         {/* Status dot: green = active, yellow = away/idle */}
         <div
-          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-amber-400' : 'bg-emerald-500 [animation:presencePulse_2s_infinite]')}
+          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-warning' : 'bg-success [animation:presencePulse_2s_infinite]')}
         />
       </div>
 

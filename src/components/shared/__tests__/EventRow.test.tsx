@@ -22,13 +22,13 @@ describe('EventRow', () => {
     render(
       <EventRow timestamp="00:00" type="test" summary="x" selected={true} />,
     );
-    expect(screen.getByTestId('event-row').className).toContain('bg-violet-100');
+    expect(screen.getByTestId('event-row').className).toContain('bg-accent-bg');
   });
 
   it('does not apply selected styles when selected=false', () => {
     render(
       <EventRow timestamp="00:00" type="test" summary="x" selected={false} />,
     );
-    expect(screen.getByTestId('event-row').className).not.toContain('bg-violet-100');
+    expect(screen.getByTestId('event-row').className).not.toContain('bg-accent-bg');
   });
 });

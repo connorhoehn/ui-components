@@ -16,10 +16,10 @@ const colors: Record<NetworkQuality, string> = {
 };
 
 const textColorClasses: Record<NetworkQuality, string> = {
-  good: 'text-green-500',
-  medium: 'text-yellow-500',
-  poor: 'text-orange-500',
-  dead: 'text-red-500',
+  good: 'text-success-fg',
+  medium: 'text-warning-fg',
+  poor: 'text-caution-fg',
+  dead: 'text-danger-fg',
 };
 
 const labels: Record<NetworkQuality, string> = {

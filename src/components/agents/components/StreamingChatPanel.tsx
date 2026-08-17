@@ -51,8 +51,8 @@ export function StreamingChatPanel({
       <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
         <span className="font-semibold text-sm text-slate-800">Agent Chat</span>
         {isStreaming && (
-          <span className="flex items-center gap-1.5 text-xs text-blue-600">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          <span className="flex items-center gap-1.5 text-xs text-info-fg">
+            <span className="w-1.5 h-1.5 rounded-full bg-info animate-pulse" />
             Streaming
           </span>
         )}
@@ -102,7 +102,7 @@ export function StreamingChatPanel({
               >
                 {msg.content}
                 {msg.isStreaming && (
-                  <span className="inline-block animate-pulse ml-0.5 text-blue-500">▊</span>
+                  <span className="inline-block animate-pulse ml-0.5 text-info-fg">▊</span>
                 )}
               </div>
 
@@ -136,7 +136,7 @@ export function StreamingChatPanel({
             <div className={AI_AVATAR}>AI</div>
             <div className="flex-1 mt-1 py-2 px-3 bg-[#f1f5f9] rounded-[4px_12px_12px_12px] text-[14px] text-[#334155] leading-[1.5] whitespace-pre-wrap break-words">
               {streamingText}
-              <span className="inline-block animate-pulse ml-0.5 text-blue-500">▊</span>
+              <span className="inline-block animate-pulse ml-0.5 text-info-fg">▊</span>
             </div>
           </div>
         )}
@@ -156,7 +156,7 @@ export function StreamingChatPanel({
 
       {/* Error banner */}
       {error && (
-        <div className="px-4 py-2 bg-red-50 border-t border-red-100 text-xs text-red-700">
+        <div className="px-4 py-2 bg-danger-bg border-t border-danger-border text-xs text-danger-fg">
           {error}
         </div>
       )}
@@ -171,14 +171,14 @@ export function StreamingChatPanel({
           disabled={isStreaming}
           placeholder={isStreaming ? 'Waiting for response...' : placeholder}
           className={cn(
-            'flex-1 text-sm px-3 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all bg-white',
+            'flex-1 text-sm px-3 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-info focus:ring-1 focus:ring-info transition-all bg-white',
             isStreaming && 'bg-slate-50 text-slate-400',
           )}
         />
         {isStreaming && onCancel ? (
           <button
             onClick={onCancel}
-            className="text-sm px-4 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+            className="text-sm px-4 py-2.5 bg-danger text-white rounded-lg hover:bg-danger transition-colors font-medium"
           >
             Stop
           </button>
@@ -190,7 +190,7 @@ export function StreamingChatPanel({
               'text-sm px-4 py-2.5 rounded-lg transition-colors font-medium',
               !input.trim() || isStreaming
                 ? 'bg-slate-100 text-slate-400 cursor-default'
-                : 'bg-blue-600 text-white hover:bg-blue-700 cursor-pointer',
+                : 'bg-info text-white hover:bg-info cursor-pointer',
             )}
           >
             Send

@@ -31,12 +31,12 @@ export interface NodeCardProps {
 }
 
 const STATUS_BORDER: Record<StatusPillState, string> = {
-  success:  'border-emerald-400',
-  error:    'border-red-500',
-  warning:  'border-amber-400',
-  info:     'border-blue-400',
+  success:  'border-success',
+  error:    'border-danger',
+  warning:  'border-warning',
+  info:     'border-info',
   neutral:  'border-slate-300',
-  pending:  'border-violet-400',
+  pending:  'border-accent',
 };
 
 export function NodeCard({

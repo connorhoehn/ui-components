@@ -21,7 +21,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       <div className={cn('text-center py-12', className)}>
         <div className="text-slate-400 text-sm">Agent not found: {agentId}</div>
         {onBack && (
-          <button className="mt-2 text-xs text-blue-500 hover:underline" onClick={onBack}>
+          <button className="mt-2 text-xs text-info-fg hover:underline" onClick={onBack}>
             Back to dashboard
           </button>
         )}
@@ -35,7 +35,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       <div className="flex items-start justify-between">
         <div>
           {onBack && (
-            <button className="text-xs text-blue-500 hover:underline mb-2 block" onClick={onBack}>
+            <button className="text-xs text-info-fg hover:underline mb-2 block" onClick={onBack}>
               ← Back
             </button>
           )}
@@ -101,10 +101,10 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    healthy: 'bg-emerald-100 text-emerald-800',
-    degraded: 'bg-amber-100 text-amber-800',
-    offline: 'bg-red-100 text-red-800',
-    deploying: 'bg-blue-100 text-blue-800',
+    healthy: 'bg-success-bg text-success-fg',
+    degraded: 'bg-warning-bg text-warning-fg',
+    offline: 'bg-danger-bg text-danger-fg',
+    deploying: 'bg-info-bg text-info-fg',
   };
   return (
     <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', styles[status] ?? 'bg-slate-100 text-slate-700')}>

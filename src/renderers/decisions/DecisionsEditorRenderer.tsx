@@ -75,7 +75,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         <button
           type="button"
           onClick={onRemove}
-          className="border-none bg-transparent text-red-500 cursor-pointer text-base px-1.5 py-0.5 leading-none"
+          className="border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 leading-none"
         >
           ×
         </button>

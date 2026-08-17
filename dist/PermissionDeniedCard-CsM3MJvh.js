@@ -1,4 +1,4 @@
-import { jsx as r, jsxs as n } from "react/jsx-runtime";
+import { jsx as r, jsxs as a } from "react/jsx-runtime";
 import { c } from "./cn-B6yFEsav.js";
 import { B as p } from "./Button-Qsbxqsl9.js";
 const u = {
@@ -10,7 +10,7 @@ function f({
   size: e = "md",
   color: i,
   className: o,
-  style: a,
+  style: n,
   "aria-label": s = "Loading",
   "data-testid": d
 }) {
@@ -26,7 +26,7 @@ function f({
         u[e],
         o
       ),
-      style: { borderTopColor: l, ...a }
+      style: { borderTopColor: l, ...n }
     }
   );
 }
@@ -46,18 +46,18 @@ const t = {
   unavailable: () => "This browser doesn't support the requested device access."
 };
 function b({ kind: e }) {
-  return e === "camera" ? /* @__PURE__ */ n("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
+  return e === "camera" ? /* @__PURE__ */ a("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
     /* @__PURE__ */ r("line", { x1: "2", y1: "2", x2: "22", y2: "22" }),
     /* @__PURE__ */ r("path", { d: "m22 8-6 4 6 4V8Z" }),
     /* @__PURE__ */ r("path", { d: "M10.5 6.5h3.5a2 2 0 0 1 2 2v2.5" }),
     /* @__PURE__ */ r("path", { d: "M2 6.5v9a2 2 0 0 0 2 2h7" })
-  ] }) : e === "microphone" ? /* @__PURE__ */ n("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
+  ] }) : e === "microphone" ? /* @__PURE__ */ a("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
     /* @__PURE__ */ r("line", { x1: "2", y1: "2", x2: "22", y2: "22" }),
     /* @__PURE__ */ r("path", { d: "M9 9v3a3 3 0 0 0 5.12 2.12" }),
     /* @__PURE__ */ r("path", { d: "M15 9.34V5a3 3 0 0 0-5.94-.6" }),
     /* @__PURE__ */ r("path", { d: "M17 16.95A7 7 0 0 1 5 12v-2" }),
     /* @__PURE__ */ r("line", { x1: "12", y1: "19", x2: "12", y2: "22" })
-  ] }) : /* @__PURE__ */ n("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
+  ] }) : /* @__PURE__ */ a("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": !0, children: [
     /* @__PURE__ */ r("rect", { x: "2", y: "3", width: "20", height: "14", rx: "2", ry: "2" }),
     /* @__PURE__ */ r("line", { x1: "8", y1: "21", x2: "16", y2: "21" }),
     /* @__PURE__ */ r("line", { x1: "12", y1: "17", x2: "12", y2: "21" }),
@@ -68,13 +68,13 @@ function w({
   kind: e,
   state: i,
   message: o,
-  onRetry: a,
+  onRetry: n,
   retryLabel: s = "Try again",
   icon: d,
   className: l,
   "data-testid": h
 }) {
-  return /* @__PURE__ */ n(
+  return /* @__PURE__ */ a(
     "div",
     {
       "data-testid": h,
@@ -87,10 +87,10 @@ function w({
       role: "status",
       "aria-live": "polite",
       children: [
-        /* @__PURE__ */ r("div", { className: "h-10 w-10 rounded-full bg-amber-100 text-amber-700 grid place-items-center", children: d ?? /* @__PURE__ */ r(b, { kind: e }) }),
+        /* @__PURE__ */ r("div", { className: "h-10 w-10 rounded-full bg-warning-bg text-warning-fg grid place-items-center", children: d ?? /* @__PURE__ */ r(b, { kind: e }) }),
         /* @__PURE__ */ r("div", { className: "text-base font-semibold text-slate-900", children: x[i](e) }),
         /* @__PURE__ */ r("p", { className: "text-xs text-slate-600", children: o ?? m[i](e) }),
-        a && /* @__PURE__ */ r(p, { variant: "ghost", size: "sm", onClick: a, children: s })
+        n && /* @__PURE__ */ r(p, { variant: "ghost", size: "sm", onClick: n, children: s })
       ]
     }
   );

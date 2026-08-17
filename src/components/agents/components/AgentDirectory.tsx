@@ -52,7 +52,7 @@ export function AgentDirectory({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search agents…"
           aria-label="Search agents"
-          className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm placeholder:text-slate-400 focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
         />
         <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter by status">
           <button

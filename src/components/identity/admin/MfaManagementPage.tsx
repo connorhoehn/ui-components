@@ -79,7 +79,7 @@ export function MfaManagementPage({
     );
   }
 
-  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection
@@ -94,19 +94,19 @@ export function MfaManagementPage({
       {metrics && (
         <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           <Card padding="md">
-            <div className="text-[1.75rem] font-bold text-blue-600 mb-1">{metrics.totalUsers}</div>
+            <div className="text-[1.75rem] font-bold text-info-fg mb-1">{metrics.totalUsers}</div>
             <div className="text-sm text-slate-500">Total Users</div>
           </Card>
           <Card padding="md">
-            <div className="text-[1.75rem] font-bold text-green-600 mb-1">{metrics.mfaEnabled}</div>
+            <div className="text-[1.75rem] font-bold text-success-fg mb-1">{metrics.mfaEnabled}</div>
             <div className="text-sm text-slate-500">MFA Enabled</div>
           </Card>
           <Card padding="md">
-            <div className="text-[1.75rem] font-bold text-amber-600 mb-1">{metrics.mfaDisabled}</div>
+            <div className="text-[1.75rem] font-bold text-warning-fg mb-1">{metrics.mfaDisabled}</div>
             <div className="text-sm text-slate-500">MFA Disabled</div>
           </Card>
           <Card padding="md">
-            <div className="text-[1.75rem] font-bold text-blue-600 mb-1">{metrics.adoptionRate}%</div>
+            <div className="text-[1.75rem] font-bold text-info-fg mb-1">{metrics.adoptionRate}%</div>
             <div className="text-sm text-slate-500">Adoption Rate</div>
           </Card>
         </section>

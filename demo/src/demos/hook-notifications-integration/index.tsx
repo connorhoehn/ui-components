@@ -271,8 +271,8 @@ export default function HookNotificationsIntegrationDemo() {
         className={
           'mb-6 inline-block rounded-xl px-2.5 py-1 text-[12px] font-semibold ' +
           (IS_MOCK
-            ? 'bg-amber-100 text-amber-800'
-            : 'bg-emerald-100 text-emerald-900')
+            ? 'bg-warning-bg text-warning-fg'
+            : 'bg-success-bg text-success-fg')
         }
       >
         {IS_MOCK ? 'MOCK MODE' : `LIVE — ${GATEWAY_URL}`}

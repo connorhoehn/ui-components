@@ -61,13 +61,13 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[13px] text-slate-900">{p.name}</code>
                       {p.required && (
-                        <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-red-600">
+                        <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-danger-fg">
                           required
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-2 align-top">
-                      <code className="font-mono text-[12px] text-indigo-700">{p.type}</code>
+                      <code className="font-mono text-[12px] text-primary-fg">{p.type}</code>
                     </td>
                     <td className="px-4 py-2 align-top text-slate-700">
                       {p.description}
@@ -105,7 +105,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
                       <code className="font-mono text-[13px] text-slate-900">{r.name}</code>
                     </td>
                     <td className="px-4 py-2 align-top">
-                      <code className="font-mono text-[12px] text-indigo-700">{r.type}</code>
+                      <code className="font-mono text-[12px] text-primary-fg">{r.type}</code>
                     </td>
                     <td className="px-4 py-2 align-top text-slate-700">{r.description}</td>
                   </tr>
@@ -129,7 +129,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
               <li key={link.to}>
                 <Link
                   to={link.to}
-                  className="text-sm text-indigo-700 hover:text-indigo-900 hover:underline no-underline"
+                  className="text-sm text-primary-fg hover:text-primary-fg hover:underline no-underline"
                 >
                   &rarr; {link.label}
                 </Link>

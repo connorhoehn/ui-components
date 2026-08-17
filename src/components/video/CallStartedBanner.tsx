@@ -107,7 +107,7 @@ export function CallStartedBanner({
           <button
             type="button"
             onClick={() => { setVisible(false); onJoin(); }}
-            className="text-xs font-semibold bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded"
+            className="text-xs font-semibold bg-success hover:bg-success text-white px-3 py-1.5 rounded"
             aria-label="Join call"
             data-testid="incoming-call-join"
           >
@@ -132,7 +132,7 @@ function Avatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
         getInitials(name)
       )}
       {/* Pulse dot — signals "active call" */}
-      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-green-400 border-2 border-[#1e293b] animate-pulse" />
+      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-success border-2 border-[#1e293b] animate-pulse" />
     </div>
   );
 }
