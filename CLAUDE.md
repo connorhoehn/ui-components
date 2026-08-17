@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.40.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.40.1`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -275,6 +275,23 @@ mocked `RM*` hook-return shapes (no realtime-modules runtime needed).
 Still thin elsewhere: 51 `shared/` components, 7 stories (hub #1059).
 
 ## Publishing
+
+> **Verify against a packed tarball, not the repo.** In-repo everything
+> resolves from `devDependencies`, which hid four consumer-breaking bugs until
+> v2.40.1 — including a root import that crashed with `ERR_MODULE_NOT_FOUND`
+> and a `tsc` failure on every root import. Before publishing:
+>
+> ```bash
+> npm pack --pack-destination /tmp/c && cd /tmp/c
+> # install the tgz into a scratch project with the peers, then tsc + import
+> ```
+>
+> `npm test` now includes `src/__tests__/packaging.test.ts`, which asserts that
+> everything `vite.config.ts` externalises is declared, that no shipped `.d.ts`
+> imports an undeclared package, and that every export subpath ships
+> `types`/`import`/`require` with the targets present. It skips itself when
+> `dist/` is absent, so run `npm run build` first for it to mean anything.
+
 
 Published to `https://npm.pkg.github.com`. Version is in `package.json`.
 Bump per the charter: patch=bugfix/internal/tests; minor=additive public API;

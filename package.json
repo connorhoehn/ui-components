@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.40.0",
+  "version": "2.40.1",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -13,57 +13,71 @@
     },
     "./pipelines": {
       "types": "./dist/pipelines.d.ts",
-      "import": "./dist/pipelines.js"
+      "import": "./dist/pipelines.js",
+      "require": "./dist/pipelines.cjs"
     },
     "./ingest": {
       "types": "./dist/ingest.d.ts",
-      "import": "./dist/ingest.js"
+      "import": "./dist/ingest.js",
+      "require": "./dist/ingest.cjs"
     },
     "./observability": {
       "types": "./dist/observability.d.ts",
-      "import": "./dist/observability.js"
+      "import": "./dist/observability.js",
+      "require": "./dist/observability.cjs"
     },
     "./doc-editor": {
       "types": "./dist/doc-editor.d.ts",
-      "import": "./dist/doc-editor.js"
+      "import": "./dist/doc-editor.js",
+      "require": "./dist/doc-editor.cjs"
     },
     "./social": {
       "types": "./dist/social.d.ts",
-      "import": "./dist/social.js"
+      "import": "./dist/social.js",
+      "require": "./dist/social.cjs"
     },
     "./hooks": {
       "types": "./dist/hooks.d.ts",
-      "import": "./dist/hooks.js"
+      "import": "./dist/hooks.js",
+      "require": "./dist/hooks.cjs"
     },
     "./types": {
       "types": "./dist/types.d.ts",
-      "import": "./dist/types.js"
+      "import": "./dist/types.js",
+      "require": "./dist/types.cjs"
     },
     "./shared": {
       "types": "./dist/shared.d.ts",
-      "import": "./dist/shared.js"
+      "import": "./dist/shared.js",
+      "require": "./dist/shared.cjs"
     },
     "./identity": {
       "types": "./dist/identity.d.ts",
-      "import": "./dist/identity.js"
+      "import": "./dist/identity.js",
+      "require": "./dist/identity.cjs"
     },
     "./agents": {
       "types": "./dist/agents.d.ts",
-      "import": "./dist/agents.js"
+      "import": "./dist/agents.js",
+      "require": "./dist/agents.cjs"
     },
     "./video": {
       "types": "./dist/video.d.ts",
-      "import": "./dist/video.js"
+      "import": "./dist/video.js",
+      "require": "./dist/video.cjs"
     },
     "./video-ivs": {
       "types": "./dist/video-ivs.d.ts",
-      "import": "./dist/video-ivs.js"
+      "import": "./dist/video-ivs.js",
+      "require": "./dist/video-ivs.cjs"
     },
     "./styles.css": "./dist/ui-components.css",
     "./integrations/realtime-modules": {
       "types": "./dist/integrations/realtime-modules.d.ts",
-      "import": "./dist/integrations/realtime-modules.js"
-    }
+      "import": "./dist/integrations/realtime-modules.js",
+      "require": "./dist/integrations/realtime-modules.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
@@ -97,16 +111,69 @@
   },
   "peerDependencies": {
     "@connorhoehn/realtime-modules": ">=0.3.0",
+    "@tiptap/extension-collaboration": "^3.22.3",
+    "@tiptap/extension-placeholder": "^3.22.3",
+    "@tiptap/extension-task-item": "^3.22.3",
+    "@tiptap/extension-task-list": "^3.22.3",
     "@tiptap/react": "^3.0.0",
+    "@tiptap/starter-kit": "^3.22.3",
+    "@tiptap/y-tiptap": "^3.0.3",
     "@xyflow/react": "^12.0.0",
+    "amazon-cognito-identity-js": "^6.3.15",
+    "amazon-ivs-web-broadcast": "^1.38.1",
+    "hls.js": "^1.7.0",
+    "lib0": "^0.2.117",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.0.0",
     "recharts": "^3.0.0",
+    "y-protocols": "^1.0.7",
     "yjs": "^13.6.0"
   },
   "peerDependenciesMeta": {
     "@connorhoehn/realtime-modules": {
+      "optional": true
+    },
+    "@tiptap/extension-collaboration": {
+      "optional": true
+    },
+    "@tiptap/extension-placeholder": {
+      "optional": true
+    },
+    "@tiptap/extension-task-item": {
+      "optional": true
+    },
+    "@tiptap/extension-task-list": {
+      "optional": true
+    },
+    "@tiptap/react": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/y-tiptap": {
+      "optional": true
+    },
+    "@xyflow/react": {
+      "optional": true
+    },
+    "amazon-cognito-identity-js": {
+      "optional": true
+    },
+    "amazon-ivs-web-broadcast": {
+      "optional": true
+    },
+    "hls.js": {
+      "optional": true
+    },
+    "lib0": {
+      "optional": true
+    },
+    "recharts": {
+      "optional": true
+    },
+    "y-protocols": {
       "optional": true
     }
   },

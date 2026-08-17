@@ -8,6 +8,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.40.1] — 2026-08-17
+
+Packaging fixes. Nothing in this release is visible in-repo — all four bugs
+were found by packing a tarball and installing it into a scratch project, the
+way a consumer actually gets the library. In-repo everything resolved from
+devDependencies, which is exactly why they survived this long.
+
+### Fixed
+
+- **`import … from '@connorhoehnslalom/ui-components'` crashed at runtime.**
+  The root bundle statically imports `amazon-cognito-identity-js`, which was
+  externalised in `vite.config.ts` but never declared, so a consumer got
+  `ERR_MODULE_NOT_FOUND` on the root import. Eight undeclared runtime deps in
+  total: that one, `amazon-ivs-web-broadcast`, `hls.js`, and six `@tiptap/*`
+  extensions (only `@tiptap/react` had been declared).
+
+- **Every consumer's `tsc` failed on the root import.** `dist/index.d.ts`,
+  `dist/hooks.d.ts` and `dist/doc-editor.d.ts` import `y-protocols/awareness`
+  and `lib0/observable`; neither package was declared, so consumers got TS2307
+  regardless of which symbol they imported. Both are now peers.
+
+- **13 of 15 export subpaths could not be `require`d.** Each declared only
+  `types` and `import`, so CJS consumers and older bundler/Jest setups could
+  reach nothing but the root — even though the build ships a `.cjs` for every
+  subpath. All 13 now declare `require`.
+
+- Added `./package.json` to `exports`; build tooling and version probes read it.
+
+`peerDependencies` went from 8 entries to 19. The ones a consumer can skip
+when they don't use that surface are marked optional in
+`peerDependenciesMeta`, so they are discoverable without being mandatory.
+
+### Added
+
+- `src/__tests__/packaging.test.ts` — a guard for all of the above: every
+  runtime import in `dist/` and every type import in `dist/**.d.ts` must be
+  declared, every export subpath must ship `types`/`import`/`require` and each
+  target must exist on disk, and `./package.json` must be exported.
+
+### Known
+
+- `import '@connorhoehnslalom/ui-components/doc-editor'` fails under **Node**
+  ESM because `amazon-ivs-web-broadcast` is CommonJS-only with no `module`
+  field. Bundlers handle the interop and the demo's production build succeeds,
+  so this affects Node-side smoke tests, not browser consumers.
+- `/doc-editor` pulling in a video-broadcast SDK at all is a chunking smell
+  (`VideoCallPanel` → `useHangoutEmbed`), pre-existing and untouched here.
+
+
 ## [2.40.0] — 2026-08-17
 
 ### Changed
