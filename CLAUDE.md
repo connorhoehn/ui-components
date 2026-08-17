@@ -1,5 +1,15 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
+## agent-hub retired (2026-08-16)
+
+This repo was previously coordinated through `agent-hub`. That system was
+retired on 2026-08-16: the server is gone, the MCP registration removed, and
+`~/.agent-hub` (task database, handoffs, blockers) deleted. Do not look for
+hub tasks, do not attempt to register/heartbeat, and do not call
+`mcp__agent-hub__*` tools — they no longer exist. `hub#<id>` references in
+docs and commit history are historical breadcrumbs, not live tickets.
+Current state and open work live in this repo (constitution/roadmap/CHANGELOG).
+
 React component library for real-time collaborative applications. Published to
 GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.44.2`). Consumed by
 several downstream apps — see **Consumer list** below.
