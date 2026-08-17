@@ -52,7 +52,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         done: status.hasUserPools,
         content: (
           <div className="flex flex-col gap-2">
-            <p className="m-0 text-sm text-slate-600">
+            <p className="m-0 text-sm text-text-secondary">
               {status.hasUserPools
                 ? `${status.poolCount} pool(s) configured.`
                 : 'No user pools yet.'}
@@ -70,7 +70,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         done: status.hasClients,
         content: (
           <div className="flex flex-col gap-2">
-            <p className="m-0 text-sm text-slate-600">
+            <p className="m-0 text-sm text-text-secondary">
               {status.hasClients
                 ? `${status.clientCount} application(s) registered.`
                 : 'No applications registered.'}
@@ -90,11 +90,11 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
           <div className="flex flex-col gap-2">
             {status.hasAdminUser ? (
               <>
-                <p className="m-0 text-sm text-slate-600">Admin users: {status.adminEmails.join(', ')}</p>
-                <p className="m-0 text-sm text-slate-600">{status.totalUsers} total user(s) across all pools.</p>
+                <p className="m-0 text-sm text-text-secondary">Admin users: {status.adminEmails.join(', ')}</p>
+                <p className="m-0 text-sm text-text-secondary">{status.totalUsers} total user(s) across all pools.</p>
               </>
             ) : (
-              <p className="m-0 text-sm text-slate-600">No admin user found. Create one in a user pool.</p>
+              <p className="m-0 text-sm text-text-secondary">No admin user found. Create one in a user pool.</p>
             )}
             {status.firstPoolId && (
               <div>
@@ -110,7 +110,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         title: 'Configure SMTP',
         done: status.smtpConfigured,
         content: (
-          <p className="m-0 text-sm text-slate-600">
+          <p className="m-0 text-sm text-text-secondary">
             {status.smtpConfigured
               ? `SMTP configured: ${status.smtpHost}`
               : 'SMTP is not yet configured. Set SMTP_HOST, SMTP_PORT, SMTP_USER, and SMTP_PASS environment variables.'}
@@ -122,11 +122,11 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
         done: status.issuerConfigured,
         content: (
           <div className="flex flex-col gap-2">
-            <p className="m-0 text-sm text-slate-600">
-              Issuer: <code className="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">{status.issuer || 'Not set'}</code>
+            <p className="m-0 text-sm text-text-secondary">
+              Issuer: <code className="px-1.5 py-0.5 bg-surface-hover rounded text-xs font-mono">{status.issuer || 'Not set'}</code>
             </p>
             {status.wellKnownUrl && (
-              <p className="m-0 text-sm text-slate-600">
+              <p className="m-0 text-sm text-text-secondary">
                 Well-known URL:{' '}
                 <a href={status.wellKnownUrl} target="_blank" rel="noopener noreferrer" className="text-info-fg underline">
                   {status.wellKnownUrl}
@@ -143,10 +143,10 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
           <div className="flex flex-col gap-3">
             {status.firstClientId ? (
               <>
-                <p className="m-0 text-sm text-slate-600">
-                  Client ID: <code className="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono">{status.firstClientId}</code>
+                <p className="m-0 text-sm text-text-secondary">
+                  Client ID: <code className="px-1.5 py-0.5 bg-surface-hover rounded text-xs font-mono">{status.firstClientId}</code>
                 </p>
-                <p className="m-0 text-sm text-slate-600">Use this code snippet to test the OIDC authorization flow:</p>
+                <p className="m-0 text-sm text-text-secondary">Use this code snippet to test the OIDC authorization flow:</p>
                 <pre className="px-4 py-3 bg-slate-900 text-slate-200 rounded-md font-mono text-xs overflow-x-auto whitespace-pre m-0">{`// OIDC Authorization Code Flow
 const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
   client_id: '${status.firstClientId}',
@@ -158,7 +158,7 @@ const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
 window.location.href = authUrl;`}</pre>
               </>
             ) : (
-              <p className="m-0 text-sm text-slate-600">Complete the previous steps first to test the integration.</p>
+              <p className="m-0 text-sm text-text-secondary">Complete the previous steps first to test the integration.</p>
             )}
           </div>
         ),
@@ -176,7 +176,7 @@ window.location.href = authUrl;`}</pre>
       description={`${completedCount} of ${steps.length} steps completed (${progressPercent}%)`}
     >
       {/* Progress bar */}
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-surface-hover rounded-full overflow-hidden">
         <div
           className="h-full bg-success rounded-full transition-[width] duration-300 ease-in-out"
           style={{ width: `${progressPercent}%` }}
@@ -199,14 +199,14 @@ window.location.href = authUrl;`}</pre>
                     'w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0',
                     step.done
                       ? 'bg-success text-white'
-                      : 'bg-slate-100 text-slate-400'
+                      : 'bg-surface-hover text-text-tertiary'
                   )}
                 >
                   {step.done ? '✓' : idx + 1}
                 </div>
                 <span className="text-sm font-medium text-slate-800">{step.title}</span>
               </div>
-              <span className="text-slate-400 text-sm">
+              <span className="text-text-tertiary text-sm">
                 {expanded === idx ? '▲' : '▼'}
               </span>
             </div>

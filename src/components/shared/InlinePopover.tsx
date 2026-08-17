@@ -230,7 +230,7 @@ export function InlinePopover({
       data-testid={testId}
       data-placement={placement}
       className={cn(
-        'min-w-[160px] rounded-lg border border-slate-200 bg-white',
+        'min-w-[160px] rounded-lg border border-border bg-white',
         'shadow-lg p-1 text-sm text-slate-700',
         className,
       )}

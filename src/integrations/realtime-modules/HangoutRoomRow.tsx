@@ -138,7 +138,7 @@ export function HangoutRoomRow({
   return (
     <SidebarRow
       data-testid={testId}
-      icon={<span aria-hidden="true" className="font-semibold text-slate-400">#</span>}
+      icon={<span aria-hidden="true" className="font-semibold text-text-tertiary">#</span>}
       label={name}
       trailing={trailing}
       active={active}

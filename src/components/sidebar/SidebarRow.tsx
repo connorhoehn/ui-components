@@ -114,10 +114,10 @@ export function SidebarRow({
     'group relative flex items-center gap-2 w-full',
     'px-2 py-1.5 rounded-md text-sm leading-tight select-none',
     'transition-colors duration-100',
-    !disabled && 'cursor-pointer hover:bg-slate-100',
+    !disabled && 'cursor-pointer hover:bg-surface-hover',
     active && !disabled && 'bg-info-bg text-info-fg hover:bg-info-bg',
     !active && !disabled && 'text-slate-700',
-    disabled && 'opacity-50 cursor-not-allowed text-slate-500',
+    disabled && 'opacity-50 cursor-not-allowed text-neutral',
     'no-underline',
     className,
   );
@@ -125,7 +125,7 @@ export function SidebarRow({
   const inner = (
     <>
       {icon && (
-        <span className="inline-flex items-center justify-center w-4 h-4 shrink-0 text-slate-400 group-hover:text-slate-500">
+        <span className="inline-flex items-center justify-center w-4 h-4 shrink-0 text-text-tertiary group-hover:text-neutral">
           {icon}
         </span>
       )}

@@ -100,7 +100,7 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
           {redirectUris.map((uri, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-1.5">
               <input
-                className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
                 value={uri}
                 onChange={(e) => handleUriChange(idx, e.target.value)}
                 placeholder="https://app.example.com/callback"

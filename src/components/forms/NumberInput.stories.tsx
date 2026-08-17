@@ -45,7 +45,7 @@ export const Clamped: Story = {
   name: 'Clamped (blur to clamp)',
   render: (args) => (
     <div className="flex flex-col gap-2 w-48">
-      <p className="text-[11px] text-slate-500">
+      <p className="text-[11px] text-neutral">
         Type a value outside 0–100 then blur to see clamping.
       </p>
       <Controlled {...args} />

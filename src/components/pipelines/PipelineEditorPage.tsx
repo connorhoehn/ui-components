@@ -426,11 +426,11 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
           data-testid="tags-row"
           className={cn(
             'flex items-center gap-2 px-4 py-1.5',
-            'border-b border-slate-200 bg-[#fafbfc]',
+            'border-b border-border bg-[#fafbfc]',
             'min-h-[34px] shrink-0 sticky top-11 z-[4]',
           )}
         >
-          <span className="text-[11px] text-slate-400 font-semibold">TAGS</span>
+          <span className="text-[11px] text-text-tertiary font-semibold">TAGS</span>
           <TagEditor
             value={definition.tags ?? []}
             onChange={setTags}

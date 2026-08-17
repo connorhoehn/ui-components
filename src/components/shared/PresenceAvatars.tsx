@@ -170,7 +170,7 @@ export function PresenceAvatars({
             )}
             {modeInfo && (
               <span
-                className="absolute flex items-center justify-center rounded-full bg-white border border-slate-200 select-none"
+                className="absolute flex items-center justify-center rounded-full bg-white border border-border select-none"
                 style={{
                   top: -border,
                   right: -border,
@@ -237,7 +237,7 @@ export function PresenceAvatars({
           aria-label={`${overflow} more users`}
           className={cn(
             'inline-flex items-center justify-center rounded-full shrink-0',
-            'font-semibold select-none bg-slate-200 text-slate-600',
+            'font-semibold select-none bg-slate-200 text-text-secondary',
             onMoreClick && 'cursor-pointer hover:bg-slate-300',
             !onMoreClick && 'cursor-default',
             'border-white',

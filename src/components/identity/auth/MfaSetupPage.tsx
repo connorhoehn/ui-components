@@ -99,12 +99,12 @@ export function MfaSetupPage({
   }, [backupCodes]);
 
   return (
-    <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div className="w-full max-w-[480px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA setup">
         <h1 className="text-xl font-bold text-slate-800 mb-2 mt-0 text-center">
           Set Up Multi-Factor Authentication
         </h1>
-        {userEmail && <p className="text-sm text-slate-500 mb-5 mt-0 text-center">{userEmail}</p>}
+        {userEmail && <p className="text-sm text-neutral mb-5 mt-0 text-center">{userEmail}</p>}
 
         {/* Step indicator */}
         <div className="flex justify-center gap-6 mb-6" role="group" aria-label="Setup progress">
@@ -119,7 +119,7 @@ export function MfaSetupPage({
               />
               <span className={cn(
                 'text-[10px] uppercase tracking-wide font-medium',
-                i === currentStepIndex ? 'text-slate-800' : 'text-slate-400'
+                i === currentStepIndex ? 'text-slate-800' : 'text-text-tertiary'
               )}>
                 {STEP_LABELS[i]}
               </span>
@@ -135,7 +135,7 @@ export function MfaSetupPage({
 
         {step === 'name' && (
           <form onSubmit={handleNameSubmit} aria-label="Name your device">
-            <p className="text-sm text-slate-500 mb-4 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-neutral mb-4 mt-0 text-center leading-relaxed">
               Give your authenticator device a name so you can identify it later.
             </p>
             <FormField
@@ -170,7 +170,7 @@ export function MfaSetupPage({
             >
               &larr; Back
             </Button>
-            <p className="text-sm text-slate-500 mb-5 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-neutral mb-5 mt-0 text-center leading-relaxed">
               Scan this QR code with your authenticator app
             </p>
             <div className="flex justify-center mb-5">
@@ -180,10 +180,10 @@ export function MfaSetupPage({
                 label={`Device: ${deviceName}`}
               />
             </div>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 text-center mb-2 mt-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0">
               Or enter this secret manually
             </p>
-            <div className="px-4 py-3 bg-slate-50 border border-slate-200 rounded-md font-mono text-sm text-slate-800 break-all text-center mb-6 select-all">
+            <div className="px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-slate-800 break-all text-center mb-6 select-all">
               {setupResult.secret}
             </div>
             <Button
@@ -208,7 +208,7 @@ export function MfaSetupPage({
             >
               &larr; Back
             </Button>
-            <p className="text-sm text-slate-500 mb-6 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-neutral mb-6 mt-0 text-center leading-relaxed">
               Enter the 6-digit code from your authenticator app to confirm setup
             </p>
             <CodeInput
@@ -218,7 +218,7 @@ export function MfaSetupPage({
               autoFocus
             />
             {loading && (
-              <p className="text-center text-sm text-slate-400 mt-3">
+              <p className="text-center text-sm text-text-tertiary mt-3">
                 Verifying...
               </p>
             )}
@@ -232,12 +232,12 @@ export function MfaSetupPage({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="text-sm text-slate-500 mb-5 mt-0 text-center leading-relaxed">
+            <p className="text-sm text-neutral mb-5 mt-0 text-center leading-relaxed">
               Save these backup codes in a safe place. Each code can only be used once.
             </p>
             <div className="grid grid-cols-2 gap-2.5 mb-6">
               {backupCodes.map((code, i) => (
-                <div key={i} className="px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-md font-mono text-sm text-slate-800 text-center select-all">
+                <div key={i} className="px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-slate-800 text-center select-all">
                   {code}
                 </div>
               ))}

@@ -66,7 +66,7 @@ function TogglingDemo() {
       />
       <button
         type="button"
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm cursor-pointer"
+        className="rounded-md border border-border-emphasis px-3 py-1.5 text-sm cursor-pointer"
         onClick={() => setRunId((n) => n + 1)}
       >
         {status === 'synthesizing' ? 'Synthesizing… (lands in 4s)' : 'Run again'}

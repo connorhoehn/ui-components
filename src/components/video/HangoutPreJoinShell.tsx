@@ -178,14 +178,14 @@ export default function HangoutPreJoinShell({
     <div
       data-testid={testId}
       className={cn(
-        'flex flex-col h-full min-h-0 bg-slate-50 text-slate-900',
+        'flex flex-col h-full min-h-0 bg-surface-panel text-text-primary',
         className,
       )}
     >
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-white">
         <div className="min-w-0 flex-1">
           <h1 className="text-lg font-semibold truncate">{channelName}</h1>
-          <p className="text-xs text-slate-500 mt-0.5">{peopleLabel}</p>
+          <p className="text-xs text-neutral mt-0.5">{peopleLabel}</p>
         </div>
         <Button variant="ghost" size="sm" onClick={onCancel}>Cancel</Button>
       </header>
@@ -193,7 +193,7 @@ export default function HangoutPreJoinShell({
       <main className="flex-1 min-h-0 flex flex-col lg:flex-row gap-6 p-6 max-w-6xl mx-auto w-full">
         {/* Left: live camera preview */}
         <section className="lg:flex-1 min-h-0">
-          <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-slate-200 bg-black">
+          <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-border bg-black">
             {previewStream && isCamReady && (
               <video
                 ref={videoRef}
@@ -225,14 +225,14 @@ export default function HangoutPreJoinShell({
                       <span className="text-white text-base font-medium truncate max-w-[16rem]">
                         {localIdentity.displayName}
                       </span>
-                      <span className="text-slate-300 text-xs">Camera off</span>
+                      <span className="text-text-disabled text-xs">Camera off</span>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div
                   data-testid="prejoin-camera-off-fallback"
-                  className="absolute inset-0 grid place-items-center text-slate-300 text-sm"
+                  className="absolute inset-0 grid place-items-center text-text-disabled text-sm"
                 >
                   Camera off
                 </div>
@@ -244,7 +244,7 @@ export default function HangoutPreJoinShell({
               </div>
             )}
             {fallbackState && (
-              <div className="absolute inset-0 grid place-items-center bg-slate-50/95">
+              <div className="absolute inset-0 grid place-items-center bg-surface-panel/95">
                 <PermissionDeniedCard
                   kind="camera"
                   state={fallbackState}
@@ -285,7 +285,7 @@ export default function HangoutPreJoinShell({
         <section className="lg:w-96 flex flex-col">
           <div className="flex-1">
             <h2 className="text-2xl font-semibold mb-2">Ready to join?</h2>
-            <p className="text-sm text-slate-500 mb-6">{peopleLabel}</p>
+            <p className="text-sm text-neutral mb-6">{peopleLabel}</p>
 
             <RosterList participants={participants} loading={readyLoading} />
 
@@ -310,7 +310,7 @@ export default function HangoutPreJoinShell({
             <button
               type="button"
               onClick={onCancel}
-              className="text-xs text-slate-500 hover:text-slate-900 transition-colors text-center"
+              className="text-xs text-neutral hover:text-text-primary transition-colors text-center"
             >
               Back to rooms
             </button>
@@ -330,7 +330,7 @@ function RosterList({
 }) {
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-xs text-slate-500">
+      <div className="flex items-center gap-2 text-xs text-neutral">
         <Spinner size="sm" /> Checking room…
       </div>
     );
@@ -338,7 +338,7 @@ function RosterList({
   if (!participants || participants.length === 0) return null;
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-xs uppercase tracking-wide text-slate-500">In the room</div>
+      <div className="text-xs uppercase tracking-wide text-neutral">In the room</div>
       <ul className="flex flex-col gap-1.5">
         {participants.slice(0, 8).map((p) => {
           const display = p.displayName ?? p.participantId.slice(0, 8);
@@ -359,7 +359,7 @@ function RosterList({
           );
         })}
         {participants.length > 8 && (
-          <li className="text-xs text-slate-500">+{participants.length - 8} more</li>
+          <li className="text-xs text-neutral">+{participants.length - 8} more</li>
         )}
       </ul>
     </div>

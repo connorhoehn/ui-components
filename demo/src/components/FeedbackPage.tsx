@@ -48,7 +48,7 @@ function ToastPreview({
   const tone = TOAST_TONE[type];
   return (
     <div
-      className={`bg-white border border-slate-200 border-l-4 ${tone.accent} rounded-lg px-4 py-3 flex items-center gap-3 max-w-[380px] shadow-md`}
+      className={`bg-white border border-border border-l-4 ${tone.accent} rounded-lg px-4 py-3 flex items-center gap-3 max-w-[380px] shadow-md`}
     >
       <span className={`text-base ${tone.iconColor} flex-shrink-0`}>
         {TOAST_ICONS[type]}
@@ -66,7 +66,7 @@ function ToastPreview({
       )}
       <button
         type="button"
-        className="text-lg text-slate-400 bg-transparent border-none cursor-pointer px-1 leading-none"
+        className="text-lg text-text-tertiary bg-transparent border-none cursor-pointer px-1 leading-none"
       >
         &times;
       </button>
@@ -130,10 +130,10 @@ function ModalPreview({
   return (
     <div className="relative bg-black/25 rounded-lg p-8 flex items-center justify-center min-h-[200px]">
       <div className="bg-white rounded-xl px-6 py-7 w-full max-w-[380px] shadow-lg">
-        <div className="text-base font-semibold text-slate-900 mb-2.5">
+        <div className="text-base font-semibold text-text-primary mb-2.5">
           {title}
         </div>
-        <div className="text-[13px] text-slate-500 leading-normal">{body}</div>
+        <div className="text-[13px] text-neutral leading-normal">{body}</div>
         {footer && (
           <div className="flex gap-2 justify-end mt-5">
             {footer}
@@ -155,7 +155,7 @@ const CONFIRM_BTN: Record<string, string> = {
 const MODAL_BTN_BASE =
   'px-4 py-1.5 text-[13px] rounded-md cursor-pointer font-[inherit] border-none';
 const MODAL_BTN_CANCEL =
-  'px-4 py-1.5 text-[13px] rounded-md cursor-pointer font-[inherit] border border-slate-200 bg-white text-slate-500';
+  'px-4 py-1.5 text-[13px] rounded-md cursor-pointer font-[inherit] border border-border bg-white text-neutral';
 
 function ConfirmPreview({
   title,
@@ -171,10 +171,10 @@ function ConfirmPreview({
   return (
     <div className="relative bg-black/25 rounded-lg p-6 flex items-center justify-center min-h-[180px]">
       <div className="bg-white rounded-xl px-6 py-7 max-w-[420px] w-full shadow-lg">
-        <div className="text-base font-semibold text-slate-900 mb-2.5">
+        <div className="text-base font-semibold text-text-primary mb-2.5">
           {title}
         </div>
-        <p className="text-[13px] text-slate-500 mb-5 leading-normal">
+        <p className="text-[13px] text-neutral mb-5 leading-normal">
           {body}
         </p>
         <div className="flex gap-2 justify-end">
@@ -356,7 +356,7 @@ toast('Deployment complete.', {
             <>
               <button
                 type="button"
-                className="px-4 py-1.5 text-[13px] border border-slate-200 bg-slate-50 text-slate-500 rounded-md cursor-pointer font-[inherit]"
+                className="px-4 py-1.5 text-[13px] border border-border bg-surface-panel text-neutral rounded-md cursor-pointer font-[inherit]"
               >
                 Cancel
               </button>
@@ -396,12 +396,12 @@ toast('Deployment complete.', {
           ].map(({ label, wClass }) => (
             <div
               key={label}
-              className={`border-2 border-dashed border-slate-300 rounded-xl px-4 py-5 text-center bg-white ${wClass}`}
+              className={`border-2 border-dashed border-border-emphasis rounded-xl px-4 py-5 text-center bg-white ${wClass}`}
             >
-              <div className="text-xs font-semibold text-slate-900 mb-1.5">
+              <div className="text-xs font-semibold text-text-primary mb-1.5">
                 {label}
               </div>
-              <div className="text-[11px] text-slate-400">Modal container</div>
+              <div className="text-[11px] text-text-tertiary">Modal container</div>
             </div>
           ))}
         </div>

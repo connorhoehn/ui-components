@@ -69,8 +69,8 @@ export function MfaManagementPage({
         <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i} padding="md">
-              <div className="h-5 w-12 rounded bg-slate-100 animate-pulse mb-2" />
-              <div className="h-3 w-20 rounded bg-slate-100 animate-pulse" />
+              <div className="h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" />
+              <div className="h-3 w-20 rounded bg-surface-hover animate-pulse" />
             </Card>
           ))}
         </div>
@@ -79,7 +79,7 @@ export function MfaManagementPage({
     );
   }
 
-  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection
@@ -95,19 +95,19 @@ export function MfaManagementPage({
         <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4">
           <Card padding="md">
             <div className="text-[1.75rem] font-bold text-info-fg mb-1">{metrics.totalUsers}</div>
-            <div className="text-sm text-slate-500">Total Users</div>
+            <div className="text-sm text-neutral">Total Users</div>
           </Card>
           <Card padding="md">
             <div className="text-[1.75rem] font-bold text-success-fg mb-1">{metrics.mfaEnabled}</div>
-            <div className="text-sm text-slate-500">MFA Enabled</div>
+            <div className="text-sm text-neutral">MFA Enabled</div>
           </Card>
           <Card padding="md">
             <div className="text-[1.75rem] font-bold text-warning-fg mb-1">{metrics.mfaDisabled}</div>
-            <div className="text-sm text-slate-500">MFA Disabled</div>
+            <div className="text-sm text-neutral">MFA Disabled</div>
           </Card>
           <Card padding="md">
             <div className="text-[1.75rem] font-bold text-info-fg mb-1">{metrics.adoptionRate}%</div>
-            <div className="text-sm text-slate-500">Adoption Rate</div>
+            <div className="text-sm text-neutral">Adoption Rate</div>
           </Card>
         </section>
       )}
@@ -115,7 +115,7 @@ export function MfaManagementPage({
       {/* Pool filter */}
       {pools && pools.length > 0 && (
         <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+          <label className="text-xs font-semibold text-neutral uppercase tracking-wide">
             Filter by pool
           </label>
           <select className={inputClass} value={selectedPool} onChange={(e) => setSelectedPool(e.target.value)}>

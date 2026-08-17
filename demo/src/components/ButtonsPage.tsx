@@ -16,8 +16,8 @@ const tocItems: TocItem[] = [
 const BTN_BASE =
   'font-semibold rounded-md cursor-pointer inline-flex items-center gap-1.5 transition-colors';
 const BTN_PRIMARY = `${BTN_BASE} bg-info text-white border-none px-4 py-2 text-sm hover:bg-info`;
-const BTN_SECONDARY = `${BTN_BASE} bg-slate-100 text-slate-700 border border-slate-200 px-4 py-2 text-sm hover:bg-slate-200`;
-const BTN_GHOST = `${BTN_BASE} bg-transparent text-slate-700 border border-slate-300 px-4 py-2 text-sm hover:bg-slate-100`;
+const BTN_SECONDARY = `${BTN_BASE} bg-surface-hover text-slate-700 border border-border px-4 py-2 text-sm hover:bg-slate-200`;
+const BTN_GHOST = `${BTN_BASE} bg-transparent text-slate-700 border border-border-emphasis px-4 py-2 text-sm hover:bg-surface-hover`;
 const BTN_DANGER = `${BTN_BASE} bg-danger text-white border-none px-4 py-2 text-sm hover:bg-danger`;
 const BTN_OUTLINE = `${BTN_BASE} bg-transparent text-info-fg border border-info px-4 py-2 text-sm hover:bg-info-bg`;
 
@@ -197,7 +197,7 @@ function App() {
           <button
             type="button"
             aria-label="Menu"
-            className={`${ICON_BTN_BASE} w-8 h-8 bg-transparent text-slate-700 hover:bg-slate-100`}
+            className={`${ICON_BTN_BASE} w-8 h-8 bg-transparent text-slate-700 hover:bg-surface-hover`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="3" y1="6" x2="21" y2="6" />

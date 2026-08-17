@@ -19,7 +19,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
   if (!agent) {
     return (
       <div className={cn('text-center py-12', className)}>
-        <div className="text-slate-400 text-sm">Agent not found: {agentId}</div>
+        <div className="text-text-tertiary text-sm">Agent not found: {agentId}</div>
         {onBack && (
           <button className="mt-2 text-xs text-info-fg hover:underline" onClick={onBack}>
             Back to dashboard
@@ -42,12 +42,12 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
           <div className="flex items-center gap-3">
             <span className="text-2xl">🤖</span>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">{agent.name}</h2>
-              <div className="text-xs text-slate-500 font-mono">{agent.id}</div>
+              <h2 className="text-lg font-semibold text-text-primary">{agent.name}</h2>
+              <div className="text-xs text-neutral font-mono">{agent.id}</div>
             </div>
           </div>
           {agent.description && (
-            <p className="text-sm text-slate-600 mt-2">{agent.description}</p>
+            <p className="text-sm text-text-secondary mt-2">{agent.description}</p>
           )}
         </div>
         <StatusBadge status={agent.status} />
@@ -64,7 +64,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
         <Section title="Tools">
           <div className="flex flex-wrap gap-1">
             {agent.tools.map((t) => (
-              <span key={t} className="text-[11px] px-2 py-0.5 bg-slate-100 rounded font-mono text-slate-700">
+              <span key={t} className="text-[11px] px-2 py-0.5 bg-surface-hover rounded font-mono text-slate-700">
                 {t}
               </span>
             ))}
@@ -107,7 +107,7 @@ function StatusBadge({ status }: { status: string }) {
     deploying: 'bg-info-bg text-info-fg',
   };
   return (
-    <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', styles[status] ?? 'bg-slate-100 text-slate-700')}>
+    <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', styles[status] ?? 'bg-surface-hover text-slate-700')}>
       {status}
     </span>
   );
@@ -115,8 +115,8 @@ function StatusBadge({ status }: { status: string }) {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border border-slate-200 rounded-lg p-4 bg-white">
-      <h4 className="text-xs font-medium text-slate-500 uppercase mb-3">{title}</h4>
+    <div className="border border-border rounded-lg p-4 bg-white">
+      <h4 className="text-xs font-medium text-neutral uppercase mb-3">{title}</h4>
       {children}
     </div>
   );
@@ -125,7 +125,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex items-baseline justify-between py-1 text-[12px]">
-      <span className="text-slate-500">{label}</span>
+      <span className="text-neutral">{label}</span>
       <span className={cn('text-slate-800', mono && 'font-mono text-[11px] break-all text-right max-w-[60%]')}>
         {value}
       </span>

@@ -52,7 +52,7 @@ function NavLink({
           'flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer',
           'border-none rounded-none border-l-[3px] transition-colors',
           active
-            ? 'bg-slate-50 text-info-fg font-semibold border-l-info'
+            ? 'bg-surface-panel text-info-fg font-semibold border-l-info'
             : 'bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]'
         )}
         onClick={() => onNavigate(item.path)}
@@ -81,14 +81,14 @@ export function IdentityAdminLayout({
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
 
   return (
-    <div className="flex min-h-screen bg-slate-50 font-[inherit]">
+    <div className="flex min-h-screen bg-surface-panel font-[inherit]">
       <aside
         className={cn(
-          'bg-white border-r border-slate-200 flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
+          'bg-white border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden',
           sidebarOpen ? 'w-60' : 'w-0 border-r-0'
         )}
       >
-        <div className="p-4 font-bold text-lg text-info-fg border-b border-slate-200">
+        <div className="p-4 font-bold text-lg text-info-fg border-b border-border">
           Identity Admin
         </div>
         <ul className="list-none m-0 p-0 py-2 flex-1">
@@ -104,7 +104,7 @@ export function IdentityAdminLayout({
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center justify-between px-4 py-2 bg-white border-b border-slate-200">
+        <header className="flex items-center justify-between px-4 py-2 bg-white border-b border-border">
           <Button
             variant="ghost"
             size="sm"
@@ -116,7 +116,7 @@ export function IdentityAdminLayout({
 
           <div className="flex items-center gap-4">
             {adminEmail && (
-              <span className="text-sm text-slate-500">
+              <span className="text-sm text-neutral">
                 {adminEmail}
               </span>
             )}

@@ -159,7 +159,7 @@ describe('EmptyState', () => {
     ];
     render(<EmptyState title="No items" actions={actions} />);
     const button = screen.getByTestId('empty-state-actions-button');
-    expect(button.className).toMatch(/border-slate-300/);
+    expect(button.className).toMatch(/border-border-emphasis/);
     expect(button.className).not.toMatch(/bg-primary/);
   });
 });

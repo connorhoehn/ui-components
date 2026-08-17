@@ -177,15 +177,15 @@ function LiveActivityView({ url, channel }: { url: string; channel: string }) {
 export default function HookActivityIntegrationDemo() {
   return (
     <div className="mx-auto max-w-[640px] p-8">
-      <h2 className="mb-1 text-xl font-bold text-slate-900">
+      <h2 className="mb-1 text-xl font-bold text-text-primary">
         ActivityFeed + useActivity
       </h2>
-      <p className="mb-2 text-sm leading-relaxed text-slate-500">
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+      <p className="mb-2 text-sm leading-relaxed text-neutral">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           {'<ActivityFeed>'}
         </code>{' '}
         wired to{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           useActivity('{CHANNEL}')
         </code>
         . Events stream in on a timer — open the page and watch the feed

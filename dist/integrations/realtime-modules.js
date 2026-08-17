@@ -1,18 +1,18 @@
 import { jsx as a, jsxs as p, Fragment as w } from "react/jsx-runtime";
-import { C as H, P as z } from "../PresencePanel-BQDnRya1.js";
+import { C as H, P as z } from "../PresencePanel-C81AAPgj.js";
 import { Component as V, useState as C, useEffect as U, useMemo as S } from "react";
-import { E as j } from "../EmptyState-CSXnZFAs.js";
+import { E as j } from "../EmptyState-CpAOblv3.js";
 import { c as _ } from "../cn-B6yFEsav.js";
-import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-DRQIwSra.js";
+import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-DdIZ40jI.js";
 import { S as K } from "../SkeletonCard-C89GWQ3p.js";
-import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-Bcf9nJeZ.js";
-import { R as J, S as B, a as ee } from "../ReactionsOverlay-B8ycHuZC.js";
+import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-BgXzWBnr.js";
+import { R as J, S as B, a as ee } from "../ReactionsOverlay-Cp1TxS9B.js";
 import { F as te, I as ae } from "../FileUploadDrop-Cmz3XANg.js";
 import { useRoomOccupancy as ne } from "@connorhoehn/realtime-modules/client/hangout-rooms";
 import { B as I } from "../Button-Qsbxqsl9.js";
-import { M as re } from "../Modal-2jg4229_.js";
+import { M as re } from "../Modal-fp5zcyw8.js";
 import { useLVSHangout as ie } from "@connorhoehn/realtime-modules/client/video";
-import { A as oe } from "../Avatar-DIEPZUB9.js";
+import { A as oe } from "../Avatar-DLI820CU.js";
 function se(e) {
   return {
     id: e.id,
@@ -114,10 +114,10 @@ function ye(e, t) {
     isLocal: t != null ? e.clientId === t : void 0
   };
 }
-function ve(e, t) {
+function xe(e, t) {
   return e.map((n) => ye(n, t));
 }
-function xe(e) {
+function ve(e) {
   return {
     id: e.id,
     title: e.title,
@@ -129,7 +129,7 @@ function xe(e) {
   };
 }
 function Ne(e) {
-  return e.map(xe);
+  return e.map(ve);
 }
 class we extends V {
   state = { error: null };
@@ -396,7 +396,7 @@ function tt({
   onParticipantClick: u,
   className: l
 }) {
-  const d = ve(e.participants, t), h = t != null ? d.find((s) => s.id === t) ?? null : null, b = t != null ? d.filter((s) => s.id !== t) : d;
+  const d = xe(e.participants, t), h = t != null ? d.find((s) => s.id === t) ?? null : null, b = t != null ? d.filter((s) => s.id !== t) : d;
   function f(s) {
     return n ? s.map((m) => ({
       ...m,
@@ -466,7 +466,7 @@ function Re({
 }) {
   const h = ne(i ? e : null, {
     subscribeRoomsIndex: i
-  }), b = i ? h.occupancy ?? null : o ?? null, f = b?.count ?? 0, s = b?.members ?? [], m = S(() => n ? s.some((N) => N.participantId === n) : !1, [s, n]), y = m, v = S(
+  }), b = i ? h.occupancy ?? null : o ?? null, f = b?.count ?? 0, s = b?.members ?? [], m = S(() => n ? s.some((N) => N.participantId === n) : !1, [s, n]), y = m, x = S(
     () => s.slice(0, 3).map((N) => ({
       id: N.participantId,
       name: N.displayName ?? N.userId,
@@ -474,11 +474,11 @@ function Re({
     })),
     [s]
   );
-  let x = null;
-  return f > 1 ? x = /* @__PURE__ */ p(w, { children: [
-    /* @__PURE__ */ a(D, { users: v, maxVisible: 3, size: 18 }),
+  let v = null;
+  return f > 1 ? v = /* @__PURE__ */ p(w, { children: [
+    /* @__PURE__ */ a(D, { users: x, maxVisible: 3, size: 18 }),
     /* @__PURE__ */ a(A, { variant: "count", value: f, color: "muted" })
-  ] }) : f === 1 && m ? x = /* @__PURE__ */ a(
+  ] }) : f === 1 && m ? v = /* @__PURE__ */ a(
     A,
     {
       variant: "pulse",
@@ -486,16 +486,16 @@ function Re({
       "aria-label": "Just you in this room",
       "data-testid": `${d}-self-pulse`
     }
-  ) : f === 1 && (x = /* @__PURE__ */ p(w, { children: [
-    /* @__PURE__ */ a(D, { users: v, maxVisible: 1, size: 18 }),
+  ) : f === 1 && (v = /* @__PURE__ */ p(w, { children: [
+    /* @__PURE__ */ a(D, { users: x, maxVisible: 1, size: 18 }),
     /* @__PURE__ */ a(A, { variant: "count", value: 1, color: "muted" })
   ] })), /* @__PURE__ */ a(
     B,
     {
       "data-testid": d,
-      icon: /* @__PURE__ */ a("span", { "aria-hidden": "true", className: "font-semibold text-slate-400", children: "#" }),
+      icon: /* @__PURE__ */ a("span", { "aria-hidden": "true", className: "font-semibold text-text-tertiary", children: "#" }),
       label: t,
-      trailing: x,
+      trailing: v,
       active: y,
       onClick: r,
       onContextMenu: c,
@@ -526,14 +526,14 @@ function Ae({
   onCreated: o,
   defaultVisibility: i
 }) {
-  const [r, c] = C(""), [u, l] = C(""), [d, h] = C(!1), [b, f] = C(!1), [s, m] = C(!1), [y, v] = C(null);
+  const [r, c] = C(""), [u, l] = C(""), [d, h] = C(!1), [b, f] = C(!1), [s, m] = C(!1), [y, x] = C(null);
   U(() => {
-    e && (c(""), l(""), h(!1), f(!1), m(!1), v(null));
+    e && (c(""), l(""), h(!1), f(!1), m(!1), x(null));
   }, [e]);
-  const x = S(() => Ee(r), [r]), N = S(() => Le(r), [r]), g = !x && !s;
+  const v = S(() => Ee(r), [r]), N = S(() => Le(r), [r]), g = !v && !s;
   async function E(k) {
     if (k.preventDefault(), !!g) {
-      m(!0), v(null);
+      m(!0), x(null);
       try {
         const R = await n({
           name: r.trim(),
@@ -546,7 +546,7 @@ function Ae({
         });
         o?.(R), t();
       } catch (R) {
-        v(R instanceof Error ? R.message : "Failed to create room."), m(!1);
+        x(R instanceof Error ? R.message : "Failed to create room."), m(!1);
       }
     }
   }
@@ -575,26 +575,26 @@ function Ae({
               placeholder: "Team standup",
               maxLength: L + 10,
               disabled: s,
-              className: "w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info"
+              className: "w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info"
             }
           ),
-          /* @__PURE__ */ p("div", { className: "flex items-center justify-between text-[11px] text-slate-400", children: [
+          /* @__PURE__ */ p("div", { className: "flex items-center justify-between text-[11px] text-text-tertiary", children: [
             /* @__PURE__ */ a("span", { "data-testid": "new-hangout-room-slug-preview", children: N ? `#${N}` : "Slug preview appears here" }),
             /* @__PURE__ */ a("span", { children: `${r.trim().length}/${L}` })
           ] }),
-          x && r.length > 0 && /* @__PURE__ */ a(
+          v && r.length > 0 && /* @__PURE__ */ a(
             "span",
             {
               "data-testid": "new-hangout-room-name-error",
               className: "text-[11px] text-danger-fg",
-              children: x
+              children: v
             }
           )
         ] }),
         /* @__PURE__ */ p("label", { className: "flex flex-col gap-1", children: [
           /* @__PURE__ */ p("span", { className: "text-[12px] font-semibold text-slate-700", children: [
             "Description ",
-            /* @__PURE__ */ a("span", { className: "font-normal text-slate-400", children: "(optional)" })
+            /* @__PURE__ */ a("span", { className: "font-normal text-text-tertiary", children: "(optional)" })
           ] }),
           /* @__PURE__ */ a(
             "textarea",
@@ -605,7 +605,7 @@ function Ae({
               placeholder: "What's this room for?",
               rows: 2,
               disabled: s,
-              className: "w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
+              className: "w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
             }
           )
         ] }),
@@ -613,7 +613,7 @@ function Ae({
           /* @__PURE__ */ p("label", { className: "flex items-center justify-between gap-3", children: [
             /* @__PURE__ */ p("span", { className: "flex flex-col", children: [
               /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Audio only" }),
-              /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Skip video tracks — voice-only room." })
+              /* @__PURE__ */ a("span", { className: "text-[11px] text-text-tertiary", children: "Skip video tracks — voice-only room." })
             ] }),
             /* @__PURE__ */ a(
               $,
@@ -629,7 +629,7 @@ function Ae({
           /* @__PURE__ */ p("label", { className: "flex items-center justify-between gap-3", children: [
             /* @__PURE__ */ p("span", { className: "flex flex-col", children: [
               /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Recording enabled" }),
-              /* @__PURE__ */ a("span", { className: "text-[11px] text-slate-400", children: "Allow server-side recording of sessions." })
+              /* @__PURE__ */ a("span", { className: "text-[11px] text-text-tertiary", children: "Allow server-side recording of sessions." })
             ] }),
             /* @__PURE__ */ a(
               $,
@@ -694,10 +694,10 @@ function Pe({
   const [b, f] = C(!1), s = () => f(!0), m = () => f(!1), y = S(
     () => e.rooms.filter((g) => g.state === "active"),
     [e.rooms]
-  ), v = S(
+  ), x = S(
     () => y.slice(0, u),
     [y, u]
-  ), x = y.length - v.length;
+  ), v = y.length - x.length;
   return /* @__PURE__ */ p(w, { children: [
     /* @__PURE__ */ p(
       ee,
@@ -720,7 +720,7 @@ function Pe({
             "div",
             {
               "aria-hidden": "true",
-              className: "h-7 rounded-md bg-slate-100 animate-pulse"
+              className: "h-7 rounded-md bg-surface-hover animate-pulse"
             },
             g
           )) }),
@@ -756,7 +756,7 @@ function Pe({
             }
           ),
           !e.isLoading && !e.error && y.length > 0 && /* @__PURE__ */ p("div", { className: "flex flex-col gap-0.5", children: [
-            v.map((g) => /* @__PURE__ */ a(
+            x.map((g) => /* @__PURE__ */ a(
               Re,
               {
                 slug: g.slug,
@@ -769,11 +769,11 @@ function Pe({
               },
               g.slug
             )),
-            x > 0 && /* @__PURE__ */ a(
+            v > 0 && /* @__PURE__ */ a(
               B,
               {
                 "data-testid": "hangout-rooms-browse-all",
-                label: /* @__PURE__ */ p("span", { className: "text-[12px] text-slate-500", children: [
+                label: /* @__PURE__ */ p("span", { className: "text-[12px] text-neutral", children: [
                   "Browse all (",
                   y.length,
                   ")"
@@ -847,11 +847,11 @@ function it({
     participantId: t,
     userId: n ?? t.slice(0, 8),
     getAuthToken: i
-  }), y = S(() => m.participants.filter((g) => b || !g.isLocal).map((g) => je(g, h)), [m.participants, b, h]), v = m.participants.filter((N) => !N.isLocal).length, x = {
+  }), y = S(() => m.participants.filter((g) => b || !g.isLocal).map((g) => je(g, h)), [m.participants, b, h]), x = m.participants.filter((N) => !N.isLocal).length, v = {
     connectionState: m.connectionState,
     error: m.error,
     participantCount: m.participants.length,
-    remoteCount: v
+    remoteCount: x
   };
   return /* @__PURE__ */ p(
     "div",
@@ -870,7 +870,7 @@ function it({
             className: "h-full"
           }
         ),
-        r && /* @__PURE__ */ a("div", { className: "absolute inset-0 pointer-events-none z-10", "data-testid": "wrapped-overlay-slot", children: /* @__PURE__ */ a("div", { className: "pointer-events-auto", children: r(x) }) })
+        r && /* @__PURE__ */ a("div", { className: "absolute inset-0 pointer-events-none z-10", "data-testid": "wrapped-overlay-slot", children: /* @__PURE__ */ a("div", { className: "pointer-events-auto", children: r(v) }) })
       ]
     }
   );
@@ -891,7 +891,7 @@ function ot({
   wrapWithNetworkShim: f
 }) {
   return e.rooms.filter(
-    (v) => v.state === "active"
+    (x) => x.state === "active"
   ).length === 0 && !e.isLoading && !e.error && h ? /* @__PURE__ */ a("div", { "data-testid": "wrapped-hangout-rooms-empty-slot", children: h }) : /* @__PURE__ */ a(w, { children: T(/* @__PURE__ */ a(
     Pe,
     {
@@ -899,7 +899,7 @@ function ot({
       occupancyAdapter: t,
       occupancyFor: n,
       participantId: o,
-      onJoinRoom: i ? (v) => i(v.slug) : void 0,
+      onJoinRoom: i ? (x) => i(x.slug) : void 0,
       onContextMenu: r,
       onBrowseAll: c,
       maxVisible: u,
@@ -933,8 +933,8 @@ export {
   he as adaptFileUploadState,
   be as adaptFileUploads,
   ye as adaptHangoutParticipant,
-  ve as adaptHangoutParticipants,
-  xe as adaptNotification,
+  xe as adaptHangoutParticipants,
+  ve as adaptNotification,
   Ne as adaptNotifications,
   ce as adaptPresenceEntry,
   Ye as adaptPresenceRoster,

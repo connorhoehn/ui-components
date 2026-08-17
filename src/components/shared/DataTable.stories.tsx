@@ -111,14 +111,14 @@ export const WithRowActions: Story = {
       <>
         <button
           type="button"
-          className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary hover:bg-slate-50"
+          className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary hover:bg-surface-panel"
           onClick={() => console.log('retry', row.id)}
         >
           Retry
         </button>
         <button
           type="button"
-          className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-secondary hover:bg-slate-50"
+          className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-secondary hover:bg-surface-panel"
           onClick={() => console.log('cancel', row.id)}
         >
           Cancel

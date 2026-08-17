@@ -188,7 +188,7 @@ function Modal({
         onClick={e => e.stopPropagation()}
       >
         {title && (
-          <div className="text-base font-semibold text-slate-900 mb-2.5">
+          <div className="text-base font-semibold text-text-primary mb-2.5">
             {title}
           </div>
         )}

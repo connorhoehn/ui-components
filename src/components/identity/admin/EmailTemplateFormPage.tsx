@@ -115,11 +115,11 @@ export function EmailTemplateFormPage({
             onChange={(e) => setHtmlBody(e.target.value)}
             placeholder="<html><body>...</body></html>"
             rows={10}
-            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 resize-y box-border font-mono"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 resize-y box-border font-mono"
           />
           {showPreview && (
             <div
-              className="border border-slate-200 rounded-sm p-4 bg-white min-h-[200px] mt-2"
+              className="border border-border rounded-sm p-4 bg-white min-h-[200px] mt-2"
               dangerouslySetInnerHTML={{ __html: htmlBody }}
             />
           )}
@@ -154,7 +154,7 @@ export function EmailTemplateFormPage({
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 box-border"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 box-border"
             placeholder="Type variable name and press Enter"
             value={varInput}
             onChange={(e) => setVarInput(e.target.value)}

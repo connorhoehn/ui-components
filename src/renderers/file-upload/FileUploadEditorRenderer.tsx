@@ -82,7 +82,7 @@ export default function FileUploadEditorRenderer({
         <label
           data-testid={`file-upload-empty-${section.id}`}
           className={cn(
-            'block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-slate-500 text-[13px] text-center bg-surface-inset',
+            'block px-4 py-3.5 border border-dashed border-border-emphasis rounded-lg text-neutral text-[13px] text-center bg-surface-inset',
             editable ? 'cursor-pointer' : 'cursor-default',
           )}
         >

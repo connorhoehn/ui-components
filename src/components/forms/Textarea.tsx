@@ -98,16 +98,16 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         value={value}
         onChange={handleChange}
         className={cn(
-          'w-full rounded-md border bg-slate-50 font-inherit text-slate-900',
+          'w-full rounded-md border bg-surface-panel font-inherit text-text-primary',
           'outline-none transition-colors duration-150 px-2.5 py-1.5 text-[13px] leading-5',
-          'placeholder:text-slate-400',
+          'placeholder:text-text-tertiary',
           'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
-          'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100',
+          'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
           !autoResize && 'resize-y',
           autoResize && 'resize-none overflow-hidden',
           invalid
             ? 'border-danger focus:border-danger focus:ring-danger/40'
-            : 'border-slate-300',
+            : 'border-border-emphasis',
           className,
         )}
         style={

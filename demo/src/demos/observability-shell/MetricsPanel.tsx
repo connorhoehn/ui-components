@@ -31,7 +31,7 @@ const TREND_ARROW: Record<NonNullable<KPI['trend']>, string> = {
 const TREND_COLOR: Record<NonNullable<KPI['trend']>, string> = {
   up: 'text-danger-fg',
   down: 'text-success-fg',
-  stable: 'text-slate-400',
+  stable: 'text-text-tertiary',
 };
 
 export function MetricsPanel() {
@@ -88,14 +88,14 @@ export function MetricsPanel() {
             key={kpi.label}
             className={`rounded-[10px] border px-[18px] py-4 transition-all ${SEVERITY_CLASSES[severity]}`}
           >
-            <div className="text-[11px] font-medium text-slate-500 mb-2">
+            <div className="text-[11px] font-medium text-neutral mb-2">
               {kpi.label}
             </div>
             <div className="flex items-baseline gap-1.5">
               <span className={`text-2xl font-bold ${SEVERITY_TEXT[severity]}`}>
                 {kpi.value}
               </span>
-              {kpi.unit && <span className="text-xs text-slate-500">{kpi.unit}</span>}
+              {kpi.unit && <span className="text-xs text-neutral">{kpi.unit}</span>}
               {kpi.trend && kpi.trend !== 'stable' && (
                 <span className={`ml-auto text-sm font-semibold ${TREND_COLOR[kpi.trend]}`}>
                   {TREND_ARROW[kpi.trend]}

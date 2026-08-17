@@ -35,7 +35,7 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
         className="h-full flex flex-col group-hover:shadow-md group-hover:-translate-y-0.5 transition-all"
       >
         <div
-          className={`h-40 flex items-center justify-center border-b border-slate-200 bg-gradient-to-br ${gradient}`}
+          className={`h-40 flex items-center justify-center border-b border-border bg-gradient-to-br ${gradient}`}
           aria-hidden="true"
         >
           {entry.thumbnail ? (
@@ -54,10 +54,10 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
               {entry.category}
             </Chip>
           </div>
-          <h3 className="text-base font-semibold text-slate-900 m-0">
+          <h3 className="text-base font-semibold text-text-primary m-0">
             {entry.title}
           </h3>
-          <p className="text-[13px] text-slate-500 leading-relaxed m-0">
+          <p className="text-[13px] text-neutral leading-relaxed m-0">
             {entry.description}
           </p>
         </div>

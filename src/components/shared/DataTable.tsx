@@ -174,12 +174,12 @@ export function DataTable<T>({
                 <TableRow key={`skeleton-${i}`} data-testid="datatable-loading-row">
                   {columns.map((col) => (
                     <TableTd key={col.key} className={alignClass(col.align)}>
-                      <div className="h-4 w-3/4 animate-pulse rounded bg-slate-100" />
+                      <div className="h-4 w-3/4 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   ))}
                   {rowActions && (
                     <TableTd className="text-right">
-                      <div className="ml-auto h-4 w-16 animate-pulse rounded bg-slate-100" />
+                      <div className="ml-auto h-4 w-16 animate-pulse rounded bg-surface-hover" />
                     </TableTd>
                   )}
                 </TableRow>
@@ -233,7 +233,7 @@ export function DataTable<T>({
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={safePage === 0}
               data-testid="datatable-prev"
-              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-slate-50"
+              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
             >
               Prev
             </button>
@@ -242,7 +242,7 @@ export function DataTable<T>({
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={safePage >= totalPages - 1}
               data-testid="datatable-next"
-              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-slate-50"
+              className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
             >
               Next
             </button>

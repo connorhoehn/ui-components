@@ -67,7 +67,7 @@ describe('AgentCard', () => {
 
   it('selected=false uses the slate border', () => {
     const { container } = render(<AgentCard agent={makeAgent()} selected={false} />);
-    expect(container.firstChild).toHaveClass('border-slate-200');
+    expect(container.firstChild).toHaveClass('border-border');
   });
 
   it('fires onClick when the card is clicked', () => {
@@ -132,6 +132,6 @@ describe('AgentCard', () => {
 
   it('omits the tools row entirely when tools is empty', () => {
     const { container } = render(<AgentCard agent={makeAgent({ tools: [] })} />);
-    expect(container.querySelectorAll('span.bg-slate-100')).toHaveLength(1); // protocol pill only
+    expect(container.querySelectorAll('span.bg-surface-hover')).toHaveLength(1); // protocol pill only
   });
 });

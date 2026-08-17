@@ -164,13 +164,13 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           {customAttrs.map((attr, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-2">
               <input
-                className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
               <input
-                className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}

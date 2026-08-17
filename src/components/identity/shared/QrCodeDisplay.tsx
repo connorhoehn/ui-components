@@ -11,7 +11,7 @@ export interface QrCodeDisplayProps {
 
 export function QrCodeDisplay({ value, size = 200, label }: QrCodeDisplayProps) {
   return (
-    <figure className="flex flex-col items-center gap-2 m-0 p-4 border border-slate-200 rounded-md bg-white">
+    <figure className="flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white">
       <img
         src={value}
         alt={label || 'QR Code'}
@@ -20,7 +20,7 @@ export function QrCodeDisplay({ value, size = 200, label }: QrCodeDisplayProps) 
         className="block rounded-sm [image-rendering:pixelated]"
       />
       {label && (
-        <figcaption className="text-sm text-slate-500 text-center">
+        <figcaption className="text-sm text-neutral text-center">
           {label}
         </figcaption>
       )}

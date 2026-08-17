@@ -34,7 +34,7 @@ export function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboard
 
       {/* Global info row */}
       <div className="flex items-center justify-between px-1">
-        <div className="text-xs text-slate-500">
+        <div className="text-xs text-neutral">
           Avg latency: <span className="font-medium text-slate-700">{avgLatency}ms</span>
           {' · '}
           Metrics tracked: <span className="font-medium text-slate-700">{metrics.length} agents</span>
@@ -60,8 +60,8 @@ export function AgentsDashboardPage({ onAgentClick, className }: AgentsDashboard
 function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
   const colorClass = color === 'emerald' ? 'text-success-fg' : color === 'amber' ? 'text-warning-fg' : color === 'red' ? 'text-danger-fg' : 'text-slate-800';
   return (
-    <div className="border border-slate-200 rounded-lg p-3 bg-white">
-      <div className="text-[10px] uppercase text-slate-400 mb-1">{label}</div>
+    <div className="border border-border rounded-lg p-3 bg-white">
+      <div className="text-[10px] uppercase text-text-tertiary mb-1">{label}</div>
       <div className={cn('text-xl font-semibold', colorClass)}>{value}</div>
     </div>
   );

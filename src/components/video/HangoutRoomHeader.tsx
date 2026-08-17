@@ -95,14 +95,14 @@ export function HangoutRoomHeader({
     <header
       data-testid={testId}
       className={cn(
-        'flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-200 bg-white',
+        'flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-white',
         className,
       )}
     >
       <div className="min-w-0 flex-1">
-        <h1 className="text-lg font-semibold truncate text-slate-900">{channelName}</h1>
+        <h1 className="text-lg font-semibold truncate text-text-primary">{channelName}</h1>
         {(subtitle || recording?.armed || elapsedLabel) && (
-          <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
+          <div className="text-xs text-neutral mt-0.5 flex items-center gap-2 flex-wrap">
             {subtitle && <span>{subtitle}</span>}
             {recording?.armed && (
               <Chip

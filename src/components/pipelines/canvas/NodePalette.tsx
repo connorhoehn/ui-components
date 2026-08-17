@@ -398,7 +398,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           className={cn(
             'h-8 box-border my-px mx-2 px-2 flex items-center gap-2 rounded font-[inherit]',
             isDisabled ? 'cursor-not-allowed opacity-45' : 'cursor-grab',
-            isHovered ? 'bg-slate-100' : 'bg-transparent',
+            isHovered ? 'bg-surface-hover' : 'bg-transparent',
           )}
           title={
             isDisabled
@@ -426,7 +426,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             <kbd
               data-testid={`palette-shortcut-${item.type}`}
               className={cn(
-                'ml-auto text-[10px] font-semibold font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0',
+                'ml-auto text-[10px] font-semibold font-mono text-neutral bg-surface-hover border border-border rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0',
                 isDisabled && 'opacity-50',
               )}
             >
@@ -447,7 +447,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
         className={cn(
           'h-11 box-border my-0.5 mx-2 py-1.5 px-2.5 flex items-center gap-2.5 rounded-md border border-transparent font-[inherit]',
           isDisabled ? 'cursor-not-allowed opacity-45' : 'cursor-grab',
-          isHovered ? 'bg-slate-50' : 'bg-transparent',
+          isHovered ? 'bg-surface-panel' : 'bg-transparent',
         )}
         title={
           isDisabled
@@ -469,13 +469,13 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           {item.icon}
         </span>
         <div className="flex-1 min-w-0">
-          <div className={cn('text-[13px] font-semibold text-slate-900 flex items-center gap-1.5', isDisabled && 'line-through')}>
+          <div className={cn('text-[13px] font-semibold text-text-primary flex items-center gap-1.5', isDisabled && 'line-through')}>
             <span className="truncate">{item.name}</span>
             {shortcutDigit !== null && (
               <kbd
                 data-testid={`palette-shortcut-${item.type}`}
                 className={cn(
-                  'text-[10px] font-semibold font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0',
+                  'text-[10px] font-semibold font-mono text-neutral bg-surface-hover border border-border rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0',
                   isDisabled && 'opacity-50',
                 )}
               >
@@ -483,7 +483,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
               </kbd>
             )}
           </div>
-          <div className="text-[11px] text-slate-500 truncate">
+          <div className="text-[11px] text-neutral truncate">
             {isDisabled ? 'Placed' : item.description}
           </div>
         </div>
@@ -497,11 +497,11 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
 
   return (
     <div
-      className="w-[220px] shrink-0 h-full border-r border-slate-200 bg-white flex flex-col"
+      className="w-[220px] shrink-0 h-full border-r border-border bg-white flex flex-col"
       data-testid="node-palette"
     >
       {/* Header */}
-      <div className="shrink-0 border-b border-slate-200">
+      <div className="shrink-0 border-b border-border">
         {/* Search + compact toggle */}
         <div className="flex items-center gap-1.5 py-2.5 px-3">
           <input
@@ -511,7 +511,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             placeholder="Search nodes..."
             aria-label="Search nodes"
             data-testid="palette-search"
-            className="flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-slate-400"
+            className="flex-1 min-w-0 border border-border-emphasis rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-surface-panel text-text-primary outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-text-tertiary"
           />
           <button
             type="button"
@@ -523,7 +523,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
               'shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors',
               compact
                 ? 'bg-info border-info text-white'
-                : 'bg-white border-slate-300 text-slate-500 hover:bg-slate-50',
+                : 'bg-white border-border-emphasis text-neutral hover:bg-surface-panel',
             )}
           >
             {compact ? (
@@ -570,7 +570,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             <button
               type="button"
               onClick={() => toggleCollapsed('__recents__')}
-              className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-slate-400 hover:text-slate-600 transition-colors font-[inherit]"
+              className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"
               aria-expanded={!collapsed['__recents__']}
             >
               <Chevron expanded={!collapsed['__recents__']} />
@@ -593,7 +593,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
             className="flex flex-col items-center gap-3 px-4 py-8 text-center"
             data-testid="palette-empty"
           >
-            <span className="text-xs text-slate-400">No nodes match</span>
+            <span className="text-xs text-text-tertiary">No nodes match</span>
             <button
               type="button"
               onClick={clearFilters}
@@ -611,7 +611,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
                 <button
                   type="button"
                   onClick={() => toggleCollapsed(cat.name)}
-                  className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-slate-400 hover:text-slate-600 transition-colors font-[inherit]"
+                  className="w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]"
                   aria-expanded={!isCollapsed}
                 >
                   <Chevron expanded={!isCollapsed} />
@@ -637,7 +637,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
       </div>
 
       {/* Footer */}
-      <div className="py-2 px-3 border-t border-slate-200 text-[10px] text-slate-400 font-[inherit] shrink-0">
+      <div className="py-2 px-3 border-t border-border text-[10px] text-text-tertiary font-[inherit] shrink-0">
         Press 1–9 to insert at center
       </div>
     </div>

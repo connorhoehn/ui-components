@@ -95,11 +95,11 @@ async function fetchOutputSchemas(): Promise<OutputSchemasResponse> {
 
 const KIND_CHIP_CLASSES: Record<SchemaPath['kind'], string> = {
   array:   'bg-primary-bg text-primary-fg border-primary-border',
-  object:  'bg-slate-50 text-slate-600 border-slate-200',
+  object:  'bg-surface-panel text-text-secondary border-border',
   string:  'bg-success-bg text-success-fg border-success-border',
   number:  'bg-warning-bg text-warning-fg border-warning-border',
   boolean: 'bg-pink-50 text-pink-700 border-pink-200',
-  unknown: 'bg-slate-50 text-slate-400 border-slate-200',
+  unknown: 'bg-surface-panel text-text-tertiary border-border',
 };
 
 function KindChip({ kind }: { kind: SchemaPath['kind'] }) {
@@ -133,7 +133,7 @@ function PathRow({ entry, isSelected, onPick }: PathRowProps) {
       data-testid={`path-row-${entry.path}`}
       className={cn(
         'w-full flex items-center gap-2 px-2 py-1 rounded text-left transition-colors duration-100',
-        'hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/50',
+        'hover:bg-surface-panel focus:outline-none focus:ring-2 focus:ring-primary/50',
         isSelected && 'bg-primary-bg ring-1 ring-inset ring-primary',
         entry.isArrayItems && !isSelected && 'hover:bg-primary-bg',
       )}
@@ -227,7 +227,7 @@ export function ScatterPathPicker({
     return (
       <div className="flex flex-col gap-1.5">
         {fetchState === 'loading' && (
-          <p className="text-[11px] text-slate-400 leading-4">
+          <p className="text-[11px] text-text-tertiary leading-4">
             Loading schema for {upstreamKind}…
           </p>
         )}
@@ -237,7 +237,7 @@ export function ScatterPathPicker({
           </p>
         )}
         {(fetchState === 'done' || upstreamSchema === null) && (
-          <p className="text-[11px] text-slate-400 leading-4">
+          <p className="text-[11px] text-text-tertiary leading-4">
             Schema unavailable for <span className="font-mono">{upstreamKind}</span> — enter path manually.
           </p>
         )}
@@ -257,7 +257,7 @@ export function ScatterPathPicker({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <p className="text-[11px] text-slate-500 leading-4">
+      <p className="text-[11px] text-neutral leading-4">
         Click a path to set itemsPath.
         {hasMixedPaths && (
           <>
@@ -269,7 +269,7 @@ export function ScatterPathPicker({
       </p>
 
       <div
-        className="flex flex-col gap-px border border-slate-200 rounded-md bg-white max-h-48 overflow-y-auto"
+        className="flex flex-col gap-px border border-border rounded-md bg-white max-h-48 overflow-y-auto"
         data-testid="scatter-path-tree"
         role="listbox"
         aria-label="Available output paths"

@@ -23,7 +23,7 @@ const meta = {
     (Story) => (
       <PipelineEditorServicesProvider services={services}>
         {/* Node-card width context — strips live inside 200px cards */}
-        <div className="w-[200px] rounded-lg border border-slate-200 bg-white p-3">
+        <div className="w-[200px] rounded-lg border border-border bg-white p-3">
           <Story />
         </div>
       </PipelineEditorServicesProvider>

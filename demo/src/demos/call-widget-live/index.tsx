@@ -51,11 +51,11 @@ function AppSidebar() {
     <div className="w-52 bg-[#1e1e2e] border-r border-[#2e2e3e] flex flex-col shrink-0 h-full overflow-hidden">
       <div className="px-4 py-3 border-b border-[#2e2e3e]">
         <div className="text-[15px] font-bold text-slate-200">Acme Workspace</div>
-        <div className="text-[11px] text-slate-500 mt-0.5">4 members online</div>
+        <div className="text-[11px] text-neutral mt-0.5">4 members online</div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-2">
-        <div className="px-4 py-1 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+        <div className="px-4 py-1 text-[10px] font-bold text-neutral uppercase tracking-wider">
           Channels
         </div>
         {CHANNELS.map(ch => (
@@ -64,7 +64,7 @@ function AppSidebar() {
             className={`flex items-center justify-between px-4 py-1.5 text-[13px] cursor-pointer border-l-[3px] ${
               ch.active
                 ? 'text-slate-200 bg-primary/10 border-l-primary'
-                : 'text-slate-400 border-l-transparent hover:bg-white/5'
+                : 'text-text-tertiary border-l-transparent hover:bg-white/5'
             }`}
           >
             <span># {ch.name}</span>
@@ -74,11 +74,11 @@ function AppSidebar() {
           </div>
         ))}
 
-        <div className="px-4 py-1 mt-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+        <div className="px-4 py-1 mt-3 text-[10px] font-bold text-neutral uppercase tracking-wider">
           Online
         </div>
         {ONLINE_USERS.map(u => (
-          <div key={u.id} className="flex items-center gap-2 px-4 py-1 text-[13px] text-slate-400">
+          <div key={u.id} className="flex items-center gap-2 px-4 py-1 text-[13px] text-text-tertiary">
             <span className="w-2 h-2 rounded-full bg-success shrink-0" />
             {u.displayName}
           </div>
@@ -105,9 +105,9 @@ function MessageBubble({ sender, text, time, isLocal }: { sender: typeof USERS.s
       <div className="flex-1 min-w-0">
         <div className="flex items-baseline gap-2">
           <span className="text-[13px] font-semibold text-slate-200">{sender.displayName}</span>
-          <span className="text-[10px] text-slate-500">{time}</span>
+          <span className="text-[10px] text-neutral">{time}</span>
         </div>
-        <p className="m-0 mt-0.5 text-[13px] text-slate-300 leading-relaxed">{text}</p>
+        <p className="m-0 mt-0.5 text-[13px] text-text-disabled leading-relaxed">{text}</p>
       </div>
     </div>
   );
@@ -137,7 +137,7 @@ function ChatArea({ callActive, messages }: { callActive: boolean; messages: Cha
       <div className="flex items-center justify-between px-5 py-3 border-b border-[#2e2e3e] shrink-0">
         <div>
           <div className="text-[15px] font-semibold text-slate-200"># api-team</div>
-          <div className="text-[11px] text-slate-500">Sarah, Marcus, Alex, and you</div>
+          <div className="text-[11px] text-neutral">Sarah, Marcus, Alex, and you</div>
         </div>
         {callActive && (
           <Chip tone="success" size="sm">
@@ -350,8 +350,8 @@ export default function CallWidgetLiveDemo() {
   return (
     <div className="flex flex-col flex-1 min-h-0 px-6 pt-4">
       <div className="mb-3">
-        <h1 className="text-xl font-semibold text-slate-900 m-0">Call Widget — Live Demo</h1>
-        <p className="text-sm text-slate-500 mt-1 m-0 max-w-2xl">
+        <h1 className="text-xl font-semibold text-text-primary m-0">Call Widget — Live Demo</h1>
+        <p className="text-sm text-neutral mt-1 m-0 max-w-2xl">
           Simulated messaging app with a floating call widget. The simulation auto-plays a full call lifecycle — use the controls to pause, step, or adjust speed.
         </p>
       </div>

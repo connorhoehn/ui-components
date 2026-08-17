@@ -26,7 +26,7 @@ import EditorOverflowMenu from './EditorOverflowMenu';
 type ChipVariant = 'success' | 'info' | 'neutral' | 'warning' | 'danger';
 
 const chipVariantClasses: Record<ChipVariant, string> = {
-  neutral: 'bg-slate-100 text-slate-600',
+  neutral: 'bg-surface-hover text-text-secondary',
   success: 'bg-success-bg text-success-fg',
   warning: 'bg-warning-bg text-warning-fg',
   danger: 'bg-danger-bg text-danger-fg',
@@ -345,7 +345,7 @@ export default function EditorTopBar({
           data-testid="run-status-indicator"
         >
           {toolbarRunStatus.variant === 'running' && (
-            <span className="inline-block w-3 h-3 border-2 border-slate-200 border-t-primary rounded-full animate-spin" />
+            <span className="inline-block w-3 h-3 border-2 border-border border-t-primary rounded-full animate-spin" />
           )}
           {toolbarRunStatus.variant === 'success' && '✓ '}
           {toolbarRunStatus.variant === 'error' && '✗ '}
@@ -403,7 +403,7 @@ export default function EditorTopBar({
       >
         {isTriggering ? (
           <span className="inline-flex items-center gap-1.5">
-            <span className="inline-block w-3 h-3 border-2 border-slate-200 border-t-white rounded-full animate-spin" />
+            <span className="inline-block w-3 h-3 border-2 border-border border-t-white rounded-full animate-spin" />
             Triggering…
           </span>
         ) : (

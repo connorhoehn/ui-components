@@ -174,7 +174,7 @@ function makeNotificationFrame(n: typeof NOTIFICATIONS[number]) {
 
 function CapabilityToggleHint() {
   return (
-    <p className="text-[11px] italic text-slate-400">
+    <p className="text-[11px] italic text-text-tertiary">
       Capability check resolves automatically in mock mode (always enabled
       after ~400 ms). In live mode the gateway's CRD list decides.
     </p>
@@ -197,7 +197,7 @@ function GatedInbox() {
     <CapabilityBoundary
       capability={capability}
       loading={
-        <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+        <div className="rounded-md border border-border bg-surface-panel p-4 text-sm text-neutral">
           Loading capability…
         </div>
       }
@@ -249,20 +249,20 @@ function LiveWiring({ url, children }: { url: string; children: ReactNode }) {
 export default function HookNotificationsIntegrationDemo() {
   return (
     <div className="mx-auto max-w-[1080px] p-8">
-      <h2 className="mb-1 text-xl font-bold text-slate-900">
+      <h2 className="mb-1 text-xl font-bold text-text-primary">
         NotificationCenter + useNotifications
       </h2>
-      <p className="mb-2 text-sm leading-relaxed text-slate-500">
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+      <p className="mb-2 text-sm leading-relaxed text-neutral">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           {'<NotificationCenter>'}
         </code>{' '}
         wired to{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           useNotifications()
         </code>
         . Side-by-side compares a plain wrap to a capability-gated wrap that
         falls back to{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           {'<CapabilityDeniedFallback>'}
         </code>{' '}
         when the gateway reports the capability is off.
@@ -283,7 +283,7 @@ export default function HookNotificationsIntegrationDemo() {
           <h3 className="mb-2 text-sm font-semibold text-slate-700">
             Bare wrap
           </h3>
-          <p className="mb-3 text-[12px] leading-snug text-slate-500">
+          <p className="mb-3 text-[12px] leading-snug text-neutral">
             useNotifications() → WrappedNotificationCenter. Always renders.
           </p>
           {IS_MOCK ? (
@@ -301,7 +301,7 @@ export default function HookNotificationsIntegrationDemo() {
           <h3 className="mb-2 text-sm font-semibold text-slate-700">
             Capability-gated
           </h3>
-          <p className="mb-3 text-[12px] leading-snug text-slate-500">
+          <p className="mb-3 text-[12px] leading-snug text-neutral">
             Wraps the inbox in &lt;CapabilityBoundary capability=
             {`{useCapability('notifications')}`}&gt; with{' '}
             &lt;CapabilityDeniedFallback&gt; as the disabled slot.

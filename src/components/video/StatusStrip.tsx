@@ -39,7 +39,7 @@ const phaseTextClasses: Record<string, string> = {
   connecting: 'text-warning-fg',
   reconnecting: 'text-warning-fg',
   buffering: 'text-warning-fg',
-  idle: 'text-slate-400',
+  idle: 'text-text-tertiary',
   error: 'text-danger-fg',
 };
 
@@ -50,7 +50,7 @@ export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }:
     <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono')} style={style}>
       <span className={cn('flex items-center gap-1')}>
         <span className={cn('w-[7px] h-[7px] rounded-full', phaseDotClasses[phase] ?? 'bg-slate-400')} />
-        <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-slate-400')}>{label}</span>
+        <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-text-tertiary')}>{label}</span>
       </span>
       {bitrateBps !== undefined && <span>{formatBitrate(bitrateBps)}</span>}
       {duration !== undefined && <span>{formatDuration(duration)}</span>}

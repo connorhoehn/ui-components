@@ -14,11 +14,11 @@ function sparklineBarColor(height: number) {
 
 function ChartPlaceholder() {
   return (
-    <div className="bg-white rounded-[10px] border border-slate-200 p-5 h-full flex flex-col">
+    <div className="bg-white rounded-[10px] border border-border p-5 h-full flex flex-col">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm">📈</span>
         <span className="text-[13px] font-semibold text-slate-800">Latency P99</span>
-        <span className="text-[11px] text-slate-400 ml-auto">Last 5 minutes</span>
+        <span className="text-[11px] text-text-tertiary ml-auto">Last 5 minutes</span>
       </div>
       <div className="flex-1 flex items-end gap-[3px] px-1">
         {SPARKLINE_BARS.map((h, i) => (
@@ -29,7 +29,7 @@ function ChartPlaceholder() {
           />
         ))}
       </div>
-      <div className="flex justify-between mt-2 text-[10px] text-slate-400">
+      <div className="flex justify-between mt-2 text-[10px] text-text-tertiary">
         <span>5m ago</span>
         <span>now</span>
       </div>
@@ -43,14 +43,14 @@ export default function ObservabilityShellDemo() {
       <div className="p-6 max-w-[1100px] mx-auto">
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-xl font-bold text-slate-900 m-0">
+            <h2 className="text-xl font-bold text-text-primary m-0">
               Observability Dashboard
             </h2>
             <span className="text-[10px] font-semibold uppercase tracking-wider bg-info-bg text-info-fg px-2 py-0.5 rounded">
               Live
             </span>
           </div>
-          <p className="text-slate-500 text-sm m-0">
+          <p className="text-neutral text-sm m-0">
             Cluster monitoring with real-time metrics, alerts, and node health. Events from the simulation
             drive KPI updates, alert firing/resolution, and node status changes.
           </p>

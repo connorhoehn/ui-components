@@ -73,7 +73,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     );
 
     const unitSuffix = unit ? (
-      <span className="text-slate-400 font-sans text-[12px] select-none">{unit}</span>
+      <span className="text-text-tertiary font-sans text-[12px] select-none">{unit}</span>
     ) : undefined;
 
     return (

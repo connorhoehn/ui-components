@@ -30,7 +30,7 @@ function GalleryDemo({ images }: { images: ImageLightboxImage[] }) {
           <button
             key={img.src}
             type="button"
-            className="h-20 w-20 overflow-hidden rounded-md border border-slate-200 p-0 cursor-pointer"
+            className="h-20 w-20 overflow-hidden rounded-md border border-border p-0 cursor-pointer"
             onClick={() => setOpenIndex(i)}
           >
             <img src={img.src} alt={img.alt ?? ''} className="h-full w-full object-cover" />
@@ -64,7 +64,7 @@ function UncontrolledDemo({ images }: { images: ImageLightboxImage[] }) {
     <>
       <button
         type="button"
-        className="rounded-md border border-slate-300 px-3 py-1.5 text-sm cursor-pointer"
+        className="rounded-md border border-border-emphasis px-3 py-1.5 text-sm cursor-pointer"
         onClick={() => setOpen(true)}
       >
         Open lightbox (internal nav state)

@@ -67,7 +67,7 @@ export const CustomFallback: Story = {
     size: 'md',
     loading: 'eager',
     fallback: (
-      <div className="flex flex-col items-center gap-1 text-slate-400">
+      <div className="flex flex-col items-center gap-1 text-text-tertiary">
         <span className="text-2xl">📷</span>
         <span className="text-xs">No image</span>
       </div>

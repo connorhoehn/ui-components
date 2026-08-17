@@ -44,12 +44,12 @@ const FOLLOW_UPS = [
 ];
 
 const COMPOSER_FRAME =
-  'border border-slate-200 rounded-lg overflow-hidden bg-white';
+  'border border-border rounded-lg overflow-hidden bg-white';
 const COMPOSER_LABEL =
-  'px-3 py-2 text-[11px] font-semibold text-slate-500';
+  'px-3 py-2 text-[11px] font-semibold text-neutral';
 const SUBTLE_SEP = 'border-t border-slate-100';
 const COL = 'flex flex-col items-center gap-1.5';
-const CAPTION = 'text-[11px] text-slate-500';
+const CAPTION = 'text-[11px] text-neutral';
 
 interface MockMessage {
   id: string;
@@ -211,7 +211,7 @@ export default function ChatPage() {
 
 <MessageBubble role="assistant" content="" streaming />`}
       >
-        <div className="border border-slate-200 rounded-lg px-4 bg-white flex flex-col">
+        <div className="border border-border rounded-lg px-4 bg-white flex flex-col">
           <MessageBubble role="user" content="Who knows auth best?" />
           <div className={SUBTLE_SEP} />
           <MessageBubble
@@ -349,9 +349,9 @@ Step 4: Rank and return top 3`}
   </div>
 </div>`}
       >
-        <div className="flex h-[700px] border border-slate-200 rounded-xl overflow-hidden bg-white">
-          <aside className="w-[220px] border-r border-slate-200 bg-slate-50 flex flex-col">
-            <div className="px-4 py-3.5 border-b border-slate-200 text-[13px] font-semibold text-slate-900">
+        <div className="flex h-[700px] border border-border rounded-xl overflow-hidden bg-white">
+          <aside className="w-[220px] border-r border-border bg-surface-panel flex flex-col">
+            <div className="px-4 py-3.5 border-b border-border text-[13px] font-semibold text-text-primary">
               Sessions
             </div>
             <div className="flex-1 overflow-y-auto p-2">
@@ -377,7 +377,7 @@ Step 4: Rank and return top 3`}
           </aside>
 
           <div className="flex-1 flex flex-col min-w-0">
-            <div className="px-5 py-3 border-b border-slate-200 text-[13px] font-semibold text-slate-900 bg-white">
+            <div className="px-5 py-3 border-b border-border text-[13px] font-semibold text-text-primary bg-white">
               Auth expertise lookup
             </div>
             <div className="flex-1 overflow-y-auto px-6">
@@ -411,7 +411,7 @@ Step 4: Rank and return top 3`}
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
       <div id="props" className="mt-12">
-        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
+        <h2 className="text-[22px] font-bold text-text-primary mb-6">
           API Reference
         </h2>
 

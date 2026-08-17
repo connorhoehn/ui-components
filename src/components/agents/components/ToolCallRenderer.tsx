@@ -23,13 +23,13 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
       className={cn(
         'border rounded text-xs font-mono overflow-hidden',
         toolCall.status === 'streaming' && 'border-info-border bg-info-bg/50',
-        toolCall.status === 'completed' && 'border-slate-200 bg-slate-50',
+        toolCall.status === 'completed' && 'border-border bg-surface-panel',
         toolCall.status === 'error' && 'border-danger-border bg-danger-bg/50',
         className,
       )}
     >
       <button
-        className="flex items-center gap-2 w-full px-2 py-1.5 text-left hover:bg-slate-100/50 transition-colors"
+        className="flex items-center gap-2 w-full px-2 py-1.5 text-left hover:bg-surface-hover/50 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         <span className={cn(
@@ -41,25 +41,25 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
         </span>
         <span className="text-slate-700 font-medium">{toolCall.name}</span>
         {duration != null && (
-          <span className="text-slate-400 ml-auto">{duration}ms</span>
+          <span className="text-text-tertiary ml-auto">{duration}ms</span>
         )}
-        <span className="text-slate-400 ml-1">{expanded ? '▾' : '▸'}</span>
+        <span className="text-text-tertiary ml-1">{expanded ? '▾' : '▸'}</span>
       </button>
 
       {expanded && (
         <div className="px-2 pb-2 space-y-1 border-t border-slate-100">
           {toolCall.args && (
             <div>
-              <div className="text-[10px] text-slate-400 uppercase mt-1">args</div>
-              <pre className="text-[11px] text-slate-600 whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto">
+              <div className="text-[10px] text-text-tertiary uppercase mt-1">args</div>
+              <pre className="text-[11px] text-text-secondary whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto">
                 {formatJson(toolCall.args)}
               </pre>
             </div>
           )}
           {toolCall.result != null && (
             <div>
-              <div className="text-[10px] text-slate-400 uppercase mt-1">result</div>
-              <pre className="text-[11px] text-slate-600 whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto">
+              <div className="text-[10px] text-text-tertiary uppercase mt-1">result</div>
+              <pre className="text-[11px] text-text-secondary whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto">
                 {formatUnknown(toolCall.result)}
               </pre>
             </div>

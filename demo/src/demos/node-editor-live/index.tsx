@@ -123,7 +123,7 @@ function EdgePath({ edge, fromStatus, toStatus }: {
 }
 
 const NODE_BORDER_CLASSES: Record<NodeStatus, string> = {
-  idle: 'border-slate-200 shadow-sm',
+  idle: 'border-border shadow-sm',
   running: 'border-warning shadow-[0_0_12px_rgba(245,158,11,0.4)]',
   completed: 'border-success shadow-sm',
   failed: 'border-danger shadow-sm',
@@ -137,7 +137,7 @@ const STATUS_DOT_CLASSES: Record<NodeStatus, string> = {
 };
 
 const STATUS_TEXT_CLASSES: Record<NodeStatus, string> = {
-  idle: 'text-slate-400',
+  idle: 'text-text-tertiary',
   running: 'text-warning-fg',
   completed: 'text-success-fg',
   failed: 'text-danger-fg',
@@ -178,7 +178,7 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
       </div>
       {status === 'running' && streamTokens.length > 0 && (
         <div className="px-3 pt-1 pb-1.5 border-t border-slate-100 max-h-11 overflow-hidden">
-          <div className="font-mono text-[9px] text-slate-500 leading-[13px]">
+          <div className="font-mono text-[9px] text-neutral leading-[13px]">
             {streamTokens.slice(-3).map((token, i) => (
               <div key={i} className="whitespace-nowrap overflow-hidden text-ellipsis">
                 {token}
@@ -252,7 +252,7 @@ function WorkflowCanvas() {
   const svgHeight = Math.max(...workflowNodes.map((n) => n.y + NODE_HEIGHT + 80)) + 40;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50">
+    <div className="flex flex-col h-full bg-surface-panel">
       <div className="flex items-center px-5 py-3 bg-slate-900 gap-4 shrink-0">
         <div className="flex items-center gap-2.5">
           <span className="text-lg">⚙</span>
@@ -271,7 +271,7 @@ function WorkflowCanvas() {
           <span
             className={`w-2 h-2 rounded-full ${WORKFLOW_STATUS_DOT_CLASSES[workflowStatus]}`}
           />
-          <span className="text-slate-400 text-xs font-medium">{statusLabel}</span>
+          <span className="text-text-tertiary text-xs font-medium">{statusLabel}</span>
         </div>
       </div>
 
@@ -301,7 +301,7 @@ function WorkflowCanvas() {
           <div className="pointer-events-none" style={{ width: svgWidth, height: svgHeight }} />
         </div>
 
-        <div className="w-[280px] border-l border-slate-200 shrink-0 overflow-hidden">
+        <div className="w-[280px] border-l border-border shrink-0 overflow-hidden">
           <DeploymentLog />
         </div>
       </div>

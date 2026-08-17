@@ -37,10 +37,10 @@ const SIZE_CLASSES: Record<CircularIconToggleSize, string> = {
 };
 
 const ON_CLASSES =
-  'bg-slate-200 text-slate-900 hover:bg-slate-300';
+  'bg-slate-200 text-text-primary hover:bg-slate-300';
 
 const OFF_NEUTRAL =
-  'bg-slate-100 text-slate-500 hover:bg-slate-200';
+  'bg-surface-hover text-neutral hover:bg-slate-200';
 
 const OFF_DANGER =
   'bg-danger-bg text-danger-fg hover:bg-danger-bg';

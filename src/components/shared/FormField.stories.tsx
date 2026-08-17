@@ -14,7 +14,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const inputClass =
-  'block w-full rounded border border-slate-300 px-3 py-1.5 text-sm';
+  'block w-full rounded border border-border-emphasis px-3 py-1.5 text-sm';
 
 export const Basic: Story = {
   args: {

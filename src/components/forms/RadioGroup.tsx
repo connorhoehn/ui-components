@@ -79,7 +79,7 @@ export function RadioGroup<T extends string = string>({
                   'block w-4 h-4 rounded-full border-2 transition-colors duration-150',
                   isChecked
                     ? 'border-info bg-white'
-                    : 'border-slate-300 bg-white',
+                    : 'border-border-emphasis bg-white',
                   !disabled && !isChecked && 'peer-hover:border-info',
                   'peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1',
                 )}
@@ -97,7 +97,7 @@ export function RadioGroup<T extends string = string>({
               <span
                 className={cn(
                   'text-[13px] leading-5 font-medium',
-                  disabled ? 'text-slate-400' : 'text-slate-800',
+                  disabled ? 'text-text-tertiary' : 'text-slate-800',
                 )}
               >
                 {option.label}
@@ -106,7 +106,7 @@ export function RadioGroup<T extends string = string>({
                 <span
                   className={cn(
                     'text-[11px] leading-4 mt-0.5',
-                    disabled ? 'text-slate-300' : 'text-slate-500',
+                    disabled ? 'text-text-disabled' : 'text-neutral',
                   )}
                 >
                   {option.description}

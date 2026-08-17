@@ -101,12 +101,12 @@ function CapabilityShowcaseRow({
         <div className="flex items-center gap-2">
           <span aria-hidden="true" className="text-lg">{row.icon}</span>
           <h3 className="text-sm font-semibold text-slate-800">{row.label}</h3>
-          <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] text-slate-600">
+          <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[11px] text-text-secondary">
             useCapability('{row.key}')
           </code>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[12px] font-medium text-slate-600">
+          <span className="text-[12px] font-medium text-text-secondary">
             {enabled ? 'Enabled' : 'Disabled'}
           </span>
           <Switch
@@ -117,7 +117,7 @@ function CapabilityShowcaseRow({
           <button
             type="button"
             onClick={onPulseLoad}
-            className="rounded-md border border-slate-300 bg-white px-2 py-1 text-[12px] font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-md border border-border-emphasis bg-white px-2 py-1 text-[12px] font-medium text-slate-700 hover:bg-surface-panel"
           >
             Pulse loading
           </button>
@@ -127,7 +127,7 @@ function CapabilityShowcaseRow({
       <CapabilityBoundary
         capability={hook}
         loading={
-          <div className="rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+          <div className="rounded-md border border-border bg-surface-panel p-4 text-sm text-neutral">
             Resolving capability…
           </div>
         }
@@ -170,17 +170,17 @@ export default function HookCapabilityIntegrationDemo() {
 
   return (
     <div className="mx-auto max-w-[820px] p-8">
-      <h2 className="mb-1 text-xl font-bold text-slate-900">
+      <h2 className="mb-1 text-xl font-bold text-text-primary">
         useCapability + CapabilityBoundary
       </h2>
-      <p className="mb-6 text-sm leading-relaxed text-slate-500">
+      <p className="mb-6 text-sm leading-relaxed text-neutral">
         Each card wraps its content in{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           {'<CapabilityBoundary>'}
         </code>{' '}
         — flip the switch to flip the synthesized hook return and watch the
         gate swap between content,{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[12px]">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
           {'<CapabilityDeniedFallback>'}
         </code>
         , and the loading slot.
@@ -199,13 +199,13 @@ export default function HookCapabilityIntegrationDemo() {
         ))}
       </div>
 
-      <p className="mt-6 text-[12px] italic text-slate-400">
+      <p className="mt-6 text-[12px] italic text-text-tertiary">
         In live mode each row would replace the synthesized hook return with{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] not-italic">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[11px] not-italic">
           useCapability(name)
         </code>{' '}
         from{' '}
-        <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] not-italic">
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[11px] not-italic">
           @connorhoehn/realtime-modules/client
         </code>
         . The gateway resolves the capability from the registered CRD set on

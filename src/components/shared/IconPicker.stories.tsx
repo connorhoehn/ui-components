@@ -17,7 +17,7 @@ function Harness({ initial }: { initial: string }) {
   return (
     <div className="flex flex-col gap-2 items-start">
       <IconPicker value={emoji} onChange={setEmoji} />
-      <span className="text-xs text-slate-500">selected: {emoji}</span>
+      <span className="text-xs text-neutral">selected: {emoji}</span>
     </div>
   );
 }

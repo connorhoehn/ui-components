@@ -64,7 +64,7 @@ export function GroupListPage({
         render: (item) => (
           <div className="flex flex-wrap gap-1">
             {item.permissions.length === 0
-              ? <span className="text-slate-400 text-xs">None</span>
+              ? <span className="text-text-tertiary text-xs">None</span>
               : item.permissions.map((p) => (
                   <Chip key={p} tone="info" size="xs">{p}</Chip>
                 ))}

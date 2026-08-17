@@ -15,7 +15,7 @@ const ICON_BG_CLASSES: Record<AudiencePath['accent'], string> = {
   sky: 'bg-info-bg text-info-fg',
   emerald: 'bg-success-bg text-success-fg',
   amber: 'bg-warning-bg text-warning-fg',
-  slate: 'bg-slate-100 text-slate-700',
+  slate: 'bg-surface-hover text-slate-700',
 };
 
 const PRIMARY_LINK_CLASSES: Record<AudiencePath['accent'], string> = {
@@ -23,7 +23,7 @@ const PRIMARY_LINK_CLASSES: Record<AudiencePath['accent'], string> = {
   sky: 'text-info-fg hover:text-info-fg',
   emerald: 'text-success-fg hover:text-success-fg',
   amber: 'text-warning-fg hover:text-warning-fg',
-  slate: 'text-slate-700 hover:text-slate-900',
+  slate: 'text-slate-700 hover:text-text-primary',
 };
 
 const ICON_GLYPHS: Record<string, string> = {
@@ -52,17 +52,17 @@ function AudienceCard({ path }: { path: AudiencePath }) {
           {ICON_GLYPHS[path.id] ?? '✨'}
         </div>
         <div className="flex flex-col">
-          <h3 className="text-base font-semibold text-slate-900 leading-tight m-0">
+          <h3 className="text-base font-semibold text-text-primary leading-tight m-0">
             {path.title}
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5 mb-0">{path.tagline}</p>
+          <p className="text-xs text-neutral mt-0.5 mb-0">{path.tagline}</p>
         </div>
       </div>
 
-      <p className="text-sm text-slate-600 leading-relaxed m-0">{path.description}</p>
+      <p className="text-sm text-text-secondary leading-relaxed m-0">{path.description}</p>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
           Hooks
         </span>
         <div className="flex flex-wrap gap-1">
@@ -75,7 +75,7 @@ function AudienceCard({ path }: { path: AudiencePath }) {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
           Composites
         </span>
         <div className="flex flex-wrap gap-1">
@@ -101,7 +101,7 @@ function AudienceCard({ path }: { path: AudiencePath }) {
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-xs text-slate-500 hover:text-slate-900 hover:underline no-underline"
+                className="text-xs text-neutral hover:text-text-primary hover:underline no-underline"
               >
                 {link.label}
               </Link>
@@ -122,11 +122,11 @@ export function AudienceHero() {
         </span>
         <h2
           id="audience-hero-heading"
-          className="text-2xl font-bold text-slate-900 m-0 leading-tight"
+          className="text-2xl font-bold text-text-primary m-0 leading-tight"
         >
           What do you want to build?
         </h2>
-        <p className="text-sm text-slate-600 m-0 leading-relaxed">
+        <p className="text-sm text-text-secondary m-0 leading-relaxed">
           Each path opens a working demo with the hooks and composites you would use in
           a real consumer app. Browse the full catalog below for primitives and one-off
           showcases.

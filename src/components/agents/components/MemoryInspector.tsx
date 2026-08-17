@@ -32,11 +32,11 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
   const longTermCount = entries.filter((e) => e.scope === 'long-term').length;
 
   return (
-    <div className={cn('border border-slate-200 rounded-lg overflow-hidden bg-white', className)}>
+    <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <span className="text-xs font-medium text-slate-700">Memory Inspector</span>
-        <span className="text-[10px] text-slate-400">
+        <span className="text-[10px] text-text-tertiary">
           {sessionCount} session · {longTermCount} long-term
         </span>
       </div>
@@ -48,15 +48,15 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search keys/values..."
-          className="flex-1 text-[11px] px-2 py-1 border border-slate-200 rounded outline-none focus:border-info"
+          className="flex-1 text-[11px] px-2 py-1 border border-border rounded outline-none focus:border-info"
         />
-        <div className="flex text-[10px] border border-slate-200 rounded overflow-hidden">
+        <div className="flex text-[10px] border border-border rounded overflow-hidden">
           {(['all', 'session', 'long-term'] as const).map((f) => (
             <button
               key={f}
               className={cn(
                 'px-2 py-0.5 transition-colors',
-                filter === f ? 'bg-info text-white' : 'text-slate-500 hover:bg-slate-100',
+                filter === f ? 'bg-info text-white' : 'text-neutral hover:bg-surface-hover',
               )}
               onClick={() => setFilter(f)}
             >
@@ -68,7 +68,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
 
       {/* Entries */}
       {filtered.length === 0 ? (
-        <div className="px-3 py-6 text-center text-xs text-slate-400">
+        <div className="px-3 py-6 text-center text-xs text-text-tertiary">
           {entries.length === 0 ? 'No memory entries' : 'No matches'}
         </div>
       ) : (
@@ -86,7 +86,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                     {entry.scope}
                   </span>
                   {entry.namespace && (
-                    <span className="text-[10px] text-slate-400 font-mono">{entry.namespace}/</span>
+                    <span className="text-[10px] text-text-tertiary font-mono">{entry.namespace}/</span>
                   )}
                   <span className="text-[11px] font-medium text-slate-700 font-mono">{entry.key}</span>
                 </div>
@@ -99,10 +99,10 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                   </button>
                 )}
               </div>
-              <pre className="text-[11px] text-slate-600 font-mono whitespace-pre-wrap break-all max-h-[60px] overflow-y-auto">
+              <pre className="text-[11px] text-text-secondary font-mono whitespace-pre-wrap break-all max-h-[60px] overflow-y-auto">
                 {formatValue(entry.value)}
               </pre>
-              <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-400">
+              <div className="flex items-center gap-2 mt-0.5 text-[10px] text-text-tertiary">
                 <span>Created {formatTimestamp(entry.createdAt)}</span>
                 {entry.ttl && <span>· TTL {entry.ttl}s</span>}
               </div>

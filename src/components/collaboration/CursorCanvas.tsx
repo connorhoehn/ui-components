@@ -39,11 +39,11 @@ export function CursorCanvas({
   return (
     <div
       onMouseMove={handleMouseMove}
-      className="relative border-2 border-gray-200 rounded overflow-hidden cursor-none cursor-canvas-grid"
+      className="relative border-2 border-border rounded overflow-hidden cursor-none cursor-canvas-grid"
       style={{ width, height }}
     >
       {/* Label */}
-      <span className="absolute top-1 left-1 text-gray-400 text-xs p-1 pointer-events-none select-none">
+      <span className="absolute top-1 left-1 text-text-tertiary text-xs p-1 pointer-events-none select-none">
         Move your mouse here
       </span>
 

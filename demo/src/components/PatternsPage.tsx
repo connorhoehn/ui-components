@@ -21,7 +21,7 @@ const tocItems: TocItem[] = [
   { id: 'props', label: 'API Reference', level: 2 },
 ];
 
-const CARD = 'border border-slate-200 rounded-lg bg-white';
+const CARD = 'border border-border rounded-lg bg-white';
 const CARD_LG = `${CARD} px-5 py-4`;
 const CARD_PAD = `${CARD} p-4`;
 const PILL_DANGER =
@@ -29,7 +29,7 @@ const PILL_DANGER =
 const PILL_WARN =
   'inline-block text-[11px] font-semibold px-2 py-px rounded-full bg-warning/10 text-warning-fg';
 const LABEL =
-  'text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5';
+  'text-[11px] font-semibold text-neutral uppercase tracking-wider mb-1.5';
 
 export default function PatternsPage() {
   useRegisterToc(tocItems);
@@ -202,7 +202,7 @@ export default function PatternsPage() {
           <Button variant="primary" size="md" onClick={() => setDrawerOpen(true)}>
             Open Drawer
           </Button>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-neutral">
             Drawer is portal-rendered to document.body, so it sits above the docs layout.
           </span>
         </div>
@@ -227,7 +227,7 @@ export default function PatternsPage() {
           <div className="flex flex-col gap-4">
             <div>
               <div className={LABEL}>Status</div>
-              <div className="text-sm text-slate-900">Completed in 2m 14s</div>
+              <div className="text-sm text-text-primary">Completed in 2m 14s</div>
             </div>
             <div>
               <div className={LABEL}>Steps</div>
@@ -302,7 +302,7 @@ export default function PatternsPage() {
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
       <div id="props" className="mt-12">
-        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
+        <h2 className="text-[22px] font-bold text-text-primary mb-6">
           API Reference
         </h2>
 

@@ -96,7 +96,7 @@ export default function ChecklistEditorRenderer({
       )}
 
       {total > 0 && (
-        <div className="text-[11px] text-slate-500 font-semibold mb-1.5">
+        <div className="text-[11px] text-neutral font-semibold mb-1.5">
           {doneCount} / {total} done
         </div>
       )}
@@ -123,7 +123,7 @@ export default function ChecklistEditorRenderer({
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-slate-500 cursor-pointer font-inherit"
+          className="mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit"
         >
           + Add item
         </button>

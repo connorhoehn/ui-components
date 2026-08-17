@@ -63,7 +63,7 @@ function MultiInput({
       {values.map((val, idx) => (
         <div key={idx} className="flex gap-2 items-center mb-1.5">
           <input
-            className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
+            className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
             value={val}
             onChange={(e) => handleChange(idx, e.target.value)}
             placeholder={placeholder}

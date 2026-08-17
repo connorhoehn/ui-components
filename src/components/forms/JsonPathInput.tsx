@@ -91,7 +91,7 @@ export const JsonPathInput = forwardRef<HTMLInputElement, JsonPathInputProps>(
                 disabled={disabled}
                 onClick={() => onChange(sample.value)}
                 className={cn(
-                  'rounded border border-slate-200 bg-slate-100 font-mono text-slate-600',
+                  'rounded border border-border bg-surface-hover font-mono text-text-secondary',
                   'transition-colors duration-100',
                   'hover:bg-info-bg hover:border-info-border hover:text-info-fg',
                   'focus:outline-none focus:ring-2 focus:ring-info/40',

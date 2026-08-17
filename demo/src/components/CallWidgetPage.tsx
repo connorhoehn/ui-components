@@ -23,7 +23,7 @@ const availableToAdd: CallWidgetParticipant[] = [
 ];
 
 const DEMO_BUTTON_CLASSES =
-  'px-4 py-2 rounded-md border border-slate-200 bg-white cursor-pointer text-[13px] font-semibold hover:bg-slate-50';
+  'px-4 py-2 rounded-md border border-border bg-white cursor-pointer text-[13px] font-semibold hover:bg-surface-panel';
 
 function LiveDemo() {
   const [state, setState] = useState<CallWidgetState>('idle');
@@ -73,7 +73,7 @@ function LiveDemo() {
         </button>
       </div>
 
-      <div className="text-xs text-slate-500 mb-2">
+      <div className="text-xs text-neutral mb-2">
         State: <strong>{state}</strong> | Mode: <strong>{mode}</strong> | Minimized:{' '}
         <strong>{minimized ? 'yes' : 'no'}</strong> | Screen share:{' '}
         <strong>{isScreenSharing ? 'on' : 'off'}</strong> | Participants:{' '}
@@ -242,7 +242,7 @@ export default function CallWidgetPage() {
   onMinimize?: () => void;
 }`}
       >
-        <div className="p-4 text-[13px] text-slate-600 leading-relaxed">
+        <div className="p-4 text-[13px] text-text-secondary leading-relaxed">
           <p className="m-0 mb-2"><strong>contained</strong> — Uses <code>position: absolute</code> within a <code>relative</code> parent instead of fixed to the viewport.</p>
           <p className="m-0 mb-2"><strong>availableParticipants</strong> — Populates the "Add person" picker. Only shows people not already in the call.</p>
           <p className="m-0 mb-2"><strong>draggable</strong> — Enables drag-to-move. Snap zones appear near corners. A snap-back button shows when dragged away from default position.</p>

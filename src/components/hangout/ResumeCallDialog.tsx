@@ -15,7 +15,7 @@
 //   - Primary "Reconnect" + secondary "Dismiss" buttons.
 //
 // No inline styles — everything goes through Tailwind v4 design tokens
-// (same palette as ConfirmDialog: text-slate-900 / text-text-secondary /
+// (same palette as ConfirmDialog: text-text-primary / text-text-secondary /
 // bg-info-bg chips).
 
 import { useEffect, useState } from 'react';
@@ -158,7 +158,7 @@ export function ResumeCallDialog({
             >
                 <p className="text-[13px] text-[#475569]">
                     You were in a call with{' '}
-                    <span className="font-semibold text-slate-900">{callerName}</span>
+                    <span className="font-semibold text-text-primary">{callerName}</span>
                     {lobbyName ? (
                         <>
                             {' '}in{' '}
@@ -169,11 +169,11 @@ export function ResumeCallDialog({
                 </p>
 
                 <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-neutral">
                         Elapsed
                     </span>
                     <span
-                        className="font-mono text-[13px] text-slate-900"
+                        className="font-mono text-[13px] text-text-primary"
                         data-testid="resume-call-elapsed"
                         aria-live="polite"
                     >
@@ -194,7 +194,7 @@ export function ResumeCallDialog({
                                 data-testid="resume-call-participant"
                                 data-participant-id={p.userId}
                                 data-participant-name={p.name}
-                                className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 pl-1 pr-2.5 py-1"
+                                className="inline-flex items-center gap-1.5 rounded-full bg-surface-hover pl-1 pr-2.5 py-1"
                                 title={p.name}
                             >
                                 {p.avatarUrl ? (

@@ -31,9 +31,9 @@ export const WithBadgesAndRightSlot: Story = {
     brand: <strong>UI Components</strong>,
     rightSlot: (
       <>
-        <button type="button" className="text-sm text-slate-600">Search</button>
-        <span className="text-sm text-slate-400">·</span>
-        <a href="#" className="text-sm text-slate-600 no-underline">GitHub</a>
+        <button type="button" className="text-sm text-text-secondary">Search</button>
+        <span className="text-sm text-text-tertiary">·</span>
+        <a href="#" className="text-sm text-text-secondary no-underline">GitHub</a>
       </>
     ),
   },

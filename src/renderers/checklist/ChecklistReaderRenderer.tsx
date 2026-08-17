@@ -34,8 +34,8 @@ export default function ChecklistReaderRenderer({
       {total > 0 && (
         <div className="mb-2.5">
           <div className="flex justify-between mb-1">
-            <span className="text-[11px] text-slate-500 font-semibold">{doneCount} / {total} done</span>
-            <span className={cn('text-[11px] font-semibold', pct === 100 ? 'text-success-fg' : 'text-slate-500')}>{pct}%</span>
+            <span className="text-[11px] text-neutral font-semibold">{doneCount} / {total} done</span>
+            <span className={cn('text-[11px] font-semibold', pct === 100 ? 'text-success-fg' : 'text-neutral')}>{pct}%</span>
           </div>
           <div className="h-1 bg-border rounded-sm overflow-hidden">
             <div

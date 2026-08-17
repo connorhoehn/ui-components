@@ -41,7 +41,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
   return (
     <div
       className={cn(
-        'flex items-center h-7 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-100',
+        'flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-slate-100',
         selected && 'bg-info-bg',
       )}
       onClick={() => onSelect(span)}
@@ -57,7 +57,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
           style={{ left: `${leftPct}%`, width: `${widthPct}%`, minWidth: 2 }}
         />
         <span
-          className="absolute text-[10px] text-slate-500"
+          className="absolute text-[10px] text-neutral"
           style={{ left: `${leftPct + widthPct + 0.5}%` }}
         >
           {span.durationMs}ms
@@ -102,14 +102,14 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
   const traceStart = new Date(trace.startedAt).getTime();
 
   return (
-    <div className={cn('border border-slate-200 rounded-lg overflow-hidden bg-white', className)}>
+    <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
       {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-slate-50">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium text-slate-700">Trace</span>
-          <span className="text-[10px] font-mono text-slate-400">{trace.traceId}</span>
+          <span className="text-[10px] font-mono text-text-tertiary">{trace.traceId}</span>
         </div>
-        <span className="text-xs text-slate-500">{trace.totalDurationMs}ms total</span>
+        <span className="text-xs text-neutral">{trace.totalDurationMs}ms total</span>
       </div>
 
       {/* Legend */}
@@ -117,7 +117,7 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
         {(Object.keys(KIND_COLORS) as SpanKind[]).map((kind) => (
           <div key={kind} className="flex items-center gap-1">
             <span className={cn('w-2 h-2 rounded-sm', KIND_COLORS[kind])} />
-            <span className="text-[10px] text-slate-500">{KIND_LABELS[kind]}</span>
+            <span className="text-[10px] text-neutral">{KIND_LABELS[kind]}</span>
           </div>
         ))}
       </div>
@@ -142,36 +142,36 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
 
       {/* Detail panel */}
       {selectedSpan && (
-        <div className="border-t border-slate-200 p-3 bg-slate-50">
+        <div className="border-t border-border p-3 bg-surface-panel">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-slate-700">{selectedSpan.name}</span>
             <button
-              className="text-[10px] text-slate-400 hover:text-slate-600"
+              className="text-[10px] text-text-tertiary hover:text-text-secondary"
               onClick={() => setSelectedSpan(null)}
             >
               Close
             </button>
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
-            <div className="text-slate-500">Kind</div>
+            <div className="text-neutral">Kind</div>
             <div className="text-slate-700 font-medium">{KIND_LABELS[selectedSpan.kind]}</div>
-            <div className="text-slate-500">Duration</div>
+            <div className="text-neutral">Duration</div>
             <div className="text-slate-700">{selectedSpan.durationMs}ms</div>
-            <div className="text-slate-500">Status</div>
+            <div className="text-neutral">Status</div>
             <div className={cn(
               'font-medium',
               selectedSpan.status === 'ok' && 'text-success-fg',
               selectedSpan.status === 'error' && 'text-danger-fg',
             )}>{selectedSpan.status}</div>
-            <div className="text-slate-500">Span ID</div>
+            <div className="text-neutral">Span ID</div>
             <div className="text-slate-700 font-mono">{selectedSpan.spanId}</div>
           </div>
           {Object.keys(selectedSpan.attributes).length > 0 && (
             <div className="mt-2">
-              <div className="text-[10px] text-slate-400 uppercase mb-1">Attributes</div>
-              <div className="text-[11px] font-mono text-slate-600 space-y-0.5">
+              <div className="text-[10px] text-text-tertiary uppercase mb-1">Attributes</div>
+              <div className="text-[11px] font-mono text-text-secondary space-y-0.5">
                 {Object.entries(selectedSpan.attributes).map(([k, v]) => (
-                  <div key={k}><span className="text-slate-400">{k}:</span> {String(v)}</div>
+                  <div key={k}><span className="text-text-tertiary">{k}:</span> {String(v)}</div>
                 ))}
               </div>
             </div>

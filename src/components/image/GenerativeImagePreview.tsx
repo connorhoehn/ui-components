@@ -95,7 +95,7 @@ export function GenerativeImagePreview({
     <div
       data-testid="generative-image-preview"
       data-status={status}
-      className={cn('relative overflow-hidden rounded-md bg-slate-100', className)}
+      className={cn('relative overflow-hidden rounded-md bg-surface-hover', className)}
     >
       {status === 'synthesizing' ? (
         <>
@@ -130,7 +130,7 @@ export function GenerativeImagePreview({
           <span
             className={cn(
               'absolute inset-0 flex items-center justify-center',
-              'text-[11px] font-medium tracking-wide text-slate-500 select-none',
+              'text-[11px] font-medium tracking-wide text-neutral select-none',
             )}
           >
             ✦ synthesizing

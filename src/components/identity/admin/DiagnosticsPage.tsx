@@ -31,7 +31,7 @@ export interface DiagnosticsPageProps {
 
 function JsonViewer({ data }: { data: unknown }) {
   return (
-    <pre className="p-5 font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-slate-50">
+    <pre className="p-5 font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel">
       {JSON.stringify(data, null, 2)}
     </pre>
   );
@@ -40,7 +40,7 @@ function JsonViewer({ data }: { data: unknown }) {
 function RateTable({ rates }: { rates: Record<string, unknown> }) {
   const entries = Object.entries(rates);
   if (entries.length === 0) {
-    return <p className="p-5 text-center text-slate-400 text-sm m-0">No rate limiter data available.</p>;
+    return <p className="p-5 text-center text-text-tertiary text-sm m-0">No rate limiter data available.</p>;
   }
 
   return (
@@ -122,7 +122,7 @@ export function DiagnosticsPage({
       title="Diagnostics"
       actions={
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-1.5 text-sm text-slate-500 cursor-pointer">
+          <label className="flex items-center gap-1.5 text-sm text-neutral cursor-pointer">
             <input
               type="checkbox"
               checked={autoRefresh}
@@ -139,31 +139,31 @@ export function DiagnosticsPage({
     >
       {/* Node/Cluster diagnostics */}
       <Card>
-        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+        <div className="px-5 py-3 border-b border-border bg-surface-panel">
           <h3 className="text-sm font-semibold text-slate-700 m-0">Node / Cluster Diagnostics</h3>
         </div>
         {diagnostics ? (
           <JsonViewer data={diagnostics} />
         ) : (
-          <p className="p-5 text-center text-slate-400 text-sm m-0">No diagnostics data available.</p>
+          <p className="p-5 text-center text-text-tertiary text-sm m-0">No diagnostics data available.</p>
         )}
       </Card>
 
       {/* Rate limiter stats */}
       <Card>
-        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+        <div className="px-5 py-3 border-b border-border bg-surface-panel">
           <h3 className="text-sm font-semibold text-slate-700 m-0">Rate Limiter Stats</h3>
         </div>
-        {rates ? <RateTable rates={rates} /> : <p className="p-5 text-center text-slate-400 text-sm m-0">No rate data available.</p>}
+        {rates ? <RateTable rates={rates} /> : <p className="p-5 text-center text-text-tertiary text-sm m-0">No rate data available.</p>}
       </Card>
 
       {/* Dead Letter Queue */}
       <Card>
-        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+        <div className="px-5 py-3 border-b border-border bg-surface-panel">
           <h3 className="text-sm font-semibold text-slate-700 m-0">Dead Letter Queue</h3>
         </div>
         {!dlq || dlq.length === 0 ? (
-          <p className="p-5 text-center text-slate-400 text-sm m-0">Dead letter queue is empty.</p>
+          <p className="p-5 text-center text-text-tertiary text-sm m-0">Dead letter queue is empty.</p>
         ) : (
           <Table>
             <TableHead>
@@ -182,7 +182,7 @@ export function DiagnosticsPage({
                   <TableTd>
                     <Chip tone="danger" size="xs">{entry.error}</Chip>
                   </TableTd>
-                  <TableTd className="text-xs text-slate-500">{new Date(entry.failedAt).toLocaleString()}</TableTd>
+                  <TableTd className="text-xs text-neutral">{new Date(entry.failedAt).toLocaleString()}</TableTd>
                   <TableTd>
                     <Chip tone="neutral" size="xs" mono>{entry.retryCount}</Chip>
                   </TableTd>

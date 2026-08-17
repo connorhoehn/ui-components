@@ -27,13 +27,13 @@ export function AgentFlowPage({ edges = DEFAULT_EDGES, onAgentClick, className }
     <div className={cn('space-y-4', className)}>
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">Agent Flow (A2A)</h2>
-          <p className="text-xs text-slate-500">
+          <h2 className="text-lg font-semibold text-text-primary">Agent Flow (A2A)</h2>
+          <p className="text-xs text-neutral">
             {a2aAgents.length} A2A agents · {directAgents.length} direct agents ·{' '}
             {edges.length} connections
           </p>
         </div>
-        <div className="flex items-center gap-3 text-[10px] text-slate-500">
+        <div className="flex items-center gap-3 text-[10px] text-neutral">
           <span className="flex items-center gap-1">
             <span className="w-3 h-0.5 bg-info inline-block" /> A2A (animated)
           </span>
@@ -43,7 +43,7 @@ export function AgentFlowPage({ edges = DEFAULT_EDGES, onAgentClick, className }
         </div>
       </div>
 
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <div className="border border-border rounded-lg overflow-hidden">
         <AgentFlowCanvas
           agents={agents}
           edges={edges}

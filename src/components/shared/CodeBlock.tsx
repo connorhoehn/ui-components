@@ -146,7 +146,7 @@ export function CodeBlock({
         'relative rounded-lg border font-mono text-[13px] leading-relaxed overflow-hidden',
         isDark
           ? 'bg-slate-800 text-slate-100 border-slate-700'
-          : 'bg-slate-50 text-slate-900 border-slate-200',
+          : 'bg-surface-panel text-text-primary border-border',
         className,
       )}
       style={style}
@@ -161,7 +161,7 @@ export function CodeBlock({
             'absolute top-2 right-2 text-[11px] px-2 py-1 rounded border transition-opacity',
             isDark
               ? 'bg-slate-700 text-slate-100 border-slate-600 hover:bg-slate-600'
-              : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100',
+              : 'bg-white text-slate-700 border-border-emphasis hover:bg-surface-hover',
           )}
           data-copied={copied ? 'true' : 'false'}
         >
@@ -174,7 +174,7 @@ export function CodeBlock({
             <div
               className={cn(
                 'select-none pr-3 text-right',
-                isDark ? 'text-slate-500' : 'text-slate-400',
+                isDark ? 'text-neutral' : 'text-text-tertiary',
               )}
               aria-hidden="true"
             >

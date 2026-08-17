@@ -87,7 +87,7 @@ function EmptyState({
       data-testid={testId}
       className={cn(
         'flex flex-col items-center justify-center min-h-[220px]',
-        'text-slate-400 gap-2 p-8 font-[inherit]',
+        'text-text-tertiary gap-2 p-8 font-[inherit]',
       )}
     >
       {icon && (
@@ -95,9 +95,9 @@ function EmptyState({
           ? <div className="text-[52px] mb-2">{icon}</div>
           : <div className="mb-2">{icon}</div>
       )}
-      <div className="text-[17px] font-semibold text-slate-500">{title}</div>
+      <div className="text-[17px] font-semibold text-neutral">{title}</div>
       {resolvedDescription && (
-        <div className="text-[13px] text-center max-w-[340px] text-slate-400 leading-normal">
+        <div className="text-[13px] text-center max-w-[340px] text-text-tertiary leading-normal">
           {resolvedDescription}
         </div>
       )}
@@ -154,7 +154,7 @@ function GuidedAction({
     'transition-colors font-[inherit]',
     variant === 'primary'
       ? 'bg-primary text-white border border-transparent hover:bg-primary/90'
-      : 'bg-transparent text-slate-700 border border-slate-300 hover:bg-slate-50',
+      : 'bg-transparent text-slate-700 border border-border-emphasis hover:bg-surface-panel',
   );
 
   if (action.href) {

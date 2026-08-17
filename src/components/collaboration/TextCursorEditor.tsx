@@ -170,7 +170,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
   return (
     <div
       ref={containerRef}
-      className="relative border border-gray-200 rounded min-h-[120px] p-3 font-mono text-sm leading-relaxed"
+      className="relative border border-border rounded min-h-[120px] p-3 font-mono text-sm leading-relaxed"
     >
       {/* Contenteditable document */}
       <div

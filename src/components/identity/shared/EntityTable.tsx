@@ -85,12 +85,12 @@ export function EntityTable<T extends Record<string, unknown>>({
               <TableRow key={i}>
                 {columns.map((col) => (
                   <TableTd key={col.key}>
-                    <div className="h-4 rounded bg-slate-100 animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
+                    <div className="h-4 rounded bg-surface-hover animate-pulse" style={{ width: `${60 + Math.random() * 30}%` }} />
                   </TableTd>
                 ))}
                 {actions && (
                   <TableTd className="text-right">
-                    <div className="h-4 w-20 rounded bg-slate-100 animate-pulse ml-auto" />
+                    <div className="h-4 w-20 rounded bg-surface-hover animate-pulse ml-auto" />
                   </TableTd>
                 )}
               </TableRow>
@@ -105,7 +105,7 @@ export function EntityTable<T extends Record<string, unknown>>({
     return (
       <Card className="flex flex-col items-center justify-center min-h-[220px] p-8">
         <span className="text-[42px] mb-3">{emptyIcon}</span>
-        <p className="text-sm font-medium text-slate-500 text-center max-w-[280px] m-0">{emptyMessage}</p>
+        <p className="text-sm font-medium text-neutral text-center max-w-[280px] m-0">{emptyMessage}</p>
       </Card>
     );
   }

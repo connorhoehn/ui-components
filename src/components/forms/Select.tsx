@@ -50,7 +50,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
       data-testid={testId}
       value={value}
       className={cn(
-        'w-full appearance-none rounded-md border bg-slate-50 font-inherit text-slate-900',
+        'w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary',
         'outline-none transition-colors duration-150 cursor-pointer',
         // Custom chevron via background-image is banned (inline style). Instead
         // rely on the native OS chevron — appearance: none removes it but is
@@ -59,10 +59,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         // We use `appearance-auto` to restore the native arrow on modern browsers.
         'appearance-auto',
         'focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40',
-        'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100',
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover',
         invalid
           ? 'border-danger focus:border-danger focus:ring-danger/40'
-          : 'border-slate-300',
+          : 'border-border-emphasis',
         sizeClasses[size],
         className,
       )}

@@ -79,7 +79,7 @@ export const Loading: Story = {
       <div className="p-4 text-sm">Won't show during load.</div>
     ),
     loading: (
-      <div className="rounded border border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">
+      <div className="rounded border border-border-emphasis bg-surface-panel p-4 text-sm text-neutral">
         Loading capability...
       </div>
     ),

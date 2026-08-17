@@ -90,7 +90,7 @@ export default function FormField({
             id={describedById}
             className={cn(
               'mt-1 text-[11px]',
-              error ? 'text-[#991b1b]' : 'text-gray-500',
+              error ? 'text-[#991b1b]' : 'text-neutral',
             )}
           >
             {error ?? hint}

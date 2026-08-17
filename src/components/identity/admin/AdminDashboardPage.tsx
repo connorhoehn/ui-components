@@ -35,8 +35,8 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
         <div className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
           {[1, 2, 3].map((i) => (
             <Card key={i} padding="md">
-              <div className="h-5 w-12 rounded bg-slate-100 animate-pulse mb-2" />
-              <div className="h-3 w-20 rounded bg-slate-100 animate-pulse" />
+              <div className="h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" />
+              <div className="h-3 w-20 rounded bg-surface-hover animate-pulse" />
             </Card>
           ))}
         </div>
@@ -52,14 +52,14 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
         {statsCards.map((s) => (
           <Card key={s.label} padding="md">
             <div className="text-[2rem] font-bold text-info-fg mb-1">{s.value}</div>
-            <div className="text-sm text-slate-500">{s.label}</div>
+            <div className="text-sm text-neutral">{s.label}</div>
           </Card>
         ))}
       </section>
 
       {/* Pools */}
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-slate-900 m-0">User Pools</h2>
+        <h2 className="text-lg font-semibold text-text-primary m-0">User Pools</h2>
         <Card>
           {pools.length === 0 ? (
             <EmptyState title="No pools created yet" actionLabel="Create Pool" onAction={() => onNavigate('/identity/admin/pools/new')} />
@@ -71,7 +71,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
               >
                 <div className="flex items-center gap-3">
                   <span className="font-medium text-slate-800">{pool.poolName}</span>
-                  <span className="text-xs text-slate-400">{pool.createdAt}</span>
+                  <span className="text-xs text-text-tertiary">{pool.createdAt}</span>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => onNavigate(`/identity/admin/pools/${pool.poolId}`)}>
                   View
@@ -84,7 +84,7 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
 
       {/* Quick Links */}
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-slate-900 m-0">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-text-primary m-0">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
           <Button variant="secondary" size="lg" onClick={() => onNavigate('/identity/admin/pools/new')}>
             Create Pool

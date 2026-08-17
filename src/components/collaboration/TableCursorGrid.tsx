@@ -52,16 +52,16 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
   });
 
   return (
-    <div className="overflow-auto border border-gray-200 rounded">
+    <div className="overflow-auto border border-border rounded">
       <table className="border-collapse w-full">
         <thead>
           <tr>
             {/* empty corner cell */}
-            <th className="font-bold bg-gray-50 p-1.5 min-w-[40px] text-center border border-gray-200" />
+            <th className="font-bold bg-surface-panel p-1.5 min-w-[40px] text-center border border-border" />
             {COL_HEADERS.map((header) => (
               <th
                 key={header}
-                className="font-bold bg-gray-50 p-1.5 min-w-[80px] text-center border border-gray-200"
+                className="font-bold bg-surface-panel p-1.5 min-w-[80px] text-center border border-border"
               >
                 {header}
               </th>
@@ -72,7 +72,7 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
           {Array.from({ length: ROW_COUNT }, (_, rowIndex) => (
             <tr key={rowIndex}>
               {/* Row header */}
-              <th className="font-bold bg-gray-50 p-1.5 min-w-[40px] text-center border border-gray-200">
+              <th className="font-bold bg-surface-panel p-1.5 min-w-[40px] text-center border border-border">
                 {rowIndex + 1}
               </th>
 
@@ -85,7 +85,7 @@ export function TableCursorGrid({ cursors, localCursor, onCellClick }: TableCurs
                   <td
                     key={colIndex}
                     onClick={() => onCellClick(rowIndex, colIndex)}
-                    className="relative p-2 min-w-[80px] h-[30px] border border-gray-200 cursor-pointer bg-white"
+                    className="relative p-2 min-w-[80px] h-[30px] border border-border cursor-pointer bg-white"
                   >
                     {/* Local cursor cell highlight */}
                     {localCursorKey === key && (

@@ -61,7 +61,7 @@ export function ApplicationListPage({
         key: 'clientId',
         header: 'Client ID',
         render: (item) => (
-          <span className="font-mono text-xs text-slate-500">{item.clientId}</span>
+          <span className="font-mono text-xs text-neutral">{item.clientId}</span>
         ),
       },
       { key: 'poolName', header: 'Pool', render: (item) => item.poolName || item.poolId },

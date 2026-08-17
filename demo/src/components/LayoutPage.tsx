@@ -11,15 +11,15 @@ const tocItems: TocItem[] = [
 ];
 
 const PANEL_FRAME_LIGHT =
-  'border border-slate-200 rounded-lg overflow-hidden bg-white w-[320px] shadow';
+  'border border-border rounded-lg overflow-hidden bg-white w-[320px] shadow';
 const PANEL_FRAME_DARK =
   'border border-white/10 rounded-lg overflow-hidden bg-[#111827] w-[320px] shadow';
 const PANEL_HEAD_LIGHT =
-  'flex items-center justify-between px-3.5 py-2.5 border-b border-slate-200';
+  'flex items-center justify-between px-3.5 py-2.5 border-b border-border';
 const PANEL_HEAD_DARK =
   'flex items-center justify-between px-3.5 py-2.5 border-b border-white/10';
 const CODE_INLINE =
-  'bg-slate-100 px-1 py-px rounded-sm text-xs';
+  'bg-surface-hover px-1 py-px rounded-sm text-xs';
 
 export default function LayoutPage() {
   useRegisterToc(tocItems);
@@ -57,17 +57,17 @@ function DetailPanel({ onClose }) {
       >
         <div className={PANEL_FRAME_LIGHT}>
           <div className={PANEL_HEAD_LIGHT}>
-            <span className="text-sm font-semibold text-slate-900">Item Details</span>
-            <span className="text-lg text-slate-400 cursor-pointer leading-none">×</span>
+            <span className="text-sm font-semibold text-text-primary">Item Details</span>
+            <span className="text-lg text-text-tertiary cursor-pointer leading-none">×</span>
           </div>
-          <div className="p-3.5 text-[13px] text-slate-600 leading-relaxed">
+          <div className="p-3.5 text-[13px] text-text-secondary leading-relaxed">
             <p className="mb-2.5">
               This is a light-themed panel. It renders fixed to the right edge of the viewport via a React portal.
             </p>
             <p className="mb-2.5">
               The <code className={CODE_INLINE}>Panel</code> component accepts <code className={CODE_INLINE}>variant</code> and <code className={CODE_INLINE}>width</code> props.
             </p>
-            <ul className="m-0 pl-[18px] text-xs text-slate-500">
+            <ul className="m-0 pl-[18px] text-xs text-neutral">
               <li className="mb-1">PanelHeader: title, close button, optional actions</li>
               <li className="mb-1">PanelBody: scrollable content area</li>
             </ul>
@@ -105,13 +105,13 @@ function TerminalPanel({ onClose }) {
         <div className={PANEL_FRAME_DARK}>
           <div className={PANEL_HEAD_DARK}>
             <span className="text-sm font-semibold text-white">Terminal</span>
-            <span className="text-lg text-gray-500 cursor-pointer leading-none">×</span>
+            <span className="text-lg text-neutral cursor-pointer leading-none">×</span>
           </div>
           <div className="p-3.5">
             <div className="bg-white/[0.04] border border-white/10 rounded-md p-3 font-mono text-[11px] text-primary-fg leading-loose">
               <div><span className="text-success-fg">$</span> npm run build</div>
-              <div className="text-slate-400">Building for production...</div>
-              <div className="text-slate-400">Bundling 42 modules...</div>
+              <div className="text-text-tertiary">Building for production...</div>
+              <div className="text-text-tertiary">Bundling 42 modules...</div>
               <div className="text-success-fg">Done in 3.2s</div>
             </div>
           </div>
@@ -137,9 +137,9 @@ function TerminalPanel({ onClose }) {
   </main>
 </div>`}
       >
-        <div className="flex border border-slate-200 rounded-lg overflow-hidden h-[300px] bg-white">
-          <div className="w-[200px] bg-slate-50 border-r border-slate-200 p-3.5 flex flex-col">
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+        <div className="flex border border-border rounded-lg overflow-hidden h-[300px] bg-white">
+          <div className="w-[200px] bg-surface-panel border-r border-border p-3.5 flex flex-col">
+            <div className="text-[11px] font-bold text-text-tertiary uppercase tracking-wider mb-3">
               Navigation
             </div>
             {['Dashboard', 'Pipelines', 'Documents', 'Integrations', 'Settings'].map((item, i) => (
@@ -148,7 +148,7 @@ function TerminalPanel({ onClose }) {
                 className={`px-2.5 py-1.5 rounded mb-0.5 text-[13px] cursor-pointer ${
                   i === 0
                     ? 'text-info-fg bg-info-bg font-semibold'
-                    : 'text-slate-600 bg-transparent'
+                    : 'text-text-secondary bg-transparent'
                 }`}
               >
                 {item}
@@ -156,18 +156,18 @@ function TerminalPanel({ onClose }) {
             ))}
           </div>
           <div className="flex-1 p-5 flex flex-col">
-            <div className="text-base font-semibold text-slate-900 mb-2">Dashboard</div>
-            <p className="text-[13px] text-slate-500 leading-normal mb-4">
+            <div className="text-base font-semibold text-text-primary mb-2">Dashboard</div>
+            <p className="text-[13px] text-neutral leading-normal mb-4">
               Main content area with flexible width. The sidebar remains fixed at 200px while this region adapts to the available space.
             </p>
             <div className="grid grid-cols-2 gap-2.5 flex-1">
               {['Requests', 'Latency', 'Errors', 'Throughput'].map((label) => (
                 <div
                   key={label}
-                  className="bg-slate-50 border border-slate-200 rounded-md p-3 flex flex-col justify-center"
+                  className="bg-surface-panel border border-border rounded-md p-3 flex flex-col justify-center"
                 >
-                  <div className="text-[11px] text-slate-400 mb-1">{label}</div>
-                  <div className="text-lg font-bold text-slate-900">--</div>
+                  <div className="text-[11px] text-text-tertiary mb-1">{label}</div>
+                  <div className="text-lg font-bold text-text-primary">--</div>
                 </div>
               ))}
             </div>
@@ -196,18 +196,18 @@ function TerminalPanel({ onClose }) {
   </footer>
 </div>`}
       >
-        <div className="flex flex-col border border-slate-200 rounded-lg overflow-hidden h-[300px] bg-white">
-          <div className="px-4 py-2.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between flex-shrink-0">
-            <span className="text-sm font-bold text-slate-900">Application Header</span>
-            <div className="flex gap-3 text-xs text-slate-500 items-center">
+        <div className="flex flex-col border border-border rounded-lg overflow-hidden h-[300px] bg-white">
+          <div className="px-4 py-2.5 border-b border-border bg-surface-panel flex items-center justify-between flex-shrink-0">
+            <span className="text-sm font-bold text-text-primary">Application Header</span>
+            <div className="flex gap-3 text-xs text-neutral items-center">
               <span>Docs</span>
               <span>Settings</span>
-              <span className="w-6 h-6 rounded-full bg-slate-200 inline-flex items-center justify-center text-[10px] font-semibold text-slate-600">
+              <span className="w-6 h-6 rounded-full bg-slate-200 inline-flex items-center justify-center text-[10px] font-semibold text-text-secondary">
                 CH
               </span>
             </div>
           </div>
-          <div className="flex-1 p-4 overflow-y-auto text-[13px] text-slate-500 leading-relaxed">
+          <div className="flex-1 p-4 overflow-y-auto text-[13px] text-neutral leading-relaxed">
             <p className="mb-2.5">
               This body area grows to fill all available vertical space between the header and footer. When content overflows, it scrolls independently.
             </p>
@@ -221,8 +221,8 @@ function TerminalPanel({ onClose }) {
               Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
             </p>
           </div>
-          <div className="px-4 py-2.5 border-t border-slate-200 bg-slate-50 flex justify-end gap-2 flex-shrink-0">
-            <button className="px-3 py-1.5 text-xs border border-slate-200 rounded bg-white text-slate-600 cursor-pointer font-[inherit]">
+          <div className="px-4 py-2.5 border-t border-border bg-surface-panel flex justify-end gap-2 flex-shrink-0">
+            <button className="px-3 py-1.5 text-xs border border-border rounded bg-white text-text-secondary cursor-pointer font-[inherit]">
               Cancel
             </button>
             <button className="px-3 py-1.5 text-xs border-none rounded bg-info text-white cursor-pointer font-semibold font-[inherit]">
@@ -266,11 +266,11 @@ function TerminalPanel({ onClose }) {
           ].map((card) => (
             <div
               key={card.title}
-              className="border border-slate-200 rounded-lg p-4 bg-white"
+              className="border border-border rounded-lg p-4 bg-white"
             >
               <div className="text-[22px] mb-2">{card.icon}</div>
-              <div className="text-sm font-semibold text-slate-900 mb-1">{card.title}</div>
-              <p className="text-xs text-slate-500 m-0 leading-snug">{card.desc}</p>
+              <div className="text-sm font-semibold text-text-primary mb-1">{card.title}</div>
+              <p className="text-xs text-neutral m-0 leading-snug">{card.desc}</p>
             </div>
           ))}
         </div>
@@ -278,7 +278,7 @@ function TerminalPanel({ onClose }) {
 
       {/* ─── PROPS TABLE ──────────────────────────────────────────────── */}
       <div id="props" className="mt-12">
-        <h2 className="text-[22px] font-bold text-slate-900 mb-6">API Reference</h2>
+        <h2 className="text-[22px] font-bold text-text-primary mb-6">API Reference</h2>
 
         <PropsTable
           componentName="Panel"

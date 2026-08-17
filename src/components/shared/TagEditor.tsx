@@ -102,7 +102,7 @@ export default function TagEditor({
       {value.map((tag) => (
         <span
           key={tag}
-          className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600"
+          className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary"
           data-testid={`tag-chip-${tag}`}
         >
           {tag}
@@ -130,11 +130,11 @@ export default function TagEditor({
             setTimeout(() => setFocused(false), 120);
           }}
           placeholder={placeholder}
-          className="border border-gray-300 rounded-md px-2.5 py-1.5 text-xs bg-gray-50 w-[140px] min-w-[120px] outline-none font-[inherit] text-slate-900"
+          className="border border-border-emphasis rounded-md px-2.5 py-1.5 text-xs bg-surface-panel w-[140px] min-w-[120px] outline-none font-[inherit] text-text-primary"
         />
         {showPopover ? (
           <div
-            className="absolute top-full mt-1 bg-white border border-slate-200 rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30"
+            className="absolute top-full mt-1 bg-white border border-border rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30"
             data-testid="tag-suggestions"
           >
             {shownSuggestions.map((s) => (
@@ -146,7 +146,7 @@ export default function TagEditor({
                   e.preventDefault();
                 }}
                 onClick={() => addTag(s)}
-                className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-600 cursor-pointer border border-dashed border-gray-300"
+                className="inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary cursor-pointer border border-dashed border-border-emphasis"
               >
                 + {s}
               </button>

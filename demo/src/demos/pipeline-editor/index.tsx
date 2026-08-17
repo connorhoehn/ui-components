@@ -50,7 +50,7 @@ function NodePalette() {
   const [query, setQuery] = useState('');
 
   return (
-    <aside className="w-56 border-r border-slate-200 bg-white flex flex-col overflow-hidden shrink-0">
+    <aside className="w-56 border-r border-border bg-white flex flex-col overflow-hidden shrink-0">
       <div className="px-3 py-2.5 border-b border-slate-100">
         <Input
           type="search"
@@ -68,14 +68,14 @@ function NodePalette() {
           if (filtered.length === 0) return null;
           return (
             <div key={group.category} className="mb-4">
-              <div className="px-3.5 py-1 text-[10px] font-semibold tracking-widest text-slate-500 uppercase">
+              <div className="px-3.5 py-1 text-[10px] font-semibold tracking-widest text-neutral uppercase">
                 {group.category}
               </div>
               {filtered.map((item) => (
                 <div
                   key={item.type}
                   draggable
-                  className="flex items-center gap-2.5 mx-1.5 px-3 py-2 rounded-md cursor-grab transition-colors hover:bg-slate-100"
+                  className="flex items-center gap-2.5 mx-1.5 px-3 py-2 rounded-md cursor-grab transition-colors hover:bg-surface-hover"
                 >
                   <span
                     className="text-base w-6 text-center shrink-0"
@@ -87,7 +87,7 @@ function NodePalette() {
                   <span className="flex-1 text-sm font-medium text-slate-800">
                     {item.label}
                   </span>
-                  <kbd className="text-[10px] text-slate-400 bg-slate-100 rounded px-1.5 py-0.5 font-mono">
+                  <kbd className="text-[10px] text-text-tertiary bg-surface-hover rounded px-1.5 py-0.5 font-mono">
                     {item.shortcut}
                   </kbd>
                 </div>
@@ -96,7 +96,7 @@ function NodePalette() {
           );
         })}
       </div>
-      <div className="px-3.5 py-2 text-[11px] text-slate-400 border-t border-slate-100">
+      <div className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-slate-100">
         Press 1–8 to insert at center
       </div>
     </aside>
@@ -242,7 +242,7 @@ function PipelineCanvas() {
             key={icon}
             type="button"
             aria-label={icon}
-            className="w-7 h-7 flex items-center justify-center text-sm text-slate-600 hover:bg-slate-50 border-b border-slate-100 last:border-b-0 transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-sm text-text-secondary hover:bg-surface-panel border-b border-slate-100 last:border-b-0 transition-colors"
           >
             {icon}
           </button>
@@ -276,9 +276,9 @@ function ConfigPanel() {
   const [nodeType, setNodeType] = useState('llm');
 
   return (
-    <aside className="w-72 border-l border-slate-200 bg-white flex flex-col shrink-0">
+    <aside className="w-72 border-l border-border bg-white flex flex-col shrink-0">
       {/* Tab strip */}
-      <div className="px-3 pt-2.5 border-b border-slate-200">
+      <div className="px-3 pt-2.5 border-b border-border">
         <Tabs
           items={TAB_ITEMS}
           value={tab}
@@ -292,12 +292,12 @@ function ConfigPanel() {
       <div className="flex-1 overflow-y-auto p-3">
         {tab === 'config' && (
           <div className="flex flex-col gap-3">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-neutral">
               Select a node on the canvas to configure it.
             </p>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-slate-600">
+              <label className="text-[11px] font-semibold text-text-secondary">
                 Node type
               </label>
               <Select
@@ -309,14 +309,14 @@ function ConfigPanel() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-slate-600">
+              <label className="text-[11px] font-semibold text-text-secondary">
                 Label
               </label>
               <Input placeholder="Node label…" size="sm" />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-slate-600">
+              <label className="text-[11px] font-semibold text-text-secondary">
                 System prompt
               </label>
               <Textarea
@@ -350,10 +350,10 @@ export default function PipelineEditorDemo() {
     <SimulatedProvider timeline={pipelineExecutionTimeline} autoPlay>
       <AppShell
         header={
-          <div className="h-[53px] flex items-center gap-3 px-4 border-b border-slate-200 bg-white">
+          <div className="h-[53px] flex items-center gap-3 px-4 border-b border-border bg-white">
             <button
               type="button"
-              className="text-slate-500 hover:text-slate-800 text-base transition-colors"
+              className="text-neutral hover:text-slate-800 text-base transition-colors"
               aria-label="Back"
             >
               ←

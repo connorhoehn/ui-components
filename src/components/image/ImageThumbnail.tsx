@@ -45,7 +45,7 @@ function BrokenImageIcon() {
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="w-6 h-6 text-slate-400"
+      className="w-6 h-6 text-text-tertiary"
       aria-hidden="true"
     >
       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
@@ -72,7 +72,7 @@ export function ImageThumbnail({
     <div
       data-testid={testId}
       className={cn(
-        'relative overflow-hidden bg-slate-100',
+        'relative overflow-hidden bg-surface-hover',
         sizeClasses[size],
         aspectRatio !== 'auto' && aspectClasses[aspectRatio],
         rounded ? 'rounded-full' : 'rounded-md',
@@ -89,7 +89,7 @@ export function ImageThumbnail({
 
       {/* Error fallback */}
       {status === 'error' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+        <div className="absolute inset-0 flex items-center justify-center bg-surface-hover">
           {fallback ?? <BrokenImageIcon />}
         </div>
       )}

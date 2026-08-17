@@ -50,7 +50,7 @@ export const CustomAction: Story = {
     description: 'Try a different search query.',
     action: (
       <div className="flex gap-2">
-        <button type="button" className="rounded border border-slate-300 px-3 py-1 text-sm">Clear filters</button>
+        <button type="button" className="rounded border border-border-emphasis px-3 py-1 text-sm">Clear filters</button>
         <button type="button" className="rounded bg-info px-3 py-1 text-sm font-semibold text-white">Browse all</button>
       </div>
     ),

@@ -52,7 +52,7 @@ export function AgentDirectory({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search agents…"
           aria-label="Search agents"
-          className="flex-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm placeholder:text-slate-400 focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
+          className="flex-1 rounded-md border border-border-emphasis bg-white px-3 py-1.5 text-sm placeholder:text-text-tertiary focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
         />
         <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter by status">
           <button
@@ -62,7 +62,7 @@ export function AgentDirectory({
               'rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
               activeStatus === null
                 ? 'border-slate-900 bg-slate-900 text-white'
-                : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50',
+                : 'border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel',
             )}
           >
             All
@@ -77,7 +77,7 @@ export function AgentDirectory({
                 'rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize transition-colors',
                 activeStatus === status
                   ? 'border-slate-900 bg-slate-900 text-white'
-                  : 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50',
+                  : 'border-border-emphasis bg-white text-text-secondary hover:bg-surface-panel',
               )}
             >
               {status}
@@ -87,7 +87,7 @@ export function AgentDirectory({
       </div>
 
       {visible.length === 0 ? (
-        <div className="rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+        <div className="rounded-md border border-dashed border-border-emphasis bg-surface-panel px-4 py-8 text-center text-sm text-neutral">
           {emptyMessage}
         </div>
       ) : (

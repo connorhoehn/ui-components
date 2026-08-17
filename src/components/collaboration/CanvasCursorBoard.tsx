@@ -145,7 +145,7 @@ export function CanvasCursorBoard({
       {/* Tool controls row */}
       <div className="flex items-center gap-3 mb-2 flex-wrap">
         <div className="flex items-center gap-1">
-          <span className="text-[11px] text-gray-500">Tool:</span>
+          <span className="text-[11px] text-neutral">Tool:</span>
           {tools.map((t) => (
             <button
               key={t}
@@ -154,7 +154,7 @@ export function CanvasCursorBoard({
                 'text-xs px-2.5 py-1 border rounded cursor-pointer',
                 tool === t
                   ? 'bg-[#007bff] text-white border-[#007bff]'
-                  : 'bg-white text-gray-700 border-gray-300'
+                  : 'bg-white text-gray-700 border-border-emphasis'
               )}
             >
               {toolLabels[t]}
@@ -163,7 +163,7 @@ export function CanvasCursorBoard({
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="text-[11px] text-gray-500">Color:</span>
+          <span className="text-[11px] text-neutral">Color:</span>
           <input
             type="color"
             value={color}
@@ -173,7 +173,7 @@ export function CanvasCursorBoard({
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="text-[11px] text-gray-500">Size: {size}</span>
+          <span className="text-[11px] text-neutral">Size: {size}</span>
           <input
             type="range"
             min={1}
@@ -189,11 +189,11 @@ export function CanvasCursorBoard({
       <div
         ref={boardRef}
         onMouseMove={handleMouseMove}
-        className="relative border-2 border-gray-200 rounded overflow-hidden cursor-crosshair cursor-canvas-grid"
+        className="relative border-2 border-border rounded overflow-hidden cursor-crosshair cursor-canvas-grid"
         style={{ width, height }}
       >
         {/* Board label */}
-        <span className="absolute top-1 left-1 text-gray-400 text-xs p-1 pointer-events-none select-none">
+        <span className="absolute top-1 left-1 text-text-tertiary text-xs p-1 pointer-events-none select-none">
           Move your mouse here (canvas mode)
         </span>
 

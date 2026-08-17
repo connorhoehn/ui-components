@@ -35,7 +35,7 @@ const STATUS_BORDER: Record<StatusPillState, string> = {
   error:    'border-danger',
   warning:  'border-warning',
   info:     'border-info',
-  neutral:  'border-slate-300',
+  neutral:  'border-border-emphasis',
   pending:  'border-accent',
 };
 
@@ -81,14 +81,14 @@ export function NodeCard({
 
       {/* Subtitle */}
       {subtitle && (
-        <div className="px-2.5 pt-1.5 pb-0 text-[11px] text-slate-500 truncate">
+        <div className="px-2.5 pt-1.5 pb-0 text-[11px] text-neutral truncate">
           {subtitle}
         </div>
       )}
 
       {/* Body slot */}
       {body && (
-        <div className="px-2.5 pb-2 pt-1 text-xs text-slate-600">
+        <div className="px-2.5 pb-2 pt-1 text-xs text-text-secondary">
           {body}
         </div>
       )}

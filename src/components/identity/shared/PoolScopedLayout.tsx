@@ -43,7 +43,7 @@ function Tab({
         'rounded-none -mb-[2px] border-b-2',
         active
           ? 'font-semibold text-info-fg border-b-[#3b82f6]'
-          : 'font-normal text-slate-500 border-b-transparent'
+          : 'font-normal text-neutral border-b-transparent'
       )}
       onClick={onClick}
       aria-selected={active}
@@ -80,7 +80,7 @@ export function PoolScopedLayout({
   return (
     <div className="flex flex-col gap-4">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-slate-400" aria-label="Breadcrumb">
+      <nav className="flex items-center gap-1.5 text-sm text-text-tertiary" aria-label="Breadcrumb">
         <Button
           variant="ghost"
           size="sm"
@@ -108,7 +108,7 @@ export function PoolScopedLayout({
       </div>
 
       {/* Tab bar */}
-      <div className="flex border-b-2 border-slate-200">
+      <div className="flex border-b-2 border-border">
         {TABS.map((tab) => (
           <Tab
             key={tab.key}

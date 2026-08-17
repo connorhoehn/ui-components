@@ -74,7 +74,7 @@ export default function BreakpointPauseOverlay({
             disabled={applyingPatch}
             data-testid="breakpoint-apply-continue-btn"
             className={cn(
-              'px-3 py-1 text-xs font-semibold bg-success-bg text-gray-900',
+              'px-3 py-1 text-xs font-semibold bg-success-bg text-text-primary',
               'border-none rounded cursor-pointer font-inherit',
               applyingPatch && 'cursor-wait opacity-70',
             )}
@@ -185,7 +185,7 @@ export default function BreakpointPauseOverlay({
                         </span>
                       )}
                       {reverted && (
-                        <span className="px-1 text-[9px] font-bold bg-gray-500/20 text-gray-400 rounded-sm">
+                        <span className="px-1 text-[9px] font-bold bg-gray-500/20 text-text-tertiary rounded-sm">
                           Reverted
                         </span>
                       )}

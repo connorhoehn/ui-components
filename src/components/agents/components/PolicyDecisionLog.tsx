@@ -21,14 +21,14 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
   const visible = decisions.slice(0, maxItems);
 
   return (
-    <div className={cn('border border-slate-200 rounded-lg overflow-hidden bg-white', className)}>
-      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-200 bg-slate-50">
+    <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <span className="text-xs font-medium text-slate-700">Policy Decisions</span>
-        <span className="text-[10px] text-slate-400">{decisions.length} total</span>
+        <span className="text-[10px] text-text-tertiary">{decisions.length} total</span>
       </div>
 
       {visible.length === 0 ? (
-        <div className="px-3 py-6 text-center text-xs text-slate-400">No decisions recorded</div>
+        <div className="px-3 py-6 text-center text-xs text-text-tertiary">No decisions recorded</div>
       ) : (
         <div className="max-h-[250px] overflow-y-auto divide-y divide-slate-100">
           {visible.map((d) => (
@@ -46,12 +46,12 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
                   <span className="text-[11px] font-medium text-slate-700 truncate">
                     {d.action}
                   </span>
-                  <span className="text-[10px] text-slate-400">on</span>
-                  <span className="text-[11px] font-mono text-slate-600 truncate">
+                  <span className="text-[10px] text-text-tertiary">on</span>
+                  <span className="text-[11px] font-mono text-text-secondary truncate">
                     {d.resource}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                <div className="flex items-center gap-1.5 text-[10px] text-text-tertiary">
                   <span>by {d.principal}</span>
                   <span>·</span>
                   <span className="font-mono">{d.policyId}</span>
@@ -63,7 +63,7 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
                   )}
                 </div>
               </div>
-              <span className="text-[10px] text-slate-400 shrink-0">
+              <span className="text-[10px] text-text-tertiary shrink-0">
                 {formatTime(d.timestamp)}
               </span>
             </div>

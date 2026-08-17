@@ -21,7 +21,7 @@ const STATUS_DOT_COLOR: Record<string, string> = {
 function statusDotColor(action: string, status?: string) {
   if (action === 'stream') return STATUS_DOT_COLOR.stream;
   if (status && STATUS_DOT_COLOR[status]) return STATUS_DOT_COLOR[status];
-  return 'text-slate-400';
+  return 'text-text-tertiary';
 }
 
 function actionIcon(action: string) {
@@ -79,17 +79,17 @@ export function DeploymentLog() {
       <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center gap-2">
         <span className="text-primary-fg text-[8px]">●</span>
         <span className="text-slate-200 text-xs font-semibold">Deployment Log</span>
-        <span className="text-slate-500 text-[11px] ml-auto">{events.length} events</span>
+        <span className="text-neutral text-[11px] ml-auto">{events.length} events</span>
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 font-mono text-[11px]">
         {events.length === 0 && (
-          <div className="text-slate-600 text-center py-6 text-xs">
+          <div className="text-text-secondary text-center py-6 text-xs">
             Waiting for deployment events...
           </div>
         )}
         {events.map((event) => (
           <div key={event.id} className="px-3.5 py-0.5 flex items-baseline gap-2">
-            <span className="text-slate-600 shrink-0 text-[10px]">{event.timestamp}</span>
+            <span className="text-text-secondary shrink-0 text-[10px]">{event.timestamp}</span>
             <span className={`shrink-0 w-3.5 text-center ${statusDotColor(event.action, event.status)}`}>
               {actionIcon(event.action)}
             </span>
@@ -97,14 +97,14 @@ export function DeploymentLog() {
               <span className="text-accent-fg italic">{event.detail}</span>
             ) : (
               <>
-                <span className="text-slate-300">{event.action}</span>
+                <span className="text-text-disabled">{event.action}</span>
                 {event.nodeId && (
                   <span className="text-info-fg bg-info px-1.5 py-px rounded-sm text-[10px]">
                     {formatNodeId(event.nodeId)}
                   </span>
                 )}
                 {event.detail && (
-                  <span className="text-slate-400 ml-auto text-[10px] shrink-0">
+                  <span className="text-text-tertiary ml-auto text-[10px] shrink-0">
                     {event.detail}
                   </span>
                 )}

@@ -129,7 +129,7 @@ export function FormField({
       <div className="mb-4">
         {renderInput()}
         {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
-        {helpText && !error && <p className="mt-1 text-sm text-slate-400">{helpText}</p>}
+        {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
       </div>
     );
   }
@@ -141,7 +141,7 @@ export function FormField({
       </label>
       {renderInput()}
       {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
-      {helpText && !error && <p className="mt-1 text-sm text-slate-400">{helpText}</p>}
+      {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
     </div>
   );
 }

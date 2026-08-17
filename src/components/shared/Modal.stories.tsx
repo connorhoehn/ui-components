@@ -51,7 +51,7 @@ export const WithFooter: Story = {
     children: <p>This action cannot be undone.</p>,
     footer: (
       <>
-        <button type="button" className="rounded border border-slate-300 px-3 py-1 text-sm">Cancel</button>
+        <button type="button" className="rounded border border-border-emphasis px-3 py-1 text-sm">Cancel</button>
         <button type="button" className="rounded bg-danger px-3 py-1 text-sm font-semibold text-white">Delete</button>
       </>
     ),

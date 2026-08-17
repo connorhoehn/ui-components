@@ -125,7 +125,7 @@ export function HangoutRoomsSection({
               <div
                 key={i}
                 aria-hidden="true"
-                className="h-7 rounded-md bg-slate-100 animate-pulse"
+                className="h-7 rounded-md bg-surface-hover animate-pulse"
               />
             ))}
           </div>
@@ -185,7 +185,7 @@ export function HangoutRoomsSection({
               <SidebarRow
                 data-testid="hangout-rooms-browse-all"
                 label={
-                  <span className="text-[12px] text-slate-500">
+                  <span className="text-[12px] text-neutral">
                     Browse all ({activeRooms.length})
                   </span>
                 }

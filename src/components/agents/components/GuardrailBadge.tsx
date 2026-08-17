@@ -9,7 +9,7 @@ interface GuardrailBadgeProps {
 export function GuardrailBadge({ guardrails, className, compact }: GuardrailBadgeProps) {
   if (guardrails.length === 0) {
     return (
-      <span className={cn('text-[10px] text-slate-400 italic', className)}>
+      <span className={cn('text-[10px] text-text-tertiary italic', className)}>
         No guardrails
       </span>
     );
@@ -19,7 +19,7 @@ export function GuardrailBadge({ guardrails, className, compact }: GuardrailBadg
     return (
       <span className={cn('inline-flex items-center gap-1 text-[10px]', className)}>
         <span className="text-warning-fg">🛡️</span>
-        <span className="text-slate-600">{guardrails.length}</span>
+        <span className="text-text-secondary">{guardrails.length}</span>
       </span>
     );
   }

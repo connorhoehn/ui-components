@@ -136,9 +136,9 @@ export function NewHangoutRoomDialog({
             placeholder="Team standup"
             maxLength={NAME_MAX + 10}
             disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info"
+            className="w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info"
           />
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
+          <div className="flex items-center justify-between text-[11px] text-text-tertiary">
             <span data-testid="new-hangout-room-slug-preview">
               {slugPreview ? `#${slugPreview}` : 'Slug preview appears here'}
             </span>
@@ -156,7 +156,7 @@ export function NewHangoutRoomDialog({
 
         <label className="flex flex-col gap-1">
           <span className="text-[12px] font-semibold text-slate-700">
-            Description <span className="font-normal text-slate-400">(optional)</span>
+            Description <span className="font-normal text-text-tertiary">(optional)</span>
           </span>
           <textarea
             data-testid="new-hangout-room-description"
@@ -165,7 +165,7 @@ export function NewHangoutRoomDialog({
             placeholder="What's this room for?"
             rows={2}
             disabled={submitting}
-            className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
+            className="w-full px-3 py-2 text-sm border border-border-emphasis rounded-md focus:outline-none focus:ring-2 focus:ring-info resize-none"
           />
         </label>
 
@@ -173,7 +173,7 @@ export function NewHangoutRoomDialog({
           <label className="flex items-center justify-between gap-3">
             <span className="flex flex-col">
               <span className="text-[13px] font-semibold text-slate-700">Audio only</span>
-              <span className="text-[11px] text-slate-400">Skip video tracks — voice-only room.</span>
+              <span className="text-[11px] text-text-tertiary">Skip video tracks — voice-only room.</span>
             </span>
             <Switch
               checked={audioOnly}
@@ -186,7 +186,7 @@ export function NewHangoutRoomDialog({
           <label className="flex items-center justify-between gap-3">
             <span className="flex flex-col">
               <span className="text-[13px] font-semibold text-slate-700">Recording enabled</span>
-              <span className="text-[11px] text-slate-400">Allow server-side recording of sessions.</span>
+              <span className="text-[11px] text-text-tertiary">Allow server-side recording of sessions.</span>
             </span>
             <Switch
               checked={recordingEnabled}

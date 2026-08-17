@@ -65,7 +65,7 @@ function ErrorState({
               className={cn(
                 'mt-2.5 px-[22px] py-[9px] text-sm font-semibold',
                 'bg-surface text-text-primary border border-border rounded-lg cursor-pointer font-[inherit]',
-                'hover:bg-slate-50',
+                'hover:bg-surface-panel',
               )}
             >
               {actionLabel}

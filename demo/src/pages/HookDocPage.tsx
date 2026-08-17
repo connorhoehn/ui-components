@@ -20,13 +20,13 @@ function HookGroupOverview({ group }: { group: HookGroup }) {
   return (
     <article className="flex flex-col gap-6 max-w-3xl">
       <header className="flex flex-col gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <span className="text-xs font-semibold uppercase tracking-wider text-neutral">
           Hook group
         </span>
-        <h1 className="text-2xl font-bold text-slate-900 m-0">
+        <h1 className="text-2xl font-bold text-text-primary m-0">
           {HOOK_GROUP_LABEL[group]} hooks
         </h1>
-        <p className="text-sm text-slate-600 m-0">
+        <p className="text-sm text-text-secondary m-0">
           {groupDocs.length} hook{groupDocs.length === 1 ? '' : 's'} in this group.
         </p>
       </header>
@@ -34,13 +34,13 @@ function HookGroupOverview({ group }: { group: HookGroup }) {
         {groupDocs.map((doc) => (
           <li
             key={doc.name}
-            className="border border-slate-200 rounded-lg p-4 hover:border-slate-300 hover:shadow-sm transition-all"
+            className="border border-border rounded-lg p-4 hover:border-border-emphasis hover:shadow-sm transition-all"
           >
             <Link to={`/hooks/${doc.name}`} className="no-underline block">
-              <h3 className="text-base font-semibold text-slate-900 m-0 font-mono">
+              <h3 className="text-base font-semibold text-text-primary m-0 font-mono">
                 {doc.name}
               </h3>
-              <p className="text-sm text-slate-600 m-0 mt-1">{doc.summary}</p>
+              <p className="text-sm text-text-secondary m-0 mt-1">{doc.summary}</p>
             </Link>
           </li>
         ))}

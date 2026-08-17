@@ -1,59 +1,59 @@
 import { DOCUMENT_TYPE_ICONS as da, getPageConfig as pa, getPagesView as ua, makeEmptyField as ma } from "./types.js";
 import { C as xa, i as ba } from "./fieldType-BJfRz7mO.js";
-import { c as Ye, A as Qe, j as Je } from "./useUrlFilterState-DZ-IE37c.js";
-import { B as ga, a as ya, u as va, b as Na, d as wa, e as ka, f as Ca, g as Sa, h as Ia, i as Ta, k as Ea, l as Pa, m as Da, n as Aa, o as Ra, p as La, q as Ma, r as _a, s as Oa, t as $a, v as Fa, w as Ba, x as ja, y as Ua, z as Va, C as Ga, D as Wa } from "./useUrlFilterState-DZ-IE37c.js";
+import { c as Ye, A as Qe, j as Je } from "./useUrlFilterState-C_4sQpK2.js";
+import { B as ga, a as ya, u as va, b as Na, d as wa, e as ka, f as Ca, g as Sa, h as Ia, i as Ta, k as Ea, l as Pa, m as Da, n as Aa, o as Ra, p as La, q as Ma, r as _a, s as Oa, t as $a, v as Fa, w as Ba, x as ja, y as Ua, z as Va, C as Ga, D as Wa } from "./useUrlFilterState-C_4sQpK2.js";
 import { u as Ha, a as Xa, b as Ka, c as qa, d as Ya, e as Qa, f as Ja, g as Za, h as es, i as ts, j as rs, k as as, l as ss, m as ns, n as os, o as is, p as ls } from "./useWebSocket-Bn4OeUor.js";
 import { u as ds, a as ps, b as us, c as ms, d as fs, e as xs } from "./useComments-Bocx7XyC.js";
 import { u as hs, a as gs, b as ys, c as vs, d as Ns, e as ws, f as ks, g as Cs, h as Ss, i as Is } from "./useMappingReviewQueue-DRbIo6-O.js";
 import { u as Es } from "./useDocumentTypes-C29MkgPl.js";
-import { u as Pe, T as Ze } from "./ToastProvider-wpvjc3pD.js";
-import { a as Ds } from "./ToastProvider-wpvjc3pD.js";
+import { u as Pe, T as Ze } from "./ToastProvider-DLKtnzJT.js";
+import { a as Ds } from "./ToastProvider-DLKtnzJT.js";
 import { u as et } from "./WebSocketContext-DPGFyPeZ.js";
 import { W as Rs } from "./WebSocketContext-DPGFyPeZ.js";
 import { u as tt } from "./IdentityContext-CLalsm_M.js";
 import { I as Ms } from "./IdentityContext-CLalsm_M.js";
-import { u as rt } from "./TrendSparkline-rw33UoWS.js";
-import { C as Os, D as $s, F as Fs, I as Bs, P as js, S as Us, T as Vs, a as Gs } from "./TrendSparkline-rw33UoWS.js";
-import { A as zs, C as Hs, e as Xs, a as Ks, a as qs, D as Ys, G as Qs, M as Js, P as Zs, R as en, b as tn, c as rn, S as an, d as sn, u as nn } from "./ReactionsBar-ClNzdaPj.js";
-import { v as at } from "./StatusPill-CYLT76xH.js";
-import { B as ln, C as cn, a as dn, b as pn, c as un, d as mn, e as fn, f as xn, g as bn, h as hn, D as gn, i as yn, j as vn, E as Nn, k as wn, F as kn, l as Cn, I as Sn, m as In, K as Tn, L as En, n as Pn, o as Dn, M as An, P as Rn, p as Ln, q as Mn, r as _n, Q as On, S as $n, s as Fn, t as Bn, u as jn, w as Un, T as Vn, x as Gn, y as Wn, z as zn, A as Hn, G as Xn, H as Kn, J as qn, N as Yn, U as Qn, O as Jn, R as Zn, V as eo, W as to, X as ro, Y as ao } from "./StatusPill-CYLT76xH.js";
+import { u as rt } from "./TrendSparkline-BFllSNbR.js";
+import { C as Os, D as $s, F as Fs, I as Bs, P as js, S as Us, T as Vs, a as Gs } from "./TrendSparkline-BFllSNbR.js";
+import { A as zs, C as Hs, e as Xs, a as Ks, a as qs, D as Ys, G as Qs, M as Js, P as Zs, R as en, b as tn, c as rn, S as an, d as sn, u as nn } from "./ReactionsBar-DW0UFNsm.js";
+import { v as at } from "./StatusPill-Dgf-DDmo.js";
+import { B as ln, C as cn, a as dn, b as pn, c as un, d as mn, e as fn, f as xn, g as bn, h as hn, D as gn, i as yn, j as vn, E as Nn, k as wn, F as kn, l as Cn, I as Sn, m as In, K as Tn, L as En, n as Pn, o as Dn, M as An, P as Rn, p as Ln, q as Mn, r as _n, Q as On, S as $n, s as Fn, t as Bn, u as jn, w as Un, T as Vn, x as Gn, y as Wn, z as zn, A as Hn, G as Xn, H as Kn, J as qn, N as Yn, U as Qn, O as Jn, R as Zn, V as eo, W as to, X as ro, Y as ao } from "./StatusPill-Dgf-DDmo.js";
 import { B as Ne } from "./Button-Qsbxqsl9.js";
-import { C as st } from "./Card-B2uO9v1w.js";
-import { P as no, T as oo, a as io, b as lo, c as co, d as po, e as uo } from "./Table-BOmVFX6H.js";
+import { C as st } from "./Card-qOg_oC77.js";
+import { P as no, T as oo, a as io, b as lo, c as co, d as po, e as uo } from "./Table-CGM2zaOL.js";
 import { F as fo, I as xo } from "./FileUploadDrop-Cmz3XANg.js";
 import { B as ho } from "./Banner-DKb3JiLs.js";
 import { B as yo, L as vo, S as No } from "./Chart-ByoxeiYX.js";
 import { C as ko } from "./Chip-BDT8ro4h.js";
-import { C as So } from "./ConfirmDialog-DkFFYdzP.js";
-import { E as To } from "./EmptyState-CSXnZFAs.js";
+import { C as So } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { E as To } from "./EmptyState-CpAOblv3.js";
 import { C as Po, S as Do, e as Ao, g as Ro, a as Lo } from "./CardHeader-CHxrs92b.js";
 import { jsxs as n, jsx as e, Fragment as $ } from "react/jsx-runtime";
 import "clsx";
 import "tailwind-merge";
-import { M as De } from "./Modal-2jg4229_.js";
+import { M as De } from "./Modal-fp5zcyw8.js";
 import { S as _o } from "./SkeletonCard-C89GWQ3p.js";
-import { C as nt } from "./Badge-Bcf9nJeZ.js";
-import { A as $o, B as Fo, N as Bo, P as jo, S as Uo } from "./Badge-Bcf9nJeZ.js";
+import { C as nt } from "./Badge-BgXzWBnr.js";
+import { A as $o, B as Fo, N as Bo, P as jo, S as Uo } from "./Badge-BgXzWBnr.js";
 import { useState as P, useEffect as E, useMemo as Q, useRef as A, Component as ot, lazy as it, useCallback as we, Suspense as ke, createContext as lt, useContext as ct, useId as dt } from "react";
-import { P as Go, S as Wo } from "./PermissionDeniedCard-CsM3MJvh.js";
+import { P as Go, S as Wo } from "./PermissionDeniedCard-zuRojsB7.js";
 import { S as Ho } from "./StatusDot-BC7B1tTr.js";
-import { A as pt } from "./Avatar-DIEPZUB9.js";
-import { a as Ko, n as qo, b as Yo } from "./Avatar-DIEPZUB9.js";
+import { A as pt } from "./Avatar-DLI820CU.js";
+import { a as Ko, n as qo, b as Yo } from "./Avatar-DLI820CU.js";
 import { T as Jo, a as Zo, b as ei, c as ti, d as ri, e as ai, f as si, t as ni, g as oi } from "./tones-DknNcB3q.js";
-import { R as ut } from "./ReactionsOverlay-B8ycHuZC.js";
-import { S as li, a as ci } from "./ReactionsOverlay-B8ycHuZC.js";
+import { R as ut } from "./ReactionsOverlay-Cp1TxS9B.js";
+import { S as li, a as ci } from "./ReactionsOverlay-Cp1TxS9B.js";
 import { useNavigate as Ae, useLocation as mt, Outlet as ft } from "react-router";
 import { c as u } from "./cn-B6yFEsav.js";
-import { i as xt, a as bt } from "./PresencePanel-BQDnRya1.js";
-import { C as pi, M as ui, P as mi, f as fi } from "./PresencePanel-BQDnRya1.js";
-import { N as ht } from "./NewDocumentModal-BH7g4Hn1.js";
+import { i as xt, a as bt } from "./PresencePanel-C81AAPgj.js";
+import { C as pi, M as ui, P as mi, f as fi } from "./PresencePanel-C81AAPgj.js";
+import { N as ht } from "./NewDocumentModal-D3u1SxCT.js";
 import { a as gt, u as Re, E as yt } from "./EventStreamContext-CjzSHXy-.js";
-import { u as Le, l as Me, a as _e, P as vt, b as Nt, c as wt, d as kt } from "./usePendingApprovals-CV1PcpST.js";
-import { G as bi, I as hi, e as gi, J as yi, N as vi, f as Ni, g as wi, h as ki, S as Ci, T as Si, i as Ii, j as Ti, k as Ei, m as Pi, n as Di, r as Ai, o as Ri, p as Li, s as Mi, q as _i, t as Oi } from "./usePendingApprovals-CV1PcpST.js";
+import { u as Le, l as Me, a as _e, P as vt, b as Nt, c as wt, d as kt } from "./usePendingApprovals-BhFuu3qV.js";
+import { G as bi, I as hi, e as gi, J as yi, N as vi, f as Ni, g as wi, h as ki, S as Ci, T as Si, i as Ii, j as Ti, k as Ei, m as Pi, n as Di, r as Ai, o as Ri, p as Li, s as Mi, q as _i, t as Oi } from "./usePendingApprovals-BhFuu3qV.js";
 import { u as Ct, O as St } from "./ObservabilityContext-mvmEXnGv.js";
-import { A as Fi, C as Bi, a as ji, b as Ui, c as Vi, d as Gi, e as Wi, f as zi, E as Hi, H as Xi, g as Ki, M as qi, h as Yi, i as Qi, j as Ji, k as Zi, N as el, P as tl, l as rl, R as al, m as sl, n as nl, o as ol, p as il, q as ll, S as cl, r as dl, s as pl, t as ul, u as ml, T as fl, v as xl, V as bl, w as hl, x as gl, y as yl, z as vl, B as Nl, D as wl, F as kl } from "./MediaControlsBar-B1eGUb6T.js";
-import { H as Sl, a as Il, b as Tl, P as El, R as Pl, c as Dl, S as Al, g as Rl, s as Ll, u as Ml, d as _l } from "./ReconnectingBanner-DRQIwSra.js";
-import { A as $l, a as Fl, b as Bl, c as jl, d as Ul, C as Vl, e as Gl, D as Wl, E as zl, f as Hl, g as Xl, h as Kl, G as ql, i as Yl, I as Ql, d as Jl, F as Zl, L as ec, j as tc, M as rc, k as ac, l as sc, m as nc, P as oc, n as ic, o as lc, Q as cc, S as dc, p as pc, U as uc, q as mc } from "./PoolScopedLayout-vj0QysMf.js";
+import { A as Fi, C as Bi, a as ji, b as Ui, c as Vi, d as Gi, e as Wi, f as zi, E as Hi, H as Xi, g as Ki, M as qi, h as Yi, i as Qi, j as Ji, k as Zi, N as el, P as tl, l as rl, R as al, m as sl, n as nl, o as ol, p as il, q as ll, S as cl, r as dl, s as pl, t as ul, u as ml, T as fl, v as xl, V as bl, w as hl, x as gl, y as yl, z as vl, B as Nl, D as wl, F as kl } from "./MediaControlsBar-D7JYLGpA.js";
+import { H as Sl, a as Il, b as Tl, P as El, R as Pl, c as Dl, S as Al, g as Rl, s as Ll, u as Ml, d as _l } from "./ReconnectingBanner-DdIZ40jI.js";
+import { A as $l, a as Fl, b as Bl, c as jl, d as Ul, C as Vl, e as Gl, D as Wl, E as zl, f as Hl, g as Xl, h as Kl, G as ql, i as Yl, I as Ql, d as Jl, F as Zl, L as ec, j as tc, M as rc, k as ac, l as sc, m as nc, P as oc, n as ic, o as lc, Q as cc, S as dc, p as pc, U as uc, q as mc } from "./PoolScopedLayout-BpUcKi0B.js";
 import { g as xc, c as bc, b as hc, l as gc, r as yc, a as vc } from "./registry-qR57lair.js";
 const It = [
   {
@@ -240,7 +240,7 @@ function Br({
             /* @__PURE__ */ n("p", { className: "text-[13px] text-[#475569]", children: [
               "You were in a call with",
               " ",
-              /* @__PURE__ */ e("span", { className: "font-semibold text-slate-900", children: a }),
+              /* @__PURE__ */ e("span", { className: "font-semibold text-text-primary", children: a }),
               o ? /* @__PURE__ */ n($, { children: [
                 " ",
                 "in",
@@ -250,11 +250,11 @@ function Br({
               "."
             ] }),
             /* @__PURE__ */ n("div", { className: "flex items-center gap-2", children: [
-              /* @__PURE__ */ e("span", { className: "text-[11px] font-semibold uppercase tracking-wide text-slate-500", children: "Elapsed" }),
+              /* @__PURE__ */ e("span", { className: "text-[11px] font-semibold uppercase tracking-wide text-neutral", children: "Elapsed" }),
               /* @__PURE__ */ e(
                 "span",
                 {
-                  className: "font-mono text-[13px] text-slate-900",
+                  className: "font-mono text-[13px] text-text-primary",
                   "data-testid": "resume-call-elapsed",
                   "aria-live": "polite",
                   children: Et(D)
@@ -274,7 +274,7 @@ function Br({
                     "data-testid": "resume-call-participant",
                     "data-participant-id": k.userId,
                     "data-participant-name": k.name,
-                    className: "inline-flex items-center gap-1.5 rounded-full bg-slate-100 pl-1 pr-2.5 py-1",
+                    className: "inline-flex items-center gap-1.5 rounded-full bg-surface-hover pl-1 pr-2.5 py-1",
                     title: k.name,
                     children: [
                       k.avatarUrl ? /* @__PURE__ */ e(
@@ -1022,7 +1022,7 @@ function qt() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Yt = it(() => import("./DocumentEditorPage-CTm0W69r.js").then((t) => t.o));
+const Yt = it(() => import("./DocumentEditorPage-B3iZwXc-.js").then((t) => t.o));
 function Qt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;
@@ -2459,7 +2459,7 @@ function oa({
                     "aria-hidden": "true",
                     className: u(
                       "block w-4 h-4 rounded-full border-2 transition-colors duration-150",
-                      x ? "border-info bg-white" : "border-slate-300 bg-white",
+                      x ? "border-info bg-white" : "border-border-emphasis bg-white",
                       !o && !x && "peer-hover:border-info",
                       "peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1"
                     )
@@ -2479,7 +2479,7 @@ function oa({
                   {
                     className: u(
                       "text-[13px] leading-5 font-medium",
-                      o ? "text-slate-400" : "text-slate-800"
+                      o ? "text-text-tertiary" : "text-slate-800"
                     ),
                     children: p.label
                   }
@@ -2489,7 +2489,7 @@ function oa({
                   {
                     className: u(
                       "text-[11px] leading-4 mt-0.5",
-                      o ? "text-slate-300" : "text-slate-500"
+                      o ? "text-text-disabled" : "text-neutral"
                     ),
                     children: p.description
                   }
@@ -2508,7 +2508,7 @@ const ur = {
   error: "border-danger",
   warning: "border-warning",
   info: "border-info",
-  neutral: "border-slate-300",
+  neutral: "border-border-emphasis",
   pending: "border-accent"
 };
 function ia({
@@ -2544,8 +2544,8 @@ function ia({
           ] }),
           /* @__PURE__ */ e(at, { state: a, label: m, size: "sm" })
         ] }),
-        s && /* @__PURE__ */ e("div", { className: "px-2.5 pt-1.5 pb-0 text-[11px] text-slate-500 truncate", children: s }),
-        i && /* @__PURE__ */ e("div", { className: "px-2.5 pb-2 pt-1 text-xs text-slate-600", children: i })
+        s && /* @__PURE__ */ e("div", { className: "px-2.5 pt-1.5 pb-0 text-[11px] text-neutral truncate", children: s }),
+        i && /* @__PURE__ */ e("div", { className: "px-2.5 pb-2 pt-1 text-xs text-text-secondary", children: i })
       ]
     }
   );

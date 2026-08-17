@@ -53,7 +53,7 @@ export function ConsentPage({
   }, [onDeny]);
 
   return (
-    <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div
         className="w-full max-w-[440px] bg-white rounded-xl shadow-md overflow-hidden"
         role="main"
@@ -64,13 +64,13 @@ export function ConsentPage({
           <h1 className="text-xl font-bold text-slate-800 m-0 text-center">
             Authorize {clientName}
           </h1>
-          <p className="text-sm text-slate-500 m-0 text-center leading-relaxed">
+          <p className="text-sm text-neutral m-0 text-center leading-relaxed">
             This application is requesting access to your account.
           </p>
         </header>
 
-        <div className="mx-8 border border-slate-200 rounded-md overflow-hidden mb-6">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 px-4 py-2.5 m-0 bg-slate-50 border-b border-slate-200">
+        <div className="mx-8 border border-border rounded-md overflow-hidden mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral px-4 py-2.5 m-0 bg-surface-panel border-b border-border">
             Requested Permissions
           </p>
           <ul className="list-none p-0 m-0" aria-label="Requested permissions">
@@ -79,7 +79,7 @@ export function ConsentPage({
                 key={scope}
                 className={cn(
                   'flex items-center gap-3 px-4 py-3 text-sm text-slate-800',
-                  i < scopes.length - 1 && 'border-b border-slate-200'
+                  i < scopes.length - 1 && 'border-b border-border'
                 )}
               >
                 <span className="w-2 h-2 rounded-full bg-info shrink-0" aria-hidden="true" />
@@ -91,8 +91,8 @@ export function ConsentPage({
 
         <div className="px-8 pb-8">
           {redirectUri && (
-            <p className="text-[11px] text-slate-400 mb-5 mt-0 break-all leading-relaxed">
-              You will be redirected to: <strong className="text-slate-500">{redirectUri}</strong>
+            <p className="text-[11px] text-text-tertiary mb-5 mt-0 break-all leading-relaxed">
+              You will be redirected to: <strong className="text-neutral">{redirectUri}</strong>
             </p>
           )}
 

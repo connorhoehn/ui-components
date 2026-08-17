@@ -21,7 +21,7 @@ function Harness({ initial, suggestions, lowercase }: {
   return (
     <div className="max-w-md">
       <TagEditor value={tags} onChange={setTags} suggestions={suggestions} lowercase={lowercase} />
-      <div className="mt-2 text-xs text-slate-500">value: [{tags.join(', ')}]</div>
+      <div className="mt-2 text-xs text-neutral">value: [{tags.join(', ')}]</div>
     </div>
   );
 }

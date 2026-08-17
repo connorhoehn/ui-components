@@ -40,7 +40,7 @@ const tocItems: TocItem[] = [
 const TEAM = ['Alice Chen', 'Bobby Knox', 'Carmen Diaz', 'Devon Lee', 'Erin Pope', 'Fai Wong'];
 
 const SAMPLE_COL = 'flex flex-col items-center gap-1.5';
-const SAMPLE_CAPTION = 'text-[11px] text-slate-500';
+const SAMPLE_CAPTION = 'text-[11px] text-neutral';
 const SAMPLE_LABEL = 'flex items-center gap-2';
 
 export default function PrimitivesPage() {
@@ -220,7 +220,7 @@ export default function PrimitivesPage() {
             <Avatar name="Devon Lee" size={36} />
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-slate-500 mb-1.5">
+            <div className="text-[11px] font-semibold text-neutral mb-1.5">
               AvatarGroup (maxVisible=4)
             </div>
             <AvatarGroup names={TEAM} maxVisible={4} size={32} />
@@ -248,7 +248,7 @@ export default function PrimitivesPage() {
             placeholder="Search projects…"
           />
           {query && (
-            <div className="text-xs text-slate-500 mt-2">
+            <div className="text-xs text-neutral mt-2">
               Searching for: <strong>{query}</strong>
             </div>
           )}
@@ -280,7 +280,7 @@ export default function PrimitivesPage() {
               { label: 'List', value: 'list' },
             ]}
           />
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-neutral">
             Current view: <strong>{view}</strong>
           </div>
         </div>
@@ -316,7 +316,7 @@ export default function PrimitivesPage() {
   href="/agents/supervisor"
 />`}
       >
-        <div className="border border-slate-200 rounded-lg overflow-hidden bg-white max-w-[420px]">
+        <div className="border border-border rounded-lg overflow-hidden bg-white max-w-[420px]">
           <div className="px-3.5 py-2.5 border-b border-slate-100">
             <EntityCell label="orgiq-search" id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2A" />
           </div>
@@ -348,7 +348,7 @@ export default function PrimitivesPage() {
   </div>
 </Card>`}
       >
-        <div className="border border-slate-200 rounded-lg p-4 bg-white max-w-[480px]">
+        <div className="border border-border rounded-lg p-4 bg-white max-w-[480px]">
           <CardHeader
             title="Active Runs"
             subtitle="Past 24 hours"
@@ -363,7 +363,7 @@ export default function PrimitivesPage() {
 
       {/* ─── Props ────────────────────────────────────────────────────── */}
       <div id="props" className="mt-12">
-        <h2 className="text-[22px] font-bold text-slate-900 mb-6">
+        <h2 className="text-[22px] font-bold text-text-primary mb-6">
           API Reference
         </h2>
 

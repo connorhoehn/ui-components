@@ -48,7 +48,7 @@ export function UserChip({
       data-testid={testId}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-1.5 py-0.5 text-[12px] text-text-primary',
-        onClick && 'hover:bg-slate-100 cursor-pointer transition-colors',
+        onClick && 'hover:bg-surface-hover cursor-pointer transition-colors',
         !onClick && 'cursor-default',
         className,
       )}

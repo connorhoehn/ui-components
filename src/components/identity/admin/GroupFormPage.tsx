@@ -132,7 +132,7 @@ export function GroupFormPage({
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800 box-border"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 box-border"
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -145,12 +145,12 @@ export function GroupFormPage({
           <section>
             <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
-              <p className="text-slate-400 text-sm">
+              <p className="text-text-tertiary text-sm">
                 No members yet.
               </p>
             ) : (
               members.map((m) => (
-                <div key={m.userId} className="flex items-center justify-between py-1.5 border-b border-slate-200">
+                <div key={m.userId} className="flex items-center justify-between py-1.5 border-b border-border">
                   <span className="text-base">{m.email}</span>
                   {onRemoveMember && (
                     <Button variant="danger" size="sm" onClick={() => onRemoveMember(m.userId)}>
@@ -165,7 +165,7 @@ export function GroupFormPage({
             {availableUsers && availableUsers.length > 0 && onAddMember && (
               <div className="flex gap-2 mt-2">
                 <select
-                  className="flex-1 p-2 text-base border border-slate-200 rounded-sm bg-white text-slate-800"
+                  className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >

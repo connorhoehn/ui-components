@@ -21,16 +21,16 @@ export function ExampleBlock({
   const [showCode, setShowCode] = useState(false);
 
   const previewClass =
-    'border border-slate-200 rounded-lg p-6' +
-    (background ? '' : ' bg-slate-50');
+    'border border-border rounded-lg p-6' +
+    (background ? '' : ' bg-surface-panel');
 
   return (
     <div className="mb-10">
-      <h3 id={id} className="text-lg font-semibold mb-1.5 text-slate-900">
+      <h3 id={id} className="text-lg font-semibold mb-1.5 text-text-primary">
         {title}
       </h3>
       {description && (
-        <p className="text-sm text-slate-600 mb-3 leading-relaxed">
+        <p className="text-sm text-text-secondary mb-3 leading-relaxed">
           {description}
         </p>
       )}
@@ -43,7 +43,7 @@ export function ExampleBlock({
       <div className="flex justify-end mt-2">
         <button
           type="button"
-          className="bg-transparent border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-600 cursor-pointer font-[inherit] hover:bg-slate-50"
+          className="bg-transparent border border-border rounded px-2.5 py-1 text-xs text-text-secondary cursor-pointer font-[inherit] hover:bg-surface-panel"
           onClick={() => setShowCode((v) => !v)}
         >
           {showCode ? 'Hide code' : 'Show code'}

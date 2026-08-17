@@ -72,7 +72,7 @@ describe('CircularIconToggle', () => {
         offTone="neutral"
       />,
     );
-    expect(screen.getByRole('button').className).toMatch(/bg-slate-100/);
+    expect(screen.getByRole('button').className).toMatch(/bg-surface-hover/);
     expect(screen.getByRole('button').className).not.toMatch(/bg-red-/);
   });
 });

@@ -70,7 +70,7 @@ export const SmVsMd: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-80">
       <div>
-        <p className="text-[11px] text-slate-400 mb-1">sm</p>
+        <p className="text-[11px] text-text-tertiary mb-1">sm</p>
         <Controlled
           size="sm"
           samples={imageSamples}
@@ -79,7 +79,7 @@ export const SmVsMd: Story = {
         />
       </div>
       <div>
-        <p className="text-[11px] text-slate-400 mb-1">md</p>
+        <p className="text-[11px] text-text-tertiary mb-1">md</p>
         <Controlled
           size="md"
           samples={imageSamples}

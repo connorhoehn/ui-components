@@ -24,9 +24,9 @@ export function PageSection({
     <section className={cn('flex flex-col gap-6', className)}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900 m-0">{title}</h1>
+          <h1 className="text-xl font-semibold text-text-primary m-0">{title}</h1>
           {description && (
-            <p className="text-sm text-slate-500 mt-1 mb-0">{description}</p>
+            <p className="text-sm text-neutral mt-1 mb-0">{description}</p>
           )}
         </div>
         {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}

@@ -84,7 +84,7 @@ export function AuditPage({
         header: 'Timestamp',
         sortable: true,
         render: (item) => (
-          <span className="font-mono text-xs text-slate-500">
+          <span className="font-mono text-xs text-neutral">
             {new Date(item.timestamp).toLocaleString()}
           </span>
         ),
@@ -117,7 +117,7 @@ export function AuditPage({
     [onViewEntity],
   );
 
-  const inputClass = 'px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection title="Audit Log">
@@ -125,7 +125,7 @@ export function AuditPage({
       <Card padding="md">
         <div className="flex flex-wrap gap-4 items-end">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Entity Type</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity Type</label>
             <select className={inputClass} value={entityType} onChange={(e) => setEntityType(e.target.value)}>
               <option value="">All</option>
               {ENTITY_TYPES.filter(Boolean).map((t) => (
@@ -134,19 +134,19 @@ export function AuditPage({
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Entity ID</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
             <input className={inputClass} value={entityId} onChange={(e) => setEntityId(e.target.value)} placeholder="Optional" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">From</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">From</label>
             <input className={inputClass} type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">To</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">To</label>
             <input className={inputClass} type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Limit</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Limit</label>
             <input className={`${inputClass} w-[70px]`} type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />
           </div>
           <Button variant="primary" size="lg" onClick={handleQuery} disabled={loading}>
@@ -157,7 +157,7 @@ export function AuditPage({
 
       {/* Results */}
       {totalRecords !== undefined && (
-        <p className="text-sm text-slate-400 m-0">{totalRecords} total record(s)</p>
+        <p className="text-sm text-text-tertiary m-0">{totalRecords} total record(s)</p>
       )}
 
       <EntityTable<AuditRow>
@@ -171,14 +171,14 @@ export function AuditPage({
 
       {/* Point-in-time replay */}
       <Card padding="md">
-        <h3 className="text-base font-semibold text-slate-900 mb-4 mt-0">Point-in-Time Replay</h3>
+        <h3 className="text-base font-semibold text-text-primary mb-4 mt-0">Point-in-Time Replay</h3>
         <div className="flex flex-wrap gap-4 items-end mb-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Entity ID</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
             <input className={inputClass} value={replayEntityId} onChange={(e) => setReplayEntityId(e.target.value)} placeholder="entity-id" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wide">At Timestamp</label>
+            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">At Timestamp</label>
             <input className={inputClass} type="datetime-local" value={replayTimestamp} onChange={(e) => setReplayTimestamp(e.target.value)} />
           </div>
           <Button variant="primary" size="lg" onClick={handleReplay} disabled={replaying || !replayEntityId || !replayTimestamp}>
@@ -186,7 +186,7 @@ export function AuditPage({
           </Button>
         </div>
         {replayResult && (
-          <pre className="p-4 bg-slate-50 border border-slate-200 rounded-md font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0">
+          <pre className="p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0">
             {JSON.stringify(replayResult, null, 2)}
           </pre>
         )}

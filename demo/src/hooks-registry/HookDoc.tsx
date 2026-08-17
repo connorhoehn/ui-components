@@ -4,7 +4,7 @@ import { HOOK_GROUP_LABEL, type HookDoc as HookDocData } from './hook-docs';
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-base font-semibold text-slate-900 m-0 mt-2 mb-3">
+    <h2 className="text-base font-semibold text-text-primary m-0 mt-2 mb-3">
       {children}
     </h2>
   );
@@ -17,10 +17,10 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
         <div className="flex items-center gap-2">
           <Chip tone="info" size="sm">{HOOK_GROUP_LABEL[doc.group]}</Chip>
         </div>
-        <h1 className="text-2xl font-bold text-slate-900 m-0 font-mono">
+        <h1 className="text-2xl font-bold text-text-primary m-0 font-mono">
           {doc.name}
         </h1>
-        <p className="text-base text-slate-600 m-0 leading-relaxed">
+        <p className="text-base text-text-secondary m-0 leading-relaxed">
           {doc.summary}
         </p>
       </header>
@@ -40,17 +40,17 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
       {doc.params.length > 0 && (
         <section className="flex flex-col gap-3">
           <SectionHeading>Parameters</SectionHeading>
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
+          <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-slate-50">
+              <thead className="bg-surface-panel">
                 <tr>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Name
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Type
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Description
                   </th>
                 </tr>
@@ -59,7 +59,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
                 {doc.params.map((p) => (
                   <tr key={p.name} className="border-b border-slate-100 last:border-b-0">
                     <td className="px-4 py-2 align-top">
-                      <code className="font-mono text-[13px] text-slate-900">{p.name}</code>
+                      <code className="font-mono text-[13px] text-text-primary">{p.name}</code>
                       {p.required && (
                         <span className="ml-1 text-[10px] font-semibold uppercase tracking-wider text-danger-fg">
                           required
@@ -83,17 +83,17 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
       {doc.returns.length > 0 && (
         <section className="flex flex-col gap-3">
           <SectionHeading>Returns</SectionHeading>
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
+          <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-sm border-collapse">
-              <thead className="bg-slate-50">
+              <thead className="bg-surface-panel">
                 <tr>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Field
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Type
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-slate-500 px-4 py-2 border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wider text-neutral px-4 py-2 border-b border-border">
                     Description
                   </th>
                 </tr>
@@ -102,7 +102,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
                 {doc.returns.map((r) => (
                   <tr key={r.name} className="border-b border-slate-100 last:border-b-0">
                     <td className="px-4 py-2 align-top">
-                      <code className="font-mono text-[13px] text-slate-900">{r.name}</code>
+                      <code className="font-mono text-[13px] text-text-primary">{r.name}</code>
                     </td>
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[12px] text-primary-fg">{r.type}</code>

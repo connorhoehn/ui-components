@@ -73,7 +73,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
         <button
           onClick={() => onDismiss(id)}
           aria-label="Dismiss notification"
-          className="text-base text-slate-400 bg-transparent border-none cursor-pointer px-1 py-0 leading-none"
+          className="text-base text-text-tertiary bg-transparent border-none cursor-pointer px-1 py-0 leading-none"
         >
           &times;
         </button>

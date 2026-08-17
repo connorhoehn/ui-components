@@ -110,10 +110,10 @@ export default function PermissionDeniedCard({
       <div className="h-10 w-10 rounded-full bg-warning-bg text-warning-fg grid place-items-center">
         {icon ?? <DefaultIcon kind={kind} />}
       </div>
-      <div className="text-base font-semibold text-slate-900">
+      <div className="text-base font-semibold text-text-primary">
         {STATE_TITLE[state](kind)}
       </div>
-      <p className="text-xs text-slate-600">
+      <p className="text-xs text-text-secondary">
         {message ?? STATE_BODY[state](kind)}
       </p>
       {onRetry && (

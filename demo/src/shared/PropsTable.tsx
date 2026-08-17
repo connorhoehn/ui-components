@@ -11,17 +11,17 @@ interface PropsTableProps {
   props: PropDef[];
 }
 
-const TH = 'text-left px-3.5 py-2.5 bg-slate-100 font-semibold border-b border-slate-200 text-slate-700';
-const TD_BASE = 'px-3.5 py-2.5 border-b border-slate-200';
+const TH = 'text-left px-3.5 py-2.5 bg-surface-hover font-semibold border-b border-border text-slate-700';
+const TD_BASE = 'px-3.5 py-2.5 border-b border-border';
 const TD_NAME = `${TD_BASE} font-mono font-bold`;
 const TD_TYPE = `${TD_BASE} font-mono text-accent-fg`;
-const TD_DEFAULT = `${TD_BASE} font-mono text-slate-500`;
+const TD_DEFAULT = `${TD_BASE} font-mono text-neutral`;
 const TD_DESC = `${TD_BASE} text-slate-700`;
 
 export function PropsTable({ componentName, props }: PropsTableProps) {
   return (
     <div className="mb-8 w-full overflow-x-auto">
-      <h3 className="text-lg font-semibold mb-3 text-slate-900">
+      <h3 className="text-lg font-semibold mb-3 text-text-primary">
         {componentName} Props
       </h3>
       <table className="w-full border-collapse text-sm">
@@ -35,7 +35,7 @@ export function PropsTable({ componentName, props }: PropsTableProps) {
         </thead>
         <tbody>
           {props.map((prop, i) => (
-            <tr key={prop.name} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+            <tr key={prop.name} className={i % 2 === 0 ? 'bg-white' : 'bg-surface-panel'}>
               <td className={TD_NAME}>
                 {prop.name}
                 {prop.required && (

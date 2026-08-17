@@ -129,8 +129,8 @@ export function CodeInput({
               'w-11 h-[52px] text-center text-lg font-semibold font-[inherit]',
               'rounded-md outline-none transition-[border-color,box-shadow] duration-150',
               'border-2',
-              error ? 'border-danger' : 'border-slate-200',
-              disabled ? 'bg-slate-50 cursor-not-allowed' : 'bg-white cursor-text',
+              error ? 'border-danger' : 'border-border',
+              disabled ? 'bg-surface-panel cursor-not-allowed' : 'bg-white cursor-text',
               'text-slate-800',
               'focus:border-info focus:ring-2 focus:ring-info/20'
             )}

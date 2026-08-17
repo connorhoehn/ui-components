@@ -1,16 +1,16 @@
 import { jsxs as o, jsx as e, Fragment as G } from "react/jsx-runtime";
 import No, { useState as S, memo as oa, useRef as le, useEffect as ne, useMemo as q, useCallback as D, useContext as wo, createContext as aa } from "react";
 import { useNavigate as Be, useParams as gt, Navigate as xt, useSearchParams as an } from "react-router";
-import { v as me, w as Re, q as $e, G as Jn, x as Ue, u as bt, i as ia, g as sa, f as or, p as la, y as ca, J as cn, t as ko, I as Co, e as Bt, S as en, N as da, T as dn, n as Io, a as ot, z as So, A as Hn, B as On, C as $o, D as pa, E as ua, F as ma, b as ha, H as at, K as fa, L as ga, M as it, O as ar, Q as xa, j as ba, o as To, R as tn, U as ya, m as ir, P as va, V as Na, r as wa, W as nn, l as sr, X as ka, k as Ca } from "./usePendingApprovals-CV1PcpST.js";
-import { h as kf, Y as Cf, Z as If } from "./usePendingApprovals-CV1PcpST.js";
+import { v as me, w as Re, q as $e, G as Jn, x as Ue, u as bt, i as ia, g as sa, f as or, p as la, y as ca, J as cn, t as ko, I as Co, e as Bt, S as en, N as da, T as dn, n as Io, a as ot, z as So, A as Hn, B as On, C as $o, D as pa, E as ua, F as ma, b as ha, H as at, K as fa, L as ga, M as it, O as ar, Q as xa, j as ba, o as To, R as tn, U as ya, m as ir, P as va, V as Na, r as wa, W as nn, l as sr, X as ka, k as Ca } from "./usePendingApprovals-BhFuu3qV.js";
+import { h as kf, Y as Cf, Z as If } from "./usePendingApprovals-BhFuu3qV.js";
 import { Handle as L, Position as B, useNodeConnections as Ia, getSmoothStepPath as Sa, EdgeLabelRenderer as lr, ReactFlowProvider as $a, useReactFlow as Ta, useNodesState as Ao, useEdgesState as Ro, ReactFlow as Po, Background as Mo, BackgroundVariant as Aa, Controls as Eo, MiniMap as Ra } from "@xyflow/react";
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
-import { a as Gn, u as sn } from "./ToastProvider-wpvjc3pD.js";
-import { I as yt, F as Pa, b as Ma, C as Kn, u as Ea, T as Da, S as Yn, a as Oa } from "./TrendSparkline-rw33UoWS.js";
+import { a as Gn, u as sn } from "./ToastProvider-DLKtnzJT.js";
+import { I as yt, F as Pa, b as Ma, C as Kn, u as Ea, T as Da, S as Yn, a as Oa } from "./TrendSparkline-BFllSNbR.js";
 import "clsx";
 import "tailwind-merge";
-import { M as He } from "./Modal-2jg4229_.js";
+import { M as He } from "./Modal-fp5zcyw8.js";
 import "react-dom";
 import "./WebSocketContext-DPGFyPeZ.js";
 import { a as De, u as _a } from "./EventStreamContext-CjzSHXy-.js";
@@ -20,8 +20,8 @@ import { I as mt, F as La } from "./FileUploadDrop-Cmz3XANg.js";
 import { u as Xn } from "./IdentityContext-CLalsm_M.js";
 import { B as Ze } from "./Banner-DKb3JiLs.js";
 import { C as se } from "./Chip-BDT8ro4h.js";
-import { E as ze } from "./EmptyState-CSXnZFAs.js";
-import { C as rn } from "./ConfirmDialog-DkFFYdzP.js";
+import { E as ze } from "./EmptyState-CpAOblv3.js";
+import { C as rn } from "./ConfirmDialog-Ix7G_Mb4.js";
 import { B as Ba, L as qt } from "./Chart-ByoxeiYX.js";
 import { S as pn } from "./SkeletonCard-C89GWQ3p.js";
 const Ua = {
@@ -2790,7 +2790,7 @@ function ws({ disabledTypes: t = [] }) {
         className: I(
           "h-8 box-border my-px mx-2 px-2 flex items-center gap-2 rounded font-[inherit]",
           W ? "cursor-not-allowed opacity-45" : "cursor-grab",
-          ie ? "bg-slate-100" : "bg-transparent"
+          ie ? "bg-surface-hover" : "bg-transparent"
         ),
         title: W ? `${A.name} is already placed` : Y ? `${A.description} — press ${Y}` : A.description,
         "data-node-type": A.type,
@@ -2812,7 +2812,7 @@ function ws({ disabledTypes: t = [] }) {
             {
               "data-testid": `palette-shortcut-${A.type}`,
               className: I(
-                "ml-auto text-[10px] font-semibold font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0",
+                "ml-auto text-[10px] font-semibold font-mono text-neutral bg-surface-hover border border-border rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0",
                 W && "opacity-50"
               ),
               children: Y
@@ -2831,7 +2831,7 @@ function ws({ disabledTypes: t = [] }) {
         className: I(
           "h-11 box-border my-0.5 mx-2 py-1.5 px-2.5 flex items-center gap-2.5 rounded-md border border-transparent font-[inherit]",
           W ? "cursor-not-allowed opacity-45" : "cursor-grab",
-          ie ? "bg-slate-50" : "bg-transparent"
+          ie ? "bg-surface-panel" : "bg-transparent"
         ),
         title: W ? `${A.name} is already placed` : Y ? `${A.description} — press ${Y}` : A.description,
         "data-node-type": A.type,
@@ -2848,21 +2848,21 @@ function ws({ disabledTypes: t = [] }) {
           ),
           /* @__PURE__ */ e("span", { className: "text-lg leading-none w-[22px] text-center shrink-0", "aria-hidden": !0, children: A.icon }),
           /* @__PURE__ */ o("div", { className: "flex-1 min-w-0", children: [
-            /* @__PURE__ */ o("div", { className: I("text-[13px] font-semibold text-slate-900 flex items-center gap-1.5", W && "line-through"), children: [
+            /* @__PURE__ */ o("div", { className: I("text-[13px] font-semibold text-text-primary flex items-center gap-1.5", W && "line-through"), children: [
               /* @__PURE__ */ e("span", { className: "truncate", children: A.name }),
               Y !== null && /* @__PURE__ */ e(
                 "kbd",
                 {
                   "data-testid": `palette-shortcut-${A.type}`,
                   className: I(
-                    "text-[10px] font-semibold font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0",
+                    "text-[10px] font-semibold font-mono text-neutral bg-surface-hover border border-border rounded px-1 leading-[14px] min-w-[14px] text-center shrink-0",
                     W && "opacity-50"
                   ),
                   children: Y
                 }
               )
             ] }),
-            /* @__PURE__ */ e("div", { className: "text-[11px] text-slate-500 truncate", children: W ? "Placed" : A.description })
+            /* @__PURE__ */ e("div", { className: "text-[11px] text-neutral truncate", children: W ? "Placed" : A.description })
           ] })
         ]
       },
@@ -2873,10 +2873,10 @@ function ws({ disabledTypes: t = [] }) {
   return /* @__PURE__ */ o(
     "div",
     {
-      className: "w-[220px] shrink-0 h-full border-r border-slate-200 bg-white flex flex-col",
+      className: "w-[220px] shrink-0 h-full border-r border-border bg-white flex flex-col",
       "data-testid": "node-palette",
       children: [
-        /* @__PURE__ */ o("div", { className: "shrink-0 border-b border-slate-200", children: [
+        /* @__PURE__ */ o("div", { className: "shrink-0 border-b border-border", children: [
           /* @__PURE__ */ o("div", { className: "flex items-center gap-1.5 py-2.5 px-3", children: [
             /* @__PURE__ */ e(
               "input",
@@ -2887,7 +2887,7 @@ function ws({ disabledTypes: t = [] }) {
                 placeholder: "Search nodes...",
                 "aria-label": "Search nodes",
                 "data-testid": "palette-search",
-                className: "flex-1 min-w-0 border border-slate-300 rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-slate-50 text-slate-900 outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-slate-400"
+                className: "flex-1 min-w-0 border border-border-emphasis rounded-md py-1.5 px-2.5 text-[13px] font-[inherit] bg-surface-panel text-text-primary outline-none focus:border-info focus:ring-1 focus:ring-info placeholder:text-text-tertiary"
               }
             ),
             /* @__PURE__ */ e(
@@ -2900,7 +2900,7 @@ function ws({ disabledTypes: t = [] }) {
                 "aria-pressed": p,
                 className: I(
                   "shrink-0 w-7 h-7 flex items-center justify-center rounded border text-[11px] transition-colors",
-                  p ? "bg-info border-info text-white" : "bg-white border-slate-300 text-slate-500 hover:bg-slate-50"
+                  p ? "bg-info border-info text-white" : "bg-white border-border-emphasis text-neutral hover:bg-surface-panel"
                 ),
                 children: p ? /* @__PURE__ */ o("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "none", "aria-hidden": "true", children: [
                   /* @__PURE__ */ e("rect", { x: "1", y: "2", width: "12", height: "2", rx: "1", fill: "currentColor" }),
@@ -2941,7 +2941,7 @@ function ws({ disabledTypes: t = [] }) {
               {
                 type: "button",
                 onClick: () => N("__recents__"),
-                className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-slate-400 hover:text-slate-600 transition-colors font-[inherit]",
+                className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
                 "aria-expanded": !f.__recents__,
                 children: [
                   /* @__PURE__ */ e(mr, { expanded: !f.__recents__ }),
@@ -2960,7 +2960,7 @@ function ws({ disabledTypes: t = [] }) {
               className: "flex flex-col items-center gap-3 px-4 py-8 text-center",
               "data-testid": "palette-empty",
               children: [
-                /* @__PURE__ */ e("span", { className: "text-xs text-slate-400", children: "No nodes match" }),
+                /* @__PURE__ */ e("span", { className: "text-xs text-text-tertiary", children: "No nodes match" }),
                 /* @__PURE__ */ e(
                   "button",
                   {
@@ -2981,7 +2981,7 @@ function ws({ disabledTypes: t = [] }) {
                 {
                   type: "button",
                   onClick: () => N(A.name),
-                  className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-slate-400 hover:text-slate-600 transition-colors font-[inherit]",
+                  className: "w-full flex items-center gap-1 pt-2 pb-1 px-3.5 text-[10px] font-bold tracking-[0.6px] uppercase text-text-tertiary hover:text-text-secondary transition-colors font-[inherit]",
                   "aria-expanded": !j,
                   children: [
                     /* @__PURE__ */ e(mr, { expanded: !j }),
@@ -3004,7 +3004,7 @@ function ws({ disabledTypes: t = [] }) {
             ] }, A.name);
           })
         ] }),
-        /* @__PURE__ */ e("div", { className: "py-2 px-3 border-t border-slate-200 text-[10px] text-slate-400 font-[inherit] shrink-0", children: "Press 1–9 to insert at center" })
+        /* @__PURE__ */ e("div", { className: "py-2 px-3 border-t border-border text-[10px] text-text-tertiary font-[inherit] shrink-0", children: "Press 1–9 to insert at center" })
       ]
     }
   );
@@ -5158,7 +5158,7 @@ function Al({
   );
 }
 const fn = {
-  neutral: "bg-slate-100 text-slate-600",
+  neutral: "bg-surface-hover text-text-secondary",
   success: "bg-success-bg text-success-fg",
   warning: "bg-warning-bg text-warning-fg",
   danger: "bg-danger-bg text-danger-fg",
@@ -5356,7 +5356,7 @@ function Rl({
             ),
             "data-testid": "run-status-indicator",
             children: [
-              Ee.variant === "running" && /* @__PURE__ */ e("span", { className: "inline-block w-3 h-3 border-2 border-slate-200 border-t-primary rounded-full animate-spin" }),
+              Ee.variant === "running" && /* @__PURE__ */ e("span", { className: "inline-block w-3 h-3 border-2 border-border border-t-primary rounded-full animate-spin" }),
               Ee.variant === "success" && "✓ ",
               Ee.variant === "error" && "✗ ",
               Ee.text
@@ -5413,7 +5413,7 @@ function Rl({
             ),
             "data-testid": "run-button",
             children: s ? /* @__PURE__ */ o("span", { className: "inline-flex items-center gap-1.5", children: [
-              /* @__PURE__ */ e("span", { className: "inline-block w-3 h-3 border-2 border-slate-200 border-t-white rounded-full animate-spin" }),
+              /* @__PURE__ */ e("span", { className: "inline-block w-3 h-3 border-2 border-border border-t-white rounded-full animate-spin" }),
               "Triggering…"
             ] }) : je
           }
@@ -6290,7 +6290,7 @@ function jl({
               disabled: n,
               "data-testid": "breakpoint-apply-continue-btn",
               className: I(
-                "px-3 py-1 text-xs font-semibold bg-success-bg text-gray-900",
+                "px-3 py-1 text-xs font-semibold bg-success-bg text-text-primary",
                 "border-none rounded cursor-pointer font-inherit",
                 n && "cursor-wait opacity-70"
               ),
@@ -6398,7 +6398,7 @@ function jl({
                                   children: "⚠ Unvalidated"
                                 }
                               ),
-                              b && /* @__PURE__ */ e("span", { className: "px-1 text-[9px] font-bold bg-gray-500/20 text-gray-400 rounded-sm", children: "Reverted" })
+                              b && /* @__PURE__ */ e("span", { className: "px-1 text-[9px] font-bold bg-gray-500/20 text-text-tertiary rounded-sm", children: "Reverted" })
                             ] }),
                             /* @__PURE__ */ o("div", { className: "text-[10px] text-[#9399b2]", children: [
                               w.appliedAt,
@@ -7847,11 +7847,11 @@ async function wc() {
 }
 const kc = {
   array: "bg-primary-bg text-primary-fg border-primary-border",
-  object: "bg-slate-50 text-slate-600 border-slate-200",
+  object: "bg-surface-panel text-text-secondary border-border",
   string: "bg-success-bg text-success-fg border-success-border",
   number: "bg-warning-bg text-warning-fg border-warning-border",
   boolean: "bg-pink-50 text-pink-700 border-pink-200",
-  unknown: "bg-slate-50 text-slate-400 border-slate-200"
+  unknown: "bg-surface-panel text-text-tertiary border-border"
 };
 function Cc({ kind: t }) {
   return /* @__PURE__ */ e(
@@ -7874,7 +7874,7 @@ function Ic({ entry: t, isSelected: r, onPick: n }) {
       "data-testid": `path-row-${t.path}`,
       className: I(
         "w-full flex items-center gap-2 px-2 py-1 rounded text-left transition-colors duration-100",
-        "hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary/50",
+        "hover:bg-surface-panel focus:outline-none focus:ring-2 focus:ring-primary/50",
         r && "bg-primary-bg ring-1 ring-inset ring-primary",
         t.isArrayItems && !r && "hover:bg-primary-bg"
       ),
@@ -7936,13 +7936,13 @@ function Sc({
     );
   if (!f)
     return /* @__PURE__ */ o("div", { className: "flex flex-col gap-1.5", children: [
-      i === "loading" && /* @__PURE__ */ o("p", { className: "text-[11px] text-slate-400 leading-4", children: [
+      i === "loading" && /* @__PURE__ */ o("p", { className: "text-[11px] text-text-tertiary leading-4", children: [
         "Loading schema for ",
         n,
         "…"
       ] }),
       i === "error" && /* @__PURE__ */ e("p", { className: "text-[11px] text-warning-fg leading-4", children: "Could not load schema — enter path manually." }),
-      (i === "done" || a === null) && /* @__PURE__ */ o("p", { className: "text-[11px] text-slate-400 leading-4", children: [
+      (i === "done" || a === null) && /* @__PURE__ */ o("p", { className: "text-[11px] text-text-tertiary leading-4", children: [
         "Schema unavailable for ",
         /* @__PURE__ */ e("span", { className: "font-mono", children: n }),
         " — enter path manually."
@@ -7959,7 +7959,7 @@ function Sc({
     ] });
   const x = u.filter((m) => m.isArrayItems).length < u.length;
   return /* @__PURE__ */ o("div", { className: "flex flex-col gap-1.5", children: [
-    /* @__PURE__ */ o("p", { className: "text-[11px] text-slate-500 leading-4", children: [
+    /* @__PURE__ */ o("p", { className: "text-[11px] text-neutral leading-4", children: [
       "Click a path to set itemsPath.",
       x && /* @__PURE__ */ o(G, { children: [
         " ",
@@ -7971,7 +7971,7 @@ function Sc({
     /* @__PURE__ */ e(
       "div",
       {
-        className: "flex flex-col gap-px border border-slate-200 rounded-md bg-white max-h-48 overflow-y-auto",
+        className: "flex flex-col gap-px border border-border rounded-md bg-white max-h-48 overflow-y-auto",
         "data-testid": "scatter-path-tree",
         role: "listbox",
         "aria-label": "Available output paths",
@@ -9544,7 +9544,7 @@ function ud({
         u && /* @__PURE__ */ e(
           "p",
           {
-            className: "text-sm text-slate-500",
+            className: "text-sm text-neutral",
             "data-testid": p ? `${p}-uploading` : void 0,
             children: "Uploading..."
           }
@@ -9617,7 +9617,7 @@ function Fo(t) {
       uploadImage: n,
       getImageUrl: r.getImageUrl
     }
-  ) : /* @__PURE__ */ e("div", { className: "text-sm text-slate-500", children: "This host has not wired uploadImage. Cannot accept new uploads." });
+  ) : /* @__PURE__ */ e("div", { className: "text-sm text-neutral", children: "This host has not wired uploadImage. Cannot accept new uploads." });
 }
 const jn = {
   brightness: "Brightness",
@@ -14487,11 +14487,11 @@ function Yp({ pipelineId: t }) {
             "data-testid": "tags-row",
             className: I(
               "flex items-center gap-2 px-4 py-1.5",
-              "border-b border-slate-200 bg-[#fafbfc]",
+              "border-b border-border bg-[#fafbfc]",
               "min-h-[34px] shrink-0 sticky top-11 z-[4]"
             ),
             children: [
-              /* @__PURE__ */ e("span", { className: "text-[11px] text-slate-400 font-semibold", children: "TAGS" }),
+              /* @__PURE__ */ e("span", { className: "text-[11px] text-text-tertiary font-semibold", children: "TAGS" }),
               /* @__PURE__ */ e(
                 Da,
                 {
@@ -18740,7 +18740,7 @@ function gm({ pipelineId: t, runId: r }) {
   const n = Be(), a = Ue(), i = bt(), { definition: s } = a, [d, c] = S(null);
   ne(() => {
     let z = !1;
-    return import("./usePendingApprovals-CV1PcpST.js").then((ce) => ce._).then(({ getPipelineRun: ce }) => {
+    return import("./usePendingApprovals-BhFuu3qV.js").then((ce) => ce._).then(({ getPipelineRun: ce }) => {
       ce(t, r).then((we) => {
         !z && we && c(we);
       });

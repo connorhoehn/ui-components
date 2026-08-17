@@ -60,7 +60,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
             onMouseDown={(e) => { e.preventDefault(); exec(cmd); }}
             disabled={disabled}
             title={title}
-            className="px-2 py-0.5 text-xs font-semibold border border-gray-300 rounded bg-gray-50 text-gray-700 cursor-pointer leading-normal"
+            className="px-2 py-0.5 text-xs font-semibold border border-border-emphasis rounded bg-surface-panel text-gray-700 cursor-pointer leading-normal"
           >
             {label}
           </button>
@@ -69,7 +69,7 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
         <select
           onChange={(e) => { document.execCommand('formatBlock', false, e.target.value); flush(); }}
           disabled={disabled}
-          className="text-xs border border-gray-300 rounded px-1.5 py-0.5 bg-gray-50 text-gray-700"
+          className="text-xs border border-border-emphasis rounded px-1.5 py-0.5 bg-surface-panel text-gray-700"
         >
           <option value="p">Paragraph</option>
           <option value="h1">H1</option>
@@ -100,12 +100,12 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
         suppressContentEditableWarning
         onInput={flush}
         className={cn(
-          'min-h-[180px] border border-gray-300 rounded px-3 py-2 text-[0.9rem] font-[inherit] leading-relaxed outline-none overflow-y-auto text-slate-800',
-          disabled ? 'bg-slate-50' : 'bg-white'
+          'min-h-[180px] border border-border-emphasis rounded px-3 py-2 text-[0.9rem] font-[inherit] leading-relaxed outline-none overflow-y-auto text-slate-800',
+          disabled ? 'bg-surface-panel' : 'bg-white'
         )}
       />
       {disabled && (
-        <p className="text-gray-400 mt-1 mb-0 text-[0.8rem]">
+        <p className="text-text-tertiary mt-1 mb-0 text-[0.8rem]">
           Disconnected — reconnect to edit
         </p>
       )}

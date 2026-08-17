@@ -31,7 +31,7 @@ export interface TableHeadProps extends HTMLAttributes<HTMLTableSectionElement> 
 
 export function TableHead({ children, className, ...rest }: TableHeadProps) {
   return (
-    <thead className={cn('border-b border-slate-200 bg-slate-50', className)} {...rest}>
+    <thead className={cn('border-b border-border bg-surface-panel', className)} {...rest}>
       {children}
     </thead>
   );
@@ -67,7 +67,7 @@ export function TableRow({ children, clickable, className, ...rest }: TableRowPr
     <tr
       className={cn(
         'border-b border-slate-100 last:border-b-0 transition-colors',
-        clickable && 'cursor-pointer hover:bg-slate-50',
+        clickable && 'cursor-pointer hover:bg-surface-panel',
         className,
       )}
       {...rest}
@@ -91,7 +91,7 @@ export function TableTh({ children, sortable, sortDirection, className, ...rest 
   return (
     <th
       className={cn(
-        'text-left px-4 py-2.5 text-slate-500 font-semibold text-[11px] uppercase tracking-wide select-none',
+        'text-left px-4 py-2.5 text-neutral font-semibold text-[11px] uppercase tracking-wide select-none',
         sortable && 'cursor-pointer hover:text-slate-700 transition-colors',
         className,
       )}
@@ -99,7 +99,7 @@ export function TableTh({ children, sortable, sortDirection, className, ...rest 
     >
       {children}
       {sortable && sortDirection && (
-        <span className="ml-1 text-slate-400">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+        <span className="ml-1 text-text-tertiary">{sortDirection === 'asc' ? '↑' : '↓'}</span>
       )}
     </th>
   );

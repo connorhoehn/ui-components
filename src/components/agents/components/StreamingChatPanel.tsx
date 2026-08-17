@@ -46,9 +46,9 @@ export function StreamingChatPanel({
   }
 
   return (
-    <div className={cn('flex flex-col border border-slate-200 rounded-lg bg-white overflow-hidden', className)}>
+    <div className={cn('flex flex-col border border-border rounded-lg bg-white overflow-hidden', className)}>
       {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <span className="font-semibold text-sm text-slate-800">Agent Chat</span>
         {isStreaming && (
           <span className="flex items-center gap-1.5 text-xs text-info-fg">
@@ -61,7 +61,7 @@ export function StreamingChatPanel({
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 min-h-[300px] max-h-[500px] flex flex-col gap-4">
         {messages.length === 0 && !isStreaming && (
-          <div className="text-sm text-slate-400 text-center mt-[60px]">
+          <div className="text-sm text-text-tertiary text-center mt-[60px]">
             Messages will appear here as you interact with the agent...
           </div>
         )}
@@ -162,7 +162,7 @@ export function StreamingChatPanel({
       )}
 
       {/* Input */}
-      <div className="flex items-center gap-2 p-3 border-t border-slate-200 bg-slate-50/50">
+      <div className="flex items-center gap-2 p-3 border-t border-border bg-surface-panel/50">
         <input
           type="text"
           value={input}
@@ -171,8 +171,8 @@ export function StreamingChatPanel({
           disabled={isStreaming}
           placeholder={isStreaming ? 'Waiting for response...' : placeholder}
           className={cn(
-            'flex-1 text-sm px-3 py-2.5 border border-slate-200 rounded-lg outline-none focus:border-info focus:ring-1 focus:ring-info transition-all bg-white',
-            isStreaming && 'bg-slate-50 text-slate-400',
+            'flex-1 text-sm px-3 py-2.5 border border-border rounded-lg outline-none focus:border-info focus:ring-1 focus:ring-info transition-all bg-white',
+            isStreaming && 'bg-surface-panel text-text-tertiary',
           )}
         />
         {isStreaming && onCancel ? (
@@ -189,7 +189,7 @@ export function StreamingChatPanel({
             className={cn(
               'text-sm px-4 py-2.5 rounded-lg transition-colors font-medium',
               !input.trim() || isStreaming
-                ? 'bg-slate-100 text-slate-400 cursor-default'
+                ? 'bg-surface-hover text-text-tertiary cursor-default'
                 : 'bg-info text-white hover:bg-info cursor-pointer',
             )}
           >

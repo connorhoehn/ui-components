@@ -113,14 +113,14 @@ export function LoginPage({
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center p-6 bg-slate-50">
+    <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
         <header className="flex flex-col items-center gap-3 mb-6">
           {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
           {clientName && <h1 className="text-xl font-bold text-slate-800 m-0">{clientName}</h1>}
         </header>
 
-        <nav className="flex border-b border-slate-200 mb-6" role="tablist" aria-label="Authentication method">
+        <nav className="flex border-b border-border mb-6" role="tablist" aria-label="Authentication method">
           <Button
             variant="ghost"
             size="sm"
@@ -130,7 +130,7 @@ export function LoginPage({
               'flex-1 rounded-none border-b-2',
               tab === 'signin'
                 ? 'border-b-[#3b82f6] text-info-fg font-semibold'
-                : 'border-b-transparent text-slate-500 font-normal'
+                : 'border-b-transparent text-neutral font-normal'
             )}
             onClick={() => switchTab('signin')}
           >
@@ -146,7 +146,7 @@ export function LoginPage({
                 'flex-1 rounded-none border-b-2',
                 tab === 'register'
                   ? 'border-b-[#3b82f6] text-info-fg font-semibold'
-                  : 'border-b-transparent text-slate-500 font-normal'
+                  : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('register')}
             >
@@ -163,7 +163,7 @@ export function LoginPage({
                 'flex-1 rounded-none border-b-2',
                 tab === 'forgot'
                   ? 'border-b-[#3b82f6] text-info-fg font-semibold'
-                  : 'border-b-transparent text-slate-500 font-normal'
+                  : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('forgot')}
             >
@@ -290,7 +290,7 @@ export function LoginPage({
               </Banner>
             ) : (
               <>
-                <p className="text-sm text-slate-500 mb-4 mt-0 leading-relaxed">
+                <p className="text-sm text-neutral mb-4 mt-0 leading-relaxed">
                   Enter your email address and we'll send you a link to reset your password.
                 </p>
                 <FormField

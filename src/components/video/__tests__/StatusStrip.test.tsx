@@ -18,7 +18,7 @@ describe('StatusStrip', () => {
     ['connecting', 'text-warning-fg'],
     ['reconnecting', 'text-warning-fg'],
     ['buffering', 'text-warning-fg'],
-    ['idle', 'text-slate-400'],
+    ['idle', 'text-text-tertiary'],
     ['error', 'text-danger-fg'],
   ] as const)('applies the %s text-color tier', (phase, klass) => {
     render(<StatusStrip phase={phase} />);

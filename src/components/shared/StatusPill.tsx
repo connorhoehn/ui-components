@@ -59,7 +59,7 @@ const STATE_TOKENS: Record<StatusPillState, PillTokens> = {
     text: 'text-info-fg',
   },
   neutral: {
-    pill: 'bg-slate-100 border-slate-200',
+    pill: 'bg-surface-hover border-border',
     dot:  'bg-slate-400',
     text: 'text-slate-700',
   },

@@ -258,7 +258,7 @@ function ViewerCountExample() {
 function PropsSection() {
   return (
     <div id="props" className="mt-12">
-      <h2 className="text-[22px] font-bold mb-5 text-slate-900">Props Reference</h2>
+      <h2 className="text-[22px] font-bold mb-5 text-text-primary">Props Reference</h2>
 
       <PropsTable componentName="VideoPlayer" props={[
         { name: 'src', type: 'string', default: '—', description: 'Video source URL (MP4, HLS)' },

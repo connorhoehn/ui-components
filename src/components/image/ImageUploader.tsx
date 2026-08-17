@@ -128,7 +128,7 @@ function ImageUploaderInner({
     >
       {uploading && (
         <p
-          className="text-sm text-slate-500"
+          className="text-sm text-neutral"
           data-testid={testId ? `${testId}-uploading` : undefined}
         >
           Uploading...
@@ -196,7 +196,7 @@ export function ImageUploader(props: ImageUploaderProps) {
 
   if (!upload) {
     return (
-      <div className="text-sm text-slate-500">
+      <div className="text-sm text-neutral">
         This host has not wired uploadImage. Cannot accept new uploads.
       </div>
     );
