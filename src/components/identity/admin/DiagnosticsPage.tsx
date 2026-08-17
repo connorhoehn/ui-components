@@ -31,7 +31,7 @@ export interface DiagnosticsPageProps {
 
 function JsonViewer({ data }: { data: unknown }) {
   return (
-    <pre className="p-5 font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel">
+    <pre className="p-5 font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel">
       {JSON.stringify(data, null, 2)}
     </pre>
   );
@@ -140,7 +140,7 @@ export function DiagnosticsPage({
       {/* Node/Cluster diagnostics */}
       <Card>
         <div className="px-5 py-3 border-b border-border bg-surface-panel">
-          <h3 className="text-sm font-semibold text-slate-700 m-0">Node / Cluster Diagnostics</h3>
+          <h3 className="text-sm font-semibold text-text-primary m-0">Node / Cluster Diagnostics</h3>
         </div>
         {diagnostics ? (
           <JsonViewer data={diagnostics} />
@@ -152,7 +152,7 @@ export function DiagnosticsPage({
       {/* Rate limiter stats */}
       <Card>
         <div className="px-5 py-3 border-b border-border bg-surface-panel">
-          <h3 className="text-sm font-semibold text-slate-700 m-0">Rate Limiter Stats</h3>
+          <h3 className="text-sm font-semibold text-text-primary m-0">Rate Limiter Stats</h3>
         </div>
         {rates ? <RateTable rates={rates} /> : <p className="p-5 text-center text-text-tertiary text-sm m-0">No rate data available.</p>}
       </Card>
@@ -160,7 +160,7 @@ export function DiagnosticsPage({
       {/* Dead Letter Queue */}
       <Card>
         <div className="px-5 py-3 border-b border-border bg-surface-panel">
-          <h3 className="text-sm font-semibold text-slate-700 m-0">Dead Letter Queue</h3>
+          <h3 className="text-sm font-semibold text-text-primary m-0">Dead Letter Queue</h3>
         </div>
         {!dlq || dlq.length === 0 ? (
           <p className="p-5 text-center text-text-tertiary text-sm m-0">Dead letter queue is empty.</p>

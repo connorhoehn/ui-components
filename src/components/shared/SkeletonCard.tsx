@@ -15,7 +15,7 @@ function SkeletonCard({ width = '100%', height = 64 }: SkeletonCardProps) {
     <div
       data-testid="skeleton-card"
       className={cn(
-        'rounded-lg bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100',
+        'rounded-lg bg-gradient-to-r from-surface-hover via-surface-emphasis to-surface-hover',
         'bg-[length:400px_100%] animate-[skeleton-shimmer_1.4s_ease-in-out_infinite]',
       )}
       style={{ width, height }}

@@ -101,7 +101,7 @@ export function MfaSetupPage({
   return (
     <div className="min-h-full flex items-center justify-center p-6 bg-surface-panel">
       <div className="w-full max-w-[480px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA setup">
-        <h1 className="text-xl font-bold text-slate-800 mb-2 mt-0 text-center">
+        <h1 className="text-xl font-bold text-text-primary mb-2 mt-0 text-center">
           Set Up Multi-Factor Authentication
         </h1>
         {userEmail && <p className="text-sm text-neutral mb-5 mt-0 text-center">{userEmail}</p>}
@@ -113,13 +113,13 @@ export function MfaSetupPage({
               <div
                 className={cn(
                   'w-3 h-3 rounded-full transition-colors duration-200',
-                  i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-info' : 'bg-slate-200'
+                  i < currentStepIndex ? 'bg-success' : i === currentStepIndex ? 'bg-info' : 'bg-surface-emphasis'
                 )}
                 aria-label={`Step ${i + 1}${i === currentStepIndex ? ' (current)' : i < currentStepIndex ? ' (completed)' : ''}`}
               />
               <span className={cn(
                 'text-[10px] uppercase tracking-wide font-medium',
-                i === currentStepIndex ? 'text-slate-800' : 'text-text-tertiary'
+                i === currentStepIndex ? 'text-text-primary' : 'text-text-tertiary'
               )}>
                 {STEP_LABELS[i]}
               </span>
@@ -183,7 +183,7 @@ export function MfaSetupPage({
             <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0">
               Or enter this secret manually
             </p>
-            <div className="px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-slate-800 break-all text-center mb-6 select-all">
+            <div className="px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all">
               {setupResult.secret}
             </div>
             <Button
@@ -237,7 +237,7 @@ export function MfaSetupPage({
             </p>
             <div className="grid grid-cols-2 gap-2.5 mb-6">
               {backupCodes.map((code, i) => (
-                <div key={i} className="px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-slate-800 text-center select-all">
+                <div key={i} className="px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all">
                   {code}
                 </div>
               ))}

@@ -419,7 +419,7 @@ export default function NodePalette({ disabledTypes = [] }: NodePaletteProps) {
           <span className="text-base leading-none w-5 text-center shrink-0" aria-hidden>
             {item.icon}
           </span>
-          <span className={cn('text-[12px] font-medium text-slate-800 truncate', isDisabled && 'line-through')}>
+          <span className={cn('text-[12px] font-medium text-text-primary truncate', isDisabled && 'line-through')}>
             {item.name}
           </span>
           {shortcutDigit !== null && (

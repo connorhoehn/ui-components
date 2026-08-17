@@ -83,7 +83,7 @@ export function ImageThumbnail({
       {status === 'loading' && (
         <div
           aria-hidden="true"
-          className="absolute inset-0 animate-pulse bg-slate-200"
+          className="absolute inset-0 animate-pulse bg-surface-emphasis"
         />
       )}
 

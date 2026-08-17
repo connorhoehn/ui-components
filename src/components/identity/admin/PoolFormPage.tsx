@@ -105,7 +105,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         />
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-slate-800 mb-2">MFA Configuration</h3>
+          <h3 className="text-base font-semibold text-text-primary mb-2">MFA Configuration</h3>
           <FormField
             label="MFA Mode"
             name="mfaConfig"
@@ -121,7 +121,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         </section>
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-slate-800 mb-2">Password Policy</h3>
+          <h3 className="text-base font-semibold text-text-primary mb-2">Password Policy</h3>
           <FormField
             label="Minimum Length"
             name="minLength"
@@ -160,17 +160,17 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
         </section>
 
         <section className="mb-6">
-          <h3 className="text-base font-semibold text-slate-800 mb-2">Custom Attributes</h3>
+          <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
           {customAttrs.map((attr, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-2">
               <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
               <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
+                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}
@@ -185,7 +185,7 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           </Button>
         </section>
 
-        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+        <div className="flex gap-3 mt-6 pt-5 border-t border-border-subtle">
           <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Pool' : 'Create Pool'}
           </Button>

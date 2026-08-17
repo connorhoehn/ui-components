@@ -18,7 +18,7 @@ export default function RichTextReaderRenderer({
   return (
     <div>
       {hasContent ? (
-        <div className="border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-slate-800 leading-[1.6]">
+        <div className="border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]">
           <TiptapEditor
             fragment={fragment}
             ydoc={ydoc}

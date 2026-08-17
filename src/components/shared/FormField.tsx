@@ -78,7 +78,7 @@ export default function FormField({
         className={cn(
           'text-[12px] font-medium',
           layout === 'inline' ? 'min-w-[140px]' : '',
-          error ? 'text-[#991b1b]' : 'text-gray-700',
+          error ? 'text-[#991b1b]' : 'text-text-primary',
         )}
       >
         {label}{required && <span className="ml-0.5 text-[#991b1b]">*</span>}

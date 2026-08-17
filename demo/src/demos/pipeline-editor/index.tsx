@@ -51,7 +51,7 @@ function NodePalette() {
 
   return (
     <aside className="w-56 border-r border-border bg-white flex flex-col overflow-hidden shrink-0">
-      <div className="px-3 py-2.5 border-b border-slate-100">
+      <div className="px-3 py-2.5 border-b border-border-subtle">
         <Input
           type="search"
           placeholder="Search nodes…"
@@ -84,7 +84,7 @@ function NodePalette() {
                   >
                     {nodeTypeIcons[item.type]}
                   </span>
-                  <span className="flex-1 text-sm font-medium text-slate-800">
+                  <span className="flex-1 text-sm font-medium text-text-primary">
                     {item.label}
                   </span>
                   <kbd className="text-[10px] text-text-tertiary bg-surface-hover rounded px-1.5 py-0.5 font-mono">
@@ -96,7 +96,7 @@ function NodePalette() {
           );
         })}
       </div>
-      <div className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-slate-100">
+      <div className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-border-subtle">
         Press 1–8 to insert at center
       </div>
     </aside>
@@ -242,7 +242,7 @@ function PipelineCanvas() {
             key={icon}
             type="button"
             aria-label={icon}
-            className="w-7 h-7 flex items-center justify-center text-sm text-text-secondary hover:bg-surface-panel border-b border-slate-100 last:border-b-0 transition-colors"
+            className="w-7 h-7 flex items-center justify-center text-sm text-text-secondary hover:bg-surface-panel border-b border-border-subtle last:border-b-0 transition-colors"
           >
             {icon}
           </button>
@@ -353,7 +353,7 @@ export default function PipelineEditorDemo() {
           <div className="h-[53px] flex items-center gap-3 px-4 border-b border-border bg-white">
             <button
               type="button"
-              className="text-neutral hover:text-slate-800 text-base transition-colors"
+              className="text-neutral hover:text-text-primary text-base transition-colors"
               aria-label="Back"
             >
               ←

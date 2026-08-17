@@ -25,7 +25,7 @@ export function ErrorPage({
             <line x1="9" y1="9" x2="15" y2="15" />
           </svg>
         </div>
-        <h1 className="text-xl font-bold text-slate-800 mb-3 mt-0">{title}</h1>
+        <h1 className="text-xl font-bold text-text-primary mb-3 mt-0">{title}</h1>
         <p className="text-sm text-neutral mb-3 mt-0 leading-relaxed">{message}</p>
         {error && (
           <code className="text-[11px] text-text-tertiary font-mono mb-5 px-3.5 py-2 bg-surface-panel border border-border rounded-md inline-block max-w-full overflow-x-auto">

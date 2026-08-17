@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ReconnectingShim } from './ReconnectingShim';
 
 const SampleBody = () => (
-  <div className="rounded border border-border bg-white p-4 text-sm text-slate-700">
+  <div className="rounded border border-border bg-white p-4 text-sm text-text-primary">
     <div className="mb-2 font-semibold">Chat panel</div>
     <ul className="space-y-1 text-text-secondary">
       <li>Alice: hey 👋</li>

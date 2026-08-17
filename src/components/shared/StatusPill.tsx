@@ -60,8 +60,8 @@ const STATE_TOKENS: Record<StatusPillState, PillTokens> = {
   },
   neutral: {
     pill: 'bg-surface-hover border-border',
-    dot:  'bg-slate-400',
-    text: 'text-slate-700',
+    dot:  'bg-surface-emphasis',
+    text: 'text-text-primary',
   },
   pending: {
     pill: 'bg-accent-bg border-accent-border',

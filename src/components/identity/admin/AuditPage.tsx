@@ -117,7 +117,7 @@ export function AuditPage({
     [onViewEntity],
   );
 
-  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection title="Audit Log">
@@ -186,7 +186,7 @@ export function AuditPage({
           </Button>
         </div>
         {replayResult && (
-          <pre className="p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-slate-700 overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0">
+          <pre className="p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0">
             {JSON.stringify(replayResult, null, 2)}
           </pre>
         )}

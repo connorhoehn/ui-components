@@ -3,7 +3,7 @@
 // Payload-typed port styling for @xyflow/react <Handle> elements
 // (NODE-VISUALS-AUDIT §3.4). Class strings use !important-prefixed Tailwind
 // utilities because React Flow ships its own handle CSS that these must
-// override (same convention as the existing `!bg-slate-300 !w-2.5 !h-2.5`
+// override (same convention as the existing `!bg-surface-emphasis !w-2.5 !h-2.5`
 // handle classNames across the node components).
 //
 // Convention summary (also documented in NODE_HANDLES.md):
@@ -18,7 +18,7 @@ export type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error';
 
 export const PORT_CLS: Record<PortPayload, string> = {
   image: '!w-2.5 !h-2.5 !rounded-sm !bg-[#7c3aed] !border-[#6d28d9]',
-  text: '!w-2.5 !h-2.5 !bg-slate-300',
+  text: '!w-2.5 !h-2.5 !bg-surface-emphasis',
   data: '!w-2.5 !h-2.5 !bg-[#94a3b8]',
   control: '!w-2 !h-2 !bg-warning',
   error: '!w-2 !h-2 !bg-danger',

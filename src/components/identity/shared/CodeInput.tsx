@@ -131,7 +131,7 @@ export function CodeInput({
               'border-2',
               error ? 'border-danger' : 'border-border',
               disabled ? 'bg-surface-panel cursor-not-allowed' : 'bg-white cursor-text',
-              'text-slate-800',
+              'text-text-primary',
               'focus:border-info focus:ring-2 focus:ring-info/20'
             )}
           />

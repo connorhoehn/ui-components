@@ -17,10 +17,10 @@ export function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps)
             <line x1="21" y1="12" x2="9" y2="12" />
           </svg>
         </div>
-        <h1 className="text-xl font-bold text-slate-800 mb-3 mt-0">Sign Out</h1>
+        <h1 className="text-xl font-bold text-text-primary mb-3 mt-0">Sign Out</h1>
         <p className="text-sm text-neutral mb-6 mt-0 leading-relaxed">
           Are you sure you want to sign out
-          {clientName ? <> from <strong className="text-slate-800">{clientName}</strong></> : ''}?
+          {clientName ? <> from <strong className="text-text-primary">{clientName}</strong></> : ''}?
           You will need to sign in again to access your account.
         </p>
         <div className="flex gap-3 justify-center">

@@ -23,14 +23,14 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
   return (
     <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
-        <span className="text-xs font-medium text-slate-700">Policy Decisions</span>
+        <span className="text-xs font-medium text-text-primary">Policy Decisions</span>
         <span className="text-[10px] text-text-tertiary">{decisions.length} total</span>
       </div>
 
       {visible.length === 0 ? (
         <div className="px-3 py-6 text-center text-xs text-text-tertiary">No decisions recorded</div>
       ) : (
-        <div className="max-h-[250px] overflow-y-auto divide-y divide-slate-100">
+        <div className="max-h-[250px] overflow-y-auto divide-y divide-border-subtle">
           {visible.map((d) => (
             <div key={d.id} className="flex items-center gap-2 px-3 py-2">
               <span
@@ -43,7 +43,7 @@ export function PolicyDecisionLog({ decisions, className, maxItems = 50 }: Polic
               </span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-medium text-slate-700 truncate">
+                  <span className="text-[11px] font-medium text-text-primary truncate">
                     {d.action}
                   </span>
                   <span className="text-[10px] text-text-tertiary">on</span>

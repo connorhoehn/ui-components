@@ -162,7 +162,7 @@ export function ResumeCallDialog({
                     {lobbyName ? (
                         <>
                             {' '}in{' '}
-                            <span className="font-mono text-[12px] text-slate-700">{lobbyName}</span>
+                            <span className="font-mono text-[12px] text-text-primary">{lobbyName}</span>
                         </>
                     ) : null}
                     .
@@ -206,7 +206,7 @@ export function ResumeCallDialog({
                                 ) : (
                                     <Avatar name={p.name} size={20} />
                                 )}
-                                <span className="text-[12px] font-medium text-slate-700">
+                                <span className="text-[12px] font-medium text-text-primary">
                                     {p.name}
                                 </span>
                             </div>

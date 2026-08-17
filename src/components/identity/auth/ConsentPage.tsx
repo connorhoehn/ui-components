@@ -61,7 +61,7 @@ export function ConsentPage({
       >
         <header className="flex flex-col items-center gap-3 px-8 pt-8 pb-5">
           {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
-          <h1 className="text-xl font-bold text-slate-800 m-0 text-center">
+          <h1 className="text-xl font-bold text-text-primary m-0 text-center">
             Authorize {clientName}
           </h1>
           <p className="text-sm text-neutral m-0 text-center leading-relaxed">
@@ -78,7 +78,7 @@ export function ConsentPage({
               <li
                 key={scope}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 text-sm text-slate-800',
+                  'flex items-center gap-3 px-4 py-3 text-sm text-text-primary',
                   i < scopes.length - 1 && 'border-b border-border'
                 )}
               >

@@ -117,7 +117,7 @@ export function LoginPage({
       <div className="w-full max-w-[440px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="Authentication">
         <header className="flex flex-col items-center gap-3 mb-6">
           {logoUrl && <img src={logoUrl} alt="" className="w-14 h-14 object-contain rounded-md" />}
-          {clientName && <h1 className="text-xl font-bold text-slate-800 m-0">{clientName}</h1>}
+          {clientName && <h1 className="text-xl font-bold text-text-primary m-0">{clientName}</h1>}
         </header>
 
         <nav className="flex border-b border-border mb-6" role="tablist" aria-label="Authentication method">

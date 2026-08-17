@@ -39,7 +39,7 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
         )}>
           {STATUS_ICON[toolCall.status]}
         </span>
-        <span className="text-slate-700 font-medium">{toolCall.name}</span>
+        <span className="text-text-primary font-medium">{toolCall.name}</span>
         {duration != null && (
           <span className="text-text-tertiary ml-auto">{duration}ms</span>
         )}
@@ -47,7 +47,7 @@ export function ToolCallRenderer({ toolCall, className }: ToolCallRendererProps)
       </button>
 
       {expanded && (
-        <div className="px-2 pb-2 space-y-1 border-t border-slate-100">
+        <div className="px-2 pb-2 space-y-1 border-t border-border-subtle">
           {toolCall.args && (
             <div>
               <div className="text-[10px] text-text-tertiary uppercase mt-1">args</div>

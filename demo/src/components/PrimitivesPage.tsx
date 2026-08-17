@@ -317,10 +317,10 @@ export default function PrimitivesPage() {
 />`}
       >
         <div className="border border-border rounded-lg overflow-hidden bg-white max-w-[420px]">
-          <div className="px-3.5 py-2.5 border-b border-slate-100">
+          <div className="px-3.5 py-2.5 border-b border-border-subtle">
             <EntityCell label="orgiq-search" id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2A" />
           </div>
-          <div className="px-3.5 py-2.5 border-b border-slate-100">
+          <div className="px-3.5 py-2.5 border-b border-border-subtle">
             <EntityCell
               label="orgiq-supervisor"
               id="agent_01HXR4K7TQ8YN3PXF1KQVZ9R2B"

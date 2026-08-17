@@ -231,7 +231,7 @@ export function InlinePopover({
       data-placement={placement}
       className={cn(
         'min-w-[160px] rounded-lg border border-border bg-white',
-        'shadow-lg p-1 text-sm text-slate-700',
+        'shadow-lg p-1 text-sm text-text-primary',
         className,
       )}
       style={{ ...position, zIndex }}

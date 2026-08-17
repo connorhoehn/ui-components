@@ -17,7 +17,7 @@ function ChartPlaceholder() {
     <div className="bg-white rounded-[10px] border border-border p-5 h-full flex flex-col">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-sm">📈</span>
-        <span className="text-[13px] font-semibold text-slate-800">Latency P99</span>
+        <span className="text-[13px] font-semibold text-text-primary">Latency P99</span>
         <span className="text-[11px] text-text-tertiary ml-auto">Last 5 minutes</span>
       </div>
       <div className="flex-1 flex items-end gap-[3px] px-1">

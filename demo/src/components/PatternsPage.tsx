@@ -231,7 +231,7 @@ export default function PatternsPage() {
             </div>
             <div>
               <div className={LABEL}>Steps</div>
-              <ol className="pl-[18px] m-0 text-[13px] text-slate-700 leading-relaxed">
+              <ol className="pl-[18px] m-0 text-[13px] text-text-primary leading-relaxed">
                 <li>Extract from source — 320 records</li>
                 <li>Validate schema — 0 errors</li>
                 <li>Transform — 320 records</li>
@@ -240,7 +240,7 @@ export default function PatternsPage() {
             </div>
             <div>
               <div className={LABEL}>Logs</div>
-              <pre className="bg-slate-900 text-slate-200 p-3 rounded-md text-[11px] font-mono m-0 overflow-x-auto">
+              <pre className="bg-surface-inverse text-text-inverse p-3 rounded-md text-[11px] font-mono m-0 overflow-x-auto">
 {`[09:14:22] starting run #4521
 [09:14:23] extract: 320 records
 [09:14:55] transform: ok
@@ -276,12 +276,12 @@ export default function PatternsPage() {
       >
         <div className="flex flex-col gap-2.5">
           <CollapsibleSection title="General" defaultOpen>
-            <div className="p-4 text-[13px] text-slate-700 leading-normal">
+            <div className="p-4 text-[13px] text-text-primary leading-normal">
               Workspace name, time zone, and other general preferences. Always open by default.
             </div>
           </CollapsibleSection>
           <CollapsibleSection title="Advanced" storageKey="demo.patterns.advanced.open">
-            <div className="p-4 text-[13px] text-slate-700 leading-normal">
+            <div className="p-4 text-[13px] text-text-primary leading-normal">
               Reload the page — this section's open/closed state will be remembered via localStorage
               (key <code>demo.patterns.advanced.open</code>).
             </div>
@@ -290,7 +290,7 @@ export default function PatternsPage() {
             title="Warnings"
             badge={<span className={PILL_WARN}>2</span>}
           >
-            <div className="p-4 text-[13px] text-slate-700 leading-normal">
+            <div className="p-4 text-[13px] text-text-primary leading-normal">
               <ul className="m-0 pl-[18px]">
                 <li>Storage usage above 80%</li>
                 <li>2 API keys expiring within 7 days</li>

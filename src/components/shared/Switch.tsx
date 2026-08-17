@@ -62,7 +62,7 @@ export default function Switch({
         'relative inline-flex items-center rounded-full border border-transparent transition-colors',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-info',
         TRACK_SIZES[size],
-        checked ? 'bg-info' : 'bg-gray-300',
+        checked ? 'bg-info' : 'bg-surface-emphasis',
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
         className,
       )}

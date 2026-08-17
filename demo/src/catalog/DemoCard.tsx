@@ -14,7 +14,7 @@ const THUMB_GRADIENT: Record<string, string> = {
   Workflows: 'from-primary-bg to-primary-bg/40',
   Agents: 'from-accent-bg to-accent-bg/40',
   'Hook Integrations': 'from-success-bg to-success-bg/40',
-  Foundations: 'from-slate-50 to-slate-100/40',
+  Foundations: 'from-surface-panel to-surface-hover/40',
 };
 
 export function DemoCard({ entry }: { entry: CatalogEntry }) {
@@ -24,7 +24,7 @@ export function DemoCard({ entry }: { entry: CatalogEntry }) {
     ? `/workflows/${entry.id}`
     : `/components/${entry.id}`;
 
-  const gradient = THUMB_GRADIENT[entry.category] ?? 'from-slate-50 to-slate-100/40';
+  const gradient = THUMB_GRADIENT[entry.category] ?? 'from-surface-panel to-surface-hover/40';
   const tone = CATEGORY_TONE[entry.category] ?? 'neutral';
   const glyph = entry.type === 'component' ? '\u{1F9F1}' : '\u{1F5BC}';
 

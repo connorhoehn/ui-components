@@ -213,7 +213,7 @@ export default function HangoutPreJoinShell({
                 // initials when avatarSrc is absent.
                 <div
                   data-testid="prejoin-identity-tile"
-                  className="absolute inset-0 grid place-items-center bg-slate-900/95"
+                  className="absolute inset-0 grid place-items-center bg-surface-inverse/95"
                 >
                   <div className="flex flex-col items-center gap-3 px-6 text-center">
                     <Avatar

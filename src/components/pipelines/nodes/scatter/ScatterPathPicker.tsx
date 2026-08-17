@@ -142,7 +142,7 @@ function PathRow({ entry, isSelected, onPick }: PathRowProps) {
       <span
         className={cn(
           'flex-1 font-mono text-[12px] leading-5 truncate',
-          entry.isArrayItems ? 'text-primary-fg font-semibold' : 'text-slate-700',
+          entry.isArrayItems ? 'text-primary-fg font-semibold' : 'text-text-primary',
         )}
       >
         {entry.path}

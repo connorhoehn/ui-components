@@ -57,13 +57,13 @@ function MultiInput({
 
   return (
     <div className="mb-4">
-      <label className="block mb-1 text-sm font-semibold text-slate-800">
+      <label className="block mb-1 text-sm font-semibold text-text-primary">
         {label}
       </label>
       {values.map((val, idx) => (
         <div key={idx} className="flex gap-2 items-center mb-1.5">
           <input
-            className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
+            className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
             value={val}
             onChange={(e) => handleChange(idx, e.target.value)}
             placeholder={placeholder}
@@ -185,10 +185,10 @@ export function ApplicationFormPage({
 
         {/* Grant Types */}
         <section>
-          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Grant Types</h3>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Grant Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
-              <label key={gt} className="flex items-center gap-2 text-base text-slate-800 cursor-pointer">
+              <label key={gt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={grantTypes.includes(gt)}
@@ -202,10 +202,10 @@ export function ApplicationFormPage({
 
         {/* Response Types */}
         <section>
-          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Response Types</h3>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Response Types</h3>
           <div className="flex flex-col gap-2 mb-4">
             {RESPONSE_TYPE_OPTIONS.map((rt) => (
-              <label key={rt} className="flex items-center gap-2 text-base text-slate-800 cursor-pointer">
+              <label key={rt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={responseTypes.includes(rt)}
@@ -226,7 +226,7 @@ export function ApplicationFormPage({
           helpText="Space-separated list of scopes."
         />
 
-        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+        <div className="flex gap-3 mt-6 pt-5 border-t border-border-subtle">
           <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Application' : 'Create Application'}
           </Button>

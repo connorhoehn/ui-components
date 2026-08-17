@@ -130,7 +130,7 @@ const NODE_BORDER_CLASSES: Record<NodeStatus, string> = {
 };
 
 const STATUS_DOT_CLASSES: Record<NodeStatus, string> = {
-  idle: 'bg-slate-400',
+  idle: 'bg-surface-emphasis',
   running: 'bg-warning animate-pulse',
   completed: 'bg-success',
   failed: 'bg-danger',
@@ -162,7 +162,7 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
       <div className="flex items-center gap-2 px-3 py-2">
         <span className={`w-2 h-2 rounded-full shrink-0 ${STATUS_DOT_CLASSES[status]}`} />
         <span className="text-sm shrink-0">{node.icon}</span>
-        <span className="text-xs font-semibold text-slate-800 whitespace-nowrap overflow-hidden text-ellipsis">
+        <span className="text-xs font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">
           {node.label}
         </span>
       </div>
@@ -177,7 +177,7 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
         )}
       </div>
       {status === 'running' && streamTokens.length > 0 && (
-        <div className="px-3 pt-1 pb-1.5 border-t border-slate-100 max-h-11 overflow-hidden">
+        <div className="px-3 pt-1 pb-1.5 border-t border-border-subtle max-h-11 overflow-hidden">
           <div className="font-mono text-[9px] text-neutral leading-[13px]">
             {streamTokens.slice(-3).map((token, i) => (
               <div key={i} className="whitespace-nowrap overflow-hidden text-ellipsis">
@@ -192,7 +192,7 @@ function WorkflowNodeCard({ node, status, streamTokens }: {
 }
 
 const WORKFLOW_STATUS_DOT_CLASSES: Record<'idle' | 'running' | 'completed', string> = {
-  idle: 'bg-slate-400',
+  idle: 'bg-surface-emphasis',
   running: 'bg-warning animate-pulse',
   completed: 'bg-success',
 };
@@ -253,10 +253,10 @@ function WorkflowCanvas() {
 
   return (
     <div className="flex flex-col h-full bg-surface-panel">
-      <div className="flex items-center px-5 py-3 bg-slate-900 gap-4 shrink-0">
+      <div className="flex items-center px-5 py-3 bg-surface-inverse gap-4 shrink-0">
         <div className="flex items-center gap-2.5">
           <span className="text-lg">⚙</span>
-          <h1 className="m-0 text-[15px] font-bold text-slate-100 tracking-tight">
+          <h1 className="m-0 text-[15px] font-bold text-text-inverse tracking-tight">
             CI/CD Deployment Workflow
           </h1>
         </div>

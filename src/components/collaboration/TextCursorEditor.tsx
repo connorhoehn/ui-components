@@ -179,7 +179,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
         suppressContentEditableWarning
         onClick={handleInteraction}
         onKeyUp={handleInteraction}
-        className="outline-none min-h-[80px] whitespace-pre-wrap break-words text-slate-800"
+        className="outline-none min-h-[80px] whitespace-pre-wrap break-words text-text-primary"
       >
         {INITIAL_TEXT}
       </div>

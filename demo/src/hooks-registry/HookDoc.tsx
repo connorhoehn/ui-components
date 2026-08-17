@@ -27,7 +27,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
 
       <section className="flex flex-col gap-3">
         <SectionHeading>Description</SectionHeading>
-        <p className="text-sm text-slate-700 leading-relaxed m-0">
+        <p className="text-sm text-text-primary leading-relaxed m-0">
           {doc.description}
         </p>
       </section>
@@ -57,7 +57,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
               </thead>
               <tbody>
                 {doc.params.map((p) => (
-                  <tr key={p.name} className="border-b border-slate-100 last:border-b-0">
+                  <tr key={p.name} className="border-b border-border-subtle last:border-b-0">
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[13px] text-text-primary">{p.name}</code>
                       {p.required && (
@@ -69,7 +69,7 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[12px] text-primary-fg">{p.type}</code>
                     </td>
-                    <td className="px-4 py-2 align-top text-slate-700">
+                    <td className="px-4 py-2 align-top text-text-primary">
                       {p.description}
                     </td>
                   </tr>
@@ -100,14 +100,14 @@ export function HookDoc({ doc }: { doc: HookDocData }) {
               </thead>
               <tbody>
                 {doc.returns.map((r) => (
-                  <tr key={r.name} className="border-b border-slate-100 last:border-b-0">
+                  <tr key={r.name} className="border-b border-border-subtle last:border-b-0">
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[13px] text-text-primary">{r.name}</code>
                     </td>
                     <td className="px-4 py-2 align-top">
                       <code className="font-mono text-[12px] text-primary-fg">{r.type}</code>
                     </td>
-                    <td className="px-4 py-2 align-top text-slate-700">{r.description}</td>
+                    <td className="px-4 py-2 align-top text-text-primary">{r.description}</td>
                   </tr>
                 ))}
               </tbody>

@@ -163,7 +163,7 @@ export default function CallWidgetPage() {
   onDecline={() => dismiss()}
 />`}
       >
-        <div className="relative min-h-[240px] bg-slate-900 rounded-lg">
+        <div className="relative min-h-[240px] bg-surface-inverse rounded-lg">
           <CallWidget
             state="ringing"
             mode="audio"
@@ -194,7 +194,7 @@ export default function CallWidgetPage() {
   onEndCall={() => endCall()}
 />`}
       >
-        <div className="relative min-h-[80px] bg-slate-900 rounded-lg flex items-center justify-center">
+        <div className="relative min-h-[80px] bg-surface-inverse rounded-lg flex items-center justify-center">
           <CallWidget
             state="active"
             mode="audio"

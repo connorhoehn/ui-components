@@ -18,7 +18,7 @@ describe('CursorModeSelector', () => {
     expect(activeBtn.className).toMatch(/bg-\[#007bff\]/);
     expect(activeBtn.className).toMatch(/text-white/);
     expect(inactiveBtn.className).not.toMatch(/bg-\[#007bff\]/);
-    expect(inactiveBtn.className).toMatch(/text-gray-700/);
+    expect(inactiveBtn.className).toMatch(/text-text-primary/);
   });
 
   it('invokes onModeChange with the corresponding CursorMode when a non-active button is clicked', () => {

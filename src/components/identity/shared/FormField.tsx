@@ -20,8 +20,8 @@ export interface FormFieldProps {
   disabled?: boolean;
 }
 
-const inputClasses = 'block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info';
-const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-slate-800 outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger';
+const inputClasses = 'block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info';
+const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger';
 
 export function FormField({
   label,
@@ -65,7 +65,7 @@ export function FormField({
             onChange={handleChange}
             disabled={disabled}
           />
-          <span className="text-sm text-slate-800">
+          <span className="text-sm text-text-primary">
             {label}{required && <span className="text-danger-fg"> *</span>}
           </span>
         </label>
@@ -136,7 +136,7 @@ export function FormField({
 
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="block mb-1 text-sm font-semibold text-slate-800">
+      <label htmlFor={id} className="block mb-1 text-sm font-semibold text-text-primary">
         {label}{required && <span className="text-danger-fg"> *</span>}
       </label>
       {renderInput()}

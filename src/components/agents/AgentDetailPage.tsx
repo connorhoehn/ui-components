@@ -64,7 +64,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
         <Section title="Tools">
           <div className="flex flex-wrap gap-1">
             {agent.tools.map((t) => (
-              <span key={t} className="text-[11px] px-2 py-0.5 bg-surface-hover rounded font-mono text-slate-700">
+              <span key={t} className="text-[11px] px-2 py-0.5 bg-surface-hover rounded font-mono text-text-primary">
                 {t}
               </span>
             ))}
@@ -91,7 +91,7 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       {/* Trace */}
       {trace && (
         <div>
-          <h3 className="text-sm font-medium text-slate-700 mb-2">Recent Trace</h3>
+          <h3 className="text-sm font-medium text-text-primary mb-2">Recent Trace</h3>
           <TraceTimeline trace={trace} />
         </div>
       )}
@@ -107,7 +107,7 @@ function StatusBadge({ status }: { status: string }) {
     deploying: 'bg-info-bg text-info-fg',
   };
   return (
-    <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', styles[status] ?? 'bg-surface-hover text-slate-700')}>
+    <span className={cn('text-xs font-medium px-2.5 py-1 rounded-full', styles[status] ?? 'bg-surface-hover text-text-primary')}>
       {status}
     </span>
   );
@@ -126,7 +126,7 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
   return (
     <div className="flex items-baseline justify-between py-1 text-[12px]">
       <span className="text-neutral">{label}</span>
-      <span className={cn('text-slate-800', mono && 'font-mono text-[11px] break-all text-right max-w-[60%]')}>
+      <span className={cn('text-text-primary', mono && 'font-mono text-[11px] break-all text-right max-w-[60%]')}>
         {value}
       </span>
     </div>

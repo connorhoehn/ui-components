@@ -237,8 +237,8 @@ export function PresenceAvatars({
           aria-label={`${overflow} more users`}
           className={cn(
             'inline-flex items-center justify-center rounded-full shrink-0',
-            'font-semibold select-none bg-slate-200 text-text-secondary',
-            onMoreClick && 'cursor-pointer hover:bg-slate-300',
+            'font-semibold select-none bg-surface-emphasis text-text-secondary',
+            onMoreClick && 'cursor-pointer hover:bg-surface-emphasis',
             !onMoreClick && 'cursor-default',
             'border-white',
           )}

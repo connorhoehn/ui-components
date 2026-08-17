@@ -274,7 +274,7 @@ describe('ports.ts PORT_CLS mapping', () => {
   });
 
   it('text keeps the current gray circle default', () => {
-    expect(PORT_CLS.text).toBe('!w-2.5 !h-2.5 !bg-slate-300');
+    expect(PORT_CLS.text).toBe('!w-2.5 !h-2.5 !bg-surface-emphasis');
   });
 
   it('data is the slate-blue tinted circle', () => {

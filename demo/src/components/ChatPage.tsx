@@ -47,7 +47,7 @@ const COMPOSER_FRAME =
   'border border-border rounded-lg overflow-hidden bg-white';
 const COMPOSER_LABEL =
   'px-3 py-2 text-[11px] font-semibold text-neutral';
-const SUBTLE_SEP = 'border-t border-slate-100';
+const SUBTLE_SEP = 'border-t border-border-subtle';
 const COL = 'flex flex-col items-center gap-1.5';
 const CAPTION = 'text-[11px] text-neutral';
 
@@ -364,11 +364,11 @@ Step 4: Rank and return top 3`}
                 <div
                   key={s.id}
                   className={`px-2.5 py-2 rounded-md mb-0.5 cursor-pointer flex gap-2 items-center ${
-                    s.selected ? 'bg-slate-200' : 'bg-transparent'
+                    s.selected ? 'bg-surface-emphasis' : 'bg-transparent'
                   }`}
                 >
                   <Avatar name={s.name} size={22} />
-                  <span className="text-xs text-slate-700 overflow-hidden text-ellipsis whitespace-nowrap flex-1">
+                  <span className="text-xs text-text-primary overflow-hidden text-ellipsis whitespace-nowrap flex-1">
                     {s.name}
                   </span>
                 </div>

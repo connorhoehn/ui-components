@@ -33,7 +33,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
   }, [autoFocus, onDidAutoFocus]);
 
   return (
-    <div className="flex items-center gap-2 py-1.5 border-b border-slate-100">
+    <div className="flex items-center gap-2 py-1.5 border-b border-border-subtle">
       <span
         className="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 select-none"
         style={{ background: meta.bg, color: meta.color }}
@@ -50,7 +50,7 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
         placeholder="Describe the decision..."
         className={cn(
           'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
-          item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-slate-800',
+          item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-text-primary',
         )}
       />
 

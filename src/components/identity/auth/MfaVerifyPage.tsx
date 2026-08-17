@@ -58,7 +58,7 @@ export function MfaVerifyPage({
           </svg>
         </div>
 
-        <h1 className="text-xl font-bold text-slate-800 mb-2 mt-0 text-center">Verify Your Identity</h1>
+        <h1 className="text-xl font-bold text-text-primary mb-2 mt-0 text-center">Verify Your Identity</h1>
 
         {mode === 'totp' ? (
           <>

@@ -55,7 +55,7 @@ export default function ChecklistReaderRenderer({
             return (
               <div
                 key={item.id}
-                className="flex items-center gap-2 py-[5px] border-b border-slate-100"
+                className="flex items-center gap-2 py-[5px] border-b border-border-subtle"
               >
                 <input
                   type="checkbox"
@@ -64,7 +64,7 @@ export default function ChecklistReaderRenderer({
                   className={cn('w-3.5 h-3.5 accent-success shrink-0', onUpdateItem ? 'cursor-pointer' : 'cursor-default')}
                   readOnly={!onUpdateItem}
                 />
-                <span className={cn('text-[13px] flex-1 leading-[1.4]', done ? 'text-text-tertiary line-through' : 'text-slate-800')}>
+                <span className={cn('text-[13px] flex-1 leading-[1.4]', done ? 'text-text-tertiary line-through' : 'text-text-primary')}>
                   {item.text || <span className="text-text-disabled italic">Untitled</span>}
                 </span>
               </div>

@@ -7,7 +7,7 @@ const SPINE_CLASSES: Record<AudiencePath['accent'], string> = {
   sky: 'bg-info',
   emerald: 'bg-success',
   amber: 'bg-warning',
-  slate: 'bg-slate-500',
+  slate: 'bg-neutral',
 };
 
 const ICON_BG_CLASSES: Record<AudiencePath['accent'], string> = {
@@ -15,7 +15,7 @@ const ICON_BG_CLASSES: Record<AudiencePath['accent'], string> = {
   sky: 'bg-info-bg text-info-fg',
   emerald: 'bg-success-bg text-success-fg',
   amber: 'bg-warning-bg text-warning-fg',
-  slate: 'bg-surface-hover text-slate-700',
+  slate: 'bg-surface-hover text-text-primary',
 };
 
 const PRIMARY_LINK_CLASSES: Record<AudiencePath['accent'], string> = {
@@ -23,7 +23,7 @@ const PRIMARY_LINK_CLASSES: Record<AudiencePath['accent'], string> = {
   sky: 'text-info-fg hover:text-info-fg',
   emerald: 'text-success-fg hover:text-success-fg',
   amber: 'text-warning-fg hover:text-warning-fg',
-  slate: 'text-slate-700 hover:text-text-primary',
+  slate: 'text-text-primary hover:text-text-primary',
 };
 
 const ICON_GLYPHS: Record<string, string> = {
@@ -96,7 +96,7 @@ function AudienceCard({ path }: { path: AudiencePath }) {
           <span aria-hidden="true">&rarr;</span>
         </Link>
         {path.related.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 border-t border-slate-100 pt-3">
+          <div className="flex flex-wrap gap-1.5 border-t border-border-subtle pt-3">
             {path.related.map((link) => (
               <Link
                 key={link.to}

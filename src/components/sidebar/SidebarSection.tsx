@@ -104,7 +104,7 @@ export function SidebarSection({
             'flex items-center gap-1.5 min-w-0 flex-1',
             'text-[11px] font-bold uppercase tracking-[0.5px]',
             'text-neutral select-none text-left',
-            collapsible && 'cursor-pointer hover:text-slate-700',
+            collapsible && 'cursor-pointer hover:text-text-primary',
             !collapsible && 'cursor-default',
             'bg-transparent border-0 p-0 m-0',
           )}

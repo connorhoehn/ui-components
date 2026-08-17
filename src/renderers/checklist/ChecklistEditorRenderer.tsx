@@ -25,7 +25,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
   }, [autoFocus, onDidAutoFocus]);
 
   return (
-    <div className="flex items-center gap-2 py-[5px] border-b border-slate-100">
+    <div className="flex items-center gap-2 py-[5px] border-b border-border-subtle">
       <input
         type="checkbox"
         checked={done}
@@ -42,7 +42,7 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
         placeholder="Checklist item..."
         className={cn(
           'flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5',
-          done ? 'text-text-tertiary line-through' : 'text-slate-800',
+          done ? 'text-text-tertiary line-through' : 'text-text-primary',
         )}
       />
       {editable && (

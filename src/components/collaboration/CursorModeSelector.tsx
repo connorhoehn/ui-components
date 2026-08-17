@@ -38,7 +38,7 @@ export function CursorModeSelector({ activeMode, onModeChange }: CursorModeSelec
               'px-4 py-2 border-2 rounded-md cursor-pointer text-sm font-mono',
               isActive
                 ? 'bg-[#007bff] text-white border-[#007bff]'
-                : 'bg-white text-gray-700 border-border-emphasis'
+                : 'bg-white text-text-primary border-border-emphasis'
             )}
           >
             {label}

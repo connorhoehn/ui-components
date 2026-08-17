@@ -12,7 +12,7 @@ const STATUS_META: Record<string, { label: string; icon: string; color: string; 
 function DecisionRow({ item }: { item: TaskItem }) {
   const meta = STATUS_META[item.status] ?? STATUS_META.pending;
   return (
-    <div className="flex items-start gap-2 py-1.5 border-b border-slate-100">
+    <div className="flex items-start gap-2 py-1.5 border-b border-border-subtle">
       <span
         className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5 select-none"
         style={{ background: meta.bg, color: meta.color }}
@@ -21,7 +21,7 @@ function DecisionRow({ item }: { item: TaskItem }) {
       </span>
       <span className={cn(
         'flex-1 text-[13px] leading-[1.4]',
-        item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-slate-800',
+        item.status === 'rejected' ? 'text-text-tertiary line-through' : 'text-text-primary',
       )}>
         {item.text || <span className="text-text-disabled italic">Untitled decision</span>}
       </span>

@@ -79,7 +79,7 @@ export function MfaManagementPage({
     );
   }
 
-  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
+  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection

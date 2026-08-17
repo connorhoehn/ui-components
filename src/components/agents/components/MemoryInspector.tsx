@@ -35,14 +35,14 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
     <div className={cn('border border-border rounded-lg overflow-hidden bg-white', className)}>
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
-        <span className="text-xs font-medium text-slate-700">Memory Inspector</span>
+        <span className="text-xs font-medium text-text-primary">Memory Inspector</span>
         <span className="text-[10px] text-text-tertiary">
           {sessionCount} session · {longTermCount} long-term
         </span>
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-100">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border-subtle">
         <input
           type="text"
           value={search}
@@ -72,7 +72,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
           {entries.length === 0 ? 'No memory entries' : 'No matches'}
         </div>
       ) : (
-        <div className="max-h-[300px] overflow-y-auto divide-y divide-slate-100">
+        <div className="max-h-[300px] overflow-y-auto divide-y divide-border-subtle">
           {filtered.map((entry) => (
             <div key={entry.id} className="px-3 py-2 group">
               <div className="flex items-center justify-between mb-0.5">
@@ -88,7 +88,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                   {entry.namespace && (
                     <span className="text-[10px] text-text-tertiary font-mono">{entry.namespace}/</span>
                   )}
-                  <span className="text-[11px] font-medium text-slate-700 font-mono">{entry.key}</span>
+                  <span className="text-[11px] font-medium text-text-primary font-mono">{entry.key}</span>
                 </div>
                 {onDelete && (
                   <button

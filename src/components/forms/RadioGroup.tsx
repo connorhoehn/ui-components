@@ -97,7 +97,7 @@ export function RadioGroup<T extends string = string>({
               <span
                 className={cn(
                   'text-[13px] leading-5 font-medium',
-                  disabled ? 'text-text-tertiary' : 'text-slate-800',
+                  disabled ? 'text-text-tertiary' : 'text-text-primary',
                 )}
               >
                 {option.label}

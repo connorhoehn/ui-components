@@ -58,7 +58,7 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
         reduceMotion && exiting && 'opacity-0',
       )}
     >
-      <span className="text-sm text-gray-700 font-normal flex-1 leading-[1.35]">
+      <span className="text-sm text-text-primary font-normal flex-1 leading-[1.35]">
         {message}
       </span>
       <div className="flex items-center gap-1 shrink-0">

@@ -100,7 +100,7 @@ function CapabilityShowcaseRow({
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span aria-hidden="true" className="text-lg">{row.icon}</span>
-          <h3 className="text-sm font-semibold text-slate-800">{row.label}</h3>
+          <h3 className="text-sm font-semibold text-text-primary">{row.label}</h3>
           <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[11px] text-text-secondary">
             useCapability('{row.key}')
           </code>
@@ -117,7 +117,7 @@ function CapabilityShowcaseRow({
           <button
             type="button"
             onClick={onPulseLoad}
-            className="rounded-md border border-border-emphasis bg-white px-2 py-1 text-[12px] font-medium text-slate-700 hover:bg-surface-panel"
+            className="rounded-md border border-border-emphasis bg-white px-2 py-1 text-[12px] font-medium text-text-primary hover:bg-surface-panel"
           >
             Pulse loading
           </button>

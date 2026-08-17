@@ -91,7 +91,7 @@ export function PoolScopedLayout({
           Pools
         </Button>
         <span>/</span>
-        <span className="text-slate-800 font-medium">{poolName}</span>
+        <span className="text-text-primary font-medium">{poolName}</span>
         {activeSection && (
           <>
             <span>/</span>

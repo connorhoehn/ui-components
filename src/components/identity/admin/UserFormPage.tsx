@@ -161,7 +161,7 @@ export function UserFormPage({
         {/* Custom Attributes */}
         {customAttributeDefinitions && Object.keys(customAttributeDefinitions).length > 0 && (
           <section>
-            <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Custom Attributes</h3>
+            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Custom Attributes</h3>
             {Object.entries(customAttributeDefinitions).map(([key, type]) => (
               <FormField
                 key={key}
@@ -176,7 +176,7 @@ export function UserFormPage({
           </section>
         )}
 
-        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+        <div className="flex gap-3 mt-6 pt-5 border-t border-border-subtle">
           <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update User' : 'Create User'}
           </Button>

@@ -17,6 +17,16 @@
   --color-border: #e2e8f0;
   --color-border-emphasis: #cbd5e1;
   --color-border-field: #d1d5db;
+  /* Hairline divider inside a card — lighter than --color-border. */
+  --color-border-subtle: #f1f5f9;
+
+  /* A stronger inset than --color-surface-hover, for wells and tracks. */
+  --color-surface-emphasis: #e2e8f0;
+
+  /* Dark surfaces: code blocks, terminals, inverse panels. Pair
+   * --color-text-inverse with --color-surface-inverse. */
+  --color-surface-inverse: #0f172a;
+  --color-text-inverse: #f8fafc;
 
   --color-state-idle: #d1d5db;
   --color-state-pending: #93c5fd;

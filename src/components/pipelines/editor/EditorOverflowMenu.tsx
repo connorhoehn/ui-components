@@ -82,7 +82,7 @@ export default function EditorOverflowMenu({
       >
         Revert to published
       </button>
-      <div className="border-t border-slate-100 my-1" />
+      <div className="border-t border-border-subtle my-1" />
       <button
         className={itemClasses}
         role="menuitem"
@@ -107,7 +107,7 @@ export default function EditorOverflowMenu({
       </button>
       {import.meta.env.DEV && (
         <>
-          <div className="border-t border-slate-100 my-1" />
+          <div className="border-t border-border-subtle my-1" />
           <button
             className={itemClasses}
             role="menuitem"
@@ -119,7 +119,7 @@ export default function EditorOverflowMenu({
           </button>
         </>
       )}
-      <div className="border-t border-slate-100 my-1" />
+      <div className="border-t border-border-subtle my-1" />
       <button
         className={dangerItemClasses}
         role="menuitem"

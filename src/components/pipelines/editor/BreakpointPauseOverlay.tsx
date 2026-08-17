@@ -168,7 +168,7 @@ export default function BreakpointPauseOverlay({
                     data-testid={`breakpoint-patch-row-${p.patchId}`}
                     className={cn(
                       'border border-border rounded p-1.5',
-                      reverted ? 'bg-gray-500/10 opacity-60' : 'bg-[#11111b]',
+                      reverted ? 'bg-neutral/10 opacity-60' : 'bg-[#11111b]',
                     )}
                   >
                     <div className="flex items-center gap-1 text-[10px] text-[#cdd6f4] mb-0.5">
@@ -185,7 +185,7 @@ export default function BreakpointPauseOverlay({
                         </span>
                       )}
                       {reverted && (
-                        <span className="px-1 text-[9px] font-bold bg-gray-500/20 text-text-tertiary rounded-sm">
+                        <span className="px-1 text-[9px] font-bold bg-neutral/20 text-text-tertiary rounded-sm">
                           Reverted
                         </span>
                       )}
@@ -214,7 +214,7 @@ export default function BreakpointPauseOverlay({
                           'mt-1 px-2 py-0.5 text-[10px] font-semibold bg-transparent rounded-sm font-inherit',
                           revertAllowed
                             ? 'text-danger-fg border border-danger cursor-pointer'
-                            : 'text-gray-700 border border-gray-700 cursor-not-allowed',
+                            : 'text-text-primary border border-border-emphasis cursor-not-allowed',
                           revertingPatchId === p.patchId && 'cursor-not-allowed',
                         )}
                       >

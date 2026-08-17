@@ -13,7 +13,7 @@ const KIND_COLORS: Record<SpanKind, string> = {
   llm: 'bg-warning',
   retrieval: 'bg-success',
   guardrail: 'bg-danger',
-  internal: 'bg-slate-400',
+  internal: 'bg-surface-emphasis',
 };
 
 const KIND_LABELS: Record<SpanKind, string> = {
@@ -41,7 +41,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
   return (
     <div
       className={cn(
-        'flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-slate-100',
+        'flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle',
         selected && 'bg-info-bg',
       )}
       onClick={() => onSelect(span)}
@@ -49,7 +49,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
       <div className="w-[200px] shrink-0 flex items-center gap-1 px-2 overflow-hidden">
         <span style={{ marginLeft: depth * 12 }} className="shrink-0" />
         <span className={cn('w-2 h-2 rounded-sm shrink-0', KIND_COLORS[span.kind])} />
-        <span className="text-[11px] text-slate-700 truncate">{span.name}</span>
+        <span className="text-[11px] text-text-primary truncate">{span.name}</span>
       </div>
       <div className="flex-1 relative h-full flex items-center">
         <div
@@ -106,14 +106,14 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-slate-700">Trace</span>
+          <span className="text-xs font-medium text-text-primary">Trace</span>
           <span className="text-[10px] font-mono text-text-tertiary">{trace.traceId}</span>
         </div>
         <span className="text-xs text-neutral">{trace.totalDurationMs}ms total</span>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-3 px-3 py-1.5 border-b border-slate-100">
+      <div className="flex items-center gap-3 px-3 py-1.5 border-b border-border-subtle">
         {(Object.keys(KIND_COLORS) as SpanKind[]).map((kind) => (
           <div key={kind} className="flex items-center gap-1">
             <span className={cn('w-2 h-2 rounded-sm', KIND_COLORS[kind])} />
@@ -144,7 +144,7 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
       {selectedSpan && (
         <div className="border-t border-border p-3 bg-surface-panel">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-700">{selectedSpan.name}</span>
+            <span className="text-xs font-medium text-text-primary">{selectedSpan.name}</span>
             <button
               className="text-[10px] text-text-tertiary hover:text-text-secondary"
               onClick={() => setSelectedSpan(null)}
@@ -154,9 +154,9 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
           </div>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px]">
             <div className="text-neutral">Kind</div>
-            <div className="text-slate-700 font-medium">{KIND_LABELS[selectedSpan.kind]}</div>
+            <div className="text-text-primary font-medium">{KIND_LABELS[selectedSpan.kind]}</div>
             <div className="text-neutral">Duration</div>
-            <div className="text-slate-700">{selectedSpan.durationMs}ms</div>
+            <div className="text-text-primary">{selectedSpan.durationMs}ms</div>
             <div className="text-neutral">Status</div>
             <div className={cn(
               'font-medium',
@@ -164,7 +164,7 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
               selectedSpan.status === 'error' && 'text-danger-fg',
             )}>{selectedSpan.status}</div>
             <div className="text-neutral">Span ID</div>
-            <div className="text-slate-700 font-mono">{selectedSpan.spanId}</div>
+            <div className="text-text-primary font-mono">{selectedSpan.spanId}</div>
           </div>
           {Object.keys(selectedSpan.attributes).length > 0 && (
             <div className="mt-2">

@@ -154,7 +154,7 @@ function GuidedAction({
     'transition-colors font-[inherit]',
     variant === 'primary'
       ? 'bg-primary text-white border border-transparent hover:bg-primary/90'
-      : 'bg-transparent text-slate-700 border border-border-emphasis hover:bg-surface-panel',
+      : 'bg-transparent text-text-primary border border-border-emphasis hover:bg-surface-panel',
   );
 
   if (action.href) {
@@ -209,7 +209,7 @@ function CopyableCode({ code }: { code: string }) {
       data-testid="empty-state-action-code"
       className={cn(
         'relative flex items-start gap-2 rounded-md',
-        'bg-slate-900 text-slate-100 text-[12px] font-mono leading-snug',
+        'bg-surface-inverse text-text-inverse text-[12px] font-mono leading-snug',
         'px-3 py-2',
       )}
     >
@@ -223,8 +223,8 @@ function CopyableCode({ code }: { code: string }) {
         data-testid="empty-state-action-code-copy"
         className={cn(
           'shrink-0 self-start text-[11px] font-semibold px-2 py-1 rounded',
-          'border border-slate-600 hover:bg-slate-700 cursor-pointer',
-          copied ? 'text-success-fg border-success/50' : 'text-slate-100',
+          'border border-border-emphasis hover:bg-surface-inverse cursor-pointer',
+          copied ? 'text-success-fg border-success/50' : 'text-text-inverse',
         )}
       >
         {copied ? 'Copied' : 'Copy'}

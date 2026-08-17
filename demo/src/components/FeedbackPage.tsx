@@ -53,7 +53,7 @@ function ToastPreview({
       <span className={`text-base ${tone.iconColor} flex-shrink-0`}>
         {TOAST_ICONS[type]}
       </span>
-      <span className="text-sm text-slate-700 flex-1 leading-snug">
+      <span className="text-sm text-text-primary flex-1 leading-snug">
         {message}
       </span>
       {actionLabel && (

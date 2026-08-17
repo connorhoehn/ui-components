@@ -280,7 +280,7 @@ export default function HookNotificationsIntegrationDemo() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <section>
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">
+          <h3 className="mb-2 text-sm font-semibold text-text-primary">
             Bare wrap
           </h3>
           <p className="mb-3 text-[12px] leading-snug text-neutral">
@@ -298,7 +298,7 @@ export default function HookNotificationsIntegrationDemo() {
         </section>
 
         <section>
-          <h3 className="mb-2 text-sm font-semibold text-slate-700">
+          <h3 className="mb-2 text-sm font-semibold text-text-primary">
             Capability-gated
           </h3>
           <p className="mb-3 text-[12px] leading-snug text-neutral">

@@ -126,7 +126,7 @@ export function NewHangoutRoomDialog({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-semibold text-slate-700">Name</span>
+          <span className="text-[12px] font-semibold text-text-primary">Name</span>
           <input
             data-autofocus
             data-testid="new-hangout-room-name"
@@ -155,7 +155,7 @@ export function NewHangoutRoomDialog({
         </label>
 
         <label className="flex flex-col gap-1">
-          <span className="text-[12px] font-semibold text-slate-700">
+          <span className="text-[12px] font-semibold text-text-primary">
             Description <span className="font-normal text-text-tertiary">(optional)</span>
           </span>
           <textarea
@@ -172,7 +172,7 @@ export function NewHangoutRoomDialog({
         <div className="flex flex-col gap-3">
           <label className="flex items-center justify-between gap-3">
             <span className="flex flex-col">
-              <span className="text-[13px] font-semibold text-slate-700">Audio only</span>
+              <span className="text-[13px] font-semibold text-text-primary">Audio only</span>
               <span className="text-[11px] text-text-tertiary">Skip video tracks — voice-only room.</span>
             </span>
             <Switch
@@ -185,7 +185,7 @@ export function NewHangoutRoomDialog({
           </label>
           <label className="flex items-center justify-between gap-3">
             <span className="flex flex-col">
-              <span className="text-[13px] font-semibold text-slate-700">Recording enabled</span>
+              <span className="text-[13px] font-semibold text-text-primary">Recording enabled</span>
               <span className="text-[11px] text-text-tertiary">Allow server-side recording of sessions.</span>
             </span>
             <Switch

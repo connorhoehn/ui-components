@@ -67,10 +67,10 @@ export function AdminDashboardPage({ stats, pools, onNavigate, loading }: AdminD
             pools.map((pool, i) => (
               <div
                 key={pool.poolId}
-                className={`flex items-center justify-between px-4 py-3 ${i < pools.length - 1 ? 'border-b border-slate-100' : ''}`}
+                className={`flex items-center justify-between px-4 py-3 ${i < pools.length - 1 ? 'border-b border-border-subtle' : ''}`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="font-medium text-slate-800">{pool.poolName}</span>
+                  <span className="font-medium text-text-primary">{pool.poolName}</span>
                   <span className="text-xs text-text-tertiary">{pool.createdAt}</span>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => onNavigate(`/identity/admin/pools/${pool.poolId}`)}>

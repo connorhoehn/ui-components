@@ -49,7 +49,7 @@ export function StreamingChatPanel({
     <div className={cn('flex flex-col border border-border rounded-lg bg-white overflow-hidden', className)}>
       {/* Header */}
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-        <span className="font-semibold text-sm text-slate-800">Agent Chat</span>
+        <span className="font-semibold text-sm text-text-primary">Agent Chat</span>
         {isStreaming && (
           <span className="flex items-center gap-1.5 text-xs text-info-fg">
             <span className="w-1.5 h-1.5 rounded-full bg-info animate-pulse" />
@@ -145,9 +145,9 @@ export function StreamingChatPanel({
         {isStreaming && activeToolCalls.length === 0 && !streamingText && messages.length > 0 && !messages[messages.length - 1]?.isStreaming && (
           <div className="flex items-center gap-2 py-1">
             <div className="flex gap-[3px] py-1.5 px-3 bg-[#f1f5f9] rounded-xl">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0ms]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:150ms]" />
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:300ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:0ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:300ms]" />
             </div>
             <span className="text-[12px] text-[#64748b]">Agent is thinking...</span>
           </div>

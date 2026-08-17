@@ -55,7 +55,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="flex items-center gap-2 py-1.5 border-b border-slate-100"
+      className="flex items-center gap-2 py-1.5 border-b border-border-subtle"
       style={{ opacity: isDone ? 0.65 : 1 }}
     >
       {/* Priority dot */}
@@ -101,7 +101,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
       </button>
 
       {/* Text */}
-      <span className={cn('flex-1 text-[13px] leading-[1.4]', isDone ? 'text-text-tertiary line-through' : 'text-slate-800')}>
+      <span className={cn('flex-1 text-[13px] leading-[1.4]', isDone ? 'text-text-tertiary line-through' : 'text-text-primary')}>
         {item.text || <span className="text-text-disabled italic">Untitled item</span>}
       </span>
 

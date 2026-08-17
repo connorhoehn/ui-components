@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.42.0] — 2026-08-17
+
+### Added
+
+- **Four neutral-role tokens**, completing the ramp so the greys have somewhere
+  semantic to live:
+  - `--color-border-subtle` (#f1f5f9) — hairline divider inside a card
+  - `--color-surface-emphasis` (#e2e8f0) — stronger inset than surface-hover
+  - `--color-surface-inverse` (#0f172a) + `--color-text-inverse` (#f8fafc) —
+    dark surfaces (code blocks, terminals) and their text
+
+### Changed
+
+- **The last 248 grey palette occurrences are tokens.** `src/` and `demo/src`
+  now contain **zero** raw Tailwind palette colours of any family, hue or grey.
+  Combined with 2.40.0's 510 and the earlier 712 exact-match greys, ~1,470
+  hardcoded colours are gone.
+
+  `text-slate-700/800` collapse onto `text-text-primary`: usage analysis showed
+  they are headings (h1/h3), labels and emphasis spans, so the darkest text role
+  is the correct home. Two shades becoming one is intentional — fewer variants,
+  one ramp.
+
+
 ## [2.41.0] — 2026-08-17
 
 ### Fixed

@@ -1,18 +1,18 @@
 import { jsx as a, jsxs as p, Fragment as w } from "react/jsx-runtime";
-import { C as H, P as z } from "../PresencePanel-C81AAPgj.js";
+import { C as H, P as z } from "../PresencePanel-B5sxSQ2n.js";
 import { Component as V, useState as C, useEffect as U, useMemo as S } from "react";
-import { E as j } from "../EmptyState-CpAOblv3.js";
+import { E as j } from "../EmptyState-Ejc9dJA3.js";
 import { c as _ } from "../cn-B6yFEsav.js";
-import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-DdIZ40jI.js";
-import { S as K } from "../SkeletonCard-C89GWQ3p.js";
-import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-BgXzWBnr.js";
-import { R as J, S as B, a as ee } from "../ReactionsOverlay-Cp1TxS9B.js";
+import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-ClUFFUr4.js";
+import { S as K } from "../SkeletonCard-Baj5Ynm7.js";
+import { A as G, N as Q, C as Z, P as D, B as A, S as $ } from "../Badge-3b8qOTfQ.js";
+import { R as J, S as B, a as ee } from "../ReactionsOverlay-DGBFgHTr.js";
 import { F as te, I as ae } from "../FileUploadDrop-Cmz3XANg.js";
 import { useRoomOccupancy as ne } from "@connorhoehn/realtime-modules/client/hangout-rooms";
 import { B as I } from "../Button-Qsbxqsl9.js";
 import { M as re } from "../Modal-fp5zcyw8.js";
 import { useLVSHangout as ie } from "@connorhoehn/realtime-modules/client/video";
-import { A as oe } from "../Avatar-DLI820CU.js";
+import { A as oe } from "../Avatar-B7O2g50s.js";
 function se(e) {
   return {
     id: e.id,
@@ -563,7 +563,7 @@ function Ae({
       footer: null,
       children: /* @__PURE__ */ p("form", { onSubmit: E, className: "flex flex-col gap-4", children: [
         /* @__PURE__ */ p("label", { className: "flex flex-col gap-1", children: [
-          /* @__PURE__ */ a("span", { className: "text-[12px] font-semibold text-slate-700", children: "Name" }),
+          /* @__PURE__ */ a("span", { className: "text-[12px] font-semibold text-text-primary", children: "Name" }),
           /* @__PURE__ */ a(
             "input",
             {
@@ -592,7 +592,7 @@ function Ae({
           )
         ] }),
         /* @__PURE__ */ p("label", { className: "flex flex-col gap-1", children: [
-          /* @__PURE__ */ p("span", { className: "text-[12px] font-semibold text-slate-700", children: [
+          /* @__PURE__ */ p("span", { className: "text-[12px] font-semibold text-text-primary", children: [
             "Description ",
             /* @__PURE__ */ a("span", { className: "font-normal text-text-tertiary", children: "(optional)" })
           ] }),
@@ -612,7 +612,7 @@ function Ae({
         /* @__PURE__ */ p("div", { className: "flex flex-col gap-3", children: [
           /* @__PURE__ */ p("label", { className: "flex items-center justify-between gap-3", children: [
             /* @__PURE__ */ p("span", { className: "flex flex-col", children: [
-              /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Audio only" }),
+              /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-text-primary", children: "Audio only" }),
               /* @__PURE__ */ a("span", { className: "text-[11px] text-text-tertiary", children: "Skip video tracks — voice-only room." })
             ] }),
             /* @__PURE__ */ a(
@@ -628,7 +628,7 @@ function Ae({
           ] }),
           /* @__PURE__ */ p("label", { className: "flex items-center justify-between gap-3", children: [
             /* @__PURE__ */ p("span", { className: "flex flex-col", children: [
-              /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-slate-700", children: "Recording enabled" }),
+              /* @__PURE__ */ a("span", { className: "text-[13px] font-semibold text-text-primary", children: "Recording enabled" }),
               /* @__PURE__ */ a("span", { className: "text-[11px] text-text-tertiary", children: "Allow server-side recording of sessions." })
             ] }),
             /* @__PURE__ */ a(
@@ -813,7 +813,7 @@ function Ie({
       },
       className: "w-full h-full object-cover scale-x-[-1]"
     }
-  ) : /* @__PURE__ */ a("div", { className: "w-full h-full grid place-items-center bg-slate-200", "data-testid": "local-camera-avatar", children: /* @__PURE__ */ a(oe, { name: t, size: 64 }) });
+  ) : /* @__PURE__ */ a("div", { className: "w-full h-full grid place-items-center bg-surface-emphasis", "data-testid": "local-camera-avatar", children: /* @__PURE__ */ a(oe, { name: t, size: 64 }) });
 }
 function je(e, t) {
   const n = e.isLocal, o = n ? t ?? e.displayName ?? "You" : e.displayName || e.participantId.slice(0, 8), i = e.streams[0], r = e.screenStream, c = n ? /* @__PURE__ */ a(Ie, { stream: i, displayName: o }) : /* @__PURE__ */ a(X, { stream: i, displayName: o, cameraOn: e.hasVideo }), u = r ? /* @__PURE__ */ a(Y, { stream: r, muted: n, className: "w-full h-full object-contain bg-black" }) : void 0;

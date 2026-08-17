@@ -66,7 +66,7 @@ export function TableRow({ children, clickable, className, ...rest }: TableRowPr
   return (
     <tr
       className={cn(
-        'border-b border-slate-100 last:border-b-0 transition-colors',
+        'border-b border-border-subtle last:border-b-0 transition-colors',
         clickable && 'cursor-pointer hover:bg-surface-panel',
         className,
       )}
@@ -92,7 +92,7 @@ export function TableTh({ children, sortable, sortDirection, className, ...rest 
     <th
       className={cn(
         'text-left px-4 py-2.5 text-neutral font-semibold text-[11px] uppercase tracking-wide select-none',
-        sortable && 'cursor-pointer hover:text-slate-700 transition-colors',
+        sortable && 'cursor-pointer hover:text-text-primary transition-colors',
         className,
       )}
       {...rest}
@@ -115,7 +115,7 @@ export interface TableTdProps extends TdHTMLAttributes<HTMLTableCellElement> {
 
 export function TableTd({ children, className, ...rest }: TableTdProps) {
   return (
-    <td className={cn('px-4 py-3 text-sm text-slate-700 align-middle', className)} {...rest}>
+    <td className={cn('px-4 py-3 text-sm text-text-primary align-middle', className)} {...rest}>
       {children}
     </td>
   );

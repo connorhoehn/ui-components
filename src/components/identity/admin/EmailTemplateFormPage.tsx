@@ -103,7 +103,7 @@ export function EmailTemplateFormPage({
         {/* HTML Body */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1">
-            <label className="text-sm font-semibold text-slate-800">
+            <label className="text-sm font-semibold text-text-primary">
               HTML Body
             </label>
             <Button variant="ghost" size="sm" onClick={() => setShowPreview((v) => !v)}>
@@ -115,7 +115,7 @@ export function EmailTemplateFormPage({
             onChange={(e) => setHtmlBody(e.target.value)}
             placeholder="<html><body>...</body></html>"
             rows={10}
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 resize-y box-border font-mono"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary resize-y box-border font-mono"
           />
           {showPreview && (
             <div
@@ -136,7 +136,7 @@ export function EmailTemplateFormPage({
 
         {/* Variables */}
         <section>
-          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Variables</h3>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Variables</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {variables.map((v) => (
               <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
@@ -154,7 +154,7 @@ export function EmailTemplateFormPage({
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 box-border"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border"
             placeholder="Type variable name and press Enter"
             value={varInput}
             onChange={(e) => setVarInput(e.target.value)}
@@ -162,7 +162,7 @@ export function EmailTemplateFormPage({
           />
         </section>
 
-        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+        <div className="flex gap-3 mt-6 pt-5 border-t border-border-subtle">
           <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Template' : 'Create Template'}
           </Button>

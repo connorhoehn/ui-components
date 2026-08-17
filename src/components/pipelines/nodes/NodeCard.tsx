@@ -71,10 +71,10 @@ export function NodeCard({
       )}
 
       {/* Header */}
-      <div className={cn('flex items-center justify-between gap-2 px-2.5 py-2 border-b border-slate-100', accentClass && 'pl-3.5')}>
+      <div className={cn('flex items-center justify-between gap-2 px-2.5 py-2 border-b border-border-subtle', accentClass && 'pl-3.5')}>
         <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-sm leading-none shrink-0" aria-hidden="true">{icon}</span>
-          <span className="text-xs font-semibold text-slate-800 truncate">{label}</span>
+          <span className="text-xs font-semibold text-text-primary truncate">{label}</span>
         </div>
         <StatusPill state={status} label={pillLabel} size="sm" />
       </div>

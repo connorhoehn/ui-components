@@ -38,7 +38,7 @@ export function AgentFlowPage({ edges = DEFAULT_EDGES, onAgentClick, className }
             <span className="w-3 h-0.5 bg-info inline-block" /> A2A (animated)
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-3 h-0.5 bg-slate-400 inline-block" /> Direct
+            <span className="w-3 h-0.5 bg-surface-emphasis inline-block" /> Direct
           </span>
         </div>
       </div>

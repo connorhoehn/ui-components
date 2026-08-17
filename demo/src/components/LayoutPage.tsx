@@ -202,7 +202,7 @@ function TerminalPanel({ onClose }) {
             <div className="flex gap-3 text-xs text-neutral items-center">
               <span>Docs</span>
               <span>Settings</span>
-              <span className="w-6 h-6 rounded-full bg-slate-200 inline-flex items-center justify-center text-[10px] font-semibold text-text-secondary">
+              <span className="w-6 h-6 rounded-full bg-surface-emphasis inline-flex items-center justify-center text-[10px] font-semibold text-text-secondary">
                 CH
               </span>
             </div>

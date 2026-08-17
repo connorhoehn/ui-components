@@ -116,7 +116,7 @@ export function SidebarRow({
     'transition-colors duration-100',
     !disabled && 'cursor-pointer hover:bg-surface-hover',
     active && !disabled && 'bg-info-bg text-info-fg hover:bg-info-bg',
-    !active && !disabled && 'text-slate-700',
+    !active && !disabled && 'text-text-primary',
     disabled && 'opacity-50 cursor-not-allowed text-neutral',
     'no-underline',
     className,

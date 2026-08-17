@@ -117,7 +117,7 @@ function LocalCameraTile({
 }) {
   if (!stream) {
     return (
-      <div className="w-full h-full grid place-items-center bg-slate-200" data-testid="local-camera-avatar">
+      <div className="w-full h-full grid place-items-center bg-surface-emphasis" data-testid="local-camera-avatar">
         {/* Initials-only avatar — sized to fit the tile via Avatar's size prop. */}
         <Avatar name={displayName} size={64} />
       </div>

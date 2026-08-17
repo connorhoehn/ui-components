@@ -106,9 +106,9 @@ export function GenerativeImagePreview({
             className={cn(
               'absolute inset-0',
               reducedMotion
-                ? 'bg-slate-200'
+                ? 'bg-surface-emphasis'
                 : cn(
-                    'bg-gradient-to-r from-slate-100 via-slate-200 to-slate-100',
+                    'bg-gradient-to-r from-surface-hover via-surface-emphasis to-surface-hover',
                     'bg-[length:400px_100%] animate-[skeleton-shimmer_1.4s_ease-in-out_infinite]',
                   ),
             )}
@@ -150,7 +150,7 @@ export function GenerativeImagePreview({
         />
       ) : (
         // 'done' without a src — keep the neutral block rather than a broken img.
-        <div aria-hidden="true" className="absolute inset-0 bg-slate-200" />
+        <div aria-hidden="true" className="absolute inset-0 bg-surface-emphasis" />
       )}
     </div>
   );

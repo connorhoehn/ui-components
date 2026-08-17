@@ -147,7 +147,7 @@ export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
                   Client ID: <code className="px-1.5 py-0.5 bg-surface-hover rounded text-xs font-mono">{status.firstClientId}</code>
                 </p>
                 <p className="m-0 text-sm text-text-secondary">Use this code snippet to test the OIDC authorization flow:</p>
-                <pre className="px-4 py-3 bg-slate-900 text-slate-200 rounded-md font-mono text-xs overflow-x-auto whitespace-pre m-0">{`// OIDC Authorization Code Flow
+                <pre className="px-4 py-3 bg-surface-inverse text-text-inverse rounded-md font-mono text-xs overflow-x-auto whitespace-pre m-0">{`// OIDC Authorization Code Flow
 const authUrl = \`\${issuer}/authorize?\` + new URLSearchParams({
   client_id: '${status.firstClientId}',
   response_type: 'code',
@@ -204,14 +204,14 @@ window.location.href = authUrl;`}</pre>
                 >
                   {step.done ? '✓' : idx + 1}
                 </div>
-                <span className="text-sm font-medium text-slate-800">{step.title}</span>
+                <span className="text-sm font-medium text-text-primary">{step.title}</span>
               </div>
               <span className="text-text-tertiary text-sm">
                 {expanded === idx ? '▲' : '▼'}
               </span>
             </div>
             {expanded === idx && (
-              <div className="px-5 pb-5 pt-0 border-t border-slate-100">
+              <div className="px-5 pb-5 pt-0 border-t border-border-subtle">
                 <div className="pt-4">
                   {step.content}
                 </div>

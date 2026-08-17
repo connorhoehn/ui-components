@@ -403,7 +403,7 @@ export default function AdjustLayerSliderPanel({
                   'ml-1 inline-flex items-center justify-center',
                   'w-3 h-3 rounded-full text-[10px] leading-none',
                   'bg-transparent border-none cursor-pointer text-current',
-                  'hover:bg-slate-200',
+                  'hover:bg-surface-emphasis',
                 )}
               >
                 ×

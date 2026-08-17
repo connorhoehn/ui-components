@@ -69,10 +69,10 @@ export function PipelineEventLog({ compact }: { compact?: boolean } = {}) {
   }, [events]);
 
   return (
-    <div className="bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex flex-col h-full">
-      <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center gap-2">
+    <div className="bg-surface-inverse rounded-lg border border-surface-inverse overflow-hidden flex flex-col h-full">
+      <div className="px-3.5 py-2.5 border-b border-surface-inverse flex items-center gap-2">
         <span className="text-success-fg text-[8px]">●</span>
-        <span className="text-slate-200 text-xs font-semibold">Event Stream</span>
+        <span className="text-text-inverse text-xs font-semibold">Event Stream</span>
         <span className="text-neutral text-[11px] ml-auto">{events.length} events</span>
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto py-2 font-mono text-[11px]">

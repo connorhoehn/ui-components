@@ -84,7 +84,7 @@ export function MfaDashboardPage({
       <div className="w-full max-w-[600px] bg-white rounded-xl shadow-md p-8" role="main" aria-label="MFA device management">
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div className="flex flex-col gap-1">
-            <h1 className="text-xl font-bold text-slate-800 m-0">MFA Devices</h1>
+            <h1 className="text-xl font-bold text-text-primary m-0">MFA Devices</h1>
             {userEmail && <p className="text-sm text-neutral m-0">{userEmail}</p>}
           </div>
           <div className="flex items-center gap-3">
@@ -140,7 +140,7 @@ export function MfaDashboardPage({
                       </form>
                     ) : (
                       <>
-                        <h3 className="text-[15px] font-semibold text-slate-800 m-0">{device.deviceName}</h3>
+                        <h3 className="text-[15px] font-semibold text-text-primary m-0">{device.deviceName}</h3>
                         <StatusBadge
                           status={device.isVerified ? 'CONFIRMED' : 'UNCONFIRMED'}
                         />

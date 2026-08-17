@@ -114,7 +114,7 @@ export function GroupFormPage({
 
         {/* Permissions tag input */}
         <section>
-          <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Permissions</h3>
+          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {permissions.map((perm) => (
               <span key={perm} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
@@ -132,7 +132,7 @@ export function GroupFormPage({
             ))}
           </div>
           <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-slate-800 box-border"
+            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border"
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -143,7 +143,7 @@ export function GroupFormPage({
         {/* Members section (edit mode only) */}
         {isEdit && members && (
           <section>
-            <h3 className="text-base font-semibold text-slate-800 mt-6 mb-2">Members</h3>
+            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
               <p className="text-text-tertiary text-sm">
                 No members yet.
@@ -165,7 +165,7 @@ export function GroupFormPage({
             {availableUsers && availableUsers.length > 0 && onAddMember && (
               <div className="flex gap-2 mt-2">
                 <select
-                  className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-slate-800"
+                  className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
                 >
@@ -184,7 +184,7 @@ export function GroupFormPage({
           </section>
         )}
 
-        <div className="flex gap-3 mt-6 pt-5 border-t border-slate-100">
+        <div className="flex gap-3 mt-6 pt-5 border-t border-border-subtle">
           <Button type="submit" variant="primary" size="lg" disabled={submitting}>
             {submitting ? 'Saving...' : isEdit ? 'Update Group' : 'Create Group'}
           </Button>
