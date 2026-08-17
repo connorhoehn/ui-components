@@ -6,22 +6,21 @@ import { useCallback, useState } from 'react';
 import type { AuthoringBBox, ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
 import { NodeConfigShell } from '../shared';
+import { ContextVariablePicker } from '../../context/ContextVariablePicker';
+import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionConfigProps {
   data: ImageVisionAnalyzeNodeData;
   onChange: (patch: Partial<ImageVisionAnalyzeNodeData>) => void;
+  /** Node being edited; enables real upstream-context pills. */
+  nodeId?: string;
 }
 
 const VISION_MODELS = [
   'claude-opus-4-7',
   'claude-sonnet-4-6',
   'claude-haiku-4-5-20251001',
-];
-
-const REF_PATH_SAMPLES = [
-  '$.trigger.imageRef',
-  '$.trigger.image',
-  '$.steps.upload.output.imageId',
 ];
 
 /**
@@ -59,7 +58,9 @@ const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 const errorCls = 'text-[11px] text-danger-fg mt-0.5';
 
-export default function VisionConfig({ data, onChange }: VisionConfigProps) {
+export default function VisionConfig({ data, onChange, nodeId }: VisionConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [schemaText, setSchemaText] = useState<string>(
     data.outputSchema ? JSON.stringify(data.outputSchema, null, 2) : '',
@@ -132,7 +133,7 @@ export default function VisionConfig({ data, onChange }: VisionConfigProps) {
           <div className={helpCls}>JSONPath into context. The value must be a string imageId or object with imageId.</div>
         )}
         <div className="mt-1.5 flex flex-wrap gap-1">
-          {REF_PATH_SAMPLES.map((sample) => (
+          {imageRefOptions.map(({ path: sample }) => (
             <button
               key={sample}
               type="button"

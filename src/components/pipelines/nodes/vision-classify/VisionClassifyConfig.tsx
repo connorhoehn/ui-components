@@ -5,17 +5,16 @@
 import { useState } from 'react';
 import type { ImageVisionClassifyNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { ContextVariablePicker } from '../../context/ContextVariablePicker';
+import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionClassifyConfigProps {
   data: ImageVisionClassifyNodeData;
   onChange: (patch: Partial<ImageVisionClassifyNodeData>) => void;
+  /** Node being edited; enables real upstream-context pills. */
+  nodeId?: string;
 }
-
-const IMAGE_REF_SAMPLES = [
-  '$.trigger.imageRef',
-  '$.scatter.parentImageId',
-  '$.steps.crop.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -44,7 +43,9 @@ const monoInputCls = `${inputCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function VisionClassifyConfig({ data, onChange }: VisionClassifyConfigProps) {
+export default function VisionClassifyConfig({ data, onChange, nodeId }: VisionClassifyConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const [newLabel, setNewLabel] = useState('');
   const labels = data.labels ?? [];
 
@@ -74,7 +75,7 @@ export default function VisionClassifyConfig({ data, onChange }: VisionClassifyC
           placeholder="$.trigger.imageRef"
         />
         <div className={helpCls}>JSONPath to the imageId to classify. Required.</div>
-        <SamplePills samples={IMAGE_REF_SAMPLES} onSelect={(v) => onChange({ imageRefPath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ imageRefPath: v })} />
       </div>
 
       {/* Labels */}

@@ -4,17 +4,14 @@
 
 import type { ImageTransformNodeData, GeometricOp, GeometricOpRotate } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface TransformGeoConfigProps {
   data: ImageTransformNodeData;
   onChange: (patch: Partial<ImageTransformNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -123,7 +120,8 @@ function OpCard({ op, index, onUpdate, onRemove }: OpCardProps) {
   );
 }
 
-export default function TransformGeoConfig({ data, onChange }: TransformGeoConfigProps) {
+export default function TransformGeoConfig({ data, onChange, nodeId }: TransformGeoConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   const ops = data.operations ?? [];
 
   const updateOp = (index: number, op: GeometricOp) => {
@@ -154,7 +152,7 @@ export default function TransformGeoConfig({ data, onChange }: TransformGeoConfi
           onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
           placeholder="$.trigger.imageRef"
         />
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Operations stack */}

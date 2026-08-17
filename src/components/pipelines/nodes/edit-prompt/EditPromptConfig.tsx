@@ -4,17 +4,14 @@
 
 import type { ImageEditPromptNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface EditPromptConfigProps {
   data: ImageEditPromptNodeData;
   onChange: (patch: Partial<ImageEditPromptNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 const MASK_SAMPLES = [
   '$.steps.mask.output.imageId',
@@ -47,7 +44,8 @@ const monoInputCls = `${inputCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function EditPromptConfig({ data, onChange }: EditPromptConfigProps) {
+export default function EditPromptConfig({ data, onChange, nodeId }: EditPromptConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Source image path */}
@@ -64,7 +62,7 @@ export default function EditPromptConfig({ data, onChange }: EditPromptConfigPro
           onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
           placeholder="$.trigger.imageRef"
         />
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Mask image path */}

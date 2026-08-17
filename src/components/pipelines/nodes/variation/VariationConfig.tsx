@@ -4,17 +4,14 @@
 
 import type { ImageVariationNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VariationConfigProps {
   data: ImageVariationNodeData;
   onChange: (patch: Partial<ImageVariationNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -42,7 +39,8 @@ const monoInputCls = `${inputCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function VariationConfig({ data, onChange }: VariationConfigProps) {
+export default function VariationConfig({ data, onChange, nodeId }: VariationConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Source image path */}
@@ -59,7 +57,7 @@ export default function VariationConfig({ data, onChange }: VariationConfigProps
           onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
           placeholder="$.trigger.imageRef"
         />
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Model */}

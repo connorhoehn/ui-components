@@ -9,17 +9,14 @@ import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface AdjustLayerConfigProps {
   data: ImageAdjustLayerNodeData;
   onChange: (patch: Partial<ImageAdjustLayerNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -76,6 +73,7 @@ function AdjustLayerConfigInner({
   onChange,
   currentNodeId,
 }: AdjustLayerConfigProps & { currentNodeId: string | null }) {
+  const imageRefOptions = useUpstreamImageRefs(currentNodeId ?? null);
   const autoSourceImageId = useUpstreamImageId(currentNodeId);
   const pinnedSourceImageId = data.previewSourceImageId;
   const layers = data.layers ?? [];
@@ -97,7 +95,7 @@ function AdjustLayerConfigInner({
           placeholder="$.scatter.parentImageId"
         />
         <div className={helpCls}>JSONPath to the imageId of the source image.</div>
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Live slider panel */}

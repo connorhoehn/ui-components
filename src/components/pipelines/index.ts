@@ -179,3 +179,18 @@ export type {
   UploadedImage as PipelineUploadedImage,
   PipelineEditorServices,
 } from './services';
+
+// Upstream-context derivation — what `{{context.*}}` paths and image refs are
+// actually available at a node, from its real position in the graph.
+export {
+  availableContextPaths,
+  availableImageRefs,
+  contextContributions,
+  unresolvedTemplatePaths,
+  upstreamNodeIds,
+} from './context/upstreamContext';
+export type { ContextPath, ImageRefOption } from './context/upstreamContext';
+export { useUpstreamContext, useUpstreamImageRefs } from './context/useUpstreamContext';
+export type { UpstreamContext } from './context/useUpstreamContext';
+export { ContextVariablePicker } from './context/ContextVariablePicker';
+export type { ContextVariablePickerProps } from './context/ContextVariablePicker';

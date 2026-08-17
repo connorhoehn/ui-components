@@ -7,17 +7,14 @@ import type { ImageSaveNodeData } from '../../../../types/pipeline';
 import { Input } from '../../../forms/Input';
 import { cn } from '../../../../lib/cn';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface SaveConfigProps {
   data: ImageSaveNodeData;
   onChange: (patch: Partial<ImageSaveNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.crop.output.imageId',
-];
 
 const FILENAME_TEMPLATE_SAMPLES = [
   '{{scatter.item.label}}',
@@ -53,7 +50,8 @@ function SamplePills({
   );
 }
 
-export default function SaveConfig({ data, onChange }: SaveConfigProps) {
+export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Source image path */}
@@ -83,7 +81,7 @@ export default function SaveConfig({ data, onChange }: SaveConfigProps) {
           <code>$.scatter.parentImageId</code>.
         </p>
         <SamplePills
-          samples={SOURCE_IMAGE_SAMPLES}
+          samples={imageRefOptions.map((o) => o.path)}
           onSelect={(v) => onChange({ sourceImagePath: v })}
         />
       </div>

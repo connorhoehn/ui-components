@@ -4,17 +4,14 @@
 
 import type { ImageAdjustBwNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface AdjustBwConfigProps {
   data: ImageAdjustBwNodeData;
   onChange: (patch: Partial<ImageAdjustBwNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -37,7 +34,8 @@ const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white 
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps) {
+export default function AdjustBwConfig({ data, onChange, nodeId }: AdjustBwConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   const algorithm = data.algorithm ?? 'luminosity';
   const contrast = data.contrast ?? 1;
 
@@ -60,7 +58,7 @@ export default function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps) 
         <div className={helpCls}>
           JSONPath to the imageId of the source image.
         </div>
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Algorithm */}

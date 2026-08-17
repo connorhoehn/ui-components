@@ -4,17 +4,14 @@
 
 import type { ImageResizeNodeData, ResizeFit } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface ResizeConfigProps {
   data: ImageResizeNodeData;
   onChange: (patch: Partial<ImageResizeNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -39,7 +36,8 @@ const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white 
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function ResizeConfig({ data, onChange }: ResizeConfigProps) {
+export default function ResizeConfig({ data, onChange, nodeId }: ResizeConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Source image path */}
@@ -56,7 +54,7 @@ export default function ResizeConfig({ data, onChange }: ResizeConfigProps) {
           onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
           placeholder="$.trigger.imageRef"
         />
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Width / Height */}

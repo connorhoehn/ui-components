@@ -259,6 +259,12 @@ export interface ConfigPanelProps {
 type AnyConfig = (props: {
   data: NodeData;
   onChange: (patch: Partial<NodeData>) => void;
+  /**
+   * The node being edited. Panels that author `{{context.*}}` templates need it
+   * to derive the paths actually available upstream — without it they can only
+   * offer a hardcoded guess, which is what LLMConfig used to do.
+   */
+  nodeId?: string;
 }) => ReactElement;
 
 const PlaceholderConfig: AnyConfig = ({ data }) => (
@@ -312,7 +318,7 @@ function renderConfig(
   onChange: (patch: Partial<NodeData>) => void,
 ): ReactElement {
   const Config = CONFIGS[node.type];
-  return <Config data={node.data} onChange={onChange} />;
+  return <Config data={node.data} onChange={onChange} nodeId={node.id} />;
 }
 
 // ---------------------------------------------------------------------------

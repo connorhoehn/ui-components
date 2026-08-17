@@ -12,10 +12,18 @@ import { ConfigField, ConfigSection, NodeConfigShell } from '../shared';
 import { cn } from '../../../../lib/cn';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
+import { ContextVariablePicker } from '../../context/ContextVariablePicker';
+import { useUpstreamContext } from '../../context/useUpstreamContext';
 
 export interface LLMConfigProps {
   data: LLMNodeData;
   onChange: (patch: Partial<LLMNodeData>) => void;
+  /**
+   * Node being edited. Supplied by ConfigPanel; when present the variable pills
+   * and the resolved-prompt preview come from the node's real upstream graph
+   * instead of a hardcoded sample.
+   */
+  nodeId?: string;
 }
 
 const MODELS_BY_PROVIDER: Record<LLMProvider, string[]> = {
@@ -38,28 +46,39 @@ const MODELS_BY_PROVIDER: Record<LLMProvider, string[]> = {
   ],
 };
 
-const VARIABLES = [
-  'context.doc.body',
-  'context.doc.title',
-  'context.trigger.userId',
-  'context.steps',
-];
+/**
+ * Placeholder for a path in the preview.
+ *
+ * Describes the SHAPE rather than inventing a value. The previous version
+ * substituted lorem-ipsum for four hardcoded paths, which made the preview look
+ * authoritative while telling the author nothing about their own pipeline.
+ */
+function previewValueFor(path: string, kind: string): string {
+  switch (kind) {
+    case 'image': return `<image from ${path}>`;
+    case 'number': return '123';
+    case 'boolean': return 'true';
+    case 'array': return '[ … ]';
+    case 'object': return '{ … }';
+    default: return `<${path}>`;
+  }
+}
 
-const SAMPLE_CONTEXT: Record<string, string> = {
-  'context.doc.body': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  'context.doc.title': 'Sample Document Title',
-  'context.trigger.userId': 'user_abc123',
-  'context.steps': '["step-1: fetched document", "step-2: validated schema"]',
-};
-
-function resolveTemplate(template: string): string {
-  return template.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, key) => {
-    return SAMPLE_CONTEXT[key] ?? `{{${key}}}`;
+function resolveTemplate(template: string, kinds: Map<string, string>): string {
+  return template.replace(/\{\{\s*([\w.[\]-]+)\s*\}\}/g, (_, key: string) => {
+    const kind = kinds.get(key);
+    // Unknown path: leave it visibly unresolved rather than faking a value.
+    return kind ? previewValueFor(key, kind) : `{{${key}}}`;
   });
 }
 
-export default function LLMConfig({ data, onChange }: LLMConfigProps) {
+export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
+  const kinds = new Map<string, string>(paths.map((p) => [p.path, p.kind]));
+  const unresolvedPaths = unresolved(
+    `${data.systemPrompt ?? ''}\n${data.userPromptTemplate ?? ''}`,
+  );
 
   const systemMissing = !data.systemPrompt?.trim();
   const userMissing   = !data.userPromptTemplate?.trim();
@@ -100,6 +119,17 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
         </select>
       </ConfigField>
 
+      {/* Available run context, derived from the graph upstream of this node. */}
+      <ConfigField label="Available context">
+        <ContextVariablePicker
+          paths={paths}
+          unresolved={unresolvedPaths}
+          onInsert={(token) =>
+            onChange({ userPromptTemplate: `${data.userPromptTemplate ?? ''}${token}` })
+          }
+        />
+      </ConfigField>
+
       {/* System prompt */}
       <ConfigField
         label="System prompt"
@@ -122,13 +152,13 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
         label="User prompt template"
         required
         error={userMissing ? 'User prompt template is required.' : undefined}
-        help={!userMissing ? 'Supports {{ context.* }} substitution — click a pill above to insert.' : undefined}
+        help={!userMissing ? 'Supports {{ context.* }} substitution — click a pill above to append.' : undefined}
       >
         <CodeEditor
           value={data.userPromptTemplate}
           onChange={(next) => onChange({ userPromptTemplate: next })}
           language="template"
-          variables={VARIABLES}
+          variables={paths.map((p) => p.path)}
           minLines={6}
           aria-label="User prompt template"
         />
@@ -202,7 +232,7 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
               Resolved system prompt
             </div>
             <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[120px] overflow-auto">
-              {resolveTemplate(data.systemPrompt || '(empty)')}
+              {resolveTemplate(data.systemPrompt || '(empty)', kinds)}
             </pre>
           </div>
           <div>
@@ -210,11 +240,13 @@ export default function LLMConfig({ data, onChange }: LLMConfigProps) {
               Resolved user prompt
             </div>
             <pre className="text-xs whitespace-pre-wrap break-words m-0 text-text-primary bg-white p-2 rounded-md border border-border max-h-[200px] overflow-auto">
-              {resolveTemplate(data.userPromptTemplate || '(empty)')}
+              {resolveTemplate(data.userPromptTemplate || '(empty)', kinds)}
             </pre>
           </div>
           <div className="text-[11px] text-text-tertiary">
-            Sample values: {Object.keys(SAMPLE_CONTEXT).map(k => `{{${k}}}`).join(', ')}
+            {paths.length > 0
+              ? 'Placeholders describe the shape of each upstream value; unresolved paths stay in braces.'
+              : 'No upstream context — connect this node to see what it can reference.'}
           </div>
         </div>
       )}

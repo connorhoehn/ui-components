@@ -4,17 +4,16 @@
 
 import type { ImageVisionDescribeNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { ContextVariablePicker } from '../../context/ContextVariablePicker';
+import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionDescribeConfigProps {
   data: ImageVisionDescribeNodeData;
   onChange: (patch: Partial<ImageVisionDescribeNodeData>) => void;
+  /** Node being edited; enables real upstream-context pills. */
+  nodeId?: string;
 }
-
-const IMAGE_REF_SAMPLES = [
-  '$.trigger.imageRef',
-  '$.scatter.parentImageId',
-  '$.steps.crop.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -43,7 +42,9 @@ const monoInputCls = `${inputCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function VisionDescribeConfig({ data, onChange }: VisionDescribeConfigProps) {
+export default function VisionDescribeConfig({ data, onChange, nodeId }: VisionDescribeConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Image ref path */}
@@ -59,7 +60,7 @@ export default function VisionDescribeConfig({ data, onChange }: VisionDescribeC
           placeholder="$.trigger.imageRef"
         />
         <div className={helpCls}>JSONPath to the imageId to describe. Required.</div>
-        <SamplePills samples={IMAGE_REF_SAMPLES} onSelect={(v) => onChange({ imageRefPath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ imageRefPath: v })} />
       </div>
 
       {/* User prompt */}

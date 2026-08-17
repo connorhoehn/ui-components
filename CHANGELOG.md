@@ -8,6 +8,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.43.0] — 2026-08-17
+
+Node-editor authoring for LLM and vision workflows now reflects the real graph.
+
+### Fixed
+
+- **The LLM prompt editor offered four invented context paths.** `LLMConfig`
+  shipped a hardcoded `VARIABLES` list (`context.doc.body`, `context.doc.title`,
+  `context.trigger.userId`, `context.steps`) and a `SAMPLE_CONTEXT` of
+  lorem-ipsum, regardless of what was upstream. Authoring against
+  `trigger → transform → llm` still suggested `context.doc.body`, which no step
+  writes. The panel looked capable while its context awareness was fiction, and
+  a template referencing a non-existent path failed at run time with no
+  authoring-time signal.
+
+- **18 image/vision panels hardcoded fake JSONPath image refs** —
+  `$.steps.upload.output.imageId`, `$.steps.crop.output.imageId`,
+  `$.steps.visionAnalyze.output.extracted.regions[0].bbox` — naming nodes that
+  need not exist in the user's graph. Picking one produced a reference that
+  silently resolved to nothing.
+
+Both now derive from the node's actual position in the graph.
+
+### Added
+
+- `context/upstreamContext.ts` — pure, no React, 28 tests:
+  - `upstreamNodeIds` — strict ancestors, nearest first, cycle-safe
+  - `contextContributions` — what each node type writes into context, honouring
+    `outputKey` when set
+  - `availableContextPaths` — every `{{context.*}}` path reachable at a node
+  - `availableImageRefs` — upstream image producers as JSONPath, plus the
+    always-present `$.trigger.imageRef` and a scatter parent when one is upstream
+  - `unresolvedTemplatePaths` — **the authoring-time signal that was missing**:
+    paths a template references that nothing upstream provides. Accepts leaves
+    under an available object, since payload shape is caller-defined.
+- `useUpstreamContext(nodeId)` / `useUpstreamImageRefs(nodeId)` — bind the above
+  to the live editor graph.
+- `ContextVariablePicker` — insertable pills tinted by value kind, an
+  unresolved-path warning, and a "where each value comes from" disclosure that
+  can reveal the producing node. Shared rather than inlined, since LLM, vision
+  and transform panels all author templates.
+- `ConfigPanel` now passes `nodeId` to every config panel; without it a panel
+  can only guess at its context.
+
+
 ## [2.42.0] — 2026-08-17
 
 ### Added

@@ -20,17 +20,14 @@ import Banner from '../../../shared/Banner';
 import Chip from '../../../shared/Chip';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface CropConfigProps {
   data: ImageCropNodeData;
   onChange: (patch: Partial<ImageCropNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 const BBOX_SAMPLES = [
   '$.scatter.item.bbox',
@@ -106,6 +103,7 @@ function CropConfigInner({
   onChange,
   currentNodeId,
 }: CropConfigProps & { currentNodeId: string | null }) {
+  const imageRefOptions = useUpstreamImageRefs(currentNodeId ?? null);
   const materialize = data.materialize !== false;
   const upstream = useUpstreamImage(currentNodeId);
   const getImageUrl = useImageUrl();
@@ -171,7 +169,7 @@ function CropConfigInner({
           <code>$.scatter.parentImageId</code>.
         </div>
         <SamplePills
-          samples={SOURCE_IMAGE_SAMPLES}
+          samples={imageRefOptions.map((o) => o.path)}
           onSelect={(v) => onChange({ sourceImagePath: v })}
         />
       </div>

@@ -4,17 +4,14 @@
 
 import type { ImageFormatConvertNodeData, ImageFormat } from '../../../../types/pipeline';
 import { NodeConfigShell } from '../shared';
+import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface FormatConvertConfigProps {
   data: ImageFormatConvertNodeData;
   onChange: (patch: Partial<ImageFormatConvertNodeData>) => void;
+  /** Node being edited; derives real upstream image refs. */
+  nodeId?: string;
 }
-
-const SOURCE_IMAGE_SAMPLES = [
-  '$.scatter.parentImageId',
-  '$.trigger.imageRef',
-  '$.steps.upload.output.imageId',
-];
 
 function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
   return (
@@ -45,7 +42,8 @@ const monoInputCls = `${inputCls} font-mono`;
 const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
-export default function FormatConvertConfig({ data, onChange }: FormatConvertConfigProps) {
+export default function FormatConvertConfig({ data, onChange, nodeId }: FormatConvertConfigProps) {
+  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   const isLossyFormat = data.format === 'jpeg' || data.format === 'webp' || data.format === 'avif';
 
   return (
@@ -64,7 +62,7 @@ export default function FormatConvertConfig({ data, onChange }: FormatConvertCon
           onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
           placeholder="$.trigger.imageRef"
         />
-        <SamplePills samples={SOURCE_IMAGE_SAMPLES} onSelect={(v) => onChange({ sourceImagePath: v })} />
+        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
       </div>
 
       {/* Format */}

@@ -33,11 +33,13 @@ declare interface ActionNodeData {
 
 declare type ActionType = 'update-document' | 'post-comment' | 'notify' | 'webhook' | 'mcp-tool' | 'sync-back';
 
-export declare function AdjustBwConfig({ data, onChange }: AdjustBwConfigProps): JSX.Element;
+export declare function AdjustBwConfig({ data, onChange, nodeId }: AdjustBwConfigProps): JSX.Element;
 
 declare interface AdjustBwConfigProps {
     data: ImageAdjustBwNodeData;
     onChange: (patch: Partial<ImageAdjustBwNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type AdjustBwData = ImageAdjustBwNodeData & {
@@ -76,6 +78,8 @@ export declare function AdjustLayerConfig(props: AdjustLayerConfigProps): JSX.El
 declare interface AdjustLayerConfigProps {
     data: ImageAdjustLayerNodeData;
     onChange: (patch: Partial<ImageAdjustLayerNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type AdjustLayerData = ImageAdjustLayerNodeData & {
@@ -237,6 +241,28 @@ declare interface AuthoringBBox {
     label?: string;
 }
 
+/**
+ * Every `{{context.*}}` path available at `targetId`, nearest upstream first.
+ *
+ * `context.trigger` is always included even when the trigger isn't wired yet —
+ * the executor always provides it, and omitting it would make a fresh graph
+ * look like it has no context at all.
+ */
+export declare function availableContextPaths(nodes: readonly PipelineNode[], edges: readonly PipelineEdge[], targetId: string): ContextPath[];
+
+/**
+ * Image references actually reachable from `targetId`, nearest upstream first.
+ *
+ * Replaces the hardcoded sample lists that 18 image/vision config panels
+ * carried (`$.steps.upload.output.imageId`, `$.steps.crop.output.imageId`) —
+ * paths naming nodes that need not exist in the user's graph. An author picking
+ * one got a reference that silently resolved to nothing at run time.
+ *
+ * `$.trigger.imageRef` is always offered: the executor supplies it whenever a
+ * run is started with an image, independent of the graph.
+ */
+export declare function availableImageRefs(nodes: readonly PipelineNode[], edges: readonly PipelineEdge[], targetId: string): ImageRefOption[];
+
 export declare function BaseNode(props: BaseNodeProps): JSX.Element;
 
 declare interface BaseNodeProps {
@@ -316,6 +342,43 @@ declare interface ConditionNodeData {
 }
 
 /**
+ * What a node writes into the run context.
+ *
+ * Keyed by node type. `outputKey` on the node's data overrides the default
+ * location for the types that support it (transform, action, and the vision
+ * family), which is why this takes the node rather than just the type.
+ */
+export declare function contextContributions(node: PipelineNode): ContextPath[];
+
+/** One `{{context.*}}` path an author can insert, and where it comes from. */
+export declare interface ContextPath {
+    /** Template path WITHOUT braces, e.g. `context.steps.step-2.output`. */
+    path: string;
+    /** Human label for the contributing node, e.g. "Classify (llm)". */
+    source: string;
+    /** Node id that contributes it, for click-to-reveal in the canvas. */
+    sourceNodeId: string;
+    /** What the value is, shown as help text next to the pill. */
+    description: string;
+    /** Rough shape, so a panel can hint at usage without executing anything. */
+    kind: 'string' | 'number' | 'boolean' | 'object' | 'array' | 'image';
+}
+
+export declare function ContextVariablePicker({ paths, unresolved, onInsert, onRevealNode, className, }: ContextVariablePickerProps): JSX.Element;
+
+export declare interface ContextVariablePickerProps {
+    /** Paths available at this node, from `availableContextPaths`. */
+    paths: readonly ContextPath[];
+    /** Referenced but unavailable, from `unresolvedTemplatePaths`. */
+    unresolved?: readonly string[];
+    /** Called with the `{{path}}` text to insert at the cursor. */
+    onInsert: (token: string) => void;
+    /** Reveal the contributing node on the canvas. */
+    onRevealNode?: (nodeId: string) => void;
+    className?: string;
+}
+
+/**
  * Per-criterion rows: id + raw score + verdict chip + 0..1 gauge +
  * rationale. The rubric prompt sits inline so users can see the question
  * the model was answering without flipping tabs.
@@ -343,6 +406,8 @@ export declare function CropConfig(props: CropConfigProps): JSX.Element;
 declare interface CropConfigProps {
     data: ImageCropNodeData;
     onChange: (patch: Partial<ImageCropNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type CropData = ImageCropNodeData & {
@@ -355,11 +420,13 @@ declare type CropFlowNode = Node_2<CropData, 'image:crop'>;
 
 export declare function CropNode(props: NodeProps<CropFlowNode>): JSX.Element;
 
-export declare function DimensionsConfig({ data, onChange }: DimensionsConfigProps): JSX.Element;
+export declare function DimensionsConfig({ data, onChange, nodeId }: DimensionsConfigProps): JSX.Element;
 
 export declare interface DimensionsConfigProps {
     data: ImageDimensionsNodeData;
     onChange: (patch: Partial<ImageDimensionsNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type DimensionsData = ImageDimensionsNodeData & {
@@ -376,11 +443,13 @@ export declare type EdgePayload = 'image' | 'text' | 'data' | 'control';
 
 export declare type EdgeState = 'default' | 'active' | 'traversed-success' | 'traversed-failure';
 
-export declare function EditPromptConfig({ data, onChange }: EditPromptConfigProps): JSX.Element;
+export declare function EditPromptConfig({ data, onChange, nodeId }: EditPromptConfigProps): JSX.Element;
 
 declare interface EditPromptConfigProps {
     data: ImageEditPromptNodeData;
     onChange: (patch: Partial<ImageEditPromptNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type EditPromptData = ImageEditPromptNodeData & {
@@ -471,11 +540,13 @@ declare interface ForkNodeData {
     branchLabels?: string[];
 }
 
-export declare function FormatConvertConfig({ data, onChange }: FormatConvertConfigProps): JSX.Element;
+export declare function FormatConvertConfig({ data, onChange, nodeId }: FormatConvertConfigProps): JSX.Element;
 
 declare interface FormatConvertConfigProps {
     data: ImageFormatConvertNodeData;
     onChange: (patch: Partial<ImageFormatConvertNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type FormatConvertData = ImageFormatConvertNodeData & {
@@ -670,6 +741,15 @@ export declare function imageOverlayPropsFrom(result: VisionResult): {
     people: VisionPerson[] | undefined;
     objects: VisionObject[] | undefined;
 };
+
+/** A JSONPath an image-consuming node can point `imageRefPath` at. */
+export declare interface ImageRefOption {
+    /** JSONPath as the executor resolves it, e.g. `$.steps.crop-1.output.imageId`. */
+    path: string;
+    /** Human label for the producing node. */
+    source: string;
+    sourceNodeId: string;
+}
 
 declare interface ImageResizeNodeData {
     type: 'image:resize';
@@ -1910,11 +1990,13 @@ export declare type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error
  */
 export declare function recordRecentType(type: NodeType): void;
 
-export declare function ResizeConfig({ data, onChange }: ResizeConfigProps): JSX.Element;
+export declare function ResizeConfig({ data, onChange, nodeId }: ResizeConfigProps): JSX.Element;
 
 declare interface ResizeConfigProps {
     data: ImageResizeNodeData;
     onChange: (patch: Partial<ImageResizeNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type ResizeData = ImageResizeNodeData & {
@@ -1945,11 +2027,13 @@ declare interface RetryPolicy {
 
 declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
 
-export declare function SaveConfig({ data, onChange }: SaveConfigProps): JSX.Element;
+export declare function SaveConfig({ data, onChange, nodeId }: SaveConfigProps): JSX.Element;
 
 export declare interface SaveConfigProps {
     data: ImageSaveNodeData;
     onChange: (patch: Partial<ImageSaveNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type SaveData = ImageSaveNodeData & {
@@ -1998,11 +2082,13 @@ declare interface ScatterNodeData {
     maxConcurrency?: number;
 }
 
-export declare function SharpenConfig({ data, onChange }: SharpenConfigProps): JSX.Element;
+export declare function SharpenConfig({ data, onChange, nodeId }: SharpenConfigProps): JSX.Element;
 
 declare interface SharpenConfigProps {
     data: ImageSharpenNodeData;
     onChange: (patch: Partial<ImageSharpenNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type SharpenData = ImageSharpenNodeData & {
@@ -2130,11 +2216,13 @@ declare type TransformData = TransformNodeData & {
 
 declare type TransformFlowNode = Node_2<TransformData, 'transform'>;
 
-export declare function TransformGeoConfig({ data, onChange }: TransformGeoConfigProps): JSX.Element;
+export declare function TransformGeoConfig({ data, onChange, nodeId }: TransformGeoConfigProps): JSX.Element;
 
 declare interface TransformGeoConfigProps {
     data: ImageTransformNodeData;
     onChange: (patch: Partial<ImageTransformNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type TransformGeoData = ImageTransformNodeData & {
@@ -2202,11 +2290,21 @@ declare interface TriggerNodeData {
 
 declare type TriggerType = 'manual' | 'document.finalize' | 'document.comment' | 'document.submit' | 'schedule' | 'webhook';
 
-export declare function UpscaleConfig({ data, onChange }: UpscaleConfigProps): JSX.Element;
+/**
+ * Paths a template references that nothing upstream provides.
+ *
+ * This is the authoring-time signal that was missing: a typo or a path from a
+ * node that isn't wired in yet shows up here instead of failing at run time.
+ */
+export declare function unresolvedTemplatePaths(template: string, available: readonly ContextPath[]): string[];
+
+export declare function UpscaleConfig({ data, onChange, nodeId }: UpscaleConfigProps): JSX.Element;
 
 export declare interface UpscaleConfigProps {
     data: ImageUpscaleNodeData;
     onChange: (patch: Partial<ImageUpscaleNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type UpscaleData = ImageUpscaleNodeData & {
@@ -2218,6 +2316,21 @@ declare type UpscaleData = ImageUpscaleNodeData & {
 declare type UpscaleFlowNode = Node_2<UpscaleData, 'image:upscale'>;
 
 export declare function UpscaleNode(props: NodeProps<UpscaleFlowNode>): JSX.Element;
+
+export declare interface UpstreamContext {
+    /** Paths available at this node, nearest upstream first. */
+    paths: ContextPath[];
+    /** Paths a template references that nothing upstream provides. */
+    unresolved: (template: string) => string[];
+}
+
+/**
+ * Node ids strictly upstream of `targetId`, nearest first.
+ *
+ * Breadth-first over reversed edges. Cycle-safe: a visited set means a loop in
+ * the graph terminates instead of hanging the editor.
+ */
+export declare function upstreamNodeIds(edges: readonly PipelineEdge[], targetId: string): string[];
 
 /**
  * Lifecycle-safe subscription. The `handler` ref is kept latest so callers
@@ -2370,6 +2483,23 @@ export declare function usePipelineRuns(): PipelineRunsValue;
 export declare function useRetryFromStep(): (nodeId: string) => Promise<void>;
 
 /**
+ * Context paths available at `nodeId`, recomputed when the graph changes.
+ *
+ * Returns an empty set when `nodeId` is null so a panel can call this
+ * unconditionally without branching on selection.
+ */
+export declare function useUpstreamContext(nodeId: string | null): UpstreamContext;
+
+/**
+ * Image references reachable from `nodeId`, for the `imageRefPath` field on
+ * image/vision nodes.
+ *
+ * Replaces the hardcoded `IMAGE_REF_SAMPLES` lists that 18 config panels
+ * carried, which named nodes ("upload", "crop") that need not exist.
+ */
+export declare function useUpstreamImageRefs(nodeId: string | null): ImageRefOption[];
+
+/**
  * Hook that subscribes to the pipeline event stream (the same stream the
  * existing runs page consumes) and folds `pipeline.image.vision.*` events
  * into a per-step record map. Stable record identity per (runId, stepId)
@@ -2390,11 +2520,13 @@ export declare interface UseVisionResultsOptions {
     runId?: string;
 }
 
-export declare function VariationConfig({ data, onChange }: VariationConfigProps): JSX.Element;
+export declare function VariationConfig({ data, onChange, nodeId }: VariationConfigProps): JSX.Element;
 
 declare interface VariationConfigProps {
     data: ImageVariationNodeData;
     onChange: (patch: Partial<ImageVariationNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type VariationData = ImageVariationNodeData & {
@@ -2433,11 +2565,13 @@ export declare interface VisionBBox {
     y2: number;
 }
 
-export declare function VisionClassifyConfig({ data, onChange }: VisionClassifyConfigProps): JSX.Element;
+export declare function VisionClassifyConfig({ data, onChange, nodeId }: VisionClassifyConfigProps): JSX.Element;
 
 declare interface VisionClassifyConfigProps {
     data: ImageVisionClassifyNodeData;
     onChange: (patch: Partial<ImageVisionClassifyNodeData>) => void;
+    /** Node being edited; enables real upstream-context pills. */
+    nodeId?: string;
 }
 
 declare type VisionClassifyData = ImageVisionClassifyNodeData & {
@@ -2450,11 +2584,13 @@ declare type VisionClassifyFlowNode = Node_2<VisionClassifyData, 'image:vision-c
 
 export declare function VisionClassifyNode(props: NodeProps<VisionClassifyFlowNode>): JSX.Element;
 
-export declare function VisionConfig({ data, onChange }: VisionConfigProps): JSX.Element;
+export declare function VisionConfig({ data, onChange, nodeId }: VisionConfigProps): JSX.Element;
 
 declare interface VisionConfigProps {
     data: ImageVisionAnalyzeNodeData;
     onChange: (patch: Partial<ImageVisionAnalyzeNodeData>) => void;
+    /** Node being edited; enables real upstream-context pills. */
+    nodeId?: string;
 }
 
 export declare type VisionContrastVerdict = 'low' | 'normal' | 'high';
@@ -2465,11 +2601,13 @@ declare type VisionData = ImageVisionAnalyzeNodeData & {
     _pausedAtBreakpoint?: boolean;
 } & Record<string, unknown>;
 
-export declare function VisionDescribeConfig({ data, onChange }: VisionDescribeConfigProps): JSX.Element;
+export declare function VisionDescribeConfig({ data, onChange, nodeId }: VisionDescribeConfigProps): JSX.Element;
 
 declare interface VisionDescribeConfigProps {
     data: ImageVisionDescribeNodeData;
     onChange: (patch: Partial<ImageVisionDescribeNodeData>) => void;
+    /** Node being edited; enables real upstream-context pills. */
+    nodeId?: string;
 }
 
 declare type VisionDescribeData = ImageVisionDescribeNodeData & {
@@ -2488,11 +2626,13 @@ export declare interface VisionExposure {
     rationale: string;
 }
 
-export declare function VisionExtractTextConfig({ data, onChange }: VisionExtractTextConfigProps): JSX.Element;
+export declare function VisionExtractTextConfig({ data, onChange, nodeId }: VisionExtractTextConfigProps): JSX.Element;
 
 declare interface VisionExtractTextConfigProps {
     data: ImageVisionExtractTextNodeData;
     onChange: (patch: Partial<ImageVisionExtractTextNodeData>) => void;
+    /** Node being edited; enables real upstream-context pills. */
+    nodeId?: string;
 }
 
 declare type VisionExtractTextData = ImageVisionExtractTextNodeData & {
@@ -2634,11 +2774,13 @@ export declare interface VisionStepRecord {
 
 export declare type VisionStepStatus = 'running' | 'completed' | 'failed';
 
-export declare function VisionTagConfig({ data, onChange }: VisionTagConfigProps): JSX.Element;
+export declare function VisionTagConfig({ data, onChange, nodeId }: VisionTagConfigProps): JSX.Element;
 
 declare interface VisionTagConfigProps {
     data: ImageVisionTagNodeData;
     onChange: (patch: Partial<ImageVisionTagNodeData>) => void;
+    /** Node being edited; enables real upstream-context pills. */
+    nodeId?: string;
 }
 
 declare type VisionTagData = ImageVisionTagNodeData & {
@@ -2657,11 +2799,13 @@ export declare interface VisionWhiteBalance {
     rationale: string;
 }
 
-export declare function WatermarkConfig({ data, onChange }: WatermarkConfigProps): JSX.Element;
+export declare function WatermarkConfig({ data, onChange, nodeId }: WatermarkConfigProps): JSX.Element;
 
 declare interface WatermarkConfigProps {
     data: ImageWatermarkNodeData;
     onChange: (patch: Partial<ImageWatermarkNodeData>) => void;
+    /** Node being edited; derives real upstream image refs. */
+    nodeId?: string;
 }
 
 declare type WatermarkData = ImageWatermarkNodeData & {
