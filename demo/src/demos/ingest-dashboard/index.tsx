@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Chip } from '@connorhoehnslalom/ui-components/shared';
+import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
 import { SimulatedProvider } from '../../engine/SimulatedProvider';
 import { ingestActivityTimeline } from './simulation';
 import { IngestActivityLog } from './IngestActivityLog';
@@ -56,11 +58,12 @@ function SourceTable() {
     return unsubscribe;
   }, [onMessage]);
 
-  const statusColors: Record<string, { bg: string; text: string }> = {
-    idle: { bg: '#f1f5f9', text: '#64748b' },
-    syncing: { bg: '#ede9fe', text: '#6366f1' },
-    completed: { bg: '#d1fae5', text: '#059669' },
-    error: { bg: '#fee2e2', text: '#dc2626' },
+  // Ingest states map onto the library tone scale — no local palette.
+  const statusTone: Record<string, ChipTone> = {
+    idle: 'neutral',
+    syncing: 'accent',
+    completed: 'success',
+    error: 'danger',
   };
 
   return (
@@ -86,23 +89,13 @@ function SourceTable() {
         </thead>
         <tbody>
           {sources.map((source) => {
-            const style = statusColors[source.status];
             return (
               <tr className="border-b border-surface-hover" key={source.sourceId}>
                 <td className="py-[10px] px-4 text-[#1a1a2e]">{source.sourceName}</td>
                 <td className="py-[10px] px-4">
-                  <span
-                    style={{
-                      padding: '3px 8px',
-                      borderRadius: 10,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      background: style.bg,
-                      color: style.text,
-                    }}
-                  >
+                  <Chip tone={statusTone[source.status] ?? 'neutral'}>
                     {source.status}
-                  </span>
+                  </Chip>
                 </td>
                 <td className="py-[10px] px-4 text-[#64748b]">
                   {source.progress || '—'}

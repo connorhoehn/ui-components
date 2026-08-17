@@ -9,7 +9,9 @@ storybook-static
 test-results
 playwright-report
 
-# Temporary: local-only visual baselines for the inline-style migration.
-# Darwin-specific PNGs; remove this block when the migration lands.
+# Local-only visual-regression scratch for the inline-style / tone migration.
+# Darwin-specific PNGs, and unreliable under machine load, so it is a local
+# directional tool rather than a gate. tests/e2e/zz-tones.spec.ts (committed)
+# is the deterministic replacement for what this was checking.
 tests/e2e/zz-visual.spec.ts
 tests/e2e/zz-visual.spec.ts-snapshots/

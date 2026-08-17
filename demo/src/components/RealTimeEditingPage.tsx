@@ -1,4 +1,5 @@
-import { Avatar, AvatarGroup } from '@connorhoehnslalom/ui-components/shared';
+import { Avatar, AvatarGroup, Chip } from '@connorhoehnslalom/ui-components/shared';
+import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
 import {
   ExampleBlock,
   PropsTable,
@@ -37,10 +38,11 @@ const PARTICIPANTS = [
   { name: 'Carol Davis', color: '#f59e0b', mode: 'reader' as const, section: 'Summary', idle: true },
 ];
 
-const MODE_COLORS: Record<string, { bg: string; text: string }> = {
-  editor: { bg: '#dbeafe', text: '#1d4ed8' },
-  reviewer: { bg: '#ede9fe', text: '#7c3aed' },
-  reader: { bg: '#f1f5f9', text: '#475569' },
+// Participant modes map onto the library tone scale — no local palette.
+const MODE_TONE: Record<string, ChipTone> = {
+  editor: 'info',
+  reviewer: 'accent',
+  reader: 'neutral',
 };
 
 /* ─── Page ────────────────────────────────────────────────────────────── */
@@ -281,16 +283,7 @@ function ParticipantsPanel({ provider }) {
                 {/* Name */}
                 <span className="text-[14px] font-medium text-text-primary min-w-25">{p.name}</span>
                 {/* Mode badge */}
-                <span style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  padding: '2px 8px',
-                  borderRadius: 10,
-                  background: MODE_COLORS[p.mode].bg,
-                  color: MODE_COLORS[p.mode].text,
-                }}>
-                  {p.mode}
-                </span>
+                <Chip tone={MODE_TONE[p.mode] ?? 'neutral'}>{p.mode}</Chip>
                 {/* Section */}
                 <span className="text-[12px] text-[#64748b]">{'§'} {p.section}</span>
                 {/* Idle label */}
@@ -380,21 +373,14 @@ function DocumentView({ documentId, ws, onMessage }) {
         <div className="bg-surface border border-border rounded-lg p-5">
           {/* Connection states */}
           <div className="flex gap-3 mb-5 flex-wrap">
-            {[
-              { label: 'Connecting', color: '#f59e0b', bg: '#fef3c7' },
-              { label: 'Synced', color: '#10b981', bg: '#dcfce7' },
-              { label: 'Disconnected', color: '#ef4444', bg: '#fee2e2' },
-            ].map((state) => (
-              <span key={state.label} style={{
-                fontSize: 12,
-                fontWeight: 600,
-                padding: '4px 12px',
-                borderRadius: 12,
-                background: state.bg,
-                color: state.color,
-              }}>
+            {([
+              { label: 'Connecting', tone: 'warning' },
+              { label: 'Synced', tone: 'success' },
+              { label: 'Disconnected', tone: 'danger' },
+            ] as const).map((state) => (
+              <Chip key={state.label} tone={state.tone}>
                 {state.label}
-              </span>
+              </Chip>
             ))}
           </div>
           {/* Flow diagram */}

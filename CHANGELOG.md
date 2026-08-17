@@ -35,9 +35,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   disagreed.** Chip's success was `green-50`/`green-600`, Badge's was
   `emerald-100`/`emerald-700`, and StackDiagram had a third set — so the same
   semantic state rendered in different hues depending on which component you
-  used. All three now resolve through `tones.ts`. Chip is pixel-identical
-  (its hardcoded values already *were* the token values); Badge and
-  StackDiagram change appearance, which is the point.
+  used. All three now resolve through `tones.ts`.
+
+  All three shift appearance slightly, Chip included. Chip's literals looked
+  like an exact match for the tokens (`green-50`/`green-600` vs
+  `--color-success-bg: #f0fdf4` / `--color-success-fg: #16a34a`) — but those
+  hex values are the Tailwind **v3** palette, and v4 defines `green-600` as
+  `oklch(62.7% .194 149.214)`, which renders a few sRGB units off the hex.
+  So the old classes and the tokens were never the same colour. Badge and
+  StackDiagram change more, since their palettes differed outright.
 - **The demo forked the design tokens.** `demo/src/App.css` held a verbatim
   copy of the `@theme` block that had drifted 26 tokens behind — including
   every `--color-cat-*` and `--font-code`, so components using those rendered
