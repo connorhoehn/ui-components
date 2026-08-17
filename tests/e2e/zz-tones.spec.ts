@@ -50,3 +50,23 @@ test('demo inherits library-only tokens (no forked @theme)', async ({ page }) =>
   expect(vals.catAi).toBe('#7c3aed');
   expect(vals.fontCode).toContain('JetBrains Mono');
 });
+
+test('overriding a tone re-themes every surface using it', async ({ page }) => {
+  await page.goto('/components/data-display');
+  await page.waitForLoadState('networkidle');
+
+  const el = page.locator('[class*="bg-danger-bg"]').first();
+  await expect(el).toBeVisible({ timeout: 10000 });
+  expect(await el.evaluate((e) => getComputedStyle(e).backgroundColor))
+    .toBe('rgb(254, 242, 242)');
+
+  // This is the whole point of the scale: a consumer redefines the tone's
+  // variables after importing the stylesheet and never touches a component.
+  await page.addStyleTag({
+    content: ':root{--color-danger:#0d9488;--color-danger-bg:#f0fdfa;' +
+      '--color-danger-fg:#0f766e;--color-danger-border:#99f6e4;}',
+  });
+
+  expect(await el.evaluate((e) => getComputedStyle(e).backgroundColor))
+    .toBe('rgb(240, 253, 250)');
+});
