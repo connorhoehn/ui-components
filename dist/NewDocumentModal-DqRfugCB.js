@@ -1720,7 +1720,9 @@ function ft({ open: e, onClose: r, onCreate: n }) {
   if (A(() => {
     if (!e) return;
     const p = pe();
-    o(p), l(p[0]?.id ?? null), f(""), h(""), setTimeout(() => x.current?.focus(), 50);
+    o(p), l(p[0]?.id ?? null), f(""), h("");
+    const g = setTimeout(() => x.current?.focus(), 50);
+    return () => clearTimeout(g);
   }, [e]), !e) return null;
   const m = i.find((p) => p.id === d), N = () => {
     const p = a.trim();

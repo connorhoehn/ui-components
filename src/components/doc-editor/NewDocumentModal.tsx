@@ -36,7 +36,10 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     setSelectedId(loaded[0]?.id ?? null);
     setTitle('');
     setDescription('');
-    setTimeout(() => titleRef.current?.focus(), 50);
+    // Cleared on close: an uncancelled focus lands on a hidden input and
+    // steals focus back from whatever the user moved to.
+    const t = setTimeout(() => titleRef.current?.focus(), 50);
+    return () => clearTimeout(t);
   }, [open]);
 
   if (!open) return null;

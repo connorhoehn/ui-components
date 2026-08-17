@@ -19,6 +19,7 @@ import { useMyMentionsAndTasks } from '../../hooks/useMyMentionsAndTasks';
 import { useVideoSessions } from '../../hooks/useVideoSessions';
 import { useDocumentActions } from './useDocumentActions';
 import { useSidebarPanels } from './useSidebarPanels';
+import { dedupeSectionsById, templateSectionId } from '../../hooks/templateSections';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -298,14 +299,6 @@ export function useDocumentEditorState({
     const followed = participants.find(
       (p) => (p.userId || p.clientId) === followingUserId,
     );
-    if (provider?.awareness) {
-      const states = provider.awareness.getStates();
-      states.forEach((_state: Record<string, unknown>, cid: number) => {
-        if (cid !== provider!.awareness.clientID) {
-          // Remote awareness state logged for debugging
-        }
-      });
-    }
     if (!followed || !followed.currentSectionId) {
       if (followed && sections.length > 0) {
         const firstEl = document.getElementById(`section-${sections[0].id}`);
@@ -333,15 +326,23 @@ export function useDocumentEditorState({
       }
     }
 
-    setTimeout(() => {
+    // Timers are cleaned up: this effect re-runs on every `participants`
+    // change, which in a live session is constant, and an uncancelled scroll
+    // would keep firing after the user stopped following or left the page.
+    const scrollTimer = setTimeout(() => {
       const el = document.getElementById(`section-${followed.currentSectionId}`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.style.transition = 'box-shadow 0.3s ease';
-        el.style.boxShadow = `0 0 0 3px ${followed.color}40`;
-        setTimeout(() => { el.style.boxShadow = ''; }, 1500);
-      }
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.style.transition = 'box-shadow 0.3s ease';
+      el.style.boxShadow = `0 0 0 3px ${followed.color}40`;
+      highlightTimer = setTimeout(() => { el.style.boxShadow = ''; }, 1500);
     }, 100);
+    let highlightTimer: ReturnType<typeof setTimeout> | undefined;
+
+    return () => {
+      clearTimeout(scrollTimer);
+      if (highlightTimer) clearTimeout(highlightTimer);
+    };
   }, [followingUserId, participants, mode, sections]);
 
   const handleStopFollow = useCallback(() => {
@@ -529,7 +530,11 @@ export function useDocumentEditorState({
 
     for (const field of dt.fields) {
       addSection({
-        id: crypto.randomUUID(),
+        // Deterministic, not random: two clients opening this document at the
+        // same moment both pass the guards above (templateApplied is a Y.Map
+        // key, not a lock), so they must produce the SAME ids or the document
+        // ends up with two indistinguishable copies of every section.
+        id: templateSectionId(documentId, field.name),
         type: legacyType(field.sectionType),
         sectionType: field.sectionType,
         title: field.name,
@@ -540,6 +545,17 @@ export function useDocumentEditorState({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [synced, documentType, ydoc]);
+
+  // Repair duplicate sections once the document has synced.
+  //
+  // Convergent and idempotent: post-merge Y.Array order is identical on every
+  // client, so "keep the first occurrence of each id" makes each client compute
+  // the same deletions with no coordination. Also heals documents that were
+  // duplicated before template ids became deterministic.
+  useEffect(() => {
+    if (!synced || !ydoc) return;
+    dedupeSectionsById(ydoc);
+  }, [synced, ydoc]);
 
   // Mode switching
   const handleModeChange = (newMode: ViewMode) => {

@@ -8,6 +8,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.45.0] — 2026-08-17
+
+### Fixed
+
+- **New documents could end up with every section duplicated.** The
+  auto-populate effect guards on `meta.templateApplied` and
+  `sections.length === 0`, but neither is a lock: `templateApplied` is a Y.Map
+  key (last-write-wins, not compare-and-set), and both clients read an empty
+  section list before either has written. Two people opening the same new
+  document at once therefore both applied the template, and `addSection` pushes
+  onto the shared Y.Array with no dedupe — so the document got two of
+  everything, with different random UUIDs so nothing could tell them apart
+  afterwards.
+
+  Fixed by making the operation **idempotent** rather than trying to make it
+  exclusive, which CRDTs do not offer:
+  - `templateSectionId(documentId, fieldName)` derives a stable id, so
+    concurrent appliers produce the *same* ids.
+  - `dedupeSectionsById(ydoc)` keeps the first occurrence of each id and runs on
+    every client after sync. Post-merge Y.Array order is identical everywhere,
+    so "keep the first" is convergent — each client computes the same deletions
+    with no coordination, and nothing is lost to a double delete.
+
+  The repair pass also heals documents that were already duplicated.
+
+- **Follow-mode scheduled scroll/highlight timers it never cancelled.** The
+  effect re-runs on every `participants` change — constant in a live session —
+  so an uncancelled scroll kept firing after the user stopped following or left
+  the page.
+- Removed a dead loop in the same effect that iterated every peer's awareness
+  state and did nothing with it, on every participants change.
+- `NewDocumentModal`'s focus timer is cleared on close; an uncancelled one lands
+  on a hidden input and steals focus back.
+
+### Added
+
+- `src/hooks/templateSections.ts` with 9 tests, including one that reproduces
+  the duplication with two synced `Y.Doc`s and one that shows both clients
+  converging on a single copy after an independent repair.
+
+
 ## [2.44.2] — 2026-08-17
 
 Lifecycle bugs in the two areas with the most reported trouble. Both files were
