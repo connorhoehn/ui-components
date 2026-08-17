@@ -11,25 +11,25 @@ describe('Chip', () => {
   it('applies correct tone styling (neutral default)', () => {
     render(<Chip data-testid="chip">Label</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('bg-slate-100', 'text-slate-600');
+    expect(chip).toHaveClass('bg-neutral-bg', 'text-neutral-fg');
   });
 
   it('applies success tone styling', () => {
     render(<Chip tone="success" data-testid="chip">OK</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('bg-green-50', 'text-green-600');
+    expect(chip).toHaveClass('bg-success-bg', 'text-success-fg');
   });
 
   it('applies danger tone styling', () => {
     render(<Chip tone="danger" data-testid="chip">Error</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('bg-red-50', 'text-red-600');
+    expect(chip).toHaveClass('bg-danger-bg', 'text-danger-fg');
   });
 
   it('applies solid variant styling', () => {
     render(<Chip tone="success" solid data-testid="chip">Done</Chip>);
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('bg-green-600', 'text-white');
+    expect(chip).toHaveClass('bg-success', 'text-white');
   });
 
   it('renders with sm size (default)', () => {
@@ -80,7 +80,7 @@ describe('Chip', () => {
     const chip = screen.getByTestId('chip');
     // First aria-hidden is the dot wrapper; it carries the amber swatch
     const dot = chip.querySelector('[aria-hidden]');
-    expect(dot).toHaveClass('bg-amber-500');
+    expect(dot).toHaveClass('bg-warning');
   });
 
   it('uppercases the label when uppercase is true', () => {
@@ -112,7 +112,7 @@ describe('Chip', () => {
       </Chip>,
     );
     const chip = screen.getByTestId('chip');
-    expect(chip).toHaveClass('bg-red-50', 'text-red-600', 'uppercase', 'tracking-wide', 'gap-1');
+    expect(chip).toHaveClass('bg-danger-bg', 'text-danger-fg', 'uppercase', 'tracking-wide', 'gap-1');
     expect(chip.querySelector('.animate-ping')).toBeInTheDocument();
     expect(screen.getByTestId('ico')).toBeInTheDocument();
   });

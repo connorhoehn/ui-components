@@ -11,11 +11,12 @@ import { A as q, a as ge } from "./Avatar-DIEPZUB9.js";
 import { S as re } from "./StatusDot-BC7B1tTr.js";
 import { createPortal as ae } from "react-dom";
 import { C as ye } from "./Card-B2uO9v1w.js";
-import { C as we } from "./Chip-CAS9vOWq.js";
-import { A as Ne } from "./Badge-DsDlxqeg.js";
+import { C as we } from "./Chip-BDT8ro4h.js";
+import { t as Ne, f as ke, b as Ce, a as Se } from "./tones-DknNcB3q.js";
+import { A as $e } from "./Badge-Cb2y1B62.js";
 import "clsx";
 import "tailwind-merge";
-const ke = [
+const Ee = [
   "import",
   "export",
   "from",
@@ -63,7 +64,7 @@ const ke = [
   "readonly",
   "static",
   "enum"
-], Ce = [
+], Le = [
   "if",
   "then",
   "else",
@@ -79,7 +80,7 @@ const ke = [
   "export",
   "local",
   "in"
-], Se = [
+], Te = [
   "cd",
   "ls",
   "echo",
@@ -107,34 +108,34 @@ const ke = [
   "curl",
   "wget"
 ];
-function $e(e) {
+function Ae(e) {
   return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-function Ee(e, r) {
+function _e(e, r) {
   let a = e.replace(/(\/\/.*?)(\n|$)/g, `<span style="color:${r.comment}">$1</span>$2`);
   a = a.replace(/(\/\*[\s\S]*?\*\/)/g, `<span style="color:${r.comment}">$1</span>`), a = a.replace(
     /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g,
     `<span style="color:${r.string}">$1</span>`
   );
-  const n = new RegExp(`\\b(${ke.join("|")})\\b`, "g");
+  const n = new RegExp(`\\b(${Ee.join("|")})\\b`, "g");
   return a = a.replace(n, `<span style="color:${r.keyword}">$1</span>`), a = a.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span style="color:${r.number}">$1</span>`), a;
 }
-function Le(e, r) {
+function Re(e, r) {
   let a = e.replace(
     /("(?:[^"\\]|\\.)*")(\s*:)/g,
     `<span style="color:${r.property}">$1</span>$2`
   );
   return a = a.replace(/("(?:[^"\\]|\\.)*")/g, `<span style="color:${r.string}">$1</span>`), a = a.replace(/\b(true|false|null)\b/g, `<span style="color:${r.keyword}">$1</span>`), a = a.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span style="color:${r.number}">$1</span>`), a;
 }
-function Te(e, r) {
+function De(e, r) {
   let a = e.replace(/(#.*?)(\n|$)/g, `<span style="color:${r.comment}">$1</span>$2`);
   a = a.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span style="color:${r.string}">$1</span>`);
-  const n = new RegExp(`\\b(${Ce.join("|")})\\b`, "g");
+  const n = new RegExp(`\\b(${Le.join("|")})\\b`, "g");
   a = a.replace(n, `<span style="color:${r.keyword}">$1</span>`);
-  const o = new RegExp(`\\b(${Se.join("|")})\\b`, "g");
+  const o = new RegExp(`\\b(${Te.join("|")})\\b`, "g");
   return a = a.replace(o, `<span style="color:${r.builtin}">$1</span>`), a = a.replace(/(\$\w+|\$\{[^}]+\})/g, `<span style="color:${r.variable}">$1</span>`), a;
 }
-const Ae = {
+const Me = {
   comment: "#6b7280",
   string: "#4ade80",
   keyword: "#93c5fd",
@@ -142,7 +143,7 @@ const Ae = {
   property: "#7dd3fc",
   builtin: "#c4b5fd",
   variable: "#fbbf24"
-}, _e = {
+}, Oe = {
   comment: "#64748b",
   string: "#15803d",
   keyword: "#1d4ed8",
@@ -152,20 +153,20 @@ const Ae = {
   variable: "#a16207"
 };
 function V(e, r, a) {
-  const n = a === "dark" ? Ae : _e, o = $e(e);
+  const n = a === "dark" ? Me : Oe, o = Ae(e);
   switch (r) {
     case "json":
-      return Le(o, n);
+      return Re(o, n);
     case "bash":
     case "sh":
-      return Te(o, n);
+      return De(o, n);
     case "text":
       return o;
     default:
-      return Ee(o, n);
+      return _e(o, n);
   }
 }
-function Ht({
+function Ut({
   code: e,
   language: r = "tsx",
   theme: a = "dark",
@@ -241,8 +242,8 @@ function Ht({
     }
   );
 }
-const Re = "cui:command-palette:recents", De = 5;
-function Me(e, r) {
+const je = "cui:command-palette:recents", Be = 5;
+function Pe(e, r) {
   if (!e || typeof window > "u") return [];
   try {
     const a = window.localStorage.getItem(e);
@@ -253,7 +254,7 @@ function Me(e, r) {
     return [];
   }
 }
-function Oe(e, r) {
+function Ie(e, r) {
   if (!(!e || typeof window > "u"))
     try {
       window.localStorage.setItem(e, JSON.stringify(r));
@@ -269,11 +270,11 @@ function U() {
     );
   return e;
 }
-function Ft() {
+function Wt() {
   const { open: e, close: r, toggle: a, isOpen: n, query: o } = U();
   return { open: e, close: r, toggle: a, isOpen: n, query: o };
 }
-function je(e, r) {
+function Ke(e, r) {
   const a = r.toLowerCase().split("+").map((v) => v.trim()).filter(Boolean);
   if (a.length === 0) return !1;
   const n = a[a.length - 1], o = new Set(a.slice(0, -1)), l = o.has("cmd") || o.has("meta"), s = o.has("ctrl"), d = o.has("mod"), p = o.has("shift"), f = o.has("alt");
@@ -282,17 +283,17 @@ function je(e, r) {
   } else if (l !== e.metaKey || s !== e.ctrlKey) return !1;
   return p !== e.shiftKey || f !== e.altKey ? !1 : e.key.toLowerCase() === n;
 }
-function Ut({
+function Gt({
   commands: e,
   getDynamicCommands: r,
-  recentsKey: a = Re,
-  recentsLimit: n = De,
+  recentsKey: a = je,
+  recentsLimit: n = Be,
   children: o
 }) {
   const [l, s] = T(!1), [d, p] = T(""), [f, v] = T(
     () => /* @__PURE__ */ new Map()
   ), [N, b] = T(
-    () => Me(a, n)
+    () => Pe(a, n)
   ), x = A(
     ($) => {
       a !== null && b((k) => {
@@ -300,7 +301,7 @@ function Ut({
           0,
           n
         );
-        return Oe(a, E), E;
+        return Ie(a, E), E;
       });
     },
     [a, n]
@@ -332,7 +333,7 @@ function Ut({
     const $ = (k) => {
       if (!((k.metaKey || k.ctrlKey) && k.key.toLowerCase() === "k")) {
         for (const E of S.current)
-          if (E.hotkey && je(k, E.hotkey)) {
+          if (E.hotkey && Ke(k, E.hotkey)) {
             k.preventDefault(), Promise.resolve().then(() => E.run());
             return;
           }
@@ -355,11 +356,11 @@ function Ut({
   };
   return /* @__PURE__ */ t(ne.Provider, { value: I, children: o });
 }
-function Wt(e) {
+function qt(e) {
   const { registerCommand: r, unregisterCommand: a } = U();
   _(() => (r(e), () => a(e.id)), [e, r, a]);
 }
-function Be(e) {
+function He(e) {
   const r = /* @__PURE__ */ new Map();
   for (const a of e) {
     const n = a.group ?? null, o = r.get(n);
@@ -370,7 +371,7 @@ function Be(e) {
     items: n
   }));
 }
-function Gt({
+function zt({
   placeholder: e = "Type a command or search…",
   emptyState: r,
   className: a
@@ -387,7 +388,7 @@ function Gt({
     if (l.trim() !== "" || p.length === 0) return [];
     const x = new Map(d.map((m) => [m.id, m]));
     return p.map((m) => x.get(m)).filter((m) => !!m);
-  }, [d, l, p]), N = O(() => Be(d), [d]), b = A(
+  }, [d, l, p]), N = O(() => He(d), [d]), b = A(
     (x) => {
       f(x.id), o(), Promise.resolve().then(() => x.run());
     },
@@ -489,7 +490,7 @@ function Gt({
     }
   );
 }
-function qt({ className: e } = {}) {
+function Yt({ className: e } = {}) {
   const { toggle: r } = U();
   return /* @__PURE__ */ c(
     "button",
@@ -516,7 +517,7 @@ function G(e) {
   if (e === "right") return "text-right";
   if (e === "center") return "text-center";
 }
-function zt({
+function Vt({
   data: e,
   columns: r,
   keyField: a,
@@ -655,8 +656,8 @@ function zt({
     ] })
   ] });
 }
-const Pe = "🔒";
-function Yt({
+const Fe = "🔒";
+function Jt({
   capabilityName: e,
   title: r,
   description: a,
@@ -670,7 +671,7 @@ function Yt({
   return /* @__PURE__ */ t(
     me,
     {
-      icon: s === null ? void 0 : s ?? Pe,
+      icon: s === null ? void 0 : s ?? Fe,
       title: p,
       description: f,
       actionLabel: n,
@@ -680,7 +681,7 @@ function Yt({
     }
   );
 }
-function Vt({
+function Qt({
   icon: e = "⚠️",
   title: r,
   body: a,
@@ -723,7 +724,7 @@ function Vt({
     }
   );
 }
-function Jt({
+function Zt({
   label: e = "Loading…",
   description: r,
   spinnerSize: a = "lg",
@@ -748,7 +749,7 @@ function Jt({
     }
   );
 }
-function Qt({
+function Xt({
   label: e,
   hint: r,
   error: a,
@@ -809,11 +810,11 @@ function Qt({
     }
   );
 }
-const Ie = {
+const Ue = {
   sm: "px-2.5 py-1 text-xs",
   md: "px-3 py-1.5 text-sm"
 };
-function Ke(e) {
+function We(e) {
   switch (e) {
     case "underline":
       return "inline-flex items-center gap-1 border-b border-[var(--color-border)]";
@@ -823,7 +824,7 @@ function Ke(e) {
       return "inline-flex items-center rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-inset,#f8fafc)] p-0.5 gap-0.5";
   }
 }
-function He(e, r, a) {
+function Ge(e, r, a) {
   return e === "underline" ? u(
     "-mb-px border-b-2 rounded-none",
     r ? "border-[var(--color-primary)] text-[var(--color-text-primary)]" : "border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]",
@@ -838,7 +839,7 @@ function He(e, r, a) {
     a && "opacity-50 cursor-not-allowed hover:bg-transparent"
   );
 }
-function Zt({
+function er({
   items: e,
   value: r,
   onValueChange: a,
@@ -891,7 +892,7 @@ function Zt({
     {
       role: "tablist",
       "aria-label": d,
-      className: u(Ke(n), l),
+      className: u(We(n), l),
       style: s,
       children: e.map((i) => {
         const h = i.id === r;
@@ -913,8 +914,8 @@ function Zt({
             onKeyDown: (g) => m(g, i.id),
             className: u(
               "inline-flex items-center gap-1.5 font-medium transition-colors cursor-pointer",
-              Ie[o],
-              He(n, h, !!i.disabled)
+              Ue[o],
+              Ge(n, h, !!i.disabled)
             ),
             children: [
               i.icon,
@@ -937,7 +938,7 @@ function Zt({
     }
   );
 }
-function Xt({ id: e, when: r, idPrefix: a, className: n, style: o, children: l }) {
+function tr({ id: e, when: r, idPrefix: a, className: n, style: o, children: l }) {
   return e !== r ? null : /* @__PURE__ */ t(
     "div",
     {
@@ -951,15 +952,15 @@ function Xt({ id: e, when: r, idPrefix: a, className: n, style: o, children: l }
     }
   );
 }
-const Fe = {
+const qe = {
   positive: "text-[var(--color-success)]",
   negative: "text-[var(--color-danger)]",
   neutral: "text-[var(--color-text-secondary)]"
 };
-function Ue(e) {
+function ze(e) {
   return e.tone ?? (e.direction === "up" ? "positive" : "negative");
 }
-function er({
+function rr({
   label: e,
   value: r,
   accent: a = !1,
@@ -985,7 +986,7 @@ function er({
   ), i = s && s.length > 0 ? s : null;
   let h = null;
   if (l) {
-    const C = Ue(l), y = l.direction === "up" ? "▲" : "▼", S = l.direction === "up" ? "+" : "-", I = l.suffix ?? "%", $ = Math.abs(l.value), k = l["aria-label"] ?? `${l.direction} ${$}${I}`;
+    const C = ze(l), y = l.direction === "up" ? "▲" : "▼", S = l.direction === "up" ? "+" : "-", I = l.suffix ?? "%", $ = Math.abs(l.value), k = l["aria-label"] ?? `${l.direction} ${$}${I}`;
     h = /* @__PURE__ */ c(
       "div",
       {
@@ -993,7 +994,7 @@ function er({
         "data-direction": l.direction,
         "data-tone": C,
         "aria-label": k,
-        className: u("mt-1 text-[12px] font-medium leading-tight", Fe[C]),
+        className: u("mt-1 text-[12px] font-medium leading-tight", qe[C]),
         children: [
           /* @__PURE__ */ c("span", { "aria-hidden": "true", children: [
             y,
@@ -1036,13 +1037,13 @@ function er({
     }
   ) : /* @__PURE__ */ t("div", { "data-testid": x, className: m, style: b, children: g });
 }
-const We = {
+const Ye = {
   1: "sm:grid-cols-1",
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-3",
   4: "sm:grid-cols-4"
 };
-function tr({
+function ar({
   children: e,
   columns: r = 4,
   dense: a = !1,
@@ -1056,7 +1057,7 @@ function tr({
       "data-testid": l,
       className: u(
         "grid grid-cols-1",
-        We[r],
+        Ye[r],
         a ? "gap-2" : "gap-4",
         n
       ),
@@ -1065,11 +1066,11 @@ function tr({
     }
   );
 }
-const Ge = {
+const Ve = {
   sm: "h-1.5",
   md: "h-2"
 };
-function rr({
+function nr({
   value: e,
   max: r = 100,
   color: a,
@@ -1097,7 +1098,7 @@ function rr({
         "aria-label": f,
         className: u(
           "w-full rounded-full overflow-hidden bg-[var(--color-surface-hover)]",
-          Ge[n]
+          Ve[n]
         ),
         children: /* @__PURE__ */ t(
           "div",
@@ -1110,20 +1111,20 @@ function rr({
     )
   ] });
 }
-const qe = {
+const Je = {
   online: "var(--color-success, #22c55e)",
   away: "var(--color-state-pending, #f59e0b)",
   busy: "var(--color-state-error, #ef4444)",
   offline: "var(--color-text-tertiary, #94a3b8)",
   unknown: "var(--color-text-tertiary, #94a3b8)"
-}, ze = {
+}, Qe = {
   online: "Online",
   away: "Away",
   busy: "Busy",
   offline: "Offline",
   unknown: "Unknown presence"
 };
-function Ye({
+function Ze({
   state: e,
   ariaLabel: r,
   label: a,
@@ -1134,11 +1135,11 @@ function Ye({
   title: d,
   "data-testid": p
 }) {
-  const f = n ?? e === "online", v = r ?? ze[e];
+  const f = n ?? e === "online", v = r ?? Qe[e];
   return /* @__PURE__ */ t(
     re,
     {
-      color: qe[e],
+      color: Je[e],
       pulse: f,
       size: o,
       label: a,
@@ -1150,7 +1151,7 @@ function Ye({
     }
   );
 }
-function ar({
+function or({
   name: e,
   label: r,
   avatarSize: a = 20,
@@ -1179,16 +1180,16 @@ function ar({
       children: [
         /* @__PURE__ */ t(q, { name: e, size: a, color: n }),
         /* @__PURE__ */ t("span", { className: "font-medium leading-none", children: r ?? e }),
-        o && /* @__PURE__ */ t(Ye, { state: o, size: "xs" })
+        o && /* @__PURE__ */ t(Ze, { state: o, size: "xs" })
       ]
     }
   );
 }
-const Ve = {
+const Xe = {
   sm: "px-2.5 py-1 text-xs",
   md: "px-3 py-1.5 text-sm"
-}, Je = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", Qe = "bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
-function nr({
+}, et = "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-hover)]", tt = "bg-white shadow-sm text-[var(--color-text-primary)] border border-[var(--color-border)]";
+function lr({
   options: e,
   value: r,
   onChange: a,
@@ -1213,8 +1214,8 @@ function nr({
             "aria-pressed": s,
             className: u(
               "inline-flex items-center gap-1.5 rounded-md font-medium transition-all cursor-pointer",
-              Ve[n],
-              s ? Qe : Je
+              Xe[n],
+              s ? tt : et
             ),
             children: [
               l.icon,
@@ -1227,7 +1228,7 @@ function nr({
     }
   );
 }
-function or({
+function sr({
   label: e,
   id: r,
   href: a,
@@ -1266,7 +1267,7 @@ function or({
     )
   ] });
 }
-const Ze = [
+const rt = [
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -1275,7 +1276,7 @@ const Ze = [
   '[tabindex]:not([tabindex="-1"])',
   '[contenteditable="true"]'
 ].join(",");
-function lr({
+function ir({
   open: e,
   onClose: r,
   title: a,
@@ -1296,7 +1297,7 @@ function lr({
     if (!e) return;
     const f = p.current;
     if (!f) return;
-    const v = f.querySelector(Ze);
+    const v = f.querySelector(rt);
     v ? v.focus() : (f.setAttribute("tabindex", "-1"), f.focus());
   }, [e]), e ? ae(
     /* @__PURE__ */ c("div", { className: "fixed inset-0 z-[9000]", "data-testid": d, children: [
@@ -1355,7 +1356,7 @@ function lr({
     document.body
   ) : null;
 }
-function Xe(e, r) {
+function at(e, r) {
   if (!e || typeof window > "u") return r;
   try {
     const a = window.localStorage.getItem(e);
@@ -1364,7 +1365,7 @@ function Xe(e, r) {
     return r;
   }
 }
-function sr({
+function cr({
   title: e,
   defaultOpen: r = !1,
   badge: a,
@@ -1373,7 +1374,7 @@ function sr({
   storageKey: l
 }) {
   const [s, d] = T(
-    () => Xe(l, r)
+    () => at(l, r)
   );
   return _(() => {
     if (l && !(typeof window > "u"))
@@ -1431,7 +1432,7 @@ function sr({
     }
   );
 }
-function ir({
+function dr({
   value: e,
   onChange: r,
   placeholder: a,
@@ -1513,13 +1514,13 @@ function ir({
     }
   );
 }
-const et = {
+const nt = {
   error: "bg-[var(--color-danger-bg,#fef2f2)] border-[var(--color-danger,#dc2626)] text-[var(--color-danger,#dc2626)]",
   success: "bg-[var(--color-success-bg,#f0fdf4)] border-[var(--color-success,#16a34a)] text-[var(--color-success,#16a34a)]",
   info: "bg-[var(--color-info-bg,#eff6ff)] border-[var(--color-info,#2563eb)] text-[var(--color-info,#2563eb)]",
   warning: "bg-[var(--color-warning-bg,#fffbeb)] border-[var(--color-warning,#f59e0b)] text-[var(--color-warning,#f59e0b)]"
 };
-function cr({ tone: e, children: r, onDismiss: a, className: n }) {
+function ur({ tone: e, children: r, onDismiss: a, className: n }) {
   return /* @__PURE__ */ c(
     "div",
     {
@@ -1527,7 +1528,7 @@ function cr({ tone: e, children: r, onDismiss: a, className: n }) {
       "aria-live": e === "error" || e === "warning" ? "assertive" : "polite",
       className: u(
         "flex items-start gap-2 px-3 py-2 rounded-md border-l-[3px] text-sm",
-        et[e],
+        nt[e],
         n
       ),
       children: [
@@ -1546,7 +1547,7 @@ function cr({ tone: e, children: r, onDismiss: a, className: n }) {
     }
   );
 }
-function dr({
+function pr({
   title: e,
   description: r,
   actions: a,
@@ -1621,14 +1622,14 @@ function F({ size: e = "md", color: r, className: a }) {
     )) })
   ] });
 }
-function tt(e) {
+function ot(e) {
   if (e.length === 0) return "";
   if (e.length === 1) return `${e[0]} is typing…`;
   if (e.length === 2) return `${e[0]} and ${e[1]} are typing…`;
   const r = e.length - 2;
   return `${e[0]}, ${e[1]} and ${r} other${r > 1 ? "s" : ""} are typing…`;
 }
-function ur({
+function fr({
   names: e,
   compact: r = !1,
   color: a,
@@ -1648,7 +1649,7 @@ function ur({
       ),
       children: [
         /* @__PURE__ */ t(F, { size: n, color: a }),
-        !r && /* @__PURE__ */ t("span", { children: tt(e) })
+        !r && /* @__PURE__ */ t("span", { children: ot(e) })
       ]
     }
   );
@@ -1658,13 +1659,13 @@ const J = {
   info: "INFO",
   warn: "WARN",
   error: "ERROR"
-}, rt = {
+}, lt = {
   debug: "text-[var(--color-text-tertiary)]",
   info: "text-[var(--color-info,#3b82f6)]",
   warn: "text-[var(--color-warning,#d97706)]",
   error: "text-[var(--color-danger,#dc2626)]"
 };
-function at({
+function st({
   lines: e,
   follow: r = !0,
   showTimestamp: a = !0,
@@ -1769,7 +1770,7 @@ function at({
                         {
                           className: u(
                             "shrink-0 font-semibold uppercase text-[10px] w-[44px]",
-                            rt[S]
+                            lt[S]
                           ),
                           "aria-label": `level ${J[S].toLowerCase()}`,
                           children: J[S]
@@ -1808,8 +1809,8 @@ function at({
     }
   );
 }
-const pr = at;
-function fr({
+const xr = st;
+function mr({
   title: e,
   description: r,
   category: a,
@@ -1893,14 +1894,14 @@ function fr({
     }
   ) : /* @__PURE__ */ t("div", { "data-testid": x, className: i, style: b, children: h });
 }
-const nt = {
+const it = {
   1: "sm:grid-cols-1",
   2: "sm:grid-cols-2",
   3: "sm:grid-cols-2 lg:grid-cols-3",
   4: "sm:grid-cols-2 lg:grid-cols-4",
   5: "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
 };
-function xr({
+function br({
   children: e,
   columns: r = 3,
   dense: a = !1,
@@ -1915,7 +1916,7 @@ function xr({
       "data-columns": r,
       className: u(
         "grid grid-cols-1",
-        nt[r],
+        it[r],
         a ? "gap-3" : "gap-5",
         n
       ),
@@ -1924,32 +1925,7 @@ function xr({
     }
   );
 }
-const ot = {
-  neutral: "bg-slate-50",
-  success: "bg-green-50",
-  warning: "bg-amber-50",
-  danger: "bg-red-50",
-  info: "bg-blue-50",
-  caution: "bg-orange-50",
-  purple: "bg-purple-50"
-}, lt = {
-  neutral: "border-slate-200",
-  success: "border-green-300",
-  warning: "border-amber-300",
-  danger: "border-red-300",
-  info: "border-blue-300",
-  caution: "border-orange-300",
-  purple: "border-purple-300"
-}, st = {
-  neutral: "text-slate-800",
-  success: "text-green-800",
-  warning: "text-amber-800",
-  danger: "text-red-800",
-  info: "text-blue-800",
-  caution: "text-orange-800",
-  purple: "text-purple-800"
-};
-function it({
+function ct({
   orientation: e,
   variant: r
 }) {
@@ -1968,7 +1944,7 @@ function it({
     }
   );
 }
-function ct({
+function dt({
   layers: e,
   orientation: r = "vertical",
   connector: a = "arrow",
@@ -1990,7 +1966,7 @@ function ct({
       ),
       style: o,
       children: e.map((d, p) => {
-        const f = d.tone ?? "neutral";
+        const f = Ne(d.tone ?? "neutral");
         return /* @__PURE__ */ c("div", { className: u("flex", "flex-col"), children: [
           /* @__PURE__ */ c(
             "div",
@@ -1999,28 +1975,28 @@ function ct({
               "data-tone": f,
               className: u(
                 "rounded-md border px-3 py-2",
-                ot[f],
-                lt[f],
+                Se[f],
+                Ce[f],
                 !s && "min-w-[140px]"
               ),
               children: [
                 /* @__PURE__ */ c("div", { className: "flex items-center gap-2", children: [
                   d.icon != null && /* @__PURE__ */ t("span", { className: "shrink-0 text-[14px] leading-none", "aria-hidden": !0, children: d.icon }),
-                  /* @__PURE__ */ t("span", { className: u("text-[12px] font-semibold", st[f]), children: d.label }),
+                  /* @__PURE__ */ t("span", { className: u("text-[12px] font-semibold", ke[f]), children: d.label }),
                   d.meta != null && /* @__PURE__ */ t("span", { className: "ml-auto text-[10px] text-[var(--color-text-tertiary)] shrink-0", children: d.meta })
                 ] }),
                 d.description != null && /* @__PURE__ */ t("div", { className: "mt-0.5 text-[11px] leading-snug text-[var(--color-text-secondary)]", children: d.description })
               ]
             }
           ),
-          p < e.length - 1 && /* @__PURE__ */ t(it, { orientation: r, variant: a })
+          p < e.length - 1 && /* @__PURE__ */ t(ct, { orientation: r, variant: a })
         ] }, d.id);
       })
     }
   );
 }
-const mr = ct;
-function br({
+const hr = dt;
+function vr({
   value: e,
   onChange: r,
   onSubmit: a,
@@ -2099,7 +2075,7 @@ function br({
     }
   );
 }
-function dt({ name: e, done: r, className: a }) {
+function ut({ name: e, done: r, className: a }) {
   return /* @__PURE__ */ c(
     "span",
     {
@@ -2115,10 +2091,10 @@ function dt({ name: e, done: r, className: a }) {
     }
   );
 }
-function ut({ toolCalls: e, className: r }) {
-  return /* @__PURE__ */ t("div", { className: u("flex flex-wrap gap-1.5 py-1", r), children: e.map((a) => /* @__PURE__ */ t(dt, { name: a.name, done: a.done }, a.id)) });
+function pt({ toolCalls: e, className: r }) {
+  return /* @__PURE__ */ t("div", { className: u("flex flex-wrap gap-1.5 py-1", r), children: e.map((a) => /* @__PURE__ */ t(ut, { name: a.name, done: a.done }, a.id)) });
 }
-function hr({
+function gr({
   role: e,
   content: r,
   toolCalls: a,
@@ -2131,11 +2107,11 @@ function hr({
   const p = e === "user" ? l || "You" : o || "Assistant";
   return /* @__PURE__ */ c("div", { className: u("flex flex-col gap-1.5 py-3", d), children: [
     /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-tertiary)]", children: p }),
-    a && a.length > 0 && /* @__PURE__ */ t(ut, { toolCalls: a }),
+    a && a.length > 0 && /* @__PURE__ */ t(pt, { toolCalls: a }),
     e === "user" ? /* @__PURE__ */ t("div", { className: "text-sm text-[var(--color-text-primary)] whitespace-pre-wrap", children: r }) : /* @__PURE__ */ t("div", { className: "text-sm text-[var(--color-text-primary)] prose-sm max-w-none", children: r ? s ? s(r) : /* @__PURE__ */ t("span", { className: "whitespace-pre-wrap", children: r }) : n ? /* @__PURE__ */ t(F, {}) : null })
   ] });
 }
-function vr({
+function yr({
   content: e,
   streaming: r = !1,
   defaultOpen: a = !1,
@@ -2178,7 +2154,7 @@ function vr({
     }
   );
 }
-function gr({
+function wr({
   prompts: e,
   onSelect: r,
   columns: a,
@@ -2203,7 +2179,7 @@ function gr({
     )) })
   ] });
 }
-function yr({
+function Nr({
   suggestions: e,
   onSelect: r,
   onRefresh: a,
@@ -2234,7 +2210,7 @@ function yr({
     )
   ] });
 }
-function wr({
+function kr({
   name: e,
   memberCount: r,
   description: a,
@@ -2303,7 +2279,7 @@ function wr({
     }
   );
 }
-function Nr({ user: e, items: r, className: a, "data-testid": n }) {
+function Cr({ user: e, items: r, className: a, "data-testid": n }) {
   const [o, l] = T(!1), s = D(null), d = A(() => l(!1), []);
   return _(() => {
     if (!o) return;
@@ -2411,7 +2387,7 @@ function Nr({ user: e, items: r, className: a, "data-testid": n }) {
     }
   );
 }
-function pt({ item: e, isLast: r }) {
+function ft({ item: e, isLast: r }) {
   const a = u(
     "text-sm leading-snug transition-colors duration-100",
     r ? "text-[var(--color-text-primary)] font-medium cursor-default" : "text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] font-normal"
@@ -2426,12 +2402,12 @@ function pt({ item: e, isLast: r }) {
     }
   );
 }
-function ft(e, r) {
+function xt(e, r) {
   if (e.length <= r) return e;
   const a = e.slice(0, 1), n = e.slice(-(r - 2 > 0 ? r - 2 : 1));
   return [...a, null, ...n];
 }
-function kr({
+function Sr({
   items: e,
   separator: r = "/",
   maxItems: a,
@@ -2439,7 +2415,7 @@ function kr({
   "data-testid": o
 }) {
   if (e.length === 0) return null;
-  const l = a != null ? ft(e, a) : e;
+  const l = a != null ? xt(e, a) : e;
   return /* @__PURE__ */ t("nav", { "aria-label": "Breadcrumb", "data-testid": o, className: u("flex items-center", n), children: /* @__PURE__ */ t("ol", { className: "flex items-center gap-1 flex-wrap list-none m-0 p-0", children: l.map((s, d) => {
     const p = d === l.length - 1;
     return /* @__PURE__ */ c("li", { className: "flex items-center gap-1", children: [
@@ -2451,7 +2427,7 @@ function kr({
           title: "Some items are hidden",
           children: "…"
         }
-      ) : /* @__PURE__ */ t(pt, { item: s, isLast: p }),
+      ) : /* @__PURE__ */ t(ft, { item: s, isLast: p }),
       !p && /* @__PURE__ */ t(
         "span",
         {
@@ -2463,20 +2439,20 @@ function kr({
     ] }, d);
   }) }) });
 }
-const xt = {
+const mt = {
   active: { bg: "#f0fdf4", border: "#86efac", text: "#166534", accent: "#16a34a" },
   in_progress: { bg: "#eff6ff", border: "#93c5fd", text: "#1e40af", accent: "#3b82f6" },
   completed: { bg: "#f0fdf4", border: "#86efac", text: "#166534", accent: "#16a34a" },
   archived: { bg: "#f9fafb", border: "#d1d5db", text: "#6b7280", accent: "#9ca3af" },
   planning: { bg: "#fefce8", border: "#fde047", text: "#713f12", accent: "#eab308" },
   paused: { bg: "#fff7ed", border: "#fdba74", text: "#9a3412", accent: "#f97316" }
-}, mt = {
+}, bt = {
   bg: "#f3f4f6",
   border: "#d1d5db",
   text: "#374151",
   accent: "#6b7280"
 };
-function bt({ status: e, colors: r }) {
+function ht({ status: e, colors: r }) {
   return /* @__PURE__ */ c(
     "span",
     {
@@ -2503,7 +2479,7 @@ function bt({ status: e, colors: r }) {
     }
   );
 }
-function Cr({
+function $r({
   name: e,
   id: r,
   status: a,
@@ -2519,7 +2495,7 @@ function Cr({
   style: b,
   minHeight: x = 190
 }) {
-  const m = { ...xt, ...n }, i = (a ?? "unknown").toLowerCase().replace(/ /g, "_"), h = m[i] ?? mt, g = l !== void 0 ? Math.max(0, l - o.length) : 0, C = f % 8 * 525;
+  const m = { ...mt, ...n }, i = (a ?? "unknown").toLowerCase().replace(/ /g, "_"), h = m[i] ?? bt, g = l !== void 0 ? Math.max(0, l - o.length) : 0, C = f % 8 * 525;
   return /* @__PURE__ */ c(
     "button",
     {
@@ -2590,11 +2566,11 @@ function Cr({
                   }
                 )
               ] }),
-              a && /* @__PURE__ */ t(bt, { status: a, colors: h })
+              a && /* @__PURE__ */ t(ht, { status: a, colors: h })
             ]
           }
         ),
-        /* @__PURE__ */ t(Ne, { items: s, staggerMs: C }),
+        /* @__PURE__ */ t($e, { items: s, staggerMs: C }),
         /* @__PURE__ */ c(
           "div",
           {
@@ -2640,7 +2616,7 @@ function Cr({
     }
   );
 }
-function ht(e) {
+function vt(e) {
   const r = [], a = /* @__PURE__ */ new Map();
   for (const n of e) {
     const o = n.group ?? null;
@@ -2659,10 +2635,10 @@ function Q({
   title: a,
   renderNavItem: n
 }) {
-  const o = O(() => ht(e), [e]), l = o.some((s) => s.name !== null);
+  const o = O(() => vt(e), [e]), l = o.some((s) => s.name !== null);
   return /* @__PURE__ */ t("nav", { className: "flex-1 overflow-y-auto py-1", children: l ? o.map(
     (s) => s.name === null ? /* @__PURE__ */ t(Z, { items: s.items, renderNavItem: n }, "__ungrouped") : /* @__PURE__ */ t(
-      vt,
+      gt,
       {
         name: s.name,
         items: s.items,
@@ -2673,7 +2649,7 @@ function Q({
     )
   ) : /* @__PURE__ */ t(Z, { items: e, renderNavItem: n }) });
 }
-function Sr({
+function Er({
   title: e,
   items: r,
   titleAction: a,
@@ -2732,7 +2708,7 @@ function Z({
 }) {
   return /* @__PURE__ */ t(P, { children: e.map((a) => /* @__PURE__ */ t(oe, { item: a, renderNavItem: r }, a.path)) });
 }
-function vt({
+function gt({
   name: e,
   items: r,
   storageKey: a,
@@ -2803,11 +2779,11 @@ function oe({
     }
   );
 }
-const $r = {
+const Lr = {
   borderLeft: "3px solid var(--color-primary)",
   background: "var(--color-surface-hover)",
   color: "var(--color-text-primary)"
-}, gt = [
+}, yt = [
   "a[href]",
   "button:not([disabled])",
   'input:not([disabled]):not([type="hidden"])',
@@ -2817,11 +2793,11 @@ const $r = {
   '[contenteditable="true"]'
 ].join(",");
 function X(e) {
-  return Array.from(e.querySelectorAll(gt)).filter(
+  return Array.from(e.querySelectorAll(yt)).filter(
     (r) => r.getAttribute("aria-hidden") !== "true"
   );
 }
-function yt(e, r, a) {
+function wt(e, r, a) {
   return r === "right" ? {
     position: "fixed",
     top: e.top,
@@ -2837,7 +2813,7 @@ function yt(e, r, a) {
     left: e.left
   };
 }
-function wt({
+function Nt({
   trigger: e,
   open: r,
   onClose: a,
@@ -2852,7 +2828,7 @@ function wt({
     const m = e.current;
     if (!m) return;
     const i = m.getBoundingClientRect();
-    N(yt(i, n, o));
+    N(wt(i, n, o));
   }, [e, n, o]);
   return de(() => {
     if (!r) {
@@ -2928,7 +2904,7 @@ function wt({
     document.body
   );
 }
-function Er({
+function Tr({
   trigger: e,
   triggerLabel: r = "Open menu",
   triggerTitle: a,
@@ -2974,7 +2950,7 @@ function Er({
       }
     ),
     /* @__PURE__ */ t(
-      wt,
+      Nt,
       {
         trigger: v,
         open: p,
@@ -3021,7 +2997,7 @@ function Er({
     )
   ] });
 }
-const Nt = {
+const kt = {
   success: {
     pill: "bg-emerald-100 border-emerald-200",
     dot: "bg-emerald-500",
@@ -3052,14 +3028,14 @@ const Nt = {
     dot: "bg-violet-500",
     text: "text-violet-800"
   }
-}, kt = {
+}, Ct = {
   sm: "px-1.5 py-0.5 text-[10px] gap-1",
   md: "px-2.5 py-1 text-[12px] gap-1.5"
 }, ee = {
   sm: "w-1.5 h-1.5",
   md: "w-2 h-2"
 };
-function Lr({
+function Ar({
   state: e,
   label: r,
   icon: a,
@@ -3067,7 +3043,7 @@ function Lr({
   className: o,
   "data-testid": l
 }) {
-  const s = Nt[e], d = e === "pending";
+  const s = kt[e], d = e === "pending";
   return /* @__PURE__ */ c(
     "span",
     {
@@ -3078,7 +3054,7 @@ function Lr({
         "inline-flex items-center rounded-full border font-medium leading-none select-none",
         s.pill,
         s.text,
-        kt[n],
+        Ct[n],
         o
       ),
       children: [
@@ -3111,54 +3087,54 @@ function Lr({
 }
 export {
   F as A,
-  kr as B,
-  Yt as C,
-  zt as D,
-  or as E,
-  yr as F,
-  fr as G,
-  dt as H,
-  cr as I,
-  ut as J,
-  tr as K,
-  mr as L,
-  hr as M,
-  ur as N,
-  Nr as O,
-  dr as P,
-  gr as Q,
-  $r as R,
-  ir as S,
-  Xt as T,
-  ar as U,
-  tt as V,
-  je as W,
-  Ft as X,
-  Wt as Y,
-  xr as a,
-  wr as b,
-  br as c,
-  Ht as d,
-  sr as e,
-  Gt as f,
-  qt as g,
-  Ut as h,
-  lr as i,
-  Er as j,
-  Vt as k,
-  Qt as l,
-  wt as m,
-  Jt as n,
-  at as o,
-  Ye as p,
-  rr as q,
-  Cr as r,
-  nr as s,
-  ct as t,
-  er as u,
-  Lr as v,
-  Sr as w,
-  Zt as x,
-  pr as y,
-  vr as z
+  Sr as B,
+  Jt as C,
+  Vt as D,
+  sr as E,
+  Nr as F,
+  mr as G,
+  ut as H,
+  ur as I,
+  pt as J,
+  ar as K,
+  hr as L,
+  gr as M,
+  fr as N,
+  Cr as O,
+  pr as P,
+  wr as Q,
+  Lr as R,
+  dr as S,
+  tr as T,
+  or as U,
+  ot as V,
+  Ke as W,
+  Wt as X,
+  qt as Y,
+  br as a,
+  kr as b,
+  vr as c,
+  Ut as d,
+  cr as e,
+  zt as f,
+  Yt as g,
+  Gt as h,
+  ir as i,
+  Tr as j,
+  Qt as k,
+  Xt as l,
+  Nt as m,
+  Zt as n,
+  st as o,
+  Ze as p,
+  nr as q,
+  $r as r,
+  lr as s,
+  dt as t,
+  rr as u,
+  Ar as v,
+  Er as w,
+  er as x,
+  xr as y,
+  yr as z
 };

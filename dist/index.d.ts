@@ -1280,7 +1280,8 @@ export declare interface ChipProps {
     'aria-label'?: string;
 }
 
-export declare type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
+/** @see Tone — the library-wide semantic tone scale. */
+export declare type ChipTone = ToneOrAlias;
 
 export declare function CircularIconToggle({ on, iconOn, iconOff, 'aria-label': ariaLabel, offTone, size, disabled, className, ...rest }: CircularIconToggleProps): JSX.Element;
 
@@ -6721,6 +6722,41 @@ export declare interface TokenUsageByModel {
     tokensIn: number;
     tokensOut: number;
 }
+
+export declare type Tone = (typeof TONES)[number];
+
+/** Soft background only. */
+export declare const TONE_BG: Record<Tone, string>;
+
+/** Border for a soft surface. */
+export declare const TONE_BORDER: Record<Tone, string>;
+
+/** Soft tinted surface: background + readable foreground. */
+export declare const TONE_SOFT: Record<Tone, string>;
+
+/** Solid fill with inverse text. */
+export declare const TONE_SOLID: Record<Tone, string>;
+
+/** Solid swatch only — indicator dots, bars, legend keys. */
+export declare const TONE_SOLID_BG: Record<Tone, string>;
+
+/** Foreground only — labels, icons on an untinted surface. */
+export declare const TONE_TEXT: Record<Tone, string>;
+
+/** Normalise a caller-supplied tone (folds the deprecated 'purple'). */
+export declare function toneKey(tone: ToneOrAlias): Tone;
+
+/** Tone plus the historical alias kept for source compatibility. */
+export declare type ToneOrAlias = Tone | 'purple';
+
+export declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
+
+/**
+ * The raw CSS variable for a tone's solid swatch, for the rare caller that
+ * needs a colour value rather than a class (canvas/SVG fills, chart series).
+ * Prefer the class maps above wherever a class will do.
+ */
+export declare function toneVar(tone: ToneOrAlias): string;
 
 export declare interface ToolCall {
     id: string;

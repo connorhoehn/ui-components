@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.38.1`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.39.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -286,13 +286,69 @@ npm publish   # requires GITHUB_TOKEN with packages:write
 
 ## Design tokens (Tailwind v4)
 
-Tokens are declared in `src/styles.css` via `@theme`. Key custom properties:
-
-```
---color-primary, --color-border, --color-border-field
---color-surface, --color-text-primary, --color-text-secondary
---color-success, --color-success-bg
---color-state-running, --color-state-pending, --color-state-error
-```
+Tokens are declared in `src/styles.css` via `@theme`. **`src/styles.css` is the
+single source of truth for branding — nothing may fork it.**
 
 Use `cn()` from `src/lib/cn.ts` to compose class names (`clsx` + `tailwind-merge`).
+
+### The semantic tone scale (v2.39.0)
+
+Seven tones — `neutral`, `success`, `warning`, `danger`, `info`, `caution`,
+`accent` — each with four roles:
+
+```
+--color-{tone}          solid fill / icon / indicator dot
+--color-{tone}-bg       soft tinted background
+--color-{tone}-fg       readable text on that soft background
+--color-{tone}-border   border for the soft surface
+```
+
+**Rules:**
+
+1. **Never name a raw palette colour inside a component.** No `bg-green-50`,
+   no `text-emerald-700`. Go through `src/components/shared/tones.ts`
+   (`TONE_SOFT`, `TONE_SOLID`, `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`,
+   `TONE_BG`), or the token classes directly (`bg-success-bg text-success-fg`).
+2. **Never define a second `Record<Tone, string>` palette.** That is exactly
+   how this went wrong: Chip, Badge and StackDiagram each had one, and they
+   disagreed — Chip's success was green-50/green-600, Badge's was
+   emerald-100/emerald-700, so the same semantic state rendered in two
+   different greens depending on which component you reached for.
+3. **Consumers rebrand by overriding the variables**, after importing the
+   stylesheet. Four variables re-tone every surface in the library:
+
+   ```css
+   @import "@connorhoehnslalom/ui-components/styles.css";
+   :root {
+     --color-accent: #0d9488;
+     --color-accent-bg: #f0fdfa;
+     --color-accent-fg: #0f766e;
+     --color-accent-border: #99f6e4;
+   }
+   ```
+
+   Adding a tone follows the same four-role shape. For a colour value rather
+   than a class (canvas/SVG fills, chart series), use `toneVar(tone)`.
+
+`toneKey()` folds the deprecated `'purple'` alias onto `'accent'`.
+
+### Consumers (and the demo) must import, not copy
+
+`demo/src/App.css` used to carry a verbatim copy of the `@theme` block. It
+drifted — 26 tokens missing, including every `--color-cat-*` and `--font-code`
+— so library components using those rendered unstyled in the demo while
+looking correct in Storybook. It now does `@import "../../src/styles.css"`,
+which is also the documented consumer on-ramp. Do not reintroduce a copy.
+
+Other token families beyond the tone scale: `--color-text-{primary,secondary,
+tertiary,disabled}`, `--color-surface{,-inset,-panel,-hover}`,
+`--color-border{,-emphasis,-field}`, `--color-state-*` (run states),
+`--color-cat-*` (pipeline node categories), `--radius-*`, `--shadow-*`,
+`--font-code`.
+
+> **`src/theme/` is a separate, disconnected system.** `ThemeProvider` injects
+> `--ui-*` variables, which no Tailwind utility reads — so
+> `<ThemeProvider theme={{ primary: 'red' }}>` changes nothing visible. Its
+> preset values also disagree with the `@theme` tokens (`primary: #3b82f6` vs
+> `#646cff`). Treat the CSS variables above as authoritative; reconciling or
+> retiring `src/theme/` is open work.

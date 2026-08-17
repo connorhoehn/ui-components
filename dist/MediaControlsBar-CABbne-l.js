@@ -4,7 +4,7 @@ import { c as h } from "./cn-B6yFEsav.js";
 import { P as Ie, S as Te } from "./ReconnectingBanner-BQ0hb0DP.js";
 import { B as ce } from "./Button-Qsbxqsl9.js";
 import { A as we } from "./Avatar-DIEPZUB9.js";
-import { C as re } from "./Chip-CAS9vOWq.js";
+import { C as re } from "./Chip-BDT8ro4h.js";
 import { S as ye, P as Ae } from "./PermissionDeniedCard-B9U2evs3.js";
 const Be = {
   idle: "Ready",

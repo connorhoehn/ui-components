@@ -8,6 +8,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.39.0] — 2026-08-17
+
+### Added
+
+- **A single semantic tone scale — the library's branding scheme.**
+  Seven tones (`neutral`, `success`, `warning`, `danger`, `info`, `caution`,
+  `accent`), each with four roles: `--color-{tone}`, `-bg`, `-fg`, `-border`.
+  A consumer rebrands a tone by overriding four CSS variables and every
+  surface in the library follows. New `src/components/shared/tones.ts` is the
+  one place that maps tones to classes, exported from `…/shared`
+  (`TONE_SOFT`, `TONE_SOLID`, `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`,
+  `TONE_BG`, `toneKey`, `toneVar`, `Tone`, `TONES`).
+- `Avatar` gains `initials` — it derived them from `name`, turning a canonical
+  "AS" into "As", which forced callers holding real initials to hand-roll the
+  circle.
+- `AvatarGroup` gains `items` (per-person name/initials/color/src) and
+  `total`. It only accepted `names: string[]` and hashed every colour, so
+  presence UIs with per-user brand colours could not use it at all.
+- `ViewerCount` gains `className`; `style` is deprecated.
+- `Chip` gains the `accent` tone; `purple` is deprecated but still compiles.
+
+### Fixed
+
+- **Three components each carried their own colour palette and they
+  disagreed.** Chip's success was `green-50`/`green-600`, Badge's was
+  `emerald-100`/`emerald-700`, and StackDiagram had a third set — so the same
+  semantic state rendered in different hues depending on which component you
+  used. All three now resolve through `tones.ts`. Chip is pixel-identical
+  (its hardcoded values already *were* the token values); Badge and
+  StackDiagram change appearance, which is the point.
+- **The demo forked the design tokens.** `demo/src/App.css` held a verbatim
+  copy of the `@theme` block that had drifted 26 tokens behind — including
+  every `--color-cat-*` and `--font-code`, so components using those rendered
+  unstyled in the demo while looking correct in Storybook. It now imports
+  `src/styles.css`, which is also the documented consumer on-ramp.
+
+### Known
+
+- `src/theme/` (`ThemeProvider`) injects `--ui-*` variables that no Tailwind
+  utility reads, and its preset values disagree with the `@theme` tokens. It
+  is a disconnected fourth colour system; reconciling it is open work.
+
+
 ## [2.38.1] — 2026-08-16
 
 Internal only — no public API change. Every npm script in the repo now

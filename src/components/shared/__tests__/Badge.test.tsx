@@ -37,7 +37,7 @@ describe('Badge', () => {
 
     it('applies color classes', () => {
       const { container } = render(<Badge variant="count" value={1} color="success" />);
-      expect(container.firstChild).toHaveClass('bg-emerald-100');
+      expect(container.firstChild).toHaveClass('bg-success-bg');
     });
   });
 
@@ -47,7 +47,7 @@ describe('Badge', () => {
       const el = screen.getByTestId('dot');
       expect(el).toBeInTheDocument();
       expect(el.className).toMatch(/rounded-full/);
-      expect(el.className).toMatch(/bg-rose-500/);
+      expect(el.className).toMatch(/bg-danger/);
     });
 
     it('omits role/aria-label when no label provided', () => {
@@ -76,7 +76,7 @@ describe('Badge', () => {
     it('applies pulse-ring color', () => {
       const { container } = render(<Badge variant="pulse" color="success" />);
       const pingRing = container.querySelector('.animate-ping');
-      expect(pingRing?.className).toMatch(/bg-emerald-400/);
+      expect(pingRing?.className).toMatch(/bg-success/);
     });
   });
 });

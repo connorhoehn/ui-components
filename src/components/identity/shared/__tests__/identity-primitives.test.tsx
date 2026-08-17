@@ -14,19 +14,19 @@ describe('StatusBadge', () => {
     expect(screen.getByText('CONFIRMED')).toBeInTheDocument();
   });
 
-  it('maps CONFIRMED to the success tone (green class)', () => {
+  it('maps CONFIRMED to the success tone (success tone class)', () => {
     const { container } = render(<StatusBadge status="CONFIRMED" />);
-    expect(container.firstChild as HTMLElement).toHaveClass('text-green-600');
+    expect(container.firstChild as HTMLElement).toHaveClass('text-success-fg');
   });
 
-  it('maps DISABLED to the danger tone (red class)', () => {
+  it('maps DISABLED to the danger tone (danger tone class)', () => {
     const { container } = render(<StatusBadge status="DISABLED" />);
-    expect(container.firstChild as HTMLElement).toHaveClass('text-red-600');
+    expect(container.firstChild as HTMLElement).toHaveClass('text-danger-fg');
   });
 
   it('falls back to neutral for an unknown status', () => {
     const { container } = render(<StatusBadge status="NOT_A_REAL_STATUS" />);
-    expect(container.firstChild as HTMLElement).toHaveClass('text-slate-600');
+    expect(container.firstChild as HTMLElement).toHaveClass('text-neutral-fg');
   });
 
   it('variant prop overrides the status-based tone', () => {
@@ -34,7 +34,7 @@ describe('StatusBadge', () => {
     const { container } = render(
       <StatusBadge status="CONFIRMED" variant="danger" />,
     );
-    expect(container.firstChild as HTMLElement).toHaveClass('text-red-600');
+    expect(container.firstChild as HTMLElement).toHaveClass('text-danger-fg');
   });
 });
 

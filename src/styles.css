@@ -33,20 +33,62 @@
   --color-cat-sink: #2563eb;
   --color-cat-human: #db2777;
 
+  /* ── Semantic tone scale ────────────────────────────────────────────
+   * THE branding scheme. Every tinted surface in the library — Chip,
+   * Badge, StatusDot, banners, pills — resolves through these and nothing
+   * else. Do not reach for a raw palette class (bg-green-50) in a
+   * component; that is how Badge and Chip drifted apart into two
+   * different greens.
+   *
+   * Each tone carries four roles, so a consumer can rebrand a tone by
+   * overriding four variables and have every surface follow:
+   *   --color-{tone}          solid fill / icon / indicator dot
+   *   --color-{tone}-bg       soft tinted background
+   *   --color-{tone}-fg       readable text on that soft background
+   *   --color-{tone}-border   border for the soft surface
+   *
+   * To extend: redefine any of these under :root (or any scope) in your
+   * own stylesheet — they are plain custom properties, so the override
+   * cascades. To add a tone, follow the same four-role shape.
+   */
+  --color-neutral: #64748b;
+  --color-neutral-bg: #f1f5f9;
+  --color-neutral-fg: #475569;
+  --color-neutral-border: #e2e8f0;
+
   --color-success: #16a34a;
-  --color-warning: #d97706;
-  --color-danger: #dc2626;
-  --color-info: #2563eb;
-
   --color-success-bg: #f0fdf4;
-  --color-warning-bg: #fffbeb;
-  --color-danger-bg: #fef2f2;
-  --color-info-bg: #eff6ff;
-
+  --color-success-fg: #16a34a;
   --color-success-border: #bbf7d0;
+
+  --color-warning: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-fg: #d97706;
   --color-warning-border: #fde68a;
+
+  --color-danger: #dc2626;
+  --color-danger-bg: #fef2f2;
+  --color-danger-fg: #dc2626;
   --color-danger-border: #fecaca;
+
+  --color-info: #2563eb;
+  --color-info-bg: #eff6ff;
+  --color-info-fg: #2563eb;
   --color-info-border: #bfdbfe;
+
+  --color-caution: #ea580c;
+  --color-caution-bg: #fff7ed;
+  --color-caution-fg: #ea580c;
+  --color-caution-border: #fed7aa;
+
+  --color-accent: #9333ea;
+  --color-accent-bg: #faf5ff;
+  --color-accent-fg: #9333ea;
+  --color-accent-border: #e9d5ff;
+
+  --color-primary-bg: #eef0ff;
+  --color-primary-fg: #4f55ff;
+  --color-primary-border: #c7cbff;
 
   --radius-sm: 4px;
   --radius-md: 6px;

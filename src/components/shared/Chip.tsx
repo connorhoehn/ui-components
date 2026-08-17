@@ -1,41 +1,16 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
-export type ChipTone = 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'caution' | 'purple';
+import {
+  TONE_SOFT,
+  TONE_SOLID,
+  TONE_SOLID_BG,
+  toneKey,
+  type ToneOrAlias,
+} from './tones';
 
-const SOFT_CLASSES: Record<ChipTone, string> = {
-  neutral: 'bg-slate-100 text-slate-600',
-  success: 'bg-green-50 text-green-600',
-  warning: 'bg-amber-50 text-amber-600',
-  danger:  'bg-red-50 text-red-600',
-  info:    'bg-blue-50 text-blue-600',
-  caution: 'bg-orange-50 text-orange-600',
-  purple:  'bg-purple-50 text-purple-600',
-};
-
-const SOLID_CLASSES: Record<ChipTone, string> = {
-  neutral: 'bg-slate-500 text-white',
-  success: 'bg-green-600 text-white',
-  warning: 'bg-amber-600 text-white',
-  danger:  'bg-red-600 text-white',
-  info:    'bg-blue-600 text-white',
-  caution: 'bg-orange-600 text-white',
-  purple:  'bg-purple-600 text-white',
-};
-
-// Dot color matches the tone's saturated swatch. Used by `dot` prop —
-// the soft palette pairs with a small filled circle indicator the
-// consumer doesn't have to compose themselves (the recurring "status
-// pill with a dot" pattern across hangout/recordings/cluster routes).
-const DOT_CLASSES: Record<ChipTone, string> = {
-  neutral: 'bg-slate-400',
-  success: 'bg-green-500',
-  warning: 'bg-amber-500',
-  danger:  'bg-red-500',
-  info:    'bg-blue-500',
-  caution: 'bg-orange-500',
-  purple:  'bg-purple-500',
-};
+/** @see Tone — the library-wide semantic tone scale. */
+export type ChipTone = ToneOrAlias;
 
 const SIZE_CLASSES: Record<'sm' | 'xs', string> = {
   sm: 'px-2 py-0.5 text-[11px]',
@@ -85,7 +60,8 @@ export default function Chip({
   'data-testid': testId,
   'aria-label': ariaLabel,
 }: ChipProps) {
-  const paletteClasses = solid ? SOLID_CLASSES[tone] : SOFT_CLASSES[tone];
+  const key = toneKey(tone);
+  const paletteClasses = solid ? TONE_SOLID[key] : TONE_SOFT[key];
   const hasAdornment = !!(dot || icon);
   return (
     <span
@@ -109,7 +85,7 @@ export default function Chip({
           className={cn(
             'relative inline-block rounded-full shrink-0',
             DOT_SIZE[size],
-            DOT_CLASSES[tone],
+            TONE_SOLID_BG[key],
           )}
         >
           {dot === 'pulse' && (
@@ -117,7 +93,7 @@ export default function Chip({
               aria-hidden
               className={cn(
                 'absolute inset-0 rounded-full animate-ping opacity-70',
-                DOT_CLASSES[tone],
+                TONE_SOLID_BG[key],
               )}
             />
           )}

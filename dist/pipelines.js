@@ -19,7 +19,7 @@ import { B as Oe } from "./Button-Qsbxqsl9.js";
 import { I as mt, F as La } from "./FileUploadDrop-Cmz3XANg.js";
 import { u as Xn } from "./IdentityContext-CLalsm_M.js";
 import { B as Ze } from "./Banner-DKb3JiLs.js";
-import { C as se } from "./Chip-CAS9vOWq.js";
+import { C as se } from "./Chip-BDT8ro4h.js";
 import { E as ze } from "./EmptyState-D_CN3LUx.js";
 import { C as rn } from "./ConfirmDialog-CNoxvYGu.js";
 import { B as Ba, L as qt } from "./Chart-ByoxeiYX.js";

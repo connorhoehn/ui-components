@@ -6,7 +6,7 @@ import { B as f } from "./Button-Qsbxqsl9.js";
 import { E as me } from "./EmptyState-D_CN3LUx.js";
 import { C as H } from "./ConfirmDialog-CNoxvYGu.js";
 import { B as V } from "./Banner-DKb3JiLs.js";
-import { C as K } from "./Chip-CAS9vOWq.js";
+import { C as K } from "./Chip-BDT8ro4h.js";
 import { M as ye } from "./Modal-2jg4229_.js";
 import { c as O } from "./cn-B6yFEsav.js";
 function He({ stats: a, pools: s, onNavigate: i, loading: u }) {

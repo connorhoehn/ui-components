@@ -2,7 +2,7 @@ import { jsxs as r, jsx as e, Fragment as Q } from "react/jsx-runtime";
 import { useMemo as L, useState as I, useCallback as A, useEffect as B, useRef as ae } from "react";
 import { useNavigate as V, useParams as be } from "react-router";
 import { e as G, c as le, h as ge, g as ye, d as ce, a as ve, i as Ne, b as we, u as Ie, f as Se } from "./useMappingReviewQueue-DRbIo6-O.js";
-import { C as _ } from "./Chip-CAS9vOWq.js";
+import { C as _ } from "./Chip-BDT8ro4h.js";
 import { E as q } from "./EmptyState-D_CN3LUx.js";
 import { S as P } from "./SkeletonCard-C89GWQ3p.js";
 import { c as E } from "./cn-B6yFEsav.js";

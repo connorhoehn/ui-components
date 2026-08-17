@@ -8,6 +8,7 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { TONE_BG, TONE_BORDER, TONE_TEXT, toneKey } from './tones';
 import type { ChipTone } from './Chip';
 
 export interface StackLayerSpec {
@@ -34,36 +35,6 @@ export interface StackDiagramProps {
   style?: CSSProperties;
   'data-testid'?: string;
 }
-
-const TONE_BG: Record<ChipTone, string> = {
-  neutral: 'bg-slate-50',
-  success: 'bg-green-50',
-  warning: 'bg-amber-50',
-  danger:  'bg-red-50',
-  info:    'bg-blue-50',
-  caution: 'bg-orange-50',
-  purple:  'bg-purple-50',
-};
-
-const TONE_BORDER: Record<ChipTone, string> = {
-  neutral: 'border-slate-200',
-  success: 'border-green-300',
-  warning: 'border-amber-300',
-  danger:  'border-red-300',
-  info:    'border-blue-300',
-  caution: 'border-orange-300',
-  purple:  'border-purple-300',
-};
-
-const TONE_LABEL: Record<ChipTone, string> = {
-  neutral: 'text-slate-800',
-  success: 'text-green-800',
-  warning: 'text-amber-800',
-  danger:  'text-red-800',
-  info:    'text-blue-800',
-  caution: 'text-orange-800',
-  purple:  'text-purple-800',
-};
 
 function Connector({
   orientation,
@@ -111,7 +82,7 @@ export function StackDiagram({
       style={style}
     >
       {layers.map((layer, idx) => {
-        const tone = layer.tone ?? 'neutral';
+        const tone = toneKey(layer.tone ?? 'neutral');
         return (
           <div key={layer.id} className={cn('flex', isVertical ? 'flex-col' : 'flex-col')}>
             <div
@@ -130,7 +101,7 @@ export function StackDiagram({
                     {layer.icon}
                   </span>
                 )}
-                <span className={cn('text-[12px] font-semibold', TONE_LABEL[tone])}>
+                <span className={cn('text-[12px] font-semibold', TONE_TEXT[tone])}>
                   {layer.label}
                 </span>
                 {layer.meta != null && (

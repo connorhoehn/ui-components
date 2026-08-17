@@ -165,3 +165,19 @@ export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from '.
 // ── Status primitives (Phase 5) ──
 export { StatusPill } from './StatusPill';
 export type { StatusPillProps, StatusPillState, StatusPillSize } from './StatusPill';
+
+// Semantic tone scale — the library-wide branding surface. Components resolve
+// tinted colours through these; consumers rebrand by overriding the matching
+// CSS variables (--color-{tone}, -bg, -fg, -border).
+export {
+  TONES,
+  TONE_SOFT,
+  TONE_SOLID,
+  TONE_SOLID_BG,
+  TONE_BORDER,
+  TONE_TEXT,
+  TONE_BG,
+  toneKey,
+  toneVar,
+} from './tones';
+export type { Tone, ToneOrAlias } from './tones';

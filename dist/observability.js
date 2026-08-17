@@ -10,7 +10,7 @@ import { a as ye } from "./EventStreamContext-CjzSHXy-.js";
 import { E as ve } from "./EmptyState-D_CN3LUx.js";
 import { M as Ne } from "./Modal-2jg4229_.js";
 import { C as ne } from "./Card-B2uO9v1w.js";
-import { C as ae } from "./Chip-CAS9vOWq.js";
+import { C as ae } from "./Chip-BDT8ro4h.js";
 import { S as se } from "./StatusDot-BC7B1tTr.js";
 function Jt() {
   return /* @__PURE__ */ t(xe, {});
