@@ -57,3 +57,53 @@ export function injectThemeVars(tokens: ThemeTokens): string {
 export function cssVar(token: keyof ThemeTokens): string {
   return `var(${tokenToCssVarName(token)})`;
 }
+
+
+// ---------------------------------------------------------------------------
+// Bridge to the real design tokens
+// ---------------------------------------------------------------------------
+
+/**
+ * ThemeTokens key -> the `@theme` custom property in src/styles.css that
+ * Tailwind utilities actually compile against.
+ *
+ * Why this exists: ThemeProvider only ever wrote `--ui-*`, and no utility class
+ * reads those, so `<ThemeProvider theme={{ primary: 'red' }}>` changed nothing
+ * visible. Writing these names too is what makes the provider real. Keys with
+ * no semantic counterpart (textInverse, surfaceOverlay, borderLight, …) stay
+ * `--ui-*`-only and are intentionally absent.
+ */
+export const THEME_TOKEN_ALIASES: Partial<Record<keyof ThemeTokens, string>> = {
+  primary: '--color-primary',
+  primaryDark: '--color-primary-hover',
+  danger: '--color-danger',
+  success: '--color-success',
+  warning: '--color-warning',
+  info: '--color-info',
+  textPrimary: '--color-text-primary',
+  textSecondary: '--color-text-secondary',
+  textMuted: '--color-text-tertiary',
+  surface: '--color-surface',
+  border: '--color-border',
+  radiusSm: '--radius-sm',
+  radiusMd: '--radius-md',
+  radiusLg: '--radius-lg',
+};
+
+/** The four roles every tone in the scale carries. */
+export type ToneRole = 'base' | 'bg' | 'fg' | 'border';
+
+const TONE_ROLE_SUFFIX: Record<ToneRole, string> = {
+  base: '',
+  bg: '-bg',
+  fg: '-fg',
+  border: '-border',
+};
+
+/**
+ * Custom-property name for one role of one tone, e.g.
+ * `toneCssVarName('success', 'bg')` -> `--color-success-bg`.
+ */
+export function toneCssVarName(tone: string, role: ToneRole): string {
+  return `--color-${tone}${TONE_ROLE_SUFFIX[role]}`;
+}

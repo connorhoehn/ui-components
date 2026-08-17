@@ -28,7 +28,7 @@ export default function ThemingPage() {
 
 function App() {
   return (
-    <ThemeProvider mode="light">
+    <ThemeProvider preset="light">
       <YourApp />
     </ThemeProvider>
   );
@@ -43,7 +43,7 @@ function App() {
       </p>
       <pre style={codeBlockStyle}>
 {`<ThemeProvider
-  mode="light"
+  preset="light"
   tokens={{
     colors: {
       primary: '#7c3aed',
@@ -74,7 +74,7 @@ function App() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');
 
   return (
-    <ThemeProvider mode={mode}>
+    <ThemeProvider preset={mode}>
       <button onClick={() => setMode(m => m === 'light' ? 'dark' : 'light')}>
         Toggle theme
       </button>
@@ -109,6 +109,55 @@ function App() {
           ))}
         </tbody>
       </table>
+
+      <h2 className="mt-8 mb-3 text-lg font-semibold text-text-primary">
+        Rebranding a tone
+      </h2>
+      <p className="mb-3 max-w-2xl text-sm leading-relaxed text-text-secondary">
+        Every tinted surface in the library — Chip, Badge, StatusDot, banners,
+        pills — resolves through the semantic tone scale. Each of the seven
+        tones ({'neutral, success, warning, danger, info, caution, accent'})
+        carries four roles, so rebranding one means setting four values and
+        every surface follows. There is no per-component colour to chase.
+      </p>
+      <pre className="mb-4 overflow-auto rounded-md bg-[#1e293b] p-4 text-[13px] text-[#e2e8f0]">
+{`/* Plain CSS — works for any consumer, no provider needed. */
+@import "@connorhoehnslalom/ui-components/styles.css";
+
+:root {
+  --color-accent: #0d9488;         /* solid fill / icon / dot     */
+  --color-accent-bg: #f0fdfa;      /* soft tinted background      */
+  --color-accent-fg: #0f766e;      /* text on that background     */
+  --color-accent-border: #99f6e4;  /* border for the soft surface */
+}`}
+      </pre>
+      <pre className="mb-4 overflow-auto rounded-md bg-[#1e293b] p-4 text-[13px] text-[#e2e8f0]">
+{`// Or at runtime, for a theme switcher.
+<ThemeProvider
+  tones={{
+    accent: { base: '#0d9488', bg: '#f0fdfa', fg: '#0f766e', border: '#99f6e4' },
+  }}
+>
+  <YourApp />
+</ThemeProvider>`}
+      </pre>
+      <p className="mb-3 max-w-2xl text-sm leading-relaxed text-text-secondary">
+        Omitted roles keep their default. Mounting{' '}
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
+          {'<ThemeProvider>'}
+        </code>{' '}
+        with no overrides changes nothing — the light preset mirrors the
+        stylesheet defaults.
+      </p>
+      <p className="max-w-2xl text-sm leading-relaxed text-text-secondary">
+        <strong>Note:</strong>{' '}
+        <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">
+          preset="dark"
+        </code>{' '}
+        is partial: it re-tones text, surface, border and the semantic colours,
+        but the token set has no dark-specific palette yet, so it is a starting
+        point rather than a finished dark mode.
+      </p>
     </div>
   );
 }

@@ -4,7 +4,12 @@
 
 import { createContext, useContext, useEffect, useMemo, ReactNode } from 'react';
 import { lightTheme, darkTheme } from './presets';
-import { tokenToCssVarName } from './css-variables';
+import {
+  tokenToCssVarName,
+  toneCssVarName,
+  THEME_TOKEN_ALIASES,
+  type ToneRole,
+} from './css-variables';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -77,23 +82,55 @@ const ThemeContext = createContext<ThemeTokens>(lightTheme);
 // Provider
 // ---------------------------------------------------------------------------
 
+/** Overrides for one tone in the semantic scale. Omitted roles keep their default. */
+export interface ToneOverride {
+  /** Solid fill / icon / indicator dot. */
+  base?: string;
+  /** Soft tinted background. */
+  bg?: string;
+  /** Readable text on the soft background. */
+  fg?: string;
+  /** Border for the soft surface. */
+  border?: string;
+}
+
 export interface ThemeProviderProps {
   children?: ReactNode;
   /** Base preset to use. Defaults to 'light'. */
   preset?: 'light' | 'dark';
   /** Partial overrides merged on top of the preset. */
   theme?: Partial<ThemeTokens>;
+  /**
+   * Rebrand tones from the semantic scale — the recommended path, because it
+   * maps 1:1 onto what every tinted surface in the library reads:
+   *
+   *   <ThemeProvider tones={{ accent: { base: '#0d9488', bg: '#f0fdfa' } }}>
+   *
+   * Equivalent to overriding `--color-accent` / `--color-accent-bg` in CSS.
+   */
+  tones?: Record<string, ToneOverride>;
 }
 
 /**
- * Provides a resolved theme via React context and injects CSS custom properties
- * on the document root so that `var(--ui-*)` references work globally.
+ * Injects the theme as CSS custom properties on the document root.
  *
- * Works without wrapping — once mounted, any component using `cssVar()` in
- * inline styles will pick up the values. Wrapping in ThemeProvider enables
- * programmatic access via `useTheme()` and scoped overrides.
+ * Writes BOTH namespaces:
+ *   - `--ui-*`   for every ThemeTokens key (kept for `cssVar()` callers)
+ *   - `--color-*` / `--radius-*` for keys with a real token counterpart, which
+ *     is what Tailwind utilities compile against
+ *
+ * The second half is what makes this component do anything. Until v2.40.2 it
+ * wrote only `--ui-*`, which no utility class reads, so
+ * `<ThemeProvider theme={{ primary: 'red' }}>` was silently inert.
+ *
+ * Mounting with no overrides is a no-op: the light preset mirrors the @theme
+ * defaults in src/styles.css.
+ *
+ * `preset="dark"` is PARTIAL — it re-tones text/surface/border and the semantic
+ * colours, but the token set has no dark-specific palette, so surfaces that use
+ * literal utilities won't follow. Treat it as a starting point.
  */
-export function ThemeProvider({ children, preset = 'light', theme }: ThemeProviderProps) {
+export function ThemeProvider({ children, preset = 'light', theme, tones }: ThemeProviderProps) {
   const baseTheme = preset === 'dark' ? darkTheme : lightTheme;
 
   const resolvedTheme = useMemo<ThemeTokens>(
@@ -105,18 +142,29 @@ export function ThemeProvider({ children, preset = 'light', theme }: ThemeProvid
   useEffect(() => {
     const root = document.documentElement;
     const keys = Object.keys(resolvedTheme) as Array<keyof ThemeTokens>;
+    const written: string[] = [];
+
+    const set = (name: string, value: string) => {
+      root.style.setProperty(name, value);
+      written.push(name);
+    };
 
     for (const key of keys) {
-      root.style.setProperty(tokenToCssVarName(key), resolvedTheme[key]);
+      set(tokenToCssVarName(key), resolvedTheme[key]);
+      const alias = THEME_TOKEN_ALIASES[key];
+      if (alias) set(alias, resolvedTheme[key]);
     }
 
-    // Cleanup: remove properties when unmounted or theme changes
-    return () => {
-      for (const key of keys) {
-        root.style.removeProperty(tokenToCssVarName(key));
+    for (const [tone, roles] of Object.entries(tones ?? {})) {
+      for (const [role, value] of Object.entries(roles)) {
+        if (value) set(toneCssVarName(tone, role as ToneRole), value);
       }
+    }
+
+    return () => {
+      for (const name of written) root.style.removeProperty(name);
     };
-  }, [resolvedTheme]);
+  }, [resolvedTheme, tones]);
 
   return (
     <ThemeContext.Provider value={resolvedTheme}>

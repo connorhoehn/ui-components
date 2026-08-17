@@ -1,27 +1,33 @@
 // src/theme/presets.ts
 //
 // Light and dark theme presets defining all design tokens as raw CSS values.
+//
+// The light preset's colours MUST match the @theme tokens in src/styles.css.
+// They had drifted (primary #3b82f6 vs #646cff, success #10b981 vs #16a34a, and
+// four more), which meant simply mounting <ThemeProvider> would silently
+// rebrand the app once the provider started writing the real --color-* tokens.
+// src/styles.css is the source of truth; mirror it here.
 
 import type { ThemeTokens } from './ThemeProvider';
 
 /** Default light theme — derived from the original hardcoded tokens. */
 export const lightTheme: ThemeTokens = {
   // Colors
-  primary: '#3b82f6',
-  primaryDark: '#1d4ed8',
+  primary: '#646cff',
+  primaryDark: '#4f55ff',
   primaryLight: '#93c5fd',
   danger: '#dc2626',
   dangerLight: '#fca5a5',
-  success: '#10b981',
+  success: '#16a34a',
   successLight: '#6ee7b7',
-  warning: '#f59e0b',
+  warning: '#d97706',
   warningLight: '#fcd34d',
-  info: '#0ea5e9',
+  info: '#2563eb',
   infoLight: '#7dd3fc',
 
   // Text
-  textPrimary: '#1e293b',
-  textSecondary: '#64748b',
+  textPrimary: '#0f172a',
+  textSecondary: '#475569',
   textMuted: '#94a3b8',
   textInverse: '#ffffff',
 

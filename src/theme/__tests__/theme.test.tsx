@@ -1,3 +1,8 @@
+// NOTE: the light-preset colours asserted here must match the @theme tokens
+// in src/styles.css. They used to be a drifted fork (#3b82f6 vs #646cff,
+// #1e293b vs #0f172a, ...), and these assertions were pinning the drift —
+// which mattered once ThemeProvider started writing the real --color-*
+// tokens, because mounting it would then have silently rebranded the app.
 import { render } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
 import { createElement } from 'react';
@@ -44,8 +49,8 @@ describe('ThemeProvider', () => {
     );
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue('--ui-primary')).toBe('#3b82f6');
-    expect(root.style.getPropertyValue('--ui-text-primary')).toBe('#1e293b');
+    expect(root.style.getPropertyValue('--ui-primary')).toBe('#646cff');
+    expect(root.style.getPropertyValue('--ui-text-primary')).toBe('#0f172a');
   });
 
   it('applies dark theme preset CSS variables', () => {
@@ -64,7 +69,7 @@ describe('ThemeProvider', () => {
     );
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue('--ui-primary')).toBe('#3b82f6');
+    expect(root.style.getPropertyValue('--ui-primary')).toBe('#646cff');
 
     unmount();
 
@@ -95,8 +100,8 @@ describe('useTheme', () => {
 
     const { result } = renderHook(() => useTheme(), { wrapper: themeWrapper });
 
-    expect(result.current.primary).toBe('#3b82f6');
-    expect(result.current.textPrimary).toBe('#1e293b');
+    expect(result.current.primary).toBe('#646cff');
+    expect(result.current.textPrimary).toBe('#0f172a');
     expect(result.current.background).toBe('#f8fafc');
   });
 

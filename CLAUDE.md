@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.40.1`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.41.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -378,9 +378,23 @@ tertiary,disabled}`, `--color-surface{,-inset,-panel,-hover}`,
 `--color-cat-*` (pipeline node categories), `--radius-*`, `--shadow-*`,
 `--font-code`.
 
-> **`src/theme/` is a separate, disconnected system.** `ThemeProvider` injects
-> `--ui-*` variables, which no Tailwind utility reads — so
-> `<ThemeProvider theme={{ primary: 'red' }}>` changes nothing visible. Its
-> preset values also disagree with the `@theme` tokens (`primary: #3b82f6` vs
-> `#646cff`). Treat the CSS variables above as authoritative; reconciling or
-> retiring `src/theme/` is open work.
+### `src/theme/` — reconciled in v2.41.0
+
+`ThemeProvider` used to write only `--ui-*`, which no Tailwind utility reads, so
+it was silently inert while `ThemingPage` documented it as the theming API. It
+now writes the real `--color-*` / `--radius-*` tokens too (`THEME_TOKEN_ALIASES`
+in `css-variables.ts`), keeps `--ui-*` for existing `cssVar()` callers, and
+takes a `tones` prop that maps onto the four-role scale.
+
+Two rules that keep it honest, both pinned by
+`src/theme/__tests__/ThemeProvider.tokens.test.tsx`:
+
+1. **`lightTheme` must mirror the `@theme` tokens in `src/styles.css`.** It was
+   a drifted fork (6 of 10 colours disagreed). Now that the provider writes real
+   tokens, any divergence means *mounting* `<ThemeProvider>` silently rebrands
+   the app.
+2. **The provider must remove every property it wrote on unmount**, including
+   the aliases and tone overrides.
+
+`preset="dark"` is **partial** — it re-tones text/surface/border and the
+semantic colours, but there is no dark-specific palette in the token set yet.

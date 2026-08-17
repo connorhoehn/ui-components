@@ -6541,20 +6541,43 @@ declare interface TextSelectionData {
 
 declare type Theme = 'light' | 'dark';
 
+/**
+ * ThemeTokens key -> the `@theme` custom property in src/styles.css that
+ * Tailwind utilities actually compile against.
+ *
+ * Why this exists: ThemeProvider only ever wrote `--ui-*`, and no utility class
+ * reads those, so `<ThemeProvider theme={{ primary: 'red' }}>` changed nothing
+ * visible. Writing these names too is what makes the provider real. Keys with
+ * no semantic counterpart (textInverse, surfaceOverlay, borderLight, …) stay
+ * `--ui-*`-only and are intentionally absent.
+ */
+export declare const THEME_TOKEN_ALIASES: Partial<Record<keyof ThemeTokens, string>>;
+
 declare interface ThemeContextValue {
     theme: Theme;
     toggleTheme: () => void;
 }
 
 /**
- * Provides a resolved theme via React context and injects CSS custom properties
- * on the document root so that `var(--ui-*)` references work globally.
+ * Injects the theme as CSS custom properties on the document root.
  *
- * Works without wrapping — once mounted, any component using `cssVar()` in
- * inline styles will pick up the values. Wrapping in ThemeProvider enables
- * programmatic access via `useTheme()` and scoped overrides.
+ * Writes BOTH namespaces:
+ *   - `--ui-*`   for every ThemeTokens key (kept for `cssVar()` callers)
+ *   - `--color-*` / `--radius-*` for keys with a real token counterpart, which
+ *     is what Tailwind utilities compile against
+ *
+ * The second half is what makes this component do anything. Until v2.40.2 it
+ * wrote only `--ui-*`, which no utility class reads, so
+ * `<ThemeProvider theme={{ primary: 'red' }}>` was silently inert.
+ *
+ * Mounting with no overrides is a no-op: the light preset mirrors the @theme
+ * defaults in src/styles.css.
+ *
+ * `preset="dark"` is PARTIAL — it re-tones text/surface/border and the semantic
+ * colours, but the token set has no dark-specific palette, so surfaces that use
+ * literal utilities won't follow. Treat it as a starting point.
  */
-export declare function ThemeProvider({ children, preset, theme }: ThemeProviderProps): JSX.Element;
+export declare function ThemeProvider({ children, preset, theme, tones }: ThemeProviderProps): JSX.Element;
 
 export declare interface ThemeProviderProps {
     children?: ReactNode;
@@ -6562,6 +6585,15 @@ export declare interface ThemeProviderProps {
     preset?: 'light' | 'dark';
     /** Partial overrides merged on top of the preset. */
     theme?: Partial<ThemeTokens>;
+    /**
+     * Rebrand tones from the semantic scale — the recommended path, because it
+     * maps 1:1 onto what every tinted surface in the library reads:
+     *
+     *   <ThemeProvider tones={{ accent: { base: '#0d9488', bg: '#f0fdfa' } }}>
+     *
+     * Equivalent to overriding `--color-accent` / `--color-accent-bg` in CSS.
+     */
+    tones?: Record<string, ToneOverride>;
 }
 
 /**
@@ -6743,11 +6775,32 @@ export declare const TONE_SOLID_BG: Record<Tone, string>;
 /** Foreground only — labels, icons on an untinted surface. */
 export declare const TONE_TEXT: Record<Tone, string>;
 
+/**
+ * Custom-property name for one role of one tone, e.g.
+ * `toneCssVarName('success', 'bg')` -> `--color-success-bg`.
+ */
+export declare function toneCssVarName(tone: string, role: ToneRole): string;
+
 /** Normalise a caller-supplied tone (folds the deprecated 'purple'). */
 export declare function toneKey(tone: ToneOrAlias): Tone;
 
 /** Tone plus the historical alias kept for source compatibility. */
 export declare type ToneOrAlias = Tone | 'purple';
+
+/** Overrides for one tone in the semantic scale. Omitted roles keep their default. */
+export declare interface ToneOverride {
+    /** Solid fill / icon / indicator dot. */
+    base?: string;
+    /** Soft tinted background. */
+    bg?: string;
+    /** Readable text on the soft background. */
+    fg?: string;
+    /** Border for the soft surface. */
+    border?: string;
+}
+
+/** The four roles every tone in the scale carries. */
+export declare type ToneRole = 'base' | 'bg' | 'fg' | 'border';
 
 export declare const TONES: readonly ["neutral", "success", "warning", "danger", "info", "caution", "accent"];
 

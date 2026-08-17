@@ -8,6 +8,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.41.0] — 2026-08-17
+
+### Fixed
+
+- **`ThemeProvider` did nothing.** It wrote only `--ui-*` custom properties,
+  which no Tailwind utility reads, so `<ThemeProvider theme={{ primary: 'red' }}>`
+  was silently inert — while `ThemingPage` documented it as *the* theming API
+  with copy-paste samples. It now also writes the real `--color-*` / `--radius-*`
+  tokens for every key with a semantic counterpart (see `THEME_TOKEN_ALIASES`),
+  and still writes `--ui-*` so existing `cssVar()` callers keep working.
+
+- **The light preset was a stale fork of the palette** — a sixth colour system.
+  Six of ten mapped colours disagreed with `src/styles.css` (`primary` #3b82f6
+  vs #646cff, `success` #10b981 vs #16a34a, `warning`, `info`, `textPrimary`,
+  `textSecondary`). That only became dangerous once the provider started
+  writing real tokens: mounting `<ThemeProvider>` with no overrides would have
+  silently rebranded the app. `lightTheme` now mirrors the stylesheet, and a
+  test pins it.
+
+- **The documented `mode` prop does not exist.** Every `ThemingPage` sample used
+  `<ThemeProvider mode="light">`; the prop is `preset`. Copy-pasting the docs
+  produced a no-op. Fixed, and the page now documents the tone-override path.
+
+### Added
+
+- **`tones` prop** — the recommended rebrand path, matching what every tinted
+  surface actually reads:
+
+  ```tsx
+  <ThemeProvider tones={{ accent: { base: '#0d9488', bg: '#f0fdfa' } }}>
+  ```
+
+  Omitted roles keep their default. Equivalent to overriding
+  `--color-accent{,-bg,-fg,-border}` in CSS.
+- `toneCssVarName`, `THEME_TOKEN_ALIASES`, `ToneRole`, `ToneOverride` exported
+  from `…/theme`.
+- `ThemingPage` gained a "Rebranding a tone" section covering both the plain-CSS
+  and the runtime route.
+
+### Known
+
+- `preset="dark"` is **partial**: it re-tones text/surface/border and the
+  semantic colours, but the token set has no dark-specific palette, so surfaces
+  are not fully dark-mode-ready. Documented as a starting point rather than
+  presented as finished.
+
+
 ## [2.40.1] — 2026-08-17
 
 Packaging fixes. Nothing in this release is visible in-repo — all four bugs
