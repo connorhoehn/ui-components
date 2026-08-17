@@ -1,7 +1,7 @@
 # CLAUDE.md — @connorhoehnslalom/ui-components
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.44.1`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.44.2`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is

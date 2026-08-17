@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.44.2] — 2026-08-17
+
+Lifecycle bugs in the two areas with the most reported trouble. Both files were
+among the largest with **no tests at all**.
+
+### Fixed — doc-editor
+
+- **Ghost cursors.** `TiptapEditor` published the local caret into awareness on
+  every selection change, tagged with `sectionId`, but unmount only removed the
+  `selectionUpdate` listener — it never cleared the `cursor` field. The caret
+  survived pointing into a section that no longer existed, and peers kept
+  drawing it until awareness timed out, or indefinitely if the author simply
+  stopped moving. Cleanup now clears the field, and only that field, since
+  awareness is shared with identity/presence.
+- **Carets filtered against a stale section.** `updateCursors` read `sectionId`
+  but omitted it from its dependency list, so after a section id change the
+  filter compared against the id the callback was created with.
+- **Carets positioned against the wrong element.** The overlay received
+  `editorAreaRef.current` read during render, which is null on the first pass;
+  `getCoords` then fell back to `view.dom`, offsetting every remote caret until
+  an unrelated re-render happened to pick up the node. Now a callback ref into
+  state.
+
+### Fixed — hangout
+
+- **Screen share that could never be stopped.** `startScreenShare` awaits
+  `getDisplayMedia`, which stays pending while the OS window-picker is open —
+  easily long enough for the user to leave the call. Nothing guarded the
+  resolution, so the stream was assigned to a ref after teardown had already
+  run: the capture stayed live with no UI left to stop it, and the browser kept
+  showing the "sharing your screen" indicator. Both awaits in the callback now
+  check a component-lifetime mount flag and release the stream.
+
+### Added
+
+- `TiptapEditor.awareness.test.tsx` (4 cases) and
+  `useHangoutEmbed.test.ts` (5 cases) — the first tests either file has had.
+  Both were written to fail against the old code first.
+
+
 ## [2.44.1] — 2026-08-17
 
 ### Fixed

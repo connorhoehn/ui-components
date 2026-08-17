@@ -1,6 +1,6 @@
-import { r as L, a as v } from "./registry-qR57lair.js";
-import { jsx as t, jsxs as u, Fragment as P } from "react/jsx-runtime";
-import { useMemo as ne, useState as R, useRef as A, useEffect as S, useCallback as E } from "react";
+import { r as T, a as k } from "./registry-qR57lair.js";
+import { jsx as t, jsxs as u, Fragment as O } from "react/jsx-runtime";
+import { useMemo as ne, useState as D, useEffect as A, useCallback as j, useRef as S } from "react";
 import { useEditor as ie, EditorContent as ae } from "@tiptap/react";
 import oe from "@tiptap/starter-kit";
 import se from "@tiptap/extension-task-list";
@@ -234,7 +234,7 @@ const we = console.warn;
 console.warn = (...e) => {
   typeof e[0] == "string" && e[0].includes("extension-collaboration") || we(...e);
 };
-function j(e, r, n) {
+function B(e, r, n) {
   try {
     if (r < 0 || r > e.state.doc.content.size) return null;
     const i = e.coordsAtPos(r), d = (n || e.dom).getBoundingClientRect();
@@ -248,38 +248,38 @@ function j(e, r, n) {
   }
 }
 function Ce({ cursors: e, editorView: r, containerEl: n }) {
-  return r ? /* @__PURE__ */ t(P, { children: e.map((i) => {
+  return r ? /* @__PURE__ */ t(O, { children: e.map((i) => {
     if (i.head == null) return null;
-    const o = j(r, i.head, n);
+    const o = B(r, i.head, n);
     if (!o) return null;
     const d = i.name.split(" ").map((a) => a[0] ?? "").join("").toUpperCase().slice(0, 2) || i.name.slice(0, 2).toUpperCase(), l = [];
     if (i.anchor != null && i.anchor !== i.head) {
-      const a = Math.min(i.anchor, i.head), p = Math.max(i.anchor, i.head);
+      const a = Math.min(i.anchor, i.head), f = Math.max(i.anchor, i.head);
       try {
         const h = r.dom.offsetWidth;
         let x = a;
-        for (; x <= p; ) {
-          const m = j(r, x, n);
+        for (; x <= f; ) {
+          const m = B(r, x, n);
           if (!m) break;
           let N = x;
-          const g = m.top;
-          for (let f = x + 1; f <= p; f++) {
-            const y = j(r, f, n);
-            if (!y || Math.abs(y.top - g) > 2) break;
-            N = f;
+          const v = m.top;
+          for (let p = x + 1; p <= f; p++) {
+            const g = B(r, p, n);
+            if (!g || Math.abs(g.top - v) > 2) break;
+            N = p;
           }
-          const k = j(r, N, n);
-          if (k) {
-            const f = x === a ? m.left : 0, y = N === p ? k.left + 4 : h;
+          const y = B(r, N, n);
+          if (y) {
+            const p = x === a ? m.left : 0, g = N === f ? y.left + 4 : h;
             l.push(
               /* @__PURE__ */ t(
                 "div",
                 {
                   className: "absolute rounded-sm pointer-events-none opacity-[0.12] z-[5]",
                   style: {
-                    top: g,
-                    left: f,
-                    width: Math.max(y - f, 4),
+                    top: v,
+                    left: p,
+                    width: Math.max(g - p, 4),
                     height: m.height || 18,
                     background: i.color
                   }
@@ -335,7 +335,7 @@ function Ce({ cursors: e, editorView: r, containerEl: n }) {
     ] }, i.clientId);
   }) }) : null;
 }
-function T({
+function E({
   fragment: e,
   ydoc: r,
   provider: n,
@@ -345,7 +345,7 @@ function T({
   sectionId: l,
   onUpdateCursorInfo: a
 }) {
-  const p = ne(() => [
+  const f = ne(() => [
     oe.configure({ history: !1 }),
     se,
     le.configure({ nested: !0 }),
@@ -353,78 +353,78 @@ function T({
     ce.configure({ document: r, fragment: e })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [r, e]), c = ie({
-    extensions: p,
+    extensions: f,
     editable: o
-  }, [p]), [h, x] = R([]), m = A(null);
-  S(() => {
+  }, [f]), [h, x] = D([]), [m, N] = D(null);
+  A(() => {
     if (a)
       a(i.name, i.color);
     else if (n?.awareness) {
-      const k = n.awareness.getLocalState()?.user || {};
+      const p = n.awareness.getLocalState()?.user || {};
       n.awareness.setLocalStateField("user", {
-        ...k,
+        ...p,
         name: i.name,
         color: i.color
       });
     }
   }, [n, i, a]);
-  const N = E(() => {
+  const v = j(() => {
     if (!n?.awareness || !c?.view) return;
-    const g = n.awareness.getStates(), k = n.awareness.clientID, f = [];
-    g.forEach((y, C) => {
-      if (C === k) return;
-      const w = y.user;
-      if (!(!w || !y.cursor) && !(l && y.cursor.sectionId !== l))
+    const y = n.awareness.getStates(), p = n.awareness.clientID, g = [];
+    y.forEach((w, C) => {
+      if (C === p) return;
+      const $ = w.user;
+      if (!(!$ || !w.cursor) && !(l && w.cursor.sectionId !== l))
         try {
-          const D = _.getState(c.view.state);
-          if (!D?.type || !D?.binding?.mapping) return;
-          const I = M(
-            D.doc,
-            D.type,
-            z.createRelativePositionFromJSON(y.cursor.anchor),
-            D.binding.mapping
-          ), B = M(
-            D.doc,
-            D.type,
-            z.createRelativePositionFromJSON(y.cursor.head),
-            D.binding.mapping
+          const R = _.getState(c.view.state);
+          if (!R?.type || !R?.binding?.mapping) return;
+          const F = M(
+            R.doc,
+            R.type,
+            z.createRelativePositionFromJSON(w.cursor.anchor),
+            R.binding.mapping
+          ), I = M(
+            R.doc,
+            R.type,
+            z.createRelativePositionFromJSON(w.cursor.head),
+            R.binding.mapping
           );
-          f.push({
+          g.push({
             clientId: C,
-            name: w.name || `User ${C}`,
-            color: w.color || "#3b82f6",
-            anchor: I,
-            head: B
+            name: $.name || `User ${C}`,
+            color: $.color || "#3b82f6",
+            anchor: F,
+            head: I
           });
         } catch {
         }
-    }), x(f);
-  }, [n, c]);
-  return S(() => {
+    }), x(g);
+  }, [n, c, l]);
+  return A(() => {
     if (!c?.view || !n?.awareness) return;
-    const g = () => {
+    const y = () => {
       try {
-        const k = _.getState(c.view.state);
-        if (!k?.type || !k?.binding?.mapping) return;
-        const { anchor: f, head: y } = c.view.state.selection, C = V(f, k.type, k.binding.mapping), w = V(y, k.type, k.binding.mapping);
-        n.awareness.setLocalStateField("cursor", { anchor: C, head: w, sectionId: l });
+        const p = _.getState(c.view.state);
+        if (!p?.type || !p?.binding?.mapping) return;
+        const { anchor: g, head: w } = c.view.state.selection, C = V(g, p.type, p.binding.mapping), $ = V(w, p.type, p.binding.mapping);
+        n.awareness.setLocalStateField("cursor", { anchor: C, head: $, sectionId: l });
       } catch {
       }
     };
-    return c.on("selectionUpdate", g), g(), () => {
-      c.off("selectionUpdate", g);
+    return c.on("selectionUpdate", y), y(), () => {
+      c.off("selectionUpdate", y), n.awareness.setLocalStateField("cursor", null);
     };
-  }, [c, n, l]), S(() => {
+  }, [c, n, l]), A(() => {
     if (!n?.awareness) return;
-    const g = () => N();
-    return n.awareness.on("change", g), () => {
-      n.awareness.off("change", g);
+    const y = () => v();
+    return n.awareness.on("change", y), () => {
+      n.awareness.off("change", y);
     };
-  }, [n, N]), /* @__PURE__ */ u("div", { className: s(o ? "border border-border rounded-lg overflow-hidden relative" : "relative"), children: [
+  }, [n, v]), /* @__PURE__ */ u("div", { className: s(o ? "border border-border rounded-lg overflow-hidden relative" : "relative"), children: [
     o && /* @__PURE__ */ t(Ne, { editor: c }),
-    /* @__PURE__ */ u("div", { ref: m, className: s("px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative"), children: [
+    /* @__PURE__ */ u("div", { ref: N, className: s("px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative"), children: [
       /* @__PURE__ */ t(ae, { editor: c }),
-      /* @__PURE__ */ t(Ce, { cursors: h, editorView: c?.view, containerEl: m.current })
+      /* @__PURE__ */ t(Ce, { cursors: h, editorView: c?.view, containerEl: m })
     ] })
   ] });
 }
@@ -456,34 +456,34 @@ function W(e) {
   return e.split(/\s+/).map((r) => r[0]).join("").toUpperCase().slice(0, 2);
 }
 function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, onDidAutoFocus: d }) {
-  const [l, a] = R(!1), [p, c] = R(""), [h, x] = R(0), m = A(null), N = A(null), g = A(null), k = () => {
+  const [l, a] = D(!1), [f, c] = D(""), [h, x] = D(0), m = S(null), N = S(null), v = S(null), y = () => {
     const b = e.status === "done" ? "pending" : "done";
     n({ status: b });
-  }, f = e.assignee ? H.find((b) => b.displayName === e.assignee) : void 0, y = p.trim() ? ue(p) : H, C = E(() => {
+  }, p = e.assignee ? H.find((b) => b.displayName === e.assignee) : void 0, g = f.trim() ? ue(f) : H, w = j(() => {
     r && (c(""), x(0), a(!0));
-  }, [r]), w = E(() => {
+  }, [r]), C = j(() => {
     a(!1), c(""), x(0);
-  }, []), D = E((b) => {
-    n({ assignee: b.displayName }), w();
-  }, [n, w]), I = E(() => {
-    n({ assignee: "" }), w();
-  }, [n, w]);
-  S(() => {
+  }, []), $ = j((b) => {
+    n({ assignee: b.displayName }), C();
+  }, [n, C]), R = j(() => {
+    n({ assignee: "" }), C();
+  }, [n, C]);
+  A(() => {
     if (!l) return;
-    const b = ($) => {
-      m.current && !m.current.contains($.target) && w();
+    const b = (L) => {
+      m.current && !m.current.contains(L.target) && C();
     };
     return document.addEventListener("mousedown", b), () => document.removeEventListener("mousedown", b);
-  }, [l, w]), S(() => {
+  }, [l, C]), A(() => {
     l && N.current && N.current.focus();
-  }, [l]), S(() => {
+  }, [l]), A(() => {
     x(0);
-  }, [p]), S(() => {
-    o && g.current && (g.current.focus(), d?.());
+  }, [f]), A(() => {
+    o && v.current && (v.current.focus(), d?.());
   }, [o, d]);
-  const B = (b) => {
-    b.key === "Escape" ? w() : b.key === "ArrowDown" ? (b.preventDefault(), x(($) => Math.min($ + 1, y.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), x(($) => Math.max($ - 1, 0))) : b.key === "Enter" && (b.preventDefault(), y[h] && D(y[h]));
-  }, O = e.dueDate && e.status !== "done" ? Se(e.dueDate) : !1;
+  const F = (b) => {
+    b.key === "Escape" ? C() : b.key === "ArrowDown" ? (b.preventDefault(), x((L) => Math.min(L + 1, g.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), x((L) => Math.max(L - 1, 0))) : b.key === "Enter" && (b.preventDefault(), g[h] && $(g[h]));
+  }, I = e.dueDate && e.status !== "done" ? Se(e.dueDate) : !1;
   return /* @__PURE__ */ u("div", { className: s("flex items-center gap-2 py-1.5 border-b border-[#f1f5f9]"), children: [
     /* @__PURE__ */ t(
       "span",
@@ -498,7 +498,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
       {
         type: "checkbox",
         checked: e.status === "done",
-        onChange: k,
+        onChange: y,
         disabled: !r,
         className: s("w-4 h-4 accent-[#3b82f6]", r ? "cursor-pointer" : "cursor-default")
       }
@@ -506,7 +506,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
     /* @__PURE__ */ t(
       "input",
       {
-        ref: g,
+        ref: v,
         "data-testid": `task-text-${e.id}`,
         type: "text",
         value: e.text,
@@ -524,10 +524,10 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
         title: e.dueDate,
         className: s(
           "inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border",
-          O ? "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]" : "bg-[#f0f9ff] text-[#64748b] border-[#e0f2fe]"
+          I ? "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]" : "bg-[#f0f9ff] text-[#64748b] border-[#e0f2fe]"
         ),
         children: [
-          O ? "⚠ " : "",
+          I ? "⚠ " : "",
           "Due: ",
           Ae(e.dueDate)
         ]
@@ -546,18 +546,18 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
         "button",
         {
           type: "button",
-          onClick: C,
+          onClick: w,
           title: e.assignee || "Unassigned",
           className: s(
             "inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap",
             e.assignee ? "px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0" : "w-6 px-0 bg-white text-text-tertiary border border-dashed border-[#cbd5e1]"
           ),
-          children: e.assignee ? /* @__PURE__ */ u(P, { children: [
+          children: e.assignee ? /* @__PURE__ */ u(O, { children: [
             /* @__PURE__ */ t(
               "span",
               {
                 className: s("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
-                style: { background: f?.color ?? "#94a3b8" },
+                style: { background: p?.color ?? "#94a3b8" },
                 children: W(e.assignee)
               }
             ),
@@ -571,9 +571,9 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
           {
             ref: N,
             type: "text",
-            value: p,
+            value: f,
             onChange: (b) => c(b.target.value),
-            onKeyDown: B,
+            onKeyDown: F,
             placeholder: "Search users...",
             className: s("w-full text-[11px] font-[inherit] px-2 py-1 rounded-md border border-[#d1d5db] outline-none h-7 bg-white text-[#1e293b] box-border")
           }
@@ -582,7 +582,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
           "button",
           {
             type: "button",
-            onClick: I,
+            onClick: R,
             className: s("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-[#1e293b]"),
             children: [
               /* @__PURE__ */ t("span", { className: s("w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-[#64748b] inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"), children: "--" }),
@@ -590,15 +590,15 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
             ]
           }
         ),
-        y.map((b, $) => /* @__PURE__ */ u(
+        g.map((b, L) => /* @__PURE__ */ u(
           "button",
           {
             type: "button",
-            onClick: () => D(b),
-            onMouseEnter: () => x($),
+            onClick: () => $(b),
+            onMouseEnter: () => x(L),
             className: s(
               "flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]",
-              $ === h ? "bg-surface-hover" : "bg-transparent"
+              L === h ? "bg-surface-hover" : "bg-transparent"
             ),
             children: [
               /* @__PURE__ */ t(
@@ -614,7 +614,7 @@ function $e({ item: e, editable: r, onUpdate: n, onRemove: i, autoFocusText: o, 
           },
           b.userId
         )),
-        y.length === 0 && /* @__PURE__ */ t("div", { className: s("px-2.5 py-2 text-[11px] text-text-tertiary"), children: "No users found" })
+        g.length === 0 && /* @__PURE__ */ t("div", { className: s("px-2.5 py-2 text-[11px] text-text-tertiary"), children: "No users found" })
       ] })
     ] }),
     /* @__PURE__ */ u(
@@ -671,7 +671,7 @@ function q({ items: e, editable: r, onUpdateItem: n, onRemoveItem: i, focusLastI
     {
       item: l,
       editable: r,
-      onUpdate: (p) => n(l.id, p),
+      onUpdate: (f) => n(l.id, f),
       onRemove: () => i(l.id),
       autoFocusText: d && a === e.length - 1,
       onDidAutoFocus: d && a === e.length - 1 ? () => {
@@ -690,15 +690,15 @@ function Le({
   editable: d,
   onAddItem: l,
   onUpdateItem: a,
-  onRemoveItem: p,
+  onRemoveItem: f,
   onUpdateCursorInfo: c
 }) {
-  const h = A(!1), x = () => {
+  const h = S(!1), x = () => {
     l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
-      T,
+      E,
       {
         fragment: r,
         ydoc: n,
@@ -716,7 +716,7 @@ function Le({
         items: e.items,
         editable: d,
         onUpdateItem: (m, N) => a?.(m, N),
-        onRemoveItem: (m) => p?.(m),
+        onRemoveItem: (m) => f?.(m),
         focusLastItem: h
       }
     ),
@@ -741,7 +741,7 @@ function Te({
   onUpdateCursorInfo: l
 }) {
   return !r || !n ? /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px] py-2", children: "No content yet." }) : /* @__PURE__ */ t(
-    T,
+    E,
     {
       fragment: r,
       ydoc: n,
@@ -763,7 +763,7 @@ function Y({
 }) {
   return /* @__PURE__ */ u("div", { children: [
     !!r && !!n ? /* @__PURE__ */ t("div", { className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]", children: /* @__PURE__ */ t(
-      T,
+      E,
       {
         fragment: r,
         ydoc: n,
@@ -791,7 +791,7 @@ function Ee({
   onUpdateItem: i,
   onRemoveItem: o
 }) {
-  const d = A(!1), l = () => {
+  const d = S(!1), l = () => {
     n?.({
       text: "",
       status: "pending",
@@ -808,7 +808,7 @@ function Ee({
       {
         items: e.items,
         editable: r,
-        onUpdateItem: (a, p) => i?.(a, p),
+        onUpdateItem: (a, f) => i?.(a, f),
         onRemoveItem: (a) => o?.(a),
         focusLastItem: d
       }
@@ -848,8 +848,8 @@ function Fe(e) {
 function Ue(e) {
   return e.split(/\s+/).map((r) => r[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function F({ item: e, onUpdateItem: r }) {
-  const [n, i] = R(!1), o = je[e.status], d = e.dueDate && e.status === "pending" ? Be(e.dueDate) : !1, l = e.status === "done" || e.status === "acked";
+function U({ item: e, onUpdateItem: r }) {
+  const [n, i] = D(!1), o = je[e.status], d = e.dueDate && e.status === "pending" ? Be(e.dueDate) : !1, l = e.status === "done" || e.status === "acked";
   return /* @__PURE__ */ u(
     "div",
     {
@@ -957,9 +957,9 @@ function Q({ section: e, onUpdateItem: r, onNavigateToEditor: n }) {
     return /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No items." });
   const o = i.filter((a) => a.status === "pending"), d = i.filter((a) => a.status === "done" || a.status === "acked"), l = i.filter((a) => a.status === "rejected");
   return /* @__PURE__ */ u("div", { children: [
-    o.length > 0 && /* @__PURE__ */ t("div", { className: "mb-1", children: o.map((a) => /* @__PURE__ */ t(F, { item: a, onUpdateItem: r }, a.id)) }),
-    d.length > 0 && /* @__PURE__ */ t("div", { className: "mb-1", children: d.map((a) => /* @__PURE__ */ t(F, { item: a, onUpdateItem: r }, a.id)) }),
-    l.length > 0 && /* @__PURE__ */ t("div", { children: l.map((a) => /* @__PURE__ */ t(F, { item: a, onUpdateItem: r }, a.id)) }),
+    o.length > 0 && /* @__PURE__ */ t("div", { className: "mb-1", children: o.map((a) => /* @__PURE__ */ t(U, { item: a, onUpdateItem: r }, a.id)) }),
+    d.length > 0 && /* @__PURE__ */ t("div", { className: "mb-1", children: d.map((a) => /* @__PURE__ */ t(U, { item: a, onUpdateItem: r }, a.id)) }),
+    l.length > 0 && /* @__PURE__ */ t("div", { children: l.map((a) => /* @__PURE__ */ t(U, { item: a, onUpdateItem: r }, a.id)) }),
     n && /* @__PURE__ */ t(
       "button",
       {
@@ -972,8 +972,8 @@ function Q({ section: e, onUpdateItem: r, onNavigateToEditor: n }) {
   ] });
 }
 function Pe({ item: e, editable: r, autoFocus: n, onDidAutoFocus: i, onUpdate: o, onRemove: d }) {
-  const l = A(null), a = e.status === "done";
-  return S(() => {
+  const l = S(null), a = e.status === "done";
+  return A(() => {
     n && l.current && (l.current.focus(), i?.());
   }, [n, i]), /* @__PURE__ */ u("div", { className: "flex items-center gap-2 py-[5px] border-b border-border-subtle", children: [
     /* @__PURE__ */ t(
@@ -992,7 +992,7 @@ function Pe({ item: e, editable: r, autoFocus: n, onDidAutoFocus: i, onUpdate: o
         ref: l,
         type: "text",
         value: e.text,
-        onChange: (p) => o({ text: p.target.value }),
+        onChange: (f) => o({ text: f.target.value }),
         readOnly: !r,
         placeholder: "Checklist item...",
         className: s(
@@ -1021,15 +1021,15 @@ function Oe({
   editable: d,
   onAddItem: l,
   onUpdateItem: a,
-  onRemoveItem: p,
+  onRemoveItem: f,
   onUpdateCursorInfo: c
 }) {
-  const h = A(!1), x = () => {
+  const h = S(!1), x = () => {
     l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
-  }, m = e.items.length, N = e.items.filter((g) => g.status === "done").length;
+  }, m = e.items.length, N = e.items.filter((v) => v.status === "done").length;
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
-      T,
+      E,
       {
         fragment: r,
         ydoc: n,
@@ -1047,21 +1047,21 @@ function Oe({
       m,
       " done"
     ] }),
-    /* @__PURE__ */ t("div", { children: e.items.map((g, k) => {
-      const f = k === e.items.length - 1, y = h.current && f;
+    /* @__PURE__ */ t("div", { children: e.items.map((v, y) => {
+      const p = y === e.items.length - 1, g = h.current && p;
       return /* @__PURE__ */ t(
         Pe,
         {
-          item: g,
+          item: v,
           editable: d,
-          autoFocus: y,
-          onDidAutoFocus: y ? () => {
+          autoFocus: g,
+          onDidAutoFocus: g ? () => {
             h.current = !1;
           } : void 0,
-          onUpdate: (C) => a?.(g.id, C),
-          onRemove: () => p?.(g.id)
+          onUpdate: (w) => a?.(v.id, w),
+          onRemove: () => f?.(v.id)
         },
-        g.id
+        v.id
       );
     }) }),
     d && /* @__PURE__ */ t(
@@ -1083,10 +1083,10 @@ function X({
   onUpdateItem: o,
   onNavigateToEditor: d
 }) {
-  const l = e.items, a = l.length, p = l.filter((h) => h.status === "done").length, c = a > 0 ? Math.round(p / a * 100) : 0;
+  const l = e.items, a = l.length, f = l.filter((h) => h.status === "done").length, c = a > 0 ? Math.round(f / a * 100) : 0;
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t("div", { className: "mb-2.5", children: /* @__PURE__ */ t(
-      T,
+      E,
       {
         fragment: r,
         ydoc: n,
@@ -1099,7 +1099,7 @@ function X({
     a > 0 && /* @__PURE__ */ u("div", { className: "mb-2.5", children: [
       /* @__PURE__ */ u("div", { className: "flex justify-between mb-1", children: [
         /* @__PURE__ */ u("span", { className: "text-[11px] text-neutral font-semibold", children: [
-          p,
+          f,
           " / ",
           a,
           " done"
@@ -1196,8 +1196,8 @@ const G = {
   rejected: { label: "Vetoed", icon: "✕", color: "#991b1b", bg: "#fee2e2" }
 };
 function Ke({ item: e, editable: r, autoFocus: n, onDidAutoFocus: i, onUpdate: o, onRemove: d }) {
-  const l = A(null), a = G[e.status] ?? G.pending;
-  return S(() => {
+  const l = S(null), a = G[e.status] ?? G.pending;
+  return A(() => {
     n && l.current && (l.current.focus(), i?.());
   }, [n, i]), /* @__PURE__ */ u("div", { className: "flex items-center gap-2 py-1.5 border-b border-border-subtle", children: [
     /* @__PURE__ */ t(
@@ -1214,7 +1214,7 @@ function Ke({ item: e, editable: r, autoFocus: n, onDidAutoFocus: i, onUpdate: o
         ref: l,
         type: "text",
         value: e.text,
-        onChange: (p) => o({ text: p.target.value }),
+        onChange: (f) => o({ text: f.target.value }),
         readOnly: !r,
         placeholder: "Describe the decision...",
         className: s(
@@ -1227,7 +1227,7 @@ function Ke({ item: e, editable: r, autoFocus: n, onDidAutoFocus: i, onUpdate: o
       "select",
       {
         value: e.status === "done" ? "acked" : e.status,
-        onChange: (p) => o({ status: p.target.value }),
+        onChange: (f) => o({ status: f.target.value }),
         className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none",
         style: {
           border: `1px solid ${a.color}`,
@@ -1261,15 +1261,15 @@ function We({
   editable: d,
   onAddItem: l,
   onUpdateItem: a,
-  onRemoveItem: p,
+  onRemoveItem: f,
   onUpdateCursorInfo: c
 }) {
-  const h = A(!1), x = () => {
+  const h = S(!1), x = () => {
     l?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
     r && n && /* @__PURE__ */ t(
-      T,
+      E,
       {
         fragment: r,
         ydoc: n,
@@ -1283,28 +1283,28 @@ function We({
     ),
     e.items.length === 0 && !d && /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No decisions yet." }),
     /* @__PURE__ */ t("div", { children: e.items.map((m, N) => {
-      const g = N === e.items.length - 1, k = h.current && g;
+      const v = N === e.items.length - 1, y = h.current && v;
       return /* @__PURE__ */ t(
         Ke,
         {
           item: m,
           editable: d,
-          autoFocus: k,
-          onDidAutoFocus: k ? () => {
+          autoFocus: y,
+          onDidAutoFocus: y ? () => {
             h.current = !1;
           } : void 0,
-          onUpdate: (f) => {
-            const y = m.status;
-            if (a?.(m.id, f), f.status && f.status !== y) {
-              const C = Ve(f.status);
-              C && He({
+          onUpdate: (p) => {
+            const g = m.status;
+            if (a?.(m.id, p), p.status && p.status !== g) {
+              const w = Ve(p.status);
+              w && He({
                 sectionId: e.id,
-                decision: C,
+                decision: w,
                 reviewerName: o?.name
               });
             }
           },
-          onRemove: () => p?.(m.id)
+          onRemove: () => f?.(m.id)
         },
         m.id
       );
@@ -1351,7 +1351,7 @@ function Ge({ item: e }) {
     )
   ] });
 }
-function U({ label: e, color: r, items: n }) {
+function P({ label: e, color: r, items: n }) {
   return /* @__PURE__ */ u("div", { className: "mb-2", children: [
     /* @__PURE__ */ t("div", { className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5", style: { color: r }, children: e }),
     n.map((i) => /* @__PURE__ */ t(Ge, { item: i }, i.id))
@@ -1363,9 +1363,9 @@ function Z({ section: e, onNavigateToEditor: r }) {
     return /* @__PURE__ */ t("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No decisions recorded." });
   const i = n.filter((l) => l.status === "pending"), o = n.filter((l) => l.status === "acked" || l.status === "done"), d = n.filter((l) => l.status === "rejected");
   return /* @__PURE__ */ u("div", { children: [
-    i.length > 0 && /* @__PURE__ */ t(U, { label: "Open", color: "#92400e", items: i }),
-    o.length > 0 && /* @__PURE__ */ t(U, { label: "Decided", color: "#065f46", items: o }),
-    d.length > 0 && /* @__PURE__ */ t(U, { label: "Vetoed", color: "#991b1b", items: d }),
+    i.length > 0 && /* @__PURE__ */ t(P, { label: "Open", color: "#92400e", items: i }),
+    o.length > 0 && /* @__PURE__ */ t(P, { label: "Decided", color: "#065f46", items: o }),
+    d.length > 0 && /* @__PURE__ */ t(P, { label: "Vetoed", color: "#991b1b", items: d }),
     r && /* @__PURE__ */ t(
       "button",
       {
@@ -1385,19 +1385,19 @@ function qe({
   editable: r,
   onUpdateSection: n
 }) {
-  const i = Je(e), [o, d] = R(!1), l = (p) => {
+  const i = Je(e), [o, d] = D(!1), l = (f) => {
     d(!0);
     const c = new FileReader();
     c.onload = () => {
       n?.({
         metadata: {
           ...e.metadata ?? {},
-          fileName: p.name,
+          fileName: f.name,
           fileDataUrl: typeof c.result == "string" ? c.result : "",
-          fileSize: p.size
+          fileSize: f.size
         }
       }), d(!1);
-    }, c.onerror = () => d(!1), c.readAsDataURL(p);
+    }, c.onerror = () => d(!1), c.readAsDataURL(f);
   }, a = () => {
     n?.({
       metadata: {
@@ -1442,8 +1442,8 @@ function qe({
             "data-testid": `file-upload-input-${e.id}`,
             disabled: !r,
             className: "hidden",
-            onChange: (p) => {
-              const c = p.target.files?.[0];
+            onChange: (f) => {
+              const c = f.target.files?.[0];
               c && l(c);
             }
           }
@@ -1488,7 +1488,7 @@ function Ye({
   editable: r,
   onUpdateSection: n
 }) {
-  const i = e.metadata ?? {}, [o, d] = R(!1), l = (c) => {
+  const i = e.metadata ?? {}, [o, d] = D(!1), l = (c) => {
     d(!0);
     const h = new FileReader();
     h.onload = () => {
@@ -1504,7 +1504,7 @@ function Ye({
     n?.({
       metadata: { ...e.metadata ?? {}, alt: c }
     });
-  }, p = () => {
+  }, f = () => {
     n?.({
       metadata: { ...e.metadata ?? {}, imageDataUrl: void 0, alt: void 0 }
     });
@@ -1536,7 +1536,7 @@ function Ye({
         {
           type: "button",
           "data-testid": `diagram-remove-${e.id}`,
-          onClick: p,
+          onClick: f,
           className: "bg-transparent border-none text-danger-fg cursor-pointer text-[13px]",
           children: "Remove"
         }
@@ -1593,14 +1593,14 @@ function Xe({
   editable: r,
   onUpdateSection: n
 }) {
-  const i = Qe(e), o = (p) => {
+  const i = Qe(e), o = (f) => {
     n?.({
-      metadata: { ...e.metadata ?? {}, links: p }
+      metadata: { ...e.metadata ?? {}, links: f }
     });
-  }, d = () => o([...i, { label: "", url: "" }]), l = (p, c) => {
-    o(i.map((h, x) => x === p ? { ...h, ...c } : h));
-  }, a = (p) => {
-    o(i.filter((c, h) => h !== p));
+  }, d = () => o([...i, { label: "", url: "" }]), l = (f, c) => {
+    o(i.map((h, x) => x === f ? { ...h, ...c } : h));
+  }, a = (f) => {
+    o(i.filter((c, h) => h !== f));
   };
   return /* @__PURE__ */ u("div", { "data-testid": `link-block-editor-${e.id}`, className: "flex flex-col gap-1.5", children: [
     i.length === 0 && /* @__PURE__ */ t(
@@ -1611,13 +1611,13 @@ function Xe({
         children: "No links yet."
       }
     ),
-    i.map((p, c) => /* @__PURE__ */ u("div", { className: "flex items-center gap-1.5", children: [
+    i.map((f, c) => /* @__PURE__ */ u("div", { className: "flex items-center gap-1.5", children: [
       /* @__PURE__ */ t(
         "input",
         {
           type: "text",
           "data-testid": `link-block-label-${e.id}-${c}`,
-          value: p.label,
+          value: f.label,
           placeholder: "Label",
           onChange: (h) => l(c, { label: h.target.value }),
           disabled: !r,
@@ -1629,7 +1629,7 @@ function Xe({
         {
           type: "url",
           "data-testid": `link-block-url-${e.id}-${c}`,
-          value: p.url,
+          value: f.url,
           placeholder: "https://example.com",
           onChange: (h) => l(c, { url: h.target.value }),
           disabled: !r,
@@ -1686,54 +1686,54 @@ function re({ section: e }) {
     }
   );
 }
-L(he);
-L(me);
-L(xe);
-L(be);
-L(ge);
-L(ye);
-L(ke);
-v("*", "*", Le);
-v("rich-text", "editor", Te);
-v("rich-text", "ack", Y);
-v("rich-text", "reader", Y);
-v("tasks", "editor", Ee);
-v("tasks", "ack", Q);
-v("tasks", "reader", Q);
-v("checklist", "editor", Oe);
-v("checklist", "ack", X);
-v("checklist", "reader", X);
-v("decisions", "editor", We);
-v("decisions", "ack", Z);
-v("decisions", "reader", Z);
-v("file-upload", "editor", qe);
-v("file-upload", "ack", ee);
-v("file-upload", "reader", ee);
-v("diagram", "editor", Ye);
-v("diagram", "ack", te);
-v("diagram", "reader", te);
-v("link-block", "editor", Xe);
-v("link-block", "ack", re);
-v("link-block", "reader", re);
+T(he);
+T(me);
+T(xe);
+T(be);
+T(ge);
+T(ye);
+T(ke);
+k("*", "*", Le);
+k("rich-text", "editor", Te);
+k("rich-text", "ack", Y);
+k("rich-text", "reader", Y);
+k("tasks", "editor", Ee);
+k("tasks", "ack", Q);
+k("tasks", "reader", Q);
+k("checklist", "editor", Oe);
+k("checklist", "ack", X);
+k("checklist", "reader", X);
+k("decisions", "editor", We);
+k("decisions", "ack", Z);
+k("decisions", "reader", Z);
+k("file-upload", "editor", qe);
+k("file-upload", "ack", ee);
+k("file-upload", "reader", ee);
+k("diagram", "editor", Ye);
+k("diagram", "ack", te);
+k("diagram", "reader", te);
+k("link-block", "editor", Xe);
+k("link-block", "ack", re);
+k("link-block", "reader", re);
 function ft({ open: e, onClose: r, onCreate: n }) {
-  const [i, o] = R([]), [d, l] = R(null), [a, p] = R(""), [c, h] = R(""), x = A(null);
-  if (S(() => {
+  const [i, o] = D([]), [d, l] = D(null), [a, f] = D(""), [c, h] = D(""), x = S(null);
+  if (A(() => {
     if (!e) return;
-    const f = pe();
-    o(f), l(f[0]?.id ?? null), p(""), h(""), setTimeout(() => x.current?.focus(), 50);
+    const p = pe();
+    o(p), l(p[0]?.id ?? null), f(""), h(""), setTimeout(() => x.current?.focus(), 50);
   }, [e]), !e) return null;
-  const m = i.find((f) => f.id === d), N = () => {
-    const f = a.trim();
-    !f || !m || (n({
-      title: f,
+  const m = i.find((p) => p.id === d), N = () => {
+    const p = a.trim();
+    !p || !m || (n({
+      title: p,
       type: m.name,
       description: c.trim() || void 0,
       icon: m.icon,
       documentTypeId: m.id
     }), r());
-  }, g = (f) => {
-    f.key === "Enter" && !f.shiftKey && a.trim() && m && N();
-  }, k = !!a.trim() && !!m;
+  }, v = (p) => {
+    p.key === "Enter" && !p.shiftKey && a.trim() && m && N();
+  }, y = !!a.trim() && !!m;
   return /* @__PURE__ */ t(
     fe,
     {
@@ -1754,7 +1754,7 @@ function ft({ open: e, onClose: r, onCreate: n }) {
         overflow: "hidden",
         padding: 0
       },
-      children: /* @__PURE__ */ u("div", { onKeyDown: g, className: "contents", children: [
+      children: /* @__PURE__ */ u("div", { onKeyDown: v, className: "contents", children: [
         /* @__PURE__ */ t("h2", { className: s("m-0 px-6 pt-6 pb-4 text-lg font-bold text-[#1e293b] shrink-0"), children: "Create New Document" }),
         /* @__PURE__ */ t("div", { className: s("flex-1 overflow-y-auto px-6 min-h-0"), children: i.length === 0 ? /* @__PURE__ */ u("div", { className: s("text-center px-4 py-8 border border-dashed border-[#d1d5db] rounded-lg mb-5 text-[#64748b]"), children: [
           /* @__PURE__ */ t("div", { className: s("text-[40px] mb-3"), children: "📋" }),
@@ -1772,35 +1772,35 @@ function ft({ open: e, onClose: r, onCreate: n }) {
               children: "Close"
             }
           )
-        ] }) : /* @__PURE__ */ u(P, { children: [
+        ] }) : /* @__PURE__ */ u(O, { children: [
           /* @__PURE__ */ u("div", { className: s("mb-5"), children: [
             /* @__PURE__ */ t("label", { className: s("block text-[13px] font-semibold text-text-secondary mb-2"), children: "Document Type" }),
-            /* @__PURE__ */ t("div", { className: s("grid grid-cols-2 gap-2"), children: i.map((f) => {
-              const y = d === f.id;
+            /* @__PURE__ */ t("div", { className: s("grid grid-cols-2 gap-2"), children: i.map((p) => {
+              const g = d === p.id;
               return /* @__PURE__ */ u(
                 "button",
                 {
-                  "data-testid": `type-option-${f.id}`,
-                  onClick: () => l(f.id),
+                  "data-testid": `type-option-${p.id}`,
+                  onClick: () => l(p.id),
                   className: s(
                     "flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]",
-                    y ? "bg-[#eff6ff] border-2 border-[#3b82f6]" : "bg-white border-2 border-border hover:bg-[#f8fafc]"
+                    g ? "bg-[#eff6ff] border-2 border-[#3b82f6]" : "bg-white border-2 border-border hover:bg-[#f8fafc]"
                   ),
                   children: [
-                    /* @__PURE__ */ t("span", { className: s("text-2xl shrink-0"), children: f.icon }),
+                    /* @__PURE__ */ t("span", { className: s("text-2xl shrink-0"), children: p.icon }),
                     /* @__PURE__ */ u("div", { className: s("min-w-0"), children: [
-                      /* @__PURE__ */ t("div", { className: s("text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: f.name }),
-                      f.description && /* @__PURE__ */ t("div", { className: s("text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: f.description }),
+                      /* @__PURE__ */ t("div", { className: s("text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: p.name }),
+                      p.description && /* @__PURE__ */ t("div", { className: s("text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: p.description }),
                       /* @__PURE__ */ u("div", { className: s("text-[11px] text-text-tertiary mt-0.5"), children: [
-                        f.fields.length,
+                        p.fields.length,
                         " section",
-                        f.fields.length !== 1 ? "s" : ""
+                        p.fields.length !== 1 ? "s" : ""
                       ] })
                     ] }),
-                    y && /* @__PURE__ */ t("span", { className: s("absolute top-1.5 right-2 text-sm text-[#3b82f6] font-bold"), children: "✓" })
+                    g && /* @__PURE__ */ t("span", { className: s("absolute top-1.5 right-2 text-sm text-[#3b82f6] font-bold"), children: "✓" })
                   ]
                 },
-                f.id
+                p.id
               );
             }) })
           ] }),
@@ -1816,7 +1816,7 @@ function ft({ open: e, onClose: r, onCreate: n }) {
                 "data-testid": "new-doc-title",
                 type: "text",
                 value: a,
-                onChange: (f) => p(f.target.value),
+                onChange: (p) => f(p.target.value),
                 placeholder: m ? `e.g. Q2 ${m.name}` : "Document title…",
                 className: s("w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] box-border font-[inherit] focus:border-[#3b82f6]")
               }
@@ -1832,7 +1832,7 @@ function ft({ open: e, onClose: r, onCreate: n }) {
               {
                 "data-testid": "new-doc-description",
                 value: c,
-                onChange: (f) => h(f.target.value),
+                onChange: (p) => h(p.target.value),
                 placeholder: "Brief description of this document…",
                 rows: 3,
                 className: s("w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] resize-y box-border font-[inherit] focus:border-[#3b82f6]")
@@ -1855,10 +1855,10 @@ function ft({ open: e, onClose: r, onCreate: n }) {
             {
               "data-testid": "new-doc-submit",
               onClick: N,
-              disabled: !k,
+              disabled: !y,
               className: s(
                 "px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]",
-                k ? "bg-[#3b82f6] cursor-pointer" : "bg-[#94a3b8] cursor-not-allowed"
+                y ? "bg-[#3b82f6] cursor-pointer" : "bg-[#94a3b8] cursor-not-allowed"
               ),
               children: "Create Document"
             }
@@ -1872,7 +1872,7 @@ export {
   Le as D,
   Ne as E,
   ft as N,
-  T,
+  E as T,
   $e as a,
   q as b
 };

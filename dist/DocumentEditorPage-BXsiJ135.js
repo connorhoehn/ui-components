@@ -5,9 +5,9 @@ import { n as rn, b as on, c as sn, g as an, e as ln, j as dn, l as cn, m as mn,
 import { u as un } from "./IdentityContext-CLalsm_M.js";
 import { l as fn } from "./useDocumentTypes-C29MkgPl.js";
 import { c as e } from "./cn-B6yFEsav.js";
-import { u as xn } from "./useHangoutEmbed-CENeXX6M.js";
+import { u as xn } from "./useHangoutEmbed-D-rUq74K.js";
 import { u as hn } from "./useActiveSpeaker-BOwJ262O.js";
-import { D as bn, T as De } from "./NewDocumentModal-PEMSfpvd.js";
+import { D as bn, T as De } from "./NewDocumentModal-CM_kJ22t.js";
 import { b as gn } from "./registry-qR57lair.js";
 function $e() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);

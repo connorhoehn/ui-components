@@ -76,6 +76,20 @@ export function useHangoutEmbed({
   const screenStreamRef = useRef<MediaStream | null>(null);
   const localStageStreamsRef = useRef<LocalStageStream[]>([]);
   const stageRef = useRef<Stage | null>(null);
+  /**
+   * Component-lifetime mount flag.
+   *
+   * The join effect has its own `mounted` local, but the screen-share callbacks
+   * outlive any single effect run and await user-facing permission prompts that
+   * can stay open for seconds. Without this, a stream acquired after unmount is
+   * assigned to a ref that nothing will ever read again — and the browser keeps
+   * reporting an active capture with no UI left to stop it.
+   */
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
     if (!stageToken) return;
@@ -277,10 +291,20 @@ export function useHangoutEmbed({
         video: { cursor: 'always' } as any,
         audio: false,
       });
+      // The picker may have been open while the call closed.
+      if (!mountedRef.current) {
+        screenStream.getTracks().forEach((t) => t.stop());
+        return;
+      }
       screenStreamRef.current = screenStream;
       const videoTrack = screenStream.getVideoTracks()[0];
       videoTrack.contentHint = 'detail';
       const { LocalStageStream: Ctor } = await loadIvs();
+      if (!mountedRef.current) {
+        screenStream.getTracks().forEach((t) => t.stop());
+        screenStreamRef.current = null;
+        return;
+      }
       const screenStageStream = new Ctor(videoTrack);
 
       // SWAP: replace camera video with screen video (keep audio)

@@ -46,7 +46,7 @@ import { useNavigate as Ae, useLocation as mt, Outlet as ft } from "react-router
 import { c as m } from "./cn-B6yFEsav.js";
 import { i as xt, a as bt } from "./PresencePanel-B5sxSQ2n.js";
 import { C as fi, M as xi, P as bi, f as hi } from "./PresencePanel-B5sxSQ2n.js";
-import { N as ht } from "./NewDocumentModal-PEMSfpvd.js";
+import { N as ht } from "./NewDocumentModal-CM_kJ22t.js";
 import { a as gt, u as Re, E as yt } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Le, l as Me, a as _e, P as vt, b as Nt, c as wt, d as kt } from "./usePendingApprovals-BdaJbM4y.js";
 import { G as yi, I as vi, e as Ni, J as wi, N as ki, f as Ci, g as Si, h as Ii, S as Ti, T as Ei, i as Pi, j as Di, k as Ai, m as Ri, n as Li, r as Mi, o as _i, p as Oi, s as $i, q as Fi, t as Bi } from "./usePendingApprovals-BdaJbM4y.js";
@@ -1022,7 +1022,7 @@ function qt() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Yt = it(() => import("./DocumentEditorPage-DmFOcaSr.js").then((t) => t.o));
+const Yt = it(() => import("./DocumentEditorPage-BXsiJ135.js").then((t) => t.o));
 function Qt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;

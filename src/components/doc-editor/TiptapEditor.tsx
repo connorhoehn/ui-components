@@ -68,7 +68,7 @@ function getCoords(view: any, pos: number, containerEl?: HTMLDivElement | null):
   try {
     if (pos < 0 || pos > view.state.doc.content.size) return null;
     const coords = view.coordsAtPos(pos);
-    // Use the container element (editorAreaRef) as reference, not view.dom,
+    // Use the container element (editorArea) as reference, not view.dom,
     // because the overlay is positioned relative to the container which has padding.
     const refEl = containerEl || view.dom;
     const refRect = refEl.getBoundingClientRect();
@@ -221,7 +221,11 @@ export default function TiptapEditor({
 
   // ---- Custom cursor overlay using awareness directly ----
   const [remoteCursors, setRemoteCursors] = useState<RemoteCursorInfo[]>([]);
-  const editorAreaRef = useRef<HTMLDivElement>(null);
+  // State, not a ref: the overlay positions carets relative to this element, and
+  // a ref read during render is null on the first pass. getCoords then falls
+  // back to view.dom and every caret is offset until some unrelated re-render
+  // happens to pick the node up.
+  const [editorArea, setEditorArea] = useState<HTMLDivElement | null>(null);
 
   // Merge local awareness user info via the centralized updater (if provided)
   // or fall back to a merge-safe direct write.
@@ -283,7 +287,10 @@ export default function TiptapEditor({
     });
 
     setRemoteCursors(cursors);
-  }, [provider, editor]);
+    // sectionId is read above to filter peers to this section's editor; without
+    // it here the filter compares against the id this callback was created
+    // with, so carets vanish (or leak in) after a section id change.
+  }, [provider, editor, sectionId]);
 
   // Update local cursor position in awareness when selection changes
   useEffect(() => {
@@ -309,6 +316,12 @@ export default function TiptapEditor({
 
     return () => {
       editor.off('selectionUpdate', handleTransaction);
+      // Clear the caret we published. Without this it survives in awareness
+      // pointing into a section that no longer exists — peers keep drawing a
+      // ghost until awareness times out, or indefinitely if this client simply
+      // stops moving. setLocalStateField touches only `cursor`, so identity and
+      // presence written by the page are untouched.
+      provider.awareness.setLocalStateField('cursor', null);
     };
   }, [editor, provider, sectionId]);
 
@@ -325,10 +338,10 @@ export default function TiptapEditor({
   return (
     <div className={cn(editable ? 'border border-border rounded-lg overflow-hidden relative' : 'relative')}>
       {editable && <EditorToolbar editor={editor} />}
-      <div ref={editorAreaRef} className={cn('px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative')}>
+      <div ref={setEditorArea} className={cn('px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative')}>
         <EditorContent editor={editor} />
         {/* Custom cursor overlay */}
-        <CursorOverlay cursors={remoteCursors} editorView={editor?.view} containerEl={editorAreaRef.current} />
+        <CursorOverlay cursors={remoteCursors} editorView={editor?.view} containerEl={editorArea} />
       </div>
     </div>
   );
