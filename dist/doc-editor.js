@@ -1,7 +1,7 @@
 import { S as W } from "./DocumentEditorPage-61O6ns98.js";
 import { A as we, a as Ne, D as ye, b as ve, c as ke, E as Ce, F as Me, H as Se, K as je, M as Ae, d as $e, P as Pe, R as Ee, e as _e, f as De, g as Ie, h as Te, T as Re, V as He, i as Le, j as Oe, k as Be, l as Ue, m as We, r as Fe, u as Ve, n as Xe } from "./DocumentEditorPage-61O6ns98.js";
 import { jsxs as r, jsx as n, Fragment as $ } from "react/jsx-runtime";
-import { useState as j, useMemo as E, useCallback as I, useRef as _, useEffect as T } from "react";
+import { useState as j, useMemo as _, useCallback as T, useRef as P, useEffect as D } from "react";
 import { N as F, T as R } from "./NewDocumentModal-DqRfugCB.js";
 import { E as qe, a as ze, b as Ge } from "./NewDocumentModal-DqRfugCB.js";
 import { c as t } from "./cn-B6yFEsav.js";
@@ -9,16 +9,16 @@ import { o as V, p as X } from "./useWebSocket-Bn4OeUor.js";
 function K(e) {
   const i = Date.now(), d = new Date(e).getTime();
   if (isNaN(d)) return "";
-  const c = i - d;
-  if (c < 0) return "just now";
-  const s = Math.floor(c / 1e3);
+  const l = i - d;
+  if (l < 0) return "just now";
+  const s = Math.floor(l / 1e3);
   if (s < 60) return "just now";
   const a = Math.floor(s / 60);
   if (a < 60) return `${a}m ago`;
-  const u = Math.floor(a / 60);
-  if (u < 24) return `${u}h ago`;
-  const m = Math.floor(u / 24);
-  return m < 30 ? `${m}d ago` : `${Math.floor(m / 30)}mo ago`;
+  const c = Math.floor(a / 60);
+  if (c < 24) return `${c}h ago`;
+  const b = Math.floor(c / 24);
+  return b < 30 ? `${b}d ago` : `${Math.floor(b / 30)}mo ago`;
 }
 const H = {
   draft: { bg: "#fef3c7", color: "#92400e" },
@@ -46,36 +46,36 @@ function z({
   users: e,
   onClickUser: i
 }) {
-  const c = e.slice(0, 5), s = e.length - 5;
+  const l = e.slice(0, 5), s = e.length - 5;
   return /* @__PURE__ */ r("div", { className: t("flex items-center gap-0.5"), children: [
-    c.map((a, u) => {
-      const m = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, h = p ? "#f59e0b" : "#10b981";
+    l.map((a, c) => {
+      const b = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, w = p ? "#f59e0b" : "#10b981";
       return /* @__PURE__ */ r(
         "div",
         {
-          title: `${a.displayName} — ${p ? "Away" : m.label}`,
-          onClick: (f) => {
-            f.stopPropagation(), i(a.userId);
+          title: `${a.displayName} — ${p ? "Away" : b.label}`,
+          onClick: (h) => {
+            h.stopPropagation(), i(a.userId);
           },
           className: t("relative cursor-pointer"),
-          style: { marginLeft: u > 0 ? -6 : 0, zIndex: 5 - u },
+          style: { marginLeft: c > 0 ? -6 : 0, zIndex: 5 - c },
           children: [
             /* @__PURE__ */ n(
               "div",
               {
                 className: t("w-8 h-8 rounded-full text-white text-[11px] font-bold flex items-center justify-center border-2 border-white"),
                 style: { background: p ? `${a.color}99` : a.color },
-                children: a.displayName.split(" ").map((f) => f[0]).join("").slice(0, 2).toUpperCase()
+                children: a.displayName.split(" ").map((h) => h[0]).join("").slice(0, 2).toUpperCase()
               }
             ),
             /* @__PURE__ */ n(
               "div",
               {
                 className: t("absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full border-2 border-white"),
-                style: { background: h }
+                style: { background: w }
               }
             ),
-            /* @__PURE__ */ n("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: m.icon })
+            /* @__PURE__ */ n("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: b.icon })
           ]
         },
         a.userId
@@ -93,26 +93,26 @@ function z({
     )
   ] });
 }
-function me({
+function pe({
   documents: e,
   presence: i,
   onOpenDocument: d,
-  onCreateDocument: c,
+  onCreateDocument: l,
   onDeleteDocument: s,
   onJumpToUser: a,
-  hideHeader: u
+  hideHeader: c
 }) {
-  const [m, p] = j(!1), [h, f] = j(null), [w, N] = j(1), x = 10, l = Math.max(1, Math.ceil(e.length / x)), v = Math.min(w, l), S = E(() => {
-    const o = (v - 1) * x;
-    return e.slice(o, o + x);
-  }, [e, v]), y = I(
-    (o, k, M) => {
-      o.stopPropagation(), window.confirm(`Delete "${M}"? This cannot be undone.`) && s(k);
+  const [b, p] = j(!1), [w, h] = j(null), [x, N] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), y = Math.min(x, m), M = _(() => {
+    const o = (y - 1) * u;
+    return e.slice(o, o + u);
+  }, [e, y]), f = T(
+    (o, k, S) => {
+      o.stopPropagation(), window.confirm(`Delete "${S}"? This cannot be undone.`) && s(k);
     },
     [s]
   );
   return /* @__PURE__ */ r("div", { className: t("px-4"), children: [
-    !u && /* @__PURE__ */ r("div", { className: t("flex items-center justify-between mb-5"), children: [
+    !c && /* @__PURE__ */ r("div", { className: t("flex items-center justify-between mb-5"), children: [
       /* @__PURE__ */ n("h1", { className: t("m-0 text-[22px] font-bold text-[#1e293b]"), children: "Documents" }),
       /* @__PURE__ */ r(
         "button",
@@ -134,18 +134,18 @@ function me({
         className: t("text-center px-4 py-12 text-text-tertiary text-[15px]"),
         children: "No documents yet. Create your first document to get started."
       }
-    ) : /* @__PURE__ */ n("div", { className: t("flex flex-col gap-3"), children: S.map((o) => {
-      const k = i[o.id] ?? [], M = h === o.id;
+    ) : /* @__PURE__ */ n("div", { className: t("flex flex-col gap-3"), children: M.map((o) => {
+      const k = i[o.id] ?? [], S = w === o.id;
       return /* @__PURE__ */ r(
         "div",
         {
           "data-testid": `document-card-${o.id}`,
           onClick: () => d(o.id),
-          onMouseEnter: () => f(o.id),
-          onMouseLeave: () => f(null),
+          onMouseEnter: () => h(o.id),
+          onMouseLeave: () => h(null),
           className: t(
             "flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150",
-            M ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""
+            S ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""
           ),
           children: [
             /* @__PURE__ */ n("span", { className: t("text-2xl shrink-0"), children: o.icon }),
@@ -172,10 +172,10 @@ function me({
                 onClickUser: (C) => a(o.id, C)
               }
             ) }),
-            M && /* @__PURE__ */ n(
+            S && /* @__PURE__ */ n(
               "button",
               {
-                onClick: (C) => y(C, o.id, o.title),
+                onClick: (C) => f(C, o.id, o.title),
                 title: "Delete document",
                 className: t("absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-[#dc2626] text-sm leading-none cursor-pointer font-[inherit] p-0"),
                 children: "×"
@@ -186,7 +186,7 @@ function me({
         o.id
       );
     }) }),
-    e.length > x && /* @__PURE__ */ r(
+    e.length > u && /* @__PURE__ */ r(
       "div",
       {
         "data-testid": "pagination-controls",
@@ -196,11 +196,11 @@ function me({
             "button",
             {
               "data-testid": "pagination-prev",
-              disabled: v <= 1,
+              disabled: y <= 1,
               onClick: () => N((o) => Math.max(1, o - 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                v <= 1 ? "bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                y <= 1 ? "bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Previous"
             }
@@ -212,9 +212,9 @@ function me({
               className: t("text-[13px] text-text-secondary font-medium"),
               children: [
                 "Page ",
-                v,
+                y,
                 " of ",
-                l
+                m
               ]
             }
           ),
@@ -222,11 +222,11 @@ function me({
             "button",
             {
               "data-testid": "pagination-next",
-              disabled: v >= l,
-              onClick: () => N((o) => Math.min(l, o + 1)),
+              disabled: y >= m,
+              onClick: () => N((o) => Math.min(m, o + 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                v >= l ? "bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                y >= m ? "bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Next"
             }
@@ -237,9 +237,9 @@ function me({
     /* @__PURE__ */ n(
       F,
       {
-        open: m,
+        open: b,
         onClose: () => p(!1),
-        onCreate: c
+        onCreate: l
       }
     )
   ] });
@@ -255,26 +255,26 @@ function Y({
   ydoc: e,
   provider: i,
   fragment: d,
-  user: c,
+  user: l,
   fragmentName: s = U,
   editable: a,
-  placeholder: u,
-  className: m,
+  placeholder: c,
+  className: b,
   onFragmentReady: p
 }) {
-  const h = E(
+  const w = _(
     () => d ?? e.getXmlFragment(s),
     [d, e, s]
-  ), f = _(!1);
-  return f.current || (f.current = !0, p?.(h, e)), /* @__PURE__ */ n("div", { className: t(m), children: /* @__PURE__ */ n(
+  ), h = P(!1);
+  return h.current || (h.current = !0, p?.(w, e)), /* @__PURE__ */ n("div", { className: t(b), children: /* @__PURE__ */ n(
     R,
     {
-      fragment: h,
+      fragment: w,
       ydoc: e,
       provider: i,
-      user: c,
+      user: l,
       editable: a,
-      placeholder: u
+      placeholder: c
     }
   ) });
 }
@@ -282,46 +282,46 @@ function Q({
   gatewayUrl: e,
   docId: i,
   authToken: d,
-  channel: c,
+  channel: l,
   user: s,
   fragmentName: a = U,
-  editable: u,
-  placeholder: m,
+  editable: c,
+  placeholder: b,
   className: p,
-  onFragmentReady: h,
-  loadingSlot: f
+  onFragmentReady: w,
+  loadingSlot: h
 }) {
-  const w = c ?? `doc:${i}`, N = _(/* @__PURE__ */ new Set()), x = I(
+  const x = l ?? `doc:${i}`, N = P(/* @__PURE__ */ new Set()), u = T(
     (C) => (N.current.add(C), () => {
       N.current.delete(C);
     }),
     []
-  ), l = I((C) => {
-    N.current.forEach((g) => g(C));
-  }, []), v = E(
+  ), m = T((C) => {
+    N.current.forEach((v) => v(C));
+  }, []), y = _(
     () => ({
       wsUrl: e,
       cognitoToken: d,
-      defaultChannel: w
+      defaultChannel: x
     }),
-    [e, d, w]
-  ), S = V({ config: v, onMessage: l }), { ydoc: y, provider: o } = X({
+    [e, d, x]
+  ), M = V({ config: y, onMessage: m }), { ydoc: f, provider: o } = X({
     documentId: i,
-    ws: S,
-    onMessage: x
-  }), k = E(
-    () => y ? y.getXmlFragment(a) : null,
-    [y, a]
-  ), M = _(!1);
-  return !M.current && k && y && (M.current = !0, h?.(k, y)), !y || !k ? /* @__PURE__ */ n("div", { className: t(p), children: f ?? null }) : /* @__PURE__ */ n("div", { className: t(p), children: /* @__PURE__ */ n(
+    ws: M,
+    onMessage: u
+  }), k = _(
+    () => f ? f.getXmlFragment(a) : null,
+    [f, a]
+  ), S = P(!1);
+  return !S.current && k && f && (S.current = !0, w?.(k, f)), !f || !k ? /* @__PURE__ */ n("div", { className: t(p), children: h ?? null }) : /* @__PURE__ */ n("div", { className: t(p), children: /* @__PURE__ */ n(
     R,
     {
       fragment: k,
-      ydoc: y,
+      ydoc: f,
       provider: o,
       user: s,
-      editable: u,
-      placeholder: m
+      editable: c,
+      placeholder: b
     }
   ) });
 }
@@ -360,31 +360,35 @@ const J = {
   high: "#ef4444"
 };
 function ee({ item: e, onAck: i, onReject: d }) {
-  const [c, s] = j(!1), [a, u] = j(""), [m, p] = j("none"), h = _(e.status), f = J[e.status];
-  T(() => {
-    h.current === "pending" && e.status === "acked" ? p("ack") : h.current === "pending" && e.status === "rejected" && p("reject"), h.current = e.status;
+  const [l, s] = j(!1), [a, c] = j(""), [b, p] = j("none"), w = P(e.status), h = J[e.status], [x, N] = j(!1), u = P(null);
+  D(() => () => {
+    u.current && clearTimeout(u.current);
+  }, []), D(() => {
+    w.current === "pending" && e.status === "acked" ? p("ack") : w.current === "pending" && e.status === "rejected" && p("reject"), w.current = e.status;
   }, [e.status]);
-  const w = () => {
-    p("ack"), setTimeout(() => {
-      i(a || void 0), u(""), s(!1);
-    }, 150);
-  }, N = () => {
-    if (!a.trim()) {
-      s(!0);
-      return;
+  const m = () => {
+    x || (N(!0), p("ack"), u.current = setTimeout(() => {
+      u.current = null, i(a || void 0), c(""), s(!1), N(!1);
+    }, 150));
+  }, y = () => {
+    if (!x) {
+      if (!a.trim()) {
+        s(!0);
+        return;
+      }
+      N(!0), p("reject"), u.current = setTimeout(() => {
+        u.current = null, d(a), c(""), s(!1), N(!1);
+      }, 150);
     }
-    p("reject"), setTimeout(() => {
-      d(a), u(""), s(!1);
-    }, 150);
   };
-  return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", m === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]" : m === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]" : ""), children: [
+  return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", b === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]" : b === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]" : ""), children: [
     /* @__PURE__ */ r("div", { className: t("flex items-center mb-1.5"), children: [
       /* @__PURE__ */ n("span", { className: t("text-sm font-medium flex-1 text-[#1e293b]"), children: e.text }),
       /* @__PURE__ */ n(
         "span",
         {
           className: t("inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2"),
-          style: { background: f.bg, color: f.text },
+          style: { background: h.bg, color: h.text },
           children: e.status
         }
       ),
@@ -429,9 +433,9 @@ function ee({ item: e, onAck: i, onReject: d }) {
     ] }),
     e.status === "pending" && /* @__PURE__ */ r("div", { children: [
       /* @__PURE__ */ r("div", { className: t("flex gap-2 mt-1.5"), children: [
-        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white"), onClick: w, children: "Acknowledge" }),
-        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white"), onClick: N, children: "Reject" }),
-        !c && /* @__PURE__ */ n(
+        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white", x && "opacity-60 cursor-not-allowed"), onClick: m, disabled: x, children: "Acknowledge" }),
+        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white", x && "opacity-60 cursor-not-allowed"), onClick: y, disabled: x, children: "Reject" }),
+        !l && /* @__PURE__ */ n(
           "button",
           {
             type: "button",
@@ -441,14 +445,14 @@ function ee({ item: e, onAck: i, onReject: d }) {
           }
         )
       ] }),
-      c && /* @__PURE__ */ r("div", { className: t("mt-2"), children: [
+      l && /* @__PURE__ */ r("div", { className: t("mt-2"), children: [
         /* @__PURE__ */ n(
           "textarea",
           {
             value: a,
-            onChange: (l) => u(l.target.value),
-            onKeyDown: (l) => {
-              l.key === "Enter" && !l.shiftKey && (l.preventDefault(), a.trim() && w()), l.key === "Escape" && (s(!1), u(""));
+            onChange: (f) => c(f.target.value),
+            onKeyDown: (f) => {
+              f.key === "Enter" && !f.shiftKey && (f.preventDefault(), a.trim() && m()), f.key === "Escape" && (s(!1), c(""));
             },
             placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
             autoFocus: !0,
@@ -461,7 +465,8 @@ function ee({ item: e, onAck: i, onReject: d }) {
             {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white"),
-              onClick: w,
+              onClick: m,
+              disabled: x,
               tabIndex: 0,
               children: "Submit & Acknowledge"
             }
@@ -471,7 +476,8 @@ function ee({ item: e, onAck: i, onReject: d }) {
             {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white"),
-              onClick: N,
+              onClick: y,
+              disabled: x,
               tabIndex: 0,
               children: "Submit & Reject"
             }
@@ -482,7 +488,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-[#d1d5db]"),
               onClick: () => {
-                s(!1), u("");
+                s(!1), c("");
               },
               tabIndex: 0,
               children: "Cancel"
@@ -500,22 +506,22 @@ const B = {
   notes: { bg: "#f3f4f6", text: "#374151" },
   custom: { bg: "#e0e7ff", text: "#3730a3" }
 };
-function te({ section: e, onAckItem: i, onRejectItem: d, fragment: c, ydoc: s, provider: a, comments: u, onAddComment: m, onResolveThread: p, onUnresolveThread: h, participants: f }) {
-  const w = B[e.type] ?? B.custom, N = e.items.filter((x) => x.status !== "pending").length;
+function te({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, provider: a, comments: c, onAddComment: b, onResolveThread: p, onUnresolveThread: w, participants: h }) {
+  const x = B[e.type] ?? B.custom, N = e.items.filter((u) => u.status !== "pending").length;
   return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg p-5 mb-4"), children: [
     /* @__PURE__ */ n("h2", { className: t("text-xl font-bold m-0 mb-1 text-[#1e293b]"), children: e.title }),
     /* @__PURE__ */ n(
       "span",
       {
         className: t("inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3"),
-        style: { background: w.bg, color: w.text },
+        style: { background: x.bg, color: x.text },
         children: e.type
       }
     ),
-    c && /* @__PURE__ */ n("div", { className: t(e.items.length > 0 ? "mb-4" : ""), children: /* @__PURE__ */ n(
+    l && /* @__PURE__ */ n("div", { className: t(e.items.length > 0 ? "mb-4" : ""), children: /* @__PURE__ */ n(
       R,
       {
-        fragment: c,
+        fragment: l,
         ydoc: s,
         provider: a,
         user: { name: "", color: "" },
@@ -523,20 +529,20 @@ function te({ section: e, onAckItem: i, onRejectItem: d, fragment: c, ydoc: s, p
         sectionId: e.id
       }
     ) }),
-    !c && e.items.length === 0 && /* @__PURE__ */ r("div", { className: t("py-6 text-text-tertiary text-sm text-center"), children: [
+    !l && e.items.length === 0 && /* @__PURE__ */ r("div", { className: t("py-6 text-text-tertiary text-sm text-center"), children: [
       "This ",
       e.type,
       " section has no content. Switch to Editor mode to add content."
     ] }),
     e.items.length > 0 && /* @__PURE__ */ r("div", { children: [
-      e.items.map((x) => /* @__PURE__ */ n(
+      e.items.map((u) => /* @__PURE__ */ n(
         ee,
         {
-          item: x,
-          onAck: (l) => i(x.id, l),
-          onReject: (l) => d(x.id, l)
+          item: u,
+          onAck: (m) => i(u.id, m),
+          onReject: (m) => d(u.id, m)
         },
-        x.id
+        u.id
       )),
       /* @__PURE__ */ r("div", { className: t("text-xs text-[#6b7280] mt-3 pt-2 border-t border-[#f3f4f6]"), children: [
         N,
@@ -545,63 +551,63 @@ function te({ section: e, onAckItem: i, onRejectItem: d, fragment: c, ydoc: s, p
         " items reviewed"
       ] })
     ] }),
-    m && /* @__PURE__ */ n(
+    b && /* @__PURE__ */ n(
       W,
       {
-        comments: u ?? [],
-        onAddComment: m,
-        participants: f,
+        comments: c ?? [],
+        onAddComment: b,
+        participants: h,
         onResolveThread: p,
-        onUnresolveThread: h
+        onUnresolveThread: w
       }
     )
   ] });
 }
-const P = 4;
-function xe({ sections: e, onAckItem: i, onRejectItem: d, participants: c, onSectionFocus: s, jumpToIndex: a, onJumpComplete: u, getSectionFragment: m, ydoc: p, provider: h, comments: f, onAddComment: w, onResolveThread: N, onUnresolveThread: x }) {
-  const [l, v] = j(0), S = Math.max(1, Math.ceil(e.length / P)), y = l * P, o = e.slice(y, y + P);
-  if (T(() => {
-    a != null && a >= 0 && a < e.length && (v(Math.floor(a / P)), u?.());
-  }, [a, e.length, u]), T(() => {
+const E = 4;
+function be({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSectionFocus: s, jumpToIndex: a, onJumpComplete: c, getSectionFragment: b, ydoc: p, provider: w, comments: h, onAddComment: x, onResolveThread: N, onUnresolveThread: u }) {
+  const [m, y] = j(0), M = Math.max(1, Math.ceil(e.length / E)), f = m * E, o = e.slice(f, f + E);
+  if (D(() => {
+    a != null && a >= 0 && a < e.length && (y(Math.floor(a / E)), c?.());
+  }, [a, e.length, c]), D(() => {
     o.length > 0 && s && s(o[0].id);
-  }, [y, s]), e.length === 0)
+  }, [f, s]), e.length === 0)
     return /* @__PURE__ */ n("div", { className: t("text-center p-12 text-[#6b7280] text-[15px]"), children: "No sections to review." });
-  const k = () => v((g) => Math.max(0, g - 1)), M = () => v((g) => Math.min(S - 1, g + 1)), C = y + o.length;
+  const k = () => y((v) => Math.max(0, v - 1)), S = () => y((v) => Math.min(M - 1, v + 1)), C = f + o.length;
   return /* @__PURE__ */ r("div", { children: [
     /* @__PURE__ */ n(Z, { current: C, total: e.length }),
-    /* @__PURE__ */ n("div", { className: t("flex flex-col gap-4"), children: o.map((g) => {
-      const D = c?.filter((b) => b.currentSectionId === g.id) ?? [];
+    /* @__PURE__ */ n("div", { className: t("flex flex-col gap-4"), children: o.map((v) => {
+      const I = l?.filter((g) => g.currentSectionId === v.id) ?? [];
       return /* @__PURE__ */ r("div", { children: [
-        D.length > 0 && /* @__PURE__ */ r("div", { className: t("flex gap-1 mb-1.5 items-center"), children: [
+        I.length > 0 && /* @__PURE__ */ r("div", { className: t("flex gap-1 mb-1.5 items-center"), children: [
           /* @__PURE__ */ n("span", { className: t("text-xs text-[#6b7280] mr-1"), children: "Viewing:" }),
-          D.map((b) => /* @__PURE__ */ n(
+          I.map((g) => /* @__PURE__ */ n(
             "div",
             {
-              title: `${b.displayName} (${b.mode})`,
+              title: `${g.displayName} (${g.mode})`,
               className: t("w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold"),
-              style: { background: b.color },
-              children: b.displayName.split(" ").map((A) => A[0]).join("").toUpperCase().slice(0, 2)
+              style: { background: g.color },
+              children: g.displayName.split(" ").map((A) => A[0]).join("").toUpperCase().slice(0, 2)
             },
-            b.clientId
+            g.clientId
           ))
         ] }),
         /* @__PURE__ */ n(
           te,
           {
-            section: g,
-            onAckItem: (b, A) => i(g.id, b, A),
-            onRejectItem: (b, A) => d(g.id, b, A),
-            fragment: m(g.id),
+            section: v,
+            onAckItem: (g, A) => i(v.id, g, A),
+            onRejectItem: (g, A) => d(v.id, g, A),
+            fragment: b(v.id),
             ydoc: p,
-            provider: h,
-            comments: f?.[g.id],
-            onAddComment: w ? (b, A) => w(g.id, b, A) : void 0,
-            onResolveThread: N ? (b) => N(g.id, b) : void 0,
-            onUnresolveThread: x ? (b) => x(g.id, b) : void 0,
-            participants: D
+            provider: w,
+            comments: h?.[v.id],
+            onAddComment: x ? (g, A) => x(v.id, g, A) : void 0,
+            onResolveThread: N ? (g) => N(v.id, g) : void 0,
+            onUnresolveThread: u ? (g) => u(v.id, g) : void 0,
+            participants: I
           }
         )
-      ] }, g.id);
+      ] }, v.id);
     }) }),
     /* @__PURE__ */ r("div", { className: t("flex justify-between items-center mt-4 py-3"), children: [
       /* @__PURE__ */ n(
@@ -610,18 +616,18 @@ function xe({ sections: e, onAckItem: i, onRejectItem: d, participants: c, onSec
           type: "button",
           className: t(
             "px-[18px] py-2 text-sm font-semibold border border-[#d1d5db] rounded-md font-[inherit]",
-            l === 0 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
+            m === 0 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
           ),
           onClick: k,
-          disabled: l === 0,
+          disabled: m === 0,
           children: "Previous"
         }
       ),
       /* @__PURE__ */ r("span", { className: t("text-[13px] text-[#6b7280]"), children: [
         "Page ",
-        l + 1,
+        m + 1,
         " of ",
-        S,
+        M,
         " (",
         e.length,
         " sections)"
@@ -632,10 +638,10 @@ function xe({ sections: e, onAckItem: i, onRejectItem: d, participants: c, onSec
           type: "button",
           className: t(
             "px-[18px] py-2 text-sm font-semibold border border-[#d1d5db] rounded-md font-[inherit]",
-            l === S - 1 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
+            m === M - 1 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
           ),
-          onClick: M,
-          disabled: l === S - 1,
+          onClick: S,
+          disabled: m === M - 1,
           children: "Next"
         }
       )
@@ -663,8 +669,8 @@ function re(e, i) {
     case "doc.comment":
       return `commented: "${i.text || "..."}"${d}`;
     case "pipeline.run.started": {
-      const c = i.pipelineId ?? "";
-      return c ? `triggered pipeline ${c}` : "triggered a pipeline";
+      const l = i.pipelineId ?? "";
+      return l ? `triggered pipeline ${l}` : "triggered a pipeline";
     }
     case "pipeline.run.completed":
       return typeof i.durationMs == "number" ? `pipeline run completed in ${i.durationMs}ms` : "pipeline run completed";
@@ -698,14 +704,14 @@ function oe(e) {
       return "online";
   }
 }
-function be({ events: e, participants: i }) {
-  const [d, c] = j(!1);
+function xe({ events: e, participants: i }) {
+  const [d, l] = j(!1);
   return /* @__PURE__ */ r("div", { className: t("bg-[#f8fafc] border border-border rounded-lg overflow-hidden"), children: [
     /* @__PURE__ */ r(
       "div",
       {
         className: t("flex items-center justify-between px-3 py-2 bg-[#f1f5f9] border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none"),
-        onClick: () => c((s) => !s),
+        onClick: () => l((s) => !s),
         children: [
           /* @__PURE__ */ r("span", { children: [
             "Activity ",
@@ -750,15 +756,15 @@ function be({ events: e, participants: i }) {
   ] });
 }
 export {
-  xe as AckMode,
+  be as AckMode,
   we as ActionItemsCard,
-  be as ActivityFeed,
+  xe as ActivityFeed,
   Ne as AttachmentsPanel,
   te as ChunkViewer,
   ye as DiffViewer,
   ve as DocumentEditorPage,
   ke as DocumentHeader,
-  me as DocumentListPage,
+  pe as DocumentListPage,
   qe as EditorToolbar,
   Ce as ExecutiveSummaryCard,
   Me as FollowModeBar,

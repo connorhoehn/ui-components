@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.45.1] — 2026-08-17
+
+### Fixed
+
+- **Review items could be acknowledged or rejected more than once.**
+  `ReviewableItem` defers `onAck`/`onReject` by 150ms so the pulse animation
+  can play, but nothing guarded that window: the buttons stayed live, so a
+  double click sent two acks for the same item. Confirmed by test — three
+  clicks produced three `onAck` calls.
+- **The deferred submit outlived the row.** The timer was never cleared, so a
+  review list that re-rendered or unmounted mid-animation still fired
+  `onAck`/`onReject` against an item the user could no longer see.
+
+  Both fixed with an in-flight flag plus timer cleanup. The action buttons now
+  disable during the window and carry a visible affordance, rather than looking
+  live while silently ignoring clicks.
+
+### Checked and found correct
+
+Recorded so the next pass doesn't re-investigate:
+
+- The document-events `unsubscribe` on disconnect — `useWebSocket.sendMessage`
+  no-ops unless `readyState === OPEN`.
+- Focus timers in `CommentThread` and `SectionComments` — they are in event
+  handlers and use optional chaining, and React nulls refs on unmount, so
+  `?.focus()` is already a safe no-op.
+- `DocumentEditorPage`'s video-host attach interval — correctly cleared, with a
+  2s stop timer that is also cleared.
+- `VideoCallPanel`'s `srcObject` effects and its call-state transition effect.
+
+
 ## [2.45.0] — 2026-08-17
 
 ### Fixed

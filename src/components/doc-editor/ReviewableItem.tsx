@@ -32,6 +32,17 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
   const prevStatus = useRef(item.status);
   const sc = statusColors[item.status];
 
+  // Ack/reject are deferred 150ms so the pulse animation can play. Two things
+  // fall out of that delay: the buttons stay live during the window, so a
+  // double click submits twice; and the timer outlives the row, so a list that
+  // re-renders mid-animation still fires against an item the user can no
+  // longer see. `submitting` covers the first, the ref + cleanup the second.
+  const [submitting, setSubmitting] = useState(false);
+  const submitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (submitTimer.current) clearTimeout(submitTimer.current);
+  }, []);
+
   useEffect(() => {
     if (prevStatus.current === 'pending' && item.status === 'acked') {
       setTransition('ack');
@@ -42,24 +53,32 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
   }, [item.status]);
 
   const handleAck = () => {
+    if (submitting) return;
+    setSubmitting(true);
     setTransition('ack');
-    setTimeout(() => {
+    submitTimer.current = setTimeout(() => {
+      submitTimer.current = null;
       onAck(noteText || undefined);
       setNoteText('');
       setShowNotes(false);
+      setSubmitting(false);
     }, 150);
   };
 
   const handleReject = () => {
+    if (submitting) return;
     if (!noteText.trim()) {
       setShowNotes(true);
       return;
     }
+    setSubmitting(true);
     setTransition('reject');
-    setTimeout(() => {
+    submitTimer.current = setTimeout(() => {
+      submitTimer.current = null;
       onReject(noteText);
       setNoteText('');
       setShowNotes(false);
+      setSubmitting(false);
     }, 150);
   };
 
@@ -112,10 +131,10 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       {item.status === 'pending' && (
         <div>
           <div className={cn('flex gap-2 mt-1.5')}>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white')} onClick={handleAck}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleAck} disabled={submitting}>
               Acknowledge
             </button>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white')} onClick={handleReject}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleReject} disabled={submitting}>
               Reject
             </button>
             {!showNotes && (
@@ -153,6 +172,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                   type="button"
                   className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white')}
                   onClick={handleAck}
+                  disabled={submitting}
                   tabIndex={0}
                 >
                   Submit & Acknowledge
@@ -161,6 +181,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                   type="button"
                   className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white')}
                   onClick={handleReject}
+                  disabled={submitting}
                   tabIndex={0}
                 >
                   Submit & Reject

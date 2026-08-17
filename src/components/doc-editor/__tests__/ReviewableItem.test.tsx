@@ -194,3 +194,80 @@ describe('ReviewableItem', () => {
     expect((screen.getByPlaceholderText(/Add notes/) as HTMLTextAreaElement).value).toBe('');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Submission guards
+//
+// handleAck / handleReject defer the callback by 150ms so the ack/reject pulse
+// can play. Two things fall out of that delay if nothing guards it: the button
+// stays live during the animation, and the timer outlives the component.
+// ---------------------------------------------------------------------------
+
+describe('ReviewableItem submission guards', () => {
+  it('acknowledges once even if the button is clicked repeatedly', () => {
+    const onAck = vi.fn();
+    render(<ReviewableItem item={mk()} onAck={onAck} onReject={vi.fn()} />);
+    const btn = screen.getByRole('button', { name: 'Acknowledge' });
+
+    fireEvent.click(btn);
+    fireEvent.click(btn);
+    fireEvent.click(btn);
+    act(() => { vi.advanceTimersByTime(200); });
+
+    // Three clicks inside the 150ms animation window must not become three
+    // acks on the same item.
+    expect(onAck).toHaveBeenCalledTimes(1);
+  });
+
+  it('disables the actions once an acknowledge is in flight', () => {
+    render(<ReviewableItem item={mk()} onAck={vi.fn()} onReject={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Acknowledge' }));
+    expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Reject' })).toBeDisabled();
+  });
+
+  it('does not acknowledge after the item unmounts mid-animation', () => {
+    const onAck = vi.fn();
+    const { unmount } = render(
+      <ReviewableItem item={mk()} onAck={onAck} onReject={vi.fn()} />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Acknowledge' }));
+    unmount();
+    act(() => { vi.advanceTimersByTime(500); });
+
+    // The row is gone — acking it now submits against something the user can
+    // no longer see.
+    expect(onAck).not.toHaveBeenCalled();
+  });
+
+  it('rejects once even if the button is clicked repeatedly', () => {
+    const onReject = vi.fn();
+    render(
+      <ReviewableItem item={mk()} onAck={vi.fn()} onReject={onReject} />,
+    );
+    // Reject requires a note first.
+    fireEvent.click(screen.getByRole('button', { name: 'Add note' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'nope' } });
+
+    const rejectBtns = screen.getAllByRole('button', { name: 'Reject' });
+    fireEvent.click(rejectBtns[0]);
+    fireEvent.click(rejectBtns[0]);
+    act(() => { vi.advanceTimersByTime(200); });
+
+    expect(onReject).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not reject after the item unmounts mid-animation', () => {
+    const onReject = vi.fn();
+    const { unmount } = render(
+      <ReviewableItem item={mk()} onAck={vi.fn()} onReject={onReject} />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Add note' }));
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'nope' } });
+    fireEvent.click(screen.getAllByRole('button', { name: 'Reject' })[0]);
+    unmount();
+    act(() => { vi.advanceTimersByTime(500); });
+
+    expect(onReject).not.toHaveBeenCalled();
+  });
+});
