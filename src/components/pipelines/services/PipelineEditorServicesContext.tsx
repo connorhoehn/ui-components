@@ -81,6 +81,31 @@ export interface PipelineEditorServices {
    * Omit it and every field keeps its neutral wording.
    */
   nodeVocabulary?: Record<string, NodeVocabulary>;
+
+  /**
+   * Host-supplied model choices, keyed by model GROUP.
+   *
+   * The library ships a small default list per group so the editor is usable
+   * out of the box, but a hardcoded list is wrong the moment a host runs a
+   * different backend — or the same backend a version later. Which models a
+   * deployment can actually call is a property of the HOST, exactly like
+   * `executableNodeTypes` and `nodeVocabulary`.
+   *
+   * Group names the library asks for:
+   *   - `image:generate`  — image generation models
+   *   - `llm:<provider>`  — chat models for an LLM node's selected provider,
+   *                         e.g. `llm:anthropic`, `llm:bedrock`
+   *
+   * Supplying a group REPLACES the default list for it; groups you omit keep
+   * their defaults, so a host can override one without restating the rest.
+   */
+  modelOptions?: Record<string, readonly ModelOption[]>;
+}
+
+/** One selectable model. `value` is what gets written to the node's data. */
+export interface ModelOption {
+  value: string;
+  label?: string;
 }
 
 /** Per-node-type overrides for config-field wording. */
@@ -162,6 +187,44 @@ export function useNodeVocabulary(nodeType: string): NodeVocabularyResolver {
       placeholder: (field, fallback) => vocab?.placeholders?.[field] ?? fallback,
     }),
     [vocab],
+  );
+}
+
+/**
+ * Model choices for a group, falling back to the library's defaults.
+ *
+ * Reads the context directly so a config panel stays renderable with no
+ * services provider mounted.
+ */
+export function useModelOptions(
+  group: string,
+  fallback: readonly ModelOption[],
+): readonly ModelOption[] {
+  const svc = useContext(PipelineEditorServicesContext);
+  const hostOptions = svc?.modelOptions?.[group];
+  return useMemo(
+    // An explicitly empty list is a real answer ("this host runs none"), so it
+    // is honoured rather than treated as "unset" and replaced by the defaults.
+    () => hostOptions ?? fallback,
+    [hostOptions, fallback],
+  );
+}
+
+/**
+ * Resolver form of {@link useModelOptions}, for callers that need a group they
+ * are not currently rendering — e.g. the LLM panel, which must look up the
+ * INCOMING provider's models when the provider changes, to decide whether the
+ * selected model survives the switch.
+ */
+export function useModelOptionsResolver(): (
+  group: string,
+  fallback: readonly ModelOption[],
+) => readonly ModelOption[] {
+  const svc = useContext(PipelineEditorServicesContext);
+  const hostOptions = svc?.modelOptions;
+  return useMemo(
+    () => (group, fallback) => hostOptions?.[group] ?? fallback,
+    [hostOptions],
   );
 }
 

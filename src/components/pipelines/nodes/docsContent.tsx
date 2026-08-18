@@ -189,7 +189,7 @@ const docsContent: Record<NodeType, ReactNode> = {
   ),
 
   // -------------------------------------------------------------------------
-  // Agent (AgentCore)
+  // Agent
   // -------------------------------------------------------------------------
   agent: (
     <>
@@ -197,7 +197,7 @@ const docsContent: Record<NodeType, ReactNode> = {
       <p>Invokes a Strands agent via A2A protocol. The agent processes the input and returns a structured response.</p>
       <h4>Fields</h4>
       <ul>
-        <li><code>agentId</code> — AgentCore agent identifier or ARN.</li>
+        <li><code>agentId</code> — agent identifier, in whatever form the host's agent runtime uses.</li>
         <li><code>protocol</code> — <code>a2a</code> (recommended) or <code>direct</code>.</li>
         <li><code>inputTemplate</code> — supports <code>{'{{context.*}}'}</code> substitution.</li>
         <li><code>streaming</code> — whether to stream the agent's response tokens.</li>
@@ -225,10 +225,10 @@ const docsContent: Record<NodeType, ReactNode> = {
   'knowledge-base': (
     <>
       <h4>What it does</h4>
-      <p>Queries a Bedrock Knowledge Base for relevant document chunks (RAG retrieval).</p>
+      <p>Queries a knowledge base for relevant document chunks (RAG retrieval). Which retrieval backend answers is configured by the host.</p>
       <h4>Fields</h4>
       <ul>
-        <li><code>knowledgeBaseId</code> — Bedrock KB identifier.</li>
+        <li><code>knowledgeBaseId</code> — knowledge base identifier.</li>
         <li><code>queryTemplate</code> — natural language query with substitution.</li>
         <li><code>topK</code> — number of chunks to retrieve (default 5).</li>
         <li><code>scoreThreshold</code> — minimum relevance score (0–1).</li>
@@ -241,10 +241,10 @@ const docsContent: Record<NodeType, ReactNode> = {
   'graph-query': (
     <>
       <h4>What it does</h4>
-      <p>Runs an openCypher query against a Neptune Analytics graph.</p>
+      <p>Runs a query against a graph database. The query dialect is whatever the host's graph engine accepts.</p>
       <h4>Fields</h4>
       <ul>
-        <li><code>graphId</code> — Neptune Analytics graph identifier.</li>
+        <li><code>graphId</code> — graph identifier.</li>
         <li><code>query</code> — openCypher query (NOT Gremlin/SPARQL).</li>
         <li><code>parameters</code> — named query parameters.</li>
       </ul>
@@ -256,7 +256,7 @@ const docsContent: Record<NodeType, ReactNode> = {
   memory: (
     <>
       <h4>What it does</h4>
-      <p>Reads from or writes to AgentCore Memory (session or long-term).</p>
+      <p>Reads from or writes to a scoped key/value memory (session or long-term). The backing store is supplied by the host.</p>
       <h4>Fields</h4>
       <ul>
         <li><code>mode</code> — <code>read</code> or <code>write</code>.</li>
@@ -272,10 +272,10 @@ const docsContent: Record<NodeType, ReactNode> = {
   guardrail: (
     <>
       <h4>What it does</h4>
-      <p>Applies Bedrock Guardrails content filtering. Evaluates input against configured policies and routes accordingly.</p>
+      <p>Applies content filtering. Evaluates input against the host's configured policies and routes accordingly.</p>
       <h4>Fields</h4>
       <ul>
-        <li><code>guardrailId</code> — Bedrock Guardrail identifier.</li>
+        <li><code>guardrailId</code> — guardrail identifier.</li>
         <li><code>inputField</code> — context path to evaluate.</li>
         <li><code>action</code> — <code>block</code>, <code>mask</code>, or <code>warn</code>.</li>
       </ul>
@@ -586,7 +586,7 @@ const docsContent: Record<NodeType, ReactNode> = {
   'image:generate': (
     <>
       <h4>What it does</h4>
-      <p>Generates images from a text prompt using Amazon Bedrock Titan Image Generator.</p>
+      <p>Generates images from a text prompt using the host's configured image model.</p>
       <h4>Fields</h4>
       <ul>
         <li><code>prompt</code> — required. Describes what to generate.</li>

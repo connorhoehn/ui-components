@@ -14,6 +14,8 @@ import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 import { ContextVariablePicker } from '../../context/ContextVariablePicker';
 import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useModelOptionsResolver } from '../../services/PipelineEditorServicesContext';
+import { Select } from '../../../forms/Select';
 
 export interface LLMConfigProps {
   data: LLMNodeData;
@@ -26,7 +28,20 @@ export interface LLMConfigProps {
   nodeId?: string;
 }
 
-const MODELS_BY_PROVIDER: Record<LLMProvider, string[]> = {
+/**
+ * Default model choices per provider, shipped so the editor is usable with no
+ * host wiring. A hardcoded list goes stale the moment a host runs a different
+ * deployment or the provider ships a new tier, so a host replaces any of these
+ * through `modelOptions` on the editor services seam, keyed `llm:<provider>`.
+ */
+/** The providers the LLM node's data type allows. Values are frozen API. */
+const PROVIDER_OPTIONS = [
+  { value: 'anthropic', label: 'Anthropic' },
+  { value: 'bedrock', label: 'Bedrock' },
+  { value: 'claude-code', label: 'Claude Code (subprocess)' },
+];
+
+export const DEFAULT_MODELS_BY_PROVIDER: Record<LLMProvider, string[]> = {
   anthropic: [
     'claude-opus-4-7',
     'claude-sonnet-4-6',
@@ -83,10 +98,19 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
   const systemMissing = !data.systemPrompt?.trim();
   const userMissing   = !data.userPromptTemplate?.trim();
 
+  const resolveModels = useModelOptionsResolver();
+  const modelsFor = (provider: LLMProvider) =>
+    resolveModels(
+      `llm:${provider}`,
+      DEFAULT_MODELS_BY_PROVIDER[provider].map((value) => ({ value })),
+    );
+  const modelOptions = modelsFor(data.provider);
+
   // Switching provider resets the model to the provider's first option if
   // the current model isn't valid for the new provider.
   const setProvider = (provider: LLMProvider) => {
-    const models = MODELS_BY_PROVIDER[provider];
+    // Read the NEW provider's list from the host, falling back to the default.
+    const models = modelsFor(provider).map((m) => m.value);
     const model = models.includes(data.model) ? data.model : models[0];
     onChange({ provider, model });
   };
@@ -95,28 +119,27 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
     <NodeConfigShell>
       {/* Provider */}
       <ConfigField label="Provider" required>
-        <select
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Select
+          size="sm"
           value={data.provider}
           onChange={(e) => setProvider(e.target.value as LLMProvider)}
-        >
-          <option value="anthropic">Anthropic</option>
-          <option value="bedrock">Bedrock</option>
-          <option value="claude-code">Claude Code (subprocess)</option>
-        </select>
+          aria-label="Provider"
+          options={PROVIDER_OPTIONS}
+        />
       </ConfigField>
 
       {/* Model */}
       <ConfigField label="Model" required>
-        <select
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Select
+          size="sm"
           value={data.model}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODELS_BY_PROVIDER[data.provider].map(m => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
+          aria-label="Model"
+          options={modelOptions.map((m) => ({
+            value: m.value,
+            label: m.label ?? m.value,
+          }))}
+        />
       </ConfigField>
 
       {/* Available run context, derived from the graph upstream of this node. */}

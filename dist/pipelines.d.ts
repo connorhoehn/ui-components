@@ -1221,6 +1221,12 @@ declare interface MemoryNodeData {
 
 declare type MemoryScope = 'session' | 'long-term';
 
+/** One selectable model. `value` is what gets written to the node's data. */
+declare interface ModelOption {
+    value: string;
+    label?: string;
+}
+
 /**
  * Category assignment for every node type registered in `nodeTypes`
  * (see ./index.ts). Keys are the exact React Flow type strings.
@@ -1503,6 +1509,24 @@ export declare interface PipelineEditorServices {
      * Omit it and every field keeps its neutral wording.
      */
     nodeVocabulary?: Record<string, NodeVocabulary>;
+    /**
+     * Host-supplied model choices, keyed by model GROUP.
+     *
+     * The library ships a small default list per group so the editor is usable
+     * out of the box, but a hardcoded list is wrong the moment a host runs a
+     * different backend — or the same backend a version later. Which models a
+     * deployment can actually call is a property of the HOST, exactly like
+     * `executableNodeTypes` and `nodeVocabulary`.
+     *
+     * Group names the library asks for:
+     *   - `image:generate`  — image generation models
+     *   - `llm:<provider>`  — chat models for an LLM node's selected provider,
+     *                         e.g. `llm:anthropic`, `llm:bedrock`
+     *
+     * Supplying a group REPLACES the default list for it; groups you omit keep
+     * their defaults, so a host can override one without restating the rest.
+     */
+    modelOptions?: Record<string, readonly ModelOption[]>;
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {

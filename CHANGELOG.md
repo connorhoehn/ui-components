@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.51.0] — 2026-08-18
+
+Finishes the vendor-neutrality pass across the whole pipelines node surface,
+and de-hand-rolls the two panels that were still doing their own controls.
+
+### Added
+
+- **`modelOptions` on the editor services seam** (+ `useModelOptions` and
+  `useModelOptionsResolver`). Model lists were hardcoded in two panels — an
+  AWS-only pair of image model ids in `GenerateConfig`, and a
+  provider-keyed chat model map in `LLMConfig`. Both go stale the moment a
+  host runs a different deployment or a provider ships a new tier. Hosts now
+  replace any group (`image:generate`, `llm:<provider>`) without restating
+  the rest; the shipped lists remain as defaults so the editor works unwired.
+
+  An explicitly empty list is honoured rather than treated as "unset" —
+  "this host runs no image models" is a real answer.
+
+### Changed
+
+- **`GenerateConfig` no longer hand-rolls its controls.** It rendered raw
+  `<textarea>`, `<select>` and `<input type="number">` styled by three shared
+  class-string constants, instead of the
+  `ConfigField`/`Textarea`/`Select`/`NumberInput` composites every other
+  panel uses — the exact drift the library exists to prevent. It also now
+  defaults the selection to the *first offered* model rather than a
+  hardcoded id, which with a host-supplied list may not be in the list at all.
+- **`LLMConfig`'s two `<select>`s** likewise become the `Select` composite,
+  dropping a raw `bg-[#f9fafb]` hex along the way, and gain the `aria-label`s
+  that made them testable.
+- **`docsContent.tsx` no longer names a backend** for the agent,
+  knowledge-base, graph-query, memory, guardrail and image-generate nodes.
+  The one remaining mention is deliberate: `provider: 'bedrock'` is a frozen
+  field *value* that literally means AWS Bedrock, so documenting it as such
+  is correct.
+
+### Tests
+
+- The vendor scan now walks **every** `.tsx` under `pipelines/nodes/`
+  (~78 files) instead of a hand-listed three, so a new panel is covered the
+  day it lands rather than the day someone remembers to add it. Three files
+  are allowlisted where the vendor name is a genuine data *value*, and a
+  "guards the guard" case fails if the walk ever stops finding files.
+- `modelOptions` (11) — defaults, host replacement, per-group isolation,
+  empty-list semantics, and the provider-switch path, which has to read the
+  **incoming** provider's list to decide whether the current model survives.
+  `LLMConfig` had no tests at all before this.
+
 ## [2.50.0] — 2026-08-18
 
 Vendor neutrality, and the memory node's editor/executor contract.

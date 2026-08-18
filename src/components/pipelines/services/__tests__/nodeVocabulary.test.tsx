@@ -11,7 +11,7 @@
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   PipelineEditorServicesProvider,
@@ -65,17 +65,50 @@ describe('vendor neutrality', () => {
     'Titan', 'Amazon', 'AWS',
   ];
 
-  const PANELS: Array<[string, string]> = [
-    ['knowledge-base/KnowledgeBaseConfig.tsx', 'knowledge base'],
-    ['graph-query/GraphQueryConfig.tsx', 'graph query'],
-    ['memory/MemoryConfig.tsx', 'memory'],
-  ];
+  // Scanned wholesale rather than as a hand-maintained list, so a new panel is
+  // covered the day it lands instead of the day someone remembers to add it.
+  const NODES_DIR = join(__dirname, '..', '..', 'nodes');
 
-  it.each(PANELS)('%s names no vendor in its user-visible copy', (file) => {
-    const source = readFileSync(
-      join(__dirname, '..', '..', 'nodes', file),
-      'utf8',
-    );
+  /**
+   * Genuine data VALUES, not incidental branding. `provider: 'bedrock'` is a
+   * frozen field value that literally means AWS Bedrock, and the default model
+   * ids are real ids a host can replace via `modelOptions`. Naming the vendor
+   * there is correct; the allowlist keeps the scan honest about the difference
+   * instead of being weakened for everything.
+   */
+  const ALLOWED = new Set([
+    'llm/LLMConfig.tsx',
+    'generate/GenerateConfig.tsx',
+    'docsContent.tsx',
+  ]);
+
+  function panelSources(): Array<[string, string]> {
+    const out: Array<[string, string]> = [];
+    const walk = (dir: string, prefix = '') => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+        if (entry.isDirectory()) {
+          if (entry.name === '__tests__') continue;
+          walk(join(dir, entry.name), rel);
+        } else if (
+          entry.name.endsWith('.tsx') &&
+          !entry.name.endsWith('.stories.tsx') &&
+          !ALLOWED.has(rel)
+        ) {
+          out.push([rel, readFileSync(join(dir, entry.name), 'utf8')]);
+        }
+      }
+    };
+    walk(NODES_DIR);
+    return out;
+  }
+
+  it('covers a meaningful number of node files', () => {
+    // Guards the guard: a broken walk would silently assert nothing.
+    expect(panelSources().length).toBeGreaterThan(20);
+  });
+
+  it.each(panelSources())('%s names no vendor in its user-visible copy', (_file, source) => {
     // Strip comments — the explanation of WHY the seam exists is allowed to
     // name an example vendor; the rendered UI is not.
     const code = source

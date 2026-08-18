@@ -1,135 +1,163 @@
 // src/components/pipelines/nodes/generate/GenerateConfig.tsx
 //
-// Config panel for image:generate (Bedrock Titan).
+// Config panel for image:generate.
+//
+// Rewritten twice over from its original form:
+//
+//  1. It hand-rolled every control — raw <textarea>, <select> and
+//     <input type="number"> styled by three shared class-string constants —
+//     instead of the ConfigField / Textarea / Select / NumberInput composites
+//     every other config panel uses. That is the drift the component library
+//     exists to prevent: the same field rendered two different ways depending
+//     on which panel you opened.
+//
+//  2. The model list was a hardcoded pair of vendor model IDs, so a host
+//     running any other image backend had no way to offer its own. The list is
+//     now a default that the host replaces through `modelOptions` on the
+//     editor services seam, keyed `image:generate`.
 
 import type { ImageGenerateNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
+import { Textarea } from '../../../forms/Textarea';
+import { Select } from '../../../forms/Select';
+import { NumberInput } from '../../../forms/NumberInput';
+import {
+  useModelOptions,
+  useNodeVocabulary,
+  type ModelOption,
+} from '../../services/PipelineEditorServicesContext';
 
 export interface GenerateConfigProps {
   data: ImageGenerateNodeData;
   onChange: (patch: Partial<ImageGenerateNodeData>) => void;
 }
 
-const MODEL_OPTIONS = [
+/**
+ * Shipped so the editor is usable with no host wiring. A host that runs a
+ * different image backend replaces this via `modelOptions['image:generate']`.
+ */
+export const DEFAULT_GENERATE_MODELS: readonly ModelOption[] = [
   { value: 'amazon.titan-image-generator-v2:0', label: 'Titan v2 (default)' },
-  { value: 'amazon.titan-image-generator-v1',   label: 'Titan v1' },
+  { value: 'amazon.titan-image-generator-v1', label: 'Titan v1' },
 ];
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const MIN_EDGE = 64;
+const MAX_EDGE = 2048;
+const MAX_IMAGES = 8;
 
 export default function GenerateConfig({ data, onChange }: GenerateConfigProps) {
+  const models = useModelOptions('image:generate', DEFAULT_GENERATE_MODELS);
+  const vocab = useNodeVocabulary('image:generate');
+
+  const promptMissing = !data.prompt?.trim();
+
+  // Fall back to the first offered model rather than a literal id — with a
+  // host-supplied list, a hardcoded default may not be in it.
+  const selectedModel = data.model ?? models[0]?.value ?? '';
+
   return (
     <NodeConfigShell>
-      {/* Prompt */}
-      <div>
-        <label htmlFor="generate-prompt" className={labelCls}>Prompt</label>
-        <textarea
-          id="generate-prompt"
+      <ConfigField
+        label={vocab.label('prompt', 'Prompt')}
+        required
+        error={promptMissing ? 'Prompt is required.' : undefined}
+        help={
+          !promptMissing
+            ? vocab.help('prompt', 'Text description of the image to generate.')
+            : undefined
+        }
+      >
+        <Textarea
           rows={4}
           spellCheck={false}
-          className={`${inputCls} resize-y min-h-20`}
+          invalid={promptMissing}
           value={data.prompt ?? ''}
           onChange={(e) => onChange({ prompt: e.target.value })}
-          placeholder="A photorealistic photograph of a golden retriever in a sunny meadow"
+          placeholder={vocab.placeholder(
+            'prompt',
+            'A photorealistic photograph of a golden retriever in a sunny meadow',
+          )}
+          aria-label="Prompt"
         />
-        <div className={helpCls}>Text description of the image to generate. Required.</div>
-      </div>
+      </ConfigField>
 
-      {/* Model */}
-      <div>
-        <label htmlFor="generate-model" className={labelCls}>Model</label>
-        <select
-          id="generate-model"
-          className={inputCls}
-          value={data.model ?? 'amazon.titan-image-generator-v2:0'}
+      <ConfigField
+        label={vocab.label('model', 'Model')}
+        help={
+          models.length === 0
+            ? 'This host declares no image models.'
+            : vocab.help('model')
+        }
+      >
+        <Select
+          size="sm"
+          value={selectedModel}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
 
-      {/* Dimensions */}
       <div className="flex gap-2">
         <div className="flex-1">
-          <label htmlFor="generate-width" className={labelCls}>Width (px)</label>
-          <input
-            id="generate-width"
-            type="number"
-            min={64}
-            max={2048}
-            step={64}
-            className={inputCls}
-            value={data.width ?? 512}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ width: Number.isFinite(v) && v > 0 ? v : 512 });
-            }}
-          />
+          <ConfigField label={vocab.label('width', 'Width')}>
+            <NumberInput
+              size="sm"
+              min={MIN_EDGE}
+              max={MAX_EDGE}
+              step={64}
+              unit="px"
+              value={data.width ?? 512}
+              onChange={(v) => onChange({ width: v })}
+              data-testid="generate-width"
+            />
+          </ConfigField>
         </div>
         <div className="flex-1">
-          <label htmlFor="generate-height" className={labelCls}>Height (px)</label>
-          <input
-            id="generate-height"
-            type="number"
-            min={64}
-            max={2048}
-            step={64}
-            className={inputCls}
-            value={data.height ?? 512}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ height: Number.isFinite(v) && v > 0 ? v : 512 });
-            }}
-          />
+          <ConfigField label={vocab.label('height', 'Height')}>
+            <NumberInput
+              size="sm"
+              min={MIN_EDGE}
+              max={MAX_EDGE}
+              step={64}
+              unit="px"
+              value={data.height ?? 512}
+              onChange={(v) => onChange({ height: v })}
+              data-testid="generate-height"
+            />
+          </ConfigField>
         </div>
       </div>
 
-      {/* Seed */}
-      <div>
-        <label htmlFor="generate-seed" className={labelCls}>
-          Seed <span className="text-text-tertiary font-normal">(optional — for reproducibility)</span>
-        </label>
-        <input
-          id="generate-seed"
-          type="number"
+      <ConfigField
+        label={vocab.label('seed', 'Seed')}
+        help="Optional — set for a reproducible result."
+      >
+        <NumberInput
+          size="sm"
           min={0}
           step={1}
-          className={inputCls}
-          value={data.seed ?? ''}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ seed: Number.isFinite(v) && v >= 0 ? v : undefined });
-          }}
+          value={data.seed ?? 0}
+          onChange={(v) => onChange({ seed: v })}
           placeholder="random"
+          data-testid="generate-seed"
         />
-      </div>
+      </ConfigField>
 
-      {/* numImages */}
-      <div>
-        <label htmlFor="generate-num-images" className={labelCls}>
-          Number of images <span className="text-text-tertiary font-normal">(fan-out when &gt; 1)</span>
-        </label>
-        <input
-          id="generate-num-images"
-          type="number"
+      <ConfigField
+        label={vocab.label('numImages', 'Number of images')}
+        help="Above 1, the step fans out with one arm per image, each carrying one imageId."
+      >
+        <NumberInput
+          size="sm"
           min={1}
-          max={8}
+          max={MAX_IMAGES}
           step={1}
-          className={inputCls}
           value={data.numImages ?? 1}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ numImages: Number.isFinite(v) && v >= 1 ? Math.min(8, v) : 1 });
-          }}
+          onChange={(v) => onChange({ numImages: v })}
+          data-testid="generate-num-images"
         />
-        <div className={helpCls}>
-          When &gt; 1, the step fans out with one arm per image. Each arm carries one imageId.
-        </div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

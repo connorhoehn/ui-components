@@ -1,5 +1,5 @@
-import { jsx as E, jsxs as K, Fragment as De } from "react/jsx-runtime";
-import { createContext as oe, useContext as B, useState as D, useRef as J, useEffect as F, useCallback as w, useMemo as V, forwardRef as G, useId as Oe } from "react";
+import { jsx as E, jsxs as z, Fragment as De } from "react/jsx-runtime";
+import { createContext as oe, useContext as L, useState as D, useRef as V, useEffect as F, useCallback as w, useMemo as B, forwardRef as Q, useId as Oe } from "react";
 import { c as j } from "./cn-B6yFEsav.js";
 import { b as je } from "./ToastProvider-D3MHbP-u.js";
 import { a as _e, u as Me } from "./EventStreamContext-CjzSHXy-.js";
@@ -60,7 +60,7 @@ function W(e) {
     return null;
   }
 }
-function z(e) {
+function Y(e) {
   e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), me(se(e.id), JSON.stringify(e)), Le(e);
 }
 function Je(e) {
@@ -158,13 +158,13 @@ function Ct(e) {
       outputKey: "pipelineCompletion",
       terminal: !0
     } }
-  ], U = (q, X, m, l) => ({
+  ], U = (q, G, m, l) => ({
     id: crypto.randomUUID(),
     source: q,
-    sourceHandle: X,
+    sourceHandle: G,
     target: m,
     targetHandle: l
-  }), H = [
+  }), J = [
     // Happy path: trigger → llm → condition → fork → (postComment | notify) → join → approval → updateDoc → finalSink
     U(r, "out", o, "in"),
     U(o, "out", i, "in"),
@@ -202,7 +202,7 @@ function Ct(e) {
     // NO_ERROR_HANDLER for the error-handler node).
     U(d, "out", v, "in"),
     U(d, "error", v, "in")
-  ], L = {
+  ], H = {
     id: crypto.randomUUID(),
     name: "Document Summary Pipeline (Demo)",
     description: "A showcase pipeline demonstrating LLM summarization, branching, approval, parallel actions, and a shared error handler.",
@@ -212,12 +212,12 @@ function Ct(e) {
     publishedVersion: 1,
     triggerBinding: { event: "manual" },
     nodes: A,
-    edges: H,
+    edges: J,
     createdAt: n,
     updatedAt: n,
     createdBy: e
   };
-  return z(L), L;
+  return Y(H), H;
 }
 function Ut(e, n) {
   const r = W(e);
@@ -245,18 +245,18 @@ function Ut(e, n) {
     createdAt: s,
     updatedAt: s
   };
-  return z(a), a;
+  return Y(a), a;
 }
 function At(e) {
   const n = W(e);
   return n ? JSON.stringify(n, null, 2) : null;
 }
-function Q(e = "") {
+function Z(e = "") {
   return `/api/pipelines/defs${e}`;
 }
 const We = { "Content-Type": "application/json" };
 async function Ke() {
-  const e = await fetch(Q("/"), { credentials: "include" });
+  const e = await fetch(Z("/"), { credentials: "include" });
   if (!e.ok) throw new Error(`listPipelinesRemote failed (${e.status})`);
   return ((await e.json()).pipelines ?? []).map((r) => ({
     id: r.id,
@@ -268,7 +268,7 @@ async function Ke() {
   }));
 }
 async function ze(e) {
-  const n = await fetch(Q(`/${encodeURIComponent(e)}`), {
+  const n = await fetch(Z(`/${encodeURIComponent(e)}`), {
     credentials: "include"
   });
   if (n.status === 404) return null;
@@ -276,7 +276,7 @@ async function ze(e) {
   return await n.json();
 }
 async function Te(e) {
-  const n = await fetch(Q(`/${encodeURIComponent(e.id)}`), {
+  const n = await fetch(Z(`/${encodeURIComponent(e.id)}`), {
     method: "PUT",
     headers: We,
     credentials: "include",
@@ -286,7 +286,7 @@ async function Te(e) {
   return await n.json();
 }
 async function Ye(e) {
-  const n = await fetch(Q(`/${encodeURIComponent(e)}`), {
+  const n = await fetch(Z(`/${encodeURIComponent(e)}`), {
     method: "DELETE",
     credentials: "include"
   });
@@ -294,7 +294,7 @@ async function Ye(e) {
     throw new Error(`deletePipelineRemote failed (${n.status})`);
 }
 async function Xe(e) {
-  const n = await fetch(Q(`/${encodeURIComponent(e)}/publish`), {
+  const n = await fetch(Z(`/${encodeURIComponent(e)}/publish`), {
     method: "POST",
     credentials: "include"
   });
@@ -302,7 +302,7 @@ async function Xe(e) {
   if (!n.ok) throw new Error(`publishPipelineRemote failed (${n.status})`);
   return await n.json();
 }
-function Y(e) {
+function X(e) {
   if (e instanceof SyntaxError) return !0;
   const n = e.message || String(e);
   return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("Unexpected token") || n.includes("not valid JSON") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
@@ -311,25 +311,25 @@ async function Nt() {
   try {
     return await Ke();
   } catch (e) {
-    if (Y(e)) return Be();
+    if (X(e)) return Be();
     throw e;
   }
 }
 async function be(e) {
   try {
     const n = await ze(e);
-    return n && z(n), n ?? W(e);
+    return n && Y(n), n ?? W(e);
   } catch (n) {
-    if (Y(n)) return W(e);
+    if (X(n)) return W(e);
     throw n;
   }
 }
 async function ce(e) {
-  e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), z(e);
+  e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), Y(e);
   try {
     return await Te(e);
   } catch (n) {
-    if (Y(n)) return e;
+    if (X(n)) return e;
     throw n;
   }
 }
@@ -338,16 +338,16 @@ async function Dt(e) {
   try {
     await Ye(e);
   } catch (n) {
-    if (Y(n)) return;
+    if (X(n)) return;
     throw n;
   }
 }
 async function Ge(e) {
   try {
     const n = await Xe(e);
-    return n && z(n), n;
+    return n && Y(n), n;
   } catch (n) {
-    if (Y(n)) return null;
+    if (X(n)) return null;
     throw n;
   }
 }
@@ -373,11 +373,11 @@ async function Ot(e) {
     updatedAt: n,
     createdBy: e.createdBy
   };
-  z(o);
+  Y(o);
   try {
     await Te(o);
   } catch (i) {
-    if (!Y(i)) throw i;
+    if (!X(i)) throw i;
   }
   return o;
 }
@@ -523,7 +523,7 @@ function jt({
   pipelineId: e,
   children: n
 }) {
-  const [r, o] = D(null), [i, t] = D(!1), [s, a] = D(null), [c, u] = D([]), [x, h] = D([]), d = J(null);
+  const [r, o] = D(null), [i, t] = D(!1), [s, a] = D(null), [c, u] = D([]), [x, h] = D([]), d = V(null);
   F(() => {
     let m = !1;
     return o(null), t(!1), a(null), u([]), h([]), be(e).then((l) => {
@@ -675,13 +675,13 @@ function jt({
     l && (o((I) => !I || I.name === l ? I : { ...I, name: l }), t(!0));
   }, []), U = w((m) => {
     o((l) => !l || l.icon === m ? l : { ...l, icon: m }), t(!0);
-  }, []), H = w((m) => {
+  }, []), J = w((m) => {
     o((l) => {
       if (!l) return l;
       const I = l.tags ?? [];
       return I.length === m.length && I.every((k, _) => k === m[_]) ? l : { ...l, tags: [...m] };
     }), t(!0);
-  }, []), L = w(() => {
+  }, []), H = w(() => {
     u((m) => {
       if (m.length === 0 || !r) return m;
       const l = m[m.length - 1];
@@ -702,7 +702,7 @@ function jt({
         return k.length > ve && k.shift(), k;
       }), o({ ...r, nodes: l.nodes, edges: l.edges }), t(!0), m.slice(0, -1);
     });
-  }, [r]), X = V(
+  }, [r]), G = B(
     () => ({
       definition: r,
       dirty: i,
@@ -719,13 +719,13 @@ function jt({
       save: S,
       publish: T,
       revert: $,
-      undo: L,
+      undo: H,
       redo: q,
       canUndo: c.length > 0,
       canRedo: x.length > 0,
       rename: A,
       setIcon: U,
-      setTags: H
+      setTags: J
     }),
     [
       r,
@@ -742,19 +742,19 @@ function jt({
       S,
       T,
       $,
-      L,
+      H,
       q,
       c.length,
       x.length,
       A,
       U,
-      H
+      J
     ]
   );
-  return /* @__PURE__ */ E(ge.Provider, { value: X, children: n });
+  return /* @__PURE__ */ E(ge.Provider, { value: G, children: n });
 }
 function _t() {
-  const e = B(ge);
+  const e = L(ge);
   if (!e)
     throw new Error(
       "usePipelineEditor must be used within a PipelineEditorProvider"
@@ -924,7 +924,7 @@ function Ht({
   onEvent: n,
   enabled: r = !1
 }) {
-  const { connectionState: o, sendMessage: i, onMessage: t } = pe(), s = J(n);
+  const { connectionState: o, sendMessage: i, onMessage: t } = pe(), s = V(n);
   F(() => {
     s.current = n;
   }, [n]), F(() => {
@@ -1054,7 +1054,7 @@ function Jt({
   return /* @__PURE__ */ E(Ee.Provider, { value: e, children: n });
 }
 function Re() {
-  return B(Ee);
+  return L(Ee);
 }
 const le = 20, ie = oe(null);
 function dt(e, n) {
@@ -1082,7 +1082,7 @@ function lt(e) {
   return s;
 }
 function Vt({ children: e }) {
-  const n = B(ge), { triggerRun: r } = it(), o = ut(), [i, t] = D({}), [s, a] = D(!1), c = J(/* @__PURE__ */ new Set()), u = J(null);
+  const n = L(ge), { triggerRun: r } = it(), o = ut(), [i, t] = D({}), [s, a] = D(!1), c = V(/* @__PURE__ */ new Set()), u = V(null);
   F(() => {
     const p = n?.definition?.id;
     !p || u.current === p || (u.current = p, a(!0), $e(p, { limit: le }).then((S) => {
@@ -1132,7 +1132,7 @@ function Vt({ children: e }) {
       o.resolveApproval(p, S, T, { comment: $ });
     },
     [o]
-  ), v = J(i);
+  ), v = V(i);
   F(() => {
     v.current = i;
   }, [i]);
@@ -1169,14 +1169,14 @@ function Vt({ children: e }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: T })
         }
-      ).catch((H) => {
-        console.error("[PipelineRuns] resolveBreakpoint API failed", H);
+      ).catch((J) => {
+        console.error("[PipelineRuns] resolveBreakpoint API failed", J);
       });
     },
     []
   ), b = w(
     async (p, S, T, $) => {
-      const H = v.current[p]?.pipelineId ?? "unknown", L = `/api/pipelines/${encodeURIComponent(H)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch`, q = await fetch(L, {
+      const J = v.current[p]?.pipelineId ?? "unknown", H = `/api/pipelines/${encodeURIComponent(J)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch`, q = await fetch(H, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ patch: T, ...$ ? { appliedBy: $ } : {} })
@@ -1192,16 +1192,16 @@ function Vt({ children: e }) {
           validation: { ok: !1, reason: m.error ?? "patch rejected" }
         };
       }
-      const X = await q.text().catch(() => "");
-      throw new Error(`applyContextPatch HTTP ${q.status}: ${X}`);
+      const G = await q.text().catch(() => "");
+      throw new Error(`applyContextPatch HTTP ${q.status}: ${G}`);
     },
     []
   ), g = w(
     async (p, S, T) => {
-      const U = v.current[p]?.pipelineId ?? "unknown", H = `/api/pipelines/${encodeURIComponent(U)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch/${encodeURIComponent(T)}`, L = await fetch(H, { method: "DELETE" });
-      if (L.status !== 204) {
-        const q = await L.text().catch(() => "");
-        throw new Error(`revertContextPatch HTTP ${L.status}: ${q}`);
+      const U = v.current[p]?.pipelineId ?? "unknown", J = `/api/pipelines/${encodeURIComponent(U)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch/${encodeURIComponent(T)}`, H = await fetch(J, { method: "DELETE" });
+      if (H.status !== 204) {
+        const q = await H.text().catch(() => "");
+        throw new Error(`revertContextPatch HTTP ${H.status}: ${q}`);
       }
     },
     []
@@ -1214,12 +1214,12 @@ function Vt({ children: e }) {
       }
       return { ...S, [p.id]: p };
     });
-  }, []), R = V(
+  }, []), R = B(
     () => Object.values(i).filter(
       (p) => p.status === "running" || p.status === "pending" || p.status === "awaiting_approval" || p.status === "paused_at_breakpoint"
     ).map((p) => p.id),
     [i]
-  ), N = V(
+  ), N = B(
     () => ({
       runs: i,
       activeRunIds: R,
@@ -1567,7 +1567,7 @@ function pt(e, n, r) {
   }
 }
 function mt() {
-  const e = B(ie);
+  const e = L(ie);
   if (!e)
     throw new Error(
       "usePipelineRuns must be used within a PipelineRunsProvider"
@@ -1575,17 +1575,17 @@ function mt() {
   return e;
 }
 function Wt() {
-  const e = Re(), n = B(ie), r = e?.retryFromStep, o = n?.retryFromStep;
-  return V(() => r ? async (i) => {
+  const e = Re(), n = L(ie), r = e?.retryFromStep, o = n?.retryFromStep;
+  return B(() => r ? async (i) => {
     await r(i);
   } : o ?? (async () => {
   }), [r, o]);
 }
 function Kt(e) {
-  const n = Re(), r = B(ie), o = n?.getLatestStepForNode, i = V(
+  const n = Re(), r = L(ie), o = n?.getLatestStepForNode, i = B(
     () => o ? o(e) : null,
     [o, e]
-  ), t = V(() => {
+  ), t = B(() => {
     if (!r) return null;
     let s = null, a = "";
     for (const c of Object.values(r.runs)) {
@@ -1596,15 +1596,15 @@ function Kt(e) {
   }, [r, e]);
   return o ? i : t;
 }
-const Z = oe(null);
+const K = oe(null);
 function zt({
   services: e,
   children: n
 }) {
-  return /* @__PURE__ */ E(Z.Provider, { value: e, children: n });
+  return /* @__PURE__ */ E(K.Provider, { value: e, children: n });
 }
 function Yt() {
-  const e = B(Z);
+  const e = L(K);
   if (!e)
     throw new Error(
       "useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation."
@@ -1612,7 +1612,7 @@ function Yt() {
   return e.getImageUrl;
 }
 function Xt() {
-  const e = B(Z);
+  const e = L(K);
   if (!e)
     throw new Error(
       "usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>."
@@ -1620,8 +1620,8 @@ function Xt() {
   return e;
 }
 function Gt(e) {
-  const r = B(Z)?.nodeVocabulary?.[e];
-  return V(
+  const r = L(K)?.nodeVocabulary?.[e];
+  return B(
     () => ({
       label: (o, i) => r?.labels?.[o] ?? i,
       help: (o, i) => r?.help?.[o] ?? i,
@@ -1630,9 +1630,25 @@ function Gt(e) {
     [r]
   );
 }
-function Qt() {
-  const n = B(Z)?.executableNodeTypes;
-  return V(() => {
+function Qt(e, n) {
+  const o = L(K)?.modelOptions?.[e];
+  return B(
+    // An explicitly empty list is a real answer ("this host runs none"), so it
+    // is honoured rather than treated as "unset" and replaced by the defaults.
+    () => o ?? n,
+    [o, n]
+  );
+}
+function Zt() {
+  const n = L(K)?.modelOptions;
+  return B(
+    () => (r, o) => n?.[r] ?? o,
+    [n]
+  );
+}
+function en() {
+  const n = L(K)?.executableNodeTypes;
+  return B(() => {
     if (!n) return () => !0;
     const r = new Set(n);
     return (o) => r.has(o);
@@ -1661,14 +1677,14 @@ function gt({ startedAt: e }) {
     }
   );
 }
-function Zt({
+function tn({
   status: e,
   src: n,
   alt: r = "",
   startedAt: o,
   className: i
 }) {
-  const t = je(), s = J(e), [a, c] = D(!1);
+  const t = je(), s = V(e), [a, c] = D(!1);
   return s.current !== e && (s.current = e, e === "done" && !t && c(!0)), F(() => {
     if (!a) return;
     const u = setTimeout(() => c(!1), 30);
@@ -1679,7 +1695,7 @@ function Zt({
       "data-testid": "generative-image-preview",
       "data-status": e,
       className: j("relative overflow-hidden rounded-md bg-surface-hover", i),
-      children: e === "synthesizing" ? /* @__PURE__ */ K(De, { children: [
+      children: e === "synthesizing" ? /* @__PURE__ */ z(De, { children: [
         /* @__PURE__ */ E(
           "div",
           {
@@ -1755,7 +1771,7 @@ function Ce(e, n, r, o) {
   const t = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/breakpoint/${encodeURIComponent(r)}/patch`;
   return o ? `${t}/${encodeURIComponent(o)}` : `${t}`;
 }
-async function en(e, n, r, o, i) {
+async function nn(e, n, r, o, i) {
   const t = await fetch(Ce(e, n, r), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1782,7 +1798,7 @@ async function en(e, n, r, o, i) {
     a
   );
 }
-async function tn(e, n, r, o) {
+async function rn(e, n, r, o) {
   const i = await fetch(Ce(e, n, r, o), {
     method: "DELETE",
     credentials: "include"
@@ -1801,13 +1817,56 @@ async function tn(e, n, r, o) {
     s
   );
 }
-const ue = {
+const yt = {
+  sm: "h-7 px-2 text-[12px]",
+  md: "h-9 px-2.5 text-[13px]"
+}, on = Q(function({
+  options: n,
+  placeholder: r,
+  size: o = "md",
+  invalid: i = !1,
+  disabled: t = !1,
+  className: s,
+  "data-testid": a,
+  value: c,
+  ...u
+}, x) {
+  return /* @__PURE__ */ z(
+    "select",
+    {
+      ref: x,
+      disabled: t,
+      "data-testid": a,
+      value: c,
+      className: j(
+        "w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary",
+        "outline-none transition-colors duration-150 cursor-pointer",
+        // Custom chevron via background-image is banned (inline style). Instead
+        // rely on the native OS chevron — appearance: none removes it but is
+        // only needed to remove the native outline; here we let native appearance
+        // show through via a Tailwind `select` reset that keeps the arrow.
+        // We use `appearance-auto` to restore the native arrow on modern browsers.
+        "appearance-auto",
+        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
+        i ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
+        yt[o],
+        s
+      ),
+      ...u,
+      children: [
+        r && /* @__PURE__ */ E("option", { value: "", disabled: !0, children: r }),
+        n.map((h) => /* @__PURE__ */ E("option", { value: h.value, disabled: h.disabled, children: h.label }, h.value))
+      ]
+    }
+  );
+}), ue = {
   sm: "h-7 px-2 text-[12px]",
   md: "h-9 px-2.5 text-[13px]"
 }, xe = {
   sm: "px-1.5",
   md: "px-2"
-}, Ue = G(function({
+}, Ue = Q(function({
   type: n = "text",
   size: r = "md",
   prefix: o,
@@ -1840,7 +1899,7 @@ const ue = {
       ),
       ...x
     }
-  ) : /* @__PURE__ */ K(
+  ) : /* @__PURE__ */ z(
     "div",
     {
       className: j(
@@ -1896,10 +1955,10 @@ const ue = {
       ]
     }
   );
-}), yt = {
+}), It = {
   sm: "px-1.5 py-0.5 text-[11px]",
   md: "px-2 py-0.5 text-[12px]"
-}, nn = G(
+}, sn = Q(
   function({
     value: n,
     onChange: r,
@@ -1913,7 +1972,7 @@ const ue = {
     "data-testid": x
   }, h) {
     const d = Oe(), v = u && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, f = t || v != null, P = s ?? v;
-    return /* @__PURE__ */ K("div", { className: "flex flex-col gap-1 w-full", children: [
+    return /* @__PURE__ */ z("div", { className: "flex flex-col gap-1 w-full", children: [
       /* @__PURE__ */ E(
         Ue,
         {
@@ -1943,7 +2002,7 @@ const ue = {
             "hover:bg-info-bg hover:border-info-border hover:text-info-fg",
             "focus:outline-none focus:ring-2 focus:ring-info/40",
             "disabled:opacity-50 disabled:cursor-not-allowed",
-            yt[c]
+            It[c]
           ),
           children: y.label
         },
@@ -1960,7 +2019,7 @@ const ue = {
       )
     ] });
   }
-), rn = G(
+), an = Q(
   function({
     value: n,
     onChange: r,
@@ -2016,50 +2075,7 @@ const ue = {
       }
     );
   }
-), It = {
-  sm: "h-7 px-2 text-[12px]",
-  md: "h-9 px-2.5 text-[13px]"
-}, on = G(function({
-  options: n,
-  placeholder: r,
-  size: o = "md",
-  invalid: i = !1,
-  disabled: t = !1,
-  className: s,
-  "data-testid": a,
-  value: c,
-  ...u
-}, x) {
-  return /* @__PURE__ */ K(
-    "select",
-    {
-      ref: x,
-      disabled: t,
-      "data-testid": a,
-      value: c,
-      className: j(
-        "w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary",
-        "outline-none transition-colors duration-150 cursor-pointer",
-        // Custom chevron via background-image is banned (inline style). Instead
-        // rely on the native OS chevron — appearance: none removes it but is
-        // only needed to remove the native outline; here we let native appearance
-        // show through via a Tailwind `select` reset that keeps the arrow.
-        // We use `appearance-auto` to restore the native arrow on modern browsers.
-        "appearance-auto",
-        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
-        "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
-        i ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
-        It[o],
-        s
-      ),
-      ...u,
-      children: [
-        r && /* @__PURE__ */ E("option", { value: "", disabled: !0, children: r }),
-        n.map((h) => /* @__PURE__ */ E("option", { value: h.value, disabled: h.disabled, children: h.label }, h.value))
-      ]
-    }
-  );
-}), bt = {
+), bt = {
   sm: "w-16",
   md: "w-32",
   lg: "w-48"
@@ -2069,7 +2085,7 @@ const ue = {
   auto: ""
 };
 function wt() {
-  return /* @__PURE__ */ K(
+  return /* @__PURE__ */ z(
     "svg",
     {
       xmlns: "http://www.w3.org/2000/svg",
@@ -2089,7 +2105,7 @@ function wt() {
     }
   );
 }
-function sn({
+function cn({
   src: e,
   alt: n,
   size: r = "md",
@@ -2101,7 +2117,7 @@ function sn({
   "data-testid": c
 }) {
   const [u, x] = D("loading");
-  return /* @__PURE__ */ K(
+  return /* @__PURE__ */ z(
     "div",
     {
       "data-testid": c,
@@ -2139,7 +2155,7 @@ function sn({
     }
   );
 }
-const an = G(
+const un = Q(
   function({
     rows: n,
     minRows: r = 2,
@@ -2153,7 +2169,7 @@ const an = G(
     "data-testid": x,
     ...h
   }, d) {
-    const v = J(null), f = w(
+    const v = V(null), f = w(
       (R) => {
         v.current = R, typeof d == "function" ? d(R) : d && (d.current = R);
       },
@@ -2200,7 +2216,7 @@ const an = G(
     );
   }
 );
-async function cn(e, n, r, o) {
+async function dn(e, n, r, o) {
   const i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(i, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -2224,7 +2240,7 @@ function Ae(e) {
         n.push(`${encodeURIComponent(r)}=${encodeURIComponent(String(o))}`);
   return n.length > 0 ? `?${n.join("&")}` : "";
 }
-async function un(e, n, r = {}) {
+async function ln(e, n, r = {}) {
   const o = Ae({
     since: r.since,
     until: r.until,
@@ -2241,7 +2257,7 @@ async function un(e, n, r = {}) {
   }
   return t.json();
 }
-async function dn(e) {
+async function pn(e) {
   if (!e.actor && !e.pipelineId)
     throw new Error("searchAudit requires at least one of `actor` or `pipelineId`");
   const r = `/api/pipelines/audit/search${Ae({
@@ -2301,11 +2317,11 @@ function xt() {
       }
       return f;
     }
-  ), [i, t] = D(!0), [s, a] = D(null), [c, u] = D(0), x = J(n.runs);
+  ), [i, t] = D(!0), [s, a] = D(null), [c, u] = D(0), x = V(n.runs);
   F(() => {
     x.current = n.runs;
   }, [n.runs]);
-  const h = J(/* @__PURE__ */ new Map());
+  const h = V(/* @__PURE__ */ new Map());
   F(() => {
     let f = !1;
     t(!0), a(null);
@@ -2410,69 +2426,71 @@ function xt() {
       for (const y of f) y();
     };
   }, [e]);
-  const d = V(() => Object.values(r).sort(
+  const d = B(() => Object.values(r).sort(
     (f, P) => P.requestedAt.localeCompare(f.requestedAt)
   ), [r]), v = w(() => {
     u((f) => f + 1);
   }, []);
   return { approvals: d, isLoading: i, error: s, retry: v };
 }
-function ln() {
+function mn() {
   const { approvals: e } = xt();
   return e;
 }
 export {
-  Re as $,
-  Gt as A,
-  jt as B,
-  Ut as C,
-  At as D,
-  qt as E,
-  Ve as F,
-  Zt as G,
-  z as H,
-  sn as I,
-  nn as J,
-  it as K,
-  be as L,
-  Ot as M,
-  rn as N,
-  Ct as O,
+  xt as $,
+  Zt as A,
+  Qt as B,
+  Gt as C,
+  jt as D,
+  Ut as E,
+  At as F,
+  tn as G,
+  qt as H,
+  cn as I,
+  sn as J,
+  Ve as K,
+  Y as L,
+  it as M,
+  an as N,
+  be as O,
   Vt as P,
-  ce as Q,
-  Dt as R,
+  Ot as Q,
+  Ct as R,
   on as S,
-  an as T,
-  Ge as U,
-  ye as V,
-  ot as W,
-  Bt as X,
-  Ft as Y,
-  xt as Z,
-  Jt as _,
+  un as T,
+  ce as U,
+  Dt as V,
+  Ge as W,
+  ye as X,
+  ot as Y,
+  Bt as Z,
+  Ft as _,
   W as a,
-  Lt as a0,
+  Jt as a0,
+  Re as a1,
+  Lt as a2,
   Nt as b,
   Ht as c,
-  ln as d,
+  mn as d,
   Ue as e,
   ke as f,
   ht as g,
   zt as h,
-  en as i,
+  nn as i,
   Mt as j,
   st as k,
   Be as l,
-  un as m,
+  ln as m,
   $e as n,
   et as o,
-  tn as p,
+  rn as p,
   Yt as q,
-  cn as r,
-  dn as s,
+  dn as r,
+  pn as s,
   Xt as t,
   mt as u,
-  Qt as v,
+  en as v,
   Kt as w,
   Wt as x,
   _t as y,
