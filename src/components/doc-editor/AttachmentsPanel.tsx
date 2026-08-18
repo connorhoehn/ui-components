@@ -2,7 +2,7 @@
 //
 // Per-document attachments: file references and linked documents.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
 
 // ---------------------------------------------------------------------------
@@ -48,27 +48,39 @@ function useDocumentAttachments(documentId: string) {
     loadAttachments(documentId),
   );
 
+  // A lazy useState initialiser runs ONCE per mount. EditorModeSwitch keeps this
+  // panel mounted while documentId changes, so without this the panel kept
+  // showing the previous document's attachments — and because `persist` writes
+  // to the CURRENT documentId's key, adding a file to document B wrote
+  // document A's list into B's storage.
+  useEffect(() => {
+    setAttachments(loadAttachments(documentId));
+  }, [documentId]);
+
   const persist = (next: Attachment[]) => {
     localStorage.setItem(storageKey(documentId), JSON.stringify(next));
     setAttachments(next);
   };
 
+  // Mutators read from storage rather than from `attachments`, so a write can
+  // never be based on a list belonging to a different document (or on a stale
+  // copy if another tab changed it).
   const addFile = (name: string, url: string) => {
     persist([
-      ...attachments,
+      ...loadAttachments(documentId),
       { id: crypto.randomUUID(), kind: 'file', name: name.trim(), url: url.trim(), addedAt: new Date().toISOString() },
     ]);
   };
 
   const addDocumentLink = (title: string) => {
     persist([
-      ...attachments,
+      ...loadAttachments(documentId),
       { id: crypto.randomUUID(), kind: 'document', title: title.trim(), addedAt: new Date().toISOString() },
     ]);
   };
 
   const remove = (id: string) => {
-    persist(attachments.filter(a => a.id !== id));
+    persist(loadAttachments(documentId).filter(a => a.id !== id));
   };
 
   return { attachments, addFile, addDocumentLink, remove };

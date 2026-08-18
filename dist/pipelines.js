@@ -13806,7 +13806,7 @@ const Cp = {
 };
 function Sp(t, n) {
   const r = Ip[t.type];
-  return /* @__PURE__ */ e(r, { data: t.data, onChange: n, nodeId: t.id });
+  return /* @__PURE__ */ e(r, { data: t.data, onChange: n, nodeId: t.id }, t.id);
 }
 function $p({ selectedIds: t }) {
   const {

@@ -318,7 +318,16 @@ function renderConfig(
   onChange: (patch: Partial<NodeData>) => void,
 ): ReactElement {
   const Config = CONFIGS[node.type];
-  return <Config data={node.data} onChange={onChange} nodeId={node.id} />;
+  // Keyed by node id so selecting a different node REMOUNTS the panel.
+  //
+  // Without it React reuses the instance (same component type, same tree
+  // position), and any `useState(() => derive(props))` keeps the previous
+  // node's value. ApprovalConfig infers its time unit that way: select a node
+  // stored in hours then one stored in minutes and the second rendered "0
+  // hours" for a 5-minute timeout — nudging that 0 to 1 silently rewrote the
+  // node to 1 hour. Local UI state in a config panel belongs to one node, so
+  // resetting it on selection is the correct default for all of them.
+  return <Config key={node.id} data={node.data} onChange={onChange} nodeId={node.id} />;
 }
 
 // ---------------------------------------------------------------------------

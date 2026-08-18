@@ -8,6 +8,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.45.2] — 2026-08-17
+
+Two instances of the same root cause: `useState(() => derive(props))` runs once
+per mount, but both components stay mounted while the prop they derive from
+changes.
+
+### Fixed
+
+- **Attachments leaked between documents.** `AttachmentsPanel` seeded its list
+  with a lazy initialiser, and `EditorModeSwitch` keeps the panel mounted while
+  `documentId` changes. So switching documents kept showing the previous
+  document's attachments — and because `persist` writes to the *current*
+  document's storage key, adding a file to document B wrote document A's list
+  into B's storage. Confirmed by test: B's key ended up holding
+  `['a-spec.pdf', 'b-new.pdf']`.
+
+  The list now reloads when `documentId` changes, and the mutators read from
+  storage rather than from state, so a write can never be based on another
+  document's list (or a stale copy from another tab).
+
+- **Config panels kept the previously selected node's UI state.** `ConfigPanel`
+  renders `<Config data={node.data} …/>` — same component type, same tree
+  position — so React reuses the instance across node selections.
+  `ApprovalConfig` infers its time unit once from `data.timeoutMs`: select a
+  node stored in hours, then one stored in minutes, and the second rendered
+  "0 hours" for a 5-minute timeout. Nudging that 0 to 1 wrote 3,600,000 —
+  silently changing the node from 5 minutes to 1 hour.
+
+  Fixed at the dispatch site rather than per panel: the config is now keyed by
+  node id, so selecting a different node resets local UI state in **every**
+  panel. Six config panels hold prop-seeded state.
+
+### Checked and found correct
+
+- Focus timers in `CommentThread` and `SectionComments` — event handlers with
+  optional chaining, and React nulls refs on unmount.
+- Lazy initialisers elsewhere (`NodePalette` recents, `SourcesPage`,
+  `PipelineRunsPage` selection, `ResumeCallDialog`) — seeded from constants or
+  storage that is not prop-scoped, so they do not go stale.
+
+
 ## [2.45.1] — 2026-08-17
 
 ### Fixed
