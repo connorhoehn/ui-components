@@ -4,8 +4,6 @@
 
 import type { ImageVisionDescribeNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell, SamplePills } from '../shared';
-import { ContextVariablePicker } from '../../context/ContextVariablePicker';
-import { useUpstreamContext } from '../../context/useUpstreamContext';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionDescribeConfigProps {
@@ -27,7 +25,6 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function VisionDescribeConfig({ data, onChange, nodeId }: VisionDescribeConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
-  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   return (
     <NodeConfigShell>
       {/* Image ref path */}

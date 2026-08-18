@@ -2881,7 +2881,7 @@ export declare function VisionTagConfig({ data, onChange, nodeId }: VisionTagCon
 declare interface VisionTagConfigProps {
     data: ImageVisionTagNodeData;
     onChange: (patch: Partial<ImageVisionTagNodeData>) => void;
-    /** Node being edited; enables real upstream-context pills. */
+    /** Node being edited; enables real upstream image refs. */
     nodeId?: string;
 }
 

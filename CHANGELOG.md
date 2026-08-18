@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.54.0] — 2026-08-18
+
+Hand-rolled-control migration, batch 2. **22 files / 94 controls → 21 / 88.**
+
+### Fixed
+
+- **Five vision panels imported a context-variable picker they never
+  rendered.** `VisionConfig`, `VisionTagConfig`, `VisionDescribeConfig`,
+  `VisionClassifyConfig` and `VisionExtractTextConfig` each imported
+  `ContextVariablePicker` and destructured `paths`/`unresolved` from
+  `useUpstreamContext`, then never used any of it — invisible because
+  `tsc` isn't configured to flag unused locals.
+
+  Checked against the executor before deciding what to do with it, and the
+  answer was *not* "render the missing picker": `visionHandlerFactory`
+  passes `systemPrompt` through **verbatim**
+  (`buildSystemPrompt: (data) => data.systemPrompt ?? ''`), so a
+  `{{context.*}}` token in a vision prompt reaches the model as literal
+  text. Rendering the picker would have invited authors to insert tokens
+  that never resolve. The dead code is removed and `VisionTagConfig` now
+  says so in its help text instead.
+
+### Changed
+
+- **`VisionTagConfig` converted.** Its candidate-tag editor was hand-built
+  — chip list, input, Add button, Enter handling — when the library already
+  ships `<TagEditor>`, which is exactly that component. Wired with
+  `lowercase={false}`, because candidate tags are a controlled vocabulary
+  handed to the model and "Golden Retriever" has to survive as written.
+  Its hardcoded model list now comes from `modelOptions['image:vision']`.
+
+### Tests
+
+- `VisionTagConfig` (10), covering the TagEditor integration, tag-case
+  preservation, and the model seam.
+
 ## [2.53.0] — 2026-08-18
 
 Hand-rolled-control migration, batch 1 of the debt recorded in v2.52.0,

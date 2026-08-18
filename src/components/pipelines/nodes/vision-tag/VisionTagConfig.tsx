@@ -1,182 +1,119 @@
 // src/components/pipelines/nodes/vision-tag/VisionTagConfig.tsx
 //
 // Config panel for image:vision-tag.
+//
+// Converted off hand-rolled controls. Two things worth calling out:
+//
+//  - The candidate-tag editor was built by hand here — a chip list, an input,
+//    an Add button and Enter-key handling — when the library already ships
+//    <TagEditor>, which is that component. It keeps `lowercase={false}`
+//    because candidate tags are a controlled vocabulary handed to the model,
+//    so "Golden Retriever" must survive as written.
+//  - The model list was hardcoded, so a host running different vision models
+//    could not offer them. It now comes from the `modelOptions` seam under
+//    `image:vision`, with this list as the default.
 
-import { useState } from 'react';
 import type { ImageVisionTagNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { ContextVariablePicker } from '../../context/ContextVariablePicker';
-import { useUpstreamContext } from '../../context/useUpstreamContext';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import TagEditor from '../../../shared/TagEditor';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import {
+  useModelOptions,
+  type ModelOption,
+} from '../../services/PipelineEditorServicesContext';
 
 export interface VisionTagConfigProps {
   data: ImageVisionTagNodeData;
   onChange: (patch: Partial<ImageVisionTagNodeData>) => void;
-  /** Node being edited; enables real upstream-context pills. */
+  /** Node being edited; enables real upstream image refs. */
   nodeId?: string;
 }
 
-const MODEL_OPTIONS = [
-  { value: 'claude-haiku-4-5',   label: 'Claude Haiku 4.5 (default — fast)' },
-  { value: 'claude-sonnet-4-6',  label: 'Claude Sonnet 4.6 (more accurate)' },
+/** Default vision models; replaceable via `modelOptions['image:vision']`. */
+export const DEFAULT_VISION_MODELS: readonly ModelOption[] = [
+  { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5 (default — fast)' },
+  { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 (more accurate)' },
 ];
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-
 export default function VisionTagConfig({ data, onChange, nodeId }: VisionTagConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
-  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
-  const [newCandidate, setNewCandidate] = useState('');
-  const candidateTags = data.candidateTags ?? [];
-
-  const addCandidate = () => {
-    const trimmed = newCandidate.trim();
-    if (!trimmed || candidateTags.includes(trimmed)) return;
-    onChange({ candidateTags: [...candidateTags, trimmed] });
-    setNewCandidate('');
-  };
-
-  const removeCandidate = (idx: number) => {
-    onChange({ candidateTags: candidateTags.filter((_, i) => i !== idx) });
-  };
+  const models = useModelOptions('image:vision', DEFAULT_VISION_MODELS);
+  const pathMissing = !data.imageRefPath?.trim();
 
   return (
     <NodeConfigShell>
-      {/* Image ref path */}
-      <div>
-        <label htmlFor="vision-tag-image-ref-path" className={labelCls}>Image ref path</label>
-        <input
-          id="vision-tag-image-ref-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.imageRefPath ?? ''}
-          onChange={(e) => onChange({ imageRefPath: e.target.value.trim() })}
-          placeholder="$.trigger.imageRef"
+      <SourceImagePathField
+        value={data.imageRefPath}
+        onChange={(v) => onChange({ imageRefPath: v ?? '' })}
+        nodeId={nodeId}
+        label="Image ref path"
+        help={
+          pathMissing
+            ? 'Required — JSONPath to the imageId to tag.'
+            : 'JSONPath to the imageId to tag.'
+        }
+      />
+
+      <ConfigField
+        label="Candidate tags"
+        help="Restricts tagging to this vocabulary. Leave empty for open-ended tags."
+      >
+        <TagEditor
+          value={data.candidateTags ?? []}
+          onChange={(candidateTags) => onChange({ candidateTags })}
+          placeholder="Add candidate tag…"
+          lowercase={false}
         />
-        <div className={helpCls}>JSONPath to the imageId to tag. Required.</div>
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ imageRefPath: v })} />
-      </div>
+      </ConfigField>
 
-      {/* Candidate tags */}
-      <div>
-        <div className={labelCls}>
-          Candidate tags <span className="text-text-tertiary font-normal">(optional — omit for open-vocabulary)</span>
-        </div>
-        {candidateTags.length > 0 && (
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            {candidateTags.map((tag, idx) => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1 text-[11px] font-semibold bg-surface-inset border border-border rounded-full px-2 py-0.5 text-text-secondary"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => removeCandidate(idx)}
-                  className="bg-transparent border-none cursor-pointer p-0 text-danger-fg text-[11px] leading-none"
-                  aria-label={`Remove candidate tag ${tag}`}
-                >
-                  ✕
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="mt-1.5 flex gap-1.5">
-          <input
-            type="text"
-            spellCheck={false}
-            className={`${inputCls} flex-1 mt-0`}
-            value={newCandidate}
-            onChange={(e) => setNewCandidate(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addCandidate(); } }}
-            placeholder="Add candidate tag…"
-          />
-          <button
-            type="button"
-            onClick={addCandidate}
-            className="text-[12px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer py-1 px-3 shrink-0"
-          >
-            Add
-          </button>
-        </div>
-        <div className={helpCls}>Restricts tagging to this vocabulary. Leave empty for open-ended tags.</div>
-      </div>
-
-      {/* Max tags */}
-      <div>
-        <label htmlFor="vision-tag-max-tags" className={labelCls}>
-          Max tags <span className="text-text-tertiary font-normal">(default 10)</span>
-        </label>
-        <input
-          id="vision-tag-max-tags"
-          type="number"
+      <ConfigField label="Max tags" help="Default 10.">
+        <NumberInput
+          size="sm"
           min={1}
           max={50}
           step={1}
-          className={inputCls}
           value={data.maxTags ?? 10}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxTags: Number.isFinite(v) && v >= 1 ? v : 10 });
-          }}
+          onChange={(maxTags) => onChange({ maxTags })}
+          data-testid="vision-tag-max-tags"
         />
-      </div>
+      </ConfigField>
 
-      {/* Model */}
-      <div>
-        <label htmlFor="vision-tag-model" className={labelCls}>Model</label>
-        <select
-          id="vision-tag-model"
-          className={inputCls}
-          value={data.model ?? 'claude-haiku-4-5'}
+      <ConfigField label="Model">
+        <Select
+          size="sm"
+          value={data.model ?? models[0]?.value ?? ''}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
 
-      {/* System prompt override */}
-      <div>
-        <label htmlFor="vision-tag-system-prompt" className={labelCls}>
-          System prompt override <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <textarea
-          id="vision-tag-system-prompt"
+      <ConfigField
+        label="System prompt override"
+        help="Optional. Sent verbatim — {{context.*}} is NOT substituted here."
+      >
+        <Textarea
           rows={3}
           spellCheck={false}
-          className={`${inputCls} resize-y`}
           value={data.systemPrompt ?? ''}
           onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
           placeholder="Leave blank to use the default tagging system prompt."
+          aria-label="System prompt override"
         />
-      </div>
+      </ConfigField>
 
-      {/* Max output tokens */}
-      <div>
-        <label htmlFor="vision-tag-max-output-tokens" className={labelCls}>
-          Max output tokens <span className="text-text-tertiary font-normal">(default 256)</span>
-        </label>
-        <input
-          id="vision-tag-max-output-tokens"
-          type="number"
+      <ConfigField label="Max output tokens" help="Default 256.">
+        <NumberInput
+          size="sm"
           min={64}
           max={4096}
           step={64}
-          className={inputCls}
           value={data.maxOutputTokens ?? 256}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxOutputTokens: Number.isFinite(v) && v > 0 ? v : 256 });
-          }}
+          onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+          data-testid="vision-tag-max-output-tokens"
         />
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

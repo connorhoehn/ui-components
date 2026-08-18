@@ -5,8 +5,6 @@
 import { useState } from 'react';
 import type { ImageVisionClassifyNodeData } from '../../../../types/pipeline';
 import { NodeConfigShell, SamplePills } from '../shared';
-import { ContextVariablePicker } from '../../context/ContextVariablePicker';
-import { useUpstreamContext } from '../../context/useUpstreamContext';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionClassifyConfigProps {
@@ -28,7 +26,6 @@ const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 export default function VisionClassifyConfig({ data, onChange, nodeId }: VisionClassifyConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
-  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const [newLabel, setNewLabel] = useState('');
   const labels = data.labels ?? [];
 

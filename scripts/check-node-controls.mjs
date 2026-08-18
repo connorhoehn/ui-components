@@ -31,7 +31,6 @@ const CONTROL_RE = /<(select|textarea|input)\b/g;
 const BASELINE = {
   'action/ActionConfig.tsx': 9,
   'vision/VisionConfig.tsx': 6,
-  'vision-tag/VisionTagConfig.tsx': 6,
   'watermark/WatermarkConfig.tsx': 6,
   'resize/ResizeConfig.tsx': 6,
   'approval/ApprovalConfig.tsx': 5,

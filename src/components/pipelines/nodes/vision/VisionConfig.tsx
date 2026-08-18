@@ -6,8 +6,6 @@ import { useCallback, useState } from 'react';
 import type { AuthoringBBox, ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
 import { NodeConfigShell } from '../shared';
-import { ContextVariablePicker } from '../../context/ContextVariablePicker';
-import { useUpstreamContext } from '../../context/useUpstreamContext';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VisionConfigProps {
@@ -60,7 +58,6 @@ const errorCls = 'text-[11px] text-danger-fg mt-0.5';
 
 export default function VisionConfig({ data, onChange, nodeId }: VisionConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
-  const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [schemaText, setSchemaText] = useState<string>(
     data.outputSchema ? JSON.stringify(data.outputSchema, null, 2) : '',
