@@ -8,6 +8,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.49.0] — 2026-08-18
+
+Group C node configuration: the two nodes whose panels read
+"coming in Phase C".
+
+### Added
+
+- **`KnowledgeBaseConfig`** — configuration for the `knowledge-base` node
+  (RAG retrieval from a Bedrock Knowledge Base): knowledge base id, query
+  template, top-K, score threshold, output key and retry policy. The query
+  template gets the upstream-context picker and the unresolved-path warning,
+  because a typo'd `{{context.*}}` path there silently embeds and searches for
+  the literal text of the template.
+- **`GraphQueryConfig`** — configuration for the `graph-query` node (Neptune
+  openCypher): graph id, query, bind parameters, timeout, output key and retry
+  policy. Parameters are edited as rows rather than a raw JSON blob — a
+  malformed blob is only discovered at run time, and a user who cannot add a
+  parameter row will interpolate values into the query string instead, which
+  is how you get an injection into a graph database. For the same reason the
+  context picker appends to a parameter value rather than to the query.
+
+Both are wired into `ConfigPanel` and removed from
+`NODE_TYPES_WITHOUT_CONFIG`, which is now down to five inert node types
+(`agent`, `mcp-tool`, `guardrail`, `policy`, `ag-ui-output`).
+
+### Fixed
+
+- **A colliding parameter rename silently destroyed a binding.**
+  `GraphQueryConfig` stores parameters as a `Record<string, string>`, so
+  renaming row `b` to `a` overwrote `a`'s value *and* dropped a row, with no
+  indication. The rename is now refused with an explanation. (Caught writing
+  the test for a duplicate-name warning that, it turned out, could never
+  fire — a `Record` cannot hold duplicates.)
+
+### Tests
+
+- `KnowledgeBaseConfig` (9), `GraphQueryConfig` (12), including the boundary
+  cases where a falsy check would be wrong: `topK` at 1 and 100, and a
+  `scoreThreshold` of `0`, which means "keep everything" rather than "unset".
+
+### Consumer note
+
+The matching executor support for the `memory` node (v2.48.0) ships in
+`platform-api` under `src/pipeline/memory/` — see its
+`docs/memory-PROVISIONING.md`. `knowledge-base` and `graph-query` still have
+no executor handler, so those nodes configure but do not yet run.
+
 ## [2.48.0] — 2026-08-18
 
 Group B node configuration, and two canvas bugs the new e2e coverage exposed.

@@ -43,6 +43,8 @@ import docsContent from '../nodes/docsContent';
 import ImageSourceConfig from '../nodes/image-source/ImageSourceConfig';
 import SaveConfig from '../nodes/save/SaveConfig';
 import MemoryConfig from '../nodes/memory/MemoryConfig';
+import KnowledgeBaseConfig from '../nodes/knowledge-base/KnowledgeBaseConfig';
+import GraphQueryConfig from '../nodes/graph-query/GraphQueryConfig';
 import VisionPromptBench from '../vision/VisionPromptBench';
 import EmptyState from '../../shared/EmptyState';
 
@@ -301,8 +303,7 @@ const PlaceholderConfig: AnyConfig = ({ data }) => (
  * front rather than letting the author find out after placing the node.
  */
 export const NODE_TYPES_WITHOUT_CONFIG: readonly NodeType[] = [
-  'agent', 'mcp-tool', 'knowledge-base', 'graph-query',
-  'guardrail', 'policy', 'ag-ui-output',
+  'agent', 'mcp-tool', 'guardrail', 'policy', 'ag-ui-output',
 ];
 
 const CONFIGS: Record<NodeType, AnyConfig> = {
@@ -316,8 +317,8 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   approval: ApprovalConfig as unknown as AnyConfig,
   agent: PlaceholderConfig,
   'mcp-tool': PlaceholderConfig,
-  'knowledge-base': PlaceholderConfig,
-  'graph-query': PlaceholderConfig,
+  'knowledge-base': KnowledgeBaseConfig as unknown as AnyConfig,
+  'graph-query': GraphQueryConfig as unknown as AnyConfig,
   memory: MemoryConfig as unknown as AnyConfig,
   guardrail: PlaceholderConfig,
   policy: PlaceholderConfig,

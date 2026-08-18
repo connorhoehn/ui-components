@@ -2,10 +2,11 @@
 //
 // Config panel for the memory node (AgentCore Memory read/write).
 //
-// The executor has supported this node for a while, but the editor offered no
-// settings — it rendered a placeholder — so every memory node ran with whatever
-// defaults it was created with and the mode/scope/namespace could not be
-// changed after placing it.
+// The editor rendered a placeholder for this node, so a placed memory node ran
+// with whatever defaults it was created with and its mode/scope/namespace could
+// not be changed afterwards. The matching executor handler ships in
+// platform-api (src/pipeline/memory/) — 'session' scope binds to the runId and
+// 'long-term' to the pipelineId, which is what the scope help text describes.
 
 import type { MemoryNodeData, MemoryMode, MemoryScope } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
