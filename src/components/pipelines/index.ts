@@ -195,6 +195,10 @@ export { useUpstreamContext, useUpstreamImageRefs } from './context/useUpstreamC
 // Host-declared executor capability. The palette and node cards mark types the
 // host cannot run; omit `executableNodeTypes` and nothing is marked.
 export { useIsNodeTypeExecutable } from './services/PipelineEditorServicesContext';
+
+// Node types that ship without a settings UI — surfaced so a host can tell the
+// author up front instead of after they place the node.
+export { NODE_TYPES_WITHOUT_CONFIG } from './canvas/ConfigPanel';
 export type { UpstreamContext } from './context/useUpstreamContext';
 export { ContextVariablePicker } from './context/ContextVariablePicker';
 export type { ContextVariablePickerProps } from './context/ContextVariablePicker';

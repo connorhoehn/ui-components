@@ -97,13 +97,28 @@ export async function publishPipelineRemote(id: string): Promise<PipelineDefinit
 // source of truth.
 // ---------------------------------------------------------------------------
 
+/**
+ * True when the pipelines API is not usably present, so the caller should fall
+ * back to localStorage rather than surfacing an error.
+ *
+ * Covers the obvious transport failures AND a response that is not JSON. That
+ * second case is not exotic: any SPA-fallback deployment answers an unknown
+ * path with index.html and HTTP 200, so `res.json()` throws a parse error
+ * rather than a network error. Classifying that as a hard failure left the
+ * editor stuck on "Loading pipeline…" forever instead of opening the locally
+ * stored copy — which is exactly what happens in the demo, and in any app
+ * whose static host serves index.html for /api/*.
+ */
 function isNetworkError(err: unknown): boolean {
+  if (err instanceof SyntaxError) return true; // response body was not JSON
   const msg = (err as Error).message || String(err);
   return (
     msg.includes('NetworkError') ||
     msg.includes('Failed to fetch') ||
     msg.includes('network') ||
     msg.includes('ECONNREFUSED') ||
+    msg.includes('Unexpected token') ||
+    msg.includes('not valid JSON') ||
     msg.includes('500') ||
     msg.includes('502') ||
     msg.includes('503') ||

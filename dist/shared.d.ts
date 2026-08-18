@@ -664,6 +664,8 @@ export declare interface EventGlyph {
 
 export declare const eventGlyphs: Record<string, EventGlyph>;
 
+export declare function EventRow({ timestamp, type, summary, severity, onClick, selected }: EventRowProps): JSX.Element;
+
 export declare interface EventRowProps {
     timestamp: string;
     type: string;
@@ -787,6 +789,8 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
     variant?: 'ghost' | 'primary' | 'danger';
     size?: 'sm' | 'md' | 'lg';
 }
+
+export declare function IconPicker({ value, onChange, curated, }: IconPickerProps): JSX.Element;
 
 export declare interface IconPickerProps {
     value: string;
@@ -1288,6 +1292,8 @@ export declare interface SegmentOption {
     icon?: ReactNode;
 }
 
+export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
+
 export declare interface ShortcutsHelpProps {
     open: boolean;
     onClose: () => void;
@@ -1719,6 +1725,8 @@ export declare interface ThumbnailCardProps {
     'data-testid'?: string;
 }
 
+export declare function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps): JSX.Element;
+
 export declare interface ToastContextValue {
     toast: (message: string, opts?: ToastOptions) => void;
 }
@@ -1925,6 +1933,8 @@ export declare interface UserMenuUser {
     email: string;
     avatarUrl?: string;
 }
+
+export declare function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps): JSX.Element;
 
 export declare interface UserPickerProps {
     value: string[];

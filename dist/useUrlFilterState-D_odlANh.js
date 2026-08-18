@@ -5,7 +5,7 @@ import * as Y from "yjs";
 import { applyUpdate as W, encodeStateAsUpdate as oe } from "yjs";
 import { C as z, i as ce } from "./fieldType-BJfRz7mO.js";
 import { g as ie, r as ue } from "./registry-qR57lair.js";
-import { u as le } from "./ToastProvider-BMqraB3k.js";
+import { u as le } from "./ToastProvider-D3MHbP-u.js";
 import { useSearchParams as de } from "react-router";
 const j = "activity:broadcast", fe = 100, me = 2e3;
 let pe = 0;

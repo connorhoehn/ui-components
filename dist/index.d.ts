@@ -2275,6 +2275,8 @@ export declare interface EventGlyph {
 
 export declare const eventGlyphs: Record<string, EventGlyph>;
 
+export declare function EventRow({ timestamp, type, summary, severity, onClick, selected }: EventRowProps): JSX.Element;
+
 export declare interface EventRowProps {
     timestamp: string;
     type: string;
@@ -2878,6 +2880,8 @@ export declare interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLB
     variant?: 'ghost' | 'primary' | 'danger';
     size?: 'sm' | 'md' | 'lg';
 }
+
+export declare function IconPicker({ value, onChange, curated, }: IconPickerProps): JSX.Element;
 
 export declare interface IconPickerProps {
     value: string;
@@ -5815,6 +5819,8 @@ export declare const shadows: {
     readonly xl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)";
 };
 
+export declare function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps): JSX.Element;
+
 export declare interface ShortcutsHelpProps {
     open: boolean;
     onClose: () => void;
@@ -6734,6 +6740,8 @@ export declare interface ThumbnailCardProps {
     style?: CSSProperties;
     'data-testid'?: string;
 }
+
+export declare function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps): JSX.Element;
 
 export declare interface ToastContextValue {
     toast: (message: string, opts?: ToastOptions) => void;
@@ -7985,6 +7993,8 @@ declare interface UseActivityBusReturn {
      /** Retry the GET /api/rooms hydrate after a fetch failure. */
      retry: () => void;
  }
+
+ export declare function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps): JSX.Element;
 
  export declare interface UserPickerProps {
      value: string[];

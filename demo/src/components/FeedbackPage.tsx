@@ -1,3 +1,12 @@
+import { useState } from 'react';
+import {
+  Banner,
+  Button,
+  Modal,
+  Toast,
+  type BannerVariant,
+  type ToastType,
+} from '@connorhoehnslalom/ui-components/shared';
 import {
   ExampleBlock,
   PropsTable,
@@ -41,35 +50,23 @@ function ToastPreview({
   message,
   actionLabel,
 }: {
-  type: string;
+  type: ToastType;
   message: string;
   actionLabel?: string;
 }) {
-  const tone = TOAST_TONE[type];
+  // The real component. This used to be a hand-rolled div that mimicked it,
+  // which meant the showcase could drift from the thing it documents — and the
+  // interaction tests had nothing real to drive.
   return (
-    <div
-      className={`bg-white border border-border border-l-4 ${tone.accent} rounded-lg px-4 py-3 flex items-center gap-3 max-w-[380px] shadow-md`}
-    >
-      <span className={`text-base ${tone.iconColor} flex-shrink-0`}>
-        {TOAST_ICONS[type]}
-      </span>
-      <span className="text-sm text-text-primary flex-1 leading-snug">
-        {message}
-      </span>
-      {actionLabel && (
-        <button
-          type="button"
-          className={`bg-transparent border-none ${tone.actionText} text-[13px] font-semibold cursor-pointer px-1.5 py-0.5 font-[inherit]`}
-        >
-          {actionLabel}
-        </button>
-      )}
-      <button
-        type="button"
-        className="text-lg text-text-tertiary bg-transparent border-none cursor-pointer px-1 leading-none"
-      >
-        &times;
-      </button>
+    <div className="max-w-[380px]">
+      <Toast
+        id={`preview-${type}-${message}`}
+        type={type}
+        message={message}
+        actionLabel={actionLabel}
+        onAction={() => {}}
+        onDismiss={() => {}}
+      />
     </div>
   );
 }
@@ -89,30 +86,31 @@ function BannerPreview({
   title,
   dismissible = true,
 }: {
-  variant: string;
+  variant: BannerVariant;
   message: string;
   title?: string;
   dismissible?: boolean;
 }) {
-  const s = BANNER_STYLES[variant];
+  const [shown, setShown] = useState(true);
+  if (!shown) {
+    return (
+      <button
+        type="button"
+        onClick={() => setShown(true)}
+        className="text-[12px] text-primary underline bg-transparent border-none cursor-pointer p-0 text-left"
+      >
+        Dismissed — restore this banner
+      </button>
+    );
+  }
   return (
-    <div
-      className={`border rounded-lg px-3.5 py-2.5 flex items-start gap-2 text-[13px] ${s.wrapper}`}
+    <Banner
+      variant={variant}
+      title={title}
+      onDismiss={dismissible ? () => setShown(false) : undefined}
     >
-      <span className="text-sm flex-shrink-0 mt-px">{s.icon}</span>
-      <div className="flex-1">
-        {title && <strong className="block mb-0.5">{title}</strong>}
-        <span>{message}</span>
-      </div>
-      {dismissible && (
-        <button
-          type="button"
-          className="bg-transparent border-none cursor-pointer text-base p-0 leading-none text-current"
-        >
-          &times;
-        </button>
-      )}
-    </div>
+      {message}
+    </Banner>
   );
 }
 
@@ -127,20 +125,20 @@ function ModalPreview({
   body: string;
   footer?: React.ReactNode;
 }) {
+  // A trigger + the real <Modal>, rather than a div dressed up to look like
+  // one. A modal is an overlay; rendering a fake inline copy meant the page
+  // documented markup the component does not produce, and nothing here could
+  // actually be opened, focus-trapped or dismissed with Escape.
+  const [open, setOpen] = useState(false);
   return (
-    <div className="relative bg-black/25 rounded-lg p-8 flex items-center justify-center min-h-[200px]">
-      <div className="bg-white rounded-xl px-6 py-7 w-full max-w-[380px] shadow-lg">
-        <div className="text-base font-semibold text-text-primary mb-2.5">
-          {title}
-        </div>
-        <div className="text-[13px] text-neutral leading-normal">{body}</div>
-        {footer && (
-          <div className="flex gap-2 justify-end mt-5">
-            {footer}
-          </div>
-        )}
-      </div>
-    </div>
+    <>
+      <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
+        Open “{title}”
+      </Button>
+      <Modal open={open} onClose={() => setOpen(false)} title={title} footer={footer}>
+        <p className="m-0 text-[13px] leading-normal text-neutral">{body}</p>
+      </Modal>
+    </>
   );
 }
 

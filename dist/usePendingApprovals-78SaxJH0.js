@@ -1,7 +1,7 @@
 import { jsx as E, jsxs as V, Fragment as De } from "react/jsx-runtime";
 import { createContext as re, useContext as J, useState as D, useRef as B, useEffect as F, useCallback as w, useMemo as W, forwardRef as G, useId as Oe } from "react";
 import { c as j } from "./cn-B6yFEsav.js";
-import { a as je } from "./ToastProvider-BMqraB3k.js";
+import { b as je } from "./ToastProvider-D3MHbP-u.js";
 import { a as _e, u as Me } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Fe } from "./IdentityContext-CLalsm_M.js";
 import { u as pe } from "./WebSocketContext-DPGFyPeZ.js";
@@ -303,8 +303,9 @@ async function Xe(e) {
   return await n.json();
 }
 function Y(e) {
+  if (e instanceof SyntaxError) return !0;
   const n = e.message || String(e);
-  return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
+  return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("Unexpected token") || n.includes("not valid JSON") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
 }
 async function Nt() {
   try {

@@ -135,7 +135,7 @@ export default function App() {
         <Route path="workflows">
           <Route index element={<PagesOverviewPage />} />
           {/* Pipelines */}
-          <Route path="pipeline-editor" element={<S><PipelineEditor /></S>} />
+          <Route path="pipeline-editor/*" element={<S><PipelineEditor /></S>} />
           {/* Agents */}
           <Route path="agents/dashboard" element={<S><AgentDashboard /></S>} />
           <Route path="agents/flow" element={<S><AgentFlow /></S>} />

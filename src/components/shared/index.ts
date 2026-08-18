@@ -32,12 +32,15 @@ export * from './LoadingState';
 export { default as FormField } from './FormField';
 export * from './FormField';
 export * from './eventGlyphs';
+export { default as EventRow } from './EventRow';
 export * from './EventRow';
+export { default as IconPicker } from './IconPicker';
 export * from './IconPicker';
 export { default as ImageLightbox } from './ImageLightbox';
 export * from './ImageLightbox';
 export { default as Modal } from './Modal';
 export * from './Modal';
+export { default as ShortcutsHelp } from './ShortcutsHelp';
 export * from './ShortcutsHelp';
 export { default as ScoreBarGauge } from './ScoreBarGauge';
 export * from './ScoreBarGauge';
@@ -53,8 +56,12 @@ export { default as Tabs } from './Tabs';
 export * from './Tabs';
 export { default as TagEditor } from './TagEditor';
 export * from './TagEditor';
+// `export *` does not re-export a default, so the Toast component itself was
+// unreachable from this barrel — only its types were. Additive fix.
+export { default as Toast } from './Toast';
 export * from './Toast';
 export * from './ToastProvider';
+export { default as UserPicker } from './UserPicker';
 export * from './UserPicker';
 
 // ── New primitives (2025-05) ──

@@ -41,6 +41,7 @@ import VariationConfig from '../nodes/variation/VariationConfig';
 import EditPromptConfig from '../nodes/edit-prompt/EditPromptConfig';
 import docsContent from '../nodes/docsContent';
 import VisionPromptBench from '../vision/VisionPromptBench';
+import EmptyState from '../../shared/EmptyState';
 
 // ---------------------------------------------------------------------------
 // Per-type icon + display name (matches NodePalette).
@@ -267,11 +268,39 @@ type AnyConfig = (props: {
   nodeId?: string;
 }) => ReactElement;
 
+/**
+ * Shown for node types that have no settings UI yet.
+ *
+ * The previous copy read "Configuration for X — coming in Phase C", which is
+ * internal roadmap language: it tells the person holding the editor nothing
+ * about what will happen if they leave the node on the canvas. This says what
+ * the state actually is and what it means for their pipeline.
+ */
 const PlaceholderConfig: AnyConfig = ({ data }) => (
-  <div className="p-3 text-[13px] text-[#64748b]">
-    Configuration for <strong>{data.type}</strong> — coming in Phase C.
+  <div className="p-4" data-testid="config-panel-no-settings">
+    <EmptyState
+      icon="⚙️"
+      title="No settings for this node type yet"
+      description={
+        <>
+          <code className="font-mono text-[12px]">{String(data.type)}</code> has no
+          configurable options in this version. The node can sit on the canvas and
+          connect to others, and it will run with its defaults wherever the
+          executor supports it.
+        </>
+      }
+    />
   </div>
 );
+
+/**
+ * Node types with no settings UI. Exported so a palette or canvas can say so up
+ * front rather than letting the author find out after placing the node.
+ */
+export const NODE_TYPES_WITHOUT_CONFIG: readonly NodeType[] = [
+  'agent', 'mcp-tool', 'knowledge-base', 'graph-query', 'memory',
+  'guardrail', 'policy', 'ag-ui-output', 'image-source', 'image:save',
+];
 
 const CONFIGS: Record<NodeType, AnyConfig> = {
   trigger: TriggerConfig as unknown as AnyConfig,

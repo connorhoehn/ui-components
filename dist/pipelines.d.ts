@@ -1227,6 +1227,12 @@ declare type MemoryScope = 'session' | 'long-term';
  */
 export declare const NODE_CATEGORIES: Record<string, NodeCategory>;
 
+/**
+ * Node types with no settings UI. Exported so a palette or canvas can say so up
+ * front rather than letting the author find out after placing the node.
+ */
+export declare const NODE_TYPES_WITHOUT_CONFIG: readonly NodeType[];
+
 export declare type NodeCategory = 'source' | 'transform' | 'ai' | 'control' | 'sink' | 'human';
 
 declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageDimensionsNodeData | ImageUpscaleNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
