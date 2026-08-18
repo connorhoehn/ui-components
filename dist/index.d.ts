@@ -3992,6 +3992,16 @@ export declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData
 
 export declare type NodeType = 'trigger' | 'llm' | 'transform' | 'condition' | 'action' | 'fork' | 'join' | 'approval' | 'agent' | 'mcp-tool' | 'knowledge-base' | 'graph-query' | 'memory' | 'guardrail' | 'policy' | 'ag-ui-output' | 'image-source' | 'image:save' | 'scatter' | 'image:resize' | 'image:transform' | 'image:format-convert' | 'image:sharpen' | 'image:watermark' | 'image:crop' | 'image:adjust-bw' | 'image:adjust-layer' | 'image:dimensions' | 'image:upscale' | 'image:vision-analyze' | 'image:vision-classify' | 'image:vision-describe' | 'image:vision-tag' | 'image:vision-extract-text' | 'image:generate' | 'image:variation' | 'image:edit-prompt';
 
+/** Per-node-type overrides for config-field wording. */
+declare interface NodeVocabulary {
+    /** Field key -> visible label. */
+    labels?: Record<string, string>;
+    /** Field key -> help text shown under the control. */
+    help?: Record<string, string>;
+    /** Field key -> input placeholder. */
+    placeholders?: Record<string, string>;
+}
+
 export declare function NotificationCenter({ items, onItemClick, onMarkAllRead, onClearAll, className, 'data-testid': testId, }: NotificationCenterProps): JSX.Element;
 
 export declare interface NotificationCenterProps {
@@ -4337,6 +4347,36 @@ export declare interface PipelineEditorServices {
      * that haven't wired this up yet.
      */
     executableNodeTypes?: readonly string[];
+    /**
+     * Host-supplied vocabulary for node config fields, keyed by node type.
+     *
+     * The library ships VENDOR-NEUTRAL copy: a retrieval node asks for a
+     * "Knowledge base ID", a graph node asks for a "Graph ID" and a "Graph
+     * query". It deliberately does not say "Bedrock" or "Neptune" or
+     * "openCypher", for the same reason it does not hardcode
+     * `executableNodeTypes`: which backend stands behind a node type is a
+     * property of the HOST's deployment, not of the component library. Baking a
+     * vendor's name into a shared primitive makes the library wrong for every
+     * host that uses a different one, and it cannot be corrected without a
+     * breaking change to a frozen surface.
+     *
+     * A host that IS running a specific backend supplies its own words here and
+     * gets the vendor-accurate UI it wants:
+     *
+     * ```ts
+     * nodeVocabulary: {
+     *   'knowledge-base': {
+     *     labels: { knowledgeBaseId: 'Bedrock KB ID' },
+     *     help: { knowledgeBaseId: 'The Bedrock Knowledge Base to retrieve from.' },
+     *     placeholders: { knowledgeBaseId: 'kb-3f9c1a2b' },
+     *   },
+     *   'graph-query': { labels: { query: 'openCypher query' } },
+     * }
+     * ```
+     *
+     * Omit it and every field keeps its neutral wording.
+     */
+    nodeVocabulary?: Record<string, NodeVocabulary>;
 }
 
 export declare function PipelineEditorServicesProvider({ services, children, }: {

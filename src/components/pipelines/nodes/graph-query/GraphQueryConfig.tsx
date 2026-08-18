@@ -1,11 +1,16 @@
 // src/components/pipelines/nodes/graph-query/GraphQueryConfig.tsx
 //
-// Config panel for the graph-query node (Neptune openCypher). Selecting the
-// node used to show "Configuration for graph-query — coming in Phase C", so
-// the query, its parameters and the timeout were all unreachable after the
-// node was placed.
+// Config panel for the graph-query node. Selecting the node used to show
+// "Configuration for graph-query — coming in Phase C", so the query, its
+// parameters and the timeout were all unreachable after the node was placed.
 //
-// Parameters are a Record<string,string> of openCypher bind parameters. They
+// The copy here is VENDOR-NEUTRAL on purpose — nothing names a graph database
+// or a query dialect, because which one stands behind this node is a property
+// of the host's deployment, not of this library. A host running a specific
+// engine supplies its own wording through `nodeVocabulary` on the editor
+// services seam (e.g. relabelling "Graph query" as "openCypher query").
+//
+// Parameters are a Record<string,string> of bind parameters. They
 // are edited as rows rather than raw JSON because a malformed blob is only
 // discovered at run time, and because binding is the whole point: a user who
 // cannot add a parameter row will interpolate values into the query string
@@ -21,6 +26,7 @@ import { Button } from '../../../ui/Button';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 import { ContextVariablePicker } from '../../context/ContextVariablePicker';
 import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useNodeVocabulary } from '../../services/PipelineEditorServicesContext';
 
 export interface GraphQueryConfigProps {
   data: GraphQueryNodeData;
@@ -28,6 +34,11 @@ export interface GraphQueryConfigProps {
   /** Node being edited; drives the real upstream-context pills. */
   nodeId?: string;
 }
+
+// A query example cannot avoid picking a dialect. This one is only a default;
+// a host running a different engine replaces it via `nodeVocabulary`.
+const DEFAULT_QUERY_EXAMPLE =
+  'MATCH (u:User {id: $userId})-[:AUTHORED]->(d:Doc)\nRETURN d.title LIMIT 10';
 
 const MIN_TIMEOUT_MS = 100;
 const MAX_TIMEOUT_MS = 300_000;
@@ -38,6 +49,7 @@ export default function GraphQueryConfig({
   nodeId,
 }: GraphQueryConfigProps) {
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
+  const vocab = useNodeVocabulary('graph-query');
 
   const graphMissing = !data.graphId?.trim();
   const queryMissing = !data.query?.trim();
@@ -94,10 +106,10 @@ export default function GraphQueryConfig({
     <NodeConfigShell>
       <ConfigSection title="Graph">
         <ConfigField
-          label="Graph ID"
+          label={vocab.label('graphId', 'Graph ID')}
           required
           error={graphMissing ? 'Graph ID is required.' : undefined}
-          help={!graphMissing ? 'The Neptune cluster/graph to query.' : undefined}
+          help={!graphMissing ? vocab.help('graphId', 'The graph to query.') : undefined}
         >
           <Input
             size="sm"
@@ -105,13 +117,13 @@ export default function GraphQueryConfig({
             spellCheck={false}
             value={data.graphId ?? ''}
             onChange={(e) => onChange({ graphId: e.target.value })}
-            placeholder="neptune-prod"
+            placeholder={vocab.placeholder('graphId', 'my-graph')}
             aria-label="Graph ID"
           />
         </ConfigField>
 
         <ConfigField
-          label="openCypher query"
+          label={vocab.label('query', 'Graph query')}
           required
           error={queryMissing ? 'Query is required.' : undefined}
           help={
@@ -126,8 +138,8 @@ export default function GraphQueryConfig({
             spellCheck={false}
             value={data.query ?? ''}
             onChange={(e) => onChange({ query: e.target.value })}
-            placeholder={'MATCH (u:User {id: $userId})-[:AUTHORED]->(d:Doc)\nRETURN d.title LIMIT 10'}
-            aria-label="openCypher query"
+            placeholder={vocab.placeholder('query', DEFAULT_QUERY_EXAMPLE)}
+            aria-label="Graph query"
           />
         </ConfigField>
       </ConfigSection>

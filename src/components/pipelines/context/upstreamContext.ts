@@ -68,8 +68,27 @@ export function contextContributions(node: PipelineNode): ContextPath[] {
       return [at(out, 'Result of the transform expression.', 'object')];
     case 'action':
       return [at(out, 'Response returned by the action.', 'object')];
-    case 'memory':
-      return [at(out, 'Records read from memory.', 'array')];
+    case 'memory': {
+      // Must match what the memory step handler actually returns
+      // (platform-api src/pipeline/memory/MemoryStepHandler.ts). It returns an
+      // OBJECT, not an array, and the useful value sits at `.value` — an
+      // author who is offered only the wrapper cannot reach the thing they
+      // stored. A read and a write return different shapes, so they are
+      // advertised differently.
+      if (data.mode === 'write') {
+        return [
+          at(out, 'Result of the memory write.', 'object'),
+          at(`${out}.written`, 'Whether the value was persisted.', 'boolean'),
+          at(`${out}.key`, 'The resolved key that was written.', 'string'),
+        ];
+      }
+      return [
+        at(out, 'Result of the memory read.', 'object'),
+        at(`${out}.value`, 'The recalled value, or null on a miss.', 'object'),
+        at(`${out}.found`, 'Whether a record existed for the key.', 'boolean'),
+        at(`${out}.key`, 'The resolved key that was read.', 'string'),
+      ];
+    }
     case 'scatter':
       return [
         at(`context.steps.${node.id}.items`, 'The fanned-out items.', 'array'),

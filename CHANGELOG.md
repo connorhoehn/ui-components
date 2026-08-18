@@ -8,6 +8,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.50.0] — 2026-08-18
+
+Vendor neutrality, and the memory node's editor/executor contract.
+
+### Added
+
+- **`nodeVocabulary` on the editor services seam.** The library ships
+  vendor-neutral copy for node config fields; a host that IS running a
+  specific backend supplies its own wording per node type and per field
+  (`labels` / `help` / `placeholders`) and gets the vendor-accurate UI it
+  wants. New `useNodeVocabulary(nodeType)` hook; it reads the context
+  directly, so panels stay renderable with no services provider mounted.
+
+  This follows the same reasoning as the existing `executableNodeTypes`:
+  which backend stands behind a node type is a property of the **host's
+  deployment**, not of the component library. Baking a vendor's name into a
+  shared primitive makes the library wrong for every host that uses a
+  different one, and it can't be corrected without a breaking change to a
+  frozen surface.
+
+### Changed
+
+- **`KnowledgeBaseConfig`, `GraphQueryConfig` and `MemoryConfig` no longer
+  name a vendor.** "Bedrock Knowledge Base" → "knowledge base", "Neptune
+  cluster/graph" → "graph", "openCypher query" → "Graph query", "AgentCore
+  Memory" → "memory". All of it is overridable through `nodeVocabulary`.
+  A test scans these panels' non-comment source for vendor terms so the
+  neutrality can't quietly regress.
+
+### Fixed
+
+- **The memory node's advertised output didn't match what runs.**
+  `contextContributions` described a memory node as contributing
+  `steps.<id>.output` — an **array**, "Records read from memory". The
+  handler returns an **object**, and the recalled value sits at `.value`,
+  which the picker never offered at all. A downstream author could not
+  select the thing they had just stored, and anything they did select was
+  silently empty at run time. Read and write now advertise their real,
+  separate shapes (`value`/`found`/`key` vs `written`/`key`).
+
+### Tests
+
+- `nodeVocabulary` (10) — neutral defaults, host overrides, per-field
+  fallback, and no-provider rendering.
+- **Bidirectional contract for the memory node** (8 here, 12 in
+  platform-api). Both repos assert against one shared fixture, in both
+  directions: that the config shape the panel produces is exactly what the
+  handler reads, and that every path the picker advertises actually exists
+  in the handler's output. A one-directional test passes while the two
+  halves disagree — and that failure shows up as silently wrong data at run
+  time rather than as a build error.
+
 ## [2.49.0] — 2026-08-18
 
 Group C node configuration: the two nodes whose panels read

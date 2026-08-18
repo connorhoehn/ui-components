@@ -21,7 +21,7 @@ describe('GraphQueryConfig', () => {
     fireEvent.change(screen.getByLabelText('Graph ID'), { target: { value: 'g2' } });
     expect(onChange).toHaveBeenCalledWith({ graphId: 'g2' });
 
-    fireEvent.change(screen.getByLabelText('openCypher query'), {
+    fireEvent.change(screen.getByLabelText('Graph query'), {
       target: { value: 'MATCH (u:User) RETURN u' },
     });
     expect(onChange).toHaveBeenCalledWith({ query: 'MATCH (u:User) RETURN u' });

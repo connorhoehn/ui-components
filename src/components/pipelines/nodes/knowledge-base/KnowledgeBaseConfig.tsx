@@ -1,9 +1,15 @@
 // src/components/pipelines/nodes/knowledge-base/KnowledgeBaseConfig.tsx
 //
-// Config panel for the knowledge-base node (RAG retrieval from a Bedrock
-// Knowledge Base). Until now selecting the node showed "Configuration for
-// knowledge-base — coming in Phase C", so a placed node kept whatever defaults
-// it was created with and none of the retrieval settings could be reached.
+// Config panel for the knowledge-base node (RAG retrieval). Until now selecting
+// the node showed "Configuration for knowledge-base — coming in Phase C", so a
+// placed node kept whatever defaults it was created with and none of the
+// retrieval settings could be reached.
+//
+// The copy here is VENDOR-NEUTRAL on purpose. Which retrieval backend stands
+// behind this node is a property of the host's deployment, not of this
+// library, so nothing here names one. A host that is running a specific
+// backend supplies its own wording through `nodeVocabulary` on the editor
+// services seam and gets the vendor-accurate labels it wants.
 //
 // The query template is the interesting field: it is what actually gets
 // embedded and searched, so it needs the same {{ context.* }} substitution and
@@ -18,6 +24,7 @@ import { NumberInput } from '../../../forms/NumberInput';
 import RetryPolicyEditor from '../RetryPolicyEditor';
 import { ContextVariablePicker } from '../../context/ContextVariablePicker';
 import { useUpstreamContext } from '../../context/useUpstreamContext';
+import { useNodeVocabulary } from '../../services/PipelineEditorServicesContext';
 
 export interface KnowledgeBaseConfigProps {
   data: KnowledgeBaseNodeData;
@@ -26,7 +33,10 @@ export interface KnowledgeBaseConfigProps {
   nodeId?: string;
 }
 
-/** Bedrock caps a single retrieve call well below this; keep the UI honest. */
+/**
+ * Upper bound offered in the UI. Retrieval backends cap a single call well
+ * below this; the host's executor enforces its own real limit.
+ */
 const MAX_TOP_K = 100;
 
 export default function KnowledgeBaseConfig({
@@ -35,6 +45,7 @@ export default function KnowledgeBaseConfig({
   nodeId,
 }: KnowledgeBaseConfigProps) {
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
+  const vocab = useNodeVocabulary('knowledge-base');
 
   const idMissing = !data.knowledgeBaseId?.trim();
   const queryMissing = !data.queryTemplate?.trim();
@@ -51,10 +62,14 @@ export default function KnowledgeBaseConfig({
     <NodeConfigShell>
       <ConfigSection title="Knowledge base">
         <ConfigField
-          label="Knowledge base ID"
+          label={vocab.label('knowledgeBaseId', 'Knowledge base ID')}
           required
           error={idMissing ? 'Knowledge base ID is required.' : undefined}
-          help={!idMissing ? 'The Bedrock Knowledge Base to retrieve from.' : undefined}
+          help={
+            !idMissing
+              ? vocab.help('knowledgeBaseId', 'The knowledge base to retrieve from.')
+              : undefined
+          }
         >
           <Input
             size="sm"
@@ -62,18 +77,21 @@ export default function KnowledgeBaseConfig({
             spellCheck={false}
             value={data.knowledgeBaseId ?? ''}
             onChange={(e) => onChange({ knowledgeBaseId: e.target.value })}
-            placeholder="kb-3f9c1a2b"
+            placeholder={vocab.placeholder('knowledgeBaseId', 'my-knowledge-base')}
             aria-label="Knowledge base ID"
           />
         </ConfigField>
 
         <ConfigField
-          label="Query template"
+          label={vocab.label('queryTemplate', 'Query template')}
           required
           error={queryMissing ? 'Query template is required.' : undefined}
           help={
             !queryMissing
-              ? 'Text to embed and search. Supports {{ context.* }} substitution.'
+              ? vocab.help(
+                  'queryTemplate',
+                  'Text to embed and search. Supports {{ context.* }} substitution.',
+                )
               : undefined
           }
         >
@@ -101,10 +119,10 @@ export default function KnowledgeBaseConfig({
 
       <ConfigSection title="Retrieval">
         <ConfigField
-          label="Top K"
+          label={vocab.label('topK', 'Top K')}
           required
           error={topKInvalid ? `Must be between 1 and ${MAX_TOP_K}.` : undefined}
-          help={!topKInvalid ? 'How many passages to retrieve.' : undefined}
+          help={!topKInvalid ? vocab.help('topK', 'How many passages to retrieve.') : undefined}
         >
           <NumberInput
             size="sm"
@@ -119,7 +137,7 @@ export default function KnowledgeBaseConfig({
         </ConfigField>
 
         <ConfigField
-          label="Score threshold"
+          label={vocab.label('scoreThreshold', 'Score threshold')}
           error={thresholdInvalid ? 'Must be between 0 and 1.' : undefined}
           help={
             !thresholdInvalid

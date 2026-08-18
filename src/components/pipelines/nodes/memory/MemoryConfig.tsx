@@ -1,12 +1,20 @@
 // src/components/pipelines/nodes/memory/MemoryConfig.tsx
 //
-// Config panel for the memory node (AgentCore Memory read/write).
+// Config panel for the memory node (read/write).
+//
+// Vendor-neutral by design: the node describes a scoped key/value memory, and
+// which store stands behind it is a property of the host's deployment, not of
+// this library. A host supplies its own wording through `nodeVocabulary` on
+// the editor services seam.
 //
 // The editor rendered a placeholder for this node, so a placed memory node ran
 // with whatever defaults it was created with and its mode/scope/namespace could
 // not be changed afterwards. The matching executor handler ships in
 // platform-api (src/pipeline/memory/) — 'session' scope binds to the runId and
 // 'long-term' to the pipelineId, which is what the scope help text describes.
+// That handler stores through an injected `MemoryStore` interface, so the
+// backing store is a consumer extension rather than something this node knows
+// anything about.
 
 import type { MemoryNodeData, MemoryMode, MemoryScope } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
