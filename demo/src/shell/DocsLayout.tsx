@@ -65,6 +65,7 @@ export function DocsLayout() {
       <CommandPaletteProvider commands={navCommands}>
         <TocProvider>
           <DocsShell
+            scrollResetKey={pathname}
             topNav={
               <DocsTopNav
                 items={TOPNAV_ITEMS}
@@ -82,6 +83,12 @@ export function DocsLayout() {
               <DocsSidebar
                 sections={SIDEBAR_SECTIONS}
                 activeHref={pathname}
+                // Only the section you are in starts open. The full tree is
+                // long enough that expanding everything buries the item you
+                // clicked and makes the nav its own scrolling chore.
+                defaultCollapsedSections={SIDEBAR_SECTIONS
+                  .filter((s) => !s.basePath || !pathname.startsWith(s.basePath))
+                  .map((s) => s.id)}
                 renderLink={({ to }, props) => (
                   <Link to={to} {...props}>
                     {props.children}

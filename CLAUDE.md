@@ -11,7 +11,7 @@ docs and commit history are historical breadcrumbs, not live tickets.
 Current state and open work live in this repo (constitution/roadmap/CHANGELOG).
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.45.2`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.46.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is

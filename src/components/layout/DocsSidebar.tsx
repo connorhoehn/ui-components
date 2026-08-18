@@ -171,9 +171,15 @@ function DocsSidebarGroupRows({
       </div>
     );
   }
+  // A single-item group whose label repeats the item reads as the same word
+  // twice in a row ("Social & Chat" above "Social & Chat"). The header carries
+  // no information there, so drop it and let the item stand alone.
+  const headerIsRedundant =
+    group.items.length === 1 && group.items[0].label === group.label;
+
   return (
     <div className="mb-1">
-      {group.label && (
+      {group.label && !headerIsRedundant && (
         <div className="px-5 pt-1.5 pb-1 pl-8 text-[12px] font-semibold text-[var(--color-text-secondary)]">
           {group.label}
         </div>

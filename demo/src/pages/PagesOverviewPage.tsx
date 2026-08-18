@@ -2,8 +2,25 @@ import { Link } from 'react-router';
 import { navigationTree } from '../navigation';
 
 export default function PagesOverviewPage() {
-  const pagesSection = navigationTree.find(s => s.id === 'pages');
-  if (!pagesSection) return null;
+  // The nav section is 'workflows'. It used to be 'pages', and this lookup was
+  // never updated when the IA was restructured — so it silently returned null
+  // and /workflows rendered a blank page. Fall back to the route rather than
+  // rendering nothing, so a future rename degrades to a visible list instead of
+  // an empty screen.
+  const pagesSection =
+    navigationTree.find(s => s.id === 'workflows') ??
+    navigationTree.find(s => s.id === 'pages');
+
+  if (!pagesSection) {
+    return (
+      <div>
+        <h1 className="text-[28px] font-bold mb-2 text-text-primary">Workflows</h1>
+        <p className="text-[15px] text-text-secondary">
+          No workflow section found in the navigation tree.
+        </p>
+      </div>
+    );
+  }
 
   const descriptions: Record<string, string> = {
     'pipeline-editor': 'Visual node-based editor for building content moderation and data processing pipelines.',
@@ -19,7 +36,7 @@ export default function PagesOverviewPage() {
   return (
     <div>
       <h1 className="text-[28px] font-bold mb-2 text-text-primary">
-        Pages
+        Workflows
       </h1>
       <p className="text-[15px] text-text-secondary mb-8 leading-[1.6] max-w-160">
         Full-page demos combining multiple components into complete application UIs.

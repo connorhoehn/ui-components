@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.46.0] — 2026-08-18
+
+Docs-shell layout and navigation, all four reported from using the demo.
+
+### Fixed
+
+- **`/workflows` rendered a blank page.** `PagesOverviewPage` looked up the nav
+  section by `id === 'pages'`, which the IA restructure renamed to
+  `'workflows'`. The lookup returned `undefined` and the component
+  `return null`ed. It now resolves `'workflows'` (falling back to `'pages'`) and
+  renders a visible message instead of nothing if neither is found, so a future
+  rename degrades to a list rather than an empty screen. 26 cards render again.
+
+- **The page stretched to the height of the nav.** `DocsShell` used
+  `min-h-screen`, so nothing was height-bounded: `overflow-y-auto` on `<main>`
+  never engaged and a tall sidebar dragged the whole document down with it. The
+  shell now owns the viewport (`h-screen` + `overflow-hidden`) and the sidebar,
+  main pane and right rail each scroll independently. Verified in-browser:
+  document height now equals viewport height.
+
+- **Navigation left you mid-page.** With `<main>` as the scroll container rather
+  than the window, the browser's own scroll restoration no longer applies, so
+  following a nav link kept the previous page's scroll offset. `DocsShell` takes
+  a `scrollResetKey` (pass the pathname) and returns the content pane to the top.
+
+- **Nav groups repeated their own item.** A one-item group whose label matched
+  the item rendered the same words twice in a row — "Social & Chat" as a header
+  above "Social & Chat" as the link. Eight groups were shaped that way. The
+  header is now omitted when it carries no information; multi-item groups and
+  differing labels are untouched.
+
+### Changed
+
+- The demo sidebar starts with only the active section expanded
+  (`defaultCollapsedSections`), so the nav no longer buries the item you clicked.
+
+
 ## [2.45.2] — 2026-08-17
 
 Two instances of the same root cause: `useState(() => derive(props))` runs once
