@@ -8,6 +8,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.53.0] — 2026-08-18
+
+Hand-rolled-control migration, batch 1 of the debt recorded in v2.52.0,
+plus a ratchet so it can only go one way.
+
+### Added
+
+- **`SourceImagePathField`** (`pipelines/nodes/shared`) — the "which image
+  does this step operate on?" JSONPath field, with its upstream-ref
+  suggestion pills. Thirteen image panels each rendered their own, and the
+  copies had already diverged on whether the path is monospaced.
+- **`npm run lint:node-controls`** — a ratchet over raw
+  `<input>`/`<select>`/`<textarea>` under `pipelines/nodes/`. Files not on
+  the baseline must have zero; a file above its baseline fails; and a file
+  *below* its baseline also fails, asking you to lower the number, so the
+  ratchet tightens instead of quietly going slack. Verified by mutation in
+  both directions.
+
+### Changed
+
+- **`NumberInput` can express "unset".** `value` now accepts `undefined`
+  (rendering an empty field), and a new opt-in `onClear` makes a field
+  clearable. Before this, an optional numeric setting could be typed into
+  but never emptied again — deleting the text silently left the old value,
+  because `''` doesn't parse to a number. `onChange` keeps its
+  `(value: number) => void` signature so no existing caller breaks.
+  `GenerateConfig`'s seed was shipped with exactly this bug in v2.51.0 and
+  is fixed here.
+- **Converted to `ConfigField` + composites:** `SharpenConfig`,
+  `DimensionsConfig`, `UpscaleConfig`, `AdjustBwConfig`, `JoinConfig`
+  (raw radios → `RadioGroup`), `ForkConfig`, `ConditionConfig`.
+  **28 files / 112 controls → 22 files / 94.**
+
+### Fixed
+
+- **`ConditionConfig` had a dead button.** A primary-styled "▶ Preview with
+  sample context" sat at the bottom of the panel with an empty `onClick` —
+  a Phase 1 stub that was never wired up. It looked like a real action and
+  did nothing whatsoever when clicked. Removed rather than left advertising
+  a feature that does not exist.
+
+### Tests
+
+- `NumberInput` (13) and `SamplePills` (5). The `forms/` primitives — the
+  very composites every panel is supposed to use — had **no tests at all**
+  before this.
+
 ## [2.52.0] — 2026-08-18
 
 ### Added

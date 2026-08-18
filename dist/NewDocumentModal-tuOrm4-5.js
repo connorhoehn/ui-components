@@ -1,4 +1,4 @@
-import { r as T, a as k } from "./registry-qR57lair.js";
+import { r as T, a as k } from "./registry-DmLIk6XM.js";
 import { jsx as t, jsxs as u, Fragment as O } from "react/jsx-runtime";
 import { useMemo as ne, useState as D, useEffect as A, useCallback as j, useRef as S } from "react";
 import { useEditor as ie, EditorContent as ae } from "@tiptap/react";

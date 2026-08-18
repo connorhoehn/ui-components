@@ -8,8 +8,22 @@ import { forwardRef, useCallback } from 'react';
 import { Input } from './Input';
 
 export interface NumberInputProps {
-  value: number;
+  /**
+   * `undefined` renders an empty field, for a genuinely optional numeric
+   * setting. Distinguishing "unset" from 0 matters: 0 is a real value for a
+   * seed, a threshold or an offset.
+   */
+  value: number | undefined;
   onChange: (value: number) => void;
+  /**
+   * Called when the field is emptied. Supplying it is what makes the field
+   * clearable — without it, deleting the text leaves the previous value in
+   * place, because a half-typed "-" or "" cannot be parsed to a number.
+   *
+   * Kept separate from `onChange` so widening that callback's parameter to
+   * `number | undefined` doesn't break every existing caller.
+   */
+  onClear?: () => void;
   min?: number;
   max?: number;
   step?: number;
@@ -27,6 +41,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     {
       value,
       onChange,
+      onClear,
       min,
       max,
       step,
@@ -51,12 +66,17 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
-        const parsed = parseFloat(e.target.value);
+        const raw = e.target.value;
+        if (raw === '' && onClear) {
+          onClear();
+          return;
+        }
+        const parsed = parseFloat(raw);
         if (!Number.isNaN(parsed)) {
           onChange(parsed);
         }
       },
-      [onChange],
+      [onChange, onClear],
     );
 
     const handleBlur = useCallback(
@@ -81,7 +101,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         ref={ref}
         type="number"
         size={size}
-        value={value}
+        value={value ?? ''}
         min={min}
         max={max}
         step={step}

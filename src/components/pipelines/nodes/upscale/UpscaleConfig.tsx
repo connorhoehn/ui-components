@@ -3,8 +3,9 @@
 // Config panel for the image:upscale node.
 
 import type { ImageUpscaleNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface UpscaleConfigProps {
   data: ImageUpscaleNodeData;
@@ -13,66 +14,47 @@ export interface UpscaleConfigProps {
   nodeId?: string;
 }
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const DEFAULT_MAX_EDGE = 1024;
 
 export default function UpscaleConfig({ data, onChange, nodeId }: UpscaleConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
-      {/* Prompt */}
-      <div>
-        <label htmlFor="upscale-prompt" className={labelCls}>
-          Prompt <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <textarea
-          id="upscale-prompt"
+      <ConfigField
+        label="Prompt"
+        help="Optional text guidance forwarded to the upscaler."
+      >
+        <Textarea
           rows={3}
           spellCheck={false}
-          className={`${inputCls} resize-y min-h-16`}
           value={data.prompt ?? ''}
+          // Blank means "no guidance", which is absent rather than an empty
+          // string — an empty prompt would be forwarded as one.
           onChange={(e) => onChange({ prompt: e.target.value.trim() ? e.target.value : undefined })}
           placeholder="optional guidance forwarded to the upscaler"
+          aria-label="Prompt"
         />
-        <div className={helpCls}>Optional text guidance forwarded to the self-hosted x4 upscaler.</div>
-      </div>
+      </ConfigField>
 
-      {/* Max edge */}
-      <div>
-        <label htmlFor="upscale-max-edge" className={labelCls}>Max edge (px)</label>
-        <input
-          id="upscale-max-edge"
-          type="number"
+      <ConfigField
+        label="Max edge"
+        help="Longest-edge cap applied before the super-resolution pass."
+      >
+        <NumberInput
+          size="sm"
           min={1}
           step={1}
-          className={inputCls}
-          value={data.maxEdge ?? 1024}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxEdge: Number.isFinite(v) && v > 0 ? v : 1024 });
-          }}
+          unit="px"
+          value={data.maxEdge ?? DEFAULT_MAX_EDGE}
+          onChange={(v) => onChange({ maxEdge: v })}
+          data-testid="upscale-max-edge"
         />
-        <div className={helpCls}>Longest-edge cap applied before the 4× super-resolution pass.</div>
-      </div>
+      </ConfigField>
 
-      {/* Source image path */}
-      <div>
-        <label htmlFor="upscale-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="upscale-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
     </NodeConfigShell>
   );
 }

@@ -8,6 +8,8 @@
 
 import type { ForkNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
+import { Input } from '../../../forms/Input';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface ForkConfigProps {
   data: ForkNodeData;
@@ -60,13 +62,13 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
           onChange={(e) => setBranchCount(parseInt(e.target.value, 10))}
           className="w-full mt-1"
         />
-        <input
-          type="number"
+        <NumberInput
+          size="sm"
           min={MIN_BRANCHES}
           max={MAX_BRANCHES}
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-20 font-inherit mt-1"
           value={count}
-          onChange={(e) => setBranchCount(parseInt(e.target.value, 10) || MIN_BRANCHES)}
+          onChange={setBranchCount}
+          data-testid="fork-branch-count"
         />
       </ConfigField>
 
@@ -78,12 +80,12 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
               <span className="text-xs text-text-secondary min-w-[72px]">
                 Branch {idx}:
               </span>
-              <input
-                type="text"
-                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none flex-1 min-w-[120px] font-inherit"
+              <Input
+                size="sm"
                 value={label}
                 onChange={(e) => setLabel(idx, e.target.value)}
                 placeholder={idx === 0 ? 'primary' : `branch-${idx}`}
+                aria-label={`Branch ${idx} label`}
               />
             </div>
           ))}

@@ -137,8 +137,9 @@ export default function GenerateConfig({ data, onChange }: GenerateConfigProps) 
           size="sm"
           min={0}
           step={1}
-          value={data.seed ?? 0}
+          value={data.seed}
           onChange={(v) => onChange({ seed: v })}
+          onClear={() => onChange({ seed: undefined })}
           placeholder="random"
           data-testid="generate-seed"
         />

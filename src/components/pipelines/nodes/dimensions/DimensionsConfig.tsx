@@ -1,10 +1,15 @@
 // src/components/pipelines/nodes/dimensions/DimensionsConfig.tsx
 //
 // Config panel for the image:dimensions node.
+//
+// Converted to the ConfigField + composites pattern. The old hand-rolled
+// version applied its `font-mono` class constant to BOTH fields, so "Max edge"
+// rendered monospaced here and proportional in UpscaleConfig — the same field,
+// two appearances, depending on which node you had selected.
 
 import type { ImageDimensionsNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface DimensionsConfigProps {
   data: ImageDimensionsNodeData;
@@ -13,50 +18,31 @@ export interface DimensionsConfigProps {
   nodeId?: string;
 }
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 font-mono outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const DEFAULT_MAX_EDGE = 1024;
 
 export default function DimensionsConfig({ data, onChange, nodeId }: DimensionsConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="dimensions-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="dimensions-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={inputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Max edge */}
-      <div>
-        <label htmlFor="dimensions-max-edge" className={labelCls}>Max edge (px)</label>
-        <input
-          id="dimensions-max-edge"
-          type="number"
+      <ConfigField
+        label="Max edge"
+        help="Longest-edge cap. The derived genWidth/genHeight scale to fit within it while preserving aspect ratio — wire them into image:generate."
+      >
+        <NumberInput
+          size="sm"
           min={1}
           step={1}
-          className={inputCls}
-          value={data.maxEdge ?? 1024}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxEdge: Number.isFinite(v) && v > 0 ? v : 1024 });
-          }}
+          unit="px"
+          value={data.maxEdge ?? DEFAULT_MAX_EDGE}
+          onChange={(v) => onChange({ maxEdge: v })}
+          data-testid="dimensions-max-edge"
         />
-        <div className={helpCls}>
-          Longest-edge cap. The derived <code>genWidth</code>/<code>genHeight</code> are scaled to fit within this while preserving aspect ratio — wire them into <code>image:generate</code>.
-        </div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

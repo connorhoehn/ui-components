@@ -1,11 +1,11 @@
-import { jsx as E, jsxs as z, Fragment as De } from "react/jsx-runtime";
-import { createContext as oe, useContext as L, useState as D, useRef as V, useEffect as F, useCallback as w, useMemo as B, forwardRef as Q, useId as Oe } from "react";
-import { c as j } from "./cn-B6yFEsav.js";
+import { jsx as T, jsxs as V, Fragment as Oe } from "react/jsx-runtime";
+import { createContext as oe, useContext as L, useState as O, useRef as W, useEffect as F, useCallback as I, useMemo as B, forwardRef as Q, useId as Se } from "react";
+import { c as U } from "./cn-B6yFEsav.js";
 import { b as je } from "./ToastProvider-D3MHbP-u.js";
 import { a as _e, u as Me } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Fe } from "./IdentityContext-CLalsm_M.js";
 import { u as pe } from "./WebSocketContext-DPGFyPeZ.js";
-const Se = "ws_pipelines_v1_index", qe = "ws_pipelines_v1:";
+const Pe = "ws_pipelines_v1_index", qe = "ws_pipelines_v1:";
 function se(e) {
   return `${qe}${e}`;
 }
@@ -19,7 +19,7 @@ function me(e, n) {
 }
 function fe() {
   try {
-    const e = localStorage.getItem(Se);
+    const e = localStorage.getItem(Pe);
     if (!e) return [];
     const n = JSON.parse(e);
     return Array.isArray(n) ? n : [];
@@ -27,8 +27,8 @@ function fe() {
     return [];
   }
 }
-function Pe(e) {
-  me(Se, JSON.stringify(e));
+function Te(e) {
+  me(Pe, JSON.stringify(e));
 }
 function Le(e) {
   const n = fe(), r = {
@@ -36,23 +36,23 @@ function Le(e) {
     name: e.name,
     status: e.status,
     updatedAt: e.updatedAt
-  }, o = n.findIndex((i) => i.id === e.id);
+  }, o = n.findIndex((s) => s.id === e.id);
   if (o === -1)
     e.icon && (r.icon = e.icon), e.tags && e.tags.length > 0 && (r.tags = [...e.tags]), n.push(r);
   else {
-    const i = e.icon ?? n[o].icon, t = e.tags ?? n[o].tags, s = { ...r };
-    i && (s.icon = i), t && t.length > 0 && (s.tags = [...t]), n[o] = s;
+    const s = e.icon ?? n[o].icon, t = e.tags ?? n[o].tags, i = { ...r };
+    s && (i.icon = s), t && t.length > 0 && (i.tags = [...t]), n[o] = i;
   }
-  Pe(n);
+  Te(n);
 }
 function He(e) {
   const n = fe().filter((r) => r.id !== e);
-  Pe(n);
+  Te(n);
 }
 function Be() {
   return fe();
 }
-function W(e) {
+function K(e) {
   try {
     const n = localStorage.getItem(se(e));
     return n ? JSON.parse(n) : null;
@@ -73,8 +73,8 @@ function Ve(e) {
   }
   He(e);
 }
-function Ct(e) {
-  const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), o = crypto.randomUUID(), i = crypto.randomUUID(), t = crypto.randomUUID(), s = crypto.randomUUID(), a = crypto.randomUUID(), c = crypto.randomUUID(), u = crypto.randomUUID(), x = crypto.randomUUID(), h = crypto.randomUUID(), d = crypto.randomUUID(), v = crypto.randomUUID(), f = { type: "trigger", triggerType: "manual" }, P = {
+function Nt(e) {
+  const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), o = crypto.randomUUID(), s = crypto.randomUUID(), t = crypto.randomUUID(), i = crypto.randomUUID(), a = crypto.randomUUID(), c = crypto.randomUUID(), u = crypto.randomUUID(), v = crypto.randomUUID(), g = crypto.randomUUID(), d = crypto.randomUUID(), b = crypto.randomUUID(), f = { type: "trigger", triggerType: "manual" }, P = {
     type: "llm",
     provider: "bedrock",
     model: "claude-sonnet-4-6",
@@ -83,20 +83,20 @@ function Ct(e) {
     temperature: 0.3,
     maxTokens: 1024,
     streaming: !0
-  }, y = {
+  }, h = {
     type: "condition",
     expression: `context.steps.${o}.llm.tokensOut > 200`,
     label: "Long summary?"
-  }, b = {
+  }, w = {
     type: "fork",
     branchCount: 2,
     branchLabels: ["post-comment", "notify-user"]
-  }, g = {
+  }, x = {
     type: "action",
     actionType: "post-comment",
     config: { body: "{{context.steps." + o + ".response}}" },
     onError: "route-error"
-  }, C = {
+  }, $ = {
     type: "action",
     actionType: "notify",
     config: {
@@ -104,11 +104,11 @@ function Ct(e) {
       message: "Your document summary is ready for review."
     },
     onError: "route-error"
-  }, R = {
+  }, k = {
     type: "join",
     mode: "all",
     mergeStrategy: "deep-merge"
-  }, N = {
+  }, D = {
     type: "approval",
     approvers: [{ type: "user", value: "demo-user" }],
     requiredCount: 1,
@@ -123,14 +123,14 @@ function Ct(e) {
   }, A = [
     { id: r, type: "trigger", position: { x: 40, y: 200 }, data: f },
     { id: o, type: "llm", position: { x: 320, y: 200 }, data: P },
-    { id: i, type: "condition", position: { x: 620, y: 200 }, data: y },
-    { id: t, type: "fork", position: { x: 900, y: 120 }, data: b },
-    { id: s, type: "action", position: { x: 1180, y: 60 }, data: g },
-    { id: a, type: "action", position: { x: 1180, y: 180 }, data: C },
-    { id: c, type: "join", position: { x: 1480, y: 120 }, data: R },
-    { id: u, type: "approval", position: { x: 1780, y: 120 }, data: N },
-    { id: x, type: "action", position: { x: 2080, y: 120 }, data: p },
-    { id: h, type: "action", position: { x: 900, y: 320 }, data: {
+    { id: s, type: "condition", position: { x: 620, y: 200 }, data: h },
+    { id: t, type: "fork", position: { x: 900, y: 120 }, data: w },
+    { id: i, type: "action", position: { x: 1180, y: 60 }, data: x },
+    { id: a, type: "action", position: { x: 1180, y: 180 }, data: $ },
+    { id: c, type: "join", position: { x: 1480, y: 120 }, data: k },
+    { id: u, type: "approval", position: { x: 1780, y: 120 }, data: D },
+    { id: v, type: "action", position: { x: 2080, y: 120 }, data: p },
+    { id: g, type: "action", position: { x: 900, y: 320 }, data: {
       type: "action",
       actionType: "mcp-tool",
       config: {
@@ -151,14 +151,14 @@ function Ct(e) {
       idempotent: !0,
       onError: "route-error"
     } },
-    { id: v, type: "transform", position: { x: 2380, y: 200 }, data: {
+    { id: b, type: "transform", position: { x: 2380, y: 200 }, data: {
       type: "transform",
       transformType: "template",
       expression: "pipeline-complete",
       outputKey: "pipelineCompletion",
       terminal: !0
     } }
-  ], U = (q, G, m, l) => ({
+  ], C = (q, G, m, l) => ({
     id: crypto.randomUUID(),
     source: q,
     sourceHandle: G,
@@ -166,24 +166,24 @@ function Ct(e) {
     targetHandle: l
   }), J = [
     // Happy path: trigger → llm → condition → fork → (postComment | notify) → join → approval → updateDoc → finalSink
-    U(r, "out", o, "in"),
-    U(o, "out", i, "in"),
-    U(i, "true", t, "in"),
-    U(i, "false", h, "in"),
-    U(t, "branch-0", s, "in"),
-    U(t, "branch-1", a, "in"),
-    U(s, "out", c, "in-0"),
-    U(a, "out", c, "in-1"),
-    U(c, "out", u, "in"),
-    U(u, "approved", x, "in"),
+    C(r, "out", o, "in"),
+    C(o, "out", s, "in"),
+    C(s, "true", t, "in"),
+    C(s, "false", g, "in"),
+    C(t, "branch-0", i, "in"),
+    C(t, "branch-1", a, "in"),
+    C(i, "out", c, "in-0"),
+    C(a, "out", c, "in-1"),
+    C(c, "out", u, "in"),
+    C(u, "approved", v, "in"),
     // Terminal `out` paths converge on the final sink. Each leaf wires `out`
     // so DEAD_END only fires for the sink itself.
-    U(x, "out", v, "in"),
-    U(h, "out", v, "in"),
+    C(v, "out", b, "in"),
+    C(g, "out", b, "in"),
     // Approval rejection routes through the shared error handler. Wiring
     // `rejected` is hygiene only — there is no UNUSED_APPROVAL_BRANCH lint —
     // but it keeps the rejection path observable.
-    U(u, "rejected", d, "in"),
+    C(u, "rejected", d, "in"),
     // Every llm/action `error` handle routes to the shared error handler so
     // NO_ERROR_HANDLER stays silent on each one. Exception: the two actions
     // *inside* the fork (postComment, notifyBranch) intentionally leave their
@@ -194,14 +194,14 @@ function Ct(e) {
     // arrival. NO_ERROR_HANDLER's structural exemption (downstream-of-Fork
     // AND upstream-of-Join) covers these two nodes, so the demo stays
     // lint-clean while preserving fork-join 'all' runtime semantics.
-    U(o, "error", d, "in"),
-    U(x, "error", d, "in"),
-    U(h, "error", d, "in"),
+    C(o, "error", d, "in"),
+    C(v, "error", d, "in"),
+    C(g, "error", d, "in"),
     // The error handler itself drains into the final sink on both handles
     // so it is not a dead end and its own `error` handle is wired (silencing
     // NO_ERROR_HANDLER for the error-handler node).
-    U(d, "out", v, "in"),
-    U(d, "error", v, "in")
+    C(d, "out", b, "in"),
+    C(d, "error", b, "in")
   ], H = {
     id: crypto.randomUUID(),
     name: "Document Summary Pipeline (Demo)",
@@ -219,10 +219,10 @@ function Ct(e) {
   };
   return Y(H), H;
 }
-function Ut(e, n) {
-  const r = W(e);
+function Ct(e, n) {
+  const r = K(e);
   if (!r) return null;
-  const o = /* @__PURE__ */ new Map(), i = r.nodes.map((c) => {
+  const o = /* @__PURE__ */ new Map(), s = r.nodes.map((c) => {
     const u = crypto.randomUUID();
     return o.set(c.id, u), { ...c, id: u, data: { ...c.data } };
   }), t = r.edges.map((c) => ({
@@ -230,7 +230,7 @@ function Ut(e, n) {
     id: crypto.randomUUID(),
     source: o.get(c.source) ?? c.source,
     target: o.get(c.target) ?? c.target
-  })), s = (/* @__PURE__ */ new Date()).toISOString(), a = {
+  })), i = (/* @__PURE__ */ new Date()).toISOString(), a = {
     ...r,
     id: crypto.randomUUID(),
     name: n ?? `${r.name} (copy)`,
@@ -240,15 +240,15 @@ function Ut(e, n) {
     version: 0,
     status: "draft",
     publishedVersion: void 0,
-    nodes: i,
+    nodes: s,
     edges: t,
-    createdAt: s,
-    updatedAt: s
+    createdAt: i,
+    updatedAt: i
   };
   return Y(a), a;
 }
-function At(e) {
-  const n = W(e);
+function Ut(e) {
+  const n = K(e);
   return n ? JSON.stringify(n, null, 2) : null;
 }
 function Z(e = "") {
@@ -275,7 +275,7 @@ async function ze(e) {
   if (!n.ok) throw new Error(`loadPipelineRemote failed (${n.status})`);
   return await n.json();
 }
-async function Te(e) {
+async function $e(e) {
   const n = await fetch(Z(`/${encodeURIComponent(e.id)}`), {
     method: "PUT",
     headers: We,
@@ -307,7 +307,7 @@ function X(e) {
   const n = e.message || String(e);
   return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("Unexpected token") || n.includes("not valid JSON") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
 }
-async function Nt() {
+async function At() {
   try {
     return await Ke();
   } catch (e) {
@@ -318,16 +318,16 @@ async function Nt() {
 async function be(e) {
   try {
     const n = await ze(e);
-    return n && Y(n), n ?? W(e);
+    return n && Y(n), n ?? K(e);
   } catch (n) {
-    if (X(n)) return W(e);
+    if (X(n)) return K(e);
     throw n;
   }
 }
 async function ce(e) {
   e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), Y(e);
   try {
-    return await Te(e);
+    return await $e(e);
   } catch (n) {
     if (X(n)) return e;
     throw n;
@@ -375,9 +375,9 @@ async function Ot(e) {
   };
   Y(o);
   try {
-    await Te(o);
-  } catch (i) {
-    if (!X(i)) throw i;
+    await $e(o);
+  } catch (s) {
+    if (!X(s)) throw s;
   }
   return o;
 }
@@ -523,235 +523,235 @@ function jt({
   pipelineId: e,
   children: n
 }) {
-  const [r, o] = D(null), [i, t] = D(!1), [s, a] = D(null), [c, u] = D([]), [x, h] = D([]), d = V(null);
+  const [r, o] = O(null), [s, t] = O(!1), [i, a] = O(null), [c, u] = O([]), [v, g] = O([]), d = W(null);
   F(() => {
     let m = !1;
-    return o(null), t(!1), a(null), u([]), h([]), be(e).then((l) => {
+    return o(null), t(!1), a(null), u([]), g([]), be(e).then((l) => {
       m || (l && (l.nodes = l.nodes ?? [], l.edges = l.edges ?? []), o(l));
     }), () => {
       m = !0;
     };
   }, [e]), F(() => {
-    if (!(!i || !r))
+    if (!(!s || !r))
       return d.current && clearTimeout(d.current), d.current = setTimeout(() => {
         ce(r).then(() => t(!1));
       }, Qe), () => {
         d.current && (clearTimeout(d.current), d.current = null);
       };
-  }, [r, i]);
-  const v = w((m) => {
+  }, [r, s]);
+  const b = I((m) => {
     u((l) => {
-      const I = [
+      const y = [
         ...l,
         { nodes: m.nodes, edges: m.edges }
       ];
-      return I.length > ve && I.shift(), I;
-    }), h([]);
-  }, []), f = w(
+      return y.length > ve && y.shift(), y;
+    }), g([]);
+  }, []), f = I(
     (m) => {
       let l = null;
-      return o((I) => {
-        if (!I) return I;
-        v(I);
-        const k = m(I);
-        return l = k, k;
+      return o((y) => {
+        if (!y) return y;
+        b(y);
+        const N = m(y);
+        return l = N, N;
       }), t(!0), l;
     },
-    [v]
-  ), P = w(
+    [b]
+  ), P = I(
     (m, l) => {
-      const I = te();
-      return f((k) => ({
-        ...k,
+      const y = te();
+      return f((N) => ({
+        ...N,
         nodes: [
-          ...k.nodes,
-          { id: I, type: m, position: l, data: Ze(m) }
+          ...N.nodes,
+          { id: y, type: m, position: l, data: Ze(m) }
         ]
-      })), I;
+      })), y;
     },
     [f]
-  ), y = w(
+  ), h = I(
     (m, l) => {
-      f((I) => ({
-        ...I,
-        nodes: I.nodes.map((k) => k.id === m ? { ...k, ...l } : k)
+      f((y) => ({
+        ...y,
+        nodes: y.nodes.map((N) => N.id === m ? { ...N, ...l } : N)
       }));
     },
     [f]
-  ), b = w(
+  ), w = I(
     (m, l) => {
-      f((I) => ({
-        ...I,
-        nodes: I.nodes.map((k) => {
-          if (k.id !== m) return k;
-          const _ = { ...k.data, ...l };
-          return { ...k, data: _ };
+      f((y) => ({
+        ...y,
+        nodes: y.nodes.map((N) => {
+          if (N.id !== m) return N;
+          const _ = { ...N.data, ...l };
+          return { ...N, data: _ };
         })
       }));
     },
     [f]
-  ), g = w(
+  ), x = I(
     (m) => {
       f((l) => ({
         ...l,
-        nodes: l.nodes.filter((I) => I.id !== m),
-        edges: l.edges.filter((I) => I.source !== m && I.target !== m)
+        nodes: l.nodes.filter((y) => y.id !== m),
+        edges: l.edges.filter((y) => y.source !== m && y.target !== m)
       })), a((l) => l === m ? null : l);
     },
     [f]
-  ), C = w(
+  ), $ = I(
     (m) => {
       const l = [];
-      return f((I) => {
-        const k = new Set(m), _ = /* @__PURE__ */ new Map(), ee = I.nodes.filter((O) => k.has(O.id)).map((O) => {
+      return f((y) => {
+        const N = new Set(m), _ = /* @__PURE__ */ new Map(), ee = y.nodes.filter((j) => N.has(j.id)).map((j) => {
           const ae = te();
-          return _.set(O.id, ae), l.push(ae), {
-            ...O,
+          return _.set(j.id, ae), l.push(ae), {
+            ...j,
             id: ae,
-            position: { x: O.position.x + 40, y: O.position.y + 40 },
-            data: { ...O.data }
+            position: { x: j.position.x + 40, y: j.position.y + 40 },
+            data: { ...j.data }
           };
-        }), Ne = I.edges.filter((O) => k.has(O.source) && k.has(O.target)).map((O) => ({
-          ...O,
+        }), De = y.edges.filter((j) => N.has(j.source) && N.has(j.target)).map((j) => ({
+          ...j,
           id: te(),
-          source: _.get(O.source) ?? O.source,
-          target: _.get(O.target) ?? O.target
+          source: _.get(j.source) ?? j.source,
+          target: _.get(j.target) ?? j.target
         }));
         return {
-          ...I,
-          nodes: [...I.nodes, ...ee],
-          edges: [...I.edges, ...Ne]
+          ...y,
+          nodes: [...y.nodes, ...ee],
+          edges: [...y.edges, ...De]
         };
       }), l;
     },
     [f]
-  ), R = w(
+  ), k = I(
     (m) => {
       const l = te();
-      return f((I) => ({
-        ...I,
-        edges: [...I.edges, { id: l, ...m }]
+      return f((y) => ({
+        ...y,
+        edges: [...y.edges, { id: l, ...m }]
       })), l;
     },
     [f]
-  ), N = w(
+  ), D = I(
     (m) => {
       f((l) => ({
         ...l,
-        edges: l.edges.filter((I) => I.id !== m)
+        edges: l.edges.filter((y) => y.id !== m)
       }));
     },
     [f]
-  ), p = w(
+  ), p = I(
     (m) => {
       m.length !== 0 && o((l) => {
         if (!l) return l;
-        const I = new Map(m.map((_) => [_.id, _.position])), k = {
+        const y = new Map(m.map((_) => [_.id, _.position])), N = {
           ...l,
           nodes: l.nodes.map((_) => {
-            const ee = I.get(_.id);
+            const ee = y.get(_.id);
             return ee ? { ..._, position: ee } : _;
           })
         };
-        return Je(k), k;
+        return Je(N), N;
       });
     },
     []
-  ), S = w(() => {
+  ), S = I(() => {
     r && (d.current && (clearTimeout(d.current), d.current = null), ce(r).then(() => t(!1)));
-  }, [r]), T = w(() => {
+  }, [r]), R = I(() => {
     if (!r) return;
     d.current && (clearTimeout(d.current), d.current = null), (async () => {
-      i && (await ce(r), t(!1));
+      s && (await ce(r), t(!1));
       const l = await Ge(r.id);
       l && o(l);
     })();
-  }, [r, i]), $ = w(() => {
+  }, [r, s]), E = I(() => {
     be(e).then((m) => {
-      o(m), t(!1), u([]), h([]);
+      o(m), t(!1), u([]), g([]);
     });
-  }, [e]), A = w((m) => {
+  }, [e]), A = I((m) => {
     const l = m.trim();
-    l && (o((I) => !I || I.name === l ? I : { ...I, name: l }), t(!0));
-  }, []), U = w((m) => {
+    l && (o((y) => !y || y.name === l ? y : { ...y, name: l }), t(!0));
+  }, []), C = I((m) => {
     o((l) => !l || l.icon === m ? l : { ...l, icon: m }), t(!0);
-  }, []), J = w((m) => {
+  }, []), J = I((m) => {
     o((l) => {
       if (!l) return l;
-      const I = l.tags ?? [];
-      return I.length === m.length && I.every((k, _) => k === m[_]) ? l : { ...l, tags: [...m] };
+      const y = l.tags ?? [];
+      return y.length === m.length && y.every((N, _) => N === m[_]) ? l : { ...l, tags: [...m] };
     }), t(!0);
-  }, []), H = w(() => {
+  }, []), H = I(() => {
     u((m) => {
       if (m.length === 0 || !r) return m;
       const l = m[m.length - 1];
-      return h((I) => [
-        ...I,
+      return g((y) => [
+        ...y,
         { nodes: r.nodes, edges: r.edges }
       ]), o({ ...r, nodes: l.nodes, edges: l.edges }), t(!0), m.slice(0, -1);
     });
-  }, [r]), q = w(() => {
-    h((m) => {
+  }, [r]), q = I(() => {
+    g((m) => {
       if (m.length === 0 || !r) return m;
       const l = m[m.length - 1];
-      return u((I) => {
-        const k = [
-          ...I,
+      return u((y) => {
+        const N = [
+          ...y,
           { nodes: r.nodes, edges: r.edges }
         ];
-        return k.length > ve && k.shift(), k;
+        return N.length > ve && N.shift(), N;
       }), o({ ...r, nodes: l.nodes, edges: l.edges }), t(!0), m.slice(0, -1);
     });
   }, [r]), G = B(
     () => ({
       definition: r,
-      dirty: i,
-      selectedNodeId: s,
+      dirty: s,
+      selectedNodeId: i,
       setSelectedNodeId: a,
       addNode: P,
-      updateNode: y,
-      updateNodeData: b,
-      removeNode: g,
-      duplicateNodes: C,
-      addEdge: R,
-      removeEdge: N,
+      updateNode: h,
+      updateNodeData: w,
+      removeNode: x,
+      duplicateNodes: $,
+      addEdge: k,
+      removeEdge: D,
       setPositions: p,
       save: S,
-      publish: T,
-      revert: $,
+      publish: R,
+      revert: E,
       undo: H,
       redo: q,
       canUndo: c.length > 0,
-      canRedo: x.length > 0,
+      canRedo: v.length > 0,
       rename: A,
-      setIcon: U,
+      setIcon: C,
       setTags: J
     }),
     [
       r,
-      i,
       s,
+      i,
       P,
-      y,
-      b,
-      g,
-      C,
-      R,
-      N,
+      h,
+      w,
+      x,
+      $,
+      k,
+      D,
       p,
       S,
-      T,
-      $,
+      R,
+      E,
       H,
       q,
       c.length,
-      x.length,
+      v.length,
       A,
-      U,
+      C,
       J
     ]
   );
-  return /* @__PURE__ */ E(ge.Provider, { value: G, children: n });
+  return /* @__PURE__ */ T(ge.Provider, { value: G, children: n });
 }
 function _t() {
   const e = L(ge);
@@ -768,35 +768,35 @@ async function Mt(e, n) {
     credentials: "include"
   });
   if (!o.ok) {
-    const i = await o.text();
-    throw new Error(`Force-fail failed: ${o.status} ${i}`);
+    const s = await o.text();
+    throw new Error(`Force-fail failed: ${o.status} ${s}`);
   }
   return o.json();
 }
-async function et(e, n, r, o, i) {
-  const t = `/api/pipelines/${e}/runs/${n}/retry/${r}`, s = await fetch(t, {
+async function et(e, n, r, o, s) {
+  const t = `/api/pipelines/${e}/runs/${n}/retry/${r}`, i = await fetch(t, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ inputs: o, ...i ? { snapshotInput: i } : {} })
+    body: JSON.stringify({ inputs: o, ...s ? { snapshotInput: s } : {} })
   });
-  if (!s.ok) {
-    const a = await s.text();
-    throw new Error(`Failed to retry from node ${r}: ${s.status} ${a}`);
+  if (!i.ok) {
+    const a = await i.text();
+    throw new Error(`Failed to retry from node ${r}: ${i.status} ${a}`);
   }
-  return s.json();
+  return i.json();
 }
 const tt = "ws_pipeline_runs_v1:", nt = 50;
 function he(e) {
   return `${tt}${e}`;
 }
-let we = !1;
+let xe = !1;
 function rt(e, n) {
   try {
     localStorage.setItem(e, n);
   } catch (r) {
-    we || (we = !0, console.warn("[runHistory] localStorage write failed", r));
+    xe || (xe = !0, console.warn("[runHistory] localStorage write failed", r));
   }
 }
 function ye(e) {
@@ -813,7 +813,7 @@ function Ft(e, n) {
   return ye(e).find((o) => o.id === n) ?? null;
 }
 function ot(e, n) {
-  const r = ye(e).filter((i) => i.id !== n.id), o = [n, ...r].sort((i, t) => t.startedAt.localeCompare(i.startedAt)).slice(0, nt);
+  const r = ye(e).filter((s) => s.id !== n.id), o = [n, ...r].sort((s, t) => t.startedAt.localeCompare(s.startedAt)).slice(0, nt);
   rt(he(e), JSON.stringify(o));
 }
 function qt(e) {
@@ -822,30 +822,30 @@ function qt(e) {
   } catch {
   }
 }
-async function $e(e, n) {
+async function ke(e, n) {
   const r = new URLSearchParams();
   n?.limit && r.set("limit", String(n.limit)), n?.cursor && r.set("cursor", n.cursor);
   const o = `/api/pipelines/${e}/runs${r.toString() ? `?${r}` : ""}`;
   try {
-    const i = await fetch(o, {
+    const s = await fetch(o, {
       headers: {
         "Content-Type": "application/json"
       },
       credentials: "include"
       // Send cookies for auth
     });
-    if (!i.ok)
-      throw new Error(`Failed to list runs: ${i.status} ${i.statusText}`);
-    const t = await i.json();
-    return Array.isArray(t.runs) && (t.runs = t.runs.map((s) => ({
-      ...s,
-      id: s.id ?? s.runId
-    })).sort((s, a) => {
-      const c = s.startedAt ? new Date(s.startedAt).getTime() : 0;
+    if (!s.ok)
+      throw new Error(`Failed to list runs: ${s.status} ${s.statusText}`);
+    const t = await s.json();
+    return Array.isArray(t.runs) && (t.runs = t.runs.map((i) => ({
+      ...i,
+      id: i.id ?? i.runId
+    })).sort((i, a) => {
+      const c = i.startedAt ? new Date(i.startedAt).getTime() : 0;
       return (a.startedAt ? new Date(a.startedAt).getTime() : 0) - c;
     })), t;
-  } catch (i) {
-    return console.error("[pipelineRuns] Failed to fetch from API:", i), { runs: [] };
+  } catch (s) {
+    return console.error("[pipelineRuns] Failed to fetch from API:", s), { runs: [] };
   }
 }
 async function st(e, n) {
@@ -858,8 +858,8 @@ async function st(e, n) {
     if (o.status === 404) return null;
     if (!o.ok)
       throw new Error(`Failed to get run: ${o.status} ${o.statusText}`);
-    const i = await o.json();
-    return { ...i, id: i.runId };
+    const s = await o.json();
+    return { ...s, id: s.runId };
   } catch (o) {
     return console.error("[pipelineRuns] Failed to fetch run:", o), null;
   }
@@ -867,39 +867,39 @@ async function st(e, n) {
 const Lt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   getPipelineRun: st,
-  listPipelineRuns: $e
+  listPipelineRuns: ke
 }, Symbol.toStringTag, { value: "Module" }));
 function it() {
-  const { idToken: e } = Fe(), [n, r] = D(!1), [o, i] = D(null), [t, s] = D(!1), a = "";
-  return { triggerRun: w(
-    async (u, x, h) => {
-      r(!0), i(null), s(!1);
+  const { idToken: e } = Fe(), [n, r] = O(!1), [o, s] = O(null), [t, i] = O(!1), a = "";
+  return { triggerRun: I(
+    async (u, v, g) => {
+      r(!0), s(null), i(!1);
       try {
-        const d = W(u), v = {};
-        x && (v.triggerPayload = x), d && (v.definition = d);
+        const d = K(u), b = {};
+        v && (b.triggerPayload = v), d && (b.definition = d);
         const f = {
           "Content-Type": "application/json",
           ...e ? { Authorization: `Bearer ${e}` } : {}
         };
-        h?.idempotencyKey && (f["Idempotency-Key"] = h.idempotencyKey);
+        g?.idempotencyKey && (f["Idempotency-Key"] = g.idempotencyKey);
         const P = await fetch(
           `${a}/api/pipelines/${encodeURIComponent(u)}/runs`,
           {
             method: "POST",
             headers: f,
-            body: JSON.stringify(v)
+            body: JSON.stringify(b)
           }
         );
         if (!P.ok) {
-          const g = await P.text().catch(() => "");
-          return i(
-            `Trigger failed (${P.status})${g ? `: ${g}` : ""}`
+          const x = await P.text().catch(() => "");
+          return s(
+            `Trigger failed (${P.status})${x ? `: ${x}` : ""}`
           ), null;
         }
-        const y = typeof P.headers?.get == "function" ? P.headers.get("X-Idempotent-Replay") : P.headers["x-idempotent-replay"] ?? null;
-        return s(y === "true"), (await P.json()).runId;
+        const h = typeof P.headers?.get == "function" ? P.headers.get("X-Idempotent-Replay") : P.headers["x-idempotent-replay"] ?? null;
+        return i(h === "true"), (await P.json()).runId;
       } catch (d) {
-        return i(d.message), null;
+        return s(d.message), null;
       } finally {
         r(!1);
       }
@@ -924,99 +924,99 @@ function Ht({
   onEvent: n,
   enabled: r = !1
 }) {
-  const { connectionState: o, sendMessage: i, onMessage: t } = pe(), s = V(n);
+  const { connectionState: o, sendMessage: s, onMessage: t } = pe(), i = W(n);
   F(() => {
-    s.current = n;
+    i.current = n;
   }, [n]), F(() => {
     if (!r || o !== "connected") return;
-    i({ service: "pipeline", action: "subscribe", channel: e });
+    s({ service: "pipeline", action: "subscribe", channel: e });
     const a = t((c) => {
       if (c.type !== "pipeline:event") return;
-      const u = c, x = u.eventType;
-      if (!x) return;
+      const u = c, v = u.eventType;
+      if (!v) return;
       const d = {
-        eventType: ct(x),
+        eventType: ct(v),
         payload: u.payload,
         seq: typeof u.seq == "number" ? u.seq : 0,
         sourceNodeId: typeof u.sourceNodeId == "string" ? u.sourceNodeId : "unknown",
         emittedAt: typeof u.emittedAt == "number" ? u.emittedAt : Date.now()
       };
       try {
-        s.current(d);
-      } catch (v) {
-        console.error("[WebSocketEventAdapter] onEvent threw", v);
+        i.current(d);
+      } catch (b) {
+        console.error("[WebSocketEventAdapter] onEvent threw", b);
       }
     });
     return () => {
-      a(), i({ service: "pipeline", action: "unsubscribe", channel: e });
+      a(), s({ service: "pipeline", action: "unsubscribe", channel: e });
     };
-  }, [r, o, e, i, t]);
+  }, [r, o, e, s, t]);
 }
 function ne() {
   const e = typeof globalThis < "u" ? globalThis.crypto : void 0;
   return e && typeof e.randomUUID == "function" ? e.randomUUID() : `ws-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 function ut() {
-  const { sendMessage: e } = pe(), n = w(
-    (h) => e({ service: "pipeline", action: "subscribe", channel: `pipeline:run:${h}` }),
+  const { sendMessage: e } = pe(), n = I(
+    (g) => e({ service: "pipeline", action: "subscribe", channel: `pipeline:run:${g}` }),
     [e]
-  ), r = w(
-    (h) => e({ service: "pipeline", action: "unsubscribe", channel: `pipeline:run:${h}` }),
+  ), r = I(
+    (g) => e({ service: "pipeline", action: "unsubscribe", channel: `pipeline:run:${g}` }),
     [e]
-  ), o = w(
+  ), o = I(
     () => e({ service: "pipeline", action: "subscribe", channel: "pipeline:all" }),
     [e]
-  ), i = w(
+  ), s = I(
     () => e({ service: "pipeline", action: "unsubscribe", channel: "pipeline:all" }),
     [e]
-  ), t = w(
+  ), t = I(
     () => e({ service: "pipeline", action: "subscribe", channel: "pipeline:approvals" }),
     [e]
-  ), s = w(
+  ), i = I(
     () => e({ service: "pipeline", action: "unsubscribe", channel: "pipeline:approvals" }),
     [e]
-  ), a = w(
-    (h, d = {}) => {
-      const v = d.correlationId ?? ne();
+  ), a = I(
+    (g, d = {}) => {
+      const b = d.correlationId ?? ne();
       return e({
         service: "pipeline",
         action: "trigger",
-        pipelineId: h,
+        pipelineId: g,
         ...d.definition ? { definition: d.definition } : {},
         ...d.triggerPayload ? { triggerPayload: d.triggerPayload } : {},
         ...d.triggeredBy ? { triggeredBy: d.triggeredBy } : {},
-        correlationId: v
-      }), v;
+        correlationId: b
+      }), b;
     },
     [e]
-  ), c = w(
-    (h, d) => {
-      const v = d ?? ne();
-      return e({ service: "pipeline", action: "cancel", runId: h, correlationId: v }), v;
+  ), c = I(
+    (g, d) => {
+      const b = d ?? ne();
+      return e({ service: "pipeline", action: "cancel", runId: g, correlationId: b }), b;
     },
     [e]
-  ), u = w(
-    (h, d, v, f = {}) => {
+  ), u = I(
+    (g, d, b, f = {}) => {
       const P = f.correlationId ?? ne();
       return e({
         service: "pipeline",
         action: "resolveApproval",
-        runId: h,
+        runId: g,
         stepId: d,
-        decision: v,
+        decision: b,
         ...f.comment ? { comment: f.comment } : {},
         ...f.decidedBy ? { decidedBy: f.decidedBy } : {},
         correlationId: P
       }), P;
     },
     [e]
-  ), x = w(
-    (h, d, v) => {
-      const f = v ?? ne();
+  ), v = I(
+    (g, d, b) => {
+      const f = b ?? ne();
       return e({
         service: "pipeline",
         action: "resumeFromStep",
-        runId: h,
+        runId: g,
         fromNodeId: d,
         correlationId: f
       }), f;
@@ -1027,34 +1027,34 @@ function ut() {
     subscribeToRun: n,
     unsubscribeFromRun: r,
     subscribeToAll: o,
-    unsubscribeFromAll: i,
+    unsubscribeFromAll: s,
     subscribeToApprovals: t,
-    unsubscribeFromApprovals: s,
+    unsubscribeFromApprovals: i,
     triggerRun: a,
     cancelRun: c,
     resolveApproval: u,
-    requestResumeFromStep: x
+    requestResumeFromStep: v
   };
 }
 function Bt(e, n = {}) {
-  const { enabled: r = !0 } = n, { connectionState: o, sendMessage: i } = pe();
+  const { enabled: r = !0 } = n, { connectionState: o, sendMessage: s } = pe();
   F(() => {
     if (!r || !e || o !== "connected") return;
     const t = `pipeline:run:${e}`;
-    return i({ service: "pipeline", action: "subscribe", channel: t }), () => {
-      i({ service: "pipeline", action: "unsubscribe", channel: t });
+    return s({ service: "pipeline", action: "subscribe", channel: t }), () => {
+      s({ service: "pipeline", action: "unsubscribe", channel: t });
     };
-  }, [r, e, o, i]);
+  }, [r, e, o, s]);
 }
-const Ee = oe(null);
+const Re = oe(null);
 function Jt({
   value: e,
   children: n
 }) {
-  return /* @__PURE__ */ E(Ee.Provider, { value: e, children: n });
+  return /* @__PURE__ */ T(Re.Provider, { value: e, children: n });
 }
-function Re() {
-  return L(Ee);
+function Ee() {
+  return L(Re);
 }
 const le = 20, ie = oe(null);
 function dt(e, n) {
@@ -1064,82 +1064,82 @@ function dt(e, n) {
   };
 }
 function M(e, n, r) {
-  const o = dt(e, n), i = typeof r == "function" ? r(o) : { ...o, ...r };
-  return { ...e, steps: { ...e.steps, [n]: i } };
+  const o = dt(e, n), s = typeof r == "function" ? r(o) : { ...o, ...r };
+  return { ...e, steps: { ...e.steps, [n]: s } };
 }
 function lt(e) {
   const n = Object.values(e);
   if (n.length <= le) return e;
   const r = n.filter(
     (a) => a.status === "running" || a.status === "pending" || a.status === "awaiting_approval" || a.status === "paused_at_breakpoint"
-  ), i = n.filter(
+  ), s = n.filter(
     (a) => a.status !== "running" && a.status !== "pending" && a.status !== "awaiting_approval" && a.status !== "paused_at_breakpoint"
   ).sort((a, c) => c.startedAt.localeCompare(a.startedAt)).slice(
     0,
     Math.max(0, le - r.length)
-  ), t = [...r, ...i], s = {};
-  for (const a of t) s[a.id] = a;
-  return s;
+  ), t = [...r, ...s], i = {};
+  for (const a of t) i[a.id] = a;
+  return i;
 }
 function Vt({ children: e }) {
-  const n = L(ge), { triggerRun: r } = it(), o = ut(), [i, t] = D({}), [s, a] = D(!1), c = V(/* @__PURE__ */ new Set()), u = V(null);
+  const n = L(ge), { triggerRun: r } = it(), o = ut(), [s, t] = O({}), [i, a] = O(!1), c = W(/* @__PURE__ */ new Set()), u = W(null);
   F(() => {
     const p = n?.definition?.id;
-    !p || u.current === p || (u.current = p, a(!0), $e(p, { limit: le }).then((S) => {
-      t((T) => {
-        const $ = { ...T };
+    !p || u.current === p || (u.current = p, a(!0), ke(p, { limit: le }).then((S) => {
+      t((R) => {
+        const E = { ...R };
         for (const A of S.runs)
-          $[A.id] || ($[A.id] = A);
-        return $;
+          E[A.id] || (E[A.id] = A);
+        return E;
       });
     }).catch((S) => {
-      console.error("[PipelineRuns] Failed to load history from API", S), t((T) => {
-        const $ = { ...T };
+      console.error("[PipelineRuns] Failed to load history from API", S), t((R) => {
+        const E = { ...R };
         for (const A of ye(p))
-          $[A.id] || ($[A.id] = A);
-        return $;
+          E[A.id] || (E[A.id] = A);
+        return E;
       });
     }).finally(() => a(!1)));
   }, [n?.definition?.id]), _e("*", (p) => {
-    const { eventType: S, payload: T } = p;
-    t(($) => pt($, S, T));
+    const { eventType: S, payload: R } = p;
+    t((E) => pt(E, S, R));
   }), F(() => {
-    for (const p of Object.values(i))
+    for (const p of Object.values(s))
       if ((p.status === "completed" || p.status === "failed" || p.status === "cancelled") && !c.current.has(p.id)) {
         c.current.add(p.id);
         try {
           ot(p.pipelineId, p);
-        } catch (T) {
-          console.warn("[PipelineRuns] appendRun failed", T);
+        } catch (R) {
+          console.warn("[PipelineRuns] appendRun failed", R);
         }
       }
-  }, [i]);
-  const x = w(
+  }, [s]);
+  const v = I(
     async (p, S) => {
-      const T = await r(p, S);
-      if (!T)
+      const R = await r(p, S);
+      if (!R)
         throw new Error("Trigger failed (REST POST did not return a runId)");
-      return T;
+      return R;
     },
     [r]
-  ), h = w(
+  ), g = I(
     (p) => {
       o.cancelRun(p);
     },
     [o]
-  ), d = w(
-    (p, S, T, $) => {
-      o.resolveApproval(p, S, T, { comment: $ });
+  ), d = I(
+    (p, S, R, E) => {
+      o.resolveApproval(p, S, R, { comment: E });
     },
     [o]
-  ), v = V(i);
+  ), b = W(s);
   F(() => {
-    v.current = i;
-  }, [i]);
-  const f = w(
+    b.current = s;
+  }, [s]);
+  const f = I(
     async (p) => {
-      const T = Object.values(v.current).filter(($) => $.status === "failed").filter(($) => $.steps[p]?.status === "failed").sort(($, A) => A.startedAt.localeCompare($.startedAt))[0];
-      if (!T) {
+      const R = Object.values(b.current).filter((E) => E.status === "failed").filter((E) => E.steps[p]?.status === "failed").sort((E, A) => A.startedAt.localeCompare(E.startedAt))[0];
+      if (!R) {
         console.warn(
           "[PipelineRuns] retryFromStep — no failed run found for node",
           p
@@ -1147,39 +1147,39 @@ function Vt({ children: e }) {
         return;
       }
       try {
-        await et(T.pipelineId, T.id, p);
-      } catch ($) {
-        console.error("[PipelineRuns] retryFromNode API failed", $);
+        await et(R.pipelineId, R.id, p);
+      } catch (E) {
+        console.error("[PipelineRuns] retryFromNode API failed", E);
       }
     },
     []
-  ), P = w(
-    async (p, S, T) => {
-      const $ = { ...T ?? {}, __breakpoints: S };
-      return x(p, $);
+  ), P = I(
+    async (p, S, R) => {
+      const E = { ...R ?? {}, __breakpoints: S };
+      return v(p, E);
     },
-    [x]
-  ), y = w(
-    (p, S, T = "continue") => {
-      const U = v.current[p]?.pipelineId ?? "unknown";
+    [v]
+  ), h = I(
+    (p, S, R = "continue") => {
+      const C = b.current[p]?.pipelineId ?? "unknown";
       fetch(
-        `/api/pipelines/${encodeURIComponent(U)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/resolve`,
+        `/api/pipelines/${encodeURIComponent(C)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/resolve`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: T })
+          body: JSON.stringify({ action: R })
         }
       ).catch((J) => {
         console.error("[PipelineRuns] resolveBreakpoint API failed", J);
       });
     },
     []
-  ), b = w(
-    async (p, S, T, $) => {
-      const J = v.current[p]?.pipelineId ?? "unknown", H = `/api/pipelines/${encodeURIComponent(J)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch`, q = await fetch(H, {
+  ), w = I(
+    async (p, S, R, E) => {
+      const J = b.current[p]?.pipelineId ?? "unknown", H = `/api/pipelines/${encodeURIComponent(J)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch`, q = await fetch(H, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ patch: T, ...$ ? { appliedBy: $ } : {} })
+        body: JSON.stringify({ patch: R, ...E ? { appliedBy: E } : {} })
       });
       if (q.status === 200)
         return await q.json();
@@ -1196,64 +1196,64 @@ function Vt({ children: e }) {
       throw new Error(`applyContextPatch HTTP ${q.status}: ${G}`);
     },
     []
-  ), g = w(
-    async (p, S, T) => {
-      const U = v.current[p]?.pipelineId ?? "unknown", J = `/api/pipelines/${encodeURIComponent(U)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch/${encodeURIComponent(T)}`, H = await fetch(J, { method: "DELETE" });
+  ), x = I(
+    async (p, S, R) => {
+      const C = b.current[p]?.pipelineId ?? "unknown", J = `/api/pipelines/${encodeURIComponent(C)}/runs/${encodeURIComponent(p)}/breakpoint/${encodeURIComponent(S)}/patch/${encodeURIComponent(R)}`, H = await fetch(J, { method: "DELETE" });
       if (H.status !== 204) {
         const q = await H.text().catch(() => "");
         throw new Error(`revertContextPatch HTTP ${H.status}: ${q}`);
       }
     },
     []
-  ), C = w((p) => {
+  ), $ = I((p) => {
     t((S) => {
-      const T = S[p.id];
-      if (T && T.status === p.status) {
-        const $ = Object.keys(T.steps).length, A = Object.keys(p.steps).length;
-        if ($ >= A) return S;
+      const R = S[p.id];
+      if (R && R.status === p.status) {
+        const E = Object.keys(R.steps).length, A = Object.keys(p.steps).length;
+        if (E >= A) return S;
       }
       return { ...S, [p.id]: p };
     });
-  }, []), R = B(
-    () => Object.values(i).filter(
+  }, []), k = B(
+    () => Object.values(s).filter(
       (p) => p.status === "running" || p.status === "pending" || p.status === "awaiting_approval" || p.status === "paused_at_breakpoint"
     ).map((p) => p.id),
-    [i]
-  ), N = B(
+    [s]
+  ), D = B(
     () => ({
-      runs: i,
-      activeRunIds: R,
-      triggerRun: x,
+      runs: s,
+      activeRunIds: k,
+      triggerRun: v,
       triggerDebugRun: P,
-      cancelRun: h,
+      cancelRun: g,
       resolveApproval: d,
-      resolveBreakpoint: y,
-      applyContextPatch: b,
-      revertContextPatch: g,
+      resolveBreakpoint: h,
+      applyContextPatch: w,
+      revertContextPatch: x,
       retryFromStep: f,
-      ingestRun: C
+      ingestRun: $
     }),
     [
-      i,
-      R,
-      x,
+      s,
+      k,
+      v,
       P,
-      h,
-      d,
-      y,
-      b,
       g,
+      d,
+      h,
+      w,
+      x,
       f,
-      C
+      $
     ]
   );
-  return /* @__PURE__ */ E(ie.Provider, { value: N, children: e });
+  return /* @__PURE__ */ T(ie.Provider, { value: D, children: e });
 }
 function pt(e, n, r) {
   if (!r || typeof r != "object" || typeof r.runId != "string") return e;
   switch (n) {
     case "pipeline.run.started": {
-      const t = r, s = {
+      const t = r, i = {
         id: t.runId,
         pipelineId: t.pipelineId,
         pipelineVersion: 0,
@@ -1265,14 +1265,14 @@ function pt(e, n, r) {
         steps: {},
         context: {}
       };
-      return lt({ ...e, [t.runId]: s });
+      return lt({ ...e, [t.runId]: i });
     }
     case "pipeline.run.completed": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
         [t.runId]: {
-          ...s,
+          ...i,
           status: "completed",
           completedAt: t.at,
           durationMs: t.durationMs,
@@ -1281,11 +1281,11 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.run.failed": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
         [t.runId]: {
-          ...s,
+          ...i,
           status: "failed",
           completedAt: t.at,
           error: t.error,
@@ -1294,11 +1294,11 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.run.cancelled": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
         [t.runId]: {
-          ...s,
+          ...i,
           status: "cancelled",
           completedAt: t.at,
           currentStepIds: []
@@ -1306,9 +1306,9 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.step.started": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         nodeId: t.stepId,
         status: "running",
@@ -1325,9 +1325,9 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.step.completed": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         status: "completed",
         completedAt: t.at,
@@ -1343,9 +1343,9 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.step.failed": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         status: "failed",
         completedAt: t.at,
@@ -1360,9 +1360,9 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.step.skipped": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         status: "skipped",
         completedAt: t.at,
@@ -1377,9 +1377,9 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.step.cancelled": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         // `StepStatus` has no 'cancelled' — track as failed with marker.
         status: "failed",
@@ -1395,10 +1395,10 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.llm.prompt": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
-        [t.runId]: M(s, t.stepId, (a) => ({
+        [t.runId]: M(i, t.stepId, (a) => ({
           ...a,
           llm: {
             prompt: t.prompt,
@@ -1412,10 +1412,10 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.llm.stream.opened": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
-        [t.runId]: M(s, t.stepId, (a) => {
+        [t.runId]: M(i, t.stepId, (a) => {
           const c = Date.parse(t.openedAt), u = {
             ...a,
             llm: {
@@ -1432,11 +1432,11 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.llm.token": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
-        [t.runId]: M(s, t.stepId, (a) => {
-          const c = a.llm?.tokensOut ?? 0, u = c === 0, x = a.llm?._streamOpenedAtMs, h = Date.parse(t.at), d = u && typeof x == "number" && Number.isFinite(h) ? Math.max(0, h - x) : a.llm?.firstTokenLatencyMs;
+        [t.runId]: M(i, t.stepId, (a) => {
+          const c = a.llm?.tokensOut ?? 0, u = c === 0, v = a.llm?._streamOpenedAtMs, g = Date.parse(t.at), d = u && typeof v == "number" && Number.isFinite(g) ? Math.max(0, g - v) : a.llm?.firstTokenLatencyMs;
           return {
             ...a,
             llm: {
@@ -1452,10 +1452,10 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.llm.response": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
-        [t.runId]: M(s, t.stepId, (a) => ({
+        [t.runId]: M(i, t.stepId, (a) => ({
           ...a,
           llm: {
             prompt: a.llm?.prompt ?? "",
@@ -1467,9 +1467,9 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.step.breakpoint": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         status: "awaiting"
       }));
@@ -1487,8 +1487,8 @@ function pt(e, n, r) {
     // directly.
     case "pipeline.step.context.patched":
     case "pipeline.step.context.patched-unvalidated": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
+      const t = r, i = e[t.runId];
+      if (!i) return e;
       const a = n === "pipeline.step.context.patched-unvalidated", c = {
         patchId: t.patchId,
         appliedAt: t.at,
@@ -1497,17 +1497,17 @@ function pt(e, n, r) {
       };
       return {
         ...e,
-        [t.runId]: M(s, t.stepId, (u) => ({
+        [t.runId]: M(i, t.stepId, (u) => ({
           ...u,
           patches: [...u.patches ?? [], c]
         }))
       };
     }
     case "pipeline.step.context.patch-reverted": {
-      const t = r, s = e[t.runId];
-      return s ? {
+      const t = r, i = e[t.runId];
+      return i ? {
         ...e,
-        [t.runId]: M(s, t.stepId, (a) => ({
+        [t.runId]: M(i, t.stepId, (a) => ({
           ...a,
           patches: (a.patches ?? []).map(
             (c) => c.patchId === t.patchId ? { ...c, revertedAt: t.at } : c
@@ -1516,9 +1516,9 @@ function pt(e, n, r) {
       } : e;
     }
     case "pipeline.approval.requested": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
-      const a = M(s, t.stepId, (c) => ({
+      const t = r, i = e[t.runId];
+      if (!i) return e;
+      const a = M(i, t.stepId, (c) => ({
         ...c,
         status: "awaiting",
         approvals: c.approvals ?? []
@@ -1529,8 +1529,8 @@ function pt(e, n, r) {
       };
     }
     case "pipeline.run.resumed-from-step": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
+      const t = r, i = e[t.runId];
+      if (!i) return e;
       const a = {
         fromNodeId: t.fromNodeId,
         ...t.originalFailedStepId ? { originalFailedStepId: t.originalFailedStepId } : {},
@@ -1539,16 +1539,16 @@ function pt(e, n, r) {
       return {
         ...e,
         [t.runId]: {
-          ...s,
+          ...i,
           status: "running",
-          replayAttempts: (s.replayAttempts ?? 0) + 1,
-          resumeHistory: [...s.resumeHistory ?? [], a]
+          replayAttempts: (i.replayAttempts ?? 0) + 1,
+          resumeHistory: [...i.resumeHistory ?? [], a]
         }
       };
     }
     case "pipeline.approval.recorded": {
-      const t = r, s = e[t.runId];
-      if (!s) return e;
+      const t = r, i = e[t.runId];
+      if (!i) return e;
       const a = {
         userId: t.userId,
         decision: t.decision,
@@ -1556,7 +1556,7 @@ function pt(e, n, r) {
       };
       return {
         ...e,
-        [t.runId]: M(s, t.stepId, (c) => ({
+        [t.runId]: M(i, t.stepId, (c) => ({
           ...c,
           approvals: [...c.approvals ?? [], a]
         }))
@@ -1575,36 +1575,36 @@ function mt() {
   return e;
 }
 function Wt() {
-  const e = Re(), n = L(ie), r = e?.retryFromStep, o = n?.retryFromStep;
-  return B(() => r ? async (i) => {
-    await r(i);
+  const e = Ee(), n = L(ie), r = e?.retryFromStep, o = n?.retryFromStep;
+  return B(() => r ? async (s) => {
+    await r(s);
   } : o ?? (async () => {
   }), [r, o]);
 }
 function Kt(e) {
-  const n = Re(), r = L(ie), o = n?.getLatestStepForNode, i = B(
+  const n = Ee(), r = L(ie), o = n?.getLatestStepForNode, s = B(
     () => o ? o(e) : null,
     [o, e]
   ), t = B(() => {
     if (!r) return null;
-    let s = null, a = "";
+    let i = null, a = "";
     for (const c of Object.values(r.runs)) {
       const u = c.steps[e];
-      u && c.startedAt > a && (s = u, a = c.startedAt);
+      u && c.startedAt > a && (i = u, a = c.startedAt);
     }
-    return s;
+    return i;
   }, [r, e]);
-  return o ? i : t;
+  return o ? s : t;
 }
-const K = oe(null);
+const z = oe(null);
 function zt({
   services: e,
   children: n
 }) {
-  return /* @__PURE__ */ E(K.Provider, { value: e, children: n });
+  return /* @__PURE__ */ T(z.Provider, { value: e, children: n });
 }
 function Yt() {
-  const e = L(K);
+  const e = L(z);
   if (!e)
     throw new Error(
       "useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation."
@@ -1612,7 +1612,7 @@ function Yt() {
   return e.getImageUrl;
 }
 function Xt() {
-  const e = L(K);
+  const e = L(z);
   if (!e)
     throw new Error(
       "usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>."
@@ -1620,18 +1620,18 @@ function Xt() {
   return e;
 }
 function Gt(e) {
-  const r = L(K)?.nodeVocabulary?.[e];
+  const r = L(z)?.nodeVocabulary?.[e];
   return B(
     () => ({
-      label: (o, i) => r?.labels?.[o] ?? i,
-      help: (o, i) => r?.help?.[o] ?? i,
-      placeholder: (o, i) => r?.placeholders?.[o] ?? i
+      label: (o, s) => r?.labels?.[o] ?? s,
+      help: (o, s) => r?.help?.[o] ?? s,
+      placeholder: (o, s) => r?.placeholders?.[o] ?? s
     }),
     [r]
   );
 }
 function Qt(e, n) {
-  const o = L(K)?.modelOptions?.[e];
+  const o = L(z)?.modelOptions?.[e];
   return B(
     // An explicitly empty list is a real answer ("this host runs none"), so it
     // is honoured rather than treated as "unset" and replaced by the defaults.
@@ -1640,14 +1640,14 @@ function Qt(e, n) {
   );
 }
 function Zt() {
-  const n = L(K)?.modelOptions;
+  const n = L(z)?.modelOptions;
   return B(
     () => (r, o) => n?.[r] ?? o,
     [n]
   );
 }
 function en() {
-  const n = L(K)?.executableNodeTypes;
+  const n = L(z)?.executableNodeTypes;
   return B(() => {
     if (!n) return () => !0;
     const r = new Set(n);
@@ -1660,15 +1660,15 @@ function ft(e) {
   return `${n}m ${r}s`;
 }
 function gt({ startedAt: e }) {
-  const [n, r] = D(
+  const [n, r] = O(
     () => Math.max(0, Math.floor((Date.now() - e) / 1e3))
   );
   return F(() => {
     const o = () => r(Math.max(0, Math.floor((Date.now() - e) / 1e3)));
     o();
-    const i = setInterval(o, 1e3);
-    return () => clearInterval(i);
-  }, [e]), /* @__PURE__ */ E(
+    const s = setInterval(o, 1e3);
+    return () => clearInterval(s);
+  }, [e]), /* @__PURE__ */ T(
     "span",
     {
       "data-testid": "generative-image-preview-elapsed",
@@ -1682,40 +1682,40 @@ function tn({
   src: n,
   alt: r = "",
   startedAt: o,
-  className: i
+  className: s
 }) {
-  const t = je(), s = V(e), [a, c] = D(!1);
-  return s.current !== e && (s.current = e, e === "done" && !t && c(!0)), F(() => {
+  const t = je(), i = W(e), [a, c] = O(!1);
+  return i.current !== e && (i.current = e, e === "done" && !t && c(!0)), F(() => {
     if (!a) return;
     const u = setTimeout(() => c(!1), 30);
     return () => clearTimeout(u);
-  }, [a]), /* @__PURE__ */ E(
+  }, [a]), /* @__PURE__ */ T(
     "div",
     {
       "data-testid": "generative-image-preview",
       "data-status": e,
-      className: j("relative overflow-hidden rounded-md bg-surface-hover", i),
-      children: e === "synthesizing" ? /* @__PURE__ */ z(De, { children: [
-        /* @__PURE__ */ E(
+      className: U("relative overflow-hidden rounded-md bg-surface-hover", s),
+      children: e === "synthesizing" ? /* @__PURE__ */ V(Oe, { children: [
+        /* @__PURE__ */ T(
           "div",
           {
             "aria-hidden": "true",
             "data-testid": "generative-image-preview-shimmer",
-            className: j(
+            className: U(
               "absolute inset-0",
-              t ? "bg-surface-emphasis" : j(
+              t ? "bg-surface-emphasis" : U(
                 "bg-gradient-to-r from-surface-hover via-surface-emphasis to-surface-hover",
                 "bg-[length:400px_100%] animate-[skeleton-shimmer_1.4s_ease-in-out_infinite]"
               )
             )
           }
         ),
-        !t && /* @__PURE__ */ E(
+        !t && /* @__PURE__ */ T(
           "div",
           {
             "aria-hidden": "true",
             "data-testid": "generative-image-preview-sweep",
-            className: j(
+            className: U(
               "absolute inset-0",
               "bg-[linear-gradient(115deg,transparent_35%,rgba(255,255,255,0.55)_50%,transparent_65%)]",
               "bg-[length:400px_100%] bg-no-repeat",
@@ -1723,24 +1723,24 @@ function tn({
             )
           }
         ),
-        /* @__PURE__ */ E(
+        /* @__PURE__ */ T(
           "span",
           {
-            className: j(
+            className: U(
               "absolute inset-0 flex items-center justify-center",
               "text-[11px] font-medium tracking-wide text-neutral select-none"
             ),
             children: "✦ synthesizing"
           }
         ),
-        o !== void 0 && /* @__PURE__ */ E(gt, { startedAt: o })
-      ] }) : n ? /* @__PURE__ */ E(
+        o !== void 0 && /* @__PURE__ */ T(gt, { startedAt: o })
+      ] }) : n ? /* @__PURE__ */ T(
         "img",
         {
           src: n,
           alt: r,
           "data-testid": "generative-image-preview-img",
-          className: j(
+          className: U(
             "h-full w-full object-cover",
             !t && "transition-[filter] duration-[400ms] ease-out",
             a ? "blur-[16px]" : "blur-0"
@@ -1748,7 +1748,7 @@ function tn({
         }
       ) : (
         // 'done' without a src — keep the neutral block rather than a broken img.
-        /* @__PURE__ */ E("div", { "aria-hidden": "true", className: "absolute inset-0 bg-surface-emphasis" })
+        /* @__PURE__ */ T("div", { "aria-hidden": "true", className: "absolute inset-0 bg-surface-emphasis" })
       )
     }
   );
@@ -1760,7 +1760,7 @@ class ht extends Error {
     super(n), this.name = "PatchValidationRejectedError", this.reason = n, this.result = r;
   }
 }
-class ke extends Error {
+class Ne extends Error {
   status;
   body;
   constructor(n, r, o) {
@@ -1771,12 +1771,12 @@ function Ce(e, n, r, o) {
   const t = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/breakpoint/${encodeURIComponent(r)}/patch`;
   return o ? `${t}/${encodeURIComponent(o)}` : `${t}`;
 }
-async function nn(e, n, r, o, i) {
+async function nn(e, n, r, o, s) {
   const t = await fetch(Ce(e, n, r), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ patch: o, ...i ? { appliedBy: i } : {} })
+    body: JSON.stringify({ patch: o, ...s ? { appliedBy: s } : {} })
   });
   if (t.status === 200)
     return await t.json();
@@ -1785,108 +1785,65 @@ async function nn(e, n, r, o, i) {
     let u = "patch rejected by validator";
     throw c.result && c.result.validation && c.result.validation.ok === !1 && typeof c.result.validation.reason == "string" ? u = c.result.validation.reason : typeof c.error == "string" && (u = c.error), new ht(u, c.result);
   }
-  const s = await t.text().catch(() => "");
+  const i = await t.text().catch(() => "");
   let a;
   try {
-    a = JSON.parse(s);
+    a = JSON.parse(i);
   } catch {
-    a = s;
+    a = i;
   }
-  throw new ke(
+  throw new Ne(
     t.status,
-    `applyPatch HTTP ${t.status}: ${s}`,
+    `applyPatch HTTP ${t.status}: ${i}`,
     a
   );
 }
 async function rn(e, n, r, o) {
-  const i = await fetch(Ce(e, n, r, o), {
+  const s = await fetch(Ce(e, n, r, o), {
     method: "DELETE",
     credentials: "include"
   });
-  if (i.status === 204) return;
-  const t = await i.text().catch(() => "");
-  let s;
+  if (s.status === 204) return;
+  const t = await s.text().catch(() => "");
+  let i;
   try {
-    s = JSON.parse(t);
+    i = JSON.parse(t);
   } catch {
-    s = t;
+    i = t;
   }
-  throw new ke(
-    i.status,
-    `revertPatch HTTP ${i.status}: ${t}`,
-    s
+  throw new Ne(
+    s.status,
+    `revertPatch HTTP ${s.status}: ${t}`,
+    i
   );
 }
-const yt = {
+const ue = {
   sm: "h-7 px-2 text-[12px]",
   md: "h-9 px-2.5 text-[13px]"
-}, on = Q(function({
-  options: n,
-  placeholder: r,
-  size: o = "md",
-  invalid: i = !1,
-  disabled: t = !1,
-  className: s,
-  "data-testid": a,
-  value: c,
-  ...u
-}, x) {
-  return /* @__PURE__ */ z(
-    "select",
-    {
-      ref: x,
-      disabled: t,
-      "data-testid": a,
-      value: c,
-      className: j(
-        "w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary",
-        "outline-none transition-colors duration-150 cursor-pointer",
-        // Custom chevron via background-image is banned (inline style). Instead
-        // rely on the native OS chevron — appearance: none removes it but is
-        // only needed to remove the native outline; here we let native appearance
-        // show through via a Tailwind `select` reset that keeps the arrow.
-        // We use `appearance-auto` to restore the native arrow on modern browsers.
-        "appearance-auto",
-        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
-        "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
-        i ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
-        yt[o],
-        s
-      ),
-      ...u,
-      children: [
-        r && /* @__PURE__ */ E("option", { value: "", disabled: !0, children: r }),
-        n.map((h) => /* @__PURE__ */ E("option", { value: h.value, disabled: h.disabled, children: h.label }, h.value))
-      ]
-    }
-  );
-}), ue = {
-  sm: "h-7 px-2 text-[12px]",
-  md: "h-9 px-2.5 text-[13px]"
-}, xe = {
+}, we = {
   sm: "px-1.5",
   md: "px-2"
 }, Ue = Q(function({
   type: n = "text",
   size: r = "md",
   prefix: o,
-  suffix: i,
+  suffix: s,
   invalid: t = !1,
-  disabled: s = !1,
+  disabled: i = !1,
   mono: a = !1,
   className: c,
   "data-testid": u,
-  ...x
-}, h) {
-  const d = o != null, v = i != null;
-  return !d && !v ? /* @__PURE__ */ E(
+  ...v
+}, g) {
+  const d = o != null, b = s != null;
+  return !d && !b ? /* @__PURE__ */ T(
     "input",
     {
-      ref: h,
+      ref: g,
       type: n,
-      disabled: s,
+      disabled: i,
       "data-testid": u,
-      className: j(
+      className: U(
         "w-full rounded-md border bg-surface-panel font-inherit text-text-primary",
         "outline-none transition-colors duration-150",
         "placeholder:text-text-tertiary",
@@ -1897,106 +1854,306 @@ const yt = {
         ue[r],
         c
       ),
-      ...x
+      ...v
     }
-  ) : /* @__PURE__ */ z(
+  ) : /* @__PURE__ */ V(
     "div",
     {
-      className: j(
+      className: U(
         "relative flex w-full items-center rounded-md border bg-surface-panel",
         "transition-colors duration-150",
         "focus-within:bg-white focus-within:border-info focus-within:ring-1 focus-within:ring-info/40",
         t ? "border-danger focus-within:border-danger focus-within:ring-danger/40" : "border-border-emphasis",
-        s && "opacity-50 cursor-not-allowed bg-surface-hover"
+        i && "opacity-50 cursor-not-allowed bg-surface-hover"
       ),
       children: [
-        d && /* @__PURE__ */ E(
+        d && /* @__PURE__ */ T(
           "span",
           {
             "aria-hidden": "true",
-            className: j(
+            className: U(
               "flex shrink-0 items-center text-text-tertiary",
-              xe[r]
+              we[r]
             ),
             children: o
           }
         ),
-        /* @__PURE__ */ E(
+        /* @__PURE__ */ T(
           "input",
           {
-            ref: h,
+            ref: g,
             type: n,
-            disabled: s,
+            disabled: i,
             "data-testid": u,
-            className: j(
+            className: U(
               "flex-1 min-w-0 bg-transparent font-inherit text-text-primary outline-none",
               "placeholder:text-text-tertiary",
               "disabled:cursor-not-allowed",
               d ? "pl-0" : ue[r].split(" ")[1],
-              v ? "pr-0" : ue[r].split(" ")[2],
+              b ? "pr-0" : ue[r].split(" ")[2],
               r === "sm" ? "h-7 text-[12px]" : "h-9 text-[13px]",
               a && "font-mono",
               c
             ),
-            ...x
+            ...v
           }
         ),
-        v && /* @__PURE__ */ E(
+        b && /* @__PURE__ */ T(
           "span",
           {
             "aria-hidden": "true",
-            className: j(
+            className: U(
               "flex shrink-0 items-center text-text-tertiary",
-              xe[r]
+              we[r]
             ),
-            children: i
+            children: s
           }
         )
       ]
     }
   );
-}), It = {
+}), yt = {
+  sm: "h-7 px-2 text-[12px]",
+  md: "h-9 px-2.5 text-[13px]"
+}, on = Q(function({
+  options: n,
+  placeholder: r,
+  size: o = "md",
+  invalid: s = !1,
+  disabled: t = !1,
+  className: i,
+  "data-testid": a,
+  value: c,
+  ...u
+}, v) {
+  return /* @__PURE__ */ V(
+    "select",
+    {
+      ref: v,
+      disabled: t,
+      "data-testid": a,
+      value: c,
+      className: U(
+        "w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary",
+        "outline-none transition-colors duration-150 cursor-pointer",
+        // Custom chevron via background-image is banned (inline style). Instead
+        // rely on the native OS chevron — appearance: none removes it but is
+        // only needed to remove the native outline; here we let native appearance
+        // show through via a Tailwind `select` reset that keeps the arrow.
+        // We use `appearance-auto` to restore the native arrow on modern browsers.
+        "appearance-auto",
+        "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
+        "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
+        s ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
+        yt[o],
+        i
+      ),
+      ...u,
+      children: [
+        r && /* @__PURE__ */ T("option", { value: "", disabled: !0, children: r }),
+        n.map((g) => /* @__PURE__ */ T("option", { value: g.value, disabled: g.disabled, children: g.label }, g.value))
+      ]
+    }
+  );
+}), sn = Q(
+  function({
+    value: n,
+    onChange: r,
+    onClear: o,
+    min: s,
+    max: t,
+    step: i,
+    unit: a,
+    placeholder: c,
+    invalid: u = !1,
+    disabled: v = !1,
+    size: g = "md",
+    "data-testid": d
+  }, b) {
+    const f = I(
+      (x) => {
+        let $ = x;
+        return s !== void 0 && $ < s && ($ = s), t !== void 0 && $ > t && ($ = t), $;
+      },
+      [s, t]
+    ), P = I(
+      (x) => {
+        const $ = x.target.value;
+        if ($ === "" && o) {
+          o();
+          return;
+        }
+        const k = parseFloat($);
+        Number.isNaN(k) || r(k);
+      },
+      [r, o]
+    ), h = I(
+      (x) => {
+        const $ = parseFloat(x.target.value);
+        if (!Number.isNaN($)) {
+          const k = f($);
+          k !== $ && r(k);
+        }
+      },
+      [f, r]
+    );
+    return /* @__PURE__ */ T(
+      Ue,
+      {
+        ref: b,
+        type: "number",
+        size: g,
+        value: n ?? "",
+        min: s,
+        max: t,
+        step: i,
+        placeholder: c,
+        invalid: u,
+        disabled: v,
+        suffix: a ? /* @__PURE__ */ T("span", { className: "text-text-tertiary font-sans text-[12px] select-none", children: a }) : void 0,
+        "data-testid": d,
+        onChange: P,
+        onBlur: h
+      }
+    );
+  }
+);
+function an({
+  name: e,
+  value: n,
+  onChange: r,
+  options: o,
+  disabled: s = !1,
+  orientation: t = "vertical",
+  "data-testid": i
+}) {
+  const a = Se();
+  return /* @__PURE__ */ T(
+    "div",
+    {
+      role: "radiogroup",
+      "data-testid": i,
+      className: U(
+        "flex",
+        t === "vertical" ? "flex-col gap-2" : "flex-row flex-wrap gap-x-4 gap-y-2"
+      ),
+      children: o.map((c, u) => {
+        const v = `${a}-${u}`, g = c.value === n;
+        return /* @__PURE__ */ V(
+          "label",
+          {
+            htmlFor: v,
+            className: U(
+              "flex items-start gap-2.5 cursor-pointer select-none",
+              s && "opacity-50 cursor-not-allowed"
+            ),
+            children: [
+              /* @__PURE__ */ V("span", { className: "relative flex shrink-0 mt-0.5", children: [
+                /* @__PURE__ */ T(
+                  "input",
+                  {
+                    id: v,
+                    type: "radio",
+                    name: e,
+                    value: c.value,
+                    checked: g,
+                    disabled: s,
+                    onChange: () => r(c.value),
+                    className: "sr-only peer"
+                  }
+                ),
+                /* @__PURE__ */ T(
+                  "span",
+                  {
+                    "aria-hidden": "true",
+                    className: U(
+                      "block w-4 h-4 rounded-full border-2 transition-colors duration-150",
+                      g ? "border-info bg-white" : "border-border-emphasis bg-white",
+                      !s && !g && "peer-hover:border-info",
+                      "peer-focus-visible:ring-2 peer-focus-visible:ring-info/40 peer-focus-visible:ring-offset-1"
+                    )
+                  }
+                ),
+                g && /* @__PURE__ */ T(
+                  "span",
+                  {
+                    "aria-hidden": "true",
+                    className: "absolute inset-0 m-auto block w-2 h-2 rounded-full bg-info"
+                  }
+                )
+              ] }),
+              /* @__PURE__ */ V("span", { className: "flex flex-col", children: [
+                /* @__PURE__ */ T(
+                  "span",
+                  {
+                    className: U(
+                      "text-[13px] leading-5 font-medium",
+                      s ? "text-text-tertiary" : "text-text-primary"
+                    ),
+                    children: c.label
+                  }
+                ),
+                c.description && /* @__PURE__ */ T(
+                  "span",
+                  {
+                    className: U(
+                      "text-[11px] leading-4 mt-0.5",
+                      s ? "text-text-disabled" : "text-neutral"
+                    ),
+                    children: c.description
+                  }
+                )
+              ] })
+            ]
+          },
+          c.value
+        );
+      })
+    }
+  );
+}
+const It = {
   sm: "px-1.5 py-0.5 text-[11px]",
   md: "px-2 py-0.5 text-[12px]"
-}, sn = Q(
+}, cn = Q(
   function({
     value: n,
     onChange: r,
     samples: o,
-    placeholder: i = "$.path.to.value",
+    placeholder: s = "$.path.to.value",
     invalid: t = !1,
-    errorMessage: s,
+    errorMessage: i,
     disabled: a = !1,
     size: c = "md",
     enforcePrefix: u = !1,
-    "data-testid": x
-  }, h) {
-    const d = Oe(), v = u && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, f = t || v != null, P = s ?? v;
-    return /* @__PURE__ */ z("div", { className: "flex flex-col gap-1 w-full", children: [
-      /* @__PURE__ */ E(
+    "data-testid": v
+  }, g) {
+    const d = Se(), b = u && n.length > 0 && !n.startsWith("$.") ? 'JSONPath must start with "$."' : void 0, f = t || b != null, P = i ?? b;
+    return /* @__PURE__ */ V("div", { className: "flex flex-col gap-1 w-full", children: [
+      /* @__PURE__ */ T(
         Ue,
         {
-          ref: h,
+          ref: g,
           type: "text",
           mono: !0,
           size: c,
           value: n,
-          onChange: (y) => r(y.target.value),
-          placeholder: i,
+          onChange: (h) => r(h.target.value),
+          placeholder: s,
           invalid: f,
           disabled: a,
-          "data-testid": x,
+          "data-testid": v,
           "aria-describedby": P ? d : void 0,
           "aria-invalid": f || void 0
         }
       ),
-      o && o.length > 0 && /* @__PURE__ */ E("div", { className: "flex flex-wrap gap-1", children: o.map((y) => /* @__PURE__ */ E(
+      o && o.length > 0 && /* @__PURE__ */ T("div", { className: "flex flex-wrap gap-1", children: o.map((h) => /* @__PURE__ */ T(
         "button",
         {
           type: "button",
           disabled: a,
-          onClick: () => r(y.value),
-          className: j(
+          onClick: () => r(h.value),
+          className: U(
             "rounded border border-border bg-surface-hover font-mono text-text-secondary",
             "transition-colors duration-100",
             "hover:bg-info-bg hover:border-info-border hover:text-info-fg",
@@ -2004,11 +2161,11 @@ const yt = {
             "disabled:opacity-50 disabled:cursor-not-allowed",
             It[c]
           ),
-          children: y.label
+          children: h.label
         },
-        y.value
+        h.value
       )) }),
-      P && /* @__PURE__ */ E(
+      P && /* @__PURE__ */ T(
         "p",
         {
           id: d,
@@ -2019,62 +2176,6 @@ const yt = {
       )
     ] });
   }
-), an = Q(
-  function({
-    value: n,
-    onChange: r,
-    min: o,
-    max: i,
-    step: t,
-    unit: s,
-    placeholder: a,
-    invalid: c = !1,
-    disabled: u = !1,
-    size: x = "md",
-    "data-testid": h
-  }, d) {
-    const v = w(
-      (b) => {
-        let g = b;
-        return o !== void 0 && g < o && (g = o), i !== void 0 && g > i && (g = i), g;
-      },
-      [o, i]
-    ), f = w(
-      (b) => {
-        const g = parseFloat(b.target.value);
-        Number.isNaN(g) || r(g);
-      },
-      [r]
-    ), P = w(
-      (b) => {
-        const g = parseFloat(b.target.value);
-        if (!Number.isNaN(g)) {
-          const C = v(g);
-          C !== g && r(C);
-        }
-      },
-      [v, r]
-    );
-    return /* @__PURE__ */ E(
-      Ue,
-      {
-        ref: d,
-        type: "number",
-        size: x,
-        value: n,
-        min: o,
-        max: i,
-        step: t,
-        placeholder: a,
-        invalid: c,
-        disabled: u,
-        suffix: s ? /* @__PURE__ */ E("span", { className: "text-text-tertiary font-sans text-[12px] select-none", children: s }) : void 0,
-        "data-testid": h,
-        onChange: f,
-        onBlur: P
-      }
-    );
-  }
 ), bt = {
   sm: "w-16",
   md: "w-32",
@@ -2084,8 +2185,8 @@ const yt = {
   video: "aspect-video",
   auto: ""
 };
-function wt() {
-  return /* @__PURE__ */ z(
+function xt() {
+  return /* @__PURE__ */ V(
     "svg",
     {
       xmlns: "http://www.w3.org/2000/svg",
@@ -2098,54 +2199,54 @@ function wt() {
       className: "w-6 h-6 text-text-tertiary",
       "aria-hidden": "true",
       children: [
-        /* @__PURE__ */ E("rect", { x: "3", y: "3", width: "18", height: "18", rx: "2", ry: "2" }),
-        /* @__PURE__ */ E("circle", { cx: "8.5", cy: "8.5", r: "1.5" }),
-        /* @__PURE__ */ E("path", { d: "M21 15l-5-5L5 21" })
+        /* @__PURE__ */ T("rect", { x: "3", y: "3", width: "18", height: "18", rx: "2", ry: "2" }),
+        /* @__PURE__ */ T("circle", { cx: "8.5", cy: "8.5", r: "1.5" }),
+        /* @__PURE__ */ T("path", { d: "M21 15l-5-5L5 21" })
       ]
     }
   );
 }
-function cn({
+function un({
   src: e,
   alt: n,
   size: r = "md",
   aspectRatio: o = "square",
-  rounded: i = !1,
+  rounded: s = !1,
   fallback: t,
-  loading: s = "lazy",
+  loading: i = "lazy",
   className: a,
   "data-testid": c
 }) {
-  const [u, x] = D("loading");
-  return /* @__PURE__ */ z(
+  const [u, v] = O("loading");
+  return /* @__PURE__ */ V(
     "div",
     {
       "data-testid": c,
-      className: j(
+      className: U(
         "relative overflow-hidden bg-surface-hover",
         bt[r],
         o !== "auto" && vt[o],
-        i ? "rounded-full" : "rounded-md",
+        s ? "rounded-full" : "rounded-md",
         a
       ),
       children: [
-        u === "loading" && /* @__PURE__ */ E(
+        u === "loading" && /* @__PURE__ */ T(
           "div",
           {
             "aria-hidden": "true",
             className: "absolute inset-0 animate-pulse bg-surface-emphasis"
           }
         ),
-        u === "error" && /* @__PURE__ */ E("div", { className: "absolute inset-0 flex items-center justify-center bg-surface-hover", children: t ?? /* @__PURE__ */ E(wt, {}) }),
-        /* @__PURE__ */ E(
+        u === "error" && /* @__PURE__ */ T("div", { className: "absolute inset-0 flex items-center justify-center bg-surface-hover", children: t ?? /* @__PURE__ */ T(xt, {}) }),
+        /* @__PURE__ */ T(
           "img",
           {
             src: e,
             alt: n,
-            loading: s,
-            onLoad: () => x("loaded"),
-            onError: () => x("error"),
-            className: j(
+            loading: i,
+            onLoad: () => v("loaded"),
+            onError: () => v("error"),
+            className: U(
               "w-full h-full object-cover transition-opacity duration-200",
               u === "loaded" ? "opacity-100" : "opacity-0"
             )
@@ -2155,77 +2256,77 @@ function cn({
     }
   );
 }
-const un = Q(
+const dn = Q(
   function({
     rows: n,
     minRows: r = 2,
     maxRows: o,
-    autoResize: i = !1,
+    autoResize: s = !1,
     invalid: t = !1,
-    disabled: s = !1,
+    disabled: i = !1,
     onChange: a,
     value: c,
     className: u,
-    "data-testid": x,
-    ...h
+    "data-testid": v,
+    ...g
   }, d) {
-    const v = V(null), f = w(
-      (R) => {
-        v.current = R, typeof d == "function" ? d(R) : d && (d.current = R);
+    const b = W(null), f = I(
+      (k) => {
+        b.current = k, typeof d == "function" ? d(k) : d && (d.current = k);
       },
       [d]
-    ), P = 20, y = 12, b = w(() => {
-      const R = v.current;
-      if (!R || !i) return;
-      R.style.height = "auto";
-      const N = r * P + y, p = R.scrollHeight, S = o ? o * P + y : 1 / 0;
-      R.style.height = `${Math.min(Math.max(p, N), S)}px`, R.style.overflowY = p > S ? "auto" : "hidden";
-    }, [i, r, o]);
+    ), P = 20, h = 12, w = I(() => {
+      const k = b.current;
+      if (!k || !s) return;
+      k.style.height = "auto";
+      const D = r * P + h, p = k.scrollHeight, S = o ? o * P + h : 1 / 0;
+      k.style.height = `${Math.min(Math.max(p, D), S)}px`, k.style.overflowY = p > S ? "auto" : "hidden";
+    }, [s, r, o]);
     F(() => {
-      b();
-    }, [c, b]);
-    const g = w(
-      (R) => {
-        b(), a?.(R);
+      w();
+    }, [c, w]);
+    const x = I(
+      (k) => {
+        w(), a?.(k);
       },
-      [a, b]
+      [a, w]
     );
-    return /* @__PURE__ */ E(
+    return /* @__PURE__ */ T(
       "textarea",
       {
         ref: f,
-        rows: i ? void 0 : n ?? r,
-        disabled: s,
-        "data-testid": x,
+        rows: s ? void 0 : n ?? r,
+        disabled: i,
+        "data-testid": v,
         value: c,
-        onChange: g,
-        className: j(
+        onChange: x,
+        className: U(
           "w-full rounded-md border bg-surface-panel font-inherit text-text-primary",
           "outline-none transition-colors duration-150 px-2.5 py-1.5 text-[13px] leading-5",
           "placeholder:text-text-tertiary",
           "focus:bg-white focus:border-info focus:ring-1 focus:ring-info/40",
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-hover",
-          !i && "resize-y",
-          i && "resize-none overflow-hidden",
+          !s && "resize-y",
+          s && "resize-none overflow-hidden",
           t ? "border-danger focus:border-danger focus:ring-danger/40" : "border-border-emphasis",
           u
         ),
-        style: i ? { minHeight: `${r * P + y}px` } : void 0,
-        ...h
+        style: s ? { minHeight: `${r * P + h}px` } : void 0,
+        ...g
       }
     );
   }
 );
-async function dn(e, n, r, o) {
-  const i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(i, {
+async function ln(e, n, r, o) {
+  const s = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(s, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(o ?? {})
   });
   if (!t.ok) {
-    const s = await t.text();
-    throw new Error(`Failed to resume run ${n} from node ${r}: ${t.status} ${s}`);
+    const i = await t.text();
+    throw new Error(`Failed to resume run ${n} from node ${r}: ${t.status} ${i}`);
   }
   return t.json();
 }
@@ -2240,24 +2341,24 @@ function Ae(e) {
         n.push(`${encodeURIComponent(r)}=${encodeURIComponent(String(o))}`);
   return n.length > 0 ? `?${n.join("&")}` : "";
 }
-async function ln(e, n, r = {}) {
+async function pn(e, n, r = {}) {
   const o = Ae({
     since: r.since,
     until: r.until,
     actions: r.actions,
     limit: r.limit,
     cursor: r.cursor
-  }), i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/audit${o}`, t = await fetch(i, {
+  }), s = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/audit${o}`, t = await fetch(s, {
     method: "GET",
     credentials: "include"
   });
   if (!t.ok) {
-    const s = await t.text();
-    throw new Error(`Failed to load audit log for ${e}/${n}: ${t.status} ${s}`);
+    const i = await t.text();
+    throw new Error(`Failed to load audit log for ${e}/${n}: ${t.status} ${i}`);
   }
   return t.json();
 }
-async function pn(e) {
+async function mn(e) {
   if (!e.actor && !e.pipelineId)
     throw new Error("searchAudit requires at least one of `actor` or `pipelineId`");
   const r = `/api/pipelines/audit/search${Ae({
@@ -2273,8 +2374,8 @@ async function pn(e) {
     credentials: "include"
   });
   if (!o.ok) {
-    const i = await o.text();
-    throw new Error(`Audit search failed: ${o.status} ${i}`);
+    const s = await o.text();
+    throw new Error(`Audit search failed: ${o.status} ${s}`);
   }
   return o.json();
 }
@@ -2282,92 +2383,92 @@ function re(e, n) {
   return `${e}::${n}`;
 }
 function de(e, n) {
-  const r = W(e);
+  const r = K(e);
   if (!r) return { requiredCount: 1 };
   const o = r.nodes.find((t) => t.id === n);
   if (!o || o.data.type !== "approval") return { requiredCount: 1 };
-  const i = o.data;
+  const s = o.data;
   return {
-    message: i.message,
-    requiredCount: Math.max(1, i.requiredCount ?? 1)
+    message: s.message,
+    requiredCount: Math.max(1, s.requiredCount ?? 1)
   };
 }
-function xt() {
-  const e = Me(), n = mt(), [r, o] = D(
+function wt() {
+  const e = Me(), n = mt(), [r, o] = O(
     () => {
       const f = {};
       for (const P in n.runs) {
-        const y = n.runs[P];
-        if (y.status === "awaiting_approval")
-          for (const b in y.steps) {
-            const g = y.steps[b];
-            if (g.status !== "awaiting") continue;
-            const C = de(y.pipelineId, b), N = W(y.pipelineId)?.nodes.find((S) => S.id === b), p = N && N.data.type === "approval" ? N.data.approvers : [];
-            f[re(P, b)] = {
+        const h = n.runs[P];
+        if (h.status === "awaiting_approval")
+          for (const w in h.steps) {
+            const x = h.steps[w];
+            if (x.status !== "awaiting") continue;
+            const $ = de(h.pipelineId, w), D = K(h.pipelineId)?.nodes.find((S) => S.id === w), p = D && D.data.type === "approval" ? D.data.approvers : [];
+            f[re(P, w)] = {
               runId: P,
-              pipelineId: y.pipelineId,
-              stepId: b,
+              pipelineId: h.pipelineId,
+              stepId: w,
               approvers: p,
-              requestedAt: g.startedAt ?? (/* @__PURE__ */ new Date(0)).toISOString(),
-              message: C.message,
-              requiredCount: C.requiredCount,
-              recordedCount: g.approvals?.filter((S) => S.decision === "approve").length ?? 0
+              requestedAt: x.startedAt ?? (/* @__PURE__ */ new Date(0)).toISOString(),
+              message: $.message,
+              requiredCount: $.requiredCount,
+              recordedCount: x.approvals?.filter((S) => S.decision === "approve").length ?? 0
             };
           }
       }
       return f;
     }
-  ), [i, t] = D(!0), [s, a] = D(null), [c, u] = D(0), x = V(n.runs);
+  ), [s, t] = O(!0), [i, a] = O(null), [c, u] = O(0), v = W(n.runs);
   F(() => {
-    x.current = n.runs;
+    v.current = n.runs;
   }, [n.runs]);
-  const h = V(/* @__PURE__ */ new Map());
+  const g = W(/* @__PURE__ */ new Map());
   F(() => {
     let f = !1;
     t(!0), a(null);
     const P = async () => {
       try {
-        const y = await fetch("/api/pipelines/approvals", {
+        const h = await fetch("/api/pipelines/approvals", {
           credentials: "same-origin"
         });
-        if (y.status === 404) return null;
-        if (!y.ok)
-          throw new Error(`Dashboard fetch failed: ${y.status}`);
-        return { pendingApprovals: (await y.json()).approvals ?? [] };
-      } catch (y) {
-        if (y.message?.includes("Dashboard fetch failed"))
-          throw y;
+        if (h.status === 404) return null;
+        if (!h.ok)
+          throw new Error(`Dashboard fetch failed: ${h.status}`);
+        return { pendingApprovals: (await h.json()).approvals ?? [] };
+      } catch (h) {
+        if (h.message?.includes("Dashboard fetch failed"))
+          throw h;
         return null;
       }
     };
     return (async () => {
       try {
-        const y = await P();
+        const h = await P();
         if (f) return;
-        if (y?.pendingApprovals) {
-          const b = {};
-          for (const g of y.pendingApprovals) {
-            const C = de(g.pipelineId, g.stepId);
-            b[re(g.runId, g.stepId)] = {
-              runId: g.runId,
-              pipelineId: g.pipelineId,
-              stepId: g.stepId,
-              approvers: g.approvers ?? [],
-              requestedAt: g.requestedAt,
-              message: g.message ?? C.message,
-              requiredCount: g.requiredCount ?? C.requiredCount,
-              recordedCount: g.recordedCount ?? 0
+        if (h?.pendingApprovals) {
+          const w = {};
+          for (const x of h.pendingApprovals) {
+            const $ = de(x.pipelineId, x.stepId);
+            w[re(x.runId, x.stepId)] = {
+              runId: x.runId,
+              pipelineId: x.pipelineId,
+              stepId: x.stepId,
+              approvers: x.approvers ?? [],
+              requestedAt: x.requestedAt,
+              message: x.message ?? $.message,
+              requiredCount: x.requiredCount ?? $.requiredCount,
+              recordedCount: x.recordedCount ?? 0
             };
           }
-          o(b);
+          o(w);
         }
         t(!1);
-      } catch (y) {
+      } catch (h) {
         if (f) return;
         console.error(
           "[usePendingApprovals] /api/observability/dashboard?include=pendingApprovals failed:",
-          y
-        ), a(y.message ?? "Failed to load pending approvals"), t(!1);
+          h
+        ), a(h.message ?? "Failed to load pending approvals"), t(!1);
       }
     })(), () => {
       f = !0;
@@ -2375,119 +2476,120 @@ function xt() {
   }, [c]), F(() => {
     const f = [];
     f.push(
-      e.subscribe("pipeline.run.started", (y) => {
-        const b = y;
-        h.current.set(b.runId, b.pipelineId);
+      e.subscribe("pipeline.run.started", (h) => {
+        const w = h;
+        g.current.set(w.runId, w.pipelineId);
       })
     ), f.push(
-      e.subscribe("pipeline.approval.requested", (y) => {
-        const b = y, g = h.current.get(b.runId) ?? x.current[b.runId]?.pipelineId ?? "", C = de(g, b.stepId);
-        o((R) => {
-          const N = re(b.runId, b.stepId);
-          return R[N] ? R : {
-            ...R,
-            [N]: {
-              runId: b.runId,
-              pipelineId: g,
-              stepId: b.stepId,
-              approvers: b.approvers,
-              requestedAt: b.at,
-              message: C.message,
-              requiredCount: C.requiredCount,
+      e.subscribe("pipeline.approval.requested", (h) => {
+        const w = h, x = g.current.get(w.runId) ?? v.current[w.runId]?.pipelineId ?? "", $ = de(x, w.stepId);
+        o((k) => {
+          const D = re(w.runId, w.stepId);
+          return k[D] ? k : {
+            ...k,
+            [D]: {
+              runId: w.runId,
+              pipelineId: x,
+              stepId: w.stepId,
+              approvers: w.approvers,
+              requestedAt: w.at,
+              message: $.message,
+              requiredCount: $.requiredCount,
               recordedCount: 0
             }
           };
         });
       })
     ), f.push(
-      e.subscribe("pipeline.approval.recorded", (y) => {
-        const b = y, g = re(b.runId, b.stepId);
-        o((C) => {
-          const R = C[g];
-          if (!R) return C;
-          if (b.decision === "reject") {
-            const S = { ...C };
-            return delete S[g], S;
+      e.subscribe("pipeline.approval.recorded", (h) => {
+        const w = h, x = re(w.runId, w.stepId);
+        o(($) => {
+          const k = $[x];
+          if (!k) return $;
+          if (w.decision === "reject") {
+            const S = { ...$ };
+            return delete S[x], S;
           }
-          const N = (R.recordedCount ?? 0) + 1, p = R.requiredCount ?? 1;
-          if (N >= p) {
-            const S = { ...C };
-            return delete S[g], S;
+          const D = (k.recordedCount ?? 0) + 1, p = k.requiredCount ?? 1;
+          if (D >= p) {
+            const S = { ...$ };
+            return delete S[x], S;
           }
           return {
-            ...C,
-            [g]: { ...R, recordedCount: N }
+            ...$,
+            [x]: { ...k, recordedCount: D }
           };
         });
       })
     );
     const P = e.subscribeToApprovals();
     return f.push(P), () => {
-      for (const y of f) y();
+      for (const h of f) h();
     };
   }, [e]);
   const d = B(() => Object.values(r).sort(
     (f, P) => P.requestedAt.localeCompare(f.requestedAt)
-  ), [r]), v = w(() => {
+  ), [r]), b = I(() => {
     u((f) => f + 1);
   }, []);
-  return { approvals: d, isLoading: i, error: s, retry: v };
+  return { approvals: d, isLoading: s, error: i, retry: b };
 }
-function mn() {
-  const { approvals: e } = xt();
+function fn() {
+  const { approvals: e } = wt();
   return e;
 }
 export {
-  xt as $,
+  Ft as $,
   Zt as A,
   Qt as B,
   Gt as C,
   jt as D,
-  Ut as E,
-  At as F,
+  Ct as E,
+  Ut as F,
   tn as G,
   qt as H,
-  cn as I,
-  sn as J,
+  un as I,
+  cn as J,
   Ve as K,
   Y as L,
   it as M,
-  an as N,
+  sn as N,
   be as O,
   Vt as P,
   Ot as Q,
-  Ct as R,
+  an as R,
   on as S,
-  un as T,
-  ce as U,
-  Dt as V,
-  Ge as W,
-  ye as X,
-  ot as Y,
-  Bt as Z,
-  Ft as _,
-  W as a,
-  Jt as a0,
-  Re as a1,
-  Lt as a2,
-  Nt as b,
+  dn as T,
+  Nt as U,
+  ce as V,
+  Dt as W,
+  Ge as X,
+  ye as Y,
+  ot as Z,
+  Bt as _,
+  K as a,
+  wt as a0,
+  Jt as a1,
+  Ee as a2,
+  Lt as a3,
+  At as b,
   Ht as c,
-  mn as d,
+  fn as d,
   Ue as e,
-  ke as f,
+  Ne as f,
   ht as g,
   zt as h,
   nn as i,
   Mt as j,
   st as k,
   Be as l,
-  ln as m,
-  $e as n,
+  pn as m,
+  ke as n,
   et as o,
   rn as p,
   Yt as q,
-  dn as r,
-  pn as s,
+  ln as r,
+  mn as s,
   Xt as t,
   mt as u,
   en as v,

@@ -4,10 +4,16 @@
 //
 // Single-expression boolean branch. The optional label is surfaced on the
 // node face on the canvas so the author can distinguish multiple branches.
+//
+// A primary-styled "Preview with sample context" button used to sit at the
+// bottom with an empty onClick — a Phase 1 stub that was never wired up. It
+// looked like a real action and did nothing at all when clicked, so it is
+// removed rather than left advertising a feature that does not exist.
 
 import type { ConditionNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
+import { Input } from '../../../forms/Input';
 
 export interface ConditionConfigProps {
   data: ConditionNodeData;
@@ -38,22 +44,14 @@ export default function ConditionConfig({ data, onChange }: ConditionConfigProps
       </ConfigField>
 
       <ConfigField label="Label (optional — shown on node face)" help="A short name so this branch is easy to spot.">
-        <input
-          type="text"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Input
+          size="sm"
           value={data.label ?? ''}
           onChange={(e) => onChange({ label: e.target.value || undefined })}
           placeholder="Long summary?"
+          aria-label="Condition label"
         />
       </ConfigField>
-
-      <button
-        type="button"
-        onClick={() => { /* Phase 1 stub — wired in Phase 3 */ }}
-        className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-inherit shrink-0"
-      >
-        ▶ Preview with sample context
-      </button>
     </NodeConfigShell>
   );
 }

@@ -4034,8 +4034,22 @@ export declare interface NotificationItem {
 export declare const NumberInput: ForwardRefExoticComponent<NumberInputProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface NumberInputProps {
-    value: number;
+    /**
+     * `undefined` renders an empty field, for a genuinely optional numeric
+     * setting. Distinguishing "unset" from 0 matters: 0 is a real value for a
+     * seed, a threshold or an offset.
+     */
+    value: number | undefined;
     onChange: (value: number) => void;
+    /**
+     * Called when the field is emptied. Supplying it is what makes the field
+     * clearable — without it, deleting the text leaves the previous value in
+     * place, because a half-typed "-" or "" cannot be parsed to a number.
+     *
+     * Kept separate from `onChange` so widening that callback's parameter to
+     * `number | undefined` doesn't break every existing caller.
+     */
+    onClear?: () => void;
     min?: number;
     max?: number;
     step?: number;

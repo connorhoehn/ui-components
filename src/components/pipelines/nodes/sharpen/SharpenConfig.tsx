@@ -1,9 +1,17 @@
 // src/components/pipelines/nodes/sharpen/SharpenConfig.tsx
 //
 // Config panel for image:sharpen.
+//
+// Converted from hand-rolled controls to the ConfigField + Input/NumberInput
+// composites. Every optional numeric field here is genuinely optional — the
+// executor falls back to its own default when the value is absent — so they
+// pass `onClear` and hand back `undefined` rather than coercing a blank field
+// to 0, which would silently mean "no sharpening at all" instead of "default".
 
 import type { ImageSharpenNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
+import { ConfigField, NodeConfigShell, SamplePills } from '../shared';
+import { Input } from '../../../forms/Input';
+import { NumberInput } from '../../../forms/NumberInput';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface SharpenConfigProps {
@@ -13,98 +21,81 @@ export interface SharpenConfigProps {
   nodeId?: string;
 }
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-
 export default function SharpenConfig({ data, onChange, nodeId }: SharpenConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="sharpen-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="sharpen-source-image-path"
-          type="text"
+      <ConfigField
+        label="Source image path"
+        help="Optional. Defaults to the image produced upstream."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={`${inputCls} font-mono`}
           value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
+          onChange={(e) =>
+            onChange({ sourceImagePath: e.target.value.trim() || undefined })
+          }
           placeholder="$.trigger.imageRef"
+          aria-label="Source image path"
         />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+        <SamplePills
+          samples={imageRefOptions.map((o) => o.path)}
+          onSelect={(v) => onChange({ sourceImagePath: v })}
+          aria-label="Upstream image refs"
+        />
+      </ConfigField>
 
-      {/* Sigma */}
-      <div>
-        <label htmlFor="sharpen-sigma" className={labelCls}>
-          Sigma <span className="text-text-tertiary font-normal">(optional, default 1)</span>
-        </label>
-        <input
-          id="sharpen-sigma"
-          type="number"
+      <ConfigField
+        label="Sigma"
+        help="Gaussian mask sigma. Higher is broader and stronger. Typical range 0.5–3."
+      >
+        <NumberInput
+          size="sm"
           min={0.01}
           max={10}
           step={0.1}
-          className={inputCls}
-          value={data.sigma ?? ''}
-          onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            onChange({ sigma: Number.isFinite(v) && v > 0 ? v : undefined });
-          }}
+          value={data.sigma}
+          onChange={(v) => onChange({ sigma: v })}
+          onClear={() => onChange({ sigma: undefined })}
           placeholder="1"
+          data-testid="sharpen-sigma"
         />
-        <div className={helpCls}>
-          Gaussian mask sigma. Higher = broader/stronger sharpening. Typical range: 0.5–3.
-        </div>
-      </div>
+      </ConfigField>
 
-      {/* m1 */}
-      <div>
-        <label htmlFor="sharpen-m1" className={labelCls}>
-          m1 — flat area level <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="sharpen-m1"
-          type="number"
+      <ConfigField
+        label="m1 — flat area level"
+        help="Sharpening applied to flat (smooth) areas of the image."
+      >
+        <NumberInput
+          size="sm"
           min={0}
-          max={1000000}
           step={0.1}
-          className={inputCls}
-          value={data.m1 ?? ''}
-          onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            onChange({ m1: Number.isFinite(v) && v >= 0 ? v : undefined });
-          }}
+          value={data.m1}
+          onChange={(v) => onChange({ m1: v })}
+          onClear={() => onChange({ m1: undefined })}
           placeholder="leave blank for default"
+          data-testid="sharpen-m1"
         />
-        <div className={helpCls}>Level of sharpening applied to flat (smooth) areas of the image.</div>
-      </div>
+      </ConfigField>
 
-      {/* m2 */}
-      <div>
-        <label htmlFor="sharpen-m2" className={labelCls}>
-          m2 — jagged area level <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="sharpen-m2"
-          type="number"
+      <ConfigField
+        label="m2 — jagged area level"
+        help="Sharpening applied to jagged (edge) areas of the image."
+      >
+        <NumberInput
+          size="sm"
           min={0}
-          max={1000000}
           step={0.1}
-          className={inputCls}
-          value={data.m2 ?? ''}
-          onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            onChange({ m2: Number.isFinite(v) && v >= 0 ? v : undefined });
-          }}
+          value={data.m2}
+          onChange={(v) => onChange({ m2: v })}
+          onClear={() => onChange({ m2: undefined })}
           placeholder="leave blank for default"
+          data-testid="sharpen-m2"
         />
-        <div className={helpCls}>Level of sharpening applied to jagged (edge) areas of the image.</div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

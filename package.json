@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.52.0",
+  "version": "2.53.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -95,7 +95,8 @@
     "demo": "vite --config demo/vite.config.ts",
     "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "lint:node-controls": "node scripts/check-node-controls.mjs"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

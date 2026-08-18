@@ -7,8 +7,8 @@ import { l as xn } from "./useDocumentTypes-C29MkgPl.js";
 import { c as t } from "./cn-B6yFEsav.js";
 import { u as hn } from "./useHangoutEmbed-D-rUq74K.js";
 import { u as bn } from "./useActiveSpeaker-BOwJ262O.js";
-import { D as gn, T as De } from "./NewDocumentModal-DqRfugCB.js";
-import { b as yn } from "./registry-qR57lair.js";
+import { D as gn, T as De } from "./NewDocumentModal-tuOrm4-5.js";
+import { c as yn } from "./registry-DmLIk6XM.js";
 function $e() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }

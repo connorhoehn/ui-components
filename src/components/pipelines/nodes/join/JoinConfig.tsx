@@ -7,6 +7,8 @@
 
 import type { JoinNodeData, JoinMode, JoinMergeStrategy } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
+import { RadioGroup } from '../../../forms/RadioGroup';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface JoinConfigProps {
   data: JoinNodeData;
@@ -30,33 +32,27 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
     <NodeConfigShell>
       {/* Mode */}
       <ConfigField label="Mode" required>
-        <div className="flex flex-col gap-1.5">
-          {MODE_OPTIONS.map(opt => (
-            <label
-              key={opt.value}
-              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="join-mode"
-                checked={data.mode === opt.value}
-                onChange={() => onChange({ mode: opt.value })}
-              />
-              {opt.label}
-              <span className="text-text-tertiary text-[11px]">— {opt.hint}</span>
-            </label>
-          ))}
-        </div>
+        <RadioGroup
+          name="join-mode"
+          value={data.mode}
+          onChange={(mode) => onChange({ mode })}
+          options={MODE_OPTIONS.map((o) => ({
+            value: o.value,
+            label: o.label,
+            description: o.hint,
+          }))}
+          data-testid="join-mode"
+        />
 
         {data.mode === 'n_of_m' && (
           <div className="mt-2 flex items-center gap-2">
-            <label className="text-[11px] font-semibold text-text-secondary">N</label>
-            <input
-              type="number"
+            <span className="text-[11px] font-semibold text-text-secondary">N</span>
+            <NumberInput
+              size="sm"
               min={1}
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-20 font-inherit"
               value={data.n ?? 1}
-              onChange={(e) => onChange({ n: Math.max(1, parseInt(e.target.value, 10) || 1) })}
+              onChange={(n) => onChange({ n })}
+              data-testid="join-n"
             />
           </div>
         )}
@@ -64,23 +60,17 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
 
       {/* Merge strategy */}
       <ConfigField label="Merge strategy" required>
-        <div className="flex flex-col gap-1.5">
-          {STRATEGY_OPTIONS.map(opt => (
-            <label
-              key={opt.value}
-              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="join-merge"
-                checked={data.mergeStrategy === opt.value}
-                onChange={() => onChange({ mergeStrategy: opt.value })}
-              />
-              {opt.label}
-              <span className="text-text-tertiary text-[11px]">— {opt.hint}</span>
-            </label>
-          ))}
-        </div>
+        <RadioGroup
+          name="join-merge"
+          value={data.mergeStrategy}
+          onChange={(mergeStrategy) => onChange({ mergeStrategy })}
+          options={STRATEGY_OPTIONS.map((o) => ({
+            value: o.value,
+            label: o.label,
+            description: o.hint,
+          }))}
+          data-testid="join-merge"
+        />
       </ConfigField>
 
       {/* Current inputs (read-only) */}
