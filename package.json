@@ -111,7 +111,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
-    "@connorhoehn/realtime-modules": ">=0.3.0",
+    "@connorhoehn/realtime-modules": ">=0.17.0 <1",
     "@tiptap/extension-collaboration": "^3.22.3",
     "@tiptap/extension-placeholder": "^3.22.3",
     "@tiptap/extension-task-item": "^3.22.3",
