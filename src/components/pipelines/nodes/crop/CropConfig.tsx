@@ -19,7 +19,7 @@ import { useImageUrl } from '../../services';
 import Banner from '../../../shared/Banner';
 import Chip from '../../../shared/Chip';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
-import { NodeConfigShell } from '../shared';
+import { NodeConfigShell, SamplePills } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface CropConfigProps {
@@ -37,29 +37,6 @@ const BBOX_SAMPLES = [
 
 const CROP_REGION_ID = 'crop-region';
 const CROP_REGION_LABEL = 'crop';
-
-function SamplePills({
-  samples,
-  onSelect,
-}: {
-  samples: string[];
-  onSelect: (v: string) => void;
-}) {
-  return (
-    <div className="mt-1.5 flex flex-wrap gap-1">
-      {samples.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => onSelect(s)}
-          className="text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer"
-        >
-          {s}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 const inputCls =
   'mt-1 w-full text-[12px] font-mono rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';

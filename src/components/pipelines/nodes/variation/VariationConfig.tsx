@@ -3,7 +3,7 @@
 // Config panel for image:variation (Nova Canvas).
 
 import type { ImageVariationNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell } from '../shared';
+import { NodeConfigShell, SamplePills } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface VariationConfigProps {
@@ -11,23 +11,6 @@ export interface VariationConfigProps {
   onChange: (patch: Partial<ImageVariationNodeData>) => void;
   /** Node being edited; derives real upstream image refs. */
   nodeId?: string;
-}
-
-function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
-  return (
-    <div className="mt-1.5 flex flex-wrap gap-1">
-      {samples.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => onSelect(s)}
-          className="text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer"
-        >
-          {s}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 const MODEL_OPTIONS = [

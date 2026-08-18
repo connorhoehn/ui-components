@@ -6,7 +6,7 @@
 import type { ImageSaveNodeData } from '../../../../types/pipeline';
 import { Input } from '../../../forms/Input';
 import { cn } from '../../../../lib/cn';
-import { NodeConfigShell } from '../shared';
+import { NodeConfigShell, SamplePills } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface SaveConfigProps {
@@ -21,34 +21,6 @@ const FILENAME_TEMPLATE_SAMPLES = [
   '{{scatter.index}}',
   '{{scatter.parentImageId}}',
 ];
-
-function SamplePills({
-  samples,
-  onSelect,
-}: {
-  samples: string[];
-  onSelect: (v: string) => void;
-}) {
-  return (
-    <div className="mt-1.5 flex flex-wrap gap-1">
-      {samples.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => onSelect(s)}
-          className={cn(
-            'text-[10px] font-mono',
-            'bg-[#f3f4f6] border border-[#d1d5db] text-[#374151]',
-            'rounded px-1.5 py-0.5 cursor-pointer',
-            'hover:bg-[#e5e7eb] transition-colors duration-100',
-          )}
-        >
-          {s}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);

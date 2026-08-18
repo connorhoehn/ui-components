@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import type { ImageVisionTagNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell } from '../shared';
+import { NodeConfigShell, SamplePills } from '../shared';
 import { ContextVariablePicker } from '../../context/ContextVariablePicker';
 import { useUpstreamContext } from '../../context/useUpstreamContext';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
@@ -14,23 +14,6 @@ export interface VisionTagConfigProps {
   onChange: (patch: Partial<ImageVisionTagNodeData>) => void;
   /** Node being edited; enables real upstream-context pills. */
   nodeId?: string;
-}
-
-function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
-  return (
-    <div className="mt-1.5 flex flex-wrap gap-1">
-      {samples.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => onSelect(s)}
-          className="text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer"
-        >
-          {s}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 const MODEL_OPTIONS = [

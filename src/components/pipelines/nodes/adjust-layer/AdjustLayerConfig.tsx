@@ -8,7 +8,7 @@ import type { ImageAdjustLayerNodeData, AdjustLayer } from '../../../../types/pi
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
-import { NodeConfigShell } from '../shared';
+import { NodeConfigShell, SamplePills } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface AdjustLayerConfigProps {
@@ -16,23 +16,6 @@ export interface AdjustLayerConfigProps {
   onChange: (patch: Partial<ImageAdjustLayerNodeData>) => void;
   /** Node being edited; derives real upstream image refs. */
   nodeId?: string;
-}
-
-function SamplePills({ samples, onSelect }: { samples: string[]; onSelect: (v: string) => void }) {
-  return (
-    <div className="mt-1.5 flex flex-wrap gap-1">
-      {samples.map((s) => (
-        <button
-          key={s}
-          type="button"
-          onClick={() => onSelect(s)}
-          className="text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer"
-        >
-          {s}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 const labelCls = 'text-[12px] font-semibold text-text-secondary';

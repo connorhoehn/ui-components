@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.52.0] — 2026-08-18
+
+### Added
+
+- **`SamplePills`** (`pipelines/nodes/shared`) — the one-click suggestion row
+  under a path input. It existed as a private copy in **seventeen** config
+  panels, byte-identical apart from formatting: seventeen chances to drift and
+  no single place to fix a bug. Now exported once, with tests.
+
+  It also renders **nothing** when there are no samples. Every inlined copy
+  returned an empty flex wrapper whose `mt-1.5` showed as a stray gap under
+  any input with no upstream suggestions to offer.
+
+### Audit note — hand-rolled controls
+
+Counted while auditing, and recorded here so the number is honest rather
+than rediscovered: **28 files under `pipelines/nodes/` still hand-roll 112
+raw `<input>`/`<select>`/`<textarea>` controls** instead of using
+`ConfigField` + `Input`/`Select`/`Textarea`/`NumberInput`.
+
+They share a copy-pasted `inputCls` constant which has already diverged into
+**4 different definitions** across 17 files — so the same field renders
+differently depending on which panel you open, and all four hardcode
+`bg-white` rather than a surface token. This is the Chip/Badge tone
+divergence from v2.39.0 repeating in a different guise.
+
+`GenerateConfig` and `LLMConfig`'s selects were converted in v2.51.0; the
+remaining files are being worked through in batches.
+
 ## [2.51.0] — 2026-08-18
 
 Finishes the vendor-neutrality pass across the whole pipelines node surface,
