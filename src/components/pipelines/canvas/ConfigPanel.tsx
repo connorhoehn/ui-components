@@ -40,6 +40,9 @@ import GenerateConfig from '../nodes/generate/GenerateConfig';
 import VariationConfig from '../nodes/variation/VariationConfig';
 import EditPromptConfig from '../nodes/edit-prompt/EditPromptConfig';
 import docsContent from '../nodes/docsContent';
+import ImageSourceConfig from '../nodes/image-source/ImageSourceConfig';
+import SaveConfig from '../nodes/save/SaveConfig';
+import MemoryConfig from '../nodes/memory/MemoryConfig';
 import VisionPromptBench from '../vision/VisionPromptBench';
 import EmptyState from '../../shared/EmptyState';
 
@@ -298,8 +301,8 @@ const PlaceholderConfig: AnyConfig = ({ data }) => (
  * front rather than letting the author find out after placing the node.
  */
 export const NODE_TYPES_WITHOUT_CONFIG: readonly NodeType[] = [
-  'agent', 'mcp-tool', 'knowledge-base', 'graph-query', 'memory',
-  'guardrail', 'policy', 'ag-ui-output', 'image-source', 'image:save',
+  'agent', 'mcp-tool', 'knowledge-base', 'graph-query',
+  'guardrail', 'policy', 'ag-ui-output',
 ];
 
 const CONFIGS: Record<NodeType, AnyConfig> = {
@@ -315,12 +318,12 @@ const CONFIGS: Record<NodeType, AnyConfig> = {
   'mcp-tool': PlaceholderConfig,
   'knowledge-base': PlaceholderConfig,
   'graph-query': PlaceholderConfig,
-  memory: PlaceholderConfig,
+  memory: MemoryConfig as unknown as AnyConfig,
   guardrail: PlaceholderConfig,
   policy: PlaceholderConfig,
   'ag-ui-output': PlaceholderConfig,
-  'image-source': PlaceholderConfig,
-  'image:save': PlaceholderConfig,
+  'image-source': ImageSourceConfig as unknown as AnyConfig,
+  'image:save': SaveConfig as unknown as AnyConfig,
   scatter: ScatterConfig as unknown as AnyConfig,
   'image:resize': ResizeConfig as unknown as AnyConfig,
   'image:transform': TransformGeoConfig as unknown as AnyConfig,

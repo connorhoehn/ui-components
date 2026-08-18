@@ -25,10 +25,16 @@ import {
   savePipeline,
 } from '@/components/pipelines/persistence/pipelineStorage';
 
+/** The name `createDemoPipeline` gives its result — the reuse key below. */
+const DEMO_PIPELINE_NAME = 'Document Summary Pipeline (Demo)';
+
 /** Seed a demo pipeline once, then reuse it across visits. */
 function useDemoPipelineId(): string {
   return useMemo(() => {
-    const existing = listPipelines().find((p) => p.name === 'Content Moderation');
+    // Match on the name createDemoPipeline actually produces. Matching on
+    // anything else silently never hits, so every visit seeds another copy and
+    // localStorage fills up with identical pipelines.
+    const existing = listPipelines().find((p) => p.name === DEMO_PIPELINE_NAME);
     if (existing) return existing.id;
     const def = createDemoPipeline('demo-user');
     savePipeline(def);

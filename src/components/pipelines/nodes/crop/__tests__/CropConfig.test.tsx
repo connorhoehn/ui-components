@@ -5,6 +5,7 @@
 //   - drag-to-create single box writes to nodeData.bbox
 //   - drawing a second box replaces the first (single-box invariant)
 
+import { createContext } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import CropConfig from '../CropConfig';
@@ -23,6 +24,9 @@ import {
 const mockUsePipelineEditor = vi.fn();
 vi.mock('../../../context/PipelineEditorContext', () => ({
   usePipelineEditor: () => mockUsePipelineEditor(),
+  // useUpstreamContext reads the context object directly (so a panel stays
+  // renderable with no provider), so the mock has to supply it too.
+  PipelineEditorContext: createContext<unknown>(null),
 }));
 
 // Mock the runs context so we can control the upstream step image record.

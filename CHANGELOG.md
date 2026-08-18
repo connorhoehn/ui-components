@@ -8,6 +8,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.48.0] — 2026-08-18
+
+Group B node configuration, and two canvas bugs the new e2e coverage exposed.
+
+### Added
+
+- **`MemoryConfig`** — configuration panel for the `memory` node (AgentCore
+  Memory read/write): mode, scope, namespace, key expression, value field and
+  output key, with the upstream-context variable picker wired in so key and
+  value expressions can be built from what actually reaches the node.
+- **`PipelineCanvas` refits on resize.** The canvas is a `flex-1` column
+  between the palette and the config panel, so it is resized constantly —
+  opening the config pane, collapsing the palette, resizing the window. The
+  `fitView` prop only fits once, on init, so the viewport kept a fit computed
+  for a width that no longer existed. A `ResizeObserver` now refits, but only
+  while the viewport is still the one the editor chose: once the user pans or
+  zooms it is theirs, tracked via `onMoveStart` (React Flow passes a null
+  event for programmatic moves, so a non-null event is a real gesture).
+
+### Fixed
+
+- **`image-source` and `image:save` config panels were unreachable.** Both
+  components existed and were complete, but `ConfigPanel` still mapped their
+  node types to `PlaceholderConfig`, so selecting either node showed
+  "coming soon" instead of the panel that was already shipped. Wired both and
+  removed them from `NODE_TYPES_WITHOUT_CONFIG`.
+- **Half the pipeline graph was invisible.** React Flow's default `minZoom` is
+  `0.5` and `fitView` will not zoom out past the flow's `minZoom`. A pipeline
+  is far wider than the canvas column at 0.5, so the fit silently *clamped*
+  rather than fitting — and because the ReactFlow root is `overflow: hidden`,
+  the overflow was clipped with no scrollbar and no indication anything was
+  missing. Six of the seeded demo's twelve nodes were off-screen; the editor
+  read as broken. `minZoom` is now `0.1` with matching `fitViewOptions`.
+- **`useUpstreamContext` threw outside `PipelineEditorProvider`.** It called
+  `usePipelineEditor()`, which throws when no provider is mounted, so any
+  config panel using the context picker could not render in a test, a story,
+  or a standalone settings view. It now reads the context object directly and
+  treats "no editor" as "no upstream context to offer", matching the existing
+  precedent in `PipelineRunsContext`.
+- **The pipeline-editor demo reseeded on every visit.** `useDemoPipelineId`
+  looked for a pipeline named `'Content Moderation'` while
+  `createDemoPipeline` names its result `'Document Summary Pipeline (Demo)'`.
+  The lookup never hit, so each visit wrote another identical pipeline to
+  localStorage.
+
+### Tests
+
+- `MemoryConfig` (6), `PipelineCanvas` fit configuration (4).
+- `tests/e2e/pipeline-demo.spec.ts` rewritten against the real editor — the
+  old spec asserted against the removed mock simulation. It now covers the
+  seeded graph rendering, palette search, **drag-and-drop from the palette
+  onto the canvas**, node selection opening the real config panel, the
+  no-clipping invariant above, and seed reuse across visits.
+
 ## [2.46.0] — 2026-08-18
 
 Docs-shell layout and navigation, all four reported from using the demo.

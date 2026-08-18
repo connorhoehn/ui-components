@@ -19,8 +19,13 @@ import type {
   NodeChange,
   NodeTypes,
   OnConnect,
+  OnMove,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+
+/** Zoom floor. Low enough that `fitView` can fit a wide pipeline. */
+const MIN_ZOOM = 0.1;
+const FIT_VIEW_OPTIONS = { padding: 0.15, minZoom: MIN_ZOOM, maxZoom: 1 } as const;
 
 import type { NodeType, PipelineDefinition, PipelineNode } from '../../../types/pipeline';
 import { usePipelineEditor } from '../context/PipelineEditorContext';
@@ -160,6 +165,50 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
   } = usePipelineEditor();
 
   const { screenToFlowPosition, fitView } = useReactFlow();
+
+  // ── Refit when the canvas is resized ─────────────────────────────────────
+  //
+  // The `fitView` prop only fits once, on init. The canvas is `flex-1` between
+  // the palette and the config panel, so it is resized constantly: opening or
+  // closing the config pane, collapsing the palette, resizing the window. None
+  // of those refit the viewport, and because the ReactFlow root is
+  // `overflow: hidden`, a graph laid out for the old width is simply clipped —
+  // a seeded 12-node pipeline can end up entirely off-screen, looking like an
+  // empty editor.
+  //
+  // Refit on resize, but only while the viewport is still the one WE chose.
+  // Once the user pans or zooms, the viewport is theirs and yanking it back on
+  // every resize would fight them. React Flow passes a null event for
+  // programmatic moves, so a non-null event is the user's own gesture.
+  // React Flow's default minZoom is 0.5, and `fitView` will not zoom out past
+  // it. A real pipeline is far wider than the canvas column at 0.5, so the fit
+  // silently clamps and the graph overflows a container that is
+  // `overflow: hidden` — half the seeded demo was invisible. Allow zooming out
+  // far enough that a fit is actually achievable.
+  const userMovedViewportRef = useRef(false);
+  const handleMoveStart = useCallback<OnMove>((event) => {
+    if (event) userMovedViewportRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+
+    let last = { w: el.clientWidth, h: el.clientHeight };
+    const observer = new ResizeObserver(() => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      // Ignore sub-pixel jitter and the 0x0 pass before layout settles.
+      if (w === 0 || h === 0) return;
+      if (Math.abs(w - last.w) < 2 && Math.abs(h - last.h) < 2) return;
+      last = { w, h };
+      if (userMovedViewportRef.current) return;
+      fitView(FIT_VIEW_OPTIONS);
+    });
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fitView]);
 
   useDevEditorBridge({
     addNode,
@@ -501,7 +550,10 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
         onNodeClick={handleNodeClick}
         onNodeContextMenu={handleNodeContextMenu}
         onPaneClick={handlePaneClick}
+        onMoveStart={handleMoveStart}
         fitView
+        fitViewOptions={FIT_VIEW_OPTIONS}
+        minZoom={MIN_ZOOM}
         snapToGrid
         snapGrid={[16, 16]}
         edgesFocusable

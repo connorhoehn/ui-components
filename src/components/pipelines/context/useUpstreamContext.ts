@@ -4,7 +4,8 @@
 // author a template against the paths that actually exist at its node.
 
 import { useMemo } from 'react';
-import { usePipelineEditor } from './PipelineEditorContext';
+import { useContext } from 'react';
+import { PipelineEditorContext } from './PipelineEditorContext';
 import {
   availableContextPaths,
   availableImageRefs,
@@ -27,7 +28,11 @@ export interface UpstreamContext {
  * unconditionally without branching on selection.
  */
 export function useUpstreamContext(nodeId: string | null): UpstreamContext {
-  const { definition } = usePipelineEditor();
+  // Read the context directly rather than through usePipelineEditor(), which
+  // throws when no provider is mounted. A config panel must stay renderable
+  // outside the editor — in a story, a test, or a standalone settings view —
+  // and "no graph" simply means "no upstream context to offer".
+  const definition = useContext(PipelineEditorContext)?.definition ?? null;
   const nodes = definition?.nodes ?? [];
   const edges = definition?.edges ?? [];
 
@@ -53,7 +58,7 @@ export function useUpstreamContext(nodeId: string | null): UpstreamContext {
  * carried, which named nodes ("upload", "crop") that need not exist.
  */
 export function useUpstreamImageRefs(nodeId: string | null): ImageRefOption[] {
-  const { definition } = usePipelineEditor();
+  const definition = useContext(PipelineEditorContext)?.definition ?? null;
   const nodes = definition?.nodes ?? [];
   const edges = definition?.edges ?? [];
   return useMemo(
