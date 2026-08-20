@@ -8,6 +8,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.58.0] — 2026-08-20
+
+Audit round: the demo's static inline styles are gone, and the showcase
+pages now demo the library's real components instead of fakes.
+
+### Fixed
+
+- **`DataDisplayPage` showcased chips, sparklines and skeletons using
+  hand-rolled fakes.** `DemoChip` carried its own hex palette — a second
+  `Record<color, hex>` that duplicated and disagreed with the tone scale,
+  the exact drift rule 2 of the tones section exists to prevent —
+  `DemoSparkline` reimplemented `Sparkline`, and `SkeletonRect`
+  reimplemented `SkeletonCard`. A showcase that renders a fake of the
+  component it documents teaches the copy-paster the wrong thing twice.
+  All three now render the real composites.
+- **`Sparkline`'s default stroke was `#646cff`** — Vite-template indigo,
+  not this library's primary, and invisible to the tones guard because it
+  is a string value rather than a utility class. Now
+  `var(--color-primary)`, so it follows the host's brand.
+- **`RealTimeEditingPage` and `InvokeDemo`** carried private hex palettes
+  (architecture-diagram tints, a green/orange mode banner); both now use
+  the tone tokens (`TONE_BG`/`TONE_BORDER`, `bg-success-bg` /
+  `bg-caution-bg`, `toneVar`).
+
+### Changed
+
+- **`SkeletonCard` gains `rounded?: 'md' | 'lg' | 'full'`** — the
+  avatar-placeholder (circle) case is what forced `DataDisplayPage` to
+  hand-roll its own skeleton rect. Additive; default unchanged.
+- **`lint:static-styles` now scans `demo/src` too, string-aware.** A naive
+  grep said 46 demo files used `style={{}}`; the real number was 9 — pages
+  like `LayoutPage` and `PatternsPage` only *display* inline-style JSX
+  inside `code={\`...\`}` template literals. Occurrences inside strings
+  no longer count, in either tree (which also retired one stale `src`
+  allowlist entry). The 8 remaining demo files are allowlisted with
+  per-line justifications; every one is runtime-derived only (cursor
+  positions, per-datum colors, `toneVar`).
+
+### Docs
+
+- `CLAUDE.md` refreshed against measurements: demo static eradication
+  complete; `src` inline-style count 131 → 97; the zero-test folders
+  (`collaboration/`, `misc/`, `doc-types/`) are filled and no longer
+  listed as gaps.
+
 ## [2.57.0] — 2026-08-20
 
 **Hand-rolled-control migration complete. 28 files / 112 controls → 0 / 0.**

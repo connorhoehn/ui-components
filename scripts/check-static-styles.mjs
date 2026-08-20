@@ -1,7 +1,11 @@
 #!/usr/bin/env node
-// Drift check: fails CI if a NEW file appears in src/components/ that uses
-// `style={{...}}` and isn't on the grandfathered allowlist. Locks in the
-// "convert vs keep" heuristic from TAILWIND_MIGRATION.md.
+// Drift check: fails CI if a NEW file appears in src/components/ OR demo/src/
+// that uses `style={{...}}` and isn't on the grandfathered allowlist. Locks in
+// the "convert vs keep" heuristic from TAILWIND_MIGRATION.md.
+//
+// Occurrences inside strings and template literals do NOT count. Several docs
+// pages carry JSX code samples in code={`...`} props; a naive grep flags the
+// sample text and forces allowlisting files whose real JSX is clean.
 //
 // When a file is intentionally added with dynamic inline styles (cursor
 // positions, theme-mode colors, prop-driven sizing, etc.) — add its path
@@ -31,11 +35,44 @@ try {
   // (e.g. a JSX sample inside pipelines/judge/README.md), which is a false
   // positive the allowlist should never have to carry.
   rawGrep = execSync(
-    'grep -rl --include="*.tsx" --include="*.ts" "style={{" src/components 2>/dev/null',
+    'grep -rl --include="*.tsx" --include="*.ts" "style={{" src/components demo/src 2>/dev/null',
     { encoding: 'utf8' },
   );
 } catch (err) {
   if (err.status !== 1) throw err;
+}
+
+/** Blank out string/template-literal/comment content, preserving line count. */
+function stripStrings(src) {
+  let out = '';
+  let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    if (c === '`' || c === '"' || c === "'") {
+      const q = c;
+      out += q;
+      i++;
+      while (i < src.length) {
+        if (src[i] === '\\') { i += 2; continue; }
+        if (src[i] === q) { out += q; i++; break; }
+        out += src[i] === '\n' ? '\n' : ' ';
+        i++;
+      }
+    } else if (c === '/' && src[i + 1] === '/') {
+      while (i < src.length && src[i] !== '\n') i++;
+    } else if (c === '/' && src[i + 1] === '*') {
+      i += 2;
+      while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) {
+        out += src[i] === '\n' ? '\n' : '';
+        i++;
+      }
+      i += 2;
+    } else {
+      out += c;
+      i++;
+    }
+  }
+  return out;
 }
 
 const current = new Set(
@@ -43,6 +80,8 @@ const current = new Set(
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
+    // Keep only files whose REAL code (not code samples in strings) uses it.
+    .filter((f) => stripStrings(readFileSync(f, 'utf8')).includes('style={{'))
 );
 
 const additions = [...current].filter((f) => !allowed.has(f)).sort();

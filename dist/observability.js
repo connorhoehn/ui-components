@@ -3,7 +3,7 @@ import { Outlet as xe, useNavigate as me } from "react-router";
 import { useState as g, useRef as T, useCallback as Y, useEffect as O, useMemo as D } from "react";
 import { u as W, d as ee } from "./ObservabilityContext-mvmEXnGv.js";
 import { u as fe } from "./IdentityContext-CLalsm_M.js";
-import { S as te, E as re, C as ne } from "./CardHeader-DdyKN-6E.js";
+import { S as te, E as re, C as ne } from "./CardHeader-Cri3P8GV.js";
 import { c as h } from "./cn-B6yFEsav.js";
 import { S as he, L as _, B as be } from "./Chart-ByoxeiYX.js";
 import { a as ge } from "./EventStreamContext-CjzSHXy-.js";

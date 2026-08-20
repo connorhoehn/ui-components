@@ -23,7 +23,7 @@ import { C as le } from "./Chip-BDT8ro4h.js";
 import { u as Xr } from "./IdentityContext-CLalsm_M.js";
 import { C as qt } from "./ConfirmDialog-Ix7G_Mb4.js";
 import { B as aa, L as Bt } from "./Chart-ByoxeiYX.js";
-import { S as Qt } from "./SkeletonCard-Baj5Ynm7.js";
+import { S as Qt } from "./SkeletonCard-Bm2f1JX1.js";
 const ia = {
   trigger: ["out"],
   llm: ["out", "error"],

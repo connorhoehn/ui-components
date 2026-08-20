@@ -30,35 +30,29 @@ export default function InvokeDemo() {
   return (
     <div className="flex flex-col h-full">
       {/* Mode toggle banner */}
+      {/* Two-state tone banner: success while simulated, caution when live.
+          Was a private green/orange hex set; now the same four-role tone
+          tokens every library surface uses. */}
       <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          padding: '8px 16px',
-          background: simulated ? '#f0fdf4' : '#fff7ed',
-          borderBottom: `1px solid ${simulated ? '#bbf7d0' : '#fed7aa'}`,
-          fontSize: 13,
-        }}
+        className={`flex items-center gap-2.5 py-2 px-4 text-[13px] border-b ${
+          simulated
+            ? 'bg-success-bg border-success-border'
+            : 'bg-caution-bg border-caution-border'
+        }`}
       >
-        <span className={`w-2 h-2 rounded-full shrink-0 ${simulated ? 'bg-[#22c55e]' : 'bg-[#f97316]'}`}
+        <span
+          className={`w-2 h-2 rounded-full shrink-0 ${simulated ? 'bg-success' : 'bg-caution'}`}
         />
-        <span className={`font-medium ${simulated ? 'text-[#15803d]' : 'text-[#c2410c]'}`}>
-          {simulated ? 'Simulated mode — scripted AG-UI event stream' : 'Live mode — requires AgentCore runtime'}
+        <span className={`font-medium ${simulated ? 'text-success-fg' : 'text-caution-fg'}`}>
+          {simulated ? 'Simulated mode — scripted AG-UI event stream' : 'Live mode — requires an agent runtime'}
         </span>
         <button
           onClick={() => setSimulated((s) => !s)}
-          style={{
-            marginLeft: 'auto',
-            padding: '4px 12px',
-            fontSize: 12,
-            fontWeight: 500,
-            border: `1px solid ${simulated ? '#86efac' : '#fdba74'}`,
-            borderRadius: 6,
-            background: '#fff',
-            color: simulated ? '#15803d' : '#c2410c',
-            cursor: 'pointer',
-          }}
+          className={`ml-auto py-1 px-3 text-[12px] font-medium border rounded-md bg-surface cursor-pointer ${
+            simulated
+              ? 'border-success-border text-success-fg'
+              : 'border-caution-border text-caution-fg'
+          }`}
         >
           {simulated ? 'Switch to live endpoint' : 'Use simulated stream'}
         </button>

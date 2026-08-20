@@ -1,4 +1,11 @@
-import { StatusDot } from '@connorhoehnslalom/ui-components/shared';
+import {
+  Chip,
+  SkeletonCard,
+  Sparkline,
+  StatusDot,
+  toneVar,
+  type Tone,
+} from '@connorhoehnslalom/ui-components/shared';
 import { ExampleBlock, PropsTable, PageHeader, useRegisterToc } from '../shared';
 import type { TocItem } from '../shared';
 
@@ -13,117 +20,18 @@ const tocItems: TocItem[] = [
   { id: 'props', label: 'API Reference', level: 2 },
 ];
 
-// --- Inline chip rendering helpers ---
-
-const chipColors = {
-  blue:   { soft: { bg: 'rgba(37,99,235,0.1)', text: '#2563eb' }, solid: { bg: '#2563eb', text: '#fff' } },
-  green:  { soft: { bg: 'rgba(22,163,74,0.1)', text: '#16a34a' }, solid: { bg: '#16a34a', text: '#fff' } },
-  amber:  { soft: { bg: 'rgba(217,119,6,0.1)', text: '#d97706' }, solid: { bg: '#d97706', text: '#fff' } },
-  red:    { soft: { bg: 'rgba(220,38,38,0.1)', text: '#dc2626' }, solid: { bg: '#dc2626', text: '#fff' } },
-  purple: { soft: { bg: 'rgba(147,51,234,0.1)', text: '#9333ea' }, solid: { bg: '#9333ea', text: '#fff' } },
-  gray:   { soft: { bg: 'rgba(100,116,139,0.1)', text: '#64748b' }, solid: { bg: '#64748b', text: '#fff' } },
-};
-
-type ChipColor = keyof typeof chipColors;
-
-function DemoChip({
-  color,
-  variant = 'soft',
-  size = 'sm',
-  mono = false,
-  children,
-}: {
-  color: ChipColor;
-  variant?: 'soft' | 'solid';
-  size?: 'sm' | 'xs';
-  mono?: boolean;
-  children: React.ReactNode;
-}) {
-  const palette = chipColors[color][variant];
-  const sizeStyle = size === 'xs'
-    ? { padding: '1px 6px', fontSize: 10 }
-    : { padding: '4px 10px', fontSize: 12 };
-  return (
-    <span
-      style={{
-        display: 'inline-block',
-        borderRadius: 12,
-        fontWeight: 600,
-        fontFamily: mono ? 'monospace' : 'inherit',
-        lineHeight: 1.4,
-        whiteSpace: 'nowrap',
-        background: palette.bg,
-        color: palette.text,
-        ...sizeStyle,
-      }}
-    >
-      {children}
-    </span>
-  );
-}
-
-// --- Sparkline SVG helper ---
-
-function DemoSparkline({
-  data,
-  width = 80,
-  height = 24,
-  color = '#2563eb',
-}: {
-  data: number[];
-  width?: number;
-  height?: number;
-  color?: string;
-}) {
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const stepX = data.length > 1 ? width / (data.length - 1) : 0;
-
-  const points = data
-    .map((v, i) => {
-      const x = i * stepX;
-      const y = height - ((v - min) / range) * (height - 4) - 2;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(' ');
-
-  return (
-    <svg className="block" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-      <polyline fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" points={points} />
-    </svg>
-  );
-}
-
-// --- Skeleton pulse animation ---
-
-const pulseKeyframes = `
-@keyframes demo-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-`;
-
-function SkeletonRect({ width, height, borderRadius = 6 }: { width: number | string; height: number; borderRadius?: number }) {
-  return (
-    <div
-      style={{
-        width,
-        height,
-        borderRadius,
-        background: '#e2e8f0',
-        animation: 'demo-pulse 1.8s ease-in-out infinite',
-      }}
-    />
-  );
-}
+// The chips, sparklines and skeletons on this page are the LIBRARY'S OWN.
+// This page used to demo them with hand-rolled fakes — including a private
+// hex palette that duplicated (and disagreed with) the tone scale, which is
+// exactly the drift the tones rule exists to prevent. A showcase that renders
+// a fake of the component it documents teaches the copy-paster the wrong
+// thing twice.
 
 export default function DataDisplayPage() {
   useRegisterToc(tocItems);
 
   return (
     <div className="max-w-240 mx-auto my-0">
-      <style>{pulseKeyframes}</style>
 
       <PageHeader
         title="Data Display"
@@ -160,12 +68,12 @@ export default function DataDisplayPage() {
               Soft (default)
             </div>
             <div className="flex flex-wrap gap-2 items-center">
-              <DemoChip color="blue">Active</DemoChip>
-              <DemoChip color="green">Healthy</DemoChip>
-              <DemoChip color="amber">Degraded</DemoChip>
-              <DemoChip color="red">Critical</DemoChip>
-              <DemoChip color="purple">Beta</DemoChip>
-              <DemoChip color="gray">Archived</DemoChip>
+              <Chip tone="info">Active</Chip>
+              <Chip tone="success">Healthy</Chip>
+              <Chip tone="warning">Degraded</Chip>
+              <Chip tone="danger">Critical</Chip>
+              <Chip tone="accent">Beta</Chip>
+              <Chip tone="neutral">Archived</Chip>
             </div>
           </div>
           <div>
@@ -173,12 +81,12 @@ export default function DataDisplayPage() {
               Solid
             </div>
             <div className="flex flex-wrap gap-2 items-center">
-              <DemoChip color="blue" variant="solid">Active</DemoChip>
-              <DemoChip color="green" variant="solid">Healthy</DemoChip>
-              <DemoChip color="amber" variant="solid">Degraded</DemoChip>
-              <DemoChip color="red" variant="solid">Critical</DemoChip>
-              <DemoChip color="purple" variant="solid">Beta</DemoChip>
-              <DemoChip color="gray" variant="solid">Archived</DemoChip>
+              <Chip tone="info" solid>Active</Chip>
+              <Chip tone="success" solid>Healthy</Chip>
+              <Chip tone="warning" solid>Degraded</Chip>
+              <Chip tone="danger" solid>Critical</Chip>
+              <Chip tone="accent" solid>Beta</Chip>
+              <Chip tone="neutral" solid>Archived</Chip>
             </div>
           </div>
         </div>
@@ -203,16 +111,16 @@ export default function DataDisplayPage() {
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">sm (default)</div>
             <div className="flex gap-[6px]">
-              <DemoChip color="blue" size="sm">Default size</DemoChip>
-              <DemoChip color="green" size="sm">Success</DemoChip>
+              <Chip tone="info" size="sm">Default size</Chip>
+              <Chip tone="success" size="sm">Success</Chip>
             </div>
           </div>
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">xs</div>
             <div className="flex gap-[6px]">
-              <DemoChip color="blue" size="xs">Extra small</DemoChip>
-              <DemoChip color="green" size="xs">Deployed</DemoChip>
-              <DemoChip color="red" size="xs">Failed</DemoChip>
+              <Chip tone="info" size="xs">Extra small</Chip>
+              <Chip tone="success" size="xs">Deployed</Chip>
+              <Chip tone="danger" size="xs">Failed</Chip>
             </div>
           </div>
         </div>
@@ -233,11 +141,11 @@ export default function DataDisplayPage() {
 <Chip tone="purple" mono solid>99+</Chip>`}
       >
         <div className="flex gap-3 items-center">
-          <DemoChip color="blue" mono>42</DemoChip>
-          <DemoChip color="red" variant="solid" mono>3</DemoChip>
-          <DemoChip color="green" mono>128</DemoChip>
-          <DemoChip color="purple" variant="solid" mono>99+</DemoChip>
-          <DemoChip color="amber" mono>7</DemoChip>
+          <Chip tone="info" mono>42</Chip>
+          <Chip tone="danger" solid mono>3</Chip>
+          <Chip tone="success" mono>128</Chip>
+          <Chip tone="accent" solid mono>99+</Chip>
+          <Chip tone="warning" mono>7</Chip>
         </div>
       </ExampleBlock>
 
@@ -264,25 +172,25 @@ export default function DataDisplayPage() {
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Upward trend</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
-              <DemoSparkline data={[4, 6, 5, 8, 7, 12, 11, 15, 14, 18]} width={80} height={24} color="#16a34a" />
+              <Sparkline data={[4, 6, 5, 8, 7, 12, 11, 15, 14, 18]} width={80} height={24} color={toneVar('success')} />
             </div>
           </div>
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Downward trend</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
-              <DemoSparkline data={[18, 16, 17, 14, 12, 13, 10, 9, 7, 5]} width={80} height={24} color="#dc2626" />
+              <Sparkline data={[18, 16, 17, 14, 12, 13, 10, 9, 7, 5]} width={80} height={24} color={toneVar('danger')} />
             </div>
           </div>
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Flat / stable</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
-              <DemoSparkline data={[10, 11, 10, 10, 11, 10, 11, 10, 10, 11]} width={80} height={24} color="#64748b" />
+              <Sparkline data={[10, 11, 10, 10, 11, 10, 11, 10, 10, 11]} width={80} height={24} color={toneVar('neutral')} />
             </div>
           </div>
           <div>
             <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Volatile (purple, wider)</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
-              <DemoSparkline data={[3, 14, 8, 18, 5, 16, 2, 19, 7, 15, 4, 17]} width={120} height={24} color="#9333ea" />
+              <Sparkline data={[3, 14, 8, 18, 5, 16, 2, 19, 7, 15, 4, 17]} width={120} height={24} color={toneVar('accent')} />
             </div>
           </div>
         </div>
@@ -318,23 +226,23 @@ export default function DataDisplayPage() {
           {/* Card-style skeleton */}
           <div className="bg-surface border border-border rounded-lg p-4 mb-3">
             <div className="flex gap-3 mb-[14px]">
-              <SkeletonRect width={44} height={44} borderRadius={22} />
+              <SkeletonCard width={44} height={44} rounded="full" />
               <div className="flex-[1] flex flex-col gap-2 justify-center">
-                <SkeletonRect width="60%" height={14} />
-                <SkeletonRect width="40%" height={10} />
+                <SkeletonCard width="60%" height={14} rounded="md" />
+                <SkeletonCard width="40%" height={10} rounded="md" />
               </div>
             </div>
-            <SkeletonRect width="100%" height={12} />
+            <SkeletonCard width="100%" height={12} rounded="md" />
             <div className="mt-2" />
-            <SkeletonRect width="90%" height={12} />
+            <SkeletonCard width="90%" height={12} rounded="md" />
             <div className="mt-2" />
-            <SkeletonRect width="70%" height={12} />
+            <SkeletonCard width="70%" height={12} rounded="md" />
           </div>
           {/* Row skeletons */}
           <div className="flex gap-[10px]">
-            <SkeletonRect width={100} height={80} borderRadius={8} />
-            <SkeletonRect width={100} height={80} borderRadius={8} />
-            <SkeletonRect width={100} height={80} borderRadius={8} />
+            <SkeletonCard width={100} height={80} />
+            <SkeletonCard width={100} height={80} />
+            <SkeletonCard width={100} height={80} />
           </div>
         </div>
       </ExampleBlock>
@@ -424,18 +332,18 @@ export default function DataDisplayPage() {
       >
         <div className="border border-border rounded-lg overflow-hidden bg-surface">
           {[
-            { severity: 'info', color: '#64748b', ts: '09:14:22', type: 'pipeline.run.started', summary: 'ETL pipeline began execution' },
-            { severity: 'success', color: '#16a34a', ts: '09:14:28', type: 'pipeline.step.completed', summary: 'Extract step finished (240 records)' },
-            { severity: 'error', color: '#dc2626', ts: '09:14:35', type: 'pipeline.run.failed', summary: 'Transform step threw NullPointerException' },
-            { severity: 'warning', color: '#d97706', ts: '09:15:01', type: 'pipeline.approval.requested', summary: 'Manual retry requires approval' },
-            { severity: 'success', color: '#16a34a', ts: '09:15:12', type: 'pipeline.run.completed', summary: 'Pipeline completed after retry' },
+            { severity: 'info', tone: 'neutral' as Tone, ts: '09:14:22', type: 'pipeline.run.started', summary: 'ETL pipeline began execution' },
+            { severity: 'success', tone: 'success' as Tone, ts: '09:14:28', type: 'pipeline.step.completed', summary: 'Extract step finished (240 records)' },
+            { severity: 'error', tone: 'danger' as Tone, ts: '09:14:35', type: 'pipeline.run.failed', summary: 'Transform step threw NullPointerException' },
+            { severity: 'warning', tone: 'warning' as Tone, ts: '09:15:01', type: 'pipeline.approval.requested', summary: 'Manual retry requires approval' },
+            { severity: 'success', tone: 'success' as Tone, ts: '09:15:12', type: 'pipeline.run.completed', summary: 'Pipeline completed after retry' },
           ].map((event, idx) => (
             <div className={`flex items-center gap-[10px] py-2 px-3 ${idx < 4 ? 'border-b border-surface-hover' : 'border-b-0'} ${idx === 2 ? 'bg-danger-bg' : 'bg-transparent'}`}
               key={idx}
             >
-              <StatusDot size="sm" color={event.color} />
+              <StatusDot size="sm" color={toneVar(event.tone)} />
               <span className="text-[11px] text-text-tertiary font-mono w-16 shrink-0">{event.ts}</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: event.color, flexShrink: 0, minWidth: 180 }}>{event.type}</span>
+              <span className="text-[11px] font-semibold shrink-0 min-w-45" style={{ color: toneVar(event.tone) }}>{event.type}</span>
               <span className="text-[13px] text-[#334155] flex-[1] overflow-hidden text-ellipsis whitespace-nowrap">{event.summary}</span>
             </div>
           ))}

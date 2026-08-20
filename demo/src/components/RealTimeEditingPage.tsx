@@ -1,4 +1,12 @@
-import { Avatar, AvatarGroup, Chip } from '@connorhoehnslalom/ui-components/shared';
+import {
+  Avatar,
+  AvatarGroup,
+  Chip,
+  TONE_BG,
+  TONE_BORDER,
+  toneVar,
+  type Tone,
+} from '@connorhoehnslalom/ui-components/shared';
 import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
 import {
   ExampleBlock,
@@ -23,11 +31,13 @@ const tocItems: TocItem[] = [
 
 /* ─── Architecture diagram layer colors ───────────────────────────────── */
 
+// Tinted with the semantic tone scale rather than a private hex palette —
+// the same four-role tokens every library surface uses.
 const LAYERS = [
-  { label: 'SharedTextEditor', sublabel: 'UI Component', color: '#dbeafe', border: '#93c5fd' },
-  { label: 'useCollaborativeDoc', sublabel: 'Orchestration hook', color: '#ede9fe', border: '#c4b5fd' },
-  { label: 'useYjsDoc + GatewayProvider', sublabel: 'Y.js lifecycle', color: '#dcfce7', border: '#86efac' },
-  { label: 'WebSocket Gateway', sublabel: 'Transport', color: '#fef3c7', border: '#fcd34d' },
+  { label: 'SharedTextEditor', sublabel: 'UI Component', tone: 'info' as Tone },
+  { label: 'useCollaborativeDoc', sublabel: 'Orchestration hook', tone: 'accent' as Tone },
+  { label: 'useYjsDoc + GatewayProvider', sublabel: 'Y.js lifecycle', tone: 'success' as Tone },
+  { label: 'WebSocket Gateway', sublabel: 'Transport', tone: 'warning' as Tone },
 ];
 
 /* ─── Participant mock data ───────────────────────────────────────────── */
@@ -84,14 +94,7 @@ import { GatewayProvider } from '@connorhoehnslalom/ui-components'
                 </div>
               )}
               <div
-                style={{
-                  background: layer.color,
-                  border: `1px solid ${layer.border}`,
-                  borderRadius: 10,
-                  padding: '12px 28px',
-                  minWidth: 280,
-                  textAlign: 'center',
-                }}
+                className={`${TONE_BG[layer.tone]} border ${TONE_BORDER[layer.tone]} rounded-[10px] py-3 px-7 min-w-70 text-center`}
               >
                 <div className="font-semibold text-[14px] text-text-primary">{layer.label}</div>
                 <div className="text-[12px] text-text-secondary mt-[2px]">{layer.sublabel}</div>
@@ -135,24 +138,12 @@ function Editor() {
               { label: 'B', style: { fontWeight: 700 } },
               { label: 'I', style: { fontStyle: 'italic' } },
               { label: 'U', style: { textDecoration: 'underline' } },
-              { label: 'S', style: { textDecoration: 'line-through' } },
-              { label: '<>', style: { fontFamily: 'monospace', fontSize: 11 } },
+              { label: 'S', className: 'line-through' },
+              { label: '<>', className: 'font-mono text-[11px]' },
             ].map((btn, i) => (
               <div
                 key={i}
-                style={{
-                  width: 28,
-                  height: 28,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1px solid #d1d5db',
-                  borderRadius: 4,
-                  background: '#ffffff',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  ...btn.style,
-                }}
+                className={`w-7 h-7 flex items-center justify-center border border-border-field rounded bg-surface text-[13px] cursor-pointer ${btn.className ?? ''}`}
               >
                 {btn.label}
               </div>
@@ -328,19 +319,19 @@ function MyEditor({ provider }) {
           </div>
           <div className="flex flex-col gap-2">
             {[
-              { key: 'userId', value: '"user-123"', color: '#4ade80' },
-              { key: 'displayName', value: '"Alice Smith"', color: '#4ade80' },
-              { key: 'color', value: '"#6366f1"', color: '#4ade80', swatch: '#6366f1' },
-              { key: 'mode', value: '"editor"', color: '#4ade80' },
-              { key: 'currentSectionId', value: '"section-intro"', color: '#4ade80' },
-              { key: 'lastSeen', value: '1712345678000', color: '#fbbf24' },
-              { key: 'idle', value: 'false', color: '#93c5fd' },
+              { key: 'userId', value: '"user-123"', tone: 'success' as Tone },
+              { key: 'displayName', value: '"Alice Smith"', tone: 'success' as Tone },
+              { key: 'color', value: '"#6366f1"', tone: 'success' as Tone, swatch: '#6366f1' },
+              { key: 'mode', value: '"editor"', tone: 'success' as Tone },
+              { key: 'currentSectionId', value: '"section-intro"', tone: 'success' as Tone },
+              { key: 'lastSeen', value: '1712345678000', tone: 'warning' as Tone },
+              { key: 'idle', value: 'false', tone: 'info' as Tone },
             ].map((field) => (
               <div className="flex items-center gap-2 font-mono text-[13px]" key={field.key}>
                 <span className="text-[#7c3aed] font-medium min-w-35">{field.key}:</span>
-                <span style={{ color: field.color }}>{field.value}</span>
+                <span style={{ color: toneVar(field.tone) }}>{field.value}</span>
                 {field.swatch && (
-                  <span style={{ width: 14, height: 14, borderRadius: 3, background: field.swatch, display: 'inline-block', border: '1px solid #e2e8f0' }} />
+                  <span className="w-3.5 h-3.5 rounded-[3px] inline-block border border-border" style={{ background: field.swatch }} />
                 )}
               </div>
             ))}

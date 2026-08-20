@@ -230,9 +230,13 @@ tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
 
 1. **Demo pages must NOT use `style={{}}`.** Per global CLAUDE.md, all
    `demo/src/**` must use ui-components composites + Tailwind v4 token classes.
-   Current violator count: **46 files** (measured 2026-08-16; was 69).
+   **DONE for static styles (2026-08-20):** every remaining demo occurrence is
+   runtime-derived (cursor positions, per-datum colors, `toneVar(...)`) and
+   allowlisted in `scripts/check-static-styles.allowlist.txt`, which now scans
+   `demo/src` too — string-aware, so JSX samples inside `code={\`...\`}` props
+   don't count. New static violations fail `npm run lint:static-styles`.
    When you find a violation, classify A (token swap), B (use existing
-   composite), or C (ship the primitive first — file a hub task and stop).
+   composite), or C (ship the primitive first), same as before.
 
 2. **Verification gate** (every commit): `npm test && npm run lint && npm run build`
    must all pass. No `--no-verify`, no skipping hooks. Run `npm run test:e2e`
@@ -252,12 +256,13 @@ tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
 ## Active migrations / coverage gaps
 
 ### Inline-style eradication (Tailwind v4)
-- `src/**`: **131 files** remain (measured 2026-08-16). This went *up* from
-  the 91 recorded here — the June pipelines work (node visual system, image
-  nodes) added inline styles faster than the waves removed them.
-- `demo/**`: **46 files** (was 69) — waves #1045/#1050/#1055/#1067 landed as
-  part of the wave-2/3 batches recovered from `agent/ui-components-2/wip`
-  on 2026-08-16.
+- `src/**`: **97 files** with `style={{}}` (measured 2026-08-20, down from
+  131); the ones on the allowlist are runtime-derived by design. The
+  hand-rolled *form controls* under `pipelines/nodes/` are fully gone —
+  `npm run lint:node-controls` enforces zero.
+- `demo/**`: **complete for static styles** (2026-08-20; was 46 files, then
+  a string-aware recount showed most were JSX samples in template literals).
+  8 files remain on the allowlist, all runtime-derived only.
 - **Deferred:** `demo/src/demos/pipeline-editor/index.tsx` — the branch's
   wave-3 eradication of this file was dropped during that rebase because
   main had already converted it, better (uses the `<Input>` composite and a
@@ -271,10 +276,9 @@ now has ~45 test files (was 1/91) including the editor mounting path
 (`PipelineEditorPage`), editor/event-stream contexts, `NodePalette`, and
 20+ node components; `doc-editor/` has 23 (was 0) including the full
 `DocumentEditorPage` Yjs composition path and `StandaloneTiptap`.
-Remaining zero-test folders: `collaboration/` (8 components),
-`doc-types/` (5), `misc/` (8) — tracked under hub #1051. Large untested
-exports — `CallWidget` 1009 LOC, `AppLayout` 837, `CollapsibleSidebar`
-454 — tracked under #1041.
+The zero-test folders are filled (2026-08-20 measurement: `collaboration/`
+8/8, `misc/` 8/8, `doc-types/` 4/5). Still open: large untested exports —
+`CallWidget` 1009 LOC, `AppLayout` 837, `CollapsibleSidebar` 454.
 
 ### Story coverage (audit #4, audit #5)
 Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,

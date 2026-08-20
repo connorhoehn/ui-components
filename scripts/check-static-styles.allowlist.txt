@@ -88,7 +88,6 @@ src/components/video/VideoGrid.tsx
 # precedent) and DocsSidebar's two-state rotate.
 src/components/layout/SettingsLayout.tsx          # width: railWidth (prop)
 src/components/observability/components/AlertList.tsx  # maxHeight (prop)
-src/components/pipelines/canvas/NodePalette.tsx   # spread of computed style
 src/components/pipelines/nodes/scatter/ScatterPathPicker.tsx  # depth arithmetic
 src/components/pipelines/vision/BBoxAuthoringCanvas.tsx  # measured bbox rects
 src/components/pipelines/vision/CaptionPanel.tsx  # background from data
@@ -105,3 +104,13 @@ src/components/video/HangoutSpotlight.tsx         # filmstrip tile width
 src/components/video/RecordingPlayer.tsx          # --progress CSS var
 src/components/video/TranscriptOverlay.tsx        # per-line opacity + speaker color
 src/components/video/TranscriptPanel.tsx          # HSL from speaker hash
+
+# --- demo/src (2026-08-20) — every entry here is runtime-derived only -------
+demo/src/components/CollaborationPage.tsx        # simulated cursor-trail dots + floating reactions at per-datum positions
+demo/src/components/DataDisplayPage.tsx          # event-log type text colored by toneVar(event.tone)
+demo/src/components/RealTimeEditingPage.tsx      # awareness values colored by toneVar; color swatch displays a runtime hex
+demo/src/demos/call-widget-live/index.tsx        # participant tile hue derived from identity hash
+demo/src/demos/collaboration/index.tsx           # live cursor/selection overlay positions from mouse state
+demo/src/demos/ingest-dashboard/IngestActivityLog.tsx  # per-entry accent color from activity data
+demo/src/demos/node-editor-live/index.tsx        # node x/y positions and computed SVG canvas size
+demo/src/demos/observability-shell/index.tsx     # bar heights from live metric values

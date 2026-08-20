@@ -1,6 +1,6 @@
 import { jsx as r, jsxs as u } from "react/jsx-runtime";
 import { c as m } from "./cn-B6yFEsav.js";
-function E({ data: e, width: i = 80, height: n = 20, color: l = "#646cff" }) {
+function E({ data: e, width: i = 80, height: n = 20, color: l = "var(--color-primary)" }) {
   if (!e || e.length === 0)
     return /* @__PURE__ */ r("svg", { width: i, height: n, "aria-hidden": "true" });
   const s = Math.min(...e), v = Math.max(...e) - s || 1, x = e.length > 1 ? i / (e.length - 1) : 0, h = e.map((g, w) => {

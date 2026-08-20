@@ -5955,11 +5955,17 @@ export declare interface SidebarSectionProps {
     'data-testid'?: string;
 }
 
-export declare function SkeletonCard({ width, height }: SkeletonCardProps): JSX.Element;
+export declare function SkeletonCard({ width, height, rounded }: SkeletonCardProps): JSX.Element;
 
 export declare interface SkeletonCardProps {
     width?: number | string;
     height?: number | string;
+    /**
+     * Corner shape. 'full' makes a circle/pill — the avatar-placeholder case
+     * that used to force pages to hand-roll their own skeleton rect.
+     * @default 'lg'
+     */
+    rounded?: 'md' | 'lg' | 'full';
 }
 
 declare interface SloPoint {
