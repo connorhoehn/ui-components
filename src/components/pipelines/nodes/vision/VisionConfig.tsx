@@ -1,12 +1,25 @@
 // src/components/pipelines/nodes/vision/VisionConfig.tsx
 //
 // Config panel for image:vision-analyze. Model, image-ref path, prompt, schema.
+//
+// Converted off hand-rolled controls. This panel carried its own inlined copy
+// of the suggestion pills — a raw button list, not even the SamplePills copy
+// the other panels shared — and its own pair of error-state class constants
+// duplicating what ConfigField already does.
 
 import { useCallback, useState } from 'react';
 import type { AuthoringBBox, ImageVisionAnalyzeNodeData } from '../../../../types/pipeline';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
-import { NodeConfigShell } from '../shared';
+import { ConfigField, NodeConfigShell, SamplePills } from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import {
+  useModelOptions,
+  type ModelOption,
+} from '../../services/PipelineEditorServicesContext';
 
 export interface VisionConfigProps {
   data: ImageVisionAnalyzeNodeData;
@@ -15,10 +28,11 @@ export interface VisionConfigProps {
   nodeId?: string;
 }
 
-const VISION_MODELS = [
-  'claude-opus-4-7',
-  'claude-sonnet-4-6',
-  'claude-haiku-4-5-20251001',
+/** Replaceable via `modelOptions['image:vision-analyze']`. */
+export const DEFAULT_ANALYZE_MODELS: readonly ModelOption[] = [
+  { value: 'claude-opus-4-7' },
+  { value: 'claude-sonnet-4-6' },
+  { value: 'claude-haiku-4-5-20251001' },
 ];
 
 /**
@@ -34,7 +48,9 @@ function isDetectionRegionsPreset(schema: Record<string, unknown> | undefined): 
   return typeof regions === 'object' && regions !== null;
 }
 
-function tryParseSchema(text: string): { ok: true; value: Record<string, unknown> | undefined } | { ok: false; error: string } {
+function tryParseSchema(
+  text: string,
+): { ok: true; value: Record<string, unknown> | undefined } | { ok: false; error: string } {
   const trimmed = text.trim();
   if (trimmed.length === 0) return { ok: true, value: undefined };
   try {
@@ -48,16 +64,12 @@ function tryParseSchema(text: string): { ok: true; value: Record<string, unknown
   }
 }
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const inputErrorCls = 'mt-1 w-full text-[12px] rounded border border-danger bg-white px-2 py-1 outline-none';
-const monoInputCls = `${inputCls} font-mono`;
-const monoInputErrorCls = `${inputErrorCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-const errorCls = 'text-[11px] text-danger-fg mt-0.5';
+const SCHEMA_PLACEHOLDER =
+  '{\n  "type": "object",\n  "properties": {\n    "caption": { "type": "string" }\n  }\n}';
 
 export default function VisionConfig({ data, onChange, nodeId }: VisionConfigProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const models = useModelOptions('image:vision-analyze', DEFAULT_ANALYZE_MODELS);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [schemaText, setSchemaText] = useState<string>(
     data.outputSchema ? JSON.stringify(data.outputSchema, null, 2) : '',
@@ -88,165 +100,141 @@ export default function VisionConfig({ data, onChange, nodeId }: VisionConfigPro
     onChange({ outputSchema: parsed.value });
   };
 
+  const refError = refMissing
+    ? 'Image reference path is required.'
+    : refMalformed
+      ? 'Path must start with $.'
+      : undefined;
+
   return (
     <NodeConfigShell>
-      {/* Model */}
-      <div>
-        <label htmlFor="vision-model" className={labelCls}>Model</label>
-        <select
-          id="vision-model"
-          className={inputCls}
+      <ConfigField
+        label="Model"
+        help="Requires the host's vision credentials on the executor."
+      >
+        <Select
+          size="sm"
           value={data.model ?? 'claude-sonnet-4-6'}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {VISION_MODELS.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-        <div className={helpCls}>Anthropic Messages API. Requires ANTHROPIC_API_KEY on platform-api.</div>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
 
-      {/* Image ref path */}
-      <div>
-        <label htmlFor="vision-image-ref-path" className={labelCls}>
-          Image reference path<span className="text-danger-fg ml-1">●</span>
-        </label>
-        <input
-          id="vision-image-ref-path"
-          type="text"
+      <ConfigField
+        label="Image reference path"
+        required
+        error={refError}
+        help="JSONPath into context. The value must be a string imageId, or an object with one."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          aria-invalid={refMissing || refMalformed ? 'true' : undefined}
-          aria-describedby={refMissing || refMalformed ? 'vision-image-ref-path-error' : undefined}
-          className={refMissing || refMalformed ? monoInputErrorCls : monoInputCls}
+          invalid={!!refError}
           value={data.imageRefPath ?? ''}
           onChange={(e) => onChange({ imageRefPath: e.target.value })}
           placeholder="$.trigger.imageRef"
+          aria-label="Image reference path"
         />
-        {refMissing ? (
-          <div id="vision-image-ref-path-error" role="alert" className={errorCls}>Image reference path is required.</div>
-        ) : refMalformed ? (
-          <div id="vision-image-ref-path-error" role="alert" className={errorCls}>Path must start with <code>$.</code></div>
-        ) : (
-          <div className={helpCls}>JSONPath into context. The value must be a string imageId or object with imageId.</div>
-        )}
-        <div className="mt-1.5 flex flex-wrap gap-1">
-          {imageRefOptions.map(({ path: sample }) => (
-            <button
-              key={sample}
-              type="button"
-              onClick={() => onChange({ imageRefPath: sample })}
-              className="text-[10px] font-mono bg-surface-inset border border-border text-text-secondary rounded px-1.5 py-0.5 cursor-pointer"
-            >
-              {sample}
-            </button>
-          ))}
-        </div>
-      </div>
+        <SamplePills
+          samples={imageRefOptions.map((o) => o.path)}
+          onSelect={(v) => onChange({ imageRefPath: v })}
+          aria-label="Upstream image refs"
+        />
+      </ConfigField>
 
-      {/* User prompt */}
-      <div>
-        <label htmlFor="vision-user-prompt" className={labelCls}>
-          User prompt<span className="text-danger-fg ml-1">●</span>
-        </label>
-        <textarea
-          id="vision-user-prompt"
-          aria-invalid={userMissing ? 'true' : undefined}
-          aria-describedby={userMissing ? 'vision-user-prompt-error' : undefined}
-          className={`${userMissing ? inputErrorCls : inputCls} min-h-20 resize-y`}
+      <ConfigField
+        label="User prompt"
+        required
+        error={userMissing ? 'User prompt is required.' : undefined}
+        help="Supports {{ context.* }} substitution."
+      >
+        <Textarea
+          rows={4}
+          invalid={userMissing}
           value={data.userPrompt}
           onChange={(e) => onChange({ userPrompt: e.target.value })}
+          aria-label="User prompt"
         />
-        {userMissing ? (
-          <div id="vision-user-prompt-error" role="alert" className={errorCls}>User prompt is required.</div>
-        ) : (
-          <div className={helpCls}>Supports {'{{ context.* }}'} substitution.</div>
-        )}
-      </div>
+      </ConfigField>
 
-      {/* Seed regions (detection-regions preset only) */}
       {showBBoxCanvas && (
-        <div>
-          <div className={labelCls}>Focus regions (optional)</div>
-          <div className={helpCls}>
-            Drag on the image to paint focus boxes. The next vision pass will use these as analysis hints.
-          </div>
+        <ConfigField
+          label="Focus regions"
+          help="Drag on the image to paint focus boxes. The next vision pass uses these as analysis hints."
+        >
           <BBoxAuthoringCanvas
             imageUrl=""
             imageWidth={800}
             imageHeight={600}
             boxes={data.seedRegions ?? []}
             onChange={onSeedRegionsChange}
-            className="mt-1"
           />
           {(data.seedRegions?.length ?? 0) > 0 && (
-            <div className={helpCls} data-testid="bbox-region-count">
+            <div className="text-[11px] text-text-tertiary mt-0.5" data-testid="bbox-region-count">
               {data.seedRegions!.length} region{data.seedRegions!.length !== 1 ? 's' : ''} defined.
             </div>
           )}
-        </div>
+        </ConfigField>
       )}
 
-      {/* Output schema */}
-      <div>
-        <label htmlFor="vision-output-schema" className={labelCls}>Output schema (optional)</label>
-        <textarea
-          id="vision-output-schema"
-          aria-invalid={schemaErr ? 'true' : undefined}
-          aria-describedby={schemaErr ? 'vision-output-schema-error' : undefined}
-          className={`${schemaErr ? inputErrorCls : inputCls} font-mono text-[11px] min-h-28 resize-y`}
+      <ConfigField
+        label="Output schema"
+        error={schemaErr ? `Invalid JSON: ${schemaErr}` : undefined}
+        help={
+          data.outputSchema
+            ? 'Extract mode — the model must return JSON matching this schema.'
+            : 'Leave blank for caption mode (freeform analysis text).'
+        }
+      >
+        <Textarea
+          rows={6}
+          invalid={!!schemaErr}
+          className="font-mono text-[11px]"
           value={schemaText}
           onChange={(e) => onSchemaTextChange(e.target.value)}
-          placeholder={'{\n  "type": "object",\n  "properties": {\n    "caption": { "type": "string" }\n  }\n}'}
+          placeholder={SCHEMA_PLACEHOLDER}
+          aria-label="Output schema"
         />
-        {schemaErr ? (
-          <div id="vision-output-schema-error" role="alert" className={errorCls}>Invalid JSON: {schemaErr}</div>
-        ) : data.outputSchema ? (
-          <div className={helpCls}>Extract mode — model must return JSON matching this schema.</div>
-        ) : (
-          <div className={helpCls}>Leave blank for caption mode (freeform analysis text).</div>
-        )}
-      </div>
+      </ConfigField>
 
-      {/* Advanced */}
       <div>
         <button
           type="button"
           onClick={() => setAdvancedOpen((v) => !v)}
+          aria-expanded={advancedOpen}
           className="bg-transparent border-none p-0 cursor-pointer font-inherit text-[12px] font-semibold text-text-secondary flex items-center gap-1"
         >
-          <span>{advancedOpen ? '▾' : '▸'}</span> Advanced
+          <span aria-hidden="true">{advancedOpen ? '▾' : '▸'}</span> Advanced
         </button>
 
         {advancedOpen && (
           <div className="flex flex-col gap-3 mt-2">
-            <div>
-              <label htmlFor="vision-max-output-tokens" className={labelCls}>Max output tokens</label>
-              <input
-                id="vision-max-output-tokens"
-                type="number"
+            <ConfigField label="Max output tokens" help="Caps the response length. Default 2048.">
+              <NumberInput
+                size="sm"
                 min={1}
                 max={8192}
-                className={inputCls}
-                value={data.maxOutputTokens ?? ''}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  onChange({ maxOutputTokens: v === '' ? undefined : Math.max(1, parseInt(v, 10) || 0) });
-                }}
+                value={data.maxOutputTokens}
+                onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+                onClear={() => onChange({ maxOutputTokens: undefined })}
+                data-testid="vision-max-output-tokens"
               />
-              <div className={helpCls}>Caps the response length. Default 2048.</div>
-            </div>
+            </ConfigField>
 
-            <div>
-              <label htmlFor="vision-system-prompt" className={labelCls}>System prompt override (optional)</label>
-              <textarea
-                id="vision-system-prompt"
-                className={`${inputCls} min-h-14 resize-y`}
+            <ConfigField
+              label="System prompt override"
+              help="Schema instructions are auto-appended when an output schema is set."
+            >
+              <Textarea
+                rows={2}
                 value={data.systemPrompt ?? ''}
                 onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
                 placeholder="Leave blank to use the canned vision system prompt."
+                aria-label="System prompt override"
               />
-              <div className={helpCls}>Schema instructions are auto-appended when output schema is set.</div>
-            </div>
+            </ConfigField>
           </div>
         )}
       </div>

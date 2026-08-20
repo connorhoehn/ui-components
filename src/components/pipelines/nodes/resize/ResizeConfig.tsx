@@ -1,10 +1,21 @@
 // src/components/pipelines/nodes/resize/ResizeConfig.tsx
 //
 // Config panel for the image:resize node.
+//
+// Width and height are genuinely optional — supplying only one lets the
+// executor derive the other from the aspect ratio — so they clear back to
+// `undefined` rather than coercing a blank field to a number.
 
 import type { ImageResizeNodeData, ResizeFit } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import {
+  ConfigField,
+  NodeConfigShell,
+  SourceImagePathField,
+  ToggleField,
+} from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface ResizeConfigProps {
   data: ImageResizeNodeData;
@@ -13,117 +24,97 @@ export interface ResizeConfigProps {
   nodeId?: string;
 }
 
-const FIT_OPTIONS: ResizeFit[] = ['cover', 'contain', 'fill', 'inside', 'outside'];
-
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 font-mono outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const FIT_OPTIONS: { value: ResizeFit; label: string }[] = [
+  { value: 'cover', label: 'cover' },
+  { value: 'contain', label: 'contain' },
+  { value: 'fill', label: 'fill' },
+  { value: 'inside', label: 'inside' },
+  { value: 'outside', label: 'outside' },
+];
 
 export default function ResizeConfig({ data, onChange, nodeId }: ResizeConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const fit = data.fit ?? 'cover';
+  const paddingApplies = fit === 'contain' || fit === 'fill';
+
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="resize-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="resize-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={inputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Width / Height */}
       <div className="flex gap-2">
         <div className="flex-1">
-          <label htmlFor="resize-width" className={labelCls}>Width (px)</label>
-          <input
-            id="resize-width"
-            type="number"
-            min={1}
-            step={1}
-            className={inputCls}
-            value={data.width ?? ''}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ width: Number.isFinite(v) && v > 0 ? v : undefined });
-            }}
-            placeholder="e.g. 512"
-          />
+          <ConfigField label="Width">
+            <NumberInput
+              size="sm"
+              min={1}
+              step={1}
+              unit="px"
+              value={data.width}
+              onChange={(width) => onChange({ width })}
+              onClear={() => onChange({ width: undefined })}
+              placeholder="e.g. 512"
+              data-testid="resize-width"
+            />
+          </ConfigField>
         </div>
         <div className="flex-1">
-          <label htmlFor="resize-height" className={labelCls}>Height (px)</label>
-          <input
-            id="resize-height"
-            type="number"
-            min={1}
-            step={1}
-            className={inputCls}
-            value={data.height ?? ''}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ height: Number.isFinite(v) && v > 0 ? v : undefined });
-            }}
-            placeholder="e.g. 512"
-          />
+          <ConfigField label="Height">
+            <NumberInput
+              size="sm"
+              min={1}
+              step={1}
+              unit="px"
+              value={data.height}
+              onChange={(height) => onChange({ height })}
+              onClear={() => onChange({ height: undefined })}
+              placeholder="e.g. 512"
+              data-testid="resize-height"
+            />
+          </ConfigField>
         </div>
       </div>
 
-      {/* Fit mode */}
-      <div>
-        <label htmlFor="resize-fit" className={labelCls}>Fit mode</label>
-        <select
-          id="resize-fit"
-          className={inputCls}
-          value={data.fit ?? 'cover'}
+      <ConfigField
+        label="Fit mode"
+        help="How the image fits the target dimensions. cover (default) crops, contain letterboxes, fill stretches."
+      >
+        <Select
+          size="sm"
+          value={fit}
           onChange={(e) => onChange({ fit: e.target.value as ResizeFit })}
-        >
-          {FIT_OPTIONS.map((f) => (
-            <option key={f} value={f}>{f}</option>
-          ))}
-        </select>
-        <div className={helpCls}>
-          How the image is fit into the target dimensions. <code>cover</code> (default) crops; <code>contain</code> letterboxes; <code>fill</code> stretches.
-        </div>
-      </div>
-
-      {/* Without enlargement */}
-      <label htmlFor="resize-without-enlargement" className="flex items-center gap-2 text-[12px] font-semibold text-text-secondary cursor-pointer">
-        <input
-          id="resize-without-enlargement"
-          type="checkbox"
-          checked={data.withoutEnlargement ?? false}
-          onChange={(e) => onChange({ withoutEnlargement: e.target.checked })}
-          className="w-3.5 h-3.5 accent-primary"
+          aria-label="Fit mode"
+          options={FIT_OPTIONS}
         />
-        Do not enlarge if already smaller than target
-      </label>
+      </ConfigField>
 
-      {/* Background colour */}
-      <div>
-        <label htmlFor="resize-background" className={labelCls}>
-          Background colour <span className="text-text-tertiary font-normal">(optional, for contain / fill)</span>
-        </label>
-        <input
-          id="resize-background"
-          type="text"
+      <ToggleField
+        label="Do not enlarge if already smaller than target"
+        checked={data.withoutEnlargement ?? false}
+        onChange={(withoutEnlargement) => onChange({ withoutEnlargement })}
+        data-testid="resize-without-enlargement"
+      />
+
+      <ConfigField
+        label="Background colour"
+        help={
+          paddingApplies
+            ? 'Hex colour used to fill letterbox padding.'
+            : 'Only applies when fit is contain or fill.'
+        }
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={inputCls}
           value={data.background ?? ''}
           onChange={(e) => onChange({ background: e.target.value.trim() || undefined })}
           placeholder="#ffffff"
+          aria-label="Background colour"
         />
-        <div className={helpCls}>
-          Hex colour used to fill letterbox padding. Only applies when fit is <code>contain</code> or <code>fill</code>.
-        </div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

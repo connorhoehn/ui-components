@@ -1,100 +1,94 @@
 // src/components/pipelines/nodes/vision-extract-text/VisionExtractTextConfig.tsx
 //
-// Config panel for image:vision-extract-text (OCR).
+// Config panel for image:vision-extract-text.
 
 import type { ImageVisionExtractTextNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import {
+  useModelOptions,
+  type ModelOption,
+} from '../../services/PipelineEditorServicesContext';
 
 export interface VisionExtractTextConfigProps {
   data: ImageVisionExtractTextNodeData;
   onChange: (patch: Partial<ImageVisionExtractTextNodeData>) => void;
-  /** Node being edited; enables real upstream-context pills. */
+  /** Node being edited; enables real upstream image refs. */
   nodeId?: string;
 }
 
-const MODEL_OPTIONS = [
+/**
+ * OCR reverses the usual default: the more capable model goes first, because
+ * accuracy matters more than latency when transcribing a document.
+ * Replaceable via `modelOptions['image:vision-ocr']`.
+ */
+export const DEFAULT_OCR_MODELS: readonly ModelOption[] = [
   { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 (default — best OCR accuracy)' },
-  { value: 'claude-haiku-4-5',  label: 'Claude Haiku 4.5 (faster, lower accuracy)' },
+  { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5 (faster, lower accuracy)' },
 ];
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+export default function VisionExtractTextConfig({
+  data,
+  onChange,
+  nodeId,
+}: VisionExtractTextConfigProps) {
+  const models = useModelOptions('image:vision-ocr', DEFAULT_OCR_MODELS);
+  const pathMissing = !data.imageRefPath?.trim();
 
-export default function VisionExtractTextConfig({ data, onChange, nodeId }: VisionExtractTextConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
-      {/* Image ref path */}
-      <div>
-        <label htmlFor="vision-extract-text-image-ref-path" className={labelCls}>Image ref path</label>
-        <input
-          id="vision-extract-text-image-ref-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.imageRefPath ?? ''}
-          onChange={(e) => onChange({ imageRefPath: e.target.value.trim() })}
-          placeholder="$.trigger.imageRef"
-        />
-        <div className={helpCls}>JSONPath to the imageId to extract text from. Required.</div>
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ imageRefPath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.imageRefPath}
+        onChange={(v) => onChange({ imageRefPath: v ?? '' })}
+        nodeId={nodeId}
+        label="Image ref path"
+        help={
+          pathMissing
+            ? 'Required — JSONPath to the imageId to extract text from.'
+            : 'JSONPath to the imageId to extract text from.'
+        }
+      />
 
-      {/* Model */}
-      <div>
-        <label htmlFor="vision-extract-text-model" className={labelCls}>Model</label>
-        <select
-          id="vision-extract-text-model"
-          className={inputCls}
-          value={data.model ?? 'claude-sonnet-4-6'}
+      <ConfigField label="Model" help="Defaults to the more accurate model for OCR.">
+        <Select
+          size="sm"
+          value={data.model ?? models[0]?.value ?? ''}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-        <div className={helpCls}>Defaults to Sonnet for best OCR accuracy.</div>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
 
-      {/* System prompt override */}
-      <div>
-        <label htmlFor="vision-extract-text-system-prompt" className={labelCls}>
-          System prompt override <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <textarea
-          id="vision-extract-text-system-prompt"
+      <ConfigField
+        label="System prompt override"
+        help="Optional. Sent verbatim — {{context.*}} is NOT substituted here."
+      >
+        <Textarea
           rows={3}
           spellCheck={false}
-          className={`${inputCls} resize-y`}
           value={data.systemPrompt ?? ''}
           onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
           placeholder="Leave blank to use the default OCR system prompt."
+          aria-label="System prompt override"
         />
-      </div>
+      </ConfigField>
 
-      {/* Max output tokens */}
-      <div>
-        <label htmlFor="vision-extract-text-max-output-tokens" className={labelCls}>
-          Max output tokens <span className="text-text-tertiary font-normal">(default 1024)</span>
-        </label>
-        <input
-          id="vision-extract-text-max-output-tokens"
-          type="number"
+      <ConfigField
+        label="Max output tokens"
+        help="Default 1024. Increase for documents with large amounts of text."
+      >
+        <NumberInput
+          size="sm"
           min={64}
           max={8192}
           step={64}
-          className={inputCls}
           value={data.maxOutputTokens ?? 1024}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxOutputTokens: Number.isFinite(v) && v > 0 ? v : 1024 });
-          }}
+          onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+          data-testid="vision-extract-text-max-output-tokens"
         />
-        <div className={helpCls}>Increase for documents with large amounts of text.</div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

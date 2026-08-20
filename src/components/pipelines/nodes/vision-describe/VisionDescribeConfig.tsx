@@ -3,111 +3,95 @@
 // Config panel for image:vision-describe.
 
 import type { ImageVisionDescribeNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import { useModelOptions } from '../../services/PipelineEditorServicesContext';
+import { DEFAULT_VISION_MODELS } from '../vision-tag/VisionTagConfig';
 
 export interface VisionDescribeConfigProps {
   data: ImageVisionDescribeNodeData;
   onChange: (patch: Partial<ImageVisionDescribeNodeData>) => void;
-  /** Node being edited; enables real upstream-context pills. */
+  /** Node being edited; enables real upstream image refs. */
   nodeId?: string;
 }
 
-const MODEL_OPTIONS = [
-  { value: 'claude-haiku-4-5',   label: 'Claude Haiku 4.5 (default — fast)' },
-  { value: 'claude-sonnet-4-6',  label: 'Claude Sonnet 4.6 (more detail)' },
-];
+export default function VisionDescribeConfig({
+  data,
+  onChange,
+  nodeId,
+}: VisionDescribeConfigProps) {
+  const models = useModelOptions('image:vision', DEFAULT_VISION_MODELS);
+  const pathMissing = !data.imageRefPath?.trim();
+  const promptMissing = !data.userPrompt?.trim();
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-
-export default function VisionDescribeConfig({ data, onChange, nodeId }: VisionDescribeConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
   return (
     <NodeConfigShell>
-      {/* Image ref path */}
-      <div>
-        <label htmlFor="vision-describe-image-ref-path" className={labelCls}>Image ref path</label>
-        <input
-          id="vision-describe-image-ref-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.imageRefPath ?? ''}
-          onChange={(e) => onChange({ imageRefPath: e.target.value.trim() })}
-          placeholder="$.trigger.imageRef"
-        />
-        <div className={helpCls}>JSONPath to the imageId to describe. Required.</div>
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ imageRefPath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.imageRefPath}
+        onChange={(v) => onChange({ imageRefPath: v ?? '' })}
+        nodeId={nodeId}
+        label="Image ref path"
+        help={
+          pathMissing
+            ? 'Required — JSONPath to the imageId to describe.'
+            : 'JSONPath to the imageId to describe.'
+        }
+      />
 
-      {/* User prompt */}
-      <div>
-        <label htmlFor="vision-describe-user-prompt" className={labelCls}>User prompt</label>
-        <textarea
-          id="vision-describe-user-prompt"
+      <ConfigField
+        label="User prompt"
+        required
+        error={promptMissing ? 'User prompt is required.' : undefined}
+        help="What to ask the model about the image."
+      >
+        <Textarea
           rows={3}
           spellCheck={false}
-          className={`${inputCls} resize-y`}
+          invalid={promptMissing}
           value={data.userPrompt ?? ''}
           onChange={(e) => onChange({ userPrompt: e.target.value })}
           placeholder="Describe what you see in this image in one paragraph."
+          aria-label="User prompt"
         />
-        <div className={helpCls}>Required. What to ask the model about the image.</div>
-      </div>
+      </ConfigField>
 
-      {/* Model */}
-      <div>
-        <label htmlFor="vision-describe-model" className={labelCls}>Model</label>
-        <select
-          id="vision-describe-model"
-          className={inputCls}
-          value={data.model ?? 'claude-haiku-4-5'}
+      <ConfigField label="Model">
+        <Select
+          size="sm"
+          value={data.model ?? models[0]?.value ?? ''}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
 
-      {/* System prompt override */}
-      <div>
-        <label htmlFor="vision-describe-system-prompt" className={labelCls}>
-          System prompt override <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <textarea
-          id="vision-describe-system-prompt"
+      <ConfigField
+        label="System prompt override"
+        help="Optional. Sent verbatim — {{context.*}} is NOT substituted here."
+      >
+        <Textarea
           rows={3}
           spellCheck={false}
-          className={`${inputCls} resize-y`}
           value={data.systemPrompt ?? ''}
           onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
           placeholder="Leave blank to use the default describe system prompt."
+          aria-label="System prompt override"
         />
-      </div>
+      </ConfigField>
 
-      {/* Max output tokens */}
-      <div>
-        <label htmlFor="vision-describe-max-output-tokens" className={labelCls}>
-          Max output tokens <span className="text-text-tertiary font-normal">(default 512)</span>
-        </label>
-        <input
-          id="vision-describe-max-output-tokens"
-          type="number"
+      <ConfigField label="Max output tokens" help="Default 512.">
+        <NumberInput
+          size="sm"
           min={64}
           max={4096}
           step={64}
-          className={inputCls}
           value={data.maxOutputTokens ?? 512}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ maxOutputTokens: Number.isFinite(v) && v > 0 ? v : 512 });
-          }}
+          onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+          data-testid="vision-describe-max-output-tokens"
         />
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

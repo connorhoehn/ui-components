@@ -8,6 +8,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.55.0] — 2026-08-20
+
+Hand-rolled-control migration, batch 3. **21 files / 88 controls → 14 / 51.**
+
+### Added
+
+- **`ToggleField`** (`pipelines/nodes/shared`) — a boolean setting with the
+  control beside its label and help underneath. `ConfigField` stacks the
+  label *above* the control, which is right for a text field and wrong for a
+  toggle, so every panel needing one dropped out of the pattern and
+  hand-rolled `<label><input type="checkbox">` instead — eight times across
+  seven panels, each with its own `accent-primary w-3.5 h-3.5`. Built on the
+  library's own `<Switch>`.
+
+### Changed
+
+- **Converted:** `VisionConfig`, `VisionClassifyConfig`,
+  `VisionDescribeConfig`, `VisionExtractTextConfig`, `ResizeConfig`,
+  `FormatConvertConfig`, `WatermarkConfig`.
+  `VisionClassifyConfig`'s label list was a second hand-built copy of the tag
+  editor already replaced in `VisionTagConfig`; both now use `<TagEditor>`.
+  `VisionConfig` carried its own inlined suggestion-pill list — not even the
+  `SamplePills` copy the other panels shared.
+- **Vision model lists** moved onto the `modelOptions` seam
+  (`image:vision`, `image:vision-analyze`, `image:vision-ocr`).
+- **`FormatConvertConfig` now disables Quality when Lossless is on** and says
+  so, rather than leaving an editable field whose value is discarded.
+
+### Fixed
+
+- **`ConfigField` errors are now announced.** The base wrapper every panel
+  routes through rendered its error as a plain `<div>`, so a validation
+  message was silent to a screen reader unless the individual panel had
+  hand-rolled its own `role="alert"` — which only `VisionConfig` did.
+- **`ConfigField` used raw hexes** (`text-[#dc2626]`) for its required marker
+  and error text. Arbitrary-value hexes slip past the tones guard, which
+  scans for palette *utility* classes. Now `text-danger-fg`.
+
 ## [2.54.0] — 2026-08-18
 
 Hand-rolled-control migration, batch 2. **22 files / 94 controls → 21 / 88.**

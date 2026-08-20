@@ -5,3 +5,5 @@ export { default as SamplePills } from './SamplePills';
 export type { SamplePillsProps } from './SamplePills';
 export { default as SourceImagePathField } from './SourceImagePathField';
 export type { SourceImagePathFieldProps } from './SourceImagePathField';
+export { default as ToggleField } from './ToggleField';
+export type { ToggleFieldProps } from './ToggleField';

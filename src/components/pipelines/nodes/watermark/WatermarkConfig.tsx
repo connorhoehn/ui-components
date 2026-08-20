@@ -1,10 +1,16 @@
 // src/components/pipelines/nodes/watermark/WatermarkConfig.tsx
 //
 // Config panel for image:watermark.
+//
+// The offsets clear back to `undefined` rather than to 0. They read the same on
+// the canvas, but "unset" lets the executor keep its own default if that ever
+// stops being zero, where a stored 0 pins it.
 
 import type { ImageWatermarkNodeData, WatermarkGravity } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface WatermarkConfigProps {
   data: ImageWatermarkNodeData;
@@ -13,122 +19,94 @@ export interface WatermarkConfigProps {
   nodeId?: string;
 }
 
-const GRAVITY_OPTIONS: WatermarkGravity[] = [
+const GRAVITY_OPTIONS: { value: WatermarkGravity; label: string }[] = [
   'northwest', 'north', 'northeast',
   'west', 'center', 'east',
   'southwest', 'south', 'southeast',
-];
-
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+].map((g) => ({ value: g as WatermarkGravity, label: g }));
 
 export default function WatermarkConfig({ data, onChange, nodeId }: WatermarkConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const overlayMissing = !data.overlayImageId?.trim();
+
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="watermark-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="watermark-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Overlay image id */}
-      <div>
-        <label htmlFor="watermark-overlay-image-id" className={labelCls}>Overlay image ID</label>
-        <input
-          id="watermark-overlay-image-id"
-          type="text"
+      <ConfigField
+        label="Overlay image ID"
+        required
+        error={overlayMissing ? 'Overlay image ID is required.' : undefined}
+        help="The imageId of the watermark image already stored in the blob store."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={monoInputCls}
+          invalid={overlayMissing}
           value={data.overlayImageId ?? ''}
           onChange={(e) => onChange({ overlayImageId: e.target.value.trim() })}
           placeholder="img_xxxxxxxx"
+          aria-label="Overlay image ID"
         />
-        <div className={helpCls}>
-          The imageId of the watermark/overlay image already stored in the blob store. Required.
-        </div>
-      </div>
+      </ConfigField>
 
-      {/* Gravity */}
-      <div>
-        <label htmlFor="watermark-gravity" className={labelCls}>Gravity (placement)</label>
-        <select
-          id="watermark-gravity"
-          className={inputCls}
+      <ConfigField
+        label="Gravity"
+        help="Where the overlay sits on the source image. Default southeast."
+      >
+        <Select
+          size="sm"
           value={data.gravity ?? 'southeast'}
           onChange={(e) => onChange({ gravity: e.target.value as WatermarkGravity })}
-        >
-          {GRAVITY_OPTIONS.map((g) => (
-            <option key={g} value={g}>{g}</option>
-          ))}
-        </select>
-        <div className={helpCls}>Where the overlay is placed on the source image. Default: southeast.</div>
-      </div>
+          aria-label="Gravity"
+          options={GRAVITY_OPTIONS}
+        />
+      </ConfigField>
 
-      {/* Opacity */}
-      <div>
-        <label htmlFor="watermark-opacity" className={labelCls}>
-          Opacity <span className="text-text-tertiary font-normal">(0.0–1.0, default 1.0)</span>
-        </label>
-        <input
-          id="watermark-opacity"
-          type="number"
+      <ConfigField label="Opacity" help="0 to 1. Default 1.">
+        <NumberInput
+          size="sm"
           min={0}
           max={1}
           step={0.05}
-          className={inputCls}
           value={data.opacity ?? 1}
-          onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            onChange({ opacity: Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 1 });
-          }}
+          onChange={(opacity) => onChange({ opacity })}
+          data-testid="watermark-opacity"
         />
-      </div>
+      </ConfigField>
 
-      {/* Offsets */}
       <div className="flex gap-2">
         <div className="flex-1">
-          <label htmlFor="watermark-offset-x" className={labelCls}>Offset X (px)</label>
-          <input
-            id="watermark-offset-x"
-            type="number"
-            step={1}
-            className={inputCls}
-            value={data.offsetX ?? ''}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ offsetX: Number.isFinite(v) ? v : undefined });
-            }}
-            placeholder="0"
-          />
+          <ConfigField label="Offset X">
+            <NumberInput
+              size="sm"
+              step={1}
+              unit="px"
+              value={data.offsetX}
+              onChange={(offsetX) => onChange({ offsetX })}
+              onClear={() => onChange({ offsetX: undefined })}
+              placeholder="0"
+              data-testid="watermark-offset-x"
+            />
+          </ConfigField>
         </div>
         <div className="flex-1">
-          <label htmlFor="watermark-offset-y" className={labelCls}>Offset Y (px)</label>
-          <input
-            id="watermark-offset-y"
-            type="number"
-            step={1}
-            className={inputCls}
-            value={data.offsetY ?? ''}
-            onChange={(e) => {
-              const v = parseInt(e.target.value, 10);
-              onChange({ offsetY: Number.isFinite(v) ? v : undefined });
-            }}
-            placeholder="0"
-          />
+          <ConfigField label="Offset Y">
+            <NumberInput
+              size="sm"
+              step={1}
+              unit="px"
+              value={data.offsetY}
+              onChange={(offsetY) => onChange({ offsetY })}
+              onClear={() => onChange({ offsetY: undefined })}
+              placeholder="0"
+              data-testid="watermark-offset-y"
+            />
+          </ConfigField>
         </div>
       </div>
     </NodeConfigShell>

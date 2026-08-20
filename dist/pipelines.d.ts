@@ -545,7 +545,7 @@ declare interface ForkNodeData {
     branchLabels?: string[];
 }
 
-export declare function FormatConvertConfig({ data, onChange, nodeId }: FormatConvertConfigProps): JSX.Element;
+export declare function FormatConvertConfig({ data, onChange, nodeId, }: FormatConvertConfigProps): JSX.Element;
 
 declare interface FormatConvertConfigProps {
     data: ImageFormatConvertNodeData;
@@ -2667,12 +2667,12 @@ export declare interface VisionBBox {
     y2: number;
 }
 
-export declare function VisionClassifyConfig({ data, onChange, nodeId }: VisionClassifyConfigProps): JSX.Element;
+export declare function VisionClassifyConfig({ data, onChange, nodeId, }: VisionClassifyConfigProps): JSX.Element;
 
 declare interface VisionClassifyConfigProps {
     data: ImageVisionClassifyNodeData;
     onChange: (patch: Partial<ImageVisionClassifyNodeData>) => void;
-    /** Node being edited; enables real upstream-context pills. */
+    /** Node being edited; enables real upstream image refs. */
     nodeId?: string;
 }
 
@@ -2703,12 +2703,12 @@ declare type VisionData = ImageVisionAnalyzeNodeData & {
     _pausedAtBreakpoint?: boolean;
 } & Record<string, unknown>;
 
-export declare function VisionDescribeConfig({ data, onChange, nodeId }: VisionDescribeConfigProps): JSX.Element;
+export declare function VisionDescribeConfig({ data, onChange, nodeId, }: VisionDescribeConfigProps): JSX.Element;
 
 declare interface VisionDescribeConfigProps {
     data: ImageVisionDescribeNodeData;
     onChange: (patch: Partial<ImageVisionDescribeNodeData>) => void;
-    /** Node being edited; enables real upstream-context pills. */
+    /** Node being edited; enables real upstream image refs. */
     nodeId?: string;
 }
 
@@ -2728,12 +2728,12 @@ export declare interface VisionExposure {
     rationale: string;
 }
 
-export declare function VisionExtractTextConfig({ data, onChange, nodeId }: VisionExtractTextConfigProps): JSX.Element;
+export declare function VisionExtractTextConfig({ data, onChange, nodeId, }: VisionExtractTextConfigProps): JSX.Element;
 
 declare interface VisionExtractTextConfigProps {
     data: ImageVisionExtractTextNodeData;
     onChange: (patch: Partial<ImageVisionExtractTextNodeData>) => void;
-    /** Node being edited; enables real upstream-context pills. */
+    /** Node being edited; enables real upstream image refs. */
     nodeId?: string;
 }
 

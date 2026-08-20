@@ -15,26 +15,26 @@ import { I as Ls } from "./IdentityContext-CLalsm_M.js";
 import { u as tt } from "./TrendSparkline-Bm0kEjdg.js";
 import { C as _s, D as Os, F as $s, I as Bs, a as js, P as Fs, S as Us, T as Vs, b as Ws, U as Gs } from "./TrendSparkline-Bm0kEjdg.js";
 import { A as Hs, C as Xs, e as Ks, a as qs, a as Ys, D as Qs, G as Js, M as Zs, P as en, R as tn, b as rn, c as an, S as sn, d as nn, u as on } from "./ReactionsBar-BHQlXpaM.js";
-import { t as rt, w as at } from "./StatusPill-BfbNu6S1.js";
-import { B as cn, C as dn, a as pn, b as un, c as mn, d as fn, e as xn, f as bn, g as hn, h as gn, D as vn, i as yn, j as Nn, E as wn, k as Cn, F as Sn, l as In, I as Tn, m as kn, K as En, L as Pn, n as Dn, o as An, M as Rn, P as Ln, p as Mn, q as _n, r as On, Q as $n, S as Bn, s as jn, u as Fn, v as Un, x as Vn, T as Wn, y as Gn, z as zn, A as Hn, G as Xn, H as Kn, J as qn, N as Yn, O as Qn, U as Jn, R as Zn, V as eo, W as to, X as ro, Y as ao, Z as so } from "./StatusPill-BfbNu6S1.js";
+import { t as rt, w as at } from "./StatusPill-D9uKqUDW.js";
+import { B as cn, C as dn, a as pn, b as un, c as mn, d as fn, e as xn, f as bn, g as hn, h as gn, D as vn, i as yn, j as Nn, E as wn, k as Cn, F as Sn, l as In, I as Tn, m as kn, K as En, L as Pn, n as Dn, o as An, M as Rn, P as Ln, p as Mn, q as _n, r as On, Q as $n, S as Bn, s as jn, u as Fn, v as Un, x as Vn, T as Wn, y as Gn, z as zn, A as Hn, G as Xn, H as Kn, J as qn, N as Yn, O as Qn, U as Jn, R as Zn, V as eo, W as to, X as ro, Y as ao, Z as so } from "./StatusPill-D9uKqUDW.js";
 import { B as Ne } from "./Button-Qsbxqsl9.js";
 import { C as st } from "./Card-qOg_oC77.js";
 import { P as oo, T as io, a as lo, b as co, c as po, d as uo, e as mo } from "./Table-D7HV0dS-.js";
-import { F as xo, I as bo } from "./FileUploadDrop-Cmz3XANg.js";
-import { B as go } from "./Banner-DKb3JiLs.js";
-import { B as yo, L as No, S as wo } from "./Chart-ByoxeiYX.js";
-import { C as So } from "./Chip-BDT8ro4h.js";
-import { C as To } from "./ConfirmDialog-Ix7G_Mb4.js";
-import { E as Eo } from "./EmptyState-Ejc9dJA3.js";
-import { C as Do, E as Ao, S as Ro, e as Lo, g as Mo, a as _o } from "./CardHeader-DdyKN-6E.js";
+import { F as xo, I as bo, S as ho } from "./FileUploadDrop-CL1kscAC.js";
+import { B as vo } from "./Banner-DKb3JiLs.js";
+import { B as No, L as wo, S as Co } from "./Chart-ByoxeiYX.js";
+import { C as Io } from "./Chip-BDT8ro4h.js";
+import { C as ko } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { E as Po } from "./EmptyState-Ejc9dJA3.js";
+import { C as Ao, E as Ro, S as Lo, e as Mo, g as _o, a as Oo } from "./CardHeader-DdyKN-6E.js";
 import { M as nt } from "./Modal-fp5zcyw8.js";
-import { S as $o } from "./SkeletonCard-Baj5Ynm7.js";
-import { C as ot } from "./Badge-3b8qOTfQ.js";
-import { A as jo, B as Fo, N as Uo, P as Vo, S as Wo } from "./Badge-3b8qOTfQ.js";
-import { P as zo, S as Ho } from "./PermissionDeniedCard-zuRojsB7.js";
-import { S as Ko } from "./StatusDot-BC7B1tTr.js";
-import { A as it } from "./Avatar-B7O2g50s.js";
-import { a as Yo, n as Qo, b as Jo } from "./Avatar-B7O2g50s.js";
+import { S as Bo } from "./SkeletonCard-Baj5Ynm7.js";
+import { P as Fo, S as Uo } from "./PermissionDeniedCard-zuRojsB7.js";
+import { S as Wo } from "./StatusDot-BC7B1tTr.js";
+import { A as ot } from "./Avatar-B7O2g50s.js";
+import { a as zo, n as Ho, b as Xo } from "./Avatar-B7O2g50s.js";
+import { C as it } from "./Badge-Cy_IRGw3.js";
+import { A as qo, B as Yo, N as Qo, P as Jo } from "./Badge-Cy_IRGw3.js";
 import { T as ei, a as ti, b as ri, c as ai, d as si, e as ni, f as oi, t as ii, g as li } from "./tones-DknNcB3q.js";
 import { R as lt } from "./ReactionsOverlay-DGBFgHTr.js";
 import { S as di, a as pi } from "./ReactionsOverlay-DGBFgHTr.js";
@@ -167,7 +167,7 @@ function Br({
                           alt: S.name,
                           className: "rounded-full object-cover w-5 h-5"
                         }
-                      ) : /* @__PURE__ */ e(it, { name: S.name, size: 20 }),
+                      ) : /* @__PURE__ */ e(ot, { name: S.name, size: 20 }),
                       /* @__PURE__ */ e("span", { className: "text-[12px] font-medium text-text-primary", children: S.name })
                     ]
                   },
@@ -182,7 +182,7 @@ function Br({
   );
 }
 function kt(t) {
-  return /* @__PURE__ */ e(ot, { ...t });
+  return /* @__PURE__ */ e(it, { ...t });
 }
 function Et({ health: t }) {
   if (t.status !== "degraded") return null;
@@ -2378,7 +2378,7 @@ function na({
   );
 }
 export {
-  jo as ActivityFeed,
+  qo as ActivityFeed,
   Hs as ActivityPanel,
   Fl as AdminDashboardPage,
   Et as ApiDegradedBanner,
@@ -2389,11 +2389,11 @@ export {
   Wl as ApplicationPoolFormPage,
   Gl as AuditPage,
   Ui as AutoplayGate,
-  it as Avatar,
-  Yo as AvatarGroup,
-  Fo as Badge,
-  go as Banner,
-  yo as BarChart,
+  ot as Avatar,
+  zo as AvatarGroup,
+  Yo as Badge,
+  vo as Banner,
+  No as BarChart,
   cn as Breadcrumbs,
   Ne as Button,
   ma as CUSTOM_FIELD_TYPE_STORAGE_KEY,
@@ -2405,13 +2405,13 @@ export {
   Xi as CallingStatusPill,
   dn as CapabilityDeniedFallback,
   st as Card,
-  Do as CardHeader,
+  Ao as CardHeader,
   pn as CatalogGrid,
   un as ChannelHeader,
   mn as ChatComposer,
   mi as ChatPanel,
   Xs as ChatRoom,
-  So as Chip,
+  Io as Chip,
   Ki as CircularIconToggle,
   fn as CodeBlock,
   _s as CodeEditor,
@@ -2425,8 +2425,8 @@ export {
   gn as CommandPaletteProvider,
   qs as CommentThread,
   Ys as CommentThreadPanel,
-  To as ConfirmDialog,
-  ot as ConnectionPill,
+  ko as ConfirmDialog,
+  it as ConnectionPill,
   kt as ConnectionStatus,
   Hl as ConsentPage,
   Qs as DEFAULT_PICKER_EMOJIS,
@@ -2441,12 +2441,12 @@ export {
   Nn as DropdownMenu,
   Kl as EmailTemplateFormPage,
   ql as EmailTemplateListPage,
-  Eo as EmptyState,
+  Po as EmptyState,
   wn as EntityCell,
   Yl as EntityTable,
   Ql as ErrorPage,
   Cn as ErrorState,
-  Ao as EventRow,
+  Ro as EventRow,
   qi as ExpandableCallWidget,
   xo as FileUploadDrop,
   $s as FilterChip,
@@ -2476,7 +2476,7 @@ export {
   Ni as JsonPathInput,
   En as KPIGrid,
   Pn as LayerStack,
-  No as LineChart,
+  wo as LineChart,
   Dn as LoadingState,
   An as LogStream,
   ac as LoginPage,
@@ -2497,14 +2497,14 @@ export {
   Ur as NavTabs,
   al as NetworkQualityBadge,
   na as NodeCard,
-  Uo as NotificationCenter,
+  Qo as NotificationCenter,
   wi as NumberInput,
   Ln as PageHeader,
   oo as PageSection,
   Al as ParticipantTile,
   Ci as PatchHttpError,
   Si as PatchValidationRejectedError,
-  zo as PermissionDeniedCard,
+  Fo as PermissionDeniedCard,
   sl as PhoneOffIcon,
   nl as PiPButton,
   Ii as PipelineEditorServicesProvider,
@@ -2512,7 +2512,7 @@ export {
   dc as PoolListPage,
   pc as PoolScopedLayout,
   en as PostFeed,
-  Vo as PresenceAvatars,
+  Jo as PresenceAvatars,
   Mn as PresenceDot,
   xi as PresencePanel,
   Fs as PresenceProvider,
@@ -2544,23 +2544,23 @@ export {
   rt as ShortcutsHelp,
   di as SidebarRow,
   pi as SidebarSection,
-  $o as SkeletonCard,
+  Bo as SkeletonCard,
   sn as SocialPanel,
   nn as SocialTabContent,
-  Ro as Sparkline,
-  Ho as Spinner,
+  Lo as Sparkline,
+  Uo as Spinner,
   Fn as StackDiagram,
-  wo as StackedAreaChart,
+  Co as StackedAreaChart,
   Un as StatCard,
   fl as StatsCard,
   fc as StatusBadge,
-  Ko as StatusDot,
+  Wo as StatusDot,
   at as StatusPill,
   xl as StatusStrip,
   Ml as StreamVideo,
   Vn as SubNavLayout,
   bl as SummaryPanel,
-  Wo as Switch,
+  ho as Switch,
   sr as THEME_TOKEN_ALIASES,
   ei as TONES,
   ti as TONE_BG,
@@ -2611,13 +2611,13 @@ export {
   Kr as colors,
   g as cssVar,
   pr as darkTheme,
-  Lo as eventGlyphs,
+  Mo as eventGlyphs,
   Yr as fontSize,
   Di as forceFail,
   bi as formatChatTime,
   to as formatTypingBanner,
-  Mo as getEventCategory,
-  _o as getEventGlyph,
+  _o as getEventCategory,
+  Oo as getEventGlyph,
   gc as getFieldType,
   vc as getFieldTypes,
   ca as getPageConfig,
@@ -2635,8 +2635,8 @@ export {
   Nc as listRegisteredRenderers,
   pa as makeEmptyField,
   ro as matchHotkey,
-  Qo as nameToColor,
-  Jo as nameToInitials,
+  Ho as nameToColor,
+  Xo as nameToInitials,
   sa as purgeDLQEntries,
   dr as rawBorderRadius,
   ir as rawColors,
