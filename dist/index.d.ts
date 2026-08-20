@@ -1255,6 +1255,32 @@ declare interface ChatRoomProps {
     onMessage: OnMessageFn_9;
 }
 
+export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface CheckboxProps {
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    /**
+     * Mixed state — "some but not all selected". Rendered natively (the dash),
+     * exposed to AT via aria-checked="mixed". Clicking a mixed checkbox
+     * reports `true`, matching the native select-all convention.
+     */
+    indeterminate?: boolean;
+    disabled?: boolean;
+    /** Accessible name. Required when no visible <label> wraps this. */
+    'aria-label'?: string;
+    /**
+     * Click pass-through. Row-selection checkboxes live inside clickable
+     * rows/cards and need `e.stopPropagation()` so ticking the box doesn't
+     * also open the row.
+     */
+    onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+    /** Key pass-through, for shift-range selection handling. */
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare function Chip({ tone, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
 
 export declare interface ChipProps {
@@ -5966,6 +5992,27 @@ export declare interface SkeletonCardProps {
      * @default 'lg'
      */
     rounded?: 'md' | 'lg' | 'full';
+}
+
+export declare const Slider: ForwardRefExoticComponent<SliderProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface SliderProps {
+    value: number;
+    onChange: (value: number) => void;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** Accessible name. Required when no visible label is wired up. */
+    'aria-label'?: string;
+    /**
+     * Show the current value beside the track. Pass a formatter to control how
+     * it reads (units, decimal places); `true` uses the raw number.
+     * @default true
+     */
+    readout?: boolean | ((value: number) => string);
+    disabled?: boolean;
+    className?: string;
+    'data-testid'?: string;
 }
 
 declare interface SloPoint {

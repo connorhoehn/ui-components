@@ -26,6 +26,10 @@ export { NumberInput } from './components/forms/NumberInput';
 export type { NumberInputProps } from './components/forms/NumberInput';
 export { RadioGroup } from './components/forms/RadioGroup';
 export type { RadioGroupProps, RadioOption } from './components/forms/RadioGroup';
+export { Checkbox } from './components/forms/Checkbox';
+export type { CheckboxProps } from './components/forms/Checkbox';
+export { Slider } from './components/forms/Slider';
+export type { SliderProps } from './components/forms/Slider';
 
 // ── Image primitives (Phase 5) ──
 export { ImageThumbnail } from './components/image/ImageThumbnail';

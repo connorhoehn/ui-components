@@ -270,6 +270,20 @@ tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
 
 See `TAILWIND_MIGRATION.md` for conversion rules and token mappings.
 
+### Hand-rolled form controls (survey 2026-08-20)
+
+`pipelines/**` is DONE — node panels at zero, list surfaces converted, and
+the 8 remaining raw elements are justified exceptions documented in
+`scripts/check-node-controls.mjs`. The composites now cover every control
+kind (`Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`,
+`Checkbox` w/ indeterminate, `Slider`, `ToggleField`), so conversions
+elsewhere are mechanical. Remaining raw-control files by area (naive grep,
+includes legitimate primitive internals): identity 11, shared 9 (mostly the
+primitives themselves — fine), ingest 8, doc-editor 8, social 7,
+observability 3, doc-types 3, agents 3, typed-documents 2, collaboration 2,
+video 1, field-types 1. Widen the guard's ROOT per-area as each is
+converted.
+
 ### Test coverage (audit #5)
 Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066): `pipelines/`
 now has ~45 test files (was 1/91) including the editor mounting path

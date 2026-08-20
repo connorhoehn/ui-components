@@ -105,6 +105,18 @@ export { PORT_CLS, portCls } from './nodes/shared/ports';
 export type { PortPayload } from './nodes/shared/ports';
 export { default as NodeThumbStrip } from './nodes/shared/NodeThumbStrip';
 export type { NodeThumbStripProps, NodeThumbStripImage } from './nodes/shared/NodeThumbStrip';
+// Panel-building primitives, so a host adding its own node type can compose a
+// config panel from the same parts the built-in panels use (additive, 2026-08-20).
+export { default as ConfigField } from './nodes/shared/ConfigField';
+export type { ConfigFieldProps } from './nodes/shared/ConfigField';
+export { default as ConfigSection } from './nodes/shared/ConfigSection';
+export { default as NodeConfigShell } from './nodes/shared/NodeConfigShell';
+export { default as ToggleField } from './nodes/shared/ToggleField';
+export type { ToggleFieldProps } from './nodes/shared/ToggleField';
+export { default as SamplePills } from './nodes/shared/SamplePills';
+export type { SamplePillsProps } from './nodes/shared/SamplePills';
+export { default as SourceImagePathField } from './nodes/shared/SourceImagePathField';
+export type { SourceImagePathFieldProps } from './nodes/shared/SourceImagePathField';
 export { default as AnimatedEdge } from './canvas/edges/AnimatedEdge';
 export type { AnimatedEdgeData, EdgeState, EdgePayload } from './canvas/edges/AnimatedEdge';
 

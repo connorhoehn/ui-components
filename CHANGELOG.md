@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.60.0] — 2026-08-20
+
+Reachability follow-up to v2.53.0–v2.59.0: the primitives added during the
+control migration are now exported, not just used internally.
+
+### Added
+
+- **Root exports:** `Checkbox` and `Slider` join the other form primitives
+  on the root index — they were shipped, tested and used across the
+  pipelines surfaces but unreachable to consumers.
+- **`/pipelines` barrel exports the panel-building primitives:**
+  `ConfigField`, `ConfigSection`, `NodeConfigShell`, `ToggleField`,
+  `SamplePills`, `SourceImagePathField`. A host adding its own node type
+  (the `nodeVocabulary`/`modelOptions` extension story) can now compose its
+  config panel from the same parts the built-in panels use, instead of
+  hand-rolling — which is how this whole migration started. Additive.
+
+### Docs
+
+- `CLAUDE.md` gains the 2026-08-20 hand-rolled-control survey: `pipelines/`
+  done; per-area counts for the remaining trees (identity 11, ingest 8,
+  doc-editor 8, social 7, …) so the next front is measured, not guessed.
+
 ## [2.59.0] — 2026-08-20
 
 The control migration extended beyond the node panels: the pipelines list

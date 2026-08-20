@@ -346,6 +346,26 @@ declare interface ConditionNodeData {
     label?: string;
 }
 
+export declare function ConfigField({ label, required, help, error, children, className }: ConfigFieldProps): JSX.Element;
+
+export declare interface ConfigFieldProps {
+    label: string;
+    required?: boolean;
+    help?: string;
+    error?: string;
+    children: ReactNode;
+    className?: string;
+}
+
+export declare function ConfigSection({ title, defaultCollapsed, children, className }: ConfigSectionProps): JSX.Element;
+
+declare interface ConfigSectionProps {
+    title: string;
+    defaultCollapsed?: boolean;
+    children: ReactNode;
+    className?: string;
+}
+
 /**
  * What a node writes into the run context.
  *
@@ -1241,6 +1261,13 @@ export declare const NODE_TYPES_WITHOUT_CONFIG: readonly NodeType[];
 
 export declare type NodeCategory = 'source' | 'transform' | 'ai' | 'control' | 'sink' | 'human';
 
+export declare function NodeConfigShell({ children, className }: NodeConfigShellProps): JSX.Element;
+
+declare interface NodeConfigShellProps {
+    children: ReactNode;
+    className?: string;
+}
+
 declare type NodeData = TriggerNodeData | LLMNodeData | TransformNodeData | ConditionNodeData | ActionNodeData | ForkNodeData | JoinNodeData | ApprovalNodeData | AgentNodeData | GuardrailNodeData | McpToolNodeData | KnowledgeBaseNodeData | GraphQueryNodeData | MemoryNodeData | PolicyNodeData | AgUiOutputNodeData | ImageSourceNodeData | ImageSaveNodeData | ScatterNodeData | ImageResizeNodeData | ImageTransformNodeData | ImageFormatConvertNodeData | ImageSharpenNodeData | ImageWatermarkNodeData | ImageCropNodeData | ImageAdjustBwNodeData | ImageAdjustLayerNodeData | ImageDimensionsNodeData | ImageUpscaleNodeData | ImageVisionAnalyzeNodeData | ImageVisionClassifyNodeData | ImageVisionDescribeNodeData | ImageVisionTagNodeData | ImageVisionExtractTextNodeData | ImageGenerateNodeData | ImageVariationNodeData | ImageEditPromptNodeData;
 
 export declare type NodeExecutionState = 'idle' | 'pending' | 'running' | 'awaiting' | 'completed' | 'failed' | 'skipped';
@@ -2120,6 +2147,17 @@ declare interface RetryPolicy {
 
 declare type RunStatus = 'pending' | 'running' | 'awaiting_approval' | 'paused_at_breakpoint' | 'completed' | 'failed' | 'cancelled';
 
+export declare function SamplePills({ samples, onSelect, 'aria-label': ariaLabel, className, }: SamplePillsProps): JSX.Element | null;
+
+export declare interface SamplePillsProps {
+    /** Suggestions to offer. Renders nothing when empty. */
+    samples: readonly string[];
+    onSelect: (value: string) => void;
+    /** Accessible name for the group, e.g. "Upstream image refs". */
+    'aria-label'?: string;
+    className?: string;
+}
+
 export declare function SaveConfig({ data, onChange, nodeId }: SaveConfigProps): JSX.Element;
 
 export declare interface SaveConfigProps {
@@ -2193,6 +2231,18 @@ declare type SharpenData = ImageSharpenNodeData & {
 declare type SharpenFlowNode = Node_2<SharpenData, 'image:sharpen'>;
 
 export declare function SharpenNode(props: NodeProps<SharpenFlowNode>): JSX.Element;
+
+export declare function SourceImagePathField({ value, onChange, nodeId, label, help, placeholder, }: SourceImagePathFieldProps): JSX.Element;
+
+export declare interface SourceImagePathFieldProps {
+    value: string | undefined;
+    onChange: (next: string | undefined) => void;
+    /** Node being edited; drives the real upstream image-ref suggestions. */
+    nodeId?: string;
+    label?: string;
+    help?: string;
+    placeholder?: string;
+}
 
 /**
  * One execution attempt of a step. Hub task #1280.
@@ -2294,6 +2344,17 @@ export declare interface TagsPanelProps {
     tags: string[];
     onTagClick?: (tag: string) => void;
     className?: string;
+}
+
+export declare function ToggleField({ label, checked, onChange, help, disabled, 'data-testid': testId, }: ToggleFieldProps): JSX.Element;
+
+export declare interface ToggleFieldProps {
+    label: string;
+    checked: boolean;
+    onChange: (checked: boolean) => void;
+    help?: string;
+    disabled?: boolean;
+    'data-testid'?: string;
 }
 
 declare interface TokenUsageByModel {
