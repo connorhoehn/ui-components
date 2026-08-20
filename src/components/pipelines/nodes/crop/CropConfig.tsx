@@ -19,7 +19,14 @@ import { useImageUrl } from '../../services';
 import Banner from '../../../shared/Banner';
 import Chip from '../../../shared/Chip';
 import { BBoxAuthoringCanvas } from '../../vision/BBoxAuthoringCanvas';
-import { NodeConfigShell, SamplePills } from '../shared';
+import {
+  ConfigField,
+  NodeConfigShell,
+  SamplePills,
+  SourceImagePathField,
+  ToggleField,
+} from '../shared';
+import { Input } from '../../../forms/Input';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface CropConfigProps {
@@ -38,9 +45,7 @@ const BBOX_SAMPLES = [
 const CROP_REGION_ID = 'crop-region';
 const CROP_REGION_LABEL = 'crop';
 
-const inputCls =
   'mt-1 w-full text-[12px] font-mono rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 // ---------------------------------------------------------------------------
@@ -124,71 +129,42 @@ function CropConfigInner({
 
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="crop-source-image-path" className={labelCls}>
-          Source image path{' '}
-          <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="crop-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={inputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) =>
-            onChange({ sourceImagePath: e.target.value.trim() || undefined })
-          }
-          placeholder="$.scatter.parentImageId"
-        />
-        <div className={helpCls}>
-          JSONPath to the imageId of the source image. Defaults server-side to{' '}
-          <code>$.scatter.parentImageId</code>.
-        </div>
-        <SamplePills
-          samples={imageRefOptions.map((o) => o.path)}
-          onSelect={(v) => onChange({ sourceImagePath: v })}
-        />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={currentNodeId ?? undefined}
+        help="JSONPath to the imageId of the source image. Defaults server-side to $.scatter.parentImageId."
+        placeholder="$.scatter.parentImageId"
+      />
 
-      {/* Bbox path */}
-      <div>
-        <label htmlFor="crop-bbox-path" className={labelCls}>
-          Bounding-box path{' '}
-          <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="crop-bbox-path"
-          type="text"
+      <ConfigField
+        label="Bounding-box path"
+        help="Optional. JSONPath to a bbox object { x, y, width, height } in pixels. Overrides the manual crop region below when present at run time."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={inputCls}
           value={data.bboxPath ?? ''}
-          onChange={(e) =>
-            onChange({ bboxPath: e.target.value.trim() || undefined })
-          }
+          onChange={(e) => onChange({ bboxPath: e.target.value.trim() || undefined })}
           placeholder="$.scatter.item.bbox"
+          aria-label="Bounding-box path"
         />
-        <div className={helpCls}>
-          JSONPath to a bbox object <code>{'{ x, y, width, height }'}</code> in
-          pixels. Overrides the manual crop region below when present at run
-          time.
-        </div>
         <SamplePills
           samples={BBOX_SAMPLES}
           onSelect={(v) => onChange({ bboxPath: v })}
+          aria-label="Common bbox paths"
         />
-      </div>
+      </ConfigField>
 
       {/* Crop region (visual authoring) */}
       <div data-testid="crop-region-section">
-        <div className={labelCls}>
-          Crop region{' '}
-          <span className="text-text-tertiary font-normal">(optional)</span>
-        </div>
-        <div className={helpCls}>
-          Drag on the source image to paint the crop box. Drawing a new box
-          replaces the previous one.
-        </div>
+        <ConfigField
+          label="Crop region"
+          help="Optional. Drag on the source image to paint the crop box. Drawing a new box replaces the previous one."
+        >
+          <></>
+        </ConfigField>
 
         {upstream ? (
           <>
@@ -248,24 +224,13 @@ function CropConfigInner({
         )}
       </div>
 
-      {/* Materialize toggle */}
-      <label
-        htmlFor="crop-materialize"
-        className="flex items-center gap-2 text-[12px] font-semibold text-text-secondary cursor-pointer"
-      >
-        <input
-          id="crop-materialize"
-          type="checkbox"
-          checked={materialize}
-          onChange={(e) => onChange({ materialize: e.target.checked })}
-          className="w-3.5 h-3.5 accent-primary"
-        />
-        Persist crop to blob store
-      </label>
-      <div className={helpCls}>
-        When enabled (default), the cropped image is saved to the
-        ImageBlobStore.
-      </div>
+      <ToggleField
+        label="Persist crop to blob store"
+        checked={materialize}
+        onChange={(v) => onChange({ materialize: v })}
+        help="On by default. The cropped image is saved to the image blob store."
+        data-testid="crop-materialize"
+      />
     </NodeConfigShell>
   );
 }

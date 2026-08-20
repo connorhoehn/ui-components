@@ -12,16 +12,15 @@ import { useMemo } from 'react';
 import type { ScatterNodeData } from '../../../../types/pipeline';
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { ScatterPathPicker } from './ScatterPathPicker';
-import { NodeConfigShell } from '../shared';
+import { ConfigField, NodeConfigShell } from '../shared';
+import { Input } from '../../../forms/Input';
+import { NumberInput } from '../../../forms/NumberInput';
 
 export interface ScatterConfigProps {
   data: ScatterNodeData;
   onChange: (patch: Partial<ScatterNodeData>) => void;
 }
 
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 
 // ---------------------------------------------------------------------------
 // Hook: find the upstream node kind for the selected scatter node
@@ -55,78 +54,56 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
   return (
     <NodeConfigShell>
       {/* Items path — schema-aware picker */}
-      <div>
-        <label className={labelCls}>
-          Items path<span className="text-danger-fg ml-1" aria-hidden>*</span>
-        </label>
-        <div className="mt-1">
-          <ScatterPathPicker
-            value={data.itemsPath ?? ''}
-            onChange={(path) => onChange({ itemsPath: path })}
-            upstreamKind={upstreamKind}
-          />
-        </div>
-        {!data.itemsPath?.trim() && (
-          <div role="alert" className="text-[11px] text-danger-fg mt-0.5">
-            Items path is required.
-          </div>
-        )}
-        {!!data.itemsPath && !data.itemsPath.startsWith('$.') && (
-          <div role="alert" className="text-[11px] text-danger-fg mt-0.5">
-            Path must start with <code>$.</code>
-          </div>
-        )}
-        {!!data.itemsPath?.startsWith('$.') && (
-          <div className={helpCls}>
-            JSONPath into context resolving to an array. Each element becomes one scatter arm.
-          </div>
-        )}
-      </div>
+      <ConfigField
+        label="Items path"
+        required
+        error={
+          !data.itemsPath?.trim()
+            ? 'Items path is required.'
+            : !data.itemsPath.startsWith('$.')
+              ? 'Path must start with $.'
+              : undefined
+        }
+        help="JSONPath into context resolving to an array. Each element becomes one scatter arm."
+      >
+        <ScatterPathPicker
+          value={data.itemsPath ?? ''}
+          onChange={(path) => onChange({ itemsPath: path })}
+          upstreamKind={upstreamKind}
+        />
+      </ConfigField>
 
       {/* Item alias */}
-      <div>
-        <label htmlFor="scatter-item-alias" className={labelCls}>
-          Item alias <span className="text-text-tertiary font-normal">(optional, default: item)</span>
-        </label>
-        <input
-          id="scatter-item-alias"
-          type="text"
+      <ConfigField
+        label="Item alias"
+        help="Optional, default 'item'. Key written to $.scatter.<alias> for each arm."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={inputCls}
           value={data.itemAlias ?? ''}
           onChange={(e) => onChange({ itemAlias: e.target.value.trim() || undefined })}
           placeholder="item"
+          aria-label="Item alias"
         />
-        <div className={helpCls}>
-          Key written to <code>{'$.scatter.<alias>'}</code> for each arm.
-        </div>
-      </div>
+      </ConfigField>
 
-      {/* Max concurrency */}
-      <div>
-        <label htmlFor="scatter-max-concurrency" className={labelCls}>
-          Max concurrency <span className="text-text-tertiary font-normal">(optional, default: 4)</span>
-        </label>
-        <input
-          id="scatter-max-concurrency"
-          type="number"
+      <ConfigField
+        label="Max concurrency"
+        help="Optional, default 4. Maximum number of arms executing concurrently."
+      >
+        <NumberInput
+          size="sm"
           min={1}
           max={64}
-          className="mt-1 w-28 text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          value={rawConcurrency}
-          onChange={(e) => {
-            const v = e.target.value;
-            onChange({
-              maxConcurrency:
-                v === '' ? undefined : Math.max(1, parseInt(v, 10) || 1),
-            });
-          }}
+          value={data.maxConcurrency}
+          onChange={(maxConcurrency) => onChange({ maxConcurrency })}
+          onClear={() => onChange({ maxConcurrency: undefined })}
           placeholder="4"
+          data-testid="scatter-max-concurrency"
         />
-        <div className={helpCls}>
-          Maximum number of arms executing concurrently.
-        </div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

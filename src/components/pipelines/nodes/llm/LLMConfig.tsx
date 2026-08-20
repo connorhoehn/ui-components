@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import type { LLMNodeData, LLMProvider } from '../../../../types/pipeline';
-import { ConfigField, ConfigSection, NodeConfigShell } from '../shared';
+import { ConfigField, ConfigSection, NodeConfigShell, ToggleField } from '../shared';
 import { cn } from '../../../../lib/cn';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
@@ -16,6 +16,9 @@ import { ContextVariablePicker } from '../../context/ContextVariablePicker';
 import { useUpstreamContext } from '../../context/useUpstreamContext';
 import { useModelOptionsResolver } from '../../services/PipelineEditorServicesContext';
 import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import { Slider } from '../../../forms/Slider';
 
 export interface LLMConfigProps {
   data: LLMNodeData;
@@ -160,13 +163,12 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
         error={systemMissing ? 'System prompt is required.' : undefined}
         help={!systemMissing ? 'Sets the model\'s role and constraints.' : undefined}
       >
-        <textarea
-          className={cn(
-            'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[80px]',
-            systemMissing ? 'border-[#dc2626]' : 'border-border-field',
-          )}
+        <Textarea
+          rows={4}
+          invalid={systemMissing}
           value={data.systemPrompt}
           onChange={(e) => onChange({ systemPrompt: e.target.value })}
+          aria-label="System prompt"
         />
       </ConfigField>
 
@@ -193,43 +195,38 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
           label="Temperature"
           help="0 = deterministic, 1 = creative."
         >
-          <span className="text-text-tertiary text-xs ml-2">
-            {(data.temperature ?? 0.7).toFixed(1)}
-          </span>
-          <input
-            type="range"
+          <Slider
             min={0}
             max={1}
             step={0.1}
             value={data.temperature ?? 0.7}
-            onChange={(e) => onChange({ temperature: parseFloat(e.target.value) })}
-            className="w-full mt-1"
+            onChange={(temperature) => onChange({ temperature })}
+            readout={(v) => v.toFixed(1)}
+            aria-label="Temperature"
+            data-testid="llm-temperature"
           />
         </ConfigField>
 
         <ConfigField label="Max tokens" help="Upper bound on response length.">
-          <input
-            type="number"
+          <NumberInput
+            size="sm"
             min={1}
-            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
-            value={data.maxTokens ?? ''}
-            onChange={(e) => {
-              const v = e.target.value;
-              onChange({ maxTokens: v === '' ? undefined : Math.max(1, parseInt(v, 10) || 0) });
-            }}
+            value={data.maxTokens}
+            onChange={(maxTokens) => onChange({ maxTokens })}
+            onClear={() => onChange({ maxTokens: undefined })}
+            aria-label="Max tokens"
+            data-testid="llm-max-tokens"
           />
         </ConfigField>
 
         <div>
-          <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
-            <input
-              type="checkbox"
-              checked={data.streaming}
-              onChange={(e) => onChange({ streaming: e.target.checked })}
-            />
-            Streaming
-          </label>
-          <div className="text-[11px] text-text-tertiary mt-0.5">Stream tokens as they are generated.</div>
+          <ToggleField
+            label="Streaming"
+            checked={data.streaming}
+            onChange={(streaming) => onChange({ streaming })}
+            help="Stream tokens as they are generated."
+            data-testid="llm-streaming"
+          />
         </div>
 
         {/* Retry policy (hub#1289) */}

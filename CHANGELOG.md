@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.57.0] — 2026-08-20
+
+**Hand-rolled-control migration complete. 28 files / 112 controls → 0 / 0.**
+
+`npm run lint:node-controls` is now a plain rule rather than a ratchet: no
+raw `<input>`/`<select>`/`<textarea>` anywhere under `pipelines/nodes/`. The
+baseline is empty and must stay that way — if a panel needs something the
+composites can't express, add the primitive to `forms/` and use it, the way
+`Slider` and `ToggleField` were added during this migration.
+
+### Added
+
+- **`Slider`** (`forms/`) — range input with a built-in value readout
+  (`readout` takes `false` or a formatter). Three panels each had their own
+  `<input type="range">` with the readout stuck somewhere different. The
+  readout is part of the component because a slider without numeric feedback
+  is unusable at any real scale — "somewhere around the middle" is not a
+  temperature.
+
+### Changed
+
+- **Converted (final batch):** `ApprovalConfig`, `CropConfig`,
+  `TransformConfig`, `ScatterConfig`, `LLMConfig`, `AdjustLayerConfig`,
+  `AdjustLayerSliderPanel`, `ForkConfig`.
+- The copy-pasted `inputCls`/`labelCls`/`helpCls` constants are gone from
+  every node panel but one, where a single local `helpCls` still styles
+  italic caption text that isn't a form field.
+
+### Fixed
+
+- **`TransformConfig`'s "Preview" was two permanently disabled textareas**
+  captioned "(preview not yet available)". They read as input fields the
+  user had somehow failed to enable, rather than as a feature that doesn't
+  exist yet. Replaced with the shipped `EmptyState`, which says so plainly.
+  (Same class of dead UI as the `ConditionConfig` button removed in v2.53.0.)
+
+### Tests
+
+- `Slider` (6), `ToggleField` (4).
+
+### Migration total
+
+Across v2.52.0–v2.57.0: **112 hand-rolled controls removed**, 4 duplicate
+`inputCls` definitions collapsed, `SamplePills` de-duplicated from 17 copies,
+`SourceImagePathField` from 13, two hand-built tag editors replaced with the
+shipped `TagEditor`, three new primitives added (`SourceImagePathField`,
+`ToggleField`, `Slider`), and four pieces of dead UI removed.
+
 ## [2.56.0] — 2026-08-20
 
 Hand-rolled-control migration, batch 4. **14 files / 51 controls → 8 / 21.**

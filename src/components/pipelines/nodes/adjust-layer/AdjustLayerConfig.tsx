@@ -8,7 +8,7 @@ import type { ImageAdjustLayerNodeData, AdjustLayer } from '../../../../types/pi
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { useLatestStepForNode } from '../../context/PipelineRunsContext';
 import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
-import { NodeConfigShell, SamplePills } from '../shared';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
 export interface AdjustLayerConfigProps {
@@ -18,8 +18,6 @@ export interface AdjustLayerConfigProps {
   nodeId?: string;
 }
 
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
 
 /**
  * Resolve the sourceImageId to pass to the preview panel.
@@ -64,28 +62,16 @@ function AdjustLayerConfigInner({
   return (
     <NodeConfigShell>
       {/* Source image path */}
-      <div>
-        <label htmlFor="adjust-layer-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="adjust-layer-source-image-path"
-          type="text"
-          spellCheck={false}
-          className="mt-1 w-full text-[12px] font-mono rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.scatter.parentImageId"
-        />
-        <div className={helpCls}>JSONPath to the imageId of the source image.</div>
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={currentNodeId ?? undefined}
+        help="JSONPath to the imageId of the source image."
+        placeholder="$.scatter.parentImageId"
+      />
 
       {/* Live slider panel */}
-      <div>
-        <div className={`${labelCls} mb-1`}>
-          Adjustment layers <span className="text-text-tertiary font-normal">(applied top-to-bottom)</span>
-        </div>
+      <ConfigField label="Adjustment layers" help="Applied top-to-bottom.">
         <AdjustLayerSliderPanel
           layers={layers}
           onChange={(next: AdjustLayer[]) => onChange({ layers: next })}
@@ -95,7 +81,7 @@ function AdjustLayerConfigInner({
             onChange({ previewSourceImageId: next })
           }
         />
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

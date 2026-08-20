@@ -10,6 +10,7 @@ import type { ForkNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
 import { NumberInput } from '../../../forms/NumberInput';
+import { Slider } from '../../../forms/Slider';
 
 export interface ForkConfigProps {
   data: ForkNodeData;
@@ -52,15 +53,14 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
         required
         help={`Between ${MIN_BRANCHES} and ${MAX_BRANCHES} parallel branches.`}
       >
-        <span className="text-text-tertiary text-xs ml-2">{count}</span>
-        <input
-          type="range"
+        <Slider
           min={MIN_BRANCHES}
           max={MAX_BRANCHES}
           step={1}
           value={count}
-          onChange={(e) => setBranchCount(parseInt(e.target.value, 10))}
-          className="w-full mt-1"
+          onChange={setBranchCount}
+          aria-label="Branch count"
+          data-testid="fork-branch-slider"
         />
         <NumberInput
           size="sm"

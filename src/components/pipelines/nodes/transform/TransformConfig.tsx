@@ -10,6 +10,9 @@ import type { TransformNodeData, TransformType } from '../../../../types/pipelin
 import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
 import RetryPolicyEditor from '../RetryPolicyEditor';
+import { Input } from '../../../forms/Input';
+import EmptyState from '../../../shared/EmptyState';
+import { RadioGroup } from '../../../forms/RadioGroup';
 
 export interface TransformConfigProps {
   data: TransformNodeData;
@@ -33,23 +36,13 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
     <NodeConfigShell>
       {/* Type */}
       <ConfigField label="Type" required>
-        <div className="flex flex-col gap-1.5">
-          {RADIO_OPTIONS.map(opt => (
-            <label
-              key={opt.value}
-              className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="transform-type"
-                value={opt.value}
-                checked={data.transformType === opt.value}
-                onChange={() => onChange({ transformType: opt.value })}
-              />
-              {opt.label}
-            </label>
-          ))}
-        </div>
+        <RadioGroup
+          name="transform-type"
+          value={data.transformType}
+          onChange={(transformType) => onChange({ transformType })}
+          options={RADIO_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+          data-testid="transform-type"
+        />
       </ConfigField>
 
       {/* Expression */}
@@ -78,12 +71,14 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
         label="Output key (optional)"
         help={`If set, writes to context.${data.outputKey || 'outputKey'}. Otherwise merges into root context.`}
       >
-        <input
-          type="text"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Input
+          size="sm"
+          mono
+          spellCheck={false}
           value={data.outputKey ?? ''}
           onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
           placeholder="activeItems"
+          aria-label="Output key"
         />
       </ConfigField>
 
@@ -93,26 +88,14 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
         onChange={(next) => onChange({ retryPolicy: next })}
       />
 
-      {/* Preview area (not yet implemented) */}
+      {/* Preview is not implemented. It used to render as two permanently
+          disabled <textarea>s, which read as input fields the user had failed
+          to enable rather than as a feature that does not exist yet. */}
       <ConfigField label="Preview">
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <div className="text-[11px] text-text-tertiary mb-1">Sample input</div>
-            <textarea
-              disabled
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[11px] bg-surface-inset text-text-tertiary outline-none w-full font-mono resize-y min-h-[80px]"
-              placeholder='{ "items": [...] }'
-            />
-          </div>
-          <div>
-            <div className="text-[11px] text-text-tertiary mb-1">Sample output</div>
-            <textarea
-              disabled
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[11px] bg-surface-inset text-text-tertiary outline-none w-full font-mono resize-y min-h-[80px]"
-              placeholder="(preview not yet available)"
-            />
-          </div>
-        </div>
+        <EmptyState
+          title="Preview not available yet"
+          body="Sample input and output for a transform will render here once the preview runner ships."
+        />
       </ConfigField>
     </NodeConfigShell>
   );

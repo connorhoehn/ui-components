@@ -14,6 +14,7 @@ import Chip from '../../../shared/Chip';
 import { Button } from '../../../ui/Button';
 import type { UploadedImage } from '../../services';
 import type { AdjustLayer } from '../../../../types/pipeline';
+import { Slider } from '../../../forms/Slider';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -144,13 +145,6 @@ function LayerRow({ layer, index, onUpdate, onRemove }: LayerRowProps) {
     onUpdate(defaultLayerForKind(e.target.value as LayerKind));
   };
 
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = parseFloat(e.target.value);
-    if (Number.isFinite(raw)) {
-      onUpdate(setLayerValue(layer, raw));
-    }
-  };
-
   const handleNumberChange = (newVal: number) => {
     onUpdate(setLayerValue(layer, newVal));
   };
@@ -177,14 +171,14 @@ function LayerRow({ layer, index, onUpdate, onRemove }: LayerRowProps) {
       />
 
       {/* Range slider */}
-      <input
-        type="range"
+      <Slider
         min={range.min}
         max={range.max}
         step={range.step}
         value={value}
-        onChange={handleSliderChange}
-        className="flex-1 h-1 accent-primary cursor-pointer min-w-0"
+        onChange={handleNumberChange}
+        readout={false}
+        className="flex-1 min-w-0"
         aria-label={`${KIND_LABELS[layer.kind]} slider`}
         data-testid={`layer-slider-${index}`}
       />

@@ -13,6 +13,21 @@ import type { ApprovalNodeData, Approver, ApprovalTimeoutAction } from '../../..
 import { ConfigField, NodeConfigShell } from '../shared';
 import UserPicker from '../../../shared/UserPicker';
 import { cn } from '../../../../lib/cn';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import { RadioGroup } from '../../../forms/RadioGroup';
+
+const TIMEOUT_UNITS = [
+  { value: 'seconds', label: 'seconds' },
+  { value: 'minutes', label: 'minutes' },
+  { value: 'hours', label: 'hours' },
+];
+
+const TIMEOUT_ACTIONS = [
+  { value: 'reject', label: 'Reject' },
+  { value: 'approve', label: 'Approve' },
+];
 
 export interface ApprovalConfigProps {
   data: ApprovalNodeData;
@@ -136,20 +151,16 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
         help="How many approvers must say yes."
       >
         <div className="flex items-center gap-2">
-          <input
-            type="number"
+          <NumberInput
+            size="sm"
             min={1}
             max={requiredCountMax}
-            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-24 font-inherit"
             value={data.requiredCount || 1}
-            onChange={(e) => {
-              const n = parseInt(e.target.value, 10);
-              const clamped = Math.max(1, Math.min(requiredCountMax, Number.isNaN(n) ? 1 : n));
-              onChange({ requiredCount: clamped });
-            }}
+            onChange={(requiredCount) => onChange({ requiredCount })}
+            data-testid="approval-required-count"
           />
-          <span className="text-text-tertiary text-xs">
-            {data.requiredCount || 1} of {requiredCountMax}
+          <span className="text-text-tertiary text-xs whitespace-nowrap">
+            of {requiredCountMax}
           </span>
         </div>
       </ConfigField>
@@ -157,43 +168,41 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
       {/* Timeout */}
       <ConfigField label="Timeout" help="Leave blank for no timeout.">
         <div className="flex items-center gap-2">
-          <input
-            type="number"
+          <NumberInput
+            size="sm"
             min={0}
-            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-24 flex-none font-inherit"
-            value={unitValue}
-            onChange={(e) => setTimeoutValue(e.target.value)}
+            value={unitValue === '' ? undefined : Number(unitValue)}
+            onChange={(v) => setTimeoutValue(String(v))}
+            onClear={() => setTimeoutValue('')}
             placeholder="24"
+            data-testid="approval-timeout-value"
           />
-          <select
-            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-[120px] flex-none font-inherit"
+          <Select
+            size="sm"
+            className="w-[120px] flex-none"
             value={unit}
             onChange={(e) => setTimeoutUnit(e.target.value as TimeUnit)}
-          >
-            <option value="seconds">seconds</option>
-            <option value="minutes">minutes</option>
-            <option value="hours">hours</option>
-          </select>
+            aria-label="Timeout unit"
+            options={TIMEOUT_UNITS}
+          />
         </div>
 
         {data.timeoutMs !== undefined && data.timeoutMs > 0 && (
           <div className="mt-2">
-            <label className="text-[11px] font-semibold text-text-secondary">If timeout</label>
-            <div className="flex gap-3 mt-1">
-              {(['reject', 'approve'] as ApprovalTimeoutAction[]).map(action => (
-                <label
-                  key={action}
-                  className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    name="approval-timeout-action"
-                    checked={(data.timeoutAction ?? 'reject') === action}
-                    onChange={() => onChange({ timeoutAction: action })}
-                  />
-                  {action === 'reject' ? 'Reject' : 'Approve'}
-                </label>
-              ))}
+            <span className="text-[11px] font-semibold text-text-secondary">
+              If timeout
+            </span>
+            <div className="mt-1">
+              <RadioGroup
+                name="approval-timeout-action"
+                orientation="horizontal"
+                value={data.timeoutAction ?? 'reject'}
+                onChange={(timeoutAction) =>
+                  onChange({ timeoutAction: timeoutAction as ApprovalTimeoutAction })
+                }
+                options={TIMEOUT_ACTIONS}
+                data-testid="approval-timeout-action"
+              />
             </div>
           </div>
         )}
@@ -201,11 +210,12 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
 
       {/* Message */}
       <ConfigField label="Message for approver (optional)" help="Shown to the approver when the request is sent.">
-        <textarea
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[80px]"
+        <Textarea
+          rows={4}
           value={data.message ?? ''}
           onChange={(e) => onChange({ message: e.target.value || undefined })}
           placeholder="Please review the summary before it's posted to the document."
+          aria-label="Message for approver"
         />
       </ConfigField>
     </NodeConfigShell>

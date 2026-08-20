@@ -27,18 +27,16 @@ import { join } from 'node:path';
 const ROOT = 'src/components/pipelines/nodes';
 const CONTROL_RE = /<(select|textarea|input)\b/g;
 
-/** file (relative to ROOT) -> number of raw controls still present. */
-const BASELINE = {
-  'approval/ApprovalConfig.tsx': 5,
-  'llm/LLMConfig.tsx': 4,
-  'transform/TransformConfig.tsx': 4,
-  'crop/CropConfig.tsx': 3,
-  'scatter/ScatterConfig.tsx': 2,
-  'adjust-layer/AdjustLayerConfig.tsx': 1,
-  'adjust-layer/AdjustLayerSliderPanel.tsx': 1,
-  // A range slider; there is no Slider primitive in forms/ yet.
-  'fork/ForkConfig.tsx': 1,
-};
+/**
+ * File (relative to ROOT) -> raw controls still allowed.
+ *
+ * EMPTY, as of 2026-08-20. Every panel now builds its fields from ConfigField
+ * plus the forms/ composites. This is a plain "no hand-rolled controls" rule,
+ * not a ratchet any more — do not add entries back. If a panel needs something
+ * the composites cannot express, add the primitive to forms/ and use it, the
+ * way Slider and ToggleField were added during the migration.
+ */
+const BASELINE = {};
 
 /** Strip comments so a code sample in a doc comment isn't counted. */
 function stripComments(source) {
@@ -101,6 +99,8 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `ok check-node-controls: pass (${counts.size} file(s) still on the ratchet, ` +
-    `${total} raw control(s) left to convert).`,
+  Object.keys(BASELINE).length === 0
+    ? 'ok check-node-controls: pass (no hand-rolled controls under pipelines/nodes).'
+    : `ok check-node-controls: pass (${counts.size} file(s) still on the ratchet, ` +
+      `${total} raw control(s) left to convert).`,
 );

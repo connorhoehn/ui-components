@@ -15,3 +15,6 @@ export type { NumberInputProps } from './NumberInput';
 
 export { RadioGroup } from './RadioGroup';
 export type { RadioGroupProps, RadioOption } from './RadioGroup';
+
+export { Slider } from './Slider';
+export type { SliderProps } from './Slider';
