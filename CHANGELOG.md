@@ -8,6 +8,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.59.0] — 2026-08-20
+
+The control migration extended beyond the node panels: the pipelines list
+surfaces (runs, DLQ, filter bars, pages) now use the composites too, and the
+one missing primitive they needed ships with it.
+
+### Added
+
+- **`Checkbox`** (`forms/`) — with declarative `indeterminate`. The library
+  shipped `Switch` and `RadioGroup` but no checkbox, so eleven call sites
+  across the pipelines list surfaces hand-rolled
+  `<input type="checkbox" className="w-3.5 h-3.5 accent-primary">` — the
+  select-all headers additionally reaching into a ref to set
+  `indeterminate`, since HTML only exposes the mixed state imperatively.
+  A checkbox is *not* a Switch: a switch flips a setting; a checkbox marks
+  selection and supports "some but not all". `onClick`/`onKeyDown`
+  pass-throughs cover row-embedded usage (stopPropagation, shift-range
+  selection). 5 tests.
+
+### Changed
+
+- **Converted to composites (11 files):** `RunsTable`, `PipelinesFilterBar`
+  (which now takes `someVisibleSelected` instead of a `selectAllRef` — the
+  ref plumbing existed only to set `indeterminate`), `DLQInspector` (its
+  select-all also *gains* an indeterminate state it never had),
+  `RunsFilterBar`, `DLQEntryCard`, `PipelineCard`, `PipelineRunsPanel`,
+  `PipelineRunReplayPage`, `PipelineRunsPage`, `PipelinesPage`,
+  `TemplatesModal`, `ExecutorLog`, `PendingApprovalsPage`,
+  `PipelineEditorPage`.
+- **`lint:node-controls` scope widened** from `pipelines/nodes/` to all of
+  `pipelines/`. The node panels stay at zero; the 8 files still carrying a
+  raw element are a *justified* baseline, each with its reason in the
+  script — terminal-styled dev inspectors, an invisible a11y range over the
+  custom replay timeline, an invisible test hook, in-canvas/inline editors.
+  Justified exceptions are not unconverted debt, and the guard's pass
+  message now says which it is.
+
 ## [2.58.0] — 2026-08-20
 
 Audit round: the demo's static inline styles are gone, and the showcase

@@ -46,6 +46,7 @@ import { StepTree } from './steps/StepTree';
 import { Button } from '../ui/Button';
 import { IconButton } from '../ui/IconButton';
 import ExecutorLog from './ExecutorLog';
+import { Checkbox } from '../forms/Checkbox';
 
 // ---------------------------------------------------------------------------
 // Outer page — route param validation + providers
@@ -428,11 +429,11 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               </div>
             )}
             <label className="flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={retryModal.snapshotInput}
-                onChange={(e) => setRetryModal((m) => m ? { ...m, snapshotInput: e.target.checked } : m)}
-                className="accent-primary"
+                onChange={(snapshotInput) =>
+                  setRetryModal((m) => (m ? { ...m, snapshotInput } : m))
+                }
               />
               Use persisted input snapshot
             </label>

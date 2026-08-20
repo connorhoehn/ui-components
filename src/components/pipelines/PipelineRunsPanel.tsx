@@ -15,6 +15,7 @@ import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import RunDetailDrawer from './RunDetailDrawer';
 import { formatDuration } from './utils/formatTime';
+import { Checkbox } from '../forms/Checkbox';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -337,13 +338,12 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                 >
                   <div className="flex items-center gap-2">
                     {compareMode && (
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={isCompareSelected}
                         onChange={() => toggleCompareSelection(run.id)}
                         onClick={(e) => e.stopPropagation()}
                         data-testid={`runs-panel-compare-check-${run.id}`}
-                        className="m-0 shrink-0 accent-primary"
+                        className="m-0 shrink-0"
                         aria-label={`Select run ${run.id.slice(0, 8)} for comparison`}
                       />
                     )}

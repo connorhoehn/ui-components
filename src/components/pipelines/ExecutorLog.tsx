@@ -29,6 +29,7 @@ import {
   type UsePipelineRunAuditLogResult,
 } from './hooks/usePipelineRunAuditLog';
 import type { AuditRow } from '../../api/pipelineAudit';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -264,12 +265,12 @@ export default function ExecutorLog({
 
         <span className="text-border">|</span>
 
-        <input
-          type="text"
+        <Input
+          size="sm"
           value={actorFilter}
           onChange={(e) => setActorFilter(e.target.value)}
           placeholder="Actor"
-          className="font-[inherit] text-xs px-2 py-1 border border-border-field rounded bg-surface text-text-primary min-w-[120px]"
+          className="min-w-30"
           data-testid="executor-log-actor-input"
           aria-label="Filter by actor"
         />

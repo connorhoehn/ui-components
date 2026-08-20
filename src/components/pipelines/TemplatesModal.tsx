@@ -5,6 +5,7 @@ import { savePipeline } from './persistence/pipelineStorage';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import { pipelineTemplates, type PipelineTemplate } from './templates';
 import { scaffoldPrerequisites } from './templates/scaffoldPrerequisites';
+import { Input } from '../forms/Input';
 import type {
   PipelineDefinition,
   PipelineEdge,
@@ -204,7 +205,7 @@ export default function TemplatesModal({
       <div className="text-[13px] text-text-secondary mb-3">
         Pick a template to spawn a new pipeline with prebuilt nodes and edges.
       </div>
-      <input
+      <Input
         ref={searchRef}
         type="search"
         data-testid="templates-search"
@@ -212,7 +213,8 @@ export default function TemplatesModal({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleSearchKeyDown}
-        className="w-full px-3 py-2 text-[13px] mb-3.5 border border-border-field rounded-md font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+        className="w-full mb-3.5"
+        aria-label="Search templates"
       />
       {filtered.length === 0 ? (
         <div

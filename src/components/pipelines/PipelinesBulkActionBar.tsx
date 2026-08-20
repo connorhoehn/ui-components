@@ -5,6 +5,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -166,9 +167,9 @@ export default function PipelinesBulkActionBar({
               'flex flex-col gap-2',
             )}
           >
-            <input
+            <Input
               ref={addTagInputRef}
-              type="text"
+              size="sm"
               data-testid="bulk-add-tag-input"
               placeholder="Tag name"
               value={addTagText}
@@ -186,6 +187,7 @@ export default function PipelinesBulkActionBar({
                 'border border-border-field rounded-md px-2.5 py-1.5 text-[13px]',
                 'bg-[#f9fafb] text-text-primary outline-none w-full',
               )}
+              aria-label="Tag name"
             />
             <button
               data-testid="bulk-add-tag-submit"

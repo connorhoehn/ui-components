@@ -18,3 +18,6 @@ export type { RadioGroupProps, RadioOption } from './RadioGroup';
 
 export { Slider } from './Slider';
 export type { SliderProps } from './Slider';
+
+export { Checkbox } from './Checkbox';
+export type { CheckboxProps } from './Checkbox';

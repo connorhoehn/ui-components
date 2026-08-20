@@ -27,6 +27,7 @@ import RunsTable from './RunsTable';
 import { cn } from '../../lib/cn';
 import type { PipelineDefinition, PipelineRun } from '../../types/pipeline';
 import { retryFromNode } from '../../api/pipelineRetry';
+import { Checkbox } from '../forms/Checkbox';
 import {
   filterRuns,
   parseFilterParams,
@@ -248,7 +249,12 @@ export default function PipelineRunsPage() {
               </div>
             )}
             <label className="flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer">
-              <input type="checkbox" checked={retryTarget.snapshotInput} onChange={(e) => setRetryTarget((t) => t ? { ...t, snapshotInput: e.target.checked } : t)} className="accent-primary" />
+              <Checkbox
+                checked={retryTarget.snapshotInput}
+                onChange={(snapshotInput) =>
+                  setRetryTarget((t) => (t ? { ...t, snapshotInput } : t))
+                }
+              />
               Use persisted input snapshot
             </label>
             {retryError && (

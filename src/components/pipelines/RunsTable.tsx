@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import Chip from '../shared/Chip';
 import { cn } from '../../lib/cn';
+import { Checkbox } from '../forms/Checkbox';
 import type { ErrorCategory, PipelineRun } from '../../types/pipeline';
 import { formatDuration } from './utils/formatTime';
 import { statusChipVariant, errorCategoryTone } from './utils/statusColors';
@@ -96,14 +97,11 @@ export default function RunsTable({
             scope="col"
             className="px-3 py-2 w-6 border-b border-border"
           >
-            <input
-              type="checkbox"
+            <Checkbox
               data-testid="runs-select-all"
               aria-label="Select all visible runs"
               checked={allSelected}
-              ref={(el) => {
-                if (el) el.indeterminate = someSelected;
-              }}
+              indeterminate={someSelected}
               onChange={toggleHeaderCheckbox}
             />
           </th>
@@ -134,16 +132,17 @@ export default function RunsTable({
               onClick={() => onNavigate(`/pipelines/${pipelineId}/runs/${r.id}`)}
             >
               <td className="px-3 py-2.5 text-xs text-text-secondary w-6" onClick={(e) => e.stopPropagation()}>
-                <input
-                  type="checkbox"
-                  data-testid={`run-select-${r.id}`}
-                  checked={isSelected}
+                <span
                   onMouseDown={(e) => {
                     pendingShiftRef.current = e.shiftKey;
                   }}
                   onKeyDown={(e) => {
                     pendingShiftRef.current = e.shiftKey;
                   }}
+                >
+                <Checkbox
+                  data-testid={`run-select-${r.id}`}
+                  checked={isSelected}
                   onChange={() => {
                     const shift = pendingShiftRef.current;
                     pendingShiftRef.current = false;
@@ -151,6 +150,9 @@ export default function RunsTable({
                   }}
                   aria-label={`Select run ${r.id.slice(0, 8)}`}
                 />
+                </span>
+                {/* Invisible test hook, not a user-facing control — stays a
+                    raw input on purpose (tabIndex=-1, zero-size, no pointer). */}
                 <input
                   type="checkbox"
                   data-testid={`run-compare-pick-${r.id}`}

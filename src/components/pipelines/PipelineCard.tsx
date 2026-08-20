@@ -4,6 +4,7 @@ import type { TriggerBinding } from '../../types/pipeline';
 import Chip from '../shared/Chip';
 import { cn } from '../../lib/cn';
 import type { PipelineRow } from './PipelinesPage';
+import { Checkbox } from '../forms/Checkbox';
 
 function triggerSummary(binding?: TriggerBinding): { icon: string; text: string } {
   const ev = binding?.event;
@@ -94,10 +95,10 @@ export default function PipelineCard({
           onClick={(e) => e.stopPropagation()}
           className="absolute top-2 right-2 flex items-center justify-center w-[22px] h-[22px] cursor-pointer z-[1]"
         >
-          <input
-            type="checkbox"
+          <Checkbox
             data-testid={`pipeline-select-${row.id}`}
             checked={selected}
+            aria-label={`Select pipeline ${row.name}`}
             onClick={(e) => {
               e.stopPropagation();
               onToggleSelect(e.shiftKey);
@@ -109,7 +110,7 @@ export default function PipelineCard({
               }
             }}
             onChange={() => {}}
-            className="cursor-pointer w-4 h-4 accent-primary"
+            className="w-4 h-4"
           />
         </label>
       )}

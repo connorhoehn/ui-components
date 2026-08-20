@@ -26,6 +26,7 @@ import SkeletonCard from '../shared/SkeletonCard';
 import Chip from '../shared/Chip';
 import { cn } from '../../lib/cn';
 import type { Approver, PipelineDefinition } from '../../types/pipeline';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -213,13 +214,14 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
         ) : null}
       </div>
 
-      <textarea
+      <Textarea
         data-testid={`approval-comment-${row.runId}`}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Optional comment…"
         rows={2}
-        className="w-full px-3 py-2 text-[13px] font-[inherit] border border-border-field rounded-md bg-[#f9fafb] text-text-primary outline-none resize-y"
+        className="w-full"
+        aria-label="Approval comment"
       />
 
       <div className="flex gap-2 justify-end">

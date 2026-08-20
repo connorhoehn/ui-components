@@ -16,6 +16,9 @@ import type { DLQEntry } from '../../api/pipelineDLQ';
 import Modal from '../shared/Modal';
 import { useToast } from '../shared/ToastProvider';
 import { DLQEntryCard } from './DLQEntryCard';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -211,28 +214,29 @@ export default function DLQInspector() {
 
       {/* Toolbar: filters + bulk actions */}
       <div className="flex items-center gap-2.5 mb-4 flex-wrap">
-        <input
-          type="text"
+        <Input
+          size="sm"
+          type="search"
           placeholder="Filter by error text or event type..."
           value={filterText}
           onChange={(e) => setFilterText(e.target.value)}
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none flex-1 min-w-[120px] max-w-[300px]"
+          className="flex-1 min-w-30 max-w-75"
+          aria-label="Filter dead letters"
           data-testid="dlq-filter-text"
         />
 
-        <select
+        <Select
+          size="sm"
           value={filterKind}
           onChange={(e) => setFilterKind(e.target.value)}
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none max-w-[200px] flex-none cursor-pointer"
+          className="max-w-50 flex-none"
+          aria-label="Filter by error kind"
           data-testid="dlq-filter-kind"
-        >
-          <option value="">All error kinds</option>
-          {errorKinds.map((kind) => (
-            <option key={kind} value={kind}>
-              {kind}
-            </option>
-          ))}
-        </select>
+          options={[
+            { value: '', label: 'All error kinds' },
+            ...errorKinds.map((kind) => ({ value: kind, label: kind })),
+          ]}
+        />
 
         <div className="flex-1" />
 
@@ -304,11 +308,11 @@ export default function DLQInspector() {
             <thead>
               <tr>
                 <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap w-8">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={selected.size === sorted.length && sorted.length > 0}
+                    indeterminate={selected.size > 0 && selected.size < sorted.length}
                     onChange={toggleSelectAll}
-                    title="Select all"
+                    aria-label="Select all dead letters"
                   />
                 </th>
                 <th className="text-left p-2.5 border-b-2 border-border text-[11px] font-bold uppercase tracking-wider text-text-secondary whitespace-nowrap">Event Type</th>

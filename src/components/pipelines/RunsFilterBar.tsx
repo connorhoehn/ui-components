@@ -3,6 +3,8 @@ import { useClickOutside } from './hooks/useClickOutside';
 import { cn } from '../../lib/cn';
 import type { DateRangeKey, StatusKey, TriggerKindKey } from './runsUtils';
 import { STATUS_KEYS, TRIGGER_KIND_KEYS, DATE_RANGE_KEYS } from './runsUtils';
+import { Input } from '../forms/Input';
+import { Checkbox } from '../forms/Checkbox';
 
 const STATUS_LABEL: Record<StatusKey, string> = {
   pending: 'Pending',
@@ -90,11 +92,11 @@ function FilterDropdown<T extends string>({
               data-testid={`${testIdPrefix}-${opt}`}
               className="flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-[#f1f5f9]"
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={selected.has(opt)}
                 onChange={() => onToggle(opt)}
-                className="m-0 accent-primary"
+                className="m-0"
+                aria-label={labels[opt]}
               />
               {labels[opt]}
             </label>
@@ -138,14 +140,15 @@ export default function RunsFilterBar({
     <div
       className="flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md"
     >
-      <input
+      <Input
         id="runs-search"
         type="search"
+        size="sm"
         data-testid="runs-search-input"
         placeholder="Search…"
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
-        className="flex-[1_1_180px] max-w-[240px] px-2.5 py-[5px] text-xs border border-border-field rounded-md font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+        className="flex-[1_1_180px] max-w-60"
         aria-label="Search runs by run id or pipeline id"
       />
 

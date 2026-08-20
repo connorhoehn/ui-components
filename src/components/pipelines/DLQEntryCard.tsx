@@ -7,6 +7,7 @@
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
 import type { DLQEntry } from '../../api/pipelineDLQ';
+import { Checkbox } from '../forms/Checkbox';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -65,10 +66,10 @@ export function DLQEntryCard({
       )}
     >
       <td className="p-2.5 border-b border-border align-top">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={isSelected}
           onChange={() => onToggleSelect(entry.messageId)}
+          aria-label={`Select dead letter ${entry.messageId}`}
         />
       </td>
       <td className="p-2.5 border-b border-border align-top">

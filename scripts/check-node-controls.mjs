@@ -24,19 +24,41 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'src/components/pipelines/nodes';
+const ROOT = 'src/components/pipelines';
 const CONTROL_RE = /<(select|textarea|input)\b/g;
 
 /**
  * File (relative to ROOT) -> raw controls still allowed.
  *
- * EMPTY, as of 2026-08-20. Every panel now builds its fields from ConfigField
- * plus the forms/ composites. This is a plain "no hand-rolled controls" rule,
- * not a ratchet any more — do not add entries back. If a panel needs something
- * the composites cannot express, add the primitive to forms/ and use it, the
- * way Slider and ToggleField were added during the migration.
+ * Scope widened from pipelines/nodes to ALL of pipelines on 2026-08-20; the
+ * node config panels themselves are at zero and must stay there. Every entry
+ * below is a JUSTIFIED exception, not unconverted debt — a raw element is the
+ * correct implementation for it. If you convert one anyway, lower or delete
+ * its entry. If a new panel needs something the composites cannot express,
+ * add the primitive to forms/ first (the way Slider, ToggleField and Checkbox
+ * were added), don't add an entry here.
  */
-const BASELINE = {};
+const BASELINE = {
+  // Terminal-styled dev inspector (Catppuccin palette); deliberately NOT the
+  // light form language — it reads as a debugger, because it is one.
+  'context-inspector/ContextEditBuffer.tsx': 6,
+  // Dev-only simulator payload editor, same reasoning.
+  'dev/EventPayloadEditor.tsx': 3,
+  // Invisible test hook (zero-size, tabIndex=-1) — not a user-facing control.
+  'RunsTable.tsx': 1,
+  // Invisible a11y range overlaid on the custom-drawn replay timeline;
+  // a visible Slider track would double-draw the scrubber.
+  'replay/Scrubber.tsx': 1,
+  // Floating in-canvas label editor positioned over the drawn bbox.
+  'vision/BBoxAuthoringCanvas.tsx': 1,
+  // Palette-toned search field (surface-panel bg, info focus ring) — the
+  // palette's own visual language, not the standard field chrome.
+  'canvas/NodePalette.tsx': 1,
+  // Command-palette-style inline input inside the quick-insert popover.
+  'canvas/QuickInsertPopover.tsx': 1,
+  // Borderless inline-rename field in the editor top bar.
+  'editor/EditorTopBar.tsx': 1,
+};
 
 /** Strip comments so a code sample in a doc comment isn't counted. */
 function stripComments(source) {
@@ -100,7 +122,7 @@ if (errors.length > 0) {
 
 console.log(
   Object.keys(BASELINE).length === 0
-    ? 'ok check-node-controls: pass (no hand-rolled controls under pipelines/nodes).'
-    : `ok check-node-controls: pass (${counts.size} file(s) still on the ratchet, ` +
-      `${total} raw control(s) left to convert).`,
+    ? 'ok check-node-controls: pass (no hand-rolled controls under pipelines/).'
+    : `ok check-node-controls: pass (${counts.size} file(s) with justified raw ` +
+      `control(s), ${total} total — see BASELINE for why each is exempt).`,
 );

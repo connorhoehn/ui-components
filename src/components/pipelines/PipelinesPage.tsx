@@ -43,6 +43,7 @@ import { useIdentityContext } from '../../contexts/IdentityContext';
 import { downloadJSON } from './utils/fileUtils';
 
 import type { TriggerFilter, SortKey } from './PipelinesFilterBar';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types / filters
@@ -189,21 +190,17 @@ function NewPipelineModal({
       <label className="block text-[13px] font-semibold text-text-secondary mb-1.5">
         Name
       </label>
-      <input
+      <Input
         ref={inputRef}
         data-testid="new-pipeline-name"
-        type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') handleSubmit();
         }}
         placeholder="e.g. Invoice summarizer"
-        className={cn(
-          'border border-border-field rounded-md px-3 py-2 text-sm',
-          'bg-[#f9fafb] text-text-primary outline-none',
-          'box-border w-full',
-        )}
+        aria-label="New pipeline name"
+        className="w-full"
       />
     </Modal>
   );
@@ -668,7 +665,7 @@ export default function PipelinesPage() {
           sortKey={sortKey}
           onSortKeyChange={setSortKey}
           allVisibleSelected={allVisibleSelected}
-          selectAllRef={selectAllRef}
+          someVisibleSelected={someVisibleSelected}
           onHeaderToggleAll={handleHeaderToggleAll}
         />
       )}

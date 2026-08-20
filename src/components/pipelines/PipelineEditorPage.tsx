@@ -47,6 +47,7 @@ import { downloadJSON } from './utils/fileUtils';
 import { Button } from '../ui/Button';
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
+import { Textarea } from '../forms/Textarea';
 
 import {
   EditorTopBar,
@@ -546,14 +547,14 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
           {triggerInputKeys.map((key) => (
             <label key={key} className="flex flex-col gap-1 text-xs">
               <span className="font-medium text-text-primary">{key}</span>
-              <textarea
+              <Textarea
                 data-autofocus={key === triggerInputKeys[0] ? true : undefined}
                 rows={3}
-                className="resize-y px-2 py-1.5 rounded-md border border-border text-xs font-inherit"
                 value={lifecycle.triggerInputValues[key] ?? ''}
                 onChange={(e) =>
                   lifecycle.setTriggerInputValues((prev) => ({ ...prev, [key]: e.target.value }))
                 }
+                aria-label={`Trigger input ${key}`}
               />
             </label>
           ))}

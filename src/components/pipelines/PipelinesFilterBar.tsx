@@ -3,8 +3,10 @@
 // Filter bar for the pipelines list page: search input, status filter chips,
 // trigger dropdown, sort dropdown, and a select-all checkbox.
 
-import type { RefObject } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 import type { StatusKey } from './PipelinesPage';
 import { STATUS_KEYS } from './PipelinesPage';
 
@@ -33,7 +35,8 @@ export interface PipelinesFilterBarProps {
   onSortKeyChange: (v: SortKey) => void;
   // Select-all checkbox
   allVisibleSelected: boolean;
-  selectAllRef: RefObject<HTMLInputElement | null>;
+  /** "Some but not all visible selected" — drives the mixed checkbox state. */
+  someVisibleSelected: boolean;
   onHeaderToggleAll: () => void;
 }
 
@@ -55,7 +58,7 @@ export default function PipelinesFilterBar({
   sortKey,
   onSortKeyChange,
   allVisibleSelected,
-  selectAllRef,
+  someVisibleSelected,
   onHeaderToggleAll,
 }: PipelinesFilterBarProps) {
   return (
@@ -70,30 +73,26 @@ export default function PipelinesFilterBar({
         className="flex items-center gap-1.5 cursor-pointer"
         title="Select all visible pipelines"
       >
-        <input
-          ref={selectAllRef}
-          type="checkbox"
+        <Checkbox
           data-testid="pipeline-select-all"
           aria-label="Select all visible pipelines"
           checked={allVisibleSelected}
+          indeterminate={someVisibleSelected && !allVisibleSelected}
           onChange={onHeaderToggleAll}
-          className="w-3.5 h-3.5 accent-primary"
         />
         <span className="text-[11px] text-text-tertiary">All</span>
       </label>
 
       {/* Search */}
-      <input
+      <Input
         data-testid="pipeline-search"
         type="search"
+        size="sm"
         placeholder="Search..."
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
-        className={cn(
-          'border border-border-field rounded-md px-2.5 py-1.5 text-[13px]',
-          'bg-[#f9fafb] text-text-primary outline-none',
-          'flex-[0_1_260px] min-w-[180px]',
-        )}
+        className="flex-[0_1_260px] min-w-45"
+        aria-label="Search pipelines"
       />
 
       {/* Status filter chips */}
@@ -142,39 +141,37 @@ export default function PipelinesFilterBar({
       {/* Trigger filter */}
       <label className="text-xs text-text-secondary flex items-center gap-1.5">
         Trigger:
-        <select
+        <Select
           data-testid="trigger-filter"
+          size="sm"
           value={triggerFilter}
           onChange={(e) => onTriggerFilterChange(e.target.value as TriggerFilter)}
-          className={cn(
-            'border border-border-field rounded-md px-2 py-1 text-[13px]',
-            'bg-[#f9fafb] text-text-primary outline-none',
-          )}
-        >
-          <option value="all">All</option>
-          <option value="manual">Manual</option>
-          <option value="document">Document event</option>
-          <option value="schedule">Schedule</option>
-          <option value="webhook">Webhook</option>
-        </select>
+          aria-label="Trigger filter"
+          options={[
+            { value: 'all', label: 'All' },
+            { value: 'manual', label: 'Manual' },
+            { value: 'document', label: 'Document event' },
+            { value: 'schedule', label: 'Schedule' },
+            { value: 'webhook', label: 'Webhook' },
+          ]}
+        />
       </label>
 
       {/* Sort */}
       <label className="text-xs text-text-secondary flex items-center gap-1.5 ml-auto">
         Sort:
-        <select
+        <Select
           data-testid="sort-key"
+          size="sm"
           value={sortKey}
           onChange={(e) => onSortKeyChange(e.target.value as SortKey)}
-          className={cn(
-            'border border-border-field rounded-md px-2 py-1 text-[13px]',
-            'bg-[#f9fafb] text-text-primary outline-none',
-          )}
-        >
-          <option value="updated">Recently updated</option>
-          <option value="name">Name A-Z</option>
-          <option value="created">Recently created</option>
-        </select>
+          aria-label="Sort pipelines"
+          options={[
+            { value: 'updated', label: 'Recently updated' },
+            { value: 'name', label: 'Name A-Z' },
+            { value: 'created', label: 'Recently created' },
+          ]}
+        />
       </label>
     </div>
   );
