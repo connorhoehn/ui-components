@@ -2309,7 +2309,7 @@ declare type TransformData = TransformNodeData & {
 
 declare type TransformFlowNode = Node_2<TransformData, 'transform'>;
 
-export declare function TransformGeoConfig({ data, onChange, nodeId }: TransformGeoConfigProps): JSX.Element;
+export declare function TransformGeoConfig({ data, onChange, nodeId, }: TransformGeoConfigProps): JSX.Element;
 
 declare interface TransformGeoConfigProps {
     data: ImageTransformNodeData;

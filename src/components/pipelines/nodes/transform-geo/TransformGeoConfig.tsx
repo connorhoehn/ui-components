@@ -2,9 +2,21 @@
 //
 // Config panel for image:transform — chain editor for geometric ops.
 
-import type { ImageTransformNodeData, GeometricOp, GeometricOpRotate } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import type {
+  ImageTransformNodeData,
+  GeometricOp,
+  GeometricOpRotate,
+} from '../../../../types/pipeline';
+import {
+  ConfigField,
+  NodeConfigShell,
+  SourceImagePathField,
+  ToggleField,
+} from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { NumberInput } from '../../../forms/NumberInput';
+import { Button } from '../../../ui/Button';
 
 export interface TransformGeoConfigProps {
   data: ImageTransformNodeData;
@@ -13,12 +25,18 @@ export interface TransformGeoConfigProps {
   nodeId?: string;
 }
 
+const OP_OPTIONS = [
+  { value: 'rotate', label: 'Rotate' },
+  { value: 'flip', label: 'Flip (vertical)' },
+  { value: 'flop', label: 'Flop (horizontal)' },
+];
+
 function defaultOp(opType: string): GeometricOp {
   switch (opType) {
     case 'rotate': return { op: 'rotate', degrees: 90 };
-    case 'flip':   return { op: 'flip' };
-    case 'flop':   return { op: 'flop' };
-    default:       return { op: 'rotate', degrees: 90 };
+    case 'flip': return { op: 'flip' };
+    case 'flop': return { op: 'flop' };
+    default: return { op: 'rotate', degrees: 90 };
   }
 }
 
@@ -29,82 +47,85 @@ interface OpCardProps {
   onRemove: () => void;
 }
 
-const inputCls = 'text-[12px] rounded border border-border bg-white px-2 py-1 font-mono outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const selectCls = 'flex-1 text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
-
 function OpCard({ op, index, onUpdate, onRemove }: OpCardProps) {
+  const rotate = op as GeometricOpRotate;
+
   return (
-    <div className="border border-border rounded-md p-2.5 bg-surface-inset flex flex-col gap-2" data-testid={`geo-op-card-${index}`}>
+    <div
+      className="border border-border rounded-md p-2.5 bg-surface-inset flex flex-col gap-2"
+      data-testid={`geo-op-card-${index}`}
+    >
       <div className="flex items-center gap-2">
-        <span className="text-[11px] text-text-tertiary font-semibold min-w-[20px]">{index + 1}.</span>
-        <select
-          className={selectCls}
+        <span className="text-[11px] text-text-tertiary font-semibold min-w-[20px]">
+          {index + 1}.
+        </span>
+        <Select
+          size="sm"
+          className="flex-1"
           value={op.op}
           onChange={(e) => onUpdate(defaultOp(e.target.value))}
           aria-label={`Op ${index + 1} type`}
-        >
-          <option value="rotate">Rotate</option>
-          <option value="flip">Flip (vertical)</option>
-          <option value="flop">Flop (horizontal)</option>
-        </select>
-        <button
-          type="button"
+          options={OP_OPTIONS}
+        />
+        <Button
+          size="sm"
+          variant="ghost"
           onClick={onRemove}
-          className="ml-auto text-[11px] font-semibold bg-transparent text-danger-fg border border-transparent rounded px-2 py-0.5 cursor-pointer hover:bg-danger-bg"
           aria-label={`Remove op ${index + 1}`}
         >
           ✕
-        </button>
+        </Button>
       </div>
+
       {op.op === 'rotate' && (
         <>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-text-tertiary min-w-[60px]">Degrees</label>
-            <input
-              type="number"
+            <span className="text-[11px] text-text-tertiary min-w-[60px]">Degrees</span>
+            <NumberInput
+              size="sm"
               min={-360}
               max={360}
               step={90}
-              className={`${inputCls} w-24`}
-              value={(op as GeometricOpRotate).degrees}
-              onChange={(e) => {
-                const v = parseFloat(e.target.value);
-                onUpdate({ ...op, degrees: Number.isFinite(v) ? v : 90 } as GeometricOpRotate);
-              }}
-              aria-label="Rotation degrees"
+              unit="°"
+              value={rotate.degrees}
+              onChange={(degrees) => onUpdate({ ...op, degrees } as GeometricOpRotate)}
+              data-testid={`geo-op-degrees-${index}`}
             />
-            <span className="text-[11px] text-text-tertiary">°</span>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-[11px] text-text-tertiary min-w-[60px]">Background</label>
-            <input
-              type="text"
+            <span className="text-[11px] text-text-tertiary min-w-[60px]">Background</span>
+            <Input
+              size="sm"
+              mono
               spellCheck={false}
-              className={`${inputCls} flex-1`}
-              value={(op as GeometricOpRotate).background ?? ''}
-              onChange={(e) => onUpdate({ ...op, background: e.target.value.trim() || undefined } as GeometricOpRotate)}
+              value={rotate.background ?? ''}
+              onChange={(e) =>
+                onUpdate({
+                  ...op,
+                  background: e.target.value.trim() || undefined,
+                } as GeometricOpRotate)
+              }
               placeholder="#000000"
+              aria-label={`Op ${index + 1} background`}
             />
           </div>
-          <label className="flex items-center gap-2 text-[12px] font-semibold text-text-secondary cursor-pointer">
-            <input
-              type="checkbox"
-              checked={(op as GeometricOpRotate).trimAfter ?? false}
-              onChange={(e) => onUpdate({ ...op, trimAfter: e.target.checked } as GeometricOpRotate)}
-              className="w-3.5 h-3.5 accent-primary"
-            />
-            Trim after rotate
-          </label>
+          <ToggleField
+            label="Trim after rotate"
+            checked={rotate.trimAfter ?? false}
+            onChange={(trimAfter) => onUpdate({ ...op, trimAfter } as GeometricOpRotate)}
+            data-testid={`geo-op-trim-${index}`}
+          />
         </>
       )}
     </div>
   );
 }
 
-export default function TransformGeoConfig({ data, onChange, nodeId }: TransformGeoConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+export default function TransformGeoConfig({
+  data,
+  onChange,
+  nodeId,
+}: TransformGeoConfigProps) {
   const ops = data.operations ?? [];
 
   const updateOp = (index: number, op: GeometricOp) => {
@@ -121,33 +142,17 @@ export default function TransformGeoConfig({ data, onChange, nodeId }: Transform
 
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="transform-geo-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="transform-geo-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={`mt-1 w-full ${inputCls}`}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Operations stack */}
-      <div>
-        <div className={`${labelCls} mb-2`}>
-          Operations <span className="text-text-tertiary font-normal">(applied top-to-bottom)</span>
-        </div>
-        {ops.length === 0 && (
-          <div className="text-[11px] text-text-tertiary mb-2 italic">
-            No operations — add at least one.
-          </div>
-        )}
+      <ConfigField
+        label="Operations"
+        error={ops.length === 0 ? 'Add at least one operation.' : undefined}
+        help="Applied top-to-bottom. Rotate (any angle), Flip (top-to-bottom mirror), Flop (left-to-right mirror)."
+      >
         <div className="flex flex-col gap-1.5">
           {ops.map((op, idx) => (
             <OpCard
@@ -159,18 +164,18 @@ export default function TransformGeoConfig({ data, onChange, nodeId }: Transform
             />
           ))}
         </div>
-        <button
-          type="button"
-          onClick={addOp}
-          className={`w-full text-[12px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer py-1.5 px-3 ${ops.length > 0 ? 'mt-2' : ''}`}
-          data-testid="add-geo-op-btn"
-        >
-          + Add operation
-        </button>
-        <div className={`${helpCls} mt-1.5`}>
-          Supported: Rotate (any angle), Flip (top-to-bottom mirror), Flop (left-to-right mirror).
+        <div className={ops.length > 0 ? 'mt-2' : ''}>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={addOp}
+            className="w-full"
+            data-testid="add-geo-op-btn"
+          >
+            + Add operation
+          </Button>
         </div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }

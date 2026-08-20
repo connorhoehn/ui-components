@@ -8,6 +8,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.56.0] — 2026-08-20
+
+Hand-rolled-control migration, batch 4. **14 files / 51 controls → 8 / 21.**
+
+### Changed
+
+- **Converted:** `ActionConfig` (the worst offender at 9),
+  `TransformGeoConfig`, `EditPromptConfig`, `VariationConfig`,
+  `TriggerConfig`, `RetryPolicyEditor`.
+- **`ActionConfig`'s "Retry up to N times" no longer nests a number input
+  inside a radio `<label>`.** A control inside a label steals clicks meant
+  for the option, so tabbing to the count and clicking it re-selected the
+  radio. The count is now a separate field that appears when Retry is
+  chosen, matching how `JoinConfig` handles `n_of_m`.
+- **Image-edit model lists** (`image:edit`) moved onto the `modelOptions`
+  seam, the last hardcoded lists in the node panels.
+
+### Note on `border-[#dc2626]`
+
+`TriggerConfig` styled its own invalid state with a raw hex, in three
+places, rather than the `invalid` prop the `Input`/`Select` composites
+already carry. That is the same class of drift as the `ConfigField` hexes
+fixed in v2.55.0: arbitrary-value hexes are invisible to the tones guard,
+which scans for palette *utility* classes. Converting the controls removed
+all three.
+
 ## [2.55.0] — 2026-08-20
 
 Hand-rolled-control migration, batch 3. **21 files / 88 controls → 14 / 51.**

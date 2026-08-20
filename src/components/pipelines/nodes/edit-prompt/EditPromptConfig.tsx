@@ -1,10 +1,19 @@
 // src/components/pipelines/nodes/edit-prompt/EditPromptConfig.tsx
 //
-// Config panel for image:edit-prompt (Nova Canvas inpaint).
+// Config panel for image:edit-prompt.
 
 import type { ImageEditPromptNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import {
+  ConfigField,
+  NodeConfigShell,
+  SamplePills,
+  SourceImagePathField,
+} from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { useModelOptions } from '../../services/PipelineEditorServicesContext';
+import { DEFAULT_IMAGE_EDIT_MODELS } from '../variation/VariationConfig';
 
 export interface EditPromptConfigProps {
   data: ImageEditPromptNodeData;
@@ -13,90 +22,66 @@ export interface EditPromptConfigProps {
   nodeId?: string;
 }
 
-const MASK_SAMPLES = [
-  '$.steps.mask.output.imageId',
-  '$.trigger.maskRef',
-];
-
-const MODEL_OPTIONS = [
-  { value: 'amazon.nova-canvas-v1:0', label: 'Nova Canvas v1 (default)' },
-];
-
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const MASK_SAMPLES = ['$.steps.mask.output.imageId', '$.trigger.maskRef'];
 
 export default function EditPromptConfig({ data, onChange, nodeId }: EditPromptConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const models = useModelOptions('image:edit', DEFAULT_IMAGE_EDIT_MODELS);
+  const promptMissing = !data.prompt?.trim();
+
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="edit-prompt-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="edit-prompt-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Mask image path */}
-      <div>
-        <label htmlFor="edit-prompt-mask-image-path" className={labelCls}>
-          Mask image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="edit-prompt-mask-image-path"
-          type="text"
+      <ConfigField
+        label="Mask image path"
+        help="Optional. White pixels are the edit region, black is preserved. Omit for outpainting."
+      >
+        <Input
+          size="sm"
+          mono
           spellCheck={false}
-          className={monoInputCls}
           value={data.maskImagePath ?? ''}
           onChange={(e) => onChange({ maskImagePath: e.target.value.trim() || undefined })}
           placeholder="$.steps.mask.output.imageId"
+          aria-label="Mask image path"
         />
-        <div className={helpCls}>
-          JSONPath to a mask image. White pixels = edit region, black = preserve. Omit for outpainting.
-        </div>
-        <SamplePills samples={MASK_SAMPLES} onSelect={(v) => onChange({ maskImagePath: v })} />
-      </div>
+        <SamplePills
+          samples={MASK_SAMPLES}
+          onSelect={(v) => onChange({ maskImagePath: v })}
+          aria-label="Common mask paths"
+        />
+      </ConfigField>
 
-      {/* Prompt */}
-      <div>
-        <label htmlFor="edit-prompt-prompt" className={labelCls}>Edit prompt</label>
-        <textarea
-          id="edit-prompt-prompt"
+      <ConfigField
+        label="Edit prompt"
+        required
+        error={promptMissing ? 'Edit prompt is required.' : undefined}
+        help="Describes what to generate in the masked region."
+      >
+        <Textarea
           rows={4}
           spellCheck={false}
-          className={`${inputCls} resize-y min-h-20`}
+          invalid={promptMissing}
           value={data.prompt ?? ''}
           onChange={(e) => onChange({ prompt: e.target.value })}
           placeholder="Replace the background with a sunny beach"
+          aria-label="Edit prompt"
         />
-        <div className={helpCls}>Describes what to generate in the masked region. Required.</div>
-      </div>
+      </ConfigField>
 
-      {/* Model */}
-      <div>
-        <label htmlFor="edit-prompt-model" className={labelCls}>Model</label>
-        <select
-          id="edit-prompt-model"
-          className={inputCls}
-          value={data.model ?? 'amazon.nova-canvas-v1:0'}
+      <ConfigField label="Model">
+        <Select
+          size="sm"
+          value={data.model ?? models[0]?.value ?? ''}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-      </div>
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+        />
+      </ConfigField>
     </NodeConfigShell>
   );
 }

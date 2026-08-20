@@ -14,8 +14,13 @@
 // represented as a halt with an attached retry budget in config.
 
 import type { ActionNodeData, ActionType } from '../../../../types/pipeline';
-import { ConfigField, NodeConfigShell } from '../shared';
+import { ConfigField, NodeConfigShell, ToggleField } from '../shared';
 import RetryPolicyEditor from '../RetryPolicyEditor';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
+import { Textarea } from '../../../forms/Textarea';
+import { NumberInput } from '../../../forms/NumberInput';
+import { RadioGroup } from '../../../forms/RadioGroup';
 
 export interface ActionConfigProps {
   data: ActionNodeData;
@@ -68,6 +73,17 @@ const SUBTYPE_FIELD_DEFS: Record<ActionType, FieldDef[]> = {
   ],
 };
 
+const ON_ERROR_OPTIONS = [
+  { value: 'route-error' as const, label: 'Route to error handle' },
+  { value: 'halt' as const, label: 'Halt pipeline' },
+  { value: 'retry' as const, label: 'Retry a fixed number of times' },
+];
+
+const IDEMPOTENCY_MODES = [
+  { value: 'per-step', label: 'Per step — fire once regardless of retries' },
+  { value: 'per-attempt', label: 'Per attempt — fire once per retry window' },
+];
+
 export default function ActionConfig({ data, onChange }: ActionConfigProps) {
   const fieldDefs = SUBTYPE_FIELD_DEFS[data.actionType];
   const config = data.config ?? {};
@@ -99,15 +115,13 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
     <NodeConfigShell>
       {/* Action type */}
       <ConfigField label="Action type" required>
-        <select
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Select
+          size="sm"
           value={data.actionType}
           onChange={(e) => onChange({ actionType: e.target.value as ActionType, config: {} })}
-        >
-          {ACTION_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          aria-label="Action type"
+          options={ACTION_OPTIONS}
+        />
       </ConfigField>
 
       {/* Per-subtype fields */}
@@ -117,20 +131,20 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
             <div key={fd.key}>
               <label className="text-[11px] font-semibold text-text-secondary">{fd.label}</label>
               {fd.multiline ? (
-                <textarea
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit resize-y min-h-[48px] mt-0.5"
+                <Textarea
                   rows={2}
                   placeholder={fd.placeholder}
                   value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
                   onChange={(e) => setConfigField(fd.key, e.target.value)}
+                  aria-label={fd.label}
                 />
               ) : (
-                <input
-                  type="text"
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit mt-0.5"
+                <Input
+                  size="sm"
                   placeholder={fd.placeholder}
                   value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
                   onChange={(e) => setConfigField(fd.key, e.target.value)}
+                  aria-label={fd.label}
                 />
               )}
               {fd.help && <div className="text-[11px] text-text-tertiary mt-0.5">{fd.help}</div>}
@@ -139,30 +153,26 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
         </div>
       </ConfigField>
 
-      {/* Idempotent */}
-      <div>
-        <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
-          <input
-            type="checkbox"
-            checked={!!data.idempotent}
-            onChange={(e) => onChange({ idempotent: e.target.checked })}
-          />
-          Idempotent
-        </label>
-        <div className="text-[11px] text-text-tertiary mt-0.5">This action is safe to retry.</div>
-      </div>
+      <ToggleField
+        label="Idempotent"
+        checked={!!data.idempotent}
+        onChange={(idempotent) => onChange({ idempotent })}
+        help="This action is safe to retry."
+        data-testid="action-idempotent"
+      />
 
       {/* Idempotency mode — visible only when idempotent is checked */}
       {data.idempotent && (
         <ConfigField label="Dedup scope">
-          <select
-            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+          <Select
+            size="sm"
             value={data.idempotencyMode ?? 'per-step'}
-            onChange={(e) => onChange({ idempotencyMode: e.target.value as 'per-attempt' | 'per-step' })}
-          >
-            <option value="per-step">Per step — fire once regardless of retries</option>
-            <option value="per-attempt">Per attempt — fire once per retry window</option>
-          </select>
+            onChange={(e) =>
+              onChange({ idempotencyMode: e.target.value as 'per-attempt' | 'per-step' })
+            }
+            aria-label="Dedup scope"
+            options={IDEMPOTENCY_MODES}
+          />
           <div className="text-[11px] text-text-tertiary mt-0.5">
             {(data.idempotencyMode ?? 'per-step') === 'per-step'
               ? 'Retries skip this action if it already succeeded. Best for post-comment, notify.'
@@ -177,49 +187,33 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
         onChange={(next) => onChange({ retryPolicy: next })}
       />
 
-      {/* On error */}
       <ConfigField label="On error">
-        <div className="flex flex-col gap-1.5">
-          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
-            <input
-              type="radio"
-              name="action-on-error"
-              checked={onErrorUI === 'route-error'}
-              onChange={() => setOnErrorUI('route-error')}
-            />
-            Route to error handle
-          </label>
-          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
-            <input
-              type="radio"
-              name="action-on-error"
-              checked={onErrorUI === 'halt'}
-              onChange={() => setOnErrorUI('halt')}
-            />
-            Halt pipeline
-          </label>
-          <label className="flex items-center gap-1.5 text-[13px] text-text-primary cursor-pointer">
-            <input
-              type="radio"
-              name="action-on-error"
-              checked={onErrorUI === 'retry'}
-              onChange={() => setOnErrorUI('retry')}
-            />
-            Retry up to
-            <input
-              type="number"
+        <RadioGroup
+          name="action-on-error"
+          value={onErrorUI}
+          onChange={setOnErrorUI}
+          options={ON_ERROR_OPTIONS}
+          data-testid="action-on-error"
+        />
+
+        {/* The count sits outside the radio label rather than inside it: a
+            control nested in a <label> steals clicks meant for the option. */}
+        {onErrorUI === 'retry' && (
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-text-secondary">
+              Attempts
+            </span>
+            <NumberInput
+              size="sm"
               min={1}
-              disabled={onErrorUI !== 'retry'}
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-16 flex-none font-inherit"
               value={retryCount}
-              onChange={(e) => {
-                const n = Math.max(1, parseInt(e.target.value, 10) || 1);
-                onChange({ onError: 'fail-run', config: { ...config, retryCount: n } });
-              }}
+              onChange={(n) =>
+                onChange({ onError: 'fail-run', config: { ...config, retryCount: n } })
+              }
+              data-testid="action-retry-count"
             />
-            times
-          </label>
-        </div>
+          </div>
+        )}
       </ConfigField>
     </NodeConfigShell>
   );

@@ -9,8 +9,9 @@
 
 import { useContext, useMemo, useState } from 'react';
 import type { TriggerNodeData, TriggerType } from '../../../../types/pipeline';
-import { cn } from '../../../../lib/cn';
 import { ConfigField, NodeConfigShell } from '../shared';
+import { Input } from '../../../forms/Input';
+import { Select } from '../../../forms/Select';
 import { parseCron, nextFires } from '../../cron/cronUtils';
 import { useToast } from '../../../shared/ToastProvider';
 import { PipelineEditorContext } from '../../context/PipelineEditorContext';
@@ -122,15 +123,13 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
     <NodeConfigShell>
       {/* Trigger type */}
       <ConfigField label="Trigger type" required>
-        <select
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit"
+        <Select
+          size="sm"
           value={data.triggerType}
           onChange={(e) => onChange({ triggerType: e.target.value as TriggerType })}
-        >
-          {TRIGGER_TYPE_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          aria-label="Trigger type"
+          options={TRIGGER_TYPE_OPTIONS}
+        />
       </ConfigField>
 
       {/* Document type (when document.*) */}
@@ -141,19 +140,17 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
           error={docTypeMissing ? 'Select a document type.' : undefined}
           help={!docTypeMissing ? 'Which document type should trigger this pipeline.' : undefined}
         >
-          <select
-            className={cn(
-              'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-inherit',
-              docTypeMissing ? 'border-[#dc2626]' : 'border-border-field',
-            )}
+          <Select
+            size="sm"
+            invalid={docTypeMissing}
             value={data.documentTypeId ?? ''}
             onChange={(e) => onChange({ documentTypeId: e.target.value || undefined })}
-          >
-            <option value="">— select a document type —</option>
-            {docTypes.map(dt => (
-              <option key={dt.id} value={dt.id}>{dt.name}</option>
-            ))}
-          </select>
+            aria-label="Document type"
+            options={[
+              { value: '', label: '— select a document type —' },
+              ...docTypes.map((dt) => ({ value: dt.id, label: dt.name })),
+            ]}
+          />
           {eventLabel && (
             <div className="text-[11px] text-text-tertiary mt-1.5">
               Event: <span className="font-semibold text-text-secondary">{eventLabel}</span>
@@ -174,15 +171,15 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
           }
           help={!scheduleMissing && !cronInvalid ? '5-field cron: minute hour day month weekday.' : undefined}
         >
-          <input
-            type="text"
-            className={cn(
-              'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-mono',
-              (scheduleMissing || cronInvalid) ? 'border-[#dc2626]' : 'border-border-field',
-            )}
+          <Input
+            size="sm"
+            mono
+            spellCheck={false}
+            invalid={scheduleMissing || cronInvalid}
             placeholder="*/15 * * * *"
             value={data.schedule ?? ''}
             onChange={(e) => onChange({ schedule: e.target.value })}
+            aria-label="Cron schedule"
           />
           <div className="mt-2 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-tertiary font-mono">
             {upcomingFires.length > 0 ? (
@@ -214,15 +211,15 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
             }
             help={!webhookMissing && !webhookPathInvalid ? 'Alphanumeric, _, or - (max 64 chars). No leading slash.' : undefined}
           >
-            <input
-              type="text"
-              className={cn(
-                'border rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full font-mono',
-                (webhookMissing || webhookPathInvalid) ? 'border-[#dc2626]' : 'border-border-field',
-              )}
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              invalid={webhookMissing || webhookPathInvalid}
               placeholder="weekly-digest"
               value={webhookPathRaw}
               onChange={(e) => onChange({ webhookPath: e.target.value })}
+              aria-label="Webhook path"
             />
           </ConfigField>
 

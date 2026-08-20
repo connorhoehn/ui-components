@@ -29,15 +29,9 @@ const CONTROL_RE = /<(select|textarea|input)\b/g;
 
 /** file (relative to ROOT) -> number of raw controls still present. */
 const BASELINE = {
-  'action/ActionConfig.tsx': 9,
   'approval/ApprovalConfig.tsx': 5,
-  'transform-geo/TransformGeoConfig.tsx': 5,
-  'RetryPolicyEditor.tsx': 4,
-  'edit-prompt/EditPromptConfig.tsx': 4,
   'llm/LLMConfig.tsx': 4,
   'transform/TransformConfig.tsx': 4,
-  'trigger/TriggerConfig.tsx': 4,
-  'variation/VariationConfig.tsx': 4,
   'crop/CropConfig.tsx': 3,
   'scatter/ScatterConfig.tsx': 2,
   'adjust-layer/AdjustLayerConfig.tsx': 1,

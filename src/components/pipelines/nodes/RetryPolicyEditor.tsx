@@ -5,6 +5,8 @@
 // types but had no UI surface — operators had to hand-edit JSON.
 
 import type { RetryPolicy } from '../../../types/pipeline';
+import { NumberInput } from '../../forms/NumberInput';
+import { ToggleField } from './shared';
 
 export interface RetryPolicyEditorProps {
   value: RetryPolicy | undefined;
@@ -47,65 +49,49 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
 
   return (
     <div data-testid="retry-policy-editor" className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold text-text-secondary flex items-center gap-1.5">
-        <input
-          type="checkbox"
-          checked={enabled}
-          onChange={(e) => onChange(e.target.checked ? DEFAULT_POLICY : undefined)}
-          aria-label="Enable retries"
-        />
-        Retry policy
-      </label>
-      {!enabled && (
-        <div className="text-[11px] text-text-tertiary mt-1">No retries — failure is terminal on first attempt.</div>
-      )}
+      <ToggleField
+        label="Retry policy"
+        checked={enabled}
+        onChange={(on) => onChange(on ? DEFAULT_POLICY : undefined)}
+        help={enabled ? undefined : 'No retries — failure is terminal on first attempt.'}
+        data-testid="retry-policy-enabled"
+      />
       {enabled && (
         <>
           <div className="grid grid-cols-3 gap-2 mt-1">
             <div>
               <label className="text-[11px] font-semibold text-text-secondary">Max attempts</label>
-              <input
-                type="number"
+              <NumberInput
+                size="sm"
                 min={1}
                 max={10}
                 step={1}
-                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
                 value={policy.maxAttempts}
-                onChange={(e) => {
-                  const n = Math.max(1, Math.min(10, parseInt(e.target.value, 10) || 1));
-                  onChange({ ...policy, maxAttempts: n });
-                }}
+                onChange={(maxAttempts) => onChange({ ...policy, maxAttempts })}
                 aria-label="Max attempts"
               />
             </div>
             <div>
               <label className="text-[11px] font-semibold text-text-secondary">Initial backoff (ms)</label>
-              <input
-                type="number"
+              <NumberInput
+                size="sm"
                 min={0}
                 step={100}
-                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
+                unit="ms"
                 value={policy.backoffMs}
-                onChange={(e) => {
-                  const n = Math.max(0, parseInt(e.target.value, 10) || 0);
-                  onChange({ ...policy, backoffMs: n });
-                }}
+                onChange={(backoffMs) => onChange({ ...policy, backoffMs })}
                 aria-label="Initial backoff in milliseconds"
               />
             </div>
             <div>
               <label className="text-[11px] font-semibold text-text-secondary">Backoff multiplier</label>
-              <input
-                type="number"
+              <NumberInput
+                size="sm"
                 min={1}
                 max={4}
                 step={0.5}
-                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none w-full mt-0.5 font-inherit"
                 value={policy.backoffMultiplier}
-                onChange={(e) => {
-                  const n = Math.max(1, Math.min(4, parseFloat(e.target.value) || 1));
-                  onChange({ ...policy, backoffMultiplier: n });
-                }}
+                onChange={(backoffMultiplier) => onChange({ ...policy, backoffMultiplier })}
                 aria-label="Backoff multiplier"
               />
             </div>

@@ -1,10 +1,15 @@
 // src/components/pipelines/nodes/variation/VariationConfig.tsx
 //
-// Config panel for image:variation (Nova Canvas).
+// Config panel for image:variation.
 
 import type { ImageVariationNodeData } from '../../../../types/pipeline';
-import { NodeConfigShell, SamplePills } from '../shared';
-import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
+import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
+import { Select } from '../../../forms/Select';
+import { NumberInput } from '../../../forms/NumberInput';
+import {
+  useModelOptions,
+  type ModelOption,
+} from '../../services/PipelineEditorServicesContext';
 
 export interface VariationConfigProps {
   data: ImageVariationNodeData;
@@ -13,92 +18,63 @@ export interface VariationConfigProps {
   nodeId?: string;
 }
 
-const MODEL_OPTIONS = [
+/** Replaceable via `modelOptions['image:edit']`. */
+export const DEFAULT_IMAGE_EDIT_MODELS: readonly ModelOption[] = [
   { value: 'amazon.nova-canvas-v1:0', label: 'Nova Canvas v1 (default)' },
 ];
 
-const inputCls = 'mt-1 w-full text-[12px] rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-const monoInputCls = `${inputCls} font-mono`;
-const labelCls = 'text-[12px] font-semibold text-text-secondary';
-const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
+const MAX_VARIATIONS = 8;
 
 export default function VariationConfig({ data, onChange, nodeId }: VariationConfigProps) {
-  const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const models = useModelOptions('image:edit', DEFAULT_IMAGE_EDIT_MODELS);
+
   return (
     <NodeConfigShell>
-      {/* Source image path */}
-      <div>
-        <label htmlFor="variation-source-image-path" className={labelCls}>
-          Source image path <span className="text-text-tertiary font-normal">(optional)</span>
-        </label>
-        <input
-          id="variation-source-image-path"
-          type="text"
-          spellCheck={false}
-          className={monoInputCls}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) => onChange({ sourceImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.trigger.imageRef"
-        />
-        <SamplePills samples={imageRefOptions.map((o) => o.path)} onSelect={(v) => onChange({ sourceImagePath: v })} />
-      </div>
+      <SourceImagePathField
+        value={data.sourceImagePath}
+        onChange={(v) => onChange({ sourceImagePath: v })}
+        nodeId={nodeId}
+      />
 
-      {/* Model */}
-      <div>
-        <label htmlFor="variation-model" className={labelCls}>Model</label>
-        <select
-          id="variation-model"
-          className={inputCls}
-          value={data.model ?? 'amazon.nova-canvas-v1:0'}
+      <ConfigField label="Model">
+        <Select
+          size="sm"
+          value={data.model ?? models[0]?.value ?? ''}
           onChange={(e) => onChange({ model: e.target.value })}
-        >
-          {MODEL_OPTIONS.map((m) => (
-            <option key={m.value} value={m.value}>{m.label}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* numVariations */}
-      <div>
-        <label htmlFor="variation-num-variations" className={labelCls}>
-          Number of variations <span className="text-text-tertiary font-normal">(fan-out)</span>
-        </label>
-        <input
-          id="variation-num-variations"
-          type="number"
-          min={1}
-          max={8}
-          step={1}
-          className={inputCls}
-          value={data.numVariations ?? 1}
-          onChange={(e) => {
-            const v = parseInt(e.target.value, 10);
-            onChange({ numVariations: Number.isFinite(v) && v >= 1 ? Math.min(8, v) : 1 });
-          }}
+          aria-label="Model"
+          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
         />
-        <div className={helpCls}>Always fans out — each variation becomes a separate arm downstream.</div>
-      </div>
+      </ConfigField>
 
-      {/* Similarity */}
-      <div>
-        <label htmlFor="variation-similarity" className={labelCls}>
-          Similarity <span className="text-text-tertiary font-normal">(0.0–1.0, default 0.7)</span>
-        </label>
-        <input
-          id="variation-similarity"
-          type="number"
+      <ConfigField
+        label="Number of variations"
+        help="Always fans out — each variation becomes a separate arm downstream."
+      >
+        <NumberInput
+          size="sm"
+          min={1}
+          max={MAX_VARIATIONS}
+          step={1}
+          value={data.numVariations ?? 1}
+          onChange={(numVariations) => onChange({ numVariations })}
+          data-testid="variation-num-variations"
+        />
+      </ConfigField>
+
+      <ConfigField
+        label="Similarity"
+        help="0 is very different, 1 is nearly identical. 0.7 is a good starting point."
+      >
+        <NumberInput
+          size="sm"
           min={0}
           max={1}
           step={0.05}
-          className={inputCls}
           value={data.similarity ?? 0.7}
-          onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            onChange({ similarity: Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0.7 });
-          }}
+          onChange={(similarity) => onChange({ similarity })}
+          data-testid="variation-similarity"
         />
-        <div className={helpCls}>0 = very different, 1 = nearly identical. 0.7 is a good starting point.</div>
-      </div>
+      </ConfigField>
     </NodeConfigShell>
   );
 }
