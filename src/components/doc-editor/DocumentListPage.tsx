@@ -143,7 +143,7 @@ function PresenceAvatars({
       })}
       {overflow > 0 && (
         <div
-          className={cn('w-8 h-8 rounded-full bg-[#94a3b8] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5')}
+          className={cn('w-8 h-8 rounded-full bg-neutral text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5')}
         >
           +{overflow}
         </div>
@@ -193,11 +193,11 @@ export default function DocumentListPage({
       {/* Header */}
       {!hideHeader && (
       <div className={cn('flex items-center justify-between mb-5')}>
-        <h1 className={cn('m-0 text-[22px] font-bold text-[#1e293b]')}>Documents</h1>
+        <h1 className={cn('m-0 text-[22px] font-bold text-text-primary')}>Documents</h1>
         <button
           data-testid="new-document-btn"
           onClick={() => setShowModal(true)}
-          className={cn('flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-[#3b82f6] text-white cursor-pointer font-[inherit]')}
+          className={cn('flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-info text-white cursor-pointer font-[inherit]')}
         >
           <span className={cn('text-base leading-none')}>+</span>
           New Document
@@ -237,7 +237,7 @@ export default function DocumentListPage({
                 {/* Left: metadata */}
                 <div className={cn('flex-1 min-w-0')}>
                   <div className={cn('flex items-center gap-2 mb-0.5')}>
-                    <span className={cn('text-[15px] font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
+                    <span className={cn('text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>
                       {doc.title}
                     </span>
                     <StatusBadge status={doc.status} />
@@ -247,7 +247,7 @@ export default function DocumentListPage({
                       </span>
                     )}
                     {doc.activeCallSessionId && (
-                      <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] leading-[18px]')}>
+                      <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-success-bg text-success-fg leading-[18px]')}>
                         <span className={cn('w-1.5 h-1.5 rounded-full bg-success animate-pulse')} />
                         Live Call
                       </span>
@@ -278,7 +278,7 @@ export default function DocumentListPage({
                   <button
                     onClick={(e) => handleDelete(e, doc.id, doc.title)}
                     title="Delete document"
-                    className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0')}
+                    className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-danger-bg text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0')}
                   >
                     &#215;
                   </button>
@@ -301,7 +301,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage <= 1 ? 'bg-surface-hover text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage <= 1 ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
             )}
           >
             Previous
@@ -318,7 +318,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage >= totalPages ? 'bg-surface-hover text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage >= totalPages ? 'bg-surface-hover text-text-tertiary cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
             )}
           >
             Next

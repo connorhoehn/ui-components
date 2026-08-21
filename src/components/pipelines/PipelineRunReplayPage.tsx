@@ -438,7 +438,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" className="py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]">
+              <div data-testid="retry-modal-error" className="py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg">
                 {retryError}
               </div>
             )}
@@ -523,7 +523,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
             <Banner title="Run failed:" className="mb-4">
               {run.error.message}
               {run.error.nodeId && run.error.nodeId !== 'unknown' && (
-                <span className="ml-2 text-[11px] text-[#b91c1c]">
+                <span className="ml-2 text-[11px] text-danger-fg">
                   at node {run.error.nodeId.slice(0, 8)}
                 </span>
               )}

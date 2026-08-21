@@ -47,7 +47,7 @@ export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }:
   const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();
 
   return (
-    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-[#e2e8f0] font-mono')} style={style}>
+    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono')} style={style}>
       <span className={cn('flex items-center gap-1')}>
         <span className={cn('w-[7px] h-[7px] rounded-full', phaseDotClasses[phase] ?? 'bg-surface-emphasis')} />
         <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-text-tertiary')}>{label}</span>

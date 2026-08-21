@@ -17,9 +17,9 @@ export interface ConfirmDialogProps {
 }
 
 const CONFIRM_BG: Record<NonNullable<ConfirmDialogProps['tone']>, string> = {
-  destructive: 'bg-[#ef4444] hover:bg-danger',
+  destructive: 'bg-danger hover:bg-danger',
   caution: 'bg-warning hover:bg-warning',
-  info: 'bg-[#3b82f6] hover:bg-info',
+  info: 'bg-info hover:bg-info',
 };
 
 export default function ConfirmDialog({

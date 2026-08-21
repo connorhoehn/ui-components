@@ -85,7 +85,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     >
       <div onKeyDown={handleKeyDown} className="contents">
         {/* Header */}
-        <h2 className={cn('m-0 px-6 pt-6 pb-4 text-lg font-bold text-[#1e293b] shrink-0')}>
+        <h2 className={cn('m-0 px-6 pt-6 pb-4 text-lg font-bold text-text-primary shrink-0')}>
           Create New Document
         </h2>
 
@@ -96,7 +96,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
           {types.length === 0 ? (
             <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-neutral')}>
               <div className={cn('text-[40px] mb-3')}>📋</div>
-              <div className={cn('text-[15px] font-semibold mb-2 text-[#374151]')}>
+              <div className={cn('text-[15px] font-semibold mb-2 text-text-primary')}>
                 No document types defined yet
               </div>
               <div className={cn('text-[13px] text-text-tertiary max-w-xs mx-auto mb-4')}>
@@ -127,12 +127,12 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                         onClick={() => setSelectedId(t.id)}
                         className={cn(
                           'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
-                          isSelected ? 'bg-info-bg border-2 border-[#3b82f6]' : 'bg-white border-2 border-border hover:bg-surface-panel',
+                          isSelected ? 'bg-info-bg border-2 border-info' : 'bg-white border-2 border-border hover:bg-surface-panel',
                         )}
                       >
                         <span className={cn('text-2xl shrink-0')}>{t.icon}</span>
                         <div className={cn('min-w-0')}>
-                          <div className={cn('text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
+                          <div className={cn('text-sm font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>
                             {t.name}
                           </div>
                           {t.description && (
@@ -145,7 +145,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                           </div>
                         </div>
                         {isSelected && (
-                          <span className={cn('absolute top-1.5 right-2 text-sm text-[#3b82f6] font-bold')}>
+                          <span className={cn('absolute top-1.5 right-2 text-sm text-info-fg font-bold')}>
                             ✓
                           </span>
                         )}
@@ -158,7 +158,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               {/* Title */}
               <div className={cn('mb-4')}>
                 <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
-                  Title <span className={cn('text-[#ef4444]')}>*</span>
+                  Title <span className={cn('text-danger-fg')}>*</span>
                 </label>
                 <Input
                   ref={titleRef}
@@ -203,7 +203,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
               disabled={!canSubmit}
               className={cn(
                 'px-5 py-2 text-sm font-semibold border-none rounded-lg text-white font-[inherit]',
-                canSubmit ? 'bg-[#3b82f6] cursor-pointer' : 'bg-[#94a3b8] cursor-not-allowed',
+                canSubmit ? 'bg-info cursor-pointer' : 'bg-neutral cursor-not-allowed',
               )}
             >
               Create Document

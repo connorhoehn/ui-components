@@ -58,7 +58,7 @@ export function NotificationCenter({
   const tabCls = (active: boolean) => cn(
     'px-3 py-1.5 text-sm border-none rounded-md cursor-pointer font-[inherit] transition-colors duration-100',
     active
-      ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
+      ? 'bg-primary-bg text-text-primary font-semibold'
       : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]',
   );
 
@@ -75,7 +75,7 @@ export function NotificationCenter({
         <span className="text-sm font-semibold text-[var(--color-text-primary)]">
           Notifications
           {hasUnread && (
-            <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-bold bg-[#ef4444] text-white leading-none">
+            <span className="ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-bold bg-danger text-white leading-none">
               {unread.length}
             </span>
           )}
@@ -153,7 +153,7 @@ export function NotificationCenter({
                   </span>
                   {!item.read && (
                     <span
-                      className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#3b82f6]"
+                      className="shrink-0 w-1.5 h-1.5 rounded-full bg-info"
                       aria-label="Unread"
                     />
                   )}

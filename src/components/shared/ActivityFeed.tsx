@@ -89,10 +89,10 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
       <Avatar name={item.actor} size={17} />
 
       {/* "Alex C. merged" */}
-      <span className="text-[11px] text-[#374151] font-medium shrink-0">
+      <span className="text-[11px] text-text-primary font-medium shrink-0">
         {shortName(item.actor)}
       </span>
-      <span className="text-[11px] text-[#9ca3af] shrink-0">{item.action}</span>
+      <span className="text-[11px] text-text-tertiary shrink-0">{item.action}</span>
 
       {/* Ticket badge */}
       {item.ticketId && (
@@ -103,7 +103,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Subject */}
       <span
-        className="text-[11px] text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
+        className="text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0"
         title={item.subject}
       >
         {truncSubject}
@@ -111,7 +111,7 @@ function ActivityRow({ item, opacity, dotColor }: ActivityRowProps) {
 
       {/* Timestamp */}
       {item.timeLabel && (
-        <span className="text-[10px] text-[#d1d5db] shrink-0 whitespace-nowrap">
+        <span className="text-[10px] text-code-subtle shrink-0 whitespace-nowrap">
           {item.timeLabel}
         </span>
       )}
@@ -170,7 +170,7 @@ export function ActivityFeed({
   if (visible.length === 0) {
     return (
       <div className={cn('flex-1 flex items-center', className)}>
-        <span className="text-[11px] text-[#e5e7eb]">No recent activity</span>
+        <span className="text-[11px] text-border">No recent activity</span>
       </div>
     );
   }

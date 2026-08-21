@@ -133,7 +133,7 @@ function B({ messages: t, onSend: r, disabled: e = !1, onTyping: i, typingUsers:
           disabled: e || !c.trim(),
           className: p(
             "text-[0.8rem] px-3 py-1 border border-border-field rounded font-mono",
-            e || !c.trim() ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-[#007bff] text-white cursor-pointer"
+            e || !c.trim() ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-info text-white cursor-pointer"
           ),
           children: "Send"
         }

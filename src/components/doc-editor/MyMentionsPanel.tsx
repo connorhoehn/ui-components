@@ -63,7 +63,7 @@ function MentionRow({
 }) {
   return (
     <div
-      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-[#f3f4f6] items-start hover:bg-[#f9fafb]')}
+      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
       onClick={onClick}
     >
       <div
@@ -115,7 +115,7 @@ function TaskRow({
 
   return (
     <div
-      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-[#f3f4f6] items-start hover:bg-[#f9fafb]')}
+      className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
       onClick={onClick}
     >
       <div

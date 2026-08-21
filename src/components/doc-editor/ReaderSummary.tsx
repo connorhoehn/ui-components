@@ -166,13 +166,13 @@ export function ExecutiveSummaryCard({
         </div>
       ) : hasContent ? (
         <div className={cn(
-          'text-sm text-[#1e293b] leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          'text-sm text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
           bullets.length > 0 ? 'mb-3' : '',
         )}>
           {contentText!.trim()}
         </div>
       ) : null}
-      <ul className={cn('m-0 pl-[18px] text-[13px] text-[#334155] leading-relaxed')}>
+      <ul className={cn('m-0 pl-[18px] text-[13px] text-text-primary leading-relaxed')}>
         {bullets.map((b, i) => (
           <li key={i}>{b}</li>
         ))}

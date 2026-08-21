@@ -39,10 +39,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     if (this.state.hasError) {
       return (
         <div className="bg-danger-bg border border-danger-border rounded-lg p-6 text-center font-sans">
-          <p className="m-0 mb-2 text-[0.95rem] font-semibold text-[#991b1b]">
+          <p className="m-0 mb-2 text-[0.95rem] font-semibold text-danger-fg">
             Something went wrong
           </p>
-          <p className="m-0 mb-4 text-[0.8rem] text-[#b91c1c]">
+          <p className="m-0 mb-4 text-[0.8rem] text-danger-fg">
             {this.state.error?.message ?? 'An unexpected error occurred.'}
           </p>
           <button

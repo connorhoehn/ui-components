@@ -269,13 +269,13 @@ function LlmDiff({ a, b }: { a: string; b: string }) {
         if (p.type === 'eq') return <span key={i}>{p.text}</span>;
         if (p.type === 'add') {
           return (
-            <span key={i} data-diff="add" className="bg-[#dcfce7] text-[#166534]">
+            <span key={i} data-diff="add" className="bg-success-bg text-success-fg">
               {p.text}
             </span>
           );
         }
         return (
-          <span key={i} data-diff="del" className="bg-[#fee2e2] text-[#991b1b] line-through">
+          <span key={i} data-diff="del" className="bg-danger-bg text-danger-fg line-through">
             {p.text}
           </span>
         );

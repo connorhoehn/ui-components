@@ -8,7 +8,7 @@ export default function SocialPanelDemo() {
     <SimulatedProvider timeline={socialActivityTimeline} autoPlay>
       <div className="p-6">
         <div className="mb-6">
-          <h2 className="text-[20px] font-semibold mb-2 text-[#1a1a2e]">
+          <h2 className="text-[20px] font-semibold mb-2 text-text-primary">
             Social &amp; Chat
           </h2>
           <p className="text-neutral text-[14px]">

@@ -280,7 +280,7 @@ export default function DataDisplayPage() {
               <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 📋
               </div>
-              <div className="text-[16px] font-semibold text-[#334155] mb-1">No items yet</div>
+              <div className="text-[16px] font-semibold text-text-primary mb-1">No items yet</div>
               <div className="text-[13px] text-text-tertiary max-w-60 leading-[1.5] mb-[14px]">
                 Create your first item to get started with your project.
               </div>
@@ -295,7 +295,7 @@ export default function DataDisplayPage() {
               <div className="w-16 h-16 rounded-[32px] bg-surface-hover flex items-center justify-center text-[28px] mb-3">
                 🔍
               </div>
-              <div className="text-[16px] font-semibold text-[#334155] mb-1">No results found</div>
+              <div className="text-[16px] font-semibold text-text-primary mb-1">No results found</div>
               <div className="text-[13px] text-text-tertiary max-w-60 leading-[1.5]">
                 Try adjusting your search or filter criteria to find what you need.
               </div>
@@ -344,7 +344,7 @@ export default function DataDisplayPage() {
               <StatusDot size="sm" color={toneVar(event.tone)} />
               <span className="text-[11px] text-text-tertiary font-mono w-16 shrink-0">{event.ts}</span>
               <span className="text-[11px] font-semibold shrink-0 min-w-45" style={{ color: toneVar(event.tone) }}>{event.type}</span>
-              <span className="text-[13px] text-[#334155] flex-[1] overflow-hidden text-ellipsis whitespace-nowrap">{event.summary}</span>
+              <span className="text-[13px] text-text-primary flex-[1] overflow-hidden text-ellipsis whitespace-nowrap">{event.summary}</span>
             </div>
           ))}
         </div>

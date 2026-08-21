@@ -69,13 +69,13 @@ function SourceTable() {
   return (
     <div className="bg-surface border border-border rounded-lg overflow-hidden"
     >
-      <div className="py-[10px] px-4 border-b border-border font-semibold text-[13px] text-[#1a1a2e]"
+      <div className="py-[10px] px-4 border-b border-border font-semibold text-[13px] text-text-primary"
       >
         Sources
       </div>
       <table className="w-full border-collapse text-[13px]">
         <thead>
-          <tr className="border-b border-border bg-[#f8f9fa]">
+          <tr className="border-b border-border bg-surface-panel">
             <th className="py-2 px-4 text-left font-semibold text-neutral">
               Source
             </th>
@@ -91,7 +91,7 @@ function SourceTable() {
           {sources.map((source) => {
             return (
               <tr className="border-b border-surface-hover" key={source.sourceId}>
-                <td className="py-[10px] px-4 text-[#1a1a2e]">{source.sourceName}</td>
+                <td className="py-[10px] px-4 text-text-primary">{source.sourceName}</td>
                 <td className="py-[10px] px-4">
                   <Chip tone={statusTone[source.status] ?? 'neutral'}>
                     {source.status}
@@ -114,7 +114,7 @@ export default function IngestDashboardDemo() {
     <SimulatedProvider timeline={ingestActivityTimeline} autoPlay>
       <div className="p-6">
         <div className="mb-6">
-          <h2 className="text-[20px] font-semibold mb-2 text-[#1a1a2e]">
+          <h2 className="text-[20px] font-semibold mb-2 text-text-primary">
             Ingest Dashboard
           </h2>
           <p className="text-neutral text-[14px]">

@@ -100,7 +100,7 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         <span className="font-[ui-monospace,monospace] text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap" title={item.sourcePath}>
           {item.sourcePath}
         </span>
-        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]">
+        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-warning-bg text-warning-fg">
           conf {conf}
         </span>
       </div>

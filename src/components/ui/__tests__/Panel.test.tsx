@@ -10,7 +10,7 @@ describe('Panel', () => {
   it('applies dark variant class', () => {
     render(<Panel variant="dark">Dark panel</Panel>);
     const panel = screen.getByText('Dark panel').closest('div');
-    expect(panel?.className).toContain('bg-[#111827]');
+    expect(panel?.className).toContain('bg-surface-inverse');
   });
 });
 

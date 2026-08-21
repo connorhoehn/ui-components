@@ -74,14 +74,14 @@ export default function DocumentHeader({
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
 
   return (
-    <header className={cn('flex flex-col py-2 px-4 bg-white border-b border-[#e5e7eb] shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
+    <header className={cn('flex flex-col py-2 px-4 bg-white border-b border-border shrink-0 gap-1.5 sticky top-[53px] z-[34]')}>
       {/* Row 1: breadcrumb + title + status + participants */}
       <div className={cn('flex items-center justify-between')}>
         <div className={cn('flex items-center gap-2.5')}>
           {onBack && (
             <button
               onClick={onBack}
-              className={cn('bg-transparent border-none text-[#3b82f6] cursor-pointer text-[13px] p-0 flex items-center gap-1 font-[inherit]')}
+              className={cn('bg-transparent border-none text-info-fg cursor-pointer text-[13px] p-0 flex items-center gap-1 font-[inherit]')}
             >
               &larr; Documents
             </button>
@@ -119,7 +119,7 @@ export default function DocumentHeader({
             </span>
           )}
           {commentCount != null && commentCount > 0 && (
-            <span className={cn('inline-flex items-center gap-1 text-[11px] font-semibold py-0.5 px-2.5 rounded-full bg-[#f3f4f6] text-[#6b7280]')}>
+            <span className={cn('inline-flex items-center gap-1 text-[11px] font-semibold py-0.5 px-2.5 rounded-full bg-surface-hover text-text-secondary')}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
@@ -142,7 +142,7 @@ export default function DocumentHeader({
               data-testid={`mode-btn-${m}`}
               className={cn(
                 'py-1.5 px-3.5 text-[13px] font-semibold border border-border-field rounded-md cursor-pointer font-[inherit]',
-                mode === m ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#374151]',
+                mode === m ? 'bg-info text-white' : 'bg-white text-text-primary',
               )}
               onClick={() => onModeChange(m)}
             >
@@ -155,7 +155,7 @@ export default function DocumentHeader({
           {/* My Items — always visible */}
           <button
             type="button"
-            className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative')}
+            className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative')}
             onClick={onToggleMyItems}
           >
             My Items{myItemCount ? ` (${myItemCount})` : ''}
@@ -167,7 +167,7 @@ export default function DocumentHeader({
               type="button"
               className={cn(
                 'py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative',
-                isCallActive ? 'bg-[#dcfce7] text-[#166534] border-[#86efac]' : 'bg-white text-[#374151] border-border-field',
+                isCallActive ? 'bg-success-bg text-success-fg border-success-border' : 'bg-white text-text-primary border-border-field',
               )}
               onClick={onToggleVideoCall}
             >
@@ -179,7 +179,7 @@ export default function DocumentHeader({
           {meta.status === 'final' ? (
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-success-bg text-[#065f46] cursor-pointer font-[inherit] relative')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
               onClick={onUnlock}
             >
               Unlock
@@ -187,7 +187,7 @@ export default function DocumentHeader({
           ) : (
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-success-bg text-[#065f46] cursor-pointer font-[inherit] relative')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-success-border rounded-md bg-success-bg text-success-fg cursor-pointer font-[inherit] relative')}
               onClick={onFinalize}
             >
               Finalize
@@ -198,17 +198,17 @@ export default function DocumentHeader({
           <div className={cn('relative')}>
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative tracking-wider')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-text-primary cursor-pointer font-[inherit] relative tracking-wider')}
               onClick={() => setShowMore((v) => !v)}
               title="More actions"
             >
               ⋯
             </button>
             {showMore && (
-              <div className={cn('absolute top-full right-0 mt-1 bg-white border border-[#e5e7eb] rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
+              <div className={cn('absolute top-full right-0 mt-1 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] z-50 min-w-[160px] overflow-hidden')}>
                 <button
                   type="button"
-                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
+                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
                   onClick={() => { onToggleHistory(); setShowMore(false); }}
                 >
                   History
@@ -216,27 +216,27 @@ export default function DocumentHeader({
                 {onToggleVideoHistory && (pastCallsCount ?? 0) > 0 && (
                   <button
                     type="button"
-                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
+                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
                     onClick={() => { onToggleVideoHistory(); setShowMore(false); }}
                   >
                     Past Calls ({pastCallsCount})
                   </button>
                 )}
-                <div className={cn('border-t border-[#f1f5f9] my-1')} />
+                <div className={cn('border-t border-border-subtle my-1')} />
                 {(['markdown', 'pdf', 'json'] as const).map((fmt) => (
                   <button
                     key={fmt}
                     type="button"
-                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#374151] text-left cursor-pointer font-[inherit] hover:bg-[#f3f4f6]')}
+                    className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-text-primary text-left cursor-pointer font-[inherit] hover:bg-surface-hover')}
                     onClick={() => { onExport(fmt); setShowMore(false); }}
                   >
                     Export {fmt.charAt(0).toUpperCase() + fmt.slice(1)}
                   </button>
                 ))}
-                <div className={cn('border-t border-[#f1f5f9] my-1')} />
+                <div className={cn('border-t border-border-subtle my-1')} />
                 <button
                   type="button"
-                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-danger-fg text-left cursor-pointer font-[inherit] hover:bg-[#fff5f5]')}
+                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-danger-fg text-left cursor-pointer font-[inherit] hover:bg-danger-bg')}
                   onClick={() => { setShowMore(false); if (window.confirm('Clear all document content? This cannot be undone.')) onClearDocument(); }}
                 >
                   Clear Document

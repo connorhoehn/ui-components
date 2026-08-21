@@ -89,7 +89,7 @@ export function FieldDefinitionEditor({
         className={cn(
           'px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer',
           field.required
-            ? 'bg-[#ede9fe] text-[#4c1d95] border border-[#c4b5fd]'
+            ? 'bg-accent-bg text-accent-fg border border-accent-border'
             : 'bg-surface-panel text-text-tertiary border border-border',
         )}
       >
@@ -103,7 +103,7 @@ export function FieldDefinitionEditor({
         className={cn(
           'px-2 py-[3px] text-[11px] font-semibold rounded-[7px] font-inherit shrink-0 cursor-pointer',
           field.defaultCollapsed
-            ? 'bg-success-bg text-success-fg border border-[#86efac]'
+            ? 'bg-success-bg text-success-fg border border-success-border'
             : 'bg-surface-panel text-text-tertiary border border-border',
         )}
       >
@@ -115,7 +115,7 @@ export function FieldDefinitionEditor({
         type="button"
         onClick={onRemove}
         data-testid={`field-remove-${field.id}`}
-        className="px-1.5 py-0.5 text-sm bg-transparent border-none text-[#ef4444] cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
+        className="px-1.5 py-0.5 text-sm bg-transparent border-none text-danger-fg cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
       >
         ×
       </button>

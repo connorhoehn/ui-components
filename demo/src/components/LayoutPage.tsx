@@ -13,7 +13,7 @@ const tocItems: TocItem[] = [
 const PANEL_FRAME_LIGHT =
   'border border-border rounded-lg overflow-hidden bg-white w-[320px] shadow';
 const PANEL_FRAME_DARK =
-  'border border-white/10 rounded-lg overflow-hidden bg-[#111827] w-[320px] shadow';
+  'border border-white/10 rounded-lg overflow-hidden bg-surface-inverse w-[320px] shadow';
 const PANEL_HEAD_LIGHT =
   'flex items-center justify-between px-3.5 py-2.5 border-b border-border';
 const PANEL_HEAD_DARK =

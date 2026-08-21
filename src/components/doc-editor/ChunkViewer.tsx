@@ -38,8 +38,8 @@ export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment
   const reviewed = section.items.filter((i) => i.status !== 'pending').length;
 
   return (
-    <div className={cn('bg-white border border-[#e5e7eb] rounded-lg p-5 mb-4')}>
-      <h2 className={cn('text-xl font-bold m-0 mb-1 text-[#1e293b]')}>{section.title}</h2>
+    <div className={cn('bg-white border border-border rounded-lg p-5 mb-4')}>
+      <h2 className={cn('text-xl font-bold m-0 mb-1 text-text-primary')}>{section.title}</h2>
       <span
         className={cn('inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3')}
         style={{ background: tc.bg, color: tc.text }}
@@ -78,7 +78,7 @@ export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment
               onReject={(reason) => onRejectItem(item.id, reason)}
             />
           ))}
-          <div className={cn('text-xs text-[#6b7280] mt-3 pt-2 border-t border-[#f3f4f6]')}>
+          <div className={cn('text-xs text-text-secondary mt-3 pt-2 border-t border-border-subtle')}>
             {reviewed} of {section.items.length} items reviewed
           </div>
         </div>

@@ -30,13 +30,13 @@ function formatDuration(startedAt: string): string {
 
 function eventBadgeClasses(type: string): string {
   if (type.startsWith('sync.')) {
-    return 'bg-[#dbeafe] text-[#1d4ed8]';
+    return 'bg-info-bg text-info-fg';
   }
   if (type === 'item.mapped') {
-    return 'bg-[#ede9fe] text-[#7c3aed]';
+    return 'bg-accent-bg text-accent-fg';
   }
   if (type === 'item.materialized') {
-    return 'bg-[#dcfce7] text-success-fg';
+    return 'bg-success-bg text-success-fg';
   }
   if (type === 'item.failed') {
     return 'bg-danger-bg text-danger-fg';
@@ -152,7 +152,7 @@ export default function SyncMonitorPage() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Monitor</h2>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-success-fg rounded-full border border-success-border">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-success-bg text-success-fg rounded-full border border-success-border">
             <span className="w-[7px] h-[7px] rounded-full bg-success animate-[sync-pulse_1.5s_ease-in-out_infinite]" />
             Live
           </span>

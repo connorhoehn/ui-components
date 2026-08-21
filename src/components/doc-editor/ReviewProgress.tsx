@@ -14,13 +14,13 @@ export default function ReviewProgress({ current, total }: ReviewProgressProps) 
 
   return (
     <div className={cn('mb-4')}>
-      <div className={cn('text-[13px] text-[#6b7280] mb-1 flex justify-between')}>
+      <div className={cn('text-[13px] text-text-secondary mb-1 flex justify-between')}>
         <span>{current} of {total} sections reviewed</span>
         <span>{pct}%</span>
       </div>
-      <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden')}>
+      <div className={cn('h-2 bg-surface-emphasis rounded overflow-hidden')}>
         <div
-          className={cn('h-full bg-[#3b82f6] rounded transition-[width] duration-300 ease-in-out')}
+          className={cn('h-full bg-info rounded transition-[width] duration-300 ease-in-out')}
           style={{ width: `${pct}%` }}
         />
       </div>

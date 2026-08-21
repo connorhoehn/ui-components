@@ -5,7 +5,7 @@ import { c as h } from "./cn-B6yFEsav.js";
 import { I as P } from "./Input-Dt0yAs9r.js";
 import { T as W } from "./Textarea-kaa9rHUL.js";
 import { S as ge } from "./Select-DAEcKWg2.js";
-import { M as ve } from "./PresencePanel-19UCWiYi.js";
+import { M as ve } from "./PresencePanel-BNCV4y5A.js";
 import { u as Ne } from "./ToastProvider-D3MHbP-u.js";
 import { _ as A } from "./index-Bjylubtc.js";
 function K(t, n) {
@@ -483,7 +483,7 @@ function H({ onCreateDM: t, loading: n, friends: r }) {
   );
 }
 function De({ room: t, isActive: n, onClick: r }) {
-  const a = (i) => i === "standalone" ? "bg-[#ede9fe] text-primary text-xs px-2 py-0.5 rounded" : i === "group" ? "bg-info-bg text-info text-xs px-2 py-0.5 rounded" : "bg-success-bg text-success text-xs px-2 py-0.5 rounded";
+  const a = (i) => i === "standalone" ? "bg-accent-bg text-primary text-xs px-2 py-0.5 rounded" : i === "group" ? "bg-info-bg text-info text-xs px-2 py-0.5 rounded" : "bg-success-bg text-success text-xs px-2 py-0.5 rounded";
   return /* @__PURE__ */ s(
     "div",
     {
@@ -506,7 +506,7 @@ function Fe({ room: t, isActive: n, onClick: r }) {
       onClick: r,
       className: h(
         "flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]",
-        n ? "bg-[#ede9fe] text-[#4c1d95] font-semibold" : "bg-transparent text-text-primary font-normal"
+        n ? "bg-accent-bg text-accent-fg font-semibold" : "bg-transparent text-text-primary font-normal"
       ),
       children: [
         /* @__PURE__ */ e("span", { className: h("text-[13px] shrink-0", n ? "text-primary" : "text-text-tertiary"), children: t.type === "dm" ? "●" : "#" }),
@@ -525,7 +525,7 @@ function X({ message: t, onRetry: n, compact: r }) {
         r ? "px-2 py-3" : "px-4 py-6"
       ),
       children: [
-        /* @__PURE__ */ e("div", { className: h("font-semibold text-[#b91c1c]", r ? "text-xs" : "text-sm"), children: "Couldn't load rooms" }),
+        /* @__PURE__ */ e("div", { className: h("font-semibold text-danger-fg", r ? "text-xs" : "text-sm"), children: "Couldn't load rooms" }),
         /* @__PURE__ */ e("div", { className: h("text-text-secondary", r ? "text-[11px]" : "text-xs"), children: t }),
         n && /* @__PURE__ */ e(
           "button",
@@ -533,7 +533,7 @@ function X({ message: t, onRetry: n, compact: r }) {
             type: "button",
             onClick: n,
             className: h(
-              "mt-1 font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer font-[system-ui,-apple-system,sans-serif]",
+              "mt-1 font-medium text-info-fg bg-info-bg border border-info-border rounded cursor-pointer font-[system-ui,-apple-system,sans-serif]",
               r ? "px-2.5 py-0.5 text-[11px]" : "px-3.5 py-1 text-xs"
             ),
             children: "Retry"
@@ -617,7 +617,7 @@ function Ee({ group: t, isSelected: n, onClick: r }) {
       onClick: r,
       className: h(
         "flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]",
-        n ? "bg-[#ede9fe] text-[#4c1d95] font-semibold" : "bg-transparent text-text-primary font-normal"
+        n ? "bg-accent-bg text-accent-fg font-semibold" : "bg-transparent text-text-primary font-normal"
       ),
       children: [
         /* @__PURE__ */ e("span", { className: h("text-xs shrink-0", n ? "text-primary" : "text-text-tertiary"), children: t.visibility === "private" ? "🔒" : "👥" }),
@@ -1112,7 +1112,7 @@ function J({ title: t, count: n, unreadTotal: r, defaultOpen: a = !0, children: 
             "span",
             {
               className: h(
-                "text-[10px] text-[#6b7280] inline-block w-3 transition-transform duration-150",
+                "text-[10px] text-text-secondary inline-block w-3 transition-transform duration-150",
                 o ? "rotate-90" : "rotate-0"
               ),
               children: "▶"
@@ -1120,7 +1120,7 @@ function J({ title: t, count: n, unreadTotal: r, defaultOpen: a = !0, children: 
           ),
           /* @__PURE__ */ e("span", { className: "text-[11px] font-bold text-text-tertiary uppercase tracking-wide flex-1", children: t }),
           !o && r !== void 0 && r > 0 && /* @__PURE__ */ e("span", { className: "min-w-[18px] h-[18px] rounded-[9px] bg-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5", children: r > 99 ? "99+" : r }),
-          /* @__PURE__ */ e("span", { className: "text-[11px] text-[#6b7280]", children: n })
+          /* @__PURE__ */ e("span", { className: "text-[11px] text-text-secondary", children: n })
         ]
       }
     ),
@@ -1134,10 +1134,10 @@ function Z({ room: t, isActive: n, unread: r, onClick: a }) {
       onClick: a,
       className: h(
         "flex items-center gap-1.5 w-full border-none rounded-[5px] pt-1.5 pb-1.5 pr-2 pl-6 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]",
-        n ? "bg-[rgba(100,108,255,0.15)] text-[#a5b4fc] font-semibold" : r > 0 ? "bg-transparent text-surface-hover font-semibold" : "bg-transparent text-text-tertiary font-normal"
+        n ? "bg-primary/15 text-primary font-semibold" : r > 0 ? "bg-transparent text-surface-hover font-semibold" : "bg-transparent text-text-tertiary font-normal"
       ),
       children: [
-        /* @__PURE__ */ e("span", { className: h("text-[13px] shrink-0", n ? "text-[#a5b4fc]" : "text-[#6b7280]"), children: t.type === "dm" ? "●" : "#" }),
+        /* @__PURE__ */ e("span", { className: h("text-[13px] shrink-0", n ? "text-primary" : "text-text-secondary"), children: t.type === "dm" ? "●" : "#" }),
         /* @__PURE__ */ e("span", { className: "overflow-hidden text-ellipsis whitespace-nowrap flex-1", children: t.name }),
         r > 0 && !n && /* @__PURE__ */ e("span", { className: "min-w-[18px] h-[18px] rounded-[9px] bg-danger text-white text-[10px] font-bold flex items-center justify-center px-1.5 shrink-0", children: r > 99 ? "99+" : r })
       ]
@@ -1206,7 +1206,7 @@ function wt({
                     /* @__PURE__ */ s("div", { className: "flex-1 min-w-0", children: [
                       /* @__PURE__ */ e("div", { className: "text-[13px] font-bold overflow-hidden text-ellipsis whitespace-nowrap", style: { color: B }, children: n || t }),
                       /* @__PURE__ */ s("div", { className: "text-[11px] flex items-center gap-1", style: { color: L }, children: [
-                        /* @__PURE__ */ e("span", { className: "w-1.5 h-1.5 rounded-full bg-[#22c55e] inline-block" }),
+                        /* @__PURE__ */ e("span", { className: "w-1.5 h-1.5 rounded-full bg-success inline-block" }),
                         "Active"
                       ] })
                     ] }),
@@ -1843,7 +1843,7 @@ function kt({ idToken: t, sendMessage: n, onMessage: r, connectionState: a }) {
       c && /* @__PURE__ */ e(
         "span",
         {
-          className: "inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle",
+          className: "inline-block w-2 h-2 rounded-full bg-success ml-2 align-middle",
           title: "Live"
         }
       )
@@ -1855,7 +1855,7 @@ function kt({ idToken: t, sendMessage: n, onMessage: r, connectionState: a }) {
       "div",
       {
         role: "alert",
-        className: "py-6 px-4 text-center text-[#b91c1c] text-sm flex flex-col items-center gap-2",
+        className: "py-6 px-4 text-center text-danger-fg text-sm flex flex-col items-center gap-2",
         children: [
           /* @__PURE__ */ e("span", { children: "Couldn't load activity" }),
           /* @__PURE__ */ e("span", { className: "text-text-secondary text-xs", children: m }),
@@ -1864,7 +1864,7 @@ function kt({ idToken: t, sendMessage: n, onMessage: r, connectionState: a }) {
             {
               type: "button",
               onClick: p,
-              className: "mt-1 px-3 py-1 text-xs font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer",
+              className: "mt-1 px-3 py-1 text-xs font-medium text-info-fg bg-info-bg border border-info-border rounded cursor-pointer",
               children: "Retry"
             }
           )

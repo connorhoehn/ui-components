@@ -218,7 +218,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
 
           {step.error && (
             <StepSection title="Error">
-              <div className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap">
+              <div className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg font-mono whitespace-pre-wrap">
                 {step.error}
               </div>
             </StepSection>

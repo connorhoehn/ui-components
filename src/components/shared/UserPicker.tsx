@@ -197,7 +197,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
           {value.map(userId => (
             <span
               key={userId}
-              className="inline-flex items-center gap-1 bg-[#eef2ff] border border-[#c7d2fe] text-[#3730a3] rounded-full py-0.5 pr-2 pl-2.5 text-[12px] font-medium"
+              className="inline-flex items-center gap-1 bg-primary-bg border border-primary-border text-primary-fg rounded-full py-0.5 pr-2 pl-2.5 text-[12px] font-medium"
             >
               {chipLabel(userId)}
               <button
@@ -205,7 +205,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
                 onClick={() => removeUser(userId)}
                 aria-label={`Remove ${chipLabel(userId)}`
                 }
-                className="bg-transparent border-none text-[#3730a3] cursor-pointer text-[14px] leading-none px-0.5 py-0"
+                className="bg-transparent border-none text-primary-fg cursor-pointer text-[14px] leading-none px-0.5 py-0"
               >
                 ×
               </button>
@@ -243,7 +243,7 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
               <div
                 key={c.userId}
                 className={cn(
-                  'py-1.5 px-2.5 text-[13px] text-[#374151] cursor-pointer',
+                  'py-1.5 px-2.5 text-[13px] text-text-primary cursor-pointer',
                   idx === activeIdx ? 'bg-surface-hover' : 'bg-transparent',
                 )}
                 onMouseEnter={() => setActiveIdx(idx)}

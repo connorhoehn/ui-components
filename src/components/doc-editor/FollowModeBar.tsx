@@ -51,11 +51,11 @@ export default function FollowModeBar({
   if (!followed) return null;
 
   return (
-    <div className={cn('flex items-center justify-center gap-2 px-4 py-1.5 bg-info-bg border-b border-info-border text-[13px] font-medium text-[#1d4ed8] shrink-0')}>
+    <div className={cn('flex items-center justify-center gap-2 px-4 py-1.5 bg-info-bg border-b border-info-border text-[13px] font-medium text-info-fg shrink-0')}>
       <span>Following {followed.displayName}</span>
       <button
         onClick={onStopFollow}
-        className={cn('bg-transparent border border-[#93c5fd] rounded px-2 py-0.5 text-xs font-semibold text-[#1d4ed8] cursor-pointer font-[inherit]')}
+        className={cn('bg-transparent border border-info-border rounded px-2 py-0.5 text-xs font-semibold text-info-fg cursor-pointer font-[inherit]')}
       >
         Stop
       </button>

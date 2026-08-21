@@ -54,7 +54,7 @@ export function renderCommentText(text: string): React.ReactNode {
     part.startsWith('@') && /^@[A-Z]/.test(part) ? (
       <span
         key={i}
-        className={cn('text-[#3b82f6] font-semibold bg-info-bg px-0.5 rounded-sm')}
+        className={cn('text-info-fg font-semibold bg-info-bg px-0.5 rounded-sm')}
       >
         {part}
       </span>
@@ -216,7 +216,7 @@ function CommentThreadNode({
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
-              <span className={cn('text-[#86efac] text-[11px]')}>
+              <span className={cn('text-code-green text-[11px]')}>
                 {relativeTime(comment.resolvedAt)}
               </span>
             )}
@@ -253,7 +253,7 @@ function CommentThreadNode({
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
-              <span className={cn('text-[#86efac] text-[11px]')}>
+              <span className={cn('text-code-green text-[11px]')}>
                 {relativeTime(comment.resolvedAt)}
               </span>
             )}
@@ -289,7 +289,7 @@ function CommentThreadNode({
           >
             {getInitials(comment.displayName)}
           </div>
-          <span className={cn('font-semibold text-[13px] text-[#1e293b]')}>
+          <span className={cn('font-semibold text-[13px] text-text-primary')}>
             {comment.displayName}
           </span>
           <span className={cn('text-[11px] text-text-tertiary')}>
@@ -298,7 +298,7 @@ function CommentThreadNode({
         </div>
 
         {/* Comment text */}
-        <div className={cn('text-[13px] leading-normal text-[#334155] pl-[30px] whitespace-pre-wrap')}>
+        <div className={cn('text-[13px] leading-normal text-text-primary pl-[30px] whitespace-pre-wrap')}>
           {renderCommentText(comment.text)}
         </div>
 
@@ -355,7 +355,7 @@ function CommentThreadNode({
               <button
                 type="button"
                 onClick={handleSubmitReply}
-                className={cn('px-3 py-1 text-xs font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit]')}
+                className={cn('px-3 py-1 text-xs font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit]')}
               >
                 Reply
               </button>

@@ -231,7 +231,7 @@ function CollaborationCanvas() {
               initials="You"
               color="#6366f1"
               size={24}
-              className="border-2 border-[#0f172a]"
+              className="border-2 border-surface-inverse"
             />
             {Object.values(presenceUsers).slice(0, 5).map((u, i) => (
               <Avatar
@@ -240,7 +240,7 @@ function CollaborationCanvas() {
                 initials={u.displayName.charAt(0)}
                 color={u.color}
                 size={24}
-                className="border-2 border-[#0f172a] -ml-2"
+                className="border-2 border-surface-inverse -ml-2"
                 style={{ zIndex: 9 - i }}
               />
             ))}
@@ -262,7 +262,7 @@ function CollaborationCanvas() {
             <div className="text-[11px] text-text-tertiary mb-3 uppercase tracking-[0.5px] font-semibold">
               Shared Document
             </div>
-            <p className="font-[Georgia,_serif] text-[15px] leading-[1.8] text-[#1e293b] m-0">
+            <p className="font-[Georgia,_serif] text-[15px] leading-[1.8] text-text-primary m-0">
               {docText}
             </p>
           </div>
@@ -362,12 +362,12 @@ function CollaborationCanvas() {
           {/* Local user */}
           <div className="flex items-center gap-2 py-1 px-0 text-[12px]">
             <Avatar name="You" initials="Y" color="#6366f1" size={20} />
-            <span className="text-[#374151] font-medium">You</span>
+            <span className="text-text-primary font-medium">You</span>
           </div>
           {Object.values(presenceUsers).map(u => (
             <div className="flex items-center gap-2 py-1 px-0 text-[12px]" key={u.userId}>
               <Avatar name={u.displayName} initials={u.displayName.charAt(0)} color={u.color} size={20} />
-              <span className="text-[#374151]">{u.displayName}</span>
+              <span className="text-text-primary">{u.displayName}</span>
               {u.isTyping && <span className="text-text-tertiary italic text-[11px]">typing...</span>}
             </div>
           ))}
@@ -391,7 +391,7 @@ function CollaborationCanvas() {
                 className="mt-[1px]"
               />
               <div>
-                <span className="font-semibold text-[#374151]">{entry.displayName}</span>{' '}
+                <span className="font-semibold text-text-primary">{entry.displayName}</span>{' '}
                 <span className="text-neutral">{entry.action}</span>
                 <div className="text-[10px] text-text-tertiary mt-[1px]">
                   {formatTimeAgo(entry.timestamp)}

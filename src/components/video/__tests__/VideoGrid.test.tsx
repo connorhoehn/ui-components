@@ -69,7 +69,7 @@ describe('VideoGrid', () => {
     const root = getGridRoot(container);
     const tiles = Array.from(root.children) as HTMLElement[];
     expect(tiles).toHaveLength(2);
-    expect(tiles[0].className).toContain('border-[#22c55e]');
+    expect(tiles[0].className).toContain('border-success');
     expect(tiles[1].className).toContain('border-transparent');
   });
 

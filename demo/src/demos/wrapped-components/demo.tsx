@@ -166,7 +166,7 @@ function RawColumn() {
 
   return (
     <div>
-      <h3 className="text-[14px] font-bold text-[#374151] mb-2">
+      <h3 className="text-[14px] font-bold text-text-primary mb-2">
         Raw (manual adapter)
       </h3>
       <code className="text-[11px] text-text-tertiary block mb-3">
@@ -191,7 +191,7 @@ function WrappedColumn() {
 
   return (
     <div>
-      <h3 className="text-[14px] font-bold text-[#374151] mb-2">
+      <h3 className="text-[14px] font-bold text-text-primary mb-2">
         Wrapped (adapter built-in)
       </h3>
       <code className="text-[11px] text-text-tertiary block mb-3">

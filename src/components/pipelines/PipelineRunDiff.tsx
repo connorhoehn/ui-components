@@ -117,9 +117,9 @@ function CollapsibleSection({
 // ---------------------------------------------------------------------------
 
 const DIFF_TYPE_CLASSES: Record<string, string> = {
-  added:     'bg-success-bg text-[#166534]',
-  removed:   'bg-danger-bg text-[#991b1b] line-through',
-  changed:   'bg-warning-bg text-[#92400e]',
+  added:     'bg-success-bg text-success-fg',
+  removed:   'bg-danger-bg text-danger-fg line-through',
+  changed:   'bg-warning-bg text-warning-fg',
   unchanged: 'text-text-tertiary',
 };
 

@@ -49,7 +49,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
               )}
             >
               <div className="min-w-0">
-                <div className="text-[14px] text-[#1a1a2e] truncate">
+                <div className="text-[14px] text-text-primary truncate">
                   {agent.name}
                 </div>
                 <div className="text-[11px] text-text-tertiary">
@@ -60,10 +60,10 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                 className={cn(
                   'w-2 h-2 rounded-full shrink-0',
                   agent.status === 'healthy'
-                    ? 'bg-[#10b981]'
+                    ? 'bg-success'
                     : agent.status === 'degraded'
-                      ? 'bg-[#f59e0b]'
-                      : 'bg-[#ef4444]',
+                      ? 'bg-warning'
+                      : 'bg-danger',
                 )}
               />
             </div>
@@ -131,7 +131,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
               {events.map((ev, i) => (
                 <div key={i} className="flex gap-2 text-text-secondary py-px">
                   <span className="text-text-tertiary w-5 text-right shrink-0">{i + 1}</span>
-                  <span className="text-[#1e293b] w-[150px] shrink-0 font-medium">{ev.type}</span>
+                  <span className="text-text-primary w-[150px] shrink-0 font-medium">{ev.type}</span>
                   <span className="text-neutral overflow-hidden text-ellipsis whitespace-nowrap">
                     {(() => {
                       if (ev.type === 'TEXT_MESSAGE_CONTENT' || ev.type === 'TOOL_CALL_ARGS') return `"${ev.delta.slice(0, 60)}"`;

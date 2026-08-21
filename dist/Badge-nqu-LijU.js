@@ -6,21 +6,21 @@ import { useState as T, useRef as _, useEffect as S } from "react";
 import { E as F } from "./EmptyState-Ejc9dJA3.js";
 import { c as P, e as w } from "./tones-DknNcB3q.js";
 const R = {
-  idle: { label: "Idle", colorClass: "text-[#6b7280]" },
-  connecting: { label: "Connecting…", colorClass: "text-[#f59e0b]" },
-  connected: { label: "Connected", colorClass: "text-[#10b981]" },
-  reconnecting: { label: "Reconnecting…", colorClass: "text-[#f59e0b]" },
-  disconnected: { label: "Disconnected", colorClass: "text-[#ef4444]" }
+  idle: { label: "Idle", colorClass: "text-text-secondary" },
+  connecting: { label: "Connecting…", colorClass: "text-warning-fg" },
+  connected: { label: "Connected", colorClass: "text-success-fg" },
+  reconnecting: { label: "Reconnecting…", colorClass: "text-warning-fg" },
+  disconnected: { label: "Disconnected", colorClass: "text-danger-fg" }
 };
 function ee({
   state: e,
-  compact: l = !1,
+  compact: o = !1,
   withLabel: a = !0,
   labels: n,
   className: p,
   "data-testid": h = "connection-pill"
 }) {
-  const i = R[e], m = n?.[e] ?? i.label, d = a && !l;
+  const i = R[e], m = n?.[e] ?? i.label, d = a && !o;
   return /* @__PURE__ */ c(
     "span",
     {
@@ -54,22 +54,22 @@ function U(e) {
 }
 function te({
   users: e,
-  maxVisible: l = 5,
+  maxVisible: o = 5,
   size: a = 28,
   onMoreClick: n,
   onUserClick: p,
   className: h
 }) {
-  const i = e.slice(0, l), m = e.length - i.length, d = -(a * 0.3), f = Math.max(1, Math.round(a * 0.07)), u = Math.max(10, Math.round(a * 0.42));
+  const i = e.slice(0, o), m = e.length - i.length, d = -(a * 0.3), f = Math.max(1, Math.round(a * 0.07)), u = Math.max(10, Math.round(a * 0.42));
   return /* @__PURE__ */ c("div", { className: s("inline-flex items-center", h), role: "list", "aria-label": "Online users", children: [
-    i.map((r, o) => {
-      const x = L(r), b = r.idle === !0, I = b ? U(r.color) : r.color, k = b && !r.color ? 0.6 : void 0, g = r.mode ? B[r.mode] : null, v = [r.name];
-      b ? v.push("Away") : g && v.push(g.label);
+    i.map((r, l) => {
+      const b = L(r), x = r.idle === !0, I = x ? U(r.color) : r.color, k = x && !r.color ? 0.6 : void 0, g = r.mode ? B[r.mode] : null, v = [r.name];
+      x ? v.push("Away") : g && v.push(g.label);
       const N = v.join(" — "), C = {
         "data-testid": "presence-avatar",
         "data-presence-user": r.name,
         "data-presence-user-id": r.id,
-        ...b ? { "data-presence-idle": "true" } : {},
+        ...x ? { "data-presence-idle": "true" } : {},
         ...r.mode ? { "data-presence-mode": r.mode } : {}
       }, $ = /* @__PURE__ */ c(E, { children: [
         r.avatarUrl ? /* @__PURE__ */ t(
@@ -97,12 +97,12 @@ function te({
             }
           }
         ),
-        x && /* @__PURE__ */ t("span", { className: "absolute -bottom-0.5 -right-0.5", children: /* @__PURE__ */ t(
+        b && /* @__PURE__ */ t("span", { className: "absolute -bottom-0.5 -right-0.5", children: /* @__PURE__ */ t(
           D,
           {
-            color: x,
+            color: b,
             size: "xs",
-            "aria-label": b ? `${r.name} away` : r.online === !1 ? `${r.name} offline` : `${r.name} online`
+            "aria-label": x ? `${r.name} away` : r.online === !1 ? `${r.name} offline` : `${r.name} online`
           }
         ) }),
         g && /* @__PURE__ */ t(
@@ -123,7 +123,7 @@ function te({
           }
         )
       ] }), j = {
-        marginLeft: o > 0 ? d : 0
+        marginLeft: l > 0 ? d : 0
       };
       return p ? /* @__PURE__ */ t(
         "button",
@@ -185,22 +185,22 @@ function te({
 }
 function G(e) {
   if (e == null) return null;
-  const l = new Date(e);
-  if (isNaN(l.getTime())) return null;
-  const n = Date.now() - l.getTime();
+  const o = new Date(e);
+  if (isNaN(o.getTime())) return null;
+  const n = Date.now() - o.getTime();
   return n < 6e4 ? "just now" : n < 36e5 ? `${Math.floor(n / 6e4)}m ago` : n < 864e5 ? `${Math.floor(n / 36e5)}h ago` : `${Math.floor(n / 864e5)}d ago`;
 }
 function ne({
   items: e,
-  onItemClick: l,
+  onItemClick: o,
   onMarkAllRead: a,
   onClearAll: n,
   className: p,
   "data-testid": h
 }) {
-  const [i, m] = T("unread"), d = e.filter((o) => !o.read), f = i === "unread" ? d : e, u = d.length > 0, r = (o) => s(
+  const [i, m] = T("unread"), d = e.filter((l) => !l.read), f = i === "unread" ? d : e, u = d.length > 0, r = (l) => s(
     "px-3 py-1.5 text-sm border-none rounded-md cursor-pointer font-[inherit] transition-colors duration-100",
-    o ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]"
+    l ? "bg-primary-bg text-text-primary font-semibold" : "bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]"
   );
   return /* @__PURE__ */ c(
     "div",
@@ -214,7 +214,7 @@ function ne({
         /* @__PURE__ */ c("div", { className: "flex items-center justify-between px-4 pt-3 pb-2 border-b border-[var(--color-border)]", children: [
           /* @__PURE__ */ c("span", { className: "text-sm font-semibold text-[var(--color-text-primary)]", children: [
             "Notifications",
-            u && /* @__PURE__ */ t("span", { className: "ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-bold bg-[#ef4444] text-white leading-none", children: d.length })
+            u && /* @__PURE__ */ t("span", { className: "ml-2 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[11px] font-bold bg-danger text-white leading-none", children: d.length })
           ] }),
           /* @__PURE__ */ c("div", { className: "flex items-center gap-2", children: [
             a && u && /* @__PURE__ */ t(
@@ -251,18 +251,18 @@ function ne({
             title: i === "unread" ? "All caught up" : "No notifications",
             body: i === "unread" ? "No unread notifications." : "Notifications will appear here."
           }
-        ) : f.map((o) => /* @__PURE__ */ c(
+        ) : f.map((l) => /* @__PURE__ */ c(
           "button",
           {
             type: "button",
-            onClick: () => l?.(o),
+            onClick: () => o?.(l),
             className: s(
               "flex items-start gap-3 px-4 py-3 text-left border-none",
               "transition-colors duration-100 cursor-pointer font-[inherit] w-full",
-              o.read ? "bg-transparent hover:bg-[var(--color-surface-hover)]" : "bg-[rgba(59,130,246,0.05)] hover:bg-[rgba(59,130,246,0.1)]"
+              l.read ? "bg-transparent hover:bg-[var(--color-surface-hover)]" : "bg-[rgba(59,130,246,0.05)] hover:bg-[rgba(59,130,246,0.1)]"
             ),
             children: [
-              o.icon && /* @__PURE__ */ t("span", { className: "text-lg shrink-0 mt-0.5", "aria-hidden": "true", children: o.icon }),
+              l.icon && /* @__PURE__ */ t("span", { className: "text-lg shrink-0 mt-0.5", "aria-hidden": "true", children: l.icon }),
               /* @__PURE__ */ c("div", { className: "flex-1 min-w-0", children: [
                 /* @__PURE__ */ c("div", { className: "flex items-center justify-between gap-2", children: [
                   /* @__PURE__ */ t(
@@ -270,25 +270,25 @@ function ne({
                     {
                       className: s(
                         "text-sm leading-snug truncate",
-                        o.read ? "text-[var(--color-text-secondary)] font-normal" : "text-[var(--color-text-primary)] font-medium"
+                        l.read ? "text-[var(--color-text-secondary)] font-normal" : "text-[var(--color-text-primary)] font-medium"
                       ),
-                      children: o.title
+                      children: l.title
                     }
                   ),
-                  !o.read && /* @__PURE__ */ t(
+                  !l.read && /* @__PURE__ */ t(
                     "span",
                     {
-                      className: "shrink-0 w-1.5 h-1.5 rounded-full bg-[#3b82f6]",
+                      className: "shrink-0 w-1.5 h-1.5 rounded-full bg-info",
                       "aria-label": "Unread"
                     }
                   )
                 ] }),
-                o.body && /* @__PURE__ */ t("p", { className: "text-xs text-[var(--color-text-tertiary)] mt-0.5 leading-snug line-clamp-2", children: o.body }),
-                o.timestamp != null && /* @__PURE__ */ t("p", { className: "text-[11px] text-[var(--color-text-tertiary)] mt-1 font-mono", children: G(o.timestamp) })
+                l.body && /* @__PURE__ */ t("p", { className: "text-xs text-[var(--color-text-tertiary)] mt-0.5 leading-snug line-clamp-2", children: l.body }),
+                l.timestamp != null && /* @__PURE__ */ t("p", { className: "text-[11px] text-[var(--color-text-tertiary)] mt-1 font-mono", children: G(l.timestamp) })
               ] })
             ]
           },
-          o.id
+          l.id
         )) })
       ]
     }
@@ -302,17 +302,17 @@ const M = {
   status: "#3b82f6"
 };
 function H(e) {
-  const l = e.trim().split(/\s+/), a = l[0] ?? "", n = l[1]?.[0] ?? "";
+  const o = e.trim().split(/\s+/), a = o[0] ?? "", n = o[1]?.[0] ?? "";
   return n ? `${a} ${n}.` : a;
 }
 const V = [1, 0.5, 0.18];
-function K({ item: e, opacity: l, dotColor: a }) {
+function K({ item: e, opacity: o, dotColor: a }) {
   const n = e.subject.length > 30 ? e.subject.slice(0, 28) + "…" : e.subject;
   return /* @__PURE__ */ c(
     "div",
     {
       className: "uc-activity-row flex items-center gap-1.5 py-[3.5px] overflow-hidden min-w-0 transition-[opacity] duration-[380ms] ease-in-out",
-      style: { opacity: l },
+      style: { opacity: o },
       children: [
         /* @__PURE__ */ t(
           "span",
@@ -322,52 +322,52 @@ function K({ item: e, opacity: l, dotColor: a }) {
           }
         ),
         /* @__PURE__ */ t(A, { name: e.actor, size: 17 }),
-        /* @__PURE__ */ t("span", { className: "text-[11px] text-[#374151] font-medium shrink-0", children: H(e.actor) }),
-        /* @__PURE__ */ t("span", { className: "text-[11px] text-[#9ca3af] shrink-0", children: e.action }),
+        /* @__PURE__ */ t("span", { className: "text-[11px] text-text-primary font-medium shrink-0", children: H(e.actor) }),
+        /* @__PURE__ */ t("span", { className: "text-[11px] text-text-tertiary shrink-0", children: e.action }),
         e.ticketId && /* @__PURE__ */ t("span", { className: "text-[10px] font-bold font-mono text-primary-fg bg-primary-bg border border-primary-border rounded-[3px] px-[5px] py-px shrink-0 tracking-[0.01em] whitespace-nowrap", children: e.ticketId }),
         /* @__PURE__ */ t(
           "span",
           {
-            className: "text-[11px] text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0",
+            className: "text-[11px] text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap flex-1 min-w-0",
             title: e.subject,
             children: n
           }
         ),
-        e.timeLabel && /* @__PURE__ */ t("span", { className: "text-[10px] text-[#d1d5db] shrink-0 whitespace-nowrap", children: e.timeLabel })
+        e.timeLabel && /* @__PURE__ */ t("span", { className: "text-[10px] text-code-subtle shrink-0 whitespace-nowrap", children: e.timeLabel })
       ]
     }
   );
 }
 function re({
   items: e,
-  visibleCount: l = 3,
+  visibleCount: o = 3,
   rotateMs: a = 4200,
   staggerMs: n = 0,
   kindColors: p,
   className: h
 }) {
   const i = { ...M, ...p }, [m, d] = T(
-    () => e.slice(0, l)
-  ), f = _(l);
+    () => e.slice(0, o)
+  ), f = _(o);
   return S(() => {
-    d(e.slice(0, l)), f.current = l;
-  }, [e, l]), S(() => {
-    if (!a || e.length <= l) return;
+    d(e.slice(0, o)), f.current = o;
+  }, [e, o]), S(() => {
+    if (!a || e.length <= o) return;
     let u;
     const r = setTimeout(() => {
       u = setInterval(() => {
         if (!e.length) return;
-        const o = e[f.current % e.length];
-        o && (f.current = (f.current + 1) % e.length, d((x) => {
-          const b = [o];
-          return x[0] && b.push(x[0]), x[1] && b.push(x[1]), b.slice(0, l);
+        const l = e[f.current % e.length];
+        l && (f.current = (f.current + 1) % e.length, d((b) => {
+          const x = [l];
+          return b[0] && x.push(b[0]), b[1] && x.push(b[1]), x.slice(0, o);
         }));
       }, a);
     }, n);
     return () => {
       clearTimeout(r), clearInterval(u);
     };
-  }, [e, l, a, n]), m.length === 0 ? /* @__PURE__ */ t("div", { className: s("flex-1 flex items-center", h), children: /* @__PURE__ */ t("span", { className: "text-[11px] text-[#e5e7eb]", children: "No recent activity" }) }) : /* @__PURE__ */ t("div", { className: s("flex-1 flex flex-col overflow-hidden", h), children: m.map((u, r) => /* @__PURE__ */ t(
+  }, [e, o, a, n]), m.length === 0 ? /* @__PURE__ */ t("div", { className: s("flex-1 flex items-center", h), children: /* @__PURE__ */ t("span", { className: "text-[11px] text-border", children: "No recent activity" }) }) : /* @__PURE__ */ t("div", { className: s("flex-1 flex flex-col overflow-hidden", h), children: m.map((u, r) => /* @__PURE__ */ t(
     K,
     {
       item: u,
@@ -388,14 +388,14 @@ function W(e) {
 }
 function ae({
   variant: e,
-  value: l,
+  value: o,
   color: a = "accent",
   "aria-label": n,
   className: p,
   "data-testid": h
 }) {
   if (e === "count") {
-    const i = W(l);
+    const i = W(o);
     return /* @__PURE__ */ t(
       "span",
       {

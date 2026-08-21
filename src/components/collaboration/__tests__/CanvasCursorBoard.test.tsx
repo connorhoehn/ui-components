@@ -54,16 +54,16 @@ describe('CanvasCursorBoard', () => {
       expect(screen.getByRole('button', { name: 'Pen' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Eraser' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Select' })).toBeInTheDocument();
-      expect(brush.className).toMatch(/bg-\[#007bff\]/);
-      expect(screen.getByRole('button', { name: 'Pen' }).className).not.toMatch(/bg-\[#007bff\]/);
+      expect(brush.className).toMatch(/bg-info/);
+      expect(screen.getByRole('button', { name: 'Pen' }).className).not.toMatch(/bg-info/);
     });
 
     it('clicking a tool switches active style', () => {
       render(<CanvasCursorBoard {...defaultProps()} />);
       const pen = screen.getByRole('button', { name: 'Pen' });
       fireEvent.click(pen);
-      expect(pen.className).toMatch(/bg-\[#007bff\]/);
-      expect(screen.getByRole('button', { name: 'Brush' }).className).not.toMatch(/bg-\[#007bff\]/);
+      expect(pen.className).toMatch(/bg-info/);
+      expect(screen.getByRole('button', { name: 'Brush' }).className).not.toMatch(/bg-info/);
     });
   });
 

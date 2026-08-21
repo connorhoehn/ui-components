@@ -11,7 +11,7 @@ function DemoTopBar() {
     .join(' ');
 
   return (
-    <div className="h-10 bg-[#1e293b] flex items-center justify-between py-0 px-4 shrink-0"
+    <div className="h-10 bg-surface-inverse flex items-center justify-between py-0 px-4 shrink-0"
     >
       <Link className="text-surface no-underline text-[13px] font-medium"
         to="/pages"

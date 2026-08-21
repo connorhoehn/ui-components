@@ -4,9 +4,9 @@ import { C as R } from "./Card-qOg_oC77.js";
 import { P as F, T as ee, b as te, e as _, a as ae, c as ne, d as q } from "./Table-D7HV0dS-.js";
 import { B as f } from "./Button-DILgRebO.js";
 import { E as pe } from "./EmptyState-Ejc9dJA3.js";
-import { C as Q } from "./ConfirmDialog-BRr5Nyae.js";
+import { C as Q } from "./ConfirmDialog-B0yXaqxp.js";
 import { I as O } from "./Input-Dt0yAs9r.js";
-import { B as $ } from "./Banner-DKb3JiLs.js";
+import { B as $ } from "./Banner-BoO81CCz.js";
 import { C as X } from "./Chip-BDT8ro4h.js";
 import { S as re } from "./Select-DAEcKWg2.js";
 import { C as J } from "./Checkbox-vOc5I8kn.js";
@@ -2761,7 +2761,7 @@ function Fe({
       className: G(
         "flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer",
         "border-none rounded-none border-l-[3px] transition-colors",
-        l ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-[#334155] border-l-transparent hover:bg-surface-hover"
+        l ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-text-primary border-l-transparent hover:bg-surface-hover"
       ),
       onClick: () => i(a.path),
       "aria-current": l ? "page" : void 0,

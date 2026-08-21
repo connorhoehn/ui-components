@@ -270,7 +270,7 @@ function ActiveCallContent({
           {localParticipant?.videoStream && showVideo ? (
             <VideoTile stream={localParticipant.videoStream} muted />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-[#1e293b]">
+            <div className="w-full h-full flex items-center justify-center bg-surface-inverse">
               {localParticipant && <CallAvatar participant={localParticipant} size={48} />}
             </div>
           )}
@@ -281,7 +281,7 @@ function ActiveCallContent({
            * tile disappeared entirely, which read as "the peer left" even
            * when they were still in the call with audio only. */}
           {participants.length > 0 && (
-            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-[#1e293b]">
+            <div className="absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-surface-inverse">
               {participants[0].videoStream ? (
                 <VideoTile stream={participants[0].videoStream} />
               ) : (
@@ -711,7 +711,7 @@ export function CallWidget({
       >
         <div
           className={cn(
-            'bg-[#1e293b] rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden backdrop-blur-sm',
+            'bg-surface-inverse rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/10 overflow-hidden backdrop-blur-sm',
             minimized ? 'w-[260px]' : 'w-[320px]',
           )}
         >

@@ -69,7 +69,7 @@ function ObjectEditor({ k, initial, onCommit, onError, onFocus }: ObjectEditorPr
           onError(`Invalid JSON: ${err instanceof Error ? err.message : String(err)}`);
         }
       }}
-      className="w-full px-1.5 py-1 text-xs bg-[#11111b] text-[#cdd6f4] border border-[#313244] rounded-sm font-mono min-h-[60px] resize-y"
+      className="w-full px-1.5 py-1 text-xs bg-code-bg text-code-text border border-code-border rounded-sm font-mono min-h-[60px] resize-y"
     />
   );
 }
@@ -99,7 +99,7 @@ export function ContextEditBuffer({
     return Array.from(set);
   }, [inputContext, buffer]);
 
-  const inputClasses = 'w-full px-1.5 py-1 text-xs bg-[#11111b] text-[#cdd6f4] border border-[#313244] rounded-sm font-mono';
+  const inputClasses = 'w-full px-1.5 py-1 text-xs bg-code-bg text-code-text border border-code-border rounded-sm font-mono';
 
   return (
     <div data-testid="context-edit-table">
@@ -112,13 +112,13 @@ export function ContextEditBuffer({
         return (
           <div
             key={key}
-            className="grid grid-cols-[120px_1fr_auto] gap-2 items-start py-1.5 border-b border-[#313244]"
+            className="grid grid-cols-[120px_1fr_auto] gap-2 items-start py-1.5 border-b border-code-border"
             data-testid={`context-edit-row-${key}`}
           >
             <span
               className={cn(
-                'text-xs font-medium text-[#89b4fa] pt-1 overflow-hidden text-ellipsis whitespace-nowrap',
-                dirty && 'text-[#a6e3a1] font-bold',
+                'text-xs font-medium text-code-blue pt-1 overflow-hidden text-ellipsis whitespace-nowrap',
+                dirty && 'text-code-green font-bold',
               )}
               title={key}
             >
@@ -172,7 +172,7 @@ export function ContextEditBuffer({
               {parseErrors[key] && (
                 <div
                   data-testid={`context-edit-parse-error-${key}`}
-                  className="text-[#f38ba8] text-[11px] mt-1"
+                  className="text-code-red text-[11px] mt-1"
                 >
                   {parseErrors[key]}
                 </div>
@@ -185,7 +185,7 @@ export function ContextEditBuffer({
                   data-testid={`context-edit-revert-${key}`}
                   onClick={() => onRemoveKey(key)}
                   title="Drop change"
-                  className="px-1.5 py-0.5 text-[10px] bg-transparent text-[#9399b2] border border-[#313244] rounded-sm cursor-pointer font-mono"
+                  className="px-1.5 py-0.5 text-[10px] bg-transparent text-code-comment border border-code-border rounded-sm cursor-pointer font-mono"
                 >
                   ↺
                 </button>
@@ -230,8 +230,8 @@ export function ContextEditBuffer({
           className={cn(
             'px-2.5 py-0.5 text-[11px] font-semibold border rounded-sm cursor-pointer font-mono',
             newKeyDraft.key.trim()
-              ? 'bg-[#a6e3a1] text-[#1e1e2e] border-[#a6e3a1]'
-              : 'bg-transparent text-[#45475a] border-[#313244] cursor-not-allowed',
+              ? 'bg-code-green text-code-surface border-code-green'
+              : 'bg-transparent text-code-raised border-code-border cursor-not-allowed',
           )}
         >
           + Add field

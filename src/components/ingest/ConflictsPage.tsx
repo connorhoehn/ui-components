@@ -127,7 +127,7 @@ export default function ConflictsPage() {
 
       {usingMock && (
         <div
-          className="px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3"
+          className="px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-warning-fg rounded-lg text-xs mb-3"
           data-testid="conflicts-mock-banner"
         >
           Showing mock conflicts &mdash; backend endpoint <code>/api/sync/conflicts</code> not implemented yet.
@@ -160,7 +160,7 @@ export default function ConflictsPage() {
                   key={c.conflictId}
                   className={cn(
                     'px-3.5 py-2.5 border-b border-border cursor-pointer flex flex-col gap-1',
-                    isActive && 'bg-[#eef2ff]',
+                    isActive && 'bg-primary-bg',
                   )}
                   onClick={() => setSelectedId(c.conflictId)}
                   data-testid={`conflict-row-${c.conflictId}`}
@@ -372,7 +372,7 @@ function DiffCell({
       className={cn(
         'p-3 text-xs text-text-secondary font-mono whitespace-pre-wrap break-words min-h-[60px] bg-surface',
         !last && 'border-r border-border',
-        selected && 'bg-[#ecfdf5] border-[var(--color-state-completed)]',
+        selected && 'bg-success-bg border-[var(--color-state-completed)]',
         dim && 'opacity-55',
       )}
     >

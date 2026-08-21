@@ -23,7 +23,7 @@ function formatBitrate(bps: number): string {
 export function StatsCard({ metrics, style }: StatsCardProps) {
   if (!metrics) {
     return (
-      <div className={cn('p-3 bg-[#1e293b] rounded-lg text-text-tertiary text-xs')} style={style}>
+      <div className={cn('p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs')} style={style}>
         No stream data
       </div>
     );
@@ -40,7 +40,7 @@ export function StatsCard({ metrics, style }: StatsCardProps) {
   }
 
   return (
-    <div className={cn('p-3 bg-[#1e293b] rounded-lg text-xs text-[#e2e8f0]')} style={style}>
+    <div className={cn('p-3 bg-surface-inverse rounded-lg text-xs text-code-text')} style={style}>
       {rows.map(([label, value]) => (
         <div key={label} className={cn('flex justify-between py-[3px]')}>
           <span className={cn('text-text-tertiary')}>{label}</span>

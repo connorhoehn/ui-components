@@ -73,29 +73,29 @@ type TabId = 'input' | 'output' | 'prompt' | 'details' | 'attempts';
 function AttemptCard({ attempt, label }: { attempt: StepAttempt; label: string }) {
   const succeeded = !attempt.error;
   return (
-    <div className="bg-[#11111b] rounded-md border border-[#313244] p-2.5 overflow-auto">
-      <div className="text-[11px] font-bold text-[#cdd6f4] mb-2">{label}</div>
+    <div className="bg-code-bg rounded-md border border-code-border p-2.5 overflow-auto">
+      <div className="text-[11px] font-bold text-code-text mb-2">{label}</div>
       <div className="flex gap-1.5 mb-1.5 items-center">
         <span className={cn(
           'text-[10px] font-semibold px-1.5 py-px rounded-sm',
           succeeded
-            ? 'bg-[rgba(166,227,161,0.15)] text-[#a6e3a1]'
-            : 'bg-[rgba(243,139,168,0.15)] text-[#f38ba8]',
+            ? 'bg-[rgba(166,227,161,0.15)] text-code-green'
+            : 'bg-[rgba(243,139,168,0.15)] text-code-red',
         )}>
           {succeeded ? 'OK' : 'FAIL'}
         </span>
         {attempt.durationMs != null && (
-          <span className="text-[10px] text-[#6c7086]">{attempt.durationMs}ms</span>
+          <span className="text-[10px] text-code-muted">{attempt.durationMs}ms</span>
         )}
       </div>
       {attempt.error && (
-        <div className="text-[11px] text-[#f38ba8] font-mono mb-1.5 px-2 py-1.5 bg-[#1a0f14] rounded whitespace-pre-wrap break-words">
+        <div className="text-[11px] text-code-red font-mono mb-1.5 px-2 py-1.5 bg-code-red/10 rounded whitespace-pre-wrap break-words">
           {attempt.error}
         </div>
       )}
       {attempt.output !== undefined && (
         <div>
-          <div className="text-[10px] text-[#6c7086] font-semibold mb-1 uppercase">
+          <div className="text-[10px] text-code-muted font-semibold mb-1 uppercase">
             Output
           </div>
           <ContextJsonTree data={attempt.output} depth={0} />
@@ -275,10 +275,10 @@ export default function ContextInspector({
           </span>
         </div>
         <div className="flex-1 overflow-auto px-3.5 py-2.5 font-mono text-xs flex items-center justify-center flex-col gap-2">
-          <span className="text-[13px] text-[#6c7086]">
+          <span className="text-[13px] text-code-muted">
             {!run ? 'Run a pipeline to inspect context flow' : 'Waiting for step execution data...'}
           </span>
-          <span className="text-[11px] text-[#45475a]">
+          <span className="text-[11px] text-code-raised">
             {!run
               ? 'Trigger a run to see inputs, outputs, and context at each step.'
               : 'Context data will appear as steps complete.'}
@@ -297,7 +297,7 @@ export default function ContextInspector({
           Context Inspector
         </span>
         {activeSnapshot && activeSnapshot.stepId && (
-          <span className="text-[10px] text-[#6c7086]">
+          <span className="text-[10px] text-code-muted">
             Step: {activeSnapshot.stepId.slice(0, 8)}
           </span>
         )}
@@ -348,7 +348,7 @@ export default function ContextInspector({
           ) : activeTab === 'input' ? (
             <div>
               <div className="flex items-center justify-between mb-2">
-                <div className="text-[10px] text-[#6c7086] font-semibold uppercase">
+                <div className="text-[10px] text-code-muted font-semibold uppercase">
                   Input context{activeSnapshot.stepId ? ` — step ${activeSnapshot.stepId.slice(0, 8)}` : ''}
                 </div>
                 {editingAllowed && (
@@ -358,7 +358,7 @@ export default function ContextInspector({
                         type="button"
                         onClick={discardChanges}
                         data-testid="context-inspector-discard"
-                        className="px-2 py-0.5 text-[10px] font-semibold bg-transparent text-[#f38ba8] border border-[#313244] rounded-sm cursor-pointer font-mono"
+                        className="px-2 py-0.5 text-[10px] font-semibold bg-transparent text-code-red border border-code-border rounded-sm cursor-pointer font-mono"
                       >
                         Discard changes
                       </button>
@@ -374,8 +374,8 @@ export default function ContextInspector({
                       className={cn(
                         'px-2 py-0.5 text-[10px] font-semibold border rounded-sm cursor-pointer font-mono uppercase tracking-wide',
                         editMode
-                          ? 'bg-warning text-white border-[#d97706]'
-                          : 'bg-transparent text-warning-fg border-[#d97706]',
+                          ? 'bg-warning text-white border-warning'
+                          : 'bg-transparent text-warning-fg border-warning',
                       )}
                     >
                       {editMode ? 'Editing' : 'Edit'}
@@ -384,7 +384,7 @@ export default function ContextInspector({
                 )}
               </div>
               {Object.keys(activeSnapshot.inputContext).length === 0 && !(editingAllowed && editMode) ? (
-                <div className="text-[#6c7086] text-xs italic">
+                <div className="text-code-muted text-xs italic">
                   No input context (first step or no upstream output)
                 </div>
               ) : editingAllowed && editMode ? (
@@ -409,20 +409,20 @@ export default function ContextInspector({
             </div>
           ) : activeTab === 'output' ? (
             <div>
-              <div className="mb-2 text-[10px] text-[#6c7086] font-semibold uppercase">
+              <div className="mb-2 text-[10px] text-code-muted font-semibold uppercase">
                 Output{activeSnapshot.stepId ? ` — step ${activeSnapshot.stepId.slice(0, 8)}` : ''}
               </div>
               <ContextJsonTree data={activeSnapshot.output} />
               {activeSnapshot.newKeys.length > 0 && (
                 <div className="mt-3">
-                  <div className="text-[10px] text-[#a6e3a1] font-semibold uppercase mb-1">
+                  <div className="text-[10px] text-code-green font-semibold uppercase mb-1">
                     New context keys added
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {activeSnapshot.newKeys.map((key) => (
                       <span
                         key={key}
-                        className="px-1.5 py-0.5 bg-[rgba(166,227,161,0.15)] text-[#a6e3a1] rounded-sm text-[11px] font-semibold font-mono"
+                        className="px-1.5 py-0.5 bg-[rgba(166,227,161,0.15)] text-code-green rounded-sm text-[11px] font-semibold font-mono"
                       >
                         {key}
                       </span>
@@ -433,7 +433,7 @@ export default function ContextInspector({
             </div>
           ) : activeTab === 'prompt' ? (
             <div>
-              <div className="mb-2 text-[10px] text-[#6c7086] font-semibold uppercase">
+              <div className="mb-2 text-[10px] text-code-muted font-semibold uppercase">
                 Resolved prompt template
               </div>
               <div className="px-3 py-2.5 bg-surface-inset border border-border rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
@@ -442,15 +442,15 @@ export default function ContextInspector({
             </div>
           ) : activeTab === 'details' ? (
             <div>
-              <div className="mb-2 text-[10px] text-[#6c7086] font-semibold uppercase">
+              <div className="mb-2 text-[10px] text-code-muted font-semibold uppercase">
                 Step execution details
               </div>
               <div className="flex flex-col gap-3">
                 {/* Duration */}
                 {activeSnapshot.stepExecution.startedAt && (
                   <div>
-                    <div className="text-[11px] text-[#89b4fa] font-semibold mb-1">Duration</div>
-                    <div className="text-[11px] text-[#cdd6f4]">
+                    <div className="text-[11px] text-code-blue font-semibold mb-1">Duration</div>
+                    <div className="text-[11px] text-code-text">
                       Started: {activeSnapshot.stepExecution.startedAt}
                       {activeSnapshot.stepExecution.completedAt && (
                         <>
@@ -471,8 +471,8 @@ export default function ContextInspector({
                 {/* LLM details */}
                 {activeSnapshot.stepExecution.llm && (
                   <div>
-                    <div className="text-[11px] text-[#89b4fa] font-semibold mb-1">LLM Metrics</div>
-                    <div className="text-[11px] text-[#cdd6f4]">
+                    <div className="text-[11px] text-code-blue font-semibold mb-1">LLM Metrics</div>
+                    <div className="text-[11px] text-code-text">
                       Tokens in: {activeSnapshot.stepExecution.llm.tokensIn}
                       <br />
                       Tokens out: {activeSnapshot.stepExecution.llm.tokensOut}
@@ -485,7 +485,7 @@ export default function ContextInspector({
                     </div>
                     {activeSnapshot.stepExecution.llm.response && (
                       <>
-                        <div className="text-[11px] text-[#89b4fa] font-semibold mt-2 mb-1">
+                        <div className="text-[11px] text-code-blue font-semibold mt-2 mb-1">
                           Response Text
                         </div>
                         <div className="px-3 py-2.5 bg-surface-inset border border-border rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
@@ -499,9 +499,9 @@ export default function ContextInspector({
                 {/* Error details */}
                 {activeSnapshot.stepExecution.error && (
                   <div>
-                    <div className="text-[11px] text-[#f38ba8] font-semibold mb-1">Error</div>
-                    <div className="px-3 py-2.5 bg-[#1a0f14] border border-[#f38ba8] rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
-                      <div className="text-[#f38ba8] font-semibold mb-1">
+                    <div className="text-[11px] text-code-red font-semibold mb-1">Error</div>
+                    <div className="px-3 py-2.5 bg-code-red/10 border border-code-red rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto">
+                      <div className="text-code-red font-semibold mb-1">
                         {activeSnapshot.stepExecution.error}
                       </div>
                     </div>
@@ -511,7 +511,7 @@ export default function ContextInspector({
                 {/* Approval records */}
                 {activeSnapshot.stepExecution.approvals && activeSnapshot.stepExecution.approvals.length > 0 && (
                   <div>
-                    <div className="text-[11px] text-[#89b4fa] font-semibold mb-1">
+                    <div className="text-[11px] text-code-blue font-semibold mb-1">
                       Approvals ({activeSnapshot.stepExecution.approvals.length})
                     </div>
                     {activeSnapshot.stepExecution.approvals.map((approval, idx) => (
@@ -520,19 +520,19 @@ export default function ContextInspector({
                           <span className={cn(
                             'px-1.5 py-0.5 rounded-sm text-[10px] font-semibold',
                             approval.decision === 'approve'
-                              ? 'bg-[rgba(166,227,161,0.15)] text-[#a6e3a1]'
-                              : 'bg-[rgba(243,139,168,0.15)] text-[#f38ba8]',
+                              ? 'bg-[rgba(166,227,161,0.15)] text-code-green'
+                              : 'bg-[rgba(243,139,168,0.15)] text-code-red',
                           )}>
                             {approval.decision.toUpperCase()}
                           </span>
-                          <span className="text-[11px] text-[#cdd6f4]">{approval.userId}</span>
+                          <span className="text-[11px] text-code-text">{approval.userId}</span>
                         </div>
                         {approval.comment && (
-                          <div className="text-[11px] text-[#9399b2] italic">
+                          <div className="text-[11px] text-code-comment italic">
                             &quot;{approval.comment}&quot;
                           </div>
                         )}
-                        <div className="text-[10px] text-[#6c7086] mt-1">
+                        <div className="text-[10px] text-code-muted mt-1">
                           {approval.at}
                         </div>
                       </div>
@@ -542,8 +542,8 @@ export default function ContextInspector({
 
                 {/* Status */}
                 <div>
-                  <div className="text-[11px] text-[#89b4fa] font-semibold mb-1">Status</div>
-                  <div className="text-[11px] text-[#cdd6f4]">
+                  <div className="text-[11px] text-code-blue font-semibold mb-1">Status</div>
+                  <div className="text-[11px] text-code-text">
                     {activeSnapshot.stepExecution.status}
                   </div>
                 </div>
@@ -559,15 +559,15 @@ export default function ContextInspector({
                   disabled={compareIdx === 0}
                   onClick={() => setCompareIdx((c) => c - 1)}
                   className={cn(
-                    'px-2 py-0.5 text-[11px] bg-transparent border border-[#313244] rounded-sm font-mono',
-                    compareIdx === 0 ? 'text-[#45475a] cursor-not-allowed' : 'text-[#cdd6f4] cursor-pointer',
+                    'px-2 py-0.5 text-[11px] bg-transparent border border-code-border rounded-sm font-mono',
+                    compareIdx === 0 ? 'text-code-raised cursor-not-allowed' : 'text-code-text cursor-pointer',
                   )}
                 >
                   ←
                 </button>
                 <span
                   data-testid="attempts-label"
-                  className="text-[11px] text-[#9399b2] flex-1 text-center"
+                  className="text-[11px] text-code-comment flex-1 text-center"
                 >
                   Attempt {compareIdx + 1} vs {compareIdx + 2} of {stepAttempts.length}
                 </span>
@@ -577,8 +577,8 @@ export default function ContextInspector({
                   disabled={compareIdx >= stepAttempts.length - 2}
                   onClick={() => setCompareIdx((c) => c + 1)}
                   className={cn(
-                    'px-2 py-0.5 text-[11px] bg-transparent border border-[#313244] rounded-sm font-mono',
-                    compareIdx >= stepAttempts.length - 2 ? 'text-[#45475a] cursor-not-allowed' : 'text-[#cdd6f4] cursor-pointer',
+                    'px-2 py-0.5 text-[11px] bg-transparent border border-code-border rounded-sm font-mono',
+                    compareIdx >= stepAttempts.length - 2 ? 'text-code-raised cursor-not-allowed' : 'text-code-text cursor-pointer',
                   )}
                 >
                   →

@@ -27,7 +27,7 @@ function formatCost(usd?: number): string {
 function costColor(usd?: number): string {
   if (usd == null || usd === 0) return 'text-text-tertiary';
   if (usd < 0.01) return 'text-success-fg';
-  if (usd < 0.10) return 'text-[#ca8a04]';
+  if (usd < 0.10) return 'text-warning-fg';
   if (usd < 1.00) return 'text-caution-fg';
   return 'text-danger-fg';
 }
@@ -145,7 +145,7 @@ export default function RunDetailDrawer({ pipelineId, run, onBack }: RunDetailDr
                 {formatCost(run.estimatedCostUsd)}
               </span>
               {run.estimatedCostUsd > 1.0 && (
-                <span className="ml-1.5 rounded-sm bg-[#fef3c7] px-1 py-px text-[9px] font-bold uppercase text-[#92400e]">
+                <span className="ml-1.5 rounded-sm bg-warning-bg px-1 py-px text-[9px] font-bold uppercase text-warning-fg">
                   Budget Warning
                 </span>
               )}
@@ -180,10 +180,10 @@ export default function RunDetailDrawer({ pipelineId, run, onBack }: RunDetailDr
               <div className="mb-1 text-[11px] font-semibold uppercase text-state-failed">
                 Error
               </div>
-              <div className="whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-[#991b1b]">
+              <div className="whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-danger-fg">
                 {run.error.message}
                 {run.error.nodeId && (
-                  <div className="mt-1 text-[11px] text-[#b91c1c]">
+                  <div className="mt-1 text-[11px] text-danger-fg">
                     at node: {run.error.nodeId}
                   </div>
                 )}

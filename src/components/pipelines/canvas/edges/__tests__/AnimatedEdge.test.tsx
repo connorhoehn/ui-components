@@ -269,7 +269,7 @@ describe('AnimatedEdge reduced motion', () => {
 describe('ports.ts PORT_CLS mapping', () => {
   it('image is a violet square', () => {
     expect(PORT_CLS.image).toContain('!rounded-sm');
-    expect(PORT_CLS.image).toContain('!bg-[#7c3aed]');
+    expect(PORT_CLS.image).toContain('!bg-accent');
     expect(PORT_CLS.image).toContain('!w-2.5');
   });
 
@@ -278,7 +278,7 @@ describe('ports.ts PORT_CLS mapping', () => {
   });
 
   it('data is the slate-blue tinted circle', () => {
-    expect(PORT_CLS.data).toContain('!bg-[#94a3b8]');
+    expect(PORT_CLS.data).toContain('!bg-neutral');
     expect(PORT_CLS.data).not.toContain('!rounded-sm');
   });
 

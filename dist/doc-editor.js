@@ -1,9 +1,9 @@
-import { S as W } from "./DocumentEditorPage-DmOW28h7.js";
-import { A as ye, a as ve, D as ke, b as Ce, c as Me, E as Se, F as je, H as Ae, K as $e, M as Pe, d as Ee, P as _e, R as De, e as Ie, f as Te, g as Re, h as He, T as Le, V as Oe, i as Be, j as Ue, k as We, l as Fe, m as Ve, r as Xe, u as Ke, n as qe } from "./DocumentEditorPage-DmOW28h7.js";
+import { S as W } from "./DocumentEditorPage-CCf0hNyR.js";
+import { A as Ne, a as ve, D as ke, b as Ce, c as Me, E as Se, F as je, H as Ae, K as $e, M as Pe, d as Ee, P as _e, R as De, e as Ie, f as Te, g as Re, h as He, T as Le, V as Oe, i as Be, j as Ue, k as We, l as Fe, m as Ve, r as Xe, u as Ke, n as qe } from "./DocumentEditorPage-CCf0hNyR.js";
 import { jsxs as n, jsx as r, Fragment as $ } from "react/jsx-runtime";
 import { useState as j, useMemo as _, useCallback as T, useRef as P, useEffect as D } from "react";
-import { N as F, T as R } from "./NewDocumentModal-CkLx3Yvx.js";
-import { E as Ge, a as Ye, b as Qe } from "./NewDocumentModal-CkLx3Yvx.js";
+import { N as F, T as R } from "./NewDocumentModal-DrvMvgkp.js";
+import { E as Ge, a as Ye, b as Qe } from "./NewDocumentModal-DrvMvgkp.js";
 import { c as t } from "./cn-B6yFEsav.js";
 import { o as V, p as X } from "./useWebSocket-Bn4OeUor.js";
 import { T as K } from "./Textarea-kaa9rHUL.js";
@@ -18,8 +18,8 @@ function q(e) {
   if (a < 60) return `${a}m ago`;
   const c = Math.floor(a / 60);
   if (c < 24) return `${c}h ago`;
-  const x = Math.floor(c / 24);
-  return x < 30 ? `${x}d ago` : `${Math.floor(x / 30)}mo ago`;
+  const f = Math.floor(c / 24);
+  return f < 30 ? `${f}d ago` : `${Math.floor(f / 30)}mo ago`;
 }
 const H = {
   draft: { bg: "#fef3c7", color: "#92400e" },
@@ -50,11 +50,11 @@ function G({
   const l = e.slice(0, 5), i = e.length - 5;
   return /* @__PURE__ */ n("div", { className: t("flex items-center gap-0.5"), children: [
     l.map((a, c) => {
-      const x = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, w = p ? "#f59e0b" : "#10b981";
+      const f = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, y = p ? "#f59e0b" : "#10b981";
       return /* @__PURE__ */ n(
         "div",
         {
-          title: `${a.displayName} — ${p ? "Away" : x.label}`,
+          title: `${a.displayName} — ${p ? "Away" : f.label}`,
           onClick: (h) => {
             h.stopPropagation(), s(a.userId);
           },
@@ -73,10 +73,10 @@ function G({
               "div",
               {
                 className: t("absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full border-2 border-white"),
-                style: { background: w }
+                style: { background: y }
               }
             ),
-            /* @__PURE__ */ r("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: x.icon })
+            /* @__PURE__ */ r("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: f.icon })
           ]
         },
         a.userId
@@ -85,7 +85,7 @@ function G({
     i > 0 && /* @__PURE__ */ n(
       "div",
       {
-        className: t("w-8 h-8 rounded-full bg-[#94a3b8] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5"),
+        className: t("w-8 h-8 rounded-full bg-neutral text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5"),
         children: [
           "+",
           i
@@ -94,7 +94,7 @@ function G({
     )
   ] });
 }
-function xe({
+function fe({
   documents: e,
   presence: s,
   onOpenDocument: d,
@@ -103,10 +103,10 @@ function xe({
   onJumpToUser: a,
   hideHeader: c
 }) {
-  const [x, p] = j(!1), [w, h] = j(null), [b, N] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), y = Math.min(b, m), M = _(() => {
-    const o = (y - 1) * u;
+  const [f, p] = j(!1), [y, h] = j(null), [b, w] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), N = Math.min(b, m), M = _(() => {
+    const o = (N - 1) * u;
     return e.slice(o, o + u);
-  }, [e, y]), f = T(
+  }, [e, N]), x = T(
     (o, k, S) => {
       o.stopPropagation(), window.confirm(`Delete "${S}"? This cannot be undone.`) && i(k);
     },
@@ -114,13 +114,13 @@ function xe({
   );
   return /* @__PURE__ */ n("div", { className: t("px-4"), children: [
     !c && /* @__PURE__ */ n("div", { className: t("flex items-center justify-between mb-5"), children: [
-      /* @__PURE__ */ r("h1", { className: t("m-0 text-[22px] font-bold text-[#1e293b]"), children: "Documents" }),
+      /* @__PURE__ */ r("h1", { className: t("m-0 text-[22px] font-bold text-text-primary"), children: "Documents" }),
       /* @__PURE__ */ n(
         "button",
         {
           "data-testid": "new-document-btn",
           onClick: () => p(!0),
-          className: t("flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-[#3b82f6] text-white cursor-pointer font-[inherit]"),
+          className: t("flex items-center gap-1.5 px-4 py-2 text-sm font-semibold border-none rounded-lg bg-info text-white cursor-pointer font-[inherit]"),
           children: [
             /* @__PURE__ */ r("span", { className: t("text-base leading-none"), children: "+" }),
             "New Document"
@@ -136,7 +136,7 @@ function xe({
         children: "No documents yet. Create your first document to get started."
       }
     ) : /* @__PURE__ */ r("div", { className: t("flex flex-col gap-3"), children: M.map((o) => {
-      const k = s[o.id] ?? [], S = w === o.id;
+      const k = s[o.id] ?? [], S = y === o.id;
       return /* @__PURE__ */ n(
         "div",
         {
@@ -152,10 +152,10 @@ function xe({
             /* @__PURE__ */ r("span", { className: t("text-2xl shrink-0"), children: o.icon }),
             /* @__PURE__ */ n("div", { className: t("flex-1 min-w-0"), children: [
               /* @__PURE__ */ n("div", { className: t("flex items-center gap-2 mb-0.5"), children: [
-                /* @__PURE__ */ r("span", { className: t("text-[15px] font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: o.title }),
+                /* @__PURE__ */ r("span", { className: t("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"), children: o.title }),
                 /* @__PURE__ */ r(z, { status: o.status }),
                 o.type && /* @__PURE__ */ r("span", { className: t("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"), children: o.type }),
-                o.activeCallSessionId && /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] leading-[18px]"), children: [
+                o.activeCallSessionId && /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-success-bg text-success-fg leading-[18px]"), children: [
                   /* @__PURE__ */ r("span", { className: t("w-1.5 h-1.5 rounded-full bg-success animate-pulse") }),
                   "Live Call"
                 ] })
@@ -176,9 +176,9 @@ function xe({
             S && /* @__PURE__ */ r(
               "button",
               {
-                onClick: (C) => f(C, o.id, o.title),
+                onClick: (C) => x(C, o.id, o.title),
                 title: "Delete document",
-                className: t("absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0"),
+                className: t("absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-danger-bg text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0"),
                 children: "×"
               }
             )
@@ -197,11 +197,11 @@ function xe({
             "button",
             {
               "data-testid": "pagination-prev",
-              disabled: y <= 1,
-              onClick: () => N((o) => Math.max(1, o - 1)),
+              disabled: N <= 1,
+              onClick: () => w((o) => Math.max(1, o - 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                y <= 1 ? "bg-surface-hover text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                N <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Previous"
             }
@@ -213,7 +213,7 @@ function xe({
               className: t("text-[13px] text-text-secondary font-medium"),
               children: [
                 "Page ",
-                y,
+                N,
                 " of ",
                 m
               ]
@@ -223,11 +223,11 @@ function xe({
             "button",
             {
               "data-testid": "pagination-next",
-              disabled: y >= m,
-              onClick: () => N((o) => Math.min(m, o + 1)),
+              disabled: N >= m,
+              onClick: () => w((o) => Math.min(m, o + 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                y >= m ? "bg-surface-hover text-[#9ca3af] cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                N >= m ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Next"
             }
@@ -238,7 +238,7 @@ function xe({
     /* @__PURE__ */ r(
       F,
       {
-        open: x,
+        open: f,
         onClose: () => p(!1),
         onCreate: l
       }
@@ -260,17 +260,17 @@ function Q({
   fragmentName: i = U,
   editable: a,
   placeholder: c,
-  className: x,
+  className: f,
   onFragmentReady: p
 }) {
-  const w = _(
+  const y = _(
     () => d ?? e.getXmlFragment(i),
     [d, e, i]
   ), h = P(!1);
-  return h.current || (h.current = !0, p?.(w, e)), /* @__PURE__ */ r("div", { className: t(x), children: /* @__PURE__ */ r(
+  return h.current || (h.current = !0, p?.(y, e)), /* @__PURE__ */ r("div", { className: t(f), children: /* @__PURE__ */ r(
     R,
     {
-      fragment: w,
+      fragment: y,
       ydoc: e,
       provider: s,
       user: l,
@@ -287,49 +287,49 @@ function Z({
   user: i,
   fragmentName: a = U,
   editable: c,
-  placeholder: x,
+  placeholder: f,
   className: p,
-  onFragmentReady: w,
+  onFragmentReady: y,
   loadingSlot: h
 }) {
-  const b = l ?? `doc:${s}`, N = P(/* @__PURE__ */ new Set()), u = T(
-    (C) => (N.current.add(C), () => {
-      N.current.delete(C);
+  const b = l ?? `doc:${s}`, w = P(/* @__PURE__ */ new Set()), u = T(
+    (C) => (w.current.add(C), () => {
+      w.current.delete(C);
     }),
     []
   ), m = T((C) => {
-    N.current.forEach((v) => v(C));
-  }, []), y = _(
+    w.current.forEach((v) => v(C));
+  }, []), N = _(
     () => ({
       wsUrl: e,
       cognitoToken: d,
       defaultChannel: b
     }),
     [e, d, b]
-  ), M = V({ config: y, onMessage: m }), { ydoc: f, provider: o } = X({
+  ), M = V({ config: N, onMessage: m }), { ydoc: x, provider: o } = X({
     documentId: s,
     ws: M,
     onMessage: u
   }), k = _(
-    () => f ? f.getXmlFragment(a) : null,
-    [f, a]
+    () => x ? x.getXmlFragment(a) : null,
+    [x, a]
   ), S = P(!1);
-  return !S.current && k && f && (S.current = !0, w?.(k, f)), !f || !k ? /* @__PURE__ */ r("div", { className: t(p), children: h ?? null }) : /* @__PURE__ */ r("div", { className: t(p), children: /* @__PURE__ */ r(
+  return !S.current && k && x && (S.current = !0, y?.(k, x)), !x || !k ? /* @__PURE__ */ r("div", { className: t(p), children: h ?? null }) : /* @__PURE__ */ r("div", { className: t(p), children: /* @__PURE__ */ r(
     R,
     {
       fragment: k,
-      ydoc: f,
+      ydoc: x,
       provider: o,
       user: i,
       editable: c,
-      placeholder: x
+      placeholder: f
     }
   ) });
 }
 function J({ current: e, total: s }) {
   const d = s > 0 ? Math.round(e / s * 100) : 0;
   return /* @__PURE__ */ n("div", { className: t("mb-4"), children: [
-    /* @__PURE__ */ n("div", { className: t("text-[13px] text-[#6b7280] mb-1 flex justify-between"), children: [
+    /* @__PURE__ */ n("div", { className: t("text-[13px] text-text-secondary mb-1 flex justify-between"), children: [
       /* @__PURE__ */ n("span", { children: [
         e,
         " of ",
@@ -341,10 +341,10 @@ function J({ current: e, total: s }) {
         "%"
       ] })
     ] }),
-    /* @__PURE__ */ r("div", { className: t("h-2 bg-[#e5e7eb] rounded overflow-hidden"), children: /* @__PURE__ */ r(
+    /* @__PURE__ */ r("div", { className: t("h-2 bg-surface-emphasis rounded overflow-hidden"), children: /* @__PURE__ */ r(
       "div",
       {
-        className: t("h-full bg-[#3b82f6] rounded transition-[width] duration-300 ease-in-out"),
+        className: t("h-full bg-info rounded transition-[width] duration-300 ease-in-out"),
         style: { width: `${d}%` }
       }
     ) })
@@ -361,30 +361,30 @@ const ee = {
   high: "#ef4444"
 };
 function te({ item: e, onAck: s, onReject: d }) {
-  const [l, i] = j(!1), [a, c] = j(""), [x, p] = j("none"), w = P(e.status), h = ee[e.status], [b, N] = j(!1), u = P(null);
+  const [l, i] = j(!1), [a, c] = j(""), [f, p] = j("none"), y = P(e.status), h = ee[e.status], [b, w] = j(!1), u = P(null);
   D(() => () => {
     u.current && clearTimeout(u.current);
   }, []), D(() => {
-    w.current === "pending" && e.status === "acked" ? p("ack") : w.current === "pending" && e.status === "rejected" && p("reject"), w.current = e.status;
+    y.current === "pending" && e.status === "acked" ? p("ack") : y.current === "pending" && e.status === "rejected" && p("reject"), y.current = e.status;
   }, [e.status]);
   const m = () => {
-    b || (N(!0), p("ack"), u.current = setTimeout(() => {
-      u.current = null, s(a || void 0), c(""), i(!1), N(!1);
+    b || (w(!0), p("ack"), u.current = setTimeout(() => {
+      u.current = null, s(a || void 0), c(""), i(!1), w(!1);
     }, 150));
-  }, y = () => {
+  }, N = () => {
     if (!b) {
       if (!a.trim()) {
         i(!0);
         return;
       }
-      N(!0), p("reject"), u.current = setTimeout(() => {
-        u.current = null, d(a), c(""), i(!1), N(!1);
+      w(!0), p("reject"), u.current = setTimeout(() => {
+        u.current = null, d(a), c(""), i(!1), w(!1);
       }, 150);
     }
   };
-  return /* @__PURE__ */ n("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", x === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-success-bg" : x === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-danger-bg" : ""), children: [
+  return /* @__PURE__ */ n("div", { className: t("bg-white border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", f === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-success bg-success-bg" : f === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-danger bg-danger-bg" : ""), children: [
     /* @__PURE__ */ n("div", { className: t("flex items-center mb-1.5"), children: [
-      /* @__PURE__ */ r("span", { className: t("text-sm font-medium flex-1 text-[#1e293b]"), children: e.text }),
+      /* @__PURE__ */ r("span", { className: t("text-sm font-medium flex-1 text-text-primary"), children: e.text }),
       /* @__PURE__ */ r(
         "span",
         {
@@ -402,11 +402,11 @@ function te({ item: e, onAck: s, onReject: d }) {
         }
       )
     ] }),
-    e.status === "acked" && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 text-xs text-[#6b7280] mb-1"), children: [
-      /* @__PURE__ */ r("span", { className: t("w-5 h-5 rounded-full bg-[#22c55e] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"), children: "✓" }),
+    e.status === "acked" && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 text-xs text-text-secondary mb-1"), children: [
+      /* @__PURE__ */ r("span", { className: t("w-5 h-5 rounded-full bg-success text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"), children: "✓" }),
       /* @__PURE__ */ n("span", { children: [
         "Approved by ",
-        /* @__PURE__ */ r("strong", { className: t("text-[#334155]"), children: e.ackedBy?.slice(0, 8) ?? "user" }),
+        /* @__PURE__ */ r("strong", { className: t("text-text-primary"), children: e.ackedBy?.slice(0, 8) ?? "user" }),
         e.ackedAt && /* @__PURE__ */ n($, { children: [
           " · ",
           new Date(e.ackedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
@@ -417,8 +417,8 @@ function te({ item: e, onAck: s, onReject: d }) {
         ] })
       ] })
     ] }),
-    e.status === "rejected" && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 text-xs text-[#991b1b] mb-1"), children: [
-      /* @__PURE__ */ r("span", { className: t("w-5 h-5 rounded-full bg-[#ef4444] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"), children: "✕" }),
+    e.status === "rejected" && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 text-xs text-danger-fg mb-1"), children: [
+      /* @__PURE__ */ r("span", { className: t("w-5 h-5 rounded-full bg-danger text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0"), children: "✕" }),
       /* @__PURE__ */ n("span", { children: [
         "Rejected by ",
         /* @__PURE__ */ r("strong", { children: e.ackedBy?.slice(0, 8) ?? "user" }),
@@ -434,13 +434,13 @@ function te({ item: e, onAck: s, onReject: d }) {
     ] }),
     e.status === "pending" && /* @__PURE__ */ n("div", { children: [
       /* @__PURE__ */ n("div", { className: t("flex gap-2 mt-1.5"), children: [
-        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white", b && "opacity-60 cursor-not-allowed"), onClick: m, disabled: b, children: "Acknowledge" }),
-        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white", b && "opacity-60 cursor-not-allowed"), onClick: y, disabled: b, children: "Reject" }),
+        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white", b && "opacity-60 cursor-not-allowed"), onClick: m, disabled: b, children: "Acknowledge" }),
+        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white", b && "opacity-60 cursor-not-allowed"), onClick: N, disabled: b, children: "Reject" }),
         !l && /* @__PURE__ */ r(
           "button",
           {
             type: "button",
-            className: t("px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field"),
+            className: t("px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
             onClick: () => i(!0),
             children: "Add note"
           }
@@ -451,9 +451,9 @@ function te({ item: e, onAck: s, onReject: d }) {
           K,
           {
             value: a,
-            onChange: (f) => c(f.target.value),
-            onKeyDown: (f) => {
-              f.key === "Enter" && !f.shiftKey && (f.preventDefault(), a.trim() && m()), f.key === "Escape" && (i(!1), c(""));
+            onChange: (x) => c(x.target.value),
+            onKeyDown: (x) => {
+              x.key === "Enter" && !x.shiftKey && (x.preventDefault(), a.trim() && m()), x.key === "Escape" && (i(!1), c(""));
             },
             placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
             autoFocus: !0,
@@ -465,7 +465,7 @@ function te({ item: e, onAck: s, onReject: d }) {
             "button",
             {
               type: "button",
-              className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white"),
+              className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-success text-white"),
               onClick: m,
               disabled: b,
               tabIndex: 0,
@@ -476,8 +476,8 @@ function te({ item: e, onAck: s, onReject: d }) {
             "button",
             {
               type: "button",
-              className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white"),
-              onClick: y,
+              className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white"),
+              onClick: N,
               disabled: b,
               tabIndex: 0,
               children: "Submit & Reject"
@@ -487,7 +487,7 @@ function te({ item: e, onAck: s, onReject: d }) {
             "button",
             {
               type: "button",
-              className: t("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field"),
+              className: t("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
               onClick: () => {
                 i(!1), c("");
               },
@@ -507,10 +507,10 @@ const B = {
   notes: { bg: "#f3f4f6", text: "#374151" },
   custom: { bg: "#e0e7ff", text: "#3730a3" }
 };
-function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, provider: a, comments: c, onAddComment: x, onResolveThread: p, onUnresolveThread: w, participants: h }) {
-  const b = B[e.type] ?? B.custom, N = e.items.filter((u) => u.status !== "pending").length;
-  return /* @__PURE__ */ n("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg p-5 mb-4"), children: [
-    /* @__PURE__ */ r("h2", { className: t("text-xl font-bold m-0 mb-1 text-[#1e293b]"), children: e.title }),
+function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, provider: a, comments: c, onAddComment: f, onResolveThread: p, onUnresolveThread: y, participants: h }) {
+  const b = B[e.type] ?? B.custom, w = e.items.filter((u) => u.status !== "pending").length;
+  return /* @__PURE__ */ n("div", { className: t("bg-white border border-border rounded-lg p-5 mb-4"), children: [
+    /* @__PURE__ */ r("h2", { className: t("text-xl font-bold m-0 mb-1 text-text-primary"), children: e.title }),
     /* @__PURE__ */ r(
       "span",
       {
@@ -545,42 +545,42 @@ function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, p
         },
         u.id
       )),
-      /* @__PURE__ */ n("div", { className: t("text-xs text-[#6b7280] mt-3 pt-2 border-t border-[#f3f4f6]"), children: [
-        N,
+      /* @__PURE__ */ n("div", { className: t("text-xs text-text-secondary mt-3 pt-2 border-t border-border-subtle"), children: [
+        w,
         " of ",
         e.items.length,
         " items reviewed"
       ] })
     ] }),
-    x && /* @__PURE__ */ r(
+    f && /* @__PURE__ */ r(
       W,
       {
         comments: c ?? [],
-        onAddComment: x,
+        onAddComment: f,
         participants: h,
         onResolveThread: p,
-        onUnresolveThread: w
+        onUnresolveThread: y
       }
     )
   ] });
 }
 const E = 4;
-function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSectionFocus: i, jumpToIndex: a, onJumpComplete: c, getSectionFragment: x, ydoc: p, provider: w, comments: h, onAddComment: b, onResolveThread: N, onUnresolveThread: u }) {
-  const [m, y] = j(0), M = Math.max(1, Math.ceil(e.length / E)), f = m * E, o = e.slice(f, f + E);
+function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSectionFocus: i, jumpToIndex: a, onJumpComplete: c, getSectionFragment: f, ydoc: p, provider: y, comments: h, onAddComment: b, onResolveThread: w, onUnresolveThread: u }) {
+  const [m, N] = j(0), M = Math.max(1, Math.ceil(e.length / E)), x = m * E, o = e.slice(x, x + E);
   if (D(() => {
-    a != null && a >= 0 && a < e.length && (y(Math.floor(a / E)), c?.());
+    a != null && a >= 0 && a < e.length && (N(Math.floor(a / E)), c?.());
   }, [a, e.length, c]), D(() => {
     o.length > 0 && i && i(o[0].id);
-  }, [f, i]), e.length === 0)
-    return /* @__PURE__ */ r("div", { className: t("text-center p-12 text-[#6b7280] text-[15px]"), children: "No sections to review." });
-  const k = () => y((v) => Math.max(0, v - 1)), S = () => y((v) => Math.min(M - 1, v + 1)), C = f + o.length;
+  }, [x, i]), e.length === 0)
+    return /* @__PURE__ */ r("div", { className: t("text-center p-12 text-text-secondary text-[15px]"), children: "No sections to review." });
+  const k = () => N((v) => Math.max(0, v - 1)), S = () => N((v) => Math.min(M - 1, v + 1)), C = x + o.length;
   return /* @__PURE__ */ n("div", { children: [
     /* @__PURE__ */ r(J, { current: C, total: e.length }),
     /* @__PURE__ */ r("div", { className: t("flex flex-col gap-4"), children: o.map((v) => {
       const I = l?.filter((g) => g.currentSectionId === v.id) ?? [];
       return /* @__PURE__ */ n("div", { children: [
         I.length > 0 && /* @__PURE__ */ n("div", { className: t("flex gap-1 mb-1.5 items-center"), children: [
-          /* @__PURE__ */ r("span", { className: t("text-xs text-[#6b7280] mr-1"), children: "Viewing:" }),
+          /* @__PURE__ */ r("span", { className: t("text-xs text-text-secondary mr-1"), children: "Viewing:" }),
           I.map((g) => /* @__PURE__ */ r(
             "div",
             {
@@ -598,12 +598,12 @@ function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSec
             section: v,
             onAckItem: (g, A) => s(v.id, g, A),
             onRejectItem: (g, A) => d(v.id, g, A),
-            fragment: x(v.id),
+            fragment: f(v.id),
             ydoc: p,
-            provider: w,
+            provider: y,
             comments: h?.[v.id],
             onAddComment: b ? (g, A) => b(v.id, g, A) : void 0,
-            onResolveThread: N ? (g) => N(v.id, g) : void 0,
+            onResolveThread: w ? (g) => w(v.id, g) : void 0,
             onUnresolveThread: u ? (g) => u(v.id, g) : void 0,
             participants: I
           }
@@ -617,14 +617,14 @@ function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSec
           type: "button",
           className: t(
             "px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]",
-            m === 0 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
+            m === 0 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-white text-text-primary cursor-pointer"
           ),
           onClick: k,
           disabled: m === 0,
           children: "Previous"
         }
       ),
-      /* @__PURE__ */ n("span", { className: t("text-[13px] text-[#6b7280]"), children: [
+      /* @__PURE__ */ n("span", { className: t("text-[13px] text-text-secondary"), children: [
         "Page ",
         m + 1,
         " of ",
@@ -639,7 +639,7 @@ function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSec
           type: "button",
           className: t(
             "px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]",
-            m === M - 1 ? "bg-[#f9fafb] text-[#9ca3af] cursor-default" : "bg-white text-[#374151] cursor-pointer"
+            m === M - 1 ? "bg-surface-inset text-text-tertiary cursor-default" : "bg-white text-text-primary cursor-pointer"
           ),
           onClick: S,
           disabled: m === M - 1,
@@ -711,7 +711,7 @@ function ge({ events: e, participants: s }) {
     /* @__PURE__ */ n(
       "div",
       {
-        className: t("flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none"),
+        className: t("flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none"),
         onClick: () => l((i) => !i),
         children: [
           /* @__PURE__ */ n("span", { children: [
@@ -725,7 +725,7 @@ function ge({ events: e, participants: s }) {
     !d && /* @__PURE__ */ n($, { children: [
       s.length > 0 && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap"), children: [
         /* @__PURE__ */ r("span", { className: t("font-semibold"), children: "Active:" }),
-        s.map((i) => /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-[#334155]"), children: [
+        s.map((i) => /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"), children: [
           /* @__PURE__ */ r("span", { className: t("w-2 h-2 rounded-full shrink-0"), style: { background: i.color } }),
           i.displayName,
           " (",
@@ -733,7 +733,7 @@ function ge({ events: e, participants: s }) {
           ")"
         ] }, i.clientId))
       ] }),
-      /* @__PURE__ */ r("div", { className: t("max-h-[260px] overflow-y-auto py-1"), children: e.length === 0 ? /* @__PURE__ */ r("div", { className: t("px-3 py-4 text-center text-text-tertiary text-xs"), children: "No activity yet. Actions like acknowledging tasks will appear here." }) : e.map((i) => /* @__PURE__ */ n("div", { className: t("flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-[#f1f5f9]"), children: [
+      /* @__PURE__ */ r("div", { className: t("max-h-[260px] overflow-y-auto py-1"), children: e.length === 0 ? /* @__PURE__ */ r("div", { className: t("px-3 py-4 text-center text-text-tertiary text-xs"), children: "No activity yet. Actions like acknowledging tasks will appear here." }) : e.map((i) => /* @__PURE__ */ n("div", { className: t("flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle"), children: [
         /* @__PURE__ */ r(
           "div",
           {
@@ -743,7 +743,7 @@ function ge({ events: e, participants: s }) {
           }
         ),
         /* @__PURE__ */ n("div", { children: [
-          /* @__PURE__ */ r("span", { className: t("font-semibold text-[#334155]"), children: i.displayName || "Unknown" }),
+          /* @__PURE__ */ r("span", { className: t("font-semibold text-text-primary"), children: i.displayName || "Unknown" }),
           " ",
           /* @__PURE__ */ n("span", { className: t("text-neutral"), children: [
             ne(i.eventType),
@@ -758,14 +758,14 @@ function ge({ events: e, participants: s }) {
 }
 export {
   he as AckMode,
-  ye as ActionItemsCard,
+  Ne as ActionItemsCard,
   ge as ActivityFeed,
   ve as AttachmentsPanel,
   re as ChunkViewer,
   ke as DiffViewer,
   Ce as DocumentEditorPage,
   Me as DocumentHeader,
-  xe as DocumentListPage,
+  fe as DocumentListPage,
   Ge as EditorToolbar,
   Se as ExecutiveSummaryCard,
   je as FollowModeBar,

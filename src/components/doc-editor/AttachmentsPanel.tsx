@@ -195,7 +195,7 @@ function AttachmentRow({ attachment, onRemove, editable }: {
           type="button"
           onClick={onRemove}
           title="Remove"
-          className={cn('bg-transparent border-none cursor-pointer text-[#ef4444] text-sm px-[5px] py-0.5 opacity-50 leading-none rounded shrink-0 hover:opacity-100')}
+          className={cn('bg-transparent border-none cursor-pointer text-danger-fg text-sm px-[5px] py-0.5 opacity-50 leading-none rounded shrink-0 hover:opacity-100')}
         >
           ×
         </button>
@@ -226,7 +226,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
         'flex items-center justify-between px-3.5 py-2.5 bg-surface-panel',
         (hasItems || addMode) ? 'border-b border-border' : '',
       )}>
-        <span className={cn('text-[13px] font-semibold text-[#374151]')}>
+        <span className={cn('text-[13px] font-semibold text-text-primary')}>
           Attachments
           {hasItems && (
             <span className={cn('ml-1.5 text-[11px] text-text-tertiary font-normal')}>
@@ -239,14 +239,14 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
             <button
               type="button"
               onClick={() => setAddMode('file')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
             >
               + File
             </button>
             <button
               type="button"
               onClick={() => setAddMode('document')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-text-primary')}
             >
               + Document
             </button>

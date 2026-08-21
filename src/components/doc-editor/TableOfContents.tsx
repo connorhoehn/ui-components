@@ -89,8 +89,8 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
               <div
                 className={cn(
                   'rounded-full transition-all duration-200',
-                  isActive ? 'w-2 h-2 bg-[#3b82f6] shadow-[0_0_0_3px_rgba(59,130,246,0.2)]' :
-                  isPast ? 'w-1.5 h-1.5 bg-[#94a3b8]' : 'w-1.5 h-1.5 bg-[#d1d5db]',
+                  isActive ? 'w-2 h-2 bg-info shadow-[0_0_0_3px_rgba(59,130,246,0.2)]' :
+                  isPast ? 'w-1.5 h-1.5 bg-neutral' : 'w-1.5 h-1.5 bg-state-idle',
                 )}
               />
             </div>
@@ -98,7 +98,7 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
             {/* Label */}
             <span className={cn(
               'text-[11px] overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200',
-              isActive ? 'font-semibold text-[#1e293b]' :
+              isActive ? 'font-semibold text-text-primary' :
               isPast ? 'font-normal text-neutral' : 'font-normal text-text-tertiary',
             )}>
               {section.title || 'Untitled'}

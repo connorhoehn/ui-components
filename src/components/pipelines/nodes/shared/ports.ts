@@ -17,9 +17,9 @@
 export type PortPayload = 'image' | 'text' | 'data' | 'control' | 'error';
 
 export const PORT_CLS: Record<PortPayload, string> = {
-  image: '!w-2.5 !h-2.5 !rounded-sm !bg-[#7c3aed] !border-[#6d28d9]',
+  image: '!w-2.5 !h-2.5 !rounded-sm !bg-accent !border-accent',
   text: '!w-2.5 !h-2.5 !bg-surface-emphasis',
-  data: '!w-2.5 !h-2.5 !bg-[#94a3b8]',
+  data: '!w-2.5 !h-2.5 !bg-neutral',
   control: '!w-2 !h-2 !bg-warning',
   error: '!w-2 !h-2 !bg-danger',
 };

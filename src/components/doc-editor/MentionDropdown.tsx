@@ -124,7 +124,7 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
                 {user.type === 'group' ? '#' : getInitials(user.displayName)}
               </div>
               <div className={cn('flex items-center gap-1.5 flex-1 min-w-0')}>
-                <span className={cn('text-[13px] font-medium text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap')}>
+                <span className={cn('text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>
                   {user.type === 'group' ? `@${user.displayName.toLowerCase()}` : user.displayName}
                 </span>
                 {user.type === 'user' && <span className={cn('w-2 h-2 rounded-full shrink-0', user.online ? 'bg-success' : 'bg-text-disabled')} />}

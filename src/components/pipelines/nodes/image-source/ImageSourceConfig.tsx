@@ -18,10 +18,10 @@ export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigP
       <div>
         <label
           htmlFor="image-source-image-id"
-          className="block text-[12px] font-semibold text-[#374151]"
+          className="block text-[12px] font-semibold text-text-primary"
         >
           Image ID{' '}
-          <span className="text-[#6b7280] font-normal">
+          <span className="text-text-secondary font-normal">
             (optional &mdash; can be set at run time)
           </span>
         </label>
@@ -36,7 +36,7 @@ export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigP
           onChange={(e) => onChange({ imageId: e.target.value.trim() || undefined })}
           placeholder="img_xxxxxxxx"
         />
-        <p className="mt-0.5 text-[11px] text-[#6b7280]">
+        <p className="mt-0.5 text-[11px] text-text-secondary">
           The imageId of an image already in the blob store. Leave blank to have the trigger or a
           preceding step supply the image at runtime.
         </p>
@@ -46,10 +46,10 @@ export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigP
       <div>
         <label
           htmlFor="image-source-output-key"
-          className="block text-[12px] font-semibold text-[#374151]"
+          className="block text-[12px] font-semibold text-text-primary"
         >
           Output key{' '}
-          <span className="text-[#6b7280] font-normal">(default: imageRef)</span>
+          <span className="text-text-secondary font-normal">(default: imageRef)</span>
         </label>
         <Input
           id="image-source-output-key"
@@ -62,7 +62,7 @@ export default function ImageSourceConfig({ data, onChange }: ImageSourceConfigP
           onChange={(e) => onChange({ outputKey: e.target.value.trim() || undefined })}
           placeholder="imageRef"
         />
-        <p className="mt-0.5 text-[11px] text-[#6b7280]">
+        <p className="mt-0.5 text-[11px] text-text-secondary">
           The key written to pipeline context (accessible as{' '}
           <code>$.trigger.{'<key>'}</code> by downstream steps).
         </p>

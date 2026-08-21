@@ -78,7 +78,7 @@ function CollapsibleGroup({
     <div className={cn('mb-2')}>
       <button
         onClick={() => setOpen(!open)}
-        className={cn('bg-transparent border-none cursor-pointer flex items-center gap-1.5 py-1 px-0 text-[13px] font-semibold text-[#334155] font-[inherit] w-full')}
+        className={cn('bg-transparent border-none cursor-pointer flex items-center gap-1.5 py-1 px-0 text-[13px] font-semibold text-text-primary font-[inherit] w-full')}
       >
         <span
           className={cn('inline-block text-[10px] transition-transform duration-150 ease-in-out', open ? 'rotate-90' : 'rotate-0')}
@@ -124,7 +124,7 @@ function ItemRow({
       <span className={cn('text-[13px] flex-1')}>
         <span
           className={cn(
-            variant === 'completed' ? 'line-through text-text-tertiary' : 'text-[#334155]',
+            variant === 'completed' ? 'line-through text-text-tertiary' : 'text-text-primary',
           )}
         >
           {item.text}
@@ -169,7 +169,7 @@ export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
           {items.map((item) => (
             <div
               key={item.id}
-              className={cn('flex items-start gap-2 text-[13px] text-[#334155]')}
+              className={cn('flex items-start gap-2 text-[13px] text-text-primary')}
             >
               <span className={cn('shrink-0')}>{statusIcon(item.status)}</span>
               <span>{item.text}</span>
@@ -306,7 +306,7 @@ export function SectionSummariesCard({
                 <button
                   onClick={() => toggle(section.id)}
                   className={cn(
-                    'border-none cursor-pointer flex items-center gap-2 py-2 px-1.5 rounded-md w-full font-[inherit] text-[13px] text-[#334155] transition-colors duration-100',
+                    'border-none cursor-pointer flex items-center gap-2 py-2 px-1.5 rounded-md w-full font-[inherit] text-[13px] text-text-primary transition-colors duration-100',
                     isOpen ? 'bg-surface-panel' : 'bg-transparent',
                   )}
                 >
@@ -360,7 +360,7 @@ export function SectionSummariesCard({
                       if (hasContent) {
                         return (
                           <div className={cn(
-                            'text-[13px] text-[#334155] leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
+                            'text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
                             section.items.length > 0 ? 'mb-2' : '',
                           )}>
                             {sectionContent.trim()}
@@ -389,7 +389,7 @@ export function SectionSummariesCard({
 
                     {/* Comments summary */}
                     {sectionComments.length > 0 && (
-                      <div className={cn('mt-2 pt-1.5 border-t border-[#f1f5f9]')}>
+                      <div className={cn('mt-2 pt-1.5 border-t border-border-subtle')}>
                         <div className={cn('text-[11px] font-semibold text-text-tertiary mb-1')}>
                           Comments ({commentCount})
                         </div>

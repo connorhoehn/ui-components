@@ -25,13 +25,13 @@ export function ApiDegradedBanner({ health }: ApiDegradedBannerProps) {
       aria-live="polite"
       data-testid="api-degraded-banner"
       className={cn(
-        'bg-[#fef3c7] border border-[#f59e0b] rounded-md text-[#78350f]',
+        'bg-warning-bg border border-warning rounded-md text-warning-fg',
         'px-3.5 py-2 text-[13px] font-sans flex items-center gap-2.5'
       )}
     >
       <span className="text-base" aria-hidden="true">⚠</span>
       <span className="font-semibold">Backend services degraded — some features unavailable.</span>
-      <span className="text-[#92400e] font-normal">{detail}</span>
+      <span className="text-warning-fg font-normal">{detail}</span>
     </div>
   );
 }

@@ -381,7 +381,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
         </>
       }
     >
-      <div className="text-xs text-[#92400e] bg-[#fef3c7] border border-warning-border rounded-md py-2 px-2.5 mb-3.5 leading-[1.45]">
+      <div className="text-xs text-warning-fg bg-warning-bg border border-warning-border rounded-md py-2 px-2.5 mb-3.5 leading-[1.45]">
         Dev only — requires <code>DCORE_ENABLE_TEST_EMIT=1</code> on the
         gateway. Emits fake events onto the pipelineEventSource to exercise
         the frontend without a real pipeline executor.
@@ -399,7 +399,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
       {history.length > 0 && (
         <div data-testid="sim-history" className="mt-4">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-[#334155]">
+            <span className="text-xs font-semibold text-text-primary">
               Recent fires ({history.length})
             </span>
             <button
@@ -439,7 +439,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
                   type="button"
                   data-testid="sim-history-refire"
                   onClick={() => handleRefire(entry)}
-                  className="text-[11px] py-[3px] px-2 bg-white border border-border-emphasis rounded cursor-pointer font-[inherit] text-[#334155]"
+                  className="text-[11px] py-[3px] px-2 bg-white border border-border-emphasis rounded cursor-pointer font-[inherit] text-text-primary"
                 >
                   ↻ re-fire
                 </button>

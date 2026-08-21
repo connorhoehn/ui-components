@@ -13,24 +13,24 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
   M(() => {
     w(a);
   }, [a]);
-  const b = a !== null && e.length > 0, f = l ? a : m ?? a, h = f === null ? 0 : Math.min(Math.max(f, 0), e.length - 1), u = (r) => {
-    const n = e.length;
-    if (n < 2) return;
-    const y = (h + r + n) % n;
+  const b = a !== null && e.length > 0, f = l ? a : m ?? a, h = f === null ? 0 : Math.min(Math.max(f, 0), e.length - 1), u = (n) => {
+    const r = e.length;
+    if (r < 2) return;
+    const y = (h + n + r) % r;
     l ? l(y) : w(y);
   };
   if (M(() => {
     if (b)
       return x.current = typeof document < "u" ? document.activeElement : null, d.current?.focus(), () => {
-        const r = x.current;
-        r && typeof r.focus == "function" && document.contains(r) && r.focus(), x.current = null;
+        const n = x.current;
+        n && typeof n.focus == "function" && document.contains(n) && n.focus(), x.current = null;
       };
   }, [b]), M(() => {
     if (!b) return;
-    const r = (n) => {
-      n.key === "Escape" ? (n.stopPropagation(), c()) : n.key === "ArrowLeft" ? (n.preventDefault(), u(-1)) : n.key === "ArrowRight" && (n.preventDefault(), u(1));
+    const n = (r) => {
+      r.key === "Escape" ? (r.stopPropagation(), c()) : r.key === "ArrowLeft" ? (r.preventDefault(), u(-1)) : r.key === "ArrowRight" && (r.preventDefault(), u(1));
     };
-    return window.addEventListener("keydown", r), () => window.removeEventListener("keydown", r);
+    return window.addEventListener("keydown", n), () => window.removeEventListener("keydown", n);
   }, [b, h, e.length, c, l]), !b) return null;
   const g = e[h], N = e.length > 1;
   return Z(
@@ -69,8 +69,8 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
                 "bg-black/50 text-lg leading-none text-white hover:bg-black/70",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
               ),
-              onClick: (r) => {
-                r.stopPropagation(), c();
+              onClick: (n) => {
+                n.stopPropagation(), c();
               },
               children: "✕"
             }
@@ -79,7 +79,7 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
             "figure",
             {
               className: "flex max-h-[85vh] max-w-[85vw] flex-col items-center gap-2",
-              onClick: (r) => r.stopPropagation(),
+              onClick: (n) => n.stopPropagation(),
               children: [
                 /* @__PURE__ */ s(
                   "img",
@@ -109,8 +109,8 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
                 "aria-label": "Previous image",
                 "data-testid": "image-lightbox-prev",
                 className: I(U, "left-3"),
-                onClick: (r) => {
-                  r.stopPropagation(), u(-1);
+                onClick: (n) => {
+                  n.stopPropagation(), u(-1);
                 },
                 children: "‹"
               }
@@ -122,8 +122,8 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
                 "aria-label": "Next image",
                 "data-testid": "image-lightbox-next",
                 className: I(U, "right-3"),
-                onClick: (r) => {
-                  r.stopPropagation(), u(1);
+                onClick: (n) => {
+                  n.stopPropagation(), u(1);
                 },
                 children: "›"
               }
@@ -191,8 +191,8 @@ function be({
   suggestions: l,
   lowercase: d = !0
 }) {
-  const [x, m] = $(""), [w, b] = $(!1), f = F(null), h = (n) => {
-    const y = ee(n, d);
+  const [x, m] = $(""), [w, b] = $(!1), f = F(null), h = (r) => {
+    const y = ee(r, d);
     if (y) {
       if (e.includes(y)) {
         m("");
@@ -200,40 +200,40 @@ function be({
       }
       a([...e, y]), m("");
     }
-  }, u = (n) => {
-    a(e.filter((y) => y !== n));
-  }, g = (n) => {
-    if (n.key === "Enter") {
-      n.preventDefault(), h(x);
+  }, u = (r) => {
+    a(e.filter((y) => y !== r));
+  }, g = (r) => {
+    if (r.key === "Enter") {
+      r.preventDefault(), h(x);
       return;
     }
-    n.key === "Backspace" && x === "" && e.length > 0 && (n.preventDefault(), u(e[e.length - 1]));
+    r.key === "Backspace" && x === "" && e.length > 0 && (r.preventDefault(), u(e[e.length - 1]));
   }, N = _(() => {
     if (!l || l.length === 0) return [];
-    const n = x.trim().toLowerCase(), y = new Set(e.map((k) => k.toLowerCase()));
-    return l.map((k) => k.trim().toLowerCase()).filter((k) => k.length > 0 && !y.has(k)).filter((k) => n ? k.includes(n) : !0).slice(0, 12);
-  }, [l, e, x]), r = w && N.length > 0;
+    const r = x.trim().toLowerCase(), y = new Set(e.map((k) => k.toLowerCase()));
+    return l.map((k) => k.trim().toLowerCase()).filter((k) => k.length > 0 && !y.has(k)).filter((k) => r ? k.includes(r) : !0).slice(0, 12);
+  }, [l, e, x]), n = w && N.length > 0;
   return /* @__PURE__ */ v("div", { className: "relative flex flex-wrap items-center gap-1.5", "data-testid": "tag-editor", children: [
-    e.map((n) => /* @__PURE__ */ v(
+    e.map((r) => /* @__PURE__ */ v(
       "span",
       {
         className: "inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary",
-        "data-testid": `tag-chip-${n}`,
+        "data-testid": `tag-chip-${r}`,
         children: [
-          n,
+          r,
           /* @__PURE__ */ s(
             "button",
             {
               type: "button",
-              "aria-label": `Remove tag ${n}`,
-              onClick: () => u(n),
+              "aria-label": `Remove tag ${r}`,
+              onClick: () => u(r),
               className: "ml-1 bg-transparent border-none text-inherit cursor-pointer text-xs leading-none p-0 font-[inherit]",
               children: "×"
             }
           )
         ]
       },
-      n
+      r
     )),
     /* @__PURE__ */ v("div", { className: "relative", children: [
       /* @__PURE__ */ s(
@@ -243,7 +243,7 @@ function be({
           "data-testid": "tag-editor-input",
           type: "text",
           value: x,
-          onChange: (n) => m(n.target.value),
+          onChange: (r) => m(r.target.value),
           onKeyDown: g,
           onFocus: () => b(!0),
           onBlur: () => {
@@ -253,26 +253,26 @@ function be({
           className: "border border-border-emphasis rounded-md px-2.5 py-1.5 text-xs bg-surface-panel w-[140px] min-w-[120px] outline-none font-[inherit] text-text-primary"
         }
       ),
-      r ? /* @__PURE__ */ s(
+      n ? /* @__PURE__ */ s(
         "div",
         {
           className: "absolute top-full mt-1 bg-white border border-border rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30",
           "data-testid": "tag-suggestions",
-          children: N.map((n) => /* @__PURE__ */ v(
+          children: N.map((r) => /* @__PURE__ */ v(
             "button",
             {
               type: "button",
               onMouseDown: (y) => {
                 y.preventDefault();
               },
-              onClick: () => h(n),
+              onClick: () => h(r),
               className: "inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary cursor-pointer border border-dashed border-border-emphasis",
               children: [
                 "+ ",
-                n
+                r
               ]
             },
-            n
+            r
           ))
         }
       ) : null
@@ -329,7 +329,7 @@ const te = [
   "📌",
   "🏷"
 ];
-function ne({
+function re({
   emoji: e,
   active: a,
   onPick: c
@@ -357,24 +357,24 @@ function ge({
   const [l, d] = $(!1), [x, m] = $(!1), [w, b] = $(""), f = F(null), h = F(null), u = c ?? te;
   M(() => {
     if (!l) return;
-    const r = (n) => {
-      const y = n.target;
+    const n = (r) => {
+      const y = r.target;
       f.current && f.current.contains(y) || h.current && h.current.contains(y) || d(!1);
     };
-    return window.addEventListener("mousedown", r), () => window.removeEventListener("mousedown", r);
+    return window.addEventListener("mousedown", n), () => window.removeEventListener("mousedown", n);
   }, [l]);
-  const g = (r) => {
-    a(r), d(!1);
+  const g = (n) => {
+    a(n), d(!1);
   }, N = () => {
-    const r = w.trim();
-    r.length !== 0 && (a(r), b(""), d(!1));
+    const n = w.trim();
+    n.length !== 0 && (a(n), b(""), d(!1));
   };
   return /* @__PURE__ */ v("div", { className: "relative inline-block", ref: f, children: [
     /* @__PURE__ */ s(
       "button",
       {
         type: "button",
-        onClick: () => d((r) => !r),
+        onClick: () => d((n) => !n),
         className: "w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-surface-hover hover:border-border-emphasis",
         "aria-label": "Choose icon",
         "aria-haspopup": "dialog",
@@ -384,14 +384,14 @@ function ge({
       }
     ),
     l ? /* @__PURE__ */ v("div", { ref: h, className: "absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]", "data-testid": "icon-picker-popover", children: [
-      /* @__PURE__ */ s("div", { className: "grid grid-cols-[repeat(8,28px)] gap-1", children: u.map((r, n) => /* @__PURE__ */ s(
-        ne,
+      /* @__PURE__ */ s("div", { className: "grid grid-cols-[repeat(8,28px)] gap-1", children: u.map((n, r) => /* @__PURE__ */ s(
+        re,
         {
-          emoji: r,
-          active: r === e,
+          emoji: n,
+          active: n === e,
           onPick: g
         },
-        `${r}-${n}`
+        `${n}-${r}`
       )) }),
       /* @__PURE__ */ v("div", { className: "flex gap-1.5 mt-2.5 pt-2.5 border-t border-border", children: [
         /* @__PURE__ */ s(
@@ -399,12 +399,12 @@ function ge({
           {
             type: "text",
             value: w,
-            onChange: (r) => b(r.target.value),
-            onKeyDown: (r) => {
-              r.key === "Enter" ? (r.preventDefault(), N()) : r.key === "Escape" && d(!1);
+            onChange: (n) => b(n.target.value),
+            onKeyDown: (n) => {
+              n.key === "Enter" ? (n.preventDefault(), N()) : n.key === "Escape" && d(!1);
             },
             placeholder: "Paste any emoji…",
-            className: "flex-1 min-w-0 border border-border-field rounded-md px-2 py-1 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none",
+            className: "flex-1 min-w-0 border border-border-field rounded-md px-2 py-1 text-[13px] font-[inherit] bg-surface-inset text-text-primary outline-none",
             "data-testid": "icon-picker-custom-input",
             "aria-label": "Custom emoji"
           }
@@ -423,7 +423,7 @@ function ge({
     ] }) : null
   ] });
 }
-const A = "'SF Mono', Menlo, monospace", z = 12, R = 1.5, re = z * R, j = 8, oe = 10, ae = 36;
+const A = "'SF Mono', Menlo, monospace", z = 12, R = 1.5, ne = z * R, j = 8, oe = 10, ae = 36;
 function ye({
   value: e,
   onChange: a,
@@ -442,7 +442,7 @@ function ye({
     for (let C = 1; C <= i; C++) E.push(String(C));
     return E.join(`
 `);
-  }, [g, d]), n = Math.min(Math.max(g, d), x) * re + j * 2, y = g > x, k = (i) => {
+  }, [g, d]), r = Math.min(Math.max(g, d), x) * ne + j * 2, y = g > x, k = (i) => {
     const E = f.current, C = e ?? "";
     if (!E) {
       a(C + i);
@@ -475,7 +475,7 @@ function ye({
       {
         type: "button",
         onClick: () => k(`{{ ${i} }}`),
-        className: "inline-block px-1.5 py-px text-[11px] bg-[#eef2ff] text-[#4338ca] border border-[#c7d2fe] rounded cursor-pointer leading-[1.4]",
+        className: "inline-block px-1.5 py-px text-[11px] bg-primary-bg text-primary-fg border border-primary-border rounded cursor-pointer leading-[1.4]",
         style: { fontFamily: A },
         title: `Insert {{ ${i} }}`,
         disabled: m,
@@ -490,7 +490,7 @@ function ye({
           "flex border border-border-field rounded-md bg-surface-inset overflow-hidden box-border",
           h && "border-primary shadow-[0_0_0_1px_#646cff]"
         ),
-        style: { fontFamily: A, fontSize: z, lineHeight: R, height: n },
+        style: { fontFamily: A, fontSize: z, lineHeight: R, height: r },
         children: [
           /* @__PURE__ */ s(
             "div",
@@ -523,7 +523,7 @@ function ye({
                 fontSize: z,
                 lineHeight: R,
                 tabSize: 2,
-                height: n,
+                height: r,
                 overflow: y ? "auto" : "hidden"
               }
             }
@@ -552,7 +552,7 @@ function H(e, a) {
   return typeof c == "string" && c.length > 0 ? c : a.slice(0, 8);
 }
 function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
-  const { presenceUsers: d } = se(), { idToken: x } = X(), [m, w] = $(""), [b, f] = $(!1), [h, u] = $(0), [g, N] = $([]), r = F(null), n = F(null), y = _(() => {
+  const { presenceUsers: d } = se(), { idToken: x } = X(), [m, w] = $(""), [b, f] = $(!1), [h, u] = $(0), [g, N] = $([]), n = F(null), r = F(null), y = _(() => {
     const t = new Set(e), o = [];
     for (const p of d)
       t.has(p.clientId) || (t.add(p.clientId), o.push({
@@ -621,7 +621,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
     e.length > 0 && /* @__PURE__ */ s("div", { className: "flex flex-wrap gap-1.5", children: e.map((t) => /* @__PURE__ */ v(
       "span",
       {
-        className: "inline-flex items-center gap-1 bg-[#eef2ff] border border-[#c7d2fe] text-[#3730a3] rounded-full py-0.5 pr-2 pl-2.5 text-[12px] font-medium",
+        className: "inline-flex items-center gap-1 bg-primary-bg border border-primary-border text-primary-fg rounded-full py-0.5 pr-2 pl-2.5 text-[12px] font-medium",
         children: [
           D(t),
           /* @__PURE__ */ s(
@@ -630,7 +630,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
               type: "button",
               onClick: () => E(t),
               "aria-label": `Remove ${D(t)}`,
-              className: "bg-transparent border-none text-[#3730a3] cursor-pointer text-[14px] leading-none px-0.5 py-0",
+              className: "bg-transparent border-none text-primary-fg cursor-pointer text-[14px] leading-none px-0.5 py-0",
               children: "×"
             }
           )
@@ -642,7 +642,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
       /* @__PURE__ */ s(
         "input",
         {
-          ref: r,
+          ref: n,
           type: "text",
           value: m,
           disabled: L,
@@ -652,7 +652,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
           },
           onFocus: () => f(!0),
           onBlur: () => {
-            n.current = setTimeout(() => f(!1), 120);
+            r.current = setTimeout(() => f(!1), 120);
           },
           onKeyDown: C,
           className: "w-full py-1.5 px-2.5 text-[13px] border border-border rounded-md font-[inherit] box-border outline-none"
@@ -663,18 +663,18 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
         {
           className: "absolute top-full left-0 right-0 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10",
           onMouseDown: (t) => {
-            t.preventDefault(), n.current && clearTimeout(n.current);
+            t.preventDefault(), r.current && clearTimeout(r.current);
           },
           children: S.map((t, o) => /* @__PURE__ */ v(
             "div",
             {
               className: I(
-                "py-1.5 px-2.5 text-[13px] text-[#374151] cursor-pointer",
+                "py-1.5 px-2.5 text-[13px] text-text-primary cursor-pointer",
                 o === h ? "bg-surface-hover" : "bg-transparent"
               ),
               onMouseEnter: () => u(o),
               onClick: () => {
-                i(t.userId), r.current?.focus();
+                i(t.userId), n.current?.focus();
               },
               children: [
                 /* @__PURE__ */ s("span", { className: "font-medium", children: t.displayName }),
@@ -772,8 +772,8 @@ function ke({
         children: "—"
       }
     );
-  const g = Math.min(...u), N = Math.max(...u), r = a ?? (g === N ? g - 1 : g), n = c ?? (g === N ? N + 1 : N), y = Math.max(1e-9, n - r), k = u.length === 1 ? 0 : l / (u.length - 1), S = m, L = d - S * 2, i = u.map((o, p) => {
-    const T = u.length === 1 ? l / 2 : p * k, P = S + L - (o - r) / y * L;
+  const g = Math.min(...u), N = Math.max(...u), n = a ?? (g === N ? g - 1 : g), r = c ?? (g === N ? N + 1 : N), y = Math.max(1e-9, r - n), k = u.length === 1 ? 0 : l / (u.length - 1), S = m, L = d - S * 2, i = u.map((o, p) => {
+    const T = u.length === 1 ? l / 2 : p * k, P = S + L - (o - n) / y * L;
     return { x: T, y: P };
   }), E = i.map((o, p) => `${p === 0 ? "M" : "L"}${o.x.toFixed(2)},${o.y.toFixed(2)}`).join(" "), C = `${E} L${i[i.length - 1].x.toFixed(2)},${(d - S).toFixed(2)} L${i[0].x.toFixed(2)},${(d - S).toFixed(2)} Z`, D = i[i.length - 1], t = `Trend, ${u.length} points, starts ${O(u[0])}, ends ${O(u[u.length - 1])}`;
   return /* @__PURE__ */ s(

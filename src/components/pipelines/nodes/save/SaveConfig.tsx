@@ -30,10 +30,10 @@ export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) 
       <div>
         <label
           htmlFor="save-source-image-path"
-          className="block text-[12px] font-semibold text-[#374151]"
+          className="block text-[12px] font-semibold text-text-primary"
         >
           Source image path{' '}
-          <span className="text-[#6b7280] font-normal">(optional)</span>
+          <span className="text-text-secondary font-normal">(optional)</span>
         </label>
         <Input
           id="save-source-image-path"
@@ -48,7 +48,7 @@ export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) 
           }
           placeholder="$.scatter.parentImageId"
         />
-        <p className="mt-0.5 text-[11px] text-[#6b7280]">
+        <p className="mt-0.5 text-[11px] text-text-secondary">
           JSONPath to the imageId to save. Defaults server-side to{' '}
           <code>$.scatter.parentImageId</code>.
         </p>
@@ -62,10 +62,10 @@ export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) 
       <div>
         <label
           htmlFor="save-filename-template"
-          className="block text-[12px] font-semibold text-[#374151]"
+          className="block text-[12px] font-semibold text-text-primary"
         >
           Filename template{' '}
-          <span className="text-[#6b7280] font-normal">(optional)</span>
+          <span className="text-text-secondary font-normal">(optional)</span>
         </label>
         <Input
           id="save-filename-template"
@@ -80,7 +80,7 @@ export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) 
           }
           placeholder="crop-{{scatter.index}}.png"
         />
-        <p className="mt-0.5 text-[11px] text-[#6b7280]">
+        <p className="mt-0.5 text-[11px] text-text-secondary">
           Output filename. Supports{' '}
           <code>{'{{scatter.item.label}}'}</code>,{' '}
           <code>{'{{scatter.index}}'}</code>, and{' '}
@@ -88,7 +88,7 @@ export default function SaveConfig({ data, onChange, nodeId }: SaveConfigProps) 
           <code>crop-{'{{scatter.index}}'}.png</code>.
         </p>
         <div className="mt-1.5">
-          <div className="text-[10px] text-[#6b7280] mb-1">Quick-fill variable:</div>
+          <div className="text-[10px] text-text-secondary mb-1">Quick-fill variable:</div>
           <SamplePills
             samples={FILENAME_TEMPLATE_SAMPLES}
             onSelect={(v) => {

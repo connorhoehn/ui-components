@@ -136,7 +136,7 @@ export default function VersionHistoryPanel({
               onClick={() => onPreview(v.timestamp)}
             >
               <div className={cn('flex-1 min-w-0')}>
-                {v.name && <span className={cn('text-xs font-semibold text-[#1f2937] block mb-px')}>{v.name}</span>}
+                {v.name && <span className={cn('text-xs font-semibold text-text-primary block mb-px')}>{v.name}</span>}
                 <span className={cn('flex items-center gap-1')}>
                   {formatRelativeTime(v.age)}
                   {v.type && v.type !== 'manual' && (
@@ -144,10 +144,10 @@ export default function VersionHistoryPanel({
                       className={cn(
                         'text-[10px] font-medium px-[5px] py-px rounded-[3px] ml-1.5',
                         v.type === 'pre-restore'
-                          ? 'bg-[#fef3c7] text-[#92400e]'
+                          ? 'bg-warning-bg text-warning-fg'
                           : v.type === 'auto'
-                          ? 'bg-[#f3f4f6] text-text-tertiary'
-                          : 'bg-[#e0f2fe] text-[#0369a1]',
+                          ? 'bg-surface-hover text-text-tertiary'
+                          : 'bg-info-bg text-info-fg',
                       )}
                     >
                       {versionTypeLabel(v)}
@@ -164,8 +164,8 @@ export default function VersionHistoryPanel({
                 className={cn(
                   'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',
                   compareTimestamp === v.timestamp
-                    ? 'bg-info-bg border-[#3b82f6] text-[#3b82f6]'
-                    : 'bg-white border-border text-[#6b7280]',
+                    ? 'bg-info-bg border-info text-info-fg'
+                    : 'bg-white border-border text-text-secondary',
                 )}
                 onClick={(e) => handleCompare(e, v.timestamp)}
               >

@@ -60,12 +60,12 @@ export function ParticipantTile({
   return (
     <div
       className={cn(
-        'relative bg-[#1a1a2e] flex items-center justify-center rounded overflow-hidden border-2 transition-colors',
+        'relative bg-video-tile flex items-center justify-center rounded overflow-hidden border-2 transition-colors',
         // fillParent: defer sizing to the parent grid cell. Default:
         // enforce 16:9 so the tile renders correctly even in a parent
         // with no explicit height (the mini-widget case).
         fillParent ? 'w-full h-full' : 'aspect-video',
-        isSpeaking ? 'border-[#22c55e]' : 'border-transparent',
+        isSpeaking ? 'border-success' : 'border-transparent',
         onClick && 'cursor-pointer hover:border-white/30',
         className,
       )}
@@ -111,7 +111,7 @@ export function ParticipantTile({
        * label stays legible against either the colored Avatar backdrop or
        * a noisy video frame. */}
       <div className={cn('absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow')}>
-        {isLocal && <span className={cn('text-[#60a5fa] truncate font-medium')}>You</span>}
+        {isLocal && <span className={cn('text-code-blue truncate font-medium')}>You</span>}
         {!isLocal && <span className="truncate font-medium">{displayName}</span>}
         {isMuted && (
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
@@ -143,7 +143,7 @@ export function ParticipantTile({
       )}
 
       {isSpeaking && (
-        <div className={cn('absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]')} />
+        <div className={cn('absolute top-1 right-1 w-2 h-2 rounded-full bg-success shadow-[0_0_4px_#22c55e]')} />
       )}
     </div>
   );

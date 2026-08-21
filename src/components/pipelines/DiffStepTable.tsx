@@ -161,7 +161,7 @@ export default function DiffStepTable({ runA, runB, def }: DiffStepTableProps) {
             key={row.nodeId}
             className={cn(
               row.onlyInA || row.onlyInB
-                ? 'bg-[#fefce8]'
+                ? 'bg-warning-bg'
                 : row.statusDiffers
                   ? 'bg-danger-bg'
                   : undefined,

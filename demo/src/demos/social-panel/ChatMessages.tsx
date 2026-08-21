@@ -91,7 +91,7 @@ export function ChatMessages() {
     <div className="flex-[1] flex flex-col bg-surface border border-border rounded-lg overflow-hidden"
     >
       {/* Header */}
-      <div className="py-3 px-4 border-b border-border font-semibold text-[14px] text-[#1a1a2e]"
+      <div className="py-3 px-4 border-b border-border font-semibold text-[14px] text-text-primary"
       >
         # general
       </div>
@@ -119,7 +119,7 @@ export function ChatMessages() {
             {/* Bubble */}
             <div className="flex-[1]">
               <div className="flex items-baseline gap-2">
-                <span className="font-semibold text-[13px] text-[#1a1a2e]">
+                <span className="font-semibold text-[13px] text-text-primary">
                   {msg.displayName}
                 </span>
                 <span className="text-[11px] text-text-tertiary">
@@ -129,7 +129,7 @@ export function ChatMessages() {
                   })}
                 </span>
               </div>
-              <div className="mt-1 py-2 px-3 bg-surface-hover rounded-tl rounded-tr-xl rounded-br-xl rounded-bl-xl text-[14px] text-[#334155] leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              <div className="mt-1 py-2 px-3 bg-surface-hover rounded-tl rounded-tr-xl rounded-br-xl rounded-bl-xl text-[14px] text-text-primary leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
               >
                 {msg.text}
               </div>

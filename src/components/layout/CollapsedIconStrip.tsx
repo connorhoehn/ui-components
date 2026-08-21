@@ -71,9 +71,9 @@ export function CollapsedIconStrip({
       <div
         className={cn(
           'w-2 h-2 rounded-full mx-auto my-1.5',
-          connectionState === 'connected' && 'bg-[#22c55e]',
-          (connectionState === 'connecting' || connectionState === 'reconnecting') && 'bg-[#f59e0b]',
-          (connectionState === 'idle' || connectionState === 'disconnected') && 'bg-[#ef4444]'
+          connectionState === 'connected' && 'bg-success',
+          (connectionState === 'connecting' || connectionState === 'reconnecting') && 'bg-warning',
+          (connectionState === 'idle' || connectionState === 'disconnected') && 'bg-danger'
         )}
         title={`Connection: ${connectionState}`}
         aria-label={`Connection: ${connectionState}`}

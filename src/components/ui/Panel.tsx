@@ -28,7 +28,7 @@ export const Panel: React.FC<PanelProps> = ({
     <div
       className={cn(
         'fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]',
-        variant === 'dark' ? 'bg-[#111827]' : 'bg-surface'
+        variant === 'dark' ? 'bg-surface-inverse' : 'bg-surface'
       )}
       style={{ width, ...style }}
     >

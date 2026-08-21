@@ -29,7 +29,7 @@ export function VideoGrid({ participants, style }: VideoGridProps) {
 
   return (
     <div
-      className={cn('grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden')}
+      className={cn('grid gap-1 bg-video-stage rounded-lg overflow-hidden')}
       style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, ...style }}
     >
       {participants.map(p => (

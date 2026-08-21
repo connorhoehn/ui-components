@@ -137,7 +137,7 @@ export default function EditorModeSwitch({
       {isFinalized && mode === 'editor' && (
         <div className={cn(
           'rounded-lg border px-4 py-2.5 mb-3 text-center text-[13px] font-medium',
-          'bg-[#fefce8] border-warning-border text-[#92400e]'
+          'bg-warning-bg border-warning-border text-warning-fg'
         )}>
           This document has been finalized and is read-only
         </div>

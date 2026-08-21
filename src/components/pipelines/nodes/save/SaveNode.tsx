@@ -47,7 +47,7 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
       <NodeThumbStrip images={producedImages} data-testid="save-thumb-strip" />
       {resolvedFilename && (
         <div
-          className="mt-1 text-[10px] font-mono text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap"
+          className="mt-1 text-[10px] font-mono text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap"
           data-testid="save-filename-badge"
           title={resolvedFilename}
         >
@@ -59,8 +59,8 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
     <div
       className={cn(
         'w-full h-20 rounded flex items-center justify-center',
-        'border border-dashed border-border-field bg-[#f3f4f6]',
-        'text-[11px] text-[#6b7280]',
+        'border border-dashed border-border-field bg-surface-hover',
+        'text-[11px] text-text-secondary',
       )}
       data-testid="save-placeholder"
     >
@@ -73,7 +73,7 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
 
   const footer = (
     <span
-      className="font-mono text-[11px] text-[#6b7280]"
+      className="font-mono text-[11px] text-text-secondary"
       data-testid="save-footer"
       title={template}
     >

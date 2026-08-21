@@ -130,11 +130,11 @@ export default function VideoStreamingDemo() {
   }, []);
 
   return (
-    <div className="flex h-full bg-[#0a0a0f] text-border">
+    <div className="flex h-full bg-code-bg text-border">
       {/* Main video area */}
       <div className="flex-[1] flex flex-col min-w-0">
         {/* Top bar */}
-        <div className="flex items-center justify-between py-2 px-4 border-b border-[#1e293b]">
+        <div className="flex items-center justify-between py-2 px-4 border-b border-code-border">
           <div className="flex items-center gap-3">
             <StatusStrip phase="live" bitrateBps={metrics.bitrateBps} viewerCount={viewerCount} duration={elapsed} />
           </div>
@@ -158,13 +158,13 @@ export default function VideoStreamingDemo() {
         </div>
 
         {/* Reaction picker */}
-        <div className="flex justify-center py-2 px-4 border-t border-[#1e293b]">
+        <div className="flex justify-center py-2 px-4 border-t border-code-border">
           <ReactionPicker onReact={handleReact} />
         </div>
       </div>
 
       {/* Right sidebar */}
-      <div className="w-75 border-l border-[#1e293b] flex flex-col overflow-hidden">
+      <div className="w-75 border-l border-code-border flex flex-col overflow-hidden">
         {/* Participants grid */}
         <div className="flex-[1] p-3 overflow-auto">
           <div className="text-[12px] font-semibold text-text-tertiary mb-2 uppercase tracking-[0.5px]">
@@ -174,7 +174,7 @@ export default function VideoStreamingDemo() {
         </div>
 
         {/* Stats panel */}
-        <div className="p-3 border-t border-[#1e293b]">
+        <div className="p-3 border-t border-code-border">
           <div className="text-[12px] font-semibold text-text-tertiary mb-2 uppercase tracking-[0.5px]">
             Stream Stats
           </div>

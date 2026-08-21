@@ -37,7 +37,7 @@ export function CursorModeSelector({ activeMode, onModeChange }: CursorModeSelec
             className={cn(
               'px-4 py-2 border-2 rounded-md cursor-pointer text-sm font-mono',
               isActive
-                ? 'bg-[#007bff] text-white border-[#007bff]'
+                ? 'bg-info text-white border-info'
                 : 'bg-white text-text-primary border-border-emphasis'
             )}
           >

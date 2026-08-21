@@ -32,9 +32,9 @@ describe('TabbedEventLog', () => {
     render(<TabbedEventLog entries={[]} />);
     const chatBtn = screen.getByRole('button', { name: /^Chat \(/ });
     const presenceBtn = screen.getByRole('button', { name: /^Presence \(/ });
-    expect(chatBtn.className).toMatch(/bg-\[#3b82f6\]/);
+    expect(chatBtn.className).toMatch(/bg-info/);
     expect(chatBtn.className).toMatch(/font-semibold/);
-    expect(presenceBtn.className).toMatch(/bg-\[#e5e7eb\]/);
+    expect(presenceBtn.className).toMatch(/bg-surface-emphasis/);
     expect(presenceBtn.className).not.toMatch(/font-semibold/);
   });
 
@@ -132,12 +132,12 @@ describe('TabbedEventLog', () => {
   it('clicking a tab makes it active (styling switches)', () => {
     render(<TabbedEventLog entries={[]} />);
     const presenceBtn = screen.getByRole('button', { name: /^Presence \(/ });
-    expect(presenceBtn.className).toMatch(/bg-\[#e5e7eb\]/);
+    expect(presenceBtn.className).toMatch(/bg-surface-emphasis/);
     fireEvent.click(presenceBtn);
-    expect(presenceBtn.className).toMatch(/bg-\[#3b82f6\]/);
+    expect(presenceBtn.className).toMatch(/bg-info/);
     expect(presenceBtn.className).toMatch(/font-semibold/);
     const chatBtn = screen.getByRole('button', { name: /^Chat \(/ });
-    expect(chatBtn.className).toMatch(/bg-\[#e5e7eb\]/);
+    expect(chatBtn.className).toMatch(/bg-surface-emphasis/);
   });
 
   it('empty active tab renders "No events yet." even when other tabs have entries', () => {

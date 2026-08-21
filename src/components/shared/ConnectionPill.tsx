@@ -24,11 +24,11 @@ const STATE_CONFIG: Record<
   ConnectionState,
   { label: string; colorClass: string }
 > = {
-  idle:         { label: 'Idle',          colorClass: 'text-[#6b7280]' },
-  connecting:   { label: 'Connecting…',   colorClass: 'text-[#f59e0b]' },
-  connected:    { label: 'Connected',     colorClass: 'text-[#10b981]' },
-  reconnecting: { label: 'Reconnecting…', colorClass: 'text-[#f59e0b]' },
-  disconnected: { label: 'Disconnected',  colorClass: 'text-[#ef4444]' },
+  idle:         { label: 'Idle',          colorClass: 'text-text-secondary' },
+  connecting:   { label: 'Connecting…',   colorClass: 'text-warning-fg' },
+  connected:    { label: 'Connected',     colorClass: 'text-success-fg' },
+  reconnecting: { label: 'Reconnecting…', colorClass: 'text-warning-fg' },
+  disconnected: { label: 'Disconnected',  colorClass: 'text-danger-fg' },
 };
 
 export function ConnectionPill({

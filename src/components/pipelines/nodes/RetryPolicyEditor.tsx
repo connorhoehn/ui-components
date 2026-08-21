@@ -104,7 +104,7 @@ export default function RetryPolicyEditor({ value, onChange }: RetryPolicyEditor
                 : `Retries up to ${policy.maxAttempts}× with delays: ${delays.map(formatMs).join(', ')}.`}
           </div>
           {tailRiskMs && (
-            <div className="text-[11px] text-[#ca8a04] mt-1" data-testid="retry-policy-tail-warning">
+            <div className="text-[11px] text-warning-fg mt-1" data-testid="retry-policy-tail-warning">
               ⚠ Total backoff &gt;5min — long-tail latency risk on persistent failures.
             </div>
           )}

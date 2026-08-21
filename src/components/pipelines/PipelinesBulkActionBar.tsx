@@ -115,7 +115,7 @@ export default function PipelinesBulkActionBar({
       data-testid="bulk-action-bar"
       className={cn(
         'min-h-[40px] shrink-0 flex items-center gap-3 px-6',
-        'border-b border-border bg-[#eef2ff]',
+        'border-b border-border bg-primary-bg',
         'sticky top-[56px] z-[1]',
       )}
     >
@@ -185,7 +185,7 @@ export default function PipelinesBulkActionBar({
               }}
               className={cn(
                 'border border-border-field rounded-md px-2.5 py-1.5 text-[13px]',
-                'bg-[#f9fafb] text-text-primary outline-none w-full',
+                'bg-surface-inset text-text-primary outline-none w-full',
               )}
               aria-label="Tag name"
             />

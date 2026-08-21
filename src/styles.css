@@ -100,6 +100,32 @@
   --color-primary-fg: #4f55ff;
   --color-primary-border: #c7cbff;
 
+  /* Code/terminal surfaces (Catppuccin Mocha) — the dark language used by
+     the pipeline debugger, log consoles and code blocks. A separate family
+     rather than per-file hexes so hosts can re-theme the dev surfaces the
+     same way they re-tone everything else. */
+  --color-code-bg: #11111b;
+  --color-code-panel: #181825;
+  --color-code-surface: #1e1e2e;
+  --color-code-border: #313244;
+  --color-code-raised: #45475a;
+  --color-code-text: #cdd6f4;
+  --color-code-subtle: #a6adc8;
+  --color-code-comment: #9399b2;
+  --color-code-muted: #6c7086;
+  --color-code-red: #f38ba8;
+  --color-code-green: #a6e3a1;
+  --color-code-blue: #89b4fa;
+  --color-code-yellow: #f9e2af;
+  --color-code-peach: #fab387;
+  --color-code-mauve: #cba6f7;
+
+  /* Video stage surfaces — the near-black letterbox behind video tiles and
+     the dark tile placeholder. Previously three slightly-different ad hoc
+     darks (#0f0f0f, #1a1a2e, #0a1020). */
+  --color-video-stage: #0f0f0f;
+  --color-video-tile: #1a1a2e;
+
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;

@@ -52,9 +52,9 @@ export function ContextStepList({
             title={snapshot.stepId}
           >
             {snapshot.newKeys.length > 0 && (
-              <span className="text-[#a6e3a1] mr-1 text-[9px]">+</span>
+              <span className="text-code-green mr-1 text-[9px]">+</span>
             )}
-            <span className="text-[10px] text-[#9399b2] mr-1">{idx + 1}.</span>
+            <span className="text-[10px] text-code-comment mr-1">{idx + 1}.</span>
             {snapshot.stepId ? snapshot.stepId.slice(0, 8) : `step-${idx + 1}`}
           </div>
         );

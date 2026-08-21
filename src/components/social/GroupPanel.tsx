@@ -36,7 +36,7 @@ function CompactGroupRow({ group, isSelected, onClick }: {
       onClick={onClick}
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
-        isSelected ? 'bg-[#ede9fe] text-[#4c1d95] font-semibold' : 'bg-transparent text-text-primary font-normal',
+        isSelected ? 'bg-accent-bg text-accent-fg font-semibold' : 'bg-transparent text-text-primary font-normal',
       )}
     >
       <span className={cn('text-xs shrink-0', isSelected ? 'text-primary' : 'text-text-tertiary')}>

@@ -192,7 +192,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
     <div data-testid="typed-documents-page" className={cn('flex h-full overflow-hidden font-[inherit]')}>
 
       <aside className={cn('w-60 shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset')}>
-        <div className={cn('px-4 py-3.5 border-b border-border text-[13px] font-bold text-[#374151]')}>
+        <div className={cn('px-4 py-3.5 border-b border-border text-[13px] font-bold text-text-primary')}>
           Document Types
         </div>
         <div data-testid="types-list" className={cn('flex-1 overflow-y-auto p-2')}>
@@ -215,7 +215,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
               className={cn(
                 'flex items-center gap-2 w-full text-left px-2.5 py-2 rounded-[7px] mb-0.5 cursor-pointer font-[inherit] text-[13px]',
                 selectedTypeId === t.typeId
-                  ? 'bg-[#ede9fe] border border-[#c4b5fd]'
+                  ? 'bg-accent-bg border border-accent-border'
                   : 'bg-transparent border border-transparent',
               )}
             >
@@ -291,8 +291,8 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   className={cn(
                     'mb-3 p-3 rounded-lg border',
                     importResult.failed > 0
-                      ? 'bg-danger-bg border-[#fca5a5]'
-                      : 'bg-success-bg border-[#86efac]',
+                      ? 'bg-danger-bg border-danger-border'
+                      : 'bg-success-bg border-success-border',
                   )}
                 >
                   <div className={cn(
@@ -372,7 +372,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                         }
                         return (
                           <div key={f.fieldId} className={cn('text-[13px]')}>
-                            <span className={cn('font-medium text-[#374151]')}>{f.name}: </span>
+                            <span className={cn('font-medium text-text-primary')}>{f.name}: </span>
                             <span className={cn('text-text-primary')}>{display}</span>
                           </div>
                         );

@@ -120,7 +120,7 @@ function App() {
         carries four roles, so rebranding one means setting four values and
         every surface follows. There is no per-component colour to chase.
       </p>
-      <pre className="mb-4 overflow-auto rounded-md bg-[#1e293b] p-4 text-[13px] text-[#e2e8f0]">
+      <pre className="mb-4 overflow-auto rounded-md bg-surface-inverse p-4 text-[13px] text-code-text">
 {`/* Plain CSS — works for any consumer, no provider needed. */
 @import "@connorhoehnslalom/ui-components/styles.css";
 
@@ -131,7 +131,7 @@ function App() {
   --color-accent-border: #99f6e4;  /* border for the soft surface */
 }`}
       </pre>
-      <pre className="mb-4 overflow-auto rounded-md bg-[#1e293b] p-4 text-[13px] text-[#e2e8f0]">
+      <pre className="mb-4 overflow-auto rounded-md bg-surface-inverse p-4 text-[13px] text-code-text">
 {`// Or at runtime, for a theme switcher.
 <ThemeProvider
   tones={{

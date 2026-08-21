@@ -210,18 +210,18 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
 
   return (
     <div
-      className="flex flex-col bg-[#1e1e2e] border-t border-[#313244] max-h-[320px] min-h-[160px] overflow-hidden relative"
+      className="flex flex-col bg-code-surface border-t border-code-border max-h-[320px] min-h-[160px] overflow-hidden relative"
       data-testid="live-output-panel"
     >
       {/* Header */}
-      <div className="flex items-center justify-between py-2 px-[14px] bg-[#181825] border-b border-[#313244] shrink-0">
-        <div className="text-xs font-bold text-[#cdd6f4] tracking-[0.04em] uppercase flex items-center gap-2">
+      <div className="flex items-center justify-between py-2 px-[14px] bg-code-panel border-b border-code-border shrink-0">
+        <div className="text-xs font-bold text-code-text tracking-[0.04em] uppercase flex items-center gap-2">
           <span>Live Output</span>
           {hasActiveStream && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#a6e3a1] [animation:live-output-blink_1.2s_ease-in-out_infinite]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-code-green [animation:live-output-blink_1.2s_ease-in-out_infinite]" />
           )}
           {runId && (
-            <span className="text-[10px] text-[#6c7086] font-normal normal-case">
+            <span className="text-[10px] text-code-muted font-normal normal-case">
               {runId.slice(0, 8)}...
             </span>
           )}
@@ -231,11 +231,11 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
       {/* Body */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-[#cdd6f4] font-code"
+        className="flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-code-text font-code"
         onScroll={handleScroll}
       >
         {stepEntries.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-[#6c7086] text-[13px] italic">
+          <div className="flex items-center justify-center h-full text-code-muted text-[13px] italic">
             {runId
               ? 'Waiting for LLM output...'
               : 'No active run'}
@@ -246,8 +246,8 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
               {/* Section header */}
               <div
                 className={cn(
-                  'flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-[#313244] mb-1.5',
-                  step.active ? 'text-[#89b4fa]' : 'text-[#a6adc8]',
+                  'flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5',
+                  step.active ? 'text-code-blue' : 'text-code-subtle',
                 )}
                 onClick={() => toggleCollapse(step.stepId)}
                 role="button"
@@ -261,7 +261,7 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
                 </span>
                 <span>{step.stepId}</span>
                 {step.active && (
-                  <span className="text-[#a6e3a1] text-[10px]">streaming</span>
+                  <span className="text-code-green text-[10px]">streaming</span>
                 )}
               </div>
 
@@ -269,15 +269,15 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
               {!step.collapsed && (
                 <>
                   {step.text.length > 0 && (
-                    <div className="whitespace-pre-wrap break-words m-0 mb-3 p-0 text-[#cdd6f4]">
+                    <div className="whitespace-pre-wrap break-words m-0 mb-3 p-0 text-code-text">
                       {step.text}
                       {step.active && (
-                        <span className="inline-block w-0.5 h-[14px] bg-[#89b4fa] ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" />
+                        <span className="inline-block w-0.5 h-[14px] bg-code-blue ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" />
                       )}
                     </div>
                   )}
                   {step.summary && (
-                    <div className="text-[11px] text-[#a6e3a1] font-semibold pt-1 pb-2 border-b border-[#313244] mb-2">
+                    <div className="text-[11px] text-code-green font-semibold pt-1 pb-2 border-b border-code-border mb-2">
                       {'✓'} {step.summary}
                     </div>
                   )}

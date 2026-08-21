@@ -154,7 +154,7 @@ export default function QuickInsertPopover({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search nodes…"
-          className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none"
+          className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-surface-inset text-text-primary outline-none"
           aria-label="Search node types"
           data-testid="quick-insert-search"
         />

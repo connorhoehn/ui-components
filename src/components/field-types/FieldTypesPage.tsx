@@ -73,12 +73,12 @@ function DeleteModal({ name, onConfirm, onCancel }: {
           <button
             data-testid="cancel-delete"
             onClick={onCancel}
-            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
           >Cancel</button>
           <button
             data-testid="confirm-delete"
             onClick={onConfirm}
-            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-danger-fg border border-[#fca5a5]"
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-danger-fg border border-danger-border"
           >Delete</button>
         </div>
       </div>
@@ -105,7 +105,7 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
             <div className={cn(
               'w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center text-xs font-bold border-2',
               done && 'bg-primary text-white border-transparent',
-              active && 'bg-[#ede9fe] text-[#4c1d95] border-primary',
+              active && 'bg-accent-bg text-accent-fg border-primary',
               !done && !active && 'bg-surface-hover text-text-tertiary border-transparent',
             )}>
               {done ? '✓' : n}
@@ -146,7 +146,7 @@ function Step1({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
+        <span className="block text-xs font-semibold text-text-primary mb-[5px]">
           Label <span className="text-danger-fg">*</span>
         </span>
         <Input
@@ -161,7 +161,7 @@ function Step1({
       </div>
 
       <div>
-        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">Description</span>
+        <span className="block text-xs font-semibold text-text-primary mb-[5px]">Description</span>
         <Textarea
           data-testid="description-input"
           className="min-h-16 resize-y"
@@ -173,7 +173,7 @@ function Step1({
       </div>
 
       <div>
-        <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
+        <span className="block text-xs font-semibold text-text-primary mb-[5px]">
           Field type <span className="font-normal text-text-tertiary">— what kind of data this field stores</span>
         </span>
 
@@ -294,7 +294,7 @@ function Step2({
                     onChange={checked => setVisibility({ ...visibility, [m.key]: checked })}
                     className="w-4 h-4"
                   />
-                  <span className="text-[13px] text-[#374151]">Visible</span>
+                  <span className="text-[13px] text-text-primary">Visible</span>
                 </label>
                 {isVisible && options.length > 0 && (
                   <Select
@@ -397,7 +397,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+              className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
             >← Back</button>
           )}
           {step === 1 ? (
@@ -446,7 +446,7 @@ function TypeListItem({
       className={cn(
         'flex items-center gap-2.5 py-2 px-3.5 cursor-pointer rounded-[7px]',
         active
-          ? 'bg-[#f1f0ff] border-l-[3px] border-l-primary'
+          ? 'bg-primary-bg border-l-[3px] border-l-primary'
           : 'bg-transparent border-l-[3px] border-l-transparent',
       )}
     >
@@ -462,7 +462,7 @@ function TypeListItem({
         type="button"
         onClick={e => { e.stopPropagation(); onDelete(); }}
         title="Delete"
-        className="px-1.5 py-0.5 text-sm bg-transparent border-none text-[#ef4444] cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
+        className="px-1.5 py-0.5 text-sm bg-transparent border-none text-danger-fg cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
       >
         ×
       </button>
@@ -477,7 +477,7 @@ function TypeListItem({
 function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
   return (
     <div className="h-full flex flex-col items-center justify-center py-10 px-6 text-center">
-      <div className="text-base font-semibold text-[#374151] mb-2">Data Types</div>
+      <div className="text-base font-semibold text-text-primary mb-2">Data Types</div>
       <div className="text-[13px] text-text-tertiary max-w-[360px] mb-6 leading-relaxed">
         Data types define the primitive storage type a document section holds — Text, Long text, Integer, Boolean, and more.
         Create custom types to give sections distinct labels and display configuration.
@@ -540,7 +540,7 @@ export default function FieldTypesPage() {
       {/* Left sidebar */}
       <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-y-auto bg-surface-inset">
         <div className="py-4 px-3.5 pb-2.5 flex items-center justify-between">
-          <span className="text-[13px] font-bold text-[#374151]">Data Types</span>
+          <span className="text-[13px] font-bold text-text-primary">Data Types</span>
           <button
             data-testid="new-data-type-button"
             type="button"

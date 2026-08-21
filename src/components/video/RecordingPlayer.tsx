@@ -148,7 +148,7 @@ export function RecordingPlayer({
   );
 
   return (
-    <div className={cn('relative bg-[#0f0f0f] rounded-lg overflow-hidden aspect-video group', className)}>
+    <div className={cn('relative bg-video-stage rounded-lg overflow-hidden aspect-video group', className)}>
       <video
         ref={videoRef}
         autoPlay={autoPlay}

@@ -66,7 +66,7 @@ export function HangoutGrid({
   return (
     <div
       className={cn(
-        'relative grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden',
+        'relative grid gap-1 bg-video-stage rounded-lg overflow-hidden',
         fillParent && 'h-full w-full',
         className,
       )}

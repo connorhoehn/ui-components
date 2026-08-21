@@ -231,7 +231,7 @@ export default function RunsTable({
                       }
                     }}
                     title="Force-fail this stuck run so you can retry from the stuck step"
-                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-warning-border rounded cursor-pointer font-[inherit]"
+                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-warning-fg border border-warning-border rounded cursor-pointer font-[inherit]"
                   >
                     ⚡ Force-fail
                   </button>

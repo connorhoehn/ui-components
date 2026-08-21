@@ -358,10 +358,12 @@ Seven tones — `neutral`, `success`, `warning`, `danger`, `info`, `caution`,
    classes directly (`bg-success-bg text-success-fg ring-primary`).
 
    **Arbitrary-value hexes (`bg-[#2563eb]`) are guarded too** — the tones
-   test can't see them, so `npm run lint:hex-colors` ratchets them: 844
-   pre-existing occurrences are baselined for burn-down (the 665 that
-   exactly matched a token value were mechanically converted in v2.63.0);
-   new ones fail the guard.
+   test can't see them, so `npm run lint:hex-colors` covers them with
+   **zero tolerance** (the ~950-occurrence debt was burned down completely
+   in v2.63.0–v2.64.0; the baseline is empty). Two families were added for
+   colours the scale couldn't express: `--color-code-*` (Catppuccin
+   terminal palette for the debugger/log/code surfaces) and
+   `--color-video-*` (video stage darks).
 
    **Enforced with zero tolerance** by
    `src/components/shared/__tests__/tones.test.ts`, which scans all of `src/`

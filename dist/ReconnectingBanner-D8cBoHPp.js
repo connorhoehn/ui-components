@@ -21,12 +21,12 @@ function p({
     "div",
     {
       className: x(
-        "relative bg-[#1a1a2e] flex items-center justify-center rounded overflow-hidden border-2 transition-colors",
+        "relative bg-video-tile flex items-center justify-center rounded overflow-hidden border-2 transition-colors",
         // fillParent: defer sizing to the parent grid cell. Default:
         // enforce 16:9 so the tile renders correctly even in a parent
         // with no explicit height (the mini-widget case).
         g ? "w-full h-full" : "aspect-video",
-        d ? "border-[#22c55e]" : "border-transparent",
+        d ? "border-success" : "border-transparent",
         f && "cursor-pointer hover:border-white/30",
         m
       ),
@@ -68,7 +68,7 @@ function p({
           }
         ),
         /* @__PURE__ */ k("div", { className: x("absolute bottom-1 left-1 right-1 flex items-center gap-1 bg-black/70 rounded-[3px] px-1.5 py-0.5 text-[11px] text-white overflow-hidden drop-shadow"), children: [
-          c && /* @__PURE__ */ s("span", { className: x("text-[#60a5fa] truncate font-medium"), children: "You" }),
+          c && /* @__PURE__ */ s("span", { className: x("text-code-blue truncate font-medium"), children: "You" }),
           !c && /* @__PURE__ */ s("span", { className: "truncate font-medium", children: t }),
           l && /* @__PURE__ */ s("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ s("path", { d: "M1 1l8 8M5 1v4.5", stroke: "#ef4444", strokeWidth: "1.5", strokeLinecap: "round" }) })
         ] }),
@@ -89,7 +89,7 @@ function p({
             ] })
           }
         ),
-        d && /* @__PURE__ */ s("div", { className: x("absolute top-1 right-1 w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_4px_#22c55e]") })
+        d && /* @__PURE__ */ s("div", { className: x("absolute top-1 right-1 w-2 h-2 rounded-full bg-success shadow-[0_0_4px_#22c55e]") })
       ]
     }
   );
@@ -125,7 +125,7 @@ function O({
     "div",
     {
       className: x(
-        "relative grid gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden",
+        "relative grid gap-1 bg-video-stage rounded-lg overflow-hidden",
         l && "h-full w-full",
         h
       ),
@@ -216,7 +216,7 @@ function V({
     "div",
     {
       className: x(
-        "flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden",
+        "flex flex-col gap-1 bg-video-stage rounded-lg overflow-hidden",
         h && "h-full w-full",
         f
       ),

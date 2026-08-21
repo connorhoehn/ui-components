@@ -70,7 +70,7 @@ export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
   return (
     <div
       className={cn(
-        'px-3 py-1 border-b border-[#f1f5f9] text-xs text-text-primary cursor-pointer',
+        'px-3 py-1 border-b border-border-subtle text-xs text-text-primary cursor-pointer',
         isOpen && 'bg-surface-panel',
       )}
       data-testid={`execution-log-row-${row.id}`}
@@ -94,7 +94,7 @@ export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
       ) : null}
       {isOpen ? (
         <pre
-          className="mt-1.5 mb-0 p-2.5 bg-surface-inverse text-[#e2e8f0] rounded-md text-[11px] leading-normal overflow-x-auto font-mono"
+          className="mt-1.5 mb-0 p-2.5 bg-surface-inverse text-code-text rounded-md text-[11px] leading-normal overflow-x-auto font-mono"
           data-testid={`execution-log-row-json-${row.id}`}
         >
           {JSON.stringify(row.payload, null, 2)}

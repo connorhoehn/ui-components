@@ -18,7 +18,7 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
   cancelled: 'bg-surface-hover text-text-secondary',
   running:   'bg-info-bg text-info-fg',
   pending:   'bg-surface-hover text-text-secondary',
-  skipped:   'bg-[#fafafa] text-[#71717a]',
+  skipped:   'bg-surface-inset text-neutral',
 };
 
 function formatTimestamp(iso: string | undefined): string {

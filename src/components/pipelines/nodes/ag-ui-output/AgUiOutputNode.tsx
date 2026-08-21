@@ -27,7 +27,7 @@ export default function AgUiOutputNode({ id, data, selected }: NodeProps<AgUiFlo
       state={state}
       category={categoryFor('ag-ui-output')}
       body={<span className="text-[11px]">Source: {data.sourceField}</span>}
-      footer={<span className="text-[10px] text-[#6366f1]">Terminal — streams to AG-UI frontend</span>}
+      footer={<span className="text-[10px] text-primary">Terminal — streams to AG-UI frontend</span>}
       selected={selected}
       hasBreakpoint={data._hasBreakpoint}
       pausedAtBreakpoint={data._pausedAtBreakpoint}

@@ -79,7 +79,7 @@ function MiniNode({
   return (
     <div style={cardStyle}>
       {hasBreakpoint && (
-        <span className="absolute top-[-4px] left-[-4px] w-[10px] h-[10px] rounded-full bg-[#ef4444] border-1 border-surface z-[1]"
+        <span className="absolute top-[-4px] left-[-4px] w-[10px] h-[10px] rounded-full bg-danger border-1 border-surface z-[1]"
         />
       )}
       <div style={headerStyle}>
@@ -113,7 +113,7 @@ function ArchitectureDiagram() {
   return (
     <div className="flex items-center gap-0 flex-wrap justify-center">
       <div className="flex flex-col gap-2 items-center">
-        <div className={`${BOX_CLS} bg-info-bg border-2 border-info text-[#1e40af]`}>
+        <div className={`${BOX_CLS} bg-info-bg border-2 border-info text-info-fg`}>
           PipelineCanvas
         </div>
         <div className="text-[11px] text-neutral">React Flow wrapper</div>
@@ -122,22 +122,22 @@ function ArchitectureDiagram() {
         <path d="M4 12 H38 M34 7 L40 12 L34 17" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
       </svg>
       <div className="flex flex-col gap-2">
-        <div className={`${BOX_CLS} bg-success-bg border-[1.5px] border-success text-[#166534]`}>
+        <div className={`${BOX_CLS} bg-success-bg border-[1.5px] border-success text-success-fg`}>
           BaseNode
         </div>
-        <div className={`${BOX_CLS} bg-[#fef3c7] border-[1.5px] border-[#f59e0b] text-[#92400e]`}>
+        <div className={`${BOX_CLS} bg-warning-bg border-[1.5px] border-warning text-warning-fg`}>
           AnimatedEdge
         </div>
       </div>
       <div className="flex flex-col gap-4 ml-8">
         <div className="flex items-center gap-2">
-          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
+          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-neutral text-text-primary`}>
             NodePalette
           </div>
           <span className="text-[11px] text-neutral">drag to canvas</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
+          <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-neutral text-text-primary`}>
             CanvasToolbar
           </div>
           <span className="text-[11px] text-neutral">canvas actions</span>
@@ -283,7 +283,7 @@ function PalettePreview() {
     <div className="w-55 border border-border rounded-lg bg-white font-[inherit] overflow-hidden"
     >
       <div className="py-[10px] px-3 border-b border-border">
-        <input className="w-full box-border border border-border-field rounded-md py-[6px] px-[10px] text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary"
+        <input className="w-full box-border border border-border-field rounded-md py-[6px] px-[10px] text-[13px] font-[inherit] bg-surface-inset text-text-primary"
           readOnly
           placeholder="Search nodes..."
         />
@@ -473,7 +473,7 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
             </div>
           </div>
           <div className="border-t border-border pt-4">
-            <div className="text-[13px] font-semibold text-[#334155] mb-3">Breakpoint variants</div>
+            <div className="text-[13px] font-semibold text-text-primary mb-3">Breakpoint variants</div>
             <div className="flex gap-4 items-start">
               <div className="text-center">
                 <MiniNode icon="🎯" subtitle="With Breakpoint" state="idle" hasBreakpoint />

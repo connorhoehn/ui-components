@@ -56,7 +56,7 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <span className="block text-xs font-semibold text-[#374151] mb-[5px] tracking-wide">
+        <span className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
           Name <span className="text-danger-fg">*</span>
         </span>
         <Input
@@ -70,7 +70,7 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
       </div>
 
       <div>
-        <span className="block text-xs font-semibold text-[#374151] mb-[5px] tracking-wide">
+        <span className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
           Description
         </span>
         <Textarea
@@ -126,7 +126,7 @@ function SortablePage({
     >
       <div className={cn(
         'bg-white border rounded-[10px] p-4 mb-3',
-        isActive ? 'bg-accent-bg border-[#c4b5fd]' : 'border-border',
+        isActive ? 'bg-accent-bg border-accent-border' : 'border-border',
       )}>
         <div className="flex items-center gap-2 mb-2.5">
           <button
@@ -175,7 +175,7 @@ function SortablePage({
             disabled={totalPages <= 1}
             onClick={() => removePage(page.id)}
             className={cn(
-              'px-2 py-0.5 text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-transparent text-[#ef4444]',
+              'px-2 py-0.5 text-[13px] font-semibold rounded-[7px] font-inherit border-none bg-transparent text-danger-fg',
               totalPages <= 1 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
             )}
             title="Remove page (sections move to first page)"
@@ -430,7 +430,7 @@ function Step2Fields({
     <div className="flex gap-5 items-start">
       {/* Left — pages of sections */}
       <div className="flex-1 min-w-0">
-        <div className="text-xs font-semibold text-[#374151] mb-2.5 tracking-wide">
+        <div className="text-xs font-semibold text-text-primary mb-2.5 tracking-wide">
           SECTIONS {fields.length > 0 && <span className="text-primary">({fields.length}{!isSinglePage ? ` across ${pages.length} pages` : ''})</span>}
         </div>
 
@@ -479,7 +479,7 @@ function Step2Fields({
           type="button"
           data-testid="add-page"
           onClick={addPage}
-          className="mt-2 text-xs px-3 py-1.5 font-semibold rounded-md font-inherit border border-dashed border-[#c4b5fd] bg-transparent text-primary cursor-pointer"
+          className="mt-2 text-xs px-3 py-1.5 font-semibold rounded-md font-inherit border border-dashed border-accent-border bg-transparent text-primary cursor-pointer"
         >
           + Add Page
         </button>
@@ -503,7 +503,7 @@ function Step2Fields({
 
       {/* Right — field type picker */}
       <div className="w-[220px] shrink-0">
-        <div className="text-xs font-semibold text-[#374151] mb-2.5 tracking-wide">
+        <div className="text-xs font-semibold text-text-primary mb-2.5 tracking-wide">
           SECTION TYPES
         </div>
         <div className="flex flex-col gap-1.5">
@@ -513,7 +513,7 @@ function Step2Fields({
               data-testid={`add-field-${fieldDef.type}`}
               type="button"
               onClick={() => addField(fieldDef.type)}
-              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-white border border-border cursor-pointer text-left font-inherit transition-colors hover:border-[#c4b5fd] hover:bg-accent-bg"
+              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-white border border-border cursor-pointer text-left font-inherit transition-colors hover:border-accent-border hover:bg-accent-bg"
             >
               <span className="text-xl shrink-0">{fieldDef.icon}</span>
               <div>
@@ -552,7 +552,7 @@ function ViewModeCell({ field, mode, onToggleHidden, onOverrideChange }: {
             checked={!hidden}
             onChange={onToggleHidden}
           />
-          <span className={cn('text-xs', hidden ? 'text-text-tertiary' : 'text-[#374151]')}>
+          <span className={cn('text-xs', hidden ? 'text-text-tertiary' : 'text-text-primary')}>
             {hidden ? 'Hidden' : 'Visible'}
           </span>
         </label>
@@ -620,11 +620,11 @@ function Step3ViewModes({ fields, setFields }: {
       <table className="w-full border-collapse text-[13px]">
         <thead>
           <tr className="bg-surface-panel">
-            <th className="p-[10px_12px] text-left font-semibold text-[#374151] border-b-2 border-border whitespace-nowrap">
+            <th className="p-[10px_12px] text-left font-semibold text-text-primary border-b-2 border-border whitespace-nowrap">
               Field
             </th>
             {modes.map(m => (
-              <th key={m} className="p-[10px_12px] text-left font-semibold text-[#374151] border-b-2 border-border min-w-[130px]">
+              <th key={m} className="p-[10px_12px] text-left font-semibold text-text-primary border-b-2 border-border min-w-[130px]">
                 {modeLabels[m]}
               </th>
             ))}
@@ -634,12 +634,12 @@ function Step3ViewModes({ fields, setFields }: {
           {fields.map((f, i) => {
             const def = getFieldType(f.sectionType);
             return (
-              <tr key={f.id} className={cn('border-b border-[#f1f5f9]', i % 2 === 0 ? 'bg-white' : 'bg-surface-inset')}>
+              <tr key={f.id} className={cn('border-b border-border-subtle', i % 2 === 0 ? 'bg-white' : 'bg-surface-inset')}>
                 <td className="p-[10px_12px] align-middle">
                   <div className="flex items-center gap-[7px]">
                     <span>{def?.icon}</span>
                     <span className="font-medium text-text-primary">{f.name}</span>
-                    {f.required && <span className="text-[10px] bg-[#ede9fe] text-[#4c1d95] px-[5px] py-px rounded">required</span>}
+                    {f.required && <span className="text-[10px] bg-accent-bg text-accent-fg px-[5px] py-px rounded">required</span>}
                   </div>
                 </td>
                 {modes.map(m => (

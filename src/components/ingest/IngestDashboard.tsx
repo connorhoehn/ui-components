@@ -214,7 +214,7 @@ export default function IngestDashboard() {
                 'px-3 py-2 rounded-md text-[13px] border',
                 a.level === 'critical'
                   ? 'bg-danger-bg border-[var(--color-state-failed)] text-[var(--color-state-failed)]'
-                  : 'bg-[#fefce8] border-[#fbbf24] text-[#92400e]',
+                  : 'bg-warning-bg border-warning text-warning-fg',
               )}
             >
               <strong>{a.level === 'critical' ? '⛔' : '⚠'}</strong> {a.message}

@@ -168,10 +168,10 @@ export default function BreakpointPauseOverlay({
                     data-testid={`breakpoint-patch-row-${p.patchId}`}
                     className={cn(
                       'border border-border rounded p-1.5',
-                      reverted ? 'bg-neutral/10 opacity-60' : 'bg-[#11111b]',
+                      reverted ? 'bg-neutral/10 opacity-60' : 'bg-code-bg',
                     )}
                   >
-                    <div className="flex items-center gap-1 text-[10px] text-[#cdd6f4] mb-0.5">
+                    <div className="flex items-center gap-1 text-[10px] text-code-text mb-0.5">
                       <span className="font-mono">
                         {p.patchId.slice(0, 8)}
                       </span>
@@ -190,12 +190,12 @@ export default function BreakpointPauseOverlay({
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] text-[#9399b2]">
+                    <div className="text-[10px] text-code-comment">
                       {p.appliedAt}
                       {p.appliedBy && (
                         <>
                           {' · '}
-                          <span className="text-[#cdd6f4]">{p.appliedBy}</span>
+                          <span className="text-code-text">{p.appliedBy}</span>
                         </>
                       )}
                     </div>

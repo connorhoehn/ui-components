@@ -233,7 +233,7 @@ export default function ExecutorLog({
           <span
             className={cn(
               'inline-block w-2 h-2 rounded-full mr-1.5 align-middle',
-              error ? 'bg-text-tertiary' : 'bg-[#22c55e] [animation:executor-log-pulse_1.6s_ease-in-out_infinite]',
+              error ? 'bg-text-tertiary' : 'bg-success [animation:executor-log-pulse_1.6s_ease-in-out_infinite]',
             )}
             aria-hidden
           />
@@ -251,7 +251,7 @@ export default function ExecutorLog({
               className={cn(
                 'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
                 active
-                  ? 'bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]'
+                  ? 'bg-info-bg text-info-fg border-info-border'
                   : 'bg-surface text-text-secondary border-border',
               )}
               onClick={() => toggleChip(chip.label)}
@@ -286,7 +286,7 @@ export default function ExecutorLog({
               className={cn(
                 'font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer',
                 active
-                  ? 'bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]'
+                  ? 'bg-info-bg text-info-fg border-info-border'
                   : 'bg-surface text-text-secondary border-border',
               )}
               onClick={() => setTimePreset(preset)}
@@ -338,7 +338,7 @@ export default function ExecutorLog({
           return (
             <div
               key={row.auditId}
-              className="grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-[#fafbfc] cursor-pointer"
+              className="grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-surface-inset cursor-pointer"
               onClick={() => handleRowClick(row)}
               data-testid="executor-log-row"
               data-action={row.action}
@@ -372,7 +372,7 @@ export default function ExecutorLog({
                   <span
                     className={cn(
                       'text-[11px]',
-                      row.outcome === 'error' ? 'text-[#b91c1c]' : 'text-text-tertiary',
+                      row.outcome === 'error' ? 'text-danger-fg' : 'text-text-tertiary',
                     )}
                   >
                     · {row.outcome}

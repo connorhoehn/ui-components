@@ -29,7 +29,7 @@ export default function IntroductionPage() {
       <h2 className="text-[20px] font-semibold mb-3 text-text-primary">
         Design Principles
       </h2>
-      <ul className="text-[14px] text-[#334155] leading-[1.8] pl-5">
+      <ul className="text-[14px] text-text-primary leading-[1.8] pl-5">
         <li><strong>Composable:</strong> Small, focused components that combine into complex UIs.</li>
         <li><strong>Real-time first:</strong> Built-in WebSocket integration and collaboration primitives.</li>
         <li><strong>Type-safe:</strong> Full TypeScript coverage with exported types for every component.</li>

@@ -15,9 +15,9 @@ describe('CursorModeSelector', () => {
     render(<CursorModeSelector activeMode="text" onModeChange={() => {}} />);
     const activeBtn = screen.getByRole('button', { name: 'Text' });
     const inactiveBtn = screen.getByRole('button', { name: 'Freeform' });
-    expect(activeBtn.className).toMatch(/bg-\[#007bff\]/);
+    expect(activeBtn.className).toMatch(/bg-info/);
     expect(activeBtn.className).toMatch(/text-white/);
-    expect(inactiveBtn.className).not.toMatch(/bg-\[#007bff\]/);
+    expect(inactiveBtn.className).not.toMatch(/bg-info/);
     expect(inactiveBtn.className).toMatch(/text-text-primary/);
   });
 

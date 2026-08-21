@@ -77,7 +77,7 @@ export function CallStartedBanner({
       data-caller-name={callerName}
       className={cn(
         'flex items-center gap-3 px-3 py-2 rounded-lg shadow-lg',
-        'bg-[#1e293b] text-white border border-white/10',
+        'bg-surface-inverse text-white border border-white/10',
         className,
       )}
       style={style}
@@ -132,7 +132,7 @@ function Avatar({ name, avatarUrl }: { name: string; avatarUrl?: string }) {
         getInitials(name)
       )}
       {/* Pulse dot — signals "active call" */}
-      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-success border-2 border-[#1e293b] animate-pulse" />
+      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-success border-2 border-code-border animate-pulse" />
     </div>
   );
 }

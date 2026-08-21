@@ -32,11 +32,11 @@ type ValueType = 'string' | 'number' | 'boolean' | 'null' | 'bracket';
 
 function valueClasses(t: ValueType): string {
   const colorMap: Record<ValueType, string> = {
-    string: 'text-[#a6e3a1]',
-    number: 'text-[#fab387]',
-    boolean: 'text-[#cba6f7]',
-    null: 'text-[#6c7086]',
-    bracket: 'text-[#9399b2]',
+    string: 'text-code-green',
+    number: 'text-code-peach',
+    boolean: 'text-code-mauve',
+    null: 'text-code-muted',
+    bracket: 'text-code-comment',
   };
   return cn('text-xs', colorMap[t]);
 }
@@ -108,7 +108,7 @@ export function ContextJsonTree({
     return (
       <span>
         <span
-          className="cursor-pointer select-none text-[9px] mr-1 text-[#6c7086] inline-block w-3 text-center"
+          className="cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center"
           onClick={() => setCollapsed((c) => !c)}
           role="button"
           tabIndex={0}
@@ -118,12 +118,12 @@ export function ContextJsonTree({
         </span>
         <span className={valueClasses('bracket')}>[</span>
         {collapsed ? (
-          <span className="text-[#6c7086] italic text-[11px] ml-1">{data.length} items</span>
+          <span className="text-code-muted italic text-[11px] ml-1">{data.length} items</span>
         ) : (
           <div className="pl-4">
             {data.map((item, i) => (
               <div key={i} className="leading-relaxed whitespace-nowrap">
-                <span className="text-[#6c7086] text-[11px]">{i}: </span>
+                <span className="text-code-muted text-[11px]">{i}: </span>
                 <ContextJsonTree data={item} depth={depth + 1} highlightKeys={highlightKeys} />
                 {i < data.length - 1 && <span className={valueClasses('bracket')}>,</span>}
               </div>
@@ -143,7 +143,7 @@ export function ContextJsonTree({
     return (
       <span>
         <span
-          className="cursor-pointer select-none text-[9px] mr-1 text-[#6c7086] inline-block w-3 text-center"
+          className="cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center"
           onClick={() => setCollapsed((c) => !c)}
           role="button"
           tabIndex={0}
@@ -153,7 +153,7 @@ export function ContextJsonTree({
         </span>
         <span className={valueClasses('bracket')}>{'{'}</span>
         {collapsed ? (
-          <span className="text-[#6c7086] italic text-[11px] ml-1">{entries.length} keys</span>
+          <span className="text-code-muted italic text-[11px] ml-1">{entries.length} keys</span>
         ) : (
           <div className="pl-4">
             {entries.map(([key, val], i) => {
@@ -161,8 +161,8 @@ export function ContextJsonTree({
               return (
                 <div key={key} className="leading-relaxed whitespace-nowrap">
                   <span className={cn(
-                    'text-xs font-medium text-[#89b4fa]',
-                    keyHighlighted && 'text-[#a6e3a1] font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5',
+                    'text-xs font-medium text-code-blue',
+                    keyHighlighted && 'text-code-green font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5',
                   )}>
                     {key}
                   </span>

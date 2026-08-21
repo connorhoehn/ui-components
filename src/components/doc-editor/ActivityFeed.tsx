@@ -108,7 +108,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
   return (
     <div className={cn('bg-surface-panel border border-border rounded-lg overflow-hidden')}>
       <div
-        className={cn('flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none')}
+        className={cn('flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none')}
         onClick={() => setCollapsed(v => !v)}
       >
         <span>Activity {events.length > 0 && `(${events.length})`}</span>
@@ -124,7 +124,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
             <div className={cn('flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap')}>
               <span className={cn('font-semibold')}>Active:</span>
               {participants.map(p => (
-                <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-[#334155]')}>
+                <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary')}>
                   <span className={cn('w-2 h-2 rounded-full shrink-0')} style={{ background: p.color }} />
                   {p.displayName} ({modeLabel(p.mode)})
                 </span>
@@ -140,7 +140,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
               </div>
             ) : (
               events.map(event => (
-                <div key={event.id} className={cn('flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-[#f1f5f9]')}>
+                <div key={event.id} className={cn('flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle')}>
                   <div
                     className={cn('w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px')}
                     style={{ background: event.color || '#94a3b8' }}
@@ -148,7 +148,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
                     {getInitials(event.displayName || 'Unknown')}
                   </div>
                   <div>
-                    <span className={cn('font-semibold text-[#334155]')}>{event.displayName || 'Unknown'}</span>
+                    <span className={cn('font-semibold text-text-primary')}>{event.displayName || 'Unknown'}</span>
                     {' '}
                     <span className={cn('text-neutral')}>
                       {eventIcon(event.eventType)} {eventDescription(event.eventType, event.detail)}

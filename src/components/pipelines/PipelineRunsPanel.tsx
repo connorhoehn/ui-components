@@ -41,7 +41,7 @@ function formatCost(usd?: number): string {
 function costColorClass(usd?: number): string {
   if (usd == null || usd === 0) return 'text-text-tertiary';
   if (usd < 0.01) return 'text-success-fg';
-  if (usd < 0.10) return 'text-[#ca8a04]';
+  if (usd < 0.10) return 'text-warning-fg';
   if (usd < 1.00) return 'text-caution-fg';
   return 'text-danger-fg';
 }
@@ -368,7 +368,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                       </span>
                     )}
                     {run.estimatedCostUsd != null && run.estimatedCostUsd > 1.0 && (
-                      <span className="rounded-sm bg-[#fef3c7] px-1 py-px text-[9px] font-bold uppercase text-[#92400e]">
+                      <span className="rounded-sm bg-warning-bg px-1 py-px text-[9px] font-bold uppercase text-warning-fg">
                         High Cost
                       </span>
                     )}

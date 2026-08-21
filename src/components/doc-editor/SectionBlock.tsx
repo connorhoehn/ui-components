@@ -86,7 +86,7 @@ function AvatarStack({ participants }: { participants: Participant[] }) {
         >
           {getInitials(p.displayName)}
           {/* Online presence dot */}
-          <div className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full bg-[#10b981] border-2 border-white')} />
+          <div className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full bg-success border-2 border-white')} />
         </div>
       ))}
       {overflow > 0 && (
@@ -175,7 +175,7 @@ export default function SectionBlock({
           <span className={cn('pointer-events-none')}>💬</span>
           {/* Badge count */}
           {commentCount > 0 && (
-            <span className={cn('absolute -top-1 -right-1 min-w-[16px] h-4 rounded-lg bg-[#3b82f6] text-white text-[10px] font-bold flex items-center justify-center px-1 leading-none')}>
+            <span className={cn('absolute -top-1 -right-1 min-w-[16px] h-4 rounded-lg bg-info text-white text-[10px] font-bold flex items-center justify-center px-1 leading-none')}>
               {commentCount}
             </span>
           )}

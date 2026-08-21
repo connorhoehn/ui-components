@@ -94,7 +94,7 @@ function TypeListItem({
       className={cn(
         'flex items-center gap-2 py-2 px-2.5 rounded-[7px] mb-0.5 transition-colors',
         active
-          ? 'bg-[#ede9fe] border border-[#c4b5fd]'
+          ? 'bg-accent-bg border border-accent-border'
           : 'bg-transparent border border-transparent',
       )}
     >
@@ -112,8 +112,8 @@ function TypeListItem({
         onClick={onSelect}
         title="Edit type"
         className={cn(
-          'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-[#ede9fe] hover:text-[#4c1d95]',
-          active ? 'bg-[#c4b5fd] text-[#4c1d95]' : 'bg-transparent text-text-tertiary',
+          'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-accent-bg hover:text-accent-fg',
+          active ? 'bg-accent-border text-accent-fg' : 'bg-transparent text-text-tertiary',
         )}
       >
         Edit
@@ -122,7 +122,7 @@ function TypeListItem({
         data-testid={`delete-type-${type.id}`}
         onClick={e => { e.stopPropagation(); onDeleteRequest(); }}
         title="Delete type"
-        className="bg-transparent border-none text-[#ef4444] cursor-pointer text-base px-[5px] py-0.5 shrink-0 opacity-55 leading-none rounded hover:opacity-100"
+        className="bg-transparent border-none text-danger-fg cursor-pointer text-base px-[5px] py-0.5 shrink-0 opacity-55 leading-none rounded hover:opacity-100"
       >
         ×
       </button>
@@ -226,7 +226,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
       <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset">
         {/* Header */}
         <div className="py-3.5 px-4 border-b border-border flex items-center justify-between">
-          <span className="text-[13px] font-bold text-[#374151]">
+          <span className="text-[13px] font-bold text-text-primary">
             Document Types
           </span>
           <div className="flex gap-1.5">

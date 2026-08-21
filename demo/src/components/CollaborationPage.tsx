@@ -53,9 +53,9 @@ export default function CollaborationPage() {
 
 <PresencePanel users={users} currentClientId="client-1" />`}
       >
-        <div className="border border-[#e5e7eb] rounded p-3 font-mono max-w-70"
+        <div className="border border-border rounded p-3 font-mono max-w-70"
         >
-          <div className="text-[12px] font-bold mb-2 text-[#374151]"
+          <div className="text-[12px] font-bold mb-2 text-text-primary"
           >
             Online &middot; 5
           </div>
@@ -70,10 +70,10 @@ export default function CollaborationPage() {
               key={u.initials}
             >
               <Avatar name={u.name} initials={u.initials} color={u.color} size={20} />
-              <span className="text-[#374151]">{u.name}</span>
-              {u.you && <span className="text-[#9ca3af]">(you)</span>}
+              <span className="text-text-primary">{u.name}</span>
+              {u.you && <span className="text-text-tertiary">(you)</span>}
               {u.typing && (
-                <span className="text-[#9ca3af] italic">typing...</span>
+                <span className="text-text-tertiary italic">typing...</span>
               )}
             </div>
           ))}
@@ -144,25 +144,25 @@ const overflow = users.length - visible.length;
 </PresenceProvider>`}
       >
         <div
-          className="relative w-125 h-50 border-2 border-[#e5e7eb] rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
+          className="relative w-125 h-50 border-2 border-border rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
         >
           {/* Local cursor */}
-          <div className="absolute left-30 top-[90px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#3b82f6] border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[11]"
+          <div className="absolute left-30 top-[90px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-info border-2 border-dashed border-white flex items-center justify-center text-white text-[9px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[11]"
           >
             You
           </div>
           {/* Remote cursor: AS */}
-          <div className="absolute left-80 top-15 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#ec4899] flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
+          <div className="absolute left-80 top-15 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-accent flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
           >
             AS
           </div>
           {/* Remote cursor: MK */}
-          <div className="absolute left-100 top-[150px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#10b981] flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
+          <div className="absolute left-100 top-[150px] -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-success flex items-center justify-center text-white text-[10px] font-bold shadow-[0_2px_4px_rgba(0,0,0,0.3)] z-[10]"
           >
             MK
           </div>
           {/* Hint label */}
-          <span className="absolute top-1 left-[6px] text-[#9ca3af] text-[11px] pointer-events-none select-none"
+          <span className="absolute top-1 left-[6px] text-text-tertiary text-[11px] pointer-events-none select-none"
           >
             Move your mouse here
           </span>
@@ -190,23 +190,23 @@ const cursors = new Map([
   }}
 />`}
       >
-        <div className="relative border border-[#e5e7eb] rounded p-3 font-mono text-[14px] leading-[1.6] min-h-20 whitespace-pre-wrap text-[#1e293b]"
+        <div className="relative border border-border rounded p-3 font-mono text-[14px] leading-[1.6] min-h-20 whitespace-pre-wrap text-text-primary"
         >
           {'This is a shared document. Click '}
           {/* Alice's cursor at char 34 */}
           <span className="relative inline">
-            <span className="absolute -top-[14px] left-0 text-[10px] bg-[#ec4899] text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
+            <span className="absolute -top-[14px] left-0 text-[10px] bg-accent text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
             >
               AS
             </span>
-            <span className="inline-block w-[3px] h-[18px] bg-[#ec4899] align-text-bottom -mr-[1px]"
+            <span className="inline-block w-[3px] h-[18px] bg-accent align-text-bottom -mr-[1px]"
             />
           </span>
           {'here to set your '}
           {/* Marcus's selection highlight */}
           <span className="relative bg-[rgba(16,185,129,0.25)]"
           >
-            <span className="absolute -top-[14px] left-0 text-[10px] bg-[#10b981] text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
+            <span className="absolute -top-[14px] left-0 text-[10px] bg-success text-white py-[1px] px-[3px] rounded-sm whitespace-nowrap"
             >
               MK
             </span>
@@ -251,14 +251,14 @@ const cursors = new Map([
                     const isAlice = row === 1 && col === 3;
                     const isMarcus = row === 4 && col === 0;
                     return (
-                      <td className="relative w-20 h-8 border border-[#e5e7eb] p-[6px] bg-white"
+                      <td className="relative w-20 h-8 border border-border p-[6px] bg-white"
                         key={col}
                       >
                         {isLocal && (
                           <>
-                            <div className="absolute inset-0 border-2 border-dashed border-[#3b82f6] rounded-[3px] pointer-events-none"
+                            <div className="absolute inset-0 border-2 border-dashed border-info rounded-[3px] pointer-events-none"
                             />
-                            <div className="absolute -top-[10px] right-0 text-[10px] bg-[#3b82f6] text-white py-[1px] px-1 rounded-[3px]"
+                            <div className="absolute -top-[10px] right-0 text-[10px] bg-info text-white py-[1px] px-1 rounded-[3px]"
                             >
                               You
                             </div>
@@ -266,9 +266,9 @@ const cursors = new Map([
                         )}
                         {isAlice && (
                           <>
-                            <div className="absolute inset-0 border-3 border-[#ec4899] rounded-[3px] pointer-events-none"
+                            <div className="absolute inset-0 border-3 border-accent rounded-[3px] pointer-events-none"
                             />
-                            <div className="absolute -top-[10px] left-0 text-[10px] bg-[#ec4899] text-white py-[1px] px-1 rounded-[3px]"
+                            <div className="absolute -top-[10px] left-0 text-[10px] bg-accent text-white py-[1px] px-1 rounded-[3px]"
                             >
                               AS
                             </div>
@@ -276,9 +276,9 @@ const cursors = new Map([
                         )}
                         {isMarcus && (
                           <>
-                            <div className="absolute inset-0 border-3 border-[#10b981] rounded-[3px] pointer-events-none"
+                            <div className="absolute inset-0 border-3 border-success rounded-[3px] pointer-events-none"
                             />
-                            <div className="absolute -top-[10px] left-0 text-[10px] bg-[#10b981] text-white py-[1px] px-1 rounded-[3px]"
+                            <div className="absolute -top-[10px] left-0 text-[10px] bg-success text-white py-[1px] px-1 rounded-[3px]"
                             >
                               MK
                             </div>
@@ -316,29 +316,29 @@ const cursors = new Map([
         <div>
           {/* Toolbar row */}
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-[11px] text-[#6b7280]">Tool:</span>
+            <span className="text-[11px] text-text-secondary">Tool:</span>
             {['Brush', 'Pen', 'Eraser', 'Select'].map((t, i) => (
-              <button className={`text-[12px] py-1 px-[10px] border rounded cursor-default ${i === 0 ? 'bg-[#007bff] text-white border-[#007bff]' : 'bg-white text-[#374151] border-[#ddd]'}`}
+              <button className={`text-[12px] py-1 px-[10px] border rounded cursor-default ${i === 0 ? 'bg-info text-white border-info' : 'bg-white text-text-primary border-border-field'}`}
                 key={t}
                 type="button"
               >
                 {t}
               </button>
             ))}
-            <span className="text-[11px] text-[#6b7280] ml-2">Color:</span>
-            <div className="w-6 h-6 rounded bg-[#007bff] border border-[#ddd]"
+            <span className="text-[11px] text-text-secondary ml-2">Color:</span>
+            <div className="w-6 h-6 rounded bg-info border border-border-field"
             />
           </div>
 
           {/* Canvas area */}
           <div
-            className="relative w-100 h-45 border-2 border-[#e5e7eb] rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
+            className="relative w-100 h-45 border-2 border-border rounded overflow-hidden bg-[radial-gradient(circle,_#d1d5db_1px,_transparent_1px)] bg-[length:20px_20px]"
           >
             {/* Remote cursor 1: brush */}
             <div className="absolute left-35 top-[70px] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <Avatar name="AS" initials="AS" color="#ec4899" size={24} />
-              <div className="text-[11px] mt-[2px] text-white bg-[#ec4899] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
+              <div className="text-[11px] mt-[2px] text-white bg-accent rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 brush
               </div>
@@ -348,7 +348,7 @@ const cursors = new Map([
             <div className="absolute left-75 top-30 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center z-[10] pointer-events-none"
             >
               <Avatar name="MK" initials="MK" color="#10b981" size={24} />
-              <div className="text-[11px] mt-[2px] text-white bg-[#10b981] rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
+              <div className="text-[11px] mt-[2px] text-white bg-success rounded-[3px] py-[1px] px-1 whitespace-nowrap opacity-85"
               >
                 pen
               </div>
@@ -397,7 +397,7 @@ const [mode, setMode] = useState<CursorMode>('freeform');
       >
         <div className="flex gap-2">
           {['Freeform', 'Table', 'Text', 'Canvas'].map((label, i) => (
-            <button className={`py-2 px-4 border-2 rounded-md cursor-default text-[14px] font-mono ${i === 0 ? 'bg-[#007bff] text-white border-[#007bff]' : 'bg-white text-[#374151] border-border-field'}`}
+            <button className={`py-2 px-4 border-2 rounded-md cursor-default text-[14px] font-mono ${i === 0 ? 'bg-info text-white border-info' : 'bg-white text-text-primary border-border-field'}`}
               key={label}
               type="button"
             >
@@ -448,9 +448,9 @@ function handleReact(emoji: string) {
           </div>
 
           {/* Simulated overlay area */}
-          <div className="relative w-full h-25 border border-dashed border-border rounded-md overflow-hidden bg-[#fafafa]"
+          <div className="relative w-full h-25 border border-dashed border-border rounded-md overflow-hidden bg-surface-inset"
           >
-            <span className="absolute top-1 left-2 text-[11px] text-[#9ca3af]"
+            <span className="absolute top-1 left-2 text-[11px] text-text-tertiary"
             >
               Reactions overlay (simulated)
             </span>
@@ -500,7 +500,7 @@ function handleReact(emoji: string) {
           <h2 className="text-[12px] font-semibold uppercase tracking-[0.05em] text-neutral mt-0 mr-0 mb-3 ml-0"
           >
             Activity
-            <span className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"
+            <span className="inline-block w-2 h-2 rounded-full bg-success ml-2 align-middle"
             />
           </h2>
           {[
@@ -516,8 +516,8 @@ function handleReact(emoji: string) {
               <span className="w-5 shrink-0 text-center">
                 {item.icon}
               </span>
-              <span className="flex-[1] text-[14px] text-[#374151]">{item.text}</span>
-              <span className="text-[12px] text-[#9ca3af] shrink-0">
+              <span className="flex-[1] text-[14px] text-text-primary">{item.text}</span>
+              <span className="text-[12px] text-text-tertiary shrink-0">
                 {item.time}
               </span>
             </div>
@@ -707,4 +707,4 @@ function handleReact(emoji: string) {
 // ---------------------------------------------------------------------------
 
 const TH_CLS =
-  'font-bold bg-[#f9fafb] p-1.5 min-w-10 text-center border border-[#e5e7eb] text-[12px]';
+  'font-bold bg-surface-inset p-1.5 min-w-10 text-center border border-border text-[12px]';

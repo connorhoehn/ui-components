@@ -1,11 +1,11 @@
 import { jsx as i, jsxs as v } from "react/jsx-runtime";
 import { c as p } from "./cn-B6yFEsav.js";
 import { useState as N, useRef as I, useCallback as m } from "react";
-import { B as W } from "./Banner-DKb3JiLs.js";
+import { B as W } from "./Banner-BoO81CCz.js";
 const A = {
-  ghost: "bg-transparent text-[#374151] hover:bg-[#f3f4f6]",
-  primary: "bg-[#3b82f6] text-white hover:bg-info",
-  danger: "bg-[#ef4444] text-white hover:bg-danger"
+  ghost: "bg-transparent text-text-primary hover:bg-surface-hover",
+  primary: "bg-info text-white hover:bg-info",
+  danger: "bg-danger text-white hover:bg-danger"
 }, K = {
   sm: "w-6 h-6 text-sm",
   md: "w-8 h-8 text-base",

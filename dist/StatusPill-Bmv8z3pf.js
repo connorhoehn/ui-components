@@ -13,7 +13,7 @@ import { createPortal as ne } from "react-dom";
 import { C as ye } from "./Card-qOg_oC77.js";
 import { C as we } from "./Chip-BDT8ro4h.js";
 import { t as Ne, f as ke, b as Ce, a as Se } from "./tones-DknNcB3q.js";
-import { A as Ee } from "./Badge-qI9E13DX.js";
+import { A as Ee } from "./Badge-nqu-LijU.js";
 import "clsx";
 import "tailwind-merge";
 const $e = [
@@ -784,11 +784,11 @@ function er({
             className: u(
               "text-[12px] font-medium",
               o === "inline" ? "min-w-[140px]" : "",
-              a ? "text-[#991b1b]" : "text-text-primary"
+              a ? "text-danger-fg" : "text-text-primary"
             ),
             children: [
               e,
-              n && /* @__PURE__ */ t("span", { className: "ml-0.5 text-[#991b1b]", children: "*" })
+              n && /* @__PURE__ */ t("span", { className: "ml-0.5 text-danger-fg", children: "*" })
             ]
           }
         ),
@@ -800,7 +800,7 @@ function er({
               id: N,
               className: u(
                 "mt-1 text-[11px]",
-                a ? "text-[#991b1b]" : "text-neutral"
+                a ? "text-danger-fg" : "text-neutral"
               ),
               children: a ?? r
             }
@@ -896,7 +896,7 @@ function tr({ open: e, onClose: r }) {
             {
               className: u(
                 "text-[12px] font-bold text-text-primary uppercase tracking-[0.05em] mb-1.5",
-                n === 0 ? "mt-0 pt-0" : "mt-4 pt-1.5 border-t border-[#f1f5f9]"
+                n === 0 ? "mt-0 pt-0" : "mt-4 pt-1.5 border-t border-border-subtle"
               ),
               children: a.title
             }
@@ -917,7 +917,7 @@ function tr({ open: e, onClose: r }) {
           "button",
           {
             onClick: r,
-            className: "py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]",
+            className: "py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-text-primary cursor-pointer font-[inherit]",
             children: "Close"
           }
         ) })

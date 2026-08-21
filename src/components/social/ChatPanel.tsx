@@ -139,7 +139,7 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
             'text-[0.8rem] px-3 py-1 border border-border-field rounded font-mono',
             disabled || !inputValue.trim()
               ? 'bg-surface-inset text-text-tertiary cursor-default'
-              : 'bg-[#007bff] text-white cursor-pointer',
+              : 'bg-info text-white cursor-pointer',
           )}
         >
           Send

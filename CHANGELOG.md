@@ -8,6 +8,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.64.0] — 2026-08-21
+
+**Hex burn-down complete, same day the ratchet was created.** The 844
+baselined arbitrary-value hex utilities are gone; `lint:hex-colors` is now
+a plain zero-tolerance rule with an empty baseline.
+
+### Added
+
+- **`--color-code-*` token family** (Catppuccin Mocha): bg, panel, surface,
+  border, raised, text, subtle, comment, muted, red, green, blue, yellow,
+  peach, mauve. The dark language of the pipeline debugger, log consoles
+  and syntax-highlighted code blocks — previously ~150 per-file hexes —
+  is now re-themeable like everything else.
+- **`--color-video-*` tokens** (`video-stage`, `video-tile`): the near-black
+  video letterbox and tile placeholder, previously three slightly-different
+  ad hoc darks (#0f0f0f / #1a1a2e / #0a1020).
+
+### Changed
+
+- **~760 hex utilities converted by nearest tone/role** per the CLAUDE.md
+  mapping table: the gray/slate text ladder onto `text-text-{primary,
+  secondary,tertiary}`, semantic shades onto their tone roles, run-state
+  dots onto `--color-state-*` (BaseNode's pending dot was literally the
+  `state-pending` value), light-on-dark shades onto the code family.
+  12 visual e2e baselines shifted — each diff reviewed (localized label/
+  chip re-tonings) and regenerated; the other 52 pages were pixel-stable.
+- 13 unit tests that pinned old hex class strings now assert the token
+  classes.
+
 ## [2.63.0] — 2026-08-21
 
 The tones rule gets its missing enforcement half: arbitrary-value hex

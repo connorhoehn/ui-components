@@ -105,7 +105,7 @@ export function BigBrotherPanel({
       <div className="flex gap-3">
         <div className="bg-surface-panel border border-border rounded-lg px-4 py-2 text-center flex-1">
           <div className="text-xl font-bold text-text-primary">
-            <span className="inline-block w-2 h-2 rounded-full bg-[#22c55e] mr-1.5 align-middle" />
+            <span className="inline-block w-2 h-2 rounded-full bg-success mr-1.5 align-middle" />
             {presenceUsers.length}
           </div>
           <div className="text-xs text-text-secondary uppercase">Online</div>
@@ -131,7 +131,7 @@ export function BigBrotherPanel({
             </span>
           </h2>
           {rooms.length === 0 ? (
-            <div className="p-6 text-center text-[#9ca3af] text-sm">
+            <div className="p-6 text-center text-text-tertiary text-sm">
               No rooms yet
             </div>
           ) : (
@@ -166,13 +166,13 @@ export function BigBrotherPanel({
             Live Events
             {isLive && (
               <span
-                className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"
+                className="inline-block w-2 h-2 rounded-full bg-success ml-2 align-middle"
                 title="Live"
               />
             )}
           </h2>
           {activityEvents.length === 0 ? (
-            <div className="p-10 text-center text-[#9ca3af] text-sm">
+            <div className="p-10 text-center text-text-tertiary text-sm">
               No events yet -- run a simulation to see activity here
             </div>
           ) : (
@@ -185,7 +185,7 @@ export function BigBrotherPanel({
                     className={`flex items-center gap-2 py-2 ${idx < activityEvents.length - 1 ? 'border-b border-surface-hover' : ''}`}
                   >
                     <span className="w-6 shrink-0 text-center">{icon}</span>
-                    <span className="flex-1 text-sm text-[#374151]">
+                    <span className="flex-1 text-sm text-text-primary">
                       {event.displayName && (
                         <span className="font-semibold mr-1" style={{ color: event.color ?? '#6366f1' }}>
                           {event.displayName}
@@ -193,7 +193,7 @@ export function BigBrotherPanel({
                       )}
                       {text}
                     </span>
-                    <span className="text-xs text-[#9ca3af] shrink-0">
+                    <span className="text-xs text-text-tertiary shrink-0">
                       {relativeTime(event.timestamp)}
                     </span>
                   </div>

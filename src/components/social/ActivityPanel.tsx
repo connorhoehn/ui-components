@@ -239,7 +239,7 @@ export function ActivityPanel({ idToken, sendMessage, onMessage, connectionState
         Activity
         {isLive && (
           <span
-            className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"
+            className="inline-block w-2 h-2 rounded-full bg-success ml-2 align-middle"
             title="Live"
           />
         )}
@@ -252,14 +252,14 @@ export function ActivityPanel({ idToken, sendMessage, onMessage, connectionState
       ) : error && items.length === 0 ? (
         <div
           role="alert"
-          className="py-6 px-4 text-center text-[#b91c1c] text-sm flex flex-col items-center gap-2"
+          className="py-6 px-4 text-center text-danger-fg text-sm flex flex-col items-center gap-2"
         >
           <span>Couldn't load activity</span>
           <span className="text-text-secondary text-xs">{error}</span>
           <button
             type="button"
             onClick={retry}
-            className="mt-1 px-3 py-1 text-xs font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer"
+            className="mt-1 px-3 py-1 text-xs font-medium text-info-fg bg-info-bg border border-info-border rounded cursor-pointer"
           >
             Retry
           </button>

@@ -97,7 +97,7 @@ export function CallAvatar({ participant, size = 32 }: CallAvatarProps) {
       {participant.isSpeaking && (
         <span
           data-testid="call-avatar-speaking"
-          className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-[#1e293b]"
+          className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-success border-2 border-code-border"
         />
       )}
       {participant.isMuted && (

@@ -120,7 +120,7 @@ export default function SectionComments({
         }}
         className={cn(
           'inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-medium border border-border rounded-md cursor-pointer font-[inherit]',
-          totalCount > 0 ? 'bg-[#f0f9ff] text-info-fg' : 'bg-transparent text-neutral',
+          totalCount > 0 ? 'bg-info-bg text-info-fg' : 'bg-transparent text-neutral',
         )}
       >
         {expanded ? '▼' : '▶'} Comments{totalCount > 0 ? ` (${totalCount})` : ''}
@@ -155,7 +155,7 @@ export default function SectionComments({
             <button
               type="button"
               onClick={handlePost}
-              className={cn('px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit] whitespace-nowrap self-end')}
+              className={cn('px-3.5 py-1.5 text-xs font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit] whitespace-nowrap self-end')}
             >
               Post
             </button>
@@ -163,7 +163,7 @@ export default function SectionComments({
 
           {/* Sort control + comment threads */}
           {comments.length > 1 && (
-            <div className={cn('flex justify-end px-3 pt-1 border-b border-[#f1f5f9]')}>
+            <div className={cn('flex justify-end px-3 pt-1 border-b border-border-subtle')}>
               <button
                 type="button"
                 onClick={() => setSortNewest(v => !v)}

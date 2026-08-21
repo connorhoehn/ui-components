@@ -65,7 +65,7 @@ function renderRow(
         {shortLabel(node)}
       </span>
       {kind === 'modified' && row.positionChanged ? (
-        <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[#fef3c7] text-[#92400e]">
+        <span className="inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-warning-bg text-warning-fg">
           moved
         </span>
       ) : null}

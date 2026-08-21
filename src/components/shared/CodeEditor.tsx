@@ -155,7 +155,7 @@ export default function CodeEditor({
               key={v}
               type="button"
               onClick={() => insertAtCursor(`{{ ${v} }}`)}
-              className="inline-block px-1.5 py-px text-[11px] bg-[#eef2ff] text-[#4338ca] border border-[#c7d2fe] rounded cursor-pointer leading-[1.4]"
+              className="inline-block px-1.5 py-px text-[11px] bg-primary-bg text-primary-fg border border-primary-border rounded cursor-pointer leading-[1.4]"
               style={{ fontFamily: FONT_FAMILY }}
               title={`Insert {{ ${v} }}`}
               disabled={readOnly}

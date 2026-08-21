@@ -198,14 +198,14 @@ export default function ExecutionLog({
         data-testid="execution-log-filter-chip-row"
       >
         <span
-          className="inline-flex items-center gap-1.5 px-2.5 pl-2.5 py-0.5 bg-info-bg text-[#1d4ed8] border border-info-border rounded-full text-[11px] font-semibold font-inherit"
+          className="inline-flex items-center gap-1.5 px-2.5 pl-2.5 py-0.5 bg-info-bg text-info-fg border border-info-border rounded-full text-[11px] font-semibold font-inherit"
           data-testid="execution-log-filter-chip"
         >
           <span aria-hidden="true">🎯</span>
           <span>Node: {label}</span>
           <button
             type="button"
-            className="w-4 h-4 border-none bg-transparent text-[#1d4ed8] cursor-pointer text-sm font-inherit leading-none p-0 inline-flex items-center justify-center"
+            className="w-4 h-4 border-none bg-transparent text-info-fg cursor-pointer text-sm font-inherit leading-none p-0 inline-flex items-center justify-center"
             onClick={() => onClearFilter?.()}
             aria-label="Clear node filter"
             data-testid="execution-log-filter-chip-clear"

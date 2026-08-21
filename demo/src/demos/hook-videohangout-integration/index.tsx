@@ -106,29 +106,29 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
       {/* State strip */}
       <div className="flex gap-2 mb-4 flex-wrap">
         {!session ? (
-          <button className="py-2 px-[18px] bg-[#6366f1] text-surface border-0 rounded-lg text-[14px] font-semibold cursor-pointer"
+          <button className="py-2 px-[18px] bg-primary text-surface border-0 rounded-lg text-[14px] font-semibold cursor-pointer"
             onClick={() => start({ type: 'hangout' })}
           >
             Start Hangout
           </button>
         ) : (
           <>
-            <button className="py-[6px] px-[14px] bg-surface-hover text-[#334155] border border-border rounded-lg text-[13px] cursor-pointer"
+            <button className="py-[6px] px-[14px] bg-surface-hover text-text-primary border border-border rounded-lg text-[13px] cursor-pointer"
               onClick={toggleVideo}
             >
               Toggle Video
             </button>
-            <button className="py-[6px] px-[14px] bg-surface-hover text-[#334155] border border-border rounded-lg text-[13px] cursor-pointer"
+            <button className="py-[6px] px-[14px] bg-surface-hover text-text-primary border border-border rounded-lg text-[13px] cursor-pointer"
               onClick={toggleAudio}
             >
               Toggle Audio
             </button>
-            <button className="py-[6px] px-[14px] bg-surface text-[#ef4444] border border-[#fca5a5] rounded-lg text-[13px] cursor-pointer"
+            <button className="py-[6px] px-[14px] bg-surface text-danger-fg border border-danger-border rounded-lg text-[13px] cursor-pointer"
               onClick={leave}
             >
               Leave
             </button>
-            <button className="py-[6px] px-[14px] bg-[#fee2e2] text-[#991b1b] border border-[#fca5a5] rounded-lg text-[13px] cursor-pointer"
+            <button className="py-[6px] px-[14px] bg-danger-bg text-danger-fg border border-danger-border rounded-lg text-[13px] cursor-pointer"
               onClick={end}
             >
               End for All
@@ -269,7 +269,7 @@ export default function HookVideoHangoutIntegrationDemo() {
         The <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">joinToken</code> is
         displayed but real media is not wired (no MediaStream in mock mode).
       </p>
-      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-warning-bg text-warning-fg' : 'bg-success-bg text-success-fg'}`}
       >
         {IS_MOCK ? 'MOCK MODE — signaling only, no real media' : `LIVE — ${GATEWAY_URL}`}
       </div>

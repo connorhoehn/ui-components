@@ -164,7 +164,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
   const overdue = item.dueDate && item.status !== 'done' ? isOverdue(item.dueDate) : false;
 
   return (
-    <div className={cn('flex items-center gap-2 py-1.5 border-b border-[#f1f5f9]')}>
+    <div className={cn('flex items-center gap-2 py-1.5 border-b border-border-subtle')}>
       {/* Priority dot indicator */}
       <span
         title={`Priority: ${item.priority}`}
@@ -201,7 +201,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             'inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border',
             overdue
               ? 'bg-danger-bg text-danger-fg border-danger-border'
-              : 'bg-[#f0f9ff] text-neutral border-[#e0f2fe]',
+              : 'bg-info-bg text-neutral border-info-border',
           )}
         >
           {overdue ? '⚠ ' : ''}Due: {formatDueDate(item.dueDate)}
@@ -227,7 +227,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
           className={cn(
             'inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap',
             item.assignee
-              ? 'px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0'
+              ? 'px-2 bg-primary-bg text-primary-fg border-none min-w-0'
               : 'w-6 px-0 bg-white text-text-tertiary border border-dashed border-border-emphasis',
           )}
         >
@@ -265,9 +265,9 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
               <button
                 type="button"
                 onClick={clearAssignee}
-                className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-[#1e293b]')}
+                className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-text-primary')}
               >
-                <span className={cn('w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}>--</span>
+                <span className={cn('w-[22px] h-[22px] rounded-full bg-border-emphasis text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}>--</span>
                 <span className={cn('text-neutral italic')}>Unassigned</span>
               </button>
             )}
@@ -279,7 +279,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
                 onClick={() => selectUser(user)}
                 onMouseEnter={() => setHighlightIdx(idx)}
                 className={cn(
-                  'flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-[#1e293b]',
+                  'flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-text-primary',
                   idx === highlightIdx ? 'bg-surface-hover' : 'bg-transparent',
                 )}
               >
@@ -338,7 +338,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
           type="button"
           onClick={onRemove}
           title="Remove task"
-          className={cn('border-none bg-transparent text-[#ef4444] cursor-pointer text-base px-1.5 py-0.5 rounded leading-none')}
+          className={cn('border-none bg-transparent text-danger-fg cursor-pointer text-base px-1.5 py-0.5 rounded leading-none')}
         >
           x
         </button>

@@ -70,7 +70,7 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
           alt="Source image"
           className={cn(
             'w-full h-20 object-cover rounded block',
-            'border border-border-field bg-[#f3f4f6]',
+            'border border-border-field bg-surface-hover',
           )}
           data-testid="image-source-thumb"
         />
@@ -85,8 +85,8 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
     <div
       className={cn(
         'w-full h-20 rounded flex items-center justify-center',
-        'border border-dashed border-border-field bg-[#f3f4f6]',
-        'text-[11px] text-[#6b7280]',
+        'border border-dashed border-border-field bg-surface-hover',
+        'text-[11px] text-text-secondary',
       )}
       data-testid="image-source-placeholder"
     >
@@ -95,7 +95,7 @@ export default function ImageSourceNode(props: NodeProps<ImageSourceFlowNode>) {
   );
 
   const footer = imageId ? (
-    <span className="font-mono text-[11px] text-[#6b7280]">
+    <span className="font-mono text-[11px] text-text-secondary">
       {imageId.slice(0, 16)}&hellip;
     </span>
   ) : undefined;

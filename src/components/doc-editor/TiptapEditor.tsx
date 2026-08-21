@@ -338,7 +338,7 @@ export default function TiptapEditor({
   return (
     <div className={cn(editable ? 'border border-border rounded-lg overflow-hidden relative' : 'relative')}>
       {editable && <EditorToolbar editor={editor} />}
-      <div ref={setEditorArea} className={cn('px-4 py-3 text-sm leading-relaxed text-[#1e293b] relative')}>
+      <div ref={setEditorArea} className={cn('px-4 py-3 text-sm leading-relaxed text-text-primary relative')}>
         <EditorContent editor={editor} />
         {/* Custom cursor overlay */}
         <CursorOverlay cursors={remoteCursors} editorView={editor?.view} containerEl={editorArea} />

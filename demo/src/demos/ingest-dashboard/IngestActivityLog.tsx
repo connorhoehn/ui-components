@@ -82,7 +82,7 @@ export function IngestActivityLog() {
   return (
     <div className="bg-surface border border-border rounded-lg overflow-hidden flex flex-col h-70"
     >
-      <div className="py-[10px] px-4 border-b border-border font-semibold text-[13px] text-[#1a1a2e]"
+      <div className="py-[10px] px-4 border-b border-border font-semibold text-[13px] text-text-primary"
       >
         Activity Log
       </div>
@@ -95,7 +95,7 @@ export function IngestActivityLog() {
           </div>
         )}
         {entries.map((entry) => (
-          <div className="flex items-start gap-[10px] py-[6px] px-0 border-b border-[#f8f9fa]"
+          <div className="flex items-start gap-[10px] py-[6px] px-0 border-b border-surface-panel"
             key={entry.id}
           >
             <span
@@ -117,7 +117,7 @@ export function IngestActivityLog() {
               {entry.icon}
             </span>
             <div className="flex-[1] min-w-0">
-              <div className="text-[13px] text-[#334155] leading-[1.4] break-words"
+              <div className="text-[13px] text-text-primary leading-[1.4] break-words"
               >
                 {entry.description}
               </div>

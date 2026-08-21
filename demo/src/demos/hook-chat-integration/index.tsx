@@ -35,7 +35,7 @@ export default function HookChatIntegrationDemo() {
         </code>{' '}
         from <strong>realtime-modules</strong>.
       </p>
-      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-[#fef9c3] text-[#854d0e]' : 'bg-[#dcfce7] text-[#14532d]'}`}
+      <div className={`inline-block py-1 px-[10px] rounded-xl text-[12px] font-semibold mb-6 ${IS_MOCK ? 'bg-warning-bg text-warning-fg' : 'bg-success-bg text-success-fg'}`}
       >
         {IS_MOCK
           ? 'MOCK MODE — set VITE_GATEWAY_URL to connect live'

@@ -62,6 +62,6 @@ describe('ErrorPanel', () => {
   it('uses a muted-color count when errors.length === 0', () => {
     const { container } = render(<ErrorPanel errors={[]} />);
     const countSpan = container.querySelector('h3 > span');
-    expect(countSpan?.className).toMatch(/text-\[#9ca3af\]/);
+    expect(countSpan?.className).toMatch(/text-text-tertiary/);
   });
 });

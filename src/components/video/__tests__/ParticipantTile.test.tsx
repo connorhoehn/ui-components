@@ -48,8 +48,8 @@ describe('ParticipantTile', () => {
       <ParticipantTile id="a" displayName="Alice" isSpeaking />,
     );
     const root = container.firstElementChild as HTMLElement;
-    expect(root.className).toContain('border-[#22c55e]');
-    const dot = container.querySelector('.bg-\\[\\#22c55e\\].rounded-full');
+    expect(root.className).toContain('border-success');
+    const dot = container.querySelector('.bg-success.rounded-full');
     expect(dot).not.toBeNull();
   });
 

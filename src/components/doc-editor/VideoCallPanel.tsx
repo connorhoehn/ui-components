@@ -47,7 +47,7 @@ function ParticipantTile({ participant, isSpeaking }: { participant: HangoutPart
 
   return (
     <div
-      className={cn('relative bg-[#111827] rounded-lg overflow-hidden transition-shadow duration-300', isSpeaking ? 'video-tile-speaking' : 'video-tile-idle')}
+      className={cn('relative bg-surface-inverse rounded-lg overflow-hidden transition-shadow duration-300', isSpeaking ? 'video-tile-speaking' : 'video-tile-idle')}
     >
       <video
         ref={videoRef}
@@ -59,7 +59,7 @@ function ParticipantTile({ participant, isSpeaking }: { participant: HangoutPart
       <div className={cn('absolute bottom-0 left-0 right-0 h-9 bg-gradient-to-t from-black/50 to-transparent pointer-events-none')} />
       <div className={cn('absolute bottom-1.5 left-1.5 flex items-center gap-1 bg-black/60 text-white text-[11px] font-medium px-2 py-[3px] rounded-full')}>
         {isSpeaking && (
-          <span className={cn('w-[5px] h-[5px] rounded-full bg-[#34d399]')} />
+          <span className={cn('w-[5px] h-[5px] rounded-full bg-success')} />
         )}
         <span>{participant.userId}</span>
         {participant.isLocal && <span className={cn('opacity-50')}>(You)</span>}
@@ -92,7 +92,7 @@ function ScreenShareTile({ stream, userId, cameraStream, isLocal }: {
   }, [cameraStream]);
 
   return (
-    <div className={cn('relative bg-black rounded-[10px] overflow-hidden border-2 border-[#3b82f6] aspect-video')}>
+    <div className={cn('relative bg-black rounded-[10px] overflow-hidden border-2 border-info aspect-video')}>
       <video
         ref={screenRef}
         autoPlay
@@ -166,7 +166,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
   if (!isJoined) {
     return (
-      <div className={cn('p-5 text-center text-[#6b7280] text-[13px]')}>
+      <div className={cn('p-5 text-center text-text-secondary text-[13px]')}>
         Connecting to video...
       </div>
     );
@@ -201,7 +201,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
       {/* Controls */}
       <div
-        className={cn('flex justify-center gap-1 px-2 py-1.5 border-t border-[#374151] shrink-0 transition-opacity duration-200', showControls ? 'opacity-100' : 'opacity-0')}
+        className={cn('flex justify-center gap-1 px-2 py-1.5 border-t border-code-raised shrink-0 transition-opacity duration-200', showControls ? 'opacity-100' : 'opacity-0')}
       >
         <IconButton onClick={() => { setIsMuted(!isMuted); toggleMute(!isMuted); }}
           title={isMuted ? 'Unmute' : 'Mute'} active={isMuted}
@@ -225,7 +225,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
       </div>
 
       {/* Participant count */}
-      <div className={cn('text-center text-[10px] text-[#6b7280] py-1')}>
+      <div className={cn('text-center text-[10px] text-text-secondary py-1')}>
         {participants.length} in call
       </div>
     </div>
@@ -272,25 +272,25 @@ export default function VideoCallPanel({
   const activeCallSessionId = meta?.activeCallSessionId;
 
   return (
-    <div className={cn('bg-[#111827] border border-[#374151] rounded-xl overflow-hidden')}>
+    <div className={cn('bg-surface-inverse border border-code-raised rounded-xl overflow-hidden')}>
       {/* Header */}
-      <div className={cn('flex items-center justify-between px-2 py-1 border-b border-[#374151] shrink-0')}>
-        <span className={cn('text-[11px] font-semibold text-[#9ca3af] m-0')}>Video</span>
+      <div className={cn('flex items-center justify-between px-2 py-1 border-b border-code-raised shrink-0')}>
+        <span className={cn('text-[11px] font-semibold text-text-tertiary m-0')}>Video</span>
         <div className={cn('flex items-center gap-0.5')}>
           {onDockToSidebar && !isDocked && (
             <button type="button" onClick={onDockToSidebar} title="Dock to sidebar"
-              className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-[#9ca3af] cursor-pointer text-xs leading-none p-0')}>
+              className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-xs leading-none p-0')}>
               {'←'}
             </button>
           )}
           {isDocked && onUndock && (
             <button type="button" onClick={onUndock} title="Undock from sidebar"
-              className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-[#9ca3af] cursor-pointer text-xs leading-none p-0')}>
+              className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-xs leading-none p-0')}>
               {'→'}
             </button>
           )}
           <button type="button" onClick={onClose} title="Close video"
-            className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-[#9ca3af] cursor-pointer text-sm leading-none p-0')}>
+            className={cn('w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-transparent text-text-tertiary cursor-pointer text-sm leading-none p-0')}>
             {'✕'}
           </button>
         </div>
@@ -308,14 +308,14 @@ export default function VideoCallPanel({
         )}
 
         {(callState === 'creating' || callState === 'joining') && (
-          <div className={cn('p-4 text-center text-[#9ca3af] text-[13px]')}>
+          <div className={cn('p-4 text-center text-text-tertiary text-[13px]')}>
             {callState === 'creating' ? 'Starting call...' : 'Joining call...'}
           </div>
         )}
 
         {callState === 'error' && (
           <div className={cn('p-4 text-center')}>
-            <div className={cn('text-[#f87171] text-[13px] mb-3')}>{error}</div>
+            <div className={cn('text-code-red text-[13px] mb-3')}>{error}</div>
             <Button variant="primary" onClick={() => startCall()}>Try Again</Button>
           </div>
         )}
@@ -324,7 +324,7 @@ export default function VideoCallPanel({
           <div className={cn('p-4 text-center')}>
             {hasActiveCall && activeCallSessionId ? (
               <>
-                <div className={cn('text-[13px] text-[#d1d5db] mb-3')}>
+                <div className={cn('text-[13px] text-code-subtle mb-3')}>
                   A call is in progress on this document.
                 </div>
                 <Button variant="primary" onClick={() => joinCall(activeCallSessionId)}>
@@ -333,7 +333,7 @@ export default function VideoCallPanel({
               </>
             ) : (
               <>
-                <div className={cn('text-[13px] text-[#9ca3af] mb-3')}>
+                <div className={cn('text-[13px] text-text-tertiary mb-3')}>
                   Start a video call with collaborators on this document.
                 </div>
                 <Button variant="primary" onClick={startCall}>

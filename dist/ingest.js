@@ -93,7 +93,7 @@ function Pt() {
         "data-testid": `alert-${N.id}`,
         className: E(
           "px-3 py-2 rounded-md text-[13px] border",
-          N.level === "critical" ? "bg-danger-bg border-[var(--color-state-failed)] text-[var(--color-state-failed)]" : "bg-[#fefce8] border-[#fbbf24] text-[#92400e]"
+          N.level === "critical" ? "bg-danger-bg border-[var(--color-state-failed)] text-[var(--color-state-failed)]" : "bg-warning-bg border-warning text-warning-fg"
         ),
         children: [
           /* @__PURE__ */ e("strong", { children: N.level === "critical" ? "⛔" : "⚠" }),
@@ -1816,7 +1816,7 @@ function jt() {
     p && /* @__PURE__ */ r(
       "div",
       {
-        className: "px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3",
+        className: "px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-warning-fg rounded-lg text-xs mb-3",
         "data-testid": "conflicts-mock-banner",
         children: [
           "Showing mock conflicts — backend endpoint ",
@@ -1850,7 +1850,7 @@ function jt() {
             {
               className: E(
                 "px-3.5 py-2.5 border-b border-border cursor-pointer flex flex-col gap-1",
-                c && "bg-[#eef2ff]"
+                c && "bg-primary-bg"
               ),
               onClick: () => S(s.conflictId),
               "data-testid": `conflict-row-${s.conflictId}`,
@@ -2063,7 +2063,7 @@ function te({
       className: E(
         "p-3 text-xs text-text-secondary font-mono whitespace-pre-wrap break-words min-h-[60px] bg-surface",
         !p && "border-r border-border",
-        l && "bg-[#ecfdf5] border-[var(--color-state-completed)]",
+        l && "bg-success-bg border-[var(--color-state-completed)]",
         m && "opacity-55"
       ),
       children: [
@@ -2293,7 +2293,7 @@ function mt({ item: t, docTypes: a, remapTypeId: l, onPickRemapType: p, onAccept
   return /* @__PURE__ */ r("div", { "data-testid": `review-row-${t.itemId}`, className: "p-4 bg-surface border border-border rounded-[10px] flex flex-col gap-2", children: [
     /* @__PURE__ */ r("div", { className: "flex items-center justify-between gap-3", children: [
       /* @__PURE__ */ e("span", { className: "font-[ui-monospace,monospace] text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap", title: t.sourcePath, children: t.sourcePath }),
-      /* @__PURE__ */ r("span", { className: "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e]", children: [
+      /* @__PURE__ */ r("span", { className: "text-[11px] font-semibold px-2 py-0.5 rounded-full bg-warning-bg text-warning-fg", children: [
         "conf ",
         S
       ] })
@@ -2372,7 +2372,7 @@ function ft(t) {
   return `${p}m ${m}s`;
 }
 function ht(t) {
-  return t.startsWith("sync.") ? "bg-[#dbeafe] text-[#1d4ed8]" : t === "item.mapped" ? "bg-[#ede9fe] text-[#7c3aed]" : t === "item.materialized" ? "bg-[#dcfce7] text-success-fg" : t === "item.failed" ? "bg-danger-bg text-danger-fg" : "bg-surface-hover text-neutral";
+  return t.startsWith("sync.") ? "bg-info-bg text-info-fg" : t === "item.mapped" ? "bg-accent-bg text-accent-fg" : t === "item.materialized" ? "bg-success-bg text-success-fg" : t === "item.failed" ? "bg-danger-bg text-danger-fg" : "bg-surface-hover text-neutral";
 }
 function ce(t) {
   const a = t.sourceName ?? t.sourceId ?? "";
@@ -2437,7 +2437,7 @@ function _t() {
     /* @__PURE__ */ r("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ r("div", { className: "flex items-center gap-2.5", children: [
         /* @__PURE__ */ e("h2", { className: "m-0 text-[22px] font-bold text-text-primary", children: "Sync Monitor" }),
-        /* @__PURE__ */ r("span", { className: "inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-success-fg rounded-full border border-success-border", children: [
+        /* @__PURE__ */ r("span", { className: "inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-success-bg text-success-fg rounded-full border border-success-border", children: [
           /* @__PURE__ */ e("span", { className: "w-[7px] h-[7px] rounded-full bg-success animate-[sync-pulse_1.5s_ease-in-out_infinite]" }),
           "Live"
         ] })

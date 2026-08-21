@@ -93,7 +93,7 @@ export default function ReviewMode({
 
   if (sections.length === 0) {
     return (
-      <div className={cn('text-center p-12 text-[#6b7280] text-[15px]')}>
+      <div className={cn('text-center p-12 text-text-secondary text-[15px]')}>
         No sections to review.
       </div>
     );
@@ -103,11 +103,11 @@ export default function ReviewMode({
     <div data-testid="review-mode" className={cn('max-w-[800px] mx-auto')}>
       {/* Progress bar */}
       <div data-testid="review-progress" className={cn('mb-6')}>
-        <div className={cn('text-[13px] text-[#6b7280] mb-1 flex justify-between')}>
+        <div className={cn('text-[13px] text-text-secondary mb-1 flex justify-between')}>
           <span data-testid="review-progress-text">{reviewedByMe} of {sections.length} sections reviewed by you</span>
           <span data-testid="review-progress-pct">{pct}%</span>
         </div>
-        <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden')}>
+        <div className={cn('h-2 bg-surface-emphasis rounded overflow-hidden')}>
           <div
             className={cn('h-full rounded transition-[width] duration-300 ease-in-out', reviewedByMe === sections.length ? 'bg-success' : 'bg-info')}
             style={{ width: `${pct}%` }}
@@ -131,7 +131,7 @@ export default function ReviewMode({
               key={section.id}
               id={`section-${section.id}`}
               data-testid={`review-section-${section.id}`}
-              className={cn('bg-white border border-[#e5e7eb] rounded-lg p-5')}
+              className={cn('bg-white border border-border rounded-lg p-5')}
               style={{
                 borderLeft: myReview
                   ? `3px solid ${statusConfig[myReview.status].color}`
@@ -141,7 +141,7 @@ export default function ReviewMode({
             >
               {/* Header */}
               <div className={cn('flex items-center gap-2 mb-1')}>
-                <h3 className={cn('text-lg font-bold m-0 text-[#1e293b] flex-1')}>
+                <h3 className={cn('text-lg font-bold m-0 text-text-primary flex-1')}>
                   {section.title}
                 </h3>
                 <span
@@ -182,15 +182,15 @@ export default function ReviewMode({
                       item.status === 'rejected' ? '#dc2626' :
                       item.status === 'done' ? '#6b7280' : '#94a3b8';
                     return (
-                      <div key={item.id} className={cn('flex items-start gap-2 py-1.5 border-b border-[#f3f4f6] text-sm')}>
+                      <div key={item.id} className={cn('flex items-start gap-2 py-1.5 border-b border-border-subtle text-sm')}>
                         <span
                           className={cn('inline-block w-2 h-2 rounded-full mt-[5px] shrink-0')}
                           style={{ background: itemStatusColor }}
                         />
                         <div className={cn('flex-1')}>
-                          <span className={cn('text-[#1e293b]')}>{item.text}</span>
+                          <span className={cn('text-text-primary')}>{item.text}</span>
                           {item.assignee && (
-                            <span className={cn('text-[#6b7280] text-xs ml-2')}>
+                            <span className={cn('text-text-secondary text-xs ml-2')}>
                               — {item.assignee}
                             </span>
                           )}
@@ -215,7 +215,7 @@ export default function ReviewMode({
               )}
 
               {/* Review action bar */}
-              <div className={cn('flex items-center gap-2 pt-2.5 pb-1 border-t border-[#f3f4f6] flex-wrap')}>
+              <div className={cn('flex items-center gap-2 pt-2.5 pb-1 border-t border-border-subtle flex-wrap')}>
                 {(!myReview || isChanging) ? (
                   <>
                     <ReviewButton
@@ -255,7 +255,7 @@ export default function ReviewMode({
                       <button
                         data-testid={`section-${section.id}-cancel-change`}
                         onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: false }))}
-                        className={cn('bg-transparent border-none text-[#6b7280] text-xs cursor-pointer underline')}
+                        className={cn('bg-transparent border-none text-text-secondary text-xs cursor-pointer underline')}
                       >
                         Cancel
                       </button>
@@ -272,7 +272,7 @@ export default function ReviewMode({
                       <span className={cn('text-sm')}>{statusConfig[myReview.status].icon}</span>
                       {statusConfig[myReview.status].label}
                     </span>
-                    <span className={cn('text-xs text-[#6b7280]')}>
+                    <span className={cn('text-xs text-text-secondary')}>
                       by you &middot; {new Date(myReview.timestamp).toLocaleString(undefined, {
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
@@ -280,7 +280,7 @@ export default function ReviewMode({
                     <button
                       data-testid={`section-${section.id}-change-review`}
                       onClick={() => setChangingReview((prev) => ({ ...prev, [section.id]: true }))}
-                      className={cn('bg-transparent border-none text-[#3b82f6] text-xs cursor-pointer underline p-0')}
+                      className={cn('bg-transparent border-none text-info-fg text-xs cursor-pointer underline p-0')}
                     >
                       Change
                     </button>
@@ -356,24 +356,24 @@ export default function ReviewMode({
               const reviewedCount = entry.statuses.filter((s) => s === 'reviewed').length;
               return (
                 <div key={uid} className={cn('flex items-center gap-2.5 text-[13px]')}>
-                  <span className={cn('font-semibold text-[#1e293b] min-w-[100px]')}>
+                  <span className={cn('font-semibold text-text-primary min-w-[100px]')}>
                     {entry.displayName}{uid === userId ? ' (you)' : ''}
                   </span>
-                  <span className={cn('text-[#6b7280]')}>
+                  <span className={cn('text-text-secondary')}>
                     {entry.statuses.length} of {sections.length} sections
                   </span>
                   {approvedCount > 0 && (
-                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#dcfce7] text-[#166534] font-semibold')}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-success-bg text-success-fg font-semibold')}>
                       {approvedCount} approved
                     </span>
                   )}
                   {reviewedCount > 0 && (
-                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#f3f4f6] text-[#374151] font-semibold')}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-surface-hover text-text-primary font-semibold')}>
                       {reviewedCount} reviewed
                     </span>
                   )}
                   {changesCount > 0 && (
-                    <span className={cn('text-[11px] px-2 py-px rounded bg-[#fef3c7] text-[#92400e] font-semibold')}>
+                    <span className={cn('text-[11px] px-2 py-px rounded bg-warning-bg text-warning-fg font-semibold')}>
                       {changesCount} changes requested
                     </span>
                   )}

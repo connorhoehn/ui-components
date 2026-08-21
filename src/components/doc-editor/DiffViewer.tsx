@@ -141,24 +141,24 @@ function diffSections(
 // ---------------------------------------------------------------------------
 
 const statusBgClass: Record<SectionDiffStatus, string> = {
-  added: 'bg-[#dcfce7] border-[#86efac]',
-  removed: 'bg-[#fee2e2] border-[#fca5a5]',
-  modified: 'bg-[#fef9c3] border-[#fde047]',
-  unchanged: 'bg-transparent border-[#e5e7eb]',
+  added: 'bg-success-bg border-success-border',
+  removed: 'bg-danger-bg border-danger-border',
+  modified: 'bg-warning-bg border-warning-border',
+  unchanged: 'bg-transparent border-border',
 };
 
 function badgeClasses(status: string): string {
-  if (status === 'added') return 'text-[#166534] bg-[#bbf7d0]';
-  if (status === 'removed') return 'text-[#991b1b] bg-[#fecaca]';
-  if (status === 'modified') return 'text-[#854d0e] bg-[#fef08a]';
-  return 'text-[#6b7280] bg-[#f3f4f6]';
+  if (status === 'added') return 'text-success-fg bg-success-bg';
+  if (status === 'removed') return 'text-danger-fg bg-danger-bg';
+  if (status === 'modified') return 'text-warning-fg bg-warning-border';
+  return 'text-text-secondary bg-surface-hover';
 }
 
 function itemRowClasses(status: string): string {
-  if (status === 'added') return 'bg-[#dcfce7] text-[#166534]';
-  if (status === 'removed') return 'bg-[#fee2e2] text-[#991b1b] line-through';
-  if (status === 'modified') return 'bg-[#fef9c3] text-[#854d0e]';
-  return 'bg-transparent text-[#374151]';
+  if (status === 'added') return 'bg-success-bg text-success-fg';
+  if (status === 'removed') return 'bg-danger-bg text-danger-fg line-through';
+  if (status === 'modified') return 'bg-warning-bg text-warning-fg';
+  return 'bg-transparent text-text-primary';
 }
 
 // ---------------------------------------------------------------------------
@@ -170,12 +170,12 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
   const hasChanges = diffs.some(d => d.status !== 'unchanged');
 
   return (
-    <div className={cn('border-t border-[#e5e7eb] bg-surface-inset max-h-[400px] overflow-auto px-4 py-3')}>
+    <div className={cn('border-t border-border bg-surface-inset max-h-[400px] overflow-auto px-4 py-3')}>
       <div className={cn('flex items-center justify-between mb-2')}>
-        <h4 className={cn('text-[13px] font-semibold text-[#374151] m-0')}>Changes from selected version to current</h4>
+        <h4 className={cn('text-[13px] font-semibold text-text-primary m-0')}>Changes from selected version to current</h4>
         <button
           type="button"
-          className={cn('px-2 py-0.5 text-xs border border-border-field rounded bg-white text-[#6b7280] cursor-pointer font-[inherit]')}
+          className={cn('px-2 py-0.5 text-xs border border-border-field rounded bg-white text-text-secondary cursor-pointer font-[inherit]')}
           onClick={onClose}
         >
           Dismiss
@@ -183,7 +183,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
       </div>
 
       {!hasChanges && (
-        <div className={cn('text-[13px] text-[#9ca3af] text-center p-4')}>No differences found. The documents are identical.</div>
+        <div className={cn('text-[13px] text-text-tertiary text-center p-4')}>No differences found. The documents are identical.</div>
       )}
 
       {diffs
@@ -192,11 +192,11 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
           <div key={sd.id} className={cn('border rounded-md p-2 px-2.5 mb-1.5', statusBgClass[sd.status])}>
             <div className={cn('flex items-center gap-2 mb-1')}>
               <span className={cn('text-[10px] font-semibold uppercase px-1.5 py-px rounded-sm', badgeClasses(sd.status))}>{sd.status}</span>
-              <span className={cn('text-[13px] font-semibold text-[#1f2937]')}>
+              <span className={cn('text-[13px] font-semibold text-text-primary')}>
                 {sd.status === 'removed' ? sd.oldTitle : sd.newTitle ?? sd.oldTitle}
               </span>
               {sd.titleChanged && (
-                <span className={cn('text-[11px] text-[#92400e]')}>
+                <span className={cn('text-[11px] text-warning-fg')}>
                   (was: &quot;{sd.oldTitle}&quot;)
                 </span>
               )}
@@ -217,7 +217,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
                       {item?.assignee ? ` [${item.assignee}]` : ''}
                     </div>
                     {id.changes.length > 0 && (
-                      <div className={cn('text-[11px] text-[#92400e] ml-4 italic')}>
+                      <div className={cn('text-[11px] text-warning-fg ml-4 italic')}>
                         {id.changes.join(', ')}
                       </div>
                     )}
@@ -229,12 +229,12 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
             {sd.textChanged && (
               <div className={cn('mt-1 text-xs')}>
                 {sd.oldTextContent && (
-                  <div className={cn('px-2 py-1 rounded-sm bg-[#fee2e2] text-[#991b1b] line-through mb-0.5')}>
+                  <div className={cn('px-2 py-1 rounded-sm bg-danger-bg text-danger-fg line-through mb-0.5')}>
                     {sd.oldTextContent.substring(0, 200)}{(sd.oldTextContent?.length ?? 0) > 200 ? '...' : ''}
                   </div>
                 )}
                 {sd.newTextContent && (
-                  <div className={cn('px-2 py-1 rounded-sm bg-[#dcfce7] text-[#166534]')}>
+                  <div className={cn('px-2 py-1 rounded-sm bg-success-bg text-success-fg')}>
                     {sd.newTextContent.substring(0, 200)}{(sd.newTextContent?.length ?? 0) > 200 ? '...' : ''}
                   </div>
                 )}
@@ -242,7 +242,7 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
             )}
 
             {sd.status === 'modified' && !sd.textChanged && sd.itemDiffs.every(d => d.status === 'unchanged') && sd.titleChanged && (
-              <div className={cn('text-xs text-[#6b7280] mt-0.5')}>
+              <div className={cn('text-xs text-text-secondary mt-0.5')}>
                 Only the section title changed.
               </div>
             )}

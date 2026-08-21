@@ -87,13 +87,13 @@ interface StateTokens {
 }
 
 const STATE_TOKENS: Record<NodeExecutionState, StateTokens> = {
-  idle:      { card: 'border border-border-field bg-white',                    dot: 'bg-[#d1d5db]' },
-  pending:   { card: 'border border-dashed border-[#93c5fd] bg-info-bg',  dot: 'bg-[#93c5fd]' },
+  idle:      { card: 'border border-border-field bg-white',                    dot: 'bg-state-idle' },
+  pending:   { card: 'border border-dashed border-info-border bg-info-bg',  dot: 'bg-state-pending' },
   running:   { card: 'border-2 border-info bg-info-bg',              dot: 'bg-info' },
-  awaiting:  { card: 'border-2 border-[#f59e0b] bg-warning-bg',              dot: 'bg-[#f59e0b]' },
+  awaiting:  { card: 'border-2 border-warning bg-warning-bg',              dot: 'bg-warning' },
   completed: { card: 'border border-success bg-success-bg',                dot: 'bg-success' },
   failed:    { card: 'border-2 border-danger bg-danger-bg',              dot: 'bg-danger' },
-  skipped:   { card: 'border border-dashed border-border-field bg-[#f9fafb] opacity-50', dot: 'bg-[#d1d5db]' },
+  skipped:   { card: 'border border-dashed border-border-field bg-surface-inset opacity-50', dot: 'bg-state-idle' },
 };
 
 // ---------------------------------------------------------------------------
@@ -173,7 +173,7 @@ export default function BaseNode(props: BaseNodeProps) {
       className={cn(
         'w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
         pausedAtBreakpoint
-          ? 'border-2 border-[#d97706] bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]'
+          ? 'border-2 border-warning bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]'
           : tokens.card,
         !pausedAtBreakpoint && selected && 'shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]',
         !pausedAtBreakpoint && !selected && 'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
@@ -202,7 +202,7 @@ export default function BaseNode(props: BaseNodeProps) {
         <span
           aria-label="breakpoint"
           data-testid="breakpoint-dot"
-          className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-[#ef4444] border-[1.5px] border-white z-[1]"
+          className="absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-danger border-[1.5px] border-white z-[1]"
         />
       )}
       <div className={cn(

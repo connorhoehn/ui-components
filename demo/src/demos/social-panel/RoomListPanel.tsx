@@ -50,11 +50,11 @@ export function RoomListPanel() {
       {/* Room list */}
       <div className="flex-[1] py-2 px-0">
         {rooms.map((room) => (
-          <div className={`py-2 px-4 flex items-center justify-between cursor-pointer transition-[all] ${activeRoom === room.id ? 'bg-surface-hover border-l-3 border-[#6366f1]' : 'bg-transparent border-l-3 border-transparent'}`}
+          <div className={`py-2 px-4 flex items-center justify-between cursor-pointer transition-[all] ${activeRoom === room.id ? 'bg-surface-hover border-l-3 border-primary' : 'bg-transparent border-l-3 border-transparent'}`}
             key={room.id}
             onClick={() => setActiveRoom(room.id)}
           >
-            <span className="text-[14px] text-[#1a1a2e]">
+            <span className="text-[14px] text-text-primary">
               <span className="text-text-tertiary mr-1">{room.icon}</span>
               {room.name}
             </span>
@@ -68,9 +68,9 @@ export function RoomListPanel() {
 
       {/* Join indicator */}
       {joinIndicator && (
-        <div className="py-2 px-4 border-t border-border text-[11px] text-[#10b981] flex items-center gap-[6px]"
+        <div className="py-2 px-4 border-t border-border text-[11px] text-success-fg flex items-center gap-[6px]"
         >
-          <span className="w-[6px] h-[6px] rounded-full bg-[#10b981]"
+          <span className="w-[6px] h-[6px] rounded-full bg-success"
           />
           {joinIndicator} joined
         </div>

@@ -158,7 +158,7 @@ export default function IconPicker({
                 }
               }}
               placeholder="Paste any emoji…"
-              className="flex-1 min-w-0 border border-border-field rounded-md px-2 py-1 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+              className="flex-1 min-w-0 border border-border-field rounded-md px-2 py-1 text-[13px] font-[inherit] bg-surface-inset text-text-primary outline-none"
               data-testid="icon-picker-custom-input"
               aria-label="Custom emoji"
             />

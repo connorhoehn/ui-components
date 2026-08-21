@@ -75,7 +75,7 @@ export default function EditorModals(props: EditorModalsProps) {
               disabled={hasErrors}
               className={cn(
                 'px-4 py-[7px] text-[13px] font-semibold text-white border-none rounded-[7px] font-[inherit]',
-                hasErrors ? 'bg-[#cbd5e1] cursor-not-allowed' : 'bg-primary cursor-pointer',
+                hasErrors ? 'bg-border-emphasis cursor-not-allowed' : 'bg-primary cursor-pointer',
               )}
             >
               Publish

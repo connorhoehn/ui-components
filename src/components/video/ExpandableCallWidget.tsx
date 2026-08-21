@@ -377,7 +377,7 @@ export function ExpandableCallWidget({
       </div>
 
       {controls && (
-        <div className="border-t border-white/5 px-2 py-2 bg-[#0a1020]">
+        <div className="border-t border-white/5 px-2 py-2 bg-video-tile">
           {controls}
         </div>
       )}

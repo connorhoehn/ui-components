@@ -115,7 +115,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
                 'text-[12px] font-bold text-text-primary uppercase tracking-[0.05em] mb-1.5',
                 sectionIdx === 0
                   ? 'mt-0 pt-0'
-                  : 'mt-4 pt-1.5 border-t border-[#f1f5f9]',
+                  : 'mt-4 pt-1.5 border-t border-border-subtle',
               )}
             >
               {section.title}
@@ -141,7 +141,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       <div className="flex justify-end mt-[18px]">
         <button
           onClick={onClose}
-          className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]"
+          className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-text-primary cursor-pointer font-[inherit]"
         >
           Close
         </button>

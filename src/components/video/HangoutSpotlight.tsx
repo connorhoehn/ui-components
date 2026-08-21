@@ -132,7 +132,7 @@ export function HangoutSpotlight({
   return (
     <div
       className={cn(
-        'flex flex-col gap-1 bg-[#0f0f0f] rounded-lg overflow-hidden',
+        'flex flex-col gap-1 bg-video-stage rounded-lg overflow-hidden',
         fillParent && 'h-full w-full',
         className,
       )}

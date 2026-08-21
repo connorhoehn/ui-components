@@ -17,7 +17,7 @@ interface StreamingChatPanelProps {
   className?: string;
 }
 
-const AI_AVATAR = 'w-8 h-8 rounded-full bg-[#10b981] flex items-center justify-center text-white text-[11px] font-bold shrink-0';
+const AI_AVATAR = 'w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-[11px] font-bold shrink-0';
 
 export function StreamingChatPanel({
   messages,
@@ -73,7 +73,7 @@ export function StreamingChatPanel({
             <div
               className={cn(
                 'w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0',
-                msg.role === 'user' ? 'bg-[#6366f1]' : 'bg-[#10b981]',
+                msg.role === 'user' ? 'bg-primary' : 'bg-success',
               )}
             >
               {msg.role === 'user' ? 'U' : 'AI'}
@@ -82,7 +82,7 @@ export function StreamingChatPanel({
             {/* Content */}
             <div className="flex-1 min-w-0">
               <div className="flex items-baseline gap-2">
-                <span className="font-semibold text-[13px] text-[#1a1a2e]">
+                <span className="font-semibold text-[13px] text-text-primary">
                   {msg.role === 'user' ? 'You' : 'Agent'}
                 </span>
               </div>
@@ -95,9 +95,9 @@ export function StreamingChatPanel({
               )}
               <div
                 className={cn(
-                  'mt-1 py-2 px-3 text-[14px] text-[#334155] leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-pre-wrap break-words',
+                  'mt-1 py-2 px-3 text-[14px] text-text-primary leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-pre-wrap break-words',
                   msg.role === 'user'
-                    ? 'bg-[#eef2ff] rounded-[12px_4px_12px_12px]'
+                    ? 'bg-primary-bg rounded-[12px_4px_12px_12px]'
                     : 'bg-surface-hover rounded-[4px_12px_12px_12px]',
                 )}
               >
@@ -135,7 +135,7 @@ export function StreamingChatPanel({
         {streamingText && !messages.some((m) => m.isStreaming) && (
           <div className="flex gap-2.5">
             <div className={AI_AVATAR}>AI</div>
-            <div className="flex-1 mt-1 py-2 px-3 bg-surface-hover rounded-[4px_12px_12px_12px] text-[14px] text-[#334155] leading-[1.5] whitespace-pre-wrap break-words">
+            <div className="flex-1 mt-1 py-2 px-3 bg-surface-hover rounded-[4px_12px_12px_12px] text-[14px] text-text-primary leading-[1.5] whitespace-pre-wrap break-words">
               {streamingText}
               <span className="inline-block animate-pulse ml-0.5 text-info-fg">▊</span>
             </div>

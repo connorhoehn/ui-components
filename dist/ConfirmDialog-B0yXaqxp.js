@@ -1,37 +1,37 @@
-import { jsxs as n, jsx as t, Fragment as f } from "react/jsx-runtime";
-import { M as x } from "./Modal-X8tdpRKs.js";
+import { jsxs as n, jsx as o, Fragment as x } from "react/jsx-runtime";
+import { M as f } from "./Modal-X8tdpRKs.js";
 import { c as i } from "./cn-B6yFEsav.js";
 const b = {
-  destructive: "bg-[#ef4444] hover:bg-danger",
+  destructive: "bg-danger hover:bg-danger",
   caution: "bg-warning hover:bg-warning",
-  info: "bg-[#3b82f6] hover:bg-info"
+  info: "bg-info hover:bg-info"
 };
 function y({
   open: a,
   onConfirm: d,
-  onCancel: o,
+  onCancel: t,
   title: c,
-  body: e,
+  body: r,
   confirmLabel: s = "Confirm",
   cancelLabel: l = "Cancel",
-  confirmDisabled: r = !1,
+  confirmDisabled: e = !1,
   tone: p = "info",
   children: m
 }) {
   return /* @__PURE__ */ n(
-    x,
+    f,
     {
       open: a,
-      onClose: o,
+      onClose: t,
       title: c,
       maxWidth: 420,
-      footer: /* @__PURE__ */ n(f, { children: [
-        /* @__PURE__ */ t(
+      footer: /* @__PURE__ */ n(x, { children: [
+        /* @__PURE__ */ o(
           "button",
           {
             type: "button",
             "data-testid": "confirm-dialog-cancel",
-            onClick: o,
+            onClick: t,
             className: i(
               "px-4 py-[7px] text-[13px] font-[inherit]",
               "border border-border bg-white text-text-secondary",
@@ -40,25 +40,25 @@ function y({
             children: l
           }
         ),
-        /* @__PURE__ */ t(
+        /* @__PURE__ */ o(
           "button",
           {
             type: "button",
             "data-testid": "confirm-dialog-confirm",
             onClick: d,
-            disabled: r,
+            disabled: e,
             className: i(
               "px-4 py-[7px] text-[13px] font-semibold font-[inherit]",
               "border-none text-white rounded-md transition-colors duration-150",
               b[p],
-              r ? "cursor-not-allowed opacity-70" : "cursor-pointer opacity-100"
+              e ? "cursor-not-allowed opacity-70" : "cursor-pointer opacity-100"
             ),
             children: s
           }
         )
       ] }),
       children: [
-        e && /* @__PURE__ */ t("p", { className: "m-0 mb-3 text-[13px] text-text-secondary", children: e }),
+        r && /* @__PURE__ */ o("p", { className: "m-0 mb-3 text-[13px] text-text-secondary", children: r }),
         m
       ]
     }

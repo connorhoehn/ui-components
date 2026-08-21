@@ -97,7 +97,7 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
             onClick={isClickable(n) ? () => onClick?.(n) : undefined}
             onKeyDown={isClickable(n) ? (e) => { if (e.key === 'Enter') onClick?.(n); } : undefined}
             className={cn(
-              'text-sm text-[#374151] font-normal',
+              'text-sm text-text-primary font-normal',
               isClickable(n) && 'cursor-pointer underline decoration-text-tertiary'
             )}
           >
@@ -422,14 +422,14 @@ function AppLayoutInner({
   // Helper for menu button classes
   const menuBtnClass = (isActive: boolean) => cn(
     'block w-full text-left px-3.5 py-2 text-sm border-none cursor-pointer font-[inherit] hover:bg-surface-panel',
-    isActive ? 'bg-surface-hover text-text-primary font-semibold' : 'bg-transparent text-[#374151] font-normal'
+    isActive ? 'bg-surface-hover text-text-primary font-semibold' : 'bg-transparent text-text-primary font-normal'
   );
 
   // Helper for tab button classes
   const tabBtnClass = (isActive: boolean) => cn(
     'px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out',
     isActive
-      ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
+      ? 'bg-primary-bg text-text-primary font-semibold'
       : 'bg-transparent text-neutral font-medium hover:bg-surface-hover'
   );
 
@@ -437,7 +437,7 @@ function AppLayoutInner({
   const subTabClass = (isActive: boolean) => cn(
     'px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out',
     isActive
-      ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
+      ? 'bg-primary-bg text-text-primary font-semibold'
       : 'bg-transparent text-neutral font-medium hover:bg-surface-hover'
   );
 
@@ -473,7 +473,7 @@ function AppLayoutInner({
           )}
           <button
             onClick={onSignOut}
-            className="bg-none border border-border rounded-md px-3 py-1 cursor-pointer text-sm text-[#374151]"
+            className="bg-none border border-border rounded-md px-3 py-1 cursor-pointer text-sm text-text-primary"
           >
             Sign Out
           </button>
@@ -633,7 +633,7 @@ function AppLayoutInner({
                     <button
                       data-testid="new-document-btn"
                       onClick={() => setShowNewDocModal(true)}
-                      className="ml-auto flex items-center gap-1 px-3 py-[5px] text-[13px] font-semibold border-none rounded-md bg-[#3b82f6] text-white cursor-pointer font-[inherit]"
+                      className="ml-auto flex items-center gap-1 px-3 py-[5px] text-[13px] font-semibold border-none rounded-md bg-info text-white cursor-pointer font-[inherit]"
                     >
                       + New Document
                     </button>
@@ -682,7 +682,7 @@ function AppLayoutInner({
                           {showBadge && (
                             <span
                               data-testid="pending-approvals-badge"
-                              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[11px] font-bold bg-[#f59e0b] text-white leading-none"
+                              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 rounded-full text-[11px] font-bold bg-warning text-white leading-none"
                             >
                               {pendingApprovalsCount}
                             </span>

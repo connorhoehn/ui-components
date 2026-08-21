@@ -149,12 +149,12 @@ function Editor() {
               </div>
             ))}
             <div className="w-[1px] h-5 bg-border my-0 mx-1" />
-            <div className="text-[12px] border border-border-field rounded py-1 px-2 bg-surface text-[#374151]">
+            <div className="text-[12px] border border-border-field rounded py-1 px-2 bg-surface text-text-primary">
               Paragraph ▾
             </div>
           </div>
           {/* Content area */}
-          <div className="py-4 px-5 min-h-45 bg-surface text-[14px] leading-[1.7] text-[#1e293b]">
+          <div className="py-4 px-5 min-h-45 bg-surface text-[14px] leading-[1.7] text-text-primary">
             <h3 className="mt-0 mr-0 mb-2 ml-0 text-[18px] font-semibold">Meeting Notes</h3>
             <p className="mt-0 mr-0 mb-2 ml-0">
               <strong>Date:</strong> May 7, 2026 — Sprint planning session
@@ -211,14 +211,14 @@ function EditorWithConflicts() {
             ))}
           </div>
           {/* Conflict banner */}
-          <div className="flex items-center justify-between py-[10px] px-[14px] bg-[#fefce8] border border-warning-border border-l-0 border-r-0 text-[13px] text-[#92400e]">
+          <div className="flex items-center justify-between py-[10px] px-[14px] bg-warning-bg border border-warning-border border-l-0 border-r-0 text-[13px] text-warning-fg">
             <span>⚠ Edits merged — your changes are preserved</span>
-            <div className="w-[22px] h-[22px] flex items-center justify-center rounded cursor-pointer text-[14px] text-[#92400e] font-semibold">
+            <div className="w-[22px] h-[22px] flex items-center justify-center rounded cursor-pointer text-[14px] text-warning-fg font-semibold">
               ✕
             </div>
           </div>
           {/* Content area */}
-          <div className="py-4 px-5 min-h-30 bg-surface text-[14px] leading-[1.7] text-[#1e293b]">
+          <div className="py-4 px-5 min-h-30 bg-surface text-[14px] leading-[1.7] text-text-primary">
             <p className="m-0">Both users edited the introduction paragraph simultaneously. Y.js merged both changes — no data was lost.</p>
           </div>
         </div>
@@ -328,7 +328,7 @@ function MyEditor({ provider }) {
               { key: 'idle', value: 'false', tone: 'info' as Tone },
             ].map((field) => (
               <div className="flex items-center gap-2 font-mono text-[13px]" key={field.key}>
-                <span className="text-[#7c3aed] font-medium min-w-35">{field.key}:</span>
+                <span className="text-accent-fg font-medium min-w-35">{field.key}:</span>
                 <span style={{ color: toneVar(field.tone) }}>{field.value}</span>
                 {field.swatch && (
                   <span className="w-3.5 h-3.5 rounded-[3px] inline-block border border-border" style={{ background: field.swatch }} />
@@ -378,7 +378,7 @@ function DocumentView({ documentId, ws, onMessage }) {
           <div className="flex items-center gap-2 flex-wrap font-mono text-[12px] text-text-secondary">
             {['Connect', 'Subscribe', 'Receive Snapshot', 'Synced', 'Stream Updates'].map((step, i) => (
               <span className="flex items-center gap-2" key={step}>
-                <span className={`py-1 px-[10px] rounded font-medium whitespace-nowrap ${i === 3 ? 'bg-[#dcfce7] text-[#10b981]' : 'bg-surface-hover text-[#334155]'}`}>
+                <span className={`py-1 px-[10px] rounded font-medium whitespace-nowrap ${i === 3 ? 'bg-success-bg text-success-fg' : 'bg-surface-hover text-text-primary'}`}>
                   {step}
                 </span>
                 {i < 4 && <span className="text-text-tertiary">{'→'}</span>}
@@ -438,7 +438,7 @@ function DocumentEditor({ documentId }) {
             <div className="flex items-center gap-[10px]">
               <span className="text-[13px] font-semibold text-text-primary min-w-[90px]">Document:</span>
               <span className="text-[13px] text-text-secondary">Sprint Planning Notes</span>
-              <span className="text-[11px] py-[2px] px-2 rounded-[10px] bg-[#dcfce7] text-[#10b981] font-semibold">synced</span>
+              <span className="text-[11px] py-[2px] px-2 rounded-[10px] bg-success-bg text-success-fg font-semibold">synced</span>
             </div>
             {/* Sections */}
             <div className="flex items-start gap-[10px]">
@@ -495,42 +495,42 @@ ydoc.transact(() => {
   meta.set('updatedAt', new Date().toISOString())
 })`}
       >
-        <div className="bg-[#1e293b] rounded-lg p-5 font-mono text-[13px] leading-[1.8]">
+        <div className="bg-surface-inverse rounded-lg p-5 font-mono text-[13px] leading-[1.8]">
           <div className="text-border">
-            <span className="text-[#93c5fd] font-semibold">Y.Doc</span>
+            <span className="text-code-blue font-semibold">Y.Doc</span>
             {'\n'}
             <span className="text-neutral">{'├── '}</span>
-            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-code-mauve">Y.Map</span>
             <span className="text-neutral">(</span>
-            <span className="text-[#4ade80]">"meta"</span>
+            <span className="text-code-green">"meta"</span>
             <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} title, description, ownerId, status, ... {'}'}</span>
             {'\n'}
             <span className="text-neutral">{'├── '}</span>
-            <span className="text-[#c4b5fd]">Y.Array</span>
+            <span className="text-code-mauve">Y.Array</span>
             <span className="text-neutral">(</span>
-            <span className="text-[#4ade80]">"sections"</span>
+            <span className="text-code-green">"sections"</span>
             <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} [{'{'} id, title, type, items {'}'}]</span>
             {'\n'}
             <span className="text-neutral">{'├── '}</span>
-            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-code-mauve">Y.Map</span>
             <span className="text-neutral">(</span>
-            <span className="text-[#4ade80]">"comments"</span>
+            <span className="text-code-green">"comments"</span>
             <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} [sectionId]: CommentThread[] {'}'}</span>
             {'\n'}
             <span className="text-neutral">{'├── '}</span>
-            <span className="text-[#c4b5fd]">Y.Map</span>
+            <span className="text-code-mauve">Y.Map</span>
             <span className="text-neutral">(</span>
-            <span className="text-[#4ade80]">"sectionReviews"</span>
+            <span className="text-code-green">"sectionReviews"</span>
             <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} [sectionId:userId]: SectionReview {'}'}</span>
             {'\n'}
             <span className="text-neutral">{'└── '}</span>
-            <span className="text-[#c4b5fd]">Y.XmlFragment</span>
+            <span className="text-code-mauve">Y.XmlFragment</span>
             <span className="text-neutral">(</span>
-            <span className="text-[#4ade80]">"section:{'<id>'}"</span>
+            <span className="text-code-green">"section:{'<id>'}"</span>
             <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} Rich-text content per section</span>
           </div>
@@ -569,13 +569,13 @@ ws.sendMessage({ service: 'crdt', action: 'awareness', channel: 'doc:abc-123', u
             { direction: '→', label: 'Awareness', msg: '{ service: \'crdt\', action: \'awareness\', channel: \'doc-123\', update: \'base64...\' }' },
           ].map((item, i) => (
             <div className="flex items-center gap-[10px]" key={i}>
-              <span className={`text-[16px] font-bold w-5 text-center ${item.direction === '→' ? 'text-[#3b82f6]' : 'text-[#10b981]'}`}>
+              <span className={`text-[16px] font-bold w-5 text-center ${item.direction === '→' ? 'text-info-fg' : 'text-success-fg'}`}>
                 {item.direction}
               </span>
-              <span className={`text-[11px] font-semibold py-[2px] px-2 rounded min-w-[70px] text-center ${item.direction === '→' ? 'bg-[#dbeafe] text-[#1d4ed8]' : 'bg-[#dcfce7] text-[#047857]'}`}>
+              <span className={`text-[11px] font-semibold py-[2px] px-2 rounded min-w-[70px] text-center ${item.direction === '→' ? 'bg-info-bg text-info-fg' : 'bg-success-bg text-success-fg'}`}>
                 {item.label}
               </span>
-              <code className="flex-[1] text-[12px] font-mono bg-[#1e293b] text-border py-[6px] px-[10px] rounded overflow-x-auto whitespace-nowrap">
+              <code className="flex-[1] text-[12px] font-mono bg-surface-inverse text-border py-[6px] px-[10px] rounded overflow-x-auto whitespace-nowrap">
                 {item.msg}
               </code>
             </div>

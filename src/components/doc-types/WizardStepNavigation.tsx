@@ -23,7 +23,7 @@ export function StepIndicator({ step, total }: { step: number; total: number }) 
             <div className={cn(
               'w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold',
               done && 'bg-primary text-white border-2 border-transparent',
-              active && 'bg-[#ede9fe] text-[#4c1d95] border-2 border-primary',
+              active && 'bg-accent-bg text-accent-fg border-2 border-primary',
               !done && !active && 'bg-surface-hover text-text-tertiary border-2 border-transparent',
             )}>
               {done ? '✓' : n}
@@ -78,7 +78,7 @@ export function WizardStepNavigation({
             type="button"
             onClick={onExportSchema}
             title="Download JSON Schema"
-            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
           >
             Export Schema
           </button>
@@ -89,7 +89,7 @@ export function WizardStepNavigation({
           <button
             type="button"
             onClick={onBack}
-            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#374151] border border-border-field"
+            className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-text-primary border border-border-field"
           >
             ← Back
           </button>

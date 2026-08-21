@@ -27,8 +27,8 @@ export function DisconnectReconnect({ connectionState, onDisconnect, onReconnect
         className={cn(
           'px-3 py-1.5 border rounded font-mono text-sm',
           isDisconnected
-            ? 'bg-[#f3f4f6] text-[#9ca3af] border-border-field cursor-not-allowed'
-            : 'bg-[#fee2e2] text-danger-fg border-[#fca5a5] cursor-pointer'
+            ? 'bg-surface-hover text-text-tertiary border-border-field cursor-not-allowed'
+            : 'bg-danger-bg text-danger-fg border-danger-border cursor-pointer'
         )}
       >
         Disconnect
@@ -40,14 +40,14 @@ export function DisconnectReconnect({ connectionState, onDisconnect, onReconnect
         className={cn(
           'px-3 py-1.5 border rounded font-mono text-sm',
           isActiveOrConnecting
-            ? 'bg-[#f3f4f6] text-[#9ca3af] border-border-field cursor-not-allowed'
-            : 'bg-[#dcfce7] text-[#15803d] border-[#86efac] cursor-pointer'
+            ? 'bg-surface-hover text-text-tertiary border-border-field cursor-not-allowed'
+            : 'bg-success-bg text-success-fg border-success-border cursor-pointer'
         )}
       >
         Reconnect
       </button>
 
-      <span className="text-[#6b7280] text-xs font-mono">
+      <span className="text-text-secondary text-xs font-mono">
         state: <strong>{connectionState}</strong>
       </span>
     </div>

@@ -78,10 +78,10 @@ export default function FormField({
         className={cn(
           'text-[12px] font-medium',
           layout === 'inline' ? 'min-w-[140px]' : '',
-          error ? 'text-[#991b1b]' : 'text-text-primary',
+          error ? 'text-danger-fg' : 'text-text-primary',
         )}
       >
-        {label}{required && <span className="ml-0.5 text-[#991b1b]">*</span>}
+        {label}{required && <span className="ml-0.5 text-danger-fg">*</span>}
       </label>
       <div className={cn(layout === 'inline' ? 'flex-1' : '')}>
         {children(wiring)}
@@ -90,7 +90,7 @@ export default function FormField({
             id={describedById}
             className={cn(
               'mt-1 text-[11px]',
-              error ? 'text-[#991b1b]' : 'text-neutral',
+              error ? 'text-danger-fg' : 'text-neutral',
             )}
           >
             {error ?? hint}

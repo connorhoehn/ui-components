@@ -214,7 +214,7 @@ export function CollapsibleSidebar({
         <span
           className={cn(
             'w-2 h-2 rounded-full inline-block shrink-0',
-            isConnected ? 'bg-[#22c55e]' : 'bg-[#ef4444]'
+            isConnected ? 'bg-success' : 'bg-danger'
           )}
         />
         <span
@@ -236,7 +236,7 @@ export function CollapsibleSidebar({
           ) : (
             <button
               onClick={onReconnect}
-              className="text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-info-fg cursor-pointer font-sans"
+              className="text-[11px] px-2 py-0.5 border border-info rounded bg-info-bg text-info-fg cursor-pointer font-sans"
             >
               Reconnect
             </button>
@@ -333,7 +333,7 @@ export function CollapsibleSidebar({
                 <span className="shrink-0 w-4 text-center text-text-tertiary">
                   {eventIcon(event.eventType)}
                 </span>
-                <span className="flex-1 text-[#374151] overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="flex-1 text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
                   {eventDescription(event)}
                 </span>
                 <span className="shrink-0 text-[10px] text-text-tertiary font-mono whitespace-nowrap">
@@ -362,7 +362,7 @@ export function CollapsibleSidebar({
               role="button"
               tabIndex={0}
               onKeyDown={e => { if (e.key === 'Enter') onOpenDocument(doc.id); }}
-              className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-[#374151] font-sans hover:bg-surface-hover"
+              className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-text-primary font-sans hover:bg-surface-hover"
             >
               <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
                 {doc.title}
@@ -404,7 +404,7 @@ export function CollapsibleSidebar({
                   role="button"
                   tabIndex={0}
                   onKeyDown={e => { if (e.key === 'Enter') onOpenPipeline?.(p.id); }}
-                  className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-[#374151] font-sans gap-1.5 min-w-0 hover:bg-surface-hover"
+                  className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-text-primary font-sans gap-1.5 min-w-0 hover:bg-surface-hover"
                 >
                   <span className="shrink-0 text-xs w-4 text-center">
                     {p.icon ?? '\u{1F500}'}
@@ -416,8 +416,8 @@ export function CollapsibleSidebar({
                     className={cn(
                       'shrink-0 text-[9px] font-semibold uppercase tracking-[0.4px] px-1.5 py-px rounded-lg font-sans',
                       p.status === 'published'
-                        ? 'text-[#166534] bg-[#dcfce7]'
-                        : 'text-[#92400e] bg-[#fef3c7]'
+                        ? 'text-success-fg bg-success-bg'
+                        : 'text-warning-fg bg-warning-bg'
                     )}
                   >
                     {p.status}

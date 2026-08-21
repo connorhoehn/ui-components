@@ -111,7 +111,7 @@ function AvatarItem({
       {/* Tooltip */}
       {hovered && (
         <div
-          className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-[#1e293b] text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
+          className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
           onMouseEnter={showTooltip}
           onMouseLeave={hideTooltip}
         >
@@ -167,7 +167,7 @@ function AvatarItem({
 
       {/* Following indicator */}
       {isFollowing && (
-        <span className={cn('text-[10px] font-semibold text-[#3b82f6]')}>
+        <span className={cn('text-[10px] font-semibold text-info-fg')}>
           following
         </span>
       )}

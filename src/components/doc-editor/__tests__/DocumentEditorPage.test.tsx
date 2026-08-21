@@ -123,13 +123,13 @@ describe('DocumentEditorPage', () => {
     const editorBtn = screen.getByTestId('mode-btn-editor');
     const readerBtn = screen.getByTestId('mode-btn-reader');
     // Editor starts active (highlighted), reader inactive.
-    expect(editorBtn.className).toContain('bg-[#3b82f6]');
-    expect(readerBtn.className).not.toContain('bg-[#3b82f6]');
+    expect(editorBtn.className).toContain('bg-info');
+    expect(readerBtn.className).not.toContain('bg-info');
 
     fireEvent.click(readerBtn);
 
-    expect(readerBtn.className).toContain('bg-[#3b82f6]');
-    expect(editorBtn.className).not.toContain('bg-[#3b82f6]');
+    expect(readerBtn.className).toContain('bg-info');
+    expect(editorBtn.className).not.toContain('bg-info');
   });
 
   it('loads the demo document into the Y.Doc and renders its sections', async () => {

@@ -134,7 +134,7 @@ function ProgressCard({
           {pct}%
         </span>
       </div>
-      <div className={cn('h-2 bg-[#e5e7eb] rounded overflow-hidden mb-1.5')}>
+      <div className={cn('h-2 bg-surface-emphasis rounded overflow-hidden mb-1.5')}>
         <div
           className={cn('h-full rounded transition-[width] duration-300 ease-in-out')}
           style={{ width: `${pct}%`, background: color }}
@@ -197,7 +197,7 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
               className={cn('w-2 h-2 rounded-full shrink-0')}
               style={{ background: c.isOnline ? (MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8') : '#d1d5db' }}
             />
-            <span className={cn('font-medium text-[#334155] flex-1')}>
+            <span className={cn('font-medium text-text-primary flex-1')}>
               {c.name}
             </span>
             <span className={cn('text-[11px] text-text-tertiary')}>
@@ -230,32 +230,32 @@ function DocumentStatsCard({
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
       <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Document Info</h3>
-      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+      <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
         <span className={cn('text-neutral')}>Sections</span>
         <span className={cn('font-semibold')}>{sections.length}</span>
       </div>
-      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+      <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
         <span className={cn('text-neutral')}>Total tasks</span>
         <span className={cn('font-semibold')}>{allItems.length}</span>
       </div>
-      <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+      <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
         <span className={cn('text-neutral')}>Completed</span>
-        <span className={cn('font-semibold text-[#10b981]')}>{completedCount}</span>
+        <span className={cn('font-semibold text-success-fg')}>{completedCount}</span>
       </div>
       {totalComments > 0 && (
-        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+        <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
           <span className={cn('text-neutral')}>Comments</span>
           <span className={cn('font-semibold')}>{totalComments}</span>
         </div>
       )}
       {meta.createdAt && (
-        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
+        <div className={cn('flex justify-between py-1 text-[13px] text-text-primary border-b border-border-subtle')}>
           <span className={cn('text-neutral')}>Created</span>
           <span className={cn('font-medium text-xs')}>{formatDate(meta.createdAt)}</span>
         </div>
       )}
       {meta.updatedAt && (
-        <div className={cn('flex justify-between py-1 text-[13px] text-[#334155]')}>
+        <div className={cn('flex justify-between py-1 text-[13px] text-text-primary')}>
           <span className={cn('text-neutral')}>Last changed</span>
           <span className={cn('font-medium text-xs')}>{formatDate(meta.updatedAt)}</span>
         </div>

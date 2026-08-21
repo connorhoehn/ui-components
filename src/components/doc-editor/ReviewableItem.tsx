@@ -84,15 +84,15 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
   };
 
   const transitionClass = transition === 'ack'
-    ? 'animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-success-bg'
+    ? 'animate-[ackPulse_0.6s_ease-out] border-success bg-success-bg'
     : transition === 'reject'
-    ? 'animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-danger-bg'
+    ? 'animate-[rejectPulse_0.6s_ease-out] border-danger bg-danger-bg'
     : '';
 
   return (
-    <div className={cn('bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out', transitionClass)}>
+    <div className={cn('bg-white border border-border rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out', transitionClass)}>
       <div className={cn('flex items-center mb-1.5')}>
-        <span className={cn('text-sm font-medium flex-1 text-[#1e293b]')}>{item.text}</span>
+        <span className={cn('text-sm font-medium flex-1 text-text-primary')}>{item.text}</span>
         <span
           className={cn('inline-block text-[11px] font-semibold px-2 py-0.5 rounded-full ml-2')}
           style={{ background: sc.bg, color: sc.text }}
@@ -108,10 +108,10 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       </div>
 
       {item.status === 'acked' && (
-        <div className={cn('flex items-center gap-1.5 text-xs text-[#6b7280] mb-1')}>
-          <span className={cn('w-5 h-5 rounded-full bg-[#22c55e] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✓</span>
+        <div className={cn('flex items-center gap-1.5 text-xs text-text-secondary mb-1')}>
+          <span className={cn('w-5 h-5 rounded-full bg-success text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✓</span>
           <span>
-            Approved by <strong className={cn('text-[#334155]')}>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
+            Approved by <strong className={cn('text-text-primary')}>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
             {item.ackedAt && <> · {new Date(item.ackedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>}
             {item.notes && <> — {item.notes}</>}
           </span>
@@ -119,8 +119,8 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       )}
 
       {item.status === 'rejected' && (
-        <div className={cn('flex items-center gap-1.5 text-xs text-[#991b1b] mb-1')}>
-          <span className={cn('w-5 h-5 rounded-full bg-[#ef4444] text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✕</span>
+        <div className={cn('flex items-center gap-1.5 text-xs text-danger-fg mb-1')}>
+          <span className={cn('w-5 h-5 rounded-full bg-danger text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0')}>✕</span>
           <span>
             Rejected by <strong>{item.ackedBy?.slice(0, 8) ?? 'user'}</strong>
             {item.ackedAt && <> · {new Date(item.ackedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>}
@@ -132,16 +132,16 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
       {item.status === 'pending' && (
         <div>
           <div className={cn('flex gap-2 mt-1.5')}>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleAck} disabled={submitting}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleAck} disabled={submitting}>
               Acknowledge
             </button>
-            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleReject} disabled={submitting}>
+            <button type="button" className={cn('px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white', submitting && 'opacity-60 cursor-not-allowed')} onClick={handleReject} disabled={submitting}>
               Reject
             </button>
             {!showNotes && (
               <button
                 type="button"
-                className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field')}
+                className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field')}
                 onClick={() => setShowNotes(true)}
               >
                 Add note
@@ -171,7 +171,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
               <div className={cn('flex gap-1.5 mt-1.5')}>
                 <button
                   type="button"
-                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white')}
+                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-success text-white')}
                   onClick={handleAck}
                   disabled={submitting}
                   tabIndex={0}
@@ -180,7 +180,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 </button>
                 <button
                   type="button"
-                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white')}
+                  className={cn('px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white')}
                   onClick={handleReject}
                   disabled={submitting}
                   tabIndex={0}
@@ -189,7 +189,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 </button>
                 <button
                   type="button"
-                  className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field')}
+                  className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field')}
                   onClick={() => { setShowNotes(false); setNoteText(''); }}
                   tabIndex={0}
                 >

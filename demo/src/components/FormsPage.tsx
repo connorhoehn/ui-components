@@ -48,22 +48,22 @@ const [code, setCode] = useState(\`function fibonacci(n) {
   minLines={5}
 />`}
       >
-        <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
+        <div className="bg-surface-inverse rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
         >
-          <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+          <div className="w-10 py-3 px-2 text-right text-neutral border-r border-code-border select-none shrink-0 text-[12px] leading-[1.6]"
           >
             {'1\n2\n3\n4\n5\n6\n7\n8'.split('\n').map((n, i) => (
               <div key={i}>{n}</div>
             ))}
           </div>
           <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
-            <div><span className="text-[#93c5fd]">function</span> <span className="text-[#fbbf24]">fibonacci</span>(n) {'{'}</div>
-            <div>  <span className="text-[#93c5fd]">if</span> (n {'<='} 1) <span className="text-[#93c5fd]">return</span> n;</div>
-            <div>  <span className="text-[#93c5fd]">return</span> fibonacci(n - 1) + fibonacci(n - 2);</div>
+            <div><span className="text-code-blue">function</span> <span className="text-code-yellow">fibonacci</span>(n) {'{'}</div>
+            <div>  <span className="text-code-blue">if</span> (n {'<='} 1) <span className="text-code-blue">return</span> n;</div>
+            <div>  <span className="text-code-blue">return</span> fibonacci(n - 1) + fibonacci(n - 2);</div>
             <div>{'}'}</div>
             <div>&nbsp;</div>
-            <div><span className="text-[#93c5fd]">const</span> result = fibonacci(10);</div>
-            <div>console.<span className="text-[#fbbf24]">log</span>(<span className="text-[#4ade80]">"fib(10) ="</span>, result);</div>
+            <div><span className="text-code-blue">const</span> result = fibonacci(10);</div>
+            <div>console.<span className="text-code-yellow">log</span>(<span className="text-code-green">"fib(10) ="</span>, result);</div>
             <div className="text-neutral">// Output: fib(10) = 55</div>
           </div>
         </div>
@@ -88,9 +88,9 @@ const [code, setCode] = useState(\`function fibonacci(n) {
           >
             read-only
           </div>
-          <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex opacity-85"
+          <div className="bg-surface-inverse rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex opacity-85"
           >
-            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-code-border select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
@@ -98,9 +98,9 @@ const [code, setCode] = useState(\`function fibonacci(n) {
             </div>
             <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
               <div className="text-neutral">// This editor is read-only</div>
-              <div><span className="text-[#93c5fd]">const</span> API_URL = <span className="text-[#4ade80]">"https://api.example.com/v2"</span>;</div>
-              <div><span className="text-[#93c5fd]">const</span> TIMEOUT = <span className="text-[#fb923c]">5000</span>;</div>
-              <div><span className="text-[#93c5fd]">export default</span> {'{ API_URL, TIMEOUT }'};</div>
+              <div><span className="text-code-blue">const</span> API_URL = <span className="text-code-green">"https://api.example.com/v2"</span>;</div>
+              <div><span className="text-code-blue">const</span> TIMEOUT = <span className="text-code-peach">5000</span>;</div>
+              <div><span className="text-code-blue">export default</span> {'{ API_URL, TIMEOUT }'};</div>
             </div>
           </div>
         </div>
@@ -124,28 +124,28 @@ const [code, setCode] = useState(\`function fibonacci(n) {
           {/* Variable pills row */}
           <div className="flex flex-wrap gap-1 mb-2">
             {['user.name', 'order.id', 'order.delivery_date', 'company.name'].map((v) => (
-              <span className="inline-block py-[2px] px-2 text-[11px] font-mono bg-[#eef2ff] text-[#4338ca] border border-[#c7d2fe] rounded cursor-pointer"
+              <span className="inline-block py-[2px] px-2 text-[11px] font-mono bg-primary-bg text-primary-fg border border-primary-border rounded cursor-pointer"
                 key={v}
               >
                 {v}
               </span>
             ))}
           </div>
-          <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
+          <div className="bg-surface-inverse rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
           >
-            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-code-border select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4\n5\n6'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
               ))}
             </div>
             <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
-              <div>Hello <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ user.name }}'}</span>,</div>
+              <div>Hello <span className="bg-code-yellow/20 text-code-yellow py-[1px] px-1 rounded-[3px]">{'{{ user.name }}'}</span>,</div>
               <div>&nbsp;</div>
-              <div>Your order #<span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ order.id }}'}</span> has been shipped.</div>
-              <div>Estimated delivery: <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ order.delivery_date }}'}</span></div>
+              <div>Your order #<span className="bg-code-yellow/20 text-code-yellow py-[1px] px-1 rounded-[3px]">{'{{ order.id }}'}</span> has been shipped.</div>
+              <div>Estimated delivery: <span className="bg-code-yellow/20 text-code-yellow py-[1px] px-1 rounded-[3px]">{'{{ order.delivery_date }}'}</span></div>
               <div>&nbsp;</div>
-              <div>Thanks, <span className="bg-[#fbbf2433] text-[#fbbf24] py-[1px] px-1 rounded-[3px]">{'{{ company.name }}'}</span></div>
+              <div>Thanks, <span className="bg-code-yellow/20 text-code-yellow py-[1px] px-1 rounded-[3px]">{'{{ company.name }}'}</span></div>
             </div>
           </div>
         </div>
@@ -171,11 +171,11 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
         <div className="flex flex-wrap items-center gap-[6px] bg-surface border border-border rounded-md py-2 px-[10px] min-h-10"
         >
           {['react', 'typescript', 'vite'].map((tag) => (
-            <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
+            <span className="inline-flex items-center gap-1 bg-info-bg text-info-fg rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
               key={tag}
             >
               {tag}
-              <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-[#3b82f6]"
+              <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-info-fg"
               >
                 &times;
               </span>
@@ -203,20 +203,20 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
 />`}
       >
         <div className="relative">
-          <div className="flex flex-wrap items-center gap-[6px] bg-surface border border-[#3b82f6] rounded-md py-2 px-[10px] min-h-10 shadow-[0_0_0_1px_#3b82f6]"
+          <div className="flex flex-wrap items-center gap-[6px] bg-surface border border-info rounded-md py-2 px-[10px] min-h-10 shadow-[0_0_0_1px_#3b82f6]"
           >
             {['frontend'].map((tag) => (
-              <span className="inline-flex items-center gap-1 bg-[#dbeafe] text-[#1e40af] rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
+              <span className="inline-flex items-center gap-1 bg-info-bg text-info-fg rounded-[999px] py-[3px] px-[10px] text-[12px] font-medium"
                 key={tag}
               >
                 {tag}
-                <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-[#3b82f6]"
+                <span className="cursor-pointer ml-[2px] text-[14px] leading-[1] text-info-fg"
                 >
                   &times;
                 </span>
               </span>
             ))}
-            <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-[#334155]"
+            <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-text-primary"
               type="text"
               placeholder="Type or pick a suggestion..."
               readOnly
@@ -276,7 +276,7 @@ const [icon, setIcon] = useState('rocket');
             { emoji: '\u{1F4CB}', selected: false },
             { emoji: '\u{1F527}', selected: false },
           ].map(({ emoji, selected }, i) => (
-            <div className={`w-10 h-10 flex items-center justify-center text-[20px] rounded-md cursor-pointer transition-[border-color] ${selected ? 'border-2 border-[#3b82f6] bg-info-bg' : 'border border-border bg-surface'}`}
+            <div className={`w-10 h-10 flex items-center justify-center text-[20px] rounded-md cursor-pointer transition-[border-color] ${selected ? 'border-2 border-info bg-info-bg' : 'border border-border bg-surface'}`}
               key={i}
             >
               {emoji}
@@ -305,7 +305,7 @@ const [selected, setSelected] = useState<string[]>([]);
       >
         <div className="max-w-90">
           {/* Search input */}
-          <div className="bg-surface border border-[#3b82f6] rounded-md py-2 px-[10px] text-[13px] text-[#334155] shadow-[0_0_0_1px_#3b82f6] mb-1"
+          <div className="bg-surface border border-info rounded-md py-2 px-[10px] text-[13px] text-text-primary shadow-[0_0_0_1px_#3b82f6] mb-1"
           >
             <span className="text-text-tertiary">Search team members...</span>
           </div>

@@ -83,7 +83,7 @@ export function EventPayloadEditor({
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <label className="block text-xs font-semibold text-[#334155] mb-1">
+        <label className="block text-xs font-semibold text-text-primary mb-1">
           Event type
         </label>
         <select
@@ -100,7 +100,7 @@ export function EventPayloadEditor({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#334155] mb-1">
+        <label className="block text-xs font-semibold text-text-primary mb-1">
           Payload (JSON)
         </label>
         <textarea
@@ -117,7 +117,7 @@ export function EventPayloadEditor({
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#334155] mb-1">
+        <label className="block text-xs font-semibold text-text-primary mb-1">
           Seq (optional)
         </label>
         <input

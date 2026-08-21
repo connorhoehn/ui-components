@@ -57,7 +57,7 @@ describe('EditorToolbar', () => {
   it('applies the active class set when isActive returns true for a mark', () => {
     const { editor } = makeMockEditor(new Set(['bold']));
     render(<EditorToolbar editor={editor} />);
-    expect(screen.getByText('B').className).toMatch(/bg-\[#3b82f6\]/);
+    expect(screen.getByText('B').className).toMatch(/bg-info/);
     // Italic is not active, so it stays in the white bucket.
     expect(screen.getByText('I').className).toMatch(/bg-white/);
   });

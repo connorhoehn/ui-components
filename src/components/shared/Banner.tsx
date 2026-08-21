@@ -4,10 +4,10 @@ import { cn } from '../../lib/cn';
 export type BannerVariant = 'error' | 'warning' | 'info' | 'success';
 
 const VARIANT_CLASSES: Record<BannerVariant, string> = {
-  error:   'bg-danger-bg border-danger-border text-[#991b1b]',
-  warning: 'bg-warning-bg border-warning-border text-[#92400e]',
-  info:    'bg-info-bg border-info-border text-[#1e40af]',
-  success: 'bg-success-bg border-success-border text-[#166534]',
+  error:   'bg-danger-bg border-danger-border text-danger-fg',
+  warning: 'bg-warning-bg border-warning-border text-warning-fg',
+  info:    'bg-info-bg border-info-border text-info-fg',
+  success: 'bg-success-bg border-success-border text-success-fg',
 };
 
 export interface BannerProps {

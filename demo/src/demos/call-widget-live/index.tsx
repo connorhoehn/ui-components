@@ -48,8 +48,8 @@ const ONLINE_USERS = [USERS.sarah, USERS.marcus, USERS.alex];
 
 function AppSidebar() {
   return (
-    <div className="w-52 bg-[#1e1e2e] border-r border-[#2e2e3e] flex flex-col shrink-0 h-full overflow-hidden">
-      <div className="px-4 py-3 border-b border-[#2e2e3e]">
+    <div className="w-52 bg-code-surface border-r border-code-border flex flex-col shrink-0 h-full overflow-hidden">
+      <div className="px-4 py-3 border-b border-code-border">
         <div className="text-[15px] font-bold text-text-inverse">Acme Workspace</div>
         <div className="text-[11px] text-neutral mt-0.5">4 members online</div>
       </div>
@@ -134,7 +134,7 @@ function ChatArea({ callActive, messages }: { callActive: boolean; messages: Cha
   return (
     <div className="flex-1 flex flex-col h-full min-w-0">
       {/* Channel header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-[#2e2e3e] shrink-0">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-code-border shrink-0">
         <div>
           <div className="text-[15px] font-semibold text-text-inverse"># api-team</div>
           <div className="text-[11px] text-neutral">Sarah, Marcus, Alex, and you</div>
@@ -163,13 +163,13 @@ function ChatArea({ callActive, messages }: { callActive: boolean; messages: Cha
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSend} className="px-5 py-3 border-t border-[#2e2e3e] shrink-0">
+      <form onSubmit={handleSend} className="px-5 py-3 border-t border-code-border shrink-0">
         <input
           type="text"
           value={newMsg}
           onChange={e => setNewMsg(e.target.value)}
           placeholder="Type a message..."
-          className="w-full px-3.5 py-2.5 rounded-lg border border-border-emphasis bg-[#1e293b] text-text-inverse text-[13px] font-[inherit] outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
+          className="w-full px-3.5 py-2.5 rounded-lg border border-border-emphasis bg-surface-inverse text-text-inverse text-[13px] font-[inherit] outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
         />
       </form>
     </div>

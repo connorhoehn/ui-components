@@ -38,7 +38,7 @@ export default function PatternPage() {
         </p>
       </div>
 
-      <div className="p-4 bg-warning-bg border border-warning-border rounded-lg text-[13px] text-[#92400e] leading-[1.5]">
+      <div className="p-4 bg-warning-bg border border-warning-border rounded-lg text-[13px] text-warning-fg leading-[1.5]">
         Full pattern documentation with code examples and interactive demos coming soon.
       </div>
     </div>

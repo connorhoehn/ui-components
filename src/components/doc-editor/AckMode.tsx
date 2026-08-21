@@ -54,7 +54,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
   }, [startIdx, onSectionFocus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (sections.length === 0) {
-    return <div className={cn('text-center p-12 text-[#6b7280] text-[15px]')}>No sections to review.</div>;
+    return <div className={cn('text-center p-12 text-text-secondary text-[15px]')}>No sections to review.</div>;
   }
 
   const prev = () => setPageIndex((i) => Math.max(0, i - 1));
@@ -72,7 +72,7 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
             <div key={section.id}>
               {sectionParticipants.length > 0 && (
                 <div className={cn('flex gap-1 mb-1.5 items-center')}>
-                  <span className={cn('text-xs text-[#6b7280] mr-1')}>Viewing:</span>
+                  <span className={cn('text-xs text-text-secondary mr-1')}>Viewing:</span>
                   {sectionParticipants.map(p => (
                     <div
                       key={p.clientId}
@@ -109,21 +109,21 @@ export default function AckMode({ sections, onAckItem, onRejectItem, participant
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',
-            pageIndex === 0 ? 'bg-[#f9fafb] text-[#9ca3af] cursor-default' : 'bg-white text-[#374151] cursor-pointer',
+            pageIndex === 0 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-white text-text-primary cursor-pointer',
           )}
           onClick={prev}
           disabled={pageIndex === 0}
         >
           Previous
         </button>
-        <span className={cn('text-[13px] text-[#6b7280]')}>
+        <span className={cn('text-[13px] text-text-secondary')}>
           Page {pageIndex + 1} of {totalPages} ({sections.length} sections)
         </span>
         <button
           type="button"
           className={cn(
             'px-[18px] py-2 text-sm font-semibold border border-border-field rounded-md font-[inherit]',
-            pageIndex === totalPages - 1 ? 'bg-[#f9fafb] text-[#9ca3af] cursor-default' : 'bg-white text-[#374151] cursor-pointer',
+            pageIndex === totalPages - 1 ? 'bg-surface-inset text-text-tertiary cursor-default' : 'bg-white text-text-primary cursor-pointer',
           )}
           onClick={next}
           disabled={pageIndex === totalPages - 1}

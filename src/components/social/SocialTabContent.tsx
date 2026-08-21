@@ -56,7 +56,7 @@ function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, chi
       >
         <span
           className={cn(
-            'text-[10px] text-[#6b7280] inline-block w-3 transition-transform duration-150',
+            'text-[10px] text-text-secondary inline-block w-3 transition-transform duration-150',
             open ? 'rotate-90' : 'rotate-0',
           )}
         >
@@ -70,7 +70,7 @@ function CollapsibleSection({ title, count, unreadTotal, defaultOpen = true, chi
             {unreadTotal > 99 ? '99+' : unreadTotal}
           </span>
         )}
-        <span className="text-[11px] text-[#6b7280]">{count}</span>
+        <span className="text-[11px] text-text-secondary">{count}</span>
       </button>
       {open && children}
     </div>
@@ -93,13 +93,13 @@ function SidebarRoomRow({ room, isActive, unread, onClick }: {
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] pt-1.5 pb-1.5 pr-2 pl-6 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
         isActive
-          ? 'bg-[rgba(100,108,255,0.15)] text-[#a5b4fc] font-semibold'
+          ? 'bg-primary/15 text-primary font-semibold'
           : unread > 0
             ? 'bg-transparent text-surface-hover font-semibold'
             : 'bg-transparent text-text-tertiary font-normal',
       )}
     >
-      <span className={cn('text-[13px] shrink-0', isActive ? 'text-[#a5b4fc]' : 'text-[#6b7280]')}>
+      <span className={cn('text-[13px] shrink-0', isActive ? 'text-primary' : 'text-text-secondary')}>
         {room.type === 'dm' ? '●' : '#'}
       </span>
       <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
@@ -220,7 +220,7 @@ export default function SocialTabContent({
               {displayName || userId}
             </div>
             <div className="text-[11px] flex items-center gap-1" style={{ color: sidebarTextSecondary }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e] inline-block" />
+              <span className="w-1.5 h-1.5 rounded-full bg-success inline-block" />
               Active
             </div>
           </div>

@@ -187,7 +187,7 @@ interface RoomRowProps {
 
 function RoomRow({ room, isActive, onClick }: RoomRowProps) {
   const typeBadgeClass = (type: RoomItem['type']) => {
-    if (type === 'standalone') return 'bg-[#ede9fe] text-primary text-xs px-2 py-0.5 rounded';
+    if (type === 'standalone') return 'bg-accent-bg text-primary text-xs px-2 py-0.5 rounded';
     if (type === 'group') return 'bg-info-bg text-info text-xs px-2 py-0.5 rounded';
     return 'bg-success-bg text-success text-xs px-2 py-0.5 rounded';
   };
@@ -218,7 +218,7 @@ function CompactRoomRow({ room, isActive, onClick }: RoomRowProps) {
       onClick={onClick}
       className={cn(
         'flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1.5 cursor-pointer text-[13px] text-left font-[system-ui,-apple-system,sans-serif]',
-        isActive ? 'bg-[#ede9fe] text-[#4c1d95] font-semibold' : 'bg-transparent text-text-primary font-normal',
+        isActive ? 'bg-accent-bg text-accent-fg font-semibold' : 'bg-transparent text-text-primary font-normal',
       )}
     >
       <span className={cn('text-[13px] shrink-0', isActive ? 'text-primary' : 'text-text-tertiary')}>
@@ -250,7 +250,7 @@ function RoomsErrorState({ message, onRetry, compact }: RoomsErrorStateProps) {
         compact ? 'px-2 py-3' : 'px-4 py-6',
       )}
     >
-      <div className={cn('font-semibold text-[#b91c1c]', compact ? 'text-xs' : 'text-sm')}>
+      <div className={cn('font-semibold text-danger-fg', compact ? 'text-xs' : 'text-sm')}>
         Couldn't load rooms
       </div>
       <div className={cn('text-text-secondary', compact ? 'text-[11px]' : 'text-xs')}>{message}</div>
@@ -259,7 +259,7 @@ function RoomsErrorState({ message, onRetry, compact }: RoomsErrorStateProps) {
           type="button"
           onClick={onRetry}
           className={cn(
-            'mt-1 font-medium text-[#1d4ed8] bg-info-bg border border-info-border rounded cursor-pointer font-[system-ui,-apple-system,sans-serif]',
+            'mt-1 font-medium text-info-fg bg-info-bg border border-info-border rounded cursor-pointer font-[system-ui,-apple-system,sans-serif]',
             compact ? 'px-2.5 py-0.5 text-[11px]' : 'px-3.5 py-1 text-xs',
           )}
         >

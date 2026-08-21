@@ -97,7 +97,7 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
             onClick={() => btn.action(editor)}
             className={cn(
               'px-2 py-1 text-xs font-[inherit] border border-border-emphasis rounded cursor-pointer leading-snug',
-              active ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#334155]',
+              active ? 'bg-info text-white' : 'bg-white text-text-primary',
             )}
             title={btn.label}
           >

@@ -83,14 +83,14 @@ export function TabbedEventLog({ entries }: Props) {
   const activeEntries = getTabEntries(entries, activeTab);
 
   return (
-    <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+    <div className="border-t border-border pt-4 mt-4">
       <h3 className="m-0 mb-2 text-sm">
         Event Log{' '}
-        <span className="text-[#9ca3af] font-normal">({entries.length})</span>
+        <span className="text-text-tertiary font-normal">({entries.length})</span>
       </h3>
 
       {/* Tab buttons */}
-      <div className="flex gap-2 mb-4 border-b border-[#e5e7eb] pb-4 flex-wrap">
+      <div className="flex gap-2 mb-4 border-b border-border pb-4 flex-wrap">
         {tabs.map((tab) => {
           const tabCount = getTabEntries(entries, tab).length;
           const isActive = tab === activeTab;
@@ -102,8 +102,8 @@ export function TabbedEventLog({ entries }: Props) {
               className={cn(
                 'border-none rounded px-4 py-2 cursor-pointer text-sm',
                 isActive
-                  ? 'bg-[#3b82f6] text-white font-semibold'
-                  : 'bg-[#e5e7eb] text-[#374151] font-normal'
+                  ? 'bg-info text-white font-semibold'
+                  : 'bg-surface-emphasis text-text-primary font-normal'
               )}
             >
               {tab} ({tabCount})
@@ -114,26 +114,26 @@ export function TabbedEventLog({ entries }: Props) {
 
       {/* Tab content */}
       {activeEntries.length === 0 ? (
-        <p className="text-[#9ca3af]">No events yet.</p>
+        <p className="text-text-tertiary">No events yet.</p>
       ) : (
         <div className="max-h-[300px] overflow-y-auto">
           {activeEntries.map((entry) => (
             <div
               key={entry.id}
-              className="bg-[#f9fafb] rounded mb-1 px-2 py-1 font-mono"
+              className="bg-surface-inset rounded mb-1 px-2 py-1 font-mono"
             >
               {/* Direction badge + timestamp */}
               <div className="flex items-center gap-2 mb-1">
                 {entry.direction === 'sent' ? (
-                  <span className="bg-[#dbeafe] text-[#1d4ed8] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
+                  <span className="bg-info-bg text-info-fg rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [SENT]
                   </span>
                 ) : (
-                  <span className="bg-[#dcfce7] text-[#15803d] rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
+                  <span className="bg-success-bg text-success-fg rounded-[3px] px-1.5 text-[0.7rem] font-semibold">
                     [RECV]
                   </span>
                 )}
-                <span className="text-[#9ca3af] text-[0.7rem]">
+                <span className="text-text-tertiary text-[0.7rem]">
                   {new Date(entry.timestamp).toLocaleTimeString()}
                 </span>
               </div>

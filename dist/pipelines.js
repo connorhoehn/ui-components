@@ -7,7 +7,7 @@ import { Handle as U, Position as j, useNodeConnections as Vo, getSmoothStepPath
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
 import { b as An, u as Jt } from "./ToastProvider-D3MHbP-u.js";
-import { a as vt, F as Xo, I as Qo, C as Rn, U as Zo, T as Pn, S as Dn, b as ea } from "./TrendSparkline-CO4UKW-S.js";
+import { a as vt, F as Xo, I as Qo, C as Rn, U as Zo, T as Pn, S as Dn, b as ea } from "./TrendSparkline-po-w4wQC.js";
 import "clsx";
 import "tailwind-merge";
 import { M as Qe } from "./Modal-X8tdpRKs.js";
@@ -17,15 +17,15 @@ import { a as ze, u as ta } from "./EventStreamContext-CjzSHXy-.js";
 import { E as kh } from "./EventStreamContext-CjzSHXy-.js";
 import { B as Pe } from "./Button-DILgRebO.js";
 import { T as $e } from "./Textarea-kaa9rHUL.js";
-import { I as mt, S as na, F as ra } from "./FileUploadDrop-CUuFbl97.js";
+import { I as mt, S as na, F as ra } from "./FileUploadDrop-D8mbq_QB.js";
 import { I as we } from "./Input-Dt0yAs9r.js";
 import { S as Ce } from "./Select-DAEcKWg2.js";
 import { E as qe } from "./EmptyState-Ejc9dJA3.js";
-import { B as nt } from "./Banner-DKb3JiLs.js";
+import { B as nt } from "./Banner-BoO81CCz.js";
 import { C as le } from "./Chip-BDT8ro4h.js";
 import { C as rt } from "./Checkbox-vOc5I8kn.js";
 import { u as Qr } from "./IdentityContext-CLalsm_M.js";
-import { C as Wt } from "./ConfirmDialog-BRr5Nyae.js";
+import { C as Wt } from "./ConfirmDialog-B0yXaqxp.js";
 import { B as oa, L as Ut } from "./Chart-ByoxeiYX.js";
 import { S as Zt } from "./SkeletonCard-Bm2f1JX1.js";
 const aa = {
@@ -129,13 +129,13 @@ function da(e) {
   return /^in-(\d+)$/.exec(e) !== null;
 }
 const pa = {
-  idle: { card: "border border-border-field bg-white", dot: "bg-[#d1d5db]" },
-  pending: { card: "border border-dashed border-[#93c5fd] bg-info-bg", dot: "bg-[#93c5fd]" },
+  idle: { card: "border border-border-field bg-white", dot: "bg-state-idle" },
+  pending: { card: "border border-dashed border-info-border bg-info-bg", dot: "bg-state-pending" },
   running: { card: "border-2 border-info bg-info-bg", dot: "bg-info" },
-  awaiting: { card: "border-2 border-[#f59e0b] bg-warning-bg", dot: "bg-[#f59e0b]" },
+  awaiting: { card: "border-2 border-warning bg-warning-bg", dot: "bg-warning" },
   completed: { card: "border border-success bg-success-bg", dot: "bg-success" },
   failed: { card: "border-2 border-danger bg-danger-bg", dot: "bg-danger" },
-  skipped: { card: "border border-dashed border-border-field bg-[#f9fafb] opacity-50", dot: "bg-[#d1d5db]" }
+  skipped: { card: "border border-dashed border-border-field bg-surface-inset opacity-50", dot: "bg-state-idle" }
 }, ua = {
   source: { bar: "bg-cat-source", chip: "w-5 h-5 rounded-full bg-cat-source/15" },
   transform: { bar: "bg-cat-transform", chip: "w-5 h-5 rounded-md bg-cat-transform/15" },
@@ -153,7 +153,7 @@ function ye(e) {
     {
       className: I(
         "w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
-        f ? "border-2 border-[#d97706] bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]" : m.card,
+        f ? "border-2 border-warning bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]" : m.card,
         !f && l && "shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]",
         !f && !l && "shadow-[0_1px_2px_rgba(15,23,42,0.06)]",
         v && "transition-none"
@@ -183,7 +183,7 @@ function ye(e) {
           {
             "aria-label": "breakpoint",
             "data-testid": "breakpoint-dot",
-            className: "absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-[#ef4444] border-[1.5px] border-white z-[1]"
+            className: "absolute -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-danger border-[1.5px] border-white z-[1]"
           }
         ),
         /* @__PURE__ */ o("div", { className: I(
@@ -295,9 +295,9 @@ function xe(e) {
   return ma[e];
 }
 const ha = {
-  image: "!w-2.5 !h-2.5 !rounded-sm !bg-[#7c3aed] !border-[#6d28d9]",
+  image: "!w-2.5 !h-2.5 !rounded-sm !bg-accent !border-accent",
   text: "!w-2.5 !h-2.5 !bg-surface-emphasis",
-  data: "!w-2.5 !h-2.5 !bg-[#94a3b8]",
+  data: "!w-2.5 !h-2.5 !bg-neutral",
   control: "!w-2 !h-2 !bg-warning",
   error: "!w-2 !h-2 !bg-danger"
 };
@@ -822,7 +822,7 @@ function Ua({ id: e, data: n, selected: r }) {
         "Source: ",
         n.sourceField
       ] }),
-      footer: /* @__PURE__ */ t("span", { className: "text-[10px] text-[#6366f1]", children: "Terminal — streams to AG-UI frontend" }),
+      footer: /* @__PURE__ */ t("span", { className: "text-[10px] text-primary", children: "Terminal — streams to AG-UI frontend" }),
       selected: r,
       hasBreakpoint: n._hasBreakpoint,
       pausedAtBreakpoint: n._pausedAtBreakpoint,
@@ -853,7 +853,7 @@ function za(e) {
             alt: "Source image",
             className: I(
               "w-full h-20 object-cover rounded block",
-              "border border-border-field bg-[#f3f4f6]"
+              "border border-border-field bg-surface-hover"
             ),
             "data-testid": "image-source-thumb"
           }
@@ -873,13 +873,13 @@ function za(e) {
     {
       className: I(
         "w-full h-20 rounded flex items-center justify-center",
-        "border border-dashed border-border-field bg-[#f3f4f6]",
-        "text-[11px] text-[#6b7280]"
+        "border border-dashed border-border-field bg-surface-hover",
+        "text-[11px] text-text-secondary"
       ),
       "data-testid": "image-source-placeholder",
       children: "No image configured"
     }
-  ), x = h ? /* @__PURE__ */ o("span", { className: "font-mono text-[11px] text-[#6b7280]", children: [
+  ), x = h ? /* @__PURE__ */ o("span", { className: "font-mono text-[11px] text-text-secondary", children: [
     h.slice(0, 16),
     "…"
   ] }) : void 0;
@@ -996,7 +996,7 @@ function Fa(e) {
     u && /* @__PURE__ */ t(
       "div",
       {
-        className: "mt-1 text-[10px] font-mono text-[#6b7280] overflow-hidden text-ellipsis whitespace-nowrap",
+        className: "mt-1 text-[10px] font-mono text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap",
         "data-testid": "save-filename-badge",
         title: u,
         children: u
@@ -1007,8 +1007,8 @@ function Fa(e) {
     {
       className: I(
         "w-full h-20 rounded flex items-center justify-center",
-        "border border-dashed border-border-field bg-[#f3f4f6]",
-        "text-[11px] text-[#6b7280]"
+        "border border-dashed border-border-field bg-surface-hover",
+        "text-[11px] text-text-secondary"
       ),
       "data-testid": "save-placeholder",
       children: "Awaiting input"
@@ -1016,7 +1016,7 @@ function Fa(e) {
   ), h = r.filenameTemplate ?? "crop-{{scatter.index}}.png", g = h.length > 28 ? `${h.slice(0, 25)}…` : h, x = /* @__PURE__ */ t(
     "span",
     {
-      className: "font-mono text-[11px] text-[#6b7280]",
+      className: "font-mono text-[11px] text-text-secondary",
       "data-testid": "save-footer",
       title: h,
       children: g
@@ -2346,7 +2346,7 @@ function $i({
             onChange: (m) => d(m.target.value),
             onKeyDown: x,
             placeholder: "Search nodes…",
-            className: "w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none",
+            className: "w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-surface-inset text-text-primary outline-none",
             "aria-label": "Search node types",
             "data-testid": "quick-insert-search"
           }
@@ -4430,7 +4430,7 @@ function tn(e, n, r) {
         /* @__PURE__ */ t("span", { className: "text-sm", children: i }),
         /* @__PURE__ */ t("span", { className: "font-semibold", children: a.type }),
         /* @__PURE__ */ t("span", { className: "text-text-secondary flex-1 overflow-hidden text-ellipsis whitespace-nowrap", children: qs(a) }),
-        n === "modified" && e.positionChanged ? /* @__PURE__ */ t("span", { className: "inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-[#fef3c7] text-[#92400e]", children: "moved" }) : null
+        n === "modified" && e.positionChanged ? /* @__PURE__ */ t("span", { className: "inline-flex items-center px-1.5 py-px rounded text-[10px] font-semibold bg-warning-bg text-warning-fg", children: "moved" }) : null
       ]
     },
     `${n}-${e.node.id}`
@@ -4599,7 +4599,7 @@ function Ks(e) {
               disabled: i,
               className: I(
                 "px-4 py-[7px] text-[13px] font-semibold text-white border-none rounded-[7px] font-[inherit]",
-                i ? "bg-[#cbd5e1] cursor-not-allowed" : "bg-primary cursor-pointer"
+                i ? "bg-border-emphasis cursor-not-allowed" : "bg-primary cursor-pointer"
               ),
               children: "Publish"
             }
@@ -4794,13 +4794,13 @@ function Hs({ runId: e, visible: n }) {
   return n ? /* @__PURE__ */ o(
     "div",
     {
-      className: "flex flex-col bg-[#1e1e2e] border-t border-[#313244] max-h-[320px] min-h-[160px] overflow-hidden relative",
+      className: "flex flex-col bg-code-surface border-t border-code-border max-h-[320px] min-h-[160px] overflow-hidden relative",
       "data-testid": "live-output-panel",
       children: [
-        /* @__PURE__ */ t("div", { className: "flex items-center justify-between py-2 px-[14px] bg-[#181825] border-b border-[#313244] shrink-0", children: /* @__PURE__ */ o("div", { className: "text-xs font-bold text-[#cdd6f4] tracking-[0.04em] uppercase flex items-center gap-2", children: [
+        /* @__PURE__ */ t("div", { className: "flex items-center justify-between py-2 px-[14px] bg-code-panel border-b border-code-border shrink-0", children: /* @__PURE__ */ o("div", { className: "text-xs font-bold text-code-text tracking-[0.04em] uppercase flex items-center gap-2", children: [
           /* @__PURE__ */ t("span", { children: "Live Output" }),
-          f && /* @__PURE__ */ t("span", { className: "w-1.5 h-1.5 rounded-full bg-[#a6e3a1] [animation:live-output-blink_1.2s_ease-in-out_infinite]" }),
-          e && /* @__PURE__ */ o("span", { className: "text-[10px] text-[#6c7086] font-normal normal-case", children: [
+          f && /* @__PURE__ */ t("span", { className: "w-1.5 h-1.5 rounded-full bg-code-green [animation:live-output-blink_1.2s_ease-in-out_infinite]" }),
+          e && /* @__PURE__ */ o("span", { className: "text-[10px] text-code-muted font-normal normal-case", children: [
             e.slice(0, 8),
             "..."
           ] })
@@ -4809,15 +4809,15 @@ function Hs({ runId: e, visible: n }) {
           "div",
           {
             ref: i,
-            className: "flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-[#cdd6f4] font-code",
+            className: "flex-1 overflow-y-auto py-[10px] px-[14px] text-[13px] leading-[1.6] text-code-text font-code",
             onScroll: c,
-            children: h.length === 0 ? /* @__PURE__ */ t("div", { className: "flex items-center justify-center h-full text-[#6c7086] text-[13px] italic", children: e ? "Waiting for LLM output..." : "No active run" }) : h.map((g) => /* @__PURE__ */ o("div", { children: [
+            children: h.length === 0 ? /* @__PURE__ */ t("div", { className: "flex items-center justify-center h-full text-code-muted text-[13px] italic", children: e ? "Waiting for LLM output..." : "No active run" }) : h.map((g) => /* @__PURE__ */ o("div", { children: [
               /* @__PURE__ */ o(
                 "div",
                 {
                   className: I(
-                    "flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-[#313244] mb-1.5",
-                    g.active ? "text-[#89b4fa]" : "text-[#a6adc8]"
+                    "flex items-center gap-2 py-1.5 cursor-pointer select-none text-[11px] font-semibold border-b border-code-border mb-1.5",
+                    g.active ? "text-code-blue" : "text-code-subtle"
                   ),
                   onClick: () => u(g.stepId),
                   role: "button",
@@ -4828,16 +4828,16 @@ function Hs({ runId: e, visible: n }) {
                   children: [
                     /* @__PURE__ */ t("span", { className: "text-[10px]", children: g.collapsed ? "▶" : "▼" }),
                     /* @__PURE__ */ t("span", { children: g.stepId }),
-                    g.active && /* @__PURE__ */ t("span", { className: "text-[#a6e3a1] text-[10px]", children: "streaming" })
+                    g.active && /* @__PURE__ */ t("span", { className: "text-code-green text-[10px]", children: "streaming" })
                   ]
                 }
               ),
               !g.collapsed && /* @__PURE__ */ o(H, { children: [
-                g.text.length > 0 && /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words m-0 mb-3 p-0 text-[#cdd6f4]", children: [
+                g.text.length > 0 && /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words m-0 mb-3 p-0 text-code-text", children: [
                   g.text,
-                  g.active && /* @__PURE__ */ t("span", { className: "inline-block w-0.5 h-[14px] bg-[#89b4fa] ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" })
+                  g.active && /* @__PURE__ */ t("span", { className: "inline-block w-0.5 h-[14px] bg-code-blue ml-px align-text-bottom [animation:live-output-blink_1s_step-end_infinite]" })
                 ] }),
-                g.summary && /* @__PURE__ */ o("div", { className: "text-[11px] text-[#a6e3a1] font-semibold pt-1 pb-2 border-b border-[#313244] mb-2", children: [
+                g.summary && /* @__PURE__ */ o("div", { className: "text-[11px] text-code-green font-semibold pt-1 pb-2 border-b border-code-border mb-2", children: [
                   "✓",
                   " ",
                   g.summary
@@ -5530,11 +5530,11 @@ function Ys({
 const Xs = 12;
 function Oe(e) {
   return I("text-xs", {
-    string: "text-[#a6e3a1]",
-    number: "text-[#fab387]",
-    boolean: "text-[#cba6f7]",
-    null: "text-[#6c7086]",
-    bracket: "text-[#9399b2]"
+    string: "text-code-green",
+    number: "text-code-peach",
+    boolean: "text-code-mauve",
+    null: "text-code-muted",
+    bracket: "text-code-comment"
   }[e]);
 }
 function Ot({
@@ -5569,7 +5569,7 @@ function Ot({
       /* @__PURE__ */ t(
         "span",
         {
-          className: "cursor-pointer select-none text-[9px] mr-1 text-[#6c7086] inline-block w-3 text-center",
+          className: "cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center",
           onClick: () => d((l) => !l),
           role: "button",
           tabIndex: 0,
@@ -5580,11 +5580,11 @@ function Ot({
         }
       ),
       /* @__PURE__ */ t("span", { className: Oe("bracket"), children: "[" }),
-      s ? /* @__PURE__ */ o("span", { className: "text-[#6c7086] italic text-[11px] ml-1", children: [
+      s ? /* @__PURE__ */ o("span", { className: "text-code-muted italic text-[11px] ml-1", children: [
         e.length,
         " items"
       ] }) : /* @__PURE__ */ t("div", { className: "pl-4", children: e.map((l, p) => /* @__PURE__ */ o("div", { className: "leading-relaxed whitespace-nowrap", children: [
-        /* @__PURE__ */ o("span", { className: "text-[#6c7086] text-[11px]", children: [
+        /* @__PURE__ */ o("span", { className: "text-code-muted text-[11px]", children: [
           p,
           ": "
         ] }),
@@ -5599,7 +5599,7 @@ function Ot({
       /* @__PURE__ */ t(
         "span",
         {
-          className: "cursor-pointer select-none text-[9px] mr-1 text-[#6c7086] inline-block w-3 text-center",
+          className: "cursor-pointer select-none text-[9px] mr-1 text-code-muted inline-block w-3 text-center",
           onClick: () => d((p) => !p),
           role: "button",
           tabIndex: 0,
@@ -5610,15 +5610,15 @@ function Ot({
         }
       ),
       /* @__PURE__ */ t("span", { className: Oe("bracket"), children: "{" }),
-      s ? /* @__PURE__ */ o("span", { className: "text-[#6c7086] italic text-[11px] ml-1", children: [
+      s ? /* @__PURE__ */ o("span", { className: "text-code-muted italic text-[11px] ml-1", children: [
         l.length,
         " keys"
       ] }) : /* @__PURE__ */ t("div", { className: "pl-4", children: l.map(([p, u], f) => {
         const h = r?.has(p) || i;
         return /* @__PURE__ */ o("div", { className: "leading-relaxed whitespace-nowrap", children: [
           /* @__PURE__ */ t("span", { className: I(
-            "text-xs font-medium text-[#89b4fa]",
-            h && "text-[#a6e3a1] font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5"
+            "text-xs font-medium text-code-blue",
+            h && "text-code-green font-bold bg-[rgba(166,227,161,0.1)] rounded-sm px-0.5"
           ), children: p }),
           /* @__PURE__ */ t("span", { className: Oe("bracket"), children: ": " }),
           /* @__PURE__ */ t(
@@ -5663,8 +5663,8 @@ function Qs({
         },
         title: s.stepId,
         children: [
-          s.newKeys.length > 0 && /* @__PURE__ */ t("span", { className: "text-[#a6e3a1] mr-1 text-[9px]", children: "+" }),
-          /* @__PURE__ */ o("span", { className: "text-[10px] text-[#9399b2] mr-1", children: [
+          s.newKeys.length > 0 && /* @__PURE__ */ t("span", { className: "text-code-green mr-1 text-[9px]", children: "+" }),
+          /* @__PURE__ */ o("span", { className: "text-[10px] text-code-comment mr-1", children: [
             d + 1,
             "."
           ] }),
@@ -5701,7 +5701,7 @@ function el({ k: e, initial: n, onCommit: r, onError: a, onFocus: i }) {
           a(`Invalid JSON: ${c instanceof Error ? c.message : String(c)}`);
         }
       },
-      className: "w-full px-1.5 py-1 text-xs bg-[#11111b] text-[#cdd6f4] border border-[#313244] rounded-sm font-mono min-h-[60px] resize-y"
+      className: "w-full px-1.5 py-1 text-xs bg-code-bg text-code-text border border-code-border rounded-sm font-mono min-h-[60px] resize-y"
     }
   );
 }
@@ -5723,22 +5723,22 @@ function tl({
       ...Object.keys(n)
     ]);
     return Array.from(h);
-  }, [e, n]), f = "w-full px-1.5 py-1 text-xs bg-[#11111b] text-[#cdd6f4] border border-[#313244] rounded-sm font-mono";
+  }, [e, n]), f = "w-full px-1.5 py-1 text-xs bg-code-bg text-code-text border border-code-border rounded-sm font-mono";
   return /* @__PURE__ */ o("div", { "data-testid": "context-edit-table", children: [
     u.map((h) => {
       const g = h in n, x = g ? n[h] : e[h], m = Zs(x), w = g;
       return /* @__PURE__ */ o(
         "div",
         {
-          className: "grid grid-cols-[120px_1fr_auto] gap-2 items-start py-1.5 border-b border-[#313244]",
+          className: "grid grid-cols-[120px_1fr_auto] gap-2 items-start py-1.5 border-b border-code-border",
           "data-testid": `context-edit-row-${h}`,
           children: [
             /* @__PURE__ */ o(
               "span",
               {
                 className: I(
-                  "text-xs font-medium text-[#89b4fa] pt-1 overflow-hidden text-ellipsis whitespace-nowrap",
-                  w && "text-[#a6e3a1] font-bold"
+                  "text-xs font-medium text-code-blue pt-1 overflow-hidden text-ellipsis whitespace-nowrap",
+                  w && "text-code-green font-bold"
                 ),
                 title: h,
                 children: [
@@ -5798,7 +5798,7 @@ function tl({
                 "div",
                 {
                   "data-testid": `context-edit-parse-error-${h}`,
-                  className: "text-[#f38ba8] text-[11px] mt-1",
+                  className: "text-code-red text-[11px] mt-1",
                   children: r[h]
                 }
               )
@@ -5810,7 +5810,7 @@ function tl({
                 "data-testid": `context-edit-revert-${h}`,
                 onClick: () => l(h),
                 title: "Drop change",
-                className: "px-1.5 py-0.5 text-[10px] bg-transparent text-[#9399b2] border border-[#313244] rounded-sm cursor-pointer font-mono",
+                className: "px-1.5 py-0.5 text-[10px] bg-transparent text-code-comment border border-code-border rounded-sm cursor-pointer font-mono",
                 children: "↺"
               }
             ) })
@@ -5859,7 +5859,7 @@ function tl({
               disabled: !a.key.trim(),
               className: I(
                 "px-2.5 py-0.5 text-[11px] font-semibold border rounded-sm cursor-pointer font-mono",
-                a.key.trim() ? "bg-[#a6e3a1] text-[#1e1e2e] border-[#a6e3a1]" : "bg-transparent text-[#45475a] border-[#313244] cursor-not-allowed"
+                a.key.trim() ? "bg-code-green text-code-surface border-code-green" : "bg-transparent text-code-raised border-code-border cursor-not-allowed"
               ),
               children: "+ Add field"
             }
@@ -5957,21 +5957,21 @@ function al(e, n) {
 }
 function tr({ attempt: e, label: n }) {
   const r = !e.error;
-  return /* @__PURE__ */ o("div", { className: "bg-[#11111b] rounded-md border border-[#313244] p-2.5 overflow-auto", children: [
-    /* @__PURE__ */ t("div", { className: "text-[11px] font-bold text-[#cdd6f4] mb-2", children: n }),
+  return /* @__PURE__ */ o("div", { className: "bg-code-bg rounded-md border border-code-border p-2.5 overflow-auto", children: [
+    /* @__PURE__ */ t("div", { className: "text-[11px] font-bold text-code-text mb-2", children: n }),
     /* @__PURE__ */ o("div", { className: "flex gap-1.5 mb-1.5 items-center", children: [
       /* @__PURE__ */ t("span", { className: I(
         "text-[10px] font-semibold px-1.5 py-px rounded-sm",
-        r ? "bg-[rgba(166,227,161,0.15)] text-[#a6e3a1]" : "bg-[rgba(243,139,168,0.15)] text-[#f38ba8]"
+        r ? "bg-[rgba(166,227,161,0.15)] text-code-green" : "bg-[rgba(243,139,168,0.15)] text-code-red"
       ), children: r ? "OK" : "FAIL" }),
-      e.durationMs != null && /* @__PURE__ */ o("span", { className: "text-[10px] text-[#6c7086]", children: [
+      e.durationMs != null && /* @__PURE__ */ o("span", { className: "text-[10px] text-code-muted", children: [
         e.durationMs,
         "ms"
       ] })
     ] }),
-    e.error && /* @__PURE__ */ t("div", { className: "text-[11px] text-[#f38ba8] font-mono mb-1.5 px-2 py-1.5 bg-[#1a0f14] rounded whitespace-pre-wrap break-words", children: e.error }),
+    e.error && /* @__PURE__ */ t("div", { className: "text-[11px] text-code-red font-mono mb-1.5 px-2 py-1.5 bg-code-red/10 rounded whitespace-pre-wrap break-words", children: e.error }),
     e.output !== void 0 && /* @__PURE__ */ o("div", { children: [
-      /* @__PURE__ */ t("div", { className: "text-[10px] text-[#6c7086] font-semibold mb-1 uppercase", children: "Output" }),
+      /* @__PURE__ */ t("div", { className: "text-[10px] text-code-muted font-semibold mb-1 uppercase", children: "Output" }),
       /* @__PURE__ */ t(Ot, { data: e.output, depth: 0 })
     ] })
   ] });
@@ -6045,13 +6045,13 @@ function il({
   return !e || y.length === 0 ? /* @__PURE__ */ o("div", { className: "flex flex-col overflow-hidden h-full", "data-testid": "context-inspector", children: [
     /* @__PURE__ */ t("div", { className: "flex items-center justify-between px-3.5 py-2 border-b border-border shrink-0", children: /* @__PURE__ */ t("span", { className: "text-xs font-bold text-text-primary tracking-wide uppercase", children: "Context Inspector" }) }),
     /* @__PURE__ */ o("div", { className: "flex-1 overflow-auto px-3.5 py-2.5 font-mono text-xs flex items-center justify-center flex-col gap-2", children: [
-      /* @__PURE__ */ t("span", { className: "text-[13px] text-[#6c7086]", children: e ? "Waiting for step execution data..." : "Run a pipeline to inspect context flow" }),
-      /* @__PURE__ */ t("span", { className: "text-[11px] text-[#45475a]", children: e ? "Context data will appear as steps complete." : "Trigger a run to see inputs, outputs, and context at each step." })
+      /* @__PURE__ */ t("span", { className: "text-[13px] text-code-muted", children: e ? "Waiting for step execution data..." : "Run a pipeline to inspect context flow" }),
+      /* @__PURE__ */ t("span", { className: "text-[11px] text-code-raised", children: e ? "Context data will appear as steps complete." : "Trigger a run to see inputs, outputs, and context at each step." })
     ] })
   ] }) : /* @__PURE__ */ o("div", { className: "flex flex-col overflow-hidden h-full", "data-testid": "context-inspector", children: [
     /* @__PURE__ */ o("div", { className: "flex items-center justify-between px-3.5 py-2 border-b border-border shrink-0", children: [
       /* @__PURE__ */ t("span", { className: "text-xs font-bold text-text-primary tracking-wide uppercase", children: "Context Inspector" }),
-      k && k.stepId && /* @__PURE__ */ o("span", { className: "text-[10px] text-[#6c7086]", children: [
+      k && k.stepId && /* @__PURE__ */ o("span", { className: "text-[10px] text-code-muted", children: [
         "Step: ",
         k.stepId.slice(0, 8)
       ] })
@@ -6088,7 +6088,7 @@ function il({
       ),
       /* @__PURE__ */ t("div", { className: "flex-1 overflow-auto px-3.5 py-2.5 font-mono text-xs", children: k ? d === "input" ? /* @__PURE__ */ o("div", { children: [
         /* @__PURE__ */ o("div", { className: "flex items-center justify-between mb-2", children: [
-          /* @__PURE__ */ o("div", { className: "text-[10px] text-[#6c7086] font-semibold uppercase", children: [
+          /* @__PURE__ */ o("div", { className: "text-[10px] text-code-muted font-semibold uppercase", children: [
             "Input context",
             k.stepId ? ` — step ${k.stepId.slice(0, 8)}` : ""
           ] }),
@@ -6099,7 +6099,7 @@ function il({
                 type: "button",
                 onClick: Z,
                 "data-testid": "context-inspector-discard",
-                className: "px-2 py-0.5 text-[10px] font-semibold bg-transparent text-[#f38ba8] border border-[#313244] rounded-sm cursor-pointer font-mono",
+                className: "px-2 py-0.5 text-[10px] font-semibold bg-transparent text-code-red border border-code-border rounded-sm cursor-pointer font-mono",
                 children: "Discard changes"
               }
             ),
@@ -6114,14 +6114,14 @@ function il({
                 "data-testid": "context-inspector-edit-toggle",
                 className: I(
                   "px-2 py-0.5 text-[10px] font-semibold border rounded-sm cursor-pointer font-mono uppercase tracking-wide",
-                  u ? "bg-warning text-white border-[#d97706]" : "bg-transparent text-warning-fg border-[#d97706]"
+                  u ? "bg-warning text-white border-warning" : "bg-transparent text-warning-fg border-warning"
                 ),
                 children: u ? "Editing" : "Edit"
               }
             )
           ] })
         ] }),
-        Object.keys(k.inputContext).length === 0 && !(re && u) ? /* @__PURE__ */ t("div", { className: "text-[#6c7086] text-xs italic", children: "No input context (first step or no upstream output)" }) : re && u ? /* @__PURE__ */ t(
+        Object.keys(k.inputContext).length === 0 && !(re && u) ? /* @__PURE__ */ t("div", { className: "text-code-muted text-xs italic", children: "No input context (first step or no upstream output)" }) : re && u ? /* @__PURE__ */ t(
           tl,
           {
             inputContext: k.inputContext,
@@ -6143,31 +6143,31 @@ function il({
           }
         )
       ] }) : d === "output" ? /* @__PURE__ */ o("div", { children: [
-        /* @__PURE__ */ o("div", { className: "mb-2 text-[10px] text-[#6c7086] font-semibold uppercase", children: [
+        /* @__PURE__ */ o("div", { className: "mb-2 text-[10px] text-code-muted font-semibold uppercase", children: [
           "Output",
           k.stepId ? ` — step ${k.stepId.slice(0, 8)}` : ""
         ] }),
         /* @__PURE__ */ t(Ot, { data: k.output }),
         k.newKeys.length > 0 && /* @__PURE__ */ o("div", { className: "mt-3", children: [
-          /* @__PURE__ */ t("div", { className: "text-[10px] text-[#a6e3a1] font-semibold uppercase mb-1", children: "New context keys added" }),
+          /* @__PURE__ */ t("div", { className: "text-[10px] text-code-green font-semibold uppercase mb-1", children: "New context keys added" }),
           /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-1", children: k.newKeys.map((R) => /* @__PURE__ */ t(
             "span",
             {
-              className: "px-1.5 py-0.5 bg-[rgba(166,227,161,0.15)] text-[#a6e3a1] rounded-sm text-[11px] font-semibold font-mono",
+              className: "px-1.5 py-0.5 bg-[rgba(166,227,161,0.15)] text-code-green rounded-sm text-[11px] font-semibold font-mono",
               children: R
             },
             R
           )) })
         ] })
       ] }) : d === "prompt" ? /* @__PURE__ */ o("div", { children: [
-        /* @__PURE__ */ t("div", { className: "mb-2 text-[10px] text-[#6c7086] font-semibold uppercase", children: "Resolved prompt template" }),
+        /* @__PURE__ */ t("div", { className: "mb-2 text-[10px] text-code-muted font-semibold uppercase", children: "Resolved prompt template" }),
         /* @__PURE__ */ t("div", { className: "px-3 py-2.5 bg-surface-inset border border-border rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto", children: k.resolvedPrompt })
       ] }) : d === "details" ? /* @__PURE__ */ o("div", { children: [
-        /* @__PURE__ */ t("div", { className: "mb-2 text-[10px] text-[#6c7086] font-semibold uppercase", children: "Step execution details" }),
+        /* @__PURE__ */ t("div", { className: "mb-2 text-[10px] text-code-muted font-semibold uppercase", children: "Step execution details" }),
         /* @__PURE__ */ o("div", { className: "flex flex-col gap-3", children: [
           k.stepExecution.startedAt && /* @__PURE__ */ o("div", { children: [
-            /* @__PURE__ */ t("div", { className: "text-[11px] text-[#89b4fa] font-semibold mb-1", children: "Duration" }),
-            /* @__PURE__ */ o("div", { className: "text-[11px] text-[#cdd6f4]", children: [
+            /* @__PURE__ */ t("div", { className: "text-[11px] text-code-blue font-semibold mb-1", children: "Duration" }),
+            /* @__PURE__ */ o("div", { className: "text-[11px] text-code-text", children: [
               "Started: ",
               k.stepExecution.startedAt,
               k.stepExecution.completedAt && /* @__PURE__ */ o(H, { children: [
@@ -6184,8 +6184,8 @@ function il({
             ] })
           ] }),
           k.stepExecution.llm && /* @__PURE__ */ o("div", { children: [
-            /* @__PURE__ */ t("div", { className: "text-[11px] text-[#89b4fa] font-semibold mb-1", children: "LLM Metrics" }),
-            /* @__PURE__ */ o("div", { className: "text-[11px] text-[#cdd6f4]", children: [
+            /* @__PURE__ */ t("div", { className: "text-[11px] text-code-blue font-semibold mb-1", children: "LLM Metrics" }),
+            /* @__PURE__ */ o("div", { className: "text-[11px] text-code-text", children: [
               "Tokens in: ",
               k.stepExecution.llm.tokensIn,
               /* @__PURE__ */ t("br", {}),
@@ -6199,16 +6199,16 @@ function il({
               ] })
             ] }),
             k.stepExecution.llm.response && /* @__PURE__ */ o(H, { children: [
-              /* @__PURE__ */ t("div", { className: "text-[11px] text-[#89b4fa] font-semibold mt-2 mb-1", children: "Response Text" }),
+              /* @__PURE__ */ t("div", { className: "text-[11px] text-code-blue font-semibold mt-2 mb-1", children: "Response Text" }),
               /* @__PURE__ */ t("div", { className: "px-3 py-2.5 bg-surface-inset border border-border rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto", children: k.stepExecution.llm.response })
             ] })
           ] }),
           k.stepExecution.error && /* @__PURE__ */ o("div", { children: [
-            /* @__PURE__ */ t("div", { className: "text-[11px] text-[#f38ba8] font-semibold mb-1", children: "Error" }),
-            /* @__PURE__ */ t("div", { className: "px-3 py-2.5 bg-[#1a0f14] border border-[#f38ba8] rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto", children: /* @__PURE__ */ t("div", { className: "text-[#f38ba8] font-semibold mb-1", children: k.stepExecution.error }) })
+            /* @__PURE__ */ t("div", { className: "text-[11px] text-code-red font-semibold mb-1", children: "Error" }),
+            /* @__PURE__ */ t("div", { className: "px-3 py-2.5 bg-code-red/10 border border-code-red rounded-md text-xs text-text-primary whitespace-pre-wrap break-words leading-relaxed max-h-60 overflow-y-auto", children: /* @__PURE__ */ t("div", { className: "text-code-red font-semibold mb-1", children: k.stepExecution.error }) })
           ] }),
           k.stepExecution.approvals && k.stepExecution.approvals.length > 0 && /* @__PURE__ */ o("div", { children: [
-            /* @__PURE__ */ o("div", { className: "text-[11px] text-[#89b4fa] font-semibold mb-1", children: [
+            /* @__PURE__ */ o("div", { className: "text-[11px] text-code-blue font-semibold mb-1", children: [
               "Approvals (",
               k.stepExecution.approvals.length,
               ")"
@@ -6217,21 +6217,21 @@ function il({
               /* @__PURE__ */ o("div", { className: "flex gap-2 mb-1", children: [
                 /* @__PURE__ */ t("span", { className: I(
                   "px-1.5 py-0.5 rounded-sm text-[10px] font-semibold",
-                  R.decision === "approve" ? "bg-[rgba(166,227,161,0.15)] text-[#a6e3a1]" : "bg-[rgba(243,139,168,0.15)] text-[#f38ba8]"
+                  R.decision === "approve" ? "bg-[rgba(166,227,161,0.15)] text-code-green" : "bg-[rgba(243,139,168,0.15)] text-code-red"
                 ), children: R.decision.toUpperCase() }),
-                /* @__PURE__ */ t("span", { className: "text-[11px] text-[#cdd6f4]", children: R.userId })
+                /* @__PURE__ */ t("span", { className: "text-[11px] text-code-text", children: R.userId })
               ] }),
-              R.comment && /* @__PURE__ */ o("div", { className: "text-[11px] text-[#9399b2] italic", children: [
+              R.comment && /* @__PURE__ */ o("div", { className: "text-[11px] text-code-comment italic", children: [
                 '"',
                 R.comment,
                 '"'
               ] }),
-              /* @__PURE__ */ t("div", { className: "text-[10px] text-[#6c7086] mt-1", children: R.at })
+              /* @__PURE__ */ t("div", { className: "text-[10px] text-code-muted mt-1", children: R.at })
             ] }, Y))
           ] }),
           /* @__PURE__ */ o("div", { children: [
-            /* @__PURE__ */ t("div", { className: "text-[11px] text-[#89b4fa] font-semibold mb-1", children: "Status" }),
-            /* @__PURE__ */ t("div", { className: "text-[11px] text-[#cdd6f4]", children: k.stepExecution.status })
+            /* @__PURE__ */ t("div", { className: "text-[11px] text-code-blue font-semibold mb-1", children: "Status" }),
+            /* @__PURE__ */ t("div", { className: "text-[11px] text-code-text", children: k.stepExecution.status })
           ] })
         ] })
       ] }) : d === "attempts" && M && M.length >= 2 ? /* @__PURE__ */ o("div", { children: [
@@ -6244,8 +6244,8 @@ function il({
               disabled: l === 0,
               onClick: () => p((R) => R - 1),
               className: I(
-                "px-2 py-0.5 text-[11px] bg-transparent border border-[#313244] rounded-sm font-mono",
-                l === 0 ? "text-[#45475a] cursor-not-allowed" : "text-[#cdd6f4] cursor-pointer"
+                "px-2 py-0.5 text-[11px] bg-transparent border border-code-border rounded-sm font-mono",
+                l === 0 ? "text-code-raised cursor-not-allowed" : "text-code-text cursor-pointer"
               ),
               children: "←"
             }
@@ -6254,7 +6254,7 @@ function il({
             "span",
             {
               "data-testid": "attempts-label",
-              className: "text-[11px] text-[#9399b2] flex-1 text-center",
+              className: "text-[11px] text-code-comment flex-1 text-center",
               children: [
                 "Attempt ",
                 l + 1,
@@ -6273,8 +6273,8 @@ function il({
               disabled: l >= M.length - 2,
               onClick: () => p((R) => R + 1),
               className: I(
-                "px-2 py-0.5 text-[11px] bg-transparent border border-[#313244] rounded-sm font-mono",
-                l >= M.length - 2 ? "text-[#45475a] cursor-not-allowed" : "text-[#cdd6f4] cursor-pointer"
+                "px-2 py-0.5 text-[11px] bg-transparent border border-code-border rounded-sm font-mono",
+                l >= M.length - 2 ? "text-code-raised cursor-not-allowed" : "text-code-text cursor-pointer"
               ),
               children: "→"
             }
@@ -6423,10 +6423,10 @@ function sl({
                           "data-testid": `breakpoint-patch-row-${N.patchId}`,
                           className: I(
                             "border border-border rounded p-1.5",
-                            y ? "bg-neutral/10 opacity-60" : "bg-[#11111b]"
+                            y ? "bg-neutral/10 opacity-60" : "bg-code-bg"
                           ),
                           children: [
-                            /* @__PURE__ */ o("div", { className: "flex items-center gap-1 text-[10px] text-[#cdd6f4] mb-0.5", children: [
+                            /* @__PURE__ */ o("div", { className: "flex items-center gap-1 text-[10px] text-code-text mb-0.5", children: [
                               /* @__PURE__ */ t("span", { className: "font-mono", children: N.patchId.slice(0, 8) }),
                               N.unvalidated && /* @__PURE__ */ t(
                                 "span",
@@ -6439,11 +6439,11 @@ function sl({
                               ),
                               y && /* @__PURE__ */ t("span", { className: "px-1 text-[9px] font-bold bg-neutral/20 text-text-tertiary rounded-sm", children: "Reverted" })
                             ] }),
-                            /* @__PURE__ */ o("div", { className: "text-[10px] text-[#9399b2]", children: [
+                            /* @__PURE__ */ o("div", { className: "text-[10px] text-code-comment", children: [
                               N.appliedAt,
                               N.appliedBy && /* @__PURE__ */ o(H, { children: [
                                 " · ",
-                                /* @__PURE__ */ t("span", { className: "text-[#cdd6f4]", children: N.appliedBy })
+                                /* @__PURE__ */ t("span", { className: "text-code-text", children: N.appliedBy })
                               ] })
                             ] }),
                             !y && /* @__PURE__ */ t(
@@ -7079,7 +7079,7 @@ function Lt({ value: e, onChange: n }) {
         ] })
       ] }),
       /* @__PURE__ */ t("div", { className: "text-[11px] text-text-tertiary mt-1", "data-testid": "retry-policy-preview", children: a.maxAttempts === 1 ? "Effectively no retry (1 attempt)." : i.length === 0 ? `Retries up to ${a.maxAttempts}× with no delay.` : `Retries up to ${a.maxAttempts}× with delays: ${i.map(Nl).join(", ")}.` }),
-      d && /* @__PURE__ */ t("div", { className: "text-[11px] text-[#ca8a04] mt-1", "data-testid": "retry-policy-tail-warning", children: "⚠ Total backoff >5min — long-tail latency risk on persistent failures." })
+      d && /* @__PURE__ */ t("div", { className: "text-[11px] text-warning-fg mt-1", "data-testid": "retry-policy-tail-warning", children: "⚠ Total backoff >5min — long-tail latency risk on persistent failures." })
     ] })
   ] });
 }
@@ -12035,11 +12035,11 @@ function ld({ data: e, onChange: n }) {
         "label",
         {
           htmlFor: "image-source-image-id",
-          className: "block text-[12px] font-semibold text-[#374151]",
+          className: "block text-[12px] font-semibold text-text-primary",
           children: [
             "Image ID",
             " ",
-            /* @__PURE__ */ t("span", { className: "text-[#6b7280] font-normal", children: "(optional — can be set at run time)" })
+            /* @__PURE__ */ t("span", { className: "text-text-secondary font-normal", children: "(optional — can be set at run time)" })
           ]
         }
       ),
@@ -12057,18 +12057,18 @@ function ld({ data: e, onChange: n }) {
           placeholder: "img_xxxxxxxx"
         }
       ),
-      /* @__PURE__ */ t("p", { className: "mt-0.5 text-[11px] text-[#6b7280]", children: "The imageId of an image already in the blob store. Leave blank to have the trigger or a preceding step supply the image at runtime." })
+      /* @__PURE__ */ t("p", { className: "mt-0.5 text-[11px] text-text-secondary", children: "The imageId of an image already in the blob store. Leave blank to have the trigger or a preceding step supply the image at runtime." })
     ] }),
     /* @__PURE__ */ o("div", { children: [
       /* @__PURE__ */ o(
         "label",
         {
           htmlFor: "image-source-output-key",
-          className: "block text-[12px] font-semibold text-[#374151]",
+          className: "block text-[12px] font-semibold text-text-primary",
           children: [
             "Output key",
             " ",
-            /* @__PURE__ */ t("span", { className: "text-[#6b7280] font-normal", children: "(default: imageRef)" })
+            /* @__PURE__ */ t("span", { className: "text-text-secondary font-normal", children: "(default: imageRef)" })
           ]
         }
       ),
@@ -12086,7 +12086,7 @@ function ld({ data: e, onChange: n }) {
           placeholder: "imageRef"
         }
       ),
-      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-[#6b7280]", children: [
+      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-text-secondary", children: [
         "The key written to pipeline context (accessible as",
         " ",
         /* @__PURE__ */ o("code", { children: [
@@ -12111,11 +12111,11 @@ function dd({ data: e, onChange: n, nodeId: r }) {
         "label",
         {
           htmlFor: "save-source-image-path",
-          className: "block text-[12px] font-semibold text-[#374151]",
+          className: "block text-[12px] font-semibold text-text-primary",
           children: [
             "Source image path",
             " ",
-            /* @__PURE__ */ t("span", { className: "text-[#6b7280] font-normal", children: "(optional)" })
+            /* @__PURE__ */ t("span", { className: "text-text-secondary font-normal", children: "(optional)" })
           ]
         }
       ),
@@ -12133,7 +12133,7 @@ function dd({ data: e, onChange: n, nodeId: r }) {
           placeholder: "$.scatter.parentImageId"
         }
       ),
-      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-[#6b7280]", children: [
+      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-text-secondary", children: [
         "JSONPath to the imageId to save. Defaults server-side to",
         " ",
         /* @__PURE__ */ t("code", { children: "$.scatter.parentImageId" }),
@@ -12152,11 +12152,11 @@ function dd({ data: e, onChange: n, nodeId: r }) {
         "label",
         {
           htmlFor: "save-filename-template",
-          className: "block text-[12px] font-semibold text-[#374151]",
+          className: "block text-[12px] font-semibold text-text-primary",
           children: [
             "Filename template",
             " ",
-            /* @__PURE__ */ t("span", { className: "text-[#6b7280] font-normal", children: "(optional)" })
+            /* @__PURE__ */ t("span", { className: "text-text-secondary font-normal", children: "(optional)" })
           ]
         }
       ),
@@ -12174,7 +12174,7 @@ function dd({ data: e, onChange: n, nodeId: r }) {
           placeholder: "crop-{{scatter.index}}.png"
         }
       ),
-      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-[#6b7280]", children: [
+      /* @__PURE__ */ o("p", { className: "mt-0.5 text-[11px] text-text-secondary", children: [
         "Output filename. Supports",
         " ",
         /* @__PURE__ */ t("code", { children: "{{scatter.item.label}}" }),
@@ -12194,7 +12194,7 @@ function dd({ data: e, onChange: n, nodeId: r }) {
         "."
       ] }),
       /* @__PURE__ */ o("div", { className: "mt-1.5", children: [
-        /* @__PURE__ */ t("div", { className: "text-[10px] text-[#6b7280] mb-1", children: "Quick-fill variable:" }),
+        /* @__PURE__ */ t("div", { className: "text-[10px] text-text-secondary mb-1", children: "Quick-fill variable:" }),
         /* @__PURE__ */ t(
           lt,
           {
@@ -13967,7 +13967,7 @@ function Dd(e) {
   return e == null || e === 0 ? "--" : e < 1e-3 ? "<$0.001" : e < 0.01 ? `$${e.toFixed(4)}` : e < 1 ? `$${e.toFixed(3)}` : `$${e.toFixed(2)}`;
 }
 function Md(e) {
-  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-caution-fg" : "text-danger-fg";
+  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-warning-fg" : e < 1 ? "text-caution-fg" : "text-danger-fg";
 }
 function xr(e) {
   switch (e) {
@@ -14045,7 +14045,7 @@ function Od({ pipelineId: e, run: n, onBack: r }) {
       /* @__PURE__ */ t(st, { label: "Trigger type", children: n.triggeredBy.triggerType }),
       n.estimatedCostUsd != null && n.estimatedCostUsd > 0 && /* @__PURE__ */ o(st, { label: "Est. Cost", children: [
         /* @__PURE__ */ t("span", { className: I("font-semibold", Md(n.estimatedCostUsd)), children: Dd(n.estimatedCostUsd) }),
-        n.estimatedCostUsd > 1 && /* @__PURE__ */ t("span", { className: "ml-1.5 rounded-sm bg-[#fef3c7] px-1 py-px text-[9px] font-bold uppercase text-[#92400e]", children: "Budget Warning" })
+        n.estimatedCostUsd > 1 && /* @__PURE__ */ t("span", { className: "ml-1.5 rounded-sm bg-warning-bg px-1 py-px text-[9px] font-bold uppercase text-warning-fg", children: "Budget Warning" })
       ] }),
       n.tokenUsage && Object.keys(n.tokenUsage).length > 0 && /* @__PURE__ */ o("div", { className: "mt-2", children: [
         /* @__PURE__ */ t("div", { className: "mb-1.5 text-[11px] font-semibold uppercase text-text-secondary", children: "Cost Breakdown" }),
@@ -14068,9 +14068,9 @@ function Od({ pipelineId: e, run: n, onBack: r }) {
       ] }),
       n.error && /* @__PURE__ */ o("div", { className: "mt-2", children: [
         /* @__PURE__ */ t("div", { className: "mb-1 text-[11px] font-semibold uppercase text-state-failed", children: "Error" }),
-        /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-[#991b1b]", children: [
+        /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-danger-fg", children: [
           n.error.message,
-          n.error.nodeId && /* @__PURE__ */ o("div", { className: "mt-1 text-[11px] text-[#b91c1c]", children: [
+          n.error.nodeId && /* @__PURE__ */ o("div", { className: "mt-1 text-[11px] text-danger-fg", children: [
             "at node: ",
             n.error.nodeId
           ] })
@@ -14116,7 +14116,7 @@ function br(e) {
   return e == null || e === 0 ? "--" : e < 1e-3 ? "<$0.001" : e < 0.01 ? `$${e.toFixed(4)}` : e < 1 ? `$${e.toFixed(3)}` : `$${e.toFixed(2)}`;
 }
 function _d(e) {
-  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-caution-fg" : "text-danger-fg";
+  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-warning-fg" : e < 1 ? "text-caution-fg" : "text-danger-fg";
 }
 function Ld(e) {
   const n = Date.now() - new Date(e).getTime();
@@ -14366,7 +14366,7 @@ function zd({ pipelineId: e, onClose: n }) {
                         children: br(y.estimatedCostUsd)
                       }
                     ),
-                    y.estimatedCostUsd != null && y.estimatedCostUsd > 1 && /* @__PURE__ */ t("span", { className: "rounded-sm bg-[#fef3c7] px-1 py-px text-[9px] font-bold uppercase text-[#92400e]", children: "High Cost" }),
+                    y.estimatedCostUsd != null && y.estimatedCostUsd > 1 && /* @__PURE__ */ t("span", { className: "rounded-sm bg-warning-bg px-1 py-px text-[9px] font-bold uppercase text-warning-fg", children: "High Cost" }),
                     /* @__PURE__ */ t("span", { className: "ml-auto", children: jd(y) })
                   ] }),
                   y.error && /* @__PURE__ */ t("div", { className: "mt-1 truncate text-[11px] text-state-failed", children: y.error.message })
@@ -15130,7 +15130,7 @@ function Qd({
       "data-testid": "bulk-action-bar",
       className: I(
         "min-h-[40px] shrink-0 flex items-center gap-3 px-6",
-        "border-b border-border bg-[#eef2ff]",
+        "border-b border-border bg-primary-bg",
         "sticky top-[56px] z-[1]"
       ),
       children: [
@@ -15189,7 +15189,7 @@ function Qd({
                     },
                     className: I(
                       "border border-border-field rounded-md px-2.5 py-1.5 text-[13px]",
-                      "bg-[#f9fafb] text-text-primary outline-none w-full"
+                      "bg-surface-inset text-text-primary outline-none w-full"
                     ),
                     "aria-label": "Tag name"
                   }
@@ -17846,7 +17846,7 @@ function Vp({
                           }
                       },
                       title: "Force-fail this stuck run so you can retry from the stuck step",
-                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-warning-border rounded cursor-pointer font-[inherit]",
+                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-warning-fg border border-warning-border rounded cursor-pointer font-[inherit]",
                       children: "⚡ Force-fail"
                     }
                   ),
@@ -17995,7 +17995,7 @@ function Zm() {
             ),
             "Use persisted input snapshot"
           ] }),
-          w && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]", children: w })
+          w && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg", children: w })
         ] })
       }
     ),
@@ -18314,7 +18314,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
               ] })
             ] })
           ] }) }),
-          n.error && /* @__PURE__ */ t(tt, { title: "Error", children: /* @__PURE__ */ t("div", { className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap", children: n.error }) }),
+          n.error && /* @__PURE__ */ t(tt, { title: "Error", children: /* @__PURE__ */ t("div", { className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg font-mono whitespace-pre-wrap", children: n.error }) }),
           (s || d) && /* @__PURE__ */ o("div", { className: "px-4 py-2.5 border-t border-border flex justify-end gap-2", children: [
             d && /* @__PURE__ */ t(
               "button",
@@ -18694,7 +18694,7 @@ function pu({
                   {
                     className: I(
                       "inline-block w-2 h-2 rounded-full mr-1.5 align-middle",
-                      s ? "bg-text-tertiary" : "bg-[#22c55e] [animation:executor-log-pulse_1.6s_ease-in-out_infinite]"
+                      s ? "bg-text-tertiary" : "bg-success [animation:executor-log-pulse_1.6s_ease-in-out_infinite]"
                     ),
                     "aria-hidden": !0
                   }
@@ -18712,7 +18712,7 @@ function pu({
                 type: "button",
                 className: I(
                   "font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer",
-                  T ? "bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]" : "bg-surface text-text-secondary border-border"
+                  T ? "bg-info-bg text-info-fg border-info-border" : "bg-surface text-text-secondary border-border"
                 ),
                 onClick: () => v(C.label),
                 "data-testid": `executor-log-chip-${C.label.toLowerCase().replace(/\s+/g, "-")}`,
@@ -18744,7 +18744,7 @@ function pu({
                 type: "button",
                 className: I(
                   "font-[inherit] text-[11px] font-semibold px-2.5 py-[3px] rounded-xl border cursor-pointer",
-                  T ? "bg-[#dbeafe] text-[#1d4ed8] border-[#93c5fd]" : "bg-surface text-text-secondary border-border"
+                  T ? "bg-info-bg text-info-fg border-info-border" : "bg-surface text-text-secondary border-border"
                 ),
                 onClick: () => x(C),
                 "data-testid": `executor-log-time-${C}`,
@@ -18785,7 +18785,7 @@ function pu({
             return /* @__PURE__ */ o(
               "div",
               {
-                className: "grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-[#fafbfc] cursor-pointer",
+                className: "grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-surface-inset cursor-pointer",
                 onClick: () => k(C),
                 "data-testid": "executor-log-row",
                 "data-action": C.action,
@@ -18821,7 +18821,7 @@ function pu({
                       {
                         className: I(
                           "text-[11px]",
-                          C.outcome === "error" ? "text-[#b91c1c]" : "text-text-tertiary"
+                          C.outcome === "error" ? "text-danger-fg" : "text-text-tertiary"
                         ),
                         children: [
                           "· ",
@@ -19144,7 +19144,7 @@ function uu({ pipelineId: e, runId: n }) {
                 ),
                 "Use persisted input snapshot"
               ] }),
-              k && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]", children: k })
+              k && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg", children: k })
             ] })
           }
         ),
@@ -19215,7 +19215,7 @@ function uu({ pipelineId: e, runId: n }) {
           Z && /* @__PURE__ */ t(nt, { title: "Resumed", className: "mb-4", "data-testid": "resume-toast", children: Z }),
           l.error && /* @__PURE__ */ o(nt, { title: "Run failed:", className: "mb-4", children: [
             l.error.message,
-            l.error.nodeId && l.error.nodeId !== "unknown" && /* @__PURE__ */ o("span", { className: "ml-2 text-[11px] text-[#b91c1c]", children: [
+            l.error.nodeId && l.error.nodeId !== "unknown" && /* @__PURE__ */ o("span", { className: "ml-2 text-[11px] text-danger-fg", children: [
               "at node ",
               l.error.nodeId.slice(0, 8)
             ] }),
@@ -19407,7 +19407,7 @@ function vu({ a: e, b: n }) {
     {
       className: "whitespace-pre-wrap break-words rounded-md border border-border bg-surface-inset p-2.5 font-mono text-xs leading-relaxed",
       "data-testid": "llm-word-diff",
-      children: r.map((a, i) => a.type === "eq" ? /* @__PURE__ */ t("span", { children: a.text }, i) : a.type === "add" ? /* @__PURE__ */ t("span", { "data-diff": "add", className: "bg-[#dcfce7] text-[#166534]", children: a.text }, i) : /* @__PURE__ */ t("span", { "data-diff": "del", className: "bg-[#fee2e2] text-[#991b1b] line-through", children: a.text }, i))
+      children: r.map((a, i) => a.type === "eq" ? /* @__PURE__ */ t("span", { children: a.text }, i) : a.type === "add" ? /* @__PURE__ */ t("span", { "data-diff": "add", className: "bg-success-bg text-success-fg", children: a.text }, i) : /* @__PURE__ */ t("span", { "data-diff": "del", className: "bg-danger-bg text-danger-fg line-through", children: a.text }, i))
     }
   );
 }
@@ -19828,7 +19828,7 @@ function Pu({ runA: e, runB: n, def: r }) {
       "tr",
       {
         className: I(
-          i.onlyInA || i.onlyInB ? "bg-[#fefce8]" : i.statusDiffers ? "bg-danger-bg" : void 0
+          i.onlyInA || i.onlyInB ? "bg-warning-bg" : i.statusDiffers ? "bg-danger-bg" : void 0
         ),
         "data-testid": `diff-step-row-${i.nodeId}`,
         children: [
@@ -19943,9 +19943,9 @@ function yo(e, n) {
   }), s;
 }
 const Mu = {
-  added: "bg-success-bg text-[#166534]",
-  removed: "bg-danger-bg text-[#991b1b] line-through",
-  changed: "bg-warning-bg text-[#92400e]",
+  added: "bg-success-bg text-success-fg",
+  removed: "bg-danger-bg text-danger-fg line-through",
+  changed: "bg-warning-bg text-warning-fg",
   unchanged: "text-text-tertiary"
 };
 function Eu({
@@ -20089,9 +20089,9 @@ function zt({
   );
 }
 const Lu = {
-  added: "bg-success-bg text-[#166534]",
-  removed: "bg-danger-bg text-[#991b1b] line-through",
-  changed: "bg-warning-bg text-[#92400e]",
+  added: "bg-success-bg text-success-fg",
+  removed: "bg-danger-bg text-danger-fg line-through",
+  changed: "bg-warning-bg text-warning-fg",
   unchanged: "text-text-tertiary"
 };
 function Bu({

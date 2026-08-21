@@ -88,7 +88,7 @@ function CollabPanel() {
 }`}
       </pre>
 
-      <div className="p-4 bg-info-bg border border-info-border rounded-lg text-[14px] text-[#1e40af] leading-[1.5]">
+      <div className="p-4 bg-info-bg border border-info-border rounded-lg text-[14px] text-info-fg leading-[1.5]">
         <strong>Next step:</strong> Explore the Components section in the sidebar to see interactive examples
         of every available component.
       </div>
