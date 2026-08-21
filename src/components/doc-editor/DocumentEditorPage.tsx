@@ -48,7 +48,7 @@ export default function DocumentEditorPage({
   ws,
   userId,
   displayName,
-  color = '#3b82f6',
+  color = 'var(--color-info)',
   onMessage,
   activityPublish,
   onBack,

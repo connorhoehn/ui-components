@@ -25,7 +25,7 @@ function MetricsGraph({ title, data, series, yLabel }: MetricsGraphProps) {
     series && series.length > 0
       ? series
       : data
-        ? [{ label: title, data, color: '#646cff' }]
+        ? [{ label: title, data, color: 'var(--color-primary)' }]
         : [];
 
   return (
@@ -66,7 +66,7 @@ function MetricsGraph({ title, data, series, yLabel }: MetricsGraphProps) {
                 data={s.data}
                 width={180}
                 height={28}
-                color={s.color ?? '#646cff'}
+                color={s.color ?? 'var(--color-primary)'}
               />
             </div>
           ))

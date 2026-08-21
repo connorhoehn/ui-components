@@ -23,22 +23,22 @@ export interface TaskItemRowProps {
 }
 
 const statusColors: Record<TaskItem['status'], string> = {
-  pending: '#94a3b8',
-  acked: '#3b82f6',
-  done: '#22c55e',
-  rejected: '#ef4444',
+  pending: 'var(--color-text-tertiary)',
+  acked: 'var(--color-info)',
+  done: 'var(--color-success)',
+  rejected: 'var(--color-danger)',
 };
 
 const priorityColors: Record<TaskItem['priority'], string> = {
-  low: '#94a3b8',
-  medium: '#f97316',
-  high: '#ef4444',
+  low: 'var(--color-text-tertiary)',
+  medium: 'var(--color-caution)',
+  high: 'var(--color-danger)',
 };
 
 const categoryColors: Record<string, string> = {
-  start: '#22c55e',
-  stop: '#ef4444',
-  continue: '#3b82f6',
+  start: 'var(--color-success)',
+  stop: 'var(--color-danger)',
+  continue: 'var(--color-info)',
 };
 
 /** Format an ISO date string as a short label like "Apr 15". */
@@ -212,7 +212,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
       {item.category && (
         <span
           className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap')}
-          style={{ backgroundColor: categoryColors[item.category.toLowerCase()] ?? '#6b7280' }}
+          style={{ backgroundColor: categoryColors[item.category.toLowerCase()] ?? 'var(--color-neutral)' }}
         >
           {item.category}
         </span>
@@ -235,7 +235,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             <>
               <span
                 className={cn('w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none')}
-                style={{ background: assigneeUser?.color ?? '#94a3b8' }}
+                style={{ background: assigneeUser?.color ?? 'var(--color-text-tertiary)' }}
               >
                 {getInitials(item.assignee)}
               </span>

@@ -14,11 +14,11 @@ const styles: Record<string, CSSProperties> = {
     fontSize: 28,
     fontWeight: 700,
     margin: '0 0 8px 0',
-    color: '#0f172a',
+    color: 'var(--color-text-primary)',
   },
   description: {
     fontSize: 15,
-    color: '#475569',
+    color: 'var(--color-text-secondary)',
     maxWidth: 640,
     margin: '0 0 16px 0',
     lineHeight: 1.6,
@@ -26,7 +26,7 @@ const styles: Record<string, CSSProperties> = {
   importBadge: {
     display: 'inline-block',
     background: '#1e293b',
-    color: '#e2e8f0',
+    color: 'var(--color-border)',
     fontFamily: 'monospace',
     fontSize: 13,
     padding: '6px 12px',

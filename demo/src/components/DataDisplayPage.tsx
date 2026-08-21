@@ -376,7 +376,7 @@ export default function DataDisplayPage() {
             { name: 'data', type: 'number[]', required: true, description: 'Array of numeric data points to plot.' },
             { name: 'width', type: 'number', default: '80', description: 'Width of the SVG element in pixels.' },
             { name: 'height', type: 'number', default: '20', description: 'Height of the SVG element in pixels.' },
-            { name: 'color', type: 'string', default: "'#646cff'", description: 'Stroke color of the polyline.' },
+            { name: 'color', type: 'string', default: "'var(--color-primary)'", description: 'Stroke color of the polyline.' },
           ]}
         />
 

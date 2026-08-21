@@ -295,9 +295,9 @@ function ItemLink({
   renderNavItem?: SubNavLayoutProps['renderNavItem'];
 }) {
   const accentColor =
-    item.accent === 'danger' ? '#dc2626'
-    : item.accent === 'warning' ? '#d97706'
-    : item.accent === 'success' ? '#16a34a'
+    item.accent === 'danger' ? 'var(--color-danger)'
+    : item.accent === 'warning' ? 'var(--color-warning)'
+    : item.accent === 'success' ? 'var(--color-success)'
     : undefined;
 
   const body = (

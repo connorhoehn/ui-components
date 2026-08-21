@@ -14,16 +14,16 @@ interface ReviewableItemProps {
 }
 
 const statusColors: Record<TaskItem['status'], { bg: string; text: string }> = {
-  pending: { bg: '#fef3c7', text: '#92400e' },
-  acked: { bg: '#d1fae5', text: '#065f46' },
-  done: { bg: '#dbeafe', text: '#1e40af' },
-  rejected: { bg: '#fee2e2', text: '#991b1b' },
+  pending: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-fg)' },
+  acked: { bg: 'var(--color-success-bg)', text: 'var(--color-success-fg)' },
+  done: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
+  rejected: { bg: 'var(--color-danger-bg)', text: 'var(--color-danger-fg)' },
 };
 
 const priorityColors: Record<TaskItem['priority'], string> = {
-  low: '#6b7280',
-  medium: '#f59e0b',
-  high: '#ef4444',
+  low: 'var(--color-neutral)',
+  medium: 'var(--color-warning)',
+  high: 'var(--color-danger)',
 };
 
 export default function ReviewableItem({ item, onAck, onReject }: ReviewableItemProps) {

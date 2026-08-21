@@ -14,17 +14,17 @@ interface LogEntry {
 function getEventStyle(action: string): { color: string; icon: string } {
   switch (action) {
     case 'sync.started':
-      return { color: '#6366f1', icon: '▶' };
+      return { color: 'var(--color-primary)', icon: '▶' };
     case 'sync.progress':
-      return { color: '#10b981', icon: '↑' };
+      return { color: 'var(--color-success)', icon: '↑' };
     case 'conflict.detected':
-      return { color: '#f59e0b', icon: '⚠' };
+      return { color: 'var(--color-warning)', icon: '⚠' };
     case 'dlq.item.added':
-      return { color: '#ef4444', icon: '✗' };
+      return { color: 'var(--color-danger)', icon: '✗' };
     case 'sync.completed':
-      return { color: '#10b981', icon: '✓' };
+      return { color: 'var(--color-success)', icon: '✓' };
     default:
-      return { color: '#64748b', icon: '•' };
+      return { color: 'var(--color-neutral)', icon: '•' };
   }
 }
 

@@ -14,7 +14,7 @@ const styles: Record<string, CSSProperties> = {
   heading: {
     fontSize: 11,
     textTransform: 'uppercase',
-    color: '#64748b',
+    color: 'var(--color-neutral)',
     letterSpacing: '0.05em',
     fontWeight: 600,
     marginBottom: 12,
@@ -35,14 +35,14 @@ export function TableOfContents({ items, activeId }: TableOfContentsProps) {
           const isActive = item.id === activeId;
           const itemStyle: CSSProperties = {
             paddingLeft: item.level === 3 ? 12 : 0,
-            borderLeft: `2px solid ${isActive ? '#2563eb' : '#e2e8f0'}`,
+            borderLeft: `2px solid ${isActive ? 'var(--color-info)' : 'var(--color-border)'}`,
             paddingTop: 2,
             paddingBottom: 2,
             paddingRight: 0,
             marginLeft: 0,
           };
           const linkStyle: CSSProperties = {
-            color: isActive ? '#2563eb' : '#475569',
+            color: isActive ? 'var(--color-info)' : 'var(--color-text-secondary)',
             fontWeight: isActive ? 500 : 400,
             textDecoration: 'none',
             display: 'block',

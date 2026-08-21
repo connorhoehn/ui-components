@@ -79,11 +79,11 @@ describe('ChunkViewer', () => {
 
   it('type badge uses type-specific background/color for summary, tasks, and custom', () => {
     const { rerender, props } = renderViewer({ section: mkSection({ type: 'summary' }) });
-    expect(screen.getByText('summary')).toHaveStyle({ background: '#dbeafe', color: '#1e40af' });
+    expect(screen.getByText('summary')).toHaveStyle({ background: 'var(--color-info-bg)', color: 'var(--color-info-fg)' });
     rerender(<ChunkViewer {...props} section={mkSection({ type: 'tasks' })} />);
-    expect(screen.getByText('tasks')).toHaveStyle({ background: '#fef3c7', color: '#92400e' });
+    expect(screen.getByText('tasks')).toHaveStyle({ background: 'var(--color-warning-bg)', color: 'var(--color-warning-fg)' });
     rerender(<ChunkViewer {...props} section={mkSection({ type: 'custom' })} />);
-    expect(screen.getByText('custom')).toHaveStyle({ background: '#e0e7ff', color: '#3730a3' });
+    expect(screen.getByText('custom')).toHaveStyle({ background: 'var(--color-primary-bg)', color: 'var(--color-primary-fg)' });
   });
 
   it('renders TiptapEditor only when fragment is non-null; passes editable=false + section.id', () => {

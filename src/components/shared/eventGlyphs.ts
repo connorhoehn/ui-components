@@ -18,13 +18,13 @@ export interface EventGlyph {
   severity: 'info' | 'success' | 'warning' | 'error' | 'neutral';
 }
 
-const C_SUCCESS = '#16a34a';
-const C_ERROR   = '#dc2626';
-const C_WARNING = '#d97706';
-const C_INFO    = '#2563eb';
-const C_NEUTRAL = '#94a3b8';
-const C_SOCIAL  = '#646cff';
-const C_DOC     = '#0f172a';
+const C_SUCCESS = 'var(--color-success)';
+const C_ERROR   = 'var(--color-danger)';
+const C_WARNING = 'var(--color-warning)';
+const C_INFO    = 'var(--color-info)';
+const C_NEUTRAL = 'var(--color-text-tertiary)';
+const C_SOCIAL  = 'var(--color-primary)';
+const C_DOC     = 'var(--color-text-primary)';
 
 // ---------------------------------------------------------------------------
 // Glyph map
@@ -105,7 +105,7 @@ export const eventGlyphs: Record<string, EventGlyph> = {
  * Look up a glyph for an event type, falling back to a neutral bullet.
  */
 export function getEventGlyph(type: string): EventGlyph {
-  return eventGlyphs[type] ?? { icon: '•', color: '#94a3b8', severity: 'neutral' };
+  return eventGlyphs[type] ?? { icon: '•', color: 'var(--color-text-tertiary)', severity: 'neutral' };
 }
 
 /**

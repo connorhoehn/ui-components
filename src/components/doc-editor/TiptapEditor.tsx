@@ -277,7 +277,7 @@ export default function TiptapEditor({
         cursors.push({
           clientId,
           name: u.name || `User ${clientId}`,
-          color: u.color || '#3b82f6',
+          color: u.color || 'var(--color-info)',
           anchor,
           head,
         });

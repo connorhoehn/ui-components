@@ -51,15 +51,15 @@ function successRate(started: number, completed: number): number {
 }
 
 function rateColor(pct: number): string {
-  if (pct >= 90) return '#16a34a';
-  if (pct >= 70) return '#f59e0b';
-  return '#dc2626';
+  if (pct >= 90) return 'var(--color-success)';
+  if (pct >= 70) return 'var(--color-warning)';
+  return 'var(--color-danger)';
 }
 
 function latencyColor(ms: number): string {
-  if (ms <= 500) return '#16a34a';
-  if (ms <= 2000) return '#f59e0b';
-  return '#dc2626';
+  if (ms <= 500) return 'var(--color-success)';
+  if (ms <= 2000) return 'var(--color-warning)';
+  return 'var(--color-danger)';
 }
 
 function formatCostUsd(usd: number | null | undefined): string {
@@ -79,19 +79,19 @@ function costPerRun(totalCost: number | null | undefined, runsCompleted: number)
 }
 
 function costValueColor(usd: number | null | undefined): string {
-  if (usd == null || usd === 0) return '#94a3b8';
-  if (usd < 1) return '#16a34a';
-  if (usd < 10) return '#ca8a04';
-  if (usd < 100) return '#ea580c';
-  return '#dc2626';
+  if (usd == null || usd === 0) return 'var(--color-text-tertiary)';
+  if (usd < 1) return 'var(--color-success)';
+  if (usd < 10) return 'var(--color-warning)';
+  if (usd < 100) return 'var(--color-caution)';
+  return 'var(--color-danger)';
 }
 
 function failureRateColor(started: number, failed: number): string {
-  if (started === 0) return '#94a3b8';
+  if (started === 0) return 'var(--color-text-tertiary)';
   const pct = (failed / started) * 100;
-  if (pct <= 5) return '#16a34a';
-  if (pct <= 20) return '#f59e0b';
-  return '#dc2626';
+  if (pct <= 5) return 'var(--color-success)';
+  if (pct <= 20) return 'var(--color-warning)';
+  return 'var(--color-danger)';
 }
 
 function relativeTimeAgo(iso: string): string {
@@ -120,7 +120,7 @@ function StatCard({ label, value, sub, valueColor, testId }: StatCardProps) {
       <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">{label}</div>
       <div
         className="text-[22px] font-bold font-mono"
-        style={{ color: valueColor || '#0f172a' }}
+        style={{ color: valueColor || 'var(--color-text-primary)' }}
       >
         {value}
       </div>
@@ -135,8 +135,8 @@ function StatCard({ label, value, sub, valueColor, testId }: StatCardProps) {
 
 function TokenBarChart({ tokensIn, tokensOut }: { tokensIn: number; tokensOut: number }) {
   const data = [
-    { name: 'In', value: tokensIn, color: '#646cff' },
-    { name: 'Out', value: tokensOut, color: '#16a34a' },
+    { name: 'In', value: tokensIn, color: 'var(--color-primary)' },
+    { name: 'Out', value: tokensOut, color: 'var(--color-success)' },
   ];
   return (
     <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
@@ -174,10 +174,10 @@ function RunsBarChart({ started, completed, failed, active }: {
   started: number; completed: number; failed: number; active: number;
 }) {
   const data = [
-    { name: 'Started', value: started, color: '#646cff' },
-    { name: 'Completed', value: completed, color: '#16a34a' },
-    { name: 'Failed', value: failed, color: '#dc2626' },
-    { name: 'Active', value: active, color: '#2563eb' },
+    { name: 'Started', value: started, color: 'var(--color-primary)' },
+    { name: 'Completed', value: completed, color: 'var(--color-success)' },
+    { name: 'Failed', value: failed, color: 'var(--color-danger)' },
+    { name: 'Active', value: active, color: 'var(--color-info)' },
   ];
   return (
     <div className="bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0">
@@ -373,7 +373,7 @@ export default function PipelineMetrics() {
         <StatCard
           label="Runs Active"
           value={formatNumber(m.runsActive)}
-          valueColor={m.runsActive > 0 ? '#2563eb' : '#94a3b8'}
+          valueColor={m.runsActive > 0 ? 'var(--color-info)' : 'var(--color-text-tertiary)'}
           testId="metric-runs-active"
         />
       </div>

@@ -54,8 +54,8 @@ function layoutAgents(agents: AgentDefinition[], edgeDefs: { from: string; to: s
         data: { label: agent.name },
         type: 'default',
         style: {
-          background: agent.status === 'offline' ? '#fef2f2' : agent.status === 'degraded' ? '#fffbeb' : '#f0fdf4',
-          border: `2px solid ${agent.status === 'offline' ? '#fecaca' : agent.status === 'degraded' ? '#fed7aa' : '#86efac'}`,
+          background: agent.status === 'offline' ? 'var(--color-danger-bg)' : agent.status === 'degraded' ? 'var(--color-warning-bg)' : 'var(--color-success-bg)',
+          border: `2px solid ${agent.status === 'offline' ? 'var(--color-danger-border)' : agent.status === 'degraded' ? 'var(--color-caution-border)' : '#86efac'}`,
           borderRadius: 8,
           padding: '8px 16px',
           fontSize: 13,
@@ -81,10 +81,10 @@ function buildEdges(edgeDefs: { from: string; to: string }[], agents: AgentDefin
         source: e.from,
         target: e.to,
         animated: isA2A,
-        style: { stroke: isA2A ? '#3b82f6' : '#94a3b8', strokeWidth: isA2A ? 2 : 1.5 },
+        style: { stroke: isA2A ? 'var(--color-info)' : 'var(--color-text-tertiary)', strokeWidth: isA2A ? 2 : 1.5 },
         label: isA2A ? 'A2A' : undefined,
-        labelStyle: { fontSize: 10, fill: '#64748b', fontWeight: 500 },
-        markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: isA2A ? '#3b82f6' : '#94a3b8' },
+        labelStyle: { fontSize: 10, fill: 'var(--color-neutral)', fontWeight: 500 },
+        markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: isA2A ? 'var(--color-info)' : 'var(--color-text-tertiary)' },
       };
     });
 }

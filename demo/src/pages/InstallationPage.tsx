@@ -1,6 +1,6 @@
 const codeBlockStyle: React.CSSProperties = {
   background: '#1e293b',
-  color: '#e2e8f0',
+  color: 'var(--color-border)',
   padding: '16px 20px',
   borderRadius: 8,
   fontSize: 13,

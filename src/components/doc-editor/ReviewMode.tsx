@@ -38,17 +38,17 @@ interface ReviewModeProps {
 // ---------------------------------------------------------------------------
 
 const typeBadgeColors: Record<Section['type'], { bg: string; text: string }> = {
-  summary: { bg: '#dbeafe', text: '#1e40af' },
-  tasks: { bg: '#fef3c7', text: '#92400e' },
+  summary: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
+  tasks: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-fg)' },
   decisions: { bg: '#ede9fe', text: '#5b21b6' },
-  notes: { bg: '#f3f4f6', text: '#374151' },
-  custom: { bg: '#e0e7ff', text: '#3730a3' },
+  notes: { bg: 'var(--color-surface-hover)', text: 'var(--color-text-primary)' },
+  custom: { bg: 'var(--color-primary-bg)', text: '#3730a3' },
 };
 
 const statusConfig: Record<SectionReview['status'], { label: string; color: string; bg: string; icon: string }> = {
-  approved: { label: 'Approved', color: '#166534', bg: '#dcfce7', icon: '✓' },
-  reviewed: { label: 'Reviewed', color: '#374151', bg: '#f3f4f6', icon: '—' },
-  changes_requested: { label: 'Changes Requested', color: '#92400e', bg: '#fef3c7', icon: '!' },
+  approved: { label: 'Approved', color: 'var(--color-success-fg)', bg: '#dcfce7', icon: '✓' },
+  reviewed: { label: 'Reviewed', color: 'var(--color-text-primary)', bg: 'var(--color-surface-hover)', icon: '—' },
+  changes_requested: { label: 'Changes Requested', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)', icon: '!' },
 };
 
 // ---------------------------------------------------------------------------
@@ -178,9 +178,9 @@ export default function ReviewMode({
                 <div className={cn('mb-3')}>
                   {section.items.map((item) => {
                     const itemStatusColor =
-                      item.status === 'acked' ? '#16a34a' :
-                      item.status === 'rejected' ? '#dc2626' :
-                      item.status === 'done' ? '#6b7280' : '#94a3b8';
+                      item.status === 'acked' ? 'var(--color-success)' :
+                      item.status === 'rejected' ? 'var(--color-danger)' :
+                      item.status === 'done' ? 'var(--color-neutral)' : 'var(--color-text-tertiary)';
                     return (
                       <div key={item.id} className={cn('flex items-start gap-2 py-1.5 border-b border-border-subtle text-sm')}>
                         <span

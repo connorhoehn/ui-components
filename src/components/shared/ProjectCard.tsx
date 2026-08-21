@@ -19,16 +19,16 @@ export interface StatusColors {
 }
 
 const DEFAULT_STATUS_COLORS: Record<string, StatusColors> = {
-  active:      { bg: '#f0fdf4', border: '#86efac', text: '#166534', accent: '#16a34a' },
-  in_progress: { bg: '#eff6ff', border: '#93c5fd', text: '#1e40af', accent: '#3b82f6' },
-  completed:   { bg: '#f0fdf4', border: '#86efac', text: '#166534', accent: '#16a34a' },
-  archived:    { bg: '#f9fafb', border: '#d1d5db', text: '#6b7280', accent: '#9ca3af' },
+  active:      { bg: 'var(--color-success-bg)', border: '#86efac', text: 'var(--color-success-fg)', accent: 'var(--color-success)' },
+  in_progress: { bg: 'var(--color-info-bg)', border: 'var(--color-state-pending)', text: 'var(--color-info-fg)', accent: 'var(--color-info)' },
+  completed:   { bg: 'var(--color-success-bg)', border: '#86efac', text: 'var(--color-success-fg)', accent: 'var(--color-success)' },
+  archived:    { bg: 'var(--color-surface-inset)', border: 'var(--color-border-field)', text: 'var(--color-neutral)', accent: 'var(--color-text-tertiary)' },
   planning:    { bg: '#fefce8', border: '#fde047', text: '#713f12', accent: '#eab308' },
-  paused:      { bg: '#fff7ed', border: '#fdba74', text: '#9a3412', accent: '#f97316' },
+  paused:      { bg: 'var(--color-caution-bg)', border: '#fdba74', text: '#9a3412', accent: 'var(--color-caution)' },
 };
 
 const FALLBACK_COLORS: StatusColors = {
-  bg: '#f3f4f6', border: '#d1d5db', text: '#374151', accent: '#6b7280',
+  bg: 'var(--color-surface-hover)', border: 'var(--color-border-field)', text: 'var(--color-text-primary)', accent: 'var(--color-neutral)',
 };
 
 // ─── StatusChip ───────────────────────────────────────────────────────────────
@@ -85,8 +85,8 @@ export interface ProjectCardProps {
   /** Activity ticker items. */
   activityItems?: ActivityFeedItem[];
   /**
-   * Color of the presence dot in the footer (e.g. '#22c55e' for green).
-   * Default: '#d1d5db' (grey = unknown).
+   * Color of the presence dot in the footer (e.g. 'var(--color-success)' for green).
+   * Default: 'var(--color-border-field)' (grey = unknown).
    */
   presenceDotColor?: string;
   /** Human-readable "last active" label shown next to the presence dot. */
@@ -111,7 +111,7 @@ export function ProjectCard({
   contributorNames = [],
   contributorCount,
   activityItems = [],
-  presenceDotColor = '#d1d5db',
+  presenceDotColor = 'var(--color-border-field)',
   activityLabel = '',
   cardIndex = 0,
   onClick,
@@ -164,7 +164,7 @@ export function ProjectCard({
         const el = e.currentTarget as HTMLElement;
         el.style.boxShadow = 'none';
         el.style.transform = 'none';
-        el.style.borderColor = '#e5e7eb';
+        el.style.borderColor = 'var(--color-border)';
       }}
     >
       {/* Title + status chip */}
@@ -193,7 +193,7 @@ export function ProjectCard({
               style={{
                 fontSize: 10,
                 fontFamily: 'ui-monospace, "SFMono-Regular", Menlo, monospace',
-                color: '#9ca3af',
+                color: 'var(--color-text-tertiary)',
                 letterSpacing: '0.02em',
               }}
             >
@@ -222,12 +222,12 @@ export function ProjectCard({
           {contributorNames.length > 0 ? (
             <AvatarGroup names={contributorNames} maxVisible={5} size={24} />
           ) : (
-            <span style={{ fontSize: 12, color: '#9ca3af' }}>
-              <strong style={{ color: '#374151' }}>{contributorCount ?? 0}</strong> contributors
+            <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }}>
+              <strong style={{ color: 'var(--color-text-primary)' }}>{contributorCount ?? 0}</strong> contributors
             </span>
           )}
           {contributorNames.length > 0 && overflow > 0 && (
-            <span style={{ fontSize: 11, color: '#9ca3af' }}>+{overflow} more</span>
+            <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>+{overflow} more</span>
           )}
         </div>
 
@@ -242,7 +242,7 @@ export function ProjectCard({
                 flexShrink: 0,
               }}
             />
-            <span style={{ fontSize: 11, color: '#9ca3af', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', whiteSpace: 'nowrap' }}>
               {activityLabel}
             </span>
           </div>

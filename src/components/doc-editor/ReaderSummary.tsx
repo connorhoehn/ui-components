@@ -14,9 +14,9 @@ import { cn } from '../../lib/cn';
 // ---------------------------------------------------------------------------
 
 const STATUS_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  draft: { bg: '#fef3c7', text: '#92400e' },
-  review: { bg: '#dbeafe', text: '#1e40af' },
-  final: { bg: '#d1fae5', text: '#065f46' },
+  draft: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-fg)' },
+  review: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
+  final: { bg: 'var(--color-success-bg)', text: 'var(--color-success-fg)' },
 };
 
 // ---------------------------------------------------------------------------

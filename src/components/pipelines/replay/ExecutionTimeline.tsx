@@ -19,8 +19,8 @@ const nodeBarGap = 4;
 const statusColors: Record<string, string> = {
   completed: 'var(--color-state-completed)',
   failed: 'var(--color-state-failed)',
-  cancelled: '#64748b',
-  skipped: '#94a3b8',
+  cancelled: 'var(--color-neutral)',
+  skipped: 'var(--color-text-tertiary)',
   running: 'var(--color-state-running)',
 };
 
@@ -138,7 +138,7 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
                 top: track * (nodeBarHeight + nodeBarGap),
                 width: `${widthPercent}%`,
                 height: nodeBarHeight,
-                background: statusColors[step.status] || '#64748b',
+                background: statusColors[step.status] || 'var(--color-neutral)',
               }}
               onClick={() => onNodeClick?.(nodeId)}
               onMouseEnter={(e) => {

@@ -37,7 +37,7 @@ describe('getEventGlyph', () => {
     const g = getEventGlyph('unknown.event.type');
     expect(g.icon).toBe('•');
     expect(g.severity).toBe('neutral');
-    expect(g.color).toBe('#94a3b8');
+    expect(g.color).toBe('var(--color-text-tertiary)');
   });
 
   it('returns the same fallback shape for an empty type string', () => {

@@ -187,7 +187,7 @@ export function BigBrotherPanel({
                     <span className="w-6 shrink-0 text-center">{icon}</span>
                     <span className="flex-1 text-sm text-text-primary">
                       {event.displayName && (
-                        <span className="font-semibold mr-1" style={{ color: event.color ?? '#6366f1' }}>
+                        <span className="font-semibold mr-1" style={{ color: event.color ?? 'var(--color-primary)' }}>
                           {event.displayName}
                         </span>
                       )}

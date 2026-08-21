@@ -74,7 +74,7 @@ export interface PresenceAvatarsProps {
  */
 function resolveDotColor(user: PresenceUser): string | null {
   if (user.idle === true) return '#f59e0b';     // amber
-  if (user.online === false) return '#94a3b8';  // slate
+  if (user.online === false) return 'var(--color-text-tertiary)';  // slate
   if (user.online === true) return '#22c55e';   // green
   return null; // `online` undefined and !idle → no dot rendered
 }

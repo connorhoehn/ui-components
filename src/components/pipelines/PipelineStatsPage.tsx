@@ -213,9 +213,9 @@ function aggregate(runs: PipelineRun[], models: Map<string, string>): Stats {
 // ---------------------------------------------------------------------------
 
 function successRateColor(pct: number): string {
-  if (pct >= 90) return '#16a34a';
-  if (pct >= 70) return '#f59e0b';
-  return '#dc2626';
+  if (pct >= 90) return 'var(--color-success)';
+  if (pct >= 70) return 'var(--color-warning)';
+  return 'var(--color-danger)';
 }
 
 // ---------------------------------------------------------------------------
@@ -244,9 +244,9 @@ function buildRunsOverTime(runs: PipelineRun[]): LineSeries[] {
   }
 
   return [
-    { label: 'Completed', data: completed, color: '#16a34a' },
-    { label: 'Failed', data: failed, color: '#dc2626' },
-    { label: 'Cancelled', data: cancelled, color: '#d1d5db' },
+    { label: 'Completed', data: completed, color: 'var(--color-success)' },
+    { label: 'Failed', data: failed, color: 'var(--color-danger)' },
+    { label: 'Cancelled', data: cancelled, color: 'var(--color-border-field)' },
   ];
 }
 
@@ -259,8 +259,8 @@ function buildDurationSeries(runs: PipelineRun[], p50: number): LineSeries[] {
   const p50Line = points.map((p) => ({ x: p.x, y: p50 }));
 
   return [
-    { label: 'Duration (ms)', data: points, color: '#646cff' },
-    { label: 'p50', data: p50Line, color: '#94a3b8' },
+    { label: 'Duration (ms)', data: points, color: 'var(--color-primary)' },
+    { label: 'p50', data: p50Line, color: 'var(--color-text-tertiary)' },
   ];
 }
 
@@ -276,8 +276,8 @@ function buildTokenSeries(runs: PipelineRun[]): LineSeries[] {
     tout.push({ x: t, y: tokensOut });
   }
   return [
-    { label: 'Tokens in', data: tin, color: '#646cff' },
-    { label: 'Tokens out', data: tout, color: '#16a34a' },
+    { label: 'Tokens in', data: tin, color: 'var(--color-primary)' },
+    { label: 'Tokens out', data: tout, color: 'var(--color-success)' },
   ];
 }
 
@@ -321,7 +321,7 @@ export default function PipelineStatsPage() {
       {
         label: 'Daily spend',
         data: trendPoints.map((p) => ({ x: p.ts, y: p.totalCostUsd })),
-        color: '#646cff',
+        color: 'var(--color-primary)',
       },
     ],
     [trendPoints],

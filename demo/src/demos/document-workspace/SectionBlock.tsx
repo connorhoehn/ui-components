@@ -25,7 +25,7 @@ const headerStyle: CSSProperties = {
   alignItems: 'center',
   gap: 8,
   padding: '8px 12px',
-  background: '#f8fafc',
+  background: 'var(--color-surface-panel)',
   borderBottom: '1px solid #e2e8f0',
   cursor: 'pointer',
   userSelect: 'none',
@@ -33,7 +33,7 @@ const headerStyle: CSSProperties = {
 
 const chevronStyle: CSSProperties = {
   fontSize: 12,
-  color: '#64748b',
+  color: 'var(--color-neutral)',
   width: 16,
   textAlign: 'center',
 };
@@ -52,7 +52,7 @@ const commentIconStyle: CSSProperties = {
   borderRadius: 4,
   border: 'none',
   background: 'transparent',
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
 };
 
 const toolbarStyle: CSSProperties = {
@@ -70,7 +70,7 @@ const toolbarBtnStyle: CSSProperties = {
   border: '1px solid #cbd5e1',
   borderRadius: 4,
   background: '#fff',
-  color: '#475569',
+  color: 'var(--color-text-secondary)',
   cursor: 'pointer',
   fontFamily: 'monospace',
   lineHeight: 1,
@@ -86,14 +86,14 @@ const contentAreaStyle: CSSProperties = {
 };
 
 const placeholderStyle: CSSProperties = {
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   fontStyle: 'italic',
 };
 
 const tasksStyle: CSSProperties = {
   padding: '4px 12px 8px 12px',
   fontSize: 13,
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   fontStyle: 'italic',
 };
 
@@ -103,7 +103,7 @@ const addItemStyle: CSSProperties = {
   border: '1px dashed #cbd5e1',
   borderRadius: 6,
   background: 'transparent',
-  color: '#64748b',
+  color: 'var(--color-neutral)',
   fontSize: 13,
   cursor: 'pointer',
   width: 'calc(100% - 24px)',
@@ -126,8 +126,8 @@ export function SectionBlock({
     ? localContent + remoteText
     : localContent;
 
-  const badgeBg = type === 'notes' ? '#f3f4f6' : '#e0e7ff';
-  const badgeColor = typeBadgeColors[type] || '#6b7280';
+  const badgeBg = type === 'notes' ? 'var(--color-surface-hover)' : 'var(--color-primary-bg)';
+  const badgeColor = typeBadgeColors[type] || 'var(--color-neutral)';
 
   const typeBadgeStyle: CSSProperties = {
     fontSize: 11,

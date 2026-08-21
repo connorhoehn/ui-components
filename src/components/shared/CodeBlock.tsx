@@ -82,13 +82,13 @@ interface Palette {
 }
 
 const DARK: Palette = {
-  comment: '#6b7280', string: '#4ade80', keyword: '#93c5fd', number: '#fbbf24',
+  comment: 'var(--color-neutral)', string: '#4ade80', keyword: 'var(--color-state-pending)', number: '#fbbf24',
   property: '#7dd3fc', builtin: '#c4b5fd', variable: '#fbbf24',
 };
 
 const LIGHT: Palette = {
-  comment: '#64748b', string: '#15803d', keyword: '#1d4ed8', number: '#a16207',
-  property: '#0369a1', builtin: '#7c3aed', variable: '#a16207',
+  comment: 'var(--color-neutral)', string: '#15803d', keyword: 'var(--color-info-fg)', number: '#a16207',
+  property: '#0369a1', builtin: 'var(--color-cat-ai)', variable: '#a16207',
 };
 
 function highlight(code: string, language: CodeBlockLanguage, theme: CodeBlockTheme): string {

@@ -26,12 +26,12 @@ export interface ErrorOverlayProps {
 // ---------------------------------------------------------------------------
 
 const CATEGORY_COLORS: Record<ErrorCategory, { bg: string; fg: string }> = {
-  LLMError:         { bg: '#fef2f2', fg: '#dc2626' },
-  TimeoutError:     { bg: '#fff7ed', fg: '#ea580c' },
-  NetworkError:     { bg: '#fffbeb', fg: '#d97706' },
-  ValidationError:  { bg: '#fefce8', fg: '#ca8a04' },
-  RegistryConflict: { bg: '#faf5ff', fg: '#9333ea' },
-  UnknownError:     { bg: '#f1f5f9', fg: '#475569' },
+  LLMError:         { bg: 'var(--color-danger-bg)', fg: 'var(--color-danger)' },
+  TimeoutError:     { bg: 'var(--color-caution-bg)', fg: 'var(--color-caution)' },
+  NetworkError:     { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning)' },
+  ValidationError:  { bg: '#fefce8', fg: 'var(--color-warning)' },
+  RegistryConflict: { bg: 'var(--color-accent-bg)', fg: 'var(--color-accent)' },
+  UnknownError:     { bg: 'var(--color-surface-hover)', fg: 'var(--color-text-secondary)' },
 };
 
 function categoryLabel(cat: ErrorCategory): string {

@@ -67,7 +67,7 @@ describe('Chart', () => {
       expect(lines).toHaveLength(1);
       expect(lines[0]).toHaveAttribute('data-key', 'cpu');
       // First color in MULTI_SERIES_PALETTE.
-      expect(lines[0]).toHaveAttribute('data-color', '#646cff');
+      expect(lines[0]).toHaveAttribute('data-color', 'var(--color-primary)');
     });
 
     it('renders multiple series, cycling through the default palette', () => {
@@ -82,9 +82,9 @@ describe('Chart', () => {
       );
       const lines = container.querySelectorAll('[data-series="line"]');
       expect(lines).toHaveLength(3);
-      expect(lines[0]).toHaveAttribute('data-color', '#646cff');
-      expect(lines[1]).toHaveAttribute('data-color', '#16a34a');
-      expect(lines[2]).toHaveAttribute('data-color', '#f59e0b');
+      expect(lines[0]).toHaveAttribute('data-color', 'var(--color-primary)');
+      expect(lines[1]).toHaveAttribute('data-color', 'var(--color-success)');
+      expect(lines[2]).toHaveAttribute('data-color', 'var(--color-warning)');
     });
 
     it('honors a per-series color override', () => {
@@ -155,7 +155,7 @@ describe('Chart', () => {
       const areas = container.querySelectorAll('[data-series="area"]');
       expect(areas).toHaveLength(2);
       expect(areas[0]).toHaveAttribute('data-key', 'in');
-      expect(areas[0]).toHaveAttribute('data-color', '#646cff');
+      expect(areas[0]).toHaveAttribute('data-color', 'var(--color-primary)');
       expect(areas[1]).toHaveAttribute('data-key', 'out');
       expect(areas[1]).toHaveAttribute('data-color', '#123456');
     });
@@ -172,7 +172,7 @@ describe('Chart', () => {
       );
       const bar = container.querySelector('[data-series="bar"]');
       expect(bar).toHaveAttribute('data-key', 'count');
-      expect(bar).toHaveAttribute('data-color', '#646cff');
+      expect(bar).toHaveAttribute('data-color', 'var(--color-primary)');
       const xAxis = container.querySelector('[data-axis="x"]');
       expect(xAxis).toHaveAttribute('data-key', 'name');
     });

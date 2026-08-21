@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.65.0] — 2026-08-21
+
+The theming audit reaches JS constants: hex strings in color maps, chart
+palettes and SVG strokes now resolve through the token system.
+
+### Fixed
+
+- **`StepTimeline` carried a second 40-entry node-type palette** that
+  disagreed with the canvas (llm was blue in the timeline, violet on the
+  canvas — the banned second-`Record` failure). It now colors bars by the
+  same category channel the canvas uses (`--color-cat-*` via
+  `NODE_CATEGORIES`), and its legend lists the six categories.
+
+### Changed
+
+- **~430 JS-constant hexes converted to `var(--color-*)` strings** across
+  status maps (`ReviewMode`, `DocumentListPage`, `ChunkViewer`,
+  `NetworkQualityBadge`, `PipelineMetrics` cost/latency thresholds…), chart
+  palettes (`Chart`'s series palette, axis/grid strokes, tooltip chrome)
+  and SVG strokes (`AnimatedEdge`, `AgentFlowCanvas`). CSS vars resolve in
+  inline styles and SVG attributes, so these now re-tone with the theme.
+- **User-distinguishing colors deliberately stay hex data**: `Avatar`'s
+  palette, awareness/presence fixtures, collaboration-sim users, and code
+  samples that teach passing a user color. The mechanical pass initially
+  converted 35+ of these; the visual suite caught a corrupted ThemingPage
+  doc sample and all were reverted from git history. Hexes that are *data*
+  (manipulated as strings, sent over the wire, hash-picked per user) must
+  not become var strings — there is no automated guard for this
+  distinction, so it lives here and in CLAUDE.md.
+- 23 unit-test assertions updated from pinned hexes to the var strings.
+
 ## [2.64.0] — 2026-08-21
 
 **Hex burn-down complete, same day the ratchet was created.** The 844

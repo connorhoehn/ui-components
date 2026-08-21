@@ -32,7 +32,7 @@ const row2Style: CSSProperties = {
 
 const backLinkStyle: CSSProperties = {
   fontSize: 13,
-  color: '#3b82f6',
+  color: 'var(--color-info)',
   cursor: 'pointer',
   textDecoration: 'none',
   fontWeight: 500,
@@ -41,7 +41,7 @@ const backLinkStyle: CSSProperties = {
 const titleStyle: CSSProperties = {
   fontSize: 18,
   fontWeight: 600,
-  color: '#0f172a',
+  color: 'var(--color-text-primary)',
   margin: 0,
 };
 
@@ -51,14 +51,14 @@ const statusBadgeStyle: CSSProperties = {
   padding: '2px 8px',
   borderRadius: 4,
   background: '#dcfce7',
-  color: '#166534',
+  color: 'var(--color-success-fg)',
   textTransform: 'uppercase',
   letterSpacing: 0.5,
 };
 
 const autoSavedStyle: CSSProperties = {
   fontSize: 12,
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   marginLeft: 8,
 };
 
@@ -66,7 +66,7 @@ const modeTabContainerStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 0,
-  background: '#f1f5f9',
+  background: 'var(--color-surface-hover)',
   borderRadius: 16,
   padding: 2,
 };
@@ -84,7 +84,7 @@ const actionButtonStyle: CSSProperties = {
 
 const finalizeButtonStyle: CSSProperties = {
   ...actionButtonStyle,
-  background: '#3b82f6',
+  background: 'var(--color-info)',
   color: '#fff',
   border: '1px solid #3b82f6',
 };
@@ -116,8 +116,8 @@ export function DocumentHeader({
               padding: '4px 14px',
               borderRadius: 16,
               border: 'none',
-              background: isActive ? '#3b82f6' : 'transparent',
-              color: isActive ? '#fff' : '#64748b',
+              background: isActive ? 'var(--color-info)' : 'transparent',
+              color: isActive ? '#fff' : 'var(--color-neutral)',
               cursor: 'pointer',
               transition: 'all 0.15s',
             };

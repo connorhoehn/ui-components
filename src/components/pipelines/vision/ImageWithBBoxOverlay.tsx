@@ -12,7 +12,7 @@ import type { VisionObject, VisionPerson, VisionResult } from './types';
  */
 const BBOX_PALETTE = {
   people: { stroke: '#4f46e5', fill: 'rgba(79,70,229,0.10)', text: 'bg-primary text-white' },
-  object: { stroke: '#d97706', fill: 'rgba(217,119,6,0.10)', text: 'bg-warning text-white' },
+  object: { stroke: 'var(--color-warning)', fill: 'rgba(217,119,6,0.10)', text: 'bg-warning text-white' },
 } as const;
 
 export interface ImageWithBBoxOverlayProps {

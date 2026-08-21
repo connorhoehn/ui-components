@@ -16,16 +16,16 @@ import { cn } from '../../lib/cn';
 // ---------------------------------------------------------------------------
 
 const STATUS_COLORS = {
-  pending: '#f59e0b',
-  done: '#10b981',
-  acked: '#10b981',
-  rejected: '#ef4444',
+  pending: 'var(--color-warning)',
+  done: 'var(--color-success)',
+  acked: 'var(--color-success)',
+  rejected: 'var(--color-danger)',
 } as const;
 
 const PRIORITY_COLORS = {
-  high: '#ef4444',
-  medium: '#f59e0b',
-  low: '#6b7280',
+  high: 'var(--color-danger)',
+  medium: 'var(--color-warning)',
+  low: 'var(--color-neutral)',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -269,11 +269,11 @@ export function SectionSummariesCard({
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const TYPE_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-    summary: { bg: '#e0e7ff', text: '#4338ca' },
-    tasks: { bg: '#dbeafe', text: '#1e40af' },
+    summary: { bg: 'var(--color-primary-bg)', text: '#4338ca' },
+    tasks: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
     decisions: { bg: '#fce7f3', text: '#9d174d' },
-    notes: { bg: '#f0fdf4', text: '#166534' },
-    custom: { bg: '#f3f4f6', text: '#6b7280' },
+    notes: { bg: 'var(--color-success-bg)', text: 'var(--color-success-fg)' },
+    custom: { bg: 'var(--color-surface-hover)', text: 'var(--color-neutral)' },
   };
 
   return (

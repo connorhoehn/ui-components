@@ -42,7 +42,7 @@ const headerTitleStyle: CSSProperties = {
 
 const closeBtnStyle: CSSProperties = {
   fontSize: 18,
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   cursor: 'pointer',
   border: 'none',
   background: 'transparent',
@@ -55,7 +55,7 @@ const sectionLabelStyle: CSSProperties = {
   padding: '12px 16px 8px 16px',
   fontSize: 13,
   fontWeight: 500,
-  color: '#475569',
+  color: 'var(--color-text-secondary)',
   display: 'flex',
   alignItems: 'center',
   gap: 6,
@@ -87,7 +87,7 @@ const postBtnStyle: CSSProperties = {
   fontWeight: 500,
   borderRadius: 6,
   border: 'none',
-  background: '#3b82f6',
+  background: 'var(--color-info)',
   color: '#fff',
   cursor: 'pointer',
 };
@@ -95,7 +95,7 @@ const postBtnStyle: CSSProperties = {
 const emptyStateStyle: CSSProperties = {
   padding: '24px 16px',
   fontSize: 13,
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   textAlign: 'center',
   fontStyle: 'italic',
 };
@@ -120,7 +120,7 @@ const commentAuthorStyle: CSSProperties = {
 
 const commentTextStyle: CSSProperties = {
   fontSize: 13,
-  color: '#475569',
+  color: 'var(--color-text-secondary)',
   lineHeight: 1.4,
 };
 

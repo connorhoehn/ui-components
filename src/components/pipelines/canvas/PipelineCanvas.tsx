@@ -514,15 +514,15 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
     switch (state) {
       case 'running':
       case 'pending':
-        return '#2563eb';
+        return 'var(--color-info)';
       case 'completed':
-        return '#16a34a';
+        return 'var(--color-success)';
       case 'failed':
-        return '#dc2626';
+        return 'var(--color-danger)';
       case 'awaiting':
-        return '#f59e0b';
+        return 'var(--color-warning)';
       default:
-        return '#94a3b8';
+        return 'var(--color-text-tertiary)';
     }
   }, []);
 

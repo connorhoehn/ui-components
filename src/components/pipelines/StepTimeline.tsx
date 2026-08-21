@@ -14,6 +14,7 @@ import type { NodeType, PipelineRun, StepExecution } from '../../types/pipeline'
 import { cn } from '../../lib/cn';
 import Chip from '../shared/Chip';
 import { formatDuration } from './utils/formatTime';
+import { categoryFor } from './nodes/categories';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -30,88 +31,27 @@ export interface StepTimelineProps {
 }
 
 // ---------------------------------------------------------------------------
-// Color mapping: node type -> bar color
+// Color mapping: node type -> category channel
 // ---------------------------------------------------------------------------
+//
+// The timeline colors bars by the SAME category channel the canvas uses
+// (--color-cat-*, via NODE_CATEGORIES) — it used to carry its own 40-entry
+// Record<NodeType, string> hex palette, which disagreed with the canvas
+// (llm was blue here, violet there). Second palettes are banned; see the
+// tone-scale rules in CLAUDE.md.
 
-const NODE_TYPE_COLORS: Record<NodeType, string> = {
-  trigger:          '#6b7280',
-  llm:              '#2563eb',
-  transform:        '#16a34a',
-  condition:        '#ca8a04',
-  action:           '#7c3aed',
-  fork:             '#6b7280',
-  join:             '#6b7280',
-  approval:         '#ea580c',
-  agent:            '#0891b2',
-  'mcp-tool':       '#7c3aed',
-  'knowledge-base': '#0d9488',
-  'graph-query':    '#4f46e5',
-  memory:           '#0369a1',
-  guardrail:        '#dc2626',
-  policy:           '#b45309',
-  'ag-ui-output':   '#6366f1',
-  'image-source':           '#6b7280',
-  'image:save':             '#0369a1',
-  scatter:                  '#ca8a04',
-  'image:resize':           '#0369a1',
-  'image:transform':        '#0369a1',
-  'image:format-convert':   '#0369a1',
-  'image:sharpen':          '#0369a1',
-  'image:watermark':        '#0369a1',
-  'image:crop':             '#059669',
-  'image:adjust-bw':        '#374151',
-  'image:adjust-layer':     '#4f46e5',
-  'image:dimensions':       '#0369a1',
-  'image:upscale':          '#b45309',
-  'image:vision-analyze':   '#7c3aed',
-  'image:vision-classify':  '#7c3aed',
-  'image:vision-describe':  '#7c3aed',
-  'image:vision-tag':       '#7c3aed',
-  'image:vision-extract-text': '#7c3aed',
-  'image:generate':         '#b45309',
-  'image:variation':        '#b45309',
-  'image:edit-prompt':      '#b45309',
-};
+function barColorFor(nodeType: string): string {
+  const cat = categoryFor(nodeType);
+  return cat ? `var(--color-cat-${cat})` : 'var(--color-neutral)';
+}
 
-const NODE_TYPE_COLORS_LIGHT: Record<NodeType, string> = {
-  trigger:          '#d1d5db',
-  llm:              '#93c5fd',
-  transform:        '#86efac',
-  condition:        '#fde047',
-  action:           '#c4b5fd',
-  fork:             '#d1d5db',
-  join:             '#d1d5db',
-  approval:         '#fdba74',
-  agent:            '#a5f3fc',
-  'mcp-tool':       '#c4b5fd',
-  'knowledge-base': '#99f6e4',
-  'graph-query':    '#a5b4fc',
-  memory:           '#bae6fd',
-  guardrail:        '#fecaca',
-  policy:           '#fde68a',
-  'ag-ui-output':   '#c7d2fe',
-  'image-source':           '#d1d5db',
-  'image:save':             '#bae6fd',
-  scatter:                  '#fde047',
-  'image:resize':           '#bae6fd',
-  'image:transform':        '#bae6fd',
-  'image:format-convert':   '#bae6fd',
-  'image:sharpen':          '#bae6fd',
-  'image:watermark':        '#bae6fd',
-  'image:crop':             '#a7f3d0',
-  'image:adjust-bw':        '#d1d5db',
-  'image:adjust-layer':     '#c7d2fe',
-  'image:dimensions':       '#bae6fd',
-  'image:upscale':          '#fde68a',
-  'image:vision-analyze':   '#e9d5ff',
-  'image:vision-classify':  '#e9d5ff',
-  'image:vision-describe':  '#e9d5ff',
-  'image:vision-tag':       '#e9d5ff',
-  'image:vision-extract-text': '#e9d5ff',
-  'image:generate':         '#fde68a',
-  'image:variation':        '#fde68a',
-  'image:edit-prompt':      '#fde68a',
-};
+/** Soft variant of the category color, for the first-token wait segment. */
+function lightColorFor(nodeType: string): string {
+  const cat = categoryFor(nodeType);
+  return cat
+    ? `color-mix(in srgb, var(--color-cat-${cat}) 25%, white)`
+    : 'var(--color-state-idle)';
+}
 
 // ---------------------------------------------------------------------------
 // Parsed step data
@@ -247,8 +187,8 @@ export default function StepTimeline({
       {steps.map((step) => {
         const offsetPct = ((step.startMs - runStartMs) / totalDurationMs) * 100;
         const widthPct = Math.max(0.5, (step.durationMs / totalDurationMs) * 100);
-        const barColor = NODE_TYPE_COLORS[step.nodeType];
-        const lightColor = NODE_TYPE_COLORS_LIGHT[step.nodeType];
+        const barColor = barColorFor(step.nodeType);
+        const lightColor = lightColorFor(step.nodeType);
         const isHovered = hoveredStep === step.stepId;
 
         let waitWidthPct = 0;
@@ -355,24 +295,29 @@ export default function StepTimeline({
       {/* Legend */}
       <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-2.5 pt-2 border-t border-border">
         {(
-          ['trigger', 'llm', 'transform', 'condition', 'action', 'approval'] as NodeType[]
-        ).map((t) => (
-          <div key={t} className="flex items-center gap-1">
+          [
+            ['source', 'Source'],
+            ['transform', 'Transform'],
+            ['ai', 'AI'],
+            ['control', 'Control'],
+            ['sink', 'Sink'],
+            ['human', 'Human'],
+          ] as const
+        ).map(([cat, label]) => (
+          <div key={cat} className="flex items-center gap-1">
             <div
               className="w-2.5 h-2.5 rounded-sm"
-              style={{ background: NODE_TYPE_COLORS[t] }}
+              style={{ background: `var(--color-cat-${cat})` }}
             />
-            <span className="text-[10px] text-text-secondary">
-              {nodeTypeLabel(t)}
-            </span>
+            <span className="text-[10px] text-text-secondary">{label}</span>
           </div>
         ))}
         <div className="flex items-center gap-1">
           <div
             className="w-2.5 h-2.5 rounded-sm"
             style={{
-              background: NODE_TYPE_COLORS_LIGHT.llm,
-              border: `1px solid ${NODE_TYPE_COLORS.llm}`,
+              background: lightColorFor('llm'),
+              border: `1px solid ${barColorFor('llm')}`,
             }}
           />
           <span className="text-[10px] text-text-secondary">

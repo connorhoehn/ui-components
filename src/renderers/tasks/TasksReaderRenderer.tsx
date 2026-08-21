@@ -10,16 +10,16 @@ import type { TaskItem } from '../../types/document';
 import type { SectionRendererProps } from '../types';
 
 const STATUS_META: Record<TaskItem['status'], { label: string; color: string; bg: string }> = {
-  pending: { label: 'Pending', color: '#92400e', bg: '#fef3c7' },
-  acked:   { label: 'Acked',   color: '#1e40af', bg: '#dbeafe' },
-  done:    { label: 'Done',    color: '#065f46', bg: '#d1fae5' },
-  rejected:{ label: 'Rejected',color: '#991b1b', bg: '#fee2e2' },
+  pending: { label: 'Pending', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
+  acked:   { label: 'Acked',   color: 'var(--color-info-fg)', bg: 'var(--color-info-bg)' },
+  done:    { label: 'Done',    color: 'var(--color-success-fg)', bg: 'var(--color-success-bg)' },
+  rejected:{ label: 'Rejected',color: 'var(--color-danger-fg)', bg: 'var(--color-danger-bg)' },
 };
 
 const PRIORITY_COLORS: Record<TaskItem['priority'], string> = {
-  high:   '#ef4444',
-  medium: '#f97316',
-  low:    '#94a3b8',
+  high:   'var(--color-danger)',
+  medium: 'var(--color-caution)',
+  low:    'var(--color-text-tertiary)',
 };
 
 function isOverdue(iso: string): boolean {
@@ -122,8 +122,8 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
           fontWeight: 600,
           padding: '1px 6px',
           borderRadius: 10,
-          background: overdue ? '#fef2f2' : '#f0f9ff',
-          color: overdue ? '#dc2626' : '#64748b',
+          background: overdue ? 'var(--color-danger-bg)' : '#f0f9ff',
+          color: overdue ? 'var(--color-danger)' : 'var(--color-neutral)',
           border: overdue ? '1px solid #fecaca' : '1px solid #e0f2fe',
           whiteSpace: 'nowrap',
           flexShrink: 0,

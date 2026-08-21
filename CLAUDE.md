@@ -357,6 +357,16 @@ Seven tones — `neutral`, `success`, `warning`, `danger`, `info`, `caution`,
    `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`, `TONE_BG`), or the token
    classes directly (`bg-success-bg text-success-fg ring-primary`).
 
+   **Hex strings in JS constants** (status maps, chart palettes, SVG
+   strokes) resolve through `var(--color-*)` strings as of v2.65.0 — CSS
+   vars work in inline styles and SVG attributes. The exception is
+   **user-distinguishing color data** (Avatar's palette, awareness/presence
+   user colors, simulation fixtures, doc samples teaching a color prop):
+   those are data, often string-manipulated or sent over the wire, and MUST
+   stay literal hexes — never convert them, and never pass a var string
+   where code appends alpha or darkens the hex. ~214 such data hexes remain
+   by design; no guard can make this distinction automatically.
+
    **Arbitrary-value hexes (`bg-[#2563eb]`) are guarded too** — the tones
    test can't see them, so `npm run lint:hex-colors` covers them with
    **zero tolerance** (the ~950-occurrence debt was burned down completely

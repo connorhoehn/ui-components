@@ -97,9 +97,9 @@ function EdgePath({ edge, fromStatus, toStatus }: {
   const isFlowing = fromStatus === 'completed' && (toStatus === 'running' || toStatus === 'completed');
   const isActive = fromStatus === 'running' || toStatus === 'running';
 
-  let strokeColor = '#cbd5e1';
-  if (isFlowing) strokeColor = '#3b82f6';
-  else if (fromStatus === 'completed' && toStatus === 'completed') strokeColor = '#10b981';
+  let strokeColor = 'var(--color-border-emphasis)';
+  if (isFlowing) strokeColor = 'var(--color-info)';
+  else if (fromStatus === 'completed' && toStatus === 'completed') strokeColor = 'var(--color-success)';
 
   return (
     <g>

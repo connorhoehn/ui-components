@@ -59,7 +59,7 @@ export function ChannelHeader({
           {online !== undefined && (
             <span className="absolute -bottom-0.5 -right-0.5">
               <StatusDot
-                color={online ? '#22c55e' : '#94a3b8'}
+                color={online ? 'var(--color-success)' : 'var(--color-text-tertiary)'}
                 size="sm"
                 aria-label={online ? 'Online' : 'Offline'}
               />

@@ -99,16 +99,16 @@ function TaskRow({
   onDismiss: () => void;
 }) {
   const dotColors: Record<string, string> = {
-    high: '#ef4444',
-    medium: '#f59e0b',
-    low: '#22c55e',
+    high: 'var(--color-danger)',
+    medium: 'var(--color-warning)',
+    low: 'var(--color-success)',
   };
 
   const badgeColors: Record<string, { bg: string; text: string }> = {
-    pending: { bg: '#fef3c7', text: '#92400e' },
-    acked: { bg: '#dbeafe', text: '#1e40af' },
-    done: { bg: '#d1fae5', text: '#065f46' },
-    rejected: { bg: '#fee2e2', text: '#991b1b' },
+    pending: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-fg)' },
+    acked: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
+    done: { bg: 'var(--color-success-bg)', text: 'var(--color-success-fg)' },
+    rejected: { bg: 'var(--color-danger-bg)', text: 'var(--color-danger-fg)' },
   };
 
   const bc = badgeColors[item.status] ?? badgeColors.pending;
@@ -120,7 +120,7 @@ function TaskRow({
     >
       <div
         className={cn('w-2 h-2 rounded-full shrink-0 mt-1')}
-        style={{ background: dotColors[item.priority] ?? '#94a3b8' }}
+        style={{ background: dotColors[item.priority] ?? 'var(--color-text-tertiary)' }}
       />
       <div className={cn('flex-1 min-w-0')}>
         <div className={cn('text-[13px] text-text-primary overflow-hidden text-ellipsis whitespace-nowrap')}>

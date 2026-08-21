@@ -56,15 +56,15 @@ function formatDate(iso: string): string {
 }
 
 function progressColor(pct: number): string {
-  if (pct >= 75) return '#10b981';
-  if (pct >= 25) return '#f59e0b';
-  return '#ef4444';
+  if (pct >= 75) return 'var(--color-success)';
+  if (pct >= 25) return 'var(--color-warning)';
+  return 'var(--color-danger)';
 }
 
 const MODE_DOT_COLORS: Record<string, string> = {
-  editor: '#10b981',
-  reviewer: '#f59e0b',
-  reader: '#94a3b8',
+  editor: 'var(--color-success)',
+  reviewer: 'var(--color-warning)',
+  reader: 'var(--color-text-tertiary)',
 };
 
 const MODE_LABELS: Record<string, string> = {
@@ -182,7 +182,7 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
               {c.isOnline && (
                 <div
                   className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white')}
-                  style={{ background: MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8' }}
+                  style={{ background: MODE_DOT_COLORS[c.mode ?? 'reader'] ?? 'var(--color-text-tertiary)' }}
                 />
               )}
             </div>
@@ -195,7 +195,7 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
           <div key={`detail-${c.name}-${i}`} className={cn('flex items-center gap-2 text-[13px]')}>
             <span
               className={cn('w-2 h-2 rounded-full shrink-0')}
-              style={{ background: c.isOnline ? (MODE_DOT_COLORS[c.mode ?? 'reader'] ?? '#94a3b8') : '#d1d5db' }}
+              style={{ background: c.isOnline ? (MODE_DOT_COLORS[c.mode ?? 'reader'] ?? 'var(--color-text-tertiary)') : 'var(--color-border-field)' }}
             />
             <span className={cn('font-medium text-text-primary flex-1')}>
               {c.name}

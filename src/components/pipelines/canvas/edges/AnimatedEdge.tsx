@@ -53,18 +53,18 @@ function strokeFor(state: EdgeState | undefined): StrokeSpec {
   switch (state) {
     case 'active':
       return {
-        stroke: '#2563eb',
+        stroke: 'var(--color-info)',
         strokeWidth: 2,
         strokeDasharray: '6 4',
         animate: true,
       };
     case 'traversed-success':
-      return { stroke: '#16a34a', strokeWidth: 2 };
+      return { stroke: 'var(--color-success)', strokeWidth: 2 };
     case 'traversed-failure':
-      return { stroke: '#dc2626', strokeWidth: 2 };
+      return { stroke: 'var(--color-danger)', strokeWidth: 2 };
     case 'default':
     default:
-      return { stroke: '#cbd5e1', strokeWidth: 1.5 };
+      return { stroke: 'var(--color-border-emphasis)', strokeWidth: 1.5 };
   }
 }
 
@@ -120,7 +120,7 @@ export default function AnimatedEdge({
 
   // When the edge is selected (clicked), show a highlight so the user knows
   // they can press Delete/Backspace to remove it.
-  const strokeColor = selected ? '#646cff' : baseStroke;
+  const strokeColor = selected ? 'var(--color-primary)' : baseStroke;
   const strokeWidth = selected ? Math.max(2.5, baseWidth) : baseWidth;
 
   // Active image edges get a traveling "packet" dot on top of the dash

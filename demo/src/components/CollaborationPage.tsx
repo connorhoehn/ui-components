@@ -359,9 +359,9 @@ const cursors = new Map([
               { x: 130, y: 80, color: '#ec4899', size: 5 },
               { x: 125, y: 85, color: '#ec4899', size: 5 },
               { x: 135, y: 75, color: '#ec4899', size: 5 },
-              { x: 295, y: 125, color: '#10b981', size: 2 },
-              { x: 290, y: 130, color: '#10b981', size: 2 },
-              { x: 305, y: 118, color: '#10b981', size: 2 },
+              { x: 295, y: 125, color: 'var(--color-success)', size: 2 },
+              { x: 290, y: 130, color: 'var(--color-success)', size: 2 },
+              { x: 305, y: 118, color: 'var(--color-success)', size: 2 },
             ].map((dot, i) => (
               <div
                 key={i}

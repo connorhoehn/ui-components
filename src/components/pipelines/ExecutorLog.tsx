@@ -51,12 +51,12 @@ export interface ExecutorLogProps {
 // Marker color table — see hub#2225 task description.
 // ---------------------------------------------------------------------------
 
-const COLOR_BLUE = '#3b82f6';
+const COLOR_BLUE = 'var(--color-info)';
 const COLOR_YELLOW = '#eab308';
-const COLOR_ORANGE = '#f97316';
-const COLOR_GRAY = '#64748b';
-const COLOR_RED = '#ef4444';
-const COLOR_PURPLE = '#a855f7';
+const COLOR_ORANGE = 'var(--color-caution)';
+const COLOR_GRAY = 'var(--color-neutral)';
+const COLOR_RED = 'var(--color-danger)';
+const COLOR_PURPLE = 'var(--color-accent)';
 
 function markerColor(row: AuditRow): string {
   // Error/failure paths win regardless of action namespace.

@@ -82,9 +82,9 @@ describe('AgentFlowCanvas', () => {
       />,
     );
     const styles = Object.fromEntries(capturedNodes.map((n) => [n.id, n.style]));
-    expect(styles.h.background).toBe('#f0fdf4');
-    expect(styles.d.background).toBe('#fffbeb');
-    expect(styles.o.background).toBe('#fef2f2');
+    expect(styles.h.background).toBe('var(--color-success-bg)');
+    expect(styles.d.background).toBe('var(--color-warning-bg)');
+    expect(styles.o.background).toBe('var(--color-danger-bg)');
   });
 
   it('filters out edges referencing unknown agents', () => {
@@ -112,7 +112,7 @@ describe('AgentFlowCanvas', () => {
     const e = capturedEdges[0];
     expect(e.animated).toBe(true);
     expect(e.label).toBe('A2A');
-    expect(e.style.stroke).toBe('#3b82f6');
+    expect(e.style.stroke).toBe('var(--color-info)');
   });
 
   it('direct-source edges are not animated, gray, no label', () => {
@@ -125,7 +125,7 @@ describe('AgentFlowCanvas', () => {
     const e = capturedEdges[0];
     expect(e.animated).toBe(false);
     expect(e.label).toBeUndefined();
-    expect(e.style.stroke).toBe('#94a3b8');
+    expect(e.style.stroke).toBe('var(--color-text-tertiary)');
   });
 
   it('onAgentClick fires with the clicked node id', () => {

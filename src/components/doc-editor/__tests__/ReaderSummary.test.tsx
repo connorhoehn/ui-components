@@ -102,22 +102,22 @@ describe('HeaderBanner', () => {
   it('applies the review badge palette', () => {
     render(<HeaderBanner meta={meta({ status: 'review' })} participantCount={0} />);
     const style = screen.getByText('review').getAttribute('style') ?? '';
-    expect(style).toContain('rgb(219, 234, 254)');
-    expect(style).toContain('rgb(30, 64, 175)');
+    expect(style).toContain('var(--color-info-bg)');
+    expect(style).toContain('var(--color-info-fg)');
   });
 
   it('applies the final badge palette', () => {
     render(<HeaderBanner meta={meta({ status: 'final' })} participantCount={0} />);
     const style = screen.getByText('final').getAttribute('style') ?? '';
-    expect(style).toContain('rgb(209, 250, 229)');
-    expect(style).toContain('rgb(6, 95, 70)');
+    expect(style).toContain('var(--color-success-bg)');
+    expect(style).toContain('var(--color-success-fg)');
   });
 
   it('falls back to draft palette for an unknown status', () => {
     render(<HeaderBanner meta={meta({ status: 'archived' as DocumentMeta['status'] })} participantCount={0} />);
     const style = screen.getByText('archived').getAttribute('style') ?? '';
-    expect(style).toContain('rgb(254, 243, 199)');
-    expect(style).toContain('rgb(146, 64, 14)');
+    expect(style).toContain('var(--color-warning-bg)');
+    expect(style).toContain('var(--color-warning-fg)');
   });
 
   it('prefers createdByName over the raw createdBy address', () => {

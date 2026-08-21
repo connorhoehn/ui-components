@@ -56,9 +56,9 @@ function toSeries(label: string, values: number[], color?: string): LineSeries {
 
 // Chart data viz colors — kept as raw values since these are runtime data colors
 const CHART_COLORS = {
-  primary: '#646cff',
-  completed: '#16a34a',
-  failed: '#dc2626',
+  primary: 'var(--color-primary)',
+  completed: 'var(--color-success)',
+  failed: 'var(--color-danger)',
 };
 
 interface SeedBundle {

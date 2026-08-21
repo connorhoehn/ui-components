@@ -88,7 +88,7 @@ function MockGatewayProvider({
 const TOKEN_STYLE: React.CSSProperties = {
   marginTop: 12,
   padding: '8px 12px',
-  background: '#f1f5f9',
+  background: 'var(--color-surface-hover)',
   borderRadius: 8,
   fontFamily: 'ui-monospace, monospace',
   fontSize: 12,

@@ -44,11 +44,11 @@ export interface ActivityFeedProps {
 // ─── Default dot palette ──────────────────────────────────────────────────────
 
 const DEFAULT_KIND_COLORS: Record<string, string> = {
-  task:     '#10b981',
-  pr:       '#6366f1',
-  decision: '#f59e0b',
-  comment:  '#94a3b8',
-  status:   '#3b82f6',
+  task:     'var(--color-success)',
+  pr:       'var(--color-primary)',
+  decision: 'var(--color-warning)',
+  comment:  'var(--color-text-tertiary)',
+  status:   'var(--color-info)',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ export function ActivityFeed({
           key={item.id}
           item={item}
           opacity={ROW_OPACITIES[i] ?? 0.1}
-          dotColor={palette[item.kind ?? ''] ?? '#94a3b8'}
+          dotColor={palette[item.kind ?? ''] ?? 'var(--color-text-tertiary)'}
         />
       ))}
     </div>

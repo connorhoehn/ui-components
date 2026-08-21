@@ -68,10 +68,10 @@ function relativeTime(isoString: string): string {
 }
 
 const STATUS_STYLES: Record<string, { bg: string; color: string }> = {
-  draft: { bg: '#fef3c7', color: '#92400e' },
-  review: { bg: '#dbeafe', color: '#1e40af' },
-  final: { bg: '#d1fae5', color: '#065f46' },
-  archived: { bg: '#f1f5f9', color: '#475569' },
+  draft: { bg: 'var(--color-warning-bg)', color: 'var(--color-warning-fg)' },
+  review: { bg: 'var(--color-info-bg)', color: 'var(--color-info-fg)' },
+  final: { bg: 'var(--color-success-bg)', color: 'var(--color-success-fg)' },
+  archived: { bg: 'var(--color-surface-hover)', color: 'var(--color-text-secondary)' },
 };
 
 // ---------------------------------------------------------------------------
@@ -112,7 +112,7 @@ function PresenceAvatars({
       {shown.map((u, i) => {
         const modeInfo = MODE_ICONS[u.mode ?? 'editor'] ?? MODE_ICONS.editor;
         const isIdle = u.idle === true;
-        const statusColor = isIdle ? '#f59e0b' : '#10b981';
+        const statusColor = isIdle ? 'var(--color-warning)' : 'var(--color-success)';
 
         return (
           <div

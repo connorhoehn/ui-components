@@ -30,13 +30,13 @@ interface StateToken {
 }
 
 const STATE_TOKENS: Record<StateKey, StateToken> = {
-  idle:      { border: '1px solid #94a3b8', background: '#ffffff', opacity: 1, dot: '#94a3b8' },
-  pending:   { border: '1px dashed #2563eb', background: '#eff6ff', opacity: 1, dot: '#2563eb' },
-  running:   { border: '2px solid #2563eb', background: '#eff6ff', opacity: 1, dot: '#2563eb' },
-  awaiting:  { border: '2px solid #f59e0b', background: '#fffbeb', opacity: 1, dot: '#f59e0b' },
-  completed: { border: '1px solid #16a34a', background: '#f0fdf4', opacity: 1, dot: '#16a34a' },
-  failed:    { border: '2px solid #dc2626', background: '#fef2f2', opacity: 1, dot: '#dc2626' },
-  skipped:   { border: '1px dashed #94a3b8', background: '#f9fafb', opacity: 0.5, dot: '#94a3b8' },
+  idle:      { border: '1px solid #94a3b8', background: '#ffffff', opacity: 1, dot: 'var(--color-text-tertiary)' },
+  pending:   { border: '1px dashed #2563eb', background: 'var(--color-info-bg)', opacity: 1, dot: 'var(--color-info)' },
+  running:   { border: '2px solid #2563eb', background: 'var(--color-info-bg)', opacity: 1, dot: 'var(--color-info)' },
+  awaiting:  { border: '2px solid #f59e0b', background: 'var(--color-warning-bg)', opacity: 1, dot: 'var(--color-warning)' },
+  completed: { border: '1px solid #16a34a', background: 'var(--color-success-bg)', opacity: 1, dot: 'var(--color-success)' },
+  failed:    { border: '2px solid #dc2626', background: 'var(--color-danger-bg)', opacity: 1, dot: 'var(--color-danger)' },
+  skipped:   { border: '1px dashed #94a3b8', background: 'var(--color-surface-inset)', opacity: 0.5, dot: 'var(--color-text-tertiary)' },
 };
 
 function MiniNode({
@@ -59,7 +59,7 @@ function MiniNode({
     width: 200,
     borderRadius: 8,
     border: pausedAtBreakpoint ? '2px solid #d97706' : tokens.border,
-    background: pausedAtBreakpoint ? '#fffbeb' : tokens.background,
+    background: pausedAtBreakpoint ? 'var(--color-warning-bg)' : tokens.background,
     opacity: tokens.opacity,
     boxShadow: pausedAtBreakpoint
       ? '0 0 0 3px rgba(217, 119, 6, 0.25), 0 1px 2px rgba(15, 23, 42, 0.06)'
@@ -90,7 +90,7 @@ function MiniNode({
         </span>
         <StatusDot
           size="sm"
-          color={pausedAtBreakpoint ? '#d97706' : tokens.dot}
+          color={pausedAtBreakpoint ? 'var(--color-warning)' : tokens.dot}
         />
       </div>
       {body && (
@@ -155,7 +155,7 @@ function EdgePreview() {
   const labelStyle: CSSProperties = {
     fontSize: 11,
     fontFamily: 'inherit',
-    fill: '#475569',
+    fill: 'var(--color-text-secondary)',
   };
   return (
     <svg className="max-w-160" width="100%" height="200" viewBox="0 0 640 200">
@@ -330,7 +330,7 @@ function ToolbarPreview() {
     border: '1px solid #e2e8f0',
     borderRadius: 6,
     boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
-    color: '#64748b',
+    color: 'var(--color-neutral)',
     cursor: 'pointer',
     padding: 0,
     fontFamily: 'inherit',

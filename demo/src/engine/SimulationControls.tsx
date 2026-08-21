@@ -13,7 +13,7 @@ const panelStyle: React.CSSProperties = {
   right: 16,
   zIndex: 9999,
   background: 'rgba(15, 23, 42, 0.92)',
-  color: '#e2e8f0',
+  color: 'var(--color-border)',
   borderRadius: 10,
   padding: '12px 16px',
   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
@@ -29,7 +29,7 @@ const ROW_CLS = 'flex items-center gap-1.5';
 const btnStyle: React.CSSProperties = {
   background: 'rgba(148, 163, 184, 0.15)',
   border: '1px solid rgba(148, 163, 184, 0.25)',
-  color: '#e2e8f0',
+  color: 'var(--color-border)',
   borderRadius: 5,
   padding: '4px 8px',
   cursor: 'pointer',

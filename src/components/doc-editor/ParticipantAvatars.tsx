@@ -64,9 +64,9 @@ function modeBadgeColor(mode: Participant['mode']): { bg: string; text: string }
     case 'reviewer':
       return { bg: '#fef3c7', text: '#92400e' };
     case 'reader':
-      return { bg: '#f1f5f9', text: '#64748b' };
+      return { bg: 'var(--color-surface-hover)', text: 'var(--color-neutral)' };
     default:
-      return { bg: '#f1f5f9', text: '#64748b' };
+      return { bg: 'var(--color-surface-hover)', text: 'var(--color-neutral)' };
   }
 }
 

@@ -200,7 +200,7 @@ function CommentThreadNode({
     }
   };
 
-  const borderColor = hovered ? comment.color : depth === 0 ? '#e2e8f0' : '#cbd5e1';
+  const borderColor = hovered ? comment.color : depth === 0 ? 'var(--color-border)' : 'var(--color-border-emphasis)';
 
   // Resolved banner (shown for resolved root threads)
   if (isResolved && !resolvedExpanded) {

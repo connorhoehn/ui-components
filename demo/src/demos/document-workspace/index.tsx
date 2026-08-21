@@ -29,7 +29,7 @@ const outerStyle: CSSProperties = {
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  background: '#f8fafc',
+  background: 'var(--color-surface-panel)',
   fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
 };
 

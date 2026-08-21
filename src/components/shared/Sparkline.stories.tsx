@@ -16,7 +16,7 @@ export const Default: Story = {
 };
 
 export const Falling: Story = {
-  args: { data: [12, 11, 10, 9, 8, 6, 5, 4, 3, 2], color: '#ef4444' },
+  args: { data: [12, 11, 10, 9, 8, 6, 5, 4, 3, 2], color: 'var(--color-danger)' },
 };
 
 export const Wide: Story = {

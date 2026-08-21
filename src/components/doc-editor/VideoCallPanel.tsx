@@ -205,21 +205,21 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
       >
         <IconButton onClick={() => { setIsMuted(!isMuted); toggleMute(!isMuted); }}
           title={isMuted ? 'Unmute' : 'Mute'} active={isMuted}
-          activeColor="#dc2626" style={{ color: '#fff', background: isMuted ? '#dc2626' : 'rgba(255,255,255,0.1)' }}>
+          activeColor="#dc2626" style={{ color: '#fff', background: isMuted ? 'var(--color-danger)' : 'rgba(255,255,255,0.1)' }}>
           {isMuted ? '\u{1F507}' : '\u{1F50A}'}
         </IconButton>
         <IconButton onClick={() => { setIsCameraOff(!isCameraOff); toggleCamera(isCameraOff); }}
           title={isCameraOff ? 'Camera On' : 'Camera Off'} active={isCameraOff}
-          activeColor="#dc2626" style={{ color: '#fff', background: isCameraOff ? '#dc2626' : 'rgba(255,255,255,0.1)' }}>
+          activeColor="#dc2626" style={{ color: '#fff', background: isCameraOff ? 'var(--color-danger)' : 'rgba(255,255,255,0.1)' }}>
           {isCameraOff ? '\u{1F6AB}' : '\u{1F4F7}'}
         </IconButton>
         <IconButton onClick={() => isScreenSharing ? stopScreenShare() : startScreenShare()}
           title={isScreenSharing ? 'Stop Sharing' : 'Share Screen'} active={isScreenSharing}
-          activeColor="#646cff" style={{ color: '#fff', background: isScreenSharing ? '#646cff' : 'rgba(255,255,255,0.1)' }}>
+          activeColor="#646cff" style={{ color: '#fff', background: isScreenSharing ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)' }}>
           {'\u{1F4BB}'}
         </IconButton>
         <IconButton onClick={handleEndCall} title="Leave Call"
-          style={{ color: '#fff', background: '#dc2626' }}>
+          style={{ color: '#fff', background: 'var(--color-danger)' }}>
           {'\u{1F4DE}'}
         </IconButton>
       </div>

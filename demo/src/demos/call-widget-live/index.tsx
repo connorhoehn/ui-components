@@ -98,7 +98,7 @@ function MessageBubble({ sender, text, time, isLocal }: { sender: typeof USERS.s
     <div className="flex gap-2.5 py-2 items-start">
       <div
         className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-white text-xs font-semibold"
-        style={{ background: isLocal ? '#3b82f6' : `hsl(${Math.abs(hue)}, 50%, 45%)` }}
+        style={{ background: isLocal ? 'var(--color-info)' : `hsl(${Math.abs(hue)}, 50%, 45%)` }}
       >
         {sender.displayName.charAt(0)}
       </div>

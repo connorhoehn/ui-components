@@ -184,11 +184,11 @@ export default function SocialTabContent({
   const channelUnreadTotal = channels.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
   const dmUnreadTotal = dms.reduce((s, r) => s + (unreadCounts[r.roomId] ?? 0), 0);
 
-  const sidebarBg = isDark ? '#1e1f2e' : '#f8fafc';
-  const sidebarBorder = isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0';
-  const sidebarTextPrimary = isDark ? '#fff' : '#0f172a';
-  const sidebarTextSecondary = isDark ? '#94a3b8' : '#64748b';
-  const chatBg = isDark ? '#0f172a' : '#fff';
+  const sidebarBg = isDark ? '#1e1f2e' : 'var(--color-surface-panel)';
+  const sidebarBorder = isDark ? 'rgba(255,255,255,0.06)' : 'var(--color-border)';
+  const sidebarTextPrimary = isDark ? '#fff' : 'var(--color-text-primary)';
+  const sidebarTextSecondary = isDark ? 'var(--color-text-tertiary)' : 'var(--color-neutral)';
+  const chatBg = isDark ? 'var(--color-text-primary)' : '#fff';
 
   return (
     <div

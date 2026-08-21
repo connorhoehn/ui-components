@@ -26,11 +26,11 @@ interface ChunkViewerProps {
 }
 
 const typeBadgeColors: Record<Section['type'], { bg: string; text: string }> = {
-  summary: { bg: '#dbeafe', text: '#1e40af' },
-  tasks: { bg: '#fef3c7', text: '#92400e' },
-  decisions: { bg: '#ede9fe', text: '#5b21b6' },
-  notes: { bg: '#f3f4f6', text: '#374151' },
-  custom: { bg: '#e0e7ff', text: '#3730a3' },
+  summary: { bg: 'var(--color-info-bg)', text: 'var(--color-info-fg)' },
+  tasks: { bg: 'var(--color-warning-bg)', text: 'var(--color-warning-fg)' },
+  decisions: { bg: 'var(--color-accent-bg)', text: 'var(--color-accent-fg)' },
+  notes: { bg: 'var(--color-surface-hover)', text: 'var(--color-text-primary)' },
+  custom: { bg: 'var(--color-primary-bg)', text: 'var(--color-primary-fg)' },
 };
 
 export default function ChunkViewer({ section, onAckItem, onRejectItem, fragment, ydoc, provider, comments, onAddComment, onResolveThread, onUnresolveThread, participants }: ChunkViewerProps) {

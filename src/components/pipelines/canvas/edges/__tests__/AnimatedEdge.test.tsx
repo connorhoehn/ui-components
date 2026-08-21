@@ -81,7 +81,7 @@ describe('AnimatedEdge back-compat (no payload/volume)', () => {
   it('renders default state with slate stroke at 1.5px and no dash', () => {
     const { container } = renderEdge(undefined);
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#cbd5e1');
+    expect(path.getAttribute('stroke')).toBe('var(--color-border-emphasis)');
     expect(path.getAttribute('stroke-width')).toBe('1.5');
     expect(path.getAttribute('stroke-dasharray')).toBeNull();
     expect(container.querySelector('animate')).toBeNull();
@@ -91,7 +91,7 @@ describe('AnimatedEdge back-compat (no payload/volume)', () => {
   it('renders active state with blue animated dashes at 2px', () => {
     const { container } = renderEdge({ state: 'active' });
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#2563eb');
+    expect(path.getAttribute('stroke')).toBe('var(--color-info)');
     expect(path.getAttribute('stroke-width')).toBe('2');
     expect(path.getAttribute('stroke-dasharray')).toBe('6 4');
     expect(container.querySelector('animate')).not.toBeNull();
@@ -101,9 +101,9 @@ describe('AnimatedEdge back-compat (no payload/volume)', () => {
 
   it('renders traversed-success / traversed-failure with state colors', () => {
     const success = renderEdge({ state: 'traversed-success' });
-    expect(visiblePath(success.container).getAttribute('stroke')).toBe('#16a34a');
+    expect(visiblePath(success.container).getAttribute('stroke')).toBe('var(--color-success)');
     const failure = renderEdge({ state: 'traversed-failure' });
-    expect(visiblePath(failure.container).getAttribute('stroke')).toBe('#dc2626');
+    expect(visiblePath(failure.container).getAttribute('stroke')).toBe('var(--color-danger)');
   });
 
   it('keeps the invisible 12px hit-target path', () => {
@@ -117,7 +117,7 @@ describe('AnimatedEdge back-compat (no payload/volume)', () => {
   it('highlights selected edges with #646cff at 2.5px', () => {
     const { container } = renderEdge({ state: 'default' }, true);
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#646cff');
+    expect(path.getAttribute('stroke')).toBe('var(--color-primary)');
     expect(path.getAttribute('stroke-width')).toBe('2.5');
   });
 
@@ -142,7 +142,7 @@ describe('AnimatedEdge image payload', () => {
   it('keeps state colors dominant when not idle', () => {
     const { container } = renderEdge({ payload: 'image', state: 'traversed-success' });
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#16a34a');
+    expect(path.getAttribute('stroke')).toBe('var(--color-success)');
     expect(path.getAttribute('stroke-width')).toBe('2.5');
   });
 
@@ -154,7 +154,7 @@ describe('AnimatedEdge image payload', () => {
     const circle = container.querySelector('circle');
     expect(circle).not.toBeNull();
     expect(circle!.getAttribute('r')).toBe('3');
-    expect(circle!.getAttribute('fill')).toBe('#2563eb');
+    expect(circle!.getAttribute('fill')).toBe('var(--color-info)');
     const motion = container.querySelector('animateMotion');
     expect(motion).not.toBeNull();
     expect(motion!.getAttribute('dur')).toBe('1.2s');
@@ -185,7 +185,7 @@ describe('AnimatedEdge control/text/data payloads', () => {
   it('control: active state overrides the dotted dash with the flow dash', () => {
     const { container } = renderEdge({ payload: 'control', state: 'active' });
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#2563eb');
+    expect(path.getAttribute('stroke')).toBe('var(--color-info)');
     expect(path.getAttribute('stroke-dasharray')).toBe('6 4');
   });
 
@@ -193,7 +193,7 @@ describe('AnimatedEdge control/text/data payloads', () => {
     for (const payload of ['text', 'data'] as const) {
       const { container } = renderEdge({ payload });
       const path = visiblePath(container);
-      expect(path.getAttribute('stroke')).toBe('#cbd5e1');
+      expect(path.getAttribute('stroke')).toBe('var(--color-border-emphasis)');
       expect(path.getAttribute('stroke-width')).toBe('1.5');
       expect(path.getAttribute('stroke-dasharray')).toBeNull();
     }
@@ -249,7 +249,7 @@ describe('AnimatedEdge reduced motion', () => {
     expect(container.querySelector('circle')).toBeNull();
     // Color + width still convey state.
     const path = visiblePath(container);
-    expect(path.getAttribute('stroke')).toBe('#2563eb');
+    expect(path.getAttribute('stroke')).toBe('var(--color-info)');
     expect(path.getAttribute('stroke-width')).toBe('2.5');
     // No flowing dash when motion is reduced.
     expect(path.getAttribute('stroke-dasharray')).toBeNull();

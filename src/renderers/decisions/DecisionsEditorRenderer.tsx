@@ -6,10 +6,10 @@ import TiptapEditor from '../../components/doc-editor/TiptapEditor';
 import { postApproval, mapStatusToDecision } from './approvalSync';
 
 const DECISION_META: Record<string, { label: string; icon: string; color: string; bg: string }> = {
-  pending:  { label: 'Open',    icon: '○', color: '#92400e', bg: '#fef3c7' },
-  acked:    { label: 'Decided', icon: '✓', color: '#065f46', bg: '#d1fae5' },
-  done:     { label: 'Decided', icon: '✓', color: '#065f46', bg: '#d1fae5' },
-  rejected: { label: 'Vetoed',  icon: '✕', color: '#991b1b', bg: '#fee2e2' },
+  pending:  { label: 'Open',    icon: '○', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
+  acked:    { label: 'Decided', icon: '✓', color: 'var(--color-success-fg)', bg: 'var(--color-success-bg)' },
+  done:     { label: 'Decided', icon: '✓', color: 'var(--color-success-fg)', bg: 'var(--color-success-bg)' },
+  rejected: { label: 'Vetoed',  icon: '✕', color: 'var(--color-danger-fg)', bg: 'var(--color-danger-bg)' },
 };
 
 interface RowProps {

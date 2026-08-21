@@ -143,7 +143,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
                 <div key={event.id} className={cn('flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle')}>
                   <div
                     className={cn('w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px')}
-                    style={{ background: event.color || '#94a3b8' }}
+                    style={{ background: event.color || 'var(--color-text-tertiary)' }}
                   >
                     {getInitials(event.displayName || 'Unknown')}
                   </div>

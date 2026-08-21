@@ -15,9 +15,9 @@ export interface StepThreadProps {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  completed: '#16a34a',
-  failed: '#dc2626',
-  running: '#2563eb',
+  completed: 'var(--color-success)',
+  failed: 'var(--color-danger)',
+  running: 'var(--color-info)',
 };
 
 export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps) {
@@ -27,7 +27,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
   const llmResponse = output?.response as string | undefined;
   const llmData = step.llm;
   const input = step.input as Record<string, unknown> | undefined;
-  const statusColor = STATUS_COLOR[step.status] ?? '#94a3b8';
+  const statusColor = STATUS_COLOR[step.status] ?? 'var(--color-text-tertiary)';
 
   return (
     <div className="relative pl-9 mb-1">
@@ -47,7 +47,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
           expanded ? 'bg-surface-inset rounded-t-lg' : 'bg-surface rounded-lg',
         )}
         style={{
-          border: `1px solid ${expanded ? statusColor + '40' : '#e2e8f0'}`,
+          border: `1px solid ${expanded ? statusColor + '40' : 'var(--color-border)'}`,
           ...(expanded ? { borderRadius: '8px 8px 0 0' } : {}),
         }}
       >
@@ -107,28 +107,28 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
               <tbody>
                 {step.startedAt && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#2563eb')}>started</span></td>
+                    <td className={tdClass}><span className={eventChipClass('var(--color-info)')}>started</span></td>
                     <td className={tdClass}>{new Date(step.startedAt).toLocaleTimeString()}</td>
                     <td className={tdClass}>Node {stepId.slice(0, 8)} ({nodeType}) began execution</td>
                   </tr>
                 )}
                 {llmData?.streamOpened && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#7c3aed')}>stream.opened</span></td>
+                    <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>stream.opened</span></td>
                     <td className={tdClass}>—</td>
                     <td className={tdClass}>LLM stream connection established</td>
                   </tr>
                 )}
                 {llmData?.firstTokenLatencyMs != null && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#7c3aed')}>first.token</span></td>
+                    <td className={tdClass}><span className={eventChipClass('var(--color-cat-ai)')}>first.token</span></td>
                     <td className={tdClass}>+{llmData.firstTokenLatencyMs}ms</td>
                     <td className={tdClass}>First token received from LLM</td>
                   </tr>
                 )}
                 {step.completedAt && step.status === 'completed' && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#16a34a')}>completed</span></td>
+                    <td className={tdClass}><span className={eventChipClass('var(--color-success)')}>completed</span></td>
                     <td className={tdClass}>{new Date(step.completedAt).toLocaleTimeString()}</td>
                     <td className={tdClass}>
                       Finished in {step.durationMs != null ? (step.durationMs < 1000 ? `${step.durationMs}ms` : `${(step.durationMs / 1000).toFixed(1)}s`) : '—'}
@@ -137,7 +137,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
                 )}
                 {step.status === 'failed' && (
                   <tr className="border-b border-border">
-                    <td className={tdClass}><span className={eventChipClass('#dc2626')}>failed</span></td>
+                    <td className={tdClass}><span className={eventChipClass('var(--color-danger)')}>failed</span></td>
                     <td className={tdClass}>{step.completedAt ? new Date(step.completedAt).toLocaleTimeString() : '—'}</td>
                     <td className={tdClass}>{step.error ?? 'Unknown error'}</td>
                   </tr>

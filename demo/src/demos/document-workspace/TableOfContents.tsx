@@ -22,7 +22,7 @@ const containerStyle: CSSProperties = {
 const headerStyle: CSSProperties = {
   fontSize: 10,
   fontWeight: 600,
-  color: '#94a3b8',
+  color: 'var(--color-text-tertiary)',
   textTransform: 'uppercase',
   letterSpacing: 1.2,
   marginBottom: 10,
@@ -46,13 +46,13 @@ export function TableOfContents({ sections, activeSectionId }: TableOfContentsPr
           width: isActive ? 8 : 6,
           height: isActive ? 8 : 6,
           borderRadius: '50%',
-          background: isActive ? '#3b82f6' : '#cbd5e1',
+          background: isActive ? 'var(--color-info)' : 'var(--color-border-emphasis)',
           flexShrink: 0,
         };
         const textStyle: CSSProperties = {
           fontSize: 12,
           fontWeight: isActive ? 600 : 400,
-          color: isActive ? '#1e293b' : '#64748b',
+          color: isActive ? '#1e293b' : 'var(--color-neutral)',
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',

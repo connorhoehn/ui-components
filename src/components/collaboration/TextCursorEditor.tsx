@@ -229,7 +229,7 @@ export function TextCursorEditor({ cursors, localCursor, onPositionChange }: Tex
                 top: coords.top + 12,
                 left: coords.left + 12,
                 height: coords.height,
-                background: '#3b82f6',
+                background: 'var(--color-info)',
               }}
             />
             {/* "You" label */}
