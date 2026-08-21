@@ -228,10 +228,10 @@ function Qt({ metrics: t, style: r }) {
   ] }, o)) });
 }
 const Fe = {
-  good: "#22c55e",
-  medium: "#eab308",
-  poor: "#f97316",
-  dead: "#ef4444"
+  good: "var(--color-success)",
+  medium: "var(--color-warning)",
+  poor: "var(--color-caution)",
+  dead: "var(--color-danger)"
 }, ze = {
   good: "text-success-fg",
   medium: "text-warning-fg",

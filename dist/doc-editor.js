@@ -1,39 +1,39 @@
-import { S as W } from "./DocumentEditorPage-CCf0hNyR.js";
-import { A as Ne, a as ve, D as ke, b as Ce, c as Me, E as Se, F as je, H as Ae, K as $e, M as Pe, d as Ee, P as _e, R as De, e as Ie, f as Te, g as Re, h as He, T as Le, V as Oe, i as Be, j as Ue, k as We, l as Fe, m as Ve, r as Xe, u as Ke, n as qe } from "./DocumentEditorPage-CCf0hNyR.js";
+import { S as W } from "./DocumentEditorPage-8c0s4Uxk.js";
+import { A as we, a as Ne, D as ke, b as Ce, c as Me, E as Se, F as je, H as Ae, K as $e, M as Pe, d as Ee, P as _e, R as De, e as Ie, f as Te, g as Re, h as He, T as Le, V as Oe, i as Be, j as Ue, k as We, l as Fe, m as Ve, r as Xe, u as Ke, n as qe } from "./DocumentEditorPage-8c0s4Uxk.js";
 import { jsxs as n, jsx as r, Fragment as $ } from "react/jsx-runtime";
 import { useState as j, useMemo as _, useCallback as T, useRef as P, useEffect as D } from "react";
-import { N as F, T as R } from "./NewDocumentModal-DrvMvgkp.js";
-import { E as Ge, a as Ye, b as Qe } from "./NewDocumentModal-DrvMvgkp.js";
+import { N as F, T as R } from "./NewDocumentModal--mWvUs78.js";
+import { E as Ge, a as Ye, b as Qe } from "./NewDocumentModal--mWvUs78.js";
 import { c as t } from "./cn-B6yFEsav.js";
 import { o as V, p as X } from "./useWebSocket-Bn4OeUor.js";
 import { T as K } from "./Textarea-kaa9rHUL.js";
 function q(e) {
-  const s = Date.now(), d = new Date(e).getTime();
-  if (isNaN(d)) return "";
-  const l = s - d;
-  if (l < 0) return "just now";
-  const i = Math.floor(l / 1e3);
-  if (i < 60) return "just now";
-  const a = Math.floor(i / 60);
+  const o = Date.now(), l = new Date(e).getTime();
+  if (isNaN(l)) return "";
+  const c = o - l;
+  if (c < 0) return "just now";
+  const s = Math.floor(c / 1e3);
+  if (s < 60) return "just now";
+  const a = Math.floor(s / 60);
   if (a < 60) return `${a}m ago`;
-  const c = Math.floor(a / 60);
-  if (c < 24) return `${c}h ago`;
-  const f = Math.floor(c / 24);
+  const d = Math.floor(a / 60);
+  if (d < 24) return `${d}h ago`;
+  const f = Math.floor(d / 24);
   return f < 30 ? `${f}d ago` : `${Math.floor(f / 30)}mo ago`;
 }
 const H = {
-  draft: { bg: "#fef3c7", color: "#92400e" },
-  review: { bg: "#dbeafe", color: "#1e40af" },
-  final: { bg: "#d1fae5", color: "#065f46" },
-  archived: { bg: "#f1f5f9", color: "#475569" }
+  draft: { bg: "var(--color-warning-bg)", color: "var(--color-warning-fg)" },
+  review: { bg: "var(--color-info-bg)", color: "var(--color-info-fg)" },
+  final: { bg: "var(--color-success-bg)", color: "var(--color-success-fg)" },
+  archived: { bg: "var(--color-surface-hover)", color: "var(--color-text-secondary)" }
 };
 function z({ status: e }) {
-  const s = H[e] ?? H.draft;
+  const o = H[e] ?? H.draft;
   return /* @__PURE__ */ r(
     "span",
     {
       className: t("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full capitalize leading-[18px]"),
-      style: { background: s.bg, color: s.color },
+      style: { background: o.bg, color: o.color },
       children: e
     }
   );
@@ -45,21 +45,21 @@ const L = {
 };
 function G({
   users: e,
-  onClickUser: s
+  onClickUser: o
 }) {
-  const l = e.slice(0, 5), i = e.length - 5;
+  const c = e.slice(0, 5), s = e.length - 5;
   return /* @__PURE__ */ n("div", { className: t("flex items-center gap-0.5"), children: [
-    l.map((a, c) => {
-      const f = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, y = p ? "#f59e0b" : "#10b981";
+    c.map((a, d) => {
+      const f = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, y = p ? "var(--color-warning)" : "var(--color-success)";
       return /* @__PURE__ */ n(
         "div",
         {
           title: `${a.displayName} — ${p ? "Away" : f.label}`,
           onClick: (h) => {
-            h.stopPropagation(), s(a.userId);
+            h.stopPropagation(), o(a.userId);
           },
           className: t("relative cursor-pointer"),
-          style: { marginLeft: c > 0 ? -6 : 0, zIndex: 5 - c },
+          style: { marginLeft: d > 0 ? -6 : 0, zIndex: 5 - d },
           children: [
             /* @__PURE__ */ r(
               "div",
@@ -82,13 +82,13 @@ function G({
         a.userId
       );
     }),
-    i > 0 && /* @__PURE__ */ n(
+    s > 0 && /* @__PURE__ */ n(
       "div",
       {
         className: t("w-8 h-8 rounded-full bg-neutral text-white text-[10px] font-bold flex items-center justify-center border-2 border-white -ml-1.5"),
         children: [
           "+",
-          i
+          s
         ]
       }
     )
@@ -96,24 +96,24 @@ function G({
 }
 function fe({
   documents: e,
-  presence: s,
-  onOpenDocument: d,
-  onCreateDocument: l,
-  onDeleteDocument: i,
+  presence: o,
+  onOpenDocument: l,
+  onCreateDocument: c,
+  onDeleteDocument: s,
   onJumpToUser: a,
-  hideHeader: c
+  hideHeader: d
 }) {
-  const [f, p] = j(!1), [y, h] = j(null), [b, w] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), N = Math.min(b, m), M = _(() => {
-    const o = (N - 1) * u;
-    return e.slice(o, o + u);
-  }, [e, N]), x = T(
-    (o, k, S) => {
-      o.stopPropagation(), window.confirm(`Delete "${S}"? This cannot be undone.`) && i(k);
+  const [f, p] = j(!1), [y, h] = j(null), [b, v] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), w = Math.min(b, m), M = _(() => {
+    const i = (w - 1) * u;
+    return e.slice(i, i + u);
+  }, [e, w]), x = T(
+    (i, k, S) => {
+      i.stopPropagation(), window.confirm(`Delete "${S}"? This cannot be undone.`) && s(k);
     },
-    [i]
+    [s]
   );
   return /* @__PURE__ */ n("div", { className: t("px-4"), children: [
-    !c && /* @__PURE__ */ n("div", { className: t("flex items-center justify-between mb-5"), children: [
+    !d && /* @__PURE__ */ n("div", { className: t("flex items-center justify-between mb-5"), children: [
       /* @__PURE__ */ r("h1", { className: t("m-0 text-[22px] font-bold text-text-primary"), children: "Documents" }),
       /* @__PURE__ */ n(
         "button",
@@ -135,48 +135,48 @@ function fe({
         className: t("text-center px-4 py-12 text-text-tertiary text-[15px]"),
         children: "No documents yet. Create your first document to get started."
       }
-    ) : /* @__PURE__ */ r("div", { className: t("flex flex-col gap-3"), children: M.map((o) => {
-      const k = s[o.id] ?? [], S = y === o.id;
+    ) : /* @__PURE__ */ r("div", { className: t("flex flex-col gap-3"), children: M.map((i) => {
+      const k = o[i.id] ?? [], S = y === i.id;
       return /* @__PURE__ */ n(
         "div",
         {
-          "data-testid": `document-card-${o.id}`,
-          onClick: () => d(o.id),
-          onMouseEnter: () => h(o.id),
+          "data-testid": `document-card-${i.id}`,
+          onClick: () => l(i.id),
+          onMouseEnter: () => h(i.id),
           onMouseLeave: () => h(null),
           className: t(
             "flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150",
             S ? "shadow-[0_4px_12px_rgba(0,0,0,0.08)]" : ""
           ),
           children: [
-            /* @__PURE__ */ r("span", { className: t("text-2xl shrink-0"), children: o.icon }),
+            /* @__PURE__ */ r("span", { className: t("text-2xl shrink-0"), children: i.icon }),
             /* @__PURE__ */ n("div", { className: t("flex-1 min-w-0"), children: [
               /* @__PURE__ */ n("div", { className: t("flex items-center gap-2 mb-0.5"), children: [
-                /* @__PURE__ */ r("span", { className: t("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"), children: o.title }),
-                /* @__PURE__ */ r(z, { status: o.status }),
-                o.type && /* @__PURE__ */ r("span", { className: t("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"), children: o.type }),
-                o.activeCallSessionId && /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-success-bg text-success-fg leading-[18px]"), children: [
+                /* @__PURE__ */ r("span", { className: t("text-[15px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap"), children: i.title }),
+                /* @__PURE__ */ r(z, { status: i.status }),
+                i.type && /* @__PURE__ */ r("span", { className: t("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0"), children: i.type }),
+                i.activeCallSessionId && /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-success-bg text-success-fg leading-[18px]"), children: [
                   /* @__PURE__ */ r("span", { className: t("w-1.5 h-1.5 rounded-full bg-success animate-pulse") }),
                   "Live Call"
                 ] })
               ] }),
-              o.description && /* @__PURE__ */ r("div", { className: t("text-[13px] text-neutral overflow-hidden text-ellipsis whitespace-nowrap mb-0.5"), children: o.description }),
+              i.description && /* @__PURE__ */ r("div", { className: t("text-[13px] text-neutral overflow-hidden text-ellipsis whitespace-nowrap mb-0.5"), children: i.description }),
               /* @__PURE__ */ n("div", { className: t("text-xs text-text-tertiary"), children: [
                 "Updated ",
-                q(o.updatedAt)
+                q(i.updatedAt)
               ] })
             ] }),
             k.length > 0 && /* @__PURE__ */ r("div", { className: t("shrink-0"), children: /* @__PURE__ */ r(
               G,
               {
                 users: k,
-                onClickUser: (C) => a(o.id, C)
+                onClickUser: (C) => a(i.id, C)
               }
             ) }),
             S && /* @__PURE__ */ r(
               "button",
               {
-                onClick: (C) => x(C, o.id, o.title),
+                onClick: (C) => x(C, i.id, i.title),
                 title: "Delete document",
                 className: t("absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-danger-bg text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0"),
                 children: "×"
@@ -184,7 +184,7 @@ function fe({
             )
           ]
         },
-        o.id
+        i.id
       );
     }) }),
     e.length > u && /* @__PURE__ */ n(
@@ -197,11 +197,11 @@ function fe({
             "button",
             {
               "data-testid": "pagination-prev",
-              disabled: N <= 1,
-              onClick: () => w((o) => Math.max(1, o - 1)),
+              disabled: w <= 1,
+              onClick: () => v((i) => Math.max(1, i - 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                N <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                w <= 1 ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Previous"
             }
@@ -213,7 +213,7 @@ function fe({
               className: t("text-[13px] text-text-secondary font-medium"),
               children: [
                 "Page ",
-                N,
+                w,
                 " of ",
                 m
               ]
@@ -223,11 +223,11 @@ function fe({
             "button",
             {
               "data-testid": "pagination-next",
-              disabled: N >= m,
-              onClick: () => w((o) => Math.min(m, o + 1)),
+              disabled: w >= m,
+              onClick: () => v((i) => Math.min(m, i + 1)),
               className: t(
                 "px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md",
-                N >= m ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
+                w >= m ? "bg-surface-hover text-text-tertiary cursor-not-allowed" : "bg-white text-text-secondary cursor-pointer"
               ),
               children: "Next"
             }
@@ -240,7 +240,7 @@ function fe({
       {
         open: f,
         onClose: () => p(!1),
-        onCreate: l
+        onCreate: c
       }
     )
   ] });
@@ -254,60 +254,60 @@ function be(e) {
 }
 function Q({
   ydoc: e,
-  provider: s,
-  fragment: d,
-  user: l,
-  fragmentName: i = U,
+  provider: o,
+  fragment: l,
+  user: c,
+  fragmentName: s = U,
   editable: a,
-  placeholder: c,
+  placeholder: d,
   className: f,
   onFragmentReady: p
 }) {
   const y = _(
-    () => d ?? e.getXmlFragment(i),
-    [d, e, i]
+    () => l ?? e.getXmlFragment(s),
+    [l, e, s]
   ), h = P(!1);
   return h.current || (h.current = !0, p?.(y, e)), /* @__PURE__ */ r("div", { className: t(f), children: /* @__PURE__ */ r(
     R,
     {
       fragment: y,
       ydoc: e,
-      provider: s,
-      user: l,
+      provider: o,
+      user: c,
       editable: a,
-      placeholder: c
+      placeholder: d
     }
   ) });
 }
 function Z({
   gatewayUrl: e,
-  docId: s,
-  authToken: d,
-  channel: l,
-  user: i,
+  docId: o,
+  authToken: l,
+  channel: c,
+  user: s,
   fragmentName: a = U,
-  editable: c,
+  editable: d,
   placeholder: f,
   className: p,
   onFragmentReady: y,
   loadingSlot: h
 }) {
-  const b = l ?? `doc:${s}`, w = P(/* @__PURE__ */ new Set()), u = T(
-    (C) => (w.current.add(C), () => {
-      w.current.delete(C);
+  const b = c ?? `doc:${o}`, v = P(/* @__PURE__ */ new Set()), u = T(
+    (C) => (v.current.add(C), () => {
+      v.current.delete(C);
     }),
     []
   ), m = T((C) => {
-    w.current.forEach((v) => v(C));
-  }, []), N = _(
+    v.current.forEach((N) => N(C));
+  }, []), w = _(
     () => ({
       wsUrl: e,
-      cognitoToken: d,
+      cognitoToken: l,
       defaultChannel: b
     }),
-    [e, d, b]
-  ), M = V({ config: N, onMessage: m }), { ydoc: x, provider: o } = X({
-    documentId: s,
+    [e, l, b]
+  ), M = V({ config: w, onMessage: m }), { ydoc: x, provider: i } = X({
+    documentId: o,
     ws: M,
     onMessage: u
   }), k = _(
@@ -319,25 +319,25 @@ function Z({
     {
       fragment: k,
       ydoc: x,
-      provider: o,
-      user: i,
-      editable: c,
+      provider: i,
+      user: s,
+      editable: d,
       placeholder: f
     }
   ) });
 }
-function J({ current: e, total: s }) {
-  const d = s > 0 ? Math.round(e / s * 100) : 0;
+function J({ current: e, total: o }) {
+  const l = o > 0 ? Math.round(e / o * 100) : 0;
   return /* @__PURE__ */ n("div", { className: t("mb-4"), children: [
     /* @__PURE__ */ n("div", { className: t("text-[13px] text-text-secondary mb-1 flex justify-between"), children: [
       /* @__PURE__ */ n("span", { children: [
         e,
         " of ",
-        s,
+        o,
         " sections reviewed"
       ] }),
       /* @__PURE__ */ n("span", { children: [
-        d,
+        l,
         "%"
       ] })
     ] }),
@@ -345,40 +345,40 @@ function J({ current: e, total: s }) {
       "div",
       {
         className: t("h-full bg-info rounded transition-[width] duration-300 ease-in-out"),
-        style: { width: `${d}%` }
+        style: { width: `${l}%` }
       }
     ) })
   ] });
 }
 const ee = {
-  pending: { bg: "#fef3c7", text: "#92400e" },
-  acked: { bg: "#d1fae5", text: "#065f46" },
-  done: { bg: "#dbeafe", text: "#1e40af" },
-  rejected: { bg: "#fee2e2", text: "#991b1b" }
+  pending: { bg: "var(--color-warning-bg)", text: "var(--color-warning-fg)" },
+  acked: { bg: "var(--color-success-bg)", text: "var(--color-success-fg)" },
+  done: { bg: "var(--color-info-bg)", text: "var(--color-info-fg)" },
+  rejected: { bg: "var(--color-danger-bg)", text: "var(--color-danger-fg)" }
 }, O = {
-  low: "#6b7280",
-  medium: "#f59e0b",
-  high: "#ef4444"
+  low: "var(--color-neutral)",
+  medium: "var(--color-warning)",
+  high: "var(--color-danger)"
 };
-function te({ item: e, onAck: s, onReject: d }) {
-  const [l, i] = j(!1), [a, c] = j(""), [f, p] = j("none"), y = P(e.status), h = ee[e.status], [b, w] = j(!1), u = P(null);
+function te({ item: e, onAck: o, onReject: l }) {
+  const [c, s] = j(!1), [a, d] = j(""), [f, p] = j("none"), y = P(e.status), h = ee[e.status], [b, v] = j(!1), u = P(null);
   D(() => () => {
     u.current && clearTimeout(u.current);
   }, []), D(() => {
     y.current === "pending" && e.status === "acked" ? p("ack") : y.current === "pending" && e.status === "rejected" && p("reject"), y.current = e.status;
   }, [e.status]);
   const m = () => {
-    b || (w(!0), p("ack"), u.current = setTimeout(() => {
-      u.current = null, s(a || void 0), c(""), i(!1), w(!1);
+    b || (v(!0), p("ack"), u.current = setTimeout(() => {
+      u.current = null, o(a || void 0), d(""), s(!1), v(!1);
     }, 150));
-  }, N = () => {
+  }, w = () => {
     if (!b) {
       if (!a.trim()) {
-        i(!0);
+        s(!0);
         return;
       }
-      w(!0), p("reject"), u.current = setTimeout(() => {
-        u.current = null, d(a), c(""), i(!1), w(!1);
+      v(!0), p("reject"), u.current = setTimeout(() => {
+        u.current = null, l(a), d(""), s(!1), v(!1);
       }, 150);
     }
   };
@@ -435,25 +435,25 @@ function te({ item: e, onAck: s, onReject: d }) {
     e.status === "pending" && /* @__PURE__ */ n("div", { children: [
       /* @__PURE__ */ n("div", { className: t("flex gap-2 mt-1.5"), children: [
         /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-success text-white", b && "opacity-60 cursor-not-allowed"), onClick: m, disabled: b, children: "Acknowledge" }),
-        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white", b && "opacity-60 cursor-not-allowed"), onClick: N, disabled: b, children: "Reject" }),
-        !l && /* @__PURE__ */ r(
+        /* @__PURE__ */ r("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-danger text-white", b && "opacity-60 cursor-not-allowed"), onClick: w, disabled: b, children: "Reject" }),
+        !c && /* @__PURE__ */ r(
           "button",
           {
             type: "button",
             className: t("px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
-            onClick: () => i(!0),
+            onClick: () => s(!0),
             children: "Add note"
           }
         )
       ] }),
-      l && /* @__PURE__ */ n("div", { className: t("mt-2"), children: [
+      c && /* @__PURE__ */ n("div", { className: t("mt-2"), children: [
         /* @__PURE__ */ r(
           K,
           {
             value: a,
-            onChange: (x) => c(x.target.value),
+            onChange: (x) => d(x.target.value),
             onKeyDown: (x) => {
-              x.key === "Enter" && !x.shiftKey && (x.preventDefault(), a.trim() && m()), x.key === "Escape" && (i(!1), c(""));
+              x.key === "Enter" && !x.shiftKey && (x.preventDefault(), a.trim() && m()), x.key === "Escape" && (s(!1), d(""));
             },
             placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
             autoFocus: !0,
@@ -477,7 +477,7 @@ function te({ item: e, onAck: s, onReject: d }) {
             {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-danger text-white"),
-              onClick: N,
+              onClick: w,
               disabled: b,
               tabIndex: 0,
               children: "Submit & Reject"
@@ -489,7 +489,7 @@ function te({ item: e, onAck: s, onReject: d }) {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-text-secondary border border-border-field"),
               onClick: () => {
-                i(!1), c("");
+                s(!1), d("");
               },
               tabIndex: 0,
               children: "Cancel"
@@ -501,14 +501,14 @@ function te({ item: e, onAck: s, onReject: d }) {
   ] });
 }
 const B = {
-  summary: { bg: "#dbeafe", text: "#1e40af" },
-  tasks: { bg: "#fef3c7", text: "#92400e" },
-  decisions: { bg: "#ede9fe", text: "#5b21b6" },
-  notes: { bg: "#f3f4f6", text: "#374151" },
-  custom: { bg: "#e0e7ff", text: "#3730a3" }
+  summary: { bg: "var(--color-info-bg)", text: "var(--color-info-fg)" },
+  tasks: { bg: "var(--color-warning-bg)", text: "var(--color-warning-fg)" },
+  decisions: { bg: "var(--color-accent-bg)", text: "var(--color-accent-fg)" },
+  notes: { bg: "var(--color-surface-hover)", text: "var(--color-text-primary)" },
+  custom: { bg: "var(--color-primary-bg)", text: "var(--color-primary-fg)" }
 };
-function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, provider: a, comments: c, onAddComment: f, onResolveThread: p, onUnresolveThread: y, participants: h }) {
-  const b = B[e.type] ?? B.custom, w = e.items.filter((u) => u.status !== "pending").length;
+function re({ section: e, onAckItem: o, onRejectItem: l, fragment: c, ydoc: s, provider: a, comments: d, onAddComment: f, onResolveThread: p, onUnresolveThread: y, participants: h }) {
+  const b = B[e.type] ?? B.custom, v = e.items.filter((u) => u.status !== "pending").length;
   return /* @__PURE__ */ n("div", { className: t("bg-white border border-border rounded-lg p-5 mb-4"), children: [
     /* @__PURE__ */ r("h2", { className: t("text-xl font-bold m-0 mb-1 text-text-primary"), children: e.title }),
     /* @__PURE__ */ r(
@@ -519,18 +519,18 @@ function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, p
         children: e.type
       }
     ),
-    l && /* @__PURE__ */ r("div", { className: t(e.items.length > 0 ? "mb-4" : ""), children: /* @__PURE__ */ r(
+    c && /* @__PURE__ */ r("div", { className: t(e.items.length > 0 ? "mb-4" : ""), children: /* @__PURE__ */ r(
       R,
       {
-        fragment: l,
-        ydoc: i,
+        fragment: c,
+        ydoc: s,
         provider: a,
         user: { name: "", color: "" },
         editable: !1,
         sectionId: e.id
       }
     ) }),
-    !l && e.items.length === 0 && /* @__PURE__ */ n("div", { className: t("py-6 text-text-tertiary text-sm text-center"), children: [
+    !c && e.items.length === 0 && /* @__PURE__ */ n("div", { className: t("py-6 text-text-tertiary text-sm text-center"), children: [
       "This ",
       e.type,
       " section has no content. Switch to Editor mode to add content."
@@ -540,13 +540,13 @@ function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, p
         te,
         {
           item: u,
-          onAck: (m) => s(u.id, m),
-          onReject: (m) => d(u.id, m)
+          onAck: (m) => o(u.id, m),
+          onReject: (m) => l(u.id, m)
         },
         u.id
       )),
       /* @__PURE__ */ n("div", { className: t("text-xs text-text-secondary mt-3 pt-2 border-t border-border-subtle"), children: [
-        w,
+        v,
         " of ",
         e.items.length,
         " items reviewed"
@@ -555,7 +555,7 @@ function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, p
     f && /* @__PURE__ */ r(
       W,
       {
-        comments: c ?? [],
+        comments: d ?? [],
         onAddComment: f,
         participants: h,
         onResolveThread: p,
@@ -565,19 +565,19 @@ function re({ section: e, onAckItem: s, onRejectItem: d, fragment: l, ydoc: i, p
   ] });
 }
 const E = 4;
-function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSectionFocus: i, jumpToIndex: a, onJumpComplete: c, getSectionFragment: f, ydoc: p, provider: y, comments: h, onAddComment: b, onResolveThread: w, onUnresolveThread: u }) {
-  const [m, N] = j(0), M = Math.max(1, Math.ceil(e.length / E)), x = m * E, o = e.slice(x, x + E);
+function he({ sections: e, onAckItem: o, onRejectItem: l, participants: c, onSectionFocus: s, jumpToIndex: a, onJumpComplete: d, getSectionFragment: f, ydoc: p, provider: y, comments: h, onAddComment: b, onResolveThread: v, onUnresolveThread: u }) {
+  const [m, w] = j(0), M = Math.max(1, Math.ceil(e.length / E)), x = m * E, i = e.slice(x, x + E);
   if (D(() => {
-    a != null && a >= 0 && a < e.length && (N(Math.floor(a / E)), c?.());
-  }, [a, e.length, c]), D(() => {
-    o.length > 0 && i && i(o[0].id);
-  }, [x, i]), e.length === 0)
+    a != null && a >= 0 && a < e.length && (w(Math.floor(a / E)), d?.());
+  }, [a, e.length, d]), D(() => {
+    i.length > 0 && s && s(i[0].id);
+  }, [x, s]), e.length === 0)
     return /* @__PURE__ */ r("div", { className: t("text-center p-12 text-text-secondary text-[15px]"), children: "No sections to review." });
-  const k = () => N((v) => Math.max(0, v - 1)), S = () => N((v) => Math.min(M - 1, v + 1)), C = x + o.length;
+  const k = () => w((N) => Math.max(0, N - 1)), S = () => w((N) => Math.min(M - 1, N + 1)), C = x + i.length;
   return /* @__PURE__ */ n("div", { children: [
     /* @__PURE__ */ r(J, { current: C, total: e.length }),
-    /* @__PURE__ */ r("div", { className: t("flex flex-col gap-4"), children: o.map((v) => {
-      const I = l?.filter((g) => g.currentSectionId === v.id) ?? [];
+    /* @__PURE__ */ r("div", { className: t("flex flex-col gap-4"), children: i.map((N) => {
+      const I = c?.filter((g) => g.currentSectionId === N.id) ?? [];
       return /* @__PURE__ */ n("div", { children: [
         I.length > 0 && /* @__PURE__ */ n("div", { className: t("flex gap-1 mb-1.5 items-center"), children: [
           /* @__PURE__ */ r("span", { className: t("text-xs text-text-secondary mr-1"), children: "Viewing:" }),
@@ -595,20 +595,20 @@ function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSec
         /* @__PURE__ */ r(
           re,
           {
-            section: v,
-            onAckItem: (g, A) => s(v.id, g, A),
-            onRejectItem: (g, A) => d(v.id, g, A),
-            fragment: f(v.id),
+            section: N,
+            onAckItem: (g, A) => o(N.id, g, A),
+            onRejectItem: (g, A) => l(N.id, g, A),
+            fragment: f(N.id),
             ydoc: p,
             provider: y,
-            comments: h?.[v.id],
-            onAddComment: b ? (g, A) => b(v.id, g, A) : void 0,
-            onResolveThread: w ? (g) => w(v.id, g) : void 0,
-            onUnresolveThread: u ? (g) => u(v.id, g) : void 0,
+            comments: h?.[N.id],
+            onAddComment: b ? (g, A) => b(N.id, g, A) : void 0,
+            onResolveThread: v ? (g) => v(N.id, g) : void 0,
+            onUnresolveThread: u ? (g) => u(N.id, g) : void 0,
             participants: I
           }
         )
-      ] }, v.id);
+      ] }, N.id);
     }) }),
     /* @__PURE__ */ n("div", { className: t("flex justify-between items-center mt-4 py-3"), children: [
       /* @__PURE__ */ r(
@@ -652,41 +652,41 @@ function he({ sections: e, onAckItem: s, onRejectItem: d, participants: l, onSec
 function ne(e) {
   return e === "doc.ack" ? "✅" : e === "doc.reject" ? "❌" : e === "doc.add_item" || e === "doc.add_section" ? "➕" : e === "doc.edit_section" ? "✏️" : e === "doc.remove_item" ? "➖" : e === "doc.comment" ? "💬" : e.endsWith(".join") ? "🟢" : e.endsWith(".leave") ? "🔴" : e.startsWith("social.") ? "💬" : e === "pipeline.run.started" ? "▶" : e === "pipeline.run.completed" ? "✓" : e === "pipeline.run.failed" ? "✕" : e === "pipeline.approval.requested" ? "✋" : "•";
 }
-function se(e, s) {
-  const d = s.documentTitle ? ` in ${s.documentTitle}` : "";
+function oe(e, o) {
+  const l = o.documentTitle ? ` in ${o.documentTitle}` : "";
   switch (e) {
     case "doc.ack":
-      return `acknowledged "${s.itemText || "item"}"${d}`;
+      return `acknowledged "${o.itemText || "item"}"${l}`;
     case "doc.reject":
-      return `rejected "${s.itemText || "item"}"${d}`;
+      return `rejected "${o.itemText || "item"}"${l}`;
     case "doc.add_item":
-      return `added task in "${s.sectionTitle || "section"}"${d}`;
+      return `added task in "${o.sectionTitle || "section"}"${l}`;
     case "doc.add_section":
-      return `added new section${d}`;
+      return `added new section${l}`;
     case "doc.edit_section":
-      return `edited "${s.sectionTitle || "section"}"${d}`;
+      return `edited "${o.sectionTitle || "section"}"${l}`;
     case "doc.remove_item":
-      return `removed "${s.itemText || "item"}"${d}`;
+      return `removed "${o.itemText || "item"}"${l}`;
     case "doc.comment":
-      return `commented: "${s.text || "..."}"${d}`;
+      return `commented: "${o.text || "..."}"${l}`;
     case "pipeline.run.started": {
-      const l = s.pipelineId ?? "";
-      return l ? `triggered pipeline ${l}` : "triggered a pipeline";
+      const c = o.pipelineId ?? "";
+      return c ? `triggered pipeline ${c}` : "triggered a pipeline";
     }
     case "pipeline.run.completed":
-      return typeof s.durationMs == "number" ? `pipeline run completed in ${s.durationMs}ms` : "pipeline run completed";
+      return typeof o.durationMs == "number" ? `pipeline run completed in ${o.durationMs}ms` : "pipeline run completed";
     case "pipeline.run.failed":
-      return `pipeline run failed: ${s.error ?? "unknown error"}`;
+      return `pipeline run failed: ${o.error ?? "unknown error"}`;
     case "pipeline.approval.requested":
       return "approval requested";
     default:
-      return s.description ? String(s.description) : e;
+      return o.description ? String(o.description) : e;
   }
 }
-function ie(e) {
-  return e.split(" ").map((s) => s[0] ?? "").join("").toUpperCase().slice(0, 2);
+function se(e) {
+  return e.split(" ").map((o) => o[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function oe(e) {
+function ie(e) {
   try {
     return new Date(e).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   } catch {
@@ -705,62 +705,62 @@ function ae(e) {
       return "online";
   }
 }
-function ge({ events: e, participants: s }) {
-  const [d, l] = j(!1);
+function ge({ events: e, participants: o }) {
+  const [l, c] = j(!1);
   return /* @__PURE__ */ n("div", { className: t("bg-surface-panel border border-border rounded-lg overflow-hidden"), children: [
     /* @__PURE__ */ n(
       "div",
       {
         className: t("flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-text-primary cursor-pointer select-none"),
-        onClick: () => l((i) => !i),
+        onClick: () => c((s) => !s),
         children: [
           /* @__PURE__ */ n("span", { children: [
             "Activity ",
             e.length > 0 && `(${e.length})`
           ] }),
-          /* @__PURE__ */ r("span", { className: t("text-[11px] font-normal text-text-tertiary"), children: d ? "▶" : "▼" })
+          /* @__PURE__ */ r("span", { className: t("text-[11px] font-normal text-text-tertiary"), children: l ? "▶" : "▼" })
         ]
       }
     ),
-    !d && /* @__PURE__ */ n($, { children: [
-      s.length > 0 && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap"), children: [
+    !l && /* @__PURE__ */ n($, { children: [
+      o.length > 0 && /* @__PURE__ */ n("div", { className: t("flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap"), children: [
         /* @__PURE__ */ r("span", { className: t("font-semibold"), children: "Active:" }),
-        s.map((i) => /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"), children: [
-          /* @__PURE__ */ r("span", { className: t("w-2 h-2 rounded-full shrink-0"), style: { background: i.color } }),
-          i.displayName,
+        o.map((s) => /* @__PURE__ */ n("span", { className: t("inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-text-primary"), children: [
+          /* @__PURE__ */ r("span", { className: t("w-2 h-2 rounded-full shrink-0"), style: { background: s.color } }),
+          s.displayName,
           " (",
-          ae(i.mode),
+          ae(s.mode),
           ")"
-        ] }, i.clientId))
+        ] }, s.clientId))
       ] }),
-      /* @__PURE__ */ r("div", { className: t("max-h-[260px] overflow-y-auto py-1"), children: e.length === 0 ? /* @__PURE__ */ r("div", { className: t("px-3 py-4 text-center text-text-tertiary text-xs"), children: "No activity yet. Actions like acknowledging tasks will appear here." }) : e.map((i) => /* @__PURE__ */ n("div", { className: t("flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle"), children: [
+      /* @__PURE__ */ r("div", { className: t("max-h-[260px] overflow-y-auto py-1"), children: e.length === 0 ? /* @__PURE__ */ r("div", { className: t("px-3 py-4 text-center text-text-tertiary text-xs"), children: "No activity yet. Actions like acknowledging tasks will appear here." }) : e.map((s) => /* @__PURE__ */ n("div", { className: t("flex items-start gap-2 px-3 py-1.5 text-xs leading-normal border-b border-border-subtle"), children: [
         /* @__PURE__ */ r(
           "div",
           {
             className: t("w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px"),
-            style: { background: i.color || "#94a3b8" },
-            children: ie(i.displayName || "Unknown")
+            style: { background: s.color || "var(--color-text-tertiary)" },
+            children: se(s.displayName || "Unknown")
           }
         ),
         /* @__PURE__ */ n("div", { children: [
-          /* @__PURE__ */ r("span", { className: t("font-semibold text-text-primary"), children: i.displayName || "Unknown" }),
+          /* @__PURE__ */ r("span", { className: t("font-semibold text-text-primary"), children: s.displayName || "Unknown" }),
           " ",
           /* @__PURE__ */ n("span", { className: t("text-neutral"), children: [
-            ne(i.eventType),
+            ne(s.eventType),
             " ",
-            se(i.eventType, i.detail)
+            oe(s.eventType, s.detail)
           ] })
         ] }),
-        /* @__PURE__ */ r("span", { className: t("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"), children: oe(i.timestamp) })
-      ] }, i.id)) })
+        /* @__PURE__ */ r("span", { className: t("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"), children: ie(s.timestamp) })
+      ] }, s.id)) })
     ] })
   ] });
 }
 export {
   he as AckMode,
-  Ne as ActionItemsCard,
+  we as ActionItemsCard,
   ge as ActivityFeed,
-  ve as AttachmentsPanel,
+  Ne as AttachmentsPanel,
   re as ChunkViewer,
   ke as DiffViewer,
   Ce as DocumentEditorPage,

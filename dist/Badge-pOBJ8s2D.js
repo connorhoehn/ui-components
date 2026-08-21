@@ -46,7 +46,7 @@ const B = {
   // eye
 };
 function L(e) {
-  return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "#94a3b8" : e.online === !0 ? "#22c55e" : null;
+  return e.idle === !0 ? "#f59e0b" : e.online === !1 ? "var(--color-text-tertiary)" : e.online === !0 ? "#22c55e" : null;
 }
 function U(e) {
   if (e)
@@ -295,11 +295,11 @@ function ne({
   );
 }
 const M = {
-  task: "#10b981",
-  pr: "#6366f1",
-  decision: "#f59e0b",
-  comment: "#94a3b8",
-  status: "#3b82f6"
+  task: "var(--color-success)",
+  pr: "var(--color-primary)",
+  decision: "var(--color-warning)",
+  comment: "var(--color-text-tertiary)",
+  status: "var(--color-info)"
 };
 function H(e) {
   const o = e.trim().split(/\s+/), a = o[0] ?? "", n = o[1]?.[0] ?? "";
@@ -372,7 +372,7 @@ function re({
     {
       item: u,
       opacity: V[r] ?? 0.1,
-      dotColor: i[u.kind ?? ""] ?? "#94a3b8"
+      dotColor: i[u.kind ?? ""] ?? "var(--color-text-tertiary)"
     },
     u.id
   )) });

@@ -3,9 +3,9 @@ import { Outlet as he, useNavigate as be } from "react-router";
 import { useState as g, useRef as T, useCallback as X, useEffect as O, useMemo as D } from "react";
 import { u as q, d as ne } from "./ObservabilityContext-mvmEXnGv.js";
 import { u as ge } from "./IdentityContext-CLalsm_M.js";
-import { S as ae, E as se, C as ie } from "./CardHeader-Cri3P8GV.js";
+import { S as ae, E as se, C as ie } from "./CardHeader-C068zmoE.js";
 import { c as h } from "./cn-B6yFEsav.js";
-import { S as ve, L as _, B as ye } from "./Chart-ByoxeiYX.js";
+import { S as ve, L as _, B as ye } from "./Chart-D_DsFB-7.js";
 import { S as Y } from "./Select-DAEcKWg2.js";
 import { a as Ne } from "./EventStreamContext-CjzSHXy-.js";
 import { E as we } from "./EmptyState-Ejc9dJA3.js";
@@ -1023,9 +1023,9 @@ function C(e, r, n) {
   };
 }
 const F = {
-  primary: "#646cff",
-  completed: "#16a34a",
-  failed: "#dc2626"
+  primary: "var(--color-primary)",
+  completed: "var(--color-success)",
+  failed: "var(--color-danger)"
 };
 function at() {
   return {

@@ -26,7 +26,7 @@ import { C as le } from "./Chip-BDT8ro4h.js";
 import { C as rt } from "./Checkbox-vOc5I8kn.js";
 import { u as Qr } from "./IdentityContext-CLalsm_M.js";
 import { C as Wt } from "./ConfirmDialog-B0yXaqxp.js";
-import { B as oa, L as Ut } from "./Chart-ByoxeiYX.js";
+import { B as oa, L as Ut } from "./Chart-D_DsFB-7.js";
 import { S as Zt } from "./SkeletonCard-Bm2f1JX1.js";
 const aa = {
   trigger: ["out"],
@@ -2156,17 +2156,17 @@ function Ci(e) {
   switch (e) {
     case "active":
       return {
-        stroke: "#2563eb",
+        stroke: "var(--color-info)",
         strokeWidth: 2,
         strokeDasharray: "6 4",
         animate: !0
       };
     case "traversed-success":
-      return { stroke: "#16a34a", strokeWidth: 2 };
+      return { stroke: "var(--color-success)", strokeWidth: 2 };
     case "traversed-failure":
-      return { stroke: "#dc2626", strokeWidth: 2 };
+      return { stroke: "var(--color-danger)", strokeWidth: 2 };
     default:
-      return { stroke: "#cbd5e1", strokeWidth: 1.5 };
+      return { stroke: "var(--color-border-emphasis)", strokeWidth: 1.5 };
   }
 }
 function Ii({
@@ -2193,7 +2193,7 @@ function Ii({
   v === "image" ? (y = 2.5, w && (N = ki)) : v === "control" && (y = 1.5, w && (k = "2 4"));
   const C = u.volume, T = typeof C == "number" && C >= 2;
   T && (y = Math.min(4, y + Math.log2(C)));
-  const M = p ? "#646cff" : N, P = p ? Math.max(2.5, y) : y, D = v === "image" && u.state === "active" && !f;
+  const M = p ? "var(--color-primary)" : N, P = p ? Math.max(2.5, y) : y, D = v === "image" && u.state === "active" && !f;
   return /* @__PURE__ */ o(H, { children: [
     /* @__PURE__ */ t(
       "path",
@@ -3436,15 +3436,15 @@ function ns({ onFilterLog: e, errorNodeId: n, onErrorNodePosition: r, replayEdge
     switch (ee.data?._state) {
       case "running":
       case "pending":
-        return "#2563eb";
+        return "var(--color-info)";
       case "completed":
-        return "#16a34a";
+        return "var(--color-success)";
       case "failed":
-        return "#dc2626";
+        return "var(--color-danger)";
       case "awaiting":
-        return "#f59e0b";
+        return "var(--color-warning)";
       default:
-        return "#94a3b8";
+        return "var(--color-text-tertiary)";
     }
   }, []);
   return /* @__PURE__ */ o(
@@ -3579,12 +3579,12 @@ function rs({ onFilterLog: e, errorNodeId: n, onErrorNodePosition: r, replayEdge
   ) });
 }
 const Yn = {
-  LLMError: { bg: "#fef2f2", fg: "#dc2626" },
-  TimeoutError: { bg: "#fff7ed", fg: "#ea580c" },
-  NetworkError: { bg: "#fffbeb", fg: "#d97706" },
-  ValidationError: { bg: "#fefce8", fg: "#ca8a04" },
-  RegistryConflict: { bg: "#faf5ff", fg: "#9333ea" },
-  UnknownError: { bg: "#f1f5f9", fg: "#475569" }
+  LLMError: { bg: "var(--color-danger-bg)", fg: "var(--color-danger)" },
+  TimeoutError: { bg: "var(--color-caution-bg)", fg: "var(--color-caution)" },
+  NetworkError: { bg: "var(--color-warning-bg)", fg: "var(--color-warning)" },
+  ValidationError: { bg: "#fefce8", fg: "var(--color-warning)" },
+  RegistryConflict: { bg: "var(--color-accent-bg)", fg: "var(--color-accent)" },
+  UnknownError: { bg: "var(--color-surface-hover)", fg: "var(--color-text-secondary)" }
 };
 function os(e) {
   switch (e) {
@@ -12709,7 +12709,7 @@ function fd({ result: e, className: n }) {
 }
 const gd = {
   people: { stroke: "#4f46e5", fill: "rgba(79,70,229,0.10)", text: "bg-primary text-white" },
-  object: { stroke: "#d97706", fill: "rgba(217,119,6,0.10)", text: "bg-warning text-white" }
+  object: { stroke: "var(--color-warning)", fill: "rgba(217,119,6,0.10)", text: "bg-warning text-white" }
 };
 function xd({
   imageUrl: e,
@@ -18148,21 +18148,21 @@ function tt({ title: e, children: n }) {
   ] });
 }
 const kr = "m-0 px-3 py-2 bg-surface-inset border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto", Cr = "px-3.5 py-2.5 bg-surface-inset border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto", fn = "text-left px-2 py-1 text-[10px] font-semibold text-text-tertiary uppercase", Le = "px-2 py-[5px] text-[11px] text-text-secondary align-top", Hp = {
-  "#2563eb": "bg-info/10 text-info-fg",
-  "#7c3aed": "bg-accent/10 text-accent-fg",
-  "#16a34a": "bg-success/10 text-success-fg",
-  "#dc2626": "bg-danger/10 text-danger-fg"
+  "var(--color-info)": "bg-info/10 text-info-fg",
+  "var(--color-cat-ai)": "bg-accent/10 text-accent-fg",
+  "var(--color-success)": "bg-success/10 text-success-fg",
+  "var(--color-danger)": "bg-danger/10 text-danger-fg"
 };
 function $t(e) {
   return `inline-block px-1.5 py-px rounded-[3px] text-[10px] font-semibold ${Hp[e] ?? ""}`.trimEnd();
 }
 const Jp = {
-  completed: "#16a34a",
-  failed: "#dc2626",
-  running: "#2563eb"
+  completed: "var(--color-success)",
+  failed: "var(--color-danger)",
+  running: "var(--color-info)"
 };
 function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryFromStep: s, onResumeFromStep: d }) {
-  const [c, l] = S(!1), p = n.output, u = p?.response, f = n.llm, h = n.input, g = Jp[n.status] ?? "#94a3b8";
+  const [c, l] = S(!1), p = n.output, u = p?.response, f = n.llm, h = n.input, g = Jp[n.status] ?? "var(--color-text-tertiary)";
   return /* @__PURE__ */ o("div", { className: "relative pl-9 mb-1", children: [
     /* @__PURE__ */ t(
       "div",
@@ -18186,7 +18186,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
           c ? "bg-surface-inset rounded-t-lg" : "bg-surface rounded-lg"
         ),
         style: {
-          border: `1px solid ${c ? g + "40" : "#e2e8f0"}`,
+          border: `1px solid ${c ? g + "40" : "var(--color-border)"}`,
           ...c ? { borderRadius: "8px 8px 0 0" } : {}
         },
         children: [
@@ -18242,7 +18242,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
             ] }) }),
             /* @__PURE__ */ o("tbody", { children: [
               n.startedAt && /* @__PURE__ */ o("tr", { className: "border-b border-border", children: [
-                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("#2563eb"), children: "started" }) }),
+                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("var(--color-info)"), children: "started" }) }),
                 /* @__PURE__ */ t("td", { className: Le, children: new Date(n.startedAt).toLocaleTimeString() }),
                 /* @__PURE__ */ o("td", { className: Le, children: [
                   "Node ",
@@ -18253,12 +18253,12 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
                 ] })
               ] }),
               f?.streamOpened && /* @__PURE__ */ o("tr", { className: "border-b border-border", children: [
-                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("#7c3aed"), children: "stream.opened" }) }),
+                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("var(--color-cat-ai)"), children: "stream.opened" }) }),
                 /* @__PURE__ */ t("td", { className: Le, children: "—" }),
                 /* @__PURE__ */ t("td", { className: Le, children: "LLM stream connection established" })
               ] }),
               f?.firstTokenLatencyMs != null && /* @__PURE__ */ o("tr", { className: "border-b border-border", children: [
-                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("#7c3aed"), children: "first.token" }) }),
+                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("var(--color-cat-ai)"), children: "first.token" }) }),
                 /* @__PURE__ */ o("td", { className: Le, children: [
                   "+",
                   f.firstTokenLatencyMs,
@@ -18267,7 +18267,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
                 /* @__PURE__ */ t("td", { className: Le, children: "First token received from LLM" })
               ] }),
               n.completedAt && n.status === "completed" && /* @__PURE__ */ o("tr", { className: "border-b border-border", children: [
-                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("#16a34a"), children: "completed" }) }),
+                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("var(--color-success)"), children: "completed" }) }),
                 /* @__PURE__ */ t("td", { className: Le, children: new Date(n.completedAt).toLocaleTimeString() }),
                 /* @__PURE__ */ o("td", { className: Le, children: [
                   "Finished in ",
@@ -18275,7 +18275,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
                 ] })
               ] }),
               n.status === "failed" && /* @__PURE__ */ o("tr", { className: "border-b border-border", children: [
-                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("#dc2626"), children: "failed" }) }),
+                /* @__PURE__ */ t("td", { className: Le, children: /* @__PURE__ */ t("span", { className: $t("var(--color-danger)"), children: "failed" }) }),
                 /* @__PURE__ */ t("td", { className: Le, children: n.completedAt ? new Date(n.completedAt).toLocaleTimeString() : "—" }),
                 /* @__PURE__ */ t("td", { className: Le, children: n.error ?? "Unknown error" })
               ] })
@@ -18598,7 +18598,7 @@ function tu(e, n, r = {}) {
     refresh: T
   };
 }
-const nu = "#3b82f6", ru = "#eab308", ou = "#f97316", Ir = "#64748b", au = "#ef4444", iu = "#a855f7";
+const nu = "var(--color-info)", ru = "#eab308", ou = "var(--color-caution)", Ir = "var(--color-neutral)", au = "var(--color-danger)", iu = "var(--color-accent)";
 function su(e) {
   return e.action === "pipeline.step.failed" || e.outcome === "error" ? au : e.action === "pipeline.run.resumed-from-step" || e.action.startsWith("pipeline.step.context.patched") ? iu : e.action.startsWith("pipeline.approval.") ? ru : e.action.startsWith("pipeline.breakpoint.") ? ou : e.action.startsWith("pipeline.step.") ? nu : (e.action.startsWith("pipeline.run."), Ir);
 }
@@ -20435,7 +20435,7 @@ function Wu(e, n) {
   };
 }
 function Vu(e) {
-  return e >= 90 ? "#16a34a" : e >= 70 ? "#f59e0b" : "#dc2626";
+  return e >= 90 ? "var(--color-success)" : e >= 70 ? "var(--color-warning)" : "var(--color-danger)";
 }
 function Ku(e) {
   const n = [...e].sort((l, p) => l.startedAt.localeCompare(p.startedAt)), r = [], a = [], i = [];
@@ -20445,16 +20445,16 @@ function Ku(e) {
     l.status === "completed" ? s += 1 : l.status === "failed" ? d += 1 : l.status === "cancelled" && (c += 1), r.push({ x: p, y: s }), a.push({ x: p, y: d }), i.push({ x: p, y: c });
   }
   return [
-    { label: "Completed", data: r, color: "#16a34a" },
-    { label: "Failed", data: a, color: "#dc2626" },
-    { label: "Cancelled", data: i, color: "#d1d5db" }
+    { label: "Completed", data: r, color: "var(--color-success)" },
+    { label: "Failed", data: a, color: "var(--color-danger)" },
+    { label: "Cancelled", data: i, color: "var(--color-border-field)" }
   ];
 }
 function Hu(e, n) {
   const a = [...e].sort((s, d) => s.startedAt.localeCompare(d.startedAt)).filter((s) => typeof s.durationMs == "number" && s.durationMs > 0).map((s) => ({ x: new Date(s.startedAt).getTime(), y: s.durationMs })), i = a.map((s) => ({ x: s.x, y: n }));
   return [
-    { label: "Duration (ms)", data: a, color: "#646cff" },
-    { label: "p50", data: i, color: "#94a3b8" }
+    { label: "Duration (ms)", data: a, color: "var(--color-primary)" },
+    { label: "p50", data: i, color: "var(--color-text-tertiary)" }
   ];
 }
 function Ju(e) {
@@ -20464,8 +20464,8 @@ function Ju(e) {
     r.push({ x: s, y: d }), a.push({ x: s, y: c });
   }
   return [
-    { label: "Tokens in", data: r, color: "#646cff" },
-    { label: "Tokens out", data: a, color: "#16a34a" }
+    { label: "Tokens in", data: r, color: "var(--color-primary)" },
+    { label: "Tokens out", data: a, color: "var(--color-success)" }
   ];
 }
 function oh() {
@@ -20485,7 +20485,7 @@ function oh() {
       {
         label: "Daily spend",
         data: h.map((m) => ({ x: m.ts, y: m.totalCostUsd })),
-        color: "#646cff"
+        color: "var(--color-primary)"
       }
     ],
     [h]

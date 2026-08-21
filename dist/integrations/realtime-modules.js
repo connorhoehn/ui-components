@@ -5,7 +5,7 @@ import { E as j } from "../EmptyState-Ejc9dJA3.js";
 import { c as _ } from "../cn-B6yFEsav.js";
 import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-D8cBoHPp.js";
 import { S as K } from "../SkeletonCard-Bm2f1JX1.js";
-import { A as G, N as Q, C as Z, P as D, B as A } from "../Badge-nqu-LijU.js";
+import { A as G, N as Q, C as Z, P as D, B as A } from "../Badge-pOBJ8s2D.js";
 import { R as J, S as B, a as ee } from "../ReactionsOverlay-DGBFgHTr.js";
 import { F as te, S as $, I as ae } from "../FileUploadDrop-D8mbq_QB.js";
 import { useRoomOccupancy as ne } from "@connorhoehn/realtime-modules/client/hangout-rooms";

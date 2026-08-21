@@ -1,7 +1,7 @@
 import { r as T, a as k } from "./registry-qR57lair.js";
 import { jsx as r, jsxs as u, Fragment as z } from "react/jsx-runtime";
-import { useMemo as ie, useState as D, useEffect as A, useCallback as j, useRef as S } from "react";
-import { useEditor as oe, EditorContent as se } from "@tiptap/react";
+import { useMemo as oe, useState as D, useEffect as A, useCallback as j, useRef as S } from "react";
+import { useEditor as ie, EditorContent as se } from "@tiptap/react";
 import le from "@tiptap/starter-kit";
 import de from "@tiptap/extension-task-list";
 import ce from "@tiptap/extension-task-item";
@@ -14,8 +14,8 @@ import { D as K, q as me } from "./useWebSocket-Bn4OeUor.js";
 import { I as O } from "./Input-Dt0yAs9r.js";
 import { S as W } from "./Select-DAEcKWg2.js";
 import { C as he } from "./Checkbox-vOc5I8kn.js";
-import { l as fe } from "./useDocumentTypes-C29MkgPl.js";
-import { M as xe } from "./Modal-X8tdpRKs.js";
+import { l as xe } from "./useDocumentTypes-C29MkgPl.js";
+import { M as fe } from "./Modal-X8tdpRKs.js";
 import { T as be } from "./Textarea-kaa9rHUL.js";
 const ge = {
   type: "tasks",
@@ -254,27 +254,27 @@ function B(e, t, n) {
 function Se({ cursors: e, editorView: t, containerEl: n }) {
   return t ? /* @__PURE__ */ r(z, { children: e.map((a) => {
     if (a.head == null) return null;
-    const o = B(t, a.head, n);
-    if (!o) return null;
-    const d = a.name.split(" ").map((i) => i[0] ?? "").join("").toUpperCase().slice(0, 2) || a.name.slice(0, 2).toUpperCase(), s = [];
+    const i = B(t, a.head, n);
+    if (!i) return null;
+    const d = a.name.split(" ").map((o) => o[0] ?? "").join("").toUpperCase().slice(0, 2) || a.name.slice(0, 2).toUpperCase(), s = [];
     if (a.anchor != null && a.anchor !== a.head) {
-      const i = Math.min(a.anchor, a.head), m = Math.max(a.anchor, a.head);
+      const o = Math.min(a.anchor, a.head), m = Math.max(a.anchor, a.head);
       try {
         const h = t.dom.offsetWidth;
-        let x = i;
-        for (; x <= m; ) {
-          const f = B(t, x, n);
-          if (!f) break;
-          let N = x;
-          const v = f.top;
-          for (let p = x + 1; p <= m; p++) {
+        let f = o;
+        for (; f <= m; ) {
+          const x = B(t, f, n);
+          if (!x) break;
+          let N = f;
+          const v = x.top;
+          for (let p = f + 1; p <= m; p++) {
             const g = B(t, p, n);
             if (!g || Math.abs(g.top - v) > 2) break;
             N = p;
           }
           const y = B(t, N, n);
           if (y) {
-            const p = x === i ? f.left : 0, g = N === m ? y.left + 4 : h;
+            const p = f === o ? x.left : 0, g = N === m ? y.left + 4 : h;
             s.push(
               /* @__PURE__ */ r(
                 "div",
@@ -284,15 +284,15 @@ function Se({ cursors: e, editorView: t, containerEl: n }) {
                     top: v,
                     left: p,
                     width: Math.max(g - p, 4),
-                    height: f.height || 18,
+                    height: x.height || 18,
                     background: a.color
                   }
                 },
-                `sel-${a.clientId}-${x}`
+                `sel-${a.clientId}-${f}`
               )
             );
           }
-          x = N + 1;
+          f = N + 1;
         }
       } catch {
       }
@@ -304,9 +304,9 @@ function Se({ cursors: e, editorView: t, containerEl: n }) {
         {
           className: "absolute w-0.5 opacity-40 rounded-[1px] pointer-events-none z-10 [animation:cursorBlink_1.2s_ease-in-out_infinite]",
           style: {
-            top: o.top,
-            left: o.left - 1,
-            height: o.height || 18,
+            top: i.top,
+            left: i.left - 1,
+            height: i.height || 18,
             background: a.color
           }
         }
@@ -316,9 +316,9 @@ function Se({ cursors: e, editorView: t, containerEl: n }) {
         {
           className: "absolute w-2 opacity-[0.06] rounded pointer-events-none z-[9]",
           style: {
-            top: o.top,
-            left: o.left - 4,
-            height: o.height || 18,
+            top: i.top,
+            left: i.left - 4,
+            height: i.height || 18,
             background: a.color
           }
         }
@@ -328,8 +328,8 @@ function Se({ cursors: e, editorView: t, containerEl: n }) {
         {
           className: "absolute text-white text-[10px] font-bold py-px px-[5px] rounded-[4px_4px_4px_0] whitespace-nowrap pointer-events-none z-[11] opacity-[0.55] shadow-[0_1px_4px_rgba(0,0,0,0.1)]",
           style: {
-            top: o.top - 18,
-            left: o.left - 2,
+            top: i.top - 18,
+            left: i.left - 2,
             background: a.color
           },
           title: a.name,
@@ -344,25 +344,25 @@ function E({
   ydoc: t,
   provider: n,
   user: a,
-  editable: o = !0,
+  editable: i = !0,
   placeholder: d = "Start typing...",
   sectionId: s,
-  onUpdateCursorInfo: i
+  onUpdateCursorInfo: o
 }) {
-  const m = ie(() => [
+  const m = oe(() => [
     le.configure({ history: !1 }),
     de,
     ce.configure({ nested: !0 }),
     ue.configure({ placeholder: d }),
     pe.configure({ document: t, fragment: e })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [t, e]), c = oe({
+  ], [t, e]), c = ie({
     extensions: m,
-    editable: o
-  }, [m]), [h, x] = D([]), [f, N] = D(null);
+    editable: i
+  }, [m]), [h, f] = D([]), [x, N] = D(null);
   A(() => {
-    if (i)
-      i(a.name, a.color);
+    if (o)
+      o(a.name, a.color);
     else if (n?.awareness) {
       const p = n.awareness.getLocalState()?.user || {};
       n.awareness.setLocalStateField("user", {
@@ -371,7 +371,7 @@ function E({
         color: a.color
       });
     }
-  }, [n, a, i]);
+  }, [n, a, o]);
   const v = j(() => {
     if (!n?.awareness || !c?.view) return;
     const y = n.awareness.getStates(), p = n.awareness.clientID, g = [];
@@ -396,13 +396,13 @@ function E({
           g.push({
             clientId: C,
             name: $.name || `User ${C}`,
-            color: $.color || "#3b82f6",
+            color: $.color || "var(--color-info)",
             anchor: F,
             head: I
           });
         } catch {
         }
-    }), x(g);
+    }), f(g);
   }, [n, c, s]);
   return A(() => {
     if (!c?.view || !n?.awareness) return;
@@ -424,27 +424,27 @@ function E({
     return n.awareness.on("change", y), () => {
       n.awareness.off("change", y);
     };
-  }, [n, v]), /* @__PURE__ */ u("div", { className: l(o ? "border border-border rounded-lg overflow-hidden relative" : "relative"), children: [
-    o && /* @__PURE__ */ r(Re, { editor: c }),
+  }, [n, v]), /* @__PURE__ */ u("div", { className: l(i ? "border border-border rounded-lg overflow-hidden relative" : "relative"), children: [
+    i && /* @__PURE__ */ r(Re, { editor: c }),
     /* @__PURE__ */ u("div", { ref: N, className: l("px-4 py-3 text-sm leading-relaxed text-text-primary relative"), children: [
       /* @__PURE__ */ r(se, { editor: c }),
-      /* @__PURE__ */ r(Se, { cursors: h, editorView: c?.view, containerEl: f })
+      /* @__PURE__ */ r(Se, { cursors: h, editorView: c?.view, containerEl: x })
     ] })
   ] });
 }
 const $e = {
-  pending: "#94a3b8",
-  acked: "#3b82f6",
-  done: "#22c55e",
-  rejected: "#ef4444"
+  pending: "var(--color-text-tertiary)",
+  acked: "var(--color-info)",
+  done: "var(--color-success)",
+  rejected: "var(--color-danger)"
 }, G = {
-  low: "#94a3b8",
-  medium: "#f97316",
-  high: "#ef4444"
+  low: "var(--color-text-tertiary)",
+  medium: "var(--color-caution)",
+  high: "var(--color-danger)"
 }, Le = {
-  start: "#22c55e",
-  stop: "#ef4444",
-  continue: "#3b82f6"
+  start: "var(--color-success)",
+  stop: "var(--color-danger)",
+  continue: "var(--color-info)"
 };
 function Te(e) {
   const t = new Date(e);
@@ -459,14 +459,14 @@ function Ee(e) {
 function J(e) {
   return e.split(/\s+/).map((t) => t[0]).join("").toUpperCase().slice(0, 2);
 }
-function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, onDidAutoFocus: d }) {
-  const [s, i] = D(!1), [m, c] = D(""), [h, x] = D(0), f = S(null), N = S(null), v = S(null), y = () => {
+function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: i, onDidAutoFocus: d }) {
+  const [s, o] = D(!1), [m, c] = D(""), [h, f] = D(0), x = S(null), N = S(null), v = S(null), y = () => {
     const b = e.status === "done" ? "pending" : "done";
     n({ status: b });
   }, p = e.assignee ? K.find((b) => b.displayName === e.assignee) : void 0, g = m.trim() ? me(m) : K, w = j(() => {
-    t && (c(""), x(0), i(!0));
+    t && (c(""), f(0), o(!0));
   }, [t]), C = j(() => {
-    i(!1), c(""), x(0);
+    o(!1), c(""), f(0);
   }, []), $ = j((b) => {
     n({ assignee: b.displayName }), C();
   }, [n, C]), R = j(() => {
@@ -475,18 +475,18 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
   A(() => {
     if (!s) return;
     const b = (L) => {
-      f.current && !f.current.contains(L.target) && C();
+      x.current && !x.current.contains(L.target) && C();
     };
     return document.addEventListener("mousedown", b), () => document.removeEventListener("mousedown", b);
   }, [s, C]), A(() => {
     s && N.current && N.current.focus();
   }, [s]), A(() => {
-    x(0);
+    f(0);
   }, [m]), A(() => {
-    o && v.current && (v.current.focus(), d?.());
-  }, [o, d]);
+    i && v.current && (v.current.focus(), d?.());
+  }, [i, d]);
   const F = (b) => {
-    b.key === "Escape" ? C() : b.key === "ArrowDown" ? (b.preventDefault(), x((L) => Math.min(L + 1, g.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), x((L) => Math.max(L - 1, 0))) : b.key === "Enter" && (b.preventDefault(), g[h] && $(g[h]));
+    b.key === "Escape" ? C() : b.key === "ArrowDown" ? (b.preventDefault(), f((L) => Math.min(L + 1, g.length - 1))) : b.key === "ArrowUp" ? (b.preventDefault(), f((L) => Math.max(L - 1, 0))) : b.key === "Enter" && (b.preventDefault(), g[h] && $(g[h]));
   }, I = e.dueDate && e.status !== "done" ? Ee(e.dueDate) : !1;
   return /* @__PURE__ */ u("div", { className: l("flex items-center gap-2 py-1.5 border-b border-border-subtle"), children: [
     /* @__PURE__ */ r(
@@ -539,11 +539,11 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
       "span",
       {
         className: l("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-        style: { backgroundColor: Le[e.category.toLowerCase()] ?? "#6b7280" },
+        style: { backgroundColor: Le[e.category.toLowerCase()] ?? "var(--color-neutral)" },
         children: e.category
       }
     ),
-    /* @__PURE__ */ u("div", { ref: f, className: l("relative"), children: [
+    /* @__PURE__ */ u("div", { ref: x, className: l("relative"), children: [
       /* @__PURE__ */ r(
         "button",
         {
@@ -559,7 +559,7 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
               "span",
               {
                 className: l("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
-                style: { background: p?.color ?? "#94a3b8" },
+                style: { background: p?.color ?? "var(--color-text-tertiary)" },
                 children: J(e.assignee)
               }
             ),
@@ -597,7 +597,7 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
           {
             type: "button",
             onClick: () => $(b),
-            onMouseEnter: () => x(L),
+            onMouseEnter: () => f(L),
             className: l(
               "flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer border-none w-full text-left font-[inherit] text-text-primary",
               L === h ? "bg-surface-hover" : "bg-transparent"
@@ -664,20 +664,20 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
     )
   ] });
 }
-function Q({ items: e, editable: t, onUpdateItem: n, onRemoveItem: a, focusLastItem: o }) {
+function Q({ items: e, editable: t, onUpdateItem: n, onRemoveItem: a, focusLastItem: i }) {
   if (e.length === 0)
     return /* @__PURE__ */ r("div", { className: l("text-text-tertiary text-[13px] italic py-2"), children: "No tasks yet." });
-  const d = o?.current ?? !1;
-  return /* @__PURE__ */ r("div", { className: l("py-2"), children: e.map((s, i) => /* @__PURE__ */ r(
+  const d = i?.current ?? !1;
+  return /* @__PURE__ */ r("div", { className: l("py-2"), children: e.map((s, o) => /* @__PURE__ */ r(
     je,
     {
       item: s,
       editable: t,
       onUpdate: (m) => n(s.id, m),
       onRemove: () => a(s.id),
-      autoFocusText: d && i === e.length - 1,
-      onDidAutoFocus: d && i === e.length - 1 ? () => {
-        o && (o.current = !1);
+      autoFocusText: d && o === e.length - 1,
+      onDidAutoFocus: d && o === e.length - 1 ? () => {
+        i && (i.current = !1);
       } : void 0
     },
     s.id
@@ -688,14 +688,14 @@ function Ie({
   fragment: t,
   ydoc: n,
   provider: a,
-  user: o,
+  user: i,
   editable: d,
   onAddItem: s,
-  onUpdateItem: i,
+  onUpdateItem: o,
   onRemoveItem: m,
   onUpdateCursorInfo: c
 }) {
-  const h = S(!1), x = () => {
+  const h = S(!1), f = () => {
     s?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
@@ -705,7 +705,7 @@ function Ie({
         fragment: t,
         ydoc: n,
         provider: a ?? null,
-        user: o ?? { name: "Anonymous", color: "#6b7280" },
+        user: i ?? { name: "Anonymous", color: "#6b7280" },
         editable: d,
         placeholder: e.placeholder ?? `Write ${e.type} content...`,
         sectionId: e.id,
@@ -717,8 +717,8 @@ function Ie({
       {
         items: e.items,
         editable: d,
-        onUpdateItem: (f, N) => i?.(f, N),
-        onRemoveItem: (f) => m?.(f),
+        onUpdateItem: (x, N) => o?.(x, N),
+        onRemoveItem: (x) => m?.(x),
         focusLastItem: h
       }
     ),
@@ -726,7 +726,7 @@ function Ie({
       "button",
       {
         type: "button",
-        onClick: x,
+        onClick: f,
         className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
         children: "+ Add item"
       }
@@ -738,7 +738,7 @@ function Be({
   fragment: t,
   ydoc: n,
   provider: a,
-  user: o,
+  user: i,
   editable: d,
   onUpdateCursorInfo: s
 }) {
@@ -748,7 +748,7 @@ function Be({
       fragment: t,
       ydoc: n,
       provider: a ?? null,
-      user: o ?? { name: "Anonymous", color: "#6b7280" },
+      user: i ?? { name: "Anonymous", color: "#6b7280" },
       editable: d,
       placeholder: e.placeholder ?? "Write content...",
       sectionId: e.id,
@@ -761,7 +761,7 @@ function X({
   fragment: t,
   ydoc: n,
   provider: a,
-  onNavigateToEditor: o
+  onNavigateToEditor: i
 }) {
   return /* @__PURE__ */ u("div", { children: [
     !!t && !!n ? /* @__PURE__ */ r("div", { className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]", children: /* @__PURE__ */ r(
@@ -775,11 +775,11 @@ function X({
         sectionId: e.id
       }
     ) }) : /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px]", children: "No content." }),
-    o && /* @__PURE__ */ r(
+    i && /* @__PURE__ */ r(
       "button",
       {
         type: "button",
-        onClick: () => o(e.id),
+        onClick: () => i(e.id),
         className: "mt-2 bg-transparent border-none text-info-fg text-xs cursor-pointer p-0 font-inherit",
         children: "Edit in editor →"
       }
@@ -791,7 +791,7 @@ function Fe({
   editable: t,
   onAddItem: n,
   onUpdateItem: a,
-  onRemoveItem: o
+  onRemoveItem: i
 }) {
   const d = S(!1), s = () => {
     n?.({
@@ -810,8 +810,8 @@ function Fe({
       {
         items: e.items,
         editable: t,
-        onUpdateItem: (i, m) => a?.(i, m),
-        onRemoveItem: (i) => o?.(i),
+        onUpdateItem: (o, m) => a?.(o, m),
+        onRemoveItem: (o) => i?.(o),
         focusLastItem: d
       }
     ) : null,
@@ -828,14 +828,14 @@ function Fe({
   ] });
 }
 const Ue = {
-  pending: { label: "Pending", color: "#92400e", bg: "#fef3c7" },
-  acked: { label: "Acked", color: "#1e40af", bg: "#dbeafe" },
-  done: { label: "Done", color: "#065f46", bg: "#d1fae5" },
-  rejected: { label: "Rejected", color: "#991b1b", bg: "#fee2e2" }
+  pending: { label: "Pending", color: "var(--color-warning-fg)", bg: "var(--color-warning-bg)" },
+  acked: { label: "Acked", color: "var(--color-info-fg)", bg: "var(--color-info-bg)" },
+  done: { label: "Done", color: "var(--color-success-fg)", bg: "var(--color-success-bg)" },
+  rejected: { label: "Rejected", color: "var(--color-danger-fg)", bg: "var(--color-danger-bg)" }
 }, Pe = {
-  high: "#ef4444",
-  medium: "#f97316",
-  low: "#94a3b8"
+  high: "var(--color-danger)",
+  medium: "var(--color-caution)",
+  low: "var(--color-text-tertiary)"
 };
 function Oe(e) {
   const t = new Date(e);
@@ -851,7 +851,7 @@ function _e(e) {
   return e.split(/\s+/).map((t) => t[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
 function U({ item: e, onUpdateItem: t }) {
-  const [n, a] = D(!1), o = Ue[e.status], d = e.dueDate && e.status === "pending" ? Oe(e.dueDate) : !1, s = e.status === "done" || e.status === "acked";
+  const [n, a] = D(!1), i = Ue[e.status], d = e.dueDate && e.status === "pending" ? Oe(e.dueDate) : !1, s = e.status === "done" || e.status === "acked";
   return /* @__PURE__ */ u(
     "div",
     {
@@ -880,15 +880,15 @@ function U({ item: e, onUpdateItem: t }) {
             title: `Status: ${e.status}${t ? " — click to toggle done" : ""}`,
             onClick: () => {
               if (!t) return;
-              const i = e.status === "done" ? "pending" : "done";
-              t(e.id, { status: i });
+              const o = e.status === "done" ? "pending" : "done";
+              t(e.id, { status: o });
             },
             style: {
               width: 18,
               height: 18,
               borderRadius: "50%",
-              border: `2px solid ${o.color}`,
-              background: s ? o.color : "transparent",
+              border: `2px solid ${i.color}`,
+              background: s ? i.color : "transparent",
               cursor: t ? "pointer" : "default",
               flexShrink: 0,
               display: "flex",
@@ -913,8 +913,8 @@ function U({ item: e, onUpdateItem: t }) {
           fontWeight: 600,
           padding: "1px 6px",
           borderRadius: 10,
-          background: d ? "#fef2f2" : "#f0f9ff",
-          color: d ? "#dc2626" : "#64748b",
+          background: d ? "var(--color-danger-bg)" : "#f0f9ff",
+          color: d ? "var(--color-danger)" : "var(--color-neutral)",
           border: d ? "1px solid #fecaca" : "1px solid #e0f2fe",
           whiteSpace: "nowrap",
           flexShrink: 0
@@ -926,15 +926,15 @@ function U({ item: e, onUpdateItem: t }) {
           "select",
           {
             value: e.status,
-            onChange: (i) => t(e.id, { status: i.target.value }),
-            onClick: (i) => i.stopPropagation(),
+            onChange: (o) => t(e.id, { status: o.target.value }),
+            onClick: (o) => o.stopPropagation(),
             style: {
               fontSize: 10,
               padding: "1px 4px",
               borderRadius: 6,
-              border: `1px solid ${o.color}`,
-              background: o.bg,
-              color: o.color,
+              border: `1px solid ${i.color}`,
+              background: i.bg,
+              color: i.color,
               fontWeight: 600,
               cursor: "pointer",
               outline: "none",
@@ -957,11 +957,11 @@ function Z({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
   const a = e.items;
   if (a.length === 0)
     return /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No items." });
-  const o = a.filter((i) => i.status === "pending"), d = a.filter((i) => i.status === "done" || i.status === "acked"), s = a.filter((i) => i.status === "rejected");
+  const i = a.filter((o) => o.status === "pending"), d = a.filter((o) => o.status === "done" || o.status === "acked"), s = a.filter((o) => o.status === "rejected");
   return /* @__PURE__ */ u("div", { children: [
-    o.length > 0 && /* @__PURE__ */ r("div", { className: "mb-1", children: o.map((i) => /* @__PURE__ */ r(U, { item: i, onUpdateItem: t }, i.id)) }),
-    d.length > 0 && /* @__PURE__ */ r("div", { className: "mb-1", children: d.map((i) => /* @__PURE__ */ r(U, { item: i, onUpdateItem: t }, i.id)) }),
-    s.length > 0 && /* @__PURE__ */ r("div", { children: s.map((i) => /* @__PURE__ */ r(U, { item: i, onUpdateItem: t }, i.id)) }),
+    i.length > 0 && /* @__PURE__ */ r("div", { className: "mb-1", children: i.map((o) => /* @__PURE__ */ r(U, { item: o, onUpdateItem: t }, o.id)) }),
+    d.length > 0 && /* @__PURE__ */ r("div", { className: "mb-1", children: d.map((o) => /* @__PURE__ */ r(U, { item: o, onUpdateItem: t }, o.id)) }),
+    s.length > 0 && /* @__PURE__ */ r("div", { children: s.map((o) => /* @__PURE__ */ r(U, { item: o, onUpdateItem: t }, o.id)) }),
     n && /* @__PURE__ */ r(
       "button",
       {
@@ -973,8 +973,8 @@ function Z({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
     )
   ] });
 }
-function Me({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o, onRemove: d }) {
-  const s = S(null), i = e.status === "done";
+function Me({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: i, onRemove: d }) {
+  const s = S(null), o = e.status === "done";
   return A(() => {
     n && s.current && (s.current.focus(), a?.());
   }, [n, a]), /* @__PURE__ */ u("div", { className: "flex items-center gap-2 py-[5px] border-b border-border-subtle", children: [
@@ -982,8 +982,8 @@ function Me({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o
       "input",
       {
         type: "checkbox",
-        checked: i,
-        onChange: () => o({ status: i ? "pending" : "done" }),
+        checked: o,
+        onChange: () => i({ status: o ? "pending" : "done" }),
         disabled: !t,
         className: l("w-[15px] h-[15px] accent-success shrink-0", t ? "cursor-pointer" : "cursor-default")
       }
@@ -994,12 +994,12 @@ function Me({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o
         ref: s,
         type: "text",
         value: e.text,
-        onChange: (m) => o({ text: m.target.value }),
+        onChange: (m) => i({ text: m.target.value }),
         readOnly: !t,
         placeholder: "Checklist item...",
         className: l(
           "flex-1 border-none outline-none text-sm font-inherit bg-transparent px-1 py-0.5",
-          i ? "text-text-tertiary line-through" : "text-text-primary"
+          o ? "text-text-tertiary line-through" : "text-text-primary"
         )
       }
     ),
@@ -1019,16 +1019,16 @@ function Ve({
   fragment: t,
   ydoc: n,
   provider: a,
-  user: o,
+  user: i,
   editable: d,
   onAddItem: s,
-  onUpdateItem: i,
+  onUpdateItem: o,
   onRemoveItem: m,
   onUpdateCursorInfo: c
 }) {
-  const h = S(!1), x = () => {
+  const h = S(!1), f = () => {
     s?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
-  }, f = e.items.length, N = e.items.filter((v) => v.status === "done").length;
+  }, x = e.items.length, N = e.items.filter((v) => v.status === "done").length;
   return /* @__PURE__ */ u("div", { children: [
     t && n && /* @__PURE__ */ r(
       E,
@@ -1036,17 +1036,17 @@ function Ve({
         fragment: t,
         ydoc: n,
         provider: a ?? null,
-        user: o ?? { name: "Anonymous", color: "#6b7280" },
+        user: i ?? { name: "Anonymous", color: "#6b7280" },
         editable: d,
         placeholder: e.placeholder ?? "Add notes or context...",
         sectionId: e.id,
         onUpdateCursorInfo: c
       }
     ),
-    f > 0 && /* @__PURE__ */ u("div", { className: "text-[11px] text-neutral font-semibold mb-1.5", children: [
+    x > 0 && /* @__PURE__ */ u("div", { className: "text-[11px] text-neutral font-semibold mb-1.5", children: [
       N,
       " / ",
-      f,
+      x,
       " done"
     ] }),
     /* @__PURE__ */ r("div", { children: e.items.map((v, y) => {
@@ -1060,7 +1060,7 @@ function Ve({
           onDidAutoFocus: g ? () => {
             h.current = !1;
           } : void 0,
-          onUpdate: (w) => i?.(v.id, w),
+          onUpdate: (w) => o?.(v.id, w),
           onRemove: () => m?.(v.id)
         },
         v.id
@@ -1070,7 +1070,7 @@ function Ve({
       "button",
       {
         type: "button",
-        onClick: x,
+        onClick: f,
         className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
         children: "+ Add item"
       }
@@ -1082,10 +1082,10 @@ function ee({
   fragment: t,
   ydoc: n,
   provider: a,
-  onUpdateItem: o,
+  onUpdateItem: i,
   onNavigateToEditor: d
 }) {
-  const s = e.items, i = s.length, m = s.filter((h) => h.status === "done").length, c = i > 0 ? Math.round(m / i * 100) : 0;
+  const s = e.items, o = s.length, m = s.filter((h) => h.status === "done").length, c = o > 0 ? Math.round(m / o * 100) : 0;
   return /* @__PURE__ */ u("div", { children: [
     t && n && /* @__PURE__ */ r("div", { className: "mb-2.5", children: /* @__PURE__ */ r(
       E,
@@ -1098,12 +1098,12 @@ function ee({
         sectionId: e.id
       }
     ) }),
-    i > 0 && /* @__PURE__ */ u("div", { className: "mb-2.5", children: [
+    o > 0 && /* @__PURE__ */ u("div", { className: "mb-2.5", children: [
       /* @__PURE__ */ u("div", { className: "flex justify-between mb-1", children: [
         /* @__PURE__ */ u("span", { className: "text-[11px] text-neutral font-semibold", children: [
           m,
           " / ",
-          i,
+          o,
           " done"
         ] }),
         /* @__PURE__ */ u("span", { className: l("text-[11px] font-semibold", c === 100 ? "text-success-fg" : "text-neutral"), children: [
@@ -1119,8 +1119,8 @@ function ee({
         }
       ) })
     ] }),
-    i === 0 ? /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px]", children: "No items." }) : /* @__PURE__ */ r("div", { children: s.map((h) => {
-      const x = h.status === "done";
+    o === 0 ? /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px]", children: "No items." }) : /* @__PURE__ */ r("div", { children: s.map((h) => {
+      const f = h.status === "done";
       return /* @__PURE__ */ u(
         "div",
         {
@@ -1130,13 +1130,13 @@ function ee({
               "input",
               {
                 type: "checkbox",
-                checked: x,
-                onChange: () => o?.(h.id, { status: x ? "pending" : "done" }),
-                className: l("w-3.5 h-3.5 accent-success shrink-0", o ? "cursor-pointer" : "cursor-default"),
-                readOnly: !o
+                checked: f,
+                onChange: () => i?.(h.id, { status: f ? "pending" : "done" }),
+                className: l("w-3.5 h-3.5 accent-success shrink-0", i ? "cursor-pointer" : "cursor-default"),
+                readOnly: !i
               }
             ),
-            /* @__PURE__ */ r("span", { className: l("text-[13px] flex-1 leading-[1.4]", x ? "text-text-tertiary line-through" : "text-text-primary"), children: h.text || /* @__PURE__ */ r("span", { className: "text-text-disabled italic", children: "Untitled" }) })
+            /* @__PURE__ */ r("span", { className: l("text-[13px] flex-1 leading-[1.4]", f ? "text-text-tertiary line-through" : "text-text-primary"), children: h.text || /* @__PURE__ */ r("span", { className: "text-text-disabled italic", children: "Untitled" }) })
           ]
         },
         h.id
@@ -1192,13 +1192,13 @@ async function Je(e) {
   }
 }
 const q = {
-  pending: { label: "Open", icon: "○", color: "#92400e", bg: "#fef3c7" },
-  acked: { label: "Decided", icon: "✓", color: "#065f46", bg: "#d1fae5" },
-  done: { label: "Decided", icon: "✓", color: "#065f46", bg: "#d1fae5" },
-  rejected: { label: "Vetoed", icon: "✕", color: "#991b1b", bg: "#fee2e2" }
+  pending: { label: "Open", icon: "○", color: "var(--color-warning-fg)", bg: "var(--color-warning-bg)" },
+  acked: { label: "Decided", icon: "✓", color: "var(--color-success-fg)", bg: "var(--color-success-bg)" },
+  done: { label: "Decided", icon: "✓", color: "var(--color-success-fg)", bg: "var(--color-success-bg)" },
+  rejected: { label: "Vetoed", icon: "✕", color: "var(--color-danger-fg)", bg: "var(--color-danger-bg)" }
 };
-function qe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o, onRemove: d }) {
-  const s = S(null), i = q[e.status] ?? q.pending;
+function qe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: i, onRemove: d }) {
+  const s = S(null), o = q[e.status] ?? q.pending;
   return A(() => {
     n && s.current && (s.current.focus(), a?.());
   }, [n, a]), /* @__PURE__ */ u("div", { className: "flex items-center gap-2 py-1.5 border-b border-border-subtle", children: [
@@ -1206,8 +1206,8 @@ function qe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o
       "span",
       {
         className: "w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 select-none",
-        style: { background: i.bg, color: i.color },
-        children: i.icon
+        style: { background: o.bg, color: o.color },
+        children: o.icon
       }
     ),
     /* @__PURE__ */ r(
@@ -1216,7 +1216,7 @@ function qe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o
         ref: s,
         type: "text",
         value: e.text,
-        onChange: (m) => o({ text: m.target.value }),
+        onChange: (m) => i({ text: m.target.value }),
         readOnly: !t,
         placeholder: "Describe the decision...",
         className: l(
@@ -1229,12 +1229,12 @@ function qe({ item: e, editable: t, autoFocus: n, onDidAutoFocus: a, onUpdate: o
       "select",
       {
         value: e.status === "done" ? "acked" : e.status,
-        onChange: (m) => o({ status: m.target.value }),
+        onChange: (m) => i({ status: m.target.value }),
         className: "text-[10px] px-2 py-0.5 rounded-[10px] font-semibold cursor-pointer outline-none font-inherit shrink-0 appearance-none",
         style: {
-          border: `1px solid ${i.color}`,
-          background: i.bg,
-          color: i.color
+          border: `1px solid ${o.color}`,
+          background: o.bg,
+          color: o.color
         },
         children: [
           /* @__PURE__ */ r("option", { value: "pending", children: "Open" }),
@@ -1259,14 +1259,14 @@ function Ye({
   fragment: t,
   ydoc: n,
   provider: a,
-  user: o,
+  user: i,
   editable: d,
   onAddItem: s,
-  onUpdateItem: i,
+  onUpdateItem: o,
   onRemoveItem: m,
   onUpdateCursorInfo: c
 }) {
-  const h = S(!1), x = () => {
+  const h = S(!1), f = () => {
     s?.({ text: "", status: "pending", assignee: "", ackedBy: "", ackedAt: "", priority: "medium", notes: "" }), h.current = !0;
   };
   return /* @__PURE__ */ u("div", { children: [
@@ -1276,7 +1276,7 @@ function Ye({
         fragment: t,
         ydoc: n,
         provider: a ?? null,
-        user: o ?? { name: "Anonymous", color: "#6b7280" },
+        user: i ?? { name: "Anonymous", color: "#6b7280" },
         editable: d,
         placeholder: e.placeholder ?? "Add context or background...",
         sectionId: e.id,
@@ -1284,38 +1284,38 @@ function Ye({
       }
     ),
     e.items.length === 0 && !d && /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No decisions yet." }),
-    /* @__PURE__ */ r("div", { children: e.items.map((f, N) => {
+    /* @__PURE__ */ r("div", { children: e.items.map((x, N) => {
       const v = N === e.items.length - 1, y = h.current && v;
       return /* @__PURE__ */ r(
         qe,
         {
-          item: f,
+          item: x,
           editable: d,
           autoFocus: y,
           onDidAutoFocus: y ? () => {
             h.current = !1;
           } : void 0,
           onUpdate: (p) => {
-            const g = f.status;
-            if (i?.(f.id, p), p.status && p.status !== g) {
+            const g = x.status;
+            if (o?.(x.id, p), p.status && p.status !== g) {
               const w = Ge(p.status);
               w && Je({
                 sectionId: e.id,
                 decision: w,
-                reviewerName: o?.name
+                reviewerName: i?.name
               });
             }
           },
-          onRemove: () => m?.(f.id)
+          onRemove: () => m?.(x.id)
         },
-        f.id
+        x.id
       );
     }) }),
     d && /* @__PURE__ */ r(
       "button",
       {
         type: "button",
-        onClick: x,
+        onClick: f,
         className: "mt-2 px-3.5 py-1.5 text-[13px] border border-dashed border-border-emphasis rounded-md bg-transparent text-neutral cursor-pointer font-inherit",
         children: "+ Add decision"
       }
@@ -1323,10 +1323,10 @@ function Ye({
   ] });
 }
 const Y = {
-  pending: { label: "Open", icon: "○", color: "#92400e", bg: "#fef3c7" },
-  acked: { label: "Decided", icon: "✓", color: "#065f46", bg: "#d1fae5" },
-  done: { label: "Decided", icon: "✓", color: "#065f46", bg: "#d1fae5" },
-  rejected: { label: "Vetoed", icon: "✕", color: "#991b1b", bg: "#fee2e2" }
+  pending: { label: "Open", icon: "○", color: "var(--color-warning-fg)", bg: "var(--color-warning-bg)" },
+  acked: { label: "Decided", icon: "✓", color: "var(--color-success-fg)", bg: "var(--color-success-bg)" },
+  done: { label: "Decided", icon: "✓", color: "var(--color-success-fg)", bg: "var(--color-success-bg)" },
+  rejected: { label: "Vetoed", icon: "✕", color: "var(--color-danger-fg)", bg: "var(--color-danger-bg)" }
 };
 function Qe({ item: e }) {
   const t = Y[e.status] ?? Y.pending;
@@ -1363,10 +1363,10 @@ function te({ section: e, onNavigateToEditor: t }) {
   const n = e.items;
   if (n.length === 0)
     return /* @__PURE__ */ r("div", { className: "text-text-tertiary italic text-[13px] py-1", children: "No decisions recorded." });
-  const a = n.filter((s) => s.status === "pending"), o = n.filter((s) => s.status === "acked" || s.status === "done"), d = n.filter((s) => s.status === "rejected");
+  const a = n.filter((s) => s.status === "pending"), i = n.filter((s) => s.status === "acked" || s.status === "done"), d = n.filter((s) => s.status === "rejected");
   return /* @__PURE__ */ u("div", { children: [
     a.length > 0 && /* @__PURE__ */ r(P, { label: "Open", color: "#92400e", items: a }),
-    o.length > 0 && /* @__PURE__ */ r(P, { label: "Decided", color: "#065f46", items: o }),
+    i.length > 0 && /* @__PURE__ */ r(P, { label: "Decided", color: "#065f46", items: i }),
     d.length > 0 && /* @__PURE__ */ r(P, { label: "Vetoed", color: "#991b1b", items: d }),
     t && /* @__PURE__ */ r(
       "button",
@@ -1387,7 +1387,7 @@ function Ze({
   editable: t,
   onUpdateSection: n
 }) {
-  const a = Xe(e), [o, d] = D(!1), s = (m) => {
+  const a = Xe(e), [i, d] = D(!1), s = (m) => {
     d(!0);
     const c = new FileReader();
     c.onload = () => {
@@ -1400,7 +1400,7 @@ function Ze({
         }
       }), d(!1);
     }, c.onerror = () => d(!1), c.readAsDataURL(m);
-  }, i = () => {
+  }, o = () => {
     n?.({
       metadata: {
         ...e.metadata ?? {},
@@ -1422,7 +1422,7 @@ function Ze({
       {
         type: "button",
         "data-testid": `file-upload-remove-${e.id}`,
-        onClick: i,
+        onClick: o,
         className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
         children: "×"
       }
@@ -1436,7 +1436,7 @@ function Ze({
         t ? "cursor-pointer" : "cursor-default"
       ),
       children: [
-        o ? "Reading file…" : e.placeholder ?? "Click to upload a file",
+        i ? "Reading file…" : e.placeholder ?? "Click to upload a file",
         /* @__PURE__ */ r(
           "input",
           {
@@ -1490,7 +1490,7 @@ function et({
   editable: t,
   onUpdateSection: n
 }) {
-  const a = e.metadata ?? {}, [o, d] = D(!1), s = (c) => {
+  const a = e.metadata ?? {}, [i, d] = D(!1), s = (c) => {
     d(!0);
     const h = new FileReader();
     h.onload = () => {
@@ -1502,7 +1502,7 @@ function et({
         }
       }), d(!1);
     }, h.onerror = () => d(!1), h.readAsDataURL(c);
-  }, i = (c) => {
+  }, o = (c) => {
     n?.({
       metadata: { ...e.metadata ?? {}, alt: c }
     });
@@ -1529,7 +1529,7 @@ function et({
           "data-testid": `diagram-alt-${e.id}`,
           value: a.alt ?? "",
           placeholder: "Alt text",
-          onChange: (c) => i(c.target.value),
+          onChange: (c) => o(c.target.value),
           className: "flex-1 px-2 py-1 text-xs border border-border-emphasis rounded"
         }
       ),
@@ -1553,7 +1553,7 @@ function et({
         t ? "cursor-pointer" : "cursor-default"
       ),
       children: [
-        o ? "Reading image…" : e.placeholder ?? "Upload an image (PNG / JPG / SVG)",
+        i ? "Reading image…" : e.placeholder ?? "Upload an image (PNG / JPG / SVG)",
         /* @__PURE__ */ r(
           "input",
           {
@@ -1595,14 +1595,14 @@ function rt({
   editable: t,
   onUpdateSection: n
 }) {
-  const a = tt(e), o = (m) => {
+  const a = tt(e), i = (m) => {
     n?.({
       metadata: { ...e.metadata ?? {}, links: m }
     });
-  }, d = () => o([...a, { label: "", url: "" }]), s = (m, c) => {
-    o(a.map((h, x) => x === m ? { ...h, ...c } : h));
-  }, i = (m) => {
-    o(a.filter((c, h) => h !== m));
+  }, d = () => i([...a, { label: "", url: "" }]), s = (m, c) => {
+    i(a.map((h, f) => f === m ? { ...h, ...c } : h));
+  }, o = (m) => {
+    i(a.filter((c, h) => h !== m));
   };
   return /* @__PURE__ */ u("div", { "data-testid": `link-block-editor-${e.id}`, className: "flex flex-col gap-1.5", children: [
     a.length === 0 && /* @__PURE__ */ r(
@@ -1643,7 +1643,7 @@ function rt({
         {
           type: "button",
           "data-testid": `link-block-remove-${e.id}-${c}`,
-          onClick: () => i(c),
+          onClick: () => o(c),
           className: "border-none bg-transparent text-danger-fg cursor-pointer text-sm px-1.5 py-0.5",
           children: "×"
         }
@@ -1675,7 +1675,7 @@ function ae({ section: e }) {
     {
       "data-testid": `link-block-reader-${e.id}`,
       className: "list-none m-0 p-0 flex flex-col gap-1",
-      children: n.map((a, o) => /* @__PURE__ */ r("li", { className: "text-[13px]", children: /* @__PURE__ */ r(
+      children: n.map((a, i) => /* @__PURE__ */ r("li", { className: "text-[13px]", children: /* @__PURE__ */ r(
         "a",
         {
           href: a.url,
@@ -1684,7 +1684,7 @@ function ae({ section: e }) {
           className: "text-primary font-medium no-underline",
           children: a.label || a.url
         }
-      ) }, o))
+      ) }, i))
     }
   );
 }
@@ -1718,28 +1718,28 @@ k("link-block", "editor", rt);
 k("link-block", "ack", ae);
 k("link-block", "reader", ae);
 function vt({ open: e, onClose: t, onCreate: n }) {
-  const [a, o] = D([]), [d, s] = D(null), [i, m] = D(""), [c, h] = D(""), x = S(null);
+  const [a, i] = D([]), [d, s] = D(null), [o, m] = D(""), [c, h] = D(""), f = S(null);
   if (A(() => {
     if (!e) return;
-    const p = fe();
-    o(p), s(p[0]?.id ?? null), m(""), h("");
-    const g = setTimeout(() => x.current?.focus(), 50);
+    const p = xe();
+    i(p), s(p[0]?.id ?? null), m(""), h("");
+    const g = setTimeout(() => f.current?.focus(), 50);
     return () => clearTimeout(g);
   }, [e]), !e) return null;
-  const f = a.find((p) => p.id === d), N = () => {
-    const p = i.trim();
-    !p || !f || (n({
+  const x = a.find((p) => p.id === d), N = () => {
+    const p = o.trim();
+    !p || !x || (n({
       title: p,
-      type: f.name,
+      type: x.name,
       description: c.trim() || void 0,
-      icon: f.icon,
-      documentTypeId: f.id
+      icon: x.icon,
+      documentTypeId: x.id
     }), t());
   }, v = (p) => {
-    p.key === "Enter" && !p.shiftKey && i.trim() && f && N();
-  }, y = !!i.trim() && !!f;
+    p.key === "Enter" && !p.shiftKey && o.trim() && x && N();
+  }, y = !!o.trim() && !!x;
   return /* @__PURE__ */ r(
-    xe,
+    fe,
     {
       open: e,
       onClose: t,
@@ -1816,11 +1816,11 @@ function vt({ open: e, onClose: t, onCreate: n }) {
             /* @__PURE__ */ r(
               O,
               {
-                ref: x,
+                ref: f,
                 "data-testid": "new-doc-title",
-                value: i,
+                value: o,
                 onChange: (p) => m(p.target.value),
-                placeholder: f ? `e.g. Q2 ${f.name}` : "Document title…"
+                placeholder: x ? `e.g. Q2 ${x.name}` : "Document title…"
               }
             )
           ] }),

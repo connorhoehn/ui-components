@@ -1176,13 +1176,13 @@ function wt({
       O && O !== D.current && w((q) => ({ ...q, [O]: (q[O] ?? 0) + 1 }));
     }
   }), [b]);
-  const [k, F] = f(!1), j = n ? n.split(" ").map((C) => C[0]).join("").toUpperCase().slice(0, 2) : t.slice(0, 2).toUpperCase(), U = a.find((C) => C.roomId === x) ?? null, $ = a.filter((C) => C.type === "standalone" || C.type === "group"), G = a.filter((C) => C.type === "dm"), le = $.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), ce = G.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), de = d ? "#1e1f2e" : "#f8fafc", M = d ? "rgba(255,255,255,0.06)" : "#e2e8f0", B = d ? "#fff" : "#0f172a", L = d ? "#94a3b8" : "#64748b";
+  const [k, F] = f(!1), j = n ? n.split(" ").map((C) => C[0]).join("").toUpperCase().slice(0, 2) : t.slice(0, 2).toUpperCase(), U = a.find((C) => C.roomId === x) ?? null, $ = a.filter((C) => C.type === "standalone" || C.type === "group"), G = a.filter((C) => C.type === "dm"), le = $.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), ce = G.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), de = d ? "#1e1f2e" : "var(--color-surface-panel)", M = d ? "rgba(255,255,255,0.06)" : "var(--color-border)", B = d ? "#fff" : "var(--color-text-primary)", L = d ? "var(--color-text-tertiary)" : "var(--color-neutral)";
   return /* @__PURE__ */ s(
     "div",
     {
       className: "flex overflow-hidden rounded-lg transition-colors duration-200 h-[calc(100vh-120px)]",
       style: {
-        background: d ? "#0f172a" : "#fff",
+        background: d ? "var(--color-text-primary)" : "#fff",
         border: `1px solid ${M}`
       },
       children: [

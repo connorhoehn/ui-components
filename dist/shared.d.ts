@@ -1195,8 +1195,8 @@ export declare interface ProjectCardProps {
     /** Activity ticker items. */
     activityItems?: ActivityFeedItem[];
     /**
-     * Color of the presence dot in the footer (e.g. '#22c55e' for green).
-     * Default: '#d1d5db' (grey = unknown).
+     * Color of the presence dot in the footer (e.g. 'var(--color-success)' for green).
+     * Default: 'var(--color-border-field)' (grey = unknown).
      */
     presenceDotColor?: string;
     /** Human-readable "last active" label shown next to the presence dot. */
