@@ -41,6 +41,8 @@ export interface HangoutLayoutProps {
    * shared screen, or a `<ParticipantTile>` clone. When provided, the
    * layout switches to spotlight regardless of `mode`. */
   spotlightContent?: ReactNode;
+  /** Attribution label for `spotlightContent` — see HangoutSpotlight. */
+  spotlightContentLabel?: string;
   /** Click handler per tile (e.g. pin / promote to spotlight). */
   onParticipantClick?: (id: string) => void;
   /** Fill parent dimensions — propagates down through grid/spotlight/tile
@@ -65,6 +67,7 @@ export function HangoutLayout({
   activeSpeakerId = null,
   speakerHysteresisMs = 750,
   spotlightContent,
+  spotlightContentLabel,
   onParticipantClick,
   fillParent = false,
   pipWidth,
@@ -90,6 +93,7 @@ export function HangoutLayout({
         participants={participants}
         localParticipant={localParticipant}
         spotlightContent={spotlightContent}
+        spotlightContentLabel={spotlightContentLabel}
         activeSpeakerId={activeSpeakerId}
         speakerHysteresisMs={speakerHysteresisMs}
         onParticipantClick={onParticipantClick}

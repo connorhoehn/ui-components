@@ -209,3 +209,34 @@ describe('HangoutSpotlight', () => {
     }
   });
 });
+
+describe('HangoutSpotlight — sharer attribution (F5)', () => {
+  it('spotlightContentLabel attributes the share to the SHARER, not the speaker', () => {
+    render(
+      <HangoutSpotlight
+        participants={[p('alice', 'Alice'), p('bob', 'Bob')]}
+        spotlightContent={<div data-testid="screen-share">screen</div>}
+        spotlightContentLabel="Bob"
+        activeSpeakerId="alice"
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(
+      screen.getByTestId('hangout-spotlight').getAttribute('data-spotlight-user'),
+    ).toBe('Bob');
+  });
+
+  it('falls back to the speaker name when no label is given (legacy behavior)', () => {
+    render(
+      <HangoutSpotlight
+        participants={[p('alice', 'Alice')]}
+        spotlightContent={<div>screen</div>}
+        activeSpeakerId="alice"
+        speakerHysteresisMs={0}
+      />,
+    );
+    expect(
+      screen.getByTestId('hangout-spotlight').getAttribute('data-spotlight-user'),
+    ).toBe('Alice');
+  });
+});

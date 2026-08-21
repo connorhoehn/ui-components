@@ -3,7 +3,7 @@ import { C as H, P as z } from "../PresencePanel-BNCV4y5A.js";
 import { Component as V, useState as C, useEffect as U, useMemo as S } from "react";
 import { E as j } from "../EmptyState-Ejc9dJA3.js";
 import { c as _ } from "../cn-B6yFEsav.js";
-import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-D8cBoHPp.js";
+import { R as q, a as W, c as X, S as Y } from "../ReconnectingBanner-CmL6Bm72.js";
 import { S as K } from "../SkeletonCard-Bm2f1JX1.js";
 import { A as G, N as Q, C as Z, P as D, B as A } from "../Badge-pOBJ8s2D.js";
 import { R as J, S as B, a as ee } from "../ReactionsOverlay-DGBFgHTr.js";

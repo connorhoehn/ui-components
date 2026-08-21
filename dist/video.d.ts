@@ -308,7 +308,7 @@ export declare interface HangoutGridProps {
     style?: CSSProperties;
 }
 
-export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, onParticipantClick, fillParent, pipWidth, filmstripTileWidth, className, style, }: HangoutLayoutProps): JSX.Element;
+export declare function HangoutLayout({ participants, localParticipant, mode, activeSpeakerId, speakerHysteresisMs, spotlightContent, spotlightContentLabel, onParticipantClick, fillParent, pipWidth, filmstripTileWidth, className, style, }: HangoutLayoutProps): JSX.Element;
 
 export declare interface HangoutLayoutParticipant {
     id: string;
@@ -348,6 +348,8 @@ export declare interface HangoutLayoutProps {
      * shared screen, or a `<ParticipantTile>` clone. When provided, the
      * layout switches to spotlight regardless of `mode`. */
     spotlightContent?: ReactNode;
+    /** Attribution label for `spotlightContent` — see HangoutSpotlight. */
+    spotlightContentLabel?: string;
     /** Click handler per tile (e.g. pin / promote to spotlight). */
     onParticipantClick?: (id: string) => void;
     /** Fill parent dimensions — propagates down through grid/spotlight/tile
@@ -434,7 +436,7 @@ export declare interface HangoutRoomHeaderRecording {
     active: boolean;
 }
 
-export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
+export declare function HangoutSpotlight({ participants, localParticipant, spotlightContent, spotlightContentLabel, activeSpeakerId, speakerHysteresisMs, onParticipantClick, fillParent, filmstripTileWidth, className, style, }: HangoutSpotlightProps): JSX.Element;
 
 export declare interface HangoutSpotlightProps {
     /** Remote participants. Caller should NOT include the local user here. */
@@ -444,6 +446,10 @@ export declare interface HangoutSpotlightProps {
     /** Content for the main slot — typically a screen-share `<video>`. When
      *  provided, takes priority over the active-speaker tile. */
     spotlightContent?: ReactNode;
+    /** Attribution label for `spotlightContent` — WHO is sharing. Without
+     *  it the spotlight falls back to the active speaker's name, which is
+     *  wrong whenever the person talking isn't the person sharing (F5). */
+    spotlightContentLabel?: string;
     /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
     activeSpeakerId?: string | null;
     /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */

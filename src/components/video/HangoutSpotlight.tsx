@@ -33,6 +33,10 @@ export interface HangoutSpotlightProps {
   /** Content for the main slot — typically a screen-share `<video>`. When
    *  provided, takes priority over the active-speaker tile. */
   spotlightContent?: ReactNode;
+  /** Attribution label for `spotlightContent` — WHO is sharing. Without
+   *  it the spotlight falls back to the active speaker's name, which is
+   *  wrong whenever the person talking isn't the person sharing (F5). */
+  spotlightContentLabel?: string;
   /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
   activeSpeakerId?: string | null;
   /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */
@@ -53,6 +57,7 @@ export function HangoutSpotlight({
   participants,
   localParticipant = null,
   spotlightContent,
+  spotlightContentLabel,
   activeSpeakerId = null,
   speakerHysteresisMs = 750,
   onParticipantClick,
@@ -102,7 +107,9 @@ export function HangoutSpotlight({
   let spotlightSlot: ReactNode = null;
   if (spotlightContent) {
     spotlightType = 'screen';
-    spotlightUser = cameraTileSource?.displayName ?? '';
+    // Prefer the explicit sharer label — the speaking participant and
+    // the sharing participant are usually different people.
+    spotlightUser = spotlightContentLabel ?? cameraTileSource?.displayName ?? '';
     spotlightSlot = spotlightContent;
   } else if (screenShareSharer) {
     spotlightType = 'screen';
