@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.71.1] — 2026-08-21
+
+**User-journey e2e coverage** (22 new tests, suite now 193): the audit found
+the interactive flows were smoke-tested only — mounted, screenshotted, never
+driven. Five journey specs now exercise the shipped components end-to-end:
+
+- `identity-journeys`: sign-in submits credentials, error banner toggles,
+  the sign-in-only variant hides Register, MFA 6-digit entry auto-verifies,
+  consent lists human-readable scope descriptions, and the full admin demo
+  navigates dashboard → pools → (View) → users → audit via the real sidebar.
+- `document-workspace`: section structure renders, collapsed sections
+  toggle, the simulated collaborator (Alice) joins and streams edits.
+- `agents-invoke`: a prompt sent into `AgentInvokePage` streams the
+  scripted AG-UI answer with its `query_knowledge_base` tool call; the
+  simulated/live mode banner toggles.
+- `hook-demos`: mock-mode chat receives timer messages AND echoes a sent
+  message back through `useChat` into the panel; presence roster joins.
+- `call-widget-journey`: the auto-played call lifecycle goes active with a
+  ticking `data-call-duration` timer (the testid contract from v2.67.0),
+  speaking state surfaces, and the scripted call ends back to idle at 4×.
+
+Also noted: the call demo's simulation Reset leaves the widget's call state
+active (timeline-only reset) — recorded, not fixed, since the scripted
+end-of-call covers the journey.
+
 ## [2.71.0] — 2026-08-21
 
 Audit-round follow-through: the two biggest untested surfaces get suites,
