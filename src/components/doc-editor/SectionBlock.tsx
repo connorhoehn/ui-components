@@ -12,6 +12,7 @@ import { getRenderer } from '../../renderers';
 import DefaultRenderer from '../../renderers/default/DefaultRenderer';
 import type { CommentThread } from '../../types/document';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 export interface SectionBlockProps {
   section: Section;
@@ -209,12 +210,13 @@ export default function SectionBlock({
           </svg>
         </button>
 
-        <input
-          type="text"
+        {/* Inline section-title editor — chrome stripped so it reads as a
+            heading until focused. */}
+        <Input
           value={section.title}
           onChange={(e) => onUpdateSection({ title: e.target.value })}
           readOnly={!editable}
-          className={cn('flex-1 border border-transparent rounded outline-none text-[15px] font-semibold font-[inherit] bg-transparent text-[#1e293b] py-0.5 px-1.5 cursor-text focus:border-[#3b82f6]')}
+          className={cn('flex-1 h-auto border-transparent bg-transparent text-[15px] font-semibold py-0.5 px-1.5 cursor-text')}
         />
 
         <span

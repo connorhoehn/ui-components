@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 import type { AgUiMessage, AgUiToolCall } from '../../../types/agents';
 import { ToolCallRenderer } from './ToolCallRenderer';
 import { AgUiReasoningBlock } from './AgUiReasoningBlock';
@@ -163,15 +164,14 @@ export function StreamingChatPanel({
 
       {/* Input */}
       <div className="flex items-center gap-2 p-3 border-t border-border bg-surface-panel/50">
-        <input
-          type="text"
+        <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           disabled={isStreaming}
           placeholder={isStreaming ? 'Waiting for response...' : placeholder}
           className={cn(
-            'flex-1 text-sm px-3 py-2.5 border border-border rounded-lg outline-none focus:border-info focus:ring-1 focus:ring-info transition-all bg-white',
+            'flex-1 rounded-lg',
             isStreaming && 'bg-surface-panel text-text-tertiary',
           )}
         />

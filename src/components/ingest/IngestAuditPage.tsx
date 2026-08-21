@@ -6,6 +6,8 @@ import { useMemo, useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { useIngestAudit } from '../../hooks/useIngestAudit';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 import type {
   IngestAuditEntry,
   IngestAuditEventType,
@@ -59,39 +61,37 @@ export default function IngestAuditPage() {
 
       <div className="flex gap-2 flex-wrap items-center p-3 bg-surface-inset rounded-lg mb-3">
         <span className="text-[11px] text-text-tertiary mr-1">Time</span>
-        <select
+        <Select
           data-testid="audit-time-range"
           aria-label="Time range"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
+          className="w-auto min-w-[140px]"
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-        >
-          {TIME_RANGES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
+          options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
+        />
         <span className="text-[11px] text-text-tertiary mr-1">Event</span>
-        <select
+        <Select
           data-testid="audit-event-type"
           aria-label="Event type"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
+          className="w-auto min-w-[140px]"
           value={eventType}
           onChange={(e) => setEventType(e.target.value as '' | IngestAuditEventType)}
-        >
-          {EVENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-        </select>
+          options={EVENT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
+        />
         <span className="text-[11px] text-text-tertiary mr-1">Actor</span>
-        <input
+        <Input
           data-testid="audit-actor"
           aria-label="Actor"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
+          className="w-auto min-w-[140px]"
           value={actor}
           onChange={(e) => setActor(e.target.value)}
           placeholder="email or system"
         />
         <span className="text-[11px] text-text-tertiary mr-1">Target</span>
-        <input
+        <Input
           data-testid="audit-target-id"
           aria-label="Target ID"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
+          className="w-auto min-w-[140px]"
           value={targetId}
           onChange={(e) => setTargetId(e.target.value)}
           placeholder="sourceId / itemId"

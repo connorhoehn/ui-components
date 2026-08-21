@@ -7,6 +7,8 @@ import { loadTypes } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
 import Modal from '../shared/Modal';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -158,14 +160,12 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                 <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
                   Title <span className={cn('text-[#ef4444]')}>*</span>
                 </label>
-                <input
+                <Input
                   ref={titleRef}
                   data-testid="new-doc-title"
-                  type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder={selected ? `e.g. Q2 ${selected.name}` : 'Document title…'}
-                  className={cn('w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] box-border font-[inherit] focus:border-[#3b82f6]')}
                 />
               </div>
 
@@ -174,13 +174,13 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                 <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
                   Description <span className={cn('text-text-tertiary font-normal')}>(optional)</span>
                 </label>
-                <textarea
+                <Textarea
                   data-testid="new-doc-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Brief description of this document…"
                   rows={3}
-                  className={cn('w-full px-3 py-2 text-sm border border-border rounded-lg outline-none bg-white text-[#1e293b] resize-y box-border font-[inherit] focus:border-[#3b82f6]')}
+                  className={cn('resize-y')}
                 />
               </div>
             </>

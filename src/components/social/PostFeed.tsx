@@ -10,6 +10,7 @@ import type { PostItem } from '../../hooks/usePosts';
 import type { GatewayMessage } from '../../types/gateway';
 import { CommentThread } from './CommentThread';
 import { cn } from '../../lib/cn';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -77,13 +78,13 @@ function CreatePostForm({ onCreate, loading }: CreatePostFormProps) {
 
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }}>
-      <textarea
+      <Textarea
         value={content}
         onChange={e => setContent(e.target.value)}
         placeholder="What's on your mind?"
         maxLength={10000}
         rows={3}
-        className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary resize-y mb-2"
+        className="resize-y mb-2"
       />
       <div className="flex justify-end">
         <button
@@ -219,11 +220,11 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
       {/* Body */}
       {editMode ? (
         <div className="mb-2">
-          <textarea
+          <Textarea
             value={editContent}
             onChange={e => setEditContent(e.target.value)}
             rows={3}
-            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary resize-y mb-2"
+            className="resize-y mb-2"
           />
           <div className="flex gap-2">
             <button

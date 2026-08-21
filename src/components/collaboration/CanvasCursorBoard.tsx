@@ -11,6 +11,8 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import type { RemoteCursor, CanvasTool } from '../../hooks/useCursors';
 import { identityToColor, identityToInitials } from '../../utils/identity';
 import { cn } from '../../lib/cn';
+import { ColorInput } from '../forms/ColorInput';
+import { Slider } from '../forms/Slider';
 
 // ---------------------------------------------------------------------------
 // Trail helper
@@ -164,23 +166,23 @@ export function CanvasCursorBoard({
 
         <div className="flex items-center gap-1">
           <span className="text-[11px] text-neutral">Color:</span>
-          <input
-            type="color"
+          <ColorInput
             value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="w-8 h-6 cursor-pointer border-none p-0"
+            onChange={setColor}
+            aria-label="Cursor color"
           />
         </div>
 
         <div className="flex items-center gap-1">
           <span className="text-[11px] text-neutral">Size: {size}</span>
-          <input
-            type="range"
+          <Slider
             min={1}
             max={50}
             value={size}
-            onChange={(e) => setSize(parseInt(e.target.value, 10))}
-            className="w-20 cursor-pointer"
+            onChange={(v) => setSize(Math.round(v))}
+            readout={false}
+            aria-label="Brush size"
+            className="w-20"
           />
         </div>
       </div>

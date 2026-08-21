@@ -7,6 +7,7 @@ import { useGroups } from '../../hooks/useGroups';
 import type { GroupItem, MemberItem } from '../../hooks/useGroups';
 import type { RoomItem } from '../../hooks/useRooms';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -74,14 +75,15 @@ function CompactCreateGroupForm({ onCreate, onDiscard, loading }: {
 
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }} className="p-2 bg-surface-panel rounded-md border border-border my-1 mb-2">
-      <input
+      <Input
+        size="sm"
         value={name}
         onChange={e => setName(e.target.value.slice(0, 50))}
         placeholder="Group name"
         maxLength={50}
         required
         autoFocus
-        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
+        className="mb-1.5"
       />
       <div className="flex gap-1.5">
         <button type="submit" disabled={!name.trim() || loading} className={cn(
@@ -156,11 +158,12 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
 
       {showInvite && (
         <form onSubmit={(e) => { void handleInvite(e); }} className="flex gap-1 mb-1.5">
-          <input
+          <Input
+            size="sm"
             value={inviteId}
             onChange={e => setInviteId(e.target.value)}
             placeholder="User ID"
-            className="flex-1 border border-border-field rounded px-1.5 py-0.5 text-xs font-[inherit] bg-surface text-text-primary"
+            className="flex-1"
           />
           <button type="submit" disabled={!inviteId.trim()} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
@@ -197,11 +200,12 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
 
       {showCreateRoom && (
         <form onSubmit={(e) => { void handleCreateRoom(e); }} className="flex gap-1 mb-1.5">
-          <input
+          <Input
+            size="sm"
             value={roomName}
             onChange={e => setRoomName(e.target.value.slice(0, 50))}
             placeholder="Room name"
-            className="flex-1 border border-border-field rounded px-1.5 py-0.5 text-xs font-[inherit] bg-surface text-text-primary"
+            className="flex-1"
           />
           <button type="submit" disabled={!roomName.trim() || loading} className={cn(
             'h-6 px-2 border-none rounded text-[11px] font-[inherit]',
@@ -254,7 +258,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
     <form onSubmit={(e) => { void handleSubmit(e); }} className="mb-3 p-3 bg-surface-panel rounded-lg border border-border">
       <div className="mb-3">
         <label className="text-sm text-text-primary block mb-1">Group name</label>
-        <input value={name} onChange={e => setName(e.target.value.slice(0, 50))} placeholder="Group name" maxLength={50} required className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
+        <Input value={name} onChange={e => setName(e.target.value.slice(0, 50))} placeholder="Group name" maxLength={50} required />
       </div>
       <div className="flex items-center gap-2.5 mb-3.5">
         <span className="text-[13px] text-text-primary min-w-[42px]">{visibility === 'public' ? 'Public' : 'Private'}</span>
@@ -325,7 +329,7 @@ function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
-      <input value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
+      <Input className="flex-1" value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" />
       <button type="submit" disabled={!userId.trim()} className={cn(
         'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
         !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
@@ -380,7 +384,7 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
         showCreateForm ? (
           <form onSubmit={handleCreateRoom} className="mb-2 p-3 bg-surface-panel rounded-lg border border-border">
             <div className="flex gap-2">
-              <input value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary" />
+              <Input className="flex-1" value={roomName} onChange={e => setRoomName(e.target.value.slice(0, 50))} placeholder="Room name" maxLength={50} required />
               <button type="submit" disabled={!roomName.trim() || loading} className={cn(
                 'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
                 !roomName.trim() || loading ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',

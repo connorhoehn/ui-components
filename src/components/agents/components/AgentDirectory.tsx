@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 import { AgentCard } from './AgentCard';
 import type { AgentDefinition, AgentStatus, AgentMetrics } from '../../../types/agents';
 
@@ -46,13 +47,13 @@ export function AgentDirectory({
   return (
     <div className={cn('flex flex-col gap-3', className)}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <input
+        <Input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search agents…"
           aria-label="Search agents"
-          className="flex-1 rounded-md border border-border-emphasis bg-white px-3 py-1.5 text-sm placeholder:text-text-tertiary focus:border-info focus:outline-none focus:ring-1 focus:ring-info"
+          className="flex-1"
         />
         <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter by status">
           <button

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router';
 import { useIngestProgress } from '../../hooks/useIngestProgress';
 import type { ActiveSync, IngestProgressEvent } from '../../hooks/useIngestProgress';
 import { cn } from '../../lib/cn';
+import { Select } from '../forms/Select';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -231,29 +232,25 @@ export default function SyncMonitorPage() {
         <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
           <span className="text-sm font-semibold text-text-primary">Event Log</span>
           <div className="flex items-center gap-2 flex-wrap">
-            <select
+            <Select
               data-testid="event-source-filter"
               aria-label="Filter by source"
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[140px]"
+              className="w-auto min-w-[140px]"
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
-            >
-              <option value="">All sources</option>
-              {sourceOptions.map((sid) => (
-                <option key={sid} value={sid}>{sid.slice(0, 12)}</option>
-              ))}
-            </select>
-            <select
+              options={[
+                { value: '', label: 'All sources' },
+                ...sourceOptions.map((sid) => ({ value: sid, label: sid.slice(0, 12) })),
+              ]}
+            />
+            <Select
               data-testid="event-type-filter"
               aria-label="Filter by event type"
-              className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[110px]"
+              className="w-auto min-w-[110px]"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as EventTypeBucket)}
-            >
-              {EVENT_TYPE_BUCKETS.map((b) => (
-                <option key={b.value} value={b.value}>{b.label}</option>
-              ))}
-            </select>
+              options={EVENT_TYPE_BUCKETS.map((b) => ({ value: b.value, label: b.label }))}
+            />
             <button
               data-testid="event-pause-toggle"
               className="px-2.5 py-0.5 text-[11px] font-medium bg-transparent border border-border rounded-md cursor-pointer font-[inherit] text-text-secondary"

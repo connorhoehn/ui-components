@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
 
 export interface MemoryEntry {
   id: string;
@@ -43,12 +44,12 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
 
       {/* Filters */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border-subtle">
-        <input
-          type="text"
+        <Input
+          size="sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search keys/values..."
-          className="flex-1 text-[11px] px-2 py-1 border border-border rounded outline-none focus:border-info"
+          className="flex-1 text-[11px]"
         />
         <div className="flex text-[10px] border border-border rounded overflow-hidden">
           {(['all', 'session', 'long-term'] as const).map((f) => (

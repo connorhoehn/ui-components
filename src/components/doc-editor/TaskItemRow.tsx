@@ -7,6 +7,9 @@ import type { TaskItem } from '../../types/document';
 import { DEV_USERS, findUserByName } from '../../data/userDirectory';
 import type { DirectoryUser } from '../../data/userDirectory';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 
 export interface TaskItemRowProps {
   item: TaskItem;
@@ -169,24 +172,24 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         style={{ background: priorityColors[item.priority] }}
       />
 
-      <input
-        type="checkbox"
+      <Checkbox
         checked={item.status === 'done'}
         onChange={toggleStatus}
         disabled={!editable}
-        className={cn('w-4 h-4 accent-[#3b82f6]', editable ? 'cursor-pointer' : 'cursor-default')}
+        className={cn('w-4 h-4', editable ? 'cursor-pointer' : 'cursor-default')}
       />
 
-      <input
+      {/* Inline task-text editor — reads as plain text in the row, so the
+          Input's chrome is stripped via class overrides. */}
+      <Input
         ref={textInputRef}
         data-testid={`task-text-${item.id}`}
-        type="text"
         value={item.text}
         onChange={(e) => onUpdate({ text: e.target.value })}
         readOnly={!editable}
         className={cn(
-          'flex-1 border-none outline-none text-sm font-[inherit] bg-transparent px-1 py-0.5',
-          item.status === 'done' ? 'line-through text-text-tertiary' : 'text-[#1e293b]',
+          'flex-1 h-auto border-transparent bg-transparent px-1 py-0.5',
+          item.status === 'done' ? 'line-through text-text-tertiary' : 'text-text-primary',
         )}
       />
 
@@ -246,14 +249,14 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         {pickerOpen && (
           <div className={cn('absolute top-full left-0 mt-1 min-w-[180px] max-h-[200px] overflow-y-auto bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] z-[1000] py-1')}>
             <div className={cn('px-2 py-1')}>
-              <input
+              <Input
                 ref={inputRef}
-                type="text"
+                size="sm"
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
                 onKeyDown={handlePickerKeyDown}
                 placeholder="Search users..."
-                className={cn('w-full text-[11px] font-[inherit] px-2 py-1 rounded-md border border-[#d1d5db] outline-none h-7 bg-white text-[#1e293b] box-border')}
+                className={cn('text-[11px]')}
               />
             </div>
 
@@ -299,32 +302,36 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
         )}
       </div>
 
-      <select
+      {/* Colored pill select — background is runtime-derived per priority,
+          so the Select keeps its pill chrome via class overrides. */}
+      <Select
         value={item.priority}
         disabled={!editable}
         onChange={(e) => onUpdate({ priority: e.target.value as TaskItem['priority'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
+        className={cn('w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
         style={{ backgroundColor: priorityColors[item.priority] }}
         title={`Priority: ${item.priority}`}
-      >
-        <option value="low">low</option>
-        <option value="medium">medium</option>
-        <option value="high">high</option>
-      </select>
+        options={[
+          { value: 'low', label: 'low' },
+          { value: 'medium', label: 'medium' },
+          { value: 'high', label: 'high' },
+        ]}
+      />
 
-      <select
+      <Select
         value={item.status}
         disabled={!editable}
         onChange={(e) => onUpdate({ status: e.target.value as TaskItem['status'] })}
-        className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none outline-none appearance-none pr-4 doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
+        className={cn('w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow', editable ? 'cursor-pointer' : 'cursor-default')}
         style={{ backgroundColor: statusColors[item.status] }}
         title={`Status: ${item.status}`}
-      >
-        <option value="pending">pending</option>
-        <option value="acked">acked</option>
-        <option value="done">done</option>
-        <option value="rejected">rejected</option>
-      </select>
+        options={[
+          { value: 'pending', label: 'pending' },
+          { value: 'acked', label: 'acked' },
+          { value: 'done', label: 'done' },
+          { value: 'rejected', label: 'rejected' },
+        ]}
+      />
 
       {editable && (
         <button

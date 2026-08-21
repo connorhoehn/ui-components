@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -100,19 +101,19 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
 
   return (
     <div className={cn('flex gap-2 items-start flex-wrap')}>
-      <input
+      <Input
         autoFocus
         placeholder="File name"
         value={name}
         onChange={e => setName(e.target.value)}
-        className={cn('flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
+        className={cn('flex-1 min-w-[120px]')}
       />
-      <input
+      <Input
         placeholder="URL or path"
         value={url}
         onChange={e => setUrl(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter' && valid) { onAdd(name, url); } }}
-        className={cn('flex-[2] min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
+        className={cn('flex-[2] min-w-[120px]')}
       />
       <button
         type="button"
@@ -133,13 +134,13 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
 
   return (
     <div className={cn('flex gap-2 items-center flex-wrap')}>
-      <input
+      <Input
         autoFocus
         placeholder="Document name"
         value={title}
         onChange={e => setTitle(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter' && valid) onAdd(title); }}
-        className={cn('flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-[#f9fafb] text-text-primary outline-none')}
+        className={cn('flex-1 min-w-[120px]')}
       />
       <button
         type="button"

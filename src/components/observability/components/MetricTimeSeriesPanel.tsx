@@ -13,6 +13,7 @@ import {
   type LineSeries,
 } from '../../shared/Chart';
 import { cn } from '../../../lib/cn';
+import { Select } from '../../forms/Select';
 
 type TimeRange = '15m' | '1h' | '24h' | '7d';
 const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
@@ -70,29 +71,23 @@ function MetricTimeSeriesPanel({
   return (
     <>
       <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel">
-        <select
+        <Select
           data-testid="metrics-time-range"
           aria-label="Time range"
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-          className="min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
-        >
-          {TIME_RANGES.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
-          ))}
-        </select>
+          className="w-auto min-w-[120px]"
+          options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
+        />
 
-        <select
+        <Select
           data-testid="metrics-refresh-interval"
           aria-label="Refresh interval"
           value={refresh}
           onChange={(e) => setRefresh(e.target.value as RefreshInterval)}
-          className="min-w-[100px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
-        >
-          {REFRESH_INTERVALS.map((r) => (
-            <option key={r.value} value={r.value}>Refresh: {r.label}</option>
-          ))}
-        </select>
+          className="w-auto min-w-[100px]"
+          options={REFRESH_INTERVALS.map((r) => ({ value: r.value, label: `Refresh: ${r.label}` }))}
+        />
 
         <button
           data-testid="metrics-reset-zoom"

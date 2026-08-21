@@ -16,6 +16,8 @@ import type { IngestSource, IngestSourceStatus, IngestSourceType, MappingRule } 
 import { usePipelineDefs } from '../../hooks/usePipelineDefs';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
 import SourceSloPanel from './SourceSloPanel';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 
 // Schedule presets — operator-friendly cron expressions for common cadences.
 const SCHEDULE_PRESETS: Array<{ label: string; cron: string }> = [
@@ -353,8 +355,8 @@ export default function SourceDetailPage() {
             {Object.entries(editConfig).map(([key, value]) => (
               <div key={key} className="flex items-center gap-3 mb-2.5">
                 <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">{key}</span>
-                <input
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
+                <Input
+                  className="flex-1"
                   value={typeof value === 'string' ? value : JSON.stringify(value)}
                   onChange={(e) => setEditConfig({ ...editConfig, [key]: e.target.value })}
                 />
@@ -454,21 +456,21 @@ export default function SourceDetailPage() {
             <div className="flex items-center gap-3 mb-2.5">
               <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Sync Schedule</span>
               <div className="flex gap-2 flex-1 flex-wrap">
-                <select
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[160px]"
+                <Select
+                  className="w-auto min-w-[160px]"
                   value={SCHEDULE_PRESETS.some((p) => p.cron === editSchedule) ? editSchedule : '__custom__'}
                   onChange={(e) => {
                     if (e.target.value !== '__custom__') setEditSchedule(e.target.value);
                   }}
                   data-testid="schedule-preset"
-                >
-                  {SCHEDULE_PRESETS.map((p) => (
-                    <option key={p.cron || '__manual__'} value={p.cron}>{p.label}</option>
-                  ))}
-                  <option value="__custom__">Custom…</option>
-                </select>
-                <input
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none font-mono flex-1"
+                  options={[
+                    ...SCHEDULE_PRESETS.map((p) => ({ value: p.cron, label: p.label })),
+                    { value: '__custom__', label: 'Custom…' },
+                  ]}
+                />
+                <Input
+                  mono
+                  className="flex-1"
                   value={editSchedule}
                   onChange={(e) => setEditSchedule(e.target.value)}
                   placeholder="Cron (e.g. 0 */6 * * *) — empty = manual"
@@ -478,22 +480,22 @@ export default function SourceDetailPage() {
             </div>
             <div className="flex items-center gap-3 mb-2.5">
               <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Default Pipeline</span>
-              <select
-                className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
+              <Select
+                className="flex-1"
                 value={editPipelineId}
                 onChange={(e) => setEditPipelineId(e.target.value)}
                 data-testid="default-pipeline-picker"
-              >
-                <option value="">— None (use mapping rule pipeline) —</option>
-                {pipelineDefs.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} {p.status ? `(${p.status})` : ''}
-                  </option>
-                ))}
-                {editPipelineId && !pipelineDefs.some((p) => p.id === editPipelineId) && (
-                  <option value={editPipelineId}>{editPipelineId} (unknown)</option>
-                )}
-              </select>
+                options={[
+                  { value: '', label: '— None (use mapping rule pipeline) —' },
+                  ...pipelineDefs.map((p) => ({
+                    value: p.id,
+                    label: `${p.name}${p.status ? ` (${p.status})` : ''}`,
+                  })),
+                  ...(editPipelineId && !pipelineDefs.some((p) => p.id === editPipelineId)
+                    ? [{ value: editPipelineId, label: `${editPipelineId} (unknown)` }]
+                    : []),
+                ]}
+              />
             </div>
             <div className="flex items-center gap-3 mb-2.5">
               <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Pipeline overrides</span>
@@ -518,18 +520,15 @@ export default function SourceDetailPage() {
                           <span className="flex-[0_0_160px] text-[13px]">
                             {docTypes.find((t) => t.id === typeId)?.name ?? typeId}
                           </span>
-                          <select
+                          <Select
                             data-testid={`overrides-pipeline-${typeId}`}
-                            className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
+                            className="flex-1"
                             value={pipelineId}
                             onChange={(e) =>
                               setEditPipelineByDocType({ ...editPipelineByDocType, [typeId]: e.target.value })
                             }
-                          >
-                            {pipelineDefs.map((p) => (
-                              <option key={p.id} value={p.id}>{p.name}</option>
-                            ))}
-                          </select>
+                            options={pipelineDefs.map((p) => ({ value: p.id, label: p.name }))}
+                          />
                           <button
                             type="button"
                             data-testid={`overrides-remove-${typeId}`}
@@ -545,9 +544,9 @@ export default function SourceDetailPage() {
                         </div>
                       ))
                     )}
-                    <select
+                    <Select
                       data-testid="overrides-add-type"
-                      className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none self-start"
+                      className="w-auto self-start"
                       value=""
                       onChange={(e) => {
                         const typeId = e.target.value;
@@ -557,14 +556,13 @@ export default function SourceDetailPage() {
                           [typeId]: pipelineDefs[0]?.id ?? '',
                         });
                       }}
-                    >
-                      <option value="">+ Add override for type…</option>
-                      {docTypes
-                        .filter((t) => editPipelineByDocType[t.id] === undefined)
-                        .map((t) => (
-                          <option key={t.id} value={t.id}>{t.name}</option>
-                        ))}
-                    </select>
+                      options={[
+                        { value: '', label: '+ Add override for type…' },
+                        ...docTypes
+                          .filter((t) => editPipelineByDocType[t.id] === undefined)
+                          .map((t) => ({ value: t.id, label: t.name })),
+                      ]}
+                    />
                   </div>
                 ) : null}
               </div>

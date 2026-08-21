@@ -1,4 +1,4 @@
-import { g as r } from "./registry-DmLIk6XM.js";
+import { g as r } from "./registry-qR57lair.js";
 import { C as f, i as g } from "./fieldType-BJfRz7mO.js";
 const i = [
   "📄",

@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { TaskItem } from '../../types/document';
 import { cn } from '../../lib/cn';
+import { Textarea } from '../forms/Textarea';
 
 interface ReviewableItemProps {
   item: TaskItem;
@@ -150,7 +151,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
 
           {showNotes && (
             <div className={cn('mt-2')}>
-              <textarea
+              <Textarea
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 onKeyDown={(e) => {
@@ -165,7 +166,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 }}
                 placeholder="Add notes or rejection reason... (Enter to submit, Esc to cancel)"
                 autoFocus
-                className={cn('w-full min-h-[60px] p-2 text-[13px] border border-[#d1d5db] rounded-md resize-y font-[inherit] bg-white text-[#1e293b] outline-none')}
+                className={cn('min-h-[60px] resize-y')}
               />
               <div className={cn('flex gap-1.5 mt-1.5')}>
                 <button

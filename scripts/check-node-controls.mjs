@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 //
-// Guards the pipeline node config panels against hand-rolled form controls.
+// Guards ALL of src/components against hand-rolled form controls.
 //
 // Every panel is supposed to build its fields from ConfigField plus the
 // forms/ composites (Input, Select, Textarea, NumberInput, RadioGroup) and
@@ -24,40 +24,78 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const ROOT = 'src/components/pipelines';
+const ROOT = 'src/components';
 const CONTROL_RE = /<(select|textarea|input)\b/g;
 
 /**
  * File (relative to ROOT) -> raw controls still allowed.
  *
- * Scope widened from pipelines/nodes to ALL of pipelines on 2026-08-20; the
- * node config panels themselves are at zero and must stay there. Every entry
- * below is a JUSTIFIED exception, not unconverted debt — a raw element is the
- * correct implementation for it. If you convert one anyway, lower or delete
- * its entry. If a new panel needs something the composites cannot express,
- * add the primitive to forms/ first (the way Slider, ToggleField and Checkbox
- * were added), don't add an entry here.
+ * Scope widened to ALL of src/components on 2026-08-21 — the migration is
+ * complete; identity, typed-documents, doc-types, ingest, social, doc-editor,
+ * observability, agents, collaboration, video and field-types are converted.
+ * Every entry below is a JUSTIFIED exception, not unconverted debt — either
+ * the primitive itself (forms/, shared pickers) or chrome where a raw element
+ * is the correct implementation (media scrubbers, hidden inputs). If a page
+ * needs something the composites cannot express, add the primitive to forms/
+ * first (the way Slider, Checkbox and ColorInput were added), don't add an
+ * entry here.
  */
 const BASELINE = {
+  // ---- forms/: the primitives themselves. The raw element IS the component;
+  // everything else in the tree is supposed to reach these instead.
+  'forms/Input.tsx': 2, // plain + prefix/suffix variants
+  'forms/Select.tsx': 1,
+  'forms/Textarea.tsx': 1,
+  'forms/RadioGroup.tsx': 1,
+  'forms/Checkbox.tsx': 1,
+  'forms/Slider.tsx': 1,
+  'forms/ColorInput.tsx': 1,
+
+  // ---- shared/: composite primitives whose embedded control is their own
+  // body (a picker's query field, a composer's message field). Fine as raw;
+  // converting them to forms/ internals is optional polish, not debt.
+  'shared/SearchInput.tsx': 1,
+  'shared/TagEditor.tsx': 1,
+  'shared/UserPicker.tsx': 1,
+  'shared/IconPicker.tsx': 1,
+  'shared/ChatComposer.tsx': 2, // input or textarea depending on `multiline`
+  'shared/CodeEditor.tsx': 1, // the editor surface itself
+  'shared/DataTable.tsx': 1, // built-in search field
+  'shared/FileUploadDrop.tsx': 1, // invisible file input behind the drop zone
+
+  // ---- identity/
+  'identity/shared/CodeInput.tsx': 1, // OTP digit boxes — the primitive itself
+  'identity/auth/LoginPage.tsx': 1, // <input type="hidden"> — not a control
+
+  // ---- typed-documents/
+  // Invisible file-input trigger behind the styled Bulk Import label.
+  'typed-documents/TypedDocumentsPage.tsx': 1,
+
+  // ---- video/
+  // Player-overlay seek + volume ranges: media chrome (white accent on a
+  // gradient, --progress fill var), not form controls.
+  'video/RecordingPlayer.tsx': 2,
+
+  // ---- pipelines/ (unchanged from the 2026-08-20 widening)
   // Terminal-styled dev inspector (Catppuccin palette); deliberately NOT the
   // light form language — it reads as a debugger, because it is one.
-  'context-inspector/ContextEditBuffer.tsx': 6,
+  'pipelines/context-inspector/ContextEditBuffer.tsx': 6,
   // Dev-only simulator payload editor, same reasoning.
-  'dev/EventPayloadEditor.tsx': 3,
+  'pipelines/dev/EventPayloadEditor.tsx': 3,
   // Invisible test hook (zero-size, tabIndex=-1) — not a user-facing control.
-  'RunsTable.tsx': 1,
+  'pipelines/RunsTable.tsx': 1,
   // Invisible a11y range overlaid on the custom-drawn replay timeline;
   // a visible Slider track would double-draw the scrubber.
-  'replay/Scrubber.tsx': 1,
+  'pipelines/replay/Scrubber.tsx': 1,
   // Floating in-canvas label editor positioned over the drawn bbox.
-  'vision/BBoxAuthoringCanvas.tsx': 1,
+  'pipelines/vision/BBoxAuthoringCanvas.tsx': 1,
   // Palette-toned search field (surface-panel bg, info focus ring) — the
   // palette's own visual language, not the standard field chrome.
-  'canvas/NodePalette.tsx': 1,
+  'pipelines/canvas/NodePalette.tsx': 1,
   // Command-palette-style inline input inside the quick-insert popover.
-  'canvas/QuickInsertPopover.tsx': 1,
+  'pipelines/canvas/QuickInsertPopover.tsx': 1,
   // Borderless inline-rename field in the editor top bar.
-  'editor/EditorTopBar.tsx': 1,
+  'pipelines/editor/EditorTopBar.tsx': 1,
 };
 
 /** Strip comments so a code sample in a doc comment isn't counted. */

@@ -9,6 +9,8 @@ import { useFriends } from '../../hooks/useFriends';
 import type { ProfileItem, OnMessageFn } from '../../hooks/useSocialProfile';
 import type { PublicProfile } from '../../hooks/useFriends';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -209,32 +211,30 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
       <div>
         <div className="mb-3">
           <label className="text-sm text-text-primary block mb-1">Display name</label>
-          <input
+          <Input
             value={displayName}
             onChange={e => setDisplayName(e.target.value.slice(0, 50))}
             placeholder="Your name"
             maxLength={50}
-            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
           />
         </div>
         <div className="mb-3">
           <label className="text-sm text-text-primary block mb-1">Bio</label>
-          <textarea
+          <Textarea
             value={bio}
             onChange={e => setBio(e.target.value.slice(0, 160))}
             placeholder="Tell people a bit about yourself (max 160 characters)"
             maxLength={160}
             rows={3}
-            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary resize-y"
+            className="resize-y"
           />
         </div>
         <div className="mb-4">
           <label className="text-sm text-text-primary block mb-1">Avatar URL</label>
-          <input
+          <Input
             value={avatarUrl}
             onChange={e => setAvatarUrl(e.target.value)}
             placeholder="https://example.com/avatar.png"
-            className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
           />
         </div>
         <div className="mb-4">

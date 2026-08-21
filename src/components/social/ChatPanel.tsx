@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -121,17 +122,15 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
 
       {/* Input row */}
       <div className="flex flex-row gap-2">
-        <input
-          type="text"
+        <Input
+          size="sm"
+          mono
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={disabled ? 'Not connected' : 'Type a message...'}
-          className={cn(
-            'flex-1 text-[0.8rem] px-2 py-1 border border-border-field rounded font-mono text-text-primary',
-            disabled ? 'bg-surface-inset' : 'bg-surface',
-          )}
+          className="flex-1 text-[0.8rem]"
         />
         <button
           onClick={handleSend}

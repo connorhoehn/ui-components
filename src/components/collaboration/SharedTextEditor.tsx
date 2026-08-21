@@ -4,6 +4,7 @@
 
 import { useRef, useEffect } from 'react';
 import { cn } from '../../lib/cn';
+import { Select } from '../forms/Select';
 
 export interface SharedTextEditorProps {
   content: string;
@@ -66,17 +67,20 @@ export function SharedTextEditor({ content, applyLocalEdit, disabled = false, ha
           </button>
         ))}
         <div className="w-px self-stretch bg-surface-emphasis mx-1" />
-        <select
+        <Select
+          size="sm"
           onChange={(e) => { document.execCommand('formatBlock', false, e.target.value); flush(); }}
           disabled={disabled}
-          className="text-xs border border-border-emphasis rounded px-1.5 py-0.5 bg-surface-panel text-text-primary"
-        >
-          <option value="p">Paragraph</option>
-          <option value="h1">H1</option>
-          <option value="h2">H2</option>
-          <option value="h3">H3</option>
-          <option value="pre">Code</option>
-        </select>
+          className="w-auto"
+          aria-label="Block format"
+          options={[
+            { value: 'p', label: 'Paragraph' },
+            { value: 'h1', label: 'H1' },
+            { value: 'h2', label: 'H2' },
+            { value: 'h3', label: 'H3' },
+            { value: 'pre', label: 'Code' },
+          ]}
+        />
       </div>
 
       {/* CRDT-03: Merge conflict indicator */}

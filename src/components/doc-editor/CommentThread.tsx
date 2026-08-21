@@ -8,6 +8,7 @@ import { MentionDropdown } from './MentionDropdown';
 import type { MentionDropdownHandle } from './MentionDropdown';
 import type { MentionUser } from '../../hooks/useMentionUsers';
 import { cn } from '../../lib/cn';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Small display helpers
@@ -330,14 +331,14 @@ function CommentThreadNode({
         {showReplyForm && (
           <div className={cn('pl-[30px] mt-2 overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
             <div className={cn('relative')}>
-              <textarea
+              <Textarea
                 ref={textareaRef}
                 value={replyText}
                 onChange={handleReplyChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Write a reply... (type @ to mention)"
                 rows={2}
-                className={cn('w-full border border-border rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] outline-none resize-y min-h-12 box-border text-[#1e293b] bg-white')}
+                className={cn('resize-y min-h-12')}
               />
               {mention.active && (
                 <MentionDropdown

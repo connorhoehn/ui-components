@@ -8,6 +8,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Modal from '../../shared/Modal';
 import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
+import { Checkbox } from '../../forms/Checkbox';
 import {
   getChaosState,
   resetChaosState,
@@ -152,13 +154,13 @@ function ChaosPanel(props: ChaosPanelProps) {
           Latency
         </div>
         <div className="flex gap-1.5">
-          <input
+          <Input
             data-testid="chaos-latency-input"
             type="number"
             min={0}
             value={latencyMs}
             onChange={(e) => setLatencyMs(e.target.value)}
-            className="flex-1 min-w-[60px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+            className="flex-1 min-w-[60px]"
             aria-label="Latency in milliseconds"
           />
           <span className="text-[11px] text-text-tertiary self-center">ms</span>
@@ -183,8 +185,7 @@ function ChaosPanel(props: ChaosPanelProps) {
               key={n.id}
               className="flex items-center gap-1.5 text-xs text-text-primary cursor-pointer"
             >
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={selectedNodes.includes(n.id)}
                 onChange={() => toggleNode(n.id)}
               />
@@ -211,14 +212,14 @@ function ChaosPanel(props: ChaosPanelProps) {
           Drop messages
         </div>
         <div className="flex gap-1.5">
-          <input
+          <Input
             data-testid="chaos-drop-input"
             type="number"
             min={0}
             max={100}
             value={dropPercent}
             onChange={(e) => setDropPercent(e.target.value)}
-            className="flex-1 min-w-[60px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+            className="flex-1 min-w-[60px]"
             aria-label="Drop percent"
           />
           <span className="text-[11px] text-text-tertiary self-center">%</span>

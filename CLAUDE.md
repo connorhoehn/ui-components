@@ -270,19 +270,20 @@ tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
 
 See `TAILWIND_MIGRATION.md` for conversion rules and token mappings.
 
-### Hand-rolled form controls (survey 2026-08-20)
+### Hand-rolled form controls — MIGRATION COMPLETE (2026-08-21)
 
-`pipelines/**` is DONE — node panels at zero, list surfaces converted, and
-the 8 remaining raw elements are justified exceptions documented in
-`scripts/check-node-controls.mjs`. The composites now cover every control
-kind (`Input`, `Select`, `Textarea`, `NumberInput`, `RadioGroup`,
-`Checkbox` w/ indeterminate, `Slider`, `ToggleField`), so conversions
-elsewhere are mechanical. Remaining raw-control files by area (naive grep,
-includes legitimate primitive internals): identity 11, shared 9 (mostly the
-primitives themselves — fine), ingest 8, doc-editor 8, social 7,
-observability 3, doc-types 3, agents 3, typed-documents 2, collaboration 2,
-video 1, field-types 1. Widen the guard's ROOT per-area as each is
-converted.
+ALL of `src/components` is converted (v2.61.0–v2.62.0): pipelines, identity,
+typed-documents, doc-types, ingest, social, doc-editor, observability,
+agents, collaboration, video, field-types. `npm run lint:node-controls` now
+guards the whole tree; its BASELINE lists the 27 files / 37 raw elements
+that remain, every one a documented justified exception (the forms/shared
+primitives themselves, hidden inputs, OTP digit boxes, media scrubbers,
+dev inspectors). The composites cover every control kind: `Input` (incl.
+date/datetime-local/time), `Select` (incl. `groups`/optgroup), `Textarea`,
+`NumberInput`, `RadioGroup`, `Checkbox` w/ indeterminate, `Slider`,
+`ColorInput`, `ToggleField`. If a new surface needs something these can't
+express, ship the primitive to `forms/` first — never add a BASELINE entry
+for a convertible control.
 
 ### Test coverage (audit #5)
 Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066): `pipelines/`

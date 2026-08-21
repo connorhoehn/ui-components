@@ -13,6 +13,7 @@ import SkeletonCard from '../shared/SkeletonCard';
 import { cn } from '../../lib/cn';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../../types/ingest';
 import IngestItemDrawer from './IngestItemDrawer';
+import { Select } from '../forms/Select';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -110,29 +111,27 @@ export default function IngestItemsPage() {
 
       {/* Filters row */}
       <div className="flex gap-2.5 items-center mb-3 flex-wrap">
-        <select
-          className="px-2.5 py-1.5 text-[13px] font-[inherit] border border-border-field rounded-md bg-surface text-text-primary cursor-pointer outline-none"
+        <Select
+          className="w-auto"
           value={sourceFilter ?? ''}
           onChange={(e) => setSourceFilter(e.target.value || null)}
           data-testid="source-filter"
-        >
-          <option value="">All Sources</option>
-          {sources.map((s) => (
-            <option key={s.sourceId} value={s.sourceId}>{s.name}</option>
-          ))}
-        </select>
+          options={[
+            { value: '', label: 'All Sources' },
+            ...sources.map((s) => ({ value: s.sourceId, label: s.name })),
+          ]}
+        />
 
-        <select
-          className="px-2.5 py-1.5 text-[13px] font-[inherit] border border-border-field rounded-md bg-surface text-text-primary cursor-pointer outline-none"
+        <Select
+          className="w-auto"
           value={statusFilter ?? ''}
           onChange={(e) => setStatusFilter((e.target.value || null) as IngestItemStatus | null)}
           data-testid="status-filter"
-        >
-          <option value="">All</option>
-          {ALL_STATUSES.map((st) => (
-            <option key={st} value={st}>{st}</option>
-          ))}
-        </select>
+          options={[
+            { value: '', label: 'All' },
+            ...ALL_STATUSES.map((st) => ({ value: st, label: st })),
+          ]}
+        />
 
         <button
           className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit]"

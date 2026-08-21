@@ -16,6 +16,7 @@ import CommentThreadNode, {
   type MentionState,
 } from './CommentThread';
 import { cn } from '../../lib/cn';
+import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -131,14 +132,14 @@ export default function SectionComments({
           {/* New comment input at top */}
           <div className={cn('flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-white')}>
             <div className={cn('flex-1 relative')}>
-              <textarea
+              <Textarea
                 ref={inputRef}
                 value={draft}
                 onChange={handleDraftChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Add a comment... (type @ to mention)"
                 rows={2}
-                className={cn('w-full border border-border rounded-md px-2.5 py-2 text-[13px] font-[inherit] outline-none resize-y min-h-12 box-border text-[#1e293b] bg-white')}
+                className={cn('resize-y min-h-12')}
               />
               {mention.active && (
                 <MentionDropdown

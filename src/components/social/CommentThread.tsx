@@ -9,6 +9,7 @@ import { useComments } from '../../hooks/useComments';
 import type { CommentItem } from '../../hooks/useComments';
 import type { GatewayMessage } from '../../types/gateway';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -66,11 +67,11 @@ function ReplyForm({ onSubmit, placeholder = 'Write a reply…', loading }: Repl
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
-      <input
+      <Input
         value={content}
         onChange={e => setContent(e.target.value)}
         placeholder={placeholder}
-        className="flex-1 border border-border-field rounded-md px-2.5 py-1.5 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-inset text-text-primary"
+        className="flex-1"
       />
       <button
         type="submit"

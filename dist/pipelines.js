@@ -1,8 +1,8 @@
 import { jsxs as o, jsx as t, Fragment as H } from "react/jsx-runtime";
 import Ur, { useState as S, memo as Io, useRef as ce, useEffect as oe, useMemo as W, useCallback as E, useContext as Kt, createContext as So } from "react";
 import { useNavigate as Ve, useParams as xt, Navigate as bt, useSearchParams as Ht } from "react-router";
-import { t as jr, v as fe, w as _e, p as Me, G as Cn, x as Ke, u as yt, h as To, f as $o, e as Un, o as Ao, y as In, N as he, z as Ro, S as Sn, R as Et, J as Qt, q as zr, I as Fr, A as it, B as Tn, m as qr, a as ct, C as Wr, D as $n, E as xn, F as Vr, H as Po, K as Do, L as Mo, b as Eo, M as dt, O as Oo, Q as _o, T as pt, U as jn, V as Lo, i as Bo, n as Kr, W as Ft, X as Uo, k as zn, P as jo, Y as zo, r as Fo, Z as qt, l as Fn, _ as qo, j as Wo } from "./usePendingApprovals-D9mv5SDX.js";
-import { g as gh, $ as xh, a0 as bh } from "./usePendingApprovals-D9mv5SDX.js";
+import { t as jr, v as fe, w as _e, p as Me, G as Cn, x as Ke, u as yt, h as To, f as $o, e as Un, o as Ao, y as In, N as he, z as Ro, S as Sn, R as Et, J as Qt, q as zr, I as Fr, A as it, B as Tn, m as qr, a as ct, C as Wr, D as $n, E as xn, F as Vr, H as Po, K as Do, L as Mo, b as Eo, M as dt, O as Oo, Q as _o, T as pt, U as jn, V as Lo, i as Bo, n as Kr, W as Ft, X as Uo, k as zn, P as jo, Y as zo, r as Fo, Z as qt, l as Fn, _ as qo, j as Wo } from "./usePendingApprovals-c2L-t6o9.js";
+import { g as yh, $ as vh, a0 as wh } from "./usePendingApprovals-c2L-t6o9.js";
 import { Handle as U, Position as j, useNodeConnections as Vo, getSmoothStepPath as Ko, EdgeLabelRenderer as qn, ReactFlowProvider as Ho, useReactFlow as Jo, useNodesState as Hr, useEdgesState as Jr, ReactFlow as Gr, Background as Yr, BackgroundVariant as Go, Controls as Xr, MiniMap as Yo } from "@xyflow/react";
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
@@ -14,13 +14,16 @@ import { M as Qe } from "./Modal-fp5zcyw8.js";
 import "react-dom";
 import "./WebSocketContext-DPGFyPeZ.js";
 import { a as ze, u as ta } from "./EventStreamContext-CjzSHXy-.js";
-import { E as vh } from "./EventStreamContext-CjzSHXy-.js";
+import { E as kh } from "./EventStreamContext-CjzSHXy-.js";
 import { B as Pe } from "./Button-DILgRebO.js";
-import { I as we, S as Ce, T as $e, C as rt } from "./Checkbox-DJp19x0a.js";
+import { T as $e } from "./Textarea-kaa9rHUL.js";
 import { I as mt, S as na, F as ra } from "./FileUploadDrop-CL1kscAC.js";
+import { I as we } from "./Input-Dt0yAs9r.js";
+import { S as Ce } from "./Select-DAEcKWg2.js";
 import { E as qe } from "./EmptyState-Ejc9dJA3.js";
 import { B as nt } from "./Banner-DKb3JiLs.js";
 import { C as le } from "./Chip-BDT8ro4h.js";
+import { C as rt } from "./Checkbox-vOc5I8kn.js";
 import { u as Qr } from "./IdentityContext-CLalsm_M.js";
 import { C as Wt } from "./ConfirmDialog-Ix7G_Mb4.js";
 import { B as oa, L as Ut } from "./Chart-ByoxeiYX.js";
@@ -2669,7 +2672,7 @@ function Bi(e) {
     } catch {
     }
 }
-function Km(e) {
+function Gm(e) {
   const n = yn().filter((a) => a !== e), r = [e, ...n].slice(0, Li);
   Bi(r);
 }
@@ -13703,7 +13706,7 @@ const Td = {
       " has no configurable options in this version. The node can sit on the canvas and connect to others, and it will run with its defaults wherever the executor supports it."
     ] })
   }
-) }), Hm = [
+) }), Ym = [
   "agent",
   "mcp-tool",
   "guardrail",
@@ -14460,7 +14463,7 @@ function Vd(e) {
   const n = e.tagName;
   return !!(n === "INPUT" || n === "TEXTAREA" || n === "SELECT" || e.isContentEditable);
 }
-function Jm() {
+function Xm() {
   const { pipelineId: e } = xt(), n = W(() => e ? ct(e) !== null : !1, [e]);
   return !e || !n ? /* @__PURE__ */ t(bt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(Wr, { pipelineId: e, children: /* @__PURE__ */ t(Kd, { pipelineId: e }) });
 }
@@ -16693,7 +16696,7 @@ function $p({
     }
   );
 }
-function Gm() {
+function Qm() {
   const e = Ve(), { userId: n } = Qr(), { toast: r } = Jt(), { triggerRun: a, isTriggering: i } = Mo(), [s, d] = Ht(), [c, l] = S([]), [p, u] = S(""), [f, h] = S("all"), [g, x] = S("updated"), m = W(
     () => Cp(s.get("status")),
     [s]
@@ -17871,7 +17874,7 @@ function Vp({
     }
   );
 }
-function Ym() {
+function Zm() {
   const { pipelineId: e } = xt(), n = Ve(), [r, a] = Ht(), [i, s] = S([]), [d, c] = S(null), [l, p] = S([]), [u, f] = S(() => /* @__PURE__ */ new Set()), [h, g] = S(null), [x, m] = S(!1), [w, v] = S(null), [b, N] = S(!1), y = E((L) => {
     const V = L.error?.nodeId;
     if (!V || V === "unknown") return;
@@ -18867,7 +18870,7 @@ function pu({
     }
   );
 }
-function Xm() {
+function eh() {
   const { pipelineId: e, runId: n } = xt();
   return !e || !n ? /* @__PURE__ */ t(bt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(Wr, { pipelineId: e, children: /* @__PURE__ */ t(jo, { children: /* @__PURE__ */ t(uu, { pipelineId: e, runId: n }) }) });
 }
@@ -18875,7 +18878,7 @@ function uu({ pipelineId: e, runId: n }) {
   const r = Ve(), a = Ke(), i = yt(), { definition: s } = a, [d, c] = S(null);
   oe(() => {
     let q = !1;
-    return import("./usePendingApprovals-D9mv5SDX.js").then((de) => de.a1).then(({ getPipelineRun: de }) => {
+    return import("./usePendingApprovals-c2L-t6o9.js").then((de) => de.a1).then(({ getPipelineRun: de }) => {
       de(e, n).then((Ie) => {
         !q && Ie && c(Ie);
       });
@@ -19565,7 +19568,7 @@ function Pr({
     }
   );
 }
-function Qm() {
+function th() {
   const { pipelineId: e, runIdA: n, runIdB: r } = xt(), a = Ve(), i = W(
     () => e ? ct(e) : null,
     [e]
@@ -20229,11 +20232,11 @@ function Uu({ pipelineId: e, runIdA: n, runIdB: r }) {
     }
   );
 }
-function Zm() {
+function nh() {
   const { pipelineId: e } = xt(), [n] = Ht(), r = n.get("a"), a = n.get("b");
   return !e || !r || !a ? /* @__PURE__ */ t(bt, { to: "/pipelines", replace: !0 }) : /* @__PURE__ */ t(Uu, { pipelineId: e, runIdA: r, runIdB: a });
 }
-function eh() {
+function rh() {
   const e = Ve(), [n, r] = Ht(), [a, i] = S([]), { runs: s } = yt();
   oe(() => {
     let b = !1;
@@ -20465,7 +20468,7 @@ function Ju(e) {
     { label: "Tokens out", data: a, color: "#16a34a" }
   ];
 }
-function th() {
+function oh() {
   const { pipelineId: e } = xt(), n = Ve(), [r, a] = S(null), [i, s] = S([]), [d, c] = S("50");
   oe(() => {
     e && (a(ct(e)), s(Ft(e)));
@@ -20856,7 +20859,7 @@ function Zu({ row: e, onSubmit: n, onOpenPipeline: r }) {
     ] })
   ] });
 }
-function nh() {
+function ah() {
   const e = Ve(), { approvals: n, isLoading: r, error: a, retry: i } = qo(), { resolveApproval: s, runs: d } = yt(), [c, l] = S(
     () => /* @__PURE__ */ new Set()
   );
@@ -20940,7 +20943,7 @@ function nh() {
     ] })
   ] });
 }
-function rh({
+function ih({
   status: e,
   result: n,
   runId: r,
@@ -20991,7 +20994,7 @@ function rh({
   }
   return /* @__PURE__ */ t("article", { className: I(g, c), children: h });
 }
-function oh(e = {}) {
+function sh(e = {}) {
   const { maxRecords: n = 50, runId: r } = e, [a, i] = S([]), s = ce(/* @__PURE__ */ new Map()), d = ce(!0);
   return oe(() => (d.current = !0, () => {
     d.current = !1;
@@ -21155,13 +21158,13 @@ function rm({
   ] });
 }
 const wo = So(null);
-function ah({ value: e, children: n }) {
+function lh({ value: e, children: n }) {
   return /* @__PURE__ */ t(wo.Provider, { value: e, children: n });
 }
 function No() {
   return Kt(wo);
 }
-function ih({
+function ch({
   result: e,
   showVerdict: n = !0,
   showCriteria: r = !0,
@@ -21260,7 +21263,7 @@ function om({
     r.message
   ] }) : e === null || e.length === 0 ? /* @__PURE__ */ t("div", { className: "rounded-lg border border-border bg-surface-panel p-2 text-[11px] text-text-tertiary", children: a ?? "Raw text not available." }) : /* @__PURE__ */ t("pre", { className: "overflow-x-auto rounded-lg border border-border bg-surface-panel p-2 font-mono text-[11px] leading-snug text-text-secondary", children: e });
 }
-function sh({ aggregate: e, className: n }) {
+function dh({ aggregate: e, className: n }) {
   const r = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, a = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, i = r >= 0.9 ? "success" : r >= 0.6 ? "warning" : "danger", s = i === "success" ? "HEALTHY" : i === "warning" ? "MIXED" : "FAILING";
   return /* @__PURE__ */ o(
     "section",
@@ -21333,7 +21336,7 @@ function sh({ aggregate: e, className: n }) {
     }
   );
 }
-function lh({
+function ph({
   aggregates: e,
   sortOrder: n = "desc",
   caption: r,
@@ -21430,7 +21433,7 @@ function im(e) {
   }
   return Date.now();
 }
-function ch(e = {}) {
+function uh(e = {}) {
   const { maxRecords: n = 50, runId: r } = e, [a, i] = S([]), s = ce(/* @__PURE__ */ new Map()), d = ce(!0);
   return oe(() => (d.current = !0, () => {
     d.current = !1;
@@ -21511,7 +21514,7 @@ function ch(e = {}) {
     });
   }), W(() => a, [a]);
 }
-function dh(e) {
+function mh(e) {
   const n = No(), [r, a] = S([]), [i, s] = S(!1), [d, c] = S(null), l = ce(!0), p = ce(() => {
   }), { pipelineId: u, rubricId: f, since: h, until: g, limit: x, refreshIntervalMs: m = 0, paused: w = !1 } = e, v = `${u ?? ""}|${f ?? ""}|${h ?? ""}|${g ?? ""}|${x ?? ""}|${w ? "1" : "0"}`;
   return oe(() => (l.current = !0, () => {
@@ -21830,7 +21833,7 @@ function bm({
     }
   );
 }
-function ph({
+function hh({
   entries: e,
   selectedImageId: n,
   onSelect: r,
@@ -21996,10 +21999,10 @@ function Br(e) {
 function vm(e, n) {
   _t.set(e, { entries: n, fetchedAt: Date.now() });
 }
-function uh() {
+function fh() {
   _t.clear();
 }
-function mh(e, n) {
+function gh(e, n) {
   const [r, a] = S(() => e ? Br(e) ?? [] : []), [i, s] = S(!1), [d, c] = S(null), l = ce(0), p = E(() => {
     if (!e || !n) return;
     const f = Br(e);
@@ -22042,8 +22045,8 @@ export {
   ni as AdjustLayerNode,
   Ua as AgUiOutputNode,
   Da as AgentNode,
-  sh as AggregateSummaryCard,
-  eh as AllRunsPage,
+  dh as AggregateSummaryCard,
+  rh as AllRunsPage,
   Ii as AnimatedEdge,
   Pa as ApprovalNode,
   ye as BaseNode,
@@ -22060,7 +22063,7 @@ export {
   id as EditPromptConfig,
   wi as EditPromptNode,
   Nd as EditRecommendationsPanel,
-  vh as EventStreamProvider,
+  kh as EventStreamProvider,
   Sa as ForkNode,
   uc as FormatConvertConfig,
   Ga as FormatConvertNode,
@@ -22068,41 +22071,41 @@ export {
   gi as GenerateNode,
   Oa as GraphQueryNode,
   La as GuardrailNode,
-  ph as ImageLineageGraph,
+  hh as ImageLineageGraph,
   ld as ImageSourceConfig,
   za as ImageSourceNode,
   xd as ImageWithBBoxOverlay,
   Aa as JoinNode,
-  ah as JudgmentApiProvider,
-  ih as JudgmentResultViewer,
-  lh as JudgmentTrendChart,
+  lh as JudgmentApiProvider,
+  ch as JudgmentResultViewer,
+  ph as JudgmentTrendChart,
   Ea as KnowledgeBaseNode,
   ya as LLMNode,
   Ma as McpToolNode,
   _a as MemoryNode,
   ma as NODE_CATEGORIES,
-  Hm as NODE_TYPES_WITHOUT_CONFIG,
+  Ym as NODE_TYPES_WITHOUT_CONFIG,
   Ne as NodeConfigShell,
   Fi as NodePalette,
   Gt as NodeThumbStrip,
   vd as ObjectsPanel,
   Oi as PALETTE_ITEMS,
   ha as PORT_CLS,
-  nh as PendingApprovalsPage,
+  ah as PendingApprovalsPage,
   yd as PeoplePanel,
   rs as PipelineCanvas,
   In as PipelineEditorContext,
-  Jm as PipelineEditorPage,
+  Xm as PipelineEditorPage,
   Wr as PipelineEditorProvider,
-  gh as PipelineEditorServicesProvider,
-  xh as PipelineNodeRuntimeProvider,
-  Qm as PipelineRunComparePage,
-  Zm as PipelineRunDiff,
-  Xm as PipelineRunReplayPage,
-  Ym as PipelineRunsPage,
+  yh as PipelineEditorServicesProvider,
+  vh as PipelineNodeRuntimeProvider,
+  th as PipelineRunComparePage,
+  nh as PipelineRunDiff,
+  eh as PipelineRunReplayPage,
+  Zm as PipelineRunsPage,
   jo as PipelineRunsProvider,
-  th as PipelineStatsPage,
-  Gm as PipelinesPage,
+  oh as PipelineStatsPage,
+  Qm as PipelinesPage,
   Ba as PolicyNode,
   oc as ResizeConfig,
   Va as ResizeNode,
@@ -22134,7 +22137,7 @@ export {
   mi as VisionExtractTextNode,
   ci as VisionNode,
   kd as VisionResultViewer,
-  rh as VisionRunCard,
+  ih as VisionRunCard,
   Gc as VisionTagConfig,
   ui as VisionTagNode,
   fc as WatermarkConfig,
@@ -22142,29 +22145,29 @@ export {
   ll as availableContextPaths,
   pl as availableImageRefs,
   xe as categoryFor,
-  uh as clearImageLineageCache,
+  fh as clearImageLineageCache,
   nr as contextContributions,
   bd as imageOverlayPropsFrom,
   Ni as nodeTypes,
   z as portCls,
-  Km as recordRecentType,
+  Gm as recordRecentType,
   cl as unresolvedTemplatePaths,
   vn as upstreamNodeIds,
   ze as useEventStream,
   ta as useEventStreamContext,
-  mh as useImageLineage,
+  gh as useImageLineage,
   Me as useImageUrl,
   jr as useIsNodeTypeExecutable,
-  dh as useJudgmentAggregates,
+  mh as useJudgmentAggregates,
   No as useJudgmentApi,
-  ch as useJudgmentResults,
+  uh as useJudgmentResults,
   fe as useLatestStepForNode,
   Ke as usePipelineEditor,
   zr as usePipelineEditorServices,
-  bh as usePipelineNodeRuntime,
+  wh as usePipelineNodeRuntime,
   yt as usePipelineRuns,
   _e as useRetryFromStep,
   Yt as useUpstreamContext,
   wt as useUpstreamImageRefs,
-  oh as useVisionResults
+  sh as useVisionResults
 };

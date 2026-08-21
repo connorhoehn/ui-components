@@ -6,6 +6,8 @@
 import { useCallback, useState } from 'react';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 import type { MappingRule } from '../../types/ingest';
 
 const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
@@ -162,8 +164,9 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                   return (
                     <tr key={idx} className="border-b border-border">
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
-                        <input
-                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none w-[50px]"
+                        <Input
+                          size="sm"
+                          className="w-[50px]"
                           type="number"
                           value={draft.priority}
                           onChange={(e) => setDraft({ ...draft, priority: Number(e.target.value) })}
@@ -171,22 +174,23 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <div className="flex gap-1 items-center flex-wrap">
-                          <select
-                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[90px] cursor-pointer"
+                          <Select
+                            size="sm"
+                            className="w-auto min-w-[90px]"
                             value={draftParsed.field}
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(e.target.value, draftParsed.op, draftParsed.value) })}
-                          >
-                            {FIELD_OPTIONS.map((f) => <option key={f} value={f}>{f}</option>)}
-                          </select>
-                          <select
-                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[90px] cursor-pointer"
+                            options={FIELD_OPTIONS.map((f) => ({ value: f, label: f }))}
+                          />
+                          <Select
+                            size="sm"
+                            className="w-auto min-w-[90px]"
                             value={draftParsed.op}
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(draftParsed.field, e.target.value, draftParsed.value) })}
-                          >
-                            {OP_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-                          </select>
-                          <input
-                            className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[100px] w-full"
+                            options={OP_OPTIONS.map((o) => ({ value: o, label: o }))}
+                          />
+                          <Input
+                            size="sm"
+                            className="min-w-[100px]"
                             value={draftParsed.value}
                             placeholder="value"
                             onChange={(e) => setDraft({ ...draft, pattern: buildPattern(draftParsed.field, draftParsed.op, e.target.value) })}
@@ -194,16 +198,18 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                         </div>
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
-                        <input
-                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[80px] w-full"
+                        <Input
+                          size="sm"
+                          className="min-w-[80px]"
                           value={draft.documentTypeId}
                           placeholder="document type id"
                           onChange={(e) => setDraft({ ...draft, documentTypeId: e.target.value })}
                         />
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
-                        <input
-                          className="border border-border-field rounded-md px-2 py-1 text-xs bg-surface-inset text-text-primary outline-none min-w-[80px] w-full"
+                        <Input
+                          size="sm"
+                          className="min-w-[80px]"
                           value={draft.pipelineId ?? ''}
                           placeholder="(optional)"
                           onChange={(e) => setDraft({ ...draft, pipelineId: e.target.value || undefined })}
@@ -264,8 +270,8 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
 
       {/* Preview section */}
       <div className="flex gap-2 items-center mt-1">
-        <input
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none flex-1"
+        <Input
+          className="flex-1"
           value={previewPath}
           onChange={(e) => setPreviewPath(e.target.value)}
           placeholder="Enter a file path to preview mapping..."

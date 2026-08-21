@@ -10,6 +10,7 @@ import { cn } from '../../lib/cn';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import { useMappingReviewQueue } from '../../hooks/useMappingReviewQueue';
 import { useDocumentTypes } from '../../hooks/useDocumentTypes';
+import { Select } from '../forms/Select';
 import type { IngestItem } from '../../types/ingest';
 
 export default function MappingReviewPage() {
@@ -125,17 +126,16 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         >
           Accept suggestion
         </button>
-        <select
+        <Select
           data-testid={`review-remap-picker-${item.itemId}`}
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[200px]"
+          className="w-auto min-w-[200px]"
           value={remapTypeId}
           onChange={(e) => onPickRemapType(e.target.value)}
-        >
-          <option value="">Re-map to…</option>
-          {docTypes.map((t) => (
-            <option key={t.id} value={t.id}>{t.name}</option>
-          ))}
-        </select>
+          options={[
+            { value: '', label: 'Re-map to…' },
+            ...docTypes.map((t) => ({ value: t.id, label: t.name })),
+          ]}
+        />
         <button
           data-testid={`review-remap-${item.itemId}`}
           className={cn(

@@ -12,6 +12,10 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { useCustomFieldTypes } from '../../hooks/useCustomFieldTypes';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 import type { CustomFieldType } from '../../types/fieldType';
 
 // ---------------------------------------------------------------------------
@@ -145,9 +149,8 @@ function Step1({
         <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
           Label <span className="text-[#dc2626]">*</span>
         </span>
-        <input
+        <Input
           data-testid="name-input"
-          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none"
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="e.g. Article title, Publication date, Author bio…"
@@ -159,9 +162,9 @@ function Step1({
 
       <div>
         <span className="block text-xs font-semibold text-[#374151] mb-[5px]">Description</span>
-        <textarea
+        <Textarea
           data-testid="description-input"
-          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none min-h-16 resize-y"
+          className="min-h-16 resize-y"
           value={description}
           onChange={e => setDescription(e.target.value)}
           placeholder="Optional — describe when and how this field is used"
@@ -175,24 +178,22 @@ function Step1({
         </span>
 
         {/* Drupal-style select */}
-        <select
+        <Select
           data-testid="primitive-type-select"
           value={primitiveType}
           onChange={e => setPrimitiveType(e.target.value)}
-          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none cursor-pointer appearance-auto"
-        >
-          <option value="">— Select a field type —</option>
-          <optgroup label="Available now">
-            {AVAILABLE.map(p => (
-              <option key={p.id} value={p.id}>{p.label}</option>
-            ))}
-          </optgroup>
-          <optgroup label="Coming soon">
-            {COMING_SOON.map(p => (
-              <option key={p.id} value={p.id} disabled>{p.label}</option>
-            ))}
-          </optgroup>
-        </select>
+          options={[{ value: '', label: '— Select a field type —' }]}
+          groups={[
+            {
+              label: 'Available now',
+              options: AVAILABLE.map(p => ({ value: p.id, label: p.label })),
+            },
+            {
+              label: 'Coming soon',
+              options: COMING_SOON.map(p => ({ value: p.id, label: p.label, disabled: true })),
+            },
+          ]}
+        />
 
         {/* Description of selected type */}
         {selected && (
@@ -288,24 +289,19 @@ function Step2({
             return (
               <div key={m.key} className="px-4 flex flex-col gap-2">
                 <label className="flex items-center gap-[7px] cursor-pointer select-none">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={isVisible}
-                    onChange={e => setVisibility({ ...visibility, [m.key]: e.target.checked })}
-                    className="w-4 h-4 accent-primary cursor-pointer"
+                    onChange={checked => setVisibility({ ...visibility, [m.key]: checked })}
+                    className="w-4 h-4"
                   />
                   <span className="text-[13px] text-[#374151]">Visible</span>
                 </label>
                 {isVisible && options.length > 0 && (
-                  <select
+                  <Select
                     value={formatters[m.key] ?? options[0]}
                     onChange={e => setFormatters({ ...formatters, [m.key]: e.target.value })}
-                    className="w-full text-[13px] border border-border-field rounded-md py-1.5 px-2.5 bg-white text-[#374151] font-inherit cursor-pointer"
-                  >
-                    {options.map(key => (
-                      <option key={key} value={key}>{RENDERER_LABELS[key] ?? key}</option>
-                    ))}
-                  </select>
+                    options={options.map(key => ({ value: key, label: RENDERER_LABELS[key] ?? key }))}
+                  />
                 )}
                 {isVisible && options.length === 0 && (
                   <span className="text-xs text-[#94a3b8] italic">Default</span>

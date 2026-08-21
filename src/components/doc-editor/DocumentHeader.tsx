@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { ViewMode, DocumentMeta, Participant } from '../../types/document';
 import ParticipantAvatars from './ParticipantAvatars';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 interface DocumentHeaderProps {
   meta: DocumentMeta;
@@ -85,8 +86,10 @@ export default function DocumentHeader({
               &larr; Documents
             </button>
           )}
-          <input
-            className={cn('text-base font-semibold border border-transparent rounded outline-none bg-transparent font-[inherit] min-w-[180px] text-[#111827] py-1 px-2 focus:border-[#3b82f6]')}
+          {/* Inline document-title editor — chrome stripped so it reads as
+              the page heading until focused. */}
+          <Input
+            className={cn('w-auto h-auto min-w-[180px] text-base font-semibold border-transparent bg-transparent py-1 px-2')}
             value={meta.title}
             placeholder="Untitled document"
             onChange={(e) => onUpdateMeta({ title: e.target.value })}

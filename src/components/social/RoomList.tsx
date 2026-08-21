@@ -8,6 +8,8 @@ import type { RoomItem } from '../../hooks/useRooms';
 import { useFriends } from '../../hooks/useFriends';
 import type { PublicProfile } from '../../hooks/useFriends';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -55,14 +57,15 @@ function CreateRoomForm({ onCreate, onDiscard, loading }: CreateRoomFormProps) {
 
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }} className="my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border">
-      <input
+      <Input
+        size="sm"
         value={name}
         onChange={e => setName(e.target.value.slice(0, 50))}
         placeholder="Room name"
         maxLength={50}
         required
         autoFocus
-        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
+        className="mb-1.5"
       />
       <div className="flex gap-1.5">
         <button
@@ -133,17 +136,17 @@ function DMRoomButton({ onCreateDM, loading, friends }: DMRoomButtonProps) {
 
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }} className="my-1 mb-2 p-2 bg-surface-panel rounded-md border border-border">
-      <select
+      <Select
+        size="sm"
         value={peerId}
         onChange={e => setPeerId(e.target.value)}
         disabled={friends.length === 0}
-        className="w-full box-border border border-border-field rounded-[5px] px-2 py-1 text-[13px] font-[system-ui,-apple-system,sans-serif] bg-surface text-text-primary mb-1.5"
-      >
-        <option value="">{friends.length === 0 ? 'No mutual friends yet' : 'Select a friend…'}</option>
-        {friends.map(f => (
-          <option key={f.userId} value={f.userId}>{f.displayName}</option>
-        ))}
-      </select>
+        className="mb-1.5"
+        options={[
+          { value: '', label: friends.length === 0 ? 'No mutual friends yet' : 'Select a friend…' },
+          ...friends.map(f => ({ value: f.userId, label: f.displayName })),
+        ]}
+      />
       <div className="flex gap-1.5">
         <button
           type="submit"

@@ -1430,6 +1430,19 @@ declare interface CollapsibleSidebarProps {
     videoSlot?: React.ReactNode;
 }
 
+export declare const ColorInput: ForwardRefExoticComponent<ColorInputProps & RefAttributes<HTMLInputElement>>;
+
+export declare interface ColorInputProps {
+    /** Hex color value, e.g. "#3b82f6". */
+    value: string;
+    onChange: (value: string) => void;
+    disabled?: boolean;
+    /** Accessible name. Required when no visible <label> wraps this. */
+    'aria-label'?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 export declare const colors: {
     readonly primary: string;
     readonly primaryDark: string;
@@ -5801,8 +5814,15 @@ export declare interface SelectOption {
     disabled?: boolean;
 }
 
+export declare interface SelectOptionGroup {
+    label: string;
+    options: SelectOption[];
+}
+
 export declare interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
     options: SelectOption[];
+    /** Optional labelled option groups, rendered after the flat `options`. */
+    groups?: SelectOptionGroup[];
     /** Shown as a disabled placeholder option when no value is selected. */
     placeholder?: string;
     size?: SelectSize;

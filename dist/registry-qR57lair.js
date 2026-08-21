@@ -27,8 +27,8 @@ function f() {
 }
 export {
   d as a,
-  g as b,
-  p as c,
+  p as b,
+  g as c,
   a as g,
   f as l,
   u as r

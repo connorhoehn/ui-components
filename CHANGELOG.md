@@ -8,6 +8,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.62.0] — 2026-08-21
+
+**The hand-rolled control migration is complete.** Every area of
+`src/components` now builds its form controls from the `forms/` primitives,
+and the ratchet guard covers the whole tree.
+
+### Added
+
+- **`ColorInput` primitive** (forms + root export): wrapper over
+  `<input type="color">`, shipped because `CanvasCursorBoard` was the one
+  place hand-rolling a color swatch.
+- **`Select` gains `groups`** (`SelectOptionGroup[]`, rendered as
+  `<optgroup>`): `FieldTypesPage`'s Drupal-style grouped type picker needed
+  it, and the primitive ships first.
+
+### Changed
+
+- **Converted to forms primitives:** ingest (8 files — mapping rule editor,
+  source detail, audit/sync/items/SLO/review/conflicts), social (7 —
+  GroupPanel, SocialPanel, RoomList, PostFeed, CommentThread, ChatRoom,
+  ChatPanel internals; public props untouched), doc-editor (8 — TaskItemRow's
+  pill selects keep their runtime-derived colors via class overrides,
+  AttachmentsPanel, NewDocumentModal, SectionComments, SectionBlock,
+  ReviewableItem, DocumentHeader, CommentThread), observability (3), agents
+  (3), collaboration (CanvasCursorBoard now uses `Slider` + `ColorInput`;
+  SharedTextEditor's format picker), video (RecordingPlayer's speed select;
+  its seek/volume ranges stay raw as media chrome), field-types (1).
+- **`lint:node-controls` now guards ALL of `src/components`** (was
+  `pipelines/` only). 27 files / 37 raw elements remain, every one a
+  documented justified exception — the forms/shared primitives themselves,
+  hidden inputs, OTP digit boxes, media scrubbers, dev inspectors.
+- Visual e2e baselines regenerated for the v2.61.0 Button re-toning; the
+  visual spec now blanks `<video>` surfaces (live frames made
+  `/workflows/video-streaming` flaky by nature).
+
 ## [2.61.0] — 2026-08-21
 
 The control migration crosses into its next areas: identity, typed-documents

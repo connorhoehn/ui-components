@@ -14,8 +14,15 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
+export interface SelectOptionGroup {
+  label: string;
+  options: SelectOption[];
+}
+
 export interface SelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
   options: SelectOption[];
+  /** Optional labelled option groups, rendered after the flat `options`. */
+  groups?: SelectOptionGroup[];
   /** Shown as a disabled placeholder option when no value is selected. */
   placeholder?: string;
   size?: SelectSize;
@@ -32,6 +39,7 @@ const sizeClasses: Record<SelectSize, string> = {
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
   {
     options,
+    groups,
     placeholder,
     size = 'md',
     invalid = false,
@@ -77,6 +85,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         <option key={opt.value} value={opt.value} disabled={opt.disabled}>
           {opt.label}
         </option>
+      ))}
+      {groups?.map((group) => (
+        <optgroup key={group.label} label={group.label}>
+          {group.options.map((opt) => (
+            <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+              {opt.label}
+            </option>
+          ))}
+        </optgroup>
       ))}
     </select>
   );

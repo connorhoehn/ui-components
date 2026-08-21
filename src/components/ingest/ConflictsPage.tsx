@@ -9,6 +9,7 @@ import Chip from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 import type { ConflictField, ConflictSide, SyncConflict, ConflictResolution } from '../../types/ingest';
 
 // ---------------------------------------------------------------------------
@@ -244,8 +245,8 @@ export default function ConflictsPage() {
 
               {/* Note + actions */}
               <div className="flex gap-2 justify-end border-t border-border pt-3.5 flex-wrap">
-                <input
-                  className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none font-[inherit] min-w-[240px] flex-1"
+                <Input
+                  className="min-w-[240px] flex-1"
                   placeholder="Optional note (logged in audit trail)"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}

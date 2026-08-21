@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
+import { Select } from '../forms/Select';
 
 export interface RecordingPlayerProps {
   playlistUrl: string | null;
@@ -191,6 +192,9 @@ export function RecordingPlayer({
       <div className="absolute bottom-0 left-0 right-0 px-3 pt-8 pb-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-white text-xs tabular-nums w-12">{formatTime(currentTime)}</span>
+          {/* Media chrome: the seek bar is part of the video overlay (white
+              accent on a gradient, --progress var for the fill) — a player
+              scrubber, not a form control, so it stays a raw range. */}
           <input
             type="range"
             min={0}
@@ -225,16 +229,19 @@ export function RecordingPlayer({
               aria-label="Volume"
             />
           </div>
-          <select
-            value={speed} onChange={onSpeedChange}
-            className="bg-white/10 hover:bg-white/20 text-white text-xs rounded px-2 py-1 border-0 outline-none"
+          <Select
+            size="sm"
+            value={String(speed)}
+            onChange={onSpeedChange}
+            className="w-auto bg-white/10 hover:bg-white/20 text-white border-transparent focus:bg-white/20 focus:border-transparent"
             aria-label="Playback speed"
-          >
-            <option value={0.5}>0.5×</option>
-            <option value={1}>1×</option>
-            <option value={1.5}>1.5×</option>
-            <option value={2}>2×</option>
-          </select>
+            options={[
+              { value: '0.5', label: '0.5×' },
+              { value: '1', label: '1×' },
+              { value: '1.5', label: '1.5×' },
+              { value: '2', label: '2×' },
+            ]}
+          />
           <div className="flex-1" />
           {!hideDownload && playlistUrl && (
             <a

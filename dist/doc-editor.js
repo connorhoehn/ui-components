@@ -1,12 +1,13 @@
-import { S as W } from "./DocumentEditorPage-DgchbdbS.js";
-import { A as we, a as Ne, D as ye, b as ve, c as ke, E as Ce, F as Me, H as Se, K as je, M as Ae, d as $e, P as Pe, R as Ee, e as _e, f as De, g as Ie, h as Te, T as Re, V as He, i as Le, j as Oe, k as Be, l as Ue, m as We, r as Fe, u as Ve, n as Xe } from "./DocumentEditorPage-DgchbdbS.js";
+import { S as W } from "./DocumentEditorPage-Bf_R4rmp.js";
+import { A as ye, a as ve, D as ke, b as Ce, c as Me, E as Se, F as je, H as Ae, K as $e, M as Pe, d as Ee, P as _e, R as De, e as Ie, f as Te, g as Re, h as He, T as Le, V as Oe, i as Be, j as Ue, k as We, l as Fe, m as Ve, r as Xe, u as Ke, n as qe } from "./DocumentEditorPage-Bf_R4rmp.js";
 import { jsxs as r, jsx as n, Fragment as $ } from "react/jsx-runtime";
 import { useState as j, useMemo as _, useCallback as T, useRef as P, useEffect as D } from "react";
-import { N as F, T as R } from "./NewDocumentModal-tuOrm4-5.js";
-import { E as qe, a as ze, b as Ge } from "./NewDocumentModal-tuOrm4-5.js";
+import { N as F, T as R } from "./NewDocumentModal-CN--uJf6.js";
+import { E as Ge, a as Ye, b as Qe } from "./NewDocumentModal-CN--uJf6.js";
 import { c as t } from "./cn-B6yFEsav.js";
 import { o as V, p as X } from "./useWebSocket-Bn4OeUor.js";
-function K(e) {
+import { T as K } from "./Textarea-kaa9rHUL.js";
+function q(e) {
   const i = Date.now(), d = new Date(e).getTime();
   if (isNaN(d)) return "";
   const l = i - d;
@@ -17,8 +18,8 @@ function K(e) {
   if (a < 60) return `${a}m ago`;
   const c = Math.floor(a / 60);
   if (c < 24) return `${c}h ago`;
-  const b = Math.floor(c / 24);
-  return b < 30 ? `${b}d ago` : `${Math.floor(b / 30)}mo ago`;
+  const x = Math.floor(c / 24);
+  return x < 30 ? `${x}d ago` : `${Math.floor(x / 30)}mo ago`;
 }
 const H = {
   draft: { bg: "#fef3c7", color: "#92400e" },
@@ -26,7 +27,7 @@ const H = {
   final: { bg: "#d1fae5", color: "#065f46" },
   archived: { bg: "#f1f5f9", color: "#475569" }
 };
-function q({ status: e }) {
+function z({ status: e }) {
   const i = H[e] ?? H.draft;
   return /* @__PURE__ */ n(
     "span",
@@ -42,18 +43,18 @@ const L = {
   reviewer: { icon: "✔", label: "Reviewing" },
   reader: { icon: "👁", label: "Viewing" }
 };
-function z({
+function G({
   users: e,
   onClickUser: i
 }) {
   const l = e.slice(0, 5), s = e.length - 5;
   return /* @__PURE__ */ r("div", { className: t("flex items-center gap-0.5"), children: [
     l.map((a, c) => {
-      const b = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, w = p ? "#f59e0b" : "#10b981";
+      const x = L[a.mode ?? "editor"] ?? L.editor, p = a.idle === !0, w = p ? "#f59e0b" : "#10b981";
       return /* @__PURE__ */ r(
         "div",
         {
-          title: `${a.displayName} — ${p ? "Away" : b.label}`,
+          title: `${a.displayName} — ${p ? "Away" : x.label}`,
           onClick: (h) => {
             h.stopPropagation(), i(a.userId);
           },
@@ -75,7 +76,7 @@ function z({
                 style: { background: w }
               }
             ),
-            /* @__PURE__ */ n("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: b.icon })
+            /* @__PURE__ */ n("div", { className: t("absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none"), children: x.icon })
           ]
         },
         a.userId
@@ -93,7 +94,7 @@ function z({
     )
   ] });
 }
-function pe({
+function xe({
   documents: e,
   presence: i,
   onOpenDocument: d,
@@ -102,7 +103,7 @@ function pe({
   onJumpToUser: a,
   hideHeader: c
 }) {
-  const [b, p] = j(!1), [w, h] = j(null), [x, N] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), y = Math.min(x, m), M = _(() => {
+  const [x, p] = j(!1), [w, h] = j(null), [b, N] = j(1), u = 10, m = Math.max(1, Math.ceil(e.length / u)), y = Math.min(b, m), M = _(() => {
     const o = (y - 1) * u;
     return e.slice(o, o + u);
   }, [e, y]), f = T(
@@ -152,7 +153,7 @@ function pe({
             /* @__PURE__ */ r("div", { className: t("flex-1 min-w-0"), children: [
               /* @__PURE__ */ r("div", { className: t("flex items-center gap-2 mb-0.5"), children: [
                 /* @__PURE__ */ n("span", { className: t("text-[15px] font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: o.title }),
-                /* @__PURE__ */ n(q, { status: o.status }),
+                /* @__PURE__ */ n(z, { status: o.status }),
                 o.type && /* @__PURE__ */ n("span", { className: t("inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-[#f1f5f9] text-text-secondary whitespace-nowrap shrink-0"), children: o.type }),
                 o.activeCallSessionId && /* @__PURE__ */ r("span", { className: t("inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] leading-[18px]"), children: [
                   /* @__PURE__ */ n("span", { className: t("w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse") }),
@@ -162,11 +163,11 @@ function pe({
               o.description && /* @__PURE__ */ n("div", { className: t("text-[13px] text-[#64748b] overflow-hidden text-ellipsis whitespace-nowrap mb-0.5"), children: o.description }),
               /* @__PURE__ */ r("div", { className: t("text-xs text-text-tertiary"), children: [
                 "Updated ",
-                K(o.updatedAt)
+                q(o.updatedAt)
               ] })
             ] }),
             k.length > 0 && /* @__PURE__ */ n("div", { className: t("shrink-0"), children: /* @__PURE__ */ n(
-              z,
+              G,
               {
                 users: k,
                 onClickUser: (C) => a(o.id, C)
@@ -237,7 +238,7 @@ function pe({
     /* @__PURE__ */ n(
       F,
       {
-        open: b,
+        open: x,
         onClose: () => p(!1),
         onCreate: l
       }
@@ -245,13 +246,13 @@ function pe({
   ] });
 }
 const U = "prosemirror";
-function G(e) {
+function Y(e) {
   return e.ydoc !== void 0;
 }
-function fe(e) {
-  return G(e) ? /* @__PURE__ */ n(Y, { ...e }) : /* @__PURE__ */ n(Q, { ...e });
+function be(e) {
+  return Y(e) ? /* @__PURE__ */ n(Q, { ...e }) : /* @__PURE__ */ n(Z, { ...e });
 }
-function Y({
+function Q({
   ydoc: e,
   provider: i,
   fragment: d,
@@ -259,14 +260,14 @@ function Y({
   fragmentName: s = U,
   editable: a,
   placeholder: c,
-  className: b,
+  className: x,
   onFragmentReady: p
 }) {
   const w = _(
     () => d ?? e.getXmlFragment(s),
     [d, e, s]
   ), h = P(!1);
-  return h.current || (h.current = !0, p?.(w, e)), /* @__PURE__ */ n("div", { className: t(b), children: /* @__PURE__ */ n(
+  return h.current || (h.current = !0, p?.(w, e)), /* @__PURE__ */ n("div", { className: t(x), children: /* @__PURE__ */ n(
     R,
     {
       fragment: w,
@@ -278,7 +279,7 @@ function Y({
     }
   ) });
 }
-function Q({
+function Z({
   gatewayUrl: e,
   docId: i,
   authToken: d,
@@ -286,12 +287,12 @@ function Q({
   user: s,
   fragmentName: a = U,
   editable: c,
-  placeholder: b,
+  placeholder: x,
   className: p,
   onFragmentReady: w,
   loadingSlot: h
 }) {
-  const x = l ?? `doc:${i}`, N = P(/* @__PURE__ */ new Set()), u = T(
+  const b = l ?? `doc:${i}`, N = P(/* @__PURE__ */ new Set()), u = T(
     (C) => (N.current.add(C), () => {
       N.current.delete(C);
     }),
@@ -302,9 +303,9 @@ function Q({
     () => ({
       wsUrl: e,
       cognitoToken: d,
-      defaultChannel: x
+      defaultChannel: b
     }),
-    [e, d, x]
+    [e, d, b]
   ), M = V({ config: y, onMessage: m }), { ydoc: f, provider: o } = X({
     documentId: i,
     ws: M,
@@ -321,11 +322,11 @@ function Q({
       provider: o,
       user: s,
       editable: c,
-      placeholder: b
+      placeholder: x
     }
   ) });
 }
-function Z({ current: e, total: i }) {
+function J({ current: e, total: i }) {
   const d = i > 0 ? Math.round(e / i * 100) : 0;
   return /* @__PURE__ */ r("div", { className: t("mb-4"), children: [
     /* @__PURE__ */ r("div", { className: t("text-[13px] text-[#6b7280] mb-1 flex justify-between"), children: [
@@ -349,7 +350,7 @@ function Z({ current: e, total: i }) {
     ) })
   ] });
 }
-const J = {
+const ee = {
   pending: { bg: "#fef3c7", text: "#92400e" },
   acked: { bg: "#d1fae5", text: "#065f46" },
   done: { bg: "#dbeafe", text: "#1e40af" },
@@ -359,19 +360,19 @@ const J = {
   medium: "#f59e0b",
   high: "#ef4444"
 };
-function ee({ item: e, onAck: i, onReject: d }) {
-  const [l, s] = j(!1), [a, c] = j(""), [b, p] = j("none"), w = P(e.status), h = J[e.status], [x, N] = j(!1), u = P(null);
+function te({ item: e, onAck: i, onReject: d }) {
+  const [l, s] = j(!1), [a, c] = j(""), [x, p] = j("none"), w = P(e.status), h = ee[e.status], [b, N] = j(!1), u = P(null);
   D(() => () => {
     u.current && clearTimeout(u.current);
   }, []), D(() => {
     w.current === "pending" && e.status === "acked" ? p("ack") : w.current === "pending" && e.status === "rejected" && p("reject"), w.current = e.status;
   }, [e.status]);
   const m = () => {
-    x || (N(!0), p("ack"), u.current = setTimeout(() => {
+    b || (N(!0), p("ack"), u.current = setTimeout(() => {
       u.current = null, i(a || void 0), c(""), s(!1), N(!1);
     }, 150));
   }, y = () => {
-    if (!x) {
+    if (!b) {
       if (!a.trim()) {
         s(!0);
         return;
@@ -381,7 +382,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
       }, 150);
     }
   };
-  return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", b === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]" : b === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]" : ""), children: [
+  return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg px-4 py-3 mb-2 transition-all duration-300 ease-in-out", x === "ack" ? "animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]" : x === "reject" ? "animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]" : ""), children: [
     /* @__PURE__ */ r("div", { className: t("flex items-center mb-1.5"), children: [
       /* @__PURE__ */ n("span", { className: t("text-sm font-medium flex-1 text-[#1e293b]"), children: e.text }),
       /* @__PURE__ */ n(
@@ -433,8 +434,8 @@ function ee({ item: e, onAck: i, onReject: d }) {
     ] }),
     e.status === "pending" && /* @__PURE__ */ r("div", { children: [
       /* @__PURE__ */ r("div", { className: t("flex gap-2 mt-1.5"), children: [
-        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white", x && "opacity-60 cursor-not-allowed"), onClick: m, disabled: x, children: "Acknowledge" }),
-        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white", x && "opacity-60 cursor-not-allowed"), onClick: y, disabled: x, children: "Reject" }),
+        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white", b && "opacity-60 cursor-not-allowed"), onClick: m, disabled: b, children: "Acknowledge" }),
+        /* @__PURE__ */ n("button", { type: "button", className: t("px-3.5 py-1.5 text-[13px] font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white", b && "opacity-60 cursor-not-allowed"), onClick: y, disabled: b, children: "Reject" }),
         !l && /* @__PURE__ */ n(
           "button",
           {
@@ -447,7 +448,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
       ] }),
       l && /* @__PURE__ */ r("div", { className: t("mt-2"), children: [
         /* @__PURE__ */ n(
-          "textarea",
+          K,
           {
             value: a,
             onChange: (f) => c(f.target.value),
@@ -456,7 +457,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
             },
             placeholder: "Add notes or rejection reason... (Enter to submit, Esc to cancel)",
             autoFocus: !0,
-            className: t("w-full min-h-[60px] p-2 text-[13px] border border-[#d1d5db] rounded-md resize-y font-[inherit] bg-white text-[#1e293b] outline-none")
+            className: t("min-h-[60px] resize-y")
           }
         ),
         /* @__PURE__ */ r("div", { className: t("flex gap-1.5 mt-1.5"), children: [
@@ -466,7 +467,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#22c55e] text-white"),
               onClick: m,
-              disabled: x,
+              disabled: b,
               tabIndex: 0,
               children: "Submit & Acknowledge"
             }
@@ -477,7 +478,7 @@ function ee({ item: e, onAck: i, onReject: d }) {
               type: "button",
               className: t("px-3 py-[5px] text-xs font-semibold border-none rounded-md cursor-pointer bg-[#ef4444] text-white"),
               onClick: y,
-              disabled: x,
+              disabled: b,
               tabIndex: 0,
               children: "Submit & Reject"
             }
@@ -506,15 +507,15 @@ const B = {
   notes: { bg: "#f3f4f6", text: "#374151" },
   custom: { bg: "#e0e7ff", text: "#3730a3" }
 };
-function te({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, provider: a, comments: c, onAddComment: b, onResolveThread: p, onUnresolveThread: w, participants: h }) {
-  const x = B[e.type] ?? B.custom, N = e.items.filter((u) => u.status !== "pending").length;
+function ne({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, provider: a, comments: c, onAddComment: x, onResolveThread: p, onUnresolveThread: w, participants: h }) {
+  const b = B[e.type] ?? B.custom, N = e.items.filter((u) => u.status !== "pending").length;
   return /* @__PURE__ */ r("div", { className: t("bg-white border border-[#e5e7eb] rounded-lg p-5 mb-4"), children: [
     /* @__PURE__ */ n("h2", { className: t("text-xl font-bold m-0 mb-1 text-[#1e293b]"), children: e.title }),
     /* @__PURE__ */ n(
       "span",
       {
         className: t("inline-block text-[11px] font-semibold px-2.5 py-0.5 rounded-full mb-3"),
-        style: { background: x.bg, color: x.text },
+        style: { background: b.bg, color: b.text },
         children: e.type
       }
     ),
@@ -536,7 +537,7 @@ function te({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, p
     ] }),
     e.items.length > 0 && /* @__PURE__ */ r("div", { children: [
       e.items.map((u) => /* @__PURE__ */ n(
-        ee,
+        te,
         {
           item: u,
           onAck: (m) => i(u.id, m),
@@ -551,11 +552,11 @@ function te({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, p
         " items reviewed"
       ] })
     ] }),
-    b && /* @__PURE__ */ n(
+    x && /* @__PURE__ */ n(
       W,
       {
         comments: c ?? [],
-        onAddComment: b,
+        onAddComment: x,
         participants: h,
         onResolveThread: p,
         onUnresolveThread: w
@@ -564,7 +565,7 @@ function te({ section: e, onAckItem: i, onRejectItem: d, fragment: l, ydoc: s, p
   ] });
 }
 const E = 4;
-function be({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSectionFocus: s, jumpToIndex: a, onJumpComplete: c, getSectionFragment: b, ydoc: p, provider: w, comments: h, onAddComment: x, onResolveThread: N, onUnresolveThread: u }) {
+function he({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSectionFocus: s, jumpToIndex: a, onJumpComplete: c, getSectionFragment: x, ydoc: p, provider: w, comments: h, onAddComment: b, onResolveThread: N, onUnresolveThread: u }) {
   const [m, y] = j(0), M = Math.max(1, Math.ceil(e.length / E)), f = m * E, o = e.slice(f, f + E);
   if (D(() => {
     a != null && a >= 0 && a < e.length && (y(Math.floor(a / E)), c?.());
@@ -574,7 +575,7 @@ function be({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSec
     return /* @__PURE__ */ n("div", { className: t("text-center p-12 text-[#6b7280] text-[15px]"), children: "No sections to review." });
   const k = () => y((v) => Math.max(0, v - 1)), S = () => y((v) => Math.min(M - 1, v + 1)), C = f + o.length;
   return /* @__PURE__ */ r("div", { children: [
-    /* @__PURE__ */ n(Z, { current: C, total: e.length }),
+    /* @__PURE__ */ n(J, { current: C, total: e.length }),
     /* @__PURE__ */ n("div", { className: t("flex flex-col gap-4"), children: o.map((v) => {
       const I = l?.filter((g) => g.currentSectionId === v.id) ?? [];
       return /* @__PURE__ */ r("div", { children: [
@@ -592,16 +593,16 @@ function be({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSec
           ))
         ] }),
         /* @__PURE__ */ n(
-          te,
+          ne,
           {
             section: v,
             onAckItem: (g, A) => i(v.id, g, A),
             onRejectItem: (g, A) => d(v.id, g, A),
-            fragment: b(v.id),
+            fragment: x(v.id),
             ydoc: p,
             provider: w,
             comments: h?.[v.id],
-            onAddComment: x ? (g, A) => x(v.id, g, A) : void 0,
+            onAddComment: b ? (g, A) => b(v.id, g, A) : void 0,
             onResolveThread: N ? (g) => N(v.id, g) : void 0,
             onUnresolveThread: u ? (g) => u(v.id, g) : void 0,
             participants: I
@@ -648,10 +649,10 @@ function be({ sections: e, onAckItem: i, onRejectItem: d, participants: l, onSec
     ] })
   ] });
 }
-function ne(e) {
+function re(e) {
   return e === "doc.ack" ? "✅" : e === "doc.reject" ? "❌" : e === "doc.add_item" || e === "doc.add_section" ? "➕" : e === "doc.edit_section" ? "✏️" : e === "doc.remove_item" ? "➖" : e === "doc.comment" ? "💬" : e.endsWith(".join") ? "🟢" : e.endsWith(".leave") ? "🔴" : e.startsWith("social.") ? "💬" : e === "pipeline.run.started" ? "▶" : e === "pipeline.run.completed" ? "✓" : e === "pipeline.run.failed" ? "✕" : e === "pipeline.approval.requested" ? "✋" : "•";
 }
-function re(e, i) {
+function ie(e, i) {
   const d = i.documentTitle ? ` in ${i.documentTitle}` : "";
   switch (e) {
     case "doc.ack":
@@ -682,17 +683,17 @@ function re(e, i) {
       return i.description ? String(i.description) : e;
   }
 }
-function ie(e) {
+function se(e) {
   return e.split(" ").map((i) => i[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function se(e) {
+function oe(e) {
   try {
     return new Date(e).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   } catch {
     return "";
   }
 }
-function oe(e) {
+function ae(e) {
   switch (e) {
     case "editor":
       return "editing";
@@ -704,7 +705,7 @@ function oe(e) {
       return "online";
   }
 }
-function xe({ events: e, participants: i }) {
+function ge({ events: e, participants: i }) {
   const [d, l] = j(!1);
   return /* @__PURE__ */ r("div", { className: t("bg-[#f8fafc] border border-border rounded-lg overflow-hidden"), children: [
     /* @__PURE__ */ r(
@@ -728,7 +729,7 @@ function xe({ events: e, participants: i }) {
           /* @__PURE__ */ n("span", { className: t("w-2 h-2 rounded-full shrink-0"), style: { background: s.color } }),
           s.displayName,
           " (",
-          oe(s.mode),
+          ae(s.mode),
           ")"
         ] }, s.clientId))
       ] }),
@@ -738,62 +739,62 @@ function xe({ events: e, participants: i }) {
           {
             className: t("w-[22px] h-[22px] rounded-full text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-px"),
             style: { background: s.color || "#94a3b8" },
-            children: ie(s.displayName || "Unknown")
+            children: se(s.displayName || "Unknown")
           }
         ),
         /* @__PURE__ */ r("div", { children: [
           /* @__PURE__ */ n("span", { className: t("font-semibold text-[#334155]"), children: s.displayName || "Unknown" }),
           " ",
           /* @__PURE__ */ r("span", { className: t("text-[#64748b]"), children: [
-            ne(s.eventType),
+            re(s.eventType),
             " ",
-            re(s.eventType, s.detail)
+            ie(s.eventType, s.detail)
           ] })
         ] }),
-        /* @__PURE__ */ n("span", { className: t("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"), children: se(s.timestamp) })
+        /* @__PURE__ */ n("span", { className: t("text-[10px] text-text-tertiary whitespace-nowrap ml-auto pl-2 shrink-0"), children: oe(s.timestamp) })
       ] }, s.id)) })
     ] })
   ] });
 }
 export {
-  be as AckMode,
-  we as ActionItemsCard,
-  xe as ActivityFeed,
-  Ne as AttachmentsPanel,
-  te as ChunkViewer,
-  ye as DiffViewer,
-  ve as DocumentEditorPage,
-  ke as DocumentHeader,
-  pe as DocumentListPage,
-  qe as EditorToolbar,
-  Ce as ExecutiveSummaryCard,
-  Me as FollowModeBar,
-  Se as HeaderBanner,
-  je as KeyDecisionsCard,
-  Ae as MentionDropdown,
-  $e as MyMentionsPanel,
+  he as AckMode,
+  ye as ActionItemsCard,
+  ge as ActivityFeed,
+  ve as AttachmentsPanel,
+  ne as ChunkViewer,
+  ke as DiffViewer,
+  Ce as DocumentEditorPage,
+  Me as DocumentHeader,
+  xe as DocumentListPage,
+  Ge as EditorToolbar,
+  Se as ExecutiveSummaryCard,
+  je as FollowModeBar,
+  Ae as HeaderBanner,
+  $e as KeyDecisionsCard,
+  Pe as MentionDropdown,
+  Ee as MyMentionsPanel,
   F as NewDocumentModal,
-  Pe as ParticipantAvatars,
-  Ee as ReaderMode,
-  _e as ReviewMode,
-  Z as ReviewProgress,
-  ee as ReviewableItem,
-  De as SectionBlock,
+  _e as ParticipantAvatars,
+  De as ReaderMode,
+  Ie as ReviewMode,
+  J as ReviewProgress,
+  te as ReviewableItem,
+  Te as SectionBlock,
   W as SectionComments,
-  Ie as SectionList,
-  Te as SectionSummariesCard,
-  fe as StandaloneTiptap,
-  Re as TableOfContents,
-  ze as TaskItemRow,
-  Ge as TaskList,
+  Re as SectionList,
+  He as SectionSummariesCard,
+  be as StandaloneTiptap,
+  Le as TableOfContents,
+  Ye as TaskItemRow,
+  Qe as TaskList,
   R as TiptapEditor,
-  He as VersionHistoryPanel,
-  Le as VideoCallPanel,
-  Oe as VideoHistoryPanel,
-  Be as countAllComments,
-  Ue as generateSummaryBullets,
-  We as getInitials,
-  Fe as relativeTime,
-  Ve as useDocumentActions,
-  Xe as useSidebarPanels
+  Oe as VersionHistoryPanel,
+  Be as VideoCallPanel,
+  Ue as VideoHistoryPanel,
+  We as countAllComments,
+  Fe as generateSummaryBullets,
+  Ve as getInitials,
+  Xe as relativeTime,
+  Ke as useDocumentActions,
+  qe as useSidebarPanels
 };

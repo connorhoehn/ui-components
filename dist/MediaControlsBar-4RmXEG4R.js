@@ -2,18 +2,19 @@ import { jsxs as i, jsx as e, Fragment as ne } from "react/jsx-runtime";
 import { useRef as $, useState as I, useEffect as B, useMemo as G, useCallback as H, useImperativeHandle as Pe, useLayoutEffect as Ee } from "react";
 import { c as h } from "./cn-B6yFEsav.js";
 import { P as Ie, S as Te } from "./ReconnectingBanner-ClUFFUr4.js";
+import { S as Ae } from "./Select-DAEcKWg2.js";
 import { B as ce } from "./Button-DILgRebO.js";
 import { A as we } from "./Avatar-B7O2g50s.js";
 import { C as re } from "./Chip-BDT8ro4h.js";
-import { S as ye, P as Ae } from "./PermissionDeniedCard-0XYb6Eju.js";
-const Be = {
+import { S as ye, P as Be } from "./PermissionDeniedCard-0XYb6Eju.js";
+const $e = {
   idle: "Ready",
   connecting: "Connecting…",
   buffering: "Buffering…",
   playing: "",
   error: "Playback Error"
 };
-function Gt({
+function qt({
   src: t,
   stream: r,
   autoPlay: n = !1,
@@ -53,7 +54,7 @@ function Gt({
     const N = v.current;
     N && r !== void 0 && (N.srcObject = r);
   }, [r]);
-  const k = w !== "playing", b = Be[w];
+  const k = w !== "playing", b = $e[w];
   return /* @__PURE__ */ i(
     "div",
     {
@@ -75,23 +76,23 @@ function Gt({
           }
         ),
         k && b && /* @__PURE__ */ i("div", { className: h("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"), children: [
-          w === "buffering" && /* @__PURE__ */ e($e, {}),
+          w === "buffering" && /* @__PURE__ */ e(He, {}),
           /* @__PURE__ */ e("span", { className: h(w === "buffering" ? "ml-2" : ""), children: b })
         ] })
       ]
     }
   );
 }
-function $e() {
+function He() {
   return /* @__PURE__ */ i("svg", { width: "18", height: "18", viewBox: "0 0 18 18", className: h("animate-spin"), children: [
     /* @__PURE__ */ e("circle", { cx: "9", cy: "9", r: "7", fill: "none", stroke: "rgba(255,255,255,0.3)", strokeWidth: "2" }),
     /* @__PURE__ */ e("path", { d: "M9 2a7 7 0 0 1 7 7", fill: "none", stroke: "#fff", strokeWidth: "2", strokeLinecap: "round" })
   ] });
 }
-function He(t) {
+function Re(t) {
   return t < 1024 ? `${t} B` : t < 1024 * 1024 ? `${(t / 1024).toFixed(1)} KB` : t < 1024 * 1024 * 1024 ? `${(t / (1024 * 1024)).toFixed(1)} MB` : `${(t / (1024 * 1024 * 1024)).toFixed(2)} GB`;
 }
-function Jt({
+function Zt({
   onClose: t,
   sources: r,
   title: n,
@@ -183,7 +184,7 @@ function Jt({
                         k ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface-alt,rgba(255,255,255,0.05))] hover:bg-white/10"
                       ),
                       "aria-current": k ? "true" : void 0,
-                      title: x.sizeBytes != null ? He(x.sizeBytes) : void 0,
+                      title: x.sizeBytes != null ? Re(x.sizeBytes) : void 0,
                       children: x.label || `Segment ${w + 1}`
                     },
                     `${w}:${x.url}`
@@ -209,14 +210,14 @@ function Jt({
     }
   );
 }
-function Re(t) {
+function De(t) {
   return t >= 1e6 ? `${(t / 1e6).toFixed(1)} Mbps` : t >= 1e3 ? `${(t / 1e3).toFixed(0)} Kbps` : `${t} bps`;
 }
-function qt({ metrics: t, style: r }) {
+function Qt({ metrics: t, style: r }) {
   if (!t)
     return /* @__PURE__ */ e("div", { className: h("p-3 bg-[#1e293b] rounded-lg text-[#94a3b8] text-xs"), style: r, children: "No stream data" });
   const n = [
-    ["Bitrate", Re(t.bitrateBps)],
+    ["Bitrate", De(t.bitrateBps)],
     ["FPS", `${t.fps}`],
     ["Resolution", `${t.resolution.width}×${t.resolution.height}`],
     ["Packets Lost", `${t.packetsLost}`]
@@ -226,12 +227,12 @@ function qt({ metrics: t, style: r }) {
     /* @__PURE__ */ e("span", { className: h("font-mono"), children: a })
   ] }, o)) });
 }
-const De = {
+const Fe = {
   good: "#22c55e",
   medium: "#eab308",
   poor: "#f97316",
   dead: "#ef4444"
-}, Fe = {
+}, ze = {
   good: "text-success-fg",
   medium: "text-warning-fg",
   poor: "text-caution-fg",
@@ -242,8 +243,8 @@ const De = {
   poor: "Poor",
   dead: "No Connection"
 };
-function ze({ quality: t, style: r }) {
-  const n = De[t], o = t === "good" ? 4 : t === "medium" ? 3 : t === "poor" ? 2 : 1;
+function Ve({ quality: t, style: r }) {
+  const n = Fe[t], o = t === "good" ? 4 : t === "medium" ? 3 : t === "poor" ? 2 : 1;
   return /* @__PURE__ */ i("div", { className: h("inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium"), style: r, children: [
     /* @__PURE__ */ e("svg", { width: "14", height: "12", viewBox: "0 0 14 12", children: [0, 1, 2, 3].map((a) => /* @__PURE__ */ e(
       "rect",
@@ -257,10 +258,10 @@ function ze({ quality: t, style: r }) {
       },
       a
     )) }),
-    /* @__PURE__ */ e("span", { className: Fe[t], children: We[t] })
+    /* @__PURE__ */ e("span", { className: ze[t], children: We[t] })
   ] });
 }
-function Zt({ participants: t, style: r }) {
+function er({ participants: t, style: r }) {
   const n = t.length, o = n <= 1 ? 1 : n <= 4 ? 2 : n <= 9 ? 3 : 4;
   return /* @__PURE__ */ e(
     "div",
@@ -283,7 +284,7 @@ function Zt({ participants: t, style: r }) {
     }
   );
 }
-function Qt({ reactions: t, style: r }) {
+function tr({ reactions: t, style: r }) {
   const [n, o] = I([]);
   return B(() => {
     if (t.length === 0) return;
@@ -309,8 +310,8 @@ function Qt({ reactions: t, style: r }) {
     a.id
   )) });
 }
-const Ve = ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯"];
-function er({ onReact: t, emojis: r = Ve, style: n }) {
+const Oe = ["👍", "❤️", "🔥", "😂", "👏", "🎉", "😮", "💯"];
+function rr({ onReact: t, emojis: r = Oe, style: n }) {
   return /* @__PURE__ */ e("div", { className: h("flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]"), style: n, children: r.map((o) => /* @__PURE__ */ e(
     "button",
     {
@@ -325,14 +326,14 @@ function er({ onReact: t, emojis: r = Ve, style: n }) {
     o
   )) });
 }
-function Oe(t) {
+function _e(t) {
   return t >= 1e6 ? `${(t / 1e6).toFixed(1)} Mbps` : `${(t / 1e3).toFixed(0)} Kbps`;
 }
-function _e(t) {
+function Ue(t) {
   const r = Math.floor(t / 3600), n = Math.floor(t % 3600 / 60), o = Math.floor(t % 60);
   return r > 0 ? `${r}:${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}` : `${n}:${String(o).padStart(2, "0")}`;
 }
-const Ue = {
+const Xe = {
   live: "bg-success shadow-[0_0_6px_#22c55e]",
   playing: "bg-success shadow-[0_0_6px_#22c55e]",
   connecting: "bg-warning",
@@ -340,7 +341,7 @@ const Ue = {
   buffering: "bg-warning",
   idle: "bg-surface-emphasis",
   error: "bg-danger"
-}, Xe = {
+}, Ye = {
   live: "text-success-fg",
   playing: "text-success-fg",
   connecting: "text-warning-fg",
@@ -349,15 +350,15 @@ const Ue = {
   idle: "text-text-tertiary",
   error: "text-danger-fg"
 };
-function tr({ phase: t, bitrateBps: r, viewerCount: n, duration: o, style: a }) {
+function nr({ phase: t, bitrateBps: r, viewerCount: n, duration: o, style: a }) {
   const c = t === "playing" ? "LIVE" : t.toUpperCase();
   return /* @__PURE__ */ i("div", { className: h("inline-flex items-center gap-4 px-4 py-2 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono"), style: a, children: [
     /* @__PURE__ */ i("span", { className: h("flex items-center gap-1"), children: [
-      /* @__PURE__ */ e("span", { className: h("w-[7px] h-[7px] rounded-full", Ue[t] ?? "bg-surface-emphasis") }),
-      /* @__PURE__ */ e("span", { className: h("font-semibold", Xe[t] ?? "text-text-tertiary"), children: c })
+      /* @__PURE__ */ e("span", { className: h("w-[7px] h-[7px] rounded-full", Xe[t] ?? "bg-surface-emphasis") }),
+      /* @__PURE__ */ e("span", { className: h("font-semibold", Ye[t] ?? "text-text-tertiary"), children: c })
     ] }),
-    r !== void 0 && /* @__PURE__ */ e("span", { children: Oe(r) }),
-    o !== void 0 && /* @__PURE__ */ e("span", { children: _e(o) }),
+    r !== void 0 && /* @__PURE__ */ e("span", { children: _e(r) }),
+    o !== void 0 && /* @__PURE__ */ e("span", { children: Ue(o) }),
     n !== void 0 && /* @__PURE__ */ i("span", { className: h("flex items-center gap-[3px]"), children: [
       /* @__PURE__ */ i("svg", { width: "10", height: "10", viewBox: "0 0 10 10", fill: "currentColor", children: [
         /* @__PURE__ */ e("circle", { cx: "5", cy: "4", r: "2" }),
@@ -367,7 +368,7 @@ function tr({ phase: t, bitrateBps: r, viewerCount: n, duration: o, style: a }) 
     ] })
   ] });
 }
-function rr({ count: t, className: r, style: n }) {
+function ir({ count: t, className: r, style: n }) {
   const o = t >= 1e3 ? `${(t / 1e3).toFixed(1)}K` : `${t}`;
   return /* @__PURE__ */ i(
     "div",
@@ -390,17 +391,17 @@ function rr({ count: t, className: r, style: n }) {
     }
   );
 }
-function Ye(t) {
+function Ke(t) {
   return t.split(" ").map((r) => r[0]).slice(0, 2).join("").toUpperCase();
 }
-function Ke(t) {
+function Ge(t) {
   let r = 0;
   for (let n = 0; n < t.length; n++)
     r = t.charCodeAt(n) + ((r << 5) - r);
   return Math.abs(r) % 360;
 }
 function q({ participant: t, size: r = 32 }) {
-  const n = Ke(t.displayName);
+  const n = Ge(t.displayName);
   return /* @__PURE__ */ i(
     "div",
     {
@@ -422,7 +423,7 @@ function q({ participant: t, size: r = 32 }) {
             alt: "",
             className: "w-full h-full rounded-full object-cover"
           }
-        ) : Ye(t.displayName),
+        ) : Ke(t.displayName),
         t.isSpeaking && /* @__PURE__ */ e(
           "span",
           {
@@ -461,7 +462,7 @@ function q({ participant: t, size: r = 32 }) {
     }
   );
 }
-function Ge({
+function Je({
   participants: t,
   localFallback: r,
   maxVisible: n = 4,
@@ -573,7 +574,7 @@ function K({
     }
   );
 }
-function Je({
+function qe({
   mode: t,
   isMuted: r = !1,
   isCameraOn: n = !0,
@@ -698,16 +699,16 @@ function Je({
     )
   ] });
 }
-function qe(t) {
+function Ze(t) {
   return t ? t.networkQuality !== void 0 || t.bitrateKbps !== void 0 || t.latencyMs !== void 0 || t.packetLossPct !== void 0 : !1;
 }
-const Ze = {
+const Qe = {
   "top-left": "top-2 left-2",
   "top-right": "top-2 right-2",
   "bottom-left": "bottom-2 left-2",
   "bottom-right": "bottom-2 right-2"
 };
-function Qe(t) {
+function et(t) {
   return t >= 1e3 ? `${(t / 1e3).toFixed(1)} Mb/s` : `${Math.round(t)} kb/s`;
 }
 function de({
@@ -717,19 +718,19 @@ function de({
   className: o,
   style: a
 }) {
-  return qe(t) ? /* @__PURE__ */ i(
+  return Ze(t) ? /* @__PURE__ */ i(
     "div",
     {
       "data-testid": n,
       className: h(
         "absolute z-10 pointer-events-none",
-        Ze[r],
+        Qe[r],
         "flex flex-col gap-1.5",
         o
       ),
       style: a,
       children: [
-        t.networkQuality && /* @__PURE__ */ e(ze, { quality: t.networkQuality }),
+        t.networkQuality && /* @__PURE__ */ e(Ve, { quality: t.networkQuality }),
         (t.bitrateKbps !== void 0 || t.latencyMs !== void 0 || t.packetLossPct !== void 0) && /* @__PURE__ */ i(
           "div",
           {
@@ -738,7 +739,7 @@ function de({
             children: [
               t.bitrateKbps !== void 0 && /* @__PURE__ */ i("span", { "data-testid": "call-stats-bitrate", children: [
                 /* @__PURE__ */ e("span", { className: "text-white/50 mr-1.5", children: "bitrate" }),
-                Qe(t.bitrateKbps)
+                et(t.bitrateKbps)
               ] }),
               t.latencyMs !== void 0 && /* @__PURE__ */ i("span", { "data-testid": "call-stats-latency", children: [
                 /* @__PURE__ */ e("span", { className: "text-white/50 mr-1.5", children: "latency" }),
@@ -798,7 +799,7 @@ const ie = {
     /* @__PURE__ */ e("path", { d: "M3.51 15a9 9 0 1 0 2.13-9.36L1 10" })
   ] })
 };
-function et({
+function tt({
   callerName: t,
   onAnswer: r,
   onDecline: n
@@ -833,7 +834,7 @@ function et({
     ] })
   ] });
 }
-function tt({
+function rt({
   mode: t,
   participants: r,
   localParticipant: n,
@@ -877,7 +878,7 @@ function tt({
       /* @__PURE__ */ e(de, { stats: w, position: "bottom-left" })
     ] }),
     t === "audio" && /* @__PURE__ */ e(
-      Ge,
+      Je,
       {
         participants: r,
         localFallback: n,
@@ -893,7 +894,7 @@ function tt({
       ] })
     ] }),
     /* @__PURE__ */ e(
-      Je,
+      qe,
       {
         mode: t,
         isMuted: a,
@@ -911,7 +912,7 @@ function tt({
     )
   ] });
 }
-function rt({
+function nt({
   state: t,
   mode: r,
   duration: n,
@@ -985,7 +986,7 @@ function rt({
     }
   );
 }
-function nt(t) {
+function it(t) {
   const [r, n] = I({ x: 0, y: 0 }), [o, a] = I(!1), [c, l] = I(!1), u = $(!1), d = $({ x: 0, y: 0 }), m = $({ x: 0, y: 0 }), p = $(null), g = H(
     (k) => {
       t && (u.current = !0, a(!0), l(!1), d.current = { x: k.clientX, y: k.clientY }, m.current = { ...r }, k.preventDefault());
@@ -1039,8 +1040,8 @@ function nt(t) {
         const y = C.getBoundingClientRect();
         L = y.width, S = y.height;
       }
-      const P = N.getBoundingClientRect(), E = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, T = P.left - E.left, D = P.top - E.top, F = L - (T + P.width), O = S - (D + P.height), z = T < j, W = F < j, M = D < j, f = O < j;
-      M && z ? x.current("top-left") : M && W ? x.current("top-right") : f && z ? x.current("bottom-left") : f && W && x.current("bottom-right");
+      const P = N.getBoundingClientRect(), E = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, T = P.left - E.left, D = P.top - E.top, F = L - (T + P.width), O = S - (D + P.height), W = T < j, z = F < j, M = D < j, f = O < j;
+      M && W ? x.current("top-left") : M && z ? x.current("top-right") : f && W ? x.current("bottom-left") : f && z && x.current("bottom-right");
     };
     return document.addEventListener("mousemove", k), document.addEventListener("mouseup", b), () => {
       document.removeEventListener("mousemove", k), document.removeEventListener("mouseup", b);
@@ -1049,7 +1050,7 @@ function nt(t) {
   const w = r.x !== 0 || r.y !== 0;
   return { offset: r, handleMouseDown: g, resetOffset: v, snapToCorner: s, isDragging: o, isAnimating: c, hasMoved: w, widgetRef: p };
 }
-function it({
+function ot({
   onSnap: t,
   contained: r
 }) {
@@ -1070,7 +1071,7 @@ function it({
     o
   )) });
 }
-function nr({
+function or({
   state: t,
   mode: r,
   participants: n,
@@ -1101,7 +1102,7 @@ function nr({
   style: F,
   dataAttrs: O
 }) {
-  const { offset: z, handleMouseDown: W, resetOffset: M, snapToCorner: f, isDragging: y, isAnimating: A, hasMoved: X, widgetRef: V } = nt(T), Y = {};
+  const { offset: W, handleMouseDown: z, resetOffset: M, snapToCorner: f, isDragging: y, isAnimating: A, hasMoved: X, widgetRef: V } = it(T), Y = {};
   if (O)
     for (const [je, Z] of Object.entries(O))
       Z != null && Z !== "" && (Y[je] = Z);
@@ -1118,7 +1119,7 @@ function nr({
     }
   }, [P]);
   return t === "idle" || t === "ended" ? null : /* @__PURE__ */ i(ne, { children: [
-    y && /* @__PURE__ */ e(it, { onSnap: f, contained: E }),
+    y && /* @__PURE__ */ e(ot, { onSnap: f, contained: E }),
     /* @__PURE__ */ e(
       "div",
       {
@@ -1131,7 +1132,7 @@ function nr({
           D
         ),
         style: {
-          transform: `translate(${z.x}px, ${z.y}px)`,
+          transform: `translate(${W.x}px, ${W.y}px)`,
           transition: A ? "transform 0.2s ease-out" : void 0,
           ...F
         },
@@ -1151,7 +1152,7 @@ function nr({
                     "flex items-center justify-between px-3 py-2 border-b border-white/5",
                     T && "cursor-grab active:cursor-grabbing"
                   ),
-                  onMouseDown: W,
+                  onMouseDown: z,
                   children: [
                     /* @__PURE__ */ i("div", { className: "flex items-center gap-2", children: [
                       /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-success" }),
@@ -1199,9 +1200,9 @@ function nr({
                 "div",
                 {
                   className: h(T && "cursor-grab active:cursor-grabbing"),
-                  onMouseDown: W,
+                  onMouseDown: z,
                   children: /* @__PURE__ */ e(
-                    rt,
+                    nt,
                     {
                       state: t,
                       mode: r,
@@ -1217,7 +1218,7 @@ function nr({
               ),
               !S && /* @__PURE__ */ i(ne, { children: [
                 t === "ringing" && /* @__PURE__ */ e(
-                  et,
+                  tt,
                   {
                     callerName: a,
                     onAnswer: m,
@@ -1236,7 +1237,7 @@ function nr({
                   }
                 ),
                 t === "active" && /* @__PURE__ */ e(
-                  tt,
+                  rt,
                   {
                     mode: r,
                     participants: n,
@@ -1264,7 +1265,7 @@ function nr({
     )
   ] });
 }
-function ir({
+function ar({
   callerName: t,
   callerAvatarUrl: r,
   context: n,
@@ -1297,7 +1298,7 @@ function ir({
       ),
       style: d,
       children: [
-        /* @__PURE__ */ e(ot, { name: t, avatarUrl: r }),
+        /* @__PURE__ */ e(at, { name: t, avatarUrl: r }),
         /* @__PURE__ */ i("div", { className: "flex-1 min-w-0", children: [
           /* @__PURE__ */ e("p", { className: "text-sm font-semibold m-0 truncate", children: o === "calling" ? `${t} is calling you` : `${t} started a call` }),
           n && /* @__PURE__ */ e("p", { className: "text-xs text-white/60 m-0 truncate", children: n })
@@ -1334,24 +1335,24 @@ function ir({
     }
   ) : null;
 }
-function ot({ name: t, avatarUrl: r }) {
-  const n = lt(t);
+function at({ name: t, avatarUrl: r }) {
+  const n = st(t);
   return /* @__PURE__ */ i(
     "div",
     {
       className: "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold shrink-0 relative",
       style: { background: r ? void 0 : `hsl(${n}, 55%, 45%)` },
       children: [
-        r ? /* @__PURE__ */ e("img", { src: r, alt: "", className: "w-full h-full rounded-full object-cover" }) : at(t),
+        r ? /* @__PURE__ */ e("img", { src: r, alt: "", className: "w-full h-full rounded-full object-cover" }) : lt(t),
         /* @__PURE__ */ e("span", { className: "absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-success border-2 border-[#1e293b] animate-pulse" })
       ]
     }
   );
 }
-function at(t) {
+function lt(t) {
   return t.split(" ").map((r) => r[0]).slice(0, 2).join("").toUpperCase();
 }
-function lt(t) {
+function st(t) {
   let r = 0;
   for (let n = 0; n < t.length; n++)
     r = t.charCodeAt(n) + ((r << 5) - r);
@@ -1362,7 +1363,7 @@ function he(t) {
   const r = Math.floor(t / 3600), n = Math.floor(t % 3600 / 60), o = Math.floor(t % 60), a = r > 0 ? String(n).padStart(2, "0") : String(n), c = String(o).padStart(2, "0");
   return r > 0 ? `${r}:${a}:${c}` : `${a}:${c}`;
 }
-function or({
+function lr({
   playlistUrl: t,
   poster: r,
   autoPlay: n = !1,
@@ -1428,10 +1429,10 @@ function or({
     if (!f) return;
     const y = Number(M.target.value);
     f.playbackRate = y, j(y);
-  }, z = () => {
+  }, W = () => {
     const M = m.current;
     M && (document.fullscreenElement ? document.exitFullscreen() : M.requestFullscreen?.());
-  }, W = G(
+  }, z = G(
     () => w > 0 ? Math.min(100, s / w * 100) : 0,
     [s, w]
   );
@@ -1477,7 +1478,7 @@ function or({
             value: s,
             onChange: D,
             className: "flex-1 h-1 accent-white/90 cursor-pointer",
-            style: { "--progress": `${W}%` }
+            style: { "--progress": `${z}%` }
           }
         ),
         /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12 text-right", children: he(w) })
@@ -1512,18 +1513,19 @@ function or({
             }
           )
         ] }),
-        /* @__PURE__ */ i(
-          "select",
+        /* @__PURE__ */ e(
+          Ae,
           {
-            value: C,
+            size: "sm",
+            value: String(C),
             onChange: O,
-            className: "bg-white/10 hover:bg-white/20 text-white text-xs rounded px-2 py-1 border-0 outline-none",
+            className: "w-auto bg-white/10 hover:bg-white/20 text-white border-transparent focus:bg-white/20 focus:border-transparent",
             "aria-label": "Playback speed",
-            children: [
-              /* @__PURE__ */ e("option", { value: 0.5, children: "0.5×" }),
-              /* @__PURE__ */ e("option", { value: 1, children: "1×" }),
-              /* @__PURE__ */ e("option", { value: 1.5, children: "1.5×" }),
-              /* @__PURE__ */ e("option", { value: 2, children: "2×" })
+            options: [
+              { value: "0.5", label: "0.5×" },
+              { value: "1", label: "1×" },
+              { value: "1.5", label: "1.5×" },
+              { value: "2", label: "2×" }
             ]
           }
         ),
@@ -1542,7 +1544,7 @@ function or({
           "button",
           {
             type: "button",
-            onClick: z,
+            onClick: W,
             className: "w-9 h-9 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center",
             "aria-label": "Fullscreen",
             children: /* @__PURE__ */ e("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: /* @__PURE__ */ e("path", { d: "M2 2h4v1.5H3.5V6H2V2zm10 0v4h-1.5V3.5H8V2h4zM2 12v-4h1.5v2.5H6V12H2zm10 0H8v-1.5h2.5V8H12v4z" }) })
@@ -1552,7 +1554,7 @@ function or({
     ] })
   ] });
 }
-function st(t) {
+function ct(t) {
   if (!isFinite(t) || t < 0) return "—";
   const r = Math.floor(t / 3600), n = Math.floor(t % 3600 / 60), o = Math.floor(t % 60);
   return r > 0 ? `${r}h ${n}m` : n > 0 ? `${n}m ${o}s` : `${o}s`;
@@ -1571,7 +1573,7 @@ function fe(t) {
     return t;
   }
 }
-function ct({ status: t }) {
+function dt({ status: t }) {
   return t === "ready" ? null : t === "processing" ? /* @__PURE__ */ i(
     "span",
     {
@@ -1593,7 +1595,7 @@ function ct({ status: t }) {
     }
   );
 }
-function dt({
+function ut({
   id: t,
   startIso: r,
   durationSec: n,
@@ -1642,8 +1644,8 @@ function dt({
               }
             }
           ) : /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center text-white/30", children: /* @__PURE__ */ e("svg", { width: "36", height: "36", viewBox: "0 0 24 24", fill: "currentColor", "aria-hidden": !0, children: /* @__PURE__ */ e("path", { d: "M8 5v14l11-7z" }) }) }),
-          /* @__PURE__ */ e(ct, { status: l }),
-          /* @__PURE__ */ e("span", { className: "absolute bottom-1 right-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-black/60 text-white tabular-nums", children: st(n) })
+          /* @__PURE__ */ e(dt, { status: l }),
+          /* @__PURE__ */ e("span", { className: "absolute bottom-1 right-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-black/60 text-white tabular-nums", children: ct(n) })
         ] }),
         /* @__PURE__ */ i("div", { className: "flex items-center justify-between gap-2", children: [
           /* @__PURE__ */ e("span", { className: "text-sm font-medium text-[var(--color-text-primary)] truncate", children: c ?? fe(r) }),
@@ -1666,7 +1668,7 @@ function dt({
     }
   );
 }
-function ar({
+function sr({
   recordings: t,
   selectedId: r,
   onSelect: n,
@@ -1686,7 +1688,7 @@ function ar({
     },
     u
   )) }) : t.length === 0 ? /* @__PURE__ */ e("div", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-text-secondary)]", l), children: a ?? "No recordings yet." }) : /* @__PURE__ */ e("div", { className: h("flex flex-col gap-2", l), children: t.map((u) => /* @__PURE__ */ e(
-    dt,
+    ut,
     {
       id: u.id,
       startIso: u.startIso,
@@ -1703,17 +1705,17 @@ function ar({
     u.id
   )) });
 }
-function ut(t) {
+function ht(t) {
   const r = Math.floor(t / 1e3), n = Math.floor(r / 60), o = r % 60;
   return `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`;
 }
-function ht(t) {
+function ft(t) {
   let r = 0;
   for (let n = 0; n < t.length; n++)
     r = r * 31 + t.charCodeAt(n) | 0;
   return Math.abs(r) % 360;
 }
-function lr({
+function cr({
   status: t,
   segments: r,
   currentTimeMs: n,
@@ -1764,7 +1766,7 @@ function lr({
       ] })
     ] }),
     /* @__PURE__ */ e("div", { ref: m, className: "flex-1 overflow-y-auto max-h-[60vh] p-4 space-y-2", children: r.map((g, v) => {
-      const s = v === p, x = ht(g.speakerId), w = !!o;
+      const s = v === p, x = ft(g.speakerId), w = !!o;
       return /* @__PURE__ */ i(
         "div",
         {
@@ -1787,7 +1789,7 @@ function lr({
                   children: g.speakerLabel
                 }
               ),
-              /* @__PURE__ */ e("span", { className: "text-xs font-mono text-[var(--color-text-tertiary,#737373)]", children: ut(g.startMs) })
+              /* @__PURE__ */ e("span", { className: "text-xs font-mono text-[var(--color-text-tertiary,#737373)]", children: ht(g.startMs) })
             ] }),
             /* @__PURE__ */ e("p", { className: "text-sm text-[var(--color-text-primary)] leading-relaxed", children: g.text })
           ]
@@ -1797,7 +1799,7 @@ function lr({
     }) })
   ] });
 }
-function sr({
+function dr({
   status: t,
   markdown: r,
   renderMarkdown: n,
@@ -1830,7 +1832,7 @@ function sr({
     /* @__PURE__ */ e("div", { className: "prose prose-sm prose-invert max-w-none p-4 overflow-y-auto max-h-[60vh]", children: n ? n(r) : /* @__PURE__ */ e("pre", { className: "whitespace-pre-wrap text-sm font-sans text-[var(--color-text-primary)]", children: r }) })
   ] });
 }
-function cr({
+function ur({
   getVideoElement: t,
   className: r,
   title: n
@@ -1875,12 +1877,12 @@ function cr({
     }
   );
 }
-function ft(t) {
+function mt(t) {
   if (!t) return "?";
   const r = t.trim().split(/\s+/);
   return r.length === 1 ? r[0].slice(0, 2).toUpperCase() : (r[0].charAt(0) + r[r.length - 1].charAt(0)).toUpperCase();
 }
-function dr({
+function hr({
   participants: t,
   activeSpeakerId: r,
   onParticipantClick: n,
@@ -1927,7 +1929,7 @@ function dr({
                       m && "ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]"
                     ),
                     children: [
-                      d.avatarUrl ? /* @__PURE__ */ e("img", { src: d.avatarUrl, alt: "", className: "w-full h-full rounded-full object-cover" }) : /* @__PURE__ */ e("span", { children: ft(d.displayName) }),
+                      d.avatarUrl ? /* @__PURE__ */ e("img", { src: d.avatarUrl, alt: "", className: "w-full h-full rounded-full object-cover" }) : /* @__PURE__ */ e("span", { children: mt(d.displayName) }),
                       d.isScreenSharing && /* @__PURE__ */ e(
                         "span",
                         {
@@ -1970,7 +1972,7 @@ function dr({
   );
 }
 let Q = null;
-function mt() {
+function pt() {
   if (Q) return Q;
   try {
     return Q = new AudioContext(), Q;
@@ -1978,7 +1980,7 @@ function mt() {
     return null;
   }
 }
-function ur({
+function fr({
   localStream: t,
   isMuted: r,
   threshold: n = -45,
@@ -1988,7 +1990,7 @@ function ur({
   const [c, l] = I(!1);
   return B(() => {
     if (!r || !t || t.getAudioTracks().filter((k) => k.readyState === "live").length === 0) return;
-    const d = mt();
+    const d = pt();
     if (!d) return;
     let m, p;
     try {
@@ -2022,8 +2024,8 @@ function ur({
     r || l(!1);
   }, [r]), c;
 }
-const pt = "pointer-events-auto rounded-full bg-black/70 px-4 py-2 text-[13px] font-medium text-white shadow-lg backdrop-blur-sm hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
-function xt() {
+const xt = "pointer-events-auto rounded-full bg-black/70 px-4 py-2 text-[13px] font-medium text-white shadow-lg backdrop-blur-sm hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70";
+function gt() {
   if (typeof document > "u") return;
   document.querySelectorAll("video").forEach((r) => {
     if (r.paused) {
@@ -2033,7 +2035,7 @@ function xt() {
     }
   });
 }
-function hr({
+function mr({
   chipLabel: t = "Tap to unmute",
   chipClassName: r,
   wrapperClassName: n,
@@ -2053,7 +2055,7 @@ function hr({
       s && typeof s.catch == "function" && s.catch(() => {
       });
     }
-    xt(), l(!1);
+    gt(), l(!1);
   }, [m]);
   return /* @__PURE__ */ i("div", { className: h("relative h-full w-full", n), children: [
     /* @__PURE__ */ e(
@@ -2069,7 +2071,7 @@ function hr({
       {
         type: "button",
         onClick: g,
-        className: h(pt, r),
+        className: h(xt, r),
         "data-testid": "autoplay-gate-chip",
         children: t
       }
@@ -2077,7 +2079,7 @@ function hr({
   ] });
 }
 const me = 1;
-function gt({
+function bt({
   persistKey: t,
   defaults: r,
   debounceMs: n = 200
@@ -2123,8 +2125,8 @@ function gt({
 function ee(t, r) {
   return typeof t == "number" && Number.isFinite(t) ? t : r;
 }
-const ae = 320, le = 200, bt = 640, vt = 400, wt = 1440, yt = 900, pe = 960, xe = 600, R = 8;
-function fr({
+const ae = 320, le = 200, vt = 640, wt = 400, yt = 1440, Nt = 900, pe = 960, xe = 600, R = 8;
+function pr({
   title: t,
   subtitle: r,
   children: n,
@@ -2138,7 +2140,7 @@ function fr({
   zIndex: p = 9999,
   className: g
 }) {
-  const v = G(() => a === "docked" ? ge(pe, xe) : be(d), [a, d]), { state: s, setState: x } = gt({
+  const v = G(() => a === "docked" ? ge(pe, xe) : be(d), [a, d]), { state: s, setState: x } = bt({
     persistKey: l,
     defaults: {
       mode: a,
@@ -2218,12 +2220,12 @@ function fr({
       origW: s.width,
       origH: s.height
     });
-  }, [b, s.width, s.height]), z = H((f) => {
+  }, [b, s.width, s.height]), W = H((f) => {
     const y = F.current;
     if (!y) return;
-    const A = f.clientX - y.startX, X = f.clientY - y.startY, V = se(y.origW + A, bt, Math.min(wt, window.innerWidth - R * 2)), Y = se(y.origH + X, vt, Math.min(yt, window.innerHeight - R * 2));
+    const A = f.clientX - y.startX, X = f.clientY - y.startY, V = se(y.origW + A, vt, Math.min(yt, window.innerWidth - R * 2)), Y = se(y.origH + X, wt, Math.min(Nt, window.innerHeight - R * 2));
     x({ width: V, height: Y });
-  }, [x]), W = H((f) => {
+  }, [x]), z = H((f) => {
     f.currentTarget.releasePointerCapture(f.pointerId), F.current = null;
   }, []);
   Ee(() => {
@@ -2292,7 +2294,7 @@ function fr({
                     label: "Mini",
                     onClick: () => S("mini"),
                     testId: "call-widget-mode-mini",
-                    children: /* @__PURE__ */ e(Nt, {})
+                    children: /* @__PURE__ */ e(kt, {})
                   }
                 ),
                 /* @__PURE__ */ e(
@@ -2302,7 +2304,7 @@ function fr({
                     label: "Window",
                     onClick: () => S("docked"),
                     testId: "call-widget-mode-docked",
-                    children: /* @__PURE__ */ e(kt, {})
+                    children: /* @__PURE__ */ e(Ct, {})
                   }
                 ),
                 /* @__PURE__ */ e(
@@ -2312,7 +2314,7 @@ function fr({
                     label: "Fullscreen",
                     onClick: () => S(b === "fullscreen" ? "docked" : "fullscreen"),
                     testId: "call-widget-mode-fullscreen",
-                    children: /* @__PURE__ */ e(Ct, {})
+                    children: /* @__PURE__ */ e(Mt, {})
                   }
                 )
               ] })
@@ -2326,9 +2328,9 @@ function fr({
           {
             className: "absolute bottom-0 right-0 w-4 h-4 cursor-se-resize",
             onPointerDown: O,
-            onPointerMove: z,
-            onPointerUp: W,
-            onPointerCancel: W,
+            onPointerMove: W,
+            onPointerUp: z,
+            onPointerCancel: z,
             "data-testid": "call-widget-resize-handle",
             "aria-label": "Resize call widget",
             children: /* @__PURE__ */ e("svg", { viewBox: "0 0 16 16", className: "w-full h-full text-white/30", children: /* @__PURE__ */ e("path", { d: "M14 10v4h-4M14 6v8M10 14h4", stroke: "currentColor", strokeWidth: "1.5", fill: "none" }) })
@@ -2362,13 +2364,13 @@ function oe({
     }
   );
 }
-function Nt() {
+function kt() {
   return /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ e("rect", { x: "6.5", y: "6.5", width: "4", height: "3", stroke: "currentColor", strokeWidth: "1.2" }) });
 }
-function kt() {
+function Ct() {
   return /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ e("rect", { x: "1.5", y: "2.5", width: "9", height: "7", stroke: "currentColor", strokeWidth: "1.2" }) });
 }
-function Ct() {
+function Mt() {
   return /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ e("path", { d: "M2 4V2h2M10 4V2H8M2 8v2h2M10 8v2H8", stroke: "currentColor", strokeWidth: "1.4", strokeLinecap: "round" }) });
 }
 function ge(t, r) {
@@ -2397,7 +2399,7 @@ function se(t, r, n) {
 function te(t, r, n) {
   return se(t, R, Math.max(R, n - r - R));
 }
-function mr({ show: t, label: r }) {
+function xr({ show: t, label: r }) {
   return t ? /* @__PURE__ */ i(
     "div",
     {
@@ -2412,7 +2414,7 @@ function mr({ show: t, label: r }) {
     }
   ) : null;
 }
-function pr({
+function gr({
   show: t,
   label: r = "You're muted — tap mic to unmute"
 }) {
@@ -2434,12 +2436,12 @@ const ve = [
   "#a78bfa",
   "#fb7185"
 ];
-function Mt(t) {
+function St(t) {
   let r = 0;
   for (let n = 0; n < t.length; n++) r = r * 31 + t.charCodeAt(n) | 0;
   return ve[Math.abs(r) % ve.length];
 }
-function xr({
+function br({
   lines: t,
   maxLines: r = 3,
   fadeAfterMs: n = 8e3,
@@ -2472,7 +2474,7 @@ function xr({
               "span",
               {
                 className: "font-medium text-xs shrink-0",
-                style: { color: Mt(l.speakerId) },
+                style: { color: St(l.speakerId) },
                 children: l.speakerName ?? l.speakerId.slice(0, 6)
               }
             ),
@@ -2484,11 +2486,11 @@ function xr({
     }
   );
 }
-const St = {
+const Lt = {
   sm: "h-9 w-9",
   md: "h-11 w-11",
   lg: "h-14 w-14"
-}, Lt = "bg-surface-emphasis text-text-primary hover:bg-surface-emphasis", jt = "bg-surface-hover text-neutral hover:bg-surface-emphasis", Pt = "bg-danger-bg text-danger-fg hover:bg-danger-bg";
+}, jt = "bg-surface-emphasis text-text-primary hover:bg-surface-emphasis", Pt = "bg-surface-hover text-neutral hover:bg-surface-emphasis", Et = "bg-danger-bg text-danger-fg hover:bg-danger-bg";
 function J({
   on: t,
   iconOn: r,
@@ -2500,7 +2502,7 @@ function J({
   className: u,
   ...d
 }) {
-  const m = t ? Lt : a === "danger" ? Pt : jt;
+  const m = t ? jt : a === "danger" ? Et : Pt;
   return /* @__PURE__ */ e(
     "button",
     {
@@ -2510,7 +2512,7 @@ function J({
       disabled: l,
       className: h(
         "rounded-full grid place-items-center transition-colors duration-150",
-        St[c],
+        Lt[c],
         m,
         l && "opacity-40 cursor-not-allowed",
         !l && "cursor-pointer",
@@ -2568,7 +2570,7 @@ function Se({ size: t = 20, ...r }) {
     /* @__PURE__ */ e("path", { d: "M22 8l-6 4 6 4V8z" })
   ] });
 }
-function Et({ size: t = 20, ...r }) {
+function It({ size: t = 20, ...r }) {
   return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
     /* @__PURE__ */ e("rect", { x: "2", y: "4", width: "20", height: "12", rx: "2" }),
     /* @__PURE__ */ e("line", { x1: "8", y1: "20", x2: "16", y2: "20" }),
@@ -2577,7 +2579,7 @@ function Et({ size: t = 20, ...r }) {
     /* @__PURE__ */ e("line", { x1: "12", y1: "7", x2: "12", y2: "13" })
   ] });
 }
-function It({ size: t = 20, ...r }) {
+function Tt({ size: t = 20, ...r }) {
   return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
     /* @__PURE__ */ e("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
     /* @__PURE__ */ e("path", { d: "M22 14V6a2 2 0 0 0-2-2H6" }),
@@ -2586,30 +2588,30 @@ function It({ size: t = 20, ...r }) {
     /* @__PURE__ */ e("line", { x1: "12", y1: "16", x2: "12", y2: "20" })
   ] });
 }
-function Tt({ size: t = 20, ...r }) {
+function At({ size: t = 20, ...r }) {
   return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
     /* @__PURE__ */ e("path", { d: "M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.49-2.86" }),
     /* @__PURE__ */ e("path", { d: "M5 5l-1.27 1.27a2 2 0 0 0-.45 2.11 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11" }),
     /* @__PURE__ */ e("line", { x1: "22", y1: "2", x2: "2", y2: "22" })
   ] });
 }
-function gr({ size: t = 20, ...r }) {
+function vr({ size: t = 20, ...r }) {
   return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
     /* @__PURE__ */ e("circle", { cx: "12", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "19", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "5", cy: "12", r: "1" })
   ] });
 }
-function At(t, r, n) {
+function Bt(t, r, n) {
   if (n) return "Checking room…";
   if (!r || r === "empty") return "You'll be the first one in this room";
   const o = t?.length ?? 0;
   return r === "ready" ? o === 1 ? "1 person is in this call" : `${o} people are in this call` : o === 1 ? "1 person is joining (connecting…)" : `${o} people are joining (connecting…)`;
 }
-function Bt(t) {
+function $t(t) {
   return t === "denied" ? "denied" : t === "blocked" ? "blocked" : t === "no-device" ? "no-device" : t === "unavailable" ? "unavailable" : null;
 }
-function br({
+function wr({
   channelName: t,
   localIdentity: r,
   previewStream: n,
@@ -2635,7 +2637,7 @@ function br({
   B(() => {
     j.current && n && (j.current.srcObject = n);
   }, [n]);
-  const L = o === "granted", S = Bt(o), P = k ?? !L, E = w ?? (P && !L ? "Allow camera to join" : "Join now"), T = b ?? At(p, g, v);
+  const L = o === "granted", S = $t(o), P = k ?? !L, E = w ?? (P && !L ? "Allow camera to join" : "Join now"), T = b ?? Bt(p, g, v);
   return /* @__PURE__ */ i(
     "div",
     {
@@ -2703,7 +2705,7 @@ function br({
               )),
               o === "pending" && /* @__PURE__ */ e("div", { className: "absolute inset-0 grid place-items-center", children: /* @__PURE__ */ e(ye, { size: "lg" }) }),
               S && /* @__PURE__ */ e("div", { className: "absolute inset-0 grid place-items-center bg-surface-panel/95", children: /* @__PURE__ */ e(
-                Ae,
+                Be,
                 {
                   kind: "camera",
                   state: S,
@@ -2746,7 +2748,7 @@ function br({
             /* @__PURE__ */ i("div", { className: "flex-1", children: [
               /* @__PURE__ */ e("h2", { className: "text-2xl font-semibold mb-2", children: "Ready to join?" }),
               /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6", children: T }),
-              /* @__PURE__ */ e($t, { participants: p, loading: v }),
+              /* @__PURE__ */ e(Ht, { participants: p, loading: v }),
               g === "pending" && !v && /* @__PURE__ */ i("p", { className: "mt-4 text-xs text-warning-fg flex items-center gap-2", children: [
                 /* @__PURE__ */ e("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }),
                 "Other publishers are still connecting — you can join anyway."
@@ -2780,7 +2782,7 @@ function br({
     }
   );
 }
-function $t({
+function Ht({
   participants: t,
   loading: r
 }) {
@@ -2816,14 +2818,14 @@ function $t({
     ] })
   ] });
 }
-const Ht = {
+const Rt = {
   idle: "neutral",
   joining: "warning",
   joined: "success",
   reconnecting: "warning",
   ended: "neutral",
   failed: "danger"
-}, Rt = {
+}, Dt = {
   idle: "Idle",
   joining: "Joining…",
   joined: "Live",
@@ -2831,7 +2833,7 @@ const Ht = {
   ended: "Ended",
   failed: "Failed"
 };
-function Dt() {
+function Ft() {
   return /* @__PURE__ */ i(
     "svg",
     {
@@ -2851,7 +2853,7 @@ function Dt() {
     }
   );
 }
-function vr({
+function yr({
   channelName: t,
   subtitle: r,
   recording: n,
@@ -2891,7 +2893,7 @@ function vr({
               {
                 tone: "neutral",
                 size: "xs",
-                icon: /* @__PURE__ */ e(Dt, {}),
+                icon: /* @__PURE__ */ e(Ft, {}),
                 title: "Time since you joined this room",
                 "data-testid": "hangout-room-header-elapsed",
                 children: /* @__PURE__ */ e("span", { className: "tabular-nums", children: o })
@@ -2903,11 +2905,11 @@ function vr({
           a && /* @__PURE__ */ e(
             re,
             {
-              tone: Ht[a],
+              tone: Rt[a],
               size: "sm",
               dot: a === "reconnecting" ? "pulse" : "static",
               "data-testid": "hangout-room-header-phase",
-              children: Rt[a]
+              children: Dt[a]
             }
           ),
           c
@@ -2916,7 +2918,7 @@ function vr({
     }
   );
 }
-const Ft = {
+const zt = {
   sm: "h-9 w-9",
   md: "h-11 w-11",
   lg: "h-14 w-14"
@@ -2925,7 +2927,7 @@ const Ft = {
   md: 20,
   lg: 24
 };
-function wr({
+function Nr({
   audioOn: t,
   videoOn: r,
   screenSharing: n = !1,
@@ -2990,8 +2992,8 @@ function wr({
             offTone: "neutral",
             "aria-label": n ? "Stop sharing screen" : "Share screen",
             title: n ? "Stop sharing screen" : "Share screen",
-            iconOn: /* @__PURE__ */ e(Et, { size: w }),
-            iconOff: /* @__PURE__ */ e(It, { size: w }),
+            iconOn: /* @__PURE__ */ e(It, { size: w }),
+            iconOff: /* @__PURE__ */ e(Tt, { size: w }),
             "data-testid": "media-controls-screenshare"
           }
         ),
@@ -3006,10 +3008,10 @@ function wr({
             "data-testid": "media-controls-leave",
             className: h(
               "rounded-full grid place-items-center transition-colors duration-150",
-              Ft[v],
+              zt[v],
               "bg-danger text-white hover:bg-danger cursor-pointer"
             ),
-            children: /* @__PURE__ */ e(Tt, { size: Wt[v] })
+            children: /* @__PURE__ */ e(At, { size: Wt[v] })
           }
         )
       ]
@@ -3017,44 +3019,44 @@ function wr({
   );
 }
 export {
-  hr as A,
-  rr as B,
-  Je as C,
-  gt as D,
-  fr as E,
-  ur as F,
-  br as H,
-  wr as M,
-  ze as N,
-  Tt as P,
-  Qt as R,
-  Et as S,
-  xr as T,
-  Zt as V,
-  Ge as a,
-  ir as b,
+  mr as A,
+  ir as B,
+  qe as C,
+  bt as D,
+  pr as E,
+  fr as F,
+  wr as H,
+  Nr as M,
+  Ve as N,
+  At as P,
+  tr as R,
+  It as S,
+  br as T,
+  er as V,
+  Je as a,
+  ar as b,
   de as c,
-  nr as d,
-  mr as e,
+  or as d,
+  xr as e,
   J as f,
-  vr as g,
+  yr as g,
   ke as h,
   Ce as i,
-  gr as j,
-  pr as k,
-  cr as l,
-  er as m,
-  ar as n,
-  or as o,
-  dt as p,
-  dr as q,
-  It as r,
-  qt as s,
-  tr as t,
-  sr as u,
-  lr as v,
+  vr as j,
+  gr as k,
+  ur as l,
+  rr as m,
+  sr as n,
+  lr as o,
+  ut as p,
+  hr as q,
+  Tt as r,
+  Qt as s,
+  nr as t,
+  dr as u,
+  cr as v,
   Me as w,
   Se as x,
-  Gt as y,
-  Jt as z
+  qt as y,
+  Zt as z
 };

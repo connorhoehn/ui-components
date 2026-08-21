@@ -17,6 +17,9 @@ import type { WildcardEvent } from '../pipelines/context/EventStreamContext';
 import EventTimeline, { type EventItem } from './components/EventTimeline';
 import EventDetailPane from './components/EventDetailPane';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -229,19 +232,16 @@ function EventsPageInner() {
           {paused ? '■ Paused' : '● Live'}
         </button>
 
-        <select
+        <Select
           data-testid="events-time-range"
           aria-label="Time range"
           value={filters.timeRange}
           onChange={(e) =>
             setFilters((f) => ({ ...f, timeRange: e.target.value as TimeRange }))
           }
-          className="min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
-        >
-          {TIME_RANGES.map((t) => (
-            <option key={t.value} value={t.value}>{t.label}</option>
-          ))}
-        </select>
+          className="w-auto min-w-[120px]"
+          options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
+        />
 
         <div className="ml-auto text-xs text-text-tertiary">
           {visibleEvents.length} / {events.length} event{events.length === 1 ? '' : 's'}
@@ -283,8 +283,7 @@ function EventsPageInner() {
                     key={g}
                     className="flex items-center gap-1.5 text-xs"
                   >
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={filters.groups.has(g)}
                       onChange={() => toggleGroup(g)}
                     />
@@ -297,15 +296,14 @@ function EventsPageInner() {
                 <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Runs
                 </div>
-                <input
+                <Input
                   data-testid="events-filter-runs"
-                  type="text"
                   placeholder="runId (comma-separated)"
                   value={filters.runIds}
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, runIds: e.target.value }))
                   }
-                  className="flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+                  className="flex-1 min-w-[120px]"
                 />
               </div>
 
@@ -313,15 +311,14 @@ function EventsPageInner() {
                 <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Pipelines
                 </div>
-                <input
+                <Input
                   data-testid="events-filter-pipelines"
-                  type="text"
                   placeholder="pipelineId (comma-separated)"
                   value={filters.pipelineIds}
                   onChange={(e) =>
                     setFilters((f) => ({ ...f, pipelineIds: e.target.value }))
                   }
-                  className="flex-1 min-w-[120px] border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-[inherit] bg-[#f9fafb] text-text-primary outline-none"
+                  className="flex-1 min-w-[120px]"
                 />
               </div>
 
@@ -334,8 +331,7 @@ function EventsPageInner() {
                     key={id}
                     className="flex items-center gap-1.5 text-xs"
                   >
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={filters.nodes.has(id)}
                       onChange={() => toggleNode(id)}
                     />
@@ -353,8 +349,7 @@ function EventsPageInner() {
                     key={s}
                     className="flex items-center gap-1.5 text-xs"
                   >
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={filters.severities.has(s)}
                       onChange={() => toggleSeverity(s)}
                     />

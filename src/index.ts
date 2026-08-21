@@ -17,7 +17,7 @@ export * from './renderers';
 export { Input } from './components/forms/Input';
 export type { InputProps, InputSize, InputType } from './components/forms/Input';
 export { Select } from './components/forms/Select';
-export type { SelectProps, SelectSize, SelectOption } from './components/forms/Select';
+export type { SelectProps, SelectSize, SelectOption, SelectOptionGroup } from './components/forms/Select';
 export { Textarea } from './components/forms/Textarea';
 export type { TextareaProps } from './components/forms/Textarea';
 export { JsonPathInput } from './components/forms/JsonPathInput';
@@ -28,6 +28,8 @@ export { RadioGroup } from './components/forms/RadioGroup';
 export type { RadioGroupProps, RadioOption } from './components/forms/RadioGroup';
 export { Checkbox } from './components/forms/Checkbox';
 export type { CheckboxProps } from './components/forms/Checkbox';
+export { ColorInput } from './components/forms/ColorInput';
+export type { ColorInputProps } from './components/forms/ColorInput';
 export { Slider } from './components/forms/Slider';
 export type { SliderProps } from './components/forms/Slider';
 

@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { LineChart, Line, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
 import { useSourceSloMetrics } from '../../hooks/useSourceSloMetrics';
+import { Select } from '../forms/Select';
 import type { SloPoint, SloWindow } from '../../hooks/useSourceSloMetrics';
 
 const WINDOW_OPTIONS: SloWindow[] = ['15m', '1h', '6h', '24h'];
@@ -62,17 +63,14 @@ export default function SourceSloPanel({ sourceId }: Props) {
     <div data-testid="source-slo-panel" className="px-4 py-3 bg-surface border border-border rounded-[10px] mb-4">
       <div className="flex items-center justify-between mb-2 gap-2">
         <span className="text-sm font-bold text-text-primary">Health (last {window})</span>
-        <select
+        <Select
           data-testid="slo-window-picker"
           aria-label="Window"
-          className="border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none min-w-[100px]"
+          className="w-auto min-w-[100px]"
           value={window}
           onChange={(e) => setWindow(e.target.value as SloWindow)}
-        >
-          {WINDOW_OPTIONS.map((w) => (
-            <option key={w} value={w}>Last {w}</option>
-          ))}
-        </select>
+          options={WINDOW_OPTIONS.map((w) => ({ value: w, label: `Last ${w}` }))}
+        />
       </div>
       {error ? (
         <div data-testid="slo-error" className="px-3 py-2 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg text-xs">

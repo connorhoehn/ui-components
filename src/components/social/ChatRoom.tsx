@@ -8,6 +8,7 @@ import { usePosts } from '../../hooks/usePosts';
 import type { PostItem } from '../../hooks/usePosts';
 import type { GatewayMessage } from '../../types/gateway';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 
 type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
@@ -217,13 +218,13 @@ export function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps
 
       {/* Input */}
       <div className="flex items-center gap-2 px-3 py-2.5 border-t border-border bg-surface shrink-0">
-        <input
+        <Input
           value={message}
           onChange={e => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={`Message #${roomName}…`}
           disabled={sending}
-          className="flex-1 border border-border-field rounded-[22px] px-4 py-2 text-sm font-[system-ui,-apple-system,sans-serif] bg-surface-panel text-text-primary outline-none"
+          className="flex-1 rounded-[22px] px-4"
         />
         <button
           onClick={() => void handleSend()}
