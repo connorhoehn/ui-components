@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.69.0] — 2026-08-21
+
+**Every `shared/` component now has a story** (hub #1059 closed). The last
+32 landed: the 24 primitives that gained tests in v2.68.0, plus `Chart`
+(all three chart kinds), `CodeEditor` (variable pills, read-only),
+`PermissionDeniedCard` (camera/mic/screen states), `ScoreBarGauge`,
+`ShortcutsHelp`, `StatCard` (delta + sparkline, inverted-tone failures
+card), `TrendSparkline`, and `UserPicker` — the last driven by mocked
+`PresenceProvider`/`IdentityProvider` values, the same no-runtime pattern
+as the Wrapped* integration stories. Stories use tone/token classes only
+(the tones test scans them), and `build-storybook` passes.
+
 ## [2.68.0] — 2026-08-21
 
 **Every `shared/` component now has tests.** The 26 that had none —

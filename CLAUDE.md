@@ -302,10 +302,11 @@ Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,
 `WrappedChatPanel`, `WrappedPresencePanel`, `WrappedNotificationCenter`,
 `CapabilityBoundary`, and the Hangout composites all have stories driven by
 mocked `RM*` hook-return shapes (no realtime-modules runtime needed).
-Remaining story gap (hub #1059, recounted 2026-08-21): 32 `shared/`
-components lack stories — 24 that until v2.66.0 also lacked tests, plus
-Chart, CodeEditor, PermissionDeniedCard, ScoreBarGauge, ShortcutsHelp,
-StatCard, TrendSparkline, UserPicker. ~40 already have both.
+**hub #1059 CLOSED (v2.69.0, 2026-08-21): every `shared/` component now
+has a story** — the last 32 landed together (UserPicker's is driven by
+mocked `PresenceProvider`/`IdentityProvider` context values, the same
+no-runtime pattern as the Wrapped* integration stories). Every shared
+component now has both a test file and a story file.
 
 ## Publishing
 
