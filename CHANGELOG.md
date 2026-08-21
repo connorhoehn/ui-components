@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.70.0] — 2026-08-21
+
+The `forms/` primitives — the most-copied components since the control
+migration — close their own coverage gaps.
+
+### Added
+
+- **Tests for `Input`, `Select`, `Textarea`, `RadioGroup`, `JsonPathInput`**
+  (22 tests): the widened date/datetime-local type union, Select's disabled
+  placeholder + `groups`/optgroup rendering, RadioGroup's shared name and
+  selection reporting, JsonPathInput's sample-pill paste and
+  `enforcePrefix` blur validation. Every forms primitive now has direct
+  unit tests.
+- **Stories for `Checkbox`, `Slider`, `ColorInput`**: Checkbox ships a
+  working select-all/indeterminate example (the pattern the pipelines list
+  surfaces use), Slider a formatted-readout temperature example. Every
+  forms primitive now has a story.
+
 ## [2.69.0] — 2026-08-21
 
 **Every `shared/` component now has a story** (hub #1059 closed). The last
