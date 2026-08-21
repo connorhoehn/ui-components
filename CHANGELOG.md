@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.71.2] — 2026-08-21
+
+Journey round two (e2e 193 → 206), plus the reset bug from round one fixed.
+
+### Fixed
+
+- **Call-widget demo: simulation Reset now resets the call state.** The
+  simulator's Reset only rewound its own timeline, leaving the widget
+  mid-call; the demo now mirrors reset into its dispatch (the `'reset'`
+  case existed but nothing ever fired it). Pinned by a journey test.
+
+### Added
+
+- `hook-demos-2` journeys: auto-fired reactions land AND a clicked emoji
+  fires through `useReactions`; `CapabilityBoundary` swaps to the denied
+  fallback when a capability toggles off and restores on re-enable, with
+  the pulse-loading state covered; activity events stream in order; the
+  file-upload drop zone mounts with its input wired.
+- `streaming-hangout-journeys`: video-streaming stats render and simulated
+  participants churn; the hangout rooms list renders seeded rooms and a
+  join reports its slug to the host; the wrapped-components comparison
+  mounts both chat panels (raw + adapter); the video-hangout layout mounts.
+
 ## [2.71.1] — 2026-08-21
 
 **User-journey e2e coverage** (22 new tests, suite now 193): the audit found

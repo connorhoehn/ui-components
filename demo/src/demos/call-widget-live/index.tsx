@@ -262,6 +262,15 @@ export default function CallWidgetLiveDemo() {
   const controls = useEventSimulator(callWidgetTimeline, dispatch);
   const [lastDescription, setLastDescription] = useState<string | undefined>();
 
+  // The simulator's Reset only rewinds its own timeline — mirror it into the
+  // demo's call state, otherwise the widget stays mid-call after a reset.
+  useEffect(() => {
+    if (controls.state === 'idle' && controls.currentEventIndex === 0) {
+      dispatch({ type: 'call', action: 'reset' });
+      setLastDescription(undefined);
+    }
+  }, [controls.state, controls.currentEventIndex, dispatch]);
+
   useEffect(() => {
     if (callWidgetTimeline.events.length > 0 && controls.currentEventIndex > 0) {
       const lastIdx = controls.currentEventIndex - 1;

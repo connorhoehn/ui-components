@@ -57,7 +57,7 @@ npm test           # vitest run (306 test files, 3148 tests)
 npm run lint       # tsc --noEmit on src AND demo (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
-npm run test:e2e   # playwright (15 specs, 193 tests — incl. user-journey specs)
+npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey specs)
 ```
 
 > `npm run lint` typechecks **both** projects — root `tsconfig.json`
@@ -223,7 +223,7 @@ demo/
     catalog/       Demo catalog grid
     navigation/    nav-tree.ts (single source of truth for sidebar IA)
 
-tests/e2e/         Playwright (15 specs, 193 tests — routes smoke, visual baselines, tones, per-demo + user-journey specs)
+tests/e2e/         Playwright (17 specs, 206 tests — routes smoke, visual baselines, tones, per-demo + user-journey specs)
 ```
 
 ## Hard rules (do not violate)

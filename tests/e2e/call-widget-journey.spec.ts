@@ -29,6 +29,13 @@ test.describe('Call widget journey', () => {
     await expect(page.getByText(/speaking/i).first()).toBeVisible({ timeout: 20_000 });
   });
 
+  test('resetting the simulation now resets the call state too', async ({ page }) => {
+    await expect(page.getByTestId('call-timer').first()).toBeVisible({ timeout: 20_000 });
+    await page.getByTitle('Reset').click();
+    await expect(page.getByTestId('call-timer')).toHaveCount(0);
+    await expect(page.getByText('Call in progress')).toHaveCount(0);
+  });
+
   test('the scripted call ends and the widget returns to idle', async ({ page }) => {
     // Speed the timeline up; the script ends the call itself.
     await page.getByRole('button', { name: '4x' }).click();
