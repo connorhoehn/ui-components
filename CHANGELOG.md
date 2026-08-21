@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [2.66.0] — 2026-08-21
+## [2.68.0] — 2026-08-21
 
 **Every `shared/` component now has tests.** The 26 that had none —
 including several with real behavioral surface — gained 101 tests
@@ -37,6 +37,24 @@ including several with real behavioral surface — gained 101 tests
   (`CallWidget`/`AppLayout`/`CollapsibleSidebar`) have been tested for a
   while; the story gap recounted at 32 `shared/` components (was stated
   as "51 components, 7 stories").
+
+## [2.67.0] — 2026-08-21
+
+### Fixed
+
+- **Call-timer testids on both widget chromes** (parallel session): the e2e
+  Hangout page-object reads `[data-testid=call-timer]` /
+  `[data-call-duration]` but no element carried them. `CallWidget`'s two
+  duration spans now stamp both; `ExpandableCallWidget` gains
+  `durationSeconds` and renders the timer in its expanded header.
+  `formatDuration` exported for reuse.
+
+## [2.66.0] — 2026-08-21
+
+### Fixed
+
+- **F5: `spotlightContentLabel` attributes screen share to the sharer**
+  (parallel session) — the spotlight label named the wrong participant.
 
 ## [2.65.0] — 2026-08-21
 
