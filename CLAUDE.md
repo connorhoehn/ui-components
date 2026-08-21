@@ -223,7 +223,7 @@ demo/
     catalog/       Demo catalog grid
     navigation/    nav-tree.ts (single source of truth for sidebar IA)
 
-tests/e2e/         Playwright (8 specs, incl. all-routes-smoke; hub #1046)
+tests/e2e/         Playwright (15 specs, 193 tests — routes smoke, visual baselines, tones, per-demo + user-journey specs)
 ```
 
 ## Hard rules (do not violate)
