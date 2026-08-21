@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2.65.0] — 2026-08-21
 
+### Added
+
+- **`ActiveCallBanner`** (`/hangout`): non-modal "call in progress — join?"
+  affordance for lobbies the user wasn't invited to (sibling of
+  `ResumeCallDialog` in the F3 discovery journey). Live-dot, participant
+  count, elapsed ticker, avatar chips, Join/Not-now. Token classes only;
+  6 tests. (Landed in a parallel session under this same version.)
+
 The theming audit reaches JS constants: hex strings in color maps, chart
 palettes and SVG strokes now resolve through the token system.
 
