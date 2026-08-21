@@ -344,7 +344,7 @@ export default function ReviewMode({
       {allReviewers.size > 0 && (
         <div
           data-testid="review-summary"
-          className={cn('mt-8 p-4 px-5 bg-[#f8fafc] border border-border rounded-lg')}
+          className={cn('mt-8 p-4 px-5 bg-surface-panel border border-border rounded-lg')}
         >
           <h4 className={cn('m-0 mb-3 text-sm font-bold text-text-secondary')}>
             Document Review Summary

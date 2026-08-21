@@ -144,7 +144,7 @@ export default function IngestItemsPage() {
 
       {/* Error banner */}
       {error && (
-        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
+        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
           <span className="text-[13px] font-medium">Failed to load ingest items.</span>
           <button
             onClick={() => void refresh()}
@@ -228,7 +228,7 @@ export default function IngestItemsPage() {
                       )}
                       {item.status !== 'done' && (
                         <button
-                          className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
+                          className="px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]"
                           onClick={() => void handleSkip(item.itemId)}
                           data-testid={`skip-${item.itemId}`}
                         >

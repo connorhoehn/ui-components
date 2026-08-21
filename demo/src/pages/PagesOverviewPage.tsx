@@ -52,7 +52,7 @@ export default function PagesOverviewPage() {
             <div className="text-[15px] font-semibold text-text-primary mb-[6px]">
               {item.label}
             </div>
-            <div className="text-[13px] text-[#64748b] leading-[1.5]">
+            <div className="text-[13px] text-neutral leading-[1.5]">
               {descriptions[item.id] || 'Interactive demo page.'}
             </div>
           </Link>

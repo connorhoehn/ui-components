@@ -111,7 +111,7 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
 
   return (
     <div className="w-full h-[120px] bg-white border-t border-b border-border relative px-6 py-4 overflow-x-auto overflow-y-hidden">
-      <div className="text-[11px] text-[#64748b] mb-2">
+      <div className="text-[11px] text-neutral mb-2">
         Execution Timeline &bull; Total Duration: {formatDuration(totalDuration)}
       </div>
       <div
@@ -152,7 +152,7 @@ export default function ExecutionTimeline({ run, onNodeClick }: ExecutionTimelin
             >
               <div
                 data-tooltip
-                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-[#0f172a] text-white text-[11px] rounded-sm whitespace-nowrap pointer-events-none z-10 shadow-md hidden"
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-surface-inverse text-white text-[11px] rounded-sm whitespace-nowrap pointer-events-none z-10 shadow-md hidden"
               >
                 {nodeId} &bull; {step.status} &bull; {formatDuration(duration)}
               </div>

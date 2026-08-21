@@ -13,11 +13,11 @@ export interface DebugTabProps {
 }
 
 const STATUS_BADGE_CLASSES: Record<string, string> = {
-  completed: 'bg-[#f0fdf4] text-[#16a34a]',
-  failed:    'bg-[#fef2f2] text-[#dc2626]',
-  cancelled: 'bg-[#f1f5f9] text-[#475569]',
-  running:   'bg-[#eff6ff] text-[#2563eb]',
-  pending:   'bg-[#f1f5f9] text-[#475569]',
+  completed: 'bg-success-bg text-success-fg',
+  failed:    'bg-danger-bg text-danger-fg',
+  cancelled: 'bg-surface-hover text-text-secondary',
+  running:   'bg-info-bg text-info-fg',
+  pending:   'bg-surface-hover text-text-secondary',
   skipped:   'bg-[#fafafa] text-[#71717a]',
 };
 
@@ -46,7 +46,7 @@ function formatJSON(value: unknown): string {
 export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
   if (!stepExecution) {
     return (
-      <div className="px-4 py-6 text-center text-[#94a3b8] text-[13px]">
+      <div className="px-4 py-6 text-center text-text-tertiary text-[13px]">
         <p>No execution data available for this node.</p>
         <p className="mt-2 text-xs">
           Run the pipeline to see debug information.
@@ -60,33 +60,33 @@ export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
   return (
     <div>
       {/* Status & Timing */}
-      <div className="px-4 py-3 border-b border-[#e2e8f0]">
-        <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Status</div>
+      <div className="px-4 py-3 border-b border-border">
+        <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-1.5">Status</div>
         <div className={cn('inline-block px-2 py-0.5 text-[11px] font-semibold rounded', STATUS_BADGE_CLASSES[status] ?? STATUS_BADGE_CLASSES.pending)}>
           {status}
         </div>
 
         <div className="mt-3">
           <div className="flex justify-between py-1 text-xs">
-            <span className="text-[#64748b]">Started</span>
-            <span className="font-semibold text-[#0f172a]">{formatTimestamp(startedAt)}</span>
+            <span className="text-neutral">Started</span>
+            <span className="font-semibold text-text-primary">{formatTimestamp(startedAt)}</span>
           </div>
           <div className="flex justify-between py-1 text-xs">
-            <span className="text-[#64748b]">Completed</span>
-            <span className="font-semibold text-[#0f172a]">{formatTimestamp(completedAt)}</span>
+            <span className="text-neutral">Completed</span>
+            <span className="font-semibold text-text-primary">{formatTimestamp(completedAt)}</span>
           </div>
           <div className="flex justify-between py-1 text-xs">
-            <span className="text-[#64748b]">Duration</span>
-            <span className="font-semibold text-[#0f172a]">{formatDuration(durationMs)}</span>
+            <span className="text-neutral">Duration</span>
+            <span className="font-semibold text-text-primary">{formatDuration(durationMs)}</span>
           </div>
         </div>
       </div>
 
       {/* Error (if present) */}
       {error && (
-        <div className="px-4 py-3 border-b border-[#e2e8f0]">
-          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Error</div>
-          <div className="text-[13px] font-mono whitespace-pre-wrap break-words text-[#dc2626] bg-[#fef2f2] p-2 rounded border border-[#fecaca]">
+        <div className="px-4 py-3 border-b border-border">
+          <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-1.5">Error</div>
+          <div className="text-[13px] font-mono whitespace-pre-wrap break-words text-danger-fg bg-danger-bg p-2 rounded border border-danger-border">
             {error}
           </div>
         </div>
@@ -94,51 +94,51 @@ export default function DebugTab({ stepExecution, nodeId }: DebugTabProps) {
 
       {/* Input */}
       {input !== undefined && (
-        <div className="px-4 py-3 border-b border-[#e2e8f0]">
-          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Input</div>
-          <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{formatJSON(input)}</pre>
+        <div className="px-4 py-3 border-b border-border">
+          <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-1.5">Input</div>
+          <pre className="text-[13px] text-text-primary font-mono whitespace-pre-wrap break-words">{formatJSON(input)}</pre>
         </div>
       )}
 
       {/* Output */}
       {output !== undefined && (
-        <div className="px-4 py-3 border-b border-[#e2e8f0]">
-          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">Output</div>
-          <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{formatJSON(output)}</pre>
+        <div className="px-4 py-3 border-b border-border">
+          <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-1.5">Output</div>
+          <pre className="text-[13px] text-text-primary font-mono whitespace-pre-wrap break-words">{formatJSON(output)}</pre>
         </div>
       )}
 
       {/* LLM Metadata (if present) */}
       {llm && (
-        <div className="px-4 py-3 border-b border-[#e2e8f0]">
-          <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-1.5">LLM Details</div>
+        <div className="px-4 py-3 border-b border-border">
+          <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-1.5">LLM Details</div>
 
           <div className="flex justify-between py-1 text-xs">
-            <span className="text-[#64748b]">Tokens In</span>
-            <span className="font-semibold text-[#0f172a]">{llm.tokensIn.toLocaleString()}</span>
+            <span className="text-neutral">Tokens In</span>
+            <span className="font-semibold text-text-primary">{llm.tokensIn.toLocaleString()}</span>
           </div>
           <div className="flex justify-between py-1 text-xs">
-            <span className="text-[#64748b]">Tokens Out</span>
-            <span className="font-semibold text-[#0f172a]">{llm.tokensOut.toLocaleString()}</span>
+            <span className="text-neutral">Tokens Out</span>
+            <span className="font-semibold text-text-primary">{llm.tokensOut.toLocaleString()}</span>
           </div>
           {llm.firstTokenLatencyMs !== undefined && (
             <div className="flex justify-between py-1 text-xs">
-              <span className="text-[#64748b]">First Token Latency</span>
-              <span className="font-semibold text-[#0f172a]">{formatDuration(llm.firstTokenLatencyMs)}</span>
+              <span className="text-neutral">First Token Latency</span>
+              <span className="font-semibold text-text-primary">{formatDuration(llm.firstTokenLatencyMs)}</span>
             </div>
           )}
 
           {llm.prompt && (
             <div className="mt-3">
-              <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Prompt</div>
-              <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{llm.prompt}</pre>
+              <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-2">Prompt</div>
+              <pre className="text-[13px] text-text-primary font-mono whitespace-pre-wrap break-words">{llm.prompt}</pre>
             </div>
           )}
 
           {llm.response && (
             <div className="mt-3">
-              <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.5px] mb-2">Response</div>
-              <pre className="text-[13px] text-[#0f172a] font-mono whitespace-pre-wrap break-words">{llm.response}</pre>
+              <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.5px] mb-2">Response</div>
+              <pre className="text-[13px] text-text-primary font-mono whitespace-pre-wrap break-words">{llm.response}</pre>
             </div>
           )}
         </div>

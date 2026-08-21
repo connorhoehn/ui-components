@@ -22,7 +22,7 @@ export default function ConsentDemo() {
   onDeny={async () => { ... }}
 />`}
       >
-        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[520px]">
+        <div className="border border-border rounded-lg overflow-hidden h-[520px]">
           <ConsentPage
             clientName="Acme Dashboard"
             scopes={['openid', 'profile', 'email', 'offline_access']}
@@ -51,7 +51,7 @@ export default function ConsentDemo() {
   onDeny={async () => { ... }}
 />`}
       >
-        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[420px]">
+        <div className="border border-border rounded-lg overflow-hidden h-[420px]">
           <ConsentPage
             clientName="Partner API"
             scopes={['openid']}

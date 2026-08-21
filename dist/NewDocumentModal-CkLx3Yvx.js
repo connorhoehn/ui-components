@@ -15,7 +15,7 @@ import { I as O } from "./Input-Dt0yAs9r.js";
 import { S as W } from "./Select-DAEcKWg2.js";
 import { C as me } from "./Checkbox-vOc5I8kn.js";
 import { l as he } from "./useDocumentTypes-C29MkgPl.js";
-import { M as xe } from "./Modal-fp5zcyw8.js";
+import { M as xe } from "./Modal-X8tdpRKs.js";
 import { T as be } from "./Textarea-kaa9rHUL.js";
 const ge = {
   type: "tasks",
@@ -216,7 +216,7 @@ const ge = {
   }
 ];
 function Re({ editor: e }) {
-  return e ? /* @__PURE__ */ r("div", { className: l("flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-[#f8fafc] rounded-t-lg"), children: De.map((t) => {
+  return e ? /* @__PURE__ */ r("div", { className: l("flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-surface-panel rounded-t-lg"), children: De.map((t) => {
     const n = t.isActive(e);
     return /* @__PURE__ */ r(
       "button",
@@ -224,7 +224,7 @@ function Re({ editor: e }) {
         type: "button",
         onClick: () => t.action(e),
         className: l(
-          "px-2 py-1 text-xs font-[inherit] border border-[#cbd5e1] rounded cursor-pointer leading-snug",
+          "px-2 py-1 text-xs font-[inherit] border border-border-emphasis rounded cursor-pointer leading-snug",
           n ? "bg-[#3b82f6] text-white" : "bg-white text-[#334155]"
         ),
         title: t.label,
@@ -526,7 +526,7 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
         title: e.dueDate,
         className: l(
           "inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border",
-          I ? "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]" : "bg-[#f0f9ff] text-[#64748b] border-[#e0f2fe]"
+          I ? "bg-danger-bg text-danger-fg border-danger-border" : "bg-[#f0f9ff] text-neutral border-[#e0f2fe]"
         ),
         children: [
           I ? "⚠ " : "",
@@ -552,7 +552,7 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
           title: e.assignee || "Unassigned",
           className: l(
             "inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap",
-            e.assignee ? "px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0" : "w-6 px-0 bg-white text-text-tertiary border border-dashed border-[#cbd5e1]"
+            e.assignee ? "px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0" : "w-6 px-0 bg-white text-text-tertiary border border-dashed border-border-emphasis"
           ),
           children: e.assignee ? /* @__PURE__ */ u(z, { children: [
             /* @__PURE__ */ r(
@@ -587,8 +587,8 @@ function je({ item: e, editable: t, onUpdate: n, onRemove: a, autoFocusText: o, 
             onClick: R,
             className: l("flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-[#1e293b]"),
             children: [
-              /* @__PURE__ */ r("span", { className: l("w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-[#64748b] inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"), children: "--" }),
-              /* @__PURE__ */ r("span", { className: l("text-[#64748b] italic"), children: "Unassigned" })
+              /* @__PURE__ */ r("span", { className: l("w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"), children: "--" }),
+              /* @__PURE__ */ r("span", { className: l("text-neutral italic"), children: "Unassigned" })
             ]
           }
         ),
@@ -1760,7 +1760,7 @@ function vt({ open: e, onClose: t, onCreate: n }) {
       },
       children: /* @__PURE__ */ u("div", { onKeyDown: v, className: "contents", children: [
         /* @__PURE__ */ r("h2", { className: l("m-0 px-6 pt-6 pb-4 text-lg font-bold text-[#1e293b] shrink-0"), children: "Create New Document" }),
-        /* @__PURE__ */ r("div", { className: l("flex-1 overflow-y-auto px-6 min-h-0"), children: a.length === 0 ? /* @__PURE__ */ u("div", { className: l("text-center px-4 py-8 border border-dashed border-[#d1d5db] rounded-lg mb-5 text-[#64748b]"), children: [
+        /* @__PURE__ */ r("div", { className: l("flex-1 overflow-y-auto px-6 min-h-0"), children: a.length === 0 ? /* @__PURE__ */ u("div", { className: l("text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-neutral"), children: [
           /* @__PURE__ */ r("div", { className: l("text-[40px] mb-3"), children: "📋" }),
           /* @__PURE__ */ r("div", { className: l("text-[15px] font-semibold mb-2 text-[#374151]"), children: "No document types defined yet" }),
           /* @__PURE__ */ u("div", { className: l("text-[13px] text-text-tertiary max-w-xs mx-auto mb-4"), children: [
@@ -1788,13 +1788,13 @@ function vt({ open: e, onClose: t, onCreate: n }) {
                   onClick: () => s(p.id),
                   className: l(
                     "flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]",
-                    g ? "bg-[#eff6ff] border-2 border-[#3b82f6]" : "bg-white border-2 border-border hover:bg-[#f8fafc]"
+                    g ? "bg-info-bg border-2 border-[#3b82f6]" : "bg-white border-2 border-border hover:bg-surface-panel"
                   ),
                   children: [
                     /* @__PURE__ */ r("span", { className: l("text-2xl shrink-0"), children: p.icon }),
                     /* @__PURE__ */ u("div", { className: l("min-w-0"), children: [
                       /* @__PURE__ */ r("div", { className: l("text-sm font-semibold text-[#1e293b] overflow-hidden text-ellipsis whitespace-nowrap"), children: p.name }),
-                      p.description && /* @__PURE__ */ r("div", { className: l("text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: p.description }),
+                      p.description && /* @__PURE__ */ r("div", { className: l("text-[11px] text-neutral leading-tight mt-0.5 overflow-hidden line-clamp-2"), children: p.description }),
                       /* @__PURE__ */ u("div", { className: l("text-[11px] text-text-tertiary mt-0.5"), children: [
                         p.fields.length,
                         " section",

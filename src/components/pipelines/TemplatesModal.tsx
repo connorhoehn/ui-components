@@ -107,7 +107,7 @@ function TemplateCard({ template, meta, onPick }: TemplateCardProps) {
           {template.tags.map((tag) => (
             <span
               key={tag}
-              className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#f1f5f9] text-text-secondary lowercase"
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-hover text-text-secondary lowercase"
             >
               {tag}
             </span>

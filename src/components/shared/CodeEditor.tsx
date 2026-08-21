@@ -168,14 +168,14 @@ export default function CodeEditor({
 
       <div
         className={cn(
-          'flex border border-border-field rounded-md bg-[#fafbfc] overflow-hidden box-border',
+          'flex border border-border-field rounded-md bg-surface-inset overflow-hidden box-border',
           focused && 'border-primary shadow-[0_0_0_1px_#646cff]',
         )}
         style={{ fontFamily: FONT_FAMILY, fontSize: FONT_SIZE, lineHeight: LINE_HEIGHT, height: contentHeight }}
       >
         <div
           data-gutter
-          className="text-right select-none border-r border-border overflow-hidden whitespace-pre bg-[#f8fafc] text-text-tertiary text-[11px]"
+          className="text-right select-none border-r border-border overflow-hidden whitespace-pre bg-surface-panel text-text-tertiary text-[11px]"
           style={{ width: GUTTER_W, padding: `${PADDING_Y}px 6px`, fontFamily: FONT_FAMILY, lineHeight: LINE_HEIGHT }}
         >
           {lineNumbers}

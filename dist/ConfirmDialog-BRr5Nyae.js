@@ -1,31 +1,31 @@
-import { jsxs as n, jsx as t, Fragment as p } from "react/jsx-runtime";
-import { M as b } from "./Modal-fp5zcyw8.js";
+import { jsxs as n, jsx as t, Fragment as f } from "react/jsx-runtime";
+import { M as x } from "./Modal-X8tdpRKs.js";
 import { c as i } from "./cn-B6yFEsav.js";
-const x = {
-  destructive: "bg-[#ef4444] hover:bg-[#dc2626]",
+const b = {
+  destructive: "bg-[#ef4444] hover:bg-danger",
   caution: "bg-warning hover:bg-warning",
-  info: "bg-[#3b82f6] hover:bg-[#2563eb]"
+  info: "bg-[#3b82f6] hover:bg-info"
 };
-function C({
+function y({
   open: a,
-  onConfirm: c,
+  onConfirm: d,
   onCancel: o,
-  title: d,
+  title: c,
   body: e,
   confirmLabel: s = "Confirm",
-  cancelLabel: f = "Cancel",
+  cancelLabel: l = "Cancel",
   confirmDisabled: r = !1,
-  tone: l = "info",
+  tone: p = "info",
   children: m
 }) {
   return /* @__PURE__ */ n(
-    b,
+    x,
     {
       open: a,
       onClose: o,
-      title: d,
+      title: c,
       maxWidth: 420,
-      footer: /* @__PURE__ */ n(p, { children: [
+      footer: /* @__PURE__ */ n(f, { children: [
         /* @__PURE__ */ t(
           "button",
           {
@@ -34,10 +34,10 @@ function C({
             onClick: o,
             className: i(
               "px-4 py-[7px] text-[13px] font-[inherit]",
-              "border border-[#e2e8f0] bg-white text-[#475569]",
-              "rounded-md cursor-pointer hover:bg-[#f8fafc]"
+              "border border-border bg-white text-text-secondary",
+              "rounded-md cursor-pointer hover:bg-surface-panel"
             ),
-            children: f
+            children: l
           }
         ),
         /* @__PURE__ */ t(
@@ -45,12 +45,12 @@ function C({
           {
             type: "button",
             "data-testid": "confirm-dialog-confirm",
-            onClick: c,
+            onClick: d,
             disabled: r,
             className: i(
               "px-4 py-[7px] text-[13px] font-semibold font-[inherit]",
               "border-none text-white rounded-md transition-colors duration-150",
-              x[l],
+              b[p],
               r ? "cursor-not-allowed opacity-70" : "cursor-pointer opacity-100"
             ),
             children: s
@@ -58,12 +58,12 @@ function C({
         )
       ] }),
       children: [
-        e && /* @__PURE__ */ t("p", { className: "m-0 mb-3 text-[13px] text-[#475569]", children: e }),
+        e && /* @__PURE__ */ t("p", { className: "m-0 mb-3 text-[13px] text-text-secondary", children: e }),
         m
       ]
     }
   );
 }
 export {
-  C
+  y as C
 };

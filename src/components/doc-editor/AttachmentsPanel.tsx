@@ -123,7 +123,7 @@ function AddFileForm({ onAdd, onCancel }: { onAdd: (name: string, url: string) =
       >
         Attach
       </button>
-      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-[#64748b] cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
+      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -150,7 +150,7 @@ function AddDocumentForm({ onAdd, onCancel }: { onAdd: (title: string) => void; 
       >
         Link
       </button>
-      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-[#64748b] cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
+      <button type="button" onClick={onCancel} className={cn('px-3 py-1.5 text-[13px] bg-transparent border-none text-neutral cursor-pointer font-[inherit] shrink-0')}>Cancel</button>
     </div>
   );
 }
@@ -167,8 +167,8 @@ function AttachmentRow({ attachment, onRemove, editable }: {
   const isFile = attachment.kind === 'file';
 
   return (
-    <div className={cn('flex items-center gap-2.5 px-2.5 py-[7px] rounded-md bg-[#f8fafc] border border-border')}>
-      <span className={cn('text-sm shrink-0 text-[#64748b]')}>
+    <div className={cn('flex items-center gap-2.5 px-2.5 py-[7px] rounded-md bg-surface-panel border border-border')}>
+      <span className={cn('text-sm shrink-0 text-neutral')}>
         {isFile ? '📎' : '📄'}
       </span>
       <div className={cn('flex-1 min-w-0')}>
@@ -177,7 +177,7 @@ function AttachmentRow({ attachment, onRemove, editable }: {
             href={(attachment as FileAttachment).url}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn('text-[13px] text-[#2563eb] font-medium no-underline hover:underline')}
+            className={cn('text-[13px] text-info-fg font-medium no-underline hover:underline')}
           >
             {(attachment as FileAttachment).name}
           </a>
@@ -223,7 +223,7 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
     <div className={cn('mt-4 border border-border rounded-[10px] overflow-hidden')}>
       {/* Header */}
       <div className={cn(
-        'flex items-center justify-between px-3.5 py-2.5 bg-[#f8fafc]',
+        'flex items-center justify-between px-3.5 py-2.5 bg-surface-panel',
         (hasItems || addMode) ? 'border-b border-border' : '',
       )}>
         <span className={cn('text-[13px] font-semibold text-[#374151]')}>
@@ -239,14 +239,14 @@ export default function AttachmentsPanel({ documentId, editable }: AttachmentsPa
             <button
               type="button"
               onClick={() => setAddMode('file')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-[#d1d5db] rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
             >
               + File
             </button>
             <button
               type="button"
               onClick={() => setAddMode('document')}
-              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-[#d1d5db] rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
+              className={cn('text-xs px-2.5 py-1 font-semibold bg-white border border-border-field rounded-[5px] cursor-pointer font-[inherit] text-[#374151]')}
             >
               + Document
             </button>

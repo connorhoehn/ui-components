@@ -85,7 +85,7 @@ export function NotificationCenter({
             <button
               type="button"
               onClick={onMarkAllRead}
-              className="text-xs text-[#2563eb] bg-transparent border-none cursor-pointer hover:underline"
+              className="text-xs text-info-fg bg-transparent border-none cursor-pointer hover:underline"
             >
               Mark all read
             </button>

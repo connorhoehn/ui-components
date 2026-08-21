@@ -191,14 +191,14 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
   return (
     <div data-testid="typed-documents-page" className={cn('flex h-full overflow-hidden font-[inherit]')}>
 
-      <aside className={cn('w-60 shrink-0 border-r border-border flex flex-col overflow-hidden bg-[#fafbfc]')}>
+      <aside className={cn('w-60 shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset')}>
         <div className={cn('px-4 py-3.5 border-b border-border text-[13px] font-bold text-[#374151]')}>
           Document Types
         </div>
         <div data-testid="types-list" className={cn('flex-1 overflow-y-auto p-2')}>
           {typesLoading && <div className={cn('text-text-tertiary text-[13px] p-3')}>Loading…</div>}
           {typesError && (
-            <div data-testid="types-error" role="alert" className={cn('text-[#dc2626] text-[13px] p-3')}>
+            <div data-testid="types-error" role="alert" className={cn('text-danger-fg text-[13px] p-3')}>
               {typesError}
             </div>
           )}
@@ -251,7 +251,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   {selectedType.name} documents ({documents.length})
                 </div>
                 <div className={cn('flex items-center gap-3')}>
-                  <label className={cn('flex items-center gap-1.5 text-xs text-[#64748b]')}>
+                  <label className={cn('flex items-center gap-1.5 text-xs text-neutral')}>
                     Display:
                     <Select
                       data-testid="display-mode-picker"
@@ -291,13 +291,13 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   className={cn(
                     'mb-3 p-3 rounded-lg border',
                     importResult.failed > 0
-                      ? 'bg-[#fef2f2] border-[#fca5a5]'
-                      : 'bg-[#f0fdf4] border-[#86efac]',
+                      ? 'bg-danger-bg border-[#fca5a5]'
+                      : 'bg-success-bg border-[#86efac]',
                   )}
                 >
                   <div className={cn(
                     'text-[13px] font-semibold mb-1.5',
-                    importResult.failed > 0 ? 'text-[#dc2626]' : 'text-[#16a34a]',
+                    importResult.failed > 0 ? 'text-danger-fg' : 'text-success-fg',
                   )}>
                     Import {importResult.failed > 0 ? 'Partially' : 'Successfully'} Completed
                   </div>
@@ -306,7 +306,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                   </div>
                   {importResult.errors.length > 0 && (
                     <details className={cn('mt-2 text-xs')}>
-                      <summary className={cn('cursor-pointer font-semibold text-[#dc2626]')}>
+                      <summary className={cn('cursor-pointer font-semibold text-danger-fg')}>
                         {importResult.errors.length} error{importResult.errors.length !== 1 ? 's' : ''}
                       </summary>
                       <ul className={cn('mt-1.5 m-0 pl-5 max-h-[150px] overflow-y-auto')}>
@@ -323,14 +323,14 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                       <button
                         data-testid="download-failed-rows"
                         onClick={handleDownloadFailedRows}
-                        className={cn('text-[11px] px-2 py-[3px] rounded bg-white border border-[#dc2626] text-[#dc2626] cursor-pointer font-[inherit] font-semibold')}
+                        className={cn('text-[11px] px-2 py-[3px] rounded bg-white border border-danger text-danger-fg cursor-pointer font-[inherit] font-semibold')}
                       >
                         Download failed rows
                       </button>
                     )}
                     <button
                       onClick={() => setImportResult(null)}
-                      className={cn('text-[11px] px-2 py-[3px] rounded bg-transparent border border-[#cbd5e1] cursor-pointer font-[inherit]')}
+                      className={cn('text-[11px] px-2 py-[3px] rounded bg-transparent border border-border-emphasis cursor-pointer font-[inherit]')}
                     >
                       Dismiss
                     </button>
@@ -339,7 +339,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
               )}
               {docsLoading && <div className={cn('text-text-tertiary text-[13px]')}>Loading…</div>}
               {docsError && (
-                <div data-testid="documents-error" role="alert" className={cn('text-[#dc2626] text-[13px]')}>
+                <div data-testid="documents-error" role="alert" className={cn('text-danger-fg text-[13px]')}>
                   {docsError}
                 </div>
               )}

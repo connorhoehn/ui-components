@@ -140,13 +140,13 @@ export default function QuickInsertPopover({
   return (
     <div
       ref={popoverRef}
-      className="fixed w-[260px] bg-white border border-[#e2e8f0] rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit"
+      className="fixed w-[260px] bg-white border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit"
       style={{ top: anchor.y, left: anchor.x }}
       role="dialog"
       aria-label="Quick insert node"
       data-testid="quick-insert-popover"
     >
-      <div className="p-2 border-b border-[#e2e8f0]">
+      <div className="p-2 border-b border-border">
         <input
           ref={inputRef}
           type="text"
@@ -154,14 +154,14 @@ export default function QuickInsertPopover({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search nodes…"
-          className="w-full box-border border border-[#d1d5db] rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-[#0f172a] outline-none"
+          className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none"
           aria-label="Search node types"
           data-testid="quick-insert-search"
         />
       </div>
       <div className="max-h-[260px] overflow-y-auto py-1" role="listbox">
         {filtered.length === 0 ? (
-          <div className="px-3 py-3.5 text-xs text-[#94a3b8] font-inherit">
+          <div className="px-3 py-3.5 text-xs text-text-tertiary font-inherit">
             No nodes match "{query}"
           </div>
         ) : (
@@ -179,7 +179,7 @@ export default function QuickInsertPopover({
                 }}
                 className={cn(
                   'flex items-center gap-2.5 px-3 py-2 cursor-pointer font-inherit',
-                  highlighted ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                  highlighted ? 'bg-surface-hover' : 'bg-transparent',
                 )}
                 data-node-type={item.type}
                 data-testid={`quick-insert-row-${item.type}`}
@@ -188,8 +188,8 @@ export default function QuickInsertPopover({
                   {item.icon}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-semibold text-[#0f172a]">{item.name}</div>
-                  <div className="text-[11px] text-[#475569] whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="text-[13px] font-semibold text-text-primary">{item.name}</div>
+                  <div className="text-[11px] text-text-secondary whitespace-nowrap overflow-hidden text-ellipsis">
                     {item.description}
                   </div>
                 </div>

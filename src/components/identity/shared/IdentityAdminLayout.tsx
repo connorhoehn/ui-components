@@ -53,7 +53,7 @@ function NavLink({
           'border-none rounded-none border-l-[3px] transition-colors',
           active
             ? 'bg-surface-panel text-info-fg font-semibold border-l-info'
-            : 'bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]'
+            : 'bg-transparent text-[#334155] border-l-transparent hover:bg-surface-hover'
         )}
         onClick={() => onNavigate(item.path)}
         aria-current={active ? 'page' : undefined}

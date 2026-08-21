@@ -14,7 +14,7 @@ export default function RunsBulkActionBar({
   return (
     <div
       data-testid="runs-bulk-toolbar"
-      className="flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md"
+      className="flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md"
     >
       <span className="text-xs text-text-secondary">
         {selectionCount} selected
@@ -31,7 +31,7 @@ export default function RunsBulkActionBar({
         type="button"
         data-testid="runs-bulk-delete"
         onClick={onDelete}
-        className="px-2.5 py-1 text-xs font-medium border border-[#dc2626] bg-surface text-[#dc2626] rounded cursor-pointer font-[inherit]"
+        className="px-2.5 py-1 text-xs font-medium border border-danger bg-surface text-danger-fg rounded cursor-pointer font-[inherit]"
       >
         Delete
       </button>

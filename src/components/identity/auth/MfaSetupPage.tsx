@@ -227,7 +227,7 @@ export function MfaSetupPage({
 
         {step === 'backup' && (
           <div>
-            <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center">
+            <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-success-bg flex items-center justify-center">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-success-fg">
                 <polyline points="20 6 9 17 4 12" />
               </svg>

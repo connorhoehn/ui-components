@@ -120,7 +120,7 @@ export default function SectionComments({
         }}
         className={cn(
           'inline-flex items-center gap-1 mt-2.5 px-2.5 py-1 text-xs font-medium border border-border rounded-md cursor-pointer font-[inherit]',
-          totalCount > 0 ? 'bg-[#f0f9ff] text-[#2563eb]' : 'bg-transparent text-[#64748b]',
+          totalCount > 0 ? 'bg-[#f0f9ff] text-info-fg' : 'bg-transparent text-neutral',
         )}
       >
         {expanded ? '▼' : '▶'} Comments{totalCount > 0 ? ` (${totalCount})` : ''}
@@ -128,7 +128,7 @@ export default function SectionComments({
 
       {/* Expanded thread container */}
       {expanded && (
-        <div className={cn('mt-2 border border-border rounded-lg bg-[#f8fafc] overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
+        <div className={cn('mt-2 border border-border rounded-lg bg-surface-panel overflow-hidden animate-[sectionCommentsSlideDown_0.2s_ease-out]')}>
           {/* New comment input at top */}
           <div className={cn('flex items-start gap-1.5 px-3 py-2.5 border-b border-border bg-white')}>
             <div className={cn('flex-1 relative')}>
@@ -167,7 +167,7 @@ export default function SectionComments({
               <button
                 type="button"
                 onClick={() => setSortNewest(v => !v)}
-                className={cn('bg-transparent border-none cursor-pointer text-[11px] text-[#64748b] px-1.5 py-0.5 font-[inherit]')}
+                className={cn('bg-transparent border-none cursor-pointer text-[11px] text-neutral px-1.5 py-0.5 font-[inherit]')}
               >
                 {sortNewest ? '↓ Newest first' : '↑ Oldest first'}
               </button>

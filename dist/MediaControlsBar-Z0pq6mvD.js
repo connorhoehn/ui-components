@@ -215,7 +215,7 @@ function De(t) {
 }
 function Qt({ metrics: t, style: r }) {
   if (!t)
-    return /* @__PURE__ */ e("div", { className: h("p-3 bg-[#1e293b] rounded-lg text-[#94a3b8] text-xs"), style: r, children: "No stream data" });
+    return /* @__PURE__ */ e("div", { className: h("p-3 bg-[#1e293b] rounded-lg text-text-tertiary text-xs"), style: r, children: "No stream data" });
   const n = [
     ["Bitrate", De(t.bitrateBps)],
     ["FPS", `${t.fps}`],
@@ -223,7 +223,7 @@ function Qt({ metrics: t, style: r }) {
     ["Packets Lost", `${t.packetsLost}`]
   ];
   return t.jitter !== void 0 && n.push(["Jitter", `${t.jitter.toFixed(1)} ms`]), /* @__PURE__ */ e("div", { className: h("p-3 bg-[#1e293b] rounded-lg text-xs text-[#e2e8f0]"), style: r, children: n.map(([o, a]) => /* @__PURE__ */ i("div", { className: h("flex justify-between py-[3px]"), children: [
-    /* @__PURE__ */ e("span", { className: h("text-[#94a3b8]"), children: o }),
+    /* @__PURE__ */ e("span", { className: h("text-text-tertiary"), children: o }),
     /* @__PURE__ */ e("span", { className: h("font-mono"), children: a })
   ] }, o)) });
 }
@@ -352,7 +352,7 @@ const Xe = {
 };
 function nr({ phase: t, bitrateBps: r, viewerCount: n, duration: o, style: a }) {
   const c = t === "playing" ? "LIVE" : t.toUpperCase();
-  return /* @__PURE__ */ i("div", { className: h("inline-flex items-center gap-4 px-4 py-2 bg-[#0f172a] rounded-md text-xs text-[#e2e8f0] font-mono"), style: a, children: [
+  return /* @__PURE__ */ i("div", { className: h("inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-[#e2e8f0] font-mono"), style: a, children: [
     /* @__PURE__ */ i("span", { className: h("flex items-center gap-1"), children: [
       /* @__PURE__ */ e("span", { className: h("w-[7px] h-[7px] rounded-full", Xe[t] ?? "bg-surface-emphasis") }),
       /* @__PURE__ */ e("span", { className: h("font-semibold", Ye[t] ?? "text-text-tertiary"), children: c })
@@ -2264,7 +2264,7 @@ function pr({
       "data-call-widget-mode": b,
       style: M,
       className: h(
-        "flex flex-col bg-[#0f172a] text-white shadow-2xl overflow-hidden border border-white/10",
+        "flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10",
         b === "fullscreen" ? "rounded-none" : "rounded-lg",
         g
       ),

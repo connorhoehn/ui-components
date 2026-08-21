@@ -357,6 +357,12 @@ Seven tones — `neutral`, `success`, `warning`, `danger`, `info`, `caution`,
    `TONE_SOLID_BG`, `TONE_BORDER`, `TONE_TEXT`, `TONE_BG`), or the token
    classes directly (`bg-success-bg text-success-fg ring-primary`).
 
+   **Arbitrary-value hexes (`bg-[#2563eb]`) are guarded too** — the tones
+   test can't see them, so `npm run lint:hex-colors` ratchets them: 844
+   pre-existing occurrences are baselined for burn-down (the 665 that
+   exactly matched a token value were mechanically converted in v2.63.0);
+   new ones fail the guard.
+
    **Enforced with zero tolerance** by
    `src/components/shared/__tests__/tones.test.ts`, which scans all of `src/`
    — including `.stories.tsx`, since stories are what people copy from — for

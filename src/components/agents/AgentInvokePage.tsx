@@ -28,9 +28,9 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
   return (
     <div className={cn('flex h-full min-h-[500px]', className)}>
       {/* Left panel — agent selector & info */}
-      <div className="w-[240px] border-r border-[#e2e8f0] bg-white flex flex-col overflow-hidden">
+      <div className="w-[240px] border-r border-border bg-white flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="py-3 px-4 border-b border-[#e2e8f0] font-semibold text-[13px] text-[#64748b] uppercase tracking-[0.05em]">
+        <div className="py-3 px-4 border-b border-border font-semibold text-[13px] text-neutral uppercase tracking-[0.05em]">
           Agents
         </div>
 
@@ -44,7 +44,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                 'py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]',
                 agent.status === 'offline' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
                 selectedId === agent.id
-                  ? 'bg-[#f1f5f9] border-l-[#6366f1]'
+                  ? 'bg-surface-hover border-l-[#6366f1]'
                   : 'bg-transparent border-l-transparent',
               )}
             >
@@ -52,7 +52,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                 <div className="text-[14px] text-[#1a1a2e] truncate">
                   {agent.name}
                 </div>
-                <div className="text-[11px] text-[#94a3b8]">
+                <div className="text-[11px] text-text-tertiary">
                   {agent.protocol.toUpperCase()} · {agent.model}
                 </div>
               </div>
@@ -72,13 +72,13 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
 
         {/* Agent details */}
         {selectedAgent && (
-          <div className="py-3 px-4 border-t border-[#e2e8f0] text-[11px]">
-            <div className="text-[#64748b] mb-1.5">Tools:</div>
+          <div className="py-3 px-4 border-t border-border text-[11px]">
+            <div className="text-neutral mb-1.5">Tools:</div>
             <div className="flex flex-wrap gap-1">
               {selectedAgent.tools.map((t) => (
                 <span
                   key={t}
-                  className="py-0.5 px-1.5 bg-[#f1f5f9] rounded text-[10px] text-[#475569] font-mono"
+                  className="py-0.5 px-1.5 bg-surface-hover rounded text-[10px] text-text-secondary font-mono"
                 >
                   {t}
                 </span>
@@ -86,9 +86,9 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
             </div>
             {selectedAgent.guardrails.length > 0 && (
               <div className="mt-2">
-                <div className="text-[#64748b] mb-1">Guardrails:</div>
+                <div className="text-neutral mb-1">Guardrails:</div>
                 {selectedAgent.guardrails.map((g) => (
-                  <div key={g} className="text-[10px] text-[#d97706] font-mono">
+                  <div key={g} className="text-[10px] text-warning-fg font-mono">
                     🛡️ {g}
                   </div>
                 ))}
@@ -98,10 +98,10 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
         )}
 
         {/* Actions */}
-        <div className="py-2 px-4 border-t border-[#e2e8f0]">
+        <div className="py-2 px-4 border-t border-border">
           <button
             onClick={() => { reset(); setEvents([]); }}
-            className="w-full py-1.5 text-[12px] text-[#64748b] bg-[#f8fafc] border border-[#e2e8f0] rounded-md cursor-pointer"
+            className="w-full py-1.5 text-[12px] text-neutral bg-surface-panel border border-border rounded-md cursor-pointer"
           >
             Reset Session
           </button>
@@ -123,16 +123,16 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
 
         {/* Event log footer */}
         {events.length > 0 && (
-          <details className="border-t border-[#e2e8f0] bg-[#f8fafc]">
-            <summary className="py-2 px-4 text-[12px] text-[#64748b] cursor-pointer font-medium">
+          <details className="border-t border-border bg-surface-panel">
+            <summary className="py-2 px-4 text-[12px] text-neutral cursor-pointer font-medium">
               Event Log ({events.length} events)
             </summary>
             <div className="max-h-[150px] overflow-y-auto pt-1 px-4 pb-2 font-mono text-[10px]">
               {events.map((ev, i) => (
-                <div key={i} className="flex gap-2 text-[#475569] py-px">
-                  <span className="text-[#94a3b8] w-5 text-right shrink-0">{i + 1}</span>
+                <div key={i} className="flex gap-2 text-text-secondary py-px">
+                  <span className="text-text-tertiary w-5 text-right shrink-0">{i + 1}</span>
                   <span className="text-[#1e293b] w-[150px] shrink-0 font-medium">{ev.type}</span>
-                  <span className="text-[#64748b] overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span className="text-neutral overflow-hidden text-ellipsis whitespace-nowrap">
                     {(() => {
                       if (ev.type === 'TEXT_MESSAGE_CONTENT' || ev.type === 'TOOL_CALL_ARGS') return `"${ev.delta.slice(0, 60)}"`;
                       if (ev.type === 'TEXT_MESSAGE_CHUNK' && ev.delta) return `"${ev.delta.slice(0, 60)}"`;

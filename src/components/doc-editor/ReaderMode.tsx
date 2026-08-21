@@ -94,7 +94,7 @@ function TocCard({ sections }: { sections: Section[] }) {
       data-testid="reader-toc"
       className={cn('sticky top-4 self-start bg-white border border-border rounded-lg p-4 mb-3')}
     >
-      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Contents</h3>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Contents</h3>
       <nav>
         <ol className={cn('list-none m-0 p-0 flex flex-col gap-1')}>
           {sections.map((s, i) => (
@@ -103,7 +103,7 @@ function TocCard({ sections }: { sections: Section[] }) {
                 href={`#section-${s.id}`}
                 data-testid={`toc-link-${s.id}`}
                 onClick={(e) => handleClick(e, s.id)}
-                className={cn('block py-1 px-1.5 text-[13px] text-text-secondary no-underline rounded border-l-2 border-l-transparent transition-colors duration-75 hover:bg-[#f1f5f9] hover:border-l-primary')}
+                className={cn('block py-1 px-1.5 text-[13px] text-text-secondary no-underline rounded border-l-2 border-l-transparent transition-colors duration-75 hover:bg-surface-hover hover:border-l-primary')}
               >
                 <span className={cn('font-medium text-text-primary')}>{i + 1}.</span>{' '}
                 {s.title || `Section ${i + 1}`}
@@ -128,7 +128,7 @@ function ProgressCard({
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
-      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Progress</h3>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Progress</h3>
       <div className={cn('flex items-baseline gap-1 mb-2')}>
         <span className={cn('text-[28px] font-bold leading-none')} style={{ color }}>
           {pct}%
@@ -140,7 +140,7 @@ function ProgressCard({
           style={{ width: `${pct}%`, background: color }}
         />
       </div>
-      <div className={cn('text-xs text-[#64748b]')}>
+      <div className={cn('text-xs text-neutral')}>
         {reviewed} of {total} items reviewed
       </div>
     </div>
@@ -166,7 +166,7 @@ function ContributorsCard({ participants, meta }: { participants: Participant[];
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
-      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Contributors</h3>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Contributors</h3>
       {/* Bubble row */}
       <div className={cn('flex flex-wrap gap-1.5 mb-3')}>
         {contributors.map((c, i) => {
@@ -229,34 +229,34 @@ function DocumentStatsCard({
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-3')}>
-      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Document Info</h3>
+      <h3 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Document Info</h3>
       <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
-        <span className={cn('text-[#64748b]')}>Sections</span>
+        <span className={cn('text-neutral')}>Sections</span>
         <span className={cn('font-semibold')}>{sections.length}</span>
       </div>
       <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
-        <span className={cn('text-[#64748b]')}>Total tasks</span>
+        <span className={cn('text-neutral')}>Total tasks</span>
         <span className={cn('font-semibold')}>{allItems.length}</span>
       </div>
       <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
-        <span className={cn('text-[#64748b]')}>Completed</span>
+        <span className={cn('text-neutral')}>Completed</span>
         <span className={cn('font-semibold text-[#10b981]')}>{completedCount}</span>
       </div>
       {totalComments > 0 && (
         <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
-          <span className={cn('text-[#64748b]')}>Comments</span>
+          <span className={cn('text-neutral')}>Comments</span>
           <span className={cn('font-semibold')}>{totalComments}</span>
         </div>
       )}
       {meta.createdAt && (
         <div className={cn('flex justify-between py-1 text-[13px] text-[#334155] border-b border-[#f1f5f9]')}>
-          <span className={cn('text-[#64748b]')}>Created</span>
+          <span className={cn('text-neutral')}>Created</span>
           <span className={cn('font-medium text-xs')}>{formatDate(meta.createdAt)}</span>
         </div>
       )}
       {meta.updatedAt && (
         <div className={cn('flex justify-between py-1 text-[13px] text-[#334155]')}>
-          <span className={cn('text-[#64748b]')}>Last changed</span>
+          <span className={cn('text-neutral')}>Last changed</span>
           <span className={cn('font-medium text-xs')}>{formatDate(meta.updatedAt)}</span>
         </div>
       )}

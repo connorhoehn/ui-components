@@ -461,22 +461,22 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
         // Multi-select pane
         // ---------------------------------------------------------------
         <>
-          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0">
+          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-border shrink-0">
             <span className="text-base" aria-hidden>{'⧉'}</span>
-            <div className="flex-1 text-[13px] font-semibold text-[#0f172a]">
+            <div className="flex-1 text-[13px] font-semibold text-text-primary">
               {effectiveIds.length} nodes selected
             </div>
             <button
               type="button"
               onClick={close}
-              className="w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit"
+              className="w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit"
               aria-label="Close"
             >
               {'×'}
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-            <div className="text-xs text-[#64748b] leading-normal">
+            <div className="text-xs text-neutral leading-normal">
               Bulk actions apply to every selected node. Individual node
               configuration is only shown for single selections.
             </div>
@@ -484,14 +484,14 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               <button
                 type="button"
                 onClick={handleDelete}
-                className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-[#fecaca] rounded-md cursor-pointer font-inherit"
+                className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-danger-border rounded-md cursor-pointer font-inherit"
               >
                 Delete all
               </button>
               <button
                 type="button"
                 onClick={handleDuplicate}
-                className="px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+                className="px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit"
               >
                 Duplicate all
               </button>
@@ -503,15 +503,15 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
         // Single-node pane
         // ---------------------------------------------------------------
         <>
-          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0">
+          <div className="h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-border shrink-0">
             <span className="text-lg leading-none" aria-hidden>{meta.icon}</span>
-            <div className="flex-1 text-[13px] font-semibold text-[#0f172a]">
+            <div className="flex-1 text-[13px] font-semibold text-text-primary">
               {meta.name}
             </div>
             <button
               type="button"
               onClick={close}
-              className="w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit"
+              className="w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit"
               aria-label="Close"
             >
               {'×'}
@@ -521,7 +521,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
             ref={tabsRef}
             role="tablist"
             aria-label="Node configuration tabs"
-            className="h-9 flex border-b border-[#e2e8f0] shrink-0"
+            className="h-9 flex border-b border-border shrink-0"
             onKeyDown={(e) => {
               const showBench = selectedNode && VISION_NODE_TYPES.has(selectedNode.type);
               const order: Tab[] = showBench
@@ -566,8 +566,8 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                   className={cn(
                     'flex-1 border-none bg-transparent text-xs font-semibold cursor-pointer font-inherit',
                     active
-                      ? 'text-[#0f172a] border-b-2 border-b-[#646cff]'
-                      : 'text-[#64748b] border-b-2 border-b-transparent',
+                      ? 'text-text-primary border-b-2 border-b-[#646cff]'
+                      : 'text-neutral border-b-2 border-b-transparent',
                   )}
                   onClick={() => setTab(key)}
                 >
@@ -579,12 +579,12 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
           <div className="flex-1 overflow-y-auto">
             {tab === 'config' && renderConfig(selectedNode, onChange)}
             {tab === 'runs' && (
-              <div className="p-6 text-xs text-[#64748b]">
+              <div className="p-6 text-xs text-neutral">
                 No runs yet.
               </div>
             )}
             {tab === 'docs' && (
-              <div className="pipeline-docs-pane p-4 text-[13px] text-[#0f172a] leading-snug">
+              <div className="pipeline-docs-pane p-4 text-[13px] text-text-primary leading-snug">
                 {docsContent[selectedNode.type] ?? (
                   <p className="text-text-secondary">
                     No docs available for this node type.
@@ -613,18 +613,18 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
               );
             })()}
           </div>
-          <div className="h-10 px-3 flex items-center justify-between gap-2 border-t border-[#e2e8f0] shrink-0">
+          <div className="h-10 px-3 flex items-center justify-between gap-2 border-t border-border shrink-0">
             <button
               type="button"
               onClick={handleDelete}
-              className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-transparent rounded-md cursor-pointer font-inherit"
+              className="px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-transparent rounded-md cursor-pointer font-inherit"
             >
               🗑 Delete node
             </button>
             <button
               type="button"
               onClick={handleDuplicate}
-              className="px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+              className="px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit"
             >
               {'⧉'} Duplicate
             </button>

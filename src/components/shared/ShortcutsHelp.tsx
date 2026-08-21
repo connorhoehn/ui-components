@@ -104,7 +104,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       cardStyle={{ maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}
       rawChildren
     >
-      <div className="text-base font-semibold text-[#0f172a] mb-2.5">
+      <div className="text-base font-semibold text-text-primary mb-2.5">
         Keyboard shortcuts
       </div>
       <div className="overflow-y-auto pr-1">
@@ -112,7 +112,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
           <div key={section.title}>
             <div
               className={cn(
-                'text-[12px] font-bold text-[#0f172a] uppercase tracking-[0.05em] mb-1.5',
+                'text-[12px] font-bold text-text-primary uppercase tracking-[0.05em] mb-1.5',
                 sectionIdx === 0
                   ? 'mt-0 pt-0'
                   : 'mt-4 pt-1.5 border-t border-[#f1f5f9]',
@@ -126,10 +126,10 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
                   key={`${section.title}-${rowIdx}`}
                   className="flex items-baseline justify-between py-1 text-[13px] gap-4"
                 >
-                  <span className="font-mono text-[12px] text-[#0f172a] bg-[#f1f5f9] border border-[#e2e8f0] rounded px-1.5 py-px whitespace-nowrap shrink-0">
+                  <span className="font-mono text-[12px] text-text-primary bg-surface-hover border border-border rounded px-1.5 py-px whitespace-nowrap shrink-0">
                     {row.keys}
                   </span>
-                  <span className="text-[#64748b] text-right flex-1">
+                  <span className="text-neutral text-right flex-1">
                     {row.action}
                   </span>
                 </div>
@@ -141,7 +141,7 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
       <div className="flex justify-end mt-[18px]">
         <button
           onClick={onClose}
-          className="py-1.5 px-3.5 text-[13px] font-semibold border border-[#e2e8f0] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]"
+          className="py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]"
         >
           Close
         </button>

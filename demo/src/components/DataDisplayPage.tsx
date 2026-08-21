@@ -64,7 +64,7 @@ export default function DataDisplayPage() {
       >
         <div>
           <div className="mb-4">
-            <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.05em] mb-2">
+            <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.05em] mb-2">
               Soft (default)
             </div>
             <div className="flex flex-wrap gap-2 items-center">
@@ -77,7 +77,7 @@ export default function DataDisplayPage() {
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] uppercase tracking-[0.05em] mb-2">
+            <div className="text-[11px] font-semibold text-neutral uppercase tracking-[0.05em] mb-2">
               Solid
             </div>
             <div className="flex flex-wrap gap-2 items-center">
@@ -109,14 +109,14 @@ export default function DataDisplayPage() {
       >
         <div className="flex gap-6 items-center">
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">sm (default)</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">sm (default)</div>
             <div className="flex gap-[6px]">
               <Chip tone="info" size="sm">Default size</Chip>
               <Chip tone="success" size="sm">Success</Chip>
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">xs</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">xs</div>
             <div className="flex gap-[6px]">
               <Chip tone="info" size="xs">Extra small</Chip>
               <Chip tone="success" size="xs">Deployed</Chip>
@@ -170,25 +170,25 @@ export default function DataDisplayPage() {
       >
         <div className="flex gap-8 items-end flex-wrap">
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Upward trend</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">Upward trend</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <Sparkline data={[4, 6, 5, 8, 7, 12, 11, 15, 14, 18]} width={80} height={24} color={toneVar('success')} />
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Downward trend</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">Downward trend</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <Sparkline data={[18, 16, 17, 14, 12, 13, 10, 9, 7, 5]} width={80} height={24} color={toneVar('danger')} />
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Flat / stable</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">Flat / stable</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <Sparkline data={[10, 11, 10, 10, 11, 10, 11, 10, 10, 11]} width={80} height={24} color={toneVar('neutral')} />
             </div>
           </div>
           <div>
-            <div className="text-[11px] font-semibold text-[#64748b] mb-[6px]">Volatile (purple, wider)</div>
+            <div className="text-[11px] font-semibold text-neutral mb-[6px]">Volatile (purple, wider)</div>
             <div className="bg-surface border border-border rounded-md py-2 px-3 inline-block">
               <Sparkline data={[3, 14, 8, 18, 5, 16, 2, 19, 7, 15, 4, 17]} width={120} height={24} color={toneVar('accent')} />
             </div>

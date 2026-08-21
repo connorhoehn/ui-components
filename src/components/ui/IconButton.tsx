@@ -15,8 +15,8 @@ export interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonEle
 
 const variantClasses: Record<'ghost' | 'primary' | 'danger', string> = {
   ghost: 'bg-transparent text-[#374151] hover:bg-[#f3f4f6]',
-  primary: 'bg-[#3b82f6] text-white hover:bg-[#2563eb]',
-  danger: 'bg-[#ef4444] text-white hover:bg-[#dc2626]',
+  primary: 'bg-[#3b82f6] text-white hover:bg-info',
+  danger: 'bg-[#ef4444] text-white hover:bg-danger',
 };
 
 const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {

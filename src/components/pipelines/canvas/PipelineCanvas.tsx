@@ -529,7 +529,7 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
   return (
     <div
       ref={containerRef}
-      className="flex-1 min-w-0 min-h-[520px] relative bg-[#fafbfc]"
+      className="flex-1 min-w-0 min-h-[520px] relative bg-surface-inset"
       role="application"
       aria-label="Pipeline editor canvas"
       tabIndex={0}

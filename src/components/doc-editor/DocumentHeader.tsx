@@ -141,7 +141,7 @@ export default function DocumentHeader({
               type="button"
               data-testid={`mode-btn-${m}`}
               className={cn(
-                'py-1.5 px-3.5 text-[13px] font-semibold border border-[#d1d5db] rounded-md cursor-pointer font-[inherit]',
+                'py-1.5 px-3.5 text-[13px] font-semibold border border-border-field rounded-md cursor-pointer font-[inherit]',
                 mode === m ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#374151]',
               )}
               onClick={() => onModeChange(m)}
@@ -155,7 +155,7 @@ export default function DocumentHeader({
           {/* My Items — always visible */}
           <button
             type="button"
-            className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#d1d5db] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative')}
+            className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative')}
             onClick={onToggleMyItems}
           >
             My Items{myItemCount ? ` (${myItemCount})` : ''}
@@ -167,7 +167,7 @@ export default function DocumentHeader({
               type="button"
               className={cn(
                 'py-1.5 px-3 text-[13px] font-medium border rounded-md cursor-pointer font-[inherit] relative',
-                isCallActive ? 'bg-[#dcfce7] text-[#166534] border-[#86efac]' : 'bg-white text-[#374151] border-[#d1d5db]',
+                isCallActive ? 'bg-[#dcfce7] text-[#166534] border-[#86efac]' : 'bg-white text-[#374151] border-border-field',
               )}
               onClick={onToggleVideoCall}
             >
@@ -179,7 +179,7 @@ export default function DocumentHeader({
           {meta.status === 'final' ? (
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-[#f0fdf4] text-[#065f46] cursor-pointer font-[inherit] relative')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-success-bg text-[#065f46] cursor-pointer font-[inherit] relative')}
               onClick={onUnlock}
             >
               Unlock
@@ -187,7 +187,7 @@ export default function DocumentHeader({
           ) : (
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-[#f0fdf4] text-[#065f46] cursor-pointer font-[inherit] relative')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#86efac] rounded-md bg-success-bg text-[#065f46] cursor-pointer font-[inherit] relative')}
               onClick={onFinalize}
             >
               Finalize
@@ -198,7 +198,7 @@ export default function DocumentHeader({
           <div className={cn('relative')}>
             <button
               type="button"
-              className={cn('py-1.5 px-3 text-[13px] font-medium border border-[#d1d5db] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative tracking-wider')}
+              className={cn('py-1.5 px-3 text-[13px] font-medium border border-border-field rounded-md bg-white text-[#374151] cursor-pointer font-[inherit] relative tracking-wider')}
               onClick={() => setShowMore((v) => !v)}
               title="More actions"
             >
@@ -236,7 +236,7 @@ export default function DocumentHeader({
                 <div className={cn('border-t border-[#f1f5f9] my-1')} />
                 <button
                   type="button"
-                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-[#dc2626] text-left cursor-pointer font-[inherit] hover:bg-[#fff5f5]')}
+                  className={cn('block w-full py-2 px-3.5 text-[13px] border-none bg-transparent text-danger-fg text-left cursor-pointer font-[inherit] hover:bg-[#fff5f5]')}
                   onClick={() => { setShowMore(false); if (window.confirm('Clear all document content? This cannot be undone.')) onClearDocument(); }}
                 >
                   Clear Document

@@ -175,7 +175,7 @@ export default function PipelineCard({
                 Export JSON
               </button>
               <button
-                className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-[#dc2626]"
+                className="block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-danger-fg"
                 role="menuitem"
                 onClick={stop(() => { setMenuOpen(false); onDelete(); })}
               >

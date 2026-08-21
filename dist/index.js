@@ -12,29 +12,29 @@ import { u as Ze } from "./WebSocketContext-DPGFyPeZ.js";
 import { W as Ls } from "./WebSocketContext-DPGFyPeZ.js";
 import { u as et } from "./IdentityContext-CLalsm_M.js";
 import { I as _s } from "./IdentityContext-CLalsm_M.js";
-import { u as tt } from "./TrendSparkline-Bm0kEjdg.js";
-import { C as $s, D as Bs, F as js, I as Fs, a as Us, P as Vs, S as Ws, T as Gs, b as zs, U as Hs } from "./TrendSparkline-Bm0kEjdg.js";
+import { u as tt } from "./TrendSparkline-CO4UKW-S.js";
+import { C as $s, D as Bs, F as js, I as Fs, a as Us, P as Vs, S as Ws, T as Gs, b as zs, U as Hs } from "./TrendSparkline-CO4UKW-S.js";
 import { A as Ks, C as qs, e as Ys, a as Qs, a as Js, D as Zs, G as en, M as tn, P as rn, R as an, b as sn, c as nn, S as on, d as ln, u as cn } from "./ReactionsBar-CZLQvBhn.js";
-import { t as rt, w as at } from "./StatusPill-Ozs4n3N7.js";
-import { B as pn, C as un, a as mn, b as fn, c as xn, d as bn, e as hn, f as gn, g as vn, h as yn, D as Nn, i as wn, j as Cn, E as Sn, k as In, F as Tn, l as kn, I as En, m as Pn, K as Dn, L as An, n as Rn, o as Ln, M as Mn, P as _n, p as On, q as $n, r as Bn, Q as jn, S as Fn, s as Un, u as Vn, v as Wn, x as Gn, T as zn, y as Hn, z as Xn, A as Kn, G as qn, H as Yn, J as Qn, N as Jn, O as Zn, U as eo, R as to, V as ro, W as ao, X as so, Y as no, Z as oo } from "./StatusPill-Ozs4n3N7.js";
+import { t as rt, w as at } from "./StatusPill-fVc3efAB.js";
+import { B as pn, C as un, a as mn, b as fn, c as xn, d as bn, e as hn, f as gn, g as vn, h as yn, D as Nn, i as wn, j as Cn, E as Sn, k as In, F as Tn, l as kn, I as En, m as Pn, K as Dn, L as An, n as Rn, o as Ln, M as Mn, P as _n, p as On, q as $n, r as Bn, Q as jn, S as Fn, s as Un, u as Vn, v as Wn, x as Gn, T as zn, y as Hn, z as Xn, A as Kn, G as qn, H as Yn, J as Qn, N as Jn, O as Zn, U as eo, R as to, V as ro, W as ao, X as so, Y as no, Z as oo } from "./StatusPill-fVc3efAB.js";
 import { B as Ne } from "./Button-DILgRebO.js";
 import { C as st } from "./Card-qOg_oC77.js";
 import { P as lo, T as co, a as po, b as uo, c as mo, d as fo, e as xo } from "./Table-D7HV0dS-.js";
-import { F as ho, I as go, S as vo } from "./FileUploadDrop-CL1kscAC.js";
+import { F as ho, I as go, S as vo } from "./FileUploadDrop-CUuFbl97.js";
 import { B as No } from "./Banner-DKb3JiLs.js";
 import { B as Co, L as So, S as Io } from "./Chart-ByoxeiYX.js";
 import { C as ko } from "./Chip-BDT8ro4h.js";
-import { C as Po } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { C as Po } from "./ConfirmDialog-BRr5Nyae.js";
 import { E as Ao } from "./EmptyState-Ejc9dJA3.js";
 import { C as Lo, E as Mo, S as _o, e as Oo, g as $o, a as Bo } from "./CardHeader-Cri3P8GV.js";
-import { M as nt } from "./Modal-fp5zcyw8.js";
+import { M as nt } from "./Modal-X8tdpRKs.js";
 import { S as Fo } from "./SkeletonCard-Bm2f1JX1.js";
 import { P as Vo, S as Wo } from "./PermissionDeniedCard-0XYb6Eju.js";
 import { S as zo } from "./StatusDot-BC7B1tTr.js";
 import { A as ot } from "./Avatar-B7O2g50s.js";
 import { a as Xo, n as Ko, b as qo } from "./Avatar-B7O2g50s.js";
-import { C as it } from "./Badge-Cy_IRGw3.js";
-import { A as Qo, B as Jo, N as Zo, P as ei } from "./Badge-Cy_IRGw3.js";
+import { C as it } from "./Badge-qI9E13DX.js";
+import { A as Qo, B as Jo, N as Zo, P as ei } from "./Badge-qI9E13DX.js";
 import { T as ri, a as ai, b as si, c as ni, d as oi, e as ii, f as li, t as ci, g as di } from "./tones-DknNcB3q.js";
 import { R as lt } from "./ReactionsOverlay-DGBFgHTr.js";
 import { S as ui, a as mi } from "./ReactionsOverlay-DGBFgHTr.js";
@@ -44,14 +44,14 @@ import { useNavigate as De, useLocation as ft, Outlet as xt } from "react-router
 import { c as m } from "./cn-B6yFEsav.js";
 import { i as bt, a as ht } from "./PresencePanel-19UCWiYi.js";
 import { C as xi, M as bi, P as hi, f as gi } from "./PresencePanel-19UCWiYi.js";
-import { N as gt } from "./NewDocumentModal-CN--uJf6.js";
+import { N as gt } from "./NewDocumentModal-CkLx3Yvx.js";
 import { a as vt, u as Ae, E as yt } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Re, l as Le, a as Me, P as Nt, b as wt, c as Ct, d as St } from "./usePendingApprovals-c2L-t6o9.js";
 import { G as yi, I as Ni, J as wi, N as Ci, e as Si, f as Ii, g as Ti, R as ki, S as Ei, h as Pi, i as Di, j as Ai, k as Ri, m as Li, r as Mi, n as _i, o as Oi, s as $i, p as Bi, q as ji } from "./usePendingApprovals-c2L-t6o9.js";
 import { u as It, O as Tt } from "./ObservabilityContext-mvmEXnGv.js";
-import { A as Ui, C as Vi, a as Wi, b as Gi, c as zi, d as Hi, e as Xi, f as Ki, E as qi, H as Yi, g as Qi, M as Ji, h as Zi, i as el, j as tl, k as rl, N as al, P as sl, l as nl, R as ol, m as il, n as ll, o as cl, p as dl, q as pl, S as ul, r as ml, s as fl, t as xl, u as bl, T as hl, v as gl, V as vl, w as yl, x as Nl, y as wl, z as Cl, B as Sl, D as Il, F as Tl } from "./MediaControlsBar-4RmXEG4R.js";
+import { A as Ui, C as Vi, a as Wi, b as Gi, c as zi, d as Hi, e as Xi, f as Ki, E as qi, H as Yi, g as Qi, M as Ji, h as Zi, i as el, j as tl, k as rl, N as al, P as sl, l as nl, R as ol, m as il, n as ll, o as cl, p as dl, q as pl, S as ul, r as ml, s as fl, t as xl, u as bl, T as hl, v as gl, V as vl, w as yl, x as Nl, y as wl, z as Cl, B as Sl, D as Il, F as Tl } from "./MediaControlsBar-Z0pq6mvD.js";
 import { H as El, a as Pl, b as Dl, P as Al, R as Rl, c as Ll, S as Ml, g as _l, s as Ol, u as $l, d as Bl } from "./ReconnectingBanner-ClUFFUr4.js";
-import { A as Fl, a as Ul, b as Vl, c as Wl, d as Gl, C as zl, e as Hl, D as Xl, E as Kl, f as ql, g as Yl, h as Ql, G as Jl, i as Zl, I as ec, d as tc, F as rc, L as ac, j as sc, M as nc, k as oc, l as ic, m as lc, P as cc, n as dc, o as pc, Q as uc, S as mc, p as fc, U as xc, q as bc } from "./PoolScopedLayout-CtrrI2Hv.js";
+import { A as Fl, a as Ul, b as Vl, c as Wl, d as Gl, C as zl, e as Hl, D as Xl, E as Kl, f as ql, g as Yl, h as Ql, G as Jl, i as Zl, I as ec, d as tc, F as rc, L as ac, j as sc, M as nc, k as oc, l as ic, m as lc, P as cc, n as dc, o as pc, Q as uc, S as mc, p as fc, U as xc, q as bc } from "./PoolScopedLayout-BKrhM3jD.js";
 import { I as gc } from "./Input-Dt0yAs9r.js";
 import { S as yc } from "./Select-DAEcKWg2.js";
 import { T as wc } from "./Textarea-kaa9rHUL.js";
@@ -124,7 +124,7 @@ function jr({
           "data-testid": "resume-call-dialog",
           "data-lobby-name": n,
           children: [
-            /* @__PURE__ */ o("p", { className: "text-[13px] text-[#475569]", children: [
+            /* @__PURE__ */ o("p", { className: "text-[13px] text-text-secondary", children: [
               "You were in a call with",
               " ",
               /* @__PURE__ */ e("span", { className: "font-semibold text-text-primary", children: a }),
@@ -261,7 +261,7 @@ function H({
     /* @__PURE__ */ o(
       "div",
       {
-        className: "text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748b] m-0 cursor-pointer flex items-center gap-1.5 select-none py-2",
+        className: "text-[11px] font-bold uppercase tracking-[0.5px] text-neutral m-0 cursor-pointer flex items-center gap-1.5 select-none py-2",
         onClick: () => l((p) => !p),
         role: "button",
         tabIndex: 0,
@@ -281,7 +281,7 @@ function H({
           ),
           r && /* @__PURE__ */ e("span", { className: "text-xs", children: r }),
           /* @__PURE__ */ e("span", { children: t }),
-          typeof s == "number" && s > 0 && /* @__PURE__ */ e("span", { className: "ml-1 text-[10px] font-semibold text-[#64748b] bg-border rounded-lg px-1.5 py-px tracking-normal normal-case", children: s })
+          typeof s == "number" && s > 0 && /* @__PURE__ */ e("span", { className: "ml-1 text-[10px] font-semibold text-neutral bg-border rounded-lg px-1.5 py-px tracking-normal normal-case", children: s })
         ]
       }
     ),
@@ -331,7 +331,7 @@ function Lt({
         {
           className: m(
             "text-[13px] font-medium font-sans",
-            b ? "text-[#16a34a]" : "text-[#dc2626]"
+            b ? "text-success-fg" : "text-danger-fg"
           ),
           children: b ? "Connected" : t === "connecting" || t === "reconnecting" ? "Connecting..." : "Disconnected"
         }
@@ -341,14 +341,14 @@ function Lt({
           "button",
           {
             onClick: r,
-            className: "text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-[#64748b] cursor-pointer font-sans",
+            className: "text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-neutral cursor-pointer font-sans",
             children: "Disconnect"
           }
         ) : /* @__PURE__ */ e(
           "button",
           {
             onClick: s,
-            className: "text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-[#2563eb] cursor-pointer font-sans",
+            className: "text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-info-fg cursor-pointer font-sans",
             children: "Reconnect"
           }
         ),
@@ -464,7 +464,7 @@ function Lt({
               onKeyDown: (h) => {
                 h.key === "Enter" && C();
               },
-              className: "text-[11px] text-[#2563eb] not-italic cursor-pointer ml-2",
+              className: "text-[11px] text-info-fg not-italic cursor-pointer ml-2",
               children: "+ New"
             }
           )
@@ -505,7 +505,7 @@ function Lt({
             onKeyDown: (h) => {
               h.key === "Enter" && C();
             },
-            className: "px-1 py-1 text-[11px] text-[#2563eb] cursor-pointer font-sans",
+            className: "px-1 py-1 text-[11px] text-info-fg cursor-pointer font-sans",
             children: [
               "See all pipelines ",
               "→"
@@ -749,7 +749,7 @@ class Te extends ct {
         "button",
         {
           onClick: this.handleRetry,
-          className: "bg-[#dc2626] text-white border-none rounded-md px-4 py-1.5 text-[0.8rem] font-semibold cursor-pointer font-[inherit]",
+          className: "bg-danger text-white border-none rounded-md px-4 py-1.5 text-[0.8rem] font-semibold cursor-pointer font-[inherit]",
           children: "Retry"
         }
       )
@@ -909,7 +909,7 @@ function Kt() {
       n.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const qt = dt(() => import("./DocumentEditorPage-Bf_R4rmp.js").then((t) => t.o));
+const qt = dt(() => import("./DocumentEditorPage-DmOW28h7.js").then((t) => t.o));
 function Yt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (n) => (n.type === "mention" || n.type === "assignment") && !!n.sectionId;
@@ -1072,10 +1072,10 @@ function Qt({
     v ? "bg-surface-hover text-text-primary font-semibold" : "bg-transparent text-[#374151] font-normal"
   ), Ke = (v) => m(
     "px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out",
-    v ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
+    v ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover"
   ), ie = (v) => m(
     "px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out",
-    v ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-[#64748b] font-medium hover:bg-surface-hover"
+    v ? "bg-[#e0e7ff] text-[#1e1b4b] font-semibold" : "bg-transparent text-neutral font-medium hover:bg-surface-hover"
   );
   return /* @__PURE__ */ o("div", { className: "relative min-h-screen font-sans bg-surface-panel", children: [
     /* @__PURE__ */ e(lt, { reactions: a }),
@@ -1084,10 +1084,10 @@ function Qt({
       /* @__PURE__ */ e("span", { className: "text-base font-semibold text-text-primary shrink-0", children: "WebSocket Gateway" }),
       /* @__PURE__ */ o("div", { className: "flex items-center gap-4 flex-1 justify-center", children: [
         /* @__PURE__ */ e(Et, { state: f }),
-        /* @__PURE__ */ e("span", { className: "text-sm text-[#64748b] font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1", children: q.find((v) => v.roomId === K)?.name ?? t })
+        /* @__PURE__ */ e("span", { className: "text-sm text-neutral font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1", children: q.find((v) => v.roomId === K)?.name ?? t })
       ] }),
       /* @__PURE__ */ o("div", { className: "flex items-center gap-3 shrink-0", children: [
-        M && /* @__PURE__ */ e("span", { className: "text-sm text-[#64748b]", children: M }),
+        M && /* @__PURE__ */ e("span", { className: "text-sm text-neutral", children: M }),
         /* @__PURE__ */ e(
           "button",
           {
@@ -1102,7 +1102,7 @@ function Qt({
             {
               onClick: () => j((v) => !v),
               className: m(
-                "border border-border rounded-md px-2 py-1 cursor-pointer text-base text-[#64748b] leading-none",
+                "border border-border rounded-md px-2 py-1 cursor-pointer text-base text-neutral leading-none",
                 me ? "bg-surface-hover" : "bg-none"
               ),
               title: "Menu",
@@ -1337,7 +1337,7 @@ function Qt({
                       onClick: () => N(c),
                       className: m(
                         "px-3 py-1.5 border-none bg-none cursor-pointer font-[inherit] text-[0.8125rem]",
-                        L ? "border-b-2 border-b-primary text-text-primary font-semibold" : "border-b-2 border-b-transparent text-[#64748b] font-normal"
+                        L ? "border-b-2 border-b-primary text-text-primary font-semibold" : "border-b-2 border-b-transparent text-neutral font-normal"
                       ),
                       children: w
                     },

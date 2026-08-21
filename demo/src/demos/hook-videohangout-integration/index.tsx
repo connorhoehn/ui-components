@@ -139,7 +139,7 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
 
       {/* Session info */}
       {session && (
-        <div className="mb-4 text-[13px] text-[#64748b]">
+        <div className="mb-4 text-[13px] text-neutral">
           Session: <code className="font-mono">{session.id}</code>
           {' '}&middot; {participants.length} participant(s)
         </div>
@@ -148,7 +148,7 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
       {/* Join token display */}
       {joinToken && (
         <div>
-          <div className="text-[12px] font-semibold text-[#64748b] mb-1">
+          <div className="text-[12px] font-semibold text-neutral mb-1">
             joinToken (pass to your media stack / Stage component):
           </div>
           <div style={TOKEN_STYLE}>{joinToken}</div>
@@ -257,7 +257,7 @@ export default function HookVideoHangoutIntegrationDemo() {
       <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         HangoutLayout + useVideoHangout
       </h2>
-      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+      <p className="text-[14px] text-neutral mb-2 leading-[1.6]">
         <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<HangoutLayout>'}
         </code>{' '}

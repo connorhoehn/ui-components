@@ -91,7 +91,7 @@ function AvatarStack({ participants }: { participants: Participant[] }) {
       ))}
       {overflow > 0 && (
         <div
-          className={cn('w-6 h-6 rounded-full bg-border text-[#64748b] flex items-center justify-center text-[9px] font-bold border-2 border-white relative -ml-2')}
+          className={cn('w-6 h-6 rounded-full bg-border text-neutral flex items-center justify-center text-[9px] font-bold border-2 border-white relative -ml-2')}
         >
           +{overflow}
         </div>
@@ -194,12 +194,12 @@ export default function SectionBlock({
           )}
         </button>
       )}
-      <div className={cn('flex items-center gap-2 py-2.5 px-3.5 bg-[#f8fafc] border-b border-border rounded-t-lg')}>
+      <div className={cn('flex items-center gap-2 py-2.5 px-3.5 bg-surface-panel border-b border-border rounded-t-lg')}>
         <button
           type="button"
           onClick={toggleCollapse}
           className={cn(
-            'border-none bg-transparent cursor-pointer text-xs p-1 text-[#64748b] leading-none rounded inline-flex items-center justify-center transition-[background,transform] duration-200 ease-in-out hover:bg-border',
+            'border-none bg-transparent cursor-pointer text-xs p-1 text-neutral leading-none rounded inline-flex items-center justify-center transition-[background,transform] duration-200 ease-in-out hover:bg-border',
             collapsed ? '-rotate-90' : 'rotate-0',
           )}
           title={collapsed ? 'Expand section' : 'Collapse section'}

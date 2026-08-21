@@ -94,7 +94,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
           {/* No types defined yet */}
           {types.length === 0 ? (
-            <div className={cn('text-center px-4 py-8 border border-dashed border-[#d1d5db] rounded-lg mb-5 text-[#64748b]')}>
+            <div className={cn('text-center px-4 py-8 border border-dashed border-border-field rounded-lg mb-5 text-neutral')}>
               <div className={cn('text-[40px] mb-3')}>📋</div>
               <div className={cn('text-[15px] font-semibold mb-2 text-[#374151]')}>
                 No document types defined yet
@@ -127,7 +127,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                         onClick={() => setSelectedId(t.id)}
                         className={cn(
                           'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
-                          isSelected ? 'bg-[#eff6ff] border-2 border-[#3b82f6]' : 'bg-white border-2 border-border hover:bg-[#f8fafc]',
+                          isSelected ? 'bg-info-bg border-2 border-[#3b82f6]' : 'bg-white border-2 border-border hover:bg-surface-panel',
                         )}
                       >
                         <span className={cn('text-2xl shrink-0')}>{t.icon}</span>
@@ -136,7 +136,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                             {t.name}
                           </div>
                           {t.description && (
-                            <div className={cn('text-[11px] text-[#64748b] leading-tight mt-0.5 overflow-hidden line-clamp-2')}>
+                            <div className={cn('text-[11px] text-neutral leading-tight mt-0.5 overflow-hidden line-clamp-2')}>
                               {t.description}
                             </div>
                           )}

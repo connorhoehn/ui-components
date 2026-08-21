@@ -13,26 +13,26 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
   M(() => {
     w(a);
   }, [a]);
-  const h = a !== null && e.length > 0, f = l ? a : m ?? a, b = f === null ? 0 : Math.min(Math.max(f, 0), e.length - 1), u = (r) => {
+  const b = a !== null && e.length > 0, f = l ? a : m ?? a, h = f === null ? 0 : Math.min(Math.max(f, 0), e.length - 1), u = (r) => {
     const n = e.length;
     if (n < 2) return;
-    const y = (b + r + n) % n;
+    const y = (h + r + n) % n;
     l ? l(y) : w(y);
   };
   if (M(() => {
-    if (h)
+    if (b)
       return x.current = typeof document < "u" ? document.activeElement : null, d.current?.focus(), () => {
         const r = x.current;
         r && typeof r.focus == "function" && document.contains(r) && r.focus(), x.current = null;
       };
-  }, [h]), M(() => {
-    if (!h) return;
+  }, [b]), M(() => {
+    if (!b) return;
     const r = (n) => {
       n.key === "Escape" ? (n.stopPropagation(), c()) : n.key === "ArrowLeft" ? (n.preventDefault(), u(-1)) : n.key === "ArrowRight" && (n.preventDefault(), u(1));
     };
     return window.addEventListener("keydown", r), () => window.removeEventListener("keydown", r);
-  }, [h, b, e.length, c, l]), !h) return null;
-  const g = e[b], N = e.length > 1;
+  }, [b, h, e.length, c, l]), !b) return null;
+  const g = e[h], N = e.length > 1;
   return Z(
     /* @__PURE__ */ v(
       "div",
@@ -41,7 +41,7 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
         "data-testid": "image-lightbox",
         role: "dialog",
         "aria-modal": "true",
-        "aria-label": g.caption ?? g.alt ?? `Image ${b + 1} of ${e.length}`,
+        "aria-label": g.caption ?? g.alt ?? `Image ${h + 1} of ${e.length}`,
         tabIndex: -1,
         className: "fixed inset-0 z-[10000] flex items-center justify-center bg-black/85 outline-none",
         onClick: c,
@@ -52,7 +52,7 @@ function xe({ images: e, openIndex: a, onClose: c, onNavigate: l }) {
               "data-testid": "image-lightbox-counter",
               className: "absolute top-3 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 font-mono text-xs text-white/90",
               children: [
-                b + 1,
+                h + 1,
                 " / ",
                 e.length
               ]
@@ -139,7 +139,7 @@ const Y = {
   sm: "px-2.5 py-0.5 text-[11px]",
   xs: "px-2 py-px text-[10px]"
 }, Q = "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)] hover:border-[var(--color-border-emphasis)]", J = "bg-[var(--color-primary)] border-[var(--color-primary)] text-white hover:opacity-90", W = "border-[var(--color-border-emphasis)] text-[var(--color-text-primary)]";
-function be({
+function he({
   active: e,
   onClick: a,
   color: c,
@@ -148,9 +148,9 @@ function be({
   children: x,
   className: m,
   disabled: w = !1,
-  "data-testid": h
+  "data-testid": b
 }) {
-  const f = e && !!c, b = f ? { background: `${c}22`, borderColor: `${c}66`, color: c } : void 0;
+  const f = e && !!c, h = f ? { background: `${c}22`, borderColor: `${c}66`, color: c } : void 0;
   return /* @__PURE__ */ v(
     "button",
     {
@@ -158,7 +158,7 @@ function be({
       onClick: a,
       disabled: w,
       "aria-pressed": e,
-      "data-testid": h,
+      "data-testid": b,
       className: I(
         "inline-flex items-center gap-1.5 rounded-full font-semibold border transition-colors cursor-pointer select-none",
         Y[d],
@@ -166,7 +166,7 @@ function be({
         w && "opacity-50 cursor-not-allowed",
         m
       ),
-      style: b,
+      style: h,
       children: [
         l && /* @__PURE__ */ s(
           "span",
@@ -184,14 +184,14 @@ function ee(e, a) {
   const c = e.trim();
   return a ? c.toLowerCase() : c;
 }
-function he({
+function be({
   value: e,
   onChange: a,
   placeholder: c = "add tag...",
   suggestions: l,
   lowercase: d = !0
 }) {
-  const [x, m] = $(""), [w, h] = $(!1), f = F(null), b = (n) => {
+  const [x, m] = $(""), [w, b] = $(!1), f = F(null), h = (n) => {
     const y = ee(n, d);
     if (y) {
       if (e.includes(y)) {
@@ -204,7 +204,7 @@ function he({
     a(e.filter((y) => y !== n));
   }, g = (n) => {
     if (n.key === "Enter") {
-      n.preventDefault(), b(x);
+      n.preventDefault(), h(x);
       return;
     }
     n.key === "Backspace" && x === "" && e.length > 0 && (n.preventDefault(), u(e[e.length - 1]));
@@ -245,9 +245,9 @@ function he({
           value: x,
           onChange: (n) => m(n.target.value),
           onKeyDown: g,
-          onFocus: () => h(!0),
+          onFocus: () => b(!0),
           onBlur: () => {
-            setTimeout(() => h(!1), 120);
+            setTimeout(() => b(!1), 120);
           },
           placeholder: c,
           className: "border border-border-emphasis rounded-md px-2.5 py-1.5 text-xs bg-surface-panel w-[140px] min-w-[120px] outline-none font-[inherit] text-text-primary"
@@ -265,7 +265,7 @@ function he({
               onMouseDown: (y) => {
                 y.preventDefault();
               },
-              onClick: () => b(n),
+              onClick: () => h(n),
               className: "inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary cursor-pointer border border-dashed border-border-emphasis",
               children: [
                 "+ ",
@@ -340,7 +340,7 @@ function ne({
       type: "button",
       onClick: () => c(e),
       className: I(
-        "w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-[#f1f5f9]",
+        "w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-surface-hover",
         a ? "border border-primary" : "border border-transparent"
       ),
       "aria-label": `Select ${e}`,
@@ -354,12 +354,12 @@ function ge({
   onChange: a,
   curated: c
 }) {
-  const [l, d] = $(!1), [x, m] = $(!1), [w, h] = $(""), f = F(null), b = F(null), u = c ?? te;
+  const [l, d] = $(!1), [x, m] = $(!1), [w, b] = $(""), f = F(null), h = F(null), u = c ?? te;
   M(() => {
     if (!l) return;
     const r = (n) => {
       const y = n.target;
-      f.current && f.current.contains(y) || b.current && b.current.contains(y) || d(!1);
+      f.current && f.current.contains(y) || h.current && h.current.contains(y) || d(!1);
     };
     return window.addEventListener("mousedown", r), () => window.removeEventListener("mousedown", r);
   }, [l]);
@@ -367,7 +367,7 @@ function ge({
     a(r), d(!1);
   }, N = () => {
     const r = w.trim();
-    r.length !== 0 && (a(r), h(""), d(!1));
+    r.length !== 0 && (a(r), b(""), d(!1));
   };
   return /* @__PURE__ */ v("div", { className: "relative inline-block", ref: f, children: [
     /* @__PURE__ */ s(
@@ -375,7 +375,7 @@ function ge({
       {
         type: "button",
         onClick: () => d((r) => !r),
-        className: "w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-[#f1f5f9] hover:border-[#cbd5e1]",
+        className: "w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-surface-hover hover:border-border-emphasis",
         "aria-label": "Choose icon",
         "aria-haspopup": "dialog",
         "aria-expanded": l,
@@ -383,7 +383,7 @@ function ge({
         children: /* @__PURE__ */ s("span", { "aria-hidden": !0, children: e })
       }
     ),
-    l ? /* @__PURE__ */ v("div", { ref: b, className: "absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]", "data-testid": "icon-picker-popover", children: [
+    l ? /* @__PURE__ */ v("div", { ref: h, className: "absolute top-full left-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] p-2.5 z-30 min-w-[272px]", "data-testid": "icon-picker-popover", children: [
       /* @__PURE__ */ s("div", { className: "grid grid-cols-[repeat(8,28px)] gap-1", children: u.map((r, n) => /* @__PURE__ */ s(
         ne,
         {
@@ -399,7 +399,7 @@ function ge({
           {
             type: "text",
             value: w,
-            onChange: (r) => h(r.target.value),
+            onChange: (r) => b(r.target.value),
             onKeyDown: (r) => {
               r.key === "Enter" ? (r.preventDefault(), N()) : r.key === "Escape" && d(!1);
             },
@@ -434,9 +434,9 @@ function ye({
   maxLines: x = 20,
   readOnly: m = !1,
   variables: w,
-  "aria-label": h
+  "aria-label": b
 }) {
-  const f = F(null), [b, u] = $(!1), g = _(() => Math.max(1, e.split(`
+  const f = F(null), [h, u] = $(!1), g = _(() => Math.max(1, e.split(`
 `).length), [e]), N = _(() => {
     const i = Math.max(g, d), E = [];
     for (let C = 1; C <= i; C++) E.push(String(C));
@@ -487,8 +487,8 @@ function ye({
       "div",
       {
         className: I(
-          "flex border border-border-field rounded-md bg-[#fafbfc] overflow-hidden box-border",
-          b && "border-primary shadow-[0_0_0_1px_#646cff]"
+          "flex border border-border-field rounded-md bg-surface-inset overflow-hidden box-border",
+          h && "border-primary shadow-[0_0_0_1px_#646cff]"
         ),
         style: { fontFamily: A, fontSize: z, lineHeight: R, height: n },
         children: [
@@ -496,7 +496,7 @@ function ye({
             "div",
             {
               "data-gutter": !0,
-              className: "text-right select-none border-r border-border overflow-hidden whitespace-pre bg-[#f8fafc] text-text-tertiary text-[11px]",
+              className: "text-right select-none border-r border-border overflow-hidden whitespace-pre bg-surface-panel text-text-tertiary text-[11px]",
               style: { width: ae, padding: `${j}px 6px`, fontFamily: A, lineHeight: R },
               children: N
             }
@@ -512,7 +512,7 @@ function ye({
               onBlur: () => u(!1),
               placeholder: l,
               readOnly: m,
-              "aria-label": h,
+              "aria-label": b,
               spellCheck: !1,
               autoCorrect: "off",
               autoCapitalize: "off",
@@ -552,7 +552,7 @@ function H(e, a) {
   return typeof c == "string" && c.length > 0 ? c : a.slice(0, 8);
 }
 function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
-  const { presenceUsers: d } = se(), { idToken: x } = X(), [m, w] = $(""), [h, f] = $(!1), [b, u] = $(0), [g, N] = $([]), r = F(null), n = F(null), y = _(() => {
+  const { presenceUsers: d } = se(), { idToken: x } = X(), [m, w] = $(""), [b, f] = $(!1), [h, u] = $(0), [g, N] = $([]), r = F(null), n = F(null), y = _(() => {
     const t = new Set(e), o = [];
     for (const p of d)
       t.has(p.clientId) || (t.add(p.clientId), o.push({
@@ -608,7 +608,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
       t.preventDefault(), u((o) => Math.max(o - 1, 0));
     else if (t.key === "Enter") {
       t.preventDefault();
-      const o = S[b];
+      const o = S[h];
       o ? i(o.userId) : m.trim() && i(m.trim());
     } else t.key === "Escape" ? f(!1) : t.key === "Backspace" && !m && e.length > 0 && E(e[e.length - 1]);
   }, D = (t) => {
@@ -655,13 +655,13 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
             n.current = setTimeout(() => f(!1), 120);
           },
           onKeyDown: C,
-          className: "w-full py-1.5 px-2.5 text-[13px] border border-[#e2e8f0] rounded-md font-[inherit] box-border outline-none"
+          className: "w-full py-1.5 px-2.5 text-[13px] border border-border rounded-md font-[inherit] box-border outline-none"
         }
       ),
-      h && !L && S.length > 0 && /* @__PURE__ */ s(
+      b && !L && S.length > 0 && /* @__PURE__ */ s(
         "div",
         {
-          className: "absolute top-full left-0 right-0 bg-white border border-[#e2e8f0] rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10",
+          className: "absolute top-full left-0 right-0 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10",
           onMouseDown: (t) => {
             t.preventDefault(), n.current && clearTimeout(n.current);
           },
@@ -670,7 +670,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
             {
               className: I(
                 "py-1.5 px-2.5 text-[13px] text-[#374151] cursor-pointer",
-                o === b ? "bg-[#f1f5f9]" : "bg-transparent"
+                o === h ? "bg-surface-hover" : "bg-transparent"
               ),
               onMouseEnter: () => u(o),
               onClick: () => {
@@ -678,7 +678,7 @@ function ve({ value: e, onChange: a, placeholder: c, maxSelect: l }) {
               },
               children: [
                 /* @__PURE__ */ s("span", { className: "font-medium", children: t.displayName }),
-                t.displayName !== t.userId && /* @__PURE__ */ s("span", { className: "text-[#94a3b8] ml-2 text-[11px] font-mono", children: t.userId.slice(0, 12) })
+                t.displayName !== t.userId && /* @__PURE__ */ s("span", { className: "text-text-tertiary ml-2 text-[11px] font-mono", children: t.userId.slice(0, 12) })
               ]
             },
             t.userId
@@ -709,15 +709,15 @@ function Ne({
   ariaLabel: m,
   className: w
 }) {
-  const h = Number.isFinite(e) ? Math.max(0, Math.min(1, e)) : 0, f = c ?? (h >= a ? "success" : "danger"), b = (x ?? B)(h);
+  const b = Number.isFinite(e) ? Math.max(0, Math.min(1, e)) : 0, f = c ?? (b >= a ? "success" : "danger"), h = (x ?? B)(b);
   return /* @__PURE__ */ v(
     "div",
     {
       role: "meter",
-      "aria-valuenow": h,
+      "aria-valuenow": b,
       "aria-valuemin": 0,
       "aria-valuemax": 1,
-      "aria-label": m ?? `Score ${b} (threshold ${B(a)})`,
+      "aria-label": m ?? `Score ${h} (threshold ${B(a)})`,
       className: I("flex w-full items-center gap-2", w),
       children: [
         /* @__PURE__ */ s(
@@ -731,12 +731,12 @@ function Ne({
               "div",
               {
                 className: I("absolute inset-y-0 left-0 rounded-full transition-[width]", le[f]),
-                style: { width: `${h * 100}%` }
+                style: { width: `${b * 100}%` }
               }
             )
           }
         ),
-        d ? /* @__PURE__ */ s("span", { className: "min-w-[2.5rem] shrink-0 text-right font-mono text-[11px] text-text-secondary", children: b }) : null
+        d ? /* @__PURE__ */ s("span", { className: "min-w-[2.5rem] shrink-0 text-right font-mono text-[11px] text-text-secondary", children: h }) : null
       ]
     }
   );
@@ -753,9 +753,9 @@ function ke({
   stroke: x = "currentColor",
   strokeWidth: m = 1.5,
   showLastPoint: w = !0,
-  showFill: h = !0,
+  showFill: b = !0,
   ariaLabel: f,
-  className: b
+  className: h
 }) {
   const u = e.filter((o) => Number.isFinite(o));
   if (u.length === 0)
@@ -766,7 +766,7 @@ function ke({
         "aria-label": f ?? "No trend data",
         className: I(
           "inline-flex items-center justify-center text-[10px] text-text-tertiary",
-          b
+          h
         ),
         style: { width: l, height: d },
         children: "—"
@@ -781,7 +781,7 @@ function ke({
     {
       role: "img",
       "aria-label": f ?? t,
-      className: I("inline-block align-middle text-text-secondary", b),
+      className: I("inline-block align-middle text-text-secondary", h),
       style: { width: l, height: d },
       children: /* @__PURE__ */ v(
         "svg",
@@ -792,7 +792,7 @@ function ke({
           height: d,
           className: "block",
           children: [
-            h ? /* @__PURE__ */ s("path", { d: C, fill: x, fillOpacity: 0.12, stroke: "none" }) : null,
+            b ? /* @__PURE__ */ s("path", { d: C, fill: x, fillOpacity: 0.12, stroke: "none" }) : null,
             /* @__PURE__ */ s(
               "path",
               {
@@ -817,11 +817,11 @@ function O(e) {
 export {
   ye as C,
   te as D,
-  be as F,
+  he as F,
   ge as I,
   we as P,
   Ne as S,
-  he as T,
+  be as T,
   ve as U,
   xe as a,
   ke as b,

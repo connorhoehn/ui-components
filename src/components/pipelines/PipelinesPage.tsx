@@ -602,7 +602,7 @@ export default function PipelinesPage() {
   return (
     <div
       data-testid="pipelines-page"
-      className="flex flex-col h-full overflow-hidden bg-[#fafbfc] font-inherit"
+      className="flex flex-col h-full overflow-hidden bg-surface-inset font-inherit"
     >
       {/* Header (sticky, 56px) */}
       <div

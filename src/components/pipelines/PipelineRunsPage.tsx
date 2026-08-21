@@ -232,8 +232,8 @@ export default function PipelineRunsPage() {
         {retryTarget && (
           <div className="flex flex-col gap-2.5">
             <div className="text-[13px] text-text-secondary">
-              Run <code className="bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs">{retryTarget.run.id.slice(0, 8)}</code> will restart from step{' '}
-              <code className="bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs">{retryTarget.nodeId.slice(0, 12)}{retryTarget.nodeId.length > 12 ? '…' : ''}</code>
+              Run <code className="bg-surface-inset px-1 py-px rounded-[3px] text-xs">{retryTarget.run.id.slice(0, 8)}</code> will restart from step{' '}
+              <code className="bg-surface-inset px-1 py-px rounded-[3px] text-xs">{retryTarget.nodeId.slice(0, 12)}{retryTarget.nodeId.length > 12 ? '…' : ''}</code>
               {' '}using the original upstream context.
             </div>
             {retryTarget.skippedNodes.length > 0 && (
@@ -243,7 +243,7 @@ export default function PipelineRunsPage() {
                 </div>
                 <div className="max-h-20 overflow-y-auto flex flex-wrap gap-1">
                   {retryTarget.skippedNodes.map((id) => (
-                    <span key={id} className="bg-[#fafbfc] border border-border rounded-[3px] px-1.5 py-px text-[11px] font-mono text-text-secondary">{id.slice(0, 10)}</span>
+                    <span key={id} className="bg-surface-inset border border-border rounded-[3px] px-1.5 py-px text-[11px] font-mono text-text-secondary">{id.slice(0, 10)}</span>
                   ))}
                 </div>
               </div>
@@ -258,7 +258,7 @@ export default function PipelineRunsPage() {
               Use persisted input snapshot
             </label>
             {retryError && (
-              <div data-testid="retry-modal-error" className="px-3 py-2 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b]">{retryError}</div>
+              <div data-testid="retry-modal-error" className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]">{retryError}</div>
             )}
           </div>
         )}

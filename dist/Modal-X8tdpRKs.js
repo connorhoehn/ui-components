@@ -1,5 +1,5 @@
 import { jsx as a, jsxs as A } from "react/jsx-runtime";
-import { useRef as y, useEffect as p } from "react";
+import { useRef as b, useEffect as p } from "react";
 import { createPortal as N } from "react-dom";
 import { c as v } from "./cn-B6yFEsav.js";
 const D = [
@@ -29,19 +29,19 @@ function K({
   zIndex: k = 1e4,
   rawChildren: j = !1
 }) {
-  const u = y(null), l = y(null);
+  const u = b(null), l = b(null);
   return p(() => {
     if (!n) return;
-    const s = typeof document < "u" ? document.activeElement : null;
-    l.current = s;
+    const i = typeof document < "u" ? document.activeElement : null;
+    l.current = i;
     const e = u.current;
     if (e) {
       const t = e.querySelector("[data-autofocus]");
       if (t)
         t.focus();
       else {
-        const i = x(e);
-        i.length > 0 ? i[0].focus() : (e.setAttribute("tabindex", "-1"), e.focus());
+        const s = x(e);
+        s.length > 0 ? s[0].focus() : (e.setAttribute("tabindex", "-1"), e.focus());
       }
     }
     return () => {
@@ -50,7 +50,7 @@ function K({
     };
   }, [n]), p(() => {
     if (!n) return;
-    const s = (e) => {
+    const i = (e) => {
       if (e.key === "Escape") {
         r();
         return;
@@ -58,19 +58,19 @@ function K({
       if (e.key !== "Tab") return;
       const t = u.current;
       if (!t) return;
-      const i = x(t);
-      if (i.length === 0) {
+      const s = x(t);
+      if (s.length === 0) {
         e.preventDefault();
         return;
       }
-      const f = i[0], b = i[i.length - 1], o = document.activeElement;
+      const f = s[0], y = s[s.length - 1], o = document.activeElement;
       if (!o || !t.contains(o)) {
         e.preventDefault(), f.focus();
         return;
       }
-      e.shiftKey && o === f ? (e.preventDefault(), b.focus()) : !e.shiftKey && o === b && (e.preventDefault(), f.focus());
+      e.shiftKey && o === f ? (e.preventDefault(), y.focus()) : !e.shiftKey && o === y && (e.preventDefault(), f.focus());
     };
-    return window.addEventListener("keydown", s), () => window.removeEventListener("keydown", s);
+    return window.addEventListener("keydown", i), () => window.removeEventListener("keydown", i);
   }, [n, r]), n ? N(
     /* @__PURE__ */ a(
       "div",
@@ -92,10 +92,10 @@ function K({
               "bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]"
             ),
             style: { maxWidth: h, ...w },
-            onClick: (s) => s.stopPropagation(),
+            onClick: (i) => i.stopPropagation(),
             children: [
               c && /* @__PURE__ */ a("div", { className: "text-base font-semibold text-text-primary mb-2.5", children: c }),
-              j ? d : /* @__PURE__ */ a("div", { className: "text-[13px] text-[#475569]", children: d }),
+              j ? d : /* @__PURE__ */ a("div", { className: "text-[13px] text-text-secondary", children: d }),
               m && /* @__PURE__ */ a("div", { className: "flex gap-2 justify-end mt-5", children: m })
             ]
           }

@@ -163,7 +163,7 @@ export default function DiffStepTable({ runA, runB, def }: DiffStepTableProps) {
               row.onlyInA || row.onlyInB
                 ? 'bg-[#fefce8]'
                 : row.statusDiffers
-                  ? 'bg-[#fef2f2]'
+                  ? 'bg-danger-bg'
                   : undefined,
             )}
             data-testid={`diff-step-row-${row.nodeId}`}
@@ -216,7 +216,7 @@ export default function DiffStepTable({ runA, runB, def }: DiffStepTableProps) {
             </td>
             <td className="border-b border-border px-3 py-2.5 align-top font-mono text-xs text-text-primary">
               {row.statusDiffers && (
-                <div className="text-[11px] font-semibold text-[#dc2626]">
+                <div className="text-[11px] font-semibold text-danger-fg">
                   status differs
                 </div>
               )}
@@ -227,8 +227,8 @@ export default function DiffStepTable({ runA, runB, def }: DiffStepTableProps) {
                     row.durationDelta === 0
                       ? 'text-text-tertiary'
                       : row.durationDelta < 0
-                        ? 'text-[#16a34a]'
-                        : 'text-[#dc2626]',
+                        ? 'text-success-fg'
+                        : 'text-danger-fg',
                   )}
                 >
                   {formatDelta(row.durationDelta)}
@@ -238,7 +238,7 @@ export default function DiffStepTable({ runA, runB, def }: DiffStepTableProps) {
                 <div
                   className={cn(
                     'mt-0.5 text-[10px]',
-                    row.tokenDelta < 0 ? 'text-[#16a34a]' : 'text-[#dc2626]',
+                    row.tokenDelta < 0 ? 'text-success-fg' : 'text-danger-fg',
                   )}
                 >
                   {row.tokenDelta > 0 ? '+' : ''}{row.tokenDelta} tok

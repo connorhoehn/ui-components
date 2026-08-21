@@ -269,7 +269,7 @@ export default function SourceDetailPage() {
             Back to Sources
           </button>
         </div>
-        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
+        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
           <span className="text-[13px] font-medium">Failed to load source: {error}</span>
           <button
             onClick={() => void fetchSource()}
@@ -336,7 +336,7 @@ export default function SourceDetailPage() {
 
       {/* Error banner (non-blocking) */}
       {error && (
-        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
+        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3" role="alert">
           <span className="text-[13px] font-medium">{error}</span>
           <button
             onClick={() => setError(null)}
@@ -402,7 +402,7 @@ export default function SourceDetailPage() {
               'px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]',
               syncing || source.status === 'paused'
                 ? 'border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed'
-                : 'border border-primary bg-[#eff6ff] text-primary',
+                : 'border border-primary bg-info-bg text-primary',
             )}
             disabled={syncing || source.status === 'paused'}
             onClick={() => void handleSync()}

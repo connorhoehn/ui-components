@@ -66,7 +66,7 @@ function DeleteModal({ name, onConfirm, onCancel }: {
         onClick={e => e.stopPropagation()}
       >
         <div className="text-[17px] font-bold text-text-primary mb-2">Delete data type?</div>
-        <p className="text-[13px] text-[#64748b] mb-5">
+        <p className="text-[13px] text-neutral mb-5">
           <strong>{name}</strong> will be removed. Document types that reference it will keep their existing sections, but this type won't appear in the picker for new sections.
         </p>
         <div className="flex justify-end gap-2">
@@ -78,7 +78,7 @@ function DeleteModal({ name, onConfirm, onCancel }: {
           <button
             data-testid="confirm-delete"
             onClick={onConfirm}
-            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-[#dc2626] border border-[#fca5a5]"
+            className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-white text-danger-fg border border-[#fca5a5]"
           >Delete</button>
         </div>
       </div>
@@ -106,13 +106,13 @@ function StepIndicator({ step }: { step: 1 | 2 }) {
               'w-[26px] h-[26px] rounded-full shrink-0 flex items-center justify-center text-xs font-bold border-2',
               done && 'bg-primary text-white border-transparent',
               active && 'bg-[#ede9fe] text-[#4c1d95] border-primary',
-              !done && !active && 'bg-[#f1f5f9] text-[#94a3b8] border-transparent',
+              !done && !active && 'bg-surface-hover text-text-tertiary border-transparent',
             )}>
               {done ? '✓' : n}
             </div>
             <span className={cn(
               'ml-1.5 text-xs whitespace-nowrap',
-              active ? 'font-semibold text-text-primary' : 'font-normal text-[#94a3b8]',
+              active ? 'font-semibold text-text-primary' : 'font-normal text-text-tertiary',
             )}>
               {label}
             </span>
@@ -147,7 +147,7 @@ function Step1({
     <div className="flex flex-col gap-5">
       <div>
         <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
-          Label <span className="text-[#dc2626]">*</span>
+          Label <span className="text-danger-fg">*</span>
         </span>
         <Input
           data-testid="name-input"
@@ -157,7 +157,7 @@ function Step1({
           maxLength={80}
           autoFocus
         />
-        {nameError && <div className="text-[#dc2626] text-xs mt-1">{nameError}</div>}
+        {nameError && <div className="text-danger-fg text-xs mt-1">{nameError}</div>}
       </div>
 
       <div>
@@ -174,7 +174,7 @@ function Step1({
 
       <div>
         <span className="block text-xs font-semibold text-[#374151] mb-[5px]">
-          Field type <span className="font-normal text-[#94a3b8]">— what kind of data this field stores</span>
+          Field type <span className="font-normal text-text-tertiary">— what kind of data this field stores</span>
         </span>
 
         {/* Drupal-style select */}
@@ -197,10 +197,10 @@ function Step1({
 
         {/* Description of selected type */}
         {selected && (
-          <div className="mt-2.5 py-2.5 px-3.5 rounded-[7px] bg-[#f8fafc] border border-border text-[13px] text-[#475569]">
+          <div className="mt-2.5 py-2.5 px-3.5 rounded-[7px] bg-surface-panel border border-border text-[13px] text-text-secondary">
             <strong className="text-text-primary">{selected.label}</strong> — {selected.description}
             {selected.rendererBase && (
-              <span className="ml-2 text-[11px] text-[#94a3b8]">
+              <span className="ml-2 text-[11px] text-text-tertiary">
                 · renders with: {selected.rendererBase}
               </span>
             )}
@@ -261,13 +261,13 @@ function Step2({
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="m-0 mb-4 text-[13px] text-[#64748b]">
+      <p className="m-0 mb-4 text-[13px] text-neutral">
         Configure which view modes this field appears in and which renderer to use.
       </p>
 
       <div className="border border-border rounded-[10px] overflow-hidden">
         {/* Header */}
-        <div className="grid grid-cols-4 bg-[#f8fafc] border-b border-border">
+        <div className="grid grid-cols-4 bg-surface-panel border-b border-border">
           <div className="py-2.5 px-4 text-[13px] font-bold text-text-primary">Field</div>
           {VIEW_MODES.map(m => (
             <div key={m.key} className="py-2.5 px-4 text-[13px] font-bold text-text-primary">{m.label}</div>
@@ -279,7 +279,7 @@ function Step2({
           {/* Field cell */}
           <div className="px-4">
             <div className="text-sm font-semibold text-text-primary">{fieldLabel}</div>
-            <div className="text-[11px] text-[#94a3b8] mt-0.5">{prim?.label ?? primitiveType}</div>
+            <div className="text-[11px] text-text-tertiary mt-0.5">{prim?.label ?? primitiveType}</div>
           </div>
 
           {/* Mode cells */}
@@ -304,7 +304,7 @@ function Step2({
                   />
                 )}
                 {isVisible && options.length === 0 && (
-                  <span className="text-xs text-[#94a3b8] italic">Default</span>
+                  <span className="text-xs text-text-tertiary italic">Default</span>
                 )}
               </div>
             );
@@ -390,7 +390,7 @@ function DataTypeForm({ initial, onSave, onCancel }: DataTypeFormProps) {
         <button
           type="button"
           onClick={onCancel}
-          className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-[#64748b]"
+          className="py-[7px] px-4 text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral"
         >Cancel</button>
         <div className="flex gap-2">
           {step === 2 && (
@@ -454,7 +454,7 @@ function TypeListItem({
         <div className="text-[13px] font-semibold text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
           {label}
         </div>
-        <div className="text-[11px] text-[#94a3b8] overflow-hidden text-ellipsis whitespace-nowrap">
+        <div className="text-[11px] text-text-tertiary overflow-hidden text-ellipsis whitespace-nowrap">
           {primitiveLabel}
         </div>
       </div>
@@ -478,7 +478,7 @@ function IdlePanel({ onCreateNew }: { onCreateNew: () => void }) {
   return (
     <div className="h-full flex flex-col items-center justify-center py-10 px-6 text-center">
       <div className="text-base font-semibold text-[#374151] mb-2">Data Types</div>
-      <div className="text-[13px] text-[#94a3b8] max-w-[360px] mb-6 leading-relaxed">
+      <div className="text-[13px] text-text-tertiary max-w-[360px] mb-6 leading-relaxed">
         Data types define the primitive storage type a document section holds — Text, Long text, Integer, Boolean, and more.
         Create custom types to give sections distinct labels and display configuration.
       </div>
@@ -538,7 +538,7 @@ export default function FieldTypesPage() {
     <div className="flex h-full min-h-0 relative">
 
       {/* Left sidebar */}
-      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-y-auto bg-[#fafbfc]">
+      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-y-auto bg-surface-inset">
         <div className="py-4 px-3.5 pb-2.5 flex items-center justify-between">
           <span className="text-[13px] font-bold text-[#374151]">Data Types</span>
           <button
@@ -553,7 +553,7 @@ export default function FieldTypesPage() {
 
         <div className="px-2 py-1 flex-1">
           {customTypes.length === 0 ? (
-            <div className="py-5 px-3 text-center text-[#94a3b8] text-xs">
+            <div className="py-5 px-3 text-center text-text-tertiary text-xs">
               No custom data types yet.
             </div>
           ) : (
@@ -575,7 +575,7 @@ export default function FieldTypesPage() {
           <div
             key={saveMessage.key}
             data-testid="save-banner"
-            className="py-2 px-3.5 border-t border-[#bbf7d0] bg-[#f0fdf4] text-xs text-[#16a34a] font-medium"
+            className="py-2 px-3.5 border-t border-success-border bg-success-bg text-xs text-success-fg font-medium"
           >
             ✓ {saveMessage.text}
           </div>

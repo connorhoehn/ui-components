@@ -144,7 +144,7 @@ function CollapsibleSection({
   return (
     <div>
       <div
-        className="text-[11px] font-bold uppercase tracking-[0.5px] text-[#64748b] m-0 cursor-pointer flex items-center gap-1.5 select-none py-2"
+        className="text-[11px] font-bold uppercase tracking-[0.5px] text-neutral m-0 cursor-pointer flex items-center gap-1.5 select-none py-2"
         onClick={() => setExpanded(v => !v)}
         role="button"
         tabIndex={0}
@@ -161,7 +161,7 @@ function CollapsibleSection({
         {emoji && <span className="text-xs">{emoji}</span>}
         <span>{title}</span>
         {typeof count === 'number' && count > 0 && (
-          <span className="ml-1 text-[10px] font-semibold text-[#64748b] bg-border rounded-lg px-1.5 py-px tracking-normal normal-case">
+          <span className="ml-1 text-[10px] font-semibold text-neutral bg-border rounded-lg px-1.5 py-px tracking-normal normal-case">
             {count}
           </span>
         )}
@@ -220,7 +220,7 @@ export function CollapsibleSidebar({
         <span
           className={cn(
             'text-[13px] font-medium font-sans',
-            isConnected ? 'text-[#16a34a]' : 'text-[#dc2626]'
+            isConnected ? 'text-success-fg' : 'text-danger-fg'
           )}
         >
           {isConnected ? 'Connected' : connectionState === 'connecting' || connectionState === 'reconnecting' ? 'Connecting...' : 'Disconnected'}
@@ -229,14 +229,14 @@ export function CollapsibleSidebar({
           {isConnected ? (
             <button
               onClick={onDisconnect}
-              className="text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-[#64748b] cursor-pointer font-sans"
+              className="text-[11px] px-2 py-0.5 border border-border rounded bg-surface text-neutral cursor-pointer font-sans"
             >
               Disconnect
             </button>
           ) : (
             <button
               onClick={onReconnect}
-              className="text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-[#2563eb] cursor-pointer font-sans"
+              className="text-[11px] px-2 py-0.5 border border-[#3b82f6] rounded bg-info-bg text-info-fg cursor-pointer font-sans"
             >
               Reconnect
             </button>
@@ -390,7 +390,7 @@ export function CollapsibleSidebar({
                       tabIndex={0}
                       onClick={onSeeAllPipelines}
                       onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
-                      className="text-[11px] text-[#2563eb] not-italic cursor-pointer ml-2"
+                      className="text-[11px] text-info-fg not-italic cursor-pointer ml-2"
                     >
                       + New
                     </span>
@@ -430,7 +430,7 @@ export function CollapsibleSidebar({
                   tabIndex={0}
                   onClick={onSeeAllPipelines}
                   onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
-                  className="px-1 py-1 text-[11px] text-[#2563eb] cursor-pointer font-sans"
+                  className="px-1 py-1 text-[11px] text-info-fg cursor-pointer font-sans"
                 >
                   See all pipelines {'→'}
                 </div>

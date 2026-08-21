@@ -366,7 +366,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
           <button
             type="button"
             onClick={onClose}
-            className="py-1.5 px-3 text-[13px] bg-none border-none text-[#64748b] cursor-pointer font-[inherit]"
+            className="py-1.5 px-3 text-[13px] bg-none border-none text-neutral cursor-pointer font-[inherit]"
           >
             Close
           </button>
@@ -374,14 +374,14 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
             type="button"
             onClick={handleEmit}
             data-testid="sim-emit-button"
-            className="py-[7px] px-4 text-[13px] font-semibold bg-[#2563eb] text-white border-none rounded-[7px] cursor-pointer font-[inherit]"
+            className="py-[7px] px-4 text-[13px] font-semibold bg-info text-white border-none rounded-[7px] cursor-pointer font-[inherit]"
           >
             ▶ Emit
           </button>
         </>
       }
     >
-      <div className="text-xs text-[#92400e] bg-[#fef3c7] border border-[#fde68a] rounded-md py-2 px-2.5 mb-3.5 leading-[1.45]">
+      <div className="text-xs text-[#92400e] bg-[#fef3c7] border border-warning-border rounded-md py-2 px-2.5 mb-3.5 leading-[1.45]">
         Dev only — requires <code>DCORE_ENABLE_TEST_EMIT=1</code> on the
         gateway. Emits fake events onto the pipelineEventSource to exercise
         the frontend without a real pipeline executor.
@@ -406,7 +406,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
               type="button"
               data-testid="sim-history-clear"
               onClick={handleClearHistory}
-              className="text-[11px] bg-none border-none text-[#64748b] cursor-pointer p-0 underline font-[inherit]"
+              className="text-[11px] bg-none border-none text-neutral cursor-pointer p-0 underline font-[inherit]"
             >
               Clear history
             </button>
@@ -416,21 +416,21 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
             push the modal taller than the viewport. The Modal shell itself
             has no overflow handling, so we cap height here.
           */}
-          <ul className="list-none m-0 p-0 max-h-[180px] overflow-y-auto border border-[#e2e8f0] rounded-md bg-[#f8fafc]">
+          <ul className="list-none m-0 p-0 max-h-[180px] overflow-y-auto border border-border rounded-md bg-surface-panel">
             {history.map((entry, idx) => (
               <li
                 key={`${entry.ts}-${idx}`}
                 data-testid="sim-history-row"
                 className={cn(
                   'flex items-center justify-between gap-2 py-1.5 px-2 text-xs',
-                  idx !== history.length - 1 && 'border-b border-[#e2e8f0]',
+                  idx !== history.length - 1 && 'border-b border-border',
                 )}
               >
-                <span className="text-[#94a3b8] tabular-nums min-w-[64px]">
+                <span className="text-text-tertiary tabular-nums min-w-[64px]">
                   {formatRelative(now, entry.ts)}
                 </span>
                 <span
-                  className="flex-1 text-[#0f172a] font-mono overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="flex-1 text-text-primary font-mono overflow-hidden text-ellipsis whitespace-nowrap"
                   title={entry.eventType}
                 >
                   {entry.eventType}
@@ -439,7 +439,7 @@ function SimulatorPanelInner({ open, onClose }: SimulatorPanelProps) {
                   type="button"
                   data-testid="sim-history-refire"
                   onClick={() => handleRefire(entry)}
-                  className="text-[11px] py-[3px] px-2 bg-white border border-[#cbd5e1] rounded cursor-pointer font-[inherit] text-[#334155]"
+                  className="text-[11px] py-[3px] px-2 bg-white border border-border-emphasis rounded cursor-pointer font-[inherit] text-[#334155]"
                 >
                   ↻ re-fire
                 </button>

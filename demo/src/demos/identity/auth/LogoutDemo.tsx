@@ -20,7 +20,7 @@ export default function LogoutDemo() {
   onCancel={() => { ... }}
 />`}
       >
-        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[380px]">
+        <div className="border border-border rounded-lg overflow-hidden h-[380px]">
           <LogoutPage
             clientName="Acme Application"
             onConfirm={() => {
@@ -41,7 +41,7 @@ export default function LogoutDemo() {
   onConfirm={() => { ... }}
 />`}
       >
-        <div className="border border-[#e2e8f0] rounded-lg overflow-hidden h-[380px]">
+        <div className="border border-border rounded-lg overflow-hidden h-[380px]">
           <LogoutPage
             onConfirm={() => {
               console.log('[LogoutDemo] Logged out');

@@ -242,19 +242,19 @@ export default function DocumentListPage({
                     </span>
                     <StatusBadge status={doc.status} />
                     {doc.type && (
-                      <span className={cn('inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-[#f1f5f9] text-text-secondary whitespace-nowrap shrink-0')}>
+                      <span className={cn('inline-block px-2 py-px text-[11px] font-semibold rounded-full bg-surface-hover text-text-secondary whitespace-nowrap shrink-0')}>
                         {doc.type}
                       </span>
                     )}
                     {doc.activeCallSessionId && (
                       <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] leading-[18px]')}>
-                        <span className={cn('w-1.5 h-1.5 rounded-full bg-[#16a34a] animate-pulse')} />
+                        <span className={cn('w-1.5 h-1.5 rounded-full bg-success animate-pulse')} />
                         Live Call
                       </span>
                     )}
                   </div>
                   {doc.description && (
-                    <div className={cn('text-[13px] text-[#64748b] overflow-hidden text-ellipsis whitespace-nowrap mb-0.5')}>
+                    <div className={cn('text-[13px] text-neutral overflow-hidden text-ellipsis whitespace-nowrap mb-0.5')}>
                       {doc.description}
                     </div>
                   )}
@@ -278,7 +278,7 @@ export default function DocumentListPage({
                   <button
                     onClick={(e) => handleDelete(e, doc.id, doc.title)}
                     title="Delete document"
-                    className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-[#dc2626] text-sm leading-none cursor-pointer font-[inherit] p-0')}
+                    className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-[#fee2e2] text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0')}
                   >
                     &#215;
                   </button>
@@ -301,7 +301,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage <= 1 ? 'bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage <= 1 ? 'bg-surface-hover text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
             )}
           >
             Previous
@@ -318,7 +318,7 @@ export default function DocumentListPage({
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             className={cn(
               'px-3.5 py-1.5 text-[13px] font-semibold font-[inherit] border border-border rounded-md',
-              safeCurrentPage >= totalPages ? 'bg-[#f1f5f9] text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
+              safeCurrentPage >= totalPages ? 'bg-surface-hover text-[#9ca3af] cursor-not-allowed' : 'bg-white text-text-secondary cursor-pointer',
             )}
           >
             Next

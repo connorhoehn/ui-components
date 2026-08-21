@@ -125,8 +125,8 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
                 className={cn(
                   'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-[1.4] whitespace-nowrap',
                   a.type === 'role'
-                    ? 'bg-[#fffbeb] text-[#d97706]'
-                    : 'bg-[#eff6ff] text-[#2563eb]',
+                    ? 'bg-warning-bg text-warning-fg'
+                    : 'bg-info-bg text-info-fg',
                 )}
               >
                 {a.type === 'role' ? '🎖' : '👤'} {a.value}

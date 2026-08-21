@@ -47,23 +47,23 @@ export default function LogFilterBar({
   const [filterOpen, setFilterOpen] = useState(false);
 
   return (
-    <div className="h-10 px-3 flex items-center gap-2.5 border-b border-[#e2e8f0] shrink-0">
+    <div className="h-10 px-3 flex items-center gap-2.5 border-b border-border shrink-0">
       {!inFullscreen ? (
         <button
           type="button"
-          className="w-6 h-6 p-0 border-none bg-transparent text-[#64748b] cursor-pointer text-xs leading-none font-inherit"
+          className="w-6 h-6 p-0 border-none bg-transparent text-neutral cursor-pointer text-xs leading-none font-inherit"
           onClick={onToggleExpand}
           aria-label={expanded ? 'Collapse log' : 'Expand log'}
         >
           {expanded ? '▾' : '▸'}
         </button>
       ) : null}
-      <div className="flex-1 text-xs text-[#475569]">{statusLabel}</div>
+      <div className="flex-1 text-xs text-text-secondary">{statusLabel}</div>
 
       {/* Export button */}
       <button
         type="button"
-        className="px-2.5 py-1 text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+        className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
         onClick={onExport}
         disabled={rowCount === 0}
         title="Download event log as JSON"
@@ -75,13 +75,13 @@ export default function LogFilterBar({
       <div className="relative">
         <button
           type="button"
-          className="px-2.5 py-1 text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+          className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={() => setFilterOpen((x) => !x)}
         >
           {FILTER_LABEL[filter]} {'▾'}
         </button>
         {filterOpen ? (
-          <div className="absolute right-0 bottom-full mb-1 bg-white border border-[#e2e8f0] rounded-md shadow-lg z-[3] min-w-[140px]">
+          <div className="absolute right-0 bottom-full mb-1 bg-white border border-border rounded-md shadow-lg z-[3] min-w-[140px]">
             {(Object.keys(FILTER_LABEL) as LogFilter[]).map((key) => (
               <button
                 type="button"
@@ -91,8 +91,8 @@ export default function LogFilterBar({
                   setFilterOpen(false);
                 }}
                 className={cn(
-                  'block w-full text-left px-3 py-2 text-xs border-none text-[#0f172a] cursor-pointer font-inherit',
-                  filter === key ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                  'block w-full text-left px-3 py-2 text-xs border-none text-text-primary cursor-pointer font-inherit',
+                  filter === key ? 'bg-surface-hover' : 'bg-transparent',
                 )}
               >
                 {FILTER_LABEL[key]}
@@ -104,7 +104,7 @@ export default function LogFilterBar({
 
       <button
         type="button"
-        className="px-2.5 py-1 text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+        className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
         onClick={onClear}
         title="Clear log"
       >
@@ -113,7 +113,7 @@ export default function LogFilterBar({
       {inFullscreen ? (
         <button
           type="button"
-          className="px-2.5 py-1 text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+          className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={onFullscreenToggle}
           aria-label="Close fullscreen log"
           data-testid="execution-log-fullscreen-close"
@@ -124,7 +124,7 @@ export default function LogFilterBar({
       ) : (
         <button
           type="button"
-          className="px-2.5 py-1 text-[11px] font-semibold bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit"
+          className="px-2.5 py-1 text-[11px] font-semibold bg-surface-hover text-text-secondary border border-border rounded-md cursor-pointer font-inherit"
           onClick={onFullscreenToggle}
           aria-label="Fullscreen log"
           data-testid="execution-log-fullscreen-btn"

@@ -56,7 +56,7 @@ function DeleteConfirmModal({
         <button
           data-testid="confirm-delete"
           onClick={onConfirm}
-          className="py-[7px] px-[18px] text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-[7px] cursor-pointer font-inherit"
+          className="py-[7px] px-[18px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-inherit"
         >
           Delete
         </button>
@@ -65,7 +65,7 @@ function DeleteConfirmModal({
       <div className="text-base font-semibold text-text-primary mb-2.5">
         Delete document type?
       </div>
-      <p className="text-[13px] text-[#64748b] m-0">
+      <p className="text-[13px] text-neutral m-0">
         <strong>"{typeName}"</strong> will be permanently removed. Documents already
         created from this type are unaffected.
       </p>
@@ -103,7 +103,7 @@ function TypeListItem({
         <div className="text-[13px] font-medium text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
           {type.name}
         </div>
-        <div className="text-[11px] text-[#94a3b8]">
+        <div className="text-[11px] text-text-tertiary">
           {type.fields.length} field{type.fields.length !== 1 ? 's' : ''}
         </div>
       </div>
@@ -113,7 +113,7 @@ function TypeListItem({
         title="Edit type"
         className={cn(
           'border border-transparent cursor-pointer text-xs px-2 py-[3px] shrink-0 leading-none rounded font-semibold font-inherit hover:bg-[#ede9fe] hover:text-[#4c1d95]',
-          active ? 'bg-[#c4b5fd] text-[#4c1d95]' : 'bg-transparent text-[#94a3b8]',
+          active ? 'bg-[#c4b5fd] text-[#4c1d95]' : 'bg-transparent text-text-tertiary',
         )}
       >
         Edit
@@ -223,7 +223,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
     <div className="flex h-full overflow-hidden font-inherit">
 
       {/* -- Left sidebar -- */}
-      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-[#fafbfc]">
+      <div className="w-[264px] shrink-0 border-r border-border flex flex-col overflow-hidden bg-surface-inset">
         {/* Header */}
         <div className="py-3.5 px-4 border-b border-border flex items-center justify-between">
           <span className="text-[13px] font-bold text-[#374151]">
@@ -251,7 +251,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
         <div className="flex-1 overflow-y-auto p-2" data-testid="type-list">
           {types.length === 0 ? (
             <div className="py-8 px-4 flex flex-col items-center gap-2">
-              <div className="text-[#94a3b8] text-[13px]">No types yet.</div>
+              <div className="text-text-tertiary text-[13px]">No types yet.</div>
               <button
                 onClick={handleCreateClick}
                 className="bg-transparent border-none text-primary text-[13px] font-medium cursor-pointer py-1 px-2 font-inherit"
@@ -277,7 +277,7 @@ export function DocumentTypesPage({ idToken }: DocumentTypesPageProps = {}) {
           <div
             key={saveMessage.key}
             data-testid="save-message"
-            className="py-2 px-3.5 border-t border-[#bbf7d0] bg-[#f0fdf4] text-xs text-[#16a34a] font-medium"
+            className="py-2 px-3.5 border-t border-success-border bg-success-bg text-xs text-success-fg font-medium"
           >
             ✓ {saveMessage.text}{saveMessage.syncSuffix ?? ''}
           </div>

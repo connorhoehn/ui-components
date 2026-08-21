@@ -45,7 +45,7 @@ export default function CanvasToolbar({
       <button
         type="button"
         onClick={handleAutoArrange}
-        className="absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none"
+        className="absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none"
         title="Auto-arrange (Shift+A)"
         aria-label="Auto-arrange"
         data-testid="auto-arrange-btn"
@@ -62,7 +62,7 @@ export default function CanvasToolbar({
       <button
         type="button"
         onClick={handleFitView}
-        className="absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none"
+        className="absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none"
         title="Fit view"
         aria-label="Fit view"
       >

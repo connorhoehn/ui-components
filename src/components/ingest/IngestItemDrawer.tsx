@@ -335,7 +335,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
           {item.error && (
             <div className="flex flex-col gap-2">
               <div className="text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">Error</div>
-              <div className="bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
+              <div className="bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
                 {item.error}
               </div>
             </div>
@@ -343,7 +343,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
 
           {/* Inline remap error */}
           {remapError && (
-            <div className="bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
+            <div className="bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words">
               Re-map failed: {remapError}
             </div>
           )}
@@ -382,7 +382,7 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
               'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer',
               busy || item.status === 'done'
                 ? 'bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed'
-                : 'bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)]',
+                : 'bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]',
             )}
             onClick={() => void handleSkip()}
             disabled={!!busy || item.status === 'done'}

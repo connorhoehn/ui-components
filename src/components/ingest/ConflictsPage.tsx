@@ -127,7 +127,7 @@ export default function ConflictsPage() {
 
       {usingMock && (
         <div
-          className="px-3.5 py-2.5 bg-[#fffbeb] border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3"
+          className="px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3"
           data-testid="conflicts-mock-banner"
         >
           Showing mock conflicts &mdash; backend endpoint <code>/api/sync/conflicts</code> not implemented yet.
@@ -135,7 +135,7 @@ export default function ConflictsPage() {
       )}
 
       {error && !usingMock && (
-        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3" role="alert">
+        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3" role="alert">
           <span className="text-[13px]">Failed to load conflicts: {error}</span>
         </div>
       )}
@@ -254,7 +254,7 @@ export default function ConflictsPage() {
                 />
                 <button
                   className={cn(
-                    'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)]',
+                    'px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]',
                     submitting && 'opacity-50 cursor-not-allowed',
                   )}
                   onClick={() => void handleDiscard()}

@@ -430,7 +430,7 @@ function AppLayoutInner({
     'px-3.5 py-1.5 border-none rounded-md cursor-pointer font-[inherit] transition-[background,color] duration-[120ms] ease-in-out',
     isActive
       ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
-      : 'bg-transparent text-[#64748b] font-medium hover:bg-surface-hover'
+      : 'bg-transparent text-neutral font-medium hover:bg-surface-hover'
   );
 
   // Sub-nav tab class
@@ -438,7 +438,7 @@ function AppLayoutInner({
     'px-3 py-[5px] border-none rounded-md cursor-pointer font-[inherit] text-[0.8125rem] transition-[background,color] duration-[120ms] ease-in-out',
     isActive
       ? 'bg-[#e0e7ff] text-[#1e1b4b] font-semibold'
-      : 'bg-transparent text-[#64748b] font-medium hover:bg-surface-hover'
+      : 'bg-transparent text-neutral font-medium hover:bg-surface-hover'
   );
 
   return (
@@ -459,7 +459,7 @@ function AppLayoutInner({
         {/* Center: connection status + active room/channel */}
         <div className="flex items-center gap-4 flex-1 justify-center">
           <ConnectionStatus state={connectionState} />
-          <span className="text-sm text-[#64748b] font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1">
+          <span className="text-sm text-neutral font-mono bg-surface-hover border border-border rounded-md px-2.5 py-1">
             {rooms.find(r => r.roomId === activeRoomId)?.name ?? currentChannel}
           </span>
         </div>
@@ -467,7 +467,7 @@ function AppLayoutInner({
         {/* Right: user email + sign out + hamburger menu */}
         <div className="flex items-center gap-3 shrink-0">
           {userEmail && (
-            <span className="text-sm text-[#64748b]">
+            <span className="text-sm text-neutral">
               {userEmail}
             </span>
           )}
@@ -482,7 +482,7 @@ function AppLayoutInner({
             <button
               onClick={() => setShowAppMenu(v => !v)}
               className={cn(
-                'border border-border rounded-md px-2 py-1 cursor-pointer text-base text-[#64748b] leading-none',
+                'border border-border rounded-md px-2 py-1 cursor-pointer text-base text-neutral leading-none',
                 showAppMenu ? 'bg-surface-hover' : 'bg-none'
               )}
               title="Menu"
@@ -739,7 +739,7 @@ function AppLayoutInner({
                             'px-3 py-1.5 border-none bg-none cursor-pointer font-[inherit] text-[0.8125rem]',
                             isActive
                               ? 'border-b-2 border-b-primary text-text-primary font-semibold'
-                              : 'border-b-2 border-b-transparent text-[#64748b] font-normal'
+                              : 'border-b-2 border-b-transparent text-neutral font-normal'
                           )}
                         >
                           {label}

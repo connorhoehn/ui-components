@@ -59,7 +59,7 @@ export default function InstallationPage() {
           ].map(([pkg, version]) => (
             <tr className="border-b border-surface-hover" key={pkg}>
               <td className="py-2 px-3 font-mono text-[13px]">{pkg}</td>
-              <td className="py-2 px-3 text-[#64748b]">{version}</td>
+              <td className="py-2 px-3 text-neutral">{version}</td>
             </tr>
           ))}
         </tbody>

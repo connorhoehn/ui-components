@@ -28,7 +28,7 @@ export function DisconnectReconnect({ connectionState, onDisconnect, onReconnect
           'px-3 py-1.5 border rounded font-mono text-sm',
           isDisconnected
             ? 'bg-[#f3f4f6] text-[#9ca3af] border-border-field cursor-not-allowed'
-            : 'bg-[#fee2e2] text-[#dc2626] border-[#fca5a5] cursor-pointer'
+            : 'bg-[#fee2e2] text-danger-fg border-[#fca5a5] cursor-pointer'
         )}
       >
         Disconnect

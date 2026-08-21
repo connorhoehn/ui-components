@@ -87,7 +87,7 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
   if (!editor) return null;
 
   return (
-    <div className={cn('flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-[#f8fafc] rounded-t-lg')}>
+    <div className={cn('flex flex-wrap gap-1 px-2 py-1.5 border-b border-border bg-surface-panel rounded-t-lg')}>
       {buttons.map((btn) => {
         const active = btn.isActive(editor);
         return (
@@ -96,7 +96,7 @@ export default function EditorToolbar({ editor }: EditorToolbarProps) {
             type="button"
             onClick={() => btn.action(editor)}
             className={cn(
-              'px-2 py-1 text-xs font-[inherit] border border-[#cbd5e1] rounded cursor-pointer leading-snug',
+              'px-2 py-1 text-xs font-[inherit] border border-border-emphasis rounded cursor-pointer leading-snug',
               active ? 'bg-[#3b82f6] text-white' : 'bg-white text-[#334155]',
             )}
             title={btn.label}

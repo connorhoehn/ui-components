@@ -32,7 +32,7 @@ export interface EditorModalsProps {
 }
 
 const cancelBtnClass = 'px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit]';
-const dangerBtnClass = 'px-4 py-[7px] text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-[7px] cursor-pointer font-[inherit]';
+const dangerBtnClass = 'px-4 py-[7px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-[inherit]';
 
 export default function EditorModals(props: EditorModalsProps) {
   const {
@@ -91,7 +91,7 @@ export default function EditorModals(props: EditorModalsProps) {
             <>
               <br />
               <br />
-              <span className="text-[#dc2626]">
+              <span className="text-danger-fg">
                 Pipeline has {validationErrorCount} validation error
                 {validationErrorCount === 1 ? '' : 's'}. Fix them before
                 publishing.

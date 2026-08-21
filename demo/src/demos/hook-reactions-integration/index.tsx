@@ -198,7 +198,7 @@ export default function HookReactionsIntegrationDemo() {
       <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         ReactionButtons + ReactionsOverlay + useReactions
       </h2>
-      <p className="text-[14px] text-[#64748b] mb-2 leading-[1.6]">
+      <p className="text-[14px] text-neutral mb-2 leading-[1.6]">
         <code className="bg-surface-hover rounded py-[1px] px-[6px] font-mono">
           {'<ReactionButtons>'}
         </code>{' '}

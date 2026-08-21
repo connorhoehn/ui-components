@@ -42,7 +42,7 @@ export function RoomListPanel() {
     <div className="w-55 bg-surface border border-border rounded-lg flex flex-col overflow-hidden"
     >
       {/* Header */}
-      <div className="py-3 px-4 border-b border-border font-semibold text-[13px] text-[#64748b] uppercase tracking-[0.05em]"
+      <div className="py-3 px-4 border-b border-border font-semibold text-[13px] text-neutral uppercase tracking-[0.05em]"
       >
         Channels
       </div>
@@ -58,7 +58,7 @@ export function RoomListPanel() {
               <span className="text-text-tertiary mr-1">{room.icon}</span>
               {room.name}
             </span>
-            <span className="text-[11px] text-[#64748b] bg-surface-hover py-[2px] px-[6px] rounded-lg"
+            <span className="text-[11px] text-neutral bg-surface-hover py-[2px] px-[6px] rounded-lg"
             >
               {room.online}
             </span>

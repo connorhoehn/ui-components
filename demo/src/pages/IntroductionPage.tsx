@@ -21,7 +21,7 @@ export default function IntroductionPage() {
         ].map(item => (
           <div className="p-5 border border-border rounded-lg bg-surface-panel" key={item.title}>
             <h3 className="text-[15px] font-semibold mb-[6px] text-text-primary">{item.title}</h3>
-            <p className="text-[13px] text-[#64748b] m-0 leading-[1.5]">{item.desc}</p>
+            <p className="text-[13px] text-neutral m-0 leading-[1.5]">{item.desc}</p>
           </div>
         ))}
       </div>

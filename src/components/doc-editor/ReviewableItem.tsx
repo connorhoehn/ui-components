@@ -84,9 +84,9 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
   };
 
   const transitionClass = transition === 'ack'
-    ? 'animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-[#f0fdf4]'
+    ? 'animate-[ackPulse_0.6s_ease-out] border-[#22c55e] bg-success-bg'
     : transition === 'reject'
-    ? 'animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-[#fef2f2]'
+    ? 'animate-[rejectPulse_0.6s_ease-out] border-[#ef4444] bg-danger-bg'
     : '';
 
   return (
@@ -141,7 +141,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
             {!showNotes && (
               <button
                 type="button"
-                className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-[#d1d5db]')}
+                className={cn('px-3.5 py-1.5 text-[13px] font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field')}
                 onClick={() => setShowNotes(true)}
               >
                 Add note
@@ -189,7 +189,7 @@ export default function ReviewableItem({ item, onAck, onReject }: ReviewableItem
                 </button>
                 <button
                   type="button"
-                  className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-[#d1d5db]')}
+                  className={cn('px-3 py-[5px] text-xs font-semibold rounded-md cursor-pointer bg-transparent text-[#6b7280] border border-border-field')}
                   onClick={() => { setShowNotes(false); setNoteText(''); }}
                   tabIndex={0}
                 >

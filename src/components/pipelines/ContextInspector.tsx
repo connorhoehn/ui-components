@@ -374,8 +374,8 @@ export default function ContextInspector({
                       className={cn(
                         'px-2 py-0.5 text-[10px] font-semibold border rounded-sm cursor-pointer font-mono uppercase tracking-wide',
                         editMode
-                          ? 'bg-[#d97706] text-white border-[#d97706]'
-                          : 'bg-transparent text-[#d97706] border-[#d97706]',
+                          ? 'bg-warning text-white border-[#d97706]'
+                          : 'bg-transparent text-warning-fg border-[#d97706]',
                       )}
                     >
                       {editMode ? 'Editing' : 'Edit'}

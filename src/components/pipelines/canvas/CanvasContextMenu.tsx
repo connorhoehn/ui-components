@@ -51,7 +51,7 @@ export default function CanvasContextMenu({
     <div
       data-testid="canvas-node-context-menu"
       role="menu"
-      className="fixed bg-white border border-[#e2e8f0] rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
+      className="fixed bg-white border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
       style={{ top: nodeMenu.y, left: nodeMenu.x }}
     >
       <button
@@ -59,7 +59,7 @@ export default function CanvasContextMenu({
         role="menuitem"
         onClick={onFilterLog}
         data-testid="ctx-filter-log"
-        className={cn(menuItemBase, 'text-[#0f172a]')}
+        className={cn(menuItemBase, 'text-text-primary')}
       >
         🎯 Filter log to this node
       </button>
@@ -68,7 +68,7 @@ export default function CanvasContextMenu({
         role="menuitem"
         onClick={onCopyNodeId}
         data-testid="ctx-copy-id"
-        className={cn(menuItemBase, 'text-[#0f172a]')}
+        className={cn(menuItemBase, 'text-text-primary')}
       >
         📋 Copy node id
       </button>
@@ -77,7 +77,7 @@ export default function CanvasContextMenu({
         role="menuitem"
         onClick={onDuplicate}
         data-testid="ctx-duplicate"
-        className={cn(menuItemBase, 'text-[#0f172a]')}
+        className={cn(menuItemBase, 'text-text-primary')}
       >
         📑 Duplicate node
       </button>
@@ -89,7 +89,7 @@ export default function CanvasContextMenu({
           data-testid="ctx-toggle-breakpoint"
           className={cn(
             menuItemBase,
-            breakpoints?.has(nodeMenu.nodeId) ? 'text-[#dc2626]' : 'text-[#0f172a]',
+            breakpoints?.has(nodeMenu.nodeId) ? 'text-danger-fg' : 'text-text-primary',
           )}
         >
           {breakpoints?.has(nodeMenu.nodeId) ? '🔴 Remove Breakpoint' : '🔴 Toggle Breakpoint'}

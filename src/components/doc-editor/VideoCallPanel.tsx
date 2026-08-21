@@ -156,7 +156,7 @@ function ActiveCallView({ stageToken, participantId, userId, onEndCall }: {
 
   if (error) {
     return (
-      <div className={cn('p-4 text-center text-[#dc2626] text-[13px]')}>
+      <div className={cn('p-4 text-center text-danger-fg text-[13px]')}>
         {error}
         <br />
         <Button onClick={onEndCall} className="mt-3">Close</Button>

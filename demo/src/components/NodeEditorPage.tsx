@@ -116,7 +116,7 @@ function ArchitectureDiagram() {
         <div className={`${BOX_CLS} bg-info-bg border-2 border-info text-[#1e40af]`}>
           PipelineCanvas
         </div>
-        <div className="text-[11px] text-[#64748b]">React Flow wrapper</div>
+        <div className="text-[11px] text-neutral">React Flow wrapper</div>
       </div>
       <svg className="shrink-0" width="48" height="24">
         <path d="M4 12 H38 M34 7 L40 12 L34 17" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
@@ -134,13 +134,13 @@ function ArchitectureDiagram() {
           <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
             NodePalette
           </div>
-          <span className="text-[11px] text-[#64748b]">drag to canvas</span>
+          <span className="text-[11px] text-neutral">drag to canvas</span>
         </div>
         <div className="flex items-center gap-2">
           <div className={`${BOX_CLS} bg-surface-hover border-[1.5px] border-[#64748b] text-[#334155]`}>
             CanvasToolbar
           </div>
-          <span className="text-[11px] text-[#64748b]">canvas actions</span>
+          <span className="text-[11px] text-neutral">canvas actions</span>
         </div>
       </div>
     </div>
@@ -186,7 +186,7 @@ function EdgePreview() {
       <text className="text-[10px] font-semibold fill-text-secondary font-[inherit]" x="463" y="122" textAnchor="middle">false</text>
       <path d="M490 118 C530 118, 520 118, 560 118" fill="none" stroke="#dc2626" strokeWidth="2" />
 
-      <text className="text-[11px] fill-[#64748b] font-[inherit]" x="440" y="50">Branch labels:</text>
+      <text className="text-[11px] fill-neutral font-[inherit]" x="440" y="50">Branch labels:</text>
     </svg>
   );
 }
@@ -304,7 +304,7 @@ function PalettePreview() {
                 </span>
                 <div className="flex-[1] min-w-0">
                   <div className="text-[13px] font-semibold text-text-primary">{item.label}</div>
-                  <div className="text-[11px] text-[#64748b]">{item.desc}</div>
+                  <div className="text-[11px] text-neutral">{item.desc}</div>
                 </div>
               </div>
             ))}
@@ -445,31 +445,31 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
           <div className="flex flex-wrap gap-4 items-start mb-6">
             <div className="text-center">
               <MiniNode icon="⬜" subtitle="Idle" state="idle" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">gray, 1px solid</div>
+              <div className="text-[11px] text-neutral mt-[6px]">gray, 1px solid</div>
             </div>
             <div className="text-center">
               <MiniNode icon="⏳" subtitle="Pending" state="pending" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">blue, 1px dashed</div>
+              <div className="text-[11px] text-neutral mt-[6px]">blue, 1px dashed</div>
             </div>
             <div className="text-center">
               <MiniNode icon="▶" subtitle="Running" state="running" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">blue, 2px solid</div>
+              <div className="text-[11px] text-neutral mt-[6px]">blue, 2px solid</div>
             </div>
             <div className="text-center">
               <MiniNode icon="⏸" subtitle="Awaiting" state="awaiting" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">amber, 2px solid</div>
+              <div className="text-[11px] text-neutral mt-[6px]">amber, 2px solid</div>
             </div>
             <div className="text-center">
               <MiniNode icon="✓" subtitle="Completed" state="completed" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">green, 1px solid</div>
+              <div className="text-[11px] text-neutral mt-[6px]">green, 1px solid</div>
             </div>
             <div className="text-center">
               <MiniNode icon="✗" subtitle="Failed" state="failed" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">red, 2px solid</div>
+              <div className="text-[11px] text-neutral mt-[6px]">red, 2px solid</div>
             </div>
             <div className="text-center">
               <MiniNode icon="⤳" subtitle="Skipped" state="skipped" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">gray, dashed, 50%</div>
+              <div className="text-[11px] text-neutral mt-[6px]">gray, dashed, 50%</div>
             </div>
           </div>
           <div className="border-t border-border pt-4">
@@ -477,11 +477,11 @@ import { BaseNode, AnimatedEdge, NodePalette, PipelineCanvas } from '@connorhoeh
             <div className="flex gap-4 items-start">
               <div className="text-center">
                 <MiniNode icon="🎯" subtitle="With Breakpoint" state="idle" hasBreakpoint />
-                <div className="text-[11px] text-[#64748b] mt-[6px]">hasBreakpoint (red dot)</div>
+                <div className="text-[11px] text-neutral mt-[6px]">hasBreakpoint (red dot)</div>
               </div>
               <div className="text-center">
                 <MiniNode icon="🎯" subtitle="Paused at BP" state="running" pausedAtBreakpoint hasBreakpoint />
-                <div className="text-[11px] text-[#64748b] mt-[6px]">pausedAtBreakpoint (amber glow)</div>
+                <div className="text-[11px] text-neutral mt-[6px]">pausedAtBreakpoint (amber glow)</div>
               </div>
             </div>
           </div>
@@ -568,7 +568,7 @@ const nodeTypes = {
               state="completed"
               body="Runtime: Node.js 20 | Memory: 512MB"
             />
-            <div className="text-[11px] text-[#64748b] mt-[6px]">Lambda Node</div>
+            <div className="text-[11px] text-neutral mt-[6px]">Lambda Node</div>
           </div>
           <div className="text-center">
             <MiniNode
@@ -577,7 +577,7 @@ const nodeTypes = {
               state="running"
               body="POST api.stripe.com/charges"
             />
-            <div className="text-[11px] text-[#64748b] mt-[6px]">HTTP Request Node</div>
+            <div className="text-[11px] text-neutral mt-[6px]">HTTP Request Node</div>
           </div>
           <div className="text-center">
             <MiniNode
@@ -586,7 +586,7 @@ const nodeTypes = {
               state="awaiting"
               body="amount > 0 && !expired"
             />
-            <div className="text-[11px] text-[#64748b] mt-[6px]">Decision Node</div>
+            <div className="text-[11px] text-neutral mt-[6px]">Decision Node</div>
           </div>
         </div>
       </ExampleBlock>
@@ -672,7 +672,7 @@ function MyCanvas() {
       >
         <div>
           <ToolbarPreview />
-          <div className="mt-3 text-[12px] text-[#64748b]">
+          <div className="mt-3 text-[12px] text-neutral">
             The toolbar renders as absolutely-positioned buttons in the top-right corner of the canvas container.
             Auto-arrange uses a Dagre-based layout algorithm to compute optimal node positions for readability.
           </div>
@@ -834,19 +834,19 @@ const nodeTypes = {
           <div className="flex flex-wrap gap-4 items-start">
             <div className="text-center">
               <MiniNode icon={'⚙'} subtitle="ProcessPayment" state="completed" body="arn:aws:lambda:..." />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">Task</div>
+              <div className="text-[11px] text-neutral mt-[6px]">Task</div>
             </div>
             <div className="text-center">
               <MiniNode icon={'🔀'} subtitle="IsAmountValid?" state="running" body="3 branches" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">Choice</div>
+              <div className="text-[11px] text-neutral mt-[6px]">Choice</div>
             </div>
             <div className="text-center">
               <MiniNode icon={'≡'} subtitle="FanOutWorkers" state="pending" body="4 parallel branches" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">Parallel</div>
+              <div className="text-[11px] text-neutral mt-[6px]">Parallel</div>
             </div>
             <div className="text-center">
               <MiniNode icon={'⏱'} subtitle="CooldownPeriod" state="awaiting" body="Wait: 30s" />
-              <div className="text-[11px] text-[#64748b] mt-[6px]">Wait</div>
+              <div className="text-[11px] text-neutral mt-[6px]">Wait</div>
             </div>
           </div>
           <div className="mt-4 py-3 px-[14px] bg-surface-hover rounded-md text-[12px] text-text-secondary leading-[1.5]">

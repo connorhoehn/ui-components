@@ -427,7 +427,7 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
           data-testid="tags-row"
           className={cn(
             'flex items-center gap-2 px-4 py-1.5',
-            'border-b border-border bg-[#fafbfc]',
+            'border-b border-border bg-surface-inset',
             'min-h-[34px] shrink-0 sticky top-11 z-[4]',
           )}
         >

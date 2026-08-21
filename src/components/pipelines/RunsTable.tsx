@@ -92,7 +92,7 @@ export default function RunsTable({
       className="w-full border-collapse text-[13px] bg-surface border border-border rounded-lg overflow-hidden"
     >
       <thead>
-        <tr className="bg-[#fafbfc] text-left">
+        <tr className="bg-surface-inset text-left">
           <th
             scope="col"
             className="px-3 py-2 w-6 border-b border-border"
@@ -126,8 +126,8 @@ export default function RunsTable({
               key={r.id}
               data-testid={`run-card-${r.id}`}
               className={cn(
-                'border-b border-border cursor-pointer hover:bg-[#f1f5f9]',
-                isSelected && 'bg-[#f1f5f9]',
+                'border-b border-border cursor-pointer hover:bg-surface-hover',
+                isSelected && 'bg-surface-hover',
               )}
               onClick={() => onNavigate(`/pipelines/${pipelineId}/runs/${r.id}`)}
             >
@@ -231,7 +231,7 @@ export default function RunsTable({
                       }
                     }}
                     title="Force-fail this stuck run so you can retry from the stuck step"
-                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-[#fde68a] rounded cursor-pointer font-[inherit]"
+                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-warning-border rounded cursor-pointer font-[inherit]"
                   >
                     ⚡ Force-fail
                   </button>
@@ -242,7 +242,7 @@ export default function RunsTable({
                     data-testid={`retry-from-failed-step-${r.id}`}
                     onClick={(e) => { e.stopPropagation(); onOpenRetryModal(r); }}
                     title={`Retry from "${r.error.nodeId}" with the original upstream context`}
-                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-[#ea580c] border border-[#fed7aa] rounded cursor-pointer font-[inherit]"
+                    className="text-[11px] px-2 py-1 mr-2 bg-transparent text-caution-fg border border-caution-border rounded cursor-pointer font-[inherit]"
                   >
                     ↻ Retry from failed
                   </button>

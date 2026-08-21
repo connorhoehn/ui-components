@@ -322,7 +322,7 @@ export function ExpandableCallWidget({
       data-call-widget-mode={effectiveMode}
       style={rootStyle}
       className={cn(
-        'flex flex-col bg-[#0f172a] text-white shadow-2xl overflow-hidden border border-white/10',
+        'flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10',
         effectiveMode === 'fullscreen' ? 'rounded-none' : 'rounded-lg',
         className,
       )}

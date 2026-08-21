@@ -168,7 +168,7 @@ export default function AnimatedEdge({
           <div
             className={cn(
               'absolute pointer-events-auto px-2 py-0.5 rounded-full text-[10px] font-semibold leading-[1.4]',
-              'bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap',
+              'bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap',
               'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
             )}
             style={{
@@ -186,7 +186,7 @@ export default function AnimatedEdge({
           <div
             className={cn(
               'absolute pointer-events-none px-1.5 py-px rounded-full text-[9px] font-semibold leading-[1.4]',
-              'bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap',
+              'bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap',
               'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
             )}
             style={{

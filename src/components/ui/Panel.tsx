@@ -124,7 +124,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const btnVariantClasses: Record<string, string> = {
   default: 'bg-surface text-text-primary border border-border',
-  primary: 'bg-[#16a34a] text-white border border-[#16a34a]',
+  primary: 'bg-success text-white border border-success',
   danger: 'bg-danger text-white border border-danger',
 };
 

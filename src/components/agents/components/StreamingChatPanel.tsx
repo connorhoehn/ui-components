@@ -98,7 +98,7 @@ export function StreamingChatPanel({
                   'mt-1 py-2 px-3 text-[14px] text-[#334155] leading-[1.5] shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-pre-wrap break-words',
                   msg.role === 'user'
                     ? 'bg-[#eef2ff] rounded-[12px_4px_12px_12px]'
-                    : 'bg-[#f1f5f9] rounded-[4px_12px_12px_12px]',
+                    : 'bg-surface-hover rounded-[4px_12px_12px_12px]',
                 )}
               >
                 {msg.content}
@@ -135,7 +135,7 @@ export function StreamingChatPanel({
         {streamingText && !messages.some((m) => m.isStreaming) && (
           <div className="flex gap-2.5">
             <div className={AI_AVATAR}>AI</div>
-            <div className="flex-1 mt-1 py-2 px-3 bg-[#f1f5f9] rounded-[4px_12px_12px_12px] text-[14px] text-[#334155] leading-[1.5] whitespace-pre-wrap break-words">
+            <div className="flex-1 mt-1 py-2 px-3 bg-surface-hover rounded-[4px_12px_12px_12px] text-[14px] text-[#334155] leading-[1.5] whitespace-pre-wrap break-words">
               {streamingText}
               <span className="inline-block animate-pulse ml-0.5 text-info-fg">▊</span>
             </div>
@@ -145,12 +145,12 @@ export function StreamingChatPanel({
         {/* Typing indicator */}
         {isStreaming && activeToolCalls.length === 0 && !streamingText && messages.length > 0 && !messages[messages.length - 1]?.isStreaming && (
           <div className="flex items-center gap-2 py-1">
-            <div className="flex gap-[3px] py-1.5 px-3 bg-[#f1f5f9] rounded-xl">
+            <div className="flex gap-[3px] py-1.5 px-3 bg-surface-hover rounded-xl">
               <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:0ms]" />
               <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:150ms]" />
               <span className="w-1.5 h-1.5 rounded-full bg-surface-emphasis animate-bounce [animation-delay:300ms]" />
             </div>
-            <span className="text-[12px] text-[#64748b]">Agent is thinking...</span>
+            <span className="text-[12px] text-neutral">Agent is thinking...</span>
           </div>
         )}
       </div>

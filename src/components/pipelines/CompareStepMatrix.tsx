@@ -197,9 +197,9 @@ function buildRows(
 // ---------------------------------------------------------------------------
 
 function rowHighlightClass(row: CompareRow): string | undefined {
-  if (row.statusDiffers) return 'bg-[#fef2f2]';
-  if (row.branchDiffers) return 'bg-[#eff6ff]';
-  if (row.durationLarge) return 'bg-[#fffbeb]';
+  if (row.statusDiffers) return 'bg-danger-bg';
+  if (row.branchDiffers) return 'bg-info-bg';
+  if (row.durationLarge) return 'bg-warning-bg';
   return undefined;
 }
 
@@ -249,7 +249,7 @@ function StepCell({
         </div>
       ) : null}
       {step.error ? (
-        <div className="text-[11px] text-[#dc2626]" title={step.error}>
+        <div className="text-[11px] text-danger-fg" title={step.error}>
           {step.error.length > 60 ? `${step.error.slice(0, 60)}…` : step.error}
         </div>
       ) : null}
@@ -312,11 +312,11 @@ function CompareTableRow({ row }: { row: CompareRow }) {
           data-testid={`run-compare-delta-${row.nodeId}`}
         >
           {row.branchDiffers ? (
-            <span className="font-semibold text-[#2563eb]">different branch!</span>
+            <span className="font-semibold text-info-fg">different branch!</span>
           ) : row.statusDiffers ? (
-            <span className="font-semibold text-[#dc2626]">status differs</span>
+            <span className="font-semibold text-danger-fg">status differs</span>
           ) : row.durationDelta != null ? (
-            <span className={row.durationLarge ? 'text-[#d97706]' : 'text-text-secondary'}>
+            <span className={row.durationLarge ? 'text-warning-fg' : 'text-text-secondary'}>
               {formatDelta(row.durationDelta)}
             </span>
           ) : (

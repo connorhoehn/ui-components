@@ -44,7 +44,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded); } }}
         className={cn(
           'flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer transition-colors duration-100',
-          expanded ? 'bg-[#fafbfc] rounded-t-lg' : 'bg-surface rounded-lg',
+          expanded ? 'bg-surface-inset rounded-t-lg' : 'bg-surface rounded-lg',
         )}
         style={{
           border: `1px solid ${expanded ? statusColor + '40' : '#e2e8f0'}`,
@@ -218,7 +218,7 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
 
           {step.error && (
             <StepSection title="Error">
-              <div className="px-3 py-2 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap">
+              <div className="px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap">
                 {step.error}
               </div>
             </StepSection>

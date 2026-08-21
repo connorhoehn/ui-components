@@ -109,7 +109,7 @@ export const MentionDropdown = forwardRef<MentionDropdownHandle, MentionDropdown
               aria-selected={i === activeIndex}
               className={cn(
                 'flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors duration-100',
-                i === activeIndex ? 'bg-[#eff6ff]' : 'bg-transparent',
+                i === activeIndex ? 'bg-info-bg' : 'bg-transparent',
               )}
               onMouseEnter={() => setActiveIndex(i)}
               onMouseDown={(e) => {

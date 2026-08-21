@@ -192,7 +192,7 @@ export default function IngestDashboard() {
 
       {/* Error banner */}
       {error && (
-        <div className="px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
+        <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4" role="alert">
           <span className="text-[13px] font-medium">Failed to load ingest data.</span>
           <button
             onClick={handleRetry}
@@ -213,7 +213,7 @@ export default function IngestDashboard() {
               className={cn(
                 'px-3 py-2 rounded-md text-[13px] border',
                 a.level === 'critical'
-                  ? 'bg-[#fef2f2] border-[var(--color-state-failed)] text-[var(--color-state-failed)]'
+                  ? 'bg-danger-bg border-[var(--color-state-failed)] text-[var(--color-state-failed)]'
                   : 'bg-[#fefce8] border-[#fbbf24] text-[#92400e]',
               )}
             >

@@ -246,7 +246,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                           &darr;
                         </button>
                         <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
-                        <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
+                        <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
                       </div>
                     </td>
                   </tr>
@@ -278,7 +278,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
         />
         <button
           className={cn(
-            'px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-[#eff6ff] cursor-pointer font-[inherit] text-primary self-start',
+            'px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start',
             (previewLoading || !previewPath.trim()) && 'opacity-50 cursor-not-allowed',
           )}
           onClick={() => void handlePreview()}

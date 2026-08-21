@@ -57,7 +57,7 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
     <div className="flex flex-col gap-5">
       <div>
         <span className="block text-xs font-semibold text-[#374151] mb-[5px] tracking-wide">
-          Name <span className="text-[#dc2626]">*</span>
+          Name <span className="text-danger-fg">*</span>
         </span>
         <Input
           data-testid="name-input"
@@ -126,7 +126,7 @@ function SortablePage({
     >
       <div className={cn(
         'bg-white border rounded-[10px] p-4 mb-3',
-        isActive ? 'bg-[#faf5ff] border-[#c4b5fd]' : 'border-border',
+        isActive ? 'bg-accent-bg border-[#c4b5fd]' : 'border-border',
       )}>
         <div className="flex items-center gap-2 mb-2.5">
           <button
@@ -134,7 +134,7 @@ function SortablePage({
             data-testid={`page-drag-handle-${page.id}`}
             {...attributes}
             {...listeners}
-            className="cursor-grab px-1 py-0.5 text-sm text-[#94a3b8] border-none bg-transparent select-none touch-none"
+            className="cursor-grab px-1 py-0.5 text-sm text-text-tertiary border-none bg-transparent select-none touch-none"
             title="Drag to reorder pages"
           >⋮⋮</button>
           <button
@@ -144,7 +144,7 @@ function SortablePage({
             onClick={() => movePage(page.id, -1)}
             className={cn(
               'px-1.5 py-0.5 text-[11px] font-semibold rounded-[7px] font-inherit border-none bg-transparent',
-              pageIdx === 0 ? 'text-[#64748b] opacity-50 cursor-not-allowed' : 'text-[#64748b] cursor-pointer',
+              pageIdx === 0 ? 'text-neutral opacity-50 cursor-not-allowed' : 'text-neutral cursor-pointer',
             )}
           >▲</button>
           <button
@@ -154,10 +154,10 @@ function SortablePage({
             onClick={() => movePage(page.id, +1)}
             className={cn(
               'px-1.5 py-0.5 text-[11px] font-semibold rounded-[7px] font-inherit border-none bg-transparent',
-              pageIdx === totalPages - 1 ? 'text-[#64748b] opacity-50 cursor-not-allowed' : 'text-[#64748b] cursor-pointer',
+              pageIdx === totalPages - 1 ? 'text-neutral opacity-50 cursor-not-allowed' : 'text-neutral cursor-pointer',
             )}
           >▼</button>
-          <span className="text-xs font-semibold text-[#94a3b8] min-w-14">
+          <span className="text-xs font-semibold text-text-tertiary min-w-14">
             Page {pageIdx + 1}
           </span>
           <Input
@@ -185,7 +185,7 @@ function SortablePage({
         {page.sectionIds.length === 0 ? (
           <div
             data-testid={`page-empty-${page.id}`}
-            className="py-3 px-2 text-[#94a3b8] text-xs italic"
+            className="py-3 px-2 text-text-tertiary text-xs italic"
           >
             No sections on this page yet — click the page header to make it active, then pick a section type.
           </div>
@@ -238,7 +238,7 @@ function SortableSection({ sectionId, page, idx, pages, renderRow, moveSectionTo
         data-testid={`section-drag-handle-${sectionId}`}
         {...attributes}
         {...listeners}
-        className="cursor-grab px-1 py-0.5 text-sm text-[#94a3b8] border-none bg-transparent select-none touch-none shrink-0"
+        className="cursor-grab px-1 py-0.5 text-sm text-text-tertiary border-none bg-transparent select-none touch-none shrink-0"
         title="Drag to reorder sections (or drop on another page)"
       >⋮⋮</button>
       <div className="flex-1">{renderRow(sectionId, page, idx)}</div>
@@ -436,7 +436,7 @@ function Step2Fields({
 
         {isSinglePage ? (
           fields.length === 0 ? (
-            <div className="bg-white border border-dashed border-border rounded-[10px] text-center py-8 px-4 text-[#94a3b8] text-[13px]">
+            <div className="bg-white border border-dashed border-border rounded-[10px] text-center py-8 px-4 text-text-tertiary text-[13px]">
               <div className="text-[28px] mb-2">📋</div>
               No sections yet — pick a section type →
             </div>
@@ -488,7 +488,7 @@ function Step2Fields({
         {pages.length > 1 && (
           <div
             data-testid="page-config-toc"
-            className="mt-4 p-2.5 bg-[#f8fafc] rounded-md text-[13px]"
+            className="mt-4 p-2.5 bg-surface-panel rounded-md text-[13px]"
           >
             <label className="flex items-center gap-2 cursor-pointer">
               <Checkbox
@@ -513,12 +513,12 @@ function Step2Fields({
               data-testid={`add-field-${fieldDef.type}`}
               type="button"
               onClick={() => addField(fieldDef.type)}
-              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-white border border-border cursor-pointer text-left font-inherit transition-colors hover:border-[#c4b5fd] hover:bg-[#faf5ff]"
+              className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg w-full bg-white border border-border cursor-pointer text-left font-inherit transition-colors hover:border-[#c4b5fd] hover:bg-accent-bg"
             >
               <span className="text-xl shrink-0">{fieldDef.icon}</span>
               <div>
                 <div className="text-[13px] font-semibold text-text-primary">{fieldDef.label}</div>
-                <div className="text-[11px] text-[#94a3b8] mt-px">{fieldDef.description}</div>
+                <div className="text-[11px] text-text-tertiary mt-px">{fieldDef.description}</div>
               </div>
             </button>
           ))}
@@ -552,7 +552,7 @@ function ViewModeCell({ field, mode, onToggleHidden, onOverrideChange }: {
             checked={!hidden}
             onChange={onToggleHidden}
           />
-          <span className={cn('text-xs', hidden ? 'text-[#94a3b8]' : 'text-[#374151]')}>
+          <span className={cn('text-xs', hidden ? 'text-text-tertiary' : 'text-[#374151]')}>
             {hidden ? 'Hidden' : 'Visible'}
           </span>
         </label>
@@ -570,7 +570,7 @@ function ViewModeCell({ field, mode, onToggleHidden, onOverrideChange }: {
           />
         )}
         {!hidden && options.length === 0 && (
-          <span className="text-[11px] text-[#94a3b8]">Default renderer</span>
+          <span className="text-[11px] text-text-tertiary">Default renderer</span>
         )}
       </div>
     </td>
@@ -606,7 +606,7 @@ function Step3ViewModes({ fields, setFields }: {
 
   if (fields.length === 0) {
     return (
-      <div className="bg-white border border-border rounded-[10px] text-center py-10 px-4 text-[#94a3b8]">
+      <div className="bg-white border border-border rounded-[10px] text-center py-10 px-4 text-text-tertiary">
         No fields defined — go back to Step 2 and add some fields first.
       </div>
     );
@@ -614,12 +614,12 @@ function Step3ViewModes({ fields, setFields }: {
 
   return (
     <div className="overflow-x-auto">
-      <p className="text-[13px] text-[#64748b] mb-4">
+      <p className="text-[13px] text-neutral mb-4">
         Configure which view modes each field appears in and which renderer to use.
       </p>
       <table className="w-full border-collapse text-[13px]">
         <thead>
-          <tr className="bg-[#f8fafc]">
+          <tr className="bg-surface-panel">
             <th className="p-[10px_12px] text-left font-semibold text-[#374151] border-b-2 border-border whitespace-nowrap">
               Field
             </th>
@@ -634,7 +634,7 @@ function Step3ViewModes({ fields, setFields }: {
           {fields.map((f, i) => {
             const def = getFieldType(f.sectionType);
             return (
-              <tr key={f.id} className={cn('border-b border-[#f1f5f9]', i % 2 === 0 ? 'bg-white' : 'bg-[#fafbfc]')}>
+              <tr key={f.id} className={cn('border-b border-[#f1f5f9]', i % 2 === 0 ? 'bg-white' : 'bg-surface-inset')}>
                 <td className="p-[10px_12px] align-middle">
                   <div className="flex items-center gap-[7px]">
                     <span>{def?.icon}</span>
@@ -755,7 +755,7 @@ export function DocumentTypeWizard({ initialType, onSave, onCancel }: DocumentTy
         {step === 3 && <Step3ViewModes fields={fields} setFields={setFields} />}
 
         {nameError && (
-          <div className="text-[#dc2626] text-[13px] mt-2">{nameError}</div>
+          <div className="text-danger-fg text-[13px] mt-2">{nameError}</div>
         )}
       </div>
 

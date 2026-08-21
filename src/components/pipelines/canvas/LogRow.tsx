@@ -70,13 +70,13 @@ export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
   return (
     <div
       className={cn(
-        'px-3 py-1 border-b border-[#f1f5f9] text-xs text-[#0f172a] cursor-pointer',
-        isOpen && 'bg-[#f8fafc]',
+        'px-3 py-1 border-b border-[#f1f5f9] text-xs text-text-primary cursor-pointer',
+        isOpen && 'bg-surface-panel',
       )}
       data-testid={`execution-log-row-${row.id}`}
       onClick={() => onToggle(row.id)}
     >
-      <span className="font-mono text-[11px] text-[#64748b] mr-2">
+      <span className="font-mono text-[11px] text-neutral mr-2">
         {fmtTime(row.at)}
       </span>
       <span
@@ -87,14 +87,14 @@ export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
       </span>
       <span className="font-semibold">{row.eventType}</span>
       {summary ? (
-        <span className="text-[#64748b]">
+        <span className="text-neutral">
           {' · '}
           {summary}
         </span>
       ) : null}
       {isOpen ? (
         <pre
-          className="mt-1.5 mb-0 p-2.5 bg-[#0f172a] text-[#e2e8f0] rounded-md text-[11px] leading-normal overflow-x-auto font-mono"
+          className="mt-1.5 mb-0 p-2.5 bg-surface-inverse text-[#e2e8f0] rounded-md text-[11px] leading-normal overflow-x-auto font-mono"
           data-testid={`execution-log-row-json-${row.id}`}
         >
           {JSON.stringify(row.payload, null, 2)}

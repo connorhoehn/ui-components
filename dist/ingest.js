@@ -76,7 +76,7 @@ function Pt() {
         )
       ] })
     ] }),
-    b && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
+    b && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
       /* @__PURE__ */ e("span", { className: "text-[13px] font-medium", children: "Failed to load ingest data." }),
       /* @__PURE__ */ e(
         "button",
@@ -93,7 +93,7 @@ function Pt() {
         "data-testid": `alert-${N.id}`,
         className: E(
           "px-3 py-2 rounded-md text-[13px] border",
-          N.level === "critical" ? "bg-[#fef2f2] border-[var(--color-state-failed)] text-[var(--color-state-failed)]" : "bg-[#fefce8] border-[#fbbf24] text-[#92400e]"
+          N.level === "critical" ? "bg-danger-bg border-[var(--color-state-failed)] text-[var(--color-state-failed)]" : "bg-[#fefce8] border-[#fbbf24] text-[#92400e]"
         ),
         children: [
           /* @__PURE__ */ e("strong", { children: N.level === "critical" ? "⛔" : "⚠" }),
@@ -226,7 +226,7 @@ function Et() {
         }
       )
     ] }),
-    p && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
+    p && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
       /* @__PURE__ */ e("span", { className: "text-[13px] font-medium", children: "Failed to load sources." }),
       /* @__PURE__ */ e(
         "button",
@@ -309,7 +309,7 @@ function Et() {
               /* @__PURE__ */ e(
                 "button",
                 {
-                  className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
+                  className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
                   onClick: () => {
                     b(i);
                   },
@@ -479,7 +479,7 @@ function ie({ rules: t, onChange: a }) {
             /* @__PURE__ */ e("button", { className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary", onClick: () => x(c), disabled: c === 0, title: "Move up", children: "↑" }),
             /* @__PURE__ */ e("button", { className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary", onClick: () => g(c), disabled: c === t.length - 1, title: "Move down", children: "↓" }),
             /* @__PURE__ */ e("button", { className: "px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary", onClick: () => k(c), children: "Edit" }),
-            /* @__PURE__ */ e("button", { className: "px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]", onClick: () => o(c), children: "Delete" })
+            /* @__PURE__ */ e("button", { className: "px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]", onClick: () => o(c), children: "Delete" })
           ] }) })
         ] }, c);
       }) })
@@ -507,7 +507,7 @@ function ie({ rules: t, onChange: a }) {
         "button",
         {
           className: E(
-            "px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-[#eff6ff] cursor-pointer font-[inherit] text-primary self-start",
+            "px-3.5 py-1.5 text-xs font-medium border border-primary rounded-md bg-info-bg cursor-pointer font-[inherit] text-primary self-start",
             (S || !n.trim()) && "opacity-50 cursor-not-allowed"
           ),
           onClick: () => {
@@ -574,7 +574,7 @@ function He({ sourceId: t }) {
         }
       )
     ] }),
-    m ? /* @__PURE__ */ r("div", { "data-testid": "slo-error", className: "px-3 py-2 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg text-xs", children: [
+    m ? /* @__PURE__ */ r("div", { "data-testid": "slo-error", className: "px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg text-xs", children: [
       "Couldn't load source metrics: ",
       m
     ] }) : null,
@@ -774,7 +774,7 @@ function Rt() {
         children: "Back to Sources"
       }
     ) }),
-    /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3", role: "alert", children: [
+    /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3", role: "alert", children: [
       /* @__PURE__ */ r("span", { className: "text-[13px] font-medium", children: [
         "Failed to load source: ",
         S
@@ -837,7 +837,7 @@ function Rt() {
         }
       ) })
     ] }),
-    S && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3", role: "alert", children: [
+    S && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3", role: "alert", children: [
       /* @__PURE__ */ e("span", { className: "text-[13px] font-medium", children: S }),
       /* @__PURE__ */ e(
         "button",
@@ -882,7 +882,7 @@ function Rt() {
           {
             className: E(
               "px-3.5 py-1.5 text-[13px] font-medium rounded-md cursor-pointer font-[inherit]",
-              k || n.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-[#eff6ff] text-primary"
+              k || n.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-primary bg-info-bg text-primary"
             ),
             disabled: k || n.status === "paused",
             onClick: () => {
@@ -1324,9 +1324,9 @@ function tt({ item: t, sourceName: a, onClose: l, onRetry: p, onSkip: m }) {
               ] }),
               t.error && /* @__PURE__ */ r("div", { className: "flex flex-col gap-2", children: [
                 /* @__PURE__ */ e("div", { className: "text-[11px] font-semibold text-text-tertiary uppercase tracking-wide", children: "Error" }),
-                /* @__PURE__ */ e("div", { className: "bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words", children: t.error })
+                /* @__PURE__ */ e("div", { className: "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words", children: t.error })
               ] }),
-              w && /* @__PURE__ */ r("div", { className: "bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words", children: [
+              w && /* @__PURE__ */ r("div", { className: "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-md p-2.5 text-xs font-mono whitespace-pre-wrap break-words", children: [
                 "Re-map failed: ",
                 w
               ] })
@@ -1369,7 +1369,7 @@ function tt({ item: t, sourceName: a, onClose: l, onRetry: p, onSkip: m }) {
                 {
                   className: E(
                     "px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer",
-                    y || t.status === "done" ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)]"
+                    y || t.status === "done" ? "bg-surface border border-border text-text-secondary opacity-50 cursor-not-allowed" : "bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]"
                   ),
                   onClick: () => {
                     u();
@@ -1488,7 +1488,7 @@ function At() {
         }
       )
     ] }),
-    S && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
+    S && /* @__PURE__ */ r("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-4", role: "alert", children: [
       /* @__PURE__ */ e("span", { className: "text-[13px] font-medium", children: "Failed to load ingest items." }),
       /* @__PURE__ */ e(
         "button",
@@ -1562,7 +1562,7 @@ function At() {
                   o.status !== "done" && /* @__PURE__ */ e(
                     "button",
                     {
-                      className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-[#fef2f2] cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
+                      className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
                       onClick: () => {
                         u(o.itemId);
                       },
@@ -1816,7 +1816,7 @@ function jt() {
     p && /* @__PURE__ */ r(
       "div",
       {
-        className: "px-3.5 py-2.5 bg-[#fffbeb] border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3",
+        className: "px-3.5 py-2.5 bg-warning-bg border border-[var(--color-state-awaiting)] text-[#92400e] rounded-lg text-xs mb-3",
         "data-testid": "conflicts-mock-banner",
         children: [
           "Showing mock conflicts — backend endpoint ",
@@ -1825,7 +1825,7 @@ function jt() {
         ]
       }
     ),
-    l && !p && /* @__PURE__ */ e("div", { className: "px-4 py-3 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3", role: "alert", children: /* @__PURE__ */ r("span", { className: "text-[13px]", children: [
+    l && !p && /* @__PURE__ */ e("div", { className: "px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3", role: "alert", children: /* @__PURE__ */ r("span", { className: "text-[13px]", children: [
       "Failed to load conflicts: ",
       l
     ] }) }),
@@ -1947,7 +1947,7 @@ function jt() {
             "button",
             {
               className: E(
-                "px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)]",
+                "px-3.5 py-1.5 text-[13px] font-medium font-[inherit] rounded-md cursor-pointer bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)]",
                 u && "opacity-50 cursor-not-allowed"
               ),
               onClick: () => {
@@ -2250,7 +2250,7 @@ function Ft() {
         "%."
       ] })
     ] }) }),
-    m ? /* @__PURE__ */ r("div", { "data-testid": "mapping-review-error", className: "px-3 py-2 bg-[#fef2f2] border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3", children: [
+    m ? /* @__PURE__ */ r("div", { "data-testid": "mapping-review-error", className: "px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3", children: [
       "Couldn't load review queue: ",
       m
     ] }) : null,
@@ -2372,7 +2372,7 @@ function ft(t) {
   return `${p}m ${m}s`;
 }
 function ht(t) {
-  return t.startsWith("sync.") ? "bg-[#dbeafe] text-[#1d4ed8]" : t === "item.mapped" ? "bg-[#ede9fe] text-[#7c3aed]" : t === "item.materialized" ? "bg-[#dcfce7] text-[#16a34a]" : t === "item.failed" ? "bg-[#fef2f2] text-[#dc2626]" : "bg-[#f1f5f9] text-[#64748b]";
+  return t.startsWith("sync.") ? "bg-[#dbeafe] text-[#1d4ed8]" : t === "item.mapped" ? "bg-[#ede9fe] text-[#7c3aed]" : t === "item.materialized" ? "bg-[#dcfce7] text-success-fg" : t === "item.failed" ? "bg-danger-bg text-danger-fg" : "bg-surface-hover text-neutral";
 }
 function ce(t) {
   const a = t.sourceName ?? t.sourceId ?? "";
@@ -2437,8 +2437,8 @@ function _t() {
     /* @__PURE__ */ r("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ r("div", { className: "flex items-center gap-2.5", children: [
         /* @__PURE__ */ e("h2", { className: "m-0 text-[22px] font-bold text-text-primary", children: "Sync Monitor" }),
-        /* @__PURE__ */ r("span", { className: "inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-[#16a34a] rounded-full border border-[#bbf7d0]", children: [
-          /* @__PURE__ */ e("span", { className: "w-[7px] h-[7px] rounded-full bg-[#16a34a] animate-[sync-pulse_1.5s_ease-in-out_infinite]" }),
+        /* @__PURE__ */ r("span", { className: "inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-success-fg rounded-full border border-success-border", children: [
+          /* @__PURE__ */ e("span", { className: "w-[7px] h-[7px] rounded-full bg-success animate-[sync-pulse_1.5s_ease-in-out_infinite]" }),
           "Live"
         ] })
       ] }),
@@ -2477,7 +2477,7 @@ function _t() {
             /* @__PURE__ */ e("span", { className: "text-sm font-semibold text-text-primary", children: u.sourceName }),
             /* @__PURE__ */ e("span", { className: "text-[11px] text-text-tertiary font-mono", children: ft(u.startedAt) })
           ] }),
-          /* @__PURE__ */ e("div", { className: "h-2 rounded bg-[#e2e8f0] overflow-hidden mb-2", children: /* @__PURE__ */ e(
+          /* @__PURE__ */ e("div", { className: "h-2 rounded bg-surface-emphasis overflow-hidden mb-2", children: /* @__PURE__ */ e(
             "div",
             {
               className: "h-full rounded bg-[var(--color-state-running)] transition-[width] duration-300 ease-out",

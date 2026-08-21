@@ -63,7 +63,7 @@ function IconCell({
       type="button"
       onClick={() => onPick(emoji)}
       className={cn(
-        'w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-[#f1f5f9]',
+        'w-7 h-7 inline-flex items-center justify-center p-0 text-base leading-none rounded cursor-pointer font-[inherit] hover:bg-surface-hover',
         active ? 'border border-primary' : 'border border-transparent',
       )}
       aria-label={`Select ${emoji}`}
@@ -123,7 +123,7 @@ export default function IconPicker({
       <button
         type="button"
         onClick={() => setOpen((x) => !x)}
-        className="w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-[#f1f5f9] hover:border-[#cbd5e1]"
+        className="w-[34px] h-[34px] inline-flex items-center justify-center p-0 text-[22px] leading-none border border-border rounded-md cursor-pointer font-[inherit] shrink-0 hover:bg-surface-hover hover:border-border-emphasis"
         aria-label="Choose icon"
         aria-haspopup="dialog"
         aria-expanded={open}

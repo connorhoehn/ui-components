@@ -118,7 +118,7 @@ export function HeaderBanner({
           {meta.status}
         </span>
       </div>
-      <div className={cn('text-xs text-[#64748b]')}>
+      <div className={cn('text-xs text-neutral')}>
         {meta.createdBy && <>Created by {meta.createdByName || meta.createdBy}</>}
         {meta.createdAt && <> &middot; {formatDate(meta.createdAt)}</>}
         {participantCount > 0 && (
@@ -150,10 +150,10 @@ export function ExecutiveSummaryCard({
   const hasContent = contentText && contentText.trim().length > 0;
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
-      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Executive Summary</h2>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Executive Summary</h2>
       {hasFragment ? (
         <div className={cn(
-          'py-1 px-3 bg-[#f8fafc] rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          'py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
           bullets.length > 0 ? 'mb-3' : '',
         )}>
           <TiptapEditor
@@ -166,7 +166,7 @@ export function ExecutiveSummaryCard({
         </div>
       ) : hasContent ? (
         <div className={cn(
-          'text-sm text-[#1e293b] leading-relaxed whitespace-pre-wrap py-2 px-3 bg-[#f8fafc] rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          'text-sm text-[#1e293b] leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
           bullets.length > 0 ? 'mb-3' : '',
         )}>
           {contentText!.trim()}

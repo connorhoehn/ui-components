@@ -111,7 +111,7 @@ function SessionCard({ session, isActive }: { session: VideoSession; isActive?: 
       {/* Participants */}
       <div className={cn('flex flex-wrap gap-1 mb-2')}>
         {session.participants.map((p, i) => (
-          <span key={`${p.userId}-${i}`} className={cn('text-[11px] text-text-secondary bg-[#f8fafc] px-2 py-0.5 rounded-full')}>
+          <span key={`${p.userId}-${i}`} className={cn('text-[11px] text-text-secondary bg-surface-panel px-2 py-0.5 rounded-full')}>
             {p.displayName || p.userId.slice(0, 10)}
           </span>
         ))}
@@ -119,7 +119,7 @@ function SessionCard({ session, isActive }: { session: VideoSession; isActive?: 
 
       {/* Summary (if available) */}
       {session.aiSummary && (
-        <div className={cn('text-[11px] text-text-primary bg-[#f8fafc] p-2 rounded-md leading-normal')}>
+        <div className={cn('text-[11px] text-text-primary bg-surface-panel p-2 rounded-md leading-normal')}>
           {session.aiSummary}
         </div>
       )}

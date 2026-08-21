@@ -128,8 +128,8 @@ export default function DiffMetadataHeader({
             delta === 0
               ? 'text-text-secondary'
               : delta < 0
-                ? 'text-[#16a34a]'
-                : 'text-[#dc2626]',
+                ? 'text-success-fg'
+                : 'text-danger-fg',
           )}
         >
           {formatDelta(delta)}

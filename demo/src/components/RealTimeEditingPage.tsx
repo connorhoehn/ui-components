@@ -276,7 +276,7 @@ function ParticipantsPanel({ provider }) {
                 {/* Mode badge */}
                 <Chip tone={MODE_TONE[p.mode] ?? 'neutral'}>{p.mode}</Chip>
                 {/* Section */}
-                <span className="text-[12px] text-[#64748b]">{'§'} {p.section}</span>
+                <span className="text-[12px] text-neutral">{'§'} {p.section}</span>
                 {/* Idle label */}
                 {p.idle && (
                   <span className="text-[11px] text-text-tertiary italic">idle</span>
@@ -499,39 +499,39 @@ ydoc.transact(() => {
           <div className="text-border">
             <span className="text-[#93c5fd] font-semibold">Y.Doc</span>
             {'\n'}
-            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-neutral">{'├── '}</span>
             <span className="text-[#c4b5fd]">Y.Map</span>
-            <span className="text-[#64748b]">(</span>
+            <span className="text-neutral">(</span>
             <span className="text-[#4ade80]">"meta"</span>
-            <span className="text-[#64748b]">)</span>
+            <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} title, description, ownerId, status, ... {'}'}</span>
             {'\n'}
-            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-neutral">{'├── '}</span>
             <span className="text-[#c4b5fd]">Y.Array</span>
-            <span className="text-[#64748b]">(</span>
+            <span className="text-neutral">(</span>
             <span className="text-[#4ade80]">"sections"</span>
-            <span className="text-[#64748b]">)</span>
+            <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} [{'{'} id, title, type, items {'}'}]</span>
             {'\n'}
-            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-neutral">{'├── '}</span>
             <span className="text-[#c4b5fd]">Y.Map</span>
-            <span className="text-[#64748b]">(</span>
+            <span className="text-neutral">(</span>
             <span className="text-[#4ade80]">"comments"</span>
-            <span className="text-[#64748b]">)</span>
+            <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} [sectionId]: CommentThread[] {'}'}</span>
             {'\n'}
-            <span className="text-[#64748b]">{'├── '}</span>
+            <span className="text-neutral">{'├── '}</span>
             <span className="text-[#c4b5fd]">Y.Map</span>
-            <span className="text-[#64748b]">(</span>
+            <span className="text-neutral">(</span>
             <span className="text-[#4ade80]">"sectionReviews"</span>
-            <span className="text-[#64748b]">)</span>
+            <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} {'{'} [sectionId:userId]: SectionReview {'}'}</span>
             {'\n'}
-            <span className="text-[#64748b]">{'└── '}</span>
+            <span className="text-neutral">{'└── '}</span>
             <span className="text-[#c4b5fd]">Y.XmlFragment</span>
-            <span className="text-[#64748b]">(</span>
+            <span className="text-neutral">(</span>
             <span className="text-[#4ade80]">"section:{'<id>'}"</span>
-            <span className="text-[#64748b]">)</span>
+            <span className="text-neutral">)</span>
             <span className="text-text-tertiary"> {'→'} Rich-text content per section</span>
           </div>
         </div>

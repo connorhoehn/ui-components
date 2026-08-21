@@ -156,7 +156,7 @@ export function ResumeCallDialog({
                 data-testid="resume-call-dialog"
                 data-lobby-name={lobbyName}
             >
-                <p className="text-[13px] text-[#475569]">
+                <p className="text-[13px] text-text-secondary">
                     You were in a call with{' '}
                     <span className="font-semibold text-text-primary">{callerName}</span>
                     {lobbyName ? (

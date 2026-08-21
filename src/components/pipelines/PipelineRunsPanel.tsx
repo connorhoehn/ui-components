@@ -40,10 +40,10 @@ function formatCost(usd?: number): string {
 
 function costColorClass(usd?: number): string {
   if (usd == null || usd === 0) return 'text-text-tertiary';
-  if (usd < 0.01) return 'text-[#16a34a]';
+  if (usd < 0.01) return 'text-success-fg';
   if (usd < 0.10) return 'text-[#ca8a04]';
-  if (usd < 1.00) return 'text-[#ea580c]';
-  return 'text-[#dc2626]';
+  if (usd < 1.00) return 'text-caution-fg';
+  return 'text-danger-fg';
 }
 
 function relativeTime(iso: string): string {
@@ -333,7 +333,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                   }}
                   className={cn(
                     'cursor-pointer border-b border-border px-4 py-2.5 transition-colors duration-100 hover:bg-surface-hover',
-                    isCompareSelected && 'bg-[#eff6ff]',
+                    isCompareSelected && 'bg-info-bg',
                   )}
                 >
                   <div className="flex items-center gap-2">

@@ -36,12 +36,12 @@ function eventBadgeClasses(type: string): string {
     return 'bg-[#ede9fe] text-[#7c3aed]';
   }
   if (type === 'item.materialized') {
-    return 'bg-[#dcfce7] text-[#16a34a]';
+    return 'bg-[#dcfce7] text-success-fg';
   }
   if (type === 'item.failed') {
-    return 'bg-[#fef2f2] text-[#dc2626]';
+    return 'bg-danger-bg text-danger-fg';
   }
-  return 'bg-[#f1f5f9] text-[#64748b]';
+  return 'bg-surface-hover text-neutral';
 }
 
 function eventDescription(event: IngestProgressEvent): string {
@@ -152,8 +152,8 @@ export default function SyncMonitorPage() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <h2 className="m-0 text-[22px] font-bold text-text-primary">Sync Monitor</h2>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-[#16a34a] rounded-full border border-[#bbf7d0]">
-            <span className="w-[7px] h-[7px] rounded-full bg-[#16a34a] animate-[sync-pulse_1.5s_ease-in-out_infinite]" />
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-semibold bg-[#ecfdf5] text-success-fg rounded-full border border-success-border">
+            <span className="w-[7px] h-[7px] rounded-full bg-success animate-[sync-pulse_1.5s_ease-in-out_infinite]" />
             Live
           </span>
         </div>
@@ -204,7 +204,7 @@ export default function SyncMonitorPage() {
                   <span className="text-sm font-semibold text-text-primary">{sync.sourceName}</span>
                   <span className="text-[11px] text-text-tertiary font-mono">{formatDuration(sync.startedAt)}</span>
                 </div>
-                <div className="h-2 rounded bg-[#e2e8f0] overflow-hidden mb-2">
+                <div className="h-2 rounded bg-surface-emphasis overflow-hidden mb-2">
                   <div
                     className="h-full rounded bg-[var(--color-state-running)] transition-[width] duration-300 ease-out"
                     style={{ width: `${pct}%` }}

@@ -87,13 +87,13 @@ interface StateTokens {
 }
 
 const STATE_TOKENS: Record<NodeExecutionState, StateTokens> = {
-  idle:      { card: 'border border-[#d1d5db] bg-white',                    dot: 'bg-[#d1d5db]' },
-  pending:   { card: 'border border-dashed border-[#93c5fd] bg-[#eff6ff]',  dot: 'bg-[#93c5fd]' },
-  running:   { card: 'border-2 border-[#2563eb] bg-[#eff6ff]',              dot: 'bg-[#2563eb]' },
-  awaiting:  { card: 'border-2 border-[#f59e0b] bg-[#fffbeb]',              dot: 'bg-[#f59e0b]' },
-  completed: { card: 'border border-[#16a34a] bg-[#f0fdf4]',                dot: 'bg-[#16a34a]' },
-  failed:    { card: 'border-2 border-[#dc2626] bg-[#fef2f2]',              dot: 'bg-[#dc2626]' },
-  skipped:   { card: 'border border-dashed border-[#d1d5db] bg-[#f9fafb] opacity-50', dot: 'bg-[#d1d5db]' },
+  idle:      { card: 'border border-border-field bg-white',                    dot: 'bg-[#d1d5db]' },
+  pending:   { card: 'border border-dashed border-[#93c5fd] bg-info-bg',  dot: 'bg-[#93c5fd]' },
+  running:   { card: 'border-2 border-info bg-info-bg',              dot: 'bg-info' },
+  awaiting:  { card: 'border-2 border-[#f59e0b] bg-warning-bg',              dot: 'bg-[#f59e0b]' },
+  completed: { card: 'border border-success bg-success-bg',                dot: 'bg-success' },
+  failed:    { card: 'border-2 border-danger bg-danger-bg',              dot: 'bg-danger' },
+  skipped:   { card: 'border border-dashed border-border-field bg-[#f9fafb] opacity-50', dot: 'bg-[#d1d5db]' },
 };
 
 // ---------------------------------------------------------------------------
@@ -173,7 +173,7 @@ export default function BaseNode(props: BaseNodeProps) {
       className={cn(
         'w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
         pausedAtBreakpoint
-          ? 'border-2 border-[#d97706] bg-[#fffbeb] shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]'
+          ? 'border-2 border-[#d97706] bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]'
           : tokens.card,
         !pausedAtBreakpoint && selected && 'shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]',
         !pausedAtBreakpoint && !selected && 'shadow-[0_1px_2px_rgba(15,23,42,0.06)]',
@@ -243,8 +243,8 @@ export default function BaseNode(props: BaseNodeProps) {
           <button
             type="button"
             className={cn(
-              'cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-[#dc2626] text-[#dc2626] transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
-              retryHover ? 'bg-[#fef2f2]' : 'bg-transparent',
+              'cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-danger text-danger-fg transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
+              retryHover ? 'bg-danger-bg' : 'bg-transparent',
               reduceMotion && 'transition-none',
             )}
             onClick={handleRetryClick}

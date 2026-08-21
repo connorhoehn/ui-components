@@ -53,7 +53,7 @@ function renderRow(
       disabled={!canJump}
       onClick={canJump ? () => onJump!(row.node.id) : undefined}
       className={cn(
-        'flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-[inherit] bg-[#f8fafc] border border-border text-left w-full text-text-primary',
+        'flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-[inherit] bg-surface-panel border border-border text-left w-full text-text-primary',
         canJump ? 'cursor-pointer' : 'cursor-default',
         kind === 'removed' && 'opacity-85',
       )}

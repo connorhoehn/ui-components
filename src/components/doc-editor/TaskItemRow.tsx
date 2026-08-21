@@ -200,8 +200,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
           className={cn(
             'inline-block px-2 py-0.5 text-[10px] font-semibold rounded-xl whitespace-nowrap leading-snug border',
             overdue
-              ? 'bg-[#fef2f2] text-[#dc2626] border-[#fecaca]'
-              : 'bg-[#f0f9ff] text-[#64748b] border-[#e0f2fe]',
+              ? 'bg-danger-bg text-danger-fg border-danger-border'
+              : 'bg-[#f0f9ff] text-neutral border-[#e0f2fe]',
           )}
         >
           {overdue ? '⚠ ' : ''}Due: {formatDueDate(item.dueDate)}
@@ -228,7 +228,7 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
             'inline-flex items-center justify-center h-6 rounded-xl font-semibold text-[11px] cursor-pointer leading-snug whitespace-nowrap',
             item.assignee
               ? 'px-2 bg-[#e0e7ff] text-[#4338ca] border-none min-w-0'
-              : 'w-6 px-0 bg-white text-text-tertiary border border-dashed border-[#cbd5e1]',
+              : 'w-6 px-0 bg-white text-text-tertiary border border-dashed border-border-emphasis',
           )}
         >
           {item.assignee ? (
@@ -267,8 +267,8 @@ export default function TaskItemRow({ item, editable, onUpdate, onRemove, autoFo
                 onClick={clearAssignee}
                 className={cn('flex items-center gap-2 py-1.5 px-2.5 text-xs cursor-pointer bg-transparent border-none w-full text-left font-[inherit] text-[#1e293b]')}
               >
-                <span className={cn('w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-[#64748b] inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}>--</span>
-                <span className={cn('text-[#64748b] italic')}>Unassigned</span>
+                <span className={cn('w-[22px] h-[22px] rounded-full bg-[#cbd5e1] text-neutral inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none')}>--</span>
+                <span className={cn('text-neutral italic')}>Unassigned</span>
               </button>
             )}
 

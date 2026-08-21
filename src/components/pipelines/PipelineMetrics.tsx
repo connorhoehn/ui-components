@@ -158,7 +158,7 @@ function TokenBarChart({ tokensIn, tokensOut }: { tokensIn: number; tokensOut: n
           In: {formatNumber(tokensIn)}
         </span>
         <span>
-          <span className="inline-block w-2 h-2 rounded-sm bg-[#16a34a] mr-1" />
+          <span className="inline-block w-2 h-2 rounded-sm bg-success mr-1" />
           Out: {formatNumber(tokensOut)}
         </span>
       </div>
@@ -328,7 +328,7 @@ export default function PipelineMetrics() {
         </span>
         <div className="ml-auto flex items-center gap-2">
           {error && (
-            <span className="text-[11px] text-[#dc2626]">
+            <span className="text-[11px] text-danger-fg">
               Fetch error: {error}
             </span>
           )}

@@ -137,7 +137,7 @@ export default function EditorModeSwitch({
       {isFinalized && mode === 'editor' && (
         <div className={cn(
           'rounded-lg border px-4 py-2.5 mb-3 text-center text-[13px] font-medium',
-          'bg-[#fefce8] border-[#fde68a] text-[#92400e]'
+          'bg-[#fefce8] border-warning-border text-[#92400e]'
         )}>
           This document has been finalized and is read-only
         </div>
@@ -221,7 +221,7 @@ export default function EditorModeSwitch({
             <div
               className={cn(
                 'w-[420px] shrink-0 rounded-lg border border-border',
-                'bg-[#fafbfc] flex flex-col max-h-[calc(100vh-180px)] overflow-hidden'
+                'bg-surface-inset flex flex-col max-h-[calc(100vh-180px)] overflow-hidden'
               )}
               style={{ marginTop: commentSidebarTop }}
             >
@@ -235,7 +235,7 @@ export default function EditorModeSwitch({
                   onClick={onCloseComments}
                   className={cn(
                     'border-none bg-transparent cursor-pointer',
-                    'text-base text-[#64748b] px-1.5 py-0.5 rounded leading-none shrink-0'
+                    'text-base text-neutral px-1.5 py-0.5 rounded leading-none shrink-0'
                   )}
                   title="Close comments"
                 >

@@ -221,7 +221,7 @@ function CollaborationCanvas() {
           <h1 className="m-0 text-[15px] font-bold text-surface-hover">
             Real-time Collaboration
           </h1>
-          <span className="text-[12px] text-[#64748b]">
+          <span className="text-[12px] text-neutral">
             {Object.keys(presenceUsers).length + 1} users online
           </span>
           {/* Avatar stack */}
@@ -356,7 +356,7 @@ function CollaborationCanvas() {
       <div className="w-65 border-l border-border flex flex-col bg-surface">
         {/* Presence panel */}
         <div className="p-4 border-b border-border">
-          <div className="text-[11px] font-bold text-[#64748b] mb-[10px] uppercase tracking-[0.5px]">
+          <div className="text-[11px] font-bold text-neutral mb-[10px] uppercase tracking-[0.5px]">
             Online
           </div>
           {/* Local user */}
@@ -375,7 +375,7 @@ function CollaborationCanvas() {
 
         {/* Activity feed */}
         <div className="flex-[1] overflow-auto p-4">
-          <div className="text-[11px] font-bold text-[#64748b] mb-[10px] uppercase tracking-[0.5px]">
+          <div className="text-[11px] font-bold text-neutral mb-[10px] uppercase tracking-[0.5px]">
             Activity
           </div>
           {activity.length === 0 && (
@@ -392,7 +392,7 @@ function CollaborationCanvas() {
               />
               <div>
                 <span className="font-semibold text-[#374151]">{entry.displayName}</span>{' '}
-                <span className="text-[#64748b]">{entry.action}</span>
+                <span className="text-neutral">{entry.action}</span>
                 <div className="text-[10px] text-text-tertiary mt-[1px]">
                   {formatTimeAgo(entry.timestamp)}
                 </div>

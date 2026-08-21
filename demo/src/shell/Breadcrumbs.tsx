@@ -7,7 +7,7 @@ export function Breadcrumbs() {
   if (breadcrumbs.length === 0) return null;
 
   return (
-    <nav className="flex items-center gap-[6px] mb-6 text-[13px] text-[#64748b]">
+    <nav className="flex items-center gap-[6px] mb-6 text-[13px] text-neutral">
       {breadcrumbs.map((crumb, i) => {
         const isLast = i === breadcrumbs.length - 1;
         return (
@@ -16,7 +16,7 @@ export function Breadcrumbs() {
             {isLast ? (
               <span className="text-text-primary font-medium">{crumb.label}</span>
             ) : (
-              <Link className="text-[#64748b] no-underline" to={crumb.path}>
+              <Link className="text-neutral no-underline" to={crumb.path}>
                 {crumb.label}
               </Link>
             )}

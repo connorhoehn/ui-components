@@ -228,11 +228,11 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
             blurTimer.current = setTimeout(() => setOpen(false), 120);
           }}
           onKeyDown={handleKeyDown}
-          className="w-full py-1.5 px-2.5 text-[13px] border border-[#e2e8f0] rounded-md font-[inherit] box-border outline-none"
+          className="w-full py-1.5 px-2.5 text-[13px] border border-border rounded-md font-[inherit] box-border outline-none"
         />
         {open && !atMax && filtered.length > 0 && (
           <div
-            className="absolute top-full left-0 right-0 bg-white border border-[#e2e8f0] rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10"
+            className="absolute top-full left-0 right-0 bg-white border border-border rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.08)] mt-1 max-h-[200px] overflow-y-auto z-10"
             onMouseDown={e => {
               // Prevent input blur from dismissing before click fires.
               e.preventDefault();
@@ -244,14 +244,14 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
                 key={c.userId}
                 className={cn(
                   'py-1.5 px-2.5 text-[13px] text-[#374151] cursor-pointer',
-                  idx === activeIdx ? 'bg-[#f1f5f9]' : 'bg-transparent',
+                  idx === activeIdx ? 'bg-surface-hover' : 'bg-transparent',
                 )}
                 onMouseEnter={() => setActiveIdx(idx)}
                 onClick={() => { addUser(c.userId); inputRef.current?.focus(); }}
               >
                 <span className="font-medium">{c.displayName}</span>
                 {c.displayName !== c.userId && (
-                  <span className="text-[#94a3b8] ml-2 text-[11px] font-mono">
+                  <span className="text-text-tertiary ml-2 text-[11px] font-mono">
                     {c.userId.slice(0, 12)}
                   </span>
                 )}

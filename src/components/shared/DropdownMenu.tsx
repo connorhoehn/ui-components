@@ -158,7 +158,7 @@ export function DropdownMenu({
                     'flex items-center gap-2.5 w-full text-left px-3.5 py-2',
                     'text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100',
                     item.danger
-                      ? 'text-[#dc2626] bg-transparent hover:bg-[#fef2f2]'
+                      ? 'text-danger-fg bg-transparent hover:bg-danger-bg'
                       : item.active
                         ? 'font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]'
                         : 'font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]',

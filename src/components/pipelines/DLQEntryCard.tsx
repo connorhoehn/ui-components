@@ -110,7 +110,7 @@ export function DLQEntryCard({
           <button
             type="button"
             onClick={() => onRedrive([entry.messageId])}
-            className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-[#eff6ff] text-[#2563eb]"
+            className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-info-bg text-info-fg"
             title="Redrive this entry"
           >
             Redrive
@@ -118,7 +118,7 @@ export function DLQEntryCard({
           <button
             type="button"
             onClick={() => onPurge([entry.messageId])}
-            className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-[#fef2f2] text-[#dc2626]"
+            className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-danger-bg text-danger-fg"
             title="Purge this entry"
           >
             Purge

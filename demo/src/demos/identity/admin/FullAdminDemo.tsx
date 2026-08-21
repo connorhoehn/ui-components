@@ -141,7 +141,7 @@ export default function FullAdminDemo() {
 </IdentityAdminLayout>`}
         background="#ffffff"
       >
-        <div className="h-[700px] border border-[#e2e8f0] rounded-lg overflow-hidden">
+        <div className="h-[700px] border border-border rounded-lg overflow-hidden">
           <IdentityAdminLayout
             activePath={activePath}
             adminEmail="admin@acme.com"

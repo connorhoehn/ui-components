@@ -56,7 +56,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
         <span className="font-semibold text-[11px] uppercase tracking-[0.05em] text-text-tertiary">
           Simulation
         </span>
-        <span className="text-[10px] text-[#64748b]">{stateLabel}</span>
+        <span className="text-[10px] text-neutral">{stateLabel}</span>
       </div>
 
       {/* Controls row */}
@@ -83,7 +83,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
 
       {/* Speed selector */}
       <div className={`${ROW_CLS} ${eventDescription ? 'mb-2' : 'mb-0'}`}>
-        <span className="text-[#64748b] text-[10px] mr-1">Speed:</span>
+        <span className="text-neutral text-[10px] mr-1">Speed:</span>
         {speeds.map((s) => (
           <button
             key={s}

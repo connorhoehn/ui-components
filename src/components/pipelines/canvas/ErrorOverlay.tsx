@@ -88,14 +88,14 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
 
   return (
     <div
-      className="fixed z-[100] bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-[#0f172a]"
+      className="fixed z-[100] bg-white border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary"
       style={{ top: Math.max(8, top), left: Math.max(8, left) }}
       data-testid="error-overlay"
       role="dialog"
       aria-label={`Error details for node ${error.nodeId}`}
     >
       {/* Header */}
-      <div className="flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b border-[#e2e8f0]">
+      <div className="flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b border-border">
         <span
           className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold leading-snug"
           style={{ background: catColor.bg, color: catColor.fg }}
@@ -108,7 +108,7 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss error overlay"
-          className="bg-transparent border-none text-[#94a3b8] cursor-pointer text-base leading-none px-1 py-0.5"
+          className="bg-transparent border-none text-text-tertiary cursor-pointer text-base leading-none px-1 py-0.5"
         >
           {'×'}
         </button>
@@ -117,14 +117,14 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
       {/* Body */}
       <div className="px-3.5 py-3 flex flex-col gap-2.5">
         {/* Error message */}
-        <div className="text-[13px] leading-normal text-[#0f172a]">
+        <div className="text-[13px] leading-normal text-text-primary">
           {error.message}
         </div>
 
         {/* Node ID */}
-        <div className="text-[11px] text-[#94a3b8]">
+        <div className="text-[11px] text-text-tertiary">
           Failed node:{' '}
-          <code className="bg-[#f1f5f9] px-[5px] py-px rounded-[3px] font-mono text-[11px] text-[#475569]">
+          <code className="bg-surface-hover px-[5px] py-px rounded-[3px] font-mono text-[11px] text-text-secondary">
             {error.nodeId}
           </code>
         </div>
@@ -135,14 +135,14 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
             <button
               type="button"
               onClick={() => setStackOpen((v) => !v)}
-              className="bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-[#475569] font-inherit"
+              className="bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-text-secondary font-inherit"
               data-testid="error-stack-toggle"
             >
               {stackOpen ? '▾' : '▸'} Stack trace
             </button>
             {stackOpen && (
               <pre
-                className="mt-1.5 p-2.5 bg-[#f8fafc] border border-[#e2e8f0] rounded-md text-[10px] leading-normal font-mono text-[#475569] whitespace-pre-wrap break-all max-h-40 overflow-y-auto m-0"
+                className="mt-1.5 p-2.5 bg-surface-panel border border-border rounded-md text-[10px] leading-normal font-mono text-text-secondary whitespace-pre-wrap break-all max-h-40 overflow-y-auto m-0"
                 data-testid="error-stack-content"
               >
                 {error.stack}
@@ -153,11 +153,11 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
       </div>
 
       {/* Footer actions */}
-      <div className="flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-[#e2e8f0]">
+      <div className="flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-border">
         <button
           type="button"
           onClick={handleCopy}
-          className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-[#f1f5f9] text-[#475569]"
+          className="px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-surface-hover text-text-secondary"
           data-testid="error-copy-btn"
         >
           {copied ? 'Copied!' : 'Copy error details'}

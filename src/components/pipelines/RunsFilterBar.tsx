@@ -90,7 +90,7 @@ function FilterDropdown<T extends string>({
             <label
               key={opt}
               data-testid={`${testIdPrefix}-${opt}`}
-              className="flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-[#f1f5f9]"
+              className="flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-surface-hover"
             >
               <Checkbox
                 checked={selected.has(opt)}
@@ -138,7 +138,7 @@ export default function RunsFilterBar({
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md"
+      className="flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md"
     >
       <Input
         id="runs-search"

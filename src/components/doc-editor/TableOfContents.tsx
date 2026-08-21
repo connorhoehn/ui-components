@@ -99,7 +99,7 @@ export default function TableOfContents({ sections, focusedSectionId }: TableOfC
             <span className={cn(
               'text-[11px] overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200',
               isActive ? 'font-semibold text-[#1e293b]' :
-              isPast ? 'font-normal text-[#64748b]' : 'font-normal text-text-tertiary',
+              isPast ? 'font-normal text-neutral' : 'font-normal text-text-tertiary',
             )}>
               {section.title || 'Untitled'}
             </span>

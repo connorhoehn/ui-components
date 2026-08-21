@@ -116,7 +116,7 @@ function ChaosPanel(props: ChaosPanelProps) {
         data-testid="chaos-state-readout"
         className={cn(
           'flex flex-col gap-1.5 pb-3 mb-3 border-b border-border',
-          chaosActive && 'bg-[#fffbeb] p-2 rounded-md border border-[#fde68a]'
+          chaosActive && 'bg-warning-bg p-2 rounded-md border border-warning-border'
         )}
       >
         <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">

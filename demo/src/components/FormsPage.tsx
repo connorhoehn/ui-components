@@ -50,7 +50,7 @@ const [code, setCode] = useState(\`function fibonacci(n) {
       >
         <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
         >
-          <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+          <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
           >
             {'1\n2\n3\n4\n5\n6\n7\n8'.split('\n').map((n, i) => (
               <div key={i}>{n}</div>
@@ -64,7 +64,7 @@ const [code, setCode] = useState(\`function fibonacci(n) {
             <div>&nbsp;</div>
             <div><span className="text-[#93c5fd]">const</span> result = fibonacci(10);</div>
             <div>console.<span className="text-[#fbbf24]">log</span>(<span className="text-[#4ade80]">"fib(10) ="</span>, result);</div>
-            <div className="text-[#64748b]">// Output: fib(10) = 55</div>
+            <div className="text-neutral">// Output: fib(10) = 55</div>
           </div>
         </div>
       </ExampleBlock>
@@ -90,14 +90,14 @@ const [code, setCode] = useState(\`function fibonacci(n) {
           </div>
           <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex opacity-85"
           >
-            <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
               ))}
             </div>
             <div className="py-3 px-4 text-border flex-[1] whitespace-pre">
-              <div className="text-[#64748b]">// This editor is read-only</div>
+              <div className="text-neutral">// This editor is read-only</div>
               <div><span className="text-[#93c5fd]">const</span> API_URL = <span className="text-[#4ade80]">"https://api.example.com/v2"</span>;</div>
               <div><span className="text-[#93c5fd]">const</span> TIMEOUT = <span className="text-[#fb923c]">5000</span>;</div>
               <div><span className="text-[#93c5fd]">export default</span> {'{ API_URL, TIMEOUT }'};</div>
@@ -133,7 +133,7 @@ const [code, setCode] = useState(\`function fibonacci(n) {
           </div>
           <div className="bg-[#1e293b] rounded-md overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] font-mono text-[13px] leading-[1.6] flex"
           >
-            <div className="w-10 py-3 px-2 text-right text-[#64748b] border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
+            <div className="w-10 py-3 px-2 text-right text-neutral border-r border-[#334155] select-none shrink-0 text-[12px] leading-[1.6]"
             >
               {'1\n2\n3\n4\n5\n6'.split('\n').map((n, i) => (
                 <div key={i}>{n}</div>
@@ -181,7 +181,7 @@ const [tags, setTags] = useState(['react', 'typescript', 'vite']);
               </span>
             </span>
           ))}
-          <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-[#64748b]"
+          <input className="border-0 outline-none text-[13px] flex-[1] min-w-30 bg-transparent text-neutral"
             type="text"
             placeholder="Type and press Enter..."
             readOnly

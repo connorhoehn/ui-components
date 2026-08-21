@@ -131,7 +131,7 @@ export default function VersionHistoryPanel({
               key={v.timestamp}
               className={cn(
                 'flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary',
-                previewTimestamp === v.timestamp ? 'bg-[#eff6ff] border-l-[3px] border-l-[#3b82f6]' : 'bg-transparent border-l-[3px] border-l-transparent',
+                previewTimestamp === v.timestamp ? 'bg-info-bg border-l-[3px] border-l-[#3b82f6]' : 'bg-transparent border-l-[3px] border-l-transparent',
               )}
               onClick={() => onPreview(v.timestamp)}
             >
@@ -164,7 +164,7 @@ export default function VersionHistoryPanel({
                 className={cn(
                   'px-2 py-[3px] text-[11px] font-medium border rounded-[4px] cursor-pointer font-[inherit] whitespace-nowrap',
                   compareTimestamp === v.timestamp
-                    ? 'bg-[#eff6ff] border-[#3b82f6] text-[#3b82f6]'
+                    ? 'bg-info-bg border-[#3b82f6] text-[#3b82f6]'
                     : 'bg-white border-border text-[#6b7280]',
                 )}
                 onClick={(e) => handleCompare(e, v.timestamp)}

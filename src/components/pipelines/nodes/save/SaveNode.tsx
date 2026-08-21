@@ -59,7 +59,7 @@ export default function SaveNode(props: NodeProps<SaveFlowNode>) {
     <div
       className={cn(
         'w-full h-20 rounded flex items-center justify-center',
-        'border border-dashed border-[#d1d5db] bg-[#f3f4f6]',
+        'border border-dashed border-border-field bg-[#f3f4f6]',
         'text-[11px] text-[#6b7280]',
       )}
       data-testid="save-placeholder"

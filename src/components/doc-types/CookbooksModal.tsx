@@ -46,7 +46,7 @@ function CookbookCard({ cookbook, onPick }: CookbookCardProps) {
           {cookbook.name}
         </div>
       </div>
-      <div className="text-[11px] text-[#94a3b8] flex gap-2">
+      <div className="text-[11px] text-text-tertiary flex gap-2">
         <span>{cookbook.category}</span>
       </div>
       <div className="text-xs text-text-secondary leading-[1.4] flex-1">
@@ -57,7 +57,7 @@ function CookbookCard({ cookbook, onPick }: CookbookCardProps) {
           {cookbook.tags.map((tag) => (
             <span
               key={tag}
-              className="text-[10px] font-semibold py-0.5 px-1.5 rounded bg-[#f1f5f9] text-text-secondary lowercase"
+              className="text-[10px] font-semibold py-0.5 px-1.5 rounded bg-surface-hover text-text-secondary lowercase"
             >
               {tag}
             </span>
@@ -149,7 +149,7 @@ export default function CookbooksModal({
             'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
             activeCategory === 'All'
               ? 'bg-primary text-white'
-              : 'bg-[#f1f5f9] text-text-secondary',
+              : 'bg-surface-hover text-text-secondary',
           )}
         >
           All
@@ -164,7 +164,7 @@ export default function CookbooksModal({
               'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
               activeCategory === cat
                 ? 'bg-primary text-white'
-                : 'bg-[#f1f5f9] text-text-secondary',
+                : 'bg-surface-hover text-text-secondary',
             )}
           >
             {cat}
@@ -186,7 +186,7 @@ export default function CookbooksModal({
       {filtered.length === 0 ? (
         <div
           data-testid="cookbooks-empty"
-          className="text-center py-8 text-[13px] text-[#94a3b8]"
+          className="text-center py-8 text-[13px] text-text-tertiary"
         >
           No cookbooks match "{search}".
         </div>

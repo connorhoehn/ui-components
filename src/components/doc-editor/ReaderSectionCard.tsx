@@ -159,7 +159,7 @@ export function KeyDecisionsCard({ sections }: { sections: Section[] }) {
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
-      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Key Decisions</h2>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Key Decisions</h2>
       {items.length === 0 ? (
         <div className={cn('text-[13px] text-text-tertiary italic')}>
           No decisions recorded
@@ -190,7 +190,7 @@ export function ActionItemsCard({ allItems }: { allItems: TaskItem[] }) {
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
-      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Action Items</h2>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Action Items</h2>
 
       {allItems.length === 0 ? (
         <div className={cn('text-[13px] text-text-tertiary italic')}>
@@ -278,7 +278,7 @@ export function SectionSummariesCard({
 
   return (
     <div className={cn('bg-white border border-border rounded-lg p-4 mb-4')}>
-      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-[#64748b] m-0 mb-3')}>Section Summaries</h2>
+      <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Section Summaries</h2>
       {sections.length === 0 ? (
         <div className={cn('text-[13px] text-text-tertiary italic')}>
           No sections
@@ -307,7 +307,7 @@ export function SectionSummariesCard({
                   onClick={() => toggle(section.id)}
                   className={cn(
                     'border-none cursor-pointer flex items-center gap-2 py-2 px-1.5 rounded-md w-full font-[inherit] text-[13px] text-[#334155] transition-colors duration-100',
-                    isOpen ? 'bg-[#f8fafc]' : 'bg-transparent',
+                    isOpen ? 'bg-surface-panel' : 'bg-transparent',
                   )}
                 >
                   <span
@@ -325,12 +325,12 @@ export function SectionSummariesCard({
                     {section.type}
                   </span>
                   {total > 0 && (
-                    <span className={cn('text-[11px] text-[#64748b] shrink-0')}>
+                    <span className={cn('text-[11px] text-neutral shrink-0')}>
                       {done}/{total} done
                     </span>
                   )}
                   {commentCount > 0 && (
-                    <span className={cn('text-[11px] text-[#64748b] shrink-0')}>
+                    <span className={cn('text-[11px] text-neutral shrink-0')}>
                       {commentCount} comment{commentCount !== 1 ? 's' : ''}
                     </span>
                   )}
@@ -344,7 +344,7 @@ export function SectionSummariesCard({
                       if (frag && ydoc) {
                         return (
                           <div className={cn(
-                            'py-1 px-2.5 bg-[#f8fafc] rounded border-l-2 border-l-[#cbd5e1]',
+                            'py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
                             section.items.length > 0 ? 'mb-2' : '',
                           )}>
                             <TiptapEditor
@@ -360,7 +360,7 @@ export function SectionSummariesCard({
                       if (hasContent) {
                         return (
                           <div className={cn(
-                            'text-[13px] text-[#334155] leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-[#f8fafc] rounded border-l-2 border-l-[#cbd5e1]',
+                            'text-[13px] text-[#334155] leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
                             section.items.length > 0 ? 'mb-2' : '',
                           )}>
                             {sectionContent.trim()}
@@ -374,7 +374,7 @@ export function SectionSummariesCard({
                     {section.items.map((item) => (
                       <div
                         key={item.id}
-                        className={cn('flex items-center gap-1.5 py-[3px] text-xs text-[#64748b]')}
+                        className={cn('flex items-center gap-1.5 py-[3px] text-xs text-neutral')}
                       >
                         <span className={cn('shrink-0')}>{statusIcon(item.status)}</span>
                         <span
@@ -394,7 +394,7 @@ export function SectionSummariesCard({
                           Comments ({commentCount})
                         </div>
                         {sectionComments.slice(0, 3).map(c => (
-                          <div key={c.id} className={cn('text-xs text-[#64748b] py-0.5 flex gap-1.5')}>
+                          <div key={c.id} className={cn('text-xs text-neutral py-0.5 flex gap-1.5')}>
                             <span className={cn('font-semibold text-text-secondary shrink-0')}>
                               {c.displayName}:
                             </span>

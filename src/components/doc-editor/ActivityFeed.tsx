@@ -106,9 +106,9 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={cn('bg-[#f8fafc] border border-border rounded-lg overflow-hidden')}>
+    <div className={cn('bg-surface-panel border border-border rounded-lg overflow-hidden')}>
       <div
-        className={cn('flex items-center justify-between px-3 py-2 bg-[#f1f5f9] border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none')}
+        className={cn('flex items-center justify-between px-3 py-2 bg-surface-hover border-b border-border text-[13px] font-semibold text-[#334155] cursor-pointer select-none')}
         onClick={() => setCollapsed(v => !v)}
       >
         <span>Activity {events.length > 0 && `(${events.length})`}</span>
@@ -121,7 +121,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
         <>
           {/* Active participants bar */}
           {participants.length > 0 && (
-            <div className={cn('flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-[#64748b] flex-wrap')}>
+            <div className={cn('flex items-center gap-1.5 px-3 py-1.5 border-b border-border text-[11px] text-neutral flex-wrap')}>
               <span className={cn('font-semibold')}>Active:</span>
               {participants.map(p => (
                 <span key={p.clientId} className={cn('inline-flex items-center gap-1 bg-white border border-border rounded-xl px-2 py-0.5 text-[11px] font-medium text-[#334155]')}>
@@ -150,7 +150,7 @@ export default function ActivityFeed({ events, participants }: ActivityFeedProps
                   <div>
                     <span className={cn('font-semibold text-[#334155]')}>{event.displayName || 'Unknown'}</span>
                     {' '}
-                    <span className={cn('text-[#64748b]')}>
+                    <span className={cn('text-neutral')}>
                       {eventIcon(event.eventType)} {eventDescription(event.eventType, event.detail)}
                     </span>
                   </div>

@@ -4,13 +4,13 @@ import { C as R } from "./Card-qOg_oC77.js";
 import { P as F, T as ee, b as te, e as _, a as ae, c as ne, d as q } from "./Table-D7HV0dS-.js";
 import { B as f } from "./Button-DILgRebO.js";
 import { E as pe } from "./EmptyState-Ejc9dJA3.js";
-import { C as Q } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { C as Q } from "./ConfirmDialog-BRr5Nyae.js";
 import { I as O } from "./Input-Dt0yAs9r.js";
 import { B as $ } from "./Banner-DKb3JiLs.js";
 import { C as X } from "./Chip-BDT8ro4h.js";
 import { S as re } from "./Select-DAEcKWg2.js";
 import { C as J } from "./Checkbox-vOc5I8kn.js";
-import { M as we } from "./Modal-fp5zcyw8.js";
+import { M as we } from "./Modal-X8tdpRKs.js";
 import { T as fe } from "./Textarea-kaa9rHUL.js";
 import { c as G } from "./cn-B6yFEsav.js";
 function tt({ stats: a, pools: l, onNavigate: i, loading: p }) {
@@ -70,15 +70,15 @@ function H({
   emptyIcon: h = "📋",
   loading: u = !1
 }) {
-  const [s, d] = o(null), [b, C] = o("asc"), r = w(
+  const [s, d] = o(null), [x, C] = o("asc"), r = w(
     (m) => {
       s === m ? C((v) => v === "asc" ? "desc" : "asc") : (d(m), C("asc"));
     },
     [s]
   ), n = V(() => s ? [...l].sort((m, v) => {
-    const S = String(m[s] ?? ""), z = String(v[s] ?? ""), x = S.localeCompare(z);
-    return b === "asc" ? x : -x;
-  }) : l, [l, s, b]);
+    const S = String(m[s] ?? ""), z = String(v[s] ?? ""), b = S.localeCompare(z);
+    return x === "asc" ? b : -b;
+  }) : l, [l, s, x]);
   return u ? /* @__PURE__ */ e(R, { children: /* @__PURE__ */ t(ee, { children: [
     /* @__PURE__ */ e(te, { children: /* @__PURE__ */ t("tr", { children: [
       a.map((m) => /* @__PURE__ */ e(_, { style: m.width ? { width: m.width } : void 0, children: m.header }, m.key)),
@@ -97,7 +97,7 @@ function H({
         _,
         {
           sortable: m.sortable,
-          sortDirection: m.sortable && s === m.key ? b : null,
+          sortDirection: m.sortable && s === m.key ? x : null,
           style: m.width ? { width: m.width } : void 0,
           className: m.align === "right" ? "text-right" : m.align === "center" ? "text-center" : void 0,
           onClick: m.sortable ? () => r(m.key) : void 0,
@@ -137,7 +137,7 @@ function at({
   onViewPool: g,
   loading: c
 }) {
-  const [h, u] = o(null), [s, d] = o(!1), b = w(
+  const [h, u] = o(null), [s, d] = o(!1), x = w(
     async (n) => {
       d(!0);
       try {
@@ -184,7 +184,7 @@ function at({
           Q,
           {
             open: !!h,
-            onConfirm: () => h && b(h),
+            onConfirm: () => h && x(h),
             onCancel: () => u(null),
             title: "Delete Pool",
             body: "This action cannot be undone. All users in this pool will be affected.",
@@ -208,7 +208,7 @@ function T({
   placeholder: u,
   options: s,
   helpText: d,
-  disabled: b
+  disabled: x
 }) {
   const C = Ce(), r = w(
     (m) => {
@@ -223,7 +223,7 @@ function T({
         name: l,
         checked: !!p,
         onChange: g,
-        disabled: b
+        disabled: x
       }
     ),
     /* @__PURE__ */ t("span", { className: "text-sm text-text-primary", children: [
@@ -238,7 +238,7 @@ function T({
       value: String(p),
       onChange: r,
       placeholder: u,
-      disabled: b,
+      disabled: x,
       required: h,
       rows: 5,
       invalid: !!c,
@@ -251,7 +251,7 @@ function T({
       name: l,
       value: String(p),
       onChange: r,
-      disabled: b,
+      disabled: x,
       required: h,
       invalid: !!c,
       options: [
@@ -268,7 +268,7 @@ function T({
       value: String(p),
       onChange: r,
       placeholder: u,
-      disabled: b,
+      disabled: x,
       required: h,
       invalid: !!c
     }
@@ -288,7 +288,7 @@ function T({
   ] });
 }
 function nt({ pool: a, isEdit: l, onSubmit: i, onCancel: p, error: g }) {
-  const [c, h] = o(a?.poolName ?? ""), [u, s] = o(a?.settings?.mfaConfiguration ?? "OFF"), [d, b] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [C, r] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [n, m] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [v, S] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [z, x] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [I, A] = o(
+  const [c, h] = o(a?.poolName ?? ""), [u, s] = o(a?.settings?.mfaConfiguration ?? "OFF"), [d, x] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [C, r] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [n, m] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [v, S] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [z, b] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [I, A] = o(
     Object.entries(a?.customAttributes ?? {}).map(([y, M]) => ({ key: y, value: M }))
   ), [L, E] = o(!1), P = w(() => {
     A((y) => [...y, { key: "", value: "" }]);
@@ -366,7 +366,7 @@ function nt({ pool: a, isEdit: l, onSubmit: i, onCancel: p, error: g }) {
             name: "minLength",
             type: "number",
             value: d,
-            onChange: (y) => b(Number(y))
+            onChange: (y) => x(Number(y))
           }
         ),
         /* @__PURE__ */ e(
@@ -406,7 +406,7 @@ function nt({ pool: a, isEdit: l, onSubmit: i, onCancel: p, error: g }) {
             name: "requireSymbols",
             type: "checkbox",
             value: z,
-            onChange: (y) => x(!!y)
+            onChange: (y) => b(!!y)
           }
         )
       ] }),
@@ -472,7 +472,7 @@ function rt({
   onDeleteUser: g,
   loading: c
 }) {
-  const [h, u] = o(null), [s, d] = o(!1), b = w(
+  const [h, u] = o(null), [s, d] = o(!1), x = w(
     async (n) => {
       d(!0);
       try {
@@ -528,7 +528,7 @@ function rt({
           Q,
           {
             open: !!h,
-            onConfirm: () => h && b(h),
+            onConfirm: () => h && x(h),
             onCancel: () => u(null),
             title: "Delete User",
             body: "This action cannot be undone. The user will be permanently removed.",
@@ -549,7 +549,7 @@ function lt({
   onCancel: g,
   error: c
 }) {
-  const [h, u] = o(a?.email ?? ""), [s, d] = o(""), [b, C] = o(a?.givenName ?? ""), [r, n] = o(a?.familyName ?? ""), [m, v] = o(a?.nickname ?? ""), [S, z] = o(a?.picture ?? ""), [x, I] = o(a?.website ?? ""), [A, L] = o(
+  const [h, u] = o(a?.email ?? ""), [s, d] = o(""), [x, C] = o(a?.givenName ?? ""), [r, n] = o(a?.familyName ?? ""), [m, v] = o(a?.nickname ?? ""), [S, z] = o(a?.picture ?? ""), [b, I] = o(a?.website ?? ""), [A, L] = o(
     Object.fromEntries(
       Object.entries(a?.customAttributes ?? {}).map(([k, y]) => [k, String(y)])
     )
@@ -562,18 +562,18 @@ function lt({
         await p({
           email: h,
           ...!l && s ? { password: s } : {},
-          givenName: b || void 0,
+          givenName: x || void 0,
           familyName: r || void 0,
           nickname: m || void 0,
           picture: S || void 0,
-          website: x || void 0,
+          website: b || void 0,
           customAttributes: A
         });
       } finally {
         P(!1);
       }
     },
-    [h, s, b, r, m, S, x, A, l, p]
+    [h, s, x, r, m, S, b, A, l, p]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit User" : "Create User", className: "max-w-[640px]", children: [
     c && /* @__PURE__ */ e($, { variant: "error", children: c }),
@@ -608,7 +608,7 @@ function lt({
         {
           label: "Given Name",
           name: "givenName",
-          value: b,
+          value: x,
           onChange: (k) => C(String(k)),
           placeholder: "John"
         }
@@ -648,7 +648,7 @@ function lt({
         {
           label: "Website",
           name: "website",
-          value: x,
+          value: b,
           onChange: (k) => I(String(k)),
           placeholder: "https://..."
         }
@@ -683,7 +683,7 @@ function it({
   onDeleteGroup: g,
   loading: c
 }) {
-  const [h, u] = o(null), [s, d] = o(!1), b = w(
+  const [h, u] = o(null), [s, d] = o(!1), x = w(
     async (n) => {
       d(!0);
       try {
@@ -733,7 +733,7 @@ function it({
           Q,
           {
             open: !!h,
-            onConfirm: () => h && b(h),
+            onConfirm: () => h && x(h),
             onCancel: () => u(null),
             title: "Delete Group",
             body: "This action cannot be undone. Members will lose their group permissions.",
@@ -757,7 +757,7 @@ function st({
   onCancel: u,
   error: s
 }) {
-  const [d, b] = o(a?.groupName ?? ""), [C, r] = o(a?.description ?? ""), [n, m] = o(a?.permissions ?? []), [v, S] = o(""), [z, x] = o(""), [I, A] = o(!1), L = w(
+  const [d, x] = o(a?.groupName ?? ""), [C, r] = o(a?.description ?? ""), [n, m] = o(a?.permissions ?? []), [v, S] = o(""), [z, b] = o(""), [I, A] = o(!1), L = w(
     (N) => {
       if (N.key === "Enter") {
         N.preventDefault();
@@ -769,7 +769,7 @@ function st({
   ), E = w((N) => {
     m((k) => k.filter((y) => y !== N));
   }, []), P = w(async () => {
-    z && c && (await c(z), x(""));
+    z && c && (await c(z), b(""));
   }, [z, c]), D = w(
     async (N) => {
       N.preventDefault(), A(!0);
@@ -790,7 +790,7 @@ function st({
           label: "Group Name",
           name: "groupName",
           value: d,
-          onChange: (N) => b(String(N)),
+          onChange: (N) => x(String(N)),
           required: !0,
           placeholder: "admins"
         }
@@ -844,7 +844,7 @@ function st({
             {
               className: "flex-1",
               value: z,
-              onChange: (N) => x(N.target.value),
+              onChange: (N) => b(N.target.value),
               placeholder: "Select user to add...",
               options: p.map((N) => ({ value: N.userId, label: N.email }))
             }
@@ -867,7 +867,7 @@ function ot({
   onDeleteApp: g,
   loading: c
 }) {
-  const [h, u] = o(null), [s, d] = o(!1), b = w(
+  const [h, u] = o(null), [s, d] = o(!1), x = w(
     async (n) => {
       d(!0);
       try {
@@ -932,7 +932,7 @@ function ot({
           Q,
           {
             open: !!h,
-            onConfirm: () => h && b(h),
+            onConfirm: () => h && x(h),
             onCancel: () => u(null),
             title: "Delete Application",
             body: "This action cannot be undone. The application will lose access immediately.",
@@ -951,7 +951,7 @@ function ce({
   onChange: i,
   placeholder: p
 }) {
-  const g = () => i([...l, ""]), c = (u) => i(l.filter((s, d) => d !== u)), h = (u, s) => i(l.map((d, b) => b === u ? s : d));
+  const g = () => i([...l, ""]), c = (u) => i(l.filter((s, d) => d !== u)), h = (u, s) => i(l.map((d, x) => x === u ? s : d));
   return /* @__PURE__ */ t("div", { className: "mb-4", children: [
     /* @__PURE__ */ e("label", { className: "block mb-1 text-sm font-semibold text-text-primary", children: a }),
     l.map((u, s) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
@@ -982,7 +982,7 @@ function ct({
   onCancel: g,
   error: c
 }) {
-  const [h, u] = o(a?.clientName ?? ""), [s, d] = o(a?.poolId ?? ""), [b, C] = o(a?.redirectUris ?? [""]), [r, n] = o(a?.postLogoutRedirectUris ?? []), [m, v] = o(a?.grantTypes ?? ["authorization_code"]), [S, z] = o(a?.responseTypes ?? ["code"]), [x, I] = o(a?.scope ?? "openid profile email"), [A, L] = o(!1), E = w((N) => {
+  const [h, u] = o(a?.clientName ?? ""), [s, d] = o(a?.poolId ?? ""), [x, C] = o(a?.redirectUris ?? [""]), [r, n] = o(a?.postLogoutRedirectUris ?? []), [m, v] = o(a?.grantTypes ?? ["authorization_code"]), [S, z] = o(a?.responseTypes ?? ["code"]), [b, I] = o(a?.scope ?? "openid profile email"), [A, L] = o(!1), E = w((N) => {
     v(
       (k) => k.includes(N) ? k.filter((y) => y !== N) : [...k, N]
     );
@@ -997,17 +997,17 @@ function ct({
         await p({
           clientName: h,
           poolId: s,
-          redirectUris: b.filter((k) => k.trim()),
+          redirectUris: x.filter((k) => k.trim()),
           postLogoutRedirectUris: r.filter((k) => k.trim()),
           grantTypes: m,
           responseTypes: S,
-          scope: x
+          scope: b
         });
       } finally {
         L(!1);
       }
     },
-    [h, s, b, r, m, S, x, p]
+    [h, s, x, r, m, S, b, p]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit Application" : "New Application", className: "max-w-[640px]", children: [
     c && /* @__PURE__ */ e($, { variant: "error", children: c }),
@@ -1040,7 +1040,7 @@ function ct({
         ce,
         {
           label: "Redirect URIs",
-          values: b,
+          values: x,
           onChange: C,
           placeholder: "https://app.example.com/callback"
         }
@@ -1085,7 +1085,7 @@ function ct({
         {
           label: "Scope",
           name: "scope",
-          value: x,
+          value: b,
           onChange: (N) => I(String(N)),
           placeholder: "openid profile email",
           helpText: "Space-separated list of scopes."
@@ -1100,19 +1100,19 @@ function ct({
 }
 const Pe = ["authorization_code", "client_credentials", "refresh_token"];
 function dt({ onSubmit: a, onCancel: l, error: i }) {
-  const [p, g] = o(""), [c, h] = o(""), [u, s] = o([""]), [d, b] = o(["authorization_code"]), [C, r] = o(!1), n = w((x) => {
-    b(
-      (I) => I.includes(x) ? I.filter((A) => A !== x) : [...I, x]
+  const [p, g] = o(""), [c, h] = o(""), [u, s] = o([""]), [d, x] = o(["authorization_code"]), [C, r] = o(!1), n = w((b) => {
+    x(
+      (I) => I.includes(b) ? I.filter((A) => A !== b) : [...I, b]
     );
   }, []), m = w(() => {
-    s((x) => [...x, ""]);
-  }, []), v = w((x) => {
-    s((I) => I.filter((A, L) => L !== x));
-  }, []), S = w((x, I) => {
-    s((A) => A.map((L, E) => E === x ? I : L));
+    s((b) => [...b, ""]);
+  }, []), v = w((b) => {
+    s((I) => I.filter((A, L) => L !== b));
+  }, []), S = w((b, I) => {
+    s((A) => A.map((L, E) => E === b ? I : L));
   }, []), z = w(
-    async (x) => {
-      x.preventDefault(), r(!0);
+    async (b) => {
+      b.preventDefault(), r(!0);
       try {
         await a({
           poolName: p,
@@ -1135,7 +1135,7 @@ function dt({ onSubmit: a, onCancel: l, error: i }) {
           label: "Pool Name",
           name: "poolName",
           value: p,
-          onChange: (x) => g(String(x)),
+          onChange: (b) => g(String(b)),
           required: !0,
           placeholder: "my-user-pool"
         }
@@ -1146,19 +1146,19 @@ function dt({ onSubmit: a, onCancel: l, error: i }) {
           label: "Application Name",
           name: "clientName",
           value: c,
-          onChange: (x) => h(String(x)),
+          onChange: (b) => h(String(b)),
           required: !0,
           placeholder: "My App"
         }
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Redirect URIs" }),
-        u.map((x, I) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
+        u.map((b, I) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
           /* @__PURE__ */ e(
             O,
             {
               className: "flex-1",
-              value: x,
+              value: b,
               onChange: (A) => S(I, A.target.value),
               placeholder: "https://app.example.com/callback"
             }
@@ -1169,16 +1169,16 @@ function dt({ onSubmit: a, onCancel: l, error: i }) {
       ] }),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Grant Types" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Pe.map((x) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Pe.map((b) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
           /* @__PURE__ */ e(
             J,
             {
-              checked: d.includes(x),
-              onChange: () => n(x)
+              checked: d.includes(b),
+              onChange: () => n(b)
             }
           ),
-          x
-        ] }, x)) })
+          b
+        ] }, b)) })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
         /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: C, children: C ? "Creating..." : "Create Pool + Application" }),
@@ -1195,7 +1195,7 @@ function mt({
   onTestSend: g,
   loading: c
 }) {
-  const [h, u] = o(null), [s, d] = o(!1), [b, C] = o(null), [r, n] = o(""), [m, v] = o(!1), S = w(
+  const [h, u] = o(null), [s, d] = o(!1), [x, C] = o(null), [r, n] = o(""), [m, v] = o(!1), S = w(
     async (A) => {
       d(!0);
       try {
@@ -1206,15 +1206,15 @@ function mt({
     },
     [p]
   ), z = w(async () => {
-    if (!(!b || !r.trim())) {
+    if (!(!x || !r.trim())) {
       v(!0);
       try {
-        await g(b, r.trim()), C(null), n("");
+        await g(x, r.trim()), C(null), n("");
       } finally {
         v(!1);
       }
     }
-  }, [b, r, g]), x = V(
+  }, [x, r, g]), b = V(
     () => [
       { key: "name", header: "Name", sortable: !0 },
       { key: "subject", header: "Subject" }
@@ -1239,7 +1239,7 @@ function mt({
         /* @__PURE__ */ e(
           H,
           {
-            columns: x,
+            columns: b,
             data: a,
             keyField: "templateId",
             actions: I,
@@ -1251,7 +1251,7 @@ function mt({
         /* @__PURE__ */ e(
           we,
           {
-            open: !!b,
+            open: !!x,
             onClose: () => C(null),
             title: "Send Test Email",
             footer: /* @__PURE__ */ t(j, { children: [
@@ -1295,7 +1295,7 @@ function ut({
   onCancel: p,
   error: g
 }) {
-  const [c, h] = o(a?.name ?? ""), [u, s] = o(a?.subject ?? ""), [d, b] = o(a?.htmlBody ?? ""), [C, r] = o(a?.textBody ?? ""), [n, m] = o(a?.variables ?? []), [v, S] = o(""), [z, x] = o(!1), [I, A] = o(!1), L = w(
+  const [c, h] = o(a?.name ?? ""), [u, s] = o(a?.subject ?? ""), [d, x] = o(a?.htmlBody ?? ""), [C, r] = o(a?.textBody ?? ""), [n, m] = o(a?.variables ?? []), [v, S] = o(""), [z, b] = o(!1), [I, A] = o(!1), L = w(
     (D) => {
       if (D.key === "Enter") {
         D.preventDefault();
@@ -1345,13 +1345,13 @@ function ut({
       /* @__PURE__ */ t("div", { className: "mb-4", children: [
         /* @__PURE__ */ t("div", { className: "flex items-center justify-between mb-1", children: [
           /* @__PURE__ */ e("label", { className: "text-sm font-semibold text-text-primary", children: "HTML Body" }),
-          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => x((D) => !D), children: z ? "Hide Preview" : "Show Preview" })
+          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b((D) => !D), children: z ? "Hide Preview" : "Show Preview" })
         ] }),
         /* @__PURE__ */ e(
           fe,
           {
             value: d,
-            onChange: (D) => b(D.target.value),
+            onChange: (D) => x(D.target.value),
             placeholder: "<html><body>...</body></html>",
             rows: 10,
             className: "resize-y font-mono"
@@ -1509,25 +1509,25 @@ function pt({
   loading: g,
   totalRecords: c
 }) {
-  const [h, u] = o(""), [s, d] = o(""), [b, C] = o(""), [r, n] = o(""), [m, v] = o("50"), [S, z] = o(""), [x, I] = o(""), [A, L] = o(null), [E, P] = o(!1), D = w(async () => {
+  const [h, u] = o(""), [s, d] = o(""), [x, C] = o(""), [r, n] = o(""), [m, v] = o("50"), [S, z] = o(""), [b, I] = o(""), [A, L] = o(null), [E, P] = o(!1), D = w(async () => {
     await l({
       entityType: h || void 0,
       entityId: s || void 0,
-      fromTime: b ? new Date(b).getTime() : void 0,
+      fromTime: x ? new Date(x).getTime() : void 0,
       toTime: r ? new Date(r).getTime() : void 0,
       limit: m ? Number(m) : void 0
     });
-  }, [h, s, b, r, m, l]), N = w(async () => {
-    if (!(!S || !x)) {
+  }, [h, s, x, r, m, l]), N = w(async () => {
+    if (!(!S || !b)) {
       P(!0);
       try {
-        const y = await p(S, new Date(x).getTime());
+        const y = await p(S, new Date(b).getTime());
         L(y);
       } finally {
         P(!1);
       }
     }
-  }, [S, x, p]), k = V(
+  }, [S, b, p]), k = V(
     () => [
       {
         key: "timestamp",
@@ -1582,7 +1582,7 @@ function pt({
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "From" }),
-        /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: b, onChange: (y) => C(y.target.value) })
+        /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: x, onChange: (y) => C(y.target.value) })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "To" }),
@@ -1618,9 +1618,9 @@ function pt({
         ] }),
         /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
           /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "At Timestamp" }),
-          /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: x, onChange: (y) => I(y.target.value) })
+          /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: b, onChange: (y) => I(y.target.value) })
         ] }),
-        /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: N, disabled: E || !S || !x, children: E ? "Replaying..." : "Replay" })
+        /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: N, disabled: E || !S || !b, children: E ? "Replaying..." : "Replay" })
       ] }),
       A && /* @__PURE__ */ e("pre", { className: "p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0", children: JSON.stringify(A, null, 2) })
     ] })
@@ -1781,7 +1781,7 @@ function gt({
   he(() => (u ? d.current = setInterval(c, 1e4) : d.current && (clearInterval(d.current), d.current = null), () => {
     d.current && clearInterval(d.current);
   }), [u, c]);
-  const b = w(
+  const x = w(
     async (r) => {
       await p(r);
     },
@@ -1838,7 +1838,7 @@ function gt({
               /* @__PURE__ */ e(q, { className: "text-xs text-neutral", children: new Date(r.failedAt).toLocaleString() }),
               /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e(X, { tone: "neutral", size: "xs", mono: !0, children: r.retryCount }) }),
               /* @__PURE__ */ e(q, { className: "text-right", children: /* @__PURE__ */ t("div", { className: "flex items-center justify-end gap-2", children: [
-                /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b(r.id), children: "Redrive" }),
+                /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => x(r.id), children: "Redrive" }),
                 /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => C(r.id), children: "Purge" })
               ] }) })
             ] }, r.id)) })
@@ -1848,7 +1848,7 @@ function gt({
     }
   );
 }
-function xt({
+function bt({
   uid: a,
   interactionUrl: l,
   clientName: i,
@@ -1860,16 +1860,16 @@ function xt({
   registrationEnabled: s = !0,
   forgotPasswordEnabled: d = !0
 }) {
-  const [b, C] = o("signin"), [r, n] = o(!1), [m, v] = o(null), [S, z] = o(""), [x, I] = o(""), [A, L] = o(""), [E, P] = o(""), [D, N] = o(""), [k, y] = o(""), [M, B] = o(""), [W, Z] = o(!1), [Y, xe] = o(""), [be, se] = o(!1), oe = g || m, ye = w(async (U) => {
+  const [x, C] = o("signin"), [r, n] = o(!1), [m, v] = o(null), [S, z] = o(""), [b, I] = o(""), [A, L] = o(""), [E, P] = o(""), [D, N] = o(""), [k, y] = o(""), [M, B] = o(""), [W, Z] = o(!1), [Y, be] = o(""), [xe, se] = o(!1), oe = g || m, ye = w(async (U) => {
     U.preventDefault(), v(null), n(!0);
     try {
-      await c(S, x);
+      await c(S, b);
     } catch (K) {
       v(K instanceof Error ? K.message : "Login failed");
     } finally {
       n(!1);
     }
-  }, [S, x, c]), ve = w(async (U) => {
+  }, [S, b, c]), ve = w(async (U) => {
     if (U.preventDefault(), v(null), E !== D) {
       v("Passwords do not match");
       return;
@@ -1912,10 +1912,10 @@ function xt({
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": b === "signin",
+          "aria-selected": x === "signin",
           className: G(
             "flex-1 rounded-none border-b-2",
-            b === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            x === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
           onClick: () => le("signin"),
           children: "Sign In"
@@ -1927,10 +1927,10 @@ function xt({
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": b === "register",
+          "aria-selected": x === "register",
           className: G(
             "flex-1 rounded-none border-b-2",
-            b === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            x === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
           onClick: () => le("register"),
           children: "Register"
@@ -1942,10 +1942,10 @@ function xt({
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": b === "forgot",
+          "aria-selected": x === "forgot",
           className: G(
             "flex-1 rounded-none border-b-2",
-            b === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            x === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
           onClick: () => le("forgot"),
           children: "Forgot Password"
@@ -1953,7 +1953,7 @@ function xt({
       )
     ] }),
     oe && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: oe }) }),
-    b === "signin" && /* @__PURE__ */ t("form", { onSubmit: ye, "aria-label": "Sign in form", children: [
+    x === "signin" && /* @__PURE__ */ t("form", { onSubmit: ye, "aria-label": "Sign in form", children: [
       /* @__PURE__ */ e("input", { type: "hidden", name: "uid", value: a }),
       /* @__PURE__ */ e(
         T,
@@ -1974,7 +1974,7 @@ function xt({
           label: "Password",
           name: "login-password",
           type: "password",
-          value: x,
+          value: b,
           onChange: (U) => I(String(U)),
           required: !0,
           disabled: r
@@ -1992,7 +1992,7 @@ function xt({
         }
       )
     ] }),
-    b === "register" && /* @__PURE__ */ t("form", { onSubmit: ve, "aria-label": "Registration form", children: [
+    x === "register" && /* @__PURE__ */ t("form", { onSubmit: ve, "aria-label": "Registration form", children: [
       /* @__PURE__ */ e(
         T,
         {
@@ -2075,7 +2075,7 @@ function xt({
         }
       )
     ] }),
-    b === "forgot" && /* @__PURE__ */ e("form", { onSubmit: Ne, "aria-label": "Forgot password form", children: be ? /* @__PURE__ */ e($, { variant: "success", children: "If an account exists for that email, a password reset link has been sent." }) : /* @__PURE__ */ t(j, { children: [
+    x === "forgot" && /* @__PURE__ */ e("form", { onSubmit: Ne, "aria-label": "Forgot password form", children: xe ? /* @__PURE__ */ e($, { variant: "success", children: "If an account exists for that email, a password reset link has been sent." }) : /* @__PURE__ */ t(j, { children: [
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-4 mt-0 leading-relaxed", children: "Enter your email address and we'll send you a link to reset your password." }),
       /* @__PURE__ */ e(
         T,
@@ -2084,7 +2084,7 @@ function xt({
           name: "forgot-email",
           type: "email",
           value: Y,
-          onChange: (U) => xe(String(U)),
+          onChange: (U) => be(String(U)),
           required: !0,
           placeholder: "you@example.com",
           disabled: r
@@ -2115,7 +2115,7 @@ const Ee = {
 function Re(a) {
   return Ee[a] || `Access: ${a}`;
 }
-function bt({
+function xt({
   clientName: a,
   scopes: l,
   redirectUri: i,
@@ -2155,7 +2155,7 @@ function bt({
         ] }),
         /* @__PURE__ */ t("div", { className: "mx-8 border border-border rounded-md overflow-hidden mb-6", children: [
           /* @__PURE__ */ e("p", { className: "text-[11px] font-semibold uppercase tracking-wide text-neutral px-4 py-2.5 m-0 bg-surface-panel border-b border-border", children: "Requested Permissions" }),
-          /* @__PURE__ */ e("ul", { className: "list-none p-0 m-0", "aria-label": "Requested permissions", children: l.map((b, C) => /* @__PURE__ */ t(
+          /* @__PURE__ */ e("ul", { className: "list-none p-0 m-0", "aria-label": "Requested permissions", children: l.map((x, C) => /* @__PURE__ */ t(
             "li",
             {
               className: G(
@@ -2164,10 +2164,10 @@ function bt({
               ),
               children: [
                 /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-info shrink-0", "aria-hidden": "true" }),
-                /* @__PURE__ */ e("span", { children: Re(b) })
+                /* @__PURE__ */ e("span", { children: Re(x) })
               ]
             },
-            b
+            x
           )) })
         ] }),
         /* @__PURE__ */ t("div", { className: "px-8 pb-8", children: [
@@ -2238,9 +2238,9 @@ function ge({
       const S = [...v];
       S[r] = m;
       const z = S.join("");
-      return z.length === a && S.every((x) => x !== "") && setTimeout(() => l(z), 0), S;
+      return z.length === a && S.every((b) => b !== "") && setTimeout(() => l(z), 0), S;
     }), m && r < a - 1 && s(r + 1);
-  }, [a, l, s]), b = w((r, n) => {
+  }, [a, l, s]), x = w((r, n) => {
     n.key === "Backspace" ? c[r] === "" && r > 0 ? (n.preventDefault(), h((m) => {
       const v = [...m];
       return v[r - 1] = "", v;
@@ -2278,7 +2278,7 @@ function ge({
             disabled: p,
             "aria-label": `Digit ${n + 1} of ${a}`,
             onChange: (m) => d(n, m.target.value),
-            onKeyDown: (m) => b(n, m),
+            onKeyDown: (m) => x(n, m),
             onPaste: C,
             onFocus: (m) => m.target.select(),
             className: G(
@@ -2312,11 +2312,11 @@ function yt({
   onComplete: i,
   userEmail: p
 }) {
-  const [g, c] = o("name"), [h, u] = o(!1), [s, d] = o(null), [b, C] = o(""), [r, n] = o(null), [m, v] = o([]), [S, z] = o(!1), x = de.indexOf(g), I = w(async (E) => {
-    if (E.preventDefault(), !!b.trim()) {
+  const [g, c] = o("name"), [h, u] = o(!1), [s, d] = o(null), [x, C] = o(""), [r, n] = o(null), [m, v] = o([]), [S, z] = o(!1), b = de.indexOf(g), I = w(async (E) => {
+    if (E.preventDefault(), !!x.trim()) {
       d(null), u(!0);
       try {
-        const P = await a(b.trim());
+        const P = await a(x.trim());
         n(P), v(P.backupCodes), c("scan");
       } catch (P) {
         d(P instanceof Error ? P.message : "Setup failed");
@@ -2324,7 +2324,7 @@ function yt({
         u(!1);
       }
     }
-  }, [b, a]), A = w(async (E) => {
+  }, [x, a]), A = w(async (E) => {
     if (r) {
       d(null), u(!0);
       try {
@@ -2352,14 +2352,14 @@ function yt({
         {
           className: G(
             "w-3 h-3 rounded-full transition-colors duration-200",
-            P < x ? "bg-success" : P === x ? "bg-info" : "bg-surface-emphasis"
+            P < b ? "bg-success" : P === b ? "bg-info" : "bg-surface-emphasis"
           ),
-          "aria-label": `Step ${P + 1}${P === x ? " (current)" : P < x ? " (completed)" : ""}`
+          "aria-label": `Step ${P + 1}${P === b ? " (current)" : P < b ? " (completed)" : ""}`
         }
       ),
       /* @__PURE__ */ e("span", { className: G(
         "text-[10px] uppercase tracking-wide font-medium",
-        P === x ? "text-text-primary" : "text-text-tertiary"
+        P === b ? "text-text-primary" : "text-text-tertiary"
       ), children: Le[P] })
     ] }, E)) }),
     s && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: s }) }),
@@ -2370,7 +2370,7 @@ function yt({
         {
           label: "Device Name",
           name: "device-name",
-          value: b,
+          value: x,
           onChange: (E) => C(String(E)),
           required: !0,
           placeholder: "e.g., My Phone",
@@ -2384,7 +2384,7 @@ function yt({
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          disabled: h || !b.trim(),
+          disabled: h || !x.trim(),
           children: h ? "Setting up..." : "Continue"
         }
       )
@@ -2407,7 +2407,7 @@ function yt({
         {
           value: r.qrCode,
           size: 200,
-          label: `Device: ${b}`
+          label: `Device: ${x}`
         }
       ) }),
       /* @__PURE__ */ e("p", { className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0", children: "Or enter this secret manually" }),
@@ -2448,7 +2448,7 @@ function yt({
       h && /* @__PURE__ */ e("p", { className: "text-center text-sm text-text-tertiary mt-3", children: "Verifying..." })
     ] }),
     g === "backup" && /* @__PURE__ */ t("div", { children: [
-      /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center", children: /* @__PURE__ */ e("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-success-fg", children: /* @__PURE__ */ e("polyline", { points: "20 6 9 17 4 12" }) }) }),
+      /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-success-bg flex items-center justify-center", children: /* @__PURE__ */ e("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-success-fg", children: /* @__PURE__ */ e("polyline", { points: "20 6 9 17 4 12" }) }) }),
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-5 mt-0 text-center leading-relaxed", children: "Save these backup codes in a safe place. Each code can only be used once." }),
       /* @__PURE__ */ e("div", { className: "grid grid-cols-2 gap-2.5 mb-6", children: m.map((E, P) => /* @__PURE__ */ e("div", { className: "px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all", children: E }, P)) }),
       /* @__PURE__ */ e(
@@ -2479,7 +2479,7 @@ function vt({
   onVerifyBackup: l,
   error: i = null
 }) {
-  const [p, g] = o("totp"), [c, h] = o(!1), [u, s] = o(null), [d, b] = o(""), C = i || u, r = w(async (m) => {
+  const [p, g] = o("totp"), [c, h] = o(!1), [u, s] = o(null), [d, x] = o(""), C = i || u, r = w(async (m) => {
     s(null), h(!0);
     try {
       await a(m);
@@ -2501,7 +2501,7 @@ function vt({
     }
   }, [d, l]);
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[440px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "Multi-factor verification", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-info-fg", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-info-bg flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-info-fg", children: [
       /* @__PURE__ */ e("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2", ry: "2" }),
       /* @__PURE__ */ e("path", { d: "M7 11V7a5 5 0 0 1 10 0v4" })
     ] }) }),
@@ -2541,7 +2541,7 @@ function vt({
             label: "Backup Code",
             name: "backup-code",
             value: d,
-            onChange: (m) => b(String(m)),
+            onChange: (m) => x(String(m)),
             required: !0,
             placeholder: "XXXX-XXXX-XXXX",
             disabled: c
@@ -2594,7 +2594,7 @@ function Nt({
   onRemoveDevice: c,
   loading: h = !1
 }) {
-  const [u, s] = o(null), [d, b] = o(null), [C, r] = o(""), [n, m] = o(!1), v = w(async () => {
+  const [u, s] = o(null), [d, x] = o(null), [C, r] = o(""), [n, m] = o(!1), v = w(async () => {
     if (u) {
       m(!0);
       try {
@@ -2603,17 +2603,17 @@ function Nt({
         m(!1), s(null);
       }
     }
-  }, [u, c]), S = w(async (x) => {
+  }, [u, c]), S = w(async (b) => {
     if (C.trim()) {
       m(!0);
       try {
-        await g(x, C.trim());
+        await g(b, C.trim());
       } finally {
-        m(!1), b(null), r("");
+        m(!1), x(null), r("");
       }
     }
-  }, [C, g]), z = (x) => {
-    b(x.deviceId), r(x.deviceName);
+  }, [C, g]), z = (b) => {
+    x(b.deviceId), r(b.deviceName);
   };
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-start justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[600px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "MFA device management", children: [
     /* @__PURE__ */ t("div", { className: "flex items-center justify-between mb-6 flex-wrap gap-3", children: [
@@ -2637,12 +2637,12 @@ function Nt({
         onAction: p
       }
     ),
-    !h && a.length > 0 && /* @__PURE__ */ e("div", { className: "flex flex-col gap-3", role: "list", "aria-label": "MFA devices", children: a.map((x) => /* @__PURE__ */ t("div", { className: "p-5 border border-border rounded-lg bg-white", role: "listitem", children: [
-      /* @__PURE__ */ e("div", { className: "flex items-center justify-between mb-2", children: /* @__PURE__ */ e("div", { className: "flex items-center gap-2.5", children: d === x.deviceId ? /* @__PURE__ */ t(
+    !h && a.length > 0 && /* @__PURE__ */ e("div", { className: "flex flex-col gap-3", role: "list", "aria-label": "MFA devices", children: a.map((b) => /* @__PURE__ */ t("div", { className: "p-5 border border-border rounded-lg bg-white", role: "listitem", children: [
+      /* @__PURE__ */ e("div", { className: "flex items-center justify-between mb-2", children: /* @__PURE__ */ e("div", { className: "flex items-center gap-2.5", children: d === b.deviceId ? /* @__PURE__ */ t(
         "form",
         {
           onSubmit: (I) => {
-            I.preventDefault(), S(x.deviceId);
+            I.preventDefault(), S(b.deviceId);
           },
           className: "flex gap-2 items-center",
           children: [
@@ -2650,37 +2650,37 @@ function Nt({
               T,
               {
                 label: "",
-                name: `rename-${x.deviceId}`,
+                name: `rename-${b.deviceId}`,
                 value: C,
                 onChange: (I) => r(String(I)),
                 disabled: n
               }
             ),
             /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "sm", disabled: n || !C.trim(), children: "Save" }),
-            /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b(null), children: "Cancel" })
+            /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => x(null), children: "Cancel" })
           ]
         }
       ) : /* @__PURE__ */ t(j, { children: [
-        /* @__PURE__ */ e("h3", { className: "text-[15px] font-semibold text-text-primary m-0", children: x.deviceName }),
+        /* @__PURE__ */ e("h3", { className: "text-[15px] font-semibold text-text-primary m-0", children: b.deviceName }),
         /* @__PURE__ */ e(
           ie,
           {
-            status: x.isVerified ? "CONFIRMED" : "UNCONFIRMED"
+            status: b.isVerified ? "CONFIRMED" : "UNCONFIRMED"
           }
         )
       ] }) }) }),
       /* @__PURE__ */ t("p", { className: "text-[11px] text-text-tertiary m-0 mb-3", children: [
         "Type: ",
-        x.deviceType,
+        b.deviceType,
         " · Added: ",
-        me(x.createdAt),
-        x.lastUsed && ` · Last used: ${me(x.lastUsed)}`
+        me(b.createdAt),
+        b.lastUsed && ` · Last used: ${me(b.lastUsed)}`
       ] }),
-      d !== x.deviceId && /* @__PURE__ */ t("div", { className: "flex gap-2", children: [
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => z(x), children: "Rename" }),
-        /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => s(x.deviceId), children: "Remove" })
+      d !== b.deviceId && /* @__PURE__ */ t("div", { className: "flex gap-2", children: [
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => z(b), children: "Rename" }),
+        /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => s(b.deviceId), children: "Remove" })
       ] })
-    ] }, x.deviceId)) }),
+    ] }, b.deviceId)) }),
     /* @__PURE__ */ e(
       Q,
       {
@@ -2698,7 +2698,7 @@ function Nt({
 }
 function Ct({ onConfirm: a, onCancel: l, clientName: i }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Sign out confirmation", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-danger-bg flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
       /* @__PURE__ */ e("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
       /* @__PURE__ */ e("polyline", { points: "16 17 21 12 16 7" }),
       /* @__PURE__ */ e("line", { x1: "21", y1: "12", x2: "9", y2: "12" })
@@ -2726,7 +2726,7 @@ function wt({
   onBack: g
 }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Error", children: [
-    /* @__PURE__ */ e("div", { className: "w-14 h-14 rounded-full bg-[#fef2f2] flex items-center justify-center mx-auto mb-5", "aria-hidden": "true", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
+    /* @__PURE__ */ e("div", { className: "w-14 h-14 rounded-full bg-danger-bg flex items-center justify-center mx-auto mb-5", "aria-hidden": "true", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
       /* @__PURE__ */ e("circle", { cx: "12", cy: "12", r: "10" }),
       /* @__PURE__ */ e("line", { x1: "15", y1: "9", x2: "9", y2: "15" }),
       /* @__PURE__ */ e("line", { x1: "9", y1: "9", x2: "15", y2: "15" })
@@ -2761,7 +2761,7 @@ function Fe({
       className: G(
         "flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer",
         "border-none rounded-none border-l-[3px] transition-colors",
-        l ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]"
+        l ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-[#334155] border-l-transparent hover:bg-surface-hover"
       ),
       onClick: () => i(a.path),
       "aria-current": l ? "page" : void 0,
@@ -2904,7 +2904,7 @@ export {
   T as F,
   st as G,
   kt as I,
-  xt as L,
+  bt as L,
   Nt as M,
   nt as P,
   Ue as Q,
@@ -2914,7 +2914,7 @@ export {
   ot as b,
   dt as c,
   pt as d,
-  bt as e,
+  xt as e,
   mt as f,
   H as g,
   wt as h,

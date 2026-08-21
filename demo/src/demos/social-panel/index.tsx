@@ -11,7 +11,7 @@ export default function SocialPanelDemo() {
           <h2 className="text-[20px] font-semibold mb-2 text-[#1a1a2e]">
             Social &amp; Chat
           </h2>
-          <p className="text-[#64748b] text-[14px]">
+          <p className="text-neutral text-[14px]">
             Chat rooms, typing indicators, reactions, and user presence — all driven by simulated
             real-time events.
           </p>

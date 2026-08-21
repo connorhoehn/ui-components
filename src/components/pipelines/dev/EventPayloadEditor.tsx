@@ -92,7 +92,7 @@ export function EventPayloadEditor({
           onChange={(e) => onEventTypeChange(e.target.value as EventKey)}
           className={cn(
             'w-full py-[7px] px-2 text-[13px] rounded-md',
-            'border border-[#cbd5e1] bg-white font-[inherit]',
+            'border border-border-emphasis bg-white font-[inherit]',
           )}
         >
           {eventOptions}
@@ -111,7 +111,7 @@ export function EventPayloadEditor({
           rows={12}
           className={cn(
             'w-full p-2 text-xs font-mono rounded-md',
-            'border border-[#cbd5e1] resize-y box-border',
+            'border border-border-emphasis resize-y box-border',
           )}
         />
       </div>
@@ -127,7 +127,7 @@ export function EventPayloadEditor({
           onChange={(e) => onSeqChange(e.target.value)}
           className={cn(
             'w-[120px] py-1.5 px-2 text-[13px] rounded-md',
-            'border border-[#cbd5e1] font-[inherit]',
+            'border border-border-emphasis font-[inherit]',
           )}
         />
       </div>

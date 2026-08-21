@@ -104,7 +104,7 @@ function App() {
           ].map(([cat, examples]) => (
             <tr className="border-b border-surface-hover" key={cat}>
               <td className="py-2 px-3 font-mono text-[13px] font-medium">{cat}</td>
-              <td className="py-2 px-3 text-[#64748b]">{examples}</td>
+              <td className="py-2 px-3 text-neutral">{examples}</td>
             </tr>
           ))}
         </tbody>

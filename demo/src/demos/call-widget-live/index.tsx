@@ -358,7 +358,7 @@ export default function CallWidgetLiveDemo() {
 
       {/* Simulated app — fills remaining space, contains the call widget */}
       <div className="flex-1 min-h-0 relative">
-        <div className="absolute inset-0 flex bg-[#0f172a] overflow-hidden">
+        <div className="absolute inset-0 flex bg-surface-inverse overflow-hidden">
           <AppSidebar />
           <ChatArea callActive={callState === 'active'} messages={messages} />
         </div>

@@ -2,7 +2,7 @@ import { jsxs as i, jsx as t, Fragment as B } from "react/jsx-runtime";
 import { useState as T, useCallback as A, createContext as ce, useMemo as M, useEffect as R, useRef as D, useContext as de, useId as te, useLayoutEffect as ue } from "react";
 import { c as u } from "./cn-B6yFEsav.js";
 import { _ as O } from "./index-Bjylubtc.js";
-import { M as re } from "./Modal-fp5zcyw8.js";
+import { M as re } from "./Modal-X8tdpRKs.js";
 import { T as pe, b as fe, e as J, a as xe, c as G, d as F } from "./Table-D7HV0dS-.js";
 import { E as me } from "./EmptyState-Ejc9dJA3.js";
 import { S as he } from "./PermissionDeniedCard-0XYb6Eju.js";
@@ -13,7 +13,7 @@ import { createPortal as ne } from "react-dom";
 import { C as ye } from "./Card-qOg_oC77.js";
 import { C as we } from "./Chip-BDT8ro4h.js";
 import { t as Ne, f as ke, b as Ce, a as Se } from "./tones-DknNcB3q.js";
-import { A as Ee } from "./Badge-Cy_IRGw3.js";
+import { A as Ee } from "./Badge-qI9E13DX.js";
 import "clsx";
 import "tailwind-merge";
 const $e = [
@@ -889,13 +889,13 @@ function tr({ open: e, onClose: r }) {
       cardStyle: { maxHeight: "85vh", display: "flex", flexDirection: "column" },
       rawChildren: !0,
       children: [
-        /* @__PURE__ */ t("div", { className: "text-base font-semibold text-[#0f172a] mb-2.5", children: "Keyboard shortcuts" }),
+        /* @__PURE__ */ t("div", { className: "text-base font-semibold text-text-primary mb-2.5", children: "Keyboard shortcuts" }),
         /* @__PURE__ */ t("div", { className: "overflow-y-auto pr-1", children: Ue.map((a, n) => /* @__PURE__ */ i("div", { children: [
           /* @__PURE__ */ t(
             "div",
             {
               className: u(
-                "text-[12px] font-bold text-[#0f172a] uppercase tracking-[0.05em] mb-1.5",
+                "text-[12px] font-bold text-text-primary uppercase tracking-[0.05em] mb-1.5",
                 n === 0 ? "mt-0 pt-0" : "mt-4 pt-1.5 border-t border-[#f1f5f9]"
               ),
               children: a.title
@@ -906,8 +906,8 @@ function tr({ open: e, onClose: r }) {
             {
               className: "flex items-baseline justify-between py-1 text-[13px] gap-4",
               children: [
-                /* @__PURE__ */ t("span", { className: "font-mono text-[12px] text-[#0f172a] bg-[#f1f5f9] border border-[#e2e8f0] rounded px-1.5 py-px whitespace-nowrap shrink-0", children: o.keys }),
-                /* @__PURE__ */ t("span", { className: "text-[#64748b] text-right flex-1", children: o.action })
+                /* @__PURE__ */ t("span", { className: "font-mono text-[12px] text-text-primary bg-surface-hover border border-border rounded px-1.5 py-px whitespace-nowrap shrink-0", children: o.keys }),
+                /* @__PURE__ */ t("span", { className: "text-neutral text-right flex-1", children: o.action })
               ]
             },
             `${a.title}-${s}`
@@ -917,7 +917,7 @@ function tr({ open: e, onClose: r }) {
           "button",
           {
             onClick: r,
-            className: "py-1.5 px-3.5 text-[13px] font-semibold border border-[#e2e8f0] rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]",
+            className: "py-1.5 px-3.5 text-[13px] font-semibold border border-border rounded-md bg-white text-[#374151] cursor-pointer font-[inherit]",
             children: "Close"
           }
         ) })
@@ -2486,7 +2486,7 @@ function Er({ user: e, items: r, className: a, "data-testid": n }) {
                     className: u(
                       "flex items-center gap-2.5 w-full text-left px-3 py-2",
                       "text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100",
-                      p.danger ? "text-[#dc2626] bg-transparent hover:bg-[#fef2f2]" : "text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]"
+                      p.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : "text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]"
                     ),
                     children: [
                       p.icon && /* @__PURE__ */ t("span", { className: "shrink-0 text-base leading-none", "aria-hidden": "true", children: p.icon }),
@@ -3096,7 +3096,7 @@ function Rr({
                   className: u(
                     "flex items-center gap-2.5 w-full text-left px-3.5 py-2",
                     "text-sm border-none cursor-pointer font-[inherit] transition-colors duration-100",
-                    b.danger ? "text-[#dc2626] bg-transparent hover:bg-[#fef2f2]" : b.active ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]"
+                    b.danger ? "text-danger-fg bg-transparent hover:bg-danger-bg" : b.active ? "font-semibold text-[var(--color-text-primary)] bg-[var(--color-surface-hover)]" : "font-normal text-[var(--color-text-primary)] bg-transparent hover:bg-[var(--color-surface-hover)]"
                   ),
                   children: [
                     b.icon && /* @__PURE__ */ t("span", { className: "shrink-0 text-base leading-none", "aria-hidden": "true", children: b.icon }),

@@ -174,7 +174,7 @@ function AvatarItem({
 
       {/* Section indicator */}
       {sectionTitle && (
-        <span className={cn('text-[10px] text-[#64748b] max-w-[80px] overflow-hidden text-ellipsis whitespace-nowrap text-center')}>
+        <span className={cn('text-[10px] text-neutral max-w-[80px] overflow-hidden text-ellipsis whitespace-nowrap text-center')}>
           &sect; {sectionTitle}
         </span>
       )}

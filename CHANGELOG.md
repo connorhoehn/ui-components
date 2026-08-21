@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.63.0] — 2026-08-21
+
+The tones rule gets its missing enforcement half: arbitrary-value hex
+utilities (`bg-[#2563eb]`) sailed past the palette-name scan — ~950 of them
+had accumulated, including Button's off-brand primary fixed in v2.61.0.
+
+### Changed
+
+- **665 hex utilities converted to token classes, mechanically and
+  pixel-identically:** every `prefix-[#hex]` whose hex exactly equals a
+  token's current value became that token's class (`text-[#0f172a]` →
+  `text-text-primary`, `border-[#e2e8f0]` → `border-border`,
+  `bg-[#fef2f2]` → `bg-danger-bg`, …) across `src/components`, `src/theme`,
+  `src/renderers` and `demo/src`. All 64 visual e2e baselines pass
+  unchanged, which is the proof of the "pixel-identical" claim.
+
+### Added
+
+- **`npm run lint:hex-colors`** (`scripts/check-hex-colors.mjs`): ratchet
+  guard over the 844 remaining hex utilities in 143 files — the ones whose
+  hex matches no token and needs judgment (nearest-tone mapping per the
+  CLAUDE.md table, with eyes on the rendering change). New hexes fail;
+  burn-down must lower the baseline. No new entries allowed — if the scale
+  can't express a colour, add a tone.
+
 ## [2.62.0] — 2026-08-21
 
 **The hand-rolled control migration is complete.** Every area of

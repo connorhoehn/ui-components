@@ -11,7 +11,7 @@ import { a as Ne } from "./EventStreamContext-CjzSHXy-.js";
 import { E as we } from "./EmptyState-Ejc9dJA3.js";
 import { I as z } from "./Input-Dt0yAs9r.js";
 import { C as V } from "./Checkbox-vOc5I8kn.js";
-import { M as ke } from "./Modal-fp5zcyw8.js";
+import { M as ke } from "./Modal-X8tdpRKs.js";
 import { C as oe } from "./Card-qOg_oC77.js";
 import { C as le } from "./Chip-BDT8ro4h.js";
 import { S as ce } from "./StatusDot-BC7B1tTr.js";
@@ -1711,7 +1711,7 @@ function Nt(e) {
             "data-testid": "chaos-state-readout",
             className: h(
               "flex flex-col gap-1.5 pb-3 mb-3 border-b border-border",
-              E && "bg-[#fffbeb] p-2 rounded-md border border-[#fde68a]"
+              E && "bg-warning-bg p-2 rounded-md border border-warning-border"
             ),
             children: [
               /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]", children: "Current state" }),

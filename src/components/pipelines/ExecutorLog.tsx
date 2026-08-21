@@ -221,7 +221,7 @@ export default function ExecutorLog({
       data-testid="executor-log"
     >
       {/* ── Sticky filter bar ─────────────────────────────────────── */}
-      <div className="sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-[#f8fafc] border-b border-border text-xs">
+      <div className="sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-surface-panel border-b border-border text-xs">
         <span
           className={cn(
             'inline-flex items-center text-[11px] font-semibold',
@@ -360,7 +360,7 @@ export default function ExecutorLog({
                 {row.actorUserId}
               </span>
               <span className="text-text-primary flex items-baseline gap-1.5 flex-wrap">
-                <code className="font-mono text-[11px] bg-[#fafbfc] px-1.5 py-px rounded-[3px]">
+                <code className="font-mono text-[11px] bg-surface-inset px-1.5 py-px rounded-[3px]">
                   {row.action}
                 </code>
                 {stepId && (
@@ -381,7 +381,7 @@ export default function ExecutorLog({
               </span>
               {expanded && row.trace && (
                 <pre
-                  className="col-[2/span_3] mt-1 p-2 bg-[#fafbfc] border border-border rounded text-[11px] font-mono text-text-secondary overflow-x-auto"
+                  className="col-[2/span_3] mt-1 p-2 bg-surface-inset border border-border rounded text-[11px] font-mono text-text-secondary overflow-x-auto"
                   data-testid="executor-log-trace"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -394,7 +394,7 @@ export default function ExecutorLog({
       </div>
 
       {/* ── Footer ────────────────────────────────────────────────── */}
-      <div className="flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-[#f8fafc]">
+      <div className="flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-surface-panel">
         {hasMore ? (
           <span data-testid="executor-log-load-more">
             <Button

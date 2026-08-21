@@ -17,9 +17,9 @@ export interface ConfirmDialogProps {
 }
 
 const CONFIRM_BG: Record<NonNullable<ConfirmDialogProps['tone']>, string> = {
-  destructive: 'bg-[#ef4444] hover:bg-[#dc2626]',
+  destructive: 'bg-[#ef4444] hover:bg-danger',
   caution: 'bg-warning hover:bg-warning',
-  info: 'bg-[#3b82f6] hover:bg-[#2563eb]',
+  info: 'bg-[#3b82f6] hover:bg-info',
 };
 
 export default function ConfirmDialog({
@@ -41,8 +41,8 @@ export default function ConfirmDialog({
             onClick={onCancel}
             className={cn(
               'px-4 py-[7px] text-[13px] font-[inherit]',
-              'border border-[#e2e8f0] bg-white text-[#475569]',
-              'rounded-md cursor-pointer hover:bg-[#f8fafc]',
+              'border border-border bg-white text-text-secondary',
+              'rounded-md cursor-pointer hover:bg-surface-panel',
             )}
           >
             {cancelLabel}
@@ -64,7 +64,7 @@ export default function ConfirmDialog({
         </>
       }
     >
-      {body && <p className="m-0 mb-3 text-[13px] text-[#475569]">{body}</p>}
+      {body && <p className="m-0 mb-3 text-[13px] text-text-secondary">{body}</p>}
       {children}
     </Modal>
   );

@@ -194,7 +194,7 @@ function Modal({
         )}
         {rawChildren
           ? children
-          : <div className="text-[13px] text-[#475569]">{children}</div>}
+          : <div className="text-[13px] text-text-secondary">{children}</div>}
         {footer && (
           <div className="flex gap-2 justify-end mt-5">
             {footer}

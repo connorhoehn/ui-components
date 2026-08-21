@@ -194,11 +194,11 @@ export default function ExecutionLog({
     const label = filterNodeLabel ?? filterByNodeId;
     return (
       <div
-        className="flex items-center gap-2 px-3 py-1.5 bg-[#f8fafc] border-b border-[#e2e8f0] shrink-0"
+        className="flex items-center gap-2 px-3 py-1.5 bg-surface-panel border-b border-border shrink-0"
         data-testid="execution-log-filter-chip-row"
       >
         <span
-          className="inline-flex items-center gap-1.5 px-2.5 pl-2.5 py-0.5 bg-[#eff6ff] text-[#1d4ed8] border border-[#bfdbfe] rounded-full text-[11px] font-semibold font-inherit"
+          className="inline-flex items-center gap-1.5 px-2.5 pl-2.5 py-0.5 bg-info-bg text-[#1d4ed8] border border-info-border rounded-full text-[11px] font-semibold font-inherit"
           data-testid="execution-log-filter-chip"
         >
           <span aria-hidden="true">🎯</span>
@@ -220,7 +220,7 @@ export default function ExecutionLog({
   const renderRows = () => {
     if (visible.length === 0) {
       return (
-        <div className="p-4 text-xs text-[#94a3b8]">
+        <div className="p-4 text-xs text-text-tertiary">
           {filterByNodeId ? 'No events for this node yet.' : 'No events yet.'}
         </div>
       );
@@ -272,7 +272,7 @@ export default function ExecutionLog({
                 {!pinned ? (
                   <button
                     type="button"
-                    className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-[#0f172a] text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
+                    className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                     onClick={jumpToLatest}
                   >
                     Jump to latest
@@ -289,7 +289,7 @@ export default function ExecutionLog({
     <>
       <div
         className={cn(
-          'shrink-0 transition-[height] duration-[160ms] ease-[cubic-bezier(0.4,0,0.2,1)] border-t border-[#e2e8f0] bg-white flex flex-col font-inherit',
+          'shrink-0 transition-[height] duration-[160ms] ease-[cubic-bezier(0.4,0,0.2,1)] border-t border-border bg-white flex flex-col font-inherit',
           expanded && !fullscreen ? 'h-60' : 'h-10',
         )}
         data-testid="execution-log"
@@ -313,7 +313,7 @@ export default function ExecutionLog({
             {!pinned ? (
               <button
                 type="button"
-                className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-[#0f172a] text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
+                className="absolute bottom-2.5 right-3.5 px-3 py-1.5 text-[11px] font-semibold bg-surface-inverse text-white border-none rounded-full cursor-pointer font-inherit shadow-lg z-[2]"
                 onClick={jumpToLatest}
               >
                 Jump to latest

@@ -7,17 +7,17 @@ import { Handle as U, Position as j, useNodeConnections as Vo, getSmoothStepPath
 /* empty css               */
 import { c as I } from "./cn-B6yFEsav.js";
 import { b as An, u as Jt } from "./ToastProvider-D3MHbP-u.js";
-import { a as vt, F as Xo, I as Qo, C as Rn, U as Zo, T as Pn, S as Dn, b as ea } from "./TrendSparkline-Bm0kEjdg.js";
+import { a as vt, F as Xo, I as Qo, C as Rn, U as Zo, T as Pn, S as Dn, b as ea } from "./TrendSparkline-CO4UKW-S.js";
 import "clsx";
 import "tailwind-merge";
-import { M as Qe } from "./Modal-fp5zcyw8.js";
+import { M as Qe } from "./Modal-X8tdpRKs.js";
 import "react-dom";
 import "./WebSocketContext-DPGFyPeZ.js";
 import { a as ze, u as ta } from "./EventStreamContext-CjzSHXy-.js";
 import { E as kh } from "./EventStreamContext-CjzSHXy-.js";
 import { B as Pe } from "./Button-DILgRebO.js";
 import { T as $e } from "./Textarea-kaa9rHUL.js";
-import { I as mt, S as na, F as ra } from "./FileUploadDrop-CL1kscAC.js";
+import { I as mt, S as na, F as ra } from "./FileUploadDrop-CUuFbl97.js";
 import { I as we } from "./Input-Dt0yAs9r.js";
 import { S as Ce } from "./Select-DAEcKWg2.js";
 import { E as qe } from "./EmptyState-Ejc9dJA3.js";
@@ -25,7 +25,7 @@ import { B as nt } from "./Banner-DKb3JiLs.js";
 import { C as le } from "./Chip-BDT8ro4h.js";
 import { C as rt } from "./Checkbox-vOc5I8kn.js";
 import { u as Qr } from "./IdentityContext-CLalsm_M.js";
-import { C as Wt } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { C as Wt } from "./ConfirmDialog-BRr5Nyae.js";
 import { B as oa, L as Ut } from "./Chart-ByoxeiYX.js";
 import { S as Zt } from "./SkeletonCard-Bm2f1JX1.js";
 const aa = {
@@ -129,13 +129,13 @@ function da(e) {
   return /^in-(\d+)$/.exec(e) !== null;
 }
 const pa = {
-  idle: { card: "border border-[#d1d5db] bg-white", dot: "bg-[#d1d5db]" },
-  pending: { card: "border border-dashed border-[#93c5fd] bg-[#eff6ff]", dot: "bg-[#93c5fd]" },
-  running: { card: "border-2 border-[#2563eb] bg-[#eff6ff]", dot: "bg-[#2563eb]" },
-  awaiting: { card: "border-2 border-[#f59e0b] bg-[#fffbeb]", dot: "bg-[#f59e0b]" },
-  completed: { card: "border border-[#16a34a] bg-[#f0fdf4]", dot: "bg-[#16a34a]" },
-  failed: { card: "border-2 border-[#dc2626] bg-[#fef2f2]", dot: "bg-[#dc2626]" },
-  skipped: { card: "border border-dashed border-[#d1d5db] bg-[#f9fafb] opacity-50", dot: "bg-[#d1d5db]" }
+  idle: { card: "border border-border-field bg-white", dot: "bg-[#d1d5db]" },
+  pending: { card: "border border-dashed border-[#93c5fd] bg-info-bg", dot: "bg-[#93c5fd]" },
+  running: { card: "border-2 border-info bg-info-bg", dot: "bg-info" },
+  awaiting: { card: "border-2 border-[#f59e0b] bg-warning-bg", dot: "bg-[#f59e0b]" },
+  completed: { card: "border border-success bg-success-bg", dot: "bg-success" },
+  failed: { card: "border-2 border-danger bg-danger-bg", dot: "bg-danger" },
+  skipped: { card: "border border-dashed border-border-field bg-[#f9fafb] opacity-50", dot: "bg-[#d1d5db]" }
 }, ua = {
   source: { bar: "bg-cat-source", chip: "w-5 h-5 rounded-full bg-cat-source/15" },
   transform: { bar: "bg-cat-transform", chip: "w-5 h-5 rounded-md bg-cat-transform/15" },
@@ -153,7 +153,7 @@ function ye(e) {
     {
       className: I(
         "w-[200px] rounded-lg relative font-inherit text-text-primary box-border outline-none transition-[border-color,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
-        f ? "border-2 border-[#d97706] bg-[#fffbeb] shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]" : m.card,
+        f ? "border-2 border-[#d97706] bg-warning-bg shadow-[0_0_0_3px_rgba(217,119,6,0.25),0_1px_2px_rgba(15,23,42,0.06)]" : m.card,
         !f && l && "shadow-[0_0_0_4px_rgba(100,108,255,0.18),0_1px_2px_rgba(15,23,42,0.06)]",
         !f && !l && "shadow-[0_1px_2px_rgba(15,23,42,0.06)]",
         v && "transition-none"
@@ -225,8 +225,8 @@ function ye(e) {
           {
             type: "button",
             className: I(
-              "cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-[#dc2626] text-[#dc2626] transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
-              b ? "bg-[#fef2f2]" : "bg-transparent",
+              "cursor-pointer appearance-none font-inherit text-[11px] font-medium leading-tight px-2 py-0.5 rounded-full border border-danger text-danger-fg transition-colors duration-[120ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+              b ? "bg-danger-bg" : "bg-transparent",
               v && "transition-none"
             ),
             onClick: k,
@@ -379,7 +379,7 @@ function ba({ info: e }) {
           e.streamOpening && /* @__PURE__ */ t(
             "span",
             {
-              className: "ml-1.5 text-[11px] text-[#2563eb]",
+              className: "ml-1.5 text-[11px] text-info-fg",
               "data-testid": "llm-stream-opening",
               title: "LLM stream is open — waiting for the first token",
               children: "· stream open — waiting…"
@@ -853,7 +853,7 @@ function za(e) {
             alt: "Source image",
             className: I(
               "w-full h-20 object-cover rounded block",
-              "border border-[#d1d5db] bg-[#f3f4f6]"
+              "border border-border-field bg-[#f3f4f6]"
             ),
             "data-testid": "image-source-thumb"
           }
@@ -873,7 +873,7 @@ function za(e) {
     {
       className: I(
         "w-full h-20 rounded flex items-center justify-center",
-        "border border-dashed border-[#d1d5db] bg-[#f3f4f6]",
+        "border border-dashed border-border-field bg-[#f3f4f6]",
         "text-[11px] text-[#6b7280]"
       ),
       "data-testid": "image-source-placeholder",
@@ -1007,7 +1007,7 @@ function Fa(e) {
     {
       className: I(
         "w-full h-20 rounded flex items-center justify-center",
-        "border border-dashed border-[#d1d5db] bg-[#f3f4f6]",
+        "border border-dashed border-border-field bg-[#f3f4f6]",
         "text-[11px] text-[#6b7280]"
       ),
       "data-testid": "save-placeholder",
@@ -2234,7 +2234,7 @@ function Ii({
       {
         className: I(
           "absolute pointer-events-auto px-2 py-0.5 rounded-full text-[10px] font-semibold leading-[1.4]",
-          "bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap",
+          "bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap",
           "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
         ),
         style: {
@@ -2250,7 +2250,7 @@ function Ii({
       {
         className: I(
           "absolute pointer-events-none px-1.5 py-px rounded-full text-[9px] font-semibold leading-[1.4]",
-          "bg-white text-[#475569] border border-[#e2e8f0] font-[inherit] whitespace-nowrap",
+          "bg-white text-text-secondary border border-border font-[inherit] whitespace-nowrap",
           "shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
         ),
         style: {
@@ -2331,13 +2331,13 @@ function $i({
     "div",
     {
       ref: p,
-      className: "fixed w-[260px] bg-white border border-[#e2e8f0] rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit",
+      className: "fixed w-[260px] bg-white border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] z-50 flex flex-col overflow-hidden font-inherit",
       style: { top: e.y, left: e.x },
       role: "dialog",
       "aria-label": "Quick insert node",
       "data-testid": "quick-insert-popover",
       children: [
-        /* @__PURE__ */ t("div", { className: "p-2 border-b border-[#e2e8f0]", children: /* @__PURE__ */ t(
+        /* @__PURE__ */ t("div", { className: "p-2 border-b border-border", children: /* @__PURE__ */ t(
           "input",
           {
             ref: u,
@@ -2346,12 +2346,12 @@ function $i({
             onChange: (m) => d(m.target.value),
             onKeyDown: x,
             placeholder: "Search nodes…",
-            className: "w-full box-border border border-[#d1d5db] rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-[#0f172a] outline-none",
+            className: "w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none",
             "aria-label": "Search node types",
             "data-testid": "quick-insert-search"
           }
         ) }),
-        /* @__PURE__ */ t("div", { className: "max-h-[260px] overflow-y-auto py-1", role: "listbox", children: h.length === 0 ? /* @__PURE__ */ o("div", { className: "px-3 py-3.5 text-xs text-[#94a3b8] font-inherit", children: [
+        /* @__PURE__ */ t("div", { className: "max-h-[260px] overflow-y-auto py-1", role: "listbox", children: h.length === 0 ? /* @__PURE__ */ o("div", { className: "px-3 py-3.5 text-xs text-text-tertiary font-inherit", children: [
           'No nodes match "',
           s,
           '"'
@@ -2368,15 +2368,15 @@ function $i({
               },
               className: I(
                 "flex items-center gap-2.5 px-3 py-2 cursor-pointer font-inherit",
-                v ? "bg-[#f1f5f9]" : "bg-transparent"
+                v ? "bg-surface-hover" : "bg-transparent"
               ),
               "data-node-type": m.type,
               "data-testid": `quick-insert-row-${m.type}`,
               children: [
                 /* @__PURE__ */ t("span", { className: "text-lg leading-none w-[22px] text-center shrink-0", "aria-hidden": !0, children: m.icon }),
                 /* @__PURE__ */ o("div", { className: "flex-1 min-w-0", children: [
-                  /* @__PURE__ */ t("div", { className: "text-[13px] font-semibold text-[#0f172a]", children: m.name }),
-                  /* @__PURE__ */ t("div", { className: "text-[11px] text-[#475569] whitespace-nowrap overflow-hidden text-ellipsis", children: m.description })
+                  /* @__PURE__ */ t("div", { className: "text-[13px] font-semibold text-text-primary", children: m.name }),
+                  /* @__PURE__ */ t("div", { className: "text-[11px] text-text-secondary whitespace-nowrap overflow-hidden text-ellipsis", children: m.description })
                 ] })
               ]
             },
@@ -2543,7 +2543,7 @@ function Di({
     {
       "data-testid": "canvas-node-context-menu",
       role: "menu",
-      className: "fixed bg-white border border-[#e2e8f0] rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit",
+      className: "fixed bg-white border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit",
       style: { top: e.y, left: e.x },
       children: [
         /* @__PURE__ */ t(
@@ -2553,7 +2553,7 @@ function Di({
             role: "menuitem",
             onClick: a,
             "data-testid": "ctx-filter-log",
-            className: I(l, "text-[#0f172a]"),
+            className: I(l, "text-text-primary"),
             children: "🎯 Filter log to this node"
           }
         ),
@@ -2564,7 +2564,7 @@ function Di({
             role: "menuitem",
             onClick: i,
             "data-testid": "ctx-copy-id",
-            className: I(l, "text-[#0f172a]"),
+            className: I(l, "text-text-primary"),
             children: "📋 Copy node id"
           }
         ),
@@ -2575,7 +2575,7 @@ function Di({
             role: "menuitem",
             onClick: s,
             "data-testid": "ctx-duplicate",
-            className: I(l, "text-[#0f172a]"),
+            className: I(l, "text-text-primary"),
             children: "📑 Duplicate node"
           }
         ),
@@ -2588,7 +2588,7 @@ function Di({
             "data-testid": "ctx-toggle-breakpoint",
             className: I(
               l,
-              n?.has(e.nodeId) ? "text-[#dc2626]" : "text-[#0f172a]"
+              n?.has(e.nodeId) ? "text-danger-fg" : "text-text-primary"
             ),
             children: n?.has(e.nodeId) ? "🔴 Remove Breakpoint" : "🔴 Toggle Breakpoint"
           }
@@ -3138,7 +3138,7 @@ function Yi({
       {
         type: "button",
         onClick: i,
-        className: "absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none",
+        className: "absolute top-3 right-[50px] z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
         title: "Auto-arrange (Shift+A)",
         "aria-label": "Auto-arrange",
         "data-testid": "auto-arrange-btn",
@@ -3158,7 +3158,7 @@ function Yi({
       {
         type: "button",
         onClick: a,
-        className: "absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-[#e2e8f0] rounded-md shadow-sm text-[#475569] cursor-pointer p-0 font-inherit text-sm leading-none",
+        className: "absolute top-3 right-3 z-[5] w-8 h-8 inline-flex items-center justify-center bg-white border border-border rounded-md shadow-sm text-text-secondary cursor-pointer p-0 font-inherit text-sm leading-none",
         title: "Fit view",
         "aria-label": "Fit view",
         children: /* @__PURE__ */ t("svg", { width: "14", height: "14", viewBox: "0 0 16 16", fill: "none", "aria-hidden": "true", children: /* @__PURE__ */ t(
@@ -3451,7 +3451,7 @@ function ns({ onFilterLog: e, errorNodeId: n, onErrorNodePosition: r, replayEdge
     "div",
     {
       ref: Z,
-      className: "flex-1 min-w-0 min-h-[520px] relative bg-[#fafbfc]",
+      className: "flex-1 min-w-0 min-h-[520px] relative bg-surface-inset",
       role: "application",
       "aria-label": "Pipeline editor canvas",
       tabIndex: 0,
@@ -3625,13 +3625,13 @@ ${e.stack}` : ""
   return /* @__PURE__ */ o(
     "div",
     {
-      className: "fixed z-[100] bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-[#0f172a]",
+      className: "fixed z-[100] bg-white border border-border rounded-[10px] shadow-[0_12px_32px_rgba(15,23,42,0.18),0_2px_6px_rgba(15,23,42,0.08)] p-0 w-[340px] max-h-[420px] overflow-y-auto font-inherit text-text-primary",
       style: { top: Math.max(8, h), left: Math.max(8, g) },
       "data-testid": "error-overlay",
       role: "dialog",
       "aria-label": `Error details for node ${e.nodeId}`,
       children: [
-        /* @__PURE__ */ o("div", { className: "flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b border-[#e2e8f0]", children: [
+        /* @__PURE__ */ o("div", { className: "flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b border-border", children: [
           /* @__PURE__ */ t(
             "span",
             {
@@ -3648,17 +3648,17 @@ ${e.stack}` : ""
               type: "button",
               onClick: r,
               "aria-label": "Dismiss error overlay",
-              className: "bg-transparent border-none text-[#94a3b8] cursor-pointer text-base leading-none px-1 py-0.5",
+              className: "bg-transparent border-none text-text-tertiary cursor-pointer text-base leading-none px-1 py-0.5",
               children: "×"
             }
           )
         ] }),
         /* @__PURE__ */ o("div", { className: "px-3.5 py-3 flex flex-col gap-2.5", children: [
-          /* @__PURE__ */ t("div", { className: "text-[13px] leading-normal text-[#0f172a]", children: e.message }),
-          /* @__PURE__ */ o("div", { className: "text-[11px] text-[#94a3b8]", children: [
+          /* @__PURE__ */ t("div", { className: "text-[13px] leading-normal text-text-primary", children: e.message }),
+          /* @__PURE__ */ o("div", { className: "text-[11px] text-text-tertiary", children: [
             "Failed node:",
             " ",
-            /* @__PURE__ */ t("code", { className: "bg-[#f1f5f9] px-[5px] py-px rounded-[3px] font-mono text-[11px] text-[#475569]", children: e.nodeId })
+            /* @__PURE__ */ t("code", { className: "bg-surface-hover px-[5px] py-px rounded-[3px] font-mono text-[11px] text-text-secondary", children: e.nodeId })
           ] }),
           e.stack && /* @__PURE__ */ o("div", { children: [
             /* @__PURE__ */ o(
@@ -3666,7 +3666,7 @@ ${e.stack}` : ""
               {
                 type: "button",
                 onClick: () => s((x) => !x),
-                className: "bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-[#475569] font-inherit",
+                className: "bg-transparent border-none p-0 cursor-pointer text-xs font-medium text-text-secondary font-inherit",
                 "data-testid": "error-stack-toggle",
                 children: [
                   i ? "▾" : "▸",
@@ -3677,20 +3677,20 @@ ${e.stack}` : ""
             i && /* @__PURE__ */ t(
               "pre",
               {
-                className: "mt-1.5 p-2.5 bg-[#f8fafc] border border-[#e2e8f0] rounded-md text-[10px] leading-normal font-mono text-[#475569] whitespace-pre-wrap break-all max-h-40 overflow-y-auto m-0",
+                className: "mt-1.5 p-2.5 bg-surface-panel border border-border rounded-md text-[10px] leading-normal font-mono text-text-secondary whitespace-pre-wrap break-all max-h-40 overflow-y-auto m-0",
                 "data-testid": "error-stack-content",
                 children: e.stack
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ o("div", { className: "flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-[#e2e8f0]", children: [
+        /* @__PURE__ */ o("div", { className: "flex gap-2 px-3.5 pt-2.5 pb-3 border-t border-border", children: [
           /* @__PURE__ */ t(
             "button",
             {
               type: "button",
               onClick: u,
-              className: "px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-[#f1f5f9] text-[#475569]",
+              className: "px-3 py-1.5 text-xs font-semibold border-none rounded-md cursor-pointer font-inherit leading-snug bg-surface-hover text-text-secondary",
               "data-testid": "error-copy-btn",
               children: d ? "Copied!" : "Copy error details"
             }
@@ -4421,7 +4421,7 @@ function tn(e, n, r) {
       disabled: !s,
       onClick: s ? () => r(e.node.id) : void 0,
       className: I(
-        "flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-[inherit] bg-[#f8fafc] border border-border text-left w-full text-text-primary",
+        "flex items-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-[inherit] bg-surface-panel border border-border text-left w-full text-text-primary",
         s ? "cursor-pointer" : "cursor-default",
         n === "removed" && "opacity-85"
       ),
@@ -4558,7 +4558,7 @@ function Ws({
 function Vs({ open: e, onClose: n }) {
   return null;
 }
-const nn = "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit]", er = "px-4 py-[7px] text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-[7px] cursor-pointer font-[inherit]";
+const nn = "px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit]", er = "px-4 py-[7px] text-[13px] font-semibold bg-danger text-white border-none rounded-[7px] cursor-pointer font-[inherit]";
 function Ks(e) {
   const {
     publishConfirmOpen: n,
@@ -4621,7 +4621,7 @@ function Ks(e) {
           i ? /* @__PURE__ */ o(H, { children: [
             /* @__PURE__ */ t("br", {}),
             /* @__PURE__ */ t("br", {}),
-            /* @__PURE__ */ o("span", { className: "text-[#dc2626]", children: [
+            /* @__PURE__ */ o("span", { className: "text-danger-fg", children: [
               "Pipeline has ",
               s,
               " validation error",
@@ -6114,7 +6114,7 @@ function il({
                 "data-testid": "context-inspector-edit-toggle",
                 className: I(
                   "px-2 py-0.5 text-[10px] font-semibold border rounded-sm cursor-pointer font-mono uppercase tracking-wide",
-                  u ? "bg-[#d97706] text-white border-[#d97706]" : "bg-transparent text-[#d97706] border-[#d97706]"
+                  u ? "bg-warning text-white border-[#d97706]" : "bg-transparent text-warning-fg border-[#d97706]"
                 ),
                 children: u ? "Editing" : "Edit"
               }
@@ -7795,7 +7795,7 @@ function Kl({ data: e, onChange: n }) {
             {
               className: I(
                 "inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-[1.4] whitespace-nowrap",
-                g.type === "role" ? "bg-[#fffbeb] text-[#d97706]" : "bg-[#eff6ff] text-[#2563eb]"
+                g.type === "role" ? "bg-warning-bg text-warning-fg" : "bg-info-bg text-info-fg"
               ),
               children: [
                 g.type === "role" ? "🎖" : "👤",
@@ -13798,9 +13798,9 @@ function Rd({ selectedIds: e }) {
     // Multi-select pane
     // ---------------------------------------------------------------
     /* @__PURE__ */ o(H, { children: [
-      /* @__PURE__ */ o("div", { className: "h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0", children: [
+      /* @__PURE__ */ o("div", { className: "h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-border shrink-0", children: [
         /* @__PURE__ */ t("span", { className: "text-base", "aria-hidden": !0, children: "⧉" }),
-        /* @__PURE__ */ o("div", { className: "flex-1 text-[13px] font-semibold text-[#0f172a]", children: [
+        /* @__PURE__ */ o("div", { className: "flex-1 text-[13px] font-semibold text-text-primary", children: [
           f.length,
           " nodes selected"
         ] }),
@@ -13809,21 +13809,21 @@ function Rd({ selectedIds: e }) {
           {
             type: "button",
             onClick: m,
-            className: "w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit",
+            className: "w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit",
             "aria-label": "Close",
             children: "×"
           }
         )
       ] }),
       /* @__PURE__ */ o("div", { className: "flex-1 overflow-y-auto p-4 flex flex-col gap-3", children: [
-        /* @__PURE__ */ t("div", { className: "text-xs text-[#64748b] leading-normal", children: "Bulk actions apply to every selected node. Individual node configuration is only shown for single selections." }),
+        /* @__PURE__ */ t("div", { className: "text-xs text-neutral leading-normal", children: "Bulk actions apply to every selected node. Individual node configuration is only shown for single selections." }),
         /* @__PURE__ */ o("div", { className: "flex gap-2", children: [
           /* @__PURE__ */ t(
             "button",
             {
               type: "button",
               onClick: v,
-              className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-[#fecaca] rounded-md cursor-pointer font-inherit",
+              className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-danger-border rounded-md cursor-pointer font-inherit",
               children: "Delete all"
             }
           ),
@@ -13832,7 +13832,7 @@ function Rd({ selectedIds: e }) {
             {
               type: "button",
               onClick: b,
-              className: "px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit",
+              className: "px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit",
               children: "Duplicate all"
             }
           )
@@ -13844,15 +13844,15 @@ function Rd({ selectedIds: e }) {
     // Single-node pane
     // ---------------------------------------------------------------
     /* @__PURE__ */ o(H, { children: [
-      /* @__PURE__ */ o("div", { className: "h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-[#e2e8f0] shrink-0", children: [
+      /* @__PURE__ */ o("div", { className: "h-11 px-3 pl-3.5 flex items-center gap-2 border-b border-border shrink-0", children: [
         /* @__PURE__ */ t("span", { className: "text-lg leading-none", "aria-hidden": !0, children: w.icon }),
-        /* @__PURE__ */ t("div", { className: "flex-1 text-[13px] font-semibold text-[#0f172a]", children: w.name }),
+        /* @__PURE__ */ t("div", { className: "flex-1 text-[13px] font-semibold text-text-primary", children: w.name }),
         /* @__PURE__ */ t(
           "button",
           {
             type: "button",
             onClick: m,
-            className: "w-7 h-7 p-0 bg-transparent border-none text-[#64748b] text-lg leading-none cursor-pointer rounded font-inherit",
+            className: "w-7 h-7 p-0 bg-transparent border-none text-neutral text-lg leading-none cursor-pointer rounded font-inherit",
             "aria-label": "Close",
             children: "×"
           }
@@ -13864,7 +13864,7 @@ function Rd({ selectedIds: e }) {
           ref: u,
           role: "tablist",
           "aria-label": "Node configuration tabs",
-          className: "h-9 flex border-b border-[#e2e8f0] shrink-0",
+          className: "h-9 flex border-b border-border shrink-0",
           onKeyDown: (y) => {
             const C = x && un.has(x.type) ? ["config", "runs", "docs", "bench"] : ["config", "runs", "docs"], T = C.indexOf(c);
             let M = null;
@@ -13884,7 +13884,7 @@ function Rd({ selectedIds: e }) {
                 "data-tab": y,
                 className: I(
                   "flex-1 border-none bg-transparent text-xs font-semibold cursor-pointer font-inherit",
-                  k ? "text-[#0f172a] border-b-2 border-b-[#646cff]" : "text-[#64748b] border-b-2 border-b-transparent"
+                  k ? "text-text-primary border-b-2 border-b-[#646cff]" : "text-neutral border-b-2 border-b-transparent"
                 ),
                 onClick: () => l(y),
                 children: C
@@ -13896,8 +13896,8 @@ function Rd({ selectedIds: e }) {
       ),
       /* @__PURE__ */ o("div", { className: "flex-1 overflow-y-auto", children: [
         c === "config" && Ad(x, N),
-        c === "runs" && /* @__PURE__ */ t("div", { className: "p-6 text-xs text-[#64748b]", children: "No runs yet." }),
-        c === "docs" && /* @__PURE__ */ t("div", { className: "pipeline-docs-pane p-4 text-[13px] text-[#0f172a] leading-snug", children: sd[x.type] ?? /* @__PURE__ */ t("p", { className: "text-text-secondary", children: "No docs available for this node type." }) }),
+        c === "runs" && /* @__PURE__ */ t("div", { className: "p-6 text-xs text-neutral", children: "No runs yet." }),
+        c === "docs" && /* @__PURE__ */ t("div", { className: "pipeline-docs-pane p-4 text-[13px] text-text-primary leading-snug", children: sd[x.type] ?? /* @__PURE__ */ t("p", { className: "text-text-secondary", children: "No docs available for this node type." }) }),
         c === "bench" && un.has(x.type) && (() => {
           const y = x.data;
           return /* @__PURE__ */ t(
@@ -13914,13 +13914,13 @@ function Rd({ selectedIds: e }) {
           );
         })()
       ] }),
-      /* @__PURE__ */ o("div", { className: "h-10 px-3 flex items-center justify-between gap-2 border-t border-[#e2e8f0] shrink-0", children: [
+      /* @__PURE__ */ o("div", { className: "h-10 px-3 flex items-center justify-between gap-2 border-t border-border shrink-0", children: [
         /* @__PURE__ */ t(
           "button",
           {
             type: "button",
             onClick: v,
-            className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-[#dc2626] border border-transparent rounded-md cursor-pointer font-inherit",
+            className: "px-2.5 py-1.5 text-xs font-semibold bg-transparent text-danger-fg border border-transparent rounded-md cursor-pointer font-inherit",
             children: "🗑 Delete node"
           }
         ),
@@ -13929,7 +13929,7 @@ function Rd({ selectedIds: e }) {
           {
             type: "button",
             onClick: b,
-            className: "px-2.5 py-1.5 text-xs font-semibold bg-[#f1f5f9] text-[#0f172a] border border-[#e2e8f0] rounded-md cursor-pointer font-inherit",
+            className: "px-2.5 py-1.5 text-xs font-semibold bg-surface-hover text-text-primary border border-border rounded-md cursor-pointer font-inherit",
             children: [
               "⧉",
               " Duplicate"
@@ -13967,7 +13967,7 @@ function Dd(e) {
   return e == null || e === 0 ? "--" : e < 1e-3 ? "<$0.001" : e < 0.01 ? `$${e.toFixed(4)}` : e < 1 ? `$${e.toFixed(3)}` : `$${e.toFixed(2)}`;
 }
 function Md(e) {
-  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-[#16a34a]" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-[#ea580c]" : "text-[#dc2626]";
+  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-caution-fg" : "text-danger-fg";
 }
 function xr(e) {
   switch (e) {
@@ -14068,7 +14068,7 @@ function Od({ pipelineId: e, run: n, onBack: r }) {
       ] }),
       n.error && /* @__PURE__ */ o("div", { className: "mt-2", children: [
         /* @__PURE__ */ t("div", { className: "mb-1 text-[11px] font-semibold uppercase text-state-failed", children: "Error" }),
-        /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words rounded-md bg-[#fef2f2] px-2.5 py-2 font-mono text-xs text-[#991b1b]", children: [
+        /* @__PURE__ */ o("div", { className: "whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-[#991b1b]", children: [
           n.error.message,
           n.error.nodeId && /* @__PURE__ */ o("div", { className: "mt-1 text-[11px] text-[#b91c1c]", children: [
             "at node: ",
@@ -14116,7 +14116,7 @@ function br(e) {
   return e == null || e === 0 ? "--" : e < 1e-3 ? "<$0.001" : e < 0.01 ? `$${e.toFixed(4)}` : e < 1 ? `$${e.toFixed(3)}` : `$${e.toFixed(2)}`;
 }
 function _d(e) {
-  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-[#16a34a]" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-[#ea580c]" : "text-[#dc2626]";
+  return e == null || e === 0 ? "text-text-tertiary" : e < 0.01 ? "text-success-fg" : e < 0.1 ? "text-[#ca8a04]" : e < 1 ? "text-caution-fg" : "text-danger-fg";
 }
 function Ld(e) {
   const n = Date.now() - new Date(e).getTime();
@@ -14337,7 +14337,7 @@ function zd({ pipelineId: e, onClose: n }) {
                 },
                 className: I(
                   "cursor-pointer border-b border-border px-4 py-2.5 transition-colors duration-100 hover:bg-surface-hover",
-                  T && "bg-[#eff6ff]"
+                  T && "bg-info-bg"
                 ),
                 children: [
                   /* @__PURE__ */ o("div", { className: "flex items-center gap-2", children: [
@@ -14627,7 +14627,7 @@ function Kd({ pipelineId: e }) {
             "data-testid": "tags-row",
             className: I(
               "flex items-center gap-2 px-4 py-1.5",
-              "border-b border-border bg-[#fafbfc]",
+              "border-b border-border bg-surface-inset",
               "min-h-[34px] shrink-0 sticky top-11 z-[4]"
             ),
             children: [
@@ -14914,7 +14914,7 @@ function Jd({
                   /* @__PURE__ */ t(
                     "button",
                     {
-                      className: "block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-[#dc2626]",
+                      className: "block w-full text-left px-3.5 py-2 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-danger-fg",
                       role: "menuitem",
                       onClick: C(() => {
                         f(!1), s();
@@ -16488,7 +16488,7 @@ function Np({ template: e, meta: n, onPick: r }) {
         e.tags.length > 0 && /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-1", children: e.tags.map((a) => /* @__PURE__ */ t(
           "span",
           {
-            className: "text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#f1f5f9] text-text-secondary lowercase",
+            className: "text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-hover text-text-secondary lowercase",
             children: a
           },
           a
@@ -16906,7 +16906,7 @@ function Qm() {
     "div",
     {
       "data-testid": "pipelines-page",
-      className: "flex flex-col h-full overflow-hidden bg-[#fafbfc] font-inherit",
+      className: "flex flex-col h-full overflow-hidden bg-surface-inset font-inherit",
       children: [
         /* @__PURE__ */ o(
           "div",
@@ -17467,7 +17467,7 @@ function Nr({
           "label",
           {
             "data-testid": `${s}-${u}`,
-            className: "flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-[#f1f5f9]",
+            className: "flex items-center gap-2 px-3 py-1.5 text-xs cursor-pointer text-text-primary hover:bg-surface-hover",
             children: [
               /* @__PURE__ */ t(
                 rt,
@@ -17502,7 +17502,7 @@ function bo({
   return /* @__PURE__ */ o(
     "div",
     {
-      className: "flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md",
+      className: "flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md",
       children: [
         /* @__PURE__ */ t(
           we,
@@ -17581,7 +17581,7 @@ function zp({
     "div",
     {
       "data-testid": "runs-bulk-toolbar",
-      className: "flex items-center gap-2 px-3 py-2 bg-[#fafbfc] border border-border rounded-md",
+      className: "flex items-center gap-2 px-3 py-2 bg-surface-inset border border-border rounded-md",
       children: [
         /* @__PURE__ */ o("span", { className: "text-xs text-text-secondary", children: [
           e,
@@ -17603,7 +17603,7 @@ function zp({
             type: "button",
             "data-testid": "runs-bulk-delete",
             onClick: r,
-            className: "px-2.5 py-1 text-xs font-medium border border-[#dc2626] bg-surface text-[#dc2626] rounded cursor-pointer font-[inherit]",
+            className: "px-2.5 py-1 text-xs font-medium border border-danger bg-surface text-danger-fg rounded cursor-pointer font-[inherit]",
             children: "Delete"
           }
         ),
@@ -17705,7 +17705,7 @@ function Vp({
     {
       className: "w-full border-collapse text-[13px] bg-surface border border-border rounded-lg overflow-hidden",
       children: [
-        /* @__PURE__ */ t("thead", { children: /* @__PURE__ */ o("tr", { className: "bg-[#fafbfc] text-left", children: [
+        /* @__PURE__ */ t("thead", { children: /* @__PURE__ */ o("tr", { className: "bg-surface-inset text-left", children: [
           /* @__PURE__ */ t(
             "th",
             {
@@ -17740,8 +17740,8 @@ function Vp({
             {
               "data-testid": `run-card-${m.id}`,
               className: I(
-                "border-b border-border cursor-pointer hover:bg-[#f1f5f9]",
-                N && "bg-[#f1f5f9]"
+                "border-b border-border cursor-pointer hover:bg-surface-hover",
+                N && "bg-surface-hover"
               ),
               onClick: () => c(`/pipelines/${d}/runs/${m.id}`),
               children: [
@@ -17846,7 +17846,7 @@ function Vp({
                           }
                       },
                       title: "Force-fail this stuck run so you can retry from the stuck step",
-                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-[#fde68a] rounded cursor-pointer font-[inherit]",
+                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-[#b45309] border border-warning-border rounded cursor-pointer font-[inherit]",
                       children: "⚡ Force-fail"
                     }
                   ),
@@ -17859,7 +17859,7 @@ function Vp({
                         k.stopPropagation(), l(m);
                       },
                       title: `Retry from "${m.error.nodeId}" with the original upstream context`,
-                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-[#ea580c] border border-[#fed7aa] rounded cursor-pointer font-[inherit]",
+                      className: "text-[11px] px-2 py-1 mr-2 bg-transparent text-caution-fg border border-caution-border rounded cursor-pointer font-[inherit]",
                       children: "↻ Retry from failed"
                     }
                   ),
@@ -17967,10 +17967,10 @@ function Zm() {
         children: h && /* @__PURE__ */ o("div", { className: "flex flex-col gap-2.5", children: [
           /* @__PURE__ */ o("div", { className: "text-[13px] text-text-secondary", children: [
             "Run ",
-            /* @__PURE__ */ t("code", { className: "bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs", children: h.run.id.slice(0, 8) }),
+            /* @__PURE__ */ t("code", { className: "bg-surface-inset px-1 py-px rounded-[3px] text-xs", children: h.run.id.slice(0, 8) }),
             " will restart from step",
             " ",
-            /* @__PURE__ */ o("code", { className: "bg-[#fafbfc] px-1 py-px rounded-[3px] text-xs", children: [
+            /* @__PURE__ */ o("code", { className: "bg-surface-inset px-1 py-px rounded-[3px] text-xs", children: [
               h.nodeId.slice(0, 12),
               h.nodeId.length > 12 ? "…" : ""
             ] }),
@@ -17983,7 +17983,7 @@ function Zm() {
               h.skippedNodes.length,
               ")"
             ] }),
-            /* @__PURE__ */ t("div", { className: "max-h-20 overflow-y-auto flex flex-wrap gap-1", children: h.skippedNodes.map((L) => /* @__PURE__ */ t("span", { className: "bg-[#fafbfc] border border-border rounded-[3px] px-1.5 py-px text-[11px] font-mono text-text-secondary", children: L.slice(0, 10) }, L)) })
+            /* @__PURE__ */ t("div", { className: "max-h-20 overflow-y-auto flex flex-wrap gap-1", children: h.skippedNodes.map((L) => /* @__PURE__ */ t("span", { className: "bg-surface-inset border border-border rounded-[3px] px-1.5 py-px text-[11px] font-mono text-text-secondary", children: L.slice(0, 10) }, L)) })
           ] }),
           /* @__PURE__ */ o("label", { className: "flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer", children: [
             /* @__PURE__ */ t(
@@ -17995,7 +17995,7 @@ function Zm() {
             ),
             "Use persisted input snapshot"
           ] }),
-          w && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "px-3 py-2 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b]", children: w })
+          w && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]", children: w })
         ] })
       }
     ),
@@ -18147,7 +18147,7 @@ function tt({ title: e, children: n }) {
     n
   ] });
 }
-const kr = "m-0 px-3 py-2 bg-[#fafbfc] border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto", Cr = "px-3.5 py-2.5 bg-[#fafbfc] border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto", fn = "text-left px-2 py-1 text-[10px] font-semibold text-text-tertiary uppercase", Le = "px-2 py-[5px] text-[11px] text-text-secondary align-top", Hp = {
+const kr = "m-0 px-3 py-2 bg-surface-inset border border-border rounded-md text-[11px] font-mono text-text-secondary whitespace-pre-wrap break-words max-h-[300px] overflow-auto", Cr = "px-3.5 py-2.5 bg-surface-inset border border-border rounded-md text-[13px] text-text-primary whitespace-pre-wrap break-words leading-[1.6] max-h-[400px] overflow-auto", fn = "text-left px-2 py-1 text-[10px] font-semibold text-text-tertiary uppercase", Le = "px-2 py-[5px] text-[11px] text-text-secondary align-top", Hp = {
   "#2563eb": "bg-info/10 text-info-fg",
   "#7c3aed": "bg-accent/10 text-accent-fg",
   "#16a34a": "bg-success/10 text-success-fg",
@@ -18183,7 +18183,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
         },
         className: I(
           "flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer transition-colors duration-100",
-          c ? "bg-[#fafbfc] rounded-t-lg" : "bg-surface rounded-lg"
+          c ? "bg-surface-inset rounded-t-lg" : "bg-surface rounded-lg"
         ),
         style: {
           border: `1px solid ${c ? g + "40" : "#e2e8f0"}`,
@@ -18314,7 +18314,7 @@ function Gp({ stepId: e, step: n, index: r, nodeType: a, nodeConfig: i, onRetryF
               ] })
             ] })
           ] }) }),
-          n.error && /* @__PURE__ */ t(tt, { title: "Error", children: /* @__PURE__ */ t("div", { className: "px-3 py-2 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap", children: n.error }) }),
+          n.error && /* @__PURE__ */ t(tt, { title: "Error", children: /* @__PURE__ */ t("div", { className: "px-3 py-2 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b] font-mono whitespace-pre-wrap", children: n.error }) }),
           (s || d) && /* @__PURE__ */ o("div", { className: "px-4 py-2.5 border-t border-border flex justify-end gap-2", children: [
             d && /* @__PURE__ */ t(
               "button",
@@ -18678,7 +18678,7 @@ function pu({
       className: "flex flex-col flex-1 min-h-0 bg-surface border border-border rounded-lg overflow-hidden",
       "data-testid": "executor-log",
       children: [
-        /* @__PURE__ */ o("div", { className: "sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-[#f8fafc] border-b border-border text-xs", children: [
+        /* @__PURE__ */ o("div", { className: "sticky top-0 z-[2] flex flex-wrap items-center gap-2 px-3 py-2.5 bg-surface-panel border-b border-border text-xs", children: [
           /* @__PURE__ */ o(
             "span",
             {
@@ -18810,7 +18810,7 @@ function pu({
                   ),
                   /* @__PURE__ */ t("span", { className: "text-text-secondary text-[11px] whitespace-nowrap", children: C.actorUserId }),
                   /* @__PURE__ */ o("span", { className: "text-text-primary flex items-baseline gap-1.5 flex-wrap", children: [
-                    /* @__PURE__ */ t("code", { className: "font-mono text-[11px] bg-[#fafbfc] px-1.5 py-px rounded-[3px]", children: C.action }),
+                    /* @__PURE__ */ t("code", { className: "font-mono text-[11px] bg-surface-inset px-1.5 py-px rounded-[3px]", children: C.action }),
                     P && /* @__PURE__ */ o("span", { className: "text-[11px] text-text-tertiary", "data-testid": "executor-log-stepid", children: [
                       "· ",
                       P.slice(0, 14),
@@ -18833,7 +18833,7 @@ function pu({
                   T && C.trace && /* @__PURE__ */ t(
                     "pre",
                     {
-                      className: "col-[2/span_3] mt-1 p-2 bg-[#fafbfc] border border-border rounded text-[11px] font-mono text-text-secondary overflow-x-auto",
+                      className: "col-[2/span_3] mt-1 p-2 bg-surface-inset border border-border rounded text-[11px] font-mono text-text-secondary overflow-x-auto",
                       "data-testid": "executor-log-trace",
                       onClick: (D) => D.stopPropagation(),
                       children: JSON.stringify(C.trace, null, 2)
@@ -18845,7 +18845,7 @@ function pu({
             );
           })
         ] }),
-        /* @__PURE__ */ o("div", { className: "flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-[#f8fafc]", children: [
+        /* @__PURE__ */ o("div", { className: "flex justify-between items-center gap-2 px-3 py-2.5 border-t border-border bg-surface-panel", children: [
           d ? /* @__PURE__ */ t("span", { "data-testid": "executor-log-load-more", children: /* @__PURE__ */ t(
             Pe,
             {
@@ -19144,7 +19144,7 @@ function uu({ pipelineId: e, runId: n }) {
                 ),
                 "Use persisted input snapshot"
               ] }),
-              k && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "py-2 px-3 bg-[#fef2f2] border border-[#fecaca] rounded-md text-xs text-[#991b1b]", children: k })
+              k && /* @__PURE__ */ t("div", { "data-testid": "retry-modal-error", className: "py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-[#991b1b]", children: k })
             ] })
           }
         ),
@@ -19369,9 +19369,9 @@ function bu(e, n, r) {
   });
 }
 function yu(e) {
-  if (e.statusDiffers) return "bg-[#fef2f2]";
-  if (e.branchDiffers) return "bg-[#eff6ff]";
-  if (e.durationLarge) return "bg-[#fffbeb]";
+  if (e.statusDiffers) return "bg-danger-bg";
+  if (e.branchDiffers) return "bg-info-bg";
+  if (e.durationLarge) return "bg-warning-bg";
 }
 function Ar({
   step: e,
@@ -19397,7 +19397,7 @@ function Ar({
       e.llm.tokensOut,
       "tok"
     ] }) : null,
-    e.error ? /* @__PURE__ */ t("div", { className: "text-[11px] text-[#dc2626]", title: e.error, children: e.error.length > 60 ? `${e.error.slice(0, 60)}…` : e.error }) : null
+    e.error ? /* @__PURE__ */ t("div", { className: "text-[11px] text-danger-fg", title: e.error, children: e.error.length > 60 ? `${e.error.slice(0, 60)}…` : e.error }) : null
   ] });
 }
 function vu({ a: e, b: n }) {
@@ -19427,7 +19427,7 @@ function wu({ row: e }) {
           className: I("border-b border-border px-3 py-2.5 align-top font-mono text-xs text-text-primary", i),
           "data-testid": `run-compare-delta-${e.nodeId}`,
           children: [
-            e.branchDiffers ? /* @__PURE__ */ t("span", { className: "font-semibold text-[#2563eb]", children: "different branch!" }) : e.statusDiffers ? /* @__PURE__ */ t("span", { className: "font-semibold text-[#dc2626]", children: "status differs" }) : e.durationDelta != null ? /* @__PURE__ */ t("span", { className: e.durationLarge ? "text-[#d97706]" : "text-text-secondary", children: mu(e.durationDelta) }) : /* @__PURE__ */ t("span", { className: "text-text-tertiary", children: "—" }),
+            e.branchDiffers ? /* @__PURE__ */ t("span", { className: "font-semibold text-info-fg", children: "different branch!" }) : e.statusDiffers ? /* @__PURE__ */ t("span", { className: "font-semibold text-danger-fg", children: "status differs" }) : e.durationDelta != null ? /* @__PURE__ */ t("span", { className: e.durationLarge ? "text-warning-fg" : "text-text-secondary", children: mu(e.durationDelta) }) : /* @__PURE__ */ t("span", { className: "text-text-tertiary", children: "—" }),
             a != null && a !== 0 ? /* @__PURE__ */ o("div", { className: "mt-0.5 text-[11px] text-text-tertiary", children: [
               a > 0 ? "+" : "",
               a,
@@ -19752,7 +19752,7 @@ function Tu({
             {
               className: I(
                 "font-mono text-sm font-bold",
-                d === 0 ? "text-text-secondary" : d < 0 ? "text-[#16a34a]" : "text-[#dc2626]"
+                d === 0 ? "text-text-secondary" : d < 0 ? "text-success-fg" : "text-danger-fg"
               ),
               children: Su(d)
             }
@@ -19828,7 +19828,7 @@ function Pu({ runA: e, runB: n, def: r }) {
       "tr",
       {
         className: I(
-          i.onlyInA || i.onlyInB ? "bg-[#fefce8]" : i.statusDiffers ? "bg-[#fef2f2]" : void 0
+          i.onlyInA || i.onlyInB ? "bg-[#fefce8]" : i.statusDiffers ? "bg-danger-bg" : void 0
         ),
         "data-testid": `diff-step-row-${i.nodeId}`,
         children: [
@@ -19859,13 +19859,13 @@ function Pu({ runA: e, runB: n, def: r }) {
             ] })
           ] }) : /* @__PURE__ */ t("span", { className: "text-text-tertiary", children: "(not run)" }) }),
           /* @__PURE__ */ o("td", { className: "border-b border-border px-3 py-2.5 align-top font-mono text-xs text-text-primary", children: [
-            i.statusDiffers && /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold text-[#dc2626]", children: "status differs" }),
+            i.statusDiffers && /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold text-danger-fg", children: "status differs" }),
             i.durationDelta != null && /* @__PURE__ */ t(
               "div",
               {
                 className: I(
                   "text-xs",
-                  i.durationDelta === 0 ? "text-text-tertiary" : i.durationDelta < 0 ? "text-[#16a34a]" : "text-[#dc2626]"
+                  i.durationDelta === 0 ? "text-text-tertiary" : i.durationDelta < 0 ? "text-success-fg" : "text-danger-fg"
                 ),
                 children: $u(i.durationDelta)
               }
@@ -19875,7 +19875,7 @@ function Pu({ runA: e, runB: n, def: r }) {
               {
                 className: I(
                   "mt-0.5 text-[10px]",
-                  i.tokenDelta < 0 ? "text-[#16a34a]" : "text-[#dc2626]"
+                  i.tokenDelta < 0 ? "text-success-fg" : "text-danger-fg"
                 ),
                 children: [
                   i.tokenDelta > 0 ? "+" : "",
@@ -19943,9 +19943,9 @@ function yo(e, n) {
   }), s;
 }
 const Mu = {
-  added: "bg-[#f0fdf4] text-[#166534]",
-  removed: "bg-[#fef2f2] text-[#991b1b] line-through",
-  changed: "bg-[#fffbeb] text-[#92400e]",
+  added: "bg-success-bg text-[#166534]",
+  removed: "bg-danger-bg text-[#991b1b] line-through",
+  changed: "bg-warning-bg text-[#92400e]",
   unchanged: "text-text-tertiary"
 };
 function Eu({
@@ -20089,9 +20089,9 @@ function zt({
   );
 }
 const Lu = {
-  added: "bg-[#f0fdf4] text-[#166534]",
-  removed: "bg-[#fef2f2] text-[#991b1b] line-through",
-  changed: "bg-[#fffbeb] text-[#92400e]",
+  added: "bg-success-bg text-[#166534]",
+  removed: "bg-danger-bg text-[#991b1b] line-through",
+  changed: "bg-warning-bg text-[#92400e]",
   unchanged: "text-text-tertiary"
 };
 function Bu({
@@ -20809,8 +20809,8 @@ function Zu({ row: e, onSubmit: n, onOpenPipeline: r }) {
       ] }),
       /* @__PURE__ */ t("span", { className: "text-xs text-text-tertiary whitespace-nowrap", children: Gu(e.requestedAt) })
     ] }),
-    e.message ? /* @__PURE__ */ t("div", { "data-testid": `approval-message-${e.runId}`, className: "text-[13px] text-text-secondary bg-[#fafbfc] px-3 py-2 rounded-md leading-normal", children: e.message }) : null,
-    /* @__PURE__ */ o("div", { className: "flex flex-col gap-1.5 px-3 py-2.5 bg-[#fafbfc] rounded-md border border-border", children: [
+    e.message ? /* @__PURE__ */ t("div", { "data-testid": `approval-message-${e.runId}`, className: "text-[13px] text-text-secondary bg-surface-inset px-3 py-2 rounded-md leading-normal", children: e.message }) : null,
+    /* @__PURE__ */ o("div", { className: "flex flex-col gap-1.5 px-3 py-2.5 bg-surface-inset rounded-md border border-border", children: [
       /* @__PURE__ */ t("div", { className: "text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]", children: l.length > 0 ? "Context" : "Run details" }),
       l.length > 0 ? l.map(({ label: p, value: u }) => /* @__PURE__ */ o("div", { className: "flex flex-col gap-0.5", children: [
         /* @__PURE__ */ t("div", { className: "text-[11px] font-medium text-text-secondary", children: p }),
@@ -20854,8 +20854,8 @@ function Zu({ row: e, onSubmit: n, onOpenPipeline: r }) {
       }
     ),
     /* @__PURE__ */ o("div", { className: "flex gap-2 justify-end", children: [
-      /* @__PURE__ */ t("button", { "data-testid": `reject-${e.runId}`, onClick: () => s("reject"), className: "px-3.5 py-1.5 text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-md font-[inherit] cursor-pointer", children: "Reject" }),
-      /* @__PURE__ */ t("button", { "data-testid": `approve-${e.runId}`, onClick: () => s("approve"), className: "px-3.5 py-1.5 text-[13px] font-semibold bg-[#16a34a] text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0", children: "Approve" })
+      /* @__PURE__ */ t("button", { "data-testid": `reject-${e.runId}`, onClick: () => s("reject"), className: "px-3.5 py-1.5 text-[13px] font-semibold bg-danger text-white border-none rounded-md font-[inherit] cursor-pointer", children: "Reject" }),
+      /* @__PURE__ */ t("button", { "data-testid": `approve-${e.runId}`, onClick: () => s("approve"), className: "px-3.5 py-1.5 text-[13px] font-semibold bg-success text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0", children: "Approve" })
     ] })
   ] });
 }
@@ -20909,15 +20909,15 @@ function ah() {
     },
     [s, e]
   ), x = h.length;
-  return /* @__PURE__ */ o("div", { "data-testid": "pending-approvals-page", className: "flex flex-col h-full overflow-hidden bg-[#fafbfc] font-[inherit]", children: [
+  return /* @__PURE__ */ o("div", { "data-testid": "pending-approvals-page", className: "flex flex-col h-full overflow-hidden bg-surface-inset font-[inherit]", children: [
     /* @__PURE__ */ t("div", { className: "h-14 shrink-0 flex items-center justify-between px-6 border-b border-border bg-surface sticky top-0 z-[2]", children: /* @__PURE__ */ o("div", { className: "flex items-center gap-2.5", children: [
       /* @__PURE__ */ t("div", { className: "text-lg font-bold text-text-primary", children: "Pending approvals" }),
       /* @__PURE__ */ t(le, { "data-testid": "pending-count", tone: x > 0 ? "warning" : "neutral", size: "sm", children: x })
     ] }) }),
     /* @__PURE__ */ o("div", { className: "flex-1 overflow-y-auto p-5", children: [
-      a ? /* @__PURE__ */ o("div", { "data-testid": "approvals-error", role: "alert", className: "px-4 py-3 bg-[#fef2f2] border border-[#dc2626] text-[#dc2626] rounded-lg flex items-center justify-between gap-3 mb-4", children: [
+      a ? /* @__PURE__ */ o("div", { "data-testid": "approvals-error", role: "alert", className: "px-4 py-3 bg-danger-bg border border-danger text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4", children: [
         /* @__PURE__ */ t("span", { className: "text-[13px] font-medium", children: "Couldn't load pending approvals. Try again." }),
-        /* @__PURE__ */ t("button", { "data-testid": "approvals-retry", onClick: i, className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[#dc2626] border border-[#dc2626] rounded-md cursor-pointer font-[inherit]", children: "Retry" })
+        /* @__PURE__ */ t("button", { "data-testid": "approvals-retry", onClick: i, className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]", children: "Retry" })
       ] }) : null,
       r && x === 0 ? /* @__PURE__ */ o("div", { "data-testid": "approvals-loading", className: "flex flex-col gap-3 max-w-[680px] mx-auto", children: [
         /* @__PURE__ */ t(Zt, { height: 140 }),

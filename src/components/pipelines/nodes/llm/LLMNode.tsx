@@ -68,7 +68,7 @@ function ResponseFooter({ info }: { info: LLMResponseInfo }) {
         )}
         {info.streamOpening && (
           <span
-            className="ml-1.5 text-[11px] text-[#2563eb]"
+            className="ml-1.5 text-[11px] text-info-fg"
             data-testid="llm-stream-opening"
             title="LLM stream is open — waiting for the first token"
           >

@@ -54,7 +54,7 @@ export function renderCommentText(text: string): React.ReactNode {
     part.startsWith('@') && /^@[A-Z]/.test(part) ? (
       <span
         key={i}
-        className={cn('text-[#3b82f6] font-semibold bg-[#eff6ff] px-0.5 rounded-sm')}
+        className={cn('text-[#3b82f6] font-semibold bg-info-bg px-0.5 rounded-sm')}
       >
         {part}
       </span>
@@ -207,12 +207,12 @@ function CommentThreadNode({
     return (
       <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>
         <div
-          className={cn('bg-[#f0fdf4] border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
+          className={cn('bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(true)}
         >
           <div className={cn('flex items-center gap-1.5')}>
-            <span className={cn('text-[#16a34a] text-xs')}>{'✔'}</span>
-            <span className={cn('text-[#16a34a] text-xs font-semibold')}>
+            <span className={cn('text-success-fg text-xs')}>{'✔'}</span>
+            <span className={cn('text-success-fg text-xs font-semibold')}>
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
@@ -230,7 +230,7 @@ function CommentThreadNode({
               e.stopPropagation();
               onUnresolveThread?.(comment.id);
             }}
-            className={cn('bg-transparent border border-[#cbd5e1] rounded px-2 py-0.5 text-[#64748b] text-[11px] cursor-pointer font-[inherit]')}
+            className={cn('bg-transparent border border-border-emphasis rounded px-2 py-0.5 text-neutral text-[11px] cursor-pointer font-[inherit]')}
           >
             Reopen
           </button>
@@ -244,12 +244,12 @@ function CommentThreadNode({
       {/* Resolved banner (expanded) */}
       {isResolved && resolvedExpanded && (
         <div
-          className={cn('bg-[#f0fdf4] border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
+          className={cn('bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(false)}
         >
           <div className={cn('flex items-center gap-1.5')}>
-            <span className={cn('text-[#16a34a] text-xs')}>{'✔'}</span>
-            <span className={cn('text-[#16a34a] text-xs font-semibold')}>
+            <span className={cn('text-success-fg text-xs')}>{'✔'}</span>
+            <span className={cn('text-success-fg text-xs font-semibold')}>
               Resolved by {comment.resolvedBy}
             </span>
             {comment.resolvedAt && (
@@ -267,7 +267,7 @@ function CommentThreadNode({
               e.stopPropagation();
               onUnresolveThread?.(comment.id);
             }}
-            className={cn('bg-transparent border border-[#cbd5e1] rounded px-2 py-0.5 text-[#64748b] text-[11px] cursor-pointer font-[inherit]')}
+            className={cn('bg-transparent border border-border-emphasis rounded px-2 py-0.5 text-neutral text-[11px] cursor-pointer font-[inherit]')}
           >
             Reopen
           </button>
@@ -312,7 +312,7 @@ function CommentThreadNode({
                 setTimeout(() => textareaRef.current?.focus(), 50);
               }
             }}
-            className={cn('bg-transparent border-none text-[#64748b] text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
+            className={cn('bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
           >
             Reply
           </button>
@@ -320,7 +320,7 @@ function CommentThreadNode({
             <button
               type="button"
               onClick={() => onResolveThread(comment.id)}
-              className={cn('bg-transparent border-none text-[#64748b] text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
+              className={cn('bg-transparent border-none text-neutral text-xs cursor-pointer py-0.5 px-0 font-[inherit]')}
             >
               {'✔'} Resolve
             </button>
@@ -362,7 +362,7 @@ function CommentThreadNode({
               <button
                 type="button"
                 onClick={() => setShowReplyForm(false)}
-                className={cn('px-3 py-1 text-xs font-medium border border-border rounded-md bg-transparent text-[#64748b] cursor-pointer font-[inherit]')}
+                className={cn('px-3 py-1 text-xs font-medium border border-border rounded-md bg-transparent text-neutral cursor-pointer font-[inherit]')}
               >
                 Cancel
               </button>

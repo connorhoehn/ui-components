@@ -196,7 +196,7 @@ export default function DLQInspector() {
         </button>
         <h1 className="text-lg font-bold text-text-primary m-0">Dead Letter Queue</h1>
         <span
-          className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold bg-[#fef2f2] text-[#dc2626]"
+          className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold bg-danger-bg text-danger-fg"
           data-testid="dlq-depth-badge"
         >
           {entries.length}
@@ -256,7 +256,7 @@ export default function DLQInspector() {
             <button
               type="button"
               onClick={() => setPurgeTarget(Array.from(selected))}
-              className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-[#fef2f2] text-[#dc2626]"
+              className="px-2.5 py-1 text-xs font-semibold border-none rounded-[5px] cursor-pointer font-[inherit] bg-danger-bg text-danger-fg"
               data-testid="dlq-bulk-purge"
             >
               Purge Selected
@@ -278,7 +278,7 @@ export default function DLQInspector() {
 
       {/* Error state */}
       {error && (
-        <div className="py-2.5 px-3.5 mb-4 bg-[#fef2f2] border border-[#fecaca] rounded-md text-[13px] text-[#dc2626]">
+        <div className="py-2.5 px-3.5 mb-4 bg-danger-bg border border-danger-border rounded-md text-[13px] text-danger-fg">
           {error}
         </div>
       )}

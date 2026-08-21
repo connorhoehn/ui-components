@@ -76,13 +76,13 @@ function SourceTable() {
       <table className="w-full border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-border bg-[#f8f9fa]">
-            <th className="py-2 px-4 text-left font-semibold text-[#64748b]">
+            <th className="py-2 px-4 text-left font-semibold text-neutral">
               Source
             </th>
-            <th className="py-2 px-4 text-left font-semibold text-[#64748b]">
+            <th className="py-2 px-4 text-left font-semibold text-neutral">
               Status
             </th>
-            <th className="py-2 px-4 text-left font-semibold text-[#64748b]">
+            <th className="py-2 px-4 text-left font-semibold text-neutral">
               Progress
             </th>
           </tr>
@@ -97,7 +97,7 @@ function SourceTable() {
                     {source.status}
                   </Chip>
                 </td>
-                <td className="py-[10px] px-4 text-[#64748b]">
+                <td className="py-[10px] px-4 text-neutral">
                   {source.progress || '—'}
                 </td>
               </tr>
@@ -117,7 +117,7 @@ export default function IngestDashboardDemo() {
           <h2 className="text-[20px] font-semibold mb-2 text-[#1a1a2e]">
             Ingest Dashboard
           </h2>
-          <p className="text-[#64748b] text-[14px]">
+          <p className="text-neutral text-[14px]">
             Data ingestion monitoring with live sync progress, conflict detection, and DLQ tracking.
           </p>
         </div>

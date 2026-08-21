@@ -222,7 +222,7 @@ function ne({
               {
                 type: "button",
                 onClick: a,
-                className: "text-xs text-[#2563eb] bg-transparent border-none cursor-pointer hover:underline",
+                className: "text-xs text-info-fg bg-transparent border-none cursor-pointer hover:underline",
                 children: "Mark all read"
               }
             ),

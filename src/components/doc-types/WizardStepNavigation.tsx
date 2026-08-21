@@ -24,13 +24,13 @@ export function StepIndicator({ step, total }: { step: number; total: number }) 
               'w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-bold',
               done && 'bg-primary text-white border-2 border-transparent',
               active && 'bg-[#ede9fe] text-[#4c1d95] border-2 border-primary',
-              !done && !active && 'bg-[#f1f5f9] text-[#94a3b8] border-2 border-transparent',
+              !done && !active && 'bg-surface-hover text-text-tertiary border-2 border-transparent',
             )}>
               {done ? '✓' : n}
             </div>
             <span className={cn(
               'ml-1.5 text-xs whitespace-nowrap',
-              active ? 'font-semibold text-text-primary' : 'font-normal text-[#94a3b8]',
+              active ? 'font-semibold text-text-primary' : 'font-normal text-text-tertiary',
             )}>
               {STEP_LABELS[i]}
             </span>
@@ -69,7 +69,7 @@ export function WizardStepNavigation({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-[#64748b]"
+          className="px-4 py-[7px] text-[13px] font-semibold rounded-[7px] cursor-pointer font-inherit bg-transparent border-none text-neutral"
         >
           Cancel
         </button>

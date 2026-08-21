@@ -4,8 +4,8 @@ import { useState as N, useRef as I, useCallback as m } from "react";
 import { B as W } from "./Banner-DKb3JiLs.js";
 const A = {
   ghost: "bg-transparent text-[#374151] hover:bg-[#f3f4f6]",
-  primary: "bg-[#3b82f6] text-white hover:bg-[#2563eb]",
-  danger: "bg-[#ef4444] text-white hover:bg-[#dc2626]"
+  primary: "bg-[#3b82f6] text-white hover:bg-info",
+  danger: "bg-[#ef4444] text-white hover:bg-danger"
 }, K = {
   sm: "w-6 h-6 text-sm",
   md: "w-8 h-8 text-base",
@@ -60,7 +60,7 @@ function Z({
   "aria-labelledby": o,
   className: u,
   style: f,
-  "data-testid": b
+  "data-testid": x
 }) {
   return /* @__PURE__ */ i(
     "button",
@@ -71,7 +71,7 @@ function Z({
       "aria-label": l,
       "aria-labelledby": o,
       disabled: a,
-      "data-testid": b,
+      "data-testid": x,
       onClick: () => {
         a || n(!r);
       },
@@ -112,9 +112,9 @@ function V({
   disabled: o = !1,
   label: u,
   className: f,
-  "data-testid": b
+  "data-testid": x
 }) {
-  const [w, x] = N(!1), [D, d] = N(null), y = I(null), g = m((e) => {
+  const [w, b] = N(!1), [D, d] = N(null), y = I(null), g = m((e) => {
     const s = Array.from(e);
     if (!a && s.length > 1) {
       const c = "Only one file is allowed.";
@@ -132,19 +132,19 @@ function V({
     }
     return d(null), s;
   }, [r, n, a, l]), L = m((e) => {
-    if (e.preventDefault(), x(!1), o) return;
+    if (e.preventDefault(), b(!1), o) return;
     const s = g(e.dataTransfer.files);
     s && t(s);
   }, [o, g, t]), O = m((e) => {
-    e.preventDefault(), o || x(!0);
+    e.preventDefault(), o || b(!0);
   }, [o]), $ = m(() => {
-    x(!1);
+    b(!1);
   }, []), j = m((e) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const s = g(e.target.files);
     s && t(s), e.target.value = "";
   }, [g, t]), k = n ? `Up to ${B(n)}` : void 0, C = r ?? void 0;
-  return /* @__PURE__ */ v("div", { className: p("flex flex-col gap-2", f), "data-testid": b, children: [
+  return /* @__PURE__ */ v("div", { className: p("flex flex-col gap-2", f), "data-testid": x, children: [
     /* @__PURE__ */ v(
       "div",
       {

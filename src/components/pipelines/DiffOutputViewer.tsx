@@ -128,9 +128,9 @@ export function computeJsonDiff(a: unknown, b: unknown): JsonDiffEntry[] {
 // ---------------------------------------------------------------------------
 
 const DIFF_TYPE_CLASSES: Record<JsonDiffEntry['type'], string> = {
-  added:     'bg-[#f0fdf4] text-[#166534]',
-  removed:   'bg-[#fef2f2] text-[#991b1b] line-through',
-  changed:   'bg-[#fffbeb] text-[#92400e]',
+  added:     'bg-success-bg text-[#166534]',
+  removed:   'bg-danger-bg text-[#991b1b] line-through',
+  changed:   'bg-warning-bg text-[#92400e]',
   unchanged: 'text-text-tertiary',
 };
 

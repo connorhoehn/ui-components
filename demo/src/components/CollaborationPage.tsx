@@ -497,7 +497,7 @@ function handleReact(emoji: string) {
       >
         <div className="bg-surface border border-border rounded-lg p-5 max-w-100"
         >
-          <h2 className="text-[12px] font-semibold uppercase tracking-[0.05em] text-[#64748b] mt-0 mr-0 mb-3 ml-0"
+          <h2 className="text-[12px] font-semibold uppercase tracking-[0.05em] text-neutral mt-0 mr-0 mb-3 ml-0"
           >
             Activity
             <span className="inline-block w-2 h-2 rounded-full bg-[#22c55e] ml-2 align-middle"

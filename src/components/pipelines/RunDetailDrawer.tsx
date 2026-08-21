@@ -26,10 +26,10 @@ function formatCost(usd?: number): string {
 
 function costColor(usd?: number): string {
   if (usd == null || usd === 0) return 'text-text-tertiary';
-  if (usd < 0.01) return 'text-[#16a34a]';
+  if (usd < 0.01) return 'text-success-fg';
   if (usd < 0.10) return 'text-[#ca8a04]';
-  if (usd < 1.00) return 'text-[#ea580c]';
-  return 'text-[#dc2626]';
+  if (usd < 1.00) return 'text-caution-fg';
+  return 'text-danger-fg';
 }
 
 function statusBadgeTone(s: RunStatus): ChipTone {
@@ -180,7 +180,7 @@ export default function RunDetailDrawer({ pipelineId, run, onBack }: RunDetailDr
               <div className="mb-1 text-[11px] font-semibold uppercase text-state-failed">
                 Error
               </div>
-              <div className="whitespace-pre-wrap break-words rounded-md bg-[#fef2f2] px-2.5 py-2 font-mono text-xs text-[#991b1b]">
+              <div className="whitespace-pre-wrap break-words rounded-md bg-danger-bg px-2.5 py-2 font-mono text-xs text-[#991b1b]">
                 {run.error.message}
                 {run.error.nodeId && (
                   <div className="mt-1 text-[11px] text-[#b91c1c]">

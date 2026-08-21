@@ -165,12 +165,12 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
       </div>
 
       {row.message ? (
-        <div data-testid={`approval-message-${row.runId}`} className="text-[13px] text-text-secondary bg-[#fafbfc] px-3 py-2 rounded-md leading-normal">
+        <div data-testid={`approval-message-${row.runId}`} className="text-[13px] text-text-secondary bg-surface-inset px-3 py-2 rounded-md leading-normal">
           {row.message}
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-1.5 px-3 py-2.5 bg-[#fafbfc] rounded-md border border-border">
+      <div className="flex flex-col gap-1.5 px-3 py-2.5 bg-surface-inset rounded-md border border-border">
         <div className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
           {reviewItems.length > 0 ? 'Context' : 'Run details'}
         </div>
@@ -225,10 +225,10 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
       />
 
       <div className="flex gap-2 justify-end">
-        <button data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-[#dc2626] text-white border-none rounded-md font-[inherit] cursor-pointer">
+        <button data-testid={`reject-${row.runId}`} onClick={() => submit('reject')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-danger text-white border-none rounded-md font-[inherit] cursor-pointer">
           Reject
         </button>
-        <button data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-[#16a34a] text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0">
+        <button data-testid={`approve-${row.runId}`} onClick={() => submit('approve')} className="px-3.5 py-1.5 text-[13px] font-semibold bg-success text-white border-none rounded-md font-[inherit] cursor-pointer shrink-0">
           Approve
         </button>
       </div>
@@ -351,7 +351,7 @@ export default function PendingApprovalsPage() {
   const count = rows.length;
 
   return (
-    <div data-testid="pending-approvals-page" className="flex flex-col h-full overflow-hidden bg-[#fafbfc] font-[inherit]">
+    <div data-testid="pending-approvals-page" className="flex flex-col h-full overflow-hidden bg-surface-inset font-[inherit]">
       <div className="h-14 shrink-0 flex items-center justify-between px-6 border-b border-border bg-surface sticky top-0 z-[2]">
         <div className="flex items-center gap-2.5">
           <div className="text-lg font-bold text-text-primary">Pending approvals</div>
@@ -363,9 +363,9 @@ export default function PendingApprovalsPage() {
 
       <div className="flex-1 overflow-y-auto p-5">
         {error ? (
-          <div data-testid="approvals-error" role="alert" className="px-4 py-3 bg-[#fef2f2] border border-[#dc2626] text-[#dc2626] rounded-lg flex items-center justify-between gap-3 mb-4">
+          <div data-testid="approvals-error" role="alert" className="px-4 py-3 bg-danger-bg border border-danger text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4">
             <span className="text-[13px] font-medium">Couldn't load pending approvals. Try again.</span>
-            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[#dc2626] border border-[#dc2626] rounded-md cursor-pointer font-[inherit]">Retry</button>
+            <button data-testid="approvals-retry" onClick={retry} className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]">Retry</button>
           </div>
         ) : null}
 

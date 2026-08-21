@@ -215,7 +215,7 @@ export default function WrappedComponentsDemo() {
       <h2 className="text-[20px] font-bold mb-1 text-text-primary">
         Wrapped Components vs Raw Hook Wiring
       </h2>
-      <p className="text-[14px] text-[#64748b] mb-6 leading-[1.6]">
+      <p className="text-[14px] text-neutral mb-6 leading-[1.6]">
         Both columns receive the same mock data. The "Raw" column shows the manual adapter
         every app currently writes. The "Wrapped" column uses{' '}
         <code className="bg-surface-hover rounded py-[1px] px-[6px]">

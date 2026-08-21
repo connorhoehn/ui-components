@@ -170,12 +170,12 @@ export default function DiffViewer({ oldSections, newSections, onClose }: DiffVi
   const hasChanges = diffs.some(d => d.status !== 'unchanged');
 
   return (
-    <div className={cn('border-t border-[#e5e7eb] bg-[#fafbfc] max-h-[400px] overflow-auto px-4 py-3')}>
+    <div className={cn('border-t border-[#e5e7eb] bg-surface-inset max-h-[400px] overflow-auto px-4 py-3')}>
       <div className={cn('flex items-center justify-between mb-2')}>
         <h4 className={cn('text-[13px] font-semibold text-[#374151] m-0')}>Changes from selected version to current</h4>
         <button
           type="button"
-          className={cn('px-2 py-0.5 text-xs border border-[#d1d5db] rounded bg-white text-[#6b7280] cursor-pointer font-[inherit]')}
+          className={cn('px-2 py-0.5 text-xs border border-border-field rounded bg-white text-[#6b7280] cursor-pointer font-[inherit]')}
           onClick={onClose}
         >
           Dismiss

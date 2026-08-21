@@ -292,7 +292,7 @@ export default function StepTimeline({
             </div>
 
             {/* Bar area */}
-            <div className="flex-1 h-5 relative bg-[#fafbfc] rounded-[3px] overflow-hidden">
+            <div className="flex-1 h-5 relative bg-surface-inset rounded-[3px] overflow-hidden">
               {/* Main execution bar */}
               <div
                 className={cn('absolute top-0.5 bottom-0.5 rounded-[3px] flex overflow-hidden transition-opacity duration-100', isHovered ? 'opacity-100' : 'opacity-[0.85]')}
@@ -318,7 +318,7 @@ export default function StepTimeline({
               {/* Tooltip on hover */}
               {isHovered && (
                 <div
-                  className="absolute bottom-full -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-[#0f172a] text-white text-[11px] rounded whitespace-nowrap pointer-events-none z-20 shadow-[0_2px_8px_rgba(0,0,0,0.18)] leading-relaxed"
+                  className="absolute bottom-full -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-surface-inverse text-white text-[11px] rounded whitespace-nowrap pointer-events-none z-20 shadow-[0_2px_8px_rgba(0,0,0,0.18)] leading-relaxed"
                   style={{ left: `${offsetPct + widthPct / 2}%` }}
                 >
                   <div className="font-semibold">{step.stepId}</div>
