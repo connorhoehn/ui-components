@@ -244,7 +244,7 @@ export declare type CircularIconToggleSize = 'sm' | 'md' | 'lg';
 
 export declare type CircularIconToggleTone = 'neutral' | 'danger';
 
-export declare function ExpandableCallWidget({ title, subtitle, children, controls, defaultMode, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
+export declare function ExpandableCallWidget({ title, subtitle, durationSeconds, children, controls, defaultMode, onModeChange, persistKey, apiRef, defaultCorner, expandable, zIndex, className, }: ExpandableCallWidgetProps): JSX.Element;
 
 export declare interface ExpandableCallWidgetHandle {
     mode: CallWidgetMode;
@@ -256,6 +256,11 @@ export declare interface ExpandableCallWidgetProps {
     title?: ReactNode;
     /** Optional status line shown under the title (e.g. "0:36 • 3 in call"). */
     subtitle?: ReactNode;
+    /** Elapsed call time in seconds. When set, a monospace timer
+     *  (data-testid="call-timer") renders after the subtitle — the same
+     *  affordance CallWidget's collapsed chrome exposes, so e2e journeys
+     *  can read the duration in either mode. */
+    durationSeconds?: number;
     /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
     children: ReactNode;
     /** Optional controls strip rendered below the body. Stays inside the

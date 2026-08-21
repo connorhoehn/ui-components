@@ -29,6 +29,7 @@ import {
   type Ref,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { formatDuration } from './CallWidget';
 import {
   useCallWidgetPersistence,
   type PersistedWidgetMode,
@@ -46,6 +47,11 @@ export interface ExpandableCallWidgetProps {
   title?: ReactNode;
   /** Optional status line shown under the title (e.g. "0:36 • 3 in call"). */
   subtitle?: ReactNode;
+  /** Elapsed call time in seconds. When set, a monospace timer
+   *  (data-testid="call-timer") renders after the subtitle — the same
+   *  affordance CallWidget's collapsed chrome exposes, so e2e journeys
+   *  can read the duration in either mode. */
+  durationSeconds?: number;
   /** Body — typically `<HangoutLayout fillParent participants={…}/>`. */
   children: ReactNode;
   /** Optional controls strip rendered below the body. Stays inside the
@@ -86,6 +92,7 @@ const VIEWPORT_MARGIN = 8;
 export function ExpandableCallWidget({
   title,
   subtitle,
+  durationSeconds,
   children,
   controls,
   defaultMode = 'mini',
@@ -341,6 +348,15 @@ export function ExpandableCallWidget({
           <span className="w-2 h-2 rounded-full bg-success" aria-hidden />
           <span className="truncate font-medium">{title}</span>
           {subtitle && <span className="truncate text-white/50">{subtitle}</span>}
+          {durationSeconds !== undefined && (
+            <span
+              className="font-mono text-white/60"
+              data-testid="call-timer"
+              data-call-duration={durationSeconds}
+            >
+              {formatDuration(durationSeconds)}
+            </span>
+          )}
         </div>
         {expandable && (
           <div className="flex items-center gap-1">

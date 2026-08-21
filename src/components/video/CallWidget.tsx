@@ -93,7 +93,7 @@ export interface CallWidgetProps {
 // Utility
 // ---------------------------------------------------------------------------
 
-function formatDuration(seconds: number): string {
+export function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${s.toString().padStart(2, '0')}`;
@@ -320,7 +320,11 @@ function ActiveCallContent({
       {/* Duration & status */}
       <div className="text-center py-1.5">
         {duration !== undefined && (
-          <span className="text-white/60 text-xs font-mono">
+          <span
+            className="text-white/60 text-xs font-mono"
+            data-testid="call-timer"
+            data-call-duration={duration}
+          >
             {formatDuration(duration)}
           </span>
         )}
@@ -396,7 +400,11 @@ function MinimizedPill({
           <span className="text-white text-xs font-medium">
             {mode === 'video' ? 'Video' : 'Audio'} call
             {duration !== undefined && (
-              <span className="text-white/50 ml-1.5 font-mono">{formatDuration(duration)}</span>
+              <span
+                className="text-white/50 ml-1.5 font-mono"
+                data-testid="call-timer"
+                data-call-duration={duration}
+              >{formatDuration(duration)}</span>
             )}
           </span>
         )}

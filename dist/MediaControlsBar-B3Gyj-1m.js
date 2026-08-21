@@ -1,12 +1,12 @@
-import { jsxs as i, jsx as e, Fragment as ne } from "react/jsx-runtime";
-import { useRef as $, useState as I, useEffect as B, useMemo as G, useCallback as H, useImperativeHandle as Pe, useLayoutEffect as Ee } from "react";
+import { jsxs as i, jsx as e, Fragment as ie } from "react/jsx-runtime";
+import { useRef as $, useState as T, useEffect as B, useMemo as G, useCallback as H, useImperativeHandle as Pe, useLayoutEffect as Ee } from "react";
 import { c as h } from "./cn-B6yFEsav.js";
 import { P as Ie, S as Te } from "./ReconnectingBanner-CmL6Bm72.js";
 import { S as Ae } from "./Select-DAEcKWg2.js";
-import { B as ce } from "./Button-DILgRebO.js";
-import { A as we } from "./Avatar-B7O2g50s.js";
-import { C as re } from "./Chip-BDT8ro4h.js";
-import { S as ye, P as Be } from "./PermissionDeniedCard-0XYb6Eju.js";
+import { B as ue } from "./Button-DILgRebO.js";
+import { A as Ne } from "./Avatar-B7O2g50s.js";
+import { C as ne } from "./Chip-BDT8ro4h.js";
+import { S as ke, P as Be } from "./PermissionDeniedCard-0XYb6Eju.js";
 const $e = {
   idle: "Ready",
   connecting: "Connecting…",
@@ -22,43 +22,43 @@ function qt({
   loop: a = !1,
   controls: c = !1,
   poster: l,
-  phase: u,
-  className: d,
+  phase: d,
+  className: u,
   style: m,
-  onPhaseChange: p,
-  onTimeUpdate: g
+  onPhaseChange: g,
+  onTimeUpdate: v
 }) {
-  const b = $(null), [s, x] = I("idle"), w = u ?? s;
+  const b = $(null), [w, s] = T("idle"), x = d ?? w;
   B(() => {
-    const N = b.current;
-    if (!N) return;
+    const p = b.current;
+    if (!p) return;
     const C = [
       ["waiting", () => {
-        x("buffering"), p?.("buffering");
+        s("buffering"), g?.("buffering");
       }],
       ["playing", () => {
-        x("playing"), p?.("playing");
+        s("playing"), g?.("playing");
       }],
       ["error", () => {
-        x("error"), p?.("error");
+        s("error"), g?.("error");
       }],
       ["loadstart", () => {
-        x("connecting"), p?.("connecting");
+        s("connecting"), g?.("connecting");
       }],
       ["timeupdate", () => {
-        g?.(N.currentTime, N.duration);
+        v?.(p.currentTime, p.duration);
       }]
     ];
-    return C.forEach(([j, L]) => N.addEventListener(j, L)), () => C.forEach(([j, L]) => N.removeEventListener(j, L));
-  }, [p, g]), B(() => {
-    const N = b.current;
-    N && r !== void 0 && (N.srcObject = r);
+    return C.forEach(([j, P]) => p.addEventListener(j, P)), () => C.forEach(([j, P]) => p.removeEventListener(j, P));
+  }, [g, v]), B(() => {
+    const p = b.current;
+    p && r !== void 0 && (p.srcObject = r);
   }, [r]);
-  const k = w !== "playing", v = $e[w];
+  const y = x !== "playing", k = $e[x];
   return /* @__PURE__ */ i(
     "div",
     {
-      className: h("relative bg-black rounded-lg overflow-hidden aspect-video", d),
+      className: h("relative bg-black rounded-lg overflow-hidden aspect-video", u),
       style: m,
       children: [
         /* @__PURE__ */ e(
@@ -75,9 +75,9 @@ function qt({
             className: h("w-full h-full object-contain block")
           }
         ),
-        k && v && /* @__PURE__ */ i("div", { className: h("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"), children: [
-          w === "buffering" && /* @__PURE__ */ e(He, {}),
-          /* @__PURE__ */ e("span", { className: h(w === "buffering" ? "ml-2" : ""), children: v })
+        y && k && /* @__PURE__ */ i("div", { className: h("absolute inset-0 flex items-center justify-center bg-black/60 text-white text-sm font-medium tracking-wide"), children: [
+          x === "buffering" && /* @__PURE__ */ e(He, {}),
+          /* @__PURE__ */ e("span", { className: h(x === "buffering" ? "ml-2" : ""), children: k })
         ] })
       ]
     }
@@ -100,16 +100,16 @@ function Zt({
   autoPlay: a = !0,
   muted: c = !1,
   hideDownload: l = !1,
-  header: u,
-  footer: d,
+  header: d,
+  footer: u,
   className: m
 }) {
-  const p = G(() => r.filter((x) => !!x.url), [r]), [g, b] = I(0), s = p[g];
+  const g = G(() => r.filter((s) => !!s.url), [r]), [v, b] = T(0), w = g[v];
   return B(() => {
-    const x = (w) => {
-      w.key === "Escape" && t();
+    const s = (x) => {
+      x.key === "Escape" && t();
     };
-    return window.addEventListener("keydown", x), () => window.removeEventListener("keydown", x);
+    return window.addEventListener("keydown", s), () => window.removeEventListener("keydown", s);
   }, [t]), /* @__PURE__ */ e(
     "div",
     {
@@ -124,20 +124,20 @@ function Zt({
       children: /* @__PURE__ */ i(
         "div",
         {
-          onClick: (x) => x.stopPropagation(),
+          onClick: (s) => s.stopPropagation(),
           className: h(
             "w-full max-w-4xl flex flex-col rounded-xl overflow-hidden shadow-2xl",
             "bg-[var(--color-surface)] text-[var(--color-text-primary)]",
             m
           ),
           children: [
-            (n || o || u) && /* @__PURE__ */ i("header", { className: "flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--color-border)]", children: [
+            (n || o || d) && /* @__PURE__ */ i("header", { className: "flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--color-border)]", children: [
               /* @__PURE__ */ i("div", { className: "min-w-0 flex-1", children: [
                 n && /* @__PURE__ */ e("h2", { className: "text-sm font-semibold truncate", children: n }),
                 o && /* @__PURE__ */ e("p", { className: "text-xs text-[var(--color-text-secondary)] truncate", children: o })
               ] }),
               /* @__PURE__ */ i("div", { className: "flex items-center gap-1 shrink-0", children: [
-                u,
+                d,
                 /* @__PURE__ */ e(
                   "button",
                   {
@@ -153,18 +153,18 @@ function Zt({
                 )
               ] })
             ] }),
-            s ? /* @__PURE__ */ e(
+            w ? /* @__PURE__ */ e(
               "video",
               {
-                src: s.url,
+                src: w.url,
                 controls: !0,
                 autoPlay: a,
                 muted: c,
                 className: "w-full max-h-[70vh] bg-black"
               },
-              s.url
+              w.url
             ) : /* @__PURE__ */ e("div", { className: "p-10 text-center text-[var(--color-text-secondary)] text-sm", children: "No playable sources." }),
-            p.length > 1 && /* @__PURE__ */ e(
+            g.length > 1 && /* @__PURE__ */ e(
               "nav",
               {
                 className: h(
@@ -172,32 +172,32 @@ function Zt({
                   "text-xs"
                 ),
                 "aria-label": "Segments",
-                children: p.map((x, w) => {
-                  const k = w === g;
+                children: g.map((s, x) => {
+                  const y = x === v;
                   return /* @__PURE__ */ e(
                     "button",
                     {
                       type: "button",
-                      onClick: () => b(w),
+                      onClick: () => b(x),
                       className: h(
                         "px-2.5 py-1 rounded transition-colors",
-                        k ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface-alt,rgba(255,255,255,0.05))] hover:bg-white/10"
+                        y ? "bg-[var(--color-primary)] text-white" : "bg-[var(--color-surface-alt,rgba(255,255,255,0.05))] hover:bg-white/10"
                       ),
-                      "aria-current": k ? "true" : void 0,
-                      title: x.sizeBytes != null ? Re(x.sizeBytes) : void 0,
-                      children: x.label || `Segment ${w + 1}`
+                      "aria-current": y ? "true" : void 0,
+                      title: s.sizeBytes != null ? Re(s.sizeBytes) : void 0,
+                      children: s.label || `Segment ${x + 1}`
                     },
-                    `${w}:${x.url}`
+                    `${x}:${s.url}`
                   );
                 })
               }
             ),
-            (d || !l && s) && /* @__PURE__ */ i("footer", { className: "flex items-center gap-3 px-4 py-2 border-t border-[var(--color-border)] text-[11px] text-[var(--color-text-secondary)]", children: [
-              /* @__PURE__ */ e("div", { className: "min-w-0 flex-1 flex items-center gap-2", children: d }),
-              !l && s && /* @__PURE__ */ e(
+            (u || !l && w) && /* @__PURE__ */ i("footer", { className: "flex items-center gap-3 px-4 py-2 border-t border-[var(--color-border)] text-[11px] text-[var(--color-text-secondary)]", children: [
+              /* @__PURE__ */ e("div", { className: "min-w-0 flex-1 flex items-center gap-2", children: u }),
+              !l && w && /* @__PURE__ */ e(
                 "a",
                 {
-                  href: s.url,
+                  href: w.url,
                   download: !0,
                   className: "underline hover:text-[var(--color-primary)] shrink-0",
                   children: "Download"
@@ -285,7 +285,7 @@ function er({ participants: t, style: r }) {
   );
 }
 function tr({ reactions: t, style: r }) {
-  const [n, o] = I([]);
+  const [n, o] = T([]);
   return B(() => {
     if (t.length === 0) return;
     const a = t[t.length - 1], c = {
@@ -400,7 +400,7 @@ function Ge(t) {
     r = t.charCodeAt(n) + ((r << 5) - r);
   return Math.abs(r) % 360;
 }
-function q({ participant: t, size: r = 32 }) {
+function Z({ participant: t, size: r = 32 }) {
   const n = Ge(t.displayName);
   return /* @__PURE__ */ i(
     "div",
@@ -471,7 +471,7 @@ function Je({
   className: c,
   style: l
 }) {
-  const u = t.slice(0, n), d = Math.max(0, t.length - n), m = t.length === 0 && !!r;
+  const d = t.slice(0, n), u = Math.max(0, t.length - n), m = t.length === 0 && !!r;
   return /* @__PURE__ */ i(
     "div",
     {
@@ -483,24 +483,24 @@ function Je({
       ),
       style: l,
       children: [
-        u.map((p) => /* @__PURE__ */ e(q, { participant: p, size: o }, p.id)),
-        d > 0 && /* @__PURE__ */ i(
+        d.map((g) => /* @__PURE__ */ e(Z, { participant: g, size: o }, g.id)),
+        u > 0 && /* @__PURE__ */ i(
           "span",
           {
             "data-testid": "call-participant-strip-overflow",
             className: "text-white/50 text-xs font-medium",
             children: [
               "+",
-              d
+              u
             ]
           }
         ),
-        m && r && /* @__PURE__ */ e(q, { participant: r, size: o + 4 })
+        m && r && /* @__PURE__ */ e(Z, { participant: r, size: o + 4 })
       ]
     }
   );
 }
-const _ = {
+const U = {
   mic: /* @__PURE__ */ i("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
     /* @__PURE__ */ e("path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" }),
     /* @__PURE__ */ e("path", { d: "M19 10v2a7 7 0 0 1-14 0v-2" }),
@@ -582,14 +582,14 @@ function qe({
   onToggleMute: a,
   onToggleCamera: c,
   onToggleScreenShare: l,
-  onUpgradeToVideo: u,
-  onEndCall: d,
+  onUpgradeToVideo: d,
+  onEndCall: u,
   onAddParticipant: m,
-  availableParticipants: p,
-  currentParticipantIds: g,
+  availableParticipants: g,
+  currentParticipantIds: v,
   className: b
 }) {
-  const [s, x] = I(!1), w = new Set(g ?? []), k = (p ?? []).filter((v) => !w.has(v.id));
+  const [w, s] = T(!1), x = new Set(v ?? []), y = (g ?? []).filter((k) => !x.has(k.id));
   return /* @__PURE__ */ i("div", { className: h("flex flex-col", b), children: [
     /* @__PURE__ */ i(
       "div",
@@ -600,7 +600,7 @@ function qe({
           /* @__PURE__ */ e(
             K,
             {
-              icon: r ? _.micOff : _.mic,
+              icon: r ? U.micOff : U.mic,
               label: r ? "Unmute" : "Mute",
               active: r,
               onClick: a,
@@ -610,26 +610,26 @@ function qe({
           t === "video" && /* @__PURE__ */ e(
             K,
             {
-              icon: n ? _.camera : _.cameraOff,
+              icon: n ? U.camera : U.cameraOff,
               label: n ? "Turn off camera" : "Turn on camera",
               active: !n,
               onClick: c,
               testId: "camera-button"
             }
           ),
-          t === "audio" && u && /* @__PURE__ */ e(
+          t === "audio" && d && /* @__PURE__ */ e(
             K,
             {
-              icon: _.videoUpgrade,
+              icon: U.videoUpgrade,
               label: "Switch to video",
-              onClick: u,
+              onClick: d,
               testId: "upgrade-to-video-button"
             }
           ),
           /* @__PURE__ */ e(
             K,
             {
-              icon: _.screenShare,
+              icon: U.screenShare,
               label: o ? "Stop sharing" : "Share screen",
               active: o,
               onClick: l,
@@ -639,27 +639,27 @@ function qe({
           m && /* @__PURE__ */ e(
             K,
             {
-              icon: _.userPlus,
+              icon: U.userPlus,
               label: "Add participant",
-              active: s,
-              onClick: () => x((v) => !v),
+              active: w,
+              onClick: () => s((k) => !k),
               testId: "add-participant-button"
             }
           ),
           /* @__PURE__ */ e(
             K,
             {
-              icon: _.phoneEnd,
+              icon: U.phoneEnd,
               label: "End call",
               danger: !0,
-              onClick: d,
+              onClick: u,
               testId: "hangup-button"
             }
           )
         ]
       }
     ),
-    s && m && /* @__PURE__ */ i(
+    w && m && /* @__PURE__ */ i(
       "div",
       {
         className: "border-t border-white/5 bg-surface-inverse/80",
@@ -671,28 +671,28 @@ function qe({
               "button",
               {
                 type: "button",
-                onClick: () => x(!1),
+                onClick: () => s(!1),
                 className: "text-white/40 hover:text-white/80 text-xs border-none bg-transparent cursor-pointer",
                 "aria-label": "Close add-participant picker",
                 children: "✕"
               }
             )
           ] }),
-          k.length === 0 ? /* @__PURE__ */ e("div", { className: "px-3 pb-2.5 text-xs text-white/40 text-center", children: "Everyone is already in the call" }) : /* @__PURE__ */ e("div", { className: "max-h-[120px] overflow-y-auto pb-1", children: k.map((v) => /* @__PURE__ */ i(
+          y.length === 0 ? /* @__PURE__ */ e("div", { className: "px-3 pb-2.5 text-xs text-white/40 text-center", children: "Everyone is already in the call" }) : /* @__PURE__ */ e("div", { className: "max-h-[120px] overflow-y-auto pb-1", children: y.map((k) => /* @__PURE__ */ i(
             "button",
             {
               type: "button",
               className: "w-full flex items-center gap-2.5 px-3 py-1.5 border-none bg-transparent text-left cursor-pointer hover:bg-white/10 transition-colors",
               onClick: () => {
-                m(v.id), k.length <= 1 && x(!1);
+                m(k.id), y.length <= 1 && s(!1);
               },
               children: [
-                /* @__PURE__ */ e(q, { participant: v, size: 22 }),
-                /* @__PURE__ */ e("span", { className: "text-xs text-white/80", children: v.displayName }),
+                /* @__PURE__ */ e(Z, { participant: k, size: 22 }),
+                /* @__PURE__ */ e("span", { className: "text-xs text-white/80", children: k.displayName }),
                 /* @__PURE__ */ e("span", { className: "ml-auto text-[10px] text-primary-fg", children: "+ Add" })
               ]
             },
-            v.id
+            k.id
           )) })
         ]
       }
@@ -711,7 +711,7 @@ const Qe = {
 function et(t) {
   return t >= 1e3 ? `${(t / 1e3).toFixed(1)} Mb/s` : `${Math.round(t)} kb/s`;
 }
-function de({
+function he({
   stats: t,
   position: r = "top-left",
   testId: n = "call-stats-overlay",
@@ -758,11 +758,11 @@ function de({
     }
   ) : null;
 }
-function Ne(t) {
+function de(t) {
   const r = Math.floor(t / 60), n = t % 60;
   return `${r}:${n.toString().padStart(2, "0")}`;
 }
-function ue({
+function fe({
   stream: t,
   muted: r = !1,
   className: n
@@ -782,7 +782,7 @@ function ue({
     }
   );
 }
-const ie = {
+const oe = {
   phoneEnd: /* @__PURE__ */ i("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", children: [
     /* @__PURE__ */ e("path", { d: "M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91" }),
     /* @__PURE__ */ e("line", { x1: "22", y1: "2", x2: "2", y2: "22" })
@@ -818,7 +818,7 @@ function tt({
           onClick: n,
           className: "w-11 h-11 rounded-full bg-danger text-white border-none cursor-pointer flex items-center justify-center hover:bg-danger transition-colors",
           "aria-label": "Decline call",
-          children: ie.phoneEnd
+          children: oe.phoneEnd
         }
       ),
       /* @__PURE__ */ e(
@@ -828,7 +828,7 @@ function tt({
           onClick: r,
           className: "w-11 h-11 rounded-full bg-success text-white border-none cursor-pointer flex items-center justify-center hover:bg-success transition-colors",
           "aria-label": "Answer call",
-          children: ie.phoneAnswer
+          children: oe.phoneAnswer
         }
       )
     ] })
@@ -842,26 +842,26 @@ function rt({
   isMuted: a,
   isCameraOn: c,
   isScreenSharing: l,
-  onToggleMute: u,
-  onToggleCamera: d,
+  onToggleMute: d,
+  onToggleCamera: u,
   onToggleScreenShare: m,
-  onUpgradeToVideo: p,
-  onAddParticipant: g,
+  onUpgradeToVideo: g,
+  onAddParticipant: v,
   availableParticipants: b,
-  onEndCall: s,
-  layoutComponent: x,
-  callStats: w
+  onEndCall: w,
+  layoutComponent: s,
+  callStats: x
 }) {
-  const k = t === "video" && c;
+  const y = t === "video" && c;
   return /* @__PURE__ */ i("div", { className: "flex flex-col", children: [
-    t === "video" && x && /* @__PURE__ */ i("div", { className: "mx-3 mt-3 rounded-lg overflow-hidden relative", children: [
-      x,
-      /* @__PURE__ */ e(de, { stats: w, position: "bottom-left" })
+    t === "video" && s && /* @__PURE__ */ i("div", { className: "mx-3 mt-3 rounded-lg overflow-hidden relative", children: [
+      s,
+      /* @__PURE__ */ e(he, { stats: x, position: "bottom-left" })
     ] }),
-    t === "video" && !x && /* @__PURE__ */ i("div", { className: "relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3", children: [
-      n?.videoStream && k ? /* @__PURE__ */ e(ue, { stream: n.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-surface-inverse", children: n && /* @__PURE__ */ e(q, { participant: n, size: 48 }) }),
+    t === "video" && !s && /* @__PURE__ */ i("div", { className: "relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3", children: [
+      n?.videoStream && y ? /* @__PURE__ */ e(fe, { stream: n.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-surface-inverse", children: n && /* @__PURE__ */ e(Z, { participant: n, size: 48 }) }),
       r.length > 0 && /* @__PURE__ */ i("div", { className: "absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-surface-inverse", children: [
-        r[0].videoStream ? /* @__PURE__ */ e(ue, { stream: r[0].videoStream }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center", children: /* @__PURE__ */ e(q, { participant: r[0], size: 28 }) }),
+        r[0].videoStream ? /* @__PURE__ */ e(fe, { stream: r[0].videoStream }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center", children: /* @__PURE__ */ e(Z, { participant: r[0], size: 28 }) }),
         r[0].isMuted && /* @__PURE__ */ e(
           "div",
           {
@@ -875,7 +875,7 @@ function rt({
           }
         )
       ] }),
-      /* @__PURE__ */ e(de, { stats: w, position: "bottom-left" })
+      /* @__PURE__ */ e(he, { stats: x, position: "bottom-left" })
     ] }),
     t === "audio" && /* @__PURE__ */ e(
       Je,
@@ -887,7 +887,15 @@ function rt({
       }
     ),
     /* @__PURE__ */ i("div", { className: "text-center py-1.5", children: [
-      o !== void 0 && /* @__PURE__ */ e("span", { className: "text-white/60 text-xs font-mono", children: Ne(o) }),
+      o !== void 0 && /* @__PURE__ */ e(
+        "span",
+        {
+          className: "text-white/60 text-xs font-mono",
+          "data-testid": "call-timer",
+          "data-call-duration": o,
+          children: de(o)
+        }
+      ),
       /* @__PURE__ */ i("span", { className: "text-white/40 text-[10px] ml-2", children: [
         r.length + 1,
         " in call"
@@ -900,14 +908,14 @@ function rt({
         isMuted: a,
         isCameraOn: c,
         isScreenSharing: l,
-        onToggleMute: u,
-        onToggleCamera: d,
+        onToggleMute: d,
+        onToggleCamera: u,
         onToggleScreenShare: m,
-        onUpgradeToVideo: p,
-        onEndCall: s,
-        onAddParticipant: g,
+        onUpgradeToVideo: g,
+        onEndCall: w,
+        onAddParticipant: v,
         availableParticipants: b,
-        currentParticipantIds: r.map((v) => v.id)
+        currentParticipantIds: r.map((k) => k.id)
       }
     )
   ] });
@@ -920,17 +928,17 @@ function nt({
   callerName: a,
   onToggleMute: c,
   onEndCall: l,
-  onExpand: u
+  onExpand: d
 }) {
   return /* @__PURE__ */ i(
     "div",
     {
       className: "flex items-center gap-2 px-3 py-2 cursor-pointer select-none",
-      onClick: u,
+      onClick: d,
       role: "button",
       tabIndex: 0,
       "aria-label": "Expand call widget",
-      onKeyDown: (d) => d.key === "Enter" && u?.(),
+      onKeyDown: (u) => u.key === "Enter" && d?.(),
       children: [
         /* @__PURE__ */ e(
           "span",
@@ -944,9 +952,17 @@ function nt({
         /* @__PURE__ */ e("div", { className: "flex-1 min-w-0", children: t === "ringing" ? /* @__PURE__ */ e("span", { className: "text-white text-xs font-medium truncate", children: a || "Incoming call" }) : /* @__PURE__ */ i("span", { className: "text-white text-xs font-medium", children: [
           r === "video" ? "Video" : "Audio",
           " call",
-          n !== void 0 && /* @__PURE__ */ e("span", { className: "text-white/50 ml-1.5 font-mono", children: Ne(n) })
+          n !== void 0 && /* @__PURE__ */ e(
+            "span",
+            {
+              className: "text-white/50 ml-1.5 font-mono",
+              "data-testid": "call-timer",
+              "data-call-duration": n,
+              children: de(n)
+            }
+          )
         ] }) }),
-        /* @__PURE__ */ i("div", { className: "flex items-center gap-1", onClick: (d) => d.stopPropagation(), children: [
+        /* @__PURE__ */ i("div", { className: "flex items-center gap-1", onClick: (u) => u.stopPropagation(), children: [
           t === "active" && /* @__PURE__ */ e(
             "button",
             {
@@ -957,12 +973,12 @@ function nt({
                 o ? "bg-danger/20 text-danger-fg" : "bg-white/10 text-white/70 hover:text-white"
               ),
               "aria-label": o ? "Unmute" : "Mute",
-              children: /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", children: o ? /* @__PURE__ */ i(ne, { children: [
+              children: /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", children: o ? /* @__PURE__ */ i(ie, { children: [
                 /* @__PURE__ */ e("line", { x1: "2", y1: "2", x2: "22", y2: "22" }),
                 /* @__PURE__ */ e("path", { d: "M18.89 13.23A7.12 7.12 0 0 0 19 12v-2" }),
                 /* @__PURE__ */ e("path", { d: "M5 10v2a7 7 0 0 0 12 5.29" }),
                 /* @__PURE__ */ e("path", { d: "M15 9.34V5a3 3 0 0 0-5.68-1.33" })
-              ] }) : /* @__PURE__ */ i(ne, { children: [
+              ] }) : /* @__PURE__ */ i(ie, { children: [
                 /* @__PURE__ */ e("path", { d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" }),
                 /* @__PURE__ */ e("path", { d: "M19 10v2a7 7 0 0 1-14 0v-2" })
               ] }) })
@@ -987,68 +1003,68 @@ function nt({
   );
 }
 function it(t) {
-  const [r, n] = I({ x: 0, y: 0 }), [o, a] = I(!1), [c, l] = I(!1), u = $(!1), d = $({ x: 0, y: 0 }), m = $({ x: 0, y: 0 }), p = $(null), g = H(
-    (k) => {
-      t && (u.current = !0, a(!0), l(!1), d.current = { x: k.clientX, y: k.clientY }, m.current = { ...r }, k.preventDefault());
+  const [r, n] = T({ x: 0, y: 0 }), [o, a] = T(!1), [c, l] = T(!1), d = $(!1), u = $({ x: 0, y: 0 }), m = $({ x: 0, y: 0 }), g = $(null), v = H(
+    (y) => {
+      t && (d.current = !0, a(!0), l(!1), u.current = { x: y.clientX, y: y.clientY }, m.current = { ...r }, y.preventDefault());
     },
     [t, r]
   ), b = H(() => {
     l(!0), n({ x: 0, y: 0 }), setTimeout(() => l(!1), 200);
-  }, []), s = H(
-    (k) => {
-      const v = p.current;
-      if (!v) return;
-      const N = v.offsetParent, C = 16;
-      let j = window.innerWidth, L = window.innerHeight;
-      N && (j = N.clientWidth, L = N.clientHeight);
-      const S = v.getBoundingClientRect(), P = N ? N.getBoundingClientRect() : { left: 0, top: 0 };
-      let E, T;
-      switch (k) {
+  }, []), w = H(
+    (y) => {
+      const k = g.current;
+      if (!k) return;
+      const p = k.offsetParent, C = 16;
+      let j = window.innerWidth, P = window.innerHeight;
+      p && (j = p.clientWidth, P = p.clientHeight);
+      const S = k.getBoundingClientRect(), E = p ? p.getBoundingClientRect() : { left: 0, top: 0 };
+      let I, A;
+      switch (y) {
         case "top-left":
-          E = C, T = C;
+          I = C, A = C;
           break;
         case "top-right":
-          E = j - S.width - C, T = C;
+          I = j - S.width - C, A = C;
           break;
         case "bottom-left":
-          E = C, T = L - S.height - C;
+          I = C, A = P - S.height - C;
           break;
         default:
-          E = j - S.width - C, T = L - S.height - C;
+          I = j - S.width - C, A = P - S.height - C;
           break;
       }
-      const D = S.left - P.left - r.x, F = S.top - P.top - r.y;
-      l(!0), n({ x: E - D, y: T - F }), setTimeout(() => l(!1), 200);
+      const F = S.left - E.left - r.x, z = S.top - E.top - r.y;
+      l(!0), n({ x: I - F, y: A - z }), setTimeout(() => l(!1), 200);
     },
     [r]
-  ), x = $(s);
-  x.current = s, B(() => {
+  ), s = $(w);
+  s.current = w, B(() => {
     if (!t) return;
-    const k = (N) => {
-      u.current && n({
-        x: m.current.x + (N.clientX - d.current.x),
-        y: m.current.y + (N.clientY - d.current.y)
+    const y = (p) => {
+      d.current && n({
+        x: m.current.x + (p.clientX - u.current.x),
+        y: m.current.y + (p.clientY - u.current.y)
       });
-    }, v = () => {
-      if (!u.current) return;
-      u.current = !1, a(!1);
-      const N = p.current;
-      if (!N) return;
-      const C = N.offsetParent, j = 80;
-      let L = window.innerWidth, S = window.innerHeight;
+    }, k = () => {
+      if (!d.current) return;
+      d.current = !1, a(!1);
+      const p = g.current;
+      if (!p) return;
+      const C = p.offsetParent, j = 80;
+      let P = window.innerWidth, S = window.innerHeight;
       if (C) {
-        const y = C.getBoundingClientRect();
-        L = y.width, S = y.height;
+        const f = C.getBoundingClientRect();
+        P = f.width, S = f.height;
       }
-      const P = N.getBoundingClientRect(), E = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, T = P.left - E.left, D = P.top - E.top, F = L - (T + P.width), O = S - (D + P.height), W = T < j, z = F < j, M = D < j, f = O < j;
-      M && W ? x.current("top-left") : M && z ? x.current("top-right") : f && W ? x.current("bottom-left") : f && z && x.current("bottom-right");
+      const E = p.getBoundingClientRect(), I = C ? C.getBoundingClientRect() : { left: 0, top: 0 }, A = E.left - I.left, F = E.top - I.top, z = P - (A + E.width), W = S - (F + E.height), V = A < j, O = z < j, M = F < j, L = W < j;
+      M && V ? s.current("top-left") : M && O ? s.current("top-right") : L && V ? s.current("bottom-left") : L && O && s.current("bottom-right");
     };
-    return document.addEventListener("mousemove", k), document.addEventListener("mouseup", v), () => {
-      document.removeEventListener("mousemove", k), document.removeEventListener("mouseup", v);
+    return document.addEventListener("mousemove", y), document.addEventListener("mouseup", k), () => {
+      document.removeEventListener("mousemove", y), document.removeEventListener("mouseup", k);
     };
   }, [t]);
-  const w = r.x !== 0 || r.y !== 0;
-  return { offset: r, handleMouseDown: g, resetOffset: b, snapToCorner: s, isDragging: o, isAnimating: c, hasMoved: w, widgetRef: p };
+  const x = r.x !== 0 || r.y !== 0;
+  return { offset: r, handleMouseDown: v, resetOffset: b, snapToCorner: w, isDragging: o, isAnimating: c, hasMoved: x, widgetRef: g };
 }
 function ot({
   onSnap: t,
@@ -1079,35 +1095,35 @@ function or({
   callerName: a,
   duration: c,
   isMuted: l = !1,
-  isCameraOn: u = !0,
-  isScreenSharing: d = !1,
+  isCameraOn: d = !0,
+  isScreenSharing: u = !1,
   onAnswer: m,
-  onDecline: p,
-  onEndCall: g,
+  onDecline: g,
+  onEndCall: v,
   onToggleMute: b,
-  onToggleCamera: s,
-  onToggleScreenShare: x,
-  onUpgradeToVideo: w,
-  onAddParticipant: k,
-  availableParticipants: v,
-  onMinimize: N,
+  onToggleCamera: w,
+  onToggleScreenShare: s,
+  onUpgradeToVideo: x,
+  onAddParticipant: y,
+  availableParticipants: k,
+  onMinimize: p,
   onExpand: C,
   layoutComponent: j,
-  callStats: L,
+  callStats: P,
   minimized: S = !1,
-  position: P = "bottom-right",
-  contained: E = !1,
-  draggable: T = !0,
-  className: D,
-  style: F,
-  dataAttrs: O
+  position: E = "bottom-right",
+  contained: I = !1,
+  draggable: A = !0,
+  className: F,
+  style: z,
+  dataAttrs: W
 }) {
-  const { offset: W, handleMouseDown: z, resetOffset: M, snapToCorner: f, isDragging: y, isAnimating: A, hasMoved: X, widgetRef: V } = it(T), Y = {};
-  if (O)
-    for (const [je, Z] of Object.entries(O))
-      Z != null && Z !== "" && (Y[je] = Z);
-  const Le = G(() => {
-    switch (P) {
+  const { offset: V, handleMouseDown: O, resetOffset: M, snapToCorner: L, isDragging: f, isAnimating: N, hasMoved: D, widgetRef: _ } = it(A), Y = {};
+  if (W)
+    for (const [je, Q] of Object.entries(W))
+      Q != null && Q !== "" && (Y[je] = Q);
+  const J = G(() => {
+    switch (E) {
       case "bottom-left":
         return "bottom-4 left-4";
       case "top-right":
@@ -1117,24 +1133,24 @@ function or({
       default:
         return "bottom-4 right-4";
     }
-  }, [P]);
-  return t === "idle" || t === "ended" ? null : /* @__PURE__ */ i(ne, { children: [
-    y && /* @__PURE__ */ e(ot, { onSnap: f, contained: E }),
+  }, [E]);
+  return t === "idle" || t === "ended" ? null : /* @__PURE__ */ i(ie, { children: [
+    f && /* @__PURE__ */ e(ot, { onSnap: L, contained: I }),
     /* @__PURE__ */ e(
       "div",
       {
-        ref: V,
+        ref: _,
         "data-testid": "call-widget",
         "data-call-state": t,
         className: h(
-          E ? "absolute z-50" : "fixed z-[9999]",
-          Le,
-          D
+          I ? "absolute z-50" : "fixed z-[9999]",
+          J,
+          F
         ),
         style: {
-          transform: `translate(${W.x}px, ${W.y}px)`,
-          transition: A ? "transform 0.2s ease-out" : void 0,
-          ...F
+          transform: `translate(${V.x}px, ${V.y}px)`,
+          transition: N ? "transform 0.2s ease-out" : void 0,
+          ...z
         },
         ...Y,
         children: /* @__PURE__ */ i(
@@ -1150,16 +1166,16 @@ function or({
                 {
                   className: h(
                     "flex items-center justify-between px-3 py-2 border-b border-white/5",
-                    T && "cursor-grab active:cursor-grabbing"
+                    A && "cursor-grab active:cursor-grabbing"
                   ),
-                  onMouseDown: z,
+                  onMouseDown: O,
                   children: [
                     /* @__PURE__ */ i("div", { className: "flex items-center gap-2", children: [
                       /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-success" }),
                       /* @__PURE__ */ e("span", { className: "text-white/80 text-xs font-medium", children: r === "video" ? "Video Call" : "Audio Call" })
                     ] }),
                     /* @__PURE__ */ i("div", { className: "flex items-center gap-1", children: [
-                      X && /* @__PURE__ */ e(
+                      D && /* @__PURE__ */ e(
                         "button",
                         {
                           type: "button",
@@ -1167,7 +1183,7 @@ function or({
                           className: "w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors",
                           "aria-label": "Snap back to corner",
                           title: "Snap back to corner",
-                          children: ie.snapBack
+                          children: oe.snapBack
                         }
                       ),
                       C && /* @__PURE__ */ e(
@@ -1182,14 +1198,14 @@ function or({
                           children: /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 14 14", fill: "none", children: /* @__PURE__ */ e("path", { d: "M2 5V2h3M12 5V2H9M2 9v3h3M12 9v3H9", stroke: "currentColor", strokeWidth: "1.6", strokeLinecap: "round" }) })
                         }
                       ),
-                      N && /* @__PURE__ */ e(
+                      p && /* @__PURE__ */ e(
                         "button",
                         {
                           type: "button",
-                          onClick: N,
+                          onClick: p,
                           className: "w-5 h-5 flex items-center justify-center border-none bg-transparent text-white/40 hover:text-white/80 cursor-pointer rounded transition-colors",
                           "aria-label": "Minimize",
-                          children: ie.minimize
+                          children: oe.minimize
                         }
                       )
                     ] })
@@ -1199,8 +1215,8 @@ function or({
               S && /* @__PURE__ */ e(
                 "div",
                 {
-                  className: h(T && "cursor-grab active:cursor-grabbing"),
-                  onMouseDown: z,
+                  className: h(A && "cursor-grab active:cursor-grabbing"),
+                  onMouseDown: O,
                   children: /* @__PURE__ */ e(
                     nt,
                     {
@@ -1210,19 +1226,19 @@ function or({
                       isMuted: l,
                       callerName: a,
                       onToggleMute: b,
-                      onEndCall: g,
-                      onExpand: N
+                      onEndCall: v,
+                      onExpand: p
                     }
                   )
                 }
               ),
-              !S && /* @__PURE__ */ i(ne, { children: [
+              !S && /* @__PURE__ */ i(ie, { children: [
                 t === "ringing" && /* @__PURE__ */ e(
                   tt,
                   {
                     callerName: a,
                     onAnswer: m,
-                    onDecline: p
+                    onDecline: g
                   }
                 ),
                 t === "connecting" && /* @__PURE__ */ i(
@@ -1244,17 +1260,17 @@ function or({
                     localParticipant: o,
                     duration: c,
                     isMuted: l,
-                    isCameraOn: u,
-                    isScreenSharing: d,
+                    isCameraOn: d,
+                    isScreenSharing: u,
                     onToggleMute: b,
-                    onToggleCamera: s,
-                    onToggleScreenShare: x,
-                    onUpgradeToVideo: w,
-                    onAddParticipant: k,
-                    availableParticipants: v,
-                    onEndCall: g,
+                    onToggleCamera: w,
+                    onToggleScreenShare: s,
+                    onUpgradeToVideo: x,
+                    onAddParticipant: y,
+                    availableParticipants: k,
+                    onEndCall: v,
                     layoutComponent: j,
-                    callStats: L
+                    callStats: P
                   }
                 )
               ] })
@@ -1273,16 +1289,16 @@ function ar({
   onJoin: a,
   onDismiss: c,
   autoExpireSec: l = 30,
-  className: u,
-  style: d
+  className: d,
+  style: u
 }) {
-  const [m, p] = I(!0);
+  const [m, g] = T(!0);
   return B(() => {
     if (!l || l <= 0) return;
-    const g = setTimeout(() => {
-      p(!1), c?.();
+    const v = setTimeout(() => {
+      g(!1), c?.();
     }, l * 1e3);
-    return () => clearTimeout(g);
+    return () => clearTimeout(v);
   }, [l, c]), m ? /* @__PURE__ */ i(
     "div",
     {
@@ -1294,9 +1310,9 @@ function ar({
       className: h(
         "flex items-center gap-3 px-3 py-2 rounded-lg shadow-lg",
         "bg-surface-inverse text-white border border-white/10",
-        u
+        d
       ),
-      style: d,
+      style: u,
       children: [
         /* @__PURE__ */ e(at, { name: t, avatarUrl: r }),
         /* @__PURE__ */ i("div", { className: "flex-1 min-w-0", children: [
@@ -1309,7 +1325,7 @@ function ar({
             {
               type: "button",
               onClick: () => {
-                p(!1), c();
+                g(!1), c();
               },
               className: "text-xs text-white/60 hover:text-white px-2 py-1 rounded",
               "aria-label": "Dismiss call invitation",
@@ -1322,7 +1338,7 @@ function ar({
             {
               type: "button",
               onClick: () => {
-                p(!1), a();
+                g(!1), a();
               },
               className: "text-xs font-semibold bg-success hover:bg-success text-white px-3 py-1.5 rounded",
               "aria-label": "Join call",
@@ -1358,7 +1374,7 @@ function st(t) {
     r = t.charCodeAt(n) + ((r << 5) - r);
   return Math.abs(r) % 360;
 }
-function he(t) {
+function me(t) {
   if (!isFinite(t) || t < 0) return "0:00";
   const r = Math.floor(t / 3600), n = Math.floor(t % 3600 / 60), o = Math.floor(t % 60), a = r > 0 ? String(n).padStart(2, "0") : String(n), c = String(o).padStart(2, "0");
   return r > 0 ? `${r}:${a}:${c}` : `${a}:${c}`;
@@ -1371,72 +1387,72 @@ function lr({
   onLoadedMetadata: a,
   onTimeUpdate: c,
   onError: l,
-  hideDownload: u = !1,
-  className: d
+  hideDownload: d = !1,
+  className: u
 }) {
-  const m = $(null), p = $(null), [g, b] = I(!1), [s, x] = I(0), [w, k] = I(0), [v, N] = I(1), [C, j] = I(1), [L, S] = I(!1), [P, E] = I(null);
+  const m = $(null), g = $(null), [v, b] = T(!1), [w, s] = T(0), [x, y] = T(0), [k, p] = T(1), [C, j] = T(1), [P, S] = T(!1), [E, I] = T(null);
   B(() => {
     const M = m.current;
     if (!M || !t) return;
-    if (E(null), S(!0), M.canPlayType("application/vnd.apple.mpegurl"))
+    if (I(null), S(!0), M.canPlayType("application/vnd.apple.mpegurl"))
       return M.src = t, () => {
         M.removeAttribute("src"), M.load();
       };
-    let f = !1;
+    let L = !1;
     return (async () => {
       try {
-        const y = (await import(
+        const f = (await import(
           /* @vite-ignore */
           "hls.js"
         )).default;
-        if (f) return;
-        if (!y.isSupported()) {
-          E("HLS playback is not supported in this browser."), S(!1);
+        if (L) return;
+        if (!f.isSupported()) {
+          I("HLS playback is not supported in this browser."), S(!1);
           return;
         }
-        const A = new y({ enableWorker: !0 });
-        p.current = A, A.attachMedia(M), A.on(y.Events.MEDIA_ATTACHED, () => A.loadSource(t)), A.on(y.Events.ERROR, (X, V) => {
-          V.fatal && (E(`HLS error: ${V.type}`), l?.(new Error(`HLS fatal: ${V.type}`)));
+        const N = new f({ enableWorker: !0 });
+        g.current = N, N.attachMedia(M), N.on(f.Events.MEDIA_ATTACHED, () => N.loadSource(t)), N.on(f.Events.ERROR, (D, _) => {
+          _.fatal && (I(`HLS error: ${_.type}`), l?.(new Error(`HLS fatal: ${_.type}`)));
         });
-      } catch (y) {
-        if (f) return;
-        E(`Failed to load hls.js — install it in the consumer app: ${y?.message ?? y}`);
+      } catch (f) {
+        if (L) return;
+        I(`Failed to load hls.js — install it in the consumer app: ${f?.message ?? f}`);
       }
     })(), () => {
-      if (f = !0, p.current) {
+      if (L = !0, g.current) {
         try {
-          p.current.destroy();
+          g.current.destroy();
         } catch {
         }
-        p.current = null;
+        g.current = null;
       }
     };
   }, [t, l]);
-  const T = () => {
+  const A = () => {
     const M = m.current;
     M && (M.paused ? M.play().catch(() => {
     }) : M.pause());
-  }, D = (M) => {
-    const f = m.current;
-    !f || !isFinite(w) || w <= 0 || (f.currentTime = Number(M.target.value));
   }, F = (M) => {
-    const f = m.current;
-    if (!f) return;
-    const y = Number(M.target.value);
-    f.volume = y, N(y);
-  }, O = (M) => {
-    const f = m.current;
-    if (!f) return;
-    const y = Number(M.target.value);
-    f.playbackRate = y, j(y);
-  }, W = () => {
+    const L = m.current;
+    !L || !isFinite(x) || x <= 0 || (L.currentTime = Number(M.target.value));
+  }, z = (M) => {
+    const L = m.current;
+    if (!L) return;
+    const f = Number(M.target.value);
+    L.volume = f, p(f);
+  }, W = (M) => {
+    const L = m.current;
+    if (!L) return;
+    const f = Number(M.target.value);
+    L.playbackRate = f, j(f);
+  }, V = () => {
     const M = m.current;
     M && (document.fullscreenElement ? document.exitFullscreen() : M.requestFullscreen?.());
-  }, z = G(
-    () => w > 0 ? Math.min(100, s / w * 100) : 0,
-    [s, w]
+  }, O = G(
+    () => x > 0 ? Math.min(100, w / x * 100) : 0,
+    [w, x]
   );
-  return /* @__PURE__ */ i("div", { className: h("relative bg-video-stage rounded-lg overflow-hidden aspect-video group", d), children: [
+  return /* @__PURE__ */ i("div", { className: h("relative bg-video-stage rounded-lg overflow-hidden aspect-video group", u), children: [
     /* @__PURE__ */ e(
       "video",
       {
@@ -1449,49 +1465,49 @@ function lr({
         onPlay: () => b(!0),
         onPause: () => b(!1),
         onLoadedMetadata: (M) => {
-          const f = M.currentTarget;
-          k(f.duration), S(!1), a?.(f.duration);
+          const L = M.currentTarget;
+          y(L.duration), S(!1), a?.(L.duration);
         },
         onTimeUpdate: (M) => {
-          const f = M.currentTarget;
-          x(f.currentTime), c?.(f.currentTime, f.duration);
+          const L = M.currentTarget;
+          s(L.currentTime), c?.(L.currentTime, L.duration);
         },
         onWaiting: () => S(!0),
         onCanPlay: () => S(!1),
         onError: () => {
-          E("Playback error."), l?.(new Error("video element error")), S(!1);
+          I("Playback error."), l?.(new Error("video element error")), S(!1);
         }
       }
     ),
-    L && !P && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm", children: "Loading…" }),
-    P && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center", children: P }),
+    P && !E && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm", children: "Loading…" }),
+    E && /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center bg-black/70 text-white text-sm px-4 text-center", children: E }),
     /* @__PURE__ */ i("div", { className: "absolute bottom-0 left-0 right-0 px-3 pt-8 pb-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200", children: [
       /* @__PURE__ */ i("div", { className: "flex items-center gap-2 mb-2", children: [
-        /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12", children: he(s) }),
+        /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12", children: me(w) }),
         /* @__PURE__ */ e(
           "input",
           {
             type: "range",
             min: 0,
-            max: isFinite(w) ? w : 0,
+            max: isFinite(x) ? x : 0,
             step: 0.1,
-            value: s,
-            onChange: D,
+            value: w,
+            onChange: F,
             className: "flex-1 h-1 accent-white/90 cursor-pointer",
-            style: { "--progress": `${z}%` }
+            style: { "--progress": `${O}%` }
           }
         ),
-        /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12 text-right", children: he(w) })
+        /* @__PURE__ */ e("span", { className: "text-white text-xs tabular-nums w-12 text-right", children: me(x) })
       ] }),
       /* @__PURE__ */ i("div", { className: "flex items-center gap-3 text-white", children: [
         /* @__PURE__ */ e(
           "button",
           {
             type: "button",
-            onClick: T,
+            onClick: A,
             className: "w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center",
-            "aria-label": g ? "Pause" : "Play",
-            children: g ? /* @__PURE__ */ i("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: [
+            "aria-label": v ? "Pause" : "Play",
+            children: v ? /* @__PURE__ */ i("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: [
               /* @__PURE__ */ e("rect", { x: "2", y: "1", width: "3", height: "12" }),
               /* @__PURE__ */ e("rect", { x: "9", y: "1", width: "3", height: "12" })
             ] }) : /* @__PURE__ */ e("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: /* @__PURE__ */ e("polygon", { points: "2,1 12,7 2,13" }) })
@@ -1506,8 +1522,8 @@ function lr({
               min: 0,
               max: 1,
               step: 0.01,
-              value: v,
-              onChange: F,
+              value: k,
+              onChange: z,
               className: "w-20 h-1 accent-white/90 cursor-pointer",
               "aria-label": "Volume"
             }
@@ -1518,7 +1534,7 @@ function lr({
           {
             size: "sm",
             value: String(C),
-            onChange: O,
+            onChange: W,
             className: "w-auto bg-white/10 hover:bg-white/20 text-white border-transparent focus:bg-white/20 focus:border-transparent",
             "aria-label": "Playback speed",
             options: [
@@ -1530,7 +1546,7 @@ function lr({
           }
         ),
         /* @__PURE__ */ e("div", { className: "flex-1" }),
-        !u && t && /* @__PURE__ */ e(
+        !d && t && /* @__PURE__ */ e(
           "a",
           {
             href: t,
@@ -1544,7 +1560,7 @@ function lr({
           "button",
           {
             type: "button",
-            onClick: W,
+            onClick: V,
             className: "w-9 h-9 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center",
             "aria-label": "Fullscreen",
             children: /* @__PURE__ */ e("svg", { width: "14", height: "14", viewBox: "0 0 14 14", fill: "currentColor", children: /* @__PURE__ */ e("path", { d: "M2 2h4v1.5H3.5V6H2V2zm10 0v4h-1.5V3.5H8V2h4zM2 12v-4h1.5v2.5H6V12H2zm10 0H8v-1.5h2.5V8H12v4z" }) })
@@ -1559,7 +1575,7 @@ function ct(t) {
   const r = Math.floor(t / 3600), n = Math.floor(t % 3600 / 60), o = Math.floor(t % 60);
   return r > 0 ? `${r}h ${n}m` : n > 0 ? `${n}m ${o}s` : `${o}s`;
 }
-function fe(t) {
+function pe(t) {
   if (!t) return "—";
   try {
     const r = new Date(t);
@@ -1603,32 +1619,32 @@ function ut({
   thumbnailUrl: a,
   label: c,
   status: l = "ready",
-  selected: u,
-  onClick: d,
+  selected: d,
+  onClick: u,
   actions: m,
-  className: p
+  className: g
 }) {
-  const g = typeof d == "function";
+  const v = typeof u == "function";
   return /* @__PURE__ */ i(
     "div",
     {
-      ...g ? {
+      ...v ? {
         role: "button",
         tabIndex: 0,
-        onClick: () => d(t),
-        onKeyDown: (s) => {
-          g && (s.key === "Enter" || s.key === " ") && (s.preventDefault(), d(t));
+        onClick: () => u(t),
+        onKeyDown: (w) => {
+          v && (w.key === "Enter" || w.key === " ") && (w.preventDefault(), u(t));
         },
-        "aria-pressed": u ?? !1
+        "aria-pressed": d ?? !1
       } : {},
       "data-testid": "recording-row",
       "data-recording-id": t,
       "data-status": l,
       className: h(
         "text-left rounded-lg border bg-[var(--color-surface)] p-3 transition-colors",
-        g && "cursor-pointer hover:border-[var(--color-primary)] hover:bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/60",
-        u ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/40" : "border-[var(--color-border)]",
-        p
+        v && "cursor-pointer hover:border-[var(--color-primary)] hover:bg-white/[0.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/60",
+        d ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/40" : "border-[var(--color-border)]",
+        g
       ),
       children: [
         /* @__PURE__ */ i("div", { className: "relative aspect-video rounded bg-black overflow-hidden mb-2", children: [
@@ -1639,8 +1655,8 @@ function ut({
               alt: "",
               className: "w-full h-full object-cover",
               loading: "lazy",
-              onError: (s) => {
-                s.currentTarget.style.display = "none";
+              onError: (w) => {
+                w.currentTarget.style.display = "none";
               }
             }
           ) : /* @__PURE__ */ e("div", { className: "absolute inset-0 flex items-center justify-center text-white/30", children: /* @__PURE__ */ e("svg", { width: "36", height: "36", viewBox: "0 0 24 24", fill: "currentColor", "aria-hidden": !0, children: /* @__PURE__ */ e("path", { d: "M8 5v14l11-7z" }) }) }),
@@ -1648,19 +1664,19 @@ function ut({
           /* @__PURE__ */ e("span", { className: "absolute bottom-1 right-1 px-1.5 py-0.5 text-[10px] font-medium rounded bg-black/60 text-white tabular-nums", children: ct(n) })
         ] }),
         /* @__PURE__ */ i("div", { className: "flex items-center justify-between gap-2", children: [
-          /* @__PURE__ */ e("span", { className: "text-sm font-medium text-[var(--color-text-primary)] truncate", children: c ?? fe(r) }),
+          /* @__PURE__ */ e("span", { className: "text-sm font-medium text-[var(--color-text-primary)] truncate", children: c ?? pe(r) }),
           typeof o == "number" && o > 0 && /* @__PURE__ */ i("span", { className: "text-xs px-1.5 py-0.5 rounded bg-white/5 text-[var(--color-text-secondary)] shrink-0", children: [
             o,
             " 👥"
           ] })
         ] }),
-        c && /* @__PURE__ */ e("div", { className: "mt-0.5 text-xs text-[var(--color-text-secondary)]", children: fe(r) }),
+        c && /* @__PURE__ */ e("div", { className: "mt-0.5 text-xs text-[var(--color-text-secondary)]", children: pe(r) }),
         m && /* @__PURE__ */ e(
           "div",
           {
             "data-testid": "recording-row-actions",
             className: "mt-2 flex items-center gap-1",
-            onClick: (s) => s.stopPropagation(),
+            onClick: (w) => w.stopPropagation(),
             children: m
           }
         )
@@ -1677,7 +1693,7 @@ function sr({
   renderActions: c,
   className: l
 }) {
-  return o ? /* @__PURE__ */ e("div", { className: h("flex flex-col gap-2", l), children: [0, 1, 2].map((u) => /* @__PURE__ */ i(
+  return o ? /* @__PURE__ */ e("div", { className: h("flex flex-col gap-2", l), children: [0, 1, 2].map((d) => /* @__PURE__ */ i(
     "div",
     {
       className: "rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 animate-pulse",
@@ -1686,23 +1702,23 @@ function sr({
         /* @__PURE__ */ e("div", { className: "h-3 w-2/3 bg-white/5 rounded" })
       ]
     },
-    u
-  )) }) : t.length === 0 ? /* @__PURE__ */ e("div", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-text-secondary)]", l), children: a ?? "No recordings yet." }) : /* @__PURE__ */ e("div", { className: h("flex flex-col gap-2", l), children: t.map((u) => /* @__PURE__ */ e(
+    d
+  )) }) : t.length === 0 ? /* @__PURE__ */ e("div", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center text-sm text-[var(--color-text-secondary)]", l), children: a ?? "No recordings yet." }) : /* @__PURE__ */ e("div", { className: h("flex flex-col gap-2", l), children: t.map((d) => /* @__PURE__ */ e(
     ut,
     {
-      id: u.id,
-      startIso: u.startIso,
-      endIso: u.endIso,
-      durationSec: u.durationSec,
-      participantCount: u.participantCount,
-      thumbnailUrl: u.thumbnailUrl,
-      label: u.label,
-      status: u.status,
-      selected: u.id === r,
+      id: d.id,
+      startIso: d.startIso,
+      endIso: d.endIso,
+      durationSec: d.durationSec,
+      participantCount: d.participantCount,
+      thumbnailUrl: d.thumbnailUrl,
+      label: d.label,
+      status: d.status,
+      selected: d.id === r,
       onClick: n,
-      actions: c?.(u)
+      actions: c?.(d)
     },
-    u.id
+    d.id
   )) });
 }
 function ht(t) {
@@ -1723,41 +1739,41 @@ function cr({
   title: a = "Transcript",
   errorMessage: c,
   pendingMessage: l,
-  idleState: u,
-  className: d
+  idleState: d,
+  className: u
 }) {
-  const m = $(null), p = G(() => {
+  const m = $(null), g = G(() => {
     if (!r || n == null) return -1;
-    for (let g = 0; g < r.length; g++) {
-      const b = r[g];
-      if (n >= b.startMs && n < b.endMs) return g;
+    for (let v = 0; v < r.length; v++) {
+      const b = r[v];
+      if (n >= b.startMs && n < b.endMs) return v;
     }
     return -1;
   }, [r, n]);
   return B(() => {
-    if (p < 0 || !m.current) return;
-    const g = m.current.querySelector(`[data-seg-index="${p}"]`);
-    g && g.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [p]), t === "idle" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
+    if (g < 0 || !m.current) return;
+    const v = m.current.querySelector(`[data-seg-index="${g}"]`);
+    v && v.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [g]), t === "idle" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
     /* @__PURE__ */ e("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2", children: a }),
-    /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-tertiary,#737373)]", children: u ?? "Transcription was not enabled for this recording." })
-  ] }) : t === "pending" || t === "processing" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
+    /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-tertiary,#737373)]", children: d ?? "Transcription was not enabled for this recording." })
+  ] }) : t === "pending" || t === "processing" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
     /* @__PURE__ */ i("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2", children: [
       /* @__PURE__ */ e("span", { children: a }),
       /* @__PURE__ */ e("span", { className: "inline-block h-2 w-2 rounded-full bg-warning animate-pulse", "aria-hidden": "true" }),
       /* @__PURE__ */ e("span", { className: "text-xs font-normal text-[var(--color-text-tertiary,#737373)]", children: t === "pending" ? "queued" : "processing" })
     ] }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-secondary)]", children: l ?? (t === "pending" ? "Transcription is queued. This usually starts within a few seconds." : "Generating transcript and summary. Long recordings may take several minutes.") })
-  ] }) : t === "failed" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border-danger,#7f1d1d)] bg-[var(--color-surface)] p-4", d), children: [
+  ] }) : t === "failed" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border-danger,#7f1d1d)] bg-[var(--color-surface)] p-4", u), children: [
     /* @__PURE__ */ i("header", { className: "text-sm font-medium text-[var(--color-danger,#dc2626)] mb-2", children: [
       a,
       " — failed"
     ] }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-secondary)]", children: c ?? "Transcript generation failed. Reach out to support if this persists." })
-  ] }) : !r || r.length === 0 ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
+  ] }) : !r || r.length === 0 ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
     /* @__PURE__ */ e("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2", children: a }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-tertiary,#737373)]", children: "No audible speech was captured in this recording." })
-  ] }) : /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col", d), children: [
+  ] }) : /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col", u), children: [
     /* @__PURE__ */ i("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] px-4 py-3 border-b border-[var(--color-border)]", children: [
       a,
       /* @__PURE__ */ i("span", { className: "ml-2 text-xs font-normal text-[var(--color-text-tertiary,#737373)]", children: [
@@ -1765,36 +1781,36 @@ function cr({
         " segments"
       ] })
     ] }),
-    /* @__PURE__ */ e("div", { ref: m, className: "flex-1 overflow-y-auto max-h-[60vh] p-4 space-y-2", children: r.map((g, b) => {
-      const s = b === p, x = ft(g.speakerId), w = !!o;
+    /* @__PURE__ */ e("div", { ref: m, className: "flex-1 overflow-y-auto max-h-[60vh] p-4 space-y-2", children: r.map((v, b) => {
+      const w = b === g, s = ft(v.speakerId), x = !!o;
       return /* @__PURE__ */ i(
         "div",
         {
           "data-seg-index": b,
           className: h(
             "rounded-md px-3 py-2 transition-colors",
-            s ? "bg-[var(--color-surface-active,rgba(255,255,255,0.06))] ring-1 ring-[var(--color-border-focus,#3b82f6)]" : "hover:bg-[var(--color-surface-hover,rgba(255,255,255,0.03))]",
-            w && "cursor-pointer"
+            w ? "bg-[var(--color-surface-active,rgba(255,255,255,0.06))] ring-1 ring-[var(--color-border-focus,#3b82f6)]" : "hover:bg-[var(--color-surface-hover,rgba(255,255,255,0.03))]",
+            x && "cursor-pointer"
           ),
-          onClick: w ? () => o(g.startMs) : void 0,
-          role: w ? "button" : void 0,
-          tabIndex: w ? 0 : void 0,
+          onClick: x ? () => o(v.startMs) : void 0,
+          role: x ? "button" : void 0,
+          tabIndex: x ? 0 : void 0,
           children: [
             /* @__PURE__ */ i("div", { className: "flex items-baseline gap-2 mb-1", children: [
               /* @__PURE__ */ e(
                 "span",
                 {
                   className: "text-xs font-semibold",
-                  style: { color: `hsl(${x}, 65%, 60%)` },
-                  children: g.speakerLabel
+                  style: { color: `hsl(${s}, 65%, 60%)` },
+                  children: v.speakerLabel
                 }
               ),
-              /* @__PURE__ */ e("span", { className: "text-xs font-mono text-[var(--color-text-tertiary,#737373)]", children: ht(g.startMs) })
+              /* @__PURE__ */ e("span", { className: "text-xs font-mono text-[var(--color-text-tertiary,#737373)]", children: ht(v.startMs) })
             ] }),
-            /* @__PURE__ */ e("p", { className: "text-sm text-[var(--color-text-primary)] leading-relaxed", children: g.text })
+            /* @__PURE__ */ e("p", { className: "text-sm text-[var(--color-text-primary)] leading-relaxed", children: v.text })
           ]
         },
-        `${g.startMs}-${g.speakerId}-${b}`
+        `${v.startMs}-${v.speakerId}-${b}`
       );
     }) })
   ] });
@@ -1807,27 +1823,27 @@ function dr({
   errorMessage: a,
   pendingMessage: c,
   idleState: l,
-  className: u
+  className: d
 }) {
-  return t === "idle" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
+  return t === "idle" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
     /* @__PURE__ */ e("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2", children: o }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-tertiary,#737373)]", children: l ?? "No summary generated for this recording." })
-  ] }) : t === "pending" || t === "processing" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
+  ] }) : t === "pending" || t === "processing" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
     /* @__PURE__ */ i("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2 flex items-center gap-2", children: [
       /* @__PURE__ */ e("span", { children: o }),
       /* @__PURE__ */ e("span", { className: "inline-block h-2 w-2 rounded-full bg-warning animate-pulse", "aria-hidden": "true" })
     ] }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-secondary)]", children: c ?? "Generating summary from the transcript. This typically completes within a minute of transcription finishing." })
-  ] }) : t === "failed" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border-danger,#7f1d1d)] bg-[var(--color-surface)] p-4", u), children: [
+  ] }) : t === "failed" ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border-danger,#7f1d1d)] bg-[var(--color-surface)] p-4", d), children: [
     /* @__PURE__ */ i("header", { className: "text-sm font-medium text-[var(--color-danger,#dc2626)] mb-2", children: [
       o,
       " — failed"
     ] }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-secondary)]", children: a ?? "Summary generation failed." })
-  ] }) : !r || r.trim().length === 0 ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", u), children: [
+  ] }) : !r || r.trim().length === 0 ? /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4", d), children: [
     /* @__PURE__ */ e("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] mb-2", children: o }),
     /* @__PURE__ */ e("div", { className: "text-sm text-[var(--color-text-tertiary,#737373)]", children: "No summary content was generated." })
-  ] }) : /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col", u), children: [
+  ] }) : /* @__PURE__ */ i("section", { className: h("rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col", d), children: [
     /* @__PURE__ */ e("header", { className: "text-sm font-medium text-[var(--color-text-secondary)] px-4 py-3 border-b border-[var(--color-border)]", children: o }),
     /* @__PURE__ */ e("div", { className: "prose prose-sm prose-invert max-w-none p-4 overflow-y-auto max-h-[60vh]", children: n ? n(r) : /* @__PURE__ */ e("pre", { className: "whitespace-pre-wrap text-sm font-sans text-[var(--color-text-primary)]", children: r }) })
   ] });
@@ -1837,16 +1853,16 @@ function ur({
   className: r,
   title: n
 }) {
-  const [o, a] = I(!1), [c, l] = I(!1);
+  const [o, a] = T(!1), [c, l] = T(!1);
   B(() => {
     l(typeof document < "u" && document.pictureInPictureEnabled === !0);
   }, []), B(() => {
-    const m = () => a(!1), p = () => a(!0);
-    return document.addEventListener("leavepictureinpicture", m), document.addEventListener("enterpictureinpicture", p), () => {
-      document.removeEventListener("leavepictureinpicture", m), document.removeEventListener("enterpictureinpicture", p);
+    const m = () => a(!1), g = () => a(!0);
+    return document.addEventListener("leavepictureinpicture", m), document.addEventListener("enterpictureinpicture", g), () => {
+      document.removeEventListener("leavepictureinpicture", m), document.removeEventListener("enterpictureinpicture", g);
     };
   }, []);
-  const u = H(async () => {
+  const d = H(async () => {
     if (c)
       try {
         if (document.pictureInPictureElement) {
@@ -1858,19 +1874,19 @@ function ur({
         m.disablePictureInPicture = !1, await m.requestPictureInPicture(), a(!0);
       } catch {
       }
-  }, [c, t]), d = !c;
+  }, [c, t]), u = !c;
   return /* @__PURE__ */ e(
     "button",
     {
       type: "button",
-      onClick: u,
-      disabled: d,
-      title: n ?? (d ? "Picture-in-Picture not supported" : o ? "Exit Picture-in-Picture" : "Open Picture-in-Picture"),
+      onClick: d,
+      disabled: u,
+      title: n ?? (u ? "Picture-in-Picture not supported" : o ? "Exit Picture-in-Picture" : "Open Picture-in-Picture"),
       "aria-label": o ? "Exit Picture-in-Picture" : "Open Picture-in-Picture",
       "aria-pressed": o,
       className: h(
         "w-9 h-9 rounded flex items-center justify-center transition-colors",
-        d ? "bg-white/5 text-white/30 cursor-not-allowed" : "bg-white/10 hover:bg-white/20 text-white",
+        u ? "bg-white/5 text-white/30 cursor-not-allowed" : "bg-white/10 hover:bg-white/20 text-white",
         r
       ),
       children: /* @__PURE__ */ e("svg", { width: "16", height: "16", viewBox: "0 0 16 16", fill: "currentColor", "aria-hidden": !0, children: /* @__PURE__ */ e("path", { d: "M1 2a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H8.5v-3.5A1.5 1.5 0 0 1 10 6h4V3H2v7h4v1H2a1 1 0 0 1-1-1V2zm9 5h4v3.5a.5.5 0 0 1-.5.5H10a.5.5 0 0 1-.5-.5V7.5a.5.5 0 0 1 .5-.5z" }) })
@@ -1891,7 +1907,7 @@ function hr({
   footer: c,
   className: l
 }) {
-  const u = o ?? t.length;
+  const d = o ?? t.length;
   return /* @__PURE__ */ i(
     "aside",
     {
@@ -1903,15 +1919,15 @@ function hr({
       children: [
         /* @__PURE__ */ i("header", { className: "px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between", children: [
           /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-[var(--color-text-primary)]", children: a }),
-          /* @__PURE__ */ e("span", { className: "text-xs text-[var(--color-text-secondary)] tabular-nums", children: u })
+          /* @__PURE__ */ e("span", { className: "text-xs text-[var(--color-text-secondary)] tabular-nums", children: d })
         ] }),
-        /* @__PURE__ */ e("ul", { className: "flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]", children: t.map((d) => {
-          const m = d.id === r;
+        /* @__PURE__ */ e("ul", { className: "flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]", children: t.map((u) => {
+          const m = u.id === r;
           return /* @__PURE__ */ e("li", { children: /* @__PURE__ */ i(
             "button",
             {
               type: "button",
-              onClick: n ? () => n(d.id) : void 0,
+              onClick: n ? () => n(u.id) : void 0,
               className: h(
                 "w-full flex items-center gap-3 px-4 py-2 text-left transition-colors",
                 "hover:bg-white/[0.03]",
@@ -1929,8 +1945,8 @@ function hr({
                       m && "ring-2 ring-success ring-offset-2 ring-offset-[var(--color-surface)]"
                     ),
                     children: [
-                      d.avatarUrl ? /* @__PURE__ */ e("img", { src: d.avatarUrl, alt: "", className: "w-full h-full rounded-full object-cover" }) : /* @__PURE__ */ e("span", { children: mt(d.displayName) }),
-                      d.isScreenSharing && /* @__PURE__ */ e(
+                      u.avatarUrl ? /* @__PURE__ */ e("img", { src: u.avatarUrl, alt: "", className: "w-full h-full rounded-full object-cover" }) : /* @__PURE__ */ e("span", { children: mt(u.displayName) }),
+                      u.isScreenSharing && /* @__PURE__ */ e(
                         "span",
                         {
                           title: "Sharing screen",
@@ -1941,11 +1957,11 @@ function hr({
                   }
                 ),
                 /* @__PURE__ */ i("span", { className: "flex-1 truncate text-sm text-[var(--color-text-primary)]", children: [
-                  d.displayName,
-                  d.isLocal && /* @__PURE__ */ e("span", { className: "ml-1 text-xs text-[var(--color-text-secondary)]", children: "(you)" })
+                  u.displayName,
+                  u.isLocal && /* @__PURE__ */ e("span", { className: "ml-1 text-xs text-[var(--color-text-secondary)]", children: "(you)" })
                 ] }),
-                d.handRaised && /* @__PURE__ */ e("span", { title: "Hand raised", "aria-label": "Hand raised", children: "✋" }),
-                d.isMuted && /* @__PURE__ */ e(
+                u.handRaised && /* @__PURE__ */ e("span", { title: "Hand raised", "aria-label": "Hand raised", children: "✋" }),
+                u.isMuted && /* @__PURE__ */ e(
                   "svg",
                   {
                     width: "14",
@@ -1964,18 +1980,18 @@ function hr({
                 )
               ]
             }
-          ) }, d.id);
+          ) }, u.id);
         }) }),
         c && /* @__PURE__ */ e("div", { className: "border-t border-[var(--color-border)] p-3", children: c })
       ]
     }
   );
 }
-let Q = null;
+let ee = null;
 function pt() {
-  if (Q) return Q;
+  if (ee) return ee;
   try {
-    return Q = new AudioContext(), Q;
+    return ee = new AudioContext(), ee;
   } catch {
     return null;
   }
@@ -1987,36 +2003,36 @@ function fr({
   triggerMs: o = 1500,
   cooldownMs: a = 6e3
 }) {
-  const [c, l] = I(!1);
+  const [c, l] = T(!1);
   return B(() => {
-    if (!r || !t || t.getAudioTracks().filter((k) => k.readyState === "live").length === 0) return;
-    const d = pt();
-    if (!d) return;
-    let m, p;
+    if (!r || !t || t.getAudioTracks().filter((y) => y.readyState === "live").length === 0) return;
+    const u = pt();
+    if (!u) return;
+    let m, g;
     try {
-      m = d.createMediaStreamSource(t), p = d.createAnalyser(), p.fftSize = 512, p.smoothingTimeConstant = 0.6, m.connect(p);
+      m = u.createMediaStreamSource(t), g = u.createAnalyser(), g.fftSize = 512, g.smoothingTimeConstant = 0.6, m.connect(g);
     } catch {
       return;
     }
-    let g = null, b = 0, s = !1;
-    const x = new Float32Array(p.frequencyBinCount), w = setInterval(() => {
-      if (s) return;
-      p.getFloatTimeDomainData(x);
-      let k = 0;
-      for (let C = 0; C < x.length; C++) k += x[C] * x[C];
-      const v = 20 * Math.log10(Math.sqrt(k / x.length)), N = Date.now();
-      v > n ? (g == null && (g = N), N - g >= o && N - b > a && (l(!0), b = N, setTimeout(() => {
-        s || l(!1);
-      }, 3e3), g = null)) : g = null;
+    let v = null, b = 0, w = !1;
+    const s = new Float32Array(g.frequencyBinCount), x = setInterval(() => {
+      if (w) return;
+      g.getFloatTimeDomainData(s);
+      let y = 0;
+      for (let C = 0; C < s.length; C++) y += s[C] * s[C];
+      const k = 20 * Math.log10(Math.sqrt(y / s.length)), p = Date.now();
+      k > n ? (v == null && (v = p), p - v >= o && p - b > a && (l(!0), b = p, setTimeout(() => {
+        w || l(!1);
+      }, 3e3), v = null)) : v = null;
     }, 200);
     return () => {
-      s = !0, clearInterval(w);
+      w = !0, clearInterval(x);
       try {
         m.disconnect();
       } catch {
       }
       try {
-        p.disconnect();
+        g.disconnect();
       } catch {
       }
     };
@@ -2042,17 +2058,17 @@ function mr({
   onPlayStateChange: o,
   ...a
 }) {
-  const [c, l] = I(!1), u = $(null), m = a.videoRef ?? u, p = H(
+  const [c, l] = T(!1), d = $(null), m = a.videoRef ?? d, g = H(
     (b) => {
       b === "paused-by-autoplay" ? l(!0) : b === "playing" && l(!1), o?.(b);
     },
     [o]
-  ), g = H(() => {
+  ), v = H(() => {
     const b = m.current;
     if (b) {
       b.muted = !1;
-      const s = b.play();
-      s && typeof s.catch == "function" && s.catch(() => {
+      const w = b.play();
+      w && typeof w.catch == "function" && w.catch(() => {
       });
     }
     gt(), l(!1);
@@ -2063,14 +2079,14 @@ function mr({
       {
         ...a,
         videoRef: m,
-        onPlayStateChange: p
+        onPlayStateChange: g
       }
     ),
     c && /* @__PURE__ */ e("div", { className: "pointer-events-none absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ e(
       "button",
       {
         type: "button",
-        onClick: g,
+        onClick: v,
         className: h(xt, r),
         "data-testid": "autoplay-gate-chip",
         children: t
@@ -2078,24 +2094,24 @@ function mr({
     ) })
   ] });
 }
-const me = 1;
+const xe = 1;
 function vt({
   persistKey: t,
   defaults: r,
   debounceMs: n = 200
 }) {
-  const [o, a] = I(() => {
+  const [o, a] = T(() => {
     if (!t || typeof window > "u") return r;
     try {
-      const u = window.localStorage.getItem(t);
-      if (!u) return r;
-      const d = JSON.parse(u);
-      return !d || d.v !== me ? r : {
-        mode: d.mode === "docked" ? "docked" : "mini",
-        x: ee(d.x, r.x),
-        y: ee(d.y, r.y),
-        width: ee(d.width, r.width),
-        height: ee(d.height, r.height)
+      const d = window.localStorage.getItem(t);
+      if (!d) return r;
+      const u = JSON.parse(d);
+      return !u || u.v !== xe ? r : {
+        mode: u.mode === "docked" ? "docked" : "mini",
+        x: te(u.x, r.x),
+        y: te(u.y, r.y),
+        width: te(u.width, r.width),
+        height: te(u.height, r.height)
       };
     } catch {
       try {
@@ -2109,164 +2125,165 @@ function vt({
     if (!(!t || typeof window > "u"))
       return c.current && clearTimeout(c.current), c.current = setTimeout(() => {
         try {
-          const u = { v: me, ...o };
-          window.localStorage.setItem(t, JSON.stringify(u));
+          const d = { v: xe, ...o };
+          window.localStorage.setItem(t, JSON.stringify(d));
         } catch {
         }
       }, n), () => {
         c.current && clearTimeout(c.current);
       };
   }, [t, o, n]);
-  const l = H((u) => {
-    a((d) => ({ ...d, ...u }));
+  const l = H((d) => {
+    a((u) => ({ ...u, ...d }));
   }, []);
   return { state: o, setState: l };
 }
-function ee(t, r) {
+function te(t, r) {
   return typeof t == "number" && Number.isFinite(t) ? t : r;
 }
-const ae = 320, le = 200, bt = 640, wt = 400, yt = 1440, Nt = 900, pe = 960, xe = 600, R = 8;
+const le = 320, se = 200, bt = 640, wt = 400, yt = 1440, Nt = 900, ge = 960, ve = 600, R = 8;
 function pr({
   title: t,
   subtitle: r,
-  children: n,
-  controls: o,
-  defaultMode: a = "mini",
-  onModeChange: c,
-  persistKey: l,
+  durationSeconds: n,
+  children: o,
+  controls: a,
+  defaultMode: c = "mini",
+  onModeChange: l,
+  persistKey: d,
   apiRef: u,
-  defaultCorner: d = "bottom-right",
-  expandable: m = !0,
-  zIndex: p = 9999,
-  className: g
+  defaultCorner: m = "bottom-right",
+  expandable: g = !0,
+  zIndex: v = 9999,
+  className: b
 }) {
-  const b = G(() => a === "docked" ? ge(pe, xe) : ve(d), [a, d]), { state: s, setState: x } = vt({
-    persistKey: l,
+  const w = G(() => c === "docked" ? be(ge, ve) : we(m), [c, m]), { state: s, setState: x } = vt({
+    persistKey: d,
     defaults: {
-      mode: a,
-      x: b.x,
-      y: b.y,
-      width: pe,
-      height: xe
+      mode: c,
+      x: w.x,
+      y: w.y,
+      width: ge,
+      height: ve
     }
-  }), [w, k] = I(!1), v = w ? "fullscreen" : s.mode, N = $(null), C = $(!1);
+  }), [y, k] = T(!1), p = y ? "fullscreen" : s.mode, C = $(null), j = $(!1);
   B(() => {
     const f = () => {
-      !((document.fullscreenElement ?? document.webkitFullscreenElement) === N.current) && w && (k(!1), C.current || x({ mode: "docked" }), C.current = !1);
+      !((document.fullscreenElement ?? document.webkitFullscreenElement) === C.current) && y && (k(!1), j.current || x({ mode: "docked" }), j.current = !1);
     };
     return document.addEventListener("fullscreenchange", f), document.addEventListener("webkitfullscreenchange", f), () => {
       document.removeEventListener("fullscreenchange", f), document.removeEventListener("webkitfullscreenchange", f);
     };
-  }, [w, x]);
-  const j = H(() => {
-    const f = N.current;
+  }, [y, x]);
+  const P = H(() => {
+    const f = C.current;
     if (!f) return;
-    const y = f.requestFullscreen?.bind(f) ?? f.webkitRequestFullscreen?.bind(f);
-    if (!y) return;
-    const A = y();
-    A && typeof A.then == "function" ? A.then(
+    const N = f.requestFullscreen?.bind(f) ?? f.webkitRequestFullscreen?.bind(f);
+    if (!N) return;
+    const D = N();
+    D && typeof D.then == "function" ? D.then(
       () => k(!0),
       () => {
       }
     ) : k(!0);
-  }, []), L = H(() => {
+  }, []), S = H(() => {
     if (!(document.fullscreenElement ?? document.webkitFullscreenElement)) return;
-    C.current = !0, (document.exitFullscreen?.bind(document) ?? document.webkitExitFullscreen?.bind(document))?.().catch(() => {
+    j.current = !0, (document.exitFullscreen?.bind(document) ?? document.webkitExitFullscreen?.bind(document))?.().catch(() => {
     });
-  }, []), S = H((f) => {
-    if (f !== v) {
+  }, []), E = H((f) => {
+    if (f !== p) {
       if (f === "fullscreen") {
-        j();
+        P();
         return;
       }
-      if (v === "fullscreen") {
-        L(), x({ mode: f });
+      if (p === "fullscreen") {
+        S(), x({ mode: f });
         return;
       }
-      if (f === "docked" && v === "mini") {
-        const y = ge(s.width, s.height);
-        x({ mode: f, x: y.x, y: y.y });
+      if (f === "docked" && p === "mini") {
+        const N = be(s.width, s.height);
+        x({ mode: f, x: N.x, y: N.y });
         return;
       }
-      if (f === "mini" && v === "docked") {
-        const y = ve(d);
-        x({ mode: f, x: y.x, y: y.y });
+      if (f === "mini" && p === "docked") {
+        const N = we(m);
+        x({ mode: f, x: N.x, y: N.y });
         return;
       }
       x({ mode: f });
     }
-  }, [v, j, L, x, s.width, s.height, d]);
+  }, [p, P, S, x, s.width, s.height, m]);
   B(() => {
-    c?.(v);
-  }, [v, c]), Pe(u, () => ({ mode: v, setMode: S }), [v, S]);
-  const P = $(null), E = H((f) => {
-    v === "docked" && (f.target.closest("button") || (f.currentTarget.setPointerCapture(f.pointerId), P.current = {
+    l?.(p);
+  }, [p, l]), Pe(u, () => ({ mode: p, setMode: E }), [p, E]);
+  const I = $(null), A = H((f) => {
+    p === "docked" && (f.target.closest("button") || (f.currentTarget.setPointerCapture(f.pointerId), I.current = {
       startX: f.clientX,
       startY: f.clientY,
       origX: s.x,
       origY: s.y
     }));
-  }, [v, s.x, s.y]), T = H((f) => {
-    const y = P.current;
-    if (!y) return;
-    const A = f.clientX - y.startX, X = f.clientY - y.startY, V = te(y.origX + A, s.width, window.innerWidth), Y = te(y.origY + X, s.height, window.innerHeight);
-    x({ x: V, y: Y });
-  }, [x, s.width, s.height]), D = H((f) => {
-    f.currentTarget.releasePointerCapture(f.pointerId), P.current = null;
-  }, []), F = $(null), O = H((f) => {
-    v === "docked" && (f.stopPropagation(), f.currentTarget.setPointerCapture(f.pointerId), F.current = {
+  }, [p, s.x, s.y]), F = H((f) => {
+    const N = I.current;
+    if (!N) return;
+    const D = f.clientX - N.startX, _ = f.clientY - N.startY, Y = re(N.origX + D, s.width, window.innerWidth), J = re(N.origY + _, s.height, window.innerHeight);
+    x({ x: Y, y: J });
+  }, [x, s.width, s.height]), z = H((f) => {
+    f.currentTarget.releasePointerCapture(f.pointerId), I.current = null;
+  }, []), W = $(null), V = H((f) => {
+    p === "docked" && (f.stopPropagation(), f.currentTarget.setPointerCapture(f.pointerId), W.current = {
       startX: f.clientX,
       startY: f.clientY,
       origW: s.width,
       origH: s.height
     });
-  }, [v, s.width, s.height]), W = H((f) => {
-    const y = F.current;
-    if (!y) return;
-    const A = f.clientX - y.startX, X = f.clientY - y.startY, V = se(y.origW + A, bt, Math.min(yt, window.innerWidth - R * 2)), Y = se(y.origH + X, wt, Math.min(Nt, window.innerHeight - R * 2));
-    x({ width: V, height: Y });
-  }, [x]), z = H((f) => {
-    f.currentTarget.releasePointerCapture(f.pointerId), F.current = null;
+  }, [p, s.width, s.height]), O = H((f) => {
+    const N = W.current;
+    if (!N) return;
+    const D = f.clientX - N.startX, _ = f.clientY - N.startY, Y = ce(N.origW + D, bt, Math.min(yt, window.innerWidth - R * 2)), J = ce(N.origH + _, wt, Math.min(Nt, window.innerHeight - R * 2));
+    x({ width: Y, height: J });
+  }, [x]), M = H((f) => {
+    f.currentTarget.releasePointerCapture(f.pointerId), W.current = null;
   }, []);
   Ee(() => {
-    if (v !== "docked") return;
+    if (p !== "docked") return;
     const f = () => {
-      const y = te(s.x, s.width, window.innerWidth), A = te(s.y, s.height, window.innerHeight);
-      (y !== s.x || A !== s.y) && x({ x: y, y: A });
+      const N = re(s.x, s.width, window.innerWidth), D = re(s.y, s.height, window.innerHeight);
+      (N !== s.x || D !== s.y) && x({ x: N, y: D });
     };
     return window.addEventListener("resize", f), () => window.removeEventListener("resize", f);
-  }, [v, s.x, s.y, s.width, s.height, x]);
-  const M = G(() => v === "fullscreen" ? {
+  }, [p, s.x, s.y, s.width, s.height, x]);
+  const L = G(() => p === "fullscreen" ? {
     position: "fixed",
     inset: 0,
     width: "100vw",
     height: "100vh",
-    zIndex: p
-  } : v === "docked" ? {
+    zIndex: v
+  } : p === "docked" ? {
     position: "fixed",
     left: s.x,
     top: s.y,
     width: s.width,
     height: s.height,
-    zIndex: p
+    zIndex: v
   } : {
     position: "fixed",
     left: s.x,
     top: s.y,
-    width: ae,
-    height: le,
-    zIndex: p
-  }, [v, s.x, s.y, s.width, s.height, p]);
+    width: le,
+    height: se,
+    zIndex: v
+  }, [p, s.x, s.y, s.width, s.height, v]);
   return /* @__PURE__ */ i(
     "div",
     {
-      ref: N,
-      "data-call-widget-mode": v,
-      style: M,
+      ref: C,
+      "data-call-widget-mode": p,
+      style: L,
       className: h(
         "flex flex-col bg-surface-inverse text-white shadow-2xl overflow-hidden border border-white/10",
-        v === "fullscreen" ? "rounded-none" : "rounded-lg",
-        g
+        p === "fullscreen" ? "rounded-none" : "rounded-lg",
+        b
       ),
       children: [
         /* @__PURE__ */ i(
@@ -2274,45 +2291,54 @@ function pr({
           {
             className: h(
               "flex items-center justify-between gap-2 px-3 h-8 min-h-8 border-b border-white/5 select-none",
-              v === "docked" ? "cursor-grab active:cursor-grabbing" : ""
+              p === "docked" ? "cursor-grab active:cursor-grabbing" : ""
             ),
-            onPointerDown: E,
-            onPointerMove: T,
-            onPointerUp: D,
-            onPointerCancel: D,
+            onPointerDown: A,
+            onPointerMove: F,
+            onPointerUp: z,
+            onPointerCancel: z,
             children: [
               /* @__PURE__ */ i("div", { className: "min-w-0 flex items-center gap-2 text-xs text-white/80", children: [
                 /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-success", "aria-hidden": !0 }),
                 /* @__PURE__ */ e("span", { className: "truncate font-medium", children: t }),
-                r && /* @__PURE__ */ e("span", { className: "truncate text-white/50", children: r })
-              ] }),
-              m && /* @__PURE__ */ i("div", { className: "flex items-center gap-1", children: [
-                /* @__PURE__ */ e(
-                  oe,
+                r && /* @__PURE__ */ e("span", { className: "truncate text-white/50", children: r }),
+                n !== void 0 && /* @__PURE__ */ e(
+                  "span",
                   {
-                    active: v === "mini",
+                    className: "font-mono text-white/60",
+                    "data-testid": "call-timer",
+                    "data-call-duration": n,
+                    children: de(n)
+                  }
+                )
+              ] }),
+              g && /* @__PURE__ */ i("div", { className: "flex items-center gap-1", children: [
+                /* @__PURE__ */ e(
+                  ae,
+                  {
+                    active: p === "mini",
                     label: "Mini",
-                    onClick: () => S("mini"),
+                    onClick: () => E("mini"),
                     testId: "call-widget-mode-mini",
                     children: /* @__PURE__ */ e(kt, {})
                   }
                 ),
                 /* @__PURE__ */ e(
-                  oe,
+                  ae,
                   {
-                    active: v === "docked",
+                    active: p === "docked",
                     label: "Window",
-                    onClick: () => S("docked"),
+                    onClick: () => E("docked"),
                     testId: "call-widget-mode-docked",
                     children: /* @__PURE__ */ e(Ct, {})
                   }
                 ),
                 /* @__PURE__ */ e(
-                  oe,
+                  ae,
                   {
-                    active: v === "fullscreen",
+                    active: p === "fullscreen",
                     label: "Fullscreen",
-                    onClick: () => S(v === "fullscreen" ? "docked" : "fullscreen"),
+                    onClick: () => E(p === "fullscreen" ? "docked" : "fullscreen"),
                     testId: "call-widget-mode-fullscreen",
                     children: /* @__PURE__ */ e(Mt, {})
                   }
@@ -2321,16 +2347,16 @@ function pr({
             ]
           }
         ),
-        /* @__PURE__ */ e("div", { className: "relative flex-1 min-h-0 bg-black", children: n }),
-        o && /* @__PURE__ */ e("div", { className: "border-t border-white/5 px-2 py-2 bg-video-tile", children: o }),
-        v === "docked" && /* @__PURE__ */ e(
+        /* @__PURE__ */ e("div", { className: "relative flex-1 min-h-0 bg-black", children: o }),
+        a && /* @__PURE__ */ e("div", { className: "border-t border-white/5 px-2 py-2 bg-video-tile", children: a }),
+        p === "docked" && /* @__PURE__ */ e(
           "div",
           {
             className: "absolute bottom-0 right-0 w-4 h-4 cursor-se-resize",
-            onPointerDown: O,
-            onPointerMove: W,
-            onPointerUp: z,
-            onPointerCancel: z,
+            onPointerDown: V,
+            onPointerMove: O,
+            onPointerUp: M,
+            onPointerCancel: M,
             "data-testid": "call-widget-resize-handle",
             "aria-label": "Resize call widget",
             children: /* @__PURE__ */ e("svg", { viewBox: "0 0 16 16", className: "w-full h-full text-white/30", children: /* @__PURE__ */ e("path", { d: "M14 10v4h-4M14 6v8M10 14h4", stroke: "currentColor", strokeWidth: "1.5", fill: "none" }) })
@@ -2340,7 +2366,7 @@ function pr({
     }
   );
 }
-function oe({
+function ae({
   active: t,
   label: r,
   onClick: n,
@@ -2373,31 +2399,31 @@ function Ct() {
 function Mt() {
   return /* @__PURE__ */ e("svg", { width: "12", height: "12", viewBox: "0 0 12 12", fill: "none", "aria-hidden": !0, children: /* @__PURE__ */ e("path", { d: "M2 4V2h2M10 4V2H8M2 8v2h2M10 8v2H8", stroke: "currentColor", strokeWidth: "1.4", strokeLinecap: "round" }) });
 }
-function ge(t, r) {
+function be(t, r) {
   return typeof window > "u" ? { x: 16, y: 16 } : {
     x: Math.max(R, Math.floor((window.innerWidth - t) / 2)),
     y: Math.max(R, Math.floor((window.innerHeight - r) / 2))
   };
 }
-function ve(t) {
+function we(t) {
   if (typeof window > "u") return { x: 16, y: 16 };
   const r = window.innerWidth, n = window.innerHeight;
   switch (t) {
     case "top-left":
       return { x: R, y: R };
     case "top-right":
-      return { x: r - ae - R, y: R };
+      return { x: r - le - R, y: R };
     case "bottom-left":
-      return { x: R, y: n - le - R };
+      return { x: R, y: n - se - R };
     default:
-      return { x: r - ae - R, y: n - le - R };
+      return { x: r - le - R, y: n - se - R };
   }
 }
-function se(t, r, n) {
+function ce(t, r, n) {
   return Math.max(r, Math.min(n, t));
 }
-function te(t, r, n) {
-  return se(t, R, Math.max(R, n - r - R));
+function re(t, r, n) {
+  return ce(t, R, Math.max(R, n - r - R));
 }
 function xr({ show: t, label: r }) {
   return t ? /* @__PURE__ */ i(
@@ -2428,7 +2454,7 @@ function gr({
     }
   ) : null;
 }
-const be = [
+const ye = [
   "#60a5fa",
   "#f472b6",
   "#34d399",
@@ -2439,7 +2465,7 @@ const be = [
 function St(t) {
   let r = 0;
   for (let n = 0; n < t.length; n++) r = r * 31 + t.charCodeAt(n) | 0;
-  return be[Math.abs(r) % be.length];
+  return ye[Math.abs(r) % ye.length];
 }
 function vr({
   lines: t,
@@ -2448,8 +2474,8 @@ function vr({
   className: o
 }) {
   const a = Date.now(), c = t.slice(-r).map((l) => {
-    const u = a - new Date(l.at).getTime(), d = Math.max(0.35, 1 - u / n);
-    return { ...l, opacity: d };
+    const d = a - new Date(l.at).getTime(), u = Math.max(0.35, 1 - d / n);
+    return { ...l, opacity: u };
   }).filter((l) => l.opacity > 0);
   return c.length === 0 ? null : /* @__PURE__ */ e(
     "div",
@@ -2491,7 +2517,7 @@ const Lt = {
   md: "h-11 w-11",
   lg: "h-14 w-14"
 }, jt = "bg-surface-emphasis text-text-primary hover:bg-surface-emphasis", Pt = "bg-surface-hover text-neutral hover:bg-surface-emphasis", Et = "bg-danger-bg text-danger-fg hover:bg-danger-bg";
-function J({
+function q({
   on: t,
   iconOn: r,
   iconOff: n,
@@ -2499,8 +2525,8 @@ function J({
   offTone: a = "danger",
   size: c = "md",
   disabled: l,
-  className: u,
-  ...d
+  className: d,
+  ...u
 }) {
   const m = t ? jt : a === "danger" ? Et : Pt;
   return /* @__PURE__ */ e(
@@ -2516,14 +2542,14 @@ function J({
         m,
         l && "opacity-40 cursor-not-allowed",
         !l && "cursor-pointer",
-        u
+        d
       ),
-      ...d,
+      ...u,
       children: t ? r : n
     }
   );
 }
-function U(t, r) {
+function X(t, r) {
   return {
     width: t,
     height: t,
@@ -2538,16 +2564,16 @@ function U(t, r) {
     ...r
   };
 }
-function ke({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+function Ce({ size: t = 20, ...r }) {
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("rect", { x: "9", y: "3", width: "6", height: "11", rx: "3" }),
     /* @__PURE__ */ e("path", { d: "M5 11a7 7 0 0 0 14 0" }),
     /* @__PURE__ */ e("line", { x1: "12", y1: "18", x2: "12", y2: "22" }),
     /* @__PURE__ */ e("line", { x1: "8", y1: "22", x2: "16", y2: "22" })
   ] });
 }
-function Ce({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+function Me({ size: t = 20, ...r }) {
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
     /* @__PURE__ */ e("path", { d: "M9 9v3a3 3 0 0 0 5.12 2.12" }),
     /* @__PURE__ */ e("path", { d: "M15 9.34V6a3 3 0 0 0-5.94-.6" }),
@@ -2557,21 +2583,21 @@ function Ce({ size: t = 20, ...r }) {
     /* @__PURE__ */ e("line", { x1: "8", y1: "22", x2: "16", y2: "22" })
   ] });
 }
-function Me({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+function Se({ size: t = 20, ...r }) {
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("path", { d: "M22 8l-6 4 6 4V8z" }),
     /* @__PURE__ */ e("rect", { x: "2", y: "6", width: "14", height: "12", rx: "2" })
   ] });
 }
-function Se({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+function Le({ size: t = 20, ...r }) {
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
     /* @__PURE__ */ e("path", { d: "M16 16H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2l10 10z" }),
     /* @__PURE__ */ e("path", { d: "M22 8l-6 4 6 4V8z" })
   ] });
 }
 function It({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("rect", { x: "2", y: "4", width: "20", height: "12", rx: "2" }),
     /* @__PURE__ */ e("line", { x1: "8", y1: "20", x2: "16", y2: "20" }),
     /* @__PURE__ */ e("line", { x1: "12", y1: "16", x2: "12", y2: "20" }),
@@ -2580,7 +2606,7 @@ function It({ size: t = 20, ...r }) {
   ] });
 }
 function Tt({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("line", { x1: "3", y1: "3", x2: "21", y2: "21" }),
     /* @__PURE__ */ e("path", { d: "M22 14V6a2 2 0 0 0-2-2H6" }),
     /* @__PURE__ */ e("path", { d: "M2 6v8a2 2 0 0 0 2 2h12" }),
@@ -2589,14 +2615,14 @@ function Tt({ size: t = 20, ...r }) {
   ] });
 }
 function At({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("path", { d: "M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.49-2.86" }),
     /* @__PURE__ */ e("path", { d: "M5 5l-1.27 1.27a2 2 0 0 0-.45 2.11 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11" }),
     /* @__PURE__ */ e("line", { x1: "22", y1: "2", x2: "2", y2: "22" })
   ] });
 }
 function br({ size: t = 20, ...r }) {
-  return /* @__PURE__ */ i("svg", { ...U(t, r), children: [
+  return /* @__PURE__ */ i("svg", { ...X(t, r), children: [
     /* @__PURE__ */ e("circle", { cx: "12", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "19", cy: "12", r: "1" }),
     /* @__PURE__ */ e("circle", { cx: "5", cy: "12", r: "1" })
@@ -2619,45 +2645,45 @@ function wr({
   permissionMessage: a,
   audioEnabled: c,
   videoEnabled: l,
-  onToggleAudio: u,
-  onToggleVideo: d,
+  onToggleAudio: d,
+  onToggleVideo: u,
   onRetryPermission: m,
-  participants: p,
-  readyState: g,
+  participants: g,
+  readyState: v,
   readyLoading: b = !1,
-  onJoin: s,
-  onCancel: x,
-  joinLabel: w,
-  joinDisabled: k,
-  subtitleOverride: v,
-  className: N,
+  onJoin: w,
+  onCancel: s,
+  joinLabel: x,
+  joinDisabled: y,
+  subtitleOverride: k,
+  className: p,
   "data-testid": C
 }) {
   const j = $(null);
   B(() => {
     j.current && n && (j.current.srcObject = n);
   }, [n]);
-  const L = o === "granted", S = $t(o), P = k ?? !L, E = w ?? (P && !L ? "Allow camera to join" : "Join now"), T = v ?? Bt(p, g, b);
+  const P = o === "granted", S = $t(o), E = y ?? !P, I = x ?? (E && !P ? "Allow camera to join" : "Join now"), A = k ?? Bt(g, v, b);
   return /* @__PURE__ */ i(
     "div",
     {
       "data-testid": C,
       className: h(
         "flex flex-col h-full min-h-0 bg-surface-panel text-text-primary",
-        N
+        p
       ),
       children: [
         /* @__PURE__ */ i("header", { className: "flex items-center justify-between px-6 py-4 border-b border-border bg-white", children: [
           /* @__PURE__ */ i("div", { className: "min-w-0 flex-1", children: [
             /* @__PURE__ */ e("h1", { className: "text-lg font-semibold truncate", children: t }),
-            /* @__PURE__ */ e("p", { className: "text-xs text-neutral mt-0.5", children: T })
+            /* @__PURE__ */ e("p", { className: "text-xs text-neutral mt-0.5", children: A })
           ] }),
-          /* @__PURE__ */ e(ce, { variant: "ghost", size: "sm", onClick: x, children: "Cancel" })
+          /* @__PURE__ */ e(ue, { variant: "ghost", size: "sm", onClick: s, children: "Cancel" })
         ] }),
         /* @__PURE__ */ i("main", { className: "flex-1 min-h-0 flex flex-col lg:flex-row gap-6 p-6 max-w-6xl mx-auto w-full", children: [
           /* @__PURE__ */ i("section", { className: "lg:flex-1 min-h-0", children: [
             /* @__PURE__ */ i("div", { className: "relative aspect-video w-full rounded-xl overflow-hidden border border-border bg-black", children: [
-              n && L && /* @__PURE__ */ e(
+              n && P && /* @__PURE__ */ e(
                 "video",
                 {
                   ref: j,
@@ -2670,7 +2696,7 @@ function wr({
                   )
                 }
               ),
-              L && !l && (r ? (
+              P && !l && (r ? (
                 // Meet/Teams-style identity tile: large avatar + display
                 // name + "Camera off" subtitle. Avatar falls back to
                 // initials when avatarSrc is absent.
@@ -2681,7 +2707,7 @@ function wr({
                     className: "absolute inset-0 grid place-items-center bg-surface-inverse/95",
                     children: /* @__PURE__ */ i("div", { className: "flex flex-col items-center gap-3 px-6 text-center", children: [
                       /* @__PURE__ */ e(
-                        we,
+                        Ne,
                         {
                           name: r.displayName,
                           src: r.avatarSrc,
@@ -2703,7 +2729,7 @@ function wr({
                   children: "Camera off"
                 }
               )),
-              o === "pending" && /* @__PURE__ */ e("div", { className: "absolute inset-0 grid place-items-center", children: /* @__PURE__ */ e(ye, { size: "lg" }) }),
+              o === "pending" && /* @__PURE__ */ e("div", { className: "absolute inset-0 grid place-items-center", children: /* @__PURE__ */ e(ke, { size: "lg" }) }),
               S && /* @__PURE__ */ e("div", { className: "absolute inset-0 grid place-items-center bg-surface-panel/95", children: /* @__PURE__ */ e(
                 Be,
                 {
@@ -2717,28 +2743,28 @@ function wr({
             ] }),
             /* @__PURE__ */ i("div", { className: "mt-4 flex items-center justify-center gap-3", children: [
               /* @__PURE__ */ e(
-                J,
+                q,
                 {
                   on: c,
-                  onClick: u,
-                  disabled: !L,
+                  onClick: d,
+                  disabled: !P,
                   "aria-label": c ? "Mute mic before joining" : "Unmute mic before joining",
                   title: c ? "Mute mic before joining" : "Unmute mic before joining",
-                  iconOn: /* @__PURE__ */ e(ke, { size: 18 }),
-                  iconOff: /* @__PURE__ */ e(Ce, { size: 18 }),
+                  iconOn: /* @__PURE__ */ e(Ce, { size: 18 }),
+                  iconOff: /* @__PURE__ */ e(Me, { size: 18 }),
                   "data-testid": "prejoin-toggle-audio"
                 }
               ),
               /* @__PURE__ */ e(
-                J,
+                q,
                 {
                   on: l,
-                  onClick: d,
-                  disabled: !L,
+                  onClick: u,
+                  disabled: !P,
                   "aria-label": l ? "Turn camera off before joining" : "Turn camera on before joining",
                   title: l ? "Turn camera off before joining" : "Turn camera on before joining",
-                  iconOn: /* @__PURE__ */ e(Me, { size: 18 }),
-                  iconOff: /* @__PURE__ */ e(Se, { size: 18 }),
+                  iconOn: /* @__PURE__ */ e(Se, { size: 18 }),
+                  iconOff: /* @__PURE__ */ e(Le, { size: 18 }),
                   "data-testid": "prejoin-toggle-video"
                 }
               )
@@ -2747,30 +2773,30 @@ function wr({
           /* @__PURE__ */ i("section", { className: "lg:w-96 flex flex-col", children: [
             /* @__PURE__ */ i("div", { className: "flex-1", children: [
               /* @__PURE__ */ e("h2", { className: "text-2xl font-semibold mb-2", children: "Ready to join?" }),
-              /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6", children: T }),
-              /* @__PURE__ */ e(Ht, { participants: p, loading: b }),
-              g === "pending" && !b && /* @__PURE__ */ i("p", { className: "mt-4 text-xs text-warning-fg flex items-center gap-2", children: [
+              /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6", children: A }),
+              /* @__PURE__ */ e(Ht, { participants: g, loading: b }),
+              v === "pending" && !b && /* @__PURE__ */ i("p", { className: "mt-4 text-xs text-warning-fg flex items-center gap-2", children: [
                 /* @__PURE__ */ e("span", { className: "h-1.5 w-1.5 rounded-full bg-warning animate-pulse" }),
                 "Other publishers are still connecting — you can join anyway."
               ] })
             ] }),
             /* @__PURE__ */ i("div", { className: "mt-6 flex flex-col gap-3", children: [
               /* @__PURE__ */ e(
-                ce,
+                ue,
                 {
                   variant: "primary",
                   size: "lg",
-                  onClick: () => s({ audio: c, video: l }),
-                  disabled: P,
+                  onClick: () => w({ audio: c, video: l }),
+                  disabled: E,
                   "data-testid": "prejoin-join-button",
-                  children: E
+                  children: I
                 }
               ),
               /* @__PURE__ */ e(
                 "button",
                 {
                   type: "button",
-                  onClick: x,
+                  onClick: s,
                   className: "text-xs text-neutral hover:text-text-primary transition-colors text-center",
                   children: "Back to rooms"
                 }
@@ -2787,7 +2813,7 @@ function Ht({
   loading: r
 }) {
   return r ? /* @__PURE__ */ i("div", { className: "flex items-center gap-2 text-xs text-neutral", children: [
-    /* @__PURE__ */ e(ye, { size: "sm" }),
+    /* @__PURE__ */ e(ke, { size: "sm" }),
     " Checking room…"
   ] }) : !t || t.length === 0 ? null : /* @__PURE__ */ i("div", { className: "flex flex-col gap-2", children: [
     /* @__PURE__ */ e("div", { className: "text-xs uppercase tracking-wide text-neutral", children: "In the room" }),
@@ -2795,10 +2821,10 @@ function Ht({
       t.slice(0, 8).map((n) => {
         const o = n.displayName ?? n.participantId.slice(0, 8);
         return /* @__PURE__ */ i("li", { className: "flex items-center gap-2 text-sm", children: [
-          /* @__PURE__ */ e(we, { name: o, size: 24 }),
+          /* @__PURE__ */ e(Ne, { name: o, size: 24 }),
           /* @__PURE__ */ e("span", { className: "font-mono text-xs truncate", children: o }),
           /* @__PURE__ */ e(
-            re,
+            ne,
             {
               size: "xs",
               tone: n.ready ? "success" : "warning",
@@ -2861,12 +2887,12 @@ function yr({
   phase: a,
   actions: c,
   className: l,
-  "data-testid": u
+  "data-testid": d
 }) {
   return /* @__PURE__ */ i(
     "header",
     {
-      "data-testid": u,
+      "data-testid": d,
       className: h(
         "flex items-center justify-between gap-4 px-6 py-4 border-b border-border bg-white",
         l
@@ -2877,7 +2903,7 @@ function yr({
           (r || n?.armed || o) && /* @__PURE__ */ i("div", { className: "text-xs text-neutral mt-0.5 flex items-center gap-2 flex-wrap", children: [
             r && /* @__PURE__ */ e("span", { children: r }),
             n?.armed && /* @__PURE__ */ e(
-              re,
+              ne,
               {
                 tone: n.active ? "danger" : "neutral",
                 size: "xs",
@@ -2889,7 +2915,7 @@ function yr({
               }
             ),
             o && /* @__PURE__ */ e(
-              re,
+              ne,
               {
                 tone: "neutral",
                 size: "xs",
@@ -2903,7 +2929,7 @@ function yr({
         ] }),
         (a || c) && /* @__PURE__ */ i("div", { className: "flex items-center gap-3 shrink-0", children: [
           a && /* @__PURE__ */ e(
-            re,
+            ne,
             {
               tone: Rt[a],
               size: "sm",
@@ -2935,55 +2961,55 @@ function Nr({
   onToggleVideo: a,
   onToggleScreenShare: c,
   onLeave: l,
-  audioDisabled: u,
-  videoDisabled: d,
+  audioDisabled: d,
+  videoDisabled: u,
   screenShareDisabled: m,
-  extras: p,
-  leaveLabel: g = "Leave call",
+  extras: g,
+  leaveLabel: v = "Leave call",
   size: b = "md",
-  className: s,
-  "data-testid": x
+  className: w,
+  "data-testid": s
 }) {
-  const w = b === "lg" ? 22 : b === "sm" ? 16 : 18;
+  const x = b === "lg" ? 22 : b === "sm" ? 16 : 18;
   return /* @__PURE__ */ i(
     "div",
     {
-      "data-testid": x,
+      "data-testid": s,
       className: h(
         "flex items-center justify-center gap-3 px-4 py-3",
-        s
+        w
       ),
       children: [
         /* @__PURE__ */ e(
-          J,
+          q,
           {
             on: t,
             onClick: o,
-            disabled: u,
+            disabled: d,
             size: b,
             "aria-label": t ? "Mute microphone" : "Unmute microphone",
             title: t ? "Mute microphone" : "Unmute microphone",
-            iconOn: /* @__PURE__ */ e(ke, { size: w }),
-            iconOff: /* @__PURE__ */ e(Ce, { size: w }),
+            iconOn: /* @__PURE__ */ e(Ce, { size: x }),
+            iconOff: /* @__PURE__ */ e(Me, { size: x }),
             "data-testid": "media-controls-mic"
           }
         ),
         /* @__PURE__ */ e(
-          J,
+          q,
           {
             on: r,
             onClick: a,
-            disabled: d,
+            disabled: u,
             size: b,
             "aria-label": r ? "Turn off camera" : "Turn on camera",
             title: r ? "Turn off camera" : "Turn on camera",
-            iconOn: /* @__PURE__ */ e(Me, { size: w }),
-            iconOff: /* @__PURE__ */ e(Se, { size: w }),
+            iconOn: /* @__PURE__ */ e(Se, { size: x }),
+            iconOff: /* @__PURE__ */ e(Le, { size: x }),
             "data-testid": "media-controls-cam"
           }
         ),
         c && /* @__PURE__ */ e(
-          J,
+          q,
           {
             on: n,
             onClick: c,
@@ -2992,19 +3018,19 @@ function Nr({
             offTone: "neutral",
             "aria-label": n ? "Stop sharing screen" : "Share screen",
             title: n ? "Stop sharing screen" : "Share screen",
-            iconOn: /* @__PURE__ */ e(It, { size: w }),
-            iconOff: /* @__PURE__ */ e(Tt, { size: w }),
+            iconOn: /* @__PURE__ */ e(It, { size: x }),
+            iconOff: /* @__PURE__ */ e(Tt, { size: x }),
             "data-testid": "media-controls-screenshare"
           }
         ),
-        p,
+        g,
         /* @__PURE__ */ e(
           "button",
           {
             type: "button",
             onClick: l,
-            "aria-label": g,
-            title: g,
+            "aria-label": v,
+            title: v,
             "data-testid": "media-controls-leave",
             className: h(
               "rounded-full grid place-items-center transition-colors duration-150",
@@ -3035,13 +3061,13 @@ export {
   er as V,
   Je as a,
   ar as b,
-  de as c,
+  he as c,
   or as d,
   xr as e,
-  J as f,
+  q as f,
   yr as g,
-  ke as h,
-  Ce as i,
+  Ce as h,
+  Me as i,
   br as j,
   gr as k,
   ur as l,
@@ -3055,8 +3081,8 @@ export {
   nr as t,
   dr as u,
   cr as v,
-  Me as w,
-  Se as x,
+  Se as w,
+  Le as x,
   qt as y,
   Zt as z
 };
