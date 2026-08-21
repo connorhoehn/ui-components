@@ -286,14 +286,15 @@ express, ship the primitive to `forms/` first — never add a BASELINE entry
 for a convertible control.
 
 ### Test coverage (audit #5)
-Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066): `pipelines/`
-now has ~45 test files (was 1/91) including the editor mounting path
-(`PipelineEditorPage`), editor/event-stream contexts, `NodePalette`, and
-20+ node components; `doc-editor/` has 23 (was 0) including the full
-`DocumentEditorPage` Yjs composition path and `StandaloneTiptap`.
-The zero-test folders are filled (2026-08-20 measurement: `collaboration/`
-8/8, `misc/` 8/8, `doc-types/` 4/5). Still open: large untested exports —
-`CallWidget` 1009 LOC, `AppLayout` 837, `CollapsibleSidebar` 454.
+Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066) and were closed
+out through 2026-08-21: `pipelines/` ~45 test files, `doc-editor/` 23
+(incl. the full Yjs composition path), zero-test folders filled, the large
+exports (`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested, and as
+of v2.66.0 **every `shared/` component has a test file** (the last 26 —
+Drawer, ToastProvider, SubNavLayout, InlinePopover, ActivityFeed,
+ProjectCard, SearchInput, ChatComposer, and the smaller primitives —
+gained 101 tests). New exports ship with tests; there is no known
+untested export.
 
 ### Story coverage (audit #4, audit #5)
 Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,
@@ -301,7 +302,10 @@ Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,
 `WrappedChatPanel`, `WrappedPresencePanel`, `WrappedNotificationCenter`,
 `CapabilityBoundary`, and the Hangout composites all have stories driven by
 mocked `RM*` hook-return shapes (no realtime-modules runtime needed).
-Still thin elsewhere: 51 `shared/` components, 7 stories (hub #1059).
+Remaining story gap (hub #1059, recounted 2026-08-21): 32 `shared/`
+components lack stories — 24 that until v2.66.0 also lacked tests, plus
+Chart, CodeEditor, PermissionDeniedCard, ScoreBarGauge, ShortcutsHelp,
+StatCard, TrendSparkline, UserPicker. ~40 already have both.
 
 ## Publishing
 

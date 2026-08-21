@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.66.0] — 2026-08-21
+
+**Every `shared/` component now has tests.** The 26 that had none —
+including several with real behavioral surface — gained 101 tests
+(constitution principle 2: tests for every exported primitive).
+
+### Added
+
+- Tests for: `Drawer` (portal dialog, Escape/backdrop close, focus move,
+  width), `ToastProvider` (queue, per-type auto-dismiss durations,
+  stacking, custom duration, hook guard), `SubNavLayout` (flat + grouped
+  collapsible rails, action vs link items, `renderNavItem` delegation,
+  secondary rail), `InlinePopover` (outside-dismiss vs inside clicks,
+  Escape, fixed positioning), `ActivityFeed` (rotation pool, stagger-safe
+  fake timers, kindColors override), `ProjectCard`, `CollapsibleSection`
+  (localStorage persistence beats defaultOpen), `ChatComposer`
+  (Enter/Shift+Enter, whitespace guard), `SearchInput`, `FilterChip`,
+  `SegmentedControl`, `MessageBubble`, `ProgressBar` (clamping,
+  divide-by-zero max), `StatusPill` (tone classes, ping halo), `PageHeader`,
+  `InlineAlert` (alert vs status roles), `ThinkingBlock`, `ThinkingDots`,
+  `ToolCallStrip`, `QuickPromptGrid`, `CatalogGrid`, `EntityCell`,
+  `CardHeader`, `FollowUpChips`, `StatusDot`, `Spinner`.
+
+### Docs
+
+- CLAUDE.md coverage sections trued up: the "large untested exports"
+  (`CallWidget`/`AppLayout`/`CollapsibleSidebar`) have been tested for a
+  while; the story gap recounted at 32 `shared/` components (was stated
+  as "51 components, 7 stories").
+
 ## [2.65.0] — 2026-08-21
 
 ### Added
