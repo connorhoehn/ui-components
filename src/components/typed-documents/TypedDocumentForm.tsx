@@ -19,6 +19,11 @@
 
 import { useState, type JSX } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
+import { Button } from '../ui/Button';
 import type { ApiDocumentType, ApiDocumentTypeField, TypedDocumentValue } from '../../hooks/useTypedDocuments';
 
 export interface ReferenceOption {
@@ -142,7 +147,6 @@ function coerceUnlimited(field: ApiDocumentTypeField, arr: string[]): TypedDocum
   return out.length > 0 ? (out as string[] | number[]) : null;
 }
 
-const fieldInputClass = 'font-[inherit] text-[13px] p-2 border border-[#cbd5e1] rounded-md';
 
 export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {} }: TypedDocumentFormProps): JSX.Element {
   const [values, setValues] = useState<FormState>(() => {
@@ -239,12 +243,12 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
       </div>
 
       {error && (
-        <div data-testid="form-error" role="alert" className={cn('text-[#dc2626] text-[13px]')}>
+        <div data-testid="form-error" role="alert" className={cn('text-danger-fg text-[13px]')}>
           {error}
         </div>
       )}
       {successKey > 0 && !error && (
-        <div data-testid="form-success" key={successKey} className={cn('text-[#16a34a] text-[13px]')}>
+        <div data-testid="form-success" key={successKey} className={cn('text-success-fg text-[13px]')}>
           ✓ Saved
         </div>
       )}
@@ -255,73 +259,66 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
         return (
           <div key={field.fieldId} data-testid={`field-${field.fieldId}`} className={cn('flex flex-col gap-1')}>
-            <label className={cn('text-[13px] font-medium text-[#374151]')}>
+            <label className={cn('text-[13px] font-medium text-text-primary')}>
               {field.name}
-              {field.required && <span className={cn('text-[#dc2626] ml-1')}>*</span>}
+              {field.required && <span className={cn('text-danger-fg ml-1')}>*</span>}
             </label>
 
             {field.cardinality === 1 && field.widget === 'textarea' && (
-              <textarea
+              <Textarea
                 data-testid={`input-${field.fieldId}`}
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
                 rows={4}
-                className={cn(fieldInputClass)}
               />
             )}
 
             {field.cardinality === 1 && field.widget === 'text_field' && (
-              <input
+              <Input
                 data-testid={`input-${field.fieldId}`}
                 type="text"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                className={cn(fieldInputClass)}
               />
             )}
 
             {field.cardinality === 1 && field.widget === 'number_input' && (
-              <input
+              <Input
                 data-testid={`input-${field.fieldId}`}
                 type="number"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                className={cn(fieldInputClass)}
               />
             )}
 
             {field.cardinality === 1 && field.widget === 'date_picker' && (
-              <input
+              <Input
                 data-testid={`input-${field.fieldId}`}
                 type="date"
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                className={cn(fieldInputClass)}
               />
             )}
 
             {field.cardinality === 1 && field.widget === 'checkbox' && (
-              <input
+              <Checkbox
                 data-testid={`input-${field.fieldId}`}
-                type="checkbox"
                 checked={typeof v === 'boolean' ? v : false}
-                onChange={(e) => setField(field.fieldId, e.target.checked)}
+                onChange={(checked) => setField(field.fieldId, checked)}
                 className={cn('self-start')}
               />
             )}
 
             {field.cardinality === 1 && field.widget === 'select' && (
-              <select
+              <Select
                 data-testid={`input-${field.fieldId}`}
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
-                className={cn(fieldInputClass, 'bg-white')}
-              >
-                <option value="">— select —</option>
-                {(field.options ?? []).map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+                options={[
+                  { value: '', label: '— select —' },
+                  ...(field.options ?? []).map((opt) => ({ value: opt, label: opt })),
+                ]}
+              />
             )}
 
             {field.cardinality === 1 && field.widget === 'reference_picker' && (() => {
@@ -329,18 +326,16 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
               const empty = opts.length === 0;
               return (
                 <>
-                  <select
+                  <Select
                     data-testid={`input-${field.fieldId}`}
                     value={typeof v === 'string' ? v : ''}
                     onChange={(e) => setField(field.fieldId, e.target.value)}
                     disabled={empty}
-                    className={cn(fieldInputClass, empty ? 'bg-[#f1f5f9]' : 'bg-white')}
-                  >
-                    <option value="">— select —</option>
-                    {opts.map((opt) => (
-                      <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    ))}
-                  </select>
+                    options={[
+                      { value: '', label: '— select —' },
+                      ...opts.map((opt) => ({ value: opt.value, label: opt.label })),
+                    ]}
+                  />
                   {empty && (
                     <span data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
                       No referenceable documents yet for this type.
@@ -354,31 +349,33 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
               <div className={cn('flex flex-col gap-1.5')}>
                 {(Array.isArray(v) ? v : ['']).map((entry, idx) => (
                   <div key={idx} className={cn('flex gap-1.5 items-center')}>
-                    <input
+                    <Input
                       data-testid={`input-${field.fieldId}-${idx}`}
                       type={field.widget === 'number_input' ? 'number' : field.widget === 'date_picker' ? 'date' : 'text'}
                       value={entry}
                       onChange={(e) => setArrayAt(field.fieldId, idx, e.target.value)}
-                      className={cn('flex-1', fieldInputClass)}
+                      className={cn('flex-1')}
                     />
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       data-testid={`remove-${field.fieldId}-${idx}`}
                       onClick={() => removeArrayEntry(field.fieldId, idx)}
-                      className={cn('bg-transparent border border-[#cbd5e1] text-text-tertiary cursor-pointer rounded-md px-2.5 py-1 text-[13px]')}
+                      className={cn('text-text-tertiary font-normal')}
                     >
                       −
-                    </button>
+                    </Button>
                   </div>
                 ))}
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
+                  size="sm"
                   data-testid={`add-${field.fieldId}`}
                   onClick={() => addArrayEntry(field.fieldId)}
-                  className={cn('self-start bg-transparent border border-dashed border-[#cbd5e1] text-primary cursor-pointer rounded-md px-3 py-1 text-[13px]')}
+                  className={cn('self-start border-dashed text-primary font-normal')}
                 >
                   + Add another
-                </button>
+                </Button>
               </div>
             )}
 
@@ -389,17 +386,15 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
         );
       })}
 
-      <button
+      <Button
         type="submit"
+        variant="primary"
         data-testid="submit-typed-document"
         disabled={submitting}
-        className={cn(
-          'self-start px-[18px] py-2 text-[13px] font-semibold text-white border-none rounded-md font-[inherit]',
-          submitting ? 'bg-[#a5b4fc] cursor-wait' : 'bg-primary cursor-pointer',
-        )}
+        className={cn('self-start', submitting && 'cursor-wait')}
       >
         {submitting ? 'Saving…' : 'Save'}
-      </button>
+      </Button>
     </form>
   );
 }

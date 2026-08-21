@@ -15,12 +15,16 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   children: ReactNode;
 }
 
+// Token-mapped, not hex-literal: consumers rebrand by overriding the
+// --color-* variables, so a hex here would be the one button that never
+// re-tones. (Until v2.61.0 `primary` was hardcoded blue-600 — visibly a
+// different colour from the brand --color-primary.)
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-[#2563eb] text-white border-none hover:bg-[#1d4ed8]',
-  secondary: 'bg-[#f1f5f9] text-[#334155] border border-[#e2e8f0] hover:bg-[#e2e8f0]',
-  ghost: 'bg-transparent text-[#334155] border border-[#d1d5db] hover:bg-[#f1f5f9]',
-  danger: 'bg-transparent text-[#dc2626] border border-[#fecaca] hover:bg-[#fef2f2]',
-  'danger-solid': 'bg-[#dc2626] text-white border-none hover:bg-[#b91c1c]',
+  primary: 'bg-primary text-white border-none hover:bg-primary-hover',
+  secondary: 'bg-surface-inset text-text-primary border border-border hover:bg-surface-hover',
+  ghost: 'bg-transparent text-text-primary border border-border hover:bg-surface-hover',
+  danger: 'bg-transparent text-danger-fg border border-danger-border hover:bg-danger-bg',
+  'danger-solid': 'bg-danger text-white border-none hover:bg-danger/90',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

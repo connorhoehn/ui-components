@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { cn } from '../../lib/cn';
+import { Select } from '../forms/Select';
 import { TypedDocumentForm, type ReferenceOption } from './TypedDocumentForm';
 import { ALL_DISPLAY_MODES, visibleFieldsForMode } from './displayMode';
 import {
@@ -252,16 +253,13 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                 <div className={cn('flex items-center gap-3')}>
                   <label className={cn('flex items-center gap-1.5 text-xs text-[#64748b]')}>
                     Display:
-                    <select
+                    <Select
                       data-testid="display-mode-picker"
+                      size="sm"
                       value={displayMode}
                       onChange={(e) => setDisplayMode(e.target.value as ApiDisplayMode)}
-                      className={cn('font-[inherit] text-xs px-1.5 py-[3px] border border-[#cbd5e1] rounded-[5px] bg-white')}
-                    >
-                      {ALL_DISPLAY_MODES.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                      options={ALL_DISPLAY_MODES.map((m) => ({ value: m, label: m }))}
+                    />
                   </label>
                   <label
                     className={cn(
@@ -270,6 +268,9 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
                     )}
                   >
                     {importing ? 'Importing…' : 'Bulk Import'}
+                    {/* Invisible file-input trigger (className=hidden) — the
+                        styled <label> is the visible control. Justified raw
+                        element, same pattern as FileUploadDrop. */}
                     <input
                       type="file"
                       accept=".csv"

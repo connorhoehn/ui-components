@@ -2,9 +2,16 @@
 //
 // Universal form field component supporting text, email, password, textarea,
 // select, checkbox, and number input types with validation styling.
+//
+// The controls themselves are the shared forms primitives (Input, Textarea,
+// Select, Checkbox) — this component only adds the label / error / help-text
+// arrangement and the value-coercing onChange that identity forms rely on.
 
 import { useCallback, useId } from 'react';
-import { cn } from '../../../lib/cn';
+import { Input } from '../../forms/Input';
+import { Textarea } from '../../forms/Textarea';
+import { Select } from '../../forms/Select';
+import { Checkbox } from '../../forms/Checkbox';
 
 export interface FormFieldProps {
   label: string;
@@ -19,9 +26,6 @@ export interface FormFieldProps {
   helpText?: string;
   disabled?: boolean;
 }
-
-const inputClasses = 'block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info';
-const inputErrorClasses = 'block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger';
 
 export function FormField({
   label,
@@ -40,9 +44,7 @@ export function FormField({
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      if (type === 'checkbox') {
-        onChange((e.target as HTMLInputElement).checked);
-      } else if (type === 'number') {
+      if (type === 'number') {
         onChange(Number(e.target.value));
       } else {
         onChange(e.target.value);
@@ -51,18 +53,15 @@ export function FormField({
     [onChange, type],
   );
 
-  const classes = error ? inputErrorClasses : inputClasses;
-
   const renderInput = () => {
     if (type === 'checkbox') {
       return (
         <label className="flex items-center gap-2 cursor-pointer">
-          <input
+          <Checkbox
             id={id}
-            type="checkbox"
             name={name}
             checked={Boolean(value)}
-            onChange={handleChange}
+            onChange={onChange}
             disabled={disabled}
           />
           <span className="text-sm text-text-primary">
@@ -74,7 +73,7 @@ export function FormField({
 
     if (type === 'textarea') {
       return (
-        <textarea
+        <Textarea
           id={id}
           name={name}
           value={String(value)}
@@ -83,34 +82,34 @@ export function FormField({
           disabled={disabled}
           required={required}
           rows={5}
-          className={cn(classes, 'resize-y min-h-[100px]')}
+          invalid={Boolean(error)}
+          className="resize-y min-h-[100px]"
         />
       );
     }
 
     if (type === 'select') {
+      // The empty option stays selectable (unlike Select's built-in disabled
+      // placeholder) — identity forms let users return to the unset state.
       return (
-        <select
+        <Select
           id={id}
           name={name}
           value={String(value)}
           onChange={handleChange}
           disabled={disabled}
           required={required}
-          className={classes}
-        >
-          <option value="">{placeholder || 'Select...'}</option>
-          {options?.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          invalid={Boolean(error)}
+          options={[
+            { value: '', label: placeholder || 'Select...' },
+            ...(options ?? []),
+          ]}
+        />
       );
     }
 
     return (
-      <input
+      <Input
         id={id}
         type={type}
         name={name}
@@ -119,7 +118,7 @@ export function FormField({
         placeholder={placeholder}
         disabled={disabled}
         required={required}
-        className={classes}
+        invalid={Boolean(error)}
       />
     );
   };

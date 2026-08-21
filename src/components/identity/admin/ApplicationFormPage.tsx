@@ -7,6 +7,8 @@ import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
+import { Checkbox } from '../../forms/Checkbox';
 import Banner from '../../shared/Banner';
 
 export interface ApplicationFormPageProps {
@@ -62,8 +64,8 @@ function MultiInput({
       </label>
       {values.map((val, idx) => (
         <div key={idx} className="flex gap-2 items-center mb-1.5">
-          <input
-            className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
+          <Input
+            className="flex-1"
             value={val}
             onChange={(e) => handleChange(idx, e.target.value)}
             placeholder={placeholder}
@@ -189,8 +191,7 @@ export function ApplicationFormPage({
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
               <label key={gt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={grantTypes.includes(gt)}
                   onChange={() => toggleGrantType(gt)}
                 />
@@ -206,8 +207,7 @@ export function ApplicationFormPage({
           <div className="flex flex-col gap-2 mb-4">
             {RESPONSE_TYPE_OPTIONS.map((rt) => (
               <label key={rt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={responseTypes.includes(rt)}
                   onChange={() => toggleResponseType(rt)}
                 />

@@ -7,6 +7,7 @@ import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
 import Banner from '../../shared/Banner';
 import type { PoolSettings } from '../../../types/identity';
 
@@ -163,14 +164,14 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
           <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
           {customAttrs.map((attr, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-2">
-              <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
+              <Input
+                className="flex-1"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
-              <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
+              <Input
+                className="flex-1"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}

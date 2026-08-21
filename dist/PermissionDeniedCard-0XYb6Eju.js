@@ -1,6 +1,6 @@
 import { jsx as r, jsxs as a } from "react/jsx-runtime";
 import { c as l } from "./cn-B6yFEsav.js";
-import { B as p } from "./Button-Qsbxqsl9.js";
+import { B as p } from "./Button-DILgRebO.js";
 const u = {
   sm: "w-[14px] h-[14px]",
   md: "w-[20px] h-[20px]",

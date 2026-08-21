@@ -1258,6 +1258,9 @@ declare interface ChatRoomProps {
 export declare const Checkbox: ForwardRefExoticComponent<CheckboxProps & RefAttributes<HTMLInputElement>>;
 
 export declare interface CheckboxProps {
+    id?: string;
+    /** Form field name, for label association and form submission. */
+    name?: string;
     checked: boolean;
     onChange: (checked: boolean) => void;
     /**
@@ -3399,7 +3402,7 @@ export declare interface InputProps extends Omit<InputHTMLAttributes<HTMLInputEl
 
 export declare type InputSize = 'sm' | 'md';
 
-export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search';
+export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
 
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 

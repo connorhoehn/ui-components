@@ -7,6 +7,8 @@ import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
+import { Textarea } from '../../forms/Textarea';
 import Banner from '../../shared/Banner';
 
 export interface EmailTemplateFormPageProps {
@@ -110,12 +112,12 @@ export function EmailTemplateFormPage({
               {showPreview ? 'Hide Preview' : 'Show Preview'}
             </Button>
           </div>
-          <textarea
+          <Textarea
             value={htmlBody}
             onChange={(e) => setHtmlBody(e.target.value)}
             placeholder="<html><body>...</body></html>"
             rows={10}
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary resize-y box-border font-mono"
+            className="resize-y font-mono"
           />
           {showPreview && (
             <div
@@ -153,8 +155,7 @@ export function EmailTemplateFormPage({
               </span>
             ))}
           </div>
-          <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border"
+          <Input
             placeholder="Type variable name and press Enter"
             value={varInput}
             onChange={(e) => setVarInput(e.target.value)}

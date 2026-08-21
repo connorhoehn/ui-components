@@ -5,6 +5,8 @@
 // Extracted from DocumentTypeWizard.tsx Step 2.
 
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Select } from '../forms/Select';
 import type { DocumentTypeField } from '../../types/documentType';
 import { getFieldTypes, getFieldType } from '../../renderers/registry';
 
@@ -58,24 +60,25 @@ export function FieldDefinitionEditor({
       <span className="text-base shrink-0">{def?.icon ?? '📄'}</span>
 
       {/* Name */}
-      <input
+      {/* Inline rename — reads as plain text until focused, so the Input's
+          chrome is stripped via class overrides rather than hand-rolling. */}
+      <Input
         data-testid={`field-name-${field.id}`}
+        size="sm"
         value={field.name}
         onChange={e => onRename(e.target.value)}
-        className="flex-1 min-w-0 px-1.5 py-1 text-sm font-inherit bg-transparent border border-transparent rounded-[7px] text-text-primary outline-none focus:border-[#c4b5fd] focus:bg-white"
+        className="flex-1 min-w-0 bg-transparent border-transparent focus:border-accent-border focus:bg-white"
       />
 
       {/* Type select */}
-      <select
+      <Select
         data-testid={`field-type-${field.id}`}
+        size="sm"
         value={field.sectionType}
         onChange={e => onChangeType(e.target.value)}
-        className="text-[11px] px-1.5 py-[3px] rounded shrink-0 bg-[#ede9fe] text-[#4c1d95] font-semibold border border-[#c4b5fd] cursor-pointer font-inherit appearance-auto"
-      >
-        {allTypes.map(t => (
-          <option key={t.type} value={t.type}>{t.label}</option>
-        ))}
-      </select>
+        className="w-auto shrink-0 text-[11px] font-semibold bg-accent-bg text-accent-fg border-accent-border"
+        options={allTypes.map(t => ({ value: t.type, label: t.label }))}
+      />
 
       {/* Toggles */}
       <button

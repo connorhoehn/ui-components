@@ -8,6 +8,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.61.0] — 2026-08-21
+
+The control migration crosses into its next areas: identity, typed-documents
+and doc-types are now raw-control free (the survey's three biggest fronts
+after pipelines), and `Button` finally wears the brand.
+
+### Fixed
+
+- **`Button` variants are token-mapped, not hex-literal.** Every variant was
+  hardcoded (`bg-[#2563eb]` etc.), invisible to the tones guard because
+  arbitrary-value utilities aren't palette names. Consequences fixed: the
+  `primary` variant was blue-600 — visibly not `--color-primary` — and no
+  variant re-toned when a consumer overrode the variables. Variants now use
+  `bg-primary`/`surface`/`danger` tokens. **Visual change:** primary buttons
+  shift from blue-600 to the brand primary everywhere.
+
+### Changed
+
+- **Identity is raw-control free.** `IdentityFormField` keeps its public API
+  but is rebuilt on `Input`/`Textarea`/`Select`/`Checkbox` (its bare controls
+  carried a literal `border-[#e2e8f0]`); `AuditPage`, `MfaManagementPage`,
+  `DiagnosticsPage` and the five admin form pages drop their hand-rolled
+  controls and per-page `inputClass` constants. Remaining raw elements are
+  justified: `LoginPage`'s `type="hidden"` and `CodeInput`'s digit boxes
+  (the primitive itself).
+- **`TypedDocumentForm` (the single biggest offender, 15 controls) renders
+  every widget branch with the forms primitives**, and its hexes
+  (`text-[#dc2626]`, `border-[#cbd5e1]`, …) become tokens. The hand-rolled
+  add/remove/submit buttons are now `Button`. `TypedDocumentsPage`'s
+  display-mode picker converts too; its hidden file-upload input is a
+  justified invisible trigger.
+- **doc-types converted:** `DocumentTypeWizard` (7 controls),
+  `FieldDefinitionEditor` (inline rename expressed as an `Input` with
+  chrome-stripping overrides; the type pill select re-toned from purple
+  hexes to `accent` tokens), `CookbooksModal` search.
+
+### Added
+
+- `InputType` accepts `date`, `datetime-local` and `time` — AuditPage's
+  filters and TypedDocumentForm's date widget needed them, and the primitive
+  ships first.
+- `Checkbox` accepts `id` and `name` for label association and form posts.
+
 ## [2.60.0] — 2026-08-20
 
 Reachability follow-up to v2.53.0–v2.59.0: the primitives added during the

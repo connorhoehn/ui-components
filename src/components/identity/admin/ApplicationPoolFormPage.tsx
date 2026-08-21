@@ -7,6 +7,8 @@ import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
+import { Checkbox } from '../../forms/Checkbox';
 import Banner from '../../shared/Banner';
 
 export interface ApplicationPoolFormPageProps {
@@ -99,8 +101,8 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Redirect URIs</h3>
           {redirectUris.map((uri, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-1.5">
-              <input
-                className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
+              <Input
+                className="flex-1"
                 value={uri}
                 onChange={(e) => handleUriChange(idx, e.target.value)}
                 placeholder="https://app.example.com/callback"
@@ -123,8 +125,7 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
           <div className="flex flex-col gap-2 mb-4">
             {GRANT_TYPE_OPTIONS.map((gt) => (
               <label key={gt} className="flex items-center gap-2 text-base text-text-primary cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={grantTypes.includes(gt)}
                   onChange={() => toggleGrantType(gt)}
                 />

@@ -25,6 +25,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
+import { Textarea } from '../forms/Textarea';
+import { Select } from '../forms/Select';
+import { Checkbox } from '../forms/Checkbox';
 import type { ViewMode } from '../../types/document';
 import type {
   DocumentType,
@@ -55,9 +59,8 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
         <span className="block text-xs font-semibold text-[#374151] mb-[5px] tracking-wide">
           Name <span className="text-[#dc2626]">*</span>
         </span>
-        <input
+        <Input
           data-testid="name-input"
-          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none"
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="e.g. Sprint Planning, Retrospective, Meeting Notes…"
@@ -70,9 +73,9 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
         <span className="block text-xs font-semibold text-[#374151] mb-[5px] tracking-wide">
           Description
         </span>
-        <textarea
+        <Textarea
           data-testid="description-input"
-          className="w-full box-border border border-border-field rounded-[7px] px-3 py-2 text-sm font-inherit bg-[#f9fafb] text-text-primary outline-none min-h-[72px] resize-y"
+          className="min-h-[72px] resize-y"
           value={description}
           onChange={e => setDescription(e.target.value)}
           placeholder="Optional — describe when this document type is used"
@@ -157,12 +160,13 @@ function SortablePage({
           <span className="text-xs font-semibold text-[#94a3b8] min-w-14">
             Page {pageIdx + 1}
           </span>
-          <input
+          <Input
             data-testid={`page-title-${page.id}`}
+            size="sm"
+            className="flex-1"
             value={page.title ?? ''}
             placeholder={`Page ${pageIdx + 1}`}
             onChange={(e) => renamePage(page.id, e.target.value)}
-            className="flex-1 px-2 py-1 text-[13px] border border-border-field rounded-[7px] bg-[#f9fafb] text-text-primary font-inherit outline-none"
             onFocus={() => setActivePageId(page.id)}
           />
           <button
@@ -239,19 +243,18 @@ function SortableSection({ sectionId, page, idx, pages, renderRow, moveSectionTo
       >⋮⋮</button>
       <div className="flex-1">{renderRow(sectionId, page, idx)}</div>
       {pages.length > 1 && (
-        <select
+        <Select
           data-testid={`section-move-page-${sectionId}`}
+          size="sm"
+          className="w-auto text-[11px]"
           value={page.id}
           onChange={(e) => moveSectionToPage(sectionId, page.id, e.target.value)}
-          className="text-[11px] px-1.5 py-1 rounded font-inherit cursor-pointer bg-[#f8fafc] border border-border"
           title="Move section to another page"
-        >
-          {pages.map((pp, pi) => (
-            <option key={pp.id} value={pp.id}>
-              {pp.title || `Page ${pi + 1}`}
-            </option>
-          ))}
-        </select>
+          options={pages.map((pp, pi) => ({
+            value: pp.id,
+            label: pp.title || `Page ${pi + 1}`,
+          }))}
+        />
       )}
     </div>
   );
@@ -488,10 +491,9 @@ function Step2Fields({
             className="mt-4 p-2.5 bg-[#f8fafc] rounded-md text-[13px]"
           >
             <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={pageConfig.showTableOfContents}
-                onChange={(e) => setPageConfig({ ...pageConfig, showTableOfContents: e.target.checked })}
+                onChange={(checked) => setPageConfig({ ...pageConfig, showTableOfContents: checked })}
               />
               <span>Show table of contents (multi-page documents only)</span>
             </label>
@@ -545,28 +547,27 @@ function ViewModeCell({ field, mode, onToggleHidden, onOverrideChange }: {
     <td className="p-[10px_12px] align-top">
       <div className="flex flex-col gap-1.5">
         <label className="flex items-center gap-1.5 cursor-pointer select-none">
-          <input
+          <Checkbox
             data-testid={`visibility-${field.id}-${mode}`}
-            type="checkbox"
             checked={!hidden}
             onChange={onToggleHidden}
-            className="accent-primary"
           />
           <span className={cn('text-xs', hidden ? 'text-[#94a3b8]' : 'text-[#374151]')}>
             {hidden ? 'Hidden' : 'Visible'}
           </span>
         </label>
         {!hidden && options.length > 0 && (
-          <select
+          <Select
             data-testid={`renderer-${field.id}-${mode}`}
+            size="sm"
+            className="w-auto text-[11px]"
             value={currentOverride}
             onChange={e => onOverrideChange(e.target.value)}
-            className="text-[11px] border border-border-field rounded-[5px] px-1.5 py-[3px] bg-[#f9fafb] text-[#374151] font-inherit cursor-pointer"
-          >
-            {options.map(key => (
-              <option key={key} value={key}>{fieldTypeDef?.rendererLabels[key] ?? key}</option>
-            ))}
-          </select>
+            options={options.map(key => ({
+              value: key,
+              label: fieldTypeDef?.rendererLabels[key] ?? key,
+            }))}
+          />
         )}
         {!hidden && options.length === 0 && (
           <span className="text-[11px] text-[#94a3b8]">Default renderer</span>

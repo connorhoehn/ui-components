@@ -8,7 +8,9 @@ import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
 export type InputSize = 'sm' | 'md';
-export type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search';
+export type InputType =
+  | 'text' | 'number' | 'url' | 'password' | 'email' | 'search'
+  | 'date' | 'datetime-local' | 'time';
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'prefix'> {
   type?: InputType;

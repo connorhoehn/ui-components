@@ -5,7 +5,7 @@ import { _ as O } from "./index-Bjylubtc.js";
 import { M as re } from "./Modal-fp5zcyw8.js";
 import { T as pe, b as fe, e as J, a as xe, c as G, d as F } from "./Table-D7HV0dS-.js";
 import { E as me } from "./EmptyState-Ejc9dJA3.js";
-import { S as he } from "./PermissionDeniedCard-zuRojsB7.js";
+import { S as he } from "./PermissionDeniedCard-0XYb6Eju.js";
 import { S as be, C as ve } from "./CardHeader-Cri3P8GV.js";
 import { A as q, a as ge } from "./Avatar-B7O2g50s.js";
 import { S as ae } from "./StatusDot-BC7B1tTr.js";

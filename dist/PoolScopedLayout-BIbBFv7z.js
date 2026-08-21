@@ -1,16 +1,17 @@
 import { jsxs as t, jsx as e, Fragment as j } from "react/jsx-runtime";
-import { useMemo as G, useState as o, useCallback as w, useId as xe, useRef as ce, useEffect as de } from "react";
-import { C as U } from "./Card-qOg_oC77.js";
-import { P as F, T as J, b as Z, e as _, a as ee, c as te, d as q } from "./Table-D7HV0dS-.js";
-import { B as f } from "./Button-Qsbxqsl9.js";
-import { E as me } from "./EmptyState-Ejc9dJA3.js";
-import { C as H } from "./ConfirmDialog-Ix7G_Mb4.js";
-import { B as V } from "./Banner-DKb3JiLs.js";
-import { C as K } from "./Chip-BDT8ro4h.js";
-import { M as ye } from "./Modal-fp5zcyw8.js";
-import { c as O } from "./cn-B6yFEsav.js";
-function He({ stats: a, pools: l, onNavigate: i, loading: h }) {
-  const b = G(
+import { useMemo as V, useState as o, useCallback as w, useId as Ce, useRef as ue, useEffect as he } from "react";
+import { C as R } from "./Card-qOg_oC77.js";
+import { P as F, T as ee, b as te, e as _, a as ae, c as ne, d as q } from "./Table-D7HV0dS-.js";
+import { B as f } from "./Button-DILgRebO.js";
+import { E as pe } from "./EmptyState-Ejc9dJA3.js";
+import { C as Q } from "./ConfirmDialog-Ix7G_Mb4.js";
+import { C as J, T as fe, S as re, I as O } from "./Checkbox-DJp19x0a.js";
+import { B as $ } from "./Banner-DKb3JiLs.js";
+import { C as X } from "./Chip-BDT8ro4h.js";
+import { M as we } from "./Modal-fp5zcyw8.js";
+import { c as G } from "./cn-B6yFEsav.js";
+function Je({ stats: a, pools: l, onNavigate: i, loading: p }) {
+  const g = V(
     () => [
       { label: "User Pools", value: a.userPools },
       { label: "Applications", value: a.clients },
@@ -18,23 +19,23 @@ function He({ stats: a, pools: l, onNavigate: i, loading: h }) {
     ],
     [a]
   );
-  return h ? /* @__PURE__ */ t("div", { className: "flex flex-col gap-8", children: [
-    /* @__PURE__ */ e("div", { className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4", children: [1, 2, 3].map((c) => /* @__PURE__ */ t(U, { padding: "md", children: [
+  return p ? /* @__PURE__ */ t("div", { className: "flex flex-col gap-8", children: [
+    /* @__PURE__ */ e("div", { className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4", children: [1, 2, 3].map((c) => /* @__PURE__ */ t(R, { padding: "md", children: [
       /* @__PURE__ */ e("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }),
       /* @__PURE__ */ e("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })
     ] }, c)) }),
-    /* @__PURE__ */ e(U, { className: "h-[200px] animate-pulse" })
+    /* @__PURE__ */ e(R, { className: "h-[200px] animate-pulse" })
   ] }) : /* @__PURE__ */ t(F, { title: "Dashboard", children: [
-    /* @__PURE__ */ e("section", { className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4", children: b.map((c) => /* @__PURE__ */ t(U, { padding: "md", children: [
+    /* @__PURE__ */ e("section", { className: "grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4", children: g.map((c) => /* @__PURE__ */ t(R, { padding: "md", children: [
       /* @__PURE__ */ e("div", { className: "text-[2rem] font-bold text-info-fg mb-1", children: c.value }),
       /* @__PURE__ */ e("div", { className: "text-sm text-neutral", children: c.label })
     ] }, c.label)) }),
     /* @__PURE__ */ t("section", { className: "flex flex-col gap-3", children: [
       /* @__PURE__ */ e("h2", { className: "text-lg font-semibold text-text-primary m-0", children: "User Pools" }),
-      /* @__PURE__ */ e(U, { children: l.length === 0 ? /* @__PURE__ */ e(me, { title: "No pools created yet", actionLabel: "Create Pool", onAction: () => i("/identity/admin/pools/new") }) : l.map((c, u) => /* @__PURE__ */ t(
+      /* @__PURE__ */ e(R, { children: l.length === 0 ? /* @__PURE__ */ e(pe, { title: "No pools created yet", actionLabel: "Create Pool", onAction: () => i("/identity/admin/pools/new") }) : l.map((c, h) => /* @__PURE__ */ t(
         "div",
         {
-          className: `flex items-center justify-between px-4 py-3 ${u < l.length - 1 ? "border-b border-border-subtle" : ""}`,
+          className: `flex items-center justify-between px-4 py-3 ${h < l.length - 1 ? "border-b border-border-subtle" : ""}`,
           children: [
             /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
               /* @__PURE__ */ e("span", { className: "font-medium text-text-primary", children: c.poolName }),
@@ -56,107 +57,107 @@ function He({ stats: a, pools: l, onNavigate: i, loading: h }) {
     ] })
   ] });
 }
-function X({
+function H({
   columns: a,
   data: l,
   keyField: i,
-  onRowClick: h,
-  actions: b,
+  onRowClick: p,
+  actions: g,
   emptyMessage: c = "No records found.",
-  emptyIcon: u = "📋",
-  loading: m = !1
+  emptyIcon: h = "📋",
+  loading: u = !1
 }) {
-  const [s, p] = o(null), [g, N] = o("asc"), n = w(
-    (d) => {
-      s === d ? N((x) => x === "asc" ? "desc" : "asc") : (p(d), N("asc"));
+  const [s, d] = o(null), [b, C] = o("asc"), r = w(
+    (m) => {
+      s === m ? C((v) => v === "asc" ? "desc" : "asc") : (d(m), C("asc"));
     },
     [s]
-  ), r = G(() => s ? [...l].sort((d, x) => {
-    const A = String(d[s] ?? ""), E = String(x[s] ?? ""), y = A.localeCompare(E);
-    return g === "asc" ? y : -y;
-  }) : l, [l, s, g]);
-  return m ? /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
-    /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      a.map((d) => /* @__PURE__ */ e(_, { style: d.width ? { width: d.width } : void 0, children: d.header }, d.key)),
-      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
+  ), n = V(() => s ? [...l].sort((m, v) => {
+    const S = String(m[s] ?? ""), z = String(v[s] ?? ""), x = S.localeCompare(z);
+    return b === "asc" ? x : -x;
+  }) : l, [l, s, b]);
+  return u ? /* @__PURE__ */ e(R, { children: /* @__PURE__ */ t(ee, { children: [
+    /* @__PURE__ */ e(te, { children: /* @__PURE__ */ t("tr", { children: [
+      a.map((m) => /* @__PURE__ */ e(_, { style: m.width ? { width: m.width } : void 0, children: m.header }, m.key)),
+      g && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
     ] }) }),
-    /* @__PURE__ */ e(ee, { children: Array.from({ length: 5 }).map((d, x) => /* @__PURE__ */ t(te, { children: [
-      a.map((A) => /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e("div", { className: "h-4 rounded bg-surface-hover animate-pulse", style: { width: `${60 + Math.random() * 30}%` } }) }, A.key)),
-      b && /* @__PURE__ */ e(q, { className: "text-right", children: /* @__PURE__ */ e("div", { className: "h-4 w-20 rounded bg-surface-hover animate-pulse ml-auto" }) })
-    ] }, x)) })
-  ] }) }) : l.length === 0 ? /* @__PURE__ */ t(U, { className: "flex flex-col items-center justify-center min-h-[220px] p-8", children: [
-    /* @__PURE__ */ e("span", { className: "text-[42px] mb-3", children: u }),
+    /* @__PURE__ */ e(ae, { children: Array.from({ length: 5 }).map((m, v) => /* @__PURE__ */ t(ne, { children: [
+      a.map((S) => /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e("div", { className: "h-4 rounded bg-surface-hover animate-pulse", style: { width: `${60 + Math.random() * 30}%` } }) }, S.key)),
+      g && /* @__PURE__ */ e(q, { className: "text-right", children: /* @__PURE__ */ e("div", { className: "h-4 w-20 rounded bg-surface-hover animate-pulse ml-auto" }) })
+    ] }, v)) })
+  ] }) }) : l.length === 0 ? /* @__PURE__ */ t(R, { className: "flex flex-col items-center justify-center min-h-[220px] p-8", children: [
+    /* @__PURE__ */ e("span", { className: "text-[42px] mb-3", children: h }),
     /* @__PURE__ */ e("p", { className: "text-sm font-medium text-neutral text-center max-w-[280px] m-0", children: c })
-  ] }) : /* @__PURE__ */ e(U, { children: /* @__PURE__ */ t(J, { children: [
-    /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
-      a.map((d) => /* @__PURE__ */ e(
+  ] }) : /* @__PURE__ */ e(R, { children: /* @__PURE__ */ t(ee, { children: [
+    /* @__PURE__ */ e(te, { children: /* @__PURE__ */ t("tr", { children: [
+      a.map((m) => /* @__PURE__ */ e(
         _,
         {
-          sortable: d.sortable,
-          sortDirection: d.sortable && s === d.key ? g : null,
-          style: d.width ? { width: d.width } : void 0,
-          className: d.align === "right" ? "text-right" : d.align === "center" ? "text-center" : void 0,
-          onClick: d.sortable ? () => n(d.key) : void 0,
-          children: d.header
+          sortable: m.sortable,
+          sortDirection: m.sortable && s === m.key ? b : null,
+          style: m.width ? { width: m.width } : void 0,
+          className: m.align === "right" ? "text-right" : m.align === "center" ? "text-center" : void 0,
+          onClick: m.sortable ? () => r(m.key) : void 0,
+          children: m.header
         },
-        d.key
+        m.key
       )),
-      b && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
+      g && /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
     ] }) }),
-    /* @__PURE__ */ e(ee, { children: r.map((d) => /* @__PURE__ */ t(
-      te,
+    /* @__PURE__ */ e(ae, { children: n.map((m) => /* @__PURE__ */ t(
+      ne,
       {
-        clickable: !!h,
-        onClick: h ? () => h(d) : void 0,
+        clickable: !!p,
+        onClick: p ? () => p(m) : void 0,
         children: [
-          a.map((x) => /* @__PURE__ */ e(
+          a.map((v) => /* @__PURE__ */ e(
             q,
             {
-              style: x.width ? { width: x.width } : void 0,
-              className: x.align === "right" ? "text-right" : x.align === "center" ? "text-center" : void 0,
-              children: x.render ? x.render(d) : String(d[x.key] ?? "")
+              style: v.width ? { width: v.width } : void 0,
+              className: v.align === "right" ? "text-right" : v.align === "center" ? "text-center" : void 0,
+              children: v.render ? v.render(m) : String(m[v.key] ?? "")
             },
-            x.key
+            v.key
           )),
-          b && /* @__PURE__ */ e(q, { className: "text-right", onClick: (x) => x.stopPropagation(), children: /* @__PURE__ */ e("div", { className: "flex items-center justify-end gap-2", children: b(d) }) })
+          g && /* @__PURE__ */ e(q, { className: "text-right", onClick: (v) => v.stopPropagation(), children: /* @__PURE__ */ e("div", { className: "flex items-center justify-end gap-2", children: g(m) }) })
         ]
       },
-      String(d[i])
+      String(m[i])
     )) })
   ] }) });
 }
-function Qe({
+function Ze({
   pools: a,
   onCreatePool: l,
   onEditPool: i,
-  onDeletePool: h,
-  onViewPool: b,
+  onDeletePool: p,
+  onViewPool: g,
   loading: c
 }) {
-  const [u, m] = o(null), [s, p] = o(!1), g = w(
-    async (r) => {
-      p(!0);
+  const [h, u] = o(null), [s, d] = o(!1), b = w(
+    async (n) => {
+      d(!0);
       try {
-        await h(r);
+        await p(n);
       } finally {
-        p(!1), m(null);
+        d(!1), u(null);
       }
     },
-    [h]
-  ), N = G(
+    [p]
+  ), C = V(
     () => [
       { key: "poolName", header: "Name", sortable: !0 },
       { key: "clientId", header: "Client ID" },
       { key: "createdAt", header: "Created", sortable: !0 }
     ],
     []
-  ), n = w(
-    (r) => /* @__PURE__ */ t(j, { children: [
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b(r.poolId), children: "View" }),
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => i(r.poolId), children: "Edit" }),
-      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => m(r.poolId), children: "Delete" })
+  ), r = w(
+    (n) => /* @__PURE__ */ t(j, { children: [
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => g(n.poolId), children: "View" }),
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => i(n.poolId), children: "Edit" }),
+      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(n.poolId), children: "Delete" })
     ] }),
-    [i, b]
+    [i, g]
   );
   return /* @__PURE__ */ t(
     F,
@@ -165,23 +166,23 @@ function Qe({
       actions: /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: l, children: "Create Pool" }),
       children: [
         /* @__PURE__ */ e(
-          X,
+          H,
           {
-            columns: N,
+            columns: C,
             data: a,
             keyField: "poolId",
-            actions: n,
+            actions: r,
             loading: c,
             emptyMessage: "No user pools found. Create one to get started.",
             emptyIcon: "🏊"
           }
         ),
         /* @__PURE__ */ e(
-          H,
+          Q,
           {
-            open: !!u,
-            onConfirm: () => u && g(u),
-            onCancel: () => m(null),
+            open: !!h,
+            onConfirm: () => h && b(h),
+            onCancel: () => u(null),
             title: "Delete Pool",
             body: "This action cannot be undone. All users in this pool will be affected.",
             tone: "destructive",
@@ -193,145 +194,144 @@ function Qe({
     }
   );
 }
-const ve = "block w-full px-3 py-2 text-sm border border-[#e2e8f0] rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-info/20 focus:border-info", Ne = "block w-full px-3 py-2 text-sm border border-danger rounded-md bg-white text-text-primary outline-none box-border focus:ring-2 focus:ring-danger/20 focus:border-danger";
-function D({
+function T({
   label: a,
   name: l,
   type: i = "text",
-  value: h,
-  onChange: b,
+  value: p,
+  onChange: g,
   error: c,
-  required: u,
-  placeholder: m,
+  required: h,
+  placeholder: u,
   options: s,
-  helpText: p,
-  disabled: g
+  helpText: d,
+  disabled: b
 }) {
-  const N = xe(), n = w(
-    (x) => {
-      b(i === "checkbox" ? x.target.checked : i === "number" ? Number(x.target.value) : x.target.value);
+  const C = Ce(), r = w(
+    (m) => {
+      g(i === "number" ? Number(m.target.value) : m.target.value);
     },
-    [b, i]
-  ), r = c ? Ne : ve, d = () => i === "checkbox" ? /* @__PURE__ */ t("label", { className: "flex items-center gap-2 cursor-pointer", children: [
+    [g, i]
+  ), n = () => i === "checkbox" ? /* @__PURE__ */ t("label", { className: "flex items-center gap-2 cursor-pointer", children: [
     /* @__PURE__ */ e(
-      "input",
+      J,
       {
-        id: N,
-        type: "checkbox",
+        id: C,
         name: l,
-        checked: !!h,
-        onChange: n,
-        disabled: g
+        checked: !!p,
+        onChange: g,
+        disabled: b
       }
     ),
     /* @__PURE__ */ t("span", { className: "text-sm text-text-primary", children: [
       a,
-      u && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
+      h && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
     ] })
   ] }) : i === "textarea" ? /* @__PURE__ */ e(
-    "textarea",
+    fe,
     {
-      id: N,
+      id: C,
       name: l,
-      value: String(h),
-      onChange: n,
-      placeholder: m,
-      disabled: g,
-      required: u,
+      value: String(p),
+      onChange: r,
+      placeholder: u,
+      disabled: b,
+      required: h,
       rows: 5,
-      className: O(r, "resize-y min-h-[100px]")
+      invalid: !!c,
+      className: "resize-y min-h-[100px]"
     }
-  ) : i === "select" ? /* @__PURE__ */ t(
-    "select",
+  ) : i === "select" ? /* @__PURE__ */ e(
+    re,
     {
-      id: N,
+      id: C,
       name: l,
-      value: String(h),
-      onChange: n,
-      disabled: g,
-      required: u,
-      className: r,
-      children: [
-        /* @__PURE__ */ e("option", { value: "", children: m || "Select..." }),
-        s?.map((x) => /* @__PURE__ */ e("option", { value: x.value, children: x.label }, x.value))
+      value: String(p),
+      onChange: r,
+      disabled: b,
+      required: h,
+      invalid: !!c,
+      options: [
+        { value: "", label: u || "Select..." },
+        ...s ?? []
       ]
     }
   ) : /* @__PURE__ */ e(
-    "input",
+    O,
     {
-      id: N,
+      id: C,
       type: i,
       name: l,
-      value: String(h),
-      onChange: n,
-      placeholder: m,
-      disabled: g,
-      required: u,
-      className: r
+      value: String(p),
+      onChange: r,
+      placeholder: u,
+      disabled: b,
+      required: h,
+      invalid: !!c
     }
   );
   return i === "checkbox" ? /* @__PURE__ */ t("div", { className: "mb-4", children: [
-    d(),
+    n(),
     c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-danger-fg", children: c }),
-    p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-text-tertiary", children: p })
+    d && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-text-tertiary", children: d })
   ] }) : /* @__PURE__ */ t("div", { className: "mb-4", children: [
-    /* @__PURE__ */ t("label", { htmlFor: N, className: "block mb-1 text-sm font-semibold text-text-primary", children: [
+    /* @__PURE__ */ t("label", { htmlFor: C, className: "block mb-1 text-sm font-semibold text-text-primary", children: [
       a,
-      u && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
+      h && /* @__PURE__ */ e("span", { className: "text-danger-fg", children: " *" })
     ] }),
-    d(),
+    n(),
     c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-danger-fg", children: c }),
-    p && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-text-tertiary", children: p })
+    d && !c && /* @__PURE__ */ e("p", { className: "mt-1 text-sm text-text-tertiary", children: d })
   ] });
 }
-function Ye({ pool: a, isEdit: l, onSubmit: i, onCancel: h, error: b }) {
-  const [c, u] = o(a?.poolName ?? ""), [m, s] = o(a?.settings?.mfaConfiguration ?? "OFF"), [p, g] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [N, n] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [r, d] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [x, A] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [E, y] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [P, I] = o(
-    Object.entries(a?.customAttributes ?? {}).map(([S, k]) => ({ key: S, value: k }))
-  ), [M, R] = o(!1), T = w(() => {
-    I((S) => [...S, { key: "", value: "" }]);
-  }, []), z = w((S) => {
-    I((k) => k.filter((B, $) => $ !== S));
-  }, []), v = w((S, k, B) => {
-    I(
-      ($) => $.map((Y, Q) => Q === S ? { ...Y, [k]: B } : Y)
+function et({ pool: a, isEdit: l, onSubmit: i, onCancel: p, error: g }) {
+  const [c, h] = o(a?.poolName ?? ""), [u, s] = o(a?.settings?.mfaConfiguration ?? "OFF"), [d, b] = o(a?.settings?.passwordPolicy?.minLength ?? 8), [C, r] = o(a?.settings?.passwordPolicy?.requireUppercase ?? !0), [n, m] = o(a?.settings?.passwordPolicy?.requireLowercase ?? !0), [v, S] = o(a?.settings?.passwordPolicy?.requireNumbers ?? !0), [z, x] = o(a?.settings?.passwordPolicy?.requireSymbols ?? !1), [I, A] = o(
+    Object.entries(a?.customAttributes ?? {}).map(([y, M]) => ({ key: y, value: M }))
+  ), [L, E] = o(!1), P = w(() => {
+    A((y) => [...y, { key: "", value: "" }]);
+  }, []), D = w((y) => {
+    A((M) => M.filter((B, W) => W !== y));
+  }, []), N = w((y, M, B) => {
+    A(
+      (W) => W.map((Z, Y) => Y === y ? { ...Z, [M]: B } : Z)
     );
-  }, []), C = w(
-    async (S) => {
-      S.preventDefault(), R(!0);
+  }, []), k = w(
+    async (y) => {
+      y.preventDefault(), E(!0);
       try {
-        const k = {};
-        for (const { key: B, value: $ } of P)
-          B.trim() && (k[B.trim()] = $);
+        const M = {};
+        for (const { key: B, value: W } of I)
+          B.trim() && (M[B.trim()] = W);
         await i({
           poolName: c,
-          customAttributes: k,
+          customAttributes: M,
           settings: {
-            mfaConfiguration: m,
+            mfaConfiguration: u,
             passwordPolicy: {
-              minLength: p,
-              requireUppercase: N,
-              requireLowercase: r,
-              requireNumbers: x,
-              requireSymbols: E
+              minLength: d,
+              requireUppercase: C,
+              requireLowercase: n,
+              requireNumbers: v,
+              requireSymbols: z
             }
           }
         });
       } finally {
-        R(!1);
+        E(!1);
       }
     },
-    [c, m, p, N, r, x, E, P, i]
+    [c, u, d, C, n, v, z, I, i]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit Pool" : "Create Pool", className: "max-w-[640px]", children: [
-    b && /* @__PURE__ */ e(V, { variant: "error", children: b }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: C, children: [
+    g && /* @__PURE__ */ e($, { variant: "error", children: g }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: k, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Pool Name",
           name: "poolName",
           value: c,
-          onChange: (S) => u(String(S)),
+          onChange: (y) => h(String(y)),
           required: !0,
           placeholder: "my-user-pool"
         }
@@ -339,13 +339,13 @@ function Ye({ pool: a, isEdit: l, onSubmit: i, onCancel: h, error: b }) {
       /* @__PURE__ */ t("section", { className: "mb-6", children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mb-2", children: "MFA Configuration" }),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "MFA Mode",
             name: "mfaConfig",
             type: "select",
-            value: m,
-            onChange: (S) => s(String(S)),
+            value: u,
+            onChange: (y) => s(String(y)),
             options: [
               { value: "OFF", label: "Off" },
               { value: "OPTIONAL", label: "Optional" },
@@ -357,89 +357,89 @@ function Ye({ pool: a, isEdit: l, onSubmit: i, onCancel: h, error: b }) {
       /* @__PURE__ */ t("section", { className: "mb-6", children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mb-2", children: "Password Policy" }),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Minimum Length",
             name: "minLength",
             type: "number",
-            value: p,
-            onChange: (S) => g(Number(S))
+            value: d,
+            onChange: (y) => b(Number(y))
           }
         ),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Require Uppercase",
             name: "requireUppercase",
             type: "checkbox",
-            value: N,
-            onChange: (S) => n(!!S)
+            value: C,
+            onChange: (y) => r(!!y)
           }
         ),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Require Lowercase",
             name: "requireLowercase",
             type: "checkbox",
-            value: r,
-            onChange: (S) => d(!!S)
+            value: n,
+            onChange: (y) => m(!!y)
           }
         ),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Require Numbers",
             name: "requireNumbers",
             type: "checkbox",
-            value: x,
-            onChange: (S) => A(!!S)
+            value: v,
+            onChange: (y) => S(!!y)
           }
         ),
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Require Symbols",
             name: "requireSymbols",
             type: "checkbox",
-            value: E,
-            onChange: (S) => y(!!S)
+            value: z,
+            onChange: (y) => x(!!y)
           }
         )
       ] }),
       /* @__PURE__ */ t("section", { className: "mb-6", children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mb-2", children: "Custom Attributes" }),
-        P.map((S, k) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-2", children: [
+        I.map((y, M) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-2", children: [
           /* @__PURE__ */ e(
-            "input",
+            O,
             {
-              className: "flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary",
+              className: "flex-1",
               placeholder: "Attribute name",
-              value: S.key,
-              onChange: (B) => v(k, "key", B.target.value)
+              value: y.key,
+              onChange: (B) => N(M, "key", B.target.value)
             }
           ),
           /* @__PURE__ */ e(
-            "input",
+            O,
             {
-              className: "flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary",
+              className: "flex-1",
               placeholder: "Type (string, number, etc.)",
-              value: S.value,
-              onChange: (B) => v(k, "value", B.target.value)
+              value: y.value,
+              onChange: (B) => N(M, "value", B.target.value)
             }
           ),
-          /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => z(k), children: "Remove" })
-        ] }, k)),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: T, children: "+ Add Attribute" })
+          /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => D(M), children: "Remove" })
+        ] }, M)),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: P, children: "+ Add Attribute" })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: M, children: M ? "Saving..." : l ? "Update Pool" : "Create Pool" }),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: h, children: "Cancel" })
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: L, children: L ? "Saving..." : l ? "Update Pool" : "Create Pool" }),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: p, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-const we = {
+const ke = {
   CONFIRMED: "success",
   ACTIVE: "success",
   ENABLED: "success",
@@ -450,58 +450,58 @@ const we = {
   COMPROMISED: "danger",
   ARCHIVED: "neutral",
   UNKNOWN: "neutral"
-}, Ce = {
+}, Se = {
   success: "success",
   warning: "warning",
   danger: "danger",
   info: "info",
   neutral: "neutral"
 };
-function ne({ status: a, variant: l }) {
-  const i = l ? Ce[l] || "neutral" : we[a] || "neutral";
-  return /* @__PURE__ */ e(K, { tone: i, size: "sm", children: a });
+function ie({ status: a, variant: l }) {
+  const i = l ? Se[l] || "neutral" : ke[a] || "neutral";
+  return /* @__PURE__ */ e(X, { tone: i, size: "sm", children: a });
 }
-function Je({
+function tt({
   users: a,
   poolName: l,
   onCreateUser: i,
-  onEditUser: h,
-  onDeleteUser: b,
+  onEditUser: p,
+  onDeleteUser: g,
   loading: c
 }) {
-  const [u, m] = o(null), [s, p] = o(!1), g = w(
-    async (r) => {
-      p(!0);
+  const [h, u] = o(null), [s, d] = o(!1), b = w(
+    async (n) => {
+      d(!0);
       try {
-        await b(r);
+        await g(n);
       } finally {
-        p(!1), m(null);
+        d(!1), u(null);
       }
     },
-    [b]
-  ), N = G(
+    [g]
+  ), C = V(
     () => [
       { key: "email", header: "Email", sortable: !0 },
       {
         key: "name",
         header: "Name",
-        render: (r) => [r.givenName, r.familyName].filter(Boolean).join(" ") || "—"
+        render: (n) => [n.givenName, n.familyName].filter(Boolean).join(" ") || "—"
       },
       {
         key: "status",
         header: "Status",
         width: "180px",
-        render: (r) => /* @__PURE__ */ e(ne, { status: r.status })
+        render: (n) => /* @__PURE__ */ e(ie, { status: n.status })
       },
       { key: "createdAt", header: "Created", sortable: !0 }
     ],
     []
-  ), n = w(
-    (r) => /* @__PURE__ */ t(j, { children: [
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => h(r.userId), children: "Edit" }),
-      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => m(r.userId), children: "Delete" })
+  ), r = w(
+    (n) => /* @__PURE__ */ t(j, { children: [
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => p(n.userId), children: "Edit" }),
+      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(n.userId), children: "Delete" })
     ] }),
-    [h]
+    [p]
   );
   return /* @__PURE__ */ t(
     F,
@@ -510,23 +510,23 @@ function Je({
       actions: /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: i, children: "Create User" }),
       children: [
         /* @__PURE__ */ e(
-          X,
+          H,
           {
-            columns: N,
+            columns: C,
             data: a,
             keyField: "userId",
-            actions: n,
+            actions: r,
             loading: c,
             emptyMessage: "No users in this pool yet.",
             emptyIcon: "👤"
           }
         ),
         /* @__PURE__ */ e(
-          H,
+          Q,
           {
-            open: !!u,
-            onConfirm: () => u && g(u),
-            onCancel: () => m(null),
+            open: !!h,
+            onConfirm: () => h && b(h),
+            onCancel: () => u(null),
             title: "Delete User",
             body: "This action cannot be undone. The user will be permanently removed.",
             tone: "destructive",
@@ -538,175 +538,175 @@ function Je({
     }
   );
 }
-function Ze({
+function at({
   user: a,
   isEdit: l,
   customAttributeDefinitions: i,
-  onSubmit: h,
-  onCancel: b,
+  onSubmit: p,
+  onCancel: g,
   error: c
 }) {
-  const [u, m] = o(a?.email ?? ""), [s, p] = o(""), [g, N] = o(a?.givenName ?? ""), [n, r] = o(a?.familyName ?? ""), [d, x] = o(a?.nickname ?? ""), [A, E] = o(a?.picture ?? ""), [y, P] = o(a?.website ?? ""), [I, M] = o(
+  const [h, u] = o(a?.email ?? ""), [s, d] = o(""), [b, C] = o(a?.givenName ?? ""), [r, n] = o(a?.familyName ?? ""), [m, v] = o(a?.nickname ?? ""), [S, z] = o(a?.picture ?? ""), [x, I] = o(a?.website ?? ""), [A, L] = o(
     Object.fromEntries(
-      Object.entries(a?.customAttributes ?? {}).map(([C, S]) => [C, String(S)])
+      Object.entries(a?.customAttributes ?? {}).map(([k, y]) => [k, String(y)])
     )
-  ), [R, T] = o(!1), z = w((C, S) => {
-    M((k) => ({ ...k, [C]: S }));
-  }, []), v = w(
-    async (C) => {
-      C.preventDefault(), T(!0);
+  ), [E, P] = o(!1), D = w((k, y) => {
+    L((M) => ({ ...M, [k]: y }));
+  }, []), N = w(
+    async (k) => {
+      k.preventDefault(), P(!0);
       try {
-        await h({
-          email: u,
+        await p({
+          email: h,
           ...!l && s ? { password: s } : {},
-          givenName: g || void 0,
-          familyName: n || void 0,
-          nickname: d || void 0,
-          picture: A || void 0,
-          website: y || void 0,
-          customAttributes: I
+          givenName: b || void 0,
+          familyName: r || void 0,
+          nickname: m || void 0,
+          picture: S || void 0,
+          website: x || void 0,
+          customAttributes: A
         });
       } finally {
-        T(!1);
+        P(!1);
       }
     },
-    [u, s, g, n, d, A, y, I, l, h]
+    [h, s, b, r, m, S, x, A, l, p]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit User" : "Create User", className: "max-w-[640px]", children: [
-    c && /* @__PURE__ */ e(V, { variant: "error", children: c }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: v, children: [
+    c && /* @__PURE__ */ e($, { variant: "error", children: c }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: N, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Email",
           name: "email",
           type: "email",
-          value: u,
-          onChange: (C) => m(String(C)),
+          value: h,
+          onChange: (k) => u(String(k)),
           required: !0,
           placeholder: "user@example.com"
         }
       ),
       !l && /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Password",
           name: "password",
           type: "password",
           value: s,
-          onChange: (C) => p(String(C)),
+          onChange: (k) => d(String(k)),
           required: !0,
           placeholder: "Temporary password",
           helpText: "User will be prompted to change on first login."
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Given Name",
           name: "givenName",
-          value: g,
-          onChange: (C) => N(String(C)),
+          value: b,
+          onChange: (k) => C(String(k)),
           placeholder: "John"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Family Name",
           name: "familyName",
-          value: n,
-          onChange: (C) => r(String(C)),
+          value: r,
+          onChange: (k) => n(String(k)),
           placeholder: "Doe"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Nickname",
           name: "nickname",
-          value: d,
-          onChange: (C) => x(String(C)),
+          value: m,
+          onChange: (k) => v(String(k)),
           placeholder: "johnny"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Picture URL",
           name: "picture",
-          value: A,
-          onChange: (C) => E(String(C)),
+          value: S,
+          onChange: (k) => z(String(k)),
           placeholder: "https://..."
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Website",
           name: "website",
-          value: y,
-          onChange: (C) => P(String(C)),
+          value: x,
+          onChange: (k) => I(String(k)),
           placeholder: "https://..."
         }
       ),
       i && Object.keys(i).length > 0 && /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Custom Attributes" }),
-        Object.entries(i).map(([C, S]) => /* @__PURE__ */ e(
-          D,
+        Object.entries(i).map(([k, y]) => /* @__PURE__ */ e(
+          T,
           {
-            label: C,
-            name: `custom_${C}`,
-            type: S === "number" ? "number" : "text",
-            value: I[C] ?? "",
-            onChange: (k) => z(C, String(k)),
-            helpText: `Type: ${S}`
+            label: k,
+            name: `custom_${k}`,
+            type: y === "number" ? "number" : "text",
+            value: A[k] ?? "",
+            onChange: (M) => D(k, String(M)),
+            helpText: `Type: ${y}`
           },
-          C
+          k
         ))
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: R, children: R ? "Saving..." : l ? "Update User" : "Create User" }),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: b, children: "Cancel" })
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: E, children: E ? "Saving..." : l ? "Update User" : "Create User" }),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: g, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-function et({
+function nt({
   groups: a,
   poolName: l,
   onCreateGroup: i,
-  onEditGroup: h,
-  onDeleteGroup: b,
+  onEditGroup: p,
+  onDeleteGroup: g,
   loading: c
 }) {
-  const [u, m] = o(null), [s, p] = o(!1), g = w(
-    async (r) => {
-      p(!0);
+  const [h, u] = o(null), [s, d] = o(!1), b = w(
+    async (n) => {
+      d(!0);
       try {
-        await b(r);
+        await g(n);
       } finally {
-        p(!1), m(null);
+        d(!1), u(null);
       }
     },
-    [b]
-  ), N = G(
+    [g]
+  ), C = V(
     () => [
       { key: "groupName", header: "Name", sortable: !0 },
       { key: "description", header: "Description" },
       {
         key: "permissions",
         header: "Permissions",
-        render: (r) => /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1", children: r.permissions.length === 0 ? /* @__PURE__ */ e("span", { className: "text-text-tertiary text-xs", children: "None" }) : r.permissions.map((d) => /* @__PURE__ */ e(K, { tone: "info", size: "xs", children: d }, d)) })
+        render: (n) => /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1", children: n.permissions.length === 0 ? /* @__PURE__ */ e("span", { className: "text-text-tertiary text-xs", children: "None" }) : n.permissions.map((m) => /* @__PURE__ */ e(X, { tone: "info", size: "xs", children: m }, m)) })
       }
     ],
     []
-  ), n = w(
-    (r) => /* @__PURE__ */ t(j, { children: [
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => h(r.groupId), children: "Edit" }),
-      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => m(r.groupId), children: "Delete" })
+  ), r = w(
+    (n) => /* @__PURE__ */ t(j, { children: [
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => p(n.groupId), children: "Edit" }),
+      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(n.groupId), children: "Delete" })
     ] }),
-    [h]
+    [p]
   );
   return /* @__PURE__ */ t(
     F,
@@ -715,23 +715,23 @@ function et({
       actions: /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: i, children: "Create Group" }),
       children: [
         /* @__PURE__ */ e(
-          X,
+          H,
           {
-            columns: N,
+            columns: C,
             data: a,
             keyField: "groupId",
-            actions: n,
+            actions: r,
             loading: c,
             emptyMessage: "No groups in this pool yet.",
             emptyIcon: "👥"
           }
         ),
         /* @__PURE__ */ e(
-          H,
+          Q,
           {
-            open: !!u,
-            onConfirm: () => u && g(u),
-            onCancel: () => m(null),
+            open: !!h,
+            onConfirm: () => h && b(h),
+            onCancel: () => u(null),
             title: "Delete Group",
             body: "This action cannot be undone. Members will lose their group permissions.",
             tone: "destructive",
@@ -743,169 +743,166 @@ function et({
     }
   );
 }
-function tt({
+function rt({
   group: a,
   isEdit: l,
   members: i,
-  availableUsers: h,
-  onSubmit: b,
+  availableUsers: p,
+  onSubmit: g,
   onAddMember: c,
-  onRemoveMember: u,
-  onCancel: m,
+  onRemoveMember: h,
+  onCancel: u,
   error: s
 }) {
-  const [p, g] = o(a?.groupName ?? ""), [N, n] = o(a?.description ?? ""), [r, d] = o(a?.permissions ?? []), [x, A] = o(""), [E, y] = o(""), [P, I] = o(!1), M = w(
-    (v) => {
-      if (v.key === "Enter") {
-        v.preventDefault();
-        const C = x.trim();
-        C && !r.includes(C) && d((S) => [...S, C]), A("");
+  const [d, b] = o(a?.groupName ?? ""), [C, r] = o(a?.description ?? ""), [n, m] = o(a?.permissions ?? []), [v, S] = o(""), [z, x] = o(""), [I, A] = o(!1), L = w(
+    (N) => {
+      if (N.key === "Enter") {
+        N.preventDefault();
+        const k = v.trim();
+        k && !n.includes(k) && m((y) => [...y, k]), S("");
       }
     },
-    [x, r]
-  ), R = w((v) => {
-    d((C) => C.filter((S) => S !== v));
-  }, []), T = w(async () => {
-    E && c && (await c(E), y(""));
-  }, [E, c]), z = w(
-    async (v) => {
-      v.preventDefault(), I(!0);
+    [v, n]
+  ), E = w((N) => {
+    m((k) => k.filter((y) => y !== N));
+  }, []), P = w(async () => {
+    z && c && (await c(z), x(""));
+  }, [z, c]), D = w(
+    async (N) => {
+      N.preventDefault(), A(!0);
       try {
-        await b({ groupName: p, description: N, permissions: r });
+        await g({ groupName: d, description: C, permissions: n });
       } finally {
-        I(!1);
+        A(!1);
       }
     },
-    [p, N, r, b]
+    [d, C, n, g]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit Group" : "Create Group", className: "max-w-[640px]", children: [
-    s && /* @__PURE__ */ e(V, { variant: "error", children: s }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: z, children: [
+    s && /* @__PURE__ */ e($, { variant: "error", children: s }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: D, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Group Name",
           name: "groupName",
-          value: p,
-          onChange: (v) => g(String(v)),
+          value: d,
+          onChange: (N) => b(String(N)),
           required: !0,
           placeholder: "admins"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Description",
           name: "description",
           type: "textarea",
-          value: N,
-          onChange: (v) => n(String(v)),
+          value: C,
+          onChange: (N) => r(String(N)),
           placeholder: "Describe this group's purpose..."
         }
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Permissions" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: r.map((v) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
-          v,
+        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((N) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
+          N,
           /* @__PURE__ */ e(
             f,
             {
               variant: "ghost",
               size: "sm",
               className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
-              onClick: () => R(v),
-              "aria-label": `Remove permission ${v}`,
+              onClick: () => E(N),
+              "aria-label": `Remove permission ${N}`,
               children: "x"
             }
           )
-        ] }, v)) }),
+        ] }, N)) }),
         /* @__PURE__ */ e(
-          "input",
+          O,
           {
-            className: "w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border",
             placeholder: "Type a permission and press Enter",
-            value: x,
-            onChange: (v) => A(v.target.value),
-            onKeyDown: M
+            value: v,
+            onChange: (N) => S(N.target.value),
+            onKeyDown: L
           }
         )
       ] }),
       l && i && /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Members" }),
-        i.length === 0 ? /* @__PURE__ */ e("p", { className: "text-text-tertiary text-sm", children: "No members yet." }) : i.map((v) => /* @__PURE__ */ t("div", { className: "flex items-center justify-between py-1.5 border-b border-border", children: [
-          /* @__PURE__ */ e("span", { className: "text-base", children: v.email }),
-          u && /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(v.userId), children: "Remove" })
-        ] }, v.userId)),
-        h && h.length > 0 && c && /* @__PURE__ */ t("div", { className: "flex gap-2 mt-2", children: [
-          /* @__PURE__ */ t(
-            "select",
+        i.length === 0 ? /* @__PURE__ */ e("p", { className: "text-text-tertiary text-sm", children: "No members yet." }) : i.map((N) => /* @__PURE__ */ t("div", { className: "flex items-center justify-between py-1.5 border-b border-border", children: [
+          /* @__PURE__ */ e("span", { className: "text-base", children: N.email }),
+          h && /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => h(N.userId), children: "Remove" })
+        ] }, N.userId)),
+        p && p.length > 0 && c && /* @__PURE__ */ t("div", { className: "flex gap-2 mt-2", children: [
+          /* @__PURE__ */ e(
+            re,
             {
-              className: "flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary",
-              value: E,
-              onChange: (v) => y(v.target.value),
-              children: [
-                /* @__PURE__ */ e("option", { value: "", children: "Select user to add..." }),
-                h.map((v) => /* @__PURE__ */ e("option", { value: v.userId, children: v.email }, v.userId))
-              ]
+              className: "flex-1",
+              value: z,
+              onChange: (N) => x(N.target.value),
+              placeholder: "Select user to add...",
+              options: p.map((N) => ({ value: N.userId, label: N.email }))
             }
           ),
-          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: T, disabled: !E, children: "Add" })
+          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: P, disabled: !z, children: "Add" })
         ] })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: P, children: P ? "Saving..." : l ? "Update Group" : "Create Group" }),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: m, children: "Cancel" })
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: I, children: I ? "Saving..." : l ? "Update Group" : "Create Group" }),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: u, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-function at({
+function lt({
   applications: a,
   onCreateApp: l,
   onCreateAppWithPool: i,
-  onEditApp: h,
-  onDeleteApp: b,
+  onEditApp: p,
+  onDeleteApp: g,
   loading: c
 }) {
-  const [u, m] = o(null), [s, p] = o(!1), g = w(
-    async (r) => {
-      p(!0);
+  const [h, u] = o(null), [s, d] = o(!1), b = w(
+    async (n) => {
+      d(!0);
       try {
-        await b(r);
+        await g(n);
       } finally {
-        p(!1), m(null);
+        d(!1), u(null);
       }
     },
-    [b]
-  ), N = G(
+    [g]
+  ), C = V(
     () => [
       { key: "clientName", header: "Name", sortable: !0 },
       {
         key: "clientId",
         header: "Client ID",
-        render: (r) => /* @__PURE__ */ e("span", { className: "font-mono text-xs text-neutral", children: r.clientId })
+        render: (n) => /* @__PURE__ */ e("span", { className: "font-mono text-xs text-neutral", children: n.clientId })
       },
-      { key: "poolName", header: "Pool", render: (r) => r.poolName || r.poolId },
+      { key: "poolName", header: "Pool", render: (n) => n.poolName || n.poolId },
       {
         key: "redirectUris",
         header: "Redirect URIs",
-        render: (r) => /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-1", children: [
-          r.redirectUris.slice(0, 2).map((d) => /* @__PURE__ */ e(K, { tone: "neutral", size: "xs", children: d }, d)),
-          r.redirectUris.length > 2 && /* @__PURE__ */ t(K, { tone: "neutral", size: "xs", children: [
+        render: (n) => /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-1", children: [
+          n.redirectUris.slice(0, 2).map((m) => /* @__PURE__ */ e(X, { tone: "neutral", size: "xs", children: m }, m)),
+          n.redirectUris.length > 2 && /* @__PURE__ */ t(X, { tone: "neutral", size: "xs", children: [
             "+",
-            r.redirectUris.length - 2,
+            n.redirectUris.length - 2,
             " more"
           ] })
         ] })
       }
     ],
     []
-  ), n = w(
-    (r) => /* @__PURE__ */ t(j, { children: [
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => h(r.clientId), children: "Edit" }),
-      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => m(r.clientId), children: "Delete" })
+  ), r = w(
+    (n) => /* @__PURE__ */ t(j, { children: [
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => p(n.clientId), children: "Edit" }),
+      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(n.clientId), children: "Delete" })
     ] }),
-    [h]
+    [p]
   );
   return /* @__PURE__ */ t(
     F,
@@ -917,23 +914,23 @@ function at({
       ] }),
       children: [
         /* @__PURE__ */ e(
-          X,
+          H,
           {
-            columns: N,
+            columns: C,
             data: a,
             keyField: "clientId",
-            actions: n,
+            actions: r,
             loading: c,
             emptyMessage: "No applications registered yet.",
             emptyIcon: "🔐"
           }
         ),
         /* @__PURE__ */ e(
-          H,
+          Q,
           {
-            open: !!u,
-            onConfirm: () => u && g(u),
-            onCancel: () => m(null),
+            open: !!h,
+            onConfirm: () => h && b(h),
+            onCancel: () => u(null),
             title: "Delete Application",
             body: "This action cannot be undone. The application will lose access immediately.",
             tone: "destructive",
@@ -945,291 +942,288 @@ function at({
     }
   );
 }
-function le({
+function ce({
   label: a,
   values: l,
   onChange: i,
-  placeholder: h
+  placeholder: p
 }) {
-  const b = () => i([...l, ""]), c = (m) => i(l.filter((s, p) => p !== m)), u = (m, s) => i(l.map((p, g) => g === m ? s : p));
+  const g = () => i([...l, ""]), c = (u) => i(l.filter((s, d) => d !== u)), h = (u, s) => i(l.map((d, b) => b === u ? s : d));
   return /* @__PURE__ */ t("div", { className: "mb-4", children: [
     /* @__PURE__ */ e("label", { className: "block mb-1 text-sm font-semibold text-text-primary", children: a }),
-    l.map((m, s) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
+    l.map((u, s) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
       /* @__PURE__ */ e(
-        "input",
+        O,
         {
-          className: "flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary",
-          value: m,
-          onChange: (p) => u(s, p.target.value),
-          placeholder: h
+          className: "flex-1",
+          value: u,
+          onChange: (d) => h(s, d.target.value),
+          placeholder: p
         }
       ),
       /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => c(s), children: "Remove" })
     ] }, s)),
-    /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: b, children: "+ Add" })
+    /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: g, children: "+ Add" })
   ] });
 }
-const ke = [
+const Ae = [
   "authorization_code",
   "client_credentials",
   "refresh_token"
-], Se = ["code", "token", "id_token"];
-function nt({
+], Ie = ["code", "token", "id_token"];
+function it({
   application: a,
   isEdit: l,
   pools: i,
-  onSubmit: h,
-  onCancel: b,
+  onSubmit: p,
+  onCancel: g,
   error: c
 }) {
-  const [u, m] = o(a?.clientName ?? ""), [s, p] = o(a?.poolId ?? ""), [g, N] = o(a?.redirectUris ?? [""]), [n, r] = o(a?.postLogoutRedirectUris ?? []), [d, x] = o(a?.grantTypes ?? ["authorization_code"]), [A, E] = o(a?.responseTypes ?? ["code"]), [y, P] = o(a?.scope ?? "openid profile email"), [I, M] = o(!1), R = w((v) => {
-    x(
-      (C) => C.includes(v) ? C.filter((S) => S !== v) : [...C, v]
+  const [h, u] = o(a?.clientName ?? ""), [s, d] = o(a?.poolId ?? ""), [b, C] = o(a?.redirectUris ?? [""]), [r, n] = o(a?.postLogoutRedirectUris ?? []), [m, v] = o(a?.grantTypes ?? ["authorization_code"]), [S, z] = o(a?.responseTypes ?? ["code"]), [x, I] = o(a?.scope ?? "openid profile email"), [A, L] = o(!1), E = w((N) => {
+    v(
+      (k) => k.includes(N) ? k.filter((y) => y !== N) : [...k, N]
     );
-  }, []), T = w((v) => {
-    E(
-      (C) => C.includes(v) ? C.filter((S) => S !== v) : [...C, v]
+  }, []), P = w((N) => {
+    z(
+      (k) => k.includes(N) ? k.filter((y) => y !== N) : [...k, N]
     );
-  }, []), z = w(
-    async (v) => {
-      v.preventDefault(), M(!0);
+  }, []), D = w(
+    async (N) => {
+      N.preventDefault(), L(!0);
       try {
-        await h({
-          clientName: u,
+        await p({
+          clientName: h,
           poolId: s,
-          redirectUris: g.filter((C) => C.trim()),
-          postLogoutRedirectUris: n.filter((C) => C.trim()),
-          grantTypes: d,
-          responseTypes: A,
-          scope: y
+          redirectUris: b.filter((k) => k.trim()),
+          postLogoutRedirectUris: r.filter((k) => k.trim()),
+          grantTypes: m,
+          responseTypes: S,
+          scope: x
         });
       } finally {
-        M(!1);
+        L(!1);
       }
     },
-    [u, s, g, n, d, A, y, h]
+    [h, s, b, r, m, S, x, p]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit Application" : "New Application", className: "max-w-[640px]", children: [
-    c && /* @__PURE__ */ e(V, { variant: "error", children: c }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: z, children: [
+    c && /* @__PURE__ */ e($, { variant: "error", children: c }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: D, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Application Name",
           name: "clientName",
-          value: u,
-          onChange: (v) => m(String(v)),
+          value: h,
+          onChange: (N) => u(String(N)),
           required: !0,
           placeholder: "My App"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "User Pool",
           name: "poolId",
           type: "select",
           value: s,
-          onChange: (v) => p(String(v)),
+          onChange: (N) => d(String(N)),
           required: !0,
-          options: i.map((v) => ({ value: v.poolId, label: v.poolName })),
+          options: i.map((N) => ({ value: N.poolId, label: N.poolName })),
           placeholder: "Select a pool..."
         }
       ),
       /* @__PURE__ */ e(
-        le,
+        ce,
         {
           label: "Redirect URIs",
-          values: g,
-          onChange: N,
+          values: b,
+          onChange: C,
           placeholder: "https://app.example.com/callback"
         }
       ),
       /* @__PURE__ */ e(
-        le,
+        ce,
         {
           label: "Post-Logout Redirect URIs",
-          values: n,
-          onChange: r,
+          values: r,
+          onChange: n,
           placeholder: "https://app.example.com/logout"
         }
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Grant Types" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: ke.map((v) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Ae.map((N) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
           /* @__PURE__ */ e(
-            "input",
+            J,
             {
-              type: "checkbox",
-              checked: d.includes(v),
-              onChange: () => R(v)
+              checked: m.includes(N),
+              onChange: () => E(N)
             }
           ),
-          v
-        ] }, v)) })
+          N
+        ] }, N)) })
       ] }),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Response Types" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Se.map((v) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Ie.map((N) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
           /* @__PURE__ */ e(
-            "input",
+            J,
             {
-              type: "checkbox",
-              checked: A.includes(v),
-              onChange: () => T(v)
+              checked: S.includes(N),
+              onChange: () => P(N)
             }
           ),
-          v
-        ] }, v)) })
+          N
+        ] }, N)) })
       ] }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Scope",
           name: "scope",
-          value: y,
-          onChange: (v) => P(String(v)),
+          value: x,
+          onChange: (N) => I(String(N)),
           placeholder: "openid profile email",
           helpText: "Space-separated list of scopes."
         }
       ),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: I, children: I ? "Saving..." : l ? "Update Application" : "Create Application" }),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: b, children: "Cancel" })
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: A, children: A ? "Saving..." : l ? "Update Application" : "Create Application" }),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: g, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-const Ae = ["authorization_code", "client_credentials", "refresh_token"];
-function rt({ onSubmit: a, onCancel: l, error: i }) {
-  const [h, b] = o(""), [c, u] = o(""), [m, s] = o([""]), [p, g] = o(["authorization_code"]), [N, n] = o(!1), r = w((y) => {
-    g(
-      (P) => P.includes(y) ? P.filter((I) => I !== y) : [...P, y]
+const Pe = ["authorization_code", "client_credentials", "refresh_token"];
+function st({ onSubmit: a, onCancel: l, error: i }) {
+  const [p, g] = o(""), [c, h] = o(""), [u, s] = o([""]), [d, b] = o(["authorization_code"]), [C, r] = o(!1), n = w((x) => {
+    b(
+      (I) => I.includes(x) ? I.filter((A) => A !== x) : [...I, x]
     );
-  }, []), d = w(() => {
-    s((y) => [...y, ""]);
-  }, []), x = w((y) => {
-    s((P) => P.filter((I, M) => M !== y));
-  }, []), A = w((y, P) => {
-    s((I) => I.map((M, R) => R === y ? P : M));
-  }, []), E = w(
-    async (y) => {
-      y.preventDefault(), n(!0);
+  }, []), m = w(() => {
+    s((x) => [...x, ""]);
+  }, []), v = w((x) => {
+    s((I) => I.filter((A, L) => L !== x));
+  }, []), S = w((x, I) => {
+    s((A) => A.map((L, E) => E === x ? I : L));
+  }, []), z = w(
+    async (x) => {
+      x.preventDefault(), r(!0);
       try {
         await a({
-          poolName: h,
+          poolName: p,
           clientName: c,
-          redirectUris: m.filter((P) => P.trim()),
-          grantTypes: p
+          redirectUris: u.filter((I) => I.trim()),
+          grantTypes: d
         });
       } finally {
-        n(!1);
+        r(!1);
       }
     },
-    [h, c, m, p, a]
+    [p, c, u, d, a]
   );
   return /* @__PURE__ */ t(F, { title: "New Application + Pool", description: "Create a user pool and register an application in one step.", className: "max-w-[640px]", children: [
-    i && /* @__PURE__ */ e(V, { variant: "error", children: i }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: E, children: [
+    i && /* @__PURE__ */ e($, { variant: "error", children: i }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: z, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Pool Name",
           name: "poolName",
-          value: h,
-          onChange: (y) => b(String(y)),
+          value: p,
+          onChange: (x) => g(String(x)),
           required: !0,
           placeholder: "my-user-pool"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Application Name",
           name: "clientName",
           value: c,
-          onChange: (y) => u(String(y)),
+          onChange: (x) => h(String(x)),
           required: !0,
           placeholder: "My App"
         }
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Redirect URIs" }),
-        m.map((y, P) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
+        u.map((x, I) => /* @__PURE__ */ t("div", { className: "flex gap-2 items-center mb-1.5", children: [
           /* @__PURE__ */ e(
-            "input",
+            O,
             {
-              className: "flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary",
-              value: y,
-              onChange: (I) => A(P, I.target.value),
+              className: "flex-1",
+              value: x,
+              onChange: (A) => S(I, A.target.value),
               placeholder: "https://app.example.com/callback"
             }
           ),
-          m.length > 1 && /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => x(P), children: "Remove" })
-        ] }, P)),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: d, children: "+ Add URI" })
+          u.length > 1 && /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => v(I), children: "Remove" })
+        ] }, I)),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: m, children: "+ Add URI" })
       ] }),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Grant Types" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Ae.map((y) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2 mb-4", children: Pe.map((x) => /* @__PURE__ */ t("label", { className: "flex items-center gap-2 text-base text-text-primary cursor-pointer", children: [
           /* @__PURE__ */ e(
-            "input",
+            J,
             {
-              type: "checkbox",
-              checked: p.includes(y),
-              onChange: () => r(y)
+              checked: d.includes(x),
+              onChange: () => n(x)
             }
           ),
-          y
-        ] }, y)) })
+          x
+        ] }, x)) })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: N, children: N ? "Creating..." : "Create Pool + Application" }),
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: C, children: C ? "Creating..." : "Create Pool + Application" }),
         /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: l, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-function it({
+function ot({
   templates: a,
   onCreateTemplate: l,
   onEditTemplate: i,
-  onDeleteTemplate: h,
-  onTestSend: b,
+  onDeleteTemplate: p,
+  onTestSend: g,
   loading: c
 }) {
-  const [u, m] = o(null), [s, p] = o(!1), [g, N] = o(null), [n, r] = o(""), [d, x] = o(!1), A = w(
-    async (I) => {
-      p(!0);
+  const [h, u] = o(null), [s, d] = o(!1), [b, C] = o(null), [r, n] = o(""), [m, v] = o(!1), S = w(
+    async (A) => {
+      d(!0);
       try {
-        await h(I);
+        await p(A);
       } finally {
-        p(!1), m(null);
+        d(!1), u(null);
       }
     },
-    [h]
-  ), E = w(async () => {
-    if (!(!g || !n.trim())) {
-      x(!0);
+    [p]
+  ), z = w(async () => {
+    if (!(!b || !r.trim())) {
+      v(!0);
       try {
-        await b(g, n.trim()), N(null), r("");
+        await g(b, r.trim()), C(null), n("");
       } finally {
-        x(!1);
+        v(!1);
       }
     }
-  }, [g, n, b]), y = G(
+  }, [b, r, g]), x = V(
     () => [
       { key: "name", header: "Name", sortable: !0 },
       { key: "subject", header: "Subject" }
     ],
     []
-  ), P = w(
-    (I) => /* @__PURE__ */ t(j, { children: [
-      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => i(I.templateId), children: "Edit" }),
+  ), I = w(
+    (A) => /* @__PURE__ */ t(j, { children: [
+      /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => i(A.templateId), children: "Edit" }),
       /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => {
-        N(I.templateId), r("");
+        C(A.templateId), n("");
       }, children: "Test Send" }),
-      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => m(I.templateId), children: "Delete" })
+      /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => u(A.templateId), children: "Delete" })
     ] }),
     [i]
   );
@@ -1240,46 +1234,46 @@ function it({
       actions: /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: l, children: "Create Template" }),
       children: [
         /* @__PURE__ */ e(
-          X,
+          H,
           {
-            columns: y,
+            columns: x,
             data: a,
             keyField: "templateId",
-            actions: P,
+            actions: I,
             loading: c,
             emptyMessage: "No email templates configured.",
             emptyIcon: "✉️"
           }
         ),
         /* @__PURE__ */ e(
-          ye,
+          we,
           {
-            open: !!g,
-            onClose: () => N(null),
+            open: !!b,
+            onClose: () => C(null),
             title: "Send Test Email",
             footer: /* @__PURE__ */ t(j, { children: [
-              /* @__PURE__ */ e(f, { variant: "ghost", size: "md", onClick: () => N(null), children: "Cancel" }),
-              /* @__PURE__ */ e(f, { variant: "primary", size: "md", onClick: E, disabled: d || !n.trim(), children: d ? "Sending..." : "Send" })
+              /* @__PURE__ */ e(f, { variant: "ghost", size: "md", onClick: () => C(null), children: "Cancel" }),
+              /* @__PURE__ */ e(f, { variant: "primary", size: "md", onClick: z, disabled: m || !r.trim(), children: m ? "Sending..." : "Send" })
             ] }),
             children: /* @__PURE__ */ e(
-              D,
+              T,
               {
                 label: "Recipient Email",
                 name: "test-email",
                 type: "email",
-                value: n,
-                onChange: (I) => r(String(I)),
+                value: r,
+                onChange: (A) => n(String(A)),
                 placeholder: "recipient@example.com"
               }
             )
           }
         ),
         /* @__PURE__ */ e(
-          H,
+          Q,
           {
-            open: !!u,
-            onConfirm: () => u && A(u),
-            onCancel: () => m(null),
+            open: !!h,
+            onConfirm: () => h && S(h),
+            onCancel: () => u(null),
             title: "Delete Template",
             body: "This action cannot be undone. The template will be permanently removed.",
             tone: "destructive",
@@ -1291,56 +1285,56 @@ function it({
     }
   );
 }
-function lt({
+function ct({
   template: a,
   isEdit: l,
   onSubmit: i,
-  onCancel: h,
-  error: b
+  onCancel: p,
+  error: g
 }) {
-  const [c, u] = o(a?.name ?? ""), [m, s] = o(a?.subject ?? ""), [p, g] = o(a?.htmlBody ?? ""), [N, n] = o(a?.textBody ?? ""), [r, d] = o(a?.variables ?? []), [x, A] = o(""), [E, y] = o(!1), [P, I] = o(!1), M = w(
-    (z) => {
-      if (z.key === "Enter") {
-        z.preventDefault();
-        const v = x.trim();
-        v && !r.includes(v) && d((C) => [...C, v]), A("");
+  const [c, h] = o(a?.name ?? ""), [u, s] = o(a?.subject ?? ""), [d, b] = o(a?.htmlBody ?? ""), [C, r] = o(a?.textBody ?? ""), [n, m] = o(a?.variables ?? []), [v, S] = o(""), [z, x] = o(!1), [I, A] = o(!1), L = w(
+    (D) => {
+      if (D.key === "Enter") {
+        D.preventDefault();
+        const N = v.trim();
+        N && !n.includes(N) && m((k) => [...k, N]), S("");
       }
     },
-    [x, r]
-  ), R = w((z) => {
-    d((v) => v.filter((C) => C !== z));
-  }, []), T = w(
-    async (z) => {
-      z.preventDefault(), I(!0);
+    [v, n]
+  ), E = w((D) => {
+    m((N) => N.filter((k) => k !== D));
+  }, []), P = w(
+    async (D) => {
+      D.preventDefault(), A(!0);
       try {
-        await i({ name: c, subject: m, htmlBody: p, textBody: N, variables: r });
+        await i({ name: c, subject: u, htmlBody: d, textBody: C, variables: n });
       } finally {
-        I(!1);
+        A(!1);
       }
     },
-    [c, m, p, N, r, i]
+    [c, u, d, C, n, i]
   );
   return /* @__PURE__ */ t(F, { title: l ? "Edit Email Template" : "Create Email Template", className: "max-w-[800px]", children: [
-    b && /* @__PURE__ */ e(V, { variant: "error", children: b }),
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: T, children: [
+    g && /* @__PURE__ */ e($, { variant: "error", children: g }),
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("form", { onSubmit: P, children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Template Name",
           name: "name",
           value: c,
-          onChange: (z) => u(String(z)),
+          onChange: (D) => h(String(D)),
           required: !0,
           placeholder: "welcome-email"
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Subject",
           name: "subject",
-          value: m,
-          onChange: (z) => s(String(z)),
+          value: u,
+          onChange: (D) => s(String(D)),
           required: !0,
           placeholder: "Welcome to {{appName}}"
         }
@@ -1348,90 +1342,89 @@ function lt({
       /* @__PURE__ */ t("div", { className: "mb-4", children: [
         /* @__PURE__ */ t("div", { className: "flex items-center justify-between mb-1", children: [
           /* @__PURE__ */ e("label", { className: "text-sm font-semibold text-text-primary", children: "HTML Body" }),
-          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => y((z) => !z), children: E ? "Hide Preview" : "Show Preview" })
+          /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => x((D) => !D), children: z ? "Hide Preview" : "Show Preview" })
         ] }),
         /* @__PURE__ */ e(
-          "textarea",
+          fe,
           {
-            value: p,
-            onChange: (z) => g(z.target.value),
+            value: d,
+            onChange: (D) => b(D.target.value),
             placeholder: "<html><body>...</body></html>",
             rows: 10,
-            className: "w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary resize-y box-border font-mono"
+            className: "resize-y font-mono"
           }
         ),
-        E && /* @__PURE__ */ e(
+        z && /* @__PURE__ */ e(
           "div",
           {
             className: "border border-border rounded-sm p-4 bg-white min-h-[200px] mt-2",
-            dangerouslySetInnerHTML: { __html: p }
+            dangerouslySetInnerHTML: { __html: d }
           }
         )
       ] }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Text Body",
           name: "textBody",
           type: "textarea",
-          value: N,
-          onChange: (z) => n(String(z)),
+          value: C,
+          onChange: (D) => r(String(D)),
           placeholder: "Plain text version of the email..."
         }
       ),
       /* @__PURE__ */ t("section", { children: [
         /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mt-6 mb-2", children: "Variables" }),
-        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: r.map((z) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
-          "{{" + z + "}}",
+        /* @__PURE__ */ e("div", { className: "flex flex-wrap gap-1.5 mb-2", children: n.map((D) => /* @__PURE__ */ t("span", { className: "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium", children: [
+          "{{" + D + "}}",
           /* @__PURE__ */ e(
             f,
             {
               variant: "ghost",
               size: "sm",
               className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
-              onClick: () => R(z),
-              "aria-label": `Remove variable ${z}`,
+              onClick: () => E(D),
+              "aria-label": `Remove variable ${D}`,
               children: "x"
             }
           )
-        ] }, z)) }),
+        ] }, D)) }),
         /* @__PURE__ */ e(
-          "input",
+          O,
           {
-            className: "w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border",
             placeholder: "Type variable name and press Enter",
-            value: x,
-            onChange: (z) => A(z.target.value),
-            onKeyDown: M
+            value: v,
+            onChange: (D) => S(D.target.value),
+            onKeyDown: L
           }
         )
       ] }),
       /* @__PURE__ */ t("div", { className: "flex gap-3 mt-6 pt-5 border-t border-border-subtle", children: [
-        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: P, children: P ? "Saving..." : l ? "Update Template" : "Create Template" }),
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: h, children: "Cancel" })
+        /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "lg", disabled: I, children: I ? "Saving..." : l ? "Update Template" : "Create Template" }),
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: p, children: "Cancel" })
       ] })
     ] }) })
   ] });
 }
-function st({
+function dt({
   metrics: a,
   users: l,
   pools: i,
-  onRefresh: h,
-  loading: b
+  onRefresh: p,
+  loading: g
 }) {
-  const [c, u] = o(""), m = G(() => l ?? [], [l]), s = G(
+  const [c, h] = o(""), u = V(() => l ?? [], [l]), s = V(
     () => [
       { key: "email", header: "Email", sortable: !0 },
       {
         key: "mfaEnabled",
         header: "MFA Status",
         width: "140px",
-        render: (g) => /* @__PURE__ */ e(
-          ne,
+        render: (d) => /* @__PURE__ */ e(
+          ie,
           {
-            status: g.mfaEnabled ? "ENABLED" : "DISABLED",
-            variant: g.mfaEnabled ? "success" : "warning"
+            status: d.mfaEnabled ? "ENABLED" : "DISABLED",
+            variant: d.mfaEnabled ? "success" : "warning"
           }
         )
       },
@@ -1439,32 +1432,32 @@ function st({
     ],
     []
   );
-  return b ? /* @__PURE__ */ t(F, { title: "MFA Management", children: [
-    /* @__PURE__ */ e("div", { className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4", children: [1, 2, 3, 4].map((g) => /* @__PURE__ */ t(U, { padding: "md", children: [
+  return g ? /* @__PURE__ */ t(F, { title: "MFA Management", children: [
+    /* @__PURE__ */ e("div", { className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4", children: [1, 2, 3, 4].map((d) => /* @__PURE__ */ t(R, { padding: "md", children: [
       /* @__PURE__ */ e("div", { className: "h-5 w-12 rounded bg-surface-hover animate-pulse mb-2" }),
       /* @__PURE__ */ e("div", { className: "h-3 w-20 rounded bg-surface-hover animate-pulse" })
-    ] }, g)) }),
-    /* @__PURE__ */ e(U, { className: "h-[200px] animate-pulse" })
+    ] }, d)) }),
+    /* @__PURE__ */ e(R, { className: "h-[200px] animate-pulse" })
   ] }) : /* @__PURE__ */ t(
     F,
     {
       title: "MFA Management",
-      actions: /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: h, children: "Refresh" }),
+      actions: /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: p, children: "Refresh" }),
       children: [
         a && /* @__PURE__ */ t("section", { className: "grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4", children: [
-          /* @__PURE__ */ t(U, { padding: "md", children: [
+          /* @__PURE__ */ t(R, { padding: "md", children: [
             /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-info-fg mb-1", children: a.totalUsers }),
             /* @__PURE__ */ e("div", { className: "text-sm text-neutral", children: "Total Users" })
           ] }),
-          /* @__PURE__ */ t(U, { padding: "md", children: [
+          /* @__PURE__ */ t(R, { padding: "md", children: [
             /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-success-fg mb-1", children: a.mfaEnabled }),
             /* @__PURE__ */ e("div", { className: "text-sm text-neutral", children: "MFA Enabled" })
           ] }),
-          /* @__PURE__ */ t(U, { padding: "md", children: [
+          /* @__PURE__ */ t(R, { padding: "md", children: [
             /* @__PURE__ */ e("div", { className: "text-[1.75rem] font-bold text-warning-fg mb-1", children: a.mfaDisabled }),
             /* @__PURE__ */ e("div", { className: "text-sm text-neutral", children: "MFA Disabled" })
           ] }),
-          /* @__PURE__ */ t(U, { padding: "md", children: [
+          /* @__PURE__ */ t(R, { padding: "md", children: [
             /* @__PURE__ */ t("div", { className: "text-[1.75rem] font-bold text-info-fg mb-1", children: [
               a.adoptionRate,
               "%"
@@ -1474,21 +1467,27 @@ function st({
         ] }),
         i && i.length > 0 && /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
           /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "Filter by pool" }),
-          /* @__PURE__ */ t("select", { className: "px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow", value: c, onChange: (g) => u(g.target.value), children: [
-            /* @__PURE__ */ e("option", { value: "", children: "All Pools" }),
-            i.map((g) => /* @__PURE__ */ t("option", { value: g.poolId, children: [
-              g.poolName,
-              " (",
-              g.userCount,
-              " users)"
-            ] }, g.poolId))
-          ] })
+          /* @__PURE__ */ e(
+            re,
+            {
+              className: "w-64",
+              value: c,
+              onChange: (d) => h(d.target.value),
+              options: [
+                { value: "", label: "All Pools" },
+                ...i.map((d) => ({
+                  value: d.poolId,
+                  label: `${d.poolName} (${d.userCount} users)`
+                }))
+              ]
+            }
+          )
         ] }),
         /* @__PURE__ */ e(
-          X,
+          H,
           {
             columns: s,
-            data: m,
+            data: u,
             keyField: "userId",
             emptyMessage: "No user MFA data available.",
             emptyIcon: "🔑"
@@ -1498,128 +1497,136 @@ function st({
     }
   );
 }
-const Ie = ["", "user", "pool", "client", "group", "template"];
-function ot({
+const Te = ["", "user", "pool", "client", "group", "template"];
+function mt({
   records: a,
   onQuery: l,
   onViewEntity: i,
-  onReplay: h,
-  loading: b,
+  onReplay: p,
+  loading: g,
   totalRecords: c
 }) {
-  const [u, m] = o(""), [s, p] = o(""), [g, N] = o(""), [n, r] = o(""), [d, x] = o("50"), [A, E] = o(""), [y, P] = o(""), [I, M] = o(null), [R, T] = o(!1), z = w(async () => {
+  const [h, u] = o(""), [s, d] = o(""), [b, C] = o(""), [r, n] = o(""), [m, v] = o("50"), [S, z] = o(""), [x, I] = o(""), [A, L] = o(null), [E, P] = o(!1), D = w(async () => {
     await l({
-      entityType: u || void 0,
+      entityType: h || void 0,
       entityId: s || void 0,
-      fromTime: g ? new Date(g).getTime() : void 0,
-      toTime: n ? new Date(n).getTime() : void 0,
-      limit: d ? Number(d) : void 0
+      fromTime: b ? new Date(b).getTime() : void 0,
+      toTime: r ? new Date(r).getTime() : void 0,
+      limit: m ? Number(m) : void 0
     });
-  }, [u, s, g, n, d, l]), v = w(async () => {
-    if (!(!A || !y)) {
-      T(!0);
+  }, [h, s, b, r, m, l]), N = w(async () => {
+    if (!(!S || !x)) {
+      P(!0);
       try {
-        const k = await h(A, new Date(y).getTime());
-        M(k);
+        const y = await p(S, new Date(x).getTime());
+        L(y);
       } finally {
-        T(!1);
+        P(!1);
       }
     }
-  }, [A, y, h]), C = G(
+  }, [S, x, p]), k = V(
     () => [
       {
         key: "timestamp",
         header: "Timestamp",
         sortable: !0,
-        render: (k) => /* @__PURE__ */ e("span", { className: "font-mono text-xs text-neutral", children: new Date(k.timestamp).toLocaleString() })
+        render: (y) => /* @__PURE__ */ e("span", { className: "font-mono text-xs text-neutral", children: new Date(y.timestamp).toLocaleString() })
       },
       {
         key: "actor",
         header: "Actor",
-        render: (k) => typeof k.actor == "string" ? k.actor : k.actor?.email || k.actor?.id || JSON.stringify(k.actor)
+        render: (y) => typeof y.actor == "string" ? y.actor : y.actor?.email || y.actor?.id || JSON.stringify(y.actor)
       },
       { key: "entityType", header: "Entity Type" },
       {
         key: "entityId",
         header: "Entity ID",
-        render: (k) => /* @__PURE__ */ e(
+        render: (y) => /* @__PURE__ */ e(
           f,
           {
             variant: "ghost",
             size: "sm",
             className: "p-0 underline text-info-fg font-mono text-xs",
-            onClick: () => i(k.entityType, k.entityId),
-            children: k.entityId
+            onClick: () => i(y.entityType, y.entityId),
+            children: y.entityId
           }
         )
       },
       { key: "operation", header: "Operation" }
     ],
     [i]
-  ), S = "px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow";
+  );
   return /* @__PURE__ */ t(F, { title: "Audit Log", children: [
-    /* @__PURE__ */ e(U, { padding: "md", children: /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-4 items-end", children: [
+    /* @__PURE__ */ e(R, { padding: "md", children: /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-4 items-end", children: [
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "Entity Type" }),
-        /* @__PURE__ */ t("select", { className: S, value: u, onChange: (k) => m(k.target.value), children: [
-          /* @__PURE__ */ e("option", { value: "", children: "All" }),
-          Ie.filter(Boolean).map((k) => /* @__PURE__ */ e("option", { value: k, children: k }, k))
-        ] })
+        /* @__PURE__ */ e(
+          re,
+          {
+            className: "w-40",
+            value: h,
+            onChange: (y) => u(y.target.value),
+            options: [
+              { value: "", label: "All" },
+              ...Te.filter(Boolean).map((y) => ({ value: y, label: y }))
+            ]
+          }
+        )
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "Entity ID" }),
-        /* @__PURE__ */ e("input", { className: S, value: s, onChange: (k) => p(k.target.value), placeholder: "Optional" })
+        /* @__PURE__ */ e(O, { className: "w-44", value: s, onChange: (y) => d(y.target.value), placeholder: "Optional" })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "From" }),
-        /* @__PURE__ */ e("input", { className: S, type: "datetime-local", value: g, onChange: (k) => N(k.target.value) })
+        /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: b, onChange: (y) => C(y.target.value) })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "To" }),
-        /* @__PURE__ */ e("input", { className: S, type: "datetime-local", value: n, onChange: (k) => r(k.target.value) })
+        /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: r, onChange: (y) => n(y.target.value) })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
         /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "Limit" }),
-        /* @__PURE__ */ e("input", { className: `${S} w-[70px]`, type: "number", value: d, onChange: (k) => x(k.target.value) })
+        /* @__PURE__ */ e(O, { className: "w-[70px]", type: "number", value: m, onChange: (y) => v(y.target.value) })
       ] }),
-      /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: z, disabled: b, children: b ? "Querying..." : "Query" })
+      /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: D, disabled: g, children: g ? "Querying..." : "Query" })
     ] }) }),
     c !== void 0 && /* @__PURE__ */ t("p", { className: "text-sm text-text-tertiary m-0", children: [
       c,
       " total record(s)"
     ] }),
     /* @__PURE__ */ e(
-      X,
+      H,
       {
-        columns: C,
+        columns: k,
         data: a,
         keyField: "timestamp",
-        loading: b,
+        loading: g,
         emptyMessage: "No audit records found. Adjust filters and query.",
         emptyIcon: "📜"
       }
     ),
-    /* @__PURE__ */ t(U, { padding: "md", children: [
+    /* @__PURE__ */ t(R, { padding: "md", children: [
       /* @__PURE__ */ e("h3", { className: "text-base font-semibold text-text-primary mb-4 mt-0", children: "Point-in-Time Replay" }),
       /* @__PURE__ */ t("div", { className: "flex flex-wrap gap-4 items-end mb-4", children: [
         /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
           /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "Entity ID" }),
-          /* @__PURE__ */ e("input", { className: S, value: A, onChange: (k) => E(k.target.value), placeholder: "entity-id" })
+          /* @__PURE__ */ e(O, { className: "w-44", value: S, onChange: (y) => z(y.target.value), placeholder: "entity-id" })
         ] }),
         /* @__PURE__ */ t("div", { className: "flex flex-col gap-1.5", children: [
           /* @__PURE__ */ e("label", { className: "text-xs font-semibold text-neutral uppercase tracking-wide", children: "At Timestamp" }),
-          /* @__PURE__ */ e("input", { className: S, type: "datetime-local", value: y, onChange: (k) => P(k.target.value) })
+          /* @__PURE__ */ e(O, { className: "w-52", type: "datetime-local", value: x, onChange: (y) => I(y.target.value) })
         ] }),
-        /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: v, disabled: R || !A || !y, children: R ? "Replaying..." : "Replay" })
+        /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: N, disabled: E || !S || !x, children: E ? "Replaying..." : "Replay" })
       ] }),
-      I && /* @__PURE__ */ e("pre", { className: "p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0", children: JSON.stringify(I, null, 2) })
+      A && /* @__PURE__ */ e("pre", { className: "p-4 bg-surface-panel border border-border rounded-md font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[300px] overflow-y-auto m-0", children: JSON.stringify(A, null, 2) })
     ] })
   ] });
 }
-function ct({ status: a, onNavigate: l }) {
-  const [i, h] = o(null), b = w((s) => {
-    h((p) => p === s ? null : s);
-  }, []), c = G(
+function ut({ status: a, onNavigate: l }) {
+  const [i, p] = o(null), g = w((s) => {
+    p((d) => d === s ? null : s);
+  }, []), c = V(
     () => [
       {
         title: "Create User Pool",
@@ -1696,104 +1703,103 @@ window.location.href = authUrl;` })
       }
     ],
     [a, l]
-  ), u = c.filter((s) => s.done).length, m = Math.round(u / c.length * 100);
+  ), h = c.filter((s) => s.done).length, u = Math.round(h / c.length * 100);
   return /* @__PURE__ */ t(
     F,
     {
       title: "Setup Guide",
-      description: `${u} of ${c.length} steps completed (${m}%)`,
+      description: `${h} of ${c.length} steps completed (${u}%)`,
       children: [
         /* @__PURE__ */ e("div", { className: "h-2 bg-surface-hover rounded-full overflow-hidden", children: /* @__PURE__ */ e(
           "div",
           {
             className: "h-full bg-success rounded-full transition-[width] duration-300 ease-in-out",
-            style: { width: `${m}%` }
+            style: { width: `${u}%` }
           }
         ) }),
-        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2", children: c.map((s, p) => /* @__PURE__ */ t(U, { children: [
+        /* @__PURE__ */ e("div", { className: "flex flex-col gap-2", children: c.map((s, d) => /* @__PURE__ */ t(R, { children: [
           /* @__PURE__ */ t(
             "div",
             {
               className: "flex items-center justify-between px-5 py-4 cursor-pointer select-none",
-              onClick: () => b(p),
+              onClick: () => g(d),
               role: "button",
-              "aria-expanded": i === p,
+              "aria-expanded": i === d,
               children: [
                 /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
                   /* @__PURE__ */ e(
                     "div",
                     {
-                      className: O(
+                      className: G(
                         "w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0",
                         s.done ? "bg-success text-white" : "bg-surface-hover text-text-tertiary"
                       ),
-                      children: s.done ? "✓" : p + 1
+                      children: s.done ? "✓" : d + 1
                     }
                   ),
                   /* @__PURE__ */ e("span", { className: "text-sm font-medium text-text-primary", children: s.title })
                 ] }),
-                /* @__PURE__ */ e("span", { className: "text-text-tertiary text-sm", children: i === p ? "▲" : "▼" })
+                /* @__PURE__ */ e("span", { className: "text-text-tertiary text-sm", children: i === d ? "▲" : "▼" })
               ]
             }
           ),
-          i === p && /* @__PURE__ */ e("div", { className: "px-5 pb-5 pt-0 border-t border-border-subtle", children: /* @__PURE__ */ e("div", { className: "pt-4", children: s.content }) })
-        ] }, p)) })
+          i === d && /* @__PURE__ */ e("div", { className: "px-5 pb-5 pt-0 border-t border-border-subtle", children: /* @__PURE__ */ e("div", { className: "pt-4", children: s.content }) })
+        ] }, d)) })
       ]
     }
   );
 }
-function Pe({ data: a }) {
+function De({ data: a }) {
   return /* @__PURE__ */ e("pre", { className: "p-5 font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel", children: JSON.stringify(a, null, 2) });
 }
-function Te({ rates: a }) {
+function ze({ rates: a }) {
   const l = Object.entries(a);
-  return l.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No rate limiter data available." }) : /* @__PURE__ */ t(J, { children: [
-    /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
+  return l.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No rate limiter data available." }) : /* @__PURE__ */ t(ee, { children: [
+    /* @__PURE__ */ e(te, { children: /* @__PURE__ */ t("tr", { children: [
       /* @__PURE__ */ e(_, { children: "Key" }),
       /* @__PURE__ */ e(_, { children: "Value" })
     ] }) }),
-    /* @__PURE__ */ e(ee, { children: l.map(([i, h]) => /* @__PURE__ */ t(te, { children: [
+    /* @__PURE__ */ e(ae, { children: l.map(([i, p]) => /* @__PURE__ */ t(ne, { children: [
       /* @__PURE__ */ e(q, { className: "font-mono text-xs", children: i }),
-      /* @__PURE__ */ e(q, { children: typeof h == "object" ? JSON.stringify(h) : String(h) })
+      /* @__PURE__ */ e(q, { children: typeof p == "object" ? JSON.stringify(p) : String(p) })
     ] }, i)) })
   ] });
 }
-function dt({
+function ht({
   diagnostics: a,
   rates: l,
   dlq: i,
-  onRedrive: h,
-  onPurge: b,
+  onRedrive: p,
+  onPurge: g,
   onRefresh: c,
-  loading: u
+  loading: h
 }) {
-  const [m, s] = o(!1), p = ce(null);
-  de(() => (m ? p.current = setInterval(c, 1e4) : p.current && (clearInterval(p.current), p.current = null), () => {
-    p.current && clearInterval(p.current);
-  }), [m, c]);
-  const g = w(
-    async (n) => {
-      await h(n);
+  const [u, s] = o(!1), d = ue(null);
+  he(() => (u ? d.current = setInterval(c, 1e4) : d.current && (clearInterval(d.current), d.current = null), () => {
+    d.current && clearInterval(d.current);
+  }), [u, c]);
+  const b = w(
+    async (r) => {
+      await p(r);
     },
-    [h]
-  ), N = w(
-    async (n) => {
-      await b(n);
+    [p]
+  ), C = w(
+    async (r) => {
+      await g(r);
     },
-    [b]
+    [g]
   );
-  return u ? /* @__PURE__ */ e(F, { title: "Diagnostics", children: /* @__PURE__ */ e("div", { className: "flex flex-col gap-4", children: [1, 2, 3].map((n) => /* @__PURE__ */ e(U, { className: "h-[120px] animate-pulse" }, n)) }) }) : /* @__PURE__ */ t(
+  return h ? /* @__PURE__ */ e(F, { title: "Diagnostics", children: /* @__PURE__ */ e("div", { className: "flex flex-col gap-4", children: [1, 2, 3].map((r) => /* @__PURE__ */ e(R, { className: "h-[120px] animate-pulse" }, r)) }) }) : /* @__PURE__ */ t(
     F,
     {
       title: "Diagnostics",
       actions: /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
         /* @__PURE__ */ t("label", { className: "flex items-center gap-1.5 text-sm text-neutral cursor-pointer", children: [
           /* @__PURE__ */ e(
-            "input",
+            J,
             {
-              type: "checkbox",
-              checked: m,
-              onChange: (n) => s(n.target.checked),
+              checked: u,
+              onChange: s,
               className: "rounded"
             }
           ),
@@ -1802,98 +1808,98 @@ function dt({
         /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: c, children: "Refresh" })
       ] }),
       children: [
-        /* @__PURE__ */ t(U, { children: [
+        /* @__PURE__ */ t(R, { children: [
           /* @__PURE__ */ e("div", { className: "px-5 py-3 border-b border-border bg-surface-panel", children: /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-text-primary m-0", children: "Node / Cluster Diagnostics" }) }),
-          a ? /* @__PURE__ */ e(Pe, { data: a }) : /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No diagnostics data available." })
+          a ? /* @__PURE__ */ e(De, { data: a }) : /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No diagnostics data available." })
         ] }),
-        /* @__PURE__ */ t(U, { children: [
+        /* @__PURE__ */ t(R, { children: [
           /* @__PURE__ */ e("div", { className: "px-5 py-3 border-b border-border bg-surface-panel", children: /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-text-primary m-0", children: "Rate Limiter Stats" }) }),
-          l ? /* @__PURE__ */ e(Te, { rates: l }) : /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No rate data available." })
+          l ? /* @__PURE__ */ e(ze, { rates: l }) : /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "No rate data available." })
         ] }),
-        /* @__PURE__ */ t(U, { children: [
+        /* @__PURE__ */ t(R, { children: [
           /* @__PURE__ */ e("div", { className: "px-5 py-3 border-b border-border bg-surface-panel", children: /* @__PURE__ */ e("h3", { className: "text-sm font-semibold text-text-primary m-0", children: "Dead Letter Queue" }) }),
-          !i || i.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "Dead letter queue is empty." }) : /* @__PURE__ */ t(J, { children: [
-            /* @__PURE__ */ e(Z, { children: /* @__PURE__ */ t("tr", { children: [
+          !i || i.length === 0 ? /* @__PURE__ */ e("p", { className: "p-5 text-center text-text-tertiary text-sm m-0", children: "Dead letter queue is empty." }) : /* @__PURE__ */ t(ee, { children: [
+            /* @__PURE__ */ e(te, { children: /* @__PURE__ */ t("tr", { children: [
               /* @__PURE__ */ e(_, { children: "ID" }),
               /* @__PURE__ */ e(_, { children: "Error" }),
               /* @__PURE__ */ e(_, { children: "Failed At" }),
               /* @__PURE__ */ e(_, { children: "Retries" }),
               /* @__PURE__ */ e(_, { className: "text-right", children: "Actions" })
             ] }) }),
-            /* @__PURE__ */ e(ee, { children: i.map((n) => /* @__PURE__ */ t(te, { children: [
+            /* @__PURE__ */ e(ae, { children: i.map((r) => /* @__PURE__ */ t(ne, { children: [
               /* @__PURE__ */ t(q, { className: "font-mono text-xs", children: [
-                n.id.substring(0, 12),
+                r.id.substring(0, 12),
                 "..."
               ] }),
-              /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e(K, { tone: "danger", size: "xs", children: n.error }) }),
-              /* @__PURE__ */ e(q, { className: "text-xs text-neutral", children: new Date(n.failedAt).toLocaleString() }),
-              /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e(K, { tone: "neutral", size: "xs", mono: !0, children: n.retryCount }) }),
+              /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e(X, { tone: "danger", size: "xs", children: r.error }) }),
+              /* @__PURE__ */ e(q, { className: "text-xs text-neutral", children: new Date(r.failedAt).toLocaleString() }),
+              /* @__PURE__ */ e(q, { children: /* @__PURE__ */ e(X, { tone: "neutral", size: "xs", mono: !0, children: r.retryCount }) }),
               /* @__PURE__ */ e(q, { className: "text-right", children: /* @__PURE__ */ t("div", { className: "flex items-center justify-end gap-2", children: [
-                /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => g(n.id), children: "Redrive" }),
-                /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => N(n.id), children: "Purge" })
+                /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b(r.id), children: "Redrive" }),
+                /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => C(r.id), children: "Purge" })
               ] }) })
-            ] }, n.id)) })
+            ] }, r.id)) })
           ] })
         ] })
       ]
     }
   );
 }
-function mt({
+function pt({
   uid: a,
   interactionUrl: l,
   clientName: i,
-  logoUrl: h,
-  error: b = null,
+  logoUrl: p,
+  error: g = null,
   onLogin: c,
-  onRegister: u,
-  onForgotPassword: m,
+  onRegister: h,
+  onForgotPassword: u,
   registrationEnabled: s = !0,
-  forgotPasswordEnabled: p = !0
+  forgotPasswordEnabled: d = !0
 }) {
-  const [g, N] = o("signin"), [n, r] = o(!1), [d, x] = o(null), [A, E] = o(""), [y, P] = o(""), [I, M] = o(""), [R, T] = o(""), [z, v] = o(""), [C, S] = o(""), [k, B] = o(""), [$, Y] = o(!1), [Q, he] = o(""), [pe, re] = o(!1), ie = b || d, fe = w(async (L) => {
-    L.preventDefault(), x(null), r(!0);
+  const [b, C] = o("signin"), [r, n] = o(!1), [m, v] = o(null), [S, z] = o(""), [x, I] = o(""), [A, L] = o(""), [E, P] = o(""), [D, N] = o(""), [k, y] = o(""), [M, B] = o(""), [W, Z] = o(!1), [Y, xe] = o(""), [be, se] = o(!1), oe = g || m, ye = w(async (U) => {
+    U.preventDefault(), v(null), n(!0);
     try {
-      await c(A, y);
-    } catch (W) {
-      x(W instanceof Error ? W.message : "Login failed");
+      await c(S, x);
+    } catch (K) {
+      v(K instanceof Error ? K.message : "Login failed");
     } finally {
-      r(!1);
+      n(!1);
     }
-  }, [A, y, c]), ge = w(async (L) => {
-    if (L.preventDefault(), x(null), R !== z) {
-      x("Passwords do not match");
+  }, [S, x, c]), ve = w(async (U) => {
+    if (U.preventDefault(), v(null), E !== D) {
+      v("Passwords do not match");
       return;
     }
-    r(!0);
+    n(!0);
     try {
-      await u({
-        email: I,
-        password: R,
-        givenName: C || void 0,
-        familyName: k || void 0,
-        enableMfa: $ || void 0
+      await h({
+        email: A,
+        password: E,
+        givenName: k || void 0,
+        familyName: M || void 0,
+        enableMfa: W || void 0
       });
-    } catch (W) {
-      x(W instanceof Error ? W.message : "Registration failed");
+    } catch (K) {
+      v(K instanceof Error ? K.message : "Registration failed");
     } finally {
-      r(!1);
+      n(!1);
     }
-  }, [I, R, z, C, k, $, u]), be = w(async (L) => {
-    L.preventDefault(), x(null), r(!0);
+  }, [A, E, D, k, M, W, h]), Ne = w(async (U) => {
+    U.preventDefault(), v(null), n(!0);
     try {
-      await m(Q), re(!0);
-    } catch (W) {
-      x(W instanceof Error ? W.message : "Request failed");
+      await u(Y), se(!0);
+    } catch (K) {
+      v(K instanceof Error ? K.message : "Request failed");
     } finally {
-      r(!1);
+      n(!1);
     }
-  }, [Q, m]), ae = (L) => {
-    N(L), x(null), re(!1);
+  }, [Y, u]), le = (U) => {
+    C(U), v(null), se(!1);
   };
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[440px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "Authentication", children: [
     /* @__PURE__ */ t("header", { className: "flex flex-col items-center gap-3 mb-6", children: [
-      h && /* @__PURE__ */ e("img", { src: h, alt: "", className: "w-14 h-14 object-contain rounded-md" }),
+      p && /* @__PURE__ */ e("img", { src: p, alt: "", className: "w-14 h-14 object-contain rounded-md" }),
       i && /* @__PURE__ */ e("h1", { className: "text-xl font-bold text-text-primary m-0", children: i })
     ] }),
     /* @__PURE__ */ t("nav", { className: "flex border-b border-border mb-6", role: "tablist", "aria-label": "Authentication method", children: [
@@ -1903,12 +1909,12 @@ function mt({
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": g === "signin",
-          className: O(
+          "aria-selected": b === "signin",
+          className: G(
             "flex-1 rounded-none border-b-2",
-            g === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            b === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
-          onClick: () => ae("signin"),
+          onClick: () => le("signin"),
           children: "Sign In"
         }
       ),
@@ -1918,57 +1924,57 @@ function mt({
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": g === "register",
-          className: O(
+          "aria-selected": b === "register",
+          className: G(
             "flex-1 rounded-none border-b-2",
-            g === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            b === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
-          onClick: () => ae("register"),
+          onClick: () => le("register"),
           children: "Register"
         }
       ),
-      p && /* @__PURE__ */ e(
+      d && /* @__PURE__ */ e(
         f,
         {
           variant: "ghost",
           size: "sm",
           role: "tab",
-          "aria-selected": g === "forgot",
-          className: O(
+          "aria-selected": b === "forgot",
+          className: G(
             "flex-1 rounded-none border-b-2",
-            g === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
+            b === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"
           ),
-          onClick: () => ae("forgot"),
+          onClick: () => le("forgot"),
           children: "Forgot Password"
         }
       )
     ] }),
-    ie && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e(V, { variant: "error", children: ie }) }),
-    g === "signin" && /* @__PURE__ */ t("form", { onSubmit: fe, "aria-label": "Sign in form", children: [
+    oe && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: oe }) }),
+    b === "signin" && /* @__PURE__ */ t("form", { onSubmit: ye, "aria-label": "Sign in form", children: [
       /* @__PURE__ */ e("input", { type: "hidden", name: "uid", value: a }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Email",
           name: "login-email",
           type: "email",
-          value: A,
-          onChange: (L) => E(String(L)),
+          value: S,
+          onChange: (U) => z(String(U)),
           required: !0,
           placeholder: "you@example.com",
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Password",
           name: "login-password",
           type: "password",
-          value: y,
-          onChange: (L) => P(String(L)),
+          value: x,
+          onChange: (U) => I(String(U)),
           required: !0,
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
@@ -1978,80 +1984,80 @@ function mt({
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          disabled: n,
-          children: n ? "Signing in..." : "Sign In"
+          disabled: r,
+          children: r ? "Signing in..." : "Sign In"
         }
       )
     ] }),
-    g === "register" && /* @__PURE__ */ t("form", { onSubmit: ge, "aria-label": "Registration form", children: [
+    b === "register" && /* @__PURE__ */ t("form", { onSubmit: ve, "aria-label": "Registration form", children: [
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Email",
           name: "reg-email",
           type: "email",
-          value: I,
-          onChange: (L) => M(String(L)),
+          value: A,
+          onChange: (U) => L(String(U)),
           required: !0,
           placeholder: "you@example.com",
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ t("div", { className: "flex gap-3", children: [
         /* @__PURE__ */ e("div", { className: "flex-1", children: /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Given Name",
             name: "reg-given",
-            value: C,
-            onChange: (L) => S(String(L)),
-            disabled: n
+            value: k,
+            onChange: (U) => y(String(U)),
+            disabled: r
           }
         ) }),
         /* @__PURE__ */ e("div", { className: "flex-1", children: /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Family Name",
             name: "reg-family",
-            value: k,
-            onChange: (L) => B(String(L)),
-            disabled: n
+            value: M,
+            onChange: (U) => B(String(U)),
+            disabled: r
           }
         ) })
       ] }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Password",
           name: "reg-password",
           type: "password",
-          value: R,
-          onChange: (L) => T(String(L)),
+          value: E,
+          onChange: (U) => P(String(U)),
           required: !0,
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Confirm Password",
           name: "reg-confirm",
           type: "password",
-          value: z,
-          onChange: (L) => v(String(L)),
+          value: D,
+          onChange: (U) => N(String(U)),
           required: !0,
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Enable Multi-Factor Authentication",
           name: "reg-mfa",
           type: "checkbox",
-          value: $,
-          onChange: (L) => Y(!!L),
-          disabled: n
+          value: W,
+          onChange: (U) => Z(!!U),
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
@@ -2061,24 +2067,24 @@ function mt({
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          disabled: n,
-          children: n ? "Creating account..." : "Create Account"
+          disabled: r,
+          children: r ? "Creating account..." : "Create Account"
         }
       )
     ] }),
-    g === "forgot" && /* @__PURE__ */ e("form", { onSubmit: be, "aria-label": "Forgot password form", children: pe ? /* @__PURE__ */ e(V, { variant: "success", children: "If an account exists for that email, a password reset link has been sent." }) : /* @__PURE__ */ t(j, { children: [
+    b === "forgot" && /* @__PURE__ */ e("form", { onSubmit: Ne, "aria-label": "Forgot password form", children: be ? /* @__PURE__ */ e($, { variant: "success", children: "If an account exists for that email, a password reset link has been sent." }) : /* @__PURE__ */ t(j, { children: [
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-4 mt-0 leading-relaxed", children: "Enter your email address and we'll send you a link to reset your password." }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Email",
           name: "forgot-email",
           type: "email",
-          value: Q,
-          onChange: (L) => he(String(L)),
+          value: Y,
+          onChange: (U) => xe(String(U)),
           required: !0,
           placeholder: "you@example.com",
-          disabled: n
+          disabled: r
         }
       ),
       /* @__PURE__ */ e(
@@ -2088,14 +2094,14 @@ function mt({
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          disabled: n,
-          children: n ? "Sending..." : "Send Reset Link"
+          disabled: r,
+          children: r ? "Sending..." : "Send Reset Link"
         }
       )
     ] }) })
   ] }) });
 }
-const De = {
+const Ee = {
   openid: "Verify your identity",
   profile: "Access your name and profile information",
   email: "Access your email address",
@@ -2103,32 +2109,32 @@ const De = {
   phone: "Access your phone number",
   offline_access: "Maintain access when you are not present"
 };
-function ze(a) {
-  return De[a] || `Access: ${a}`;
+function Re(a) {
+  return Ee[a] || `Access: ${a}`;
 }
-function ut({
+function ft({
   clientName: a,
   scopes: l,
   redirectUri: i,
-  onAuthorize: h,
-  onDeny: b,
+  onAuthorize: p,
+  onDeny: g,
   logoUrl: c
 }) {
-  const [u, m] = o(!1), s = w(async () => {
-    m(!0);
+  const [h, u] = o(!1), s = w(async () => {
+    u(!0);
     try {
-      await h();
+      await p();
     } finally {
-      m(!1);
+      u(!1);
     }
-  }, [h]), p = w(async () => {
-    m(!0);
+  }, [p]), d = w(async () => {
+    u(!0);
     try {
-      await b();
+      await g();
     } finally {
-      m(!1);
+      u(!1);
     }
-  }, [b]);
+  }, [g]);
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t(
     "div",
     {
@@ -2146,19 +2152,19 @@ function ut({
         ] }),
         /* @__PURE__ */ t("div", { className: "mx-8 border border-border rounded-md overflow-hidden mb-6", children: [
           /* @__PURE__ */ e("p", { className: "text-[11px] font-semibold uppercase tracking-wide text-neutral px-4 py-2.5 m-0 bg-surface-panel border-b border-border", children: "Requested Permissions" }),
-          /* @__PURE__ */ e("ul", { className: "list-none p-0 m-0", "aria-label": "Requested permissions", children: l.map((g, N) => /* @__PURE__ */ t(
+          /* @__PURE__ */ e("ul", { className: "list-none p-0 m-0", "aria-label": "Requested permissions", children: l.map((b, C) => /* @__PURE__ */ t(
             "li",
             {
-              className: O(
+              className: G(
                 "flex items-center gap-3 px-4 py-3 text-sm text-text-primary",
-                N < l.length - 1 && "border-b border-border"
+                C < l.length - 1 && "border-b border-border"
               ),
               children: [
                 /* @__PURE__ */ e("span", { className: "w-2 h-2 rounded-full bg-info shrink-0", "aria-hidden": "true" }),
-                /* @__PURE__ */ e("span", { children: ze(g) })
+                /* @__PURE__ */ e("span", { children: Re(b) })
               ]
             },
-            g
+            b
           )) })
         ] }),
         /* @__PURE__ */ t("div", { className: "px-8 pb-8", children: [
@@ -2173,8 +2179,8 @@ function ut({
                 variant: "ghost",
                 size: "lg",
                 fullWidth: !0,
-                onClick: p,
-                disabled: u,
+                onClick: d,
+                disabled: h,
                 children: "Deny"
               }
             ),
@@ -2185,8 +2191,8 @@ function ut({
                 size: "lg",
                 fullWidth: !0,
                 onClick: s,
-                disabled: u,
-                children: u ? "Authorizing..." : "Authorize"
+                disabled: h,
+                children: h ? "Authorizing..." : "Authorize"
               }
             )
           ] })
@@ -2195,7 +2201,7 @@ function ut({
     }
   ) });
 }
-function Ee({ value: a, size: l = 200, label: i }) {
+function Ue({ value: a, size: l = 200, label: i }) {
   return /* @__PURE__ */ t("figure", { className: "flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white", children: [
     /* @__PURE__ */ e(
       "img",
@@ -2210,43 +2216,43 @@ function Ee({ value: a, size: l = 200, label: i }) {
     i && /* @__PURE__ */ e("figcaption", { className: "text-sm text-neutral text-center", children: i })
   ] });
 }
-function ue({
+function ge({
   length: a = 6,
   onComplete: l,
   error: i = null,
-  disabled: h = !1,
-  autoFocus: b = !1
+  disabled: p = !1,
+  autoFocus: g = !1
 }) {
-  const [c, u] = o(Array(a).fill("")), m = ce([]);
-  de(() => {
-    b && m.current[0] && m.current[0].focus();
-  }, [b]);
-  const s = w((n) => {
-    n >= 0 && n < a && m.current[n] && (m.current[n].focus(), m.current[n].select());
-  }, [a]), p = w((n, r) => {
-    const d = r.replace(/\D/g, "").slice(-1);
-    u((x) => {
-      const A = [...x];
-      A[n] = d;
-      const E = A.join("");
-      return E.length === a && A.every((y) => y !== "") && setTimeout(() => l(E), 0), A;
-    }), d && n < a - 1 && s(n + 1);
-  }, [a, l, s]), g = w((n, r) => {
-    r.key === "Backspace" ? c[n] === "" && n > 0 ? (r.preventDefault(), u((d) => {
-      const x = [...d];
-      return x[n - 1] = "", x;
-    }), s(n - 1)) : u((d) => {
-      const x = [...d];
-      return x[n] = "", x;
-    }) : r.key === "ArrowLeft" && n > 0 ? (r.preventDefault(), s(n - 1)) : r.key === "ArrowRight" && n < a - 1 && (r.preventDefault(), s(n + 1));
-  }, [c, a, s]), N = w((n) => {
-    n.preventDefault();
-    const r = n.clipboardData.getData("text").replace(/\D/g, "").slice(0, a);
-    if (!r) return;
-    const d = Array(a).fill("");
-    for (let x = 0; x < r.length; x++)
-      d[x] = r[x];
-    u(d), r.length === a ? setTimeout(() => l(r), 0) : s(Math.min(r.length, a - 1));
+  const [c, h] = o(Array(a).fill("")), u = ue([]);
+  he(() => {
+    g && u.current[0] && u.current[0].focus();
+  }, [g]);
+  const s = w((r) => {
+    r >= 0 && r < a && u.current[r] && (u.current[r].focus(), u.current[r].select());
+  }, [a]), d = w((r, n) => {
+    const m = n.replace(/\D/g, "").slice(-1);
+    h((v) => {
+      const S = [...v];
+      S[r] = m;
+      const z = S.join("");
+      return z.length === a && S.every((x) => x !== "") && setTimeout(() => l(z), 0), S;
+    }), m && r < a - 1 && s(r + 1);
+  }, [a, l, s]), b = w((r, n) => {
+    n.key === "Backspace" ? c[r] === "" && r > 0 ? (n.preventDefault(), h((m) => {
+      const v = [...m];
+      return v[r - 1] = "", v;
+    }), s(r - 1)) : h((m) => {
+      const v = [...m];
+      return v[r] = "", v;
+    }) : n.key === "ArrowLeft" && r > 0 ? (n.preventDefault(), s(r - 1)) : n.key === "ArrowRight" && r < a - 1 && (n.preventDefault(), s(r + 1));
+  }, [c, a, s]), C = w((r) => {
+    r.preventDefault();
+    const n = r.clipboardData.getData("text").replace(/\D/g, "").slice(0, a);
+    if (!n) return;
+    const m = Array(a).fill("");
+    for (let v = 0; v < n.length; v++)
+      m[v] = n[v];
+    h(m), n.length === a ? setTimeout(() => l(n), 0) : s(Math.min(n.length, a - 1));
   }, [a, l, s]);
   return /* @__PURE__ */ t("div", { className: "flex flex-col items-center gap-2", children: [
     /* @__PURE__ */ e(
@@ -2255,34 +2261,34 @@ function ue({
         className: "flex gap-2",
         role: "group",
         "aria-label": "Verification code input",
-        children: Array.from({ length: a }, (n, r) => /* @__PURE__ */ e(
+        children: Array.from({ length: a }, (r, n) => /* @__PURE__ */ e(
           "input",
           {
-            ref: (d) => {
-              m.current[r] = d;
+            ref: (m) => {
+              u.current[n] = m;
             },
             type: "text",
             inputMode: "numeric",
             pattern: "[0-9]",
             maxLength: 1,
-            value: c[r],
-            disabled: h,
-            "aria-label": `Digit ${r + 1} of ${a}`,
-            onChange: (d) => p(r, d.target.value),
-            onKeyDown: (d) => g(r, d),
-            onPaste: N,
-            onFocus: (d) => d.target.select(),
-            className: O(
+            value: c[n],
+            disabled: p,
+            "aria-label": `Digit ${n + 1} of ${a}`,
+            onChange: (m) => d(n, m.target.value),
+            onKeyDown: (m) => b(n, m),
+            onPaste: C,
+            onFocus: (m) => m.target.select(),
+            className: G(
               "w-11 h-[52px] text-center text-lg font-semibold font-[inherit]",
               "rounded-md outline-none transition-[border-color,box-shadow] duration-150",
               "border-2",
               i ? "border-danger" : "border-border",
-              h ? "bg-surface-panel cursor-not-allowed" : "bg-white cursor-text",
+              p ? "bg-surface-panel cursor-not-allowed" : "bg-white cursor-text",
               "text-text-primary",
               "focus:border-info focus:ring-2 focus:ring-info/20"
             )
           },
-          r
+          n
         ))
       }
     ),
@@ -2296,76 +2302,76 @@ function ue({
     )
   ] });
 }
-const se = ["name", "scan", "verify", "backup"], Re = ["Name", "Scan", "Verify", "Backup"];
-function ht({
+const de = ["name", "scan", "verify", "backup"], Le = ["Name", "Scan", "Verify", "Backup"];
+function gt({
   onSetup: a,
   onVerify: l,
   onComplete: i,
-  userEmail: h
+  userEmail: p
 }) {
-  const [b, c] = o("name"), [u, m] = o(!1), [s, p] = o(null), [g, N] = o(""), [n, r] = o(null), [d, x] = o([]), [A, E] = o(!1), y = se.indexOf(b), P = w(async (R) => {
-    if (R.preventDefault(), !!g.trim()) {
-      p(null), m(!0);
+  const [g, c] = o("name"), [h, u] = o(!1), [s, d] = o(null), [b, C] = o(""), [r, n] = o(null), [m, v] = o([]), [S, z] = o(!1), x = de.indexOf(g), I = w(async (E) => {
+    if (E.preventDefault(), !!b.trim()) {
+      d(null), u(!0);
       try {
-        const T = await a(g.trim());
-        r(T), x(T.backupCodes), c("scan");
-      } catch (T) {
-        p(T instanceof Error ? T.message : "Setup failed");
+        const P = await a(b.trim());
+        n(P), v(P.backupCodes), c("scan");
+      } catch (P) {
+        d(P instanceof Error ? P.message : "Setup failed");
       } finally {
-        m(!1);
+        u(!1);
       }
     }
-  }, [g, a]), I = w(async (R) => {
-    if (n) {
-      p(null), m(!0);
+  }, [b, a]), A = w(async (E) => {
+    if (r) {
+      d(null), u(!0);
       try {
-        const T = await l(n.deviceId, R);
-        T.success ? (T.backupCodes && x(T.backupCodes), c("backup")) : p("Verification failed. Please try again.");
-      } catch (T) {
-        p(T instanceof Error ? T.message : "Verification failed");
+        const P = await l(r.deviceId, E);
+        P.success ? (P.backupCodes && v(P.backupCodes), c("backup")) : d("Verification failed. Please try again.");
+      } catch (P) {
+        d(P instanceof Error ? P.message : "Verification failed");
       } finally {
-        m(!1);
+        u(!1);
       }
     }
-  }, [n, l]), M = w(async () => {
+  }, [r, l]), L = w(async () => {
     try {
-      await navigator.clipboard.writeText(d.join(`
-`)), E(!0), setTimeout(() => E(!1), 2e3);
+      await navigator.clipboard.writeText(m.join(`
+`)), z(!0), setTimeout(() => z(!1), 2e3);
     } catch {
     }
-  }, [d]);
+  }, [m]);
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[480px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "MFA setup", children: [
     /* @__PURE__ */ e("h1", { className: "text-xl font-bold text-text-primary mb-2 mt-0 text-center", children: "Set Up Multi-Factor Authentication" }),
-    h && /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-5 mt-0 text-center", children: h }),
-    /* @__PURE__ */ e("div", { className: "flex justify-center gap-6 mb-6", role: "group", "aria-label": "Setup progress", children: se.map((R, T) => /* @__PURE__ */ t("div", { className: "flex flex-col items-center gap-1.5", children: [
+    p && /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-5 mt-0 text-center", children: p }),
+    /* @__PURE__ */ e("div", { className: "flex justify-center gap-6 mb-6", role: "group", "aria-label": "Setup progress", children: de.map((E, P) => /* @__PURE__ */ t("div", { className: "flex flex-col items-center gap-1.5", children: [
       /* @__PURE__ */ e(
         "div",
         {
-          className: O(
+          className: G(
             "w-3 h-3 rounded-full transition-colors duration-200",
-            T < y ? "bg-success" : T === y ? "bg-info" : "bg-surface-emphasis"
+            P < x ? "bg-success" : P === x ? "bg-info" : "bg-surface-emphasis"
           ),
-          "aria-label": `Step ${T + 1}${T === y ? " (current)" : T < y ? " (completed)" : ""}`
+          "aria-label": `Step ${P + 1}${P === x ? " (current)" : P < x ? " (completed)" : ""}`
         }
       ),
-      /* @__PURE__ */ e("span", { className: O(
+      /* @__PURE__ */ e("span", { className: G(
         "text-[10px] uppercase tracking-wide font-medium",
-        T === y ? "text-text-primary" : "text-text-tertiary"
-      ), children: Re[T] })
-    ] }, R)) }),
-    s && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e(V, { variant: "error", children: s }) }),
-    b === "name" && /* @__PURE__ */ t("form", { onSubmit: P, "aria-label": "Name your device", children: [
+        P === x ? "text-text-primary" : "text-text-tertiary"
+      ), children: Le[P] })
+    ] }, E)) }),
+    s && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: s }) }),
+    g === "name" && /* @__PURE__ */ t("form", { onSubmit: I, "aria-label": "Name your device", children: [
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-4 mt-0 text-center leading-relaxed", children: "Give your authenticator device a name so you can identify it later." }),
       /* @__PURE__ */ e(
-        D,
+        T,
         {
           label: "Device Name",
           name: "device-name",
-          value: g,
-          onChange: (R) => N(String(R)),
+          value: b,
+          onChange: (E) => C(String(E)),
           required: !0,
           placeholder: "e.g., My Phone",
-          disabled: u
+          disabled: h
         }
       ),
       /* @__PURE__ */ e(
@@ -2375,12 +2381,12 @@ function ht({
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          disabled: u || !g.trim(),
-          children: u ? "Setting up..." : "Continue"
+          disabled: h || !b.trim(),
+          children: h ? "Setting up..." : "Continue"
         }
       )
     ] }),
-    b === "scan" && n && /* @__PURE__ */ t("div", { children: [
+    g === "scan" && r && /* @__PURE__ */ t("div", { children: [
       /* @__PURE__ */ e(
         f,
         {
@@ -2394,15 +2400,15 @@ function ht({
       ),
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-5 mt-0 text-center leading-relaxed", children: "Scan this QR code with your authenticator app" }),
       /* @__PURE__ */ e("div", { className: "flex justify-center mb-5", children: /* @__PURE__ */ e(
-        Ee,
+        Ue,
         {
-          value: n.qrCode,
+          value: r.qrCode,
           size: 200,
-          label: `Device: ${g}`
+          label: `Device: ${b}`
         }
       ) }),
       /* @__PURE__ */ e("p", { className: "text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0", children: "Or enter this secret manually" }),
-      /* @__PURE__ */ e("div", { className: "px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all", children: n.secret }),
+      /* @__PURE__ */ e("div", { className: "px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all", children: r.secret }),
       /* @__PURE__ */ e(
         f,
         {
@@ -2414,7 +2420,7 @@ function ht({
         }
       )
     ] }),
-    b === "verify" && /* @__PURE__ */ t("div", { children: [
+    g === "verify" && /* @__PURE__ */ t("div", { children: [
       /* @__PURE__ */ e(
         f,
         {
@@ -2428,28 +2434,28 @@ function ht({
       ),
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed", children: "Enter the 6-digit code from your authenticator app to confirm setup" }),
       /* @__PURE__ */ e(
-        ue,
+        ge,
         {
-          onComplete: I,
+          onComplete: A,
           error: s,
-          disabled: u,
+          disabled: h,
           autoFocus: !0
         }
       ),
-      u && /* @__PURE__ */ e("p", { className: "text-center text-sm text-text-tertiary mt-3", children: "Verifying..." })
+      h && /* @__PURE__ */ e("p", { className: "text-center text-sm text-text-tertiary mt-3", children: "Verifying..." })
     ] }),
-    b === "backup" && /* @__PURE__ */ t("div", { children: [
+    g === "backup" && /* @__PURE__ */ t("div", { children: [
       /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#f0fdf4] flex items-center justify-center", children: /* @__PURE__ */ e("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-success-fg", children: /* @__PURE__ */ e("polyline", { points: "20 6 9 17 4 12" }) }) }),
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-5 mt-0 text-center leading-relaxed", children: "Save these backup codes in a safe place. Each code can only be used once." }),
-      /* @__PURE__ */ e("div", { className: "grid grid-cols-2 gap-2.5 mb-6", children: d.map((R, T) => /* @__PURE__ */ e("div", { className: "px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all", children: R }, T)) }),
+      /* @__PURE__ */ e("div", { className: "grid grid-cols-2 gap-2.5 mb-6", children: m.map((E, P) => /* @__PURE__ */ e("div", { className: "px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all", children: E }, P)) }),
       /* @__PURE__ */ e(
         f,
         {
           variant: "primary",
           size: "lg",
           fullWidth: !0,
-          onClick: M,
-          children: A ? "Copied!" : "Copy All Codes"
+          onClick: L,
+          children: S ? "Copied!" : "Copy All Codes"
         }
       ),
       /* @__PURE__ */ e("div", { className: "mt-3", children: /* @__PURE__ */ e(
@@ -2465,45 +2471,45 @@ function ht({
     ] })
   ] }) });
 }
-function pt({
+function xt({
   onVerify: a,
   onVerifyBackup: l,
   error: i = null
 }) {
-  const [h, b] = o("totp"), [c, u] = o(!1), [m, s] = o(null), [p, g] = o(""), N = i || m, n = w(async (d) => {
-    s(null), u(!0);
+  const [p, g] = o("totp"), [c, h] = o(!1), [u, s] = o(null), [d, b] = o(""), C = i || u, r = w(async (m) => {
+    s(null), h(!0);
     try {
-      await a(d);
-    } catch (x) {
-      s(x instanceof Error ? x.message : "Verification failed");
+      await a(m);
+    } catch (v) {
+      s(v instanceof Error ? v.message : "Verification failed");
     } finally {
-      u(!1);
+      h(!1);
     }
-  }, [a]), r = w(async (d) => {
-    if (d.preventDefault(), !!p.trim()) {
-      s(null), u(!0);
+  }, [a]), n = w(async (m) => {
+    if (m.preventDefault(), !!d.trim()) {
+      s(null), h(!0);
       try {
-        await l(p.trim());
-      } catch (x) {
-        s(x instanceof Error ? x.message : "Verification failed");
+        await l(d.trim());
+      } catch (v) {
+        s(v instanceof Error ? v.message : "Verification failed");
       } finally {
-        u(!1);
+        h(!1);
       }
     }
-  }, [p, l]);
+  }, [d, l]);
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[440px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "Multi-factor verification", children: [
     /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#eff6ff] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-info-fg", children: [
       /* @__PURE__ */ e("rect", { x: "3", y: "11", width: "18", height: "11", rx: "2", ry: "2" }),
       /* @__PURE__ */ e("path", { d: "M7 11V7a5 5 0 0 1 10 0v4" })
     ] }) }),
     /* @__PURE__ */ e("h1", { className: "text-xl font-bold text-text-primary mb-2 mt-0 text-center", children: "Verify Your Identity" }),
-    h === "totp" ? /* @__PURE__ */ t(j, { children: [
+    p === "totp" ? /* @__PURE__ */ t(j, { children: [
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed", children: "Enter the 6-digit code from your authenticator app" }),
-      N && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e(V, { variant: "error", children: N }) }),
+      C && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: C }) }),
       /* @__PURE__ */ e(
-        ue,
+        ge,
         {
-          onComplete: n,
+          onComplete: r,
           error: null,
           disabled: c,
           autoFocus: !0
@@ -2517,22 +2523,22 @@ function pt({
           size: "sm",
           className: "block mt-6 mx-auto underline text-info-fg",
           onClick: () => {
-            b("backup"), s(null);
+            g("backup"), s(null);
           },
           children: "Use a backup code instead"
         }
       )
     ] }) : /* @__PURE__ */ t(j, { children: [
       /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed", children: "Enter one of your backup codes" }),
-      N && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e(V, { variant: "error", children: N }) }),
-      /* @__PURE__ */ t("form", { onSubmit: r, "aria-label": "Backup code verification", children: [
+      C && /* @__PURE__ */ e("div", { className: "mb-5", children: /* @__PURE__ */ e($, { variant: "error", children: C }) }),
+      /* @__PURE__ */ t("form", { onSubmit: n, "aria-label": "Backup code verification", children: [
         /* @__PURE__ */ e(
-          D,
+          T,
           {
             label: "Backup Code",
             name: "backup-code",
-            value: p,
-            onChange: (d) => g(String(d)),
+            value: d,
+            onChange: (m) => b(String(m)),
             required: !0,
             placeholder: "XXXX-XXXX-XXXX",
             disabled: c
@@ -2545,7 +2551,7 @@ function pt({
             variant: "primary",
             size: "lg",
             fullWidth: !0,
-            disabled: c || !p.trim(),
+            disabled: c || !d.trim(),
             children: c ? "Verifying..." : "Verify Backup Code"
           }
         )
@@ -2557,7 +2563,7 @@ function pt({
           size: "sm",
           className: "block mt-6 mx-auto underline text-info-fg",
           onClick: () => {
-            b("totp"), s(null);
+            g("totp"), s(null);
           },
           children: "Use authenticator code instead"
         }
@@ -2565,7 +2571,7 @@ function pt({
     ] })
   ] }) });
 }
-function oe(a) {
+function me(a) {
   try {
     return new Date(a).toLocaleDateString(void 0, {
       year: "numeric",
@@ -2576,35 +2582,35 @@ function oe(a) {
     return a;
   }
 }
-function ft({
+function bt({
   devices: a,
   userEmail: l,
   mfaEnabled: i,
-  onAddDevice: h,
-  onRenameDevice: b,
+  onAddDevice: p,
+  onRenameDevice: g,
   onRemoveDevice: c,
-  loading: u = !1
+  loading: h = !1
 }) {
-  const [m, s] = o(null), [p, g] = o(null), [N, n] = o(""), [r, d] = o(!1), x = w(async () => {
-    if (m) {
-      d(!0);
+  const [u, s] = o(null), [d, b] = o(null), [C, r] = o(""), [n, m] = o(!1), v = w(async () => {
+    if (u) {
+      m(!0);
       try {
-        await c(m);
+        await c(u);
       } finally {
-        d(!1), s(null);
+        m(!1), s(null);
       }
     }
-  }, [m, c]), A = w(async (y) => {
-    if (N.trim()) {
-      d(!0);
+  }, [u, c]), S = w(async (x) => {
+    if (C.trim()) {
+      m(!0);
       try {
-        await b(y, N.trim());
+        await g(x, C.trim());
       } finally {
-        d(!1), g(null), n("");
+        m(!1), b(null), r("");
       }
     }
-  }, [N, b]), E = (y) => {
-    g(y.deviceId), n(y.deviceName);
+  }, [C, g]), z = (x) => {
+    b(x.deviceId), r(x.deviceName);
   };
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-start justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[600px] bg-white rounded-xl shadow-md p-8", role: "main", "aria-label": "MFA device management", children: [
     /* @__PURE__ */ t("div", { className: "flex items-center justify-between mb-6 flex-wrap gap-3", children: [
@@ -2613,81 +2619,81 @@ function ft({
         l && /* @__PURE__ */ e("p", { className: "text-sm text-neutral m-0", children: l })
       ] }),
       /* @__PURE__ */ t("div", { className: "flex items-center gap-3", children: [
-        /* @__PURE__ */ e(K, { tone: i ? "success" : "warning", children: i ? "Enabled" : "Disabled" }),
-        /* @__PURE__ */ e(f, { variant: "primary", size: "md", onClick: h, children: "Add Device" })
+        /* @__PURE__ */ e(X, { tone: i ? "success" : "warning", children: i ? "Enabled" : "Disabled" }),
+        /* @__PURE__ */ e(f, { variant: "primary", size: "md", onClick: p, children: "Add Device" })
       ] })
     ] }),
-    u && /* @__PURE__ */ e("p", { className: "text-center text-text-tertiary text-sm py-8", children: "Loading devices..." }),
-    !u && a.length === 0 && /* @__PURE__ */ e(
-      me,
+    h && /* @__PURE__ */ e("p", { className: "text-center text-text-tertiary text-sm py-8", children: "Loading devices..." }),
+    !h && a.length === 0 && /* @__PURE__ */ e(
+      pe,
       {
         icon: "🔐",
         title: "No MFA devices configured",
         body: "Add a device to secure your account with multi-factor authentication.",
         actionLabel: "Add Device",
-        onAction: h
+        onAction: p
       }
     ),
-    !u && a.length > 0 && /* @__PURE__ */ e("div", { className: "flex flex-col gap-3", role: "list", "aria-label": "MFA devices", children: a.map((y) => /* @__PURE__ */ t("div", { className: "p-5 border border-border rounded-lg bg-white", role: "listitem", children: [
-      /* @__PURE__ */ e("div", { className: "flex items-center justify-between mb-2", children: /* @__PURE__ */ e("div", { className: "flex items-center gap-2.5", children: p === y.deviceId ? /* @__PURE__ */ t(
+    !h && a.length > 0 && /* @__PURE__ */ e("div", { className: "flex flex-col gap-3", role: "list", "aria-label": "MFA devices", children: a.map((x) => /* @__PURE__ */ t("div", { className: "p-5 border border-border rounded-lg bg-white", role: "listitem", children: [
+      /* @__PURE__ */ e("div", { className: "flex items-center justify-between mb-2", children: /* @__PURE__ */ e("div", { className: "flex items-center gap-2.5", children: d === x.deviceId ? /* @__PURE__ */ t(
         "form",
         {
-          onSubmit: (P) => {
-            P.preventDefault(), A(y.deviceId);
+          onSubmit: (I) => {
+            I.preventDefault(), S(x.deviceId);
           },
           className: "flex gap-2 items-center",
           children: [
             /* @__PURE__ */ e(
-              D,
+              T,
               {
                 label: "",
-                name: `rename-${y.deviceId}`,
-                value: N,
-                onChange: (P) => n(String(P)),
-                disabled: r
+                name: `rename-${x.deviceId}`,
+                value: C,
+                onChange: (I) => r(String(I)),
+                disabled: n
               }
             ),
-            /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "sm", disabled: r || !N.trim(), children: "Save" }),
-            /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => g(null), children: "Cancel" })
+            /* @__PURE__ */ e(f, { type: "submit", variant: "primary", size: "sm", disabled: n || !C.trim(), children: "Save" }),
+            /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => b(null), children: "Cancel" })
           ]
         }
       ) : /* @__PURE__ */ t(j, { children: [
-        /* @__PURE__ */ e("h3", { className: "text-[15px] font-semibold text-text-primary m-0", children: y.deviceName }),
+        /* @__PURE__ */ e("h3", { className: "text-[15px] font-semibold text-text-primary m-0", children: x.deviceName }),
         /* @__PURE__ */ e(
-          ne,
+          ie,
           {
-            status: y.isVerified ? "CONFIRMED" : "UNCONFIRMED"
+            status: x.isVerified ? "CONFIRMED" : "UNCONFIRMED"
           }
         )
       ] }) }) }),
       /* @__PURE__ */ t("p", { className: "text-[11px] text-text-tertiary m-0 mb-3", children: [
         "Type: ",
-        y.deviceType,
+        x.deviceType,
         " · Added: ",
-        oe(y.createdAt),
-        y.lastUsed && ` · Last used: ${oe(y.lastUsed)}`
+        me(x.createdAt),
+        x.lastUsed && ` · Last used: ${me(x.lastUsed)}`
       ] }),
-      p !== y.deviceId && /* @__PURE__ */ t("div", { className: "flex gap-2", children: [
-        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => E(y), children: "Rename" }),
-        /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => s(y.deviceId), children: "Remove" })
+      d !== x.deviceId && /* @__PURE__ */ t("div", { className: "flex gap-2", children: [
+        /* @__PURE__ */ e(f, { variant: "ghost", size: "sm", onClick: () => z(x), children: "Rename" }),
+        /* @__PURE__ */ e(f, { variant: "danger", size: "sm", onClick: () => s(x.deviceId), children: "Remove" })
       ] })
-    ] }, y.deviceId)) }),
+    ] }, x.deviceId)) }),
     /* @__PURE__ */ e(
-      H,
+      Q,
       {
-        open: !!m,
-        onConfirm: x,
+        open: !!u,
+        onConfirm: v,
         onCancel: () => s(null),
         title: "Remove Device",
         body: "Are you sure you want to remove this MFA device? You will no longer be able to use it for verification.",
-        confirmLabel: r ? "Removing..." : "Remove",
-        confirmDisabled: r,
+        confirmLabel: n ? "Removing..." : "Remove",
+        confirmDisabled: n,
         tone: "destructive"
       }
     )
   ] }) });
 }
-function gt({ onConfirm: a, onCancel: l, clientName: i }) {
+function yt({ onConfirm: a, onCancel: l, clientName: i }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Sign out confirmation", children: [
     /* @__PURE__ */ e("div", { className: "w-14 h-14 mx-auto mb-5 rounded-full bg-[#fef2f2] flex items-center justify-center", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
       /* @__PURE__ */ e("path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" }),
@@ -2709,12 +2715,12 @@ function gt({ onConfirm: a, onCancel: l, clientName: i }) {
     ] })
   ] }) });
 }
-function bt({
+function vt({
   title: a = "Something went wrong",
   message: l,
   error: i,
-  onRetry: h,
-  onBack: b
+  onRetry: p,
+  onBack: g
 }) {
   return /* @__PURE__ */ e("div", { className: "min-h-full flex items-center justify-center p-6 bg-surface-panel", children: /* @__PURE__ */ t("div", { className: "w-full max-w-[420px] bg-white rounded-xl shadow-md p-8 text-center", role: "main", "aria-label": "Error", children: [
     /* @__PURE__ */ e("div", { className: "w-14 h-14 rounded-full bg-[#fef2f2] flex items-center justify-center mx-auto mb-5", "aria-hidden": "true", children: /* @__PURE__ */ t("svg", { width: "28", height: "28", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", className: "text-danger-fg", children: [
@@ -2725,13 +2731,13 @@ function bt({
     /* @__PURE__ */ e("h1", { className: "text-xl font-bold text-text-primary mb-3 mt-0", children: a }),
     /* @__PURE__ */ e("p", { className: "text-sm text-neutral mb-3 mt-0 leading-relaxed", children: l }),
     i && /* @__PURE__ */ e("code", { className: "text-[11px] text-text-tertiary font-mono mb-5 px-3.5 py-2 bg-surface-panel border border-border rounded-md inline-block max-w-full overflow-x-auto", children: i }),
-    (h || b) && /* @__PURE__ */ t("div", { className: "flex gap-3 justify-center mt-6", children: [
-      b && /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: b, children: "Go Back" }),
-      h && /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: h, children: "Try Again" })
+    (p || g) && /* @__PURE__ */ t("div", { className: "flex gap-3 justify-center mt-6", children: [
+      g && /* @__PURE__ */ e(f, { variant: "ghost", size: "lg", onClick: g, children: "Go Back" }),
+      p && /* @__PURE__ */ e(f, { variant: "primary", size: "lg", onClick: p, children: "Try Again" })
     ] })
   ] }) });
 }
-const Ue = [
+const Me = [
   { label: "Dashboard", path: "/identity/admin", icon: "⌂" },
   { label: "Pools", path: "/identity/admin/pools", icon: "☰" },
   { label: "Applications", path: "/identity/admin/applications", icon: "⬚" },
@@ -2740,7 +2746,7 @@ const Ue = [
   { label: "Diagnostics", path: "/identity/admin/diagnostics", icon: "⚙" },
   { label: "Setup Guide", path: "/identity/admin/setup", icon: "✓" }
 ];
-function Le({
+function Fe({
   item: a,
   active: l,
   onNavigate: i
@@ -2749,7 +2755,7 @@ function Le({
     "button",
     {
       type: "button",
-      className: O(
+      className: G(
         "flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer",
         "border-none rounded-none border-l-[3px] transition-colors",
         l ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-[#334155] border-l-transparent hover:bg-[#f1f5f9]"
@@ -2763,30 +2769,30 @@ function Le({
     }
   ) });
 }
-function xt({
+function Nt({
   children: a,
   activePath: l,
   adminEmail: i,
-  onNavigate: h,
-  onLogout: b
+  onNavigate: p,
+  onLogout: g
 }) {
-  const [c, u] = o(!0), m = w(() => u((s) => !s), []);
+  const [c, h] = o(!0), u = w(() => h((s) => !s), []);
   return /* @__PURE__ */ t("div", { className: "flex min-h-screen bg-surface-panel font-[inherit]", children: [
     /* @__PURE__ */ t(
       "aside",
       {
-        className: O(
+        className: G(
           "bg-white border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden",
           c ? "w-60" : "w-0 border-r-0"
         ),
         children: [
           /* @__PURE__ */ e("div", { className: "p-4 font-bold text-lg text-info-fg border-b border-border", children: "Identity Admin" }),
-          /* @__PURE__ */ e("ul", { className: "list-none m-0 p-0 py-2 flex-1", children: Ue.map((s) => /* @__PURE__ */ e(
-            Le,
+          /* @__PURE__ */ e("ul", { className: "list-none m-0 p-0 py-2 flex-1", children: Me.map((s) => /* @__PURE__ */ e(
+            Fe,
             {
               item: s,
               active: l === s.path,
-              onNavigate: h
+              onNavigate: p
             },
             s.path
           )) })
@@ -2800,26 +2806,26 @@ function xt({
           {
             variant: "ghost",
             size: "sm",
-            onClick: m,
+            onClick: u,
             "aria-label": "Toggle sidebar",
             children: c ? "←" : "→"
           }
         ),
         /* @__PURE__ */ t("div", { className: "flex items-center gap-4", children: [
           i && /* @__PURE__ */ e("span", { className: "text-sm text-neutral", children: i }),
-          b && /* @__PURE__ */ e(f, { variant: "danger-solid", size: "sm", onClick: b, children: "Logout" })
+          g && /* @__PURE__ */ e(f, { variant: "danger-solid", size: "sm", onClick: g, children: "Logout" })
         ] })
       ] }),
       /* @__PURE__ */ e("main", { className: "flex-1 p-6 overflow-y-auto", children: a })
     ] })
   ] });
 }
-const Me = [
+const je = [
   { key: "users", label: "Users" },
   { key: "groups", label: "Groups" },
   { key: "mfa", label: "MFA" }
 ];
-function Fe({
+function Oe({
   label: a,
   active: l,
   onClick: i
@@ -2829,7 +2835,7 @@ function Fe({
     {
       variant: "ghost",
       size: "sm",
-      className: O(
+      className: G(
         "rounded-none -mb-[2px] border-b-2",
         l ? "font-semibold text-info-fg border-b-[#3b82f6]" : "font-normal text-neutral border-b-transparent"
       ),
@@ -2840,20 +2846,20 @@ function Fe({
     }
   );
 }
-function yt({
+function Ct({
   children: a,
   poolId: l,
   poolName: i,
-  activeSection: h,
-  onNavigate: b,
+  activeSection: p,
+  onNavigate: g,
   onBack: c
 }) {
-  const u = w(
+  const h = w(
     (s) => {
-      b(`/identity/admin/pools/${l}/${s}`);
+      g(`/identity/admin/pools/${l}/${s}`);
     },
-    [b, l]
-  ), m = h ? h.charAt(0).toUpperCase() + h.slice(1) : "";
+    [g, l]
+  ), u = p ? p.charAt(0).toUpperCase() + p.slice(1) : "";
   return /* @__PURE__ */ t("div", { className: "flex flex-col gap-4", children: [
     /* @__PURE__ */ t("nav", { className: "flex items-center gap-1.5 text-sm text-text-tertiary", "aria-label": "Breadcrumb", children: [
       /* @__PURE__ */ e(
@@ -2869,18 +2875,18 @@ function yt({
       ),
       /* @__PURE__ */ e("span", { children: "/" }),
       /* @__PURE__ */ e("span", { className: "text-text-primary font-medium", children: i }),
-      h && /* @__PURE__ */ t(j, { children: [
+      p && /* @__PURE__ */ t(j, { children: [
         /* @__PURE__ */ e("span", { children: "/" }),
-        /* @__PURE__ */ e("span", { children: m })
+        /* @__PURE__ */ e("span", { children: u })
       ] })
     ] }),
     /* @__PURE__ */ e("div", { children: /* @__PURE__ */ e(f, { variant: "secondary", size: "sm", onClick: c, children: "← Back to Pools" }) }),
-    /* @__PURE__ */ e("div", { className: "flex border-b-2 border-border", children: Me.map((s) => /* @__PURE__ */ e(
-      Fe,
+    /* @__PURE__ */ e("div", { className: "flex border-b-2 border-border", children: je.map((s) => /* @__PURE__ */ e(
+      Oe,
       {
         label: s.label,
-        active: h === s.key,
-        onClick: () => u(s.key)
+        active: p === s.key,
+        onClick: () => h(s.key)
       },
       s.key
     )) }),
@@ -2888,34 +2894,34 @@ function yt({
   ] });
 }
 export {
-  He as A,
-  ue as C,
-  dt as D,
-  lt as E,
-  D as F,
-  tt as G,
-  xt as I,
-  mt as L,
-  ft as M,
-  Ye as P,
-  Ee as Q,
-  ct as S,
-  Ze as U,
-  nt as a,
-  at as b,
-  rt as c,
-  ot as d,
-  ut as e,
-  it as f,
-  X as g,
-  bt as h,
-  et as i,
-  gt as j,
-  st as k,
-  ht as l,
-  pt as m,
-  Qe as n,
-  yt as o,
-  ne as p,
-  Je as q
+  Je as A,
+  ge as C,
+  ht as D,
+  ct as E,
+  T as F,
+  rt as G,
+  Nt as I,
+  pt as L,
+  bt as M,
+  et as P,
+  Ue as Q,
+  ut as S,
+  at as U,
+  it as a,
+  lt as b,
+  st as c,
+  mt as d,
+  ft as e,
+  ot as f,
+  H as g,
+  vt as h,
+  nt as i,
+  yt as j,
+  dt as k,
+  gt as l,
+  xt as m,
+  Ze as n,
+  Ct as o,
+  ie as p,
+  tt as q
 };

@@ -7,6 +7,8 @@ import { EntityTable, type Column } from '../shared/EntityTable';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
 
 export interface AuditPageProps {
   records: Array<{
@@ -117,8 +119,6 @@ export function AuditPage({
     [onViewEntity],
   );
 
-  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
-
   return (
     <PageSection title="Audit Log">
       {/* Filter bar */}
@@ -126,28 +126,31 @@ export function AuditPage({
         <div className="flex flex-wrap gap-4 items-end">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity Type</label>
-            <select className={inputClass} value={entityType} onChange={(e) => setEntityType(e.target.value)}>
-              <option value="">All</option>
-              {ENTITY_TYPES.filter(Boolean).map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
+            <Select
+              className="w-40"
+              value={entityType}
+              onChange={(e) => setEntityType(e.target.value)}
+              options={[
+                { value: '', label: 'All' },
+                ...ENTITY_TYPES.filter(Boolean).map((t) => ({ value: t, label: t })),
+              ]}
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
-            <input className={inputClass} value={entityId} onChange={(e) => setEntityId(e.target.value)} placeholder="Optional" />
+            <Input className="w-44" value={entityId} onChange={(e) => setEntityId(e.target.value)} placeholder="Optional" />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">From</label>
-            <input className={inputClass} type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+            <Input className="w-52" type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">To</label>
-            <input className={inputClass} type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />
+            <Input className="w-52" type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Limit</label>
-            <input className={`${inputClass} w-[70px]`} type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />
+            <Input className="w-[70px]" type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />
           </div>
           <Button variant="primary" size="lg" onClick={handleQuery} disabled={loading}>
             {loading ? 'Querying...' : 'Query'}
@@ -175,11 +178,11 @@ export function AuditPage({
         <div className="flex flex-wrap gap-4 items-end mb-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
-            <input className={inputClass} value={replayEntityId} onChange={(e) => setReplayEntityId(e.target.value)} placeholder="entity-id" />
+            <Input className="w-44" value={replayEntityId} onChange={(e) => setReplayEntityId(e.target.value)} placeholder="entity-id" />
           </div>
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-neutral uppercase tracking-wide">At Timestamp</label>
-            <input className={inputClass} type="datetime-local" value={replayTimestamp} onChange={(e) => setReplayTimestamp(e.target.value)} />
+            <Input className="w-52" type="datetime-local" value={replayTimestamp} onChange={(e) => setReplayTimestamp(e.target.value)} />
           </div>
           <Button variant="primary" size="lg" onClick={handleReplay} disabled={replaying || !replayEntityId || !replayTimestamp}>
             {replaying ? 'Replaying...' : 'Replay'}

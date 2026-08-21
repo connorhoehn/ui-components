@@ -7,6 +7,7 @@ import { Card } from '../../ui/Card';
 import { Table, TableHead, TableBody, TableRow, TableTh, TableTd } from '../../ui/Table';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Checkbox } from '../../forms/Checkbox';
 import Chip from '../../shared/Chip';
 
 export interface DiagnosticsPageProps {
@@ -123,10 +124,9 @@ export function DiagnosticsPage({
       actions={
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-1.5 text-sm text-neutral cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={autoRefresh}
-              onChange={(e) => setAutoRefresh(e.target.checked)}
+              onChange={setAutoRefresh}
               className="rounded"
             />
             Auto-refresh (10s)

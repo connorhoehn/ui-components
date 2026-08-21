@@ -15,6 +15,9 @@ import { forwardRef, useEffect, useRef } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface CheckboxProps {
+  id?: string;
+  /** Form field name, for label association and form submission. */
+  name?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   /**
@@ -41,6 +44,8 @@ export interface CheckboxProps {
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   function Checkbox(
     {
+      id,
+      name,
       checked,
       onChange,
       indeterminate = false,
@@ -70,6 +75,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           else if (forwardedRef) forwardedRef.current = el;
         }}
         type="checkbox"
+        id={id}
+        name={name}
         checked={checked}
         disabled={disabled}
         aria-label={ariaLabel}

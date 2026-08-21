@@ -8,6 +8,7 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Select } from '../../forms/Select';
 
 export interface MfaManagementPageProps {
   metrics?: {
@@ -79,7 +80,6 @@ export function MfaManagementPage({
     );
   }
 
-  const inputClass = 'px-3 py-2 text-sm border border-border rounded-md bg-white text-text-primary focus:outline-none focus:ring-2 focus:ring-info focus:border-info transition-shadow';
 
   return (
     <PageSection
@@ -118,14 +118,18 @@ export function MfaManagementPage({
           <label className="text-xs font-semibold text-neutral uppercase tracking-wide">
             Filter by pool
           </label>
-          <select className={inputClass} value={selectedPool} onChange={(e) => setSelectedPool(e.target.value)}>
-            <option value="">All Pools</option>
-            {pools.map((p) => (
-              <option key={p.poolId} value={p.poolId}>
-                {p.poolName} ({p.userCount} users)
-              </option>
-            ))}
-          </select>
+          <Select
+            className="w-64"
+            value={selectedPool}
+            onChange={(e) => setSelectedPool(e.target.value)}
+            options={[
+              { value: '', label: 'All Pools' },
+              ...pools.map((p) => ({
+                value: p.poolId,
+                label: `${p.poolName} (${p.userCount} users)`,
+              })),
+            ]}
+          />
         </div>
       )}
 

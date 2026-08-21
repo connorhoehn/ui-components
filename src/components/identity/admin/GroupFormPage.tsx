@@ -7,6 +7,8 @@ import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
+import { Input } from '../../forms/Input';
+import { Select } from '../../forms/Select';
 import Banner from '../../shared/Banner';
 
 export interface GroupFormPageProps {
@@ -131,8 +133,7 @@ export function GroupFormPage({
               </span>
             ))}
           </div>
-          <input
-            className="w-full p-2 text-base border border-border rounded-sm bg-white text-text-primary box-border"
+          <Input
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -164,18 +165,13 @@ export function GroupFormPage({
             {/* Add member */}
             {availableUsers && availableUsers.length > 0 && onAddMember && (
               <div className="flex gap-2 mt-2">
-                <select
-                  className="flex-1 p-2 text-base border border-border rounded-sm bg-white text-text-primary"
+                <Select
+                  className="flex-1"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}
-                >
-                  <option value="">Select user to add...</option>
-                  {availableUsers.map((u) => (
-                    <option key={u.userId} value={u.userId}>
-                      {u.email}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="Select user to add..."
+                  options={availableUsers.map((u) => ({ value: u.userId, label: u.email }))}
+                />
                 <Button variant="ghost" size="sm" onClick={handleAddMember} disabled={!selectedUser}>
                   Add
                 </Button>

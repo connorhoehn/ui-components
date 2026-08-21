@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { Input } from '../forms/Input';
 import Modal from '../shared/Modal';
 import {
   documentTypeCookbooks,
@@ -171,7 +172,7 @@ export default function CookbooksModal({
         ))}
       </div>
 
-      <input
+      <Input
         ref={searchRef}
         type="search"
         data-testid="cookbooks-search"
@@ -179,7 +180,7 @@ export default function CookbooksModal({
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         onKeyDown={handleSearchKeyDown}
-        className="w-full border border-border-field rounded-md px-3 py-2 text-[13px] font-inherit bg-[#f9fafb] text-text-primary outline-none mb-3.5"
+        className="mb-3.5"
       />
 
       {filtered.length === 0 ? (
