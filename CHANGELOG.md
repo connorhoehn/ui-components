@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.71.0] — 2026-08-21
+
+Audit-round follow-through: the two biggest untested surfaces get suites,
+and the dependency vulnerabilities are cleared.
+
+### Added
+
+- **Identity tests (23)**: admin form pages pin their exact submit
+  payloads (user/pool/group/application/email-template), list pages pin
+  the two-step ConfirmDialog delete flow, AuditPage pins the
+  datetime→epoch query conversion and point-in-time replay, and the OIDC
+  auth screens (login/consent/MFA verify/logout/error) are covered.
+- **`TypedDocumentForm` tests (13)**: widget mapping per field kind,
+  submit coercion (numbers, native booleans, empty-optional dropping),
+  required/regex/min-max/requireTrue validation, `showWhen` visibility
+  (hidden fields drop from the payload), unlimited-cardinality add/remove
+  and number coercion, reset-on-success, error surfacing.
+- **`FieldTypesPage` tests (5)**: two-step wizard gating, localStorage
+  persistence across remount, disabled coming-soon primitive types.
+- **`src/api/` tests (11)**: URL/param assembly and error surfacing for
+  retry/force-fail/audit/DLQ/runs/resume — including DLQ's deliberate
+  503→empty tolerance, `searchAudit`'s required-filter guard, and the
+  backend `runId` → frontend `id` boundary mapping.
+
+### Fixed
+
+- **`npm audit`: 6 high-severity vulnerabilities cleared** (brace-expansion,
+  fast-uri, nanoid, postcss) via lockfile-only upgrades. One low remains
+  (esbuild dev-server file read, Windows-only, nested under vite — waits
+  on a vite bump).
+
 ## [2.70.0] — 2026-08-21
 
 The `forms/` primitives — the most-copied components since the control

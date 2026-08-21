@@ -293,8 +293,15 @@ exports (`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested, and as
 of v2.66.0 **every `shared/` component has a test file** (the last 26 —
 Drawer, ToastProvider, SubNavLayout, InlinePopover, ActivityFeed,
 ProjectCard, SearchInput, ChatComposer, and the smaller primitives —
-gained 101 tests). New exports ship with tests; there is no known
-untested export.
+gained 101 tests). The 2026-08-21 audit round then closed the remaining
+area gaps: identity admin+auth pages (23 tests — form payload shapes,
+two-step ConfirmDialog deletes, audit query/replay, OIDC interaction
+screens), `TypedDocumentForm` (13 — widget mapping, coercion, showWhen,
+unlimited cardinality), `FieldTypesPage` (5 — wizard + localStorage
+persistence), and `src/api/` (11 — URL/param assembly, DLQ 503
+tolerance, runId→id boundary mapping). New exports ship with tests.
+Remaining thin spots are lower-value: renderers 8/26 files, contexts
+(thin providers), and parts of social/ingest/observability pages.
 
 ### Story coverage (audit #4, audit #5)
 Integrations layer fully storied (hub #989 CLOSED): `WrappedActivityPanel`,
