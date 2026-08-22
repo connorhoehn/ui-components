@@ -25,40 +25,6 @@ declare module 'reactflow' {
   export function getConnectedEdges(edges: any[], nodes: any[]): any[];
 }
 
-declare module 'amazon-cognito-identity-js' {
-  export class CognitoUserPool {
-    constructor(data: { UserPoolId: string; ClientId: string });
-    getCurrentUser(): CognitoUser | null;
-    signUp(username: string, password: string, attributes: any[], validationData: any[], callback: (err: any, result: any) => void): void;
-  }
-  export class CognitoUser {
-    constructor(data: { Username: string; Pool: CognitoUserPool });
-    authenticateUser(details: AuthenticationDetails, callbacks: any): void;
-    signOut(): void;
-    getSession(callback: (err: any, session: any) => void): void;
-    confirmRegistration(code: string, force: boolean, callback: (err: any, result: any) => void): void;
-    forgotPassword(callbacks: any): void;
-    confirmPassword(code: string, newPassword: string, callbacks: any): void;
-    getUserAttributes(callback: (err: any, attributes: any) => void): void;
-    refreshSession(token: CognitoRefreshToken, callback: (err: any, session: any) => void): void;
-    getUsername(): string;
-  }
-  export class AuthenticationDetails {
-    constructor(data: { Username: string; Password: string });
-  }
-  export class CognitoUserAttribute {
-    constructor(data: { Name: string; Value: string });
-  }
-  export class CognitoRefreshToken {
-    constructor(data: { RefreshToken: string });
-  }
-  export interface CognitoUserSession {
-    getIdToken(): { getJwtToken(): string };
-    getRefreshToken(): { getToken(): string };
-    getAccessToken(): { getJwtToken(): string };
-    isValid(): boolean;
-  }
-}
 
 declare module 'amazon-ivs-web-broadcast' {
   const content: any;

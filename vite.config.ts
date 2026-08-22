@@ -44,7 +44,7 @@ export default defineConfig({
         'clsx', 'tailwind-merge', 'cmdk',
         'yjs', 'y-prosemirror', 'y-protocols',
         '@xyflow/react', 'reactflow', '@tiptap/react', '@tiptap/starter-kit',
-        '@tiptap/extension-collaboration', '@tiptap/extension-collaboration-cursor',
+        '@tiptap/extension-collaboration',
         '@tiptap/extension-mention', '@tiptap/extension-placeholder',
         '@tiptap/extension-task-item', '@tiptap/extension-task-list',
         '@tiptap/pm', '@tiptap/y-tiptap',

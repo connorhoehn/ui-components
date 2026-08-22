@@ -10,7 +10,7 @@ The pipeline editor exists in two copies:
 | Location | Role | LOC |
 |---|---|---|
 | `~/Projects/ui-components/src/components/pipelines/` | The SDK library — used by demos, future consumers, and the runs-viewer panel embedded in wsg | ~12k |
-| `~/Projects/websocket-gateway/frontend/src/components/pipelines/` | The actual editor rendering at `localhost:15174/pipelines/<id>` | ~14k |
+| `~/Projects/realtime-examples/frontend/src/components/pipelines/` | The actual editor rendering at `localhost:15174/pipelines/<id>` | ~14k |
 
 The wsg-frontend copy is the editor of record (route handler imports it; `localhost:15174` renders it). The SDK copy is a parallel evolution — it carries 8 agentic node types (`agent`, `mcp-tool`, `knowledge-base`, `graph-query`, `memory`, `guardrail`, `policy`, `ag-ui-output`) that wsg-frontend lacks; wsg-frontend carries `image:vision-analyze` (and now `scatter` / `image:crop` / `image:adjust-bw` / `image:adjust-layer` / `image:save` / `image-source`) that the SDK lacks.
 
