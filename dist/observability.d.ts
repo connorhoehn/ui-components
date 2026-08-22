@@ -123,9 +123,9 @@ declare interface LineSeries {
 
 export declare function MetricsPage(): JSX.Element;
 
-export declare function MetricTimeSeriesPanel({ seeds, liveSeries, cols, isLiveData, failedColor, }: MetricTimeSeriesPanelProps): JSX.Element;
+export declare function MetricTimeSeriesPanel({ seeds, liveSeries, cols, isLiveData, failedColor, onResetZoom, onExportCsv, }: MetricTimeSeriesPanelProps): JSX.Element;
 
-declare interface MetricTimeSeriesPanelProps {
+export declare interface MetricTimeSeriesPanelProps {
     seeds: {
         runsPerMinute: LineSeries[];
         stepDuration: LineSeries[];
@@ -148,9 +148,39 @@ declare interface MetricTimeSeriesPanelProps {
     isLiveData: boolean;
     /** Color for the failure-rate bar chart */
     failedColor: string;
+    /** Host-wired zoom reset. The button renders only when provided. */
+    onResetZoom?: () => void;
+    /** Host-wired CSV export. The button renders only when provided. */
+    onExportCsv?: () => void;
 }
 
-export declare function NodesPage(): JSX.Element;
+export declare function NodesPage({ nodes: nodesProp, onAddLatency, onKillNode, onTransferResource, }?: NodesPageProps): JSX.Element;
+
+export declare interface NodesPageProps {
+    /**
+     * Node summaries to render. When omitted, falls back to the Phase-1
+     * fixture-derived set so the demo route is never blank.
+     */
+    nodes?: NodeSummary[];
+    /** Host-wired per-node chaos: add latency. Section hidden when absent. */
+    onAddLatency?: (nodeId: string) => void;
+    /** Host-wired per-node chaos: kill. Section hidden when absent. */
+    onKillNode?: (nodeId: string) => void;
+    /** Host-wired resource transfer. Section hidden when absent. */
+    onTransferResource?: (nodeId: string) => void;
+}
+
+declare interface NodeSummary {
+    id: string;
+    status: 'healthy' | 'degraded' | 'dead' | 'idle';
+    region?: string;
+    role?: string;
+    cpu: number;
+    memoryMb: number;
+    connections: number;
+    activeRuns: number;
+    cpuHistory: number[];
+}
 
 export declare function ObservabilityLayout(): JSX.Element;
 

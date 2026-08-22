@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.72.0] — 2026-08-21
+
+The three structural items from the audit, executed non-breaking.
+
+### Changed
+
+- **Observability graduation prep — no button is a no-op anymore.** The five
+  `console.log` stubs became optional host callbacks: `MetricTimeSeriesPanel`
+  gains `onResetZoom?`/`onExportCsv?`, `NodesPage` gains `onAddLatency?`/
+  `onKillNode?`/`onTransferResource?` — each control renders only when the
+  host wires it. `NodesPage` also gains a `nodes?` prop (fixture-derived set
+  remains the fallback so the demo route is never blank). The barrel stays
+  **in-flux**: graduation waits on a real consumer and the real
+  `ClusterDashboard` type from distributed-core.
+- **`EntityTable` is now a façade over `DataTable`.** Identity's table kept
+  its public API, Card frame and emoji empty state, but delegates sorting,
+  skeleton rows and action cells to shared `DataTable` — one table
+  implementation instead of two that could drift. `DataTable` gains an
+  additive `frameless` prop so composites can supply their own frame.
+- **`IdentityFormField` delegates presentation to `shared/FormField`.**
+  Same value-coercing API; the label/hint/error rendering and — new for
+  identity — the aria wiring (`aria-describedby` linking errors/help to the
+  input, `aria-invalid`) come from the shared wrapper. Identity forms adopt
+  the library-standard field look (visual snaps re-baselined: /identity/login,
+  /identity/mfa-setup). The checkbox branch keeps its wrapping-label markup.
+
+### Added
+
+- Contract tests (11) pinning all three: aria linkage, façade sorting/empty/
+  actions behavior, and hidden-until-wired observability actions.
+
 ## [2.71.2] — 2026-08-21
 
 Journey round two (e2e 193 → 206), plus the reset bug from round one fixed.

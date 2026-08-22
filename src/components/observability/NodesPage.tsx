@@ -83,8 +83,28 @@ function formatMem(mb: number): string {
   return `${Math.round(mb)}M`;
 }
 
-function NodesPage() {
-  const nodes = useMemo(resolveNodes, []);
+export interface NodesPageProps {
+  /**
+   * Node summaries to render. When omitted, falls back to the Phase-1
+   * fixture-derived set so the demo route is never blank.
+   */
+  nodes?: NodeSummary[];
+  /** Host-wired per-node chaos: add latency. Section hidden when absent. */
+  onAddLatency?: (nodeId: string) => void;
+  /** Host-wired per-node chaos: kill. Section hidden when absent. */
+  onKillNode?: (nodeId: string) => void;
+  /** Host-wired resource transfer. Section hidden when absent. */
+  onTransferResource?: (nodeId: string) => void;
+}
+
+function NodesPage({
+  nodes: nodesProp,
+  onAddLatency,
+  onKillNode,
+  onTransferResource,
+}: NodesPageProps = {}) {
+  const fixtureNodes = useMemo(resolveNodes, []);
+  const nodes = nodesProp ?? fixtureNodes;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = useMemo(
     () => nodes.find((n) => n.id === selectedId) ?? null,
@@ -174,39 +194,45 @@ function NodesPage() {
             </div>
           </div>
 
-          {/* Chaos controls scoped to node */}
-          <div className="px-3.5 py-3 border-b border-border flex flex-col gap-2">
-            <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
-              Chaos (this node)
+          {/* Chaos controls scoped to node — host-wired; hidden when the
+              host provides no handlers, so no button is ever a no-op. */}
+          {(onAddLatency || onKillNode) && (
+            <div className="px-3.5 py-3 border-b border-border flex flex-col gap-2">
+              <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                Chaos (this node)
+              </div>
+              {onAddLatency && (
+                <button
+                  onClick={() => onAddLatency(selected.id)}
+                  className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+                >
+                  Add latency
+                </button>
+              )}
+              {onKillNode && (
+                <button
+                  onClick={() => onKillNode(selected.id)}
+                  className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
+                >
+                  Kill node
+                </button>
+              )}
             </div>
-            <button
-              title="Stub: real per-node chaos injection ships in Phase 5"
-              onClick={() => console.log('[NodesPage] add latency to', selected.id)}
-              className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
-            >
-              Add latency
-            </button>
-            <button
-              title="Stub: real per-node chaos injection ships in Phase 5"
-              onClick={() => console.log('[NodesPage] kill', selected.id)}
-              className="self-start px-3.5 py-1.5 text-[13px] font-semibold bg-state-failed text-white border-none rounded-md cursor-pointer font-[inherit]"
-            >
-              Kill node
-            </button>
-          </div>
+          )}
 
-          {/* Transfer resource stub */}
-          <div className="px-3.5 py-3 border-b border-border flex flex-col gap-2">
-            <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
-              Actions
+          {onTransferResource && (
+            <div className="px-3.5 py-3 border-b border-border flex flex-col gap-2">
+              <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                Actions
+              </div>
+              <button
+                onClick={() => onTransferResource(selected.id)}
+                className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
+              >
+                Transfer resource
+              </button>
             </div>
-            <button
-              onClick={() => console.log('[NodesPage] transfer resource from', selected.id)}
-              className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
-            >
-              Transfer resource
-            </button>
-          </div>
+          )}
         </aside>
       )}
     </div>

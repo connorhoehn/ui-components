@@ -53,6 +53,11 @@ export interface DataTableProps<T> {
   emptyMessage?: ReactNode;
   loading?: boolean;
   loadingRows?: number;
+  /**
+   * Drop the table's own border/rounding so a composite (e.g. a Card-framed
+   * table like identity's EntityTable) can provide the frame instead.
+   */
+  frameless?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -75,6 +80,7 @@ export function DataTable<T>({
   emptyMessage = 'No records.',
   loading = false,
   loadingRows = 5,
+  frameless = false,
   className,
   'data-testid': testId,
 }: DataTableProps<T>) {
@@ -146,7 +152,7 @@ export function DataTable<T>({
           className="w-full max-w-xs rounded-md border border-border-field bg-surface px-3 py-1.5 text-sm text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
         />
       )}
-      <Table className="border border-border rounded-lg overflow-hidden">
+      <Table className={frameless ? undefined : 'border border-border rounded-lg overflow-hidden'}>
         <TableHead>
           <tr>
             {columns.map((col) => {

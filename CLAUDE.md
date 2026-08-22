@@ -110,7 +110,7 @@ Tailwind, and only allowlist values that are genuinely runtime-derived.
 | `…/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A canvas, `AgentDirectory`, `ConversationHistory` | **Stable API** (AG-UI v0.1.x types frozen 2026-06-06; see `src/types/agents.ts` header) |
 | `…/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **Stable — API frozen 2026-06-10** (hub #1062; see freeze note below) |
 | `…/doc-editor` | TipTap collaborative rich-text editor, incl. self-bootstrapping `StandaloneTiptap` | **Stable — API frozen 2026-06-10** (hub #1066; internal Tailwind wave 3 may still land — no API impact) |
-| `…/observability` | Dashboard, events, metrics, node pages | **In-flux** |
+| `…/observability` | Dashboard, events, metrics, node pages | **In-flux** — graduation-prepped v2.72.0 (host-callback actions, `nodes` prop); freezes when a real consumer + the distributed-core `ClusterDashboard` type exist |
 
 ### API freeze: `/pipelines` + `/doc-editor` (2026-06-10, v2.33.0)
 

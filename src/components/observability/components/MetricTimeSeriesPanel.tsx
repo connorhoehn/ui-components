@@ -54,6 +54,10 @@ export interface MetricTimeSeriesPanelProps {
   isLiveData: boolean;
   /** Color for the failure-rate bar chart */
   failedColor: string;
+  /** Host-wired zoom reset. The button renders only when provided. */
+  onResetZoom?: () => void;
+  /** Host-wired CSV export. The button renders only when provided. */
+  onExportCsv?: () => void;
 }
 
 function MetricTimeSeriesPanel({
@@ -62,6 +66,8 @@ function MetricTimeSeriesPanel({
   cols,
   isLiveData,
   failedColor,
+  onResetZoom,
+  onExportCsv,
 }: MetricTimeSeriesPanelProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('1h');
   const [refresh, setRefresh] = useState<RefreshInterval>('30s');
@@ -89,21 +95,25 @@ function MetricTimeSeriesPanel({
           options={REFRESH_INTERVALS.map((r) => ({ value: r.value, label: `Refresh: ${r.label}` }))}
         />
 
-        <button
-          data-testid="metrics-reset-zoom"
-          onClick={() => console.log('[MetricsPage] reset zoom')}
-          className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
-        >
-          Reset zoom
-        </button>
+        {onResetZoom && (
+          <button
+            data-testid="metrics-reset-zoom"
+            onClick={onResetZoom}
+            className="px-3 py-1.5 text-[13px] bg-transparent border-none text-text-secondary cursor-pointer font-[inherit] shrink-0"
+          >
+            Reset zoom
+          </button>
+        )}
 
-        <button
-          data-testid="metrics-export-csv"
-          onClick={() => console.log('[MetricsPage] export CSV')}
-          className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
-        >
-          Export CSV
-        </button>
+        {onExportCsv && (
+          <button
+            data-testid="metrics-export-csv"
+            onClick={onExportCsv}
+            className="px-3.5 py-1.5 text-[13px] font-semibold bg-primary text-white border-none rounded-md cursor-pointer font-[inherit] shrink-0"
+          >
+            Export CSV
+          </button>
+        )}
 
         <div
           data-testid="metrics-data-source"

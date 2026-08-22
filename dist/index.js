@@ -1,8 +1,8 @@
 import { DOCUMENT_TYPE_ICONS as ua, getPageConfig as ma, getPagesView as fa, makeEmptyField as xa } from "./types.js";
 import { C as ha, i as ga } from "./fieldType-BJfRz7mO.js";
-import { c as Ye, A as Qe, j as Je } from "./useUrlFilterState-D_odlANh.js";
+import { c as Qe, A as Ye, j as Je } from "./useUrlFilterState-D_odlANh.js";
 import { B as ya, a as Na, u as wa, b as Ca, d as Sa, e as Ia, f as Ta, g as ka, h as Ea, i as Pa, k as Da, l as Aa, m as Ra, n as La, o as Ma, p as _a, q as Oa, r as $a, s as Ba, t as ja, v as Fa, w as Ua, x as Va, y as Wa, z as Ga, C as za, D as Ha } from "./useUrlFilterState-D_odlANh.js";
-import { u as Ka, a as qa, b as Ya, c as Qa, d as Ja, e as Za, f as es, g as ts, h as rs, i as as, j as ss, k as ns, l as os, m as is, n as ls, o as cs, p as ds } from "./useWebSocket-Bn4OeUor.js";
+import { u as Ka, a as qa, b as Qa, c as Ya, d as Ja, e as Za, f as es, g as ts, h as rs, i as as, j as ss, k as ns, l as os, m as is, n as ls, o as cs, p as ds } from "./useWebSocket-Bn4OeUor.js";
 import { u as us, a as ms, b as fs, c as xs, d as bs, e as hs } from "./useComments-Bocx7XyC.js";
 import { u as vs, a as ys, b as Ns, c as ws, d as Cs, e as Ss, f as Is, g as Ts, h as ks, i as Es } from "./useMappingReviewQueue-DRbIo6-O.js";
 import { u as Ds } from "./useDocumentTypes-C29MkgPl.js";
@@ -14,12 +14,12 @@ import { u as tt } from "./IdentityContext-CLalsm_M.js";
 import { I as $s } from "./IdentityContext-CLalsm_M.js";
 import { u as rt } from "./TrendSparkline-po-w4wQC.js";
 import { C as js, D as Fs, F as Us, I as Vs, a as Ws, P as Gs, S as zs, T as Hs, b as Xs, U as Ks } from "./TrendSparkline-po-w4wQC.js";
-import { A as Ys, C as Qs, e as Js, a as Zs, a as en, D as tn, G as rn, M as an, P as sn, R as nn, b as on, c as ln, S as cn, d as dn, u as pn } from "./ReactionsBar-BqEr840w.js";
-import { t as at, w as st } from "./StatusPill-DoAGQJzd.js";
-import { B as mn, C as fn, a as xn, b as bn, c as hn, d as gn, e as vn, f as yn, g as Nn, h as wn, D as Cn, i as Sn, j as In, E as Tn, k as kn, F as En, l as Pn, I as Dn, m as An, K as Rn, L as Ln, n as Mn, o as _n, M as On, P as $n, p as Bn, q as jn, r as Fn, Q as Un, S as Vn, s as Wn, u as Gn, v as zn, x as Hn, T as Xn, y as Kn, z as qn, A as Yn, G as Qn, H as Jn, J as Zn, N as eo, O as to, U as ro, R as ao, V as so, W as no, X as oo, Y as io, Z as lo } from "./StatusPill-DoAGQJzd.js";
+import { A as Qs, C as Ys, e as Js, a as Zs, a as en, D as tn, G as rn, M as an, P as sn, R as nn, b as on, c as ln, S as cn, d as dn, u as pn } from "./ReactionsBar-BqEr840w.js";
+import { r as at, u as st } from "./StatusPill-ITfp_T8q.js";
+import { B as mn, C as fn, a as xn, b as bn, c as hn, d as gn, e as vn, f as yn, g as Nn, h as wn, D as Cn, i as Sn, E as In, j as Tn, F as kn, I as En, k as Pn, K as Dn, L as An, l as Rn, m as Ln, M as Mn, P as _n, n as On, o as $n, p as Bn, Q as jn, S as Fn, q as Un, s as Vn, t as Wn, v as Gn, T as zn, w as Hn, x as Xn, y as Kn, z as qn, A as Qn, G as Yn, H as Jn, J as Zn, U as eo, N as to, O as ro, R as ao, V as so, W as no, X as oo } from "./StatusPill-ITfp_T8q.js";
 import { B as Z } from "./Button-DILgRebO.js";
 import { C as nt } from "./Card-qOg_oC77.js";
-import { P as po, T as uo, a as mo, b as fo, c as xo, d as bo, e as ho } from "./Table-D7HV0dS-.js";
+import { D as lo, F as co, P as po, T as uo, a as mo, b as fo, c as xo, d as bo, e as ho } from "./FormField-BftBYBdG.js";
 import { F as vo, I as yo, S as No } from "./FileUploadDrop-D8mbq_QB.js";
 import { B as Co } from "./Banner-BoO81CCz.js";
 import { B as Io, L as To, S as ko } from "./Chart-D_DsFB-7.js";
@@ -32,14 +32,14 @@ import { S as Vo } from "./SkeletonCard-Bm2f1JX1.js";
 import { P as Go, S as zo } from "./PermissionDeniedCard-0XYb6Eju.js";
 import { S as Xo } from "./StatusDot-BC7B1tTr.js";
 import { A as De } from "./Avatar-B7O2g50s.js";
-import { a as qo, n as Yo, b as Qo } from "./Avatar-B7O2g50s.js";
+import { a as qo, n as Qo, b as Yo } from "./Avatar-B7O2g50s.js";
 import { C as it } from "./Badge-pOBJ8s2D.js";
 import { A as Zo, B as ei, N as ti, P as ri } from "./Badge-pOBJ8s2D.js";
 import { T as si, a as ni, b as oi, c as ii, d as li, e as ci, f as di, t as pi, g as ui } from "./tones-DknNcB3q.js";
 import { R as lt } from "./ReactionsOverlay-DGBFgHTr.js";
 import { S as fi, a as xi } from "./ReactionsOverlay-DGBFgHTr.js";
 import { jsxs as n, jsx as e, Fragment as O } from "react/jsx-runtime";
-import { useState as D, useEffect as k, useMemo as Q, useRef as A, Component as ct, lazy as dt, useCallback as we, Suspense as Ce, createContext as pt, useContext as ut, forwardRef as mt } from "react";
+import { useState as D, useEffect as k, useMemo as Y, useRef as A, Component as ct, lazy as dt, useCallback as we, Suspense as Ce, createContext as pt, useContext as ut, forwardRef as mt } from "react";
 import { useNavigate as Ae, useLocation as ft, Outlet as xt } from "react-router";
 import { c as x } from "./cn-B6yFEsav.js";
 import { i as bt, a as ht } from "./PresencePanel-BNCV4y5A.js";
@@ -49,9 +49,9 @@ import { a as vt, u as Re, E as yt } from "./EventStreamContext-CjzSHXy-.js";
 import { u as Le, l as Me, a as _e, P as Nt, b as wt, c as Ct, d as St } from "./usePendingApprovals-c2L-t6o9.js";
 import { G as wi, I as Ci, J as Si, N as Ii, e as Ti, f as ki, g as Ei, R as Pi, S as Di, h as Ai, i as Ri, j as Li, k as Mi, m as _i, r as Oi, n as $i, o as Bi, s as ji, p as Fi, q as Ui } from "./usePendingApprovals-c2L-t6o9.js";
 import { u as It, O as Tt } from "./ObservabilityContext-mvmEXnGv.js";
-import { A as Wi, C as Gi, a as zi, b as Hi, c as Xi, d as Ki, e as qi, f as Yi, E as Qi, H as Ji, g as Zi, M as el, h as tl, i as rl, j as al, k as sl, N as nl, P as ol, l as il, R as ll, m as cl, n as dl, o as pl, p as ul, q as ml, S as fl, r as xl, s as bl, t as hl, u as gl, T as vl, v as yl, V as Nl, w as wl, x as Cl, y as Sl, z as Il, B as Tl, D as kl, F as El } from "./MediaControlsBar-B3Gyj-1m.js";
+import { A as Wi, C as Gi, a as zi, b as Hi, c as Xi, d as Ki, e as qi, f as Qi, E as Yi, H as Ji, g as Zi, M as el, h as tl, i as rl, j as al, k as sl, N as nl, P as ol, l as il, R as ll, m as cl, n as dl, o as pl, p as ul, q as ml, S as fl, r as xl, s as bl, t as hl, u as gl, T as vl, v as yl, V as Nl, w as wl, x as Cl, y as Sl, z as Il, B as Tl, D as kl, F as El } from "./MediaControlsBar-B3Gyj-1m.js";
 import { H as Dl, a as Al, b as Rl, P as Ll, R as Ml, c as _l, S as Ol, g as $l, s as Bl, u as jl, d as Fl } from "./ReconnectingBanner-CmL6Bm72.js";
-import { A as Vl, a as Wl, b as Gl, c as zl, d as Hl, C as Xl, e as Kl, D as ql, E as Yl, f as Ql, g as Jl, h as Zl, G as ec, i as tc, I as rc, d as ac, F as sc, L as nc, j as oc, M as ic, k as lc, l as cc, m as dc, P as pc, n as uc, o as mc, Q as fc, S as xc, p as bc, U as hc, q as gc } from "./PoolScopedLayout-j0-lt9Qz.js";
+import { A as Vl, a as Wl, b as Gl, c as zl, d as Hl, C as Xl, e as Kl, D as ql, E as Ql, f as Yl, g as Jl, h as Zl, G as ec, i as tc, I as rc, d as ac, F as sc, L as nc, j as oc, M as ic, k as lc, l as cc, m as dc, P as pc, n as uc, o as mc, Q as fc, S as xc, p as bc, U as hc, q as gc } from "./PoolScopedLayout-Cmiolsz4.js";
 import { I as yc } from "./Input-Dt0yAs9r.js";
 import { S as wc } from "./Select-DAEcKWg2.js";
 import { T as Sc } from "./Textarea-kaa9rHUL.js";
@@ -436,7 +436,7 @@ function Mt({
   onSeeAllPipelines: w,
   videoSlot: g
 }) {
-  const b = t === "connected", E = Q(() => p.slice(0, 5), [p]), M = Q(() => m.slice(0, 5), [m]), _ = f ?? [], U = Q(() => _.slice(0, 12), [_]), G = f !== void 0;
+  const b = t === "connected", E = Y(() => p.slice(0, 5), [p]), M = Y(() => m.slice(0, 5), [m]), _ = f ?? [], U = Y(() => _.slice(0, 12), [_]), G = f !== void 0;
   return /* @__PURE__ */ n("div", { className: "flex flex-col gap-0", children: [
     /* @__PURE__ */ n("div", { className: "pt-1 pb-2 flex items-center gap-2", children: [
       /* @__PURE__ */ e(
@@ -642,7 +642,7 @@ function Mt({
     ] })
   ] });
 }
-function Y({
+function Q({
   icon: t,
   title: r,
   onClick: s
@@ -677,7 +677,7 @@ function _t({
       "data-testid": "collapsed-icon-strip",
       className: "flex flex-col items-center gap-1 h-full",
       children: [
-        /* @__PURE__ */ e(Y, { icon: "☰", title: "Expand sidebar", onClick: r }),
+        /* @__PURE__ */ e(Q, { icon: "☰", title: "Expand sidebar", onClick: r }),
         /* @__PURE__ */ e(
           "div",
           {
@@ -692,9 +692,9 @@ function _t({
           }
         ),
         /* @__PURE__ */ e("div", { className: "h-2" }),
-        /* @__PURE__ */ e(Y, { icon: "📄", title: "Documents", onClick: s }),
-        /* @__PURE__ */ e(Y, { icon: "🔀", title: "Pipelines", onClick: a }),
-        /* @__PURE__ */ e(Y, { icon: "📡", title: "Observability", onClick: o })
+        /* @__PURE__ */ e(Q, { icon: "📄", title: "Documents", onClick: s }),
+        /* @__PURE__ */ e(Q, { icon: "🔀", title: "Pipelines", onClick: a }),
+        /* @__PURE__ */ e(Q, { icon: "📡", title: "Observability", onClick: o })
       ]
     }
   );
@@ -1031,8 +1031,8 @@ function qt() {
       o.has(i) || a.current.delete(i);
   }, [t, r, s]);
 }
-const Yt = dt(() => import("./DocumentEditorPage-8c0s4Uxk.js").then((t) => t.o));
-function Qt({ notifications: t, onDismiss: r, onClick: s }) {
+const Qt = dt(() => import("./DocumentEditorPage-8c0s4Uxk.js").then((t) => t.o));
+function Yt({ notifications: t, onDismiss: r, onClick: s }) {
   if (t.length === 0) return null;
   const a = (o) => (o.type === "mention" || o.type === "assignment") && !!o.sectionId;
   return /* @__PURE__ */ e("div", { className: "fixed top-16 right-4 w-80 z-[1000] flex flex-col gap-2", children: t.map((o) => /* @__PURE__ */ n(
@@ -1089,7 +1089,7 @@ function Jt({
   activityEvents: p,
   activityPublish: u
 }) {
-  const { connectionState: m, sendMessage: d, onMessage: f, ws: P, clientId: w, sessionToken: g } = et(), { userId: b, displayName: E, userEmail: M, idToken: _, onSignOut: U } = tt(), { presenceUsers: G, currentClientId: h } = rt(), C = Ae(), N = ft(), B = Ye(), { toast: X } = Pe(), pe = A(null);
+  const { connectionState: m, sendMessage: d, onMessage: f, ws: P, clientId: w, sessionToken: g } = et(), { userId: b, displayName: E, userEmail: M, idToken: _, onSignOut: U } = tt(), { presenceUsers: G, currentClientId: h } = rt(), C = Ae(), N = ft(), B = Qe(), { toast: X } = Pe(), pe = A(null);
   k(() => {
     l?.code === "RECONNECT_EXHAUSTED" && pe.current !== "RECONNECT_EXHAUSTED" && X(l.message, {
       type: "error",
@@ -1097,7 +1097,7 @@ function Jt({
       onAction: () => s()
     }), pe.current = l?.code ?? null;
   }, [l, X, s]);
-  const R = N.pathname.startsWith("/pipelines") ? "pipelines" : N.pathname.startsWith("/ingest") ? "ingest" : N.pathname.startsWith("/observability") ? "observability" : N.pathname.startsWith("/documents") ? "doc-editor" : N.pathname.startsWith("/social") ? "social" : N.pathname.startsWith("/dashboard") ? "dashboard" : N.pathname.startsWith("/document-types") ? "doc-types" : N.pathname.startsWith("/field-types") ? "field-types" : "panels", [K] = D(null), [ue, me] = D(!1), [fe, j] = D(!1), [Ue, ee] = D(!1), [Ve, xe] = D(!1), [V, te] = D(null), [re, be] = D(!0), ae = re ? 260 : 56, { rooms: q } = Qe({ idToken: _, onMessage: f }), { documents: We, createDocument: Ge } = Je({
+  const R = N.pathname.startsWith("/pipelines") ? "pipelines" : N.pathname.startsWith("/ingest") ? "ingest" : N.pathname.startsWith("/observability") ? "observability" : N.pathname.startsWith("/documents") ? "doc-editor" : N.pathname.startsWith("/social") ? "social" : N.pathname.startsWith("/dashboard") ? "dashboard" : N.pathname.startsWith("/document-types") ? "doc-types" : N.pathname.startsWith("/field-types") ? "field-types" : "panels", [K] = D(null), [ue, me] = D(!1), [fe, j] = D(!1), [Ue, ee] = D(!1), [Ve, xe] = D(!1), [V, te] = D(null), [re, be] = D(!0), ae = re ? 260 : 56, { rooms: q } = Ye({ idToken: _, onMessage: f }), { documents: We, createDocument: Ge } = Je({
     sendMessage: d,
     onMessage: f,
     connectionState: m
@@ -1201,7 +1201,7 @@ function Jt({
   );
   return /* @__PURE__ */ n("div", { className: "relative min-h-screen font-sans bg-surface-panel", children: [
     /* @__PURE__ */ e(lt, { reactions: a }),
-    /* @__PURE__ */ e(Qt, { notifications: z, onDismiss: ie, onClick: Ke }),
+    /* @__PURE__ */ e(Yt, { notifications: z, onDismiss: ie, onClick: Ke }),
     /* @__PURE__ */ n("div", { className: "flex items-center justify-between px-6 py-3 bg-surface border-b border-border gap-4 sticky top-0 z-50", children: [
       /* @__PURE__ */ e("span", { className: "text-base font-semibold text-text-primary shrink-0", children: "WebSocket Gateway" }),
       /* @__PURE__ */ n("div", { className: "flex items-center gap-4 flex-1 justify-center", children: [
@@ -1473,7 +1473,7 @@ function Jt({
               /* @__PURE__ */ e(Te, { name: "RouteContent", children: /* @__PURE__ */ e(Ce, { fallback: /* @__PURE__ */ e("div", { children: "Loading..." }), children: /* @__PURE__ */ e(xt, { context: { dockedVideoDocId: V, setDockedVideoDocId: te } }) }) })
             ] }),
             V && N.pathname !== `/documents/${V}` && /* @__PURE__ */ e(Te, { name: "DockedVideoEditor", children: /* @__PURE__ */ e(Ce, { fallback: /* @__PURE__ */ e("div", { children: "Loading..." }), children: /* @__PURE__ */ e("div", { className: "hidden", children: /* @__PURE__ */ e(
-              Yt,
+              Qt,
               {
                 documentId: V,
                 ws: P,
@@ -2219,12 +2219,12 @@ const cr = {
   surface: "#ffffff",
   surfaceRaised: "#ffffff",
   surfaceOverlay: "rgba(15, 23, 42, 0.5)"
-}, dr = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, pr = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, ur = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, Yr = {
+}, dr = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32 }, pr = { xs: 11, sm: 13, md: 14, lg: 16, xl: 22 }, ur = { sm: 4, md: 6, lg: 8, xl: 12, full: 9999 }, Qr = {
   colors: cr,
   spacing: dr,
   fontSize: pr,
   borderRadius: ur
-}, Qr = {
+}, Yr = {
   primary: v("primary"),
   primaryDark: v("primaryDark"),
   primaryLight: v("primaryLight"),
@@ -2362,7 +2362,7 @@ const cr = {
   shadowXl: "0 20px 25px rgba(0,0,0,0.4), 0 10px 10px rgba(0,0,0,0.2)"
 }, Fe = pt(je);
 function ta({ children: t, preset: r = "light", theme: s, tones: a }) {
-  const o = r === "dark" ? mr : je, i = Q(
+  const o = r === "dark" ? mr : je, i = Y(
     () => ({ ...o, ...s }),
     [o, s]
   );
@@ -2525,7 +2525,7 @@ function ca({
 export {
   Fr as ActiveCallBanner,
   Zo as ActivityFeed,
-  Ys as ActivityPanel,
+  Qs as ActivityPanel,
   Vl as AdminDashboardPage,
   Dt as ApiDegradedBanner,
   Vr as AppLayout,
@@ -2556,10 +2556,10 @@ export {
   bn as ChannelHeader,
   hn as ChatComposer,
   hi as ChatPanel,
-  Qs as ChatRoom,
+  Ys as ChatRoom,
   Tc as Checkbox,
   Po as Chip,
-  Yi as CircularIconToggle,
+  Qi as CircularIconToggle,
   gn as CodeBlock,
   js as CodeEditor,
   Xl as CodeInput,
@@ -2580,26 +2580,26 @@ export {
   tn as DEFAULT_PICKER_EMOJIS,
   Fs as DEFAULT_PIPELINE_ICONS,
   ua as DOCUMENT_TYPE_ICONS,
-  Cn as DataTable,
+  lo as DataTable,
   ql as DiagnosticsPage,
   Hr as DocsShell,
   Xr as DocsSidebar,
   Kr as DocsTopNav,
-  Sn as Drawer,
-  In as DropdownMenu,
-  Yl as EmailTemplateFormPage,
-  Ql as EmailTemplateListPage,
+  Cn as Drawer,
+  Sn as DropdownMenu,
+  Ql as EmailTemplateFormPage,
+  Yl as EmailTemplateListPage,
   Lo as EmptyState,
-  Tn as EntityCell,
+  In as EntityCell,
   Jl as EntityTable,
   Zl as ErrorPage,
-  kn as ErrorState,
+  Tn as ErrorState,
   Oo as EventRow,
-  Qi as ExpandableCallWidget,
+  Yi as ExpandableCallWidget,
   vo as FileUploadDrop,
   Us as FilterChip,
-  En as FollowUpChips,
-  Pn as FormField,
+  kn as FollowUpChips,
+  co as FormField,
   wi as GenerativeImagePreview,
   ec as GroupFormPage,
   tc as GroupListPage,
@@ -2618,19 +2618,19 @@ export {
   $s as IdentityProvider,
   Ws as ImageLightbox,
   Ci as ImageThumbnail,
-  Dn as InlineAlert,
-  An as InlinePopover,
+  En as InlineAlert,
+  Pn as InlinePopover,
   yc as Input,
   Si as JsonPathInput,
-  Rn as KPIGrid,
-  Ln as LayerStack,
+  Dn as KPIGrid,
+  An as LayerStack,
   To as LineChart,
-  Mn as LoadingState,
-  _n as LogStream,
+  Rn as LoadingState,
+  Ln as LogStream,
   nc as LoginPage,
   oc as LogoutPage,
   el as MediaControlsBar,
-  On as MessageBubble,
+  Mn as MessageBubble,
   an as MessageGroup,
   gi as MessageRow,
   ic as MfaDashboardPage,
@@ -2647,7 +2647,7 @@ export {
   ca as NodeCard,
   ti as NotificationCenter,
   Ii as NumberInput,
-  $n as PageHeader,
+  _n as PageHeader,
   po as PageSection,
   Ll as ParticipantTile,
   Ti as PatchHttpError,
@@ -2661,13 +2661,13 @@ export {
   mc as PoolScopedLayout,
   sn as PostFeed,
   ri as PresenceAvatars,
-  Bn as PresenceDot,
+  On as PresenceDot,
   vi as PresencePanel,
   Gs as PresenceProvider,
-  jn as ProgressBar,
-  Fn as ProjectCard,
+  $n as ProgressBar,
+  Bn as ProjectCard,
   fc as QrCodeDisplay,
-  Un as QuickPromptGrid,
+  jn as QuickPromptGrid,
   Pi as RadioGroup,
   ll as ReactionOverlay,
   cl as ReactionPicker,
@@ -2684,8 +2684,8 @@ export {
   zs as ScoreBarGauge,
   fl as ScreenShareIcon,
   xl as ScreenShareOffIcon,
-  Vn as SearchInput,
-  Wn as SegmentedControl,
+  Fn as SearchInput,
+  Un as SegmentedControl,
   wc as Select,
   zr as SettingsLayout,
   xc as SetupGuidePage,
@@ -2698,16 +2698,16 @@ export {
   dn as SocialTabContent,
   $o as Sparkline,
   zo as Spinner,
-  Gn as StackDiagram,
+  Vn as StackDiagram,
   ko as StackedAreaChart,
-  zn as StatCard,
+  Wn as StatCard,
   bl as StatsCard,
   bc as StatusBadge,
   Xo as StatusDot,
   st as StatusPill,
   hl as StatusStrip,
   Ol as StreamVideo,
-  Hn as SubNavLayout,
+  Gn as SubNavLayout,
   gl as SummaryPanel,
   No as Switch,
   or as THEME_TOKEN_ALIASES,
@@ -2718,34 +2718,34 @@ export {
   li as TONE_SOLID,
   ci as TONE_SOLID_BG,
   di as TONE_TEXT,
-  Xn as TabPanel,
+  zn as TabPanel,
   uo as Table,
   mo as TableBody,
   fo as TableHead,
   xo as TableRow,
   bo as TableTd,
   ho as TableTh,
-  Kn as Tabs,
+  Hn as Tabs,
   Hs as TagEditor,
-  qn as TerminalLog,
+  Xn as TerminalLog,
   Sc as Textarea,
   ta as ThemeProvider,
-  Yn as ThinkingBlock,
-  Qn as ThinkingDots,
-  Jn as ThumbnailCard,
+  Kn as ThinkingBlock,
+  qn as ThinkingDots,
+  Qn as ThumbnailCard,
   Rs as Toast,
   Ze as ToastProvider,
-  Zn as ToolCallPill,
-  eo as ToolCallStrip,
+  Yn as ToolCallPill,
+  Jn as ToolCallStrip,
   er as TopNav,
   vl as TranscriptOverlay,
   yl as TranscriptPanel,
   Xs as TrendSparkline,
-  to as TypingIndicator,
-  ro as UserChip,
+  Zn as TypingIndicator,
+  eo as UserChip,
   hc as UserFormPage,
   gc as UserListPage,
-  ao as UserMenu,
+  to as UserMenu,
   Ks as UserPicker,
   Nl as VideoGrid,
   wl as VideoIcon,
@@ -2754,17 +2754,17 @@ export {
   Il as VideoPlayerModal,
   Tl as ViewerCount,
   _s as WebSocketProvider,
-  so as activeNavItemStyle,
+  ro as activeNavItemStyle,
   Ai as applyPatch,
   ea as borderRadius,
-  Qr as colors,
+  Yr as colors,
   v as cssVar,
   mr as darkTheme,
   Bo as eventGlyphs,
   Zr as fontSize,
   Ri as forceFail,
   yi as formatChatTime,
-  no as formatTypingBanner,
+  ao as formatTypingBanner,
   jo as getEventCategory,
   Fo as getEventGlyph,
   Ec as getFieldType,
@@ -2783,15 +2783,15 @@ export {
   _i as listPipelineRuns,
   Ac as listRegisteredRenderers,
   xa as makeEmptyField,
-  oo as matchHotkey,
-  Yo as nameToColor,
-  Qo as nameToInitials,
+  so as matchHotkey,
+  Qo as nameToColor,
+  Yo as nameToInitials,
   ia as purgeDLQEntries,
   ur as rawBorderRadius,
   cr as rawColors,
   pr as rawFontSize,
   dr as rawSpacing,
-  Yr as rawTokens,
+  Qr as rawTokens,
   oa as redriveDLQEntries,
   Rc as registerFieldType,
   Lc as registerRenderer,
@@ -2809,7 +2809,7 @@ export {
   ui as toneVar,
   wa as useActivityBus,
   Ca as useApiCall,
-  Ye as useApiHealth,
+  Qe as useApiHealth,
   Sa as useAuth,
   Ka as useAwareness,
   qa as useAwarenessState,
@@ -2817,14 +2817,14 @@ export {
   kl as useCallWidgetPersistence,
   Ta as useChat,
   ka as useClickOutside,
-  Ya as useCollaborativeDoc,
+  Qa as useCollaborativeDoc,
   pn as useColorScheme,
-  io as useCommandPalette,
+  no as useCommandPalette,
   us as useComments,
   Ea as useCursors,
   Pa as useCustomFieldTypes,
   vs as useDocTypeProposals,
-  Qa as useDocumentComments,
+  Ya as useDocumentComments,
   Ja as useDocumentExport,
   Za as useDocumentItems,
   es as useDocumentMetadata,
@@ -2866,8 +2866,8 @@ export {
   Wa as usePresence,
   rt as usePresenceContext,
   Ga as useReactions,
-  lo as useRegisterCommand,
-  Qe as useRooms,
+  oo as useRegisterCommand,
+  Ye as useRooms,
   ns as useSectionList,
   hs as useSocialProfile,
   ks as useSourceSloMetrics,

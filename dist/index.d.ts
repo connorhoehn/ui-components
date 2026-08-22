@@ -1820,7 +1820,7 @@ export declare interface CustomFieldType {
 /** Dark theme preset — proper dark UI design, not simply inverted. */
 export declare const darkTheme: ThemeTokens;
 
-export declare function DataTable<T>({ data, columns, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
+export declare function DataTable<T>({ data, columns, keyField, onRowClick, rowActions, searchable, searchPlaceholder, pageSize, emptyMessage, loading, loadingRows, frameless, className, 'data-testid': testId, }: DataTableProps<T>): JSX.Element;
 
 export declare interface DataTableColumn<T> {
     /** Stable id for the column. When `accessor` is omitted, used as the data key on T. */
@@ -1857,6 +1857,11 @@ export declare interface DataTableProps<T> {
     emptyMessage?: ReactNode;
     loading?: boolean;
     loadingRows?: number;
+    /**
+     * Drop the table's own border/rounding so a composite (e.g. a Card-framed
+     * table like identity's EntityTable) can provide the frame instead.
+     */
+    frameless?: boolean;
     className?: string;
     'data-testid'?: string;
 }

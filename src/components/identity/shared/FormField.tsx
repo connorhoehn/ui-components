@@ -1,13 +1,18 @@
 // src/components/identity/shared/FormField.tsx
 //
-// Universal form field component supporting text, email, password, textarea,
-// select, checkbox, and number input types with validation styling.
+// Identity's value-coercing form field. The public API is unchanged
+// (label/name/type/value/onChange(value)/error/...), but since v2.72.0 the
+// label / hint / error presentation AND the a11y wiring delegate to
+// shared/FormField — the audit found two label/error idioms drifting, and
+// identity's lacked aria-describedby / aria-invalid entirely. The controls
+// themselves are the forms/ primitives (since v2.61.0).
 //
-// The controls themselves are the shared forms primitives (Input, Textarea,
-// Select, Checkbox) — this component only adds the label / error / help-text
-// arrangement and the value-coercing onChange that identity forms rely on.
+// The checkbox branch keeps its own markup: a checkbox's label wraps the
+// control (implicit association), so the outer-label shape of
+// shared/FormField does not apply.
 
-import { useCallback, useId } from 'react';
+import { useCallback } from 'react';
+import SharedFormField from '../../shared/FormField';
 import { Input } from '../../forms/Input';
 import { Textarea } from '../../forms/Textarea';
 import { Select } from '../../forms/Select';
@@ -40,8 +45,6 @@ export function FormField({
   helpText,
   disabled,
 }: FormFieldProps) {
-  const id = useId();
-
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       if (type === 'number') {
@@ -53,12 +56,11 @@ export function FormField({
     [onChange, type],
   );
 
-  const renderInput = () => {
-    if (type === 'checkbox') {
-      return (
+  if (type === 'checkbox') {
+    return (
+      <div className="mb-4">
         <label className="flex items-center gap-2 cursor-pointer">
           <Checkbox
-            id={id}
             name={name}
             checked={Boolean(value)}
             onChange={onChange}
@@ -68,65 +70,6 @@ export function FormField({
             {label}{required && <span className="text-danger-fg"> *</span>}
           </span>
         </label>
-      );
-    }
-
-    if (type === 'textarea') {
-      return (
-        <Textarea
-          id={id}
-          name={name}
-          value={String(value)}
-          onChange={handleChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-          rows={5}
-          invalid={Boolean(error)}
-          className="resize-y min-h-[100px]"
-        />
-      );
-    }
-
-    if (type === 'select') {
-      // The empty option stays selectable (unlike Select's built-in disabled
-      // placeholder) — identity forms let users return to the unset state.
-      return (
-        <Select
-          id={id}
-          name={name}
-          value={String(value)}
-          onChange={handleChange}
-          disabled={disabled}
-          required={required}
-          invalid={Boolean(error)}
-          options={[
-            { value: '', label: placeholder || 'Select...' },
-            ...(options ?? []),
-          ]}
-        />
-      );
-    }
-
-    return (
-      <Input
-        id={id}
-        type={type}
-        name={name}
-        value={String(value)}
-        onChange={handleChange}
-        placeholder={placeholder}
-        disabled={disabled}
-        required={required}
-        invalid={Boolean(error)}
-      />
-    );
-  };
-
-  if (type === 'checkbox') {
-    return (
-      <div className="mb-4">
-        {renderInput()}
         {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
         {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
       </div>
@@ -134,13 +77,64 @@ export function FormField({
   }
 
   return (
-    <div className="mb-4">
-      <label htmlFor={id} className="block mb-1 text-sm font-semibold text-text-primary">
-        {label}{required && <span className="text-danger-fg"> *</span>}
-      </label>
-      {renderInput()}
-      {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
-      {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
-    </div>
+    <SharedFormField
+      label={label}
+      required={required}
+      error={error}
+      hint={helpText}
+      className="mb-4"
+    >
+      {({ labelId: _labelId, ...wiring }) => {
+        if (type === 'textarea') {
+          return (
+            <Textarea
+              {...wiring}
+              name={name}
+              value={String(value)}
+              onChange={handleChange}
+              placeholder={placeholder}
+              disabled={disabled}
+              required={required}
+              rows={5}
+              invalid={Boolean(error)}
+              className="resize-y min-h-[100px]"
+            />
+          );
+        }
+        if (type === 'select') {
+          // The empty option stays selectable (unlike Select's built-in
+          // disabled placeholder) — identity forms let users return to the
+          // unset state.
+          return (
+            <Select
+              {...wiring}
+              name={name}
+              value={String(value)}
+              onChange={handleChange}
+              disabled={disabled}
+              required={required}
+              invalid={Boolean(error)}
+              options={[
+                { value: '', label: placeholder || 'Select...' },
+                ...(options ?? []),
+              ]}
+            />
+          );
+        }
+        return (
+          <Input
+            {...wiring}
+            type={type}
+            name={name}
+            value={String(value)}
+            onChange={handleChange}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
+            invalid={Boolean(error)}
+          />
+        );
+      }}
+    </SharedFormField>
   );
 }
