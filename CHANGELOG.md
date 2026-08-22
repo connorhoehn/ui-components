@@ -8,6 +8,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.73.1] — 2026-08-22
+
+Dependency hygiene. Every in-range update applied; **0 vulnerabilities**
+(the residual esbuild advisory cleared with vite 7.3.6).
+
+### Removed
+
+- **`@tiptap/extension-collaboration-cursor` — a dead dependency pinned to a
+  deprecated release.** npm reported it oddly (`Current 3.0.0, Latest
+  2.26.2`) because tiptap published a 3.0.0 by accident and deprecated it:
+  *"There are no breaking changes in this package, we meant to release
+  2.5.0."* Nothing in `src/` or `demo/` ever imported it, so rather than
+  downgrade onto the 2.x line it is removed outright, along with its stale
+  entry in vite's externals list.
+
+### Changed
+
+- **`amazon-cognito-identity-js` now typechecks against the real package.**
+  It is a peer dependency that was never installed locally; `useAuth` — a
+  **public** export from `…/hooks` — resolved its six imports through a
+  hand-written 34-line ambient module shim in `declarations.d.ts`. Our gate
+  therefore validated the hook against our own approximation of the API, not
+  the API. It is now a devDependency and the shim is deleted; the real types
+  typecheck clean, so the shim was accurate — but future edits are now
+  actually checked. Consumers are unaffected (it stays a peer dep, and stays
+  externalised).
+- In-range bumps: playwright 1.62.1, storybook 10.5.10, tiptap 3.30.2,
+  recharts 3.10.1, vite 7.3.6, vitest 4.1.11, react 19.2.8, xyflow 12.11.3,
+  tailwind 4.3.3, yjs 13.6.32, hls.js 1.7.1.
+
+### Fixed
+
+- **A flaky e2e test I introduced in v2.71.2.** `simulated participants churn
+  over time` asserted the count changes within 20s, but the demo's churn is
+  a ~40% join / ~30% leave roll every 5s — unreliable by construction, and
+  it failed under full-suite load while passing in isolation. Replaced with
+  the invariant the simulation actually maintains (count stays within its
+  designed 3–9 bounds across many ticks).
+
+### Note
+
+The playwright bump moved the pinned chromium build, so `npx playwright
+install chromium` was required — exactly the drift CLAUDE.md documents.
+
 ## [2.73.0] — 2026-08-22
 
 A bundle-weight bug that penalised every consumer, plus the last a11y gaps.
