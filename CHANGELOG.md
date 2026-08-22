@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.73.0] — 2026-08-22
+
+A bundle-weight bug that penalised every consumer, plus the last a11y gaps.
+
+### Fixed
+
+- **`cmdk` was bundled instead of externalised — importing `Chip` cost 64KB.**
+  All three runtime `dependencies` are meant to be external (npm installs
+  them for the consumer); `clsx` and `tailwind-merge` were, `cmdk` was not.
+  It therefore inlined into a shared chunk that *every* entry pulled, so the
+  smallest primitives dragged in the whole command-palette fuzzy-matching
+  library. Measured with a scratch consumer bundle: **importing `Chip` drops
+  from 49.2KB to 4.8KB minified (−90%)**. No consumer action needed — `cmdk`
+  is already a declared dependency, so it resolves from `node_modules`, and
+  only loads for the two components that use it (`CommandPalette`,
+  `ReactionPickerPopover`).
+- **Keyboard access for `GroupPanel`'s clickable rows.** The group row and
+  the per-group room rows were `<div onClick>` with `cursor-pointer` and no
+  role, tabIndex or key handler — visible affordances that keyboard users
+  could not reach at all. They now follow the `SidebarRow` house pattern
+  (`role="button"` + `tabIndex` + `aria-pressed` + Enter/Space).
+- **Three icon-only buttons in `FieldDefinitionEditor`** (move up, move down,
+  remove) had no accessible name. They now carry field-scoped `aria-label`s.
+  `src/components` is now at **zero** unlabelled icon-only buttons and zero
+  keyboard-inaccessible click targets (the two remaining `<div onClick>` are
+  `stopPropagation` event boundaries, not controls).
+
+### Added
+
+- **Packaging guard: every runtime dependency must be externalised.** The
+  existing test asserted the converse (everything externalised is declared);
+  nothing caught a declared dependency being silently inlined. This is the
+  test that would have caught `cmdk`.
+
+### Changed
+
+- `EntityTable` dropped off the static-styles allowlist — the v2.72.0 façade
+  rewrite removed its last inline style.
+
 ## [2.72.1] — 2026-08-21
 
 Closes the last measured unit-test gaps (24 tests; suite now 3,646). The

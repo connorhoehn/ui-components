@@ -1,5 +1,5 @@
 import { jsxs as s, jsx as e, Fragment as ee } from "react/jsx-runtime";
-import { useState as f, useEffect as R, createContext as me, useContext as pe, useCallback as _, useRef as T, useId as ue, useMemo as xe, useLayoutEffect as fe } from "react";
+import { useState as f, useEffect as R, createContext as me, useContext as pe, useCallback as B, useRef as T, useId as ue, useMemo as xe, useLayoutEffect as fe } from "react";
 import { e as be, a as te, b as he, d as re, u as ye, c as ne } from "./useComments-Bocx7XyC.js";
 import { c as h } from "./cn-B6yFEsav.js";
 import { I as P } from "./Input-Dt0yAs9r.js";
@@ -7,7 +7,7 @@ import { T as W } from "./Textarea-kaa9rHUL.js";
 import { S as ge } from "./Select-DAEcKWg2.js";
 import { M as ve } from "./PresencePanel-BNCV4y5A.js";
 import { u as Ne } from "./ToastProvider-D3MHbP-u.js";
-import { _ as A } from "./index-Bjylubtc.js";
+import { Command as A } from "cmdk";
 function K(t, n) {
   return {
     id: t.userId,
@@ -360,7 +360,7 @@ function Nt({ children: t }) {
     }
     document.documentElement.setAttribute("data-theme", n);
   }, [n]);
-  const a = _(() => {
+  const a = B(() => {
     r((i) => i === "light" ? "dark" : "light");
   }, []);
   return /* @__PURE__ */ e(ae.Provider, { value: { theme: n, toggleTheme: a }, children: t });
@@ -961,11 +961,11 @@ function Oe(t) {
   const n = t.split(/[\s._@-]/);
   return n.length >= 2 ? (n[0][0] + n[1][0]).toUpperCase() : t.slice(0, 2).toUpperCase();
 }
-function _e(t) {
+function Be(t) {
   const n = Date.now() - new Date(t).getTime(), r = Math.floor(n / 1e3);
   return r < 60 ? "just now" : r < 3600 ? `${Math.floor(r / 60)}m ago` : r < 86400 ? `${Math.floor(r / 3600)}h ago` : new Date(t).toLocaleDateString();
 }
-function Be(t) {
+function _e(t) {
   if (!t) return null;
   try {
     return JSON.parse(atob(t.split(".")[1])).sub;
@@ -1012,7 +1012,7 @@ function ze({ post: t, isOwn: n, showSender: r }) {
                   children: t.content
                 }
               ),
-              r && /* @__PURE__ */ e("span", { className: "text-[10px] text-text-tertiary px-1", children: _e(t.createdAt) })
+              r && /* @__PURE__ */ e("span", { className: "text-[10px] text-text-tertiary px-1", children: Be(t.createdAt) })
             ]
           }
         )
@@ -1021,7 +1021,7 @@ function ze({ post: t, isOwn: n, showSender: r }) {
   );
 }
 function Ke({ idToken: t, roomId: n, roomName: r, onMessage: a }) {
-  const { posts: i, createPost: o, loading: c, hasMore: m, loadMore: p, error: y } = re({ idToken: t, roomId: n, onMessage: a }), [l, x] = f(""), [b, g] = f(!1), [d, v] = f(null), N = T(null), S = Be(t), I = [...i].reverse();
+  const { posts: i, createPost: o, loading: c, hasMore: m, loadMore: p, error: y } = re({ idToken: t, roomId: n, onMessage: a }), [l, x] = f(""), [b, g] = f(!1), [d, v] = f(null), N = T(null), S = _e(t), I = [...i].reverse();
   R(() => {
     N.current?.scrollIntoView({ behavior: "smooth" });
   }, [i.length]);
@@ -1163,7 +1163,7 @@ function wt({
   R(() => {
     D.current = x;
   }, [x]);
-  const u = _((C) => {
+  const u = B((C) => {
     w((E) => {
       if (!E[C.roomId]) return E;
       const z = { ...E };
@@ -1176,7 +1176,7 @@ function wt({
       O && O !== D.current && w((q) => ({ ...q, [O]: (q[O] ?? 0) + 1 }));
     }
   }), [b]);
-  const [k, F] = f(!1), j = n ? n.split(" ").map((C) => C[0]).join("").toUpperCase().slice(0, 2) : t.slice(0, 2).toUpperCase(), U = a.find((C) => C.roomId === x) ?? null, $ = a.filter((C) => C.type === "standalone" || C.type === "group"), G = a.filter((C) => C.type === "dm"), le = $.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), ce = G.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), de = d ? "#1e1f2e" : "var(--color-surface-panel)", M = d ? "rgba(255,255,255,0.06)" : "var(--color-border)", B = d ? "#fff" : "var(--color-text-primary)", L = d ? "var(--color-text-tertiary)" : "var(--color-neutral)";
+  const [k, F] = f(!1), j = n ? n.split(" ").map((C) => C[0]).join("").toUpperCase().slice(0, 2) : t.slice(0, 2).toUpperCase(), U = a.find((C) => C.roomId === x) ?? null, $ = a.filter((C) => C.type === "standalone" || C.type === "group"), G = a.filter((C) => C.type === "dm"), le = $.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), ce = G.reduce((C, E) => C + (I[E.roomId] ?? 0), 0), de = d ? "#1e1f2e" : "var(--color-surface-panel)", M = d ? "rgba(255,255,255,0.06)" : "var(--color-border)", _ = d ? "#fff" : "var(--color-text-primary)", L = d ? "var(--color-text-tertiary)" : "var(--color-neutral)";
   return /* @__PURE__ */ s(
     "div",
     {
@@ -1204,7 +1204,7 @@ function wt({
                   children: [
                     /* @__PURE__ */ e("div", { className: "w-7 h-7 rounded-md flex items-center justify-center text-white font-bold text-[11px] shrink-0 bg-[linear-gradient(135deg,#646cff,#9b59b6)]", children: j }),
                     /* @__PURE__ */ s("div", { className: "flex-1 min-w-0", children: [
-                      /* @__PURE__ */ e("div", { className: "text-[13px] font-bold overflow-hidden text-ellipsis whitespace-nowrap", style: { color: B }, children: n || t }),
+                      /* @__PURE__ */ e("div", { className: "text-[13px] font-bold overflow-hidden text-ellipsis whitespace-nowrap", style: { color: _ }, children: n || t }),
                       /* @__PURE__ */ s("div", { className: "text-[11px] flex items-center gap-1", style: { color: L }, children: [
                         /* @__PURE__ */ e("span", { className: "w-1.5 h-1.5 rounded-full bg-success inline-block" }),
                         "Active"
@@ -1305,7 +1305,7 @@ function wt({
                     children: "»"
                   }
                 ),
-                U && /* @__PURE__ */ s("span", { className: "text-[13px] font-semibold", style: { color: B }, children: [
+                U && /* @__PURE__ */ s("span", { className: "text-[13px] font-semibold", style: { color: _ }, children: [
                   U.type === "dm" ? "●" : "#",
                   " ",
                   U.name
@@ -1329,7 +1329,7 @@ function wt({
               style: { color: L },
               children: [
                 /* @__PURE__ */ e("span", { className: "text-4xl", children: "💬" }),
-                /* @__PURE__ */ e("span", { className: "text-[15px] font-semibold", style: { color: B }, children: "Select a room to start chatting" }),
+                /* @__PURE__ */ e("span", { className: "text-[15px] font-semibold", style: { color: _ }, children: "Select a room to start chatting" }),
                 /* @__PURE__ */ e("span", { className: "text-[13px]", children: "Choose a channel or DM from the sidebar" })
               ]
             }
@@ -1815,7 +1815,7 @@ function ot({
   R(() => {
     d.current = n;
   }, [n]);
-  const { toast: v } = Ne(), N = at(t), S = _(() => g((I) => I + 1), []);
+  const { toast: v } = Ne(), N = at(t), S = B(() => g((I) => I + 1), []);
   return R(() => {
   }, [t, b, v]), R(() => {
     if (a !== "connected" || !N) {
@@ -1995,7 +1995,7 @@ function lt({
     };
     return document.addEventListener("keydown", g), () => document.removeEventListener("keydown", g);
   }, [t, r]);
-  const x = _(
+  const x = B(
     (g) => {
       n(g), r();
     },

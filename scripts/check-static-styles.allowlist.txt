@@ -25,7 +25,6 @@ src/components/doc-editor/TaskItemRow.tsx
 src/components/doc-editor/TiptapEditor.tsx
 src/components/doc-editor/VideoCallPanel.tsx
 src/components/identity/admin/SetupGuidePage.tsx
-src/components/identity/shared/EntityTable.tsx
 src/components/ingest/IngestItemDrawer.tsx
 src/components/ingest/SyncMonitorPage.tsx
 src/components/layout/AppLayout.tsx

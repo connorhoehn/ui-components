@@ -296,7 +296,20 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
   const isOwner = group.ownerId === currentUserId;
 
   return (
-    <div className="flex items-center h-14 border-b border-surface-hover cursor-pointer" onClick={() => onSelect(group.groupId)}>
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
+      aria-label={`Select group ${group.name}`}
+      className="flex items-center h-14 border-b border-surface-hover cursor-pointer"
+      onClick={() => onSelect(group.groupId)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(group.groupId);
+        }
+      }}
+    >
       <div className="flex-1 min-w-0 pr-2">
         <div className={cn('text-base text-text-primary', isSelected ? 'font-semibold' : 'font-normal')}>{group.name}</div>
         {group.description && <div className="text-sm text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap">{group.description}</div>}
@@ -402,7 +415,20 @@ function GroupRoomList({ rooms, groupId, selectedGroupRole, createGroupRoom, onR
         <div className="text-sm text-text-tertiary py-2">No rooms in this group yet.</div>
       ) : (
         groupRooms.map(room => (
-          <div key={room.roomId} onClick={() => onRoomSelect?.(room)} className="flex items-center h-12 border-b border-surface-hover cursor-pointer pr-2">
+          <div
+            key={room.roomId}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open room ${room.name}`}
+            className="flex items-center h-12 border-b border-surface-hover cursor-pointer pr-2"
+            onClick={() => onRoomSelect?.(room)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onRoomSelect?.(room);
+              }
+            }}
+          >
             <div className="flex-1 text-base text-text-primary">{room.name}</div>
             <span className="bg-info-bg text-info text-xs px-2 py-0.5 rounded">group</span>
           </div>

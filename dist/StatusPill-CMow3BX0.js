@@ -1,7 +1,7 @@
 import { jsxs as c, jsx as r, Fragment as _ } from "react/jsx-runtime";
 import { useState as T, useCallback as $, createContext as Y, useMemo as O, useEffect as L, useRef as A, useContext as Z, useId as Q, useLayoutEffect as X } from "react";
 import { c as u } from "./cn-B6yFEsav.js";
-import { _ as R } from "./index-Bjylubtc.js";
+import { Command as R } from "cmdk";
 import { M as U } from "./Modal-X8tdpRKs.js";
 import { E as ee } from "./EmptyState-Ejc9dJA3.js";
 import { S as re } from "./PermissionDeniedCard-0XYb6Eju.js";

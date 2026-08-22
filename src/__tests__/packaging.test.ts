@@ -83,6 +83,26 @@ describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
     ).toEqual([]);
   });
 
+  // The inverse of the check above, and the one that was missing until
+  // v2.73.0: a runtime `dependency` that is NOT externalised gets inlined
+  // into a shared chunk that every entry drags in. `cmdk` was bundled that
+  // way — importing `Chip` pulled 64KB of command-palette fuzzy-matching,
+  // a 10x weight penalty on the smallest primitives.
+  it('every runtime dependency is externalised, not bundled into dist', () => {
+    const js = walk(DIST, (f) => f.endsWith('.js'));
+    const imported = bareImports(js);
+    const bundled = Object.keys(pkg.dependencies ?? {})
+      .filter((dep) => !imported.has(dep))
+      .sort();
+    expect(
+      bundled,
+      `These are declared dependencies but never imported by the shipped\n` +
+        `bundle, which means vite INLINED them. Add them to the externals\n` +
+        `list in vite.config.ts so consumers resolve them from node_modules:\n  ` +
+        bundled.join('\n  '),
+    ).toEqual([]);
+  });
+
   it('every type-only import in dist/**.d.ts is declared', () => {
     const dts = walk(DIST, (f) => f.endsWith('.d.ts'));
     const undeclaredTypes = [...bareImports(dts)].filter((n) => !declared.has(n)).sort();

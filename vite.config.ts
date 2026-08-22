@@ -36,7 +36,12 @@ export default defineConfig({
     rollupOptions: {
       external: [
         'react', 'react-dom', 'react/jsx-runtime', 'react-router',
-        'clsx', 'tailwind-merge',
+        // All three runtime `dependencies` are externalised: npm installs
+        // them for the consumer, so bundling them here only duplicates code.
+        // cmdk was missed until v2.73.0 — it landed in a shared chunk that
+        // EVERY entry pulled, so importing `Chip` dragged in 64KB of
+        // command-palette fuzzy-matching.
+        'clsx', 'tailwind-merge', 'cmdk',
         'yjs', 'y-prosemirror', 'y-protocols',
         '@xyflow/react', 'reactflow', '@tiptap/react', '@tiptap/starter-kit',
         '@tiptap/extension-collaboration', '@tiptap/extension-collaboration-cursor',

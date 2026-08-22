@@ -39,6 +39,7 @@ export function FieldDefinitionEditor({
           disabled={index === 0}
           onClick={onMoveUp}
           data-testid={`field-up-${field.id}`}
+          aria-label={`Move ${field.name} up`}
           className={cn(
             'px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent',
             index === 0 ? 'text-neutral opacity-50 cursor-not-allowed' : 'text-neutral cursor-pointer',
@@ -49,6 +50,7 @@ export function FieldDefinitionEditor({
           disabled={index === total - 1}
           onClick={onMoveDown}
           data-testid={`field-down-${field.id}`}
+          aria-label={`Move ${field.name} down`}
           className={cn(
             'px-1 py-px text-[10px] leading-none font-semibold rounded-[7px] font-inherit border-none bg-transparent',
             index === total - 1 ? 'text-neutral opacity-50 cursor-not-allowed' : 'text-neutral cursor-pointer',
@@ -115,6 +117,7 @@ export function FieldDefinitionEditor({
         type="button"
         onClick={onRemove}
         data-testid={`field-remove-${field.id}`}
+        aria-label={`Remove ${field.name}`}
         className="px-1.5 py-0.5 text-sm bg-transparent border-none text-danger-fg cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
       >
         ×
