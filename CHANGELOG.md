@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.72.1] — 2026-08-21
+
+Closes the last measured unit-test gaps (24 tests; suite now 3,646). The
+"renderers 8/26" audit figure turned out to count metadata files — every
+renderer family was already tested; the real gaps were the plumbing:
+
+### Added
+
+- **`renderers/registry` tests**: the four-step fallback chain
+  (`type:mode` → `type:*` → `*:mode` → `*:*`), null/undefined section
+  types, and user-defined field types delegating to their base
+  `rendererType`.
+- **`decisions/approvalSync` tests**: terminal-status mapping, document-id
+  URL parsing, bearer-token POST shape, the no-documentId skip, and the
+  never-throws guarantee (HTTP failures and network errors both surface
+  as `{ok:false}`).
+- **`lib/documentTypeApiAdapter` tests**: renderer-id → API field-kind
+  translation with the unknown-renderer text fallback, and the sync
+  lifecycle — create remembers the server id, update of a never-synced
+  type falls back to create, a 404 on update re-creates the row, delete
+  of a never-synced type is a clean no-op.
+- **`ColorSchemeProvider` tests**: light default, toggle persistence to
+  localStorage + `data-theme`, restore-on-mount, garbage tolerance.
+
 ## [2.72.0] — 2026-08-21
 
 The three structural items from the audit, executed non-breaking.
