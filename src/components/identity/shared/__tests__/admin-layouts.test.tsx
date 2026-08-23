@@ -122,6 +122,53 @@ describe('IdentityAdminLayout', () => {
     const main = screen.getByRole('main');
     expect(within(main).getByTestId('page-content')).toBeInTheDocument();
   });
+
+  // The collapsed rail used to be reachable only by clicking the header
+  // toggle. `defaultSidebarOpen` seeds the initial value without taking
+  // ownership of the state.
+  describe('defaultSidebarOpen', () => {
+    const sidebarOf = () =>
+      screen.getByText('Identity Admin').closest('aside') as HTMLElement;
+
+    it('starts open when the prop is omitted (unchanged default)', () => {
+      render(
+        <IdentityAdminLayout onNavigate={() => {}}>
+          <div>content</div>
+        </IdentityAdminLayout>,
+      );
+      expect(sidebarOf().className).toContain('w-60');
+      expect(screen.getByRole('button', { name: 'Toggle sidebar' })).toHaveTextContent('←');
+    });
+
+    it('starts open when explicitly true', () => {
+      render(
+        <IdentityAdminLayout onNavigate={() => {}} defaultSidebarOpen>
+          <div>content</div>
+        </IdentityAdminLayout>,
+      );
+      expect(sidebarOf().className).toContain('w-60');
+    });
+
+    it('renders the collapsed sidebar directly when false', () => {
+      render(
+        <IdentityAdminLayout onNavigate={() => {}} defaultSidebarOpen={false}>
+          <div>content</div>
+        </IdentityAdminLayout>,
+      );
+      expect(sidebarOf().className).toContain('w-0');
+      expect(screen.getByRole('button', { name: 'Toggle sidebar' })).toHaveTextContent('→');
+    });
+
+    it('stays uncontrolled — the toggle still reopens a collapsed sidebar', () => {
+      render(
+        <IdentityAdminLayout onNavigate={() => {}} defaultSidebarOpen={false}>
+          <div>content</div>
+        </IdentityAdminLayout>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Toggle sidebar' }));
+      expect(sidebarOf().className).toContain('w-60');
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------

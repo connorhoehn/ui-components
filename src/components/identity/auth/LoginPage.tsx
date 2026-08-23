@@ -21,9 +21,25 @@ export interface LoginPageProps {
   onForgotPassword: (email: string) => Promise<void>;
   registrationEnabled?: boolean;
   forgotPasswordEnabled?: boolean;
+  /**
+   * Tab the page opens on. Optional and **initial-only** — the page still
+   * owns the tab afterwards, so the tab bar keeps working unchanged. Omit it
+   * and the page opens on `'signin'`, which is the historical behaviour.
+   *
+   * It exists because the register and forgot-password forms were previously
+   * reachable only by clicking their tab: an OIDC host cannot honour a
+   * `?screen_hint=signup` deep link, a story cannot show either form, and a
+   * test has to click a tab before it can assert on the form behind it.
+   *
+   * A tab that the corresponding `*Enabled` flag has switched off is ignored
+   * and `'signin'` is used instead, so this prop can never render a form the
+   * host has disabled.
+   */
+  defaultTab?: LoginTab;
 }
 
-type Tab = 'signin' | 'register' | 'forgot';
+/** The three authentication forms the page can show. */
+export type LoginTab = 'signin' | 'register' | 'forgot';
 
 export function LoginPage({
   uid,
@@ -36,8 +52,13 @@ export function LoginPage({
   onForgotPassword,
   registrationEnabled = true,
   forgotPasswordEnabled = true,
+  defaultTab = 'signin',
 }: LoginPageProps) {
-  const [tab, setTab] = useState<Tab>('signin');
+  const [tab, setTab] = useState<LoginTab>(() => {
+    if (defaultTab === 'register' && !registrationEnabled) return 'signin';
+    if (defaultTab === 'forgot' && !forgotPasswordEnabled) return 'signin';
+    return defaultTab;
+  });
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -106,7 +127,7 @@ export function LoginPage({
     }
   }, [forgotEmail, onForgotPassword]);
 
-  const switchTab = (t: Tab) => {
+  const switchTab = (t: LoginTab) => {
     setTab(t);
     setLocalError(null);
     setForgotSuccess(false);
@@ -129,7 +150,7 @@ export function LoginPage({
             className={cn(
               'flex-1 rounded-none border-b-2',
               tab === 'signin'
-                ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                ? 'border-b-info text-info-fg font-semibold'
                 : 'border-b-transparent text-neutral font-normal'
             )}
             onClick={() => switchTab('signin')}
@@ -145,7 +166,7 @@ export function LoginPage({
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'register'
-                  ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                  ? 'border-b-info text-info-fg font-semibold'
                   : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('register')}
@@ -162,7 +183,7 @@ export function LoginPage({
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'forgot'
-                  ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                  ? 'border-b-info text-info-fg font-semibold'
                   : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('forgot')}
