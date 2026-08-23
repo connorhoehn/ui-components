@@ -62,6 +62,32 @@ export const SignInOnly: Story = {
 };
 
 /**
+ * Opened straight on the registration form via `defaultTab` — the shape an
+ * OIDC host renders for a `?screen_hint=signup` deep link. The prop is
+ * initial-only, so the tab bar still switches away from it.
+ */
+export const RegisterTab: Story = {
+  args: { clientName: 'Northwind Analytics', defaultTab: 'register' },
+};
+
+/** Opened straight on the password-recovery form via `defaultTab`. */
+export const ForgotPasswordTab: Story = {
+  args: { clientName: 'Northwind Analytics', defaultTab: 'forgot' },
+};
+
+/**
+ * `defaultTab` never wins over the `*Enabled` flags: a disabled tab is
+ * ignored and the page falls back to sign-in.
+ */
+export const DisabledDefaultTabFallsBack: Story = {
+  args: {
+    clientName: 'Northwind Internal',
+    defaultTab: 'register',
+    registrationEnabled: false,
+  },
+};
+
+/**
  * Submitting rejects, so the form surfaces the thrown message as its local
  * error. Type anything and press Sign In.
  */

@@ -307,3 +307,32 @@ describe('AppLayout — composition', () => {
     expect(screen.getByRole('button', { name: 'Metrics' })).toBeInTheDocument();
   });
 });
+
+// ---------------------------------------------------------------------------
+// defaultSidebarOpen — initial-only seed for the collapsible sidebar
+//
+// The 56px CollapsedIconStrip used to be reachable only by clicking the
+// sidebar's collapse control, so a host could not restore a saved preference
+// and a test could not render the collapsed chrome directly.
+// ---------------------------------------------------------------------------
+
+describe('AppLayout — defaultSidebarOpen', () => {
+  it('starts with the full sidebar when the prop is omitted (unchanged default)', () => {
+    renderAppLayout();
+    expect(screen.queryByTestId('collapsed-icon-strip')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /collapse/i })).toBeInTheDocument();
+  });
+
+  it('renders the collapsed icon strip directly when false', () => {
+    renderAppLayout({ props: { defaultSidebarOpen: false } });
+    expect(screen.getByTestId('collapsed-icon-strip')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /collapse/i })).not.toBeInTheDocument();
+  });
+
+  it('stays uncontrolled — the strip’s expand button still restores the sidebar', () => {
+    renderAppLayout({ props: { defaultSidebarOpen: false } });
+    fireEvent.click(screen.getByRole('button', { name: /expand sidebar/i }));
+    expect(screen.queryByTestId('collapsed-icon-strip')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /collapse/i })).toBeInTheDocument();
+  });
+});

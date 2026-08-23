@@ -16,10 +16,28 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The TOTP challenge. "Use a backup code instead" flips to the backup form —
- * the mode is internal state, so there is no prop to open that view directly.
+ * The TOTP challenge — where the page lands when `defaultMode` is omitted.
+ * "Use a backup code instead" flips to the backup form.
  */
 export const Default: Story = {};
+
+/**
+ * The backup-code form, opened directly via `defaultMode` — what a host
+ * renders for a user who has already told it they lost their authenticator.
+ * The prop is initial-only, so the "use authenticator code instead" link
+ * still flips back.
+ */
+export const BackupCodeMode: Story = {
+  args: { defaultMode: 'backup' },
+};
+
+/** The backup form carrying a server error from a previous attempt. */
+export const BackupCodeModeWithError: Story = {
+  args: {
+    defaultMode: 'backup',
+    error: 'That backup code has already been used.',
+  },
+};
 
 /** A server-supplied error, e.g. after a failed POST round-trip. */
 export const WithServerError: Story = {

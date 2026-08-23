@@ -35,8 +35,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The full admin chrome. The sidebar toggle in the header is internal state,
- * so collapse it there rather than via a prop.
+ * The collapsed chrome, rendered directly via `defaultSidebarOpen` — what a
+ * host shows when it restores the user's saved preference on mount. The prop
+ * is initial-only, so the header toggle still reopens the sidebar.
+ */
+export const SidebarCollapsed: Story = {
+  args: {
+    activePath: '/identity/admin',
+    adminEmail: 'ops@northwind.example',
+    onLogout: () => console.log('logout'),
+    defaultSidebarOpen: false,
+  },
+};
+
+/**
+ * The full admin chrome. The header toggle collapses the sidebar; pass
+ * `defaultSidebarOpen={false}` to start there instead.
  */
 export const Default: Story = {
   args: {

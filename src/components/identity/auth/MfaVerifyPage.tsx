@@ -4,18 +4,34 @@ import { CodeInput } from '../shared/CodeInput';
 import { Button } from '../../ui/Button';
 import Banner from '../../shared/Banner';
 
+/** Which challenge the page presents: authenticator code or backup code. */
+export type MfaVerifyMode = 'totp' | 'backup';
+
 export interface MfaVerifyPageProps {
   onVerify: (code: string) => Promise<void>;
   onVerifyBackup: (code: string) => Promise<void>;
   error?: string | null;
+  /**
+   * Challenge the page opens on. Optional and **initial-only** — the page
+   * still owns the mode afterwards, so the two "use … instead" links keep
+   * flipping it. Omit it and the page opens on `'totp'`, which is the
+   * historical behaviour.
+   *
+   * It exists because the backup-code form was previously reachable only by
+   * clicking "Use a backup code instead": a host that already knows the user
+   * has lost their authenticator cannot land them on the right challenge, a
+   * story cannot show that form, and a test has to click before asserting.
+   */
+  defaultMode?: MfaVerifyMode;
 }
 
 export function MfaVerifyPage({
   onVerify,
   onVerifyBackup,
   error = null,
+  defaultMode = 'totp',
 }: MfaVerifyPageProps) {
-  const [mode, setMode] = useState<'totp' | 'backup'>('totp');
+  const [mode, setMode] = useState<MfaVerifyMode>(defaultMode);
   const [loading, setLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [backupCode, setBackupCode] = useState('');

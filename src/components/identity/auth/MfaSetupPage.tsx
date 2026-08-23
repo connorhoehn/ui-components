@@ -6,24 +6,62 @@ import { Button } from '../../ui/Button';
 import Banner from '../../shared/Banner';
 import { cn } from '../../../lib/cn';
 
+/** The four wizard steps, in the order the user walks them. */
+export type MfaSetupStep = 'name' | 'scan' | 'verify' | 'backup';
+
+/** The enrolment payload the identity server returns from `onSetup`. */
+export interface MfaSetupResult {
+  deviceId: string;
+  qrCode: string;
+  secret: string;
+  backupCodes: string[];
+}
+
 export interface MfaSetupPageProps {
-  onSetup: (deviceName: string) => Promise<{
-    deviceId: string;
-    qrCode: string;
-    secret: string;
-    backupCodes: string[];
-  }>;
+  onSetup: (deviceName: string) => Promise<MfaSetupResult>;
   onVerify: (deviceId: string, code: string) => Promise<{
     success: boolean;
     backupCodes?: string[];
   }>;
   onComplete: () => void;
   userEmail?: string;
+  /**
+   * Step the wizard opens on. Optional and **initial-only** — the page keeps
+   * owning the step afterwards, so Back/Continue still work exactly as they
+   * do without the prop. Omit it and the wizard opens on `'name'`, which is
+   * the historical behaviour.
+   *
+   * It exists because every step past the first was previously reachable
+   * only by clicking through the one before it: a host cannot deep-link a
+   * user back into a half-finished enrolment (`/mfa/setup?step=scan` after a
+   * reload), a story cannot show the scan or backup screens, and a test has
+   * to drive the whole flow to assert on the last one.
+   *
+   * `'scan'` renders the QR code, so it needs `initialSetupResult` as well;
+   * without it the wizard falls back to `'name'` rather than rendering an
+   * empty card.
+   */
+  initialStep?: MfaSetupStep;
+  /**
+   * Seeds the enrolment payload that `onSetup` would normally have returned,
+   * so `initialStep` can open on a step that needs it — `'scan'` (QR code +
+   * secret) and `'backup'` (the backup-code grid). Initial-only: a later
+   * real `onSetup` call replaces it.
+   *
+   * Use it when the host already holds the payload (resuming an enrolment
+   * after a reload) or when a story/test wants a specific step rendered
+   * directly instead of clicking to it.
+   */
+  initialSetupResult?: MfaSetupResult;
+  /**
+   * Seeds the device-name field, so a wizard opened at a later
+   * `initialStep` still shows the name the user typed on step 1 (it appears
+   * as the QR caption). Initial-only — the field stays editable.
+   */
+  initialDeviceName?: string;
 }
 
-type Step = 'name' | 'scan' | 'verify' | 'backup';
-
-const STEPS: Step[] = ['name', 'scan', 'verify', 'backup'];
+const STEPS: MfaSetupStep[] = ['name', 'scan', 'verify', 'backup'];
 const STEP_LABELS = ['Name', 'Scan', 'Verify', 'Backup'];
 
 export function MfaSetupPage({
@@ -31,21 +69,28 @@ export function MfaSetupPage({
   onVerify,
   onComplete,
   userEmail,
+  initialStep = 'name',
+  initialSetupResult,
+  initialDeviceName = '',
 }: MfaSetupPageProps) {
-  const [step, setStep] = useState<Step>('name');
+  // 'scan' is the only step that renders nothing without an enrolment
+  // payload, so treat a payload-less request for it as "start at the top"
+  // rather than mounting a blank card.
+  const [step, setStep] = useState<MfaSetupStep>(
+    initialStep === 'scan' && !initialSetupResult ? 'name' : initialStep,
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [deviceName, setDeviceName] = useState('');
+  const [deviceName, setDeviceName] = useState(initialDeviceName);
 
-  const [setupResult, setSetupResult] = useState<{
-    deviceId: string;
-    qrCode: string;
-    secret: string;
-    backupCodes: string[];
-  } | null>(null);
+  const [setupResult, setSetupResult] = useState<MfaSetupResult | null>(
+    initialSetupResult ?? null,
+  );
 
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  const [backupCodes, setBackupCodes] = useState<string[]>(
+    initialSetupResult?.backupCodes ?? [],
+  );
   const [copied, setCopied] = useState(false);
 
   const currentStepIndex = STEPS.indexOf(step);
@@ -177,7 +222,10 @@ export function MfaSetupPage({
               <QrCodeDisplay
                 value={setupResult.qrCode}
                 size={200}
-                label={`Device: ${deviceName}`}
+                // Never empty on the normal path (step 1 requires a name);
+                // guards the caption when a host deep-links straight to
+                // 'scan' without seeding `initialDeviceName`.
+                label={deviceName ? `Device: ${deviceName}` : undefined}
               />
             </div>
             <p className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary text-center mb-2 mt-0">

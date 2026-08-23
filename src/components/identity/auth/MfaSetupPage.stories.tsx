@@ -55,10 +55,41 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The happy path. The page owns its own step state, so walk it: name the
- * device → scan/secret → enter any 6 digits → backup codes.
+ * The happy path from step 1. The page owns its own step state, so walk it:
+ * name the device → scan/secret → enter any 6 digits → backup codes.
  */
 export const HappyPath: Story = {};
+
+/**
+ * Step 2 rendered directly via `initialStep` + `initialSetupResult` — the
+ * payload a host already holds when it resumes a half-finished enrolment.
+ * Initial-only, so Back/Continue still walk the wizard from here.
+ */
+export const ScanStep: Story = {
+  args: {
+    initialStep: 'scan',
+    initialSetupResult: SETUP_RESULT,
+    initialDeviceName: "Dana's Pixel",
+  },
+};
+
+/** Step 3 rendered directly — the 6-digit confirmation. */
+export const VerifyStep: Story = {
+  args: {
+    initialStep: 'verify',
+    initialSetupResult: SETUP_RESULT,
+    initialDeviceName: "Dana's Pixel",
+  },
+};
+
+/** Step 4 rendered directly — the backup-code grid and the copy-all action. */
+export const BackupStep: Story = {
+  args: {
+    initialStep: 'backup',
+    initialSetupResult: SETUP_RESULT,
+    initialDeviceName: "Dana's Pixel",
+  },
+};
 
 /**
  * Verification always fails, so step 3 stays put and shows the inline error.

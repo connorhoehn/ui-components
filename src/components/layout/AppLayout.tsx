@@ -139,6 +139,19 @@ export interface AppLayoutProps {
   activityEvents: import('../../hooks/useActivityBus').ActivityEvent[];
   activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
   activityIsLive: boolean;
+
+  /**
+   * Whether the left sidebar starts expanded. Optional and **initial-only**
+   * — the layout still owns the state afterwards, so the collapse/expand
+   * controls keep working. Omit it and the sidebar starts open, which is the
+   * historical behaviour.
+   *
+   * It exists because the 56px `CollapsedIconStrip` was previously reachable
+   * only by clicking the sidebar's collapse control: a host cannot restore
+   * the user's saved preference on mount, and a test has to click before it
+   * can assert on the collapsed chrome.
+   */
+  defaultSidebarOpen?: boolean;
 }
 
 
@@ -174,6 +187,7 @@ function AppLayoutInner({
   lastError,
   activityEvents,
   activityPublish,
+  defaultSidebarOpen = true,
 }: AppLayoutProps) {
   // Pull shared state from contexts
   const { connectionState, sendMessage, onMessage, ws, clientId, sessionToken } = useWebSocketContext();
@@ -221,7 +235,7 @@ function AppLayoutInner({
   // Collapsible left sidebar — collapsed state shows a 56px icon strip,
   // not a fully-hidden surface (the previous behavior left the main content
   // edge-to-edge with only an overlay hamburger as the entry point).
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(defaultSidebarOpen);
   const SIDEBAR_COLLAPSED_WIDTH = 56;
   const SIDEBAR_OPEN_WIDTH = 260;
   const SIDEBAR_WIDTH = sidebarOpen ? SIDEBAR_OPEN_WIDTH : SIDEBAR_COLLAPSED_WIDTH;
