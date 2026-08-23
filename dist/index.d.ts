@@ -519,6 +519,18 @@ declare interface AppLayoutProps {
     activityEvents: ActivityEvent[];
     activityPublish: (eventType: string, detail: Record<string, unknown>) => void;
     activityIsLive: boolean;
+    /**
+     * Whether the left sidebar starts expanded. Optional and **initial-only**
+     * — the layout still owns the state afterwards, so the collapse/expand
+     * controls keep working. Omit it and the sidebar starts open, which is the
+     * historical behaviour.
+     *
+     * It exists because the 56px `CollapsedIconStrip` was previously reachable
+     * only by clicking the sidebar's collapse control: a host cannot restore
+     * the user's saved preference on mount, and a test has to click before it
+     * can assert on the collapsed chrome.
+     */
+    defaultSidebarOpen?: boolean;
 }
 
 export declare function ApplicationFormPage({ application, isEdit, pools, onSubmit, onCancel, error, }: ApplicationFormPageProps): JSX.Element;
@@ -1086,7 +1098,14 @@ export declare interface CallStatsOverlayProps {
     position?: CallStatsOverlayPosition;
     /** Stable data-testid (e2e hook). Defaults to `call-stats-overlay`. */
     testId?: string;
+    /**
+     * Extra positioning / sizing classes. Prefer this over `style` — it is
+     * composed after the `position` classes through `cn()`, so a caller class
+     * wins (e.g. `top-8` overriding `top-2`), and inline styles are banned in
+     * demos and stories.
+     */
     className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -2985,7 +3004,21 @@ export declare interface HangoutSpotlightProps {
     spotlightContentLabel?: string;
     /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
     activeSpeakerId?: string | null;
-    /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */
+    /**
+     * Hysteresis window (ms) before the spotlight slot swaps to a new
+     * `activeSpeakerId`. Default 750.
+     *
+     * In a real call you WANT the delay — it stops the spotlight flickering on
+     * coughs, laughs, and one-word interjections.
+     *
+     * Pass `0` when you need the rendered output to match the props you just
+     * handed in, with no timers involved:
+     *  - **Tests** — otherwise a change to `activeSpeakerId` needs fake timers
+     *    plus an `act()`-wrapped `advanceTimersByTime` before any assertion.
+     *  - **Storybook / demos** — changing the `activeSpeakerId` control would
+     *    otherwise appear to do nothing for three quarters of a second, and a
+     *    visual-regression snapshot could catch either state.
+     */
     speakerHysteresisMs?: number;
     /** Click handler per filmstrip tile. */
     onParticipantClick?: (id: string) => void;
@@ -3023,7 +3056,7 @@ export declare interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'childr
 
 export declare const IDENTITY_BASE_URL: string;
 
-export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, }: IdentityAdminLayoutProps): JSX.Element;
+export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, defaultSidebarOpen, }: IdentityAdminLayoutProps): JSX.Element;
 
 export declare interface IdentityAdminLayoutProps {
     children: React.ReactNode;
@@ -3031,6 +3064,18 @@ export declare interface IdentityAdminLayoutProps {
     adminEmail?: string;
     onNavigate: (path: string) => void;
     onLogout?: () => void;
+    /**
+     * Whether the sidebar starts open. Optional and **initial-only** — the
+     * layout still owns the state afterwards, so the header toggle keeps
+     * working. Omit it and the sidebar starts open, which is the historical
+     * behaviour.
+     *
+     * It exists because the collapsed rail was previously reachable only by
+     * clicking the toggle: a host cannot restore the user's saved preference
+     * on mount, a story cannot show the collapsed chrome, and a test has to
+     * click before it can assert on it.
+     */
+    defaultSidebarOpen?: boolean;
 }
 
 export declare function identityApiFetch<T>(path: string, idToken: string | null, options?: RequestInit): Promise<T>;
@@ -3723,7 +3768,7 @@ declare interface LogEntry {
     timestamp: string;
 }
 
-export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, }: LoginPageProps): JSX.Element;
+export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, defaultTab, }: LoginPageProps): JSX.Element;
 
 export declare interface LoginPageProps {
     uid: string;
@@ -3742,7 +3787,25 @@ export declare interface LoginPageProps {
     onForgotPassword: (email: string) => Promise<void>;
     registrationEnabled?: boolean;
     forgotPasswordEnabled?: boolean;
+    /**
+     * Tab the page opens on. Optional and **initial-only** — the page still
+     * owns the tab afterwards, so the tab bar keeps working unchanged. Omit it
+     * and the page opens on `'signin'`, which is the historical behaviour.
+     *
+     * It exists because the register and forgot-password forms were previously
+     * reachable only by clicking their tab: an OIDC host cannot honour a
+     * `?screen_hint=signup` deep link, a story cannot show either form, and a
+     * test has to click a tab before it can assert on the form behind it.
+     *
+     * A tab that the corresponding `*Enabled` flag has switched off is ignored
+     * and `'signin'` is used instead, so this prop can never render a form the
+     * host has disabled.
+     */
+    defaultTab?: LoginTab;
 }
+
+/** The three authentication forms the page can show. */
+declare type LoginTab = 'signin' | 'register' | 'forgot';
 
 export declare type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -4022,21 +4085,50 @@ export declare interface MfaMetrics {
     adoptionRate: number;
 }
 
-export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, }: MfaSetupPageProps): JSX.Element;
+export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, initialStep, initialSetupResult, initialDeviceName, }: MfaSetupPageProps): JSX.Element;
 
 export declare interface MfaSetupPageProps {
-    onSetup: (deviceName: string) => Promise<{
-        deviceId: string;
-        qrCode: string;
-        secret: string;
-        backupCodes: string[];
-    }>;
+    onSetup: (deviceName: string) => Promise<MfaSetupResult_2>;
     onVerify: (deviceId: string, code: string) => Promise<{
         success: boolean;
         backupCodes?: string[];
     }>;
     onComplete: () => void;
     userEmail?: string;
+    /**
+     * Step the wizard opens on. Optional and **initial-only** — the page keeps
+     * owning the step afterwards, so Back/Continue still work exactly as they
+     * do without the prop. Omit it and the wizard opens on `'name'`, which is
+     * the historical behaviour.
+     *
+     * It exists because every step past the first was previously reachable
+     * only by clicking through the one before it: a host cannot deep-link a
+     * user back into a half-finished enrolment (`/mfa/setup?step=scan` after a
+     * reload), a story cannot show the scan or backup screens, and a test has
+     * to drive the whole flow to assert on the last one.
+     *
+     * `'scan'` renders the QR code, so it needs `initialSetupResult` as well;
+     * without it the wizard falls back to `'name'` rather than rendering an
+     * empty card.
+     */
+    initialStep?: MfaSetupStep;
+    /**
+     * Seeds the enrolment payload that `onSetup` would normally have returned,
+     * so `initialStep` can open on a step that needs it — `'scan'` (QR code +
+     * secret) and `'backup'` (the backup-code grid). Initial-only: a later
+     * real `onSetup` call replaces it.
+     *
+     * Use it when the host already holds the payload (resuming an enrolment
+     * after a reload) or when a story/test wants a specific step rendered
+     * directly instead of clicking to it.
+     */
+    initialSetupResult?: MfaSetupResult_2;
+    /**
+     * Seeds the device-name field, so a wizard opened at a later
+     * `initialStep` still shows the name the user typed on step 1 (it appears
+     * as the QR caption). Initial-only — the field stays editable.
+     */
+    initialDeviceName?: string;
 }
 
 export declare interface MfaSetupResult {
@@ -4046,12 +4138,38 @@ export declare interface MfaSetupResult {
     backupCodes: string[];
 }
 
-export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, }: MfaVerifyPageProps): JSX.Element;
+/** The enrolment payload the identity server returns from `onSetup`. */
+declare interface MfaSetupResult_2 {
+    deviceId: string;
+    qrCode: string;
+    secret: string;
+    backupCodes: string[];
+}
+
+/** The four wizard steps, in the order the user walks them. */
+declare type MfaSetupStep = 'name' | 'scan' | 'verify' | 'backup';
+
+/** Which challenge the page presents: authenticator code or backup code. */
+declare type MfaVerifyMode = 'totp' | 'backup';
+
+export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, defaultMode, }: MfaVerifyPageProps): JSX.Element;
 
 export declare interface MfaVerifyPageProps {
     onVerify: (code: string) => Promise<void>;
     onVerifyBackup: (code: string) => Promise<void>;
     error?: string | null;
+    /**
+     * Challenge the page opens on. Optional and **initial-only** — the page
+     * still owns the mode afterwards, so the two "use … instead" links keep
+     * flipping it. Omit it and the page opens on `'totp'`, which is the
+     * historical behaviour.
+     *
+     * It exists because the backup-code form was previously reachable only by
+     * clicking "Use a backup code instead": a host that already knows the user
+     * has lost their authenticator cannot land them on the right challenge, a
+     * story cannot show that form, and a test has to click before asserting.
+     */
+    defaultMode?: MfaVerifyMode;
 }
 
 export declare function MicIcon({ size, ...rest }: IconProps): JSX.Element;
@@ -4132,10 +4250,18 @@ export declare interface NavTabsProps {
 
 export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
-export declare function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps): JSX.Element;
+export declare function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps): JSX.Element;
 
 export declare interface NetworkQualityBadgeProps {
     quality: NetworkQuality;
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the badge is normally docked into a corner of the video stage, and with
+     * no className seam callers had to reach for an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -5456,14 +5582,22 @@ export declare interface Reaction {
     displayName?: string;
 }
 
-export declare function ReactionOverlay({ reactions, style }: ReactionOverlayProps): JSX.Element;
+export declare function ReactionOverlay({ reactions, className, style }: ReactionOverlayProps): JSX.Element;
 
 export declare interface ReactionOverlayProps {
     reactions: Reaction[];
+    /**
+     * Positioning / sizing classes from the caller. Prefer this over `style`:
+     * the overlay is `absolute inset-0` by default, and callers wanting to
+     * scope it to a sub-region had no seam but an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
-export declare function ReactionPicker({ onReact, emojis, style }: ReactionPickerProps): JSX.Element;
+export declare function ReactionPicker({ onReact, emojis, className, style }: ReactionPickerProps): JSX.Element;
 
 export declare function ReactionPickerPopover({ open, onSelect, onClose, triggerRef, emojis, showSearch, className, style, }: ReactionPickerPopoverProps): JSX.Element | null;
 
@@ -5491,6 +5625,14 @@ export declare interface ReactionPickerPopoverProps {
 export declare interface ReactionPickerProps {
     onReact: (emoji: string) => void;
     emojis?: string[];
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the picker is usually floated over a call stage, which previously
+     * required an inline style (banned in demos and stories). Composed
+     * through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -6349,10 +6491,19 @@ export declare interface StatCardProps {
     'data-testid'?: string;
 }
 
-export declare function StatsCard({ metrics, style }: StatsCardProps): JSX.Element;
+export declare function StatsCard({ metrics, className, style }: StatsCardProps): JSX.Element;
 
 export declare interface StatsCardProps {
     metrics: StreamMetrics | null;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * the card has no intrinsic width, so every consumer was wrapping it in a
+     * `<div>` purely to size it — inline styles are banned in demos and
+     * stories. Applied to BOTH the empty and populated states, and composed
+     * through `cn()` so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -6403,13 +6554,21 @@ export declare type StatusPillSize = 'sm' | 'md';
 
 export declare type StatusPillState = 'success' | 'error' | 'warning' | 'info' | 'neutral' | 'pending';
 
-export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps): JSX.Element;
+export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps): JSX.Element;
 
 export declare interface StatusStripProps {
     phase: PlayerPhase | 'live' | 'reconnecting';
     bitrateBps?: number;
     viewerCount?: number;
     duration?: number;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * overlaying the strip on a player or widening it previously needed a
+     * wrapper `<div>`, because inline styles are banned in demos and stories.
+     * Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -7205,7 +7364,7 @@ export declare interface TraceTimeline {
     startedAt: string;
 }
 
-export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;
+export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;
 
 export declare interface TranscriptOverlayProps {
     lines: CaptionLine[];
@@ -7213,6 +7372,17 @@ export declare interface TranscriptOverlayProps {
     maxLines?: number;
     /** Fade-out duration ms. Default 8000. */
     fadeAfterMs?: number;
+    /**
+     * "Now" in ms since epoch, used as the reference point for each line's
+     * age-based opacity. Defaults to `Date.now()` — exposed for deterministic
+     * tests and stories.
+     *
+     * Without it, any fixture built from fixed ISO timestamps is arbitrarily
+     * old by the time it renders, so every line clamps to the 0.35 opacity
+     * floor and the fade ramp can never be exercised. Pass the same epoch the
+     * fixture timestamps were written against and the ramp is reproducible.
+     */
+    now?: number;
     className?: string;
 }
 
@@ -8338,6 +8508,10 @@ declare interface UseActivityBusReturn {
   * Debounce activeSpeakerId so the spotlight slot only swaps after the new
   * speaker has been talking for at least `hysteresisMs`. Without this,
   * every cough, laugh, or short interjection causes flicker.
+  *
+  * `hysteresisMs <= 0` bypasses the timer entirely and commits the new id on
+  * the next effect flush — the escape hatch tests and stories use so the
+  * rendered output tracks the props synchronously.
   */
  export declare function useStableActiveSpeaker(activeSpeakerId: string | null | undefined, hysteresisMs: number): string | null;
 
@@ -8559,10 +8733,18 @@ declare interface UseActivityBusReturn {
    * border highlight on the tile only (see ParticipantTile). For an
    * active-speaker-aware spotlight layout, use `HangoutLayout` instead.
    */
-  export declare function VideoGrid({ participants, style }: VideoGridProps): JSX.Element;
+  export declare function VideoGrid({ participants, className, style }: VideoGridProps): JSX.Element;
 
   export declare interface VideoGridProps {
       participants: VideoParticipant[];
+      /**
+       * Sizing / spacing classes from the caller. Prefer this over `style`:
+       * callers only ever needed `style` to constrain the grid's width, which
+       * forced a wrapper `<div>` on every consumer (inline styles are banned in
+       * demos and stories). Composed through `cn()`, so a caller class wins.
+       */
+      className?: string;
+      /** @deprecated Use `className`. Kept so existing callers keep compiling. */
       style?: CSSProperties;
   }
 

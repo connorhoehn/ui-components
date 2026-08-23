@@ -136,7 +136,14 @@ export declare interface CallStatsOverlayProps {
     position?: CallStatsOverlayPosition;
     /** Stable data-testid (e2e hook). Defaults to `call-stats-overlay`. */
     testId?: string;
+    /**
+     * Extra positioning / sizing classes. Prefer this over `style` — it is
+     * composed after the `position` classes through `cn()`, so a caller class
+     * wins (e.g. `top-8` overriding `top-2`), and inline styles are banned in
+     * demos and stories.
+     */
     className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -472,7 +479,21 @@ export declare interface HangoutSpotlightProps {
     spotlightContentLabel?: string;
     /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
     activeSpeakerId?: string | null;
-    /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */
+    /**
+     * Hysteresis window (ms) before the spotlight slot swaps to a new
+     * `activeSpeakerId`. Default 750.
+     *
+     * In a real call you WANT the delay — it stops the spotlight flickering on
+     * coughs, laughs, and one-word interjections.
+     *
+     * Pass `0` when you need the rendered output to match the props you just
+     * handed in, with no timers involved:
+     *  - **Tests** — otherwise a change to `activeSpeakerId` needs fake timers
+     *    plus an `act()`-wrapped `advanceTimersByTime` before any assertion.
+     *  - **Storybook / demos** — changing the `activeSpeakerId` control would
+     *    otherwise appear to do nothing for three quarters of a second, and a
+     *    visual-regression snapshot could catch either state.
+     */
     speakerHysteresisMs?: number;
     /** Click handler per filmstrip tile. */
     onParticipantClick?: (id: string) => void;
@@ -532,10 +553,18 @@ export declare interface MuteWhileTalkingToastProps {
 
 export declare type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
-export declare function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps): JSX.Element;
+export declare function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps): JSX.Element;
 
 export declare interface NetworkQualityBadgeProps {
     quality: NetworkQuality;
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the badge is normally docked into a corner of the video stage, and with
+     * no className seam callers had to reach for an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -655,18 +684,34 @@ export declare interface Reaction {
     displayName?: string;
 }
 
-export declare function ReactionOverlay({ reactions, style }: ReactionOverlayProps): JSX.Element;
+export declare function ReactionOverlay({ reactions, className, style }: ReactionOverlayProps): JSX.Element;
 
 export declare interface ReactionOverlayProps {
     reactions: Reaction[];
+    /**
+     * Positioning / sizing classes from the caller. Prefer this over `style`:
+     * the overlay is `absolute inset-0` by default, and callers wanting to
+     * scope it to a sub-region had no seam but an inline style (banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
-export declare function ReactionPicker({ onReact, emojis, style }: ReactionPickerProps): JSX.Element;
+export declare function ReactionPicker({ onReact, emojis, className, style }: ReactionPickerProps): JSX.Element;
 
 export declare interface ReactionPickerProps {
     onReact: (emoji: string) => void;
     emojis?: string[];
+    /**
+     * Positioning / spacing classes from the caller. Prefer this over `style`:
+     * the picker is usually floated over a call stage, which previously
+     * required an inline style (banned in demos and stories). Composed
+     * through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -782,20 +827,37 @@ export declare function ScreenShareIcon({ size, ...rest }: IconProps): JSX.Eleme
 
 export declare function ScreenShareOffIcon({ size, ...rest }: IconProps): JSX.Element;
 
-export declare function StatsCard({ metrics, style }: StatsCardProps): JSX.Element;
+export declare function StatsCard({ metrics, className, style }: StatsCardProps): JSX.Element;
 
 export declare interface StatsCardProps {
     metrics: StreamMetrics | null;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * the card has no intrinsic width, so every consumer was wrapping it in a
+     * `<div>` purely to size it — inline styles are banned in demos and
+     * stories. Applied to BOTH the empty and populated states, and composed
+     * through `cn()` so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
-export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps): JSX.Element;
+export declare function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps): JSX.Element;
 
 export declare interface StatusStripProps {
     phase: PlayerPhase | 'live' | 'reconnecting';
     bitrateBps?: number;
     viewerCount?: number;
     duration?: number;
+    /**
+     * Sizing / positioning classes from the caller. Prefer this over `style`:
+     * overlaying the strip on a player or widening it previously needed a
+     * wrapper `<div>`, because inline styles are banned in demos and stories.
+     * Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 
@@ -852,7 +914,7 @@ export declare interface SummaryPanelProps {
     className?: string;
 }
 
-export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, className, }: TranscriptOverlayProps): JSX.Element | null;
+export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: nowProp, className, }: TranscriptOverlayProps): JSX.Element | null;
 
 export declare interface TranscriptOverlayProps {
     lines: CaptionLine[];
@@ -860,6 +922,17 @@ export declare interface TranscriptOverlayProps {
     maxLines?: number;
     /** Fade-out duration ms. Default 8000. */
     fadeAfterMs?: number;
+    /**
+     * "Now" in ms since epoch, used as the reference point for each line's
+     * age-based opacity. Defaults to `Date.now()` — exposed for deterministic
+     * tests and stories.
+     *
+     * Without it, any fixture built from fixed ISO timestamps is arbitrarily
+     * old by the time it renders, so every line clamps to the 0.35 opacity
+     * floor and the fade ramp can never be exercised. Pass the same epoch the
+     * fixture timestamps were written against and the ramp is reproducible.
+     */
+    now?: number;
     className?: string;
 }
 
@@ -944,6 +1017,10 @@ export declare function UserPlusIcon({ size, ...rest }: IconProps): JSX.Element;
  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
  * speaker has been talking for at least `hysteresisMs`. Without this,
  * every cough, laugh, or short interjection causes flicker.
+ *
+ * `hysteresisMs <= 0` bypasses the timer entirely and commits the new id on
+ * the next effect flush — the escape hatch tests and stories use so the
+ * rendered output tracks the props synchronously.
  */
 export declare function useStableActiveSpeaker(activeSpeakerId: string | null | undefined, hysteresisMs: number): string | null;
 
@@ -955,10 +1032,18 @@ export declare function useTrackStateBump(stream: MediaStream | undefined | null
  * border highlight on the tile only (see ParticipantTile). For an
  * active-speaker-aware spotlight layout, use `HangoutLayout` instead.
  */
-export declare function VideoGrid({ participants, style }: VideoGridProps): JSX.Element;
+export declare function VideoGrid({ participants, className, style }: VideoGridProps): JSX.Element;
 
 export declare interface VideoGridProps {
     participants: Participant[];
+    /**
+     * Sizing / spacing classes from the caller. Prefer this over `style`:
+     * callers only ever needed `style` to constrain the grid's width, which
+     * forced a wrapper `<div>` on every consumer (inline styles are banned in
+     * demos and stories). Composed through `cn()`, so a caller class wins.
+     */
+    className?: string;
+    /** @deprecated Use `className`. Kept so existing callers keep compiling. */
     style?: CSSProperties;
 }
 

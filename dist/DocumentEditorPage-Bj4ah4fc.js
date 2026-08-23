@@ -1881,7 +1881,7 @@ function Z({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread:
 	return b && !v ? /* @__PURE__ */ O("div", {
 		className: p(S > 0 ? "ml-5" : "ml-0"),
 		children: /* @__PURE__ */ k("div", {
-			className: p("bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
+			className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 			onClick: () => y(!0),
 			children: [/* @__PURE__ */ k("div", {
 				className: p("flex items-center gap-1.5"),
@@ -1916,7 +1916,7 @@ function Z({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread:
 		className: p(S > 0 ? "ml-5" : "ml-0", b ? "opacity-60" : ""),
 		children: [
 			b && v && /* @__PURE__ */ k("div", {
-				className: p("bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
+				className: p("bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between"),
 				onClick: () => y(!1),
 				children: [/* @__PURE__ */ k("div", {
 					className: p("flex items-center gap-1.5"),
@@ -2540,7 +2540,7 @@ function $e(e, t) {
 function et({ meta: e, participantCount: t }) {
 	let n = Xe[e.status] ?? Xe.draft;
 	return /* @__PURE__ */ k("div", {
-		className: p("border-t-[3px] border-t-[#3b82f6] rounded-t-lg pt-5 pb-4 px-6 mb-4 bg-gradient-to-b from-surface-panel to-white col-span-full"),
+		className: p("border-t-[3px] border-t-info rounded-t-lg pt-5 pb-4 px-6 mb-4 bg-gradient-to-b from-surface-panel to-white col-span-full"),
 		children: [/* @__PURE__ */ k("div", {
 			className: p("flex items-center gap-3 mb-1.5"),
 			children: [/* @__PURE__ */ O("h1", {
@@ -2579,7 +2579,7 @@ function tt({ bullets: e, contentText: t, fragment: n, ydoc: r, provider: i }) {
 				children: "Executive Summary"
 			}),
 			a ? /* @__PURE__ */ O("div", {
-				className: p("py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]", e.length > 0 ? "mb-3" : ""),
+				className: p("py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-accent", e.length > 0 ? "mb-3" : ""),
 				children: /* @__PURE__ */ O(g, {
 					fragment: n,
 					ydoc: r,
@@ -2591,7 +2591,7 @@ function tt({ bullets: e, contentText: t, fragment: n, ydoc: r, provider: i }) {
 					editable: !1
 				})
 			}) : o ? /* @__PURE__ */ O("div", {
-				className: p("text-sm text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]", e.length > 0 ? "mb-3" : ""),
+				className: p("text-sm text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-accent", e.length > 0 ? "mb-3" : ""),
 				children: t.trim()
 			}) : null,
 			/* @__PURE__ */ O("ul", {
@@ -2840,7 +2840,7 @@ function lt({ sections: e, commentCounts: t, sectionContentTexts: n, comments: r
 							(() => {
 								let t = i?.(e.id);
 								return t && a ? /* @__PURE__ */ O("div", {
-									className: p("py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]", e.items.length > 0 ? "mb-2" : ""),
+									className: p("py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-border-emphasis", e.items.length > 0 ? "mb-2" : ""),
 									children: /* @__PURE__ */ O(g, {
 										fragment: t,
 										ydoc: a,
@@ -2852,7 +2852,7 @@ function lt({ sections: e, commentCounts: t, sectionContentTexts: n, comments: r
 										editable: !1
 									})
 								}) : v ? /* @__PURE__ */ O("div", {
-									className: p("text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]", e.items.length > 0 ? "mb-2" : ""),
+									className: p("text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-border-emphasis", e.items.length > 0 ? "mb-2" : ""),
 									children: m.trim()
 								}) : null;
 							})(),
@@ -3560,7 +3560,7 @@ function Dt({ versions: e, loading: t, previewTimestamp: n, onFetch: r, onPrevie
 						children: "No saved versions yet"
 					}),
 					!t && e.map((e) => /* @__PURE__ */ k("div", {
-						className: p("flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary", n === e.timestamp ? "bg-info-bg border-l-[3px] border-l-[#3b82f6]" : "bg-transparent border-l-[3px] border-l-transparent"),
+						className: p("flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary", n === e.timestamp ? "bg-info-bg border-l-[3px] border-l-info" : "bg-transparent border-l-[3px] border-l-transparent"),
 						onClick: () => i(e.timestamp),
 						children: [/* @__PURE__ */ k("div", {
 							className: p("flex-1 min-w-0"),

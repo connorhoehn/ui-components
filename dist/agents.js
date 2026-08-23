@@ -1557,7 +1557,7 @@ function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 						onClick: () => {
 							o(t.id), y(), l([]);
 						},
-						className: e("py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]", t.status === "offline" ? "cursor-not-allowed opacity-50" : "cursor-pointer", a === t.id ? "bg-surface-hover border-l-[#6366f1]" : "bg-transparent border-l-transparent"),
+						className: e("py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]", t.status === "offline" ? "cursor-not-allowed opacity-50" : "cursor-pointer", a === t.id ? "bg-surface-hover border-l-primary" : "bg-transparent border-l-transparent"),
 						children: [/* @__PURE__ */ d("div", {
 							className: "min-w-0",
 							children: [/* @__PURE__ */ u("div", {

@@ -8,6 +8,83 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.78.0] — 2026-08-23
+
+Three more parallel agents: API ergonomics, testability seams, and a
+definitive answer on the last open bundle question. Plus a hole found in
+one of this repo's own guards.
+
+### Fixed
+
+- **The hex-colour guard had a hole, and the v2.64.0 "zero remaining" claim
+  was wrong.** `check-hex-colors.mjs` required the hex to follow the utility
+  prefix *directly*, so every directional form — `border-l-[#22c55e]`,
+  `border-b-[#3b82f6]`, `border-t-[#…]` — sailed straight past while the
+  guard reported a clean zero. **19 escapees** across 10 files, including
+  four in `Toast.tsx`. The regex now allows the directional/sub-property
+  segment (`t/r/b/l/x/y/s/e`, `ring-offset`) and adds the missing
+  `placeholder-` prefix; all 19 are converted to tone tokens. The sibling
+  tones test was hardened the same way — it already covered `border-l` but
+  not `border-x/y/s/e`, `divide-x/y`, `ring-offset` or `placeholder`. No
+  live escapees there, but it was the same latent shape.
+
+### Added
+
+- **`className` on six video overlays** — `VideoGrid`, `StatusStrip`,
+  `StatsCard`, `NetworkQualityBadge`, `ReactionOverlay`, `ReactionPicker`.
+  They accepted `style` but not `className`, so every caller needed a
+  wrapper `<div>` purely to set a width (inline styles being banned in
+  stories and demos by our own guard). Composed through `cn()` last, so a
+  caller's class **wins** its Tailwind group — which is what the tests pin,
+  rather than mere string presence. `style` is now `@deprecated`.
+  `CallStatsOverlay` already had `className` and `HangoutSpotlight` already
+  plumbed `speakerHysteresisMs`; no redundant props were added.
+- **`TranscriptOverlay` accepts `now?: number`.** Opacity is
+  `1 - age/fadeAfterMs`, so any fixture with a fixed ISO timestamp is years
+  old at render time and every line clamped to the 0.35 floor — the fade was
+  untestable and unstorieable. Follows the existing repo convention
+  (`RunFilterCriteria.now` in `runsUtils.ts`) rather than inventing a new
+  clock prop.
+- **Initial-state props so multi-state components can be rendered directly**
+  instead of only reached by clicking: `LoginPage.defaultTab`,
+  `MfaVerifyPage.defaultMode`, `MfaSetupPage.initialStep` (+
+  `initialSetupResult`, `initialDeviceName` — the scan step is gated on the
+  setup payload, so one prop alone renders an empty card),
+  `IdentityAdminLayout.defaultSidebarOpen`, and `AppLayout.defaultSidebarOpen`.
+  All seed `useState` only — the component still owns the state afterwards,
+  so these are additive, not a controlled-component redesign. `defaultTab` is
+  ignored when the matching capability flag is off, so it can never render a
+  form the host disabled. `SettingsLayout` already supported this and was
+  left alone.
+
+### Investigated — DO NOT DECLARE `sideEffects`
+
+Settled empirically with a **webpack** consumer (webpack honours
+`sideEffects` far more aggressively than esbuild), building and *executing*
+the bundles rather than inferring:
+
+- With `"sideEffects": false`, `getFieldTypes()` returns `[]` and
+  `getRenderer('rich-text','reader')` returns `null` — the renderer registry
+  is completely dead, the `('*','*')` wildcard included. **Every broken
+  build reported `compiled successfully`.**
+- The prize is **953 bytes raw / 241 gzipped (~2.6%)** on a `Chip`-only
+  bundle.
+- The array form is not salvageable. `src/renderers/index.ts` is the
+  library's only production module-level side effect, and in `dist` its
+  registrations land in a **content-hashed** chunk that `vite.config.ts`
+  never names (`manualChunks` is unset) — so any whitelist entry is an
+  emergent artifact, not a contract. Only the *conjunction* of
+  `**/renderers-*.js` and `**/index.js` restores correctness, and flagging
+  `**/index.js` forfeits most of the tree-shaking the field was meant to buy.
+- Nothing in the gate could catch a regression: vitest doesn't bundle, the
+  build is rollup, and Playwright runs the vite demo. It would surface only
+  as an empty type picker in a downstream webpack app.
+
+Recorded in `docs/bundle-side-effects.md`, with the structural unblock: make
+registration lazy and idempotent inside `registry.ts` so the library has no
+module-level side effects, after which `["**/*.css"]` becomes safe. That
+touches the no-touch list and needs a handoff.
+
 ## [2.77.0] — 2026-08-23
 
 ### Fixed

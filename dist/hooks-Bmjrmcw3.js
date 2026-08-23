@@ -5,7 +5,7 @@ import "./useWebSocket-C17ijv1B.js";
 import "./useSocialProfile-DXPZ4OO4.js";
 import "./useSyncConflicts-DNj4F6oF.js";
 import "./useDocumentTypes-C-AMWgYq.js";
-import { n as a } from "./ToastProvider-D6pdXd91.js";
+import { n as a } from "./ToastProvider-BqgHlzIs.js";
 import { useCallback as o, useEffect as s, useMemo as c, useRef as l, useState as u } from "react";
 import { AuthenticationDetails as d, CognitoRefreshToken as f, CognitoUser as p, CognitoUserAttribute as m, CognitoUserPool as h } from "amazon-cognito-identity-js";
 import * as g from "yjs";

@@ -1581,7 +1581,7 @@ function Y({ template: e, isEdit: r, onSubmit: i, onCancel: a, error: o }) {
 }
 //#endregion
 //#region src/components/identity/admin/MfaManagementPage.tsx
-function ee({ metrics: e, users: r, pools: i, onRefresh: a, loading: o }) {
+function X({ metrics: e, users: r, pools: i, onRefresh: a, loading: o }) {
 	let [s, c] = T(""), u = C(() => r ?? [], [r]), d = C(() => [
 		{
 			key: "email",
@@ -1701,7 +1701,7 @@ function ee({ metrics: e, users: r, pools: i, onRefresh: a, loading: o }) {
 }
 //#endregion
 //#region src/components/identity/admin/AuditPage.tsx
-var te = [
+var ee = [
 	"",
 	"user",
 	"pool",
@@ -1709,7 +1709,7 @@ var te = [
 	"group",
 	"template"
 ];
-function ne({ records: e, onQuery: r, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
+function te({ records: e, onQuery: r, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
 	let [c, u] = T(""), [d, f] = T(""), [p, m] = T(""), [h, g] = T(""), [v, b] = T("50"), [S, w] = T(""), [E, k] = T(""), [j, M] = T(null), [N, P] = T(!1), F = x(async () => {
 		await r({
 			entityType: c || void 0,
@@ -1794,7 +1794,7 @@ function ne({ records: e, onQuery: r, onViewEntity: i, onReplay: a, loading: o, 
 								options: [{
 									value: "",
 									label: "All"
-								}, ...te.filter(Boolean).map((e) => ({
+								}, ...ee.filter(Boolean).map((e) => ({
 									value: e,
 									label: e
 								}))]
@@ -1924,7 +1924,7 @@ function ne({ records: e, onQuery: r, onViewEntity: i, onReplay: a, loading: o, 
 }
 //#endregion
 //#region src/components/identity/admin/SetupGuidePage.tsx
-function re({ status: r, onNavigate: i }) {
+function ne({ status: r, onNavigate: i }) {
 	let [a, o] = T(null), s = x((e) => {
 		o((t) => t === e ? null : e);
 	}, []), c = C(() => [
@@ -2094,13 +2094,13 @@ window.location.href = authUrl;`
 }
 //#endregion
 //#region src/components/identity/admin/DiagnosticsPage.tsx
-function ie({ data: e }) {
+function re({ data: e }) {
 	return /* @__PURE__ */ D("pre", {
 		className: "p-5 font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel",
 		children: JSON.stringify(e, null, 2)
 	});
 }
-function ae({ rates: e }) {
+function ie({ rates: e }) {
 	let t = Object.entries(e);
 	return t.length === 0 ? /* @__PURE__ */ D("p", {
 		className: "p-5 text-center text-text-tertiary text-sm m-0",
@@ -2110,7 +2110,7 @@ function ae({ rates: e }) {
 		children: e
 	}), /* @__PURE__ */ D(i, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
 }
-function oe({ diagnostics: e, rates: s, dlq: d, onRedrive: f, onPurge: m, onRefresh: h, loading: g }) {
+function ae({ diagnostics: e, rates: s, dlq: d, onRedrive: f, onPurge: m, onRefresh: h, loading: g }) {
 	let [_, v] = T(!1), y = w(null);
 	S(() => (_ ? y.current = setInterval(h, 1e4) : y.current &&= (clearInterval(y.current), null), () => {
 		y.current && clearInterval(y.current);
@@ -2155,7 +2155,7 @@ function oe({ diagnostics: e, rates: s, dlq: d, onRedrive: f, onPurge: m, onRefr
 					className: "text-sm font-semibold text-text-primary m-0",
 					children: "Node / Cluster Diagnostics"
 				})
-			}), e ? /* @__PURE__ */ D(ie, { data: e }) : /* @__PURE__ */ D("p", {
+			}), e ? /* @__PURE__ */ D(re, { data: e }) : /* @__PURE__ */ D("p", {
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No diagnostics data available."
 			})] }),
@@ -2165,7 +2165,7 @@ function oe({ diagnostics: e, rates: s, dlq: d, onRedrive: f, onPurge: m, onRefr
 					className: "text-sm font-semibold text-text-primary m-0",
 					children: "Rate Limiter Stats"
 				})
-			}), s ? /* @__PURE__ */ D(ae, { rates: s }) : /* @__PURE__ */ D("p", {
+			}), s ? /* @__PURE__ */ D(ie, { rates: s }) : /* @__PURE__ */ D("p", {
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No rate data available."
 			})] }),
@@ -2230,58 +2230,58 @@ function oe({ diagnostics: e, rates: s, dlq: d, onRedrive: f, onPurge: m, onRefr
 }
 //#endregion
 //#region src/components/identity/auth/LoginPage.tsx
-function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0 }) {
-	let [p, m] = T("signin"), [h, g] = T(!1), [_, v] = T(null), [y, b] = T(""), [S, C] = T(""), [w, k] = T(""), [A, j] = T(""), [N, P] = T(""), [F, I] = T(""), [L, R] = T(""), [z, B] = T(!1), [V, H] = T(""), [U, W] = T(!1), G = o || _, K = x(async (e) => {
-		e.preventDefault(), v(null), g(!0);
+function oe({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: p = "signin" }) {
+	let [m, h] = T(() => p === "register" && !u || p === "forgot" && !d ? "signin" : p), [g, _] = T(!1), [v, y] = T(null), [b, S] = T(""), [C, w] = T(""), [k, A] = T(""), [j, N] = T(""), [P, F] = T(""), [I, L] = T(""), [R, z] = T(""), [B, V] = T(!1), [H, U] = T(""), [W, G] = T(!1), K = o || v, q = x(async (e) => {
+		e.preventDefault(), y(null), _(!0);
 		try {
-			await s(y, S);
+			await s(b, C);
 		} catch (e) {
-			v(e instanceof Error ? e.message : "Login failed");
+			y(e instanceof Error ? e.message : "Login failed");
 		} finally {
-			g(!1);
+			_(!1);
 		}
 	}, [
-		y,
-		S,
+		b,
+		C,
 		s
-	]), q = x(async (e) => {
-		if (e.preventDefault(), v(null), A !== N) {
-			v("Passwords do not match");
+	]), J = x(async (e) => {
+		if (e.preventDefault(), y(null), j !== P) {
+			y("Passwords do not match");
 			return;
 		}
-		g(!0);
+		_(!0);
 		try {
 			await c({
-				email: w,
-				password: A,
-				givenName: F || void 0,
-				familyName: L || void 0,
-				enableMfa: z || void 0
+				email: k,
+				password: j,
+				givenName: I || void 0,
+				familyName: R || void 0,
+				enableMfa: B || void 0
 			});
 		} catch (e) {
-			v(e instanceof Error ? e.message : "Registration failed");
+			y(e instanceof Error ? e.message : "Registration failed");
 		} finally {
-			g(!1);
+			_(!1);
 		}
 	}, [
-		w,
-		A,
-		N,
-		F,
-		L,
-		z,
+		k,
+		j,
+		P,
+		I,
+		R,
+		B,
 		c
-	]), J = x(async (e) => {
-		e.preventDefault(), v(null), g(!0);
+	]), Y = x(async (e) => {
+		e.preventDefault(), y(null), _(!0);
 		try {
-			await l(V), W(!0);
+			await l(H), G(!0);
 		} catch (e) {
-			v(e instanceof Error ? e.message : "Request failed");
+			y(e instanceof Error ? e.message : "Request failed");
 		} finally {
-			g(!1);
+			_(!1);
 		}
-	}, [V, l]), Y = (e) => {
-		m(e), v(null), W(!1);
+	}, [H, l]), X = (e) => {
+		h(e), y(null), G(!1);
 	};
 	return /* @__PURE__ */ D("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
@@ -2310,40 +2310,40 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							variant: "ghost",
 							size: "sm",
 							role: "tab",
-							"aria-selected": p === "signin",
-							className: e("flex-1 rounded-none border-b-2", p === "signin" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Y("signin"),
+							"aria-selected": m === "signin",
+							className: e("flex-1 rounded-none border-b-2", m === "signin" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("signin"),
 							children: "Sign In"
 						}),
 						u && /* @__PURE__ */ D(t, {
 							variant: "ghost",
 							size: "sm",
 							role: "tab",
-							"aria-selected": p === "register",
-							className: e("flex-1 rounded-none border-b-2", p === "register" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Y("register"),
+							"aria-selected": m === "register",
+							className: e("flex-1 rounded-none border-b-2", m === "register" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("register"),
 							children: "Register"
 						}),
 						d && /* @__PURE__ */ D(t, {
 							variant: "ghost",
 							size: "sm",
 							role: "tab",
-							"aria-selected": p === "forgot",
-							className: e("flex-1 rounded-none border-b-2", p === "forgot" ? "border-b-[#3b82f6] text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Y("forgot"),
+							"aria-selected": m === "forgot",
+							className: e("flex-1 rounded-none border-b-2", m === "forgot" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
+							onClick: () => X("forgot"),
 							children: "Forgot Password"
 						})
 					]
 				}),
-				G && /* @__PURE__ */ D("div", {
+				K && /* @__PURE__ */ D("div", {
 					className: "mb-5",
 					children: /* @__PURE__ */ D(f, {
 						variant: "error",
-						children: G
+						children: K
 					})
 				}),
-				p === "signin" && /* @__PURE__ */ O("form", {
-					onSubmit: K,
+				m === "signin" && /* @__PURE__ */ O("form", {
+					onSubmit: q,
 					"aria-label": "Sign in form",
 					children: [
 						/* @__PURE__ */ D("input", {
@@ -2355,44 +2355,44 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Email",
 							name: "login-email",
 							type: "email",
-							value: y,
-							onChange: (e) => b(String(e)),
+							value: b,
+							onChange: (e) => S(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ D(M, {
 							label: "Password",
 							name: "login-password",
 							type: "password",
-							value: S,
-							onChange: (e) => C(String(e)),
+							value: C,
+							onChange: (e) => w(String(e)),
 							required: !0,
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ D(t, {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
 							fullWidth: !0,
-							disabled: h,
-							children: h ? "Signing in..." : "Sign In"
+							disabled: g,
+							children: g ? "Signing in..." : "Sign In"
 						})
 					]
 				}),
-				p === "register" && /* @__PURE__ */ O("form", {
-					onSubmit: q,
+				m === "register" && /* @__PURE__ */ O("form", {
+					onSubmit: J,
 					"aria-label": "Registration form",
 					children: [
 						/* @__PURE__ */ D(M, {
 							label: "Email",
 							name: "reg-email",
 							type: "email",
-							value: w,
-							onChange: (e) => k(String(e)),
+							value: k,
+							onChange: (e) => A(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ O("div", {
 							className: "flex gap-3",
@@ -2401,18 +2401,18 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 								children: /* @__PURE__ */ D(M, {
 									label: "Given Name",
 									name: "reg-given",
-									value: F,
-									onChange: (e) => I(String(e)),
-									disabled: h
+									value: I,
+									onChange: (e) => L(String(e)),
+									disabled: g
 								})
 							}), /* @__PURE__ */ D("div", {
 								className: "flex-1",
 								children: /* @__PURE__ */ D(M, {
 									label: "Family Name",
 									name: "reg-family",
-									value: L,
-									onChange: (e) => R(String(e)),
-									disabled: h
+									value: R,
+									onChange: (e) => z(String(e)),
+									disabled: g
 								})
 							})]
 						}),
@@ -2420,42 +2420,42 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Password",
 							name: "reg-password",
 							type: "password",
-							value: A,
-							onChange: (e) => j(String(e)),
+							value: j,
+							onChange: (e) => N(String(e)),
 							required: !0,
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ D(M, {
 							label: "Confirm Password",
 							name: "reg-confirm",
 							type: "password",
-							value: N,
-							onChange: (e) => P(String(e)),
+							value: P,
+							onChange: (e) => F(String(e)),
 							required: !0,
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ D(M, {
 							label: "Enable Multi-Factor Authentication",
 							name: "reg-mfa",
 							type: "checkbox",
-							value: z,
-							onChange: (e) => B(!!e),
-							disabled: h
+							value: B,
+							onChange: (e) => V(!!e),
+							disabled: g
 						}),
 						/* @__PURE__ */ D(t, {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
 							fullWidth: !0,
-							disabled: h,
-							children: h ? "Creating account..." : "Create Account"
+							disabled: g,
+							children: g ? "Creating account..." : "Create Account"
 						})
 					]
 				}),
-				p === "forgot" && /* @__PURE__ */ D("form", {
-					onSubmit: J,
+				m === "forgot" && /* @__PURE__ */ D("form", {
+					onSubmit: Y,
 					"aria-label": "Forgot password form",
-					children: U ? /* @__PURE__ */ D(f, {
+					children: W ? /* @__PURE__ */ D(f, {
 						variant: "success",
 						children: "If an account exists for that email, a password reset link has been sent."
 					}) : /* @__PURE__ */ O(E, { children: [
@@ -2467,19 +2467,19 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Email",
 							name: "forgot-email",
 							type: "email",
-							value: V,
-							onChange: (e) => H(String(e)),
+							value: H,
+							onChange: (e) => U(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
-							disabled: h
+							disabled: g
 						}),
 						/* @__PURE__ */ D(t, {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
 							fullWidth: !0,
-							disabled: h,
-							children: h ? "Sending..." : "Send Reset Link"
+							disabled: g,
+							children: g ? "Sending..." : "Send Reset Link"
 						})
 					] })
 				})
@@ -2489,7 +2489,7 @@ function se({ uid: n, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 }
 //#endregion
 //#region src/components/identity/auth/ConsentPage.tsx
-var ce = {
+var se = {
 	openid: "Verify your identity",
 	profile: "Access your name and profile information",
 	email: "Access your email address",
@@ -2497,10 +2497,10 @@ var ce = {
 	phone: "Access your phone number",
 	offline_access: "Maintain access when you are not present"
 };
-function le(e) {
-	return ce[e] || `Access: ${e}`;
+function ce(e) {
+	return se[e] || `Access: ${e}`;
 }
-function ue({ clientName: n, scopes: r, redirectUri: i, onAuthorize: a, onDeny: o, logoUrl: s }) {
+function le({ clientName: n, scopes: r, redirectUri: i, onAuthorize: a, onDeny: o, logoUrl: s }) {
 	let [c, l] = T(!1), u = x(async () => {
 		l(!0);
 		try {
@@ -2554,7 +2554,7 @@ function ue({ clientName: n, scopes: r, redirectUri: i, onAuthorize: a, onDeny: 
 							children: [/* @__PURE__ */ D("span", {
 								className: "w-2 h-2 rounded-full bg-info shrink-0",
 								"aria-hidden": "true"
-							}), /* @__PURE__ */ D("span", { children: le(t) })]
+							}), /* @__PURE__ */ D("span", { children: ce(t) })]
 						}, t))
 					})]
 				}),
@@ -2591,7 +2591,7 @@ function ue({ clientName: n, scopes: r, redirectUri: i, onAuthorize: a, onDeny: 
 }
 //#endregion
 //#region src/components/identity/shared/QrCodeDisplay.tsx
-function X({ value: e, size: t = 200, label: n }) {
+function Z({ value: e, size: t = 200, label: n }) {
 	return /* @__PURE__ */ O("figure", {
 		className: "flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white",
 		children: [/* @__PURE__ */ D("img", {
@@ -2608,7 +2608,7 @@ function X({ value: e, size: t = 200, label: n }) {
 }
 //#endregion
 //#region src/components/identity/shared/CodeInput.tsx
-function Z({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
+function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
 	let [o, s] = T(Array(t).fill("")), c = w([]);
 	S(() => {
 		a && c.current[0] && c.current[0].focus();
@@ -2683,47 +2683,47 @@ function Z({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 }
 //#endregion
 //#region src/components/identity/auth/MfaSetupPage.tsx
-var Q = [
+var $ = [
 	"name",
 	"scan",
 	"verify",
 	"backup"
-], de = [
+], ue = [
 	"Name",
 	"Scan",
 	"Verify",
 	"Backup"
 ];
-function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
-	let [o, s] = T("name"), [c, l] = T(!1), [u, d] = T(null), [p, m] = T(""), [h, g] = T(null), [_, v] = T([]), [y, b] = T(!1), S = Q.indexOf(o), C = x(async (e) => {
-		if (e.preventDefault(), p.trim()) {
-			d(null), l(!0);
+function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
+	let [l, u] = T(o === "scan" && !s ? "name" : o), [d, p] = T(!1), [m, h] = T(null), [g, _] = T(c), [v, y] = T(s ?? null), [b, S] = T(s?.backupCodes ?? []), [C, w] = T(!1), E = $.indexOf(l), k = x(async (e) => {
+		if (e.preventDefault(), g.trim()) {
+			h(null), p(!0);
 			try {
-				let e = await n(p.trim());
-				g(e), v(e.backupCodes), s("scan");
+				let e = await n(g.trim());
+				y(e), S(e.backupCodes), u("scan");
 			} catch (e) {
-				d(e instanceof Error ? e.message : "Setup failed");
+				h(e instanceof Error ? e.message : "Setup failed");
 			} finally {
-				l(!1);
+				p(!1);
 			}
 		}
-	}, [p, n]), w = x(async (e) => {
-		if (h) {
-			d(null), l(!0);
+	}, [g, n]), A = x(async (e) => {
+		if (v) {
+			h(null), p(!0);
 			try {
-				let t = await r(h.deviceId, e);
-				t.success ? (t.backupCodes && v(t.backupCodes), s("backup")) : d("Verification failed. Please try again.");
+				let t = await r(v.deviceId, e);
+				t.success ? (t.backupCodes && S(t.backupCodes), u("backup")) : h("Verification failed. Please try again.");
 			} catch (e) {
-				d(e instanceof Error ? e.message : "Verification failed");
+				h(e instanceof Error ? e.message : "Verification failed");
 			} finally {
-				l(!1);
+				p(!1);
 			}
 		}
-	}, [h, r]), E = x(async () => {
+	}, [v, r]), j = x(async () => {
 		try {
-			await navigator.clipboard.writeText(_.join("\n")), b(!0), setTimeout(() => b(!1), 2e3);
+			await navigator.clipboard.writeText(b.join("\n")), w(!0), setTimeout(() => w(!1), 2e3);
 		} catch {}
-	}, [_]);
+	}, [b]);
 	return /* @__PURE__ */ D("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
 		children: /* @__PURE__ */ O("div", {
@@ -2743,26 +2743,26 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 					className: "flex justify-center gap-6 mb-6",
 					role: "group",
 					"aria-label": "Setup progress",
-					children: Q.map((t, n) => /* @__PURE__ */ O("div", {
+					children: $.map((t, n) => /* @__PURE__ */ O("div", {
 						className: "flex flex-col items-center gap-1.5",
 						children: [/* @__PURE__ */ D("div", {
-							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < S ? "bg-success" : n === S ? "bg-info" : "bg-surface-emphasis"),
-							"aria-label": `Step ${n + 1}${n === S ? " (current)" : n < S ? " (completed)" : ""}`
+							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < E ? "bg-success" : n === E ? "bg-info" : "bg-surface-emphasis"),
+							"aria-label": `Step ${n + 1}${n === E ? " (current)" : n < E ? " (completed)" : ""}`
 						}), /* @__PURE__ */ D("span", {
-							className: e("text-[10px] uppercase tracking-wide font-medium", n === S ? "text-text-primary" : "text-text-tertiary"),
-							children: de[n]
+							className: e("text-[10px] uppercase tracking-wide font-medium", n === E ? "text-text-primary" : "text-text-tertiary"),
+							children: ue[n]
 						})]
 					}, t))
 				}),
-				u && /* @__PURE__ */ D("div", {
+				m && /* @__PURE__ */ D("div", {
 					className: "mb-5",
 					children: /* @__PURE__ */ D(f, {
 						variant: "error",
-						children: u
+						children: m
 					})
 				}),
-				o === "name" && /* @__PURE__ */ O("form", {
-					onSubmit: C,
+				l === "name" && /* @__PURE__ */ O("form", {
+					onSubmit: k,
 					"aria-label": "Name your device",
 					children: [
 						/* @__PURE__ */ D("p", {
@@ -2772,28 +2772,28 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 						/* @__PURE__ */ D(M, {
 							label: "Device Name",
 							name: "device-name",
-							value: p,
-							onChange: (e) => m(String(e)),
+							value: g,
+							onChange: (e) => _(String(e)),
 							required: !0,
 							placeholder: "e.g., My Phone",
-							disabled: c
+							disabled: d
 						}),
 						/* @__PURE__ */ D(t, {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
 							fullWidth: !0,
-							disabled: c || !p.trim(),
-							children: c ? "Setting up..." : "Continue"
+							disabled: d || !g.trim(),
+							children: d ? "Setting up..." : "Continue"
 						})
 					]
 				}),
-				o === "scan" && h && /* @__PURE__ */ O("div", { children: [
+				l === "scan" && v && /* @__PURE__ */ O("div", { children: [
 					/* @__PURE__ */ D(t, {
 						variant: "ghost",
 						size: "sm",
 						className: "p-0 mb-4",
-						onClick: () => s("name"),
+						onClick: () => u("name"),
 						"aria-label": "Go back to name step",
 						children: "← Back"
 					}),
@@ -2803,10 +2803,10 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 					}),
 					/* @__PURE__ */ D("div", {
 						className: "flex justify-center mb-5",
-						children: /* @__PURE__ */ D(X, {
-							value: h.qrCode,
+						children: /* @__PURE__ */ D(Z, {
+							value: v.qrCode,
 							size: 200,
-							label: `Device: ${p}`
+							label: g ? `Device: ${g}` : void 0
 						})
 					}),
 					/* @__PURE__ */ D("p", {
@@ -2815,22 +2815,22 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 					}),
 					/* @__PURE__ */ D("div", {
 						className: "px-4 py-3 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary break-all text-center mb-6 select-all",
-						children: h.secret
+						children: v.secret
 					}),
 					/* @__PURE__ */ D(t, {
 						variant: "primary",
 						size: "lg",
 						fullWidth: !0,
-						onClick: () => s("verify"),
+						onClick: () => u("verify"),
 						children: "I've scanned it"
 					})
 				] }),
-				o === "verify" && /* @__PURE__ */ O("div", { children: [
+				l === "verify" && /* @__PURE__ */ O("div", { children: [
 					/* @__PURE__ */ D(t, {
 						variant: "ghost",
 						size: "sm",
 						className: "p-0 mb-4",
-						onClick: () => s("scan"),
+						onClick: () => u("scan"),
 						"aria-label": "Go back to scan step",
 						children: "← Back"
 					}),
@@ -2838,18 +2838,18 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
 						children: "Enter the 6-digit code from your authenticator app to confirm setup"
 					}),
-					/* @__PURE__ */ D(Z, {
-						onComplete: w,
-						error: u,
-						disabled: c,
+					/* @__PURE__ */ D(Q, {
+						onComplete: A,
+						error: m,
+						disabled: d,
 						autoFocus: !0
 					}),
-					c && /* @__PURE__ */ D("p", {
+					d && /* @__PURE__ */ D("p", {
 						className: "text-center text-sm text-text-tertiary mt-3",
 						children: "Verifying..."
 					})
 				] }),
-				o === "backup" && /* @__PURE__ */ O("div", { children: [
+				l === "backup" && /* @__PURE__ */ O("div", { children: [
 					/* @__PURE__ */ D("div", {
 						className: "w-14 h-14 mx-auto mb-5 rounded-full bg-success-bg flex items-center justify-center",
 						children: /* @__PURE__ */ D("svg", {
@@ -2871,7 +2871,7 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 					}),
 					/* @__PURE__ */ D("div", {
 						className: "grid grid-cols-2 gap-2.5 mb-6",
-						children: _.map((e, t) => /* @__PURE__ */ D("div", {
+						children: b.map((e, t) => /* @__PURE__ */ D("div", {
 							className: "px-3 py-2.5 bg-surface-panel border border-border rounded-md font-mono text-sm text-text-primary text-center select-all",
 							children: e
 						}, t))
@@ -2880,8 +2880,8 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 						variant: "primary",
 						size: "lg",
 						fullWidth: !0,
-						onClick: E,
-						children: y ? "Copied!" : "Copy All Codes"
+						onClick: j,
+						children: C ? "Copied!" : "Copy All Codes"
 					}),
 					/* @__PURE__ */ D("div", {
 						className: "mt-3",
@@ -2900,28 +2900,28 @@ function fe({ onSetup: n, onVerify: r, onComplete: i, userEmail: a }) {
 }
 //#endregion
 //#region src/components/identity/auth/MfaVerifyPage.tsx
-function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
-	let [i, a] = T("totp"), [o, s] = T(!1), [c, l] = T(null), [u, d] = T(""), p = r || c, m = x(async (t) => {
-		l(null), s(!0);
+function fe({ onVerify: e, onVerifyBackup: n, error: r = null, defaultMode: i = "totp" }) {
+	let [a, o] = T(i), [s, c] = T(!1), [l, u] = T(null), [d, p] = T(""), m = r || l, h = x(async (t) => {
+		u(null), c(!0);
 		try {
 			await e(t);
 		} catch (e) {
-			l(e instanceof Error ? e.message : "Verification failed");
+			u(e instanceof Error ? e.message : "Verification failed");
 		} finally {
-			s(!1);
+			c(!1);
 		}
-	}, [e]), h = x(async (e) => {
-		if (e.preventDefault(), u.trim()) {
-			l(null), s(!0);
+	}, [e]), g = x(async (e) => {
+		if (e.preventDefault(), d.trim()) {
+			u(null), c(!0);
 			try {
-				await n(u.trim());
+				await n(d.trim());
 			} catch (e) {
-				l(e instanceof Error ? e.message : "Verification failed");
+				u(e instanceof Error ? e.message : "Verification failed");
 			} finally {
-				s(!1);
+				c(!1);
 			}
 		}
-	}, [u, n]);
+	}, [d, n]);
 	return /* @__PURE__ */ D("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
 		children: /* @__PURE__ */ O("div", {
@@ -2955,25 +2955,25 @@ function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
 					className: "text-xl font-bold text-text-primary mb-2 mt-0 text-center",
 					children: "Verify Your Identity"
 				}),
-				i === "totp" ? /* @__PURE__ */ O(E, { children: [
+				a === "totp" ? /* @__PURE__ */ O(E, { children: [
 					/* @__PURE__ */ D("p", {
 						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
 						children: "Enter the 6-digit code from your authenticator app"
 					}),
-					p && /* @__PURE__ */ D("div", {
+					m && /* @__PURE__ */ D("div", {
 						className: "mb-5",
 						children: /* @__PURE__ */ D(f, {
 							variant: "error",
-							children: p
+							children: m
 						})
 					}),
-					/* @__PURE__ */ D(Z, {
-						onComplete: m,
+					/* @__PURE__ */ D(Q, {
+						onComplete: h,
 						error: null,
-						disabled: o,
+						disabled: s,
 						autoFocus: !0
 					}),
-					o && /* @__PURE__ */ D("p", {
+					s && /* @__PURE__ */ D("p", {
 						className: "text-center text-sm text-text-tertiary mt-3",
 						children: "Verifying..."
 					}),
@@ -2982,7 +2982,7 @@ function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
 						size: "sm",
 						className: "block mt-6 mx-auto underline text-info-fg",
 						onClick: () => {
-							a("backup"), l(null);
+							o("backup"), u(null);
 						},
 						children: "Use a backup code instead"
 					})
@@ -2991,31 +2991,31 @@ function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
 						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
 						children: "Enter one of your backup codes"
 					}),
-					p && /* @__PURE__ */ D("div", {
+					m && /* @__PURE__ */ D("div", {
 						className: "mb-5",
 						children: /* @__PURE__ */ D(f, {
 							variant: "error",
-							children: p
+							children: m
 						})
 					}),
 					/* @__PURE__ */ O("form", {
-						onSubmit: h,
+						onSubmit: g,
 						"aria-label": "Backup code verification",
 						children: [/* @__PURE__ */ D(M, {
 							label: "Backup Code",
 							name: "backup-code",
-							value: u,
-							onChange: (e) => d(String(e)),
+							value: d,
+							onChange: (e) => p(String(e)),
 							required: !0,
 							placeholder: "XXXX-XXXX-XXXX",
-							disabled: o
+							disabled: s
 						}), /* @__PURE__ */ D(t, {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
 							fullWidth: !0,
-							disabled: o || !u.trim(),
-							children: o ? "Verifying..." : "Verify Backup Code"
+							disabled: s || !d.trim(),
+							children: s ? "Verifying..." : "Verify Backup Code"
 						})]
 					}),
 					/* @__PURE__ */ D(t, {
@@ -3023,7 +3023,7 @@ function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
 						size: "sm",
 						className: "block mt-6 mx-auto underline text-info-fg",
 						onClick: () => {
-							a("totp"), l(null);
+							o("totp"), u(null);
 						},
 						children: "Use authenticator code instead"
 					})
@@ -3034,7 +3034,7 @@ function pe({ onVerify: e, onVerifyBackup: n, error: r = null }) {
 }
 //#endregion
 //#region src/components/identity/auth/MfaDashboardPage.tsx
-function $(e) {
+function pe(e) {
 	try {
 		return new Date(e).toLocaleDateString(void 0, {
 			year: "numeric",
@@ -3160,8 +3160,8 @@ function me({ devices: e, userEmail: n, mfaEnabled: r, onAddDevice: i, onRenameD
 									"Type: ",
 									e.deviceType,
 									" · Added: ",
-									$(e.createdAt),
-									e.lastUsed && ` · Last used: ${$(e.lastUsed)}`
+									pe(e.createdAt),
+									e.lastUsed && ` · Last used: ${pe(e.lastUsed)}`
 								]
 							}),
 							u !== e.deviceId && /* @__PURE__ */ O("div", {
@@ -3386,12 +3386,12 @@ function ve({ item: t, active: n, onNavigate: r }) {
 		children: [/* @__PURE__ */ D("span", { children: t.icon }), /* @__PURE__ */ D("span", { children: t.label })]
 	}) });
 }
-function ye({ children: n, activePath: r, adminEmail: i, onNavigate: a, onLogout: o }) {
-	let [s, c] = T(!0), l = x(() => c((e) => !e), []);
+function ye({ children: n, activePath: r, adminEmail: i, onNavigate: a, onLogout: o, defaultSidebarOpen: s = !0 }) {
+	let [c, l] = T(s), u = x(() => l((e) => !e), []);
 	return /* @__PURE__ */ O("div", {
 		className: "flex min-h-screen bg-surface-panel font-[inherit]",
 		children: [/* @__PURE__ */ O("aside", {
-			className: e("bg-white border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden", s ? "w-60" : "w-0 border-r-0"),
+			className: e("bg-white border-r border-border flex flex-col shrink-0 transition-[width] duration-200 overflow-hidden", c ? "w-60" : "w-0 border-r-0"),
 			children: [/* @__PURE__ */ D("div", {
 				className: "p-4 font-bold text-lg text-info-fg border-b border-border",
 				children: "Identity Admin"
@@ -3410,9 +3410,9 @@ function ye({ children: n, activePath: r, adminEmail: i, onNavigate: a, onLogout
 				children: [/* @__PURE__ */ D(t, {
 					variant: "ghost",
 					size: "sm",
-					onClick: l,
+					onClick: u,
 					"aria-label": "Toggle sidebar",
-					children: s ? "←" : "→"
+					children: c ? "←" : "→"
 				}), /* @__PURE__ */ O("div", {
 					className: "flex items-center gap-4",
 					children: [i && /* @__PURE__ */ D("span", {
@@ -3452,7 +3452,7 @@ function xe({ label: n, active: r, onClick: i }) {
 	return /* @__PURE__ */ D(t, {
 		variant: "ghost",
 		size: "sm",
-		className: e("rounded-none -mb-[2px] border-b-2", r ? "font-semibold text-info-fg border-b-[#3b82f6]" : "font-normal text-neutral border-b-transparent"),
+		className: e("rounded-none -mb-[2px] border-b-2", r ? "font-semibold text-info-fg border-b-info" : "font-normal text-neutral border-b-transparent"),
 		onClick: i,
 		"aria-selected": r,
 		role: "tab",
@@ -3505,4 +3505,4 @@ function Se({ children: e, poolId: n, poolName: r, activeSection: i, onNavigate:
 	});
 }
 //#endregion
-export { k as A, R as C, M as D, N as E, j as O, z as S, I as T, J as _, me as a, V as b, Z as c, se as d, oe as f, Y as g, ee as h, he as i, A as k, X as l, ne as m, ye as n, pe as o, re as p, ge as r, fe as s, Se as t, ue as u, q as v, L as w, B as x, G as y };
+export { k as A, R as C, M as D, N as E, j as O, z as S, I as T, J as _, me as a, V as b, Q as c, oe as d, ae as f, Y as g, X as h, he as i, A as k, Z as l, te as m, ye as n, fe as o, ne as p, ge as r, de as s, Se as t, le as u, q as v, L as w, B as x, G as y };

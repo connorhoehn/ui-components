@@ -18,10 +18,10 @@ var d = {
 	warning: "text-warning",
 	error: "text-danger"
 }, f = {
-	info: "border-l-[#2563eb]",
-	success: "border-l-[#16a34a]",
-	warning: "border-l-[#d97706]",
-	error: "border-l-[#dc2626]"
+	info: "border-l-info",
+	success: "border-l-success",
+	warning: "border-l-warning",
+	error: "border-l-danger"
 };
 function p({ id: t, message: n, type: r, exiting: i, actionLabel: a, onAction: o, onDismiss: s }) {
 	let p = u(), m = p ? "animate-none" : i ? "animate-[toast-fade-out_160ms_ease-in_forwards]" : "animate-[toast-slide-in_200ms_ease-out]";

@@ -279,7 +279,7 @@ export declare interface GroupListPageProps {
     loading?: boolean;
 }
 
-export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, }: IdentityAdminLayoutProps): JSX.Element;
+export declare function IdentityAdminLayout({ children, activePath, adminEmail, onNavigate, onLogout, defaultSidebarOpen, }: IdentityAdminLayoutProps): JSX.Element;
 
 export declare interface IdentityAdminLayoutProps {
     children: React.ReactNode;
@@ -287,9 +287,21 @@ export declare interface IdentityAdminLayoutProps {
     adminEmail?: string;
     onNavigate: (path: string) => void;
     onLogout?: () => void;
+    /**
+     * Whether the sidebar starts open. Optional and **initial-only** — the
+     * layout still owns the state afterwards, so the header toggle keeps
+     * working. Omit it and the sidebar starts open, which is the historical
+     * behaviour.
+     *
+     * It exists because the collapsed rail was previously reachable only by
+     * clicking the toggle: a host cannot restore the user's saved preference
+     * on mount, a story cannot show the collapsed chrome, and a test has to
+     * click before it can assert on it.
+     */
+    defaultSidebarOpen?: boolean;
 }
 
-export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, }: LoginPageProps): JSX.Element;
+export declare function LoginPage({ uid, interactionUrl, clientName, logoUrl, error, onLogin, onRegister, onForgotPassword, registrationEnabled, forgotPasswordEnabled, defaultTab, }: LoginPageProps): JSX.Element;
 
 export declare interface LoginPageProps {
     uid: string;
@@ -308,7 +320,25 @@ export declare interface LoginPageProps {
     onForgotPassword: (email: string) => Promise<void>;
     registrationEnabled?: boolean;
     forgotPasswordEnabled?: boolean;
+    /**
+     * Tab the page opens on. Optional and **initial-only** — the page still
+     * owns the tab afterwards, so the tab bar keeps working unchanged. Omit it
+     * and the page opens on `'signin'`, which is the historical behaviour.
+     *
+     * It exists because the register and forgot-password forms were previously
+     * reachable only by clicking their tab: an OIDC host cannot honour a
+     * `?screen_hint=signup` deep link, a story cannot show either form, and a
+     * test has to click a tab before it can assert on the form behind it.
+     *
+     * A tab that the corresponding `*Enabled` flag has switched off is ignored
+     * and `'signin'` is used instead, so this prop can never render a form the
+     * host has disabled.
+     */
+    defaultTab?: LoginTab;
 }
+
+/** The three authentication forms the page can show. */
+declare type LoginTab = 'signin' | 'register' | 'forgot';
 
 export declare function LogoutPage({ onConfirm, onCancel, clientName }: LogoutPageProps): JSX.Element;
 
@@ -363,29 +393,84 @@ export declare interface MfaManagementPageProps {
     loading?: boolean;
 }
 
-export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, }: MfaSetupPageProps): JSX.Element;
+export declare function MfaSetupPage({ onSetup, onVerify, onComplete, userEmail, initialStep, initialSetupResult, initialDeviceName, }: MfaSetupPageProps): JSX.Element;
 
 export declare interface MfaSetupPageProps {
-    onSetup: (deviceName: string) => Promise<{
-        deviceId: string;
-        qrCode: string;
-        secret: string;
-        backupCodes: string[];
-    }>;
+    onSetup: (deviceName: string) => Promise<MfaSetupResult>;
     onVerify: (deviceId: string, code: string) => Promise<{
         success: boolean;
         backupCodes?: string[];
     }>;
     onComplete: () => void;
     userEmail?: string;
+    /**
+     * Step the wizard opens on. Optional and **initial-only** — the page keeps
+     * owning the step afterwards, so Back/Continue still work exactly as they
+     * do without the prop. Omit it and the wizard opens on `'name'`, which is
+     * the historical behaviour.
+     *
+     * It exists because every step past the first was previously reachable
+     * only by clicking through the one before it: a host cannot deep-link a
+     * user back into a half-finished enrolment (`/mfa/setup?step=scan` after a
+     * reload), a story cannot show the scan or backup screens, and a test has
+     * to drive the whole flow to assert on the last one.
+     *
+     * `'scan'` renders the QR code, so it needs `initialSetupResult` as well;
+     * without it the wizard falls back to `'name'` rather than rendering an
+     * empty card.
+     */
+    initialStep?: MfaSetupStep;
+    /**
+     * Seeds the enrolment payload that `onSetup` would normally have returned,
+     * so `initialStep` can open on a step that needs it — `'scan'` (QR code +
+     * secret) and `'backup'` (the backup-code grid). Initial-only: a later
+     * real `onSetup` call replaces it.
+     *
+     * Use it when the host already holds the payload (resuming an enrolment
+     * after a reload) or when a story/test wants a specific step rendered
+     * directly instead of clicking to it.
+     */
+    initialSetupResult?: MfaSetupResult;
+    /**
+     * Seeds the device-name field, so a wizard opened at a later
+     * `initialStep` still shows the name the user typed on step 1 (it appears
+     * as the QR caption). Initial-only — the field stays editable.
+     */
+    initialDeviceName?: string;
 }
 
-export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, }: MfaVerifyPageProps): JSX.Element;
+/** The enrolment payload the identity server returns from `onSetup`. */
+declare interface MfaSetupResult {
+    deviceId: string;
+    qrCode: string;
+    secret: string;
+    backupCodes: string[];
+}
+
+/** The four wizard steps, in the order the user walks them. */
+declare type MfaSetupStep = 'name' | 'scan' | 'verify' | 'backup';
+
+/** Which challenge the page presents: authenticator code or backup code. */
+declare type MfaVerifyMode = 'totp' | 'backup';
+
+export declare function MfaVerifyPage({ onVerify, onVerifyBackup, error, defaultMode, }: MfaVerifyPageProps): JSX.Element;
 
 export declare interface MfaVerifyPageProps {
     onVerify: (code: string) => Promise<void>;
     onVerifyBackup: (code: string) => Promise<void>;
     error?: string | null;
+    /**
+     * Challenge the page opens on. Optional and **initial-only** — the page
+     * still owns the mode afterwards, so the two "use … instead" links keep
+     * flipping it. Omit it and the page opens on `'totp'`, which is the
+     * historical behaviour.
+     *
+     * It exists because the backup-code form was previously reachable only by
+     * clicking "Use a backup code instead": a host that already knows the user
+     * has lost their authenticator cannot land them on the right challenge, a
+     * story cannot show that form, and a test has to click before asserting.
+     */
+    defaultMode?: MfaVerifyMode;
 }
 
 declare interface PasswordPolicy {

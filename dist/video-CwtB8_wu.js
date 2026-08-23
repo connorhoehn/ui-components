@@ -177,22 +177,22 @@ function C({ onClose: t, sources: n, title: r, subtitle: i, autoPlay: a = !0, mu
 function w(e) {
 	return e >= 1e6 ? `${(e / 1e6).toFixed(1)} Mbps` : e >= 1e3 ? `${(e / 1e3).toFixed(0)} Kbps` : `${e} bps`;
 }
-function T({ metrics: t, style: n }) {
+function T({ metrics: t, className: n, style: r }) {
 	if (!t) return /* @__PURE__ */ _("div", {
-		className: e("p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs"),
-		style: n,
+		className: e("p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs", n),
+		style: r,
 		children: "No stream data"
 	});
-	let r = [
+	let i = [
 		["Bitrate", w(t.bitrateBps)],
 		["FPS", `${t.fps}`],
 		["Resolution", `${t.resolution.width}×${t.resolution.height}`],
 		["Packets Lost", `${t.packetsLost}`]
 	];
-	return t.jitter !== void 0 && r.push(["Jitter", `${t.jitter.toFixed(1)} ms`]), /* @__PURE__ */ _("div", {
-		className: e("p-3 bg-surface-inverse rounded-lg text-xs text-code-text"),
-		style: n,
-		children: r.map(([t, n]) => /* @__PURE__ */ v("div", {
+	return t.jitter !== void 0 && i.push(["Jitter", `${t.jitter.toFixed(1)} ms`]), /* @__PURE__ */ _("div", {
+		className: e("p-3 bg-surface-inverse rounded-lg text-xs text-code-text", n),
+		style: r,
+		children: i.map(([t, n]) => /* @__PURE__ */ v("div", {
 			className: e("flex justify-between py-[3px]"),
 			children: [/* @__PURE__ */ _("span", {
 				className: e("text-text-tertiary"),
@@ -222,11 +222,11 @@ var E = {
 	poor: "Poor",
 	dead: "No Connection"
 };
-function k({ quality: t, style: n }) {
-	let r = E[t], i = t === "good" ? 4 : t === "medium" ? 3 : t === "poor" ? 2 : 1;
+function k({ quality: t, className: n, style: r }) {
+	let i = E[t], a = t === "good" ? 4 : t === "medium" ? 3 : t === "poor" ? 2 : 1;
 	return /* @__PURE__ */ v("div", {
-		className: e("inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium"),
-		style: n,
+		className: e("inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium", n),
+		style: r,
 		children: [/* @__PURE__ */ _("svg", {
 			width: "14",
 			height: "12",
@@ -242,7 +242,7 @@ function k({ quality: t, style: n }) {
 				width: "3",
 				height: (e + 1) * 3,
 				rx: "0.5",
-				fill: e < i ? r : "rgba(255,255,255,0.2)"
+				fill: e < a ? i : "rgba(255,255,255,0.2)"
 			}, e))
 		}), /* @__PURE__ */ _("span", {
 			className: D[t],
@@ -252,13 +252,13 @@ function k({ quality: t, style: n }) {
 }
 //#endregion
 //#region src/components/video/VideoGrid.tsx
-function A({ participants: t, style: n }) {
-	let r = t.length, i = r <= 1 ? 1 : r <= 4 ? 2 : r <= 9 ? 3 : 4;
+function A({ participants: t, className: n, style: r }) {
+	let i = t.length, a = i <= 1 ? 1 : i <= 4 ? 2 : i <= 9 ? 3 : 4;
 	return /* @__PURE__ */ _("div", {
-		className: e("grid gap-1 bg-video-stage rounded-lg overflow-hidden"),
+		className: e("grid gap-1 bg-video-stage rounded-lg overflow-hidden", n),
 		style: {
-			gridTemplateColumns: `repeat(${i}, 1fr)`,
-			...n
+			gridTemplateColumns: `repeat(${a}, 1fr)`,
+			...r
 		},
 		children: t.map((e) => /* @__PURE__ */ _(s, {
 			id: e.id,
@@ -273,8 +273,8 @@ function A({ participants: t, style: n }) {
 }
 //#endregion
 //#region src/components/video/ReactionOverlay.tsx
-function j({ reactions: t, style: n }) {
-	let [r, i] = h([]);
+function j({ reactions: t, className: n, style: r }) {
+	let [i, a] = h([]);
 	return u(() => {
 		if (t.length === 0) return;
 		let e = t[t.length - 1], n = {
@@ -283,16 +283,16 @@ function j({ reactions: t, style: n }) {
 			x: 10 + Math.random() * 80,
 			createdAt: Date.now()
 		};
-		i((e) => [...e.slice(-20), n]);
+		a((e) => [...e.slice(-20), n]);
 	}, [t]), u(() => {
 		let e = setInterval(() => {
-			i((e) => e.filter((e) => Date.now() - e.createdAt < 3e3));
+			a((e) => e.filter((e) => Date.now() - e.createdAt < 3e3));
 		}, 500);
 		return () => clearInterval(e);
 	}, []), /* @__PURE__ */ _("div", {
-		className: e("absolute inset-0 pointer-events-none overflow-hidden"),
-		style: n,
-		children: r.map((t) => /* @__PURE__ */ _("span", {
+		className: e("absolute inset-0 pointer-events-none overflow-hidden", n),
+		style: r,
+		children: i.map((t) => /* @__PURE__ */ _("span", {
 			className: e("absolute bottom-0 text-2xl opacity-0 animate-[floatUp_3s_ease-out_forwards]"),
 			style: { left: `${t.x}%` },
 			children: t.emoji
@@ -309,10 +309,10 @@ var M = [
 	"😮",
 	"💯"
 ];
-function N({ onReact: t, emojis: n = M, style: r }) {
+function N({ onReact: t, emojis: n = M, className: r, style: i }) {
 	return /* @__PURE__ */ _("div", {
-		className: e("flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]"),
-		style: r,
+		className: e("flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]", r),
+		style: i,
 		children: n.map((n) => /* @__PURE__ */ _("button", {
 			type: "button",
 			onClick: () => t(n),
@@ -350,17 +350,17 @@ var I = {
 	idle: "text-text-tertiary",
 	error: "text-danger-fg"
 };
-function R({ phase: t, bitrateBps: n, viewerCount: r, duration: i, style: a }) {
-	let o = t === "playing" ? "LIVE" : t.toUpperCase();
+function R({ phase: t, bitrateBps: n, viewerCount: r, duration: i, className: a, style: o }) {
+	let s = t === "playing" ? "LIVE" : t.toUpperCase();
 	return /* @__PURE__ */ v("div", {
-		className: e("inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono"),
-		style: a,
+		className: e("inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono", a),
+		style: o,
 		children: [
 			/* @__PURE__ */ v("span", {
 				className: e("flex items-center gap-1"),
 				children: [/* @__PURE__ */ _("span", { className: e("w-[7px] h-[7px] rounded-full", I[t] ?? "bg-surface-emphasis") }), /* @__PURE__ */ _("span", {
 					className: e("font-semibold", L[t] ?? "text-text-tertiary"),
-					children: o
+					children: s
 				})]
 			}),
 			n !== void 0 && /* @__PURE__ */ _("span", { children: P(n) }),
@@ -2694,19 +2694,19 @@ function nt(e) {
 	for (let n = 0; n < e.length; n++) t = t * 31 + e.charCodeAt(n) | 0;
 	return tt[Math.abs(t) % tt.length];
 }
-function rt({ lines: t, maxLines: n = 3, fadeAfterMs: r = 8e3, className: i }) {
-	let a = Date.now(), o = t.slice(-n).map((e) => {
-		let t = a - new Date(e.at).getTime(), n = Math.max(.35, 1 - t / r);
+function rt({ lines: t, maxLines: n = 3, fadeAfterMs: r = 8e3, now: i, className: a }) {
+	let o = i ?? Date.now(), s = t.slice(-n).map((e) => {
+		let t = o - new Date(e.at).getTime(), n = Math.max(.35, 1 - t / r);
 		return {
 			...e,
 			opacity: n
 		};
 	}).filter((e) => e.opacity > 0);
-	return o.length === 0 ? null : /* @__PURE__ */ _("div", {
-		className: e("absolute bottom-16 left-1/2 -translate-x-1/2 max-w-[min(720px,80%)] z-20", "flex flex-col gap-1 px-4 py-2 rounded-lg bg-black/70 backdrop-blur-sm", i),
+	return s.length === 0 ? null : /* @__PURE__ */ _("div", {
+		className: e("absolute bottom-16 left-1/2 -translate-x-1/2 max-w-[min(720px,80%)] z-20", "flex flex-col gap-1 px-4 py-2 rounded-lg bg-black/70 backdrop-blur-sm", a),
 		"aria-live": "polite",
 		"aria-label": "Live transcript",
-		children: o.map((t) => /* @__PURE__ */ v("div", {
+		children: s.map((t) => /* @__PURE__ */ v("div", {
 			className: e("flex items-baseline gap-2 text-sm transition-opacity", t.interim && "italic"),
 			style: { opacity: t.opacity },
 			children: [/* @__PURE__ */ _("span", {
