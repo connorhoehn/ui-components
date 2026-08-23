@@ -36,6 +36,20 @@ export const Poor: Story = { args: { quality: 'poor' } };
  *  ("No Connection") rather than a one-word grade. */
 export const Dead: Story = { args: { quality: 'dead' } };
 
+/** Docked into a stage corner via `className`. The badge is positioned by the
+ *  caller's classes rather than an inline style or a wrapper `<div>`. */
+export const DockedTopRight: Story = {
+  args: { quality: 'medium', className: 'absolute top-2 right-2' },
+  decorators: [
+    (Story) => (
+      <div className="relative w-[420px] h-[236px] rounded-lg bg-video-stage grid place-items-center">
+        <span className="text-white/25 text-xs font-mono">call stage</span>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 /** The whole scale side by side, which is how you actually judge whether the
  *  bar counts and tones read as an ordered ramp. */
 export const AllQualities: Story = {

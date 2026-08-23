@@ -39,7 +39,21 @@ export interface HangoutSpotlightProps {
   spotlightContentLabel?: string;
   /** Active speaker id — drives spotlight slot via stabilized hysteresis. */
   activeSpeakerId?: string | null;
-  /** Hysteresis window (ms) before the spotlight slot swaps. 0 = immediate. */
+  /**
+   * Hysteresis window (ms) before the spotlight slot swaps to a new
+   * `activeSpeakerId`. Default 750.
+   *
+   * In a real call you WANT the delay — it stops the spotlight flickering on
+   * coughs, laughs, and one-word interjections.
+   *
+   * Pass `0` when you need the rendered output to match the props you just
+   * handed in, with no timers involved:
+   *  - **Tests** — otherwise a change to `activeSpeakerId` needs fake timers
+   *    plus an `act()`-wrapped `advanceTimersByTime` before any assertion.
+   *  - **Storybook / demos** — changing the `activeSpeakerId` control would
+   *    otherwise appear to do nothing for three quarters of a second, and a
+   *    visual-regression snapshot could catch either state.
+   */
   speakerHysteresisMs?: number;
   /** Click handler per filmstrip tile. */
   onParticipantClick?: (id: string) => void;
@@ -188,6 +202,10 @@ export function HangoutSpotlight({
  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
  * speaker has been talking for at least `hysteresisMs`. Without this,
  * every cough, laugh, or short interjection causes flicker.
+ *
+ * `hysteresisMs <= 0` bypasses the timer entirely and commits the new id on
+ * the next effect flush — the escape hatch tests and stories use so the
+ * rendered output tracks the props synchronously.
  */
 export function useStableActiveSpeaker(
   activeSpeakerId: string | null | undefined,

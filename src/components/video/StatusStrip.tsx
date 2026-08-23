@@ -7,6 +7,14 @@ export interface StatusStripProps {
   bitrateBps?: number;
   viewerCount?: number;
   duration?: number;
+  /**
+   * Sizing / positioning classes from the caller. Prefer this over `style`:
+   * overlaying the strip on a player or widening it previously needed a
+   * wrapper `<div>`, because inline styles are banned in demos and stories.
+   * Composed through `cn()`, so a caller class wins.
+   */
+  className?: string;
+  /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
 }
 
@@ -43,11 +51,11 @@ const phaseTextClasses: Record<string, string> = {
   error: 'text-danger-fg',
 };
 
-export function StatusStrip({ phase, bitrateBps, viewerCount, duration, style }: StatusStripProps) {
+export function StatusStrip({ phase, bitrateBps, viewerCount, duration, className, style }: StatusStripProps) {
   const label = phase === 'playing' ? 'LIVE' : phase.toUpperCase();
 
   return (
-    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono')} style={style}>
+    <div className={cn('inline-flex items-center gap-4 px-4 py-2 bg-surface-inverse rounded-md text-xs text-code-text font-mono', className)} style={style}>
       <span className={cn('flex items-center gap-1')}>
         <span className={cn('w-[7px] h-[7px] rounded-full', phaseDotClasses[phase] ?? 'bg-surface-emphasis')} />
         <span className={cn('font-semibold', phaseTextClasses[phase] ?? 'text-text-tertiary')}>{label}</span>

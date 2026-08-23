@@ -10,6 +10,14 @@ export interface Reaction {
 
 export interface ReactionOverlayProps {
   reactions: Reaction[];
+  /**
+   * Positioning / sizing classes from the caller. Prefer this over `style`:
+   * the overlay is `absolute inset-0` by default, and callers wanting to
+   * scope it to a sub-region had no seam but an inline style (banned in
+   * demos and stories). Composed through `cn()`, so a caller class wins.
+   */
+  className?: string;
+  /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
 }
 
@@ -20,7 +28,7 @@ interface FloatingReaction {
   createdAt: number;
 }
 
-export function ReactionOverlay({ reactions, style }: ReactionOverlayProps) {
+export function ReactionOverlay({ reactions, className, style }: ReactionOverlayProps) {
   const [floating, setFloating] = useState<FloatingReaction[]>([]);
 
   useEffect(() => {
@@ -43,7 +51,7 @@ export function ReactionOverlay({ reactions, style }: ReactionOverlayProps) {
   }, []);
 
   return (
-    <div className={cn('absolute inset-0 pointer-events-none overflow-hidden')} style={style}>
+    <div className={cn('absolute inset-0 pointer-events-none overflow-hidden', className)} style={style}>
       {floating.map(r => (
         <span
           key={r.id}
@@ -60,14 +68,22 @@ export function ReactionOverlay({ reactions, style }: ReactionOverlayProps) {
 export interface ReactionPickerProps {
   onReact: (emoji: string) => void;
   emojis?: string[];
+  /**
+   * Positioning / spacing classes from the caller. Prefer this over `style`:
+   * the picker is usually floated over a call stage, which previously
+   * required an inline style (banned in demos and stories). Composed
+   * through `cn()`, so a caller class wins.
+   */
+  className?: string;
+  /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
 }
 
 const DEFAULT_EMOJIS = ['👍', '❤️', '🔥', '😂', '👏', '🎉', '😮', '💯'];
 
-export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, style }: ReactionPickerProps) {
+export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, style }: ReactionPickerProps) {
   return (
-    <div className={cn('flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]')} style={style}>
+    <div className={cn('flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]', className)} style={style}>
       {emojis.map(emoji => (
         <button
           key={emoji}
