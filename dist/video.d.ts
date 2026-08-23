@@ -17,7 +17,7 @@ export declare interface AutoplayGateProps extends StreamVideoProps {
     wrapperClassName?: string;
 }
 
-export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, className, }: CallControlsProps): JSX.Element;
+export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, className, }: CallControlsProps): JSX.Element;
 
 export declare type CallControlsMode = 'audio' | 'video';
 
@@ -41,6 +41,12 @@ export declare interface CallControlsProps {
     availableParticipants?: CallStripParticipant[];
     /** Optional explicit set of ids already in the call to dedupe against. */
     currentParticipantIds?: ReadonlyArray<string>;
+    /** Consumer-owned "add people" flow. When set, the add-participant
+     *  button calls this instead of toggling the built-in inline picker —
+     *  for hosts that already have their own invite surface (a modal over
+     *  the presence roster, say) and just want the button in the row,
+     *  looking like every other control. */
+    onOpenAddParticipant?: () => void;
     className?: string;
 }
 
@@ -149,7 +155,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 export declare type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
 
@@ -180,6 +186,10 @@ export declare interface CallWidgetProps {
      *  action (invite, captions, settings) without forking the chrome, so
      *  the docked and expanded widgets can offer the SAME affordance. */
     controlsExtras?: ReactNode;
+    /** Consumer-owned "add people" flow — see CallControls. Renders the
+     *  add-participant button inline with the other controls (which is
+     *  where it belongs visually) while the consumer owns the picker. */
+    onOpenAddParticipant?: () => void;
     /** List of people available to add to the call */
     availableParticipants?: CallWidgetParticipant[];
     onMinimize?: () => void;

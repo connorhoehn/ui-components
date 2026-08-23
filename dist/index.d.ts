@@ -945,7 +945,7 @@ export declare type ButtonSize = 'sm' | 'md' | 'lg';
 
 export declare type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'danger-solid';
 
-export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, className, }: CallControlsProps): JSX.Element;
+export declare function CallControls({ mode, isMuted, isCameraOn, isScreenSharing, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onEndCall, onAddParticipant, availableParticipants, currentParticipantIds, onOpenAddParticipant, className, }: CallControlsProps): JSX.Element;
 
 export declare type CallControlsMode = 'audio' | 'video';
 
@@ -969,6 +969,12 @@ export declare interface CallControlsProps {
     availableParticipants?: CallStripParticipant[];
     /** Optional explicit set of ids already in the call to dedupe against. */
     currentParticipantIds?: ReadonlyArray<string>;
+    /** Consumer-owned "add people" flow. When set, the add-participant
+     *  button calls this instead of toggling the built-in inline picker —
+     *  for hosts that already have their own invite surface (a modal over
+     *  the presence roster, say) and just want the button in the row,
+     *  looking like every other control. */
+    onOpenAddParticipant?: () => void;
     className?: string;
 }
 
@@ -1099,7 +1105,7 @@ export declare interface CallStripParticipant {
     isSpeaking?: boolean;
 }
 
-export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
+export declare function CallWidget({ state, mode, participants, localParticipant, callerName, duration, isMuted, isCameraOn, isScreenSharing, onAnswer, onDecline, onEndCall, onToggleMute, onToggleCamera, onToggleScreenShare, onUpgradeToVideo, onAddParticipant, availableParticipants, controlsExtras, onOpenAddParticipant, onMinimize, onExpand, layoutComponent, callStats, minimized, position, contained, draggable, className, style, dataAttrs, }: CallWidgetProps): JSX.Element | null;
 
 export declare type CallWidgetMode = PersistedWidgetMode | 'fullscreen';
 
@@ -1130,6 +1136,10 @@ export declare interface CallWidgetProps {
      *  action (invite, captions, settings) without forking the chrome, so
      *  the docked and expanded widgets can offer the SAME affordance. */
     controlsExtras?: ReactNode;
+    /** Consumer-owned "add people" flow — see CallControls. Renders the
+     *  add-participant button inline with the other controls (which is
+     *  where it belongs visually) while the consumer owns the picker. */
+    onOpenAddParticipant?: () => void;
     /** List of people available to add to the call */
     availableParticipants?: CallWidgetParticipant[];
     onMinimize?: () => void;
@@ -3509,7 +3519,7 @@ export declare interface InviteCandidate {
     pending?: boolean;
 }
 
-export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, }: InviteToCallDialogProps): JSX.Element;
+export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, shareLink, }: InviteToCallDialogProps): JSX.Element;
 
 export declare interface InviteToCallDialogProps {
     open: boolean;
@@ -3523,6 +3533,12 @@ export declare interface InviteToCallDialogProps {
     /** Human label for the call being invited to, shown in the subtitle. */
     lobbyLabel?: string;
     loading?: boolean;
+    /** Optional join URL. Rooms are link-shareable, so the picker is the
+     *  natural home for that link — it is the one place the user goes
+     *  when they want more people here. Previously this lived in a
+     *  full-bleed overlay across the call tiles, which covered the video
+     *  and read as a rendering bug. */
+    shareLink?: string;
 }
 
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;

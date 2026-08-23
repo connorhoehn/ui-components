@@ -43,6 +43,12 @@ export interface CallControlsProps {
   /** Optional explicit set of ids already in the call to dedupe against. */
   currentParticipantIds?: ReadonlyArray<string>;
 
+  /** Consumer-owned "add people" flow. When set, the add-participant
+   *  button calls this instead of toggling the built-in inline picker —
+   *  for hosts that already have their own invite surface (a modal over
+   *  the presence roster, say) and just want the button in the row,
+   *  looking like every other control. */
+  onOpenAddParticipant?: () => void;
   className?: string;
 }
 
@@ -174,6 +180,7 @@ export function CallControls({
   onAddParticipant,
   availableParticipants,
   currentParticipantIds,
+  onOpenAddParticipant,
   className,
 }: CallControlsProps) {
   const [showPicker, setShowPicker] = useState(false);
@@ -218,12 +225,16 @@ export function CallControls({
           onClick={onToggleScreenShare}
           testId="screenshare-button"
         />
-        {onAddParticipant && (
+        {(onAddParticipant || onOpenAddParticipant) && (
           <ControlButton
             icon={icons.userPlus}
-            label="Add participant"
+            label="Add people to this call"
             active={showPicker}
-            onClick={() => setShowPicker((v) => !v)}
+            onClick={
+              onOpenAddParticipant
+                ? onOpenAddParticipant
+                : () => setShowPicker((v) => !v)
+            }
             testId="add-participant-button"
           />
         )}
@@ -236,7 +247,7 @@ export function CallControls({
         />
       </div>
 
-      {showPicker && onAddParticipant && (
+      {showPicker && onAddParticipant && !onOpenAddParticipant && (
         <div
           className="border-t border-white/5 bg-surface-inverse/80"
           data-testid="add-participant-picker"

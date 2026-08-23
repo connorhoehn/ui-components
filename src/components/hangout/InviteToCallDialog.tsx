@@ -49,6 +49,12 @@ export interface InviteToCallDialogProps {
     /** Human label for the call being invited to, shown in the subtitle. */
     lobbyLabel?: string;
     loading?: boolean;
+    /** Optional join URL. Rooms are link-shareable, so the picker is the
+     *  natural home for that link — it is the one place the user goes
+     *  when they want more people here. Previously this lived in a
+     *  full-bleed overlay across the call tiles, which covered the video
+     *  and read as a rendering bug. */
+    shareLink?: string;
 }
 
 export function InviteToCallDialog({
@@ -58,8 +64,10 @@ export function InviteToCallDialog({
     candidates,
     lobbyLabel,
     loading = false,
+    shareLink,
 }: InviteToCallDialogProps) {
     const [selected, setSelected] = useState<Set<string>>(() => new Set());
+    const [copied, setCopied] = useState(false);
 
     // Reset the selection each time the dialog opens so a previous
     // invite's choices never leak into the next one.
@@ -126,6 +134,49 @@ export function InviteToCallDialog({
                         They&apos;ll be rung into{' '}
                         <span className="font-mono text-[12px] text-text-primary">{lobbyLabel}</span>.
                     </p>
+                ) : null}
+
+                {shareLink ? (
+                    <div className="flex flex-col gap-1.5">
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-text-secondary">
+                            Or share a link
+                        </span>
+                        <div className="flex items-center gap-2">
+                            <span
+                                className="min-w-0 flex-1 truncate rounded border border-border bg-surface-hover px-2 py-1.5 font-mono text-[11px] text-text-secondary"
+                                data-testid="hangout-invite-link"
+                                title={shareLink}
+                            >
+                                {shareLink}
+                            </span>
+                            <Button
+                                variant={copied ? 'secondary' : 'ghost'}
+                                size="sm"
+                                data-testid="hangout-invite-copy"
+                                aria-live="polite"
+                                onClick={async () => {
+                                    try {
+                                        await navigator.clipboard.writeText(shareLink);
+                                    } catch {
+                                        // Non-secure context / older Safari: a
+                                        // transient textarea still copies.
+                                        const ta = document.createElement('textarea');
+                                        ta.value = shareLink;
+                                        ta.style.position = 'fixed';
+                                        ta.style.opacity = '0';
+                                        document.body.appendChild(ta);
+                                        ta.select();
+                                        try { document.execCommand('copy'); } catch { /* noop */ }
+                                        document.body.removeChild(ta);
+                                    }
+                                    setCopied(true);
+                                    window.setTimeout(() => setCopied(false), 1500);
+                                }}
+                            >
+                                {copied ? '✓ Copied' : 'Copy'}
+                            </Button>
+                        </div>
+                    </div>
                 ) : null}
 
                 {candidates.length === 0 ? (

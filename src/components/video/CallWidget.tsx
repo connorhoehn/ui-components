@@ -60,6 +60,10 @@ export interface CallWidgetProps {
    *  action (invite, captions, settings) without forking the chrome, so
    *  the docked and expanded widgets can offer the SAME affordance. */
   controlsExtras?: ReactNode;
+  /** Consumer-owned "add people" flow — see CallControls. Renders the
+   *  add-participant button inline with the other controls (which is
+   *  where it belongs visually) while the consumer owns the picker. */
+  onOpenAddParticipant?: () => void;
   /** List of people available to add to the call */
   availableParticipants?: CallWidgetParticipant[];
   onMinimize?: () => void;
@@ -255,6 +259,7 @@ function ActiveCallContent({
   | 'onAddParticipant'
   | 'availableParticipants'
   | 'controlsExtras'
+  | 'onOpenAddParticipant'
   | 'onEndCall'
   | 'layoutComponent'
   | 'callStats'
@@ -673,6 +678,7 @@ export function CallWidget({
   onAddParticipant,
   availableParticipants,
   controlsExtras,
+  onOpenAddParticipant,
   onMinimize,
   onExpand,
   layoutComponent,
@@ -842,6 +848,7 @@ export function CallWidget({
                   onUpgradeToVideo={onUpgradeToVideo}
                   onAddParticipant={onAddParticipant}
                   availableParticipants={availableParticipants}
+                  onOpenAddParticipant={onOpenAddParticipant}
                   controlsExtras={controlsExtras}
                   onEndCall={onEndCall}
                   layoutComponent={layoutComponent}
