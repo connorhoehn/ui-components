@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CallWidget } from '../CallWidget';
 import type { CallWidgetParticipant } from '../CallWidget';
@@ -190,5 +191,43 @@ describe('CallWidget — controlsExtras', () => {
       />,
     );
     expect(screen.queryByTestId('extras-node')).not.toBeInTheDocument();
+  });
+});
+
+// onOpenAddParticipant — consumer-owned "add people". Twice now a prop
+// has been declared on CallWidget, typed into ActiveCallContent's Pick<>
+// union, and never actually destructured or forwarded: it compiled, it
+// built, and it rendered nothing. These assert the whole path.
+describe('CallWidget — onOpenAddParticipant', () => {
+  it('renders the add-people control inline with the other controls', () => {
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('bob', 'Bob')]}
+        onOpenAddParticipant={() => {}}
+      />,
+    );
+    expect(screen.getByTestId('add-participant-button')).toBeInTheDocument();
+  });
+
+  it('calls the consumer handler instead of opening the built-in picker', async () => {
+    const onOpen = vi.fn();
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('bob', 'Bob')]}
+        onOpenAddParticipant={onOpen}
+      />,
+    );
+    screen.getByTestId('add-participant-button').click();
+    expect(onOpen).toHaveBeenCalledTimes(1);
+    expect(screen.queryByTestId('add-participant-picker')).not.toBeInTheDocument();
+  });
+
+  it('omits the control when neither add-participant path is wired', () => {
+    render(<CallWidget state="active" mode="video" participants={[p('bob', 'Bob')]} />);
+    expect(screen.queryByTestId('add-participant-button')).not.toBeInTheDocument();
   });
 });

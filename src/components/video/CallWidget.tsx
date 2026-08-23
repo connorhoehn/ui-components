@@ -239,6 +239,7 @@ function ActiveCallContent({
   onUpgradeToVideo,
   onAddParticipant,
   availableParticipants,
+  onOpenAddParticipant,
   controlsExtras,
   onEndCall,
   layoutComponent,
@@ -361,6 +362,7 @@ function ActiveCallContent({
         onEndCall={onEndCall}
         onAddParticipant={onAddParticipant}
         availableParticipants={availableParticipants}
+        onOpenAddParticipant={onOpenAddParticipant}
         currentParticipantIds={participants.map((p) => p.id)}
       />
     </div>
