@@ -2104,7 +2104,10 @@ function Oe({ idToken: e, sendMessage: t, onMessage: n, connectionState: r }) {
 	let { toast: v } = o(), x = De(e), S = p(() => g((e) => e + 1), []);
 	return h(() => {
 		let t = Ce();
-		if (!e || !t) return;
+		if (!e || !t) {
+			c(!1);
+			return;
+		}
 		let n = !1;
 		return c(!0), f(null), fetch(`${t}/api/activity?limit=20`, { headers: { Authorization: `Bearer ${e}` } }).then((e) => {
 			if (!e.ok) throw Error(`HTTP ${e.status}`);

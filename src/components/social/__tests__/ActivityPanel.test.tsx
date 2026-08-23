@@ -5,9 +5,10 @@
 //   2. the 50-item cap — an unbounded prepend on a chatty socket is a leak;
 //   3. the event-type → copy mapping, which must degrade to the raw event
 //      type rather than rendering "undefined" for a type it has not seen.
-// It also has a genuine dead end: with no VITE_SOCIAL_API_URL configured the
-// hydrate effect returns before `setLoading(false)`, so the panel spins
-// forever. That is pinned below so the behaviour can't change unnoticed.
+// It previously had a genuine dead end: with no VITE_SOCIAL_API_URL the
+// hydrate effect returned before `setLoading(false)`, so the panel spun
+// forever. Fixed in v2.77.0 — it now resolves to the empty state, which is
+// pinned below.
 
 import { render, screen, act, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -109,13 +110,24 @@ describe('ActivityPanel hydrate', () => {
     await waitFor(() => expect(failing).toHaveBeenCalledTimes(2));
   });
 
-  it('stays stuck on the spinner when no API base URL is configured', async () => {
+  it('resolves to the empty state when no API base URL is configured', async () => {
+    // Regression: `loading` starts true, and the hydrate effect used to
+    // early-return without clearing it — so an unconfigured deployment
+    // showed a spinner that never resolved.
     vi.stubEnv('VITE_SOCIAL_API_URL', '');
     const fetchSpy = vi.fn();
     vi.stubGlobal('fetch', fetchSpy);
     await renderPanel();
     expect(fetchSpy).not.toHaveBeenCalled();
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText('Loading...')).toBeNull());
+  });
+
+  it('resolves to the empty state when there is no signed-in user', async () => {
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+    await renderPanel({ idToken: null });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    await waitFor(() => expect(screen.queryByText('Loading...')).toBeNull());
   });
 });
 

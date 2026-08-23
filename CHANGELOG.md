@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.77.0] — 2026-08-23
+
+### Fixed
+
+- **`ActivityPanel` spun forever when unconfigured.** `loading` initialises
+  to `true`, and the hydrate effect early-returned on `!idToken || !baseUrl`
+  *before* clearing it — so with no `VITE_SOCIAL_API_URL` (the default; there
+  is no `.env`) or no signed-in user, the panel showed a spinner that never
+  resolved, with no way out. It now resolves to the empty state. Found by the
+  coverage pass, which pinned the broken behaviour rather than silently
+  changing it; both regression tests are verified to fail without the fix.
+
+### Changed
+
+- **Config files use `import.meta.dirname` instead of `__dirname`** (40
+  occurrences across `vite.config.ts`, `demo/vite.config.ts`,
+  `vitest.config.ts`). Vite 8 warns on every command that `__dirname` is
+  unsupported by `configLoader: 'native'`, which is planned to become the
+  default in a future major. Free to adopt: vite 8 already floors Node at
+  `^20.19.0 || >=22.12.0`, above `import.meta.dirname`'s 20.11 requirement.
+  Deliberately **not** declared in `engines` — that field is consumer-facing,
+  and this is a build-time floor the shipped bundles do not impose. Recorded
+  in CLAUDE.md instead.
+
 ## [2.76.0] — 2026-08-23
 
 A parallel-agent upgrade round: three dependency majors evaluated in isolated

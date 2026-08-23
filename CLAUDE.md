@@ -67,6 +67,13 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > rendered a blank page from a bad `Switch` import. Do not narrow this back
 > to a single project.
 
+> **Node floor for development: `^20.19.0 || >=22.12.0`** (vite 8's own
+> requirement). The config files use `import.meta.dirname`, not `__dirname` —
+> vite 8 warns that `__dirname` is unsupported by `configLoader: 'native'`,
+> which is planned to become the default. This is a *toolchain* floor only;
+> it is deliberately NOT declared in `engines`, because that field is
+> consumer-facing and the shipped bundles have no such requirement.
+
 > **`npm run build` needs an 8GB heap** (wired into the script). The
 > `file:../realtime-modules` devDependency is a symlink, so api-extractor
 > resolves its `.d.ts` outside `node_modules`, treats it as local source,

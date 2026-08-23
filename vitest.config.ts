@@ -9,12 +9,12 @@ const maxWorkers = process.env.VITEST_MAX_WORKERS ?? '25%';
 export default defineConfig({
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@schemas': resolve(__dirname, 'schemas'),
+      '@': resolve(import.meta.dirname, 'src'),
+      '@schemas': resolve(import.meta.dirname, 'schemas'),
       // hls.js is an optional peer dep (consumer apps install it). Vitest's
       // import-analysis tries to resolve dynamic-import targets even with
       // `/* @vite-ignore */`, so point it at a stub for tests.
-      'hls.js': resolve(__dirname, 'src/test-stubs/hls.js-stub.ts'),
+      'hls.js': resolve(import.meta.dirname, 'src/test-stubs/hls.js-stub.ts'),
       // The realtime-modules /client/hangout-rooms subpath has not been
       // shipped yet (see CLAUDE.md "Known issues"). The HangoutRoomRow /
       // HangoutRoomsSection / WrappedHangoutRoomsList integration code
@@ -22,7 +22,7 @@ export default defineConfig({
       // this alias points vitest at a structural stub so the test suite
       // can exercise the integration wrappers without the real package.
       '@connorhoehn/realtime-modules/client/hangout-rooms': resolve(
-        __dirname,
+        import.meta.dirname,
         'tests/stubs/realtime-modules-hangout-rooms.ts',
       ),
     },

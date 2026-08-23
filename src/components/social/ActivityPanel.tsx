@@ -154,7 +154,15 @@ function useActivityFeed({
   // 1. Hydrate from REST on mount
   useEffect(() => {
     const baseUrl = getBaseUrl();
-    if (!idToken || !baseUrl) return;
+    if (!idToken || !baseUrl) {
+      // Nothing to hydrate from — resolve to the empty state instead of
+      // leaving the spinner up forever. `loading` starts true so a real
+      // fetch shows the spinner immediately; without this branch an
+      // unset VITE_SOCIAL_API_URL (the default — there is no .env) or a
+      // signed-out user spins indefinitely with no way out.
+      setLoading(false); // eslint-disable-line react-hooks/set-state-in-effect
+      return;
+    }
     let cancelled = false;
     // Set loading synchronously before the async fetch — this is intentional
     // to show a loading indicator immediately on mount/token change.
