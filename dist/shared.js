@@ -1,39 +1,39 @@
-import { B as s, C as r, a as o, b as t, c as n, d as i, e as l, f as m, g as p, h as d, D as C, i as T, E as S, j as c, F as P, I as g, k as f, K as b, L as E, l as x, m as h, M as u, P as B, n as D, o as I, p as k, Q as y, S as v, q as N, r as F, s as L, t as O, u as A, v as G, T as _, w as H, x as U, y as w, z as M, A as R, G as K, H as j, J as Q, U as V, N as X, O as q, R as z, V as J, W, X as Y } from "./StatusPill-CMow3BX0.js";
+import { B as e, C as o, a as r, b as t, c as n, d as i, e as l, f as m, g as p, h as d, D as C, i as T, E as S, j as c, F as P, I as g, k as f, K as b, L as E, l as u, m as x, M as h, P as B, n as D, o as I, p as k, Q as y, S as v, q as N, r as O, s as F, t as L, u as A, v as G, T as _, w as H, x as U, y as w, z as M, A as R, G as K, H as j, J as Q, U as V, N as X, O as q, R as z, V as J, W, X as Y } from "./StatusPill-CMow3BX0.js";
 import { B as $ } from "./Button-DILgRebO.js";
-import { C as ea } from "./Card-qOg_oC77.js";
-import { D as ra, F as oa, P as ta, T as na, a as ia, b as la, c as ma, d as pa, e as da } from "./FormField-BftBYBdG.js";
+import { C as sa } from "./Card-qOg_oC77.js";
+import { D as oa, F as ra, P as ta, T as na, a as ia, b as la, c as ma, d as pa, e as da } from "./FormField-BftBYBdG.js";
 import { F as Ta, I as Sa, S as ca } from "./FileUploadDrop-D8mbq_QB.js";
 import { B as ga } from "./Banner-BoO81CCz.js";
-import { B as ba, L as Ea, S as xa } from "./Chart-D_DsFB-7.js";
-import { C as ua } from "./Chip-BDT8ro4h.js";
-import { C as Da, D as Ia, F as ka, I as ya, a as va, S as Na, T as Fa, b as La, U as Oa } from "./TrendSparkline-po-w4wQC.js";
+import { B as ba, L as Ea, S as ua } from "./Chart-D_DsFB-7.js";
+import { C as ha } from "./Chip-BDT8ro4h.js";
+import { C as Da, D as Ia, F as ka, I as ya, a as va, S as Na, T as Oa, b as Fa, U as La } from "./TrendSparkline-po-w4wQC.js";
 import { C as Ga } from "./ConfirmDialog-B0yXaqxp.js";
 import { E as Ha } from "./EmptyState-Ejc9dJA3.js";
 import { C as wa, E as Ma, S as Ra, e as Ka, g as ja, a as Qa } from "./CardHeader-C068zmoE.js";
 import { M as Xa } from "./Modal-X8tdpRKs.js";
 import { S as za } from "./SkeletonCard-Bm2f1JX1.js";
-import { T as Wa, a as Ya, u as Za } from "./ToastProvider-D3MHbP-u.js";
-import { P as ae, S as ee } from "./PermissionDeniedCard-0XYb6Eju.js";
-import { S as re } from "./StatusDot-BC7B1tTr.js";
-import { A as te, a as ne, n as ie, b as le } from "./Avatar-B7O2g50s.js";
-import { A as pe, B as de, C as Ce, N as Te, P as Se } from "./Badge-pOBJ8s2D.js";
-import { T as Pe, a as ge, b as fe, c as be, d as Ee, e as xe, f as he, t as ue, g as Be } from "./tones-DknNcB3q.js";
+import { T as Wa, a as Ya, u as Za, b as $a } from "./ToastProvider-DzXNjRMX.js";
+import { P as ss, S as es } from "./PermissionDeniedCard-0XYb6Eju.js";
+import { S as rs } from "./StatusDot-BC7B1tTr.js";
+import { A as ns, a as is, n as ls, b as ms } from "./Avatar-B7O2g50s.js";
+import { A as ds, B as Cs, C as Ts, N as Ss, P as cs } from "./Badge-pOBJ8s2D.js";
+import { T as gs, a as fs, b as bs, c as Es, d as us, e as xs, f as hs, t as Bs, g as Ds } from "./tones-DknNcB3q.js";
 export {
-  pe as ActivityFeed,
-  te as Avatar,
-  ne as AvatarGroup,
-  de as Badge,
+  ds as ActivityFeed,
+  ns as Avatar,
+  is as AvatarGroup,
+  Cs as Badge,
   ga as Banner,
   ba as BarChart,
-  s as Breadcrumbs,
+  e as Breadcrumbs,
   $ as Button,
-  r as CapabilityDeniedFallback,
-  ea as Card,
+  o as CapabilityDeniedFallback,
+  sa as Card,
   wa as CardHeader,
-  o as CatalogGrid,
+  r as CatalogGrid,
   t as ChannelHeader,
   n as ChatComposer,
-  ua as Chip,
+  ha as Chip,
   i as CodeBlock,
   Da as CodeEditor,
   l as CollapsibleSection,
@@ -41,9 +41,9 @@ export {
   p as CommandPaletteHint,
   d as CommandPaletteProvider,
   Ga as ConfirmDialog,
-  Ce as ConnectionPill,
+  Ts as ConnectionPill,
   Ia as DEFAULT_PIPELINE_ICONS,
-  ra as DataTable,
+  oa as DataTable,
   C as Drawer,
   T as DropdownMenu,
   Ha as EmptyState,
@@ -53,7 +53,7 @@ export {
   Ta as FileUploadDrop,
   ka as FilterChip,
   P as FollowUpChips,
-  oa as FormField,
+  ra as FormField,
   Sa as IconButton,
   ya as IconPicker,
   va as ImageLightbox,
@@ -62,15 +62,15 @@ export {
   b as KPIGrid,
   E as LayerStack,
   Ea as LineChart,
-  x as LoadingState,
-  h as LogStream,
-  u as MessageBubble,
+  u as LoadingState,
+  x as LogStream,
+  h as MessageBubble,
   Xa as Modal,
-  Te as NotificationCenter,
+  Ss as NotificationCenter,
   B as PageHeader,
   ta as PageSection,
-  ae as PermissionDeniedCard,
-  Se as PresenceAvatars,
+  ss as PermissionDeniedCard,
+  cs as PresenceAvatars,
   D as PresenceDot,
   I as ProgressBar,
   k as ProjectCard,
@@ -78,24 +78,24 @@ export {
   Na as ScoreBarGauge,
   v as SearchInput,
   N as SegmentedControl,
-  F as ShortcutsHelp,
+  O as ShortcutsHelp,
   za as SkeletonCard,
   Ra as Sparkline,
-  ee as Spinner,
-  L as StackDiagram,
-  xa as StackedAreaChart,
-  O as StatCard,
-  re as StatusDot,
+  es as Spinner,
+  F as StackDiagram,
+  ua as StackedAreaChart,
+  L as StatCard,
+  rs as StatusDot,
   A as StatusPill,
   G as SubNavLayout,
   ca as Switch,
-  Pe as TONES,
-  ge as TONE_BG,
-  fe as TONE_BORDER,
-  be as TONE_SOFT,
-  Ee as TONE_SOLID,
-  xe as TONE_SOLID_BG,
-  he as TONE_TEXT,
+  gs as TONES,
+  fs as TONE_BG,
+  bs as TONE_BORDER,
+  Es as TONE_SOFT,
+  us as TONE_SOLID,
+  xs as TONE_SOLID_BG,
+  hs as TONE_TEXT,
   _ as TabPanel,
   na as Table,
   ia as TableBody,
@@ -104,7 +104,7 @@ export {
   pa as TableTd,
   da as TableTh,
   H as Tabs,
-  Fa as TagEditor,
+  Oa as TagEditor,
   U as TerminalLog,
   w as ThinkingBlock,
   M as ThinkingDots,
@@ -113,22 +113,23 @@ export {
   Ya as ToastProvider,
   K as ToolCallPill,
   j as ToolCallStrip,
-  La as TrendSparkline,
+  Fa as TrendSparkline,
   Q as TypingIndicator,
   V as UserChip,
   X as UserMenu,
-  Oa as UserPicker,
+  La as UserPicker,
   q as activeNavItemStyle,
   Ka as eventGlyphs,
   z as formatTypingBanner,
   ja as getEventCategory,
   Qa as getEventGlyph,
   J as matchHotkey,
-  ie as nameToColor,
-  le as nameToInitials,
-  ue as toneKey,
-  Be as toneVar,
+  ls as nameToColor,
+  ms as nameToInitials,
+  Bs as toneKey,
+  Ds as toneVar,
   W as useCommandPalette,
   Y as useRegisterCommand,
-  Za as useToast
+  Za as useToast,
+  $a as useToastOptional
 };

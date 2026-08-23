@@ -135,3 +135,13 @@ export function useToast(): ToastContextValue {
   }
   return ctx;
 }
+
+/**
+ * Non-throwing variant, for components that WANT to toast but must still
+ * mount where no provider exists — a widget reused inside a panel or
+ * rendered bare in a component test. Callers use `toast?.(…)`; the
+ * notification is simply skipped rather than crashing the subtree.
+ */
+export function useToastOptional(): ToastContextValue | null {
+  return useContext(ToastContext);
+}

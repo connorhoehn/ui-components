@@ -8347,6 +8347,14 @@ declare interface UseActivityBusReturn {
 
  export declare function useToast(): ToastContextValue;
 
+ /**
+  * Non-throwing variant, for components that WANT to toast but must still
+  * mount where no provider exists — a widget reused inside a panel or
+  * rendered bare in a component test. Callers use `toast?.(…)`; the
+  * notification is simply skipped rather than crashing the subtree.
+  */
+ export declare function useToastOptional(): ToastContextValue | null;
+
  export declare function useTrackStateBump(stream: MediaStream | undefined | null, participantLabel: string): number;
 
  export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;
