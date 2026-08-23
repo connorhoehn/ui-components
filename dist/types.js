@@ -1,60 +1,55 @@
-import { g as r } from "./registry-qR57lair.js";
-import { C as f, i as g } from "./fieldType-BJfRz7mO.js";
-const i = [
-  "📄",
-  "📋",
-  "📊",
-  "📈",
-  "📉",
-  "🗒️",
-  "📁",
-  "🗂️",
-  "📌",
-  "📎",
-  "🔖",
-  "🏃",
-  "🎯",
-  "🚀",
-  "⚡",
-  "🔥",
-  "💡",
-  "🛠️",
-  "⚙️",
-  "🔍",
-  "🧪",
-  "🤝",
-  "💼",
-  "🌟",
-  "✨"
+import { t as e } from "./registry-DbX3MVAA.js";
+import { n as t, t as n } from "./fieldType-Be2vqdKv.js";
+//#region src/types/documentType.ts
+var r = [
+	"📄",
+	"📋",
+	"📊",
+	"📈",
+	"📉",
+	"🗒️",
+	"📁",
+	"🗂️",
+	"📌",
+	"📎",
+	"🔖",
+	"🏃",
+	"🎯",
+	"🚀",
+	"⚡",
+	"🔥",
+	"💡",
+	"🛠️",
+	"⚙️",
+	"🔍",
+	"🧪",
+	"🤝",
+	"💼",
+	"🌟",
+	"✨"
 ];
-function n(e) {
-  return e.pages && e.pages.length > 0 ? e.pages : [{
-    id: "page-default",
-    title: void 0,
-    sectionIds: e.fields.map((a) => a.id)
-  }];
+function i(e) {
+	return e.pages && e.pages.length > 0 ? e.pages : [{
+		id: "page-default",
+		title: void 0,
+		sectionIds: e.fields.map((e) => e.id)
+	}];
 }
-function t(e) {
-  return e.pageConfig ?? { showTableOfContents: !1 };
+function a(e) {
+	return e.pageConfig ?? { showTableOfContents: !1 };
 }
-function o(e) {
-  const a = r(e);
-  return {
-    id: crypto.randomUUID(),
-    name: a?.label ?? e,
-    sectionType: e,
-    required: !1,
-    defaultCollapsed: !1,
-    placeholder: "",
-    hiddenInModes: [],
-    rendererOverrides: {}
-  };
+function o(t) {
+	let n = e(t);
+	return {
+		id: crypto.randomUUID(),
+		name: n?.label ?? t,
+		sectionType: t,
+		required: !1,
+		defaultCollapsed: !1,
+		placeholder: "",
+		hiddenInModes: [],
+		rendererOverrides: {}
+	};
 }
-export {
-  f as CUSTOM_FIELD_TYPE_STORAGE_KEY,
-  i as DOCUMENT_TYPE_ICONS,
-  t as getPageConfig,
-  n as getPagesView,
-  g as isValidCustomFieldType,
-  o as makeEmptyField
-};
+//#endregion
+export { n as CUSTOM_FIELD_TYPE_STORAGE_KEY, r as DOCUMENT_TYPE_ICONS, a as getPageConfig, i as getPagesView, t as isValidCustomFieldType, o as makeEmptyField };

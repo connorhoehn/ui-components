@@ -1,0 +1,1 @@
+const e=require("./cn-CFAiuoYh.cjs");let t=require("react/jsx-runtime");var n={none:``,sm:`p-4`,md:`p-6`,lg:`p-8`};function r({children:r,padding:i=`none`,className:a,...o}){return(0,t.jsx)(`div`,{className:e.t(`border border-border rounded-lg bg-white overflow-hidden`,n[i],a),...o,children:r})}Object.defineProperty(exports,"t",{enumerable:!0,get:function(){return r}});

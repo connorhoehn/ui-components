@@ -1,1 +1,0 @@
-"use strict";const n=require("react/jsx-runtime"),t=require("react"),o=t.createContext(null);function c({value:e,children:r}){return n.jsx(o.Provider,{value:e,children:r})}function u(){const e=t.useContext(o);if(!e)throw new Error("useWebSocketContext must be used within a <WebSocketProvider>");return e}exports.WebSocketProvider=c;exports.useWebSocketContext=u;

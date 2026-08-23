@@ -1,4 +1,2 @@
-import { u } from "./useHangoutEmbed-D-rUq74K.js";
-export {
-  u as useHangoutEmbed
-};
+import { t as e } from "./useHangoutEmbed-CzbKGc3C.js";
+export { e as useHangoutEmbed };

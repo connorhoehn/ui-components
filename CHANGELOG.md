@@ -8,6 +8,63 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.73.4] — 2026-08-23
+
+The build-tool cluster moves to vite 8. This swaps the bundler underneath
+every shipped artifact — vite 8 uses **rolldown**, not rollup — so the
+verification below is about equivalence of output, not just a green gate.
+
+### Changed
+
+- **`vite` 7.3.6 → 8.2.2** and **`@vitejs/plugin-react` 5.2.0 → 6.1.0**.
+  These are one job: plugin-react 6's peer is `vite@^8`. `@tailwindcss/vite`
+  (`^5||^6||^7||^8`), `vitest` 4.1.11 (`^6||^7||^8`) and `@storybook/react-vite`
+  all deduped onto vite 8 with no peer conflicts and no config changes.
+
+  Output was checked for equivalence rather than assumed:
+
+  - All 14 `.d.ts` entry bundles are **byte-identical** to the vite 7 build.
+  - All 14 entries export the **same symbol set** in both ESM and CJS
+    (366 from the root, 132 from `/pipelines`, …), and every one loads
+    under plain node.
+  - `dist/ui-components.css` has the same 90 `--color-*` tokens, 1657
+    selectors and 38 keyframes; it differs only in minifier ordering and a
+    stray `/*$vite$:1*/` marker rolldown leaves on the end (a CSS comment —
+    inert, but it is new).
+
+### Not taken (deliberately)
+
+- **`vite-plugin-dts` stays at 4.5.4** — it works fine on vite 8 and its
+  output is byte-identical, so there is nothing to gain and a real
+  regression to avoid. v5 is a thin wrapper over `unplugin-dts`, and:
+  - It **renamed `rollupTypes` → `bundleTypes`** and *silently ignores* the
+    old key. That is the "v5 emits no types" symptom recorded under 2.73.3:
+    with the key ignored it emits an unbundled `dist/src/**` tree and **no**
+    `dist/*.d.ts` at all, so every `exports` `types` target 404s — while the
+    build reports success.
+  - Even with the key renamed, `bundleTypes` forces `copyDtsFiles`, which
+    makes unplugin-dts harvest every ambient `declare module` / `declare
+    global` block in the project and append it to **every** rolled-up entry.
+    That would have shipped `src/declarations.d.ts`'s `declare module
+    'reactflow'` stub — a module augmentation that collides with a
+    consumer's real reactflow types — plus a `declare global` block
+    referencing a `DevEditorBridge` type that is not in the bundle, so all
+    14 `.d.ts` files fail under `skipLibCheck: false`. There is no option to
+    suppress it (`exclude` drops the file from the type program instead, and
+    `beforeWriteFile` runs after the harvest).
+
+### Known warnings (not errors)
+
+- Vite 8 warns that `__dirname` in `vite.config.ts`, `demo/vite.config.ts`
+  and `vitest.config.ts` is unsupported by `configLoader: 'native'`, which
+  is planned to become the default in a *future* major. Current default
+  still supports it; the fix when it lands is `import.meta.dirname`.
+- Rolldown's `EMPTY_IMPORT_META` warning on `ScatterPathPicker.tsx`. It
+  constant-folds `import.meta.env?.VITE_SOCIAL_API_URL` to `""`. Vite 7 also
+  substituted `import.meta.env` with `{}` at build time, so the expression
+  already evaluated to `""` — the emitted URL is unchanged.
+
+
 ## [2.73.3] — 2026-08-23
 
 Dependency majors, taken only where they cannot reach consumers. One of
