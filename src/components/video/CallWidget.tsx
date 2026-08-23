@@ -55,6 +55,11 @@ export interface CallWidgetProps {
   onToggleScreenShare?: () => void;
   onUpgradeToVideo?: () => void;
   onAddParticipant?: (participantId: string) => void;
+  /** Slot rendered alongside the control row — the collapsed-widget
+   *  counterpart to MediaControlsBar's `extras`. Lets a consumer add one
+   *  action (invite, captions, settings) without forking the chrome, so
+   *  the docked and expanded widgets can offer the SAME affordance. */
+  controlsExtras?: ReactNode;
   /** List of people available to add to the call */
   availableParticipants?: CallWidgetParticipant[];
   onMinimize?: () => void;
@@ -230,6 +235,7 @@ function ActiveCallContent({
   onUpgradeToVideo,
   onAddParticipant,
   availableParticipants,
+  controlsExtras,
   onEndCall,
   layoutComponent,
   callStats,
@@ -248,6 +254,7 @@ function ActiveCallContent({
   | 'onUpgradeToVideo'
   | 'onAddParticipant'
   | 'availableParticipants'
+  | 'controlsExtras'
   | 'onEndCall'
   | 'layoutComponent'
   | 'callStats'
@@ -334,6 +341,9 @@ function ActiveCallContent({
       </div>
 
       {/* Controls */}
+      {controlsExtras ? (
+        <div className="flex items-center justify-center pb-1">{controlsExtras}</div>
+      ) : null}
       <CallControls
         mode={mode}
         isMuted={isMuted}

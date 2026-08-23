@@ -848,18 +848,19 @@ function rt({
   onUpgradeToVideo: g,
   onAddParticipant: v,
   availableParticipants: b,
-  onEndCall: w,
-  layoutComponent: s,
-  callStats: x
+  controlsExtras: w,
+  onEndCall: s,
+  layoutComponent: x,
+  callStats: y
 }) {
-  const y = t === "video" && c;
+  const k = t === "video" && c;
   return /* @__PURE__ */ i("div", { className: "flex flex-col", children: [
-    t === "video" && s && /* @__PURE__ */ i("div", { className: "mx-3 mt-3 rounded-lg overflow-hidden relative", children: [
-      s,
-      /* @__PURE__ */ e(he, { stats: x, position: "bottom-left" })
+    t === "video" && x && /* @__PURE__ */ i("div", { className: "mx-3 mt-3 rounded-lg overflow-hidden relative", children: [
+      x,
+      /* @__PURE__ */ e(he, { stats: y, position: "bottom-left" })
     ] }),
-    t === "video" && !s && /* @__PURE__ */ i("div", { className: "relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3", children: [
-      n?.videoStream && y ? /* @__PURE__ */ e(fe, { stream: n.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-surface-inverse", children: n && /* @__PURE__ */ e(Z, { participant: n, size: 48 }) }),
+    t === "video" && !x && /* @__PURE__ */ i("div", { className: "relative bg-black aspect-video rounded-lg overflow-hidden mx-3 mt-3", children: [
+      n?.videoStream && k ? /* @__PURE__ */ e(fe, { stream: n.videoStream, muted: !0 }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center bg-surface-inverse", children: n && /* @__PURE__ */ e(Z, { participant: n, size: 48 }) }),
       r.length > 0 && /* @__PURE__ */ i("div", { className: "absolute top-2 right-2 w-20 aspect-video rounded overflow-hidden border border-white/20 bg-surface-inverse", children: [
         r[0].videoStream ? /* @__PURE__ */ e(fe, { stream: r[0].videoStream }) : /* @__PURE__ */ e("div", { className: "w-full h-full flex items-center justify-center", children: /* @__PURE__ */ e(Z, { participant: r[0], size: 28 }) }),
         r[0].isMuted && /* @__PURE__ */ e(
@@ -875,7 +876,7 @@ function rt({
           }
         )
       ] }),
-      /* @__PURE__ */ e(he, { stats: x, position: "bottom-left" })
+      /* @__PURE__ */ e(he, { stats: y, position: "bottom-left" })
     ] }),
     t === "audio" && /* @__PURE__ */ e(
       Je,
@@ -901,6 +902,7 @@ function rt({
         " in call"
       ] })
     ] }),
+    w ? /* @__PURE__ */ e("div", { className: "flex items-center justify-center pb-1", children: w }) : null,
     /* @__PURE__ */ e(
       qe,
       {
@@ -912,10 +914,10 @@ function rt({
         onToggleCamera: u,
         onToggleScreenShare: m,
         onUpgradeToVideo: g,
-        onEndCall: w,
+        onEndCall: s,
         onAddParticipant: v,
         availableParticipants: b,
-        currentParticipantIds: r.map((k) => k.id)
+        currentParticipantIds: r.map((p) => p.id)
       }
     )
   ] });
