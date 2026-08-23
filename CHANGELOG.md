@@ -8,7 +8,104 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [2.73.4] — 2026-08-23
+## [2.76.0] — 2026-08-23
+
+A parallel-agent upgrade round: three dependency majors evaluated in isolated
+worktrees, two shipped, one rejected with a root cause — plus the coverage
+work that ran alongside, which found a **data-loss bug**.
+
+### Fixed
+
+- **`MappingRuleEditor` silently destroyed a rule.** `deleteRule` cleared the
+  edit state only when the deleted index *was* the edited index. Deleting a
+  row **above** the one being edited shifted every later row down while
+  `editingIdx` stayed put, so `saveEdit`'s `updated[editingIdx] = draft`
+  wrote the pending draft over a **different** rule. Editing `B` in
+  `[A,B,C]`, deleting `A`, then saving produced `[B,B]` — `C` destroyed and
+  `B` duplicated, with no error. `moveUp`/`moveDown` always re-pointed
+  `editingIdx`; delete was the odd one out. Fixed, with a regression test
+  verified to fail (`['b','b']`) without the fix.
+- **`NodesPage` had a `= {}` default on its destructured props** (introduced
+  in v2.72.0, mine), which collapses Storybook's `typeof` arg inference to
+  `never`. React always passes a props object, so the default was redundant.
+- **A fake `declare module 'reactflow'` was living in `declarations.d.ts`.**
+  `reactflow` is not a dependency at all — this library uses `@xyflow/react`
+  — but one vestigial type-only import in `validate-handles.ts` kept the
+  hand-written shim alive. Repointed and deleted; typecheck stays clean,
+  proving the shim was never needed. (It would have been *published* to
+  consumers under vite-plugin-dts 5, colliding with their real reactflow
+  types.)
+
+### Changed
+
+- **`react-router` peer widened to `^7.0.0 || ^8.0.0`** (dev dependency now
+  8.3.0). Zero source changes were required — the library only uses
+  `BrowserRouter`/`Routes`/`Route`/`Link`/`Navigate`/`Outlet`/`useNavigate`/
+  `useParams`/`useSearchParams`/`useLocation`, none of which v8 breaks. The
+  range is **strictly additive**, so no consumer install that is valid today
+  becomes invalid, and **no charter handoff is required**. This matters:
+  react-router 8 requires `react >=19.2.7`, and two of the three consumers
+  (`event-catalog`, `vnl-ads`) are still on React 18 — forcing `^8.0.0`
+  would have hard-broken them at install time. Verified by running the full
+  gate against **both** majors, and by consumer-tarball checks under each.
+  - Caveat: v8 is ESM-only with no `require` condition. This library still
+    ships `.cjs` bundles that `require("react-router")`, which resolve via
+    `module-sync` on Node ≥22.12. A consumer on older Node or a CJS bundler
+    that ignores `module-sync` should stay on v7 — which the widened range
+    keeps available.
+  - Noted separately: `event-catalog` and `vnl-ads` are on React 18 while
+    this library already declares `react: ^19.0.0`, so they are *already*
+    out of compliance with the current peer set, independent of this change.
+
+### Added
+
+- **Storybook coverage for the four thin areas** — 82 story files, ~420
+  stories: `identity` 0 → 24, `video` 4 → 34, `observability` 2 → 17,
+  `ingest` 0 → 13. All 30 identity components turned out to be fully
+  prop-driven (no hooks, fetch or router), so they needed no mocking;
+  ingest's hooks call bare `fetch` with no injectable seam, so those stories
+  carry a local URL-keyed mock backend with ok/error/pending modes.
+- **296 tests** across `social`, `ingest`, `observability`, `ui`, `layout`
+  and `doc-types`, targeting logic that can actually break — the dashboard's
+  alert arithmetic (queue depth is `>50`, not `>=`; failure rate needs a
+  5-item sample before dividing), `formatMs` boundaries (`0` → `"0 ms"` but
+  `null`/`NaN`/`Infinity` → em-dash), and the guard that stops a background
+  error from wiping visible data. Suite: 3,661 → **3,962**.
+- **A packaging guard for the shape of the shipped `.d.ts`.** The existing
+  test only checked that `types` targets exist. It could not see the failure
+  mode found while evaluating vite-plugin-dts 5: a build that stays exit-0
+  and green while emitting an unbundled `dist/src/**` tree and no
+  `dist/index.d.ts` at all. Now asserts bundle count, rollup size, and the
+  absence of `dist/src/`.
+
+### Not taken (deliberately)
+
+- **`vite-plugin-dts` 5 — root-caused and rejected.** v5 renamed
+  `rollupTypes` → `bundleTypes` and **silently ignores the old key**, which
+  is the whole "successful build, zero `.d.ts`" symptom. Even with the key
+  corrected it is unshippable: `bundleTypes` forces `copyDtsFiles`, which
+  harvests every ambient `declare module`/`declare global` block and appends
+  them to **all** entries. No option suppresses it — `exclude` drops the
+  file from the type program, and `beforeWriteFile` runs after the harvest.
+  v4.5.4 runs fine on vite 8 with byte-identical output, so there is nothing
+  to gain.
+- **`typescript` 7.0.2 — evaluated in full, held.** It is clean for this
+  repo: **zero** new type errors, zero test changes, and a typecheck that
+  drops **30.2s → 2.0s** (verified non-vacuous by injecting a deliberate
+  error and by diffing `--listFiles`: 1,239 files under both). It also does
+  not change the shipped types — declaration emit and the api-extractor
+  rollup produce a **byte-identical** `dist/index.d.ts`, and consumers are
+  not forced onto TS7. It is held anyway because the *toolchain around it*
+  fails silently in three ways: `vite-plugin-dts@4` crashes outright on TS7,
+  forcing the rejected v5; and `@typescript/typescript6` pulls
+  `@typescript/old@npm:typescript@6.0.3`, which declares `bin.tsc` and
+  **overwrites the root `tsc` symlink** — so which compiler the gate runs is
+  decided by npm install order, with no signal. Buying a faster local
+  typecheck is not worth a CI that can silently validate against the wrong
+  compiler. The work is preserved on `upgrade/typescript-7`.
+
+
+### vite 8 (build-tool cluster)
 
 The build-tool cluster moves to vite 8. This swaps the bundler underneath
 every shipped artifact — vite 8 uses **rolldown**, not rollup — so the
@@ -64,6 +161,22 @@ verification below is about equivalence of output, not just a green gate.
   substituted `import.meta.env` with `{}` at build time, so the expression
   already evaluated to `""` — the emitted URL is unchanged.
 
+
+## [2.75.1] / [2.75.0] / [2.74.0] — 2026-08-23
+
+Shipped from a parallel session; entries reconstructed here so the release
+history stays complete.
+
+### Added
+
+- **In-row "add people" button on `CallWidget`**, plus a share link in the
+  invite dialog, and `onOpenAddParticipant` so a host with its own invite
+  surface can take over the flow instead of the built-in inline picker.
+- **`UserPlusIcon`** exported from the shared media-icon set.
+
+### Fixed
+
+- `onOpenAddParticipant` was not actually forwarded through to the controls.
 
 ## [2.73.3] — 2026-08-23
 

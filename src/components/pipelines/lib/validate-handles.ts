@@ -5,7 +5,7 @@
  * execution failures. See NODE_HANDLES.md for the full handle naming reference.
  */
 
-import type { Edge, Node } from 'reactflow';
+import type { Edge, Node } from '@xyflow/react';
 
 /**
  * Map of node types to their valid source and target handle IDs.

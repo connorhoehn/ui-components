@@ -102,7 +102,7 @@ function NodesPage({
   onAddLatency,
   onKillNode,
   onTransferResource,
-}: NodesPageProps = {}) {
+}: NodesPageProps) {
   const fixtureNodes = useMemo(resolveNodes, []);
   const nodes = nodesProp ?? fixtureNodes;
   const [selectedId, setSelectedId] = useState<string | null>(null);

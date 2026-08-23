@@ -1878,7 +1878,7 @@ function $e() {
 function et(e) {
 	return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
-function tt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r } = {}) {
+function tt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r }) {
 	let i = x($e, []), a = e ?? i, [o, s] = C(null), c = x(() => a.find((e) => e.id === o) ?? null, [a, o]);
 	return /* @__PURE__ */ E("div", {
 		"data-testid": "nodes-page",

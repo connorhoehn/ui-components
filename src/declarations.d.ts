@@ -1,29 +1,3 @@
-declare module 'reactflow' {
-  export type HandleType = 'source' | 'target';
-  export type Position = 'top' | 'bottom' | 'left' | 'right';
-  export interface Connection {
-    source: string | null;
-    target: string | null;
-    sourceHandle: string | null;
-    targetHandle: string | null;
-  }
-  export interface Edge {
-    id: string;
-    source: string;
-    target: string;
-    sourceHandle?: string | null;
-    targetHandle?: string | null;
-    [key: string]: any;
-  }
-  export interface Node {
-    id: string;
-    type?: string;
-    position: { x: number; y: number };
-    data: any;
-    [key: string]: any;
-  }
-  export function getConnectedEdges(edges: any[], nodes: any[]): any[];
-}
 
 
 declare module 'amazon-ivs-web-broadcast' {

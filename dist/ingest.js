@@ -475,7 +475,7 @@ function W({ rules: t, onChange: n }) {
 		}, r = [...t, e];
 		n(r), a(r.length - 1), m(e);
 	}, [t, n]), C = v((e) => {
-		n(t.filter((t, n) => n !== e)), i === e && (a(null), m(null));
+		n(t.filter((t, n) => n !== e)), i === e ? (a(null), m(null)) : i !== null && i > e && a(i - 1);
 	}, [
 		t,
 		n,

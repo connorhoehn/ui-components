@@ -180,12 +180,29 @@ describe('MappingRuleEditor deletion', () => {
     expect(screen.getByText(/No mapping rules configured/)).toBeInTheDocument();
   });
 
-  // NOTE: deleting a row ABOVE the row currently being edited is broken —
-  // `deleteRule` only clears the edit state when the deleted index IS the
-  // edited index, so `editingIdx` keeps pointing at a now-shifted row and a
-  // subsequent Save writes the stale draft over the wrong rule. Not covered
-  // here on purpose: a test would have to assert the corrupt result.
-  // See MappingRuleEditor.tsx:73-80 (deleteRule) and :51-58 (saveEdit).
+  // Regression: deleting a row ABOVE the one being edited used to silently
+  // destroy a rule. `deleteRule` cleared the edit state only when the deleted
+  // index WAS the edited index, so every later row shifted down while
+  // `editingIdx` stayed put — and saveEdit's `updated[editingIdx] = draft`
+  // then wrote the pending draft over a different rule. Editing B in
+  // [A,B,C], deleting A, then saving produced [B,B]: C gone, B duplicated,
+  // no error. moveUp/moveDown always re-pointed editingIdx; delete did not.
+  it('deleting a row above the edited one does not corrupt the edited rule', () => {
+    const onChange = renderEditor([
+      rule({ priority: 1, documentTypeId: 'a' }),
+      rule({ priority: 2, documentTypeId: 'b' }),
+      rule({ priority: 3, documentTypeId: 'c' }),
+    ]);
+
+    // Edit the MIDDLE rule, then delete the one above it.
+    fireEvent.click(screen.getAllByRole('button', { name: 'Edit' })[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Delete' })[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    const saved = onChange.mock.calls.at(-1)![0];
+    // Both survivors intact, in order — not [b, b] with c destroyed.
+    expect(saved.map((r) => r.documentTypeId)).toEqual(['b', 'c']);
+  });
 });
 
 describe('MappingRuleEditor preview', () => {

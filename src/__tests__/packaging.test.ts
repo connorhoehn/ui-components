@@ -114,6 +114,34 @@ describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
     ).toEqual([]);
   });
 
+  // A vite-plugin-dts 5 evaluation (2026-08-23) found a failure mode this
+  // suite could not see: v5 renamed `rollupTypes` -> `bundleTypes` and
+  // IGNORES the old key silently, so the build stays exit-0 and green while
+  // emitting a 1237-file `dist/src/**` tree and NO `dist/index.d.ts` at all.
+  // Every `exports` map `types` target would 404 for consumers. Assert the
+  // rollup's actual shape, not merely that some file exists.
+  it('ships rolled-up .d.ts bundles, not a stub or an unbundled tree', () => {
+    const rootDts = readdirSync(DIST).filter((f) => f.endsWith('.d.ts'));
+    expect(
+      rootDts.length,
+      `Expected rolled-up .d.ts bundles at the dist root; found ${rootDts.length}.`,
+    ).toBeGreaterThanOrEqual(13);
+
+    const index = readFileSync(join(DIST, 'index.d.ts'), 'utf8');
+    // The stub form is ~2.8KB of `export * from './src/...'` re-exports.
+    expect(
+      index.length,
+      'dist/index.d.ts looks like the stub form, not the self-contained rollup.',
+    ).toBeGreaterThan(50_000);
+    expect(index).not.toMatch(/from '\.\/src\//);
+
+    // An unbundled tree next to the rollup means the bundler silently changed mode.
+    expect(
+      existsSync(join(DIST, 'src')),
+      'dist/src/ exists — the dts plugin emitted per-file declarations instead of bundling.',
+    ).toBe(false);
+  });
+
   it('every export subpath ships both an ESM and a CJS entry', () => {
     const broken: string[] = [];
     for (const [key, val] of Object.entries<Record<string, string> | string>(pkg.exports)) {

@@ -76,6 +76,14 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
     if (editingIdx === idx) {
       setEditingIdx(null);
       setDraft(null);
+    } else if (editingIdx !== null && editingIdx > idx) {
+      // Every row after the deleted one shifts down, so the edited row is no
+      // longer at `editingIdx`. Without this, saveEdit's
+      // `updated[editingIdx] = draft` writes the pending draft over a
+      // DIFFERENT rule: editing B in [A,B,C], deleting A, then saving
+      // produced [B,B] — C destroyed, silently. moveUp/moveDown already
+      // re-point editingIdx the same way; delete was the odd one out.
+      setEditingIdx(editingIdx - 1);
     }
   }, [rules, onChange, editingIdx]);
 

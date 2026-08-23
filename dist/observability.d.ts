@@ -154,7 +154,7 @@ export declare interface MetricTimeSeriesPanelProps {
     onExportCsv?: () => void;
 }
 
-export declare function NodesPage({ nodes: nodesProp, onAddLatency, onKillNode, onTransferResource, }?: NodesPageProps): JSX.Element;
+export declare function NodesPage({ nodes: nodesProp, onAddLatency, onKillNode, onTransferResource, }: NodesPageProps): JSX.Element;
 
 export declare interface NodesPageProps {
     /**
