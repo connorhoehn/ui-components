@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.73.3",
+  "version": "2.74.0",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

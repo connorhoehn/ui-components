@@ -148,5 +148,6 @@ export {
   ScreenShareOffIcon,
   PhoneOffIcon,
   MoreHorizontalIcon,
+  UserPlusIcon,
 } from './MediaIcons';
 export type { IconProps } from './MediaIcons';

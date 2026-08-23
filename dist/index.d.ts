@@ -8265,6 +8265,11 @@ declare interface UseActivityBusReturn {
      maxSelect?: number;
  }
 
+ /** Add-a-person. Lives here rather than inside CallControls' private
+  *  icon map so the docked and expanded call chromes can both render the
+  *  same "add people" affordance. */
+ export declare function UserPlusIcon({ size, ...rest }: IconProps): JSX.Element;
+
  export declare function useSectionList(ydoc: Y.Doc | null): UseSectionListReturn;
 
  declare interface UseSectionListReturn {

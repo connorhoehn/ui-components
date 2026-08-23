@@ -15,3 +15,6 @@ playwright-report
 # is the deterministic replacement for what this was checking.
 tests/e2e/zz-visual.spec.ts
 tests/e2e/zz-visual.spec.ts-snapshots/
+
+# Agent worktrees — nested git repos, never part of the library.
+.claude/worktrees/

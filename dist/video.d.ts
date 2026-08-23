@@ -925,6 +925,11 @@ declare interface UseMuteWhileTalkingOptions {
     cooldownMs?: number;
 }
 
+/** Add-a-person. Lives here rather than inside CallControls' private
+ *  icon map so the docked and expanded call chromes can both render the
+ *  same "add people" affordance. */
+export declare function UserPlusIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /**
  * Debounce activeSpeakerId so the spotlight slot only swaps after the new
  * speaker has been talking for at least `hysteresisMs`. Without this,
