@@ -28,6 +28,17 @@ export interface TranscriptOverlayProps {
   maxLines?: number;
   /** Fade-out duration ms. Default 8000. */
   fadeAfterMs?: number;
+  /**
+   * "Now" in ms since epoch, used as the reference point for each line's
+   * age-based opacity. Defaults to `Date.now()` — exposed for deterministic
+   * tests and stories.
+   *
+   * Without it, any fixture built from fixed ISO timestamps is arbitrarily
+   * old by the time it renders, so every line clamps to the 0.35 opacity
+   * floor and the fade ramp can never be exercised. Pass the same epoch the
+   * fixture timestamps were written against and the ramp is reproducible.
+   */
+  now?: number;
   className?: string;
 }
 
@@ -45,9 +56,10 @@ export function TranscriptOverlay({
   lines,
   maxLines = 3,
   fadeAfterMs = 8000,
+  now: nowProp,
   className,
 }: TranscriptOverlayProps) {
-  const now = Date.now();
+  const now = nowProp ?? Date.now();
   const visible = lines
     .slice(-maxLines)
     .map((line) => {

@@ -5,6 +5,14 @@ export type NetworkQuality = 'good' | 'medium' | 'poor' | 'dead';
 
 export interface NetworkQualityBadgeProps {
   quality: NetworkQuality;
+  /**
+   * Positioning / spacing classes from the caller. Prefer this over `style`:
+   * the badge is normally docked into a corner of the video stage, and with
+   * no className seam callers had to reach for an inline style (banned in
+   * demos and stories). Composed through `cn()`, so a caller class wins.
+   */
+  className?: string;
+  /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
 }
 
@@ -29,12 +37,12 @@ const labels: Record<NetworkQuality, string> = {
   dead: 'No Connection',
 };
 
-export function NetworkQualityBadge({ quality, style }: NetworkQualityBadgeProps) {
+export function NetworkQualityBadge({ quality, className, style }: NetworkQualityBadgeProps) {
   const color = colors[quality];
   const bars = quality === 'good' ? 4 : quality === 'medium' ? 3 : quality === 'poor' ? 2 : 1;
 
   return (
-    <div className={cn('inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium')} style={style}>
+    <div className={cn('inline-flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-black/60 text-white text-[11px] font-medium', className)} style={style}>
       <svg width="14" height="12" viewBox="0 0 14 12">
         {[0, 1, 2, 3].map(i => (
           <rect

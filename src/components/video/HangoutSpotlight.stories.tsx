@@ -26,13 +26,8 @@ const meta = {
   component: HangoutSpotlight,
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
-  decorators: [
-    (Story) => (
-      <div className="w-[640px] max-w-full">
-        <Story />
-      </div>
-    ),
-  ],
+  // Sized through the component's own `className` — no wrapper decorator.
+  args: { className: 'w-[640px] max-w-full' },
 } satisfies Meta<typeof HangoutSpotlight>;
 
 export default meta;

@@ -210,6 +210,83 @@ describe('HangoutSpotlight', () => {
   });
 });
 
+// speakerHysteresisMs is the "make this deterministic" escape hatch. These
+// pin both halves of its contract: the 750ms default that a real call wants,
+// and the 0 that tests/stories need so the render tracks the props.
+describe('HangoutSpotlight — speakerHysteresisMs', () => {
+  const PEOPLE = [p('alice', 'Alice'), p('bob', 'Bob')];
+
+  function spotlitName(): string | null {
+    return screen.getByTestId('hangout-spotlight').getAttribute('data-spotlight-user');
+  }
+
+  it('defaults to 750ms — the swap is still pending at 749ms and commits at 750', async () => {
+    vi.useFakeTimers();
+    try {
+      const { rerender } = render(
+        <HangoutSpotlight participants={PEOPLE} activeSpeakerId="alice" />,
+      );
+      rerender(<HangoutSpotlight participants={PEOPLE} activeSpeakerId="bob" />);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(749);
+      });
+      expect(spotlitName()).toBe('Alice');
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1);
+      });
+      expect(spotlitName()).toBe('Bob');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('speakerHysteresisMs={0} swaps without advancing any timer', () => {
+    const { rerender } = render(
+      <HangoutSpotlight participants={PEOPLE} activeSpeakerId="alice" speakerHysteresisMs={0} />,
+    );
+    expect(spotlitName()).toBe('Alice');
+
+    rerender(
+      <HangoutSpotlight participants={PEOPLE} activeSpeakerId="bob" speakerHysteresisMs={0} />,
+    );
+    // No fake timers, no act() beyond rerender's own — this is the property
+    // that makes the component storyable and snapshot-testable.
+    expect(spotlitName()).toBe('Bob');
+  });
+
+  it('a speaker who stops talking inside the window never reaches the spotlight', async () => {
+    vi.useFakeTimers();
+    try {
+      const { rerender } = render(
+        <HangoutSpotlight participants={PEOPLE} activeSpeakerId="alice" speakerHysteresisMs={750} />,
+      );
+      // Bob coughs for 200ms, then Alice is speaking again.
+      rerender(
+        <HangoutSpotlight participants={PEOPLE} activeSpeakerId="bob" speakerHysteresisMs={750} />,
+      );
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(200);
+      });
+      rerender(
+        <HangoutSpotlight participants={PEOPLE} activeSpeakerId="alice" speakerHysteresisMs={750} />,
+      );
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(2000);
+      });
+      expect(spotlitName()).toBe('Alice');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('first paint already matches activeSpeakerId, even at the default window', () => {
+    render(<HangoutSpotlight participants={PEOPLE} activeSpeakerId="bob" />);
+    expect(spotlitName()).toBe('Bob');
+  });
+});
+
 describe('HangoutSpotlight — sharer attribution (F5)', () => {
   it('spotlightContentLabel attributes the share to the SHARER, not the speaker', () => {
     render(

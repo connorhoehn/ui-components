@@ -1,12 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TranscriptOverlay, type CaptionLine } from './TranscriptOverlay';
 
-// Opacity is computed from each line's age against `fadeAfterMs`, so the
-// timestamps below are built relative to render time — a hardcoded ISO string
-// would render every line at the 0.35 floor.
+// Opacity is computed from each line's age against `fadeAfterMs`. These
+// fixtures use FIXED ISO timestamps and pin the reference point with the
+// `now` prop (set in meta.args below), so every story renders the same fade
+// ramp on every load — and the ramp is visible at all, which it would not be
+// if `now` defaulted to Date.now() against a hardcoded fixture.
+
+const NOW = Date.parse('2026-05-28T20:00:00.000Z');
 
 function ago(secondsAgo: number): string {
-  return new Date(Date.now() - secondsAgo * 1000).toISOString();
+  return new Date(NOW - secondsAgo * 1000).toISOString();
 }
 
 const LINES: CaptionLine[] = [
@@ -20,6 +24,7 @@ const meta = {
   component: TranscriptOverlay,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  args: { now: NOW },
   decorators: [
     (Story) => (
       <div className="relative w-[560px] h-[315px] rounded-lg bg-video-stage overflow-hidden grid place-items-center">
@@ -66,6 +71,20 @@ export const UnnamedSpeakers: Story = {
     lines: [
       { id: 'c5', speakerId: 'a7f3c19b2e', text: 'Sorry, joining from my phone.', at: ago(3) },
       { id: 'c6', speakerId: 'd41d8cd98f', text: 'No problem, we can hear you.', at: ago(0) },
+    ],
+  },
+};
+
+/** The fade ramp end to end: fresh (opacity 1), half-aged (0.5), and past the
+ *  window (clamped to the 0.35 floor). Only reproducible because `now` is
+ *  pinned — with a live clock all three would sit on the floor. */
+export const FadeRamp: Story = {
+  args: {
+    fadeAfterMs: 8000,
+    lines: [
+      { id: 'f1', speakerId: 'spk-1', speakerName: 'Alice Johnson', text: 'Oldest line — clamped at the 0.35 floor.', at: ago(32) },
+      { id: 'f2', speakerId: 'spk-2', speakerName: 'Bob Smith', text: 'Half way through the fade window.', at: ago(4) },
+      { id: 'f3', speakerId: 'spk-3', speakerName: 'Cai Lund', text: 'Just spoken — full opacity.', at: ago(0) },
     ],
   },
 };

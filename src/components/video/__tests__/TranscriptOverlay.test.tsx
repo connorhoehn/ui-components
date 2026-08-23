@@ -140,3 +140,74 @@ describe('TranscriptOverlay', () => {
     expect(oldOpacity).toBeCloseTo(0.35, 5);
   });
 });
+
+// The `now` prop is the injectable-clock seam (same convention as
+// `RunFilterCriteria.now` in pipelines/runsUtils.ts). Everything below runs
+// on the REAL clock on purpose: the point of the prop is that a fixture of
+// fixed ISO timestamps produces a reproducible fade ramp without any
+// system-time mocking, which is what stories need and cannot do.
+describe('TranscriptOverlay — injected clock (now prop)', () => {
+  const FIXED = Date.parse('2020-01-01T00:00:00.000Z');
+
+  function at(msAgo: number): string {
+    return new Date(FIXED - msAgo).toISOString();
+  }
+
+  function opacityOf(text: string): number {
+    return parseFloat((screen.getByText(text).parentElement as HTMLElement).style.opacity);
+  }
+
+  it('measures line age against the injected now instead of Date.now()', () => {
+    render(
+      <TranscriptOverlay
+        now={FIXED}
+        fadeAfterMs={8000}
+        lines={[
+          { id: '1', speakerId: 's1', text: 'fresh', at: at(0) },
+          { id: '2', speakerId: 's1', text: 'half', at: at(4000) },
+          { id: '3', speakerId: 's1', text: 'floored', at: at(60_000) },
+        ]}
+      />,
+    );
+    expect(opacityOf('fresh')).toBeCloseTo(1, 5);
+    expect(opacityOf('half')).toBeCloseTo(0.5, 5);
+    expect(opacityOf('floored')).toBeCloseTo(0.35, 5);
+  });
+
+  it('without `now`, the same fixed-timestamp fixture collapses onto the floor', () => {
+    // This is the bug the prop exists to fix: a 2020 fixture is ~years old
+    // against the real clock, so every line clamps and the ramp is untestable.
+    render(
+      <TranscriptOverlay
+        fadeAfterMs={8000}
+        lines={[
+          { id: '1', speakerId: 's1', text: 'a', at: at(0) },
+          { id: '2', speakerId: 's1', text: 'b', at: at(4000) },
+        ]}
+      />,
+    );
+    expect(opacityOf('a')).toBeCloseTo(0.35, 5);
+    expect(opacityOf('b')).toBeCloseTo(0.35, 5);
+  });
+
+  it('reads the same for the same inputs across renders (no wall-clock drift)', () => {
+    const lines = [{ id: '1', speakerId: 's1', text: 'line', at: at(2000) }];
+    const first = render(<TranscriptOverlay now={FIXED} fadeAfterMs={8000} lines={lines} />);
+    const a = opacityOf('line');
+    first.unmount();
+    render(<TranscriptOverlay now={FIXED} fadeAfterMs={8000} lines={lines} />);
+    expect(opacityOf('line')).toBe(a);
+    expect(a).toBeCloseTo(0.75, 5);
+  });
+
+  it('now interacts with fadeAfterMs — a longer window keeps an old line brighter', () => {
+    const lines = [{ id: '1', speakerId: 's1', text: 'line', at: at(6000) }];
+    const short = render(<TranscriptOverlay now={FIXED} fadeAfterMs={8000} lines={lines} />);
+    // 1 - 6000/8000 = 0.25, below the 0.35 floor.
+    expect(opacityOf('line')).toBeCloseTo(0.35, 5);
+    short.unmount();
+
+    render(<TranscriptOverlay now={FIXED} fadeAfterMs={60_000} lines={lines} />);
+    expect(opacityOf('line')).toBeCloseTo(0.9, 5);
+  });
+});

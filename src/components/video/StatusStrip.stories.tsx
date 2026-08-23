@@ -48,3 +48,15 @@ export const Idle: Story = {
 export const PhaseOnly: Story = {
   args: { phase: 'live' },
 };
+
+/** The strip is `inline-flex` by default. `className` stretches it across a
+ *  player footer and spreads the slots — no wrapper `<div>`, no inline style. */
+export const FullWidthFooter: Story = {
+  args: {
+    phase: 'playing',
+    bitrateBps: 2_400_000,
+    viewerCount: 1284,
+    duration: 3725,
+    className: 'flex w-[480px] justify-between rounded-t-none',
+  },
+};

@@ -6,13 +6,8 @@ const meta = {
   component: StatsCard,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
-  decorators: [
-    (Story) => (
-      <div className="w-64">
-        <Story />
-      </div>
-    ),
-  ],
+  // Sized through the component's own `className` — no wrapper decorator.
+  args: { className: 'w-64' },
 } satisfies Meta<typeof StatsCard>;
 
 export default meta;

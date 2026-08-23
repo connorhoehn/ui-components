@@ -11,6 +11,15 @@ export interface StreamMetrics {
 
 export interface StatsCardProps {
   metrics: StreamMetrics | null;
+  /**
+   * Sizing / positioning classes from the caller. Prefer this over `style`:
+   * the card has no intrinsic width, so every consumer was wrapping it in a
+   * `<div>` purely to size it — inline styles are banned in demos and
+   * stories. Applied to BOTH the empty and populated states, and composed
+   * through `cn()` so a caller class wins.
+   */
+  className?: string;
+  /** @deprecated Use `className`. Kept so existing callers keep compiling. */
   style?: CSSProperties;
 }
 
@@ -20,10 +29,10 @@ function formatBitrate(bps: number): string {
   return `${bps} bps`;
 }
 
-export function StatsCard({ metrics, style }: StatsCardProps) {
+export function StatsCard({ metrics, className, style }: StatsCardProps) {
   if (!metrics) {
     return (
-      <div className={cn('p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs')} style={style}>
+      <div className={cn('p-3 bg-surface-inverse rounded-lg text-text-tertiary text-xs', className)} style={style}>
         No stream data
       </div>
     );
@@ -40,7 +49,7 @@ export function StatsCard({ metrics, style }: StatsCardProps) {
   }
 
   return (
-    <div className={cn('p-3 bg-surface-inverse rounded-lg text-xs text-code-text')} style={style}>
+    <div className={cn('p-3 bg-surface-inverse rounded-lg text-xs text-code-text', className)} style={style}>
       {rows.map(([label, value]) => (
         <div key={label} className={cn('flex justify-between py-[3px]')}>
           <span className={cn('text-text-tertiary')}>{label}</span>
