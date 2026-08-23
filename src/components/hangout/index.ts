@@ -3,6 +3,15 @@
 // non-participant "call in progress — join?" affordance backed by the
 // call `status` query).
 
+export { InviteToCallDialog } from './InviteToCallDialog';
+export type {
+    InviteToCallDialogProps,
+    InviteCandidate,
+} from './InviteToCallDialog';
+
+export { CallPresenceIndicator } from './CallPresenceIndicator';
+export type { CallPresenceIndicatorProps } from './CallPresenceIndicator';
+
 export { ActiveCallBanner } from './ActiveCallBanner';
 export type {
     ActiveCallBannerProps,

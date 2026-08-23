@@ -1003,6 +1003,26 @@ export declare interface CallParticipantStripProps {
     style?: CSSProperties;
 }
 
+export declare function CallPresenceIndicator({ participants, count, onClick, label, maxVisible, }: CallPresenceIndicatorProps): JSX.Element | null;
+
+export declare interface CallPresenceIndicatorProps {
+    /** People currently on the call. Names must be pre-resolved. */
+    participants: Array<{
+        userId: string;
+        name: string;
+        avatarUrl?: string;
+    }>;
+    /** Overrides the rendered count when the caller knows a truer number
+     *  than it has names for (e.g. the server's participantCount while
+     *  some display names are still resolving). */
+    count?: number;
+    /** Click target — typically "open/expand the call". */
+    onClick?: () => void;
+    /** Live-region label prefix, e.g. the lobby name. */
+    label?: string;
+    maxVisible?: number;
+}
+
 /**
  * Slack-Huddles-style "someone started a hangout" banner. Lightweight,
  * inline (not modal), low-friction: click "Join" to enter the call,
@@ -3467,6 +3487,38 @@ export declare interface InputProps extends Omit<InputHTMLAttributes<HTMLInputEl
 export declare type InputSize = 'sm' | 'md';
 
 export declare type InputType = 'text' | 'number' | 'url' | 'password' | 'email' | 'search' | 'date' | 'datetime-local' | 'time';
+
+/** A person who can be invited. Thin on purpose so callers can map a
+ *  presence roster straight in without dragging in PresenceUser. */
+export declare interface InviteCandidate {
+    userId: string;
+    /** Pre-resolved display name — callers MUST pass a human name, never
+     *  a raw id/UUID (mirrors ResumeCallParticipant's contract). */
+    name: string;
+    avatarUrl?: string;
+    /** True when this person is already on the call. Rendered as a
+     *  non-selectable "In call" row so the list still reads as the full
+     *  roster rather than mysteriously omitting people. */
+    alreadyInCall?: boolean;
+    /** True when they have been rung but have not answered yet. */
+    pending?: boolean;
+}
+
+export declare function InviteToCallDialog({ open, onClose, onInvite, candidates, lobbyLabel, loading, }: InviteToCallDialogProps): JSX.Element;
+
+export declare interface InviteToCallDialogProps {
+    open: boolean;
+    onClose: () => void;
+    /** Confirm handler — receives every selected userId. May be async;
+     *  the caller flips `loading` while the invites are in flight. */
+    onInvite: (userIds: string[]) => void | Promise<void>;
+    /** Everyone invitable, including people already on the call (they
+     *  render disabled). */
+    candidates: InviteCandidate[];
+    /** Human label for the call being invited to, shown in the subtitle. */
+    lobbyLabel?: string;
+    loading?: boolean;
+}
 
 export declare function isValidCustomFieldType(x: unknown): x is CustomFieldType;
 
