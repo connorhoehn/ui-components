@@ -5,6 +5,13 @@ import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 
 export default defineConfig({
+  // vite-plugin-dts is deliberately pinned to v4. v5 (a wrapper over
+  // unplugin-dts) renames `rollupTypes` -> `bundleTypes` and silently ignores
+  // the old key, and even with the rename it appends every ambient
+  // `declare module` / `declare global` block from src/declarations.d.ts to
+  // EVERY rolled-up entry -- shipping a `declare module 'reactflow'`
+  // augmentation and an unresolvable `DevEditorBridge` reference to consumers.
+  // v4 works fine on vite 8 (rolldown) and emits byte-identical .d.ts.
   plugins: [react(), tailwindcss(), dts({ rollupTypes: true })],
   resolve: {
     alias: {

@@ -1,0 +1,582 @@
+import { useCallback as e, useEffect as t, useRef as n, useState as r } from "react";
+//#region src/hooks/useComments.ts
+function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
+	let [c, l] = r([]), [u, d] = r(!1), [f, p] = r(null), m = n(s);
+	t(() => {
+		m.current = s;
+	}, [s]);
+	let h = n(o);
+	return t(() => {
+		h.current = o;
+	}, [o]), t(() => {
+		!i || !a || !o || (d(!0), p(null), fetch(`/api/rooms/${a}/posts/${o}/comments`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
+			if (!e.ok) throw Error(`Failed to load comments (${e.status})`);
+			return e.json();
+		}).then((e) => {
+			l(e.comments ?? []);
+		}).catch((e) => {
+			p(e.message);
+		}).finally(() => {
+			d(!1);
+		}));
+	}, [
+		i,
+		a,
+		o,
+		""
+	]), t(() => m.current((e) => {
+		if (e.type === "social:comment") {
+			let t = e.payload ?? e;
+			if (t.postId !== h.current) return;
+			let n = {
+				...t,
+				_fadeIn: !0
+			};
+			l((e) => [...e, n]), setTimeout(() => {
+				l((e) => e.map((e) => e.commentId === n.commentId ? {
+					...e,
+					_fadeIn: !1
+				} : e));
+			}, 300);
+		}
+	}), []), {
+		comments: c,
+		createComment: e(async (e, t) => {
+			if (!(!i || !a || !o)) {
+				d(!0), p(null);
+				try {
+					let n = { content: e };
+					t && (n.parentCommentId = t);
+					let r = await fetch(`/api/rooms/${a}/posts/${o}/comments`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${i}`
+						},
+						body: JSON.stringify(n)
+					});
+					if (!r.ok) throw Error(`Failed to create comment (${r.status})`);
+					let s = await r.json();
+					l((e) => [...e, s]);
+				} catch (e) {
+					p(e.message);
+				} finally {
+					d(!1);
+				}
+			}
+		}, [
+			i,
+			a,
+			o,
+			""
+		]),
+		deleteComment: e(async (e) => {
+			if (!(!i || !a || !o)) {
+				p(null);
+				try {
+					let t = await fetch(`/api/rooms/${a}/posts/${o}/comments/${e}`, {
+						method: "DELETE",
+						headers: { Authorization: `Bearer ${i}` }
+					});
+					if (!t.ok) throw Error(`Failed to delete comment (${t.status})`);
+					l((t) => t.filter((t) => t.commentId !== e));
+				} catch (e) {
+					p(e.message);
+				}
+			}
+		}, [
+			i,
+			a,
+			o,
+			""
+		]),
+		loading: u,
+		error: f
+	};
+}
+//#endregion
+//#region src/hooks/useFriends.ts
+function a({ idToken: n }) {
+	let [i, a] = r([]), [o, s] = r([]), [c, l] = r([]), [u, d] = r(!1), [f, p] = r(null);
+	t(() => {}, [n, ""]);
+	let m = e(async () => {
+		if (!n) return;
+		let e = await fetch("/api/social/following", { headers: { Authorization: `Bearer ${n}` } });
+		if (e.ok) {
+			let t = await e.json();
+			s(t.following ?? []);
+		}
+	}, [n, ""]);
+	return {
+		followers: i,
+		following: o,
+		friends: c,
+		follow: e(async (e) => {
+			if (n) {
+				p(null);
+				try {
+					let t = await fetch(`/api/social/follow/${e}`, {
+						method: "POST",
+						headers: { Authorization: `Bearer ${n}` }
+					});
+					if (!t.ok) throw Error(`Failed to follow (${t.status})`);
+					await m();
+				} catch (e) {
+					throw p(e.message), e;
+				}
+			}
+		}, [
+			n,
+			"",
+			m
+		]),
+		unfollow: e(async (e) => {
+			if (n) {
+				p(null);
+				try {
+					let t = await fetch(`/api/social/follow/${e}`, {
+						method: "DELETE",
+						headers: { Authorization: `Bearer ${n}` }
+					});
+					if (!t.ok) throw Error(`Failed to unfollow (${t.status})`);
+					await m();
+				} catch (e) {
+					throw p(e.message), e;
+				}
+			}
+		}, [
+			n,
+			"",
+			m
+		]),
+		loading: u,
+		error: f
+	};
+}
+//#endregion
+//#region src/hooks/useGroups.ts
+function o({ idToken: t }) {
+	let [n, i] = r([]), [a, o] = r([]), [s, c] = r(!1), [l, u] = r(null), d = e(() => ({
+		"Content-Type": "application/json",
+		Authorization: `Bearer ${t}`
+	}), [t]);
+	return {
+		groups: n,
+		createGroup: e(async (e, n, r) => {
+			if (t) {
+				c(!0), u(null);
+				try {
+					let t = await fetch("/api/groups", {
+						method: "POST",
+						headers: d(),
+						body: JSON.stringify({
+							name: e,
+							description: n,
+							visibility: r
+						})
+					});
+					if (!t.ok) throw Error(`Failed to create group (${t.status})`);
+					let a = await t.json();
+					i((e) => [a, ...e]);
+				} catch (e) {
+					throw u(e.message), e;
+				} finally {
+					c(!1);
+				}
+			}
+		}, [
+			t,
+			"",
+			d
+		]),
+		deleteGroup: e(async (e) => {
+			if (t) {
+				c(!0), u(null);
+				try {
+					let n = await fetch(`/api/groups/${e}`, {
+						method: "DELETE",
+						headers: { Authorization: `Bearer ${t}` }
+					});
+					if (!n.ok) throw Error(`Failed to delete group (${n.status})`);
+					i((t) => t.filter((t) => t.groupId !== e));
+				} catch (e) {
+					u(e.message);
+				} finally {
+					c(!1);
+				}
+			}
+		}, [t, ""]),
+		joinGroup: e(async (e) => {
+			if (t) {
+				u(null);
+				try {
+					let n = await fetch(`/api/groups/${e}/join`, {
+						method: "POST",
+						headers: { Authorization: `Bearer ${t}` }
+					});
+					if (!n.ok) throw Error(`Failed to join group (${n.status})`);
+				} catch (e) {
+					u(e.message);
+				}
+			}
+		}, [t, ""]),
+		leaveGroup: e(async (e) => {
+			if (t) {
+				u(null);
+				try {
+					let n = await fetch(`/api/groups/${e}/leave`, {
+						method: "DELETE",
+						headers: { Authorization: `Bearer ${t}` }
+					});
+					if (!n.ok) throw Error(`Failed to leave group (${n.status})`);
+					i((t) => t.filter((t) => t.groupId !== e));
+				} catch (e) {
+					u(e.message);
+				}
+			}
+		}, [t, ""]),
+		inviteUser: e(async (e, n) => {
+			if (t) {
+				u(null);
+				try {
+					let t = await fetch(`/api/groups/${e}/invite`, {
+						method: "POST",
+						headers: d(),
+						body: JSON.stringify({ userId: n })
+					});
+					if (!t.ok) throw Error(`Failed to invite user (${t.status})`);
+				} catch (e) {
+					u(e.message);
+				}
+			}
+		}, [
+			t,
+			"",
+			d
+		]),
+		acceptInvite: e(async (e, n) => {
+			if (t) {
+				u(null);
+				try {
+					let t = await fetch(`/api/groups/${e}/accept`, {
+						method: "POST",
+						headers: d(),
+						body: JSON.stringify({ accept: n })
+					});
+					if (!t.ok) throw Error(`Failed to respond to invite (${t.status})`);
+				} catch (e) {
+					u(e.message);
+				}
+			}
+		}, [
+			t,
+			"",
+			d
+		]),
+		loadMembers: e(async (e) => {
+			if (t) {
+				c(!0), u(null);
+				try {
+					let n = await fetch(`/api/groups/${e}/members`, { headers: { Authorization: `Bearer ${t}` } });
+					if (!n.ok) throw Error(`Failed to load members (${n.status})`);
+					let r = await n.json();
+					o(r.members ?? []);
+				} catch (e) {
+					u(e.message);
+				} finally {
+					c(!1);
+				}
+			}
+		}, [t, ""]),
+		members: a,
+		loading: s,
+		error: l
+	};
+}
+//#endregion
+//#region src/hooks/useLikes.ts
+function s({ idToken: i, roomId: a, postId: o, commentId: s, onMessage: c }) {
+	let [l, u] = r(!1), [d, f] = r(0), [p, m] = r([]), [h, g] = r(!1), [_, v] = r(null), y = n(c);
+	t(() => {
+		y.current = c;
+	}, [c]);
+	let b = n(o);
+	return t(() => {
+		b.current = o;
+	}, [o]), t(() => {
+		!i || !a || !o || s || (g(!0), v(null), fetch(`/api/rooms/${a}/posts/${o}/likes`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
+			if (!e.ok) throw Error(`Failed to load likes (${e.status})`);
+			return e.json();
+		}).then((e) => {
+			f(e.count ?? 0), m(e.users ?? []), u(!1);
+		}).catch((e) => {
+			v(e.message);
+		}).finally(() => {
+			g(!1);
+		}));
+	}, [
+		i,
+		a,
+		o,
+		s,
+		""
+	]), t(() => y.current((e) => {
+		if (e.type === "social:like") {
+			let t = e.payload ?? e;
+			if (t.postId !== b.current) return;
+			f((e) => t.action === "unliked" ? Math.max(0, e - 1) : e + 1);
+		}
+	}), []), {
+		isLiked: l,
+		likeCount: d,
+		whoLiked: p,
+		toggle: e(async () => {
+			if (!i || !a || !o) return;
+			g(!0), v(null);
+			let e = l;
+			u(!e), f((t) => e ? t - 1 : t + 1);
+			try {
+				let t;
+				t = s ? `/api/rooms/${a}/posts/${o}/comments/${s}/likes` : `/api/rooms/${a}/posts/${o}/likes`;
+				let n = await fetch(t, {
+					method: e ? "DELETE" : "POST",
+					headers: { Authorization: `Bearer ${i}` }
+				});
+				if (!n.ok) throw u(e), f((t) => e ? t + 1 : t - 1), Error(`Failed to toggle like (${n.status})`);
+			} catch (e) {
+				v(e.message);
+			} finally {
+				g(!1);
+			}
+		}, [
+			i,
+			a,
+			o,
+			s,
+			l,
+			""
+		]),
+		reactWithEmoji: e(async (e) => {
+			if (!(!i || !a || !o)) {
+				v(null);
+				try {
+					let t = await fetch(`/api/rooms/${a}/posts/${o}/reactions`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${i}`
+						},
+						body: JSON.stringify({ emoji: e })
+					});
+					if (!t.ok) throw Error(`Failed to react (${t.status})`);
+				} catch (e) {
+					v(e.message);
+				}
+			}
+		}, [
+			i,
+			a,
+			o,
+			""
+		]),
+		loading: h,
+		error: _
+	};
+}
+//#endregion
+//#region src/hooks/usePosts.ts
+function c({ idToken: i, roomId: a, onMessage: o }) {
+	let [s, c] = r([]), [l, u] = r(void 0), [d, f] = r(!1), [p, m] = r(!1), [h, g] = r(null), _ = n(o);
+	t(() => {
+		_.current = o;
+	}, [o]);
+	let v = n(a);
+	t(() => {
+		v.current = a;
+	}, [a]), t(() => {
+		!i || !a || (f(!0), g(null), c([]), u(void 0), fetch(`/api/rooms/${a}/posts`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
+			if (!e.ok) throw Error(`Failed to load posts (${e.status})`);
+			return e.json();
+		}).then((e) => {
+			c(e.posts ?? []), u(e.lastKey);
+		}).catch((e) => {
+			g(e.message);
+		}).finally(() => {
+			f(!1);
+		}));
+	}, [
+		i,
+		a,
+		""
+	]), t(() => _.current((e) => {
+		if (e.type === "social:post") {
+			let t = e.payload ?? e;
+			if (t.roomId !== v.current) return;
+			let n = {
+				...t,
+				_fadeIn: !0
+			};
+			c((e) => [n, ...e]), setTimeout(() => {
+				c((e) => e.map((e) => e.postId === n.postId ? {
+					...e,
+					_fadeIn: !1
+				} : e));
+			}, 300);
+		}
+	}), []);
+	let y = e(async () => {
+		if (!(!i || !a || !l)) {
+			f(!0), g(null);
+			try {
+				let e = await fetch(`/api/rooms/${a}/posts?lastKey=${encodeURIComponent(l)}`, { headers: { Authorization: `Bearer ${i}` } });
+				if (!e.ok) throw Error(`Failed to load more posts (${e.status})`);
+				let t = await e.json();
+				c((e) => [...e, ...t.posts ?? []]), u(t.lastKey);
+			} catch (e) {
+				g(e.message);
+			} finally {
+				f(!1);
+			}
+		}
+	}, [
+		i,
+		a,
+		l,
+		""
+	]);
+	return {
+		posts: s,
+		createPost: e(async (e) => {
+			if (!(!i || !a)) {
+				m(!0), g(null);
+				try {
+					let t = await fetch(`/api/rooms/${a}/posts`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${i}`
+						},
+						body: JSON.stringify({ content: e })
+					});
+					if (!t.ok) throw Error(`Failed to create post (${t.status})`);
+					let n = await t.json();
+					c((e) => [n, ...e]);
+				} catch (e) {
+					throw g(e.message), e;
+				} finally {
+					m(!1);
+				}
+			}
+		}, [
+			i,
+			a,
+			""
+		]),
+		editPost: e(async (e, t) => {
+			if (!(!i || !a)) {
+				m(!0), g(null);
+				try {
+					let n = await fetch(`/api/rooms/${a}/posts/${e}`, {
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${i}`
+						},
+						body: JSON.stringify({ content: t })
+					});
+					if (!n.ok) throw Error(`Failed to edit post (${n.status})`);
+					let r = await n.json();
+					c((t) => t.map((t) => t.postId === e ? r : t));
+				} catch (e) {
+					g(e.message);
+				} finally {
+					m(!1);
+				}
+			}
+		}, [
+			i,
+			a,
+			""
+		]),
+		deletePost: e(async (e) => {
+			if (!(!i || !a)) {
+				m(!0), g(null);
+				try {
+					let t = await fetch(`/api/rooms/${a}/posts/${e}`, {
+						method: "DELETE",
+						headers: { Authorization: `Bearer ${i}` }
+					});
+					if (!t.ok) throw Error(`Failed to delete post (${t.status})`);
+					c((t) => t.filter((t) => t.postId !== e));
+				} catch (e) {
+					g(e.message);
+				} finally {
+					m(!1);
+				}
+			}
+		}, [
+			i,
+			a,
+			""
+		]),
+		getUserPosts: e(async (e) => {
+			if (!i) return [];
+			let t = await fetch(`/api/posts/${e}`, { headers: { Authorization: `Bearer ${i}` } });
+			if (!t.ok) throw Error(`Failed to load user posts (${t.status})`);
+			return (await t.json()).posts;
+		}, [i, ""]),
+		loading: d,
+		error: h,
+		hasMore: l !== void 0,
+		loadMore: y
+	};
+}
+//#endregion
+//#region src/hooks/useSocialProfile.ts
+function l({ idToken: n }) {
+	let [i, a] = r(null), [o, s] = r(!1), [c, l] = r(null), u = e(() => ({
+		"Content-Type": "application/json",
+		Authorization: `Bearer ${n}`
+	}), [n]);
+	return t(() => {}, [n, ""]), {
+		profile: i,
+		loading: o,
+		error: c,
+		updateProfile: e(async (e) => {
+			if (n) {
+				s(!0), l(null);
+				try {
+					let t = await fetch("/api/profiles", {
+						method: "PUT",
+						headers: u(),
+						body: JSON.stringify(e)
+					});
+					if (!t.ok) throw Error(`Failed to update profile (${t.status})`);
+					let n = await t.json();
+					a(n);
+				} catch (e) {
+					l(e.message);
+				} finally {
+					s(!1);
+				}
+			}
+		}, [
+			n,
+			"",
+			u
+		]),
+		viewProfile: e(async (e) => {
+			if (!n) return null;
+			try {
+				let t = await fetch(`/api/profiles/${e}`, { headers: { Authorization: `Bearer ${n}` } });
+				if (t.status === 403 || t.status === 404) return null;
+				if (!t.ok) throw Error(`Failed to view profile (${t.status})`);
+				return await t.json();
+			} catch {
+				return null;
+			}
+		}, [n, ""])
+	};
+}
+//#endregion
+export { a, o as i, c as n, i as o, s as r, l as t };
