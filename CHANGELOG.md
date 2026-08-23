@@ -8,6 +8,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.73.3] — 2026-08-23
+
+Dependency majors, taken only where they cannot reach consumers. One of
+them uncovered a shipping bug.
+
+### Fixed
+
+- **`ajv` was an undeclared direct dependency.**
+  `pipelines/persistence/pipelineStorage.ts` imports it to validate
+  persisted pipelines at runtime, but it appeared in no `dependencies`,
+  `devDependencies` or `peerDependencies` — it only ever resolved because
+  `vite-plugin-dts@4` happened to pull it in transitively. The build broke
+  the instant that transitive provider changed, which is how it surfaced.
+  Now a declared `dependency` and externalised alongside the other three.
+
+### Changed
+
+- `@testing-library/jest-dom` 6 → **7** and `jsdom` 28 → **29**. Test-only,
+  whole suite green.
+
+### Not taken (deliberately)
+
+- **`vite-plugin-dts` 5 silently stops emitting types.** With v5 the build
+  reports success while producing **zero** `.d.ts` files — no error, no
+  warning. Installing its newly-peer `@microsoft/api-extractor` did not
+  help. Reverted to 4.5.4. The packaging test caught the missing types,
+  which is exactly what it exists for.
+- **`@vitejs/plugin-react` 6 requires `vite@^8`** — it cannot be taken
+  independently, so it belongs to the vite-8 decision below.
+- Left for an explicit call, all consumer-visible or large:
+  `vite` 7 → 8 (anchors the build-tool cluster; tailwind and vitest already
+  accept 8), `react-router` 7 → 8 (a declared **peer** — bumping the range
+  is consumer-visible), `typescript` 5.9 → 7.0 (the Go compiler rewrite).
+
+## [2.73.2] — 2026-08-23
+
+Shipped from a parallel session; entry reconstructed here so the release
+history stays complete.
+
+### Added
+
+- **`CallWidget` gains a `controlsExtras` slot.** The docked widget had no
+  extension point, so a consumer could not offer the same action in both
+  chromes — `MediaControlsBar` (expanded) had extras, the docked widget had
+  nothing. Also forwards `controlsExtras` to the active view.
+- **`useToastOptional`** — for components that want to notify but must still
+  mount where no provider exists (a widget reused inside a panel, or
+  rendered bare in a test). Callers use `toast?.(…)` instead of crashing the
+  subtree.
+
 ## [2.73.1] — 2026-08-22
 
 Dependency hygiene. Every in-range update applied; **0 vulnerabilities**

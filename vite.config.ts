@@ -42,6 +42,11 @@ export default defineConfig({
         // EVERY entry pulled, so importing `Chip` dragged in 64KB of
         // command-palette fuzzy-matching.
         'clsx', 'tailwind-merge', 'cmdk',
+        // ajv does runtime schema validation of persisted pipelines. It was
+        // an UNDECLARED direct import until v2.73.3 — only resolvable because
+        // vite-plugin-dts 4 happened to pull it in transitively, and it got
+        // silently inlined into dist/pipelines.js. Declared + externalised now.
+        'ajv',
         'yjs', 'y-prosemirror', 'y-protocols',
         '@xyflow/react', 'reactflow', '@tiptap/react', '@tiptap/starter-kit',
         '@tiptap/extension-collaboration',

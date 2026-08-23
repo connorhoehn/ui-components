@@ -1,6 +1,6 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.73.2",
+  "version": "2.73.3",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -107,6 +107,7 @@
     "url": "https://github.com/connorhoehnslalom/ui-components.git"
   },
   "dependencies": {
+    "ajv": "^8.20.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "tailwind-merge": "^3.5.0"
@@ -187,7 +188,7 @@
     "@playwright/test": "^1.59.1",
     "@storybook/react-vite": "^10.4.0",
     "@tailwindcss/vite": "^4.2.4",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.0.0",
     "@tiptap/extension-collaboration": "^3.22.3",
     "@tiptap/extension-mention": "^3.22.3",
@@ -203,7 +204,7 @@
     "amazon-cognito-identity-js": "^6.3.20",
     "amazon-ivs-web-broadcast": "^1.38.1",
     "hls.js": "^1.7.0",
-    "jsdom": "^28.1.0",
+    "jsdom": "^29.1.1",
     "lib0": "^0.2.117",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -213,7 +214,7 @@
     "tailwindcss": "^4.2.4",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
-    "vite-plugin-dts": "^4.0.0",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^4.0.0",
     "y-prosemirror": "^1.3.7",
     "y-protocols": "^1.0.7",

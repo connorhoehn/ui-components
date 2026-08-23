@@ -4,6 +4,7 @@ import { c as j } from "./cn-B6yFEsav.js";
 import { c as De } from "./ToastProvider-DzXNjRMX.js";
 import { I as xe } from "./Input-Dt0yAs9r.js";
 import { a as Oe, u as je } from "./EventStreamContext-CjzSHXy-.js";
+import "ajv";
 import { u as _e } from "./IdentityContext-CLalsm_M.js";
 import { u as pe } from "./WebSocketContext-DPGFyPeZ.js";
 const Se = "ws_pipelines_v1_index", Me = "ws_pipelines_v1:";
@@ -74,7 +75,7 @@ function Je(e) {
   }
   qe(e);
 }
-function Et(e) {
+function kt(e) {
   const n = (/* @__PURE__ */ new Date()).toISOString(), r = crypto.randomUUID(), s = crypto.randomUUID(), a = crypto.randomUUID(), t = crypto.randomUUID(), o = crypto.randomUUID(), i = crypto.randomUUID(), c = crypto.randomUUID(), d = crypto.randomUUID(), w = crypto.randomUUID(), h = crypto.randomUUID(), m = crypto.randomUUID(), b = crypto.randomUUID(), f = { type: "trigger", triggerType: "manual" }, R = {
     type: "llm",
     provider: "bedrock",
@@ -220,7 +221,7 @@ function Et(e) {
   };
   return X(B), B;
 }
-function kt(e, n) {
+function Ut(e, n) {
   const r = W(e);
   if (!r) return null;
   const s = /* @__PURE__ */ new Map(), a = r.nodes.map((c) => {
@@ -248,7 +249,7 @@ function kt(e, n) {
   };
   return X(i), i;
 }
-function Ut(e) {
+function Nt(e) {
   const n = W(e);
   return n ? JSON.stringify(n, null, 2) : null;
 }
@@ -308,7 +309,7 @@ function Y(e) {
   const n = e.message || String(e);
   return n.includes("NetworkError") || n.includes("Failed to fetch") || n.includes("network") || n.includes("ECONNREFUSED") || n.includes("Unexpected token") || n.includes("not valid JSON") || n.includes("500") || n.includes("502") || n.includes("503") || n.includes("504");
 }
-async function Nt() {
+async function Ct() {
   try {
     return await ze();
   } catch (e) {
@@ -334,7 +335,7 @@ async function ae(e) {
     throw n;
   }
 }
-async function Ct(e) {
+async function At(e) {
   Je(e);
   try {
     await We(e);
@@ -352,7 +353,7 @@ async function Xe(e) {
     throw n;
   }
 }
-async function At(e) {
+async function Dt(e) {
   const n = (/* @__PURE__ */ new Date()).toISOString(), r = {
     id: crypto.randomUUID(),
     type: "trigger",
@@ -520,7 +521,7 @@ function ee() {
   return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 const ge = re(null);
-function Dt({
+function Ot({
   pipelineId: e,
   children: n
 }) {
@@ -754,7 +755,7 @@ function Dt({
   );
   return /* @__PURE__ */ T(ge.Provider, { value: G, children: n });
 }
-function Ot() {
+function jt() {
   const e = L(ge);
   if (!e)
     throw new Error(
@@ -762,7 +763,7 @@ function Ot() {
     );
   return e;
 }
-async function jt(e, n) {
+async function _t(e, n) {
   const r = `/api/pipelines/${e}/runs/${n}/force-fail`, s = await fetch(r, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -810,14 +811,14 @@ function ye(e) {
     return [];
   }
 }
-function _t(e, n) {
+function Mt(e, n) {
   return ye(e).find((s) => s.id === n) ?? null;
 }
 function nt(e, n) {
   const r = ye(e).filter((a) => a.id !== n.id), s = [n, ...r].sort((a, t) => t.startedAt.localeCompare(a.startedAt)).slice(0, et);
   tt(he(e), JSON.stringify(s));
 }
-function Mt(e) {
+function Ft(e) {
   try {
     localStorage.removeItem(he(e));
   } catch {
@@ -865,7 +866,7 @@ async function rt(e, n) {
     return console.error("[pipelineRuns] Failed to fetch run:", s), null;
   }
 }
-const Ft = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const qt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   getPipelineRun: rt,
   listPipelineRuns: Te
@@ -920,7 +921,7 @@ const ot = Object.freeze({
 function it(e) {
   return ot[e] ?? e;
 }
-function qt({
+function Lt({
   channel: e = "pipeline:all",
   onEvent: n,
   enabled: r = !1
@@ -1037,7 +1038,7 @@ function at() {
     requestResumeFromStep: w
   };
 }
-function Lt(e, n = {}) {
+function Bt(e, n = {}) {
   const { enabled: r = !0 } = n, { connectionState: s, sendMessage: a } = pe();
   q(() => {
     if (!r || !e || s !== "connected") return;
@@ -1048,7 +1049,7 @@ function Lt(e, n = {}) {
   }, [r, e, s, a]);
 }
 const $e = re(null);
-function Bt({
+function Jt({
   value: e,
   children: n
 }) {
@@ -1082,7 +1083,7 @@ function ut(e) {
   for (const i of t) o[i.id] = i;
   return o;
 }
-function Jt({ children: e }) {
+function Ht({ children: e }) {
   const n = L(ge), { triggerRun: r } = st(), s = at(), [a, t] = A({}), [o, i] = A(!1), c = V(/* @__PURE__ */ new Set()), d = V(null);
   q(() => {
     const l = n?.definition?.id;
@@ -1575,14 +1576,14 @@ function lt() {
     );
   return e;
 }
-function Ht() {
+function zt() {
   const e = Ee(), n = L(oe), r = e?.retryFromStep, s = n?.retryFromStep;
   return J(() => r ? async (a) => {
     await r(a);
   } : s ?? (async () => {
   }), [r, s]);
 }
-function zt(e) {
+function Vt(e) {
   const n = Ee(), r = L(oe), s = n?.getLatestStepForNode, a = J(
     () => s ? s(e) : null,
     [s, e]
@@ -1598,13 +1599,13 @@ function zt(e) {
   return s ? a : t;
 }
 const K = re(null);
-function Vt({
+function Wt({
   services: e,
   children: n
 }) {
   return /* @__PURE__ */ T(K.Provider, { value: e, children: n });
 }
-function Wt() {
+function Kt() {
   const e = L(K);
   if (!e)
     throw new Error(
@@ -1612,7 +1613,7 @@ function Wt() {
     );
   return e.getImageUrl;
 }
-function Kt() {
+function Xt() {
   const e = L(K);
   if (!e)
     throw new Error(
@@ -1620,7 +1621,7 @@ function Kt() {
     );
   return e;
 }
-function Xt(e) {
+function Yt(e) {
   const r = L(K)?.nodeVocabulary?.[e];
   return J(
     () => ({
@@ -1631,7 +1632,7 @@ function Xt(e) {
     [r]
   );
 }
-function Yt(e, n) {
+function Gt(e, n) {
   const s = L(K)?.modelOptions?.[e];
   return J(
     // An explicitly empty list is a real answer ("this host runs none"), so it
@@ -1640,14 +1641,14 @@ function Yt(e, n) {
     [s, n]
   );
 }
-function Gt() {
+function Qt() {
   const n = L(K)?.modelOptions;
   return J(
     () => (r, s) => n?.[r] ?? s,
     [n]
   );
 }
-function Qt() {
+function Zt() {
   const n = L(K)?.executableNodeTypes;
   return J(() => {
     if (!n) return () => !0;
@@ -1678,7 +1679,7 @@ function mt({ startedAt: e }) {
     }
   );
 }
-function Zt({
+function en({
   status: e,
   src: n,
   alt: r = "",
@@ -1772,7 +1773,7 @@ function Ue(e, n, r, s) {
   const t = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/breakpoint/${encodeURIComponent(r)}/patch`;
   return s ? `${t}/${encodeURIComponent(s)}` : `${t}`;
 }
-async function en(e, n, r, s, a) {
+async function tn(e, n, r, s, a) {
   const t = await fetch(Ue(e, n, r), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1799,7 +1800,7 @@ async function en(e, n, r, s, a) {
     i
   );
 }
-async function tn(e, n, r, s) {
+async function nn(e, n, r, s) {
   const a = await fetch(Ue(e, n, r, s), {
     method: "DELETE",
     credentials: "include"
@@ -1818,7 +1819,7 @@ async function tn(e, n, r, s) {
     o
   );
 }
-const nn = de(
+const rn = de(
   function({
     value: n,
     onChange: r,
@@ -1880,7 +1881,7 @@ const nn = de(
       }
     );
   }
-), rn = de(function({
+), sn = de(function({
   value: n,
   onChange: r,
   min: s = 0,
@@ -1921,7 +1922,7 @@ const nn = de(
     )
   ] });
 });
-function sn({
+function on({
   name: e,
   value: n,
   onChange: r,
@@ -2018,7 +2019,7 @@ function sn({
 const gt = {
   sm: "px-1.5 py-0.5 text-[11px]",
   md: "px-2 py-0.5 text-[12px]"
-}, on = de(
+}, an = de(
   function({
     value: n,
     onChange: r,
@@ -2109,7 +2110,7 @@ function It() {
     }
   );
 }
-function an({
+function cn({
   src: e,
   alt: n,
   size: r = "md",
@@ -2159,7 +2160,7 @@ function an({
     }
   );
 }
-async function cn(e, n, r, s) {
+async function un(e, n, r, s) {
   const a = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(n)}/resume?fromNodeId=${encodeURIComponent(r)}`, t = await fetch(a, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -2183,7 +2184,7 @@ function Ne(e) {
         n.push(`${encodeURIComponent(r)}=${encodeURIComponent(String(s))}`);
   return n.length > 0 ? `?${n.join("&")}` : "";
 }
-async function un(e, n, r = {}) {
+async function dn(e, n, r = {}) {
   const s = Ne({
     since: r.since,
     until: r.until,
@@ -2200,7 +2201,7 @@ async function un(e, n, r = {}) {
   }
   return t.json();
 }
-async function dn(e) {
+async function ln(e) {
   if (!e.actor && !e.pipelineId)
     throw new Error("searchAudit requires at least one of `actor` or `pipelineId`");
   const r = `/api/pipelines/audit/search${Ne({
@@ -2376,65 +2377,65 @@ function vt() {
   }, []);
   return { approvals: m, isLoading: a, error: o, retry: b };
 }
-function ln() {
+function pn() {
   const { approvals: e } = vt();
   return e;
 }
 export {
-  Bt as $,
-  Yt as A,
-  Xt as B,
-  Dt as C,
-  kt as D,
-  Ut as E,
-  Mt as F,
-  Zt as G,
+  Jt as $,
+  Gt as A,
+  Yt as B,
+  Ot as C,
+  Ut as D,
+  Nt as E,
+  Ft as F,
+  en as G,
   Je as H,
-  an as I,
-  on as J,
+  cn as I,
+  an as J,
   X as K,
   st as L,
   ve as M,
-  nn as N,
-  At as O,
-  Jt as P,
-  Et as Q,
-  sn as R,
-  rn as S,
+  rn as N,
+  Dt as O,
+  Ht as P,
+  kt as Q,
+  on as R,
+  sn as S,
   ae as T,
-  Ct as U,
+  At as U,
   Xe as V,
   ye as W,
   nt as X,
-  Lt as Y,
-  _t as Z,
+  Bt as Y,
+  Mt as Z,
   vt as _,
   W as a,
   Ee as a0,
-  Ft as a1,
-  Nt as b,
-  qt as c,
-  ln as d,
+  qt as a1,
+  Ct as b,
+  Lt as c,
+  pn as d,
   ke as e,
   ft as f,
-  Vt as g,
-  en as h,
-  jt as i,
+  Wt as g,
+  tn as h,
+  _t as i,
   rt as j,
-  un as k,
+  dn as k,
   Le as l,
   Te as m,
   Qe as n,
-  tn as o,
-  Wt as p,
-  Kt as q,
-  cn as r,
-  dn as s,
-  Qt as t,
+  nn as o,
+  Kt as p,
+  Xt as q,
+  un as r,
+  ln as s,
+  Zt as t,
   lt as u,
-  zt as v,
-  Ht as w,
-  Ot as x,
+  Vt as v,
+  zt as w,
+  jt as x,
   ge as y,
-  Gt as z
+  Qt as z
 };
