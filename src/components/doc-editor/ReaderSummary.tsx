@@ -105,7 +105,7 @@ export function HeaderBanner({
   const sc = STATUS_BADGE_COLORS[meta.status] ?? STATUS_BADGE_COLORS.draft;
   return (
     <div
-      className={cn('border-t-[3px] border-t-[#3b82f6] rounded-t-lg pt-5 pb-4 px-6 mb-4 bg-gradient-to-b from-surface-panel to-white col-span-full')}
+      className={cn('border-t-[3px] border-t-info rounded-t-lg pt-5 pb-4 px-6 mb-4 bg-gradient-to-b from-surface-panel to-white col-span-full')}
     >
       <div className={cn('flex items-center gap-3 mb-1.5')}>
         <h1 className={cn('text-xl font-bold m-0 text-text-primary flex-1')}>
@@ -153,7 +153,7 @@ export function ExecutiveSummaryCard({
       <h2 className={cn('text-xs font-semibold uppercase tracking-wide text-neutral m-0 mb-3')}>Executive Summary</h2>
       {hasFragment ? (
         <div className={cn(
-          'py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          'py-1 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-accent',
           bullets.length > 0 ? 'mb-3' : '',
         )}>
           <TiptapEditor
@@ -166,7 +166,7 @@ export function ExecutiveSummaryCard({
         </div>
       ) : hasContent ? (
         <div className={cn(
-          'text-sm text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-[#8b5cf6]',
+          'text-sm text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-3 bg-surface-panel rounded-md border-l-[3px] border-l-accent',
           bullets.length > 0 ? 'mb-3' : '',
         )}>
           {contentText!.trim()}

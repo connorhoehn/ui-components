@@ -42,7 +42,7 @@ function Tab({
       className={cn(
         'rounded-none -mb-[2px] border-b-2',
         active
-          ? 'font-semibold text-info-fg border-b-[#3b82f6]'
+          ? 'font-semibold text-info-fg border-b-info'
           : 'font-normal text-neutral border-b-transparent'
       )}
       onClick={onClick}

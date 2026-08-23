@@ -207,7 +207,7 @@ function CommentThreadNode({
     return (
       <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>
         <div
-          className={cn('bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
+          className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(true)}
         >
           <div className={cn('flex items-center gap-1.5')}>
@@ -244,7 +244,7 @@ function CommentThreadNode({
       {/* Resolved banner (expanded) */}
       {isResolved && resolvedExpanded && (
         <div
-          className={cn('bg-success-bg border-l-[3px] border-l-[#22c55e] px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
+          className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(false)}
         >
           <div className={cn('flex items-center gap-1.5')}>

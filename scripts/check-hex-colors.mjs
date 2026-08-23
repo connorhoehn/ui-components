@@ -21,8 +21,13 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ROOTS = ['src/components', 'src/theme', 'src/renderers', 'demo/src'];
+// The optional middle segment matters: `border-l-[#22c55e]` and
+// `ring-offset-[#fff]` are colour utilities too, and an earlier version of
+// this regex required the hex to follow the prefix DIRECTLY. That let 19
+// directional-border hexes through while this guard reported "zero
+// remaining" (v2.64.0). `placeholder-` was missing outright.
 const HEX_RE =
-  /\b(?:bg|text|border|ring|from|to|via|fill|stroke|accent|shadow|outline|decoration|divide|caret)-\[#[0-9a-fA-F]{3,8}\]/g;
+  /\b(?:bg|text|border|ring|from|to|via|fill|stroke|accent|shadow|outline|decoration|divide|caret|placeholder)(?:-(?:t|r|b|l|x|y|s|e|offset))?-\[#[0-9a-fA-F]{3,8}\]/g;
 
 // BURN-DOWN COMPLETE (2026-08-21, same day it was created): every hex was
 // either mapped to an existing token/tone role, or the missing family was

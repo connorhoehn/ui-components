@@ -131,7 +131,7 @@ export default function VersionHistoryPanel({
               key={v.timestamp}
               className={cn(
                 'flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary',
-                previewTimestamp === v.timestamp ? 'bg-info-bg border-l-[3px] border-l-[#3b82f6]' : 'bg-transparent border-l-[3px] border-l-transparent',
+                previewTimestamp === v.timestamp ? 'bg-info-bg border-l-[3px] border-l-info' : 'bg-transparent border-l-[3px] border-l-transparent',
               )}
               onClick={() => onPreview(v.timestamp)}
             >

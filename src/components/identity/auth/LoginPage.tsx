@@ -129,7 +129,7 @@ export function LoginPage({
             className={cn(
               'flex-1 rounded-none border-b-2',
               tab === 'signin'
-                ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                ? 'border-b-info text-info-fg font-semibold'
                 : 'border-b-transparent text-neutral font-normal'
             )}
             onClick={() => switchTab('signin')}
@@ -145,7 +145,7 @@ export function LoginPage({
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'register'
-                  ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                  ? 'border-b-info text-info-fg font-semibold'
                   : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('register')}
@@ -162,7 +162,7 @@ export function LoginPage({
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'forgot'
-                  ? 'border-b-[#3b82f6] text-info-fg font-semibold'
+                  ? 'border-b-info text-info-fg font-semibold'
                   : 'border-b-transparent text-neutral font-normal'
               )}
               onClick={() => switchTab('forgot')}

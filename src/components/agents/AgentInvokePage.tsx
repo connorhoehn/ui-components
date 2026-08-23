@@ -44,7 +44,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                 'py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]',
                 agent.status === 'offline' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
                 selectedId === agent.id
-                  ? 'bg-surface-hover border-l-[#6366f1]'
+                  ? 'bg-surface-hover border-l-primary'
                   : 'bg-transparent border-l-transparent',
               )}
             >

@@ -87,7 +87,7 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
             'flex items-center justify-between font-sans shadow-md',
             'animate-[slideInRight_0.3s_ease-out]',
             n.type === 'mention'
-              ? 'border-l-[3px] border-l-[#3b82f6]'
+              ? 'border-l-[3px] border-l-info'
               : 'border-l-[3px] border-l-primary',
           )}
         >

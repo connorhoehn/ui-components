@@ -37,10 +37,19 @@ const SEMANTIC_FAMILIES = [
 
 // Any utility that takes a colour. A focus ring, an SVG fill and a gradient
 // stop are all semantic choices, so none of them get a pass.
+// Every colour-taking utility prefix, INCLUDING the directional and
+// sub-property forms. `border-l` was already here; `border-x/y/s/e`,
+// `divide-x/y`, `ring-offset` and `placeholder` were not. No live
+// violations used them, but the sibling hex guard had exactly this shape
+// of hole and it let 19 `border-l-[#...]` through while reporting zero
+// (fixed 2026-08-23), so close it here before it can bite.
 const PREFIXES = [
-  'bg', 'text', 'border', 'border-l', 'border-r', 'border-t', 'border-b',
-  'ring', 'fill', 'stroke', 'divide', 'outline', 'decoration', 'accent',
-  'caret', 'shadow', 'from', 'to', 'via',
+  'bg', 'text', 'placeholder',
+  'border', 'border-l', 'border-r', 'border-t', 'border-b',
+  'border-x', 'border-y', 'border-s', 'border-e',
+  'ring', 'ring-offset', 'fill', 'stroke',
+  'divide', 'divide-x', 'divide-y',
+  'outline', 'decoration', 'accent', 'caret', 'shadow', 'from', 'to', 'via',
 ];
 
 const PALETTE_RE = new RegExp(

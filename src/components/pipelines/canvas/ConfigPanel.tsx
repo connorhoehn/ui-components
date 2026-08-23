@@ -566,7 +566,7 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
                   className={cn(
                     'flex-1 border-none bg-transparent text-xs font-semibold cursor-pointer font-inherit',
                     active
-                      ? 'text-text-primary border-b-2 border-b-[#646cff]'
+                      ? 'text-text-primary border-b-2 border-b-primary'
                       : 'text-neutral border-b-2 border-b-transparent',
                   )}
                   onClick={() => setTab(key)}

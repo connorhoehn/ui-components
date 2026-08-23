@@ -344,7 +344,7 @@ export function SectionSummariesCard({
                       if (frag && ydoc) {
                         return (
                           <div className={cn(
-                            'py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
+                            'py-1 px-2.5 bg-surface-panel rounded border-l-2 border-l-border-emphasis',
                             section.items.length > 0 ? 'mb-2' : '',
                           )}>
                             <TiptapEditor
@@ -360,7 +360,7 @@ export function SectionSummariesCard({
                       if (hasContent) {
                         return (
                           <div className={cn(
-                            'text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-[#cbd5e1]',
+                            'text-[13px] text-text-primary leading-relaxed whitespace-pre-wrap py-2 px-2.5 bg-surface-panel rounded border-l-2 border-l-border-emphasis',
                             section.items.length > 0 ? 'mb-2' : '',
                           )}>
                             {sectionContent.trim()}

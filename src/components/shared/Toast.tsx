@@ -29,10 +29,10 @@ const ACCENT_TEXT_CLASS: Record<ToastType, string> = {
 };
 
 const ACCENT_BORDER: Record<ToastType, string> = {
-  info:    'border-l-[#2563eb]',
-  success: 'border-l-[#16a34a]',
-  warning: 'border-l-[#d97706]',
-  error:   'border-l-[#dc2626]',
+  info:    'border-l-info',
+  success: 'border-l-success',
+  warning: 'border-l-warning',
+  error:   'border-l-danger',
 };
 
 function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps) {
