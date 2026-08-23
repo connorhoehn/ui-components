@@ -672,6 +672,7 @@ export function CallWidget({
   onUpgradeToVideo,
   onAddParticipant,
   availableParticipants,
+  controlsExtras,
   onMinimize,
   onExpand,
   layoutComponent,
@@ -841,6 +842,7 @@ export function CallWidget({
                   onUpgradeToVideo={onUpgradeToVideo}
                   onAddParticipant={onAddParticipant}
                   availableParticipants={availableParticipants}
+                  controlsExtras={controlsExtras}
                   onEndCall={onEndCall}
                   layoutComponent={layoutComponent}
                   callStats={callStats}

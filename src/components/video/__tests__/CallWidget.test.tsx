@@ -158,3 +158,37 @@ describe('CallWidget — onExpand prop', () => {
     expect(onExpand).toHaveBeenCalledTimes(1);
   });
 });
+
+// controlsExtras — the docked counterpart to MediaControlsBar's `extras`.
+// A consumer-supplied node docked above the controls row; the gateway
+// hangs its "add people to this call" trigger here.
+//
+// This test exists because the prop shipped once WITHOUT the
+// pass-through from CallWidget down to ActiveCallContent: it typechecked
+// against the props interface, built clean, and rendered nothing.
+describe('CallWidget — controlsExtras', () => {
+  it('active: renders the extras node above the controls', () => {
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('bob', 'Bob')]}
+        controlsExtras={<button data-testid="extras-node">Add people</button>}
+      />,
+    );
+    expect(screen.getByTestId('extras-node')).toBeInTheDocument();
+  });
+
+  it('minimized: suppresses extras along with the rest of the body', () => {
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        minimized
+        participants={[p('bob', 'Bob')]}
+        controlsExtras={<button data-testid="extras-node">Add people</button>}
+      />,
+    );
+    expect(screen.queryByTestId('extras-node')).not.toBeInTheDocument();
+  });
+});
