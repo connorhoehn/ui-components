@@ -80,12 +80,15 @@ export default function IngestItemsPage() {
     return map;
   }, [sources]);
 
-  const handleRetry = useCallback(async (itemId: string) => {
-    await retryItem(itemId);
+  // Return the hook's boolean rather than swallowing it — the drawer uses it
+  // to decide whether to close, and a drawer that closes on a rejected Skip
+  // is telling the operator the skip landed.
+  const handleRetry = useCallback(async (itemId: string): Promise<boolean> => {
+    return retryItem(itemId);
   }, [retryItem]);
 
-  const handleSkip = useCallback(async (itemId: string) => {
-    await skipItem(itemId);
+  const handleSkip = useCallback(async (itemId: string): Promise<boolean> => {
+    return skipItem(itemId);
   }, [skipItem]);
 
   if (loading && items.length === 0) {
@@ -284,8 +287,8 @@ export default function IngestItemsPage() {
         item={drawerItemFresh}
         sourceName={drawerItemFresh ? sourceNameMap.get(drawerItemFresh.sourceId) : undefined}
         onClose={() => setDrawerItem(null)}
-        onRetry={async (id) => { await handleRetry(id); }}
-        onSkip={async (id) => { await handleSkip(id); }}
+        onRetry={handleRetry}
+        onSkip={handleSkip}
       />
     </div>
   );

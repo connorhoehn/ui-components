@@ -163,14 +163,20 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
 
   const [referenceOptions, setReferenceOptions] = useState<Record<string, ReferenceOption[]>>({});
   const [referenceOptionsErrors, setReferenceOptionsErrors] = useState<Record<string, string>>({});
+  // Which lookups are still open. Without this the picker could not tell
+  // "not fetched yet" from "fetched, nothing there", so it spent the whole
+  // request window telling the user there was nothing to reference.
+  const [referenceOptionsLoading, setReferenceOptionsLoading] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!idToken || referencedTypeIds.length === 0) {
       setReferenceOptions({});
       setReferenceOptionsErrors({});
+      setReferenceOptionsLoading({});
       return;
     }
     let cancelled = false;
+    setReferenceOptionsLoading(Object.fromEntries(referencedTypeIds.map((id) => [id, true])));
     Promise.all(
       referencedTypeIds.map(async (refTypeId): Promise<readonly [string, ReferenceOption[] | { error: string }]> => {
         try {
@@ -204,6 +210,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
       }
       setReferenceOptions(opts);
       setReferenceOptionsErrors(errs);
+      setReferenceOptionsLoading({});
     });
     return () => { cancelled = true; };
   }, [idToken, referencedTypeIds, types]);
@@ -264,6 +271,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
               onSubmit={async (values) => { await createDocument(values); }}
               referenceOptions={referenceOptions}
               referenceOptionsErrors={referenceOptionsErrors}
+              referenceOptionsLoading={referenceOptionsLoading}
             />
 
             <section data-testid="documents-list">

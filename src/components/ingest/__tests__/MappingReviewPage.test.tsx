@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { vi } from 'vitest';
 import type { UseMappingReviewQueueResult } from '../../../hooks/useMappingReviewQueue';
 import type { IngestItem } from '../../../types/ingest';
@@ -146,5 +146,58 @@ describe('MappingReviewPage', () => {
     render(<MappingReviewPage />);
     fireEvent.click(screen.getByTestId('review-discard-itm-skip'));
     expect(skip).toHaveBeenCalledWith('itm-skip');
+  });
+});
+
+describe('MappingReviewPage action failures', () => {
+  // `remap` and `skip` REJECT on a non-2xx response. Every call site was
+  // `void remap(...)`, so a rejected Accept produced an unhandled promise
+  // rejection and nothing on screen: the row stayed exactly where it was and
+  // the operator had no way to tell a failure from a queue that simply had
+  // not refreshed yet.
+  it('surfaces a rejected Accept instead of swallowing it', async () => {
+    useMappingReviewQueueMock.mockReturnValue(makeResult({
+      items: [makeItem({ itemId: 'itm-1' })],
+      remap: vi.fn().mockRejectedValue(new Error('HTTP 409')),
+    }));
+    render(<MappingReviewPage />);
+
+    fireEvent.click(screen.getByTestId('review-accept-itm-1'));
+
+    const banner = await screen.findByTestId('mapping-review-action-error');
+    expect(banner).toHaveTextContent(/not updated/i);
+    expect(banner).toHaveTextContent(/HTTP 409/);
+    // The queue itself loaded fine and must stay on screen, unhidden and
+    // un-blamed for someone else's failure.
+    expect(screen.getByTestId('review-row-itm-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('mapping-review-error')).toBeNull();
+  });
+
+  it('surfaces a rejected Discard, and Dismiss clears it', async () => {
+    useMappingReviewQueueMock.mockReturnValue(makeResult({
+      items: [makeItem({ itemId: 'itm-1' })],
+      skip: vi.fn().mockRejectedValue(new Error('HTTP 503')),
+    }));
+    render(<MappingReviewPage />);
+
+    fireEvent.click(screen.getByTestId('review-discard-itm-1'));
+    const banner = await screen.findByTestId('mapping-review-action-error');
+    expect(banner).toHaveTextContent(/HTTP 503/);
+
+    fireEvent.click(within(banner).getByRole('button', { name: /dismiss/i }));
+    expect(screen.queryByTestId('mapping-review-action-error')).toBeNull();
+  });
+
+  it('a successful action leaves no error banner behind', async () => {
+    const remap = vi.fn().mockResolvedValue(undefined);
+    useMappingReviewQueueMock.mockReturnValue(makeResult({
+      items: [makeItem({ itemId: 'itm-1' })],
+      remap,
+    }));
+    render(<MappingReviewPage />);
+
+    fireEvent.click(screen.getByTestId('review-accept-itm-1'));
+    await waitFor(() => expect(remap).toHaveBeenCalled());
+    expect(screen.queryByTestId('mapping-review-action-error')).toBeNull();
   });
 });

@@ -19,6 +19,17 @@ const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL
 export interface MappingRuleEditorProps {
   rules: MappingRule[];
   onChange: (rules: MappingRule[]) => void;
+  /**
+   * Render the rule table without any mutating controls. Additive.
+   *
+   * A caller that has nowhere to put an edit — `SourceDetailPage` outside its
+   * edit mode passes `onChange={() => {}}` — still got the full Edit / Delete /
+   * reorder / Add Rule toolbar. Every one of those calls `onChange`, so the
+   * operator could open a rule, retype its target type, press Save, and watch
+   * the row snap back to its old value with no error and no explanation. The
+   * preview box stays: it is a read-only dry run and is useful here.
+   */
+  readOnly?: boolean;
 }
 
 const FIELD_OPTIONS = ['extension', 'path', 'mimeType', 'tag', 'name'] as const;
@@ -28,7 +39,7 @@ const OP_OPTIONS = ['eq', 'contains', 'regex', 'startsWith'] as const;
 // Component
 // ---------------------------------------------------------------------------
 
-export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditorProps) {
+export default function MappingRuleEditor({ rules, onChange, readOnly = false }: MappingRuleEditorProps) {
   const { idToken } = useIdentityContext();
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [previewPath, setPreviewPath] = useState('');
@@ -87,6 +98,18 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
     }
   }, [rules, onChange, editingIdx]);
 
+  // A reorder rewrites the `priority` of both swapped rows. If one of them is
+  // the row with an open draft, re-pointing `editingIdx` is only half the job:
+  // the draft still carries the priority it was snapshotted with, and
+  // `saveEdit` writes the WHOLE draft back over the row — so the reorder the
+  // operator had just performed was silently undone, leaving two rules sharing
+  // one priority and an ambiguous match order at ingest time. Re-pointing the
+  // draft's priority as well keeps the two in step, and the change is visible:
+  // the draft's priority input updates on screen as the arrow is clicked.
+  const repointDraftPriority = useCallback((priority: number) => {
+    setDraft((d) => (d ? { ...d, priority } : d));
+  }, []);
+
   const moveUp = useCallback((idx: number) => {
     if (idx === 0) return;
     const updated = [...rules];
@@ -96,9 +119,14 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
     updated[idx - 1] = { ...updated[idx - 1], priority: updated[idx].priority };
     updated[idx] = { ...updated[idx], priority: tmpPriority };
     onChange(updated);
-    if (editingIdx === idx) setEditingIdx(idx - 1);
-    else if (editingIdx === idx - 1) setEditingIdx(idx);
-  }, [rules, onChange, editingIdx]);
+    if (editingIdx === idx) {
+      setEditingIdx(idx - 1);
+      repointDraftPriority(updated[idx - 1].priority);
+    } else if (editingIdx === idx - 1) {
+      setEditingIdx(idx);
+      repointDraftPriority(updated[idx].priority);
+    }
+  }, [rules, onChange, editingIdx, repointDraftPriority]);
 
   const moveDown = useCallback((idx: number) => {
     if (idx >= rules.length - 1) return;
@@ -109,9 +137,14 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
     updated[idx] = { ...updated[idx], priority: updated[idx + 1].priority };
     updated[idx + 1] = { ...updated[idx + 1], priority: tmpPriority };
     onChange(updated);
-    if (editingIdx === idx) setEditingIdx(idx + 1);
-    else if (editingIdx === idx + 1) setEditingIdx(idx);
-  }, [rules, onChange, editingIdx]);
+    if (editingIdx === idx) {
+      setEditingIdx(idx + 1);
+      repointDraftPriority(updated[idx + 1].priority);
+    } else if (editingIdx === idx + 1) {
+      setEditingIdx(idx);
+      repointDraftPriority(updated[idx].priority);
+    }
+  }, [rules, onChange, editingIdx, repointDraftPriority]);
 
   const handlePreview = useCallback(async () => {
     if (!previewPath.trim()) return;
@@ -149,7 +182,11 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
   return (
     <div className="flex flex-col gap-2.5" data-testid="mapping-rule-editor">
       {rules.length === 0 ? (
-        <div className="p-4 text-center text-text-tertiary text-[13px]">No mapping rules configured. Add one to get started.</div>
+        <div className="p-4 text-center text-text-tertiary text-[13px]">
+          {readOnly
+            ? 'No mapping rules configured.'
+            : 'No mapping rules configured. Add one to get started.'}
+        </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-xs">
@@ -164,7 +201,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
             </thead>
             <tbody>
               {rules.map((rule, idx) => {
-                const isEditing = editingIdx === idx && draft !== null;
+                const isEditing = !readOnly && editingIdx === idx && draft !== null;
                 const parsed = parsePattern(rule.pattern);
 
                 if (isEditing) {
@@ -256,16 +293,20 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                       {rule.pipelineId ?? '—'}
                     </td>
                     <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle text-right">
-                      <div className="flex gap-1 justify-end">
-                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
-                          &uarr;
-                        </button>
-                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
-                          &darr;
-                        </button>
-                        <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
-                        <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
-                      </div>
+                      {readOnly ? (
+                        <span className="text-[11px] text-text-tertiary">—</span>
+                      ) : (
+                        <div className="flex gap-1 justify-end">
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveUp(idx)} disabled={idx === 0} title="Move up">
+                            &uarr;
+                          </button>
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => moveDown(idx)} disabled={idx === rules.length - 1} title="Move down">
+                            &darr;
+                          </button>
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-border rounded bg-surface cursor-pointer font-[inherit] text-text-secondary" onClick={() => startEdit(idx)}>Edit</button>
+                          <button className="px-2 py-0.5 text-[11px] font-medium border border-[var(--color-state-failed)] rounded bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]" onClick={() => deleteRule(idx)}>Delete</button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 );
@@ -276,15 +317,17 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
       )}
 
       {/* Footer: Add Rule + Preview */}
-      <div className="flex gap-2.5 items-center">
-        <button
-          className="px-3.5 py-1.5 text-xs font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary self-start"
-          onClick={addRule}
-          data-testid="add-rule-btn"
-        >
-          + Add Rule
-        </button>
-      </div>
+      {!readOnly && (
+        <div className="flex gap-2.5 items-center">
+          <button
+            className="px-3.5 py-1.5 text-xs font-medium border border-border rounded-md bg-surface cursor-pointer font-[inherit] text-text-secondary self-start"
+            onClick={addRule}
+            data-testid="add-rule-btn"
+          >
+            + Add Rule
+          </button>
+        </div>
+      )}
 
       {/* Preview section */}
       <div className="flex gap-2 items-center mt-1">

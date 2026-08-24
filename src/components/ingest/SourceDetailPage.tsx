@@ -409,7 +409,11 @@ export default function SourceDetailPage() {
         {editing ? (
           <MappingRuleEditor rules={editRules} onChange={setEditRules} />
         ) : (
-          <MappingRuleEditor rules={source.mappingRules} onChange={() => { /* read-only when not editing */ }} />
+          <MappingRuleEditor
+            rules={source.mappingRules}
+            onChange={() => { /* unreachable: readOnly hides every mutating control */ }}
+            readOnly
+          />
         )}
       </div>
 

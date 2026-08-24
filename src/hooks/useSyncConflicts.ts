@@ -83,12 +83,26 @@ function buildMockConflicts(): SyncConflict[] {
 export interface UseSyncConflictsReturn {
   conflicts: SyncConflict[];
   loading: boolean;
+  /** Why the LIST fetch failed. Never set by resolve/discard — see `actionError`. */
   error: string | null;
   /** True when the data came from the local mock fallback. */
   usingMock: boolean;
   refresh: () => Promise<void>;
   resolveConflict: (id: string, resolution: ConflictResolution) => Promise<boolean>;
   discardConflict: (id: string) => Promise<boolean>;
+  /**
+   * Why the last `resolveConflict` / `discardConflict` failed, or `null`.
+   * Additive.
+   *
+   * These used to write into `error`, which `ConflictsPage` renders as
+   * "Failed to load conflicts: …". A rejected Resolve therefore reported a
+   * load failure for a queue that had loaded perfectly and was still on
+   * screen, while the conflict itself stayed pending — and the next poll
+   * cleared `error`, so the operator was left believing the resolve landed.
+   */
+  actionError: string | null;
+  /** Dismiss `actionError`. Additive. */
+  clearActionError: () => void;
 }
 
 export function useSyncConflicts(): UseSyncConflictsReturn {
@@ -96,6 +110,7 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
   const [conflicts, setConflicts] = useState<SyncConflict[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [usingMock, setUsingMock] = useState(false);
   // Two DIFFERENT concerns, deliberately not one flag.
   //
@@ -167,7 +182,10 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
     };
   }, [refresh]);
 
+  const clearActionError = useCallback(() => setActionError(null), []);
+
   const resolveConflict = useCallback(async (id: string, resolution: ConflictResolution): Promise<boolean> => {
+    setActionError(null);
     if (usingMock) {
       // Mock path — just remove the conflict locally so the UI can be exercised.
       setConflicts((prev) => prev.map((c) =>
@@ -188,12 +206,13 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
       }
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers, usingMock]);
 
   const discardConflict = useCallback(async (id: string): Promise<boolean> => {
+    setActionError(null);
     if (usingMock) {
       setConflicts((prev) => prev.map((c) =>
         c.conflictId === id ? { ...c, status: 'discarded', resolvedAt: new Date().toISOString() } : c,
@@ -211,10 +230,13 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
       ));
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers, usingMock]);
 
-  return { conflicts, loading, error, usingMock, refresh, resolveConflict, discardConflict };
+  return {
+    conflicts, loading, error, usingMock, refresh, resolveConflict, discardConflict,
+    actionError, clearActionError,
+  };
 }

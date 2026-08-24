@@ -87,7 +87,25 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const cancelledRef = useRef(false);
+  // Two DIFFERENT questions, deliberately not one flag — same shape as
+  // `useSyncConflicts`.
+  //
+  // `mountedRef` answers "is this hook still mounted". That IS shared across
+  // effect runs, correctly: a re-run means we are still mounted.
+  //
+  // `requestIdRef` answers "is this response still the one we want", and a
+  // single boolean could not answer it. The old `cancelledRef` was set true by
+  // the cleanup and then set straight back to false at the top of the next
+  // effect run, which resurrected the request that had just been cancelled.
+  // `refresh` is memoised on `sourceId` / `status` / `idToken`, so the effect
+  // re-runs on every filter change: switching the status filter from `failed`
+  // to `done` left the `failed` request live, and if it landed second its rows
+  // were written into the table under a filter that read "done" — the operator
+  // then hit Retry/Skip on rows they had just filtered away. A monotonic token
+  // cannot be resurrected: each call claims the next id, and only the current
+  // holder may write.
+  const mountedRef = useRef(true);
+  const requestIdRef = useRef(0);
 
   const headers = useCallback((): Record<string, string> => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -96,6 +114,8 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
   }, [idToken]);
 
   const refresh = useCallback(async () => {
+    const token = ++requestIdRef.current;
+    const current = () => mountedRef.current && token === requestIdRef.current;
     setLoading(true);
     setError(null);
     try {
@@ -107,24 +127,28 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
       const res = await fetch(url, { headers: headers() });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = await res.json() as { items?: BackendIngestItem[] };
-      if (!cancelledRef.current) {
+      if (current()) {
         setItems((body.items ?? []).map(normalizeItem));
       }
     } catch (err) {
-      if (!cancelledRef.current) {
+      if (current()) {
         setError(err instanceof Error ? err.message : String(err));
       }
     } finally {
-      if (!cancelledRef.current) {
+      if (current()) {
         setLoading(false);
       }
     }
   }, [headers, sourceId, status]);
 
   useEffect(() => {
-    cancelledRef.current = false;
+    mountedRef.current = true;
     void refresh();
-    return () => { cancelledRef.current = true; };
+    return () => {
+      mountedRef.current = false;
+      // Retire whatever is in flight so a superseded run can never write.
+      requestIdRef.current += 1;
+    };
   }, [refresh]);
 
   const clearActionError = useCallback(() => setActionError(null), []);

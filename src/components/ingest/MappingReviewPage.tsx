@@ -19,6 +19,20 @@ export default function MappingReviewPage() {
   const { types: docTypes } = useDocumentTypes({ idToken });
   // Per-row chosen typeId for the Re-map action (when not accepting suggestion).
   const [remapById, setRemapById] = useState<Record<string, string>>({});
+  // `remap` / `skip` REJECT on a non-2xx response. Every call site was
+  // `void remap(...)`, so a rejected Accept / Re-map / Discard produced an
+  // unhandled promise rejection and nothing else: the row stayed exactly where
+  // it was, no message appeared, and clicking again did the same nothing. The
+  // operator's only reading was "this button is broken" — or, worse, that the
+  // queue simply hadn't refreshed yet.
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const runAction = (promise: Promise<void>): void => {
+    setActionError(null);
+    void promise.catch((err: unknown) => {
+      setActionError(err instanceof Error ? err.message : String(err));
+    });
+  };
 
   return (
     <div data-testid="mapping-review-page" className="p-6 flex flex-col gap-3">
@@ -34,6 +48,27 @@ export default function MappingReviewPage() {
       {error ? (
         <div data-testid="mapping-review-error" className="px-3 py-2 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg mb-3">
           Couldn't load review queue: {error}
+        </div>
+      ) : null}
+
+      {/* Action-failure banner. Kept separate from the load error above so a
+          rejected Accept never claims the queue failed to load — the list
+          below it is correct and stays visible. */}
+      {actionError ? (
+        <div
+          data-testid="mapping-review-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3"
+        >
+          <span className="text-[13px] font-medium">
+            That item was not updated: {actionError}
+          </span>
+          <button
+            onClick={() => setActionError(null)}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
+          </button>
         </div>
       ) : null}
 
@@ -62,13 +97,13 @@ export default function MappingReviewPage() {
                 setRemapById((prev) => ({ ...prev, [item.itemId]: typeId }))
               }
               onAccept={() => {
-                if (item.documentTypeId) void remap(item.itemId, item.documentTypeId);
+                if (item.documentTypeId) runAction(remap(item.itemId, item.documentTypeId));
               }}
               onRemap={() => {
                 const typeId = remapById[item.itemId];
-                if (typeId) void remap(item.itemId, typeId);
+                if (typeId) runAction(remap(item.itemId, typeId));
               }}
-              onDiscard={() => void skip(item.itemId)}
+              onDiscard={() => runAction(skip(item.itemId))}
             />
           ))}
         </div>

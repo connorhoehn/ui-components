@@ -53,6 +53,8 @@ function renderPage(over: Partial<UseSyncConflictsReturn> = {}, sources: IngestS
     refresh: vi.fn().mockResolvedValue(undefined),
     resolveConflict: vi.fn().mockResolvedValue(true),
     discardConflict: vi.fn().mockResolvedValue(true),
+    actionError: null,
+    clearActionError: vi.fn(),
     ...over,
   };
   useSyncConflictsMock.mockReturnValue(hook);
@@ -260,5 +262,38 @@ describe('ConflictsPage queue — keyboard selection', () => {
     });
     expect(screen.getByTestId('conflict-row-c1')).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByTestId('conflict-row-c2')).toHaveAttribute('aria-pressed', 'false');
+  });
+});
+
+describe('ConflictsPage action failures', () => {
+  // A rejected Resolve is not a rejected load. Reporting it as one told the
+  // operator the queue had failed to load while the queue sat right there,
+  // fully loaded — and the next poll cleared the message, so the conflict
+  // looked handled when it was still pending.
+  it('reports a failed resolve without claiming the queue failed to load', () => {
+    renderPage({ actionError: 'HTTP 422' });
+
+    const banner = screen.getByTestId('conflicts-action-error');
+    expect(banner).toHaveTextContent(/not updated/i);
+    expect(banner).toHaveTextContent(/HTTP 422/);
+    expect(screen.queryByText(/Failed to load conflicts/i)).not.toBeInTheDocument();
+  });
+
+  it('keeps the conflict queue on screen while an action error is showing', () => {
+    renderPage({
+      actionError: 'HTTP 500',
+      conflicts: [conflict({ conflictId: 'c1', summary: 'still needs a call' })],
+    });
+
+    expect(screen.getByTestId('conflicts-list')).toBeInTheDocument();
+    expect(screen.getByTestId('conflict-row-c1')).toBeInTheDocument();
+    expect(screen.getByTestId('conflict-detail')).toBeInTheDocument();
+  });
+
+  it('Dismiss clears the action error through the hook', () => {
+    const hook = renderPage({ actionError: 'HTTP 500' });
+
+    fireEvent.click(within(screen.getByTestId('conflicts-action-error')).getByRole('button', { name: /dismiss/i }));
+    expect(hook.clearActionError).toHaveBeenCalled();
   });
 });
