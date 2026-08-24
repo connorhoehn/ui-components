@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.83.1] — 2026-08-24
+
+### Fixed
+
+- **Storybook and the demo server could not build in a git worktree.** Both
+  configs aliased the `@connorhoehn/realtime-modules` peer dep at its TS
+  source (it ships a CJS dist whose named exports Rollup cannot see), but
+  each hardcoded where `node_modules` lives — `.storybook/main.ts` via
+  `process.cwd()`, `demo/vite.config.ts` via `<configdir>/../node_modules`.
+  A worktree has no `node_modules` of its own, so both resolved to a path
+  that does not exist and the build failed with an opaque
+  `UNLOADABLE_DEPENDENCY`. **Four separate agent runs hit this**, each
+  papering over it with a throwaway symlink.
+  Both now use `scripts/resolve-realtime-modules.mjs`, which walks up from
+  the calling config file. That is correct in a normal checkout and in a
+  worktree, because worktrees live under `<repo>/.claude/worktrees/` — so
+  walking up reaches the real checkout's `node_modules`. Verified by
+  building Storybook from a worktree containing no `node_modules` at all.
+  - Known limit, and deliberate: a worktree created *outside* the repo still
+    cannot resolve it, since there is nothing to walk up to. The helper
+    falls back to the conventional path so the error names something a human
+    recognises. Run `npm install` in such a worktree.
+
 ## [2.83.0] — 2026-08-24
 
 Closes the three lifecycle items v2.82.0 deferred. Each was deferred as

@@ -2,6 +2,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'path';
+// Walk up to find the peer dep's source: a git worktree has no node_modules
+// of its own, so '<configdir>/../node_modules' does not exist there.
+import { rmSrc as rmSrcFrom } from '../scripts/resolve-realtime-modules.mjs';
+
+const rmSrc = rmSrcFrom(import.meta.dirname);
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -26,10 +31,10 @@ export default defineConfig({
       // Deeper subpaths must precede the '/client' entry — Vite matches string
       // aliases by prefix, so '/client' would otherwise swallow them and
       // resolve to '…/src/client/index.ts/video'.
-      '@connorhoehn/realtime-modules/client/video': resolve(import.meta.dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/video/index.ts'),
-      '@connorhoehn/realtime-modules/client/hangout-rooms': resolve(import.meta.dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/hangout-rooms/index.ts'),
-      '@connorhoehn/realtime-modules/client': resolve(import.meta.dirname, '../node_modules/@connorhoehn/realtime-modules/src/client/index.ts'),
-      '@connorhoehn/realtime-modules': resolve(import.meta.dirname, '../node_modules/@connorhoehn/realtime-modules/src/index.ts'),
+      '@connorhoehn/realtime-modules/client/video': rmSrc('client/video/index.ts'),
+      '@connorhoehn/realtime-modules/client/hangout-rooms': rmSrc('client/hangout-rooms/index.ts'),
+      '@connorhoehn/realtime-modules/client': rmSrc('client/index.ts'),
+      '@connorhoehn/realtime-modules': rmSrc('index.ts'),
       '@': resolve(import.meta.dirname, '../src'),
       '@schemas': resolve(import.meta.dirname, '../schemas'),
     },

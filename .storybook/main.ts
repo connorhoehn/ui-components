@@ -1,6 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import type { InlineConfig } from 'vite';
-import { resolve } from 'node:path';
+import { rmSrc as rmSrcFrom } from '../scripts/resolve-realtime-modules.mjs';
 
 // realtime-modules ships a CJS dist, so Rollup can't see its named exports
 // ("useRoomOccupancy is not exported by .../dist/client/hangout-rooms").
@@ -8,8 +8,10 @@ import { resolve } from 'node:path';
 // below clears `external` (a browser bundle must inline it), so point the
 // subpaths at the TS source instead — the same workaround demo/vite.config.ts
 // uses. Deeper subpaths first: Vite matches string aliases by prefix.
-const rmSrc = (p: string) =>
-  resolve(process.cwd(), 'node_modules/@connorhoehn/realtime-modules/src', p);
+// Resolved by walking up from THIS file, not from process.cwd(): a git
+// worktree has no node_modules of its own, and cwd-relative resolution
+// produced an opaque UNLOADABLE_DEPENDENCY there. See the helper for detail.
+const rmSrc = rmSrcFrom(import.meta.dirname);
 
 const realtimeModulesAliases = {
   '@connorhoehn/realtime-modules/client/video': rmSrc('client/video/index.ts'),

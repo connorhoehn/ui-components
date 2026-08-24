@@ -67,6 +67,18 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > rendered a blank page from a bad `Switch` import. Do not narrow this back
 > to a single project.
 
+> **Worktrees work now.** `.storybook/main.ts` and `demo/vite.config.ts`
+> both aliased the `@connorhoehn/realtime-modules` peer dep at a fixed
+> `node_modules` location (`process.cwd()` and `<configdir>/../node_modules`
+> respectively). A git worktree has no `node_modules` of its own, so both
+> resolved to a non-existent path and `build-storybook` / `npm run demo`
+> died with an opaque `UNLOADABLE_DEPENDENCY`. Four separate agent runs hit
+> this and each worked around it with a throwaway symlink. Both configs now
+> use `scripts/resolve-realtime-modules.mjs`, which walks up from the config
+> file — correct in a normal checkout and in a worktree, since worktrees
+> live under `<repo>/.claude/worktrees/`. A worktree created OUTSIDE the
+> repo still cannot resolve it; run `npm install` there if you need one.
+
 > **Node floor for development: `^20.19.0 || >=22.12.0`** (vite 8's own
 > requirement). The config files use `import.meta.dirname`, not `__dirname` —
 > vite 8 warns that `__dirname` is unsupported by `configLoader: 'native'`,
