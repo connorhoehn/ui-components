@@ -621,8 +621,12 @@ function AppLayoutInner({
             const inContent = activeView === 'doc-editor' || activeView === 'doc-types' || activeView === 'field-types';
             return (
               <div className="sticky top-[53px] bg-surface-panel z-[33] px-8">
-                {/* Main tabs */}
-                <div className="flex items-center gap-1 px-1 py-1.5 border-b border-border">
+                {/* Main tabs. A landmark, not a bare div: the sidebar has
+                    section headers with the same labels ("Documents",
+                    "Pipelines"), so without a named region there is no way —
+                    for a screen-reader user or a test — to say which
+                    "Documents" you mean. */}
+                <nav aria-label="Primary" className="flex items-center gap-1 px-1 py-1.5 border-b border-border">
                   {([
                     ['/previews', 'panels', 'Previews'],
                     ['/social', 'social', 'Social'],
@@ -652,7 +656,7 @@ function AppLayoutInner({
                       + New Document
                     </button>
                   )}
-                </div>
+                </nav>
 
                 {/* Sub-nav — visible when in Documents section */}
                 {inContent && (
