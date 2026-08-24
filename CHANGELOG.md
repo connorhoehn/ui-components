@@ -8,6 +8,74 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.91.0] — 2026-08-24
+
+Depth audit of `identity/` — 4,734 LOC across 34 files with 10 test files,
+the weakest ratio in the repo, and it holds the auth flows.
+
+### Fixed — MFA codes submitted more than once
+
+`identity/shared/CodeInput.tsx`. The file's own comment already documented
+this bug as fixed. It had been fixed only for the typing path — the only
+path the tests covered.
+
+- **Retype (the damaging one).** Editing a digit of an already-complete code
+  never returned it to an incomplete state, so the submit effect fired once
+  **per keystroke** with a half-updated code. Typing a fresh code over an old
+  one sent six verification attempts — `211111`, `221111`, `222111`, …
+  `222222` — five of them garbage. The flow that hits it is the ordinary one:
+  first attempt fails, the authenticator rolls over, the user types the new
+  code over the old digits. Identity servers rate-limit and lock accounts on
+  failed MFA attempts, so one honest retry could burn a user's whole budget.
+- **Paste.** A full paste ran a stray `setTimeout(onComplete, 0)` on top of
+  the completion effect, so a TOTP pasted from a password manager verified
+  twice and the second attempt failed on a single-use code — the user sees
+  "invalid code" after pasting a correct one. The timer was untracked, so it
+  also fired after `onComplete` had navigated away and unmounted.
+
+### Fixed — destructive actions swallowed server failures (6 pages)
+
+The state reset lived in `finally`, so a **rejected** delete closed the
+dialog exactly like a successful one: no message, no `role="alert"`, and the
+row still sitting there. Every pre-existing delete test used
+`mockResolvedValue`, so the rejection path was never exercised at all. Fixed
+in `UserListPage`, `GroupListPage`, `PoolListPage`, `ApplicationListPage`,
+`EmailTemplateListPage` (delete + test-send) and `MfaDashboardPage` (remove +
+rename) — the dialog now closes on success only and shows the reason inline.
+
+`MfaDashboardPage` is the sharpest case: a user who believes they removed
+their last MFA device, and didn't, thinks MFA is off until the next sign-in
+demands it.
+
+### Fixed — dead pool filter
+
+`MfaManagementPage.tsx` wrote `selectedPool` from the Select and read it
+nowhere. An admin picking a pool saw every user in every tenant, in what
+reads as a filtered adoption view.
+
+### Added
+
+`MfaManagementPageProps.users[].poolId` (optional, non-breaking) — rows
+cannot be filtered without it. The control now hides itself when no row
+supplies one, rather than rendering a dropdown that cannot work.
+
+### Audited clean
+
+`IdentityContext` (a plain context — no token lifecycle or refresh timers at
+all), `DiagnosticsPage` auto-refresh (already stabilised via
+`useEventCallback`), and the six `*FormPage` components (host-owned `error`
+prop rendered in a Banner — a coherent contract, not a swallow). The
+index-shift pattern that caused data loss in `ingest/MappingRuleEditor` does
+**not** exist here: every confirm/edit/rename state is keyed by string
+entity id, so no destructive action can retarget after a reorder.
+
+### Known gap
+
+`DiagnosticsPage`'s DLQ Redrive/Purge are bare pass-throughs with no error
+surface on the page, so a failed purge is still silent. Fixing it means
+designing an error region for that page rather than the mechanical change
+the other six took.
+
 ## [2.90.1] — 2026-08-24
 
 **Fixed** — `npm run build` now works inside a git worktree. It was the only

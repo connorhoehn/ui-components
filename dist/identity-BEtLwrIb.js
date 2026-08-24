@@ -153,14 +153,18 @@ function M({ columns: e, data: t, keyField: n, onRowClick: i, actions: a, emptyM
 //#endregion
 //#region src/components/identity/admin/PoolListPage.tsx
 function N({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPool: a, loading: o }) {
-	let [s, c] = D(null), [l, d] = D(!1), f = C(async (e) => {
-		d(!0);
+	let [s, c] = D(null), [l, d] = D(!1), [f, m] = D(null), h = C(async (e) => {
+		d(!0), m(null);
 		try {
-			await i(e);
+			await i(e), c(null);
+		} catch (e) {
+			m(e instanceof Error ? e.message : "Failed to delete pool.");
 		} finally {
-			d(!1), c(null);
+			d(!1);
 		}
-	}, [i]), p = T(() => [
+	}, [i]), _ = C(() => {
+		c(null), m(null);
+	}, []), v = T(() => [
 		{
 			key: "poolName",
 			header: "Name",
@@ -175,7 +179,7 @@ function N({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 			header: "Created",
 			sortable: !0
 		}
-	], []), m = C((e) => /* @__PURE__ */ A(O, { children: [
+	], []), y = C((e) => /* @__PURE__ */ A(O, { children: [
 		/* @__PURE__ */ k(n, {
 			variant: "ghost",
 			size: "sm",
@@ -191,7 +195,9 @@ function N({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 		/* @__PURE__ */ k(n, {
 			variant: "danger",
 			size: "sm",
-			onClick: () => c(e.poolId),
+			onClick: () => {
+				c(e.poolId), m(null);
+			},
 			children: "Delete"
 		})
 	] }), [r, a]);
@@ -204,22 +210,28 @@ function N({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 			children: "Create Pool"
 		}),
 		children: [/* @__PURE__ */ k(M, {
-			columns: p,
+			columns: v,
 			data: e,
 			keyField: "poolId",
-			actions: m,
+			actions: y,
 			loading: o,
 			emptyMessage: "No user pools found. Create one to get started.",
 			emptyIcon: "🏊"
 		}), /* @__PURE__ */ k(g, {
 			open: !!s,
-			onConfirm: () => s && f(s),
-			onCancel: () => c(null),
+			onConfirm: () => {
+				s && h(s);
+			},
+			onCancel: _,
 			title: "Delete Pool",
 			body: "This action cannot be undone. All users in this pool will be affected.",
 			tone: "destructive",
 			confirmLabel: "Delete",
-			confirmDisabled: l
+			confirmDisabled: l,
+			children: f && /* @__PURE__ */ k(p, {
+				variant: "error",
+				children: f
+			})
 		})]
 	});
 }
@@ -528,14 +540,18 @@ function R({ status: e, variant: t }) {
 //#endregion
 //#region src/components/identity/admin/UserListPage.tsx
 function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser: a, loading: o }) {
-	let [s, c] = D(null), [l, d] = D(!1), f = C(async (e) => {
-		d(!0);
+	let [s, c] = D(null), [l, d] = D(!1), [f, m] = D(null), h = C(async (e) => {
+		d(!0), m(null);
 		try {
-			await a(e);
+			await a(e), c(null);
+		} catch (e) {
+			m(e instanceof Error ? e.message : "Failed to delete user.");
 		} finally {
-			d(!1), c(null);
+			d(!1);
 		}
-	}, [a]), p = T(() => [
+	}, [a]), _ = C(() => {
+		c(null), m(null);
+	}, []), v = T(() => [
 		{
 			key: "email",
 			header: "Email",
@@ -557,7 +573,7 @@ function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 			header: "Created",
 			sortable: !0
 		}
-	], []), m = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
+	], []), y = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
 		variant: "ghost",
 		size: "sm",
 		onClick: () => i(e.userId),
@@ -565,7 +581,9 @@ function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 	}), /* @__PURE__ */ k(n, {
 		variant: "danger",
 		size: "sm",
-		onClick: () => c(e.userId),
+		onClick: () => {
+			c(e.userId), m(null);
+		},
 		children: "Delete"
 	})] }), [i]);
 	return /* @__PURE__ */ A(u, {
@@ -577,28 +595,34 @@ function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 			children: "Create User"
 		}),
 		children: [/* @__PURE__ */ k(M, {
-			columns: p,
+			columns: v,
 			data: e,
 			keyField: "userId",
-			actions: m,
+			actions: y,
 			loading: o,
 			emptyMessage: "No users in this pool yet.",
 			emptyIcon: "👤"
 		}), /* @__PURE__ */ k(g, {
 			open: !!s,
-			onConfirm: () => s && f(s),
-			onCancel: () => c(null),
+			onConfirm: () => {
+				s && h(s);
+			},
+			onCancel: _,
 			title: "Delete User",
 			body: "This action cannot be undone. The user will be permanently removed.",
 			tone: "destructive",
 			confirmLabel: "Delete",
-			confirmDisabled: l
+			confirmDisabled: l,
+			children: f && /* @__PURE__ */ k(p, {
+				variant: "error",
+				children: f
+			})
 		})]
 	});
 }
 //#endregion
 //#region src/components/identity/admin/UserFormPage.tsx
-function B({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onCancel: o, error: s }) {
+function ee({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onCancel: o, error: s }) {
 	let [c, l] = D(e?.email ?? ""), [d, f] = D(""), [m, h] = D(e?.givenName ?? ""), [g, _] = D(e?.familyName ?? ""), [v, y] = D(e?.nickname ?? ""), [b, x] = D(e?.picture ?? ""), [S, w] = D(e?.website ?? ""), [T, E] = D(Object.fromEntries(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => [e, String(t)]))), [O, j] = D(!1), M = C((e, t) => {
 		E((n) => ({
 			...n,
@@ -730,15 +754,19 @@ function B({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 }
 //#endregion
 //#region src/components/identity/admin/GroupListPage.tsx
-function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteGroup: a, loading: o }) {
-	let [s, c] = D(null), [l, d] = D(!1), f = C(async (e) => {
-		d(!0);
+function B({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteGroup: a, loading: o }) {
+	let [s, c] = D(null), [l, d] = D(!1), [f, h] = D(null), _ = C(async (e) => {
+		d(!0), h(null);
 		try {
-			await a(e);
+			await a(e), c(null);
+		} catch (e) {
+			h(e instanceof Error ? e.message : "Failed to delete group.");
 		} finally {
-			d(!1), c(null);
+			d(!1);
 		}
-	}, [a]), p = T(() => [
+	}, [a]), v = C(() => {
+		c(null), h(null);
+	}, []), y = T(() => [
 		{
 			key: "groupName",
 			header: "Name",
@@ -763,7 +791,7 @@ function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 				}, e))
 			})
 		}
-	], []), h = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
+	], []), b = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
 		variant: "ghost",
 		size: "sm",
 		onClick: () => i(e.groupId),
@@ -771,7 +799,9 @@ function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 	}), /* @__PURE__ */ k(n, {
 		variant: "danger",
 		size: "sm",
-		onClick: () => c(e.groupId),
+		onClick: () => {
+			c(e.groupId), h(null);
+		},
 		children: "Delete"
 	})] }), [i]);
 	return /* @__PURE__ */ A(u, {
@@ -783,28 +813,34 @@ function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 			children: "Create Group"
 		}),
 		children: [/* @__PURE__ */ k(M, {
-			columns: p,
+			columns: y,
 			data: e,
 			keyField: "groupId",
-			actions: h,
+			actions: b,
 			loading: o,
 			emptyMessage: "No groups in this pool yet.",
 			emptyIcon: "👥"
 		}), /* @__PURE__ */ k(g, {
 			open: !!s,
-			onConfirm: () => s && f(s),
-			onCancel: () => c(null),
+			onConfirm: () => {
+				s && _(s);
+			},
+			onCancel: v,
 			title: "Delete Group",
 			body: "This action cannot be undone. Members will lose their group permissions.",
 			tone: "destructive",
 			confirmLabel: "Delete",
-			confirmDisabled: l
+			confirmDisabled: l,
+			children: f && /* @__PURE__ */ k(p, {
+				variant: "error",
+				children: f
+			})
 		})]
 	});
 }
 //#endregion
 //#region src/components/identity/admin/GroupFormPage.tsx
-function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
+function V({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
 	let [f, m] = D(e?.groupName ?? ""), [h, g] = D(e?.description ?? ""), [_, y] = D(e?.permissions ?? []), [b, S] = D(""), [w, T] = D(""), [E, O] = D(!1), j = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
@@ -947,15 +983,19 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 }
 //#endregion
 //#region src/components/identity/admin/ApplicationListPage.tsx
-function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp: i, onDeleteApp: a, loading: o }) {
-	let [s, c] = D(null), [l, d] = D(!1), f = C(async (e) => {
-		d(!0);
+function H({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp: i, onDeleteApp: a, loading: o }) {
+	let [s, c] = D(null), [l, d] = D(!1), [f, h] = D(null), _ = C(async (e) => {
+		d(!0), h(null);
 		try {
-			await a(e);
+			await a(e), c(null);
+		} catch (e) {
+			h(e instanceof Error ? e.message : "Failed to delete application.");
 		} finally {
-			d(!1), c(null);
+			d(!1);
 		}
-	}, [a]), p = T(() => [
+	}, [a]), v = C(() => {
+		c(null), h(null);
+	}, []), y = T(() => [
 		{
 			key: "clientName",
 			header: "Name",
@@ -994,7 +1034,7 @@ function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 				})]
 			})
 		}
-	], []), h = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
+	], []), b = C((e) => /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
 		variant: "ghost",
 		size: "sm",
 		onClick: () => i(e.clientId),
@@ -1002,7 +1042,9 @@ function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 	}), /* @__PURE__ */ k(n, {
 		variant: "danger",
 		size: "sm",
-		onClick: () => c(e.clientId),
+		onClick: () => {
+			c(e.clientId), h(null);
+		},
 		children: "Delete"
 	})] }), [i]);
 	return /* @__PURE__ */ A(u, {
@@ -1019,28 +1061,34 @@ function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 			children: "New App + Pool"
 		})] }),
 		children: [/* @__PURE__ */ k(M, {
-			columns: p,
+			columns: y,
 			data: e,
 			keyField: "clientId",
-			actions: h,
+			actions: b,
 			loading: o,
 			emptyMessage: "No applications registered yet.",
 			emptyIcon: "🔐"
 		}), /* @__PURE__ */ k(g, {
 			open: !!s,
-			onConfirm: () => s && f(s),
-			onCancel: () => c(null),
+			onConfirm: () => {
+				s && _(s);
+			},
+			onCancel: v,
 			title: "Delete Application",
 			body: "This action cannot be undone. The application will lose access immediately.",
 			tone: "destructive",
 			confirmLabel: "Delete",
-			confirmDisabled: l
+			confirmDisabled: l,
+			children: f && /* @__PURE__ */ k(p, {
+				variant: "error",
+				children: f
+			})
 		})]
 	});
 }
 //#endregion
 //#region src/components/identity/admin/ApplicationFormPage.tsx
-function W({ label: e, values: t, onChange: r, placeholder: i }) {
+function U({ label: e, values: t, onChange: r, placeholder: i }) {
 	let a = () => r([...t, ""]), o = (e) => r(t.filter((t, n) => n !== e)), s = (e, n) => r(t.map((t, r) => r === e ? n : t));
 	return /* @__PURE__ */ A("div", {
 		className: "mb-4",
@@ -1072,16 +1120,16 @@ function W({ label: e, values: t, onChange: r, placeholder: i }) {
 		]
 	});
 }
-var G = [
+var W = [
 	"authorization_code",
 	"client_credentials",
 	"refresh_token"
-], K = [
+], G = [
 	"code",
 	"token",
 	"id_token"
 ];
-function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
+function K({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
 	let [c, l] = D(e?.clientName ?? ""), [d, f] = D(e?.poolId ?? ""), [m, h] = D(e?.redirectUris ?? [""]), [g, _] = D(e?.postLogoutRedirectUris ?? []), [v, y] = D(e?.grantTypes ?? ["authorization_code"]), [b, x] = D(e?.responseTypes ?? ["code"]), [w, T] = D(e?.scope ?? "openid profile email"), [E, O] = D(!1), j = C((e) => {
 		y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), M = C((e) => {
@@ -1143,13 +1191,13 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						})),
 						placeholder: "Select a pool..."
 					}),
-					/* @__PURE__ */ k(W, {
+					/* @__PURE__ */ k(U, {
 						label: "Redirect URIs",
 						values: m,
 						onChange: h,
 						placeholder: "https://app.example.com/callback"
 					}),
-					/* @__PURE__ */ k(W, {
+					/* @__PURE__ */ k(U, {
 						label: "Post-Logout Redirect URIs",
 						values: g,
 						onChange: _,
@@ -1160,7 +1208,7 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						children: "Grant Types"
 					}), /* @__PURE__ */ k("div", {
 						className: "flex flex-col gap-2 mb-4",
-						children: G.map((e) => /* @__PURE__ */ A("label", {
+						children: W.map((e) => /* @__PURE__ */ A("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ k(S, {
 								checked: v.includes(e),
@@ -1173,7 +1221,7 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						children: "Response Types"
 					}), /* @__PURE__ */ k("div", {
 						className: "flex flex-col gap-2 mb-4",
-						children: K.map((e) => /* @__PURE__ */ A("label", {
+						children: G.map((e) => /* @__PURE__ */ A("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ k(S, {
 								checked: b.includes(e),
@@ -1211,12 +1259,12 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 }
 //#endregion
 //#region src/components/identity/admin/ApplicationPoolFormPage.tsx
-var J = [
+var q = [
 	"authorization_code",
 	"client_credentials",
 	"refresh_token"
 ];
-function Y({ onSubmit: e, onCancel: t, error: i }) {
+function J({ onSubmit: e, onCancel: t, error: i }) {
 	let [a, o] = D(""), [s, c] = D(""), [l, d] = D([""]), [f, m] = D(["authorization_code"]), [h, g] = D(!1), _ = C((e) => {
 		m((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), y = C(() => {
@@ -1303,7 +1351,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 						children: "Grant Types"
 					}), /* @__PURE__ */ k("div", {
 						className: "flex flex-col gap-2 mb-4",
-						children: J.map((e) => /* @__PURE__ */ A("label", {
+						children: q.map((e) => /* @__PURE__ */ A("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ k(S, {
 								checked: f.includes(e),
@@ -1333,35 +1381,41 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 }
 //#endregion
 //#region src/components/identity/admin/EmailTemplateListPage.tsx
-function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTemplate: i, onTestSend: a, loading: o }) {
-	let [s, c] = D(null), [l, d] = D(!1), [f, p] = D(null), [m, _] = D(""), [v, y] = D(!1), b = C(async (e) => {
-		d(!0);
+function Y({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTemplate: i, onTestSend: a, loading: o }) {
+	let [s, c] = D(null), [l, d] = D(!1), [f, m] = D(null), [_, v] = D(null), [y, b] = D(""), [x, S] = D(!1), [w, E] = D(null), j = C(async (e) => {
+		d(!0), m(null);
 		try {
-			await i(e);
+			await i(e), c(null);
+		} catch (e) {
+			m(e instanceof Error ? e.message : "Failed to delete template.");
 		} finally {
-			d(!1), c(null);
+			d(!1);
 		}
-	}, [i]), x = C(async () => {
-		if (!(!f || !m.trim())) {
-			y(!0);
+	}, [i]), N = C(() => {
+		c(null), m(null);
+	}, []), F = C(async () => {
+		if (!(!_ || !y.trim())) {
+			S(!0), E(null);
 			try {
-				await a(f, m.trim()), p(null), _("");
+				await a(_, y.trim()), v(null), b("");
+			} catch (e) {
+				E(e instanceof Error ? e.message : "Failed to send test email.");
 			} finally {
-				y(!1);
+				S(!1);
 			}
 		}
 	}, [
-		f,
-		m,
+		_,
+		y,
 		a
-	]), S = T(() => [{
+	]), I = T(() => [{
 		key: "name",
 		header: "Name",
 		sortable: !0
 	}, {
 		key: "subject",
 		header: "Subject"
-	}], []), w = C((e) => /* @__PURE__ */ A(O, { children: [
+	}], []), L = C((e) => /* @__PURE__ */ A(O, { children: [
 		/* @__PURE__ */ k(n, {
 			variant: "ghost",
 			size: "sm",
@@ -1372,14 +1426,16 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 			variant: "ghost",
 			size: "sm",
 			onClick: () => {
-				p(e.templateId), _("");
+				v(e.templateId), b(""), E(null);
 			},
 			children: "Test Send"
 		}),
 		/* @__PURE__ */ k(n, {
 			variant: "danger",
 			size: "sm",
-			onClick: () => c(e.templateId),
+			onClick: () => {
+				c(e.templateId), m(null);
+			},
 			children: "Delete"
 		})
 	] }), [r]);
@@ -1393,55 +1449,73 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 		}),
 		children: [
 			/* @__PURE__ */ k(M, {
-				columns: S,
+				columns: I,
 				data: e,
 				keyField: "templateId",
-				actions: w,
+				actions: L,
 				loading: o,
 				emptyMessage: "No email templates configured.",
 				emptyIcon: "✉️"
 			}),
-			/* @__PURE__ */ k(h, {
-				open: !!f,
-				onClose: () => p(null),
+			/* @__PURE__ */ A(h, {
+				open: !!_,
+				onClose: () => {
+					v(null), E(null);
+				},
 				title: "Send Test Email",
 				footer: /* @__PURE__ */ A(O, { children: [/* @__PURE__ */ k(n, {
 					variant: "ghost",
 					size: "md",
-					onClick: () => p(null),
+					onClick: () => {
+						v(null), E(null);
+					},
 					children: "Cancel"
 				}), /* @__PURE__ */ k(n, {
 					variant: "primary",
 					size: "md",
-					onClick: x,
-					disabled: v || !m.trim(),
-					children: v ? "Sending..." : "Send"
+					onClick: () => {
+						F();
+					},
+					disabled: x || !y.trim(),
+					children: x ? "Sending..." : "Send"
 				})] }),
-				children: /* @__PURE__ */ k(P, {
+				children: [w && /* @__PURE__ */ k("div", {
+					className: "mb-3",
+					children: /* @__PURE__ */ k(p, {
+						variant: "error",
+						children: w
+					})
+				}), /* @__PURE__ */ k(P, {
 					label: "Recipient Email",
 					name: "test-email",
 					type: "email",
-					value: m,
-					onChange: (e) => _(String(e)),
+					value: y,
+					onChange: (e) => b(String(e)),
 					placeholder: "recipient@example.com"
-				})
+				})]
 			}),
 			/* @__PURE__ */ k(g, {
 				open: !!s,
-				onConfirm: () => s && b(s),
-				onCancel: () => c(null),
+				onConfirm: () => {
+					s && j(s);
+				},
+				onCancel: N,
 				title: "Delete Template",
 				body: "This action cannot be undone. The template will be permanently removed.",
 				tone: "destructive",
 				confirmLabel: "Delete",
-				confirmDisabled: l
+				confirmDisabled: l,
+				children: f && /* @__PURE__ */ k(p, {
+					variant: "error",
+					children: f
+				})
 			})
 		]
 	});
 }
 //#endregion
 //#region src/components/identity/admin/EmailTemplateFormPage.tsx
-function Z({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
+function X({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 	let [s, c] = D(e?.name ?? ""), [l, d] = D(e?.subject ?? ""), [f, m] = D(e?.htmlBody ?? ""), [h, g] = D(e?.textBody ?? ""), [_, b] = D(e?.variables ?? []), [x, S] = D(""), [w, T] = D(!1), [E, O] = D(!1), j = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
@@ -1582,8 +1656,15 @@ function Z({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 }
 //#endregion
 //#region src/components/identity/admin/MfaManagementPage.tsx
-function ee({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
-	let [s, c] = D(""), l = T(() => t ?? [], [t]), d = T(() => [
+function te({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
+	let [s, c] = D(""), l = T(() => (t ?? []).some((e) => e.poolId !== void 0), [t]), d = T(() => {
+		let e = t ?? [];
+		return !s || !l ? e : e.filter((e) => e.poolId === s);
+	}, [
+		t,
+		s,
+		l
+	]), f = T(() => [
 		{
 			key: "email",
 			header: "Email",
@@ -1672,7 +1753,7 @@ function ee({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 					})
 				]
 			}),
-			i && i.length > 0 && /* @__PURE__ */ A("div", {
+			i && i.length > 0 && l && /* @__PURE__ */ A("div", {
 				className: "flex items-center gap-3",
 				children: [/* @__PURE__ */ k("label", {
 					className: "text-xs font-semibold text-neutral uppercase tracking-wide",
@@ -1691,8 +1772,8 @@ function ee({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 				})]
 			}),
 			/* @__PURE__ */ k(M, {
-				columns: d,
-				data: l,
+				columns: f,
+				data: d,
 				keyField: "userId",
 				emptyMessage: "No user MFA data available.",
 				emptyIcon: "🔑"
@@ -1702,7 +1783,7 @@ function ee({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 }
 //#endregion
 //#region src/components/identity/admin/AuditPage.tsx
-var te = [
+var ne = [
 	"",
 	"user",
 	"pool",
@@ -1710,7 +1791,7 @@ var te = [
 	"group",
 	"template"
 ];
-function ne({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
+function re({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, totalRecords: s }) {
 	let [c, l] = D(""), [d, f] = D(""), [p, m] = D(""), [h, g] = D(""), [_, y] = D("50"), [b, S] = D(""), [w, E] = D(""), [O, j] = D(null), [N, P] = D(!1), F = C(async () => {
 		await t({
 			entityType: c || void 0,
@@ -1795,7 +1876,7 @@ function ne({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 								options: [{
 									value: "",
 									label: "All"
-								}, ...te.filter(Boolean).map((e) => ({
+								}, ...ne.filter(Boolean).map((e) => ({
 									value: e,
 									label: e
 								}))]
@@ -1925,7 +2006,7 @@ function ne({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 }
 //#endregion
 //#region src/components/identity/admin/SetupGuidePage.tsx
-function re({ status: t, onNavigate: i }) {
+function ie({ status: t, onNavigate: i }) {
 	let [a, o] = D(null), s = C((e) => {
 		o((t) => t === e ? null : e);
 	}, []), c = T(() => [
@@ -2095,13 +2176,13 @@ window.location.href = authUrl;`
 }
 //#endregion
 //#region src/components/identity/admin/DiagnosticsPage.tsx
-function ie({ data: e }) {
+function ae({ data: e }) {
 	return /* @__PURE__ */ k("pre", {
 		className: "p-5 font-mono text-xs text-text-primary overflow-x-auto whitespace-pre-wrap max-h-[400px] overflow-y-auto m-0 bg-surface-panel",
 		children: JSON.stringify(e, null, 2)
 	});
 }
-function ae({ rates: e }) {
+function oe({ rates: e }) {
 	let t = Object.entries(e);
 	return t.length === 0 ? /* @__PURE__ */ k("p", {
 		className: "p-5 text-center text-text-tertiary text-sm m-0",
@@ -2111,7 +2192,7 @@ function ae({ rates: e }) {
 		children: e
 	}), /* @__PURE__ */ k(a, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
 }
-function oe({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefresh: g, loading: _ }) {
+function se({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefresh: g, loading: _ }) {
 	let [v, y] = D(!1), b = E(null), x = t(g);
 	w(() => (v ? b.current = setInterval(x, 1e4) : b.current &&= (clearInterval(b.current), null), () => {
 		b.current && clearInterval(b.current);
@@ -2156,7 +2237,7 @@ function oe({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefr
 					className: "text-sm font-semibold text-text-primary m-0",
 					children: "Node / Cluster Diagnostics"
 				})
-			}), e ? /* @__PURE__ */ k(ie, { data: e }) : /* @__PURE__ */ k("p", {
+			}), e ? /* @__PURE__ */ k(ae, { data: e }) : /* @__PURE__ */ k("p", {
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No diagnostics data available."
 			})] }),
@@ -2166,7 +2247,7 @@ function oe({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefr
 					className: "text-sm font-semibold text-text-primary m-0",
 					children: "Rate Limiter Stats"
 				})
-			}), c ? /* @__PURE__ */ k(ae, { rates: c }) : /* @__PURE__ */ k("p", {
+			}), c ? /* @__PURE__ */ k(oe, { rates: c }) : /* @__PURE__ */ k("p", {
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No rate data available."
 			})] }),
@@ -2231,8 +2312,8 @@ function oe({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefr
 }
 //#endregion
 //#region src/components/identity/auth/LoginPage.tsx
-function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
-	let [m, h] = D(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = D(!1), [v, y] = D(null), [x, S] = D(""), [w, T] = D(""), [E, j] = D(""), [M, N] = D(""), [F, I] = D(""), [L, R] = D(""), [z, B] = D(""), [V, H] = D(!1), [U, W] = D(""), [G, K] = D(!1), q = o || v, J = C(async (e) => {
+function ce({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
+	let [m, h] = D(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = D(!1), [v, y] = D(null), [x, S] = D(""), [w, T] = D(""), [E, j] = D(""), [M, N] = D(""), [F, I] = D(""), [L, R] = D(""), [z, ee] = D(""), [B, V] = D(!1), [H, U] = D(""), [W, G] = D(!1), K = o || v, q = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
 			await s(x, w);
@@ -2245,7 +2326,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 		x,
 		w,
 		s
-	]), Y = C(async (e) => {
+	]), J = C(async (e) => {
 		if (e.preventDefault(), y(null), M !== F) {
 			y("Passwords do not match");
 			return;
@@ -2257,7 +2338,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 				password: M,
 				givenName: L || void 0,
 				familyName: z || void 0,
-				enableMfa: V || void 0
+				enableMfa: B || void 0
 			});
 		} catch (e) {
 			y(e instanceof Error ? e.message : "Registration failed");
@@ -2270,19 +2351,19 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 		F,
 		L,
 		z,
-		V,
+		B,
 		c
-	]), X = C(async (e) => {
+	]), Y = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
-			await l(U), K(!0);
+			await l(H), G(!0);
 		} catch (e) {
 			y(e instanceof Error ? e.message : "Request failed");
 		} finally {
 			_(!1);
 		}
-	}, [U, l]), Z = (e) => {
-		h(e), y(null), K(!1);
+	}, [H, l]), X = (e) => {
+		h(e), y(null), G(!1);
 	};
 	return /* @__PURE__ */ k("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
@@ -2315,7 +2396,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							"aria-selected": m === "signin",
 							tabIndex: m === "signin" ? 0 : -1,
 							className: e("flex-1 rounded-none border-b-2", m === "signin" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Z("signin"),
+							onClick: () => X("signin"),
 							children: "Sign In"
 						}),
 						u && /* @__PURE__ */ k(n, {
@@ -2325,7 +2406,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							"aria-selected": m === "register",
 							tabIndex: m === "register" ? 0 : -1,
 							className: e("flex-1 rounded-none border-b-2", m === "register" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Z("register"),
+							onClick: () => X("register"),
 							children: "Register"
 						}),
 						d && /* @__PURE__ */ k(n, {
@@ -2335,20 +2416,20 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							"aria-selected": m === "forgot",
 							tabIndex: m === "forgot" ? 0 : -1,
 							className: e("flex-1 rounded-none border-b-2", m === "forgot" ? "border-b-info text-info-fg font-semibold" : "border-b-transparent text-neutral font-normal"),
-							onClick: () => Z("forgot"),
+							onClick: () => X("forgot"),
 							children: "Forgot Password"
 						})
 					]
 				}),
-				q && /* @__PURE__ */ k("div", {
+				K && /* @__PURE__ */ k("div", {
 					className: "mb-5",
 					children: /* @__PURE__ */ k(p, {
 						variant: "error",
-						children: q
+						children: K
 					})
 				}),
 				m === "signin" && /* @__PURE__ */ A("form", {
-					onSubmit: J,
+					onSubmit: q,
 					"aria-label": "Sign in form",
 					children: [
 						/* @__PURE__ */ k("input", {
@@ -2386,7 +2467,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 					]
 				}),
 				m === "register" && /* @__PURE__ */ A("form", {
-					onSubmit: Y,
+					onSubmit: J,
 					"aria-label": "Registration form",
 					children: [
 						/* @__PURE__ */ k(P, {
@@ -2416,7 +2497,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 									label: "Family Name",
 									name: "reg-family",
 									value: z,
-									onChange: (e) => B(String(e)),
+									onChange: (e) => ee(String(e)),
 									disabled: g
 								})
 							})]
@@ -2443,8 +2524,8 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Enable Multi-Factor Authentication",
 							name: "reg-mfa",
 							type: "checkbox",
-							value: V,
-							onChange: (e) => H(!!e),
+							value: B,
+							onChange: (e) => V(!!e),
 							disabled: g
 						}),
 						/* @__PURE__ */ k(n, {
@@ -2458,9 +2539,9 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 					]
 				}),
 				m === "forgot" && /* @__PURE__ */ k("form", {
-					onSubmit: X,
+					onSubmit: Y,
 					"aria-label": "Forgot password form",
-					children: G ? /* @__PURE__ */ k(p, {
+					children: W ? /* @__PURE__ */ k(p, {
 						variant: "success",
 						children: "If an account exists for that email, a password reset link has been sent."
 					}) : /* @__PURE__ */ A(O, { children: [
@@ -2472,8 +2553,8 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Email",
 							name: "forgot-email",
 							type: "email",
-							value: U,
-							onChange: (e) => W(String(e)),
+							value: H,
+							onChange: (e) => U(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
 							disabled: g
@@ -2494,7 +2575,7 @@ function se({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 }
 //#endregion
 //#region src/components/identity/auth/ConsentPage.tsx
-var ce = {
+var le = {
 	openid: "Verify your identity",
 	profile: "Access your name and profile information",
 	email: "Access your email address",
@@ -2502,10 +2583,10 @@ var ce = {
 	phone: "Access your phone number",
 	offline_access: "Maintain access when you are not present"
 };
-function le(e) {
-	return ce[e] || `Access: ${e}`;
+function ue(e) {
+	return le[e] || `Access: ${e}`;
 }
-function ue({ clientName: t, scopes: r, redirectUri: i, onAuthorize: a, onDeny: o, logoUrl: s }) {
+function de({ clientName: t, scopes: r, redirectUri: i, onAuthorize: a, onDeny: o, logoUrl: s }) {
 	let [c, l] = D(!1), u = C(async () => {
 		l(!0);
 		try {
@@ -2559,7 +2640,7 @@ function ue({ clientName: t, scopes: r, redirectUri: i, onAuthorize: a, onDeny: 
 							children: [/* @__PURE__ */ k("span", {
 								className: "w-2 h-2 rounded-full bg-info shrink-0",
 								"aria-hidden": "true"
-							}), /* @__PURE__ */ k("span", { children: le(t) })]
+							}), /* @__PURE__ */ k("span", { children: ue(t) })]
 						}, t))
 					})]
 				}),
@@ -2596,7 +2677,7 @@ function ue({ clientName: t, scopes: r, redirectUri: i, onAuthorize: a, onDeny: 
 }
 //#endregion
 //#region src/components/identity/shared/QrCodeDisplay.tsx
-function Q({ value: e, size: t = 200, label: n }) {
+function Z({ value: e, size: t = 200, label: n }) {
 	return /* @__PURE__ */ A("figure", {
 		className: "flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white",
 		children: [/* @__PURE__ */ k("img", {
@@ -2613,7 +2694,7 @@ function Q({ value: e, size: t = 200, label: n }) {
 }
 //#endregion
 //#region src/components/identity/shared/CodeInput.tsx
-function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
+function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
 	let [o, s] = D(Array(t).fill("")), c = E([]);
 	w(() => {
 		a && c.current[0] && c.current[0].focus();
@@ -2637,7 +2718,8 @@ function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 		let r = n.replace(/\D/g, "").slice(-1);
 		s((t) => {
 			let n = [...t];
-			return n[e] = r, n;
+			if (n[e] = r, r && t.every((e) => e !== "")) for (let t = e + 1; t < n.length; t++) n[t] = "";
+			return n;
 		}), r && e < t - 1 && l(e + 1);
 	}, [t, l]), f = C((e, n) => {
 		n.key === "Backspace" ? o[e] === "" && e > 0 ? (n.preventDefault(), s((t) => {
@@ -2653,16 +2735,12 @@ function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 		l
 	]), p = C((e) => {
 		e.preventDefault();
-		let r = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, t);
-		if (!r) return;
-		let i = Array(t).fill("");
-		for (let e = 0; e < r.length; e++) i[e] = r[e];
-		s(i), r.length === t ? setTimeout(() => n(r), 0) : l(Math.min(r.length, t - 1));
-	}, [
-		t,
-		n,
-		l
-	]);
+		let n = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, t);
+		if (!n) return;
+		let r = Array(t).fill("");
+		for (let e = 0; e < n.length; e++) r[e] = n[e];
+		s(r), n.length < t && l(Math.min(n.length, t - 1));
+	}, [t, l]);
 	return /* @__PURE__ */ A("div", {
 		className: "flex flex-col items-center gap-2",
 		children: [/* @__PURE__ */ k("div", {
@@ -2695,7 +2773,7 @@ function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 }
 //#endregion
 //#region src/components/identity/auth/MfaSetupPage.tsx
-var de = [
+var $ = [
 	"name",
 	"scan",
 	"verify",
@@ -2707,7 +2785,7 @@ var de = [
 	"Backup"
 ];
 function pe({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
-	let [l, u] = D(o === "scan" && !s ? "name" : o), [d, f] = D(!1), [m, h] = D(null), [g, _] = D(c), [v, y] = D(s ?? null), [b, x] = D(s?.backupCodes ?? []), [S, T] = D(!1), O = de.indexOf(l), j = C(async (e) => {
+	let [l, u] = D(o === "scan" && !s ? "name" : o), [d, f] = D(!1), [m, h] = D(null), [g, _] = D(c), [v, y] = D(s ?? null), [b, x] = D(s?.backupCodes ?? []), [S, T] = D(!1), O = $.indexOf(l), j = C(async (e) => {
 		if (e.preventDefault(), g.trim()) {
 			h(null), f(!0);
 			try {
@@ -2759,7 +2837,7 @@ function pe({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					className: "flex justify-center gap-6 mb-6",
 					role: "group",
 					"aria-label": "Setup progress",
-					children: de.map((t, n) => /* @__PURE__ */ A("div", {
+					children: $.map((t, n) => /* @__PURE__ */ A("div", {
 						className: "flex flex-col items-center gap-1.5",
 						children: [/* @__PURE__ */ k("div", {
 							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < O ? "bg-success" : n === O ? "bg-info" : "bg-surface-emphasis"),
@@ -2819,7 +2897,7 @@ function pe({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					}),
 					/* @__PURE__ */ k("div", {
 						className: "flex justify-center mb-5",
-						children: /* @__PURE__ */ k(Q, {
+						children: /* @__PURE__ */ k(Z, {
 							value: v.qrCode,
 							size: 200,
 							label: g ? `Device: ${g}` : void 0
@@ -2854,7 +2932,7 @@ function pe({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
 						children: "Enter the 6-digit code from your authenticator app to confirm setup"
 					}),
-					/* @__PURE__ */ k($, {
+					/* @__PURE__ */ k(Q, {
 						onComplete: M,
 						error: m,
 						disabled: d,
@@ -2983,7 +3061,7 @@ function me({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 							children: m
 						})
 					}),
-					/* @__PURE__ */ k($, {
+					/* @__PURE__ */ k(Q, {
 						onComplete: h,
 						error: null,
 						disabled: s,
@@ -3062,26 +3140,30 @@ function he(e) {
 	}
 }
 function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameDevice: a, onRemoveDevice: o, loading: s = !1 }) {
-	let [c, l] = D(null), [u, d] = D(null), [f, p] = D(""), [h, v] = D(!1), y = C(async () => {
+	let [c, l] = D(null), [u, d] = D(null), [f, h] = D(""), [v, y] = D(!1), [b, x] = D(null), S = C(async () => {
 		if (c) {
-			v(!0);
+			y(!0), x(null);
 			try {
-				await o(c);
+				await o(c), l(null);
+			} catch (e) {
+				x(e instanceof Error ? e.message : "Failed to remove device.");
 			} finally {
-				v(!1), l(null);
+				y(!1);
 			}
 		}
-	}, [c, o]), b = C(async (e) => {
+	}, [c, o]), w = C(async (e) => {
 		if (f.trim()) {
-			v(!0);
+			y(!0), x(null);
 			try {
-				await a(e, f.trim());
+				await a(e, f.trim()), d(null), h("");
+			} catch (e) {
+				x(e instanceof Error ? e.message : "Failed to rename device.");
 			} finally {
-				v(!1), d(null), p("");
+				y(!1);
 			}
 		}
-	}, [f, a]), x = (e) => {
-		d(e.deviceId), p(e.deviceName);
+	}, [f, a]), T = (e) => {
+		d(e.deviceId), h(e.deviceName), x(null);
 	};
 	return /* @__PURE__ */ k("div", {
 		className: "min-h-full flex items-start justify-center p-6 bg-surface-panel",
@@ -3114,6 +3196,13 @@ function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 						})]
 					})]
 				}),
+				b && !c && /* @__PURE__ */ k("div", {
+					className: "mb-5",
+					children: /* @__PURE__ */ k(p, {
+						variant: "error",
+						children: b
+					})
+				}),
 				s && /* @__PURE__ */ k("p", {
 					className: "text-center text-text-tertiary text-sm py-8",
 					children: "Loading devices..."
@@ -3139,7 +3228,7 @@ function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 									className: "flex items-center gap-2.5",
 									children: u === e.deviceId ? /* @__PURE__ */ A("form", {
 										onSubmit: (t) => {
-											t.preventDefault(), b(e.deviceId);
+											t.preventDefault(), w(e.deviceId);
 										},
 										className: "flex gap-2 items-center",
 										children: [
@@ -3147,14 +3236,14 @@ function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 												label: "",
 												name: `rename-${e.deviceId}`,
 												value: f,
-												onChange: (e) => p(String(e)),
-												disabled: h
+												onChange: (e) => h(String(e)),
+												disabled: v
 											}),
 											/* @__PURE__ */ k(n, {
 												type: "submit",
 												variant: "primary",
 												size: "sm",
-												disabled: h || !f.trim(),
+												disabled: v || !f.trim(),
 												children: "Save"
 											}),
 											/* @__PURE__ */ k(n, {
@@ -3185,12 +3274,14 @@ function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 								children: [/* @__PURE__ */ k(n, {
 									variant: "ghost",
 									size: "sm",
-									onClick: () => x(e),
+									onClick: () => T(e),
 									children: "Rename"
 								}), /* @__PURE__ */ k(n, {
 									variant: "danger",
 									size: "sm",
-									onClick: () => l(e.deviceId),
+									onClick: () => {
+										l(e.deviceId), x(null);
+									},
 									children: "Remove"
 								})]
 							})
@@ -3199,13 +3290,21 @@ function ge({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 				}),
 				/* @__PURE__ */ k(g, {
 					open: !!c,
-					onConfirm: y,
-					onCancel: () => l(null),
+					onConfirm: () => {
+						S();
+					},
+					onCancel: () => {
+						l(null), x(null);
+					},
 					title: "Remove Device",
 					body: "Are you sure you want to remove this MFA device? You will no longer be able to use it for verification.",
-					confirmLabel: h ? "Removing..." : "Remove",
-					confirmDisabled: h,
-					tone: "destructive"
+					confirmLabel: v ? "Removing..." : "Remove",
+					confirmDisabled: v,
+					tone: "destructive",
+					children: b && /* @__PURE__ */ k(p, {
+						variant: "error",
+						children: b
+					})
 				})
 			]
 		})
@@ -3525,4 +3624,4 @@ function we({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate:
 	});
 }
 //#endregion
-export { j as A, B as C, P as D, F as E, N as O, V as S, R as T, X as _, ge as a, U as b, $ as c, se as d, oe as f, Z as g, ee as h, _e as i, M as k, Q as l, ne as m, xe as n, me as o, re as p, ve as r, pe as s, we as t, ue as u, Y as v, z as w, H as x, q as y };
+export { j as A, ee as C, P as D, F as E, N as O, B as S, R as T, Y as _, ge as a, H as b, Q as c, ce as d, se as f, X as g, te as h, _e as i, M as k, Z as l, re as m, xe as n, me as o, ie as p, ve as r, pe as s, we as t, de as u, J as v, z as w, V as x, K as y };

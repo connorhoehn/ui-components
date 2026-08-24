@@ -383,6 +383,14 @@ export declare interface MfaManagementPageProps {
         email: string;
         mfaEnabled: boolean;
         deviceCount: number;
+        /**
+         * Pool the user belongs to. Optional and additive.
+         *
+         * The "Filter by pool" control is only rendered when at least one row
+         * carries this, because without it the page has no way to tell which pool
+         * a row belongs to — which is exactly why the control used to be inert.
+         */
+        poolId?: string;
     }>;
     pools?: Array<{
         poolId: string;
