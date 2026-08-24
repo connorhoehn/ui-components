@@ -4,14 +4,21 @@
 //
 // Opens when a node is selected; closes on Esc, click-outside, or the header
 // close button. Body dispatches to per-type *Config components for the Config
-// tab; Runs / Docs tabs are simple placeholders for now.
+// tab. The Docs tab renders per-node-type documentation; the Runs tab shows
+// the selected node's most recent step execution (v2.80.0 — it previously
+// rendered a hardcoded "No runs yet." regardless of actual run state, even
+// though the run data was already available in this same barrel).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement } from 'react';
-import type { NodeData, NodeType, PipelineNode } from '../../../types/pipeline';
+import type { NodeData, NodeType, PipelineNode, StepStatus } from '../../../types/pipeline';
 import { cn } from '../../../lib/cn';
 import { usePrefersReducedMotion } from '../../../hooks/usePrefersReducedMotion';
 import { usePipelineEditor } from '../context/PipelineEditorContext';
+import { useLatestStepForNode } from '../context/PipelineRunsContext';
+import { formatDuration, relativeTime } from '../utils/formatTime';
+import StatusPill from '../../shared/StatusPill';
+import type { StatusPillState } from '../../shared/StatusPill';
 import TriggerConfig from '../nodes/trigger/TriggerConfig';
 import LLMConfig from '../nodes/llm/LLMConfig';
 import TransformConfig from '../nodes/transform/TransformConfig';
@@ -242,6 +249,21 @@ const TYPE_META: Record<NodeType, { icon: string; name: string; docs: string }> 
 
 type Tab = 'config' | 'runs' | 'docs' | 'bench';
 
+/**
+ * Step status -> the shared StatusPill's semantic state. Typed as an
+ * exhaustive Record over StepStatus so adding a status to the union is a
+ * compile error here rather than a silently unstyled pill.
+ */
+const STEP_STATUS_TONE: Record<StepStatus, StatusPillState> = {
+  completed: 'success',
+  failed: 'error',
+  running: 'info',
+  pending: 'pending',
+  awaiting: 'warning',
+  skipped: 'neutral',
+  cancelled: 'neutral',
+};
+
 const VISION_NODE_TYPES = new Set<NodeType>([
   'image:vision-analyze',
   'image:vision-classify',
@@ -396,6 +418,12 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
     if (isMulti || effectiveIds.length === 0 || !definition) return null;
     return definition.nodes.find((n) => n.id === effectiveIds[0]) ?? null;
   }, [definition, effectiveIds, isMulti]);
+
+  // Latest step execution for the selected node, for the Runs tab.
+  // `useLatestStepForNode` reads PipelineRunsContext directly and returns null
+  // when no provider is mounted, so this is safe in a bare editor — the tab
+  // then shows the same empty state it always did.
+  const latestStep = useLatestStepForNode(selectedNode?.id ?? '');
 
   const close = useCallback(() => {
     setSelectedNodeId(null);
@@ -579,9 +607,54 @@ export default function ConfigPanel({ selectedIds }: ConfigPanelProps) {
           <div className="flex-1 overflow-y-auto">
             {tab === 'config' && renderConfig(selectedNode, onChange)}
             {tab === 'runs' && (
-              <div className="p-6 text-xs text-neutral">
-                No runs yet.
-              </div>
+              latestStep ? (
+                <div className="p-4 flex flex-col gap-3 text-[13px]" data-testid="config-runs-latest">
+                  <div className="flex items-center gap-2">
+                    <StatusPill
+                      state={STEP_STATUS_TONE[latestStep.status]}
+                      label={latestStep.status}
+                      size="sm"
+                      data-testid="config-runs-status"
+                    />
+                    {latestStep.durationMs != null && (
+                      <span className="text-text-secondary tabular-nums">
+                        {formatDuration(latestStep.durationMs)}
+                      </span>
+                    )}
+                    {latestStep.startedAt && (
+                      <span className="text-text-tertiary ml-auto">
+                        {relativeTime(latestStep.startedAt)}
+                      </span>
+                    )}
+                  </div>
+
+                  {latestStep.error && (
+                    <div
+                      role="alert"
+                      className="rounded-md border border-danger-border bg-danger-bg px-2.5 py-2 text-xs text-danger-fg whitespace-pre-wrap break-words"
+                    >
+                      {latestStep.error}
+                    </div>
+                  )}
+
+                  {latestStep.output !== undefined && (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-text-tertiary">
+                        Output
+                      </span>
+                      <pre className="max-h-48 overflow-auto rounded-md bg-surface-panel border border-border p-2 font-mono text-[11px] text-text-primary whitespace-pre-wrap break-words m-0">
+                        {typeof latestStep.output === 'string'
+                          ? latestStep.output
+                          : JSON.stringify(latestStep.output, null, 2)}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-6 text-xs text-neutral">
+                  No runs yet.
+                </div>
+              )
             )}
             {tab === 'docs' && (
               <div className="pipeline-docs-pane p-4 text-[13px] text-text-primary leading-snug">

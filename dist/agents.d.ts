@@ -113,6 +113,18 @@ export declare interface AgentMetrics {
 
 export declare type AgentProtocol = 'a2a' | 'direct';
 
+/**
+ * Where `agents` came from. Mirrors the `source` discriminator that
+ * `usePipelineMetrics` already exposes in `/observability`.
+ *
+ * This hook seeds state with `fixtureAgents` and keeps them when no
+ * `baseUrl` is configured or when a fetch fails — so without this tag a
+ * consumer cannot tell a real, healthy registry from synthetic sample data.
+ * A failed fetch previously surfaced `error` while still rendering
+ * plausible-looking fake agents.
+ */
+export declare type AgentRegistrySource = 'fixture' | 'remote';
+
 declare interface AgentsContextValue {
     agents: AgentDefinition[];
     metrics: AgentMetrics[];
@@ -555,6 +567,8 @@ declare interface UseAgentRegistryOptions {
 
 declare interface UseAgentRegistryReturn {
     agents: AgentDefinition[];
+    /** `'fixture'` means `agents` is synthetic sample data — surface that in the UI. */
+    source: AgentRegistrySource;
     isLoading: boolean;
     error: string | null;
     refresh: () => void;

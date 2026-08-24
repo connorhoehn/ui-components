@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.80.0] — 2026-08-23
+
+Continues the stub audit: the last dead affordance is now live.
+
+### Fixed
+
+- **`ConfigPanel`'s Runs tab rendered a hardcoded `"No runs yet."` for every
+  node, always** — in the **frozen** `/pipelines` barrel — even though the
+  run data it needed was already reachable from that same barrel. A tab that
+  can only ever be empty is worse than no tab: it actively tells the user
+  there is no run history when there may well be one. It now shows the
+  selected node's latest step execution: status pill, duration, relative
+  start time, the error as a `role="alert"` when the step failed, and the
+  output rendered as formatted JSON.
+  - Safe by construction: `useLatestStepForNode` reads `PipelineRunsContext`
+    directly and returns `null` when no provider is mounted, so a bare editor
+    falls back to exactly the empty state it showed before. That fallback is
+    pinned by a test.
+  - The status→tone map is typed `Record<StepStatus, StatusPillState>`, so
+    adding a status to the union becomes a compile error here rather than a
+    silently unstyled pill.
+  - This is a rendering change only; no export or prop signature moved, so
+    the barrel's frozen API is untouched.
+
+### Audit note (no change)
+
+- `HangoutGrid`'s `"paginate beyond 16 — TODO"` was checked and is **not** a
+  data-loss bug: rows are computed as `ceil(count / cols)`, so every
+  participant renders. The TODO is about tile size at high counts, not
+  dropped participants.
+
 ## [2.79.0] — 2026-08-23
 
 A stub audit. Most of what it found was already honestly labelled (the

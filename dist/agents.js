@@ -1658,37 +1658,38 @@ function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 //#endregion
 //#region src/components/agents/hooks/useAgentRegistry.ts
 function ce({ baseUrl: e, pollIntervalMs: t = 3e4, enabled: n = !0 } = {}) {
-	let [i, o] = c(g), [s, l] = c(!1), [u, d] = c(null), f = r(async () => {
+	let [i, o] = c(g), [s, l] = c("fixture"), [u, d] = c(!1), [f, p] = c(null), m = r(async () => {
 		if (!e) {
-			o(g);
+			o(g), l("fixture");
 			return;
 		}
-		l(!0), d(null);
+		d(!0), p(null);
 		try {
 			let t = await fetch(`${e}/agents`);
 			if (!t.ok) throw Error(`HTTP ${t.status}`);
 			let n = await t.json();
-			o(n);
+			o(n), l("remote");
 		} catch (e) {
-			d(e instanceof Error ? e.message : "Failed to fetch agents");
+			p(e instanceof Error ? e.message : "Failed to fetch agents");
 		} finally {
-			l(!1);
+			d(!1);
 		}
 	}, [e]);
 	return a(() => {
-		if (!n || (f(), !e || t <= 0)) return;
-		let r = setInterval(f, t);
+		if (!n || (m(), !e || t <= 0)) return;
+		let r = setInterval(m, t);
 		return () => clearInterval(r);
 	}, [
 		n,
-		f,
+		m,
 		e,
 		t
 	]), {
 		agents: i,
-		isLoading: s,
-		error: u,
-		refresh: f,
+		source: s,
+		isLoading: u,
+		error: f,
+		refresh: m,
 		getAgent: r((e) => i.find((t) => t.id === e), [i]),
 		healthyCount: i.filter((e) => e.status === "healthy").length,
 		degradedCount: i.filter((e) => e.status === "degraded").length,
