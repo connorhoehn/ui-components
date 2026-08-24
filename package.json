@@ -1,6 +1,20 @@
 {
   "name": "@connorhoehnslalom/ui-components",
-  "version": "2.83.1",
+  "version": "2.84.0",
+  "description": "React component library for real-time collaborative applications \u2014 chat, presence, video, collaborative documents, pipeline editing and identity flows.",
+  "keywords": [
+    "react",
+    "components",
+    "ui",
+    "realtime",
+    "collaboration",
+    "websocket",
+    "video",
+    "yjs",
+    "design-system",
+    "tailwind"
+  ],
+  "homepage": "https://github.com/connorhoehnslalom/ui-components#readme",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -97,7 +111,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint:node-controls": "node scripts/check-node-controls.mjs",
-    "lint:hex-colors": "node scripts/check-hex-colors.mjs"
+    "lint:hex-colors": "node scripts/check-hex-colors.mjs",
+    "lint:readme": "node scripts/check-readme-imports.mjs"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

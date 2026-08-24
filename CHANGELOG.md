@@ -8,6 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.84.0] — 2026-08-24
+
+The README is the library's front door, and it was misinforming people.
+
+### Fixed
+
+- **The README's quick-start advertised three exports that do not exist.**
+  `TipTapEditor` (the export is `TiptapEditor`), `PipelineEditor` (it is
+  `PipelineEditorPage`) and `ObservabilityDashboard` (it is `DashboardPage`).
+  A consumer copy-pasting the first code sample got three import errors.
+- **It claimed to be published**, and pinned `2.19.0` (we are at 2.84.0).
+  Nothing is published — both scopes still 404 and every consumer is on a
+  `file:`/git-SHA pin (hub #1493). That is now stated up front rather than
+  discovered at `npm install`.
+- **Its stability table contradicted CLAUDE.md**, the source of truth:
+  `/pipelines` and `/doc-editor` were listed **In-flux** when both have had
+  frozen APIs since 2026-06-10, and `/agents` likewise. Someone reading the
+  README would have assumed those surfaces could churn under them.
+- Consumer list named `websocket-gateway`, which has been renamed to
+  `realtime-examples`. Test/story counts were off by ~2× and ~5×.
+
+### Added
+
+- **`npm run lint:readme`** — checks every
+  `import { … } from '@connorhoehnslalom/ui-components…'` in the README
+  against the barrel that subpath actually maps to, following `export *`
+  re-exports one level. Verified to fail on the real `TipTapEditor` typo.
+  Docs drift silently; this is the cheapest place to stop it.
+- **`description`, `keywords` and `homepage` in `package.json`** — all were
+  absent, so the package would publish with no registry description and no
+  search terms.
+
+### Not done — needs your decision
+
+- **There is no `license` field and no LICENSE file**, and the package is not
+  marked `private`. For a package slated to publish (#1493) that is a real
+  blocker: many organisations' dependency scanners reject unlicensed
+  packages outright, and consumers have no stated terms. Choosing a licence
+  is an owner decision, so this is reported rather than guessed at.
+
 ## [2.83.1] — 2026-08-24
 
 ### Fixed

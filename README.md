@@ -1,8 +1,15 @@
 # @connorhoehnslalom/ui-components
 
-React component library for real-time collaborative applications. Published
-to GitHub Packages as `@connorhoehnslalom/ui-components` (current `2.19.0`).
-Consumed by `event-catalog`, `websocket-gateway`, and `vnl-ads`.
+React component library for real-time collaborative applications.
+
+> **Not published yet.** Both `@connorhoehnslalom/*` and the
+> `@connorhoehn/realtime-modules` peer dep still 404 on the registry, so every
+> consumer is on a `file:`/git-SHA pin. Publishing is tracked as hub **#1493**
+> and needs all four repos moved together. The install snippet below is what
+> will work once that lands.
+
+Consumed by `event-catalog`, `realtime-examples` (formerly
+`websocket-gateway`), and `vnl-ads`.
 
 ## Install
 
@@ -28,10 +35,10 @@ import {
 } from '@connorhoehnslalom/ui-components';
 
 // Sub-paths for in-flux or specialised surfaces
-import { TipTapEditor, StandaloneTiptap } from '@connorhoehnslalom/ui-components/doc-editor';
-import { PipelineEditor } from '@connorhoehnslalom/ui-components/pipelines';
+import { TiptapEditor, StandaloneTiptap } from '@connorhoehnslalom/ui-components/doc-editor';
+import { PipelineEditorPage } from '@connorhoehnslalom/ui-components/pipelines';
 import { StreamingChatPanel, AgentFlowCanvas } from '@connorhoehnslalom/ui-components/agents';
-import { ObservabilityDashboard } from '@connorhoehnslalom/ui-components/observability';
+import { DashboardPage } from '@connorhoehnslalom/ui-components/observability';
 import { WrappedChatPanel } from '@connorhoehnslalom/ui-components/integrations/realtime-modules';
 import '@connorhoehnslalom/ui-components/styles.css';
 ```
@@ -55,29 +62,36 @@ common hand-rolled patterns onto the canonical ui-components composites.
 | `/hooks` | `useWebSocket`, `useComments`, `useLikes`, `usePosts`, `useSocialProfile`, etc. | **Stable** |
 | `/styles.css` | Tailwind v4 `@theme` tokens + keyframes | **Stable** |
 | `/integrations/realtime-modules` | Adapters that wire ui-components composites to `@connorhoehn/realtime-modules` hooks (`WrappedChatPanel`, `WrappedPresencePanel`, `WrappedReactionsOverlay`, `WrappedFileUploadDrop`, `WrappedHangoutLayout`, `WrappedHangoutRoomsList`, `ReconnectingShim`, `NetworkErrorBoundary`) | **Stable** |
-| `/doc-editor` | TipTap collaborative rich-text editor + self-bootstrapping `StandaloneTiptap`, document modes (Ack/Review/Reader), comments, mentions, video panel | **In-flux** (graduation: hub #1066) |
-| `/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **In-flux** (graduation: hub #1062) |
-| `/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A flow canvas | **In-flux** (graduation: hub #1069) |
-| `/observability` | Dashboard, events, metrics, node pages | **In-flux** |
+| `/doc-editor` | Tiptap collaborative rich-text editor + self-bootstrapping `StandaloneTiptap`, document modes (Ack/Review/Reader), comments, mentions, video panel | **Stable — API frozen** 2026-06-10 (hub #1066) |
+| `/pipelines` | Pipeline editor, canvas, runs, approvals, LLM nodes, DLQ | **Stable — API frozen** 2026-06-10 (hub #1062) |
+| `/agents` | AG-UI v0.1.x streaming chat, reasoning blocks, A2A flow canvas | **Stable API** (AG-UI v0.1.x types frozen 2026-06-06) |
+| `/observability` | Dashboard, events, metrics, node pages | **In-flux** — graduation-prepped v2.72.0; freezes when a real consumer and the distributed-core `ClusterDashboard` type exist |
 | `/ingest` | Data-ingest UI primitives | **In-flux** |
 
 ## Local development
 
 ```bash
 npm install
-npm test            # vitest run (190+ files, 2000+ tests)
-npm run lint        # tsc --noEmit
+npm test            # vitest run (currently ~400 files / ~4,000 tests)
+npm run lint        # tsc --noEmit over BOTH src and demo/
 npm run build       # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo        # demo site at http://localhost:5174
 npm run storybook   # Storybook 10 at http://localhost:6006
-npm run test:e2e    # playwright (tests/e2e/)
+npm run test:e2e    # playwright (17 specs — routes smoke, visual, journeys)
+
+# Guards, each enforcing a rule the type system cannot:
+npm run lint:hex-colors    # no arbitrary hex colour utilities (zero tolerance)
+npm run lint:static-styles # no new static inline styles
+npm run lint:node-controls # no hand-rolled form controls
 ```
 
 ### Storybook
 
-37 stories across `shared/`, `layout/`, `social/`, `video/`, `doc-editor/`,
-and `integrations/`. Each variant renders in isolation with knob-driven
-args.
+~199 story files. Every component under `shared/` and `forms/` has one, as do
+`identity/`, `ingest/`, `observability/`, `video/`, `layout/`, `social/`,
+`doc-editor/` and `integrations/`. Each variant renders in isolation with
+arg-driven controls; components needing context are driven from mocked
+provider values rather than a live runtime.
 
 ### Demo site
 
