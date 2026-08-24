@@ -176,6 +176,18 @@ export function useCursors(options: UseCursorsOptions): UseCursorsReturn {
     };
   }, [currentChannel, connectionState, activeMode, sendMessage]);
 
+  // Unmount: clear the throttle timer unconditionally.
+  //
+  // The subscribe effect above also clears it, but it bails out before
+  // registering a cleanup whenever connectionState !== 'connected' — so
+  // unmounting while disconnected left the timer pending.
+  useEffect(() => () => {
+    if (throttleTimerRef.current !== null) {
+      clearTimeout(throttleTimerRef.current);
+      throttleTimerRef.current = null;
+    }
+  }, []);
+
   // ---- sendFreeformUpdate ------------------------------------------------
 
   const sendFreeformUpdate = useCallback(

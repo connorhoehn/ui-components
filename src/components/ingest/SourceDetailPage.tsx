@@ -129,25 +129,37 @@ export default function SourceDetailPage() {
     return h;
   }, [idToken]);
 
-  const fetchSource = useCallback(async () => {
+  const fetchSource = useCallback(async (signal?: AbortSignal) => {
     if (!id) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${BASE_URL}/api/ingest/sources/${id}`, { headers: headers() });
+      const res = await fetch(`${BASE_URL}/api/ingest/sources/${id}`, {
+        headers: headers(),
+        signal,
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = await res.json();
+      if (signal?.aborted) return;
       const normalized: IngestSource = { ...body, mappingRules: normalizeRules(body.mappingRules ?? []) };
       setSource(normalized);
     } catch (err) {
+      if (signal?.aborted) return;
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
   }, [id, headers]);
 
   useEffect(() => {
-    void fetchSource();
+    // Abort on teardown. fetchSource's identity changes with `id` and
+    // `idToken`, so without this two things break: navigating away mid-request
+    // writes source/error/loading into an unmounted page, and switching
+    // sources quickly lets the older response land last and overwrite the
+    // newer one.
+    const controller = new AbortController();
+    void fetchSource(controller.signal);
+    return () => controller.abort();
   }, [fetchSource]);
 
   const enterEditMode = useCallback(() => {

@@ -216,8 +216,16 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
 
     historyFetchedRef.current = pipelineId;
     setLoadingHistory(true);
+
+    // Guard every setState below: this effect had no cleanup at all, so
+    // unmounting the provider while history was in flight wrote runs and
+    // loading state into a dead tree. Same `cancelled` pattern the rest of
+    // this domain uses (usePendingApprovals, usePipelineRunAuditLog).
+    let cancelled = false;
+
     listPipelineRuns(pipelineId, { limit: MAX_RUNS_PER_PIPELINE })
       .then((response) => {
+        if (cancelled) return;
         setRuns((prev) => {
           const next = { ...prev };
           for (const run of response.runs) {
@@ -227,6 +235,7 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
         });
       })
       .catch((err) => {
+        if (cancelled) return;
         console.error('[PipelineRuns] Failed to load history from API', err);
         setRuns((prev) => {
           const next = { ...prev };
@@ -236,7 +245,11 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
           return next;
         });
       })
-      .finally(() => setLoadingHistory(false));
+      .finally(() => {
+        if (!cancelled) setLoadingHistory(false);
+      });
+
+    return () => { cancelled = true; };
   }, [editor?.definition?.id]);
 
   // Fold every event into the runs state. Using the wildcard channel keeps

@@ -324,6 +324,16 @@ export default function PipelinesPage() {
     setSelectionMode,
   } = usePipelinesSelection({ visibleRows, filteredIds });
 
+  // Pending staggered bulk-export download timers (see handleBulkExport).
+  const bulkExportTimersRef = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    const timers = bulkExportTimersRef.current;
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
+
   // Union of tags across the selected rows (for the "Remove tag" popover).
   const selectedUnionTags = useMemo(() => {
     const tagSet = new Set<string>();
@@ -410,12 +420,18 @@ export default function PipelinesPage() {
     const ids = Array.from(selected);
     if (ids.length === 0) return;
     ids.forEach((id, i) => {
-      window.setTimeout(() => {
+      // Staggered so browsers don't drop concurrent downloads. Each handle is
+      // registered so unmount can cancel the rest — 30 selected pipelines
+      // queue 3s of timers, and navigating away mid-export would otherwise
+      // keep firing downloadJSON (anchor + object URL) into a dead tree.
+      const handle = window.setTimeout(() => {
+        bulkExportTimersRef.current.delete(handle);
         const row = rows.find((r) => r.id === id);
         const json = exportPipelineJSON(id);
         if (!row || !json) return;
         downloadJSON(`${slugify(row.name)}-${todayStamp()}.pipeline.json`, json);
       }, i * 100);
+      bulkExportTimersRef.current.add(handle);
     });
     toast(`Exported ${ids.length} pipeline${ids.length === 1 ? '' : 's'}`, {
       type: 'success',

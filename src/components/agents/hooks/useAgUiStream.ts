@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import type {
   AgUiEvent,
   AgUiMessage,
@@ -544,6 +544,15 @@ export function useAgUiStream({
     toolCallsRef.current = [];
     currentMessageIdRef.current = null;
   }, []);
+
+  // Unmount: abort any in-flight SSE stream.
+  //
+  // Every other cancel path here is user-driven (cancelStream, reset, or the
+  // next sendMessage). Without this, unmounting mid-stream — navigating away
+  // from an agent page while a response streams — leaves the read loop running
+  // against a live connection for the life of the page, pushing setState into
+  // a dead component on every event.
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   return {
     messages,

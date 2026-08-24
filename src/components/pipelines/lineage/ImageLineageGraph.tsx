@@ -344,6 +344,10 @@ function ArtifactPreviewModal({
 }: ArtifactPreviewModalProps) {
   const entry = navEntries.find((e) => e.imageId === imageId);
   const [copied, setCopied] = useState(false);
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+  }, []);
 
   // Reset the copied-confirmation when the modal target changes.
   useEffect(() => {
@@ -374,7 +378,8 @@ function ArtifactPreviewModal({
       void navigator.clipboard.writeText(imageId).then(
         () => {
           setCopied(true);
-          window.setTimeout(() => setCopied(false), 1200);
+          if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+          copiedTimerRef.current = setTimeout(() => setCopied(false), 1200);
         },
         () => {
           // Clipboard write failed (permissions / insecure context).

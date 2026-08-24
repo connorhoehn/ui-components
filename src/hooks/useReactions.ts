@@ -57,6 +57,16 @@ export function useReactions(options: UseReactionsOptions): UseReactionsReturn {
     currentChannelRef.current = currentChannel;
   }, [currentChannel]);
 
+  // Pending auto-remove timers, one per visible reaction (see handler below).
+  const expiryTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  useEffect(() => {
+    const timers = expiryTimersRef.current;
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+      timers.clear();
+    };
+  }, []);
+
   // ---- Message handler -----------------------------------------------------
   // Separate effect from subscribe so the handler survives channel changes
   // without being torn down. Channel filtering is done inside the handler
@@ -78,10 +88,15 @@ export function useReactions(options: UseReactionsOptions): UseReactionsReturn {
 
         setActiveReactions((prev) => [...prev, reaction]);
 
-        // Auto-remove after 2.5 seconds using the unique id
-        setTimeout(() => {
+        // Auto-remove after 2.5 seconds using the unique id. One timer is
+        // created per inbound reaction from inside the message handler, so a
+        // burst leaves many in flight at once — they're registered here and
+        // cleared together on unmount.
+        const handle = setTimeout(() => {
+          expiryTimersRef.current.delete(handle);
           setActiveReactions((prev) => prev.filter((r) => r.id !== reaction.id));
         }, 2500);
+        expiryTimersRef.current.add(handle);
       }
       // reaction:reaction_subscribed is silently ignored — no state change needed
     });

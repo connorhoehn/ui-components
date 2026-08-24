@@ -192,9 +192,21 @@ export function usePresence(options: UsePresenceOptions): UsePresenceReturn {
         }
       }
     },
-    []  
+    []
     // All deps are accessed via refs — stable callback that never causes re-renders
   );
+
+  // ---- Unmount: cancel a pending typing auto-clear -------------------------
+  // setTyping() schedules typingTimerRef OUTSIDE any effect, so no effect
+  // cleanup owns it. Without this, typing and then unmounting within the 2s
+  // window leaves a live timer that fires a presence 'set' on a torn-down
+  // socket. Unmount-only (empty deps) — the timer must survive re-renders.
+  useEffect(() => () => {
+    if (typingTimerRef.current !== null) {
+      clearTimeout(typingTimerRef.current);
+      typingTimerRef.current = null;
+    }
+  }, []);
 
   // ---- Derive array from map for consumers ---------------------------------
   const usersArray = Array.from(users.values());

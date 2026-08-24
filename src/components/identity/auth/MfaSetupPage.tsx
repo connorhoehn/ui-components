@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { FormField } from '../shared/FormField';
 import { QrCodeDisplay } from '../shared/QrCodeDisplay';
 import { CodeInput } from '../shared/CodeInput';
@@ -133,11 +133,21 @@ export function MfaSetupPage({
     }
   }, [setupResult, onVerify]);
 
+  // "Copied!" reset timer. The backup-codes step puts "Continue" (which calls
+  // onComplete and lets the host unmount this wizard) right under "Copy All
+  // Codes", so copy-then-continue inside 2s is the normal flow — the timer
+  // would otherwise fire on a dead component on essentially every enrolment.
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+  }, []);
+
   const handleCopyAll = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(backupCodes.join('\n'));
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       // Fallback: select text for manual copy
     }

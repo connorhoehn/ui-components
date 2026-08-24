@@ -188,6 +188,14 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [resumeToast, setResumeToast] = useState<string | null>(null);
 
+  // Auto-dismiss handle for the resume toast. Worth tracking because the
+  // handler schedules it and then immediately navigate()s — the navigation is
+  // what unmounts this page, so the timer outlived the mount every time.
+  const resumeToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (resumeToastTimerRef.current) clearTimeout(resumeToastTimerRef.current);
+  }, []);
+
   const handleResumeFromHere = useCallback(async (nodeId: string) => {
     if (!run) return;
     setResumeError(null);
@@ -198,7 +206,8 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
         `Resumed from ${nodeId.slice(0, 10)}${nodeId.length > 10 ? '…' : ''} (replay #${resp.replayAttempts})`,
       );
       // Auto-dismiss the toast after a short window so it doesn't linger.
-      setTimeout(() => setResumeToast(null), 4000);
+      if (resumeToastTimerRef.current) clearTimeout(resumeToastTimerRef.current);
+      resumeToastTimerRef.current = setTimeout(() => setResumeToast(null), 4000);
       // Stay on the same run-detail page — the resumed-from-step event
       // will live-update replayAttempts via the context reducer.
       navigate(`/pipelines/${pipelineId}/runs/${run.id}`);

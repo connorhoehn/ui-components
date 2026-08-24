@@ -3,7 +3,7 @@
 // Interactive presence strip with clickable avatars, online dots, mode badges,
 // section indicators, and tooltips.
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
 
@@ -96,6 +96,12 @@ function AvatarItem({
   const hideTooltip = () => {
     hideTimer.current = setTimeout(() => setHovered(false), 150);
   };
+
+  // A participant leaving the doc unmounts their avatar; if that happens
+  // during the 150ms hover-out grace period, nothing else clears the timer.
+  useEffect(() => () => {
+    if (hideTimer.current) clearTimeout(hideTimer.current);
+  }, []);
 
   const badge = modeBadgeColor(participant.mode);
   const baseColor = participant.color || '#3b82f6';

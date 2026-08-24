@@ -61,6 +61,10 @@ export function useMuteWhileTalking({
     let talkingSinceMs: number | null = null;
     let lastFiredMs = 0;
     let cancelled = false;
+    // Handle for the auto-dismiss timer scheduled from inside the interval
+    // below. It is nested one level down, so the effect cleanup has to hold
+    // its handle explicitly or it outlives the unmount.
+    let dismissTimeout: ReturnType<typeof setTimeout> | null = null;
     const data = new Float32Array(analyser.frequencyBinCount);
 
     const interval = setInterval(() => {
@@ -76,7 +80,11 @@ export function useMuteWhileTalking({
           setShowNag(true);
           lastFiredMs = now;
           // Auto-dismiss after 3s.
-          setTimeout(() => { if (!cancelled) setShowNag(false); }, 3000);
+          if (dismissTimeout !== null) clearTimeout(dismissTimeout);
+          dismissTimeout = setTimeout(() => {
+            dismissTimeout = null;
+            if (!cancelled) setShowNag(false);
+          }, 3000);
           talkingSinceMs = null;
         }
       } else {
@@ -87,6 +95,10 @@ export function useMuteWhileTalking({
     return () => {
       cancelled = true;
       clearInterval(interval);
+      if (dismissTimeout !== null) {
+        clearTimeout(dismissTimeout);
+        dismissTimeout = null;
+      }
       try { source.disconnect(); } catch { /* */ }
       try { analyser.disconnect(); } catch { /* */ }
     };

@@ -24,7 +24,14 @@ function addTrail(
   y: number,
   tool: CanvasTool | string,
   color: string,
-  size: number
+  size: number,
+  /**
+   * Registry of pending fade-out timers, owned by the calling component so it
+   * can cancel them on unmount. addTrail runs once per mousemove (deliberately
+   * un-throttled), so a fast drag has hundreds of these in flight; without a
+   * registry each one survives unmount holding a detached <div> alive.
+   */
+  timers?: Set<ReturnType<typeof setTimeout>>
 ) {
   const board = boardRef.current;
   if (!board) return;
@@ -73,11 +80,19 @@ function addTrail(
 
   board.appendChild(dot);
 
-  setTimeout(() => {
+  const handle = setTimeout(() => {
+    timers?.delete(handle);
     if (board.contains(dot)) {
       board.removeChild(dot);
     }
   }, 1000);
+  timers?.add(handle);
+}
+
+/** Cancel and forget every pending trail timer in a registry. */
+function clearTrailTimers(timers: Set<ReturnType<typeof setTimeout>>) {
+  timers.forEach((t) => clearTimeout(t));
+  timers.clear();
 }
 
 // ---------------------------------------------------------------------------
@@ -110,6 +125,21 @@ export function CanvasCursorBoard({
   // Throttle timer for 50ms leading-edge mousemove rate-limiting.
   const throttleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Pending fade-out timers for local trail particles.
+  const trailTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  // Unmount: drop the throttle timer and every pending trail particle timer.
+  useEffect(() => {
+    const timers = trailTimersRef.current;
+    return () => {
+      clearTrailTimers(timers);
+      if (throttleTimerRef.current !== null) {
+        clearTimeout(throttleTimerRef.current);
+        throttleTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -117,7 +147,7 @@ export function CanvasCursorBoard({
       const y = e.clientY - rect.top;
 
       // Add local trail on every event (not throttled — visual feedback).
-      addTrail(boardRef, x, y, tool, color, size);
+      addTrail(boardRef, x, y, tool, color, size, trailTimersRef.current);
 
       // Throttle broadcast: leading-edge 50ms.
       if (throttleTimerRef.current !== null) return;
@@ -274,11 +304,20 @@ function RemoteCursorWithTrail({
   size,
   boardRef,
 }: RemoteCursorWithTrailProps) {
+  // Pending fade-out timers for this remote cursor's trail particles.
+  const trailTimersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
   // Add a trail particle every time position changes.
   useEffect(() => {
-    addTrail(boardRef, x, y, tool, color, size);
+    addTrail(boardRef, x, y, tool, color, size, trailTimersRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [x, y]);
+
+  // Unmount (remote user leaves): cancel this cursor's pending particles.
+  useEffect(() => {
+    const timers = trailTimersRef.current;
+    return () => clearTrailTimers(timers);
+  }, []);
 
   return (
     <div
