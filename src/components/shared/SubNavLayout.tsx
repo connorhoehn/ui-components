@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 
@@ -252,6 +252,23 @@ function GroupSection({
     else window.localStorage?.removeItem(storageKey);
   }, [collapsed, storageKey]);
 
+  const bodyId = useId();
+  const headerRef = useRef<HTMLButtonElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  const toggle = () => {
+    if (!collapsed) {
+      // Collapsing unmounts the group's links. If focus is on one of them the
+      // browser drops it to <body>, so the keyboard user's Tab position
+      // silently resets to the top of the page. Hand focus up to the header.
+      const active = typeof document === 'undefined' ? null : document.activeElement;
+      if (active && bodyRef.current?.contains(active)) {
+        headerRef.current?.focus();
+      }
+    }
+    setCollapsed((v) => !v);
+  };
+
   // If any item in this group specifies groupScrollAfter, cap the visible
   // height at that many items and make the rest scrollable.
   const scrollAfter = items.find((i) => i.groupScrollAfter)?.groupScrollAfter;
@@ -264,9 +281,11 @@ function GroupSection({
     <section className="border-b border-[var(--color-border)]">
       <button
         type="button"
-        onClick={() => setCollapsed((v) => !v)}
+        ref={headerRef}
+        onClick={toggle}
         className="flex items-center gap-1.5 w-full px-3 py-2 bg-transparent border-none cursor-pointer text-[var(--color-text-tertiary)] text-[10px] font-bold tracking-[0.05em] uppercase text-left"
         aria-expanded={!collapsed}
+        aria-controls={bodyId}
       >
         <span className="text-[10px] w-[10px] inline-block" aria-hidden="true">
           {collapsed ? '▸' : '▾'}
@@ -277,7 +296,7 @@ function GroupSection({
         </span>
       </button>
       {!collapsed && (
-        <div style={listStyle}>
+        <div id={bodyId} ref={bodyRef} style={listStyle}>
           {items.map((item) => (
             <ItemLink key={item.path} item={item} renderNavItem={renderNavItem} />
           ))}

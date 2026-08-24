@@ -109,12 +109,50 @@ function AvatarItem({
   return (
     <div
       ref={ref}
-      className={cn('flex flex-col items-center gap-[3px] relative cursor-pointer animate-[presenceFadeIn_0.3s_ease]')}
+      className={cn('flex flex-col items-center gap-[3px] relative animate-[presenceFadeIn_0.3s_ease]')}
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
-      onClick={() => onJumpToUser?.(participant)}
+      // The tooltip used to open on hover only, which made everything inside
+      // it — including the Follow action — unreachable without a mouse.
+      // React's onFocus/onBlur are focusin/focusout, so they fire for the
+      // avatar button and for anything inside the tooltip.
+      onFocus={showTooltip}
+      onBlur={(e) => {
+        // Keep the tooltip mounted while focus moves *within* it (avatar →
+        // Follow). Tearing it down under a focused button would strand focus
+        // on <body> and restart the user's Tab walk at the top of the page.
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        hideTooltip();
+      }}
     >
-      {/* Tooltip */}
+      {/* Avatar circle with gradient + online dot. A real <button>: this was a
+          click handler on the wrapping div, so jumping to a participant was
+          mouse-only. */}
+      <button
+        type="button"
+        onClick={() => onJumpToUser?.(participant)}
+        aria-label={`Jump to ${participant.displayName}`}
+        className={cn('relative inline-block bg-transparent border-none p-0 m-0 cursor-pointer font-[inherit]')}
+      >
+        <div
+          className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out', hovered ? 'scale-110' : 'scale-100')}
+          style={{
+            background: `linear-gradient(135deg, ${baseColor}, ${darkenColor(baseColor, 0.2)})`,
+            boxShadow: hovered ? `0 0 0 2px ${baseColor}40` : 'none',
+          }}
+        >
+          {getInitials(participant.displayName)}
+        </div>
+
+        {/* Status dot: green = active, yellow = away/idle */}
+        <div
+          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-warning' : 'bg-success [animation:presencePulse_2s_infinite]')}
+        />
+      </button>
+
+      {/* Tooltip. Rendered *after* the avatar so Tab reaches Follow straight
+          after the avatar; it is absolutely positioned, so this is DOM order
+          only and does not move anything on screen. */}
       {hovered && (
         <div
           className={cn('absolute bottom-full left-1/2 -translate-x-1/2 mb-1 bg-surface-inverse text-white py-2 px-3 rounded-md text-xs whitespace-nowrap z-[100] pointer-events-auto shadow-[0_4px_12px_rgba(0,0,0,0.15)] leading-snug')}
@@ -131,34 +169,16 @@ function AvatarItem({
             </div>
           )}
           {onFollowUser && (
-            <div
-              role="button"
+            <button
+              type="button"
               onClick={(e) => { e.stopPropagation(); onFollowUser(participant); }}
-              className={cn('mt-1 text-[11px] font-semibold cursor-pointer', isFollowing ? 'text-warning-fg' : 'text-info-fg')}
+              className={cn('mt-1 text-[11px] font-semibold cursor-pointer bg-transparent border-none p-0 font-[inherit]', isFollowing ? 'text-warning-fg' : 'text-info-fg')}
             >
               {isFollowing ? 'Stop following' : 'Follow'}
-            </div>
+            </button>
           )}
         </div>
       )}
-
-      {/* Avatar circle with gradient + online dot */}
-      <div className={cn('relative inline-block')}>
-        <div
-          className={cn('w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold transition-[transform,box-shadow] duration-200 ease-in-out', hovered ? 'scale-110' : 'scale-100')}
-          style={{
-            background: `linear-gradient(135deg, ${baseColor}, ${darkenColor(baseColor, 0.2)})`,
-            boxShadow: hovered ? `0 0 0 2px ${baseColor}40` : 'none',
-          }}
-        >
-          {getInitials(participant.displayName)}
-        </div>
-
-        {/* Status dot: green = active, yellow = away/idle */}
-        <div
-          className={cn('absolute bottom-0 right-0 w-2 h-2 rounded-full border-2 border-white', participant.idle ? 'bg-warning' : 'bg-success [animation:presencePulse_2s_infinite]')}
-        />
-      </div>
 
       {/* Mode badge */}
       <span

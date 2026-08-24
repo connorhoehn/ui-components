@@ -121,6 +121,12 @@ export default function RunsTable({
           const { tone: statusTone, label: statusLabel } = statusChipVariant(r.status);
           const isSelected = selected.has(r.id);
           const retries = countTotalRetries(r);
+          // The row keeps a pointer-only onClick as a convenience. It
+          // deliberately does NOT get role="button" + tabIndex: the row
+          // already contains interactive descendants (select checkbox,
+          // Force-fail, Retry, View), and role="button" makes its children
+          // presentational and drops the `row` role. The keyboard path to
+          // the run is the real "View →" button in the last cell.
           return (
             <tr
               key={r.id}
@@ -247,7 +253,18 @@ export default function RunsTable({
                     ↻ Retry from failed
                   </button>
                 )}
-                <span className="text-xs text-primary">View →</span>
+                <button
+                  type="button"
+                  data-testid={`run-view-${r.id}`}
+                  aria-label={`View run ${r.id.slice(0, 8)}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigate(`/pipelines/${pipelineId}/runs/${r.id}`);
+                  }}
+                  className="cursor-pointer border-none bg-transparent p-0 text-xs text-primary font-[inherit]"
+                >
+                  View →
+                </button>
               </td>
             </tr>
           );

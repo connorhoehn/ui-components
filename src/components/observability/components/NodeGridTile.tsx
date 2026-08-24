@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import Sparkline from '../../shared/Sparkline';
 import { cn } from '../../../lib/cn';
+import { onActivationKey } from '../../../lib/activationKey';
 
 export interface NodeSummary {
   id: string;
@@ -73,6 +74,11 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
     <div
       data-testid="node-grid-tile"
       onClick={onClick}
+      onKeyDown={onClick ? onActivationKey(onClick) : undefined}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-pressed={onClick ? !!selected : undefined}
+      aria-label={onClick ? `Node ${node.id}` : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className={cn(
@@ -129,10 +135,12 @@ function NodeGridTile({ node, selected, onClick, onKill }: NodeGridTileProps) {
       {onKill && (
         <button
           data-testid="node-kill-btn"
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             onKill();
           }}
+          onKeyDown={(e) => e.stopPropagation()}
           className="self-start px-2 py-0.5 text-[11px] font-semibold bg-transparent text-text-tertiary border border-border rounded-sm cursor-pointer font-[inherit]"
         >
           ● kill

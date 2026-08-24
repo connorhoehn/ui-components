@@ -156,4 +156,21 @@ describe('TraceTimeline', () => {
     // amber bar in the spans area for kind='llm'
     expect(container.querySelector('.bg-warning')).not.toBeNull();
   });
+
+  // REGRESSION: each span row was a plain <div> with onClick, so the detail
+  // panel it opens was unreachable by keyboard. Rows are now real <button>s.
+  it('exposes each span row as a focusable button that opens the detail panel', () => {
+    render(<TraceTimeline trace={makeTrace()} />);
+
+    const row = screen.getByRole('button', { name: /root span/ });
+    expect(row.tagName).toBe('BUTTON');
+    expect(row).toHaveAttribute('type', 'button');
+
+    // A <div> row cannot take focus; a <button> can.
+    row.focus();
+    expect(row).toHaveFocus();
+
+    fireEvent.click(row);
+    expect(screen.getByText('Span ID')).toBeInTheDocument();
+  });
 });

@@ -7,7 +7,7 @@
 // also clickable, so the action cell and the document link have to stop
 // propagation or every action would also open the drawer.
 
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, createEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { UseIngestSourcesReturn } from '../../../hooks/useIngestSources';
 import type { UseIngestItemsReturn, UseIngestItemsOptions } from '../../../hooks/useIngestItems';
@@ -182,6 +182,59 @@ describe('IngestItemsPage drawer', () => {
     renderPage([item()]);
     fireEvent.click(screen.getByTestId('item-row-i1'));
     fireEvent.click(screen.getByTestId('ingest-item-drawer-close'));
+    expect(screen.queryByTestId('ingest-item-drawer')).toBeNull();
+  });
+});
+
+// REGRESSION (keyboard a11y): the item row was a `<tr onClick>` with no role,
+// no tabIndex and no key handler, so the detail drawer — the only way to see
+// an item's error, mapping and payload — was unreachable without a mouse. A
+// `<tr>` cannot be a `<button>`, so it carries role="button" + tabIndex={0} +
+// an Enter/Space handler instead. The nested action cell and document link
+// must keep swallowing the key event, or activating Retry/Skip would also
+// throw the drawer open.
+describe('IngestItemsPage drawer — keyboard access', () => {
+  it('exposes the row as a labelled button in the tab order', () => {
+    renderPage([item({ sourcePath: '/inbox/report.pdf' })]);
+    const row = screen.getByRole('button', { name: /Open details for \/inbox\/report\.pdf/ });
+    expect(row).toBe(screen.getByTestId('item-row-i1'));
+    expect(row).toHaveAttribute('tabindex', '0');
+  });
+
+  it('opens the drawer on Enter', () => {
+    renderPage([item()]);
+    expect(screen.queryByTestId('ingest-item-drawer')).toBeNull();
+    fireEvent.keyDown(screen.getByTestId('item-row-i1'), { key: 'Enter' });
+    expect(screen.getByTestId('ingest-item-drawer')).toBeInTheDocument();
+  });
+
+  it('opens the drawer on Space and suppresses the page scroll', () => {
+    renderPage([item()]);
+    const row = screen.getByTestId('item-row-i1');
+    const ev = createEvent.keyDown(row, { key: ' ' });
+    fireEvent(row, ev);
+    expect(screen.getByTestId('ingest-item-drawer')).toBeInTheDocument();
+    expect(ev.defaultPrevented).toBe(true);
+  });
+
+  it('ignores keys that are not Enter or Space', () => {
+    renderPage([item()]);
+    fireEvent.keyDown(screen.getByTestId('item-row-i1'), { key: 'a' });
+    expect(screen.queryByTestId('ingest-item-drawer')).toBeNull();
+  });
+
+  it('activating Skip from the keyboard does not also open the drawer', () => {
+    const hook = renderPage([item({ status: 'failed' })]);
+    const skip = screen.getByTestId('skip-i1');
+    fireEvent.keyDown(skip, { key: 'Enter' });
+    fireEvent.click(skip); // stands in for the browser's Enter->click default
+    expect(hook.skipItem).toHaveBeenCalledWith('i1');
+    expect(screen.queryByTestId('ingest-item-drawer')).toBeNull();
+  });
+
+  it('activating the document link from the keyboard does not open the drawer', () => {
+    renderPage([item({ documentId: 'doc-12345678' })]);
+    fireEvent.keyDown(screen.getByText(/doc-1234/), { key: 'Enter' });
     expect(screen.queryByTestId('ingest-item-drawer')).toBeNull();
   });
 });

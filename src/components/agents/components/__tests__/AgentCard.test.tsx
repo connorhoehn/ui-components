@@ -134,4 +134,23 @@ describe('AgentCard', () => {
     const { container } = render(<AgentCard agent={makeAgent({ tools: [] })} />);
     expect(container.querySelectorAll('span.bg-surface-hover')).toHaveLength(1); // protocol pill only
   });
+
+  // REGRESSION: the directory card was a plain <div> with onClick, so it had no
+  // role, was not in the tab order, and could not be activated by keyboard at
+  // all. It is now a real <button type="button">.
+  it('exposes the card as a focusable button that fires onClick', () => {
+    const onClick = vi.fn();
+    render(<AgentCard agent={makeAgent({ name: 'Searcher' })} onClick={onClick} />);
+
+    const card = screen.getByRole('button', { name: /Searcher/ });
+    expect(card.tagName).toBe('BUTTON');
+    expect(card).toHaveAttribute('type', 'button');
+
+    // A <div> is not focusable; a <button> is — this is what keyboard users need.
+    card.focus();
+    expect(card).toHaveFocus();
+
+    fireEvent.click(card);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
 });

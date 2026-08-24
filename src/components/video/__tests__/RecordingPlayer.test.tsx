@@ -228,3 +228,21 @@ describe('RecordingPlayer', () => {
     expect(screen.getByText('1:05')).toBeInTheDocument();
   });
 });
+
+// REGRESSION: the player's entire control bar — scrubber, play/pause, mute,
+// fullscreen — lives in an `opacity-0` overlay that was revealed only by
+// `group-hover:opacity-100`. A keyboard user tabbing into the player was
+// operating completely invisible controls. The overlay must reveal itself
+// when focus lands anywhere inside it too.
+describe('RecordingPlayer — controls must be visible when focused', () => {
+  it('reveals the control overlay on focus-within, not only on hover', () => {
+    const { container } = render(
+      <RecordingPlayer playlistUrl="https://example.com/v.m3u8" />,
+    );
+
+    const overlay = container.querySelector('.opacity-0.group-hover\\:opacity-100');
+    expect(overlay).not.toBeNull();
+    // The half that was missing:
+    expect((overlay as HTMLElement).className).toContain('focus-within:opacity-100');
+  });
+});

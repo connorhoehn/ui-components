@@ -6,6 +6,7 @@ import type { VersionEntry, SnapshotSection } from '../../hooks/useVersionHistor
 import { Panel, PanelHeader, PanelBody, Button } from '../ui/Panel';
 import DiffViewer from './DiffViewer';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -129,11 +130,15 @@ export default function VersionHistoryPanel({
           versions.map((v) => (
             <div
               key={v.timestamp}
+              role="button"
+              tabIndex={0}
               className={cn(
                 'flex items-center justify-between py-2.5 px-4 cursor-pointer text-[13px] text-text-primary',
                 previewTimestamp === v.timestamp ? 'bg-info-bg border-l-[3px] border-l-info' : 'bg-transparent border-l-[3px] border-l-transparent',
               )}
               onClick={() => onPreview(v.timestamp)}
+              // Space must preventDefault or the version list scrolls instead.
+              onKeyDown={onActivationKey(() => onPreview(v.timestamp))}
             >
               <div className={cn('flex-1 min-w-0')}>
                 {v.name && <span className={cn('text-xs font-semibold text-text-primary block mb-px')}>{v.name}</span>}

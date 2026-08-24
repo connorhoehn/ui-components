@@ -4,6 +4,7 @@
 // active step and indicates which steps added new context keys.
 
 import { cn } from '../../../lib/cn';
+import { onActivationKey } from '../../../lib/activationKey';
 import type { StepContextSnapshot } from './useContextSnapshots';
 
 // ---------------------------------------------------------------------------
@@ -46,9 +47,8 @@ export function ContextStepList({
             onClick={() => onStepSelect?.(snapshot.stepId)}
             role="button"
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') onStepSelect?.(snapshot.stepId);
-            }}
+            // Space must preventDefault or it also scrolls the step list.
+            onKeyDown={onActivationKey(() => onStepSelect?.(snapshot.stepId))}
             title={snapshot.stepId}
           >
             {snapshot.newKeys.length > 0 && (

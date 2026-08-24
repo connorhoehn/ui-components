@@ -11,6 +11,7 @@ import type { ChipTone } from '../shared/Chip';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import type { IngestItem, IngestItemStatus, IngestMappingMethod } from '../../types/ingest';
 import IngestItemDrawer from './IngestItemDrawer';
 import { Select } from '../forms/Select';
@@ -182,6 +183,10 @@ export default function IngestItemsPage() {
                   key={item.itemId}
                   className="border-b border-border cursor-pointer hover:bg-surface-hover"
                   onClick={() => setDrawerItem(item)}
+                  onKeyDown={onActivationKey(() => setDrawerItem(item))}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open details for ${item.sourcePath}`}
                   data-testid={`item-row-${item.itemId}`}
                 >
                   <td className="p-2 font-medium text-text-primary max-w-[260px] overflow-hidden text-ellipsis whitespace-nowrap" title={item.sourcePath}>
@@ -207,6 +212,7 @@ export default function IngestItemsPage() {
                         href={`/documents/${item.documentId}`}
                         className="text-primary no-underline font-medium text-xs"
                         onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
                       >
                         {item.documentId.slice(0, 8)}...
                       </a>
@@ -215,6 +221,7 @@ export default function IngestItemsPage() {
                   <td
                     className="p-2 text-right"
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
                   >
                     <div className="flex gap-1.5 justify-end">
                       {item.status === 'failed' && (

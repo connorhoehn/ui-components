@@ -31,7 +31,9 @@ function mkParticipant(overrides: Partial<Participant> = {}): Participant {
   };
 }
 
-const header = () => screen.getByText(/Activity/).closest('div')!;
+// The collapse/expand header is a real <button> (disclosure) — see the
+// REGRESSION test at the bottom of this file.
+const header = () => screen.getByRole('button', { name: /Activity/ });
 
 describe('ActivityFeed', () => {
   it('renders expanded by default with ▼ marker and no count chip when events are empty', () => {
@@ -171,5 +173,25 @@ describe('ActivityFeed', () => {
   it('renders a timestamp string in the event row', () => {
     render(<ActivityFeed events={[mkEvent({ timestamp: '2026-06-07T12:34:56Z' })]} participants={[]} />);
     expect(screen.getAllByText(/\d{1,2}:\d{2}/).length).toBeGreaterThan(0);
+  });
+
+  // REGRESSION: the collapse/expand header was a <div> with onClick — not
+  // focusable, no role, and no aria-expanded, so a keyboard or screen-reader
+  // user could neither collapse the panel nor tell whether it was collapsed.
+  it('exposes the header as a disclosure button with aria-expanded', () => {
+    render(<ActivityFeed events={[mkEvent()]} participants={[mkParticipant()]} />);
+
+    const btn = header();
+    expect(btn.tagName).toBe('BUTTON');
+    expect(btn).toHaveAttribute('type', 'button');
+    expect(btn).toHaveAttribute('aria-expanded', 'true');
+
+    // A <div> header cannot take focus; a <button> can.
+    btn.focus();
+    expect(btn).toHaveFocus();
+
+    fireEvent.click(btn);
+    expect(header()).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Active:')).not.toBeInTheDocument();
   });
 });

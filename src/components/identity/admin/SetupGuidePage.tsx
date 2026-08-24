@@ -2,7 +2,7 @@
 //
 // Step-by-step setup checklist with expandable details and progress indicator.
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useId } from 'react';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
@@ -40,6 +40,7 @@ interface Step {
 
 export function SetupGuidePage({ status, onNavigate }: SetupGuidePageProps) {
   const [expanded, setExpanded] = useState<number | null>(null);
+  const panelIdPrefix = useId();
 
   const toggleStep = useCallback((idx: number) => {
     setExpanded((prev) => (prev === idx ? null : idx));
@@ -187,11 +188,16 @@ window.location.href = authUrl;`}</pre>
       <div className="flex flex-col gap-2">
         {steps.map((step, idx) => (
           <Card key={idx}>
-            <div
-              className="flex items-center justify-between px-5 py-4 cursor-pointer select-none"
+            {/* A real <button>: this carried `role="button"` with no tabIndex
+                and no key handler, so the setup steps could only be opened
+                with a mouse. Nothing inside the header is interactive, so a
+                button is the correct element rather than an ARIA patch. */}
+            <button
+              type="button"
+              className="flex items-center justify-between w-full text-left px-5 py-4 cursor-pointer select-none bg-transparent border-none font-[inherit]"
               onClick={() => toggleStep(idx)}
-              role="button"
               aria-expanded={expanded === idx}
+              aria-controls={`${panelIdPrefix}-${idx}`}
             >
               <div className="flex items-center gap-3">
                 <div
@@ -206,12 +212,12 @@ window.location.href = authUrl;`}</pre>
                 </div>
                 <span className="text-sm font-medium text-text-primary">{step.title}</span>
               </div>
-              <span className="text-text-tertiary text-sm">
+              <span className="text-text-tertiary text-sm" aria-hidden="true">
                 {expanded === idx ? '▲' : '▼'}
               </span>
-            </div>
+            </button>
             {expanded === idx && (
-              <div className="px-5 pb-5 pt-0 border-t border-border-subtle">
+              <div id={`${panelIdPrefix}-${idx}`} className="px-5 pb-5 pt-0 border-t border-border-subtle">
                 <div className="pt-4">
                   {step.content}
                 </div>

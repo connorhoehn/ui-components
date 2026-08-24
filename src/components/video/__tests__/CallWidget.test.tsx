@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, createEvent } from '@testing-library/react';
 import { CallWidget } from '../CallWidget';
 import type { CallWidgetParticipant } from '../CallWidget';
 
@@ -229,5 +229,46 @@ describe('CallWidget — onOpenAddParticipant', () => {
   it('omits the control when neither add-participant path is wired', () => {
     render(<CallWidget state="active" mode="video" participants={[p('bob', 'Bob')]} />);
     expect(screen.queryByTestId('add-participant-button')).not.toBeInTheDocument();
+  });
+});
+
+// NOTE: the pill's expand action is wired to `onMinimize` (it toggles the
+// minimized state back off), not to `onExpand`.
+// REGRESSION: the minimized pill is a `role="button"` div whose key handler
+// was `e.key === 'Enter' && onExpand?.()` — Enter only, and with no
+// preventDefault. Pressing Space on the collapsed call widget therefore did
+// not expand the call; it scrolled the page instead, which is the browser
+// default for Space on a non-button element.
+describe('CallWidget — minimized pill keyboard activation', () => {
+  function renderPill(onExpand: () => void) {
+    render(
+      <CallWidget
+        state="active"
+        mode="video"
+        participants={[p('bob', 'Bob')]}
+        minimized
+        onMinimize={onExpand}
+      />,
+    );
+    return screen.getByRole('button', { name: 'Expand call widget' });
+  }
+
+  it('expands on Space', () => {
+    const onExpand = vi.fn();
+    fireEvent.keyDown(renderPill(onExpand), { key: ' ' });
+    expect(onExpand).toHaveBeenCalledTimes(1);
+  });
+
+  it('preventDefaults Space so the page does not scroll instead', () => {
+    const pill = renderPill(vi.fn());
+    const event = createEvent.keyDown(pill, { key: ' ' });
+    fireEvent(pill, event);
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('still expands on Enter', () => {
+    const onExpand = vi.fn();
+    fireEvent.keyDown(renderPill(onExpand), { key: 'Enter' });
+    expect(onExpand).toHaveBeenCalledTimes(1);
   });
 });

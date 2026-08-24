@@ -23,6 +23,7 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import { Button } from '../ui/Button';
 import {
   usePipelineRunAuditLog,
@@ -338,8 +339,12 @@ export default function ExecutorLog({
           return (
             <div
               key={row.auditId}
+              role="button"
+              tabIndex={0}
+              aria-expanded={row.trace ? expanded : undefined}
               className="grid grid-cols-[14px_auto_auto_1fr] items-baseline gap-2.5 py-1.5 text-xs border-b border-surface-inset cursor-pointer"
               onClick={() => handleRowClick(row)}
+              onKeyDown={onActivationKey(() => handleRowClick(row))}
               data-testid="executor-log-row"
               data-action={row.action}
               data-audit-id={row.auditId}

@@ -77,3 +77,54 @@ describe('SubNavLayout', () => {
     expect(screen.getByText('Detail A')).toBeInTheDocument();
   });
 });
+
+// REGRESSION: collapsing a group unmounts its links. With focus on one of
+// them, the browser had nowhere to put focus and dropped it to <body> — the
+// keyboard user's Tab position silently reset to the top of the page. Focus
+// must be handed up to the group header. Same defect and same fix as
+// layout/CollapsibleSidebar, sidebar/SidebarSection and shared/CollapsibleSection.
+describe('SubNavLayout — focus handoff on group collapse', () => {
+  const grouped: SubNavItem[] = [
+    { path: 'a', label: 'Alpha', group: 'Sources' },
+    { path: 'b', label: 'Beta', group: 'Sources' },
+  ];
+
+  it('moves focus to the group header instead of stranding it', () => {
+    render(<SubNavLayout title="T" items={grouped}>c</SubNavLayout>);
+
+    const link = screen.getByText('Alpha').closest('a') as HTMLElement;
+    link.focus();
+    expect(document.activeElement).toBe(link);
+
+    const header = screen.getByRole('button', { name: /Sources/ });
+    fireEvent.click(header);
+
+    expect(document.activeElement).toBe(header);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('leaves focus alone when it was never inside the group', () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <SubNavLayout title="T" items={grouped}>c</SubNavLayout>
+      </>,
+    );
+
+    const outside = screen.getByRole('button', { name: 'Outside' });
+    outside.focus();
+
+    fireEvent.click(screen.getByRole('button', { name: /Sources/ }));
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  it('points aria-controls at the group body', () => {
+    render(<SubNavLayout title="T" items={grouped}>c</SubNavLayout>);
+
+    const header = screen.getByRole('button', { name: /Sources/ });
+    const bodyId = header.getAttribute('aria-controls');
+    expect(bodyId).toBeTruthy();
+    expect(document.getElementById(bodyId as string)).not.toBeNull();
+  });
+});

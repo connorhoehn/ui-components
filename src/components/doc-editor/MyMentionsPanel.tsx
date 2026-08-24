@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { MyItem, MentionItem, TaskAssignment } from '../../hooks/useMyMentionsAndTasks';
 import { Panel, PanelHeader, PanelBody, Button } from '../ui/Panel';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -63,8 +64,12 @@ function MentionRow({
 }) {
   return (
     <div
+      role="button"
+      tabIndex={0}
       className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
       onClick={onClick}
+      // Space must preventDefault or the panel scrolls instead of navigating.
+      onKeyDown={onActivationKey(onClick)}
     >
       <div
         className={cn('w-7 h-7 rounded-full text-white text-[11px] font-semibold flex items-center justify-center shrink-0')}
@@ -115,8 +120,12 @@ function TaskRow({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       className={cn('flex gap-2.5 py-2.5 px-4 cursor-pointer border-b border-border-subtle items-start hover:bg-surface-inset')}
       onClick={onClick}
+      // Space must preventDefault or the panel scrolls instead of navigating.
+      onKeyDown={onActivationKey(onClick)}
     >
       <div
         className={cn('w-2 h-2 rounded-full shrink-0 mt-1')}

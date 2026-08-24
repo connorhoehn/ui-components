@@ -193,3 +193,48 @@ describe('RoomList selection', () => {
     expect(props.onRoomSelect).toHaveBeenCalledWith(target);
   });
 });
+
+// REGRESSION (keyboard a11y): the full-card `RoomRow` was a bare
+// `<div onClick>` — not focusable, no key handler, not announced as a control —
+// even though its sibling `CompactRoomRow` in the same file was already a real
+// `<button>`. Picking a room was mouse-only in the non-compact layout. RoomRow
+// is now a `<button type="button">` too, matching the in-file precedent, so
+// focus plus Enter/Space come from the browser.
+describe('RoomList selection — keyboard', () => {
+  it('exposes each full-card room row as a button', () => {
+    renderList({ rooms: [room({ roomId: 'r2', name: 'random' })] });
+    const row = screen.getByRole('button', { name: /random/ });
+    expect(row.tagName).toBe('BUTTON');
+    expect(row).toHaveAttribute('type', 'button');
+  });
+
+  it('puts the full-card room row in the tab order', () => {
+    renderList({ rooms: [room({ roomId: 'r2', name: 'random' })] });
+    const row = screen.getByRole('button', { name: /random/ });
+    row.focus();
+    expect(document.activeElement).toBe(row);
+  });
+
+  it('activating a focused row selects the room', () => {
+    const target = room({ roomId: 'r2', name: 'random', type: 'dm' });
+    const props = renderList({ rooms: [room(), target] });
+    const row = screen.getByRole('button', { name: /random/ });
+    row.focus();
+    // jsdom does not run the browser's Enter/Space -> click default action;
+    // the tagName + focus assertions above are what prove the key press lands.
+    fireEvent.click(row);
+    expect(props.onRoomSelect).toHaveBeenCalledWith(target);
+  });
+
+  it('marks the active room with aria-pressed', () => {
+    const target = room({ roomId: 'r2', name: 'random' });
+    renderList({ rooms: [room({ roomId: 'r1', name: 'general' }), target], activeRoomId: 'r2' } as Partial<Props>);
+    expect(screen.getByRole('button', { name: /random/ })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /general/ })).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('matches the compact variant, which was already a button', () => {
+    renderList({ compact: true, rooms: [room({ name: 'general' })] });
+    expect(screen.getByRole('button', { name: /general/ }).tagName).toBe('BUTTON');
+  });
+});

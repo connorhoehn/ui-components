@@ -20,6 +20,7 @@ import {
   type CSSProperties,
 } from 'react';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import { CallAvatar, type CallStripParticipant } from './CallParticipantStrip';
 import { CallParticipantStrip } from './CallParticipantStrip';
 import { CallControls } from './CallControls';
@@ -399,7 +400,9 @@ function MinimizedPill({
       role="button"
       tabIndex={0}
       aria-label="Expand call widget"
-      onKeyDown={(e) => e.key === 'Enter' && onExpand?.()}
+      // Enter *and* Space: this handled Enter only, so Space on the collapsed
+      // widget scrolled the page instead of expanding the call.
+      onKeyDown={onActivationKey(() => onExpand?.())}
     >
       {/* Active indicator */}
       <span

@@ -9,6 +9,7 @@
 
 import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 export interface TranscriptSegment {
   startMs: number;
@@ -176,8 +177,10 @@ export function TranscriptPanel({
                 seekable && 'cursor-pointer',
               )}
               onClick={seekable ? () => onSeek!(seg.startMs) : undefined}
+              onKeyDown={seekable ? onActivationKey(() => onSeek!(seg.startMs)) : undefined}
               role={seekable ? 'button' : undefined}
               tabIndex={seekable ? 0 : undefined}
+              aria-label={seekable ? `Seek to ${formatTimestamp(seg.startMs)} — ${seg.speakerLabel}` : undefined}
             >
               <div className="flex items-baseline gap-2 mb-1">
                 <span

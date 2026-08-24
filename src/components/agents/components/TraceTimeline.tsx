@@ -39,9 +39,10 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
   const widthPct = totalMs > 0 ? Math.max((span.durationMs / totalMs) * 100, 0.5) : 0;
 
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        'flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle',
+        'w-full text-left bg-transparent font-[inherit] flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle',
         selected && 'bg-info-bg',
       )}
       onClick={() => onSelect(span)}
@@ -63,7 +64,7 @@ function SpanRow({ span, depth, totalMs, startOffset, onSelect, selected }: Span
           {span.durationMs}ms
         </span>
       </div>
-    </div>
+    </button>
   );
 }
 

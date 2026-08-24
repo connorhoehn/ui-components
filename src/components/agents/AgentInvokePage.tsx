@@ -37,11 +37,12 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
         {/* Agent list */}
         <div className="flex-1 py-2 overflow-y-auto">
           {agents.map((agent) => (
-            <div
+            <button
               key={agent.id}
+              type="button"
               onClick={() => { setSelectedId(agent.id); reset(); setEvents([]); }}
               className={cn(
-                'py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]',
+                'w-full text-left bg-transparent font-[inherit] py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]',
                 agent.status === 'offline' ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
                 selectedId === agent.id
                   ? 'bg-surface-hover border-l-primary'
@@ -66,7 +67,7 @@ export function AgentInvokePage({ defaultAgentId, baseUrl = '/api/agents', class
                       : 'bg-danger',
                 )}
               />
-            </div>
+            </button>
           ))}
         </div>
 

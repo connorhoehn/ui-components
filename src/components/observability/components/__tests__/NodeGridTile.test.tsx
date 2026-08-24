@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, createEvent } from '@testing-library/react';
 import NodeGridTile, { type NodeSummary } from '../NodeGridTile';
 
 function makeNode(overrides: Partial<NodeSummary> = {}): NodeSummary {
@@ -99,5 +99,59 @@ describe('NodeGridTile', () => {
     render(<NodeGridTile node={makeNode({ status: 'dead' })} />);
     const tile = screen.getByTestId('node-grid-tile');
     expect(tile.className).toContain('border-state-failed');
+  });
+});
+
+// REGRESSION (keyboard a11y): the tile was a bare `<div onClick>`. The only
+// focusable thing in the whole grid was the optional "● kill" button, so a
+// keyboard user could destroy a node but could not select one to inspect it.
+// The tile now carries role="button" + tabIndex={0} + an Enter/Space handler
+// when (and only when) it is interactive, and "● kill" swallows key events so
+// it does not also select the tile.
+describe('NodeGridTile — keyboard selection', () => {
+  it('exposes an interactive tile as a labelled button in the tab order', () => {
+    render(<NodeGridTile node={makeNode({ id: 'node-XYZ' })} onClick={() => {}} />);
+    const tile = screen.getByRole('button', { name: 'Node node-XYZ' });
+    expect(tile).toBe(screen.getByTestId('node-grid-tile'));
+    expect(tile).toHaveAttribute('tabindex', '0');
+  });
+
+  it('selects the tile on Enter', () => {
+    const onClick = vi.fn();
+    render(<NodeGridTile node={makeNode()} onClick={onClick} />);
+    fireEvent.keyDown(screen.getByTestId('node-grid-tile'), { key: 'Enter' });
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('selects the tile on Space and suppresses the page scroll', () => {
+    const onClick = vi.fn();
+    render(<NodeGridTile node={makeNode()} onClick={onClick} />);
+    const tile = screen.getByTestId('node-grid-tile');
+    const ev = createEvent.keyDown(tile, { key: ' ' });
+    fireEvent(tile, ev);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(ev.defaultPrevented).toBe(true);
+  });
+
+  it('ignores keys that are not Enter or Space', () => {
+    const onClick = vi.fn();
+    render(<NodeGridTile node={makeNode()} onClick={onClick} />);
+    fireEvent.keyDown(screen.getByTestId('node-grid-tile'), { key: 'ArrowRight' });
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('stays out of the tab order when it is not interactive', () => {
+    render(<NodeGridTile node={makeNode()} />);
+    const tile = screen.getByTestId('node-grid-tile');
+    expect(tile).not.toHaveAttribute('tabindex');
+    expect(tile).not.toHaveAttribute('role');
+  });
+
+  it('keying "● kill" does not also select the tile', () => {
+    const onClick = vi.fn();
+    const onKill = vi.fn();
+    render(<NodeGridTile node={makeNode()} onClick={onClick} onKill={onKill} />);
+    fireEvent.keyDown(screen.getByTestId('node-kill-btn'), { key: 'Enter' });
+    expect(onClick).not.toHaveBeenCalled();
   });
 });

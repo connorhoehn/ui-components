@@ -5,6 +5,7 @@
 
 import { useState } from 'react';
 import { cn } from '../../../lib/cn';
+import { onActivationKey } from '../../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -112,7 +113,8 @@ export function ContextJsonTree({
           onClick={() => setCollapsed((c) => !c)}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setCollapsed((c) => !c); }}
+          // Space must preventDefault or it also scrolls the inspector panel.
+          onKeyDown={onActivationKey(() => setCollapsed((c) => !c))}
         >
           {collapsed ? '▶' : '▼'}
         </span>
@@ -147,7 +149,8 @@ export function ContextJsonTree({
           onClick={() => setCollapsed((c) => !c)}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setCollapsed((c) => !c); }}
+          // Space must preventDefault or it also scrolls the inspector panel.
+          onKeyDown={onActivationKey(() => setCollapsed((c) => !c))}
         >
           {collapsed ? '▶' : '▼'}
         </span>

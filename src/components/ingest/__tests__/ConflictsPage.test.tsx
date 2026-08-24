@@ -215,3 +215,50 @@ describe('ConflictsPage per-conflict state isolation', () => {
     await waitFor(() => expect(hook.resolveConflict).toHaveBeenCalledWith('c2', { pick: 'platform' }));
   });
 });
+
+// REGRESSION (keyboard a11y): the left-rail conflict rows were bare
+// `<div onClick>` — not focusable, not exposed as buttons, and with no key
+// handler — so a keyboard-only operator could never pick which conflict to
+// inspect or resolve. The whole queue was mouse-only. They are real
+// `<button type="button">` now, so the browser supplies focus plus Enter and
+// Space activation, and assistive tech announces them as buttons.
+describe('ConflictsPage queue — keyboard selection', () => {
+  it('exposes each conflict row as a button named after the conflict', () => {
+    renderPage({ conflicts: [conflict({ conflictId: 'c1', summary: 'first one' })] });
+    expect(screen.getByRole('button', { name: /first one/ })).toBe(
+      screen.getByTestId('conflict-row-c1'),
+    );
+  });
+
+  it('puts every conflict row in the tab order', () => {
+    renderPage({
+      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
+    });
+    const row = screen.getByTestId('conflict-row-c2');
+    expect(row.tagName).toBe('BUTTON');
+    expect(row).toHaveAttribute('type', 'button');
+    row.focus();
+    expect(document.activeElement).toBe(row);
+  });
+
+  it('activating a focused row swaps the detail pane', () => {
+    renderPage({
+      conflicts: [conflict({ conflictId: 'c1' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
+    });
+    const row = screen.getByRole('button', { name: /the second one/ });
+    row.focus();
+    // jsdom does not run the browser's Enter->click default action, so click
+    // stands in for it; the focusability assertion above is what proves the
+    // key press can reach this row at all.
+    fireEvent.click(row);
+    expect(within(screen.getByTestId('conflict-detail')).getByText('the second one')).toBeInTheDocument();
+  });
+
+  it('marks the active row with aria-pressed so SR users hear the selection', () => {
+    renderPage({
+      conflicts: [conflict({ conflictId: 'c1', summary: 'first one' }), conflict({ conflictId: 'c2', summary: 'the second one' })],
+    });
+    expect(screen.getByTestId('conflict-row-c1')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('conflict-row-c2')).toHaveAttribute('aria-pressed', 'false');
+  });
+});
