@@ -63,9 +63,13 @@ export default function DecisionsReaderRenderer({ section, onNavigateToEditor }:
 
   return (
     <div>
-      {open.length > 0    && <StatusGroup label="Open"    color="#92400e" items={open} />}
-      {decided.length > 0 && <StatusGroup label="Decided" color="#065f46" items={decided} />}
-      {vetoed.length > 0  && <StatusGroup label="Vetoed"  color="#991b1b" items={vetoed} />}
+      {/* Group headers take the same tone token as the per-row badge for that
+          status (STATUS_META above). They used to be literal palette hexes,
+          so overriding --color-warning-fg / -success-fg / -danger-fg re-toned
+          the badges but left the headers on the stock amber/green/red. */}
+      {open.length > 0    && <StatusGroup label="Open"    color={STATUS_META.pending.color}  items={open} />}
+      {decided.length > 0 && <StatusGroup label="Decided" color={STATUS_META.acked.color}    items={decided} />}
+      {vetoed.length > 0  && <StatusGroup label="Vetoed"  color={STATUS_META.rejected.color} items={vetoed} />}
 
       {onNavigateToEditor && (
         <button

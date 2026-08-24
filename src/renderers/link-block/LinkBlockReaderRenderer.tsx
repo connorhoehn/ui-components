@@ -5,9 +5,17 @@ import type { SectionRendererProps } from '../types';
 interface LinkRow { label: string; url: string }
 interface LinksMeta { links?: LinkRow[] }
 
+// `section.metadata` is untyped bag-of-anything that round-trips through the
+// CRDT and the server, so an entry can be null or a non-object. Reading
+// `l.url` off one of those threw and blanked the whole document; skip them
+// and render the links that are well-formed.
+function isLinkRow(l: unknown): l is LinkRow {
+  return typeof l === 'object' && l !== null && typeof (l as LinkRow).url === 'string';
+}
+
 export default function LinkBlockReaderRenderer({ section }: SectionRendererProps) {
   const m = (section.metadata ?? {}) as LinksMeta;
-  const links = Array.isArray(m.links) ? m.links.filter((l) => l.url) : [];
+  const links = Array.isArray(m.links) ? m.links.filter((l) => isLinkRow(l) && l.url) : [];
 
   if (links.length === 0) {
     return (

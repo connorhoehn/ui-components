@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { cn } from '../../lib/cn';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
@@ -25,12 +26,16 @@ function DecisionRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onRe
   const inputRef = useRef<HTMLInputElement>(null);
   const meta = DECISION_META[item.status] ?? DECISION_META.pending;
 
+  // Stable identity so the effect fires once per autoFocus transition rather
+  // than on every render — see src/hooks/useEventCallback.ts.
+  const didAutoFocus = useEventCallback(onDidAutoFocus);
+
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
-      onDidAutoFocus?.();
+      didAutoFocus();
     }
-  }, [autoFocus, onDidAutoFocus]);
+  }, [autoFocus, didAutoFocus]);
 
   return (
     <div className="flex items-center gap-2 py-1.5 border-b border-border-subtle">
@@ -96,12 +101,19 @@ export default function DecisionsEditorRenderer({
   onRemoveItem,
   onUpdateCursorInfo,
 }: SectionRendererProps) {
-  const focusLastRef = useRef(false);
+  // See the matching comment in ChecklistEditorRenderer: focus the new row only
+  // once the list has really grown, so an absent or async `onAddItem` cannot
+  // leave a stale focus intent that steals the caret on an unrelated render.
+  const pendingAddCountRef = useRef<number | null>(null);
 
   const handleAdd = () => {
-    onAddItem?.({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
-    focusLastRef.current = true;
+    if (!onAddItem) return;
+    pendingAddCountRef.current = section.items.length;
+    onAddItem({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
   };
+
+  const pendingCount = pendingAddCountRef.current;
+  const awaitingFocus = pendingCount !== null && section.items.length > pendingCount;
 
   return (
     <div>
@@ -125,14 +137,14 @@ export default function DecisionsEditorRenderer({
       <div>
         {section.items.map((item, idx) => {
           const isLast = idx === section.items.length - 1;
-          const shouldFocus = focusLastRef.current && isLast;
+          const shouldFocus = awaitingFocus && isLast;
           return (
             <DecisionRow
               key={item.id}
               item={item}
               editable={editable}
               autoFocus={shouldFocus}
-              onDidAutoFocus={shouldFocus ? () => { focusLastRef.current = false; } : undefined}
+              onDidAutoFocus={shouldFocus ? () => { pendingAddCountRef.current = null; } : undefined}
               onUpdate={(patch) => {
                 const prevStatus = item.status;
                 onUpdateItem?.(item.id, patch);

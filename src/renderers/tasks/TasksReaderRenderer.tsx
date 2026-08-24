@@ -9,14 +9,14 @@ import { cn } from '../../lib/cn';
 import type { TaskItem } from '../../types/document';
 import type { SectionRendererProps } from '../types';
 
-const STATUS_META: Record<TaskItem['status'], { label: string; color: string; bg: string }> = {
+const STATUS_META: Record<string, { label: string; color: string; bg: string }> = {
   pending: { label: 'Pending', color: 'var(--color-warning-fg)', bg: 'var(--color-warning-bg)' },
   acked:   { label: 'Acked',   color: 'var(--color-info-fg)', bg: 'var(--color-info-bg)' },
   done:    { label: 'Done',    color: 'var(--color-success-fg)', bg: 'var(--color-success-bg)' },
   rejected:{ label: 'Rejected',color: 'var(--color-danger-fg)', bg: 'var(--color-danger-bg)' },
 };
 
-const PRIORITY_COLORS: Record<TaskItem['priority'], string> = {
+const PRIORITY_COLORS: Record<string, string> = {
   high:   'var(--color-danger)',
   medium: 'var(--color-caution)',
   low:    'var(--color-text-tertiary)',
@@ -47,7 +47,12 @@ interface ItemRowProps {
 
 function ItemRow({ item, onUpdateItem }: ItemRowProps) {
   const [hovered, setHovered] = useState(false);
-  const meta = STATUS_META[item.status];
+  // `item.status` / `item.priority` arrive from the CRDT and from persisted
+  // documents, so they can hold a value this build does not know (a newer
+  // schema, a partially-synced item). Before the fallbacks, an unrecognised
+  // status made `meta.color` throw and took down the whole section.
+  const meta = STATUS_META[item.status] ?? STATUS_META.pending;
+  const priorityColor = PRIORITY_COLORS[item.priority] ?? PRIORITY_COLORS.medium;
   const overdue = item.dueDate && item.status === 'pending' ? isOverdue(item.dueDate) : false;
   const isDone = item.status === 'done' || item.status === 'acked';
 
@@ -65,7 +70,7 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
           width: 7,
           height: 7,
           borderRadius: '50%',
-          background: PRIORITY_COLORS[item.priority],
+          background: priorityColor,
           flexShrink: 0,
         }}
       />
@@ -122,9 +127,9 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
           fontWeight: 600,
           padding: '1px 6px',
           borderRadius: 10,
-          background: overdue ? 'var(--color-danger-bg)' : '#f0f9ff',
+          background: overdue ? 'var(--color-danger-bg)' : 'var(--color-info-bg)',
           color: overdue ? 'var(--color-danger)' : 'var(--color-neutral)',
-          border: overdue ? '1px solid #fecaca' : '1px solid #e0f2fe',
+          border: overdue ? '1px solid var(--color-danger-border)' : '1px solid var(--color-info-border)',
           whiteSpace: 'nowrap',
           flexShrink: 0,
         }}>
@@ -173,9 +178,13 @@ export default function TasksReaderRenderer({ section, onUpdateItem, onNavigateT
     );
   }
 
-  const pending  = items.filter(i => i.status === 'pending');
+  // Exhaustive by construction: the three groups used to be three positive
+  // filters, so an item whose status was none of the four known values matched
+  // no group and vanished from the list without a trace. Anything not
+  // explicitly done/acked/rejected is treated as outstanding.
   const done     = items.filter(i => i.status === 'done' || i.status === 'acked');
   const rejected = items.filter(i => i.status === 'rejected');
+  const pending  = items.filter(i => !done.includes(i) && !rejected.includes(i));
 
   return (
     <div>
