@@ -172,4 +172,99 @@ describe('DataTable', () => {
       'Page 1 of',
     );
   });
+  // Regression: the default comparator (no `compare` on the column) used to do
+  // `String(a[key]).localeCompare(String(b[key]))`, which collates "10" before
+  // "9". Inputs are chosen so the buggy and correct orders differ: ascending by
+  // `count` must be 2, 9, 10, 100 — the old code produced 10, 100, 2, 9.
+  it('default comparator sorts a numeric column numerically, not lexicographically', () => {
+    interface NumRow { id: string; count: number }
+    const numRows: NumRow[] = [
+      { id: 'ten', count: 10 },
+      { id: 'nine', count: 9 },
+      { id: 'hundred', count: 100 },
+      { id: 'two', count: 2 },
+    ];
+    const numCols: DataTableColumn<NumRow>[] = [
+      { key: 'count', header: 'Count', sortable: true },
+    ];
+    render(
+      <DataTable data={numRows} columns={numCols} keyField={(r) => r.id} />,
+    );
+    fireEvent.click(screen.getByTestId('datatable-header-count'));
+    expect(
+      screen.getAllByRole('cell').map((c) => c.textContent),
+    ).toEqual(['2', '9', '10', '100']);
+
+    fireEvent.click(screen.getByTestId('datatable-header-count'));
+    expect(
+      screen.getAllByRole('cell').map((c) => c.textContent),
+    ).toEqual(['100', '10', '9', '2']);
+  });
+
+  // Regression: `String(new Date(...))` is "Thu Aug 13 2026 …", so stringifying
+  // sorted a Date column by weekday NAME. Ascending here must be Aug 13 → Aug 14
+  // → Aug 15; the old code gave Fri(14), Sat(15), Thu(13).
+  it('default comparator sorts a Date column chronologically, not by weekday name', () => {
+    interface DateRow { id: string; when: Date }
+    const dateRows: DateRow[] = [
+      { id: 'sat', when: new Date('2026-08-15T00:00:00Z') },
+      { id: 'thu', when: new Date('2026-08-13T00:00:00Z') },
+      { id: 'fri', when: new Date('2026-08-14T00:00:00Z') },
+    ];
+    const dateCols: DataTableColumn<DateRow>[] = [
+      {
+        key: 'when',
+        header: 'When',
+        sortable: true,
+        render: (r) => <span data-testid={`when-${r.id}`}>{r.id}</span>,
+      },
+    ];
+    render(
+      <DataTable data={dateRows} columns={dateCols} keyField={(r) => r.id} />,
+    );
+    fireEvent.click(screen.getByTestId('datatable-header-when'));
+    expect(
+      screen.getAllByRole('cell').map((c) => c.textContent),
+    ).toEqual(['thu', 'fri', 'sat']);
+  });
+
+  // Regression: `page` is raw state, `safePage` is it clamped to the current
+  // page count. When `data` shrinks under a stale index the two diverge, and
+  // the pager used to step the RAW value (`setPage(p => p - 1)`), so Prev moved
+  // page 2→1 while safePage stayed pinned at 1 and the footer still read
+  // "Page 2 of 2". The button looked dead. It must step from `safePage`.
+  it('Prev advances immediately after the data shrinks under a stale page index', () => {
+    const many = Array.from({ length: 6 }, (_, i) => ({
+      id: `r${i}`,
+      name: `Row ${i}`,
+      status: 'ok',
+      count: i,
+    }));
+    const { rerender } = render(
+      <DataTable data={many} columns={columns} keyField={keyField} pageSize={2} />,
+    );
+    fireEvent.click(screen.getByTestId('datatable-next'));
+    fireEvent.click(screen.getByTestId('datatable-next'));
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent(
+      'Page 3 of 3',
+    );
+
+    // Parent narrows the data: 3 pages -> 2. safePage clamps to 1 (page is 2).
+    rerender(
+      <DataTable
+        data={many.slice(0, 4)}
+        columns={columns}
+        keyField={keyField}
+        pageSize={2}
+      />,
+    );
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent(
+      'Page 2 of 2',
+    );
+
+    fireEvent.click(screen.getByTestId('datatable-prev'));
+    expect(screen.getByTestId('datatable-page-summary')).toHaveTextContent(
+      'Page 1 of 2',
+    );
+  });
 });

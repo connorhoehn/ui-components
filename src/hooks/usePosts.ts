@@ -108,7 +108,18 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
         const payload = (msg.payload ?? msg) as Record<string, unknown>;
         if (payload.roomId !== roomIdRef.current) return;
         const incoming = { ...(payload as unknown as PostItem), _fadeIn: true };
-        setPosts((prev) => [incoming, ...prev]);
+        setPosts((prev) => {
+          // The author already has this post: `createPost` prepends the POST
+          // response, and the gateway then broadcasts the same row back. Without
+          // this guard the feed rendered the post twice and React warned about
+          // two children with the same key (`PostFeed` keys on `postId`), after
+          // which a like or comment hit an ambiguous duplicate row.
+          // `useChat` has always deduped this way; this hook was the outlier.
+          if (incoming.postId && prev.some((p) => p.postId === incoming.postId)) {
+            return prev;
+          }
+          return [incoming, ...prev];
+        });
         const handle = setTimeout(() => {
           fadeTimers.delete(handle);
           setPosts((prev) =>

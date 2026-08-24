@@ -87,6 +87,38 @@ function flattenJson(
   return result;
 }
 
+/**
+ * Order two flattened JSON paths the way a human reads an array.
+ *
+ * `flattenJson` writes array indices as bare numeric path segments
+ * (`results.0` … `results.11`), and `localeCompare` collates those as text —
+ * so "results.10" sorted between "results.1" and "results.2" and the diff for
+ * item #10 appeared above the diff for item #2. Segments that are entirely
+ * digits are compared as numbers; everything else keeps `localeCompare`, so
+ * object-key ordering is unchanged.
+ */
+function compareJsonPaths(a: string, b: string): number {
+  const as = a.split('.');
+  const bs = b.split('.');
+  const shared = Math.min(as.length, bs.length);
+  for (let i = 0; i < shared; i++) {
+    const x = as[i];
+    const y = bs[i];
+    if (x === y) continue;
+    const xNum = /^\d+$/.test(x);
+    const yNum = /^\d+$/.test(y);
+    if (xNum && yNum) {
+      const d = Number(x) - Number(y);
+      if (d !== 0) return d;
+      continue; // e.g. "01" vs "1" — equal numerically, fall through
+    }
+    // Keep array indices grouped ahead of named siblings at the same depth.
+    if (xNum !== yNum) return xNum ? -1 : 1;
+    return x.localeCompare(y);
+  }
+  return as.length - bs.length;
+}
+
 export function computeJsonDiff(a: unknown, b: unknown): JsonDiffEntry[] {
   const flatA = flattenJson(a);
   const flatB = flattenJson(b);
@@ -117,7 +149,7 @@ export function computeJsonDiff(a: unknown, b: unknown): JsonDiffEntry[] {
   entries.sort((a, b) => {
     const o = typeOrder[a.type] - typeOrder[b.type];
     if (o !== 0) return o;
-    return a.key.localeCompare(b.key);
+    return compareJsonPaths(a.key, b.key);
   });
 
   return entries;

@@ -153,9 +153,12 @@ export function ActivityFeed({
         if (!nextItem) return;
         poolIdxRef.current = (poolIdxRef.current + 1) % items.length;
         setVisible(prev => {
-          const next: ActivityFeedItem[] = [nextItem];
-          if (prev[0]) next.push(prev[0]);
-          if (prev[1]) next.push(prev[1]);
+          // Carry the whole previous window forward, not a hard-coded
+          // `prev[0]`/`prev[1]`. The two-slot carry capped every rotation at 3
+          // rows, so a feed rendered with `visibleCount={5}` showed 5 rows on
+          // mount and permanently shrank to 3 on the first tick — two rows just
+          // vanished, and nothing in the API said 3 was a ceiling.
+          const next: ActivityFeedItem[] = [nextItem, ...prev];
           return next.slice(0, visibleCount);
         });
       }, rotateMs);

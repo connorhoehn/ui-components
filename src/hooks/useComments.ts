@@ -100,7 +100,18 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
         const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
         if (payload.postId !== postIdRef.current) return;
         const incoming = { ...(payload as unknown as CommentItem), _fadeIn: true };
-        setComments((prev) => [...prev, incoming]);
+        setComments((prev) => {
+          // Same echo as `usePosts`: `createComment` appends the POST response,
+          // then the gateway broadcasts the identical row back, so the author
+          // saw their own comment twice under a duplicate-key warning.
+          if (
+            incoming.commentId &&
+            prev.some((c) => c.commentId === incoming.commentId)
+          ) {
+            return prev;
+          }
+          return [...prev, incoming];
+        });
         const handle = setTimeout(() => {
           fadeTimers.delete(handle);
           setComments((prev) =>

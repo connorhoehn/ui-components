@@ -14,6 +14,7 @@ import AttachmentsPanel from './AttachmentsPanel';
 import ReviewMode from './ReviewMode';
 import ReaderMode from './ReaderMode';
 import SectionComments from './SectionComments';
+import { countAllComments } from './CommentThread';
 import { xmlFragmentToText } from './useDocumentEditorState';
 
 // ---------------------------------------------------------------------------
@@ -324,8 +325,13 @@ export default function EditorModeSwitch({
           sections={sections}
           participants={participants}
           meta={headerMeta}
+          // `arr.length` counts ROOT threads only, while edit mode's
+          // `SectionComments` header uses the recursive `countAllComments`.
+          // Same section, same data, two numbers: 3 threads with 2 replies each
+          // read "Comments (9)" in edit mode and "3 comments" in reader mode,
+          // and Document Info → Comments summed the root-only figure.
           commentCounts={Object.fromEntries(
-            Object.entries(comments).map(([id, arr]) => [id, arr.length]),
+            Object.entries(comments).map(([id, arr]) => [id, countAllComments(arr)]),
           )}
           sectionContentTexts={Object.fromEntries(
             sections.map(s => {

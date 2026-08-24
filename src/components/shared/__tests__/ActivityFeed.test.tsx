@@ -56,4 +56,29 @@ describe('ActivityFeed', () => {
     const dot = container.querySelector('.uc-activity-row span') as HTMLElement;
     expect(dot.style.background).toBe('var(--color-danger)');
   });
+
+  // Regression: the rotation carried only `prev[0]` and `prev[1]` forward, so
+  // the window could never hold more than 3 rows however large `visibleCount`
+  // was. `visibleCount={5}` rendered 5 rows on mount and permanently collapsed
+  // to 3 on the first tick. `visibleCount` must be 4 or more here — at 2 or 3
+  // the buggy and correct behaviour are identical.
+  it('keeps rendering visibleCount rows across rotations when visibleCount > 3', () => {
+    const many: ActivityFeedItem[] = Array.from({ length: 8 }, (_, i) => ({
+      id: `m${i}`,
+      actor: `Actor${i} Last`,
+      action: 'did',
+      subject: `thing ${i}`,
+      kind: 'task',
+    }));
+    const { container } = render(
+      <ActivityFeed items={many} visibleCount={5} rotateMs={1000} />,
+    );
+    const rowCount = () => container.querySelectorAll('.uc-activity-row').length;
+
+    expect(rowCount()).toBe(5);
+    act(() => vi.advanceTimersByTime(1000));
+    expect(rowCount()).toBe(5);
+    act(() => vi.advanceTimersByTime(3000));
+    expect(rowCount()).toBe(5);
+  });
 });
