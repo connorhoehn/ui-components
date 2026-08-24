@@ -1,4 +1,4 @@
-import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-DHI6vBUX.js";
+import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-BvMQMoLB.js";
 import { n as o } from "./ToastProvider-DPq8u2eM.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { r as c } from "./PresencePanel-CSfDAAq8.js";
@@ -1771,12 +1771,12 @@ function ge({ comment: e, currentUserId: t, loading: n, onDelete: r, onReply: i 
 	});
 }
 function X({ idToken: e, roomId: t, postId: n, onMessage: i }) {
-	let { comments: a, createComment: o, deleteComment: s, loading: c } = r({
+	let { comments: a, createComment: o, deleteComment: s, loading: c, submitting: l, error: u } = r({
 		idToken: e,
 		roomId: t,
 		postId: n,
 		onMessage: i
-	}), l = he(e), u = async (e, t) => {
+	}), d = he(e), f = async (e, t) => {
 		await o(t, e);
 	};
 	return /* @__PURE__ */ w("div", {
@@ -1784,19 +1784,23 @@ function X({ idToken: e, roomId: t, postId: n, onMessage: i }) {
 		children: [c ? /* @__PURE__ */ C("div", {
 			className: "text-sm text-text-tertiary py-2",
 			children: "Loading comments…"
+		}) : u && a.length === 0 ? /* @__PURE__ */ C("div", {
+			role: "alert",
+			className: "text-sm text-danger-fg py-2",
+			children: u
 		}) : a.length === 0 ? /* @__PURE__ */ C("div", {
 			className: "text-sm text-text-tertiary text-center py-4",
 			children: "No comments yet"
 		}) : a.map((e) => /* @__PURE__ */ C(ge, {
 			comment: e,
-			currentUserId: l,
-			loading: c,
+			currentUserId: d,
+			loading: l,
 			onDelete: s,
-			onReply: u
+			onReply: f
 		}, e.commentId)), /* @__PURE__ */ C(Y, {
 			onSubmit: (e) => o(e),
 			placeholder: "Write a comment…",
-			loading: c
+			loading: l
 		})]
 	});
 }
@@ -1868,68 +1872,61 @@ function be({ onCreate: e, loading: t }) {
 		]
 	});
 }
-function xe({ idToken: e, roomId: t, postId: n, onMessage: r }) {
-	let { isLiked: a, likeCount: o, toggle: c, whoLiked: l } = i({
-		idToken: e,
-		roomId: t,
-		postId: n,
-		onMessage: r
-	});
+function xe({ isLiked: e, likeCount: t, whoLiked: n, toggle: r }) {
 	return /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ w("button", {
-		onClick: () => void c(),
+		onClick: () => void r(),
 		"aria-label": "Like post",
 		className: "bg-transparent border-none cursor-pointer flex items-center gap-1 p-0 font-[system-ui,-apple-system,sans-serif]",
 		children: [/* @__PURE__ */ C("span", {
-			className: s("text-base", a ? "text-primary" : "text-text-tertiary"),
+			className: s("text-base", e ? "text-primary" : "text-text-tertiary"),
 			children: "❤"
 		}), /* @__PURE__ */ C("span", {
-			className: s("text-sm", a ? "text-primary" : "text-text-tertiary"),
-			children: o
+			className: s("text-sm", e ? "text-primary" : "text-text-tertiary"),
+			children: t
 		})]
-	}), l.length > 0 && /* @__PURE__ */ w("span", {
+	}), n.length > 0 && /* @__PURE__ */ w("span", {
 		className: "text-xs text-text-secondary ml-1",
 		children: [
 			"Liked by: ",
-			l.slice(0, 3).map((e) => e.displayName).join(", "),
-			l.length > 3 ? ` and ${l.length - 3} more` : ""
+			n.slice(0, 3).map((e) => e.displayName).join(", "),
+			n.length > 3 ? ` and ${n.length - 3} more` : ""
 		]
 	})] });
 }
-function Se({ idToken: e, roomId: t, postId: n, onMessage: r }) {
-	let { reactWithEmoji: a } = i({
-		idToken: e,
-		roomId: t,
-		postId: n,
-		onMessage: r
-	});
+function Se({ reactWithEmoji: e }) {
 	return /* @__PURE__ */ C("div", {
 		className: "flex flex-wrap gap-0",
-		children: _e.map((e) => /* @__PURE__ */ C("button", {
-			onClick: () => void a(e),
+		children: _e.map((t) => /* @__PURE__ */ C("button", {
+			onClick: () => void e(t),
 			className: "text-base bg-transparent border-none px-1 py-0.5 cursor-pointer",
-			title: e,
-			children: e
-		}, e))
+			title: t,
+			children: t
+		}, t))
 	});
 }
-function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: i, onEdit: a, onDelete: o }) {
-	let [c, l] = x(+!e._fadeIn), [d, f] = x(!1), [p, m] = x(!1), [h, _] = x(!1), [v, y] = x(e.content);
+function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, onEdit: o, onDelete: c }) {
+	let { isLiked: l, likeCount: d, whoLiked: f, toggle: p, reactWithEmoji: m } = i({
+		idToken: t,
+		roomId: n,
+		postId: e.postId,
+		onMessage: a
+	}), [h, _] = x(+!e._fadeIn), [v, y] = x(!1), [b, S] = x(!1), [T, E] = x(!1), [D, O] = x(e.content);
 	g(() => {
 		if (e._fadeIn) {
-			let e = setTimeout(() => l(1), 10);
+			let e = setTimeout(() => _(1), 10);
 			return () => clearTimeout(e);
 		}
 	}, []);
-	let b = e.authorId === r, S = e.authorId.slice(0, 2).toUpperCase();
+	let k = e.authorId === r, A = e.authorId.slice(0, 2).toUpperCase();
 	return /* @__PURE__ */ w("div", {
-		style: { opacity: c },
+		style: { opacity: h },
 		className: "border-b border-surface-hover pb-4 mb-4 transition-opacity duration-200 ease-[ease]",
 		children: [
 			/* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 mb-2",
 				children: [/* @__PURE__ */ C("div", {
 					className: "w-8 h-8 rounded-full bg-border flex items-center justify-center text-xs font-semibold text-text-primary shrink-0",
-					children: S
+					children: A
 				}), /* @__PURE__ */ w("div", {
 					className: "flex-1",
 					children: [/* @__PURE__ */ C("span", {
@@ -1941,25 +1938,25 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: i, onE
 					})]
 				})]
 			}),
-			h ? /* @__PURE__ */ w("div", {
+			T ? /* @__PURE__ */ w("div", {
 				className: "mb-2",
 				children: [/* @__PURE__ */ C(u, {
-					value: v,
-					onChange: (e) => y(e.target.value),
+					value: D,
+					onChange: (e) => O(e.target.value),
 					rows: 3,
 					className: "resize-y mb-2"
 				}), /* @__PURE__ */ w("div", {
 					className: "flex gap-2",
 					children: [/* @__PURE__ */ C("button", {
 						onClick: () => {
-							a(e.postId, v), _(!1);
+							o(e.postId, D), E(!1);
 						},
-						disabled: !v.trim(),
-						className: s("h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", v.trim() ? "bg-primary text-white border-none cursor-pointer" : "bg-surface-hover text-text-tertiary border border-border cursor-default"),
+						disabled: !D.trim(),
+						className: s("h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", D.trim() ? "bg-primary text-white border-none cursor-pointer" : "bg-surface-hover text-text-tertiary border border-border cursor-default"),
 						children: "Save"
 					}), /* @__PURE__ */ C("button", {
 						onClick: () => {
-							_(!1), y(e.content);
+							E(!1), O(e.content);
 						},
 						className: "text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]",
 						children: "Discard Changes"
@@ -1973,33 +1970,28 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: i, onE
 				className: "flex gap-4 text-sm mt-1 items-center flex-wrap",
 				children: [
 					/* @__PURE__ */ C(xe, {
-						idToken: t,
-						roomId: n,
-						postId: e.postId,
-						onMessage: i
+						isLiked: l,
+						likeCount: d,
+						whoLiked: f,
+						toggle: p
 					}),
-					/* @__PURE__ */ C(Se, {
-						idToken: t,
-						roomId: n,
-						postId: e.postId,
-						onMessage: i
-					}),
+					/* @__PURE__ */ C(Se, { reactWithEmoji: m }),
 					/* @__PURE__ */ C("button", {
-						onClick: () => f((e) => !e),
+						onClick: () => y((e) => !e),
 						className: "bg-transparent border-none text-sm text-text-secondary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0",
 						children: "Comment"
 					}),
-					b && !h && /* @__PURE__ */ C("button", {
-						onClick: () => _(!0),
+					k && !T && /* @__PURE__ */ C("button", {
+						onClick: () => E(!0),
 						className: "bg-transparent border-none text-sm text-text-tertiary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0",
 						children: "Edit"
 					}),
-					b && !p && !h && /* @__PURE__ */ C("button", {
-						onClick: () => m(!0),
+					k && !b && !T && /* @__PURE__ */ C("button", {
+						onClick: () => S(!0),
 						className: "bg-transparent border-none text-sm text-text-tertiary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0",
 						children: "Delete"
 					}),
-					b && p && /* @__PURE__ */ w("div", {
+					k && b && /* @__PURE__ */ w("div", {
 						role: "group",
 						"aria-label": "Confirm delete post",
 						className: "flex gap-1.5 items-center",
@@ -2009,13 +2001,13 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: i, onE
 								children: "Delete this post?"
 							}),
 							/* @__PURE__ */ C("button", {
-								onClick: () => m(!1),
+								onClick: () => S(!1),
 								className: "text-xs text-text-secondary bg-transparent border border-border rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]",
 								children: "Cancel"
 							}),
 							/* @__PURE__ */ C("button", {
 								onClick: () => {
-									o(e.postId), m(!1);
+									c(e.postId), S(!1);
 								},
 								className: "text-xs text-white bg-danger border-none rounded-md px-2 py-0.5 cursor-pointer font-[system-ui,-apple-system,sans-serif]",
 								children: "Delete"
@@ -2024,31 +2016,31 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: i, onE
 					})
 				]
 			}),
-			d && /* @__PURE__ */ C(X, {
+			v && /* @__PURE__ */ C(X, {
 				idToken: t,
 				roomId: n,
 				postId: e.postId,
-				onMessage: i
+				onMessage: a
 			})
 		]
 	});
 }
 function Ce({ idToken: e, roomId: t, onMessage: r }) {
-	let { posts: i, createPost: a, editPost: o, deletePost: c, loading: l, hasMore: u, loadMore: d } = n({
+	let { posts: i, createPost: a, editPost: o, deletePost: c, loading: l, mutating: u, error: d, hasMore: f, loadMore: p } = n({
 		idToken: e,
 		roomId: t,
 		onMessage: r
-	}), f = ye(e);
+	}), m = ye(e);
 	return /* @__PURE__ */ w("div", {
 		className: "bg-surface border border-border rounded-lg p-5",
 		children: [
 			/* @__PURE__ */ C(be, {
 				onCreate: a,
-				loading: l
+				loading: l || u
 			}),
 			/* @__PURE__ */ C("div", { className: "border-t border-border my-4" }),
-			u && /* @__PURE__ */ C("button", {
-				onClick: () => void d(),
+			f && /* @__PURE__ */ C("button", {
+				onClick: () => void p(),
 				disabled: l,
 				className: s("w-full h-9 mb-4 bg-surface text-text-primary border border-border rounded-lg text-sm font-[system-ui,-apple-system,sans-serif]", l ? "cursor-default" : "cursor-pointer"),
 				children: l ? "Loading…" : "Load more"
@@ -2056,6 +2048,16 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 			l && i.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 p-4 justify-center text-text-secondary",
 				children: [/* @__PURE__ */ C("span", { className: "inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" }), "Loading..."]
+			}) : d && i.length === 0 ? /* @__PURE__ */ w("div", {
+				role: "alert",
+				className: "py-6 text-center",
+				children: [/* @__PURE__ */ C("div", {
+					className: "text-sm font-semibold text-danger-fg mb-1",
+					children: "Couldn’t load posts"
+				}), /* @__PURE__ */ C("div", {
+					className: "text-sm text-text-tertiary",
+					children: d
+				})]
 			}) : i.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "py-6 text-center",
 				children: [/* @__PURE__ */ C("div", {
@@ -2069,7 +2071,7 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 				post: n,
 				idToken: e,
 				roomId: t,
-				currentUserId: f,
+				currentUserId: m,
 				onMessage: r,
 				onEdit: o,
 				onDelete: c

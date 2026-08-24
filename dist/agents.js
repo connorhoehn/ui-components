@@ -703,30 +703,30 @@ function I({ agentId: t, trace: n, onBack: r, className: i }) {
 						className: "text-sm text-text-secondary mt-2",
 						children: s.description
 					})
-				] }), /* @__PURE__ */ u(ee, { status: s.status })]
+				] }), /* @__PURE__ */ u(L, { status: s.status })]
 			}),
 			/* @__PURE__ */ d("div", {
 				className: "grid grid-cols-1 md:grid-cols-2 gap-4",
 				children: [
-					/* @__PURE__ */ d(L, {
+					/* @__PURE__ */ d(R, {
 						title: "Configuration",
 						children: [
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Protocol",
 								value: s.protocol.toUpperCase()
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Model",
 								value: s.model
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Endpoint",
 								value: s.endpoint,
 								mono: !0
 							})
 						]
 					}),
-					/* @__PURE__ */ u(L, {
+					/* @__PURE__ */ u(R, {
 						title: "Tools",
 						children: /* @__PURE__ */ u("div", {
 							className: "flex flex-wrap gap-1",
@@ -736,38 +736,38 @@ function I({ agentId: t, trace: n, onBack: r, className: i }) {
 							}, e))
 						})
 					}),
-					/* @__PURE__ */ u(L, {
+					/* @__PURE__ */ u(R, {
 						title: "Guardrails",
 						children: /* @__PURE__ */ u(O, { guardrails: s.guardrails })
 					}),
-					c && /* @__PURE__ */ d(L, {
+					c && /* @__PURE__ */ d(R, {
 						title: "Metrics (24h)",
 						children: [
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Invocations",
 								value: String(c.invocationsLast24h)
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Errors",
 								value: String(c.errorsLast24h)
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Avg Latency",
 								value: `${c.avgLatencyMs}ms`
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "P99 Latency",
 								value: `${c.p99LatencyMs}ms`
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Tokens In",
 								value: c.tokensInLast24h.toLocaleString()
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Tokens Out",
 								value: c.tokensOutLast24h.toLocaleString()
 							}),
-							/* @__PURE__ */ u(R, {
+							/* @__PURE__ */ u(z, {
 								label: "Guardrail Blocks",
 								value: String(c.guardrailBlocksLast24h)
 							})
@@ -792,7 +792,7 @@ function I({ agentId: t, trace: n, onBack: r, className: i }) {
 		})]
 	});
 }
-function ee({ status: t }) {
+function L({ status: t }) {
 	return /* @__PURE__ */ u("span", {
 		className: e("text-xs font-medium px-2.5 py-1 rounded-full", {
 			healthy: "bg-success-bg text-success-fg",
@@ -803,7 +803,7 @@ function ee({ status: t }) {
 		children: t
 	});
 }
-function L({ title: e, children: t }) {
+function R({ title: e, children: t }) {
 	return /* @__PURE__ */ d("div", {
 		className: "border border-border rounded-lg p-4 bg-white",
 		children: [/* @__PURE__ */ u("h4", {
@@ -812,7 +812,7 @@ function L({ title: e, children: t }) {
 		}), t]
 	});
 }
-function R({ label: t, value: n, mono: r }) {
+function z({ label: t, value: n, mono: r }) {
 	return /* @__PURE__ */ d("div", {
 		className: "flex items-baseline justify-between py-1 text-[12px]",
 		children: [/* @__PURE__ */ u("span", {
@@ -826,7 +826,7 @@ function R({ label: t, value: n, mono: r }) {
 }
 //#endregion
 //#region src/components/agents/components/AgentFlowCanvas.tsx
-function te(e, t) {
+function B(e, t) {
 	let n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	for (let t of e) n.set(t.id, 0), r.set(t.id, 0);
 	for (let e of t) n.set(e.from, (n.get(e.from) ?? 0) + 1), r.set(e.to, (r.get(e.to) ?? 0) + 1);
@@ -849,7 +849,7 @@ function te(e, t) {
 				type: "default",
 				style: {
 					background: i.status === "offline" ? "var(--color-danger-bg)" : i.status === "degraded" ? "var(--color-warning-bg)" : "var(--color-success-bg)",
-					border: `2px solid ${i.status === "offline" ? "var(--color-danger-border)" : i.status === "degraded" ? "var(--color-caution-border)" : "#86efac"}`,
+					border: `2px solid ${i.status === "offline" ? "var(--color-danger-border)" : i.status === "degraded" ? "var(--color-warning-border)" : "var(--color-success-border)"}`,
 					borderRadius: 8,
 					padding: "8px 16px",
 					fontSize: 13,
@@ -861,7 +861,7 @@ function te(e, t) {
 	}
 	return a;
 }
-function ne(e, t) {
+function ee(e, t) {
 	let n = new Set(t.map((e) => e.id));
 	return e.filter((e) => n.has(e.from) && n.has(e.to)).map((e, n) => {
 		let r = t.find((t) => t.id === e.from)?.protocol === "a2a";
@@ -889,9 +889,9 @@ function ne(e, t) {
 		};
 	});
 }
-var re = [];
-function z({ agents: t, edges: n = re, onAgentClick: r, className: i }) {
-	let a = o(() => te(t, n), [t, n]), s = o(() => ne(n, t), [n, t]);
+var te = [];
+function V({ agents: t, edges: n = te, onAgentClick: r, className: i }) {
+	let a = o(() => B(t, n), [t, n]), s = o(() => ee(n, t), [n, t]);
 	return /* @__PURE__ */ u("div", {
 		className: e("w-full h-[500px]", i),
 		children: /* @__PURE__ */ d(h, {
@@ -906,14 +906,14 @@ function z({ agents: t, edges: n = re, onAgentClick: r, className: i }) {
 			children: [/* @__PURE__ */ u(f, {
 				gap: 20,
 				size: 1,
-				color: "#e2e8f0"
+				color: "var(--color-border)"
 			}), /* @__PURE__ */ u(p, { showInteractive: !1 })]
 		})
 	});
 }
 //#endregion
 //#region src/components/agents/AgentFlowPage.tsx
-var B = [
+var ne = [
 	{
 		from: "orgiq-supervisor",
 		to: "orgiq-search"
@@ -939,7 +939,7 @@ var B = [
 		to: "orgiq-scoring"
 	}
 ];
-function V({ edges: t = B, onAgentClick: n, className: r }) {
+function re({ edges: t = ne, onAgentClick: n, className: r }) {
 	let { agents: i } = C(), a = i.filter((e) => e.protocol === "a2a"), o = i.filter((e) => e.protocol === "direct");
 	return /* @__PURE__ */ d("div", {
 		className: e("space-y-4", r),
@@ -971,7 +971,7 @@ function V({ edges: t = B, onAgentClick: n, className: r }) {
 			})]
 		}), /* @__PURE__ */ u("div", {
 			className: "border border-border rounded-lg overflow-hidden",
-			children: /* @__PURE__ */ u(z, {
+			children: /* @__PURE__ */ u(V, {
 				agents: i,
 				edges: t,
 				onAgentClick: n
@@ -1040,42 +1040,52 @@ function K() {
 	return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
-	let [l, u] = c([]), [d, f] = c(""), [p, m] = c([]), [h, g] = c(void 0), [_, v] = c(t ?? null), [y, b] = c(null), [x, S] = c(!1), [C, w] = c(null), T = s(null), E = s(null), D = s(""), O = s([]), k = r((e) => {
+	let [l, u] = c([]), [d, f] = c(""), [p, m] = c([]), [h, g] = c(void 0), [_, v] = c(t ?? null), [y, b] = c(null), [x, S] = c(!1), [C, w] = c(null), T = s(null), E = s(null), D = s(""), O = s([]), k = s(!1), A = s(/* @__PURE__ */ new Set()), j = r((e) => {
 		u((t) => {
 			let n = t.findIndex((e) => e.id === E.current);
 			if (n === -1) return t;
 			let r = [...t];
 			return r[n] = e(r[n]), r;
 		});
-	}, []), A = r((e, t) => {
+	}, []), M = r((e, t) => {
 		O.current = O.current.map((n) => n.id === e ? t(n) : n), m((n) => n.map((n) => n.id === e ? t(n) : n)), u((n) => n.map((n) => ({
 			...n,
 			toolCalls: n.toolCalls.map((n) => n.id === e ? t(n) : n)
 		})));
-	}, []), j = r((e) => {
+	}, []), N = r(() => {
+		E.current = null, D.current = "";
+		let e = (e) => e.status === "streaming" ? {
+			...e,
+			status: "error",
+			endedAt: e.endedAt ?? Date.now()
+		} : e;
+		O.current = O.current.map(e), S(!1), f(""), m((t) => t.map(e)), u((t) => t.map((t) => {
+			let n = t.toolCalls.map(e);
+			return t.isStreaming || n.some((e, n) => e !== t.toolCalls[n]) ? {
+				...t,
+				isStreaming: !1,
+				toolCalls: n
+			} : t;
+		}));
+	}, []), P = r((e) => {
 		switch (o?.(e), e.type) {
 			case "RUN_STARTED":
 				v(e.threadId), b(e.runId);
 				break;
 			case "RUN_FINISHED":
-				S(!1), E.current &&= (k((e) => ({
-					...e,
-					isStreaming: !1
-				})), null), f("");
+				k.current = !0, N();
 				break;
 			case "RUN_ERROR":
-				w(e.message), S(!1), E.current &&= (k((e) => ({
-					...e,
-					isStreaming: !1
-				})), null), f("");
+				k.current = !0, w(e.message), N();
 				break;
 			case "STEP_STARTED":
 			case "STEP_FINISHED": break;
 			case "TEXT_MESSAGE_START": {
 				let t = e.messageId ?? K();
-				E.current = t, D.current = "", O.current = [];
+				if (A.current.has(t)) break;
+				A.current.add(t), E.current = t, D.current = "", O.current = [];
 				let n = e.role;
-				u((e) => [...e, {
+				u((e) => e.some((e) => e.id === t) ? e : [...e, {
 					id: t,
 					role: n,
 					content: "",
@@ -1087,14 +1097,14 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 			case "TEXT_MESSAGE_CONTENT": {
 				D.current += e.delta;
 				let t = D.current;
-				f(t), k((e) => ({
+				f(t), j((e) => ({
 					...e,
 					content: t
 				}));
 				break;
 			}
 			case "TEXT_MESSAGE_END":
-				k((e) => ({
+				j((e) => ({
 					...e,
 					isStreaming: !1
 				})), f(""), E.current = null;
@@ -1115,7 +1125,7 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 				if (e.delta) {
 					D.current += e.delta;
 					let t = D.current;
-					f(t), k((e) => ({
+					f(t), j((e) => ({
 						...e,
 						content: t
 					}));
@@ -1138,20 +1148,20 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 				break;
 			}
 			case "TOOL_CALL_ARGS":
-				A(e.toolCallId, (t) => ({
+				M(e.toolCallId, (t) => ({
 					...t,
 					args: t.args + e.delta
 				}));
 				break;
 			case "TOOL_CALL_END":
-				A(e.toolCallId, (e) => ({
+				M(e.toolCallId, (e) => ({
 					...e,
 					status: "completed",
 					endedAt: Date.now()
 				})), m((t) => t.filter((t) => t.id !== e.toolCallId));
 				break;
 			case "TOOL_CALL_RESULT":
-				A(e.toolCallId, (t) => ({
+				M(e.toolCallId, (t) => ({
 					...t,
 					result: e.content
 				}));
@@ -1173,7 +1183,7 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 						...e,
 						toolCalls: [...e.toolCalls, n]
 					} : e));
-				} else n && e.delta && A(t, (t) => ({
+				} else n && e.delta && M(t, (t) => ({
 					...t,
 					args: t.args + (e.delta ?? "")
 				}));
@@ -1191,13 +1201,13 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 			case "ACTIVITY_SNAPSHOT":
 			case "ACTIVITY_DELTA": break;
 			case "REASONING_MESSAGE_START":
-				k((e) => ({
+				j((e) => ({
 					...e,
 					reasoning: ""
 				}));
 				break;
 			case "REASONING_MESSAGE_CONTENT":
-				k((t) => ({
+				j((t) => ({
 					...t,
 					reasoning: (t.reasoning ?? "") + e.delta
 				}));
@@ -1214,9 +1224,10 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 		}
 	}, [
 		o,
-		k,
-		A
-	]), M = r((e) => {
+		j,
+		M,
+		N
+	]), F = r((e) => {
 		let t = [], n = e.split("\n"), r = "";
 		for (let e of n) {
 			if (e === "" || e.startsWith(":")) {
@@ -1231,15 +1242,12 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 			e.startsWith("data: ") && (r += e.slice(6));
 		}
 		return t;
-	}, []), N = r(() => {
-		T.current?.abort(), S(!1), f(""), E.current &&= (k((e) => ({
-			...e,
-			isStreaming: !1
-		})), null), m([]);
-	}, [k]), P = r(async (t, r) => {
-		T.current?.abort();
+	}, []), I = r(() => {
+		T.current?.abort(), T.current = null, N(), m([]);
+	}, [N]), L = r(async (t, r) => {
+		T.current?.abort(), N();
 		let a = new AbortController();
-		T.current = a, w(null), S(!0);
+		T.current = a, k.current = !1, w(null), S(!0);
 		let o = {
 			id: K(),
 			role: "user",
@@ -1276,25 +1284,27 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 				if (n !== -1) {
 					let e = l.slice(0, n + 2);
 					l = l.slice(n + 2);
-					for (let t of M(e)) j(t);
+					for (let t of F(e)) P(t);
 				}
 			}
-			if (l.trim()) for (let e of M(l + "\n\n")) j(e);
+			if (l.trim()) for (let e of F(l + "\n\n")) P(e);
+			T.current === a && (!k.current && E.current !== null && w("Stream ended before the response was complete"), N());
 		} catch (e) {
 			if (e instanceof Error && e.name === "AbortError") return;
-			w(e instanceof Error ? e.message : "Stream failed"), S(!1), f("");
+			w(e instanceof Error ? e.message : "Stream failed"), N();
 		}
 	}, [
 		e,
 		_,
 		n,
 		i,
-		M,
-		j
-	]), F = r((e, t) => {
-		N(), v(e), b(null), u(t), f(""), m([]), w(null), D.current = "", O.current = [], E.current = null;
-	}, [N]), I = r(() => {
-		T.current?.abort(), u([]), S(!1), f(""), m([]), g(void 0), v(null), b(null), w(null), D.current = "", O.current = [], E.current = null;
+		F,
+		P,
+		N
+	]), R = r((e, t) => {
+		I(), v(e), b(null), u(t), f(""), m([]), w(null), D.current = "", O.current = [], E.current = null, A.current = /* @__PURE__ */ new Set(), k.current = !1;
+	}, [I]), z = r(() => {
+		T.current?.abort(), T.current = null, A.current = /* @__PURE__ */ new Set(), k.current = !1, u([]), S(!1), f(""), m([]), g(void 0), v(null), b(null), w(null), D.current = "", O.current = [], E.current = null;
 	}, []);
 	return a(() => () => T.current?.abort(), []), {
 		messages: l,
@@ -1305,10 +1315,10 @@ function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 		runId: y,
 		isStreaming: x,
 		error: C,
-		sendMessage: P,
-		cancelStream: N,
-		reset: I,
-		loadHistory: F
+		sendMessage: L,
+		cancelStream: I,
+		reset: z,
+		loadHistory: R
 	};
 }
 //#endregion
@@ -1414,21 +1424,21 @@ function X({ reasoning: t, isStreaming: n = !1, defaultOpen: r = !1, className: 
 //#endregion
 //#region src/components/agents/components/StreamingChatPanel.tsx
 var Z = "w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-[11px] font-bold shrink-0";
-function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls: o = [], error: l, onSend: f, onCancel: p, placeholder: m = "Send a message to the agent...", className: h }) {
-	let [g, _] = c(""), v = s(null);
+function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls: l = [], error: f, onSend: p, onCancel: m, placeholder: h = "Send a message to the agent...", className: g }) {
+	let [_, v] = c(""), y = s(null), b = o(() => new Set(n.flatMap((e) => e.toolCalls.map((e) => e.id))), [n]), x = o(() => l.filter((e) => !b.has(e.id)), [l, b]);
 	a(() => {
-		v.current && (v.current.scrollTop = v.current.scrollHeight);
+		y.current && (y.current.scrollTop = y.current.scrollHeight);
 	}, [
 		n,
-		o,
+		l,
 		i
 	]);
-	function y() {
-		let e = g.trim();
-		!e || r || (f(e), _(""));
+	function S() {
+		let e = _.trim();
+		!e || r || (p(e), v(""));
 	}
 	return /* @__PURE__ */ d("div", {
-		className: e("flex flex-col border border-border rounded-lg bg-white overflow-hidden", h),
+		className: e("flex flex-col border border-border rounded-lg bg-white overflow-hidden", g),
 		children: [
 			/* @__PURE__ */ d("div", {
 				className: "px-4 py-3 border-b border-border flex items-center justify-between",
@@ -1441,7 +1451,7 @@ function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 				})]
 			}),
 			/* @__PURE__ */ d("div", {
-				ref: v,
+				ref: y,
 				className: "flex-1 overflow-y-auto p-4 min-h-[300px] max-h-[500px] flex flex-col gap-4",
 				children: [
 					n.length === 0 && !r && /* @__PURE__ */ u("div", {
@@ -1482,14 +1492,14 @@ function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 							]
 						})]
 					}, t.id)),
-					o.length > 0 && /* @__PURE__ */ d("div", {
+					x.length > 0 && /* @__PURE__ */ d("div", {
 						className: "flex gap-2.5",
 						children: [/* @__PURE__ */ u("div", {
 							className: Z,
 							children: "AI"
 						}), /* @__PURE__ */ u("div", {
 							className: "flex-1 flex flex-col gap-1",
-							children: o.map((e) => /* @__PURE__ */ u(J, { toolCall: e }, e.id))
+							children: x.map((e) => /* @__PURE__ */ u(J, { toolCall: e }, e.id))
 						})]
 					}),
 					i && !n.some((e) => e.isStreaming) && /* @__PURE__ */ d("div", {
@@ -1505,7 +1515,7 @@ function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 							})]
 						})]
 					}),
-					r && o.length === 0 && !i && n.length > 0 && !n[n.length - 1]?.isStreaming && /* @__PURE__ */ d("div", {
+					r && l.length === 0 && !i && n.length > 0 && !n[n.length - 1]?.isStreaming && /* @__PURE__ */ d("div", {
 						className: "flex items-center gap-2 py-1",
 						children: [/* @__PURE__ */ d("div", {
 							className: "flex gap-[3px] py-1.5 px-3 bg-surface-hover rounded-xl",
@@ -1521,28 +1531,28 @@ function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 					})
 				]
 			}),
-			l && /* @__PURE__ */ u("div", {
+			f && /* @__PURE__ */ u("div", {
 				className: "px-4 py-2 bg-danger-bg border-t border-danger-border text-xs text-danger-fg",
-				children: l
+				children: f
 			}),
 			/* @__PURE__ */ d("div", {
 				className: "flex items-center gap-2 p-3 border-t border-border bg-surface-panel/50",
 				children: [/* @__PURE__ */ u(t, {
 					"aria-label": "Message",
-					value: g,
-					onChange: (e) => _(e.target.value),
-					onKeyDown: (e) => e.key === "Enter" && y(),
+					value: _,
+					onChange: (e) => v(e.target.value),
+					onKeyDown: (e) => e.key === "Enter" && S(),
 					disabled: r,
-					placeholder: r ? "Waiting for response..." : m,
+					placeholder: r ? "Waiting for response..." : h,
 					className: e("flex-1 rounded-lg", r && "bg-surface-panel text-text-tertiary")
-				}), r && p ? /* @__PURE__ */ u("button", {
-					onClick: p,
+				}), r && m ? /* @__PURE__ */ u("button", {
+					onClick: m,
 					className: "text-sm px-4 py-2.5 bg-danger text-white rounded-lg hover:bg-danger transition-colors font-medium",
 					children: "Stop"
 				}) : /* @__PURE__ */ u("button", {
-					onClick: y,
-					disabled: !g.trim() || r,
-					className: e("text-sm px-4 py-2.5 rounded-lg transition-colors font-medium", !g.trim() || r ? "bg-surface-hover text-text-tertiary cursor-default" : "bg-info text-white hover:bg-info cursor-pointer"),
+					onClick: S,
+					disabled: !_.trim() || r,
+					className: e("text-sm px-4 py-2.5 rounded-lg transition-colors font-medium", !_.trim() || r ? "bg-surface-hover text-text-tertiary cursor-default" : "bg-info text-white hover:bg-info cursor-pointer"),
 					children: "Send"
 				})]
 			})
@@ -1714,41 +1724,45 @@ function ce({ baseUrl: e, pollIntervalMs: t = 3e4, enabled: n = !0 } = {}) {
 //#endregion
 //#region src/components/agents/hooks/useAgentMetrics.ts
 function le({ baseUrl: e, agentId: t, pollIntervalMs: n = 6e4, enabled: i = !0 } = {}) {
-	let [s, l] = c(_), [u, d] = c(!1), [f, p] = c(null), m = r(async () => {
+	let [l, u] = c(_), [d, f] = c("fixture"), [p, m] = c(!1), [h, g] = c(null), v = s(0), y = r(async () => {
+		let n = ++v.current, r = () => v.current === n;
 		if (!e) {
-			l(_);
+			u(_), f("fixture");
 			return;
 		}
-		d(!0), p(null);
+		m(!0), g(null);
 		try {
-			let n = t ? `${e}/agents/${t}/metrics` : `${e}/agents/metrics`, r = await fetch(n);
-			if (!r.ok) throw Error(`HTTP ${r.status}`);
-			let i = await r.json();
-			l(i);
+			let n = t ? `${e}/agents/${t}/metrics` : `${e}/agents/metrics`, i = await fetch(n);
+			if (!i.ok) throw Error(`HTTP ${i.status}`);
+			let a = await i.json();
+			if (!r()) return;
+			u(a), f("remote");
 		} catch (e) {
-			p(e instanceof Error ? e.message : "Failed to fetch metrics");
+			if (!r()) return;
+			g(e instanceof Error ? e.message : "Failed to fetch metrics");
 		} finally {
-			d(!1);
+			r() && m(!1);
 		}
 	}, [e, t]);
 	return a(() => {
-		if (!i || (m(), !e || n <= 0)) return;
-		let t = setInterval(m, n);
+		if (!i || (y(), !e || n <= 0)) return;
+		let t = setInterval(y, n);
 		return () => clearInterval(t);
 	}, [
 		i,
-		m,
+		y,
 		e,
 		n
 	]), {
-		metrics: s,
-		isLoading: u,
-		error: f,
-		refresh: m,
-		getMetricsForAgent: r((e) => s.find((t) => t.agentId === e), [s]),
-		totalInvocations24h: o(() => s.reduce((e, t) => e + t.invocationsLast24h, 0), [s]),
-		totalErrors24h: o(() => s.reduce((e, t) => e + t.errorsLast24h, 0), [s]),
-		avgLatencyMs: o(() => s.length === 0 ? 0 : Math.round(s.reduce((e, t) => e + t.avgLatencyMs, 0) / s.length), [s])
+		metrics: l,
+		source: d,
+		isLoading: p,
+		error: h,
+		refresh: y,
+		getMetricsForAgent: r((e) => l.find((t) => t.agentId === e), [l]),
+		totalInvocations24h: o(() => l.reduce((e, t) => e + t.invocationsLast24h, 0), [l]),
+		totalErrors24h: o(() => l.reduce((e, t) => e + t.errorsLast24h, 0), [l]),
+		avgLatencyMs: o(() => l.length === 0 ? 0 : Math.round(l.reduce((e, t) => e + t.avgLatencyMs, 0) / l.length), [l])
 	};
 }
 //#endregion
@@ -1769,7 +1783,7 @@ function ue({ baseUrl: e, participants: t } = {}) {
 		};
 		i(n), o([]);
 	}, []), d = r((e, t, r) => {
-		if (!n) return;
+		if (!n || n.status !== "active") return;
 		let a = {
 			id: `msg-${$()}`,
 			from: e,
@@ -2109,4 +2123,4 @@ function be(e) {
 	}
 }
 //#endregion
-export { X as AgUiReasoningBlock, D as AgentCard, I as AgentDetailPage, fe as AgentDirectory, z as AgentFlowCanvas, V as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, he as ConversationHistory, O as GuardrailBadge, ve as MemoryInspector, ge as PolicyDecisionLog, Q as StreamingChatPanel, J as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, q as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };
+export { X as AgUiReasoningBlock, D as AgentCard, I as AgentDetailPage, fe as AgentDirectory, V as AgentFlowCanvas, re as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, he as ConversationHistory, O as GuardrailBadge, ve as MemoryInspector, ge as PolicyDecisionLog, Q as StreamingChatPanel, J as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, q as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };

@@ -15,6 +15,10 @@ export { useAgUiStream } from './hooks/useAgUiStream';
 export { useAgentRegistry } from './hooks/useAgentRegistry';
 export type { AgentRegistrySource } from './hooks/useAgentRegistry';
 export { useAgentMetrics } from './hooks/useAgentMetrics';
+// Mirrors AgentRegistrySource above. useAgentMetrics gained `source` so a
+// consumer can tell fixture numbers from real ones; without the type export
+// they can discriminate on it but cannot name it.
+export type { AgentMetricsSource } from './hooks/useAgentMetrics';
 export { useA2ASession } from './hooks/useA2ASession';
 
 // Components

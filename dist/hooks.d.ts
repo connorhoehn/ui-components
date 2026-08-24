@@ -1154,7 +1154,15 @@ declare interface UseActivityBusReturn {
      comments: CommentItem[];
      createComment: (content: string, parentCommentId?: string) => Promise<void>;
      deleteComment: (commentId: string) => Promise<void>;
+     /** True only while the thread itself is being fetched. */
      loading: boolean;
+     /**
+      * True while `createComment` is posting. Separate from `loading` because
+      * `CommentThread` swaps the whole list out for "Loading comments…" when
+      * `loading` is true — so sharing one flag made every existing comment
+      * disappear for the duration of posting a reply.
+      */
+     submitting: boolean;
      error: string | null;
  }
 
@@ -1698,7 +1706,17 @@ declare interface UseActivityBusReturn {
      editPost: (postId: string, content: string) => Promise<void>;
      deletePost: (postId: string) => Promise<void>;
      getUserPosts: (userId: string) => Promise<PostItem[]>;
+     /** True while the initial fetch or `loadMore` is in flight. */
      loading: boolean;
+     /**
+      * True while `createPost` / `editPost` / `deletePost` is in flight.
+      *
+      * Kept separate from `loading` on purpose — a mutation must not put the
+      * feed back into its "Loading…" skeleton — but it was previously computed
+      * and then thrown away, so nothing could disable a submit button while a
+      * post was being written and a double-click created the post twice.
+      */
+     mutating: boolean;
      error: string | null;
      hasMore: boolean;
      loadMore: () => Promise<void>;
@@ -1812,12 +1830,26 @@ declare interface UseActivityBusReturn {
  declare interface UseSyncConflictsReturn {
      conflicts: SyncConflict[];
      loading: boolean;
+     /** Why the LIST fetch failed. Never set by resolve/discard — see `actionError`. */
      error: string | null;
      /** True when the data came from the local mock fallback. */
      usingMock: boolean;
      refresh: () => Promise<void>;
      resolveConflict: (id: string, resolution: ConflictResolution) => Promise<boolean>;
      discardConflict: (id: string) => Promise<boolean>;
+     /**
+      * Why the last `resolveConflict` / `discardConflict` failed, or `null`.
+      * Additive.
+      *
+      * These used to write into `error`, which `ConflictsPage` renders as
+      * "Failed to load conflicts: …". A rejected Resolve therefore reported a
+      * load failure for a queue that had loaded perfectly and was still on
+      * screen, while the conflict itself stayed pending — and the next poll
+      * cleared `error`, so the operator was left believing the resolve landed.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive. */
+     clearActionError: () => void;
  }
 
  export declare function useTypedDocuments({ idToken, typeId }: UseTypedDocumentsOptions): UseTypedDocumentsReturn;

@@ -167,42 +167,43 @@ function g(e) {
 	};
 }
 function _(t = {}) {
-	let { sourceId: o, status: s } = t, { idToken: c } = e(), [l, u] = a([]), [d, f] = a(!0), [p, m] = a(null), [_, v] = a(null), y = i(!1), b = n(() => {
+	let { sourceId: o, status: s } = t, { idToken: c } = e(), [l, u] = a([]), [d, f] = a(!0), [p, m] = a(null), [_, v] = a(null), y = i(!0), b = i(0), x = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return c && (e.Authorization = `Bearer ${c}`), e;
-	}, [c]), x = n(async () => {
+	}, [c]), S = n(async () => {
+		let e = ++b.current, t = () => y.current && e === b.current;
 		f(!0), m(null);
 		try {
 			let e = new URLSearchParams();
 			o && e.set("sourceId", o), s && e.set("status", s);
-			let t = e.toString(), n = `${h}/api/ingest/items${t ? `?${t}` : ""}`, r = await fetch(n, { headers: b() });
-			if (!r.ok) throw Error(`HTTP ${r.status}`);
-			let i = await r.json();
-			y.current || u((i.items ?? []).map(g));
+			let n = e.toString(), r = `${h}/api/ingest/items${n ? `?${n}` : ""}`, i = await fetch(r, { headers: x() });
+			if (!i.ok) throw Error(`HTTP ${i.status}`);
+			let a = await i.json();
+			t() && u((a.items ?? []).map(g));
 		} catch (e) {
-			y.current || m(e instanceof Error ? e.message : String(e));
+			t() && m(e instanceof Error ? e.message : String(e));
 		} finally {
-			y.current || f(!1);
+			t() && f(!1);
 		}
 	}, [
-		b,
+		x,
 		o,
 		s
 	]);
-	r(() => (y.current = !1, x(), () => {
-		y.current = !0;
-	}), [x]);
-	let S = n(() => v(null), []);
+	r(() => (y.current = !0, S(), () => {
+		y.current = !1, b.current += 1;
+	}), [S]);
+	let C = n(() => v(null), []);
 	return {
 		items: l,
 		loading: d,
 		error: p,
-		refresh: x,
+		refresh: S,
 		retryItem: n(async (e) => {
 			try {
 				let t = await fetch(`${h}/api/ingest/items/${e}/retry`, {
 					method: "POST",
-					headers: b()
+					headers: x()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return u((t) => t.map((t) => t.itemId === e ? {
@@ -213,21 +214,21 @@ function _(t = {}) {
 			} catch (e) {
 				return v(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [b]),
+		}, [x]),
 		skipItem: n(async (e) => {
 			try {
 				let t = await fetch(`${h}/api/ingest/items/${e}/skip`, {
 					method: "POST",
-					headers: b()
+					headers: x()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return u((t) => t.filter((t) => t.itemId !== e)), !0;
 			} catch (e) {
 				return v(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [b]),
+		}, [x]),
 		actionError: _,
-		clearActionError: S
+		clearActionError: C
 	};
 }
 //#endregion
@@ -572,37 +573,39 @@ function M() {
 	}];
 }
 function N() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(!1), m = i(!0), h = i(0), g = n(() => {
+	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(null), [m, h] = a(!1), g = i(!0), _ = i(0), v = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), _ = n(async () => {
-		let e = ++h.current, t = () => m.current && e === h.current;
+	}, [t]), y = n(async () => {
+		let e = ++_.current, t = () => g.current && e === _.current;
 		l(!0), d(null);
 		try {
-			let e = await fetch(`${j}/api/sync/conflicts`, { headers: g() });
+			let e = await fetch(`${j}/api/sync/conflicts`, { headers: v() });
 			if (e.status === 404) {
-				t() && (s(M()), p(!0));
+				t() && (s(M()), h(!0));
 				return;
 			}
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
 			let n = await e.json();
-			t() && (s(n.conflicts ?? []), p(!1));
+			t() && (s(n.conflicts ?? []), h(!1));
 		} catch (e) {
-			t() && (s(M()), p(!0), d(e instanceof Error ? e.message : String(e)));
+			t() && (s(M()), h(!0), d(e instanceof Error ? e.message : String(e)));
 		} finally {
 			t() && l(!1);
 		}
-	}, [g]);
-	return r(() => (m.current = !0, _(), () => {
-		m.current = !1, h.current += 1;
-	}), [_]), {
+	}, [v]);
+	r(() => (g.current = !0, y(), () => {
+		g.current = !1, _.current += 1;
+	}), [y]);
+	let b = n(() => p(null), []);
+	return {
 		conflicts: o,
 		loading: c,
 		error: u,
-		usingMock: f,
-		refresh: _,
+		usingMock: m,
+		refresh: y,
 		resolveConflict: n(async (e, t) => {
-			if (f) return s((t) => t.map((t) => t.conflictId === e ? {
+			if (p(null), m) return s((t) => t.map((t) => t.conflictId === e ? {
 				...t,
 				status: "resolved",
 				resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -610,18 +613,18 @@ function N() {
 			try {
 				let n = await fetch(`${j}/api/sync/conflicts/${e}/resolve`, {
 					method: "POST",
-					headers: g(),
+					headers: v(),
 					body: JSON.stringify(t)
 				});
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
 				let r = await n.json();
 				return r.conflict && s((t) => t.map((t) => t.conflictId === e ? r.conflict : t)), !0;
 			} catch (e) {
-				return d(e instanceof Error ? e.message : String(e)), !1;
+				return p(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [g, f]),
+		}, [v, m]),
 		discardConflict: n(async (e) => {
-			if (f) return s((t) => t.map((t) => t.conflictId === e ? {
+			if (p(null), m) return s((t) => t.map((t) => t.conflictId === e ? {
 				...t,
 				status: "discarded",
 				resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -629,7 +632,7 @@ function N() {
 			try {
 				let t = await fetch(`${j}/api/sync/conflicts/${e}/discard`, {
 					method: "POST",
-					headers: g()
+					headers: v()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return s((t) => t.map((t) => t.conflictId === e ? {
@@ -638,9 +641,11 @@ function N() {
 					resolvedAt: (/* @__PURE__ */ new Date()).toISOString()
 				} : t)), !0;
 			} catch (e) {
-				return d(e instanceof Error ? e.message : String(e)), !1;
+				return p(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [g, f])
+		}, [v, m]),
+		actionError: f,
+		clearActionError: b
 	};
 }
 //#endregion

@@ -1,39 +1,47 @@
 import { useCallback as e, useEffect as t, useRef as n, useState as r } from "react";
 //#region src/hooks/useComments.ts
 function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
-	let [c, l] = r([]), [u, d] = r(!1), [f, p] = r(null), m = n(s);
+	let [c, l] = r([]), [u, d] = r(!1), [f, p] = r(!1), [m, h] = r(null), g = n(s);
 	t(() => {
-		m.current = s;
+		g.current = s;
 	}, [s]);
-	let h = n(o);
+	let _ = n(o);
 	return t(() => {
-		h.current = o;
+		_.current = o;
 	}, [o]), t(() => {
-		!i || !a || !o || (d(!0), p(null), fetch(`/api/rooms/${a}/posts/${o}/comments`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
+		if (l([]), h(null), !i || !a || !o) {
+			d(!1);
+			return;
+		}
+		d(!0);
+		let e = !1;
+		return fetch(`/api/rooms/${a}/posts/${o}/comments`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
 			if (!e.ok) throw Error(`Failed to load comments (${e.status})`);
 			return e.json();
-		}).then((e) => {
-			l(e.comments ?? []);
-		}).catch((e) => {
-			p(e.message);
+		}).then((t) => {
+			e || l(t.comments ?? []);
+		}).catch((t) => {
+			e || h(t.message);
 		}).finally(() => {
-			d(!1);
-		}));
+			e || d(!1);
+		}), () => {
+			e = !0;
+		};
 	}, [
 		i,
 		a,
 		o,
 		""
 	]), t(() => {
-		let e = /* @__PURE__ */ new Set(), t = m.current((t) => {
+		let e = /* @__PURE__ */ new Set(), t = g.current((t) => {
 			if (t.type === "social:comment") {
 				let n = t.payload ?? t;
-				if (n.postId !== h.current) return;
+				if (n.postId !== _.current) return;
 				let r = {
 					...n,
 					_fadeIn: !0
 				};
-				l((e) => [...e, r]);
+				l((e) => e.some((e) => e.commentId === r.commentId) ? e : [...e, r]);
 				let i = setTimeout(() => {
 					e.delete(i), l((e) => e.map((e) => e.commentId === r.commentId ? {
 						...e,
@@ -50,7 +58,7 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 		comments: c,
 		createComment: e(async (e, t) => {
 			if (!(!i || !a || !o)) {
-				d(!0), p(null);
+				p(!0), h(null);
 				try {
 					let n = { content: e };
 					t && (n.parentCommentId = t);
@@ -64,11 +72,11 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 					});
 					if (!r.ok) throw Error(`Failed to create comment (${r.status})`);
 					let s = await r.json();
-					l((e) => [...e, s]);
+					l((e) => e.some((e) => e.commentId === s.commentId) ? e.map((e) => e.commentId === s.commentId ? s : e) : [...e, s]);
 				} catch (e) {
-					p(e.message);
+					h(e.message);
 				} finally {
-					d(!1);
+					p(!1);
 				}
 			}
 		}, [
@@ -79,7 +87,7 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 		]),
 		deleteComment: e(async (e) => {
 			if (!(!i || !a || !o)) {
-				p(null);
+				h(null);
 				try {
 					let t = await fetch(`/api/rooms/${a}/posts/${o}/comments/${e}`, {
 						method: "DELETE",
@@ -88,7 +96,7 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 					if (!t.ok) throw Error(`Failed to delete comment (${t.status})`);
 					l((t) => t.filter((t) => t.commentId !== e));
 				} catch (e) {
-					p(e.message);
+					h(e.message);
 				}
 			}
 		}, [
@@ -98,7 +106,8 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 			""
 		]),
 		loading: u,
-		error: f
+		submitting: f,
+		error: m
 	};
 }
 //#endregion
@@ -348,9 +357,9 @@ function s({ idToken: i, roomId: a, postId: o, commentId: s, onMessage: c }) {
 					method: e ? "DELETE" : "POST",
 					headers: { Authorization: `Bearer ${i}` }
 				});
-				if (!n.ok) throw u(e), f((t) => e ? t + 1 : t - 1), Error(`Failed to toggle like (${n.status})`);
-			} catch (e) {
-				v(e.message);
+				if (!n.ok) throw Error(`Failed to toggle like (${n.status})`);
+			} catch (t) {
+				u(e), f((t) => e ? t + 1 : t - 1), v(t.message);
 			} finally {
 				g(!1);
 			}
@@ -400,16 +409,24 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 	t(() => {
 		v.current = a;
 	}, [a]), t(() => {
-		!i || !a || (f(!0), g(null), c([]), u(void 0), fetch(`/api/rooms/${a}/posts`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
+		if (c([]), u(void 0), g(null), !i || !a) {
+			f(!1);
+			return;
+		}
+		f(!0);
+		let e = !1;
+		return fetch(`/api/rooms/${a}/posts`, { headers: { Authorization: `Bearer ${i}` } }).then(async (e) => {
 			if (!e.ok) throw Error(`Failed to load posts (${e.status})`);
 			return e.json();
-		}).then((e) => {
-			c(e.posts ?? []), u(e.lastKey);
-		}).catch((e) => {
-			g(e.message);
+		}).then((t) => {
+			e || (c(t.posts ?? []), u(t.lastKey));
+		}).catch((t) => {
+			e || g(t.message);
 		}).finally(() => {
-			f(!1);
-		}));
+			e || f(!1);
+		}), () => {
+			e = !0;
+		};
 	}, [
 		i,
 		a,
@@ -423,7 +440,7 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 					...n,
 					_fadeIn: !0
 				};
-				c((e) => [r, ...e]);
+				c((e) => e.some((e) => e.postId === r.postId) ? e : [r, ...e]);
 				let i = setTimeout(() => {
 					e.delete(i), c((e) => e.map((e) => e.postId === r.postId ? {
 						...e,
@@ -444,7 +461,10 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 				let e = await fetch(`/api/rooms/${a}/posts?lastKey=${encodeURIComponent(l)}`, { headers: { Authorization: `Bearer ${i}` } });
 				if (!e.ok) throw Error(`Failed to load more posts (${e.status})`);
 				let t = await e.json();
-				c((e) => [...e, ...t.posts ?? []]), u(t.lastKey);
+				c((e) => {
+					let n = new Set(e.map((e) => e.postId));
+					return [...e, ...(t.posts ?? []).filter((e) => !n.has(e.postId))];
+				}), u(t.lastKey);
 			} catch (e) {
 				g(e.message);
 			} finally {
@@ -473,7 +493,7 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 					});
 					if (!t.ok) throw Error(`Failed to create post (${t.status})`);
 					let n = await t.json();
-					c((e) => [n, ...e]);
+					c((e) => e.some((e) => e.postId === n.postId) ? e.map((e) => e.postId === n.postId ? n : e) : [n, ...e]);
 				} catch (e) {
 					throw g(e.message), e;
 				} finally {
@@ -539,6 +559,7 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 			return (await t.json()).posts;
 		}, [i, ""]),
 		loading: d,
+		mutating: p,
 		error: h,
 		hasMore: l !== void 0,
 		loadMore: y

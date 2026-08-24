@@ -51,6 +51,14 @@ declare interface ChatRoomProps {
     onMessage: OnMessageFn_3;
 }
 
+/**
+ * Inline comment thread for a single post.
+ *
+ * Safe to keep mounted across `postId` / `roomId` changes: the underlying
+ * `useComments` clears the thread and cancels the in-flight request when
+ * either id changes, so a caller does not need a `key` to avoid seeing the
+ * previous post's comments.
+ */
 export declare function CommentThread({ idToken, roomId, postId, onMessage }: CommentThreadProps): JSX.Element;
 
 declare interface CommentThreadProps {
@@ -168,6 +176,13 @@ export declare function PostFeed({ idToken, roomId, onMessage }: PostFeedProps):
 
 declare interface PostFeedProps {
     idToken: string | null;
+    /**
+     * Room whose posts are shown. Changing this resets the feed: the previous
+     * room's posts and paging cursor are dropped and its in-flight request is
+     * ignored, so a caller does NOT need `key={roomId}` to avoid a wrong-room
+     * render. (It used to: the slower of two overlapping requests won, so
+     * switching rooms could repaint the new room with the old room's posts.)
+     */
     roomId: string | null;
     onMessage: OnMessageFn_4;
 }
