@@ -553,10 +553,20 @@ export function useDocumentEditorState({
   // client, so "keep the first occurrence of each id" makes each client compute
   // the same deletions with no coordination. Also heals documents that were
   // duplicated before template ids became deterministic.
+  //
+  // Depends on `sections`, not just `synced`: the duplicate this repairs is
+  // created by ANOTHER client and arrives in a remote update some time after
+  // this client synced. Running only on the synced edge scanned an array that
+  // did not yet contain the duplicate, so the pass that was supposed to heal
+  // the concurrent-template race never saw it — two people opening the same
+  // new templated document at the same moment were left with every section
+  // listed twice, permanently. Re-running on each section change is safe:
+  // dedupe is idempotent, so the follow-up run it triggers finds nothing and
+  // the loop terminates.
   useEffect(() => {
     if (!synced || !ydoc) return;
     dedupeSectionsById(ydoc);
-  }, [synced, ydoc]);
+  }, [synced, ydoc, sections]);
 
   // Mode switching
   const handleModeChange = (newMode: ViewMode) => {

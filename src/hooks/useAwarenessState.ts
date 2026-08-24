@@ -7,7 +7,7 @@
 //
 // Every update MERGES with the existing state — never overwrites.
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import type { GatewayProvider } from '../providers/GatewayProvider';
 import { useIdleDetector } from './useIdleDetector';
 
@@ -108,5 +108,17 @@ export function useAwarenessState(
     flush();
   }, [flush]);
 
-  return { updateSection, updateMode, updateIdle, updateCursorInfo };
+  // Memoised, not a fresh object literal per render. Every updater above is
+  // already referentially stable, but the OBJECT holding them was not — and
+  // that object is what consumers put in dependency arrays. In
+  // useDocumentEditorState it sits in the deps of the 500ms auto-focus effect,
+  // so a new identity on every render cleared and restarted that timer: in a
+  // live session (a peer typing re-renders the page far more often than twice
+  // a second) it never got to fire, and this client's presence was never
+  // attached to a section — no avatar on any section card, and nothing for a
+  // peer's "jump to user" or follow-mode to aim at.
+  return useMemo(
+    () => ({ updateSection, updateMode, updateIdle, updateCursorInfo }),
+    [updateSection, updateMode, updateIdle, updateCursorInfo],
+  );
 }

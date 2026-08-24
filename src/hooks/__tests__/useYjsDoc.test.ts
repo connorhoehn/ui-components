@@ -105,6 +105,29 @@ describe('useYjsDoc', () => {
     expect(provider.destroy).toHaveBeenCalled();
   });
 
+  it('destroys the provider BEFORE unsubscribing the channel', () => {
+    // provider.destroy() broadcasts this client's awareness departure on the
+    // channel. The gateway routes crdt messages by subscription, so anything
+    // emitted after the unsubscribe is dropped — and the departing user stays
+    // in every remaining participant's avatar list.
+    const ws = makeWs();
+    const bus = makeMessageBus();
+    const { unmount } = renderHook(() => useYjsDoc(opts(ws, bus)));
+    const provider = refs.last;
+    ws.sendMessage.mockClear();
+
+    unmount();
+
+    const unsubIndex = ws.sendMessage.mock.calls.findIndex(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (args: any[]) => args[0]?.action === 'unsubscribe',
+    );
+    expect(unsubIndex).toBeGreaterThanOrEqual(0);
+    expect(provider.destroy.mock.invocationCallOrder[0]).toBeLessThan(
+      ws.sendMessage.mock.invocationCallOrder[unsubIndex],
+    );
+  });
+
   it('exposes non-null ydoc and provider after mount', () => {
     const ws = makeWs();
     const bus = makeMessageBus();

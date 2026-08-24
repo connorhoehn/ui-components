@@ -187,6 +187,7 @@ export default function DocumentEditorPage({
           onUpdateItem={state.handleUpdateItem}
           onRemoveItem={state.handleRemoveItem}
           restItems={state.restItems}
+          itemErrors={state.itemErrors}
           commentSidebarOpen={state.commentSidebarOpen}
           commentSectionId={state.commentSectionId}
           commentSidebarTop={state.commentSidebarTop}
