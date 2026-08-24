@@ -8,9 +8,19 @@ import type { SectionRendererProps } from '../types';
 interface LinkRow { label: string; url: string }
 interface LinksMeta { links?: LinkRow[] }
 
+// Same defence as the reader: `section.metadata.links` is untyped data off
+// the wire, and a null/non-object entry used to throw on `l.label`.
+function isLinkRow(l: unknown): l is LinkRow {
+  return typeof l === 'object' && l !== null;
+}
+
 function readLinks(section: SectionRendererProps['section']): LinkRow[] {
   const m = (section.metadata ?? {}) as LinksMeta;
-  return Array.isArray(m.links) ? m.links : [];
+  if (!Array.isArray(m.links)) return [];
+  return m.links.filter(isLinkRow).map((l) => ({
+    label: typeof l.label === 'string' ? l.label : '',
+    url: typeof l.url === 'string' ? l.url : '',
+  }));
 }
 
 export default function LinkBlockEditorRenderer({

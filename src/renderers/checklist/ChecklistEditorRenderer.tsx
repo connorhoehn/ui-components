@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { cn } from '../../lib/cn';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import type { SectionRendererProps } from '../types';
 import type { TaskItem } from '../../types/document';
 import TiptapEditor from '../../components/doc-editor/TiptapEditor';
@@ -17,12 +18,17 @@ function ChecklistRow({ item, editable, autoFocus, onDidAutoFocus, onUpdate, onR
   const inputRef = useRef<HTMLInputElement>(null);
   const done = item.status === 'done';
 
+  // Callers pass a fresh arrow for `onDidAutoFocus` on every render; depending
+  // on it directly re-ran this effect (and re-stole focus) on every render
+  // while `autoFocus` was true. See src/hooks/useEventCallback.ts.
+  const didAutoFocus = useEventCallback(onDidAutoFocus);
+
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       inputRef.current.focus();
-      onDidAutoFocus?.();
+      didAutoFocus();
     }
-  }, [autoFocus, onDidAutoFocus]);
+  }, [autoFocus, didAutoFocus]);
 
   return (
     <div className="flex items-center gap-2 py-[5px] border-b border-border-subtle">
@@ -70,12 +76,28 @@ export default function ChecklistEditorRenderer({
   onRemoveItem,
   onUpdateCursorInfo,
 }: SectionRendererProps) {
-  const focusLastRef = useRef(false);
+  // Item count recorded when "+ Add item" was pressed, or null when no add is
+  // outstanding. Focus moves to the last row only once the list has actually
+  // grown past that count.
+  //
+  // This used to be a bare `focusLastRef = true` flag, set unconditionally and
+  // cleared only from the row effect. Two consequences, both user-visible:
+  // `onAddItem` is optional, so in editable mode without one the flag was set
+  // and never cleared — the caret then jumped out of whatever row you were
+  // typing in and into the last row on the next render. With an async
+  // `onAddItem`, any unrelated re-render arriving before the new item (a
+  // collaborator's edit, say) consumed the flag the same way, and the new row
+  // never got focus at all.
+  const pendingAddCountRef = useRef<number | null>(null);
 
   const handleAdd = () => {
-    onAddItem?.({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
-    focusLastRef.current = true;
+    if (!onAddItem) return;
+    pendingAddCountRef.current = section.items.length;
+    onAddItem({ text: '', status: 'pending', assignee: '', ackedBy: '', ackedAt: '', priority: 'medium', notes: '' });
   };
+
+  const pendingCount = pendingAddCountRef.current;
+  const awaitingFocus = pendingCount !== null && section.items.length > pendingCount;
 
   const total = section.items.length;
   const doneCount = section.items.filter(i => i.status === 'done').length;
@@ -104,14 +126,14 @@ export default function ChecklistEditorRenderer({
       <div>
         {section.items.map((item, idx) => {
           const isLast = idx === section.items.length - 1;
-          const shouldFocus = focusLastRef.current && isLast;
+          const shouldFocus = awaitingFocus && isLast;
           return (
             <ChecklistRow
               key={item.id}
               item={item}
               editable={editable}
               autoFocus={shouldFocus}
-              onDidAutoFocus={shouldFocus ? () => { focusLastRef.current = false; } : undefined}
+              onDidAutoFocus={shouldFocus ? () => { pendingAddCountRef.current = null; } : undefined}
               onUpdate={(patch) => onUpdateItem?.(item.id, patch)}
               onRemove={() => onRemoveItem?.(item.id)}
             />
