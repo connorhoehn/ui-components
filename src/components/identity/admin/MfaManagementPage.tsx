@@ -22,6 +22,14 @@ export interface MfaManagementPageProps {
     email: string;
     mfaEnabled: boolean;
     deviceCount: number;
+    /**
+     * Pool the user belongs to. Optional and additive.
+     *
+     * The "Filter by pool" control is only rendered when at least one row
+     * carries this, because without it the page has no way to tell which pool
+     * a row belongs to — which is exactly why the control used to be inert.
+     */
+    poolId?: string;
   }>;
   pools?: Array<{ poolId: string; poolName: string; userCount: number }>;
   onRefresh: () => void;
@@ -43,7 +51,26 @@ export function MfaManagementPage({
 }: MfaManagementPageProps) {
   const [selectedPool, setSelectedPool] = useState('');
 
-  const filteredUsers = useMemo(() => users ?? [], [users]);
+  // `selectedPool` was written by the Select and then read by nothing:
+  // `filteredUsers` was `users ?? []`. Picking a pool visibly did nothing —
+  // the table kept showing every user in every pool, which on an MFA-adoption
+  // screen reads as "this pool has poor coverage" when you are in fact looking
+  // at the whole tenant.
+  //
+  // Rows only became filterable once they could say which pool they are in, so
+  // the filter now keys off the optional `poolId`, and the control is hidden
+  // when no row supplies one (see `canFilterByPool` below) rather than
+  // rendering a dropdown that cannot work.
+  const canFilterByPool = useMemo(
+    () => (users ?? []).some((u) => u.poolId !== undefined),
+    [users],
+  );
+
+  const filteredUsers = useMemo(() => {
+    const all = users ?? [];
+    if (!selectedPool || !canFilterByPool) return all;
+    return all.filter((u) => u.poolId === selectedPool);
+  }, [users, selectedPool, canFilterByPool]);
 
   const columns: Column<UserRow>[] = useMemo(
     () => [
@@ -113,7 +140,7 @@ export function MfaManagementPage({
       )}
 
       {/* Pool filter */}
-      {pools && pools.length > 0 && (
+      {pools && pools.length > 0 && canFilterByPool && (
         <div className="flex items-center gap-3">
           <label className="text-xs font-semibold text-neutral uppercase tracking-wide">
             Filter by pool

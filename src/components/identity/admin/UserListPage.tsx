@@ -8,6 +8,7 @@ import { StatusBadge } from '../shared/StatusBadge';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
 import ConfirmDialog from '../../shared/ConfirmDialog';
+import Banner from '../../shared/Banner';
 
 export interface UserListPageProps {
   users: Array<{
@@ -42,19 +43,34 @@ export function UserListPage({
 }: UserListPageProps) {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // A rejected delete used to be swallowed whole: the close lived in
+  // `finally`, so a 403/409/500 dismissed the dialog exactly like a success
+  // while the row stayed in the table and nothing was ever shown or logged.
+  // The admin's only clue was the row not disappearing, which reads as a
+  // stale list — so the usual response was to reload and try again. Close on
+  // success only; on failure keep the dialog up and name the reason.
   const handleDelete = useCallback(
     async (userId: string) => {
       setDeleting(true);
+      setDeleteError(null);
       try {
         await onDeleteUser(userId);
+        setConfirmingId(null);
+      } catch (err: unknown) {
+        setDeleteError(err instanceof Error ? err.message : 'Failed to delete user.');
       } finally {
         setDeleting(false);
-        setConfirmingId(null);
       }
     },
     [onDeleteUser],
   );
+
+  const closeConfirm = useCallback(() => {
+    setConfirmingId(null);
+    setDeleteError(null);
+  }, []);
 
   const columns: Column<UserRow>[] = useMemo(
     () => [
@@ -82,7 +98,11 @@ export function UserListPage({
         <Button variant="ghost" size="sm" onClick={() => onEditUser(item.userId)}>
           Edit
         </Button>
-        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.userId)}>
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => { setConfirmingId(item.userId); setDeleteError(null); }}
+        >
           Delete
         </Button>
       </>
@@ -111,14 +131,16 @@ export function UserListPage({
 
       <ConfirmDialog
         open={!!confirmingId}
-        onConfirm={() => confirmingId && handleDelete(confirmingId)}
-        onCancel={() => setConfirmingId(null)}
+        onConfirm={() => { if (confirmingId) void handleDelete(confirmingId); }}
+        onCancel={closeConfirm}
         title="Delete User"
         body="This action cannot be undone. The user will be permanently removed."
         tone="destructive"
         confirmLabel="Delete"
         confirmDisabled={deleting}
-      />
+      >
+        {deleteError && <Banner variant="error">{deleteError}</Banner>}
+      </ConfirmDialog>
     </PageSection>
   );
 }
