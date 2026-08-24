@@ -173,6 +173,16 @@ export function usePendingApprovalsState(): PendingApprovalsState {
   // are dispatched in the same tick.
   const runToPipelineRef = useRef<Map<string, string>>(new Map());
 
+  // Keys the event stream has touched since the in-flight fetch started.
+  // The `/api/pipelines/approvals` snapshot is taken server-side *before* it
+  // reaches us, so anything the stream changed in the meantime is newer than
+  // the snapshot and must survive it. Without this the fetch response replaced
+  // the map wholesale and silently discarded an approval that was requested
+  // while the page was still loading — the run stayed blocked on an approval
+  // that appeared in neither the panel nor the sub-nav badge. Reset whenever a
+  // new fetch begins.
+  const liveKeysRef = useRef<Set<string>>(new Set());
+
   // -------------------------------------------------------------------------
   // Initial fetch — dashboard endpoint, with a mock-mode fallback.
   // -------------------------------------------------------------------------
@@ -181,6 +191,7 @@ export function usePendingApprovalsState(): PendingApprovalsState {
     let cancelled = false;
     setIsLoading(true);
     setError(null);
+    liveKeysRef.current = new Set();
 
     const tryDashboard = async (): Promise<DashboardPendingApprovalsResponse | null> => {
       // Authoritative source: /api/pipelines/approvals (proxies the bridge's
@@ -224,7 +235,19 @@ export function usePendingApprovalsState(): PendingApprovalsState {
               recordedCount: row.recordedCount ?? 0,
             };
           }
-          setApprovalsMap(next);
+          // Merge, don't replace. Rows the event stream touched while this
+          // fetch was in flight are strictly newer than the server snapshot:
+          // keep the live value when the stream still holds one, and honour a
+          // deletion when the stream already resolved the approval (otherwise
+          // the stale snapshot resurrects a step that was just approved).
+          setApprovalsMap((prev) => {
+            const merged: Record<string, PendingApproval> = { ...next };
+            for (const key of liveKeysRef.current) {
+              if (prev[key]) merged[key] = prev[key];
+              else delete merged[key];
+            }
+            return merged;
+          });
         }
         setIsLoading(false);
       } catch (err) {
@@ -274,6 +297,7 @@ export function usePendingApprovalsState(): PendingApprovalsState {
           runsRef.current[payload.runId]?.pipelineId ??
           '';
         const cfg = hydrateFromDefinition(pipelineId, payload.stepId);
+        liveKeysRef.current.add(approvalKey(payload.runId, payload.stepId));
 
         setApprovalsMap((prev) => {
           const key = approvalKey(payload.runId, payload.stepId);
@@ -299,6 +323,7 @@ export function usePendingApprovalsState(): PendingApprovalsState {
       eventStream.subscribe('pipeline.approval.recorded', (raw) => {
         const payload = raw as PipelineEventMap['pipeline.approval.recorded'];
         const key = approvalKey(payload.runId, payload.stepId);
+        liveKeysRef.current.add(key);
 
         setApprovalsMap((prev) => {
           const existing = prev[key];

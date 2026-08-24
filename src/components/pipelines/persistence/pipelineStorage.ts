@@ -148,6 +148,23 @@ export function savePipelinePositionsOnly(def: PipelineDefinition): void {
   safeWrite(pipelineKey(def.id), JSON.stringify(def));
 }
 
+/**
+ * Write a definition into the local cache **verbatim** — no version bump, no
+ * `updatedAt` re-stamp, no mutation of the argument — and refresh its index
+ * entry.
+ *
+ * This is the write-through path for `pipelineStorageRemote`, where the server
+ * owns `version` / `updatedAt`. That module used to reuse `savePipeline` for
+ * its cache writes, which meant every *read* (and every publish) incremented
+ * the cached version and stamped `updatedAt = now`: opening a pipeline you
+ * never edited showed it one version ahead of the server and "just updated" in
+ * the list, and a save advanced the version by two.
+ */
+export function cachePipeline(def: PipelineDefinition): void {
+  safeWrite(pipelineKey(def.id), JSON.stringify(def));
+  upsertIndexEntry(def);
+}
+
 export function deletePipeline(id: string): void {
   try {
     localStorage.removeItem(pipelineKey(id));
@@ -509,6 +526,12 @@ export function duplicatePipeline(
     version: 0,
     status: 'draft',
     publishedVersion: undefined,
+    // The clone has never been published, so it must not inherit the source's
+    // "at publish time" snapshot — that snapshot describes a different
+    // pipeline's graph (the source's node ids) and would otherwise sit in the
+    // clone's record until its own first publish overwrote it. Matches
+    // `TemplatesModal`'s clone helper, which already clears it.
+    publishedSnapshot: undefined,
     nodes,
     edges,
     createdAt: now,

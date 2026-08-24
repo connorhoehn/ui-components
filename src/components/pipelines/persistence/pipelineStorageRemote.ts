@@ -13,10 +13,10 @@
 
 import type { PipelineDefinition } from '../../../types/pipeline';
 import {
+  cachePipeline,
   deletePipeline as deletePipelineLocal,
   listPipelines as listPipelinesLocal,
   loadPipeline as loadPipelineLocal,
-  savePipeline as savePipelineLocal,
   type PipelineIndexEntry,
 } from './pipelineStorage';
 
@@ -139,7 +139,11 @@ export async function loadPipeline(id: string): Promise<PipelineDefinition | nul
   try {
     const remote = await loadPipelineRemote(id);
     if (remote) {
-      savePipelineLocal(remote);
+      // Cache verbatim: this is a READ. Writing it back through `savePipeline`
+      // bumped `version` and re-stamped `updatedAt`, so simply opening a
+      // pipeline made the cached copy — and the definition handed to the
+      // editor, which is this same object — drift ahead of the server.
+      cachePipeline(remote);
     }
     return remote ?? loadPipelineLocal(id);
   } catch (err) {
@@ -149,13 +153,19 @@ export async function loadPipeline(id: string): Promise<PipelineDefinition | nul
 }
 
 export async function savePipeline(def: PipelineDefinition): Promise<PipelineDefinition> {
-  def.version = (def.version ?? 0) + 1;
-  def.updatedAt = new Date().toISOString();
-  savePipelineLocal(def);
+  // Bump on a COPY. Mutating the argument reached into the editor's live React
+  // state object, and delegating the cache write to the local `savePipeline`
+  // (which bumps again) advanced the version by two on every save.
+  const next: PipelineDefinition = {
+    ...def,
+    version: (def.version ?? 0) + 1,
+    updatedAt: new Date().toISOString(),
+  };
+  cachePipeline(next);
   try {
-    return await savePipelineRemote(def);
+    return await savePipelineRemote(next);
   } catch (err) {
-    if (isNetworkError(err)) return def;
+    if (isNetworkError(err)) return next;
     throw err;
   }
 }
@@ -174,7 +184,10 @@ export async function publishPipeline(id: string): Promise<PipelineDefinition | 
   try {
     const published = await publishPipelineRemote(id);
     if (published) {
-      savePipelineLocal(published);
+      // Verbatim — the server just decided `version` / `publishedVersion`.
+      // Bumping here made the cached copy look like an unpublished draft one
+      // version ahead of what was actually published.
+      cachePipeline(published);
     }
     return published;
   } catch (err) {
@@ -211,7 +224,10 @@ export async function createPipeline(
     createdBy: partial.createdBy,
   };
 
-  savePipelineLocal(def);
+  // Verbatim — `def.version` is 1 by construction above; the old
+  // `savePipelineLocal` bumped it to 2 before the PUT, so a brand-new
+  // pipeline was born at v2.
+  cachePipeline(def);
   try {
     await savePipelineRemote(def);
   } catch (err) {

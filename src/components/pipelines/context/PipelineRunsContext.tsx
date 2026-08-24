@@ -150,6 +150,11 @@ function withStep(
   return { ...run, steps: { ...run.steps, [stepId]: next } };
 }
 
+/** Terminal run states — a run in one of these can never move again. */
+function isTerminalRunStatus(status: PipelineRun['status']): boolean {
+  return status === 'completed' || status === 'failed' || status === 'cancelled';
+}
+
 function trimRuns(runs: Record<string, PipelineRun>): Record<string, PipelineRun> {
   const entries = Object.values(runs);
   if (entries.length <= MAX_RUNS_PER_PIPELINE) return runs;
@@ -454,11 +459,22 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
       // If the polled run is identical or older than what we already have
       // (e.g. events already moved it to a terminal state), skip the update
       // to avoid unnecessary re-renders.
-      if (existing && existing.status === run.status) {
-        // Quick structural compare on steps count + current frontier
-        const prevStepCount = Object.keys(existing.steps).length;
-        const nextStepCount = Object.keys(run.steps).length;
-        if (prevStepCount >= nextStepCount) return prev;
+      if (existing) {
+        // A poll that was already in flight when the terminal event landed
+        // carries pre-terminal data. Only the equal-status branch used to be
+        // guarded, so such a response was applied wholesale and rewound the
+        // run from `completed` back to `running`: the live visualiser spun
+        // forever on a finished run and it reappeared in `activeRunIds`.
+        // Terminal is final — nothing polled can un-finish a run.
+        if (isTerminalRunStatus(existing.status) && !isTerminalRunStatus(run.status)) {
+          return prev;
+        }
+        if (existing.status === run.status) {
+          // Quick structural compare on steps count + current frontier
+          const prevStepCount = Object.keys(existing.steps).length;
+          const nextStepCount = Object.keys(run.steps).length;
+          if (prevStepCount >= nextStepCount) return prev;
+        }
       }
       return { ...prev, [run.id]: run };
     });
