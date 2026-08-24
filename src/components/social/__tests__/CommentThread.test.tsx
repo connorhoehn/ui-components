@@ -36,6 +36,7 @@ function makeHook(over: Partial<UseCommentsReturn> = {}): UseCommentsReturn {
     createComment: vi.fn().mockResolvedValue(undefined),
     deleteComment: vi.fn().mockResolvedValue(undefined),
     loading: false,
+    submitting: false,
     error: null,
     ...over,
   };
@@ -120,5 +121,28 @@ describe('CommentThread ownership and deletion', () => {
     const group = screen.getByRole('group', { name: 'Confirm delete comment' });
     fireEvent.click(within(group).getByRole('button', { name: 'Delete' }));
     expect(hook.deleteComment).toHaveBeenCalledWith('c-5');
+  });
+});
+
+describe('CommentThread failure vs emptiness', () => {
+  it('shows the load error instead of "No comments yet"', () => {
+    renderThread(makeHook({ comments: [], error: 'Failed to load comments (500)' }));
+    // An outage and an unanswered post used to render identically.
+    expect(screen.getByRole('alert')).toHaveTextContent('Failed to load comments (500)');
+    expect(screen.queryByText('No comments yet')).toBeNull();
+  });
+
+  it('still shows "No comments yet" when the thread is genuinely empty', () => {
+    renderThread(makeHook({ comments: [], error: null }));
+    expect(screen.getByText('No comments yet')).toBeInTheDocument();
+  });
+
+  it('keeps existing comments on screen while a reply is submitting', () => {
+    renderThread(makeHook({ comments: [makeComment({ content: 'first comment' })], submitting: true }));
+    // `submitting` used to be the same flag as `loading`, and `loading`
+    // swaps the whole list for "Loading comments…" — so posting a reply
+    // made every comment in the thread disappear.
+    expect(screen.getByText('first comment')).toBeInTheDocument();
+    expect(screen.queryByText('Loading comments…')).toBeNull();
   });
 });

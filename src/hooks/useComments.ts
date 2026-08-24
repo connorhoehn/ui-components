@@ -34,7 +34,15 @@ export interface UseCommentsReturn {
   comments: CommentItem[];
   createComment: (content: string, parentCommentId?: string) => Promise<void>;
   deleteComment: (commentId: string) => Promise<void>;
+  /** True only while the thread itself is being fetched. */
   loading: boolean;
+  /**
+   * True while `createComment` is posting. Separate from `loading` because
+   * `CommentThread` swaps the whole list out for "Loading comments…" when
+   * `loading` is true — so sharing one flag made every existing comment
+   * disappear for the duration of posting a reply.
+   */
+  submitting: boolean;
   error: string | null;
 }
 
@@ -45,6 +53,7 @@ export interface UseCommentsReturn {
 export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsOptions): UseCommentsReturn {
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
@@ -64,10 +73,23 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
   // ---- On mount: fetch comments --------------------------------------------
 
   useEffect(() => {
-    if (!idToken || !roomId || !postId) return;
+    // Drop the previous post's thread before fetching the new one. Without
+    // this, changing `postId` on a mounted <CommentThread> left post A's
+    // comments rendered under post B until B's response arrived.
+    setComments([]);
+    setError(null);
+
+    if (!idToken || !roomId || !postId) {
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
-    setError(null);
+
+    // Per-run cancellation flag — see the matching note in usePosts. Without
+    // it a slow response for post A overwrites post B's thread whenever A
+    // resolves last.
+    let cancelled = false;
 
     fetch(`${baseUrl}/api/rooms/${roomId}/posts/${postId}/comments`, {
       headers: { Authorization: `Bearer ${idToken}` },
@@ -77,14 +99,21 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
         return res.json() as Promise<{ comments: CommentItem[] }>;
       })
       .then((data) => {
+        if (cancelled) return;
         setComments(data.comments ?? []);
       })
       .catch((err: Error) => {
+        if (cancelled) return;
         setError(err.message);
       })
       .finally(() => {
+        if (cancelled) return;
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [idToken, roomId, postId, baseUrl]);
 
   // ---- WS handler: social:comment -----------------------------------------
@@ -100,7 +129,12 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
         const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
         if (payload.postId !== postIdRef.current) return;
         const incoming = { ...(payload as unknown as CommentItem), _fadeIn: true };
-        setComments((prev) => [...prev, incoming]);
+        // Dedupe by commentId — the gateway echoes your own comment back, so
+        // `createComment`'s append plus this one showed it twice (with a
+        // duplicate React key) the moment you hit Comment.
+        setComments((prev) =>
+          prev.some((c) => c.commentId === incoming.commentId) ? prev : [...prev, incoming],
+        );
         const handle = setTimeout(() => {
           fadeTimers.delete(handle);
           setComments((prev) =>
@@ -127,7 +161,7 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
     parentCommentId?: string,
   ): Promise<void> => {
     if (!idToken || !roomId || !postId) return;
-    setLoading(true);
+    setSubmitting(true);
     setError(null);
     try {
       const body: { content: string; parentCommentId?: string } = { content };
@@ -142,11 +176,15 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
       });
       if (!res.ok) throw new Error(`Failed to create comment (${res.status})`);
       const comment = await res.json() as CommentItem;
-      setComments((prev) => [...prev, comment]);
+      setComments((prev) =>
+        prev.some((c) => c.commentId === comment.commentId)
+          ? prev.map((c) => (c.commentId === comment.commentId ? comment : c))
+          : [...prev, comment],
+      );
     } catch (err) {
       setError((err as Error).message);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }, [idToken, roomId, postId, baseUrl]);
 
@@ -170,5 +208,5 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
     }
   }, [idToken, roomId, postId, baseUrl]);
 
-  return { comments, createComment, deleteComment, loading, error };
+  return { comments, createComment, deleteComment, loading, submitting, error };
 }

@@ -126,13 +126,15 @@ export function useLikes({ idToken, roomId, postId, commentId, onMessage }: UseL
         method: wasLiked ? 'DELETE' : 'POST',
         headers: { Authorization: `Bearer ${idToken}` },
       });
-      if (!res.ok) {
-        // Revert on failure
-        setIsLiked(wasLiked);
-        setLikeCount((prev) => (wasLiked ? prev + 1 : prev - 1));
-        throw new Error(`Failed to toggle like (${res.status})`);
-      }
+      if (!res.ok) throw new Error(`Failed to toggle like (${res.status})`);
     } catch (err) {
+      // The rollback lives here, not in the `!res.ok` branch. It used to sit
+      // inside that branch, which covered an HTTP error but NOT a fetch that
+      // rejects — offline, DNS failure, CORS. In that case the heart stayed
+      // filled and the count stayed incremented for a like the server never
+      // recorded, until the user reloaded the page.
+      setIsLiked(wasLiked);
+      setLikeCount((prev) => (wasLiked ? prev + 1 : prev - 1));
       setError((err as Error).message);
     } finally {
       setLoading(false);

@@ -54,8 +54,13 @@ function layoutAgents(agents: AgentDefinition[], edgeDefs: { from: string; to: s
         data: { label: agent.name },
         type: 'default',
         style: {
+          // Background and border must resolve through the same tone, or a
+          // consumer that rebrands one gets a node styled half-old,
+          // half-new. `degraded` used to fill with `warning` and outline with
+          // `caution`, and `healthy` outlined with a literal green that no
+          // token override could reach.
           background: agent.status === 'offline' ? 'var(--color-danger-bg)' : agent.status === 'degraded' ? 'var(--color-warning-bg)' : 'var(--color-success-bg)',
-          border: `2px solid ${agent.status === 'offline' ? 'var(--color-danger-border)' : agent.status === 'degraded' ? 'var(--color-caution-border)' : '#86efac'}`,
+          border: `2px solid ${agent.status === 'offline' ? 'var(--color-danger-border)' : agent.status === 'degraded' ? 'var(--color-warning-border)' : 'var(--color-success-border)'}`,
           borderRadius: 8,
           padding: '8px 16px',
           fontSize: 13,
@@ -119,7 +124,7 @@ export function AgentFlowCanvas({
         fitViewOptions={{ padding: 0.3 }}
         proOptions={{ hideAttribution: true }}
       >
-        <Background gap={20} size={1} color="#e2e8f0" />
+        <Background gap={20} size={1} color="var(--color-border)" />
         <Controls showInteractive={false} />
       </ReactFlow>
     </div>

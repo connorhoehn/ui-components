@@ -899,4 +899,129 @@ describe('useAgUiStream', () => {
       );
     });
   });
+
+  // ── Non-terminated / superseded / redelivered streams ──────────────────────
+  //
+  // Every case below is a stream that does NOT end with the tidy
+  // RUN_FINISHED + close that the rest of this file exercises. Before
+  // `settleTurn` each one left `isStreaming` true forever: the composer in
+  // StreamingChatPanel stays disabled and the assistant bubble keeps its
+  // blinking cursor, so the user has to reload the page to talk to the agent.
+
+  describe('Stream ends without a terminal event', () => {
+    it('unsticks the turn and flags truncation when the socket dies mid-message', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'partial answ' });
+      // No TEXT_MESSAGE_END, no RUN_FINISHED — the proxy just hung up.
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      const assistant = result.current.messages.find((m) => m.id === 'm1');
+      expect(assistant?.isStreaming).toBe(false);
+      expect(assistant?.content).toBe('partial answ');
+      // The partial text must not be presented as a complete answer.
+      expect(result.current.error).toMatch(/before the response was complete/i);
+    });
+
+    it('does not invent an error when the message closed cleanly but RUN_FINISHED never came', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'done' });
+      await send({ type: 'TEXT_MESSAGE_END', messageId: 'm1' });
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+      expect(result.current.error).toBeNull();
+      expect(result.current.messages.find((m) => m.id === 'm1')?.isStreaming).toBe(false);
+    });
+
+    it('strands an unterminated tool call as error, not as a permanent spinner', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TOOL_CALL_START', toolCallId: 'tc1', toolCallName: 'search_kb' });
+      await send({ type: 'TOOL_CALL_ARGS', toolCallId: 'tc1', delta: '{"q":"x"}' });
+      // Tool call never ends — the run blows up half way through it.
+      await send({ type: 'RUN_ERROR', message: 'tool crashed' });
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      const toolCall = result.current.messages
+        .flatMap((m) => m.toolCalls)
+        .find((tc) => tc.id === 'tc1');
+      // 'streaming' renders a pulsing hourglass that never resolves;
+      // 'completed' would claim a result we never received.
+      expect(toolCall?.status).toBe('error');
+      expect(result.current.activeToolCalls.every((tc) => tc.status !== 'streaming')).toBe(true);
+    });
+  });
+
+  describe('Redelivered TEXT_MESSAGE_START', () => {
+    it('is idempotent — one bubble, deltas keep landing on it', async () => {
+      const { send, close } = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('hi'); });
+
+      await send(RUN_STARTED);
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'one ' });
+      // Duplicate delivery of the same START.
+      await send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'two' });
+      await send({ type: 'TEXT_MESSAGE_END', messageId: 'm1' });
+      await send(RUN_FINISHED);
+      await close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      const withId = result.current.messages.filter((m) => m.id === 'm1');
+      expect(withId).toHaveLength(1);
+      expect(withId[0].content).toBe('one two');
+    });
+  });
+
+  describe('Superseding sendMessage mid-message', () => {
+    it('settles the abandoned turn instead of leaving it streaming forever', async () => {
+      const first = buildMockStream();
+      const { result } = renderHook(() => useAgUiStream(HOOK_DEFAULTS));
+
+      act(() => { result.current.sendMessage('first'); });
+
+      await first.send(RUN_STARTED);
+      await first.send({ type: 'TEXT_MESSAGE_START', messageId: 'm1', role: 'assistant' });
+      await first.send({ type: 'TEXT_MESSAGE_CONTENT', messageId: 'm1', delta: 'half' });
+      await first.send({ type: 'TOOL_CALL_START', toolCallId: 'tc1', toolCallName: 'search_kb' });
+
+      // User gives up waiting and sends again. buildMockStream() rewires fetch.
+      const second = buildMockStream();
+      act(() => { result.current.sendMessage('second'); });
+      await second.send(RUN_STARTED);
+      await second.send(RUN_FINISHED);
+      await second.close();
+
+      await waitFor(() => expect(result.current.isStreaming).toBe(false));
+
+      const abandoned = result.current.messages.find((m) => m.id === 'm1');
+      expect(abandoned?.isStreaming).toBe(false);
+      expect(abandoned?.toolCalls.find((tc) => tc.id === 'tc1')?.status).toBe('error');
+    });
+  });
 });

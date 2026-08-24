@@ -46,6 +46,7 @@ function makePosts(over: Partial<UsePostsReturn> = {}): UsePostsReturn {
     deletePost: vi.fn().mockResolvedValue(undefined),
     getUserPosts: vi.fn().mockResolvedValue([]),
     loading: false,
+    mutating: false,
     error: null,
     hasMore: false,
     loadMore: vi.fn().mockResolvedValue(undefined),
@@ -79,6 +80,7 @@ beforeEach(() => {
     createComment: vi.fn().mockResolvedValue(undefined),
     deleteComment: vi.fn().mockResolvedValue(undefined),
     loading: false,
+    submitting: false,
     error: null,
   });
 });
@@ -218,6 +220,35 @@ describe('PostFeed destructive actions', () => {
     expect(save).toBeDisabled();
     fireEvent.click(save);
     expect(hook.editPost).not.toHaveBeenCalled();
+  });
+});
+
+describe('PostFeed failure vs emptiness', () => {
+  it('shows the load error instead of the "be the first to post" empty state', () => {
+    renderFeed(makePosts({ posts: [], error: 'Failed to load posts (503)' }));
+
+    // A room whose posts API is down used to be indistinguishable from a
+    // room nobody has posted in — so nobody knew there was anything to retry.
+    expect(screen.getByRole('alert')).toHaveTextContent('Failed to load posts (503)');
+    expect(screen.queryByText('No posts yet')).toBeNull();
+  });
+
+  it('still shows the empty state when the room is genuinely empty', () => {
+    renderFeed(makePosts({ posts: [], error: null }));
+    expect(screen.getByText('No posts yet')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('keeps cached posts visible when a later request fails', () => {
+    renderFeed(makePosts({ posts: [makePost({ content: 'cached' })], error: 'Failed to edit post (500)' }));
+    expect(screen.getByText('cached')).toBeInTheDocument();
+  });
+
+  it('disables the Post button while a post is being written', () => {
+    renderFeed(makePosts({ mutating: true }));
+    // `loading` is false during a mutation, so this button used to stay live
+    // and a double-click created the post twice.
+    expect(screen.getByRole('button', { name: /Post/ })).toBeDisabled();
   });
 });
 

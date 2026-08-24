@@ -155,4 +155,42 @@ describe('StreamingChatPanel', () => {
     render(<StreamingChatPanel {...BASE_PROPS} messages={messages} />);
     expect(screen.getByText('search_kb')).toBeInTheDocument();
   });
+
+  it('renders a running tool call once, not once per list it appears in', () => {
+    // useAgUiStream's TOOL_CALL_START pushes the same call into BOTH
+    // `activeToolCalls` and the open message's `toolCalls`, and only removes
+    // it from the active list on TOOL_CALL_END. Rendering both lists verbatim
+    // drew "search_kb ⏳" twice for one call, for the whole time it ran.
+    const running = {
+      id: 'tc1', name: 'search_kb', args: '{}', status: 'streaming' as const, startedAt: 0,
+    };
+    const messages = [
+      makeMsg({ id: 'a1', content: 'Let me search', isStreaming: true, toolCalls: [running] }),
+    ];
+
+    render(
+      <StreamingChatPanel
+        {...BASE_PROPS}
+        messages={messages}
+        isStreaming
+        activeToolCalls={[running]}
+      />,
+    );
+
+    expect(screen.getAllByText('search_kb')).toHaveLength(1);
+  });
+
+  it('still renders an active tool call that no message has claimed', () => {
+    // A tool call can start before any TEXT_MESSAGE_START, in which case the
+    // standalone block is the only thing that shows it.
+    const orphan = {
+      id: 'tc9', name: 'fetch_docs', args: '', status: 'streaming' as const, startedAt: 0,
+    };
+
+    render(
+      <StreamingChatPanel {...BASE_PROPS} messages={[]} isStreaming activeToolCalls={[orphan]} />,
+    );
+
+    expect(screen.getAllByText('fetch_docs')).toHaveLength(1);
+  });
 });

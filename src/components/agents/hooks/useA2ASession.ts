@@ -43,7 +43,13 @@ export function useA2ASession({
 
   const sendMessage = useCallback(
     (from: string, to: string, content: string) => {
-      if (!session) return;
+      // `isActive` is derived from this same status, so a UI that hides its
+      // composer on `!isActive` was consistent — but any caller driving the
+      // hook directly (or a click that lands in the same tick as End Session)
+      // could keep appending A2A traffic to a completed session. Those
+      // messages render on the flow canvas and in the transcript while the
+      // backend session no longer exists.
+      if (!session || session.status !== 'active') return;
 
       const msg: A2AMessage = {
         id: `msg-${createId()}`,

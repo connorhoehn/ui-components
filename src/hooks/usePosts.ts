@@ -35,7 +35,17 @@ export interface UsePostsReturn {
   editPost: (postId: string, content: string) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   getUserPosts: (userId: string) => Promise<PostItem[]>;
+  /** True while the initial fetch or `loadMore` is in flight. */
   loading: boolean;
+  /**
+   * True while `createPost` / `editPost` / `deletePost` is in flight.
+   *
+   * Kept separate from `loading` on purpose — a mutation must not put the
+   * feed back into its "Loading…" skeleton — but it was previously computed
+   * and then thrown away, so nothing could disable a submit button while a
+   * post was being written and a double-click created the post twice.
+   */
+  mutating: boolean;
   error: string | null;
   hasMore: boolean;
   loadMore: () => Promise<void>;
@@ -49,7 +59,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [lastKey, setLastKey] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);       // initial fetch / loadMore
-  const [_mutating, setMutating] = useState(false);    // createPost / editPost / deletePost
+  const [mutating, setMutating] = useState(false);     // createPost / editPost / deletePost
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
@@ -69,12 +79,28 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   // ---- On mount: fetch posts -----------------------------------------------
 
   useEffect(() => {
-    if (!idToken || !roomId) return;
-
-    setLoading(true);
-    setError(null);
+    // Clearing on the way out matters as much as on the way in: leaving a
+    // room (roomId -> null) used to bail before the reset, so the previous
+    // room's posts stayed on screen under an empty room header.
     setPosts([]);
     setLastKey(undefined);
+    setError(null);
+
+    if (!idToken || !roomId) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+
+    // Per-run cancellation flag. `<PostFeed roomId={x} />` with no `key` is a
+    // supported way to mount this: when `roomId` goes A -> B and A's response
+    // is the slower one, it used to land last and repaint room B's feed with
+    // room A's posts — and hand `loadMore` room A's cursor, so paging on
+    // B fetched more of A. Declared INSIDE the effect body on purpose; a
+    // shared ref reset at the top of each run would resurrect the previous
+    // run's cancellation.
+    let cancelled = false;
 
     fetch(`${baseUrl}/api/rooms/${roomId}/posts`, {
       headers: { Authorization: `Bearer ${idToken}` },
@@ -84,15 +110,22 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
         return res.json() as Promise<{ posts: PostItem[]; lastKey?: string }>;
       })
       .then((data) => {
+        if (cancelled) return;
         setPosts(data.posts ?? []);
         setLastKey(data.lastKey);
       })
       .catch((err: Error) => {
+        if (cancelled) return;
         setError(err.message);
       })
       .finally(() => {
+        if (cancelled) return;
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [idToken, roomId, baseUrl]);
 
   // ---- WS handler: social:post ---------------------------------------------
@@ -108,7 +141,14 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
         const payload = (msg.payload ?? msg) as Record<string, unknown>;
         if (payload.roomId !== roomIdRef.current) return;
         const incoming = { ...(payload as unknown as PostItem), _fadeIn: true };
-        setPosts((prev) => [incoming, ...prev]);
+        // Dedupe by postId. The gateway echoes a post back to its own author,
+        // so `createPost` prepending the POST response and this handler
+        // prepending the echo produced the same post twice — two identical
+        // cards and a React duplicate-key warning, every time you posted.
+        // Reconnect replay lands here the same way.
+        setPosts((prev) =>
+          prev.some((p) => p.postId === incoming.postId) ? prev : [incoming, ...prev],
+        );
         const handle = setTimeout(() => {
           fadeTimers.delete(handle);
           setPosts((prev) =>
@@ -139,7 +179,14 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       );
       if (!res.ok) throw new Error(`Failed to load more posts (${res.status})`);
       const data = await res.json() as { posts: PostItem[]; lastKey?: string };
-      setPosts((prev) => [...prev, ...(data.posts ?? [])]);
+      // Drop anything already on screen. A post that arrived over the socket
+      // (or was just created) shifts the server's window, so the next page
+      // legitimately repeats a row it already sent — which rendered as a
+      // duplicate card with a duplicate React key at every page boundary.
+      setPosts((prev) => {
+        const seen = new Set(prev.map((p) => p.postId));
+        return [...prev, ...(data.posts ?? []).filter((p) => !seen.has(p.postId))];
+      });
       setLastKey(data.lastKey);
     } catch (err) {
       setError((err as Error).message);
@@ -165,7 +212,13 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       });
       if (!res.ok) throw new Error(`Failed to create post (${res.status})`);
       const post = await res.json() as PostItem;
-      setPosts((prev) => [post, ...prev]);
+      // The socket echo may have beaten the POST response here; in that case
+      // update in place rather than prepending a second copy.
+      setPosts((prev) =>
+        prev.some((p) => p.postId === post.postId)
+          ? prev.map((p) => (p.postId === post.postId ? post : p))
+          : [post, ...prev],
+      );
     } catch (err) {
       setError((err as Error).message);
       throw err;
@@ -237,6 +290,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     deletePost,
     getUserPosts,
     loading,
+    mutating,
     error,
     hasMore: lastKey !== undefined,
     loadMore,
