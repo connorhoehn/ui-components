@@ -121,7 +121,15 @@ function k({ stats: e, pools: r, onNavigate: i, loading: a }) {
 //#endregion
 //#region src/components/identity/shared/EntityTable.tsx
 function A({ columns: e, data: t, keyField: r, onRowClick: i, actions: a, emptyMessage: o = "No records found.", emptyIcon: c = "📋", loading: l = !1 }) {
-	if (!l && t.length === 0) return /* @__PURE__ */ O(n, {
+	let u = C(() => e.map((e) => ({
+		key: e.key,
+		header: e.header,
+		render: e.render ? (t) => e.render(t) : void 0,
+		sortable: e.sortable,
+		width: e.width,
+		align: e.align
+	})), [e]);
+	return !l && t.length === 0 ? /* @__PURE__ */ O(n, {
 		className: "flex flex-col items-center justify-center min-h-[220px] p-8",
 		children: [/* @__PURE__ */ D("span", {
 			className: "text-[42px] mb-3",
@@ -130,16 +138,7 @@ function A({ columns: e, data: t, keyField: r, onRowClick: i, actions: a, emptyM
 			className: "text-sm font-medium text-neutral text-center max-w-[280px] m-0",
 			children: o
 		})]
-	});
-	let u = e.map((e) => ({
-		key: e.key,
-		header: e.header,
-		render: e.render ? (t) => e.render(t) : void 0,
-		sortable: e.sortable,
-		width: e.width,
-		align: e.align
-	}));
-	return /* @__PURE__ */ D(n, { children: /* @__PURE__ */ D(s, {
+	}) : /* @__PURE__ */ D(n, { children: /* @__PURE__ */ D(s, {
 		data: t,
 		columns: u,
 		keyField: (e) => String(e[r]),

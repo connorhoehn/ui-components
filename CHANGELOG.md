@@ -8,6 +8,72 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.85.0] — 2026-08-24
+
+A render-performance audit. All 12 changes are behaviour-preserving — except
+one, which turned out to fix a user-visible bug.
+
+### Fixed — a bug the perf audit found
+
+- **`WrappedActivityPanel` stopped the activity feed rotating entirely.** It
+  built `items` with an inline `adaptActivityEvents(...)` call, so the array
+  had a fresh identity every render — and `ActivityFeed`'s rotation-timer
+  effect keys on `items`. Any parent re-rendering faster than `rotateMs`
+  (4200ms default) restarted the timer before it could fire, so the feed
+  never advanced. Exactly the same shape as the `CallStartedBanner` bug in
+  v2.83.0: an unstable identity in a timer effect's dependencies.
+
+### Fixed — measured render waste
+
+- **Two context providers rebuilt their `value` inline** (`ThemeContext`,
+  `AgentsContext`). Context propagation bypasses `React.memo`, so *every*
+  consumer re-rendered whenever anything above the provider did. Measured
+  with a memoised consumer and a render counter: **6 consumer renders across
+  5 unrelated ancestor renders → 1**. Bites on any router transition in a
+  host app.
+- **`ReactionOverlay` re-rendered at 2 Hz for the entire duration of every
+  call.** Its 500ms expiry sweep returned `prev.filter(...)` unconditionally,
+  and `filter` always allocates a new array. Measured with `<Profiler>`:
+  **22 commits in the first 10s → 5, then flat**; with no reactions on
+  screen it now commits never.
+- **The repo's only `React.memo` was a no-op.** `VisionNode` passed
+  `footerInfo` as an inline object and `onRetry` as an inline arrow, so
+  `memo(VisionResponseFooter)` never skipped a single render. React Flow
+  re-renders every custom node on pan, zoom and selection, so this cost on
+  every canvas interaction.
+- **`EditorTopBar` ran the full graph validator in its render body** — cycle
+  detection and handle-compatibility across every node and edge — and it
+  re-renders on every WebSocket step event during a live run. A 40-node
+  pipeline emitting 200 events revalidated 200 times.
+- **`EntityTable` discarded its callers' memoisation** (regression from the
+  v2.72.0 façade, mine): it rebuilt `dtColumns` inline, and `columns` is a
+  dependency of both of `DataTable`'s `filtered` and `sorted` memos — so the
+  entire dataset was re-filtered and re-sorted on every render, including
+  every keystroke in the table search. All seven identity admin pages
+  already memoise their columns; the façade threw that away one level down.
+- Also: `PipelineCanvas` rebuilt every node's `data` on each replay tick
+  (the sibling edge effect 20 lines below already did this correctly),
+  `CodeBlock` re-ran a three-regex highlighter just to toggle its copy
+  button, `AgentFlowCanvas` had a `[]` default literal defeating two layout
+  memos (one O(edges×agents)), `TabbedEventLog` made six passes over 200
+  entries per render, and `useActiveSpeaker` allocated a `Float32Array` per
+  participant per 200ms tick — GC churn its sibling `useMuteWhileTalking`
+  already avoids.
+
+### Deliberately not changed
+
+`PresenceContext`/`WebSocketContext`/`IdentityContext` take `value` as a
+prop — stability belongs to the host. `useActiveSpeaker`'s effect deps
+rebuild the whole AudioContext graph when any participant field changes;
+keying on IDs + stream identity would fix it but risks a stale analyser on
+a real stream swap. `useLatestStepForNode` rescans all runs per node per
+event and needs a per-node selector, not a narrower dep array. Several
+components (`EventRow`, `ParticipantTile`, `TaskItemRow`) would need
+call-site changes to benefit from `memo`, and they are stable public
+exports. Two further real bugs were reported but not fixed because the fix
+changes behaviour: `SocialPanel` resets form state from its `user` prop
+with no guard, clobbering what the user has typed.
+
 ## [2.84.0] — 2026-08-24
 
 The README is the library's front door, and it was misinforming people.

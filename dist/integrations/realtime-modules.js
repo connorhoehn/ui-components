@@ -260,7 +260,7 @@ function le({ presence: e, currentClientId: t, wrapWithNetworkShim: n }) {
 //#endregion
 //#region src/integrations/realtime-modules/WrappedActivityPanel.tsx
 function ue({ activity: e, visibleCount: t, rotateMs: n, staggerMs: r, kindColors: i, className: a }) {
-	let o = R(e.events);
+	let o = T(() => R(e.events), [e.events]);
 	return /* @__PURE__ */ k(d, {
 		items: o,
 		visibleCount: t,

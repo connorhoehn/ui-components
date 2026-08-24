@@ -39,29 +39,29 @@ var ee = /* @__PURE__ */ "import.export.from.as.const.let.var.function.return.de
 	"export",
 	"local",
 	"in"
-], ne = /* @__PURE__ */ "cd.ls.echo.cat.grep.sed.awk.find.cp.mv.rm.mkdir.rmdir.touch.chmod.chown.pwd.which.npm.yarn.pnpm.npx.git.node.curl.wget".split(".");
-function re(e) {
+], A = /* @__PURE__ */ "cd.ls.echo.cat.grep.sed.awk.find.cp.mv.rm.mkdir.rmdir.touch.chmod.chown.pwd.which.npm.yarn.pnpm.npx.git.node.curl.wget".split(".");
+function ne(e) {
 	return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-function ie(e, t) {
+function re(e, t) {
 	let n = e.replace(/(\/\/.*?)(\n|$)/g, `<span style="color:${t.comment}">$1</span>$2`);
 	n = n.replace(/(\/\*[\s\S]*?\*\/)/g, `<span style="color:${t.comment}">$1</span>`), n = n.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)/g, `<span style="color:${t.string}">$1</span>`);
 	let r = RegExp(`\\b(${ee.join("|")})\\b`, "g");
 	return n = n.replace(r, `<span style="color:${t.keyword}">$1</span>`), n = n.replace(/\b(\d+(?:\.\d+)?)\b/g, `<span style="color:${t.number}">$1</span>`), n;
 }
-function ae(e, t) {
+function ie(e, t) {
 	let n = e.replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, `<span style="color:${t.property}">$1</span>$2`);
 	return n = n.replace(/("(?:[^"\\]|\\.)*")/g, `<span style="color:${t.string}">$1</span>`), n = n.replace(/\b(true|false|null)\b/g, `<span style="color:${t.keyword}">$1</span>`), n = n.replace(/\b(-?\d+(?:\.\d+)?)\b/g, `<span style="color:${t.number}">$1</span>`), n;
 }
-function oe(e, t) {
+function ae(e, t) {
 	let n = e.replace(/(#.*?)(\n|$)/g, `<span style="color:${t.comment}">$1</span>$2`);
 	n = n.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, `<span style="color:${t.string}">$1</span>`);
 	let r = RegExp(`\\b(${te.join("|")})\\b`, "g");
 	n = n.replace(r, `<span style="color:${t.keyword}">$1</span>`);
-	let i = RegExp(`\\b(${ne.join("|")})\\b`, "g");
+	let i = RegExp(`\\b(${A.join("|")})\\b`, "g");
 	return n = n.replace(i, `<span style="color:${t.builtin}">$1</span>`), n = n.replace(/(\$\w+|\$\{[^}]+\})/g, `<span style="color:${t.variable}">$1</span>`), n;
 }
-var se = {
+var oe = {
 	comment: "var(--color-neutral)",
 	string: "#4ade80",
 	keyword: "var(--color-state-pending)",
@@ -69,7 +69,7 @@ var se = {
 	property: "#7dd3fc",
 	builtin: "#c4b5fd",
 	variable: "#fbbf24"
-}, ce = {
+}, se = {
 	comment: "var(--color-neutral)",
 	string: "#15803d",
 	keyword: "var(--color-info-fg)",
@@ -78,14 +78,14 @@ var se = {
 	builtin: "var(--color-cat-ai)",
 	variable: "#a16207"
 };
-function A(e, t, n) {
-	let r = n === "dark" ? se : ce, i = re(e);
+function ce(e, t, n) {
+	let r = n === "dark" ? oe : se, i = ne(e);
 	switch (t) {
-		case "json": return ae(i, r);
+		case "json": return ie(i, r);
 		case "bash":
-		case "sh": return oe(i, r);
+		case "sh": return ae(i, r);
 		case "text": return i;
-		default: return ie(i, r);
+		default: return re(i, r);
 	}
 }
 function le({ code: t, language: n = "tsx", theme: r = "dark", copyButton: i = !0, showLineNumbers: a = !1, className: o, style: s, "data-testid": c, ariaLabel: l }) {
@@ -93,7 +93,11 @@ function le({ code: t, language: n = "tsx", theme: r = "dark", copyButton: i = !
 		typeof navigator > "u" || !navigator.clipboard || navigator.clipboard.writeText(t).then(() => {
 			d(!0), setTimeout(() => d(!1), 1500);
 		}).catch(() => {});
-	}, [t]), p = r === "dark", m = t.split("\n");
+	}, [t]), p = r === "dark", m = S(() => t.split("\n"), [t]), h = S(() => ce(t, n, r), [
+		t,
+		n,
+		r
+	]);
 	return /* @__PURE__ */ D("div", {
 		"data-testid": c,
 		"data-language": n,
@@ -118,11 +122,11 @@ function le({ code: t, language: n = "tsx", theme: r = "dark", copyButton: i = !
 					children: m.map((e, t) => /* @__PURE__ */ E("div", { children: t + 1 }, t))
 				}), /* @__PURE__ */ E("code", {
 					className: "flex-1 block",
-					dangerouslySetInnerHTML: { __html: A(t, n, r) }
+					dangerouslySetInnerHTML: { __html: h }
 				})]
 			}) : /* @__PURE__ */ E("code", {
 				className: "block",
-				dangerouslySetInnerHTML: { __html: A(t, n, r) }
+				dangerouslySetInnerHTML: { __html: h }
 			})
 		})]
 	});

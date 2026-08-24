@@ -286,7 +286,10 @@ function j({ reactions: t, className: n, style: r }) {
 		a((e) => [...e.slice(-20), n]);
 	}, [t]), u(() => {
 		let e = setInterval(() => {
-			a((e) => e.filter((e) => Date.now() - e.createdAt < 3e3));
+			a((e) => {
+				let t = e.filter((e) => Date.now() - e.createdAt < 3e3);
+				return t.length === e.length ? e : t;
+			});
 		}, 500);
 		return () => clearInterval(e);
 	}, []), /* @__PURE__ */ _("div", {

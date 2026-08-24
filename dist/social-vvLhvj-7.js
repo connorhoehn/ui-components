@@ -29,12 +29,12 @@ function D({ children: e }) {
 	}, [t]);
 	let r = p(() => {
 		n((e) => e === "light" ? "dark" : "light");
-	}, []);
+	}, []), i = v(() => ({
+		theme: t,
+		toggleTheme: r
+	}), [t, r]);
 	return /* @__PURE__ */ S(T.Provider, {
-		value: {
-			theme: t,
-			toggleTheme: r
-		},
+		value: i,
 		children: e
 	});
 }

@@ -2,7 +2,7 @@ import { g as e, t } from "./useWebSocket-DgefXbuy.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./Textarea-DPCoGI7q.js";
 import { a as i, i as a, n as o, o as s, r as c } from "./renderers-BrDjsKPH.js";
-import { C as l, D as u, E as d, O as f, S as p, T as m, _ as h, a as g, b as _, c as v, d as y, f as b, g as x, h as S, i as C, k as w, l as T, m as E, o as D, p as ee, r as te, s as ne, t as re, u as O, v as ie, w as ae, x as oe, y as k } from "./DocumentEditorPage-6mQCl83c.js";
+import { C as l, D as u, E as d, O as f, S as p, T as m, _ as h, a as g, b as _, c as v, d as y, f as b, g as x, h as S, i as C, k as w, l as T, m as E, o as D, p as ee, r as te, s as ne, t as re, u as O, v as ie, w as ae, x as oe, y as k } from "./DocumentEditorPage-BYhC_YFE.js";
 import { useCallback as A, useEffect as j, useMemo as M, useRef as N, useState as P } from "react";
 import { Fragment as F, jsx as I, jsxs as L } from "react/jsx-runtime";
 //#region src/components/doc-editor/DocumentListPage.tsx

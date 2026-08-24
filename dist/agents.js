@@ -225,29 +225,39 @@ var b = {
 	]
 }, x = n(null);
 function S({ children: e, agents: t, metrics: n, baseUrl: i }) {
-	let [o, s] = c(t ?? g), [l, d] = c(n ?? _), [f, p] = c([]), [m, h] = c([]), [v, y] = c(null);
+	let [s, l] = c(t ?? g), [d, f] = c(n ?? _), [p, m] = c([]), [h, v] = c([]), [y, b] = c(null);
 	a(() => {
-		t && s(t);
+		t && l(t);
 	}, [t]), a(() => {
-		n && d(n);
+		n && f(n);
 	}, [n]);
-	let b = r(() => {
-		s(t ?? g), d(n ?? _);
-	}, [t, n]), S = r((e) => {
-		y(e);
-	}, []), C = r((e) => o.find((t) => t.id === e), [o]), w = r((e) => l.find((t) => t.agentId === e), [l]);
+	let S = r(() => {
+		l(t ?? g), f(n ?? _);
+	}, [t, n]), C = r((e) => {
+		b(e);
+	}, []), w = r((e) => s.find((t) => t.id === e), [s]), T = r((e) => d.find((t) => t.agentId === e), [d]), E = o(() => ({
+		agents: s,
+		metrics: d,
+		sessions: p,
+		a2aSessions: h,
+		selectedAgentId: y,
+		selectAgent: C,
+		refreshAgents: S,
+		getAgent: w,
+		getMetrics: T
+	}), [
+		s,
+		d,
+		p,
+		h,
+		y,
+		C,
+		S,
+		w,
+		T
+	]);
 	return /* @__PURE__ */ u(x.Provider, {
-		value: {
-			agents: o,
-			metrics: l,
-			sessions: f,
-			a2aSessions: m,
-			selectedAgentId: v,
-			selectAgent: S,
-			refreshAgents: b,
-			getAgent: C,
-			getMetrics: w
-		},
+		value: E,
 		children: e
 	});
 }
@@ -849,7 +859,7 @@ function te(e, t) {
 	}
 	return a;
 }
-function z(e, t) {
+function ne(e, t) {
 	let n = new Set(t.map((e) => e.id));
 	return e.filter((e) => n.has(e.from) && n.has(e.to)).map((e, n) => {
 		let r = t.find((t) => t.id === e.from)?.protocol === "a2a";
@@ -877,8 +887,9 @@ function z(e, t) {
 		};
 	});
 }
-function B({ agents: t, edges: n = [], onAgentClick: r, className: i }) {
-	let a = o(() => te(t, n), [t, n]), s = o(() => z(n, t), [n, t]);
+var re = [];
+function z({ agents: t, edges: n = re, onAgentClick: r, className: i }) {
+	let a = o(() => te(t, n), [t, n]), s = o(() => ne(n, t), [n, t]);
 	return /* @__PURE__ */ u("div", {
 		className: e("w-full h-[500px]", i),
 		children: /* @__PURE__ */ d(h, {
@@ -900,7 +911,7 @@ function B({ agents: t, edges: n = [], onAgentClick: r, className: i }) {
 }
 //#endregion
 //#region src/components/agents/AgentFlowPage.tsx
-var ne = [
+var B = [
 	{
 		from: "orgiq-supervisor",
 		to: "orgiq-search"
@@ -926,7 +937,7 @@ var ne = [
 		to: "orgiq-scoring"
 	}
 ];
-function re({ edges: t = ne, onAgentClick: n, className: r }) {
+function V({ edges: t = B, onAgentClick: n, className: r }) {
 	let { agents: i } = C(), a = i.filter((e) => e.protocol === "a2a"), o = i.filter((e) => e.protocol === "direct");
 	return /* @__PURE__ */ d("div", {
 		className: e("space-y-4", r),
@@ -958,7 +969,7 @@ function re({ edges: t = ne, onAgentClick: n, className: r }) {
 			})]
 		}), /* @__PURE__ */ u("div", {
 			className: "border border-border rounded-lg overflow-hidden",
-			children: /* @__PURE__ */ u(B, {
+			children: /* @__PURE__ */ u(z, {
 				agents: i,
 				edges: t,
 				onAgentClick: n
@@ -968,7 +979,7 @@ function re({ edges: t = ne, onAgentClick: n, className: r }) {
 }
 //#endregion
 //#region src/components/agents/hooks/useAgUiStream.ts
-function V(e, t) {
+function H(e, t) {
 	let n = e;
 	for (let e of t) {
 		if (typeof n != "object" || !n) return;
@@ -976,43 +987,43 @@ function V(e, t) {
 	}
 	return n;
 }
-function H(e, t, n) {
+function U(e, t, n) {
 	if (t.length === 0) return n;
 	let r = Array.isArray(e) ? [...e] : { ...e }, i = t[0];
-	return r[i] = t.length === 1 ? n : H(r[i], t.slice(1), n), r;
+	return r[i] = t.length === 1 ? n : U(r[i], t.slice(1), n), r;
 }
-function U(e, t) {
+function W(e, t) {
 	if (t.length === 0) return;
 	let n = Array.isArray(e) ? [...e] : { ...e };
-	return t.length === 1 ? delete n[t[0]] : n[t[0]] = U(n[t[0]], t.slice(1)), n;
+	return t.length === 1 ? delete n[t[0]] : n[t[0]] = W(n[t[0]], t.slice(1)), n;
 }
-function W(e) {
+function G(e) {
 	return !e || e === "/" ? [] : e.replace(/^\//, "").split("/").map((e) => e.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
 function ie(e, t) {
 	let n = e;
 	for (let e of t) try {
-		let t = W(e.path);
+		let t = G(e.path);
 		switch (e.op) {
 			case "add":
 			case "replace":
-				n = H(n, t, e.value);
+				n = U(n, t, e.value);
 				break;
 			case "remove":
-				n = U(n, t);
+				n = W(n, t);
 				break;
 			case "copy": {
-				let r = W(e.from ?? "");
-				n = H(n, t, V(n, r));
+				let r = G(e.from ?? "");
+				n = U(n, t, H(n, r));
 				break;
 			}
 			case "move": {
-				let r = W(e.from ?? ""), i = V(n, r);
-				n = U(n, r), n = H(n, t, i);
+				let r = G(e.from ?? ""), i = H(n, r);
+				n = W(n, r), n = U(n, t, i);
 				break;
 			}
 			case "test": {
-				let r = V(n, t);
+				let r = H(n, t);
 				JSON.stringify(r) !== JSON.stringify(e.value) && console.warn("[useAgUiStream] JSON Patch test op failed at", e.path);
 				break;
 			}
@@ -1023,10 +1034,10 @@ function ie(e, t) {
 	}
 	return n;
 }
-function G() {
+function K() {
 	return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
-function K({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
+function q({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 	let [l, u] = c([]), [d, f] = c(""), [p, m] = c([]), [h, g] = c(void 0), [_, v] = c(t ?? null), [y, b] = c(null), [x, S] = c(!1), [C, w] = c(null), T = s(null), E = s(null), D = s(""), O = s([]), k = r((e) => {
 		u((t) => {
 			let n = t.findIndex((e) => e.id === E.current);
@@ -1059,7 +1070,7 @@ function K({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 			case "STEP_STARTED":
 			case "STEP_FINISHED": break;
 			case "TEXT_MESSAGE_START": {
-				let t = e.messageId ?? G();
+				let t = e.messageId ?? K();
 				E.current = t, D.current = "", O.current = [];
 				let n = e.role;
 				u((e) => [...e, {
@@ -1087,7 +1098,7 @@ function K({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 				})), f(""), E.current = null;
 				break;
 			case "TEXT_MESSAGE_CHUNK": {
-				let t = e.messageId ?? E.current ?? G();
+				let t = e.messageId ?? E.current ?? K();
 				if (E.current !== t) {
 					E.current = t, D.current = "", O.current = [];
 					let n = e.role ?? "assistant";
@@ -1228,7 +1239,7 @@ function K({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
 		let a = new AbortController();
 		T.current = a, w(null), S(!0);
 		let o = {
-			id: G(),
+			id: K(),
 			role: "user",
 			content: t,
 			isStreaming: !1,
@@ -1305,7 +1316,7 @@ var ae = {
 	completed: "✓",
 	error: "✗"
 };
-function q({ toolCall: t, className: n }) {
+function J({ toolCall: t, className: n }) {
 	let [r, i] = c(!1), a = t.endedAt == null ? null : t.endedAt - t.startedAt;
 	return /* @__PURE__ */ d("div", {
 		className: e("border rounded text-xs font-mono overflow-hidden", t.status === "streaming" && "border-info-border bg-info-bg/50", t.status === "completed" && "border-border bg-surface-panel", t.status === "error" && "border-danger-border bg-danger-bg/50", n),
@@ -1337,7 +1348,7 @@ function q({ toolCall: t, className: n }) {
 				children: "args"
 			}), /* @__PURE__ */ u("pre", {
 				className: "text-[11px] text-text-secondary whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto",
-				children: J(t.args)
+				children: Y(t.args)
 			})] }), t.result != null && /* @__PURE__ */ d("div", { children: [/* @__PURE__ */ u("div", {
 				className: "text-[10px] text-text-tertiary uppercase mt-1",
 				children: "result"
@@ -1348,7 +1359,7 @@ function q({ toolCall: t, className: n }) {
 		})]
 	});
 }
-function J(e) {
+function Y(e) {
 	try {
 		return JSON.stringify(JSON.parse(e), null, 2);
 	} catch {
@@ -1356,7 +1367,7 @@ function J(e) {
 	}
 }
 function oe(e) {
-	if (typeof e == "string") return J(e);
+	if (typeof e == "string") return Y(e);
 	try {
 		return JSON.stringify(e, null, 2);
 	} catch {
@@ -1365,7 +1376,7 @@ function oe(e) {
 }
 //#endregion
 //#region src/components/agents/components/AgUiReasoningBlock.tsx
-function Y({ reasoning: t, isStreaming: n = !1, defaultOpen: r = !1, className: i }) {
+function X({ reasoning: t, isStreaming: n = !1, defaultOpen: r = !1, className: i }) {
 	let [a, o] = c(r);
 	if (!t || !t.trim()) return null;
 	let s = t.split(/\s+/).filter(Boolean).length;
@@ -1400,8 +1411,8 @@ function Y({ reasoning: t, isStreaming: n = !1, defaultOpen: r = !1, className: 
 }
 //#endregion
 //#region src/components/agents/components/StreamingChatPanel.tsx
-var X = "w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-[11px] font-bold shrink-0";
-function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls: o = [], error: l, onSend: f, onCancel: p, placeholder: m = "Send a message to the agent...", className: h }) {
+var Z = "w-8 h-8 rounded-full bg-success flex items-center justify-center text-white text-[11px] font-bold shrink-0";
+function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls: o = [], error: l, onSend: f, onCancel: p, placeholder: m = "Send a message to the agent...", className: h }) {
 	let [g, _] = c(""), v = s(null);
 	a(() => {
 		v.current && (v.current.scrollTop = v.current.scrollHeight);
@@ -1450,7 +1461,7 @@ function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 										children: t.role === "user" ? "You" : "Agent"
 									})
 								}),
-								t.role === "assistant" && t.reasoning && /* @__PURE__ */ u(Y, {
+								t.role === "assistant" && t.reasoning && /* @__PURE__ */ u(X, {
 									reasoning: t.reasoning,
 									isStreaming: t.isStreaming && r,
 									defaultOpen: !1
@@ -1464,7 +1475,7 @@ function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 								}),
 								t.toolCalls.length > 0 && /* @__PURE__ */ u("div", {
 									className: "mt-1.5 flex flex-col gap-1",
-									children: t.toolCalls.map((e) => /* @__PURE__ */ u(q, { toolCall: e }, e.id))
+									children: t.toolCalls.map((e) => /* @__PURE__ */ u(J, { toolCall: e }, e.id))
 								})
 							]
 						})]
@@ -1472,17 +1483,17 @@ function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 					o.length > 0 && /* @__PURE__ */ d("div", {
 						className: "flex gap-2.5",
 						children: [/* @__PURE__ */ u("div", {
-							className: X,
+							className: Z,
 							children: "AI"
 						}), /* @__PURE__ */ u("div", {
 							className: "flex-1 flex flex-col gap-1",
-							children: o.map((e) => /* @__PURE__ */ u(q, { toolCall: e }, e.id))
+							children: o.map((e) => /* @__PURE__ */ u(J, { toolCall: e }, e.id))
 						})]
 					}),
 					i && !n.some((e) => e.isStreaming) && /* @__PURE__ */ d("div", {
 						className: "flex gap-2.5",
 						children: [/* @__PURE__ */ u("div", {
-							className: X,
+							className: Z,
 							children: "AI"
 						}), /* @__PURE__ */ d("div", {
 							className: "flex-1 mt-1 py-2 px-3 bg-surface-hover rounded-[4px_12px_12px_12px] text-[14px] text-text-primary leading-[1.5] whitespace-pre-wrap break-words",
@@ -1538,7 +1549,7 @@ function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 //#endregion
 //#region src/components/agents/AgentInvokePage.tsx
 function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
-	let { agents: i } = C(), [a, o] = c(t ?? i[0]?.id ?? ""), [s, l] = c([]), { messages: f, isStreaming: p, streamingText: m, activeToolCalls: h, error: g, sendMessage: _, cancelStream: v, reset: y } = K({
+	let { agents: i } = C(), [a, o] = c(t ?? i[0]?.id ?? ""), [s, l] = c([]), { messages: f, isStreaming: p, streamingText: m, activeToolCalls: h, error: g, sendMessage: _, cancelStream: v, reset: y } = q({
 		url: `${n}/${a}/invoke`,
 		onEvent: (e) => l((t) => [...t, e])
 	}), b = i.find((e) => e.id === a);
@@ -1613,7 +1624,7 @@ function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 			]
 		}), /* @__PURE__ */ d("div", {
 			className: "flex-1 flex flex-col overflow-hidden",
-			children: [/* @__PURE__ */ u(Z, {
+			children: [/* @__PURE__ */ u(Q, {
 				messages: f,
 				isStreaming: p,
 				streamingText: m,
@@ -1738,12 +1749,12 @@ function le({ baseUrl: e, agentId: t, pollIntervalMs: n = 6e4, enabled: i = !0 }
 }
 //#endregion
 //#region src/components/agents/hooks/useA2ASession.ts
-function Q() {
+function $() {
 	return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 function ue({ baseUrl: e, participants: t } = {}) {
 	let [n, i] = c(null), [a, o] = c([]), l = s(null), u = r((e) => {
-		let t = `a2a-${Q()}`;
+		let t = `a2a-${$()}`;
 		l.current = t;
 		let n = {
 			sessionId: t,
@@ -1756,7 +1767,7 @@ function ue({ baseUrl: e, participants: t } = {}) {
 	}, []), d = r((e, t, r) => {
 		if (!n) return;
 		let a = {
-			id: `msg-${Q()}`,
+			id: `msg-${$()}`,
 			from: e,
 			to: t,
 			content: r,
@@ -1851,13 +1862,13 @@ function pe(e) {
 	}
 	return "New conversation";
 }
-function $(e) {
+function me(e) {
 	let t = [...e].reverse().find((e) => e.role === "assistant" && e.content.trim().length > 0);
 	if (!t) return null;
 	let n = t.content.trim().replace(/\s+/g, " ");
 	return n.length > 120 ? `${n.slice(0, 117)}…` : n;
 }
-function me({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, emptyMessage: a = "No prior conversations.", className: o }) {
+function he({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, emptyMessage: a = "No prior conversations.", className: o }) {
 	return t.length === 0 ? /* @__PURE__ */ u("div", {
 		className: e("rounded-md border border-dashed border-border-emphasis bg-surface-panel px-4 py-6 text-center text-sm text-neutral", o),
 		children: a
@@ -1865,7 +1876,7 @@ function me({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 		className: e("flex flex-col gap-1", o),
 		"aria-label": "Prior conversations",
 		children: t.map((t) => {
-			let a = n === t.threadId, o = pe(t.messages), s = $(t.messages);
+			let a = n === t.threadId, o = pe(t.messages), s = me(t.messages);
 			return /* @__PURE__ */ d("li", {
 				className: e("group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors", a ? "border-info bg-info-bg/60" : "border-border bg-white hover:border-border-emphasis hover:bg-surface-panel"),
 				children: [/* @__PURE__ */ d("button", {
@@ -1904,7 +1915,7 @@ function me({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 }
 //#endregion
 //#region src/components/agents/components/PolicyDecisionLog.tsx
-function he({ decisions: t, className: n, maxItems: r = 50 }) {
+function ge({ decisions: t, className: n, maxItems: r = 50 }) {
 	let i = t.slice(0, r);
 	return /* @__PURE__ */ d("div", {
 		className: e("border border-border rounded-lg overflow-hidden bg-white", n),
@@ -1965,14 +1976,14 @@ function he({ decisions: t, className: n, maxItems: r = 50 }) {
 					}),
 					/* @__PURE__ */ u("span", {
 						className: "text-[10px] text-text-tertiary shrink-0",
-						children: ge(t.timestamp)
+						children: _e(t.timestamp)
 					})
 				]
 			}, t.id))
 		})]
 	});
 }
-function ge(e) {
+function _e(e) {
 	try {
 		let t = new Date(e);
 		return `${t.getHours().toString().padStart(2, "0")}:${t.getMinutes().toString().padStart(2, "0")}:${t.getSeconds().toString().padStart(2, "0")}`;
@@ -1982,7 +1993,7 @@ function ge(e) {
 }
 //#endregion
 //#region src/components/agents/components/MemoryInspector.tsx
-function _e({ entries: n, className: r, onDelete: i }) {
+function ve({ entries: n, className: r, onDelete: i }) {
 	let [a, o] = c("all"), [s, l] = c(""), f = n.filter((e) => !(a !== "all" && e.scope !== a || s && !e.key.toLowerCase().includes(s.toLowerCase()) && !e.value.toLowerCase().includes(s.toLowerCase()))), p = n.filter((e) => e.scope === "session").length, m = n.filter((e) => e.scope === "long-term").length;
 	return /* @__PURE__ */ d("div", {
 		className: e("border border-border rounded-lg overflow-hidden bg-white", r),
@@ -2057,11 +2068,11 @@ function _e({ entries: n, className: r, onDelete: i }) {
 						}),
 						/* @__PURE__ */ u("pre", {
 							className: "text-[11px] text-text-secondary font-mono whitespace-pre-wrap break-all max-h-[60px] overflow-y-auto",
-							children: ve(t.value)
+							children: ye(t.value)
 						}),
 						/* @__PURE__ */ d("div", {
 							className: "flex items-center gap-2 mt-0.5 text-[10px] text-text-tertiary",
-							children: [/* @__PURE__ */ d("span", { children: ["Created ", ye(t.createdAt)] }), t.ttl && /* @__PURE__ */ d("span", { children: [
+							children: [/* @__PURE__ */ d("span", { children: ["Created ", be(t.createdAt)] }), t.ttl && /* @__PURE__ */ d("span", { children: [
 								"· TTL ",
 								t.ttl,
 								"s"
@@ -2073,14 +2084,14 @@ function _e({ entries: n, className: r, onDelete: i }) {
 		]
 	});
 }
-function ve(e) {
+function ye(e) {
 	try {
 		return JSON.stringify(JSON.parse(e), null, 2);
 	} catch {
 		return e;
 	}
 }
-function ye(e) {
+function be(e) {
 	try {
 		return new Date(e).toLocaleString(void 0, {
 			month: "short",
@@ -2093,4 +2104,4 @@ function ye(e) {
 	}
 }
 //#endregion
-export { Y as AgUiReasoningBlock, D as AgentCard, I as AgentDetailPage, fe as AgentDirectory, B as AgentFlowCanvas, re as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, me as ConversationHistory, O as GuardrailBadge, _e as MemoryInspector, he as PolicyDecisionLog, Z as StreamingChatPanel, q as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, K as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };
+export { X as AgUiReasoningBlock, D as AgentCard, I as AgentDetailPage, fe as AgentDirectory, z as AgentFlowCanvas, V as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, he as ConversationHistory, O as GuardrailBadge, ve as MemoryInspector, ge as PolicyDecisionLog, Q as StreamingChatPanel, J as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, q as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };

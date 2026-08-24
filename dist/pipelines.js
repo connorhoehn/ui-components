@@ -1887,31 +1887,37 @@ var Sn = (e) => e.stopPropagation(), Cn = Xe(function({ info: e }) {
 	] });
 });
 function wn(e) {
-	let { id: t, data: n, selected: r } = e, i = Ne(), a = F(t), o = a?.status === "cancelled" ? "failed" : a?.status, s = (n._state && n._state !== "idle" ? n._state : void 0) ?? o ?? n._state ?? "idle", c = j(), l = s === "failed" ? () => c(t) : void 0, u = /* @__PURE__ */ H("span", {
+	let { id: t, data: n, selected: r } = e, i = Ne(), a = F(t), o = a?.status === "cancelled" ? "failed" : a?.status, s = (n._state && n._state !== "idle" ? n._state : void 0) ?? o ?? n._state ?? "idle", c = j(), l = I(() => c(t), [c, t]), u = s === "failed" ? l : void 0, d = /* @__PURE__ */ H("span", {
 		className: "italic text-text-secondary text-[13px]",
 		children: xn(n.userPrompt)
-	}), d = a?.vision, f = s === "running" && d !== void 0 && d.tokensSeen > 0 && !d.analyzed, p = s === "running" && d !== void 0 && d.tokensSeen === 0 && !d.failure, m = d ? {
-		response: d.response,
-		tokensIn: d.tokensIn,
-		tokensOut: d.tokensOut,
-		streaming: f,
-		awaiting: p,
-		...d.failure ? { failure: d.failure } : {},
-		...d.imageId ? { imageId: d.imageId } : {},
-		...typeof d.costUsd == "number" ? { costUsd: d.costUsd } : {},
-		...l ? { onRetry: l } : {},
+	}), f = a?.vision, p = s === "running" && f !== void 0 && f.tokensSeen > 0 && !f.analyzed, m = s === "running" && f !== void 0 && f.tokensSeen === 0 && !f.failure, h = R(() => f ? {
+		response: f.response,
+		tokensIn: f.tokensIn,
+		tokensOut: f.tokensOut,
+		streaming: p,
+		awaiting: m,
+		...f.failure ? { failure: f.failure } : {},
+		...f.imageId ? { imageId: f.imageId } : {},
+		...typeof f.costUsd == "number" ? { costUsd: f.costUsd } : {},
+		...u ? { onRetry: u } : {},
 		getImageUrl: i
-	} : void 0, h = m ? /* @__PURE__ */ H(Cn, { info: m }) : void 0, g = n.model || "claude-sonnet-4-6", _ = n.outputSchema ? "extract" : "caption", v = `Vision node, model ${g}, mode ${_}, state: ${s}`;
+	} : void 0, [
+		f,
+		p,
+		m,
+		u,
+		i
+	]), g = h ? /* @__PURE__ */ H(Cn, { info: h }) : void 0, _ = n.model || "claude-sonnet-4-6", v = n.outputSchema ? "extract" : "caption", y = `Vision node, model ${_}, mode ${v}, state: ${s}`;
 	return /* @__PURE__ */ U(K, {
 		icon: "📷",
-		subtitle: `${g} · ${_}`,
+		subtitle: `${_} · ${v}`,
 		state: s,
 		category: q("image:vision-analyze"),
-		body: u,
-		footer: h,
+		body: d,
+		footer: g,
 		selected: r,
-		onRetry: l,
-		ariaLabel: v,
+		onRetry: u,
+		ariaLabel: y,
 		hasBreakpoint: n._hasBreakpoint,
 		pausedAtBreakpoint: n._pausedAtBreakpoint,
 		children: [/* @__PURE__ */ H(W, {
@@ -3816,10 +3822,16 @@ function kr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 			n?.(null);
 			return;
 		}
-		C((e) => e.map((e) => ({
-			...e,
-			className: e.id === t ? "node-error" : e.className?.replace("node-error", "").trim() || void 0
-		}))), requestAnimationFrame(() => {
+		C((e) => {
+			let n = !1, r = e.map((e) => {
+				let r = e.id === t ? "node-error" : e.className?.replace("node-error", "").trim() || void 0;
+				return e.className === r ? e : (n = !0, {
+					...e,
+					className: r
+				});
+			});
+			return n ? r : e;
+		}), requestAnimationFrame(() => {
 			let e = te.current;
 			if (!e) return;
 			let r = e.querySelector(`.react-flow__node[data-id="${CSS.escape(t)}"]`);
@@ -3838,16 +3850,22 @@ function kr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		C,
 		n
 	]), L(() => {
-		i && C((e) => e.map((e) => {
-			let n = i[e.id] ?? "", r = [e.id === t ? "node-error" : "", n].filter(Boolean).join(" ") || void 0, a;
-			n === "node-replay-active" ? a = "running" : n === "node-replay-completed" ? a = "completed" : n === "node-replay-failed" && (a = "failed");
-			let o = { ...e.data };
-			return o._state = a || "idle", {
-				...e,
-				className: r,
-				data: o
-			};
-		}));
+		i && C((e) => {
+			let n = !1, r = e.map((e) => {
+				let r = i[e.id] ?? "", a = [e.id === t ? "node-error" : "", r].filter(Boolean).join(" ") || void 0, o;
+				r === "node-replay-active" ? o = "running" : r === "node-replay-completed" ? o = "completed" : r === "node-replay-failed" && (o = "failed");
+				let s = e.data, c = o ?? "idle";
+				return e.className === a && s._state === c ? e : (n = !0, {
+					...e,
+					className: a,
+					data: {
+						...s,
+						_state: c
+					}
+				});
+			});
+			return n ? r : e;
+		});
 	}, [
 		i,
 		t,
@@ -5649,7 +5667,7 @@ function Li({ pipelineId: e, definition: t, dirty: n, savingFlash: i, isRunActiv
 	let ie = () => {
 		let e = j.trim();
 		e && e !== t.name && k(e), ne(!1);
-	}, ae = t ? Fr(t) : null;
+	}, ae = R(() => t ? Fr(t) : null, [t]);
 	ae?.errors.length;
 	let oe = t.status === "published", se = n ? {
 		label: "Saving…",
