@@ -137,8 +137,8 @@ export default function MemoryConfig({ data, onChange, nodeId }: MemoryConfigPro
       {/* A row of insert buttons, not a labelable control. */}
       <ConfigField
         label="Available context"
-        render={() => (
-          <div role="group" aria-label="Available context">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <ContextVariablePicker
               paths={paths}
               unresolved={unresolved(

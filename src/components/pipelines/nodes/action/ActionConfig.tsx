@@ -139,8 +139,8 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
           associates its own label, and its help text via aria-describedby. */}
       <ConfigField
         label="Configuration"
-        render={() => (
-          <div role="group" aria-label="Configuration" className="flex flex-col gap-2.5">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId} className="flex flex-col gap-2.5">
             {fieldDefs.map(fd => {
               const fieldId = `${uid}-cfg-${fd.key}`;
               const helpId = fd.help ? `${fieldId}-help` : undefined;
@@ -232,8 +232,8 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
           names a group; htmlFor has no single control to point at. */}
       <ConfigField
         label="On error"
-        render={() => (
-          <div role="group" aria-label="On error">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <RadioGroup
               name="action-on-error"
               value={onErrorUI}

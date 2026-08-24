@@ -8,6 +8,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.89.0] — 2026-08-24
+
+### Node config panel accessibility (106 fields across 30 panels)
+
+`ConfigField` renders the label for every node config panel in
+`/pipelines`, and its `<label>` had neither an `htmlFor` nor a wrapped
+control — so it labelled **nothing**. A screen reader landing on a pipeline
+node's inputs announced "edit text" / "spin button" with no name at all, and
+the help and error text underneath was equally unreachable. Roughly 40% of
+panels had papered over it with an `aria-label` on the control.
+
+Those compensating labels turned out to be a second bug rather than a fix:
+
+- `MemoryConfig` announced five controls with *different words* than the
+  label beside them — "Memory mode" next to a label reading "Mode". No
+  sighted user could see the name being read aloud, so nobody could report
+  the mismatch.
+- `GraphQueryConfig` and `KnowledgeBaseConfig` hardcoded "Graph ID" and
+  "Knowledge base ID", but the visible label comes from the host's
+  `nodeVocabulary`. A host that relabelled the field got two contradictory
+  names for one input.
+- Five existing tests queried the invisible `aria-label` rather than the
+  visible one, so they would have kept passing if the visible label were
+  deleted outright. They now assert the accessible name the label produces.
+
+**Fixed** — 106 fields wired across all 30 panels: 85 through
+`controlId`/`render` so the `htmlFor` association is real and
+`describedById` reaches the help text, and 21 as `role="group"` where the
+field holds a radio set, a chip editor, a button row, or two boxes that are
+one value. `htmlFor` pointing at a `<div>` associates nothing — browsers,
+screen readers and `getByLabelText` all ignore it. Two controls that had no
+name whatsoever gained one (`ApprovalConfig`'s timeout amount,
+`JoinConfig`'s "N" box).
+
+### Added — `labelId` in `ConfigField`'s render wiring
+
+Grouped fields need to name themselves, and the only tool available was an
+`aria-label` repeating the label text — a copy that drifts the moment
+someone edits the label, and that is wrong on arrival when the label comes
+from `nodeVocabulary`. `ConfigField`'s render prop now hands out `labelId`
+alongside `controlId` and `describedById`, so a group points at the real
+label element with `aria-labelledby`. All 19 in-scope groups use it; the
+aria-hidden required marker is dropped by accessible-name computation, so
+the names are unchanged.
+
+`CropConfig` is the one documented exemption — its canvas is a *sibling* of
+the `ConfigField`, so the group is the field's parent and the id is out of
+scope. It names itself from the same exported constant the label renders.
+
+### Tests
+
+`configFieldWiring.test.tsx` (37) and `image-config-a11y.test.tsx` (19)
+query by visible label text and assert the control comes back, which only
+passes if the association actually resolves — asserting the attribute exists
+would prove nothing, since an id pointing at no element still "has an id".
+A source guard rejects a literal `aria-label` on any group inside a
+`ConfigField` render prop: the behavioural tests pass either way, so they
+cannot catch the drift that started all this.
+
 ## [2.88.0] — 2026-08-24
 
 Three bugs in three days shared one root cause, so this release goes after

@@ -89,10 +89,10 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
           name one control. */}
       <ConfigField
         label="Branch labels (optional)"
-        render={() => (
+        render={({ labelId }) => (
           <div
             role="group"
-            aria-label="Branch labels (optional)"
+            aria-labelledby={labelId}
             className="flex flex-col gap-1.5"
           >
             {labels.map((label, idx) => (

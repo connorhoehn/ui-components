@@ -143,7 +143,7 @@ function CropConfigInner({
         label="Bounding-box path"
         help="Optional. JSONPath to a bbox object { x, y, width, height } in pixels. Overrides the manual crop region below when present at run time."
         controlId="crop-bbox-path"
-        render={({ describedById, controlId }) => (
+        render={({ describedById, controlId, labelId }) => (
           <>
             <Input
               id={controlId}
@@ -170,7 +170,11 @@ function CropConfigInner({
           is no single labelable control for `htmlFor` to point at — and the
           canvas is a SIBLING of the ConfigField, not its child, because the
           help text has to stay above it. The whole section is therefore the
-          group, named with the same string the visible label shows. */}
+          group. It cannot use `aria-labelledby={labelId}` like the other
+          grouped fields do — that id is handed out through ConfigField's
+          render prop, and this group is the ConfigField's PARENT. Naming it
+          from the same constant the label renders is the next best thing:
+          one edit still moves both. */}
       <div
         data-testid="crop-region-section"
         role="group"

@@ -41,8 +41,8 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
       <ConfigField
         label="Type"
         required
-        render={() => (
-          <div role="group" aria-label="Type">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <RadioGroup
               name="transform-type"
               value={data.transformType}

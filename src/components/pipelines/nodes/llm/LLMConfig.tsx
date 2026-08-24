@@ -163,8 +163,8 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
           names the group. */}
       <ConfigField
         label="Available context"
-        render={() => (
-          <div role="group" aria-label="Available context">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <ContextVariablePicker
               paths={paths}
               unresolved={unresolvedPaths}

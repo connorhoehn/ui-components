@@ -113,8 +113,8 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
         required
         error={approversMissing ? 'At least one approver is required.' : undefined}
         help={!approversMissing ? 'Who can approve this step.' : undefined}
-        render={({ describedById }) => (
-          <div role="group" aria-label="Approvers" aria-describedby={describedById}>
+        render={({ describedById, labelId }) => (
+          <div role="group" aria-labelledby={labelId} aria-describedby={describedById}>
             <UserPicker
               value={userApproverIds}
               onChange={setUserApprovers}
@@ -181,8 +181,8 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
       <ConfigField
         label="Timeout"
         help="Leave blank for no timeout."
-        render={({ describedById }) => (
-          <div role="group" aria-label="Timeout" aria-describedby={describedById}>
+        render={({ describedById, labelId }) => (
+          <div role="group" aria-labelledby={labelId} aria-describedby={describedById}>
             <div className="flex items-center gap-2">
               <NumberInput
                 size="sm"

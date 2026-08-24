@@ -177,9 +177,9 @@ export default function VisionConfig({ data, onChange, nodeId }: VisionConfigPro
         <ConfigField
           label="Focus regions"
           help="Drag on the image to paint focus boxes. The next vision pass uses these as analysis hints."
-          render={({ describedById }) => (
+          render={({ describedById, labelId }) => (
             // A drawing surface plus a running count, not a labelable control.
-            <div role="group" aria-label="Focus regions" aria-describedby={describedById}>
+            <div role="group" aria-labelledby={labelId} aria-describedby={describedById}>
               <BBoxAuthoringCanvas
                 imageUrl=""
                 imageWidth={800}

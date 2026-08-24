@@ -83,10 +83,10 @@ function AdjustLayerConfigInner({
       <ConfigField
         label={ADJUSTMENT_LAYERS_LABEL}
         help="Applied top-to-bottom."
-        render={({ describedById }) => (
+        render={({ describedById, labelId }) => (
           <div
             role="group"
-            aria-label={ADJUSTMENT_LAYERS_LABEL}
+            aria-labelledby={labelId}
             aria-describedby={describedById}
           >
             <AdjustLayerSliderPanel

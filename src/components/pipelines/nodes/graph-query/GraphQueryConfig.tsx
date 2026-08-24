@@ -157,10 +157,10 @@ export default function GraphQueryConfig({
         <ConfigField
           label="Bind parameters"
           help="Each row binds one $name in the query. Values support {{ context.* }}."
-          render={({ describedById }) => (
+          render={({ describedById, labelId }) => (
             <div
               role="group"
-              aria-label="Bind parameters"
+              aria-labelledby={labelId}
               aria-describedby={describedById}
               className="flex flex-col gap-2"
               data-testid="graph-query-params"
@@ -222,8 +222,8 @@ export default function GraphQueryConfig({
         {/* A row of insert buttons, not a labelable control. */}
         <ConfigField
           label="Available context"
-          render={() => (
-            <div role="group" aria-label="Available context">
+          render={({ labelId }) => (
+            <div role="group" aria-labelledby={labelId}>
               <ContextVariablePicker
                 paths={paths}
                 unresolved={unresolved(paramRows.map(([, v]) => v).join('\n'))}

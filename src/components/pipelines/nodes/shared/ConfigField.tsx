@@ -16,10 +16,20 @@
 // by itself. `controlId` + `describedById` are the opt-in wiring: set
 // `controlId` here AND as the control's `id` and the association becomes
 // explicit; spread `describedById` onto the control's `aria-describedby` to
-// reach the help/error text. Migrating the ~117 call sites across the node
-// panels is per-panel work tracked separately — do NOT add a blanket
-// `role="group"` wrapper here instead: the ~40% of panels that already pass
-// their own `aria-label` would then announce the same name twice.
+// reach the help/error text.
+//
+// When the field holds no single labelable control — a radio set, a chip
+// editor, a row of buttons, two boxes that are one value — `htmlFor` has
+// nothing to point at and browsers ignore it. Those wrap their contents in a
+// `role="group"` and name it with `aria-labelledby={labelId}`, the third
+// piece of the wiring. Use the id, NOT a hand-written `aria-label` repeating
+// the label text: a copy drifts the moment someone edits the visible label,
+// and for a label whose text comes from the host's `nodeVocabulary` the copy
+// is wrong on arrival. The aria-hidden required dot is dropped by
+// accessible-name computation, so the name stays clean.
+//
+// Do NOT add a blanket `role="group"` wrapper here instead: fields that DO
+// have a single control would then announce their name twice.
 
 import { useId, type ReactNode } from 'react';
 import { cn } from '../../../../lib/cn';
@@ -38,7 +48,12 @@ export interface ConfigFieldProps {
    * Render-prop escape hatch: receives the id of the help/error text so the
    * control can point `aria-describedby` at it. Use INSTEAD of `children`.
    */
-  render?: (wiring: { describedById?: string; controlId?: string }) => ReactNode;
+  render?: (wiring: {
+    describedById?: string;
+    controlId?: string;
+    /** Id of the rendered `<label>`, for `aria-labelledby` on a `role="group"`. */
+    labelId: string;
+  }) => ReactNode;
   children?: ReactNode;
   className?: string;
 }
@@ -68,7 +83,7 @@ export default function ConfigField({
         )}
       </label>
       <div className="mt-1">
-        {render ? render({ describedById: descriptionId, controlId }) : children}
+        {render ? render({ describedById: descriptionId, controlId, labelId }) : children}
       </div>
       {error && (
         <div id={descriptionId} role="alert" className="text-[11px] text-danger-fg mt-0.5">

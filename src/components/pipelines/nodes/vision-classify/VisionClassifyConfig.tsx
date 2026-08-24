@@ -59,10 +59,10 @@ export default function VisionClassifyConfig({
             : undefined
         }
         help="The model returns the single best-matching label."
-        render={({ describedById }) => (
+        render={({ describedById, labelId }) => (
           // A chip list plus its add-input: several controls, so the label
           // names the group rather than any one of them.
-          <div role="group" aria-label="Labels" aria-describedby={describedById}>
+          <div role="group" aria-labelledby={labelId} aria-describedby={describedById}>
             <TagEditor
               value={labels}
               onChange={(next) => onChange({ labels: next })}

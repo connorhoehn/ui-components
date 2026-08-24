@@ -36,8 +36,8 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
       <ConfigField
         label="Mode"
         required
-        render={() => (
-          <div role="group" aria-label="Mode">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <RadioGroup
               name="join-mode"
               value={data.mode}
@@ -71,8 +71,8 @@ export default function JoinConfig({ data, onChange }: JoinConfigProps) {
       <ConfigField
         label="Merge strategy"
         required
-        render={() => (
-          <div role="group" aria-label="Merge strategy">
+        render={({ labelId }) => (
+          <div role="group" aria-labelledby={labelId}>
             <RadioGroup
               name="join-merge"
               value={data.mergeStrategy}

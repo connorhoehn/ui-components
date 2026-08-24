@@ -514,3 +514,69 @@ describe('VisionExtractTextConfig', () => {
     expect(byLabel('Max output tokens')).toHaveValue(1024);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Source guard: grouped fields must borrow the label, not copy it
+// ---------------------------------------------------------------------------
+
+// The per-panel tests above prove each group's name is right TODAY. They
+// cannot prove it stays right: `aria-label="Mode"` beside a label reading
+// "Mode" passes both, and then someone edits the visible label and only one
+// of the two moves. That is not hypothetical — it is what these panels were
+// already doing when this migration started. MemoryConfig announced "Memory
+// mode" next to a label reading "Mode", and GraphQuery/KnowledgeBase
+// hardcoded "Graph ID"/"Knowledge base ID" while the visible label comes from
+// the host's `nodeVocabulary`, so a host that relabelled the field got two
+// contradictory names and no way to notice.
+//
+// ConfigField hands its label's id to the render prop, so a group can point
+// at the real element. This scans for the copy coming back.
+// The one group that CANNOT use the id, for a structural reason rather than
+// a stylistic one: CropConfig paints its region on a canvas that is a SIBLING
+// of the ConfigField (the help text has to render above it), so the group
+// wraps the ConfigField instead of living inside its render prop, and the id
+// is not in scope. It names itself from the same exported constant the label
+// renders, so one edit still moves both. Any NEW entry here needs the same
+// kind of reason written down next to it.
+const EXEMPT = new Set(['crop/CropConfig.tsx']);
+
+describe('grouped ConfigFields name themselves from the label element', () => {
+  it('no role="group" inside a ConfigField render prop carries a literal aria-label', async () => {
+    const { readFileSync, readdirSync, statSync } = await import('node:fs');
+    const { join } = await import('node:path');
+
+    // Anchored on cwd, not import.meta.url: vitest resolves the latter to a
+    // repo-relative path, and node:fs then reads it as absolute.
+    const ROOT = join(process.cwd(), 'src/components/pipelines/nodes');
+    const files: string[] = [];
+    (function walk(dir: string) {
+      for (const entry of readdirSync(dir)) {
+        if (entry === '__tests__') continue;
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) walk(full);
+        else if (entry.endsWith('.tsx')) files.push(full);
+      }
+    })(ROOT);
+
+    const offenders: string[] = [];
+    for (const file of files) {
+      const lines = readFileSync(file, 'utf8').split('\n');
+      lines.forEach((line, i) => {
+        if (!line.includes('role="group"')) return;
+        if (line.trimStart().startsWith('//') || line.trimStart().startsWith('*')) return;
+        // The aria-label sits on this line or in the attribute block below it.
+        const block = lines.slice(i, i + 5).join('\n').split('>')[0];
+        if (!/aria-label=/.test(block)) return;
+        const rel = `${file.slice(ROOT.length + 1)}:${i + 1}`;
+        if (EXEMPT.has(rel.split(':')[0])) return;
+        // Only groups that CAN see the id are in scope: those rendered from
+        // inside a ConfigField `render` prop.
+        const above = lines.slice(Math.max(0, i - 40), i).join('\n');
+        if (!/render=\{\(/.test(above)) return;
+        offenders.push(rel);
+      });
+    }
+
+    expect(offenders, 'use aria-labelledby={labelId} from ConfigField\'s render prop').toEqual([]);
+  });
+});

@@ -160,10 +160,10 @@ export default function TransformGeoConfig({
         label={OPERATIONS_LABEL}
         error={ops.length === 0 ? 'Add at least one operation.' : undefined}
         help="Applied top-to-bottom. Rotate (any angle), Flip (top-to-bottom mirror), Flop (left-to-right mirror)."
-        render={({ describedById }) => (
+        render={({ describedById, labelId }) => (
           <div
             role="group"
-            aria-label={OPERATIONS_LABEL}
+            aria-labelledby={labelId}
             aria-describedby={describedById}
           >
             <div className="flex flex-col gap-1.5">

@@ -365,6 +365,8 @@ export declare interface ConfigFieldProps {
     render?: (wiring: {
         describedById?: string;
         controlId?: string;
+        /** Id of the rendered `<label>`, for `aria-labelledby` on a `role="group"`. */
+        labelId: string;
     }) => ReactNode;
     children?: ReactNode;
     className?: string;

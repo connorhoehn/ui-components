@@ -66,10 +66,10 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
               : undefined
         }
         help="JSONPath into context resolving to an array. Each element becomes one scatter arm."
-        render={({ describedById }) => (
+        render={({ describedById, labelId }) => (
           // ScatterPathPicker is a composite — a schema tree of buttons plus a
           // path input — not one labelable control, so the label names a group.
-          <div role="group" aria-label="Items path" aria-describedby={describedById}>
+          <div role="group" aria-labelledby={labelId} aria-describedby={describedById}>
             <ScatterPathPicker
               value={data.itemsPath ?? ''}
               onChange={(path) => onChange({ itemsPath: path })}
