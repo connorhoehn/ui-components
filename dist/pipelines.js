@@ -17,7 +17,7 @@ import { t as E } from "./activationKey-CjbL3LUv.js";
 import { t as D } from "./Input-DcK2h-jK.js";
 import { t as O } from "./Textarea-C3t5PCLv.js";
 import { n as k, r as A, t as ee } from "./EventStreamContext-C0egqLaF.js";
-import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-D0h-h8MX.js";
+import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-V9PkqE0B.js";
 import { t as Je } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as Ye } from "./Select-Z0TLUVeL.js";
 import { t as Xe } from "./Checkbox-DsS7fIUO.js";
@@ -715,15 +715,15 @@ function Kt(e) {
 //#endregion
 //#region src/components/pipelines/nodes/agent/AgentNode.tsx
 function qt({ id: e, data: t, selected: n }) {
-	let r = F(e), i = r?.status === "cancelled" ? "failed" : r?.status, a = t._state ?? i ?? "idle", o = M(), s = t.agentName || t.agentId || "Not configured", c = `${t.protocol.toUpperCase()}${t.streaming ? " (streaming)" : ""}`;
+	let r = F(e), i = r?.status === "cancelled" ? "failed" : r?.status, a = t._state ?? i ?? "idle", o = M(), s = t.allowedTools?.length ?? 0, c = t.prompt?.trim() ? t.prompt.trim().split("\n")[0].slice(0, 48) : "No prompt", l = s === 0 ? `${t.model ?? "sonnet"} · no tools` : `${t.model ?? "sonnet"} · ${s} tool${s === 1 ? "" : "s"}`;
 	return /* @__PURE__ */ U(K, {
 		icon: "🤖",
-		subtitle: s,
+		subtitle: c,
 		state: a,
 		category: q("agent"),
 		body: /* @__PURE__ */ H("span", {
-			className: "text-[11px]",
-			children: c
+			className: s === 0 ? "text-[11px] text-warning-fg" : "text-[11px]",
+			children: l
 		}),
 		selected: n,
 		onRetry: a === "failed" && r ? () => o(e) : void 0,
@@ -2937,7 +2937,7 @@ var tr = [
 		type: "agent",
 		icon: "🤖",
 		name: "Agent",
-		description: "Invoke a Strands agent via A2A"
+		description: "Run a Claude agent loop — multi-turn, tool use"
 	},
 	{
 		type: "mcp-tool",
@@ -19791,7 +19791,7 @@ function Gu({ pipelineId: e, runId: t }) {
 	let n = rt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
-		return u(null), import("./services-D0h-h8MX.js").then((e) => e.X).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-V9PkqE0B.js").then((e) => e.X).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));

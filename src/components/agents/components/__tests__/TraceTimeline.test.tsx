@@ -39,6 +39,28 @@ describe('TraceTimeline', () => {
     expect(screen.getByText('250ms total')).toBeInTheDocument();
   });
 
+  // Added with the agent-step trace consumer: a caller rendering one
+  // specific kind of trace needs to be able to name it and to drop legend
+  // entries that can never appear in its data.
+  it('uses the title prop for the header label, defaulting to "Trace"', () => {
+    const { unmount } = render(<TraceTimeline trace={makeTrace()} />);
+    expect(screen.getByText('Trace')).toBeInTheDocument();
+    unmount();
+
+    render(<TraceTimeline trace={makeTrace()} title="Tool calls" />);
+    expect(screen.getByText('Tool calls')).toBeInTheDocument();
+    expect(screen.queryByText('Trace')).not.toBeInTheDocument();
+  });
+
+  it('legendKinds restricts the legend to the listed kinds', () => {
+    render(<TraceTimeline trace={makeTrace()} legendKinds={['agent', 'tool']} />);
+    expect(screen.getByText('Agent')).toBeInTheDocument();
+    expect(screen.getByText('Tool')).toBeInTheDocument();
+    for (const absent of ['LLM', 'Retrieval', 'Guardrail', 'Internal']) {
+      expect(screen.queryByText(absent)).not.toBeInTheDocument();
+    }
+  });
+
   it('renders the legend with all six span-kind labels', () => {
     render(<TraceTimeline trace={makeTrace()} />);
     for (const label of ['Agent', 'Tool', 'LLM', 'Retrieval', 'Guardrail', 'Internal']) {

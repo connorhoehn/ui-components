@@ -76,7 +76,7 @@ const ITEM_DEFS: PaletteItemDef[] = [
   { type: 'knowledge-base',            icon: '📚', name: 'Knowledge Base',      description: 'RAG retrieval from Bedrock KB' },
   { type: 'graph-query',               icon: '🕸️', name: 'Graph Query',         description: 'Neptune openCypher query' },
   { type: 'llm',                       icon: '🧠', name: 'LLM',                 description: 'Call an LLM model' },
-  { type: 'agent',                     icon: '🤖', name: 'Agent',               description: 'Invoke a Strands agent via A2A' },
+  { type: 'agent',                     icon: '🤖', name: 'Agent',               description: 'Run a Claude agent loop — multi-turn, tool use' },
   { type: 'mcp-tool',                  icon: '🔌', name: 'MCP Tool',            description: 'Invoke an MCP Gateway tool' },
   { type: 'image:vision-analyze',      icon: '📷', name: 'Vision Analyze',      description: 'Analyze an image with a multimodal LLM' },
   { type: 'image:vision-classify',     icon: '🏷',  name: 'Vision Classify',     description: 'Classify image into a label set' },

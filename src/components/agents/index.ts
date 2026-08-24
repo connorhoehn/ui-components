@@ -29,6 +29,7 @@ export type { AgUiReasoningBlockProps } from './components/AgUiReasoningBlock';
 export { StreamingChatPanel } from './components/StreamingChatPanel';
 export { ToolCallRenderer } from './components/ToolCallRenderer';
 export { TraceTimeline } from './components/TraceTimeline';
+export type { TraceTimelineProps } from './components/TraceTimeline';
 export { GuardrailBadge } from './components/GuardrailBadge';
 export { PolicyDecisionLog } from './components/PolicyDecisionLog';
 export { MemoryInspector } from './components/MemoryInspector';

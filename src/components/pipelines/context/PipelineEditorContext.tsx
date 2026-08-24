@@ -149,12 +149,17 @@ function defaultNodeData(type: NodeType): NodeData {
         requiredCount: 1,
       };
     case 'agent':
+      // DEFAULT-DENY: `allowedTools` is an empty array on purpose, not a
+      // starter allowlist. A freshly-dropped agent node has no tools until
+      // the author grants them one at a time (agent-step contract v1).
       return {
         type: 'agent',
-        agentId: '',
-        protocol: 'a2a',
-        inputTemplate: '{{context.input}}',
-        streaming: true,
+        prompt: '',
+        systemPrompt: '',
+        model: 'sonnet',
+        allowedTools: [],
+        maxTurns: 8,
+        timeoutMs: 120_000,
       };
     case 'guardrail':
       return {

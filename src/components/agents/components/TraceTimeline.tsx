@@ -2,9 +2,26 @@ import { useState } from 'react';
 import { cn } from '../../../lib/cn';
 import type { TraceTimeline as TraceTimelineType, TraceSpan, SpanKind } from '../../../types/agents';
 
-interface TraceTimelineProps {
+export interface TraceTimelineProps {
   trace: TraceTimelineType;
   className?: string;
+  /**
+   * Header label. Defaults to 'Trace'.
+   *
+   * Exists because this component is no longer only a generic OTEL viewer:
+   * a caller rendering one specific thing (an agent step's tool calls, say)
+   * should be able to name it, rather than leaving a bare 'Trace' above a
+   * waterfall the reader has to work out for themselves.
+   */
+  title?: string;
+  /**
+   * Span kinds to show in the legend. Defaults to all six.
+   *
+   * A caller whose traces can only ever contain two kinds should not
+   * advertise six colored swatches — four of which can never appear —
+   * because a legend entry with no possible referent reads as missing data.
+   */
+  legendKinds?: SpanKind[];
 }
 
 const KIND_COLORS: Record<SpanKind, string> = {
@@ -97,7 +114,7 @@ function buildTree(spans: TraceSpan[], rootId: string): { span: TraceSpan; depth
   return result;
 }
 
-export function TraceTimeline({ trace, className }: TraceTimelineProps) {
+export function TraceTimeline({ trace, className, title, legendKinds }: TraceTimelineProps) {
   const [selectedSpan, setSelectedSpan] = useState<TraceSpan | null>(null);
   const tree = buildTree(trace.spans, trace.rootSpanId);
   const traceStart = new Date(trace.startedAt).getTime();
@@ -107,7 +124,7 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-surface-panel">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-text-primary">Trace</span>
+          <span className="text-xs font-medium text-text-primary">{title ?? 'Trace'}</span>
           <span className="text-[10px] font-mono text-text-tertiary">{trace.traceId}</span>
         </div>
         <span className="text-xs text-neutral">{trace.totalDurationMs}ms total</span>
@@ -115,7 +132,7 @@ export function TraceTimeline({ trace, className }: TraceTimelineProps) {
 
       {/* Legend */}
       <div className="flex items-center gap-3 px-3 py-1.5 border-b border-border-subtle">
-        {(Object.keys(KIND_COLORS) as SpanKind[]).map((kind) => (
+        {(legendKinds ?? (Object.keys(KIND_COLORS) as SpanKind[])).map((kind) => (
           <div key={kind} className="flex items-center gap-1">
             <span className={cn('w-2 h-2 rounded-sm', KIND_COLORS[kind])} />
             <span className="text-[10px] text-neutral">{KIND_LABELS[kind]}</span>

@@ -19,8 +19,17 @@ export default function AgentNode({ id, data, selected }: NodeProps<AgentFlowNod
   const state: NodeExecutionState = data._state ?? liveState ?? 'idle';
   const retryFromStep = useRetryFromStep();
 
-  const subtitle = data.agentName || data.agentId || 'Not configured';
-  const body = `${data.protocol.toUpperCase()}${data.streaming ? ' (streaming)' : ''}`;
+  // The canvas face has one job beyond identifying the node: make the
+  // default-deny tool allowlist impossible to miss. An agent with no tools
+  // is a legal but expensive no-op — it should not look identical on the
+  // canvas to one wired up with Bash and Read.
+  const toolCount = data.allowedTools?.length ?? 0;
+  const subtitle = data.prompt?.trim()
+    ? data.prompt.trim().split('\n')[0].slice(0, 48)
+    : 'No prompt';
+  const body = toolCount === 0
+    ? `${data.model ?? 'sonnet'} · no tools`
+    : `${data.model ?? 'sonnet'} · ${toolCount} tool${toolCount === 1 ? '' : 's'}`;
 
   return (
     <BaseNode
@@ -28,7 +37,11 @@ export default function AgentNode({ id, data, selected }: NodeProps<AgentFlowNod
       subtitle={subtitle}
       state={state}
       category={categoryFor('agent')}
-      body={<span className="text-[11px]">{body}</span>}
+      body={
+        <span className={toolCount === 0 ? 'text-[11px] text-warning-fg' : 'text-[11px]'}>
+          {body}
+        </span>
+      }
       selected={selected}
       onRetry={state === 'failed' && liveStep ? () => retryFromStep(id) : undefined}
       hasBreakpoint={data._hasBreakpoint}

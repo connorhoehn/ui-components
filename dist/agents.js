@@ -553,8 +553,8 @@ function P(e, t) {
 		depth: 0
 	}), i(a.spanId, 1)) : i(void 0, 0), n;
 }
-function F({ trace: t, className: n }) {
-	let [r, i] = c(null), a = P(t.spans, t.rootSpanId), o = new Date(t.startedAt).getTime();
+function F({ trace: t, className: n, title: r, legendKinds: i }) {
+	let [a, o] = c(null), s = P(t.spans, t.rootSpanId), l = new Date(t.startedAt).getTime();
 	return /* @__PURE__ */ d("div", {
 		className: e("border border-border rounded-lg overflow-hidden bg-white", n),
 		children: [
@@ -564,7 +564,7 @@ function F({ trace: t, className: n }) {
 					className: "flex items-center gap-2",
 					children: [/* @__PURE__ */ u("span", {
 						className: "text-xs font-medium text-text-primary",
-						children: "Trace"
+						children: r ?? "Trace"
 					}), /* @__PURE__ */ u("span", {
 						className: "text-[10px] font-mono text-text-tertiary",
 						children: t.traceId
@@ -576,7 +576,7 @@ function F({ trace: t, className: n }) {
 			}),
 			/* @__PURE__ */ u("div", {
 				className: "flex items-center gap-3 px-3 py-1.5 border-b border-border-subtle",
-				children: Object.keys(j).map((t) => /* @__PURE__ */ d("div", {
+				children: (i ?? Object.keys(j)).map((t) => /* @__PURE__ */ d("div", {
 					className: "flex items-center gap-1",
 					children: [/* @__PURE__ */ u("span", { className: e("w-2 h-2 rounded-sm", j[t]) }), /* @__PURE__ */ u("span", {
 						className: "text-[10px] text-neutral",
@@ -586,29 +586,29 @@ function F({ trace: t, className: n }) {
 			}),
 			/* @__PURE__ */ u("div", {
 				className: "max-h-[300px] overflow-y-auto",
-				children: a.map(({ span: e, depth: n }) => {
-					let a = new Date(e.startTime).getTime() - o;
+				children: s.map(({ span: e, depth: n }) => {
+					let r = new Date(e.startTime).getTime() - l;
 					return /* @__PURE__ */ u(N, {
 						span: e,
 						depth: n,
 						totalMs: t.totalDurationMs,
-						startOffset: a,
-						onSelect: i,
-						selected: r?.spanId === e.spanId
+						startOffset: r,
+						onSelect: o,
+						selected: a?.spanId === e.spanId
 					}, e.spanId);
 				})
 			}),
-			r && /* @__PURE__ */ d("div", {
+			a && /* @__PURE__ */ d("div", {
 				className: "border-t border-border p-3 bg-surface-panel",
 				children: [
 					/* @__PURE__ */ d("div", {
 						className: "flex items-center justify-between mb-2",
 						children: [/* @__PURE__ */ u("span", {
 							className: "text-xs font-medium text-text-primary",
-							children: r.name
+							children: a.name
 						}), /* @__PURE__ */ u("button", {
 							className: "text-[10px] text-text-tertiary hover:text-text-secondary",
-							onClick: () => i(null),
+							onClick: () => o(null),
 							children: "Close"
 						})]
 					}),
@@ -621,7 +621,7 @@ function F({ trace: t, className: n }) {
 							}),
 							/* @__PURE__ */ u("div", {
 								className: "text-text-primary font-medium",
-								children: M[r.kind]
+								children: M[a.kind]
 							}),
 							/* @__PURE__ */ u("div", {
 								className: "text-neutral",
@@ -629,15 +629,15 @@ function F({ trace: t, className: n }) {
 							}),
 							/* @__PURE__ */ d("div", {
 								className: "text-text-primary",
-								children: [r.durationMs, "ms"]
+								children: [a.durationMs, "ms"]
 							}),
 							/* @__PURE__ */ u("div", {
 								className: "text-neutral",
 								children: "Status"
 							}),
 							/* @__PURE__ */ u("div", {
-								className: e("font-medium", r.status === "ok" && "text-success-fg", r.status === "error" && "text-danger-fg"),
-								children: r.status
+								className: e("font-medium", a.status === "ok" && "text-success-fg", a.status === "error" && "text-danger-fg"),
+								children: a.status
 							}),
 							/* @__PURE__ */ u("div", {
 								className: "text-neutral",
@@ -645,18 +645,18 @@ function F({ trace: t, className: n }) {
 							}),
 							/* @__PURE__ */ u("div", {
 								className: "text-text-primary font-mono",
-								children: r.spanId
+								children: a.spanId
 							})
 						]
 					}),
-					Object.keys(r.attributes).length > 0 && /* @__PURE__ */ d("div", {
+					Object.keys(a.attributes).length > 0 && /* @__PURE__ */ d("div", {
 						className: "mt-2",
 						children: [/* @__PURE__ */ u("div", {
 							className: "text-[10px] text-text-tertiary uppercase mb-1",
 							children: "Attributes"
 						}), /* @__PURE__ */ u("div", {
 							className: "text-[11px] font-mono text-text-secondary space-y-0.5",
-							children: Object.entries(r.attributes).map(([e, t]) => /* @__PURE__ */ d("div", { children: [
+							children: Object.entries(a.attributes).map(([e, t]) => /* @__PURE__ */ d("div", { children: [
 								/* @__PURE__ */ d("span", {
 									className: "text-text-tertiary",
 									children: [e, ":"]

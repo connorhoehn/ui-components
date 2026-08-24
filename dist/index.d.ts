@@ -224,15 +224,39 @@ export declare interface AgentMetrics {
     asOf: string;
 }
 
+/**
+ * `agent` node config — agent-step contract v1.
+ *
+ * BREAKING CHANGE in 2.96.0. This interface previously described an
+ * aspirational "invoke a registered Strands agent over A2A" node
+ * (`agentId` / `protocol` / `inputTemplate` / `streaming`). That node was
+ * never executable by any host: no config panel ever shipped for it, no
+ * executor ever handled it, and `AgentNode` crashed on
+ * `data.protocol.toUpperCase()` for any host that dropped one on a canvas.
+ *
+ * It is replaced by the real thing: a Claude agent loop (multi-turn, tool
+ * use) run via `claude -p`, whose contract is shared with the backend
+ * (platform-api) and the executor (distributed-core). If you need the old
+ * A2A-invoke semantics back, they belong on a distinct node type — not on
+ * this one.
+ */
 export declare interface AgentNodeData {
     type: 'agent';
-    agentId: string;
-    agentName?: string;
-    protocol: AgentInvokeProtocol;
-    inputTemplate: string;
-    streaming: boolean;
+    /** The task. Supports the same {{ context.x }} interpolation as `llm`. */
+    prompt: string;
+    systemPrompt?: string;
+    /** Friendly alias ('sonnet' | 'opus' | 'haiku') or an explicit model id. */
+    model?: string;
+    /**
+     * Tools the agent may use. DEFAULT-DENY: absent or empty means the agent
+     * runs with NO tools and is equivalent to a plain `llm` step. Never widen
+     * this implicitly — hosts must make the empty case visible to authors.
+     */
+    allowedTools?: string[];
+    /** Hard ceiling on agent turns. Default 8. */
+    maxTurns?: number;
+    /** Wall-clock ceiling for the whole step. Default 120_000. */
     timeoutMs?: number;
-    outputKey?: string;
     retryPolicy?: RetryPolicy;
 }
 

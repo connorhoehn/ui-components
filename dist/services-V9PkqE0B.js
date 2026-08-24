@@ -647,10 +647,12 @@ function Se(e) {
 		};
 		case "agent": return {
 			type: "agent",
-			agentId: "",
-			protocol: "a2a",
-			inputTemplate: "{{context.input}}",
-			streaming: !0
+			prompt: "",
+			systemPrompt: "",
+			model: "sonnet",
+			allowedTools: [],
+			maxTurns: 8,
+			timeoutMs: 12e4
 		};
 		case "guardrail": return {
 			type: "guardrail",
