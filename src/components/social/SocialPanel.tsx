@@ -3,7 +3,7 @@
 // Social Profile section card — all sub-components co-located as unexported internals.
 // Only SocialPanel is exported. Connected to live social API hooks.
 
-import { useState, useEffect } from 'react';
+import { useId, useState, useEffect } from 'react';
 import { useSocialProfile } from '../../hooks/useSocialProfile';
 import { useFriends } from '../../hooks/useFriends';
 import type { ProfileItem, OnMessageFn } from '../../hooks/useSocialProfile';
@@ -188,6 +188,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl ?? '');
   const [visibility, setVisibility] = useState<Visibility>(user.visibility);
   const [saving, setSaving] = useState(false);
+  const uid = useId();
 
   // Reset the form when a DIFFERENT user is shown — keyed on `user.id`, not
   // on the object identity.
@@ -221,9 +222,12 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
   if (editing) {
     return (
       <div>
+        {/* Three <label>s with no htmlFor, wrapping nothing: the whole profile
+            editor announced as unnamed "edit text" boxes. */}
         <div className="mb-3">
-          <label className="text-sm text-text-primary block mb-1">Display name</label>
+          <label htmlFor={`${uid}-display-name`} className="text-sm text-text-primary block mb-1">Display name</label>
           <Input
+            id={`${uid}-display-name`}
             value={displayName}
             onChange={e => setDisplayName(e.target.value.slice(0, 50))}
             placeholder="Your name"
@@ -231,8 +235,9 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           />
         </div>
         <div className="mb-3">
-          <label className="text-sm text-text-primary block mb-1">Bio</label>
+          <label htmlFor={`${uid}-bio`} className="text-sm text-text-primary block mb-1">Bio</label>
           <Textarea
+            id={`${uid}-bio`}
             value={bio}
             onChange={e => setBio(e.target.value.slice(0, 160))}
             placeholder="Tell people a bit about yourself (max 160 characters)"
@@ -242,8 +247,9 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           />
         </div>
         <div className="mb-4">
-          <label className="text-sm text-text-primary block mb-1">Avatar URL</label>
+          <label htmlFor={`${uid}-avatar-url`} className="text-sm text-text-primary block mb-1">Avatar URL</label>
           <Input
+            id={`${uid}-avatar-url`}
             value={avatarUrl}
             onChange={e => setAvatarUrl(e.target.value)}
             placeholder="https://example.com/avatar.png"

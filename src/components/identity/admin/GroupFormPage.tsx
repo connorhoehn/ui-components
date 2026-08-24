@@ -2,7 +2,7 @@
 //
 // Create/Edit form for groups with permission tags and member management.
 
-import { useState, useCallback } from 'react';
+import { useId, useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
@@ -50,6 +50,7 @@ export function GroupFormPage({
   const [permInput, setPermInput] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const uid = useId();
 
   const handlePermKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -116,7 +117,7 @@ export function GroupFormPage({
 
         {/* Permissions tag input */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
+          <h3 id={`${uid}-permissions`} className="text-base font-semibold text-text-primary mt-6 mb-2">Permissions</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {permissions.map((perm) => (
               <span key={perm} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
@@ -133,7 +134,10 @@ export function GroupFormPage({
               </span>
             ))}
           </div>
+          {/* Named from the visible "Permissions" heading. A hand-written
+              aria-label would be a copy that drifts from the words on screen. */}
           <Input
+            aria-labelledby={`${uid}-permissions`}
             placeholder="Type a permission and press Enter"
             value={permInput}
             onChange={(e) => setPermInput(e.target.value)}
@@ -144,7 +148,7 @@ export function GroupFormPage({
         {/* Members section (edit mode only) */}
         {isEdit && members && (
           <section>
-            <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
+            <h3 id={`${uid}-members`} className="text-base font-semibold text-text-primary mt-6 mb-2">Members</h3>
             {members.length === 0 ? (
               <p className="text-text-tertiary text-sm">
                 No members yet.
@@ -166,6 +170,7 @@ export function GroupFormPage({
             {availableUsers && availableUsers.length > 0 && onAddMember && (
               <div className="flex gap-2 mt-2">
                 <Select
+                  aria-label="Add member"
                   className="flex-1"
                   value={selectedUser}
                   onChange={(e) => setSelectedUser(e.target.value)}

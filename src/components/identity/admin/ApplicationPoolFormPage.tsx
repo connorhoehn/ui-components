@@ -99,16 +99,26 @@ export function ApplicationPoolFormPage({ onSubmit, onCancel, error }: Applicati
         {/* Redirect URIs */}
         <section>
           <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Redirect URIs</h3>
+          {/* An <h3> is not a label: these boxes had no accessible name at all,
+              only a placeholder — which disappears the moment the field holds a
+              value, i.e. always when editing an existing pool. Named
+              positionally so each row and its Remove button are distinguishable. */}
           {redirectUris.map((uri, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-1.5">
               <Input
+                aria-label={`Redirect URI ${idx + 1}`}
                 className="flex-1"
                 value={uri}
                 onChange={(e) => handleUriChange(idx, e.target.value)}
                 placeholder="https://app.example.com/callback"
               />
               {redirectUris.length > 1 && (
-                <Button variant="danger" size="sm" onClick={() => handleRemoveUri(idx)}>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  aria-label={`Remove redirect URI ${idx + 1}`}
+                  onClick={() => handleRemoveUri(idx)}
+                >
                   Remove
                 </Button>
               )}

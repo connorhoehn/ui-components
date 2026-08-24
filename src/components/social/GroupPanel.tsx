@@ -2,7 +2,7 @@
 //
 // Group management panel. Supports compact mode for narrow sidebar rendering.
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useGroups } from '../../hooks/useGroups';
 import type { GroupItem, MemberItem } from '../../hooks/useGroups';
 import type { RoomItem } from '../../hooks/useRooms';
@@ -255,6 +255,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
   const [name, setName] = useState('');
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
   const [formError, setFormError] = useState<string | null>(null);
+  const uid = useId();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,13 +270,27 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
 
   return (
     <form onSubmit={(e) => { void handleSubmit(e); }} className="mb-3 p-3 bg-surface-panel rounded-lg border border-border">
+      {/* Detached <label>, no htmlFor: the name box announced unnamed, and the
+          create failure below was rendered as plain text that nothing pointed
+          at and nothing announced. */}
       <div className="mb-3">
-        <label className="text-sm text-text-primary block mb-1">Group name</label>
-        <Input value={name} onChange={e => setName(e.target.value.slice(0, 50))} placeholder="Group name" maxLength={50} required />
+        <label htmlFor={`${uid}-group-name`} className="text-sm text-text-primary block mb-1">Group name</label>
+        <Input
+          id={`${uid}-group-name`}
+          aria-describedby={formError ? `${uid}-form-error` : undefined}
+          aria-invalid={formError ? true : undefined}
+          value={name}
+          onChange={e => setName(e.target.value.slice(0, 50))}
+          placeholder="Group name"
+          maxLength={50}
+          required
+        />
       </div>
       <div className="flex items-center gap-2.5 mb-3.5">
         <span className="text-[13px] text-text-primary min-w-[42px]">{visibility === 'public' ? 'Public' : 'Private'}</span>
-        <button type="button" role="switch" aria-checked={visibility === 'private'}
+        {/* The switch had no name at all — the text either side of it is the
+            current state and the consequence, not what the control is. */}
+        <button type="button" role="switch" aria-label="Private group" aria-checked={visibility === 'private'}
           onClick={() => setVisibility(v => v === 'public' ? 'private' : 'public')}
           className={cn(
             'relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200',
@@ -296,7 +311,7 @@ function CreateGroupForm({ onCreate, onDiscard, loading }: {
           Cancel
         </button>
       </div>
-      {formError && <div className="text-danger text-[13px] mt-1.5">{formError}</div>}
+      {formError && <div id={`${uid}-form-error`} role="alert" className="text-danger text-[13px] mt-1.5">{formError}</div>}
     </form>
   );
 }

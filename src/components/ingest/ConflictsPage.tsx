@@ -248,7 +248,10 @@ export default function ConflictsPage() {
 
               {/* Note + actions */}
               <div className="flex gap-2 justify-end border-t border-border pt-3.5 flex-wrap">
+                {/* Placeholder-only naming — gone as soon as the note is
+                    typed, which is the whole point of the field. */}
                 <Input
+                  aria-label="Optional note (logged in audit trail)"
                   className="min-w-[240px] flex-1"
                   placeholder="Optional note (logged in audit trail)"
                   value={note}

@@ -220,6 +220,10 @@ function UserPicker({ value, onChange, placeholder, maxSelect }: UserPickerProps
           type="text"
           value={query}
           disabled={atMax}
+          // Named from the same string the placeholder shows, because the
+          // placeholder alone stops being the accessible name as soon as a
+          // query is typed — which is exactly when the listbox opens.
+          aria-label={atMax ? `Max ${maxSelect} selected` : (placeholder ?? 'Search users…')}
           placeholder={atMax ? `Max ${maxSelect} selected` : (placeholder ?? 'Search users…')}
           onChange={e => { setQuery(e.target.value); setOpen(true); setActiveIdx(0); }}
           onFocus={() => setOpen(true)}

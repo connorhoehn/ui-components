@@ -172,7 +172,12 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                   return (
                     <tr key={idx} className="border-b border-border">
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
+                        {/* Table cells: the <th> gives a sighted user the
+                            column meaning, but none of these controls had an
+                            accessible NAME. Named from the same column
+                            headings. */}
                         <Input
+                          aria-label="Priority"
                           size="sm"
                           className="w-[50px]"
                           type="number"
@@ -183,6 +188,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <div className="flex gap-1 items-center flex-wrap">
                           <Select
+                            aria-label="Match field"
                             size="sm"
                             className="w-auto min-w-[90px]"
                             value={draftParsed.field}
@@ -190,6 +196,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                             options={FIELD_OPTIONS.map((f) => ({ value: f, label: f }))}
                           />
                           <Select
+                            aria-label="Match operator"
                             size="sm"
                             className="w-auto min-w-[90px]"
                             value={draftParsed.op}
@@ -197,6 +204,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                             options={OP_OPTIONS.map((o) => ({ value: o, label: o }))}
                           />
                           <Input
+                            aria-label="Match value"
                             size="sm"
                             className="min-w-[100px]"
                             value={draftParsed.value}
@@ -207,6 +215,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <Input
+                          aria-label="Target Type ID"
                           size="sm"
                           className="min-w-[80px]"
                           value={draft.documentTypeId}
@@ -216,6 +225,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
                       </td>
                       <td className="px-2.5 py-1.5 border-b border-border text-text-secondary text-xs align-middle">
                         <Input
+                          aria-label="Pipeline"
                           size="sm"
                           className="min-w-[80px]"
                           value={draft.pipelineId ?? ''}
@@ -279,6 +289,7 @@ export default function MappingRuleEditor({ rules, onChange }: MappingRuleEditor
       {/* Preview section */}
       <div className="flex gap-2 items-center mt-1">
         <Input
+          aria-label="Enter a file path to preview mapping"
           className="flex-1"
           value={previewPath}
           onChange={(e) => setPreviewPath(e.target.value)}

@@ -89,6 +89,7 @@ export default function DocumentHeader({
           {/* Inline document-title editor — chrome stripped so it reads as
               the page heading until focused. */}
           <Input
+            aria-label="Document title"
             className={cn('w-auto h-auto min-w-[180px] text-base font-semibold border-transparent bg-transparent py-1 px-2')}
             value={meta.title}
             placeholder="Untitled document"

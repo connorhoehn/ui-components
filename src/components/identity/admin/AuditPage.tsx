@@ -4,6 +4,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
+import { FilterField } from '../shared/FilterField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
@@ -124,34 +125,32 @@ export function AuditPage({
       {/* Filter bar */}
       <Card padding="md">
         <div className="flex flex-wrap gap-4 items-end">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity Type</label>
-            <Select
-              className="w-40"
-              value={entityType}
-              onChange={(e) => setEntityType(e.target.value)}
-              options={[
-                { value: '', label: 'All' },
-                ...ENTITY_TYPES.filter(Boolean).map((t) => ({ value: t, label: t })),
-              ]}
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
-            <Input className="w-44" value={entityId} onChange={(e) => setEntityId(e.target.value)} placeholder="Optional" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">From</label>
-            <Input className="w-52" type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">To</label>
-            <Input className="w-52" type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Limit</label>
-            <Input className="w-[70px]" type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />
-          </div>
+          <FilterField label="Entity Type">
+            {(w) => (
+              <Select
+                {...w}
+                className="w-40"
+                value={entityType}
+                onChange={(e) => setEntityType(e.target.value)}
+                options={[
+                  { value: '', label: 'All' },
+                  ...ENTITY_TYPES.filter(Boolean).map((t) => ({ value: t, label: t })),
+                ]}
+              />
+            )}
+          </FilterField>
+          <FilterField label="Entity ID">
+            {(w) => <Input {...w} className="w-44" value={entityId} onChange={(e) => setEntityId(e.target.value)} placeholder="Optional" />}
+          </FilterField>
+          <FilterField label="From">
+            {(w) => <Input {...w} className="w-52" type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />}
+          </FilterField>
+          <FilterField label="To">
+            {(w) => <Input {...w} className="w-52" type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />}
+          </FilterField>
+          <FilterField label="Limit">
+            {(w) => <Input {...w} className="w-[70px]" type="number" value={limit} onChange={(e) => setLimit(e.target.value)} />}
+          </FilterField>
           <Button variant="primary" size="lg" onClick={handleQuery} disabled={loading}>
             {loading ? 'Querying...' : 'Query'}
           </Button>
@@ -176,14 +175,12 @@ export function AuditPage({
       <Card padding="md">
         <h3 className="text-base font-semibold text-text-primary mb-4 mt-0">Point-in-Time Replay</h3>
         <div className="flex flex-wrap gap-4 items-end mb-4">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">Entity ID</label>
-            <Input className="w-44" value={replayEntityId} onChange={(e) => setReplayEntityId(e.target.value)} placeholder="entity-id" />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-neutral uppercase tracking-wide">At Timestamp</label>
-            <Input className="w-52" type="datetime-local" value={replayTimestamp} onChange={(e) => setReplayTimestamp(e.target.value)} />
-          </div>
+          <FilterField label="Entity ID">
+            {(w) => <Input {...w} className="w-44" value={replayEntityId} onChange={(e) => setReplayEntityId(e.target.value)} placeholder="entity-id" />}
+          </FilterField>
+          <FilterField label="At Timestamp">
+            {(w) => <Input {...w} className="w-52" type="datetime-local" value={replayTimestamp} onChange={(e) => setReplayTimestamp(e.target.value)} />}
+          </FilterField>
           <Button variant="primary" size="lg" onClick={handleReplay} disabled={replaying || !replayEntityId || !replayTimestamp}>
             {replaying ? 'Replaying...' : 'Replay'}
           </Button>

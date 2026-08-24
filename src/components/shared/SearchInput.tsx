@@ -61,7 +61,12 @@ function SearchInput({
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder ?? 'Search…'}
         autoFocus={autoFocus}
-        aria-label={ariaLabel}
+        // A placeholder is only a LAST-RESORT accessible name, and it is gone
+        // the moment the user types — so a search box mid-query announced as a
+        // bare "edit text". Mirroring the placeholder keeps the spoken name
+        // identical to the words the user saw, instead of inventing a second
+        // wording that can drift from it.
+        aria-label={ariaLabel ?? placeholder ?? 'Search'}
         className="w-full pl-8 pr-7 py-1.5 text-sm rounded-md border border-[var(--color-border-field,#d1d5db)] bg-white text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-colors"
       />
       {value && (

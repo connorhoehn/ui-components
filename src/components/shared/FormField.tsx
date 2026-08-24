@@ -33,6 +33,15 @@ export interface FormFieldProps {
     'aria-required'?: boolean;
   }) => ReactNode;
   className?: string;
+  /**
+   * Overrides the label's typography. Exists so surfaces with their own label
+   * look — the uppercase filter-bar captions on the identity admin pages, for
+   * instance — can adopt this component for its `htmlFor` / `aria-describedby`
+   * wiring instead of hand-rolling a detached `<label>` that names nothing.
+   * Merged over the defaults, so error colouring still applies unless you
+   * override it.
+   */
+  labelClassName?: string;
   style?: CSSProperties;
   'data-testid'?: string;
 }
@@ -51,6 +60,7 @@ export default function FormField({
   layout = 'stacked',
   children,
   className,
+  labelClassName,
   style,
   'data-testid': testId,
 }: FormFieldProps) {
@@ -84,6 +94,7 @@ export default function FormField({
           'text-[12px] font-medium',
           layout === 'inline' ? 'min-w-[140px]' : '',
           error ? 'text-danger-fg' : 'text-text-primary',
+          labelClassName,
         )}
       >
         {label}

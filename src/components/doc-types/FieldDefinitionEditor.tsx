@@ -29,6 +29,7 @@ export function FieldDefinitionEditor({
 }: FieldDefinitionEditorProps) {
   const def = getFieldType(field.sectionType);
   const allTypes = getFieldTypes();
+  const rowName = field.name.trim() || `Section ${index + 1}`;
 
   return (
     <div className="flex items-center gap-2 py-2 px-2.5 rounded-lg bg-surface-panel border border-border mb-1.5">
@@ -64,7 +65,13 @@ export function FieldDefinitionEditor({
       {/* Name */}
       {/* Inline rename — reads as plain text until focused, so the Input's
           chrome is stripped via class overrides rather than hand-rolling. */}
+      {/* Neither of these had an accessible name: the rename box reads as plain
+          text so there is no visible caption to associate, and the type picker
+          sits beside it unlabelled. In a list of sections that is a column of
+          identical "edit text" / "combo box" announcements. Named positionally,
+          falling back from the section's own (visible) name while it is blank. */}
       <Input
+        aria-label={`${rowName} name`}
         data-testid={`field-name-${field.id}`}
         size="sm"
         value={field.name}
@@ -74,6 +81,7 @@ export function FieldDefinitionEditor({
 
       {/* Type select */}
       <Select
+        aria-label={`${rowName} type`}
         data-testid={`field-type-${field.id}`}
         size="sm"
         value={field.sectionType}

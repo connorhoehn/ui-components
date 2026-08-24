@@ -4,7 +4,7 @@
 // history, and settings. Available at /ingest/sources/:id.
 
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import Chip from '../shared/Chip';
@@ -112,6 +112,7 @@ export default function SourceDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  const uid = useId();
   const [syncing, setSyncing] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -365,9 +366,16 @@ export default function SourceDetailPage() {
         {editing ? (
           <div>
             {Object.entries(editConfig).map(([key, value]) => (
+              // The row captions across this page were <span>s, so not one of
+              // these controls had an accessible name — the whole edit form
+              // announced as a column of anonymous "edit text" / "combo box".
+              // Single-control rows become a real <label htmlFor>; rows holding
+              // several controls become a named role="group", because htmlFor
+              // pointing at the wrapping <div> would associate nothing.
               <div key={key} className="flex items-center gap-3 mb-2.5">
-                <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">{key}</span>
+                <label htmlFor={`${uid}-cfg-${key}`} className="text-xs font-semibold text-text-tertiary min-w-[140px]">{key}</label>
                 <Input
+                  id={`${uid}-cfg-${key}`}
                   className="flex-1"
                   value={typeof value === 'string' ? value : JSON.stringify(value)}
                   onChange={(e) => setEditConfig({ ...editConfig, [key]: e.target.value })}
@@ -466,9 +474,10 @@ export default function SourceDetailPage() {
         {editing ? (
           <div>
             <div className="flex items-center gap-3 mb-2.5">
-              <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Sync Schedule</span>
-              <div className="flex gap-2 flex-1 flex-wrap">
+              <span id={`${uid}-schedule-label`} className="text-xs font-semibold text-text-tertiary min-w-[140px]">Sync Schedule</span>
+              <div role="group" aria-labelledby={`${uid}-schedule-label`} className="flex gap-2 flex-1 flex-wrap">
                 <Select
+                  aria-label="Schedule preset"
                   className="w-auto min-w-[160px]"
                   value={SCHEDULE_PRESETS.some((p) => p.cron === editSchedule) ? editSchedule : '__custom__'}
                   onChange={(e) => {
@@ -482,6 +491,7 @@ export default function SourceDetailPage() {
                 />
                 <Input
                   mono
+                  aria-label="Cron expression"
                   className="flex-1"
                   value={editSchedule}
                   onChange={(e) => setEditSchedule(e.target.value)}
@@ -491,8 +501,9 @@ export default function SourceDetailPage() {
               </div>
             </div>
             <div className="flex items-center gap-3 mb-2.5">
-              <span className="text-xs font-semibold text-text-tertiary min-w-[140px]">Default Pipeline</span>
+              <label htmlFor={`${uid}-default-pipeline`} className="text-xs font-semibold text-text-tertiary min-w-[140px]">Default Pipeline</label>
               <Select
+                id={`${uid}-default-pipeline`}
                 className="flex-1"
                 value={editPipelineId}
                 onChange={(e) => setEditPipelineId(e.target.value)}
@@ -533,6 +544,7 @@ export default function SourceDetailPage() {
                             {docTypes.find((t) => t.id === typeId)?.name ?? typeId}
                           </span>
                           <Select
+                            aria-label={`Pipeline for ${docTypes.find((t) => t.id === typeId)?.name ?? typeId}`}
                             data-testid={`overrides-pipeline-${typeId}`}
                             className="flex-1"
                             value={pipelineId}
@@ -557,6 +569,7 @@ export default function SourceDetailPage() {
                       ))
                     )}
                     <Select
+                      aria-label="Add override for type"
                       data-testid="overrides-add-type"
                       className="w-auto self-start"
                       value=""
