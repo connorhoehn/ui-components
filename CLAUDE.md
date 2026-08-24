@@ -11,7 +11,7 @@ docs and commit history are historical breadcrumbs, not live tickets.
 Current state and open work live in this repo (constitution/roadmap/CHANGELOG).
 
 React component library for real-time collaborative applications. Published to
-GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.47.0`). Consumed by
+GitHub Packages as `@connorhoehnslalom/ui-components` (currently `2.89.0`). Consumed by
 several downstream apps — see **Consumer list** below.
 
 > **Package scope — read before touching imports.** This library is
@@ -53,7 +53,7 @@ Wave order (don't pick across waves): **0** charter + reachability →
 ## Quick commands
 
 ```bash
-npm test           # vitest run (306 test files, 3148 tests)
+npm test           # vitest run (415 test files, 4159 tests)
 npm run lint       # tsc --noEmit on src AND demo (0 errors)
 npm run build      # vite build (lib mode, multi-entry) + fix-subpath-dts
 npm run demo       # vite dev server at http://localhost:5174
@@ -307,8 +307,7 @@ for a convertible control.
 ### Test coverage (audit #5)
 Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066) and were closed
 out through 2026-08-21: `pipelines/` ~45 test files, `doc-editor/` 23
-(incl. the full Yjs composition path), zero-test folders filled, the large
-exports (`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested, and as
+(incl. the full Yjs composition path), zero-test folders filled, and as
 of v2.66.0 **every `shared/` component has a test file** (the last 26 —
 Drawer, ToastProvider, SubNavLayout, InlinePopover, ActivityFeed,
 ProjectCard, SearchInput, ChatComposer, and the smaller primitives —
@@ -319,6 +318,15 @@ screens), `TypedDocumentForm` (13 — widget mapping, coercion, showWhen,
 unlimited cardinality), `FieldTypesPage` (5 — wizard + localStorage
 persistence), and `src/api/` (11 — URL/param assembly, DLQ 503
 tolerance, runId→id boundary mapping). New exports ship with tests.
+**Correction (2026-08-24):** this section claimed the large exports
+"(`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested". Two of the three
+were not. `AppLayout` (851 LOC) and `CollapsibleSidebar` (454 LOC) had
+**zero** test files, and both are root-exported stable API — the false claim
+here is the likeliest reason they stayed open through several audit rounds.
+Verify a coverage claim with `find src -path '*__tests__*' -name '<X>*'`
+before repeating it. `CallWidget` (881 LOC) does have a test file, though
+one file for that size is thin.
+
 Remaining thin spots are lower-value: renderers 8/26 files, contexts
 (thin providers), and parts of social/ingest/observability pages.
 
