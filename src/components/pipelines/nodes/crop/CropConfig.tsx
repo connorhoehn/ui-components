@@ -44,6 +44,8 @@ const BBOX_SAMPLES = [
 
 const CROP_REGION_ID = 'crop-region';
 const CROP_REGION_LABEL = 'crop';
+/** Shared by the visible field label and the section group's accessible name. */
+const CROP_REGION_FIELD_LABEL = 'Crop region';
 
   'mt-1 w-full text-[12px] font-mono rounded border border-border bg-white px-2 py-1 outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 const helpCls = 'text-[11px] text-text-tertiary mt-0.5';
@@ -140,27 +142,42 @@ function CropConfigInner({
       <ConfigField
         label="Bounding-box path"
         help="Optional. JSONPath to a bbox object { x, y, width, height } in pixels. Overrides the manual crop region below when present at run time."
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.bboxPath ?? ''}
-          onChange={(e) => onChange({ bboxPath: e.target.value.trim() || undefined })}
-          placeholder="$.scatter.item.bbox"
-          aria-label="Bounding-box path"
-        />
-        <SamplePills
-          samples={BBOX_SAMPLES}
-          onSelect={(v) => onChange({ bboxPath: v })}
-          aria-label="Common bbox paths"
-        />
-      </ConfigField>
+        controlId="crop-bbox-path"
+        render={({ describedById, controlId }) => (
+          <>
+            <Input
+              id={controlId}
+              aria-describedby={describedById}
+              size="sm"
+              mono
+              spellCheck={false}
+              value={data.bboxPath ?? ''}
+              onChange={(e) => onChange({ bboxPath: e.target.value.trim() || undefined })}
+              placeholder="$.scatter.item.bbox"
+            />
+            <SamplePills
+              samples={BBOX_SAMPLES}
+              onSelect={(v) => onChange({ bboxPath: v })}
+              aria-label="Common bbox paths"
+            />
+          </>
+        )}
+      />
 
-      {/* Crop region (visual authoring) */}
-      <div data-testid="crop-region-section">
+      {/* Crop region (visual authoring).
+
+          The region is painted on a canvas and read back off chips, so there
+          is no single labelable control for `htmlFor` to point at — and the
+          canvas is a SIBLING of the ConfigField, not its child, because the
+          help text has to stay above it. The whole section is therefore the
+          group, named with the same string the visible label shows. */}
+      <div
+        data-testid="crop-region-section"
+        role="group"
+        aria-label={CROP_REGION_FIELD_LABEL}
+      >
         <ConfigField
-          label="Crop region"
+          label={CROP_REGION_FIELD_LABEL}
           help="Optional. Drag on the source image to paint the crop box. Drawing a new box replaces the previous one."
         >
           <></>

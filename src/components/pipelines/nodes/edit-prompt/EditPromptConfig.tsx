@@ -39,49 +39,62 @@ export default function EditPromptConfig({ data, onChange, nodeId }: EditPromptC
       <ConfigField
         label="Mask image path"
         help="Optional. White pixels are the edit region, black is preserved. Omit for outpainting."
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.maskImagePath ?? ''}
-          onChange={(e) => onChange({ maskImagePath: e.target.value.trim() || undefined })}
-          placeholder="$.steps.mask.output.imageId"
-          aria-label="Mask image path"
-        />
-        <SamplePills
-          samples={MASK_SAMPLES}
-          onSelect={(v) => onChange({ maskImagePath: v })}
-          aria-label="Common mask paths"
-        />
-      </ConfigField>
+        controlId="edit-prompt-mask-path"
+        render={({ describedById, controlId }) => (
+          <>
+            <Input
+              id={controlId}
+              aria-describedby={describedById}
+              size="sm"
+              mono
+              spellCheck={false}
+              value={data.maskImagePath ?? ''}
+              onChange={(e) => onChange({ maskImagePath: e.target.value.trim() || undefined })}
+              placeholder="$.steps.mask.output.imageId"
+            />
+            <SamplePills
+              samples={MASK_SAMPLES}
+              onSelect={(v) => onChange({ maskImagePath: v })}
+              aria-label="Common mask paths"
+            />
+          </>
+        )}
+      />
 
       <ConfigField
         label="Edit prompt"
         required
         error={promptMissing ? 'Edit prompt is required.' : undefined}
         help="Describes what to generate in the masked region."
-      >
-        <Textarea
-          rows={4}
-          spellCheck={false}
-          invalid={promptMissing}
-          value={data.prompt ?? ''}
-          onChange={(e) => onChange({ prompt: e.target.value })}
-          placeholder="Replace the background with a sunny beach"
-          aria-label="Edit prompt"
-        />
-      </ConfigField>
+        controlId="edit-prompt-prompt"
+        render={({ describedById, controlId }) => (
+          <Textarea
+            id={controlId}
+            aria-describedby={describedById}
+            rows={4}
+            spellCheck={false}
+            invalid={promptMissing}
+            value={data.prompt ?? ''}
+            onChange={(e) => onChange({ prompt: e.target.value })}
+            placeholder="Replace the background with a sunny beach"
+          />
+        )}
+      />
 
-      <ConfigField label="Model">
-        <Select
-          size="sm"
-          value={data.model ?? models[0]?.value ?? ''}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Model"
+        controlId="edit-prompt-model"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={data.model ?? models[0]?.value ?? ''}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

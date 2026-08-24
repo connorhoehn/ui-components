@@ -37,32 +37,39 @@ export default function AdjustBwConfig({ data, onChange, nodeId }: AdjustBwConfi
       <ConfigField
         label="Greyscale algorithm"
         help="Controls how RGB channels are weighted when converting to greyscale."
-      >
-        <Select
-          size="sm"
-          value={algorithm}
-          onChange={(e) =>
-            onChange({ algorithm: e.target.value as ImageAdjustBwNodeData['algorithm'] })
-          }
-          aria-label="Greyscale algorithm"
-          options={ALGORITHMS}
-        />
-      </ConfigField>
+        controlId="adjust-bw-algorithm"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={algorithm}
+            onChange={(e) =>
+              onChange({ algorithm: e.target.value as ImageAdjustBwNodeData['algorithm'] })
+            }
+            options={ALGORITHMS}
+          />
+        )}
+      />
 
       <ConfigField
         label="Contrast multiplier"
         help="Applied after greyscale conversion. 1 is no change, below 1 lowers contrast, above 1 raises it. Range 0–4."
-      >
-        <NumberInput
-          size="sm"
-          min={0}
-          max={4}
-          step={0.05}
-          value={contrast}
-          onChange={(v) => onChange({ contrast: v })}
-          data-testid="adjust-bw-contrast"
-        />
-      </ConfigField>
+        controlId="adjust-bw-contrast"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            max={4}
+            step={0.05}
+            value={contrast}
+            onChange={(v) => onChange({ contrast: v })}
+            data-testid="adjust-bw-contrast"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

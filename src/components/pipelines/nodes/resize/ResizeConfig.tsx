@@ -46,49 +46,64 @@ export default function ResizeConfig({ data, onChange, nodeId }: ResizeConfigPro
 
       <div className="flex gap-2">
         <div className="flex-1">
-          <ConfigField label="Width">
-            <NumberInput
-              size="sm"
-              min={1}
-              step={1}
-              unit="px"
-              value={data.width}
-              onChange={(width) => onChange({ width })}
-              onClear={() => onChange({ width: undefined })}
-              placeholder="e.g. 512"
-              data-testid="resize-width"
-            />
-          </ConfigField>
+          <ConfigField
+            label="Width"
+            controlId="resize-width"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                min={1}
+                step={1}
+                unit="px"
+                value={data.width}
+                onChange={(width) => onChange({ width })}
+                onClear={() => onChange({ width: undefined })}
+                placeholder="e.g. 512"
+                data-testid="resize-width"
+              />
+            )}
+          />
         </div>
         <div className="flex-1">
-          <ConfigField label="Height">
-            <NumberInput
-              size="sm"
-              min={1}
-              step={1}
-              unit="px"
-              value={data.height}
-              onChange={(height) => onChange({ height })}
-              onClear={() => onChange({ height: undefined })}
-              placeholder="e.g. 512"
-              data-testid="resize-height"
-            />
-          </ConfigField>
+          <ConfigField
+            label="Height"
+            controlId="resize-height"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                min={1}
+                step={1}
+                unit="px"
+                value={data.height}
+                onChange={(height) => onChange({ height })}
+                onClear={() => onChange({ height: undefined })}
+                placeholder="e.g. 512"
+                data-testid="resize-height"
+              />
+            )}
+          />
         </div>
       </div>
 
       <ConfigField
         label="Fit mode"
         help="How the image fits the target dimensions. cover (default) crops, contain letterboxes, fill stretches."
-      >
-        <Select
-          size="sm"
-          value={fit}
-          onChange={(e) => onChange({ fit: e.target.value as ResizeFit })}
-          aria-label="Fit mode"
-          options={FIT_OPTIONS}
-        />
-      </ConfigField>
+        controlId="resize-fit"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={fit}
+            onChange={(e) => onChange({ fit: e.target.value as ResizeFit })}
+            options={FIT_OPTIONS}
+          />
+        )}
+      />
 
       <ToggleField
         label="Do not enlarge if already smaller than target"
@@ -104,17 +119,20 @@ export default function ResizeConfig({ data, onChange, nodeId }: ResizeConfigPro
             ? 'Hex colour used to fill letterbox padding.'
             : 'Only applies when fit is contain or fill.'
         }
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.background ?? ''}
-          onChange={(e) => onChange({ background: e.target.value.trim() || undefined })}
-          placeholder="#ffffff"
-          aria-label="Background colour"
-        />
-      </ConfigField>
+        controlId="resize-background"
+        render={({ describedById, controlId }) => (
+          <Input
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            mono
+            spellCheck={false}
+            value={data.background ?? ''}
+            onChange={(e) => onChange({ background: e.target.value.trim() || undefined })}
+            placeholder="#ffffff"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

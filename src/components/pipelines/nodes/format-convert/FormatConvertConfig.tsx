@@ -47,15 +47,20 @@ export default function FormatConvertConfig({
         nodeId={nodeId}
       />
 
-      <ConfigField label="Output format">
-        <Select
-          size="sm"
-          value={format}
-          onChange={(e) => onChange({ format: e.target.value as ImageFormat })}
-          aria-label="Output format"
-          options={FORMAT_OPTIONS}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Output format"
+        controlId="format-convert-format"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={format}
+            onChange={(e) => onChange({ format: e.target.value as ImageFormat })}
+            options={FORMAT_OPTIONS}
+          />
+        )}
+      />
 
       {isLossy && (
         <ConfigField
@@ -65,18 +70,22 @@ export default function FormatConvertConfig({
               ? 'Ignored while lossless encoding is on.'
               : 'Higher is better quality and a larger file. 80 is a good default. Range 1–100.'
           }
-        >
-          <NumberInput
-            size="sm"
-            min={1}
-            max={100}
-            step={1}
-            disabled={lossless}
-            value={data.quality ?? 80}
-            onChange={(quality) => onChange({ quality })}
-            data-testid="format-convert-quality"
-          />
-        </ConfigField>
+          controlId="format-convert-quality"
+          render={({ describedById, controlId }) => (
+            <NumberInput
+              id={controlId}
+              aria-describedby={describedById}
+              size="sm"
+              min={1}
+              max={100}
+              step={1}
+              disabled={lossless}
+              value={data.quality ?? 80}
+              onChange={(quality) => onChange({ quality })}
+              data-testid="format-convert-quality"
+            />
+          )}
+        />
       )}
 
       {canBeLossless && (
