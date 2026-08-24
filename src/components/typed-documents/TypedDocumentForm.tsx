@@ -104,6 +104,12 @@ export interface TypedDocumentFormProps {
    * picker with a "no options" hint.
    */
   referenceOptions?: Record<string, ReferenceOption[]>;
+  /**
+   * Keyed by DocumentType id. Set when the caller's lookup for that type
+   * FAILED, which is not the same thing as the type having no instances — the
+   * picker says so instead of claiming there is nothing to reference.
+   */
+  referenceOptionsErrors?: Record<string, string>;
 }
 
 function defaultForField(field: ApiDocumentTypeField): FieldStored {
@@ -148,7 +154,7 @@ function coerceUnlimited(field: ApiDocumentTypeField, arr: string[]): TypedDocum
 }
 
 
-export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {} }: TypedDocumentFormProps): JSX.Element {
+export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {}, referenceOptionsErrors = {} }: TypedDocumentFormProps): JSX.Element {
   const [values, setValues] = useState<FormState>(() => {
     const init: FormState = {};
     for (const f of type.fields) init[f.fieldId] = defaultForField(f);
@@ -323,6 +329,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'reference_picker' && (() => {
               const opts = field.referenceTypeId ? (referenceOptions[field.referenceTypeId] ?? []) : [];
+              const loadError = field.referenceTypeId ? referenceOptionsErrors[field.referenceTypeId] : undefined;
               const empty = opts.length === 0;
               return (
                 <>
@@ -336,7 +343,11 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                       ...opts.map((opt) => ({ value: opt.value, label: opt.label })),
                     ]}
                   />
-                  {empty && (
+                  {loadError ? (
+                    <span role="alert" data-testid={`reference-error-${field.fieldId}`} className={cn('text-[11px] text-danger-fg')}>
+                      {loadError}
+                    </span>
+                  ) : empty && (
                     <span data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
                       No referenceable documents yet for this type.
                     </span>

@@ -188,6 +188,9 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   const [resumeInFlight, setResumeInFlight] = useState<string | null>(null);
   const [resumeError, setResumeError] = useState<string | null>(null);
   const [resumeToast, setResumeToast] = useState<string | null>(null);
+  // A failed Re-run used to be console-only: no navigation, no banner, so the
+  // button read as inert and the user just clicked it again.
+  const [reRunError, setReRunError] = useState<string | null>(null);
 
   // Auto-dismiss handle for the resume toast. Worth tracking because the
   // handler schedules it and then immediately navigate()s — the navigation is
@@ -221,26 +224,18 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
 
   // ── Re-run ───────────────────────────────────────────────────────────
   const handleReRun = useCallback(async () => {
-    if (!run) {
-      // No known run — still allow a fresh run with an empty payload.
-      try {
-        const newRunId = await runs.triggerRun(pipelineId);
-        navigate(`/pipelines/${pipelineId}/runs/${newRunId}`);
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('[PipelineRunReplay] re-run failed', err);
-      }
-      return;
-    }
+    setReRunError(null);
     try {
+      // No known run — still allow a fresh run with an empty payload.
       const newRunId = await runs.triggerRun(
         pipelineId,
-        run.triggeredBy.payload,
+        run ? run.triggeredBy.payload : undefined,
       );
       navigate(`/pipelines/${pipelineId}/runs/${newRunId}`);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('[PipelineRunReplay] re-run failed', err);
+      setReRunError(err instanceof Error ? err.message : String(err));
     }
   }, [run, runs, pipelineId, navigate]);
 
@@ -484,6 +479,12 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           {resumeError && (
             <Banner title="Resume failed:" className="mb-4" data-testid="resume-error-banner">
               {resumeError}
+            </Banner>
+          )}
+
+          {reRunError && (
+            <Banner title="Re-run failed:" className="mb-4" data-testid="rerun-error-banner">
+              {reRunError}
             </Banner>
           )}
 
