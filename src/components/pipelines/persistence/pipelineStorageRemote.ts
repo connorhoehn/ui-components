@@ -208,7 +208,14 @@ export async function deletePipeline(id: string): Promise<void> {
   try {
     await deletePipelineRemote(id);
   } catch (err) {
-    if (isNetworkError(err)) return;
+    // Same rule as `savePipeline` above, which was narrowed to `isApiAbsent`
+    // while delete was left on `isNetworkError`. That bucket includes
+    // 500/502/503/504, so a DELETE the server refused resolved exactly like
+    // one it accepted: the row vanished locally, `PipelinesPage` fired a
+    // green "Pipeline deleted" toast, and the pipeline was still on the
+    // server — back in the list on the next load, or still there for every
+    // other user. Only "there is no API at this origin" resolves quietly.
+    if (isApiAbsent(err)) return;
     throw err;
   }
 }
@@ -268,7 +275,12 @@ export async function createPipeline(
   try {
     await savePipelineRemote(def);
   } catch (err) {
-    if (!isNetworkError(err)) throw err;
+    // See `deletePipeline` — a 5xx or a dropped connection is a real, failed
+    // create, not a backendless host. Swallowing it navigated the author into
+    // an editor for a pipeline that existed only in this browser's
+    // localStorage, invisible to every other device and to the next session
+    // on a different machine.
+    if (!isApiAbsent(err)) throw err;
   }
   return def;
 }

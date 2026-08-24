@@ -47,7 +47,10 @@ import { useDocumentTriggers } from '../pipelines/hooks/useDocumentTriggers';
 import { useWebhookTriggers } from '../pipelines/hooks/useWebhookTriggers';
 import { usePendingApprovals } from '../pipelines/hooks/usePendingApprovals';
 import { usePipelineActivityRelay } from '../pipelines/hooks/usePipelineActivityRelay';
-import { useWebSocketPipelineEvents } from '../pipelines/context/WebSocketEventAdapter';
+import {
+  useWebSocketPipelineEvents,
+  usePipelineChannelTransport,
+} from '../pipelines/context/WebSocketEventAdapter';
 import { type PipelineIndexEntry } from '../pipelines/persistence/pipelineStorage';
 import { listPipelines } from '../pipelines/persistence/pipelineStorageRemote';
 import { ObservabilityProvider } from '../observability/context/ObservabilityContext';
@@ -187,8 +190,13 @@ export interface AppLayoutProps {
  * gateway WS bridge — there is no other producer.
  */
 export function AppLayout(props: AppLayoutProps) {
+  // Gateway channel transport for the event stream. Without this,
+  // `subscribeToRun` / `subscribeToApprovals` are no-ops and the per-run and
+  // approvals channels are never opened — only the `pipeline:all` firehose
+  // subscribed by AppLayoutInner reaches subscribers.
+  const channelTransport = usePipelineChannelTransport();
   return (
-    <EventStreamProvider>
+    <EventStreamProvider channelTransport={channelTransport}>
       <PipelineRunsProvider>
         <ObservabilityProvider>
           <AppLayoutInner {...props} />

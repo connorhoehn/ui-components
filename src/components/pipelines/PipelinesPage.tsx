@@ -347,7 +347,17 @@ export default function PipelinesPage() {
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
   const handleCreate = async (name: string) => {
-    const def = await createPipeline({ name, createdBy: userId });
+    let def;
+    try {
+      def = await createPipeline({ name, createdBy: userId });
+    } catch {
+      // A create the server refused must not navigate the author into an
+      // editor for a pipeline only this browser knows about.
+      toast('Could not create the pipeline — the server rejected the request', {
+        type: 'error',
+      });
+      return;
+    }
     setNewModalOpen(false);
     navigate(`/pipelines/${def.id}`);
   };
@@ -406,7 +416,19 @@ export default function PipelinesPage() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteId) return;
-    await deletePipeline(deleteId);
+    try {
+      await deletePipeline(deleteId);
+    } catch {
+      // `deletePipeline` now rejects when the server refused the DELETE
+      // (5xx / transport failure) rather than resolving like a success.
+      // Refresh so the row the local cache dropped comes back, and say so.
+      setDeleteId(null);
+      void refresh();
+      toast('Could not delete the pipeline — it is still on the server', {
+        type: 'error',
+      });
+      return;
+    }
     setDeleteId(null);
     void refresh();
     toast('Pipeline deleted', { type: 'success' });
@@ -473,10 +495,26 @@ export default function PipelinesPage() {
 
   const handleBulkDeleteConfirm = async () => {
     const ids = Array.from(selected);
-    for (const id of ids) await deletePipeline(id);
+    let deleted = 0;
+    let failed = 0;
+    for (const id of ids) {
+      try {
+        await deletePipeline(id);
+        deleted += 1;
+      } catch {
+        failed += 1;
+      }
+    }
     setBulkDeleteOpen(false);
     clearSelection();
     void refresh();
+    if (failed > 0) {
+      toast(
+        `Deleted ${deleted} of ${ids.length} pipeline${ids.length === 1 ? '' : 's'} — ${failed} still on the server`,
+        { type: 'error' },
+      );
+      return;
+    }
     toast(`Deleted ${ids.length} pipeline${ids.length === 1 ? '' : 's'}`, {
       type: 'success',
     });

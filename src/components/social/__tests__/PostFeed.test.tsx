@@ -85,6 +85,26 @@ beforeEach(() => {
   });
 });
 
+// The composer's busy guard used to read `loading`, which usePosts sets only
+// for the initial fetch and loadMore. The mutation flag existed but was held
+// in an unread `_mutating` state and never returned, so the Post button stayed
+// enabled and labelled "Post" for the whole POST and a second click created a
+// duplicate post.
+describe('PostFeed composer busy state', () => {
+  it('disables the Post button while a create is in flight', () => {
+    renderFeed(makePosts({ posts: [makePost()], mutating: true }));
+    const button = screen.getByRole('button', { name: 'Posting…' });
+    expect(button).toBeDisabled();
+  });
+
+  it('leaves the Post button live when nothing is in flight', () => {
+    renderFeed(makePosts({ posts: [makePost()], mutating: false }));
+    const textarea = screen.getByPlaceholderText("What's on your mind?");
+    fireEvent.change(textarea, { target: { value: 'hello' } });
+    expect(screen.getByRole('button', { name: 'Post' })).toBeEnabled();
+  });
+});
+
 describe('PostFeed state machine', () => {
   it('shows the spinner only while loading with nothing cached', () => {
     renderFeed(makePosts({ loading: true }));

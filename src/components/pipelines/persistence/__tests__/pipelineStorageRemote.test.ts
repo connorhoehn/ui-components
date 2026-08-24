@@ -285,17 +285,48 @@ describe('pipelineStorageRemote', () => {
       expect(sent.version).toBe(1);
     });
 
-    it('still returns a usable definition when the API is unreachable', async () => {
+    // INVERTED (v2.97.0). This case used to assert that a transport failure
+    // still RESOLVED with a usable definition — it pinned the bug: the
+    // caller navigated into an editor for a pipeline that lived only in this
+    // browser's localStorage, with nothing on screen saying the create had
+    // failed. `createPipeline` was on `isNetworkError` (which folds in
+    // 5xx and dropped connections) while `savePipeline` had already been
+    // narrowed to `isApiAbsent`. The local cache write is still the thing
+    // that must survive — that half of the original assertion is kept.
+    it('caches the definition locally AND rejects when the API is unreachable', async () => {
       stubFetch(() => {
         throw new TypeError('Failed to fetch');
       });
-      const def = await createPipeline({ name: 'Offline', createdBy: 'tester' });
-      expect(loadCached(def.id)?.name).toBe('Offline');
+      await expect(
+        createPipeline({ name: 'Offline', createdBy: 'tester', id: 'offline-1' }),
+      ).rejects.toThrow();
+      expect(loadCached('offline-1')?.name).toBe('Offline');
+    });
+
+    it('rejects on a 5xx rather than resolving like a successful create', async () => {
+      stubFetch(() => res({ error: 'boom' }, 503));
+      await expect(
+        createPipeline({ name: 'Down', createdBy: 'tester', id: 'down-1' }),
+      ).rejects.toThrow();
+    });
+
+    it('resolves quietly when there is no API at this origin (SPA fallback)', async () => {
+      // A static host answers an unknown /api/* path with index.html + 200.
+      stubFetch(() => {
+        throw new SyntaxError('Unexpected token < in JSON at position 0');
+      });
+      const def = await createPipeline({ name: 'Demo', createdBy: 'tester' });
+      expect(def.name).toBe('Demo');
     });
   });
 
   describe('deletePipeline', () => {
-    it('removes the cached copy and its index entry even when the API is down', async () => {
+    // INVERTED (v2.97.0). This used to `await deletePipeline('p1')` with no
+    // rejection expectation, pinning the bug: a DELETE the server refused
+    // resolved exactly like one it accepted, so PipelinesPage fired a green
+    // "Pipeline deleted" toast over a pipeline that was still on the server.
+    // The local-cache half of the assertion is unchanged and still asserted.
+    it('removes the cached copy and its index entry, then rejects, when the API is down', async () => {
       stubFetch((_url, init) => res(init?.body ? JSON.parse(String(init.body)) : {}));
       await savePipeline(makeDef());
       expect(listCached()).toHaveLength(1);
@@ -303,10 +334,22 @@ describe('pipelineStorageRemote', () => {
       stubFetch(() => {
         throw new TypeError('Failed to fetch');
       });
-      await deletePipeline('p1');
+      await expect(deletePipeline('p1')).rejects.toThrow();
 
       expect(loadCached('p1')).toBeNull();
       expect(listCached()).toHaveLength(0);
+    });
+
+    it('rejects on a 5xx rather than resolving like a successful delete', async () => {
+      stubFetch(() => res({ error: 'boom' }, 503));
+      await expect(deletePipeline('p1')).rejects.toThrow();
+    });
+
+    it('resolves quietly when there is no API at this origin (SPA fallback)', async () => {
+      stubFetch(() => {
+        throw new SyntaxError('Unexpected token < in JSON at position 0');
+      });
+      await expect(deletePipeline('p1')).resolves.toBeUndefined();
     });
   });
 

@@ -106,6 +106,14 @@ function MetricTimeSeriesPanel({
     ? TIME_RANGES.find((t) => t.value === timeRange)?.label ?? ''
     : undefined;
 
+  // Provenance is PER CARD. Only four of the ten charts have a live series to
+  // fall back from; the other six plot `seeds.*` — deterministic LCG noise —
+  // no matter what the toolbar pill says. A single panel-level "live" badge
+  // vouched for all ten, so an operator read seeded step-duration p99,
+  // cluster CPU/memory, event rate, failure mix and approval latency as
+  // measurements of their cluster. Each card now says which it is.
+  const isSample = (live: unknown) => live === null || live === undefined;
+
   return (
     <>
       <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel">
@@ -176,14 +184,14 @@ function MetricTimeSeriesPanel({
         className="gap-4 p-4 overflow-y-auto flex-1 grid"
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
       >
-        <MetricCard title="Runs per minute" timeRange={timeLabel}>
+        <MetricCard title="Runs per minute" timeRange={timeLabel} sample={isSample(liveSeries?.runsPerMinute)}>
           <StackedAreaChart
             series={liveSeries?.runsPerMinute ?? seeds.runsPerMinute}
             height={180}
           />
         </MetricCard>
 
-        <MetricCard title="Step duration (p50/p95/p99)" timeRange={timeLabel}>
+        <MetricCard title="Step duration (p50/p95/p99)" timeRange={timeLabel} sample>
           <LineChart
             series={seeds.stepDuration}
             height={180}
@@ -191,14 +199,14 @@ function MetricTimeSeriesPanel({
           />
         </MetricCard>
 
-        <MetricCard title="LLM tokens" timeRange={timeLabel}>
+        <MetricCard title="LLM tokens" timeRange={timeLabel} sample={isSample(liveSeries?.llmTokens)}>
           <LineChart
             series={liveSeries?.llmTokens ?? seeds.llmTokens}
             height={180}
           />
         </MetricCard>
 
-        <MetricCard title="LLM cost" timeRange={timeLabel}>
+        <MetricCard title="LLM cost" timeRange={timeLabel} sample={isSample(liveSeries?.llmCost)}>
           <LineChart
             series={liveSeries?.llmCost ?? seeds.llmCost}
             height={180}
@@ -206,7 +214,7 @@ function MetricTimeSeriesPanel({
           />
         </MetricCard>
 
-        <MetricCard title="Cluster CPU" timeRange={timeLabel}>
+        <MetricCard title="Cluster CPU" timeRange={timeLabel} sample>
           <LineChart
             series={seeds.clusterCpu}
             height={180}
@@ -214,7 +222,7 @@ function MetricTimeSeriesPanel({
           />
         </MetricCard>
 
-        <MetricCard title="Cluster memory" timeRange={timeLabel}>
+        <MetricCard title="Cluster memory" timeRange={timeLabel} sample>
           <LineChart
             series={seeds.clusterMemory}
             height={180}
@@ -222,18 +230,18 @@ function MetricTimeSeriesPanel({
           />
         </MetricCard>
 
-        <MetricCard title="Event rate" timeRange={timeLabel}>
+        <MetricCard title="Event rate" timeRange={timeLabel} sample>
           <LineChart series={seeds.eventRate} height={180} />
         </MetricCard>
 
-        <MetricCard title="Active runs over time" timeRange={timeLabel}>
+        <MetricCard title="Active runs over time" timeRange={timeLabel} sample={isSample(liveSeries?.activeRuns)}>
           <LineChart
             series={liveSeries?.activeRuns ?? seeds.activeRuns}
             height={180}
           />
         </MetricCard>
 
-        <MetricCard title="Failure rate by type" timeRange={timeLabel}>
+        <MetricCard title="Failure rate by type" timeRange={timeLabel} sample>
           <BarChart
             data={seeds.failureRate}
             xKey="x"
@@ -243,7 +251,7 @@ function MetricTimeSeriesPanel({
           />
         </MetricCard>
 
-        <MetricCard title="Approval latency" timeRange={timeLabel}>
+        <MetricCard title="Approval latency" timeRange={timeLabel} sample>
           <LineChart
             series={seeds.approvalLatency}
             height={180}

@@ -77,6 +77,10 @@ vi.mock('../pipelines/hooks/usePipelineActivityRelay', () => ({
 
 vi.mock('../pipelines/context/WebSocketEventAdapter', () => ({
   useWebSocketPipelineEvents: vi.fn(),
+  usePipelineChannelTransport: () => ({
+    subscribe: vi.fn(),
+    unsubscribe: vi.fn(),
+  }),
 }));
 
 const listPipelinesMock = vi.fn<() => Promise<unknown[]>>(() => Promise.resolve([]));
