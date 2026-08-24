@@ -511,7 +511,7 @@ async function he() {
 		throw e;
 	}
 }
-async function ge(e) {
+async function W(e) {
 	try {
 		let t = await de(e);
 		return t && V(t), t ?? B(e);
@@ -520,7 +520,7 @@ async function ge(e) {
 		throw t;
 	}
 }
-async function W(e) {
+async function G(e) {
 	e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), V(e);
 	try {
 		return await fe(e);
@@ -529,7 +529,7 @@ async function W(e) {
 		throw t;
 	}
 }
-async function _e(e) {
+async function ge(e) {
 	ae(e);
 	try {
 		await pe(e);
@@ -538,7 +538,7 @@ async function _e(e) {
 		throw e;
 	}
 }
-async function ve(e) {
+async function _e(e) {
 	try {
 		let t = await me(e);
 		return t && V(t), t;
@@ -547,7 +547,7 @@ async function ve(e) {
 		throw e;
 	}
 }
-async function ye(e) {
+async function ve(e) {
 	let t = (/* @__PURE__ */ new Date()).toISOString(), n = {
 		id: crypto.randomUUID(),
 		type: "trigger",
@@ -585,8 +585,8 @@ async function ye(e) {
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineEditorContext.tsx
-var be = 500, xe = 50;
-function Se(e) {
+var ye = 500, be = 50;
+function xe(e) {
 	switch (e) {
 		case "trigger": return {
 			type: "trigger",
@@ -748,63 +748,74 @@ function Se(e) {
 		};
 	}
 }
-function G() {
+function K() {
 	return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
-var K = c(null);
-function Ce({ pipelineId: e, children: t }) {
-	let [n, r] = g(null), [i, a] = g(!1), [o, s] = g(null), [c, l] = g([]), [d, p] = g([]), _ = h(null);
+var q = c(null);
+function Se({ pipelineId: e, children: t }) {
+	let [n, r] = g(null), [i, a] = g(!1), [o, s] = g(null), [c, l] = g([]), [d, p] = g([]), _ = h(null), y = h(n);
+	y.current = n;
+	let b = u((e) => {
+		y.current === e && a(!1);
+	}, []);
 	f(() => {
 		let t = !1;
-		return r(null), a(!1), s(null), l([]), p([]), ge(e).then((e) => {
+		return r(null), a(!1), s(null), l([]), p([]), W(e).then((e) => {
 			t || (e && (e.nodes = e.nodes ?? [], e.edges = e.edges ?? []), r(e));
 		}), () => {
 			t = !0;
 		};
 	}, [e]), f(() => {
-		if (!(!i || !n)) return _.current && clearTimeout(_.current), _.current = setTimeout(() => {
-			W(n).then(() => a(!1));
-		}, be), () => {
+		if (!i || !n) return;
+		_.current && clearTimeout(_.current);
+		let e = n;
+		return _.current = setTimeout(() => {
+			G(e).then(() => b(e));
+		}, ye), () => {
 			_.current &&= (clearTimeout(_.current), null);
 		};
-	}, [n, i]);
-	let y = u((e) => {
+	}, [
+		n,
+		i,
+		b
+	]);
+	let x = u((e) => {
 		l((t) => {
 			let n = [...t, {
 				nodes: e.nodes,
 				edges: e.edges
 			}];
-			return n.length > xe && n.shift(), n;
+			return n.length > be && n.shift(), n;
 		}), p([]);
-	}, []), b = u((e) => {
+	}, []), S = u((e) => {
 		let t = null;
 		return r((n) => {
 			if (!n) return n;
-			y(n);
+			x(n);
 			let r = e(n);
 			return t = r, r;
 		}), a(!0), t;
-	}, [y]), x = u((e, t) => {
-		let n = G();
-		return b((r) => ({
+	}, [x]), C = u((e, t) => {
+		let n = K();
+		return S((r) => ({
 			...r,
 			nodes: [...r.nodes, {
 				id: n,
 				type: e,
 				position: t,
-				data: Se(e)
+				data: xe(e)
 			}]
 		})), n;
-	}, [b]), S = u((e, t) => {
-		b((n) => ({
+	}, [S]), w = u((e, t) => {
+		S((n) => ({
 			...n,
 			nodes: n.nodes.map((n) => n.id === e ? {
 				...n,
 				...t
 			} : n)
 		}));
-	}, [b]), C = u((e, t) => {
-		b((n) => ({
+	}, [S]), T = u((e, t) => {
+		S((n) => ({
 			...n,
 			nodes: n.nodes.map((n) => {
 				if (n.id !== e) return n;
@@ -818,17 +829,17 @@ function Ce({ pipelineId: e, children: t }) {
 				};
 			})
 		}));
-	}, [b]), w = u((e) => {
-		b((t) => ({
+	}, [S]), E = u((e) => {
+		S((t) => ({
 			...t,
 			nodes: t.nodes.filter((t) => t.id !== e),
 			edges: t.edges.filter((t) => t.source !== e && t.target !== e)
 		})), s((t) => t === e ? null : t);
-	}, [b]), T = u((e) => {
+	}, [S]), D = u((e) => {
 		let t = [];
-		return b((n) => {
+		return S((n) => {
 			let r = new Set(e), i = /* @__PURE__ */ new Map(), a = n.nodes.filter((e) => r.has(e.id)).map((e) => {
-				let n = G();
+				let n = K();
 				return i.set(e.id, n), t.push(n), {
 					...e,
 					id: n,
@@ -840,7 +851,7 @@ function Ce({ pipelineId: e, children: t }) {
 				};
 			}), o = n.edges.filter((e) => r.has(e.source) && r.has(e.target)).map((e) => ({
 				...e,
-				id: G(),
+				id: K(),
 				source: i.get(e.source) ?? e.source,
 				target: i.get(e.target) ?? e.target
 			}));
@@ -850,21 +861,21 @@ function Ce({ pipelineId: e, children: t }) {
 				edges: [...n.edges, ...o]
 			};
 		}), t;
-	}, [b]), E = u((e) => {
-		let t = G();
-		return b((n) => ({
+	}, [S]), O = u((e) => {
+		let t = K();
+		return S((n) => ({
 			...n,
 			edges: [...n.edges, {
 				id: t,
 				...e
 			}]
 		})), t;
-	}, [b]), D = u((e) => {
-		b((t) => ({
+	}, [S]), k = u((e) => {
+		S((t) => ({
 			...t,
 			edges: t.edges.filter((t) => t.id !== e)
 		}));
-	}, [b]), O = u((e) => {
+	}, [S]), A = u((e) => {
 		e.length !== 0 && r((t) => {
 			if (!t) return t;
 			let n = new Map(e.map((e) => [e.id, e.position])), r = {
@@ -879,30 +890,40 @@ function Ce({ pipelineId: e, children: t }) {
 			};
 			return ie(r), r;
 		});
-	}, []), k = u(() => {
-		n && (_.current &&= (clearTimeout(_.current), null), W(n).then(() => a(!1)));
-	}, [n]), A = u(() => {
-		n && (_.current &&= (clearTimeout(_.current), null), (async () => {
-			i && (await W(n), a(!1));
-			let e = await ve(n.id);
-			e && r(e);
-		})());
-	}, [n, i]), j = u(() => {
-		ge(e).then((e) => {
+	}, []), j = u(() => {
+		if (!n) return;
+		_.current &&= (clearTimeout(_.current), null);
+		let e = n;
+		G(e).then(() => b(e));
+	}, [n, b]), M = u(() => {
+		if (!n) return;
+		_.current &&= (clearTimeout(_.current), null);
+		let e = n;
+		(async () => {
+			i && (await G(e), b(e));
+			let t = await _e(n.id);
+			t && r(t);
+		})();
+	}, [
+		n,
+		i,
+		b
+	]), N = u(() => {
+		W(e).then((e) => {
 			r(e), a(!1), l([]), p([]);
 		});
-	}, [e]), M = u((e) => {
+	}, [e]), P = u((e) => {
 		let t = e.trim();
 		t && (r((e) => !e || e.name === t ? e : {
 			...e,
 			name: t
 		}), a(!0));
-	}, []), N = u((e) => {
+	}, []), F = u((e) => {
 		r((t) => !t || t.icon === e ? t : {
 			...t,
 			icon: e
 		}), a(!0);
-	}, []), P = u((e) => {
+	}, []), I = u((e) => {
 		r((t) => {
 			if (!t) return t;
 			let n = t.tags ?? [];
@@ -911,7 +932,7 @@ function Ce({ pipelineId: e, children: t }) {
 				tags: [...e]
 			};
 		}), a(!0);
-	}, []), F = u(() => {
+	}, []), L = u(() => {
 		l((e) => {
 			if (e.length === 0 || !n) return e;
 			let t = e[e.length - 1];
@@ -924,7 +945,7 @@ function Ce({ pipelineId: e, children: t }) {
 				edges: t.edges
 			}), a(!0), e.slice(0, -1);
 		});
-	}, [n]), I = u(() => {
+	}, [n]), R = u(() => {
 		p((e) => {
 			if (e.length === 0 || !n) return e;
 			let t = e[e.length - 1];
@@ -933,42 +954,40 @@ function Ce({ pipelineId: e, children: t }) {
 					nodes: n.nodes,
 					edges: n.edges
 				}];
-				return t.length > xe && t.shift(), t;
+				return t.length > be && t.shift(), t;
 			}), r({
 				...n,
 				nodes: t.nodes,
 				edges: t.edges
 			}), a(!0), e.slice(0, -1);
 		});
-	}, [n]), L = m(() => ({
+	}, [n]), z = m(() => ({
 		definition: n,
 		dirty: i,
 		selectedNodeId: o,
 		setSelectedNodeId: s,
-		addNode: x,
-		updateNode: S,
-		updateNodeData: C,
-		removeNode: w,
-		duplicateNodes: T,
-		addEdge: E,
-		removeEdge: D,
-		setPositions: O,
-		save: k,
-		publish: A,
-		revert: j,
-		undo: F,
-		redo: I,
+		addNode: C,
+		updateNode: w,
+		updateNodeData: T,
+		removeNode: E,
+		duplicateNodes: D,
+		addEdge: O,
+		removeEdge: k,
+		setPositions: A,
+		save: j,
+		publish: M,
+		revert: N,
+		undo: L,
+		redo: R,
 		canUndo: c.length > 0,
 		canRedo: d.length > 0,
-		rename: M,
-		setIcon: N,
-		setTags: P
+		rename: P,
+		setIcon: F,
+		setTags: I
 	}), [
 		n,
 		i,
 		o,
-		x,
-		S,
 		C,
 		w,
 		T,
@@ -978,27 +997,29 @@ function Ce({ pipelineId: e, children: t }) {
 		k,
 		A,
 		j,
-		F,
-		I,
-		c.length,
-		d.length,
 		M,
 		N,
-		P
+		L,
+		R,
+		c.length,
+		d.length,
+		P,
+		F,
+		I
 	]);
-	return /* @__PURE__ */ v(K.Provider, {
-		value: L,
+	return /* @__PURE__ */ v(q.Provider, {
+		value: z,
 		children: t
 	});
 }
-function we() {
-	let e = d(K);
+function Ce() {
+	let e = d(q);
 	if (!e) throw Error("usePipelineEditor must be used within a PipelineEditorProvider");
 	return e;
 }
 //#endregion
 //#region src/components/pipelines/hooks/useTriggerRun.ts
-function Te() {
+function we() {
 	let { idToken: e } = t(), [n, r] = g(!1), [i, a] = g(null), [o, s] = g(!1);
 	return {
 		triggerRun: u(async (t, n, i) => {
@@ -1035,14 +1056,14 @@ function Te() {
 }
 //#endregion
 //#region src/components/pipelines/context/WebSocketEventAdapter.ts
-var Ee = Object.freeze({
+var Te = Object.freeze({
 	"pipeline.run.resume-from-step": "pipeline:run:resumeFromStep",
 	"pipeline.run.resumed-from-step": "pipeline.run.resumed-from-step"
 });
-function De(e) {
-	return Ee[e] ?? e;
+function Ee(e) {
+	return Te[e] ?? e;
 }
-function Oe({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
+function De({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 	let { connectionState: i, sendMessage: a, onMessage: o } = n(), s = h(t);
 	f(() => {
 		s.current = t;
@@ -1058,7 +1079,7 @@ function Oe({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 			let t = e, n = t.eventType;
 			if (!n) return;
 			let r = {
-				eventType: De(n),
+				eventType: Ee(n),
 				payload: t.payload,
 				seq: typeof t.seq == "number" ? t.seq : 0,
 				sourceNodeId: typeof t.sourceNodeId == "string" ? t.sourceNodeId : "unknown",
@@ -1085,11 +1106,11 @@ function Oe({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 		o
 	]);
 }
-function q() {
+function J() {
 	let e = typeof globalThis < "u" ? globalThis.crypto : void 0;
 	return e && typeof e.randomUUID == "function" ? e.randomUUID() : `ws-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
-function ke() {
+function Oe() {
 	let { sendMessage: e } = n();
 	return {
 		subscribeToRun: u((t) => e({
@@ -1123,7 +1144,7 @@ function ke() {
 			channel: "pipeline:approvals"
 		}), [e]),
 		triggerRun: u((t, n = {}) => {
-			let r = n.correlationId ?? q();
+			let r = n.correlationId ?? J();
 			return e({
 				service: "pipeline",
 				action: "trigger",
@@ -1135,7 +1156,7 @@ function ke() {
 			}), r;
 		}, [e]),
 		cancelRun: u((t, n) => {
-			let r = n ?? q();
+			let r = n ?? J();
 			return e({
 				service: "pipeline",
 				action: "cancel",
@@ -1144,7 +1165,7 @@ function ke() {
 			}), r;
 		}, [e]),
 		resolveApproval: u((t, n, r, i = {}) => {
-			let a = i.correlationId ?? q();
+			let a = i.correlationId ?? J();
 			return e({
 				service: "pipeline",
 				action: "resolveApproval",
@@ -1157,7 +1178,7 @@ function ke() {
 			}), a;
 		}, [e]),
 		requestResumeFromStep: u((t, n, r) => {
-			let i = r ?? q();
+			let i = r ?? J();
 			return e({
 				service: "pipeline",
 				action: "resumeFromStep",
@@ -1168,7 +1189,7 @@ function ke() {
 		}, [e])
 	};
 }
-function Ae(e, t = {}) {
+function ke(e, t = {}) {
 	let { enabled: r = !0 } = t, { connectionState: i, sendMessage: a } = n();
 	f(() => {
 		if (!r || !e || i !== "connected") return;
@@ -1193,19 +1214,19 @@ function Ae(e, t = {}) {
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineNodeRuntimeContext.tsx
-var je = c(null);
-function Me({ value: e, children: t }) {
-	return /* @__PURE__ */ v(je.Provider, {
+var Ae = c(null);
+function je({ value: e, children: t }) {
+	return /* @__PURE__ */ v(Ae.Provider, {
 		value: e,
 		children: t
 	});
 }
-function J() {
-	return d(je);
+function Y() {
+	return d(Ae);
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineRunsContext.tsx
-var Y = 20, X = c(null);
+var Me = 20, X = c(null);
 function Ne(e, t) {
 	return e.steps[t] ?? {
 		nodeId: t,
@@ -1227,19 +1248,19 @@ function Z(e, t, n) {
 }
 function Pe(e) {
 	let t = Object.values(e);
-	if (t.length <= Y) return e;
-	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Y - n.length)), i = [...n, ...r], a = {};
+	if (t.length <= Me) return e;
+	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Me - n.length)), i = [...n, ...r], a = {};
 	for (let e of i) a[e.id] = e;
 	return a;
 }
 function Fe({ children: e }) {
-	let t = d(K), { triggerRun: n } = Te(), r = ke(), [i, a] = g({}), [s, c] = g(!1), l = h(/* @__PURE__ */ new Set()), p = h(null);
+	let t = d(q), { triggerRun: n } = we(), r = Oe(), [i, a] = g({}), [s, c] = g(!1), l = h(/* @__PURE__ */ new Set()), p = h(null);
 	f(() => {
 		let e = t?.definition?.id;
 		if (!e || p.current === e) return;
 		p.current = e, c(!0);
 		let n = !1;
-		return M(e, { limit: Y }).then((e) => {
+		return M(e, { limit: Me }).then((e) => {
 			n || a((t) => {
 				let n = { ...t };
 				for (let t of e.runs) n[t.id] || (n[t.id] = t);
@@ -1697,13 +1718,13 @@ function Le() {
 	return e;
 }
 function Re() {
-	let e = J(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
+	let e = Y(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
 	return m(() => n ? async (e) => {
 		await n(e);
 	} : r ?? (async () => {}), [n, r]);
 }
 function ze(e) {
-	let t = J(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
+	let t = Y(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
 		if (!n) return null;
 		let t = null, r = "";
 		for (let i of Object.values(n.runs)) {
@@ -2308,4 +2329,4 @@ function gt() {
 	}, [e]);
 }
 //#endregion
-export { O as $, Oe as A, W as B, Fe as C, Me as D, Re as E, ye as F, re as G, ae as H, _e as I, N as J, B as K, he as L, K as M, Ce as N, J as O, we as P, A as Q, ge as R, Ve as S, Le as T, se as U, oe as V, ce as W, j as X, M as Y, k as Z, We as _, ht as a, qe as b, lt as c, tt as d, D as et, et as f, Je as g, Ze as h, mt as i, Te as j, Ae as k, ot as l, Xe as m, dt as n, x as nt, pt as o, $e as p, V as q, gt as r, ft as s, ut as t, b as tt, nt as u, Ue as v, ze as w, He as x, Ke as y, ve as z };
+export { O as $, De as A, G as B, Fe as C, je as D, Re as E, ve as F, re as G, ae as H, ge as I, N as J, B as K, he as L, q as M, Se as N, Y as O, Ce as P, A as Q, W as R, Ve as S, Le as T, se as U, oe as V, ce as W, j as X, M as Y, k as Z, We as _, ht as a, qe as b, lt as c, tt as d, D as et, et as f, Je as g, Ze as h, mt as i, we as j, ke as k, ot as l, Xe as m, dt as n, x as nt, pt as o, $e as p, V as q, gt as r, ft as s, ut as t, b as tt, nt as u, Ue as v, ze as w, He as x, Ke as y, _e as z };

@@ -8,6 +8,105 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.90.0] — 2026-08-24
+
+Four parallel audits of areas the coverage numbers said were already
+covered. **15 bugs**, ~1,100 new test lines, `4,159 → 4,288` tests.
+
+The theme: a test file existing says nothing about which surface it covers.
+Every area below had tests. They covered rendering and click callbacks, and
+the bugs were all one layer down — in collapse mechanics, timers, focus,
+async ordering and registration.
+
+### Fixed — data loss and runaway requests
+
+- **Autosave silently dropped an edit made during a save**
+  (`pipelines/context/PipelineEditorContext.tsx`). The debounced save
+  resolved with an unconditional `setDirty(false)`, so persisting version A
+  cleared dirty even though the user had already typed B. The autosave
+  effect's cleanup then fired on the `dirty` transition and killed B's
+  pending timer, so **B was never written at all**. The editor read "saved"
+  while the last edit existed only in memory, and was lost on reload. Fixed
+  across autosave, `save` and `publish`.
+- **Request storm against a failing endpoint**
+  (`pipelines/judge/JudgmentResultViewer.tsx`). The lazy-load effect bailed
+  only on `lazyText !== null`, but a rejection leaves it null, and
+  `lazyLoading` was in the deps — so the true→false flip re-fetched, forever.
+  Measured **13,259 calls in a 100ms window**: the panel strobes between
+  spinner and error and pegs a core.
+- **A new section's items vanished** (`hooks/useDocumentItems.ts`). Keyed on
+  a section-id list that grows while mounted, overlapping batches replaced
+  the whole map instead of merging, and a per-section catch swallowed
+  failures into `[]` so a stale batch always resolved and always won.
+- **Phantom call broadcast to every collaborator** (`hooks/useVideoCall.ts`).
+  `joinSession` absorbs its own failures into `error` state and resolves
+  normally, so `startCall`'s bare `await` fell through to the CRDT meta
+  write: you saw an error locally, everyone else saw a live call nobody was
+  in and couldn't join. The comment above that `await` already claimed this
+  was prevented.
+- **Reader crashed the whole document on an unrecognised item status**
+  (`renderers/tasks/TasksReaderRenderer.tsx`), and — separately — silently
+  **dropped** such items, since three status groups were three positive
+  filters and anything matching none vanished with no error. Malformed
+  `links` metadata blanked the link-block renderers the same way.
+
+### Fixed — keyboard and screen-reader access
+
+- **Collapsed sidebar sections stayed fully reachable.** Collapse only set
+  `max-height: 0`, so screen-reader users still heard every row of a
+  "collapsed" section and Tab still walked into them. Now `inert` +
+  `aria-hidden`, keeping the height transition.
+- **Disclosure headers announced nothing** — a `role="button"` div with no
+  `aria-expanded` and no `aria-controls`. Now real buttons inside named
+  `<section>` regions.
+- **Space was dead** on every `role="button"` row (sidebar items, "+ New",
+  "See all", notification banners): Enter was handled, Space scrolled the
+  page instead.
+- **Focus was stranded on collapse** in two places — inside the hidden
+  subtree in `CollapsibleSidebar`, and on `<body>` in `AppLayout`, which
+  swaps the sidebar for `CollapsedIconStrip` and unmounts the focused
+  control. A keyboard user silently restarts their Tab walk from the top of
+  the page. `AppLayout` now hands focus to the counterpart control in
+  whichever chrome mounted, in both directions.
+- **The app menu had no way out** but re-clicking the trigger — Escape and
+  click-outside now close it and restore focus.
+- **Only the first reconnect-exhaustion ever toasted** (de-duped on the error
+  code, not the occurrence), and the toast's "Reconnect" button called a
+  **stale `onReconnect`** — it outlives the render that queued it, and the
+  prop is normally an inline arrow. Now via `useEventCallback`.
+
+### Fixed — theming
+
+`DecisionsReaderRenderer` group headers and the `TasksReaderRenderer`
+due-date pill used raw palette hexes while the badges beside them used tone
+tokens, so overriding `--color-warning-fg` re-toned half the component.
+
+### Changed
+
+- `useClickOutside` accepts `RefObject<T | null>` — its old signature
+  rejected every ref a component can actually create under React 19 types,
+  including the hook's own JSDoc example. Source-compatible widening.
+
+### Tests
+
+`renderers/` 10 → 13 files (134 → 201 tests), `AppLayout` 16 → 61,
+`CollapsibleSidebar` 26 → 39.
+
+Two of the new suites exist because the old ones **passed against the bug**:
+`registry.test.ts` registers its own fakes and never imports the barrel, so
+it was green against a completely empty registry — precisely the
+`sideEffects: false` failure mode. And the per-renderer suites test each
+half against a hand-typed fixture, so a metadata rename left both green
+while every real document showed its empty state; the new round-trip drives
+the editor and renders the reader from what it emitted.
+
+Every behavioural fix was verified by reverting it and confirming the new
+test fails. That step earned its keep three times this release: two theming
+tests matched on `#` and JSDOM normalises to `rgb()`, and one storm test
+damped 13k calls to 2 because `mockRejectedValue` reuses a single Error
+instance and `waitFor` nests its own `act`. All three passed against
+unfixed code before the revert step caught them.
+
 ## [2.89.0] — 2026-08-24
 
 ### Node config panel accessibility (106 fields across 30 panels)

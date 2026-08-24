@@ -1117,7 +1117,7 @@ function Qe(a) {
 	return t(() => {
 		if (!o || !c || s.length === 0) return;
 		m(!0);
-		let e = s.map(async (e) => {
+		let e = !1, t = s.map(async (e) => {
 			try {
 				let t = await fetch(`/api/documents/${o}/sections/${e}/items`, { headers: { Authorization: `Bearer ${c}` } });
 				if (!t.ok) throw Error(`Failed to load items for section ${e} (${t.status})`);
@@ -1132,13 +1132,16 @@ function Qe(a) {
 				};
 			}
 		});
-		Promise.all(e).then((e) => {
-			let t = {};
-			for (let { sectionId: n, items: r } of e) t[n] = r;
-			f(t);
+		return Promise.all(t).then((t) => {
+			if (e) return;
+			let n = {};
+			for (let { sectionId: e, items: r } of t) n[e] = r;
+			f(n);
 		}).finally(() => {
-			m(!1);
-		});
+			e || m(!1);
+		}), () => {
+			e = !0;
+		};
 	}, [
 		o,
 		c,
@@ -1711,9 +1714,9 @@ function lt(n) {
 				}), Error("This call has ended. The page has been updated.")) : Error(n.error);
 			}
 			let n = await t.json();
-			m(e), g(n.token), v(n.participantId), b(n.userId), f("active");
+			return m(e), g(n.token), v(n.participantId), b(n.userId), f("active"), !0;
 		} catch (e) {
-			S(e.message), f("error");
+			return S(e.message), f("error"), !1;
 		}
 	}, [
 		a,
@@ -1746,7 +1749,8 @@ function lt(n) {
 					throw Error(t.error);
 				}
 				let t = (await e.json()).sessionId;
-				await D(t), c({ activeCallSessionId: t }), l({
+				if (!await D(t)) return;
+				c({ activeCallSessionId: t }), l({
 					service: "crdt",
 					action: "updateDocumentMeta",
 					documentId: a,

@@ -86,6 +86,13 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > it is deliberately NOT declared in `engines`, because that field is
 > consumer-facing and the shipped bundles have no such requirement.
 
+> **`npm run build` does NOT work in a worktree**, despite the note above
+> saying worktrees work. That note was about `.storybook/main.ts` and
+> `demo/vite.config.ts`; the build script was missed. It invokes
+> `./node_modules/vite/bin/vite.js` by relative path, and a worktree has no
+> `node_modules` of its own. Run `npm run build` from the main checkout —
+> `npm test` and `npm run lint` are fine in a worktree.
+
 > **`npm run build` needs an 8GB heap** (wired into the script). The
 > `file:../realtime-modules` devDependency is a symlink, so api-extractor
 > resolves its `.d.ts` outside `node_modules`, treats it as local source,
@@ -336,7 +343,7 @@ tolerance, runId→id boundary mapping). New exports ship with tests.
 > a11y/keyboard bugs were living there. **A test file existing says nothing
 > about which surface it covers.**
 
-Remaining thin spots are lower-value: renderers 8/26 files, contexts
+Remaining thin spots are lower-value: contexts
 (thin providers), and parts of social/ingest/observability pages.
 
 ### Story coverage (audit #4, audit #5)

@@ -16,7 +16,7 @@ import { t as T } from "./SkeletonCard-CGe8XFPB.js";
 import { t as E } from "./Input-DcK2h-jK.js";
 import { t as D } from "./Textarea-C3t5PCLv.js";
 import { n as O, r as k, t as A } from "./EventStreamContext-C0egqLaF.js";
-import { $ as ee, B as te, C as ne, D as re, E as j, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as de, N as M, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as N, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as P, y as Ke, z as qe } from "./services-CKEeZxFL.js";
+import { $ as ee, B as te, C as ne, D as re, E as j, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as de, N as M, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as N, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as P, y as Ke, z as qe } from "./services-B6pPXTpF.js";
 import { t as Je } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as F } from "./Select-Z0TLUVeL.js";
 import { t as Ye } from "./Checkbox-CsbxMNgR.js";
@@ -19761,7 +19761,7 @@ function Wu({ pipelineId: e, runId: t }) {
 	let n = nt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null);
 	L(() => {
 		let n = !1;
-		return import("./services-CKEeZxFL.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
+		return import("./services-B6pPXTpF.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
 			r(e, t).then((e) => {
 				!n && e && c(e);
 			});
@@ -22572,11 +22572,11 @@ function of() {
 //#endregion
 //#region src/components/pipelines/judge/JudgmentResultViewer.tsx
 function sf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata: i = !0, showRawText: a = !1, className: o }) {
-	let s = of(), [c, l] = B(!1), [u, d] = B(null), [f, p] = B(!1), [m, h] = B(null), g = z(!0);
+	let s = of(), [c, l] = B(!1), [u, d] = B(null), [f, p] = B(!1), [m, h] = B(null), g = z(!0), _ = z(null);
 	L(() => (g.current = !0, () => {
 		g.current = !1;
 	}), []), L(() => {
-		c && (e.rawModelText || u === null && (f || e.rawTextTruncated && s && (p(!0), (async () => {
+		c && (e.rawModelText || e.rawTextTruncated && s && _.current !== e.judgmentId && (_.current = e.judgmentId, d(null), h(null), p(!0), (async () => {
 			try {
 				let t = await s.fetchRawText(e.judgmentId);
 				if (!g.current) return;
@@ -22587,17 +22587,15 @@ function sf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 			} finally {
 				g.current && p(!1);
 			}
-		})())));
+		})()));
 	}, [
 		c,
 		e.rawModelText,
 		e.rawTextTruncated,
 		e.judgmentId,
-		s,
-		u,
-		f
+		s
 	]);
-	let _ = e.rawModelText ?? u ?? null, v = !!e.rawModelText || !!e.rawTextTruncated;
+	let v = e.rawModelText ?? u ?? null, y = !!e.rawModelText || !!e.rawTextTruncated;
 	return /* @__PURE__ */ U("div", {
 		className: r("flex w-full flex-col gap-3 text-text-primary", o),
 		children: [
@@ -22648,7 +22646,7 @@ function sf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 					})
 				]
 			}) : null,
-			a && v ? /* @__PURE__ */ U("section", {
+			a && y ? /* @__PURE__ */ U("section", {
 				className: "flex flex-col gap-1.5",
 				children: [/* @__PURE__ */ U("button", {
 					type: "button",
@@ -22657,7 +22655,7 @@ function sf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 					"aria-expanded": c,
 					children: [c ? "▾" : "▸", " Raw model output"]
 				}), c ? /* @__PURE__ */ H(cf, {
-					text: _,
+					text: v,
 					loading: f,
 					error: m,
 					fallbackHint: e.rawTextTruncated && !s ? "Raw text was spilled to S3 but no JudgmentApi provider is wired." : null
