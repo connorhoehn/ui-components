@@ -122,14 +122,14 @@ function u(e, n) {
 	};
 }
 //#endregion
-//#region node_modules/lib0/map.js
+//#region ../../../node_modules/lib0/map.js
 var d = () => /* @__PURE__ */ new Map(), f = (e, t, n) => {
 	let r = e.get(t);
 	return r === void 0 && e.set(t, r = n()), r;
 }, p = () => /* @__PURE__ */ new Set(), m = Array.from;
 Array.isArray;
 //#endregion
-//#region node_modules/lib0/observable.js
+//#region ../../../node_modules/lib0/observable.js
 /* c8 ignore start */
 var h = class {
 	constructor() {
@@ -157,11 +157,11 @@ var h = class {
 }, g = Math.floor, _ = (e, t) => e < t ? e : t, v = (e, t) => e > t ? e : t;
 Number.isNaN;
 //#endregion
-//#region node_modules/lib0/number.js
+//#region ../../../node_modules/lib0/number.js
 var y = 2 ** 53 - 1;
 Number.isInteger, Number.isNaN, Number.parseInt;
 //#endregion
-//#region node_modules/lib0/string.js
+//#region ../../../node_modules/lib0/string.js
 var b = String.fromCharCode;
 String.fromCodePoint, b(65535);
 var x = (e) => e.toLowerCase(), S = /^\s*/g, C = (e) => e.replace(S, ""), w = /([A-Z])/g, T = (e, t) => C(e.replace(w, (e) => `${t}${x(e)}`)), E = (e) => {
@@ -177,7 +177,7 @@ O && O.decode(/* @__PURE__ */ new Uint8Array()).length === 1 &&
 /* c8 ignore next */
 (O = null);
 //#endregion
-//#region node_modules/lib0/encoding.js
+//#region ../../../node_modules/lib0/encoding.js
 var te = class {
 	constructor() {
 		this.cpos = 0, this.cbuf = /* @__PURE__ */ new Uint8Array(100), this.bufs = [];
@@ -414,7 +414,7 @@ W("production"), z && ye(process.env.FORCE_COLOR, [
 ]) || !H("--no-colors") && !W("no-color") && (!z || process.stdout.isTTY) && (!z || H("--color") || U("COLORTERM") !== null || (U("TERM") || "").includes("color"));
 /* c8 ignore stop */
 //#endregion
-//#region node_modules/lib0/buffer.js
+//#region ../../../node_modules/lib0/buffer.js
 var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je = (e) => {
 	let t = "";
 	for (let n = 0; n < e.byteLength; n++) t += b(e[n]);

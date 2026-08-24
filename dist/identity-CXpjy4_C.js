@@ -2195,17 +2195,22 @@ function se({ rates: e }) {
 		children: e
 	}), /* @__PURE__ */ A(a, { children: typeof t == "object" ? JSON.stringify(t) : String(t) })] }, e)) })] });
 }
-function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefresh: g, loading: _ }) {
-	let [v, y] = O(!1), b = D(null), x = t(g);
-	w(() => (v ? b.current = setInterval(x, 1e4) : b.current &&= (clearInterval(b.current), null), () => {
-		b.current && clearInterval(b.current);
-	}), [v, x]);
-	let T = C(async (e) => {
-		await p(e);
-	}, [p]), E = C(async (e) => {
-		await h(e);
-	}, [h]);
-	return _ ? /* @__PURE__ */ A(u, {
+function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: h, onPurge: g, onRefresh: _, loading: v }) {
+	let [y, b] = O(!1), x = D(null), T = t(_);
+	w(() => (y ? x.current = setInterval(T, 1e4) : x.current &&= (clearInterval(x.current), null), () => {
+		x.current && clearInterval(x.current);
+	}), [y, T]);
+	let [E, k] = O(null), [M, N] = O(null), P = C(async (e, t, n) => {
+		N(e), k(null);
+		try {
+			await t(e);
+		} catch (t) {
+			k(t instanceof Error ? `${n} failed for ${e}: ${t.message}` : `${n} failed for ${e}.`);
+		} finally {
+			N(null);
+		}
+	}, []), F = C((e) => P(e, h, "Redrive"), [P, h]), I = C((e) => P(e, g, "Purge"), [P, g]);
+	return v ? /* @__PURE__ */ A(u, {
 		title: "Diagnostics",
 		children: /* @__PURE__ */ A("div", {
 			className: "flex flex-col gap-4",
@@ -2222,14 +2227,14 @@ function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefr
 			children: [/* @__PURE__ */ j("label", {
 				className: "flex items-center gap-1.5 text-sm text-neutral cursor-pointer",
 				children: [/* @__PURE__ */ A(S, {
-					checked: v,
-					onChange: y,
+					checked: y,
+					onChange: b,
 					className: "rounded"
 				}), "Auto-refresh (10s)"]
 			}), /* @__PURE__ */ A(n, {
 				variant: "ghost",
 				size: "lg",
-				onClick: g,
+				onClick: _,
 				children: "Refresh"
 			})]
 		}),
@@ -2254,62 +2259,79 @@ function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: p, onPurge: h, onRefr
 				className: "p-5 text-center text-text-tertiary text-sm m-0",
 				children: "No rate data available."
 			})] }),
-			/* @__PURE__ */ j(r, { children: [/* @__PURE__ */ A("div", {
-				className: "px-5 py-3 border-b border-border bg-surface-panel",
-				children: /* @__PURE__ */ A("h3", {
-					className: "text-sm font-semibold text-text-primary m-0",
-					children: "Dead Letter Queue"
-				})
-			}), !f || f.length === 0 ? /* @__PURE__ */ A("p", {
-				className: "p-5 text-center text-text-tertiary text-sm m-0",
-				children: "Dead letter queue is empty."
-			}) : /* @__PURE__ */ j(o, { children: [/* @__PURE__ */ A(l, { children: /* @__PURE__ */ j("tr", { children: [
-				/* @__PURE__ */ A(s, { children: "ID" }),
-				/* @__PURE__ */ A(s, { children: "Error" }),
-				/* @__PURE__ */ A(s, { children: "Failed At" }),
-				/* @__PURE__ */ A(s, { children: "Retries" }),
-				/* @__PURE__ */ A(s, {
-					className: "text-right",
-					children: "Actions"
-				})
-			] }) }), /* @__PURE__ */ A(i, { children: f.map((e) => /* @__PURE__ */ j(d, { children: [
-				/* @__PURE__ */ j(a, {
-					className: "font-mono text-xs",
-					children: [e.id.substring(0, 12), "..."]
-				}),
-				/* @__PURE__ */ A(a, { children: /* @__PURE__ */ A(m, {
-					tone: "danger",
-					size: "xs",
-					children: e.error
-				}) }),
-				/* @__PURE__ */ A(a, {
-					className: "text-xs text-neutral",
-					children: new Date(e.failedAt).toLocaleString()
-				}),
-				/* @__PURE__ */ A(a, { children: /* @__PURE__ */ A(m, {
-					tone: "neutral",
-					size: "xs",
-					mono: !0,
-					children: e.retryCount
-				}) }),
-				/* @__PURE__ */ A(a, {
-					className: "text-right",
-					children: /* @__PURE__ */ j("div", {
-						className: "flex items-center justify-end gap-2",
-						children: [/* @__PURE__ */ A(n, {
-							variant: "ghost",
-							size: "sm",
-							onClick: () => T(e.id),
-							children: "Redrive"
-						}), /* @__PURE__ */ A(n, {
-							variant: "danger",
-							size: "sm",
-							onClick: () => E(e.id),
-							children: "Purge"
-						})]
+			/* @__PURE__ */ j(r, { children: [
+				/* @__PURE__ */ A("div", {
+					className: "px-5 py-3 border-b border-border bg-surface-panel",
+					children: /* @__PURE__ */ A("h3", {
+						className: "text-sm font-semibold text-text-primary m-0",
+						children: "Dead Letter Queue"
 					})
-				})
-			] }, e.id)) })] })] })
+				}),
+				E && /* @__PURE__ */ A("div", {
+					className: "px-5 pt-4",
+					children: /* @__PURE__ */ A(p, {
+						variant: "error",
+						onDismiss: () => k(null),
+						children: E
+					})
+				}),
+				!f || f.length === 0 ? /* @__PURE__ */ A("p", {
+					className: "p-5 text-center text-text-tertiary text-sm m-0",
+					children: "Dead letter queue is empty."
+				}) : /* @__PURE__ */ j(o, { children: [/* @__PURE__ */ A(l, { children: /* @__PURE__ */ j("tr", { children: [
+					/* @__PURE__ */ A(s, { children: "ID" }),
+					/* @__PURE__ */ A(s, { children: "Error" }),
+					/* @__PURE__ */ A(s, { children: "Failed At" }),
+					/* @__PURE__ */ A(s, { children: "Retries" }),
+					/* @__PURE__ */ A(s, {
+						className: "text-right",
+						children: "Actions"
+					})
+				] }) }), /* @__PURE__ */ A(i, { children: f.map((e) => /* @__PURE__ */ j(d, { children: [
+					/* @__PURE__ */ j(a, {
+						className: "font-mono text-xs",
+						children: [e.id.substring(0, 12), "..."]
+					}),
+					/* @__PURE__ */ A(a, { children: /* @__PURE__ */ A(m, {
+						tone: "danger",
+						size: "xs",
+						children: e.error
+					}) }),
+					/* @__PURE__ */ A(a, {
+						className: "text-xs text-neutral",
+						children: new Date(e.failedAt).toLocaleString()
+					}),
+					/* @__PURE__ */ A(a, { children: /* @__PURE__ */ A(m, {
+						tone: "neutral",
+						size: "xs",
+						mono: !0,
+						children: e.retryCount
+					}) }),
+					/* @__PURE__ */ A(a, {
+						className: "text-right",
+						children: /* @__PURE__ */ j("div", {
+							className: "flex items-center justify-end gap-2",
+							children: [/* @__PURE__ */ A(n, {
+								variant: "ghost",
+								size: "sm",
+								disabled: M === e.id,
+								onClick: () => {
+									F(e.id);
+								},
+								children: "Redrive"
+							}), /* @__PURE__ */ A(n, {
+								variant: "danger",
+								size: "sm",
+								disabled: M === e.id,
+								onClick: () => {
+									I(e.id);
+								},
+								children: "Purge"
+							})]
+						})
+					})
+				] }, e.id)) })] })
+			] })
 		]
 	});
 }

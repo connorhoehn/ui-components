@@ -269,6 +269,24 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
     lifecycle.handleRunClick();
   }, [lifecycle, runs, runDisabled, triggerInputKeys]);
 
+  // ── Failure surfaces ──────────────────────────────────────────────────
+  // Two silent-failure paths, both of which previously left the user staring
+  // at a UI that had not moved: a rejected autosave (the "Saving…" chip never
+  // resolved) and a "Retry from here" the server refused.
+  const { saveError, clearSaveError } = editor;
+  useEffect(() => {
+    if (!saveError) return;
+    toast(`Could not save: ${saveError}`, { type: 'error' });
+    clearSaveError();
+  }, [saveError, clearSaveError, toast]);
+
+  const { retryError, clearRetryError } = runs;
+  useEffect(() => {
+    if (!retryError) return;
+    toast(`Retry failed: ${retryError.message}`, { type: 'error' });
+    clearRetryError();
+  }, [retryError, clearRetryError, toast]);
+
   // ── Keyboard shortcuts ────────────────────────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

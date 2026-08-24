@@ -1601,6 +1601,18 @@ export declare interface PipelineEditorValue {
     save: () => void;
     publish: () => void;
     revert: () => void;
+    /**
+     * Reason the most recent remote persist failed, or `null` when the last
+     * write succeeded. Additive — a rejected `savePipeline` used to be an
+     * unhandled promise rejection with no user-visible trace, so the editor
+     * showed "Saving…" forever while the server had refused the write.
+     * `dirty` stays set while this is non-null: nothing is discarded, and the
+     * next edit (or teardown) retries exactly once. Never retried on a timer —
+     * a 403 would spin against the server forever.
+     */
+    saveError: string | null;
+    /** Dismiss `saveError`. Does not clear `dirty` and does not retry. */
+    clearSaveError: () => void;
     undo: () => void;
     redo: () => void;
     canUndo: boolean;
@@ -2044,10 +2056,33 @@ declare interface PipelineRunsValue {
      * Retry the most recent failed run from a specific step (per §18.4.4 / §17.6).
      * Finds the newest run that contained `nodeId` AND ended in `failed` AND had
      * `nodeId` itself fail; calls the backend retry-from-node API to spawn a new
-     * run that resumes traversal at `nodeId` and skips upstream nodes. No-op +
-     * console.warn when no eligible run is found.
+     * run that resumes traversal at `nodeId` and skips upstream nodes.
+     *
+     * Always resolves — never rejects. When no eligible run is found, or the
+     * API refuses, the reason lands on `retryError` (below) rather than in the
+     * returned promise.
      */
     retryFromStep: (nodeId: string) => Promise<void>;
+    /**
+     * Why the most recent `retryFromStep` did not start a run, or `null` when
+     * the last attempt succeeded (or none has been made). Additive field.
+     *
+     * `retryFromStep` is frozen at `Promise<void>` and deliberately still
+     * resolves on failure — making it reject would break every existing
+     * `onClick={() => retryFromStep(id)}` call site with an unhandled
+     * rejection. Until this field existed, both failure modes (the API
+     * rejecting, and no eligible failed run being found) were a `console`
+     * line and nothing else: the user clicked "Retry from here" and the UI
+     * did not move, which is indistinguishable from a retry that silently
+     * worked. `reason` separates the two so a host can word them differently.
+     */
+    retryError: {
+        nodeId: string;
+        message: string;
+        reason: 'no-failed-run' | 'request-failed';
+    } | null;
+    /** Dismiss `retryError`. Also cleared automatically by the next retry. */
+    clearRetryError: () => void;
     /**
      * Merge a polled PipelineRun into the in-memory runs map. Used by the
      * poll-based live status visualizer to inject fresh run data fetched from

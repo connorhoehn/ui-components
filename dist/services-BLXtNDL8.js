@@ -120,19 +120,19 @@ async function N(e, t) {
 }
 //#endregion
 //#region src/components/pipelines/persistence/pipelineStorage.ts
-var P = "ws_pipelines_v1_index", ee = "ws_pipelines_v1:";
-function F(e) {
-	return `${ee}${e}`;
+var P = "ws_pipelines_v1_index", F = "ws_pipelines_v1:";
+function I(e) {
+	return `${F}${e}`;
 }
-var I = !1;
-function L(e, t) {
+var L = !1;
+function R(e, t) {
 	try {
 		localStorage.setItem(e, t);
 	} catch (e) {
-		I || (I = !0, console.warn("[pipelineStorage] localStorage write failed", e));
+		L || (L = !0, console.warn("[pipelineStorage] localStorage write failed", e));
 	}
 }
-function R() {
+function z() {
 	try {
 		let e = localStorage.getItem(P);
 		if (!e) return [];
@@ -142,11 +142,11 @@ function R() {
 		return [];
 	}
 }
-function te(e) {
-	L(P, JSON.stringify(e));
+function B(e) {
+	R(P, JSON.stringify(e));
 }
-function ne(e) {
-	let t = R(), n = {
+function V(e) {
+	let t = z(), n = {
 		id: e.id,
 		name: e.name,
 		status: e.status,
@@ -157,38 +157,38 @@ function ne(e) {
 		let i = e.icon ?? t[r].icon, a = e.tags ?? t[r].tags, o = { ...n };
 		i && (o.icon = i), a && a.length > 0 && (o.tags = [...a]), t[r] = o;
 	}
-	te(t);
+	B(t);
 }
-function re(e) {
-	te(R().filter((t) => t.id !== e));
+function ee(e) {
+	B(z().filter((t) => t.id !== e));
 }
-function ie() {
-	return R();
+function H() {
+	return z();
 }
-function z(e) {
+function U(e) {
 	try {
-		let t = localStorage.getItem(F(e));
+		let t = localStorage.getItem(I(e));
 		return t ? JSON.parse(t) : null;
 	} catch {
 		return null;
 	}
 }
-function ae(e) {
-	e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), L(F(e.id), JSON.stringify(e)), ne(e);
+function te(e) {
+	e.version = (e.version ?? 0) + 1, e.updatedAt = (/* @__PURE__ */ new Date()).toISOString(), R(I(e.id), JSON.stringify(e)), V(e);
 }
-function oe(e) {
-	L(F(e.id), JSON.stringify(e));
+function ne(e) {
+	R(I(e.id), JSON.stringify(e));
 }
-function B(e) {
-	L(F(e.id), JSON.stringify(e)), ne(e);
+function W(e) {
+	R(I(e.id), JSON.stringify(e)), V(e);
 }
-function se(e) {
+function re(e) {
 	try {
-		localStorage.removeItem(F(e));
+		localStorage.removeItem(I(e));
 	} catch {}
-	re(e);
+	ee(e);
 }
-function ce(e) {
+function ie(e) {
 	let t = (/* @__PURE__ */ new Date()).toISOString(), n = crypto.randomUUID(), r = crypto.randomUUID(), i = crypto.randomUUID(), a = crypto.randomUUID(), o = crypto.randomUUID(), s = crypto.randomUUID(), c = crypto.randomUUID(), l = crypto.randomUUID(), u = crypto.randomUUID(), d = crypto.randomUUID(), f = crypto.randomUUID(), p = crypto.randomUUID(), m = {
 		type: "trigger",
 		triggerType: "manual"
@@ -415,10 +415,10 @@ function ce(e) {
 		updatedAt: t,
 		createdBy: e
 	};
-	return ae(E), E;
+	return te(E), E;
 }
-function le(e, t) {
-	let n = z(e);
+function ae(e, t) {
+	let n = U(e);
 	if (!n) return null;
 	let r = /* @__PURE__ */ new Map(), i = n.nodes.map((e) => {
 		let t = crypto.randomUUID();
@@ -446,20 +446,20 @@ function le(e, t) {
 		createdAt: o,
 		updatedAt: o
 	};
-	return ae(s), s;
+	return te(s), s;
 }
-function ue(e) {
-	let t = z(e);
+function oe(e) {
+	let t = U(e);
 	return t ? JSON.stringify(t, null, 2) : null;
 }
 //#endregion
 //#region src/components/pipelines/persistence/pipelineStorageRemote.ts
-function V(e = "") {
+function G(e = "") {
 	return `/api/pipelines/defs${e}`;
 }
-var de = { "Content-Type": "application/json" };
-async function fe() {
-	let e = await fetch(V("/"), { credentials: "include" });
+var se = { "Content-Type": "application/json" };
+async function ce() {
+	let e = await fetch(G("/"), { credentials: "include" });
 	if (!e.ok) throw Error(`listPipelinesRemote failed (${e.status})`);
 	return ((await e.json()).pipelines ?? []).map((e) => ({
 		id: e.id,
@@ -470,31 +470,31 @@ async function fe() {
 		...e.tags && e.tags.length > 0 ? { tags: [...e.tags] } : {}
 	}));
 }
-async function pe(e) {
-	let t = await fetch(V(`/${encodeURIComponent(e)}`), { credentials: "include" });
+async function le(e) {
+	let t = await fetch(G(`/${encodeURIComponent(e)}`), { credentials: "include" });
 	if (t.status === 404) return null;
 	if (!t.ok) throw Error(`loadPipelineRemote failed (${t.status})`);
 	return await t.json();
 }
-async function me(e) {
-	let t = await fetch(V(`/${encodeURIComponent(e.id)}`), {
+async function ue(e) {
+	let t = await fetch(G(`/${encodeURIComponent(e.id)}`), {
 		method: "PUT",
-		headers: de,
+		headers: se,
 		credentials: "include",
 		body: JSON.stringify(e)
 	});
 	if (!t.ok) throw Error(`savePipelineRemote failed (${t.status})`);
 	return await t.json();
 }
-async function he(e) {
-	let t = await fetch(V(`/${encodeURIComponent(e)}`), {
+async function de(e) {
+	let t = await fetch(G(`/${encodeURIComponent(e)}`), {
 		method: "DELETE",
 		credentials: "include"
 	});
 	if (!t.ok && t.status !== 404) throw Error(`deletePipelineRemote failed (${t.status})`);
 }
-async function ge(e) {
-	let t = await fetch(V(`/${encodeURIComponent(e)}/publish`), {
+async function fe(e) {
+	let t = await fetch(G(`/${encodeURIComponent(e)}/publish`), {
 		method: "POST",
 		credentials: "include"
 	});
@@ -502,61 +502,61 @@ async function ge(e) {
 	if (!t.ok) throw Error(`publishPipelineRemote failed (${t.status})`);
 	return await t.json();
 }
-function H(e) {
+function K(e) {
 	if (e instanceof SyntaxError) return !0;
 	let t = e.message || String(e);
 	return t.includes("NetworkError") || t.includes("Failed to fetch") || t.includes("network") || t.includes("ECONNREFUSED") || t.includes("Unexpected token") || t.includes("not valid JSON") || t.includes("500") || t.includes("502") || t.includes("503") || t.includes("504");
 }
-async function _e() {
+async function pe() {
 	try {
-		return await fe();
+		return await ce();
 	} catch (e) {
-		if (H(e)) return ie();
+		if (K(e)) return H();
 		throw e;
 	}
 }
-async function U(e) {
+async function me(e) {
 	try {
-		let t = await pe(e);
-		return t && B(t), t ?? z(e);
+		let t = await le(e);
+		return t && W(t), t ?? U(e);
 	} catch (t) {
-		if (H(t)) return z(e);
+		if (K(t)) return U(e);
 		throw t;
 	}
 }
-async function W(e) {
+async function he(e) {
 	let t = {
 		...e,
 		version: (e.version ?? 0) + 1,
 		updatedAt: (/* @__PURE__ */ new Date()).toISOString()
 	};
-	B(t);
+	W(t);
 	try {
-		return await me(t);
+		return await ue(t);
 	} catch (e) {
-		if (H(e)) return t;
+		if (K(e)) return t;
+		throw e;
+	}
+}
+async function ge(e) {
+	re(e);
+	try {
+		await de(e);
+	} catch (e) {
+		if (K(e)) return;
+		throw e;
+	}
+}
+async function _e(e) {
+	try {
+		let t = await fe(e);
+		return t && W(t), t;
+	} catch (e) {
+		if (K(e)) return null;
 		throw e;
 	}
 }
 async function ve(e) {
-	se(e);
-	try {
-		await he(e);
-	} catch (e) {
-		if (H(e)) return;
-		throw e;
-	}
-}
-async function ye(e) {
-	try {
-		let t = await ge(e);
-		return t && B(t), t;
-	} catch (e) {
-		if (H(e)) return null;
-		throw e;
-	}
-}
-async function be(e) {
 	let t = (/* @__PURE__ */ new Date()).toISOString(), n = {
 		id: crypto.randomUUID(),
 		type: "trigger",
@@ -584,18 +584,18 @@ async function be(e) {
 		updatedAt: t,
 		createdBy: e.createdBy
 	};
-	B(r);
+	W(r);
 	try {
-		await me(r);
+		await ue(r);
 	} catch (e) {
-		if (!H(e)) throw e;
+		if (!K(e)) throw e;
 	}
 	return r;
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineEditorContext.tsx
-var xe = 500, Se = 50;
-function Ce(e) {
+var ye = 500, be = 50;
+function xe(e) {
 	switch (e) {
 		case "trigger": return {
 			type: "trigger",
@@ -757,74 +757,84 @@ function Ce(e) {
 		};
 	}
 }
-function G() {
+function q() {
 	return typeof crypto < "u" && "randomUUID" in crypto ? crypto.randomUUID() : `id-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
-var K = c(null);
-function we({ pipelineId: e, children: t }) {
-	let [n, r] = g(null), [i, a] = g(!1), [o, s] = g(null), [c, l] = g([]), [d, p] = g([]), _ = h(null), y = h(n);
-	y.current = n;
-	let b = u((e) => {
-		y.current === e && a(!1);
-	}, []);
+var J = c(null);
+function Se({ pipelineId: e, children: t }) {
+	let [n, r] = g(null), [i, a] = g(!1), [o, s] = g(null), [c, l] = g([]), [d, p] = g([]), [_, y] = g(null), b = h(null), x = h(null), S = h(n);
+	S.current = n;
+	let C = u((e) => {
+		S.current === e && a(!1);
+	}, []), w = u(() => y(null), []), T = u((e) => (x.current = null, he(e).then(() => {
+		C(e), y(null);
+	}, (t) => {
+		x.current === null && (x.current = e), y(t instanceof Error ? t.message : "Failed to save the pipeline."), console.error("[PipelineEditor] save failed; changes kept pending", t);
+	})), [C]);
 	f(() => {
 		let t = !1;
-		return r(null), a(!1), s(null), l([]), p([]), U(e).catch((t) => (console.error("[PipelineEditor] load failed, using cached copy", t), z(e))).then((e) => {
+		return r(null), a(!1), y(null), s(null), l([]), p([]), me(e).catch((t) => (console.error("[PipelineEditor] load failed, using cached copy", t), U(e))).then((e) => {
 			t || (e && (e.nodes = e.nodes ?? [], e.edges = e.edges ?? []), r(e));
 		}), () => {
 			t = !0;
 		};
 	}, [e]), f(() => {
-		if (!i || !n) return;
-		_.current && clearTimeout(_.current);
+		if (!i || !n) {
+			x.current = null;
+			return;
+		}
+		b.current && clearTimeout(b.current);
 		let e = n;
-		return _.current = setTimeout(() => {
-			W(e).then(() => b(e));
-		}, xe), () => {
-			_.current &&= (clearTimeout(_.current), null);
+		return x.current = e, b.current = setTimeout(() => {
+			b.current = null, T(e);
+		}, ye), () => {
+			b.current &&= (clearTimeout(b.current), null);
 		};
 	}, [
 		n,
 		i,
-		b
-	]);
-	let x = u((e) => {
+		T
+	]), f(() => () => {
+		let e = x.current;
+		e && T(e);
+	}, [e, T]);
+	let E = u((e) => {
 		l((t) => {
 			let n = [...t, {
 				nodes: e.nodes,
 				edges: e.edges
 			}];
-			return n.length > Se && n.shift(), n;
+			return n.length > be && n.shift(), n;
 		}), p([]);
-	}, []), S = u((e) => {
+	}, []), D = u((e) => {
 		let t = null;
 		return r((n) => {
 			if (!n) return n;
-			x(n);
+			E(n);
 			let r = e(n);
 			return t = r, r;
 		}), a(!0), t;
-	}, [x]), C = u((e, t) => {
-		let n = G();
-		return S((r) => ({
+	}, [E]), O = u((e, t) => {
+		let n = q();
+		return D((r) => ({
 			...r,
 			nodes: [...r.nodes, {
 				id: n,
 				type: e,
 				position: t,
-				data: Ce(e)
+				data: xe(e)
 			}]
 		})), n;
-	}, [S]), w = u((e, t) => {
-		S((n) => ({
+	}, [D]), k = u((e, t) => {
+		D((n) => ({
 			...n,
 			nodes: n.nodes.map((n) => n.id === e ? {
 				...n,
 				...t
 			} : n)
 		}));
-	}, [S]), T = u((e, t) => {
-		S((n) => ({
+	}, [D]), A = u((e, t) => {
+		D((n) => ({
 			...n,
 			nodes: n.nodes.map((n) => {
 				if (n.id !== e) return n;
@@ -838,17 +848,17 @@ function we({ pipelineId: e, children: t }) {
 				};
 			})
 		}));
-	}, [S]), E = u((e) => {
-		S((t) => ({
+	}, [D]), j = u((e) => {
+		D((t) => ({
 			...t,
 			nodes: t.nodes.filter((t) => t.id !== e),
 			edges: t.edges.filter((t) => t.source !== e && t.target !== e)
 		})), s((t) => t === e ? null : t);
-	}, [S]), D = u((e) => {
+	}, [D]), M = u((e) => {
 		let t = [];
-		return S((n) => {
+		return D((n) => {
 			let r = new Set(e), i = /* @__PURE__ */ new Map(), a = n.nodes.filter((e) => r.has(e.id)).map((e) => {
-				let n = G();
+				let n = q();
 				return i.set(e.id, n), t.push(n), {
 					...e,
 					id: n,
@@ -860,7 +870,7 @@ function we({ pipelineId: e, children: t }) {
 				};
 			}), o = n.edges.filter((e) => r.has(e.source) && r.has(e.target)).map((e) => ({
 				...e,
-				id: G(),
+				id: q(),
 				source: i.get(e.source) ?? e.source,
 				target: i.get(e.target) ?? e.target
 			}));
@@ -870,22 +880,22 @@ function we({ pipelineId: e, children: t }) {
 				edges: [...n.edges, ...o]
 			};
 		}), t;
-	}, [S]), O = u((e) => {
-		let t = G();
-		return S((n) => ({
+	}, [D]), N = u((e) => {
+		let t = q();
+		return D((n) => ({
 			...n,
 			edges: [...n.edges, {
 				id: t,
 				...e
 			}]
 		})), t;
-	}, [S]), k = u((e) => {
-		S((t) => ({
+	}, [D]), P = u((e) => {
+		D((t) => ({
 			...t,
 			edges: t.edges.filter((t) => t.id !== e)
 		}));
-	}, [S]), A = u((e) => {
-		e.length !== 0 && r((t) => {
+	}, [D]), F = u((e) => {
+		e.length !== 0 && (r((t) => {
 			if (!t) return t;
 			let n = new Map(e.map((e) => [e.id, e.position])), r = {
 				...t,
@@ -897,42 +907,39 @@ function we({ pipelineId: e, children: t }) {
 					} : e;
 				})
 			};
-			return oe(r), r;
-		});
-	}, []), j = u(() => {
+			return ne(r), r;
+		}), a(!0));
+	}, []), I = u(() => {
+		n && (b.current &&= (clearTimeout(b.current), null), T(n));
+	}, [n, T]), L = u(() => {
 		if (!n) return;
-		_.current &&= (clearTimeout(_.current), null);
-		let e = n;
-		W(e).then(() => b(e));
-	}, [n, b]), M = u(() => {
-		if (!n) return;
-		_.current &&= (clearTimeout(_.current), null);
+		b.current &&= (clearTimeout(b.current), null);
 		let e = n;
 		(async () => {
-			i && (await W(e), b(e));
-			let t = await ye(n.id);
+			i && (await he(e), C(e));
+			let t = await _e(n.id);
 			t && r(t);
 		})();
 	}, [
 		n,
 		i,
-		b
-	]), N = u(() => {
-		U(e).then((e) => {
-			r(e), a(!1), l([]), p([]);
+		C
+	]), R = u(() => {
+		me(e).then((e) => {
+			r(e), a(!1), y(null), l([]), p([]);
 		});
-	}, [e]), P = u((e) => {
+	}, [e]), z = u((e) => {
 		let t = e.trim();
 		t && (r((e) => !e || e.name === t ? e : {
 			...e,
 			name: t
 		}), a(!0));
-	}, []), ee = u((e) => {
+	}, []), B = u((e) => {
 		r((t) => !t || t.icon === e ? t : {
 			...t,
 			icon: e
 		}), a(!0);
-	}, []), F = u((e) => {
+	}, []), V = u((e) => {
 		r((t) => {
 			if (!t) return t;
 			let n = t.tags ?? [];
@@ -941,7 +948,7 @@ function we({ pipelineId: e, children: t }) {
 				tags: [...e]
 			};
 		}), a(!0);
-	}, []), I = u(() => {
+	}, []), ee = u(() => {
 		l((e) => {
 			if (e.length === 0 || !n) return e;
 			let t = e[e.length - 1];
@@ -954,7 +961,7 @@ function we({ pipelineId: e, children: t }) {
 				edges: t.edges
 			}), a(!0), e.slice(0, -1);
 		});
-	}, [n]), L = u(() => {
+	}, [n]), H = u(() => {
 		p((e) => {
 			if (e.length === 0 || !n) return e;
 			let t = e[e.length - 1];
@@ -963,78 +970,82 @@ function we({ pipelineId: e, children: t }) {
 					nodes: n.nodes,
 					edges: n.edges
 				}];
-				return t.length > Se && t.shift(), t;
+				return t.length > be && t.shift(), t;
 			}), r({
 				...n,
 				nodes: t.nodes,
 				edges: t.edges
 			}), a(!0), e.slice(0, -1);
 		});
-	}, [n]), R = m(() => ({
+	}, [n]), te = m(() => ({
 		definition: n,
 		dirty: i,
 		selectedNodeId: o,
 		setSelectedNodeId: s,
-		addNode: C,
-		updateNode: w,
-		updateNodeData: T,
-		removeNode: E,
-		duplicateNodes: D,
-		addEdge: O,
-		removeEdge: k,
-		setPositions: A,
-		save: j,
-		publish: M,
-		revert: N,
-		undo: I,
-		redo: L,
+		addNode: O,
+		updateNode: k,
+		updateNodeData: A,
+		removeNode: j,
+		duplicateNodes: M,
+		addEdge: N,
+		removeEdge: P,
+		setPositions: F,
+		save: I,
+		publish: L,
+		revert: R,
+		saveError: _,
+		clearSaveError: w,
+		undo: ee,
+		redo: H,
 		canUndo: c.length > 0,
 		canRedo: d.length > 0,
-		rename: P,
-		setIcon: ee,
-		setTags: F
+		rename: z,
+		setIcon: B,
+		setTags: V
 	}), [
 		n,
 		i,
 		o,
-		C,
-		w,
-		T,
-		E,
-		D,
 		O,
 		k,
 		A,
 		j,
 		M,
 		N,
+		P,
+		F,
 		I,
 		L,
+		R,
+		_,
+		w,
+		ee,
+		H,
 		c.length,
 		d.length,
-		P,
-		ee,
-		F
+		z,
+		B,
+		V
 	]);
-	return /* @__PURE__ */ v(K.Provider, {
-		value: R,
+	return /* @__PURE__ */ v(J.Provider, {
+		value: te,
 		children: t
 	});
 }
-function Te() {
-	let e = d(K);
+function Ce() {
+	let e = d(J);
 	if (!e) throw Error("usePipelineEditor must be used within a PipelineEditorProvider");
 	return e;
 }
 //#endregion
 //#region src/components/pipelines/hooks/useTriggerRun.ts
-function Ee() {
+function we() {
 	let { idToken: e } = t(), [n, r] = g(!1), [i, a] = g(null), [o, s] = g(!1);
 	return {
 		triggerRun: u(async (t, n, i) => {
 			r(!0), a(null), s(!1);
 			try {
-				let r = z(t), o = {};
+				let r = U(t), o = {};
 				n && (o.triggerPayload = n), r && (o.definition = r);
 				let c = {
 					"Content-Type": "application/json",
@@ -1065,14 +1076,14 @@ function Ee() {
 }
 //#endregion
 //#region src/components/pipelines/context/WebSocketEventAdapter.ts
-var De = Object.freeze({
+var Te = Object.freeze({
 	"pipeline.run.resume-from-step": "pipeline:run:resumeFromStep",
 	"pipeline.run.resumed-from-step": "pipeline.run.resumed-from-step"
 });
-function Oe(e) {
-	return De[e] ?? e;
+function Ee(e) {
+	return Te[e] ?? e;
 }
-function ke({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
+function De({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 	let { connectionState: i, sendMessage: a, onMessage: o } = n(), s = h(t);
 	f(() => {
 		s.current = t;
@@ -1088,7 +1099,7 @@ function ke({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 			let t = e, n = t.eventType;
 			if (!n) return;
 			let r = {
-				eventType: Oe(n),
+				eventType: Ee(n),
 				payload: t.payload,
 				seq: typeof t.seq == "number" ? t.seq : 0,
 				sourceNodeId: typeof t.sourceNodeId == "string" ? t.sourceNodeId : "unknown",
@@ -1115,11 +1126,11 @@ function ke({ channel: e = "pipeline:all", onEvent: t, enabled: r = !1 }) {
 		o
 	]);
 }
-function q() {
+function Y() {
 	let e = typeof globalThis < "u" ? globalThis.crypto : void 0;
 	return e && typeof e.randomUUID == "function" ? e.randomUUID() : `ws-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
-function Ae() {
+function Oe() {
 	let { sendMessage: e } = n();
 	return {
 		subscribeToRun: u((t) => e({
@@ -1153,7 +1164,7 @@ function Ae() {
 			channel: "pipeline:approvals"
 		}), [e]),
 		triggerRun: u((t, n = {}) => {
-			let r = n.correlationId ?? q();
+			let r = n.correlationId ?? Y();
 			return e({
 				service: "pipeline",
 				action: "trigger",
@@ -1165,7 +1176,7 @@ function Ae() {
 			}), r;
 		}, [e]),
 		cancelRun: u((t, n) => {
-			let r = n ?? q();
+			let r = n ?? Y();
 			return e({
 				service: "pipeline",
 				action: "cancel",
@@ -1174,7 +1185,7 @@ function Ae() {
 			}), r;
 		}, [e]),
 		resolveApproval: u((t, n, r, i = {}) => {
-			let a = i.correlationId ?? q();
+			let a = i.correlationId ?? Y();
 			return e({
 				service: "pipeline",
 				action: "resolveApproval",
@@ -1187,7 +1198,7 @@ function Ae() {
 			}), a;
 		}, [e]),
 		requestResumeFromStep: u((t, n, r) => {
-			let i = r ?? q();
+			let i = r ?? Y();
 			return e({
 				service: "pipeline",
 				action: "resumeFromStep",
@@ -1198,7 +1209,7 @@ function Ae() {
 		}, [e])
 	};
 }
-function je(e, t = {}) {
+function ke(e, t = {}) {
 	let { enabled: r = !0 } = t, { connectionState: i, sendMessage: a } = n();
 	f(() => {
 		if (!r || !e || i !== "connected") return;
@@ -1223,19 +1234,19 @@ function je(e, t = {}) {
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineNodeRuntimeContext.tsx
-var Me = c(null);
-function Ne({ value: e, children: t }) {
-	return /* @__PURE__ */ v(Me.Provider, {
+var Ae = c(null);
+function je({ value: e, children: t }) {
+	return /* @__PURE__ */ v(Ae.Provider, {
 		value: e,
 		children: t
 	});
 }
-function J() {
-	return d(Me);
+function Me() {
+	return d(Ae);
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineRunsContext.tsx
-var Y = 20, X = c(null);
+var Ne = 20, X = c(null);
 function Pe(e, t) {
 	return e.steps[t] ?? {
 		nodeId: t,
@@ -1260,19 +1271,19 @@ function Fe(e) {
 }
 function Ie(e) {
 	let t = Object.values(e);
-	if (t.length <= Y) return e;
-	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Y - n.length)), i = [...n, ...r], a = {};
+	if (t.length <= Ne) return e;
+	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Ne - n.length)), i = [...n, ...r], a = {};
 	for (let e of i) a[e.id] = e;
 	return a;
 }
 function Le({ children: e }) {
-	let t = d(K), { triggerRun: n } = Ee(), r = Ae(), [i, a] = g({}), [s, c] = g(!1), l = h(/* @__PURE__ */ new Set()), p = h(null);
+	let t = d(J), { triggerRun: n } = we(), r = Oe(), [i, a] = g({}), [s, c] = g(!1), [l, p] = g(null), _ = h(/* @__PURE__ */ new Set()), y = h(null);
 	f(() => {
 		let e = t?.definition?.id;
-		if (!e || p.current === e) return;
-		p.current = e, c(!0);
+		if (!e || y.current === e) return;
+		y.current = e, c(!0);
 		let n = !1;
-		return M(e, { limit: Y }).then((e) => {
+		return M(e, { limit: Ne }).then((e) => {
 			n || a((t) => {
 				let n = { ...t };
 				for (let t of e.runs) n[t.id] || (n[t.id] = t);
@@ -1293,8 +1304,8 @@ function Le({ children: e }) {
 		let { eventType: t, payload: n } = e;
 		a((e) => Re(e, t, n));
 	}), f(() => {
-		for (let e of Object.values(i)) if ((e.status === "completed" || e.status === "failed" || e.status === "cancelled") && !l.current.has(e.id)) {
-			l.current.add(e.id);
+		for (let e of Object.values(i)) if ((e.status === "completed" || e.status === "failed" || e.status === "cancelled") && !_.current.has(e.id)) {
+			_.current.add(e.id);
 			try {
 				k(e.pipelineId, e);
 			} catch (e) {
@@ -1302,37 +1313,46 @@ function Le({ children: e }) {
 			}
 		}
 	}, [i]);
-	let _ = u(async (e, t) => {
+	let b = u(async (e, t) => {
 		let r = await n(e, t);
 		if (!r) throw Error("Trigger failed (REST POST did not return a runId)");
 		return r;
-	}, [n]), y = u((e) => {
+	}, [n]), S = u((e) => {
 		r.cancelRun(e);
-	}, [r]), b = u((e, t, n, i) => {
+	}, [r]), C = u((e, t, n, i) => {
 		r.resolveApproval(e, t, n, { comment: i });
-	}, [r]), S = h(i);
+	}, [r]), w = h(i);
 	f(() => {
-		S.current = i;
+		w.current = i;
 	}, [i]);
-	let C = u(async (e) => {
-		let t = Object.values(S.current).filter((e) => e.status === "failed").filter((t) => t.steps[e]?.status === "failed").sort((e, t) => t.startedAt.localeCompare(e.startedAt))[0];
+	let T = u(() => p(null), []), E = u(async (e) => {
+		p(null);
+		let t = Object.values(w.current).filter((e) => e.status === "failed").filter((t) => t.steps[e]?.status === "failed").sort((e, t) => t.startedAt.localeCompare(e.startedAt))[0];
 		if (!t) {
-			console.warn("[PipelineRuns] retryFromStep — no failed run found for node", e);
+			console.warn("[PipelineRuns] retryFromStep — no failed run found for node", e), p({
+				nodeId: e,
+				reason: "no-failed-run",
+				message: "No failed run to retry from. The run history may have been cleared, or this node did not fail."
+			});
 			return;
 		}
 		try {
 			await x(t.pipelineId, t.id, e);
-		} catch (e) {
-			console.error("[PipelineRuns] retryFromNode API failed", e);
+		} catch (t) {
+			console.error("[PipelineRuns] retryFromNode API failed", t), p({
+				nodeId: e,
+				reason: "request-failed",
+				message: t instanceof Error ? t.message : "Retry request failed."
+			});
 		}
-	}, []), w = u(async (e, t, n) => {
+	}, []), O = u(async (e, t, n) => {
 		let r = {
 			...n ?? {},
 			__breakpoints: t
 		};
-		return _(e, r);
-	}, [_]), T = u((e, t, n = "continue") => {
-		let r = S.current[e]?.pipelineId ?? "unknown";
+		return b(e, r);
+	}, [b]), A = u((e, t, n = "continue") => {
+		let r = w.current[e]?.pipelineId ?? "unknown";
 		fetch(`/api/pipelines/${encodeURIComponent(r)}/runs/${encodeURIComponent(e)}/breakpoint/${encodeURIComponent(t)}/resolve`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -1340,8 +1360,8 @@ function Le({ children: e }) {
 		}).catch((e) => {
 			console.error("[PipelineRuns] resolveBreakpoint API failed", e);
 		});
-	}, []), E = u(async (e, t, n, r) => {
-		let i = S.current[e]?.pipelineId ?? "unknown", a = `/api/pipelines/${encodeURIComponent(i)}/runs/${encodeURIComponent(e)}/breakpoint/${encodeURIComponent(t)}/patch`, o = await fetch(a, {
+	}, []), j = u(async (e, t, n, r) => {
+		let i = w.current[e]?.pipelineId ?? "unknown", a = `/api/pipelines/${encodeURIComponent(i)}/runs/${encodeURIComponent(e)}/breakpoint/${encodeURIComponent(t)}/patch`, o = await fetch(a, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
@@ -1364,13 +1384,13 @@ function Le({ children: e }) {
 		}
 		let s = await o.text().catch(() => "");
 		throw Error(`applyContextPatch HTTP ${o.status}: ${s}`);
-	}, []), O = u(async (e, t, n) => {
-		let r = S.current[e]?.pipelineId ?? "unknown", i = `/api/pipelines/${encodeURIComponent(r)}/runs/${encodeURIComponent(e)}/breakpoint/${encodeURIComponent(t)}/patch/${encodeURIComponent(n)}`, a = await fetch(i, { method: "DELETE" });
+	}, []), N = u(async (e, t, n) => {
+		let r = w.current[e]?.pipelineId ?? "unknown", i = `/api/pipelines/${encodeURIComponent(r)}/runs/${encodeURIComponent(e)}/breakpoint/${encodeURIComponent(t)}/patch/${encodeURIComponent(n)}`, a = await fetch(i, { method: "DELETE" });
 		if (a.status !== 204) {
 			let e = await a.text().catch(() => "");
 			throw Error(`revertContextPatch HTTP ${a.status}: ${e}`);
 		}
-	}, []), A = u((e) => {
+	}, []), P = u((e) => {
 		a((t) => {
 			let n = t[e.id];
 			return n && (Fe(n.status) && !Fe(e.status) || n.status === e.status && Object.keys(n.steps).length >= Object.keys(e.steps).length) ? t : {
@@ -1378,33 +1398,37 @@ function Le({ children: e }) {
 				[e.id]: e
 			};
 		});
-	}, []), j = m(() => Object.values(i).filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint").map((e) => e.id), [i]), N = m(() => ({
+	}, []), F = m(() => Object.values(i).filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint").map((e) => e.id), [i]), I = m(() => ({
 		runs: i,
-		activeRunIds: j,
-		triggerRun: _,
-		triggerDebugRun: w,
-		cancelRun: y,
-		resolveApproval: b,
-		resolveBreakpoint: T,
-		applyContextPatch: E,
-		revertContextPatch: O,
-		retryFromStep: C,
-		ingestRun: A
+		activeRunIds: F,
+		triggerRun: b,
+		triggerDebugRun: O,
+		cancelRun: S,
+		resolveApproval: C,
+		resolveBreakpoint: A,
+		applyContextPatch: j,
+		revertContextPatch: N,
+		retryFromStep: E,
+		retryError: l,
+		clearRetryError: T,
+		ingestRun: P
 	}), [
 		i,
-		j,
-		_,
-		w,
-		y,
+		F,
 		b,
-		T,
-		E,
 		O,
+		S,
 		C,
-		A
+		A,
+		j,
+		N,
+		E,
+		l,
+		T,
+		P
 	]);
 	return /* @__PURE__ */ v(X.Provider, {
-		value: N,
+		value: I,
 		children: e
 	});
 }
@@ -1730,13 +1754,13 @@ function ze() {
 	return e;
 }
 function Be() {
-	let e = J(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
+	let e = Me(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
 	return m(() => n ? async (e) => {
 		await n(e);
 	} : r ?? (async () => {}), [n, r]);
 }
 function Ve(e) {
-	let t = J(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
+	let t = Me(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
 		if (!n) return null;
 		let t = null, r = "";
 		for (let i of Object.values(n.runs)) {
@@ -1753,7 +1777,7 @@ function Q(e, t) {
 	return `${e}::${t}`;
 }
 function He(e, t) {
-	let n = z(e);
+	let n = U(e);
 	if (!n) return { requiredCount: 1 };
 	let r = n.nodes.find((e) => e.id === t);
 	if (!r || r.data.type !== "approval") return { requiredCount: 1 };
@@ -1771,7 +1795,7 @@ function Ue() {
 			if (r.status === "awaiting_approval") for (let t in r.steps) {
 				let i = r.steps[t];
 				if (i.status !== "awaiting") continue;
-				let a = He(r.pipelineId, t), o = z(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
+				let a = He(r.pipelineId, t), o = U(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
 				e[Q(n, t)] = {
 					runId: n,
 					pipelineId: r.pipelineId,
@@ -2345,4 +2369,4 @@ function vt() {
 	}, [e]);
 }
 //#endregion
-export { O as $, ke as A, W as B, Le as C, Ne as D, Be as E, be as F, ie as G, se as H, ve as I, N as J, z as K, _e as L, K as M, we as N, J as O, Te as P, A as Q, U as R, Ue as S, ze as T, le as U, ce as V, ue as W, j as X, M as Y, k as Z, Ke as _, _t as a, Ye as b, dt as c, rt as d, D as et, nt as f, Xe as g, $e as h, gt as i, Ee as j, je as k, ct as l, Qe as m, pt as n, x as nt, ht as o, tt as p, ae as q, vt as r, mt as s, ft as t, b as tt, it as u, Ge as v, Ve as w, We as x, Je as y, ye as z };
+export { O as $, De as A, he as B, Le as C, je as D, Be as E, ve as F, H as G, re as H, ge as I, N as J, U as K, pe as L, J as M, Se as N, Me as O, Ce as P, A as Q, me as R, Ue as S, ze as T, ae as U, ie as V, oe as W, j as X, M as Y, k as Z, Ke as _, _t as a, Ye as b, dt as c, rt as d, D as et, nt as f, Xe as g, $e as h, gt as i, we as j, ke as k, ct as l, Qe as m, pt as n, x as nt, ht as o, tt as p, te as q, vt as r, mt as s, ft as t, b as tt, it as u, Ge as v, Ve as w, We as x, Je as y, _e as z };

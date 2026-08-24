@@ -10,6 +10,7 @@ import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../forms/Checkbox';
 import Chip from '../../shared/Chip';
+import Banner from '../../shared/Banner';
 
 export interface DiagnosticsPageProps {
   diagnostics?: Record<string, unknown>;
@@ -100,18 +101,46 @@ export function DiagnosticsPage({
     };
   }, [autoRefresh, refresh]);
 
-  const handleRedrive = useCallback(
-    async (id: string) => {
-      await onRedrive(id);
+  // Redrive/Purge were bare pass-throughs: a rejected promise became an
+  // unhandled rejection and the table simply did not change. Purge is the
+  // dangerous half — an admin who purges a poison message, sees no error and
+  // no row removal, reads that as a stale list and moves on believing the
+  // queue is clean. Same treatment the six sibling admin pages got in
+  // v2.91.0: keep the row, name the reason, role="alert".
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const runDlqAction = useCallback(
+    async (
+      id: string,
+      action: (id: string) => Promise<void>,
+      label: string,
+    ) => {
+      setBusyId(id);
+      setActionError(null);
+      try {
+        await action(id);
+      } catch (err: unknown) {
+        setActionError(
+          err instanceof Error
+            ? `${label} failed for ${id}: ${err.message}`
+            : `${label} failed for ${id}.`,
+        );
+      } finally {
+        setBusyId(null);
+      }
     },
-    [onRedrive],
+    [],
+  );
+
+  const handleRedrive = useCallback(
+    (id: string) => runDlqAction(id, onRedrive, 'Redrive'),
+    [runDlqAction, onRedrive],
   );
 
   const handlePurge = useCallback(
-    async (id: string) => {
-      await onPurge(id);
-    },
-    [onPurge],
+    (id: string) => runDlqAction(id, onPurge, 'Purge'),
+    [runDlqAction, onPurge],
   );
 
   if (loading) {
@@ -170,6 +199,13 @@ export function DiagnosticsPage({
         <div className="px-5 py-3 border-b border-border bg-surface-panel">
           <h3 className="text-sm font-semibold text-text-primary m-0">Dead Letter Queue</h3>
         </div>
+        {actionError && (
+          <div className="px-5 pt-4">
+            <Banner variant="error" onDismiss={() => setActionError(null)}>
+              {actionError}
+            </Banner>
+          </div>
+        )}
         {!dlq || dlq.length === 0 ? (
           <p className="p-5 text-center text-text-tertiary text-sm m-0">Dead letter queue is empty.</p>
         ) : (
@@ -196,10 +232,20 @@ export function DiagnosticsPage({
                   </TableTd>
                   <TableTd className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => handleRedrive(entry.id)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        disabled={busyId === entry.id}
+                        onClick={() => { void handleRedrive(entry.id); }}
+                      >
                         Redrive
                       </Button>
-                      <Button variant="danger" size="sm" onClick={() => handlePurge(entry.id)}>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        disabled={busyId === entry.id}
+                        onClick={() => { void handlePurge(entry.id); }}
+                      >
                         Purge
                       </Button>
                     </div>

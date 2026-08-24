@@ -70,6 +70,18 @@ export interface PipelineEditorValue {
   save: () => void;
   publish: () => void;
   revert: () => void;
+  /**
+   * Reason the most recent remote persist failed, or `null` when the last
+   * write succeeded. Additive — a rejected `savePipeline` used to be an
+   * unhandled promise rejection with no user-visible trace, so the editor
+   * showed "Saving…" forever while the server had refused the write.
+   * `dirty` stays set while this is non-null: nothing is discarded, and the
+   * next edit (or teardown) retries exactly once. Never retried on a timer —
+   * a 403 would spin against the server forever.
+   */
+  saveError: string | null;
+  /** Dismiss `saveError`. Does not clear `dirty` and does not retry. */
+  clearSaveError: () => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -255,7 +267,17 @@ export function PipelineEditorProvider({
   const [undoStack, setUndoStack] = useState<HistoryFrame[]>([]);
   const [redoStack, setRedoStack] = useState<HistoryFrame[]>([]);
 
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // The definition that has been edited but not yet handed to `savePipeline`.
+  // DELIBERATELY a separate ref from `saveTimerRef`: an earlier bug in this
+  // repo tracked "is a write owed?" by looking at the timer handle, so
+  // clearing the timer — which every cleanup does — also erased the fact that
+  // a write was owed, and the flush silently wrote nothing. The timer answers
+  // "when"; this ref answers "what".
+  const pendingRemoteRef = useRef<PipelineDefinition | null>(null);
 
   // The definition as of the latest render, readable from inside an in-flight
   // save's `.then`. Every persist path clears `dirty` only when the definition
@@ -270,11 +292,50 @@ export function PipelineEditorProvider({
     if (latestDefinitionRef.current === saved) setDirty(false);
   }, []);
 
+  const clearSaveError = useCallback(() => setSaveError(null), []);
+
+  /**
+   * The single remote-write path. Takes ownership of `target` up front, so an
+   * unmount mid-flight does not write it a second time — the request is
+   * already on the wire and completes whether or not React tears the tree
+   * down.
+   *
+   * On failure it re-queues `target` and leaves `dirty` set. That is the whole
+   * point: a rejected write must not read like a successful one, and the
+   * layout the user arranged must survive it. There is no retry timer — the
+   * autosave effect only re-arms on a real edit, so a persistently failing
+   * server costs one request per edit plus one at teardown, never a storm.
+   */
+  const persist = useCallback(
+    (target: PipelineDefinition): Promise<void> => {
+      pendingRemoteRef.current = null;
+      return savePipeline(target).then(
+        () => {
+          clearDirtyIfUnchanged(target);
+          setSaveError(null);
+        },
+        (err: unknown) => {
+          // Re-queue only if nothing newer already claimed the slot; a slow
+          // failing write must not overwrite a fresher pending definition
+          // with its own stale one.
+          if (pendingRemoteRef.current === null) pendingRemoteRef.current = target;
+          setSaveError(
+            err instanceof Error ? err.message : 'Failed to save the pipeline.',
+          );
+          // eslint-disable-next-line no-console
+          console.error('[PipelineEditor] save failed; changes kept pending', err);
+        },
+      );
+    },
+    [clearDirtyIfUnchanged],
+  );
+
   // Load on mount / pipelineId change.
   useEffect(() => {
     let cancelled = false;
     setDefinition(null);
     setDirty(false);
+    setSaveError(null);
     setSelectedNodeId(null);
     setUndoStack([]);
     setRedoStack([]);
@@ -302,13 +363,23 @@ export function PipelineEditorProvider({
     return () => { cancelled = true; };
   }, [pipelineId]);
 
-  // Debounced autosave. Cancels any pending timer on unmount / new edit.
+  // Debounced autosave. Cancels any pending timer on unmount / new edit, so a
+  // burst of edits — a drag settle followed by four keyboard nudges, say —
+  // coalesces into a single remote write once the burst stops.
   useEffect(() => {
-    if (!dirty || !definition) return;
+    if (!dirty || !definition) {
+      // Not dirty means everything is already on the wire, or the user
+      // reverted. Retiring the pending definition here is what stops a
+      // `revert()` from being quietly undone by a later teardown flush.
+      pendingRemoteRef.current = null;
+      return;
+    }
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     const target = definition;
+    pendingRemoteRef.current = target;
     saveTimerRef.current = setTimeout(() => {
-      void savePipeline(target).then(() => clearDirtyIfUnchanged(target));
+      saveTimerRef.current = null;
+      void persist(target);
     }, SAVE_DEBOUNCE_MS);
     return () => {
       if (saveTimerRef.current) {
@@ -316,7 +387,23 @@ export function PipelineEditorProvider({
         saveTimerRef.current = null;
       }
     };
-  }, [definition, dirty, clearDirtyIfUnchanged]);
+  }, [definition, dirty, persist]);
+
+  // Flush on teardown — unmount, and switching to a different pipeline.
+  //
+  // Without this the debounce window is a data-loss window: the cleanup above
+  // kills the timer, so dragging a node and immediately closing the editor
+  // (or navigating to another pipeline) threw the arranged layout away. The
+  // pending definition is read from `pendingRemoteRef`, never closed over —
+  // a closure over `definition` would make this effect re-run on every edit
+  // and write on every one, which is the exact failure mode the debounce
+  // exists to prevent.
+  useEffect(() => {
+    return () => {
+      const pending = pendingRemoteRef.current;
+      if (pending) void persist(pending);
+    };
+  }, [pipelineId, persist]);
 
   // -------------------------------------------------------------------------
   // History helpers
@@ -491,6 +578,16 @@ export function PipelineEditorProvider({
         savePipelinePositionsOnly(next);
         return next;
       });
+      // Drags used to write ONLY to localStorage. The remote is the source of
+      // truth, so an arranged layout survived a reload in the same browser
+      // and nowhere else: reopen the pipeline on another machine, or after a
+      // cache clear, and every node snapped back. Marking dirty routes the
+      // move through the same debounced autosave every other edit uses, which
+      // coalesces a burst (drag settle, key-repeat nudges, auto-arrange) into
+      // one write rather than one per event. The synchronous localStorage
+      // write above stays as the crash floor — it is the only thing that
+      // survives the tab being killed inside the debounce window.
+      setDirty(true);
     },
     [],
   );
@@ -505,9 +602,10 @@ export function PipelineEditorProvider({
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
-    const target = definition;
-    void savePipeline(target).then(() => clearDirtyIfUnchanged(target));
-  }, [definition, clearDirtyIfUnchanged]);
+    // Explicit save doubles as the manual flush: it takes over whatever the
+    // debounce had queued, so no redundant second write follows it.
+    void persist(definition);
+  }, [definition, persist]);
 
   const publish = useCallback((): void => {
     if (!definition) return;
@@ -531,6 +629,7 @@ export function PipelineEditorProvider({
     void loadPipeline(pipelineId).then((loaded) => {
       setDefinition(loaded);
       setDirty(false);
+      setSaveError(null);
       setUndoStack([]);
       setRedoStack([]);
     });
@@ -622,6 +721,8 @@ export function PipelineEditorProvider({
       save,
       publish,
       revert,
+      saveError,
+      clearSaveError,
       undo,
       redo,
       canUndo: undoStack.length > 0,
@@ -645,6 +746,8 @@ export function PipelineEditorProvider({
       save,
       publish,
       revert,
+      saveError,
+      clearSaveError,
       undo,
       redo,
       undoStack.length,
