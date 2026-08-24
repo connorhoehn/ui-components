@@ -46,6 +46,16 @@ describe('pipelineRetry', () => {
     await expect(retryFromNode('p1', 'r1', 'n3')).rejects.toThrow(/409/);
   });
 
+  // Regression: `retryFromNode` was the only client in src/api/ that omitted
+  // `credentials: 'include'`. The session cookie is what authenticates the
+  // POST, so on a cookie-auth deployment "Retry from this node" answered 401
+  // while Force-fail and Resume on the same run page succeeded.
+  it('retryFromNode sends the session cookie, like every sibling client', async () => {
+    const fetchSpy = mockFetch({ newRunId: 'r2' });
+    await retryFromNode('p1', 'r1', 'n3');
+    expect(fetchSpy.mock.calls[0][1].credentials).toBe('include');
+  });
+
   it('forceFail POSTs with credentials', async () => {
     const fetchSpy = mockFetch({ runId: 'r1', status: 'failed' });
     await forceFail('p1', 'r1');

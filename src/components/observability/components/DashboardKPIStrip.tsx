@@ -7,6 +7,11 @@
 
 import KPICard from './KPICard';
 
+export interface KPIDelta {
+  value: number;
+  direction: 'up' | 'down';
+}
+
 export interface DashboardKPIStripProps {
   runsToday: number | string;
   runsSparkline: number[];
@@ -14,6 +19,15 @@ export interface DashboardKPIStripProps {
   pendingApprovals: number | string;
   failed24h: number | string;
   avgFirstTokenLatency: string;
+  /**
+   * Period-over-period change for "Runs today". Host-supplied: the strip has
+   * no history to derive one from, and until v2.93.0 it hard-coded
+   * `▲ 12%` — every operator with live bridge metrics saw the same invented
+   * 12% growth under a real number, forever. Omit and no delta renders.
+   */
+  runsTodayDelta?: KPIDelta;
+  /** Period-over-period change for "Failed (24h)". Was hard-coded `▼ 4%`. */
+  failed24hDelta?: KPIDelta;
   onScrollToActive: () => void;
   onGoToPipelines: () => void;
   onGoToFailedEvents: () => void;
@@ -26,6 +40,8 @@ function DashboardKPIStrip({
   pendingApprovals,
   failed24h,
   avgFirstTokenLatency,
+  runsTodayDelta,
+  failed24hDelta,
   onScrollToActive,
   onGoToPipelines,
   onGoToFailedEvents,
@@ -35,7 +51,9 @@ function DashboardKPIStrip({
       <KPICard
         title="Runs today"
         value={runsToday}
-        delta={typeof runsToday === 'number' ? { value: 12, direction: 'up' } : undefined}
+        // Still suppressed next to an em-dash: a delta on an unknown value
+        // is meaningless even when the host supplies one.
+        delta={typeof runsToday === 'number' ? runsTodayDelta : undefined}
         sparklineData={runsSparkline}
       />
       <KPICard
@@ -51,7 +69,7 @@ function DashboardKPIStrip({
       <KPICard
         title="Failed (24h)"
         value={failed24h}
-        delta={typeof failed24h === 'number' ? { value: 4, direction: 'down' } : undefined}
+        delta={typeof failed24h === 'number' ? failed24hDelta : undefined}
         onClick={onGoToFailedEvents}
       />
       <KPICard

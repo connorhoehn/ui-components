@@ -50,7 +50,7 @@ export declare interface AlertListProps {
 
 export declare type AlertSeverity = 'critical' | 'warning' | 'info';
 
-export declare function DashboardKPIStrip({ runsToday, runsSparkline, activeNow, pendingApprovals, failed24h, avgFirstTokenLatency, onScrollToActive, onGoToPipelines, onGoToFailedEvents, }: DashboardKPIStripProps): JSX.Element;
+export declare function DashboardKPIStrip({ runsToday, runsSparkline, activeNow, pendingApprovals, failed24h, avgFirstTokenLatency, runsTodayDelta, failed24hDelta, onScrollToActive, onGoToPipelines, onGoToFailedEvents, }: DashboardKPIStripProps): JSX.Element;
 
 declare interface DashboardKPIStripProps {
     runsToday: number | string;
@@ -59,6 +59,15 @@ declare interface DashboardKPIStripProps {
     pendingApprovals: number | string;
     failed24h: number | string;
     avgFirstTokenLatency: string;
+    /**
+     * Period-over-period change for "Runs today". Host-supplied: the strip has
+     * no history to derive one from, and until v2.93.0 it hard-coded
+     * `▲ 12%` — every operator with live bridge metrics saw the same invented
+     * 12% growth under a real number, forever. Omit and no delta renders.
+     */
+    runsTodayDelta?: KPIDelta;
+    /** Period-over-period change for "Failed (24h)". Was hard-coded `▼ 4%`. */
+    failed24hDelta?: KPIDelta;
     onScrollToActive: () => void;
     onGoToPipelines: () => void;
     onGoToFailedEvents: () => void;
@@ -112,6 +121,11 @@ export declare interface HealthGridProps {
 
 export declare type HealthStatus = 'healthy' | 'degraded' | 'down' | 'unknown';
 
+declare interface KPIDelta {
+    value: number;
+    direction: 'up' | 'down';
+}
+
 declare interface LineSeries {
     label: string;
     data: Array<{
@@ -123,7 +137,7 @@ declare interface LineSeries {
 
 export declare function MetricsPage(): JSX.Element;
 
-export declare function MetricTimeSeriesPanel({ seeds, liveSeries, cols, isLiveData, failedColor, onResetZoom, onExportCsv, }: MetricTimeSeriesPanelProps): JSX.Element;
+export declare function MetricTimeSeriesPanel({ seeds, liveSeries, cols, isLiveData, failedColor, onResetZoom, onExportCsv, timeRange, onTimeRangeChange, refreshInterval, onRefreshIntervalChange, }: MetricTimeSeriesPanelProps): JSX.Element;
 
 export declare interface MetricTimeSeriesPanelProps {
     seeds: {
@@ -152,6 +166,24 @@ export declare interface MetricTimeSeriesPanelProps {
     onResetZoom?: () => void;
     /** Host-wired CSV export. The button renders only when provided. */
     onExportCsv?: () => void;
+    /**
+     * Currently-selected chart window. The panel cannot window the series it is
+     * given, so this is host state: the host re-fetches `seeds`/`liveSeries` for
+     * the chosen range. The Select — and the per-card range chip — render ONLY
+     * when both this and `onTimeRangeChange` are supplied, because a range the
+     * data does not honour is worse than no control at all.
+     */
+    timeRange?: TimeRange;
+    /** Host handler for the chart-window Select. See `timeRange`. */
+    onTimeRangeChange?: (value: TimeRange) => void;
+    /**
+     * Currently-selected poll cadence. Host state — the panel does no fetching,
+     * so only the host can act on it. The Select renders ONLY when both this and
+     * `onRefreshIntervalChange` are supplied.
+     */
+    refreshInterval?: RefreshInterval;
+    /** Host handler for the refresh-cadence Select. See `refreshInterval`. */
+    onRefreshIntervalChange?: (value: RefreshInterval) => void;
 }
 
 export declare function NodesPage({ nodes: nodesProp, onAddLatency, onKillNode, onTransferResource, }: NodesPageProps): JSX.Element;
@@ -183,5 +215,11 @@ declare interface NodeSummary {
 }
 
 export declare function ObservabilityLayout(): JSX.Element;
+
+/** Poll cadence the host can offer. `'off'` means "stop polling". */
+declare type RefreshInterval = 'off' | '5s' | '30s' | '60s';
+
+/** Chart window the host can offer. Only the host can honour one — see props. */
+declare type TimeRange = '15m' | '1h' | '24h' | '7d';
 
 export { }

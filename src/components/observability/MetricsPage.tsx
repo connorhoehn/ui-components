@@ -227,9 +227,26 @@ function ActiveModulesSection() {
 // Component
 // ---------------------------------------------------------------------------
 
+// Refresh-cadence Select values → real poll intervals for `usePipelineMetrics`.
+// `null` stops the poll chain after the initial fetch.
+const REFRESH_TO_MS: Record<'off' | '5s' | '30s' | '60s', number | null> = {
+  off: null,
+  '5s': 5_000,
+  '30s': 30_000,
+  '60s': 60_000,
+};
+
 function MetricsPage() {
   const seeds = useMemo(buildSeeds, []);
   const cols = useColumnCount();
+
+  // The refresh Select is host state and this page IS the host: the chosen
+  // cadence drives the metrics poller below. (The panel's chart-window Select
+  // stays unwired on purpose — neither the seeded series nor the live ring is
+  // time-indexed, so this page cannot honour a range, and the panel therefore
+  // hides that control rather than offering one that only re-captions cards.)
+  const [refreshInterval, setRefreshInterval] =
+    useState<'off' | '5s' | '30s' | '60s'>('30s');
 
   // The dashboard-history ring is kept so future work can splice live values
   // onto the seeded series. Phase 1 snapshot isn't time-series-shaped yet, so
@@ -240,7 +257,9 @@ function MetricsPage() {
   // Live pipeline metrics — drives the "Runs" / "LLM tokens" / "LLM cost" /
   // "Active runs" / "Approval latency" cards by appending each new poll's
   // value to a small in-page ring buffer.
-  const { metrics, isLiveData } = usePipelineMetrics();
+  const { metrics, isLiveData } = usePipelineMetrics({
+    pollIntervalMs: REFRESH_TO_MS[refreshInterval],
+  });
   const [metricsRing, setMetricsRing] = useState<PipelineMetrics[]>([]);
   useEffect(() => {
     if (!metrics) return;
@@ -310,6 +329,8 @@ function MetricsPage() {
         cols={cols}
         isLiveData={isLiveData}
         failedColor={CHART_COLORS.failed}
+        refreshInterval={refreshInterval}
+        onRefreshIntervalChange={setRefreshInterval}
       />
 
       <ActiveModulesSection />

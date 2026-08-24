@@ -25,6 +25,7 @@ async function x(e, t, n, r, i) {
 	let a = `/api/pipelines/${e}/runs/${t}/retry/${n}`, o = await fetch(a, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
+		credentials: "include",
 		body: JSON.stringify({
 			inputs: r,
 			...i ? { snapshotInput: i } : {}

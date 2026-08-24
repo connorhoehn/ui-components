@@ -47,6 +47,12 @@ export async function retryFromNode(
     headers: {
       'Content-Type': 'application/json',
     },
+    // `credentials: 'include'` is REQUIRED — the session cookie is what
+    // authenticates this POST. It was the only call in `src/api/` that omitted
+    // it (its own sibling `forceFail` above sends it), so on a cookie-auth
+    // deployment "Retry from this node" answered 401 while every other action
+    // on the same run page worked.
+    credentials: 'include',
     body: JSON.stringify({ inputs, ...(snapshotInput ? { snapshotInput } : {}) }),
   });
 

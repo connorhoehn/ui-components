@@ -154,8 +154,24 @@ function normalize(raw: unknown): PipelineMetrics {
   };
 }
 
-export function usePipelineMetrics(): UsePipelineMetricsResult {
+export interface UsePipelineMetricsOptions {
+  /**
+   * Poll cadence in ms. Defaults to `POLL_INTERVAL_MS` (10s). Pass `null` (or
+   * a non-positive number) to stop polling after the initial fetch — that is
+   * what MetricsPage's "Refresh: Off" selection maps to. Failure backoff still
+   * applies on top of whatever cadence is set.
+   */
+  pollIntervalMs?: number | null;
+}
+
+export function usePipelineMetrics(
+  options: UsePipelineMetricsOptions = {},
+): UsePipelineMetricsResult {
   const { idToken } = useIdentityContext();
+  const { pollIntervalMs = POLL_INTERVAL_MS } = options;
+  const pollingEnabled =
+    typeof pollIntervalMs === 'number' && pollIntervalMs > 0;
+  const effectiveIntervalMs = pollingEnabled ? pollIntervalMs : POLL_INTERVAL_MS;
 
   const [metrics, setMetrics] = useState<PipelineMetrics | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -269,10 +285,12 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
 
     const scheduleNext = () => {
       if (!alive || document.hidden) return;
+      // "Refresh: Off" — the initial fetch has already run; don't chain another.
+      if (!pollingEnabled) return;
       const delay =
         failureCountRef.current > 0
           ? backoffDelayMs(failureCountRef.current)
-          : POLL_INTERVAL_MS;
+          : effectiveIntervalMs;
       timeoutId = setTimeout(() => {
         timeoutId = null;
         void fetchOnce().finally(() => {
@@ -315,7 +333,7 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
         abortRef.current = null;
       }
     };
-  }, [fetchOnce]);
+  }, [fetchOnce, pollingEnabled, effectiveIntervalMs]);
 
   return {
     metrics,

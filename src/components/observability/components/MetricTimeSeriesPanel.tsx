@@ -4,7 +4,6 @@
 // and the responsive chart grid. Receives seeded + live series and renders
 // MetricCards with their chart children.
 
-import { useState } from 'react';
 import MetricCard from './MetricCard';
 import {
   LineChart,
@@ -15,6 +14,7 @@ import {
 import { cn } from '../../../lib/cn';
 import { Select } from '../../forms/Select';
 
+/** Chart window the host can offer. Only the host can honour one — see props. */
 type TimeRange = '15m' | '1h' | '24h' | '7d';
 const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
   { value: '15m', label: 'Last 15m' },
@@ -23,6 +23,7 @@ const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
   { value: '7d', label: 'Last 7d' },
 ];
 
+/** Poll cadence the host can offer. `'off'` means "stop polling". */
 type RefreshInterval = 'off' | '5s' | '30s' | '60s';
 const REFRESH_INTERVALS: Array<{ value: RefreshInterval; label: string }> = [
   { value: 'off', label: 'Off' },
@@ -58,6 +59,24 @@ export interface MetricTimeSeriesPanelProps {
   onResetZoom?: () => void;
   /** Host-wired CSV export. The button renders only when provided. */
   onExportCsv?: () => void;
+  /**
+   * Currently-selected chart window. The panel cannot window the series it is
+   * given, so this is host state: the host re-fetches `seeds`/`liveSeries` for
+   * the chosen range. The Select — and the per-card range chip — render ONLY
+   * when both this and `onTimeRangeChange` are supplied, because a range the
+   * data does not honour is worse than no control at all.
+   */
+  timeRange?: TimeRange;
+  /** Host handler for the chart-window Select. See `timeRange`. */
+  onTimeRangeChange?: (value: TimeRange) => void;
+  /**
+   * Currently-selected poll cadence. Host state — the panel does no fetching,
+   * so only the host can act on it. The Select renders ONLY when both this and
+   * `onRefreshIntervalChange` are supplied.
+   */
+  refreshInterval?: RefreshInterval;
+  /** Host handler for the refresh-cadence Select. See `refreshInterval`. */
+  onRefreshIntervalChange?: (value: RefreshInterval) => void;
 }
 
 function MetricTimeSeriesPanel({
@@ -68,32 +87,49 @@ function MetricTimeSeriesPanel({
   failedColor,
   onResetZoom,
   onExportCsv,
+  timeRange,
+  onTimeRangeChange,
+  refreshInterval,
+  onRefreshIntervalChange,
 }: MetricTimeSeriesPanelProps) {
-  const [timeRange, setTimeRange] = useState<TimeRange>('1h');
-  const [refresh, setRefresh] = useState<RefreshInterval>('30s');
+  // Both selectors used to be panel-local `useState`. Neither value was ever
+  // read by anything that fetches or filters: picking "Refresh: 5s" changed
+  // no poll, and picking "Last 7d" only re-captioned every card while the
+  // plotted points stayed byte-identical. They are host state now, and are
+  // hidden entirely unless the host wires them.
+  const timeRangeWired = timeRange !== undefined && onTimeRangeChange !== undefined;
+  const refreshWired =
+    refreshInterval !== undefined && onRefreshIntervalChange !== undefined;
 
-  const timeLabel = TIME_RANGES.find((t) => t.value === timeRange)?.label ?? '';
+  // Only label a card with a window the host is actually honouring.
+  const timeLabel = timeRangeWired
+    ? TIME_RANGES.find((t) => t.value === timeRange)?.label ?? ''
+    : undefined;
 
   return (
     <>
       <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel">
-        <Select
-          data-testid="metrics-time-range"
-          aria-label="Time range"
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-          className="w-auto min-w-[120px]"
-          options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
-        />
+        {timeRangeWired && (
+          <Select
+            data-testid="metrics-time-range"
+            aria-label="Time range"
+            value={timeRange}
+            onChange={(e) => onTimeRangeChange(e.target.value as TimeRange)}
+            className="w-auto min-w-[120px]"
+            options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
+          />
+        )}
 
-        <Select
-          data-testid="metrics-refresh-interval"
-          aria-label="Refresh interval"
-          value={refresh}
-          onChange={(e) => setRefresh(e.target.value as RefreshInterval)}
-          className="w-auto min-w-[100px]"
-          options={REFRESH_INTERVALS.map((r) => ({ value: r.value, label: `Refresh: ${r.label}` }))}
-        />
+        {refreshWired && (
+          <Select
+            data-testid="metrics-refresh-interval"
+            aria-label="Refresh interval"
+            value={refreshInterval}
+            onChange={(e) => onRefreshIntervalChange(e.target.value as RefreshInterval)}
+            className="w-auto min-w-[100px]"
+            options={REFRESH_INTERVALS.map((r) => ({ value: r.value, label: `Refresh: ${r.label}` }))}
+          />
+        )}
 
         {onResetZoom && (
           <button

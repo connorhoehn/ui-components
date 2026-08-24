@@ -28,7 +28,11 @@ import { Checkbox } from '../forms/Checkbox';
 const MAX_EVENTS = Number(import.meta.env.VITE_MAX_EVENTS) || 500;
 
 type EventGroup = 'All' | 'Errors' | 'LLM' | 'Approvals' | 'Lifecycle';
-type TimeRange = '15m' | '1h' | '6h' | '24h' | 'custom';
+// `'custom'` used to be offered here. There is no UI anywhere on this page to
+// enter custom bounds, so picking it could only ever mean "no filter" — one
+// more inert option on a control that was already inert. Removed rather than
+// faked; re-add it together with the from/to inputs that give it meaning.
+type TimeRange = '15m' | '1h' | '6h' | '24h';
 
 const EVENT_GROUPS: EventGroup[] = ['All', 'Errors', 'LLM', 'Approvals', 'Lifecycle'];
 const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
@@ -36,8 +40,15 @@ const TIME_RANGES: Array<{ value: TimeRange; label: string }> = [
   { value: '1h', label: 'Last 1h' },
   { value: '6h', label: 'Last 6h' },
   { value: '24h', label: 'Last 24h' },
-  { value: 'custom', label: 'Custom' },
 ];
+
+/** Window width in ms for each selectable range. */
+const TIME_RANGE_MS: Record<TimeRange, number> = {
+  '15m': 15 * 60_000,
+  '1h': 60 * 60_000,
+  '6h': 6 * 60 * 60_000,
+  '24h': 24 * 60 * 60_000,
+};
 const DEFAULT_NODE_OPTIONS = ['node-0', 'node-1', 'node-2'];
 const SEVERITIES: Array<'info' | 'warning' | 'error' | 'success'> = [
   'info', 'warning', 'error', 'success',
@@ -121,9 +132,11 @@ function EventsPageInner() {
     const type = env?.eventType ?? 'unknown';
     const inner = env?.payload ?? env;
     seq.current += 1;
+    const receivedAt = Date.now();
     const item: EventItem = {
-      id: `ev-${Date.now()}-${seq.current}`,
-      timestamp: formatTimestamp(),
+      id: `ev-${receivedAt}-${seq.current}`,
+      timestamp: formatTimestamp(new Date(receivedAt)),
+      receivedAt,
       type,
       summary: summarize(type, inner),
       severity: severityFor(type),
@@ -150,8 +163,17 @@ function EventsPageInner() {
     const pipelineIds = filters.pipelineIds
       .split(',').map((s) => s.trim()).filter(Boolean);
     const allGroups = filters.groups.has('All');
+    // The time-range Select used to set state that nothing read: picking
+    // "Last 15m" left hour-old rows in the list and never moved the
+    // "N / M events" counter. Cutoff is recomputed whenever an event arrives
+    // or a filter changes — a page with a completely idle stream can hold a
+    // row a little past its window until the next render.
+    const cutoff = Date.now() - TIME_RANGE_MS[filters.timeRange];
 
     return events.filter((ev) => {
+      // Time-range filter. Events with no `receivedAt` (host-supplied items
+      // predating the field) are kept rather than silently dropped.
+      if (typeof ev.receivedAt === 'number' && ev.receivedAt < cutoff) return false;
       // Group filter
       if (!allGroups) {
         const g = groupFor(ev.type);

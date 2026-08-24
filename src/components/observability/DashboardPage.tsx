@@ -249,7 +249,11 @@ export default function DashboardPage() {
   // back to the empty active-runs table count (also 0) — these are real
   // zeroes, not "unknown" zeroes, so they're rendered as numbers.
   const runsToday: number | string = pipelineMetrics?.runsStarted ?? EM_DASH;
-  const runsSparkline = [0, 0, 0, 0, 0, 0, 0, 0];
+  // No runs-over-time series exists yet, so there is nothing to draw. This
+  // used to be eight literal zeros, which rendered a flat sparkline under a
+  // live number as if the trend had been measured. An empty array makes
+  // KPICard omit the sparkline entirely.
+  const runsSparkline: number[] = [];
   const activeNow: number | string =
     activeRunsCount > 0
       ? activeRunsCount
