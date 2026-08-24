@@ -142,11 +142,14 @@ export default function CookbooksModal({
         Install a prebuilt document type. You can customize the fields after installing.
       </div>
 
-      {/* Category pills */}
-      <div className="flex flex-wrap gap-1.5 mb-2.5">
+      {/* Category pills. These are filter toggles: `aria-pressed` is what
+          tells a screen-reader user which category is active — the colour
+          swap alone said nothing. */}
+      <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-1.5 mb-2.5">
         <button
           type="button"
           data-testid="cookbook-cat-all"
+          aria-pressed={activeCategory === 'All'}
           onClick={() => setActiveCategory('All')}
           className={cn(
             'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
@@ -162,6 +165,7 @@ export default function CookbooksModal({
             type="button"
             key={cat}
             data-testid={`cookbook-cat-${cat.toLowerCase().replace(/[^a-z]/g, '-')}`}
+            aria-pressed={activeCategory === cat}
             onClick={() => setActiveCategory(cat)}
             className={cn(
               'py-1 px-2.5 text-[11px] font-semibold rounded-xl border-none cursor-pointer font-inherit',
@@ -179,6 +183,7 @@ export default function CookbooksModal({
         ref={searchRef}
         type="search"
         data-testid="cookbooks-search"
+        aria-label="Search cookbooks"
         placeholder="Search cookbooks..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}

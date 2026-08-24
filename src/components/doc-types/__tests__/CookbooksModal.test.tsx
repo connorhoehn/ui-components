@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import CookbooksModal from '../CookbooksModal';
 import type { DocumentType } from '../../../types/documentType';
 
@@ -56,5 +56,32 @@ describe('CookbooksModal', () => {
     expect(createType).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onCreated).toHaveBeenCalledWith('new-type-id');
+  });
+});
+
+// ── Deep a11y audit ─────────────────────────────────────────────────────
+describe('CookbooksModal — accessibility', () => {
+  it('names the search field beyond its placeholder', () => {
+    render(
+      <CookbooksModal open onClose={() => {}} onCreated={() => {}} createType={makeCreateType()} />,
+    );
+    expect(screen.getByRole('searchbox', { name: 'Search cookbooks' })).toBeInTheDocument();
+  });
+
+  it('exposes the active category filter via aria-pressed', () => {
+    render(
+      <CookbooksModal open onClose={() => {}} onCreated={() => {}} createType={makeCreateType()} />,
+    );
+    const group = screen.getByRole('group', { name: 'Filter by category' });
+    // Which pill is active used to be conveyed by colour alone.
+    expect(screen.getByTestId('cookbook-cat-all')).toHaveAttribute('aria-pressed', 'true');
+
+    const pills = within(group).getAllByRole('button');
+    const other = pills.find((p) => p.getAttribute('data-testid') !== 'cookbook-cat-all');
+    expect(other).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(other as HTMLElement);
+    expect(other).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('cookbook-cat-all')).toHaveAttribute('aria-pressed', 'false');
   });
 });

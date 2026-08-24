@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { trapTabKey } from '../../lib/focusTrap';
 
 export interface ImageLightboxImage {
   src: string;
@@ -81,11 +82,15 @@ export function ImageLightbox({ images, openIndex, onClose, onNavigate }: ImageL
     };
   }, [isOpen]);
 
-  // Keyboard: Escape closes, arrows navigate (with wrap).
+  // Keyboard: Escape closes, arrows navigate (with wrap), Tab stays inside.
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Tab') {
+        // Without this, Tab off the last nav button lands on whatever is
+        // behind the (still fully opaque) overlay — invisible focus.
+        trapTabKey(e, dialogRef.current);
+      } else if (e.key === 'Escape') {
         e.stopPropagation();
         onClose();
       } else if (e.key === 'ArrowLeft') {

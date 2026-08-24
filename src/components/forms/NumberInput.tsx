@@ -33,6 +33,23 @@ export interface NumberInputProps {
   invalid?: boolean;
   disabled?: boolean;
   size?: 'sm' | 'md';
+  /**
+   * Id of the rendered `<input>`, so an external `<label htmlFor>` can point
+   * at it. Without this the prop was silently dropped and the label named
+   * nothing.
+   */
+  id?: string;
+  /** Form field name, for label association and form submission. */
+  name?: string;
+  /** Accessible name. Required when no visible `<label>` is wired up. */
+  'aria-label'?: string;
+  /** Id of the element that labels this control. */
+  'aria-labelledby'?: string;
+  /** Id(s) of hint / error text describing this control. */
+  'aria-describedby'?: string;
+  'aria-invalid'?: boolean;
+  'aria-required'?: boolean;
+  required?: boolean;
   'data-testid'?: string;
 }
 
@@ -50,6 +67,14 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       invalid = false,
       disabled = false,
       size = 'md',
+      id,
+      name,
+      required,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
+      'aria-invalid': ariaInvalid,
+      'aria-required': ariaRequired,
       'data-testid': testId,
     },
     ref,
@@ -109,6 +134,14 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         invalid={invalid}
         disabled={disabled}
         suffix={unitSuffix}
+        id={id}
+        name={name}
+        required={required}
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid}
+        aria-required={ariaRequired}
         data-testid={testId}
         onChange={handleChange}
         onBlur={handleBlur}

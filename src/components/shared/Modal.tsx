@@ -11,6 +11,12 @@ export interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /**
+   * Accessible name for the dialog when it renders its own heading (or none
+   * at all) instead of using `title`. Without one of the two, screen readers
+   * announce a bare "dialog" with no indication of what opened.
+   */
+  ariaLabel?: string;
   maxWidth?: number;
   children: React.ReactNode;
   footer?: React.ReactNode;
@@ -71,7 +77,7 @@ function getFocusableElements(root: HTMLElement): HTMLElement[] {
 }
 
 function Modal({
-  open, onClose, title, maxWidth = 380, children, footer,
+  open, onClose, title, ariaLabel, maxWidth = 380, children, footer,
   backdropTestId = 'modal-backdrop', backdropStyle, cardStyle, zIndex = 10000,
   rawChildren = false,
 }: ModalProps) {
@@ -180,7 +186,7 @@ function Modal({
         ref={cardRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={title ?? ariaLabel}
         className={cn(
           'bg-white rounded-xl px-6 py-7 w-[90%] shadow-lg font-[inherit]',
         )}

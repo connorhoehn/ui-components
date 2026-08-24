@@ -37,6 +37,7 @@ const ACCENT_BORDER: Record<ToastType, string> = {
 
 function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }: ToastProps) {
   const reduceMotion = usePrefersReducedMotion();
+  const urgent = type === 'error' || type === 'warning';
 
   const animationClass = reduceMotion
     ? 'animate-none'
@@ -46,8 +47,12 @@ function Toast({ id, message, type, exiting, actionLabel, onAction, onDismiss }:
 
   return (
     <div
-      role="alert"
-      aria-live={type === 'error' || type === 'warning' ? 'assertive' : 'polite'}
+      // `role="alert"` carries an implicit aria-live="assertive". Pairing it
+      // with an explicit aria-live="polite" (as this did for info/success)
+      // is a conflicting combination: the role says interrupt, the attribute
+      // says wait, and which one the screen reader honours is unspecified.
+      // Use the role that already means what we want instead.
+      role={urgent ? 'alert' : 'status'}
       className={cn(
         'bg-white border border-border border-l-[3px] rounded-lg',
         'px-4 py-3 flex items-center justify-between gap-3',

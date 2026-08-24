@@ -130,6 +130,7 @@ function PathRow({ entry, isSelected, onPick }: PathRowProps) {
     <button
       type="button"
       onClick={() => onPick(entry.path)}
+      aria-pressed={isSelected}
       data-testid={`path-row-${entry.path}`}
       className={cn(
         'w-full flex items-center gap-2 px-2 py-1 rounded text-left transition-colors duration-100',
@@ -268,10 +269,15 @@ export function ScatterPathPicker({
         )}
       </p>
 
+      {/* Was role="listbox" with plain <button> children — ARIA requires
+          `option` children, so screen readers reported an empty list box and
+          the promised arrow-key navigation did not exist. These really are
+          buttons, so the honest shape is a labelled group whose members
+          expose their selected state. */}
       <div
         className="flex flex-col gap-px border border-border rounded-md bg-white max-h-48 overflow-y-auto"
         data-testid="scatter-path-tree"
-        role="listbox"
+        role="group"
         aria-label="Available output paths"
       >
         {paths.map((entry) => (

@@ -41,10 +41,13 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       value,
       className,
       'data-testid': testId,
+      'aria-invalid': ariaInvalidProp,
       ...rest
     },
     forwardedRef,
   ) {
+    // Same gap as Input/Select: `invalid` was styling only.
+    const ariaInvalid = ariaInvalidProp ?? (invalid || undefined);
     const internalRef = useRef<HTMLTextAreaElement>(null);
 
     // Merge the forwarded ref with our internal one.
@@ -95,6 +98,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         rows={rowsProp}
         disabled={disabled}
         data-testid={testId}
+        aria-invalid={ariaInvalid}
         value={value}
         onChange={handleChange}
         className={cn(

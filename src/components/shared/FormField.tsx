@@ -30,6 +30,7 @@ export interface FormFieldProps {
     labelId: string;
     'aria-describedby'?: string;
     'aria-invalid'?: boolean;
+    'aria-required'?: boolean;
   }) => ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -61,6 +62,10 @@ export default function FormField({
     labelId,
     'aria-describedby': describedById,
     'aria-invalid': error ? true : undefined,
+    // The asterisk after the label is decorative (aria-hidden below), so
+    // `required` needs its own programmatic exposure or the requirement is
+    // invisible to screen readers.
+    'aria-required': required || undefined,
   };
 
   return (
@@ -81,7 +86,10 @@ export default function FormField({
           error ? 'text-danger-fg' : 'text-text-primary',
         )}
       >
-        {label}{required && <span className="ml-0.5 text-danger-fg">*</span>}
+        {label}
+        {required && (
+          <span aria-hidden="true" className="ml-0.5 text-danger-fg">*</span>
+        )}
       </label>
       <div className={cn(layout === 'inline' ? 'flex-1' : '')}>
         {children(wiring)}

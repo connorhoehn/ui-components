@@ -46,16 +46,21 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     disabled = false,
     className,
     'data-testid': testId,
+    'aria-invalid': ariaInvalidProp,
     value,
     ...rest
   },
   ref,
 ) {
+  // Same gap as Input: `invalid` painted a red border but never reached the
+  // accessibility tree. An explicit caller-supplied value still wins.
+  const ariaInvalid = ariaInvalidProp ?? (invalid || undefined);
   return (
     <select
       ref={ref}
       disabled={disabled}
       data-testid={testId}
+      aria-invalid={ariaInvalid}
       value={value}
       className={cn(
         'w-full appearance-none rounded-md border bg-surface-panel font-inherit text-text-primary',

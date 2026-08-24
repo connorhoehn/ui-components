@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { cn } from '../../../lib/cn';
+import { handleRovingKeyDown } from '../../../lib/rovingFocus';
 
 interface NodeContextMenuState {
   nodeId: string;
@@ -51,6 +52,12 @@ export default function CanvasContextMenu({
     <div
       data-testid="canvas-node-context-menu"
       role="menu"
+      aria-label="Node actions"
+      // `role="menu"` promises ArrowUp/ArrowDown between items; without this
+      // the role was a label with no behaviour behind it.
+      onKeyDown={(e) =>
+        handleRovingKeyDown(e, { itemSelector: '[role="menuitem"]', orientation: 'vertical' })
+      }
       className="fixed bg-white border border-border rounded-md shadow-[0_8px_20px_rgba(15,23,42,0.16)] min-w-[220px] z-50 p-1 font-inherit"
       style={{ top: nodeMenu.y, left: nodeMenu.x }}
     >

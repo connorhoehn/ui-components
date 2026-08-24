@@ -47,6 +47,14 @@ export interface InlinePopoverProps {
   zIndex?: number;
   /** Optional testid for the panel. Default 'inline-popover'. */
   'data-testid'?: string;
+  /**
+   * Accessible name for the `role="dialog"` panel. A dialog with no name
+   * announces as a bare "dialog", so callers that don't render their own
+   * labelled surface inside should pass one.
+   */
+  'aria-label'?: string;
+  /** Id of an element inside the panel that names it. */
+  'aria-labelledby'?: string;
   children: ReactNode;
 }
 
@@ -105,6 +113,8 @@ export function InlinePopover({
   className,
   zIndex = 9500,
   'data-testid': testId = 'inline-popover',
+  'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   children,
 }: InlinePopoverProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -227,6 +237,8 @@ export function InlinePopover({
     <div
       ref={panelRef}
       role="dialog"
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
       data-testid={testId}
       data-placement={placement}
       className={cn(

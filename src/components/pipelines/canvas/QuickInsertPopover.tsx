@@ -16,6 +16,13 @@ import type { NodeType } from '../../../types/pipeline';
 import { cn } from '../../../lib/cn';
 import { useClickOutside } from '../hooks/useClickOutside';
 
+// Only one quick-insert popover can be open at a time (it is rendered by the
+// canvas, singleton), so a fixed id pair is safe and keeps the option ids
+// derivable from the node type.
+const LISTBOX_ID = 'quick-insert-listbox';
+const optionId = (type: string | undefined): string | undefined =>
+  type ? `quick-insert-option-${type}` : undefined;
+
 // ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
@@ -147,6 +154,9 @@ export default function QuickInsertPopover({
       data-testid="quick-insert-popover"
     >
       <div className="p-2 border-b border-border">
+        {/* Combobox wiring: ArrowUp/Down move `highlightIdx` but focus stays
+            in this input, so without aria-activedescendant a screen reader
+            announced nothing at all while the user arrowed the list. */}
         <input
           ref={inputRef}
           type="text"
@@ -156,10 +166,22 @@ export default function QuickInsertPopover({
           placeholder="Search nodes…"
           className="w-full box-border border border-border-field rounded-md px-2.5 py-1.5 text-[13px] font-inherit bg-surface-inset text-text-primary outline-none"
           aria-label="Search node types"
+          role="combobox"
+          aria-expanded
+          aria-autocomplete="list"
+          aria-controls={LISTBOX_ID}
+          aria-activedescendant={
+            filtered.length > 0 ? optionId(filtered[highlightIdx]?.type) : undefined
+          }
           data-testid="quick-insert-search"
         />
       </div>
-      <div className="max-h-[260px] overflow-y-auto py-1" role="listbox">
+      <div
+        id={LISTBOX_ID}
+        className="max-h-[260px] overflow-y-auto py-1"
+        role="listbox"
+        aria-label="Node types"
+      >
         {filtered.length === 0 ? (
           <div className="px-3 py-3.5 text-xs text-text-tertiary font-inherit">
             No nodes match "{query}"
@@ -170,6 +192,7 @@ export default function QuickInsertPopover({
             return (
               <div
                 key={item.type}
+                id={optionId(item.type)}
                 role="option"
                 aria-selected={highlighted}
                 onMouseEnter={() => setHighlightIdx(idx)}
