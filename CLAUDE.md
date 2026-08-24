@@ -307,7 +307,8 @@ for a convertible control.
 ### Test coverage (audit #5)
 Test floors landed 2026-06-10 (v2.33.0, hub #1062/#1066) and were closed
 out through 2026-08-21: `pipelines/` ~45 test files, `doc-editor/` 23
-(incl. the full Yjs composition path), zero-test folders filled, and as
+(incl. the full Yjs composition path), zero-test folders filled, the large
+exports (`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested, and as
 of v2.66.0 **every `shared/` component has a test file** (the last 26 —
 Drawer, ToastProvider, SubNavLayout, InlinePopover, ActivityFeed,
 ProjectCard, SearchInput, ChatComposer, and the smaller primitives —
@@ -318,14 +319,22 @@ screens), `TypedDocumentForm` (13 — widget mapping, coercion, showWhen,
 unlimited cardinality), `FieldTypesPage` (5 — wizard + localStorage
 persistence), and `src/api/` (11 — URL/param assembly, DLQ 503
 tolerance, runId→id boundary mapping). New exports ship with tests.
-**Correction (2026-08-24):** this section claimed the large exports
-"(`CallWidget`, `AppLayout`, `CollapsibleSidebar`) tested". Two of the three
-were not. `AppLayout` (851 LOC) and `CollapsibleSidebar` (454 LOC) had
-**zero** test files, and both are root-exported stable API — the false claim
-here is the likeliest reason they stayed open through several audit rounds.
-Verify a coverage claim with `find src -path '*__tests__*' -name '<X>*'`
-before repeating it. `CallWidget` (881 LOC) does have a test file, though
-one file for that size is thin.
+> **Tests are not all under `__tests__/`.** Three files are CO-LOCATED
+> beside their component — `src/components/layout/AppLayout.test.tsx`,
+> `CollapsibleSidebar.test.tsx`, `AppShell.test.tsx` — and they are the only
+> three in the repo, so any search filtered on `-path '*__tests__*'` (409
+> files) misses exactly them and reports the layout components as untested.
+> That is not hypothetical: on 2026-08-24 it sent two agents off to write
+> tests that already existed, and produced a "correction" to this very
+> section asserting a coverage gap that did not exist. Search for
+> `-name '<Component>.test.tsx'` with no path filter.
+>
+> The real gap in those three was narrower and easy to miss behind a green
+> file count: the existing cases covered rendering and click callbacks and
+> nothing else, so `CollapsibleSidebar`'s collapse mechanics — the actual
+> behaviour of a collapsible sidebar — had no coverage at all, and four
+> a11y/keyboard bugs were living there. **A test file existing says nothing
+> about which surface it covers.**
 
 Remaining thin spots are lower-value: renderers 8/26 files, contexts
 (thin providers), and parts of social/ingest/observability pages.
