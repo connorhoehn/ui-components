@@ -1,8 +1,19 @@
 // frontend/src/components/AppLayout.tsx
 //
 // Structured 2-column app layout with header, sidebar, and main content sections.
-// Pure presentational component — no hook calls, all data flows in via props.
 // Replaces the monolithic vertical stack in GatewayDemo.
+//
+// NOT a pure presentational component (the header comment claimed that for
+// years): it reads the WebSocket / Identity / Presence contexts, owns the
+// gateway notification banner, the collapsible sidebar, the docked-video
+// outlet context and the global `?` shortcut, and mounts the pipeline
+// event-stream + observability providers for the whole app.
+//
+// FOLLOW-UP: the hamburger menu below is hand-rolled. `shared/DropdownMenu`
+// (align="end") was built for exactly this shape and adds role="menu"
+// semantics plus arrow-key navigation on top of the dismissal behaviour wired
+// in here. Migrating it is a separate change — it moves the menu into a
+// portal and changes the item roles, so consumer snapshots need a heads-up.
 
 import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router';
@@ -10,6 +21,8 @@ import type { GatewayError } from '../../types/gateway';
 import type { EphemeralReaction } from '../../hooks/useReactions';
 import type { LogEntry } from '../misc/EventLog';
 import { useRooms } from '../../hooks/useRooms';
+import { useClickOutside } from '../../hooks/useClickOutside';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import { useWebSocketContext } from '../../contexts/WebSocketContext';
 import { useIdentityContext } from '../../contexts/IdentityContext';
 import { usePresenceContext } from '../../contexts/PresenceContext';
@@ -95,7 +108,15 @@ function NotificationBanner({ notifications, onDismiss, onClick }: {
             role={isClickable(n) ? 'button' : undefined}
             tabIndex={isClickable(n) ? 0 : undefined}
             onClick={isClickable(n) ? () => onClick?.(n) : undefined}
-            onKeyDown={isClickable(n) ? (e) => { if (e.key === 'Enter') onClick?.(n); } : undefined}
+            // role="button" must answer to Space as well as Enter (WAI-ARIA
+            // button pattern). Handling Enter only meant a keyboard user
+            // pressing Space on a mention got nothing but a page scroll.
+            onKeyDown={isClickable(n) ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                onClick?.(n);
+              }
+            } : undefined}
             className={cn(
               'text-sm text-text-primary font-normal',
               isClickable(n) && 'cursor-pointer underline decoration-text-tertiary'
@@ -201,17 +222,31 @@ function AppLayoutInner({
   // Surface a single, consolidated toast when the WebSocket retry budget is
   // exhausted. The hook silences per-attempt console noise and emits exactly
   // one terminal lastError with code RECONNECT_EXHAUSTED.
-  const lastErrorCodeRef = useRef<string | null>(null);
+  //
+  // The de-dupe key is `code@timestamp`, not the bare code. Keying on the code
+  // alone meant the SECOND exhaustion was swallowed: the user clicks the
+  // toast's "Reconnect" action, the retry budget burns down again, a fresh
+  // RECONNECT_EXHAUSTED arrives — and because the ref still held
+  // 'RECONNECT_EXHAUSTED' from the first one, no toast and no retry affordance
+  // ever appeared again for the rest of the session. Every GatewayError
+  // carries its own `timestamp`, so the key changes per occurrence while
+  // re-renders that carry the same error stay silent.
+  //
+  // `onReconnect` is a consumer prop and is almost always an inline arrow, so
+  // it goes through useEventCallback rather than into the dependency array.
+  const onReconnectStable = useEventCallback(onReconnect);
+  const lastErrorKeyRef = useRef<string | null>(null);
   useEffect(() => {
-    if (lastError?.code === 'RECONNECT_EXHAUSTED' && lastErrorCodeRef.current !== 'RECONNECT_EXHAUSTED') {
+    const key = lastError ? `${lastError.code}@${lastError.timestamp}` : null;
+    if (lastError?.code === 'RECONNECT_EXHAUSTED' && lastErrorKeyRef.current !== key) {
       toast(lastError.message, {
         type: 'error',
         actionLabel: 'Reconnect',
-        onAction: () => onReconnect(),
+        onAction: () => onReconnectStable(),
       });
     }
-    lastErrorCodeRef.current = lastError?.code ?? null;
-  }, [lastError, toast, onReconnect]);
+    lastErrorKeyRef.current = key;
+  }, [lastError, toast, onReconnectStable]);
 
   // Derive active view from URL path
   const activeView: 'panels' | 'social' | 'dashboard' | 'doc-editor' | 'doc-types' | 'field-types' | 'pipelines' | 'ingest' | 'observability' =
@@ -251,7 +286,14 @@ function AppLayoutInner({
   // Pipeline index — read from localStorage on mount.
   const [pipelineIndex, setPipelineIndex] = useState<PipelineIndexEntry[]>([]);
   useEffect(() => {
-    void listPipelines().then(setPipelineIndex);
+    // Guard the resolve: listPipelines() is a network read and the layout can
+    // unmount (sign-out, host route swap) long before it settles. Without the
+    // flag the resolution lands on an unmounted tree.
+    let cancelled = false;
+    void listPipelines().then((entries) => {
+      if (!cancelled) setPipelineIndex(entries);
+    });
+    return () => { cancelled = true; };
   }, []);
 
   // Wire the activity bus to pipeline triggers (PIPELINES_PLAN.md §5.1).
@@ -422,16 +464,71 @@ function AppLayoutInner({
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Deferred scroll-into-view timer for a clicked mention/assignment
+  // notification. Held in a ref so unmounting mid-flight cancels it — the
+  // callback reached into `document` 300ms after the layout was gone.
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (scrollTimerRef.current !== null) clearTimeout(scrollTimerRef.current);
+  }, []);
+
   const handleNotificationClick = useCallback((notification: Notification) => {
     if (notification.sectionId) {
       navigate('/documents');
       dismissNotification(notification.id);
       // Allow the doc editor view to mount before scrolling
-      setTimeout(() => {
+      if (scrollTimerRef.current !== null) clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = setTimeout(() => {
+        scrollTimerRef.current = null;
         document.getElementById(`section-${notification.sectionId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 300);
     }
-  }, [dismissNotification]);
+  }, [navigate, dismissNotification]);
+
+  // Collapsing/expanding the sidebar swaps CollapsibleSidebar for
+  // CollapsedIconStrip, so the control the user just activated unmounts and
+  // the browser drops focus to <body> — a keyboard user silently restarts
+  // their Tab walk from the top of the document. AppLayout owns the swap, so
+  // it owns the handoff: move focus to the counterpart control in whichever
+  // chrome just mounted. Only after a user-driven toggle, never on first
+  // mount (defaultSidebarOpen={false} must not steal focus).
+  //
+  // The two labels below are the aria-labels of the collapse/expand buttons
+  // in the sibling components; both are asserted by their own test files, so
+  // renaming one fails loudly rather than silently un-fixing this.
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const pendingSidebarFocusRef = useRef<'Expand sidebar' | 'Collapse sidebar' | null>(null);
+  const toggleSidebar = useCallback((open: boolean) => {
+    pendingSidebarFocusRef.current = open ? 'Collapse sidebar' : 'Expand sidebar';
+    setSidebarOpen(open);
+  }, []);
+  useEffect(() => {
+    const label = pendingSidebarFocusRef.current;
+    if (!label) return;
+    pendingSidebarFocusRef.current = null;
+    sidebarRef.current?.querySelector<HTMLElement>(`[aria-label="${label}"]`)?.focus();
+  }, [sidebarOpen]);
+
+  // App-level hamburger menu dismissal. The menu was hand-rolled with no way
+  // out other than re-clicking the trigger: clicking the page behind it or
+  // pressing Escape left it parked over the content. Escape also restores
+  // focus to the trigger so keyboard users are not dumped at the top of the
+  // document.
+  const appMenuRef = useRef<HTMLDivElement>(null);
+  const appMenuTriggerRef = useRef<HTMLButtonElement>(null);
+  const closeAppMenu = useCallback(() => setShowAppMenu(false), []);
+  useClickOutside(appMenuRef, closeAppMenu, showAppMenu);
+  useEffect(() => {
+    if (!showAppMenu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      setShowAppMenu(false);
+      appMenuTriggerRef.current?.focus();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showAppMenu]);
 
   // Helper for menu button classes
   const menuBtnClass = (isActive: boolean) => cn(
@@ -492,8 +589,10 @@ function AppLayoutInner({
             Sign Out
           </button>
           {/* Hamburger — app-level menu */}
-          <div className="relative">
+          <div className="relative" ref={appMenuRef}>
             <button
+              type="button"
+              ref={appMenuTriggerRef}
               onClick={() => setShowAppMenu(v => !v)}
               className={cn(
                 'border border-border rounded-md px-2 py-1 cursor-pointer text-base text-neutral leading-none',
@@ -501,11 +600,16 @@ function AppLayoutInner({
               )}
               title="Menu"
               aria-label="Open app menu"
+              aria-haspopup="menu"
+              aria-expanded={showAppMenu}
             >
               ☰
             </button>
             {showAppMenu && (
-              <div className="absolute top-[calc(100%+6px)] right-0 bg-surface border border-border rounded-lg shadow-md z-[100] min-w-[180px] overflow-hidden">
+              <div
+                data-testid="app-menu"
+                className="absolute top-[calc(100%+6px)] right-0 bg-surface border border-border rounded-lg shadow-md z-[100] min-w-[180px] overflow-hidden"
+              >
                 <div className="px-3 py-1.5 text-[11px] font-semibold text-text-tertiary uppercase tracking-wide">
                   Content
                 </div>
@@ -570,6 +674,7 @@ function AppLayoutInner({
             Always visible, full-height, persistent. Replaces the previous
             display:none + overlay hamburger pattern. */}
         <div
+          ref={sidebarRef}
           className="shrink-0 border-r border-border bg-surface flex flex-col fixed top-[53px] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40 box-border transition-[width,padding] duration-[180ms] ease-in-out"
           style={{
             width: SIDEBAR_WIDTH,
@@ -581,7 +686,7 @@ function AppLayoutInner({
               connectionState={connectionState}
               onDisconnect={onDisconnect}
               onReconnect={onReconnect}
-              onCollapse={() => setSidebarOpen(false)}
+              onCollapse={() => toggleSidebar(false)}
               presenceUsers={presenceUsers}
               currentClientId={currentClientId ?? ''}
               currentChannel={currentChannel}
@@ -599,7 +704,7 @@ function AppLayoutInner({
           ) : (
             <CollapsedIconStrip
               connectionState={connectionState}
-              onExpand={() => setSidebarOpen(true)}
+              onExpand={() => toggleSidebar(true)}
               onPipelines={() => navigate('/pipelines')}
               onObservability={() => navigate('/observability')}
               onDocuments={() => navigate('/documents')}
