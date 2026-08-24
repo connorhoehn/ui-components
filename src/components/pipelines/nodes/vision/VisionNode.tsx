@@ -3,7 +3,7 @@
 // Vision node — image:vision-analyze. Streaming response footer,
 // inline thumbnail (click-to-lightbox), retry on failure.
 
-import { memo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import BaseNode, { type NodeExecutionState } from '../BaseNode';
 import { categoryFor } from '../categories';
@@ -189,7 +189,11 @@ export default function VisionNode(props: NodeProps<VisionFlowNode>) {
   const state: NodeExecutionState = replayState ?? liveState ?? data._state ?? 'idle';
 
   const retry = useRetryFromStep();
-  const onRetry = state === 'failed' ? () => retry(id) : undefined;
+  // Hoisted out of the ternary so the identity is stable across renders —
+  // an inline `() => retry(id)` was a fresh function every render and, via
+  // `footerInfo`, defeated the `memo()` on VisionResponseFooter outright.
+  const doRetry = useCallback(() => retry(id), [retry, id]);
+  const onRetry = state === 'failed' ? doRetry : undefined;
 
   const body = (
     <span className="italic text-text-secondary text-[13px]">
@@ -202,20 +206,29 @@ export default function VisionNode(props: NodeProps<VisionFlowNode>) {
     state === 'running' && liveVision !== undefined && liveVision.tokensSeen > 0 && !liveVision.analyzed;
   const isAwaiting =
     state === 'running' && liveVision !== undefined && liveVision.tokensSeen === 0 && !liveVision.failure;
-  const footerInfo: VisionFooterInfo | undefined = liveVision
-    ? {
-        response: liveVision.response,
-        tokensIn: liveVision.tokensIn,
-        tokensOut: liveVision.tokensOut,
-        streaming: isStreaming,
-        awaiting: isAwaiting,
-        ...(liveVision.failure ? { failure: liveVision.failure } : {}),
-        ...(liveVision.imageId ? { imageId: liveVision.imageId } : {}),
-        ...(typeof liveVision.costUsd === 'number' ? { costUsd: liveVision.costUsd } : {}),
-        ...(onRetry ? { onRetry } : {}),
-        getImageUrl,
-      }
-    : undefined;
+  // Memoised so React Flow's canvas-wide re-renders (pan, zoom, selection
+  // change — every custom node re-renders) don't rebuild this object and
+  // force the memoised footer to re-render with it. Every value read below
+  // is in the dep list, so it still changes on each streamed token, which is
+  // exactly when the footer must re-render.
+  const footerInfo: VisionFooterInfo | undefined = useMemo(
+    () =>
+      liveVision
+        ? {
+            response: liveVision.response,
+            tokensIn: liveVision.tokensIn,
+            tokensOut: liveVision.tokensOut,
+            streaming: isStreaming,
+            awaiting: isAwaiting,
+            ...(liveVision.failure ? { failure: liveVision.failure } : {}),
+            ...(liveVision.imageId ? { imageId: liveVision.imageId } : {}),
+            ...(typeof liveVision.costUsd === 'number' ? { costUsd: liveVision.costUsd } : {}),
+            ...(onRetry ? { onRetry } : {}),
+            getImageUrl,
+          }
+        : undefined,
+    [liveVision, isStreaming, isAwaiting, onRetry, getImageUrl],
+  );
   const footer = footerInfo ? <VisionResponseFooter info={footerInfo} /> : undefined;
 
   const subtitle = data.model || 'claude-sonnet-4-6';
