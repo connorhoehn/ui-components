@@ -7,7 +7,7 @@
 // Auto-scrolls to the bottom when new entries are added to the active tab.
 // Entries are pre-capped at 200 by the parent (App.tsx).
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { cn } from '../../lib/cn';
 import type { LogEntry } from './EventLog';
 
@@ -16,6 +16,8 @@ import type { LogEntry } from './EventLog';
 // ---------------------------------------------------------------------------
 
 type Tab = 'Chat' | 'Presence' | 'Cursors' | 'Reactions' | 'System';
+
+const TABS: Tab[] = ['Chat', 'Presence', 'Cursors', 'Reactions', 'System'];
 
 // ---------------------------------------------------------------------------
 // Helper: Filter entries by tab service type
@@ -77,10 +79,19 @@ export function TabbedEventLog({ entries }: Props) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [entries, activeTab]);
 
-  const tabs: Tab[] = ['Chat', 'Presence', 'Cursors', 'Reactions', 'System'];
+  // Bucket once per `entries` change instead of once per render. This used to
+  // call `getTabEntries` six times in the render body — once for the active
+  // tab and once per tab for its count badge — each a full pass over an array
+  // the caller caps at 200. The component re-renders on every inbound
+  // WebSocket message, and it re-bucketed on tab switches too, which change
+  // nothing about the buckets.
+  const byTab = useMemo(() => {
+    const out = {} as Record<Tab, LogEntry[]>;
+    for (const tab of TABS) out[tab] = getTabEntries(entries, tab);
+    return out;
+  }, [entries]);
 
-  // Get entries for the active tab
-  const activeEntries = getTabEntries(entries, activeTab);
+  const activeEntries = byTab[activeTab];
 
   return (
     <div className="border-t border-border pt-4 mt-4">
@@ -91,8 +102,8 @@ export function TabbedEventLog({ entries }: Props) {
 
       {/* Tab buttons */}
       <div className="flex gap-2 mb-4 border-b border-border pb-4 flex-wrap">
-        {tabs.map((tab) => {
-          const tabCount = getTabEntries(entries, tab).length;
+        {TABS.map((tab) => {
+          const tabCount = byTab[tab].length;
           const isActive = tab === activeTab;
 
           return (

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { cn } from '../../../lib/cn';
 import { getEventGlyph } from '../../shared/eventGlyphs';
 
@@ -63,7 +64,13 @@ function summarizePayload(row: LogRowData): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
+// Memoised: ExecutionLog is a live-tailing surface — every appended event
+// re-renders the whole visible list, and each row re-runs `summarizePayload`
+// (string building over the event payload). The call site already passes a
+// stable `onToggle` (useCallback) and rows out of a useMemo'd array, so the
+// shallow compare here means an append re-renders only the new row plus any
+// row whose `isOpen` actually flipped. Only internal consumer is ExecutionLog.
+function LogRow({ row, isOpen, onToggle }: LogRowProps) {
   const glyph = getEventGlyph(row.eventType);
   const summary = summarizePayload(row);
 
@@ -103,3 +110,5 @@ export default function LogRow({ row, isOpen, onToggle }: LogRowProps) {
     </div>
   );
 }
+
+export default memo(LogRow);

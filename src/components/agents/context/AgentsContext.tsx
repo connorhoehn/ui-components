@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from 'react';
 import type {
@@ -78,20 +79,37 @@ export function AgentsProvider({
   void setSessions;
   void setA2aSessions;
 
+  // Memoised: without this, every re-render of whatever renders
+  // <AgentsProvider> handed a brand-new object to every `useAgentsContext()`
+  // consumer (agent directory rows, chat panel, metrics cards), re-rendering
+  // all of them even when nothing about the agents actually changed.
+  const value = useMemo<AgentsContextValue>(
+    () => ({
+      agents,
+      metrics,
+      sessions,
+      a2aSessions,
+      selectedAgentId,
+      selectAgent,
+      refreshAgents,
+      getAgent,
+      getMetrics,
+    }),
+    [
+      agents,
+      metrics,
+      sessions,
+      a2aSessions,
+      selectedAgentId,
+      selectAgent,
+      refreshAgents,
+      getAgent,
+      getMetrics,
+    ],
+  );
+
   return (
-    <AgentsContext.Provider
-      value={{
-        agents,
-        metrics,
-        sessions,
-        a2aSessions,
-        selectedAgentId,
-        selectAgent,
-        refreshAgents,
-        getAgent,
-        getMetrics,
-      }}
-    >
+    <AgentsContext.Provider value={value}>
       {children}
     </AgentsContext.Provider>
   );

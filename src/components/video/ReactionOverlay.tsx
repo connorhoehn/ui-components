@@ -45,7 +45,15 @@ export function ReactionOverlay({ reactions, className, style }: ReactionOverlay
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFloating(prev => prev.filter(r => Date.now() - r.createdAt < 3000));
+      setFloating(prev => {
+        // `filter` always allocates, so returning it unconditionally handed
+        // React a fresh array twice a second for the entire call — the
+        // overlay (and anything below it) re-rendered at 2Hz even with zero
+        // reactions on screen. Return the SAME array when nothing expired so
+        // React bails out of the update instead.
+        const next = prev.filter(r => Date.now() - r.createdAt < 3000);
+        return next.length === prev.length ? prev : next;
+      });
     }, 500);
     return () => clearInterval(interval);
   }, []);

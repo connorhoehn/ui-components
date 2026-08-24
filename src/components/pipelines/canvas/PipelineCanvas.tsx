@@ -298,12 +298,22 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
       onErrorNodePosition?.(null);
       return;
     }
-    setNodes((curr) =>
-      curr.map((n) => ({
-        ...n,
-        className: n.id === errorNodeId ? 'node-error' : (n.className?.replace('node-error', '').trim() || undefined),
-      })),
-    );
+    // Return the SAME node object when its className is already correct, and
+    // the same array when no node changed at all, so React Flow re-renders
+    // only the nodes that actually moved in or out of the error state instead
+    // of every node on the canvas. Same shape as the edge effect below.
+    setNodes((curr) => {
+      let changed = false;
+      const next = curr.map((n) => {
+        const className = n.id === errorNodeId
+          ? 'node-error'
+          : (n.className?.replace('node-error', '').trim() || undefined);
+        if (n.className === className) return n;
+        changed = true;
+        return { ...n, className };
+      });
+      return changed ? next : curr;
+    });
     requestAnimationFrame(() => {
       const container = containerRef.current;
       if (!container) return;
@@ -321,8 +331,15 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
 
   useEffect(() => {
     if (!replayNodeClasses) return;
-    setNodes((curr) =>
-      curr.map((n) => {
+    // Replay playback dispatches an event per timer tick, and this effect ran
+    // on each one. It unconditionally rebuilt every node with a fresh `data`
+    // object, so every node on the canvas re-rendered on every tick even
+    // though at most one changed state. Guarded the same way as the edge
+    // effect below: unchanged nodes keep their identity, and an all-unchanged
+    // pass returns `curr` so React bails out of the update entirely.
+    setNodes((curr) => {
+      let changed = false;
+      const next = curr.map((n) => {
         const replayClass = replayNodeClasses[n.id] ?? '';
         const errorClass = (n.id === errorNodeId) ? 'node-error' : '';
         const combined = [errorClass, replayClass].filter(Boolean).join(' ') || undefined;
@@ -330,15 +347,14 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
         if (replayClass === 'node-replay-active') replayState = 'running';
         else if (replayClass === 'node-replay-completed') replayState = 'completed';
         else if (replayClass === 'node-replay-failed') replayState = 'failed';
-        const data = { ...(n.data as Record<string, unknown>) };
-        if (replayState) {
-          data._state = replayState;
-        } else {
-          data._state = 'idle';
-        }
-        return { ...n, className: combined, data };
-      }),
-    );
+        const prevData = n.data as Record<string, unknown>;
+        const nextState = replayState ?? 'idle';
+        if (n.className === combined && prevData._state === nextState) return n;
+        changed = true;
+        return { ...n, className: combined, data: { ...prevData, _state: nextState } };
+      });
+      return changed ? next : curr;
+    });
   }, [replayNodeClasses, errorNodeId, setNodes]);
 
   useEffect(() => {

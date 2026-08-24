@@ -45,7 +45,13 @@ export function useActiveSpeaker({
   useEffect(() => {
     const ctx = getSharedAudioContext();
     if (!ctx) return;
-    const analyserMap = new Map<string, AnalyserNode>();
+    // Buffer is allocated once per analyser rather than once per poll tick:
+    // at 5Hz × N participants the old `new Float32Array(...)` inside the
+    // interval churned N×5 short-lived typed arrays per second purely for GC.
+    const analyserMap = new Map<
+      string,
+      { analyser: AnalyserNode; buffer: Float32Array<ArrayBuffer> }
+    >();
     const sourceMap = new Map<string, MediaStreamAudioSourceNode>();
 
     for (const p of participants) {
@@ -57,7 +63,10 @@ export function useActiveSpeaker({
         analyser.fftSize = 512;
         analyser.smoothingTimeConstant = smoothingTimeConstant;
         source.connect(analyser);
-        analyserMap.set(p.participantId, analyser);
+        analyserMap.set(p.participantId, {
+          analyser,
+          buffer: new Float32Array(analyser.frequencyBinCount),
+        });
         sourceMap.set(p.participantId, source);
       } catch {
         // Most common: stream already connected in StrictMode double-mount.
@@ -67,8 +76,7 @@ export function useActiveSpeaker({
     const intervalId = setInterval(() => {
       let loudestId: string | null = null;
       let maxDb = threshold;
-      analyserMap.forEach((analyser, pid) => {
-        const data = new Float32Array(analyser.frequencyBinCount);
+      analyserMap.forEach(({ analyser, buffer: data }, pid) => {
         analyser.getFloatTimeDomainData(data);
         let sumSquares = 0;
         for (let i = 0; i < data.length; i++) sumSquares += data[i] * data[i];
@@ -82,7 +90,7 @@ export function useActiveSpeaker({
     return () => {
       clearInterval(intervalId);
       sourceMap.forEach((s) => { try { s.disconnect(); } catch { /* */ } });
-      analyserMap.forEach((a) => { try { a.disconnect(); } catch { /* */ } });
+      analyserMap.forEach(({ analyser }) => { try { analyser.disconnect(); } catch { /* */ } });
     };
   }, [participants, threshold, smoothingTimeConstant, pollIntervalMs]);
 

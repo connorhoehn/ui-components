@@ -9,6 +9,7 @@
 //   - the Card frame around the table (DataTable runs `frameless`),
 //   - the emoji + message empty state (a Card, not an in-table row).
 
+import { useMemo } from 'react';
 import { Card } from '../../ui/Card';
 import { DataTable, type DataTableColumn } from '../../shared/DataTable';
 
@@ -42,6 +43,26 @@ export function EntityTable<T extends Record<string, unknown>>({
   emptyIcon = '📋',
   loading = false,
 }: EntityTableProps<T>) {
+  // Memoised, and hoisted above the early return so it stays an
+  // unconditional hook. Every caller (UserListPage, AuditPage, GroupListPage,
+  // …) already wraps its `columns` in useMemo, and this facade was throwing
+  // that stability away one level down: `columns` is a dependency of BOTH
+  // DataTable's `filtered` and `sorted` memos, so a fresh array here meant
+  // the whole dataset was re-filtered and re-sorted on every render —
+  // including every keystroke in the table's own search box.
+  const dtColumns: DataTableColumn<T>[] = useMemo(
+    () =>
+      columns.map((col) => ({
+        key: col.key,
+        header: col.header,
+        render: col.render ? (row: T) => col.render!(row) : undefined,
+        sortable: col.sortable,
+        width: col.width,
+        align: col.align,
+      })),
+    [columns],
+  );
+
   if (!loading && data.length === 0) {
     return (
       <Card className="flex flex-col items-center justify-center min-h-[220px] p-8">
@@ -50,15 +71,6 @@ export function EntityTable<T extends Record<string, unknown>>({
       </Card>
     );
   }
-
-  const dtColumns: DataTableColumn<T>[] = columns.map((col) => ({
-    key: col.key,
-    header: col.header,
-    render: col.render ? (row: T) => col.render!(row) : undefined,
-    sortable: col.sortable,
-    width: col.width,
-    align: col.align,
-  }));
 
   return (
     <Card>

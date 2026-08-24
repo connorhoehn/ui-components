@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -29,8 +29,18 @@ export function ColorSchemeProvider({ children }: { children: React.ReactNode })
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   }, []);
 
+  // Memoised so a re-render of whatever renders <ColorSchemeProvider> (a
+  // router transition, a parent state change) doesn't hand every
+  // `useColorScheme()` consumer a fresh object and re-render all of them.
+  // `toggleTheme` is already identity-stable, so this only changes when
+  // `theme` actually changes — which is exactly when consumers must re-render.
+  const value = useMemo<ThemeContextValue>(
+    () => ({ theme, toggleTheme }),
+    [theme, toggleTheme],
+  );
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

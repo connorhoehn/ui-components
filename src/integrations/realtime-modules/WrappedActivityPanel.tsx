@@ -3,6 +3,7 @@
 // ActivityFeed wired directly to a useActivity() hook return from realtime-modules.
 // Adapts RMActivityEvent[] to ActivityFeedItem[] automatically.
 
+import { useMemo } from 'react';
 import type { RMUseActivityReturn } from './types';
 import { adaptActivityEvents } from './adapters';
 import { ActivityFeed } from '../../components/shared/ActivityFeed';
@@ -27,7 +28,13 @@ export function WrappedActivityPanel({
   kindColors,
   className,
 }: WrappedActivityPanelProps) {
-  const items = adaptActivityEvents(activity.events);
+  // `adaptActivityEvents` is a `.map()`, so an unmemoised call handed
+  // ActivityFeed a fresh `items` array on every render. Both of ActivityFeed's
+  // effects key on `items`: one setStates unconditionally (a guaranteed extra
+  // render pass per commit) and the other tears down and re-creates the
+  // rotation timers — so a parent re-rendering faster than the rotate
+  // interval stopped the feed rotating at all.
+  const items = useMemo(() => adaptActivityEvents(activity.events), [activity.events]);
 
   return (
     <ActivityFeed
