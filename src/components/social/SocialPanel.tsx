@@ -189,13 +189,24 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
   const [visibility, setVisibility] = useState<Visibility>(user.visibility);
   const [saving, setSaving] = useState(false);
 
-  // Reset form fields when user prop changes
+  // Reset the form when a DIFFERENT user is shown — keyed on `user.id`, not
+  // on the object identity.
+  //
+  // This used to depend on `[user]`. `publicProfileToUserProfile` builds a
+  // fresh object on every call, so the effect fired on essentially every
+  // parent render and overwrote all four fields with the server's values —
+  // wiping whatever the user had typed, mid-edit, with no warning. Keying on
+  // the id preserves the intent (switching profiles resets the form) while
+  // leaving an in-progress edit alone.
   useEffect(() => {
     setDisplayName(user.displayName);
     setBio(user.bio);
     setAvatarUrl(user.avatarUrl ?? '');
     setVisibility(user.visibility);
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- see above: keying
+    // on the profile identity is the point; re-syncing on every new object
+    // identity is the bug this replaced.
+  }, [user.id]);
 
   const handleSave = async () => {
     setSaving(true);

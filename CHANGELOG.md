@@ -8,6 +8,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.87.0] — 2026-08-24
+
+### Fixed
+
+- **Editing your own social profile wiped what you typed.** `ProfileCard`
+  seeds four form fields from its `user` prop and had a reset effect keyed on
+  `[user]` — the **object**. `publicProfileToUserProfile` builds a fresh
+  object on every call, so the effect fired on essentially every parent
+  render and overwrote display name, bio, avatar URL and visibility with the
+  server's values, mid-edit, with no warning. Now keyed on `user.id`, which
+  preserves the intent — switching to a different profile still resets the
+  form — while leaving an in-progress edit alone. Reported by the v2.85.0
+  performance audit, which correctly declined to fix it there because it
+  changes behaviour. The regression test types into the field, re-renders
+  twice with a new-but-equal profile object, and asserts the text survives;
+  verified to fail against the `[user]` dependency.
+
+This is the third instance of the same root cause in three days —
+`CallStartedBanner` (v2.83.0) and `WrappedActivityPanel` (v2.85.0) were both
+an unstable identity in an effect's dependency array. The other two silently
+disabled a timer; this one silently destroyed user input.
+
 ## [2.86.0] — 2026-08-24
 
 An accessibility audit going deeper than the earlier surface sweep (which
