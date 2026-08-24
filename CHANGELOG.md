@@ -8,6 +8,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.79.0] — 2026-08-23
+
+A stub audit. Most of what it found was already honestly labelled (the
+in-flux `/observability` fixtures, the renderers' documented v1 stubs). Two
+things were not, and both were misleading consumers rather than merely
+unfinished.
+
+### Fixed
+
+- **`ShortcutsHelp` taught users dozens of shortcuts that do not exist.** Its
+  header explained why: it mirrored the shortcut map in *PIPELINES_PLAN.md* —
+  the design, not the code. Of its five sections only **Pipeline Editor** was
+  actually implemented. `PipelineRunReplayPage` and `EventsPage` have **no key
+  handling whatsoever**, so the Replay Viewer and Event Stream sections were
+  entirely fictional; the Global section advertised a ⌘K palette that is never
+  mounted and `g p`/`g o` sequences for which no handler exists anywhere. Worst
+  of all, the List view advertised four shortcuts it did not have **while
+  omitting the three it did** (`Esc`, `⌘A`, `Delete`).
+  Unwired rows are now flagged `planned` and render dimmed, struck through and
+  tagged, so the panel documents intent without claiming it works; the three
+  real list-view shortcuts are listed for the first time. A test pins that ⌘K
+  is marked planned while the editor's `⌘S` — which genuinely is wired — is
+  not, so this cannot degrade into a blanket disclaimer.
+- **`useAgentRegistry` served synthetic agents with no way to tell.** `/agents`
+  is documented as a **stable** API, but the hook seeds state from
+  `fixtureAgents` and *keeps* them both when no `baseUrl` is configured and
+  when a fetch fails — so a consumer whose backend was down rendered
+  plausible-looking fake agents beside an error. It now returns a
+  `source: 'fixture' | 'remote'` discriminator, mirroring the pattern
+  `usePipelineMetrics` already uses in the *in-flux* `/observability` barrel.
+  Additive; `AgentRegistrySource` is exported.
+
+### Audit notes (no change made)
+
+- `ConflictsPage` (`/ingest`, stable) renders mock conflicts because
+  `/api/sync/conflicts` does not exist — but it says so in a visible banner,
+  which is the honest form of this.
+- `ConfigPanel`'s **Runs** tab is hardcoded `"No runs yet."` regardless of
+  actual runs, in the **frozen** `/pipelines` barrel. Wiring it to the run
+  data that already lives in that barrel is a real change and needs its own
+  decision.
+- `CodeEditor.language` is accepted and discarded — but its JSDoc says so
+  plainly ("purely cosmetic / no-op"), so it is documented, not deceptive.
+- `useKeyboardShortcuts` is exported from `/hooks` with **zero** consumers
+  anywhere in the repo — plausibly deliberate public API, worth confirming.
+- `useWebhookTriggers` is a self-described dormant subscriber (the gateway
+  bridge is unwired), and `HangoutGrid` silently caps at 16 participants.
+
 ## [2.78.0] — 2026-08-23
 
 Three more parallel agents: API ergonomics, testability seams, and a

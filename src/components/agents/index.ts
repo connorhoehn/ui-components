@@ -13,6 +13,7 @@ export { AgentsProvider, useAgentsContext } from './context/AgentsContext';
 // Hooks
 export { useAgUiStream } from './hooks/useAgUiStream';
 export { useAgentRegistry } from './hooks/useAgentRegistry';
+export type { AgentRegistrySource } from './hooks/useAgentRegistry';
 export { useAgentMetrics } from './hooks/useAgentMetrics';
 export { useA2ASession } from './hooks/useA2ASession';
 

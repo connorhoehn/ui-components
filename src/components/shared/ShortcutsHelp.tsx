@@ -1,8 +1,18 @@
 // frontend/src/components/shared/ShortcutsHelp.tsx
 //
 // Global keyboard-shortcut help overlay. Opens when the user presses `?`
-// (shift+/) anywhere outside a text input. Sections mirror the shortcut map
-// in PIPELINES_PLAN.md §18.13.
+// (shift+/) anywhere outside a text input.
+//
+// This list used to mirror the shortcut map in PIPELINES_PLAN.md §18.13 —
+// i.e. the DESIGN, not the code — so it taught users dozens of shortcuts
+// that were never wired. An audit (2026-08-23) found that of five sections,
+// only Pipeline Editor was implemented: the Replay Viewer and Event Stream
+// pages have no key handling at all, and the Pipelines List advertised four
+// shortcuts it did not have while omitting the three it did.
+//
+// Rows that are not yet wired are now marked `planned: true` and rendered
+// dimmed with a "planned" tag, so the panel documents intent without
+// claiming it works. Wire a shortcut -> drop its flag.
 
 import { cn } from '../../lib/cn';
 import Modal from './Modal';
@@ -15,6 +25,8 @@ export interface ShortcutsHelpProps {
 interface Shortcut {
   keys: string;
   action: string;
+  /** Documented in the plan but not wired in this library yet. */
+  planned?: boolean;
 }
 
 interface Section {
@@ -29,19 +41,22 @@ const SECTIONS: Section[] = [
   {
     title: 'Global',
     rows: [
-      { keys: '⌘/Ctrl + K', action: 'Command palette (placeholder)' },
+      { keys: '⌘/Ctrl + K', action: 'Command palette', planned: true },
       { keys: '?',          action: 'Show shortcut help' },
-      { keys: 'g p',        action: 'Go to Pipelines' },
-      { keys: 'g o',        action: 'Go to Observability dashboard' },
+      { keys: 'g p',        action: 'Go to Pipelines', planned: true },
+      { keys: 'g o',        action: 'Go to Observability dashboard', planned: true },
     ],
   },
   {
     title: 'List view (/pipelines)',
     rows: [
-      { keys: '⌘/Ctrl + N',       action: 'New pipeline' },
-      { keys: '/',                action: 'Focus search' },
-      { keys: 'Enter',            action: 'Open focused pipeline in editor' },
-      { keys: 'R',                action: 'Run focused pipeline (if published)' },
+      { keys: 'Esc',              action: 'Clear selection' },
+      { keys: '⌘/Ctrl + A',       action: 'Select all visible pipelines' },
+      { keys: 'Delete / Backspace', action: 'Delete selected pipelines' },
+      { keys: '⌘/Ctrl + N',       action: 'New pipeline', planned: true },
+      { keys: '/',                action: 'Focus search', planned: true },
+      { keys: 'Enter',            action: 'Open focused pipeline in editor', planned: true },
+      { keys: 'R',                action: 'Run focused pipeline (if published)', planned: true },
     ],
   },
   {
@@ -72,24 +87,24 @@ const SECTIONS: Section[] = [
   {
     title: 'Replay view',
     rows: [
-      { keys: 'Space',            action: 'Play / pause' },
-      { keys: 'j  /  ←',          action: 'Back 1 event' },
-      { keys: 'k  /  →',          action: 'Forward 1 event' },
-      { keys: 'Shift + J / ←',    action: 'Back 10 events' },
-      { keys: 'Shift + K / →',    action: 'Forward 10 events' },
-      { keys: 'Home',             action: 'Seek to start' },
-      { keys: 'End',              action: 'Seek to end' },
-      { keys: '0 – 9',            action: 'Seek to 0% / 10% / … / 90%' },
+      { keys: 'Space',            action: 'Play / pause', planned: true },
+      { keys: 'j  /  ←',          action: 'Back 1 event', planned: true },
+      { keys: 'k  /  →',          action: 'Forward 1 event', planned: true },
+      { keys: 'Shift + J / ←',    action: 'Back 10 events', planned: true },
+      { keys: 'Shift + K / →',    action: 'Forward 10 events', planned: true },
+      { keys: 'Home',             action: 'Seek to start', planned: true },
+      { keys: 'End',              action: 'Seek to end', planned: true },
+      { keys: '0 – 9',            action: 'Seek to 0% / 10% / … / 90%', planned: true },
     ],
   },
   {
     title: 'Observability events view',
     rows: [
-      { keys: '/',                action: 'Focus filter search' },
-      { keys: 'L',                action: 'Toggle Live / Paused' },
-      { keys: '⌘/Ctrl + E',       action: 'Export JSONL' },
-      { keys: 'Arrow keys',       action: 'Navigate event list' },
-      { keys: 'Enter',            action: 'Open in detail pane' },
+      { keys: '/',                action: 'Focus filter search', planned: true },
+      { keys: 'L',                action: 'Toggle Live / Paused', planned: true },
+      { keys: '⌘/Ctrl + E',       action: 'Export JSONL', planned: true },
+      { keys: 'Arrow keys',       action: 'Navigate event list', planned: true },
+      { keys: 'Enter',            action: 'Open in detail pane', planned: true },
     ],
   },
 ];
@@ -124,13 +139,29 @@ export default function ShortcutsHelp({ open, onClose }: ShortcutsHelpProps) {
               {section.rows.map((row, rowIdx) => (
                 <div
                   key={`${section.title}-${rowIdx}`}
-                  className="flex items-baseline justify-between py-1 text-[13px] gap-4"
+                  className={cn(
+                    'flex items-baseline justify-between py-1 text-[13px] gap-4',
+                    row.planned && 'opacity-60',
+                  )}
+                  data-planned={row.planned ? 'true' : undefined}
                 >
-                  <span className="font-mono text-[12px] text-text-primary bg-surface-hover border border-border rounded px-1.5 py-px whitespace-nowrap shrink-0">
+                  <span
+                    className={cn(
+                      'font-mono text-[12px] border rounded px-1.5 py-px whitespace-nowrap shrink-0',
+                      row.planned
+                        ? 'text-text-tertiary bg-surface border-border-subtle line-through'
+                        : 'text-text-primary bg-surface-hover border-border',
+                    )}
+                  >
                     {row.keys}
                   </span>
                   <span className="text-neutral text-right flex-1">
                     {row.action}
+                    {row.planned && (
+                      <span className="ml-1.5 text-[10px] uppercase tracking-wide text-text-tertiary">
+                        planned
+                      </span>
+                    )}
                   </span>
                 </div>
               ))}
