@@ -278,6 +278,17 @@ tests/e2e/         Playwright (17 specs, 206 tests — routes smoke, visual base
    When you find a violation, classify A (token swap), B (use existing
    composite), or C (ship the primitive first), same as before.
 
+   > **The guard only grepped for the literal `style={{` until 2026-08-24**,
+   > so hoisting the same object to a module-level const and writing
+   > `style={rowStyle}` — or `const styles = {...}` + `style={styles.row}` —
+   > walked straight past it. Eleven demo files were doing exactly that
+   > while the "DONE" above was on the page. The guard now resolves those
+   > references and they are converted. It still does NOT chase an object
+   > literal built *inside* a component (that shape is usually genuinely
+   > runtime-derived), so `demo/src/components/NodeEditorPage.tsx` still
+   > hand-rolls four function-scope style objects. Treat this guard as a
+   > floor, not a proof of absence.
+
 2. **Verification gate** (every commit): `npm test && npm run lint && npm run build`
    must all pass. No `--no-verify`, no skipping hooks. Run `npm run test:e2e`
    too when touching `demo/**` or `tests/e2e/**` — the unit gate cannot see a

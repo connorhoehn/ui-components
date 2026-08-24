@@ -1,5 +1,7 @@
-import { CSSProperties, useState } from 'react';
-import { toolbarButtons, typeBadgeColors } from './MockDocuments';
+import { useState } from 'react';
+import { Card, Chip, IconButton } from '@connorhoehnslalom/ui-components/shared';
+import type { ChipTone } from '@connorhoehnslalom/ui-components/shared';
+import { toolbarButtons } from './MockDocuments';
 
 interface SectionBlockProps {
   id: string;
@@ -12,102 +14,15 @@ interface SectionBlockProps {
   remoteText?: string;
 }
 
-const cardStyle: CSSProperties = {
-  border: '1px dashed #e2e8f0',
-  borderRadius: 8,
-  overflow: 'hidden',
-  marginBottom: 12,
-  background: '#fff',
-};
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '8px 12px',
-  background: 'var(--color-surface-panel)',
-  borderBottom: '1px solid #e2e8f0',
-  cursor: 'pointer',
-  userSelect: 'none',
-};
-
-const chevronStyle: CSSProperties = {
-  fontSize: 12,
-  color: 'var(--color-neutral)',
-  width: 16,
-  textAlign: 'center',
-};
-
-const sectionTitleStyle: CSSProperties = {
-  fontSize: 14,
-  fontWeight: 600,
-  color: '#1e293b',
-  flex: 1,
-};
-
-const commentIconStyle: CSSProperties = {
-  fontSize: 14,
-  cursor: 'pointer',
-  padding: '2px 6px',
-  borderRadius: 4,
-  border: 'none',
-  background: 'transparent',
-  color: 'var(--color-text-tertiary)',
-};
-
-const toolbarStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 2,
-  padding: '6px 12px',
-  borderBottom: '1px solid #f1f5f9',
-  flexWrap: 'wrap',
-};
-
-const toolbarBtnStyle: CSSProperties = {
-  padding: '4px 8px',
-  fontSize: 12,
-  border: '1px solid #cbd5e1',
-  borderRadius: 4,
-  background: '#fff',
-  color: 'var(--color-text-secondary)',
-  cursor: 'pointer',
-  fontFamily: 'monospace',
-  lineHeight: 1,
-};
-
-const contentAreaStyle: CSSProperties = {
-  padding: '12px 12px 8px 12px',
-  minHeight: 60,
-  fontSize: 14,
-  color: '#334155',
-  outline: 'none',
-  lineHeight: 1.6,
-};
-
-const placeholderStyle: CSSProperties = {
-  color: 'var(--color-text-tertiary)',
-  fontStyle: 'italic',
-};
-
-const tasksStyle: CSSProperties = {
-  padding: '4px 12px 8px 12px',
-  fontSize: 13,
-  color: 'var(--color-text-tertiary)',
-  fontStyle: 'italic',
-};
-
-const addItemStyle: CSSProperties = {
-  margin: '4px 12px 12px 12px',
-  padding: '8px 16px',
-  border: '1px dashed #cbd5e1',
-  borderRadius: 6,
-  background: 'transparent',
-  color: 'var(--color-neutral)',
-  fontSize: 13,
-  cursor: 'pointer',
-  width: 'calc(100% - 24px)',
-  textAlign: 'center',
+// Section kind -> semantic tone. Replaces the raw per-type hex map that used
+// to live in MockDocuments (`typeBadgeColors`): these are UI states, not
+// user-distinguishing colour data, so they belong on the tone scale.
+const TYPE_TONE: Record<string, ChipTone> = {
+  summary: 'accent',
+  tasks: 'info',
+  decisions: 'warning',
+  notes: 'neutral',
+  custom: 'success',
 };
 
 export function SectionBlock({
@@ -126,27 +41,23 @@ export function SectionBlock({
     ? localContent + remoteText
     : localContent;
 
-  const badgeBg = type === 'notes' ? 'var(--color-surface-hover)' : 'var(--color-primary-bg)';
-  const badgeColor = typeBadgeColors[type] || 'var(--color-neutral)';
-
-  const typeBadgeStyle: CSSProperties = {
-    fontSize: 11,
-    fontWeight: 500,
-    padding: '2px 8px',
-    borderRadius: 10,
-    background: badgeBg,
-    color: badgeColor,
-    textTransform: 'capitalize',
-  };
-
   return (
-    <div style={cardStyle}>
-      <div style={headerStyle} onClick={() => onToggleCollapse(id)}>
-        <span style={chevronStyle}>{collapsed ? '▸' : '▾'}</span>
-        <span style={sectionTitleStyle}>{title}</span>
-        <span style={typeBadgeStyle}>{type.charAt(0).toUpperCase() + type.slice(1)}</span>
-        <button
-          style={commentIconStyle}
+    <Card className="mb-3 border-dashed">
+      <div
+        className="flex cursor-pointer select-none items-center gap-2 border-b border-border bg-surface-panel px-3 py-2"
+        onClick={() => onToggleCollapse(id)}
+      >
+        <span className="w-4 text-center text-[12px] text-neutral">
+          {collapsed ? '▸' : '▾'}
+        </span>
+        <span className="flex-1 text-[14px] font-semibold text-text-primary">{title}</span>
+        <Chip tone={TYPE_TONE[type] ?? 'neutral'} className="capitalize">
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </Chip>
+        <IconButton
+          aria-label="Comments"
+          size="sm"
+          className="text-text-tertiary"
           onClick={(e) => {
             e.stopPropagation();
             onCommentClick(id);
@@ -154,29 +65,37 @@ export function SectionBlock({
           title="Comments"
         >
           &#x1F4AC;
-        </button>
+        </IconButton>
       </div>
       {!collapsed && (
         <div>
-          <div style={toolbarStyle}>
+          <div className="flex flex-wrap items-center gap-0.5 border-b border-border-subtle px-3 py-1.5">
             {toolbarButtons.map((btn) => (
-              <button key={btn.title} style={toolbarBtnStyle} title={btn.title}>
+              <button
+                key={btn.title}
+                className="cursor-pointer rounded-sm border border-border-emphasis bg-surface px-2 py-1 font-mono text-[12px] leading-none text-text-secondary"
+                title={btn.title}
+              >
                 {btn.label}
               </button>
             ))}
           </div>
           <div
-            style={contentAreaStyle}
+            className="min-h-15 px-3 pt-3 pb-2 text-[14px] leading-[1.6] text-text-secondary outline-none"
             contentEditable
             suppressContentEditableWarning
             onInput={(e) => setLocalContent((e.target as HTMLDivElement).textContent || '')}
           >
-            {displayContent || <span style={placeholderStyle}>Write notes content...</span>}
+            {displayContent || (
+              <span className="italic text-text-tertiary">Write notes content...</span>
+            )}
           </div>
-          <div style={tasksStyle}>No tasks yet.</div>
-          <button style={addItemStyle}>+ Add item</button>
+          <div className="px-3 pt-1 pb-2 text-[13px] italic text-text-tertiary">No tasks yet.</div>
+          <button className="mx-3 mt-1 mb-3 w-[calc(100%-24px)] cursor-pointer rounded-md border border-dashed border-border-emphasis bg-transparent px-4 py-2 text-center text-[13px] text-neutral">
+            + Add item
+          </button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

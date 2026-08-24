@@ -85,17 +85,6 @@ function MockGatewayProvider({
 // Inner view using useVideoHangout
 // ---------------------------------------------------------------------------
 
-const TOKEN_STYLE: React.CSSProperties = {
-  marginTop: 12,
-  padding: '8px 12px',
-  background: 'var(--color-surface-hover)',
-  borderRadius: 8,
-  fontFamily: 'ui-monospace, monospace',
-  fontSize: 12,
-  color: '#334155',
-  wordBreak: 'break-all',
-};
-
 function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolean }) {
   const hangout = useVideoHangout(channel);
   const { session, participants, joinToken, start, leave, end, toggleVideo, toggleAudio } =
@@ -151,7 +140,9 @@ function HangoutViewInner({ channel, isMock }: { channel: string; isMock: boolea
           <div className="text-[12px] font-semibold text-neutral mb-1">
             joinToken (pass to your media stack / Stage component):
           </div>
-          <div style={TOKEN_STYLE}>{joinToken}</div>
+          <div className="mt-3 break-all rounded-lg bg-surface-hover px-3 py-2 font-mono text-[12px] text-text-secondary">
+            {joinToken}
+          </div>
         </div>
       )}
 

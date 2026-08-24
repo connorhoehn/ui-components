@@ -1,45 +1,21 @@
-import type { CSSProperties } from 'react';
-
 interface PageHeaderProps {
   title: string;
   description: string;
   importPath?: string;
 }
 
-const styles: Record<string, CSSProperties> = {
-  wrapper: {
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 700,
-    margin: '0 0 8px 0',
-    color: 'var(--color-text-primary)',
-  },
-  description: {
-    fontSize: 15,
-    color: 'var(--color-text-secondary)',
-    maxWidth: 640,
-    margin: '0 0 16px 0',
-    lineHeight: 1.6,
-  },
-  importBadge: {
-    display: 'inline-block',
-    background: '#1e293b',
-    color: 'var(--color-border)',
-    fontFamily: 'monospace',
-    fontSize: 13,
-    padding: '6px 12px',
-    borderRadius: 6,
-  },
-};
-
 export function PageHeader({ title, description, importPath }: PageHeaderProps) {
   return (
-    <div style={styles.wrapper}>
-      <h1 style={styles.title}>{title}</h1>
-      <p style={styles.description}>{description}</p>
-      {importPath && <code style={styles.importBadge}>{importPath}</code>}
+    <div className="mb-8">
+      <h1 className="m-0 mb-2 text-[28px] font-bold text-text-primary">{title}</h1>
+      <p className="m-0 mb-4 max-w-160 text-[15px] leading-[1.6] text-text-secondary">
+        {description}
+      </p>
+      {importPath && (
+        <code className="inline-block rounded-md bg-surface-inverse px-3 py-1.5 font-mono text-[13px] text-code-text">
+          {importPath}
+        </code>
+      )}
     </div>
   );
 }

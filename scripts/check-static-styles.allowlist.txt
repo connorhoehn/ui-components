@@ -69,7 +69,6 @@ src/components/social/PostFeed.tsx
 src/components/social/PresencePanel.tsx
 src/components/social/SocialTabContent.tsx
 src/components/ui/Panel.tsx
-src/components/video/__tests__/VideoGrid.test.tsx
 src/components/video/CallStartedBanner.tsx
 src/components/video/CallWidget.tsx
 src/components/video/ParticipantTile.tsx

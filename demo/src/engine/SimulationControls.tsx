@@ -1,3 +1,4 @@
+import { cn } from '@/lib/cn';
 import type { SimulationControls as SimulationControlsType } from './types';
 
 interface SimulationControlsProps {
@@ -7,41 +8,25 @@ interface SimulationControlsProps {
 
 const speeds = [0.5, 1, 2, 4];
 
-const panelStyle: React.CSSProperties = {
-  position: 'fixed',
-  bottom: 16,
-  right: 16,
-  zIndex: 9999,
-  background: 'rgba(15, 23, 42, 0.92)',
-  color: 'var(--color-border)',
-  borderRadius: 10,
-  padding: '12px 16px',
-  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-  fontSize: 12,
-  minWidth: 240,
-  boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
-  backdropFilter: 'blur(8px)',
-  border: '1px solid rgba(148, 163, 184, 0.15)',
-};
-
 const ROW_CLS = 'flex items-center gap-1.5';
 
-const btnStyle: React.CSSProperties = {
-  background: 'rgba(148, 163, 184, 0.15)',
-  border: '1px solid rgba(148, 163, 184, 0.25)',
-  color: 'var(--color-border)',
-  borderRadius: 5,
-  padding: '4px 8px',
-  cursor: 'pointer',
-  fontSize: 11,
-  lineHeight: 1,
-};
+// Translucent hairlines over the dark panel. `text-tertiary` is slate-400,
+// the same value the old rgba(148,163,184,…) literals were spelling out by
+// hand; going through the token means a consumer re-toning the scale re-tones
+// this overlay too.
+const PANEL_CLS = cn(
+  'fixed bottom-4 right-4 z-[9999] min-w-60 rounded-[10px] px-4 py-3',
+  'bg-surface-inverse/92 backdrop-blur-[8px]',
+  'border border-text-tertiary/15 shadow-[0_4px_24px_rgba(0,0,0,0.3)]',
+  'font-mono text-xs text-code-text',
+);
 
-const btnActiveStyle: React.CSSProperties = {
-  ...btnStyle,
-  background: 'rgba(99, 102, 241, 0.4)',
-  borderColor: 'rgba(99, 102, 241, 0.6)',
-};
+const BTN_CLS = cn(
+  'cursor-pointer rounded-[5px] border px-2 py-1 text-[11px] leading-none',
+  'border-text-tertiary/25 bg-text-tertiary/15 text-code-text',
+);
+
+const BTN_ACTIVE_CLS = 'border-primary/60 bg-primary/40';
 
 export function SimulationControlsPanel({ controls, eventDescription }: SimulationControlsProps) {
   const { state, speed, currentEventIndex, totalEvents, play, pause, reset, setSpeed, stepForward } = controls;
@@ -50,7 +35,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
   const stateLabel = state === 'playing' ? 'Playing' : state === 'paused' ? 'Paused' : 'Idle';
 
   return (
-    <div style={panelStyle}>
+    <div className={PANEL_CLS}>
       {/* Header */}
       <div className="mb-2 flex justify-between items-center">
         <span className="font-semibold text-[11px] uppercase tracking-[0.05em] text-text-tertiary">
@@ -62,18 +47,18 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
       {/* Controls row */}
       <div className={`${ROW_CLS} mb-2`}>
         {state === 'playing' ? (
-          <button style={btnStyle} onClick={pause} title="Pause">
+          <button className={BTN_CLS} onClick={pause} title="Pause">
             &#9646;&#9646;
           </button>
         ) : (
-          <button style={btnStyle} onClick={play} title="Play">
+          <button className={BTN_CLS} onClick={play} title="Play">
             &#9654;
           </button>
         )}
-        <button style={btnStyle} onClick={reset} title="Reset">
+        <button className={BTN_CLS} onClick={reset} title="Reset">
           &#8634;
         </button>
-        <button style={btnStyle} onClick={stepForward} title="Step Forward">
+        <button className={BTN_CLS} onClick={stepForward} title="Step Forward">
           &#9654;|
         </button>
         <span className="ml-auto text-text-tertiary text-[11px]">
@@ -87,7 +72,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
         {speeds.map((s) => (
           <button
             key={s}
-            style={s === speed ? btnActiveStyle : btnStyle}
+            className={cn(BTN_CLS, s === speed && BTN_ACTIVE_CLS)}
             onClick={() => setSpeed(s)}
           >
             {s}x
@@ -97,7 +82,7 @@ export function SimulationControlsPanel({ controls, eventDescription }: Simulati
 
       {/* Event description */}
       {eventDescription && (
-        <div className="text-text-tertiary text-[10px] border-t border-[rgba(148,163,184,0.15)] pt-[6px] mt-[2px]">
+        <div className="text-text-tertiary text-[10px] border-t border-text-tertiary/15 pt-[6px] mt-[2px]">
           {eventDescription}
         </div>
       )}

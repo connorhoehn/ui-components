@@ -7,6 +7,16 @@
 // pages carry JSX code samples in code={`...`} props; a naive grep flags the
 // sample text and forces allowlisting files whose real JSX is clean.
 //
+// The HOISTED form counts too. Until 2026-08-24 this only ever grepped for the
+// literal string `style={{`, so moving the identical object to a module-level
+// const and writing `style={rowStyle}` — or bundling several into
+// `const styles = {...}` and writing `style={styles.row}` — evaded it entirely.
+// Eleven demo files were doing exactly that while the guard reported green and
+// CLAUDE.md recorded demo eradication as complete. `hasViolation` now resolves
+// those references. Note the limits documented on `objectLiteralNames`: an
+// object literal built INSIDE a component is not chased, so this is a floor,
+// not a proof of absence.
+//
 // When a file is intentionally added with dynamic inline styles (cursor
 // positions, theme-mode colors, prop-driven sizing, etc.) — add its path
 // to scripts/check-static-styles.allowlist.txt. Never use the allowlist
@@ -34,8 +44,14 @@ try {
   // --include: only real source files. A bare `grep -rl` also matches docs
   // (e.g. a JSX sample inside pipelines/judge/README.md), which is a false
   // positive the allowlist should never have to carry.
+  //
+  // Two forms are collected. `style={{` is the literal inline object. `style={`
+  // alone also catches the HOISTED form — `const rowStyle = {...}` at module
+  // scope, referenced as `style={rowStyle}` — which is the same hand-rolled
+  // styling wearing a disguise. The grep is deliberately loose; `hasViolation`
+  // below decides which of those references actually count.
   rawGrep = execSync(
-    'grep -rl --include="*.tsx" --include="*.ts" "style={{" src/components demo/src 2>/dev/null',
+    'grep -rl --include="*.tsx" --include="*.ts" "style={" src/components demo/src 2>/dev/null',
     { encoding: 'utf8' },
   );
 } catch (err) {
@@ -75,13 +91,62 @@ function stripStrings(src) {
   return out;
 }
 
+/**
+ * Names bound to a MODULE-LEVEL object literal — `const rowStyle = {`,
+ * `const rowStyle: CSSProperties = {`, `const styles = { wrapper: {...} }`.
+ * These are what a `style={name}` / `style={styles.name}` reference points at
+ * when the styling is static: a literal written once at load time.
+ *
+ * Two deliberate limits keep this from crying wolf:
+ *  - Module level only (the declaration starts at column 0). An object built
+ *    inside a component is usually closing over props/state — a dnd-kit
+ *    `transform`, a computed position — and is genuinely runtime-derived.
+ *  - Object literals only. `useMemo(...)`, a function call, or a prop is not
+ *    matched, for the same reason.
+ */
+function objectLiteralNames(stripped) {
+  const names = new Set();
+  const re = /^(?:export\s+)?(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*(?::[^=\n]+)?=\s*\{/gm;
+  let m;
+  while ((m = re.exec(stripped)) !== null) names.add(m[1]);
+  return names;
+}
+
+/**
+ * True when the file hand-rolls inline styling — either the literal
+ * `style={{...}}` form, or a `style={x}` whose `x` is an object literal
+ * declared in the same file (the hoisted dodge).
+ */
+function hasViolation(src) {
+  const stripped = stripStrings(src);
+  if (stripped.includes('style={{')) return true;
+
+  const locals = objectLiteralNames(stripped);
+  if (locals.size === 0) return false;
+
+  // Every `style={ ... }` reference, capturing the expression up to the first
+  // newline — enough for `style={x}` and `style={a ? b : c}`, and anything
+  // longer is an inline object already caught above.
+  const re = /\bstyle=\{([^{}\n]*)\}/g;
+  let m;
+  while ((m = re.exec(stripped)) !== null) {
+    const idents = m[1].match(/[A-Za-z_$][\w$]*/g) ?? [];
+    if (idents.some((id) => locals.has(id))) return true;
+  }
+  return false;
+}
+
 const current = new Set(
   rawGrep
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
+    // Test files are not rendered UI. `video/__tests__/classNameSeam.test.tsx`
+    // exists precisely to assert that components forward a `style` prop, so it
+    // passes a module-level literal into a dozen components on purpose.
+    .filter((f) => !f.includes('__tests__') && !/\.test\.tsx?$/.test(f))
     // Keep only files whose REAL code (not code samples in strings) uses it.
-    .filter((f) => stripStrings(readFileSync(f, 'utf8')).includes('style={{'))
+    .filter((f) => hasViolation(readFileSync(f, 'utf8')))
 );
 
 const additions = [...current].filter((f) => !allowed.has(f)).sort();
@@ -89,7 +154,8 @@ const removals = [...allowed].filter((f) => !current.has(f)).sort();
 
 if (additions.length > 0) {
   process.stderr.write(
-    '\nX check-static-styles: new file(s) with inline `style={{}}` detected:\n\n'
+    '\nX check-static-styles: new file(s) with hand-rolled inline styles detected\n' +
+      '(either `style={{...}}` or a `style={x}` pointing at a module-level object literal):\n\n'
   );
   for (const f of additions) process.stderr.write('  ' + f + '\n');
   process.stderr.write(
@@ -105,7 +171,7 @@ if (removals.length > 0) {
   process.stdout.write(
     '\nok check-static-styles: pass.\n\nNote: ' +
       removals.length +
-      ' allowlisted file(s) no longer use `style={{}}` and may be removed from the allowlist:\n'
+      ' allowlisted file(s) no longer hand-roll inline styles and may be removed from the allowlist:\n'
   );
   for (const f of removals) process.stdout.write('  - ' + f + '\n');
 } else {

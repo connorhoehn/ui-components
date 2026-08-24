@@ -24,14 +24,6 @@ export const mockDocument = {
   ],
 };
 
-export const typeBadgeColors: Record<string, string> = {
-  summary: '#8b5cf6',
-  tasks: '#3b82f6',
-  decisions: '#f59e0b',
-  notes: '#6b7280',
-  custom: '#10b981',
-};
-
 export const toolbarButtons = [
   { label: 'B', title: 'Bold' },
   { label: 'I', title: 'Italic' },

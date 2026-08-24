@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { cn } from '@/lib/cn';
 import type { TocItem } from './TocContext';
 
 interface TableOfContentsProps {
@@ -6,51 +6,31 @@ interface TableOfContentsProps {
   activeId: string | null;
 }
 
-const styles: Record<string, CSSProperties> = {
-  wrapper: {
-    fontSize: 13,
-    lineHeight: 1.8,
-  },
-  heading: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    color: 'var(--color-neutral)',
-    letterSpacing: '0.05em',
-    fontWeight: 600,
-    marginBottom: 12,
-  },
-  list: {
-    listStyle: 'none',
-    margin: 0,
-    padding: 0,
-  },
-};
-
 export function TableOfContents({ items, activeId }: TableOfContentsProps) {
   return (
-    <nav style={styles.wrapper}>
-      <div style={styles.heading}>On this page</div>
-      <ul style={styles.list}>
+    <nav className="text-[13px] leading-[1.8]">
+      <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.05em] text-neutral">
+        On this page
+      </div>
+      <ul className="m-0 list-none p-0">
         {items.map((item) => {
           const isActive = item.id === activeId;
-          const itemStyle: CSSProperties = {
-            paddingLeft: item.level === 3 ? 12 : 0,
-            borderLeft: `2px solid ${isActive ? 'var(--color-info)' : 'var(--color-border)'}`,
-            paddingTop: 2,
-            paddingBottom: 2,
-            paddingRight: 0,
-            marginLeft: 0,
-          };
-          const linkStyle: CSSProperties = {
-            color: isActive ? 'var(--color-info)' : 'var(--color-text-secondary)',
-            fontWeight: isActive ? 500 : 400,
-            textDecoration: 'none',
-            display: 'block',
-            paddingLeft: 10,
-          };
           return (
-            <li key={item.id} style={itemStyle}>
-              <a href={`#${item.id}`} style={linkStyle}>
+            <li
+              key={item.id}
+              className={cn(
+                'ml-0 border-l-2 py-0.5 pr-0',
+                item.level === 3 ? 'pl-3' : 'pl-0',
+                isActive ? 'border-info' : 'border-border',
+              )}
+            >
+              <a
+                href={`#${item.id}`}
+                className={cn(
+                  'block pl-2.5 no-underline',
+                  isActive ? 'font-medium text-info' : 'font-normal text-text-secondary',
+                )}
+              >
                 {item.label}
               </a>
             </li>
