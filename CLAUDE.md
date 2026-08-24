@@ -543,5 +543,18 @@ Two rules that keep it honest, both pinned by
 2. **The provider must remove every property it wrote on unmount**, including
    the aliases and tone overrides.
 
+**Only one `ThemeProvider` per document.** It writes CSS custom properties to
+`document.documentElement`, and `:root` holds one value per property, so one
+page cannot carry two themes. Nesting used to fail in the most confusing way
+available: React flushes child effects before parent effects, so the OUTER
+provider's write landed last and won — meaning `useTheme()` returned the inner
+tokens while every Tailwind utility rendered the outer ones, and neither looked
+wrong on its own. Worse, the inner provider's cleanup removed the same property
+names the outer had set, so closing a themed preview pane stripped the app's
+branding to the stylesheet defaults and the outer provider had no reason to
+re-render and restore them. Since v2.96.0 a nested provider does not write and
+warns in dev. To theme a subtree, set the `--color-*` variables on a wrapper
+element yourself.
+
 `preset="dark"` is **partial** — it re-tones text/surface/border and the
 semantic colours, but there is no dark-specific palette in the token set yet.

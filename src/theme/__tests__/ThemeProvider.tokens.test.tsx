@@ -75,3 +75,89 @@ describe('ThemeProvider writes the real design tokens', () => {
     expect(readVar('--color-accent')).toBe('');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Nesting, and effect churn from inline object props
+// ---------------------------------------------------------------------------
+
+describe('ThemeProvider nesting', () => {
+  it('a nested provider does not silently replace the outer theme on unmount', () => {
+    // The severe face of this bug. Both providers write the SAME custom
+    // property names to documentElement, so the inner one's cleanup removed
+    // names the outer one had set. The outer provider has no reason to
+    // re-render when its child unmounts, so its effect never re-runs to put
+    // them back: mounting a themed preview pane and closing it again stripped
+    // the app's branding down to the stylesheet defaults.
+    const root = document.documentElement;
+    const Outer = ({ withInner }: { withInner: boolean }) => (
+      <ThemeProvider theme={{ primary: '#0a0a0a' }}>
+        {withInner ? (
+          <ThemeProvider theme={{ primary: '#ffffff' }}>
+            <div />
+          </ThemeProvider>
+        ) : (
+          <div />
+        )}
+      </ThemeProvider>
+    );
+
+    const { rerender } = render(<Outer withInner />);
+    rerender(<Outer withInner={false} />);
+
+    expect(root.style.getPropertyValue('--color-primary')).toBe('#0a0a0a');
+  });
+
+  it('warns that a nested provider has no visual effect', () => {
+    // It cannot be made to work in this shape — :root holds one value per
+    // property — so the failure has to be loud. Silence was the worst option:
+    // useThemeContext() reports the INNER tokens while every utility class
+    // renders the OUTER ones, so the hook and the screen disagree and neither
+    // looks wrong on its own.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(
+      <ThemeProvider theme={{ primary: '#0a0a0a' }}>
+        <ThemeProvider theme={{ primary: '#ffffff' }}>
+          <div />
+        </ThemeProvider>
+      </ThemeProvider>,
+    );
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('nested ThemeProvider has no visual effect'));
+    warn.mockRestore();
+  });
+
+  it('does not warn for a single provider', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<ThemeProvider theme={{ primary: '#0a0a0a' }}><div /></ThemeProvider>);
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+});
+
+describe('ThemeProvider effect churn', () => {
+  it('an inline theme object does not re-write every property on every render', () => {
+    // The documented usage IS an inline literal, so a fresh identity arrives
+    // each render. With the object itself in the dependency array, every
+    // parent render removed ~70 custom properties from documentElement and
+    // immediately re-set them to identical values. Keyed on content instead.
+    const root = document.documentElement;
+    const setSpy = vi.spyOn(root.style, 'setProperty');
+
+    const App = ({ n }: { n: number }) => (
+      // Same VALUE every render, fresh IDENTITY every render.
+      <ThemeProvider theme={{ primary: '#123456' }}>
+        <span>{n}</span>
+      </ThemeProvider>
+    );
+
+    const { rerender } = render(<App n={0} />);
+    const afterMount = setSpy.mock.calls.length;
+    expect(afterMount).toBeGreaterThan(0); // it did write once
+
+    for (let i = 1; i <= 3; i++) rerender(<App n={i} />);
+
+    // A delta, so this is independent of how many passes the mount took —
+    // which matters because the suite runs under StrictMode.
+    expect(setSpy.mock.calls.length - afterMount).toBe(0);
+    setSpy.mockRestore();
+  });
+});
