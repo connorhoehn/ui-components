@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.83.0] — 2026-08-24
+
+Closes the three lifecycle items v2.82.0 deferred. Each was deferred as
+"needs a decision", but on inspection the existing behaviour is clearly
+unintended in all three, so the decision is just to fix them.
+
+### Fixed
+
+- **`CallStartedBanner` never auto-expired for most callers.** `onDismiss`
+  was an effect dependency, and callers almost always pass an inline arrow —
+  a new identity every parent render tore down the 30s timer and started it
+  again. In any UI that re-renders at least once per `autoExpireSec` (a live
+  call: presence updates, an elapsed ticker) the banner simply stayed up
+  forever. The callback now lives in a ref so the timer depends only on the
+  duration. The regression test re-renders five times across the window with
+  a fresh arrow each time and asserts exactly one dismissal.
+- **`useCallWidgetPersistence` threw away the position you just set.** Its
+  debounce cleanup discarded any pending write on unmount, so a widget
+  dragged within `debounceMs` (200ms) of the call closing never had the new
+  position saved — defeating the point of a persistence hook. It now flushes
+  on unmount, and on key change so the old key keeps its final value. The
+  pending-write flag is tracked separately from the timer handle, because
+  cleanups run in effect-definition order and the debounce cleanup clears
+  the handle first.
+  - The existing test asserting the *old* behaviour ("does not call setItem
+    when unmounted") was inverted rather than deleted: that assertion was
+    pinning the bug. It now also asserts the flush happens exactly once, so
+    a flush plus a late timer can't double-write.
+- **`useYjsDoc` removed a listener that was never registered.** The mount
+  effect registered `'synced'` with its own arrow; the doc-rebuild effect
+  called `off('synced', …)` passing its *own* hoisted declaration — a
+  different function object — so the removal was a no-op. Masked today only
+  because `provider.destroy()` runs immediately after and drops all
+  observers; a real leak the moment that stops being true. All effects now
+  share one stable `handleSynced`, so `on`/`off` always pair.
+
+Both new behavioural fixes were verified to fail against the pre-fix code
+before being kept.
+
 ## [2.82.0] — 2026-08-23
 
 A resource-leak and effect-cleanup audit — the failure class our test suite

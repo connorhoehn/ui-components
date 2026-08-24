@@ -1,5 +1,5 @@
 import { a as e, o as t } from "./registry-DbX3MVAA.js";
-import { c as n, s as r } from "./useWebSocket-CDq12epx.js";
+import { c as n, s as r } from "./useWebSocket-DgefXbuy.js";
 import { t as i } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as a } from "./cn-DhjIN-s0.js";
 import { t as o } from "./Modal-B75saHcP.js";

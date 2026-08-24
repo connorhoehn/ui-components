@@ -1435,14 +1435,16 @@ function de({ state: t, mode: n, participants: r, localParticipant: i, callerNam
 //#endregion
 //#region src/components/video/CallStartedBanner.tsx
 function fe({ callerName: t, callerAvatarUrl: n, context: r, mode: i = "started", onJoin: a, onDismiss: o, autoExpireSec: s = 30, className: c, style: l }) {
-	let [d, f] = h(!0);
+	let [d, f] = h(!0), p = m(o);
 	return u(() => {
+		p.current = o;
+	}, [o]), u(() => {
 		if (!s || s <= 0) return;
 		let e = setTimeout(() => {
-			f(!1), o?.();
+			f(!1), p.current?.();
 		}, s * 1e3);
 		return () => clearTimeout(e);
-	}, [s, o]), d ? /* @__PURE__ */ v("div", {
+	}, [s]), d ? /* @__PURE__ */ v("div", {
 		role: "status",
 		"aria-live": "polite",
 		"data-testid": "incoming-call-toast",
@@ -2270,24 +2272,33 @@ function Ie({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 			} catch {}
 			return t;
 		}
-	}), a = m(null);
+	}), a = m(null), o = m(!1), s = m(r);
+	s.current = r;
+	let c = l((e, t) => {
+		try {
+			let n = {
+				v: Fe,
+				...t
+			};
+			window.localStorage.setItem(e, JSON.stringify(n));
+		} catch {}
+	}, []);
 	return u(() => {
-		if (!(!e || typeof window > "u")) return a.current && clearTimeout(a.current), a.current = setTimeout(() => {
-			try {
-				let t = {
-					v: Fe,
-					...r
-				};
-				window.localStorage.setItem(e, JSON.stringify(t));
-			} catch {}
+		if (!(!e || typeof window > "u")) return a.current && clearTimeout(a.current), o.current = !0, a.current = setTimeout(() => {
+			o.current = !1, c(e, s.current);
 		}, n), () => {
 			a.current && clearTimeout(a.current);
 		};
 	}, [
 		e,
 		r,
-		n
-	]), {
+		n,
+		c
+	]), u(() => {
+		if (!(!e || typeof window > "u")) return () => {
+			o.current && (o.current = !1, c(e, s.current));
+		};
+	}, [e, c]), {
 		state: r,
 		setState: l((e) => {
 			i((t) => ({

@@ -149,9 +149,13 @@ describe('debounced localStorage write', () => {
   });
 });
 
-// ── 8. Cleanup cancels pending debounced write ─────────────────────────────
+// ── 8. Unmount FLUSHES the pending debounced write ─────────────────────────
+// This used to assert the opposite — that unmounting cancelled the pending
+// write. That was the bug, not the contract: a widget dragged within
+// `debounceMs` of the call closing silently lost its new position, which
+// defeats the point of persisting position at all. Fixed in v2.83.0.
 describe('unmount before debounce fires', () => {
-  it('does not call setItem when unmounted before the debounce elapses', () => {
+  it('flushes the pending write on unmount instead of discarding it', () => {
     vi.useFakeTimers();
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
 
@@ -165,7 +169,10 @@ describe('unmount before debounce fires', () => {
     unmount();
 
     act(() => { vi.advanceTimersByTime(300); });
-    expect(setItemSpy).not.toHaveBeenCalled();
+    expect(setItemSpy).toHaveBeenCalled();
+    // …and exactly once: the flush must not also let the timer fire later.
+    expect(setItemSpy).toHaveBeenCalledTimes(1);
+    expect(JSON.parse(String(setItemSpy.mock.calls[0][1])).x).toBe(99);
   });
 });
 

@@ -70,19 +70,47 @@ export function useCallWidgetPersistence({
   // `debounceMs` of quiescence — avoids hammering storage on every
   // drag pixel.
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // A write is owed but not yet flushed. Tracked separately from `timerRef`
+  // because the debounce effect's cleanup clears the timer on unmount, and
+  // cleanups run in effect-definition order — so the flush below cannot rely
+  // on the handle still being there to know a write was pending.
+  const pendingRef = useRef(false);
+  const latestStateRef = useRef(state);
+  latestStateRef.current = state;
+
+  const write = useCallback((key: string, value: PersistedWidgetState) => {
+    try {
+      const stored: Stored = { v: STORAGE_VERSION, ...value };
+      window.localStorage.setItem(key, JSON.stringify(stored));
+    } catch { /* quota / private mode — ignore */ }
+  }, []);
+
   useEffect(() => {
     if (!persistKey || typeof window === 'undefined') return;
     if (timerRef.current) clearTimeout(timerRef.current);
+    pendingRef.current = true;
     timerRef.current = setTimeout(() => {
-      try {
-        const stored: Stored = { v: STORAGE_VERSION, ...state };
-        window.localStorage.setItem(persistKey, JSON.stringify(stored));
-      } catch { /* quota / private mode — ignore */ }
+      pendingRef.current = false;
+      write(persistKey, latestStateRef.current);
     }, debounceMs);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [persistKey, state, debounceMs]);
+  }, [persistKey, state, debounceMs, write]);
+
+  // Flush on unmount (and when the key changes, so the old key keeps its
+  // final value). Without this the debounce cleanup simply discarded a
+  // pending write, so a widget moved within `debounceMs` of the call closing
+  // never had its new position persisted — defeating the point of the hook.
+  useEffect(() => {
+    if (!persistKey || typeof window === 'undefined') return;
+    return () => {
+      if (pendingRef.current) {
+        pendingRef.current = false;
+        write(persistKey, latestStateRef.current);
+      }
+    };
+  }, [persistKey, write]);
 
   const setState = useCallback((next: Partial<PersistedWidgetState>) => {
     setStateImpl((prev) => ({ ...prev, ...next }));

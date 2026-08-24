@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
@@ -57,14 +57,23 @@ export function CallStartedBanner({
 }: CallStartedBannerProps) {
   const [visible, setVisible] = useState(true);
 
+  // `onDismiss` is held in a ref so the auto-expire timer depends ONLY on the
+  // duration. It used to be an effect dependency, and callers almost always
+  // pass an inline arrow — a new identity every parent render tore the timer
+  // down and restarted it, so in any UI that re-renders at least once per
+  // `autoExpireSec` (a live call: presence, elapsed ticker) the banner never
+  // expired at all.
+  const onDismissRef = useRef(onDismiss);
+  useEffect(() => { onDismissRef.current = onDismiss; }, [onDismiss]);
+
   useEffect(() => {
     if (!autoExpireSec || autoExpireSec <= 0) return;
     const t = setTimeout(() => {
       setVisible(false);
-      onDismiss?.();
+      onDismissRef.current?.();
     }, autoExpireSec * 1000);
     return () => clearTimeout(t);
-  }, [autoExpireSec, onDismiss]);
+  }, [autoExpireSec]);
 
   if (!visible) return null;
 

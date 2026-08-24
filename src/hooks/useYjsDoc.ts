@@ -11,7 +11,7 @@
 // It does NOT know about meta / sections / comments / awareness fields —
 // those live in sibling hooks that observe the exposed `ydoc` / `provider`.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import * as Y from 'yjs';
 import { GatewayProvider } from '../providers/GatewayProvider';
 import type { UseWebSocketReturn } from './useWebSocket';
@@ -56,6 +56,15 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
   const channel = `doc:${documentId}`;
 
   // ---- Setup / teardown --------------------------------------------------
+  // One stable 'synced' handler shared by every effect below. Each effect
+  // used to declare its OWN: the doc-rebuild effect called
+  // `oldProvider.off('synced', onSynced)` passing its local declaration,
+  // while the listener actually on that provider was a different arrow from
+  // the mount effect — so the off() removed nothing. Masked today only
+  // because `provider.destroy()` immediately drops all observers; a real
+  // leak the moment that stops being true.
+  const handleSynced = useCallback(() => setSynced(true), []);
+
   useEffect(() => {
     const ydoc = new Y.Doc({ gc: false });
     ydocRef.current = ydoc;
@@ -74,8 +83,7 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
     const retryTimer = setTimeout(sendSubscribe, 500);
     const retryTimer2 = setTimeout(sendSubscribe, 1500);
 
-    const onSynced = () => setSynced(true);
-    provider.on('synced', onSynced);
+    provider.on('synced', handleSynced);
 
     return () => {
       clearTimeout(retryTimer);
@@ -86,7 +94,7 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
       const curProvider = providerRef.current;
       const curDoc = ydocRef.current;
       if (curProvider) {
-        curProvider.off('synced', onSynced);
+        curProvider.off('synced', handleSynced);
         curProvider.destroy();
       }
       if (curDoc) {
@@ -129,7 +137,7 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
         const oldDoc = ydocRef.current;
         const oldProvider = providerRef.current;
         if (oldProvider) {
-          oldProvider.off('synced', onSynced);
+          oldProvider.off('synced', handleSynced);
           oldProvider.destroy();
         }
         if (oldDoc) oldDoc.destroy();
@@ -141,7 +149,7 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
         providerRef.current = newProvider;
 
         newProvider.applySnapshot(snapshotB64);
-        newProvider.on('synced', onSynced);
+        newProvider.on('synced', handleSynced);
 
         // Notify observers (sibling hooks) to re-attach.
         onDocReplacedRef.current?.(newDoc, newProvider);
@@ -208,11 +216,6 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
         }
       }
     });
-
-    // Local synced handler for doc-replaced rebuild.
-    function onSynced() {
-      setSynced(true);
-    }
 
     return unregister;
     // eslint-disable-next-line react-hooks/exhaustive-deps

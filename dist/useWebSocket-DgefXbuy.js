@@ -477,107 +477,101 @@ var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je
 };
 //#endregion
 //#region src/hooks/useYjsDoc.ts
-function Ie(e) {
-	let { documentId: n, ws: o, onMessage: s, onDocReplaced: c } = e, [l, u] = i(!1), [d, f] = i(0), p = r(null), m = r(null), h = r(c);
-	h.current = c;
-	let g = `doc:${n}`;
+function Ie(n) {
+	let { documentId: o, ws: s, onMessage: c, onDocReplaced: l } = n, [u, d] = i(!1), [f, p] = i(0), m = r(null), h = r(null), g = r(l);
+	g.current = l;
+	let _ = `doc:${o}`, v = e(() => d(!0), []);
 	return t(() => {
 		let e = new a.Doc({ gc: !1 });
-		p.current = e;
-		let t = new Fe(e, g, o.sendMessage);
-		m.current = t, f((e) => e + 1);
+		m.current = e;
+		let t = new Fe(e, _, s.sendMessage);
+		h.current = t, p((e) => e + 1);
 		let n = () => {
-			o.sendMessage({
+			s.sendMessage({
 				service: "crdt",
 				action: "subscribe",
-				channel: g
+				channel: _
 			});
 		};
 		n();
-		let r = setTimeout(n, 500), i = setTimeout(n, 1500), s = () => u(!0);
-		return t.on("synced", s), () => {
-			clearTimeout(r), clearTimeout(i), o.sendMessage({
+		let r = setTimeout(n, 500), i = setTimeout(n, 1500);
+		return t.on("synced", v), () => {
+			clearTimeout(r), clearTimeout(i), s.sendMessage({
 				service: "crdt",
 				action: "unsubscribe",
-				channel: g
+				channel: _
 			});
-			let e = m.current, t = p.current;
-			e && (e.off("synced", s), e.destroy()), t && t.destroy(), p.current = null, m.current = null, u(!1);
+			let e = h.current, t = m.current;
+			e && (e.off("synced", v), e.destroy()), t && t.destroy(), m.current = null, h.current = null, d(!1);
 		};
-	}, [n]), t(() => s((e) => {
-		e.type === "session" && o.sendMessage({
+	}, [o]), t(() => c((e) => {
+		e.type === "session" && s.sendMessage({
 			service: "crdt",
 			action: "subscribe",
-			channel: g
+			channel: _
 		});
 	}), [
-		n,
-		o.sendMessage,
-		s,
-		g
-	]), t(() => {
-		let e = s((e) => {
-			let n = m.current;
-			if (n) {
-				if (e.type === "crdt:doc-replaced") {
-					if (e.channel !== g) return;
-					let n = e.snapshot;
-					if (!n) return;
-					let r = p.current, i = m.current;
-					i && (i.off("synced", t), i.destroy()), r && r.destroy();
-					let s = new a.Doc({ gc: !1 });
-					p.current = s;
-					let c = new Fe(s, g, o.sendMessage);
-					m.current = c, c.applySnapshot(n), c.on("synced", t), h.current?.(s, c), u(!0), f((e) => e + 1);
+		o,
+		s.sendMessage,
+		c,
+		_
+	]), t(() => c((e) => {
+		let t = h.current;
+		if (t) {
+			if (e.type === "crdt:doc-replaced") {
+				if (e.channel !== _) return;
+				let t = e.snapshot;
+				if (!t) return;
+				let n = m.current, r = h.current;
+				r && (r.off("synced", v), r.destroy()), n && n.destroy();
+				let i = new a.Doc({ gc: !1 });
+				m.current = i;
+				let o = new Fe(i, _, s.sendMessage);
+				h.current = o, o.applySnapshot(t), o.on("synced", v), g.current?.(i, o), d(!0), p((e) => e + 1);
+				return;
+			}
+			if (e.type === "crdt:snapshot") {
+				if (e.channel !== _) return;
+				let n = e.snapshot;
+				n && t.applySnapshot(n);
+				return;
+			}
+			if (e.type === "crdt:update") {
+				if (e.channel !== _) return;
+				let n = e.update;
+				n && t.applyRemoteUpdate(n);
+				return;
+			}
+			if (e.type === "crdt:awareness") {
+				if (e.channel !== _) return;
+				let n = e, r = n.updates;
+				if (r && Array.isArray(r)) {
+					for (let e of r) e.update && t.applyAwarenessUpdate(e.update);
 					return;
 				}
-				if (e.type === "crdt:snapshot") {
-					if (e.channel !== g) return;
-					let t = e.snapshot;
-					t && n.applySnapshot(t);
-					return;
-				}
-				if (e.type === "crdt:update") {
-					if (e.channel !== g) return;
-					let t = e.update;
-					t && n.applyRemoteUpdate(t);
-					return;
-				}
-				if (e.type === "crdt:awareness") {
-					if (e.channel !== g) return;
-					let t = e, r = t.updates;
-					if (r && Array.isArray(r)) {
-						for (let e of r) e.update && n.applyAwarenessUpdate(e.update);
-						return;
-					}
-					let i = t.update;
-					i && n.applyAwarenessUpdate(i);
-					return;
-				}
-				if (e.type === "crdt") {
-					if (e.channel !== g) return;
-					switch (e.action) {
-						case "snapshot":
-							if (e.version) break;
-							e.update && n.applySnapshot(e.update);
-							break;
-						case "update":
-							e.update && n.applyRemoteUpdate(e.update);
-							break;
-						case "awareness": e.update && n.applyAwarenessUpdate(e.update);
-					}
+				let i = n.update;
+				i && t.applyAwarenessUpdate(i);
+				return;
+			}
+			if (e.type === "crdt") {
+				if (e.channel !== _) return;
+				switch (e.action) {
+					case "snapshot":
+						if (e.version) break;
+						e.update && t.applySnapshot(e.update);
+						break;
+					case "update":
+						e.update && t.applyRemoteUpdate(e.update);
+						break;
+					case "awareness": e.update && t.applyAwarenessUpdate(e.update);
 				}
 			}
-		});
-		function t() {
-			u(!0);
 		}
-		return e;
-	}, [n, s]), {
-		ydoc: p.current,
-		provider: m.current,
-		synced: l,
-		docVersion: d
+	}), [o, c]), {
+		ydoc: m.current,
+		provider: h.current,
+		synced: u,
+		docVersion: f
 	};
 }
 //#endregion

@@ -2615,19 +2615,26 @@ function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 	}, [a]);
 	let l = x((e) => {
 		e >= 0 && e < t && c.current[e] && (c.current[e].focus(), c.current[e].select());
-	}, [t]), u = x((e, r) => {
-		let i = r.replace(/\D/g, "").slice(-1);
-		s((r) => {
-			let a = [...r];
-			a[e] = i;
-			let o = a.join("");
-			return o.length === t && a.every((e) => e !== "") && setTimeout(() => n(o), 0), a;
-		}), i && e < t - 1 && l(e + 1);
+	}, [t]), u = w(null);
+	S(() => {
+		let e = o.join("");
+		if (!(e.length === t && o.every((e) => e !== ""))) {
+			u.current = null;
+			return;
+		}
+		u.current !== e && (u.current = e, n(e));
 	}, [
+		o,
 		t,
-		n,
-		l
-	]), d = x((e, n) => {
+		n
+	]);
+	let d = x((e, n) => {
+		let r = n.replace(/\D/g, "").slice(-1);
+		s((t) => {
+			let n = [...t];
+			return n[e] = r, n;
+		}), r && e < t - 1 && l(e + 1);
+	}, [t, l]), f = x((e, n) => {
 		n.key === "Backspace" ? o[e] === "" && e > 0 ? (n.preventDefault(), s((t) => {
 			let n = [...t];
 			return n[e - 1] = "", n;
@@ -2639,7 +2646,7 @@ function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 		o,
 		t,
 		l
-	]), f = x((e) => {
+	]), p = x((e) => {
 		e.preventDefault();
 		let r = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, t);
 		if (!r) return;
@@ -2668,9 +2675,9 @@ function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 				value: o[a],
 				disabled: i,
 				"aria-label": `Digit ${a + 1} of ${t}`,
-				onChange: (e) => u(a, e.target.value),
-				onKeyDown: (e) => d(a, e),
-				onPaste: f,
+				onChange: (e) => d(a, e.target.value),
+				onKeyDown: (e) => f(a, e),
+				onPaste: p,
 				onFocus: (e) => e.target.select(),
 				className: e("w-11 h-[52px] text-center text-lg font-semibold font-[inherit]", "rounded-md outline-none transition-[border-color,box-shadow] duration-150", "border-2", r ? "border-danger" : "border-border", i ? "bg-surface-panel cursor-not-allowed" : "bg-white cursor-text", "text-text-primary", "focus:border-info focus:ring-2 focus:ring-info/20")
 			}, a))
