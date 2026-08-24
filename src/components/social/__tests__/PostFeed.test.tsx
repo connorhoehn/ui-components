@@ -46,6 +46,7 @@ function makePosts(over: Partial<UsePostsReturn> = {}): UsePostsReturn {
     deletePost: vi.fn().mockResolvedValue(undefined),
     getUserPosts: vi.fn().mockResolvedValue([]),
     loading: false,
+    mutating: false,
     error: null,
     hasMore: false,
     loadMore: vi.fn().mockResolvedValue(undefined),
@@ -80,6 +81,26 @@ beforeEach(() => {
     deleteComment: vi.fn().mockResolvedValue(undefined),
     loading: false,
     error: null,
+  });
+});
+
+// The composer's busy guard used to read `loading`, which usePosts sets only
+// for the initial fetch and loadMore. The mutation flag existed but was held
+// in an unread `_mutating` state and never returned, so the Post button stayed
+// enabled and labelled "Post" for the whole POST and a second click created a
+// duplicate post.
+describe('PostFeed composer busy state', () => {
+  it('disables the Post button while a create is in flight', () => {
+    renderFeed(makePosts({ posts: [makePost()], mutating: true }));
+    const button = screen.getByRole('button', { name: 'Posting…' });
+    expect(button).toBeDisabled();
+  });
+
+  it('leaves the Post button live when nothing is in flight', () => {
+    renderFeed(makePosts({ posts: [makePost()], mutating: false }));
+    const textarea = screen.getByPlaceholderText("What's on your mind?");
+    fireEvent.change(textarea, { target: { value: 'hello' } });
+    expect(screen.getByRole('button', { name: 'Post' })).toBeEnabled();
   });
 });
 

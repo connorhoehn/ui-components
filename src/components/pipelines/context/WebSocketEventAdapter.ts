@@ -20,13 +20,14 @@
 //  - Handles reconnects by re-subscribing whenever `connectionState`
 //    transitions back to 'connected'.
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type {
   PipelineDefinition,
   PipelineEventMap,
   PipelineWireEvent,
 } from '../../../types/pipeline';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
+import type { EventStreamChannelTransport } from './EventStreamContext';
 import type { GatewayMessage, PipelineEventFrame } from '../../../types/gateway';
 
 // ---------------------------------------------------------------------------
@@ -339,4 +340,38 @@ export function usePipelineRunChannelSubscription(
       sendMessage({ service: 'pipeline', action: 'unsubscribe', channel });
     };
   }, [enabled, runId, connectionState, sendMessage]);
+}
+
+// ---------------------------------------------------------------------------
+// EventStreamProvider channel transport
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the `channelTransport` for `<EventStreamProvider>` out of the gateway
+ * socket. This is what makes `subscribeToRun` / `subscribeToAll` /
+ * `subscribeToApprovals` actually open a channel — without it those calls are
+ * no-ops (they were unconditional no-op stubs until v2.90; see the
+ * `EventStreamChannelTransport` docs).
+ *
+ * The returned object's identity changes when `connectionState` changes,
+ * which is deliberate: every subscriber's effect re-runs and re-subscribes
+ * after a reconnect. Sends are dropped while not `connected` rather than the
+ * transport being absent, so a not-yet-connected socket isn't mistaken for a
+ * host that forgot to wire the seam.
+ */
+export function usePipelineChannelTransport(): EventStreamChannelTransport {
+  const { connectionState, sendMessage } = useWebSocketContext();
+  return useMemo<EventStreamChannelTransport>(() => {
+    const connected = connectionState === 'connected';
+    return {
+      subscribe(channel: string) {
+        if (!connected) return;
+        sendMessage({ service: 'pipeline', action: 'subscribe', channel });
+      },
+      unsubscribe(channel: string) {
+        if (!connected) return;
+        sendMessage({ service: 'pipeline', action: 'unsubscribe', channel });
+      },
+    };
+  }, [connectionState, sendMessage]);
 }

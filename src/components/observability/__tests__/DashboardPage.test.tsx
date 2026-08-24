@@ -26,6 +26,7 @@ vi.mock('../hooks/usePipelineMetrics', () => ({ usePipelineMetrics: () => usePip
 vi.mock('react-router', () => ({ useNavigate: () => navigateMock }));
 
 import DashboardPage, { formatMs } from '../DashboardPage';
+import type { ActiveRunRow } from '../components/ActiveRunsTable';
 
 function metrics(over: Partial<PipelineMetrics> = {}): PipelineMetrics {
   return {
@@ -51,6 +52,7 @@ function renderDashboard(opts: {
   metrics?: PipelineMetrics | null;
   source?: UsePipelineMetricsResult['source'];
   dashboard?: ClusterDashboard | null;
+  activeRuns?: ActiveRunRow[];
 } = {}) {
   const obs = observability(opts.obs);
   useObservabilityMock.mockReturnValue(obs);
@@ -62,7 +64,7 @@ function renderDashboard(opts: {
     isLiveData: true,
     source: opts.source === undefined ? 'bridge' : opts.source,
   });
-  render(<DashboardPage />);
+  render(<DashboardPage activeRuns={opts.activeRuns} />);
   return obs;
 }
 
@@ -238,5 +240,58 @@ describe('DashboardPage recent events', () => {
     }));
     renderDashboard({ obs: { recentEvents } });
     expect(screen.getAllByText(/^event \d+$/)).toHaveLength(20);
+  });
+});
+
+// The dashboard header pill is scoped to the dashboard FETCH, so it read
+// "live data" over two surfaces that had no live source at all:
+//   - the cluster-health grid, whose tiles were synthesized per
+//     `overview.totalNodes` with `cpu: 10 + i * 4`, a sine-wave history and
+//     `status: 'healthy'` hard-coded for every node;
+//   - the active-runs table, fed a module-level `const [] `, which rendered
+//     "Active runs (0)" beneath a live "Active now" KPI reading 7.
+describe('DashboardPage provenance', () => {
+  it('does not synthesize node tiles when the payload has no per-node telemetry', () => {
+    renderDashboard({
+      obs: { isLiveData: true },
+      dashboard: { overview: { totalNodes: 3, healthyNodes: 3 }, regions: {} } as ClusterDashboard,
+    });
+    expect(screen.queryAllByTestId('node-grid-tile')).toHaveLength(0);
+    expect(screen.getByTestId('cluster-health-no-telemetry')).toBeInTheDocument();
+    // The counts that ARE real are still shown.
+    expect(screen.getByTestId('cluster-health-chip')).toHaveTextContent('3/3');
+  });
+
+  it('renders real node tiles when the payload carries them', () => {
+    renderDashboard({
+      dashboard: {
+        overview: { totalNodes: 1, healthyNodes: 1 },
+        regions: {
+          'us-east-1': {
+            nodes: [
+              { id: 'real-1', status: 'degraded', role: 'worker', cpu: 91, memoryMb: 700, connections: 3, activeRuns: 1, cpuHistory: [1, 2] },
+            ],
+          },
+        },
+      } as unknown as ClusterDashboard,
+    });
+    expect(screen.getAllByTestId('node-grid-tile')).toHaveLength(1);
+    expect(screen.queryByTestId('cluster-health-no-telemetry')).toBeNull();
+  });
+
+  it('says no active-run source is wired rather than claiming zero', () => {
+    renderDashboard({ obs: { activeRunsCount: 7 } });
+    expect(screen.getByTestId('active-runs-not-wired')).toBeInTheDocument();
+    expect(screen.queryByText('Active runs (0)')).toBeNull();
+  });
+
+  it('renders the table once a host supplies the rows', () => {
+    renderDashboard({
+      activeRuns: [
+        { runId: 'r1', pipelineId: 'p1', pipelineName: 'Nightly', status: 'running', startedAt: '2026-01-01T00:00:00.000Z' } as unknown as ActiveRunRow,
+      ],
+    });
+    expect(screen.queryByTestId('active-runs-not-wired')).toBeNull();
+    expect(screen.getByText('Active runs (1)')).toBeInTheDocument();
   });
 });

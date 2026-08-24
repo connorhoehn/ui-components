@@ -35,7 +35,19 @@ export interface UsePostsReturn {
   editPost: (postId: string, content: string) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
   getUserPosts: (userId: string) => Promise<PostItem[]>;
+  /** True during the initial fetch and `loadMore`. NOT set by mutations. */
   loading: boolean;
+  /**
+   * True while a `createPost` / `editPost` / `deletePost` request is in
+   * flight. **Additive, v2.97.0.**
+   *
+   * The flag existed from the start but was held in an unread `_mutating`
+   * state and never returned, so the composer's only busy signal was
+   * `loading` — which goes false after the first page resolves and never
+   * moves again. The submit button therefore stayed enabled and labelled
+   * "Post" for the whole POST, and a second click created a duplicate post.
+   */
+  mutating: boolean;
   error: string | null;
   hasMore: boolean;
   loadMore: () => Promise<void>;
@@ -49,7 +61,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [lastKey, setLastKey] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);       // initial fetch / loadMore
-  const [_mutating, setMutating] = useState(false);    // createPost / editPost / deletePost
+  const [mutating, setMutating] = useState(false);     // createPost / editPost / deletePost
   const [error, setError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
@@ -237,6 +249,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     deletePost,
     getUserPosts,
     loading,
+    mutating,
     error,
     hasMore: lastKey !== undefined,
     loadMore,

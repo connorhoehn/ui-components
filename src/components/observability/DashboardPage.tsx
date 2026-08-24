@@ -56,27 +56,44 @@ export function formatMs(value: number | null | undefined): string {
 // Phase-1 synthesized data (from the dashboardFixture scaffolding)
 // ---------------------------------------------------------------------------
 
-function buildPhase1Nodes(overview: { totalNodes: number; healthyNodes: number }): NodeSummary[] {
-  // Phase 1 fixture has no per-node telemetry. Generate simple healthy tiles
-  // so the cluster-health card renders per §18.6.
-  const n = Math.max(0, overview.totalNodes ?? 0);
-  const history = (seed: number) =>
-    Array.from({ length: 12 }, (_, i) =>
-      Math.max(0, Math.round(10 + Math.sin(seed + i / 2) * 4 + i * 0.3)),
-    );
-  return Array.from({ length: n }, (_, i) => ({
-    id: `node-${i}`,
-    status: 'healthy' as const,
-    role: 'worker',
-    cpu: 10 + i * 4,
-    memoryMb: 280 + i * 60,
-    connections: 12 + i * 3,
-    activeRuns: 0,
-    cpuHistory: history(i),
-  }));
+/**
+ * Shape whatever per-node telemetry the dashboard payload carries into
+ * `NodeSummary` tiles. Returns `[]` when the payload has none.
+ *
+ * This used to be `buildPhase1Nodes`, which SYNTHESIZED a tile per
+ * `overview.totalNodes` — `cpu: 10 + i * 4`, `memoryMb: 280 + i * 60`, a
+ * sine-wave `cpuHistory`, and `status: 'healthy'` for every node. Only the
+ * node *count* was real. The header pill is scoped to the dashboard fetch,
+ * so on a genuinely connected cluster it read "live data" directly above
+ * invented per-node CPU, invented memory, and an all-healthy grid that
+ * stayed all-healthy through an incident. Absent telemetry now renders as
+ * absent, not as a plausible number.
+ */
+function nodesFromDashboard(dashboard: { regions?: Record<string, unknown> } | null | undefined): NodeSummary[] {
+  const regions = (dashboard?.regions ?? {}) as Record<
+    string,
+    { nodes?: Array<Record<string, unknown>> } | undefined
+  >;
+  const out: NodeSummary[] = [];
+  for (const key of Object.keys(regions)) {
+    const nodes = regions[key]?.nodes;
+    if (!Array.isArray(nodes)) continue;
+    for (const n of nodes) {
+      out.push({
+        id: (n.id as string) ?? `node-${out.length}`,
+        status: (n.status as NodeSummary['status']) ?? 'healthy',
+        role: (n.role as string) ?? 'worker',
+        region: key,
+        cpu: (n.cpu as number) ?? 0,
+        memoryMb: (n.memoryMb as number) ?? 0,
+        connections: (n.connections as number) ?? 0,
+        activeRuns: (n.activeRuns as number) ?? 0,
+        cpuHistory: (n.cpuHistory as number[]) ?? [],
+      });
+    }
+  }
+  return out;
 }
-
-const PHASE1_ACTIVE_RUNS: ActiveRunRow[] = [];
 
 // ---------------------------------------------------------------------------
 // Sub-components (kept local — not reused elsewhere)
@@ -171,7 +188,17 @@ function ClusterHealthCard({
           {healthyCount}/{totalCount} {allHealthy ? '✓' : '!'}
         </span>
       </div>
-      <NodeGrid nodes={nodes} onSelect={onSelect} />
+      {nodes.length > 0 ? (
+        <NodeGrid nodes={nodes} onSelect={onSelect} />
+      ) : (
+        <div
+          data-testid="cluster-health-no-telemetry"
+          className="p-4 text-center text-text-tertiary text-[13px]"
+        >
+          No per-node telemetry in this dashboard payload — {totalCount} node
+          {totalCount === 1 ? '' : 's'} reported, {healthyCount} healthy.
+        </div>
+      )}
     </div>
   );
 }
@@ -222,7 +249,21 @@ function RecentEventsCard({
 // Main page
 // ---------------------------------------------------------------------------
 
-export default function DashboardPage() {
+export interface DashboardPageProps {
+  /**
+   * Currently-running rows for the "Active runs" table. **Additive, v2.97.0.**
+   *
+   * The table used to be fed a module-level `const PHASE1_ACTIVE_RUNS = []`,
+   * so the section rendered a permanent "Active runs (0)" heading over an
+   * empty table — directly beneath a live "Active now: 7" KPI read off the
+   * event stream. Operators could see that runs existed and could not reach
+   * them. With no host wiring there is no source for this list, so the
+   * section now says so instead of asserting zero.
+   */
+  activeRuns?: ActiveRunRow[];
+}
+
+export default function DashboardPage({ activeRuns }: DashboardPageProps = {}) {
   const navigate = useNavigate();
   const activeRunsRef = useRef<HTMLDivElement>(null);
 
@@ -240,7 +281,7 @@ export default function DashboardPage() {
   const { metrics: pipelineMetrics, source: metricsSource } = usePipelineMetrics();
 
   const overview = dashboard?.overview ?? {};
-  const nodes = useMemo(() => buildPhase1Nodes(overview), [overview]);
+  const nodes = useMemo(() => nodesFromDashboard(dashboard), [dashboard]);
 
   // KPI values: pass through nulls so KPICard can render the em-dash.
   // `activeRunsCount` from the EventStream takes precedence when non-zero —
@@ -354,14 +395,31 @@ export default function DashboardPage() {
       {/* Active runs */}
       <div ref={activeRunsRef}>
         <div className="text-sm font-semibold text-text-primary mb-2 font-[inherit]">
-          Active runs ({PHASE1_ACTIVE_RUNS.length})
+          Active runs{activeRuns ? ` (${activeRuns.length})` : ''}
         </div>
-        <ActiveRunsTable
-          runs={PHASE1_ACTIVE_RUNS}
-          onRowClick={(run) =>
-            navigate(`/pipelines/${run.pipelineId}/runs/${run.runId}`)
-          }
-        />
+        {activeRuns ? (
+          <ActiveRunsTable
+            runs={activeRuns}
+            onRowClick={(run) =>
+              navigate(`/pipelines/${run.pipelineId}/runs/${run.runId}`)
+            }
+          />
+        ) : (
+          <div
+            data-testid="active-runs-not-wired"
+            className="bg-surface border border-border rounded-[10px] p-4 text-center text-text-tertiary text-[13px]"
+          >
+            No active-run source is wired to this dashboard.{' '}
+            <button
+              data-testid="active-runs-go-to-pipelines"
+              onClick={handleGoToPipelines}
+              className="bg-transparent border-none text-primary text-[13px] font-semibold cursor-pointer font-[inherit] p-0"
+            >
+              Open Pipelines
+            </button>{' '}
+            to see runs in progress.
+          </div>
+        )}
       </div>
 
       {/* Recent events */}

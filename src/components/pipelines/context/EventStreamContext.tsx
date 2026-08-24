@@ -61,9 +61,51 @@ export interface EventStreamValue {
   dispatchEnvelope<K extends keyof PipelineEventMap>(
     envelope: PipelineWireEvent<K>,
   ): void;
+  /**
+   * Ask the gateway to start streaming the per-run channel
+   * `pipeline:run:{runId}`, and return a function that unsubscribes it.
+   *
+   * **This only does anything when the host wired `channelTransport` on
+   * `<EventStreamProvider>`.** The provider owns no socket of its own — see
+   * the `EventStreamChannelTransport` docs below. With no transport the
+   * returned function is a no-op and a dev-mode warning names the channel
+   * that was requested but never opened.
+   */
   subscribeToRun(runId: string): () => void;
+  /** Same contract as `subscribeToRun`, for the `pipeline:all` firehose. */
   subscribeToAll(): () => void;
+  /** Same contract as `subscribeToRun`, for the `pipeline:approvals` channel. */
   subscribeToApprovals(): () => void;
+}
+
+/**
+ * Host seam for gateway channel subscription.
+ *
+ * `EventStreamProvider` is a pure in-memory dispatcher: it has no WebSocket,
+ * and deliberately doesn't take a hard dependency on `WebSocketContext` so it
+ * stays mountable in tests, Storybook and the backendless demo. But
+ * `subscribeToRun` / `subscribeToAll` / `subscribeToApprovals` are, by name,
+ * promises to open a *gateway* channel — something only the host can do.
+ *
+ * Until v2.90 those three methods were unconditional `return () => {}` stubs
+ * with a comment claiming "WebSocketEventAdapter provides real subscriptions".
+ * It doesn't and it can't: the adapter is a sibling hook, not a wrapper, so
+ * nothing ever replaced the stub. Callers (`usePipelineRunAuditLog`,
+ * `usePendingApprovals`, `ObservabilityContext`) held an unsubscribe handle
+ * for a channel that had never been opened.
+ *
+ * Implement this with `usePipelineWsCommands()` from `WebSocketEventAdapter`
+ * — its `subscribe`/`unsubscribe` frames use exactly these channel names. See
+ * `AppLayout` for the reference wiring.
+ *
+ * **Pass a stable (memoized) object.** Its identity is part of the context
+ * value, so a new object every render re-runs every subscriber's effect.
+ * Changing identity on purpose (e.g. when the socket reconnects) is how
+ * re-subscription after a reconnect happens.
+ */
+export interface EventStreamChannelTransport {
+  subscribe(channel: string): void;
+  unsubscribe(channel: string): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -108,10 +150,19 @@ function buildDedupeKey(env: PipelineWireEvent): string {
 
 export interface EventStreamProviderProps {
   children: React.ReactNode;
+  /**
+   * Gateway channel transport. Omit it and `subscribeToRun` /
+   * `subscribeToAll` / `subscribeToApprovals` open nothing — correct for
+   * tests, Storybook and the backendless demo, which drive the dispatcher
+   * directly via `dispatch` / `dispatchEnvelope`. Any deployment with a real
+   * gateway must pass one. See `EventStreamChannelTransport`.
+   */
+  channelTransport?: EventStreamChannelTransport;
 }
 
 export function EventStreamProvider({
   children,
+  channelTransport,
 }: EventStreamProviderProps) {
   const listeners = useRef<Map<string, Set<AnyHandler>>>(new Map());
   // Insertion-order LRU of seen `(runId, stepId, seq)` triples. We use a plain
@@ -219,19 +270,77 @@ export function EventStreamProvider({
     [dispatchEnvelope],
   );
 
-  const subscribeToRun = useCallback((runId: string): (() => void) => {
-    // No-op stub — WebSocketEventAdapter provides real subscriptions.
-    // Only called during brief initialization before WS adapter takes over.
-    return () => {}; // unsubscribe no-op
-  }, []);
+  // Channels we've already warned about, so a component that re-subscribes on
+  // every reconnect doesn't spam the console. Per provider instance.
+  const warnedChannels = useRef<Set<string>>(new Set());
+  // Refcount per channel. Two components can want the same channel
+  // (`ObservabilityContext` and a run page both want `pipeline:all`); without
+  // this, the first one to unmount would close the channel out from under the
+  // second, which still believes it is subscribed. Only the 0->1 and 1->0
+  // transitions reach the wire.
+  const channelRefs = useRef<Map<string, number>>(new Map());
 
-  const subscribeToAll = useCallback((): (() => void) => {
-    return () => {}; // unsubscribe no-op
-  }, []);
+  /**
+   * Open a gateway channel through the host transport and return its
+   * unsubscribe. With no transport wired this is a no-op — but a *loud* one
+   * in dev, because a silent no-op here is indistinguishable from a healthy
+   * subscription at the call site.
+   */
+  const openChannel = useCallback(
+    (channel: string): (() => void) => {
+      if (!channelTransport) {
+        if (import.meta.env.DEV && !warnedChannels.current.has(channel)) {
+          warnedChannels.current.add(channel);
+          // eslint-disable-next-line no-console
+          console.warn(
+            `[EventStream] channel "${channel}" was requested but no ` +
+              '`channelTransport` is wired on <EventStreamProvider>, so nothing ' +
+              'was subscribed. Events only reach subscribers if some other ' +
+              'producer dispatches them. See EventStreamChannelTransport.',
+          );
+        }
+        return () => {};
+      }
+      const refs = channelRefs.current;
+      const before = refs.get(channel) ?? 0;
+      refs.set(channel, before + 1);
+      if (before === 0) channelTransport.subscribe(channel);
 
-  const subscribeToApprovals = useCallback((): (() => void) => {
-    return () => {}; // unsubscribe no-op
-  }, []);
+      let closed = false;
+      return () => {
+        // Guard double-invocation: React StrictMode runs mount effects as
+        // mount -> unmount -> remount, and callers keep the handle in arrays
+        // they may drain more than once. Without this, one handle could
+        // decrement the refcount twice and close a live channel.
+        if (closed) return;
+        closed = true;
+        const current = refs.get(channel) ?? 0;
+        const next = Math.max(0, current - 1);
+        if (next === 0) {
+          refs.delete(channel);
+          channelTransport.unsubscribe(channel);
+        } else {
+          refs.set(channel, next);
+        }
+      };
+    },
+    [channelTransport],
+  );
+
+  const subscribeToRun = useCallback(
+    (runId: string): (() => void) => openChannel(`pipeline:run:${runId}`),
+    [openChannel],
+  );
+
+  const subscribeToAll = useCallback(
+    (): (() => void) => openChannel('pipeline:all'),
+    [openChannel],
+  );
+
+  const subscribeToApprovals = useCallback(
+    (): (() => void) => openChannel('pipeline:approvals'),
+    [openChannel],
+  );
 
   const value = useMemo<EventStreamValue>(
     () => ({

@@ -12,9 +12,22 @@ export interface MetricCardProps {
   timeRange?: string;
   children: ReactNode;
   onMaximize?: () => void;
+  /**
+   * Marks THIS card's series as synthesized rather than measured, rendering
+   * an amber "sample" chip next to the title.
+   *
+   * Provenance is per-card, not per-panel: the metrics panel has one live/
+   * fixture pill in its toolbar, but only four of its ten charts can be fed
+   * by the live series — the other six plot seeded noise unconditionally. A
+   * panel-level pill reading "live" therefore vouched for a p99 step-duration
+   * curve, a cluster-CPU line and an approval-latency line that no backend
+   * had ever produced. Whoever renders the chart knows where its data came
+   * from; say so on the chart.
+   */
+  sample?: boolean;
 }
 
-function MetricCard({ title, timeRange, children, onMaximize }: MetricCardProps) {
+function MetricCard({ title, timeRange, children, onMaximize, sample }: MetricCardProps) {
   return (
     <div
       data-testid="metric-card"
@@ -31,6 +44,15 @@ function MetricCard({ title, timeRange, children, onMaximize }: MetricCardProps)
           {title}
         </div>
         <div className="flex items-center gap-1.5">
+          {sample && (
+            <span
+              data-testid="metric-card-sample-chip"
+              title="Synthesized sample series — this chart has no live data source yet"
+              className="inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-warning-bg text-state-awaiting leading-[1.4] whitespace-nowrap"
+            >
+              sample
+            </span>
+          )}
           {timeRange && (
             <span className="inline-block px-2 py-0.5 rounded-sm text-[11px] font-semibold bg-surface-hover text-text-secondary leading-[1.4] whitespace-nowrap">
               {timeRange}

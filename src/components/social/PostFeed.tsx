@@ -316,13 +316,16 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
 // ---------------------------------------------------------------------------
 
 export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
-  const { posts, createPost, editPost, deletePost, loading, hasMore, loadMore } = usePosts({ idToken, roomId, onMessage });
+  const { posts, createPost, editPost, deletePost, loading, mutating, hasMore, loadMore } = usePosts({ idToken, roomId, onMessage });
 
   const currentUserId = decodeUserId(idToken);
 
   return (
     <div className="bg-surface border border-border rounded-lg p-5">
-      <CreatePostForm onCreate={createPost} loading={loading} />
+      {/* `mutating` is the in-flight POST; `loading` only ever covers the
+          initial fetch and loadMore, so on its own it left the button live
+          during a submit and a second click posted twice. */}
+      <CreatePostForm onCreate={createPost} loading={loading || mutating} />
       <div className="border-t border-border my-4" />
       {hasMore && (
         <button

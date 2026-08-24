@@ -128,6 +128,22 @@ function NodesPage({
       </div>
 
       <section className="flex-1 min-w-0 overflow-auto p-6">
+        {/* Disclosure, not decoration. With no `nodes` prop this page invents
+            three us-east-1 workers with plausible CPU/memory/connection
+            numbers and a seeded CPU history, and the drawer reports
+            "Active runs: 2" for a node that does not exist. Its sibling
+            DashboardPage ships three source pills; this route shipped none,
+            so the only hint was a hover-only tooltip on the chaos rail. */}
+        {!nodesProp && (
+          <div
+            data-testid="nodes-sample-banner"
+            title="No `nodes` prop supplied — these node summaries are synthesized sample data, not your cluster"
+            className="mb-4 px-3 py-2 rounded-md text-[12px] font-semibold bg-warning-bg text-warning-fg border border-warning-border"
+          >
+            Sample data — no node source is wired to this page. These nodes,
+            their metrics and their history are synthesized.
+          </div>
+        )}
         <NodeGrid
           nodes={nodes}
           selectedId={selectedId ?? undefined}

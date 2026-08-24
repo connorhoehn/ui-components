@@ -360,3 +360,41 @@ describe('getUserPosts', () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// In-flight mutation flag
+// ---------------------------------------------------------------------------
+
+describe('mutating', () => {
+  // The flag was set around every mutation from the start but lived in an
+  // unread `_mutating` state and was never returned, so the only busy signal
+  // a composer could read was `loading` — which usePosts sets for the initial
+  // fetch and loadMore only, and which is false forever after the first page
+  // resolves. See PostFeed's submit button.
+  it('is true while a createPost request is in flight and false after it settles', async () => {
+    const { onMessage } = makeOnMessage();
+    mockFetch({ posts: [] });
+    const { result } = renderHook(() => usePosts({ ...DEFAULT_OPTS, onMessage }));
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.mutating).toBe(false);
+
+    // Hold the POST open so the in-flight window is observable.
+    let release: (() => void) | undefined;
+    const pending = new Promise<Response>((resolve) => {
+      release = () =>
+        resolve({ ok: true, status: 200, json: () => Promise.resolve(POST) } as unknown as Response);
+    });
+    vi.stubGlobal('fetch', vi.fn().mockReturnValue(pending));
+
+    let created: Promise<void> | undefined;
+    act(() => { created = result.current.createPost('hi'); });
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.mutating).toBe(true);
+
+    await act(async () => {
+      release?.();
+      await created;
+    });
+    expect(result.current.mutating).toBe(false);
+  });
+});
