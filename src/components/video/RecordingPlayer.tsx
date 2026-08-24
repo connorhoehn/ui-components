@@ -46,6 +46,15 @@ export function RecordingPlayer({
 }: RecordingPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<any>(null);
+  // `onError` is a consumer callback, usually an inline arrow. Held as an
+  // effect dependency it re-keyed the whole hls.js lifecycle to the parent's
+  // render identity: every parent render destroyed the engine and built a new
+  // one, which re-imports, re-attaches and re-buffers from the start. A parent
+  // that tracks progress via `onTimeUpdate` re-renders ~4x/sec, so playback
+  // never advanced and the decoder churned continuously. Keep the handle on
+  // its own ref so the effect keys on the playlist alone.
+  const onErrorRef = useRef(onError);
+  onErrorRef.current = onError;
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -85,7 +94,7 @@ export function RecordingPlayer({
         hls.on(Hls.Events.ERROR, (_evt: unknown, data: any) => {
           if (data.fatal) {
             setError(`HLS error: ${data.type}`);
-            onError?.(new Error(`HLS fatal: ${data.type}`));
+            onErrorRef.current?.(new Error(`HLS fatal: ${data.type}`));
           }
         });
       } catch (e: any) {
@@ -101,7 +110,7 @@ export function RecordingPlayer({
         hlsRef.current = null;
       }
     };
-  }, [playlistUrl, onError]);
+  }, [playlistUrl]);
 
   const togglePlay = () => {
     const v = videoRef.current;

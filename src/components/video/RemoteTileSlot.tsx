@@ -64,6 +64,17 @@ function HiddenAudioBinding({ stream }: { stream: MediaStream | undefined }) {
         // recovery path; the audio is bound to the element regardless.
       });
     }
+    return () => {
+      // Releasing the binding is not optional. When the remote turns their
+      // camera on, this component unmounts and <StreamVideo> takes over the
+      // same stream — but React only DETACHES this <audio>, and a detached
+      // media element with a live srcObject keeps playing in Chrome. The
+      // participant would be audible through both elements from that moment
+      // on, which is precisely the double-render the branch split above was
+      // written to avoid.
+      el.pause();
+      el.srcObject = null;
+    };
   }, [stream]);
   return (
     <audio

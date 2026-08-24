@@ -37,21 +37,32 @@ vi.mock('amazon-ivs-web-broadcast', () => {
 
 import { useHangoutEmbed } from '../useHangoutEmbed';
 
-/** A MediaStream whose tracks record whether they were stopped. */
+/** A MediaStream whose tracks record whether they were stopped.
+ *  Every call builds fresh track objects, so a shared instance can never
+ *  mask a stop() that landed on the wrong stream. */
 function fakeStream(kinds: string[] = ['video', 'audio']) {
-  const tracks = kinds.map((kind) => ({
-    kind,
-    stop: vi.fn(),
-    contentHint: '',
-    addEventListener: vi.fn(),
-    enabled: true,
-  }));
+  const tracks = kinds.map((kind) => {
+    const listeners: Record<string, Array<() => void>> = {};
+    return {
+      kind,
+      stop: vi.fn(),
+      contentHint: '',
+      addEventListener: vi.fn((evt: string, fn: () => void) => {
+        (listeners[evt] ??= []).push(fn);
+      }),
+      /** Fire a track event (e.g. the browser's "Stop sharing" bar → 'ended'). */
+      _emit: (evt: string) => { for (const fn of listeners[evt] ?? []) fn(); },
+      enabled: true,
+    };
+  });
   return {
     getTracks: () => tracks,
     getVideoTracks: () => tracks.filter((t) => t.kind === 'video'),
     getAudioTracks: () => tracks.filter((t) => t.kind === 'audio'),
     _tracks: tracks,
-  } as unknown as MediaStream & { _tracks: Array<{ stop: ReturnType<typeof vi.fn> }> };
+  } as unknown as MediaStream & {
+    _tracks: Array<{ stop: ReturnType<typeof vi.fn>; _emit: (evt: string) => void }>;
+  };
 }
 
 let getUserMedia: ReturnType<typeof vi.fn>;
@@ -137,6 +148,53 @@ describe('useHangoutEmbed teardown', () => {
 
     unmount();
     for (const t of screen._tracks) expect(t.stop).toHaveBeenCalled();
+  });
+
+  it('stops the superseded capture when a second screen share replaces it', async () => {
+    // `isScreenSharing` only flips true once getDisplayMedia resolves, so the
+    // consumer's toggle still offers "Share screen" while the OS picker is
+    // open — a second click gets a second capture. The first one must be
+    // released, or the browser keeps its sharing indicator up with no UI left
+    // that can stop it.
+    const first = fakeStream(['video']);
+    const second = fakeStream(['video']);
+
+    const { result } = renderHook(() => useHangoutEmbed(args));
+    await waitFor(() => expect(result.current.isJoined).toBe(true));
+
+    getDisplayMedia.mockResolvedValueOnce(first);
+    await act(async () => { await result.current.startScreenShare(); });
+    getDisplayMedia.mockResolvedValueOnce(second);
+    await act(async () => { await result.current.startScreenShare(); });
+
+    for (const t of first._tracks) expect(t.stop).toHaveBeenCalled();
+    for (const t of second._tracks) expect(t.stop).not.toHaveBeenCalled();
+    expect(result.current.isScreenSharing).toBe(true);
+  });
+
+  it('ignores an `ended` event from a capture that has already been replaced', async () => {
+    // Each capture gets its own browser "Stop sharing" bar. Hitting the STALE
+    // one fires `ended` on the superseded track; because stopScreenShare reads
+    // the ref, an unguarded handler would tear down the LIVE share instead.
+    const first = fakeStream(['video']);
+    const second = fakeStream(['video']);
+
+    const { result } = renderHook(() => useHangoutEmbed(args));
+    await waitFor(() => expect(result.current.isJoined).toBe(true));
+
+    getDisplayMedia.mockResolvedValueOnce(first);
+    await act(async () => { await result.current.startScreenShare(); });
+    getDisplayMedia.mockResolvedValueOnce(second);
+    await act(async () => { await result.current.startScreenShare(); });
+
+    second._tracks.forEach((t) => t.stop.mockClear());
+    await act(async () => {
+      first._tracks[0]._emit('ended');
+      await Promise.resolve();
+    });
+
+    for (const t of second._tracks) expect(t.stop).not.toHaveBeenCalled();
+    expect(result.current.isScreenSharing).toBe(true);
   });
 
   it('does not report an error when the user cancels the screen picker', async () => {
