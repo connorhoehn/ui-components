@@ -7961,6 +7961,8 @@ declare interface UseActivityBusReturn {
      lastSync: SyncStatus | null;
  }
 
+ export declare function useEventCallback<A extends any[], R>(fn: ((...args: A) => R) | undefined): (...args: A) => R | undefined;
+
  export declare function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn;
 
  declare interface UseFriendsOptions {

@@ -4,6 +4,7 @@
 // Auto-unlocks follow mode on any user interaction (mousedown, keydown, wheel).
 
 import { useEffect, useRef } from 'react';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import type { Participant } from '../../types/document';
 import { cn } from '../../lib/cn';
 
@@ -19,13 +20,16 @@ export default function FollowModeBar({
   onStopFollow,
 }: FollowModeBarProps) {
   const cleanupRef = useRef<(() => void) | null>(null);
+  // Stable, so the deferred listener registration below is not restarted by
+  // a parent re-render handing us a new `onStopFollow` arrow.
+  const stopFollow = useEventCallback(onStopFollow);
 
   // Auto-unlock follow on local user interaction in the editor area
   // Delay listener registration to avoid the "Follow" click itself triggering it
   useEffect(() => {
     if (!followingUserId) return;
     const timerId = setTimeout(() => {
-      const handler = () => onStopFollow();
+      const handler = () => stopFollow();
       const events: (keyof WindowEventMap)[] = ['mousedown', 'keydown', 'wheel'];
       for (const evt of events) {
         window.addEventListener(evt, handler, { once: true, passive: true });
@@ -41,7 +45,7 @@ export default function FollowModeBar({
       cleanupRef.current?.();
       cleanupRef.current = null;
     };
-  }, [followingUserId, onStopFollow]);
+  }, [followingUserId, stopFollow]);
 
   if (!followingUserId) return null;
 

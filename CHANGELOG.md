@@ -8,6 +8,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.88.0] — 2026-08-24
+
+Three bugs in three days shared one root cause, so this release goes after
+the **class** rather than another instance.
+
+### Added
+
+- **`useEventCallback`** (exported from `/hooks`) — a callback whose identity
+  never changes but which always invokes the latest function. Use it when a
+  callback prop needs to go in a dependency array. Plain `useCallback` is
+  still correct for a callback handed to a memoised child; that one *should*
+  change when its inputs do.
+
+### Fixed — the same bug, found by hunting for it
+
+A targeted search for "timer effect whose dependency array contains a
+callback prop" over the whole tree returned five sites. Three were real:
+
+- **`DiagnosticsPage`'s "Auto-refresh (10s)" never refreshed.** The interval
+  depended on `onRefresh`, a **required** prop that callers pass inline — so
+  every parent render tore the interval down and started a new one. Worse,
+  `onRefresh` fetches, and fetching re-renders the parent, so the clock reset
+  on its own results. On a page whose entire purpose is live diagnostics,
+  with a checkbox advertising the behaviour in its own UI.
+- **`FollowModeBar`** defers registering its interaction listeners behind a
+  timer; an unstable `onStopFollow` restarted that timer every render, so the
+  listeners never registered and follow-mode never auto-unlocked.
+- **`PipelinesBulkActionBar`** defers registering click-outside handlers for
+  both tag popovers the same way — so neither could be dismissed by clicking
+  away.
+
+`CallStartedBanner` (the first instance, v2.83.0) is retrofitted onto the
+shared helper rather than keeping its hand-rolled ref.
+
+### A note on the test
+
+The first version of the `DiagnosticsPage` regression test **passed against
+the bug**, because its final `advanceTimersByTime(10_000)` let the
+freshly-created interval fire once. It now re-renders every 4s for 40s and
+never lets 10s elapse without a re-render in between, so the buggy version
+records exactly zero ticks. Caught by running it against the reverted fix —
+which is the only reason to bother doing that.
+
 ## [2.87.0] — 2026-08-24
 
 ### Fixed

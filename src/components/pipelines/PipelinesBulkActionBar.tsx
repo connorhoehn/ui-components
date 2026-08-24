@@ -4,6 +4,7 @@
 // Actions: clear, publish, archive, export JSON, export all, add/remove tag, delete.
 
 import { useEffect, useRef, useState } from 'react';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 
@@ -73,11 +74,18 @@ export default function PipelinesBulkActionBar({
     }
   }, [addTagOpen]);
 
+  // Stable identities so the deferred click-outside registrations below are
+  // not restarted by a parent re-render handing us new inline arrows — the
+  // handler would then never register and the popover could not be dismissed
+  // by clicking away.
+  const closeAddTag = useEventCallback(onCloseAddTag);
+  const closeRemoveTag = useEventCallback(onCloseRemoveTag);
+
   // Click-outside to dismiss the add-tag popover.
   useEffect(() => {
     if (!addTagOpen) return;
     const handler = (e: MouseEvent) => {
-      if (!addTagPopoverRef.current?.contains(e.target as Node)) onCloseAddTag();
+      if (!addTagPopoverRef.current?.contains(e.target as Node)) closeAddTag();
     };
     const id = window.setTimeout(() => {
       document.addEventListener('mousedown', handler);
@@ -86,13 +94,13 @@ export default function PipelinesBulkActionBar({
       window.clearTimeout(id);
       document.removeEventListener('mousedown', handler);
     };
-  }, [addTagOpen, onCloseAddTag]);
+  }, [addTagOpen, closeAddTag]);
 
   // Click-outside to dismiss the remove-tag popover.
   useEffect(() => {
     if (!removeTagOpen) return;
     const handler = (e: MouseEvent) => {
-      if (!removeTagPopoverRef.current?.contains(e.target as Node)) onCloseRemoveTag();
+      if (!removeTagPopoverRef.current?.contains(e.target as Node)) closeRemoveTag();
     };
     const id = window.setTimeout(() => {
       document.addEventListener('mousedown', handler);
@@ -101,7 +109,7 @@ export default function PipelinesBulkActionBar({
       window.clearTimeout(id);
       document.removeEventListener('mousedown', handler);
     };
-  }, [removeTagOpen, onCloseRemoveTag]);
+  }, [removeTagOpen, closeRemoveTag]);
 
   const handleAddTagSubmit = () => {
     const v = addTagText.trim();

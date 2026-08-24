@@ -132,7 +132,7 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 	let [r, i] = x(!1), [a, o] = x(e.displayName), [c, f] = x(e.bio), [p, m] = x(e.avatarUrl ?? ""), [h, _] = x(e.visibility), [v, y] = x(!1);
 	g(() => {
 		o(e.displayName), f(e.bio), m(e.avatarUrl ?? ""), _(e.visibility);
-	}, [e]);
+	}, [e.id]);
 	let b = async () => {
 		y(!0);
 		try {

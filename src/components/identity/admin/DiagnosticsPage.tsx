@@ -3,6 +3,7 @@
 // System diagnostics viewer with node info, rate limiter stats, and DLQ management.
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useEventCallback } from '../../../hooks/useEventCallback';
 import { Card } from '../../ui/Card';
 import { Table, TableHead, TableBody, TableRow, TableTh, TableTd } from '../../ui/Table';
 import { PageSection } from '../../ui/PageSection';
@@ -80,9 +81,16 @@ export function DiagnosticsPage({
   const [autoRefresh, setAutoRefresh] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Stable identity, so the 10s interval is not torn down and restarted on
+  // every parent render. `onRefresh` is a required prop that callers pass
+  // inline, and it fetches — which re-renders the parent, which produced a
+  // new identity, which reset the clock. The advertised "Auto-refresh (10s)"
+  // therefore never fired for most callers.
+  const refresh = useEventCallback(onRefresh);
+
   useEffect(() => {
     if (autoRefresh) {
-      intervalRef.current = setInterval(onRefresh, 10000);
+      intervalRef.current = setInterval(refresh, 10000);
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -90,7 +98,7 @@ export function DiagnosticsPage({
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [autoRefresh, onRefresh]);
+  }, [autoRefresh, refresh]);
 
   const handleRedrive = useCallback(
     async (id: string) => {

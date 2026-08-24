@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useEventCallback } from '../../hooks/useEventCallback';
 import type { CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
@@ -63,17 +64,16 @@ export function CallStartedBanner({
   // down and restarted it, so in any UI that re-renders at least once per
   // `autoExpireSec` (a live call: presence, elapsed ticker) the banner never
   // expired at all.
-  const onDismissRef = useRef(onDismiss);
-  useEffect(() => { onDismissRef.current = onDismiss; }, [onDismiss]);
+  const dismiss = useEventCallback(onDismiss);
 
   useEffect(() => {
     if (!autoExpireSec || autoExpireSec <= 0) return;
     const t = setTimeout(() => {
       setVisible(false);
-      onDismissRef.current?.();
+      dismiss();
     }, autoExpireSec * 1000);
     return () => clearTimeout(t);
-  }, [autoExpireSec]);
+  }, [autoExpireSec, dismiss]);
 
   if (!visible) return null;
 

@@ -65,3 +65,5 @@ export { useVideoCall } from './useVideoCall';
 export { useVideoSessions } from './useVideoSessions';
 export { useWebSocket } from './useWebSocket';
 export { useYjsDoc } from './useYjsDoc';
+
+export { useEventCallback } from './useEventCallback';
