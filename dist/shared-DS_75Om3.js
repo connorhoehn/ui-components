@@ -13,7 +13,7 @@ import { t as s } from "./Modal-DbKyLw86.js";
 import "./ConfirmDialog-DTHQQziN.js";
 import { t as c } from "./EmptyState-CUHf5NYN.js";
 import { n as l } from "./PermissionDeniedCard-CbMdNs9F.js";
-import { n as u, t as d } from "./CardHeader-pBmYPYUU.js";
+import { n as u, t as d } from "./CardHeader-MBY5yyXT.js";
 import { n as f, r as p, t as m } from "./focusTrap-BWX7tm6P.js";
 import "./SkeletonCard-CGe8XFPB.js";
 import { t as h } from "./StatusDot-Bgx2zxgC.js";
@@ -1137,7 +1137,7 @@ function We(e, t) {
 	}
 }
 function Ge({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a, storageKey: o }) {
-	let [s, c] = E(() => We(o, n));
+	let [s, c] = E(() => We(o, n)), l = C(), u = T(null), d = T(null);
 	return S(() => {
 		if (o && !(typeof window > "u")) try {
 			window.localStorage.setItem(o, String(s));
@@ -1146,9 +1146,17 @@ function Ge({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a
 		className: e("border border-[var(--color-border)] rounded-lg overflow-hidden", a),
 		children: [/* @__PURE__ */ k("button", {
 			type: "button",
+			ref: u,
 			className: "w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left",
-			onClick: () => c((e) => !e),
+			onClick: () => {
+				if (s) {
+					let e = typeof document > "u" ? null : document.activeElement;
+					e && d.current?.contains(e) && u.current?.focus();
+				}
+				c((e) => !e);
+			},
 			"aria-expanded": s,
+			"aria-controls": l,
 			children: [/* @__PURE__ */ O("span", {
 				className: "text-sm font-semibold text-[var(--color-text-primary)]",
 				children: t
@@ -1169,6 +1177,8 @@ function Ge({ title: t, defaultOpen: n = !1, badge: r, children: i, className: a
 				})]
 			})]
 		}), s && /* @__PURE__ */ O("div", {
+			id: l,
+			ref: d,
 			className: "border-t border-[var(--color-border)] bg-white",
 			children: i
 		})]
@@ -2298,17 +2308,25 @@ function yt({ name: e, items: t, storageKey: n, renderNavItem: r }) {
 	S(() => {
 		typeof window > "u" || (i ? window.localStorage?.setItem(n, "1") : window.localStorage?.removeItem(n));
 	}, [i, n]);
-	let o = t.find((e) => e.groupScrollAfter)?.groupScrollAfter, s = o ? {
-		maxHeight: o * 38,
+	let o = C(), s = T(null), c = T(null), l = () => {
+		if (!i) {
+			let e = typeof document > "u" ? null : document.activeElement;
+			e && c.current?.contains(e) && s.current?.focus();
+		}
+		a((e) => !e);
+	}, u = t.find((e) => e.groupScrollAfter)?.groupScrollAfter, d = u ? {
+		maxHeight: u * 38,
 		overflowY: "auto"
 	} : void 0;
 	return /* @__PURE__ */ k("section", {
 		className: "border-b border-[var(--color-border)]",
 		children: [/* @__PURE__ */ k("button", {
 			type: "button",
-			onClick: () => a((e) => !e),
+			ref: s,
+			onClick: l,
 			className: "flex items-center gap-1.5 w-full px-3 py-2 bg-transparent border-none cursor-pointer text-[var(--color-text-tertiary)] text-[10px] font-bold tracking-[0.05em] uppercase text-left",
 			"aria-expanded": !i,
+			"aria-controls": o,
 			children: [
 				/* @__PURE__ */ O("span", {
 					className: "text-[10px] w-[10px] inline-block",
@@ -2325,7 +2343,9 @@ function yt({ name: e, items: t, storageKey: n, renderNavItem: r }) {
 				})
 			]
 		}), !i && /* @__PURE__ */ O("div", {
-			style: s,
+			id: o,
+			ref: c,
+			style: d,
 			children: t.map((e) => /* @__PURE__ */ O(Z, {
 				item: e,
 				renderNavItem: r

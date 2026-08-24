@@ -8,6 +8,106 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.92.0] — 2026-08-24
+
+Three parallel hunts. **43 bugs.** Tests 4,304 → 4,584.
+
+### Fixed — keyboard access (33 bugs across 31 files)
+
+Two independent agents hit the same defect in unrelated files last release,
+so it got a dedicated sweep. It was systemic.
+
+- **25 controls had no keyboard path at all** — `onClick` on a `div`/`span`
+  with no role, no `tabIndex`, no key handler. `video/TranscriptPanel.tsx`
+  was the worst: `role="button"` **and** `tabIndex={0}` and no key handler,
+  so you could Tab onto a transcript segment, see it focused, press Enter
+  and have nothing happen — the video only ever seeked on mouse click.
+  `pipelines/RunsTable.tsx`'s "View →" was a bare `<span>` inside a
+  `stopPropagation` cell: a link-looking thing that did nothing for anyone.
+- **6 handled Enter but not Space** on `role="button"`, so Space scrolled the
+  page instead of activating.
+- **4 affordances existed only on hover.** `renderers/tasks/TasksReaderRenderer`
+  was not CSS hover but a conditional *render* on mouse state — there was no
+  DOM node to Tab to, so a keyboard user could never mark an item acked or
+  rejected. `doc-editor/ParticipantAvatars` hid Follow inside a
+  mouse-only tooltip.
+- **3 stranded focus on collapse** (`SidebarSection`, `shared/CollapsibleSection`,
+  `SubNavLayout`) — focus drops to `<body>` and a keyboard user restarts
+  their Tab walk from the top of the page.
+
+`onActivationKey` was promoted from module-private in `CollapsibleSidebar` to
+`src/lib/activationKey.ts` (not barrel-exported — no public API change).
+
+### Fixed — failures that rendered as success (5 bugs)
+
+Out of 243 `catch` blocks read, five hid a failure behind a normal-looking
+result:
+
+- `api/pipelineRuns.ts` resolved `{ runs: [] }` on its own failure, so a
+  down/500ing endpoint rendered **"No runs yet. Trigger this pipeline to see
+  history here."** `PipelineRunsPanel`'s error banner was unreachable code,
+  and `PipelineRunsContext`'s localStorage fallback lived in a `.catch`
+  nothing could trigger.
+- `hooks/useFriends.ts` never checked `res.ok`, so a 401/500 with a JSON body
+  gave `{followers: undefined} ?? []` — the Followers/Following tabs said you
+  follow nobody, with no error and no retry.
+- `hooks/useGroups.ts` `inviteUser` resolved on failure, and both invite forms
+  `await` then clear the field: a rejected invite was pixel-identical to an
+  accepted one.
+- `typed-documents/TypedDocumentsPage.tsx` resolved `[refTypeId, []]`, so the
+  reference picker rendered **disabled** under "No referenceable documents yet
+  for this type" — the user is told the documents don't exist and cannot
+  create the link. Adds optional `referenceOptionsErrors` to
+  `TypedDocumentForm`.
+- `pipelines/PipelineRunReplayPage.tsx` "↻ Re-run" was `console.error`-only:
+  the click did nothing at all, so the user clicks again.
+
+### Fixed — pipelines persistence and run state (5 bugs)
+
+- **A read mutated data.** Every write-through cache write in
+  `persistence/pipelineStorageRemote.ts` went through the *local*
+  `savePipeline`, which bumps `version` and re-stamps `updatedAt`. Opening a
+  pipeline you never touched returned it a version ahead and re-dated it;
+  saving bumped twice and mutated the editor's live React state object; and
+  publishing cached the definition one version ahead, so
+  `version !== publishedVersion` read as "unpublished changes" immediately
+  after a successful publish.
+- `PipelineRunsContext` — a poll in flight when the terminal event landed
+  rewound a `completed` run to `running`; the visualiser spins forever on a
+  finished run. The existing comment claimed this was handled.
+- `usePendingApprovals` replaced its map wholesale, silently discarding an
+  approval that arrived while the page was loading — the run stays blocked on
+  an approval invisible in both the panel and the badge.
+- `PipelineEditorContext`'s load promise had no `.catch`, so an expired
+  session (401/403) rejected unhandled and left the page on "Loading
+  pipeline…" forever, with no error and no retry, even with a good cached
+  copy present.
+- `duplicatePipeline` let a clone inherit the source's `publishedSnapshot`.
+
+### Fixed — `AgentCard` content drifted to the middle of the card
+
+Caught by a visual baseline, not a unit test. Swapping the card `div` for a
+`<button>` for keyboard access changed its layout: in the dashboard grid the
+card stretches to the tallest card in its row, and Chrome vertically
+**centers** a `<button>`'s content when the button is taller than it —
+which `display: block` does not prevent. Now `flex flex-col`.
+
+### Demo
+
+`mockMfaUsers` gained `poolId`. `MfaManagementPage` hides its "Filter by
+pool" control when no row supplies one, so the demo had been rendering a page
+that could not demonstrate its own filter.
+
+### Audited clean
+
+`validation/validatePipeline.ts` (886 lines, zero prior tests — 42 cases
+across every check and all 10 advisory lints, no defects found),
+`detectCycles`, `handleCompatibility`, `runHistory`, `EventStreamContext`,
+`WebSocketEventAdapter`. Retracted with reasons: storage-quota guards and
+date/JSON formatting fallbacks returning neutral values (there `[]` and `''`
+genuinely *are* the answer), `role="tab"`/`role="menuitem"` on real buttons,
+and proper `aria-activedescendant` listboxes.
+
 ## [2.91.0] — 2026-08-24
 
 Depth audit of `identity/` — 4,734 LOC across 34 files with 10 test files,

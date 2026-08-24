@@ -1,4 +1,4 @@
-import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-Cs3kuR7d.js";
+import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-DHI6vBUX.js";
 import { n as o } from "./ToastProvider-DPq8u2eM.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { r as c } from "./PresencePanel-CSfDAAq8.js";
@@ -359,22 +359,22 @@ function F({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 	});
 }
 function I({ idToken: t, onMessage: n }) {
-	let { profile: r, loading: i, updateProfile: o } = a({ idToken: t }), { followers: s, following: c, friends: l, follow: u, unfollow: d } = e({ idToken: t }), f = new Set(c.map((e) => e.userId)), p = {};
+	let { profile: r, loading: i, updateProfile: o } = a({ idToken: t }), { followers: s, following: c, friends: l, follow: u, unfollow: d, error: f } = e({ idToken: t }), p = new Set(c.map((e) => e.userId)), m = {};
 	[
 		...s,
 		...c,
 		...l
 	].forEach((e) => {
-		p[e.userId] = f.has(e.userId) ? "following" : "not-following";
+		m[e.userId] = p.has(e.userId) ? "following" : "not-following";
 	});
-	let [m, h] = x(null), g = async (e, t) => {
-		h(null);
+	let [h, g] = x(null), _ = async (e, t) => {
+		g(null);
 		try {
 			t === "following" || t === "pending" ? await u(e) : await d(e);
 		} catch (e) {
-			h(e instanceof Error ? e.message : "Follow action failed");
+			g(e instanceof Error ? e.message : "Follow action failed");
 		}
-	}, _ = s.map((e) => A(e, p[e.userId] ?? "not-following")), v = c.map((e) => A(e, "following")), y = l.map((e) => A(e, "following")), b = r ? {
+	}, v = s.map((e) => A(e, m[e.userId] ?? "not-following")), y = c.map((e) => A(e, "following")), b = l.map((e) => A(e, "following")), T = r ? {
 		...j(r),
 		followersCount: s.length,
 		followingCount: c.length,
@@ -387,23 +387,25 @@ function I({ idToken: t, onMessage: n }) {
 				className: "text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3",
 				children: "Social Profile"
 			}),
-			i && !b ? /* @__PURE__ */ C("div", {
+			i && !T ? /* @__PURE__ */ C("div", {
 				className: "py-10 text-center text-text-tertiary text-sm",
 				children: "Loading profile…"
-			}) : b ? /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C(P, {
-				user: b,
+			}) : T ? /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C(P, {
+				user: T,
 				isOwnProfile: !0,
 				onSave: o
 			}), /* @__PURE__ */ C(F, {
-				followers: _,
-				following: v,
-				friends: y,
-				followStates: p,
-				onFollowChange: g
+				followers: v,
+				following: y,
+				friends: b,
+				followStates: m,
+				onFollowChange: _
 			})] }) : null,
-			m && /* @__PURE__ */ C("div", {
+			(h ?? f) && /* @__PURE__ */ C("div", {
+				role: "alert",
+				"data-testid": "social-panel-error",
 				className: "text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
-				children: m
+				children: h ?? f
 			})
 		]
 	});
@@ -515,9 +517,11 @@ function R({ onCreateDM: e, loading: t, friends: n }) {
 	});
 }
 function z({ room: e, isActive: t, onClick: n }) {
-	return /* @__PURE__ */ w("div", {
+	return /* @__PURE__ */ w("button", {
+		type: "button",
 		onClick: n,
-		className: s("flex items-center h-14 border-b border-surface-hover cursor-pointer pr-2", t ? "bg-surface-hover border-l-[3px] border-l-primary pl-[13px]" : "bg-transparent border-l-[3px] border-l-transparent"),
+		"aria-pressed": t,
+		className: s("flex items-center h-14 border-b border-surface-hover cursor-pointer pr-2", "w-full text-left font-[inherit]", t ? "bg-surface-hover border-l-[3px] border-l-primary pl-[13px]" : "bg-transparent border-l-[3px] border-l-transparent"),
 		children: [/* @__PURE__ */ C("div", {
 			className: s("flex-1 text-base text-text-primary", t ? "font-semibold" : "font-normal"),
 			children: e.name
@@ -712,10 +716,19 @@ function te({ onCreate: e, onDiscard: t, loading: n }) {
 	});
 }
 function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, createGroupRoom: a, onRoomSelect: o, inviteUser: c, loading: u }) {
-	let [d, f] = x(!1), [p, m] = x(""), [h, g] = x(!1), [_, v] = x(""), y = e.ownerId === i, b = n.filter((e) => e.groupId === r), S = async (e) => {
-		e.preventDefault(), p.trim() && (await c(r, p.trim()), m(""), f(!1));
-	}, T = async (e) => {
-		e.preventDefault(), _.trim() && (await a(r, _.trim()), v(""), g(!1));
+	let [d, f] = x(!1), [p, m] = x(""), [h, g] = x(null), [_, v] = x(!1), [y, b] = x(""), S = e.ownerId === i, T = n.filter((e) => e.groupId === r), E = async (e) => {
+		if (e.preventDefault(), p.trim()) {
+			g(null);
+			try {
+				await c(r, p.trim());
+			} catch (e) {
+				g(e instanceof Error ? e.message : "Failed to invite user");
+				return;
+			}
+			m(""), f(!1);
+		}
+	}, D = async (e) => {
+		e.preventDefault(), y.trim() && (await a(r, y.trim()), b(""), v(!1));
 	};
 	return /* @__PURE__ */ w("div", {
 		className: "px-2 pb-2 pt-1 border-t border-border mt-1",
@@ -729,7 +742,7 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 						t.length,
 						")"
 					]
-				}), y && /* @__PURE__ */ C("button", {
+				}), S && /* @__PURE__ */ C("button", {
 					onClick: () => f((e) => !e),
 					className: "text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]",
 					children: "+ Invite"
@@ -737,7 +750,7 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 			}),
 			d && /* @__PURE__ */ w("form", {
 				onSubmit: (e) => {
-					S(e);
+					E(e);
 				},
 				className: "flex gap-1 mb-1.5",
 				children: [/* @__PURE__ */ C(l, {
@@ -752,6 +765,12 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 					className: s("h-6 px-2 border-none rounded text-[11px] font-[inherit]", p.trim() ? "bg-primary text-white cursor-pointer" : "bg-border text-text-tertiary cursor-default"),
 					children: "Invite"
 				})]
+			}),
+			d && h && /* @__PURE__ */ C("div", {
+				role: "alert",
+				"data-testid": "compact-invite-error",
+				className: "text-danger text-[11px] mb-1.5",
+				children: h
 			}),
 			/* @__PURE__ */ w("div", {
 				className: "flex flex-wrap gap-1 mb-2",
@@ -770,34 +789,34 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 					className: "text-[11px] text-text-secondary font-semibold uppercase tracking-wide",
 					children: [
 						"Rooms (",
-						b.length,
+						T.length,
 						")"
 					]
-				}), y && /* @__PURE__ */ C("button", {
-					onClick: () => g((e) => !e),
+				}), S && /* @__PURE__ */ C("button", {
+					onClick: () => v((e) => !e),
 					className: "text-[11px] text-primary bg-transparent border-none cursor-pointer font-[inherit]",
 					children: "+ Room"
 				})]
 			}),
-			h && /* @__PURE__ */ w("form", {
+			_ && /* @__PURE__ */ w("form", {
 				onSubmit: (e) => {
-					T(e);
+					D(e);
 				},
 				className: "flex gap-1 mb-1.5",
 				children: [/* @__PURE__ */ C(l, {
 					size: "sm",
-					value: _,
-					onChange: (e) => v(e.target.value.slice(0, 50)),
+					value: y,
+					onChange: (e) => b(e.target.value.slice(0, 50)),
 					placeholder: "Room name",
 					className: "flex-1"
 				}), /* @__PURE__ */ C("button", {
 					type: "submit",
-					disabled: !_.trim() || u,
-					className: s("h-6 px-2 border-none rounded text-[11px] font-[inherit]", !_.trim() || u ? "bg-border text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
+					disabled: !y.trim() || u,
+					className: s("h-6 px-2 border-none rounded text-[11px] font-[inherit]", !y.trim() || u ? "bg-border text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
 					children: "Create"
 				})]
 			}),
-			b.map((e) => /* @__PURE__ */ w("button", {
+			T.map((e) => /* @__PURE__ */ w("button", {
 				onClick: () => o?.(e),
 				className: "flex items-center gap-1.5 w-full border-none rounded-[5px] px-2 py-1 cursor-pointer bg-transparent text-text-primary text-[13px] text-left font-[inherit]",
 				children: [/* @__PURE__ */ C("span", {
@@ -939,10 +958,21 @@ function ie({ group: e, currentUserId: t, isSelected: n, onSelect: r, onDelete: 
 	});
 }
 function ae({ groupId: e, onInvite: t }) {
-	let [n, r] = x("");
-	return /* @__PURE__ */ w("form", {
-		onSubmit: (i) => {
-			i.preventDefault(), n.trim() && (t(e, n.trim()), r(""));
+	let [n, r] = x(""), [i, a] = x(null), o = async (i) => {
+		if (i.preventDefault(), n.trim()) {
+			a(null);
+			try {
+				await t(e, n.trim());
+			} catch (e) {
+				a(e instanceof Error ? e.message : "Failed to invite user");
+				return;
+			}
+			r("");
+		}
+	};
+	return /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ w("form", {
+		onSubmit: (e) => {
+			o(e);
 		},
 		className: "flex gap-2 mt-2",
 		children: [/* @__PURE__ */ C(l, {
@@ -956,7 +986,12 @@ function ae({ groupId: e, onInvite: t }) {
 			className: s("h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", n.trim() ? "bg-primary text-white border-none cursor-pointer" : "bg-surface-hover text-text-tertiary border border-border cursor-default"),
 			children: "Invite"
 		})]
-	});
+	}), i && /* @__PURE__ */ C("div", {
+		role: "alert",
+		"data-testid": "invite-error",
+		className: "text-danger text-xs mt-1",
+		children: i
+	})] });
 }
 function oe({ members: e }) {
 	let t = (e) => e === "owner" ? "bg-success-bg text-success text-xs px-2 py-0.5 rounded" : e === "admin" ? "bg-info-bg text-info text-xs px-2 py-0.5 rounded" : "bg-surface-hover text-text-secondary text-xs px-2 py-0.5 rounded";

@@ -293,8 +293,9 @@ var T = {
 	deploying: "bg-info"
 };
 function D({ agent: t, metrics: n, selected: r, onClick: i }) {
-	return /* @__PURE__ */ d("div", {
-		className: e("border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden", r ? "border-info bg-info-bg/50 shadow-sm" : "border-border bg-white hover:border-border-emphasis"),
+	return /* @__PURE__ */ d("button", {
+		type: "button",
+		className: e("flex flex-col w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden", r ? "border-info bg-info-bg/50 shadow-sm" : "border-border bg-white hover:border-border-emphasis"),
 		onClick: i,
 		children: [/* @__PURE__ */ u("div", {
 			className: e("flex items-center justify-end px-3 py-1.5", t.status === "healthy" && "bg-success-bg", t.status === "degraded" && "bg-warning-bg", t.status === "offline" && "bg-danger-bg", t.status === "deploying" && "bg-info-bg"),
@@ -499,8 +500,9 @@ var j = {
 };
 function N({ span: t, depth: n, totalMs: r, startOffset: i, onSelect: a, selected: o }) {
 	let s = r > 0 ? i / r * 100 : 0, c = r > 0 ? Math.max(t.durationMs / r * 100, .5) : 0;
-	return /* @__PURE__ */ d("div", {
-		className: e("flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle", o && "bg-info-bg"),
+	return /* @__PURE__ */ d("button", {
+		type: "button",
+		className: e("w-full text-left bg-transparent font-[inherit] flex items-center h-7 hover:bg-surface-panel cursor-pointer transition-colors border-b border-border-subtle", o && "bg-info-bg"),
 		onClick: () => a(t),
 		children: [/* @__PURE__ */ d("div", {
 			className: "w-[200px] shrink-0 flex items-center gap-1 px-2 overflow-hidden",
@@ -1564,11 +1566,12 @@ function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 				}),
 				/* @__PURE__ */ u("div", {
 					className: "flex-1 py-2 overflow-y-auto",
-					children: i.map((t) => /* @__PURE__ */ d("div", {
+					children: i.map((t) => /* @__PURE__ */ d("button", {
+						type: "button",
 						onClick: () => {
 							o(t.id), y(), l([]);
 						},
-						className: e("py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]", t.status === "offline" ? "cursor-not-allowed opacity-50" : "cursor-pointer", a === t.id ? "bg-surface-hover border-l-primary" : "bg-transparent border-l-transparent"),
+						className: e("w-full text-left bg-transparent font-[inherit] py-2 px-4 flex items-center justify-between transition-all duration-150 ease-in-out border-l-[3px]", t.status === "offline" ? "cursor-not-allowed opacity-50" : "cursor-pointer", a === t.id ? "bg-surface-hover border-l-primary" : "bg-transparent border-l-transparent"),
 						children: [/* @__PURE__ */ d("div", {
 							className: "min-w-0",
 							children: [/* @__PURE__ */ u("div", {
@@ -2061,7 +2064,7 @@ function ve({ entries: n, className: r, onDelete: i }) {
 									})
 								]
 							}), i && /* @__PURE__ */ u("button", {
-								className: "text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 transition-opacity",
+								className: "text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity",
 								onClick: () => i(t.id),
 								children: "delete"
 							})]

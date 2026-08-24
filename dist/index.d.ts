@@ -3729,7 +3729,14 @@ export declare function listDLQEntries(options?: {
 
 /**
  * Fetch pipeline run history from the backend API.
- * Falls back gracefully when the endpoint is unavailable.
+ *
+ * **Rejects** when the endpoint is unavailable or answers non-2xx. It used to
+ * swallow the failure and resolve `{ runs: [] }`, which is indistinguishable
+ * from "this pipeline has never run": `PipelineRunsPanel` rendered
+ * "No runs yet. Trigger this pipeline to see history here." with its error
+ * banner unreachable, and `PipelineRunsContext`'s localStorage fallback —
+ * written in its `.catch` — could never run because nothing ever rejected.
+ * Every caller already has a `catch`/`.catch` that does the right thing.
  */
 export declare function listPipelineRuns(pipelineId: string, options?: {
     limit?: number;

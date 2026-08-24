@@ -27,7 +27,13 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
     <button
       type="button"
       className={cn(
-        'block w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
+        // `flex flex-col`, not `block`: in the dashboard grid the card
+        // stretches to the tallest card in its row, and Chrome vertically
+        // CENTERS a <button>'s content when the button is taller than it —
+        // which `display: block` does not prevent. As a div this content sat
+        // at the top; as a block button the shorter cards' contents drifted to
+        // the middle of the frame. Flex column pins it back to the top.
+        'flex flex-col w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
         selected
           ? 'border-info bg-info-bg/50 shadow-sm'
           : 'border-border bg-white hover:border-border-emphasis',

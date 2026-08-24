@@ -1018,12 +1018,16 @@ function he(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
 function K({ item: e, onUpdateItem: t }) {
-	let [n, r] = _(!1), i = W[e.status] ?? W.pending, o = G[e.priority] ?? G.medium, s = e.dueDate && e.status === "pending" ? pe(e.dueDate) : !1, c = e.status === "done" || e.status === "acked";
+	let [n, r] = _(!1), [i, o] = _(!1), s = n || i, c = W[e.status] ?? W.pending, l = G[e.priority] ?? G.medium, u = e.dueDate && e.status === "pending" ? pe(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
 	return /* @__PURE__ */ b("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
+		onFocus: () => o(!0),
+		onBlur: (e) => {
+			e.currentTarget.contains(e.relatedTarget) || o(!1);
+		},
 		className: "flex items-center gap-2 py-1.5 border-b border-border-subtle",
-		style: { opacity: c ? .65 : 1 },
+		style: { opacity: d ? .65 : 1 },
 		children: [
 			/* @__PURE__ */ y("span", {
 				title: `Priority: ${e.priority}`,
@@ -1031,7 +1035,7 @@ function K({ item: e, onUpdateItem: t }) {
 					width: 7,
 					height: 7,
 					borderRadius: "50%",
-					background: o,
+					background: l,
 					flexShrink: 0
 				}
 			}),
@@ -1047,8 +1051,8 @@ function K({ item: e, onUpdateItem: t }) {
 					width: 18,
 					height: 18,
 					borderRadius: "50%",
-					border: `2px solid ${i.color}`,
-					background: c ? i.color : "transparent",
+					border: `2px solid ${c.color}`,
+					background: d ? c.color : "transparent",
 					cursor: t ? "pointer" : "default",
 					flexShrink: 0,
 					display: "flex",
@@ -1056,7 +1060,7 @@ function K({ item: e, onUpdateItem: t }) {
 					justifyContent: "center",
 					padding: 0
 				},
-				children: c && /* @__PURE__ */ y("svg", {
+				children: d && /* @__PURE__ */ y("svg", {
 					width: "9",
 					height: "9",
 					viewBox: "0 0 10 10",
@@ -1071,7 +1075,7 @@ function K({ item: e, onUpdateItem: t }) {
 				})
 			}),
 			/* @__PURE__ */ y("span", {
-				className: a("flex-1 text-[13px] leading-[1.4]", c ? "text-text-tertiary line-through" : "text-text-primary"),
+				className: a("flex-1 text-[13px] leading-[1.4]", d ? "text-text-tertiary line-through" : "text-text-primary"),
 				children: e.text || /* @__PURE__ */ y("span", {
 					className: "text-text-disabled italic",
 					children: "Untitled item"
@@ -1088,15 +1092,16 @@ function K({ item: e, onUpdateItem: t }) {
 					fontWeight: 600,
 					padding: "1px 6px",
 					borderRadius: 10,
-					background: s ? "var(--color-danger-bg)" : "var(--color-info-bg)",
-					color: s ? "var(--color-danger)" : "var(--color-neutral)",
-					border: s ? "1px solid var(--color-danger-border)" : "1px solid var(--color-info-border)",
+					background: u ? "var(--color-danger-bg)" : "var(--color-info-bg)",
+					color: u ? "var(--color-danger)" : "var(--color-neutral)",
+					border: u ? "1px solid var(--color-danger-border)" : "1px solid var(--color-info-border)",
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [s ? "⚠ " : "", me(e.dueDate)]
+				children: [u ? "⚠ " : "", me(e.dueDate)]
 			}),
-			t && n && /* @__PURE__ */ b("select", {
+			t && s && /* @__PURE__ */ b("select", {
+				"aria-label": `Set status for ${e.text || "untitled item"}`,
 				value: e.status,
 				onChange: (n) => t(e.id, { status: n.target.value }),
 				onClick: (e) => e.stopPropagation(),
@@ -1104,9 +1109,9 @@ function K({ item: e, onUpdateItem: t }) {
 					fontSize: 10,
 					padding: "1px 4px",
 					borderRadius: 6,
-					border: `1px solid ${i.color}`,
-					background: i.bg,
-					color: i.color,
+					border: `1px solid ${c.color}`,
+					background: c.bg,
+					color: c.color,
 					fontWeight: 600,
 					cursor: "pointer",
 					outline: "none",

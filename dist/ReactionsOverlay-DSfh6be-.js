@@ -11,52 +11,60 @@ function l(e, t) {
 		return t;
 	}
 }
-function u({ title: t, actions: i, collapsible: o = !0, defaultCollapsed: u = !1, storageKey: d, children: f, className: p, "data-testid": m = "sidebar-section" }) {
-	let h = r(), g = `${h}-label`, _ = `${h}-body`, v = d ?? `sidebar-section:${t}`, [y, b] = a(() => o ? l(v, u) : !1);
+function u({ title: t, actions: o, collapsible: u = !0, defaultCollapsed: d = !1, storageKey: f, children: p, className: m, "data-testid": h = "sidebar-section" }) {
+	let g = r(), _ = `${g}-label`, v = `${g}-body`, y = f ?? `sidebar-section:${t}`, [b, x] = a(() => u ? l(y, d) : !1);
 	n(() => {
-		if (o && !(typeof window > "u")) try {
-			window.localStorage.setItem(v, String(y));
+		if (u && !(typeof window > "u")) try {
+			window.localStorage.setItem(y, String(b));
 		} catch {}
 	}, [
-		y,
-		o,
-		v
+		b,
+		u,
+		y
 	]);
-	let x = !y;
+	let S = !b, C = i(null), w = i(null);
 	return /* @__PURE__ */ c("section", {
-		"aria-labelledby": g,
-		"data-testid": m,
-		"data-collapsed": y ? "true" : "false",
-		className: e("flex flex-col", p),
+		"aria-labelledby": _,
+		"data-testid": h,
+		"data-collapsed": b ? "true" : "false",
+		className: e("flex flex-col", m),
 		children: [/* @__PURE__ */ c("div", {
 			className: "flex items-center justify-between gap-1 py-2 pr-1",
 			children: [/* @__PURE__ */ c("button", {
 				type: "button",
-				id: g,
-				"aria-expanded": o ? x : void 0,
-				"aria-controls": _,
+				ref: C,
+				id: _,
+				"aria-expanded": u ? S : void 0,
+				"aria-controls": v,
 				onClick: () => {
-					o && b((e) => !e);
+					if (u) {
+						if (S) {
+							let e = typeof document > "u" ? null : document.activeElement;
+							e && w.current?.contains(e) && C.current?.focus();
+						}
+						x((e) => !e);
+					}
 				},
-				disabled: !o,
-				className: e("flex items-center gap-1.5 min-w-0 flex-1", "text-[11px] font-bold uppercase tracking-[0.5px]", "text-neutral select-none text-left", o && "cursor-pointer hover:text-text-primary", !o && "cursor-default", "bg-transparent border-0 p-0 m-0"),
-				children: [o && /* @__PURE__ */ s("span", {
+				disabled: !u,
+				className: e("flex items-center gap-1.5 min-w-0 flex-1", "text-[11px] font-bold uppercase tracking-[0.5px]", "text-neutral select-none text-left", u && "cursor-pointer hover:text-text-primary", !u && "cursor-default", "bg-transparent border-0 p-0 m-0"),
+				children: [u && /* @__PURE__ */ s("span", {
 					"aria-hidden": "true",
-					className: e("inline-block text-[10px] leading-none transition-transform duration-150", x ? "rotate-90" : "rotate-0"),
+					className: e("inline-block text-[10px] leading-none transition-transform duration-150", S ? "rotate-90" : "rotate-0"),
 					children: "▸"
 				}), /* @__PURE__ */ s("span", {
 					className: "truncate",
 					children: t
 				})]
-			}), i && /* @__PURE__ */ s("div", {
+			}), o && /* @__PURE__ */ s("div", {
 				className: "flex items-center gap-1 shrink-0",
-				children: i
+				children: o
 			})]
 		}), /* @__PURE__ */ s("div", {
-			id: _,
-			hidden: !x,
-			className: e("flex flex-col gap-0.5", x && "pb-1"),
-			children: f
+			id: v,
+			ref: w,
+			hidden: !S,
+			className: e("flex flex-col gap-0.5", S && "pb-1"),
+			children: p
 		})]
 	});
 }

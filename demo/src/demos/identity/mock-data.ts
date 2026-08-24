@@ -39,15 +39,19 @@ export const mockMfaMetrics = {
   adoptionRate: 60,
 };
 
+// `poolId` matches the email domain to the pools above. It is what the
+// "Filter by pool" control keys off — MfaManagementPage hides that control
+// entirely when no row supplies one, so without these the demo renders a
+// page that cannot demonstrate its own filter.
 export const mockMfaUsers = [
-  { userId: 'usr-001', email: 'alice@acme.com', mfaEnabled: true, deviceCount: 2 },
-  { userId: 'usr-002', email: 'bob@acme.com', mfaEnabled: true, deviceCount: 1 },
-  { userId: 'usr-003', email: 'carol@acme.com', mfaEnabled: false, deviceCount: 0 },
-  { userId: 'usr-005', email: 'eve@acme.com', mfaEnabled: true, deviceCount: 1 },
-  { userId: 'usr-006', email: 'frank@internal.co', mfaEnabled: true, deviceCount: 1 },
-  { userId: 'usr-007', email: 'grace@internal.co', mfaEnabled: true, deviceCount: 2 },
-  { userId: 'usr-009', email: 'iris@partner.io', mfaEnabled: false, deviceCount: 0 },
-  { userId: 'usr-010', email: 'jack@partner.io', mfaEnabled: true, deviceCount: 1 },
+  { userId: 'usr-001', email: 'alice@acme.com', poolId: 'pool-acme-prod', mfaEnabled: true, deviceCount: 2 },
+  { userId: 'usr-002', email: 'bob@acme.com', poolId: 'pool-acme-prod', mfaEnabled: true, deviceCount: 1 },
+  { userId: 'usr-003', email: 'carol@acme.com', poolId: 'pool-acme-prod', mfaEnabled: false, deviceCount: 0 },
+  { userId: 'usr-005', email: 'eve@acme.com', poolId: 'pool-acme-prod', mfaEnabled: true, deviceCount: 1 },
+  { userId: 'usr-006', email: 'frank@internal.co', poolId: 'pool-internal', mfaEnabled: true, deviceCount: 1 },
+  { userId: 'usr-007', email: 'grace@internal.co', poolId: 'pool-internal', mfaEnabled: true, deviceCount: 2 },
+  { userId: 'usr-009', email: 'iris@partner.io', poolId: 'pool-partner-api', mfaEnabled: false, deviceCount: 0 },
+  { userId: 'usr-010', email: 'jack@partner.io', poolId: 'pool-partner-api', mfaEnabled: true, deviceCount: 1 },
 ];
 
 export const mockEmailTemplates = [

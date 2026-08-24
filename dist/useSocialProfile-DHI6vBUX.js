@@ -109,10 +109,9 @@ function a({ idToken: n }) {
 	let m = e(async () => {
 		if (!n) return;
 		let e = await fetch("/api/social/following", { headers: { Authorization: `Bearer ${n}` } });
-		if (e.ok) {
-			let t = await e.json();
-			s(t.following ?? []);
-		}
+		if (!e.ok) throw Error(`Failed to refresh following (${e.status})`);
+		let t = await e.json();
+		s(t.following ?? []);
 	}, [n, ""]);
 	return {
 		followers: i,
@@ -253,7 +252,7 @@ function o({ idToken: t }) {
 					});
 					if (!t.ok) throw Error(`Failed to invite user (${t.status})`);
 				} catch (e) {
-					u(e.message);
+					throw u(e.message), e;
 				}
 			}
 		}, [
