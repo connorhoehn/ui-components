@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { retryFromNode, forceFail } from '../pipelineRetry';
 import { getRunAuditLog, searchAudit } from '../pipelineAudit';
 import { listDLQEntries, redriveDLQEntries } from '../pipelineDLQ';
-import { listPipelineRuns } from '../pipelineRuns';
+import { getPipelineRun, listPipelineRuns } from '../pipelineRuns';
 import { resumeFromStep } from '../pipelineResume';
 
 function mockFetch(body: unknown, init: { ok?: boolean; status?: number } = {}) {
@@ -111,6 +111,31 @@ describe('pipelineRuns', () => {
     mockFetch({ runs: [{ runId: 'r1', status: 'completed' }] });
     const out = await listPipelineRuns('p1');
     expect(out.runs[0]).toMatchObject({ id: 'r1' });
+  });
+
+  // Regression (null-conflation): `getPipelineRun` used to answer `null` for
+  // BOTH a genuine 404 and any transport/5xx failure, so callers rendering
+  // "this run was trimmed from history" said so about a run that is fine on
+  // a server that is merely down. The two outcomes must not be spelled the
+  // same way. These three cases are the whole contract.
+  it('resolves null for a genuine 404', async () => {
+    mockFetch({ error: 'not found' }, { ok: false, status: 404 });
+    await expect(getPipelineRun('p1', 'r1')).resolves.toBeNull();
+  });
+
+  it('REJECTS (does not resolve null) when the request fails at the transport', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => Promise.reject(new Error('network down'))));
+    await expect(getPipelineRun('p1', 'r1')).rejects.toThrow(/network down/);
+  });
+
+  it('REJECTS (does not resolve null) on a 500', async () => {
+    mockFetch({ error: 'boom' }, { ok: false, status: 500 });
+    await expect(getPipelineRun('p1', 'r1')).rejects.toThrow(/500/);
+  });
+
+  it('maps runId to id on the happy path', async () => {
+    mockFetch({ runId: 'r7', status: 'completed', steps: {} });
+    await expect(getPipelineRun('p1', 'r7')).resolves.toMatchObject({ id: 'r7' });
   });
 });
 

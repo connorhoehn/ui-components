@@ -58,10 +58,26 @@ export interface UseIngestItemsOptions {
 export interface UseIngestItemsReturn {
   items: IngestItem[];
   loading: boolean;
+  /** Why the LIST fetch failed. Never set by retry/skip — see `actionError`. */
   error: string | null;
   refresh: () => Promise<void>;
   retryItem: (itemId: string) => Promise<boolean>;
   skipItem: (itemId: string) => Promise<boolean>;
+  /**
+   * Why the last `retryItem`/`skipItem` failed, or `null`. Additive
+   * (v2.95.0).
+   *
+   * These used to write into `error`, the same state the list loader owns.
+   * A failed Skip therefore made `IngestItemsPage` hide the entire,
+   * correctly-loaded table behind a banner reading "Failed to load ingest
+   * items." — a statement that was simply false — whose Retry button
+   * re-fetched the list rather than re-trying the skip. The next refresh
+   * cleared `error`, everything reappeared, and the operator concluded the
+   * skip had worked. It had not.
+   */
+  actionError: string | null;
+  /** Dismiss `actionError`. Additive (v2.95.0). */
+  clearActionError: () => void;
 }
 
 export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestItemsReturn {
@@ -70,6 +86,7 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
   const [items, setItems] = useState<IngestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const cancelledRef = useRef(false);
 
   const headers = useCallback((): Record<string, string> => {
@@ -110,6 +127,8 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
     return () => { cancelledRef.current = true; };
   }, [refresh]);
 
+  const clearActionError = useCallback(() => setActionError(null), []);
+
   const retryItem = useCallback(async (itemId: string): Promise<boolean> => {
     try {
       const res = await fetch(`${BASE_URL}/api/ingest/items/${itemId}/retry`, {
@@ -123,7 +142,7 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
       );
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers]);
@@ -139,10 +158,13 @@ export function useIngestItems(options: UseIngestItemsOptions = {}): UseIngestIt
       setItems((prev) => prev.filter((it) => it.itemId !== itemId));
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers]);
 
-  return { items, loading, error, refresh, retryItem, skipItem };
+  return {
+    items, loading, error, refresh, retryItem, skipItem,
+    actionError, clearActionError,
+  };
 }

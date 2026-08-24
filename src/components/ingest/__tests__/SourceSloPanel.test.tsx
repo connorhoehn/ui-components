@@ -101,6 +101,28 @@ describe('SourceSloPanel', () => {
     expect(screen.getByTestId('slo-latency-value')).toHaveTextContent('—');
   });
 
+  // Regression (0-as-sentinel): queue depth used `?? 0`, so "no samples at
+  // all" rendered as a confident bold 0 — read as "backlog drained, healthy".
+  // Its two sibling tiles have always rendered an em-dash for that case.
+  it('shows "—" for queue depth when queueDepth is all-null, not 0', () => {
+    const m = makeMetrics({
+      queueDepth: [pt('2026-05-17T00:00:00Z', null), pt('2026-05-17T00:01:00Z', null)],
+    });
+    useSourceSloMetricsMock.mockReturnValue(makeResult({ metrics: m }));
+    render(<SourceSloPanel sourceId="src-1" />);
+    expect(screen.getByTestId('slo-queue-depth-value')).toHaveTextContent('—');
+    expect(screen.getByTestId('slo-queue-depth-value')).not.toHaveTextContent('0');
+  });
+
+  it('still shows a real 0 queue depth as 0', () => {
+    const m = makeMetrics({
+      queueDepth: [pt('2026-05-17T00:00:00Z', 5), pt('2026-05-17T00:01:00Z', 0)],
+    });
+    useSourceSloMetricsMock.mockReturnValue(makeResult({ metrics: m }));
+    render(<SourceSloPanel sourceId="src-1" />);
+    expect(screen.getByTestId('slo-queue-depth-value')).toHaveTextContent('0');
+  });
+
   it('uses the last non-null value when the tail of the series is null', () => {
     const m = makeMetrics({
       latencyP95: [pt('2026-05-17T00:00:00Z', 100), pt('2026-05-17T00:01:00Z', null)],

@@ -41,7 +41,7 @@ function observability(over: Partial<ObservabilityValue> = {}): ObservabilityVal
   return {
     dashboard: null, loading: false, error: null, lastUpdatedAt: null,
     live: true, setLive: vi.fn(), refreshDashboard: vi.fn().mockResolvedValue(undefined),
-    recentEvents: [], activeRunsCount: 0, isLiveData: false,
+    recentEvents: [], activeRunsCount: 0, isLiveData: false, unauthorized: false,
     ...over,
   };
 }

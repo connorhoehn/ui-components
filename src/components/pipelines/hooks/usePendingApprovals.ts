@@ -208,10 +208,21 @@ export function usePendingApprovalsState(): PendingApprovalsState {
         const body = (await res.json()) as { approvals?: DashboardPendingApprovalsResponse['pendingApprovals'] };
         return { pendingApprovals: body.approvals ?? [] };
       } catch (err) {
-        if ((err as Error).message?.includes('Dashboard fetch failed')) {
-          throw err;
-        }
-        return null;
+        // `null` means ONE thing: this deployment has no approvals endpoint,
+        // so fall through to mock mode. It used to also mean "the request
+        // blew up" — a downed API threw `TypeError: Failed to fetch`, landed
+        // here, and returned the same `null` as a 404. The caller then set
+        // no error, left the map empty, and PendingApprovalsPage rendered
+        // "No pending approvals": an approver was told nobody was waiting on
+        // them while runs sat blocked, with the page's own error banner and
+        // Retry button unreachable for the most common failure mode.
+        //
+        // A non-JSON body stays in the "endpoint not present" bucket on
+        // purpose: any SPA-fallback host answers an unknown /api/* path with
+        // index.html and HTTP 200, which is the backendless demo, not an
+        // outage. Everything else propagates.
+        if (err instanceof SyntaxError) return null;
+        throw err;
       }
     };
 

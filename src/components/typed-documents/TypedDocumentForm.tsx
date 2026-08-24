@@ -209,6 +209,23 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
         }
       } else {
         coerced = coerceSingle(field, stored as SingleStored);
+        // `coerceSingle` answers `null` for BOTH "the user left this empty"
+        // and "there is a value here but it won't coerce" (a `number` field
+        // holding `12e`, reachable via `widget: 'text_field'` or the number
+        // input's own invalid-input state, which reports `value === ''`).
+        // Without this guard the optional case was silently dropped from the
+        // payload and the form still rendered "✓ Saved", so the user believed
+        // a number had been stored that was never sent; the required case
+        // said "<name> is required" about a field that was visibly filled.
+        // The `coerceUnlimited` branch above has always had this check.
+        if (
+          coerced === null &&
+          typeof stored === 'string' &&
+          stored.trim() !== ''
+        ) {
+          setError(`${field.name}: invalid value for ${field.fieldType}`);
+          return;
+        }
       }
 
       if (field.required && coerced === null) {

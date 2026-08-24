@@ -109,6 +109,33 @@ export async function publishPipelineRemote(id: string): Promise<PipelineDefinit
  * stored copy — which is exactly what happens in the demo, and in any app
  * whose static host serves index.html for /api/*.
  */
+/**
+ * True when the failure means "there is no pipelines API at this origin",
+ * as opposed to "the API is there and the write did not land".
+ *
+ * That distinction only matters for WRITES. `isNetworkError` below folds
+ * both into one bucket, which is right for reads (falling back to the cache
+ * shows more data, never a false emptiness) and wrong for writes: it made a
+ * rejected PUT resolve exactly like a persisted one, so the editor flashed
+ * "Saved", cleared `dirty`, and the user closed the tab believing the
+ * pipeline was on the server when it existed only in that browser's
+ * localStorage.
+ *
+ * A non-JSON body and a 404 stay in the "no API here" bucket on purpose: any
+ * SPA-fallback host answers an unknown /api/* path with index.html and HTTP
+ * 200, which is the backendless demo, not an outage. A genuine transport
+ * failure or a 5xx is a real, reportable write failure.
+ */
+function isApiAbsent(err: unknown): boolean {
+  if (err instanceof SyntaxError) return true; // response body was not JSON
+  const msg = (err as Error).message || String(err);
+  return (
+    msg.includes('Unexpected token') ||
+    msg.includes('not valid JSON') ||
+    msg.includes('(404)')
+  );
+}
+
 function isNetworkError(err: unknown): boolean {
   if (err instanceof SyntaxError) return true; // response body was not JSON
   const msg = (err as Error).message || String(err);
@@ -165,7 +192,13 @@ export async function savePipeline(def: PipelineDefinition): Promise<PipelineDef
   try {
     return await savePipelineRemote(next);
   } catch (err) {
-    if (isNetworkError(err)) return next;
+    // The local cache write above already happened, so nothing is lost — but
+    // a write the server refused must NOT resolve like one it accepted.
+    // Returning `next` here meant the caller cleared `dirty`, showed the
+    // "Saved" flash, and never queued a retry. Only "there is no API here"
+    // (demo / SPA-fallback host) resolves quietly; a real failure propagates
+    // so `PipelineEditorContext.persist` can re-queue it and toast.
+    if (isApiAbsent(err)) return next;
     throw err;
   }
 }
@@ -191,7 +224,11 @@ export async function publishPipeline(id: string): Promise<PipelineDefinition | 
     }
     return published;
   } catch (err) {
-    if (isNetworkError(err)) return null;
+    // `null` means "the server has no such pipeline" (the 404 above). It used
+    // to ALSO mean "the publish failed", which is how `PipelineEditorPage`
+    // ended up firing a green "Pipeline published" toast over a pipeline that
+    // was still a draft.
+    if (isApiAbsent(err)) return null;
     throw err;
   }
 }

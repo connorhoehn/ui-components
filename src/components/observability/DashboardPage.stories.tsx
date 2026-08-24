@@ -115,6 +115,7 @@ function observability(overrides: Partial<ObservabilityValue>): ObservabilityVal
     recentEvents: [],
     activeRunsCount: 0,
     isLiveData: true,
+    unauthorized: false,
     ...overrides,
   };
 }

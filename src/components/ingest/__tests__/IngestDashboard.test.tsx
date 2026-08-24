@@ -72,6 +72,7 @@ function renderDashboard(sources: IngestSource[] = [], items: IngestItem[] = [],
     createSource: vi.fn().mockResolvedValue(null),
     deleteSource: vi.fn().mockResolvedValue(true),
     triggerSync: vi.fn().mockResolvedValue(true),
+    actionError: null, clearActionError: vi.fn(),
     ...over.sources,
   };
   const itemsHook: UseIngestItemsReturn = {
@@ -79,6 +80,7 @@ function renderDashboard(sources: IngestSource[] = [], items: IngestItem[] = [],
     refresh: vi.fn().mockResolvedValue(undefined),
     retryItem: vi.fn().mockResolvedValue(true),
     skipItem: vi.fn().mockResolvedValue(true),
+    actionError: null, clearActionError: vi.fn(),
     ...over.items,
   };
   useIngestSourcesMock.mockReturnValue(sourcesHook);

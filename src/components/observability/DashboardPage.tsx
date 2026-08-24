@@ -226,7 +226,7 @@ export default function DashboardPage() {
   const navigate = useNavigate();
   const activeRunsRef = useRef<HTMLDivElement>(null);
 
-  const { live, setLive, recentEvents, activeRunsCount, isLiveData } =
+  const { live, setLive, recentEvents, activeRunsCount, isLiveData, unauthorized } =
     useObservability();
   const liveDashboard = useDashboard();
   // First-paint fallback: before the provider's initial-load effect has run,
@@ -301,19 +301,29 @@ export default function DashboardPage() {
           Dashboard
         </h1>
         <div className="flex items-center gap-2">
+          {/* Three states, not two. "not authorized" used to render as the
+              same muted "fixture" pill as an unreachable backend, so an
+              operator whose credentials were rejected read synthetic cluster
+              numbers as their own — with nothing on screen to correct them. */}
           <span
             data-testid="dashboard-data-source"
             title={
               isLiveData
                 ? 'Connected to /api/observability/dashboard'
-                : 'Backend unreachable — using fixture data'
+                : unauthorized
+                  ? 'Not authorized to read /api/observability/dashboard — the numbers below are fixture data, NOT your cluster. Sign in or supply a token to ObservabilityProvider.'
+                  : 'Backend unreachable — using fixture data'
             }
             className={cn(
               'text-[11px] font-semibold',
-              isLiveData ? 'text-state-completed' : 'text-text-tertiary'
+              isLiveData
+                ? 'text-state-completed'
+                : unauthorized
+                  ? 'text-danger-fg bg-danger-bg border border-danger-border rounded-sm px-1.5 py-0.5'
+                  : 'text-text-tertiary'
             )}
           >
-            {isLiveData ? 'live data' : 'fixture'}
+            {isLiveData ? 'live data' : unauthorized ? 'not authorized — fixture' : 'fixture'}
           </span>
           <MetricsSourcePill source={metricsSource} />
           <LiveToggle live={live} onChange={setLive} />

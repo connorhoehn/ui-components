@@ -58,7 +58,10 @@ export default function IngestItemsPage() {
   const [drawerItem, setDrawerItem] = useState<IngestItem | null>(null);
 
   const { sources } = useIngestSources();
-  const { items, loading, error, refresh, retryItem, skipItem } = useIngestItems({
+  const {
+    items, loading, error, refresh, retryItem, skipItem,
+    actionError, clearActionError,
+  } = useIngestItems({
     sourceId: sourceFilter,
     status: statusFilter,
   });
@@ -156,6 +159,27 @@ export default function IngestItemsPage() {
             className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
             Retry
+          </button>
+        </div>
+      )}
+
+      {/* Action-failure banner — a failed Retry/Skip is NOT a failed load, so
+          it gets its own message and, crucially, does not hide the table the
+          operator is looking at. */}
+      {actionError && (
+        <div
+          data-testid="ingest-items-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4"
+        >
+          <span className="text-[13px] font-medium">
+            Could not update that item: {actionError}
+          </span>
+          <button
+            onClick={clearActionError}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
           </button>
         </div>
       )}

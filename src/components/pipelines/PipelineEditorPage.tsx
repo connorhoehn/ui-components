@@ -280,6 +280,24 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
     clearSaveError();
   }, [saveError, clearSaveError, toast]);
 
+  // Publish outcome. The success toast used to fire unconditionally the
+  // instant the button was clicked, so a publish the server never accepted
+  // read as a green "Pipeline published" while the status chip still said
+  // Draft. Both branches now wait for the actual result.
+  const { publishError, clearPublishError, publishedAt } = editor;
+  const lastPublishedAtRef = useRef<string | null>(publishedAt);
+  useEffect(() => {
+    if (publishedAt && publishedAt !== lastPublishedAtRef.current) {
+      toast('Pipeline published', { type: 'success' });
+    }
+    lastPublishedAtRef.current = publishedAt;
+  }, [publishedAt, toast]);
+  useEffect(() => {
+    if (!publishError) return;
+    toast(`Could not publish: ${publishError}`, { type: 'error' });
+    clearPublishError();
+  }, [publishError, clearPublishError, toast]);
+
   const { retryError, clearRetryError } = runs;
   useEffect(() => {
     if (!retryError) return;
@@ -365,8 +383,8 @@ function EditorFrame({ pipelineId }: EditorFrameProps) {
   const handlePublishConfirm = () => {
     setPublishConfirmOpen(false);
     if (hasErrors) return;
+    // No toast here — the effects above fire one when the outcome is known.
     publish();
-    toast('Pipeline published', { type: 'success' });
   };
 
   const handleDeleteConfirm = () => {

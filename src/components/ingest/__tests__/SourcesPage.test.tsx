@@ -50,6 +50,7 @@ function makeHook(overrides: Partial<UseIngestSourcesReturn> = {}): UseIngestSou
     createSource: vi.fn().mockResolvedValue(null),
     deleteSource: vi.fn().mockResolvedValue(true),
     triggerSync: vi.fn().mockResolvedValue(true),
+    actionError: null, clearActionError: vi.fn(),
     ...overrides,
   };
 }

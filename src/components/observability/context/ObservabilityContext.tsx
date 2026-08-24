@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import dashboardFixture from '../fixtures/dashboardFixture';
+import { useOptionalIdentityContext } from '../../../contexts/IdentityContext';
 import {
   useEventStreamContext,
   type WildcardEvent,
@@ -93,6 +94,14 @@ export interface ObservabilityValue {
   activeRunsCount: number;
   /** True when the backend dashboard fetch has succeeded at least once. */
   isLiveData: boolean;
+  /**
+   * True when the dashboard endpoint answered 401/403 — i.e. the data on
+   * screen is fixture data because we are *not authorized*, not because the
+   * cluster is unreachable. Kept separate from `error` so the UI can stop
+   * telling an operator "backend unreachable" when the real problem is a
+   * missing credential they can actually do something about.
+   */
+  unauthorized: boolean;
 }
 
 const defaultValue: ObservabilityValue = {
@@ -106,6 +115,7 @@ const defaultValue: ObservabilityValue = {
   recentEvents: [],
   activeRunsCount: 0,
   isLiveData: false,
+  unauthorized: false,
 };
 
 const ObservabilityContext = createContext<ObservabilityValue>(defaultValue);
@@ -113,6 +123,31 @@ const ObservabilityContext = createContext<ObservabilityValue>(defaultValue);
 interface Props {
   children: ReactNode;
   pollIntervalMs?: number;
+  /**
+   * Bearer token for `GET /api/observability/dashboard`. Optional host seam:
+   * when omitted the provider falls back to an `<IdentityProvider>`'s
+   * `idToken` if one happens to be in the tree, and sends no `Authorization`
+   * header if neither is available.
+   *
+   * This exists because the provider previously sent no credentials at all
+   * while its sibling `usePipelineMetrics` sent a bearer token to the same
+   * origin — so on a protected deployment the dashboard pinned to fixture
+   * data forever and showed an operator plausible fake numbers.
+   */
+  authToken?: string | null;
+  /**
+   * Full fetch seam for hosts whose auth doesn't reduce to a bearer token
+   * (request signing, a token that must be refreshed per call, a proxy).
+   * Defaults to global `fetch`.
+   */
+  fetchImpl?: typeof fetch;
+  /**
+   * Credentials mode for the dashboard request. Defaults to `'include'` so
+   * cookie-session deployments authenticate. Set `'same-origin'` if your API
+   * replies with a wildcard `Access-Control-Allow-Origin`, which browsers
+   * refuse to combine with `'include'`.
+   */
+  credentials?: RequestCredentials;
 }
 
 const SOCIAL_API_URL =
@@ -152,7 +187,15 @@ function formatTimestamp(d: Date = new Date()): string {
 export function ObservabilityProvider({
   children,
   pollIntervalMs = 10000,
+  authToken,
+  fetchImpl,
+  credentials = 'include',
 }: Props) {
+  // Deliberately the NON-throwing identity read. `useIdentityContext` would
+  // make every ObservabilityProvider mount require an <IdentityProvider>
+  // above it, which would break the backendless demo outright.
+  const identity = useOptionalIdentityContext();
+  const token = authToken ?? identity?.idToken ?? null;
   const [dashboard, setDashboard] = useState<ClusterDashboard | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -160,6 +203,7 @@ export function ObservabilityProvider({
   const [live, setLive] = useState<boolean>(true);
   const [recentEvents, setRecentEvents] = useState<RecentEvent[]>([]);
   const [isLiveData, setIsLiveData] = useState<boolean>(false);
+  const [unauthorized, setUnauthorized] = useState<boolean>(false);
 
   // Track active runs derived from `pipeline.run.started/completed/failed/cancelled`.
   const activeRunIdsRef = useRef<Set<string>>(new Set());
@@ -181,26 +225,48 @@ export function ObservabilityProvider({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${SOCIAL_API_URL}/api/observability/dashboard`, {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const doFetch = fetchImpl ?? fetch;
+      const res = await doFetch(`${SOCIAL_API_URL}/api/observability/dashboard`, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
+        credentials,
       });
 
+      if (res.status === 401 || res.status === 403) {
+        // Distinct from unreachable: the cluster is right there and is
+        // refusing us. Falling back to the fixture without saying so is how
+        // an operator ends up reading synthetic numbers as their real cluster.
+        const authErr = new Error(
+          `Not authorized to read the observability dashboard (HTTP ${res.status})`,
+        );
+        (authErr as Error & { unauthorized?: boolean }).unauthorized = true;
+        throw authErr;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = (await res.json()) as ClusterDashboard;
       setDashboard(data);
       setLastUpdatedAt(new Date().toISOString());
       setIsLiveData(true);
+      setUnauthorized(false);
       // Reset the one-shot log so a future failure logs again.
       fallbackLoggedRef.current = false;
     } catch (err) {
+      const isAuthFailure =
+        !!(err as { unauthorized?: boolean } | null)?.unauthorized;
       // Graceful fallback: render the static fixture so the UI stays useful
       // while the backend is unreachable. Log exactly once per failure run.
       if (!fallbackLoggedRef.current) {
         // eslint-disable-next-line no-console
         console.warn(
-          '[ObservabilityContext] /api/observability/dashboard unreachable — using fixture',
+          isAuthFailure
+            ? '[ObservabilityContext] /api/observability/dashboard refused our credentials — using fixture'
+            : '[ObservabilityContext] /api/observability/dashboard unreachable — using fixture',
           err,
         );
         fallbackLoggedRef.current = true;
@@ -209,10 +275,11 @@ export function ObservabilityProvider({
       setLastUpdatedAt((prev) => prev ?? new Date().toISOString());
       setError(err instanceof Error ? err.message : 'Failed to load dashboard');
       setIsLiveData(false);
+      setUnauthorized(isAuthFailure);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token, fetchImpl, credentials]);
 
   const refreshDashboard = useCallback(async (): Promise<void> => {
     await fetchDashboard();
@@ -296,6 +363,7 @@ export function ObservabilityProvider({
       recentEvents,
       activeRunsCount,
       isLiveData,
+      unauthorized,
     }),
     [
       dashboard,
@@ -307,6 +375,7 @@ export function ObservabilityProvider({
       recentEvents,
       activeRunsCount,
       isLiveData,
+      unauthorized,
     ],
   );
 

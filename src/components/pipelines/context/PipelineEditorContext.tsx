@@ -82,6 +82,22 @@ export interface PipelineEditorValue {
   saveError: string | null;
   /** Dismiss `saveError`. Does not clear `dirty` and does not retry. */
   clearSaveError: () => void;
+  /**
+   * Why the last `publish()` failed, or `null`. Additive (v2.95.0).
+   *
+   * `publish()` returns `void` and used to swallow its outcome entirely, so
+   * `PipelineEditorPage` fired an unconditional green "Pipeline published"
+   * toast — including when the POST never landed and the pipeline was still
+   * a draft. A caller cannot act on an outcome it is never told about.
+   */
+  publishError: string | null;
+  /** Dismiss `publishError`. Additive (v2.95.0). */
+  clearPublishError: () => void;
+  /**
+   * ISO timestamp of the last SUCCESSFUL publish, or `null`. Changes on every
+   * success so a caller can confirm one actually happened. Additive (v2.95.0).
+   */
+  publishedAt: string | null;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -293,6 +309,10 @@ export function PipelineEditorProvider({
   }, []);
 
   const clearSaveError = useCallback(() => setSaveError(null), []);
+
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
+  const clearPublishError = useCallback(() => setPublishError(null), []);
 
   /**
    * The single remote-write path. Takes ownership of `target` up front, so an
@@ -639,15 +659,30 @@ export function PipelineEditorProvider({
       saveTimerRef.current = null;
     }
     const target = definition;
+    setPublishError(null);
     const doPublish = async () => {
       if (dirty) {
         await savePipeline(target);
         clearDirtyIfUnchanged(target);
       }
       const published = await publishPipelineStorage(definition.id);
-      if (published) setDefinition(published);
+      if (published) {
+        setDefinition(published);
+        setPublishedAt(new Date().toISOString());
+      } else {
+        // `null` now means only one thing: the server has no such pipeline.
+        setPublishError('The server no longer has this pipeline.');
+      }
     };
-    void doPublish();
+    // Previously `void doPublish()` with no catch — a rejected publish became
+    // an unhandled rejection while the page toasted success anyway.
+    doPublish().catch((err: unknown) => {
+      setPublishError(
+        err instanceof Error ? err.message : 'Failed to publish the pipeline.',
+      );
+      // eslint-disable-next-line no-console
+      console.error('[PipelineEditor] publish failed', err);
+    });
   }, [definition, dirty, clearDirtyIfUnchanged]);
 
   const revert = useCallback((): void => {
@@ -754,6 +789,9 @@ export function PipelineEditorProvider({
       revert,
       saveError,
       clearSaveError,
+      publishError,
+      clearPublishError,
+      publishedAt,
       undo,
       redo,
       canUndo: undoStack.length > 0,
@@ -779,6 +817,9 @@ export function PipelineEditorProvider({
       revert,
       saveError,
       clearSaveError,
+      publishError,
+      clearPublishError,
+      publishedAt,
       undo,
       redo,
       undoStack.length,

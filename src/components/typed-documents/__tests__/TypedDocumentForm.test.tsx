@@ -83,6 +83,54 @@ describe('TypedDocumentForm submit coercion', () => {
     expect(onSubmit).toHaveBeenCalledWith({ title: 'Standup', count: 42, done: false });
   });
 
+  // Regression (null-conflation): `coerceSingle` answers `null` for both
+  // "empty" and "present but un-coercible". The optional case was silently
+  // stripped from the payload while the form rendered "✓ Saved", so the user
+  // believed a number had been stored that was never sent.
+  it('rejects an un-coercible number instead of dropping it and saying Saved', async () => {
+    const onSubmit = submitSpy();
+    render(
+      <TypedDocumentForm
+        type={docType([
+          field({ fieldId: 'title' }),
+          // `text_field` on a `number` field is a legal combination, and it
+          // is what lets a non-numeric string reach the coercion step.
+          field({ fieldId: 'count', name: 'Count', fieldType: 'number', widget: 'text_field' }),
+        ])}
+        onSubmit={onSubmit}
+      />,
+    );
+    fireEvent.change(screen.getByTestId('input-title'), { target: { value: 'Standup' } });
+    fireEvent.change(screen.getByTestId('input-count'), { target: { value: '12e' } });
+    fireEvent.submit(screen.getByTestId('typed-document-form'));
+
+    expect(await screen.findByTestId('form-error')).toHaveTextContent(
+      'Count: invalid value for number',
+    );
+    // The load-bearing assertions: nothing was submitted behind the user's
+    // back, and no success message appeared.
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('form-success')).not.toBeInTheDocument();
+  });
+
+  it('still drops a genuinely empty optional number', async () => {
+    const onSubmit = submitSpy();
+    render(
+      <TypedDocumentForm
+        type={docType([
+          field({ fieldId: 'title' }),
+          field({ fieldId: 'count', name: 'Count', fieldType: 'number', widget: 'text_field' }),
+        ])}
+        onSubmit={onSubmit}
+      />,
+    );
+    fireEvent.change(screen.getByTestId('input-title'), { target: { value: 'Standup' } });
+    fireEvent.submit(screen.getByTestId('typed-document-form'));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({ title: 'Standup' }));
+    expect(screen.queryByTestId('form-error')).not.toBeInTheDocument();
+  });
+
   it('blocks submit when a required field is empty', async () => {
     const onSubmit = submitSpy();
     render(
