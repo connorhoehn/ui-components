@@ -21,6 +21,47 @@ describe('MetricTimeSeriesPanel host callbacks', () => {
     expect(screen.queryByTestId('metrics-export-csv')).toBeNull();
   });
 
+  // Regression: both selects used to be panel-local `useState`. Nothing read
+  // either value — picking "Refresh: 5s" re-polled nothing, and picking
+  // "Last 7d" only re-captioned every chart card while the plotted points
+  // stayed identical. They now render only when the host can act on them.
+  it('hides the time-range and refresh selects when the host provides no handlers', () => {
+    render(
+      <MetricTimeSeriesPanel seeds={EMPTY_SEEDS} liveSeries={null} cols={2} isLiveData={false} failedColor="var(--color-danger)" />,
+    );
+    expect(screen.queryByTestId('metrics-time-range')).toBeNull();
+    expect(screen.queryByTestId('metrics-refresh-interval')).toBeNull();
+  });
+
+  // The per-card range chip is part of the same lie: it must not claim a
+  // window when no host is honouring one.
+  it('captions no chart card with a time range when the range is unwired', () => {
+    render(
+      <MetricTimeSeriesPanel seeds={EMPTY_SEEDS} liveSeries={null} cols={2} isLiveData={false} failedColor="var(--color-danger)" />,
+    );
+    expect(screen.queryByText(/^Last /)).toBeNull();
+  });
+
+  it('renders the selects and reports changes when the host wires them', () => {
+    const onTimeRangeChange = vi.fn();
+    const onRefreshIntervalChange = vi.fn();
+    render(
+      <MetricTimeSeriesPanel
+        seeds={EMPTY_SEEDS} liveSeries={null} cols={2} isLiveData={false}
+        failedColor="var(--color-danger)"
+        timeRange="24h" onTimeRangeChange={onTimeRangeChange}
+        refreshInterval="30s" onRefreshIntervalChange={onRefreshIntervalChange}
+      />,
+    );
+    // A wired range is what licenses the card caption.
+    expect(screen.getAllByText('Last 24h').length).toBeGreaterThan(1);
+
+    fireEvent.change(screen.getByTestId('metrics-time-range'), { target: { value: '15m' } });
+    fireEvent.change(screen.getByTestId('metrics-refresh-interval'), { target: { value: 'off' } });
+    expect(onTimeRangeChange).toHaveBeenCalledWith('15m');
+    expect(onRefreshIntervalChange).toHaveBeenCalledWith('off');
+  });
+
   it('renders and fires them when wired', () => {
     const onResetZoom = vi.fn();
     const onExportCsv = vi.fn();

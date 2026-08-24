@@ -8,6 +8,123 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.93.0] — 2026-08-24
+
+Four parallel efforts: a StrictMode hunt, an `api/` + `observability` audit,
+the three deferred design items, and one loose end from v2.92.0.
+
+### Fixed — controls that did nothing, or lied
+
+`observability/` was reported to have `console.log` dead buttons. That report
+was stale, but four controls were inert or actively misleading:
+
+- **The time-range select on `MetricTimeSeriesPanel` was worse than inert** —
+  it re-captioned all ten chart cards "Last 7d" while the plotted points
+  stayed byte-identical. An operator reads a different question answered by
+  the same data.
+- `EventsPage`'s time-range select wrote a filter `visibleEvents` never read:
+  "Last 15m" left hour-old rows on screen and the "N / M events" counter never
+  moved. It now filters on a new `receivedAt` epoch stamp — `timestamp` is a
+  clock string with no date, so it could not be compared at all.
+- The refresh-interval select polled nothing: "Refresh: 5s" re-polled never,
+  and "Off" kept hammering at 10s (measured: **7 polls in 60s** with the
+  control set to Off).
+- `DashboardKPIStrip` hard-coded its deltas, so every operator watching live
+  bridge metrics saw the same invented `▲ 12%` under a real number, forever.
+  Now host-supplied.
+
+Unwired selects hide rather than render dead, following the file's own
+existing `onResetZoom`/`onExportCsv` contract.
+
+### Fixed — StrictMode / double-invocation (12 sites)
+
+Two are **production-shaped**, not dev-only:
+
+- `PipelineRunsContext` claimed its guard ref *before* a cancellable fetch, so
+  on any same-fiber effect re-run (Suspense retry, Offscreen re-show, or
+  `pipelineId` cycling A→undefined→A, which the editor's own load effect
+  produces) the first pass started and cancelled the fetch and the second
+  bailed on the ref. Run history never seeded — no error, no retry, just "no
+  runs yet" for a pipeline that has them.
+- `useVisionResults` / `useJudgmentResults` read *and rebuilt* a position index
+  inside their `setRecords` updater, so the second pass read what the first
+  wrote and a brand-new step looked like it sat at position 0. **With two
+  concurrent vision/judge steps, the second silently overwrote the first's
+  row.**
+
+Dev-only but visible in demo and Storybook: `commit` pushed two undo frames
+per edit (one Ctrl+Z looked dead) and returned its value unreliably;
+`undo`/`redo` pushed two frames onto the opposite stack; `duplicateNodes`
+returned 2N ids for N nodes, half pointing at clones never committed — and
+callers select the returned ids, so duplicating could select a phantom node.
+`useBBoxAuthoring` fired the host's `onChange` from inside an updater, so a
+host that POSTs annotations wrote every edit twice.
+
+**The suite does not run StrictMode** (`test-setup.ts` installs jsdom
+polyfills only), so none of these was catchable by the existing 4,587 tests.
+The new tests opt in per-file. Flipping it globally is its own task — expect
+assertion churn on every mock call-count, most of it not real bugs.
+
+### Fixed — retry that answered 401
+
+`api/pipelineRetry.ts`'s `retryFromNode` was the only client in `src/api/`
+omitting `credentials: 'include'`; its own sibling `forceFail` sends it. On a
+cookie-auth deployment "Retry from this node" failed while Force-fail and
+Resume on the same page worked.
+
+### Fixed — the three deferred design items
+
+- **Node layout is no longer lost on reload.** Drags wrote to localStorage
+  only, so an arranged layout survived in one browser and nowhere else. Moves
+  now mark the pipeline dirty and ride the existing debounced autosave —
+  rejected a second position-only debouncer, which would have duplicated the
+  coalescing and raced the autosave over one record. Reusing the autosave
+  inherited its gaps, so this also adds a teardown flush (the debounce window
+  was a data-loss window) and a real failure path.
+  *Premise correction:* the feared "write per drag frame" doesn't exist —
+  `PipelineCanvas` already filters to `dragging === false`. The real burst is
+  Shift+Arrow key repeat.
+- **`retryFromStep` reports its failure.** Not by rejecting — every call site
+  is a bare `onClick`, so rejecting would convert each into an unhandled
+  rejection. The reason surfaces through additive `retryError`, with a
+  discriminator so "nothing to retry" reads differently from "the server
+  refused".
+- **`DiagnosticsPage`'s DLQ Redrive/Purge surface failures**, following the
+  v2.91.0 sibling pattern rather than inventing a new one. A failed purge was
+  completely silent — the admin believes the queue was purged when it wasn't.
+
+### Fixed — a failed document section no longer reads as an empty one
+
+`useDocumentItems`' per-section `catch` returned `[]`, which was the only
+signal the caller got, so a section whose fetch failed looked exactly like a
+section with no items. Adds `itemErrors` (additive). Note: no doc-editor
+surface renders it yet, so this is fixed in state and not yet on screen.
+
+### Added (all additive, no signature breaks)
+
+`PipelineEditorValue.saveError` / `clearSaveError`,
+`PipelineRunsValue.retryError` / `clearRetryError`,
+`UseDocumentItemsReturn.itemErrors`, four optional props on
+`MetricTimeSeriesPanelProps`, `runsTodayDelta`/`failed24hDelta` +
+exported `KPIDelta` on `DashboardKPIStripProps`, optional
+`EventItem.receivedAt`, an optional options arg on `usePipelineMetrics`.
+
+### Audited clean
+
+Five of six `src/api/` modules (query building skips undefined, encodes keys
+and values, joins arrays; every file checks `res.ok`; the `runId`→`id`
+mapping round-trips). Thirteen observability components including the
+Live/Paused toggle, which genuinely gates both polls.
+
+### Known gaps, flagged not fixed
+
+`getPipelineRun` returns `null` for a transport failure as well as a 404, so
+a dead API renders "Run not available — it may have been trimmed from
+history"; fixing it needs `.catch` handling in two pages that have none.
+`ObservabilityContext` sends neither `Authorization` nor `credentials` while
+its sibling sends a bearer token to the same origin — if that endpoint is
+protected, the dashboard pins to "fixture" forever.
+
 ## [2.92.0] — 2026-08-24
 
 Three parallel hunts. **43 bugs.** Tests 4,304 → 4,584.

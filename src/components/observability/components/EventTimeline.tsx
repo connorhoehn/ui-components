@@ -14,7 +14,14 @@ import { cn } from '../../../lib/cn';
 
 export interface EventItem {
   id: string;
+  /** Display-only clock string (`HH:MM:SS.mmm`) — carries no date. */
   timestamp: string;
+  /**
+   * Epoch ms the event was received. `timestamp` is a formatted clock string
+   * with no date, so it cannot be compared; this is what EventsPage's
+   * time-range filter measures against.
+   */
+  receivedAt?: number;
   type: string;
   summary: string;
   severity?: 'info' | 'warning' | 'error' | 'success';

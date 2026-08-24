@@ -48,10 +48,43 @@ describe('DashboardKPIStrip', () => {
     expect(container.textContent).not.toContain('▼');
   });
 
-  it('shows both deltas when runsToday and failed24h are numbers', () => {
-    render(<DashboardKPIStrip {...makeProps()} />);
+  // INVERTED (v2.93.0). This test used to assert `▲ 12%` / `▼ 4%` appear
+  // whenever the KPI values are numbers — pinning two HARD-CODED deltas the
+  // strip invented. On a live dashboard that meant "Runs today: 1,438 ▲ 12%"
+  // where the 12% was measured from nothing and never changed. Deltas are
+  // host-supplied now; with none supplied, none render.
+  it('shows no delta when the host supplies none, even for numeric values', () => {
+    const { container } = render(<DashboardKPIStrip {...makeProps()} />);
+    expect(container.textContent).not.toContain('▲');
+    expect(container.textContent).not.toContain('▼');
+  });
+
+  it('renders host-supplied deltas', () => {
+    render(
+      <DashboardKPIStrip
+        {...makeProps({
+          runsTodayDelta: { value: 12, direction: 'up' },
+          failed24hDelta: { value: 4, direction: 'down' },
+        })}
+      />,
+    );
     expect(screen.getByText(/▲ 12%/)).toBeInTheDocument();
     expect(screen.getByText(/▼ 4%/)).toBeInTheDocument();
+  });
+
+  it('still suppresses a host-supplied delta next to an em-dash value', () => {
+    const { container } = render(
+      <DashboardKPIStrip
+        {...makeProps({
+          runsToday: '—',
+          failed24h: '—',
+          runsTodayDelta: { value: 12, direction: 'up' },
+          failed24hDelta: { value: 4, direction: 'down' },
+        })}
+      />,
+    );
+    expect(container.textContent).not.toContain('▲');
+    expect(container.textContent).not.toContain('▼');
   });
 
   it('invokes onScrollToActive when the Active now card is clicked', () => {

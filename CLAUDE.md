@@ -86,6 +86,16 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > it is deliberately NOT declared in `engines`, because that field is
 > consumer-facing and the shipped bundles have no such requirement.
 
+> **Do not commit `dist/` from a parallel agent branch.** `dist/` is
+> intentionally tracked (see `.gitignore`) so `github:` tag installs work
+> without a build toolchain, but its chunks are content-hashed — two branches
+> that both ran `npm run build` produce `services-<hashA>.js` and
+> `services-<hashB>.js` from the same source and git reports a rename/rename
+> conflict on every merge. Agents should run `npm run build` to verify, then
+> leave `dist/` out of the commit; the release commit rebuilds it once from
+> merged source. Resolving is harmless (`git checkout --ours dist && npm run
+> build`) but it is pure noise on every single merge.
+
 > **`npm run build` works in a worktree as of v2.90.1.** It used to be the
 > one script that didn't: it invoked `./node_modules/vite/bin/vite.js` by
 > relative path, and a *filesystem* path never gets Node's walk-up-the-tree

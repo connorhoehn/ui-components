@@ -65,64 +65,68 @@ function ie(e) {
 		source: i
 	};
 }
-function ae() {
-	let { idToken: t } = e(), [n, r] = w(null), [i, a] = w(!0), [o, s] = w(null), [c, l] = w(null), [u, d] = w(!1), f = C(null), p = C(!0), m = C(!1), h = C(0), g = b(async () => {
-		f.current && f.current.abort();
+function ae(t = {}) {
+	let { idToken: n } = e(), { pollIntervalMs: r = N } = t, i = typeof r == "number" && r > 0, a = i ? r : N, [o, s] = w(null), [c, l] = w(!0), [u, d] = w(null), [f, p] = w(null), [m, h] = w(!1), g = C(null), _ = C(!0), v = C(!1), y = C(0), S = b(async () => {
+		g.current && g.current.abort();
 		let e = new AbortController();
-		f.current = e;
+		g.current = e;
 		try {
-			let n = { "Content-Type": "application/json" };
-			t && (n.Authorization = `Bearer ${t}`);
-			let i = await fetch(`${M}/api/pipelines/metrics`, {
+			let t = { "Content-Type": "application/json" };
+			n && (t.Authorization = `Bearer ${n}`);
+			let r = await fetch(`${M}/api/pipelines/metrics`, {
 				method: "GET",
-				headers: n,
+				headers: t,
 				signal: e.signal
 			});
-			if (!i.ok) throw Error(`HTTP ${i.status}`);
-			let a = ie(await i.json());
-			if (!p.current || e.signal.aborted) return;
-			r(a), l((/* @__PURE__ */ new Date()).toISOString()), s(null), d(!0), m.current = !1, h.current = 0;
+			if (!r.ok) throw Error(`HTTP ${r.status}`);
+			let i = ie(await r.json());
+			if (!_.current || e.signal.aborted) return;
+			s(i), p((/* @__PURE__ */ new Date()).toISOString()), d(null), h(!0), v.current = !1, y.current = 0;
 		} catch (e) {
-			if (e.name === "AbortError" || !p.current) return;
-			s(e.message || "Failed to fetch pipeline metrics"), d(!1), h.current += 1, r((e) => e ?? re()), m.current ||= (console.warn("[usePipelineMetrics] /api/pipelines/metrics unreachable — using fallback", e), !0);
+			if (e.name === "AbortError" || !_.current) return;
+			d(e.message || "Failed to fetch pipeline metrics"), h(!1), y.current += 1, s((e) => e ?? re()), v.current ||= (console.warn("[usePipelineMetrics] /api/pipelines/metrics unreachable — using fallback", e), !0);
 		} finally {
-			p.current && !e.signal.aborted && a(!1);
+			_.current && !e.signal.aborted && l(!1);
 		}
-	}, [t]);
+	}, [n]);
 	return x(() => {
-		p.current = !0;
+		_.current = !0;
 		let e = null, t = !0, n = () => {
 			e !== null && (clearTimeout(e), e = null);
 		}, r = () => {
-			if (!t || document.hidden) return;
-			let n = h.current > 0 ? ne(h.current) : N;
+			if (!t || document.hidden || !i) return;
+			let n = y.current > 0 ? ne(y.current) : a;
 			e = setTimeout(() => {
-				e = null, g().finally(() => {
+				e = null, S().finally(() => {
 					r();
 				});
 			}, n);
-		}, i = () => {
+		}, o = () => {
 			!t || e !== null || r();
 		};
-		g().finally(() => {
-			document.hidden || i();
+		S().finally(() => {
+			document.hidden || o();
 		});
-		let a = () => {
-			document.hidden ? n() : (n(), g().finally(() => {
-				document.hidden || i();
+		let s = () => {
+			document.hidden ? n() : (n(), S().finally(() => {
+				document.hidden || o();
 			}));
 		};
-		return document.addEventListener("visibilitychange", a), () => {
-			t = !1, p.current = !1, n(), document.removeEventListener("visibilitychange", a), f.current &&= (f.current.abort(), null);
+		return document.addEventListener("visibilitychange", s), () => {
+			t = !1, _.current = !1, n(), document.removeEventListener("visibilitychange", s), g.current &&= (g.current.abort(), null);
 		};
-	}, [g]), {
-		metrics: n,
-		loading: i,
-		error: o,
-		lastUpdatedAt: c,
-		refresh: g,
-		isLiveData: u,
-		source: n?.source ?? null
+	}, [
+		S,
+		i,
+		a
+	]), {
+		metrics: o,
+		loading: c,
+		error: u,
+		lastUpdatedAt: f,
+		refresh: S,
+		isLiveData: m,
+		source: o?.source ?? null
 	};
 }
 //#endregion
@@ -174,37 +178,31 @@ function F({ title: e, value: n, delta: r, sparklineData: i, onClick: a }) {
 }
 //#endregion
 //#region src/components/observability/components/DashboardKPIStrip.tsx
-function se({ runsToday: e, runsSparkline: t, activeNow: n, pendingApprovals: r, failed24h: i, avgFirstTokenLatency: a, onScrollToActive: o, onGoToPipelines: s, onGoToFailedEvents: c }) {
+function se({ runsToday: e, runsSparkline: t, activeNow: n, pendingApprovals: r, failed24h: i, avgFirstTokenLatency: a, runsTodayDelta: o, failed24hDelta: s, onScrollToActive: c, onGoToPipelines: l, onGoToFailedEvents: u }) {
 	return /* @__PURE__ */ D("div", {
 		className: "grid grid-cols-[repeat(auto-fit,minmax(170px,1fr))] gap-4",
 		children: [
 			/* @__PURE__ */ E(F, {
 				title: "Runs today",
 				value: e,
-				delta: typeof e == "number" ? {
-					value: 12,
-					direction: "up"
-				} : void 0,
+				delta: typeof e == "number" ? o : void 0,
 				sparklineData: t
 			}),
 			/* @__PURE__ */ E(F, {
 				title: "Active now",
 				value: n,
-				onClick: o
+				onClick: c
 			}),
 			/* @__PURE__ */ E(F, {
 				title: "Pending approvals",
 				value: r,
-				onClick: s
+				onClick: l
 			}),
 			/* @__PURE__ */ E(F, {
 				title: "Failed (24h)",
 				value: i,
-				delta: typeof i == "number" ? {
-					value: 4,
-					direction: "down"
-				} : void 0,
-				onClick: c
+				delta: typeof i == "number" ? s : void 0,
+				onClick: u
 			}),
 			/* @__PURE__ */ E(F, {
 				title: "Avg first-token latency",
@@ -600,16 +598,7 @@ function Te({ events: e, onViewAll: t }) {
 	});
 }
 function Ee() {
-	let e = k(), n = C(null), { live: r, setLive: i, recentEvents: a, activeRunsCount: o, isLiveData: s } = g(), c = j() ?? _, { metrics: l, source: u } = ae(), d = c?.overview ?? {}, f = S(() => xe(d), [d]), p = l?.runsStarted ?? R, m = [
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-		0
-	], h = o > 0 ? o : l?.runsActive ?? R, v = l?.runsAwaitingApproval ?? R, y = l?.runsFailed ?? R, b = be(l?.avgFirstTokenLatencyMs ?? null), x = Array.isArray(c?.alerts) ? c.alerts : [];
+	let e = k(), n = C(null), { live: r, setLive: i, recentEvents: a, activeRunsCount: o, isLiveData: s } = g(), c = j() ?? _, { metrics: l, source: u } = ae(), d = c?.overview ?? {}, f = S(() => xe(d), [d]), p = l?.runsStarted ?? R, m = [], h = o > 0 ? o : l?.runsActive ?? R, v = l?.runsAwaitingApproval ?? R, y = l?.runsFailed ?? R, b = be(l?.avgFirstTokenLatencyMs ?? null), x = Array.isArray(c?.alerts) ? c.alerts : [];
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "observability-dashboard",
 		className: "p-6 flex flex-col gap-4 font-sans text-[13px] text-text-primary bg-surface-panel min-h-full",
@@ -807,12 +796,12 @@ var V = [
 		label: "60s"
 	}
 ];
-function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, onResetZoom: l, onExportCsv: u }) {
-	let [d, f] = w("1h"), [p, m] = w("30s"), h = V.find((e) => e.value === d)?.label ?? "";
+function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, onResetZoom: l, onExportCsv: u, timeRange: d, onTimeRangeChange: f, refreshInterval: p, onRefreshIntervalChange: m }) {
+	let h = d !== void 0 && f !== void 0, g = p !== void 0 && m !== void 0, _ = h ? V.find((e) => e.value === d)?.label ?? "" : void 0;
 	return /* @__PURE__ */ D(T, { children: [/* @__PURE__ */ D("div", {
 		className: "flex items-center gap-3 px-4 py-2.5 border-b border-border bg-surface-panel",
 		children: [
-			/* @__PURE__ */ E(v, {
+			h && /* @__PURE__ */ E(v, {
 				"data-testid": "metrics-time-range",
 				"aria-label": "Time range",
 				value: d,
@@ -823,7 +812,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 					label: e.label
 				}))
 			}),
-			/* @__PURE__ */ E(v, {
+			g && /* @__PURE__ */ E(v, {
 				"data-testid": "metrics-refresh-interval",
 				"aria-label": "Refresh interval",
 				value: p,
@@ -866,7 +855,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 		children: [
 			/* @__PURE__ */ E(B, {
 				title: "Runs per minute",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(i, {
 					series: n?.runsPerMinute ?? e.runsPerMinute,
 					height: 180
@@ -874,7 +863,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Step duration (p50/p95/p99)",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: e.stepDuration,
 					height: 180,
@@ -883,7 +872,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "LLM tokens",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: n?.llmTokens ?? e.llmTokens,
 					height: 180
@@ -891,7 +880,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "LLM cost",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: n?.llmCost ?? e.llmCost,
 					height: 180,
@@ -900,7 +889,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Cluster CPU",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: e.clusterCpu,
 					height: 180,
@@ -909,7 +898,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Cluster memory",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: e.clusterMemory,
 					height: 180,
@@ -918,7 +907,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Event rate",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: e.eventRate,
 					height: 180
@@ -926,7 +915,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Active runs over time",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: n?.activeRuns ?? e.activeRuns,
 					height: 180
@@ -934,7 +923,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Failure rate by type",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(a, {
 					data: e.failureRate,
 					xKey: "x",
@@ -945,7 +934,7 @@ function H({ seeds: e, liveSeries: n, cols: o, isLiveData: s, failedColor: c, on
 			}),
 			/* @__PURE__ */ E(B, {
 				title: "Approval latency",
-				timeRange: h,
+				timeRange: _,
 				children: /* @__PURE__ */ E(r, {
 					series: e.approvalLatency,
 					height: 180,
@@ -1121,40 +1110,46 @@ function Pe() {
 		})
 	});
 }
-function Fe() {
-	let e = S(Me, []), t = Ne();
+var Fe = {
+	off: null,
+	"5s": 5e3,
+	"30s": 3e4,
+	"60s": 6e4
+};
+function Ie() {
+	let e = S(Me, []), t = Ne(), [n, r] = w("30s");
 	De(60);
-	let { metrics: n, isLiveData: r } = ae(), [i, a] = w([]);
+	let { metrics: i, isLiveData: a } = ae({ pollIntervalMs: Fe[n] }), [o, s] = w([]);
 	x(() => {
-		n && a((e) => [...e, n].slice(-30));
-	}, [n]);
-	let o = S(() => {
-		if (i.length < 2) return null;
+		i && s((e) => [...e, i].slice(-30));
+	}, [i]);
+	let c = S(() => {
+		if (o.length < 2) return null;
 		let e = (e) => {
 			let t = [];
-			return i.forEach((n, r) => {
+			return o.forEach((n, r) => {
 				let i = n[e];
 				typeof i == "number" && Number.isFinite(i) && t.push({
 					x: r,
 					y: i
 				});
 			}), t;
-		}, t = (e) => e.length >= 2, n = e("runsActive"), r = e("llmTokensIn"), a = e("llmTokensOut"), o = e("estimatedCostUsd"), s = e("runsStarted"), c = e("runsCompleted"), l = e("runsFailed");
+		}, t = (e) => e.length >= 2, n = e("runsActive"), r = e("llmTokensIn"), i = e("llmTokensOut"), a = e("estimatedCostUsd"), s = e("runsStarted"), c = e("runsCompleted"), l = e("runsFailed");
 		return {
 			activeRuns: t(n) ? [{
 				label: "active",
 				data: n
 			}] : null,
-			llmTokens: t(r) && t(a) ? [{
+			llmTokens: t(r) && t(i) ? [{
 				label: "input",
 				data: r
 			}, {
 				label: "output",
-				data: a
+				data: i
 			}] : null,
-			llmCost: t(o) ? [{
+			llmCost: t(a) ? [{
 				label: "USD",
-				data: o
+				data: a
 			}] : null,
 			runsPerMinute: t(s) && t(c) && t(l) ? [
 				{
@@ -1174,22 +1169,24 @@ function Fe() {
 				}
 			] : null
 		};
-	}, [i]);
+	}, [o]);
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "metrics-page",
 		className: "flex flex-col h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface",
 		children: [/* @__PURE__ */ E(H, {
 			seeds: e,
-			liveSeries: o,
+			liveSeries: c,
 			cols: t,
-			isLiveData: r,
-			failedColor: G.failed
+			isLiveData: a,
+			failedColor: G.failed,
+			refreshInterval: n,
+			onRefreshIntervalChange: r
 		}), /* @__PURE__ */ E(Pe, {})]
 	});
 }
 //#endregion
 //#region src/components/observability/components/EventTimeline.tsx
-function Ie({ events: e, selectedId: n, onSelect: r, live: i = !1 }) {
+function Le({ events: e, selectedId: n, onSelect: r, live: i = !1 }) {
 	let a = C(null), [o, s] = w(!1);
 	return x(() => {
 		if (!i || o) return;
@@ -1239,20 +1236,20 @@ function Ie({ events: e, selectedId: n, onSelect: r, live: i = !1 }) {
 }
 //#endregion
 //#region src/components/observability/components/EventDetailPane.tsx
-function Le(e) {
+function Re(e) {
 	try {
 		return JSON.stringify(e, null, 2);
 	} catch {
 		return String(e);
 	}
 }
-function Re({ event: e }) {
+function ze({ event: e }) {
 	if (!e) return /* @__PURE__ */ E("div", {
 		"data-testid": "event-detail-empty",
 		className: t("flex items-center justify-center h-full text-[13px] text-text-tertiary", "p-6 text-center font-[inherit]"),
 		children: "Select an event to see details"
 	});
-	let n = Le(e.payload ?? e);
+	let n = Re(e.payload ?? e);
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "event-detail-pane",
 		className: "flex flex-col h-full font-[inherit] bg-surface",
@@ -1298,13 +1295,13 @@ function Re({ event: e }) {
 }
 //#endregion
 //#region src/components/observability/EventsPage.tsx
-var K = 500, ze = [
+var K = 500, Be = [
 	"All",
 	"Errors",
 	"LLM",
 	"Approvals",
 	"Lifecycle"
-], Be = [
+], Ve = [
 	{
 		value: "15m",
 		label: "Last 15m"
@@ -1320,12 +1317,13 @@ var K = 500, ze = [
 	{
 		value: "24h",
 		label: "Last 24h"
-	},
-	{
-		value: "custom",
-		label: "Custom"
 	}
-], q = [
+], He = {
+	"15m": 9e5,
+	"1h": 36e5,
+	"6h": 216e5,
+	"24h": 864e5
+}, q = [
 	"node-0",
 	"node-1",
 	"node-2"
@@ -1335,20 +1333,20 @@ var K = 500, ze = [
 	"error",
 	"success"
 ];
-function Ve(e) {
+function Ue(e) {
 	return e.includes("failed") || e.includes("error") ? "error" : e.includes("completed") ? "success" : e.includes("warn") || e.includes("awaiting") ? "warning" : "info";
 }
-function He(e) {
+function We(e) {
 	return e.includes("failed") || e.includes("error") ? "Errors" : e.startsWith("llm.") || e.includes(".llm.") ? "LLM" : e.includes("approval") ? "Approvals" : (e.includes("run.") || e.includes("pipeline."), "Lifecycle");
 }
-function Ue(e, t) {
+function Ge(e, t) {
 	if (t && typeof t == "object") {
 		let e = t, n = [];
 		if (typeof e.runId == "string" && n.push(`run ${e.runId}`), typeof e.pipelineId == "string" && n.push(`pipeline ${e.pipelineId}`), typeof e.nodeId == "string" && n.push(`node ${e.nodeId}`), n.length > 0) return n.join(" · ");
 	}
 	return e;
 }
-function We(e = /* @__PURE__ */ new Date()) {
+function Ke(e = /* @__PURE__ */ new Date()) {
 	return `${String(e.getHours()).padStart(2, "0")}:${String(e.getMinutes()).padStart(2, "0")}:${String(e.getSeconds()).padStart(2, "0")}.${String(e.getMilliseconds()).padStart(3, "0")}`;
 }
 var Y = {
@@ -1359,32 +1357,34 @@ var Y = {
 	severities: new Set(J),
 	timeRange: "1h"
 };
-function Ge() {
+function qe() {
 	let [e, n] = w([]), [r, i] = w(null), [a, o] = w(!1), [s, c] = w(Y), [l, u] = w(!1), d = C(a);
 	d.current = a;
 	let f = C(0), p = b((e) => {
 		if (d.current) return;
 		let t = e, r = t?.eventType ?? "unknown", i = t?.payload ?? t;
 		f.current += 1;
-		let a = {
-			id: `ev-${Date.now()}-${f.current}`,
-			timestamp: We(),
+		let a = Date.now(), o = {
+			id: `ev-${a}-${f.current}`,
+			timestamp: Ke(new Date(a)),
+			receivedAt: a,
 			type: r,
-			summary: Ue(r, i),
-			severity: Ve(r),
+			summary: Ge(r, i),
+			severity: Ue(r),
 			payload: i
 		};
 		n((e) => {
-			let t = [...e, a];
+			let t = [...e, o];
 			return t.length > K ? t.slice(t.length - K) : t;
 		});
 	}, []);
 	h("*", p);
 	let g = S(() => {
-		let t = s.runIds.split(",").map((e) => e.trim()).filter(Boolean), n = s.pipelineIds.split(",").map((e) => e.trim()).filter(Boolean), r = s.groups.has("All");
+		let t = s.runIds.split(",").map((e) => e.trim()).filter(Boolean), n = s.pipelineIds.split(",").map((e) => e.trim()).filter(Boolean), r = s.groups.has("All"), i = Date.now() - He[s.timeRange];
 		return e.filter((e) => {
+			if (typeof e.receivedAt == "number" && e.receivedAt < i) return !1;
 			if (!r) {
-				let t = He(e.type);
+				let t = We(e.type);
 				if (!s.groups.has(t)) return !1;
 			}
 			if (e.severity && !s.severities.has(e.severity)) return !1;
@@ -1396,8 +1396,8 @@ function Ge() {
 				let t = e.payload?.pipelineId;
 				if (!t || !n.some((e) => t.includes(e))) return !1;
 			}
-			let i = e.payload?.nodeId;
-			return !(i && !s.nodes.has(i));
+			let a = e.payload?.nodeId;
+			return !(a && !s.nodes.has(a));
 		});
 	}, [e, s]), _ = S(() => g.find((e) => e.id === r) ?? null, [g, r]), x = (e) => {
 		c((t) => {
@@ -1445,7 +1445,7 @@ function Ge() {
 						timeRange: e.target.value
 					})),
 					className: "w-auto min-w-[120px]",
-					options: Be.map((e) => ({
+					options: Ve.map((e) => ({
 						value: e.value,
 						label: e.label
 					}))
@@ -1484,7 +1484,7 @@ function Ge() {
 							children: [/* @__PURE__ */ E("div", {
 								className: "text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase",
 								children: "Event type"
-							}), ze.map((e) => /* @__PURE__ */ D("label", {
+							}), Be.map((e) => /* @__PURE__ */ D("label", {
 								className: "flex items-center gap-1.5 text-xs",
 								children: [/* @__PURE__ */ E(y, {
 									checked: s.groups.has(e),
@@ -1563,7 +1563,7 @@ function Ge() {
 				}),
 				/* @__PURE__ */ E("section", {
 					className: "flex-1 min-w-0 flex flex-col",
-					children: /* @__PURE__ */ E(Ie, {
+					children: /* @__PURE__ */ E(Le, {
 						events: g,
 						selectedId: r,
 						onSelect: i,
@@ -1572,23 +1572,23 @@ function Ge() {
 				}),
 				/* @__PURE__ */ E("aside", {
 					className: "w-80 shrink-0 border-l border-border bg-surface",
-					children: /* @__PURE__ */ E(Re, { event: _ })
+					children: /* @__PURE__ */ E(ze, { event: _ })
 				})
 			]
 		})]
 	});
 }
-function Ke() {
-	return /* @__PURE__ */ E(Ge, {});
+function Je() {
+	return /* @__PURE__ */ E(qe, {});
 }
 //#endregion
 //#region src/components/pipelines/chaos/chaosState.ts
-var qe = {
+var Ye = {
 	injectedLatencyMs: 0,
 	injectedFailureRate: 0,
 	paused: !1
-}, X = { ...qe }, Z = /* @__PURE__ */ new Set();
-function Je() {
+}, X = { ...Ye }, Z = /* @__PURE__ */ new Set();
+function Xe() {
 	return X;
 }
 function Q(e) {
@@ -1603,24 +1603,24 @@ function Q(e) {
 		}
 	});
 }
-function Ye() {
-	Q(qe);
+function Ze() {
+	Q(Ye);
 }
-function Xe(e) {
+function Qe(e) {
 	return Z.add(e), () => {
 		Z.delete(e);
 	};
 }
 //#endregion
 //#region src/components/observability/components/ChaosPanel.tsx
-var Ze = [
+var $e = [
 	{ id: "node-0" },
 	{ id: "node-1" },
 	{ id: "node-2" }
 ];
-function Qe(e) {
-	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ye(), availableNodes: c = Ze } = e, [l, u] = w("0"), [d, f] = w("0"), [p, h] = w([]), [g, _] = w(!1), [v, b] = w(() => Je());
-	x(() => Xe((e) => b(e)), []);
+function et(e) {
+	let { onInjectLatency: n = (e) => Q({ injectedLatencyMs: Math.max(0, e) }), onInjectPartition: r = (e) => Q({ paused: e.length > 0 }), onDropMessages: i = (e) => Q({ injectedFailureRate: Math.min(1, Math.max(0, e / 100)) }), onKillAll: a = () => Q({ paused: !0 }), onReset: o = () => Ze(), availableNodes: c = $e } = e, [l, u] = w("0"), [d, f] = w("0"), [p, h] = w([]), [g, _] = w(!1), [v, b] = w(() => Xe());
+	x(() => Qe((e) => b(e)), []);
 	let C = (e) => {
 		h((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, O = () => {
@@ -1828,7 +1828,7 @@ function $(e) {
 	for (let e = 0; e < 24; e++) n = (n * 9301 + 49297) % 233280, t.push(Math.abs(n % 40) + 5);
 	return t;
 }
-function $e() {
+function tt() {
 	return [
 		{
 			id: "node-0",
@@ -1865,7 +1865,7 @@ function $e() {
 		}
 	];
 }
-function et() {
+function nt() {
 	let e = _?.regions ?? {}, t = [];
 	for (let n of Object.keys(e)) {
 		let r = e[n];
@@ -1881,13 +1881,13 @@ function et() {
 			cpuHistory: e.cpuHistory ?? $(t.length + 1)
 		});
 	}
-	return t.length > 0 ? t : $e();
+	return t.length > 0 ? t : tt();
 }
-function tt(e) {
+function rt(e) {
 	return e >= 1024 ? `${(e / 1024).toFixed(1)}G` : `${Math.round(e)}M`;
 }
-function nt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r }) {
-	let i = S(et, []), a = e ?? i, [o, s] = w(null), c = S(() => a.find((e) => e.id === o) ?? null, [a, o]);
+function it({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r }) {
+	let i = S(nt, []), a = e ?? i, [o, s] = w(null), c = S(() => a.find((e) => e.id === o) ?? null, [a, o]);
 	return /* @__PURE__ */ D("div", {
 		"data-testid": "nodes-page",
 		className: "flex h-full min-h-0 font-[inherit] text-[13px] text-text-primary bg-surface",
@@ -1895,7 +1895,7 @@ function nt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 			/* @__PURE__ */ E("div", {
 				title: "Stub: writes to local chaosState; real cluster injection ships in Phase 5",
 				"data-testid": "chaos-rail-stub-wrapper",
-				children: /* @__PURE__ */ E(Qe, { availableNodes: a.map((e) => ({
+				children: /* @__PURE__ */ E(et, { availableNodes: a.map((e) => ({
 					id: e.id,
 					label: e.id
 				})) })
@@ -1941,7 +1941,7 @@ function nt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 							children: /* @__PURE__ */ E("tbody", { children: [
 								["Status", c.status],
 								["CPU", `${Math.round(c.cpu)}%`],
-								["Memory", tt(c.memoryMb)],
+								["Memory", rt(c.memoryMb)],
 								["Connections", String(c.connections)],
 								["Active runs", String(c.activeRuns)],
 								["Region", c.region ?? "—"],
@@ -2002,32 +2002,32 @@ function nt({ nodes: e, onAddLatency: t, onKillNode: n, onTransferResource: r })
 }
 //#endregion
 //#region src/components/observability/components/AlertItem.tsx
-var rt = {
+var at = {
 	critical: "var(--color-danger)",
 	warning: "var(--color-warning)",
 	info: "var(--color-info)"
-}, it = {
+}, ot = {
 	critical: "bg-[var(--color-danger-bg)]",
 	warning: "bg-[var(--color-warning-bg)]",
 	info: "bg-[var(--color-info-bg)]"
-}, at = {
+}, st = {
 	critical: "border-l-[var(--color-danger)]",
 	warning: "border-l-[var(--color-warning)]",
 	info: "border-l-[var(--color-info)]"
 };
-function ot({ severity: e, title: n, description: r, timestamp: i, resolved: a = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
+function ct({ severity: e, title: n, description: r, timestamp: i, resolved: a = !1, action: s, className: c, style: l, "data-testid": u = `alert-${e}` }) {
 	return /* @__PURE__ */ D("div", {
 		role: "listitem",
 		"data-testid": u,
 		"data-resolved": a || void 0,
-		className: t("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", a ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : t(it[e], at[e]), c),
+		className: t("rounded-md px-3 py-2.5 border-l-[3px] transition-opacity duration-300", a ? "bg-[var(--color-surface-subtle,#f8fafc)] border-l-[var(--color-text-tertiary)] opacity-70" : t(ot[e], st[e]), c),
 		style: l,
 		children: [/* @__PURE__ */ D("div", {
 			className: "flex items-center gap-1.5",
 			children: [
 				/* @__PURE__ */ E(f, {
 					size: "xs",
-					color: a ? "var(--color-text-tertiary)" : rt[e],
+					color: a ? "var(--color-text-tertiary)" : at[e],
 					"aria-label": a ? "Resolved" : e
 				}),
 				/* @__PURE__ */ E("span", {
@@ -2057,14 +2057,14 @@ function ot({ severity: e, title: n, description: r, timestamp: i, resolved: a =
 }
 //#endregion
 //#region src/components/observability/components/AlertList.tsx
-var st = /* @__PURE__ */ E("div", {
+var lt = /* @__PURE__ */ E("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "No alerts."
-}), ct = /* @__PURE__ */ E("div", {
+}), ut = /* @__PURE__ */ E("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "Loading alerts…"
 });
-function lt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": f = "alert-list" }) {
+function dt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, empty: s, maxHeight: c, className: l, style: u, "data-testid": f = "alert-list" }) {
 	let p = e.filter((e) => !e.resolved).length, m = p > 0 ? /* @__PURE__ */ D(o, {
 		tone: "danger",
 		size: "xs",
@@ -2086,7 +2086,7 @@ function lt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, emp
 			"data-testid": `${f}-rows`,
 			className: "flex-1 overflow-y-auto p-2 space-y-1.5",
 			style: { maxHeight: c },
-			children: a ? ct : e.length === 0 ? s ?? st : e.map((e) => /* @__PURE__ */ E(ot, {
+			children: a ? ut : e.length === 0 ? s ?? lt : e.map((e) => /* @__PURE__ */ E(ct, {
 				severity: e.severity,
 				title: e.title,
 				description: e.description,
@@ -2099,28 +2099,28 @@ function lt({ items: e, title: r = "Alerts", headerSlot: i, loading: a = !1, emp
 }
 //#endregion
 //#region src/components/observability/components/HealthCell.tsx
-var ut = {
+var ft = {
 	healthy: "var(--color-success)",
 	degraded: "var(--color-warning)",
 	down: "var(--color-danger)",
 	unknown: "var(--color-text-tertiary)"
-}, dt = {
+}, pt = {
 	healthy: "bg-[var(--color-success-bg)] border-[var(--color-success-border)]",
 	degraded: "bg-[var(--color-warning-bg)] border-[var(--color-warning-border)]",
 	down: "bg-[var(--color-danger-bg)] border-[var(--color-danger-border)]",
 	unknown: "bg-[var(--color-surface)] border-[var(--color-border)]"
 };
-function ft({ status: e, label: n, reason: r, dense: i = !1, className: a, style: o, "data-testid": s = `health-cell-${e}` }) {
+function mt({ status: e, label: n, reason: r, dense: i = !1, className: a, style: o, "data-testid": s = `health-cell-${e}` }) {
 	return /* @__PURE__ */ D("div", {
 		"data-testid": s,
 		"data-status": e,
-		className: t("rounded-md border transition-colors duration-300", i ? "px-2.5 py-2" : "px-3 py-2.5", dt[e], a),
+		className: t("rounded-md border transition-colors duration-300", i ? "px-2.5 py-2" : "px-3 py-2.5", pt[e], a),
 		style: o,
 		children: [/* @__PURE__ */ D("div", {
 			className: "flex items-center gap-1.5",
 			children: [/* @__PURE__ */ E(f, {
 				size: "xs",
-				color: ut[e],
+				color: ft[e],
 				"aria-label": e
 			}), /* @__PURE__ */ E("span", {
 				className: "text-[11px] font-semibold text-[var(--color-text-primary)]",
@@ -2134,23 +2134,23 @@ function ft({ status: e, label: n, reason: r, dense: i = !1, className: a, style
 }
 //#endregion
 //#region src/components/observability/components/HealthGrid.tsx
-var pt = {
+var ht = {
 	1: "sm:grid-cols-1",
 	2: "sm:grid-cols-2",
 	3: "sm:grid-cols-3",
 	4: "sm:grid-cols-4",
 	6: "sm:grid-cols-6"
-}, mt = /* @__PURE__ */ E("div", {
+}, gt = /* @__PURE__ */ E("div", {
 	className: "text-center text-[12px] text-[var(--color-text-tertiary)] py-8",
 	children: "No nodes reporting."
 });
-function ht({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
-	let f = e.length === 0 ? s ?? mt : /* @__PURE__ */ E("div", {
+function _t({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, empty: s, className: c, style: l, "data-testid": u = "health-grid" }) {
+	let f = e.length === 0 ? s ?? gt : /* @__PURE__ */ E("div", {
 		role: "list",
-		className: t("grid grid-cols-1", pt[r], i ? "gap-1.5" : "gap-2"),
+		className: t("grid grid-cols-1", ht[r], i ? "gap-1.5" : "gap-2"),
 		children: e.map((e) => /* @__PURE__ */ E("div", {
 			role: "listitem",
-			children: /* @__PURE__ */ E(ft, {
+			children: /* @__PURE__ */ E(mt, {
 				status: e.status,
 				label: e.label,
 				reason: e.reason,
@@ -2180,4 +2180,4 @@ function ht({ items: e, columns: r = 3, dense: i = !1, title: a, headerSlot: o, 
 	});
 }
 //#endregion
-export { ot as AlertItem, lt as AlertList, se as DashboardKPIStrip, Ee as DashboardPage, Ke as EventsPage, ft as HealthCell, ht as HealthGrid, H as MetricTimeSeriesPanel, Fe as MetricsPage, nt as NodesPage, A as ObservabilityLayout };
+export { ct as AlertItem, dt as AlertList, se as DashboardKPIStrip, Ee as DashboardPage, Je as EventsPage, mt as HealthCell, _t as HealthGrid, H as MetricTimeSeriesPanel, Ie as MetricsPage, it as NodesPage, A as ObservabilityLayout };
