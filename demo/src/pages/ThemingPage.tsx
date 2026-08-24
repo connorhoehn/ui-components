@@ -1,14 +1,4 @@
-const codeBlockStyle: React.CSSProperties = {
-  background: '#1e293b',
-  color: 'var(--color-border)',
-  padding: '16px 20px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace',
-  overflowX: 'auto',
-  lineHeight: 1.6,
-  marginBottom: 24,
-};
+import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
 
 export default function ThemingPage() {
   return (
@@ -23,8 +13,11 @@ export default function ThemingPage() {
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         ThemeProvider setup
       </h2>
-      <pre style={codeBlockStyle}>
-{`import { ThemeProvider } from '@connorhoehnslalom/ui-components';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -33,7 +26,7 @@ function App() {
     </ThemeProvider>
   );
 }`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Overriding tokens
@@ -41,8 +34,11 @@ function App() {
       <p className="text-[14px] text-text-secondary mb-3">
         Pass a partial token object to customize specific values:
       </p>
-      <pre style={codeBlockStyle}>
-{`<ThemeProvider
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`<ThemeProvider
   preset="light"
   tokens={{
     colors: {
@@ -58,7 +54,7 @@ function App() {
 >
   <YourApp />
 </ThemeProvider>`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Dark mode
@@ -66,8 +62,11 @@ function App() {
       <p className="text-[14px] text-text-secondary mb-3">
         Toggle between modes dynamically:
       </p>
-      <pre style={codeBlockStyle}>
-{`import { useState } from 'react';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { useState } from 'react';
 import { ThemeProvider } from '@connorhoehnslalom/ui-components';
 
 function App() {
@@ -82,7 +81,7 @@ function App() {
     </ThemeProvider>
   );
 }`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Available tokens
@@ -120,8 +119,11 @@ function App() {
         carries four roles, so rebranding one means setting four values and
         every surface follows. There is no per-component colour to chase.
       </p>
-      <pre className="mb-4 overflow-auto rounded-md bg-surface-inverse p-4 text-[13px] text-code-text">
-{`/* Plain CSS — works for any consumer, no provider needed. */
+      <CodeBlock
+        className="mb-4"
+        language="text"
+        theme="dark"
+        code={`/* Plain CSS — works for any consumer, no provider needed. */
 @import "@connorhoehnslalom/ui-components/styles.css";
 
 :root {
@@ -130,9 +132,12 @@ function App() {
   --color-accent-fg: #0f766e;      /* text on that background     */
   --color-accent-border: #99f6e4;  /* border for the soft surface */
 }`}
-      </pre>
-      <pre className="mb-4 overflow-auto rounded-md bg-surface-inverse p-4 text-[13px] text-code-text">
-{`// Or at runtime, for a theme switcher.
+      />
+      <CodeBlock
+        className="mb-4"
+        language="tsx"
+        theme="dark"
+        code={`// Or at runtime, for a theme switcher.
 <ThemeProvider
   tones={{
     accent: { base: '#0d9488', bg: '#f0fdfa', fg: '#0f766e', border: '#99f6e4' },
@@ -140,7 +145,7 @@ function App() {
 >
   <YourApp />
 </ThemeProvider>`}
-      </pre>
+      />
       <p className="mb-3 max-w-2xl text-sm leading-relaxed text-text-secondary">
         Omitted roles keep their default. Mounting{' '}
         <code className="rounded bg-surface-hover px-1.5 py-0.5 font-mono text-[12px]">

@@ -1,4 +1,5 @@
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
+import { ChatComposer, EmptyState, IconButton } from '@connorhoehnslalom/ui-components/shared';
 
 interface Comment {
   id: string;
@@ -14,115 +15,6 @@ interface CommentsSidebarProps {
   onClose: () => void;
   onPost: (text: string) => void;
 }
-
-const sidebarStyle: CSSProperties = {
-  width: 420,
-  minWidth: 420,
-  borderLeft: '1px solid #e2e8f0',
-  background: '#fff',
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100%',
-  overflow: 'hidden',
-};
-
-const headerStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '16px 16px 12px 16px',
-  borderBottom: '1px solid #e2e8f0',
-};
-
-const headerTitleStyle: CSSProperties = {
-  fontSize: 14,
-  fontWeight: 600,
-  color: '#1e293b',
-};
-
-const closeBtnStyle: CSSProperties = {
-  fontSize: 18,
-  color: 'var(--color-text-tertiary)',
-  cursor: 'pointer',
-  border: 'none',
-  background: 'transparent',
-  padding: '2px 6px',
-  borderRadius: 4,
-  lineHeight: 1,
-};
-
-const sectionLabelStyle: CSSProperties = {
-  padding: '12px 16px 8px 16px',
-  fontSize: 13,
-  fontWeight: 500,
-  color: 'var(--color-text-secondary)',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-};
-
-const inputAreaStyle: CSSProperties = {
-  padding: '12px 16px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8,
-};
-
-const textareaStyle: CSSProperties = {
-  width: '100%',
-  minHeight: 60,
-  padding: '8px 10px',
-  fontSize: 13,
-  border: '1px solid #e2e8f0',
-  borderRadius: 6,
-  resize: 'vertical',
-  outline: 'none',
-  fontFamily: 'inherit',
-};
-
-const postBtnStyle: CSSProperties = {
-  alignSelf: 'flex-end',
-  padding: '6px 16px',
-  fontSize: 13,
-  fontWeight: 500,
-  borderRadius: 6,
-  border: 'none',
-  background: 'var(--color-info)',
-  color: '#fff',
-  cursor: 'pointer',
-};
-
-const emptyStateStyle: CSSProperties = {
-  padding: '24px 16px',
-  fontSize: 13,
-  color: 'var(--color-text-tertiary)',
-  textAlign: 'center',
-  fontStyle: 'italic',
-};
-
-const commentThreadStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '8px 16px',
-};
-
-const commentItemStyle: CSSProperties = {
-  padding: '10px 0',
-  borderBottom: '1px solid #f1f5f9',
-};
-
-const commentAuthorStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 600,
-  color: '#334155',
-  marginBottom: 4,
-};
-
-const commentTextStyle: CSSProperties = {
-  fontSize: 13,
-  color: 'var(--color-text-secondary)',
-  lineHeight: 1.4,
-};
 
 export function CommentsSidebar({
   sectionTitle,
@@ -140,37 +32,39 @@ export function CommentsSidebar({
   };
 
   return (
-    <div style={sidebarStyle}>
-      <div style={headerStyle}>
-        <span style={headerTitleStyle}>{sectionTitle}</span>
-        <button style={closeBtnStyle} onClick={onClose}>&times;</button>
+    <aside className="flex h-full w-105 min-w-105 flex-col overflow-hidden border-l border-border bg-surface">
+      <div className="flex items-center justify-between border-b border-border px-4 pb-3 pt-4">
+        <span className="text-[14px] font-semibold text-text-primary">{sectionTitle}</span>
+        <IconButton aria-label="Close comments" size="sm" onClick={onClose}>
+          &times;
+        </IconButton>
       </div>
-      <div style={sectionLabelStyle}>
+      <div className="flex items-center gap-1.5 px-4 pb-2 pt-3 text-[13px] font-medium text-text-secondary">
         <span>&#9660;</span> Comments
       </div>
-      <div style={inputAreaStyle}>
-        <textarea
-          style={textareaStyle}
-          placeholder="Add a comment..."
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        <button style={postBtnStyle} onClick={handlePost}>Post</button>
-      </div>
-      <div style={commentThreadStyle}>
+      <ChatComposer
+        multiline
+        value={inputValue}
+        onChange={setInputValue}
+        onSubmit={handlePost}
+        placeholder="Add a comment..."
+        submitLabel="Post"
+        aria-label="Add a comment"
+      />
+      <div className="flex-1 overflow-y-auto px-4 py-2">
         {comments.length === 0 ? (
-          <div style={emptyStateStyle}>
-            No comments yet. Start the discussion!
-          </div>
+          <EmptyState title="No comments yet" body="Start the discussion!" />
         ) : (
           comments.map((comment) => (
-            <div key={comment.id} style={commentItemStyle}>
-              <div style={commentAuthorStyle}>{comment.displayName}</div>
-              <div style={commentTextStyle}>{comment.text}</div>
+            <div key={comment.id} className="border-b border-border-subtle py-2.5">
+              <div className="mb-1 text-[12px] font-semibold text-text-secondary">
+                {comment.displayName}
+              </div>
+              <div className="text-[13px] leading-[1.4] text-text-secondary">{comment.text}</div>
             </div>
           ))
         )}
       </div>
-    </div>
+    </aside>
   );
 }

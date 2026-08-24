@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, CSSProperties } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SimulatedProvider } from '../../engine/SimulatedProvider';
 import { useWebSocketContext } from '@/contexts/WebSocketContext';
 import type { GatewayMessage } from '@/types/gateway';
@@ -24,27 +24,6 @@ interface SectionState {
   collapsed: boolean;
   content: string;
 }
-
-const outerStyle: CSSProperties = {
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  background: 'var(--color-surface-panel)',
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-};
-
-const mainStyle: CSSProperties = {
-  display: 'flex',
-  flex: 1,
-  overflow: 'hidden',
-};
-
-const centerStyle: CSSProperties = {
-  flex: 1,
-  overflowY: 'auto',
-  padding: '24px 32px',
-  paddingBottom: 80,
-};
 
 function DocumentWorkspaceInner() {
   const { onMessage } = useWebSocketContext();
@@ -132,7 +111,7 @@ function DocumentWorkspaceInner() {
     : '';
 
   return (
-    <div style={outerStyle}>
+    <div className="flex h-full flex-col bg-surface-panel font-sans">
       <DocumentHeader
         title={mockDocument.title}
         status={mockDocument.status}
@@ -140,8 +119,8 @@ function DocumentWorkspaceInner() {
         activeMode={activeMode}
         onModeChange={setActiveMode}
       />
-      <div style={mainStyle}>
-        <div style={centerStyle}>
+      <div className="flex flex-1 overflow-hidden">
+        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-20">
           {sections.map((section) => (
             <SectionBlock
               key={section.id}

@@ -1,14 +1,4 @@
-const codeBlockStyle: React.CSSProperties = {
-  background: '#1e293b',
-  color: 'var(--color-border)',
-  padding: '16px 20px',
-  borderRadius: 8,
-  fontSize: 13,
-  fontFamily: 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, monospace',
-  overflowX: 'auto',
-  lineHeight: 1.6,
-  marginBottom: 24,
-};
+import { CodeBlock } from '@connorhoehnslalom/ui-components/shared';
 
 export default function QuickStartPage() {
   return (
@@ -26,8 +16,11 @@ export default function QuickStartPage() {
       <p className="text-[14px] text-text-secondary mb-3">
         Import a component and render it inside your app:
       </p>
-      <pre style={codeBlockStyle}>
-{`import { Button } from '@connorhoehnslalom/ui-components';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { Button } from '@connorhoehnslalom/ui-components';
 
 function App() {
   return (
@@ -38,7 +31,7 @@ function App() {
     </div>
   );
 }`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         With providers (for real-time features)
@@ -46,8 +39,11 @@ function App() {
       <p className="text-[14px] text-text-secondary mb-3">
         To use collaboration hooks, wrap your app in the required context providers:
       </p>
-      <pre style={codeBlockStyle}>
-{`import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { WebSocketProvider } from '@connorhoehnslalom/ui-components';
 import { IdentityProvider } from '@connorhoehnslalom/ui-components';
 import { PresenceProvider } from '@connorhoehnslalom/ui-components';
 
@@ -62,13 +58,16 @@ function App() {
     </WebSocketProvider>
   );
 }`}
-      </pre>
+      />
 
       <h2 className="text-[18px] font-semibold mb-3 text-text-primary">
         Using hooks
       </h2>
-      <pre style={codeBlockStyle}>
-{`import { usePresence, useChat } from '@connorhoehnslalom/ui-components';
+      <CodeBlock
+        className="mb-6"
+        language="tsx"
+        theme="dark"
+        code={`import { usePresence, useChat } from '@connorhoehnslalom/ui-components';
 
 function CollabPanel() {
   const { presenceUsers } = usePresence();
@@ -86,7 +85,7 @@ function CollabPanel() {
     </div>
   );
 }`}
-      </pre>
+      />
 
       <div className="p-4 bg-info-bg border border-info-border rounded-lg text-[14px] text-info-fg leading-[1.5]">
         <strong>Next step:</strong> Explore the Components section in the sidebar to see interactive examples

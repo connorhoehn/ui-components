@@ -1,69 +1,38 @@
-import { CSSProperties } from 'react';
+import { Card } from '@connorhoehnslalom/ui-components/shared';
+import { cn } from '@/lib/cn';
 
 interface TableOfContentsProps {
   sections: { id: string; title: string }[];
   activeSectionId: string | null;
 }
 
-const containerStyle: CSSProperties = {
-  position: 'fixed',
-  bottom: 24,
-  right: 24,
-  width: 220,
-  background: '#fff',
-  borderRadius: 8,
-  boxShadow: '0 4px 12px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06)',
-  padding: '12px 16px',
-  zIndex: 100,
-  maxHeight: 360,
-  overflowY: 'auto',
-};
-
-const headerStyle: CSSProperties = {
-  fontSize: 10,
-  fontWeight: 600,
-  color: 'var(--color-text-tertiary)',
-  textTransform: 'uppercase',
-  letterSpacing: 1.2,
-  marginBottom: 10,
-};
-
-const itemStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '3px 0',
-  cursor: 'pointer',
-};
-
 export function TableOfContents({ sections, activeSectionId }: TableOfContentsProps) {
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>CONTENTS</div>
+    <Card className="fixed bottom-6 right-6 z-[100] max-h-90 w-55 overflow-y-auto px-4 py-3 shadow-md">
+      <div className="mb-2.5 text-[10px] font-semibold uppercase tracking-[1.2px] text-text-tertiary">
+        CONTENTS
+      </div>
       {sections.map((section) => {
         const isActive = section.id === activeSectionId;
-        const dotStyle: CSSProperties = {
-          width: isActive ? 8 : 6,
-          height: isActive ? 8 : 6,
-          borderRadius: '50%',
-          background: isActive ? 'var(--color-info)' : 'var(--color-border-emphasis)',
-          flexShrink: 0,
-        };
-        const textStyle: CSSProperties = {
-          fontSize: 12,
-          fontWeight: isActive ? 600 : 400,
-          color: isActive ? '#1e293b' : 'var(--color-neutral)',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        };
         return (
-          <div key={section.id} style={itemStyle}>
-            <span style={dotStyle} />
-            <span style={textStyle}>{section.title}</span>
+          <div key={section.id} className="flex cursor-pointer items-center gap-2 py-[3px]">
+            <span
+              className={cn(
+                'shrink-0 rounded-full',
+                isActive ? 'h-2 w-2 bg-info' : 'h-1.5 w-1.5 bg-border-emphasis',
+              )}
+            />
+            <span
+              className={cn(
+                'overflow-hidden text-ellipsis whitespace-nowrap text-[12px]',
+                isActive ? 'font-semibold text-text-primary' : 'font-normal text-neutral',
+              )}
+            >
+              {section.title}
+            </span>
           </div>
         );
       })}
-    </div>
+    </Card>
   );
 }
