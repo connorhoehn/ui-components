@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { cn } from '../../../lib/cn';
 import { Input } from '../../forms/Input';
 import type { AgUiMessage, AgUiToolCall } from '../../../types/agents';
@@ -32,6 +32,22 @@ export function StreamingChatPanel({
 }: StreamingChatPanelProps) {
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // `useAgUiStream` puts a tool call in BOTH `activeToolCalls` and the open
+  // message's `toolCalls` — TOOL_CALL_START pushes to each — and only removes
+  // it from the active list on TOOL_CALL_END. Rendering both lists verbatim
+  // therefore drew the same running call twice, once under the assistant
+  // bubble and once in the standalone block below it. The orphan block is
+  // still needed for calls that start before any TEXT_MESSAGE_START, so it
+  // renders only the calls no message has claimed.
+  const attachedToolCallIds = useMemo(
+    () => new Set(messages.flatMap((m) => m.toolCalls.map((tc) => tc.id))),
+    [messages],
+  );
+  const orphanToolCalls = useMemo(
+    () => activeToolCalls.filter((tc) => !attachedToolCallIds.has(tc.id)),
+    [activeToolCalls, attachedToolCallIds],
+  );
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -119,12 +135,12 @@ export function StreamingChatPanel({
           </div>
         ))}
 
-        {/* Active tool calls */}
-        {activeToolCalls.length > 0 && (
+        {/* Active tool calls not already shown under a message */}
+        {orphanToolCalls.length > 0 && (
           <div className="flex gap-2.5">
             <div className={AI_AVATAR}>AI</div>
             <div className="flex-1 flex flex-col gap-1">
-              {activeToolCalls.map((tc) => (
+              {orphanToolCalls.map((tc) => (
                 <ToolCallRenderer key={tc.id} toolCall={tc} />
               ))}
             </div>

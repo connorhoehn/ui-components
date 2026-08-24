@@ -20,6 +20,13 @@ type OnMessageFn = (handler: (msg: GatewayMessage) => void) => () => void;
 
 interface PostFeedProps {
   idToken: string | null;
+  /**
+   * Room whose posts are shown. Changing this resets the feed: the previous
+   * room's posts and paging cursor are dropped and its in-flight request is
+   * ignored, so a caller does NOT need `key={roomId}` to avoid a wrong-room
+   * render. (It used to: the slower of two overlapping requests won, so
+   * switching rooms could repaint the new room with the old room's posts.)
+   */
   roomId: string | null;
   onMessage: OnMessageFn;
 }
@@ -114,15 +121,13 @@ function CreatePostForm({ onCreate, loading }: CreatePostFormProps) {
 // ---------------------------------------------------------------------------
 
 interface LikeButtonProps {
-  idToken: string | null;
-  roomId: string | null;
-  postId: string;
-  onMessage: OnMessageFn;
+  isLiked: boolean;
+  likeCount: number;
+  whoLiked: { displayName: string }[];
+  toggle: () => Promise<void>;
 }
 
-function LikeButton({ idToken, roomId, postId, onMessage }: LikeButtonProps) {
-  const { isLiked, likeCount, toggle, whoLiked } = useLikes({ idToken, roomId, postId, onMessage });
-
+function LikeButton({ isLiked, likeCount, whoLiked, toggle }: LikeButtonProps) {
   return (
     <>
       <button
@@ -148,15 +153,10 @@ function LikeButton({ idToken, roomId, postId, onMessage }: LikeButtonProps) {
 // ---------------------------------------------------------------------------
 
 interface EmojiReactionBarProps {
-  idToken: string | null;
-  roomId: string | null;
-  postId: string;
-  onMessage: OnMessageFn;
+  reactWithEmoji: (emoji: string) => Promise<void>;
 }
 
-function EmojiReactionBar({ idToken, roomId, postId, onMessage }: EmojiReactionBarProps) {
-  const { reactWithEmoji } = useLikes({ idToken, roomId, postId, onMessage });
-
+function EmojiReactionBar({ reactWithEmoji }: EmojiReactionBarProps) {
   return (
     <div className="flex flex-wrap gap-0">
       {EMOJIS.map(emoji => (
@@ -188,6 +188,17 @@ interface PostCardProps {
 }
 
 function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onDelete }: PostCardProps) {
+  // One useLikes per card, not one per child. LikeButton and EmojiReactionBar
+  // each used to call it with the same postId, which meant two GET
+  // /likes requests per post (2N for an N-post feed) and two independent
+  // likeCount states for the same post — the socket incremented both but an
+  // optimistic toggle only moved one, so the two copies drifted apart.
+  const { isLiked, likeCount, whoLiked, toggle, reactWithEmoji } = useLikes({
+    idToken,
+    roomId,
+    postId: post.postId,
+    onMessage,
+  });
   const [opacity, setOpacity] = useState(post._fadeIn ? 0 : 1);
   const [showComments, setShowComments] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
@@ -255,8 +266,8 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
 
       {/* PostActions */}
       <div className="flex gap-4 text-sm mt-1 items-center flex-wrap">
-        <LikeButton idToken={idToken} roomId={roomId} postId={post.postId} onMessage={onMessage} />
-        <EmojiReactionBar idToken={idToken} roomId={roomId} postId={post.postId} onMessage={onMessage} />
+        <LikeButton isLiked={isLiked} likeCount={likeCount} whoLiked={whoLiked} toggle={toggle} />
+        <EmojiReactionBar reactWithEmoji={reactWithEmoji} />
         <button
           onClick={() => setShowComments(prev => !prev)}
           className="bg-transparent border-none text-sm text-text-secondary cursor-pointer font-[system-ui,-apple-system,sans-serif] p-0"
@@ -316,13 +327,17 @@ function PostCard({ post, idToken, roomId, currentUserId, onMessage, onEdit, onD
 // ---------------------------------------------------------------------------
 
 export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
-  const { posts, createPost, editPost, deletePost, loading, hasMore, loadMore } = usePosts({ idToken, roomId, onMessage });
+  const { posts, createPost, editPost, deletePost, loading, mutating, error, hasMore, loadMore } =
+    usePosts({ idToken, roomId, onMessage });
 
   const currentUserId = decodeUserId(idToken);
 
   return (
     <div className="bg-surface border border-border rounded-lg p-5">
-      <CreatePostForm onCreate={createPost} loading={loading} />
+      {/* `mutating`, not `loading` — `loading` is false while a post is being
+          written, so the Post button stayed live and a double-click created
+          the post twice. */}
+      <CreatePostForm onCreate={createPost} loading={loading || mutating} />
       <div className="border-t border-border my-4" />
       {hasMore && (
         <button
@@ -340,6 +355,16 @@ export function PostFeed({ idToken, roomId, onMessage }: PostFeedProps) {
         <div className="flex items-center gap-2 p-4 justify-center text-text-secondary">
           <span className="inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" />
           Loading...
+        </div>
+      ) : error && posts.length === 0 ? (
+        /* A failed load used to render as the empty state — the room looked
+           genuinely empty ("Be the first to post in this room") whenever the
+           posts API was down, so nobody knew to retry. */
+        <div role="alert" className="py-6 text-center">
+          <div className="text-sm font-semibold text-danger-fg mb-1">
+            Couldn&rsquo;t load posts
+          </div>
+          <div className="text-sm text-text-tertiary">{error}</div>
         </div>
       ) : posts.length === 0 ? (
         <div className="py-6 text-center">

@@ -203,8 +203,17 @@ function CommentItemView({ comment, currentUserId, loading, onDelete, onReply }:
 // CommentThread (exported)
 // ---------------------------------------------------------------------------
 
+/**
+ * Inline comment thread for a single post.
+ *
+ * Safe to keep mounted across `postId` / `roomId` changes: the underlying
+ * `useComments` clears the thread and cancels the in-flight request when
+ * either id changes, so a caller does not need a `key` to avoid seeing the
+ * previous post's comments.
+ */
 export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThreadProps) {
-  const { comments, createComment, deleteComment, loading } = useComments({ idToken, roomId, postId, onMessage });
+  const { comments, createComment, deleteComment, loading, submitting, error } =
+    useComments({ idToken, roomId, postId, onMessage });
 
   const currentUserId = decodeUserId(idToken);
 
@@ -218,6 +227,12 @@ export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThr
         <div className="text-sm text-text-tertiary py-2">
           Loading comments…
         </div>
+      ) : error && comments.length === 0 ? (
+        /* An outage used to render as "No comments yet" — a legitimately
+           empty thread and a failed request looked identical. */
+        <div role="alert" className="text-sm text-danger-fg py-2">
+          {error}
+        </div>
       ) : comments.length === 0 ? (
         <div className="text-sm text-text-tertiary text-center py-4">
           No comments yet
@@ -228,7 +243,7 @@ export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThr
             key={comment.commentId}
             comment={comment}
             currentUserId={currentUserId}
-            loading={loading}
+            loading={submitting}
             onDelete={deleteComment}
             onReply={handleReply}
           />
@@ -237,7 +252,7 @@ export function CommentThread({ idToken, roomId, postId, onMessage }: CommentThr
       <ReplyForm
         onSubmit={(content) => createComment(content)}
         placeholder="Write a comment…"
-        loading={loading}
+        loading={submitting}
       />
     </div>
   );

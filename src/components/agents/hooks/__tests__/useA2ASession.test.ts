@@ -109,4 +109,20 @@ describe('useA2ASession', () => {
     expect(result.current.session?.status).toBe('completed');
     expect(result.current.isActive).toBe(false);
   });
+
+  it('sendMessage is a no-op once the session has ended', () => {
+    const { result } = renderHook(() =>
+      useA2ASession({ participants: [ALICE] }),
+    );
+
+    act(() => { result.current.endSession(); });
+    act(() => { result.current.sendMessage('alice', 'bob', 'still here?'); });
+
+    // The guard was `if (!session) return` — and endSession leaves the
+    // session object in place with status 'completed'. So traffic kept
+    // appending to a finished session and rendering on the flow canvas and
+    // in the transcript, for a conversation the backend had already closed.
+    expect(result.current.messages).toEqual([]);
+    expect(result.current.session?.messages).toEqual([]);
+  });
 });

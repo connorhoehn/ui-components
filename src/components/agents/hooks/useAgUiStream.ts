@@ -140,6 +140,13 @@ export function useAgUiStream({
   // Ref mirrors for accumulation inside async loop (avoids stale closure reads)
   const accumulatorRef = useRef<string>('');
   const toolCallsRef = useRef<AgUiToolCall[]>([]);
+  // Whether the current run produced a terminal lifecycle event
+  // (RUN_FINISHED / RUN_ERROR). Read once the read loop drains, to tell a
+  // clean end-of-stream from a truncated one.
+  const sawTerminalRef = useRef(false);
+  // messageIds already opened by TEXT_MESSAGE_START, so a redelivered START
+  // is a no-op rather than a duplicate bubble.
+  const startedMessageIdsRef = useRef<Set<string>>(new Set());
 
   // Update the current streaming message in the messages array
   const updateCurrentMessage = useCallback(
@@ -176,6 +183,46 @@ export function useAgUiStream({
     [],
   );
 
+  /**
+   * Ends the in-flight assistant turn.
+   *
+   * Every terminal path funnels through here: RUN_FINISHED, RUN_ERROR,
+   * `cancelStream()`, a superseding `sendMessage()`, and the end of the read
+   * loop. Two things were previously only done on RUN_FINISHED / RUN_ERROR
+   * and so were skipped whenever the stream ended some other way:
+   *
+   *   1. The open assistant message keeps `isStreaming: true` forever — the
+   *      bubble renders a blinking cursor and the composer stays disabled, so
+   *      the user has to reload the page to talk to the agent again.
+   *   2. Any tool call still at `status: 'streaming'` stays there forever, so
+   *      `ToolCallRenderer` shows a pulsing ⏳ for a call that will never
+   *      report back. A stranded call is marked `'error'` rather than
+   *      `'completed'` — we never saw TOOL_CALL_END, so claiming success would
+   *      be inventing a result.
+   */
+  const settleTurn = useCallback(() => {
+    currentMessageIdRef.current = null;
+    accumulatorRef.current = '';
+
+    const strand = (tc: AgUiToolCall): AgUiToolCall =>
+      tc.status === 'streaming'
+        ? { ...tc, status: 'error', endedAt: tc.endedAt ?? Date.now() }
+        : tc;
+
+    toolCallsRef.current = toolCallsRef.current.map(strand);
+    setIsStreaming(false);
+    setStreamingText('');
+    setActiveToolCalls((prev) => prev.map(strand));
+    setMessages((prev) =>
+      prev.map((msg) => {
+        const toolCalls = msg.toolCalls.map(strand);
+        const changed =
+          msg.isStreaming || toolCalls.some((tc, i) => tc !== msg.toolCalls[i]);
+        return changed ? { ...msg, isStreaming: false, toolCalls } : msg;
+      }),
+    );
+  }, []);
+
   const processEvent = useCallback(
     (event: AgUiEvent) => {
       // Always forward first, then mutate state
@@ -189,22 +236,14 @@ export function useAgUiStream({
           break;
         }
         case 'RUN_FINISHED': {
-          setIsStreaming(false);
-          if (currentMessageIdRef.current) {
-            updateCurrentMessage((msg) => ({ ...msg, isStreaming: false }));
-            currentMessageIdRef.current = null;
-          }
-          setStreamingText('');
+          sawTerminalRef.current = true;
+          settleTurn();
           break;
         }
         case 'RUN_ERROR': {
+          sawTerminalRef.current = true;
           setError(event.message);
-          setIsStreaming(false);
-          if (currentMessageIdRef.current) {
-            updateCurrentMessage((msg) => ({ ...msg, isStreaming: false }));
-            currentMessageIdRef.current = null;
-          }
-          setStreamingText('');
+          settleTurn();
           break;
         }
         case 'STEP_STARTED':
@@ -216,14 +255,22 @@ export function useAgUiStream({
         // ─── Text Messages ───────────────────────────────────────────────────
         case 'TEXT_MESSAGE_START': {
           const msgId = event.messageId ?? createMessageId();
+          // Idempotent on messageId. A redelivered START used to append a
+          // second bubble with the same id: React logged a duplicate-key
+          // warning, and because `updateCurrentMessage` resolves by
+          // `findIndex` every subsequent delta landed on the *first* copy,
+          // leaving a permanently blank assistant bubble on screen.
+          if (startedMessageIdsRef.current.has(msgId)) break;
+          startedMessageIdsRef.current.add(msgId);
           currentMessageIdRef.current = msgId;
           accumulatorRef.current = '';
           toolCallsRef.current = [];
           const role = event.role as AgUiRole;
-          setMessages((prev) => [
-            ...prev,
-            { id: msgId, role, content: '', isStreaming: true, toolCalls: [] },
-          ]);
+          setMessages((prev) =>
+            prev.some((m) => m.id === msgId)
+              ? prev
+              : [...prev, { id: msgId, role, content: '', isStreaming: true, toolCalls: [] }],
+          );
           break;
         }
         case 'TEXT_MESSAGE_CONTENT': {
@@ -398,7 +445,7 @@ export function useAgUiStream({
         }
       }
     },
-    [onEvent, updateCurrentMessage, mutateTool],
+    [onEvent, updateCurrentMessage, mutateTool, settleTurn],
   );
 
   const parseSSE = useCallback((chunk: string): AgUiEvent[] => {
@@ -428,20 +475,22 @@ export function useAgUiStream({
 
   const cancelStream = useCallback(() => {
     abortRef.current?.abort();
-    setIsStreaming(false);
-    setStreamingText('');
-    if (currentMessageIdRef.current) {
-      updateCurrentMessage((msg) => ({ ...msg, isStreaming: false }));
-      currentMessageIdRef.current = null;
-    }
+    abortRef.current = null;
+    settleTurn();
     setActiveToolCalls([]);
-  }, [updateCurrentMessage]);
+  }, [settleTurn]);
 
   const sendMessage = useCallback(
     async (content: string, opts?: { extraBody?: Record<string, unknown> }) => {
+      // Settle the previous turn before superseding it. Without this, sending
+      // a second message while the first was still streaming left the first
+      // assistant bubble blinking forever and its tool calls pinned at ⏳.
       abortRef.current?.abort();
+      settleTurn();
+
       const controller = new AbortController();
       abortRef.current = controller;
+      sawTerminalRef.current = false;
 
       setError(null);
       setIsStreaming(true);
@@ -504,14 +553,32 @@ export function useAgUiStream({
             processEvent(event);
           }
         }
+
+        // The socket closed. A well-behaved server closes only after
+        // RUN_FINISHED / RUN_ERROR, but a proxy timeout or a crashed worker
+        // just drops the connection — and previously nothing reset
+        // `isStreaming`, so the composer stayed disabled and the assistant
+        // bubble kept its blinking cursor until the user reloaded.
+        //
+        // The `abortRef` check is the staleness guard: a superseded stream
+        // must never settle the turn that replaced it.
+        if (abortRef.current === controller) {
+          const truncatedMidMessage =
+            !sawTerminalRef.current && currentMessageIdRef.current !== null;
+          if (truncatedMidMessage) {
+            // A message was still open when the socket died. Silently keeping
+            // the partial text would present a truncated answer as complete.
+            setError('Stream ended before the response was complete');
+          }
+          settleTurn();
+        }
       } catch (err: unknown) {
         if (err instanceof Error && err.name === 'AbortError') return;
         setError(err instanceof Error ? err.message : 'Stream failed');
-        setIsStreaming(false);
-        setStreamingText('');
+        settleTurn();
       }
     },
-    [url, threadId, headers, hookExtraBody, parseSSE, processEvent],
+    [url, threadId, headers, hookExtraBody, parseSSE, processEvent, settleTurn],
   );
 
   const loadHistory = useCallback(
@@ -526,12 +593,17 @@ export function useAgUiStream({
       accumulatorRef.current = '';
       toolCallsRef.current = [];
       currentMessageIdRef.current = null;
+      startedMessageIdsRef.current = new Set();
+      sawTerminalRef.current = false;
     },
     [cancelStream],
   );
 
   const reset = useCallback(() => {
     abortRef.current?.abort();
+    abortRef.current = null;
+    startedMessageIdsRef.current = new Set();
+    sawTerminalRef.current = false;
     setMessages([]);
     setIsStreaming(false);
     setStreamingText('');
