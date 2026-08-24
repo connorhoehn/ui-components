@@ -611,38 +611,60 @@ function L({ fragment: e, ydoc: t, provider: n, user: r, editable: i = !0, place
 	});
 }
 //#endregion
+//#region src/lib/dateOnly.ts
+var se = /^(\d{4})-(\d{2})-(\d{2})$/;
+function R(e) {
+	if (typeof e != "string") return null;
+	let t = e.trim();
+	if (t === "") return null;
+	let n = se.exec(t);
+	if (n) {
+		let e = Number(n[1]), t = Number(n[2]), r = Number(n[3]);
+		if (t < 1 || t > 12 || r < 1 || r > 31) return null;
+		let i = new Date(e, t - 1, r);
+		return i.setFullYear(e, t - 1, r), i.getMonth() !== t - 1 || i.getDate() !== r ? null : i;
+	}
+	let r = new Date(t);
+	return Number.isNaN(r.getTime()) ? null : r;
+}
+function z(e = /* @__PURE__ */ new Date()) {
+	let t = new Date(e.getTime());
+	return t.setHours(0, 0, 0, 0), t;
+}
+function B(e, t = /* @__PURE__ */ new Date()) {
+	let n = R(e);
+	return n ? z(n).getTime() < z(t).getTime() : !1;
+}
+//#endregion
 //#region src/components/doc-editor/TaskItemRow.tsx
-var se = {
+var ce = {
 	pending: "var(--color-text-tertiary)",
 	acked: "var(--color-info)",
 	done: "var(--color-success)",
 	rejected: "var(--color-danger)"
-}, R = {
+}, V = {
 	low: "var(--color-text-tertiary)",
 	medium: "var(--color-caution)",
 	high: "var(--color-danger)"
-}, ce = {
+}, le = {
 	start: "var(--color-success)",
 	stop: "var(--color-danger)",
 	continue: "var(--color-info)"
 };
-function le(e) {
-	let t = new Date(e);
-	return isNaN(t.getTime()) ? e : t.toLocaleDateString("en-US", {
+function ue(e) {
+	let t = R(e);
+	return t ? t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
-	});
+	}) : e;
 }
-function ue(e) {
-	let t = new Date(e);
-	if (isNaN(t.getTime())) return !1;
-	let n = /* @__PURE__ */ new Date();
-	return n.setHours(0, 0, 0, 0), t < n;
+function de(e) {
+	return B(e);
 }
-function z(e) {
+function H(e) {
 	return e.split(/\s+/).map((e) => e[0]).join("").toUpperCase().slice(0, 2);
 }
-function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, onDidAutoFocus: l }) {
+function U({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, onDidAutoFocus: l }) {
 	let [m, h] = _(!1), [x, S] = _(""), [C, w] = _(0), T = g(null), E = g(null), D = g(null), O = () => {
 		i({ status: e.status === "done" ? "pending" : "done" });
 	}, k = e.assignee ? r.find((t) => t.displayName === e.assignee) : void 0, A = x.trim() ? n(x) : r, j = f(() => {
@@ -669,14 +691,14 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 	}, [s, l]);
 	let ee = (e) => {
 		e.key === "Escape" ? M() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, A.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), A[C] && N(A[C]));
-	}, F = e.dueDate && e.status !== "done" ? ue(e.dueDate) : !1;
+	}, F = e.dueDate && e.status !== "done" ? de(e.dueDate) : !1;
 	return /* @__PURE__ */ b("div", {
 		className: a("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
 		children: [
 			/* @__PURE__ */ y("span", {
 				title: `Priority: ${e.priority}`,
 				className: a("w-2 h-2 rounded-full shrink-0"),
-				style: { background: R[e.priority] }
+				style: { background: V[e.priority] }
 			}),
 			/* @__PURE__ */ y(d, {
 				checked: e.status === "done",
@@ -698,12 +720,12 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 				children: [
 					F ? "⚠ " : "",
 					"Due: ",
-					le(e.dueDate)
+					ue(e.dueDate)
 				]
 			}),
 			e.category && /* @__PURE__ */ y("span", {
 				className: a("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-				style: { backgroundColor: ce[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				style: { backgroundColor: le[e.category.toLowerCase()] ?? "var(--color-neutral)" },
 				children: e.category
 			}),
 			/* @__PURE__ */ b("div", {
@@ -717,7 +739,7 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 					children: e.assignee ? /* @__PURE__ */ b(v, { children: [/* @__PURE__ */ y("span", {
 						className: a("w-[18px] h-[18px] rounded-full text-white inline-flex items-center justify-center text-[8px] font-bold shrink-0 leading-none"),
 						style: { background: k?.color ?? "var(--color-text-tertiary)" },
-						children: z(e.assignee)
+						children: H(e.assignee)
 					}), /* @__PURE__ */ y("span", {
 						className: a("ml-1 text-[11px]"),
 						children: e.assignee.split(" ")[0]
@@ -757,7 +779,7 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 							children: [/* @__PURE__ */ y("span", {
 								className: a("w-[22px] h-[22px] rounded-full text-white inline-flex items-center justify-center text-[10px] font-bold shrink-0 leading-none"),
 								style: { background: e.color },
-								children: z(e.displayName)
+								children: H(e.displayName)
 							}), /* @__PURE__ */ y("span", { children: e.displayName })]
 						}, e.userId)),
 						A.length === 0 && /* @__PURE__ */ y("div", {
@@ -772,7 +794,7 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 				disabled: !t,
 				onChange: (e) => i({ priority: e.target.value }),
 				className: a("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: R[e.priority] },
+				style: { backgroundColor: V[e.priority] },
 				title: `Priority: ${e.priority}`,
 				options: [
 					{
@@ -794,7 +816,7 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 				disabled: !t,
 				onChange: (e) => i({ status: e.target.value }),
 				className: a("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: se[e.status] },
+				style: { backgroundColor: ce[e.status] },
 				title: `Status: ${e.status}`,
 				options: [
 					{
@@ -827,7 +849,7 @@ function B({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: s, o
 }
 //#endregion
 //#region src/components/doc-editor/TaskList.tsx
-function V({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: i }) {
+function W({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastItem: i }) {
 	if (e.length === 0) return /* @__PURE__ */ y("div", {
 		className: a("text-text-tertiary text-[13px] italic py-2"),
 		children: "No tasks yet."
@@ -835,7 +857,7 @@ function V({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 	let o = i?.current ?? !1;
 	return /* @__PURE__ */ y("div", {
 		className: a("py-2"),
-		children: e.map((a, s) => /* @__PURE__ */ y(B, {
+		children: e.map((a, s) => /* @__PURE__ */ y(U, {
 			item: a,
 			editable: t,
 			onUpdate: (e) => n(a.id, e),
@@ -849,7 +871,7 @@ function V({ items: e, editable: t, onUpdateItem: n, onRemoveItem: r, focusLastI
 }
 //#endregion
 //#region src/renderers/default/DefaultRenderer.tsx
-function H({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+function G({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
 	let u = g(!1);
 	return /* @__PURE__ */ b("div", { children: [
 		t && n && /* @__PURE__ */ y(L, {
@@ -865,7 +887,7 @@ function H({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 			sectionId: e.id,
 			onUpdateCursorInfo: l
 		}),
-		(e.items.length > 0 || a) && /* @__PURE__ */ y(V, {
+		(e.items.length > 0 || a) && /* @__PURE__ */ y(W, {
 			items: e.items,
 			editable: a,
 			onUpdateItem: (e, t) => s?.(e, t),
@@ -892,7 +914,7 @@ function H({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+function fe({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
 	return !t || !n ? /* @__PURE__ */ y("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
@@ -912,7 +934,7 @@ function de({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextReaderRenderer.tsx
-function U({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
+function K({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: i }) {
 	return /* @__PURE__ */ b("div", { children: [t && n ? /* @__PURE__ */ y("div", {
 		className: "border border-info-border border-l-[3px] border-l-info rounded-md px-3.5 py-2.5 bg-info-bg text-sm text-text-primary leading-[1.6]",
 		children: /* @__PURE__ */ y(L, {
@@ -938,12 +960,12 @@ function U({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: 
 }
 //#endregion
 //#region src/renderers/tasks/TasksEditorRenderer.tsx
-function fe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+function pe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
 	let a = g(!1);
 	return /* @__PURE__ */ b("div", {
 		className: "py-1",
 		children: [
-			e.items.length > 0 || t ? /* @__PURE__ */ y(V, {
+			e.items.length > 0 || t ? /* @__PURE__ */ y(W, {
 				items: e.items,
 				editable: t,
 				onUpdateItem: (e, t) => r?.(e, t),
@@ -975,7 +997,7 @@ function fe({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIt
 }
 //#endregion
 //#region src/renderers/tasks/TasksReaderRenderer.tsx
-var W = {
+var q = {
 	pending: {
 		label: "Pending",
 		color: "var(--color-warning-fg)",
@@ -996,29 +1018,26 @@ var W = {
 		color: "var(--color-danger-fg)",
 		bg: "var(--color-danger-bg)"
 	}
-}, G = {
+}, J = {
 	high: "var(--color-danger)",
 	medium: "var(--color-caution)",
 	low: "var(--color-text-tertiary)"
 };
-function pe(e) {
-	let t = new Date(e);
-	if (isNaN(t.getTime())) return !1;
-	let n = /* @__PURE__ */ new Date();
-	return n.setHours(0, 0, 0, 0), t < n;
-}
 function me(e) {
-	let t = new Date(e);
-	return isNaN(t.getTime()) ? e : t.toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric"
-	});
+	return B(e);
 }
 function he(e) {
+	let t = R(e);
+	return t ? t.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric"
+	}) : e;
+}
+function ge(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function K({ item: e, onUpdateItem: t }) {
-	let [n, r] = _(!1), [i, o] = _(!1), s = n || i, c = W[e.status] ?? W.pending, l = G[e.priority] ?? G.medium, u = e.dueDate && e.status === "pending" ? pe(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
+function Y({ item: e, onUpdateItem: t }) {
+	let [n, r] = _(!1), [i, o] = _(!1), s = n || i, c = q[e.status] ?? q.pending, l = J[e.priority] ?? J.medium, u = e.dueDate && e.status === "pending" ? me(e.dueDate) : !1, d = e.status === "done" || e.status === "acked";
 	return /* @__PURE__ */ b("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
@@ -1084,7 +1103,7 @@ function K({ item: e, onUpdateItem: t }) {
 			e.assignee && /* @__PURE__ */ y("span", {
 				title: e.assignee,
 				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
-				children: he(e.assignee)
+				children: ge(e.assignee)
 			}),
 			e.dueDate && /* @__PURE__ */ b("span", {
 				style: {
@@ -1098,7 +1117,7 @@ function K({ item: e, onUpdateItem: t }) {
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [u ? "⚠ " : "", me(e.dueDate)]
+				children: [u ? "⚠ " : "", he(e.dueDate)]
 			}),
 			t && s && /* @__PURE__ */ b("select", {
 				"aria-label": `Set status for ${e.text || "untitled item"}`,
@@ -1140,7 +1159,7 @@ function K({ item: e, onUpdateItem: t }) {
 		]
 	});
 }
-function q({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+function _e({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 	let r = e.items;
 	if (r.length === 0) return /* @__PURE__ */ y("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
@@ -1150,19 +1169,19 @@ function q({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 	return /* @__PURE__ */ b("div", { children: [
 		o.length > 0 && /* @__PURE__ */ y("div", {
 			className: "mb-1",
-			children: o.map((e) => /* @__PURE__ */ y(K, {
+			children: o.map((e) => /* @__PURE__ */ y(Y, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
 		i.length > 0 && /* @__PURE__ */ y("div", {
 			className: "mb-1",
-			children: i.map((e) => /* @__PURE__ */ y(K, {
+			children: i.map((e) => /* @__PURE__ */ y(Y, {
 				item: e,
 				onUpdateItem: t
 			}, e.id))
 		}),
-		a.length > 0 && /* @__PURE__ */ y("div", { children: a.map((e) => /* @__PURE__ */ y(K, {
+		a.length > 0 && /* @__PURE__ */ y("div", { children: a.map((e) => /* @__PURE__ */ y(Y, {
 			item: e,
 			onUpdateItem: t
 		}, e.id)) }),
@@ -1176,7 +1195,7 @@ function q({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistEditorRenderer.tsx
-function ge({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i, onRemove: s }) {
+function ve({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i, onRemove: s }) {
 	let c = g(null), l = e.status === "done", u = o(r);
 	return p(() => {
 		n && c.current && (c.current.focus(), u());
@@ -1208,7 +1227,7 @@ function ge({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i
 		]
 	});
 }
-function _e({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+function ye({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
 	let u = g(null), d = () => {
 		o && (u.current = e.items.length, o({
 			text: "",
@@ -1245,7 +1264,7 @@ function _e({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ y("div", { children: e.items.map((t, n) => {
 			let r = n === e.items.length - 1, i = p && r;
-			return /* @__PURE__ */ y(ge, {
+			return /* @__PURE__ */ y(ve, {
 				item: t,
 				editable: a,
 				autoFocus: i,
@@ -1266,7 +1285,7 @@ function _e({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function J({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: i, onNavigateToEditor: o }) {
+function X({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: i, onNavigateToEditor: o }) {
 	let s = e.items, c = s.length, l = s.filter((e) => e.status === "done").length, u = c > 0 ? Math.round(l / c * 100) : 0;
 	return /* @__PURE__ */ b("div", { children: [
 		t && n && /* @__PURE__ */ y("div", {
@@ -1339,24 +1358,24 @@ function J({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: i, onN
 }
 //#endregion
 //#region src/renderers/decisions/approvalSync.ts
-var ve = {
+var be = {
 	acked: "approved",
 	done: "approved",
 	rejected: "rejected"
 };
-function ye() {
+function xe() {
 	return "";
 }
-function be() {
+function Se() {
 	if (typeof window > "u") return null;
 	let e = window.location.pathname.match(/\/documents\/([^/?#]+)/);
 	return e ? e[1] : null;
 }
-function xe(e) {
-	return ve[e] ?? null;
+function Ce(e) {
+	return be[e] ?? null;
 }
-async function Se(e) {
-	let t = e.documentId ?? be();
+async function we(e) {
+	let t = e.documentId ?? Se();
 	if (!t) return {
 		ok: !1,
 		error: "no documentId in URL"
@@ -1364,7 +1383,7 @@ async function Se(e) {
 	try {
 		let n = { "Content-Type": "application/json" };
 		e.idToken && (n.Authorization = `Bearer ${e.idToken}`);
-		let r = await fetch(`${ye()}/api/approvals`, {
+		let r = await fetch(`${xe()}/api/approvals`, {
 			method: "POST",
 			headers: n,
 			body: JSON.stringify({
@@ -1388,7 +1407,7 @@ async function Se(e) {
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsEditorRenderer.tsx
-var Y = {
+var Z = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1414,8 +1433,8 @@ var Y = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Ce({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i, onRemove: s }) {
-	let c = g(null), l = Y[e.status] ?? Y.pending, u = o(r);
+function Te({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i, onRemove: s }) {
+	let c = g(null), l = Z[e.status] ?? Z.pending, u = o(r);
 	return p(() => {
 		n && c.current && (c.current.focus(), u());
 	}, [n, u]), /* @__PURE__ */ b("div", {
@@ -1471,7 +1490,7 @@ function Ce({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i
 		]
 	});
 }
-function we({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
+function Ee({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onAddItem: o, onUpdateItem: s, onRemoveItem: c, onUpdateCursorInfo: l }) {
 	let u = g(null), d = () => {
 		o && (u.current = e.items.length, o({
 			text: "",
@@ -1503,7 +1522,7 @@ function we({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 		}),
 		/* @__PURE__ */ y("div", { children: e.items.map((t, n) => {
 			let r = n === e.items.length - 1, o = p && r;
-			return /* @__PURE__ */ y(Ce, {
+			return /* @__PURE__ */ y(Te, {
 				item: t,
 				editable: a,
 				autoFocus: o,
@@ -1513,8 +1532,8 @@ function we({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 				onUpdate: (n) => {
 					let r = t.status;
 					if (s?.(t.id, n), n.status && n.status !== r) {
-						let t = xe(n.status);
-						t && Se({
+						let t = Ce(n.status);
+						t && we({
 							sectionId: e.id,
 							decision: t,
 							reviewerName: i?.name
@@ -1534,7 +1553,7 @@ function we({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsReaderRenderer.tsx
-var X = {
+var Q = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1560,8 +1579,8 @@ var X = {
 		bg: "var(--color-danger-bg)"
 	}
 };
-function Te({ item: e }) {
-	let t = X[e.status] ?? X.pending;
+function De({ item: e }) {
+	let t = Q[e.status] ?? Q.pending;
 	return /* @__PURE__ */ b("div", {
 		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
 		children: [
@@ -1591,17 +1610,17 @@ function Te({ item: e }) {
 		]
 	});
 }
-function Z({ label: e, color: t, items: n }) {
+function $({ label: e, color: t, items: n }) {
 	return /* @__PURE__ */ b("div", {
 		className: "mb-2",
 		children: [/* @__PURE__ */ y("div", {
 			className: "text-[10px] font-bold uppercase tracking-[0.05em] mb-0.5",
 			style: { color: t },
 			children: e
-		}), n.map((e) => /* @__PURE__ */ y(Te, { item: e }, e.id))]
+		}), n.map((e) => /* @__PURE__ */ y(De, { item: e }, e.id))]
 	});
 }
-function Ee({ section: e, onNavigateToEditor: t }) {
+function Oe({ section: e, onNavigateToEditor: t }) {
 	let n = e.items;
 	if (n.length === 0) return /* @__PURE__ */ y("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
@@ -1609,19 +1628,19 @@ function Ee({ section: e, onNavigateToEditor: t }) {
 	});
 	let r = n.filter((e) => e.status === "pending"), i = n.filter((e) => e.status === "acked" || e.status === "done"), a = n.filter((e) => e.status === "rejected");
 	return /* @__PURE__ */ b("div", { children: [
-		r.length > 0 && /* @__PURE__ */ y(Z, {
+		r.length > 0 && /* @__PURE__ */ y($, {
 			label: "Open",
-			color: X.pending.color,
+			color: Q.pending.color,
 			items: r
 		}),
-		i.length > 0 && /* @__PURE__ */ y(Z, {
+		i.length > 0 && /* @__PURE__ */ y($, {
 			label: "Decided",
-			color: X.acked.color,
+			color: Q.acked.color,
 			items: i
 		}),
-		a.length > 0 && /* @__PURE__ */ y(Z, {
+		a.length > 0 && /* @__PURE__ */ y($, {
 			label: "Vetoed",
-			color: X.rejected.color,
+			color: Q.rejected.color,
 			items: a
 		}),
 		t && /* @__PURE__ */ y("button", {
@@ -1634,11 +1653,11 @@ function Ee({ section: e, onNavigateToEditor: t }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadEditorRenderer.tsx
-function De(e) {
+function ke(e) {
 	return e.metadata ?? {};
 }
-function Oe({ section: e, editable: t, onUpdateSection: n }) {
-	let r = De(e), [i, o] = _(!1), s = (t) => {
+function Ae({ section: e, editable: t, onUpdateSection: n }) {
+	let r = ke(e), [i, o] = _(!1), s = (t) => {
 		o(!0);
 		let r = new FileReader();
 		r.onload = () => {
@@ -1700,7 +1719,7 @@ function Oe({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
-function Q({ section: e }) {
+function je({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.fileName ? /* @__PURE__ */ b("div", {
 		"data-testid": `file-upload-reader-${e.id}`,
@@ -1734,7 +1753,7 @@ function Q({ section: e }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramEditorRenderer.tsx
-function ke({ section: e, editable: t, onUpdateSection: n }) {
+function Me({ section: e, editable: t, onUpdateSection: n }) {
 	let r = e.metadata ?? {}, [i, o] = _(!1), s = (t) => {
 		o(!0);
 		let i = new FileReader();
@@ -1802,7 +1821,7 @@ function ke({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramReaderRenderer.tsx
-function Ae({ section: e }) {
+function Ne({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.imageDataUrl ? /* @__PURE__ */ b("figure", {
 		"data-testid": `diagram-reader-${e.id}`,
@@ -1823,18 +1842,18 @@ function Ae({ section: e }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
-function je(e) {
+function Pe(e) {
 	return typeof e == "object" && !!e;
 }
-function Me(e) {
+function Fe(e) {
 	let t = e.metadata ?? {};
-	return Array.isArray(t.links) ? t.links.filter(je).map((e) => ({
+	return Array.isArray(t.links) ? t.links.filter(Pe).map((e) => ({
 		label: typeof e.label == "string" ? e.label : "",
 		url: typeof e.url == "string" ? e.url : ""
 	})) : [];
 }
-function Ne({ section: e, editable: t, onUpdateSection: n }) {
-	let r = Me(e), i = (t) => {
+function Ie({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Fe(e), i = (t) => {
 		n?.({ metadata: {
 			...e.metadata ?? {},
 			links: t
@@ -1901,11 +1920,11 @@ function Ne({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
-function Pe(e) {
+function Le(e) {
 	return typeof e == "object" && !!e && typeof e.url == "string";
 }
-function $({ section: e }) {
-	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Pe(e) && e.url) : [];
+function Re({ section: e }) {
+	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => Le(e) && e.url) : [];
 	return n.length === 0 ? /* @__PURE__ */ y("div", {
 		"data-testid": `link-block-reader-empty-${e.id}`,
 		className: "text-text-tertiary text-[13px] italic",
@@ -1925,6 +1944,6 @@ function $({ section: e }) {
 		}, t))
 	});
 }
-e(N), e(P), e(ee), e(F), e(te), e(ne), e(re), t("*", "*", H), t("rich-text", "editor", de), t("rich-text", "ack", U), t("rich-text", "reader", U), t("tasks", "editor", fe), t("tasks", "ack", q), t("tasks", "reader", q), t("checklist", "editor", _e), t("checklist", "ack", J), t("checklist", "reader", J), t("decisions", "editor", we), t("decisions", "ack", Ee), t("decisions", "reader", Ee), t("file-upload", "editor", Oe), t("file-upload", "ack", Q), t("file-upload", "reader", Q), t("diagram", "editor", ke), t("diagram", "ack", Ae), t("diagram", "reader", Ae), t("link-block", "editor", Ne), t("link-block", "ack", $), t("link-block", "reader", $);
+e(N), e(P), e(ee), e(F), e(te), e(ne), e(re), t("*", "*", G), t("rich-text", "editor", fe), t("rich-text", "ack", K), t("rich-text", "reader", K), t("tasks", "editor", pe), t("tasks", "ack", _e), t("tasks", "reader", _e), t("checklist", "editor", ye), t("checklist", "ack", X), t("checklist", "reader", X), t("decisions", "editor", Ee), t("decisions", "ack", Oe), t("decisions", "reader", Oe), t("file-upload", "editor", Ae), t("file-upload", "ack", je), t("file-upload", "reader", je), t("diagram", "editor", Me), t("diagram", "ack", Ne), t("diagram", "reader", Ne), t("link-block", "editor", Ie), t("link-block", "ack", Re), t("link-block", "reader", Re);
 //#endregion
-export { ae as a, L as i, V as n, M as o, B as r, H as t };
+export { ae as a, L as i, W as n, M as o, U as r, G as t };

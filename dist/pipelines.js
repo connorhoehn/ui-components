@@ -5730,7 +5730,7 @@ function Ui({ pipelineId: e, definition: t, dirty: n, savingFlash: i, isRunActiv
 		text: `Running (${ge}/${he} steps) · ${_e}s`,
 		variant: "running"
 	} : u?.status === "completed" ? {
-		text: `Completed in ${u.durationMs ? (u.durationMs / 1e3).toFixed(1) : "?"}s`,
+		text: `Completed in ${u.durationMs == null ? "?" : (u.durationMs / 1e3).toFixed(1)}s`,
 		variant: "success"
 	} : u?.status === "failed" ? {
 		text: `Failed at ${zi(t, u.error?.nodeId)}`,
@@ -18969,7 +18969,11 @@ var Su = {
 	failed: "var(--color-danger)",
 	running: "var(--color-info)"
 };
-function Cu({ stepId: e, step: t, index: n, nodeType: i, nodeConfig: a, onRetryFromStep: o, onResumeFromStep: s }) {
+function Cu(e) {
+	let t = Number(e);
+	return Number.isFinite(t) ? t : 0;
+}
+function wu({ stepId: e, step: t, index: n, nodeType: i, nodeConfig: a, onRetryFromStep: o, onResumeFromStep: s }) {
 	let [c, l] = B(!1), u = t.output, d = u?.response, f = t.llm, p = t.input, m = Su[t.status] ?? "var(--color-text-tertiary)";
 	return /* @__PURE__ */ U("div", {
 		className: "relative pl-9 mb-1",
@@ -19025,7 +19029,7 @@ function Cu({ stepId: e, step: t, index: n, nodeType: i, nodeConfig: a, onRetryF
 					}),
 					u?.tokensIn != null && !f && /* @__PURE__ */ U("span", {
 						className: "text-[10px] text-text-tertiary font-mono",
-						children: [Number(u.tokensIn) + Number(u.tokensOut), " tok"]
+						children: [Cu(u.tokensIn) + Cu(u.tokensOut), " tok"]
 					})
 				]
 			}),
@@ -19262,9 +19266,23 @@ function Cu({ stepId: e, step: t, index: n, nodeType: i, nodeConfig: a, onRetryF
 }
 //#endregion
 //#region src/components/pipelines/steps/StepTree.tsx
-function wu({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i }) {
+function Tu(e) {
+	if (e.startedAt) {
+		let t = Date.parse(e.startedAt);
+		if (Number.isFinite(t)) return t;
+	}
+	if (e.completedAt) {
+		let t = Date.parse(e.completedAt);
+		if (Number.isFinite(t)) return t - (e.durationMs ?? 0);
+	}
+	return Infinity;
+}
+function Eu({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFromStep: i }) {
 	let a = R(() => {
-		let r = Object.entries(e).sort(([, e], [, t]) => (e.completedAt ? Date.parse(e.completedAt) - (e.durationMs ?? 0) : 0) - (t.completedAt ? Date.parse(t.completedAt) - (t.durationMs ?? 0) : 0));
+		let r = Object.entries(e).sort(([, e], [, t]) => {
+			let n = Tu(e), r = Tu(t);
+			return n === r ? 0 : n < r ? -1 : 1;
+		});
 		if (!n || n.length === 0) return r.map(([e, t]) => ({
 			stepId: e,
 			step: t,
@@ -19351,7 +19369,7 @@ function wu({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFr
 				let e = t.branch ?? "default";
 				a.has(e) || a.set(e, []), a.get(e).push(t);
 			}
-			return /* @__PURE__ */ U(Ze.Fragment, { children: [/* @__PURE__ */ H(Cu, {
+			return /* @__PURE__ */ U(Ze.Fragment, { children: [/* @__PURE__ */ H(wu, {
 				stepId: e.stepId,
 				step: e.step,
 				index: t,
@@ -19375,8 +19393,8 @@ function wu({ steps: e, nodeDataMap: t, edges: n, onRetryFromStep: r, onResumeFr
 }
 //#endregion
 //#region src/components/pipelines/hooks/usePipelineRunAuditLog.ts
-var Tu = 5e3, Eu = "synthetic-";
-function Du(e) {
+var Du = 5e3, Ou = "synthetic-";
+function ku(e) {
 	switch (e) {
 		case "pipeline.step.started": return "pipeline.step.started";
 		case "pipeline.step.completed": return "pipeline.step.completed";
@@ -19390,11 +19408,11 @@ function Du(e) {
 		default: return null;
 	}
 }
-function Ou(e, t) {
+function Au(e, t) {
 	return t.timestamp.localeCompare(e.timestamp);
 }
-function ku(e, t) {
-	if (t.length === 0) return e.slice().sort(Ou);
+function ju(e, t) {
+	if (t.length === 0) return e.slice().sort(Au);
 	let n = new Set(e.map((e) => e.auditId)), r = /* @__PURE__ */ new Map();
 	for (let t of e) {
 		let e = r.get(t.action);
@@ -19405,21 +19423,30 @@ function ku(e, t) {
 		let t = r.get(e.action);
 		return !t || e.timestamp >= t;
 	});
-	return [...e, ...i].sort(Ou);
+	return [...e, ...i].sort(Au);
 }
-function Au(e, t, n = {}) {
-	let { pollMs: r = Tu, filters: i } = n, a = A(), [o, s] = B([]), [c, l] = B([]), [u, d] = B(!0), [f, p] = B(null), [m, h] = B(void 0), [g, _] = B(0), [v, y] = B(!1), b = JSON.stringify({
+function Mu(e, t, n = {}) {
+	let { pollMs: r = Du, filters: i } = n, a = A(), [o, s] = B([]), [c, l] = B([]), [u, d] = B(!0), [f, p] = B(null), [m, h] = B(void 0), [g, _] = B(0), [v, y] = B(!1), b = JSON.stringify({
 		since: i?.since,
 		until: i?.until,
 		actions: i?.actions,
 		limit: i?.limit
-	});
+	}), x = `${e ?? ""}|${t ?? ""}|${b}`, S = z(null), C = z(0);
 	L(() => {
+		C.current = o.length;
+	}, [o]), L(() => {
 		if (!e || !t) return;
 		let n = !1;
-		return d(!0), p(null), (async () => {
+		d(!0), p(null);
+		let r = S.current !== x;
+		S.current = x, r && (C.current = 0);
+		let a = C.current > (i?.limit ?? 0) ? C.current : i?.limit;
+		return (async () => {
 			try {
-				let r = await Ne(e, t, i ?? {});
+				let r = await Ne(e, t, {
+					...i ?? {},
+					...a == null ? {} : { limit: a }
+				});
 				if (n) return;
 				s(r.items), h(r.nextCursor), d(!1);
 			} catch (e) {
@@ -19447,13 +19474,13 @@ function Au(e, t, n = {}) {
 	]), L(() => {
 		if (!e || !t) return;
 		let n = [], r = (n, r) => {
-			let i = Du(n);
+			let i = ku(n);
 			if (!i) return;
 			let a = r;
 			if (a.runId !== t) return;
 			y(!0);
 			let o = {
-				auditId: `${Eu}${n}-${a.stepId ?? "run"}-${Date.now()}`,
+				auditId: `${Ou}${n}-${a.stepId ?? "run"}-${Date.now()}`,
 				timestamp: a.at ?? (/* @__PURE__ */ new Date()).toISOString(),
 				action: i,
 				actorUserId: "executor",
@@ -19494,8 +19521,8 @@ function Au(e, t, n = {}) {
 			});
 		});
 	}, [o]);
-	let x = z(!1), S = I(() => {
-		!e || !t || !m || x.current || (x.current = !0, (async () => {
+	let w = z(!1), T = I(() => {
+		!e || !t || !m || w.current || (w.current = !0, (async () => {
 			try {
 				let n = await Ne(e, t, {
 					...i ?? {},
@@ -19503,12 +19530,12 @@ function Au(e, t, n = {}) {
 				});
 				s((e) => {
 					let t = new Set(e.map((e) => e.auditId)), r = e.concat(n.items.filter((e) => !t.has(e.auditId)));
-					return r.sort(Ou), r;
+					return r.sort(Au), r;
 				}), h(n.nextCursor);
 			} catch (e) {
 				p(e instanceof Error ? e.message : String(e));
 			} finally {
-				x.current = !1;
+				w.current = !1;
 			}
 		})());
 	}, [
@@ -19516,30 +19543,30 @@ function Au(e, t, n = {}) {
 		t,
 		m,
 		b
-	]), C = I(() => {
+	]), E = I(() => {
 		_((e) => e + 1);
 	}, []);
 	return {
-		items: R(() => ku(o, c), [o, c]),
+		items: R(() => ju(o, c), [o, c]),
 		loading: u,
 		error: f,
 		hasMore: !!m,
-		loadMore: S,
+		loadMore: T,
 		liveHealthy: v,
-		refresh: C
+		refresh: E
 	};
 }
 //#endregion
 //#region src/components/pipelines/ExecutorLog.tsx
-var ju = "var(--color-info)", Mu = "#eab308", Nu = "var(--color-caution)", Pu = "var(--color-neutral)", Fu = "var(--color-danger)", Iu = "var(--color-accent)";
-function Lu(e) {
-	return e.action === "pipeline.step.failed" || e.outcome === "error" ? Fu : e.action === "pipeline.run.resumed-from-step" || e.action.startsWith("pipeline.step.context.patched") ? Iu : e.action.startsWith("pipeline.approval.") ? Mu : e.action.startsWith("pipeline.breakpoint.") ? Nu : e.action.startsWith("pipeline.step.") ? ju : (e.action.startsWith("pipeline.run."), Pu);
+var Nu = "var(--color-info)", Pu = "#eab308", Fu = "var(--color-caution)", Iu = "var(--color-neutral)", Lu = "var(--color-danger)", Ru = "var(--color-accent)";
+function zu(e) {
+	return e.action === "pipeline.step.failed" || e.outcome === "error" ? Lu : e.action === "pipeline.run.resumed-from-step" || e.action.startsWith("pipeline.step.context.patched") ? Ru : e.action.startsWith("pipeline.approval.") ? Pu : e.action.startsWith("pipeline.breakpoint.") ? Fu : e.action.startsWith("pipeline.step.") ? Nu : (e.action.startsWith("pipeline.run."), Iu);
 }
-var Ru = {
+var Bu = {
 	"1h": "Last 1h",
 	"24h": "Last 24h",
 	all: "All"
-}, zu = [
+}, Vu = [
 	{
 		label: "Steps",
 		matches: (e) => e.startsWith("pipeline.step.")
@@ -19561,16 +19588,16 @@ var Ru = {
 		matches: (e) => e === "pipeline.step.failed" || e === "pipeline.run.failed" || e === "pipeline.force_fail"
 	}
 ];
-function Bu(e) {
+function Hu(e) {
 	if (e === "all") return null;
 	let t = Date.now();
 	return e === "1h" ? t - 36e5 : t - 864e5;
 }
-function Vu(e) {
+function Uu(e) {
 	let t = e.details, n = e.trace, r = t && typeof t.stepId == "string" ? t.stepId : void 0, i = n && typeof n.stepId == "string" ? n.stepId : void 0, a = n && typeof n.nodeId == "string" ? n.nodeId : void 0;
 	return r ?? i ?? a;
 }
-function Hu(e, t = Date.now()) {
+function Wu(e, t = Date.now()) {
 	let n = Date.parse(e);
 	if (!Number.isFinite(n)) return e;
 	let r = Math.max(0, Math.floor((t - n) / 1e3));
@@ -19581,8 +19608,8 @@ function Hu(e, t = Date.now()) {
 	let a = Math.floor(i / 60);
 	return a < 24 ? `${a}h ago` : `${Math.floor(a / 24)}d ago`;
 }
-function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
-	let { items: i, error: a, hasMore: o, loadMore: s, loading: c } = Au(e, t), [l, u] = B(/* @__PURE__ */ new Set()), [d, f] = B(""), [p, h] = B("all"), [g, _] = B(/* @__PURE__ */ new Set()), v = I((e) => {
+function Gu({ pipelineId: e, runId: t, onStepClick: n }) {
+	let { items: i, error: a, hasMore: o, loadMore: s, loading: c } = Mu(e, t), [l, u] = B(/* @__PURE__ */ new Set()), [d, f] = B(""), [p, h] = B("all"), [g, _] = B(/* @__PURE__ */ new Set()), v = I((e) => {
 		u((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
@@ -19593,7 +19620,7 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 			return n.has(e) ? n.delete(e) : n.add(e), n;
 		});
 	}, []), b = R(() => {
-		let e = Bu(p), t = d.trim().toLowerCase(), n = zu.filter((e) => l.has(e.label));
+		let e = Hu(p), t = d.trim().toLowerCase(), n = Vu.filter((e) => l.has(e.label));
 		return i.filter((r) => {
 			if (n.length > 0 && !n.some((e) => e.matches(r.action)) || t && !r.actorUserId.toLowerCase().includes(t)) return !1;
 			if (e !== null) {
@@ -19613,7 +19640,7 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 		i.href = r, i.download = `executor-log-${t}.ndjson`, document.body.appendChild(i), i.click(), document.body.removeChild(i), URL.revokeObjectURL(r);
 	}, [b, t]), S = I((e) => {
 		if (y(e.auditId), !n || !e.action.startsWith("pipeline.step.")) return;
-		let t = Vu(e);
+		let t = Uu(e);
 		t && n(t);
 	}, [n, y]);
 	return /* @__PURE__ */ U("div", {
@@ -19636,7 +19663,7 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 						className: "text-border",
 						children: "|"
 					}),
-					zu.map((e) => {
+					Vu.map((e) => {
 						let t = l.has(e.label);
 						return /* @__PURE__ */ H("button", {
 							type: "button",
@@ -19676,7 +19703,7 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 							onClick: () => h(e),
 							"data-testid": `executor-log-time-${e}`,
 							"aria-pressed": t,
-							children: Ru[e]
+							children: Bu[e]
 						}, e);
 					}),
 					/* @__PURE__ */ H("div", { className: "flex-1" }),
@@ -19710,7 +19737,7 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 						children: "No audit rows match the current filters."
 					}),
 					b.map((e) => {
-						let t = g.has(e.auditId), n = e.action.startsWith("pipeline.step.") ? Vu(e) : void 0;
+						let t = g.has(e.auditId), n = e.action.startsWith("pipeline.step.") ? Uu(e) : void 0;
 						return /* @__PURE__ */ U("div", {
 							role: "button",
 							tabIndex: 0,
@@ -19724,14 +19751,14 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 							children: [
 								/* @__PURE__ */ H("span", {
 									className: "w-2.5 h-2.5 rounded-full shrink-0 self-center",
-									style: { background: Lu(e) },
+									style: { background: zu(e) },
 									"aria-hidden": !0,
 									"data-testid": "executor-log-marker"
 								}),
 								/* @__PURE__ */ H("span", {
 									className: "text-text-tertiary font-mono text-[11px] whitespace-nowrap",
 									title: e.timestamp,
-									children: Hu(e.timestamp)
+									children: Wu(e.timestamp)
 								}),
 								/* @__PURE__ */ H("span", {
 									className: "text-text-secondary text-[11px] whitespace-nowrap",
@@ -19796,20 +19823,20 @@ function Uu({ pipelineId: e, runId: t, onStepClick: n }) {
 }
 //#endregion
 //#region src/components/pipelines/PipelineRunReplayPage.tsx
-function Wu() {
+function Ku() {
 	let { pipelineId: e, runId: t } = it();
 	return !e || !t ? /* @__PURE__ */ H(nt, {
 		to: "/pipelines",
 		replace: !0
 	}) : /* @__PURE__ */ H(me, {
 		pipelineId: e,
-		children: /* @__PURE__ */ H(re, { children: /* @__PURE__ */ H(Gu, {
+		children: /* @__PURE__ */ H(re, { children: /* @__PURE__ */ H(qu, {
 			pipelineId: e,
 			runId: t
 		}) })
 	});
 }
-function Gu({ pipelineId: e, runId: t }) {
+function qu({ pipelineId: e, runId: t }) {
 	let n = rt(), i = ae(), a = ve(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
@@ -20266,7 +20293,7 @@ function Gu({ pipelineId: e, runId: t }) {
 								}, e.id);
 							})
 						}),
-						T === "steps" ? /* @__PURE__ */ H(wu, {
+						T === "steps" ? /* @__PURE__ */ H(Eu, {
 							steps: h.steps,
 							nodeDataMap: y,
 							edges: o?.edges,
@@ -20274,7 +20301,7 @@ function Gu({ pipelineId: e, runId: t }) {
 							onResumeFromStep: h.status === "failed" ? ge : void 0
 						}) : /* @__PURE__ */ H("div", {
 							className: "flex flex-col min-h-[400px] h-[60vh]",
-							children: /* @__PURE__ */ H(Uu, {
+							children: /* @__PURE__ */ H(Gu, {
 								pipelineId: e,
 								runId: t,
 								onStepClick: k
@@ -20288,10 +20315,10 @@ function Gu({ pipelineId: e, runId: t }) {
 }
 //#endregion
 //#region src/components/pipelines/CompareStepMatrix.tsx
-function Ku(e) {
+function Ju(e) {
 	return e == null ? "—" : `${e > 0 ? "+" : ""}${ia(Math.abs(e))}`.replace(/^(\+|-)?/, e === 0 ? "" : e > 0 ? "+" : "-");
 }
-function qu(e) {
+function Yu(e) {
 	switch (e) {
 		case "completed": return "success";
 		case "failed": return "danger";
@@ -20302,22 +20329,22 @@ function qu(e) {
 		default: return "neutral";
 	}
 }
-function Ju(e, t) {
+function Xu(e, t) {
 	if (!e) return t;
 	let n = e.nodes.find((e) => e.id === t);
 	return n ? n.data.type === "condition" && n.data.label ? n.data.label : n.type.charAt(0).toUpperCase() + n.type.slice(1) : t;
 }
-function Yu(e, t) {
+function Zu(e, t) {
 	if (!e) return !1;
 	let n = e.nodes.find((e) => e.id === t);
 	return !!n && n.data.type === "condition";
 }
-function Xu(e) {
+function Qu(e) {
 	if (!e) return;
 	let t = e.output;
 	if (t && typeof t == "object" && "result" in t) return t.result ? "true" : "false";
 }
-function Zu(e, t) {
+function $u(e, t) {
 	let n = (e) => e.split(/(\s+)/).filter((e) => e.length > 0), r = n(e), i = n(t), a = r.length, o = i.length, s = Array.from({ length: a + 1 }, () => Array(o + 1).fill(0));
 	for (let e = a - 1; e >= 0; e--) for (let t = o - 1; t >= 0; t--) r[e] === i[t] ? s[e][t] = s[e + 1][t + 1] + 1 : s[e][t] = Math.max(s[e + 1][t], s[e][t + 1]);
 	let c = [], l = (e, t) => {
@@ -20332,17 +20359,17 @@ function Zu(e, t) {
 	for (; d < o;) l("add", i[d++]);
 	return c;
 }
-function Qu(e, t, n) {
+function ed(e, t, n) {
 	let r = /* @__PURE__ */ new Set(), i = [];
 	if (n) for (let a of n.nodes) (e.steps[a.id] || t.steps[a.id]) && (i.push(a.id), r.add(a.id));
 	for (let n of [...Object.keys(e.steps), ...Object.keys(t.steps)]) r.has(n) || (i.push(n), r.add(n));
 	return i.map((r) => {
 		let i = e.steps[r], a = t.steps[r], o = i?.durationMs, s = a?.durationMs, c = o != null && s != null ? s - o : void 0, l = !!i && !!a && i.status !== a.status, u = !1;
 		o != null && s != null && o > 0 && (u = Math.abs(s - o) / o > .5);
-		let d = Yu(n, r), f = d ? Xu(i) : void 0, p = d ? Xu(a) : void 0, m = d && f !== void 0 && p !== void 0 && f !== p;
+		let d = Zu(n, r), f = d ? Qu(i) : void 0, p = d ? Qu(a) : void 0, m = d && f !== void 0 && p !== void 0 && f !== p;
 		return {
 			nodeId: r,
-			name: Ju(n, r),
+			name: Xu(n, r),
 			a: i,
 			b: a,
 			durationDelta: c,
@@ -20356,17 +20383,17 @@ function Qu(e, t, n) {
 		};
 	});
 }
-function $u(e) {
+function td(e) {
 	if (e.statusDiffers) return "bg-danger-bg";
 	if (e.branchDiffers) return "bg-info-bg";
 	if (e.durationLarge) return "bg-warning-bg";
 }
-function ed({ step: e, branch: t, isCondition: n }) {
+function nd({ step: e, branch: t, isCondition: n }) {
 	if (!e) return /* @__PURE__ */ H("span", {
 		className: "text-text-tertiary",
 		children: "(not run)"
 	});
-	let r = qu(e.status);
+	let r = Yu(e.status);
 	return /* @__PURE__ */ U("div", {
 		className: "flex flex-col gap-0.5",
 		children: [
@@ -20408,8 +20435,8 @@ function ed({ step: e, branch: t, isCondition: n }) {
 		]
 	});
 }
-function td({ a: e, b: t }) {
-	let n = R(() => Zu(e, t), [e, t]);
+function rd({ a: e, b: t }) {
+	let n = R(() => $u(e, t), [e, t]);
 	return /* @__PURE__ */ H("div", {
 		className: "whitespace-pre-wrap break-words rounded-md border border-border bg-surface-inset p-2.5 font-mono text-xs leading-relaxed",
 		"data-testid": "llm-word-diff",
@@ -20424,8 +20451,8 @@ function td({ a: e, b: t }) {
 		}, t))
 	});
 }
-function nd({ row: e }) {
-	let t = e.a?.llm, n = e.b?.llm, i = t && n ? n.tokensIn + n.tokensOut - (t.tokensIn + t.tokensOut) : void 0, a = $u(e);
+function id({ row: e }) {
+	let t = e.a?.llm, n = e.b?.llm, i = t && n ? n.tokensIn + n.tokensOut - (t.tokensIn + t.tokensOut) : void 0, a = td(e);
 	return /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("tr", {
 		"data-testid": `run-compare-row-${e.nodeId}`,
 		className: a,
@@ -20442,7 +20469,7 @@ function nd({ row: e }) {
 			}),
 			/* @__PURE__ */ H("td", {
 				className: r("border-b border-border px-3 py-2.5 align-top text-xs text-text-primary", a),
-				children: /* @__PURE__ */ H(ed, {
+				children: /* @__PURE__ */ H(nd, {
 					step: e.a,
 					branch: e.branchA,
 					isCondition: e.isCondition
@@ -20450,7 +20477,7 @@ function nd({ row: e }) {
 			}),
 			/* @__PURE__ */ H("td", {
 				className: r("border-b border-border px-3 py-2.5 align-top text-xs text-text-primary", a),
-				children: /* @__PURE__ */ H(ed, {
+				children: /* @__PURE__ */ H(nd, {
 					step: e.b,
 					branch: e.branchB,
 					isCondition: e.isCondition
@@ -20470,7 +20497,7 @@ function nd({ row: e }) {
 					children: "—"
 				}) : /* @__PURE__ */ H("span", {
 					className: e.durationLarge ? "text-warning-fg" : "text-text-secondary",
-					children: Ku(e.durationDelta)
+					children: Ju(e.durationDelta)
 				}), i != null && i !== 0 ? /* @__PURE__ */ U("div", {
 					className: "mt-0.5 text-[11px] text-text-tertiary",
 					children: [
@@ -20517,7 +20544,7 @@ function nd({ row: e }) {
 						children: "Word-level diff"
 					}), /* @__PURE__ */ H("div", {
 						className: "mt-1.5",
-						children: /* @__PURE__ */ H(td, {
+						children: /* @__PURE__ */ H(rd, {
 							a: t?.response ?? "",
 							b: n?.response ?? ""
 						})
@@ -20527,8 +20554,8 @@ function nd({ row: e }) {
 		})
 	}) }) : null] });
 }
-function rd({ runA: e, runB: t, def: n }) {
-	let r = R(() => Qu(e, t, n), [
+function ad({ runA: e, runB: t, def: n }) {
+	let r = R(() => ed(e, t, n), [
 		e,
 		t,
 		n
@@ -20553,15 +20580,15 @@ function rd({ runA: e, runB: t, def: n }) {
 				className: "border-b border-border bg-surface-inset px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wide text-text-secondary",
 				children: "Δ"
 			})
-		] }) }), /* @__PURE__ */ H("tbody", { children: r.map((e) => /* @__PURE__ */ H(nd, { row: e }, e.nodeId)) })]
+		] }) }), /* @__PURE__ */ H("tbody", { children: r.map((e) => /* @__PURE__ */ H(id, { row: e }, e.nodeId)) })]
 	});
 }
 //#endregion
 //#region src/components/pipelines/PipelineRunComparePage.tsx
-function id(e) {
+function od(e) {
 	return e == null ? "—" : `${e > 0 ? "+" : ""}${ia(Math.abs(e))}`.replace(/^(\+|-)?/, e === 0 ? "" : e > 0 ? "+" : "-");
 }
-function ad(e) {
+function sd(e) {
 	switch (e) {
 		case "completed": return "success";
 		case "failed": return "danger";
@@ -20572,21 +20599,21 @@ function ad(e) {
 		default: return "neutral";
 	}
 }
-function od(e) {
+function cd(e) {
 	let t = /* @__PURE__ */ new Map();
 	if (!e) return t;
 	for (let n of e.nodes) n.data.type === "llm" && t.set(n.id, n.data.model);
 	return t;
 }
-function sd(e, t) {
+function ld(e, t) {
 	return Wl(Ul(Object.values(e.steps).filter((e) => !!e.llm).map((e) => ({
 		model: t.get(e.nodeId),
 		tokensIn: e.llm?.tokensIn ?? 0,
 		tokensOut: e.llm?.tokensOut ?? 0
 	}))).total);
 }
-function cd({ label: e, run: t, cost: n, testIdPrefix: r }) {
-	let i = ad(t.status);
+function ud({ label: e, run: t, cost: n, testIdPrefix: r }) {
+	let i = sd(t.status);
 	return /* @__PURE__ */ U("div", {
 		className: "flex flex-col gap-1.5 rounded-lg border border-border bg-surface p-3.5 text-xs",
 		"data-testid": `${r}-summary`,
@@ -20641,8 +20668,8 @@ function cd({ label: e, run: t, cost: n, testIdPrefix: r }) {
 		]
 	});
 }
-function ld() {
-	let { pipelineId: e, runIdA: t, runIdB: n } = it(), r = rt(), i = R(() => e ? Re(e) : null, [e]), a = R(() => e && t ? ke(e, t) : null, [e, t]), o = R(() => e && n ? ke(e, n) : null, [e, n]), s = R(() => od(i), [i]);
+function dd() {
+	let { pipelineId: e, runIdA: t, runIdB: n } = it(), r = rt(), i = R(() => e ? Re(e) : null, [e]), a = R(() => e && t ? ke(e, t) : null, [e, t]), o = R(() => e && n ? ke(e, n) : null, [e, n]), s = R(() => cd(i), [i]);
 	if (!e || !t || !n) return /* @__PURE__ */ H(nt, {
 		to: "/pipelines",
 		replace: !0
@@ -20668,7 +20695,7 @@ function ld() {
 			onAction: () => r(`/pipelines/${e}/runs`)
 		})
 	});
-	let c = (o.durationMs ?? 0) - (a.durationMs ?? 0), l = sd(a, s), u = sd(o, s), d = (/* @__PURE__ */ new Set([...Object.keys(a.steps), ...Object.keys(o.steps)])).size;
+	let c = (o.durationMs ?? 0) - (a.durationMs ?? 0), l = ld(a, s), u = ld(o, s), d = (/* @__PURE__ */ new Set([...Object.keys(a.steps), ...Object.keys(o.steps)])).size;
 	return /* @__PURE__ */ U("div", {
 		className: "flex flex-col gap-4 p-6 text-text-primary",
 		"data-testid": "run-compare",
@@ -20703,12 +20730,12 @@ function ld() {
 			}),
 			/* @__PURE__ */ U("div", {
 				className: "grid grid-cols-2 gap-3",
-				children: [/* @__PURE__ */ H(cd, {
+				children: [/* @__PURE__ */ H(ud, {
 					label: "Run A",
 					run: a,
 					cost: l,
 					testIdPrefix: "run-a"
-				}), /* @__PURE__ */ H(cd, {
+				}), /* @__PURE__ */ H(ud, {
 					label: "Run B",
 					run: o,
 					cost: u,
@@ -20725,7 +20752,7 @@ function ld() {
 					}),
 					/* @__PURE__ */ H("span", {
 						className: "font-mono text-[13px]",
-						children: id(c)
+						children: od(c)
 					}),
 					/* @__PURE__ */ H("span", { className: "flex-1" }),
 					/* @__PURE__ */ U("span", {
@@ -20739,7 +20766,7 @@ function ld() {
 					})
 				]
 			}),
-			/* @__PURE__ */ H(rd, {
+			/* @__PURE__ */ H(ad, {
 				runA: a,
 				runB: o,
 				def: i
@@ -20749,10 +20776,10 @@ function ld() {
 }
 //#endregion
 //#region src/components/pipelines/DiffMetadataHeader.tsx
-function ud(e) {
+function fd(e) {
 	return e === 0 ? "0ms" : `${e > 0 ? "+" : "-"}${ia(Math.abs(e))}`;
 }
-function dd(e) {
+function pd(e) {
 	switch (e) {
 		case "completed": return "success";
 		case "failed": return "danger";
@@ -20763,7 +20790,7 @@ function dd(e) {
 		default: return "neutral";
 	}
 }
-function fd({ runA: e, runB: t, costA: n, costB: i }) {
+function md({ runA: e, runB: t, costA: n, costB: i }) {
 	let a = e.durationMs ?? 0, o = (t.durationMs ?? 0) - a;
 	return /* @__PURE__ */ U("div", {
 		className: "flex flex-col gap-3",
@@ -20783,7 +20810,7 @@ function fd({ runA: e, runB: t, costA: n, costB: i }) {
 							className: "font-mono text-xs text-text-tertiary",
 							children: e.id.slice(0, 8)
 						}), /* @__PURE__ */ H(x, {
-							tone: dd(e.status),
+							tone: pd(e.status),
 							children: e.status
 						})]
 					}),
@@ -20818,7 +20845,7 @@ function fd({ runA: e, runB: t, costA: n, costB: i }) {
 							className: "font-mono text-xs text-text-tertiary",
 							children: t.id.slice(0, 8)
 						}), /* @__PURE__ */ H(x, {
-							tone: dd(t.status),
+							tone: pd(t.status),
 							children: t.status
 						})]
 					}),
@@ -20850,7 +20877,7 @@ function fd({ runA: e, runB: t, costA: n, costB: i }) {
 				}),
 				/* @__PURE__ */ H("span", {
 					className: r("font-mono text-sm font-bold", o === 0 ? "text-text-secondary" : o < 0 ? "text-success-fg" : "text-danger-fg"),
-					children: ud(o)
+					children: fd(o)
 				}),
 				/* @__PURE__ */ U("span", {
 					className: "text-[11px] text-text-tertiary",
@@ -20866,10 +20893,10 @@ function fd({ runA: e, runB: t, costA: n, costB: i }) {
 }
 //#endregion
 //#region src/components/pipelines/DiffStepTable.tsx
-function pd(e) {
+function hd(e) {
 	return e === 0 ? "0ms" : `${e > 0 ? "+" : "-"}${ia(Math.abs(e))}`;
 }
-function md(e) {
+function gd(e) {
 	switch (e) {
 		case "completed": return "success";
 		case "failed": return "danger";
@@ -20880,12 +20907,12 @@ function md(e) {
 		default: return "neutral";
 	}
 }
-function hd(e, t) {
+function _d(e, t) {
 	if (!e) return t;
 	let n = e.nodes.find((e) => e.id === t);
 	return n ? n.data.type === "condition" && n.data.label ? n.data.label : n.type.charAt(0).toUpperCase() + n.type.slice(1) : t;
 }
-function gd(e, t, n) {
+function vd(e, t, n) {
 	let r = /* @__PURE__ */ new Set(), i = [];
 	if (n) for (let a of n.nodes) (e.steps[a.id] || t.steps[a.id]) && (i.push(a.id), r.add(a.id));
 	for (let n of [...Object.keys(e.steps), ...Object.keys(t.steps)]) r.has(n) || (i.push(n), r.add(n));
@@ -20893,7 +20920,7 @@ function gd(e, t, n) {
 		let i = e.steps[r], a = t.steps[r], o = i?.durationMs, s = a?.durationMs, c = o != null && s != null ? s - o : void 0, l = !!i && !!a && i.status !== a.status, u = !!i && !a, d = !i && !!a, f = i?.llm ? i.llm.tokensIn + i.llm.tokensOut : void 0, p = a?.llm ? a.llm.tokensIn + a.llm.tokensOut : void 0, m = f != null && p != null ? p - f : void 0;
 		return {
 			nodeId: r,
-			name: hd(n, r),
+			name: _d(n, r),
 			a: i,
 			b: a,
 			durationDelta: c,
@@ -20904,8 +20931,8 @@ function gd(e, t, n) {
 		};
 	});
 }
-function _d({ runA: e, runB: t, def: n }) {
-	let i = R(() => gd(e, t, n), [
+function yd({ runA: e, runB: t, def: n }) {
+	let i = R(() => vd(e, t, n), [
 		e,
 		t,
 		n
@@ -20962,7 +20989,7 @@ function _d({ runA: e, runB: t, def: n }) {
 						className: "flex flex-col gap-0.5",
 						children: [
 							/* @__PURE__ */ H(x, {
-								tone: md(e.a.status),
+								tone: gd(e.a.status),
 								children: e.a.status
 							}),
 							/* @__PURE__ */ H("span", {
@@ -20990,7 +21017,7 @@ function _d({ runA: e, runB: t, def: n }) {
 						className: "flex flex-col gap-0.5",
 						children: [
 							/* @__PURE__ */ H(x, {
-								tone: md(e.b.status),
+								tone: gd(e.b.status),
 								children: e.b.status
 							}),
 							/* @__PURE__ */ H("span", {
@@ -21021,7 +21048,7 @@ function _d({ runA: e, runB: t, def: n }) {
 						}),
 						e.durationDelta != null && /* @__PURE__ */ H("div", {
 							className: r("text-xs", e.durationDelta === 0 ? "text-text-tertiary" : e.durationDelta < 0 ? "text-success-fg" : "text-danger-fg"),
-							children: pd(e.durationDelta)
+							children: hd(e.durationDelta)
 						}),
 						e.tokenDelta != null && e.tokenDelta !== 0 && /* @__PURE__ */ U("div", {
 							className: r("mt-0.5 text-[10px]", e.tokenDelta < 0 ? "text-success-fg" : "text-danger-fg"),
@@ -21043,12 +21070,12 @@ function _d({ runA: e, runB: t, def: n }) {
 }
 //#endregion
 //#region src/components/pipelines/DiffOutputViewer.tsx
-function vd(e, t) {
+function bd(e, t) {
 	if (!e) return t;
 	let n = e.nodes.find((e) => e.id === t);
 	return n ? n.data.type === "condition" && n.data.label ? n.data.label : n.type.charAt(0).toUpperCase() + n.type.slice(1) : t;
 }
-function yd(e, t = "", n = 0) {
+function xd(e, t = "", n = 0) {
 	let r = /* @__PURE__ */ new Map();
 	if (n > 6 || e == null) return r.set(t || "(root)", String(e)), r;
 	if (typeof e != "object") return r.set(t || "(root)", JSON.stringify(e)), r;
@@ -21056,7 +21083,7 @@ function yd(e, t = "", n = 0) {
 		if (e.length === 0) r.set(t || "(root)", "[]");
 		else for (let i = 0; i < e.length; i++) {
 			let a = t ? `${t}.${i}` : String(i);
-			for (let [t, o] of yd(e[i], a, n + 1)) r.set(t, o);
+			for (let [t, o] of xd(e[i], a, n + 1)) r.set(t, o);
 		}
 		return r;
 	}
@@ -21064,12 +21091,27 @@ function yd(e, t = "", n = 0) {
 	if (i.length === 0) r.set(t || "(root)", "{}");
 	else for (let [e, a] of i) {
 		let i = t ? `${t}.${e}` : e;
-		for (let [e, t] of yd(a, i, n + 1)) r.set(e, t);
+		for (let [e, t] of xd(a, i, n + 1)) r.set(e, t);
 	}
 	return r;
 }
-function bd(e, t) {
-	let n = yd(e), r = yd(t), i = /* @__PURE__ */ new Set([...n.keys(), ...r.keys()]), a = [];
+function Sd(e, t) {
+	let n = e.split("."), r = t.split("."), i = Math.min(n.length, r.length);
+	for (let e = 0; e < i; e++) {
+		let t = n[e], i = r[e];
+		if (t === i) continue;
+		let a = /^\d+$/.test(t), o = /^\d+$/.test(i);
+		if (a && o) {
+			let e = Number(t) - Number(i);
+			if (e !== 0) return e;
+			continue;
+		}
+		return a === o ? t.localeCompare(i) : a ? -1 : 1;
+	}
+	return n.length - r.length;
+}
+function Cd(e, t) {
+	let n = xd(e), r = xd(t), i = /* @__PURE__ */ new Set([...n.keys(), ...r.keys()]), a = [];
 	for (let e of i) {
 		let t = n.get(e), i = r.get(e);
 		t === void 0 ? a.push({
@@ -21100,17 +21142,17 @@ function bd(e, t) {
 	};
 	return a.sort((e, t) => {
 		let n = o[e.type] - o[t.type];
-		return n === 0 ? e.key.localeCompare(t.key) : n;
+		return n === 0 ? Sd(e.key, t.key) : n;
 	}), a;
 }
-var xd = {
+var wd = {
 	added: "bg-success-bg text-success-fg",
 	removed: "bg-danger-bg text-danger-fg line-through",
 	changed: "bg-warning-bg text-warning-fg",
 	unchanged: "text-text-tertiary"
 };
-function Sd({ nodeId: e, name: t, outputA: n, outputB: i }) {
-	let [a, o] = B(!1), s = R(() => bd(n, i), [n, i]), c = s.filter((e) => e.type !== "unchanged").length;
+function Td({ nodeId: e, name: t, outputA: n, outputB: i }) {
+	let [a, o] = B(!1), s = R(() => Cd(n, i), [n, i]), c = s.filter((e) => e.type !== "unchanged").length;
 	return c === 0 ? /* @__PURE__ */ U("div", {
 		className: "rounded-md bg-surface-inset px-3 py-2",
 		children: [/* @__PURE__ */ H("span", {
@@ -21155,7 +21197,7 @@ function Sd({ nodeId: e, name: t, outputA: n, outputB: i }) {
 		}), a && /* @__PURE__ */ H("div", {
 			className: "flex flex-col gap-0.5 px-3 py-2",
 			children: s.filter((e) => e.type !== "unchanged").map((e, t) => /* @__PURE__ */ U("div", {
-				className: r("flex items-baseline gap-2 rounded-sm px-2 py-0.5 font-mono text-[11px]", xd[e.type]),
+				className: r("flex items-baseline gap-2 rounded-sm px-2 py-0.5 font-mono text-[11px]", wd[e.type]),
 				children: [
 					/* @__PURE__ */ U("span", {
 						className: "min-w-[120px] shrink-0 font-semibold",
@@ -21184,7 +21226,7 @@ function Sd({ nodeId: e, name: t, outputA: n, outputB: i }) {
 		})]
 	});
 }
-function Cd({ runA: e, runB: t, def: n }) {
+function Ed({ runA: e, runB: t, def: n }) {
 	let r = R(() => {
 		let r = /* @__PURE__ */ new Set(), i = [];
 		if (n) for (let a of n.nodes) {
@@ -21207,9 +21249,9 @@ function Cd({ runA: e, runB: t, def: n }) {
 		children: "No step outputs to compare."
 	}) : /* @__PURE__ */ H("div", {
 		className: "flex flex-col gap-3",
-		children: r.map((r) => /* @__PURE__ */ H(Sd, {
+		children: r.map((r) => /* @__PURE__ */ H(Td, {
 			nodeId: r,
-			name: vd(n, r),
+			name: bd(n, r),
 			outputA: e.steps[r]?.output,
 			outputB: t.steps[r]?.output
 		}, r))
@@ -21217,20 +21259,20 @@ function Cd({ runA: e, runB: t, def: n }) {
 }
 //#endregion
 //#region src/components/pipelines/PipelineRunDiff.tsx
-function wd(e) {
+function Dd(e) {
 	let t = /* @__PURE__ */ new Map();
 	if (!e) return t;
 	for (let n of e.nodes) n.data.type === "llm" && t.set(n.id, n.data.model);
 	return t;
 }
-function Td(e, t) {
+function Od(e, t) {
 	return Wl(Ul(Object.values(e.steps).filter((e) => !!e.llm).map((e) => ({
 		model: t.get(e.nodeId),
 		tokensIn: e.llm?.tokensIn ?? 0,
 		tokensOut: e.llm?.tokensOut ?? 0
 	}))).total);
 }
-function Ed({ title: e, defaultOpen: t = !0, badge: n, children: r, testId: i }) {
+function kd({ title: e, defaultOpen: t = !0, badge: n, children: r, testId: i }) {
 	let [a, o] = B(t);
 	return /* @__PURE__ */ U("div", {
 		className: "overflow-hidden rounded-lg border border-border bg-surface",
@@ -21265,15 +21307,15 @@ function Ed({ title: e, defaultOpen: t = !0, badge: n, children: r, testId: i })
 		})]
 	});
 }
-var Dd = {
+var Ad = {
 	added: "bg-success-bg text-success-fg",
 	removed: "bg-danger-bg text-danger-fg line-through",
 	changed: "bg-warning-bg text-warning-fg",
 	unchanged: "text-text-tertiary"
 };
-function Od({ runA: e, runB: t }) {
-	let n = R(() => bd(e.context, t.context), [e.context, t.context]), i = n.filter((e) => e.type !== "unchanged").length;
-	return /* @__PURE__ */ H(Ed, {
+function jd({ runA: e, runB: t }) {
+	let n = R(() => Cd(e.context, t.context), [e.context, t.context]), i = n.filter((e) => e.type !== "unchanged").length;
+	return /* @__PURE__ */ H(kd, {
 		title: "Context evolution diff",
 		defaultOpen: !1,
 		badge: i > 0 ? `${i} difference${i === 1 ? "" : "s"}` : void 0,
@@ -21284,7 +21326,7 @@ function Od({ runA: e, runB: t }) {
 		}) : /* @__PURE__ */ H("div", {
 			className: "flex flex-col gap-0.5",
 			children: n.map((e, t) => /* @__PURE__ */ U("div", {
-				className: r("flex items-baseline gap-2 rounded-sm px-2 py-0.5 font-mono text-[11px]", Dd[e.type]),
+				className: r("flex items-baseline gap-2 rounded-sm px-2 py-0.5 font-mono text-[11px]", Ad[e.type]),
 				children: [
 					/* @__PURE__ */ U("span", {
 						className: "min-w-[160px] shrink-0 font-semibold",
@@ -21318,8 +21360,8 @@ function Od({ runA: e, runB: t }) {
 		})
 	});
 }
-function kd({ pipelineId: e, runIdA: t, runIdB: n }) {
-	let r = rt(), i = R(() => Re(e), [e]), a = R(() => ke(e, t), [e, t]), o = R(() => ke(e, n), [e, n]), s = R(() => wd(i), [i]);
+function Md({ pipelineId: e, runIdA: t, runIdB: n }) {
+	let r = rt(), i = R(() => Re(e), [e]), a = R(() => ke(e, t), [e, t]), o = R(() => ke(e, n), [e, n]), s = R(() => Dd(i), [i]);
 	if (!i) return /* @__PURE__ */ H("div", {
 		className: "p-8",
 		children: /* @__PURE__ */ H(w, {
@@ -21341,7 +21383,7 @@ function kd({ pipelineId: e, runIdA: t, runIdB: n }) {
 			onAction: () => r(`/pipelines/${e}/runs`)
 		})
 	});
-	let c = Td(a, s), l = Td(o, s);
+	let c = Od(a, s), l = Od(o, s);
 	return /* @__PURE__ */ U("div", {
 		className: "mx-auto flex w-full max-w-[1400px] flex-col gap-5 p-6 text-text-primary",
 		"data-testid": "pipeline-run-diff",
@@ -21373,49 +21415,49 @@ function kd({ pipelineId: e, runIdA: t, runIdB: n }) {
 					})
 				]
 			}),
-			/* @__PURE__ */ H(Ed, {
+			/* @__PURE__ */ H(kd, {
 				title: "Summary",
 				testId: "diff-summary-section",
-				children: /* @__PURE__ */ H(fd, {
+				children: /* @__PURE__ */ H(md, {
 					runA: a,
 					runB: o,
 					costA: c,
 					costB: l
 				})
 			}),
-			/* @__PURE__ */ H(Ed, {
+			/* @__PURE__ */ H(kd, {
 				title: "Step-by-step comparison",
 				badge: `${Object.keys(a.steps).length + Object.keys(o.steps).length > 0 ? "steps" : "0 steps"}`,
 				testId: "diff-steps-section",
-				children: /* @__PURE__ */ H(_d, {
+				children: /* @__PURE__ */ H(yd, {
 					runA: a,
 					runB: o,
 					def: i
 				})
 			}),
-			/* @__PURE__ */ H(Ed, {
+			/* @__PURE__ */ H(kd, {
 				title: "Output diff",
 				defaultOpen: !1,
 				testId: "diff-output-section",
-				children: /* @__PURE__ */ H(Cd, {
+				children: /* @__PURE__ */ H(Ed, {
 					runA: a,
 					runB: o,
 					def: i
 				})
 			}),
-			/* @__PURE__ */ H(Od, {
+			/* @__PURE__ */ H(jd, {
 				runA: a,
 				runB: o
 			})
 		]
 	});
 }
-function Ad() {
+function Nd() {
 	let { pipelineId: e } = it(), [t] = at(), n = t.get("a"), r = t.get("b");
 	return !e || !n || !r ? /* @__PURE__ */ H(nt, {
 		to: "/pipelines",
 		replace: !0
-	}) : /* @__PURE__ */ H(kd, {
+	}) : /* @__PURE__ */ H(Md, {
 		pipelineId: e,
 		runIdA: n,
 		runIdB: r
@@ -21423,7 +21465,7 @@ function Ad() {
 }
 //#endregion
 //#region src/components/pipelines/AllRunsPage.tsx
-function jd() {
+function Pd() {
 	let e = rt(), [t, n] = at(), [r, i] = B([]), { runs: a } = ve();
 	L(() => {
 		let e = !1;
@@ -21610,7 +21652,7 @@ function jd() {
 }
 //#endregion
 //#region src/components/pipelines/PipelineStatsPage.tsx
-function Md(e) {
+function Fd(e) {
 	let t = 0, n = 0;
 	for (let r of Object.values(e.steps ?? {})) r.llm && (t += r.llm.tokensIn ?? 0, n += r.llm.tokensOut ?? 0);
 	return {
@@ -21618,13 +21660,13 @@ function Md(e) {
 		tokensOut: n
 	};
 }
-function Nd(e) {
+function Id(e) {
 	let t = /* @__PURE__ */ new Map();
 	if (!e) return t;
 	for (let n of e.nodes) n.data.type === "llm" && t.set(n.id, n.data.model);
 	return t;
 }
-function Pd(e, t) {
+function Ld(e, t) {
 	let n = [];
 	for (let r of Object.values(e.steps ?? {})) r.llm && n.push({
 		model: t.get(r.nodeId),
@@ -21633,29 +21675,31 @@ function Pd(e, t) {
 	});
 	return Ul(n).total.totalCostUsd;
 }
-function Fd(e, t) {
-	return e.length === 0 ? 0 : e[Math.min(e.length - 1, Math.floor(e.length * t))];
+function Rd(e, t) {
+	if (e.length === 0) return 0;
+	let n = Math.ceil(e.length * t);
+	return e[Math.min(e.length - 1, Math.max(0, n - 1))];
 }
-function Id(e) {
+function zd(e) {
 	return e < .01 ? `$${e.toFixed(4)}` : e < 1 ? `$${e.toFixed(3)}` : `$${e.toFixed(2)}`;
 }
-function Ld(e) {
+function Bd(e) {
 	let t = typeof e == "number" ? e : Number(e);
 	return Number.isFinite(t) ? `$${t.toFixed(4).replace(/\.?0+$/, "")}` : "$0";
 }
-function Rd(e) {
+function Vd(e) {
 	return e.slice(0, 8);
 }
-function zd(e) {
+function Hd(e) {
 	let t = Date.now() - new Date(e).getTime();
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : t < 2592e5 ? `${Math.floor(t / 864e5)}d ago` : new Date(e).toLocaleDateString();
 }
-function Bd(e, t) {
+function Ud(e, t) {
 	let n = e.length, r = 0, i = 0, a = 0, o = [], s = 0, c = 0, l = 0, u = /* @__PURE__ */ new Map();
 	for (let n of e) {
 		n.status === "completed" ? r++ : n.status === "failed" ? i++ : n.status === "cancelled" && a++, typeof n.durationMs == "number" && n.durationMs > 0 && o.push(n.durationMs);
-		let e = Md(n);
-		if (s += e.tokensIn, c += e.tokensOut, l += Pd(n, t), n.error?.message) {
+		let e = Fd(n);
+		if (s += e.tokensIn, c += e.tokensOut, l += Ld(n, t), n.error?.message) {
 			let e = n.error.message.slice(0, 48), t = u.get(e);
 			t ? (t.count += 1, n.startedAt > t.lastSeenAt && (t.lastSeenAt = n.startedAt, t.exampleRunId = n.id)) : u.set(e, {
 				count: 1,
@@ -21665,7 +21709,7 @@ function Bd(e, t) {
 		}
 	}
 	o.sort((e, t) => e - t);
-	let d = Fd(o, .5), f = Fd(o, .95), p = n === 0 ? 0 : Math.round(r / n * 100), m = [...u.entries()].map(([e, t]) => ({
+	let d = Rd(o, .5), f = Rd(o, .95), p = r + i + a, m = p === 0 ? 0 : Math.round(r / p * 100), h = [...u.entries()].map(([e, t]) => ({
 		key: e,
 		count: t.count,
 		lastSeenAt: t.lastSeenAt,
@@ -21676,7 +21720,8 @@ function Bd(e, t) {
 		completedCount: r,
 		failedCount: i,
 		cancelledCount: a,
-		successRatePct: p,
+		finishedCount: p,
+		successRatePct: m,
 		medianMs: d,
 		p95Ms: f,
 		tokensIn: s,
@@ -21684,13 +21729,13 @@ function Bd(e, t) {
 		tokensPerRun: n === 0 ? 0 : Math.round((s + c) / n),
 		totalCost: l,
 		costPerRun: n === 0 ? 0 : l / n,
-		failureBreakdown: m
+		failureBreakdown: h
 	};
 }
-function Vd(e) {
+function Wd(e) {
 	return e >= 90 ? "var(--color-success)" : e >= 70 ? "var(--color-warning)" : "var(--color-danger)";
 }
-function Hd(e) {
+function Gd(e) {
 	let t = [...e].sort((e, t) => e.startedAt.localeCompare(t.startedAt)), n = [], r = [], i = [], a = 0, o = 0, s = 0;
 	for (let e of t) {
 		let t = new Date(e.startedAt).getTime();
@@ -21723,7 +21768,7 @@ function Hd(e) {
 		}
 	];
 }
-function Ud(e, t) {
+function Kd(e, t) {
 	let n = [...e].sort((e, t) => e.startedAt.localeCompare(t.startedAt)).filter((e) => typeof e.durationMs == "number" && e.durationMs > 0).map((e) => ({
 		x: new Date(e.startedAt).getTime(),
 		y: e.durationMs
@@ -21741,10 +21786,10 @@ function Ud(e, t) {
 		color: "var(--color-text-tertiary)"
 	}];
 }
-function Wd(e) {
+function qd(e) {
 	let t = [...e].sort((e, t) => e.startedAt.localeCompare(t.startedAt)), n = [], r = [];
 	for (let e of t) {
-		let t = new Date(e.startedAt).getTime(), { tokensIn: i, tokensOut: a } = Md(e);
+		let t = new Date(e.startedAt).getTime(), { tokensIn: i, tokensOut: a } = Fd(e);
 		n.push({
 			x: t,
 			y: i
@@ -21763,7 +21808,7 @@ function Wd(e) {
 		color: "var(--color-success)"
 	}];
 }
-function Gd() {
+function Jd() {
 	let { pipelineId: e } = it(), t = rt(), [n, i] = B(null), [a, o] = B([]), [s, c] = B("50");
 	L(() => {
 		e && (i(Re(e)), o(Ue(e)));
@@ -21772,7 +21817,7 @@ function Gd() {
 		if (s === "all") return a;
 		let e = Number(s);
 		return a.slice(0, e);
-	}, [a, s]), u = R(() => Nd(n), [n]), d = R(() => Bd(l, u), [l, u]), f = R(() => ql(l, n).filter((e) => e.totalCostUsd > 0 || e.stepCount > 0), [l, n]), p = R(() => Xl(a, n, 30), [a, n]), m = R(() => [{
+	}, [a, s]), u = R(() => Id(n), [n]), d = R(() => Ud(l, u), [l, u]), f = R(() => ql(l, n).filter((e) => e.totalCostUsd > 0 || e.stepCount > 0), [l, n]), p = R(() => Xl(a, n, 30), [a, n]), m = R(() => [{
 		label: "Daily spend",
 		data: p.map((e) => ({
 			x: e.ts,
@@ -21841,18 +21886,11 @@ function Gd() {
 								className: "text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]",
 								children: "Success rate"
 							}),
-							/* @__PURE__ */ U("div", {
+							/* @__PURE__ */ H("div", {
 								className: "text-[22px] font-bold font-mono",
-								style: { color: Vd(d.successRatePct) },
+								style: { color: d.finishedCount === 0 ? "var(--color-text-tertiary)" : Wd(d.successRatePct) },
 								"data-testid": "stats-success-rate",
-								children: [
-									d.completedCount,
-									"/",
-									d.totalCount,
-									" (",
-									d.successRatePct,
-									"%)"
-								]
+								children: d.finishedCount === 0 ? "—" : `${d.completedCount}/${d.finishedCount} (${d.successRatePct}%)`
 							}),
 							/* @__PURE__ */ U("div", {
 								className: "text-xs text-text-tertiary font-mono",
@@ -21860,7 +21898,8 @@ function Gd() {
 									d.failedCount,
 									" failed · ",
 									d.cancelledCount,
-									" cancelled"
+									" cancelled",
+									d.totalCount > d.finishedCount ? ` · ${d.totalCount - d.finishedCount} in flight` : ""
 								]
 							})
 						]
@@ -21912,11 +21951,11 @@ function Gd() {
 							}),
 							/* @__PURE__ */ H("div", {
 								className: "text-[22px] font-bold text-text-primary font-mono",
-								children: Id(d.totalCost)
+								children: zd(d.totalCost)
 							}),
 							/* @__PURE__ */ U("div", {
 								className: "text-xs text-text-tertiary font-mono",
-								children: [Id(d.costPerRun), " avg per run"]
+								children: [zd(d.costPerRun), " avg per run"]
 							})
 						]
 					})
@@ -21943,7 +21982,7 @@ function Gd() {
 						yKey: "cost",
 						height: 200,
 						color: "#646cff",
-						yFormat: Ld
+						yFormat: Bd
 					})]
 				}), /* @__PURE__ */ U("div", {
 					className: "bg-surface border border-border rounded-lg p-4 flex flex-col gap-2 min-w-0",
@@ -21958,7 +21997,7 @@ function Gd() {
 							month: "short",
 							day: "numeric"
 						}),
-						yFormat: Ld
+						yFormat: Bd
 					})]
 				})]
 			}),
@@ -21971,7 +22010,7 @@ function Gd() {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Runs over time (cumulative)"
 						}), /* @__PURE__ */ H(y, {
-							series: Hd(l),
+							series: Gd(l),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString()
 						})]
@@ -21982,7 +22021,7 @@ function Gd() {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Duration over time"
 						}), /* @__PURE__ */ H(y, {
-							series: Ud(l, d.medianMs),
+							series: Kd(l, d.medianMs),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString(),
 							yFormat: (e) => ia(e)
@@ -21994,7 +22033,7 @@ function Gd() {
 							className: "text-[13px] font-semibold text-text-primary",
 							children: "Token usage over time"
 						}), /* @__PURE__ */ H(y, {
-							series: Wd(l),
+							series: qd(l),
 							height: 180,
 							xFormat: (e) => new Date(Number(e)).toLocaleDateString(),
 							yFormat: (e) => e.toLocaleString()
@@ -22036,7 +22075,7 @@ function Gd() {
 									}),
 									/* @__PURE__ */ H("td", {
 										className: "px-2 py-1.5 text-text-secondary",
-										children: zd(n.lastSeenAt)
+										children: Hd(n.lastSeenAt)
 									}),
 									/* @__PURE__ */ H("td", {
 										className: "px-2 py-1.5",
@@ -22044,7 +22083,7 @@ function Gd() {
 											type: "button",
 											onClick: () => t(`/pipelines/${e}/runs/${n.exampleRunId}`),
 											className: "bg-transparent border-none text-primary cursor-pointer text-xs font-mono p-0",
-											children: [Rd(n.exampleRunId), " →"]
+											children: [Vd(n.exampleRunId), " →"]
 										})
 									})
 								]
@@ -22062,7 +22101,7 @@ function Gd() {
 }
 //#endregion
 //#region src/components/pipelines/PendingApprovalsPage.tsx
-function Kd(e) {
+function Yd(e) {
 	let t = new Date(e).getTime();
 	if (!Number.isFinite(t) || t <= 0) return "—";
 	let n = Math.floor((Date.now() - t) / 1e3);
@@ -22073,10 +22112,10 @@ function Kd(e) {
 	let i = Math.floor(r / 60);
 	return i < 24 ? `${i}h ago` : `${Math.floor(i / 24)}d ago`;
 }
-function qd(e) {
+function Xd(e) {
 	return e.length <= 6 ? e : e.slice(-6);
 }
-function Jd({ approver: e, idx: t }) {
+function Zd({ approver: e, idx: t }) {
 	let n = e.type === "role" ? "🎖" : "👤";
 	return /* @__PURE__ */ U("span", {
 		className: "inline-flex items-center gap-1 bg-info-bg text-info-fg px-2 py-0.5 rounded-sm text-[11px] font-semibold leading-[1.4] whitespace-nowrap",
@@ -22086,7 +22125,7 @@ function Jd({ approver: e, idx: t }) {
 		}), /* @__PURE__ */ H("span", { children: e.value })]
 	}, `${e.type}:${e.value}:${t}`);
 }
-function Yd(e, t) {
+function Qd(e, t) {
 	let n = [];
 	if (e) {
 		let t = e.steps;
@@ -22115,10 +22154,10 @@ function Yd(e, t) {
 	}
 	return n;
 }
-function Xd({ row: e, onSubmit: t, onOpenPipeline: n }) {
+function $d({ row: e, onSubmit: t, onOpenPipeline: n }) {
 	let [r, i] = B(""), a = I((e) => {
 		t(e, r.trim()), i("");
-	}, [r, t]), o = e.requiredCount ?? 1, s = e.recordedCount ?? 0, c = R(() => Yd(e.runContext, e.runSteps), [e.runContext, e.runSteps]);
+	}, [r, t]), o = e.requiredCount ?? 1, s = e.recordedCount ?? 0, c = R(() => Qd(e.runContext, e.runSteps), [e.runContext, e.runSteps]);
 	return /* @__PURE__ */ U("div", {
 		"data-testid": `approval-card-${e.runId}`,
 		className: "flex flex-col gap-3 p-4 bg-surface border border-border rounded-[10px]",
@@ -22142,12 +22181,12 @@ function Xd({ row: e, onSubmit: t, onOpenPipeline: n }) {
 							children: e.pipelineName
 						}), /* @__PURE__ */ U("div", {
 							className: "font-mono text-[11px] text-text-tertiary",
-							children: ["run #", qd(e.runId)]
+							children: ["run #", Xd(e.runId)]
 						})]
 					})]
 				}), /* @__PURE__ */ H("span", {
 					className: "text-xs text-text-tertiary whitespace-nowrap",
-					children: Kd(e.requestedAt)
+					children: Yd(e.requestedAt)
 				})]
 			}),
 			e.message ? /* @__PURE__ */ H("div", {
@@ -22229,7 +22268,7 @@ function Xd({ row: e, onSubmit: t, onOpenPipeline: n }) {
 					e.approvers.length === 0 ? /* @__PURE__ */ H("span", {
 						className: "text-[11px] text-text-tertiary",
 						children: "(anyone)"
-					}) : e.approvers.map((e, t) => /* @__PURE__ */ H(Jd, {
+					}) : e.approvers.map((e, t) => /* @__PURE__ */ H(Zd, {
 						approver: e,
 						idx: t
 					}, t)),
@@ -22271,7 +22310,7 @@ function Xd({ row: e, onSubmit: t, onOpenPipeline: n }) {
 		]
 	});
 }
-function Zd() {
+function ef() {
 	let e = rt(), { approvals: t, isLoading: n, error: r, retry: i } = _e(), { resolveApproval: a, runs: o } = ve(), [s, c] = B(() => /* @__PURE__ */ new Set());
 	L(() => {
 		if (s.size === 0) return;
@@ -22389,7 +22428,7 @@ function Zd() {
 			}) : /* @__PURE__ */ H("div", {
 				"data-testid": "approvals-list",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
-				children: m.map((t) => /* @__PURE__ */ H(Xd, {
+				children: m.map((t) => /* @__PURE__ */ H($d, {
 					row: t,
 					onOpenPipeline: () => e(`/pipelines/${t.pipelineId}`),
 					onSubmit: (e, n) => h(t.pipelineId, t.runId, t.stepId, e, n)
@@ -22400,7 +22439,7 @@ function Zd() {
 }
 //#endregion
 //#region src/components/pipelines/vision/VisionRunCard.tsx
-function Qd({ status: e, result: t, runId: n, endpointLabel: i, error: a, latencyMs: o, onOpen: s, className: c }) {
+function tf({ status: e, result: t, runId: n, endpointLabel: i, error: a, latencyMs: o, onOpen: s, className: c }) {
 	let l = i ?? t?.model?.endpointId ?? "vision-model", u = o ?? t?.model?.latencyMs, d = t?.caption, f = (t?.tags ?? []).slice(0, 5), p = /* @__PURE__ */ U(V, { children: [
 		/* @__PURE__ */ U("header", {
 			className: "flex flex-wrap items-center gap-2",
@@ -22465,7 +22504,7 @@ function Qd({ status: e, result: t, runId: n, endpointLabel: i, error: a, latenc
 }
 //#endregion
 //#region src/components/pipelines/vision/useVisionResults.ts
-function $d(e = {}) {
+function nf(e = {}) {
 	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(!0);
 	return L(() => (a.current = !0, () => {
 		a.current = !1;
@@ -22526,11 +22565,11 @@ function $d(e = {}) {
 }
 //#endregion
 //#region src/components/pipelines/judge/VerdictPanel.tsx
-function ef(e) {
+function rf(e) {
 	return e === "pass" ? "success" : e === "fail" ? "danger" : "warning";
 }
-function tf({ result: e, className: t }) {
-	let n = ef(e.overallVerdict), i = n === "success" ? "PASS" : n === "danger" ? "FAIL" : "INCONCLUSIVE", a = e.rubricSnapshot.passThreshold ?? .5;
+function af({ result: e, className: t }) {
+	let n = rf(e.overallVerdict), i = n === "success" ? "PASS" : n === "danger" ? "FAIL" : "INCONCLUSIVE", a = e.rubricSnapshot.passThreshold ?? .5;
 	return /* @__PURE__ */ U("section", {
 		className: r("flex flex-col gap-2 rounded-lg border border-border bg-surface p-3", t),
 		children: [/* @__PURE__ */ U("div", {
@@ -22595,7 +22634,7 @@ function tf({ result: e, className: t }) {
 }
 //#endregion
 //#region src/components/pipelines/judge/CriteriaPanel.tsx
-function nf({ result: e, className: t }) {
+function of({ result: e, className: t }) {
 	if (!e.criteria || e.criteria.length === 0) return null;
 	let n = /* @__PURE__ */ new Map();
 	for (let t of e.rubricSnapshot.criteria) n.set(t.id, t);
@@ -22610,14 +22649,14 @@ function nf({ result: e, className: t }) {
 			]
 		}), /* @__PURE__ */ H("ul", {
 			className: "flex flex-col gap-1.5",
-			children: e.criteria.map((e) => /* @__PURE__ */ H(rf, {
+			children: e.criteria.map((e) => /* @__PURE__ */ H(sf, {
 				score: e,
 				def: n.get(e.criterionId)
 			}, e.criterionId))
 		})]
 	});
 }
-function rf({ score: e, def: t }) {
+function sf({ score: e, def: t }) {
 	let n = e.passed ? "success" : "danger", r = e.passed ? "PASS" : "FAIL", i = t?.scale ?? "0-1";
 	return /* @__PURE__ */ U("li", {
 		className: "flex flex-col gap-1.5 rounded-lg border border-border bg-surface p-2.5",
@@ -22672,20 +22711,20 @@ function rf({ score: e, def: t }) {
 }
 //#endregion
 //#region src/components/pipelines/judge/JudgmentApiContext.tsx
-var af = Qe(null);
-function of({ value: e, children: t }) {
-	return /* @__PURE__ */ H(af.Provider, {
+var cf = Qe(null);
+function lf({ value: e, children: t }) {
+	return /* @__PURE__ */ H(cf.Provider, {
 		value: e,
 		children: t
 	});
 }
-function sf() {
-	return et(af);
+function uf() {
+	return et(cf);
 }
 //#endregion
 //#region src/components/pipelines/judge/JudgmentResultViewer.tsx
-function cf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata: i = !0, showRawText: a = !1, className: o }) {
-	let s = sf(), [c, l] = B(!1), [u, d] = B(null), [f, p] = B(!1), [m, h] = B(null), g = z(!0), _ = z(null);
+function df({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata: i = !0, showRawText: a = !1, className: o }) {
+	let s = uf(), [c, l] = B(!1), [u, d] = B(null), [f, p] = B(!1), [m, h] = B(null), g = z(!0), _ = z(null);
 	L(() => (g.current = !0, () => {
 		g.current = !1;
 	}), []), L(() => {
@@ -22712,8 +22751,8 @@ function cf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 	return /* @__PURE__ */ U("div", {
 		className: r("flex w-full flex-col gap-3 text-text-primary", o),
 		children: [
-			t ? /* @__PURE__ */ H(tf, { result: e }) : null,
-			n ? /* @__PURE__ */ H(nf, { result: e }) : null,
+			t ? /* @__PURE__ */ H(af, { result: e }) : null,
+			n ? /* @__PURE__ */ H(of, { result: e }) : null,
 			i ? /* @__PURE__ */ U("section", {
 				className: "flex flex-wrap items-center gap-2 text-[11px] text-text-tertiary",
 				children: [
@@ -22767,7 +22806,7 @@ function cf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 					className: "self-start text-[11px] font-medium text-text-tertiary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded",
 					"aria-expanded": c,
 					children: [c ? "▾" : "▸", " Raw model output"]
-				}), c ? /* @__PURE__ */ H(lf, {
+				}), c ? /* @__PURE__ */ H(ff, {
 					text: v,
 					loading: f,
 					error: m,
@@ -22777,7 +22816,7 @@ function cf({ result: e, showVerdict: t = !0, showCriteria: n = !0, showMetadata
 		]
 	});
 }
-function lf({ text: e, loading: t, error: n, fallbackHint: r }) {
+function ff({ text: e, loading: t, error: n, fallbackHint: r }) {
 	return t ? /* @__PURE__ */ H("div", {
 		className: "rounded-lg border border-border bg-surface-panel p-2 text-[11px] text-text-tertiary",
 		children: "Loading raw text…"
@@ -22794,7 +22833,7 @@ function lf({ text: e, loading: t, error: n, fallbackHint: r }) {
 }
 //#endregion
 //#region src/components/pipelines/judge/AggregateSummaryCard.tsx
-function uf({ aggregate: e, className: t }) {
+function pf({ aggregate: e, className: t }) {
 	let n = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, i = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, a = n >= .9 ? "success" : n >= .6 ? "warning" : "danger", o = a === "success" ? "HEALTHY" : a === "warning" ? "MIXED" : "FAILING";
 	return /* @__PURE__ */ U("section", {
 		className: r("flex flex-col gap-2 rounded-lg border border-border bg-surface p-3", t),
@@ -22885,7 +22924,7 @@ function uf({ aggregate: e, className: t }) {
 }
 //#endregion
 //#region src/components/pipelines/judge/JudgmentTrendChart.tsx
-function df({ aggregates: e, sortOrder: t = "desc", caption: n, loading: i = !1, className: o }) {
+function mf({ aggregates: e, sortOrder: t = "desc", caption: n, loading: i = !1, className: o }) {
 	let s = R(() => {
 		let n = e.slice();
 		return n.sort((e, t) => e.dayBucket.localeCompare(t.dayBucket)), t === "desc" && n.reverse(), n;
@@ -22969,12 +23008,12 @@ function df({ aggregates: e, sortOrder: t = "desc", caption: n, loading: i = !1,
 							children: "cost"
 						})
 					]
-				}) }), /* @__PURE__ */ H("tbody", { children: s.map((e) => /* @__PURE__ */ H(ff, { row: e }, e.aggregateKey)) })]
+				}) }), /* @__PURE__ */ H("tbody", { children: s.map((e) => /* @__PURE__ */ H(hf, { row: e }, e.aggregateKey)) })]
 			})
 		]
 	});
 }
-function ff({ row: e }) {
+function hf({ row: e }) {
 	let t = e.numJudgments > 0 ? e.numPassed / e.numJudgments : 0, n = e.numJudgments > 0 ? e.sumOverallScore / e.numJudgments : 0, r = t >= .9 ? "success" : t >= .6 ? "warning" : "danger";
 	return /* @__PURE__ */ U("tr", {
 		className: "border-t border-border",
@@ -23008,7 +23047,7 @@ function ff({ row: e }) {
 }
 //#endregion
 //#region src/components/pipelines/judge/useJudgmentResults.ts
-function pf(e) {
+function gf(e) {
 	if (typeof e == "number") return e;
 	if (typeof e == "string") {
 		let t = Date.parse(e);
@@ -23016,7 +23055,7 @@ function pf(e) {
 	}
 	return Date.now();
 }
-function mf(e = {}) {
+function _f(e = {}) {
 	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(!0);
 	return L(() => (a.current = !0, () => {
 		a.current = !1;
@@ -23030,7 +23069,7 @@ function mf(e = {}) {
 		if (!s || typeof s.runId != "string" || typeof s.stepId != "string" || n && s.runId !== n) return;
 		let c = `${s.runId}::${s.stepId}`;
 		i((e) => {
-			let n = e.findIndex((e) => `${e.runId}::${e.stepId}` === c), r = n === -1 ? void 0 : n, i = pf(s.at), a = (n) => {
+			let n = e.findIndex((e) => `${e.runId}::${e.stepId}` === c), r = n === -1 ? void 0 : n, i = gf(s.at), a = (n) => {
 				if (typeof r == "number" && r >= 0 && r < e.length) {
 					let t = e.slice();
 					return t[r] = {
@@ -23099,8 +23138,8 @@ function mf(e = {}) {
 }
 //#endregion
 //#region src/components/pipelines/judge/useJudgmentAggregates.ts
-function hf(e) {
-	let t = sf(), [n, r] = B([]), [i, a] = B(!1), [o, s] = B(null), c = z(!0), l = z(() => {}), { pipelineId: u, rubricId: d, since: f, until: p, limit: m, refreshIntervalMs: h = 0, paused: g = !1 } = e, _ = `${u ?? ""}|${d ?? ""}|${f ?? ""}|${p ?? ""}|${m ?? ""}|${g ? "1" : "0"}`;
+function vf(e) {
+	let t = uf(), [n, r] = B([]), [i, a] = B(!1), [o, s] = B(null), c = z(!0), l = z(() => {}), { pipelineId: u, rubricId: d, since: f, until: p, limit: m, refreshIntervalMs: h = 0, paused: g = !1 } = e, _ = `${u ?? ""}|${d ?? ""}|${f ?? ""}|${p ?? ""}|${m ?? ""}|${g ? "1" : "0"}`;
 	return L(() => (c.current = !0, () => {
 		c.current = !1;
 	}), []), L(() => {
@@ -23158,8 +23197,8 @@ function hf(e) {
 }
 //#endregion
 //#region src/components/pipelines/lineage/ImageLineageGraph.tsx
-var gf = 100, _f = 500, vf = 148, yf = 116;
-function bf(e) {
+var yf = 100, bf = 500, xf = 148, Sf = 116;
+function Cf(e) {
 	let t = new Map(e.map((e) => [e.imageId, e])), n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	for (let t of e) if (t.parentImageId) {
 		let e = r.get(t.parentImageId) ?? [];
@@ -23192,7 +23231,7 @@ function bf(e) {
 	}
 	return s;
 }
-function xf(e, t) {
+function wf(e, t) {
 	let n = new Map(t.map((e) => [e.imageId, e])), r = /* @__PURE__ */ new Set(), i = [e];
 	for (; i.length;) {
 		let e = i.shift();
@@ -23203,7 +23242,7 @@ function xf(e, t) {
 	}
 	return r;
 }
-function Sf({ src: e, alt: t, testId: n }) {
+function Tf({ src: e, alt: t, testId: n }) {
 	let r = z(null), [i, a] = B(!1);
 	return L(() => {
 		if (!r.current) return;
@@ -23231,7 +23270,7 @@ function Sf({ src: e, alt: t, testId: n }) {
 		})
 	});
 }
-function Cf({ data: e }) {
+function Ef({ data: e }) {
 	let { entry: t, highlighted: n, selected: i, onSelect: a, getImageUrl: o } = e, s = t.width && t.height ? `${t.width}×${t.height}` : "", c = t.producedByNodeKind;
 	return /* @__PURE__ */ U(V, { children: [
 		/* @__PURE__ */ H(W, {
@@ -23248,7 +23287,7 @@ function Cf({ data: e }) {
 			"data-testid": `lineage-node-${t.imageId}`,
 			children: [/* @__PURE__ */ H("div", {
 				className: "flex-1 min-h-0 overflow-hidden bg-surface-inset flex items-center justify-center",
-				children: /* @__PURE__ */ H(Sf, {
+				children: /* @__PURE__ */ H(Tf, {
 					src: o(t.imageId),
 					alt: `Artifact ${t.imageId.slice(0, 8)}`,
 					testId: `lineage-thumb-${t.imageId}`
@@ -23273,15 +23312,15 @@ function Cf({ data: e }) {
 		})
 	] });
 }
-var wf = { lineageNode: Cf };
-function Tf() {
+var Df = { lineageNode: Ef };
+function Of() {
 	return /* @__PURE__ */ H("div", {
 		className: "flex items-center justify-center h-full text-text-tertiary text-sm",
 		"data-testid": "lineage-graph-empty",
 		children: "No image artifacts produced by this run."
 	});
 }
-function Ef(e, t) {
+function kf(e, t) {
 	if (e.length <= t) return e;
 	let n = e.map((e, t) => ({
 		e,
@@ -23292,10 +23331,10 @@ function Ef(e, t) {
 		return r === n ? t.i - e.i : r - n;
 	}), n.slice(0, t).map((e) => e.e);
 }
-function Df(e) {
+function Af(e) {
 	return e.length > 10 ? `${e.slice(0, 8)}…` : e;
 }
-function Of({ navEntries: e, imageId: t, onClose: n, onNavigate: i, getImageUrl: a }) {
+function jf({ navEntries: e, imageId: t, onClose: n, onNavigate: i, getImageUrl: a }) {
 	let o = e.find((e) => e.imageId === t), [s, c] = B(!1), l = z(null);
 	L(() => () => {
 		l.current && clearTimeout(l.current);
@@ -23325,7 +23364,7 @@ function Of({ navEntries: e, imageId: t, onClose: n, onNavigate: i, getImageUrl:
 	return /* @__PURE__ */ H(S, {
 		open: !0,
 		onClose: n,
-		title: `Artifact ${Df(o.imageId)}`,
+		title: `Artifact ${Af(o.imageId)}`,
 		maxWidth: 760,
 		rawChildren: !0,
 		backdropTestId: "lineage-preview-backdrop",
@@ -23356,7 +23395,7 @@ function Of({ navEntries: e, imageId: t, onClose: n, onNavigate: i, getImageUrl:
 						size: "sm",
 						mono: !0,
 						title: o.imageId,
-						children: ["id: ", Df(o.imageId)]
+						children: ["id: ", Af(o.imageId)]
 					}),
 					/* @__PURE__ */ H(g, {
 						"aria-label": s ? "Image id copied" : "Copy image id",
@@ -23382,19 +23421,19 @@ function Of({ navEntries: e, imageId: t, onClose: n, onNavigate: i, getImageUrl:
 						size: "sm",
 						mono: !0,
 						title: o.producedByStepId,
-						children: ["step: ", Df(o.producedByStepId)]
+						children: ["step: ", Af(o.producedByStepId)]
 					})
 				]
 			})]
 		})
 	});
 }
-function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i = gf }) {
-	let a = Pe(), [o, s] = B(!1), [c, l] = B(!1), [u, d] = B(null), f = e.length, p = !o && f > i, m = R(() => p ? Ef(e, i) : e, [
+function Mf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i = yf }) {
+	let a = Pe(), [o, s] = B(!1), [c, l] = B(!1), [u, d] = B(null), f = e.length, p = !o && f > i, m = R(() => p ? kf(e, i) : e, [
 		e,
 		p,
 		i
-	]), h = R(() => t ? xf(t, m) : /* @__PURE__ */ new Set(), [t, m]), g = R(() => bf(m), [m]), _ = I((e) => {
+	]), h = R(() => t ? wf(t, m) : /* @__PURE__ */ new Set(), [t, m]), g = R(() => Cf(m), [m]), _ = I((e) => {
 		n?.(e), d(e);
 	}, [n]), y = R(() => m.map((e) => {
 		let n = g.get(e.imageId) ?? {
@@ -23413,8 +23452,8 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 				getImageUrl: a
 			},
 			style: {
-				width: vf,
-				height: yf
+				width: xf,
+				height: Sf
 			}
 		};
 	}), [
@@ -23437,7 +23476,7 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 	]), [S, , w] = gt(y), [T, , E] = mt(x), D = I((e, t) => {
 		_(t.id);
 	}, [_]), O = I(() => {
-		f > _f ? l(!0) : s(!0);
+		f > bf ? l(!0) : s(!0);
 	}, [f]), k = I(() => {
 		s(!0), l(!1);
 	}, []), A = I(() => {
@@ -23449,7 +23488,7 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 			return n === r ? e.imageId.localeCompare(t.imageId) : n - r;
 		}), e;
 	}, [m]), j = I(() => d(null), []), te = I((e) => d(e), []);
-	return f === 0 ? /* @__PURE__ */ H(Tf, {}) : /* @__PURE__ */ U("div", {
+	return f === 0 ? /* @__PURE__ */ H(Of, {}) : /* @__PURE__ */ U("div", {
 		className: "relative w-full h-full flex flex-col",
 		"data-testid": "lineage-graph",
 		children: [
@@ -23484,7 +23523,7 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 					onNodesChange: w,
 					onEdgesChange: E,
 					onNodeClick: D,
-					nodeTypes: wf,
+					nodeTypes: Df,
 					fitView: !0,
 					fitViewOptions: { padding: .2 },
 					minZoom: .3,
@@ -23510,7 +23549,7 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 				confirmLabel: "Show all",
 				tone: "caution"
 			}),
-			u && /* @__PURE__ */ H(Of, {
+			u && /* @__PURE__ */ H(jf, {
 				navEntries: ee,
 				imageId: u,
 				onClose: j,
@@ -23522,22 +23561,22 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 }
 //#endregion
 //#region src/components/pipelines/lineage/useImageLineage.ts
-var Af = /* @__PURE__ */ new Map(), jf = 6e4, Mf = /* @__PURE__ */ new Map();
-function Nf(e) {
-	let t = Af.get(e);
-	return t ? Date.now() - t.fetchedAt > jf ? (Af.delete(e), null) : t.entries : null;
+var Nf = /* @__PURE__ */ new Map(), Pf = 6e4, Ff = /* @__PURE__ */ new Map();
+function If(e) {
+	let t = Nf.get(e);
+	return t ? Date.now() - t.fetchedAt > Pf ? (Nf.delete(e), null) : t.entries : null;
 }
-function Pf(e, t) {
-	Af.set(e, {
+function Lf(e, t) {
+	Nf.set(e, {
 		entries: t,
 		fetchedAt: Date.now()
 	});
 }
-function Ff() {
-	Af.clear(), Mf.clear();
+function Rf() {
+	Nf.clear(), Ff.clear();
 }
-function If(e, t) {
-	let n = Mf.get(e);
+function zf(e, t) {
+	let n = Ff.get(e);
 	if (n) return n;
 	let r = `/api/pipeline/runs/${encodeURIComponent(e)}/image-lineage?pipelineId=${encodeURIComponent(t)}`, i = fetch(r, {
 		headers: { "Content-Type": "application/json" },
@@ -23545,28 +23584,28 @@ function If(e, t) {
 	}).then(async (t) => {
 		if (!t.ok) throw Error(`image-lineage: ${t.status} ${t.statusText}`);
 		let n = await t.json(), r = Array.isArray(n.entries) ? n.entries : [];
-		return Pf(e, r), r;
+		return Lf(e, r), r;
 	}).finally(() => {
-		Mf.get(e) === i && Mf.delete(e);
+		Ff.get(e) === i && Ff.delete(e);
 	});
-	return Mf.set(e, i), i;
+	return Ff.set(e, i), i;
 }
-function Lf(e, t) {
-	let [n, r] = B(() => e ? Nf(e) ?? [] : []), [i, a] = B(!1), [o, s] = B(null), c = z(0), l = I(() => {
+function Bf(e, t) {
+	let [n, r] = B(() => e ? If(e) ?? [] : []), [i, a] = B(!1), [o, s] = B(null), c = z(0), l = I(() => {
 		if (!e || !t) return;
-		let n = Nf(e);
+		let n = If(e);
 		if (n) {
 			r(n), a(!1), s(null);
 			return;
 		}
 		let i = ++c.current;
-		a(!0), s(null), If(e, t).then((e) => {
+		a(!0), s(null), zf(e, t).then((e) => {
 			i === c.current && (r(e), a(!1));
 		}).catch((e) => {
 			i === c.current && (s(e instanceof Error ? e.message : String(e)), a(!1));
 		});
 	}, [e, t]), u = I(() => {
-		e && (Af.delete(e), Mf.delete(e)), l();
+		e && (Nf.delete(e), Ff.delete(e)), l();
 	}, [e, l]);
 	return L(() => {
 		l();
@@ -23578,4 +23617,4 @@ function Lf(e, t) {
 	};
 }
 //#endregion
-export { Bt as ActionNode, rs as AdjustBwConfig, yn as AdjustBwNode, xs as AdjustLayerConfig, xn as AdjustLayerNode, en as AgUiOutputNode, qt as AgentNode, uf as AggregateSummaryCard, jd as AllRunsPage, Wn as AnimatedEdge, Kt as ApprovalNode, K as BaseNode, sc as CaptionPanel, Rt as ConditionNode, Y as ConfigField, sa as ConfigSection, Ia as ContextVariablePicker, nf as CriteriaPanel, ts as CropConfig, vn as CropNode, Cs as DimensionsConfig, Sn as DimensionsNode, qs as EditPromptConfig, Bn as EditPromptNode, gc as EditRecommendationsPanel, ee as EventStreamProvider, Vt as ForkNode, Fo as FormatConvertConfig, mn as FormatConvertNode, Hs as GenerateConfig, Fn as GenerateNode, Xt as GraphQueryNode, Qt as GuardrailNode, kf as ImageLineageGraph, Ys as ImageSourceConfig, nn as ImageSourceNode, lc as ImageWithBBoxOverlay, Wt as JoinNode, of as JudgmentApiProvider, cf as JudgmentResultViewer, df as JudgmentTrendChart, Yt as KnowledgeBaseNode, Pt as LLMNode, Jt as McpToolNode, Zt as MemoryNode, Dt as NODE_CATEGORIES, Dc as NODE_TYPES_WITHOUT_CONFIG, X as NodeConfigShell, vr as NodePalette, on as NodeThumbStrip, fc as ObjectsPanel, ar as PALETTE_ITEMS, Ot as PORT_CLS, Zd as PendingApprovalsPage, dc as PeoplePanel, Ir as PipelineCanvas, N as PipelineEditorContext, Yc as PipelineEditorPage, me as PipelineEditorProvider, He as PipelineEditorServicesProvider, ie as PipelineNodeRuntimeProvider, ld as PipelineRunComparePage, Ad as PipelineRunDiff, Wu as PipelineRunReplayPage, _u as PipelineRunsPage, re as PipelineRunsProvider, Gd as PipelineStatsPage, Bl as PipelinesPage, $t as PolicyNode, Eo as ResizeConfig, un as ResizeNode, ca as SamplePills, Zs as SaveConfig, sn as SaveNode, wo as ScatterConfig, ln as ScatterNode, Io as SharpenConfig, hn as SharpenNode, _a as SourceImagePathField, pc as TagsPanel, va as ToggleField, jo as TransformGeoConfig, fn as TransformGeoNode, It as TransformNode, jt as TriggerNode, Ts as UpscaleConfig, Cn as UpscaleNode, Gs as VariationConfig, Ln as VariationNode, tf as VerdictPanel, Ps as VisionClassifyConfig, kn as VisionClassifyNode, As as VisionConfig, Fs as VisionDescribeConfig, An as VisionDescribeNode, Ls as VisionExtractTextConfig, Mn as VisionExtractTextNode, On as VisionNode, _c as VisionResultViewer, Qd as VisionRunCard, Ms as VisionTagConfig, jn as VisionTagNode, Ro as WatermarkConfig, gn as WatermarkNode, da as availableContextPaths, ma as availableImageRefs, q as categoryFor, Ff as clearImageLineageCache, la as contextContributions, uc as imageOverlayPropsFrom, Vn as nodeTypes, J as portCls, fr as recordRecentType, fa as unresolvedTemplatePaths, ua as upstreamNodeIds, k as useEventStream, A as useEventStreamContext, Lf as useImageLineage, Pe as useImageUrl, ze as useIsNodeTypeExecutable, hf as useJudgmentAggregates, sf as useJudgmentApi, mf as useJudgmentResults, F as useLatestStepForNode, ae as usePipelineEditor, Ve as usePipelineEditorServices, pe as usePipelineNodeRuntime, ve as usePipelineRuns, M as useRetryFromStep, ha as useUpstreamContext, ga as useUpstreamImageRefs, $d as useVisionResults };
+export { Bt as ActionNode, rs as AdjustBwConfig, yn as AdjustBwNode, xs as AdjustLayerConfig, xn as AdjustLayerNode, en as AgUiOutputNode, qt as AgentNode, pf as AggregateSummaryCard, Pd as AllRunsPage, Wn as AnimatedEdge, Kt as ApprovalNode, K as BaseNode, sc as CaptionPanel, Rt as ConditionNode, Y as ConfigField, sa as ConfigSection, Ia as ContextVariablePicker, of as CriteriaPanel, ts as CropConfig, vn as CropNode, Cs as DimensionsConfig, Sn as DimensionsNode, qs as EditPromptConfig, Bn as EditPromptNode, gc as EditRecommendationsPanel, ee as EventStreamProvider, Vt as ForkNode, Fo as FormatConvertConfig, mn as FormatConvertNode, Hs as GenerateConfig, Fn as GenerateNode, Xt as GraphQueryNode, Qt as GuardrailNode, Mf as ImageLineageGraph, Ys as ImageSourceConfig, nn as ImageSourceNode, lc as ImageWithBBoxOverlay, Wt as JoinNode, lf as JudgmentApiProvider, df as JudgmentResultViewer, mf as JudgmentTrendChart, Yt as KnowledgeBaseNode, Pt as LLMNode, Jt as McpToolNode, Zt as MemoryNode, Dt as NODE_CATEGORIES, Dc as NODE_TYPES_WITHOUT_CONFIG, X as NodeConfigShell, vr as NodePalette, on as NodeThumbStrip, fc as ObjectsPanel, ar as PALETTE_ITEMS, Ot as PORT_CLS, ef as PendingApprovalsPage, dc as PeoplePanel, Ir as PipelineCanvas, N as PipelineEditorContext, Yc as PipelineEditorPage, me as PipelineEditorProvider, He as PipelineEditorServicesProvider, ie as PipelineNodeRuntimeProvider, dd as PipelineRunComparePage, Nd as PipelineRunDiff, Ku as PipelineRunReplayPage, _u as PipelineRunsPage, re as PipelineRunsProvider, Jd as PipelineStatsPage, Bl as PipelinesPage, $t as PolicyNode, Eo as ResizeConfig, un as ResizeNode, ca as SamplePills, Zs as SaveConfig, sn as SaveNode, wo as ScatterConfig, ln as ScatterNode, Io as SharpenConfig, hn as SharpenNode, _a as SourceImagePathField, pc as TagsPanel, va as ToggleField, jo as TransformGeoConfig, fn as TransformGeoNode, It as TransformNode, jt as TriggerNode, Ts as UpscaleConfig, Cn as UpscaleNode, Gs as VariationConfig, Ln as VariationNode, af as VerdictPanel, Ps as VisionClassifyConfig, kn as VisionClassifyNode, As as VisionConfig, Fs as VisionDescribeConfig, An as VisionDescribeNode, Ls as VisionExtractTextConfig, Mn as VisionExtractTextNode, On as VisionNode, _c as VisionResultViewer, tf as VisionRunCard, Ms as VisionTagConfig, jn as VisionTagNode, Ro as WatermarkConfig, gn as WatermarkNode, da as availableContextPaths, ma as availableImageRefs, q as categoryFor, Rf as clearImageLineageCache, la as contextContributions, uc as imageOverlayPropsFrom, Vn as nodeTypes, J as portCls, fr as recordRecentType, fa as unresolvedTemplatePaths, ua as upstreamNodeIds, k as useEventStream, A as useEventStreamContext, Bf as useImageLineage, Pe as useImageUrl, ze as useIsNodeTypeExecutable, vf as useJudgmentAggregates, uf as useJudgmentApi, _f as useJudgmentResults, F as useLatestStepForNode, ae as usePipelineEditor, Ve as usePipelineEditorServices, pe as usePipelineNodeRuntime, ve as usePipelineRuns, M as useRetryFromStep, ha as useUpstreamContext, ga as useUpstreamImageRefs, nf as useVisionResults };

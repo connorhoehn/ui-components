@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { t as n } from "./Button-CTpms90-.js";
 import { t as r } from "./Card-CcJetqWt.js";
-import { a as i, c as a, i as o, l as s, n as c, o as l, r as u, s as d, t as f } from "./FormField-nh5TxSKB.js";
+import { a as i, c as a, i as o, l as s, n as c, o as l, r as u, s as d, t as f } from "./FormField-7BK3oOh1.js";
 import { t as p } from "./Banner-BLOg1hC_.js";
 import { t as m } from "./Chip-2lIuHwy5.js";
 import { t as h } from "./Modal-DbKyLw86.js";
@@ -239,7 +239,13 @@ function P({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 //#region src/components/identity/shared/FormField.tsx
 function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: a, required: o, placeholder: s, options: c, helpText: l, disabled: u }) {
 	let d = T(), p = C((e) => {
-		i(n === "number" ? Number(e.target.value) : e.target.value);
+		if (n === "number") {
+			let t = e.target.value;
+			if (t.trim() === "") return;
+			let n = Number(t);
+			if (Number.isNaN(n)) return;
+			i(n);
+		} else i(e.target.value);
 	}, [i, n]);
 	if (n === "checkbox") {
 		let n = a || l ? `${d}-desc` : void 0;

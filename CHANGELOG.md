@@ -8,6 +8,128 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.96.0] — 2026-08-24
+
+Six parallel efforts. **~60 bugs.** Tests 4,749 → 4,883.
+
+### Fixed — subscriptions that were never opened
+
+`pipelines/context/EventStreamContext.tsx`'s `subscribeToRun`,
+`subscribeToAll` and `subscribeToApprovals` returned `() => {}`. The comment
+claimed "WebSocketEventAdapter provides real subscriptions" — it cannot, the
+adapter is a *sibling hook*, never a wrapper, so nothing ever replaced the
+stub. `usePipelineRunChannelSubscription` had **zero callers**. The
+run-scoped and approvals channels were subscribed by nothing; only AppLayout's
+firehose was live. Now an explicit `channelTransport` seam with refcounted
+channels, warning once in dev when unwired rather than pretending.
+
+### Fixed — invented data presented as measurements
+
+- `observability/DashboardPage` invented per-node CPU (`10 + i*4`), a sine-wave
+  history and `status: 'healthy'` under a **"live data"** header, so the grid
+  stayed all-healthy straight through an incident.
+- One "live" pill on `MetricTimeSeriesPanel` vouched for ten charts, six of
+  which always plot seeded LCG noise — operators read invented step-duration
+  p99, cluster CPU/memory and approval latency as measurements. Per-card
+  `sample` chips now.
+- `PHASE1_ACTIVE_RUNS = []` rendered "Active runs (0)" directly beneath a live
+  "Active now: 7".
+
+### Fixed — quietly wrong numbers (16)
+
+The ones a user would act on:
+
+- **`identity/shared/FormField`: `Number('')` is `0`.** Backspacing the 8 out
+  of "Minimum Length" emitted `onChange(0)`, and saving mid-edit persisted
+  `minLength: 0` — **any password accepted**.
+- **`shared/DataTable`'s default comparator stringified every cell**, so a
+  numeric column sorted `1, 10, 100, 2, 9` and a `Date` column sorted by
+  weekday *name*.
+- **Success rate divided by total runs, including unfinished ones.** 8
+  completed + 2 running rendered "8/10 (80%)" in amber above "0 failed"; 5 runs
+  all awaiting approval rendered **"0/5 (0%)" in danger red** — a 100% failure
+  rate with zero failures.
+- **`p95` returned the slowest run.** `floor(len*p)` is one rank too high at
+  whole-number ranks, which the 10/50 range buttons produce directly.
+- **A task due today showed the overdue badge.** `dueDate` is a bare
+  `YYYY-MM-DD` parsed as UTC midnight, so west of Greenwich `"2026-08-16"`
+  also rendered as "Due: Aug 15". Both editor and reader carried their own
+  copy, so switching modes hid it. Fixed once, in `src/lib/dateOnly.ts`.
+- A DLQ depth badge printed the *loaded* count, so a 4,312-message queue read
+  "100" — a queue depth that was a function of how many times you'd clicked.
+- Step tree sorted unfinished steps above finished ones, so the step an
+  operator was waiting on rendered first and jumped down on completion.
+
+### Fixed — ingest, typed-documents (8)
+
+A third instance of the resurrected-cancel-ref pattern, in `useIngestItems`:
+switching the status filter left the previous filter's request live, so its
+rows could be written into a table whose header said something else — and the
+operator hit Retry/Skip on rows they had just filtered away. Also: `showWhen`
+was evaluated one hop deep, so with A→B→C, hiding B left C on screen **and in
+the submitted payload**, keyed to a condition on a field that was never sent.
+
+### Fixed — agents, social (13)
+
+- **A stream that ended without a terminal event never settled.** A proxy
+  timeout just closes the socket; the assistant bubble kept its blinking
+  cursor and the composer stayed disabled **until reload**. A tool call
+  stranded mid-run is now marked `error`, never `completed` — claiming success
+  for a result we never received would be inventing one.
+- **Posting a reply made every comment vanish**: `createComment` set the same
+  `loading` flag `CommentThread` uses to swap the list for "Loading comments…".
+- Optimistic like rollback lived inside the `!res.ok` branch, which a
+  *rejected* fetch never reaches — offline, the heart filled, the count
+  incremented, nothing saved and nothing corrected it.
+- `PostFeed` now resets on `roomId` change rather than requiring the caller to
+  pass a `key`: the requirement was invisible at the call site and the failure
+  silent and data-corrupting.
+
+### Fixed — theme
+
+**A nested `ThemeProvider` silently replaced the outer theme.** Both write the
+same properties to `document.documentElement`, and React flushes child effects
+before parent effects, so the outer write landed last — `useTheme()` returned
+the inner tokens while every utility rendered the outer ones. Worse, the inner
+provider's cleanup removed names the outer had set, and the outer has no reason
+to re-render, so closing a themed preview pane stripped the app's branding
+permanently. It cannot be fixed in this shape (`:root` holds one value per
+property), so a nested provider now declines to write and says why in dev.
+
+### Fixed — the static-style guard could be evaded by naming a variable
+
+`check-static-styles.mjs` grepped for the literal `style={{`. Hoisting the
+identical object to a const — `style={codeBlockStyle}` — sidestepped it
+entirely, as did the `styles.row` namespace variant. The whole
+`document-workspace` demo, `ThemingPage` (with a hard-coded `#1e293b`),
+`QuickStartPage`, `SimulationControls`, the videohangout demo and two shared
+demo components were built that way while the guard reported green and
+`CLAUDE.md` recorded demo eradication as **complete**. Same failure shape as
+`check-hex-colors` missing every directional form: the guard matched a
+spelling, not the thing it was meant to prevent.
+
+All 11 files are now converted — `SegmentedControl`, `Chip`, `Card`,
+`ChatComposer`, `EmptyState`, `CodeBlock`, `IconButton`, `Button` — with
+nothing allowlisted and no new primitive. Visual baselines were reviewed
+individually and updated; the two shared demo components appear on every page,
+which is why 33 routes moved.
+
+### Added
+
+`AgentMetricsSource` is now exported (mirroring `AgentRegistrySource`), plus
+additive `actionError`/`clearActionError` on `useSyncConflicts`, `readOnly` on
+`MappingRuleEditorProps`, `referenceOptionsLoading` on `TypedDocumentFormProps`,
+`source` on `useAgentMetrics`, and `activeRuns` on the observability dashboard.
+
+### Known gaps, flagged not fixed
+
+`useGroups` has no mount-time fetch at all, so `GroupPanel` always reads "No
+groups yet". `AgentsProvider` accepts a `baseUrl` and ignores it, serving
+fixtures with no discriminator. `FieldTypesPage` discards its entire Step 2 on
+save. `ImageLineageGraph` discards its `useNodesState` setter, so "Show all" is
+a no-op and an async-fed canvas renders permanently blank. `useWebhookTriggers`
+hands the user a webhook URL and signing secret for a relay that isn't wired.
+
 ## [2.95.0] — 2026-08-24
 
 Four parallel efforts. **19 bugs**, plus the whole suite now runs under

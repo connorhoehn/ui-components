@@ -327,10 +327,7 @@ function w({ items: t, visibleCount: n = 3, rotateMs: r = 4200, staggerMs: i = 0
 			e = setInterval(() => {
 				if (!t.length) return;
 				let e = t[m.current % t.length];
-				e && (m.current = (m.current + 1) % t.length, p((t) => {
-					let r = [e];
-					return t[0] && r.push(t[0]), t[1] && r.push(t[1]), r.slice(0, n);
-				}));
+				e && (m.current = (m.current + 1) % t.length, p((t) => [e, ...t].slice(0, n)));
 			}, r);
 		}, i);
 		return () => {

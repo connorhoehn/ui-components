@@ -5,7 +5,7 @@ import { t as a } from "../Modal-DbKyLw86.js";
 import { t as o } from "../EmptyState-CUHf5NYN.js";
 import { t as s } from "../SkeletonCard-CGe8XFPB.js";
 import { t as c } from "../Avatar-u3ZNK9l2.js";
-import { a as l, i as u, n as d, r as f, t as p } from "../Badge-BYt6cZLc.js";
+import { a as l, i as u, n as d, r as f, t as p } from "../Badge-B8i_epRb.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-DSfh6be-.js";
 import { n as _, t as v } from "../PresencePanel-CSfDAAq8.js";
 import { n as y, o as b, r as x, t as S } from "../ReconnectingBanner-C-5j8oMW.js";

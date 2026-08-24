@@ -41,7 +41,7 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 					...n,
 					_fadeIn: !0
 				};
-				l((e) => e.some((e) => e.commentId === r.commentId) ? e : [...e, r]);
+				l((e) => r.commentId && e.some((e) => e.commentId === r.commentId) ? e : [...e, r]);
 				let i = setTimeout(() => {
 					e.delete(i), l((e) => e.map((e) => e.commentId === r.commentId ? {
 						...e,
@@ -440,7 +440,7 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 					...n,
 					_fadeIn: !0
 				};
-				c((e) => e.some((e) => e.postId === r.postId) ? e : [r, ...e]);
+				c((e) => r.postId && e.some((e) => e.postId === r.postId) ? e : [r, ...e]);
 				let i = setTimeout(() => {
 					e.delete(i), c((e) => e.map((e) => e.postId === r.postId ? {
 						...e,

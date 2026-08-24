@@ -8,7 +8,7 @@ import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./activationKey-CjbL3LUv.js";
 import { t as g } from "./Input-DcK2h-jK.js";
 import { t as _ } from "./Textarea-C3t5PCLv.js";
-import { i as v, t as y } from "./renderers-Ceq-XDqT.js";
+import { i as v, t as y } from "./renderers-D1zoXGuw.js";
 import { t as b } from "./useHangoutEmbed-ChkoGDC_.js";
 import { t as x } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as S, useCallback as C, useEffect as w, useImperativeHandle as T, useMemo as E, useRef as D, useState as O } from "react";
@@ -292,21 +292,21 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		displayName: p,
 		color: m,
 		onMessage: h
-	}), { comments: Y, addComment: ke, resolveThread: Ae, unresolveThread: je } = i({
+	}), { comments: ke, addComment: Ae, resolveThread: je, unresolveThread: Me } = i({
 		documentId: e,
 		idToken: B,
 		sendMessage: l.sendMessage,
 		onMessage: h,
 		connectionState: l.connectionState
-	}), { sectionReviews: Me, reviewSection: Ne } = s({
+	}), { sectionReviews: Ne, reviewSection: Pe } = s({
 		documentId: e,
 		idToken: B,
 		sendMessage: l.sendMessage,
 		onMessage: h,
 		connectionState: l.connectionState
-	}), Pe = E(() => H.map((e) => e.id), [H]), { items: Fe, addItem: Ie, updateItem: Le, removeItem: Re, itemErrors: ze } = d({
+	}), Fe = E(() => H.map((e) => e.id), [H]), { items: Ie, addItem: Le, updateItem: Re, removeItem: ze, itemErrors: Be } = d({
 		documentId: e,
-		sectionIds: Pe,
+		sectionIds: Fe,
 		idToken: B,
 		sendMessage: l.sendMessage,
 		onMessage: h,
@@ -329,7 +329,7 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		l.connectionState,
 		l.sendMessage
 	]);
-	let { demoLoaded: Be, handleLoadDemo: Ve, handleClearDocument: He, handleExport: Ue } = ue({
+	let { demoLoaded: Ve, handleLoadDemo: He, handleClearDocument: Ue, handleExport: We } = ue({
 		documentId: e,
 		userId: u,
 		ws: l,
@@ -337,8 +337,8 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		addSection: Se,
 		exportJSON: De,
 		getSectionFragment: Te,
-		comments: Y
-	}), [We, Ge] = O(null), X = C((e) => {
+		comments: ke
+	}), [Y, Ge] = O(null), X = C((e) => {
 		let t = e.lastSeen && Date.now() - e.lastSeen < 3e4, n = e.mode === "reviewer" ? "ack" : e.mode === "reader" ? "reader" : "editor";
 		if (x !== n && (S(n), typeof window < "u")) {
 			let e = new URL(window.location.href);
@@ -405,25 +405,25 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 			id: crypto.randomUUID(),
 			...n
 		};
-		we(t, r), Ie(t, r).catch(() => {}), g("doc.add_item", {
+		we(t, r), Le(t, r).catch(() => {}), g("doc.add_item", {
 			sectionTitle: H.find((e) => e.id === t)?.title,
 			documentId: e,
 			documentTitle: V?.title
 		});
 	}, [
 		we,
-		Ie,
+		Le,
 		H,
 		g,
 		e,
 		V?.title
 	]), Ye = C((e, t, n) => {
-		G(e, t, n), Le(e, t, n).catch(() => {});
-	}, [G, Le]), Q = C((e, t) => {
-		K(e, t), Re(e, t).catch(() => {});
-	}, [K, Re]);
+		G(e, t, n), Re(e, t, n).catch(() => {});
+	}, [G, Re]), Q = C((e, t) => {
+		K(e, t), ze(e, t).catch(() => {});
+	}, [K, ze]);
 	w(() => {
-		if (H.length === 0 || We) return;
+		if (H.length === 0 || Y) return;
 		let e = setTimeout(() => {
 			let e = H[0].id;
 			Ge(e), J.updateSection(e);
@@ -431,7 +431,7 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		return () => clearTimeout(e);
 	}, [
 		H,
-		We,
+		Y,
 		J
 	]);
 	let Xe = C((e) => {
@@ -447,7 +447,7 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 	}, []), tt = C(() => {
 		ve(!1);
 	}, []), nt = C((t, n, r) => {
-		ke(t, n, r), g("doc.comment", {
+		Ae(t, n, r), g("doc.comment", {
 			sectionId: t,
 			text: n.slice(0, 50),
 			documentId: e,
@@ -467,26 +467,26 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 			});
 		}
 	}, [
-		ke,
+		Ae,
 		g,
 		H,
 		p,
 		e,
 		V?.title
 	]), rt = C((t, n) => {
-		Ae(t, n), g("doc.resolve_thread", {
+		je(t, n), g("doc.resolve_thread", {
 			sectionId: t,
 			commentId: n,
 			documentId: e,
 			documentTitle: V?.title
 		});
 	}, [
-		Ae,
+		je,
 		g,
 		e,
 		V?.title
 	]), $ = C((t, n) => {
-		je(t, n), g("doc.unresolve_thread", {
+		Me(t, n), g("doc.unresolve_thread", {
 			sectionId: t,
 			commentId: n,
 			reopenedBy: p,
@@ -494,14 +494,14 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 			documentTitle: V?.title
 		});
 	}, [
-		je,
+		Me,
 		g,
 		p,
 		e,
 		V?.title
 	]), it = r({
 		sections: H,
-		comments: Y,
+		comments: ke,
 		displayName: p,
 		userId: u
 	}), at = C((e) => {
@@ -619,23 +619,23 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		sections: H,
 		updateSection: Ce,
 		getSectionFragment: Te,
-		itemErrors: ze,
+		itemErrors: Be,
 		ydoc: q,
 		provider: Ee,
 		synced: U,
-		demoLoaded: Be,
-		handleLoadDemo: Ve,
-		handleClearDocument: He,
-		handleExport: Ue,
+		demoLoaded: Ve,
+		handleLoadDemo: He,
+		handleClearDocument: Ue,
+		handleExport: We,
 		participants: Oe,
 		awareness: J,
-		focusedSectionId: We,
+		focusedSectionId: Y,
 		handleSectionFocus: Xe,
 		handleJumpToUser: X,
 		followingUserId: he,
 		handleFollowUser: Ke,
 		handleStopFollow: qe,
-		comments: Y,
+		comments: ke,
 		commentSidebarOpen: _e,
 		commentSectionId: ye,
 		commentSidebarTop: Qe,
@@ -645,12 +645,12 @@ function R({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		handleAddComment: nt,
 		handleResolveThread: rt,
 		handleUnresolveThread: $,
-		restItems: Fe,
+		restItems: Ie,
 		handleAddItem: Je,
 		handleUpdateItem: Ye,
 		handleRemoveItem: Q,
-		sectionReviews: Me,
-		restReviewSection: Ne,
+		sectionReviews: Ne,
+		restReviewSection: Pe,
 		showHistory: T,
 		showMyItems: k,
 		showVideoHistory: A,
@@ -1380,19 +1380,19 @@ var Oe = {
 function J(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-var Y = 3;
-function ke({ participants: e }) {
+var ke = 3;
+function Ae({ participants: e }) {
 	if (!e || e.length === 0) return null;
-	let t = e.slice(0, Y), n = e.length - Y;
+	let t = e.slice(0, ke), n = e.length - ke;
 	return /* @__PURE__ */ j("div", {
 		className: p("flex items-center ml-auto shrink-0"),
 		children: [t.map((e, t) => /* @__PURE__ */ j("div", {
 			title: `${e.displayName} (${e.mode})`,
 			className: p("w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold border-2 border-white relative transition-transform duration-200"),
 			style: {
-				background: `linear-gradient(135deg, ${e.color || "#3b82f6"}, ${Ae(e.color || "#3b82f6", .2)})`,
+				background: `linear-gradient(135deg, ${e.color || "#3b82f6"}, ${je(e.color || "#3b82f6", .2)})`,
 				marginLeft: t === 0 ? 0 : -8,
-				zIndex: Y - t
+				zIndex: ke - t
 			},
 			children: [J(e.displayName), /* @__PURE__ */ A("div", { className: p("absolute bottom-0 right-0 w-2 h-2 rounded-full bg-success border-2 border-white") })]
 		}, e.clientId)), n > 0 && /* @__PURE__ */ j("div", {
@@ -1401,11 +1401,11 @@ function ke({ participants: e }) {
 		})]
 	});
 }
-function Ae(e, t) {
+function je(e, t) {
 	let n = e.replace("#", ""), r = parseInt(n, 16), i = Math.max(0, (r >> 16 & 255) * (1 - t)), a = Math.max(0, (r >> 8 & 255) * (1 - t)), o = Math.max(0, (r & 255) * (1 - t));
 	return `rgb(${Math.round(i)}, ${Math.round(a)}, ${Math.round(o)})`;
 }
-function je({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: h, onUpdateCursorInfo: _, commentCount: v = 0, onOpenComments: b, commentPresence: x }) {
+function Me({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: o, onUpdateSection: s, onAddItem: c, onUpdateItem: l, onRemoveItem: u, participants: d, onFocus: f, isFocused: m, comments: h, onUpdateCursorInfo: _, commentCount: v = 0, onOpenComments: b, commentPresence: x }) {
 	let [S, C] = O(e.collapsed), w = () => {
 		let e = !S;
 		C(e), s({ collapsed: e });
@@ -1480,7 +1480,7 @@ function je({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 						style: { background: Oe[e.type] },
 						children: e.type
 					}),
-					/* @__PURE__ */ A(ke, { participants: d ?? [] })
+					/* @__PURE__ */ A(Ae, { participants: d ?? [] })
 				]
 			}),
 			!S && /* @__PURE__ */ A("div", {
@@ -1509,10 +1509,10 @@ function je({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 }
 //#endregion
 //#region src/components/doc-editor/SectionList.tsx
-function Me({ sections: e, getSectionFragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateSection: o, onAddItem: s, onUpdateItem: c, onRemoveItem: l, participants: u, onSectionFocus: d, focusedSectionId: f, comments: m, onAddComment: h, onResolveThread: g, onUnresolveThread: _, onUpdateCursorInfo: v, onOpenComments: y }) {
+function Ne({ sections: e, getSectionFragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateSection: o, onAddItem: s, onUpdateItem: c, onRemoveItem: l, participants: u, onSectionFocus: d, focusedSectionId: f, comments: m, onAddComment: h, onResolveThread: g, onUnresolveThread: _, onUpdateCursorInfo: v, onOpenComments: y }) {
 	return /* @__PURE__ */ A("div", {
 		className: p("flex flex-col gap-0 pb-4"),
-		children: e.map((e) => /* @__PURE__ */ A(je, {
+		children: e.map((e) => /* @__PURE__ */ A(Me, {
 			section: e,
 			fragment: t(e.id),
 			ydoc: n,
@@ -1538,29 +1538,29 @@ function Me({ sections: e, getSectionFragment: t, ydoc: n, provider: r, user: i,
 }
 //#endregion
 //#region src/components/doc-editor/AttachmentsPanel.tsx
-function Ne(e) {
+function Pe(e) {
 	return `ws_attachments_${e}`;
 }
-function Pe(e) {
+function Fe(e) {
 	try {
-		let t = localStorage.getItem(Ne(e));
+		let t = localStorage.getItem(Pe(e));
 		return t ? JSON.parse(t) : [];
 	} catch {
 		return [];
 	}
 }
-function Fe(e) {
-	let [t, n] = O(() => Pe(e));
+function Ie(e) {
+	let [t, n] = O(() => Fe(e));
 	w(() => {
-		n(Pe(e));
+		n(Fe(e));
 	}, [e]);
 	let r = (t) => {
-		localStorage.setItem(Ne(e), JSON.stringify(t)), n(t);
+		localStorage.setItem(Pe(e), JSON.stringify(t)), n(t);
 	};
 	return {
 		attachments: t,
 		addFile: (t, n) => {
-			r([...Pe(e), {
+			r([...Fe(e), {
 				id: crypto.randomUUID(),
 				kind: "file",
 				name: t.trim(),
@@ -1569,7 +1569,7 @@ function Fe(e) {
 			}]);
 		},
 		addDocumentLink: (t) => {
-			r([...Pe(e), {
+			r([...Fe(e), {
 				id: crypto.randomUUID(),
 				kind: "document",
 				title: t.trim(),
@@ -1577,11 +1577,11 @@ function Fe(e) {
 			}]);
 		},
 		remove: (t) => {
-			r(Pe(e).filter((e) => e.id !== t));
+			r(Fe(e).filter((e) => e.id !== t));
 		}
 	};
 }
-function Ie({ onAdd: e, onCancel: t }) {
+function Le({ onAdd: e, onCancel: t }) {
 	let [n, r] = O(""), [i, a] = O(""), o = n.trim().length > 0 && i.trim().length > 0;
 	return /* @__PURE__ */ j("div", {
 		className: p("flex gap-2 items-start flex-wrap"),
@@ -1620,7 +1620,7 @@ function Ie({ onAdd: e, onCancel: t }) {
 		]
 	});
 }
-function Le({ onAdd: e, onCancel: t }) {
+function Re({ onAdd: e, onCancel: t }) {
 	let [n, r] = O(""), i = n.trim().length > 0;
 	return /* @__PURE__ */ j("div", {
 		className: p("flex gap-2 items-center flex-wrap"),
@@ -1653,7 +1653,7 @@ function Le({ onAdd: e, onCancel: t }) {
 		]
 	});
 }
-function Re({ attachment: e, onRemove: t, editable: n }) {
+function ze({ attachment: e, onRemove: t, editable: n }) {
 	let r = e.kind === "file";
 	return /* @__PURE__ */ j("div", {
 		className: p("flex items-center gap-2.5 px-2.5 py-[7px] rounded-md bg-surface-panel border border-border"),
@@ -1688,8 +1688,8 @@ function Re({ attachment: e, onRemove: t, editable: n }) {
 		]
 	});
 }
-function ze({ documentId: e, editable: t }) {
-	let { attachments: n, addFile: r, addDocumentLink: i, remove: a } = Fe(e), [o, s] = O(null), c = n.length > 0;
+function Be({ documentId: e, editable: t }) {
+	let { attachments: n, addFile: r, addDocumentLink: i, remove: a } = Ie(e), [o, s] = O(null), c = n.length > 0;
 	return /* @__PURE__ */ j("div", {
 		className: p("mt-4 border border-border rounded-[10px] overflow-hidden"),
 		children: [
@@ -1718,7 +1718,7 @@ function ze({ documentId: e, editable: t }) {
 			}),
 			c && /* @__PURE__ */ A("div", {
 				className: p("flex flex-col gap-1.5 px-3.5 py-2.5"),
-				children: n.map((e) => /* @__PURE__ */ A(Re, {
+				children: n.map((e) => /* @__PURE__ */ A(ze, {
 					attachment: e,
 					onRemove: () => a(e.id),
 					editable: t
@@ -1726,7 +1726,7 @@ function ze({ documentId: e, editable: t }) {
 			}),
 			o === "file" && /* @__PURE__ */ A("div", {
 				className: p("px-3.5 py-2.5", c ? "border-t border-border" : ""),
-				children: /* @__PURE__ */ A(Ie, {
+				children: /* @__PURE__ */ A(Le, {
 					onAdd: (e, t) => {
 						r(e, t), s(null);
 					},
@@ -1735,7 +1735,7 @@ function ze({ documentId: e, editable: t }) {
 			}),
 			o === "document" && /* @__PURE__ */ A("div", {
 				className: p("px-3.5 py-2.5", c ? "border-t border-border" : ""),
-				children: /* @__PURE__ */ A(Le, {
+				children: /* @__PURE__ */ A(Re, {
 					onAdd: (e) => {
 						i(e), s(null);
 					},
@@ -1751,11 +1751,11 @@ function ze({ documentId: e, editable: t }) {
 }
 //#endregion
 //#region src/components/doc-editor/MentionDropdown.tsx
-function Be(e) {
+function Ve(e) {
 	let t = e.trim().split(/\s+/);
 	return t.length === 0 ? "?" : t.length === 1 ? t[0].charAt(0).toUpperCase() : (t[0].charAt(0) + t[t.length - 1].charAt(0)).toUpperCase();
 }
-var Ve = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i }, a) {
+var He = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i }, a) {
 	let [o, s] = O(0), c = D(null), l = t.filter((t) => t.displayName.toLowerCase().includes(e.toLowerCase())).slice(0, 6);
 	w(() => {
 		s(0);
@@ -1793,7 +1793,7 @@ var Ve = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i
 			children: [/* @__PURE__ */ A("div", {
 				className: p("w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[11px] font-semibold text-white leading-none"),
 				style: { background: e.color },
-				children: e.type === "group" ? "#" : Be(e.displayName)
+				children: e.type === "group" ? "#" : Ve(e.displayName)
 			}), /* @__PURE__ */ j("div", {
 				className: p("flex items-center gap-1.5 flex-1 min-w-0"),
 				children: [
@@ -1817,10 +1817,10 @@ var Ve = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i
 });
 //#endregion
 //#region src/components/doc-editor/CommentThread.tsx
-function He(e) {
+function Ue(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function Ue(e) {
+function We(e) {
 	try {
 		let t = Date.now() - new Date(e).getTime(), n = Math.floor(t / 1e3);
 		if (n < 60) return "just now";
@@ -1832,9 +1832,9 @@ function Ue(e) {
 		return "";
 	}
 }
-function We(e) {
+function Y(e) {
 	let t = 0;
-	for (let n of e) t += 1 + We(n.replies);
+	for (let n of e) t += 1 + Y(n.replies);
 	return t;
 }
 function Ge(e) {
@@ -1918,7 +1918,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 					}),
 					e.resolvedAt && /* @__PURE__ */ A("span", {
 						className: p("text-code-green text-[11px]"),
-						children: Ue(e.resolvedAt)
+						children: We(e.resolvedAt)
 					}),
 					/* @__PURE__ */ A("span", {
 						className: p("text-text-tertiary text-[11px] ml-1"),
@@ -1957,7 +1957,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 						}),
 						e.resolvedAt && /* @__PURE__ */ A("span", {
 							className: p("text-code-green text-[11px]"),
-							children: Ue(e.resolvedAt)
+							children: We(e.resolvedAt)
 						}),
 						/* @__PURE__ */ A("span", {
 							className: p("text-text-tertiary text-[11px] ml-1"),
@@ -1985,7 +1985,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 							/* @__PURE__ */ A("div", {
 								className: p("w-6 h-6 rounded-full text-white flex items-center justify-center text-[10px] font-semibold shrink-0"),
 								style: { background: `linear-gradient(135deg, ${e.color}, ${e.color}dd)` },
-								children: He(e.displayName)
+								children: Ue(e.displayName)
 							}),
 							/* @__PURE__ */ A("span", {
 								className: p("font-semibold text-[13px] text-text-primary"),
@@ -1993,7 +1993,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 							}),
 							/* @__PURE__ */ A("span", {
 								className: p("text-[11px] text-text-tertiary"),
-								children: Ue(e.timestamp)
+								children: We(e.timestamp)
 							})
 						]
 					}),
@@ -2029,7 +2029,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 								placeholder: "Write a reply... (type @ to mention)",
 								rows: 2,
 								className: p("resize-y min-h-12")
-							}), g.active && /* @__PURE__ */ A(Ve, {
+							}), g.active && /* @__PURE__ */ A(He, {
 								ref: m,
 								query: g.query,
 								users: r,
@@ -2068,7 +2068,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 //#endregion
 //#region src/components/doc-editor/SectionComments.tsx
 function Je({ comments: e, onAddComment: t, participants: n = [], onResolveThread: r, onUnresolveThread: i }) {
-	let [a, o] = O(!0), [s, c] = O(""), u = D(null), d = D(null), [f, m] = O(X), h = l(n), g = We(e), [v, y] = O(!0), b = [...e].sort((e, t) => {
+	let [a, o] = O(!0), [s, c] = O(""), u = D(null), d = D(null), [f, m] = O(X), h = l(n), g = Y(e), [v, y] = O(!0), b = [...e].sort((e, t) => {
 		if (e.resolved && !t.resolved) return 1;
 		if (!e.resolved && t.resolved) return -1;
 		let n = new Date(e.timestamp).getTime(), r = new Date(t.timestamp).getTime();
@@ -2119,7 +2119,7 @@ function Je({ comments: e, onAddComment: t, participants: n = [], onResolveThrea
 						placeholder: "Add a comment... (type @ to mention)",
 						rows: 2,
 						className: p("resize-y min-h-12")
-					}), f.active && /* @__PURE__ */ A(Ve, {
+					}), f.active && /* @__PURE__ */ A(He, {
 						ref: d,
 						query: f.query,
 						users: h,
@@ -3281,7 +3281,7 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 				}),
 				/* @__PURE__ */ j("div", {
 					className: p("flex-1 min-w-0", D ? "pr-0" : se && r.length > 1 && e === "editor" ? "pr-48" : "pr-12"),
-					children: [/* @__PURE__ */ A(Me, {
+					children: [/* @__PURE__ */ A(Ne, {
 						sections: r.map((e) => {
 							let t = e.items ?? [], n = T[e.id] ?? [], r = [...t, ...n.filter((e) => !t.some((t) => t.id === e.id))];
 							return {
@@ -3310,7 +3310,7 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 						onUnresolveThread: y,
 						onUpdateCursorInfo: b,
 						onOpenComments: x
-					}), /* @__PURE__ */ A(ze, {
+					}), /* @__PURE__ */ A(Be, {
 						documentId: i,
 						editable: !n
 					})]
@@ -3371,7 +3371,7 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 			sections: r,
 			participants: f,
 			meta: ce,
-			commentCounts: Object.fromEntries(Object.entries(g).map(([e, t]) => [e, t.length])),
+			commentCounts: Object.fromEntries(Object.entries(g).map(([e, t]) => [e, Y(t)])),
 			sectionContentTexts: Object.fromEntries(r.map((e) => {
 				let t = u(e.id);
 				return [e.id, t ? me(t) : ""];
@@ -4205,4 +4205,4 @@ function Ht({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 	});
 }
 //#endregion
-export { je as C, be as D, V as E, L as O, Me as S, H as T, We as _, Pt as a, Ve as b, bt as c, dt as d, rt as f, Je as g, Xe as h, Lt as i, ue as k, ut as l, tt as m, Vt as n, kt as o, nt as p, zt as r, Dt as s, Ht as t, lt as u, He as v, De as w, ze as x, Ue as y };
+export { Me as C, be as D, V as E, L as O, Ne as S, H as T, Y as _, Pt as a, He as b, bt as c, dt as d, rt as f, Je as g, Xe as h, Lt as i, ue as k, ut as l, tt as m, Vt as n, kt as o, nt as p, zt as r, Dt as s, Ht as t, lt as u, Ue as v, De as w, Be as x, We as y };

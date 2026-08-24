@@ -494,7 +494,13 @@ export declare interface DataTableColumn<T> {
     header: ReactNode;
     /** Optional cell renderer. If absent, the value at `key` is rendered as a string. */
     render?: (row: T, rowIndex: number) => ReactNode;
-    /** Optional sort comparator. If absent but `sortable=true`, sorts by `String(row[key])`. */
+    /**
+     * Optional sort comparator. If absent but `sortable=true`, the default
+     * comparator compares numbers/bigints/Dates/booleans by VALUE and everything
+     * else by `String(...)`. (It used to stringify unconditionally, which sorted a
+     * numeric column lexicographically — 1, 10, 100, 2, 9 — and a Date column by
+     * weekday name.)
+     */
     compare?: (a: T, b: T) => number;
     /** Optional filter accessor. If absent but `filterable=true`, filters by `String(row[key])`. */
     getFilterText?: (row: T) => string;

@@ -2,7 +2,7 @@ import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-Be2vqdKv.js";
 import { n as i } from "./IdentityContext-CQM1qwH6.js";
 import "./useWebSocket-BKfGpImp.js";
-import "./useSocialProfile-BvMQMoLB.js";
+import "./useSocialProfile-Bwhm2dhi.js";
 import "./useSyncConflicts-y7kUJko3.js";
 import "./useDocumentTypes-C-AMWgYq.js";
 import { n as a } from "./ToastProvider-DPq8u2eM.js";

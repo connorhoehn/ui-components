@@ -2,8 +2,8 @@ import { g as e, t } from "./useWebSocket-BKfGpImp.js";
 import { t as n } from "./cn-DhjIN-s0.js";
 import { t as r } from "./activationKey-CjbL3LUv.js";
 import { t as i } from "./Textarea-C3t5PCLv.js";
-import { a, i as o, n as s, o as c, r as l } from "./renderers-Ceq-XDqT.js";
-import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as j } from "./DocumentEditorPage-kL6pFxDg.js";
+import { a, i as o, n as s, o as c, r as l } from "./renderers-D1zoXGuw.js";
+import { C as u, D as d, E as f, O as p, S as m, T as h, _ as g, a as _, b as v, c as y, d as b, f as x, g as S, h as C, i as w, k as T, l as E, m as D, o as O, p as k, r as A, s as ee, t as te, u as ne, v as re, w as ie, x as ae, y as j } from "./DocumentEditorPage-CV9XFTmt.js";
 import { useCallback as M, useEffect as N, useMemo as P, useRef as F, useState as I } from "react";
 import { Fragment as L, jsx as R, jsxs as z } from "react/jsx-runtime";
 //#region src/components/doc-editor/DocumentListPage.tsx
