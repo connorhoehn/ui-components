@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { JudgmentResultViewer } from '../JudgmentResultViewer';
 import { VerdictPanel } from '../VerdictPanel';
 import { CriteriaPanel } from '../CriteriaPanel';
@@ -189,6 +189,44 @@ describe('JudgmentResultViewer — raw text lazy fetch (H.2)', () => {
     await waitFor(() =>
       expect(screen.getByText(/Failed to fetch raw text/)).toBeInTheDocument(),
     );
+    expect(screen.getByText(/s3 denied/)).toBeInTheDocument();
+  });
+
+  // Regression: the lazy-fetch effect listed `lazyLoading` in its deps and
+  // only bailed on `lazyText !== null`. A rejected fetch leaves `lazyText`
+  // null, so the `lazyLoading` true -> false flip re-ran the effect, every
+  // guard passed again, and the request fired again — forever. Measured at
+  // ~13k calls in the 100ms window below against a failing endpoint: the
+  // raw-output panel strobes between spinner and error and the tab pegs a
+  // core.
+  //
+  // NOTE for whoever edits this: the rejection must construct a NEW Error per
+  // call, as a real failing fetch does. `mockRejectedValue(new Error(...))`
+  // reuses one instance, so `setLazyError` becomes a no-op write and React's
+  // bailout masks the storm down to two calls — the bug still reproduces, but
+  // only barely, and the test stops being convincing. Wrapping the wait in a
+  // `waitFor` damps it the same way, which is why this reads the counter
+  // straight out of a bare `act` window.
+  it('does NOT re-fetch in a loop after the lazy fetch rejects', async () => {
+    const api: JudgmentApi = {
+      fetchRawText: vi.fn(() => Promise.reject(new Error('s3 denied'))),
+      fetchAggregates: vi.fn(),
+    };
+    render(
+      <JudgmentApiProvider value={api}>
+        <JudgmentResultViewer result={truncatedFixture} showRawText />
+      </JudgmentApiProvider>,
+    );
+
+    fireEvent.click(screen.getByText(/Raw model output/));
+
+    // Let many effect/microtask rounds elapse; a looping effect re-issues the
+    // request throughout this window.
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 100));
+    });
+    expect(api.fetchRawText).toHaveBeenCalledTimes(1);
+    // ...and the one failure is still surfaced to the user.
     expect(screen.getByText(/s3 denied/)).toBeInTheDocument();
   });
 

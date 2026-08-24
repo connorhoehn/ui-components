@@ -46,6 +46,14 @@ export function JudgmentResultViewer({
   const [lazyLoading, setLazyLoading] = useState(false);
   const [lazyError, setLazyError] = useState<Error | null>(null);
   const mountedRef = useRef(true);
+  // Which judgmentId the lazy fetch has already been attempted for.
+  //
+  // This has to be keyed on the id, not on `lazyText`, because a FAILED
+  // attempt leaves `lazyText` at null while `lazyLoading` flips back to
+  // false — and `lazyLoading` is in the effect's dependency array, so that
+  // flip re-ran the effect, every guard passed again, and the fetch fired
+  // again forever against an endpoint that was already erroring.
+  const attemptedIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -55,16 +63,23 @@ export function JudgmentResultViewer({
   }, []);
 
   // When the user opens the raw section AND the body was truncated AND
-  // an API is wired, fire the lazy fetch. Idempotent — only fetches once
-  // per judgmentId, then caches in lazyText.
+  // an API is wired, fire the lazy fetch. Idempotent — at most one attempt
+  // per judgmentId, success or failure, then caches in lazyText.
   useEffect(() => {
     if (!showRaw) return;
     if (result.rawModelText) return; // inline body present
-    if (lazyText !== null) return; // already fetched
-    if (lazyLoading) return; // in-flight
     if (!result.rawTextTruncated) return; // not truncated; nothing to fetch
     if (!api) return; // no provider mounted; render fallback message
+    // Already fetched (or already failed) for this judgment. Also covers the
+    // in-flight case, since the ref is set synchronously below.
+    if (attemptedIdRef.current === result.judgmentId) return;
 
+    attemptedIdRef.current = result.judgmentId;
+    // A different judgment than the one `lazyText` belongs to — drop the old
+    // body so the surface doesn't show the previous judgment's raw output
+    // while this fetch is running.
+    setLazyText(null);
+    setLazyError(null);
     setLazyLoading(true);
     void (async (): Promise<void> => {
       try {
@@ -79,7 +94,7 @@ export function JudgmentResultViewer({
         if (mountedRef.current) setLazyLoading(false);
       }
     })();
-  }, [showRaw, result.rawModelText, result.rawTextTruncated, result.judgmentId, api, lazyText, lazyLoading]);
+  }, [showRaw, result.rawModelText, result.rawTextTruncated, result.judgmentId, api]);
 
   const effectiveRawText = result.rawModelText ?? lazyText ?? null;
   const rawTextAvailable = !!result.rawModelText || !!result.rawTextTruncated;

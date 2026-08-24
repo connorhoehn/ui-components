@@ -256,6 +256,19 @@ export function PipelineEditorProvider({
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // The definition as of the latest render, readable from inside an in-flight
+  // save's `.then`. Every persist path clears `dirty` only when the definition
+  // it actually wrote is still the current one — otherwise an edit made while
+  // a save was in flight would be marked clean and silently dropped (the
+  // autosave effect's cleanup kills the pending timer the moment `dirty`
+  // flips to false, so nothing ever writes it).
+  const latestDefinitionRef = useRef<PipelineDefinition | null>(definition);
+  latestDefinitionRef.current = definition;
+
+  const clearDirtyIfUnchanged = useCallback((saved: PipelineDefinition) => {
+    if (latestDefinitionRef.current === saved) setDirty(false);
+  }, []);
+
   // Load on mount / pipelineId change.
   useEffect(() => {
     let cancelled = false;
@@ -279,8 +292,9 @@ export function PipelineEditorProvider({
   useEffect(() => {
     if (!dirty || !definition) return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    const target = definition;
     saveTimerRef.current = setTimeout(() => {
-      void savePipeline(definition).then(() => setDirty(false));
+      void savePipeline(target).then(() => clearDirtyIfUnchanged(target));
     }, SAVE_DEBOUNCE_MS);
     return () => {
       if (saveTimerRef.current) {
@@ -288,7 +302,7 @@ export function PipelineEditorProvider({
         saveTimerRef.current = null;
       }
     };
-  }, [definition, dirty]);
+  }, [definition, dirty, clearDirtyIfUnchanged]);
 
   // -------------------------------------------------------------------------
   // History helpers
@@ -477,8 +491,9 @@ export function PipelineEditorProvider({
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
-    void savePipeline(definition).then(() => setDirty(false));
-  }, [definition]);
+    const target = definition;
+    void savePipeline(target).then(() => clearDirtyIfUnchanged(target));
+  }, [definition, clearDirtyIfUnchanged]);
 
   const publish = useCallback((): void => {
     if (!definition) return;
@@ -486,16 +501,17 @@ export function PipelineEditorProvider({
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
+    const target = definition;
     const doPublish = async () => {
       if (dirty) {
-        await savePipeline(definition);
-        setDirty(false);
+        await savePipeline(target);
+        clearDirtyIfUnchanged(target);
       }
       const published = await publishPipelineStorage(definition.id);
       if (published) setDefinition(published);
     };
     void doPublish();
-  }, [definition, dirty]);
+  }, [definition, dirty, clearDirtyIfUnchanged]);
 
   const revert = useCallback((): void => {
     void loadPipeline(pipelineId).then((loaded) => {

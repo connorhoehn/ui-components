@@ -216,6 +216,59 @@ describe('PipelineEditorContext', () => {
     expect(mockSavePipeline.mock.calls[0][0].nodes).toHaveLength(2);
   });
 
+  // Regression: the debounced autosave resolved with an unconditional
+  // `setDirty(false)`. An edit made while an earlier save was still in flight
+  // therefore got marked clean the moment that stale save landed — and
+  // because the autosave effect's cleanup clears the pending timer as soon
+  // as `dirty` flips to false, nothing ever wrote the newer definition. The
+  // editor showed "saved" while the last edit existed only in memory.
+  it('keeps dirty set (and still autosaves) for an edit made while a save is in flight', async () => {
+    let releaseFirstSave: () => void = () => {};
+    let call = 0;
+    mockSavePipeline.mockImplementation(() => {
+      call += 1;
+      if (call === 1) {
+        return new Promise<void>((resolve) => {
+          releaseFirstSave = () => resolve();
+        });
+      }
+      return Promise.resolve();
+    });
+
+    const { editor } = await renderEditor();
+
+    // Edit #1 — let the debounce elapse so save #1 is genuinely in flight.
+    act(() => {
+      editor().addNode('llm', { x: 0, y: 0 });
+    });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 600));
+    });
+    expect(mockSavePipeline).toHaveBeenCalledTimes(1);
+
+    // Edit #2 lands before save #1 resolves.
+    act(() => {
+      editor().addNode('llm', { x: 40, y: 40 });
+    });
+    expect(editor().definition!.nodes).toHaveLength(3);
+
+    // Save #1 resolves. It persisted the 2-node definition, so it must not
+    // declare the (now 3-node) editor clean.
+    await act(async () => {
+      releaseFirstSave();
+      await Promise.resolve();
+    });
+    expect(editor().dirty).toBe(true);
+
+    // ...and the pending autosave for edit #2 must actually fire.
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 600));
+    });
+    await waitFor(() => expect(mockSavePipeline).toHaveBeenCalledTimes(2));
+    expect(mockSavePipeline.mock.calls[1][0].nodes).toHaveLength(3);
+    await waitFor(() => expect(editor().dirty).toBe(false));
+  });
+
   it('setPositions repositions nodes without touching the undo stack (drag path)', async () => {
     const { editor } = await renderEditor();
     act(() => {
