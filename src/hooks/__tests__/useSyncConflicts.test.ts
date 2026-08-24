@@ -144,7 +144,7 @@ describe('resolveConflict (real endpoint)', () => {
     expect(result.current.conflicts[0].status).toBe('resolved');
   });
 
-  it('returns false and sets error on failure', async () => {
+  it('returns false and reports the failure as an ACTION error, not a load error', async () => {
     const fetchMock = stubFetch({ conflicts: [CONFLICT] });
     vi.stubGlobal('fetch', fetchMock);
     const { result } = renderHook(() => useSyncConflicts());
@@ -156,7 +156,29 @@ describe('resolveConflict (real endpoint)', () => {
     await act(async () => { ok = await result.current.resolveConflict('cfl-1', { pick: 'source' }); });
 
     expect(ok).toBe(false);
-    expect(result.current.error).toMatch(/422/);
+    // INVERTED: this used to assert the failure landed in `error`. That is the
+    // bug — `ConflictsPage` renders `error` as "Failed to load conflicts: …",
+    // which is a false statement about a queue that loaded fine and is still
+    // on screen, and the next poll wipes it. A mutation failure belongs in
+    // `actionError`.
+    expect(result.current.actionError).toMatch(/422/);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('a failed discard is an action error too, and clears on the next attempt', async () => {
+    const fetchMock = stubFetch({ conflicts: [CONFLICT] });
+    vi.stubGlobal('fetch', fetchMock);
+    const { result } = renderHook(() => useSyncConflicts());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    fetchMock.mockResolvedValueOnce({ ok: false, status: 503, json: () => Promise.resolve({}) } as unknown as Response);
+    await act(async () => { await result.current.discardConflict('cfl-1'); });
+    expect(result.current.actionError).toMatch(/503/);
+    expect(result.current.error).toBeNull();
+
+    fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({}) } as unknown as Response);
+    await act(async () => { await result.current.discardConflict('cfl-1'); });
+    expect(result.current.actionError).toBeNull();
   });
 });
 

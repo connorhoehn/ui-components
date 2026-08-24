@@ -19,19 +19,20 @@ function rule(over: Partial<MappingRule> = {}): MappingRule {
 }
 
 /** Controlled host so reorder/edit results are observable across renders. */
-function Host({ initial, onChange }: { initial: MappingRule[]; onChange?: (r: MappingRule[]) => void }) {
+function Host({ initial, onChange, readOnly }: { initial: MappingRule[]; onChange?: (r: MappingRule[]) => void; readOnly?: boolean }) {
   const [rules, setRules] = useState(initial);
   return (
     <MappingRuleEditor
       rules={rules}
       onChange={(next) => { setRules(next); onChange?.(next); }}
+      readOnly={readOnly}
     />
   );
 }
 
-function renderEditor(initial: MappingRule[] = []) {
+function renderEditor(initial: MappingRule[] = [], readOnly = false) {
   const onChange = vi.fn<(r: MappingRule[]) => void>();
-  render(<Host initial={initial} onChange={onChange} />);
+  render(<Host initial={initial} onChange={onChange} readOnly={readOnly} />);
   return onChange;
 }
 
@@ -231,5 +232,78 @@ describe('MappingRuleEditor preview', () => {
     fireEvent.change(screen.getByPlaceholderText(/preview mapping/), { target: { value: '/a/b.pdf' } });
     fireEvent.click(screen.getByRole('button', { name: 'Preview' }));
     await waitFor(() => expect(screen.getByText(/Error: HTTP 500/)).toBeInTheDocument());
+  });
+});
+
+describe('MappingRuleEditor draft vs. reorder', () => {
+  // The reorder rewrites BOTH swapped rows' priorities, but the open draft
+  // still held the priority it was snapshotted with — and `saveEdit` writes
+  // the whole draft back over the row. So reordering a neighbour while a rule
+  // was open for editing, then saving, put the old priority back: two rules
+  // ended up sharing one priority, which makes the ingest match order
+  // ambiguous, and nothing on screen said so.
+  it('saving after a neighbour was reordered does not resurrect the old priority', () => {
+    renderEditor([
+      rule({ documentTypeId: 'dt-a', priority: 1 }),
+      rule({ documentTypeId: 'dt-b', priority: 2 }),
+    ]);
+
+    // Open row A (index 0) for editing…
+    fireEvent.click(within(screen.getAllByRole('row')[1]).getByRole('button', { name: 'Edit' }));
+    // …then push row B up past it. A is now the second row, priority 2.
+    // (`rowSummary` can't read the edited row — it renders inputs — so the
+    // draft's own priority control is the observable here.)
+    fireEvent.click(within(screen.getAllByRole('row')[2]).getByTitle('Move up'));
+    expect((screen.getByLabelText('Priority') as HTMLInputElement).value).toBe('2');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(rowSummary()).toEqual([['1', 'dt-b'], ['2', 'dt-a']]);
+    // No two rules may claim the same priority.
+    const priorities = rowSummary().map(([p]) => p);
+    expect(new Set(priorities).size).toBe(priorities.length);
+  });
+
+  it('the same holds for Move down', () => {
+    renderEditor([
+      rule({ documentTypeId: 'dt-a', priority: 1 }),
+      rule({ documentTypeId: 'dt-b', priority: 2 }),
+    ]);
+
+    fireEvent.click(within(screen.getAllByRole('row')[2]).getByRole('button', { name: 'Edit' }));
+    fireEvent.click(within(screen.getAllByRole('row')[1]).getByTitle('Move down'));
+    expect((screen.getByLabelText('Priority') as HTMLInputElement).value).toBe('1');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+    expect(rowSummary()).toEqual([['1', 'dt-b'], ['2', 'dt-a']]);
+  });
+});
+
+describe('MappingRuleEditor readOnly', () => {
+  // `SourceDetailPage` renders this editor outside its own edit mode with an
+  // `onChange` that does nothing. Offering the full toolbar there let an
+  // operator open a rule, retype its target type, press Save, and watch the
+  // row revert with no error at all.
+  it('offers no mutating control at all', () => {
+    renderEditor([rule({ documentTypeId: 'dt-a' }), rule({ documentTypeId: 'dt-b', priority: 2 })], true);
+
+    expect(screen.queryByRole('button', { name: 'Edit' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull();
+    expect(screen.queryByTitle('Move up')).toBeNull();
+    expect(screen.queryByTitle('Move down')).toBeNull();
+    expect(screen.queryByTestId('add-rule-btn')).toBeNull();
+  });
+
+  it('still shows the rules themselves and the read-only preview', () => {
+    renderEditor([rule({ documentTypeId: 'dt-a' })], true);
+
+    expect(rowSummary()).toEqual([['1', 'dt-a']]);
+    expect(screen.getByRole('button', { name: 'Preview' })).toBeInTheDocument();
+  });
+
+  it('does not invite the operator to add a rule it cannot save', () => {
+    renderEditor([], true);
+    expect(screen.getByText(/No mapping rules configured/)).toBeInTheDocument();
+    expect(screen.queryByText(/Add one to get started/)).toBeNull();
   });
 });

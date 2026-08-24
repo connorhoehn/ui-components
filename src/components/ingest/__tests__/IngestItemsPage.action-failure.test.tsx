@@ -106,3 +106,53 @@ describe('IngestItemsPage — a failed action is not a failed load', () => {
     expect(screen.queryByTestId('ingest-items-action-error')).not.toBeInTheDocument();
   });
 });
+
+describe('IngestItemDrawer — closing is a success signal', () => {
+  // The drawer closed from a `finally`, so it slid away whether the retry had
+  // landed or not. Closing is the only "done" cue this surface has: a rejected
+  // Retry looked identical to an accepted one, and the operator moved on
+  // leaving the item still `failed`. The page's own wrapper compounded it by
+  // discarding the hook's boolean before the drawer could see it.
+  async function openDrawer(postOutcome: () => Promise<Response>) {
+    vi.stubGlobal('fetch', stubApi(postOutcome));
+    render(<IngestItemsPage />);
+    const table = await screen.findByRole('table');
+    fireEvent.click(within(table).getByText('/inbox/report.pdf'));
+    return screen.getByTestId('ingest-item-drawer');
+  }
+
+  it('stays open when the retry is rejected, and says why', async () => {
+    const drawer = await openDrawer(() =>
+      Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) } as unknown as Response),
+    );
+
+    fireEvent.click(within(drawer).getByText('Retry'));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('ingest-items-action-error')).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId('ingest-item-drawer')).toBeInTheDocument();
+  });
+
+  it('stays open when the skip is rejected', async () => {
+    const drawer = await openDrawer(() => Promise.reject(new Error('Failed to fetch')));
+
+    fireEvent.click(within(drawer).getByText('Discard'));
+
+    await waitFor(() =>
+      expect(screen.getByTestId('ingest-items-action-error')).toBeInTheDocument(),
+    );
+    expect(screen.getByTestId('ingest-item-drawer')).toBeInTheDocument();
+  });
+
+  it('closes when the retry actually lands', async () => {
+    const drawer = await openDrawer(() => Promise.resolve(jsonRes({ ok: true })));
+
+    fireEvent.click(within(drawer).getByText('Retry'));
+
+    await waitFor(() =>
+      expect(screen.queryByTestId('ingest-item-drawer')).not.toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId('ingest-items-action-error')).not.toBeInTheDocument();
+  });
+});

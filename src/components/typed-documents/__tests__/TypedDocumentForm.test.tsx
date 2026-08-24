@@ -241,6 +241,109 @@ describe('TypedDocumentForm showWhen visibility', () => {
     fireEvent.submit(screen.getByTestId('typed-document-form'));
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({ kind: 'task' }));
   });
+
+  // A→B→C. Visibility used to be answered one hop deep: C only asked what B
+  // was *holding*, not whether B was part of the document at all. So hiding B
+  // left C on screen, and `handleSubmit` — which uses the same predicate —
+  // shipped C's value keyed to a condition on a field it had just dropped.
+  const chained = () =>
+    docType([
+      field({ fieldId: 'kind', fieldType: 'enum', widget: 'select', options: ['bug', 'task'] }),
+      field({ fieldId: 'severity', showWhen: { fieldId: 'kind', equals: 'bug' } }),
+      field({ fieldId: 'pager', showWhen: { fieldId: 'severity', equals: 'p1' } }),
+    ]);
+
+  it('hiding the middle of a chain hides what depends on it', () => {
+    render(<TypedDocumentForm type={chained()} onSubmit={submitSpy()} />);
+
+    fireEvent.change(screen.getByTestId('input-kind'), { target: { value: 'bug' } });
+    fireEvent.change(screen.getByTestId('input-severity'), { target: { value: 'p1' } });
+    expect(screen.getByTestId('input-pager')).toBeInTheDocument();
+
+    // `severity` is now hidden, so nothing may still be conditioned on it.
+    fireEvent.change(screen.getByTestId('input-kind'), { target: { value: 'task' } });
+    expect(screen.queryByTestId('input-severity')).toBeNull();
+    expect(screen.queryByTestId('input-pager')).toBeNull();
+  });
+
+  it('a field hidden through the chain is dropped from the payload', async () => {
+    const onSubmit = submitSpy();
+    render(<TypedDocumentForm type={chained()} onSubmit={onSubmit} />);
+
+    fireEvent.change(screen.getByTestId('input-kind'), { target: { value: 'bug' } });
+    fireEvent.change(screen.getByTestId('input-severity'), { target: { value: 'p1' } });
+    fireEvent.change(screen.getByTestId('input-pager'), { target: { value: 'oncall-a' } });
+    fireEvent.change(screen.getByTestId('input-kind'), { target: { value: 'task' } });
+
+    fireEvent.submit(screen.getByTestId('typed-document-form'));
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({ kind: 'task' }));
+  });
+
+  it('a cyclic showWhen renders rather than hanging the page', () => {
+    // Nothing sensible to show or hide, so both fields render — the point is
+    // that the visibility walk terminates instead of recursing forever.
+    render(
+      <TypedDocumentForm
+        type={docType([
+          field({ fieldId: 'a', showWhen: { fieldId: 'b', equals: 'x' } }),
+          field({ fieldId: 'b', showWhen: { fieldId: 'a', equals: 'x' } }),
+        ])}
+        onSubmit={submitSpy()}
+      />,
+    );
+    expect(screen.getByTestId('typed-document-form')).toBeInTheDocument();
+  });
+});
+
+describe('TypedDocumentForm reference picker lookup states', () => {
+  const refType = () =>
+    docType([
+      field({ fieldId: 'author', fieldType: 'reference', widget: 'reference_picker', referenceTypeId: 'dt-person' }),
+    ]);
+
+  // An unstarted lookup and an answered-but-empty one are both an empty
+  // options array. Reading the first as the second told the user, for the
+  // whole duration of the fetch, that the documents they wanted to link did
+  // not exist — and left the picker disabled so they could not wait it out.
+  it('says the lookup is still running instead of claiming there is nothing to link', () => {
+    render(
+      <TypedDocumentForm
+        type={refType()}
+        onSubmit={submitSpy()}
+        referenceOptions={{}}
+        referenceOptionsLoading={{ 'dt-person': true }}
+      />,
+    );
+    expect(screen.getByTestId('reference-loading-author')).toBeInTheDocument();
+    expect(screen.queryByTestId('reference-empty-author')).toBeNull();
+  });
+
+  it('claims emptiness only once the lookup has answered', () => {
+    render(
+      <TypedDocumentForm
+        type={refType()}
+        onSubmit={submitSpy()}
+        referenceOptions={{ 'dt-person': [] }}
+        referenceOptionsLoading={{}}
+      />,
+    );
+    expect(screen.getByTestId('reference-empty-author')).toBeInTheDocument();
+    expect(screen.queryByTestId('reference-loading-author')).toBeNull();
+  });
+
+  it('a lookup failure still outranks both', () => {
+    render(
+      <TypedDocumentForm
+        type={refType()}
+        onSubmit={submitSpy()}
+        referenceOptionsErrors={{ 'dt-person': 'Failed to load referenceable documents (500)' }}
+        referenceOptionsLoading={{ 'dt-person': true }}
+      />,
+    );
+    expect(screen.getByTestId('reference-error-author')).toBeInTheDocument();
+    expect(screen.queryByTestId('reference-loading-author')).toBeNull();
+    expect(screen.queryByTestId('reference-empty-author')).toBeNull();
+  });
 });
 
 describe('TypedDocumentForm unlimited cardinality', () => {

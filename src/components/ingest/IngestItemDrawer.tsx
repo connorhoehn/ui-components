@@ -123,13 +123,26 @@ export default function IngestItemDrawer({ item, sourceName, onClose, onRetry, o
   const isTerminal = item.status === 'done' || item.status === 'failed';
   const confidence = typeof item.mappingConfidence === 'number' ? item.mappingConfidence : null;
 
+  // Closing the drawer is this surface's only success signal, so it must not
+  // fire on failure. It used to close from `finally`, unconditionally: a
+  // rejected Retry looked exactly like an accepted one — the drawer slid away,
+  // the operator moved on, and the item stayed `failed`. `handleRemap` below
+  // has always closed only on success; retry/skip were the odd ones out.
+  // `false` is the documented "did not land" answer from `onRetry`/`onSkip`;
+  // a `void`-returning caller keeps the old close-on-completion behaviour.
   const handleRetry = async () => {
     setBusy('retry');
-    try { await onRetry(item.itemId); } finally { setBusy(null); onClose(); }
+    try {
+      const ok = await onRetry(item.itemId);
+      if (ok !== false) onClose();
+    } finally { setBusy(null); }
   };
   const handleSkip = async () => {
     setBusy('skip');
-    try { await onSkip(item.itemId); } finally { setBusy(null); onClose(); }
+    try {
+      const ok = await onSkip(item.itemId);
+      if (ok !== false) onClose();
+    } finally { setBusy(null); }
   };
   const handleRemap = async () => {
     setBusy('remap');

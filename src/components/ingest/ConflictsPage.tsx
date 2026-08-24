@@ -35,7 +35,10 @@ function formatValue(v: unknown): string {
 // ---------------------------------------------------------------------------
 
 export default function ConflictsPage() {
-  const { conflicts, loading, error, usingMock, refresh, resolveConflict, discardConflict } = useSyncConflicts();
+  const {
+    conflicts, loading, error, usingMock, refresh, resolveConflict, discardConflict,
+    actionError, clearActionError,
+  } = useSyncConflicts();
   const { sources } = useIngestSources();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [globalPick, setGlobalPick] = useState<ConflictSide>('platform');
@@ -137,6 +140,27 @@ export default function ConflictsPage() {
       {error && !usingMock && (
         <div className="px-4 py-3 bg-danger-bg border border-[var(--color-state-failed)] text-[var(--color-state-failed)] rounded-lg flex items-center justify-between gap-3 mb-3" role="alert">
           <span className="text-[13px]">Failed to load conflicts: {error}</span>
+        </div>
+      )}
+
+      {/* Action-failure banner — a rejected Resolve/Discard is NOT a failed
+          load, and must not be reported as one. The conflict is still
+          pending, so say so rather than letting the operator move on. */}
+      {actionError && (
+        <div
+          data-testid="conflicts-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-3"
+        >
+          <span className="text-[13px] font-medium">
+            That conflict was not updated: {actionError}
+          </span>
+          <button
+            onClick={clearActionError}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 

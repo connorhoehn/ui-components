@@ -55,10 +55,26 @@ function observedFor(field: ApiDocumentTypeField, stored: FieldStored): string |
   return typeof stored === 'string' ? stored : undefined;
 }
 
-function isVisible(field: ApiDocumentTypeField, type: ApiDocumentType, values: FormState): boolean {
+function isVisible(
+  field: ApiDocumentTypeField,
+  type: ApiDocumentType,
+  values: FormState,
+  seen: ReadonlySet<string> = new Set(),
+): boolean {
   if (!field.showWhen) return true;
+  // Cyclic `showWhen` (A shows when B, B shows when A) — treat as unconditional
+  // rather than recursing forever. Same principle as the bad-reference branch
+  // below: show the field, don't crash the page and don't silently hide it.
+  if (seen.has(field.fieldId)) return true;
   const source = type.fields.find((f) => f.fieldId === field.showWhen!.fieldId);
   if (!source) return true; // bad reference — show the field rather than silently hiding
+  // A hidden source field is not part of this document: `handleSubmit` drops
+  // it from the payload entirely. So nothing may be conditioned on the value
+  // it happens to still be holding in form state. With A→B→C chained, setting
+  // A to hide B left C on screen and IN the payload, keyed to a condition on a
+  // field that was never submitted — the user saw a field the type author had
+  // said to hide, filled it in, and it was saved.
+  if (!isVisible(source, type, values, new Set(seen).add(field.fieldId))) return false;
   const observed = observedFor(source, values[source.fieldId]);
   return observed === field.showWhen.equals;
 }
@@ -110,6 +126,18 @@ export interface TypedDocumentFormProps {
    * picker says so instead of claiming there is nothing to reference.
    */
   referenceOptionsErrors?: Record<string, string>;
+  /**
+   * Keyed by DocumentType id. `true` while the caller's lookup for that type
+   * is still in flight. Additive.
+   *
+   * "No options yet" was inferred purely from an empty `referenceOptions`, and
+   * an unstarted lookup is empty too — so for the whole duration of the fetch
+   * the picker sat disabled under "No referenceable documents yet for this
+   * type." That is the same false statement the `referenceOptionsErrors`
+   * fix removed, just in a different window: it tells the user the documents
+   * do not exist and to go create one.
+   */
+  referenceOptionsLoading?: Record<string, boolean>;
 }
 
 function defaultForField(field: ApiDocumentTypeField): FieldStored {
@@ -154,7 +182,7 @@ function coerceUnlimited(field: ApiDocumentTypeField, arr: string[]): TypedDocum
 }
 
 
-export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {}, referenceOptionsErrors = {} }: TypedDocumentFormProps): JSX.Element {
+export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, referenceOptions = {}, referenceOptionsErrors = {}, referenceOptionsLoading = {} }: TypedDocumentFormProps): JSX.Element {
   const [values, setValues] = useState<FormState>(() => {
     const init: FormState = {};
     for (const f of type.fields) init[f.fieldId] = defaultForField(f);
@@ -383,11 +411,16 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
             {field.cardinality === 1 && field.widget === 'reference_picker' && (() => {
               const opts = field.referenceTypeId ? (referenceOptions[field.referenceTypeId] ?? []) : [];
               const loadError = field.referenceTypeId ? referenceOptionsErrors[field.referenceTypeId] : undefined;
+              const loading = field.referenceTypeId ? referenceOptionsLoading[field.referenceTypeId] === true : false;
+              // "Nothing to reference" is a claim about the data, so it may
+              // only be made once the lookup has actually answered — an
+              // in-flight lookup is empty too, and saying so told the user to
+              // go and create a document that already existed.
               const empty = opts.length === 0;
-              // The "lookup failed" / "nothing to reference" note explains why
-              // the picker is disabled. It sat next to the control with no
-              // aria-describedby, so the only cue a screen-reader user got was
-              // a combo box that refused to open.
+              // The "lookup failed" / "still loading" / "nothing to reference"
+              // note explains why the picker is disabled. It sat next to the
+              // control with no aria-describedby, so the only cue a
+              // screen-reader user got was a combo box that refused to open.
               const noteId = loadError || empty ? `${controlId}-note` : undefined;
               return (
                 <>
@@ -407,6 +440,10 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                   {loadError ? (
                     <span id={noteId} role="alert" data-testid={`reference-error-${field.fieldId}`} className={cn('text-[11px] text-danger-fg')}>
                       {loadError}
+                    </span>
+                  ) : loading && empty ? (
+                    <span id={noteId} data-testid={`reference-loading-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
+                      Loading referenceable documents…
                     </span>
                   ) : empty && (
                     <span id={noteId} data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
