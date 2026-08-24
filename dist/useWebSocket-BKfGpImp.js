@@ -29,64 +29,71 @@ function c(n = {}) {
 }
 //#endregion
 //#region src/hooks/useAwarenessState.ts
-function l(n, i) {
-	let a = r({
-		...i,
-		name: i.displayName,
+function l(i, a) {
+	let o = r({
+		...a,
+		name: a.displayName,
 		lastSeen: Date.now(),
 		idle: !1
-	}), o = r(n);
-	o.current = n;
-	let s = e(() => {
-		let e = o.current;
-		e?.awareness && (a.current.lastSeen = Date.now(), e.awareness.setLocalStateField("user", { ...a.current }));
+	}), s = r(i);
+	s.current = i;
+	let l = e(() => {
+		let e = s.current;
+		e?.awareness && (o.current.lastSeen = Date.now(), e.awareness.setLocalStateField("user", { ...o.current }));
 	}, []);
 	t(() => {
-		n?.awareness && (a.current = {
-			...a.current,
-			...i,
-			name: i.displayName,
+		i?.awareness && (o.current = {
+			...o.current,
+			...a,
+			name: a.displayName,
 			lastSeen: Date.now()
-		}, s());
+		}, l());
 	}, [
-		n,
-		i.userId,
-		i.displayName,
-		i.color,
-		i.mode,
-		s
+		i,
+		a.userId,
+		a.displayName,
+		a.color,
+		a.mode,
+		l
 	]);
-	let { isIdle: l } = c();
-	return t(() => {
-		a.current.idle = l, s();
-	}, [l, s]), {
-		updateSection: e((e) => {
-			a.current.currentSectionId = e, s();
-		}, [s]),
-		updateMode: e((e) => {
-			a.current.mode = e, s();
-		}, [s]),
-		updateIdle: e((e) => {
-			a.current.idle = e, s();
-		}, [s]),
-		updateCursorInfo: e((e, t) => {
-			a.current.name = e, a.current.color = t, s();
-		}, [s])
-	};
+	let { isIdle: u } = c();
+	t(() => {
+		o.current.idle = u, l();
+	}, [u, l]);
+	let d = e((e) => {
+		o.current.currentSectionId = e, l();
+	}, [l]), f = e((e) => {
+		o.current.mode = e, l();
+	}, [l]), p = e((e) => {
+		o.current.idle = e, l();
+	}, [l]), m = e((e, t) => {
+		o.current.name = e, o.current.color = t, l();
+	}, [l]);
+	return n(() => ({
+		updateSection: d,
+		updateMode: f,
+		updateIdle: p,
+		updateCursorInfo: m
+	}), [
+		d,
+		f,
+		p,
+		m
+	]);
 }
 //#endregion
 //#region src/hooks/useAwareness.ts
-function u(e, n) {
-	let [r, a] = i([]), o = l(e, {
-		userId: n.userId,
-		displayName: n.displayName,
-		color: n.color,
-		mode: n.mode,
+function u(e, r) {
+	let [a, o] = i([]), s = l(e, {
+		userId: r.userId,
+		displayName: r.displayName,
+		color: r.color,
+		mode: r.mode,
 		currentSectionId: null
 	});
 	return t(() => {
 		if (!e) {
-			a([]);
+			o([]);
 			return;
 		}
 		let t = "", n = () => {
@@ -110,16 +117,16 @@ function u(e, n) {
 				let t = e.userId || e.displayName || e.clientId, n = i.get(t);
 				(!n || (e.lastSeen ?? 0) > (n.lastSeen ?? 0)) && i.set(t, e);
 			}
-			let o = Array.from(i.values()), s = o.map((e) => `${e.clientId}:${e.currentSectionId}:${e.mode}:${e.idle}`).join("|");
-			s !== t && (t = s, queueMicrotask(() => a(o)));
+			let a = Array.from(i.values()), s = a.map((e) => `${e.clientId}:${e.currentSectionId}:${e.mode}:${e.idle}`).join("|");
+			s !== t && (t = s, queueMicrotask(() => o(a)));
 		};
 		return e.awareness.on("change", n), n(), () => {
 			e.awareness.off("change", n);
 		};
-	}, [e]), {
-		awareness: o,
-		participants: r
-	};
+	}, [e]), n(() => ({
+		awareness: s,
+		participants: a
+	}), [s, a]);
 }
 //#endregion
 //#region node_modules/lib0/map.js
@@ -281,7 +288,7 @@ var te = class {
 			let t = [];
 			this.meta.forEach((n, r) => {
 				r !== this.clientID && 3e4 <= e - n.lastUpdated && this.states.has(r) && t.push(r);
-			}), t.length > 0 && Se(this, t, "timeout");
+			}), t.length > 0 && R(this, t, "timeout");
 		}, g(be / 10)), e.on("destroy", () => {
 			this.destroy();
 		}), this.setLocalState({});
@@ -319,7 +326,7 @@ var te = class {
 	getStates() {
 		return this.states;
 	}
-}, Se = (e, t, n) => {
+}, R = (e, t, n) => {
 	let r = [];
 	for (let n = 0; n < t.length; n++) {
 		let i = t[n];
@@ -343,7 +350,7 @@ var te = class {
 		updated: [],
 		removed: r
 	}, n]));
-}, Ce = (e, t, n = e.states) => {
+}, z = (e, t, n = e.states) => {
 	let r = t.length, i = ne();
 	A(i, r);
 	for (let a = 0; a < r; a++) {
@@ -351,7 +358,7 @@ var te = class {
 		A(i, r), A(i, s), oe(i, JSON.stringify(o));
 	}
 	return ie(i);
-}, we = (e, t, n) => {
+}, Se = (e, t, n) => {
 	let r = pe(t), i = P(), a = [], o = [], s = [], c = [], l = N(r);
 	for (let t = 0; t < l; t++) {
 		let t = N(r), n = N(r), l = JSON.parse(ge(r)), u = e.meta.get(t), d = e.states.get(t), f = u === void 0 ? 0 : u.clock;
@@ -369,7 +376,7 @@ var te = class {
 		updated: o,
 		removed: c
 	}, n]);
-}, Te = (e) => e === void 0 ? null : e, R = new class {
+}, Ce = (e) => e === void 0 ? null : e, B = new class {
 	constructor() {
 		this.map = /* @__PURE__ */ new Map();
 	}
@@ -382,36 +389,36 @@ var te = class {
 }();
 /* c8 ignore start */
 try {
-	typeof localStorage < "u" && localStorage && (R = localStorage);
+	typeof localStorage < "u" && localStorage && (B = localStorage);
 } catch {}
 /* c8 ignore stop */
 /* c8 ignore next */
-var Ee = R, z = typeof process < "u" && process.release && /node|io\.js/.test(process.release.name) && Object.prototype.toString.call(typeof process < "u" ? process : 0) === "[object process]", B = typeof window < "u" && typeof document < "u" && !z;
+var we = B, V = typeof process < "u" && process.release && /node|io\.js/.test(process.release.name) && Object.prototype.toString.call(typeof process < "u" ? process : 0) === "[object process]", Te = typeof window < "u" && typeof document < "u" && !V;
 typeof navigator < "u" && /Mac/.test(navigator.platform);
-var V, De = [], Oe = () => {
-	if (V === void 0) {
-		if (z) {
-			V = d();
+var H, Ee = [], De = () => {
+	if (H === void 0) {
+		if (V) {
+			H = d();
 			let e = process.argv, t = null;
 			for (let n = 0; n < e.length; n++) {
 				let r = e[n];
-				r[0] === "-" ? (t !== null && V.set(t, ""), t = r) : t === null ? De.push(r) : (V.set(t, r), t = null);
+				r[0] === "-" ? (t !== null && H.set(t, ""), t = r) : t === null ? Ee.push(r) : (H.set(t, r), t = null);
 			}
-			t !== null && V.set(t, "");
-		} else typeof location == "object" ? (V = d(), (location.search || "?").slice(1).split("&").forEach((e) => {
+			t !== null && H.set(t, "");
+		} else typeof location == "object" ? (H = d(), (location.search || "?").slice(1).split("&").forEach((e) => {
 			if (e.length !== 0) {
 				let [t, n] = e.split("=");
-				V.set(`--${T(t, "-")}`, n), V.set(`-${T(t, "-")}`, n);
+				H.set(`--${T(t, "-")}`, n), H.set(`-${T(t, "-")}`, n);
 			}
-		})) : V = d();
+		})) : H = d();
 	}
-	return V;
-}, H = (e) => Oe().has(e), U = (e) => Te(z ? process.env[e.toUpperCase().replaceAll("-", "_")] : Ee.getItem(e)), W = (e) => H("--" + e) || U(e) !== null;
-W("production"), z && ye(process.env.FORCE_COLOR, [
+	return H;
+}, U = (e) => De().has(e), W = (e) => Ce(V ? process.env[e.toUpperCase().replaceAll("-", "_")] : we.getItem(e)), Oe = (e) => U("--" + e) || W(e) !== null;
+Oe("production"), V && ye(process.env.FORCE_COLOR, [
 	"true",
 	"1",
 	"2"
-]) || !H("--no-colors") && !W("no-color") && (!z || process.stdout.isTTY) && (!z || H("--color") || U("COLORTERM") !== null || (U("TERM") || "").includes("color"));
+]) || !U("--no-colors") && !Oe("no-color") && (!V || process.stdout.isTTY) && (!V || U("--color") || W("COLORTERM") !== null || (W("TERM") || "").includes("color"));
 /* c8 ignore stop */
 //#endregion
 //#region node_modules/lib0/buffer.js
@@ -426,12 +433,13 @@ var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je
 }, Pe = (e) => {
 	let t = Buffer.from(e, "base64");
 	return Ae(t.buffer, t.byteOffset, t.byteLength);
-}, G = B ? je : Me, K = B ? Ne : Pe, Fe = class extends h {
+}, G = Te ? je : Me, K = Te ? Ne : Pe, Fe = class extends h {
 	doc;
 	channel;
 	awareness;
 	_sendMessage;
 	_synced = !1;
+	_destroyed = !1;
 	_awarenessTimer = null;
 	_updateHandler;
 	constructor(e, t, n) {
@@ -445,15 +453,15 @@ var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je
 				update: n
 			});
 		}, this.doc.on("update", this._updateHandler), this.awareness.on("update", ({ added: e, updated: t, removed: n }, r) => {
-			r !== this && e.concat(t, n).includes(this.awareness.clientID) && (this._awarenessTimer && clearTimeout(this._awarenessTimer), this._awarenessTimer = setTimeout(() => {
-				let e = G(Ce(this.awareness, [this.awareness.clientID]));
+			r !== this && (this._destroyed || e.concat(t, n).includes(this.awareness.clientID) && (this._awarenessTimer && clearTimeout(this._awarenessTimer), this._awarenessTimer = setTimeout(() => {
+				let e = G(z(this.awareness, [this.awareness.clientID]));
 				this._sendMessage({
 					service: "crdt",
 					action: "awareness",
 					channel: this.channel,
 					update: e
 				});
-			}, 50));
+			}, 50)));
 		});
 	}
 	get synced() {
@@ -469,10 +477,22 @@ var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je
 	}
 	applyAwarenessUpdate(e) {
 		let t = K(e);
-		we(this.awareness, t, this);
+		Se(this.awareness, t, this);
+	}
+	_broadcastDeparture() {
+		let e = this.awareness.clientID;
+		if (!this.awareness.getStates().has(e)) return;
+		R(this.awareness, [e], "provider-destroy");
+		let t = z(this.awareness, [e]);
+		this._sendMessage({
+			service: "crdt",
+			action: "awareness",
+			channel: this.channel,
+			update: G(t)
+		});
 	}
 	destroy() {
-		this.doc.off("update", this._updateHandler), this._awarenessTimer && clearTimeout(this._awarenessTimer), this.awareness.destroy(), super.destroy();
+		this._destroyed || (this._destroyed = !0, this.doc.off("update", this._updateHandler), this._awarenessTimer &&= (clearTimeout(this._awarenessTimer), null), this._broadcastDeparture(), this.awareness.destroy(), super.destroy());
 	}
 };
 //#endregion
@@ -496,13 +516,13 @@ function Ie(n) {
 		n();
 		let r = setTimeout(n, 500), i = setTimeout(n, 1500);
 		return t.on("synced", v), () => {
-			clearTimeout(r), clearTimeout(i), s.sendMessage({
+			clearTimeout(r), clearTimeout(i);
+			let e = h.current, t = m.current;
+			e && (e.off("synced", v), e.destroy()), t && t.destroy(), s.sendMessage({
 				service: "crdt",
 				action: "unsubscribe",
 				channel: _
-			});
-			let e = h.current, t = m.current;
-			e && (e.off("synced", v), e.destroy()), t && t.destroy(), m.current = null, h.current = null, d(!1);
+			}), m.current = null, h.current = null, d(!1);
 		};
 	}, [o]), t(() => c((e) => {
 		e.type === "session" && s.sendMessage({

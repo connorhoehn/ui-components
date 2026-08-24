@@ -406,6 +406,7 @@ declare class GatewayProvider extends Observable<string> {
     readonly awareness: Awareness;
     private readonly _sendMessage;
     private _synced;
+    private _destroyed;
     private _awarenessTimer;
     private readonly _updateHandler;
     constructor(doc: Y.Doc, channel: string, sendMessage: SendMessage);
@@ -425,6 +426,19 @@ declare class GatewayProvider extends Observable<string> {
      * Apply a remote awareness update received from the gateway.
      */
     applyAwarenessUpdate(b64: string): void;
+    /**
+     * Tell peers this client is gone — synchronously, on the current tick.
+     *
+     * The awareness sender is debounced by 50ms, which is fatal at teardown:
+     * `Awareness.destroy()` clears the local state, our update handler schedules
+     * the removal broadcast 50ms in the future, and by then `useYjsDoc` has
+     * already sent `unsubscribe` for this channel (a gateway routes crdt
+     * messages by subscription, so it drops the late one). On a page unload the
+     * timer never runs at all. Either way the departing client lingers in every
+     * other participant's avatar list until awareness times it out — or forever,
+     * if no other awareness traffic arrives to prompt a re-render.
+     */
+    private _broadcastDeparture;
     destroy(): void;
 }
 

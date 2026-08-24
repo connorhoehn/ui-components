@@ -262,3 +262,65 @@ describe('StandaloneTiptap — bootstrap mode', () => {
     ydoc.destroy();
   });
 });
+
+// ---------------------------------------------------------------------------
+// requireSync — opt-in gate on the provider's first sync
+// ---------------------------------------------------------------------------
+
+// Bootstrap mode mounts on the first commit, before any server snapshot has
+// arrived. The user sees an empty document with a placeholder and can type
+// into it; the server's content then merges AROUND what they wrote, and
+// Tiptap's Collaboration extension writes an empty paragraph into the empty
+// fragment on top of that.
+//
+// The gate is opt-in, not the default, and that asymmetry is the whole design:
+// a gateway that sends no snapshot for a brand-new document never fires
+// `synced`, so gating unconditionally would hang the editor forever. The first
+// test below is the one that protects existing consumers — it must keep
+// passing, or this became a breaking change to a frozen export.
+describe('StandaloneTiptap — requireSync', () => {
+  const unsynced = (ydoc: Y.Doc) => ({ ydoc, provider: null, synced: false, docVersion: 0 });
+
+  function renderWith(props: Record<string, unknown>) {
+    return render(
+      <StandaloneTiptap
+        gatewayUrl="wss://example.test/ws"
+        docId="doc-1"
+        authToken=""
+        user={USER}
+        loadingSlot={<span data-testid="loading">Connecting…</span>}
+        {...props}
+      />,
+    );
+  }
+
+  it('mounts before sync by default — the historical behaviour, unchanged', () => {
+    mockUseYjsDoc.mockReturnValue(unsynced(new Y.Doc()));
+    const { container } = renderWith({});
+    expect(screen.queryByTestId('loading')).toBeNull();
+    expect(container.querySelector('.ProseMirror, [data-testid="tiptap-editor"]') ?? container.firstChild).toBeTruthy();
+  });
+
+  it('holds on loadingSlot until synced when requireSync is set', () => {
+    mockUseYjsDoc.mockReturnValue(unsynced(new Y.Doc()));
+    renderWith({ requireSync: true });
+    expect(screen.getByTestId('loading')).not.toBeNull();
+  });
+
+  it('mounts once sync arrives', () => {
+    const ydoc = new Y.Doc();
+    mockUseYjsDoc.mockReturnValue({ ydoc, provider: null, synced: true, docVersion: 1 });
+    renderWith({ requireSync: true });
+    expect(screen.queryByTestId('loading')).toBeNull();
+  });
+
+  it('does not fire onFragmentReady before sync when requireSync is set', () => {
+    // The prop is documented for "seeding initial content". Seeding an
+    // unsynced doc writes into a fragment the server is about to merge into —
+    // the same corruption the gate exists to prevent, by another route.
+    const onFragmentReady = vi.fn();
+    mockUseYjsDoc.mockReturnValue(unsynced(new Y.Doc()));
+    renderWith({ requireSync: true, onFragmentReady });
+    expect(onFragmentReady).not.toHaveBeenCalled();
+  });
+});

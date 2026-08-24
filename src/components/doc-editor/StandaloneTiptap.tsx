@@ -43,6 +43,26 @@ interface SharedProps {
   onFragmentReady?: (fragment: Y.XmlFragment, ydoc: Y.Doc) => void;
   /** Slot shown while bootstrapping (Y.Doc not yet constructed). */
   loadingSlot?: React.ReactNode;
+  /**
+   * Wait for the provider's first sync before mounting the editor.
+   *
+   * Default `false`, which is the historical behaviour: the editor mounts on
+   * the first commit, before any server snapshot has arrived. The user sees an
+   * empty document with a placeholder and can start typing into it — and the
+   * server's content then merges *around* what they wrote. Tiptap's
+   * Collaboration extension also writes an empty paragraph into an empty
+   * fragment, so a cold open can leave a stray block behind.
+   *
+   * Set `true` when the document is expected to have existing content and you
+   * would rather show `loadingSlot` than risk that. It is opt-in rather than
+   * the default because a gateway that sends no snapshot for a brand-new
+   * document never fires `synced`, and gating on it there would hang the
+   * editor forever.
+   *
+   * `onFragmentReady` respects this too: seeding content into an unsynced doc
+   * is the same corruption by another route.
+   */
+  requireSync?: boolean;
 }
 
 export interface StandaloneTiptapBootstrapProps extends SharedProps {
@@ -145,6 +165,7 @@ function BootstrappingEditor({
   className,
   onFragmentReady,
   loadingSlot,
+  requireSync,
 }: StandaloneTiptapBootstrapProps) {
   const resolvedChannel = channel ?? `doc:${docId}`;
 
@@ -177,7 +198,7 @@ function BootstrappingEditor({
 
   const ws = useWebSocket({ config: wsConfig, onMessage: onWsMessage });
 
-  const { ydoc, provider } = useYjsDoc({
+  const { ydoc, provider, synced } = useYjsDoc({
     documentId: docId,
     ws,
     onMessage: subscribeMessages,
@@ -188,13 +209,16 @@ function BootstrappingEditor({
     [ydoc, fragmentName],
   );
 
+  const gateOnSync = requireSync === true;
+  const ready = !!ydoc && !!fragment && (!gateOnSync || synced);
+
   const readyOnce = useRef(false);
-  if (!readyOnce.current && fragment && ydoc) {
+  if (!readyOnce.current && ready && fragment && ydoc) {
     readyOnce.current = true;
     onFragmentReady?.(fragment, ydoc);
   }
 
-  if (!ydoc || !fragment) {
+  if (!ready) {
     return <div className={cn(className)}>{loadingSlot ?? null}</div>;
   }
 

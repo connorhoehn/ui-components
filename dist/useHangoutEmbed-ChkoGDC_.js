@@ -106,20 +106,21 @@ function o({ stageToken: i, userId: o, participantId: s }) {
 				e.getTracks().forEach((e) => e.stop());
 				return;
 			}
-			v.current = e;
-			let t = e.getVideoTracks()[0];
-			t.contentHint = "detail";
-			let { LocalStageStream: n } = await a();
+			let t = v.current;
+			t && t !== e && t.getTracks().forEach((e) => e.stop()), v.current = e;
+			let n = e.getVideoTracks()[0];
+			n.contentHint = "detail";
+			let { LocalStageStream: r } = await a();
 			if (!x.current) {
 				e.getTracks().forEach((e) => e.stop()), v.current = null;
 				return;
 			}
-			let r = new n(t);
-			y.current = [...y.current.filter((e) => e.mediaStreamTrack.kind === "audio"), r], b.current?.refreshStrategy(), l((t) => t.map((t) => t.isLocal ? {
+			let i = new r(n);
+			y.current = [...y.current.filter((e) => e.mediaStreamTrack.kind === "audio"), i], b.current?.refreshStrategy(), l((t) => t.map((t) => t.isLocal ? {
 				...t,
 				screenStream: e
-			} : t)), p(!0), t.addEventListener("ended", () => {
-				C();
+			} : t)), p(!0), n.addEventListener("ended", () => {
+				v.current === e && C();
 			});
 		} catch (e) {
 			if (e.name === "AbortError" || e.name === "NotAllowedError") return;

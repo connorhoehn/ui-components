@@ -356,7 +356,9 @@ function b({ stream: e }) {
 		}
 		n.srcObject !== e && (n.srcObject = e);
 		let r = n.play();
-		r && typeof r.catch == "function" && r.catch(() => {});
+		return r && typeof r.catch == "function" && r.catch(() => {}), () => {
+			n.pause(), n.srcObject = null;
+		};
 	}, [e]), /* @__PURE__ */ o("audio", {
 		ref: t,
 		autoPlay: !0,

@@ -1,9 +1,9 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.js";
 import { n as o, t as s } from "./fieldType-Be2vqdKv.js";
 import { DOCUMENT_TYPE_ICONS as c, getPageConfig as l, getPagesView as u, makeEmptyField as d } from "./types.js";
-import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as ee, c as te, d as ne, f as re, g as x, h as S, i as ie, k as ae, l as oe, m as se, n as C, o as w, p as ce, r as le, s as ue, t as de, u as T, v as E, w as fe, x as D, y as pe } from "./hooks-f3Z-D_Ss.js";
+import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as ee, c as te, d as ne, f as re, g as x, h as S, i as ie, k as ae, l as oe, m as se, n as C, o as w, p as ce, r as le, s as ue, t as de, u as T, v as E, w as fe, x as D, y as pe } from "./hooks-BFvDs4VG.js";
 import { n as me, t as he } from "./IdentityContext-m2wQF4sJ.js";
-import { _ as O, a as k, d as A, f as ge, g as j, h as M, i as _e, l as ve, m as ye, n as be, o as xe, p as Se, r as N, t as P, u as Ce, v as we, y as Te } from "./useWebSocket-DlIH1l_f.js";
+import { _ as O, a as k, d as A, f as ge, g as j, h as M, i as _e, l as ve, m as ye, n as be, o as xe, p as Se, r as N, t as P, u as Ce, v as we, y as Te } from "./useWebSocket-BKfGpImp.js";
 import { a as Ee, i as F, n as I, o as L, r as De, t as Oe } from "./useSocialProfile-DHI6vBUX.js";
 import { a as R, c as ke, i as Ae, l as je, n as Me, o as z, r as Ne, s as B, t as Pe, u as Fe } from "./useSyncConflicts-DNj4F6oF.js";
 import { n as Ie } from "./useDocumentTypes-C-AMWgYq.js";
@@ -36,13 +36,13 @@ import { a as dr, i as fr, n as pr, o as mr, r as hr, t as gr } from "./Presence
 import { t as U } from "./activationKey-CjbL3LUv.js";
 import { t as _r } from "./Input-DcK2h-jK.js";
 import { t as vr } from "./Textarea-C3t5PCLv.js";
-import { o as yr } from "./renderers-UTjuxiRH.js";
+import { o as yr } from "./renderers-Ceq-XDqT.js";
 import { n as br, r as xr, t as Sr } from "./EventStreamContext-C0egqLaF.js";
 import { A as Cr, C as wr, G as Tr, J as Er, K as Dr, L as Or, T as kr, Y as Ar, _ as jr, b as Mr, c as Nr, d as Pr, f as Fr, g as Ir, h as Lr, l as Rr, m as zr, n as Br, nt as Vr, p as Hr, s as Ur, t as Wr, tt as Gr, u as Kr, v as qr, x as Jr, y as Yr } from "./services-CK_zipW-.js";
 import { n as Xr, t as Zr } from "./ObservabilityContext-1dWNBRm7.js";
 import { t as Qr } from "./Select-Z0TLUVeL.js";
-import { A as $r, B as ei, C as ti, D as ni, E as ri, F as ii, I as ai, L as oi, M as si, N as ci, O as li, P as ui, R as di, S as fi, T as pi, V as mi, _ as hi, a as gi, b as _i, c as vi, d as yi, f as bi, g as xi, h as Si, i as Ci, j as wi, k as Ti, l as Ei, m as Di, n as Oi, o as ki, p as Ai, r as ji, s as Mi, t as Ni, u as Pi, v as Fi, w as Ii, x as Li, y as Ri, z as zi } from "./video-CuuEmEjT.js";
-import { a as Bi, c as Vi, d as Hi, i as Ui, l as Wi, n as Gi, o as Ki, r as qi, s as Ji, t as Yi, u as Xi } from "./ReconnectingBanner-C5jBpTlY.js";
+import { A as $r, B as ei, C as ti, D as ni, E as ri, F as ii, I as ai, L as oi, M as si, N as ci, O as li, P as ui, R as di, S as fi, T as pi, V as mi, _ as hi, a as gi, b as _i, c as vi, d as yi, f as bi, g as xi, h as Si, i as Ci, j as wi, k as Ti, l as Ei, m as Di, n as Oi, o as ki, p as Ai, r as ji, s as Mi, t as Ni, u as Pi, v as Fi, w as Ii, x as Li, y as Ri, z as zi } from "./video-BWmoX1fi.js";
+import { a as Bi, c as Vi, d as Hi, i as Ui, l as Wi, n as Gi, o as Ki, r as qi, s as Ji, t as Yi, u as Xi } from "./ReconnectingBanner-C-5j8oMW.js";
 import { A as Zi, C as Qi, D as $i, E as ea, O as ta, S as na, T as ra, _ as ia, a as aa, b as oa, c as sa, d as ca, f as la, g as ua, h as da, i as fa, k as pa, l as ma, m as ha, n as ga, o as _a, p as va, r as ya, s as ba, t as xa, u as Sa, v as Ca, w as wa, x as Ta, y as Ea } from "./identity-BFI9xYdm.js";
 import { t as Da } from "./Checkbox-DsS7fIUO.js";
 import { Component as Oa, Suspense as ka, createContext as Aa, forwardRef as ja, lazy as Ma, useCallback as W, useContext as Na, useEffect as G, useId as Pa, useMemo as K, useRef as q, useState as J } from "react";
@@ -1211,7 +1211,7 @@ function vo() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var yo = Ma(() => import("./DocumentEditorPage-BphjUcNg.js").then((e) => e.n));
+var yo = Ma(() => import("./DocumentEditorPage-DVak-ySU.js").then((e) => e.n));
 function bo({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;
