@@ -61,18 +61,25 @@ function relativeTime(iso: string): string {
 
 export default function SourcesPage() {
   const navigate = useNavigate();
-  const { sources, loading, error, refresh, deleteSource, triggerSync } = useIngestSources();
+  const {
+    sources, loading, error, refresh, deleteSource, triggerSync,
+    actionError, clearActionError,
+  } = useIngestSources();
   const [syncing, setSyncing] = useState<Set<string>>(() => new Set());
 
   const handleSync = useCallback(async (sourceId: string) => {
     setSyncing((prev) => new Set(prev).add(sourceId));
-    await triggerSync(sourceId);
+    const ok = await triggerSync(sourceId);
     setSyncing((prev) => {
       const next = new Set(prev);
       next.delete(sourceId);
       return next;
     });
-    void refresh();
+    // Only re-list when the trigger actually landed. `refresh()` calls
+    // `setError(null)`, which used to wipe the failure the sync had just
+    // recorded — so a rejected "Sync now" ended with the spinner stopping and
+    // nothing else changing, identical to success.
+    if (ok) void refresh();
   }, [triggerSync, refresh]);
 
   const handleDelete = useCallback(async (source: IngestSource) => {
@@ -122,6 +129,26 @@ export default function SourcesPage() {
             className="px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]"
           >
             Retry
+          </button>
+        </div>
+      )}
+
+      {/* Action-failure banner — a failed delete or sync is not a failed load,
+          and must not be reported as one. */}
+      {actionError && (
+        <div
+          data-testid="sources-action-error"
+          role="alert"
+          className="px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4"
+        >
+          <span className="text-[13px] font-medium">
+            That action did not go through: {actionError}
+          </span>
+          <button
+            onClick={clearActionError}
+            className="px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]"
+          >
+            Dismiss
           </button>
         </div>
       )}

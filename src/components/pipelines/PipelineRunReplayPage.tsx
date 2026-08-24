@@ -91,15 +91,27 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   // the live context has a sparse version of the run (e.g. page opened after
   // events already fired, or WS reconnection lost intermediate step events).
   const [fetchedRun, setFetchedRun] = useState<PipelineRun | null>(null);
+  // `getPipelineRun` resolves null ONLY for a real 404 and rejects for
+  // transport/5xx/401. Keeping the two apart is the whole point: without it
+  // an unreachable API rendered "may have been trimmed from history", which
+  // tells the user their run was garbage-collected when the server is simply
+  // down — and offers no retry.
+  const [runFetchError, setRunFetchError] = useState<string | null>(null);
+  const [runFetchAttempt, setRunFetchAttempt] = useState(0);
+  const retryRunFetch = useCallback(() => setRunFetchAttempt((n) => n + 1), []);
   useEffect(() => {
     let cancelled = false;
-    import('../../api/pipelineRuns').then(({ getPipelineRun }) => {
+    setRunFetchError(null);
+    import('../../api/pipelineRuns').then(({ getPipelineRun }) =>
       getPipelineRun(pipelineId, runId).then((r) => {
         if (!cancelled && r) setFetchedRun(r);
-      });
+      }),
+    ).catch((err: unknown) => {
+      if (cancelled) return;
+      setRunFetchError(err instanceof Error ? err.message : String(err));
     });
     return () => { cancelled = true; };
-  }, [pipelineId, runId]);
+  }, [pipelineId, runId, runFetchAttempt]);
 
   const run: PipelineRun | undefined = useMemo(() => {
     const live = runs.runs[runId];
@@ -267,11 +279,15 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
   };
 
   // ── Missing-run fallback ─────────────────────────────────────────────
+  // Two distinct outcomes, deliberately rendered differently: the fetch
+  // FAILED (server unreachable — offer a retry, never claim the run is gone)
+  // vs. the server answered 404 (the run really is not there).
   if (!run) {
+    const loadFailed = runFetchError !== null;
     return (
       <div
         className="flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border"
-        data-testid="pipeline-replay-missing"
+        data-testid={loadFailed ? 'pipeline-replay-error' : 'pipeline-replay-missing'}
       >
         <div className="h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]">
           <IconButton
@@ -286,14 +302,39 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           </div>
         </div>
         <div className="flex-1 flex flex-col items-center justify-center gap-3.5 p-8 text-center">
-          <div className="text-sm text-text-secondary">
-            Run not available — it may have been trimmed from history.
-          </div>
-          <Button
-            onClick={() => navigate(`/pipelines/${pipelineId}`)}
-          >
-            Back to pipeline
-          </Button>
+          {loadFailed ? (
+            <>
+              <div className="text-sm text-text-secondary" data-testid="replay-load-error">
+                Couldn&apos;t load this run — the pipeline API is unreachable.
+                The run has not necessarily been deleted.
+              </div>
+              <div className="text-xs text-danger-fg font-mono" data-testid="replay-load-error-detail">
+                {runFetchError}
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={retryRunFetch} data-testid="replay-retry">
+                  Retry
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate(`/pipelines/${pipelineId}`)}
+                >
+                  Back to pipeline
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="text-sm text-text-secondary">
+                Run not available — it may have been trimmed from history.
+              </div>
+              <Button
+                onClick={() => navigate(`/pipelines/${pipelineId}`)}
+              >
+                Back to pipeline
+              </Button>
+            </>
+          )}
         </div>
       </div>
     );

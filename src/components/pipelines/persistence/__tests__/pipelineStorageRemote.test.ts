@@ -182,13 +182,42 @@ describe('pipelineStorageRemote', () => {
       expect(loadCached('p1')?.version).toBe(4);
     });
 
-    it('keeps the offline copy (bumped, cached) when the network is down', async () => {
+    // INVERTED (was: "keeps the offline copy (bumped, cached) when the
+    // network is down", asserting the promise RESOLVED). Half of that was
+    // right and is kept: the local cache write must survive, so no work is
+    // lost. The resolve was the bug — `PipelineEditorContext.persist` reads a
+    // fulfilled promise as "the server has it", clears `dirty`, and the
+    // editor flashes "Saved". The user then closes the tab believing the
+    // pipeline is on the server when it exists only in that browser.
+    it('caches the bumped copy AND rejects when the network is down', async () => {
       stubFetch(() => {
         throw new TypeError('Failed to fetch');
       });
 
-      const saved = await savePipeline(makeDef({ version: 3 }));
+      await expect(savePipeline(makeDef({ version: 3 }))).rejects.toThrow(
+        /Failed to fetch/,
+      );
 
+      // Nothing lost: the bumped definition is still in the local cache.
+      expect(loadCached('p1')?.version).toBe(4);
+    });
+
+    it('rejects on a 5xx rather than resolving like a successful write', async () => {
+      stubFetch(() => res({ error: 'boom' }, 503));
+      await expect(savePipeline(makeDef())).rejects.toThrow(/503/);
+    });
+
+    // The one case that still resolves quietly: an SPA-fallback host answers
+    // an unknown /api/* path with index.html and HTTP 200. That is the
+    // backendless demo, not an outage, and must not toast on every keystroke.
+    it('resolves the local copy when there is no API at this origin', async () => {
+      stubFetch(() => ({
+        ok: true,
+        status: 200,
+        json: () => Promise.reject(new SyntaxError('Unexpected token < in JSON')),
+      }) as unknown as Response);
+
+      const saved = await savePipeline(makeDef({ version: 3 }));
       expect(saved.version).toBe(4);
       expect(loadCached('p1')?.version).toBe(4);
     });
@@ -222,6 +251,21 @@ describe('pipelineStorageRemote', () => {
     it('returns null when the pipeline is gone', async () => {
       stubFetch(() => res({}, 404));
       await expect(publishPipeline('p1')).resolves.toBeNull();
+    });
+
+    // Regression (null-conflation): `null` used to mean BOTH "the server has
+    // no such pipeline" and "the publish failed", and PipelineEditorPage
+    // toasted a green "Pipeline published" over either.
+    it('REJECTS (does not resolve null) when the network is down', async () => {
+      stubFetch(() => {
+        throw new TypeError('Failed to fetch');
+      });
+      await expect(publishPipeline('p1')).rejects.toThrow(/Failed to fetch/);
+    });
+
+    it('REJECTS (does not resolve null) on a 500', async () => {
+      stubFetch(() => res({ error: 'boom' }, 500));
+      await expect(publishPipeline('p1')).rejects.toThrow(/500/);
     });
   });
 

@@ -73,6 +73,14 @@ interface ApprovalCardData extends PendingApproval {
   pipelineName: string;
   runContext?: Record<string, unknown>;
   runSteps?: RunStepsData;
+  /**
+   * Set when the run detail fetch FAILED (as opposed to resolving with no
+   * reviewable output). Without it the card fell through to the "upstream
+   * steps haven't produced reviewable output yet" copy — an affirmative
+   * claim about the run that is simply false when the API is down, and the
+   * approver decides blind on the strength of it.
+   */
+  runFetchError?: string;
 }
 
 interface CardProps {
@@ -172,9 +180,29 @@ function ApprovalCard({ row, onSubmit, onOpenPipeline }: CardProps) {
 
       <div className="flex flex-col gap-1.5 px-3 py-2.5 bg-surface-inset rounded-md border border-border">
         <div className="text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]">
-          {reviewItems.length > 0 ? 'Context' : 'Run details'}
+          {reviewItems.length > 0
+            ? 'Context'
+            : row.runFetchError
+              ? 'Review context unavailable'
+              : 'Run details'}
         </div>
-        {reviewItems.length > 0 ? (
+        {reviewItems.length === 0 && row.runFetchError ? (
+          <div
+            data-testid={`approval-context-error-${row.runId}`}
+            className="flex flex-col gap-0.5 px-2.5 py-2 rounded-md bg-danger-bg border border-danger-border"
+          >
+            <div className="text-[11px] font-semibold text-danger-fg">
+              Couldn&apos;t load this run — decide with caution
+            </div>
+            <div className="text-[11px] text-danger-fg leading-normal">
+              The pipeline API is unreachable, so what this step produced is
+              unknown. This is not the same as there being nothing to review.
+            </div>
+            <div className="font-mono text-[11px] text-danger-fg break-words">
+              {row.runFetchError}
+            </div>
+          </div>
+        ) : reviewItems.length > 0 ? (
           reviewItems.map(({ label, value }) => (
             <div key={label} className="flex flex-col gap-0.5">
               <div className="text-[11px] font-medium text-text-secondary">{label}</div>
@@ -272,19 +300,32 @@ export default function PendingApprovalsPage() {
   // Fetch run data from the API for each pending approval so the card
   // can display what's being reviewed (trigger input + LLM responses).
   const [fetchedRuns, setFetchedRuns] = useState<Record<string, { context?: Record<string, unknown>; steps?: RunStepsData }>>({});
+  // Runs whose detail fetch REJECTED. Tracked separately from `fetchedRuns`
+  // so the card can say "couldn't load" instead of asserting there is
+  // nothing to review — see `runFetchError` on ApprovalCardData.
+  const [runFetchErrors, setRunFetchErrors] = useState<Record<string, string>>({});
   const fetchedIdsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     for (const item of approvals) {
       if (fetchedIdsRef.current.has(item.runId)) continue;
       fetchedIdsRef.current.add(item.runId);
-      getPipelineRun(item.pipelineId, item.runId).then((run) => {
-        if (!run) return;
-        setFetchedRuns((prev) => ({
-          ...prev,
-          [item.runId]: { context: run.context, steps: run.steps as unknown as RunStepsData },
-        }));
-      });
+      const { runId } = item;
+      getPipelineRun(item.pipelineId, runId).then(
+        (run) => {
+          if (!run) return;
+          setFetchedRuns((prev) => ({
+            ...prev,
+            [runId]: { context: run.context, steps: run.steps as unknown as RunStepsData },
+          }));
+        },
+        (err: unknown) => {
+          setRunFetchErrors((prev) => ({
+            ...prev,
+            [runId]: err instanceof Error ? err.message : String(err),
+          }));
+        },
+      );
     }
   }, [approvals]);
 
@@ -307,10 +348,14 @@ export default function PendingApprovalsPage() {
           : 'Unknown pipeline');
       const runContext = fetchedRuns[item.runId]?.context ?? liveRuns[item.runId]?.context;
       const runSteps = fetchedRuns[item.runId]?.steps;
-      out.push({ ...item, pipelineName, runContext, runSteps });
+      // Only a real failure with nothing else to show counts as an error for
+      // the card — if the live run context filled the gap there is still
+      // something truthful to render.
+      const runFetchError = runContext ? undefined : runFetchErrors[item.runId];
+      out.push({ ...item, pipelineName, runContext, runSteps, runFetchError });
     }
     return out;
-  }, [approvals, optimisticRemoved, liveRuns, fetchedRuns]);
+  }, [approvals, optimisticRemoved, liveRuns, fetchedRuns, runFetchErrors]);
 
   const handleSubmit = useCallback(
     (

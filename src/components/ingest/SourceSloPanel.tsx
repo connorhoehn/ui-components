@@ -102,7 +102,14 @@ export default function SourceSloPanel({ sourceId }: Props) {
           <div className="px-2.5 py-2 bg-surface-inset rounded-lg">
             <div className="text-[11px] text-text-tertiary mb-1">queue depth</div>
             <div data-testid="slo-queue-depth-value" className="text-base font-bold text-text-primary">
-              {lastNonNull(metrics.queueDepth) ?? 0}
+              {/* `?? 0` rendered a confident "0" — "backlog drained, healthy" —
+                  for a source that reported no queue-depth samples at all.
+                  Both sibling tiles above already render an em-dash for the
+                  no-data case; this one was the outlier. */}
+              {(() => {
+                const v = lastNonNull(metrics.queueDepth);
+                return v === null ? '—' : v;
+              })()}
             </div>
             <MiniChart points={metrics.queueDepth} color="var(--color-state-awaiting)" testId="slo-queue-depth-chart" />
           </div>

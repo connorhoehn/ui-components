@@ -487,6 +487,7 @@ export default function PipelinesPage() {
     if (ids.length === 0) return;
     let publishedCount = 0;
     let skippedCount = 0;
+    let failedCount = 0;
     for (const id of ids) {
       const def = await loadPipeline(id);
       if (!def) continue;
@@ -494,11 +495,25 @@ export default function PipelinesPage() {
         skippedCount += 1;
         continue;
       }
-      const res = await publishPipeline(id);
-      if (res) publishedCount += 1;
+      // A publish that fails now rejects instead of resolving `null`, so
+      // count it as a failure rather than silently as "not published".
+      try {
+        const res = await publishPipeline(id);
+        if (res) publishedCount += 1;
+        else failedCount += 1;
+      } catch {
+        failedCount += 1;
+      }
     }
     void refresh();
-    if (skippedCount > 0) {
+    // The toast used to be `type: 'success'` unconditionally, so an all-fail
+    // bulk publish rendered a green "Published 0 pipelines".
+    if (failedCount > 0) {
+      toast(
+        `Published ${publishedCount}; ${failedCount} failed${skippedCount > 0 ? `; skipped ${skippedCount} already published` : ''}`,
+        { type: 'error' },
+      );
+    } else if (skippedCount > 0) {
       toast(
         `Published ${publishedCount}; skipped ${skippedCount} already published`,
         { type: 'success' },

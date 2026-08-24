@@ -131,7 +131,12 @@ describe('createSource', () => {
     await act(async () => { created = await result.current.createSource({ name: 'x', type: 's3', config: {}, syncSchedule: null, mappingRules: [], defaultPipelineId: null, status: 'active' }); });
 
     expect(created).toBeNull();
-    expect(result.current.error).toMatch(/422/);
+    // INVERTED: this used to assert the failure landed in `error`. That is
+    // the bug — SourcesPage renders `error` as the hard-coded "Failed to load
+    // sources.", blaming the wrong operation, and `refresh()` clears it
+    // unconditionally so a failed sync vanished before it could be shown.
+    expect(result.current.actionError).toMatch(/422/);
+    expect(result.current.error).toBeNull();
   });
 });
 
@@ -170,7 +175,12 @@ describe('deleteSource', () => {
     await act(async () => { ok = await result.current.deleteSource('src-1'); });
 
     expect(ok).toBe(false);
-    expect(result.current.error).toMatch(/404/);
+    // INVERTED: this used to assert the failure landed in `error`. That is
+    // the bug — SourcesPage renders `error` as the hard-coded "Failed to load
+    // sources.", blaming the wrong operation, and `refresh()` clears it
+    // unconditionally so a failed sync vanished before it could be shown.
+    expect(result.current.actionError).toMatch(/404/);
+    expect(result.current.error).toBeNull();
     expect(result.current.sources).toHaveLength(1); // not removed
   });
 });
@@ -209,6 +219,11 @@ describe('triggerSync', () => {
     await act(async () => { ok = await result.current.triggerSync('src-1'); });
 
     expect(ok).toBe(false);
-    expect(result.current.error).toMatch(/503/);
+    // INVERTED: this used to assert the failure landed in `error`. That is
+    // the bug — SourcesPage renders `error` as the hard-coded "Failed to load
+    // sources.", blaming the wrong operation, and `refresh()` clears it
+    // unconditionally so a failed sync vanished before it could be shown.
+    expect(result.current.actionError).toMatch(/503/);
+    expect(result.current.error).toBeNull();
   });
 });

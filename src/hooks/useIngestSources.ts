@@ -13,11 +13,25 @@ const BASE_URL = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL
 export interface UseIngestSourcesReturn {
   sources: IngestSource[];
   loading: boolean;
+  /** Why the LIST fetch failed. Never set by the mutations — see `actionError`. */
   error: string | null;
   refresh: () => Promise<void>;
   createSource: (data: Omit<IngestSource, 'sourceId' | 'createdAt' | 'updatedAt' | 'lastSyncAt' | 'lastSyncStats'>) => Promise<IngestSource | null>;
   deleteSource: (sourceId: string) => Promise<boolean>;
   triggerSync: (sourceId: string) => Promise<boolean>;
+  /**
+   * Why the last create/delete/sync failed, or `null`. Additive (v2.95.0).
+   *
+   * These used to write into `error`, which `SourcesPage` renders as the
+   * hard-coded "Failed to load sources." — blaming the wrong operation — and
+   * which `refresh()` clears unconditionally. A failed "Sync now" was
+   * therefore erased before it could be rendered at all: the spinner stopped
+   * and nothing else happened, exactly like a successful trigger, and the
+   * operator walked away believing a sync was running.
+   */
+  actionError: string | null;
+  /** Dismiss `actionError`. Additive (v2.95.0). */
+  clearActionError: () => void;
 }
 
 export function useIngestSources(): UseIngestSourcesReturn {
@@ -25,6 +39,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
   const [sources, setSources] = useState<IngestSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const cancelledRef = useRef(false);
 
   const headers = useCallback((): Record<string, string> => {
@@ -32,6 +47,8 @@ export function useIngestSources(): UseIngestSourcesReturn {
     if (idToken) h['Authorization'] = `Bearer ${idToken}`;
     return h;
   }, [idToken]);
+
+  const clearActionError = useCallback(() => setActionError(null), []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -74,7 +91,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
       setSources((prev) => [...prev, created]);
       return created;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return null;
     }
   }, [headers]);
@@ -89,7 +106,7 @@ export function useIngestSources(): UseIngestSourcesReturn {
       setSources((prev) => prev.filter((s) => s.sourceId !== sourceId));
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers]);
@@ -103,10 +120,13 @@ export function useIngestSources(): UseIngestSourcesReturn {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setActionError(err instanceof Error ? err.message : String(err));
       return false;
     }
   }, [headers]);
 
-  return { sources, loading, error, refresh, createSource, deleteSource, triggerSync };
+  return {
+    sources, loading, error, refresh, createSource, deleteSource, triggerSync,
+    actionError, clearActionError,
+  };
 }

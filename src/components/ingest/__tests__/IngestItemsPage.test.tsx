@@ -51,6 +51,7 @@ function renderPage(items: IngestItem[] = [], over: Partial<UseIngestItemsReturn
     refresh: vi.fn().mockResolvedValue(undefined),
     retryItem: vi.fn().mockResolvedValue(true),
     skipItem: vi.fn().mockResolvedValue(true),
+    actionError: null, clearActionError: vi.fn(),
     ...over,
   };
   useIngestItemsMock.mockReturnValue(hook);

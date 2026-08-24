@@ -189,7 +189,12 @@ describe('useIngestItems', () => {
       await act(async () => { success = await result.current.retryItem('item-1'); });
 
       expect(success).toBe(false);
-      expect(result.current.error).toMatch(/HTTP 422/);
+      // INVERTED: this used to assert the failure landed in `error`, the
+      // list-loader's channel. That is the bug — the page renders `error` as
+      // "Failed to load ingest items." and hides the whole table behind it.
+      // A mutation failure belongs in `actionError`.
+      expect(result.current.actionError).toMatch(/HTTP 422/);
+      expect(result.current.error).toBeNull();
     });
   });
 
@@ -226,7 +231,12 @@ describe('useIngestItems', () => {
       await act(async () => { success = await result.current.skipItem('item-1'); });
 
       expect(success).toBe(false);
-      expect(result.current.error).toMatch(/HTTP 403/);
+      // INVERTED: this used to assert the failure landed in `error`, the
+      // list-loader's channel. That is the bug — the page renders `error` as
+      // "Failed to load ingest items." and hides the whole table behind it.
+      // A mutation failure belongs in `actionError`.
+      expect(result.current.actionError).toMatch(/HTTP 403/);
+      expect(result.current.error).toBeNull();
     });
   });
 });
