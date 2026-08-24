@@ -16,7 +16,7 @@
 // cannot add a parameter row will interpolate values into the query string
 // instead, which is how you get an injection into a graph database.
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import type { GraphQueryNodeData } from '../../../../types/pipeline';
 import { ConfigField, ConfigSection, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -48,6 +48,7 @@ export default function GraphQueryConfig({
   onChange,
   nodeId,
 }: GraphQueryConfigProps) {
+  const uid = useId();
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const vocab = useNodeVocabulary('graph-query');
 
@@ -110,17 +111,20 @@ export default function GraphQueryConfig({
           required
           error={graphMissing ? 'Graph ID is required.' : undefined}
           help={!graphMissing ? vocab.help('graphId', 'The graph to query.') : undefined}
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.graphId ?? ''}
-            onChange={(e) => onChange({ graphId: e.target.value })}
-            placeholder={vocab.placeholder('graphId', 'my-graph')}
-            aria-label="Graph ID"
-          />
-        </ConfigField>
+          controlId={`${uid}-graph-id`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.graphId ?? ''}
+              onChange={(e) => onChange({ graphId: e.target.value })}
+              placeholder={vocab.placeholder('graphId', 'my-graph')}
+            />
+          )}
+        />
 
         <ConfigField
           label={vocab.label('query', 'Graph query')}
@@ -131,95 +135,113 @@ export default function GraphQueryConfig({
               ? 'Bind values with $parameters below rather than interpolating them.'
               : undefined
           }
-        >
-          <Textarea
-            rows={6}
-            invalid={queryMissing}
-            spellCheck={false}
-            value={data.query ?? ''}
-            onChange={(e) => onChange({ query: e.target.value })}
-            placeholder={vocab.placeholder('query', DEFAULT_QUERY_EXAMPLE)}
-            aria-label="Graph query"
-          />
-        </ConfigField>
+          controlId={`${uid}-query`}
+          render={({ controlId, describedById }) => (
+            <Textarea
+              rows={6}
+              invalid={queryMissing}
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.query ?? ''}
+              onChange={(e) => onChange({ query: e.target.value })}
+              placeholder={vocab.placeholder('query', DEFAULT_QUERY_EXAMPLE)}
+            />
+          )}
+        />
       </ConfigSection>
 
       <ConfigSection title="Parameters">
+        {/* Bind parameters — rows of name/value inputs and a remove button,
+            each already named; the field label names the group instead. */}
         <ConfigField
           label="Bind parameters"
           help="Each row binds one $name in the query. Values support {{ context.* }}."
-        >
-          <div className="flex flex-col gap-2" data-testid="graph-query-params">
-            {paramRows.length === 0 ? (
-              <p className="text-[12px] text-[var(--color-text-secondary)]">
-                No parameters. The query runs exactly as written.
-              </p>
-            ) : null}
+          render={({ describedById }) => (
+            <div
+              role="group"
+              aria-label="Bind parameters"
+              aria-describedby={describedById}
+              className="flex flex-col gap-2"
+              data-testid="graph-query-params"
+            >
+              {paramRows.length === 0 ? (
+                <p className="text-[12px] text-[var(--color-text-secondary)]">
+                  No parameters. The query runs exactly as written.
+                </p>
+              ) : null}
 
-            {paramRows.map(([key, value], index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  size="sm"
-                  mono
-                  spellCheck={false}
-                  value={key}
-                  onChange={(e) => renameParam(key, e.target.value)}
-                  invalid={key.trim() === ''}
-                  placeholder="userId"
-                  aria-label={`Parameter ${index + 1} name`}
-                />
-                <Input
-                  size="sm"
-                  mono
-                  spellCheck={false}
-                  value={value}
-                  onChange={(e) => setParamValue(key, e.target.value)}
-                  placeholder="{{context.trigger.userId}}"
-                  aria-label={`Parameter ${index + 1} value`}
-                />
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => removeParam(key)}
-                  aria-label={`Remove parameter ${key || index + 1}`}
-                >
-                  ×
+              {paramRows.map(([key, value], index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Input
+                    size="sm"
+                    mono
+                    spellCheck={false}
+                    value={key}
+                    onChange={(e) => renameParam(key, e.target.value)}
+                    invalid={key.trim() === ''}
+                    placeholder="userId"
+                    aria-label={`Parameter ${index + 1} name`}
+                  />
+                  <Input
+                    size="sm"
+                    mono
+                    spellCheck={false}
+                    value={value}
+                    onChange={(e) => setParamValue(key, e.target.value)}
+                    placeholder="{{context.trigger.userId}}"
+                    aria-label={`Parameter ${index + 1} value`}
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => removeParam(key)}
+                    aria-label={`Remove parameter ${key || index + 1}`}
+                  >
+                    ×
+                  </Button>
+                </div>
+              ))}
+
+              {collision ? (
+                <p className="text-[12px] text-[var(--color-danger)]" role="alert">
+                  A parameter named “{collision}” already exists. Rename or remove
+                  it first — two rows cannot share a name.
+                </p>
+              ) : null}
+
+              <div>
+                <Button size="sm" variant="secondary" onClick={addParam}>
+                  + Add parameter
                 </Button>
               </div>
-            ))}
-
-            {collision ? (
-              <p className="text-[12px] text-[var(--color-danger)]" role="alert">
-                A parameter named “{collision}” already exists. Rename or remove
-                it first — two rows cannot share a name.
-              </p>
-            ) : null}
-
-            <div>
-              <Button size="sm" variant="secondary" onClick={addParam}>
-                + Add parameter
-              </Button>
             </div>
-          </div>
-        </ConfigField>
+          )}
+        />
 
-        <ConfigField label="Available context">
-          <ContextVariablePicker
-            paths={paths}
-            unresolved={unresolved(paramRows.map(([, v]) => v).join('\n'))}
-            onInsert={(token) => {
-              // Append to the last parameter row — inserting into the query
-              // itself would encourage exactly the interpolation this node's
-              // parameters exist to avoid.
-              const last = paramRows[paramRows.length - 1];
-              if (!last) {
-                setParams({ ...(data.parameters ?? {}), param1: token });
-                return;
-              }
-              setParamValue(last[0], `${last[1]}${token}`);
-            }}
-          />
-        </ConfigField>
+        {/* A row of insert buttons, not a labelable control. */}
+        <ConfigField
+          label="Available context"
+          render={() => (
+            <div role="group" aria-label="Available context">
+              <ContextVariablePicker
+                paths={paths}
+                unresolved={unresolved(paramRows.map(([, v]) => v).join('\n'))}
+                onInsert={(token) => {
+                  // Append to the last parameter row — inserting into the query
+                  // itself would encourage exactly the interpolation this
+                  // node's parameters exist to avoid.
+                  const last = paramRows[paramRows.length - 1];
+                  if (!last) {
+                    setParams({ ...(data.parameters ?? {}), param1: token });
+                    return;
+                  }
+                  setParamValue(last[0], `${last[1]}${token}`);
+                }}
+              />
+            </div>
+          )}
+        />
       </ConfigSection>
 
       <ConfigSection title="Execution">
@@ -231,34 +253,41 @@ export default function GraphQueryConfig({
               : undefined
           }
           help={!timeoutInvalid ? 'Leave empty to use the executor default.' : undefined}
-        >
-          <NumberInput
-            size="sm"
-            min={MIN_TIMEOUT_MS}
-            max={MAX_TIMEOUT_MS}
-            step={100}
-            unit="ms"
-            value={timeout ?? 0}
-            onChange={(v) => onChange({ timeoutMs: v })}
-            invalid={timeoutInvalid}
-            data-testid="graph-query-timeout"
-          />
-        </ConfigField>
+          controlId={`${uid}-timeout`}
+          render={({ controlId, describedById }) => (
+            <NumberInput
+              size="sm"
+              min={MIN_TIMEOUT_MS}
+              max={MAX_TIMEOUT_MS}
+              step={100}
+              unit="ms"
+              value={timeout ?? 0}
+              onChange={(v) => onChange({ timeoutMs: v })}
+              invalid={timeoutInvalid}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="graph-query-timeout"
+            />
+          )}
+        />
 
         <ConfigField
           label="Output key"
           help="Where rows land in context. Defaults to this step's output."
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.outputKey ?? ''}
-            onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
-            placeholder="rows"
-            aria-label="Output key"
-          />
-        </ConfigField>
+          controlId={`${uid}-output-key`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.outputKey ?? ''}
+              onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
+              placeholder="rows"
+            />
+          )}
+        />
 
         <RetryPolicyEditor
           value={data.retryPolicy}

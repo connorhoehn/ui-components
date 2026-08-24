@@ -10,6 +10,7 @@
 // looked like a real action and did nothing at all when clicked, so it is
 // removed rather than left advertising a feature that does not exist.
 
+import { useId } from 'react';
 import type { ConditionNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
@@ -24,6 +25,7 @@ export interface ConditionConfigProps {
 const CONDITION_VARIABLES = ['context.trigger', 'context.steps'];
 
 export default function ConditionConfig({ data, onChange }: ConditionConfigProps) {
+  const uid = useId();
   const expressionMissing = !data.expression?.trim();
 
   return (
@@ -34,24 +36,34 @@ export default function ConditionConfig({ data, onChange }: ConditionConfigProps
         error={expressionMissing ? 'Expression is required.' : undefined}
         help={!expressionMissing ? 'e.g. context.llm.response.length > 500' : undefined}
       >
+        {/* CodeEditor accepts no `id`, so ConfigField's htmlFor has nothing to
+            point at here. The next best thing is a single name that matches the
+            visible label verbatim: this used to announce as "Condition
+            expression", a second, different name for the field on screen. */}
         <CodeEditor
           value={data.expression}
           onChange={(next) => onChange({ expression: next })}
           language="javascript"
           variables={CONDITION_VARIABLES}
-          aria-label="Condition expression"
+          aria-label="Expression"
         />
       </ConfigField>
 
-      <ConfigField label="Label (optional — shown on node face)" help="A short name so this branch is easy to spot.">
-        <Input
-          size="sm"
-          value={data.label ?? ''}
-          onChange={(e) => onChange({ label: e.target.value || undefined })}
-          placeholder="Long summary?"
-          aria-label="Condition label"
-        />
-      </ConfigField>
+      <ConfigField
+        label="Label (optional — shown on node face)"
+        help="A short name so this branch is easy to spot."
+        controlId={`${uid}-label`}
+        render={({ controlId, describedById }) => (
+          <Input
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.label ?? ''}
+            onChange={(e) => onChange({ label: e.target.value || undefined })}
+            placeholder="Long summary?"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

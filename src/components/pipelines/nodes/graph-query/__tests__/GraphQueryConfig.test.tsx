@@ -18,10 +18,17 @@ const show = (data: GraphQueryNodeData, onChange = vi.fn()) => {
 describe('GraphQueryConfig', () => {
   it('edits the graph id and query', () => {
     const onChange = show(base());
-    fireEvent.change(screen.getByLabelText('Graph ID'), { target: { value: 'g2' } });
+    // Both fields are `required`, so ConfigField renders an aria-hidden "●"
+    // inside the <label>. getByLabelText matches the label's raw textContent
+    // and would see "Graph ID●"; the accessible name a screen reader computes
+    // drops the marker, so query by role+name. (These used to resolve through
+    // an aria-label that restated the visible label — removed with the wiring.)
+    fireEvent.change(screen.getByRole('textbox', { name: 'Graph ID' }), {
+      target: { value: 'g2' },
+    });
     expect(onChange).toHaveBeenCalledWith({ graphId: 'g2' });
 
-    fireEvent.change(screen.getByLabelText('Graph query'), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Graph query' }), {
       target: { value: 'MATCH (u:User) RETURN u' },
     });
     expect(onChange).toHaveBeenCalledWith({ query: 'MATCH (u:User) RETURN u' });

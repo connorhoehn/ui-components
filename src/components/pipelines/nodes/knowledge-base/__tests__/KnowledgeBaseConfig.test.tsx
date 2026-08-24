@@ -19,12 +19,16 @@ const show = (data: KnowledgeBaseNodeData, onChange = vi.fn()) => {
 describe('KnowledgeBaseConfig', () => {
   it('edits the knowledge base id and query template', () => {
     const onChange = show(base());
-    fireEvent.change(screen.getByLabelText('Knowledge base ID'), {
+    // Required fields carry ConfigField's aria-hidden "●" in the label text,
+    // which getByLabelText's textContent match trips over and the accessible
+    // name drops — so query by role+name now that the visible label (rather
+    // than a restating aria-label) is what names these controls.
+    fireEvent.change(screen.getByRole('textbox', { name: 'Knowledge base ID' }), {
       target: { value: 'kb-2' },
     });
     expect(onChange).toHaveBeenCalledWith({ knowledgeBaseId: 'kb-2' });
 
-    fireEvent.change(screen.getByLabelText('Query template'), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Query template' }), {
       target: { value: 'find docs' },
     });
     expect(onChange).toHaveBeenCalledWith({ queryTemplate: 'find docs' });

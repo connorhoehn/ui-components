@@ -7,6 +7,7 @@
 // `lowercase={false}` because the labels are a fixed vocabulary handed to the
 // model, so their casing is the author's choice, not ours.
 
+import { useId } from 'react';
 import type { ImageVisionClassifyNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
 import TagEditor from '../../../shared/TagEditor';
@@ -30,6 +31,7 @@ export default function VisionClassifyConfig({
   onChange,
   nodeId,
 }: VisionClassifyConfigProps) {
+  const uid = useId();
   const models = useModelOptions('image:vision', DEFAULT_VISION_MODELS);
   const labels = data.labels ?? [];
   const pathMissing = !data.imageRefPath?.trim();
@@ -57,50 +59,70 @@ export default function VisionClassifyConfig({
             : undefined
         }
         help="The model returns the single best-matching label."
-      >
-        <TagEditor
-          value={labels}
-          onChange={(next) => onChange({ labels: next })}
-          placeholder="Add label…"
-          lowercase={false}
-        />
-      </ConfigField>
+        render={({ describedById }) => (
+          // A chip list plus its add-input: several controls, so the label
+          // names the group rather than any one of them.
+          <div role="group" aria-label="Labels" aria-describedby={describedById}>
+            <TagEditor
+              value={labels}
+              onChange={(next) => onChange({ labels: next })}
+              placeholder="Add label…"
+              lowercase={false}
+            />
+          </div>
+        )}
+      />
 
-      <ConfigField label="Model">
-        <Select
-          size="sm"
-          value={data.model ?? models[0]?.value ?? ''}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Model"
+        controlId={`${uid}-model`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.model ?? models[0]?.value ?? ''}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+          />
+        )}
+      />
 
       <ConfigField
         label="System prompt override"
         help="Optional. Sent verbatim — {{context.*}} is NOT substituted here."
-      >
-        <Textarea
-          rows={3}
-          spellCheck={false}
-          value={data.systemPrompt ?? ''}
-          onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
-          placeholder="Leave blank to use the default classification system prompt."
-          aria-label="System prompt override"
-        />
-      </ConfigField>
+        controlId={`${uid}-system-prompt`}
+        render={({ controlId, describedById }) => (
+          <Textarea
+            rows={3}
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.systemPrompt ?? ''}
+            onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
+            placeholder="Leave blank to use the default classification system prompt."
+          />
+        )}
+      />
 
-      <ConfigField label="Max output tokens" help="Default 256.">
-        <NumberInput
-          size="sm"
-          min={64}
-          max={4096}
-          step={64}
-          value={data.maxOutputTokens ?? 256}
-          onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
-          data-testid="vision-classify-max-output-tokens"
-        />
-      </ConfigField>
+      <ConfigField
+        label="Max output tokens"
+        help="Default 256."
+        controlId={`${uid}-max-output-tokens`}
+        render={({ controlId, describedById }) => (
+          <NumberInput
+            size="sm"
+            min={64}
+            max={4096}
+            step={64}
+            value={data.maxOutputTokens ?? 256}
+            onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+            id={controlId}
+            aria-describedby={describedById}
+            data-testid="vision-classify-max-output-tokens"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

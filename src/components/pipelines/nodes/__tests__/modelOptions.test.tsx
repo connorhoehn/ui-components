@@ -43,8 +43,13 @@ const withServices = (services: PipelineEditorServices, ui: React.ReactNode) =>
     </PipelineEditorServicesProvider>,
   );
 
+// Queried by accessible name rather than getByLabelText: LLMConfig's Provider
+// and Model are `required`, and ConfigField puts an aria-hidden "●" in the
+// label, which getByLabelText matches on (raw textContent) but the accessible
+// name correctly drops. Before the labels were wired these resolved through an
+// aria-label that merely restated the visible label.
 const optionValues = (label: string) =>
-  within(screen.getByLabelText(label))
+  within(screen.getByRole('combobox', { name: label }))
     .queryAllByRole('option')
     .map((o) => (o as HTMLOptionElement).value);
 
@@ -136,7 +141,9 @@ describe('llm model options', () => {
       <LLMConfig data={llm({ provider: 'anthropic' })} onChange={onChange} />,
     );
 
-    fireEvent.change(screen.getByLabelText('Provider'), { target: { value: 'bedrock' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Provider' }), {
+      target: { value: 'bedrock' },
+    });
 
     expect(onChange).toHaveBeenCalledWith({ provider: 'bedrock', model: 'custom-1' });
   });
@@ -145,7 +152,9 @@ describe('llm model options', () => {
     const onChange = vi.fn();
     render(<LLMConfig data={llm({ model: 'claude-opus-4-7' })} onChange={onChange} />);
 
-    fireEvent.change(screen.getByLabelText('Provider'), { target: { value: 'bedrock' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Provider' }), {
+      target: { value: 'bedrock' },
+    });
 
     expect(onChange).toHaveBeenCalledWith({
       provider: 'bedrock',
@@ -157,7 +166,7 @@ describe('llm model options', () => {
     const onChange = vi.fn();
     render(<LLMConfig data={llm({ model: 'claude-opus-4-7' })} onChange={onChange} />);
 
-    fireEvent.change(screen.getByLabelText('Provider'), {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Provider' }), {
       target: { value: 'claude-code' },
     });
 

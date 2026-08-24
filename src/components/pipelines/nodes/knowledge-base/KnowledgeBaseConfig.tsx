@@ -16,6 +16,7 @@
 // the same unresolved-path warning the LLM prompt gets — a typo'd path there
 // silently searches for the literal text of the template.
 
+import { useId } from 'react';
 import type { KnowledgeBaseNodeData } from '../../../../types/pipeline';
 import { ConfigField, ConfigSection, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -44,6 +45,7 @@ export default function KnowledgeBaseConfig({
   onChange,
   nodeId,
 }: KnowledgeBaseConfigProps) {
+  const uid = useId();
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const vocab = useNodeVocabulary('knowledge-base');
 
@@ -70,17 +72,20 @@ export default function KnowledgeBaseConfig({
               ? vocab.help('knowledgeBaseId', 'The knowledge base to retrieve from.')
               : undefined
           }
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.knowledgeBaseId ?? ''}
-            onChange={(e) => onChange({ knowledgeBaseId: e.target.value })}
-            placeholder={vocab.placeholder('knowledgeBaseId', 'my-knowledge-base')}
-            aria-label="Knowledge base ID"
-          />
-        </ConfigField>
+          controlId={`${uid}-kb-id`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.knowledgeBaseId ?? ''}
+              onChange={(e) => onChange({ knowledgeBaseId: e.target.value })}
+              placeholder={vocab.placeholder('knowledgeBaseId', 'my-knowledge-base')}
+            />
+          )}
+        />
 
         <ConfigField
           label={vocab.label('queryTemplate', 'Query template')}
@@ -94,27 +99,36 @@ export default function KnowledgeBaseConfig({
                 )
               : undefined
           }
-        >
-          <Textarea
-            rows={4}
-            invalid={queryMissing}
-            spellCheck={false}
-            value={data.queryTemplate ?? ''}
-            onChange={(e) => onChange({ queryTemplate: e.target.value })}
-            placeholder="{{context.trigger.question}}"
-            aria-label="Query template"
-          />
-        </ConfigField>
+          controlId={`${uid}-query-template`}
+          render={({ controlId, describedById }) => (
+            <Textarea
+              rows={4}
+              invalid={queryMissing}
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.queryTemplate ?? ''}
+              onChange={(e) => onChange({ queryTemplate: e.target.value })}
+              placeholder="{{context.trigger.question}}"
+            />
+          )}
+        />
 
-        <ConfigField label="Available context">
-          <ContextVariablePicker
-            paths={paths}
-            unresolved={unresolved(data.queryTemplate ?? '')}
-            onInsert={(token) =>
-              onChange({ queryTemplate: `${data.queryTemplate ?? ''}${token}` })
-            }
-          />
-        </ConfigField>
+        {/* A row of insert buttons, not a labelable control. */}
+        <ConfigField
+          label="Available context"
+          render={() => (
+            <div role="group" aria-label="Available context">
+              <ContextVariablePicker
+                paths={paths}
+                unresolved={unresolved(data.queryTemplate ?? '')}
+                onInsert={(token) =>
+                  onChange({ queryTemplate: `${data.queryTemplate ?? ''}${token}` })
+                }
+              />
+            </div>
+          )}
+        />
       </ConfigSection>
 
       <ConfigSection title="Retrieval">
@@ -123,18 +137,22 @@ export default function KnowledgeBaseConfig({
           required
           error={topKInvalid ? `Must be between 1 and ${MAX_TOP_K}.` : undefined}
           help={!topKInvalid ? vocab.help('topK', 'How many passages to retrieve.') : undefined}
-        >
-          <NumberInput
-            size="sm"
-            min={1}
-            max={MAX_TOP_K}
-            step={1}
-            value={topK}
-            onChange={(v) => onChange({ topK: v })}
-            invalid={topKInvalid}
-            data-testid="kb-top-k"
-          />
-        </ConfigField>
+          controlId={`${uid}-top-k`}
+          render={({ controlId, describedById }) => (
+            <NumberInput
+              size="sm"
+              min={1}
+              max={MAX_TOP_K}
+              step={1}
+              value={topK}
+              onChange={(v) => onChange({ topK: v })}
+              invalid={topKInvalid}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="kb-top-k"
+            />
+          )}
+        />
 
         <ConfigField
           label={vocab.label('scoreThreshold', 'Score threshold')}
@@ -144,33 +162,40 @@ export default function KnowledgeBaseConfig({
               ? 'Drop passages scoring below this. Leave empty for no filtering.'
               : undefined
           }
-        >
-          <NumberInput
-            size="sm"
-            min={0}
-            max={1}
-            step={0.05}
-            value={threshold ?? 0}
-            onChange={(v) => onChange({ scoreThreshold: v })}
-            invalid={thresholdInvalid}
-            data-testid="kb-score-threshold"
-          />
-        </ConfigField>
+          controlId={`${uid}-score-threshold`}
+          render={({ controlId, describedById }) => (
+            <NumberInput
+              size="sm"
+              min={0}
+              max={1}
+              step={0.05}
+              value={threshold ?? 0}
+              onChange={(v) => onChange({ scoreThreshold: v })}
+              invalid={thresholdInvalid}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="kb-score-threshold"
+            />
+          )}
+        />
 
         <ConfigField
           label="Output key"
           help="Where retrieved passages land in context. Defaults to this step's output."
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.outputKey ?? ''}
-            onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
-            placeholder="passages"
-            aria-label="Output key"
-          />
-        </ConfigField>
+          controlId={`${uid}-output-key`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.outputKey ?? ''}
+              onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
+              placeholder="passages"
+            />
+          )}
+        />
 
         <RetryPolicyEditor
           value={data.retryPolicy}
