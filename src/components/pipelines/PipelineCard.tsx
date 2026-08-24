@@ -157,6 +157,10 @@ export default function PipelineCard({
             data-testid={`overflow-pipeline-${row.id}`}
             onClick={stop(() => setMenuOpen(v => !v))}
             aria-label="More actions"
+            // Without these the trigger gave no hint that it opens a menu,
+            // and never announced whether the menu was open.
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
             className="px-2 py-1 text-sm font-bold bg-transparent text-text-secondary border border-transparent rounded-md cursor-pointer font-[inherit] leading-none"
           >
             &#x22EF;
@@ -165,6 +169,7 @@ export default function PipelineCard({
             <div
               data-testid={`overflow-menu-${row.id}`}
               role="menu"
+              aria-label="More actions"
               onClick={(e) => e.stopPropagation()}
               className="absolute right-0 top-full mt-1 bg-surface border border-border rounded-lg shadow-[0_8px_24px_rgba(15,23,42,0.12)] min-w-[160px] z-10 overflow-hidden"
             >

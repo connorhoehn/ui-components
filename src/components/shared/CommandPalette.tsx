@@ -393,6 +393,7 @@ export function CommandPalette({
     <Modal
       open={isOpen}
       onClose={close}
+      ariaLabel="Command palette"
       maxWidth={640}
       rawChildren
       backdropTestId="command-palette-backdrop"

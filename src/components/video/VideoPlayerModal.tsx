@@ -15,8 +15,9 @@
 // alongside the title block + segment switcher. `onClose` is required —
 // the backdrop click + Escape key both call it.
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
+import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
 
 export interface VideoPlayerSource {
   /** Direct media URL (mp4 / webm / etc) served with Range support. */
@@ -76,12 +77,35 @@ export function VideoPlayerModal({
   const safeSources = useMemo(() => sources.filter(s => !!s.url), [sources]);
   const [activeIdx, setActiveIdx] = useState(0);
   const active = safeSources[activeIdx];
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
+  // Escape closes; Tab/Shift+Tab cycle inside the card. This component
+  // declares `aria-modal="true"`, so letting Tab reach the page behind it
+  // would contradict what it tells assistive tech.
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      trapTabKey(e, cardRef.current);
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  // The modal mounts/unmounts with its open state (no `open` prop), so mount
+  // is "open": capture focus on the way in, hand it back on the way out.
+  useEffect(() => {
+    previouslyFocusedRef.current =
+      (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+    focusInitialElement(cardRef.current);
+    return () => {
+      restoreFocus(previouslyFocusedRef.current);
+      previouslyFocusedRef.current = null;
+    };
+  }, []);
 
   return (
     <div
@@ -95,6 +119,7 @@ export function VideoPlayerModal({
       )}
     >
       <div
+        ref={cardRef}
         onClick={e => e.stopPropagation()}
         className={cn(
           'w-full max-w-4xl flex flex-col rounded-xl overflow-hidden shadow-2xl',

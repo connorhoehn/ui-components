@@ -7,9 +7,10 @@
 // Replaces the hand-rolled backdrop + aside pattern in the portal codebase
 // (see TODO(T1B) in the OrgIQ portal).
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { focusInitialElement, restoreFocus, trapTabKey } from '../../lib/focusTrap';
 
 export interface DrawerProps {
   open: boolean;
@@ -20,19 +21,14 @@ export interface DrawerProps {
   width?: number;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  /**
+   * Accessible name for the dialog when there is no visible `title` to point
+   * at. When `title` IS set the heading labels the dialog via
+   * `aria-labelledby` and this prop is unnecessary.
+   */
+  'aria-label'?: string;
   'data-testid'?: string;
 }
-
-// Same focusable selector used in Modal — keep these in sync.
-const FOCUSABLE_SELECTOR = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled]):not([type="hidden"])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]:not([tabindex="-1"])',
-  '[contenteditable="true"]',
-].join(',');
 
 function Drawer({
   open,
@@ -42,37 +38,41 @@ function Drawer({
   width = 460,
   children,
   footer,
+  'aria-label': ariaLabel,
   'data-testid': testId,
 }: DrawerProps) {
   const panelRef = useRef<HTMLElement | null>(null);
+  // Element focused before the drawer opened, restored on close so keyboard
+  // users resume from the trigger instead of the top of the document.
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const headingId = useId();
 
-  // Escape-to-close handler. Only wired up while the drawer is open so
-  // background pages keep their own keyboard handlers when we're not visible.
+  // Escape-to-close plus the Tab/Shift+Tab focus trap. Without the trap, Tab
+  // from the last control walks into the page BEHIND the drawer, which is the
+  // classic "dialog leaks focus" failure.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
+        return;
       }
+      trapTabKey(e, panelRef.current);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  // Move focus into the panel when it opens. Defer slightly so the panel DOM
-  // is committed before we query for focusable children.
+  // Move focus into the panel when it opens; restore it on close.
   useEffect(() => {
     if (!open) return;
-    const panel = panelRef.current;
-    if (!panel) return;
-    const focusable = panel.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
-    if (focusable) {
-      focusable.focus();
-    } else {
-      // Nothing focusable — focus the panel itself so SR announces it.
-      panel.setAttribute('tabindex', '-1');
-      panel.focus();
-    }
+    previouslyFocusedRef.current =
+      (typeof document !== 'undefined' ? document.activeElement : null) as HTMLElement | null;
+    focusInitialElement(panelRef.current);
+    return () => {
+      restoreFocus(previouslyFocusedRef.current);
+      previouslyFocusedRef.current = null;
+    };
   }, [open]);
 
   if (!open) return null;
@@ -90,7 +90,8 @@ function Drawer({
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-labelledby={title ? headingId : undefined}
+        aria-label={title ? undefined : ariaLabel}
         className={cn(
           'absolute right-0 top-0 h-full bg-white shadow-xl flex flex-col',
           'transition-transform duration-200',
@@ -102,7 +103,7 @@ function Drawer({
         <div className="flex items-start justify-between p-5 border-b border-[var(--color-border)] flex-shrink-0">
           <div className="min-w-0">
             {title && (
-              <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
+              <h2 id={headingId} className="text-base font-semibold text-[var(--color-text-primary)]">
                 {title}
               </h2>
             )}

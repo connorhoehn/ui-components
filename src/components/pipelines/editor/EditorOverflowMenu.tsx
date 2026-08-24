@@ -5,6 +5,7 @@
 // clear history, simulator (dev-only), delete.
 
 import { cn } from '../../../lib/cn';
+import { handleRovingKeyDown } from '../../../lib/rovingFocus';
 
 export interface EditorOverflowMenuProps {
   isPublished: boolean;
@@ -54,6 +55,10 @@ export default function EditorOverflowMenu({
         'shadow-lg p-0 min-w-[200px] max-h-[320px] overflow-y-auto z-20',
       )}
       role="menu"
+      aria-label="Editor actions"
+      onKeyDown={(e) =>
+        handleRovingKeyDown(e, { itemSelector: '[role="menuitem"]', orientation: 'vertical' })
+      }
     >
       <button className={itemClasses} role="menuitem" onClick={onDuplicate}>
         Duplicate

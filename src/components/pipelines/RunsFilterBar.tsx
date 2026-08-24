@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useClickOutside } from './hooks/useClickOutside';
 import { cn } from '../../lib/cn';
+import { handleRovingKeyDown } from '../../lib/rovingFocus';
 import type { DateRangeKey, StatusKey, TriggerKindKey } from './runsUtils';
 import { STATUS_KEYS, TRIGGER_KIND_KEYS, DATE_RANGE_KEYS } from './runsUtils';
 import { Input } from '../forms/Input';
@@ -154,13 +155,21 @@ export default function RunsFilterBar({
 
       <div className="w-px h-5 bg-border shrink-0" />
 
-      <div role="radiogroup" aria-label="Date range" className="flex gap-0.5">
+      <div
+        role="radiogroup"
+        aria-label="Date range"
+        onKeyDown={(e) => handleRovingKeyDown(e, { itemSelector: '[role="radio"]' })}
+        className="flex gap-0.5"
+      >
         {DATE_RANGE_KEYS.map((r) => (
           <button
             key={r}
             type="button"
             role="radio"
             aria-checked={range === r}
+            // radiogroup semantics: one Tab stop for the group, arrows move
+            // between the ranges.
+            tabIndex={range === r ? 0 : -1}
             data-testid={`runs-range-${r}`}
             onClick={() => onRangeChange(r)}
             className={cn(

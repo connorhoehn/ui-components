@@ -2,7 +2,7 @@
 //
 // Modal for creating a new document.
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useId, useRef } from 'react';
 import { loadTypes } from '../../hooks/useDocumentTypes';
 import type { DocumentType } from '../../types/documentType';
 import Modal from '../shared/Modal';
@@ -30,6 +30,13 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const titleRef = useRef<HTMLInputElement>(null);
+  // Ids that tie each visible label to the control it names. Before these,
+  // the association was purely visual: focusing the title field announced
+  // only its placeholder.
+  const uid = useId();
+  const typeGroupLabelId = `${uid}-type-label`;
+  const titleFieldId = `${uid}-title`;
+  const descriptionFieldId = `${uid}-description`;
 
   useEffect(() => {
     if (!open) return;
@@ -71,6 +78,7 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
     <Modal
       open={open}
       onClose={onClose}
+      ariaLabel="Create New Document"
       maxWidth={560}
       zIndex={10000}
       rawChildren
@@ -114,16 +122,27 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
             <>
               {/* Type picker */}
               <div className={cn('mb-5')}>
-                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}>
+                <div
+                  id={typeGroupLabelId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary mb-2')}
+                >
                   Document Type
-                </label>
-                <div className={cn('grid grid-cols-2 gap-2')}>
+                </div>
+                <div
+                  role="group"
+                  aria-labelledby={typeGroupLabelId}
+                  className={cn('grid grid-cols-2 gap-2')}
+                >
                   {types.map((t) => {
                     const isSelected = selectedId === t.id;
                     return (
                       <button
                         key={t.id}
+                        type="button"
                         data-testid={`type-option-${t.id}`}
+                        // Selection was signalled only by colour and a "✓"
+                        // glyph; aria-pressed exposes it to screen readers.
+                        aria-pressed={isSelected}
                         onClick={() => setSelectedId(t.id)}
                         className={cn(
                           'flex items-center gap-2.5 min-h-[72px] px-3.5 py-2.5 rounded-lg cursor-pointer text-left relative font-[inherit] transition-[background,border-color] duration-[120ms]',
@@ -145,7 +164,10 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
                           </div>
                         </div>
                         {isSelected && (
-                          <span className={cn('absolute top-1.5 right-2 text-sm text-info-fg font-bold')}>
+                          <span
+                            aria-hidden="true"
+                            className={cn('absolute top-1.5 right-2 text-sm text-info-fg font-bold')}
+                          >
                             ✓
                           </span>
                         )}
@@ -157,11 +179,17 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
               {/* Title */}
               <div className={cn('mb-4')}>
-                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
-                  Title <span className={cn('text-danger-fg')}>*</span>
+                <label
+                  htmlFor={titleFieldId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
+                >
+                  Title <span className={cn('text-danger-fg')} aria-hidden="true">*</span>
                 </label>
                 <Input
                   ref={titleRef}
+                  id={titleFieldId}
+                  required
+                  aria-required="true"
                   data-testid="new-doc-title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -171,10 +199,14 @@ export default function NewDocumentModal({ open, onClose, onCreate }: NewDocumen
 
               {/* Description */}
               <div className={cn('mb-5')}>
-                <label className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}>
+                <label
+                  htmlFor={descriptionFieldId}
+                  className={cn('block text-[13px] font-semibold text-text-secondary mb-1')}
+                >
                   Description <span className={cn('text-text-tertiary font-normal')}>(optional)</span>
                 </label>
                 <Textarea
+                  id={descriptionFieldId}
                   data-testid="new-doc-description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}

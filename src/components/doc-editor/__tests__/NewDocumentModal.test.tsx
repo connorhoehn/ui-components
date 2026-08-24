@@ -164,3 +164,50 @@ describe('NewDocumentModal', () => {
     expect(screen.getByTestId('type-option-two').textContent).toContain('2 sections');
   });
 });
+
+// ── Deep a11y audit ─────────────────────────────────────────────────────
+describe('NewDocumentModal — accessibility wiring', () => {
+  it('gives the dialog an accessible name', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    // The heading is rendered inside the card, so Modal's `aria-label={title}`
+    // left the dialog announcing as a bare "dialog".
+    expect(screen.getByRole('dialog')).toHaveAccessibleName('Create New Document');
+  });
+
+  it('associates the Title and Description labels with their controls', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    // Before this, focusing the field announced only the placeholder.
+    expect(screen.getByTestId('new-doc-title')).toBe(screen.getByLabelText(/^Title/));
+    expect(screen.getByTestId('new-doc-description')).toBe(
+      screen.getByLabelText(/^Description/),
+    );
+  });
+
+  it('marks the title field required', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    expect(screen.getByTestId('new-doc-title')).toHaveAttribute('aria-required', 'true');
+  });
+
+  it('exposes the selected document type via aria-pressed', () => {
+    loadTypes.mockReturnValue([mkType(), mkType({ id: 'brief', name: 'Brief' })]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    // Selection used to be conveyed by colour and a "✓" glyph alone.
+    expect(screen.getByTestId('type-option-meeting-notes')).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(screen.getByTestId('type-option-brief')).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  });
+
+  it('names the document-type picker as a labelled group', () => {
+    loadTypes.mockReturnValue([mkType()]);
+    render(<NewDocumentModal open onClose={vi.fn()} onCreate={vi.fn()} />);
+    expect(screen.getByRole('group', { name: 'Document Type' })).toBeInTheDocument();
+  });
+});

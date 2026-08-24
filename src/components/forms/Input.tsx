@@ -47,12 +47,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     mono = false,
     className,
     'data-testid': testId,
+    'aria-invalid': ariaInvalidProp,
     ...rest
   },
   ref,
 ) {
   const hasPrefix = prefix != null;
   const hasSuffix = suffix != null;
+  // `invalid` used to be styling only — a red border and nothing in the
+  // accessibility tree, so a screen-reader user had no idea the field was
+  // rejected. An explicit `aria-invalid` from the caller still wins.
+  const ariaInvalid = ariaInvalidProp ?? (invalid || undefined);
 
   if (!hasPrefix && !hasSuffix) {
     return (
@@ -61,6 +66,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         type={type}
         disabled={disabled}
         data-testid={testId}
+        aria-invalid={ariaInvalid}
         className={cn(
           'w-full rounded-md border bg-surface-panel font-inherit text-text-primary',
           'outline-none transition-colors duration-150',
@@ -107,6 +113,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         type={type}
         disabled={disabled}
         data-testid={testId}
+        aria-invalid={ariaInvalid}
         className={cn(
           'flex-1 min-w-0 bg-transparent font-inherit text-text-primary outline-none',
           'placeholder:text-text-tertiary',

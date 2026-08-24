@@ -20,6 +20,7 @@ import React, {
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { useClickOutside } from './hooks/useClickOutside';
 import { cn } from '../../lib/cn';
+import { handleRovingKeyDown } from '../../lib/rovingFocus';
 
 import {
   PipelineEditorProvider,
@@ -385,12 +386,14 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           <IconButton
             onClick={() => setMenuOpen((x) => !x)}
             aria-label="More actions"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
             data-testid="replay-overflow-btn"
           >
             ⋯
           </IconButton>
           {menuOpen ? (
-            <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden" role="menu">
+            <div className="absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden" role="menu" aria-label="More actions">
               <button className="block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary" role="menuitem" onClick={handleCopyRunId}>
                 Copy runId
               </button>
@@ -555,6 +558,7 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
           <div
             role="tablist"
             aria-label="Run detail view"
+            onKeyDown={handleRovingKeyDown}
             className="flex gap-1 mb-3 border-b border-border"
             data-testid="run-replay-tabs"
           >
@@ -568,6 +572,9 @@ function ReplayFrame({ pipelineId, runId }: ReplayFrameProps) {
                   key={tab.id}
                   role="tab"
                   aria-selected={active}
+                  // Roving tabindex + arrow keys on the tablist: the role
+                  // promises arrow navigation and one Tab stop.
+                  tabIndex={active ? 0 : -1}
                   onClick={() => setActiveTab(tab.id)}
                   data-testid={`run-replay-tab-${tab.id}`}
                   className={cn(

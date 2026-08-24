@@ -6,6 +6,7 @@
 import { useCallback } from 'react';
 import { Button } from '../../ui/Button';
 import { cn } from '../../../lib/cn';
+import { handleRovingKeyDown } from '../../../lib/rovingFocus';
 
 export interface PoolScopedLayoutProps {
   children: React.ReactNode;
@@ -48,6 +49,9 @@ function Tab({
       onClick={onClick}
       aria-selected={active}
       role="tab"
+      // Roving tabindex: one Tab stop for the whole bar, arrows move between
+      // the sections. Every tab used to be its own Tab stop.
+      tabIndex={active ? 0 : -1}
     >
       {label}
     </Button>
@@ -107,8 +111,14 @@ export function PoolScopedLayout({
         </Button>
       </div>
 
-      {/* Tab bar */}
-      <div className="flex border-b-2 border-border">
+      {/* Tab bar. The `role="tab"` children were orphans — ARIA requires a
+          `tablist` owner, without which the role is unreliable in AT. */}
+      <div
+        role="tablist"
+        aria-label="Pool sections"
+        onKeyDown={handleRovingKeyDown}
+        className="flex border-b-2 border-border"
+      >
         {TABS.map((tab) => (
           <Tab
             key={tab.key}

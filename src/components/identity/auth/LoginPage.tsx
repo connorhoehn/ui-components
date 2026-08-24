@@ -3,6 +3,7 @@ import { FormField } from '../shared/FormField';
 import { Button } from '../../ui/Button';
 import Banner from '../../shared/Banner';
 import { cn } from '../../../lib/cn';
+import { handleRovingKeyDown } from '../../../lib/rovingFocus';
 
 export interface LoginPageProps {
   uid: string;
@@ -141,12 +142,21 @@ export function LoginPage({
           {clientName && <h1 className="text-xl font-bold text-text-primary m-0">{clientName}</h1>}
         </header>
 
-        <nav className="flex border-b border-border mb-6" role="tablist" aria-label="Authentication method">
+        {/* Was a <nav> carrying role="tablist" — the role replaced the
+            navigation landmark, so the element announced as neither one
+            thing nor the other. A plain div takes the tablist role. */}
+        <div
+          className="flex border-b border-border mb-6"
+          role="tablist"
+          aria-label="Authentication method"
+          onKeyDown={handleRovingKeyDown}
+        >
           <Button
             variant="ghost"
             size="sm"
             role="tab"
             aria-selected={tab === 'signin'}
+            tabIndex={tab === 'signin' ? 0 : -1}
             className={cn(
               'flex-1 rounded-none border-b-2',
               tab === 'signin'
@@ -163,6 +173,7 @@ export function LoginPage({
               size="sm"
               role="tab"
               aria-selected={tab === 'register'}
+              tabIndex={tab === 'register' ? 0 : -1}
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'register'
@@ -180,6 +191,7 @@ export function LoginPage({
               size="sm"
               role="tab"
               aria-selected={tab === 'forgot'}
+              tabIndex={tab === 'forgot' ? 0 : -1}
               className={cn(
                 'flex-1 rounded-none border-b-2',
                 tab === 'forgot'
@@ -191,7 +203,7 @@ export function LoginPage({
               Forgot Password
             </Button>
           )}
-        </nav>
+        </div>
 
         {displayError && (
           <div className="mb-5">

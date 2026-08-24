@@ -21,36 +21,40 @@ describe('Toast', () => {
     expect(screen.getByText('File saved')).toBeInTheDocument();
   });
 
-  it('renders info variant with polite aria-live', () => {
+  // role="status" IS the polite live region; the old markup paired
+  // role="alert" (implicitly assertive) with an explicit aria-live="polite",
+  // which is a conflicting combination.
+  it('renders info variant as a polite status region', () => {
     render(
       <Toast id="t1" message="Info toast" type="info" onDismiss={onDismiss} />
     );
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
-  it('renders error variant with assertive aria-live', () => {
+  it('renders error variant as an assertive alert', () => {
     render(
       <Toast id="t1" message="Error toast" type="error" onDismiss={onDismiss} />
     );
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveAttribute('aria-live', 'assertive');
+    // role="alert" already implies assertive; no explicit override.
+    expect(alert).not.toHaveAttribute('aria-live');
   });
 
-  it('renders warning variant with assertive aria-live', () => {
+  it('renders warning variant as an assertive alert', () => {
     render(
       <Toast id="t1" message="Warning toast" type="warning" onDismiss={onDismiss} />
     );
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveAttribute('aria-live', 'assertive');
+    expect(alert).not.toHaveAttribute('aria-live');
   });
 
-  it('renders success variant with polite aria-live', () => {
+  it('renders success variant as a polite status region', () => {
     render(
       <Toast id="t1" message="Success toast" type="success" onDismiss={onDismiss} />
     );
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('calls onDismiss when dismiss button is clicked', () => {
@@ -131,8 +135,7 @@ describe('ToastProvider', () => {
       </ToastProvider>
     );
     fireEvent.click(screen.getByText('Show'));
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveAttribute('aria-live', 'polite');
+    expect(screen.getByRole('status')).toBeInTheDocument();
     expect(screen.getByText('No opts')).toBeInTheDocument();
   });
 

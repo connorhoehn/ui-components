@@ -9,6 +9,7 @@ import { useFriends } from '../../hooks/useFriends';
 import type { ProfileItem, OnMessageFn } from '../../hooks/useSocialProfile';
 import type { PublicProfile } from '../../hooks/useFriends';
 import { cn } from '../../lib/cn';
+import { handleRovingKeyDown } from '../../lib/rovingFocus';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
 
@@ -238,12 +239,21 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           />
         </div>
         <div className="mb-4">
-          <div role="radiogroup" aria-label="Profile visibility" className="flex gap-2">
+          <div
+            role="radiogroup"
+            aria-label="Profile visibility"
+            onKeyDown={(e) => handleRovingKeyDown(e, { itemSelector: '[role="radio"]' })}
+            className="flex gap-2"
+          >
             {(['public', 'private'] as Visibility[]).map(v => (
               <button
                 key={v}
+                type="button"
                 role="radio"
                 aria-checked={visibility === v}
+                // radiogroup semantics: one Tab stop, arrows move between
+                // the options.
+                tabIndex={visibility === v ? 0 : -1}
                 onClick={() => setVisibility(v)}
                 className={cn(
                   'px-4 py-1 rounded-full text-sm cursor-pointer border border-border font-[system-ui,-apple-system,sans-serif]',
@@ -344,12 +354,23 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
   return (
     <div className="mt-4">
       {/* Tab bar */}
-      <div role="tablist" className="flex border-b border-border mb-3">
+      <div
+        role="tablist"
+        aria-label="Connections"
+        onKeyDown={handleRovingKeyDown}
+        className="flex border-b border-border mb-3"
+      >
         {tabs.map(tab => (
           <button
             key={tab.key}
+            type="button"
             role="tab"
+            id={`social-tab-${tab.key}`}
+            aria-controls="social-tabpanel"
             aria-selected={activeTab === tab.key}
+            // Roving tabindex: the tablist is one Tab stop, arrows move
+            // between Followers / Following / Friends.
+            tabIndex={activeTab === tab.key ? 0 : -1}
             onClick={() => setActiveTab(tab.key)}
             className={cn(
               'px-4 py-2 text-sm font-normal bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif] -mb-px',
@@ -366,7 +387,10 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
       {/* Tab content */}
       <div
         role="tabpanel"
-        aria-label={activeTab}
+        id="social-tabpanel"
+        // Labelled BY the selected tab rather than by a duplicate raw key
+        // string, so the panel and its trigger announce the same name.
+        aria-labelledby={`social-tab-${activeTab}`}
         className="min-h-[120px]"
       >
         {activeUsers.length === 0 ? (

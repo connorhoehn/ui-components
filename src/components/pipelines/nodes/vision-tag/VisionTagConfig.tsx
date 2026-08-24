@@ -67,17 +67,27 @@ export default function VisionTagConfig({ data, onChange, nodeId }: VisionTagCon
         />
       </ConfigField>
 
-      <ConfigField label="Max tags" help="Default 10.">
-        <NumberInput
-          size="sm"
-          min={1}
-          max={50}
-          step={1}
-          value={data.maxTags ?? 10}
-          onChange={(maxTags) => onChange({ maxTags })}
-          data-testid="vision-tag-max-tags"
-        />
-      </ConfigField>
+      {/* Worked example of ConfigField's a11y wiring: `controlId` makes the
+          <label htmlFor> association real, and `describedById` points the
+          control at the help text. The other node panels still need this. */}
+      <ConfigField
+        label="Max tags"
+        help="Default 10."
+        controlId="vision-tag-max-tags"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            size="sm"
+            min={1}
+            max={50}
+            step={1}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.maxTags ?? 10}
+            onChange={(maxTags) => onChange({ maxTags })}
+            data-testid="vision-tag-max-tags"
+          />
+        )}
+      />
 
       <ConfigField label="Model">
         <Select
