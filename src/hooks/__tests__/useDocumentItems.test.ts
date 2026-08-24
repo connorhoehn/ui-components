@@ -102,6 +102,58 @@ describe('initial fetch', () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.items[SEC_ID]).toEqual([]);
   });
+
+  // Regression: `sectionIds` grows while the page stays mounted (a templated
+  // document calls addSection once per field after sync), so several fetch
+  // batches overlap. The `.then` REPLACES the whole item map, and the
+  // per-section catch swallows failures into an empty array so a stale batch
+  // always resolves and always writes — an earlier, smaller batch landing
+  // last dropped the newly added section's items from the UI entirely and
+  // reverted the rest to an older snapshot.
+  it('a slow earlier batch does not clobber a newer sectionIds batch', async () => {
+    const ws = makeWs();
+    let releaseFirstBatch: () => void = () => {};
+    let secACalls = 0;
+    const fetchMock = vi.fn((url: string) => {
+      if (String(url).includes('sec-A')) {
+        secACalls += 1;
+        if (secACalls === 1) {
+          // Batch #1's only fetch — hold it open past batch #2.
+          return new Promise<Response>((resolve) => {
+            releaseFirstBatch = () => resolve({
+              ok: true, status: 200, json: () => Promise.resolve({ items: [] }),
+            } as unknown as Response);
+          });
+        }
+      }
+      return Promise.resolve({
+        ok: true, status: 200, json: () => Promise.resolve({ items: [RAW_ITEM] }),
+      } as unknown as Response);
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result, rerender } = renderHook(
+      ({ sectionIds }: { sectionIds: string[] }) =>
+        useDocumentItems({ ...BASE_OPTS, ...ws, sectionIds }),
+      { initialProps: { sectionIds: ['sec-A'] } },
+    );
+
+    // A second section appears while batch #1 is still in flight.
+    rerender({ sectionIds: ['sec-A', 'sec-B'] });
+    await waitFor(() => expect(result.current.items['sec-B']).toHaveLength(1));
+
+    // Batch #1 (which only ever knew about sec-A) now resolves last.
+    await act(async () => {
+      releaseFirstBatch();
+      await Promise.resolve();
+    });
+
+    // Against the bug, batch #1's map ({ 'sec-A': [] }) replaces batch #2's
+    // and 'sec-B' vanishes from the map entirely.
+    expect(Object.keys(result.current.items).sort()).toEqual(['sec-A', 'sec-B']);
+    expect(result.current.items['sec-B']).toHaveLength(1);
+    expect(result.current.items['sec-A']).toHaveLength(1);
+  });
 });
 
 // ---------------------------------------------------------------------------

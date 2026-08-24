@@ -89,6 +89,36 @@ describe('startCall', () => {
     expect(sendMessage).toHaveBeenCalledWith(expect.objectContaining({ action: 'updateDocumentMeta' }));
   });
 
+  // Regression: startCall bare-`await`ed joinSession, but joinSession absorbs
+  // its own failures into `error` + callState 'error' and resolves normally.
+  // So a failed join fell straight through to the meta write, broadcasting
+  // activeCallSessionId over CRDT to every other editor of the document —
+  // they saw a live call that nobody was in and could not join, while the
+  // caller sat in an error state locally.
+  it('does NOT broadcast activeCallSessionId when the join leg fails', async () => {
+    const updateMeta = vi.fn();
+    const sendMessage = vi.fn();
+    const fetchMock = vi.fn()
+      // create succeeds...
+      .mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ sessionId: 'sess-1' }) } as unknown as Response)
+      // ...join is rejected (e.g. permissions).
+      .mockResolvedValueOnce({ ok: false, status: 403, json: () => Promise.resolve({ error: 'Forbidden' }) } as unknown as Response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result } = renderHook(() => useVideoCall(makeOpts({ updateMeta, sendMessage })));
+
+    await act(async () => { await result.current.startCall(); });
+
+    expect(result.current.callState).toBe('error');
+    // No phantom call left behind for the other editors.
+    expect(updateMeta).not.toHaveBeenCalledWith(
+      expect.objectContaining({ activeCallSessionId: 'sess-1' }),
+    );
+    expect(sendMessage).not.toHaveBeenCalledWith(
+      expect.objectContaining({ meta: { activeCallSessionId: 'sess-1' } }),
+    );
+  });
+
   it('sets error state when session creation fails', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false, status: 503, json: () => Promise.resolve({ error: 'Service unavailable' }),

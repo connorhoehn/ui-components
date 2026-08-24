@@ -86,6 +86,17 @@ export function useDocumentItems(
 
     setLoading(true);
 
+    // `sectionIds` grows while this page is mounted — a templated document
+    // calls addSection once per field after sync, and each Yjs transaction
+    // fires the observer — so several of these batches are in flight at
+    // once. Since the `.then` REPLACES the whole map rather than merging,
+    // an earlier (smaller) batch resolving last would drop the newest
+    // section's items entirely and revert the rest to an older snapshot.
+    // The per-section catch below swallows failures into an empty array, so
+    // a stale batch always resolves and always writes. Only the newest batch
+    // may commit.
+    let cancelled = false;
+
     // Fetch items for each section in parallel
     const fetches = sectionIds.map(async (sectionId) => {
       try {
@@ -104,6 +115,7 @@ export function useDocumentItems(
 
     Promise.all(fetches)
       .then((results) => {
+        if (cancelled) return;
         const grouped: Record<string, TaskItem[]> = {};
         for (const { sectionId, items: sectionItems } of results) {
           grouped[sectionId] = sectionItems;
@@ -111,8 +123,10 @@ export function useDocumentItems(
         setItems(grouped);
       })
       .finally(() => {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       });
+
+    return () => { cancelled = true; };
   }, [documentId, idToken, sectionIdsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // NOTE: document-events subscription is managed centrally by DocumentEditorPage,
