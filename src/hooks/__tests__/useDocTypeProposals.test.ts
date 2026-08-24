@@ -46,6 +46,31 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
+// Same reason as callWith, for calls that share a method and are told apart by
+// their URL instead.
+function callTo(
+  mock: { mock: { calls: unknown[][] } },
+  urlPart: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find((c) => String(c[0]).includes(urlPart));
+  expect(call, `expected a fetch to ${urlPart}`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 describe('initial load', () => {
   it('fetches proposals on mount and populates state', async () => {
     vi.stubGlobal('fetch', stubFetch({ proposals: [PROPOSAL] }));
@@ -74,7 +99,7 @@ describe('initial load', () => {
     renderHook(() => useDocTypeProposals());
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = callTo(fetchMock, '/api/ingest/mapping/proposals');
     expect(url).toContain('/api/ingest/mapping/proposals');
     expect((init.headers as Record<string, string>).Authorization).toBe(`Bearer ${TOKEN}`);
   });
@@ -110,7 +135,7 @@ describe('promote', () => {
 
     await act(async () => { await result.current.promote('prop-1'); });
 
-    const promoteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const promoteCall = callWith(fetchMock, 'POST');
     expect(promoteCall[0]).toContain('/prop-1/promote');
     expect(promoteCall[1].method).toBe('POST');
   });
@@ -139,7 +164,7 @@ describe('reject', () => {
 
     await act(async () => { await result.current.reject('prop-1'); });
 
-    const rejectCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const rejectCall = callWith(fetchMock, 'POST');
     expect(rejectCall[0]).toContain('/prop-1/reject');
     expect(rejectCall[1].method).toBe('POST');
     expect(JSON.parse(rejectCall[1].body as string).reviewedBy).toBe('alice@test.com');

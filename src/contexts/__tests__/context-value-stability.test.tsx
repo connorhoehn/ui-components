@@ -10,6 +10,13 @@
 // changes nothing in the context value; the memo means the consumer would only
 // re-render if the context value identity changed. So the render count is a
 // direct measurement of value stability.
+//
+// The suite runs under StrictMode, which double-renders every pass, so the
+// ABSOLUTE render count is a StrictMode artefact and asserting it would just
+// bake the doubling into the expectation. The property these tests protect is
+// a delta: an unrelated ancestor re-render must add EXACTLY ZERO consumer
+// renders (that number is the same under StrictMode or not, which is why it is
+// the right assertion), and a genuine change must add at least one.
 
 import { memo, useState } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
@@ -43,7 +50,8 @@ describe('ColorSchemeProvider value identity', () => {
     }
 
     render(<Host />);
-    expect(consumerRenders).toBe(1);
+    const afterMount = consumerRenders;
+    expect(afterMount).toBeGreaterThan(0);
 
     // Five unrelated host re-renders. The theme never changes, so a stable
     // context value means the memoised consumer never re-renders.
@@ -51,7 +59,7 @@ describe('ColorSchemeProvider value identity', () => {
       fireEvent.click(screen.getByText(`tick:${i}`));
     }
     expect(screen.getByText('tick:5')).toBeInTheDocument();
-    expect(consumerRenders).toBe(1);
+    expect(consumerRenders).toBe(afterMount);
   });
 
   it('still re-renders consumers when the theme actually changes', () => {
@@ -64,11 +72,12 @@ describe('ColorSchemeProvider value identity', () => {
     });
 
     render(<ColorSchemeProvider><Consumer /></ColorSchemeProvider>);
-    expect(consumerRenders).toBe(1);
+    const afterMount = consumerRenders;
 
     fireEvent.click(screen.getByText('theme:light'));
     expect(screen.getByText('theme:dark')).toBeInTheDocument();
-    expect(consumerRenders).toBe(2);
+    // The memo must not block a real change — one or more further renders.
+    expect(consumerRenders).toBeGreaterThan(afterMount);
   });
 });
 
@@ -93,14 +102,15 @@ describe('AgentsProvider value identity', () => {
     }
 
     render(<Host />);
-    expect(consumerRenders).toBe(1);
+    const afterMount = consumerRenders;
+    expect(afterMount).toBeGreaterThan(0);
     expect(Number(screen.getByTestId('count').textContent)).toBeGreaterThan(0);
 
     for (let i = 0; i < 5; i++) {
       fireEvent.click(screen.getByText(`tick:${i}`));
     }
     expect(screen.getByText('tick:5')).toBeInTheDocument();
-    expect(consumerRenders).toBe(1);
+    expect(consumerRenders).toBe(afterMount);
   });
 
   it('still re-renders consumers when the selection actually changes', () => {
@@ -115,11 +125,12 @@ describe('AgentsProvider value identity', () => {
     });
 
     render(<AgentsProvider><Consumer /></AgentsProvider>);
-    expect(consumerRenders).toBe(1);
+    const afterMount = consumerRenders;
     expect(screen.getByTestId('sel')).toHaveTextContent('none');
 
     act(() => { select?.('agent-1'); });
     expect(screen.getByTestId('sel')).toHaveTextContent('agent-1');
-    expect(consumerRenders).toBe(2);
+    // The memo must not block a real change — one or more further renders.
+    expect(consumerRenders).toBeGreaterThan(afterMount);
   });
 });

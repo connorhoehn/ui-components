@@ -9,7 +9,7 @@
 //   200 { status: 'ok',       service, checks: { [name]: { status, ... } } }
 //   503 { status: 'degraded', service, checks: { [name]: { status, error } } }
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type ApiHealthStatus = 'ok' | 'degraded' | 'unknown';
 
@@ -53,18 +53,27 @@ export function useApiHealth(pollMs: number = DEFAULT_POLL_MS): ApiHealthSnapsho
     checks: {},
     failing: [],
   });
-  const cancelledRef = useRef(false);
-
   useEffect(() => {
     if (!baseUrl) return;
-    cancelledRef.current = false;
+
+    // Per-effect-run liveness flag, NOT a `useRef`. A ref is shared across
+    // effect runs, so resetting it to `false` at the top of the effect
+    // resurrects the cancellation of the PREVIOUS run: on a `pollMs`/`baseUrl`
+    // change (or any double-mount — StrictMode, an <Activity> re-show, a
+    // Suspense retry) the old cleanup sets it true, the new run immediately
+    // sets it false, and the old run's in-flight `/health` response then lands
+    // and is written to state. A stale sample overwrites the live one, so the
+    // "Backend services degraded" banner can show a reading the hook already
+    // knows is superseded. A local can't be resurrected.
+    // Same hazard, same fix as usePipelineMetrics' `alive` flag.
+    let alive = true;
 
     const tick = async () => {
       try {
         // /health returns 200 when ok, 503 when degraded — both ship a JSON body.
         const res = await fetch(`${baseUrl}/health`);
         const body = (await res.json().catch(() => null)) as HealthResponse | null;
-        if (cancelledRef.current) return;
+        if (!alive) return;
         if (body && (body.status === 'ok' || body.status === 'degraded')) {
           const checks = body.checks ?? {};
           setSnapshot({ status: body.status, checks, failing: deriveFailing(checks) });
@@ -74,7 +83,7 @@ export function useApiHealth(pollMs: number = DEFAULT_POLL_MS): ApiHealthSnapsho
           setSnapshot({ status: 'degraded', checks: {}, failing: ['unknown'] });
         }
       } catch {
-        if (cancelledRef.current) return;
+        if (!alive) return;
         // Network/CORS failure — distinct from a degraded backend, but for
         // banner purposes "we can't reach REST" is functionally the same.
         setSnapshot({ status: 'degraded', checks: {}, failing: ['network'] });
@@ -85,7 +94,7 @@ export function useApiHealth(pollMs: number = DEFAULT_POLL_MS): ApiHealthSnapsho
     const handle = setInterval(() => { void tick(); }, pollMs);
 
     return () => {
-      cancelledRef.current = true;
+      alive = false;
       clearInterval(handle);
     };
   }, [baseUrl, pollMs]);

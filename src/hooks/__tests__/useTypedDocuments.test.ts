@@ -172,10 +172,15 @@ describe('useTypedDocuments', () => {
         useTypedDocuments({ idToken: TOKEN, typeId: TYPE_ID }),
       );
       await waitFor(() => expect(result.current.loading).toBe(false));
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      // StrictMode runs the mount effect twice, so the mount fetch count is
+      // not 1. What matters is that refresh() adds exactly one more call.
+      const afterMount = mockFetch.mock.calls.length;
+      expect(afterMount).toBeGreaterThan(0);
 
       act(() => result.current.refresh());
-      await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
+      await waitFor(() =>
+        expect(mockFetch.mock.calls.length).toBe(afterMount + 1),
+      );
     });
   });
 });

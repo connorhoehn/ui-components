@@ -139,6 +139,34 @@ describe('useImageLineage', () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
+  it('shares one request between callers that mount while it is still in flight', async () => {
+    // The module-level cache only dedupes callers that arrive AFTER a response
+    // has landed. Two callers that mount concurrently both saw an empty cache
+    // and both fetched — which is the ordinary case, not an edge case: a
+    // StrictMode/dev double-mount, an <Activity> re-show, a Suspense retry, or
+    // two lineage panels on one page. The header comment promised "multiple
+    // consumers share the same fetch"; before the in-flight map they didn't.
+    let resolveFetch: ((r: Response) => void) | undefined;
+    vi.mocked(fetch).mockReturnValueOnce(
+      new Promise<Response>((res) => { resolveFetch = res; }),
+    );
+
+    const { result: r1 } = renderHook(() => useImageLineage('run-concurrent', 'pipeline-1'));
+    const { result: r2 } = renderHook(() => useImageLineage('run-concurrent', 'pipeline-1'));
+
+    // Both are waiting on the SAME request — a second one was never issued.
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveFetch?.(makeOkResponse([sourceEntry, cropEntry]));
+      await Promise.resolve();
+    });
+
+    expect(r1.current.entries).toHaveLength(2);
+    expect(r2.current.entries).toHaveLength(2);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
   it('returns empty entries and does not fetch when runId is null', async () => {
     const { result } = renderHook(() =>
       useImageLineage(null, 'pipeline-1'),

@@ -140,20 +140,26 @@ describe('missing VITE_SOCIAL_API_URL', () => {
 // ---------------------------------------------------------------------------
 
 describe('polling', () => {
+  // These assert on the DELTA, not the absolute call count. The suite runs
+  // under StrictMode, so the mount effect runs twice and the immediate tick
+  // fires once per pass — that total is a StrictMode artefact. The cadence
+  // ("one interval elapsing adds exactly one poll", "unmounting adds none") is
+  // the actual contract, and it reads the same either way.
   it('polls again after pollMs elapses', async () => {
     const fetchMock = mockFetch({ status: 'ok', checks: {} });
     renderHook(() => useApiHealth(5_000));
 
     // First tick (immediate)
     await act(async () => { await Promise.resolve(); });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const afterMount = fetchMock.mock.calls.length;
+    expect(afterMount).toBeGreaterThan(0);
 
     // Advance the clock past the poll interval
     await act(async () => {
       vi.advanceTimersByTime(5_001);
       await Promise.resolve();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(afterMount + 1);
   });
 
   it('clears the interval on unmount', async () => {
@@ -161,7 +167,8 @@ describe('polling', () => {
     const { unmount } = renderHook(() => useApiHealth(5_000));
 
     await act(async () => { await Promise.resolve(); });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const afterMount = fetchMock.mock.calls.length;
+    expect(afterMount).toBeGreaterThan(0);
 
     unmount();
 
@@ -170,6 +177,58 @@ describe('polling', () => {
       await Promise.resolve();
     });
     // Should NOT have polled after unmount
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(afterMount);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Stale-response rejection across effect runs
+// ---------------------------------------------------------------------------
+
+describe('superseded effect runs', () => {
+  it('ignores an in-flight response from a previous effect run', async () => {
+    // The cancellation flag used to be a `useRef`, which is SHARED across
+    // effect runs: the old cleanup set it true and the new run immediately set
+    // it false again, resurrecting the cancellation. The first run's still-open
+    // /health response then landed and overwrote the live one, so the
+    // "Backend services degraded" banner could settle on a reading the hook
+    // had already superseded. Changing pollMs re-runs the effect; so does any
+    // double-mount (StrictMode, <Activity> re-show, Suspense retry).
+    const resolvers: ((r: Response) => void)[] = [];
+    const fetchMock = vi.fn(
+      () => new Promise<Response>((resolve) => { resolvers.push(resolve); }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result, rerender } = renderHook(({ ms }) => useApiHealth(ms), {
+      initialProps: { ms: 5_000 },
+    });
+    const staleCount = resolvers.length;
+    expect(staleCount).toBeGreaterThan(0);
+
+    // Re-run the effect with a new cadence; the previous run's fetch is still open.
+    rerender({ ms: 7_000 });
+    expect(resolvers.length).toBeGreaterThan(staleCount);
+
+    const json = (body: unknown) =>
+      ({ status: 200, json: () => Promise.resolve(body) }) as unknown as Response;
+
+    // The CURRENT run answers first: healthy.
+    await act(async () => {
+      resolvers[resolvers.length - 1](json({ status: 'ok', checks: {} }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(result.current.status).toBe('ok');
+
+    // Now the superseded run's response lands, reporting degraded. It must be
+    // dropped — its effect run was cancelled.
+    await act(async () => {
+      resolvers[0](json({ status: 'degraded', checks: { redis: { status: 'error' } } }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(result.current.status).toBe('ok');
+    expect(result.current.failing).toEqual([]);
   });
 });

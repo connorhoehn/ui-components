@@ -49,6 +49,20 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -102,7 +116,7 @@ describe('replay', () => {
 
     await act(async () => { await result.current.replay('dlq-1'); });
 
-    const replayCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const replayCall = callWith(fetchMock, 'POST');
     expect(replayCall[0]).toContain('/api/ingest/dlq/dlq-1/replay');
     expect(replayCall[1].method).toBe('POST');
     expect(result.current.entries).toHaveLength(0);
@@ -139,7 +153,7 @@ describe('drop', () => {
 
     await act(async () => { await result.current.drop('dlq-1'); });
 
-    const dropCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const dropCall = callWith(fetchMock, 'DELETE');
     expect(dropCall[0]).toContain('/api/ingest/dlq/dlq-1');
     expect(dropCall[1].method).toBe('DELETE');
     expect(result.current.entries).toHaveLength(0);

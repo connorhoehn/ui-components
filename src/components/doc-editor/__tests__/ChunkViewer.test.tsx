@@ -7,10 +7,21 @@ import ChunkViewer from '../ChunkViewer';
 import type { Section, TaskItem, CommentThread, Participant } from '../../../types/document';
 
 interface TiptapCaptured { fragment: XmlFragment | null; editable: boolean; sectionId: string; }
-const tiptap: TiptapCaptured[] = [];
+// The suite runs under React StrictMode, so every child renders twice. These
+// recorders therefore key by the child's stable identity and overwrite on each
+// render — they hold the LATEST props per child, not an append-only render
+// log, so lookups can't land on a duplicate of the previous child.
+const tiptap = new Map<string, TiptapCaptured>();
+
+function tiptapFor(sectionId: string): TiptapCaptured {
+  const p = tiptap.get(sectionId);
+  if (!p) throw new Error(`TiptapEditor never rendered for section ${sectionId}`);
+  return p;
+}
+
 vi.mock('../TiptapEditor', () => ({
   default: (props: TiptapCaptured) => {
-    tiptap.push(props);
+    tiptap.set(props.sectionId, props);
     return <div
       data-testid="tiptap"
       data-section-id={props.sectionId}
@@ -23,10 +34,17 @@ interface ReviewableCaptured {
   onAck: (notes?: string) => void;
   onReject: (reason: string) => void;
 }
-const reviewable: ReviewableCaptured[] = [];
+const reviewable = new Map<string, ReviewableCaptured>();
+
+function reviewableFor(itemId: string): ReviewableCaptured {
+  const p = reviewable.get(itemId);
+  if (!p) throw new Error(`ReviewableItem never rendered for item ${itemId}`);
+  return p;
+}
+
 vi.mock('../ReviewableItem', () => ({
   default: (props: ReviewableCaptured) => {
-    reviewable.push(props);
+    reviewable.set(props.item.id, props);
     return <div data-testid="reviewable-item" data-item-id={props.item.id} />;
   },
 }));
@@ -38,10 +56,13 @@ interface SectionCommentsCaptured {
   onResolveThread?: (commentId: string) => void;
   onUnresolveThread?: (commentId: string) => void;
 }
-const sectionComments: SectionCommentsCaptured[] = [];
+// ChunkViewer renders at most one SectionComments, so its "stable identity" is
+// the singleton itself: keep the latest props in one slot. `current === null`
+// means it was never rendered, which is what the render-count assertions mean.
+const sectionComments: { current: SectionCommentsCaptured | null } = { current: null };
 vi.mock('../SectionComments', () => ({
   default: (props: SectionCommentsCaptured) => {
-    sectionComments.push(props);
+    sectionComments.current = props;
     return <div data-testid="section-comments" />;
   },
 }));
@@ -65,9 +86,9 @@ function renderViewer(overrides: Partial<ComponentProps<typeof ChunkViewer>> = {
 }
 
 beforeEach(() => {
-  tiptap.length = 0;
-  reviewable.length = 0;
-  sectionComments.length = 0;
+  tiptap.clear();
+  reviewable.clear();
+  sectionComments.current = null;
 });
 
 describe('ChunkViewer', () => {
@@ -90,13 +111,13 @@ describe('ChunkViewer', () => {
     const frag = {} as XmlFragment;
     const { rerender, props } = renderViewer({ fragment: frag, section: mkSection({ id: 's-test' }) });
     expect(screen.getByTestId('tiptap')).toBeInTheDocument();
-    expect(tiptap[0].fragment).toBe(frag);
-    expect(tiptap[0].sectionId).toBe('s-test');
-    expect(tiptap[0].editable).toBe(false);
-    tiptap.length = 0;
+    expect(tiptapFor('s-test').fragment).toBe(frag);
+    expect(tiptapFor('s-test').sectionId).toBe('s-test');
+    expect(tiptapFor('s-test').editable).toBe(false);
+    tiptap.clear();
     rerender(<ChunkViewer {...props} fragment={null} />);
     expect(screen.queryByTestId('tiptap')).toBeNull();
-    expect(tiptap).toHaveLength(0);
+    expect(tiptap.size).toBe(0);
   });
 
   it('empty-state message renders ONLY when fragment is null AND items is empty', () => {
@@ -114,7 +135,7 @@ describe('ChunkViewer', () => {
     renderViewer({ section: mkSection({ items: [mkItem('a'), mkItem('b'), mkItem('c')] }) });
     const rows = screen.getAllByTestId('reviewable-item');
     expect(rows.map(r => r.dataset.itemId)).toEqual(['a', 'b', 'c']);
-    expect(reviewable.map(c => c.item.id)).toEqual(['a', 'b', 'c']);
+    expect([...reviewable.keys()]).toEqual(['a', 'b', 'c']);
   });
 
   it('reviewed counter: only non-pending statuses count as reviewed', () => {
@@ -149,9 +170,9 @@ describe('ChunkViewer', () => {
     renderViewer({
       section: mkSection({ items: [mkItem('a'), mkItem('b')] }), onAckItem,
     });
-    reviewable[1].onAck('looks good');
+    reviewableFor('b').onAck('looks good');
     expect(onAckItem).toHaveBeenCalledWith('b', 'looks good');
-    reviewable[0].onAck();
+    reviewableFor('a').onAck();
     expect(onAckItem).toHaveBeenCalledWith('a', undefined);
   });
 
@@ -160,17 +181,17 @@ describe('ChunkViewer', () => {
     renderViewer({
       section: mkSection({ items: [mkItem('a'), mkItem('b')] }), onRejectItem,
     });
-    reviewable[1].onReject('incomplete');
+    reviewableFor('b').onReject('incomplete');
     expect(onRejectItem).toHaveBeenCalledWith('b', 'incomplete');
   });
 
   it('SectionComments renders only when onAddComment is provided', () => {
     const { rerender, props } = renderViewer({});
     expect(screen.queryByTestId('section-comments')).toBeNull();
-    expect(sectionComments).toHaveLength(0);
+    expect(sectionComments.current).toBeNull();
     rerender(<ChunkViewer {...props} onAddComment={vi.fn()} />);
     expect(screen.getByTestId('section-comments')).toBeInTheDocument();
-    expect(sectionComments).toHaveLength(1);
+    expect(sectionComments.current).not.toBeNull();
   });
 
   it('SectionComments receives the routed comments / participants / resolve handlers', () => {
@@ -183,7 +204,7 @@ describe('ChunkViewer', () => {
       color: '#fff', mode: 'editor', currentSectionId: 's1',
     }];
     renderViewer({ onAddComment, onResolveThread, onUnresolveThread, comments, participants });
-    const cap = sectionComments[0];
+    const cap = sectionComments.current!;
     expect(cap.comments).toBe(comments);
     expect(cap.onAddComment).toBe(onAddComment);
     expect(cap.onResolveThread).toBe(onResolveThread);
@@ -193,6 +214,6 @@ describe('ChunkViewer', () => {
 
   it('SectionComments comments defaults to [] when the comments prop is omitted', () => {
     renderViewer({ onAddComment: vi.fn() });
-    expect(sectionComments[0].comments).toEqual([]);
+    expect(sectionComments.current!.comments).toEqual([]);
   });
 });

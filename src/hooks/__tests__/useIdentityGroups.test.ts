@@ -35,6 +35,20 @@ function stubFetch(body: unknown, ok = true) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -74,7 +88,7 @@ describe('createGroup', () => {
     await act(async () => { await result.current.createGroup({ groupName: 'Admins' }); });
 
     expect(result.current.groups).toHaveLength(1);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain(`/api/pools/${POOL_ID}/groups`);
     expect(opts.method).toBe('POST');
   });
@@ -96,7 +110,7 @@ describe('updateGroup', () => {
     await act(async () => { await result.current.updateGroup('g1', { groupName: 'Super Admins' }); });
 
     expect(result.current.groups[0].groupName).toBe('Super Admins');
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'PUT');
     expect(url).toContain(`/api/pools/${POOL_ID}/groups/g1`);
     expect(opts.method).toBe('PUT');
   });
@@ -117,7 +131,7 @@ describe('deleteGroup', () => {
     await act(async () => { await result.current.deleteGroup('g1'); });
 
     expect(result.current.groups).toHaveLength(0);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'DELETE');
     expect(url).toContain(`/api/pools/${POOL_ID}/groups/g1`);
     expect(opts.method).toBe('DELETE');
   });
@@ -139,7 +153,7 @@ describe('addMember', () => {
     await act(async () => { await result.current.addMember('g1', 'u2'); });
 
     expect(result.current.groups[0].members).toContain('u2');
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain(`/api/pools/${POOL_ID}/groups/g1/members`);
     expect(opts.method).toBe('POST');
   });
@@ -156,7 +170,7 @@ describe('removeMember', () => {
     await act(async () => { await result.current.removeMember('g1', 'u1'); });
 
     expect(result.current.groups[0].members).not.toContain('u1');
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'DELETE');
     expect(url).toContain(`/api/pools/${POOL_ID}/groups/g1/members/u1`);
     expect(opts.method).toBe('DELETE');
   });

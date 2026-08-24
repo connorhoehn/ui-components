@@ -52,6 +52,20 @@ function stubFetch(body: unknown, ok = true) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -103,7 +117,7 @@ describe('createUser', () => {
 
     expect((created as IdentityUser | null)?.email).toBe('alice@test.com');
     expect(result.current.users).toHaveLength(1);
-    const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[0]).toContain(`/api/pools/${POOL_ID}/users`);
     expect(postCall[1].method).toBe('POST');
   });
@@ -140,7 +154,7 @@ describe('updateUser', () => {
     await act(async () => { await result.current.updateUser('u1', { givenName: 'Alice' }); });
 
     expect(result.current.users[0].givenName).toBe('Alice');
-    const putCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const putCall = callWith(fetchMock, 'PUT');
     expect(putCall[0]).toContain(`/api/pools/${POOL_ID}/users/u1`);
     expect(putCall[1].method).toBe('PUT');
   });
@@ -162,7 +176,7 @@ describe('deleteUser', () => {
     await act(async () => { await result.current.deleteUser('u1'); });
 
     expect(result.current.users).toHaveLength(0);
-    const deleteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const deleteCall = callWith(fetchMock, 'DELETE');
     expect(deleteCall[0]).toContain(`/api/pools/${POOL_ID}/users/u1`);
     expect(deleteCall[1].method).toBe('DELETE');
   });

@@ -33,6 +33,30 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+/**
+ * The suite runs under React StrictMode, so mount effects fire twice and the
+ * mutation's fetch is no longer at a fixed index. Select the call we actually
+ * mean by its method (and optionally a URL fragment) instead of by position.
+ */
+function callWith(
+  fetchMock: { mock: { calls: unknown[][] } },
+  method: string,
+  urlPart?: string,
+): [string, RequestInit] {
+  const call = fetchMock.mock.calls.find(
+    (c) =>
+      (c[1] as RequestInit | undefined)?.method === method &&
+      (urlPart === undefined || String(c[0]).includes(urlPart)),
+  );
+  if (!call) {
+    throw new Error(
+      `no fetch call with method ${method}` +
+        (urlPart ? ` and url containing ${urlPart}` : ''),
+    );
+  }
+  return call as [string, RequestInit];
+}
+
 const BASE_OPTS = {
   documentId: DOC_ID,
   sectionIds: [SEC_ID],
@@ -287,7 +311,7 @@ describe('addItem', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ item: RAW_ITEM }) } as unknown as Response);
     await act(async () => { await result.current.addItem(SEC_ID, { text: 'Buy milk' }); });
 
-    const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[1].method).toBe('POST');
     expect(result.current.items[SEC_ID]).toHaveLength(1);
   });
@@ -320,7 +344,7 @@ describe('updateItem', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ item: updatedRaw }) } as unknown as Response);
     await act(async () => { await result.current.updateItem(SEC_ID, 'item-1', { text: 'Buy oat milk' }); });
 
-    const patchCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const patchCall = callWith(fetchMock, 'PATCH');
     expect(patchCall[1].method).toBe('PATCH');
     expect(result.current.items[SEC_ID][0].text).toBe('Buy oat milk');
   });
@@ -341,7 +365,7 @@ describe('removeItem', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({}) } as unknown as Response);
     await act(async () => { await result.current.removeItem(SEC_ID, 'item-1'); });
 
-    const deleteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const deleteCall = callWith(fetchMock, 'DELETE');
     expect(deleteCall[1].method).toBe('DELETE');
     expect(result.current.items[SEC_ID]).toHaveLength(0);
   });
@@ -363,7 +387,7 @@ describe('ackItem', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve({ item: ackedRaw }) } as unknown as Response);
     await act(async () => { await result.current.ackItem(SEC_ID, 'item-1'); });
 
-    const ackCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const ackCall = callWith(fetchMock, 'POST', '/ack');
     expect(ackCall[0]).toContain('/item-1/ack');
     expect(ackCall[1].method).toBe('POST');
     expect(result.current.items[SEC_ID][0].status).toBe('acked');
