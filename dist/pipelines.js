@@ -17,7 +17,7 @@ import { t as E } from "./activationKey-CjbL3LUv.js";
 import { t as D } from "./Input-DcK2h-jK.js";
 import { t as O } from "./Textarea-C3t5PCLv.js";
 import { n as k, r as A, t as ee } from "./EventStreamContext-C0egqLaF.js";
-import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-buxrr1Qy.js";
+import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-BQLUSHcR.js";
 import { t as Je } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as Ye } from "./Select-Z0TLUVeL.js";
 import { t as Xe } from "./Checkbox-CsbxMNgR.js";
@@ -2719,95 +2719,97 @@ function Zn({ addNode: e, addEdge: t, updateNodeData: n, getDefinition: r }) {
 }
 //#endregion
 //#region src/components/pipelines/canvas/useCanvasKeyboard.ts
-function Qn({ definition: e, selectedNodeId: t, setSelectedNodeId: n, removeNode: r, removeDefEdge: i, setNodes: a, setEdges: o, setPositions: s, duplicateNodes: c, clipboardRef: l, containerRef: u }) {
-	L(() => {
-		let d = u.current;
-		if (!d) return;
-		let f = (e) => {
-			let t = d.querySelector(`.react-flow__node[data-id="${CSS.escape(e)}"]`);
+function Qn({ definition: e, selectedNodeId: t, setSelectedNodeId: n, removeNode: r, removeDefEdge: i, nodes: a, edges: o, setNodes: s, setEdges: c, setPositions: l, duplicateNodes: u, clipboardRef: d, containerRef: f }) {
+	let p = z(a);
+	p.current = a;
+	let m = z(o);
+	m.current = o, L(() => {
+		let a = f.current;
+		if (!a) return;
+		let o = (e) => {
+			let t = a.querySelector(`.react-flow__node[data-id="${CSS.escape(e)}"]`);
 			return t ? ((t.querySelector("[data-pipeline-node=\"true\"]") ?? t).focus(), !0) : !1;
-		}, p = (u) => {
-			if (kr(u.target)) return;
-			let p = document.activeElement, m = !!p && d.contains(p);
-			if (u.key === "Tab") {
-				if (!m || !e || e.nodes.length === 0) return;
+		}, h = (f) => {
+			if (kr(f.target)) return;
+			let h = document.activeElement, g = !!h && a.contains(h);
+			if (f.key === "Tab") {
+				if (!g || !e || e.nodes.length === 0) return;
 				let t = Ar(e);
 				if (t.length === 0) return;
-				let n = (p?.closest(".react-flow__node"))?.getAttribute("data-id") ?? null, r = n === null ? -1 : t.indexOf(n), i = u.shiftKey ? -1 : 1, a = t[r === -1 ? u.shiftKey ? t.length - 1 : 0 : (r + i + t.length) % t.length];
-				f(a) && u.preventDefault();
+				let n = (h?.closest(".react-flow__node"))?.getAttribute("data-id") ?? null, r = n === null ? -1 : t.indexOf(n), i = f.shiftKey ? -1 : 1, a = t[r === -1 ? f.shiftKey ? t.length - 1 : 0 : (r + i + t.length) % t.length];
+				o(a) && f.preventDefault();
 				return;
 			}
-			if (m && !u.altKey) {
-				if (u.key === "Enter" || u.key === " " || u.key === "Spacebar") {
-					let e = (p?.closest(".react-flow__node"))?.getAttribute("data-id");
-					e && (u.preventDefault(), n(e));
+			if (g && !f.altKey) {
+				if (f.key === "Enter" || f.key === " " || f.key === "Spacebar") {
+					let e = (h?.closest(".react-flow__node"))?.getAttribute("data-id");
+					e && (f.preventDefault(), n(e));
 					return;
 				}
-				if (u.key === "Delete" || u.key === "Backspace") {
+				if (f.key === "Delete" || f.key === "Backspace") {
 					if (t) {
-						u.preventDefault(), r(t);
+						f.preventDefault(), r(t);
 						return;
 					}
-					o((e) => {
-						let t = e.filter((e) => e.selected);
-						if (t.length === 0) return e;
-						for (let e of t) i(e.id);
-						return e.filter((e) => !e.selected);
-					}), u.preventDefault();
+					let e = m.current.filter((e) => e.selected);
+					if (e.length > 0) {
+						for (let t of e) i(t.id);
+						c((e) => e.filter((e) => !e.selected));
+					}
+					f.preventDefault();
 					return;
 				}
-				if (u.key === "Escape") {
-					u.preventDefault(), n(null);
+				if (f.key === "Escape") {
+					f.preventDefault(), n(null);
 					return;
 				}
-				if ((u.metaKey || u.ctrlKey) && u.key === "c" && t) {
-					u.preventDefault(), l.current = t;
+				if ((f.metaKey || f.ctrlKey) && f.key === "c" && t) {
+					f.preventDefault(), d.current = t;
 					return;
 				}
-				if ((u.metaKey || u.ctrlKey) && u.key === "v" && l.current) {
-					u.preventDefault();
-					let e = c([l.current]);
+				if ((f.metaKey || f.ctrlKey) && f.key === "v" && d.current) {
+					f.preventDefault();
+					let e = u([d.current]);
 					e.length > 0 && n(e[0]);
 					return;
 				}
-				if ((u.metaKey || u.ctrlKey) && u.key === "d" && t) {
-					u.preventDefault();
-					let e = c([t]);
+				if ((f.metaKey || f.ctrlKey) && f.key === "d" && t) {
+					f.preventDefault();
+					let e = u([t]);
 					e.length > 0 && n(e[0]);
 					return;
 				}
-				if (u.key === "ArrowUp" || u.key === "ArrowDown" || u.key === "ArrowLeft" || u.key === "ArrowRight") {
-					if (u.preventDefault(), u.stopPropagation(), !u.shiftKey || !t) return;
-					let e = u.key === "ArrowLeft" ? -8 : u.key === "ArrowRight" ? 8 : 0, n = u.key === "ArrowUp" ? -8 : u.key === "ArrowDown" ? 8 : 0;
-					a((r) => {
-						let i = r.map((r) => r.id === t ? {
-							...r,
-							position: {
-								x: r.position.x + e,
-								y: r.position.y + n
-							}
-						} : r), a = i.find((e) => e.id === t);
-						return a && s([{
-							id: a.id,
-							position: a.position
-						}]), i;
-					});
+				if (f.key === "ArrowUp" || f.key === "ArrowDown" || f.key === "ArrowLeft" || f.key === "ArrowRight") {
+					if (f.preventDefault(), f.stopPropagation(), !f.shiftKey || !t) return;
+					let e = f.key === "ArrowLeft" ? -8 : f.key === "ArrowRight" ? 8 : 0, n = f.key === "ArrowUp" ? -8 : f.key === "ArrowDown" ? 8 : 0, r = p.current.find((e) => e.id === t);
+					if (!r) return;
+					let i = {
+						x: r.position.x + e,
+						y: r.position.y + n
+					};
+					s((e) => e.map((e) => e.id === t ? {
+						...e,
+						position: i
+					} : e)), l([{
+						id: t,
+						position: i
+					}]);
 				}
 			}
 		};
-		return d.addEventListener("keydown", p), () => d.removeEventListener("keydown", p);
+		return a.addEventListener("keydown", h), () => a.removeEventListener("keydown", h);
 	}, [
 		e,
 		t,
 		n,
 		r,
 		i,
-		a,
-		o,
 		s,
 		c,
 		l,
-		u
+		u,
+		d,
+		f
 	]);
 }
 //#endregion
@@ -3976,6 +3978,8 @@ function Fr({ onFilterLog: e, errorNodeId: t, onErrorNodePosition: n, replayEdge
 		setSelectedNodeId: g,
 		removeNode: p,
 		removeDefEdge: f,
+		nodes: S,
+		edges: T,
 		setNodes: C,
 		setEdges: E,
 		setPositions: u,
@@ -9376,13 +9380,11 @@ function Bo(e, t) {
 	let [n, r] = B(e), [i, a] = B([]), [o, s] = B([]), c = z(n);
 	c.current = n;
 	let l = I((e) => {
-		r((n) => {
-			let r = e(n);
-			return a((e) => {
-				let t = [...e, n];
-				return t.length > zo && t.shift(), t;
-			}), s([]), t(r), r;
-		});
+		let n = c.current, i = e(n);
+		c.current = i, a((e) => {
+			let t = [...e, n];
+			return t.length > zo && t.shift(), t;
+		}), s([]), r(i), t(i);
 	}, [t]);
 	return {
 		boxes: n,
@@ -9415,26 +9417,18 @@ function Bo(e, t) {
 			l((t) => t.filter((t) => t.id !== e));
 		}, [l]),
 		undo: I(() => {
-			a((e) => {
-				if (e.length === 0) return e;
-				let n = e[e.length - 1];
-				s((e) => [...e, c.current]);
-				let i = n;
-				return r(i), t(i), e.slice(0, -1);
-			});
-		}, [t]),
+			if (i.length === 0) return;
+			let e = i[i.length - 1], n = c.current;
+			c.current = e, s((e) => [...e, n]), a((e) => e.slice(0, -1)), r(e), t(e);
+		}, [t, i]),
 		redo: I(() => {
-			s((e) => {
-				if (e.length === 0) return e;
-				let n = e[e.length - 1];
-				a((e) => {
-					let t = [...e, c.current];
-					return t.length > zo && t.shift(), t;
-				});
-				let i = n;
-				return r(i), t(i), e.slice(0, -1);
-			});
-		}, [t]),
+			if (o.length === 0) return;
+			let e = o[o.length - 1], n = c.current;
+			c.current = e, a((e) => {
+				let t = [...e, n];
+				return t.length > zo && t.shift(), t;
+			}), s((e) => e.slice(0, -1)), r(e), t(e);
+		}, [t, o]),
 		canUndo: i.length > 0,
 		canRedo: o.length > 0
 	};
@@ -19769,7 +19763,7 @@ function Gu({ pipelineId: e, runId: t }) {
 	let n = rt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null);
 	L(() => {
 		let n = !1;
-		return import("./services-buxrr1Qy.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
+		return import("./services-BQLUSHcR.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
 			r(e, t).then((e) => {
 				!n && e && c(e);
 			});
@@ -22363,60 +22357,58 @@ function Qd({ status: e, result: t, runId: n, endpointLabel: i, error: a, latenc
 //#endregion
 //#region src/components/pipelines/vision/useVisionResults.ts
 function $d(e = {}) {
-	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(/* @__PURE__ */ new Map()), o = z(!0);
-	return L(() => (o.current = !0, () => {
-		o.current = !1;
+	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(!0);
+	return L(() => (a.current = !0, () => {
+		a.current = !1;
 	}), []), k("*", (e) => {
-		if (!o.current) return;
+		if (!a.current) return;
 		let r = e;
 		if (!r || typeof r.eventType != "string") return;
-		let s = r.eventType;
-		if (!s.startsWith("pipeline.image.vision.")) return;
-		let c = r.payload;
-		if (!c || typeof c.runId != "string" || typeof c.stepId != "string" || n && c.runId !== n) return;
-		let l = `${c.runId}::${c.stepId}`;
+		let o = r.eventType;
+		if (!o.startsWith("pipeline.image.vision.")) return;
+		let s = r.payload;
+		if (!s || typeof s.runId != "string" || typeof s.stepId != "string" || n && s.runId !== n) return;
+		let c = `${s.runId}::${s.stepId}`;
 		i((e) => {
-			let n = a.current.get(l), r = typeof c.at == "number" ? c.at : Date.now(), i = (r) => {
-				if (typeof n == "number" && n >= 0 && n < e.length) {
+			let n = e.findIndex((e) => `${e.runId}::${e.stepId}` === c), r = n === -1 ? void 0 : n, i = typeof s.at == "number" ? s.at : Date.now(), a = (n) => {
+				if (typeof r == "number" && r >= 0 && r < e.length) {
 					let t = e.slice();
-					return t[n] = {
-						...e[n],
-						...r
+					return t[r] = {
+						...e[r],
+						...n
 					}, t;
 				}
-				let i = [r, ...e];
-				i.length > t && (i.length = t);
-				let o = /* @__PURE__ */ new Map();
-				return i.forEach((e, t) => o.set(`${e.runId}::${e.stepId}`, t)), a.current = o, i;
+				let i = [n, ...e];
+				return i.length > t && (i.length = t), i;
 			};
-			if (s === "pipeline.image.vision.started") return i({
-				runId: c.runId,
-				stepId: c.stepId,
+			if (o === "pipeline.image.vision.started") return a({
+				runId: s.runId,
+				stepId: s.stepId,
 				status: "running",
-				endpointId: c.endpointId,
-				startedAt: r
+				endpointId: s.endpointId,
+				startedAt: i
 			});
-			if (s === "pipeline.image.vision.completed") {
-				let t = typeof n == "number" ? e[n] : void 0;
-				return i({
-					runId: c.runId,
-					stepId: c.stepId,
+			if (o === "pipeline.image.vision.completed") {
+				let t = typeof r == "number" ? e[r] : void 0;
+				return a({
+					runId: s.runId,
+					stepId: s.stepId,
 					status: "completed",
-					result: c.result,
-					completedAt: r,
-					elapsedMs: t?.startedAt ? r - t.startedAt : void 0,
-					endpointId: t?.endpointId ?? c.result?.model?.endpointId
+					result: s.result,
+					completedAt: i,
+					elapsedMs: t?.startedAt ? i - t.startedAt : void 0,
+					endpointId: t?.endpointId ?? s.result?.model?.endpointId
 				});
 			}
-			if (s === "pipeline.image.vision.failed") {
-				let t = typeof n == "number" ? e[n] : void 0;
-				return i({
-					runId: c.runId,
-					stepId: c.stepId,
+			if (o === "pipeline.image.vision.failed") {
+				let t = typeof r == "number" ? e[r] : void 0;
+				return a({
+					runId: s.runId,
+					stepId: s.stepId,
 					status: "failed",
-					error: c.error,
-					completedAt: r,
-					elapsedMs: t?.startedAt ? r - t.startedAt : void 0
+					error: s.error,
+					completedAt: i,
+					elapsedMs: t?.startedAt ? i - t.startedAt : void 0
 				});
 			}
 			return e;
@@ -22916,82 +22908,80 @@ function pf(e) {
 	return Date.now();
 }
 function mf(e = {}) {
-	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(/* @__PURE__ */ new Map()), o = z(!0);
-	return L(() => (o.current = !0, () => {
-		o.current = !1;
+	let { maxRecords: t = 50, runId: n } = e, [r, i] = B([]), a = z(!0);
+	return L(() => (a.current = !0, () => {
+		a.current = !1;
 	}), []), k("*", (e) => {
-		if (!o.current) return;
+		if (!a.current) return;
 		let r = e;
 		if (!r || typeof r.eventType != "string") return;
-		let s = r.eventType;
-		if (!s.startsWith("pipeline.judge.")) return;
-		let c = r.payload;
-		if (!c || typeof c.runId != "string" || typeof c.stepId != "string" || n && c.runId !== n) return;
-		let l = `${c.runId}::${c.stepId}`;
+		let o = r.eventType;
+		if (!o.startsWith("pipeline.judge.")) return;
+		let s = r.payload;
+		if (!s || typeof s.runId != "string" || typeof s.stepId != "string" || n && s.runId !== n) return;
+		let c = `${s.runId}::${s.stepId}`;
 		i((e) => {
-			let n = a.current.get(l), r = pf(c.at), i = (r) => {
-				if (typeof n == "number" && n >= 0 && n < e.length) {
+			let n = e.findIndex((e) => `${e.runId}::${e.stepId}` === c), r = n === -1 ? void 0 : n, i = pf(s.at), a = (n) => {
+				if (typeof r == "number" && r >= 0 && r < e.length) {
 					let t = e.slice();
-					return t[n] = {
-						...e[n],
-						...r
+					return t[r] = {
+						...e[r],
+						...n
 					}, t;
 				}
-				let i = [r, ...e];
-				i.length > t && (i.length = t);
-				let o = /* @__PURE__ */ new Map();
-				return i.forEach((e, t) => o.set(`${e.runId}::${e.stepId}`, t)), a.current = o, i;
+				let i = [n, ...e];
+				return i.length > t && (i.length = t), i;
 			};
-			if (s === "pipeline.judge.started") return i({
-				runId: c.runId,
-				stepId: c.stepId,
-				pipelineId: c.pipelineId,
+			if (o === "pipeline.judge.started") return a({
+				runId: s.runId,
+				stepId: s.stepId,
+				pipelineId: s.pipelineId,
 				status: "running",
-				rubricId: c.rubricId,
-				judgeModel: c.judgeModel,
-				startedAt: r
+				rubricId: s.rubricId,
+				judgeModel: s.judgeModel,
+				startedAt: i
 			});
-			if (s === "pipeline.judge.scored") {
-				let t = typeof n == "number" ? e[n] : void 0;
-				return i({
-					runId: c.runId,
-					stepId: c.stepId,
-					pipelineId: c.pipelineId ?? t?.pipelineId,
+			if (o === "pipeline.judge.scored") {
+				let t = typeof r == "number" ? e[r] : void 0;
+				return a({
+					runId: s.runId,
+					stepId: s.stepId,
+					pipelineId: s.pipelineId ?? t?.pipelineId,
 					status: "scored",
-					result: c.result,
-					completedAt: r,
-					elapsedMs: t?.startedAt ? r - t.startedAt : c.latencyMs,
-					rubricId: c.rubricId ?? t?.rubricId,
-					judgeModel: c.judgeModel ?? t?.judgeModel,
-					costUsd: c.costUsd ?? c.result?.costUsd,
-					tokensIn: c.usage?.inputTokens ?? c.result?.tokensIn,
-					tokensOut: c.usage?.outputTokens ?? c.result?.tokensOut
+					result: s.result,
+					completedAt: i,
+					elapsedMs: t?.startedAt ? i - t.startedAt : s.latencyMs,
+					rubricId: s.rubricId ?? t?.rubricId,
+					judgeModel: s.judgeModel ?? t?.judgeModel,
+					costUsd: s.costUsd ?? s.result?.costUsd,
+					tokensIn: s.usage?.inputTokens ?? s.result?.tokensIn,
+					tokensOut: s.usage?.outputTokens ?? s.result?.tokensOut
 				});
 			}
-			if (s === "pipeline.judge.failed") {
-				let t = typeof n == "number" ? e[n] : void 0;
-				return i({
-					runId: c.runId,
-					stepId: c.stepId,
-					pipelineId: c.pipelineId ?? t?.pipelineId,
+			if (o === "pipeline.judge.failed") {
+				let t = typeof r == "number" ? e[r] : void 0;
+				return a({
+					runId: s.runId,
+					stepId: s.stepId,
+					pipelineId: s.pipelineId ?? t?.pipelineId,
 					status: "failed",
-					error: c.error,
-					failureReason: c.reason,
-					completedAt: r,
-					elapsedMs: t?.startedAt ? r - t.startedAt : c.latencyMs,
-					costUsd: c.costUsd,
-					tokensIn: c.tokensIn,
-					tokensOut: c.tokensOut
+					error: s.error,
+					failureReason: s.reason,
+					completedAt: i,
+					elapsedMs: t?.startedAt ? i - t.startedAt : s.latencyMs,
+					costUsd: s.costUsd,
+					tokensIn: s.tokensIn,
+					tokensOut: s.tokensOut
 				});
 			}
-			if (s === "pipeline.judge.budget-exceeded") {
-				let t = typeof n == "number" ? e[n] : void 0;
-				return i({
-					runId: c.runId,
-					stepId: c.stepId,
-					pipelineId: c.pipelineId ?? t?.pipelineId,
+			if (o === "pipeline.judge.budget-exceeded") {
+				let t = typeof r == "number" ? e[r] : void 0;
+				return a({
+					runId: s.runId,
+					stepId: s.stepId,
+					pipelineId: s.pipelineId ?? t?.pipelineId,
 					status: "budget-exceeded",
-					completedAt: r
+					completedAt: i
 				});
 			}
 			return e;

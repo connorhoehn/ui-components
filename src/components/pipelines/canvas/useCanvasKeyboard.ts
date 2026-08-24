@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import type { MutableRefObject } from 'react';
 import type { Edge, Node } from '@xyflow/react';
 import type { PipelineDefinition } from '../../../types/pipeline';
@@ -10,6 +10,15 @@ interface UseCanvasKeyboardParams {
   setSelectedNodeId: (id: string | null) => void;
   removeNode: (id: string) => void;
   removeDefEdge: (id: string) => void;
+  /**
+   * Current canvas nodes/edges. Read through a ref inside the hook so the
+   * keydown handler can compute a nudge or an edge deletion *without* doing
+   * that work inside a `setNodes`/`setEdges` updater — React double-invokes
+   * updaters in dev, and both paths call back into the pipeline definition.
+   * Passing them here keeps the effect's dep array stable.
+   */
+  nodes: Node[];
+  edges: Edge[];
   setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
   setPositions: (positions: Array<{ id: string; position: { x: number; y: number } }>) => void;
@@ -24,6 +33,8 @@ export function useCanvasKeyboard({
   setSelectedNodeId,
   removeNode,
   removeDefEdge,
+  nodes,
+  edges,
   setNodes,
   setEdges,
   setPositions,
@@ -31,6 +42,11 @@ export function useCanvasKeyboard({
   clipboardRef,
   containerRef,
 }: UseCanvasKeyboardParams): void {
+  const nodesRef = useRef(nodes);
+  nodesRef.current = nodes;
+  const edgesRef = useRef(edges);
+  edgesRef.current = edges;
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -89,12 +105,17 @@ export function useCanvasKeyboard({
           removeNode(selectedNodeId);
           return;
         }
-        setEdges((curr) => {
-          const selected = curr.filter((edge) => edge.selected);
-          if (selected.length === 0) return curr;
+        // StrictMode safety: `removeDefEdge` (which commits to the pipeline
+        // definition and pushes an undo frame) used to run inside this
+        // updater, which React double-invokes in dev — so deleting one edge
+        // pushed two undo frames and a single Ctrl+Z appeared to do nothing.
+        // Read the selection from the ref, mutate the definition once, then
+        // enqueue a pure filter.
+        const selected = edgesRef.current.filter((edge) => edge.selected);
+        if (selected.length > 0) {
           for (const edge of selected) removeDefEdge(edge.id);
-          return curr.filter((edge) => !edge.selected);
-        });
+          setEdges((curr) => curr.filter((edge) => !edge.selected));
+        }
         e.preventDefault();
         return;
       }
@@ -140,24 +161,17 @@ export function useCanvasKeyboard({
           e.key === 'ArrowLeft' ? -NUDGE : e.key === 'ArrowRight' ? NUDGE : 0;
         const dy =
           e.key === 'ArrowUp' ? -NUDGE : e.key === 'ArrowDown' ? NUDGE : 0;
-        setNodes((curr) => {
-          const next = curr.map((n) =>
-            n.id === selectedNodeId
-              ? {
-                  ...n,
-                  position: {
-                    x: n.position.x + dx,
-                    y: n.position.y + dy,
-                  },
-                }
-              : n,
-          );
-          const moved = next.find((n) => n.id === selectedNodeId);
-          if (moved) {
-            setPositions([{ id: moved.id, position: moved.position }]);
-          }
-          return next;
-        });
+        // StrictMode safety: `setPositions` — which writes the pipeline
+        // definition and persists to localStorage — used to be called from
+        // inside this updater, so every arrow-key nudge persisted twice in
+        // dev. Compute the moved node from the ref and persist once.
+        const target = nodesRef.current.find((n) => n.id === selectedNodeId);
+        if (!target) return;
+        const position = { x: target.position.x + dx, y: target.position.y + dy };
+        setNodes((curr) =>
+          curr.map((n) => (n.id === selectedNodeId ? { ...n, position } : n)),
+        );
+        setPositions([{ id: selectedNodeId, position }]);
       }
     };
 

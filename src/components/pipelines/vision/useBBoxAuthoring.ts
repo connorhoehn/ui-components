@@ -51,19 +51,28 @@ export function useBBoxAuthoring(
 
   // ── commit ────────────────────────────────────────────────────────────
 
+  // StrictMode safety: this used to run the mutator, both stack updates and
+  // — worst of all — the `onChange` prop *inside* the `setBoxes` updater.
+  // React double-invokes updaters in dev, so every box edit notified the host
+  // twice (a host that POSTs annotations wrote the same edit twice) and
+  // pushed two identical undo frames, so one Ctrl+Z appeared to do nothing.
+  // `boxesRef` already tracks the latest boxes for the pointer handlers, so
+  // read `prev` from it and keep the updater pure.
   const commit = useCallback(
     (mutator: (current: AuthoringBBox[]) => AuthoringBBox[]) => {
-      setBoxes((prev) => {
-        const next = mutator(prev);
-        setUndoStack((stack) => {
-          const pushed = [...stack, prev];
-          if (pushed.length > HISTORY_LIMIT) pushed.shift();
-          return pushed;
-        });
-        setRedoStack([]);
-        onChange(next);
-        return next;
+      const prev = boxesRef.current;
+      const next = mutator(prev);
+      // Keep the ref ahead of the next render so two commits in one tick
+      // (a drag that resizes then relabels) chain rather than clobber.
+      boxesRef.current = next;
+      setUndoStack((stack) => {
+        const pushed = [...stack, prev];
+        if (pushed.length > HISTORY_LIMIT) pushed.shift();
+        return pushed;
       });
+      setRedoStack([]);
+      setBoxes(next);
+      onChange(next);
     },
     [onChange],
   );
@@ -113,33 +122,33 @@ export function useBBoxAuthoring(
 
   // ── undo / redo ───────────────────────────────────────────────────────
 
+  // Same StrictMode fix as `commit`: no nested setState and no `onChange`
+  // from inside a stack updater.
   const undo = useCallback(() => {
-    setUndoStack((stack) => {
-      if (stack.length === 0) return stack;
-      const frame = stack[stack.length - 1];
-      setRedoStack((redo) => [...redo, boxesRef.current]);
-      const next = frame;
-      setBoxes(next);
-      onChange(next);
-      return stack.slice(0, -1);
-    });
-  }, [onChange]);
+    if (undoStack.length === 0) return;
+    const next = undoStack[undoStack.length - 1];
+    const current = boxesRef.current;
+    boxesRef.current = next;
+    setRedoStack((redo) => [...redo, current]);
+    setUndoStack((stack) => stack.slice(0, -1));
+    setBoxes(next);
+    onChange(next);
+  }, [onChange, undoStack]);
 
   const redo = useCallback(() => {
-    setRedoStack((stack) => {
-      if (stack.length === 0) return stack;
-      const frame = stack[stack.length - 1];
-      setUndoStack((undo) => {
-        const pushed = [...undo, boxesRef.current];
-        if (pushed.length > HISTORY_LIMIT) pushed.shift();
-        return pushed;
-      });
-      const next = frame;
-      setBoxes(next);
-      onChange(next);
-      return stack.slice(0, -1);
+    if (redoStack.length === 0) return;
+    const next = redoStack[redoStack.length - 1];
+    const current = boxesRef.current;
+    boxesRef.current = next;
+    setUndoStack((undo) => {
+      const pushed = [...undo, current];
+      if (pushed.length > HISTORY_LIMIT) pushed.shift();
+      return pushed;
     });
-  }, [onChange]);
+    setRedoStack((stack) => stack.slice(0, -1));
+    setBoxes(next);
+    onChange(next);
+  }, [onChange, redoStack]);
 
   return {
     boxes,

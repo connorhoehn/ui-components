@@ -797,13 +797,10 @@ function we({ pipelineId: e, children: t }) {
 			return n.length > Se && n.shift(), n;
 		}), p([]);
 	}, []), S = u((e) => {
-		let t = null;
-		return r((n) => {
-			if (!n) return n;
-			x(n);
-			let r = e(n);
-			return t = r, r;
-		}), a(!0), t;
+		let t = y.current;
+		if (!t) return null;
+		let n = e(t);
+		return y.current = n, x(t), r(n), a(!0), n;
 	}, [x]), C = u((e, t) => {
 		let n = G();
 		return S((r) => ({
@@ -845,31 +842,30 @@ function we({ pipelineId: e, children: t }) {
 			edges: t.edges.filter((t) => t.source !== e && t.target !== e)
 		})), s((t) => t === e ? null : t);
 	}, [S]), D = u((e) => {
-		let t = [];
-		return S((n) => {
-			let r = new Set(e), i = /* @__PURE__ */ new Map(), a = n.nodes.filter((e) => r.has(e.id)).map((e) => {
-				let n = G();
-				return i.set(e.id, n), t.push(n), {
-					...e,
-					id: n,
-					position: {
-						x: e.position.x + 40,
-						y: e.position.y + 40
-					},
-					data: { ...e.data }
-				};
-			}), o = n.edges.filter((e) => r.has(e.source) && r.has(e.target)).map((e) => ({
+		let t = y.current;
+		if (!t) return [];
+		let n = [], r = new Set(e), i = /* @__PURE__ */ new Map(), a = t.nodes.filter((e) => r.has(e.id)).map((e) => {
+			let t = G();
+			return i.set(e.id, t), n.push(t), {
 				...e,
-				id: G(),
-				source: i.get(e.source) ?? e.source,
-				target: i.get(e.target) ?? e.target
-			}));
-			return {
-				...n,
-				nodes: [...n.nodes, ...a],
-				edges: [...n.edges, ...o]
+				id: t,
+				position: {
+					x: e.position.x + 40,
+					y: e.position.y + 40
+				},
+				data: { ...e.data }
 			};
-		}), t;
+		}), o = t.edges.filter((e) => r.has(e.source) && r.has(e.target)).map((e) => ({
+			...e,
+			id: G(),
+			source: i.get(e.source) ?? e.source,
+			target: i.get(e.target) ?? e.target
+		}));
+		return S((e) => ({
+			...e,
+			nodes: [...e.nodes, ...a],
+			edges: [...e.edges, ...o]
+		})), n;
 	}, [S]), O = u((e) => {
 		let t = G();
 		return S((n) => ({
@@ -885,20 +881,20 @@ function we({ pipelineId: e, children: t }) {
 			edges: t.edges.filter((t) => t.id !== e)
 		}));
 	}, [S]), A = u((e) => {
-		e.length !== 0 && r((t) => {
-			if (!t) return t;
-			let n = new Map(e.map((e) => [e.id, e.position])), r = {
-				...t,
-				nodes: t.nodes.map((e) => {
-					let t = n.get(e.id);
-					return t ? {
-						...e,
-						position: t
-					} : e;
-				})
-			};
-			return oe(r), r;
-		});
+		if (e.length === 0) return;
+		let t = y.current;
+		if (!t) return;
+		let n = new Map(e.map((e) => [e.id, e.position])), i = {
+			...t,
+			nodes: t.nodes.map((e) => {
+				let t = n.get(e.id);
+				return t ? {
+					...e,
+					position: t
+				} : e;
+			})
+		};
+		y.current = i, oe(i), r(i);
 	}, []), j = u(() => {
 		if (!n) return;
 		_.current &&= (clearTimeout(_.current), null);
@@ -942,35 +938,31 @@ function we({ pipelineId: e, children: t }) {
 			};
 		}), a(!0);
 	}, []), I = u(() => {
-		l((e) => {
-			if (e.length === 0 || !n) return e;
-			let t = e[e.length - 1];
-			return p((e) => [...e, {
+		if (c.length === 0 || !n) return;
+		let e = c[c.length - 1], t = {
+			...n,
+			nodes: e.nodes,
+			edges: e.edges
+		};
+		y.current = t, p((e) => [...e, {
+			nodes: n.nodes,
+			edges: n.edges
+		}]), l((e) => e.slice(0, -1)), r(t), a(!0);
+	}, [n, c]), L = u(() => {
+		if (d.length === 0 || !n) return;
+		let e = d[d.length - 1], t = {
+			...n,
+			nodes: e.nodes,
+			edges: e.edges
+		};
+		y.current = t, l((e) => {
+			let t = [...e, {
 				nodes: n.nodes,
 				edges: n.edges
-			}]), r({
-				...n,
-				nodes: t.nodes,
-				edges: t.edges
-			}), a(!0), e.slice(0, -1);
-		});
-	}, [n]), L = u(() => {
-		p((e) => {
-			if (e.length === 0 || !n) return e;
-			let t = e[e.length - 1];
-			return l((e) => {
-				let t = [...e, {
-					nodes: n.nodes,
-					edges: n.edges
-				}];
-				return t.length > Se && t.shift(), t;
-			}), r({
-				...n,
-				nodes: t.nodes,
-				edges: t.edges
-			}), a(!0), e.slice(0, -1);
-		});
-	}, [n]), R = m(() => ({
+			}];
+			return t.length > Se && t.shift(), t;
+		}), p((e) => e.slice(0, -1)), r(t), a(!0);
+	}, [n, d]), R = m(() => ({
 		definition: n,
 		dirty: i,
 		selectedNodeId: o,
@@ -1270,7 +1262,7 @@ function Le({ children: e }) {
 	f(() => {
 		let e = t?.definition?.id;
 		if (!e || p.current === e) return;
-		p.current = e, c(!0);
+		c(!0);
 		let n = !1;
 		return M(e, { limit: Y }).then((e) => {
 			n || a((t) => {
@@ -1285,7 +1277,7 @@ function Le({ children: e }) {
 				return n;
 			}));
 		}).finally(() => {
-			n || c(!1);
+			n || (p.current = e, c(!1));
 		}), () => {
 			n = !0;
 		};
