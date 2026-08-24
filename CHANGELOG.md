@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.90.1] — 2026-08-24
+
+**Fixed** — `npm run build` now works inside a git worktree. It was the only
+script that didn't, because it named `./node_modules/vite/bin/vite.js` as a
+filesystem path and a worktree has no `node_modules` of its own; `test` and
+`lint` were unaffected since Node's resolver walks up to the repo root for
+module specifiers, but a literal path never gets that. Agents doing the work
+live in worktrees, so this silently removed the build from their gate.
+`scripts/vite-build.mjs` resolves the manifest instead. Verified in both a
+normal checkout and a worktree with no `node_modules`.
+
 ## [2.90.0] — 2026-08-24
 
 Four parallel audits of areas the coverage numbers said were already

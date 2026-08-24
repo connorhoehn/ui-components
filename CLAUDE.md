@@ -86,12 +86,16 @@ npm run test:e2e   # playwright (17 specs, 206 tests — incl. user-journey spec
 > it is deliberately NOT declared in `engines`, because that field is
 > consumer-facing and the shipped bundles have no such requirement.
 
-> **`npm run build` does NOT work in a worktree**, despite the note above
-> saying worktrees work. That note was about `.storybook/main.ts` and
-> `demo/vite.config.ts`; the build script was missed. It invokes
-> `./node_modules/vite/bin/vite.js` by relative path, and a worktree has no
-> `node_modules` of its own. Run `npm run build` from the main checkout —
-> `npm test` and `npm run lint` are fine in a worktree.
+> **`npm run build` works in a worktree as of v2.90.1.** It used to be the
+> one script that didn't: it invoked `./node_modules/vite/bin/vite.js` by
+> relative path, and a *filesystem* path never gets Node's walk-up-the-tree
+> resolution — which is why `test` and `lint` were fine in a worktree and
+> `build` was not. `scripts/vite-build.mjs` now resolves `vite/package.json`
+> and reads the bin from the manifest. (It cannot resolve `vite/bin/vite.js`
+> directly: vite's `exports` map doesn't list the bin, so that fails with
+> ERR_PACKAGE_PATH_NOT_EXPORTED even in a normal install.) Same fix shape as
+> `scripts/resolve-realtime-modules.mjs` — if you add a script that reaches
+> into `node_modules` by path, resolve it instead.
 
 > **`npm run build` needs an 8GB heap** (wired into the script). The
 > `file:../realtime-modules` devDependency is a symlink, so api-extractor
