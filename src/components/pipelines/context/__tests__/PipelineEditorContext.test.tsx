@@ -27,8 +27,10 @@ vi.mock('../../persistence/pipelineStorageRemote', () => ({
 }));
 
 const mockSavePositionsOnly = vi.fn();
+const mockLoadPipelineLocal = vi.fn<(id: string) => PipelineDefinition | null>();
 vi.mock('../../persistence/pipelineStorage', () => ({
   savePipelinePositionsOnly: (def: PipelineDefinition) => mockSavePositionsOnly(def),
+  loadPipeline: (id: string) => mockLoadPipelineLocal(id),
 }));
 
 import {
@@ -84,6 +86,7 @@ beforeEach(() => {
   mockSavePipeline.mockReset().mockResolvedValue(undefined);
   mockPublishPipeline.mockReset().mockResolvedValue(null);
   mockSavePositionsOnly.mockReset();
+  mockLoadPipelineLocal.mockReset().mockReturnValue(null);
 });
 
 // ---------------------------------------------------------------------------
@@ -278,6 +281,60 @@ describe('PipelineEditorContext', () => {
     expect(trigger.position).toEqual({ x: 99, y: 77 });
     expect(editor().canUndo).toBe(false);
     expect(mockSavePositionsOnly).toHaveBeenCalledTimes(1);
+  });
+
+  // -------------------------------------------------------------------------
+  // Load failure. `pipelineStorageRemote.loadPipeline` only absorbs transport
+  // errors; an expired session (401), a 403 or a 400 rejects. There was no
+  // catch on the load promise, so the rejection went unhandled and
+  // `definition` stayed null forever — PipelineEditorPage renders
+  // "Loading pipeline…" for a null definition, with no error and no retry.
+  // -------------------------------------------------------------------------
+
+  it('falls back to the cached copy when the remote load rejects', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    mockLoadPipeline.mockRejectedValue(new Error('loadPipelineRemote failed (401)'));
+    const cached = makeDefinition();
+    cached.name = 'Cached copy';
+    mockLoadPipelineLocal.mockReturnValue(cached);
+
+    let value: PipelineEditorValue | null = null;
+    function Capture() {
+      value = usePipelineEditor();
+      return null;
+    }
+    render(
+      <PipelineEditorProvider pipelineId="pipe-1">
+        <Capture />
+      </PipelineEditorProvider>,
+    );
+
+    await waitFor(() => {
+      expect(value?.definition?.name).toBe('Cached copy');
+    });
+    expect(mockLoadPipelineLocal).toHaveBeenCalledWith('pipe-1');
+    spy.mockRestore();
+  });
+
+  it('does not leave the load promise unhandled when there is no cached copy', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const rejection = vi.fn();
+    process.on('unhandledRejection', rejection);
+    mockLoadPipeline.mockRejectedValue(new Error('loadPipelineRemote failed (403)'));
+    mockLoadPipelineLocal.mockReturnValue(null);
+
+    render(
+      <PipelineEditorProvider pipelineId="pipe-1">
+        <div />
+      </PipelineEditorProvider>,
+    );
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 10));
+    });
+
+    process.off('unhandledRejection', rejection);
+    expect(rejection).not.toHaveBeenCalled();
+    spy.mockRestore();
   });
 
   it('metadata mutations (rename / setTags) mark dirty but stay off the undo stack', async () => {

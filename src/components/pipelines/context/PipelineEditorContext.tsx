@@ -27,6 +27,7 @@ import type {
   PipelineNode,
 } from '../../../types/pipeline';
 import {
+  loadPipeline as loadPipelineLocal,
   savePipelinePositionsOnly,
 } from '../persistence/pipelineStorage';
 import {
@@ -277,14 +278,27 @@ export function PipelineEditorProvider({
     setSelectedNodeId(null);
     setUndoStack([]);
     setRedoStack([]);
-    loadPipeline(pipelineId).then((loaded) => {
-      if (cancelled) return;
-      if (loaded) {
-        loaded.nodes = loaded.nodes ?? [];
-        loaded.edges = loaded.edges ?? [];
-      }
-      setDefinition(loaded);
-    });
+    loadPipeline(pipelineId)
+      .catch((err: unknown) => {
+        // `pipelineStorageRemote.loadPipeline` only swallows *transport*
+        // failures; anything else (an expired session answering 401, a 403,
+        // a 400) rejects. There was no catch here, so the promise rejected
+        // unhandled and `definition` stayed null forever — the editor sat on
+        // "Loading pipeline…" with no error and no way out, even though a
+        // perfectly good cached copy was sitting in localStorage. Fall back
+        // to that copy.
+        // eslint-disable-next-line no-console
+        console.error('[PipelineEditor] load failed, using cached copy', err);
+        return loadPipelineLocal(pipelineId);
+      })
+      .then((loaded) => {
+        if (cancelled) return;
+        if (loaded) {
+          loaded.nodes = loaded.nodes ?? [];
+          loaded.edges = loaded.edges ?? [];
+        }
+        setDefinition(loaded);
+      });
     return () => { cancelled = true; };
   }, [pipelineId]);
 
