@@ -34,8 +34,17 @@ try {
   // --include: only real source files. A bare `grep -rl` also matches docs
   // (e.g. a JSX sample inside pipelines/judge/README.md), which is a false
   // positive the allowlist should never have to carry.
+  //
+  // TWO forms are matched, because for a long time only the first was:
+  //   style={{ ... }}          the literal, inline
+  //   style={someStyle}        the SAME thing hoisted to a module const
+  //
+  // Hoisting evaded this check completely. The whole `document-workspace`
+  // demo and `ThemingPage` were built that way and passed a green guard while
+  // CLAUDE.md recorded demo inline-style eradication as complete. A rule you
+  // can sidestep by naming a variable isn't a rule.
   rawGrep = execSync(
-    'grep -rl --include="*.tsx" --include="*.ts" "style={{" src/components demo/src 2>/dev/null',
+    'grep -rlE --include="*.tsx" --include="*.ts" "style=\\{(\\{|[A-Za-z_$])" src/components demo/src 2>/dev/null',
     { encoding: 'utf8' },
   );
 } catch (err) {
@@ -75,13 +84,38 @@ function stripStrings(src) {
   return out;
 }
 
+/**
+ * True when the file applies a STATIC style object — either written inline, or
+ * hoisted to a module-level const and referenced by name.
+ *
+ * A const is treated as static unless its body shows a sign of being computed
+ * per render (interpolation, a ternary, an arrow, a spread of something else).
+ * `var(--color-*)` does NOT make it dynamic: that is the documented way to
+ * name a design token from JS, and a static box of tokens is still a static
+ * box that belongs in Tailwind classes.
+ */
+function hasInlineStyle(code) {
+  if (code.includes('style={{')) return true;
+  const names = new Set([...code.matchAll(/style=\{([A-Za-z_$][\w$]*)\}/g)].map((m) => m[1]));
+  for (const name of names) {
+    const decl = new RegExp(`^const ${name}(?:\\s*:[^=]+)?\\s*=\\s*\\{([\\s\\S]*?)^\\};`, 'm').exec(code);
+    if (!decl) continue; // computed in-component; the runtime-derived case
+    if (/\$\{|=>|\?|\.\.\./.test(decl[1])) continue;
+    return true;
+  }
+  return false;
+}
+
 const current = new Set(
   rawGrep
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
+    // Tests aren't UI: a seam test may set a style deliberately to assert that
+    // the className/style contract holds.
+    .filter((f) => !f.includes('__tests__') && !f.endsWith('.test.tsx'))
     // Keep only files whose REAL code (not code samples in strings) uses it.
-    .filter((f) => stripStrings(readFileSync(f, 'utf8')).includes('style={{'))
+    .filter((f) => hasInlineStyle(stripStrings(readFileSync(f, 'utf8'))))
 );
 
 const additions = [...current].filter((f) => !allowed.has(f)).sort();

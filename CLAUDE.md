@@ -270,11 +270,18 @@ tests/e2e/         Playwright (17 specs, 206 tests — routes smoke, visual base
 
 1. **Demo pages must NOT use `style={{}}`.** Per global CLAUDE.md, all
    `demo/src/**` must use ui-components composites + Tailwind v4 token classes.
-   **DONE for static styles (2026-08-20):** every remaining demo occurrence is
-   runtime-derived (cursor positions, per-datum colors, `toneVar(...)`) and
-   allowlisted in `scripts/check-static-styles.allowlist.txt`, which now scans
-   `demo/src` too — string-aware, so JSX samples inside `code={\`...\`}` props
-   don't count. New static violations fail `npm run lint:static-styles`.
+   **NOT done — the "complete" claim was an artefact of the guard
+   (corrected 2026-08-24).** `check-static-styles.mjs` grepped for the literal
+   string `style={{`, so hoisting the identical object to a module-level const
+   and writing `style={someStyle}` sidestepped it entirely. The whole
+   `document-workspace` demo, `ThemingPage` (including a hard-coded `#1e293b`),
+   `QuickStartPage`, `SimulationControls` and the videohangout demo were built
+   that way and the guard stayed green throughout. A rule you can evade by
+   naming a variable is not a rule. The guard now matches both forms and skips
+   `__tests__` (a seam test may set a style deliberately). Runtime-derived
+   files are still allowlisted in
+   `scripts/check-static-styles.allowlist.txt` — string-aware, so JSX samples
+   inside `code={\`...\`}` props don't count.
    When you find a violation, classify A (token swap), B (use existing
    composite), or C (ship the primitive first), same as before.
 
