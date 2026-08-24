@@ -11,6 +11,7 @@ import { useEventStream } from './context/EventStreamContext';
 import type { WildcardEvent } from './context/EventStreamContext';
 import type { PipelineRun, RunStatus } from '../../types/pipeline';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import Chip from '../shared/Chip';
 import type { ChipTone } from '../shared/Chip';
 import RunDetailDrawer from './RunDetailDrawer';
@@ -206,6 +207,16 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
     });
   }, []);
 
+  // Row activation: compare mode toggles selection, otherwise open the run.
+  // Shared by the pointer and keyboard paths so they can never drift.
+  const activateRow = useCallback(
+    (runId: string) => {
+      if (compareMode) toggleCompareSelection(runId);
+      else setSelectedRunId(runId);
+    },
+    [compareMode, toggleCompareSelection],
+  );
+
   const handleCompare = useCallback(() => {
     if (comparePair.length !== 2) return;
     const [a, b] = comparePair;
@@ -324,13 +335,15 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                 <li
                   key={run.id}
                   data-testid={`runs-panel-row-${run.id}`}
-                  onClick={() => {
-                    if (compareMode) {
-                      toggleCompareSelection(run.id);
-                    } else {
-                      setSelectedRunId(run.id);
-                    }
-                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={
+                    compareMode
+                      ? `Toggle run ${run.id.slice(0, 8)} for comparison`
+                      : `Open run ${run.id.slice(0, 8)}`
+                  }
+                  onClick={() => activateRow(run.id)}
+                  onKeyDown={onActivationKey(() => activateRow(run.id))}
                   className={cn(
                     'cursor-pointer border-b border-border px-4 py-2.5 transition-colors duration-100 hover:bg-surface-hover',
                     isCompareSelected && 'bg-info-bg',
@@ -342,6 +355,7 @@ export default function PipelineRunsPanel({ pipelineId, onClose }: PipelineRunsP
                         checked={isCompareSelected}
                         onChange={() => toggleCompareSelection(run.id)}
                         onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
                         data-testid={`runs-panel-compare-check-${run.id}`}
                         className="m-0 shrink-0"
                         aria-label={`Select run ${run.id.slice(0, 8)} for comparison`}

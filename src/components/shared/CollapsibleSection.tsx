@@ -4,7 +4,7 @@
 //
 // Replaces several hand-rolled accordion implementations across the portal.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface CollapsibleSectionProps {
@@ -44,6 +44,24 @@ function CollapsibleSection({
     readStoredOpen(storageKey, defaultOpen),
   );
 
+  const bodyId = useId();
+  const headerRef = useRef<HTMLButtonElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  const toggle = () => {
+    if (open) {
+      // Closing unmounts the body. Anything focused inside it would be
+      // stranded — the browser drops focus to <body> and the keyboard user
+      // silently restarts their Tab walk at the top of the page. Hand focus
+      // up to the header that now stands for the collapsed section.
+      const active = typeof document === 'undefined' ? null : document.activeElement;
+      if (active && bodyRef.current?.contains(active)) {
+        headerRef.current?.focus();
+      }
+    }
+    setOpen((prev) => !prev);
+  };
+
   // Persist open-state changes to localStorage when a storageKey is provided.
   useEffect(() => {
     if (!storageKey) return;
@@ -64,9 +82,11 @@ function CollapsibleSection({
     >
       <button
         type="button"
+        ref={headerRef}
         className="w-full flex items-center justify-between px-4 py-3 bg-[var(--color-surface)] hover:bg-[var(--color-surface-hover)] transition-colors text-left"
-        onClick={() => setOpen(prev => !prev)}
+        onClick={toggle}
         aria-expanded={open}
+        aria-controls={bodyId}
       >
         <span className="text-sm font-semibold text-[var(--color-text-primary)]">
           {title}
@@ -93,7 +113,7 @@ function CollapsibleSection({
         </div>
       </button>
       {open && (
-        <div className="border-t border-[var(--color-border)] bg-white">
+        <div id={bodyId} ref={bodyRef} className="border-t border-[var(--color-border)] bg-white">
           {children}
         </div>
       )}

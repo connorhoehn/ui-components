@@ -156,10 +156,13 @@ export default function ConflictsPage() {
             {pending.map((c) => {
               const isActive = c.conflictId === selectedId;
               return (
-                <div
+                <button
                   key={c.conflictId}
+                  type="button"
+                  aria-pressed={isActive}
                   className={cn(
                     'px-3.5 py-2.5 border-b border-border cursor-pointer flex flex-col gap-1',
+                    'text-left w-full bg-transparent border-x-0 border-t-0 font-[inherit]',
                     isActive && 'bg-primary-bg',
                   )}
                   onClick={() => setSelectedId(c.conflictId)}
@@ -174,7 +177,7 @@ export default function ConflictsPage() {
                     <span>&bull;</span>
                     <span>{relativeTime(c.detectedAt)}</span>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

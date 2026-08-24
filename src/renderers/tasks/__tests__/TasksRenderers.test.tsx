@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import type { Section, TaskItem } from '../../../types/document';
 import TasksEditorRenderer from '../TasksEditorRenderer';
@@ -276,5 +277,72 @@ describe('TasksEditorRenderer', () => {
       />,
     );
     expect(screen.queryByTitle('Remove task')).not.toBeInTheDocument();
+  });
+});
+
+// REGRESSION: the per-item quick-update status dropdown was rendered only
+// when `hovered` was true, and `hovered` was set exclusively by onMouseEnter.
+// The <select> was therefore never in the DOM for a keyboard user: there was
+// no Tab stop to reach, so a keyboard user could only toggle done/pending via
+// the status circle and could never set "acked" or "rejected" at all. The row
+// now reveals it on focus as well as hover, and keeps it mounted while focus
+// is inside it (unmounting a focused <select> would drop focus to <body>).
+describe('TasksReaderRenderer — quick-update dropdown keyboard reachability', () => {
+  const items = [makeItem({ id: 'i1', text: 'Ship the thing' })];
+
+  function renderRow(onUpdateItem = vi.fn()) {
+    render(
+      <TasksReaderRenderer
+        section={makeSection(items)}
+        viewMode="reader"
+        editable
+        onUpdateItem={onUpdateItem}
+      />,
+    );
+    return screen.getByRole('button', { name: /Status: pending/ });
+  }
+
+  it('is absent until the row is hovered or focused', () => {
+    renderRow();
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+  });
+
+  it('appears when focus lands anywhere in the row', () => {
+    const toggle = renderRow();
+    fireEvent.focus(toggle);
+    expect(
+      screen.getByRole('combobox', { name: /Set status for Ship the thing/ }),
+    ).toBeInTheDocument();
+  });
+
+  it('lets a keyboard user set a status the toggle cannot reach', () => {
+    const onUpdateItem = vi.fn();
+    const toggle = renderRow(onUpdateItem);
+    fireEvent.focus(toggle);
+
+    const select = screen.getByRole('combobox');
+    fireEvent.change(select, { target: { value: 'rejected' } });
+
+    expect(onUpdateItem).toHaveBeenCalledWith('i1', { status: 'rejected' });
+  });
+
+  it('stays mounted while focus moves from the toggle into the dropdown', () => {
+    const toggle = renderRow();
+    fireEvent.focus(toggle);
+    const select = screen.getByRole('combobox');
+
+    fireEvent.blur(toggle, { relatedTarget: select });
+
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
+
+  it('hides again once focus leaves the row entirely', () => {
+    const toggle = renderRow();
+    fireEvent.focus(toggle);
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+
+    fireEvent.blur(toggle, { relatedTarget: document.body });
+
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
   });
 });

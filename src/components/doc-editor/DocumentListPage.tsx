@@ -5,6 +5,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import NewDocumentModal from './NewDocumentModal';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Exported types
@@ -115,14 +116,16 @@ function PresenceAvatars({
         const statusColor = isIdle ? 'var(--color-warning)' : 'var(--color-success)';
 
         return (
-          <div
+          <button
             key={u.userId}
+            type="button"
             title={`${u.displayName} — ${isIdle ? 'Away' : modeInfo.label}`}
+            aria-label={`${u.displayName} — ${isIdle ? 'Away' : modeInfo.label}`}
             onClick={(e) => {
               e.stopPropagation();
               onClickUser(u.userId);
             }}
-            className={cn('relative cursor-pointer')}
+            className={cn('relative cursor-pointer bg-transparent border-none p-0 font-[inherit]')}
             style={{ marginLeft: i > 0 ? -6 : 0, zIndex: MAX_SHOWN - i }}
           >
             <div
@@ -138,7 +141,7 @@ function PresenceAvatars({
             <div className={cn('absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-white border border-border flex items-center justify-center text-[8px] leading-none')}>
               {modeInfo.icon}
             </div>
-          </div>
+          </button>
         );
       })}
       {overflow > 0 && (
@@ -167,6 +170,11 @@ export default function DocumentListPage({
 }: DocumentListPageProps) {
   const [showModal, setShowModal] = useState(false);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  // The per-card Delete button is revealed by `hoveredCard`, which was set
+  // only by onMouseEnter — so Delete was never in the DOM for a keyboard
+  // user and a document could not be deleted without a mouse. Focus inside
+  // a card reveals it too now.
+  const [focusedCard, setFocusedCard] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const DOCS_PER_PAGE = 10;
@@ -218,14 +226,28 @@ export default function DocumentListPage({
           {paginatedDocs.map((doc) => {
             const users = presence[doc.id] ?? [];
             const isHovered = hoveredCard === doc.id;
+            const isRevealed = isHovered || focusedCard === doc.id;
 
             return (
               <div
                 key={doc.id}
                 data-testid={`document-card-${doc.id}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open ${doc.title}`}
                 onClick={() => onOpenDocument(doc.id)}
+                // Space must preventDefault or the list scrolls instead of opening.
+                onKeyDown={onActivationKey(() => onOpenDocument(doc.id))}
                 onMouseEnter={() => setHoveredCard(doc.id)}
                 onMouseLeave={() => setHoveredCard(null)}
+                onFocus={() => setFocusedCard(doc.id)}
+                onBlur={(e) => {
+                  // Keep Delete mounted while focus moves from the card into
+                  // it — unmounting the element focus is heading for would
+                  // strand focus on <body>.
+                  if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+                  setFocusedCard((prev) => (prev === doc.id ? null : prev));
+                }}
                 className={cn(
                   'flex items-center gap-4 px-4 py-3.5 bg-white border border-border rounded-lg cursor-pointer relative transition-shadow duration-150',
                   isHovered ? 'shadow-[0_4px_12px_rgba(0,0,0,0.08)]' : '',
@@ -273,11 +295,14 @@ export default function DocumentListPage({
                   </div>
                 )}
 
-                {/* Delete button (hover-only) */}
-                {isHovered && (
+                {/* Delete button — revealed on hover *or* keyboard focus */}
+                {isRevealed && (
                   <button
+                    type="button"
                     onClick={(e) => handleDelete(e, doc.id, doc.title)}
+                    onKeyDown={(e) => e.stopPropagation()}
                     title="Delete document"
+                    aria-label={`Delete ${doc.title}`}
                     className={cn('absolute top-2 right-2 w-[22px] h-[22px] flex items-center justify-center border-none rounded bg-danger-bg text-danger-fg text-sm leading-none cursor-pointer font-[inherit] p-0')}
                   >
                     &#215;

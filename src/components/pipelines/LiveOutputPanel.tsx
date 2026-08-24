@@ -16,6 +16,7 @@ import type { PipelineEventMap } from '../../types/pipeline';
 import { useEventStream } from './context/EventStreamContext';
 import type { WildcardEvent } from './context/EventStreamContext';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Props
@@ -252,9 +253,8 @@ export default function LiveOutputPanel({ runId, visible }: LiveOutputPanelProps
                 onClick={() => toggleCollapse(step.stepId)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') toggleCollapse(step.stepId);
-                }}
+                // Space must preventDefault or it also scrolls the log pane.
+                onKeyDown={onActivationKey(() => toggleCollapse(step.stepId))}
               >
                 <span className="text-[10px]">
                   {step.collapsed ? '▶' : '▼'}

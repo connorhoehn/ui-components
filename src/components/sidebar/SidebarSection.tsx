@@ -15,7 +15,7 @@
 //   - Body is hidden via `hidden` (not just height:0) so collapsed
 //     children are not focusable / read by AT.
 
-import { type ReactNode, useEffect, useId, useState } from 'react';
+import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/cn';
 
 export interface SidebarSectionProps {
@@ -81,8 +81,24 @@ export function SidebarSection({
   }, [collapsed, collapsible, effectiveKey]);
 
   const expanded = !collapsed;
+  const headerRef = useRef<HTMLButtonElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+
   const toggle = () => {
-    if (collapsible) setCollapsed((v) => !v);
+    if (!collapsible) return;
+    if (expanded) {
+      // Collapsing. The body is about to get `hidden`, which drops it out of
+      // the DOM's focusable set — anything focused inside it would be
+      // stranded: the browser blurs to <body> and the keyboard user silently
+      // restarts their Tab walk at the top of the page. Hand focus up to the
+      // header that now stands for the section. (Same defect and same fix as
+      // layout/CollapsibleSidebar's CollapsibleSection.)
+      const active = typeof document === 'undefined' ? null : document.activeElement;
+      if (active && bodyRef.current?.contains(active)) {
+        headerRef.current?.focus();
+      }
+    }
+    setCollapsed((v) => !v);
   };
 
   return (
@@ -95,6 +111,7 @@ export function SidebarSection({
       <div className="flex items-center justify-between gap-1 py-2 pr-1">
         <button
           type="button"
+          ref={headerRef}
           id={labelId}
           aria-expanded={collapsible ? expanded : undefined}
           aria-controls={bodyId}
@@ -128,6 +145,7 @@ export function SidebarSection({
       </div>
       <div
         id={bodyId}
+        ref={bodyRef}
         hidden={!expanded}
         className={cn('flex flex-col gap-0.5', expanded && 'pb-1')}
       >

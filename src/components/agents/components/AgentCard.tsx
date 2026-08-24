@@ -24,9 +24,10 @@ const STATUS_DOT: Record<string, string> = {
 
 export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps) {
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        'border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
+        'block w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden',
         selected
           ? 'border-info bg-info-bg/50 shadow-sm'
           : 'border-border bg-white hover:border-border-emphasis',
@@ -105,6 +106,6 @@ export function AgentCard({ agent, metrics, selected, onClick }: AgentCardProps)
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 }

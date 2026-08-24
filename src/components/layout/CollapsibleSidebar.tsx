@@ -9,6 +9,7 @@ import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { DocumentInfo } from '../../hooks/useDocuments';
 import { identityToColor, identityToInitials } from '../../utils/identity';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -125,24 +126,9 @@ function isMentionEvent(event: ActivityEvent, userId: string): boolean {
   return false;
 }
 
-// ---------------------------------------------------------------------------
-// Keyboard activation
-// ---------------------------------------------------------------------------
-
-/**
- * Key handler for the `role="button"` rows below. The ARIA button contract is
- * Enter *and* Space; these rows used to handle Enter only, so a keyboard user
- * pressing Space on a document scrolled the sidebar instead of opening it.
- * Space must also be `preventDefault()`ed for exactly that reason.
- */
-function onActivationKey(action: () => void) {
-  return (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
-      e.preventDefault();
-      action();
-    }
-  };
-}
+// Keyboard activation for the `role="button"` rows below now lives in
+// `src/lib/activationKey.ts` — the same Enter-and-Space defect turned up in
+// five more components, so the helper was promoted rather than copied.
 
 // ---------------------------------------------------------------------------
 // CollapsibleSection

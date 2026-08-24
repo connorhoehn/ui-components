@@ -189,7 +189,10 @@ export function RecordingPlayer({
         </div>
       )}
 
-      <div className="absolute bottom-0 left-0 right-0 px-3 pt-8 pb-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      {/* focus-within, not just group-hover: the whole control bar (scrubber,
+          play, mute, fullscreen) was opacity-0 until the mouse entered, so a
+          keyboard user tabbing into the player operated invisible controls. */}
+      <div className="absolute bottom-0 left-0 right-0 px-3 pt-8 pb-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-white text-xs tabular-nums w-12">{formatTime(currentTime)}</span>
           {/* Media chrome: the seek bar is part of the video overlay (white

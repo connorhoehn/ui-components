@@ -193,10 +193,13 @@ function RoomRow({ room, isActive, onClick }: RoomRowProps) {
   };
 
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
+      aria-pressed={isActive}
       className={cn(
         'flex items-center h-14 border-b border-surface-hover cursor-pointer pr-2',
+        'w-full text-left font-[inherit]',
         isActive ? 'bg-surface-hover border-l-[3px] border-l-primary pl-[13px]' : 'bg-transparent border-l-[3px] border-l-transparent',
       )}
     >
@@ -204,7 +207,7 @@ function RoomRow({ room, isActive, onClick }: RoomRowProps) {
         {room.name}
       </div>
       <span className={typeBadgeClass(room.type)}>{room.type}</span>
-    </div>
+    </button>
   );
 }
 

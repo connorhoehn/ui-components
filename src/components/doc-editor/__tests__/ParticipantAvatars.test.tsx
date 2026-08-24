@@ -135,3 +135,81 @@ describe('ParticipantAvatars', () => {
     expect(screen.getAllByText(/away, 4m/).length).toBeGreaterThan(0);
   });
 });
+
+// REGRESSION (whole block): this component had two independent mouse-only
+// paths.
+//   1. "Jump to participant" was an onClick on the wrapping <div> with no
+//      role, no tabIndex and no key handler — a keyboard user could not jump
+//      to a collaborator at all. It is a real <button> now.
+//   2. The tooltip that holds the Follow / Stop following action was gated on
+//      `hovered`, set only by onMouseEnter. It was never in the DOM for a
+//      keyboard user, and the action inside it was a <div role="button"> with
+//      no tabIndex or key handler — mouse-only twice over. Focus anywhere in
+//      the avatar now opens the tooltip, and Follow is a real <button>.
+describe('ParticipantAvatars — keyboard reachability', () => {
+  it('exposes jump-to-participant as a real button', () => {
+    const onJumpToUser = vi.fn();
+    render(
+      <ParticipantAvatars participants={[mk({ displayName: 'Alice Anderson' })]} onJumpToUser={onJumpToUser} />,
+    );
+
+    const jump = screen.getByRole('button', { name: 'Jump to Alice Anderson' });
+    expect(jump.tagName).toBe('BUTTON');
+
+    fireEvent.click(jump);
+    expect(onJumpToUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens the tooltip on focus, not on hover alone', () => {
+    render(
+      <ParticipantAvatars
+        participants={[mk({ displayName: 'Alice Anderson' })]}
+        onFollowUser={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByRole('button', { name: 'Follow' })).not.toBeInTheDocument();
+
+    fireEvent.focus(screen.getByRole('button', { name: 'Jump to Alice Anderson' }));
+
+    expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
+  });
+
+  it('makes Follow a real button that fires from the keyboard', () => {
+    const onFollowUser = vi.fn();
+    render(
+      <ParticipantAvatars
+        participants={[mk({ displayName: 'Alice Anderson' })]}
+        onFollowUser={onFollowUser}
+      />,
+    );
+
+    fireEvent.focus(screen.getByRole('button', { name: 'Jump to Alice Anderson' }));
+    const follow = screen.getByRole('button', { name: 'Follow' });
+    expect(follow.tagName).toBe('BUTTON');
+
+    fireEvent.click(follow);
+    expect(onFollowUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the tooltip mounted while focus moves from the avatar into it', () => {
+    render(
+      <ParticipantAvatars
+        participants={[mk({ displayName: 'Alice Anderson' })]}
+        onFollowUser={vi.fn()}
+      />,
+    );
+
+    const jump = screen.getByRole('button', { name: 'Jump to Alice Anderson' });
+    fireEvent.focus(jump);
+    const follow = screen.getByRole('button', { name: 'Follow' });
+
+    // focusout on the avatar whose relatedTarget is the Follow button inside
+    // the same container must NOT tear the tooltip down — unmounting the
+    // element focus is moving to would strand focus on <body>.
+    fireEvent.blur(jump, { relatedTarget: follow });
+    act(() => { vi.advanceTimersByTime(300); });
+
+    expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
+  });
+});

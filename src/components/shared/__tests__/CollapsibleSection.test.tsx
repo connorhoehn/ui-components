@@ -46,3 +46,60 @@ describe('CollapsibleSection', () => {
     expect(screen.getByTestId('badge')).toBeInTheDocument();
   });
 });
+
+// REGRESSION: closing the section unmounts its body. With focus on a control
+// inside that body, the browser had nowhere to put focus and dropped it to
+// <body> — the keyboard user's Tab position silently reset to the top of the
+// page. Focus must be handed up to the header that now stands for the
+// collapsed section. Same defect and same fix as layout/CollapsibleSidebar
+// and sidebar/SidebarSection.
+describe('CollapsibleSection — focus handoff on close', () => {
+  it('moves focus to the header instead of stranding it in the unmounted body', () => {
+    render(
+      <CollapsibleSection title="Details" defaultOpen>
+        <button type="button">Inner action</button>
+      </CollapsibleSection>,
+    );
+
+    const inner = screen.getByRole('button', { name: 'Inner action' });
+    inner.focus();
+    expect(document.activeElement).toBe(inner);
+
+    const header = screen.getByRole('button', { name: /details/i });
+    fireEvent.click(header);
+
+    expect(document.activeElement).toBe(header);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('leaves focus alone when it was never inside the body', () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <CollapsibleSection title="Details" defaultOpen>
+          <button type="button">Inner action</button>
+        </CollapsibleSection>
+      </>,
+    );
+
+    const outside = screen.getByRole('button', { name: 'Outside' });
+    outside.focus();
+
+    fireEvent.click(screen.getByRole('button', { name: /details/i }));
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  it('points aria-controls at the body it reveals', () => {
+    render(
+      <CollapsibleSection title="Details" defaultOpen>
+        <span>body content</span>
+      </CollapsibleSection>,
+    );
+
+    const header = screen.getByRole('button', { name: /details/i });
+    const bodyId = header.getAttribute('aria-controls');
+    expect(bodyId).toBeTruthy();
+    expect(document.getElementById(bodyId as string)).not.toBeNull();
+  });
+});

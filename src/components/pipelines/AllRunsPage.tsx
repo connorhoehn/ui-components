@@ -10,6 +10,7 @@ import RunsFilterBar from './RunsFilterBar';
 import Chip from '../shared/Chip';
 import { cn } from '../../lib/cn';
 import type { PipelineRun } from '../../types/pipeline';
+import { onActivationKey } from '../../lib/activationKey';
 import { formatDuration, relativeTime } from './utils/formatTime';
 import { statusChipVariant } from './utils/statusColors';
 import {
@@ -184,7 +185,13 @@ export default function AllRunsPage() {
               {filtered.map((run) => (
                 <tr
                   key={run.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open run ${run.id.slice(0, 11)} of ${(run as RunWithMeta).pipelineName}`}
                   onClick={() => navigate(`/pipelines/${run.pipelineId}/runs/${run.id}`)}
+                  onKeyDown={onActivationKey(() =>
+                    navigate(`/pipelines/${run.pipelineId}/runs/${run.id}`),
+                  )}
                   className="border-b border-border cursor-pointer hover:bg-surface-hover"
                 >
                   <td className="px-3 py-2.5 text-xs text-text-secondary font-medium">

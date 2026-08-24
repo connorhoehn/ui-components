@@ -96,3 +96,63 @@ describe('SidebarSection', () => {
     expect(button).not.toHaveAttribute('aria-expanded');
   });
 });
+
+// REGRESSION: collapsing the section applies `hidden` to the body, which
+// removes its children from the DOM's focusable set. With focus sitting on a
+// row inside the body, the browser had nowhere to put it and dropped it to
+// <body> — so a keyboard user's Tab walk silently restarted from the top of
+// the page. Focus must be handed up to the header that now stands for the
+// collapsed section. Same defect and same fix as layout/CollapsibleSidebar.
+describe('SidebarSection — focus handoff on collapse', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('moves focus to the header instead of stranding it in the hidden body', () => {
+    render(
+      <SidebarSection title="Documents">
+        <button type="button">Sprint plan</button>
+      </SidebarSection>,
+    );
+
+    const row = screen.getByRole('button', { name: 'Sprint plan' });
+    row.focus();
+    expect(document.activeElement).toBe(row);
+
+    const header = screen.getByRole('button', { name: /documents/i });
+    fireEvent.click(header);
+
+    expect(document.activeElement).toBe(header);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('leaves focus alone when it was never inside the section body', () => {
+    render(
+      <>
+        <button type="button">Outside</button>
+        <SidebarSection title="Documents">
+          <button type="button">Sprint plan</button>
+        </SidebarSection>
+      </>,
+    );
+
+    const outside = screen.getByRole('button', { name: 'Outside' });
+    outside.focus();
+
+    fireEvent.click(screen.getByRole('button', { name: /documents/i }));
+
+    expect(document.activeElement).toBe(outside);
+  });
+
+  it('takes the collapsed body out of the tab order', () => {
+    render(
+      <SidebarSection title="Documents">
+        <button type="button">Sprint plan</button>
+      </SidebarSection>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /documents/i }));
+
+    expect(screen.queryByRole('button', { name: 'Sprint plan' })).not.toBeInTheDocument();
+  });
+});

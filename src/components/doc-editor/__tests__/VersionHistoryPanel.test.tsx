@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, createEvent, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { VersionEntry, SnapshotSection } from '../../../hooks/useVersionHistory';
 import VersionHistoryPanel from '../VersionHistoryPanel';
@@ -170,5 +170,45 @@ describe('VersionHistoryPanel — DiffViewer + Restore', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Restore this version' }));
     expect(onRestore).not.toHaveBeenCalled();
     expect(onClearCompare).not.toHaveBeenCalled();
+  });
+});
+
+// REGRESSION: the version row was a bare <div> with onClick. Only the nested
+// "Compare" button was focusable, so a keyboard user could never preview a
+// version — and Space on the row scrolled the panel instead of previewing.
+describe('VersionHistoryPanel — version row keyboard activation', () => {
+  it('previews the version on Enter', () => {
+    const onPreview = vi.fn();
+    render(panel({ versions: [entry({ timestamp: 1, age: 30 * 1000 })], onPreview }));
+
+    const row = screen.getByRole('button', { name: /30s ago/ });
+    expect(row).toHaveAttribute('tabindex', '0');
+    row.focus();
+    expect(row).toHaveFocus();
+
+    fireEvent.keyDown(row, { key: 'Enter' });
+    expect(onPreview).toHaveBeenCalledWith(1);
+  });
+
+  it('previews the version on Space and prevents the page from scrolling', () => {
+    const onPreview = vi.fn();
+    render(panel({ versions: [entry({ timestamp: 7, age: 30 * 1000 })], onPreview }));
+
+    const row = screen.getByRole('button', { name: /30s ago/ });
+    const ev = createEvent.keyDown(row, { key: ' ' });
+    fireEvent(row, ev);
+
+    expect(onPreview).toHaveBeenCalledWith(7);
+    expect(ev.defaultPrevented).toBe(true);
+  });
+
+  it('leaves the nested Compare button as the only handler for its own keys', () => {
+    const onPreview = vi.fn();
+    const onCompare = vi.fn();
+    render(panel({ versions: [entry({ timestamp: 3, age: 30 * 1000 })], onPreview, onCompare }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Compare' }));
+    expect(onCompare).toHaveBeenCalledWith(3);
+    expect(onPreview).not.toHaveBeenCalled();
   });
 });

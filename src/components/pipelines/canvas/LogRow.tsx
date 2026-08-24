@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { cn } from '../../../lib/cn';
+import { onActivationKey } from '../../../lib/activationKey';
 import { getEventGlyph } from '../../shared/eventGlyphs';
 
 // ---------------------------------------------------------------------------
@@ -81,7 +82,11 @@ function LogRow({ row, isOpen, onToggle }: LogRowProps) {
         isOpen && 'bg-surface-panel',
       )}
       data-testid={`execution-log-row-${row.id}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded={isOpen}
       onClick={() => onToggle(row.id)}
+      onKeyDown={onActivationKey(() => onToggle(row.id))}
     >
       <span className="font-mono text-[11px] text-neutral mr-2">
         {fmtTime(row.at)}

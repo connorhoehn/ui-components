@@ -199,3 +199,20 @@ describe('MemoryInspector', () => {
     expect(container.firstChild).toHaveClass('extra-wrap');
   });
 });
+
+// REGRESSION: the per-entry delete control is `opacity-0` and was revealed
+// only by `group-hover:opacity-100`. A keyboard user tabbing through the
+// memory list landed on a fully invisible "delete" button — no way to see
+// which control had focus, or what was about to be destroyed. The reveal has
+// to fire on keyboard focus too.
+describe('MemoryInspector — the delete control must be visible when focused', () => {
+  it('reveals delete on focus, not only on hover', () => {
+    render(<MemoryInspector entries={[makeEntry()]} onDelete={() => {}} />);
+
+    const del = screen.getByRole('button', { name: 'delete' });
+    expect(del.className).toContain('opacity-0');
+    expect(del.className).toContain('group-hover:opacity-100');
+    // The half that was missing:
+    expect(del.className).toContain('focus-visible:opacity-100');
+  });
+});

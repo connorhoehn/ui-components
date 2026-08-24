@@ -93,7 +93,10 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
                 </div>
                 {onDelete && (
                   <button
-                    className="text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 transition-opacity"
+                    // focus-visible, not just hover: the delete control was opacity-0 with
+                    // only a group-hover reveal, so tabbing to it focused an
+                    // invisible button.
+                    className="text-[10px] text-danger-fg hover:text-danger-fg opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity"
                     onClick={() => onDelete(entry.id)}
                   >
                     delete

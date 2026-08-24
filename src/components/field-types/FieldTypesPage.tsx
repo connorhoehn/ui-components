@@ -11,6 +11,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import { useCustomFieldTypes } from '../../hooks/useCustomFieldTypes';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
@@ -443,6 +444,11 @@ function TypeListItem({
   return (
     <div
       onClick={onSelect}
+      onKeyDown={onActivationKey(onSelect)}
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={label}
       className={cn(
         'flex items-center gap-2.5 py-2 px-3.5 cursor-pointer rounded-[7px]',
         active
@@ -461,6 +467,7 @@ function TypeListItem({
       <button
         type="button"
         onClick={e => { e.stopPropagation(); onDelete(); }}
+        onKeyDown={e => e.stopPropagation()}
         title="Delete"
         className="px-1.5 py-0.5 text-sm bg-transparent border-none text-danger-fg cursor-pointer shrink-0 font-semibold rounded-[7px] font-inherit"
       >

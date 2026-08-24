@@ -8,6 +8,7 @@ import { MentionDropdown } from './MentionDropdown';
 import type { MentionDropdownHandle } from './MentionDropdown';
 import type { MentionUser } from '../../hooks/useMentionUsers';
 import { cn } from '../../lib/cn';
+import { onActivationKey } from '../../lib/activationKey';
 import { Textarea } from '../forms/Textarea';
 
 // ---------------------------------------------------------------------------
@@ -207,8 +208,13 @@ function CommentThreadNode({
     return (
       <div className={cn(cappedDepth > 0 ? 'ml-5' : 'ml-0')}>
         <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={false}
           className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(true)}
+          // Space must preventDefault here or expanding also scrolls the thread.
+          onKeyDown={onActivationKey(() => setResolvedExpanded(true))}
         >
           <div className={cn('flex items-center gap-1.5')}>
             <span className={cn('text-success-fg text-xs')}>{'✔'}</span>
@@ -244,8 +250,13 @@ function CommentThreadNode({
       {/* Resolved banner (expanded) */}
       {isResolved && resolvedExpanded && (
         <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={true}
           className={cn('bg-success-bg border-l-[3px] border-l-success px-3 py-2 mb-1 rounded cursor-pointer flex items-center justify-between')}
           onClick={() => setResolvedExpanded(false)}
+          // Space must preventDefault here or collapsing also scrolls the thread.
+          onKeyDown={onActivationKey(() => setResolvedExpanded(false))}
         >
           <div className={cn('flex items-center gap-1.5')}>
             <span className={cn('text-success-fg text-xs')}>{'✔'}</span>

@@ -179,8 +179,10 @@ function StepOutputDiff({
       className="overflow-hidden rounded-md border border-border"
       data-testid={`diff-output-${nodeId}`}
     >
-      <div
-        className="flex cursor-pointer items-center gap-2 bg-surface-inset px-3 py-2"
+      <button
+        type="button"
+        aria-expanded={expanded}
+        className="flex w-full cursor-pointer items-center gap-2 border-none bg-surface-inset px-3 py-2 text-left font-[inherit]"
         onClick={() => setExpanded(!expanded)}
       >
         <span className="text-[11px] text-text-tertiary">
@@ -193,7 +195,7 @@ function StepOutputDiff({
         <Chip tone="warning" size="xs" className="ml-auto">
           {changedCount} difference{changedCount === 1 ? '' : 's'}
         </Chip>
-      </div>
+      </button>
       {expanded && (
         <div className="flex flex-col gap-0.5 px-3 py-2">
           {diff

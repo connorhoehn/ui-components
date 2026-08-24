@@ -47,6 +47,12 @@ interface ItemRowProps {
 
 function ItemRow({ item, onUpdateItem }: ItemRowProps) {
   const [hovered, setHovered] = useState(false);
+  // The quick-update dropdown below used to be gated on `hovered` alone, so
+  // it was never in the DOM unless a mouse was over the row — a keyboard user
+  // could never Tab to it and had no way to set a status other than
+  // done/pending. Focus anywhere in the row reveals it too now.
+  const [focusWithin, setFocusWithin] = useState(false);
+  const showQuickUpdate = hovered || focusWithin;
   // `item.status` / `item.priority` arrive from the CRDT and from persisted
   // documents, so they can hold a value this build does not know (a newer
   // schema, a partially-synced item). Before the fallbacks, an unrecognised
@@ -60,6 +66,15 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      // onFocus/onBlur are focusin/focusout in React, so they fire for the
+      // status toggle and for the dropdown itself. The `contains` guard keeps
+      // the dropdown mounted while focus moves into it — unmounting a focused
+      // <select> would drop focus to <body>.
+      onFocus={() => setFocusWithin(true)}
+      onBlur={(e) => {
+        if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+        setFocusWithin(false);
+      }}
       className="flex items-center gap-2 py-1.5 border-b border-border-subtle"
       style={{ opacity: isDone ? 0.65 : 1 }}
     >
@@ -137,9 +152,10 @@ function ItemRow({ item, onUpdateItem }: ItemRowProps) {
         </span>
       )}
 
-      {/* Quick-update dropdown — visible on hover */}
-      {onUpdateItem && hovered && (
+      {/* Quick-update dropdown — revealed on hover *or* keyboard focus */}
+      {onUpdateItem && showQuickUpdate && (
         <select
+          aria-label={`Set status for ${item.text || 'untitled item'}`}
           value={item.status}
           onChange={(e) => onUpdateItem(item.id, { status: e.target.value as TaskItem['status'] })}
           onClick={(e) => e.stopPropagation()}
