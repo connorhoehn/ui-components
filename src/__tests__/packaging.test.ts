@@ -159,3 +159,92 @@ describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
     expect(pkg.exports['./package.json']).toBe('./package.json');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Which optional peers does each entry point actually DRAG IN?
+// ---------------------------------------------------------------------------
+
+// `peerDependenciesMeta` marks recharts, the @tiptap/* packages, cognito, hls
+// and others `optional: true`. That flag promises a consumer can skip them.
+// For several entry points the promise is false: the barrel re-exports a
+// component that imports the peer at module scope, so `import { Button } from
+// '@connorhoehnslalom/ui-components/shared'` fails at runtime with
+// ERR_MODULE_NOT_FOUND unless recharts is installed — because `shared/Chart.tsx`
+// is `export *`'d from the same barrel.
+//
+// Verified against a real packed tarball in a scratch consumer: with the
+// optional peers absent, 8 of 13 subpaths failed to import; with them present,
+// all but `/integrations/realtime-modules` (genuinely unpublished) import clean.
+//
+// Bundler consumers are usually spared by tree-shaking. Node-ESM and SSR
+// consumers are not. This test does not force that to change — moving Chart out
+// of the barrel would be a breaking change needing a consumer handoff. It pins
+// the CURRENT truth so the set cannot quietly grow, and so the cost of adding an
+// eager peer import to a common barrel is visible at review time.
+describe('entry points and their transitive optional peers', () => {
+  it('no entry point drags in an optional peer beyond the documented set', async () => {
+    const { readFileSync, existsSync } = await import('node:fs');
+    const { join, dirname } = await import('node:path');
+
+    const ROOT = join(process.cwd(), 'dist');
+    if (!existsSync(join(ROOT, 'index.js'))) return; // dist absent; build first
+
+    // A bare specifier, not a `from` inside a template literal or a string.
+    const SPECIFIER = /^(@[a-z0-9-~][\w.-]*\/)?[a-z0-9-~][\w.-]*$/;
+    const ALWAYS = new Set(['react', 'react-dom', 'react/jsx-runtime', 'clsx', 'tailwind-merge']);
+
+    /** Follow relative chunk imports so transitive peers are counted. */
+    function peersOf(entry: string): string[] {
+      const seen = new Set<string>();
+      const found = new Set<string>();
+      const queue = [entry];
+      while (queue.length) {
+        const file = queue.pop()!;
+        if (seen.has(file) || !existsSync(file)) continue;
+        seen.add(file);
+        for (const m of readFileSync(file, 'utf8').matchAll(/from\s*"([^"]+)"/g)) {
+          const spec = m[1];
+          if (spec.startsWith('.')) { queue.push(join(dirname(file), spec)); continue; }
+          const pkg = spec.split('/').slice(0, spec.startsWith('@') ? 2 : 1).join('/');
+          if (SPECIFIER.test(pkg) && !ALWAYS.has(pkg) && !ALWAYS.has(spec)) found.add(pkg);
+        }
+      }
+      return [...found].sort();
+    }
+
+    // The documented truth. Shrinking an entry is always fine — update the
+    // list. GROWING one means a common import path now needs another package
+    // installed, so make that a deliberate decision, not a side effect.
+    const EXPECTED: Record<string, string[]> = {
+      types: [],
+      video: [],
+      social: ['cmdk'],
+      agents: ['@xyflow/react'],
+      identity: [],
+      shared: ['cmdk', 'recharts'],
+      observability: ['react-router', 'recharts'],
+      ingest: ['react-router', 'recharts'],
+      hooks: ['amazon-cognito-identity-js', 'react-router', 'yjs'],
+      pipelines: ['@xyflow/react', 'react-router', 'recharts'],
+      'doc-editor': [
+        '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
+        '@tiptap/extension-task-item', '@tiptap/extension-task-list',
+        '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap', 'yjs',
+      ],
+      // The root barrel re-exports nearly everything, so it needs nearly
+      // everything. That is expected — subpaths are how a consumer opts out.
+      index: [
+        '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
+        '@tiptap/extension-task-item', '@tiptap/extension-task-list',
+        '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap',
+        'amazon-cognito-identity-js', 'cmdk', 'react-router', 'recharts', 'yjs',
+      ],
+    };
+
+    const actual: Record<string, string[]> = {};
+    for (const entry of Object.keys(EXPECTED)) {
+      actual[entry] = peersOf(join(ROOT, `${entry}.js`));
+    }
+    expect(actual).toEqual(EXPECTED);
+  });
+});

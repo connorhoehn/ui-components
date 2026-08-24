@@ -374,6 +374,24 @@ component now has both a test file and a story file.
 
 ## Publishing
 
+> **`optional: true` on a peer dep is partly a lie — verified 2026-08-24.**
+> A packed-tarball probe in a scratch consumer found that with the optional
+> peers absent, **8 of 13 subpaths fail to import** with
+> `ERR_MODULE_NOT_FOUND`; with them installed, all but
+> `/integrations/realtime-modules` (genuinely unpublished — that's #1493)
+> import clean. The cause is barrel re-export: `shared/Chart.tsx` imports
+> `recharts` at module scope and is `export *`'d from `shared/index.ts`, so
+> `import { Button } from '…/shared'` needs a charting library installed.
+> Bundler consumers are usually spared by tree-shaking; **Node-ESM and SSR
+> consumers are not.** Moving `Chart` out of the barrel would be a breaking
+> change needing a consumer handoff, so the current truth is pinned instead by
+> the "entry points and their transitive optional peers" test in
+> `src/__tests__/packaging.test.ts`. Shrinking a set is fine; growing one means
+> a common import path now needs another install — make that deliberate.
+>
+> Leanest subpaths (react only): `/types`, `/video`, `/identity`. The root
+> barrel needs nearly everything, which is the point of subpaths.
+
 > **Verify against a packed tarball, not the repo.** In-repo everything
 > resolves from `devDependencies`, which hid four consumer-breaking bugs until
 > v2.40.1 — including a root import that crashed with `ERR_MODULE_NOT_FOUND`
