@@ -5,7 +5,7 @@
 // will replace the module-scoped state with the real distributed-core
 // `ChaosInjector` (PIPELINES_PLAN.md §18.7).
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import Modal from '../../shared/Modal';
 import { cn } from '../../../lib/cn';
 import { Input } from '../../forms/Input';
@@ -61,6 +61,7 @@ function ChaosPanel(props: ChaosPanelProps) {
   const [dropPercent, setDropPercent] = useState('0');
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [confirmKill, setConfirmKill] = useState(false);
+  const uid = useId();
 
   // Live chaos state — re-rendered when `setChaosState` fires.
   const [chaos, setChaos] = useState<ChaosState>(() => getChaosState());
@@ -175,8 +176,10 @@ function ChaosPanel(props: ChaosPanelProps) {
       </div>
 
       {/* Partition */}
-      <div className="flex flex-col gap-1.5 pb-3 mb-3 border-b border-border">
-        <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
+      {/* The caption is a <div>, so it named nothing: each node checkbox
+          announced bare, with no indication it belongs to "Partition nodes". */}
+      <div role="group" aria-labelledby={`${uid}-partition`} className="flex flex-col gap-1.5 pb-3 mb-3 border-b border-border">
+        <div id={`${uid}-partition`} className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.3px]">
           Partition nodes
         </div>
         <div className="flex flex-col gap-1">

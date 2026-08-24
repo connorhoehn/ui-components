@@ -162,21 +162,31 @@ export function PoolFormPage({ pool, isEdit, onSubmit, onCancel, error }: PoolFo
 
         <section className="mb-6">
           <h3 className="text-base font-semibold text-text-primary mb-2">Custom Attributes</h3>
+          {/* Placeholder-only naming: once a row holds values — every row on an
+              edit screen — both boxes announce as unnamed "edit text", and the
+              two are indistinguishable from each other. */}
           {customAttrs.map((attr, idx) => (
             <div key={idx} className="flex gap-2 items-center mb-2">
               <Input
+                aria-label={`Attribute ${idx + 1} name`}
                 className="flex-1"
                 placeholder="Attribute name"
                 value={attr.key}
                 onChange={(e) => handleAttrChange(idx, 'key', e.target.value)}
               />
               <Input
+                aria-label={`Attribute ${idx + 1} type`}
                 className="flex-1"
                 placeholder="Type (string, number, etc.)"
                 value={attr.value}
                 onChange={(e) => handleAttrChange(idx, 'value', e.target.value)}
               />
-              <Button variant="danger" size="sm" onClick={() => handleRemoveAttr(idx)}>
+              <Button
+                variant="danger"
+                size="sm"
+                aria-label={`Remove attribute ${idx + 1}`}
+                onClick={() => handleRemoveAttr(idx)}
+              >
                 Remove
               </Button>
             </div>

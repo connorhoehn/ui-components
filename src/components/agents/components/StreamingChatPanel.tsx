@@ -164,7 +164,11 @@ export function StreamingChatPanel({
 
       {/* Input */}
       <div className="flex items-center gap-2 p-3 border-t border-border bg-surface-panel/50">
+        {/* Named only by a placeholder, which is swapped to "Waiting for
+            response..." while streaming — so the field's accessible name
+            changed under the user, and vanished entirely once they typed. */}
         <Input
+          aria-label="Message"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}

@@ -5,6 +5,7 @@
 import { useState, useMemo } from 'react';
 import { EntityTable, type Column } from '../shared/EntityTable';
 import { StatusBadge } from '../shared/StatusBadge';
+import { FilterField } from '../shared/FilterField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
@@ -141,23 +142,23 @@ export function MfaManagementPage({
 
       {/* Pool filter */}
       {pools && pools.length > 0 && canFilterByPool && (
-        <div className="flex items-center gap-3">
-          <label className="text-xs font-semibold text-neutral uppercase tracking-wide">
-            Filter by pool
-          </label>
-          <Select
-            className="w-64"
-            value={selectedPool}
-            onChange={(e) => setSelectedPool(e.target.value)}
-            options={[
-              { value: '', label: 'All Pools' },
-              ...pools.map((p) => ({
-                value: p.poolId,
-                label: `${p.poolName} (${p.userCount} users)`,
-              })),
-            ]}
-          />
-        </div>
+        <FilterField label="Filter by pool" layout="inline">
+          {(w) => (
+            <Select
+              {...w}
+              className="w-64"
+              value={selectedPool}
+              onChange={(e) => setSelectedPool(e.target.value)}
+              options={[
+                { value: '', label: 'All Pools' },
+                ...pools.map((p) => ({
+                  value: p.poolId,
+                  label: `${p.poolName} (${p.userCount} users)`,
+                })),
+              ]}
+            />
+          )}
+        </FilterField>
       )}
 
       {/* User table */}

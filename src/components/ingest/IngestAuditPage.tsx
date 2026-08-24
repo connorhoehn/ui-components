@@ -2,7 +2,7 @@
 //
 // Operator audit-log viewer.
 
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import EmptyState from '../shared/EmptyState';
 import SkeletonCard from '../shared/SkeletonCard';
 import { useIngestAudit } from '../../hooks/useIngestAudit';
@@ -38,6 +38,7 @@ export default function IngestAuditPage() {
   const [eventType, setEventType] = useState<'' | IngestAuditEventType>('');
   const [actor, setActor] = useState('');
   const [targetId, setTargetId] = useState('');
+  const uid = useId();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filters = useMemo<IngestAuditFilters>(() => {
@@ -59,38 +60,45 @@ export default function IngestAuditPage() {
         <div className="text-[22px] font-bold text-text-primary">Audit log</div>
       </div>
 
+      {/* Three of these four filters announced a DIFFERENT name from the word
+          printed beside them — "Time range" next to "Time", "Event type" next
+          to "Event", "Target ID" next to "Target". Nobody could report the
+          mismatch, because no sighted user can see the name being read aloud.
+          The visible text wins, and the captions are now real <label htmlFor>
+          associations, so there is one source of truth that cannot drift
+          apart again. */}
       <div className="flex gap-2 flex-wrap items-center p-3 bg-surface-inset rounded-lg mb-3">
-        <span className="text-[11px] text-text-tertiary mr-1">Time</span>
+        <label htmlFor={`${uid}-time`} className="text-[11px] text-text-tertiary mr-1">Time</label>
         <Select
+          id={`${uid}-time`}
           data-testid="audit-time-range"
-          aria-label="Time range"
           className="w-auto min-w-[140px]"
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
           options={TIME_RANGES.map((t) => ({ value: t.value, label: t.label }))}
         />
-        <span className="text-[11px] text-text-tertiary mr-1">Event</span>
+        <label htmlFor={`${uid}-event`} className="text-[11px] text-text-tertiary mr-1">Event</label>
         <Select
+          id={`${uid}-event`}
           data-testid="audit-event-type"
-          aria-label="Event type"
           className="w-auto min-w-[140px]"
           value={eventType}
           onChange={(e) => setEventType(e.target.value as '' | IngestAuditEventType)}
           options={EVENT_TYPES.map((t) => ({ value: t.value, label: t.label }))}
         />
-        <span className="text-[11px] text-text-tertiary mr-1">Actor</span>
+        <label htmlFor={`${uid}-actor`} className="text-[11px] text-text-tertiary mr-1">Actor</label>
         <Input
+          id={`${uid}-actor`}
           data-testid="audit-actor"
-          aria-label="Actor"
           className="w-auto min-w-[140px]"
           value={actor}
           onChange={(e) => setActor(e.target.value)}
           placeholder="email or system"
         />
-        <span className="text-[11px] text-text-tertiary mr-1">Target</span>
+        <label htmlFor={`${uid}-target`} className="text-[11px] text-text-tertiary mr-1">Target</label>
         <Input
+          id={`${uid}-target`}
           data-testid="audit-target-id"
-          aria-label="Target ID"
           className="w-auto min-w-[140px]"
           value={targetId}
           onChange={(e) => setTargetId(e.target.value)}

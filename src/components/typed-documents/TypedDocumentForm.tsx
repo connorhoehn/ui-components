@@ -17,7 +17,7 @@
 // coerced via Number() at submit time, dates pass through as ISO strings,
 // booleans live as actual booleans tied to checkbox state.
 
-import { useState, type JSX } from 'react';
+import { useId, useState, type JSX } from 'react';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
 import { Textarea } from '../forms/Textarea';
@@ -163,8 +163,9 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successKey, setSuccessKey] = useState(0);
+  const uid = useId();
 
-  const setField = (fieldId: string, v: FieldStored): void => {
+  const setField =(fieldId: string, v: FieldStored): void => {
     setValues((prev) => ({ ...prev, [fieldId]: v }));
   };
   const setArrayAt = (fieldId: string, idx: number, v: string): void => {
@@ -263,15 +264,36 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
         if (!isVisible(field, type, values)) return null;
         const v = values[field.fieldId];
 
+        // A11y wiring, same shape as pipelines' ConfigField. The <label> here
+        // had no htmlFor and wrapped nothing, so EVERY generated field
+        // announced as a bare "edit text" — and this is a generator, so the
+        // defect multiplied by the number of fields in the document type.
+        const controlId = `${uid}-${field.fieldId}`;
+        const labelId = `${controlId}-label`;
+        const helpId = field.helpText ? `${controlId}-help` : undefined;
+        // An unlimited field renders N inputs plus add/remove buttons; there
+        // is no single labelable control for htmlFor to point at, so it names
+        // a role="group" from the same label instead.
+        const isGroup = field.cardinality === 'unlimited';
+
         return (
           <div key={field.fieldId} data-testid={`field-${field.fieldId}`} className={cn('flex flex-col gap-1')}>
-            <label className={cn('text-[13px] font-medium text-text-primary')}>
+            <label
+              id={labelId}
+              htmlFor={isGroup ? undefined : controlId}
+              className={cn('text-[13px] font-medium text-text-primary')}
+            >
               {field.name}
-              {field.required && <span className={cn('text-danger-fg ml-1')}>*</span>}
+              {field.required && (
+                <span aria-hidden="true" className={cn('text-danger-fg ml-1')}>*</span>
+              )}
             </label>
 
             {field.cardinality === 1 && field.widget === 'textarea' && (
               <Textarea
+                id={controlId}
+                aria-describedby={helpId}
+                aria-required={field.required || undefined}
                 data-testid={`input-${field.fieldId}`}
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
@@ -281,6 +303,9 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'text_field' && (
               <Input
+                id={controlId}
+                aria-describedby={helpId}
+                aria-required={field.required || undefined}
                 data-testid={`input-${field.fieldId}`}
                 type="text"
                 value={typeof v === 'string' ? v : ''}
@@ -290,6 +315,9 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'number_input' && (
               <Input
+                id={controlId}
+                aria-describedby={helpId}
+                aria-required={field.required || undefined}
                 data-testid={`input-${field.fieldId}`}
                 type="number"
                 value={typeof v === 'string' ? v : ''}
@@ -299,6 +327,9 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'date_picker' && (
               <Input
+                id={controlId}
+                aria-describedby={helpId}
+                aria-required={field.required || undefined}
                 data-testid={`input-${field.fieldId}`}
                 type="date"
                 value={typeof v === 'string' ? v : ''}
@@ -308,6 +339,8 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'checkbox' && (
               <Checkbox
+                id={controlId}
+                aria-describedby={helpId}
                 data-testid={`input-${field.fieldId}`}
                 checked={typeof v === 'boolean' ? v : false}
                 onChange={(checked) => setField(field.fieldId, checked)}
@@ -317,6 +350,9 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
 
             {field.cardinality === 1 && field.widget === 'select' && (
               <Select
+                id={controlId}
+                aria-describedby={helpId}
+                aria-required={field.required || undefined}
                 data-testid={`input-${field.fieldId}`}
                 value={typeof v === 'string' ? v : ''}
                 onChange={(e) => setField(field.fieldId, e.target.value)}
@@ -331,9 +367,17 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
               const opts = field.referenceTypeId ? (referenceOptions[field.referenceTypeId] ?? []) : [];
               const loadError = field.referenceTypeId ? referenceOptionsErrors[field.referenceTypeId] : undefined;
               const empty = opts.length === 0;
+              // The "lookup failed" / "nothing to reference" note explains why
+              // the picker is disabled. It sat next to the control with no
+              // aria-describedby, so the only cue a screen-reader user got was
+              // a combo box that refused to open.
+              const noteId = loadError || empty ? `${controlId}-note` : undefined;
               return (
                 <>
                   <Select
+                    id={controlId}
+                    aria-describedby={[helpId, noteId].filter(Boolean).join(' ') || undefined}
+                    aria-required={field.required || undefined}
                     data-testid={`input-${field.fieldId}`}
                     value={typeof v === 'string' ? v : ''}
                     onChange={(e) => setField(field.fieldId, e.target.value)}
@@ -344,11 +388,11 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                     ]}
                   />
                   {loadError ? (
-                    <span role="alert" data-testid={`reference-error-${field.fieldId}`} className={cn('text-[11px] text-danger-fg')}>
+                    <span id={noteId} role="alert" data-testid={`reference-error-${field.fieldId}`} className={cn('text-[11px] text-danger-fg')}>
                       {loadError}
                     </span>
                   ) : empty && (
-                    <span data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
+                    <span id={noteId} data-testid={`reference-empty-${field.fieldId}`} className={cn('text-[11px] text-text-tertiary')}>
                       No referenceable documents yet for this type.
                     </span>
                   )}
@@ -357,10 +401,20 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
             })()}
 
             {field.cardinality === 'unlimited' && (
-              <div className={cn('flex flex-col gap-1.5')}>
+              <div
+                role="group"
+                aria-labelledby={labelId}
+                aria-describedby={helpId}
+                className={cn('flex flex-col gap-1.5')}
+              >
                 {(Array.isArray(v) ? v : ['']).map((entry, idx) => (
                   <div key={idx} className={cn('flex gap-1.5 items-center')}>
                     <Input
+                      // Positional name: inside the group the field name is
+                      // already announced, so each box only has to say which
+                      // entry it is. Built from `field.name`, not a copy of it,
+                      // so renaming the field renames these too.
+                      aria-label={`${field.name} ${idx + 1}`}
                       data-testid={`input-${field.fieldId}-${idx}`}
                       type={field.widget === 'number_input' ? 'number' : field.widget === 'date_picker' ? 'date' : 'text'}
                       value={entry}
@@ -370,6 +424,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                     <Button
                       variant="ghost"
                       size="sm"
+                      aria-label={`Remove ${field.name} ${idx + 1}`}
                       data-testid={`remove-${field.fieldId}-${idx}`}
                       onClick={() => removeArrayEntry(field.fieldId, idx)}
                       className={cn('text-text-tertiary font-normal')}
@@ -381,6 +436,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label={`Add another ${field.name}`}
                   data-testid={`add-${field.fieldId}`}
                   onClick={() => addArrayEntry(field.fieldId)}
                   className={cn('self-start border-dashed text-primary font-normal')}
@@ -391,7 +447,7 @@ export function TypedDocumentForm({ type, onSubmit, resetOnSubmit = true, refere
             )}
 
             {field.helpText && (
-              <span className={cn('text-[11px] text-text-tertiary')}>{field.helpText}</span>
+              <span id={helpId} className={cn('text-[11px] text-text-tertiary')}>{field.helpText}</span>
             )}
           </div>
         );

@@ -8,7 +8,7 @@
 // State machine: idle → create → idle  |  idle → edit → idle
 // Delete flows through a confirmation modal.
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../../lib/cn';
 import { onActivationKey } from '../../lib/activationKey';
@@ -144,13 +144,25 @@ function Step1({
 }) {
   const selected = PRIMITIVE_STORAGE_TYPES.find(p => p.id === primitiveType);
 
+  // Every caption on this step was a <span>, so none of the three controls had
+  // an accessible name — and the "Label" validation error was rendered as
+  // plain text with nothing pointing at it, so a rejected name was announced
+  // nowhere at all. Promoting the spans to <label htmlFor> keeps the layout
+  // (they are block-styled) and makes the association real.
+  const uid = useId();
+  const nameErrorId = nameError ? `${uid}-name-error` : undefined;
+
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <span className="block text-xs font-semibold text-text-primary mb-[5px]">
-          Label <span className="text-danger-fg">*</span>
-        </span>
+        <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-text-primary mb-[5px]">
+          Label <span aria-hidden="true" className="text-danger-fg">*</span>
+        </label>
         <Input
+          id={`${uid}-name`}
+          aria-required="true"
+          aria-invalid={nameError ? true : undefined}
+          aria-describedby={nameErrorId}
           data-testid="name-input"
           value={name}
           onChange={e => setName(e.target.value)}
@@ -158,12 +170,13 @@ function Step1({
           maxLength={80}
           autoFocus
         />
-        {nameError && <div className="text-danger-fg text-xs mt-1">{nameError}</div>}
+        {nameError && <div id={nameErrorId} role="alert" className="text-danger-fg text-xs mt-1">{nameError}</div>}
       </div>
 
       <div>
-        <span className="block text-xs font-semibold text-text-primary mb-[5px]">Description</span>
+        <label htmlFor={`${uid}-description`} className="block text-xs font-semibold text-text-primary mb-[5px]">Description</label>
         <Textarea
+          id={`${uid}-description`}
           data-testid="description-input"
           className="min-h-16 resize-y"
           value={description}
@@ -174,12 +187,17 @@ function Step1({
       </div>
 
       <div>
+        {/* The trailing gloss is a description, not part of the name, so it is
+            linked with aria-describedby rather than swallowed into the label. */}
         <span className="block text-xs font-semibold text-text-primary mb-[5px]">
-          Field type <span className="font-normal text-text-tertiary">— what kind of data this field stores</span>
+          <label htmlFor={`${uid}-primitive`}>Field type</label>{' '}
+          <span id={`${uid}-primitive-desc`} className="font-normal text-text-tertiary">— what kind of data this field stores</span>
         </span>
 
         {/* Drupal-style select */}
         <Select
+          id={`${uid}-primitive`}
+          aria-describedby={`${uid}-primitive-desc`}
           data-testid="primitive-type-select"
           value={primitiveType}
           onChange={e => setPrimitiveType(e.target.value)}
@@ -288,7 +306,17 @@ function Step2({
             const options = rendererKeys[m.key] ?? [];
             const isVisible = visibility[m.key] ?? true;
             return (
-              <div key={m.key} className="px-4 flex flex-col gap-2">
+              // Three columns, three checkboxes all reading "Visible", and a
+              // renderer picker with no name at all. The checkbox keeps its
+              // visible label — overriding it with an aria-label would make the
+              // spoken name differ from the words on screen — and the column is
+              // named as a group instead, which is what disambiguates them.
+              <div
+                key={m.key}
+                role="group"
+                aria-label={m.label}
+                className="px-4 flex flex-col gap-2"
+              >
                 <label className="flex items-center gap-[7px] cursor-pointer select-none">
                   <Checkbox
                     checked={isVisible}
@@ -299,6 +327,7 @@ function Step2({
                 </label>
                 {isVisible && options.length > 0 && (
                   <Select
+                    aria-label={`${m.label} renderer`}
                     value={formatters[m.key] ?? options[0]}
                     onChange={e => setFormatters({ ...formatters, [m.key]: e.target.value })}
                     options={options.map(key => ({ value: key, label: RENDERER_LABELS[key] ?? key }))}

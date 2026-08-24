@@ -45,6 +45,7 @@ export function MemoryInspector({ entries, className, onDelete }: MemoryInspecto
       {/* Filters */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border-subtle">
         <Input
+          aria-label="Search keys/values"
           size="sm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

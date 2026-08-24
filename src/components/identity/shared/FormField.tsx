@@ -11,7 +11,7 @@
 // control (implicit association), so the outer-label shape of
 // shared/FormField does not apply.
 
-import { useCallback } from 'react';
+import { useCallback, useId } from 'react';
 import SharedFormField from '../../shared/FormField';
 import { Input } from '../../forms/Input';
 import { Textarea } from '../../forms/Textarea';
@@ -45,6 +45,7 @@ export function FormField({
   helpText,
   disabled,
 }: FormFieldProps) {
+  const uid = useId();
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       if (type === 'number') {
@@ -57,6 +58,12 @@ export function FormField({
   );
 
   if (type === 'checkbox') {
+    // The error and help text sat outside the <label> with nothing pointing at
+    // them: the checkbox was named (the label wraps it) but a rejected value
+    // was announced nowhere — the message was visible text and nothing more.
+    // The error also needs role="alert" to be spoken when it appears, matching
+    // what shared/FormField's non-checkbox branch gets via ConfigField's idiom.
+    const describedById = error || helpText ? `${uid}-desc` : undefined;
     return (
       <div className="mb-4">
         <label className="flex items-center gap-2 cursor-pointer">
@@ -65,13 +72,14 @@ export function FormField({
             checked={Boolean(value)}
             onChange={onChange}
             disabled={disabled}
+            aria-describedby={describedById}
           />
           <span className="text-sm text-text-primary">
-            {label}{required && <span className="text-danger-fg"> *</span>}
+            {label}{required && <span aria-hidden="true" className="text-danger-fg"> *</span>}
           </span>
         </label>
-        {error && <p className="mt-1 text-sm text-danger-fg">{error}</p>}
-        {helpText && !error && <p className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
+        {error && <p id={describedById} role="alert" className="mt-1 text-sm text-danger-fg">{error}</p>}
+        {helpText && !error && <p id={describedById} className="mt-1 text-sm text-text-tertiary">{helpText}</p>}
       </div>
     );
   }

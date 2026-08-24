@@ -2,7 +2,7 @@
 //
 // Create/Edit form for email templates with HTML preview and variable tags.
 
-import { useState, useCallback } from 'react';
+import { useId, useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
@@ -44,6 +44,7 @@ export function EmailTemplateFormPage({
   const [variables, setVariables] = useState<string[]>(template?.variables ?? []);
   const [varInput, setVarInput] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const uid = useId();
   const [submitting, setSubmitting] = useState(false);
 
   const handleVarKeyDown = useCallback(
@@ -105,7 +106,9 @@ export function EmailTemplateFormPage({
         {/* HTML Body */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-1">
-            <label className="text-sm font-semibold text-text-primary">
+            {/* Detached label, no htmlFor: the editor announced as an unnamed
+                "edit text" even though "HTML Body" sits right above it. */}
+            <label htmlFor={`${uid}-html-body`} className="text-sm font-semibold text-text-primary">
               HTML Body
             </label>
             <Button variant="ghost" size="sm" onClick={() => setShowPreview((v) => !v)}>
@@ -113,6 +116,7 @@ export function EmailTemplateFormPage({
             </Button>
           </div>
           <Textarea
+            id={`${uid}-html-body`}
             value={htmlBody}
             onChange={(e) => setHtmlBody(e.target.value)}
             placeholder="<html><body>...</body></html>"
@@ -138,7 +142,7 @@ export function EmailTemplateFormPage({
 
         {/* Variables */}
         <section>
-          <h3 className="text-base font-semibold text-text-primary mt-6 mb-2">Variables</h3>
+          <h3 id={`${uid}-variables`} className="text-base font-semibold text-text-primary mt-6 mb-2">Variables</h3>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {variables.map((v) => (
               <span key={v} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info text-white text-sm font-medium">
@@ -155,7 +159,10 @@ export function EmailTemplateFormPage({
               </span>
             ))}
           </div>
+          {/* Named from the visible "Variables" heading rather than a
+              hand-written aria-label, so the two can't drift apart. */}
           <Input
+            aria-labelledby={`${uid}-variables`}
             placeholder="Type variable name and press Enter"
             value={varInput}
             onChange={(e) => setVarInput(e.target.value)}

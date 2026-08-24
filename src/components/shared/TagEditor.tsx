@@ -19,6 +19,8 @@ import { cn } from '../../lib/cn';
 // ---------------------------------------------------------------------------
 
 export interface TagEditorProps {
+  /** Accessible name for the draft-tag box; defaults to the placeholder text. */
+  'aria-label'?: string;
   value: string[];
   onChange: (tags: string[]) => void;
   placeholder?: string;
@@ -45,6 +47,7 @@ function normalize(raw: string, lowercase: boolean): string {
 // ---------------------------------------------------------------------------
 
 export default function TagEditor({
+  'aria-label': ariaLabel,
   value,
   onChange,
   placeholder = 'add tag...',
@@ -129,6 +132,10 @@ export default function TagEditor({
             // Small delay so suggestion clicks register before the popover hides.
             setTimeout(() => setFocused(false), 120);
           }}
+          // Placeholder-only naming: a caller that passes placeholder="" left
+          // this box with no accessible name at all, and even the default
+          // wording disappears as soon as a draft tag is typed.
+          aria-label={ariaLabel ?? (placeholder || 'Add tag')}
           placeholder={placeholder}
           className="border border-border-emphasis rounded-md px-2.5 py-1.5 text-xs bg-surface-panel w-[140px] min-w-[120px] outline-none font-[inherit] text-text-primary"
         />

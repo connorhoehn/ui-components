@@ -9,7 +9,7 @@
 // the mock executor (or sibling tests) appears here. A local cap of 500 keeps
 // memory bounded — oldest trimmed first. Live/Paused toggle freezes prepends.
 //
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useId, useMemo, useRef, useState } from 'react';
 import {
   useEventStream,
 } from '../pipelines/context/EventStreamContext';
@@ -110,6 +110,7 @@ function EventsPageInner() {
   const [paused, setPaused] = useState(false);
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
   const [railCollapsed, setRailCollapsed] = useState(false);
+  const uid = useId();
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
 
@@ -274,8 +275,14 @@ function EventsPageInner() {
 
           {!railCollapsed && (
             <>
-              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
-                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+              {/* The section captions here are <div>s, so they named nothing:
+                  each checkbox announced as e.g. "lifecycle, checkbox" with no
+                  hint of which filter dimension it belongs to, and the two text
+                  filters had no accessible name at all beyond a placeholder.
+                  Checkbox sets become named groups; the single-control sections
+                  get a real <label htmlFor>. */}
+              <div role="group" aria-labelledby={`${uid}-event-type`} className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div id={`${uid}-event-type`} className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Event type
                 </div>
                 {EVENT_GROUPS.map((g) => (
@@ -293,10 +300,11 @@ function EventsPageInner() {
               </div>
 
               <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
-                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                <label htmlFor={`${uid}-runs`} className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Runs
-                </div>
+                </label>
                 <Input
+                  id={`${uid}-runs`}
                   data-testid="events-filter-runs"
                   placeholder="runId (comma-separated)"
                   value={filters.runIds}
@@ -308,10 +316,11 @@ function EventsPageInner() {
               </div>
 
               <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
-                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+                <label htmlFor={`${uid}-pipelines`} className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Pipelines
-                </div>
+                </label>
                 <Input
+                  id={`${uid}-pipelines`}
                   data-testid="events-filter-pipelines"
                   placeholder="pipelineId (comma-separated)"
                   value={filters.pipelineIds}
@@ -322,8 +331,8 @@ function EventsPageInner() {
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
-                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+              <div role="group" aria-labelledby={`${uid}-nodes`} className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div id={`${uid}-nodes`} className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Nodes
                 </div>
                 {DEFAULT_NODE_OPTIONS.map((id) => (
@@ -340,8 +349,8 @@ function EventsPageInner() {
                 ))}
               </div>
 
-              <div className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
-                <div className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
+              <div role="group" aria-labelledby={`${uid}-severity`} className="flex flex-col gap-1.5 px-3.5 py-3 border-b border-border">
+                <div id={`${uid}-severity`} className="text-[11px] font-bold tracking-[0.3px] text-text-secondary uppercase">
                   Severity
                 </div>
                 {SEVERITIES.map((s) => (

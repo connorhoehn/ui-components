@@ -2,7 +2,7 @@
 //
 // Create/Edit form for OAuth/OIDC applications with multi-value inputs.
 
-import { useState, useCallback } from 'react';
+import { useId, useState, useCallback } from 'react';
 import { FormField } from '../shared/FormField';
 import { Card } from '../../ui/Card';
 import { PageSection } from '../../ui/PageSection';
@@ -52,32 +52,51 @@ function MultiInput({
   onChange: (values: string[]) => void;
   placeholder?: string;
 }) {
+  const uid = useId();
   const handleAdd = () => onChange([...values, '']);
   const handleRemove = (idx: number) => onChange(values.filter((_, i) => i !== idx));
   const handleChange = (idx: number, val: string) =>
     onChange(values.map((v, i) => (i === idx ? val : v)));
 
+  // The <label> here had no htmlFor and wrapped nothing, and it could not have
+  // had one: it captions a repeating list, so there is no single control for
+  // htmlFor to point at (pointing it at the wrapping <div> associates nothing —
+  // browsers, screen readers and getByLabelText all ignore that). The list is a
+  // role="group" named from the same label instead, and each row is named
+  // positionally. Without this the only name the boxes had was the placeholder,
+  // which vanishes as soon as a value is typed — and every "Remove" button was
+  // identically named, so nothing said which row it removed.
+  const labelId = `${uid}-label`;
+
   return (
     <div className="mb-4">
-      <label className="block mb-1 text-sm font-semibold text-text-primary">
+      <label id={labelId} className="block mb-1 text-sm font-semibold text-text-primary">
         {label}
       </label>
-      {values.map((val, idx) => (
-        <div key={idx} className="flex gap-2 items-center mb-1.5">
-          <Input
-            className="flex-1"
-            value={val}
-            onChange={(e) => handleChange(idx, e.target.value)}
-            placeholder={placeholder}
-          />
-          <Button variant="danger" size="sm" onClick={() => handleRemove(idx)}>
-            Remove
-          </Button>
-        </div>
-      ))}
-      <Button variant="ghost" size="sm" onClick={handleAdd}>
-        + Add
-      </Button>
+      <div role="group" aria-labelledby={labelId}>
+        {values.map((val, idx) => (
+          <div key={idx} className="flex gap-2 items-center mb-1.5">
+            <Input
+              aria-label={`${label} ${idx + 1}`}
+              className="flex-1"
+              value={val}
+              onChange={(e) => handleChange(idx, e.target.value)}
+              placeholder={placeholder}
+            />
+            <Button
+              variant="danger"
+              size="sm"
+              aria-label={`Remove ${label} ${idx + 1}`}
+              onClick={() => handleRemove(idx)}
+            >
+              Remove
+            </Button>
+          </div>
+        ))}
+        <Button variant="ghost" size="sm" aria-label={`Add ${label}`} onClick={handleAdd}>
+          + Add
+        </Button>
+      </div>
     </div>
   );
 }

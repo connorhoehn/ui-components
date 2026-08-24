@@ -124,6 +124,40 @@ describe('IngestAuditPage', () => {
     expect(lastCall?.since).toBeUndefined();
   });
 
+  // -------------------------------------------------------------------------
+  // Label wiring — this filter bar carried the contradicting-label defect
+  // -------------------------------------------------------------------------
+  //
+  // Three of the four filters announced a name DIFFERENT from the word printed
+  // beside them: aria-label="Time range" next to a caption reading "Time",
+  // "Event type" next to "Event", "Target ID" next to "Target". That is the
+  // worst shape of the bug, because no sighted user can see the name being
+  // read aloud, so nobody can report the mismatch. The captions were plain
+  // <span>s that named nothing, so the invented aria-label was the ONLY name.
+  //
+  // The visible text wins. The captions are now real <label htmlFor>
+  // associations and the aria-labels are gone, leaving one source of truth.
+
+  it('names each filter with the word printed beside it', () => {
+    render(<IngestAuditPage />);
+    // Resolving the association, not asserting an attribute exists: an id
+    // pointing at no element still "has an id".
+    expect(screen.getByLabelText('Time')).toBe(screen.getByTestId('audit-time-range'));
+    expect(screen.getByLabelText('Event')).toBe(screen.getByTestId('audit-event-type'));
+    expect(screen.getByLabelText('Actor')).toBe(screen.getByTestId('audit-actor'));
+    expect(screen.getByLabelText('Target')).toBe(screen.getByTestId('audit-target-id'));
+  });
+
+  it('no longer answers to the invented names that contradicted the captions', () => {
+    // INVERTED expectation: "Time range" / "Event type" / "Target ID" were what
+    // a screen reader used to say. Kept as a negative assertion so nobody
+    // reintroduces a compensating aria-label on top of a visible caption.
+    render(<IngestAuditPage />);
+    expect(screen.queryByLabelText('Time range')).toBeNull();
+    expect(screen.queryByLabelText('Event type')).toBeNull();
+    expect(screen.queryByLabelText('Target ID')).toBeNull();
+  });
+
   it('clicking the per-row detail toggle reveals the JSON detail, clicking again hides it', () => {
     const entries = [makeEntry({ auditId: 'aud-t', detail: { foo: 'bar' } })];
     useIngestAuditMock.mockReturnValue(makeResult({ entries }));

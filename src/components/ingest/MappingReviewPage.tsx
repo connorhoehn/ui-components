@@ -126,7 +126,10 @@ function ReviewRow({ item, docTypes, remapTypeId, onPickRemapType, onAccept, onR
         >
           Accept suggestion
         </button>
+        {/* One per row and none of them named: a screen reader heard a
+            column of identical combo boxes with no tie to the item. */}
         <Select
+          aria-label={`Re-map ${item.sourcePath ?? item.itemId} to document type`}
           data-testid={`review-remap-picker-${item.itemId}`}
           className="w-auto min-w-[200px]"
           value={remapTypeId}

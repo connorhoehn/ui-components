@@ -30,6 +30,15 @@ export interface CheckboxProps {
   /** Accessible name. Required when no visible <label> wraps this. */
   'aria-label'?: string;
   /**
+   * Id of the element naming this checkbox. Prefer this over `aria-label` when
+   * a visible label exists but cannot wrap the control (e.g. a generated form
+   * that renders the label above a row of widgets) — a hand-written
+   * `aria-label` is a copy that drifts from the words on screen.
+   */
+  'aria-labelledby'?: string;
+  /** Id(s) of the help / error text describing this checkbox. */
+  'aria-describedby'?: string;
+  /**
    * Click pass-through. Row-selection checkboxes live inside clickable
    * rows/cards and need `e.stopPropagation()` so ticking the box doesn't
    * also open the row.
@@ -51,6 +60,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
       indeterminate = false,
       disabled = false,
       'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledBy,
+      'aria-describedby': ariaDescribedBy,
       onClick,
       onKeyDown,
       className,
@@ -80,6 +91,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         checked={checked}
         disabled={disabled}
         aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
         aria-checked={indeterminate ? 'mixed' : undefined}
         onChange={(e) => onChange(e.target.checked)}
         onClick={onClick}

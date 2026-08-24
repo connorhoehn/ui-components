@@ -5,7 +5,7 @@
 // Step 2: Fields — Drupal-style section-type picker + reorderable field list
 // Step 3: View modes — per-field visibility and renderer overrides
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   DndContext,
   closestCorners,
@@ -53,13 +53,21 @@ interface Step1Props {
 }
 
 function Step1Info({ name, setName, description, setDescription }: Step1Props) {
+  // These captions were <span>s — not even labels, so `htmlFor` was never on
+  // the table and both controls announced as unnamed "edit text". They are
+  // block-styled, so promoting them to real <label htmlFor> changes nothing
+  // visually. The required "*" is decorative and hidden, so the accessible
+  // name stays exactly "Name".
+  const uid = useId();
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <span className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
-          Name <span className="text-danger-fg">*</span>
-        </span>
+        <label htmlFor={`${uid}-name`} className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
+          Name <span aria-hidden="true" className="text-danger-fg">*</span>
+        </label>
         <Input
+          id={`${uid}-name`}
+          aria-required="true"
           data-testid="name-input"
           value={name}
           onChange={e => setName(e.target.value)}
@@ -70,10 +78,11 @@ function Step1Info({ name, setName, description, setDescription }: Step1Props) {
       </div>
 
       <div>
-        <span className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
+        <label htmlFor={`${uid}-description`} className="block text-xs font-semibold text-text-primary mb-[5px] tracking-wide">
           Description
-        </span>
+        </label>
         <Textarea
+          id={`${uid}-description`}
           data-testid="description-input"
           className="min-h-[72px] resize-y"
           value={description}
@@ -160,7 +169,10 @@ function SortablePage({
           <span className="text-xs font-semibold text-text-tertiary min-w-14">
             Page {pageIdx + 1}
           </span>
+          {/* Placeholder-only naming: once the page is named the box has no
+              accessible name at all, and every row's box is identical. */}
           <Input
+            aria-label={`Page ${pageIdx + 1} title`}
             data-testid={`page-title-${page.id}`}
             size="sm"
             className="flex-1"
@@ -556,8 +568,13 @@ function ViewModeCell({ field, mode, onToggleHidden, onOverrideChange }: {
             {hidden ? 'Hidden' : 'Visible'}
           </span>
         </label>
+        {/* One of these per field per view mode: with no name at all the whole
+            grid announced as a wall of identical combo boxes. Named from the
+            field's own name plus the mode, both of which are visible in the
+            row and column headers. */}
         {!hidden && options.length > 0 && (
           <Select
+            aria-label={`${field.name} renderer in ${mode} mode`}
             data-testid={`renderer-${field.id}-${mode}`}
             size="sm"
             className="w-auto text-[11px]"

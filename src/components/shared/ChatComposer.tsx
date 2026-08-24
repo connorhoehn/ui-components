@@ -16,6 +16,24 @@ export interface ChatComposerProps {
   autoFocus?: boolean;
   /** for multiline, max rows before scroll (default 4) */
   maxRows?: number;
+  /**
+   * Accessible name for the message field (default "Message").
+   *
+   * The field is rendered internally, so a host has no way to wrap it in its
+   * own `<label>`; without this it had no accessible name at all and announced
+   * as a bare "edit text". A `placeholder` is not a substitute — browsers only
+   * fall back to it, and it is gone the moment the user types.
+   */
+  'aria-label'?: string;
+  /** Id of an existing visible element naming the field; wins over `aria-label`. */
+  'aria-labelledby'?: string;
+  /**
+   * Accessible name for the send button. Only applied when `submitLabel` has
+   * no readable text of its own — the default `'→'` and any icon node. When
+   * `submitLabel` IS words ("Send", "Post"), that visible text is the name and
+   * this is ignored, so the spoken name can never contradict what is on screen.
+   */
+  submitAriaLabel?: string;
 }
 
 /**
@@ -36,8 +54,18 @@ export function ChatComposer({
   style,
   autoFocus,
   maxRows = 4,
+  'aria-label': ariaLabel = 'Message',
+  'aria-labelledby': ariaLabelledBy,
+  submitAriaLabel = 'Send',
 }: ChatComposerProps) {
   const canSubmit = !disabled && value.trim().length > 0;
+
+  // A submitLabel that is words names the button by itself; only a glyph or an
+  // icon node needs the override.
+  const submitHasText = typeof submitLabel === 'string' && /\p{L}|\p{N}/u.test(submitLabel);
+  const submitName = submitHasText ? undefined : submitAriaLabel;
+  // aria-labelledby wins over aria-label, so don't emit both.
+  const fieldName = ariaLabelledBy ? undefined : ariaLabel;
 
   const handleSubmit = () => {
     if (canSubmit) onSubmit();
@@ -69,6 +97,8 @@ export function ChatComposer({
     >
       {multiline ? (
         <textarea
+          aria-label={fieldName}
+          aria-labelledby={ariaLabelledBy}
           className={fieldBase}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -82,6 +112,8 @@ export function ChatComposer({
       ) : (
         <input
           type="text"
+          aria-label={fieldName}
+          aria-labelledby={ariaLabelledBy}
           className={fieldBase}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -93,6 +125,7 @@ export function ChatComposer({
       )}
       <button
         type="button"
+        aria-label={submitName}
         onClick={handleSubmit}
         disabled={!canSubmit}
         className={cn(

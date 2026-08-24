@@ -112,7 +112,10 @@ export default function IngestItemsPage() {
 
       {/* Filters row */}
       <div className="flex gap-2.5 items-center mb-3 flex-wrap">
+        {/* Neither filter had any accessible name: the toolbar announced as
+            two anonymous combo boxes reading out only their current option. */}
         <Select
+          aria-label="Filter by source"
           className="w-auto"
           value={sourceFilter ?? ''}
           onChange={(e) => setSourceFilter(e.target.value || null)}
@@ -124,6 +127,7 @@ export default function IngestItemsPage() {
         />
 
         <Select
+          aria-label="Filter by status"
           className="w-auto"
           value={statusFilter ?? ''}
           onChange={(e) => setStatusFilter((e.target.value || null) as IngestItemStatus | null)}
