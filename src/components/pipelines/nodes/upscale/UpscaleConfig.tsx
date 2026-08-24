@@ -22,33 +22,42 @@ export default function UpscaleConfig({ data, onChange, nodeId }: UpscaleConfigP
       <ConfigField
         label="Prompt"
         help="Optional text guidance forwarded to the upscaler."
-      >
-        <Textarea
-          rows={3}
-          spellCheck={false}
-          value={data.prompt ?? ''}
-          // Blank means "no guidance", which is absent rather than an empty
-          // string — an empty prompt would be forwarded as one.
-          onChange={(e) => onChange({ prompt: e.target.value.trim() ? e.target.value : undefined })}
-          placeholder="optional guidance forwarded to the upscaler"
-          aria-label="Prompt"
-        />
-      </ConfigField>
+        controlId="upscale-prompt"
+        render={({ describedById, controlId }) => (
+          <Textarea
+            id={controlId}
+            aria-describedby={describedById}
+            rows={3}
+            spellCheck={false}
+            value={data.prompt ?? ''}
+            // Blank means "no guidance", which is absent rather than an empty
+            // string — an empty prompt would be forwarded as one.
+            onChange={(e) =>
+              onChange({ prompt: e.target.value.trim() ? e.target.value : undefined })
+            }
+            placeholder="optional guidance forwarded to the upscaler"
+          />
+        )}
+      />
 
       <ConfigField
         label="Max edge"
         help="Longest-edge cap applied before the super-resolution pass."
-      >
-        <NumberInput
-          size="sm"
-          min={1}
-          step={1}
-          unit="px"
-          value={data.maxEdge ?? DEFAULT_MAX_EDGE}
-          onChange={(v) => onChange({ maxEdge: v })}
-          data-testid="upscale-max-edge"
-        />
-      </ConfigField>
+        controlId="upscale-max-edge"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={1}
+            step={1}
+            unit="px"
+            value={data.maxEdge ?? DEFAULT_MAX_EDGE}
+            onChange={(v) => onChange({ maxEdge: v })}
+            data-testid="upscale-max-edge"
+          />
+        )}
+      />
 
       <SourceImagePathField
         value={data.sourceImagePath}

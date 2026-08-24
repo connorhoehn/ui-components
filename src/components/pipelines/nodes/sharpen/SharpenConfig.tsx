@@ -29,73 +29,90 @@ export default function SharpenConfig({ data, onChange, nodeId }: SharpenConfigP
       <ConfigField
         label="Source image path"
         help="Optional. Defaults to the image produced upstream."
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.sourceImagePath ?? ''}
-          onChange={(e) =>
-            onChange({ sourceImagePath: e.target.value.trim() || undefined })
-          }
-          placeholder="$.trigger.imageRef"
-          aria-label="Source image path"
-        />
-        <SamplePills
-          samples={imageRefOptions.map((o) => o.path)}
-          onSelect={(v) => onChange({ sourceImagePath: v })}
-          aria-label="Upstream image refs"
-        />
-      </ConfigField>
+        controlId="sharpen-source-image-path"
+        render={({ describedById, controlId }) => (
+          <>
+            <Input
+              id={controlId}
+              aria-describedby={describedById}
+              size="sm"
+              mono
+              spellCheck={false}
+              value={data.sourceImagePath ?? ''}
+              onChange={(e) =>
+                onChange({ sourceImagePath: e.target.value.trim() || undefined })
+              }
+              placeholder="$.trigger.imageRef"
+            />
+            <SamplePills
+              samples={imageRefOptions.map((o) => o.path)}
+              onSelect={(v) => onChange({ sourceImagePath: v })}
+              aria-label="Upstream image refs"
+            />
+          </>
+        )}
+      />
 
       <ConfigField
         label="Sigma"
         help="Gaussian mask sigma. Higher is broader and stronger. Typical range 0.5–3."
-      >
-        <NumberInput
-          size="sm"
-          min={0.01}
-          max={10}
-          step={0.1}
-          value={data.sigma}
-          onChange={(v) => onChange({ sigma: v })}
-          onClear={() => onChange({ sigma: undefined })}
-          placeholder="1"
-          data-testid="sharpen-sigma"
-        />
-      </ConfigField>
+        controlId="sharpen-sigma"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0.01}
+            max={10}
+            step={0.1}
+            value={data.sigma}
+            onChange={(v) => onChange({ sigma: v })}
+            onClear={() => onChange({ sigma: undefined })}
+            placeholder="1"
+            data-testid="sharpen-sigma"
+          />
+        )}
+      />
 
       <ConfigField
         label="m1 — flat area level"
         help="Sharpening applied to flat (smooth) areas of the image."
-      >
-        <NumberInput
-          size="sm"
-          min={0}
-          step={0.1}
-          value={data.m1}
-          onChange={(v) => onChange({ m1: v })}
-          onClear={() => onChange({ m1: undefined })}
-          placeholder="leave blank for default"
-          data-testid="sharpen-m1"
-        />
-      </ConfigField>
+        controlId="sharpen-m1"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            step={0.1}
+            value={data.m1}
+            onChange={(v) => onChange({ m1: v })}
+            onClear={() => onChange({ m1: undefined })}
+            placeholder="leave blank for default"
+            data-testid="sharpen-m1"
+          />
+        )}
+      />
 
       <ConfigField
         label="m2 — jagged area level"
         help="Sharpening applied to jagged (edge) areas of the image."
-      >
-        <NumberInput
-          size="sm"
-          min={0}
-          step={0.1}
-          value={data.m2}
-          onChange={(v) => onChange({ m2: v })}
-          onClear={() => onChange({ m2: undefined })}
-          placeholder="leave blank for default"
-          data-testid="sharpen-m2"
-        />
-      </ConfigField>
+        controlId="sharpen-m2"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            step={0.1}
+            value={data.m2}
+            onChange={(v) => onChange({ m2: v })}
+            onClear={() => onChange({ m2: undefined })}
+            placeholder="leave blank for default"
+            data-testid="sharpen-m2"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

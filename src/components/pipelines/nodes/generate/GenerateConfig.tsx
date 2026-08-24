@@ -66,20 +66,23 @@ export default function GenerateConfig({ data, onChange }: GenerateConfigProps) 
             ? vocab.help('prompt', 'Text description of the image to generate.')
             : undefined
         }
-      >
-        <Textarea
-          rows={4}
-          spellCheck={false}
-          invalid={promptMissing}
-          value={data.prompt ?? ''}
-          onChange={(e) => onChange({ prompt: e.target.value })}
-          placeholder={vocab.placeholder(
-            'prompt',
-            'A photorealistic photograph of a golden retriever in a sunny meadow',
-          )}
-          aria-label="Prompt"
-        />
-      </ConfigField>
+        controlId="generate-prompt"
+        render={({ describedById, controlId }) => (
+          <Textarea
+            id={controlId}
+            aria-describedby={describedById}
+            rows={4}
+            spellCheck={false}
+            invalid={promptMissing}
+            value={data.prompt ?? ''}
+            onChange={(e) => onChange({ prompt: e.target.value })}
+            placeholder={vocab.placeholder(
+              'prompt',
+              'A photorealistic photograph of a golden retriever in a sunny meadow',
+            )}
+          />
+        )}
+      />
 
       <ConfigField
         label={vocab.label('model', 'Model')}
@@ -88,77 +91,100 @@ export default function GenerateConfig({ data, onChange }: GenerateConfigProps) 
             ? 'This host declares no image models.'
             : vocab.help('model')
         }
-      >
-        <Select
-          size="sm"
-          value={selectedModel}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
-        />
-      </ConfigField>
+        controlId="generate-model"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={selectedModel}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+          />
+        )}
+      />
 
       <div className="flex gap-2">
         <div className="flex-1">
-          <ConfigField label={vocab.label('width', 'Width')}>
-            <NumberInput
-              size="sm"
-              min={MIN_EDGE}
-              max={MAX_EDGE}
-              step={64}
-              unit="px"
-              value={data.width ?? 512}
-              onChange={(v) => onChange({ width: v })}
-              data-testid="generate-width"
-            />
-          </ConfigField>
+          <ConfigField
+            label={vocab.label('width', 'Width')}
+            controlId="generate-width"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                min={MIN_EDGE}
+                max={MAX_EDGE}
+                step={64}
+                unit="px"
+                value={data.width ?? 512}
+                onChange={(v) => onChange({ width: v })}
+                data-testid="generate-width"
+              />
+            )}
+          />
         </div>
         <div className="flex-1">
-          <ConfigField label={vocab.label('height', 'Height')}>
-            <NumberInput
-              size="sm"
-              min={MIN_EDGE}
-              max={MAX_EDGE}
-              step={64}
-              unit="px"
-              value={data.height ?? 512}
-              onChange={(v) => onChange({ height: v })}
-              data-testid="generate-height"
-            />
-          </ConfigField>
+          <ConfigField
+            label={vocab.label('height', 'Height')}
+            controlId="generate-height"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                min={MIN_EDGE}
+                max={MAX_EDGE}
+                step={64}
+                unit="px"
+                value={data.height ?? 512}
+                onChange={(v) => onChange({ height: v })}
+                data-testid="generate-height"
+              />
+            )}
+          />
         </div>
       </div>
 
       <ConfigField
         label={vocab.label('seed', 'Seed')}
         help="Optional — set for a reproducible result."
-      >
-        <NumberInput
-          size="sm"
-          min={0}
-          step={1}
-          value={data.seed}
-          onChange={(v) => onChange({ seed: v })}
-          onClear={() => onChange({ seed: undefined })}
-          placeholder="random"
-          data-testid="generate-seed"
-        />
-      </ConfigField>
+        controlId="generate-seed"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            step={1}
+            value={data.seed}
+            onChange={(v) => onChange({ seed: v })}
+            onClear={() => onChange({ seed: undefined })}
+            placeholder="random"
+            data-testid="generate-seed"
+          />
+        )}
+      />
 
       <ConfigField
         label={vocab.label('numImages', 'Number of images')}
         help="Above 1, the step fans out with one arm per image, each carrying one imageId."
-      >
-        <NumberInput
-          size="sm"
-          min={1}
-          max={MAX_IMAGES}
-          step={1}
-          value={data.numImages ?? 1}
-          onChange={(v) => onChange({ numImages: v })}
-          data-testid="generate-num-images"
-        />
-      </ConfigField>
+        controlId="generate-num-images"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={1}
+            max={MAX_IMAGES}
+            step={1}
+            value={data.numImages ?? 1}
+            onChange={(v) => onChange({ numImages: v })}
+            data-testid="generate-num-images"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

@@ -13,7 +13,13 @@
 // The value is deliberately `undefined` rather than `''` when blank: an empty
 // string reads downstream as "configured, to nothing", where absent correctly
 // means "default to the image produced upstream".
+//
+// A11y: the control id is generated with useId() rather than hardcoded,
+// because this field is shared by every image panel — a literal would collide
+// the moment two panels render in one tree, and duplicate ids silently break
+// the label→control association for whichever copy loses.
 
+import { useId } from 'react';
 import { ConfigField, SamplePills } from '.';
 import { Input } from '../../../forms/Input';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
@@ -37,23 +43,32 @@ export default function SourceImagePathField({
   placeholder = '$.trigger.imageRef',
 }: SourceImagePathFieldProps) {
   const imageRefOptions = useUpstreamImageRefs(nodeId ?? null);
+  const inputId = useId();
 
   return (
-    <ConfigField label={label} help={help}>
-      <Input
-        size="sm"
-        mono
-        spellCheck={false}
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value.trim() || undefined)}
-        placeholder={placeholder}
-        aria-label={label}
-      />
-      <SamplePills
-        samples={imageRefOptions.map((o) => o.path)}
-        onSelect={onChange}
-        aria-label="Upstream image refs"
-      />
-    </ConfigField>
+    <ConfigField
+      label={label}
+      help={help}
+      controlId={inputId}
+      render={({ describedById, controlId }) => (
+        <>
+          <Input
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            mono
+            spellCheck={false}
+            value={value ?? ''}
+            onChange={(e) => onChange(e.target.value.trim() || undefined)}
+            placeholder={placeholder}
+          />
+          <SamplePills
+            samples={imageRefOptions.map((o) => o.path)}
+            onSelect={onChange}
+            aria-label="Upstream image refs"
+          />
+        </>
+      )}
+    />
   );
 }

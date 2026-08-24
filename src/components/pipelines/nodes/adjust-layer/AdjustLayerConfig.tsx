@@ -11,6 +11,9 @@ import AdjustLayerSliderPanel from './AdjustLayerSliderPanel';
 import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
 import { useUpstreamImageRefs } from '../../context/useUpstreamContext';
 
+/** Shared by the visible label and the group's accessible name. */
+const ADJUSTMENT_LAYERS_LABEL = 'Adjustment layers';
+
 export interface AdjustLayerConfigProps {
   data: ImageAdjustLayerNodeData;
   onChange: (patch: Partial<ImageAdjustLayerNodeData>) => void;
@@ -70,18 +73,34 @@ function AdjustLayerConfigInner({
         placeholder="$.scatter.parentImageId"
       />
 
-      {/* Live slider panel */}
-      <ConfigField label="Adjustment layers" help="Applied top-to-bottom.">
-        <AdjustLayerSliderPanel
-          layers={layers}
-          onChange={(next: AdjustLayer[]) => onChange({ layers: next })}
-          autoSourceImageId={autoSourceImageId}
-          pinnedSourceImageId={pinnedSourceImageId}
-          onPinnedSourceImageIdChange={(next) =>
-            onChange({ previewSourceImageId: next })
-          }
-        />
-      </ConfigField>
+      {/* Live slider panel.
+
+          The panel is a stack of controls, not one labelable control, so the
+          field's name belongs on a `role="group"` around it — `htmlFor` has
+          nothing single to point at. ConfigField keeps the label id private,
+          so the group carries the same string as `aria-label`; the visible
+          <label> labels nothing, so this is still exactly one name. */}
+      <ConfigField
+        label={ADJUSTMENT_LAYERS_LABEL}
+        help="Applied top-to-bottom."
+        render={({ describedById }) => (
+          <div
+            role="group"
+            aria-label={ADJUSTMENT_LAYERS_LABEL}
+            aria-describedby={describedById}
+          >
+            <AdjustLayerSliderPanel
+              layers={layers}
+              onChange={(next: AdjustLayer[]) => onChange({ layers: next })}
+              autoSourceImageId={autoSourceImageId}
+              pinnedSourceImageId={pinnedSourceImageId}
+              onPinnedSourceImageIdChange={(next) =>
+                onChange({ previewSourceImageId: next })
+              }
+            />
+          </div>
+        )}
+      />
     </NodeConfigShell>
   );
 }

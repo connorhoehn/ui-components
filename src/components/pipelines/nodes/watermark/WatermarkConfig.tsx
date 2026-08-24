@@ -41,72 +41,97 @@ export default function WatermarkConfig({ data, onChange, nodeId }: WatermarkCon
         required
         error={overlayMissing ? 'Overlay image ID is required.' : undefined}
         help="The imageId of the watermark image already stored in the blob store."
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          invalid={overlayMissing}
-          value={data.overlayImageId ?? ''}
-          onChange={(e) => onChange({ overlayImageId: e.target.value.trim() })}
-          placeholder="img_xxxxxxxx"
-          aria-label="Overlay image ID"
-        />
-      </ConfigField>
+        controlId="watermark-overlay-image-id"
+        render={({ describedById, controlId }) => (
+          <Input
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            mono
+            spellCheck={false}
+            invalid={overlayMissing}
+            value={data.overlayImageId ?? ''}
+            onChange={(e) => onChange({ overlayImageId: e.target.value.trim() })}
+            placeholder="img_xxxxxxxx"
+          />
+        )}
+      />
 
       <ConfigField
         label="Gravity"
         help="Where the overlay sits on the source image. Default southeast."
-      >
-        <Select
-          size="sm"
-          value={data.gravity ?? 'southeast'}
-          onChange={(e) => onChange({ gravity: e.target.value as WatermarkGravity })}
-          aria-label="Gravity"
-          options={GRAVITY_OPTIONS}
-        />
-      </ConfigField>
+        controlId="watermark-gravity"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={data.gravity ?? 'southeast'}
+            onChange={(e) => onChange({ gravity: e.target.value as WatermarkGravity })}
+            options={GRAVITY_OPTIONS}
+          />
+        )}
+      />
 
-      <ConfigField label="Opacity" help="0 to 1. Default 1.">
-        <NumberInput
-          size="sm"
-          min={0}
-          max={1}
-          step={0.05}
-          value={data.opacity ?? 1}
-          onChange={(opacity) => onChange({ opacity })}
-          data-testid="watermark-opacity"
-        />
-      </ConfigField>
+      <ConfigField
+        label="Opacity"
+        help="0 to 1. Default 1."
+        controlId="watermark-opacity"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            max={1}
+            step={0.05}
+            value={data.opacity ?? 1}
+            onChange={(opacity) => onChange({ opacity })}
+            data-testid="watermark-opacity"
+          />
+        )}
+      />
 
       <div className="flex gap-2">
         <div className="flex-1">
-          <ConfigField label="Offset X">
-            <NumberInput
-              size="sm"
-              step={1}
-              unit="px"
-              value={data.offsetX}
-              onChange={(offsetX) => onChange({ offsetX })}
-              onClear={() => onChange({ offsetX: undefined })}
-              placeholder="0"
-              data-testid="watermark-offset-x"
-            />
-          </ConfigField>
+          <ConfigField
+            label="Offset X"
+            controlId="watermark-offset-x"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                step={1}
+                unit="px"
+                value={data.offsetX}
+                onChange={(offsetX) => onChange({ offsetX })}
+                onClear={() => onChange({ offsetX: undefined })}
+                placeholder="0"
+                data-testid="watermark-offset-x"
+              />
+            )}
+          />
         </div>
         <div className="flex-1">
-          <ConfigField label="Offset Y">
-            <NumberInput
-              size="sm"
-              step={1}
-              unit="px"
-              value={data.offsetY}
-              onChange={(offsetY) => onChange({ offsetY })}
-              onClear={() => onChange({ offsetY: undefined })}
-              placeholder="0"
-              data-testid="watermark-offset-y"
-            />
-          </ConfigField>
+          <ConfigField
+            label="Offset Y"
+            controlId="watermark-offset-y"
+            render={({ describedById, controlId }) => (
+              <NumberInput
+                id={controlId}
+                aria-describedby={describedById}
+                size="sm"
+                step={1}
+                unit="px"
+                value={data.offsetY}
+                onChange={(offsetY) => onChange({ offsetY })}
+                onClear={() => onChange({ offsetY: undefined })}
+                placeholder="0"
+                data-testid="watermark-offset-y"
+              />
+            )}
+          />
         </div>
       </div>
     </NodeConfigShell>

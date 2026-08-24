@@ -25,6 +25,9 @@ export interface TransformGeoConfigProps {
   nodeId?: string;
 }
 
+/** Shared by the visible label and the op-list group's accessible name. */
+const OPERATIONS_LABEL = 'Operations';
+
 const OP_OPTIONS = [
   { value: 'rotate', label: 'Rotate' },
   { value: 'flip', label: 'Flip (vertical)' },
@@ -148,34 +151,46 @@ export default function TransformGeoConfig({
         nodeId={nodeId}
       />
 
+      {/* The field is a stack of op cards plus an Add button, not one
+          labelable control, so its name goes on a `role="group"` — `htmlFor`
+          has nothing single to point at. ConfigField keeps its label id
+          private, so the group repeats the string as `aria-label`; the
+          visible <label> labels nothing, so there is still one name. */}
       <ConfigField
-        label="Operations"
+        label={OPERATIONS_LABEL}
         error={ops.length === 0 ? 'Add at least one operation.' : undefined}
         help="Applied top-to-bottom. Rotate (any angle), Flip (top-to-bottom mirror), Flop (left-to-right mirror)."
-      >
-        <div className="flex flex-col gap-1.5">
-          {ops.map((op, idx) => (
-            <OpCard
-              key={idx}
-              op={op}
-              index={idx}
-              onUpdate={(updated) => updateOp(idx, updated)}
-              onRemove={() => removeOp(idx)}
-            />
-          ))}
-        </div>
-        <div className={ops.length > 0 ? 'mt-2' : ''}>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={addOp}
-            className="w-full"
-            data-testid="add-geo-op-btn"
+        render={({ describedById }) => (
+          <div
+            role="group"
+            aria-label={OPERATIONS_LABEL}
+            aria-describedby={describedById}
           >
-            + Add operation
-          </Button>
-        </div>
-      </ConfigField>
+            <div className="flex flex-col gap-1.5">
+              {ops.map((op, idx) => (
+                <OpCard
+                  key={idx}
+                  op={op}
+                  index={idx}
+                  onUpdate={(updated) => updateOp(idx, updated)}
+                  onRemove={() => removeOp(idx)}
+                />
+              ))}
+            </div>
+            <div className={ops.length > 0 ? 'mt-2' : ''}>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={addOp}
+                className="w-full"
+                data-testid="add-geo-op-btn"
+              >
+                + Add operation
+              </Button>
+            </div>
+          </div>
+        )}
+      />
     </NodeConfigShell>
   );
 }

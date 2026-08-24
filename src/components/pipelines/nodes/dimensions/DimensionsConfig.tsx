@@ -32,17 +32,21 @@ export default function DimensionsConfig({ data, onChange, nodeId }: DimensionsC
       <ConfigField
         label="Max edge"
         help="Longest-edge cap. The derived genWidth/genHeight scale to fit within it while preserving aspect ratio — wire them into image:generate."
-      >
-        <NumberInput
-          size="sm"
-          min={1}
-          step={1}
-          unit="px"
-          value={data.maxEdge ?? DEFAULT_MAX_EDGE}
-          onChange={(v) => onChange({ maxEdge: v })}
-          data-testid="dimensions-max-edge"
-        />
-      </ConfigField>
+        controlId="dimensions-max-edge"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={1}
+            step={1}
+            unit="px"
+            value={data.maxEdge ?? DEFAULT_MAX_EDGE}
+            onChange={(v) => onChange({ maxEdge: v })}
+            data-testid="dimensions-max-edge"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

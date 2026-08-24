@@ -36,45 +36,58 @@ export default function VariationConfig({ data, onChange, nodeId }: VariationCon
         nodeId={nodeId}
       />
 
-      <ConfigField label="Model">
-        <Select
-          size="sm"
-          value={data.model ?? models[0]?.value ?? ''}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Model"
+        controlId="variation-model"
+        render={({ describedById, controlId }) => (
+          <Select
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            value={data.model ?? models[0]?.value ?? ''}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+          />
+        )}
+      />
 
       <ConfigField
         label="Number of variations"
         help="Always fans out — each variation becomes a separate arm downstream."
-      >
-        <NumberInput
-          size="sm"
-          min={1}
-          max={MAX_VARIATIONS}
-          step={1}
-          value={data.numVariations ?? 1}
-          onChange={(numVariations) => onChange({ numVariations })}
-          data-testid="variation-num-variations"
-        />
-      </ConfigField>
+        controlId="variation-num-variations"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={1}
+            max={MAX_VARIATIONS}
+            step={1}
+            value={data.numVariations ?? 1}
+            onChange={(numVariations) => onChange({ numVariations })}
+            data-testid="variation-num-variations"
+          />
+        )}
+      />
 
       <ConfigField
         label="Similarity"
         help="0 is very different, 1 is nearly identical. 0.7 is a good starting point."
-      >
-        <NumberInput
-          size="sm"
-          min={0}
-          max={1}
-          step={0.05}
-          value={data.similarity ?? 0.7}
-          onChange={(similarity) => onChange({ similarity })}
-          data-testid="variation-similarity"
-        />
-      </ConfigField>
+        controlId="variation-similarity"
+        render={({ describedById, controlId }) => (
+          <NumberInput
+            id={controlId}
+            aria-describedby={describedById}
+            size="sm"
+            min={0}
+            max={1}
+            step={0.05}
+            value={data.similarity ?? 0.7}
+            onChange={(similarity) => onChange({ similarity })}
+            data-testid="variation-similarity"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }
