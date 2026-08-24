@@ -346,14 +346,27 @@ declare interface ConditionNodeData {
     label?: string;
 }
 
-export declare function ConfigField({ label, required, help, error, children, className }: ConfigFieldProps): JSX.Element;
+export declare function ConfigField({ label, required, help, error, controlId, render, children, className, }: ConfigFieldProps): JSX.Element;
 
 export declare interface ConfigFieldProps {
     label: string;
     required?: boolean;
     help?: string;
     error?: string;
-    children: ReactNode;
+    /**
+     * Id of the control this field labels. Set the same value as the control's
+     * `id` and the `<label htmlFor>` association becomes explicit.
+     */
+    controlId?: string;
+    /**
+     * Render-prop escape hatch: receives the id of the help/error text so the
+     * control can point `aria-describedby` at it. Use INSTEAD of `children`.
+     */
+    render?: (wiring: {
+        describedById?: string;
+        controlId?: string;
+    }) => ReactNode;
+    children?: ReactNode;
     className?: string;
 }
 

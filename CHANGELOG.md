@@ -8,6 +8,81 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.86.0] — 2026-08-24
+
+An accessibility audit going deeper than the earlier surface sweep (which
+had already taken unlabelled icon buttons and keyboard-unreachable click
+targets to zero). +49 tests.
+
+### Fixed — overlays that trapped nothing
+
+- **`Drawer` had no focus trap and no focus restore.** Tab off the last
+  control walked into the page *behind* the drawer; closing it dropped focus
+  on `<body>`, so the next Tab restarted from the top of the document.
+- **`VideoPlayerModal` declared `role="dialog" aria-modal="true"` with no
+  focus management whatsoever** — focus never entered it, never cycled, and
+  never came back.
+- **`ImageLightbox`** restored focus but did not trap it, so Tab landed on
+  controls behind a fully opaque overlay: focus visible to nobody.
+- **`Modal` used `aria-label={title}`**, so a modal rendering its own heading
+  had no accessible name — `CommandPalette` and `NewDocumentModal` both
+  announced as a bare "dialog". Same for `InlinePopover`'s `role="dialog"`.
+
+`Modal` and `InlinePopover` were already exemplary (trap + restore + Esc) and
+were deliberately left alone rather than churned onto the new shared
+`src/lib/focusTrap.ts`.
+
+### Fixed — composite roles that promised a keyboard contract they did not implement
+
+Each of these set `tablist`/`radiogroup`/`menu` and implemented none of the
+expected keys, with every item its own Tab stop: `PipelineRunReplayPage`,
+`SocialPanel` (both its tablist and its radiogroup), `RunsFilterBar`,
+`CanvasContextMenu`, `EditorOverflowMenu`. Two were worse than incomplete —
+`PoolScopedLayout` had `role="tab"` children with **no `tablist` owner at
+all**, and `LoginPage` put `role="tablist"` on a `<nav>`, which replaces the
+navigation landmark so the element announced as neither. New helper
+`src/lib/rovingFocus.ts` uses manual activation, so arrows move focus and
+native Enter/Space activates — clicking behaves exactly as before.
+
+### Fixed — ARIA that actively misled
+
+- **`ScatterPathPicker` declared `role="listbox"` over plain `<button>`s**, so
+  a screen reader announced "Available output paths, list box" containing
+  **zero items**, and selection (a background tint and ring) was never
+  conveyed. Now an honest labelled group with `aria-pressed`.
+- **`QuickInsertPopover`** moved a highlight with the arrow keys while focus
+  stayed in the search box and nothing linked them, so arrowing the list
+  announced **nothing**. Now a proper combobox.
+- **`Toast` carried `role="alert"` *and* `aria-live="polite"`** — conflicting,
+  with unspecified precedence. Now `role="status"` for info/success and
+  `role="alert"` for warning/error, matching what `Banner` already did.
+
+### Fixed — form semantics on the primitives everything else uses
+
+- **`invalid` was styling only on `Input`, `Select` and `Textarea`**: a red
+  border and nothing in the accessibility tree. These back every form in the
+  library, so a rejected field looked wrong and announced as fine. Now sets
+  `aria-invalid`, with an explicit caller value still winning.
+- **`NumberInput` silently dropped `id`, `name`, `required` and every
+  `aria-*`** because its props were a closed interface — so any
+  `<label htmlFor>` aimed at one pointed at nothing.
+- `FormField`'s `required` asterisk is now `aria-hidden` with the state
+  exposed programmatically; `NewDocumentModal` and `CookbooksModal` gained
+  real label association.
+
+### Partly fixed — the largest finding, migration owed
+
+`ConfigField`'s `<label>` had no `htmlFor` and did not wrap its control, so
+**it labelled nothing**. That wrapper backs **117 fields** across the node
+config panels, and roughly 60% of those controls pass no `aria-label` of
+their own — they announce as a bare "edit text" or "spin button", with help
+and error text unreachable via `aria-describedby`. Opt-in `controlId` /
+`render({ controlId, describedById })` wiring is in place with one panel
+migrated as a worked example. A blanket `role="group" aria-labelledby`
+fallback was tried and **rejected**: it double-announces the name in the
+~40% of panels that already label their control, and broke 9 existing tests
+for exactly that reason. The remaining ~116 call sites are per-panel work.
+
 ## [2.85.0] — 2026-08-24
 
 A render-performance audit. All 12 changes are behaviour-preserving — except

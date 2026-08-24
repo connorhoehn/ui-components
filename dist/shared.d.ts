@@ -515,7 +515,7 @@ export declare interface DataTableProps<T> {
 
 export declare const DEFAULT_PIPELINE_ICONS: string[];
 
-export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
+export declare function Drawer({ open, onClose, title, subtitle, width, children, footer, 'aria-label': ariaLabel, 'data-testid': testId, }: DrawerProps): default_2.ReactPortal | null;
 
 export declare interface DrawerProps {
     open: boolean;
@@ -526,6 +526,12 @@ export declare interface DrawerProps {
     width?: number;
     children: default_2.ReactNode;
     footer?: default_2.ReactNode;
+    /**
+     * Accessible name for the dialog when there is no visible `title` to point
+     * at. When `title` IS set the heading labels the dialog via
+     * `aria-labelledby` and this prop is unnecessary.
+     */
+    'aria-label'?: string;
     'data-testid'?: string;
 }
 
@@ -768,6 +774,7 @@ export declare interface FormFieldProps {
         labelId: string;
         'aria-describedby'?: string;
         'aria-invalid'?: boolean;
+        'aria-required'?: boolean;
     }) => ReactNode;
     className?: string;
     style?: CSSProperties;
@@ -835,7 +842,7 @@ export declare interface InlineAlertProps {
 
 export declare type InlineAlertTone = 'error' | 'success' | 'info' | 'warning';
 
-export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, children, }: InlinePopoverProps): ReactPortal | null;
+export declare function InlinePopover({ trigger, open, onClose, placement, offset, className, zIndex, 'data-testid': testId, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, children, }: InlinePopoverProps): ReactPortal | null;
 
 export declare type InlinePopoverPlacement = 'bottom-start' | 'bottom-end' | 'right';
 
@@ -856,6 +863,14 @@ export declare interface InlinePopoverProps {
     zIndex?: number;
     /** Optional testid for the panel. Default 'inline-popover'. */
     'data-testid'?: string;
+    /**
+     * Accessible name for the `role="dialog"` panel. A dialog with no name
+     * announces as a bare "dialog", so callers that don't render their own
+     * labelled surface inside should pass one.
+     */
+    'aria-label'?: string;
+    /** Id of an element inside the panel that names it. */
+    'aria-labelledby'?: string;
     children: ReactNode;
 }
 
@@ -973,12 +988,18 @@ export declare interface MessageBubbleProps {
     className?: string;
 }
 
-export declare function Modal({ open, onClose, title, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
+export declare function Modal({ open, onClose, title, ariaLabel, maxWidth, children, footer, backdropTestId, backdropStyle, cardStyle, zIndex, rawChildren, }: ModalProps): ReactPortal | null;
 
 export declare interface ModalProps {
     open: boolean;
     onClose: () => void;
     title?: string;
+    /**
+     * Accessible name for the dialog when it renders its own heading (or none
+     * at all) instead of using `title`. Without one of the two, screen readers
+     * announce a bare "dialog" with no indication of what opened.
+     */
+    ariaLabel?: string;
     maxWidth?: number;
     children: React.ReactNode;
     footer?: React.ReactNode;
