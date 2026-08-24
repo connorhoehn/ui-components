@@ -1,5 +1,5 @@
 import { a as e, o as t } from "./registry-DbX3MVAA.js";
-import { c as n, s as r } from "./useWebSocket-C17ijv1B.js";
+import { c as n, s as r } from "./useWebSocket-CDq12epx.js";
 import { t as i } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as a } from "./cn-DhjIN-s0.js";
 import { t as o } from "./Modal-B75saHcP.js";
@@ -416,10 +416,6 @@ function L({ editor: e }) {
 }
 //#endregion
 //#region src/components/doc-editor/TiptapEditor.tsx
-var ne = console.warn;
-console.warn = (...e) => {
-	typeof e[0] == "string" && e[0].includes("extension-collaboration") || ne(...e);
-};
 function R(e, t, n) {
 	try {
 		if (t < 0 || t > e.state.doc.content.size) return null;
@@ -433,7 +429,7 @@ function R(e, t, n) {
 		return null;
 	}
 }
-function re({ cursors: e, editorView: t, containerEl: n }) {
+function ne({ cursors: e, editorView: t, containerEl: n }) {
 	return t ? /* @__PURE__ */ _(g, { children: e.map((e) => {
 		if (e.head == null) return null;
 		let r = R(t, e.head, n);
@@ -591,7 +587,7 @@ function z({ fragment: e, ydoc: t, provider: n, user: r, editable: i = !0, place
 		children: [i && /* @__PURE__ */ _(L, { editor: u }), /* @__PURE__ */ v("div", {
 			ref: j,
 			className: a("px-4 py-3 text-sm leading-relaxed text-text-primary relative"),
-			children: [/* @__PURE__ */ _(b, { editor: u }), /* @__PURE__ */ _(re, {
+			children: [/* @__PURE__ */ _(b, { editor: u }), /* @__PURE__ */ _(ne, {
 				cursors: m,
 				editorView: u?.view,
 				containerEl: A
@@ -601,7 +597,7 @@ function z({ fragment: e, ydoc: t, provider: n, user: r, editable: i = !0, place
 }
 //#endregion
 //#region src/components/doc-editor/TaskItemRow.tsx
-var ie = {
+var re = {
 	pending: "var(--color-text-tertiary)",
 	acked: "var(--color-info)",
 	done: "var(--color-success)",
@@ -610,19 +606,19 @@ var ie = {
 	low: "var(--color-text-tertiary)",
 	medium: "var(--color-caution)",
 	high: "var(--color-danger)"
-}, ae = {
+}, ie = {
 	start: "var(--color-success)",
 	stop: "var(--color-danger)",
 	continue: "var(--color-info)"
 };
-function oe(e) {
+function ae(e) {
 	let t = new Date(e);
 	return isNaN(t.getTime()) ? e : t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	});
 }
-function se(e) {
+function oe(e) {
 	let t = new Date(e);
 	if (isNaN(t.getTime())) return !1;
 	let n = /* @__PURE__ */ new Date();
@@ -658,7 +654,7 @@ function H({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: c, o
 	}, [c, p]);
 	let F = (e) => {
 		e.key === "Escape" ? M() : e.key === "ArrowDown" ? (e.preventDefault(), w((e) => Math.min(e + 1, A.length - 1))) : e.key === "ArrowUp" ? (e.preventDefault(), w((e) => Math.max(e - 1, 0))) : e.key === "Enter" && (e.preventDefault(), A[C] && N(A[C]));
-	}, I = e.dueDate && e.status !== "done" ? se(e.dueDate) : !1;
+	}, I = e.dueDate && e.status !== "done" ? oe(e.dueDate) : !1;
 	return /* @__PURE__ */ v("div", {
 		className: a("flex items-center gap-2 py-1.5 border-b border-border-subtle"),
 		children: [
@@ -687,12 +683,12 @@ function H({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: c, o
 				children: [
 					I ? "⚠ " : "",
 					"Due: ",
-					oe(e.dueDate)
+					ae(e.dueDate)
 				]
 			}),
 			e.category && /* @__PURE__ */ _("span", {
 				className: a("inline-block px-2 py-0.5 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap"),
-				style: { backgroundColor: ae[e.category.toLowerCase()] ?? "var(--color-neutral)" },
+				style: { backgroundColor: ie[e.category.toLowerCase()] ?? "var(--color-neutral)" },
 				children: e.category
 			}),
 			/* @__PURE__ */ v("div", {
@@ -783,7 +779,7 @@ function H({ item: e, editable: t, onUpdate: i, onRemove: o, autoFocusText: c, o
 				disabled: !t,
 				onChange: (e) => i({ status: e.target.value }),
 				className: a("w-auto h-auto inline-block px-2 py-0.5 pr-4 text-[11px] font-semibold rounded-xl text-white capitalize leading-snug whitespace-nowrap border-none appearance-none doc-select-arrow", t ? "cursor-pointer" : "cursor-default"),
-				style: { backgroundColor: ie[e.status] },
+				style: { backgroundColor: re[e.status] },
 				title: `Status: ${e.status}`,
 				options: [
 					{
@@ -881,7 +877,7 @@ function W({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a
 }
 //#endregion
 //#region src/renderers/rich-text/RichTextEditorRenderer.tsx
-function ce({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
+function se({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: a, onUpdateCursorInfo: o }) {
 	return !t || !n ? /* @__PURE__ */ _("div", {
 		className: "text-text-tertiary italic text-[13px] py-2",
 		children: "No content yet."
@@ -927,7 +923,7 @@ function G({ section: e, fragment: t, ydoc: n, provider: r, onNavigateToEditor: 
 }
 //#endregion
 //#region src/renderers/tasks/TasksEditorRenderer.tsx
-function le({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
+function ce({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveItem: i }) {
 	let a = m(!1);
 	return /* @__PURE__ */ v("div", {
 		className: "py-1",
@@ -964,7 +960,7 @@ function le({ section: e, editable: t, onAddItem: n, onUpdateItem: r, onRemoveIt
 }
 //#endregion
 //#region src/renderers/tasks/TasksReaderRenderer.tsx
-var ue = {
+var le = {
 	pending: {
 		label: "Pending",
 		color: "var(--color-warning-fg)",
@@ -985,29 +981,29 @@ var ue = {
 		color: "var(--color-danger-fg)",
 		bg: "var(--color-danger-bg)"
 	}
-}, de = {
+}, ue = {
 	high: "var(--color-danger)",
 	medium: "var(--color-caution)",
 	low: "var(--color-text-tertiary)"
 };
-function fe(e) {
+function de(e) {
 	let t = new Date(e);
 	if (isNaN(t.getTime())) return !1;
 	let n = /* @__PURE__ */ new Date();
 	return n.setHours(0, 0, 0, 0), t < n;
 }
-function pe(e) {
+function fe(e) {
 	let t = new Date(e);
 	return isNaN(t.getTime()) ? e : t.toLocaleDateString("en-US", {
 		month: "short",
 		day: "numeric"
 	});
 }
-function me(e) {
+function pe(e) {
 	return e.split(/\s+/).map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
 function K({ item: e, onUpdateItem: t }) {
-	let [n, r] = h(!1), i = ue[e.status], o = e.dueDate && e.status === "pending" ? fe(e.dueDate) : !1, s = e.status === "done" || e.status === "acked";
+	let [n, r] = h(!1), i = le[e.status], o = e.dueDate && e.status === "pending" ? de(e.dueDate) : !1, s = e.status === "done" || e.status === "acked";
 	return /* @__PURE__ */ v("div", {
 		onMouseEnter: () => r(!0),
 		onMouseLeave: () => r(!1),
@@ -1020,7 +1016,7 @@ function K({ item: e, onUpdateItem: t }) {
 					width: 7,
 					height: 7,
 					borderRadius: "50%",
-					background: de[e.priority],
+					background: ue[e.priority],
 					flexShrink: 0
 				}
 			}),
@@ -1069,7 +1065,7 @@ function K({ item: e, onUpdateItem: t }) {
 			e.assignee && /* @__PURE__ */ _("span", {
 				title: e.assignee,
 				className: "w-[22px] h-[22px] rounded-full bg-primary-bg text-primary-fg text-[9px] font-bold flex items-center justify-center shrink-0",
-				children: me(e.assignee)
+				children: pe(e.assignee)
 			}),
 			e.dueDate && /* @__PURE__ */ v("span", {
 				style: {
@@ -1083,7 +1079,7 @@ function K({ item: e, onUpdateItem: t }) {
 					whiteSpace: "nowrap",
 					flexShrink: 0
 				},
-				children: [o ? "⚠ " : "", pe(e.dueDate)]
+				children: [o ? "⚠ " : "", fe(e.dueDate)]
 			}),
 			t && n && /* @__PURE__ */ v("select", {
 				value: e.status,
@@ -1124,7 +1120,7 @@ function K({ item: e, onUpdateItem: t }) {
 		]
 	});
 }
-function q({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
+function me({ section: e, onUpdateItem: t, onNavigateToEditor: n }) {
 	let r = e.items;
 	if (r.length === 0) return /* @__PURE__ */ _("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
@@ -1250,7 +1246,7 @@ function ge({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/checklist/ChecklistReaderRenderer.tsx
-function J({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: i, onNavigateToEditor: o }) {
+function q({ section: e, fragment: t, ydoc: n, provider: r, onUpdateItem: i, onNavigateToEditor: o }) {
 	let s = e.items, c = s.length, l = s.filter((e) => e.status === "done").length, u = c > 0 ? Math.round(l / c * 100) : 0;
 	return /* @__PURE__ */ v("div", { children: [
 		t && n && /* @__PURE__ */ _("div", {
@@ -1372,7 +1368,7 @@ async function xe(e) {
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsEditorRenderer.tsx
-var Y = {
+var J = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1399,7 +1395,7 @@ var Y = {
 	}
 };
 function Se({ item: e, editable: t, autoFocus: n, onDidAutoFocus: r, onUpdate: i, onRemove: o }) {
-	let s = m(null), c = Y[e.status] ?? Y.pending;
+	let s = m(null), c = J[e.status] ?? J.pending;
 	return f(() => {
 		n && s.current && (s.current.focus(), r?.());
 	}, [n, r]), /* @__PURE__ */ v("div", {
@@ -1518,7 +1514,7 @@ function Ce({ section: e, fragment: t, ydoc: n, provider: r, user: i, editable: 
 }
 //#endregion
 //#region src/renderers/decisions/DecisionsReaderRenderer.tsx
-var X = {
+var Y = {
 	pending: {
 		label: "Open",
 		icon: "○",
@@ -1545,7 +1541,7 @@ var X = {
 	}
 };
 function we({ item: e }) {
-	let t = X[e.status] ?? X.pending;
+	let t = Y[e.status] ?? Y.pending;
 	return /* @__PURE__ */ v("div", {
 		className: "flex items-start gap-2 py-1.5 border-b border-border-subtle",
 		children: [
@@ -1575,7 +1571,7 @@ function we({ item: e }) {
 		]
 	});
 }
-function Z({ label: e, color: t, items: n }) {
+function X({ label: e, color: t, items: n }) {
 	return /* @__PURE__ */ v("div", {
 		className: "mb-2",
 		children: [/* @__PURE__ */ _("div", {
@@ -1585,7 +1581,7 @@ function Z({ label: e, color: t, items: n }) {
 		}), n.map((e) => /* @__PURE__ */ _(we, { item: e }, e.id))]
 	});
 }
-function Q({ section: e, onNavigateToEditor: t }) {
+function Z({ section: e, onNavigateToEditor: t }) {
 	let n = e.items;
 	if (n.length === 0) return /* @__PURE__ */ _("div", {
 		className: "text-text-tertiary italic text-[13px] py-1",
@@ -1593,17 +1589,17 @@ function Q({ section: e, onNavigateToEditor: t }) {
 	});
 	let r = n.filter((e) => e.status === "pending"), i = n.filter((e) => e.status === "acked" || e.status === "done"), a = n.filter((e) => e.status === "rejected");
 	return /* @__PURE__ */ v("div", { children: [
-		r.length > 0 && /* @__PURE__ */ _(Z, {
+		r.length > 0 && /* @__PURE__ */ _(X, {
 			label: "Open",
 			color: "#92400e",
 			items: r
 		}),
-		i.length > 0 && /* @__PURE__ */ _(Z, {
+		i.length > 0 && /* @__PURE__ */ _(X, {
 			label: "Decided",
 			color: "#065f46",
 			items: i
 		}),
-		a.length > 0 && /* @__PURE__ */ _(Z, {
+		a.length > 0 && /* @__PURE__ */ _(X, {
 			label: "Vetoed",
 			color: "#991b1b",
 			items: a
@@ -1684,7 +1680,7 @@ function Ee({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/file-upload/FileUploadReaderRenderer.tsx
-function De({ section: e }) {
+function Q({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.fileName ? /* @__PURE__ */ v("div", {
 		"data-testid": `file-upload-reader-${e.id}`,
@@ -1718,7 +1714,7 @@ function De({ section: e }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramEditorRenderer.tsx
-function Oe({ section: e, editable: t, onUpdateSection: n }) {
+function De({ section: e, editable: t, onUpdateSection: n }) {
 	let r = e.metadata ?? {}, [i, o] = h(!1), s = (t) => {
 		o(!0);
 		let i = new FileReader();
@@ -1786,7 +1782,7 @@ function Oe({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/diagram/DiagramReaderRenderer.tsx
-function ke({ section: e }) {
+function $({ section: e }) {
 	let t = e.metadata ?? {};
 	return t.imageDataUrl ? /* @__PURE__ */ v("figure", {
 		"data-testid": `diagram-reader-${e.id}`,
@@ -1807,12 +1803,12 @@ function ke({ section: e }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockEditorRenderer.tsx
-function Ae(e) {
+function Oe(e) {
 	let t = e.metadata ?? {};
 	return Array.isArray(t.links) ? t.links : [];
 }
-function je({ section: e, editable: t, onUpdateSection: n }) {
-	let r = Ae(e), i = (t) => {
+function ke({ section: e, editable: t, onUpdateSection: n }) {
+	let r = Oe(e), i = (t) => {
 		n?.({ metadata: {
 			...e.metadata ?? {},
 			links: t
@@ -1879,7 +1875,7 @@ function je({ section: e, editable: t, onUpdateSection: n }) {
 }
 //#endregion
 //#region src/renderers/link-block/LinkBlockReaderRenderer.tsx
-function $({ section: e }) {
+function Ae({ section: e }) {
 	let t = e.metadata ?? {}, n = Array.isArray(t.links) ? t.links.filter((e) => e.url) : [];
 	return n.length === 0 ? /* @__PURE__ */ _("div", {
 		"data-testid": `link-block-reader-empty-${e.id}`,
@@ -1900,6 +1896,6 @@ function $({ section: e }) {
 		}, t))
 	});
 }
-e(j), e(M), e(N), e(P), e(F), e(I), e(ee), t("*", "*", W), t("rich-text", "editor", ce), t("rich-text", "ack", G), t("rich-text", "reader", G), t("tasks", "editor", le), t("tasks", "ack", q), t("tasks", "reader", q), t("checklist", "editor", ge), t("checklist", "ack", J), t("checklist", "reader", J), t("decisions", "editor", Ce), t("decisions", "ack", Q), t("decisions", "reader", Q), t("file-upload", "editor", Ee), t("file-upload", "ack", De), t("file-upload", "reader", De), t("diagram", "editor", Oe), t("diagram", "ack", ke), t("diagram", "reader", ke), t("link-block", "editor", je), t("link-block", "ack", $), t("link-block", "reader", $);
+e(j), e(M), e(N), e(P), e(F), e(I), e(ee), t("*", "*", W), t("rich-text", "editor", se), t("rich-text", "ack", G), t("rich-text", "reader", G), t("tasks", "editor", ce), t("tasks", "ack", me), t("tasks", "reader", me), t("checklist", "editor", ge), t("checklist", "ack", q), t("checklist", "reader", q), t("decisions", "editor", Ce), t("decisions", "ack", Z), t("decisions", "reader", Z), t("file-upload", "editor", Ee), t("file-upload", "ack", Q), t("file-upload", "reader", Q), t("diagram", "editor", De), t("diagram", "ack", $), t("diagram", "reader", $), t("link-block", "editor", ke), t("link-block", "ack", Ae), t("link-block", "reader", Ae);
 //#endregion
 export { L as a, z as i, U as n, A as o, H as r, W as t };

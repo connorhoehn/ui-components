@@ -18,15 +18,17 @@ import type { Awareness } from 'y-protocols/awareness';
 // Collaboration extension uses its own PluginKey instance from this package.
 // Using y-prosemirror's key would never match the actual sync plugin state.
 import { ySyncPluginKey, absolutePositionToRelativePosition, relativePositionToAbsolutePosition } from '@tiptap/y-tiptap';
+// NOTE: this module used to reassign the GLOBAL `console.warn` at import
+// time, permanently and without restoring it, to swallow a Tiptap
+// "extension-collaboration" compat warning. That patched the console of any
+// app that merely imported this file. It was also unnecessary:
+// `StarterKit.configure({ history: false })` below is the documented fix for
+// that warning, and with the patch removed the editor mounts with a real
+// Y.Doc + Collaboration extension in tests and emits nothing. Removed in
+// v2.81.0 — if the warning ever returns, configure the extension, don't
+// patch the host's console.
 import EditorToolbar from './EditorToolbar';
 import { cn } from '../../lib/cn';
-
-// Suppress known Tiptap compat warning (collaboration has its own undo/redo)
-const origWarn = console.warn;
-console.warn = (...args: unknown[]) => {
-  if (typeof args[0] === 'string' && args[0].includes('extension-collaboration')) return;
-  origWarn(...args);
-};
 
 /** Minimal provider shape needed by awareness. */
 export interface CollaborationProvider {

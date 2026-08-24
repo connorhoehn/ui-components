@@ -249,13 +249,19 @@ describe('useCollaborativeDoc', () => {
   });
 
   describe('loadFromMarkdown stub', () => {
-    it('logs a not-yet-implemented warning', () => {
+    it('warns that it is unimplemented, and does nothing to the document', () => {
       const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const { result } = renderHook(() => useCollaborativeDoc(makeOptions()));
+      const sectionsBefore = result.current.sections.length;
 
       act(() => { result.current.loadFromMarkdown('# heading'); });
 
-      expect(warn).toHaveBeenCalledWith(expect.stringMatching(/not yet implemented/i));
+      // Namespaced so a consumer can tell which package warned at them.
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringMatching(/\[useCollaborativeDoc\].*not implemented/i),
+      );
+      // The point of the warning: the call is a no-op, not a partial load.
+      expect(result.current.sections.length).toBe(sectionsBefore);
       warn.mockRestore();
     });
   });

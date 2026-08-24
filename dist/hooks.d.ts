@@ -1098,6 +1098,12 @@ declare interface UseActivityBusReturn {
      getSectionFragment: (sectionId: string) => Y.XmlFragment | null;
      ydoc: Y.Doc | null;
      provider: GatewayProvider | null;
+     /**
+      * @deprecated NOT IMPLEMENTED. Calling this logs a warning and does
+      * nothing — it does not load anything into the document. It is retained
+      * only because it is part of this hook's published return shape; removing
+      * it is a breaking change. Do not call it expecting an effect.
+      */
      loadFromMarkdown: (markdown: string) => void;
      exportJSON: () => DocumentData | null;
      participants: Participant[];

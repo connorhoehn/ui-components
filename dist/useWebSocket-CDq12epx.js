@@ -915,7 +915,7 @@ function Je(n) {
 		c,
 		l
 	]), T = e((e) => {
-		console.warn("loadFromMarkdown is not yet implemented");
+		console.warn("[useCollaborativeDoc] loadFromMarkdown is not implemented and does nothing.");
 	}, []);
 	return {
 		meta: g,

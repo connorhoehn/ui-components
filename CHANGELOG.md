@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.81.0] — 2026-08-23
+
+Console-hygiene pass, closing out the stub audit.
+
+### Fixed
+
+- **The doc-editor reassigned the host application's global `console.warn`.**
+  `TiptapEditor.tsx` replaced `console.warn` at **module import** — not on
+  mount — permanently and without ever restoring it, in order to swallow one
+  Tiptap `extension-collaboration` compat warning. Any app that merely
+  imported the doc-editor barrel had its console wrapped by us, for the
+  lifetime of the page, silently dropping any warning whose first argument
+  mentioned that string. A library has no business doing that to its host.
+  It was also **unnecessary**: `StarterKit.configure({ history: false })` is
+  the documented fix for that warning and is already applied. With the patch
+  removed, the editor mounts with a real `Y.Doc`, `Awareness` and the
+  `Collaboration` extension across 301 doc-editor tests and emits nothing.
+  Pinned by a test asserting that importing the module — and the barrel —
+  leaves `console.warn` identical; verified to fail with the patch restored.
+
+### Changed
+
+- **`useCollaborativeDoc().loadFromMarkdown` is now marked
+  `@deprecated / NOT IMPLEMENTED` in its type.** It is part of the published
+  return shape of a public hook, and its signature — `(markdown: string) =>
+  void` — gave a consumer no hint that calling it logs a warning and does
+  **nothing** to the document. Removing it would be breaking, so instead the
+  interface now says so plainly, and the JSDoc ships in `dist/hooks.d.ts`
+  where a consumer's editor will surface it before they call it. The warning
+  is namespaced so it is attributable, and the test now also pins that the
+  call leaves the document unchanged rather than partially loading.
+
+### Audit note
+
+The remaining 24 `console.warn` calls in `src/` were reviewed and left: all
+sit on genuine error or degraded paths (failed clipboard writes, localStorage
+quota, fetch failures, unhandled stream events) and are consistently
+namespaced. Zero `console.log` remain.
+
 ## [2.80.0] — 2026-08-23
 
 Continues the stub audit: the last dead affordance is now live.
