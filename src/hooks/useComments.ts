@@ -90,23 +90,34 @@ export function useComments({ idToken, roomId, postId, onMessage }: UseCommentsO
   // ---- WS handler: social:comment -----------------------------------------
 
   useEffect(() => {
+    // One fade-off timer per inbound comment, created inside the message
+    // handler. Unregistering stops new ones, but any already scheduled would
+    // outlive the unmount, so they're tracked and cleared alongside it.
+    const fadeTimers = new Set<ReturnType<typeof setTimeout>>();
+
     const unregister = onMessageRef.current((msg: GatewayMessage) => {
       if (msg.type === 'social:comment') {
         const payload = ((msg as Record<string, unknown>).payload ?? msg) as Record<string, unknown>;
         if (payload.postId !== postIdRef.current) return;
         const incoming = { ...(payload as unknown as CommentItem), _fadeIn: true };
         setComments((prev) => [...prev, incoming]);
-        setTimeout(() => {
+        const handle = setTimeout(() => {
+          fadeTimers.delete(handle);
           setComments((prev) =>
             prev.map((c) =>
               c.commentId === incoming.commentId ? { ...c, _fadeIn: false } : c
             )
           );
         }, 300);
+        fadeTimers.add(handle);
       }
     });
 
-    return unregister;
+    return () => {
+      unregister();
+      fadeTimers.forEach((t) => clearTimeout(t));
+      fadeTimers.clear();
+    };
   }, []);
 
   // ---- createComment -------------------------------------------------------

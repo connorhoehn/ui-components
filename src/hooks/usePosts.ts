@@ -98,21 +98,32 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   // ---- WS handler: social:post ---------------------------------------------
 
   useEffect(() => {
+    // One fade-off timer per inbound post, created inside the message handler.
+    // Unregistering stops new ones, but any already scheduled would outlive
+    // the unmount, so they're tracked and cleared alongside it.
+    const fadeTimers = new Set<ReturnType<typeof setTimeout>>();
+
     const unregister = onMessageRef.current((msg: GatewayMessage) => {
       if (msg.type === 'social:post') {
         const payload = (msg.payload ?? msg) as Record<string, unknown>;
         if (payload.roomId !== roomIdRef.current) return;
         const incoming = { ...(payload as unknown as PostItem), _fadeIn: true };
         setPosts((prev) => [incoming, ...prev]);
-        setTimeout(() => {
+        const handle = setTimeout(() => {
+          fadeTimers.delete(handle);
           setPosts((prev) =>
             prev.map((p) => (p.postId === incoming.postId ? { ...p, _fadeIn: false } : p))
           );
         }, 300);
+        fadeTimers.add(handle);
       }
     });
 
-    return unregister;
+    return () => {
+      unregister();
+      fadeTimers.forEach((t) => clearTimeout(t));
+      fadeTimers.clear();
+    };
   }, []);
 
   // ---- loadMore ------------------------------------------------------------

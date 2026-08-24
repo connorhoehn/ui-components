@@ -482,6 +482,19 @@ function useDrag(enabled: boolean) {
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // Shared handle for the 200ms "animation finished" reset, scheduled from
+  // both resetOffset and snapToCorner. CallWidget renders null once the call
+  // reaches 'ended', so a call ending within 200ms of a snap unmounts the
+  // widget while this is still pending.
+  const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const endAnimationSoon = useCallback(() => {
+    if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
+    animationTimerRef.current = setTimeout(() => setIsAnimating(false), 200);
+  }, []);
+  useEffect(() => () => {
+    if (animationTimerRef.current) clearTimeout(animationTimerRef.current);
+  }, []);
   const dragging = useRef(false);
   const startPos = useRef({ x: 0, y: 0 });
   const startOffset = useRef({ x: 0, y: 0 });
@@ -503,8 +516,8 @@ function useDrag(enabled: boolean) {
   const resetOffset = useCallback(() => {
     setIsAnimating(true);
     setOffset({ x: 0, y: 0 });
-    setTimeout(() => setIsAnimating(false), 200);
-  }, []);
+    endAnimationSoon();
+  }, [endAnimationSoon]);
 
   const snapToCorner = useCallback(
     (corner: SnapCorner) => {
@@ -551,9 +564,9 @@ function useDrag(enabled: boolean) {
 
       setIsAnimating(true);
       setOffset({ x: targetX - baseX, y: targetY - baseY });
-      setTimeout(() => setIsAnimating(false), 200);
+      endAnimationSoon();
     },
-    [offset],
+    [offset, endAnimationSoon],
   );
 
   const snapToCornerRef = useRef(snapToCorner);

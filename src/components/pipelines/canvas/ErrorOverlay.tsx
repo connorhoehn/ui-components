@@ -5,7 +5,7 @@
 // category badge, error message, failed nodeId, optional collapsible stack
 // trace, "Copy error details" and "Retry from here" actions.
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { cn } from '../../../lib/cn';
 import type { ErrorCategory, PipelineRunError } from '../../../types/pipeline';
 
@@ -53,6 +53,10 @@ function categoryLabel(cat: ErrorCategory): string {
 export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: ErrorOverlayProps) {
   const [stackOpen, setStackOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+  }, []);
 
   const category = error.errorCategory ?? 'UnknownError';
   const catColor = CATEGORY_COLORS[category] ?? CATEGORY_COLORS.UnknownError;
@@ -71,7 +75,9 @@ export default function ErrorOverlay({ error, anchor, onDismiss, onRetry }: Erro
       if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(details);
         setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        // Overlay is dismissable, so a 2s reset easily outlives the mount.
+        if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+        copiedTimerRef.current = setTimeout(() => setCopied(false), 2000);
       }
     } catch {
       // Clipboard unavailable — silently ignore.

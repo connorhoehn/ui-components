@@ -235,3 +235,25 @@ describe('setTyping', () => {
     expect(ws.sendMessage).not.toHaveBeenCalled();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Unmount cleanup
+// ---------------------------------------------------------------------------
+
+describe('unmount cleanup', () => {
+  it('cancels the pending typing auto-clear timer on unmount', () => {
+    const ws = makeWs();
+    const { result, unmount } = renderHook(() => usePresence(defaultOpts(ws)));
+
+    // Schedule the 2s auto-clear, then tear the hook down inside that window.
+    act(() => { result.current.setTyping(true); });
+    unmount();
+    ws.sendMessage.mockClear();
+
+    act(() => { vi.advanceTimersByTime(5000); });
+
+    // The timer is created inside setTyping(), not an effect, so no effect
+    // cleanup owns it — without the unmount guard it fires on a dead socket.
+    expect(ws.sendMessage).not.toHaveBeenCalled();
+  });
+});

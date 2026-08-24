@@ -88,11 +88,14 @@ export default function CookbooksModal({
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (open) {
-      setSearch('');
-      setActiveCategory('All');
-      setTimeout(() => searchRef.current?.focus(), 30);
-    }
+    if (!open) return;
+    setSearch('');
+    setActiveCategory('All');
+    // Cleared on close: an uncancelled focus lands on a hidden input and
+    // steals focus back from whatever the user moved to. Same fix as
+    // NewDocumentModal, which documents the bug.
+    const t = setTimeout(() => searchRef.current?.focus(), 30);
+    return () => clearTimeout(t);
   }, [open]);
 
   const filtered = useMemo(() => {

@@ -34,7 +34,13 @@ export function useTrackStateBump(
     const onMute = (e: Event) => log('mute', e.target as MediaStreamTrack);
     const onUnmute = (e: Event) => log('unmute', e.target as MediaStreamTrack);
     const onEnded = (e: Event) => log('ended', e.target as MediaStreamTrack);
-    const attached = new WeakSet<MediaStreamTrack>();
+    // Strong Set, not a WeakSet: cleanup has to iterate exactly the tracks it
+    // attached to. Re-deriving from stream.getVideoTracks() at cleanup time
+    // misses any track that arrived via `addtrack` and then left via
+    // `removetrack` before unmount — its three listeners would never be
+    // removed, and their closures pin setBump (and the unmounted fiber)
+    // for as long as anything else still holds the track.
+    const attached = new Set<MediaStreamTrack>();
     const attach = (t: MediaStreamTrack) => {
       if (attached.has(t)) return;
       attached.add(t);
@@ -57,11 +63,12 @@ export function useTrackStateBump(
     stream.addEventListener('addtrack', onAdd);
     stream.addEventListener('removetrack', onRemove);
     return () => {
-      for (const t of stream.getVideoTracks()) {
+      for (const t of attached) {
         t.removeEventListener('mute', onMute);
         t.removeEventListener('unmute', onUnmute);
         t.removeEventListener('ended', onEnded);
       }
+      attached.clear();
       stream.removeEventListener('addtrack', onAdd);
       stream.removeEventListener('removetrack', onRemove);
     };

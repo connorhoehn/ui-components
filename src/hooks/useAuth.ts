@@ -137,6 +137,36 @@ export function useAuth(): UseAuthReturn {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const broadcastChannel = useRef<BroadcastChannel | null>(null);
 
+  // False once the hook has unmounted.
+  //
+  // Every scheduleTokenRefresh() assignment below happens inside an async
+  // Cognito callback, so it can land *after* the session-restore effect's
+  // cleanup has already cleared timerRef. Such a timer is owned by nobody:
+  // when it fires it refreshes the session and schedules the next one, so a
+  // single mount/unmount race leaves a chain refreshing tokens and writing
+  // localStorage for the lifetime of the tab. Guard every assignment with this.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  /** Schedule a proactive refresh, unless the hook has already unmounted. */
+  const scheduleRefreshIfMounted = useCallback(
+    (idToken: string, onRefresh: () => void) => {
+      if (!mountedRef.current) return;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = scheduleTokenRefresh(idToken, onRefresh);
+    },
+    [],
+  );
+
   // ── SIGN OUT ───────────────────────────────────────────────────────────
   // Defined early so it can be referenced by doRefresh
 
@@ -205,9 +235,9 @@ export function useAuth(): UseAuthReturn {
       setState((prev) => ({ ...prev, idToken: newIdToken }));
       broadcastChannel.current?.postMessage({ type: 'TOKEN_REFRESHED', idToken: newIdToken });
       // Re-schedule next refresh
-      timerRef.current = scheduleTokenRefresh(newIdToken, () => doRefreshRef.current());
+      scheduleRefreshIfMounted(newIdToken, () => doRefreshRef.current());
     });
-  }, [userPool, signOut]);
+  }, [userPool, signOut, scheduleRefreshIfMounted]);
 
   // Keep doRefreshRef in sync so scheduled callbacks call the latest version.
   useEffect(() => { doRefreshRef.current = doRefresh; }, [doRefresh]);
@@ -273,7 +303,7 @@ export function useAuth(): UseAuthReturn {
           error: null,
         });
         // Schedule proactive refresh
-        timerRef.current = scheduleTokenRefresh(idToken, doRefresh);
+        scheduleRefreshIfMounted(idToken, doRefresh);
       }
     });
 
@@ -307,7 +337,7 @@ export function useAuth(): UseAuthReturn {
               error: null,
             });
             // Schedule proactive refresh
-            timerRef.current = scheduleTokenRefresh(idToken, doRefresh);
+            scheduleRefreshIfMounted(idToken, doRefresh);
             resolve();
           },
           onFailure: (err: Error) => {

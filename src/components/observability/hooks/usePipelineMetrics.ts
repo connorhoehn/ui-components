@@ -249,6 +249,17 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
     // API doesn't get hammered with retries.
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
+    // Per-effect liveness flag. This deliberately does NOT use mountedRef:
+    // that ref is shared across effect runs and is set back to true above on
+    // every re-run (fetchOnce changes identity whenever idToken does). On a
+    // token refresh the old cleanup sets it false, the new effect immediately
+    // sets it true, and only then does the old in-flight fetch's .finally()
+    // land — it would see `true` and schedule a timer into THIS closure's
+    // timeoutId, which the new effect's stopPolling() cannot reach. That
+    // orphaned chain then polls forever with a stale token, racing the live
+    // chain through the shared abortRef. A per-run flag can't be resurrected.
+    let alive = true;
+
     const stopPolling = () => {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
@@ -257,7 +268,7 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
     };
 
     const scheduleNext = () => {
-      if (!mountedRef.current || document.hidden) return;
+      if (!alive || document.hidden) return;
       const delay =
         failureCountRef.current > 0
           ? backoffDelayMs(failureCountRef.current)
@@ -271,7 +282,7 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
     };
 
     const startPolling = () => {
-      if (timeoutId !== null) return;
+      if (!alive || timeoutId !== null) return;
       scheduleNext();
     };
 
@@ -295,6 +306,7 @@ export function usePipelineMetrics(): UsePipelineMetricsResult {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      alive = false;
       mountedRef.current = false;
       stopPolling();
       document.removeEventListener('visibilitychange', handleVisibilityChange);

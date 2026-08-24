@@ -203,4 +203,21 @@ describe('useMuteWhileTalking', () => {
     await advance(5000);
     expect(result.current).toBe(false);
   });
+
+  it('clears the nested auto-dismiss timeout on unmount', async () => {
+    stubAudioContextOk();
+    const stream = liveStream();
+    const { unmount } = renderHook(() =>
+      useMuteWhileTalking({ localStream: stream, isMuted: true, triggerMs: 200 }),
+    );
+    // Fire the nag so the 3s auto-dismiss timeout gets scheduled from inside
+    // the polling interval, then unmount while it is still pending.
+    amplitude = TALK;
+    await advance(500);
+    unmount();
+
+    // Cleanup must own the nested timeout too, not just the interval —
+    // otherwise it survives unmount holding the effect closure alive.
+    expect(vi.getTimerCount()).toBe(0);
+  });
 });

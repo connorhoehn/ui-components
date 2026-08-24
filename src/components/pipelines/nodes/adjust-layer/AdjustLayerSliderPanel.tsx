@@ -271,6 +271,15 @@ function useAdjustPreview(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageId, JSON.stringify(layers), fetchPreview]);
 
+  // Unmount: abort a preview request that is already in flight.
+  //
+  // The debounce cleanup above only cancels the *pending* timer. Once the
+  // 150ms has elapsed the POST is running and only the next fetchPreview call
+  // would abort it — which never comes if the config panel closed (node
+  // deselected). Without this the request runs to completion and setLoading /
+  // setPreviewSrc fire on an unmounted panel.
+  useEffect(() => () => abortRef.current?.abort(), []);
+
   return { previewSrc, loading };
 }
 

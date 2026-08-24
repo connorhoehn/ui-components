@@ -15,7 +15,7 @@
 // shell ResumeCallDialog uses, so focus and a11y behave identically.
 // Tailwind design tokens only; no inline styles.
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Avatar } from '../shared/Avatar';
 import Modal from '../shared/Modal';
@@ -74,6 +74,14 @@ export function InviteToCallDialog({
     useEffect(() => {
         if (open) setSelected(new Set());
     }, [open]);
+
+    // "Copied!" reset timer, scheduled from the copy-link click handler.
+    // This is a modal: copying the link and then closing or confirming inside
+    // 1.5s is the ordinary flow, so the timer routinely outlives the mount.
+    const copiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    useEffect(() => () => {
+        if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+    }, []);
 
     const invitable = useMemo(
         () => candidates.filter((c) => !c.alreadyInCall),
@@ -170,7 +178,8 @@ export function InviteToCallDialog({
                                         document.body.removeChild(ta);
                                     }
                                     setCopied(true);
-                                    window.setTimeout(() => setCopied(false), 1500);
+                                    if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+                                    copiedTimerRef.current = setTimeout(() => setCopied(false), 1500);
                                 }}
                             >
                                 {copied ? '✓ Copied' : 'Copy'}
