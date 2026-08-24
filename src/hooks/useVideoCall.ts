@@ -87,7 +87,13 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
     return headers;
   }, []);
 
-  const joinSession = useCallback(async (sid: string) => {
+  // Resolves true when the join actually succeeded. It reports failure by
+  // return value rather than by throwing, because it also OWNS the error
+  // state — every failure path here has already set `error` + callState
+  // 'error'. Callers must branch on the result: `await joinSession(...)`
+  // never rejects, so a caller that only guards with try/catch will run its
+  // success path on a failed join.
+  const joinSession = useCallback(async (sid: string): Promise<boolean> => {
     setCallState('joining');
     setError(null);
     try {
@@ -116,9 +122,11 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
       setParticipantId(data.participantId);
       setUserId(data.userId);
       setCallState('active');
+      return true;
     } catch (err) {
       setError((err as Error).message);
       setCallState('error');
+      return false;
     }
   }, [documentId, displayName, getAuthHeaders, updateMeta, sendMessage]);
 
@@ -139,8 +147,14 @@ export function useVideoCall(options: UseVideoCallOptions): UseVideoCallReturn {
       const newSessionId = createData.sessionId;
 
       // Join FIRST — only persist activeCallSessionId after successful join
-      // (prevents phantom calls if join fails due to permissions/network)
-      await joinSession(newSessionId);
+      // (prevents phantom calls if join fails due to permissions/network).
+      // joinSession never rejects — it absorbs its own failures into `error`
+      // + callState 'error' — so this MUST branch on the return value. It
+      // used to bare-`await`, which meant a failed join still broadcast the
+      // session id to every other editor of the document: they saw a live
+      // call nobody was in and could not join it.
+      const joined = await joinSession(newSessionId);
+      if (!joined) return;
 
       // Only write meta after join succeeds (callState is now 'active')
       updateMeta({ activeCallSessionId: newSessionId });
