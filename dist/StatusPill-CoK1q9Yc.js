@@ -387,70 +387,71 @@ function F(e, t) {
 	let n = e.trim();
 	return t ? n.toLowerCase() : n;
 }
-function I({ value: e, onChange: t, placeholder: n = "add tag...", suggestions: r, lowercase: i = !0 }) {
-	let [a, l] = c(""), [f, p] = c(!1), m = s(null), h = (n) => {
-		let r = F(n, i);
+function I({ "aria-label": e, value: t, onChange: n, placeholder: r = "add tag...", suggestions: i, lowercase: a = !0 }) {
+	let [l, f] = c(""), [p, m] = c(!1), h = s(null), g = (e) => {
+		let r = F(e, a);
 		if (r) {
-			if (e.includes(r)) {
-				l("");
+			if (t.includes(r)) {
+				f("");
 				return;
 			}
-			t([...e, r]), l("");
+			n([...t, r]), f("");
 		}
-	}, g = (n) => {
-		t(e.filter((e) => e !== n));
-	}, _ = (t) => {
-		if (t.key === "Enter") {
-			t.preventDefault(), h(a);
+	}, _ = (e) => {
+		n(t.filter((t) => t !== e));
+	}, v = (e) => {
+		if (e.key === "Enter") {
+			e.preventDefault(), g(l);
 			return;
 		}
-		t.key === "Backspace" && a === "" && e.length > 0 && (t.preventDefault(), g(e[e.length - 1]));
-	}, v = o(() => {
-		if (!r || r.length === 0) return [];
-		let t = a.trim().toLowerCase(), n = new Set(e.map((e) => e.toLowerCase()));
-		return r.map((e) => e.trim().toLowerCase()).filter((e) => e.length > 0 && !n.has(e)).filter((e) => !t || e.includes(t)).slice(0, 12);
+		e.key === "Backspace" && l === "" && t.length > 0 && (e.preventDefault(), _(t[t.length - 1]));
+	}, y = o(() => {
+		if (!i || i.length === 0) return [];
+		let e = l.trim().toLowerCase(), n = new Set(t.map((e) => e.toLowerCase()));
+		return i.map((e) => e.trim().toLowerCase()).filter((e) => e.length > 0 && !n.has(e)).filter((t) => !e || t.includes(e)).slice(0, 12);
 	}, [
-		r,
-		e,
-		a
-	]), y = f && v.length > 0;
+		i,
+		t,
+		l
+	]), b = p && y.length > 0;
 	return /* @__PURE__ */ d("div", {
 		className: "relative flex flex-wrap items-center gap-1.5",
 		"data-testid": "tag-editor",
-		children: [e.map((e) => /* @__PURE__ */ d("span", {
+		children: [t.map((e) => /* @__PURE__ */ d("span", {
 			className: "inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary",
 			"data-testid": `tag-chip-${e}`,
 			children: [e, /* @__PURE__ */ u("button", {
 				type: "button",
 				"aria-label": `Remove tag ${e}`,
-				onClick: () => g(e),
+				onClick: () => _(e),
 				className: "ml-1 bg-transparent border-none text-inherit cursor-pointer text-xs leading-none p-0 font-[inherit]",
 				children: "×"
 			})]
 		}, e)), /* @__PURE__ */ d("div", {
 			className: "relative",
 			children: [/* @__PURE__ */ u("input", {
-				ref: m,
+				ref: h,
 				"data-testid": "tag-editor-input",
 				type: "text",
-				value: a,
-				onChange: (e) => l(e.target.value),
-				onKeyDown: _,
-				onFocus: () => p(!0),
+				value: l,
+				onChange: (e) => f(e.target.value),
+				onKeyDown: v,
+				onFocus: () => m(!0),
 				onBlur: () => {
-					setTimeout(() => p(!1), 120);
+					setTimeout(() => m(!1), 120);
 				},
-				placeholder: n,
+				"aria-label": e ?? (r || "Add tag"),
+				placeholder: r,
 				className: "border border-border-emphasis rounded-md px-2.5 py-1.5 text-xs bg-surface-panel w-[140px] min-w-[120px] outline-none font-[inherit] text-text-primary"
-			}), y ? /* @__PURE__ */ u("div", {
+			}), b ? /* @__PURE__ */ u("div", {
 				className: "absolute top-full mt-1 bg-white border border-border rounded-md shadow-lg p-1.5 flex flex-wrap gap-1 max-w-xs z-30",
 				"data-testid": "tag-suggestions",
-				children: v.map((e) => /* @__PURE__ */ d("button", {
+				children: y.map((e) => /* @__PURE__ */ d("button", {
 					type: "button",
 					onMouseDown: (e) => {
 						e.preventDefault();
 					},
-					onClick: () => h(e),
+					onClick: () => g(e),
 					className: "inline-block rounded px-2 py-0.5 text-[11px] font-semibold bg-surface-hover text-text-secondary cursor-pointer border border-dashed border-border-emphasis",
 					children: ["+ ", e]
 				}, e))
@@ -548,6 +549,7 @@ function z({ value: n, onChange: r, placeholder: i, maxSelect: l }) {
 				type: "text",
 				value: m,
 				disabled: O,
+				"aria-label": O ? `Max ${l} selected` : i ?? "Search users…",
 				placeholder: O ? `Max ${l} selected` : i ?? "Search users…",
 				onChange: (e) => {
 					g(e.target.value), v(!0), b(0);

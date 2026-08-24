@@ -1528,6 +1528,7 @@ function Q({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 			/* @__PURE__ */ d("div", {
 				className: "flex items-center gap-2 p-3 border-t border-border bg-surface-panel/50",
 				children: [/* @__PURE__ */ u(t, {
+					"aria-label": "Message",
 					value: g,
 					onChange: (e) => _(e.target.value),
 					onKeyDown: (e) => e.key === "Enter" && y(),
@@ -2019,6 +2020,7 @@ function ve({ entries: n, className: r, onDelete: i }) {
 			/* @__PURE__ */ d("div", {
 				className: "flex items-center gap-2 px-3 py-2 border-b border-border-subtle",
 				children: [/* @__PURE__ */ u(t, {
+					"aria-label": "Search keys/values",
 					size: "sm",
 					value: s,
 					onChange: (e) => l(e.target.value),

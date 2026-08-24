@@ -1,9 +1,9 @@
 import "./ToastProvider-DPq8u2eM.js";
 import { t as e } from "./cn-DhjIN-s0.js";
-import "./StatusPill-DEit2_T4.js";
+import "./StatusPill-CoK1q9Yc.js";
 import "./Button-CTpms90-.js";
 import { t } from "./Card-CcJetqWt.js";
-import "./FormField-6WM9sVys.js";
+import "./FormField-nh5TxSKB.js";
 import "./FileUploadDrop-CpLUJEjW.js";
 import "./Banner-BLOg1hC_.js";
 import "./Chart-B40fkHgm.js";
@@ -1215,7 +1215,7 @@ function Ke({ value: t, onChange: n, placeholder: r, onClear: i, className: a, s
 				onChange: (e) => n(e.target.value),
 				placeholder: r ?? "Search…",
 				autoFocus: s,
-				"aria-label": c,
+				"aria-label": c ?? r ?? "Search",
 				className: "w-full pl-8 pr-7 py-1.5 text-sm rounded-md border border-[var(--color-border-field,#d1d5db)] bg-white text-[var(--color-text-primary)] placeholder:text-[var(--color-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-colors"
 			}),
 			t && /* @__PURE__ */ O("button", {
@@ -1613,23 +1613,25 @@ function G({ layers: t, orientation: o = "vertical", connector: s = "arrow", cla
 var rt = G;
 //#endregion
 //#region src/components/shared/ChatComposer.tsx
-function it({ value: t, onChange: n, onSubmit: r, disabled: i = !1, multiline: a = !1, placeholder: o, submitLabel: s = "→", className: c, style: l, autoFocus: u, maxRows: d = 4 }) {
-	let f = !i && t.trim().length > 0, p = () => {
-		f && r();
-	}, m = (e) => {
+function it({ value: t, onChange: n, onSubmit: r, disabled: i = !1, multiline: a = !1, placeholder: o, submitLabel: s = "→", className: c, style: l, autoFocus: u, maxRows: d = 4, "aria-label": f = "Message", "aria-labelledby": p, submitAriaLabel: m = "Send" }) {
+	let h = !i && t.trim().length > 0, g = typeof s == "string" && /\p{L}|\p{N}/u.test(s) ? void 0 : m, _ = p ? void 0 : f, v = () => {
+		h && r();
+	}, y = (e) => {
 		if (e.key === "Enter") {
 			if (a && e.shiftKey) return;
-			e.preventDefault(), p();
+			e.preventDefault(), v();
 		}
-	}, h = e("flex-1 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-field,#d1d5db)] bg-white text-[var(--color-text-primary)]", "placeholder:text-[var(--color-text-tertiary)]", "focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent", "resize-none", i && "opacity-50 cursor-not-allowed bg-[var(--color-surface-hover)]");
+	}, b = e("flex-1 px-3 py-2 text-sm rounded-lg border border-[var(--color-border-field,#d1d5db)] bg-white text-[var(--color-text-primary)]", "placeholder:text-[var(--color-text-tertiary)]", "focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent", "resize-none", i && "opacity-50 cursor-not-allowed bg-[var(--color-surface-hover)]");
 	return /* @__PURE__ */ k("div", {
 		className: e("flex items-end gap-2 p-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]", c),
 		style: l,
 		children: [a ? /* @__PURE__ */ O("textarea", {
-			className: h,
+			"aria-label": _,
+			"aria-labelledby": p,
+			className: b,
 			value: t,
 			onChange: (e) => n(e.target.value),
-			onKeyDown: m,
+			onKeyDown: y,
 			disabled: i,
 			placeholder: o,
 			autoFocus: u,
@@ -1640,18 +1642,21 @@ function it({ value: t, onChange: n, onSubmit: r, disabled: i = !1, multiline: a
 			}
 		}) : /* @__PURE__ */ O("input", {
 			type: "text",
-			className: h,
+			"aria-label": _,
+			"aria-labelledby": p,
+			className: b,
 			value: t,
 			onChange: (e) => n(e.target.value),
-			onKeyDown: m,
+			onKeyDown: y,
 			disabled: i,
 			placeholder: o,
 			autoFocus: u
 		}), /* @__PURE__ */ O("button", {
 			type: "button",
-			onClick: p,
-			disabled: !f,
-			className: e("px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex-shrink-0", f ? "bg-[var(--color-primary)] text-white hover:opacity-90" : "bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] cursor-not-allowed"),
+			"aria-label": g,
+			onClick: v,
+			disabled: !h,
+			className: e("px-3 py-2 rounded-lg text-sm font-semibold transition-colors flex-shrink-0", h ? "bg-[var(--color-primary)] text-white hover:opacity-90" : "bg-[var(--color-surface-hover)] text-[var(--color-text-tertiary)] cursor-not-allowed"),
 			children: s
 		})]
 	});

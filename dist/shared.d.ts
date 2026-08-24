@@ -261,7 +261,7 @@ export declare interface ChannelHeaderProps {
  * - Enter submits (Shift+Enter inserts newline in multiline mode).
  * - Submit disabled when `disabled` or value is empty/whitespace.
  */
-export declare function ChatComposer({ value, onChange, onSubmit, disabled, multiline, placeholder, submitLabel, className, style, autoFocus, maxRows, }: ChatComposerProps): JSX.Element;
+export declare function ChatComposer({ value, onChange, onSubmit, disabled, multiline, placeholder, submitLabel, className, style, autoFocus, maxRows, 'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledBy, submitAriaLabel, }: ChatComposerProps): JSX.Element;
 
 export declare interface ChatComposerProps {
     value: string;
@@ -278,6 +278,24 @@ export declare interface ChatComposerProps {
     autoFocus?: boolean;
     /** for multiline, max rows before scroll (default 4) */
     maxRows?: number;
+    /**
+     * Accessible name for the message field (default "Message").
+     *
+     * The field is rendered internally, so a host has no way to wrap it in its
+     * own `<label>`; without this it had no accessible name at all and announced
+     * as a bare "edit text". A `placeholder` is not a substitute — browsers only
+     * fall back to it, and it is gone the moment the user types.
+     */
+    'aria-label'?: string;
+    /** Id of an existing visible element naming the field; wins over `aria-label`. */
+    'aria-labelledby'?: string;
+    /**
+     * Accessible name for the send button. Only applied when `submitLabel` has
+     * no readable text of its own — the default `'→'` and any icon node. When
+     * `submitLabel` IS words ("Send", "Post"), that visible text is the name and
+     * this is ignored, so the spoken name can never contradict what is on screen.
+     */
+    submitAriaLabel?: string;
 }
 
 export declare function Chip({ tone, size, solid, mono, dot, uppercase, icon, children, title, className, style, 'data-testid': testId, 'aria-label': ariaLabel, }: ChipProps): JSX.Element;
@@ -744,7 +762,7 @@ export declare function formatTypingBanner(names: string[]): string;
  * for the error state. Use the render-prop API so we don't have to wrap
  * every kind of input the library ships.
  */
-export declare function FormField({ label, hint, error, required, layout, children, className, style, 'data-testid': testId, }: FormFieldProps): JSX.Element;
+export declare function FormField({ label, hint, error, required, layout, children, className, labelClassName, style, 'data-testid': testId, }: FormFieldProps): JSX.Element;
 
 export declare type FormFieldLayout = 'stacked' | 'inline';
 
@@ -777,6 +795,15 @@ export declare interface FormFieldProps {
         'aria-required'?: boolean;
     }) => ReactNode;
     className?: string;
+    /**
+     * Overrides the label's typography. Exists so surfaces with their own label
+     * look — the uppercase filter-bar captions on the identity admin pages, for
+     * instance — can adopt this component for its `htmlFor` / `aria-describedby`
+     * wiring instead of hand-rolling a detached `<label>` that names nothing.
+     * Merged over the defaults, so error colouring still applies unless you
+     * override it.
+     */
+    labelClassName?: string;
     style?: CSSProperties;
     'data-testid'?: string;
 }
@@ -1673,9 +1700,11 @@ export declare interface TabsProps {
 
 export declare type TabsVariant = 'underline' | 'pill' | 'segmented';
 
-export declare function TagEditor({ value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
+export declare function TagEditor({ 'aria-label': ariaLabel, value, onChange, placeholder, suggestions, lowercase, }: TagEditorProps): JSX.Element;
 
 export declare interface TagEditorProps {
+    /** Accessible name for the draft-tag box; defaults to the placeholder text. */
+    'aria-label'?: string;
     value: string[];
     onChange: (tags: string[]) => void;
     placeholder?: string;

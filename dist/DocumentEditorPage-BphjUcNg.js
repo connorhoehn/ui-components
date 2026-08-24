@@ -8,7 +8,7 @@ import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./activationKey-CjbL3LUv.js";
 import { t as g } from "./Input-DcK2h-jK.js";
 import { t as _ } from "./Textarea-C3t5PCLv.js";
-import { i as v, t as y } from "./renderers-Cud7AJCe.js";
+import { i as v, t as y } from "./renderers-UTjuxiRH.js";
 import { t as b } from "./useHangoutEmbed-CzbKGc3C.js";
 import { t as x } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as S, useCallback as C, useEffect as w, useImperativeHandle as T, useMemo as E, useRef as D, useState as O } from "react";
@@ -871,6 +871,7 @@ function z({ meta: e, mode: t, onModeChange: n, participants: r, onUpdateMeta: i
 						children: "← Documents"
 					}),
 					/* @__PURE__ */ A(g, {
+						"aria-label": "Document title",
 						className: p("w-auto h-auto min-w-[180px] text-base font-semibold border-transparent bg-transparent py-1 px-2"),
 						value: e.title,
 						placeholder: "Untitled document",

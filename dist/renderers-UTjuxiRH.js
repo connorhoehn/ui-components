@@ -7,7 +7,7 @@ import { t as s } from "./Modal-DbKyLw86.js";
 import { t as c } from "./Input-DcK2h-jK.js";
 import { t as l } from "./Textarea-C3t5PCLv.js";
 import { t as u } from "./Select-Z0TLUVeL.js";
-import { t as d } from "./Checkbox-CsbxMNgR.js";
+import { t as d } from "./Checkbox-DsS7fIUO.js";
 import { useCallback as f, useEffect as p, useId as m, useMemo as h, useRef as g, useState as _ } from "react";
 import { Fragment as v, jsx as y, jsxs as b } from "react/jsx-runtime";
 import * as x from "yjs";

@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.94.0] — 2026-08-24
+
+### Fixed — form labels outside `pipelines/`
+
+The v2.89.0 `ConfigField` migration fixed 106 fields, but only inside
+`pipelines/nodes/`. The same defect was live across `identity/`, `ingest/`,
+`doc-types/`, `field-types/`, `social/`, `agents/`, `doc-editor/` and
+`typed-documents/`: a caption rendered as a `<span>` — not even a `<label>`,
+so `htmlFor` was never on the table — or a `<label>` with no `htmlFor`
+wrapping no control. Either way the input announced as a bare "edit text"
+with no name.
+
+`FieldTypesPage` had the sharper version: its "Label is required" validation
+message was plain text with nothing pointing at it, so a rejected field name
+was announced **nowhere**. A screen-reader user pressing Next got silence and
+no indication why the wizard didn't advance.
+
+Adds `identity/shared/FilterField.tsx` for the repeated filter-control shape.
+
+### Note on how this landed
+
+The agent doing this work stalled before committing, so the source changes
+were finished but its wizard test was mid-write. Completing it turned up
+three things worth recording, because each one would have made the test lie:
+the page opens on a saved-types list, so the wizard needs "+ New" clicked
+first; Next is `disabled` until a field type is chosen, so the empty-name
+error is only reachable as pick-type-**then**-advance; and the final
+assertion was wrapped in `if (alert)`, which passes when the error is
+announced nowhere — precisely the bug it exists to catch. It now asserts
+unconditionally, and reverting the two source files fails all three tests.
+
 ## [2.93.0] — 2026-08-24
 
 Four parallel efforts: a StrictMode hunt, an `api/` + `observability` audit,

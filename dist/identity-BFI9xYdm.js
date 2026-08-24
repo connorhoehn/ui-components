@@ -2,7 +2,7 @@ import { t as e } from "./cn-DhjIN-s0.js";
 import { t } from "./useEventCallback-Cwx9QVSi.js";
 import { t as n } from "./Button-CTpms90-.js";
 import { t as r } from "./Card-CcJetqWt.js";
-import { a as i, c as a, i as o, l as s, n as c, o as l, r as u, s as d, t as f } from "./FormField-6WM9sVys.js";
+import { a as i, c as a, i as o, l as s, n as c, o as l, r as u, s as d, t as f } from "./FormField-nh5TxSKB.js";
 import { t as p } from "./Banner-BLOg1hC_.js";
 import { t as m } from "./Chip-2lIuHwy5.js";
 import { t as h } from "./Modal-DbKyLw86.js";
@@ -12,7 +12,7 @@ import { t as v } from "./Input-DcK2h-jK.js";
 import { t as y } from "./Textarea-C3t5PCLv.js";
 import { t as b } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as x } from "./Select-Z0TLUVeL.js";
-import { t as S } from "./Checkbox-CsbxMNgR.js";
+import { t as S } from "./Checkbox-DsS7fIUO.js";
 import { useCallback as C, useEffect as w, useId as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
 //#region src/components/identity/admin/AdminDashboardPage.tsx
@@ -238,37 +238,46 @@ function P({ pools: e, onCreatePool: t, onEditPool: r, onDeletePool: i, onViewPo
 //#endregion
 //#region src/components/identity/shared/FormField.tsx
 function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: a, required: o, placeholder: s, options: c, helpText: l, disabled: u }) {
-	let d = C((e) => {
+	let d = T(), p = C((e) => {
 		i(n === "number" ? Number(e.target.value) : e.target.value);
 	}, [i, n]);
-	return n === "checkbox" ? /* @__PURE__ */ j("div", {
-		className: "mb-4",
-		children: [
-			/* @__PURE__ */ j("label", {
-				className: "flex items-center gap-2 cursor-pointer",
-				children: [/* @__PURE__ */ A(S, {
-					name: t,
-					checked: !!r,
-					onChange: i,
-					disabled: u
-				}), /* @__PURE__ */ j("span", {
-					className: "text-sm text-text-primary",
-					children: [e, o && /* @__PURE__ */ A("span", {
-						className: "text-danger-fg",
-						children: " *"
+	if (n === "checkbox") {
+		let n = a || l ? `${d}-desc` : void 0;
+		return /* @__PURE__ */ j("div", {
+			className: "mb-4",
+			children: [
+				/* @__PURE__ */ j("label", {
+					className: "flex items-center gap-2 cursor-pointer",
+					children: [/* @__PURE__ */ A(S, {
+						name: t,
+						checked: !!r,
+						onChange: i,
+						disabled: u,
+						"aria-describedby": n
+					}), /* @__PURE__ */ j("span", {
+						className: "text-sm text-text-primary",
+						children: [e, o && /* @__PURE__ */ A("span", {
+							"aria-hidden": "true",
+							className: "text-danger-fg",
+							children: " *"
+						})]
 					})]
-				})]
-			}),
-			a && /* @__PURE__ */ A("p", {
-				className: "mt-1 text-sm text-danger-fg",
-				children: a
-			}),
-			l && !a && /* @__PURE__ */ A("p", {
-				className: "mt-1 text-sm text-text-tertiary",
-				children: l
-			})
-		]
-	}) : /* @__PURE__ */ A(f, {
+				}),
+				a && /* @__PURE__ */ A("p", {
+					id: n,
+					role: "alert",
+					className: "mt-1 text-sm text-danger-fg",
+					children: a
+				}),
+				l && !a && /* @__PURE__ */ A("p", {
+					id: n,
+					className: "mt-1 text-sm text-text-tertiary",
+					children: l
+				})
+			]
+		});
+	}
+	return /* @__PURE__ */ A(f, {
 		label: e,
 		required: o,
 		error: a,
@@ -278,7 +287,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 			...i,
 			name: t,
 			value: String(r),
-			onChange: d,
+			onChange: p,
 			placeholder: s,
 			disabled: u,
 			required: o,
@@ -289,7 +298,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 			...i,
 			name: t,
 			value: String(r),
-			onChange: d,
+			onChange: p,
 			disabled: u,
 			required: o,
 			invalid: !!a,
@@ -302,7 +311,7 @@ function F({ label: e, name: t, type: n = "text", value: r, onChange: i, error: 
 			type: n,
 			name: t,
 			value: String(r),
-			onChange: d,
+			onChange: p,
 			placeholder: s,
 			disabled: u,
 			required: o,
@@ -462,12 +471,14 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 								className: "flex gap-2 items-center mb-2",
 								children: [
 									/* @__PURE__ */ A(v, {
+										"aria-label": `Attribute ${t + 1} name`,
 										className: "flex-1",
 										placeholder: "Attribute name",
 										value: e.key,
 										onChange: (e) => P(t, "key", e.target.value)
 									}),
 									/* @__PURE__ */ A(v, {
+										"aria-label": `Attribute ${t + 1} type`,
 										className: "flex-1",
 										placeholder: "Type (string, number, etc.)",
 										value: e.value,
@@ -476,6 +487,7 @@ function I({ pool: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 									/* @__PURE__ */ A(n, {
 										variant: "danger",
 										size: "sm",
+										"aria-label": `Remove attribute ${t + 1}`,
 										onClick: () => N(t),
 										children: "Remove"
 									})
@@ -522,15 +534,15 @@ var L = {
 	COMPROMISED: "danger",
 	ARCHIVED: "neutral",
 	UNKNOWN: "neutral"
-}, ee = {
+}, R = {
 	success: "success",
 	warning: "warning",
 	danger: "danger",
 	info: "info",
 	neutral: "neutral"
 };
-function R({ status: e, variant: t }) {
-	let n = t ? ee[t] || "neutral" : L[e] || "neutral";
+function z({ status: e, variant: t }) {
+	let n = t ? R[t] || "neutral" : L[e] || "neutral";
 	return /* @__PURE__ */ A(m, {
 		tone: n,
 		size: "sm",
@@ -539,7 +551,7 @@ function R({ status: e, variant: t }) {
 }
 //#endregion
 //#region src/components/identity/admin/UserListPage.tsx
-function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser: a, loading: o }) {
+function B({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser: a, loading: o }) {
 	let [s, c] = O(null), [l, d] = O(!1), [f, m] = O(null), h = C(async (e) => {
 		d(!0), m(null);
 		try {
@@ -566,7 +578,7 @@ function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 			key: "status",
 			header: "Status",
 			width: "180px",
-			render: (e) => /* @__PURE__ */ A(R, { status: e.status })
+			render: (e) => /* @__PURE__ */ A(z, { status: e.status })
 		},
 		{
 			key: "createdAt",
@@ -622,7 +634,7 @@ function z({ users: e, poolName: t, onCreateUser: r, onEditUser: i, onDeleteUser
 }
 //#endregion
 //#region src/components/identity/admin/UserFormPage.tsx
-function B({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onCancel: o, error: s }) {
+function V({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onCancel: o, error: s }) {
 	let [c, l] = O(e?.email ?? ""), [d, f] = O(""), [m, h] = O(e?.givenName ?? ""), [g, _] = O(e?.familyName ?? ""), [v, y] = O(e?.nickname ?? ""), [b, x] = O(e?.picture ?? ""), [S, w] = O(e?.website ?? ""), [T, E] = O(Object.fromEntries(Object.entries(e?.customAttributes ?? {}).map(([e, t]) => [e, String(t)]))), [D, k] = O(!1), M = C((e, t) => {
 		E((n) => ({
 			...n,
@@ -754,7 +766,7 @@ function B({ user: e, isEdit: t, customAttributeDefinitions: i, onSubmit: a, onC
 }
 //#endregion
 //#region src/components/identity/admin/GroupListPage.tsx
-function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteGroup: a, loading: o }) {
+function H({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteGroup: a, loading: o }) {
 	let [s, c] = O(null), [l, d] = O(!1), [f, h] = O(null), _ = C(async (e) => {
 		d(!0), h(null);
 		try {
@@ -840,19 +852,19 @@ function V({ groups: e, poolName: t, onCreateGroup: r, onEditGroup: i, onDeleteG
 }
 //#endregion
 //#region src/components/identity/admin/GroupFormPage.tsx
-function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
-	let [f, m] = O(e?.groupName ?? ""), [h, g] = O(e?.description ?? ""), [_, y] = O(e?.permissions ?? []), [b, S] = O(""), [w, T] = O(""), [E, D] = O(!1), k = C((e) => {
+function U({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, onAddMember: s, onRemoveMember: c, onCancel: l, error: d }) {
+	let [f, m] = O(e?.groupName ?? ""), [h, g] = O(e?.description ?? ""), [_, y] = O(e?.permissions ?? []), [b, S] = O(""), [w, E] = O(""), [D, k] = O(!1), M = T(), N = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 			let t = b.trim();
 			t && !_.includes(t) && y((e) => [...e, t]), S("");
 		}
-	}, [b, _]), M = C((e) => {
+	}, [b, _]), P = C((e) => {
 		y((t) => t.filter((t) => t !== e));
-	}, []), N = C(async () => {
-		w && s && (await s(w), T(""));
-	}, [w, s]), P = C(async (e) => {
-		e.preventDefault(), D(!0);
+	}, []), I = C(async () => {
+		w && s && (await s(w), E(""));
+	}, [w, s]), L = C(async (e) => {
+		e.preventDefault(), k(!0);
 		try {
 			await o({
 				groupName: f,
@@ -860,7 +872,7 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 				permissions: _
 			});
 		} finally {
-			D(!1);
+			k(!1);
 		}
 	}, [
 		f,
@@ -877,7 +889,7 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 		}), /* @__PURE__ */ A(r, {
 			padding: "md",
 			children: /* @__PURE__ */ j("form", {
-				onSubmit: P,
+				onSubmit: L,
 				children: [
 					/* @__PURE__ */ A(F, {
 						label: "Group Name",
@@ -897,6 +909,7 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 					}),
 					/* @__PURE__ */ j("section", { children: [
 						/* @__PURE__ */ A("h3", {
+							id: `${M}-permissions`,
 							className: "text-base font-semibold text-text-primary mt-6 mb-2",
 							children: "Permissions"
 						}),
@@ -908,21 +921,23 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 									variant: "ghost",
 									size: "sm",
 									className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
-									onClick: () => M(e),
+									onClick: () => P(e),
 									"aria-label": `Remove permission ${e}`,
 									children: "x"
 								})]
 							}, e))
 						}),
 						/* @__PURE__ */ A(v, {
+							"aria-labelledby": `${M}-permissions`,
 							placeholder: "Type a permission and press Enter",
 							value: b,
 							onChange: (e) => S(e.target.value),
-							onKeyDown: k
+							onKeyDown: N
 						})
 					] }),
 					t && i && /* @__PURE__ */ j("section", { children: [
 						/* @__PURE__ */ A("h3", {
+							id: `${M}-members`,
 							className: "text-base font-semibold text-text-primary mt-6 mb-2",
 							children: "Members"
 						}),
@@ -944,9 +959,10 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 						a && a.length > 0 && s && /* @__PURE__ */ j("div", {
 							className: "flex gap-2 mt-2",
 							children: [/* @__PURE__ */ A(x, {
+								"aria-label": "Add member",
 								className: "flex-1",
 								value: w,
-								onChange: (e) => T(e.target.value),
+								onChange: (e) => E(e.target.value),
 								placeholder: "Select user to add...",
 								options: a.map((e) => ({
 									value: e.userId,
@@ -955,7 +971,7 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 							}), /* @__PURE__ */ A(n, {
 								variant: "ghost",
 								size: "sm",
-								onClick: N,
+								onClick: I,
 								disabled: !w,
 								children: "Add"
 							})]
@@ -967,8 +983,8 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 							type: "submit",
 							variant: "primary",
 							size: "lg",
-							disabled: E,
-							children: E ? "Saving..." : t ? "Update Group" : "Create Group"
+							disabled: D,
+							children: D ? "Saving..." : t ? "Update Group" : "Create Group"
 						}), /* @__PURE__ */ A(n, {
 							variant: "ghost",
 							size: "lg",
@@ -983,7 +999,7 @@ function H({ group: e, isEdit: t, members: i, availableUsers: a, onSubmit: o, on
 }
 //#endregion
 //#region src/components/identity/admin/ApplicationListPage.tsx
-function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp: i, onDeleteApp: a, loading: o }) {
+function W({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp: i, onDeleteApp: a, loading: o }) {
 	let [s, c] = O(null), [l, d] = O(!1), [f, h] = O(null), _ = C(async (e) => {
 		d(!0), h(null);
 		try {
@@ -1088,48 +1104,52 @@ function U({ applications: e, onCreateApp: t, onCreateAppWithPool: r, onEditApp:
 }
 //#endregion
 //#region src/components/identity/admin/ApplicationFormPage.tsx
-function W({ label: e, values: t, onChange: r, placeholder: i }) {
-	let a = () => r([...t, ""]), o = (e) => r(t.filter((t, n) => n !== e)), s = (e, n) => r(t.map((t, r) => r === e ? n : t));
+function G({ label: e, values: t, onChange: r, placeholder: i }) {
+	let a = T(), o = () => r([...t, ""]), s = (e) => r(t.filter((t, n) => n !== e)), c = (e, n) => r(t.map((t, r) => r === e ? n : t)), l = `${a}-label`;
 	return /* @__PURE__ */ j("div", {
 		className: "mb-4",
-		children: [
-			/* @__PURE__ */ A("label", {
-				className: "block mb-1 text-sm font-semibold text-text-primary",
-				children: e
-			}),
-			t.map((e, t) => /* @__PURE__ */ j("div", {
+		children: [/* @__PURE__ */ A("label", {
+			id: l,
+			className: "block mb-1 text-sm font-semibold text-text-primary",
+			children: e
+		}), /* @__PURE__ */ j("div", {
+			role: "group",
+			"aria-labelledby": l,
+			children: [t.map((t, r) => /* @__PURE__ */ j("div", {
 				className: "flex gap-2 items-center mb-1.5",
 				children: [/* @__PURE__ */ A(v, {
+					"aria-label": `${e} ${r + 1}`,
 					className: "flex-1",
-					value: e,
-					onChange: (e) => s(t, e.target.value),
+					value: t,
+					onChange: (e) => c(r, e.target.value),
 					placeholder: i
 				}), /* @__PURE__ */ A(n, {
 					variant: "danger",
 					size: "sm",
-					onClick: () => o(t),
+					"aria-label": `Remove ${e} ${r + 1}`,
+					onClick: () => s(r),
 					children: "Remove"
 				})]
-			}, t)),
-			/* @__PURE__ */ A(n, {
+			}, r)), /* @__PURE__ */ A(n, {
 				variant: "ghost",
 				size: "sm",
-				onClick: a,
+				"aria-label": `Add ${e}`,
+				onClick: o,
 				children: "+ Add"
-			})
-		]
+			})]
+		})]
 	});
 }
-var G = [
+var K = [
 	"authorization_code",
 	"client_credentials",
 	"refresh_token"
-], K = [
+], q = [
 	"code",
 	"token",
 	"id_token"
 ];
-function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
+function ee({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, error: s }) {
 	let [c, l] = O(e?.clientName ?? ""), [d, f] = O(e?.poolId ?? ""), [m, h] = O(e?.redirectUris ?? [""]), [g, _] = O(e?.postLogoutRedirectUris ?? []), [v, y] = O(e?.grantTypes ?? ["authorization_code"]), [b, x] = O(e?.responseTypes ?? ["code"]), [w, T] = O(e?.scope ?? "openid profile email"), [E, D] = O(!1), k = C((e) => {
 		y((t) => t.includes(e) ? t.filter((t) => t !== e) : [...t, e]);
 	}, []), M = C((e) => {
@@ -1191,13 +1211,13 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						})),
 						placeholder: "Select a pool..."
 					}),
-					/* @__PURE__ */ A(W, {
+					/* @__PURE__ */ A(G, {
 						label: "Redirect URIs",
 						values: m,
 						onChange: h,
 						placeholder: "https://app.example.com/callback"
 					}),
-					/* @__PURE__ */ A(W, {
+					/* @__PURE__ */ A(G, {
 						label: "Post-Logout Redirect URIs",
 						values: g,
 						onChange: _,
@@ -1208,7 +1228,7 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						children: "Grant Types"
 					}), /* @__PURE__ */ A("div", {
 						className: "flex flex-col gap-2 mb-4",
-						children: G.map((e) => /* @__PURE__ */ j("label", {
+						children: K.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ A(S, {
 								checked: v.includes(e),
@@ -1221,7 +1241,7 @@ function q({ application: e, isEdit: t, pools: i, onSubmit: a, onCancel: o, erro
 						children: "Response Types"
 					}), /* @__PURE__ */ A("div", {
 						className: "flex flex-col gap-2 mb-4",
-						children: K.map((e) => /* @__PURE__ */ j("label", {
+						children: q.map((e) => /* @__PURE__ */ j("label", {
 							className: "flex items-center gap-2 text-base text-text-primary cursor-pointer",
 							children: [/* @__PURE__ */ A(S, {
 								checked: b.includes(e),
@@ -1328,6 +1348,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 						l.map((e, t) => /* @__PURE__ */ j("div", {
 							className: "flex gap-2 items-center mb-1.5",
 							children: [/* @__PURE__ */ A(v, {
+								"aria-label": `Redirect URI ${t + 1}`,
 								className: "flex-1",
 								value: e,
 								onChange: (e) => x(t, e.target.value),
@@ -1335,6 +1356,7 @@ function Y({ onSubmit: e, onCancel: t, error: i }) {
 							}), l.length > 1 && /* @__PURE__ */ A(n, {
 								variant: "danger",
 								size: "sm",
+								"aria-label": `Remove redirect URI ${t + 1}`,
 								onClick: () => b(t),
 								children: "Remove"
 							})]
@@ -1516,16 +1538,16 @@ function X({ templates: e, onCreateTemplate: t, onEditTemplate: r, onDeleteTempl
 //#endregion
 //#region src/components/identity/admin/EmailTemplateFormPage.tsx
 function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
-	let [s, c] = O(e?.name ?? ""), [l, d] = O(e?.subject ?? ""), [f, m] = O(e?.htmlBody ?? ""), [h, g] = O(e?.textBody ?? ""), [_, b] = O(e?.variables ?? []), [x, S] = O(""), [w, T] = O(!1), [E, D] = O(!1), k = C((e) => {
+	let [s, c] = O(e?.name ?? ""), [l, d] = O(e?.subject ?? ""), [f, m] = O(e?.htmlBody ?? ""), [h, g] = O(e?.textBody ?? ""), [_, b] = O(e?.variables ?? []), [x, S] = O(""), [w, E] = O(!1), D = T(), [k, M] = O(!1), N = C((e) => {
 		if (e.key === "Enter") {
 			e.preventDefault();
 			let t = x.trim();
 			t && !_.includes(t) && b((e) => [...e, t]), S("");
 		}
-	}, [x, _]), M = C((e) => {
+	}, [x, _]), P = C((e) => {
 		b((t) => t.filter((t) => t !== e));
-	}, []), N = C(async (e) => {
-		e.preventDefault(), D(!0);
+	}, []), I = C(async (e) => {
+		e.preventDefault(), M(!0);
 		try {
 			await i({
 				name: s,
@@ -1535,7 +1557,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 				variables: _
 			});
 		} finally {
-			D(!1);
+			M(!1);
 		}
 	}, [
 		s,
@@ -1554,7 +1576,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 		}), /* @__PURE__ */ A(r, {
 			padding: "md",
 			children: /* @__PURE__ */ j("form", {
-				onSubmit: N,
+				onSubmit: I,
 				children: [
 					/* @__PURE__ */ A(F, {
 						label: "Template Name",
@@ -1578,16 +1600,18 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 							/* @__PURE__ */ j("div", {
 								className: "flex items-center justify-between mb-1",
 								children: [/* @__PURE__ */ A("label", {
+									htmlFor: `${D}-html-body`,
 									className: "text-sm font-semibold text-text-primary",
 									children: "HTML Body"
 								}), /* @__PURE__ */ A(n, {
 									variant: "ghost",
 									size: "sm",
-									onClick: () => T((e) => !e),
+									onClick: () => E((e) => !e),
 									children: w ? "Hide Preview" : "Show Preview"
 								})]
 							}),
 							/* @__PURE__ */ A(y, {
+								id: `${D}-html-body`,
 								value: f,
 								onChange: (e) => m(e.target.value),
 								placeholder: "<html><body>...</body></html>",
@@ -1610,6 +1634,7 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 					}),
 					/* @__PURE__ */ j("section", { children: [
 						/* @__PURE__ */ A("h3", {
+							id: `${D}-variables`,
 							className: "text-base font-semibold text-text-primary mt-6 mb-2",
 							children: "Variables"
 						}),
@@ -1621,17 +1646,18 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 									variant: "ghost",
 									size: "sm",
 									className: "p-0 text-white text-[14px] leading-none min-w-0 min-h-0",
-									onClick: () => M(e),
+									onClick: () => P(e),
 									"aria-label": `Remove variable ${e}`,
 									children: "x"
 								})]
 							}, e))
 						}),
 						/* @__PURE__ */ A(v, {
+							"aria-labelledby": `${D}-variables`,
 							placeholder: "Type variable name and press Enter",
 							value: x,
 							onChange: (e) => S(e.target.value),
-							onKeyDown: k
+							onKeyDown: N
 						})
 					] }),
 					/* @__PURE__ */ j("div", {
@@ -1640,8 +1666,8 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 							type: "submit",
 							variant: "primary",
 							size: "lg",
-							disabled: E,
-							children: E ? "Saving..." : t ? "Update Template" : "Create Template"
+							disabled: k,
+							children: k ? "Saving..." : t ? "Update Template" : "Create Template"
 						}), /* @__PURE__ */ A(n, {
 							variant: "ghost",
 							size: "lg",
@@ -1652,6 +1678,18 @@ function te({ template: e, isEdit: t, onSubmit: i, onCancel: a, error: o }) {
 				]
 			})
 		})]
+	});
+}
+//#endregion
+//#region src/components/identity/shared/FilterField.tsx
+function Z({ label: t, hint: n, children: r, layout: i = "stacked", className: a }) {
+	return /* @__PURE__ */ A(f, {
+		label: t,
+		hint: n,
+		layout: i,
+		className: a ?? (i === "stacked" ? "gap-1.5" : void 0),
+		labelClassName: e("text-xs font-semibold text-neutral uppercase tracking-wide", i === "inline" && "min-w-0"),
+		children: ({ labelId: e, ...t }) => r(t)
 	});
 }
 //#endregion
@@ -1674,7 +1712,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 			key: "mfaEnabled",
 			header: "MFA Status",
 			width: "140px",
-			render: (e) => /* @__PURE__ */ A(R, {
+			render: (e) => /* @__PURE__ */ A(z, {
 				status: e.mfaEnabled ? "ENABLED" : "DISABLED",
 				variant: e.mfaEnabled ? "success" : "warning"
 			})
@@ -1753,12 +1791,11 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 					})
 				]
 			}),
-			i && i.length > 0 && l && /* @__PURE__ */ j("div", {
-				className: "flex items-center gap-3",
-				children: [/* @__PURE__ */ A("label", {
-					className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-					children: "Filter by pool"
-				}), /* @__PURE__ */ A(x, {
+			i && i.length > 0 && l && /* @__PURE__ */ A(Z, {
+				label: "Filter by pool",
+				layout: "inline",
+				children: (e) => /* @__PURE__ */ A(x, {
+					...e,
 					className: "w-64",
 					value: s,
 					onChange: (e) => c(e.target.value),
@@ -1769,7 +1806,7 @@ function ne({ metrics: e, users: t, pools: i, onRefresh: a, loading: o }) {
 						value: e.poolId,
 						label: `${e.poolName} (${e.userCount} users)`
 					}))]
-				})]
+				})
 			}),
 			/* @__PURE__ */ A(N, {
 				columns: f,
@@ -1864,12 +1901,10 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 				children: /* @__PURE__ */ j("div", {
 					className: "flex flex-wrap gap-4 items-end",
 					children: [
-						/* @__PURE__ */ j("div", {
-							className: "flex flex-col gap-1.5",
-							children: [/* @__PURE__ */ A("label", {
-								className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-								children: "Entity Type"
-							}), /* @__PURE__ */ A(x, {
+						/* @__PURE__ */ A(Z, {
+							label: "Entity Type",
+							children: (e) => /* @__PURE__ */ A(x, {
+								...e,
 								className: "w-40",
 								value: c,
 								onChange: (e) => l(e.target.value),
@@ -1880,55 +1915,47 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 									value: e,
 									label: e
 								}))]
-							})]
+							})
 						}),
-						/* @__PURE__ */ j("div", {
-							className: "flex flex-col gap-1.5",
-							children: [/* @__PURE__ */ A("label", {
-								className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-								children: "Entity ID"
-							}), /* @__PURE__ */ A(v, {
+						/* @__PURE__ */ A(Z, {
+							label: "Entity ID",
+							children: (e) => /* @__PURE__ */ A(v, {
+								...e,
 								className: "w-44",
 								value: d,
 								onChange: (e) => f(e.target.value),
 								placeholder: "Optional"
-							})]
+							})
 						}),
-						/* @__PURE__ */ j("div", {
-							className: "flex flex-col gap-1.5",
-							children: [/* @__PURE__ */ A("label", {
-								className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-								children: "From"
-							}), /* @__PURE__ */ A(v, {
+						/* @__PURE__ */ A(Z, {
+							label: "From",
+							children: (e) => /* @__PURE__ */ A(v, {
+								...e,
 								className: "w-52",
 								type: "datetime-local",
 								value: p,
 								onChange: (e) => m(e.target.value)
-							})]
+							})
 						}),
-						/* @__PURE__ */ j("div", {
-							className: "flex flex-col gap-1.5",
-							children: [/* @__PURE__ */ A("label", {
-								className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-								children: "To"
-							}), /* @__PURE__ */ A(v, {
+						/* @__PURE__ */ A(Z, {
+							label: "To",
+							children: (e) => /* @__PURE__ */ A(v, {
+								...e,
 								className: "w-52",
 								type: "datetime-local",
 								value: h,
 								onChange: (e) => g(e.target.value)
-							})]
+							})
 						}),
-						/* @__PURE__ */ j("div", {
-							className: "flex flex-col gap-1.5",
-							children: [/* @__PURE__ */ A("label", {
-								className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-								children: "Limit"
-							}), /* @__PURE__ */ A(v, {
+						/* @__PURE__ */ A(Z, {
+							label: "Limit",
+							children: (e) => /* @__PURE__ */ A(v, {
+								...e,
 								className: "w-[70px]",
 								type: "number",
 								value: _,
 								onChange: (e) => y(e.target.value)
-							})]
+							})
 						}),
 						/* @__PURE__ */ A(n, {
 							variant: "primary",
@@ -1962,29 +1989,25 @@ function ie({ records: e, onQuery: t, onViewEntity: i, onReplay: a, loading: o, 
 					/* @__PURE__ */ j("div", {
 						className: "flex flex-wrap gap-4 items-end mb-4",
 						children: [
-							/* @__PURE__ */ j("div", {
-								className: "flex flex-col gap-1.5",
-								children: [/* @__PURE__ */ A("label", {
-									className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-									children: "Entity ID"
-								}), /* @__PURE__ */ A(v, {
+							/* @__PURE__ */ A(Z, {
+								label: "Entity ID",
+								children: (e) => /* @__PURE__ */ A(v, {
+									...e,
 									className: "w-44",
 									value: b,
 									onChange: (e) => S(e.target.value),
 									placeholder: "entity-id"
-								})]
+								})
 							}),
-							/* @__PURE__ */ j("div", {
-								className: "flex flex-col gap-1.5",
-								children: [/* @__PURE__ */ A("label", {
-									className: "text-xs font-semibold text-neutral uppercase tracking-wide",
-									children: "At Timestamp"
-								}), /* @__PURE__ */ A(v, {
+							/* @__PURE__ */ A(Z, {
+								label: "At Timestamp",
+								children: (e) => /* @__PURE__ */ A(v, {
+									...e,
 									className: "w-52",
 									type: "datetime-local",
 									value: w,
 									onChange: (e) => T(e.target.value)
-								})]
+								})
 							}),
 							/* @__PURE__ */ A(n, {
 								variant: "primary",
@@ -2338,7 +2361,7 @@ function ce({ diagnostics: e, rates: c, dlq: f, onRedrive: h, onPurge: g, onRefr
 //#endregion
 //#region src/components/identity/auth/LoginPage.tsx
 function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = null, onLogin: s, onRegister: c, onForgotPassword: l, registrationEnabled: u = !0, forgotPasswordEnabled: d = !0, defaultTab: f = "signin" }) {
-	let [m, h] = O(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = O(!1), [v, y] = O(null), [x, S] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, ee] = O(""), [R, z] = O(""), [B, V] = O(!1), [H, U] = O(""), [W, G] = O(!1), K = o || v, q = C(async (e) => {
+	let [m, h] = O(() => f === "register" && !u || f === "forgot" && !d ? "signin" : f), [g, _] = O(!1), [v, y] = O(null), [x, S] = O(""), [w, T] = O(""), [E, D] = O(""), [M, N] = O(""), [P, I] = O(""), [L, R] = O(""), [z, B] = O(""), [V, H] = O(!1), [U, W] = O(""), [G, K] = O(!1), q = o || v, ee = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
 			await s(x, w);
@@ -2362,8 +2385,8 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 				email: E,
 				password: M,
 				givenName: L || void 0,
-				familyName: R || void 0,
-				enableMfa: B || void 0
+				familyName: z || void 0,
+				enableMfa: V || void 0
 			});
 		} catch (e) {
 			y(e instanceof Error ? e.message : "Registration failed");
@@ -2375,20 +2398,20 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 		M,
 		P,
 		L,
-		R,
-		B,
+		z,
+		V,
 		c
 	]), Y = C(async (e) => {
 		e.preventDefault(), y(null), _(!0);
 		try {
-			await l(H), G(!0);
+			await l(U), K(!0);
 		} catch (e) {
 			y(e instanceof Error ? e.message : "Request failed");
 		} finally {
 			_(!1);
 		}
-	}, [H, l]), X = (e) => {
-		h(e), y(null), G(!1);
+	}, [U, l]), X = (e) => {
+		h(e), y(null), K(!1);
 	};
 	return /* @__PURE__ */ A("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
@@ -2446,15 +2469,15 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 						})
 					]
 				}),
-				K && /* @__PURE__ */ A("div", {
+				q && /* @__PURE__ */ A("div", {
 					className: "mb-5",
 					children: /* @__PURE__ */ A(p, {
 						variant: "error",
-						children: K
+						children: q
 					})
 				}),
 				m === "signin" && /* @__PURE__ */ j("form", {
-					onSubmit: q,
+					onSubmit: ee,
 					"aria-label": "Sign in form",
 					children: [
 						/* @__PURE__ */ A("input", {
@@ -2513,7 +2536,7 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 									label: "Given Name",
 									name: "reg-given",
 									value: L,
-									onChange: (e) => ee(String(e)),
+									onChange: (e) => R(String(e)),
 									disabled: g
 								})
 							}), /* @__PURE__ */ A("div", {
@@ -2521,8 +2544,8 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 								children: /* @__PURE__ */ A(F, {
 									label: "Family Name",
 									name: "reg-family",
-									value: R,
-									onChange: (e) => z(String(e)),
+									value: z,
+									onChange: (e) => B(String(e)),
 									disabled: g
 								})
 							})]
@@ -2549,8 +2572,8 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Enable Multi-Factor Authentication",
 							name: "reg-mfa",
 							type: "checkbox",
-							value: B,
-							onChange: (e) => V(!!e),
+							value: V,
+							onChange: (e) => H(!!e),
 							disabled: g
 						}),
 						/* @__PURE__ */ A(n, {
@@ -2566,7 +2589,7 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 				m === "forgot" && /* @__PURE__ */ A("form", {
 					onSubmit: Y,
 					"aria-label": "Forgot password form",
-					children: W ? /* @__PURE__ */ A(p, {
+					children: G ? /* @__PURE__ */ A(p, {
 						variant: "success",
 						children: "If an account exists for that email, a password reset link has been sent."
 					}) : /* @__PURE__ */ j(k, { children: [
@@ -2578,8 +2601,8 @@ function le({ uid: t, interactionUrl: r, clientName: i, logoUrl: a, error: o = n
 							label: "Email",
 							name: "forgot-email",
 							type: "email",
-							value: H,
-							onChange: (e) => U(String(e)),
+							value: U,
+							onChange: (e) => W(String(e)),
 							required: !0,
 							placeholder: "you@example.com",
 							disabled: g
@@ -2702,7 +2725,7 @@ function fe({ clientName: t, scopes: r, redirectUri: i, onAuthorize: a, onDeny: 
 }
 //#endregion
 //#region src/components/identity/shared/QrCodeDisplay.tsx
-function Z({ value: e, size: t = 200, label: n }) {
+function Q({ value: e, size: t = 200, label: n }) {
 	return /* @__PURE__ */ j("figure", {
 		className: "flex flex-col items-center gap-2 m-0 p-4 border border-border rounded-md bg-white",
 		children: [/* @__PURE__ */ A("img", {
@@ -2719,7 +2742,7 @@ function Z({ value: e, size: t = 200, label: n }) {
 }
 //#endregion
 //#region src/components/identity/shared/CodeInput.tsx
-function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
+function $({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, autoFocus: a = !1 }) {
 	let [o, s] = O(Array(t).fill("")), c = D([]);
 	w(() => {
 		a && c.current[0] && c.current[0].focus();
@@ -2798,19 +2821,19 @@ function Q({ length: t = 6, onComplete: n, error: r = null, disabled: i = !1, au
 }
 //#endregion
 //#region src/components/identity/auth/MfaSetupPage.tsx
-var $ = [
+var pe = [
 	"name",
 	"scan",
 	"verify",
 	"backup"
-], pe = [
+], me = [
 	"Name",
 	"Scan",
 	"Verify",
 	"Backup"
 ];
-function me({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
-	let [l, u] = O(o === "scan" && !s ? "name" : o), [d, f] = O(!1), [m, h] = O(null), [g, _] = O(c), [v, y] = O(s ?? null), [b, x] = O(s?.backupCodes ?? []), [S, T] = O(!1), E = $.indexOf(l), k = C(async (e) => {
+function he({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
+	let [l, u] = O(o === "scan" && !s ? "name" : o), [d, f] = O(!1), [m, h] = O(null), [g, _] = O(c), [v, y] = O(s ?? null), [b, x] = O(s?.backupCodes ?? []), [S, T] = O(!1), E = pe.indexOf(l), k = C(async (e) => {
 		if (e.preventDefault(), g.trim()) {
 			h(null), f(!0);
 			try {
@@ -2862,14 +2885,14 @@ function me({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					className: "flex justify-center gap-6 mb-6",
 					role: "group",
 					"aria-label": "Setup progress",
-					children: $.map((t, n) => /* @__PURE__ */ j("div", {
+					children: pe.map((t, n) => /* @__PURE__ */ j("div", {
 						className: "flex flex-col items-center gap-1.5",
 						children: [/* @__PURE__ */ A("div", {
 							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < E ? "bg-success" : n === E ? "bg-info" : "bg-surface-emphasis"),
 							"aria-label": `Step ${n + 1}${n === E ? " (current)" : n < E ? " (completed)" : ""}`
 						}), /* @__PURE__ */ A("span", {
 							className: e("text-[10px] uppercase tracking-wide font-medium", n === E ? "text-text-primary" : "text-text-tertiary"),
-							children: pe[n]
+							children: me[n]
 						})]
 					}, t))
 				}),
@@ -2922,7 +2945,7 @@ function me({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					}),
 					/* @__PURE__ */ A("div", {
 						className: "flex justify-center mb-5",
-						children: /* @__PURE__ */ A(Z, {
+						children: /* @__PURE__ */ A(Q, {
 							value: v.qrCode,
 							size: 200,
 							label: g ? `Device: ${g}` : void 0
@@ -2957,7 +2980,7 @@ function me({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 						className: "text-sm text-neutral mb-6 mt-0 text-center leading-relaxed",
 						children: "Enter the 6-digit code from your authenticator app to confirm setup"
 					}),
-					/* @__PURE__ */ A(Q, {
+					/* @__PURE__ */ A($, {
 						onComplete: M,
 						error: m,
 						disabled: d,
@@ -3019,7 +3042,7 @@ function me({ onSetup: t, onVerify: r, onComplete: i, userEmail: a, initialStep:
 }
 //#endregion
 //#region src/components/identity/auth/MfaVerifyPage.tsx
-function he({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = "totp" }) {
+function ge({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = "totp" }) {
 	let [a, o] = O(i), [s, c] = O(!1), [l, u] = O(null), [d, f] = O(""), m = r || l, h = C(async (t) => {
 		u(null), c(!0);
 		try {
@@ -3086,7 +3109,7 @@ function he({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 							children: m
 						})
 					}),
-					/* @__PURE__ */ A(Q, {
+					/* @__PURE__ */ A($, {
 						onComplete: h,
 						error: null,
 						disabled: s,
@@ -3153,7 +3176,7 @@ function he({ onVerify: e, onVerifyBackup: t, error: r = null, defaultMode: i = 
 }
 //#endregion
 //#region src/components/identity/auth/MfaDashboardPage.tsx
-function ge(e) {
+function _e(e) {
 	try {
 		return new Date(e).toLocaleDateString(void 0, {
 			year: "numeric",
@@ -3164,7 +3187,7 @@ function ge(e) {
 		return e;
 	}
 }
-function _e({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameDevice: a, onRemoveDevice: o, loading: s = !1 }) {
+function ve({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameDevice: a, onRemoveDevice: o, loading: s = !1 }) {
 	let [c, l] = O(null), [u, d] = O(null), [f, h] = O(""), [v, y] = O(!1), [b, x] = O(null), S = C(async () => {
 		if (c) {
 			y(!0), x(null);
@@ -3281,7 +3304,7 @@ function _e({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 									}) : /* @__PURE__ */ j(k, { children: [/* @__PURE__ */ A("h3", {
 										className: "text-[15px] font-semibold text-text-primary m-0",
 										children: e.deviceName
-									}), /* @__PURE__ */ A(R, { status: e.isVerified ? "CONFIRMED" : "UNCONFIRMED" })] })
+									}), /* @__PURE__ */ A(z, { status: e.isVerified ? "CONFIRMED" : "UNCONFIRMED" })] })
 								})
 							}),
 							/* @__PURE__ */ j("p", {
@@ -3290,8 +3313,8 @@ function _e({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 									"Type: ",
 									e.deviceType,
 									" · Added: ",
-									ge(e.createdAt),
-									e.lastUsed && ` · Last used: ${ge(e.lastUsed)}`
+									_e(e.createdAt),
+									e.lastUsed && ` · Last used: ${_e(e.lastUsed)}`
 								]
 							}),
 							u !== e.deviceId && /* @__PURE__ */ j("div", {
@@ -3337,7 +3360,7 @@ function _e({ devices: e, userEmail: t, mfaEnabled: r, onAddDevice: i, onRenameD
 }
 //#endregion
 //#region src/components/identity/auth/LogoutPage.tsx
-function ve({ onConfirm: e, onCancel: t, clientName: r }) {
+function ye({ onConfirm: e, onCancel: t, clientName: r }) {
 	return /* @__PURE__ */ A("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
 		children: /* @__PURE__ */ j("div", {
@@ -3406,7 +3429,7 @@ function ve({ onConfirm: e, onCancel: t, clientName: r }) {
 }
 //#endregion
 //#region src/components/identity/auth/ErrorPage.tsx
-function ye({ title: e = "Something went wrong", message: t, error: r, onRetry: i, onBack: a }) {
+function be({ title: e = "Something went wrong", message: t, error: r, onRetry: i, onBack: a }) {
 	return /* @__PURE__ */ A("div", {
 		className: "min-h-full flex items-center justify-center p-6 bg-surface-panel",
 		children: /* @__PURE__ */ j("div", {
@@ -3480,7 +3503,7 @@ function ye({ title: e = "Something went wrong", message: t, error: r, onRetry: 
 }
 //#endregion
 //#region src/components/identity/shared/IdentityAdminLayout.tsx
-var be = [
+var xe = [
 	{
 		label: "Dashboard",
 		path: "/identity/admin",
@@ -3517,7 +3540,7 @@ var be = [
 		icon: "✓"
 	}
 ];
-function xe({ item: t, active: n, onNavigate: r }) {
+function Se({ item: t, active: n, onNavigate: r }) {
 	return /* @__PURE__ */ A("li", { children: /* @__PURE__ */ j("button", {
 		type: "button",
 		className: e("flex items-center gap-2 w-full text-left px-3 py-2 text-sm font-medium cursor-pointer", "border-none rounded-none border-l-[3px] transition-colors", n ? "bg-surface-panel text-info-fg font-semibold border-l-info" : "bg-transparent text-text-primary border-l-transparent hover:bg-surface-hover"),
@@ -3526,7 +3549,7 @@ function xe({ item: t, active: n, onNavigate: r }) {
 		children: [/* @__PURE__ */ A("span", { children: t.icon }), /* @__PURE__ */ A("span", { children: t.label })]
 	}) });
 }
-function Se({ children: t, activePath: r, adminEmail: i, onNavigate: a, onLogout: o, defaultSidebarOpen: s = !0 }) {
+function Ce({ children: t, activePath: r, adminEmail: i, onNavigate: a, onLogout: o, defaultSidebarOpen: s = !0 }) {
 	let [c, l] = O(s), u = C(() => l((e) => !e), []);
 	return /* @__PURE__ */ j("div", {
 		className: "flex min-h-screen bg-surface-panel font-[inherit]",
@@ -3537,7 +3560,7 @@ function Se({ children: t, activePath: r, adminEmail: i, onNavigate: a, onLogout
 				children: "Identity Admin"
 			}), /* @__PURE__ */ A("ul", {
 				className: "list-none m-0 p-0 py-2 flex-1",
-				children: be.map((e) => /* @__PURE__ */ A(xe, {
+				children: xe.map((e) => /* @__PURE__ */ A(Se, {
 					item: e,
 					active: r === e.path,
 					onNavigate: a
@@ -3574,7 +3597,7 @@ function Se({ children: t, activePath: r, adminEmail: i, onNavigate: a, onLogout
 }
 //#endregion
 //#region src/components/identity/shared/PoolScopedLayout.tsx
-var Ce = [
+var we = [
 	{
 		key: "users",
 		label: "Users"
@@ -3588,7 +3611,7 @@ var Ce = [
 		label: "MFA"
 	}
 ];
-function we({ label: t, active: r, onClick: i }) {
+function Te({ label: t, active: r, onClick: i }) {
 	return /* @__PURE__ */ A(n, {
 		variant: "ghost",
 		size: "sm",
@@ -3600,7 +3623,7 @@ function we({ label: t, active: r, onClick: i }) {
 		children: t
 	});
 }
-function Te({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate: a, onBack: o }) {
+function Ee({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate: a, onBack: o }) {
 	let s = C((e) => {
 		a(`/identity/admin/pools/${t}/${e}`);
 	}, [a, t]), c = i ? i.charAt(0).toUpperCase() + i.slice(1) : "";
@@ -3638,7 +3661,7 @@ function Te({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate:
 				"aria-label": "Pool sections",
 				onKeyDown: b,
 				className: "flex border-b-2 border-border",
-				children: Ce.map((e) => /* @__PURE__ */ A(we, {
+				children: we.map((e) => /* @__PURE__ */ A(Te, {
 					label: e.label,
 					active: i === e.key,
 					onClick: () => s(e.key)
@@ -3649,4 +3672,4 @@ function Te({ children: e, poolId: t, poolName: r, activeSection: i, onNavigate:
 	});
 }
 //#endregion
-export { M as A, B as C, F as D, I as E, P as O, V as S, R as T, X as _, _e as a, U as b, Q as c, le as d, ce as f, te as g, ne as h, ve as i, N as k, Z as l, ie as m, Se as n, he as o, ae as p, ye as r, me as s, Te as t, fe as u, Y as v, z as w, H as x, q as y };
+export { M as A, V as C, F as D, I as E, P as O, H as S, z as T, X as _, ve as a, W as b, $ as c, le as d, ce as f, te as g, ne as h, ye as i, N as k, Q as l, ie as m, Ce as n, ge as o, ae as p, be as r, he as s, Ee as t, fe as u, Y as v, B as w, U as x, ee as y };

@@ -129,12 +129,12 @@ function N({ targetUser: e, followState: t, compact: n = !1, onFollowChange: r }
 	});
 }
 function P({ user: e, isOwnProfile: t, onSave: n }) {
-	let [r, i] = x(!1), [a, o] = x(e.displayName), [c, f] = x(e.bio), [p, m] = x(e.avatarUrl ?? ""), [h, _] = x(e.visibility), [v, y] = x(!1);
+	let [r, i] = x(!1), [a, o] = x(e.displayName), [c, f] = x(e.bio), [p, m] = x(e.avatarUrl ?? ""), [h, v] = x(e.visibility), [y, b] = x(!1), S = _();
 	g(() => {
-		o(e.displayName), f(e.bio), m(e.avatarUrl ?? ""), _(e.visibility);
+		o(e.displayName), f(e.bio), m(e.avatarUrl ?? ""), v(e.visibility);
 	}, [e.id]);
-	let b = async () => {
-		y(!0);
+	let T = async () => {
+		b(!0);
 		try {
 			await n({
 				displayName: a,
@@ -143,16 +143,18 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 				visibility: h
 			}), i(!1);
 		} finally {
-			y(!1);
+			b(!1);
 		}
 	};
 	return r ? /* @__PURE__ */ w("div", { children: [
 		/* @__PURE__ */ w("div", {
 			className: "mb-3",
 			children: [/* @__PURE__ */ C("label", {
+				htmlFor: `${S}-display-name`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Display name"
 			}), /* @__PURE__ */ C(l, {
+				id: `${S}-display-name`,
 				value: a,
 				onChange: (e) => o(e.target.value.slice(0, 50)),
 				placeholder: "Your name",
@@ -162,9 +164,11 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 		/* @__PURE__ */ w("div", {
 			className: "mb-3",
 			children: [/* @__PURE__ */ C("label", {
+				htmlFor: `${S}-bio`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Bio"
 			}), /* @__PURE__ */ C(u, {
+				id: `${S}-bio`,
 				value: c,
 				onChange: (e) => f(e.target.value.slice(0, 160)),
 				placeholder: "Tell people a bit about yourself (max 160 characters)",
@@ -176,9 +180,11 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 		/* @__PURE__ */ w("div", {
 			className: "mb-4",
 			children: [/* @__PURE__ */ C("label", {
+				htmlFor: `${S}-avatar-url`,
 				className: "text-sm text-text-primary block mb-1",
 				children: "Avatar URL"
 			}), /* @__PURE__ */ C(l, {
+				id: `${S}-avatar-url`,
 				value: p,
 				onChange: (e) => m(e.target.value),
 				placeholder: "https://example.com/avatar.png"
@@ -196,7 +202,7 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 					role: "radio",
 					"aria-checked": h === e,
 					tabIndex: h === e ? 0 : -1,
-					onClick: () => _(e),
+					onClick: () => v(e),
 					className: s("px-4 py-1 rounded-full text-sm cursor-pointer border border-border font-[system-ui,-apple-system,sans-serif]", h === e ? "bg-primary text-white" : "bg-surface text-text-primary"),
 					children: e.charAt(0).toUpperCase() + e.slice(1)
 				}, e))
@@ -206,11 +212,11 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 			className: "flex items-center gap-3",
 			children: [/* @__PURE__ */ C("button", {
 				onClick: () => {
-					b();
+					T();
 				},
-				disabled: v,
-				className: s("flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", v ? "cursor-default" : "cursor-pointer"),
-				children: v ? "Saving…" : "Save Changes"
+				disabled: y,
+				className: s("flex-1 h-9 bg-primary text-white border-none rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]", y ? "cursor-default" : "cursor-pointer"),
+				children: y ? "Saving…" : "Save Changes"
 			}), /* @__PURE__ */ C("button", {
 				onClick: () => i(!1),
 				className: "text-sm text-text-secondary bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif]",
@@ -831,7 +837,7 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 	});
 }
 function re({ onCreate: e, onDiscard: t, loading: n }) {
-	let [r, i] = x(""), [a, o] = x("public"), [c, u] = x(null), d = async (t) => {
+	let [r, i] = x(""), [a, o] = x("public"), [c, u] = x(null), d = _(), f = async (t) => {
 		if (t.preventDefault(), r.trim()) {
 			u(null);
 			try {
@@ -843,16 +849,20 @@ function re({ onCreate: e, onDiscard: t, loading: n }) {
 	};
 	return /* @__PURE__ */ w("form", {
 		onSubmit: (e) => {
-			d(e);
+			f(e);
 		},
 		className: "mb-3 p-3 bg-surface-panel rounded-lg border border-border",
 		children: [
 			/* @__PURE__ */ w("div", {
 				className: "mb-3",
 				children: [/* @__PURE__ */ C("label", {
+					htmlFor: `${d}-group-name`,
 					className: "text-sm text-text-primary block mb-1",
 					children: "Group name"
 				}), /* @__PURE__ */ C(l, {
+					id: `${d}-group-name`,
+					"aria-describedby": c ? `${d}-form-error` : void 0,
+					"aria-invalid": c ? !0 : void 0,
 					value: r,
 					onChange: (e) => i(e.target.value.slice(0, 50)),
 					placeholder: "Group name",
@@ -870,6 +880,7 @@ function re({ onCreate: e, onDiscard: t, loading: n }) {
 					/* @__PURE__ */ C("button", {
 						type: "button",
 						role: "switch",
+						"aria-label": "Private group",
 						"aria-checked": a === "private",
 						onClick: () => o((e) => e === "public" ? "private" : "public"),
 						className: s("relative w-11 h-6 rounded-xl border-none cursor-pointer p-0 shrink-0 transition-colors duration-200", a === "private" ? "bg-primary" : "bg-state-idle"),
@@ -896,6 +907,8 @@ function re({ onCreate: e, onDiscard: t, loading: n }) {
 				})]
 			}),
 			c && /* @__PURE__ */ C("div", {
+				id: `${d}-form-error`,
+				role: "alert",
 				className: "text-danger text-[13px] mt-1.5",
 				children: c
 			})
