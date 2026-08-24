@@ -538,10 +538,48 @@ export declare interface EditRecommendationsPanelProps {
 
 declare type ErrorCategory = 'NetworkError' | 'TimeoutError' | 'ValidationError' | 'LLMError' | 'RegistryConflict' | 'UnknownError';
 
-export declare function EventStreamProvider({ children, }: EventStreamProviderProps): default_2.JSX.Element;
+/**
+ * Host seam for gateway channel subscription.
+ *
+ * `EventStreamProvider` is a pure in-memory dispatcher: it has no WebSocket,
+ * and deliberately doesn't take a hard dependency on `WebSocketContext` so it
+ * stays mountable in tests, Storybook and the backendless demo. But
+ * `subscribeToRun` / `subscribeToAll` / `subscribeToApprovals` are, by name,
+ * promises to open a *gateway* channel — something only the host can do.
+ *
+ * Until v2.90 those three methods were unconditional `return () => {}` stubs
+ * with a comment claiming "WebSocketEventAdapter provides real subscriptions".
+ * It doesn't and it can't: the adapter is a sibling hook, not a wrapper, so
+ * nothing ever replaced the stub. Callers (`usePipelineRunAuditLog`,
+ * `usePendingApprovals`, `ObservabilityContext`) held an unsubscribe handle
+ * for a channel that had never been opened.
+ *
+ * Implement this with `usePipelineWsCommands()` from `WebSocketEventAdapter`
+ * — its `subscribe`/`unsubscribe` frames use exactly these channel names. See
+ * `AppLayout` for the reference wiring.
+ *
+ * **Pass a stable (memoized) object.** Its identity is part of the context
+ * value, so a new object every render re-runs every subscriber's effect.
+ * Changing identity on purpose (e.g. when the socket reconnects) is how
+ * re-subscription after a reconnect happens.
+ */
+declare interface EventStreamChannelTransport {
+    subscribe(channel: string): void;
+    unsubscribe(channel: string): void;
+}
+
+export declare function EventStreamProvider({ children, channelTransport, }: EventStreamProviderProps): default_2.JSX.Element;
 
 export declare interface EventStreamProviderProps {
     children: default_2.ReactNode;
+    /**
+     * Gateway channel transport. Omit it and `subscribeToRun` /
+     * `subscribeToAll` / `subscribeToApprovals` open nothing — correct for
+     * tests, Storybook and the backendless demo, which drive the dispatcher
+     * directly via `dispatch` / `dispatchEnvelope`. Any deployment with a real
+     * gateway must pass one. See `EventStreamChannelTransport`.
+     */
+    channelTransport?: EventStreamChannelTransport;
 }
 
 export declare interface EventStreamValue {
@@ -562,8 +600,20 @@ export declare interface EventStreamValue {
      * on replay — never use them for dedupe.
      */
     dispatchEnvelope<K extends keyof PipelineEventMap>(envelope: PipelineWireEvent<K>): void;
+    /**
+     * Ask the gateway to start streaming the per-run channel
+     * `pipeline:run:{runId}`, and return a function that unsubscribes it.
+     *
+     * **This only does anything when the host wired `channelTransport` on
+     * `<EventStreamProvider>`.** The provider owns no socket of its own — see
+     * the `EventStreamChannelTransport` docs below. With no transport the
+     * returned function is a no-op and a dev-mode warning names the channel
+     * that was requested but never opened.
+     */
     subscribeToRun(runId: string): () => void;
+    /** Same contract as `subscribeToRun`, for the `pipeline:all` firehose. */
     subscribeToAll(): () => void;
+    /** Same contract as `subscribeToRun`, for the `pipeline:approvals` channel. */
     subscribeToApprovals(): () => void;
 }
 

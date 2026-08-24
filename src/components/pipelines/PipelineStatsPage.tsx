@@ -71,9 +71,21 @@ function runCost(run: PipelineRun, models: Map<string, string>): number {
   return aggregateCost(steps).total.totalCostUsd;
 }
 
+/**
+ * Nearest-rank percentile: the smallest value that at least `p` of the sample
+ * is less than or equal to. `sorted` must already be ascending.
+ *
+ * This used to index with `Math.floor(len * p)`, which is one too high whenever
+ * `len * p` is a whole number — and the range buttons produce exactly those
+ * round counts. With 20 timed runs of 1s…20s, `floor(20 * 0.95) = 19` returned
+ * the 20th element, so the card printed "p95 · 20.0s" — the single slowest run,
+ * i.e. p100. Nearest rank is `ceil(len * p) - 1` → the 19th element, 19.0s,
+ * which is the value 95% (19/20) of runs actually came in under.
+ */
 function percentile(sorted: number[], p: number): number {
   if (sorted.length === 0) return 0;
-  const idx = Math.min(sorted.length - 1, Math.floor(sorted.length * p));
+  const rank = Math.ceil(sorted.length * p);
+  const idx = Math.min(sorted.length - 1, Math.max(0, rank - 1));
   return sorted[idx];
 }
 
@@ -125,6 +137,14 @@ interface Stats {
   completedCount: number;
   failedCount: number;
   cancelledCount: number;
+  /**
+   * Runs that reached a terminal status (completed + failed + cancelled) — the
+   * only correct denominator for a success rate. `totalCount` also contains
+   * `running` / `pending` / `awaiting_approval` runs, which can never be
+   * counted as successes, so dividing by it charges every in-flight run to the
+   * failure column.
+   */
+  finishedCount: number;
   successRatePct: number;
   medianMs: number;
   p95Ms: number;
@@ -183,8 +203,14 @@ function aggregate(runs: PipelineRun[], models: Map<string, string>): Stats {
   const medianMs = percentile(durations, 0.5);
   const p95Ms = percentile(durations, 0.95);
 
+  // Only terminal runs belong in a success rate. Dividing by `runs.length`
+  // scored 8 completed + 2 still running as "8/10 (80%)" in warning amber while
+  // the sub-line underneath read "0 failed · 0 cancelled" — and an
+  // approval-gated pipeline with 5 runs all awaiting approval rendered
+  // "0/5 (0%)" in danger red, claiming a 100% failure rate with zero failures.
+  const finishedCount = completedCount + failedCount + cancelledCount;
   const successRatePct =
-    totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
+    finishedCount === 0 ? 0 : Math.round((completedCount / finishedCount) * 100);
 
   const failureBreakdown: FailureRow[] = [...failureMap.entries()]
     .map(([key, v]) => ({ key, count: v.count, lastSeenAt: v.lastSeenAt, exampleRunId: v.exampleRunId }))
@@ -196,6 +222,7 @@ function aggregate(runs: PipelineRun[], models: Map<string, string>): Stats {
     completedCount,
     failedCount,
     cancelledCount,
+    finishedCount,
     successRatePct,
     medianMs,
     p95Ms,
@@ -400,13 +427,25 @@ export default function PipelineStatsPage() {
               <div className="text-[11px] font-semibold text-text-secondary uppercase tracking-[0.04em]">Success rate</div>
               <div
                 className="text-[22px] font-bold font-mono"
-                style={{ color: successRateColor(stats.successRatePct) }}
+                style={{
+                  // No terminal run yet means no rate — don't paint an
+                  // un-measured pipeline danger-red at "0%".
+                  color:
+                    stats.finishedCount === 0
+                      ? 'var(--color-text-tertiary)'
+                      : successRateColor(stats.successRatePct),
+                }}
                 data-testid="stats-success-rate"
               >
-                {stats.completedCount}/{stats.totalCount} ({stats.successRatePct}%)
+                {stats.finishedCount === 0
+                  ? '—'
+                  : `${stats.completedCount}/${stats.finishedCount} (${stats.successRatePct}%)`}
               </div>
               <div className="text-xs text-text-tertiary font-mono">
                 {stats.failedCount} failed · {stats.cancelledCount} cancelled
+                {stats.totalCount > stats.finishedCount
+                  ? ` · ${stats.totalCount - stats.finishedCount} in flight`
+                  : ''}
               </div>
             </div>
 

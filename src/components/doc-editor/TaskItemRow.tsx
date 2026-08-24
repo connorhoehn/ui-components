@@ -7,6 +7,7 @@ import type { TaskItem } from '../../types/document';
 import { DEV_USERS, findUserByName } from '../../data/userDirectory';
 import type { DirectoryUser } from '../../data/userDirectory';
 import { cn } from '../../lib/cn';
+import { isBeforeToday, parseIsoDateLocal } from '../../lib/dateOnly';
 import { Input } from '../forms/Input';
 import { Select } from '../forms/Select';
 import { Checkbox } from '../forms/Checkbox';
@@ -41,20 +42,29 @@ const categoryColors: Record<string, string> = {
   continue: 'var(--color-info)',
 };
 
-/** Format an ISO date string as a short label like "Apr 15". */
+/**
+ * Format an ISO date string as a short label like "Apr 15".
+ *
+ * `TaskItem.dueDate` is a bare `YYYY-MM-DD` (it comes from `<Input type="date">`),
+ * which `new Date()` parses as UTC midnight — so the old `new Date(iso)` here
+ * rendered "Aug 15" for a task due "2026-08-16" to every viewer west of
+ * Greenwich. `parseIsoDateLocal` anchors it on the viewer's calendar instead.
+ */
 function formatDueDate(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
+  const d = parseIsoDateLocal(iso);
+  if (!d) return iso;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-/** Return true if the ISO date is in the past (ignoring time). */
+/**
+ * Return true if the ISO date is in the past (ignoring time).
+ *
+ * This used to compare a UTC-midnight `Date` against a LOCAL-midnight "today",
+ * so the overdue badge fired a full day early at negative UTC offsets — a task
+ * due *today* read as late. Both sides are local midnight now.
+ */
 function isOverdue(iso: string): boolean {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return d < today;
+  return isBeforeToday(iso);
 }
 
 function getInitials(name: string) {

@@ -1,5 +1,5 @@
 import { r as e } from "./IdentityContext-CQM1qwH6.js";
-import { r as t } from "./EventStreamContext-C0egqLaF.js";
+import { r as t } from "./EventStreamContext-CLzG8O5_.js";
 import { createContext as n, useCallback as r, useContext as i, useEffect as a, useMemo as o, useRef as s, useState as c } from "react";
 import { jsx as l } from "react/jsx-runtime";
 //#region src/components/observability/fixtures/dashboardFixture.ts

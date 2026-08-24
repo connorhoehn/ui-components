@@ -187,7 +187,18 @@ export default function EditorTopBar({
     isRunActive && currentRun
       ? { text: `Running (${completedSteps}/${totalSteps} steps) · ${elapsedSec}s`, variant: 'running' }
       : currentRun?.status === 'completed'
-        ? { text: `Completed in ${currentRun.durationMs ? (currentRun.durationMs / 1000).toFixed(1) : '?'}s`, variant: 'success' }
+        // `durationMs` is `number | undefined`; a truthiness test sent a
+        // legitimate 0 down the "unknown" branch, so a run that finished in
+        // under a millisecond reported "Completed in ?s" instead of
+        // "Completed in 0.0s". Only `undefined`/`null` is unknown.
+        ? {
+            text: `Completed in ${
+              currentRun.durationMs != null
+                ? (currentRun.durationMs / 1000).toFixed(1)
+                : '?'
+            }s`,
+            variant: 'success',
+          }
         : currentRun?.status === 'failed'
           ? { text: `Failed at ${lookupStepName(definition, currentRun.error?.nodeId)}`, variant: 'error' }
           : { text: '', variant: 'none' };

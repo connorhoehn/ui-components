@@ -2,6 +2,16 @@ import { CSSProperties } from 'react';
 import { JSX } from 'react';
 import { ReactNode } from 'react';
 
+declare interface ActiveRunRow {
+    pipelineId: string;
+    pipelineName: string;
+    runId: string;
+    currentStep: string;
+    ownerNode: string;
+    elapsed: string;
+    status: string;
+}
+
 export declare function AlertItem({ severity, title, description, timestamp, resolved, action, className, style, 'data-testid': testId, }: AlertItemProps): JSX.Element;
 
 export declare interface AlertItemProps {
@@ -73,7 +83,21 @@ declare interface DashboardKPIStripProps {
     onGoToFailedEvents: () => void;
 }
 
-export declare function DashboardPage(): JSX.Element;
+export declare function DashboardPage({ activeRuns }?: DashboardPageProps): JSX.Element;
+
+declare interface DashboardPageProps {
+    /**
+     * Currently-running rows for the "Active runs" table. **Additive, v2.97.0.**
+     *
+     * The table used to be fed a module-level `const PHASE1_ACTIVE_RUNS = []`,
+     * so the section rendered a permanent "Active runs (0)" heading over an
+     * empty table — directly beneath a live "Active now: 7" KPI read off the
+     * event stream. Operators could see that runs existed and could not reach
+     * them. With no host wiring there is no source for this list, so the
+     * section now says so instead of asserting zero.
+     */
+    activeRuns?: ActiveRunRow[];
+}
 
 export declare function EventsPage(): JSX.Element;
 

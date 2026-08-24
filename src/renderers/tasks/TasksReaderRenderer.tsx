@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { cn } from '../../lib/cn';
+import { isBeforeToday, parseIsoDateLocal } from '../../lib/dateOnly';
 import type { TaskItem } from '../../types/document';
 import type { SectionRendererProps } from '../types';
 
@@ -22,17 +23,18 @@ const PRIORITY_COLORS: Record<string, string> = {
   low:    'var(--color-text-tertiary)',
 };
 
+// `TaskItem.dueDate` is a bare `YYYY-MM-DD`, which `new Date()` parses as UTC
+// midnight. Rendering or comparing that against the LOCAL clock shifted an item
+// due "2026-08-16" to "Aug 15" — and flagged it overdue — for every viewer west
+// of Greenwich. Editor mode (`doc-editor/TaskItemRow`) had the same two helpers
+// with the same defect, so switching modes showed the same wrong day and hid it.
 function isOverdue(iso: string): boolean {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return d < today;
+  return isBeforeToday(iso);
 }
 
 function formatDate(iso: string): string {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
+  const d = parseIsoDateLocal(iso);
+  if (!d) return iso;
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 

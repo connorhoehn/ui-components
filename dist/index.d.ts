@@ -8501,15 +8501,17 @@ declare interface UseActivityBusReturn {
      editPost: (postId: string, content: string) => Promise<void>;
      deletePost: (postId: string) => Promise<void>;
      getUserPosts: (userId: string) => Promise<PostItem[]>;
-     /** True while the initial fetch or `loadMore` is in flight. */
+     /** True during the initial fetch and `loadMore`. NOT set by mutations. */
      loading: boolean;
      /**
       * True while `createPost` / `editPost` / `deletePost` is in flight.
       *
-      * Kept separate from `loading` on purpose — a mutation must not put the
-      * feed back into its "Loading…" skeleton — but it was previously computed
-      * and then thrown away, so nothing could disable a submit button while a
-      * post was being written and a double-click created the post twice.
+      * Kept separate from `loading` on purpose — a mutation must not drop the
+      * feed back into its "Loading…" skeleton. But the flag was computed into an
+      * unread `_mutating` and never returned, so the composer's only busy signal
+      * was `loading`, which goes false once the first page resolves and never
+      * moves again. The submit button stayed enabled and labelled "Post" for the
+      * whole request, and a second click created the post twice.
       */
      mutating: boolean;
      error: string | null;

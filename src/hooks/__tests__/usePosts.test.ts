@@ -154,6 +154,43 @@ describe('social:post WS event', () => {
 
     expect(result.current.posts).toHaveLength(0);
   });
+
+  // Regression: `createPost` prepends the POST response and the gateway then
+  // broadcasts the identical row back over the socket. Without a dedupe the
+  // author's own post rendered TWICE and React warned about two children with
+  // the same key (PostFeed keys on `postId`). `useChat` has always deduped by
+  // server id; these two hooks were the outliers.
+  it('does not duplicate a post already present (own-post WS echo)', async () => {
+    mockFetch({ posts: [POST] });
+    const { onMessage, trigger } = makeOnMessage();
+    const { result } = renderHook(() => usePosts({ ...DEFAULT_OPTS, onMessage }));
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.posts).toHaveLength(1);
+
+    act(() => {
+      trigger({ type: 'social:post', payload: POST } as unknown as GatewayMessage);
+    });
+
+    expect(result.current.posts).toHaveLength(1);
+    expect(result.current.posts.filter((p) => p.postId === 'p1')).toHaveLength(1);
+  });
+
+  it('still accepts a genuinely new post from another author', async () => {
+    mockFetch({ posts: [POST] });
+    const { onMessage, trigger } = makeOnMessage();
+    const { result } = renderHook(() => usePosts({ ...DEFAULT_OPTS, onMessage }));
+    await act(async () => { await Promise.resolve(); });
+
+    act(() => {
+      trigger({
+        type: 'social:post',
+        payload: { ...POST, postId: 'p2', content: 'Second' },
+      } as unknown as GatewayMessage);
+    });
+
+    expect(result.current.posts).toHaveLength(2);
+    expect(result.current.posts[0].postId).toBe('p2');
+  });
 });
 
 // ---------------------------------------------------------------------------

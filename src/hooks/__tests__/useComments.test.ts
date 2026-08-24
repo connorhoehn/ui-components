@@ -163,6 +163,39 @@ describe('social:comment WS event', () => {
 
     expect(result.current.comments).toHaveLength(0);
   });
+
+  // Regression: `createComment` appends the POST response and the gateway then
+  // broadcasts the same row back, so the author saw their own comment twice
+  // under a duplicate-key warning. `useChat` deduped by server id already.
+  it('does not duplicate a comment already present (own-comment WS echo)', async () => {
+    mockFetch({ comments: [COMMENT] });
+    const { onMessage, trigger } = makeOnMessage();
+    const { result } = renderHook(() => useComments({ ...DEFAULT_OPTS, onMessage }));
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.comments).toHaveLength(1);
+
+    act(() => {
+      trigger({ type: 'social:comment', payload: COMMENT } as unknown as GatewayMessage);
+    });
+
+    expect(result.current.comments).toHaveLength(1);
+  });
+
+  it('still accepts a genuinely new comment from another author', async () => {
+    mockFetch({ comments: [COMMENT] });
+    const { onMessage, trigger } = makeOnMessage();
+    const { result } = renderHook(() => useComments({ ...DEFAULT_OPTS, onMessage }));
+    await act(async () => { await Promise.resolve(); });
+
+    act(() => {
+      trigger({
+        type: 'social:comment',
+        payload: { ...COMMENT, commentId: 'c2', content: 'Second' },
+      } as unknown as GatewayMessage);
+    });
+
+    expect(result.current.comments).toHaveLength(2);
+  });
 });
 
 // ---------------------------------------------------------------------------

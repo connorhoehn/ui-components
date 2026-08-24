@@ -49,7 +49,19 @@ export function FormField({
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
       if (type === 'number') {
-        onChange(Number(e.target.value));
+        // `Number('')` is 0, not NaN. With no empty branch, backspacing the 8
+        // out of Pool → Password Policy → Minimum Length emitted `0`, and
+        // saving in that state persisted `minLength: 0` — every password
+        // length accepted, from a keystroke the admin was about to undo.
+        // An empty or half-typed field ("1e", "-") means "unset", which this
+        // numeric API cannot express, so hold the last good value instead of
+        // inventing a zero. The input is uncontrolled for that keystroke, so
+        // the box still shows empty while the user retypes.
+        const raw = e.target.value;
+        if (raw.trim() === '') return;
+        const parsed = Number(raw);
+        if (Number.isNaN(parsed)) return;
+        onChange(parsed);
       } else {
         onChange(e.target.value);
       }

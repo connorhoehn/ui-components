@@ -119,8 +119,18 @@ export function usePipelineRunAuditLog(
     limit: filters?.limit,
   });
 
+  /** Identity of the current query — changes here mean "start over at page 1". */
+  const identityKey = `${pipelineId ?? ''}|${runId ?? ''}|${filtersKey}`;
+  const identityRef = useRef<string | null>(null);
+  /** Rows currently loaded, so a poll refresh can re-request the same span. */
+  const loadedCountRef = useRef(0);
+  useEffect(() => {
+    loadedCountRef.current = serverItems.length;
+  }, [serverItems]);
+
   // -------------------------------------------------------------------------
-  // Fetcher — pulls page 1 (no cursor) on (pipelineId, runId, filters) change.
+  // Fetcher — pulls page 1 (no cursor) on (pipelineId, runId, filters) change,
+  // and re-pulls the loaded span on every `refreshTick`.
   // -------------------------------------------------------------------------
   useEffect(() => {
     if (!pipelineId || !runId) return;
@@ -128,9 +138,27 @@ export function usePipelineRunAuditLog(
     setLoading(true);
     setError(null);
 
+    // This effect serves two callers: a genuine (pipeline, run, filters) change,
+    // which SHOULD reset to page 1, and the `refreshTick` poll, which should
+    // not. It used to reset either way, so every 5s tick replaced `serverItems`
+    // with page 1 and reset `nextCursor`: a user who clicked "Load more" watched
+    // the Executor Log grow 50 -> 100 rows ("100 of 100 shown") and snap back to
+    // 50 within five seconds, forever. A refresh now re-requests the span that
+    // is actually loaded.
+    const isReset = identityRef.current !== identityKey;
+    identityRef.current = identityKey;
+    if (isReset) loadedCountRef.current = 0;
+    const requestLimit =
+      loadedCountRef.current > (filters?.limit ?? 0)
+        ? loadedCountRef.current
+        : filters?.limit;
+
     void (async () => {
       try {
-        const page: AuditPage = await getRunAuditLog(pipelineId, runId, filters ?? {});
+        const page: AuditPage = await getRunAuditLog(pipelineId, runId, {
+          ...(filters ?? {}),
+          ...(requestLimit != null ? { limit: requestLimit } : {}),
+        });
         if (cancelled) return;
         setServerItems(page.items);
         setNextCursor(page.nextCursor);

@@ -80,6 +80,9 @@ describe('TasksReaderRenderer', () => {
   it('renders formatted due date when dueDate is set', () => {
     const items = [makeItem({ id: '1', text: 'Task', dueDate: '2099-06-15' })];
     render(<TasksReaderRenderer section={makeSection(items)} viewMode="reader" editable={false} />);
+    // Asserts the month only, so it cannot see the off-by-one-day bug that the
+    // "date-only dueDate" block below pins. Left as-is; it still guards that a
+    // date renders at all.
     expect(screen.getByText(/Jun/)).toBeInTheDocument();
   });
 
@@ -344,5 +347,60 @@ describe('TasksReaderRenderer — quick-update dropdown keyboard reachability', 
     fireEvent.blur(toggle, { relatedTarget: document.body });
 
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Date-only `dueDate` (regression)
+//
+// `TaskItem.dueDate` is a bare `YYYY-MM-DD`. `new Date('2026-08-16')` is UTC
+// midnight, so rendering it with `toLocaleDateString()` printed "Aug 15" west
+// of Greenwich, and comparing it against a LOCAL-midnight "today" flagged a
+// task due *today* as overdue. Both the zone and "now" are pinned so these
+// assertions discriminate on any runner.
+// ---------------------------------------------------------------------------
+describe('TasksReaderRenderer date-only dueDate (America/Los_Angeles)', () => {
+  const ORIGINAL_TZ = process.env.TZ;
+
+  beforeAll(() => {
+    process.env.TZ = 'America/Los_Angeles';
+  });
+  afterAll(() => {
+    if (ORIGINAL_TZ === undefined) delete process.env.TZ;
+    else process.env.TZ = ORIGINAL_TZ;
+  });
+  beforeEach(() => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    // 2026-08-16 09:00 PDT.
+    vi.setSystemTime(new Date('2026-08-16T16:00:00Z'));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('renders the authored day, not the UTC-shifted previous day', () => {
+    const items = [makeItem({ id: '1', text: 'Task', dueDate: '2026-08-16' })];
+    render(
+      <TasksReaderRenderer section={makeSection(items)} viewMode="reader" editable={false} />,
+    );
+    expect(screen.getByText('Aug 16')).toBeInTheDocument();
+    expect(screen.queryByText('Aug 15')).not.toBeInTheDocument();
+  });
+
+  it('does not flag a task due today as overdue', () => {
+    const items = [makeItem({ id: '1', text: 'Task', dueDate: '2026-08-16' })];
+    render(
+      <TasksReaderRenderer section={makeSection(items)} viewMode="reader" editable={false} />,
+    );
+    // The overdue badge prefixes the date with a warning sign.
+    expect(screen.queryByText(/⚠/)).not.toBeInTheDocument();
+  });
+
+  it('still flags a task due yesterday as overdue', () => {
+    const items = [makeItem({ id: '1', text: 'Task', dueDate: '2026-08-15' })];
+    render(
+      <TasksReaderRenderer section={makeSection(items)} viewMode="reader" editable={false} />,
+    );
+    expect(screen.getByText('⚠ Aug 15')).toBeInTheDocument();
   });
 });

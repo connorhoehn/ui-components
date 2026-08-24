@@ -20,6 +20,15 @@ const STATUS_COLOR: Record<string, string> = {
   running: 'var(--color-info)',
 };
 
+/**
+ * Coerce an untyped token count off a step's `output` bag. Anything that isn't
+ * a finite number contributes 0 rather than poisoning the sum with NaN.
+ */
+function countTokens(v: unknown): number {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+}
+
 export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryFromStep, onResumeFromStep }: StepThreadProps) {
   const [expanded, setExpanded] = useState(false);
 
@@ -85,7 +94,12 @@ export function StepThread({ stepId, step, index, nodeType, nodeConfig, onRetryF
         )}
         {output?.tokensIn != null && !llmData && (
           <span className="text-[10px] text-text-tertiary font-mono">
-            {Number(output.tokensIn) + Number(output.tokensOut)} tok
+            {/* `output` is Record<string, unknown>; the guard only checks
+                `tokensIn`, and `Number(undefined)` is NaN, so a step reporting
+                input tokens but no output tokens rendered "NaN tok" in the
+                collapsed header while the expanded panel below correctly showed
+                "Tokens in: 4200 / Tokens out: —". Missing halves count as 0. */}
+            {countTokens(output.tokensIn) + countTokens(output.tokensOut)} tok
           </span>
         )}
       </div>

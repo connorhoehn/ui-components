@@ -17,12 +17,42 @@ export interface StepTreeNode {
   children: StepTreeNode[];
 }
 
+/**
+ * Execution start of a step, in epoch ms, for ordering the tree.
+ *
+ * `StepExecution.startedAt` is the field that means this; the ordering used to
+ * reconstruct it as `completedAt - durationMs` and fall back to `0` — the Unix
+ * epoch — whenever `completedAt` was absent. Every step that had not finished
+ * therefore sorted BEFORE every step that had, so on a live run the step the
+ * operator was waiting on rendered above the steps that already completed, then
+ * visibly jumped down into place when the completion event landed. A cancelled
+ * run showed the same inversion for the killed step.
+ *
+ * A step whose start is genuinely unknown sorts LAST (it has not run) rather
+ * than to the epoch, and ties keep insertion order because `Array#sort` is
+ * stable.
+ */
+function stepStartMs(step: StepExecution): number {
+  if (step.startedAt) {
+    const t = Date.parse(step.startedAt);
+    if (Number.isFinite(t)) return t;
+  }
+  if (step.completedAt) {
+    const done = Date.parse(step.completedAt);
+    if (Number.isFinite(done)) return done - (step.durationMs ?? 0);
+  }
+  return Number.POSITIVE_INFINITY;
+}
+
 export function StepTree({ steps, nodeDataMap, edges, onRetryFromStep, onResumeFromStep }: StepTreeProps) {
   const tree = useMemo(() => {
     const sorted = Object.entries(steps).sort(([, a], [, b]) => {
-      const aT = a.completedAt ? Date.parse(a.completedAt) - (a.durationMs ?? 0) : 0;
-      const bT = b.completedAt ? Date.parse(b.completedAt) - (b.durationMs ?? 0) : 0;
-      return aT - bT;
+      const aT = stepStartMs(a);
+      const bT = stepStartMs(b);
+      // Not `aT - bT`: both can be Infinity, and Infinity - Infinity is NaN,
+      // which lets the engine emit an arbitrary permutation.
+      if (aT === bT) return 0;
+      return aT < bT ? -1 : 1;
     });
 
     if (!edges || edges.length === 0) {

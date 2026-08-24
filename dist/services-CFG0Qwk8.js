@@ -4,7 +4,7 @@ import { n } from "./WebSocketContext-DUvjGLFq.js";
 import { a as r } from "./ToastProvider-DPq8u2eM.js";
 import { t as i } from "./cn-DhjIN-s0.js";
 import { t as a } from "./Input-DcK2h-jK.js";
-import { n as o, r as s } from "./EventStreamContext-C0egqLaF.js";
+import { n as o, r as s } from "./EventStreamContext-CLzG8O5_.js";
 import { createContext as c, forwardRef as l, useCallback as u, useContext as d, useEffect as f, useId as p, useMemo as m, useRef as h, useState as g } from "react";
 import { Fragment as _, jsx as v, jsxs as y } from "react/jsx-runtime";
 import "ajv";
@@ -503,12 +503,12 @@ async function fe(e) {
 	if (!t.ok) throw Error(`publishPipelineRemote failed (${t.status})`);
 	return await t.json();
 }
-function pe(e) {
+function K(e) {
 	if (e instanceof SyntaxError) return !0;
 	let t = e.message || String(e);
 	return t.includes("Unexpected token") || t.includes("not valid JSON") || t.includes("(404)");
 }
-function K(e) {
+function pe(e) {
 	if (e instanceof SyntaxError) return !0;
 	let t = e.message || String(e);
 	return t.includes("NetworkError") || t.includes("Failed to fetch") || t.includes("network") || t.includes("ECONNREFUSED") || t.includes("Unexpected token") || t.includes("not valid JSON") || t.includes("500") || t.includes("502") || t.includes("503") || t.includes("504");
@@ -517,7 +517,7 @@ async function me() {
 	try {
 		return await ce();
 	} catch (e) {
-		if (K(e)) return B();
+		if (pe(e)) return B();
 		throw e;
 	}
 }
@@ -526,7 +526,7 @@ async function he(e) {
 		let t = await le(e);
 		return t && U(t), t ?? V(e);
 	} catch (t) {
-		if (K(t)) return V(e);
+		if (pe(t)) return V(e);
 		throw t;
 	}
 }
@@ -540,7 +540,7 @@ async function ge(e) {
 	try {
 		return await ue(t);
 	} catch (e) {
-		if (pe(e)) return t;
+		if (K(e)) return t;
 		throw e;
 	}
 }
@@ -558,7 +558,7 @@ async function ve(e) {
 		let t = await fe(e);
 		return t && U(t), t;
 	} catch (e) {
-		if (pe(e)) return null;
+		if (K(e)) return null;
 		throw e;
 	}
 }
@@ -1240,29 +1240,51 @@ function Ae(e, t = {}) {
 		a
 	]);
 }
+function je() {
+	let { connectionState: e, sendMessage: t } = n();
+	return m(() => {
+		let n = e === "connected";
+		return {
+			subscribe(e) {
+				n && t({
+					service: "pipeline",
+					action: "subscribe",
+					channel: e
+				});
+			},
+			unsubscribe(e) {
+				n && t({
+					service: "pipeline",
+					action: "unsubscribe",
+					channel: e
+				});
+			}
+		};
+	}, [e, t]);
+}
 //#endregion
 //#region src/components/pipelines/context/PipelineNodeRuntimeContext.tsx
-var je = c(null);
-function Me({ value: e, children: t }) {
-	return /* @__PURE__ */ v(je.Provider, {
+var Me = c(null);
+function Ne({ value: e, children: t }) {
+	return /* @__PURE__ */ v(Me.Provider, {
 		value: e,
 		children: t
 	});
 }
-function Ne() {
-	return d(je);
+function Pe() {
+	return d(Me);
 }
 //#endregion
 //#region src/components/pipelines/context/PipelineRunsContext.tsx
-var Pe = 20, X = c(null);
-function Fe(e, t) {
+var Fe = 20, X = c(null);
+function Ie(e, t) {
 	return e.steps[t] ?? {
 		nodeId: t,
 		status: "pending"
 	};
 }
 function Z(e, t, n) {
-	let r = Fe(e, t), i = typeof n == "function" ? n(r) : {
+	let r = Ie(e, t), i = typeof n == "function" ? n(r) : {
 		...r,
 		...n
 	};
@@ -1274,24 +1296,24 @@ function Z(e, t, n) {
 		}
 	};
 }
-function Ie(e) {
+function Le(e) {
 	return e === "completed" || e === "failed" || e === "cancelled";
 }
-function Le(e) {
+function Re(e) {
 	let t = Object.values(e);
-	if (t.length <= Pe) return e;
-	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Pe - n.length)), i = [...n, ...r], a = {};
+	if (t.length <= Fe) return e;
+	let n = t.filter((e) => e.status === "running" || e.status === "pending" || e.status === "awaiting_approval" || e.status === "paused_at_breakpoint"), r = t.filter((e) => e.status !== "running" && e.status !== "pending" && e.status !== "awaiting_approval" && e.status !== "paused_at_breakpoint").sort((e, t) => t.startedAt.localeCompare(e.startedAt)).slice(0, Math.max(0, Fe - n.length)), i = [...n, ...r], a = {};
 	for (let e of i) a[e.id] = e;
 	return a;
 }
-function Re({ children: e }) {
+function ze({ children: e }) {
 	let t = d(J), { triggerRun: n } = Te(), r = ke(), [i, a] = g({}), [s, c] = g(!1), [l, p] = g(null), _ = h(/* @__PURE__ */ new Set()), y = h(null);
 	f(() => {
 		let e = t?.definition?.id;
 		if (!e || y.current === e) return;
 		c(!0);
 		let n = !1;
-		return j(e, { limit: Pe }).then((e) => {
+		return j(e, { limit: Fe }).then((e) => {
 			n || a((t) => {
 				let n = { ...t };
 				for (let t of e.runs) n[t.id] || (n[t.id] = t);
@@ -1310,7 +1332,7 @@ function Re({ children: e }) {
 		};
 	}, [t?.definition?.id]), o("*", (e) => {
 		let { eventType: t, payload: n } = e;
-		a((e) => ze(e, t, n));
+		a((e) => Be(e, t, n));
 	}), f(() => {
 		for (let e of Object.values(i)) if ((e.status === "completed" || e.status === "failed" || e.status === "cancelled") && !_.current.has(e.id)) {
 			_.current.add(e.id);
@@ -1401,7 +1423,7 @@ function Re({ children: e }) {
 	}, []), N = u((e) => {
 		a((t) => {
 			let n = t[e.id];
-			return n && (Ie(n.status) && !Ie(e.status) || n.status === e.status && Object.keys(n.steps).length >= Object.keys(e.steps).length) ? t : {
+			return n && (Le(n.status) && !Le(e.status) || n.status === e.status && Object.keys(n.steps).length >= Object.keys(e.steps).length) ? t : {
 				...t,
 				[e.id]: e
 			};
@@ -1440,7 +1462,7 @@ function Re({ children: e }) {
 		children: e
 	});
 }
-function ze(e, t, n) {
+function Be(e, t, n) {
 	if (!n || typeof n != "object" || typeof n.runId != "string") return e;
 	switch (t) {
 		case "pipeline.run.started": {
@@ -1456,7 +1478,7 @@ function ze(e, t, n) {
 				steps: {},
 				context: {}
 			};
-			return Le({
+			return Re({
 				...e,
 				[t.runId]: r
 			});
@@ -1756,19 +1778,19 @@ function ze(e, t, n) {
 		default: return e;
 	}
 }
-function Be() {
+function Ve() {
 	let e = d(X);
 	if (!e) throw Error("usePipelineRuns must be used within a PipelineRunsProvider");
 	return e;
 }
-function Ve() {
-	let e = Ne(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
+function He() {
+	let e = Pe(), t = d(X), n = e?.retryFromStep, r = t?.retryFromStep;
 	return m(() => n ? async (e) => {
 		await n(e);
 	} : r ?? (async () => {}), [n, r]);
 }
-function He(e) {
-	let t = Ne(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
+function Ue(e) {
+	let t = Pe(), n = d(X), r = t?.getLatestStepForNode, i = m(() => r ? r(e) : null, [r, e]), a = m(() => {
 		if (!n) return null;
 		let t = null, r = "";
 		for (let i of Object.values(n.runs)) {
@@ -1784,7 +1806,7 @@ function He(e) {
 function Q(e, t) {
 	return `${e}::${t}`;
 }
-function Ue(e, t) {
+function We(e, t) {
 	let n = V(e);
 	if (!n) return { requiredCount: 1 };
 	let r = n.nodes.find((e) => e.id === t);
@@ -1795,15 +1817,15 @@ function Ue(e, t) {
 		requiredCount: Math.max(1, i.requiredCount ?? 1)
 	};
 }
-function We() {
-	let e = s(), t = Be(), [n, r] = g(() => {
+function Ge() {
+	let e = s(), t = Ve(), [n, r] = g(() => {
 		let e = {};
 		for (let n in t.runs) {
 			let r = t.runs[n];
 			if (r.status === "awaiting_approval") for (let t in r.steps) {
 				let i = r.steps[t];
 				if (i.status !== "awaiting") continue;
-				let a = Ue(r.pipelineId, t), o = V(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
+				let a = We(r.pipelineId, t), o = V(r.pipelineId)?.nodes.find((e) => e.id === t), s = o && o.data.type === "approval" ? o.data.approvers : [];
 				e[Q(n, t)] = {
 					runId: n,
 					pipelineId: r.pipelineId,
@@ -1843,7 +1865,7 @@ function We() {
 				if (n?.pendingApprovals) {
 					let e = {};
 					for (let t of n.pendingApprovals) {
-						let n = Ue(t.pipelineId, t.stepId);
+						let n = We(t.pipelineId, t.stepId);
 						e[Q(t.runId, t.stepId)] = {
 							runId: t.runId,
 							pipelineId: t.pipelineId,
@@ -1875,7 +1897,7 @@ function We() {
 			let t = e;
 			_.current.set(t.runId, t.pipelineId);
 		})), t.push(e.subscribe("pipeline.approval.requested", (e) => {
-			let t = e, n = _.current.get(t.runId) ?? p.current[t.runId]?.pipelineId ?? "", i = Ue(n, t.stepId);
+			let t = e, n = _.current.get(t.runId) ?? p.current[t.runId]?.pipelineId ?? "", i = We(n, t.stepId);
 			v.current.add(Q(t.runId, t.stepId)), r((e) => {
 				let r = Q(t.runId, t.stepId);
 				return e[r] ? e : {
@@ -1928,31 +1950,31 @@ function We() {
 		}, [])
 	};
 }
-function Ge() {
-	let { approvals: e } = We();
+function Ke() {
+	let { approvals: e } = Ge();
 	return e;
 }
 //#endregion
 //#region src/api/pipelineBreakpointPatch.ts
-var Ke = class extends Error {
+var qe = class extends Error {
 	reason;
 	result;
 	constructor(e, t) {
 		super(e), this.name = "PatchValidationRejectedError", this.reason = e, this.result = t;
 	}
-}, qe = class extends Error {
+}, Je = class extends Error {
 	status;
 	body;
 	constructor(e, t, n) {
 		super(t), this.name = "PatchHttpError", this.status = e, this.body = n;
 	}
 };
-function Je(e, t, n, r) {
+function Ye(e, t, n, r) {
 	let i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(t)}/breakpoint/${encodeURIComponent(n)}/patch`;
 	return r ? `${i}/${encodeURIComponent(r)}` : `${i}`;
 }
-async function Ye(e, t, n, r, i) {
-	let a = await fetch(Je(e, t, n), {
+async function Xe(e, t, n, r, i) {
+	let a = await fetch(Ye(e, t, n), {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		credentials: "include",
@@ -1964,7 +1986,7 @@ async function Ye(e, t, n, r, i) {
 	if (a.status === 200) return await a.json();
 	if (a.status === 422) {
 		let e = await a.json().catch(() => ({})), t = "patch rejected by validator";
-		throw e.result && e.result.validation && e.result.validation.ok === !1 && typeof e.result.validation.reason == "string" ? t = e.result.validation.reason : typeof e.error == "string" && (t = e.error), new Ke(t, e.result);
+		throw e.result && e.result.validation && e.result.validation.ok === !1 && typeof e.result.validation.reason == "string" ? t = e.result.validation.reason : typeof e.error == "string" && (t = e.error), new qe(t, e.result);
 	}
 	let o = await a.text().catch(() => ""), s;
 	try {
@@ -1972,10 +1994,10 @@ async function Ye(e, t, n, r, i) {
 	} catch {
 		s = o;
 	}
-	throw new qe(a.status, `applyPatch HTTP ${a.status}: ${o}`, s);
+	throw new Je(a.status, `applyPatch HTTP ${a.status}: ${o}`, s);
 }
-async function Xe(e, t, n, r) {
-	let i = await fetch(Je(e, t, n, r), {
+async function Ze(e, t, n, r) {
+	let i = await fetch(Ye(e, t, n, r), {
 		method: "DELETE",
 		credentials: "include"
 	});
@@ -1986,11 +2008,11 @@ async function Xe(e, t, n, r) {
 	} catch {
 		o = a;
 	}
-	throw new qe(i.status, `revertPatch HTTP ${i.status}: ${a}`, o);
+	throw new Je(i.status, `revertPatch HTTP ${i.status}: ${a}`, o);
 }
 //#endregion
 //#region src/api/pipelineResume.ts
-async function Ze(e, t, n, r) {
+async function Qe(e, t, n, r) {
 	let i = `/api/pipelines/${encodeURIComponent(e)}/runs/${encodeURIComponent(t)}/resume?fromNodeId=${encodeURIComponent(n)}`, a = await fetch(i, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -2005,7 +2027,7 @@ async function Ze(e, t, n, r) {
 }
 //#endregion
 //#region src/api/pipelineAudit.ts
-function Qe(e) {
+function $e(e) {
 	let t = [];
 	for (let [n, r] of Object.entries(e)) if (r != null) {
 		if (Array.isArray(r)) {
@@ -2015,8 +2037,8 @@ function Qe(e) {
 	}
 	return t.length > 0 ? `?${t.join("&")}` : "";
 }
-async function $e(e, t, n = {}) {
-	let r = Qe({
+async function et(e, t, n = {}) {
+	let r = $e({
 		since: n.since,
 		until: n.until,
 		actions: n.actions,
@@ -2032,9 +2054,9 @@ async function $e(e, t, n = {}) {
 	}
 	return a.json();
 }
-async function et(e) {
+async function tt(e) {
 	if (!e.actor && !e.pipelineId) throw Error("searchAudit requires at least one of `actor` or `pipelineId`");
-	let t = `/api/pipelines/audit/search${Qe({
+	let t = `/api/pipelines/audit/search${$e({
 		actor: e.actor,
 		pipelineId: e.pipelineId,
 		actions: e.actions,
@@ -2054,10 +2076,10 @@ async function et(e) {
 }
 //#endregion
 //#region src/components/forms/JsonPathInput.tsx
-var tt = {
+var nt = {
 	sm: "px-1.5 py-0.5 text-[11px]",
 	md: "px-2 py-0.5 text-[12px]"
-}, nt = l(function({ value: e, onChange: t, samples: n, placeholder: r = "$.path.to.value", invalid: o = !1, errorMessage: s, disabled: c = !1, size: l = "md", enforcePrefix: u = !1, "data-testid": d }, f) {
+}, rt = l(function({ value: e, onChange: t, samples: n, placeholder: r = "$.path.to.value", invalid: o = !1, errorMessage: s, disabled: c = !1, size: l = "md", enforcePrefix: u = !1, "data-testid": d }, f) {
 	let m = p(), h = u && e.length > 0 && !e.startsWith("$.") ? "JSONPath must start with \"$.\"" : void 0, g = o || h != null, _ = s ?? h;
 	return /* @__PURE__ */ y("div", {
 		className: "flex flex-col gap-1 w-full",
@@ -2082,7 +2104,7 @@ var tt = {
 					type: "button",
 					disabled: c,
 					onClick: () => t(e.value),
-					className: i("rounded border border-border bg-surface-hover font-mono text-text-secondary", "transition-colors duration-100", "hover:bg-info-bg hover:border-info-border hover:text-info-fg", "focus:outline-none focus:ring-2 focus:ring-info/40", "disabled:opacity-50 disabled:cursor-not-allowed", tt[l]),
+					className: i("rounded border border-border bg-surface-hover font-mono text-text-secondary", "transition-colors duration-100", "hover:bg-info-bg hover:border-info-border hover:text-info-fg", "focus:outline-none focus:ring-2 focus:ring-info/40", "disabled:opacity-50 disabled:cursor-not-allowed", nt[l]),
 					children: e.label
 				}, e.value))
 			}),
@@ -2094,7 +2116,7 @@ var tt = {
 			})
 		]
 	});
-}), rt = l(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o, unit: s, placeholder: c, invalid: l = !1, disabled: d = !1, size: f = "md", id: p, name: m, required: h, "aria-label": g, "aria-labelledby": _, "aria-describedby": y, "aria-invalid": b, "aria-required": x, "data-testid": S }, C) {
+}), it = l(function({ value: e, onChange: t, onClear: n, min: r, max: i, step: o, unit: s, placeholder: c, invalid: l = !1, disabled: d = !1, size: f = "md", id: p, name: m, required: h, "aria-label": g, "aria-labelledby": _, "aria-describedby": y, "aria-invalid": b, "aria-required": x, "data-testid": S }, C) {
 	let w = u((e) => {
 		let t = e;
 		return r !== void 0 && t < r && (t = r), i !== void 0 && t > i && (t = i), t;
@@ -2143,7 +2165,7 @@ var tt = {
 });
 //#endregion
 //#region src/components/forms/RadioGroup.tsx
-function it({ name: e, value: t, onChange: n, options: r, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
+function at({ name: e, value: t, onChange: n, options: r, disabled: a = !1, orientation: o = "vertical", "data-testid": s }) {
 	let c = p();
 	return /* @__PURE__ */ v("div", {
 		role: "radiogroup",
@@ -2192,7 +2214,7 @@ function it({ name: e, value: t, onChange: n, options: r, disabled: a = !1, orie
 }
 //#endregion
 //#region src/components/forms/Slider.tsx
-var at = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a = 1, "aria-label": o, readout: s = !0, disabled: c = !1, className: l, "data-testid": u }, d) {
+var ot = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a = 1, "aria-label": o, readout: s = !0, disabled: c = !1, className: l, "data-testid": u }, d) {
 	let f = p(), m = typeof s == "function" ? s(e) : String(e);
 	return /* @__PURE__ */ y("div", {
 		className: i("flex items-center gap-2", l),
@@ -2215,16 +2237,16 @@ var at = l(function({ value: e, onChange: t, min: n = 0, max: r = 100, step: a =
 			children: m
 		})]
 	});
-}), ot = {
+}), st = {
 	sm: "w-16",
 	md: "w-32",
 	lg: "w-48"
-}, st = {
+}, ct = {
 	square: "aspect-square",
 	video: "aspect-video",
 	auto: ""
 };
-function ct() {
+function lt() {
 	return /* @__PURE__ */ y("svg", {
 		xmlns: "http://www.w3.org/2000/svg",
 		viewBox: "0 0 24 24",
@@ -2253,11 +2275,11 @@ function ct() {
 		]
 	});
 }
-function lt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
+function ut({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded: a = !1, fallback: o, loading: s = "lazy", className: c, "data-testid": l }) {
 	let [u, d] = g("loading");
 	return /* @__PURE__ */ y("div", {
 		"data-testid": l,
-		className: i("relative overflow-hidden bg-surface-hover", ot[n], r !== "auto" && st[r], a ? "rounded-full" : "rounded-md", c),
+		className: i("relative overflow-hidden bg-surface-hover", st[n], r !== "auto" && ct[r], a ? "rounded-full" : "rounded-md", c),
 		children: [
 			u === "loading" && /* @__PURE__ */ v("div", {
 				"aria-hidden": "true",
@@ -2265,7 +2287,7 @@ function lt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 			}),
 			u === "error" && /* @__PURE__ */ v("div", {
 				className: "absolute inset-0 flex items-center justify-center bg-surface-hover",
-				children: o ?? /* @__PURE__ */ v(ct, {})
+				children: o ?? /* @__PURE__ */ v(lt, {})
 			}),
 			/* @__PURE__ */ v("img", {
 				src: e,
@@ -2280,10 +2302,10 @@ function lt({ src: e, alt: t, size: n = "md", aspectRatio: r = "square", rounded
 }
 //#endregion
 //#region src/components/image/GenerativeImagePreview.tsx
-function ut(e) {
+function dt(e) {
 	return e < 60 ? `${e}s` : `${Math.floor(e / 60)}m ${e % 60}s`;
 }
-function dt({ startedAt: e }) {
+function ft({ startedAt: e }) {
 	let [t, n] = g(() => Math.max(0, Math.floor((Date.now() - e) / 1e3)));
 	return f(() => {
 		let t = () => n(Math.max(0, Math.floor((Date.now() - e) / 1e3)));
@@ -2293,10 +2315,10 @@ function dt({ startedAt: e }) {
 	}, [e]), /* @__PURE__ */ v("span", {
 		"data-testid": "generative-image-preview-elapsed",
 		className: "absolute bottom-1 right-1 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[10px] leading-none text-white/90",
-		children: ut(t)
+		children: dt(t)
 	});
 }
-function ft({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
+function pt({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 	let s = r(), c = h(e), [l, u] = g(!1);
 	return c.current !== e && (c.current = e, e === "done" && !s && u(!0)), f(() => {
 		if (!l) return;
@@ -2321,7 +2343,7 @@ function ft({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 				className: i("absolute inset-0 flex items-center justify-center", "text-[11px] font-medium tracking-wide text-neutral select-none"),
 				children: "✦ synthesizing"
 			}),
-			a !== void 0 && /* @__PURE__ */ v(dt, { startedAt: a })
+			a !== void 0 && /* @__PURE__ */ v(ft, { startedAt: a })
 		] }) : t ? /* @__PURE__ */ v("img", {
 			src: t,
 			alt: n,
@@ -2336,23 +2358,23 @@ function ft({ status: e, src: t, alt: n = "", startedAt: a, className: o }) {
 //#endregion
 //#region src/components/pipelines/services/PipelineEditorServicesContext.tsx
 var $ = c(null);
-function pt({ services: e, children: t }) {
+function mt({ services: e, children: t }) {
 	return /* @__PURE__ */ v($.Provider, {
 		value: e,
 		children: t
 	});
 }
-function mt() {
+function ht() {
 	let e = d($);
 	if (!e) throw Error("useImageUrl must be called inside <PipelineEditorServicesProvider>. The host editor (e.g. wsg PipelineEditorPage) is responsible for mounting it with its own getImageUrl implementation.");
 	return e.getImageUrl;
 }
-function ht() {
+function gt() {
 	let e = d($);
 	if (!e) throw Error("usePipelineEditorServices must be called inside <PipelineEditorServicesProvider>.");
 	return e;
 }
-function gt(e) {
+function _t(e) {
 	let t = d($)?.nodeVocabulary?.[e];
 	return m(() => ({
 		label: (e, n) => t?.labels?.[e] ?? n,
@@ -2360,15 +2382,15 @@ function gt(e) {
 		placeholder: (e, n) => t?.placeholders?.[e] ?? n
 	}), [t]);
 }
-function _t(e, t) {
+function vt(e, t) {
 	let n = d($)?.modelOptions?.[e];
 	return m(() => n ?? t, [n, t]);
 }
-function vt() {
+function yt() {
 	let e = d($)?.modelOptions;
 	return m(() => (t, n) => e?.[t] ?? n, [e]);
 }
-function yt() {
+function bt() {
 	let e = d($)?.executableNodeTypes;
 	return m(() => {
 		if (!e) return () => !0;
@@ -2377,4 +2399,4 @@ function yt() {
 	}, [e]);
 }
 //#endregion
-export { ee as $, Oe as A, ge as B, Re as C, Me as D, Ve as E, ye as F, B as G, W as H, _e as I, M as J, V as K, me as L, J as M, Ce as N, Ne as O, we as P, k as Q, he as R, We as S, Be as T, ae as U, ie as V, oe as W, A as X, j as Y, O as Z, qe as _, vt as a, Xe as b, ft as c, it as d, D as et, rt as f, Ze as g, et as h, _t as i, Te as j, Ae as k, lt as l, $e as m, mt as n, x as nt, gt as o, nt as p, H as q, yt as r, ht as s, pt as t, b as tt, at as u, Ke as v, He as w, Ge as x, Ye as y, ve as z };
+export { k as $, Ae as A, ve as B, ze as C, Ne as D, He as E, we as F, oe as G, ie as H, ye as I, H as J, B as K, _e as L, Te as M, J as N, Pe as O, Ce as P, O as Q, me as R, Ge as S, Ve as T, W as U, ge as V, ae as W, j as X, M as Y, A as Z, Je as _, yt as a, Ze as b, pt as c, at as d, ee as et, it as f, Qe as g, tt as h, vt as i, Oe as j, je as k, ut as l, et as m, ht as n, b as nt, _t as o, rt as p, V as q, bt as r, x as rt, gt as s, mt as t, D as tt, ot as u, qe as v, Ue as w, Ke as x, Xe as y, he as z };

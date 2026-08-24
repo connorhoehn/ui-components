@@ -24,6 +24,9 @@ import { Checkbox } from '../forms/Checkbox';
 // Helpers
 // ---------------------------------------------------------------------------
 
+/** Rows fetched per page (and per "Load more" click). */
+const PAGE_SIZE = 100;
+
 /** Extract distinct error kinds from entries for the filter dropdown. */
 function extractErrorKinds(entries: DLQEntry[]): string[] {
   const kinds = new Set<string>();
@@ -63,6 +66,11 @@ export default function DLQInspector() {
   // Auto-refresh interval
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // How many rows are currently loaded, so a background refresh can re-request
+  // the same span instead of collapsing back to the first page. A ref, not
+  // state: the refresh interval captures `fetchEntries` once per filter change.
+  const loadedCountRef = useRef(0);
+
   // ── Fetch ─────────────────────────────────────────────────────────────
 
   const fetchEntries = useCallback(async (append = false) => {
@@ -70,14 +78,25 @@ export default function DLQInspector() {
       if (!append) setLoading(true);
       setError(null);
       const res = await listDLQEntries({
-        limit: 100,
+        // A non-appending fetch replaces the whole list, and the 15s
+        // auto-refresh is one of those. Asking for a flat 100 meant every
+        // refresh silently threw away the pages "Load more" had added: the
+        // table went 200 rows -> 100 rows, "Redrive All (200)" -> "(100)", with
+        // no indication anything had been dropped. Re-request the span the user
+        // has actually loaded.
+        limit: append ? PAGE_SIZE : Math.max(PAGE_SIZE, loadedCountRef.current),
         cursor: append ? cursor : undefined,
         errorKind: filterKind || undefined,
       });
       if (append) {
-        setEntries((prev) => [...prev, ...res.items]);
+        setEntries((prev) => {
+          const next = [...prev, ...res.items];
+          loadedCountRef.current = next.length;
+          return next;
+        });
       } else {
         setEntries(res.items);
+        loadedCountRef.current = res.items.length;
       }
       setCursor(res.cursor);
       setHasMore(!!res.cursor);
@@ -195,11 +214,23 @@ export default function DLQInspector() {
           ←
         </button>
         <h1 className="text-lg font-bold text-text-primary m-0">Dead Letter Queue</h1>
+        {/* `DLQListResponse` carries no server-side total, so this badge can
+            only ever report what is loaded. It used to print that bare — a
+            4,312-message queue read "100", and "200" after one Load more, i.e.
+            a queue-depth figure that was a function of how many times you had
+            clicked. The trailing "+" is the honest form while `hasMore` says
+            there is more behind the cursor. */}
         <span
           className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-bold bg-danger-bg text-danger-fg"
           data-testid="dlq-depth-badge"
+          title={
+            hasMore
+              ? `${entries.length} loaded — more remain in the queue`
+              : `${entries.length} in the queue`
+          }
         >
           {entries.length}
+          {hasMore ? '+' : ''}
         </span>
         <div className="flex-1" />
         <button

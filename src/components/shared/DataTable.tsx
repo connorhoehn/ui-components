@@ -25,7 +25,13 @@ export interface DataTableColumn<T> {
   header: ReactNode;
   /** Optional cell renderer. If absent, the value at `key` is rendered as a string. */
   render?: (row: T, rowIndex: number) => ReactNode;
-  /** Optional sort comparator. If absent but `sortable=true`, sorts by `String(row[key])`. */
+  /**
+   * Optional sort comparator. If absent but `sortable=true`, the default
+   * comparator compares numbers/bigints/Dates/booleans by VALUE and everything
+   * else by `String(...)`. (It used to stringify unconditionally, which sorted a
+   * numeric column lexicographically — 1, 10, 100, 2, 9 — and a Date column by
+   * weekday name.)
+   */
   compare?: (a: T, b: T) => number;
   /** Optional filter accessor. If absent but `filterable=true`, filters by `String(row[key])`. */
   getFilterText?: (row: T) => string;
@@ -60,6 +66,41 @@ export interface DataTableProps<T> {
   frameless?: boolean;
   className?: string;
   'data-testid'?: string;
+}
+
+/**
+ * Default cell comparator. Values that carry an intrinsic order (number,
+ * bigint, Date, boolean) are compared by VALUE; everything else falls back to
+ * `localeCompare` on its string form.
+ *
+ * Stringifying unconditionally is the classic quietly-wrong sort: `String(10)`
+ * collates before `String(9)`, so a "failures" column sorted descending puts 9
+ * above 100. `NaN`/invalid Dates are treated as equal to each other and sorted
+ * after real values so they can't make the comparator return NaN (which leaves
+ * the engine free to emit an arbitrary order).
+ */
+function defaultCellCompare(a: unknown, b: unknown): number {
+  if (typeof a === 'number' && typeof b === 'number') {
+    const aBad = Number.isNaN(a);
+    const bBad = Number.isNaN(b);
+    if (aBad || bBad) return aBad && bBad ? 0 : aBad ? 1 : -1;
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+  if (typeof a === 'bigint' && typeof b === 'bigint') {
+    return a < b ? -1 : a > b ? 1 : 0;
+  }
+  if (a instanceof Date && b instanceof Date) {
+    const at = a.getTime();
+    const bt = b.getTime();
+    const aBad = Number.isNaN(at);
+    const bBad = Number.isNaN(bt);
+    if (aBad || bBad) return aBad && bBad ? 0 : aBad ? 1 : -1;
+    return at < bt ? -1 : at > bt ? 1 : 0;
+  }
+  if (typeof a === 'boolean' && typeof b === 'boolean') {
+    return a === b ? 0 : a ? 1 : -1;
+  }
+  return String(a ?? '').localeCompare(String(b ?? ''));
 }
 
 function alignClass(a?: 'left' | 'right' | 'center'): string | undefined {
@@ -118,11 +159,11 @@ export function DataTable<T>({
     if (!col || !col.sortable) return filtered;
     const cmp =
       col.compare ??
-      ((a: T, b: T) => {
-        const av = String((a as Record<string, unknown>)[col.key] ?? '');
-        const bv = String((b as Record<string, unknown>)[col.key] ?? '');
-        return av.localeCompare(bv);
-      });
+      ((a: T, b: T) =>
+        defaultCellCompare(
+          (a as Record<string, unknown>)[col.key],
+          (b as Record<string, unknown>)[col.key],
+        ));
     const copy = [...filtered];
     copy.sort((a, b) => (sortDir === 'asc' ? cmp(a, b) : -cmp(a, b)));
     return copy;
@@ -236,7 +277,12 @@ export function DataTable<T>({
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              // Step from `safePage`, not the raw `page`. When `data` shrinks
+              // under a stale page index the two diverge (page=5, safePage=1),
+              // and stepping the raw value leaves `safePage` pinned at the
+              // clamp — Prev renders "Page 2 of 2" over and over while the user
+              // clicks. See the "stale page index" regression test.
+              onClick={() => setPage(Math.max(0, safePage - 1))}
               disabled={safePage === 0}
               data-testid="datatable-prev"
               className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
@@ -245,7 +291,7 @@ export function DataTable<T>({
             </button>
             <button
               type="button"
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(Math.min(totalPages - 1, safePage + 1))}
               disabled={safePage >= totalPages - 1}
               data-testid="datatable-next"
               className="rounded border border-border bg-surface px-2 py-1 text-xs text-text-primary disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-panel"
