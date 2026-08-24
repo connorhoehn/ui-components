@@ -4,7 +4,7 @@
 // and recent documents. Replaces the static PresencePanel + DisconnectReconnect
 // sidebar in AppLayout.
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useId, useRef } from 'react';
 import type { ActivityEvent } from '../../hooks/useActivityBus';
 import type { DocumentInfo } from '../../hooks/useDocuments';
 import { identityToColor, identityToInitials } from '../../utils/identity';
@@ -61,6 +61,9 @@ export interface CollapsibleSidebarProps {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/** Stable identity for the "no pipelines prop" case — see `visiblePipelines`. */
+const EMPTY_PIPELINES: PipelineSidebarEntry[] = [];
 
 function relativeTime(timestamp: string): string {
   const now = Date.now();
@@ -123,9 +126,40 @@ function isMentionEvent(event: ActivityEvent, userId: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
+// Keyboard activation
+// ---------------------------------------------------------------------------
+
+/**
+ * Key handler for the `role="button"` rows below. The ARIA button contract is
+ * Enter *and* Space; these rows used to handle Enter only, so a keyboard user
+ * pressing Space on a document scrolled the sidebar instead of opening it.
+ * Space must also be `preventDefault()`ed for exactly that reason.
+ */
+function onActivationKey(action: () => void) {
+  return (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      action();
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
 // CollapsibleSection
 // ---------------------------------------------------------------------------
 
+/**
+ * One CHANNELS / ACTIVITY / DOCUMENTS group.
+ *
+ * This is deliberately not `sidebar/SidebarSection`: that primitive drops its
+ * body with `hidden` (no height transition) and force-persists collapse state
+ * to localStorage. The a11y contract is the same one it documents, though —
+ * real `<button aria-expanded aria-controls>`, `<section aria-labelledby>`,
+ * and a collapsed body that is out of both the tab order and the AT tree.
+ * Here `inert` + `aria-hidden` do that job, because `max-height: 0` alone
+ * hides the body from sighted users only: screen-reader users still heard
+ * every row of a "collapsed" section, and Tab still walked through them.
+ */
 function CollapsibleSection({
   title,
   emoji,
@@ -140,17 +174,41 @@ function CollapsibleSection({
   children: React.ReactNode;
 }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const reactId = useId();
+  const labelId = `${reactId}-label`;
+  const panelId = `${reactId}-panel`;
+  const headerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  const toggle = () => {
+    const next = !expanded;
+    if (!next) {
+      // Collapsing. The panel is about to go inert/aria-hidden, so anything
+      // focused inside it would be stranded: the browser blurs to <body> and
+      // the keyboard user restarts their Tab walk from the top of the page
+      // (and an aria-hidden subtree holding focus is a WCAG violation).
+      // Pull focus back up to the header that now represents the section.
+      const active = typeof document === 'undefined' ? null : document.activeElement;
+      if (active && panelRef.current?.contains(active)) {
+        headerRef.current?.focus();
+      }
+    }
+    setExpanded(next);
+  };
 
   return (
-    <div>
-      <div
-        className="text-[11px] font-bold uppercase tracking-[0.5px] text-neutral m-0 cursor-pointer flex items-center gap-1.5 select-none py-2"
-        onClick={() => setExpanded(v => !v)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(v => !v); } }}
+    <section aria-labelledby={labelId} data-expanded={expanded ? 'true' : 'false'}>
+      <button
+        type="button"
+        ref={headerRef}
+        id={labelId}
+        aria-expanded={expanded}
+        aria-controls={panelId}
+        className="w-full text-left bg-transparent border-0 text-[11px] font-bold uppercase tracking-[0.5px] text-neutral m-0 cursor-pointer flex items-center gap-1.5 select-none px-0 py-2"
+        onClick={toggle}
       >
         <span
+          aria-hidden="true"
           className={cn(
             'inline-block transition-transform duration-200 ease-in-out text-[10px]',
             expanded ? 'rotate-90' : 'rotate-0',
@@ -158,15 +216,19 @@ function CollapsibleSection({
         >
           {'▸'}
         </span>
-        {emoji && <span className="text-xs">{emoji}</span>}
+        {emoji && <span aria-hidden="true" className="text-xs">{emoji}</span>}
         <span>{title}</span>
         {typeof count === 'number' && count > 0 && (
           <span className="ml-1 text-[10px] font-semibold text-neutral bg-border rounded-lg px-1.5 py-px tracking-normal normal-case">
             {count}
           </span>
         )}
-      </div>
+      </button>
       <div
+        id={panelId}
+        ref={panelRef}
+        inert={!expanded}
+        aria-hidden={!expanded || undefined}
         className={cn(
           'overflow-hidden transition-[max-height] duration-[250ms] ease-in-out',
           expanded ? 'max-h-[600px]' : 'max-h-0',
@@ -174,7 +236,7 @@ function CollapsibleSection({
       >
         {children}
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -202,8 +264,10 @@ export function CollapsibleSidebar({
   const isConnected = connectionState === 'connected';
   const recentEvents = useMemo(() => activityEvents.slice(0, 5), [activityEvents]);
   const recentDocs = useMemo(() => documents.slice(0, 5), [documents]);
-  const pipelineList = pipelines ?? [];
-  const visiblePipelines = useMemo(() => pipelineList.slice(0, 12), [pipelineList]);
+  const pipelineList = pipelines ?? EMPTY_PIPELINES;
+  // Memo on `pipelines`, not on `pipelineList`: `pipelines ?? []` built a fresh
+  // array every render, so the memo below never hit its cache.
+  const visiblePipelines = useMemo(() => (pipelines ?? EMPTY_PIPELINES).slice(0, 12), [pipelines]);
   const showPipelinesSection = pipelines !== undefined;
 
   return (
@@ -330,7 +394,7 @@ export function CollapsibleSidebar({
                     : '[animation:fadeSlideIn_0.3s_ease-out]',
                 )}
               >
-                <span className="shrink-0 w-4 text-center text-text-tertiary">
+                <span aria-hidden="true" className="shrink-0 w-4 text-center text-text-tertiary">
                   {eventIcon(event.eventType)}
                 </span>
                 <span className="flex-1 text-text-primary overflow-hidden text-ellipsis whitespace-nowrap">
@@ -361,7 +425,7 @@ export function CollapsibleSidebar({
               onClick={() => onOpenDocument(doc.id)}
               role="button"
               tabIndex={0}
-              onKeyDown={e => { if (e.key === 'Enter') onOpenDocument(doc.id); }}
+              onKeyDown={onActivationKey(() => onOpenDocument(doc.id))}
               className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-text-primary font-sans hover:bg-surface-hover"
             >
               <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
@@ -389,7 +453,7 @@ export function CollapsibleSidebar({
                       role="button"
                       tabIndex={0}
                       onClick={onSeeAllPipelines}
-                      onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
+                      onKeyDown={onActivationKey(onSeeAllPipelines)}
                       className="text-[11px] text-info-fg not-italic cursor-pointer ml-2"
                     >
                       + New
@@ -403,10 +467,10 @@ export function CollapsibleSidebar({
                   onClick={() => onOpenPipeline?.(p.id)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={e => { if (e.key === 'Enter') onOpenPipeline?.(p.id); }}
+                  onKeyDown={onActivationKey(() => onOpenPipeline?.(p.id))}
                   className="flex items-center justify-between px-1 py-1 rounded cursor-pointer text-xs text-text-primary font-sans gap-1.5 min-w-0 hover:bg-surface-hover"
                 >
-                  <span className="shrink-0 text-xs w-4 text-center">
+                  <span aria-hidden="true" className="shrink-0 text-xs w-4 text-center">
                     {p.icon ?? '\u{1F500}'}
                   </span>
                   <span className="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
@@ -429,7 +493,7 @@ export function CollapsibleSidebar({
                   role="button"
                   tabIndex={0}
                   onClick={onSeeAllPipelines}
-                  onKeyDown={e => { if (e.key === 'Enter') onSeeAllPipelines(); }}
+                  onKeyDown={onActivationKey(onSeeAllPipelines)}
                   className="px-1 py-1 text-[11px] text-info-fg cursor-pointer font-sans"
                 >
                   See all pipelines {'→'}

@@ -5,7 +5,7 @@
 // contexts to a 2-column layout. We mount it inside a minimal demo-provider
 // wrapper and stub every external hook so the tests stay deterministic.
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import type { ReactNode } from 'react';
@@ -214,8 +214,14 @@ describe('AppLayout — composition', () => {
 
   it('renders all six primary tabs', () => {
     renderAppLayout();
+    // Scoped to the Primary nav landmark: the sidebar's DOCUMENTS / PIPELINES
+    // section headers are real buttons with those same accessible names, so an
+    // unscoped byRole lookup is ambiguous. (Before the CollapsibleSidebar a11y
+    // fix the headers were role=button divs whose name included the "▸"
+    // chevron, which accidentally kept this query unique.)
+    const tabs = within(screen.getByRole('navigation', { name: 'Primary' }));
     for (const label of ['Previews', 'Social', 'Documents', 'Pipelines', 'Ingest', 'Observability']) {
-      expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
+      expect(tabs.getByRole('button', { name: label })).toBeInTheDocument();
     }
   });
 
