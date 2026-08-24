@@ -53,7 +53,16 @@ describe('AuditPage', () => {
 });
 
 describe('MfaManagementPage', () => {
-  it('renders adoption metrics and filters users by pool', () => {
+  // INVERTED. This case was called "filters users by pool" but only asserted
+  // that the dropdown was on screen — and the dropdown did not filter
+  // anything: `selectedPool` was written by the Select and read by nobody, so
+  // `filteredUsers` was always the full list. The assertion passed precisely
+  // because it never selected a pool and never checked the rows afterwards.
+  //
+  // Rows without a `poolId` carry no pool information at all, so the page
+  // cannot filter them; it now hides the control instead of offering a
+  // dropdown that does nothing. The old assertion is kept, negated.
+  it('renders adoption metrics, and hides the pool filter when rows carry no poolId', () => {
     render(
       <MfaManagementPage
         metrics={{ totalUsers: 10, mfaEnabled: 6, mfaDisabled: 4, adoptionRate: 60 }}
@@ -64,7 +73,31 @@ describe('MfaManagementPage', () => {
     );
     expect(screen.getByText('60%')).toBeInTheDocument();
     expect(screen.getByText('ada@x.co')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('All Pools')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue('All Pools')).toBeNull();
+  });
+
+  it('actually filters the table when a pool is selected', () => {
+    render(
+      <MfaManagementPage
+        users={[
+          { userId: 'u1', email: 'ada@x.co', mfaEnabled: true, deviceCount: 2, poolId: 'p1' },
+          { userId: 'u2', email: 'bob@y.co', mfaEnabled: false, deviceCount: 0, poolId: 'p2' },
+        ]}
+        pools={[
+          { poolId: 'p1', poolName: 'Main', userCount: 1 },
+          { poolId: 'p2', poolName: 'Staff', userCount: 1 },
+        ]}
+        onRefresh={vi.fn()}
+      />,
+    );
+    // Both visible under "All Pools".
+    expect(screen.getByText('ada@x.co')).toBeInTheDocument();
+    expect(screen.getByText('bob@y.co')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByDisplayValue('All Pools'), { target: { value: 'p2' } });
+
+    expect(screen.queryByText('ada@x.co')).toBeNull();
+    expect(screen.getByText('bob@y.co')).toBeInTheDocument();
   });
 });
 

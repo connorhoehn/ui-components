@@ -8,6 +8,7 @@ import { PageSection } from '../../ui/PageSection';
 import { Button } from '../../ui/Button';
 import Chip from '../../shared/Chip';
 import ConfirmDialog from '../../shared/ConfirmDialog';
+import Banner from '../../shared/Banner';
 
 export interface ApplicationListPageProps {
   applications: Array<{
@@ -40,19 +41,34 @@ export function ApplicationListPage({
 }: ApplicationListPageProps) {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  // A rejected delete used to be swallowed whole: the close lived in
+  // `finally`, so a 403/409/500 dismissed the dialog exactly like a success
+  // while the row stayed in the table and nothing was ever shown or logged.
+  // The admin's only clue was the row not disappearing, which reads as a
+  // stale list — so the usual response was to reload and try again. Close on
+  // success only; on failure keep the dialog up and name the reason.
   const handleDelete = useCallback(
     async (clientId: string) => {
       setDeleting(true);
+      setDeleteError(null);
       try {
         await onDeleteApp(clientId);
+        setConfirmingId(null);
+      } catch (err: unknown) {
+        setDeleteError(err instanceof Error ? err.message : 'Failed to delete application.');
       } finally {
         setDeleting(false);
-        setConfirmingId(null);
       }
     },
     [onDeleteApp],
   );
+
+  const closeConfirm = useCallback(() => {
+    setConfirmingId(null);
+    setDeleteError(null);
+  }, []);
 
   const columns: Column<AppRow>[] = useMemo(
     () => [
@@ -89,7 +105,11 @@ export function ApplicationListPage({
         <Button variant="ghost" size="sm" onClick={() => onEditApp(item.clientId)}>
           Edit
         </Button>
-        <Button variant="danger" size="sm" onClick={() => setConfirmingId(item.clientId)}>
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => { setConfirmingId(item.clientId); setDeleteError(null); }}
+        >
           Delete
         </Button>
       </>
@@ -123,14 +143,16 @@ export function ApplicationListPage({
 
       <ConfirmDialog
         open={!!confirmingId}
-        onConfirm={() => confirmingId && handleDelete(confirmingId)}
-        onCancel={() => setConfirmingId(null)}
+        onConfirm={() => { if (confirmingId) void handleDelete(confirmingId); }}
+        onCancel={closeConfirm}
         title="Delete Application"
         body="This action cannot be undone. The application will lose access immediately."
         tone="destructive"
         confirmLabel="Delete"
         confirmDisabled={deleting}
-      />
+      >
+        {deleteError && <Banner variant="error">{deleteError}</Banner>}
+      </ConfirmDialog>
     </PageSection>
   );
 }

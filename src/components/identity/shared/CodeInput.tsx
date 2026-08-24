@@ -70,6 +70,24 @@ export function CodeInput({
     setValues(prev => {
       const next = [...prev];
       next[index] = digit;
+
+      // Editing a digit of an ALREADY-COMPLETE code starts a new entry: drop
+      // everything after the edited box.
+      //
+      // Without this, the code stays "complete" through every keystroke of a
+      // retype, so the submit effect below fired once PER KEYSTROKE with a
+      // half-updated code. The real flow that hits it is the common one: the
+      // first attempt fails, the authenticator rolls over, and the user types
+      // the fresh code over the old digits — which sent SIX verification
+      // attempts ('211111', '221111', '222111', … '222222'), five of them
+      // garbage. Identity servers rate-limit and lock accounts on failed MFA
+      // attempts, so one honest retry could burn a user's whole budget.
+      //
+      // Clearing the tail makes the code incomplete again, so exactly one
+      // submission fires when the last box is filled.
+      if (digit && prev.every(v => v !== '')) {
+        for (let i = index + 1; i < next.length; i++) next[i] = '';
+      }
       return next;
     });
 
@@ -115,12 +133,19 @@ export function CodeInput({
     }
     setValues(next);
 
-    if (pasted.length === length) {
-      setTimeout(() => onComplete(pasted), 0);
-    } else {
+    // A full paste is submitted by the completion effect above, like a typed
+    // code — NOT from here. This used to also `setTimeout(() => onComplete(
+    // pasted), 0)`, which is the same untracked-timer bug the typing path was
+    // fixed for, and it survived here because the tests only covered typing.
+    // The effect fired for the newly-complete values AND the timer fired, so
+    // pasting a TOTP (the normal password-manager flow) verified it twice:
+    // the second attempt failed on a single-use code and the user saw
+    // "invalid code" on a correct paste. The timer was also unowned, so it
+    // still fired after `onComplete` navigated away and unmounted the input.
+    if (pasted.length < length) {
       focusInput(Math.min(pasted.length, length - 1));
     }
-  }, [length, onComplete, focusInput]);
+  }, [length, focusInput]);
 
   return (
     <div className="flex flex-col items-center gap-2">

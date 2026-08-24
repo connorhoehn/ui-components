@@ -5,6 +5,7 @@ import { Button } from '../../ui/Button';
 import EmptyState from '../../shared/EmptyState';
 import ConfirmDialog from '../../shared/ConfirmDialog';
 import Chip from '../../shared/Chip';
+import Banner from '../../shared/Banner';
 
 export interface MfaDevice {
   deviceId: string;
@@ -50,33 +51,47 @@ export function MfaDashboardPage({
   const [renaming, setRenaming] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
+  // Both handlers used to reset in `finally`, so a rejected call closed the
+  // dialog / left the rename form exactly as a success does, with no message
+  // anywhere. On this page that is worse than on an admin table: a user who
+  // thinks they removed their last MFA device — and did not — believes they
+  // have turned MFA off, while the server still demands that device at the
+  // next sign-in. Only close on success; surface the reason on failure.
   const handleRemove = useCallback(async () => {
     if (!confirmRemove) return;
     setActionLoading(true);
+    setActionError(null);
     try {
       await onRemoveDevice(confirmRemove);
+      setConfirmRemove(null);
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to remove device.');
     } finally {
       setActionLoading(false);
-      setConfirmRemove(null);
     }
   }, [confirmRemove, onRemoveDevice]);
 
   const handleRename = useCallback(async (deviceId: string) => {
     if (!renameValue.trim()) return;
     setActionLoading(true);
+    setActionError(null);
     try {
       await onRenameDevice(deviceId, renameValue.trim());
-    } finally {
-      setActionLoading(false);
       setRenaming(null);
       setRenameValue('');
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to rename device.');
+    } finally {
+      setActionLoading(false);
     }
   }, [renameValue, onRenameDevice]);
 
   const startRename = (device: MfaDevice) => {
     setRenaming(device.deviceId);
     setRenameValue(device.deviceName);
+    setActionError(null);
   };
 
   return (
@@ -96,6 +111,16 @@ export function MfaDashboardPage({
             </Button>
           </div>
         </div>
+
+        {/* A failed REMOVE keeps the confirm dialog open, and the dialog is a
+            modal — a banner out here would be hidden behind it. So the page
+            shows the error only while no dialog is up (i.e. rename failures);
+            the remove error is rendered inside the dialog below. */}
+        {actionError && !confirmRemove && (
+          <div className="mb-5">
+            <Banner variant="error">{actionError}</Banner>
+          </div>
+        )}
 
         {loading && (
           <p className="text-center text-text-tertiary text-sm py-8">
@@ -157,7 +182,7 @@ export function MfaDashboardPage({
                     <Button variant="ghost" size="sm" onClick={() => startRename(device)}>
                       Rename
                     </Button>
-                    <Button variant="danger" size="sm" onClick={() => setConfirmRemove(device.deviceId)}>
+                    <Button variant="danger" size="sm" onClick={() => { setConfirmRemove(device.deviceId); setActionError(null); }}>
                       Remove
                     </Button>
                   </div>
@@ -169,14 +194,16 @@ export function MfaDashboardPage({
 
         <ConfirmDialog
           open={!!confirmRemove}
-          onConfirm={handleRemove}
-          onCancel={() => setConfirmRemove(null)}
+          onConfirm={() => { void handleRemove(); }}
+          onCancel={() => { setConfirmRemove(null); setActionError(null); }}
           title="Remove Device"
           body="Are you sure you want to remove this MFA device? You will no longer be able to use it for verification."
           confirmLabel={actionLoading ? 'Removing...' : 'Remove'}
           confirmDisabled={actionLoading}
           tone="destructive"
-        />
+        >
+          {actionError && <Banner variant="error">{actionError}</Banner>}
+        </ConfirmDialog>
       </div>
     </div>
   );
