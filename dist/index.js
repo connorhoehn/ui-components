@@ -1,17 +1,17 @@
 import { a as e, i as t, n, o as r, r as i, t as a } from "./registry-DbX3MVAA.js";
 import { n as o, t as s } from "./fieldType-Be2vqdKv.js";
 import { DOCUMENT_TYPE_ICONS as c, getPageConfig as l, getPagesView as u, makeEmptyField as d } from "./types.js";
-import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as ee, c as te, d as ne, f as x, g as S, h as re, i as ie, k as ae, l as C, m as w, n as oe, o as se, p as ce, r as le, s as ue, t as T, u as de, v as E, w as fe, x as pe, y as D } from "./hooks-XgOFB4tZ.js";
+import { A as f, C as p, D as m, E as h, O as g, S as _, T as v, _ as y, a as b, b as ee, c as te, d as ne, f as x, g as S, h as re, i as ie, k as ae, l as C, m as w, n as oe, o as se, p as ce, r as le, s as ue, t as T, u as de, v as E, w as fe, x as pe, y as D } from "./hooks-Gm5iWAjV.js";
 import { n as me, t as O } from "./IdentityContext-m2wQF4sJ.js";
 import { _ as k, a as he, d as A, f as j, g as ge, h as _e, i as ve, l as ye, m as be, n as xe, o as M, p as N, r as Se, t as P, u as Ce, v as we, y as F } from "./useWebSocket-CDq12epx.js";
-import { a as I, i as Te, n as L, o as Ee, r as R, t as De } from "./useSocialProfile-DXPZ4OO4.js";
+import { a as I, i as Te, n as L, o as Ee, r as R, t as De } from "./useSocialProfile-Cs3kuR7d.js";
 import { a as Oe, c as ke, i as Ae, l as je, n as Me, o as Ne, r as Pe, s as Fe, t as Ie, u as Le } from "./useSyncConflicts-DNj4F6oF.js";
 import { n as Re } from "./useDocumentTypes-C-AMWgYq.js";
 import { n as ze, t as Be } from "./WebSocketContext-DUvjGLFq.js";
 import { a as Ve, i as He, n as Ue, r as We, t as Ge } from "./ToastProvider-BqgHlzIs.js";
 import { t as z } from "./cn-DhjIN-s0.js";
 import { a as Ke, c as qe, d as Je, f as Ye, i as Xe, l as Ze, n as Qe, o as $e, r as et, s as tt, t as nt, u as rt } from "./StatusPill-csAutHMY.js";
-import { a as it, c as at, d as ot, f as st, i as ct, l as lt, m as ut, n as dt, o as ft, p as pt, r as mt, s as ht, t as gt, u as _t } from "./social-CTphjY7n.js";
+import { a as it, c as at, d as ot, f as st, i as ct, l as lt, m as ut, n as dt, o as ft, p as pt, r as mt, s as ht, t as gt, u as _t } from "./social-nw5Fwx2h.js";
 import { A as vt, B as yt, C as bt, D as xt, E as St, F as Ct, G as wt, H as Tt, I as Et, J as Dt, K as Ot, L as kt, M as At, N as jt, O as Mt, P as Nt, R as Pt, S as Ft, T as It, U as Lt, V as Rt, W as zt, Y as Bt, _ as Vt, a as Ht, b as Ut, c as Wt, d as Gt, f as Kt, g as qt, h as Jt, i as Yt, j as Xt, k as Zt, l as Qt, m as $t, n as en, o as tn, p as nn, q as rn, r as an, s as on, t as sn, u as cn, v as ln, w as un, x as dn, y as fn, z as pn } from "./shared-NLfQ2A8M.js";
 import { t as B } from "./Button-CTpms90-.js";
 import { t as mn } from "./Card-CcJetqWt.js";
@@ -36,12 +36,12 @@ import { t as _r } from "./Input-HA4mVi1W.js";
 import { t as vr } from "./Textarea-DPCoGI7q.js";
 import { o as yr } from "./renderers-DR6m0UGC.js";
 import { n as br, r as xr, t as Sr } from "./EventStreamContext-C0egqLaF.js";
-import { A as Cr, C as wr, G as Tr, J as Er, K as Dr, L as Or, T as kr, Y as Ar, _ as jr, b as Mr, c as Nr, d as Pr, f as Fr, g as Ir, h as Lr, l as Rr, m as zr, n as Br, nt as Vr, p as Hr, s as Ur, t as Wr, tt as Gr, u as Kr, v as qr, x as Jr, y as Yr } from "./services-U3GCEVsG.js";
+import { A as Cr, C as wr, G as Tr, J as Er, K as Dr, L as Or, T as kr, Y as Ar, _ as jr, b as Mr, c as Nr, d as Pr, f as Fr, g as Ir, h as Lr, l as Rr, m as zr, n as Br, nt as Vr, p as Hr, s as Ur, t as Wr, tt as Gr, u as Kr, v as qr, x as Jr, y as Yr } from "./services-CJbSong6.js";
 import { n as Xr, t as Zr } from "./ObservabilityContext-1dWNBRm7.js";
 import { t as Qr } from "./Select-CBb9fCiw.js";
-import { A as $r, B as ei, C as ti, D as ni, E as ri, F as ii, I as ai, L as oi, M as si, N as ci, O as li, P as ui, R as di, S as fi, T as pi, V as mi, _ as hi, a as gi, b as _i, c as vi, d as yi, f as bi, g as xi, h as Si, i as Ci, j as wi, k as Ti, l as Ei, m as Di, n as Oi, o as ki, p as Ai, r as ji, s as Mi, t as Ni, u as Pi, v as Fi, w as Ii, x as Li, y as Ri, z as zi } from "./video-CwtB8_wu.js";
-import { a as Bi, c as Vi, d as Hi, i as Ui, l as Wi, n as Gi, o as Ki, r as qi, s as Ji, t as Yi, u as Xi } from "./ReconnectingBanner-BpZcmydP.js";
-import { A as Zi, C as Qi, D as $i, E as ea, O as ta, S as na, T as ra, _ as ia, a as aa, b as oa, c as sa, d as ca, f as la, g as ua, h as da, i as fa, k as pa, l as ma, m as ha, n as ga, o as _a, p as va, r as ya, s as ba, t as xa, u as Sa, v as Ca, w as wa, x as Ta, y as Ea } from "./identity-uXRpkT4G.js";
+import { A as $r, B as ei, C as ti, D as ni, E as ri, F as ii, I as ai, L as oi, M as si, N as ci, O as li, P as ui, R as di, S as fi, T as pi, V as mi, _ as hi, a as gi, b as _i, c as vi, d as yi, f as bi, g as xi, h as Si, i as Ci, j as wi, k as Ti, l as Ei, m as Di, n as Oi, o as ki, p as Ai, r as ji, s as Mi, t as Ni, u as Pi, v as Fi, w as Ii, x as Li, y as Ri, z as zi } from "./video-LsOS-m1e.js";
+import { a as Bi, c as Vi, d as Hi, i as Ui, l as Wi, n as Gi, o as Ki, r as qi, s as Ji, t as Yi, u as Xi } from "./ReconnectingBanner-C5jBpTlY.js";
+import { A as Zi, C as Qi, D as $i, E as ea, O as ta, S as na, T as ra, _ as ia, a as aa, b as oa, c as sa, d as ca, f as la, g as ua, h as da, i as fa, k as pa, l as ma, m as ha, n as ga, o as _a, p as va, r as ya, s as ba, t as xa, u as Sa, v as Ca, w as wa, x as Ta, y as Ea } from "./identity-C5Yp-zFy.js";
 import { t as Da } from "./Checkbox-CsbxMNgR.js";
 import { Component as Oa, Suspense as ka, createContext as Aa, forwardRef as ja, lazy as Ma, useCallback as Na, useContext as Pa, useEffect as H, useMemo as U, useRef as W, useState as G } from "react";
 import { Fragment as K, jsx as q, jsxs as J } from "react/jsx-runtime";
@@ -52,12 +52,16 @@ function Ra({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 	H(() => {
 		e && c(/* @__PURE__ */ new Set());
 	}, [e]);
-	let d = U(() => r.filter((e) => !e.alreadyInCall), [r]), f = (e) => {
+	let d = W(null);
+	H(() => () => {
+		d.current && clearTimeout(d.current);
+	}, []);
+	let f = U(() => r.filter((e) => !e.alreadyInCall), [r]), p = (e) => {
 		c((t) => {
 			let n = new Set(t);
 			return n.has(e) ? n.delete(e) : n.add(e), n;
 		});
-	}, p = s.size, m = /* @__PURE__ */ J(K, { children: [/* @__PURE__ */ q(B, {
+	}, m = s.size, h = /* @__PURE__ */ J(K, { children: [/* @__PURE__ */ q(B, {
 		variant: "ghost",
 		size: "md",
 		onClick: t,
@@ -70,17 +74,17 @@ function Ra({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 		onClick: () => {
 			n([...s]);
 		},
-		disabled: a || p === 0,
+		disabled: a || m === 0,
 		"data-autofocus": !0,
 		"data-testid": "invite-to-call-confirm",
-		children: a ? "Inviting…" : p === 0 ? "Invite" : `Invite ${p} ${p === 1 ? "person" : "people"}`
+		children: a ? "Inviting…" : m === 0 ? "Invite" : `Invite ${m} ${m === 1 ? "person" : "people"}`
 	})] });
 	return /* @__PURE__ */ q(Vn, {
 		open: e,
 		onClose: t,
 		title: "Add people to this call",
 		maxWidth: 420,
-		footer: m,
+		footer: h,
 		backdropTestId: "invite-to-call-backdrop",
 		children: /* @__PURE__ */ J("div", {
 			className: "flex flex-col gap-3",
@@ -126,7 +130,7 @@ function Ra({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 									} catch {}
 									document.body.removeChild(e);
 								}
-								u(!0), window.setTimeout(() => u(!1), 1500);
+								u(!0), d.current && clearTimeout(d.current), d.current = setTimeout(() => u(!1), 1500);
 							},
 							children: l ? "✓ Copied" : "Copy"
 						})]
@@ -136,7 +140,7 @@ function Ra({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 					className: "text-[13px] text-text-secondary m-0",
 					"data-testid": "invite-to-call-empty",
 					children: "Nobody else is online right now."
-				}) : d.length === 0 ? /* @__PURE__ */ q("p", {
+				}) : f.length === 0 ? /* @__PURE__ */ q("p", {
 					className: "text-[13px] text-text-secondary m-0",
 					"data-testid": "invite-to-call-everyone-here",
 					children: "Everyone who's online is already on this call."
@@ -149,7 +153,7 @@ function Ra({ open: e, onClose: t, onInvite: n, candidates: r, lobbyLabel: i, lo
 							type: "button",
 							disabled: t,
 							"aria-pressed": n,
-							onClick: () => f(e.userId),
+							onClick: () => p(e.userId),
 							"data-testid": "invite-candidate",
 							"data-user-id": e.userId,
 							"data-selected": n ? "true" : "false",
@@ -1188,7 +1192,7 @@ function ho() {
 }
 //#endregion
 //#region src/components/layout/AppLayout.tsx
-var go = Ma(() => import("./DocumentEditorPage-DBSAxrzn.js").then((e) => e.n));
+var go = Ma(() => import("./DocumentEditorPage-DaAeFyrD.js").then((e) => e.n));
 function _o({ notifications: e, onDismiss: t, onClick: n }) {
 	if (e.length === 0) return null;
 	let r = (e) => (e.type === "mention" || e.type === "assignment") && !!e.sectionId;

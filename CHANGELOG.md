@@ -8,6 +8,77 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.82.0] — 2026-08-23
+
+A resource-leak and effect-cleanup audit — the failure class our test suite
+structurally cannot see, because vitest unmounts everything immediately and
+Playwright reloads between tests. A leak here only shows up in a long-lived
+consumer app.
+
+### Fixed — confirmed leaks
+
+- **`useAuth` leaked an immortal token-refresh chain.** `scheduleTokenRefresh()`
+  is assigned from three async Cognito callbacks, but the only cleanup belonged
+  to the session-restore effect. A timer scheduled *after* that cleanup ran was
+  owned by nobody — and firing it scheduled the next one. Mount a `useAuth`
+  consumer, let `getSession` reach the network, navigate away before it
+  resolves, and you get a chain refreshing tokens and writing `localStorage`
+  for the life of the tab, with a fresh independent chain per race.
+- **`WrappedReactionsOverlay` never expired reactions in a burst.** The expiry
+  timer was tied to the effect's lifecycle, so React ran its cleanup when the
+  *next* reaction arrived — cancelling the previous reaction's still-pending
+  expiry. Any burst faster than `ttlMs` left every reaction but the last on
+  screen for the life of the mount. Each reaction now owns its handle.
+- **`usePipelineMetrics` could spawn a duplicate immortal poll with a stale
+  token.** Its `mountedRef` was shared across effect runs and reset to `true`
+  on each, so when `idToken` refreshed mid-flight the old fetch's `.finally()`
+  scheduled into a closure the new `stopPolling()` could not reach.
+- **`CanvasCursorBoard`** created one untracked 1s timer per trail particle on
+  every (deliberately un-throttled) mousemove — a fast drag at unmount
+  stranded hundreds of detached nodes.
+- **`useTrackStateBump`** re-derived its track list at cleanup time, so a track
+  added and removed via `addtrack`/`removetrack` kept all three listeners,
+  pinning an unmounted fiber.
+- **`useAgUiStream` had no `useEffect` at all** — unmounting mid-stream left the
+  SSE read loop running against a live connection.
+- Plus async effects writing state after unmount (`PipelineRunsContext`,
+  `SourceDetailPage` — which also fixes older responses overwriting newer ones
+  when switching sources quickly, `AdjustLayerSliderPanel`), and ~15 callback
+  timers never cleared, including the `PipelineRunReplayPage` resume toast
+  scheduled immediately before the `navigate()` that unmounts the page.
+
+### Fixed — a StrictMode double-submit of single-use codes
+
+- **`CodeInput` submitted a completed TOTP twice.** `setTimeout(() =>
+  onComplete(code), 0)` sat *inside* a `setValues` updater, and React
+  deliberately double-invokes updaters in StrictMode to surface impurity — so
+  the deferred submit was scheduled twice. Because a TOTP is single-use, the
+  second attempt failed and the user saw "invalid code" on a **correct** entry.
+  Completion now fires from an effect with a ref guard making it exactly-once,
+  surviving inline-arrow `onComplete` identities, and re-arming when the code
+  is corrected. The stray timer is gone entirely. Tests run inside
+  `<StrictMode>` — the configuration that reproduced it — and were verified to
+  fail against the original implementation.
+
+### Verified clean, left alone
+
+All 8 `URL.createObjectURL` sites revoke correctly, and every `ResizeObserver`
+/`IntersectionObserver` disconnects. The shared module-level `AudioContext` in
+`useActiveSpeaker`/`useMuteWhileTalking` is a documented deliberate singleton
+(Chrome warns past ~6 contexts, hard-limits near 25) and both effects do
+disconnect their per-participant nodes.
+
+### Reported, not fixed — need a decision
+
+- `CallStartedBanner` depends on `onDismiss`, so a caller passing an inline
+  arrow restarts the auto-dismiss timer every parent render and the banner
+  never expires. The cleanup is correct; the dependency is the bug.
+- `useCallWidgetPersistence` discards its pending debounced write on unmount,
+  so a position changed within 200ms of closing is never persisted.
+- `useYjsDoc` calls `provider.off('synced', …)` with a different function
+  identity than it registered — currently harmless only because
+  `provider.destroy()` drops all observers.
+
 ## [2.81.0] — 2026-08-23
 
 Console-hygiene pass, closing out the stub audit.

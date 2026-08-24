@@ -2695,33 +2695,37 @@ var $ = [
 	"Backup"
 ];
 function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep: o = "name", initialSetupResult: s, initialDeviceName: c = "" }) {
-	let [l, u] = T(o === "scan" && !s ? "name" : o), [d, p] = T(!1), [m, h] = T(null), [g, _] = T(c), [v, y] = T(s ?? null), [b, S] = T(s?.backupCodes ?? []), [C, w] = T(!1), E = $.indexOf(l), k = x(async (e) => {
+	let [l, u] = T(o === "scan" && !s ? "name" : o), [d, p] = T(!1), [m, h] = T(null), [g, _] = T(c), [v, y] = T(s ?? null), [b, C] = T(s?.backupCodes ?? []), [E, k] = T(!1), A = $.indexOf(l), j = x(async (e) => {
 		if (e.preventDefault(), g.trim()) {
 			h(null), p(!0);
 			try {
 				let e = await n(g.trim());
-				y(e), S(e.backupCodes), u("scan");
+				y(e), C(e.backupCodes), u("scan");
 			} catch (e) {
 				h(e instanceof Error ? e.message : "Setup failed");
 			} finally {
 				p(!1);
 			}
 		}
-	}, [g, n]), A = x(async (e) => {
+	}, [g, n]), N = x(async (e) => {
 		if (v) {
 			h(null), p(!0);
 			try {
 				let t = await r(v.deviceId, e);
-				t.success ? (t.backupCodes && S(t.backupCodes), u("backup")) : h("Verification failed. Please try again.");
+				t.success ? (t.backupCodes && C(t.backupCodes), u("backup")) : h("Verification failed. Please try again.");
 			} catch (e) {
 				h(e instanceof Error ? e.message : "Verification failed");
 			} finally {
 				p(!1);
 			}
 		}
-	}, [v, r]), j = x(async () => {
+	}, [v, r]), P = w(null);
+	S(() => () => {
+		P.current && clearTimeout(P.current);
+	}, []);
+	let F = x(async () => {
 		try {
-			await navigator.clipboard.writeText(b.join("\n")), w(!0), setTimeout(() => w(!1), 2e3);
+			await navigator.clipboard.writeText(b.join("\n")), k(!0), P.current && clearTimeout(P.current), P.current = setTimeout(() => k(!1), 2e3);
 		} catch {}
 	}, [b]);
 	return /* @__PURE__ */ D("div", {
@@ -2746,10 +2750,10 @@ function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					children: $.map((t, n) => /* @__PURE__ */ O("div", {
 						className: "flex flex-col items-center gap-1.5",
 						children: [/* @__PURE__ */ D("div", {
-							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < E ? "bg-success" : n === E ? "bg-info" : "bg-surface-emphasis"),
-							"aria-label": `Step ${n + 1}${n === E ? " (current)" : n < E ? " (completed)" : ""}`
+							className: e("w-3 h-3 rounded-full transition-colors duration-200", n < A ? "bg-success" : n === A ? "bg-info" : "bg-surface-emphasis"),
+							"aria-label": `Step ${n + 1}${n === A ? " (current)" : n < A ? " (completed)" : ""}`
 						}), /* @__PURE__ */ D("span", {
-							className: e("text-[10px] uppercase tracking-wide font-medium", n === E ? "text-text-primary" : "text-text-tertiary"),
+							className: e("text-[10px] uppercase tracking-wide font-medium", n === A ? "text-text-primary" : "text-text-tertiary"),
 							children: ue[n]
 						})]
 					}, t))
@@ -2762,7 +2766,7 @@ function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep:
 					})
 				}),
 				l === "name" && /* @__PURE__ */ O("form", {
-					onSubmit: k,
+					onSubmit: j,
 					"aria-label": "Name your device",
 					children: [
 						/* @__PURE__ */ D("p", {
@@ -2839,7 +2843,7 @@ function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep:
 						children: "Enter the 6-digit code from your authenticator app to confirm setup"
 					}),
 					/* @__PURE__ */ D(Q, {
-						onComplete: A,
+						onComplete: N,
 						error: m,
 						disabled: d,
 						autoFocus: !0
@@ -2880,8 +2884,8 @@ function de({ onSetup: n, onVerify: r, onComplete: i, userEmail: a, initialStep:
 						variant: "primary",
 						size: "lg",
 						fullWidth: !0,
-						onClick: j,
-						children: C ? "Copied!" : "Copy All Codes"
+						onClick: F,
+						children: E ? "Copied!" : "Copy All Codes"
 					}),
 					/* @__PURE__ */ D("div", {
 						className: "mt-3",

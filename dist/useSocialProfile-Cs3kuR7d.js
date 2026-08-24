@@ -24,22 +24,29 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 		a,
 		o,
 		""
-	]), t(() => m.current((e) => {
-		if (e.type === "social:comment") {
-			let t = e.payload ?? e;
-			if (t.postId !== h.current) return;
-			let n = {
-				...t,
-				_fadeIn: !0
-			};
-			l((e) => [...e, n]), setTimeout(() => {
-				l((e) => e.map((e) => e.commentId === n.commentId ? {
-					...e,
-					_fadeIn: !1
-				} : e));
-			}, 300);
-		}
-	}), []), {
+	]), t(() => {
+		let e = /* @__PURE__ */ new Set(), t = m.current((t) => {
+			if (t.type === "social:comment") {
+				let n = t.payload ?? t;
+				if (n.postId !== h.current) return;
+				let r = {
+					...n,
+					_fadeIn: !0
+				};
+				l((e) => [...e, r]);
+				let i = setTimeout(() => {
+					e.delete(i), l((e) => e.map((e) => e.commentId === r.commentId ? {
+						...e,
+						_fadeIn: !1
+					} : e));
+				}, 300);
+				e.add(i);
+			}
+		});
+		return () => {
+			t(), e.forEach((e) => clearTimeout(e)), e.clear();
+		};
+	}, []), {
 		comments: c,
 		createComment: e(async (e, t) => {
 			if (!(!i || !a || !o)) {
@@ -408,22 +415,29 @@ function c({ idToken: i, roomId: a, onMessage: o }) {
 		i,
 		a,
 		""
-	]), t(() => _.current((e) => {
-		if (e.type === "social:post") {
-			let t = e.payload ?? e;
-			if (t.roomId !== v.current) return;
-			let n = {
-				...t,
-				_fadeIn: !0
-			};
-			c((e) => [n, ...e]), setTimeout(() => {
-				c((e) => e.map((e) => e.postId === n.postId ? {
-					...e,
-					_fadeIn: !1
-				} : e));
-			}, 300);
-		}
-	}), []);
+	]), t(() => {
+		let e = /* @__PURE__ */ new Set(), t = _.current((t) => {
+			if (t.type === "social:post") {
+				let n = t.payload ?? t;
+				if (n.roomId !== v.current) return;
+				let r = {
+					...n,
+					_fadeIn: !0
+				};
+				c((e) => [r, ...e]);
+				let i = setTimeout(() => {
+					e.delete(i), c((e) => e.map((e) => e.postId === r.postId ? {
+						...e,
+						_fadeIn: !1
+					} : e));
+				}, 300);
+				e.add(i);
+			}
+		});
+		return () => {
+			t(), e.forEach((e) => clearTimeout(e)), e.clear();
+		};
+	}, []);
 	let y = e(async () => {
 		if (!(!i || !a || !l)) {
 			f(!0), g(null);

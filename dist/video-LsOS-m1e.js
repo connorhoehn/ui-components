@@ -4,7 +4,7 @@ import { t as n } from "./Chip-2lIuHwy5.js";
 import { n as r, t as i } from "./PermissionDeniedCard-CbMdNs9F.js";
 import { t as a } from "./Avatar-u3ZNK9l2.js";
 import { t as o } from "./Select-CBb9fCiw.js";
-import { d as s, r as c } from "./ReconnectingBanner-BpZcmydP.js";
+import { d as s, r as c } from "./ReconnectingBanner-C5jBpTlY.js";
 import { useCallback as l, useEffect as u, useImperativeHandle as d, useLayoutEffect as f, useMemo as p, useRef as m, useState as h } from "react";
 import { Fragment as g, jsx as _, jsxs as v } from "react/jsx-runtime";
 //#region src/components/video/VideoPlayer.tsx
@@ -1169,60 +1169,66 @@ function le(e) {
 	let [t, n] = h({
 		x: 0,
 		y: 0
-	}), [r, i] = h(!1), [a, o] = h(!1), s = m(!1), c = m({
+	}), [r, i] = h(!1), [a, o] = h(!1), s = m(null), c = l(() => {
+		s.current && clearTimeout(s.current), s.current = setTimeout(() => o(!1), 200);
+	}, []);
+	u(() => () => {
+		s.current && clearTimeout(s.current);
+	}, []);
+	let d = m(!1), f = m({
 		x: 0,
 		y: 0
-	}), d = m({
+	}), p = m({
 		x: 0,
 		y: 0
-	}), f = m(null), p = l((n) => {
-		e && (s.current = !0, i(!0), o(!1), c.current = {
+	}), g = m(null), _ = l((n) => {
+		e && (d.current = !0, i(!0), o(!1), f.current = {
 			x: n.clientX,
 			y: n.clientY
-		}, d.current = { ...t }, n.preventDefault());
-	}, [e, t]), g = l(() => {
+		}, p.current = { ...t }, n.preventDefault());
+	}, [e, t]), v = l(() => {
 		o(!0), n({
 			x: 0,
 			y: 0
-		}), setTimeout(() => o(!1), 200);
-	}, []), _ = l((e) => {
-		let r = f.current;
+		}), c();
+	}, [c]), y = l((e) => {
+		let r = g.current;
 		if (!r) return;
 		let i = r.offsetParent, a = window.innerWidth, s = window.innerHeight;
 		i && (a = i.clientWidth, s = i.clientHeight);
-		let c = r.getBoundingClientRect(), l = i ? i.getBoundingClientRect() : {
+		let l = r.getBoundingClientRect(), u = i ? i.getBoundingClientRect() : {
 			left: 0,
 			top: 0
-		}, u, d;
+		}, d, f;
 		switch (e) {
 			case "top-left":
-				u = 16, d = 16;
+				d = 16, f = 16;
 				break;
 			case "top-right":
-				u = a - c.width - 16, d = 16;
+				d = a - l.width - 16, f = 16;
 				break;
 			case "bottom-left":
-				u = 16, d = s - c.height - 16;
+				d = 16, f = s - l.height - 16;
 				break;
-			default: u = a - c.width - 16, d = s - c.height - 16;
+			default: d = a - l.width - 16, f = s - l.height - 16;
 		}
-		let p = c.left - l.left - t.x, m = c.top - l.top - t.y;
+		let p = l.left - u.left - t.x, m = l.top - u.top - t.y;
 		o(!0), n({
-			x: u - p,
-			y: d - m
-		}), setTimeout(() => o(!1), 200);
-	}, [t]), v = m(_);
-	return v.current = _, u(() => {
+			x: d - p,
+			y: f - m
+		}), c();
+	}, [t, c]), b = m(y);
+	return b.current = y, u(() => {
 		if (!e) return;
 		let t = (e) => {
-			s.current && n({
-				x: d.current.x + (e.clientX - c.current.x),
-				y: d.current.y + (e.clientY - c.current.y)
+			d.current && n({
+				x: p.current.x + (e.clientX - f.current.x),
+				y: p.current.y + (e.clientY - f.current.y)
 			});
 		}, r = () => {
-			if (!s.current) return;
-			s.current = !1, i(!1);
-			let e = f.current;
+			if (!d.current) return;
+			d.current = !1, i(!1);
+			let e = g.current;
 			if (!e) return;
 			let t = e.offsetParent, n = window.innerWidth, r = window.innerHeight;
 			if (t) {
@@ -1232,21 +1238,21 @@ function le(e) {
 			let a = e.getBoundingClientRect(), o = t ? t.getBoundingClientRect() : {
 				left: 0,
 				top: 0
-			}, c = a.left - o.left, l = a.top - o.top, u = n - (c + a.width), d = r - (l + a.height), p = c < 80, m = u < 80, h = l < 80, g = d < 80;
-			h && p ? v.current("top-left") : h && m ? v.current("top-right") : g && p ? v.current("bottom-left") : g && m && v.current("bottom-right");
+			}, s = a.left - o.left, c = a.top - o.top, l = n - (s + a.width), u = r - (c + a.height), f = s < 80, p = l < 80, m = c < 80, h = u < 80;
+			m && f ? b.current("top-left") : m && p ? b.current("top-right") : h && f ? b.current("bottom-left") : h && p && b.current("bottom-right");
 		};
 		return document.addEventListener("mousemove", t), document.addEventListener("mouseup", r), () => {
 			document.removeEventListener("mousemove", t), document.removeEventListener("mouseup", r);
 		};
 	}, [e]), {
 		offset: t,
-		handleMouseDown: p,
-		resetOffset: g,
-		snapToCorner: _,
+		handleMouseDown: _,
+		resetOffset: v,
+		snapToCorner: y,
 		isDragging: r,
 		isAnimating: a,
 		hasMoved: t.x !== 0 || t.y !== 0,
-		widgetRef: f
+		widgetRef: g
 	};
 }
 function ue({ onSnap: t, contained: n }) {
@@ -2171,18 +2177,18 @@ function je({ localStream: e, isMuted: t, threshold: n = -45, triggerMs: r = 150
 		} catch {
 			return;
 		}
-		let l = null, u = 0, d = !1, f = new Float32Array(c.frequencyBinCount), p = setInterval(() => {
+		let l = null, u = 0, d = !1, f = null, p = new Float32Array(c.frequencyBinCount), m = setInterval(() => {
 			if (d) return;
-			c.getFloatTimeDomainData(f);
+			c.getFloatTimeDomainData(p);
 			let e = 0;
-			for (let t = 0; t < f.length; t++) e += f[t] * f[t];
-			let t = 20 * Math.log10(Math.sqrt(e / f.length)), a = Date.now();
-			t > n ? (l ??= a, a - l >= r && a - u > i && (o(!0), u = a, setTimeout(() => {
-				d || o(!1);
+			for (let t = 0; t < p.length; t++) e += p[t] * p[t];
+			let t = 20 * Math.log10(Math.sqrt(e / p.length)), a = Date.now();
+			t > n ? (l ??= a, a - l >= r && a - u > i && (o(!0), u = a, f !== null && clearTimeout(f), f = setTimeout(() => {
+				f = null, d || o(!1);
 			}, 3e3), l = null)) : l = null;
 		}, 200);
 		return () => {
-			d = !0, clearInterval(p);
+			d = !0, clearInterval(m), f !== null && (clearTimeout(f), f = null);
 			try {
 				s.disconnect();
 			} catch {}

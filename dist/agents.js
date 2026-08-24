@@ -661,7 +661,7 @@ function F({ trace: t, className: n }) {
 }
 //#endregion
 //#region src/components/agents/AgentDetailPage.tsx
-function ee({ agentId: t, trace: n, onBack: r, className: i }) {
+function I({ agentId: t, trace: n, onBack: r, className: i }) {
 	let { getAgent: a, getMetrics: o } = C(), s = a(t), c = o(t);
 	return s ? /* @__PURE__ */ d("div", {
 		className: e("space-y-6", i),
@@ -691,7 +691,7 @@ function ee({ agentId: t, trace: n, onBack: r, className: i }) {
 						className: "text-sm text-text-secondary mt-2",
 						children: s.description
 					})
-				] }), /* @__PURE__ */ u(I, { status: s.status })]
+				] }), /* @__PURE__ */ u(ee, { status: s.status })]
 			}),
 			/* @__PURE__ */ d("div", {
 				className: "grid grid-cols-1 md:grid-cols-2 gap-4",
@@ -780,7 +780,7 @@ function ee({ agentId: t, trace: n, onBack: r, className: i }) {
 		})]
 	});
 }
-function I({ status: t }) {
+function ee({ status: t }) {
 	return /* @__PURE__ */ u("span", {
 		className: e("text-xs font-medium px-2.5 py-1 rounded-full", {
 			healthy: "bg-success-bg text-success-fg",
@@ -849,7 +849,7 @@ function te(e, t) {
 	}
 	return a;
 }
-function ne(e, t) {
+function z(e, t) {
 	let n = new Set(t.map((e) => e.id));
 	return e.filter((e) => n.has(e.from) && n.has(e.to)).map((e, n) => {
 		let r = t.find((t) => t.id === e.from)?.protocol === "a2a";
@@ -877,8 +877,8 @@ function ne(e, t) {
 		};
 	});
 }
-function z({ agents: t, edges: n = [], onAgentClick: r, className: i }) {
-	let a = o(() => te(t, n), [t, n]), s = o(() => ne(n, t), [n, t]);
+function B({ agents: t, edges: n = [], onAgentClick: r, className: i }) {
+	let a = o(() => te(t, n), [t, n]), s = o(() => z(n, t), [n, t]);
 	return /* @__PURE__ */ u("div", {
 		className: e("w-full h-[500px]", i),
 		children: /* @__PURE__ */ d(h, {
@@ -900,7 +900,7 @@ function z({ agents: t, edges: n = [], onAgentClick: r, className: i }) {
 }
 //#endregion
 //#region src/components/agents/AgentFlowPage.tsx
-var re = [
+var ne = [
 	{
 		from: "orgiq-supervisor",
 		to: "orgiq-search"
@@ -926,7 +926,7 @@ var re = [
 		to: "orgiq-scoring"
 	}
 ];
-function ie({ edges: t = re, onAgentClick: n, className: r }) {
+function re({ edges: t = ne, onAgentClick: n, className: r }) {
 	let { agents: i } = C(), a = i.filter((e) => e.protocol === "a2a"), o = i.filter((e) => e.protocol === "direct");
 	return /* @__PURE__ */ d("div", {
 		className: e("space-y-4", r),
@@ -958,7 +958,7 @@ function ie({ edges: t = re, onAgentClick: n, className: r }) {
 			})]
 		}), /* @__PURE__ */ u("div", {
 			className: "border border-border rounded-lg overflow-hidden",
-			children: /* @__PURE__ */ u(z, {
+			children: /* @__PURE__ */ u(B, {
 				agents: i,
 				edges: t,
 				onAgentClick: n
@@ -968,7 +968,7 @@ function ie({ edges: t = re, onAgentClick: n, className: r }) {
 }
 //#endregion
 //#region src/components/agents/hooks/useAgUiStream.ts
-function B(e, t) {
+function V(e, t) {
 	let n = e;
 	for (let e of t) {
 		if (typeof n != "object" || !n) return;
@@ -976,43 +976,43 @@ function B(e, t) {
 	}
 	return n;
 }
-function V(e, t, n) {
+function H(e, t, n) {
 	if (t.length === 0) return n;
 	let r = Array.isArray(e) ? [...e] : { ...e }, i = t[0];
-	return r[i] = t.length === 1 ? n : V(r[i], t.slice(1), n), r;
+	return r[i] = t.length === 1 ? n : H(r[i], t.slice(1), n), r;
 }
-function H(e, t) {
+function U(e, t) {
 	if (t.length === 0) return;
 	let n = Array.isArray(e) ? [...e] : { ...e };
-	return t.length === 1 ? delete n[t[0]] : n[t[0]] = H(n[t[0]], t.slice(1)), n;
+	return t.length === 1 ? delete n[t[0]] : n[t[0]] = U(n[t[0]], t.slice(1)), n;
 }
-function U(e) {
+function W(e) {
 	return !e || e === "/" ? [] : e.replace(/^\//, "").split("/").map((e) => e.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
-function ae(e, t) {
+function ie(e, t) {
 	let n = e;
 	for (let e of t) try {
-		let t = U(e.path);
+		let t = W(e.path);
 		switch (e.op) {
 			case "add":
 			case "replace":
-				n = V(n, t, e.value);
+				n = H(n, t, e.value);
 				break;
 			case "remove":
-				n = H(n, t);
+				n = U(n, t);
 				break;
 			case "copy": {
-				let r = U(e.from ?? "");
-				n = V(n, t, B(n, r));
+				let r = W(e.from ?? "");
+				n = H(n, t, V(n, r));
 				break;
 			}
 			case "move": {
-				let r = U(e.from ?? ""), i = B(n, r);
-				n = H(n, r), n = V(n, t, i);
+				let r = W(e.from ?? ""), i = V(n, r);
+				n = U(n, r), n = H(n, t, i);
 				break;
 			}
 			case "test": {
-				let r = B(n, t);
+				let r = V(n, t);
 				JSON.stringify(r) !== JSON.stringify(e.value) && console.warn("[useAgUiStream] JSON Patch test op failed at", e.path);
 				break;
 			}
@@ -1023,46 +1023,46 @@ function ae(e, t) {
 	}
 	return n;
 }
-function W() {
+function G() {
 	return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
-function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
-	let [o, l] = c([]), [u, d] = c(""), [f, p] = c([]), [m, h] = c(void 0), [g, _] = c(t ?? null), [v, y] = c(null), [b, x] = c(!1), [S, C] = c(null), w = s(null), T = s(null), E = s(""), D = s([]), O = r((e) => {
-		l((t) => {
-			let n = t.findIndex((e) => e.id === T.current);
+function K({ url: e, threadId: t, headers: n, extraBody: i, onEvent: o }) {
+	let [l, u] = c([]), [d, f] = c(""), [p, m] = c([]), [h, g] = c(void 0), [_, v] = c(t ?? null), [y, b] = c(null), [x, S] = c(!1), [C, w] = c(null), T = s(null), E = s(null), D = s(""), O = s([]), k = r((e) => {
+		u((t) => {
+			let n = t.findIndex((e) => e.id === E.current);
 			if (n === -1) return t;
 			let r = [...t];
 			return r[n] = e(r[n]), r;
 		});
-	}, []), k = r((e, t) => {
-		D.current = D.current.map((n) => n.id === e ? t(n) : n), p((n) => n.map((n) => n.id === e ? t(n) : n)), l((n) => n.map((n) => ({
+	}, []), A = r((e, t) => {
+		O.current = O.current.map((n) => n.id === e ? t(n) : n), m((n) => n.map((n) => n.id === e ? t(n) : n)), u((n) => n.map((n) => ({
 			...n,
 			toolCalls: n.toolCalls.map((n) => n.id === e ? t(n) : n)
 		})));
-	}, []), A = r((e) => {
-		switch (a?.(e), e.type) {
+	}, []), j = r((e) => {
+		switch (o?.(e), e.type) {
 			case "RUN_STARTED":
-				_(e.threadId), y(e.runId);
+				v(e.threadId), b(e.runId);
 				break;
 			case "RUN_FINISHED":
-				x(!1), T.current &&= (O((e) => ({
+				S(!1), E.current &&= (k((e) => ({
 					...e,
 					isStreaming: !1
-				})), null), d("");
+				})), null), f("");
 				break;
 			case "RUN_ERROR":
-				C(e.message), x(!1), T.current &&= (O((e) => ({
+				w(e.message), S(!1), E.current &&= (k((e) => ({
 					...e,
 					isStreaming: !1
-				})), null), d("");
+				})), null), f("");
 				break;
 			case "STEP_STARTED":
 			case "STEP_FINISHED": break;
 			case "TEXT_MESSAGE_START": {
-				let t = e.messageId ?? W();
-				T.current = t, E.current = "", D.current = [];
+				let t = e.messageId ?? G();
+				E.current = t, D.current = "", O.current = [];
 				let n = e.role;
-				l((e) => [...e, {
+				u((e) => [...e, {
 					id: t,
 					role: n,
 					content: "",
@@ -1072,26 +1072,26 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 				break;
 			}
 			case "TEXT_MESSAGE_CONTENT": {
-				E.current += e.delta;
-				let t = E.current;
-				d(t), O((e) => ({
+				D.current += e.delta;
+				let t = D.current;
+				f(t), k((e) => ({
 					...e,
 					content: t
 				}));
 				break;
 			}
 			case "TEXT_MESSAGE_END":
-				O((e) => ({
+				k((e) => ({
 					...e,
 					isStreaming: !1
-				})), d(""), T.current = null;
+				})), f(""), E.current = null;
 				break;
 			case "TEXT_MESSAGE_CHUNK": {
-				let t = e.messageId ?? T.current ?? W();
-				if (T.current !== t) {
-					T.current = t, E.current = "", D.current = [];
+				let t = e.messageId ?? E.current ?? G();
+				if (E.current !== t) {
+					E.current = t, D.current = "", O.current = [];
 					let n = e.role ?? "assistant";
-					l((e) => [...e, {
+					u((e) => [...e, {
 						id: t,
 						role: n,
 						content: "",
@@ -1100,9 +1100,9 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 					}]);
 				}
 				if (e.delta) {
-					E.current += e.delta;
-					let t = E.current;
-					d(t), O((e) => ({
+					D.current += e.delta;
+					let t = D.current;
+					f(t), k((e) => ({
 						...e,
 						content: t
 					}));
@@ -1118,27 +1118,27 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 					startedAt: Date.now(),
 					parentMessageId: e.parentMessageId
 				};
-				D.current = [...D.current, t], p((e) => [...e, t]), T.current && l((e) => e.map((e) => e.id === T.current ? {
+				O.current = [...O.current, t], m((e) => [...e, t]), E.current && u((e) => e.map((e) => e.id === E.current ? {
 					...e,
 					toolCalls: [...e.toolCalls, t]
 				} : e));
 				break;
 			}
 			case "TOOL_CALL_ARGS":
-				k(e.toolCallId, (t) => ({
+				A(e.toolCallId, (t) => ({
 					...t,
 					args: t.args + e.delta
 				}));
 				break;
 			case "TOOL_CALL_END":
-				k(e.toolCallId, (e) => ({
+				A(e.toolCallId, (e) => ({
 					...e,
 					status: "completed",
 					endedAt: Date.now()
-				})), p((t) => t.filter((t) => t.id !== e.toolCallId));
+				})), m((t) => t.filter((t) => t.id !== e.toolCallId));
 				break;
 			case "TOOL_CALL_RESULT":
-				k(e.toolCallId, (t) => ({
+				A(e.toolCallId, (t) => ({
 					...t,
 					result: e.content
 				}));
@@ -1146,7 +1146,7 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 			case "TOOL_CALL_CHUNK": {
 				let t = e.toolCallId;
 				if (!t) break;
-				let n = D.current.find((e) => e.id === t);
+				let n = O.current.find((e) => e.id === t);
 				if (!n && e.toolCallName) {
 					let n = {
 						id: t,
@@ -1156,35 +1156,35 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 						startedAt: Date.now(),
 						parentMessageId: e.parentMessageId
 					};
-					D.current = [...D.current, n], p((e) => [...e, n]), T.current && l((e) => e.map((e) => e.id === T.current ? {
+					O.current = [...O.current, n], m((e) => [...e, n]), E.current && u((e) => e.map((e) => e.id === E.current ? {
 						...e,
 						toolCalls: [...e.toolCalls, n]
 					} : e));
-				} else n && e.delta && k(t, (t) => ({
+				} else n && e.delta && A(t, (t) => ({
 					...t,
 					args: t.args + (e.delta ?? "")
 				}));
 				break;
 			}
 			case "STATE_SNAPSHOT":
-				h(e.snapshot);
+				g(e.snapshot);
 				break;
 			case "STATE_DELTA":
-				h((t) => ae(t, e.delta));
+				g((t) => ie(t, e.delta));
 				break;
 			case "MESSAGES_SNAPSHOT":
-				l(e.messages);
+				u(e.messages);
 				break;
 			case "ACTIVITY_SNAPSHOT":
 			case "ACTIVITY_DELTA": break;
 			case "REASONING_MESSAGE_START":
-				O((e) => ({
+				k((e) => ({
 					...e,
 					reasoning: ""
 				}));
 				break;
 			case "REASONING_MESSAGE_CONTENT":
-				O((t) => ({
+				k((t) => ({
 					...t,
 					reasoning: (t.reasoning ?? "") + e.delta
 				}));
@@ -1200,10 +1200,10 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 			default: console.warn("[useAgUiStream] Unhandled event type:", e.type);
 		}
 	}, [
-		a,
-		O,
-		k
-	]), j = r((e) => {
+		o,
+		k,
+		A
+	]), M = r((e) => {
 		let t = [], n = e.split("\n"), r = "";
 		for (let e of n) {
 			if (e === "" || e.startsWith(":")) {
@@ -1218,23 +1218,23 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 			e.startsWith("data: ") && (r += e.slice(6));
 		}
 		return t;
-	}, []), M = r(() => {
-		w.current?.abort(), x(!1), d(""), T.current &&= (O((e) => ({
+	}, []), N = r(() => {
+		T.current?.abort(), S(!1), f(""), E.current &&= (k((e) => ({
 			...e,
 			isStreaming: !1
-		})), null), p([]);
-	}, [O]), N = r(async (t, r) => {
-		w.current?.abort();
+		})), null), m([]);
+	}, [k]), P = r(async (t, r) => {
+		T.current?.abort();
 		let a = new AbortController();
-		w.current = a, C(null), x(!0);
+		T.current = a, w(null), S(!0);
 		let o = {
-			id: W(),
+			id: G(),
 			role: "user",
 			content: t,
 			isStreaming: !1,
 			toolCalls: []
 		};
-		l((e) => [...e, o]);
+		u((e) => [...e, o]);
 		try {
 			let o = await fetch(e, {
 				method: "POST",
@@ -1245,7 +1245,7 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 				},
 				body: JSON.stringify({
 					message: t,
-					threadId: g ?? void 0,
+					threadId: _ ?? void 0,
 					...i,
 					...r?.extraBody
 				}),
@@ -1263,44 +1263,44 @@ function G({ url: e, threadId: t, headers: n, extraBody: i, onEvent: a }) {
 				if (n !== -1) {
 					let e = l.slice(0, n + 2);
 					l = l.slice(n + 2);
-					for (let t of j(e)) A(t);
+					for (let t of M(e)) j(t);
 				}
 			}
-			if (l.trim()) for (let e of j(l + "\n\n")) A(e);
+			if (l.trim()) for (let e of M(l + "\n\n")) j(e);
 		} catch (e) {
 			if (e instanceof Error && e.name === "AbortError") return;
-			C(e instanceof Error ? e.message : "Stream failed"), x(!1), d("");
+			w(e instanceof Error ? e.message : "Stream failed"), S(!1), f("");
 		}
 	}, [
 		e,
-		g,
+		_,
 		n,
 		i,
-		j,
-		A
-	]), P = r((e, t) => {
-		M(), _(e), y(null), l(t), d(""), p([]), C(null), E.current = "", D.current = [], T.current = null;
-	}, [M]);
-	return {
-		messages: o,
-		streamingText: u,
-		activeToolCalls: f,
-		state: m,
-		threadId: g,
-		runId: v,
-		isStreaming: b,
-		error: S,
-		sendMessage: N,
-		cancelStream: M,
-		reset: r(() => {
-			w.current?.abort(), l([]), x(!1), d(""), p([]), h(void 0), _(null), y(null), C(null), E.current = "", D.current = [], T.current = null;
-		}, []),
-		loadHistory: P
+		M,
+		j
+	]), F = r((e, t) => {
+		N(), v(e), b(null), u(t), f(""), m([]), w(null), D.current = "", O.current = [], E.current = null;
+	}, [N]), I = r(() => {
+		T.current?.abort(), u([]), S(!1), f(""), m([]), g(void 0), v(null), b(null), w(null), D.current = "", O.current = [], E.current = null;
+	}, []);
+	return a(() => () => T.current?.abort(), []), {
+		messages: l,
+		streamingText: d,
+		activeToolCalls: p,
+		state: h,
+		threadId: _,
+		runId: y,
+		isStreaming: x,
+		error: C,
+		sendMessage: P,
+		cancelStream: N,
+		reset: I,
+		loadHistory: F
 	};
 }
 //#endregion
 //#region src/components/agents/components/ToolCallRenderer.tsx
-var K = {
+var ae = {
 	streaming: "⏳",
 	completed: "✓",
 	error: "✗"
@@ -1315,7 +1315,7 @@ function q({ toolCall: t, className: n }) {
 			children: [
 				/* @__PURE__ */ u("span", {
 					className: e(t.status === "streaming" && "animate-pulse", t.status === "completed" && "text-success-fg", t.status === "error" && "text-danger-fg"),
-					children: K[t.status]
+					children: ae[t.status]
 				}),
 				/* @__PURE__ */ u("span", {
 					className: "text-text-primary font-medium",
@@ -1538,7 +1538,7 @@ function Z({ messages: n, isStreaming: r, streamingText: i = "", activeToolCalls
 //#endregion
 //#region src/components/agents/AgentInvokePage.tsx
 function se({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
-	let { agents: i } = C(), [a, o] = c(t ?? i[0]?.id ?? ""), [s, l] = c([]), { messages: f, isStreaming: p, streamingText: m, activeToolCalls: h, error: g, sendMessage: _, cancelStream: v, reset: y } = G({
+	let { agents: i } = C(), [a, o] = c(t ?? i[0]?.id ?? ""), [s, l] = c([]), { messages: f, isStreaming: p, streamingText: m, activeToolCalls: h, error: g, sendMessage: _, cancelStream: v, reset: y } = K({
 		url: `${n}/${a}/invoke`,
 		onEvent: (e) => l((t) => [...t, e])
 	}), b = i.find((e) => e.id === a);
@@ -2093,4 +2093,4 @@ function ye(e) {
 	}
 }
 //#endregion
-export { Y as AgUiReasoningBlock, D as AgentCard, ee as AgentDetailPage, fe as AgentDirectory, z as AgentFlowCanvas, ie as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, me as ConversationHistory, O as GuardrailBadge, _e as MemoryInspector, he as PolicyDecisionLog, Z as StreamingChatPanel, q as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, G as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };
+export { Y as AgUiReasoningBlock, D as AgentCard, I as AgentDetailPage, fe as AgentDirectory, B as AgentFlowCanvas, re as AgentFlowPage, se as AgentInvokePage, k as AgentsDashboardPage, w as AgentsLayout, S as AgentsProvider, me as ConversationHistory, O as GuardrailBadge, _e as MemoryInspector, he as PolicyDecisionLog, Z as StreamingChatPanel, q as ToolCallRenderer, F as TraceTimeline, g as fixtureAgents, _ as fixtureMetrics, b as fixtureTrace, ue as useA2ASession, K as useAgUiStream, le as useAgentMetrics, ce as useAgentRegistry, C as useAgentsContext };

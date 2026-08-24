@@ -731,7 +731,11 @@ function ve({ participant: e, sectionTitle: t, onJumpToUser: n, onFollowUser: r,
 		c.current &&= (clearTimeout(c.current), null), o(!0);
 	}, u = () => {
 		c.current = setTimeout(() => o(!1), 150);
-	}, d = _e(e.mode), f = e.color || "#3b82f6";
+	};
+	S(() => () => {
+		c.current && clearTimeout(c.current);
+	}, []);
+	let d = _e(e.mode), f = e.color || "#3b82f6";
 	return /* @__PURE__ */ k("div", {
 		ref: s,
 		className: p("flex flex-col items-center gap-[3px] relative cursor-pointer animate-[presenceFadeIn_0.3s_ease]"),

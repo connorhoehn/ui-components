@@ -1022,26 +1022,33 @@ function ue() {
 	let { id: t } = D(), n = E(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = S(null), [l, u] = S(!0), [m, b] = S(null), [x, O] = S(!1), [k, A] = S(!1), [j, M] = S(!1), [N, P] = S({}), [F, I] = S([]), [L, R] = S(""), [z, ee] = S(""), [B, V] = S({}), [H, te] = S(!1), U = v(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
-	}, [r]), G = v(async () => {
+	}, [r]), G = v(async (e) => {
 		if (t) {
 			u(!0), b(null);
 			try {
-				let e = await fetch(`${J}/api/ingest/sources/${t}`, { headers: U() });
-				if (!e.ok) throw Error(`HTTP ${e.status}`);
-				let n = await e.json(), r = {
-					...n,
-					mappingRules: le(n.mappingRules ?? [])
+				let n = await fetch(`${J}/api/ingest/sources/${t}`, {
+					headers: U(),
+					signal: e
+				});
+				if (!n.ok) throw Error(`HTTP ${n.status}`);
+				let r = await n.json();
+				if (e?.aborted) return;
+				let i = {
+					...r,
+					mappingRules: le(r.mappingRules ?? [])
 				};
-				c(r);
-			} catch (e) {
-				b(e instanceof Error ? e.message : String(e));
+				c(i);
+			} catch (t) {
+				if (e?.aborted) return;
+				b(t instanceof Error ? t.message : String(t));
 			} finally {
-				u(!1);
+				e?.aborted || u(!1);
 			}
 		}
 	}, [t, U]);
 	y(() => {
-		G();
+		let e = new AbortController();
+		return G(e.signal), () => e.abort();
 	}, [G]);
 	let K = v(() => {
 		o && (P({ ...o.config }), I([...o.mappingRules]), R(o.syncSchedule ?? ""), ee(o.defaultPipelineId ?? ""), V({ ...o.pipelineByDocType ?? {} }), O(!0));

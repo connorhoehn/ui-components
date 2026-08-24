@@ -278,7 +278,7 @@ function _(e, t) {
 				readyState: n.readyState,
 				id: n.id
 			}), i((e) => e + 1);
-		}, r = (e) => n("mute", e.target), a = (e) => n("unmute", e.target), o = (e) => n("ended", e.target), s = /* @__PURE__ */ new WeakSet(), c = (e) => {
+		}, r = (e) => n("mute", e.target), a = (e) => n("unmute", e.target), o = (e) => n("ended", e.target), s = /* @__PURE__ */ new Set(), c = (e) => {
 			s.has(e) || (s.add(e), e.addEventListener("mute", r), e.addEventListener("unmute", a), e.addEventListener("ended", o));
 		};
 		for (let t of e.getVideoTracks()) c(t);
@@ -287,8 +287,8 @@ function _(e, t) {
 			t && t.kind === "video" && c(t), i((e) => e + 1);
 		}, u = () => i((e) => e + 1);
 		return e.addEventListener("addtrack", l), e.addEventListener("removetrack", u), () => {
-			for (let t of e.getVideoTracks()) t.removeEventListener("mute", r), t.removeEventListener("unmute", a), t.removeEventListener("ended", o);
-			e.removeEventListener("addtrack", l), e.removeEventListener("removetrack", u);
+			for (let e of s) e.removeEventListener("mute", r), e.removeEventListener("unmute", a), e.removeEventListener("ended", o);
+			s.clear(), e.removeEventListener("addtrack", l), e.removeEventListener("removetrack", u);
 		};
 	}, [e, t]), r;
 }

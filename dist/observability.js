@@ -90,29 +90,29 @@ function ae() {
 	}, [t]);
 	return b(() => {
 		p.current = !0;
-		let e = null, t = () => {
+		let e = null, t = !0, n = () => {
 			e !== null && (clearTimeout(e), e = null);
-		}, n = () => {
-			if (!p.current || document.hidden) return;
-			let t = h.current > 0 ? ne(h.current) : M;
+		}, r = () => {
+			if (!t || document.hidden) return;
+			let n = h.current > 0 ? ne(h.current) : M;
 			e = setTimeout(() => {
 				e = null, g().finally(() => {
-					n();
+					r();
 				});
-			}, t);
-		}, r = () => {
-			e === null && n();
+			}, n);
+		}, i = () => {
+			!t || e !== null || r();
 		};
 		g().finally(() => {
-			document.hidden || r();
+			document.hidden || i();
 		});
-		let i = () => {
-			document.hidden ? t() : (t(), g().finally(() => {
-				document.hidden || r();
+		let a = () => {
+			document.hidden ? n() : (n(), g().finally(() => {
+				document.hidden || i();
 			}));
 		};
-		return document.addEventListener("visibilitychange", i), () => {
-			p.current = !1, t(), document.removeEventListener("visibilitychange", i), f.current &&= (f.current.abort(), null);
+		return document.addEventListener("visibilitychange", a), () => {
+			t = !1, p.current = !1, n(), document.removeEventListener("visibilitychange", a), f.current &&= (f.current.abort(), null);
 		};
 	}, [g]), {
 		metrics: n,

@@ -2,7 +2,7 @@ import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-Be2vqdKv.js";
 import { n as i } from "./IdentityContext-m2wQF4sJ.js";
 import "./useWebSocket-CDq12epx.js";
-import "./useSocialProfile-DXPZ4OO4.js";
+import "./useSocialProfile-Cs3kuR7d.js";
 import "./useSyncConflicts-DNj4F6oF.js";
 import "./useDocumentTypes-C-AMWgYq.js";
 import { n as a } from "./ToastProvider-BqgHlzIs.js";
@@ -524,7 +524,7 @@ function F() {
 }
 //#endregion
 //#region src/hooks/useIdentityMfaAdmin.ts
-function I() {
+function re() {
 	let { idToken: e } = i(), [t, n] = u(null), [r, a] = u([]), [s, c] = u([]), [l, d] = u(!1), [f, p] = u(null);
 	return {
 		metrics: t,
@@ -553,7 +553,7 @@ function I() {
 }
 //#endregion
 //#region src/hooks/useIdentityPools.ts
-function L() {
+function ie() {
 	let { idToken: e } = i(), { data: t, loading: n, error: r, setData: a, refresh: s, mutate: c } = j([], { url: "/api/pools" });
 	return {
 		pools: t,
@@ -589,7 +589,7 @@ function L() {
 }
 //#endregion
 //#region src/hooks/useIdentitySetupStatus.ts
-function re() {
+function ae() {
 	let { data: e, loading: t, error: n, refresh: r } = j(null, { url: "/api/admin/setup-status" });
 	return {
 		status: e,
@@ -600,7 +600,7 @@ function re() {
 }
 //#endregion
 //#region src/hooks/useIdentityUsers.ts
-function ie(e) {
+function I(e) {
 	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: s } = j([], { url: e ? `/api/pools/${e}/users` : null });
 	return {
 		users: t,
@@ -640,8 +640,8 @@ function ie(e) {
 }
 //#endregion
 //#region src/hooks/useAuth.ts
-var R = "auth_id_token", z = "auth_refresh_token", B = "auth_email";
-function V(e, t) {
+var L = "auth_id_token", R = "auth_refresh_token", z = "auth_email";
+function B(e, t) {
 	try {
 		let n = JSON.parse(atob(e.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).exp * 1e3 - Date.now() - 12e4;
 		return n <= 0 ? (t(), null) : setTimeout(t, n);
@@ -649,7 +649,7 @@ function V(e, t) {
 		return null;
 	}
 }
-function H() {
+function V() {
 	let [e, t] = u({
 		status: "loading",
 		idToken: null,
@@ -658,62 +658,72 @@ function H() {
 	}), n = c(() => new h({
 		UserPoolId: "",
 		ClientId: ""
-	}), []), r = l(null), i = l(null), a = o(() => {
-		r.current &&= (clearTimeout(r.current), null), n?.getCurrentUser()?.signOut(), localStorage.removeItem(R), localStorage.removeItem(z), localStorage.removeItem(B), i.current?.postMessage({ type: "SIGNED_OUT" }), t({
+	}), []), r = l(null), i = l(null), a = l(!0);
+	s(() => (a.current = !0, () => {
+		a.current = !1, r.current &&= (clearTimeout(r.current), null);
+	}), []);
+	let g = o((e, t) => {
+		a.current && (r.current && clearTimeout(r.current), r.current = B(e, t));
+	}, []), _ = o(() => {
+		r.current &&= (clearTimeout(r.current), null), n?.getCurrentUser()?.signOut(), localStorage.removeItem(L), localStorage.removeItem(R), localStorage.removeItem(z), i.current?.postMessage({ type: "SIGNED_OUT" }), t({
 			status: "unauthenticated",
 			idToken: null,
 			email: null,
 			error: null
 		});
-	}, [n]), g = l(() => {}), _ = o(() => {
-		let e = localStorage.getItem(z);
+	}, [n]), v = l(() => {}), y = o(() => {
+		let e = localStorage.getItem(R);
 		if (!e) {
-			a(), t((e) => ({
+			_(), t((e) => ({
 				...e,
 				status: "unauthenticated",
 				error: "Your session has expired. Please sign in again."
 			}));
 			return;
 		}
-		let o = n.getCurrentUser();
-		if (!o) {
-			a(), t((e) => ({
+		let r = n.getCurrentUser();
+		if (!r) {
+			_(), t((e) => ({
 				...e,
 				status: "unauthenticated",
 				error: "Your session has expired. Please sign in again."
 			}));
 			return;
 		}
-		let s = new f({ RefreshToken: e });
-		o.refreshSession(s, (e, n) => {
+		let a = new f({ RefreshToken: e });
+		r.refreshSession(a, (e, n) => {
 			if (e || !n) {
-				a(), t((e) => ({
+				_(), t((e) => ({
 					...e,
 					status: "unauthenticated",
 					error: "Your session has expired. Please sign in again."
 				}));
 				return;
 			}
-			let o = n.getIdToken().getJwtToken(), s = n.getRefreshToken().getToken();
-			localStorage.setItem(R, o), localStorage.setItem(z, s), t((e) => ({
+			let r = n.getIdToken().getJwtToken(), a = n.getRefreshToken().getToken();
+			localStorage.setItem(L, r), localStorage.setItem(R, a), t((e) => ({
 				...e,
-				idToken: o
+				idToken: r
 			})), i.current?.postMessage({
 				type: "TOKEN_REFRESHED",
-				idToken: o
-			}), r.current = V(o, () => g.current());
+				idToken: r
+			}), g(r, () => v.current());
 		});
-	}, [n, a]);
+	}, [
+		n,
+		_,
+		g
+	]);
 	s(() => {
-		g.current = _;
-	}, [_]), s(() => {
+		v.current = y;
+	}, [y]), s(() => {
 		let e = new BroadcastChannel("auth");
 		return i.current = e, e.onmessage = (e) => {
 			let n = e.data;
-			n.type === "TOKEN_REFRESHED" ? (localStorage.setItem(R, n.idToken), t((e) => ({
+			n.type === "TOKEN_REFRESHED" ? (localStorage.setItem(L, n.idToken), t((e) => ({
 				...e,
 				idToken: n.idToken
-			}))) : n.type === "SIGNED_OUT" && (localStorage.removeItem(R), localStorage.removeItem(z), localStorage.removeItem(B), t({
+			}))) : n.type === "SIGNED_OUT" && (localStorage.removeItem(L), localStorage.removeItem(R), localStorage.removeItem(z), t({
 				status: "unauthenticated",
 				idToken: null,
 				email: null,
@@ -733,43 +743,43 @@ function H() {
 			});
 			return;
 		}
-		return e.getSession((n, i) => {
-			if (n || !i || !i.isValid()) t({
+		return e.getSession((n, r) => {
+			if (n || !r || !r.isValid()) t({
 				status: "unauthenticated",
 				idToken: null,
 				email: null,
 				error: null
 			});
 			else {
-				let n = i.getIdToken().getJwtToken(), a = e.getUsername();
+				let n = r.getIdToken().getJwtToken(), i = e.getUsername();
 				t({
 					status: "authenticated",
 					idToken: n,
-					email: a,
+					email: i,
 					error: null
-				}), r.current = V(n, _);
+				}), g(n, y);
 			}
 		}), () => {
 			r.current &&= (clearTimeout(r.current), null);
 		};
 	}, []);
-	let v = o((e, i) => new Promise((a) => {
-		let o = new p({
+	let b = o((e, r) => new Promise((i) => {
+		let a = new p({
 			Username: e,
 			Pool: n
-		}), s = new d({
+		}), o = new d({
 			Username: e,
-			Password: i
+			Password: r
 		});
-		o.authenticateUser(s, {
+		a.authenticateUser(o, {
 			onSuccess: (n) => {
-				let i = n.getIdToken().getJwtToken(), o = n.getRefreshToken().getToken();
-				localStorage.setItem(R, i), localStorage.setItem(z, o), localStorage.setItem(B, e), t({
+				let r = n.getIdToken().getJwtToken(), a = n.getRefreshToken().getToken();
+				localStorage.setItem(L, r), localStorage.setItem(R, a), localStorage.setItem(z, e), t({
 					status: "authenticated",
-					idToken: i,
+					idToken: r,
 					email: e,
 					error: null
-				}), r.current = V(i, _), a();
+				}), g(r, y), i();
 			},
 			onFailure: (e) => {
 				t((t) => ({
@@ -777,7 +787,7 @@ function H() {
 					status: "unauthenticated",
 					idToken: null,
 					error: e.message
-				})), a();
+				})), i();
 			},
 			newPasswordRequired: () => {
 				t((e) => ({
@@ -785,10 +795,10 @@ function H() {
 					status: "unauthenticated",
 					idToken: null,
 					error: "Password change required — contact admin"
-				})), a();
+				})), i();
 			}
 		});
-	}), [n, _]), y = o((e, r) => new Promise((i) => {
+	}), [n, y]), x = o((e, r) => new Promise((i) => {
 		let a = [new m({
 			Name: "email",
 			Value: e
@@ -802,19 +812,19 @@ function H() {
 				})), i();
 				return;
 			}
-			v(e, r).then(i);
+			b(e, r).then(i);
 		});
-	}), [n, v]);
+	}), [n, b]);
 	return {
 		...e,
-		signIn: v,
-		signUp: y,
-		signOut: a
+		signIn: b,
+		signUp: x,
+		signOut: _
 	};
 }
 //#endregion
 //#region src/hooks/useChat.ts
-function U(e) {
+function H(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i, displayName: a } = e, [c, d] = u([]), f = l(t);
 	s(() => {
 		f.current = t;
@@ -881,7 +891,7 @@ function U(e) {
 }
 //#endregion
 //#region src/hooks/useClickOutside.ts
-function W(e, t, n = !0) {
+function U(e, t, n = !0) {
 	s(() => {
 		if (!n) return;
 		let r = (n) => {
@@ -896,17 +906,17 @@ function W(e, t, n = !0) {
 }
 //#endregion
 //#region src/hooks/useCRDT.ts
-function G(e) {
+function W(e) {
 	let t = atob(e), n = new Uint8Array(t.length);
 	for (let e = 0; e < t.length; e++) n[e] = t.charCodeAt(e);
 	return n;
 }
-function K(e) {
+function G(e) {
 	let t = "";
 	for (let n = 0; n < e.length; n++) t += String.fromCharCode(e[n]);
 	return btoa(t);
 }
-function q(e) {
+function K(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i } = e, [a, c] = u(""), [d, f] = u(!1), [p] = u(() => new g.Doc()), m = l(p), [h] = u(() => p.getText("content")), y = l(h), b = l(t);
 	s(() => {
 		b.current = t;
@@ -920,7 +930,7 @@ function q(e) {
 			let t = e.snapshot;
 			if (!t) return;
 			try {
-				let e = G(t);
+				let e = W(t);
 				_(m.current, e), c(y.current.toString());
 			} catch {}
 			return;
@@ -930,7 +940,7 @@ function q(e) {
 			let t = e.update;
 			if (!t) return;
 			try {
-				let e = G(t);
+				let e = W(t);
 				_(m.current, e), c(y.current.toString());
 			} catch {}
 			return;
@@ -959,7 +969,7 @@ function q(e) {
 			m.current.transact(() => {
 				y.current.delete(0, y.current.length), y.current.insert(0, e);
 			});
-			let t = K(v(m.current));
+			let t = G(v(m.current));
 			b.current({
 				service: "crdt",
 				action: "update",
@@ -973,7 +983,7 @@ function q(e) {
 }
 //#endregion
 //#region src/hooks/useCursors.ts
-function J(e) {
+function q(e) {
 	let { sendMessage: t, onMessage: n, currentChannel: r, connectionState: i, clientId: a, displayName: c } = e, d = l(/* @__PURE__ */ new Map()), [f, p] = u(/* @__PURE__ */ new Map()), [m, h] = u(null), [g, _] = u("freeform"), v = l("freeform"), y = l(null), b = l(r);
 	s(() => {
 		b.current = r;
@@ -1027,7 +1037,9 @@ function J(e) {
 		i,
 		g,
 		t
-	]), {
+	]), s(() => () => {
+		y.current !== null && (clearTimeout(y.current), y.current = null);
+	}, []), {
 		cursors: f,
 		localCursor: m,
 		activeMode: g,
@@ -1130,7 +1142,7 @@ function J(e) {
 }
 //#endregion
 //#region src/hooks/useCustomFieldTypes.ts
-function Y() {
+function J() {
 	try {
 		let e = localStorage.getItem(r);
 		if (!e) return [];
@@ -1142,10 +1154,10 @@ function Y() {
 		return [];
 	}
 }
-function X(e) {
+function Y(e) {
 	localStorage.setItem(r, JSON.stringify(e));
 }
-function Z(n) {
+function X(n) {
 	let r = t(n.baseType);
 	e({
 		type: n.id,
@@ -1157,8 +1169,8 @@ function Z(n) {
 		rendererLabels: r?.rendererLabels ?? {}
 	});
 }
-function ae() {
-	let [e, t] = u(() => Y());
+function oe() {
+	let [e, t] = u(() => J());
 	return {
 		types: e,
 		createType: o((e) => {
@@ -1167,32 +1179,32 @@ function ae() {
 				id: crypto.randomUUID(),
 				createdAt: n,
 				updatedAt: n
-			}, i = [...Y(), r];
-			return X(i), t(i), Z(r), r;
+			}, i = [...J(), r];
+			return Y(i), t(i), X(r), r;
 		}, []),
 		updateType: o((e, n) => {
-			let r = (/* @__PURE__ */ new Date()).toISOString(), i = Y().map((t) => t.id === e ? {
+			let r = (/* @__PURE__ */ new Date()).toISOString(), i = J().map((t) => t.id === e ? {
 				...t,
 				...n,
 				updatedAt: r
 			} : t);
-			X(i), t(i);
+			Y(i), t(i);
 			let a = i.find((t) => t.id === e);
-			a && Z(a);
+			a && X(a);
 		}, []),
 		deleteType: o((e) => {
-			let n = Y().filter((t) => t.id !== e);
-			X(n), t(n);
+			let n = J().filter((t) => t.id !== e);
+			Y(n), t(n);
 		}, [])
 	};
 }
 //#endregion
 //#region src/hooks/useDocuments.ts
-var oe = 15e3, se = 1e4;
-function Q(e) {
+var se = 15e3, ce = 1e4;
+function Z(e) {
 	return [...e].sort((e, t) => new Date(t.updatedAt).getTime() - new Date(e.updatedAt).getTime());
 }
-function ce(e) {
+function le(e) {
 	let { sendMessage: t, onMessage: n, connectionState: r } = e, [i, a] = u([]), [c, d] = u({}), [f, p] = u(!0), m = l(null), h = l(null), g = l(!1), _ = l(t);
 	return s(() => {
 		_.current = t;
@@ -1213,12 +1225,12 @@ function ce(e) {
 		if (e.type === "crdt") {
 			if (e.action === "documentList") {
 				let t = e.documents ?? [];
-				a(Q(t)), p(!1);
+				a(Z(t)), p(!1);
 				return;
 			}
 			if (e.action === "documentCreated") {
 				let t = e.document;
-				t && a((e) => Q([t, ...e]));
+				t && a((e) => Z([t, ...e]));
 				return;
 			}
 			if (e.action === "documentDeleted") {
@@ -1228,7 +1240,7 @@ function ce(e) {
 			}
 			if (e.action === "documentMetaUpdated") {
 				let t = e.documentId, n = e.meta;
-				t && n && a((e) => Q(e.map((e) => e.id === t ? {
+				t && n && a((e) => Z(e.map((e) => e.id === t ? {
 					...e,
 					...n
 				} : e)));
@@ -1264,8 +1276,8 @@ function ce(e) {
 					service: "crdt",
 					action: "getDocumentPresence"
 				});
-			}, se));
-		}, oe), () => {
+			}, ce));
+		}, se), () => {
 			t(), h.current !== null && (clearTimeout(h.current), h.current = null), m.current !== null && (clearInterval(m.current), m.current = null), a([]), d({}), p(!0);
 		};
 	}, [r]), {
@@ -1310,7 +1322,7 @@ function ce(e) {
 }
 //#endregion
 //#region src/hooks/useKeyboardShortcuts.ts
-function le(e) {
+function Q(e) {
 	if (!e || !(e instanceof HTMLElement)) return !1;
 	let t = e.tagName.toLowerCase();
 	return !!(t === "input" || t === "textarea" || e.isContentEditable);
@@ -1318,7 +1330,7 @@ function le(e) {
 function ue(e) {
 	s(() => {
 		let t = (t) => {
-			if (!le(t.target)) for (let n of e) {
+			if (!Q(t.target)) for (let n of e) {
 				let e = !n.meta || t.metaKey || t.ctrlKey, r = !n.shift || t.shiftKey, i = !n.alt || t.altKey, a = t.key.toLowerCase() === n.key.toLowerCase();
 				if (e && r && i && a) {
 					n.preventDefault !== !1 && t.preventDefault(), n.handler(t);
@@ -1426,7 +1438,9 @@ function fe(e) {
 			}), p.current = null;
 		}, 2e3)) : p.current !== null && (clearTimeout(p.current), p.current = null);
 	}, []);
-	return {
+	return s(() => () => {
+		p.current !== null && (clearTimeout(p.current), p.current = null);
+	}, []), {
 		users: Array.from(c.values()),
 		setTyping: _
 	};
@@ -1439,9 +1453,16 @@ function pe(e) {
 		d.current = t;
 	}, [t]);
 	let f = l(r);
-	return s(() => {
+	s(() => {
 		f.current = r;
-	}, [r]), s(() => n((e) => {
+	}, [r]);
+	let p = l(/* @__PURE__ */ new Set());
+	return s(() => {
+		let e = p.current;
+		return () => {
+			e.forEach((e) => clearTimeout(e)), e.clear();
+		};
+	}, []), s(() => n((e) => {
 		if (e.type === "reaction" && e.action === "reaction_received") {
 			let t = e.data;
 			if (t?.channel !== f.current) return;
@@ -1452,9 +1473,11 @@ function pe(e) {
 				y: Math.floor(Math.random() * 81) + 10,
 				timestamp: t?.timestamp
 			};
-			c((e) => [...e, n]), setTimeout(() => {
-				c((e) => e.filter((e) => e.id !== n.id));
+			c((e) => [...e, n]);
+			let r = setTimeout(() => {
+				p.current.delete(r), c((e) => e.filter((e) => e.id !== n.id));
 			}, 2500);
+			p.current.add(r);
 		}
 	}), [n]), s(() => {
 		if (!(i !== "connected" || !r)) return t({
@@ -1684,4 +1707,4 @@ function ge(e) {
 	};
 }
 //#endregion
-export { T as A, j as C, A as D, k as E, O, ne as S, ee as T, I as _, fe as a, N as b, ae as c, W as d, U as f, L as g, re as h, pe as i, E as k, J as l, ie as m, he as n, ue as o, H as p, me as r, ce as s, ge as t, q as u, F as v, te as w, M as x, P as y };
+export { T as A, j as C, A as D, k as E, O, ne as S, ee as T, re as _, fe as a, N as b, oe as c, U as d, H as f, ie as g, ae as h, pe as i, E as k, q as l, I as m, he as n, ue as o, V as p, me as r, le as s, ge as t, K as u, F as v, te as w, M as x, P as y };

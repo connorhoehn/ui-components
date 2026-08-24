@@ -1236,19 +1236,26 @@ function Fe({ children: e }) {
 	let t = d(K), { triggerRun: n } = Te(), r = ke(), [i, a] = g({}), [s, c] = g(!1), l = h(/* @__PURE__ */ new Set()), p = h(null);
 	f(() => {
 		let e = t?.definition?.id;
-		!e || p.current === e || (p.current = e, c(!0), M(e, { limit: Y }).then((e) => {
-			a((t) => {
+		if (!e || p.current === e) return;
+		p.current = e, c(!0);
+		let n = !1;
+		return M(e, { limit: Y }).then((e) => {
+			n || a((t) => {
 				let n = { ...t };
 				for (let t of e.runs) n[t.id] || (n[t.id] = t);
 				return n;
 			});
 		}).catch((t) => {
-			console.error("[PipelineRuns] Failed to load history from API", t), a((t) => {
+			n || (console.error("[PipelineRuns] Failed to load history from API", t), a((t) => {
 				let n = { ...t };
 				for (let t of D(e)) n[t.id] || (n[t.id] = t);
 				return n;
-			});
-		}).finally(() => c(!1)));
+			}));
+		}).finally(() => {
+			n || c(!1);
+		}), () => {
+			n = !0;
+		};
 	}, [t?.definition?.id]), o("*", (e) => {
 		let { eventType: t, payload: n } = e;
 		a((e) => Ie(e, t, n));

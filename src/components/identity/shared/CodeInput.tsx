@@ -37,27 +37,46 @@ export function CodeInput({
     }
   }, [length]);
 
+  // Fire `onComplete` once per fully-entered code, from an effect so the
+  // side effect happens after commit rather than inside a state updater.
+  // The ref guard is what makes it exactly-once: effects are also
+  // double-invoked in StrictMode, and `onComplete` may be an inline arrow
+  // that changes identity every render. Reset when the code goes incomplete
+  // so re-entering a corrected code still submits.
+  const submittedRef = useRef<string | null>(null);
+  useEffect(() => {
+    const code = values.join('');
+    const complete = code.length === length && values.every(v => v !== '');
+    if (!complete) {
+      submittedRef.current = null;
+      return;
+    }
+    if (submittedRef.current === code) return;
+    submittedRef.current = code;
+    onComplete(code);
+  }, [values, length, onComplete]);
+
   const handleChange = useCallback((index: number, value: string) => {
     // Only accept digits
     const digit = value.replace(/\D/g, '').slice(-1);
 
+    // NOTE: `onComplete` is fired from an effect below, NOT from inside this
+    // updater. It used to be `setTimeout(() => onComplete(code), 0)` in here —
+    // a side effect inside a state updater, which React deliberately
+    // double-invokes in StrictMode to surface impurity. That submitted a
+    // completed code TWICE; because a TOTP is single-use, the second attempt
+    // failed and the user saw a spurious "invalid code" on a correct entry.
+    // The stray timer was also untracked, so it could fire after unmount.
     setValues(prev => {
       const next = [...prev];
       next[index] = digit;
-
-      const code = next.join('');
-      if (code.length === length && next.every(v => v !== '')) {
-        // Defer onComplete so state updates first
-        setTimeout(() => onComplete(code), 0);
-      }
-
       return next;
     });
 
     if (digit && index < length - 1) {
       focusInput(index + 1);
     }
-  }, [length, onComplete, focusInput]);
+  }, [length, focusInput]);
 
   const handleKeyDown = useCallback((index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
