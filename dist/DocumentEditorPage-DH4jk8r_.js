@@ -1,36 +1,36 @@
 import { t as e } from "./rolldown-runtime-Dy4uBu1J.js";
 import { r as t } from "./registry-DbX3MVAA.js";
 import { n } from "./IdentityContext-m2wQF4sJ.js";
-import { a as r, d as i, f as a, i as o, l as s, n as c, o as l, r as u, u as d } from "./useWebSocket-HLZQbJZc.js";
+import { a as r, d as i, f as a, i as o, l as s, n as c, o as l, r as u, u as d } from "./useWebSocket-DlIH1l_f.js";
 import { t as f } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as p } from "./cn-DhjIN-s0.js";
 import { t as m } from "./useEventCallback-Cwx9QVSi.js";
 import { t as h } from "./activationKey-CjbL3LUv.js";
 import { t as g } from "./Input-DcK2h-jK.js";
 import { t as _ } from "./Textarea-C3t5PCLv.js";
-import { i as v, t as y } from "./renderers-BuAr8ftW.js";
+import { i as v, t as y } from "./renderers-Cud7AJCe.js";
 import { t as b } from "./useHangoutEmbed-CzbKGc3C.js";
 import { t as x } from "./useActiveSpeaker-Dc9r75EE.js";
 import { forwardRef as S, useCallback as C, useEffect as w, useImperativeHandle as T, useMemo as E, useRef as D, useState as O } from "react";
 import { Fragment as k, jsx as A, jsxs as j } from "react/jsx-runtime";
-import ee, { createPortal as te } from "react-dom";
+import M, { createPortal as ee } from "react-dom";
 //#region src/utils/markdownParser.ts
-function M() {
+function N() {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
-var N = /^- \[([ xX])\]\s+(.+)$/;
-function ne(e, t) {
+var P = /^- \[([ xX])\]\s+(.+)$/;
+function te(e, t) {
 	let n = e.toLowerCase();
-	return N.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
+	return P.test(t) || /- \[[ xX]\]/.test(t) ? "tasks" : n.includes("decision") ? "decisions" : n.includes("summary") ? "summary" : "notes";
 }
-function P(e) {
+function F(e) {
 	let t = e.split("\n"), n = [], r = [];
 	for (let e of t) {
-		let t = e.match(N);
+		let t = e.match(P);
 		if (t) {
 			let e = t[1].toLowerCase() === "x";
 			n.push({
-				id: M(),
+				id: N(),
 				text: t[2].trim(),
 				status: e ? "done" : "pending",
 				assignee: "",
@@ -46,16 +46,16 @@ function P(e) {
 		remaining: r.join("\n").trim()
 	};
 }
-function re(e) {
+function ne(e) {
 	let t = {}, n = [], r = e.replace(/\r\n/g, "\n"), i = r.match(/^# (.+)$/m);
 	i && (t.title = i[1].trim());
 	let a = r.split(/^## /m);
 	if (a.length <= 1) {
 		let e = r.replace(/^# .+\n*/m, "").trim();
 		if (e.length > 0) {
-			let { items: r, remaining: i } = P(e);
+			let { items: r, remaining: i } = F(e);
 			n.push({
-				id: M(),
+				id: N(),
 				type: "summary",
 				title: t.title ?? "Untitled",
 				contentMarkdown: i,
@@ -68,9 +68,9 @@ function re(e) {
 		};
 	}
 	for (let e = 1; e < a.length; e++) {
-		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = P(o), l = ne(i, o);
+		let t = a[e], r = t.indexOf("\n"), i = r === -1 ? t.trim() : t.slice(0, r).trim(), o = r === -1 ? "" : t.slice(r + 1).trim(), { items: s, remaining: c } = F(o), l = te(i, o);
 		n.push({
-			id: M(),
+			id: N(),
 			type: l,
 			title: i,
 			contentMarkdown: c,
@@ -84,55 +84,55 @@ function re(e) {
 }
 //#endregion
 //#region src/utils/documentExport.ts
-function ie(e) {
+function re(e) {
 	return `- [${e.status === "done" || e.status === "acked" ? "x" : " "}] ${e.text}`;
 }
-function ae(e, t = 0) {
+function ie(e, t = 0) {
 	let n = "  ".repeat(t), r = [];
 	r.push(`${n}> **${e.displayName}**: ${e.text}`);
-	for (let n of e.replies) r.push(ae(n, t + 1));
+	for (let n of e.replies) r.push(ie(n, t + 1));
 	return r.join("\n");
 }
-function oe(e) {
+function ae(e) {
 	let t = [`## ${e.title}`, ""], n = e.contentMarkdown ?? e.contentText;
 	if (n && t.push(n, ""), e.items.length > 0) {
-		for (let n of e.items) t.push(ie(n));
+		for (let n of e.items) t.push(re(n));
 		t.push("");
 	}
 	let r = e.comments;
 	if (r && r.length > 0) {
 		t.push(`### Comments (${r.length})`, "");
-		for (let e of r) t.push(ae(e));
+		for (let e of r) t.push(ie(e));
 		t.push("");
 	}
 	return t.join("\n");
 }
-function se(e) {
+function oe(e) {
 	let t = [`# ${e.meta.title}`, ""];
-	for (let n of e.sections) t.push(oe(n));
+	for (let n of e.sections) t.push(ae(n));
 	return t.join("\n").trimEnd() + "\n";
 }
 //#endregion
 //#region src/utils/demoDocument.ts
-var ce = "# Q2 Sprint Planning - Meeting Summary\n\n## Executive Summary\n\nThis document captures the key outcomes from our Q2 sprint planning session held on April 10, 2026. The team discussed priorities for the upcoming quarter, including the new collaborative editing feature, infrastructure improvements, and customer-facing bug fixes.\n\nKey themes:\n- **Real-time collaboration** is the top priority for Q2\n- Infrastructure debt needs to be addressed before scaling\n- Customer satisfaction scores are trending upward\n\n## Action Items\n\n- [ ] Set up Tiptap editor with Y.js CRDT integration\n- [ ] Deploy shared Redis ECS service for multi-instance sync\n- [ ] Fix the 48 audit issues identified in the post-fix review\n- [ ] Create Playwright tests for 3-browser collaborative editing\n- [ ] Design the document export pipeline (PDF, DOCX, Google Docs)\n- [x] Complete the WebSocket gateway infrastructure audit\n- [x] Remove ElastiCache dependency from CDK stack\n\n## Decisions\n\n- [ ] Adopt Tiptap v3 as the standard rich text editor\n- [ ] Use Y.js with custom GatewayProvider (not Hocuspocus)\n- [ ] Store CRDT snapshots in DynamoDB with 7-day TTL\n- [ ] Support 3 viewing modes: Editor, Review, Reader\n\n## Technical Notes\n\nThe collaborative document editor will be built on top of the existing WebSocket gateway infrastructure. The `crdt-service.js` backend has been upgraded to maintain a proper `Y.Doc` per channel with awareness protocol support.\n\n### Architecture Highlights\n\n1. **Frontend**: Tiptap v3 + Y.js with custom `GatewayProvider`\n2. **Backend**: Existing crdt-service.js (treats Y.js updates as opaque binary)\n3. **Persistence**: EventBridge -> Lambda -> DynamoDB (gzip compressed, 7-day TTL)\n4. **Sync**: Redis pub/sub for multi-instance, WebSocket for client delivery\n\n### Performance Targets\n\n- Edit latency: < 50ms (local) / < 200ms (remote)\n- Concurrent editors: 10+ per document\n- Document size: up to 100KB of rich text\n- Snapshot frequency: every 50 operations or 5 minutes\n";
+var se = "# Q2 Sprint Planning - Meeting Summary\n\n## Executive Summary\n\nThis document captures the key outcomes from our Q2 sprint planning session held on April 10, 2026. The team discussed priorities for the upcoming quarter, including the new collaborative editing feature, infrastructure improvements, and customer-facing bug fixes.\n\nKey themes:\n- **Real-time collaboration** is the top priority for Q2\n- Infrastructure debt needs to be addressed before scaling\n- Customer satisfaction scores are trending upward\n\n## Action Items\n\n- [ ] Set up Tiptap editor with Y.js CRDT integration\n- [ ] Deploy shared Redis ECS service for multi-instance sync\n- [ ] Fix the 48 audit issues identified in the post-fix review\n- [ ] Create Playwright tests for 3-browser collaborative editing\n- [ ] Design the document export pipeline (PDF, DOCX, Google Docs)\n- [x] Complete the WebSocket gateway infrastructure audit\n- [x] Remove ElastiCache dependency from CDK stack\n\n## Decisions\n\n- [ ] Adopt Tiptap v3 as the standard rich text editor\n- [ ] Use Y.js with custom GatewayProvider (not Hocuspocus)\n- [ ] Store CRDT snapshots in DynamoDB with 7-day TTL\n- [ ] Support 3 viewing modes: Editor, Review, Reader\n\n## Technical Notes\n\nThe collaborative document editor will be built on top of the existing WebSocket gateway infrastructure. The `crdt-service.js` backend has been upgraded to maintain a proper `Y.Doc` per channel with awareness protocol support.\n\n### Architecture Highlights\n\n1. **Frontend**: Tiptap v3 + Y.js with custom `GatewayProvider`\n2. **Backend**: Existing crdt-service.js (treats Y.js updates as opaque binary)\n3. **Persistence**: EventBridge -> Lambda -> DynamoDB (gzip compressed, 7-day TTL)\n4. **Sync**: Redis pub/sub for multi-instance, WebSocket for client delivery\n\n### Performance Targets\n\n- Edit latency: < 50ms (local) / < 200ms (remote)\n- Concurrent editors: 10+ per document\n- Document size: up to 100KB of rich text\n- Snapshot frequency: every 50 operations or 5 minutes\n";
 //#endregion
 //#region src/components/doc-editor/useDocumentActions.ts
-function F(e) {
+function I(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
-function le(e) {
+function ce(e) {
 	return e.split("\n").map((e) => e.startsWith("### ") ? `<h3>${e.slice(4)}</h3>` : e.startsWith("## ") ? `<h2>${e.slice(3)}</h2>` : e.startsWith("# ") ? `<h1>${e.slice(2)}</h1>` : e.startsWith("> ") ? `<blockquote>${e.slice(2)}</blockquote>` : e.startsWith("- [x] ") ? `<li>&#9745; ${e.slice(6)}</li>` : e.startsWith("- [ ] ") ? `<li>&#9744; ${e.slice(6)}</li>` : e.startsWith("- ") ? `<li>${e.slice(2)}</li>` : e.trim() === "" ? "<br/>" : `<p>${e}</p>`).join("\n").replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>").replace(/`([^`]+)`/g, "<code>$1</code>");
 }
-function ue(e, t) {
+function le(e, t) {
 	let n = URL.createObjectURL(e), r = document.createElement("a");
 	r.href = n, r.download = t, r.click(), URL.revokeObjectURL(n);
 }
-function de({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exportJSON: a, getSectionFragment: o, comments: s }) {
+function ue({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exportJSON: a, getSectionFragment: o, comments: s }) {
 	let [c, l] = O(!1);
 	return {
 		demoLoaded: c,
 		handleLoadDemo: C(() => {
-			let n = re(ce);
+			let n = ne(se);
 			r({
 				id: e,
 				title: n.meta.title || "Untitled",
@@ -169,16 +169,16 @@ function de({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exp
 			if (t) {
 				for (let e of t.sections) {
 					let t = o(e.id);
-					t && (e.contentText = F(t));
+					t && (e.contentText = I(t));
 					let n = s[e.id];
 					n && n.length > 0 && (e.comments = n);
 				}
-				if (e === "json") ue(new Blob([JSON.stringify(t, null, 2)], { type: "application/json" }), `${t.meta.title || "document"}.json`);
+				if (e === "json") le(new Blob([JSON.stringify(t, null, 2)], { type: "application/json" }), `${t.meta.title || "document"}.json`);
 				else if (e === "markdown") {
-					let e = se(t);
-					ue(new Blob([e], { type: "text/markdown" }), `${t.meta.title || "document"}.md`);
+					let e = oe(t);
+					le(new Blob([e], { type: "text/markdown" }), `${t.meta.title || "document"}.md`);
 				} else if (e === "pdf") {
-					let e = se(t), n = window.open("", "_blank");
+					let e = oe(t), n = window.open("", "_blank");
 					n && (n.document.write(`
           <html>
           <head>
@@ -195,7 +195,7 @@ function de({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exp
               @media print { body { margin: 0; } }
             </style>
           </head>
-          <body>${le(e)}</body>
+          <body>${ce(e)}</body>
           </html>
         `), n.document.close(), n.print());
 				}
@@ -209,7 +209,7 @@ function de({ documentId: e, userId: t, ws: n, updateMeta: r, addSection: i, exp
 }
 //#endregion
 //#region src/components/doc-editor/useSidebarPanels.ts
-function fe(e = {}) {
+function de(e = {}) {
 	let [t, n] = O(e.initialPanel ?? null), r = C((e) => {
 		n((t) => t === e ? null : e);
 	}, []), i = C((e) => {
@@ -231,12 +231,12 @@ function fe(e = {}) {
 }
 //#endregion
 //#region src/hooks/templateSections.ts
-function pe(e, t) {
+function fe(e, t) {
 	let n = `${e}::${t}`, r = 5381;
 	for (let e = 0; e < n.length; e++) r = r * 33 ^ n.charCodeAt(e);
 	return `tpl-${(r >>> 0).toString(36)}`;
 }
-function me(e) {
+function pe(e) {
 	let t = e.getArray("sections"), n = /* @__PURE__ */ new Set(), r = [];
 	return t.toArray().forEach((e, t) => {
 		let i = e.get("id");
@@ -247,43 +247,43 @@ function me(e) {
 }
 //#endregion
 //#region src/components/doc-editor/useDocumentEditorState.ts
-function he() {
+function me() {
 	if (typeof window < "u") {
 		let e = new URLSearchParams(window.location.search).get("mode");
 		if (e === "editor" || e === "ack" || e === "reader") return e;
 	}
 	return "editor";
 }
-function ge(e) {
+function he(e) {
 	return e.toString().replace(/<\/?(paragraph|heading|blockquote|codeBlock|bulletList|orderedList|listItem|taskList|taskItem|horizontalRule|hardBreak|doc)[^>]*>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim();
 }
-function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
-	let [x, S] = O(he), { showHistory: T, showMyItems: k, showVideoHistory: A, toggleHistory: j, toggleMyItems: ee, toggleVideoHistory: te, closePanel: M } = fe(), [N, ne] = O(_ ?? !1), [P, re] = O(typeof window < "u" ? window.innerWidth : 1400);
+function ge({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, color: m = "var(--color-info)", onMessage: h, activityPublish: g, isVideoDocked: _, onDockVideo: v, onUndockVideo: y, onBack: b }) {
+	let [x, S] = O(me), { showHistory: T, showMyItems: k, showVideoHistory: A, toggleHistory: j, toggleMyItems: M, toggleVideoHistory: ee, closePanel: N } = de(), [P, te] = O(_ ?? !1), [F, ne] = O(typeof window < "u" ? window.innerWidth : 1400);
 	w(() => {
-		let e = () => re(window.innerWidth);
+		let e = () => ne(window.innerWidth);
 		return window.addEventListener("resize", e), () => window.removeEventListener("resize", e);
 	}, []);
-	let ie = P >= 1200, ae = P >= 900, [oe, se] = O(!1), ce = D(null), F = D(null), [le, ue] = O(0), [, ge] = O(0), I = D(null), L = C(() => {
-		if (I.current === null) {
-			let e = ce.current ?? F.current;
-			e && (I.current = e.getBoundingClientRect().top + window.scrollY);
+	let re = F >= 1200, ie = F >= 900, [ae, oe] = O(!1), se = D(null), I = D(null), [ce, le] = O(0), [, he] = O(0), ge = D(null), L = C(() => {
+		if (ge.current === null) {
+			let e = se.current ?? I.current;
+			e && (ge.current = e.getBoundingClientRect().top + window.scrollY);
 		}
-		let e = I.current ?? 250, t = window.scrollY > e - 146;
-		se(t), ce.current && ue(ce.current.getBoundingClientRect().left), F.current && ge(F.current.getBoundingClientRect().left);
+		let e = ge.current ?? 250, t = window.scrollY > e - 146;
+		oe(t), se.current && le(se.current.getBoundingClientRect().left), I.current && he(I.current.getBoundingClientRect().left);
 	}, []);
 	w(() => {
 		let e = () => {
-			I.current = null, L();
+			ge.current = null, L();
 		};
 		return window.addEventListener("scroll", L, { passive: !0 }), window.addEventListener("resize", e, { passive: !0 }), () => {
 			window.removeEventListener("scroll", L), window.removeEventListener("resize", e);
 		};
 	}, [L]), w(() => {
 		let e = setTimeout(() => {
-			I.current = null, L();
+			ge.current = null, L();
 		}, 50);
 		return () => clearTimeout(e);
-	}, [N, L]);
+	}, [P, L]);
 	let [_e, ve] = O(null), [ye, be] = O(!1), [xe, Se] = O(null), { idToken: R } = n(), Ce = c(e, R), { meta: z, sections: B, synced: V, updateMeta: H, addSection: we, updateSection: Te, addItem: Ee, updateItem: U, removeItem: W, getSectionFragment: De, ydoc: G, provider: Oe, exportJSON: ke, participants: Ae, awareness: K } = a({
 		documentId: e,
 		mode: x,
@@ -304,7 +304,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		sendMessage: l.sendMessage,
 		onMessage: h,
 		connectionState: l.connectionState
-	}), J = E(() => B.map((e) => e.id), [B]), { items: Ie, addItem: Le, updateItem: Re, removeItem: ze } = d({
+	}), J = E(() => B.map((e) => e.id), [B]), { items: Ie, addItem: Le, updateItem: Re, removeItem: ze, itemErrors: Be } = d({
 		documentId: e,
 		sectionIds: J,
 		idToken: R,
@@ -329,7 +329,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		l.connectionState,
 		l.sendMessage
 	]);
-	let { demoLoaded: Be, handleLoadDemo: Ve, handleClearDocument: He, handleExport: Ue } = de({
+	let { demoLoaded: Ve, handleLoadDemo: He, handleClearDocument: Ue, handleExport: We } = ue({
 		documentId: e,
 		userId: u,
 		ws: l,
@@ -338,7 +338,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		exportJSON: ke,
 		getSectionFragment: De,
 		comments: q
-	}), [Y, We] = O(null), Ge = C((e) => {
+	}), [Y, Ge] = O(null), X = C((e) => {
 		let t = e.lastSeen && Date.now() - e.lastSeen < 3e4, n = e.mode === "reviewer" ? "ack" : e.mode === "reader" ? "reader" : "editor";
 		if (x !== n && (S(n), typeof window < "u")) {
 			let e = new URL(window.location.href);
@@ -353,7 +353,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 				n.style.boxShadow = "";
 			}, 2e3)));
 		}, 150);
-	}, [x, B]), X = C((e) => {
+	}, [x, B]), Ke = C((e) => {
 		let t = e.userId || e.clientId;
 		ve((e) => e === t ? null : t);
 	}, []), Z = D(null);
@@ -398,9 +398,9 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		x,
 		B
 	]);
-	let Ke = C(() => {
+	let qe = C(() => {
 		ve(null);
-	}, []), qe = C((t, n) => {
+	}, []), Je = C((t, n) => {
 		let r = {
 			id: crypto.randomUUID(),
 			...n
@@ -417,16 +417,16 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		g,
 		e,
 		z?.title
-	]), Je = C((e, t, n) => {
+	]), Ye = C((e, t, n) => {
 		U(e, t, n), Re(e, t, n).catch(() => {});
-	}, [U, Re]), Ye = C((e, t) => {
+	}, [U, Re]), Q = C((e, t) => {
 		W(e, t), ze(e, t).catch(() => {});
 	}, [W, ze]);
 	w(() => {
 		if (B.length === 0 || Y) return;
 		let e = setTimeout(() => {
 			let e = B[0].id;
-			We(e), K.updateSection(e);
+			Ge(e), K.updateSection(e);
 		}, 500);
 		return () => clearTimeout(e);
 	}, [
@@ -434,19 +434,19 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		Y,
 		K
 	]);
-	let Q = C((e) => {
-		We(e), K.updateSection(e);
-	}, [K]), Xe = D(null), [Ze, Qe] = O(0), $e = C((e) => {
+	let Xe = C((e) => {
+		Ge(e), K.updateSection(e);
+	}, [K]), Ze = D(null), [Qe, $e] = O(0), et = C((e) => {
 		Se(e), be(!0), requestAnimationFrame(() => {
-			let t = document.getElementById(`section-${e}`), n = Xe.current;
+			let t = document.getElementById(`section-${e}`), n = Ze.current;
 			if (t && n) {
 				let e = t.getBoundingClientRect(), r = n.getBoundingClientRect();
-				Qe(e.top - r.top);
+				$e(e.top - r.top);
 			}
 		});
-	}, []), et = C(() => {
+	}, []), tt = C(() => {
 		be(!1);
-	}, []), tt = C((t, n, r) => {
+	}, []), nt = C((t, n, r) => {
 		je(t, n, r), g("doc.comment", {
 			sectionId: t,
 			text: n.slice(0, 50),
@@ -473,7 +473,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		p,
 		e,
 		z?.title
-	]), nt = C((t, n) => {
+	]), rt = C((t, n) => {
 		Me(t, n), g("doc.resolve_thread", {
 			sectionId: t,
 			commentId: n,
@@ -485,7 +485,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		g,
 		e,
 		z?.title
-	]), rt = C((t, n) => {
+	]), $ = C((t, n) => {
 		Ne(t, n), g("doc.unresolve_thread", {
 			sectionId: t,
 			commentId: n,
@@ -499,12 +499,12 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		p,
 		e,
 		z?.title
-	]), $ = r({
+	]), it = r({
 		sections: B,
 		comments: q,
 		displayName: p,
 		userId: u
-	}), it = C((e) => {
+	}), at = C((e) => {
 		setTimeout(() => {
 			let t = document.getElementById(`section-${e}`);
 			t && (t.scrollIntoView({
@@ -514,22 +514,22 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 				t.style.boxShadow = "";
 			}, 2e3));
 		}, 150);
-	}, []), at = ee, ot = j, st = te, ct = C(() => {
-		ne((e) => !e), M();
-	}, [M]);
+	}, []), ot = M, st = j, ct = ee, lt = C(() => {
+		te((e) => !e), N();
+	}, [N]);
 	w(() => {
 		let e = (e) => {
-			(e.metaKey || e.ctrlKey) && e.key === "m" && (e.preventDefault(), at());
+			(e.metaKey || e.ctrlKey) && e.key === "m" && (e.preventDefault(), ot());
 		};
 		return window.addEventListener("keydown", e), () => window.removeEventListener("keydown", e);
-	}, [at]);
-	let lt = `doc:${e}`, ut = o({
-		channel: lt,
+	}, [ot]);
+	let ut = `doc:${e}`, dt = o({
+		channel: ut,
 		sendMessage: l.sendMessage,
 		onMessage: h
 	});
 	w(() => {
-		T ? ut.fetchVersions() : ut.clearPreview();
+		T ? dt.fetchVersions() : dt.clearPreview();
 	}, [T]), w(() => {
 		if (!V || !t || !G) return;
 		let n = G.getMap("meta");
@@ -553,7 +553,7 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 			documentType: r.name
 		});
 		for (let t of r.fields) we({
-			id: pe(e, t.name),
+			id: fe(e, t.name),
 			type: i(t.sectionType),
 			sectionType: t.sectionType,
 			title: t.name,
@@ -566,14 +566,14 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		t,
 		G
 	]), w(() => {
-		!V || !G || me(G);
+		!V || !G || pe(G);
 	}, [V, G]);
-	let dt = (e) => {
+	let ft = (e) => {
 		if (S(e), typeof window < "u") {
 			let t = new URL(window.location.href);
 			t.searchParams.set("mode", e), window.history.replaceState({}, "", t.toString());
 		}
-	}, ft = z ?? {
+	}, pt = z ?? {
 		id: e,
 		title: "",
 		sourceType: "notes",
@@ -585,10 +585,10 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 	};
 	return {
 		mode: x,
-		handleModeChange: dt,
+		handleModeChange: ft,
 		meta: z,
-		headerMeta: ft,
-		isFinalized: ft.status === "final",
+		headerMeta: pt,
+		isFinalized: pt.status === "final",
 		handleFinalize: C(() => {
 			window.confirm("Finalize this document? It will become read-only.") && (H({ status: "final" }), g("doc.finalize", {
 				documentId: e,
@@ -615,65 +615,66 @@ function I({ documentId: e, documentType: t, ws: l, userId: u, displayName: p, c
 		sections: B,
 		updateSection: Te,
 		getSectionFragment: De,
+		itemErrors: Be,
 		ydoc: G,
 		provider: Oe,
 		synced: V,
-		demoLoaded: Be,
-		handleLoadDemo: Ve,
-		handleClearDocument: He,
-		handleExport: Ue,
+		demoLoaded: Ve,
+		handleLoadDemo: He,
+		handleClearDocument: Ue,
+		handleExport: We,
 		participants: Ae,
 		awareness: K,
 		focusedSectionId: Y,
-		handleSectionFocus: Q,
-		handleJumpToUser: Ge,
+		handleSectionFocus: Xe,
+		handleJumpToUser: X,
 		followingUserId: _e,
-		handleFollowUser: X,
-		handleStopFollow: Ke,
+		handleFollowUser: Ke,
+		handleStopFollow: qe,
 		comments: q,
 		commentSidebarOpen: ye,
 		commentSectionId: xe,
-		commentSidebarTop: Ze,
-		sectionListRef: Xe,
-		handleOpenComments: $e,
-		handleCloseComments: et,
-		handleAddComment: tt,
-		handleResolveThread: nt,
-		handleUnresolveThread: rt,
+		commentSidebarTop: Qe,
+		sectionListRef: Ze,
+		handleOpenComments: et,
+		handleCloseComments: tt,
+		handleAddComment: nt,
+		handleResolveThread: rt,
+		handleUnresolveThread: $,
 		restItems: Ie,
-		handleAddItem: qe,
-		handleUpdateItem: Je,
-		handleRemoveItem: Ye,
+		handleAddItem: Je,
+		handleUpdateItem: Ye,
+		handleRemoveItem: Q,
 		sectionReviews: Pe,
 		restReviewSection: Fe,
 		showHistory: T,
 		showMyItems: k,
 		showVideoHistory: A,
-		handleToggleHistory: ot,
-		handleToggleMyItems: at,
-		handleToggleVideoHistory: st,
-		closePanel: M,
-		showVideoCall: N,
-		setShowVideoCall: ne,
-		handleToggleVideoCall: ct,
+		handleToggleHistory: st,
+		handleToggleMyItems: ot,
+		handleToggleVideoHistory: ct,
+		closePanel: N,
+		showVideoCall: P,
+		setShowVideoCall: te,
+		handleToggleVideoCall: lt,
 		videoSessions: Ce,
 		isVideoDocked: _,
 		onDockVideo: v,
 		onUndockVideo: y,
-		showTOC: ie,
-		showInlineVideo: ae,
-		sidebarFixed: oe,
-		videoSpacerRef: ce,
-		tocSpacerRef: F,
-		videoLeft: le,
+		showTOC: re,
+		showInlineVideo: ie,
+		sidebarFixed: ae,
+		videoSpacerRef: se,
+		tocSpacerRef: I,
+		videoLeft: ce,
 		FIXED_TOP: 146,
-		myItems: $,
-		handleNavigateToSection: it,
-		versionHistory: ut,
+		myItems: it,
+		handleNavigateToSection: at,
+		versionHistory: dt,
 		handleBack: C(() => {
-			N && !_ && v?.(), b?.();
+			P && !_ && v?.(), b?.();
 		}, [
-			N,
+			P,
 			_,
 			v,
 			b
@@ -1053,7 +1054,7 @@ function B({ followingUserId: e, participants: t, onStopFollow: n }) {
 }
 //#endregion
 //#region src/components/ui/Panel.tsx
-var V = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : te(/* @__PURE__ */ A("div", {
+var V = ({ children: e, variant: t = "light", width: n = 320, style: r }) => typeof document > "u" ? null : ee(/* @__PURE__ */ A("div", {
 	className: p("fixed right-0 top-0 h-full z-[60] flex flex-col shadow-[-4px_0_12px_rgba(0,0,0,0.08)]", t === "dark" ? "bg-surface-inverse" : "bg-surface"),
 	style: {
 		width: n,
@@ -1403,7 +1404,7 @@ function Ne({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 	let [S, C] = O(e.collapsed), w = () => {
 		let e = !S;
 		C(e), s({ collapsed: e });
-	}, T = t(e.sectionType ?? e.type, "editor") ?? y, E = d && d.length > 0, D = E ? d[0].color || "#3b82f6" : "transparent", [k, ee] = O(!1);
+	}, T = t(e.sectionType ?? e.type, "editor") ?? y, E = d && d.length > 0, D = E ? d[0].color || "#3b82f6" : "transparent", [k, M] = O(!1);
 	return /* @__PURE__ */ j("div", {
 		id: `section-${e.id}`,
 		"data-testid": `section-block-${e.id}`,
@@ -1420,8 +1421,8 @@ function Ne({ section: e, fragment: n, ydoc: r, provider: i, user: a, editable: 
 				onClick: (t) => {
 					t.stopPropagation(), b(e.id);
 				},
-				onMouseEnter: () => ee(!0),
-				onMouseLeave: () => ee(!1),
+				onMouseEnter: () => M(!0),
+				onMouseLeave: () => M(!1),
 				className: p("absolute top-1/2 -right-[52px] -translate-y-1/2 w-10 h-10 rounded-full border border-border flex items-center justify-center text-xl leading-none p-0 z-[1] shadow-sm cursor-pointer transition-[opacity,background] duration-150 ease-in-out", k ? "bg-surface-hover opacity-90" : "bg-white opacity-40"),
 				title: "Open comments",
 				children: [
@@ -1765,7 +1766,7 @@ var He = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i
 		r,
 		i
 	]);
-	return T(a, () => ({ handleKeyDown: u }), [u]), ee.createPortal(/* @__PURE__ */ A("div", {
+	return T(a, () => ({ handleKeyDown: u }), [u]), M.createPortal(/* @__PURE__ */ A("div", {
 		ref: c,
 		role: "listbox",
 		className: p("fixed z-[1000] bg-white border border-border rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.12)] max-h-60 overflow-y-auto min-w-[200px]"),
@@ -1814,7 +1815,7 @@ var He = S(function({ query: e, users: t, position: n, onSelect: r, onDismiss: i
 function Ue(e) {
 	return e.split(" ").map((e) => e[0] ?? "").join("").toUpperCase().slice(0, 2);
 }
-function Y(e) {
+function We(e) {
 	try {
 		let t = Date.now() - new Date(e).getTime(), n = Math.floor(t / 1e3);
 		if (n < 60) return "just now";
@@ -1826,9 +1827,9 @@ function Y(e) {
 		return "";
 	}
 }
-function We(e) {
+function Y(e) {
 	let t = 0;
-	for (let n of e) t += 1 + We(n.replies);
+	for (let n of e) t += 1 + Y(n.replies);
 	return t;
 }
 function Ge(e) {
@@ -1846,7 +1847,7 @@ var X = {
 	},
 	atIndex: -1
 };
-function Z(e, t, n) {
+function Ke(e, t, n) {
 	let r = t - 1;
 	for (; r >= 0 && e[r] !== "@" && e[r] !== " " && e[r] !== "\n";) r--;
 	if (r < 0 || e[r] !== "@" || r > 0 && e[r - 1] !== " " && e[r - 1] !== "\n") return X;
@@ -1864,7 +1865,7 @@ function Z(e, t, n) {
 		atIndex: r
 	};
 }
-function Ke(e, t, n) {
+function Z(e, t, n) {
 	let r = e.slice(0, t.atIndex), i = e.slice(t.atIndex + 1 + t.query.length), a = `@${n.displayName} `;
 	return {
 		newValue: r + a + i,
@@ -1879,17 +1880,17 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 	}, T = (e) => {
 		let t = e.target.value;
 		l(t);
-		let n = Z(t, e.target.selectionStart ?? t.length, f.current);
+		let n = Ke(t, e.target.selectionStart ?? t.length, f.current);
 		v(n);
 	}, E = C((e) => {
-		let { newValue: t, newCursor: n } = Ke(c, g, e);
+		let { newValue: t, newCursor: n } = Z(c, g, e);
 		l(t), v(X), requestAnimationFrame(() => {
 			let e = f.current;
 			e && (e.focus(), e.setSelectionRange(n, n));
 		});
 	}, [c, g]), k = (e) => {
 		g.active && m.current && m.current.handleKeyDown(e) || (e.key === "Enter" && !e.shiftKey && (e.preventDefault(), w()), e.key === "Escape" && s(!1));
-	}, ee = u ? e.color : t === 0 ? "var(--color-border)" : "var(--color-border-emphasis)";
+	}, M = u ? e.color : t === 0 ? "var(--color-border)" : "var(--color-border-emphasis)";
 	return x && !y ? /* @__PURE__ */ A("div", {
 		className: p(S > 0 ? "ml-5" : "ml-0"),
 		children: /* @__PURE__ */ j("div", {
@@ -1912,7 +1913,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 					}),
 					e.resolvedAt && /* @__PURE__ */ A("span", {
 						className: p("text-code-green text-[11px]"),
-						children: Y(e.resolvedAt)
+						children: We(e.resolvedAt)
 					}),
 					/* @__PURE__ */ A("span", {
 						className: p("text-text-tertiary text-[11px] ml-1"),
@@ -1951,7 +1952,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 						}),
 						e.resolvedAt && /* @__PURE__ */ A("span", {
 							className: p("text-code-green text-[11px]"),
-							children: Y(e.resolvedAt)
+							children: We(e.resolvedAt)
 						}),
 						/* @__PURE__ */ A("span", {
 							className: p("text-text-tertiary text-[11px] ml-1"),
@@ -1969,7 +1970,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 			}),
 			/* @__PURE__ */ j("div", {
 				className: p("px-3 py-2 mb-1 transition-colors duration-200"),
-				style: { borderLeft: `3px solid ${ee}` },
+				style: { borderLeft: `3px solid ${M}` },
 				onMouseEnter: () => d(!0),
 				onMouseLeave: () => d(!1),
 				children: [
@@ -1987,7 +1988,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 							}),
 							/* @__PURE__ */ A("span", {
 								className: p("text-[11px] text-text-tertiary"),
-								children: Y(e.timestamp)
+								children: We(e.timestamp)
 							})
 						]
 					}),
@@ -2062,7 +2063,7 @@ function qe({ comment: e, depth: t, onReply: n, mentionUsers: r, onResolveThread
 //#endregion
 //#region src/components/doc-editor/SectionComments.tsx
 function Je({ comments: e, onAddComment: t, participants: n = [], onResolveThread: r, onUnresolveThread: i }) {
-	let [a, o] = O(!0), [s, c] = O(""), u = D(null), d = D(null), [f, m] = O(X), h = l(n), g = We(e), [v, y] = O(!0), b = [...e].sort((e, t) => {
+	let [a, o] = O(!0), [s, c] = O(""), u = D(null), d = D(null), [f, m] = O(X), h = l(n), g = Y(e), [v, y] = O(!0), b = [...e].sort((e, t) => {
 		if (e.resolved && !t.resolved) return 1;
 		if (!e.resolved && t.resolved) return -1;
 		let n = new Date(e.timestamp).getTime(), r = new Date(t.timestamp).getTime();
@@ -2074,10 +2075,10 @@ function Je({ comments: e, onAddComment: t, participants: n = [], onResolveThrea
 	}, S = (e) => {
 		let t = e.target.value;
 		c(t);
-		let n = Z(t, e.target.selectionStart ?? t.length, u.current);
+		let n = Ke(t, e.target.selectionStart ?? t.length, u.current);
 		m(n);
 	}, w = C((e) => {
-		let { newValue: t, newCursor: n } = Ke(s, f, e);
+		let { newValue: t, newCursor: n } = Z(s, f, e);
 		c(t), m(X), requestAnimationFrame(() => {
 			let e = u.current;
 			e && (e.focus(), e.setSelectionRange(n, n));
@@ -3220,7 +3221,7 @@ function bt({ sections: e, participants: t, meta: n, commentCounts: r, sectionCo
 }
 //#endregion
 //#region src/components/doc-editor/EditorModeSwitch.tsx
-function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, displayName: a, color: o, userId: s, ydoc: c, provider: l, getSectionFragment: u, updateSection: d, participants: f, focusedSectionId: m, onSectionFocus: h, comments: g, onAddComment: _, onResolveThread: v, onUnresolveThread: y, onUpdateCursorInfo: b, onOpenComments: x, onAddItem: S, onUpdateItem: C, onRemoveItem: w, restItems: T, commentSidebarOpen: E, commentSectionId: D, commentSidebarTop: O, sectionListRef: ee, onCloseComments: te, showVideoCall: M, isVideoDocked: N, showInlineVideo: ne, sidebarFixed: P, videoSpacerRef: re, videoLeft: ie, FIXED_TOP: ae, showTOC: oe, sectionReviews: se, reviewSection: ce, headerMeta: F, onLoadDemo: le, activityPublish: ue }) {
+function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, displayName: a, color: o, userId: s, ydoc: c, provider: l, getSectionFragment: u, updateSection: d, participants: f, focusedSectionId: m, onSectionFocus: h, comments: g, onAddComment: _, onResolveThread: v, onUnresolveThread: y, onUpdateCursorInfo: b, onOpenComments: x, onAddItem: S, onUpdateItem: C, onRemoveItem: w, restItems: T, commentSidebarOpen: E, commentSectionId: D, commentSidebarTop: O, sectionListRef: M, onCloseComments: ee, showVideoCall: N, isVideoDocked: P, showInlineVideo: te, sidebarFixed: F, videoSpacerRef: ne, videoLeft: re, FIXED_TOP: ie, showTOC: ae, sectionReviews: oe, reviewSection: se, headerMeta: I, onLoadDemo: ce, activityPublish: le }) {
 	return /* @__PURE__ */ j(k, { children: [
 		n && e === "editor" && /* @__PURE__ */ A("div", {
 			className: p("rounded-lg border px-4 py-2.5 mb-3 text-center text-[13px] font-medium", "bg-warning-bg border-warning-border text-warning-fg"),
@@ -3234,7 +3235,7 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 					children: "No document content yet."
 				}),
 				/* @__PURE__ */ A("button", {
-					onClick: le,
+					onClick: ce,
 					className: p("px-6 py-2.5 text-[15px] font-semibold border-none rounded-lg", "bg-primary text-white cursor-pointer font-[inherit]"),
 					children: "Load Demo Document"
 				}),
@@ -3245,24 +3246,24 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 			]
 		}),
 		!t && e === "editor" && c && /* @__PURE__ */ j("div", {
-			ref: ee,
+			ref: M,
 			className: "flex gap-4 relative min-w-0",
 			children: [
-				M && !N && ne && /* @__PURE__ */ A("div", {
-					ref: re,
+				N && !P && te && /* @__PURE__ */ A("div", {
+					ref: ne,
 					className: "w-[240px] shrink-0",
 					children: /* @__PURE__ */ A("div", {
 						id: "inline-video-slot",
-						className: p(P && "fixed z-30"),
-						style: P ? {
-							top: ae,
-							left: ie,
+						className: p(F && "fixed z-30"),
+						style: F ? {
+							top: ie,
+							left: re,
 							width: 240
 						} : void 0
 					})
 				}),
 				/* @__PURE__ */ j("div", {
-					className: p("flex-1 min-w-0", E ? "pr-0" : oe && r.length > 1 && e === "editor" ? "pr-48" : "pr-12"),
+					className: p("flex-1 min-w-0", E ? "pr-0" : ae && r.length > 1 && e === "editor" ? "pr-48" : "pr-12"),
 					children: [/* @__PURE__ */ A(Pe, {
 						sections: r.map((e) => {
 							let t = e.items ?? [], n = T[e.id] ?? [], r = [...t, ...n.filter((e) => !t.some((t) => t.id === e.id))];
@@ -3307,7 +3308,7 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 							children: r.find((e) => e.id === D)?.title ?? "Comments"
 						}), /* @__PURE__ */ A("button", {
 							type: "button",
-							onClick: te,
+							onClick: ee,
 							className: p("border-none bg-transparent cursor-pointer", "text-base text-neutral px-1.5 py-0.5 rounded leading-none shrink-0"),
 							title: "Close comments",
 							children: "✕"
@@ -3332,15 +3333,15 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 			getSectionFragment: u,
 			ydoc: c,
 			provider: l,
-			sectionReviews: se,
+			sectionReviews: oe,
 			reviewSection: (e, t, n) => {
-				ce(e, t, n);
+				se(e, t, n);
 				let a = r.find((t) => t.id === e);
-				ue(`doc.review_${t}`, {
+				le(`doc.review_${t}`, {
 					sectionTitle: a?.title,
 					status: t,
 					documentId: i,
-					documentTitle: F?.title
+					documentTitle: I?.title
 				});
 			},
 			comments: g,
@@ -3352,11 +3353,11 @@ function xt({ mode: e, isEmpty: t, isFinalized: n, sections: r, documentId: i, d
 		!t && e === "reader" && c && /* @__PURE__ */ A(bt, {
 			sections: r,
 			participants: f,
-			meta: F,
+			meta: I,
 			commentCounts: Object.fromEntries(Object.entries(g).map(([e, t]) => [e, t.length])),
 			sectionContentTexts: Object.fromEntries(r.map((e) => {
 				let t = u(e.id);
-				return [e.id, t ? ge(t) : ""];
+				return [e.id, t ? he(t) : ""];
 			})),
 			comments: g,
 			getSectionFragment: u,
@@ -4017,7 +4018,7 @@ function Bt({ showHistory: e, showMyItems: t, showVideoHistory: n, closePanel: r
 //#region src/components/doc-editor/DocumentEditorPage.tsx
 var Vt = /* @__PURE__ */ e({ default: () => Ht });
 function Ht({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, color: a = "var(--color-info)", onMessage: o, activityPublish: s, onBack: c, isVideoDocked: l, onDockVideo: u, onUndockVideo: d }) {
-	let f = I({
+	let f = ge({
 		documentId: e,
 		documentType: t,
 		ws: n,
@@ -4060,7 +4061,7 @@ function Ht({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 	]), w(() => () => {
 		m?.parentNode?.removeChild(m);
 	}, [m]);
-	let h = f.showVideoCall && m ? te(/* @__PURE__ */ A(ke, {
+	let h = f.showVideoCall && m ? ee(/* @__PURE__ */ A(ke, {
 		documentId: e,
 		userId: r,
 		idToken: f.idToken,
@@ -4186,4 +4187,4 @@ function Ht({ documentId: e, documentType: t, ws: n, userId: r, displayName: i, 
 	});
 }
 //#endregion
-export { Ne as C, Se as D, z as E, fe as O, Pe as S, B as T, We as _, Pt as a, He as b, bt as c, dt as d, rt as f, Je as g, Xe as h, Lt as i, de as k, ut as l, tt as m, Vt as n, kt as o, nt as p, zt as r, Dt as s, Ht as t, lt as u, Ue as v, ke as w, Be as x, Y as y };
+export { Ne as C, Se as D, z as E, de as O, Pe as S, B as T, Y as _, Pt as a, He as b, bt as c, dt as d, rt as f, Je as g, Xe as h, Lt as i, ue as k, ut as l, tt as m, Vt as n, kt as o, nt as p, zt as r, Dt as s, Ht as t, lt as u, Ue as v, ke as w, Be as x, We as y };

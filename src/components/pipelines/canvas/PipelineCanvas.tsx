@@ -517,6 +517,8 @@ function CanvasInner({ onFilterLog, errorNodeId, onErrorNodePosition, replayEdge
     setSelectedNodeId,
     removeNode,
     removeDefEdge,
+    nodes,
+    edges,
     setNodes,
     setEdges,
     setPositions,

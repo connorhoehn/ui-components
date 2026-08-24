@@ -69,10 +69,6 @@ export interface UseVisionResultsOptions {
 export function useVisionResults(opts: UseVisionResultsOptions = {}): VisionStepRecord[] {
   const { maxRecords = 50, runId: filterRunId } = opts;
   const [records, setRecords] = useState<VisionStepRecord[]>([]);
-  // Index for O(1) update by (runId, stepId). Kept in a ref so the
-  // subscription effect doesn't churn on every setRecords.
-  const indexRef = useRef<Map<string, number>>(new Map());
-
   // Late-arriving events after unmount would otherwise trigger setState
   // on an unmounted component — fall through silently.
   const mountedRef = useRef(true);
@@ -100,7 +96,17 @@ export function useVisionResults(opts: UseVisionResultsOptions = {}): VisionStep
     const key = `${payload.runId}::${payload.stepId}`;
 
     setRecords((prev) => {
-      const idx = indexRef.current.get(key);
+      // StrictMode safety: this used to read `idx` from a `runId::stepId ->
+      // position` ref and rebuild that ref *inside* the updater. React
+      // double-invokes updaters in dev, so the second pass read the index the
+      // first pass had just written: a brand-new step found itself at
+      // position 0 and took the update-in-place branch, overwriting the
+      // previous top record instead of inserting. Concurrent vision steps
+      // silently ate each other's rows. Derive the position from `prev`
+      // instead — the array is capped at `maxRecords`, so the scan is cheap
+      // and the updater is pure.
+      const found = prev.findIndex((r) => `${r.runId}::${r.stepId}` === key);
+      const idx = found === -1 ? undefined : found;
       const now = typeof payload.at === 'number' ? payload.at : Date.now();
       const updateOrInsert = (next: VisionStepRecord): VisionStepRecord[] => {
         if (typeof idx === 'number' && idx >= 0 && idx < prev.length) {
@@ -110,10 +116,6 @@ export function useVisionResults(opts: UseVisionResultsOptions = {}): VisionStep
         }
         const inserted = [next, ...prev];
         if (inserted.length > maxRecords) inserted.length = maxRecords;
-        // Rebuild index after insertion (the head shifted)
-        const newIdx = new Map<string, number>();
-        inserted.forEach((r, i) => newIdx.set(`${r.runId}::${r.stepId}`, i));
-        indexRef.current = newIdx;
         return inserted;
       };
 

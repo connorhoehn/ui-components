@@ -107,8 +107,6 @@ function toMs(at: number | string | undefined): number {
 export function useJudgmentResults(opts: UseJudgmentResultsOptions = {}): JudgmentStepRecord[] {
   const { maxRecords = 50, runId: filterRunId } = opts;
   const [records, setRecords] = useState<JudgmentStepRecord[]>([]);
-  const indexRef = useRef<Map<string, number>>(new Map());
-
   const mountedRef = useRef(true);
   useEffect(() => {
     mountedRef.current = true;
@@ -130,7 +128,13 @@ export function useJudgmentResults(opts: UseJudgmentResultsOptions = {}): Judgme
     const key = `${payload.runId}::${payload.stepId}`;
 
     setRecords((prev) => {
-      const idx = indexRef.current.get(key);
+      // StrictMode safety: identical bug to `useVisionResults` — reading and
+      // rebuilding a position index ref inside the updater meant React's dev
+      // double-invocation made the second pass believe a new step already
+      // existed at position 0, so it overwrote the previous top judgment
+      // instead of inserting a row. Derive the position from `prev`.
+      const found = prev.findIndex((r) => `${r.runId}::${r.stepId}` === key);
+      const idx = found === -1 ? undefined : found;
       const now = toMs(payload.at);
       const updateOrInsert = (next: JudgmentStepRecord): JudgmentStepRecord[] => {
         if (typeof idx === 'number' && idx >= 0 && idx < prev.length) {
@@ -140,9 +144,6 @@ export function useJudgmentResults(opts: UseJudgmentResultsOptions = {}): Judgme
         }
         const inserted = [next, ...prev];
         if (inserted.length > maxRecords) inserted.length = maxRecords;
-        const newIdx = new Map<string, number>();
-        inserted.forEach((r, i) => newIdx.set(`${r.runId}::${r.stepId}`, i));
-        indexRef.current = newIdx;
         return inserted;
       };
 

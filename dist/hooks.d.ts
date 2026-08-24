@@ -1245,6 +1245,13 @@ declare interface UseActivityBusReturn {
      removeItem: (sectionId: string, itemId: string) => Promise<void>;
      ackItem: (sectionId: string, itemId: string) => Promise<void>;
      loading: boolean;
+     /**
+      * Per-section load failures, keyed by sectionId. A section present here
+      * failed to load — which is NOT the same as having no items, and the two
+      * used to be indistinguishable (see the catch in the load effect).
+      * Sections that loaded fine are absent from this map.
+      */
+     itemErrors: Record<string, string>;
  }
 
  export declare function useDocumentMetadata(ydoc: Y.Doc | null): UseDocumentMetadataReturn;

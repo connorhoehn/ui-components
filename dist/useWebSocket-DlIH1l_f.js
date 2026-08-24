@@ -122,14 +122,14 @@ function u(e, n) {
 	};
 }
 //#endregion
-//#region ../../../node_modules/lib0/map.js
+//#region node_modules/lib0/map.js
 var d = () => /* @__PURE__ */ new Map(), f = (e, t, n) => {
 	let r = e.get(t);
 	return r === void 0 && e.set(t, r = n()), r;
 }, p = () => /* @__PURE__ */ new Set(), m = Array.from;
 Array.isArray;
 //#endregion
-//#region ../../../node_modules/lib0/observable.js
+//#region node_modules/lib0/observable.js
 /* c8 ignore start */
 var h = class {
 	constructor() {
@@ -157,11 +157,11 @@ var h = class {
 }, g = Math.floor, _ = (e, t) => e < t ? e : t, v = (e, t) => e > t ? e : t;
 Number.isNaN;
 //#endregion
-//#region ../../../node_modules/lib0/number.js
+//#region node_modules/lib0/number.js
 var y = 2 ** 53 - 1;
 Number.isInteger, Number.isNaN, Number.parseInt;
 //#endregion
-//#region ../../../node_modules/lib0/string.js
+//#region node_modules/lib0/string.js
 var b = String.fromCharCode;
 String.fromCodePoint, b(65535);
 var x = (e) => e.toLowerCase(), S = /^\s*/g, C = (e) => e.replace(S, ""), w = /([A-Z])/g, T = (e, t) => C(e.replace(w, (e) => `${t}${x(e)}`)), E = (e) => {
@@ -177,7 +177,7 @@ O && O.decode(/* @__PURE__ */ new Uint8Array()).length === 1 &&
 /* c8 ignore next */
 (O = null);
 //#endregion
-//#region ../../../node_modules/lib0/encoding.js
+//#region node_modules/lib0/encoding.js
 var te = class {
 	constructor() {
 		this.cpos = 0, this.cbuf = /* @__PURE__ */ new Uint8Array(100), this.bufs = [];
@@ -414,7 +414,7 @@ W("production"), z && ye(process.env.FORCE_COLOR, [
 ]) || !H("--no-colors") && !W("no-color") && (!z || process.stdout.isTTY) && (!z || H("--color") || U("COLORTERM") !== null || (U("TERM") || "").includes("color"));
 /* c8 ignore stop */
 //#endregion
-//#region ../../../node_modules/lib0/buffer.js
+//#region node_modules/lib0/buffer.js
 var ke = (e) => new Uint8Array(e), Ae = (e, t, n) => new Uint8Array(e, t, n), je = (e) => {
 	let t = "";
 	for (let n = 0; n < e.byteLength; n++) t += b(e[n]);
@@ -1102,55 +1102,57 @@ function Z(e) {
 	};
 }
 function Qe(a) {
-	let { documentId: o, sectionIds: s, idToken: c, sendMessage: l, onMessage: u } = a, [d, f] = i({}), [p, m] = i(!1), h = r(l);
+	let { documentId: o, sectionIds: s, idToken: c, sendMessage: l, onMessage: u } = a, [d, f] = i({}), [p, m] = i({}), [h, g] = i(!1), _ = r(l);
 	t(() => {
-		h.current = l;
+		_.current = l;
 	}, [l]);
-	let g = r(o);
+	let v = r(o);
 	t(() => {
-		g.current = o;
+		v.current = o;
 	}, [o]);
-	let _ = n(() => {
+	let y = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return c && (e.Authorization = `Bearer ${c}`), e;
-	}, [c]), v = s.join(",");
+	}, [c]), b = s.join(",");
 	return t(() => {
 		if (!o || !c || s.length === 0) return;
-		m(!0);
+		g(!0);
 		let e = !1, t = s.map(async (e) => {
 			try {
 				let t = await fetch(`/api/documents/${o}/sections/${e}/items`, { headers: { Authorization: `Bearer ${c}` } });
 				if (!t.ok) throw Error(`Failed to load items for section ${e} (${t.status})`);
 				return {
 					sectionId: e,
-					items: ((await t.json()).items ?? []).map(Z)
+					items: ((await t.json()).items ?? []).map(Z),
+					error: null
 				};
 			} catch (t) {
 				return console.warn(`[useDocumentItems] fetch error for section ${e}:`, t.message), {
 					sectionId: e,
-					items: []
+					items: [],
+					error: t.message
 				};
 			}
 		});
 		return Promise.all(t).then((t) => {
 			if (e) return;
-			let n = {};
-			for (let { sectionId: e, items: r } of t) n[e] = r;
-			f(n);
+			let n = {}, r = {};
+			for (let { sectionId: e, items: i, error: a } of t) n[e] = i, a && (r[e] = a);
+			f(n), m(r);
 		}).finally(() => {
-			e || m(!1);
+			e || g(!1);
 		}), () => {
 			e = !0;
 		};
 	}, [
 		o,
 		c,
-		v
+		b
 	]), t(() => u((e) => {
 		let t = e.type, n = e.payload;
 		if (!n) return;
 		let r = n.documentId;
-		if (!(r && r !== g.current)) {
+		if (!(r && r !== v.current)) {
 			if (t === "social:post" && n.type === "section:item:created") {
 				let e = n.sectionId, t = n.item;
 				if (!e || !t) return;
@@ -1213,9 +1215,9 @@ function Qe(a) {
 		items: d,
 		addItem: e(async (e, t) => {
 			if (!c) return;
-			let n = await fetch(`/api/documents/${g.current}/sections/${e}/items`, {
+			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items`, {
 				method: "POST",
-				headers: _,
+				headers: y,
 				body: JSON.stringify(t)
 			});
 			if (!n.ok) throw Error(`Failed to add item (${n.status})`);
@@ -1227,12 +1229,12 @@ function Qe(a) {
 					[e]: [...n, r]
 				};
 			});
-		}, [c, _]),
+		}, [c, y]),
 		updateItem: e(async (e, t, n) => {
 			if (!c) return;
-			let r = await fetch(`/api/documents/${g.current}/sections/${e}/items/${t}`, {
+			let r = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}`, {
 				method: "PATCH",
-				headers: _,
+				headers: y,
 				body: JSON.stringify(n)
 			});
 			if (!r.ok) throw Error(`Failed to update item (${r.status})`);
@@ -1244,12 +1246,12 @@ function Qe(a) {
 					[e]: r.map((e) => e.id === t ? i : e)
 				} : n;
 			});
-		}, [c, _]),
+		}, [c, y]),
 		removeItem: e(async (e, t) => {
 			if (!c) return;
-			let n = await fetch(`/api/documents/${g.current}/sections/${e}/items/${t}`, {
+			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}`, {
 				method: "DELETE",
-				headers: _
+				headers: y
 			});
 			if (!n.ok) throw Error(`Failed to remove item (${n.status})`);
 			f((n) => {
@@ -1259,12 +1261,12 @@ function Qe(a) {
 					[e]: r.filter((e) => e.id !== t)
 				} : n;
 			});
-		}, [c, _]),
+		}, [c, y]),
 		ackItem: e(async (e, t) => {
 			if (!c) return;
-			let n = await fetch(`/api/documents/${g.current}/sections/${e}/items/${t}/ack`, {
+			let n = await fetch(`/api/documents/${v.current}/sections/${e}/items/${t}/ack`, {
 				method: "POST",
-				headers: _
+				headers: y
 			});
 			if (!n.ok) throw Error(`Failed to acknowledge item (${n.status})`);
 			let r = Z((await n.json()).item);
@@ -1275,8 +1277,9 @@ function Qe(a) {
 					[e]: i.map((e) => e.id === t ? r : e)
 				} : n;
 			});
-		}, [c, _]),
-		loading: p
+		}, [c, y]),
+		loading: h,
+		itemErrors: p
 	};
 }
 //#endregion

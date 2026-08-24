@@ -424,20 +424,30 @@ export function PipelineEditorProvider({
   // Commit a mutation atomically: push current state onto undo, apply
   // `mutator`, mark dirty. Returns the (possibly updated) definition so
   // callers can read back generated IDs.
+  //
+  // StrictMode safety: this used to run `pushHistory(prev)`, `mutator(prev)`
+  // and the `committed` write *inside* the `setDefinition` updater. React
+  // double-invokes updaters in dev, so every edit pushed TWO undo frames —
+  // one Ctrl+Z then appeared to do nothing — and `committed` was only ever
+  // populated when React happened to eagerly evaluate the updater (it does
+  // not when the update queue is non-empty), so `addNode`/`duplicateNodes`
+  // silently returned null. Read the current definition from the render-time
+  // ref instead and keep the updater out of it entirely: the effects now run
+  // exactly once per call.
   const commit = useCallback(
     (
       mutator: (def: PipelineDefinition) => PipelineDefinition,
     ): PipelineDefinition | null => {
-      let committed: PipelineDefinition | null = null;
-      setDefinition((prev) => {
-        if (!prev) return prev;
-        pushHistory(prev);
-        const next = mutator(prev);
-        committed = next;
-        return next;
-      });
+      const prev = latestDefinitionRef.current;
+      if (!prev) return null;
+      const next = mutator(prev);
+      // Keep the ref ahead of the next render so back-to-back commits in the
+      // same tick chain off each other rather than off a stale definition.
+      latestDefinitionRef.current = next;
+      pushHistory(prev);
+      setDefinition(next);
       setDirty(true);
-      return committed;
+      return next;
     },
     [pushHistory],
   );
@@ -501,38 +511,44 @@ export function PipelineEditorProvider({
 
   const duplicateNodes = useCallback(
     (ids: string[]): string[] => {
+      const def = latestDefinitionRef.current;
+      if (!def) return [];
+      // StrictMode safety: `genId()` and `newIds.push(...)` used to live
+      // inside the mutator body. React double-invokes the updater that ran
+      // it, so duplicating N nodes returned 2N ids — and the first N referred
+      // to clones that were never committed. Callers select the returned ids,
+      // so a duplicate could leave the canvas selecting a phantom node.
+      // Everything id-generating now happens once, before the commit.
       const newIds: string[] = [];
-      commit((def) => {
-        const idSet = new Set(ids);
-        const idMap = new Map<string, string>();
-        const clones: PipelineNode[] = def.nodes
-          .filter((n) => idSet.has(n.id))
-          .map((n) => {
-            const fresh = genId();
-            idMap.set(n.id, fresh);
-            newIds.push(fresh);
-            return {
-              ...n,
-              id: fresh,
-              position: { x: n.position.x + 40, y: n.position.y + 40 },
-              data: { ...n.data },
-            };
-          });
-        // Clone edges that are internal to the selection.
-        const clonedEdges: PipelineEdge[] = def.edges
-          .filter((e) => idSet.has(e.source) && idSet.has(e.target))
-          .map((e) => ({
-            ...e,
-            id: genId(),
-            source: idMap.get(e.source) ?? e.source,
-            target: idMap.get(e.target) ?? e.target,
-          }));
-        return {
-          ...def,
-          nodes: [...def.nodes, ...clones],
-          edges: [...def.edges, ...clonedEdges],
-        };
-      });
+      const idSet = new Set(ids);
+      const idMap = new Map<string, string>();
+      const clones: PipelineNode[] = def.nodes
+        .filter((n) => idSet.has(n.id))
+        .map((n) => {
+          const fresh = genId();
+          idMap.set(n.id, fresh);
+          newIds.push(fresh);
+          return {
+            ...n,
+            id: fresh,
+            position: { x: n.position.x + 40, y: n.position.y + 40 },
+            data: { ...n.data },
+          };
+        });
+      // Clone edges that are internal to the selection.
+      const clonedEdges: PipelineEdge[] = def.edges
+        .filter((e) => idSet.has(e.source) && idSet.has(e.target))
+        .map((e) => ({
+          ...e,
+          id: genId(),
+          source: idMap.get(e.source) ?? e.source,
+          target: idMap.get(e.target) ?? e.target,
+        }));
+      commit((current) => ({
+        ...current,
+        nodes: [...current.nodes, ...clones],
+        edges: [...current.edges, ...clonedEdges],
+      }));
       return newIds;
     },
     [commit],
@@ -565,28 +581,37 @@ export function PipelineEditorProvider({
       updates: Array<{ id: string; position: { x: number; y: number } }>,
     ): void => {
       if (updates.length === 0) return;
-      setDefinition((prev) => {
-        if (!prev) return prev;
-        const byId = new Map(updates.map((u) => [u.id, u.position]));
-        const next = {
-          ...prev,
-          nodes: prev.nodes.map((n) => {
-            const pos = byId.get(n.id);
-            return pos ? { ...n, position: pos } : n;
-          }),
-        };
-        savePipelinePositionsOnly(next);
-        return next;
-      });
-      // Drags used to write ONLY to localStorage. The remote is the source of
-      // truth, so an arranged layout survived a reload in the same browser
-      // and nowhere else: reopen the pipeline on another machine, or after a
-      // cache clear, and every node snapped back. Marking dirty routes the
-      // move through the same debounced autosave every other edit uses, which
-      // coalesces a burst (drag settle, key-repeat nudges, auto-arrange) into
-      // one write rather than one per event. The synchronous localStorage
-      // write above stays as the crash floor — it is the only thing that
-      // survives the tab being killed inside the debounce window.
+      // Two fixes meet here, and both are load-bearing.
+      //
+      // PURITY: `savePipelinePositionsOnly` is a localStorage write, and it
+      // used to sit inside the `setDefinition` updater — which React
+      // double-invokes in dev, so every drag wrote twice. The next definition
+      // is computed from `latestDefinitionRef` and the write happens out here,
+      // where running it once is guaranteed.
+      //
+      // REMOTE PERSISTENCE: drags used to write ONLY to localStorage. The
+      // remote is the source of truth, so an arranged layout survived a reload
+      // in the same browser and nowhere else — reopen the pipeline on another
+      // machine, or after a cache clear, and every node snapped back. Marking
+      // dirty routes the move through the same debounced autosave every other
+      // edit uses, which coalesces a burst (drag settle, Shift+Arrow key
+      // repeat, auto-arrange) into one write instead of one per event. The
+      // synchronous localStorage write stays as the crash floor: it is the
+      // only thing that survives the tab being killed inside the debounce
+      // window.
+      const prev = latestDefinitionRef.current;
+      if (!prev) return;
+      const byId = new Map(updates.map((u) => [u.id, u.position]));
+      const next = {
+        ...prev,
+        nodes: prev.nodes.map((n) => {
+          const pos = byId.get(n.id);
+          return pos ? { ...n, position: pos } : n;
+        }),
+      };
+      latestDefinitionRef.current = next;
+      savePipelinePositionsOnly(next);
+      setDefinition(next);
       setDirty(true);
     },
     [],
@@ -672,37 +697,43 @@ export function PipelineEditorProvider({
   // Undo / redo
   // -------------------------------------------------------------------------
 
+  // StrictMode safety: both of these used to nest `setRedoStack` /
+  // `setUndoStack` / `setDefinition` / `setDirty` *inside* the outer stack
+  // updater. React double-invokes updaters in dev, so a single undo pushed
+  // two identical frames onto the redo stack (and vice versa) — after one
+  // undo you needed two redos to get back. Read the stacks from state and
+  // enqueue each update once.
   const undo = useCallback((): void => {
-    setUndoStack((stack) => {
-      if (stack.length === 0 || !definition) return stack;
-      const frame = stack[stack.length - 1];
-      setRedoStack((redo) => [
-        ...redo,
-        { nodes: definition.nodes, edges: definition.edges },
-      ]);
-      setDefinition({ ...definition, nodes: frame.nodes, edges: frame.edges });
-      setDirty(true);
-      return stack.slice(0, -1);
-    });
-  }, [definition]);
+    if (undoStack.length === 0 || !definition) return;
+    const frame = undoStack[undoStack.length - 1];
+    const next = { ...definition, nodes: frame.nodes, edges: frame.edges };
+    latestDefinitionRef.current = next;
+    setRedoStack((redo) => [
+      ...redo,
+      { nodes: definition.nodes, edges: definition.edges },
+    ]);
+    setUndoStack((stack) => stack.slice(0, -1));
+    setDefinition(next);
+    setDirty(true);
+  }, [definition, undoStack]);
 
   const redo = useCallback((): void => {
-    setRedoStack((stack) => {
-      if (stack.length === 0 || !definition) return stack;
-      const frame = stack[stack.length - 1];
-      setUndoStack((undoS) => {
-        const next = [
-          ...undoS,
-          { nodes: definition.nodes, edges: definition.edges },
-        ];
-        if (next.length > HISTORY_LIMIT) next.shift();
-        return next;
-      });
-      setDefinition({ ...definition, nodes: frame.nodes, edges: frame.edges });
-      setDirty(true);
-      return stack.slice(0, -1);
+    if (redoStack.length === 0 || !definition) return;
+    const frame = redoStack[redoStack.length - 1];
+    const next = { ...definition, nodes: frame.nodes, edges: frame.edges };
+    latestDefinitionRef.current = next;
+    setUndoStack((undoS) => {
+      const pushed = [
+        ...undoS,
+        { nodes: definition.nodes, edges: definition.edges },
+      ];
+      if (pushed.length > HISTORY_LIMIT) pushed.shift();
+      return pushed;
     });
-  }, [definition]);
+    setRedoStack((stack) => stack.slice(0, -1));
+    setDefinition(next);
+    setDirty(true);
+  }, [definition, redoStack]);
 
   const value = useMemo<PipelineEditorValue>(
     () => ({

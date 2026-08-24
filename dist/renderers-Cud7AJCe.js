@@ -1,5 +1,5 @@
 import { a as e, o as t } from "./registry-DbX3MVAA.js";
-import { c as n, s as r } from "./useWebSocket-HLZQbJZc.js";
+import { c as n, s as r } from "./useWebSocket-DlIH1l_f.js";
 import { t as i } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as a } from "./cn-DhjIN-s0.js";
 import { t as o } from "./useEventCallback-Cwx9QVSi.js";

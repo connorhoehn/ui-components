@@ -244,7 +244,16 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
     const pipelineId = editor?.definition?.id;
     if (!pipelineId || historyFetchedRef.current === pipelineId) return;
 
-    historyFetchedRef.current = pipelineId;
+    // The guard is claimed only once the fetch has actually *landed*, not
+    // before it starts. Setting it up here used to strand the panel: on a
+    // double-mount (StrictMode, an <Activity>/Offscreen re-show, a Suspense
+    // retry, or a `pipelineId` that goes A -> undefined -> A) the first pass
+    // set the ref and started the fetch, the cleanup cancelled that fetch,
+    // and the second pass saw its own ref already set and returned early.
+    // Net effect: `listPipelineRuns` never lands, `runs` stays empty, and the
+    // runs views render "no runs yet" for a pipeline with history — silently,
+    // with no error and no retry. (`loadingHistory` sticks at true too, but
+    // nothing reads it, so the empty list is the whole visible symptom.)
     setLoadingHistory(true);
 
     // Guard every setState below: this effect had no cleanup at all, so
@@ -276,7 +285,13 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
         });
       })
       .finally(() => {
-        if (!cancelled) setLoadingHistory(false);
+        if (cancelled) return;
+        // Claim the guard only on a settled, un-cancelled pass. A cancelled
+        // pass leaves it unclaimed so the next mount re-seeds. The merge above
+        // is `if (!next[run.id])`, so a repeat seed can never clobber live
+        // state — the guard is an optimisation, not a correctness barrier.
+        historyFetchedRef.current = pipelineId;
+        setLoadingHistory(false);
       });
 
     return () => { cancelled = true; };
