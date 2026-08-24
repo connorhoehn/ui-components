@@ -389,8 +389,21 @@ component now has both a test file and a story file.
 > `src/__tests__/packaging.test.ts`. Shrinking a set is fine; growing one means
 > a common import path now needs another install — make that deliberate.
 >
-> Leanest subpaths (react only): `/types`, `/video`, `/identity`. The root
-> barrel needs nearly everything, which is the point of subpaths.
+> The guard tracks **static** and **dynamic** peers separately, because only
+> the first kind breaks the import: a static peer is needed by every consumer
+> of that subpath whether or not they touch the feature, while
+> `import('amazon-ivs-web-broadcast')` only fails when a hangout actually
+> starts. That laziness is deliberate and is the entire reason `/video-ivs`
+> exists. A walk following only `from "…"` reports the IVS SDK as absent from
+> three entry points that do reach it — don't write one.
+>
+> Leanest subpaths (react only, statically): `/types`, `/video`, `/identity`,
+> and `/video-ivs` (its SDK is dynamic). The root barrel needs nearly
+> everything, which is the point of subpaths.
+>
+> **`/video-ivs` has no `src/components/video-ivs/` directory** — the entry is
+> `src/video-ivs.ts`, re-exporting `src/lib/video/useHangoutEmbed`. The source
+> layout below doesn't show this and it has already misled one reader.
 
 > **Verify against a packed tarball, not the repo.** In-repo everything
 > resolves from `devDependencies`, which hid four consumer-breaking bugs until

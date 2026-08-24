@@ -164,23 +164,33 @@ describe.skipIf(!distExists)('packaging contract (requires a build)', () => {
 // Which optional peers does each entry point actually DRAG IN?
 // ---------------------------------------------------------------------------
 
-// `peerDependenciesMeta` marks recharts, the @tiptap/* packages, cognito, hls
-// and others `optional: true`. That flag promises a consumer can skip them.
-// For several entry points the promise is false: the barrel re-exports a
+// `peerDependenciesMeta` marks recharts, the @tiptap/* packages, cognito, the
+// IVS SDK and others `optional: true`. That flag promises a consumer can skip
+// them. For STATIC imports the promise is false: the barrel re-exports a
 // component that imports the peer at module scope, so `import { Button } from
-// '@connorhoehnslalom/ui-components/shared'` fails at runtime with
-// ERR_MODULE_NOT_FOUND unless recharts is installed — because `shared/Chart.tsx`
-// is `export *`'d from the same barrel.
+// '@connorhoehnslalom/ui-components/shared'` dies with ERR_MODULE_NOT_FOUND
+// unless recharts is installed — because `shared/Chart.tsx` is `export *`'d
+// from that same barrel.
 //
 // Verified against a real packed tarball in a scratch consumer: with the
 // optional peers absent, 8 of 13 subpaths failed to import; with them present,
 // all but `/integrations/realtime-modules` (genuinely unpublished) import clean.
 //
-// Bundler consumers are usually spared by tree-shaking. Node-ESM and SSR
-// consumers are not. This test does not force that to change — moving Chart out
-// of the barrel would be a breaking change needing a consumer handoff. It pins
-// the CURRENT truth so the set cannot quietly grow, and so the cost of adding an
-// eager peer import to a common barrel is visible at review time.
+// STATIC vs DYNAMIC is the distinction that matters, and they are tracked
+// separately below:
+//   - a static peer breaks the import itself, for every consumer of that
+//     subpath, whether or not they touch the feature;
+//   - a dynamic peer (`import('amazon-ivs-web-broadcast')`) only fails when the
+//     feature actually runs, which is the deliberate design — the IVS SDK loads
+//     when a hangout starts, not when someone imports a Button.
+// A walk that follows only `from "…"` reports the IVS SDK as absent from three
+// entry points that do reach it. That undercount is the reason this tracks both.
+//
+// Bundler consumers are usually spared the static problem by tree-shaking.
+// Node-ESM and SSR consumers are not. This test does not force that to change —
+// moving Chart out of the barrel would be a breaking change needing a consumer
+// handoff. It pins the CURRENT truth so the set cannot quietly grow, and so the
+// cost of adding an eager peer import to a common barrel is visible at review.
 describe('entry points and their transitive optional peers', () => {
   it('no entry point drags in an optional peer beyond the documented set', async () => {
     const { readFileSync, existsSync } = await import('node:fs');
@@ -193,55 +203,71 @@ describe('entry points and their transitive optional peers', () => {
     const SPECIFIER = /^(@[a-z0-9-~][\w.-]*\/)?[a-z0-9-~][\w.-]*$/;
     const ALWAYS = new Set(['react', 'react-dom', 'react/jsx-runtime', 'clsx', 'tailwind-merge']);
 
-    /** Follow relative chunk imports so transitive peers are counted. */
-    function peersOf(entry: string): string[] {
+    /**
+     * Follow relative chunk imports — static AND dynamic — so transitive peers
+     * are counted, and record which kind reached each package.
+     */
+    function peersOf(entry: string): { static: string[]; dynamic: string[] } {
       const seen = new Set<string>();
-      const found = new Set<string>();
-      const queue = [entry];
+      const stat = new Set<string>();
+      const dyn = new Set<string>();
+      // [file, reachedDynamically]
+      const queue: Array<[string, boolean]> = [[entry, false]];
       while (queue.length) {
-        const file = queue.pop()!;
-        if (seen.has(file) || !existsSync(file)) continue;
-        seen.add(file);
-        for (const m of readFileSync(file, 'utf8').matchAll(/from\s*"([^"]+)"/g)) {
-          const spec = m[1];
-          if (spec.startsWith('.')) { queue.push(join(dirname(file), spec)); continue; }
+        const [file, lazy] = queue.pop()!;
+        const key = `${file}|${lazy}`;
+        if (seen.has(key) || !existsSync(file)) continue;
+        seen.add(key);
+        const src = readFileSync(file, 'utf8');
+        const edges: Array<[string, boolean]> = [
+          ...[...src.matchAll(/from\s*"([^"]+)"/g)].map((m) => [m[1], lazy] as [string, boolean]),
+          // Anything behind a dynamic import stays dynamic for the rest of the walk.
+          ...[...src.matchAll(/import\("([^"]+)"\)/g)].map((m) => [m[1], true] as [string, boolean]),
+        ];
+        for (const [spec, isLazy] of edges) {
+          if (spec.startsWith('.')) { queue.push([join(dirname(file), spec), isLazy]); continue; }
           const pkg = spec.split('/').slice(0, spec.startsWith('@') ? 2 : 1).join('/');
-          if (SPECIFIER.test(pkg) && !ALWAYS.has(pkg) && !ALWAYS.has(spec)) found.add(pkg);
+          if (!SPECIFIER.test(pkg) || ALWAYS.has(pkg) || ALWAYS.has(spec)) continue;
+          (isLazy ? dyn : stat).add(pkg);
         }
       }
-      return [...found].sort();
+      // A package reachable statically is statically required, full stop.
+      return { static: [...stat].sort(), dynamic: [...dyn].filter((p) => !stat.has(p)).sort() };
     }
 
-    // The documented truth. Shrinking an entry is always fine — update the
-    // list. GROWING one means a common import path now needs another package
-    // installed, so make that a deliberate decision, not a side effect.
-    const EXPECTED: Record<string, string[]> = {
-      types: [],
-      video: [],
-      social: ['cmdk'],
-      agents: ['@xyflow/react'],
-      identity: [],
-      shared: ['cmdk', 'recharts'],
-      observability: ['react-router', 'recharts'],
-      ingest: ['react-router', 'recharts'],
-      hooks: ['amazon-cognito-identity-js', 'react-router', 'yjs'],
-      pipelines: ['@xyflow/react', 'react-router', 'recharts'],
-      'doc-editor': [
-        '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
-        '@tiptap/extension-task-item', '@tiptap/extension-task-list',
-        '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap', 'yjs',
-      ],
+    const TIPTAP = [
+      '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
+      '@tiptap/extension-task-item', '@tiptap/extension-task-list',
+      '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap',
+    ];
+
+    // The documented truth. Shrinking a `static` list is always good — update
+    // it. GROWING one means a common import path now needs another package
+    // installed to import at all, so make that a deliberate decision.
+    const EXPECTED: Record<string, { static: string[]; dynamic: string[] }> = {
+      types: { static: [], dynamic: [] },
+      video: { static: [], dynamic: [] },
+      identity: { static: [], dynamic: [] },
+      // The whole point of this subpath: the SDK is lazy, so importing it costs
+      // nothing until a hangout actually starts.
+      'video-ivs': { static: [], dynamic: ['amazon-ivs-web-broadcast'] },
+      social: { static: ['cmdk'], dynamic: [] },
+      agents: { static: ['@xyflow/react'], dynamic: [] },
+      shared: { static: ['cmdk', 'recharts'], dynamic: [] },
+      observability: { static: ['react-router', 'recharts'], dynamic: [] },
+      ingest: { static: ['react-router', 'recharts'], dynamic: [] },
+      hooks: { static: ['amazon-cognito-identity-js', 'react-router', 'yjs'], dynamic: [] },
+      pipelines: { static: ['@xyflow/react', 'react-router', 'recharts'], dynamic: [] },
+      'doc-editor': { static: [...TIPTAP, 'yjs'].sort(), dynamic: ['amazon-ivs-web-broadcast'] },
       // The root barrel re-exports nearly everything, so it needs nearly
       // everything. That is expected — subpaths are how a consumer opts out.
-      index: [
-        '@tiptap/extension-collaboration', '@tiptap/extension-placeholder',
-        '@tiptap/extension-task-item', '@tiptap/extension-task-list',
-        '@tiptap/react', '@tiptap/starter-kit', '@tiptap/y-tiptap',
-        'amazon-cognito-identity-js', 'cmdk', 'react-router', 'recharts', 'yjs',
-      ],
+      index: {
+        static: [...TIPTAP, 'amazon-cognito-identity-js', 'cmdk', 'react-router', 'recharts', 'yjs'].sort(),
+        dynamic: ['amazon-ivs-web-broadcast'],
+      },
     };
 
-    const actual: Record<string, string[]> = {};
+    const actual: Record<string, { static: string[]; dynamic: string[] }> = {};
     for (const entry of Object.keys(EXPECTED)) {
       actual[entry] = peersOf(join(ROOT, `${entry}.js`));
     }
