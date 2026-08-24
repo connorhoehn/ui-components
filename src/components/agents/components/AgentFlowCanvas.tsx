@@ -89,9 +89,16 @@ function buildEdges(edgeDefs: { from: string; to: string }[], agents: AgentDefin
     });
 }
 
+// Hoisted so the `edges` default is one shared reference. As an inline `= []`
+// it was a new array on every render, which made both memos below dependency-
+// dead: `layoutAgents` (a degree/layer pass over every agent) and `buildEdges`
+// (O(edges × agents), because of the `agents.find()` inside its map) recomputed
+// on every render of any canvas that omits the prop.
+const NO_EDGES: { from: string; to: string }[] = [];
+
 export function AgentFlowCanvas({
   agents,
-  edges: edgeDefs = [],
+  edges: edgeDefs = NO_EDGES,
   onAgentClick,
   className,
 }: AgentFlowCanvasProps) {

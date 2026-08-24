@@ -1,4 +1,4 @@
-import { useState, useCallback, type CSSProperties } from 'react';
+import { useState, useCallback, useMemo, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
 export type CodeBlockLanguage = 'tsx' | 'ts' | 'jsx' | 'js' | 'json' | 'bash' | 'sh' | 'text';
@@ -135,7 +135,14 @@ export function CodeBlock({
   }, [code]);
 
   const isDark = theme === 'dark';
-  const lines = code.split('\n');
+  const lines = useMemo(() => code.split('\n'), [code]);
+
+  // `highlight` builds three fresh RegExps with 20-30 alternations each and
+  // runs half a dozen full-string passes. It was called in the render body,
+  // so it re-ran for the `copied` toggle above — which touches nothing the
+  // highlighter reads — and on any parent re-render, over payloads that can
+  // be tens of KB (pipeline step output, LLM responses, JSON blobs).
+  const html = useMemo(() => highlight(code, language, theme), [code, language, theme]);
 
   return (
     <div
@@ -184,13 +191,13 @@ export function CodeBlock({
             </div>
             <code
               className="flex-1 block"
-              dangerouslySetInnerHTML={{ __html: highlight(code, language, theme) }}
+              dangerouslySetInnerHTML={{ __html: html }}
             />
           </div>
         ) : (
           <code
             className="block"
-            dangerouslySetInnerHTML={{ __html: highlight(code, language, theme) }}
+            dangerouslySetInnerHTML={{ __html: html }}
           />
         )}
       </pre>

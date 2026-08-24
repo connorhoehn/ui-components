@@ -3,7 +3,7 @@
 // Top toolbar for the pipeline editor: pipeline name editor, status chips,
 // validation indicator, run/stop button, publish button, and overflow menu trigger.
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { cn } from '../../../lib/cn';
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -119,7 +119,16 @@ export default function EditorTopBar({
   };
 
   // ── Validation ──────────────────────────────────────────────────────────
-  const validation = definition ? validatePipeline(definition) : null;
+  // `validatePipeline` is the full graph validator — cycle detection plus a
+  // handle-compatibility pass over every node and edge. It was running on
+  // every render of the top bar, and the top bar re-renders on every
+  // WebSocket step event during a live run (its `currentRun` prop is a new
+  // object each time), so a 40-node pipeline emitting 200 events re-validated
+  // the whole graph 200 times. It only depends on the definition.
+  const validation = useMemo(
+    () => (definition ? validatePipeline(definition) : null),
+    [definition],
+  );
   const hasErrors = (validation?.errors.length ?? 0) > 0;
   const isPublished = definition.status === 'published';
 
