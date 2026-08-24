@@ -156,8 +156,14 @@ export function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn {
       if (!res.ok) throw new Error(`Failed to invite user (${res.status})`);
     } catch (err) {
       setError((err as Error).message);
+      // Rethrow, like createGroup does. This used to absorb the failure and
+      // resolve normally, so every call site's `await inviteUser(...)` fell
+      // through to clearing the user-id field and closing the invite form —
+      // pixel-identical to a successful invite. Nothing rendered `error`, so
+      // a rejected invite was completely invisible.
+      throw err;
     }
-  }, [idToken, baseUrl, authHeaders]);  
+  }, [idToken, baseUrl, authHeaders]);
 
   // ---- acceptInvite --------------------------------------------------------
 

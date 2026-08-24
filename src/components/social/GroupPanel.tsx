@@ -120,6 +120,7 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
 }) {
   const [showInvite, setShowInvite] = useState(false);
   const [inviteId, setInviteId] = useState('');
+  const [inviteError, setInviteError] = useState<string | null>(null);
   const [showCreateRoom, setShowCreateRoom] = useState(false);
   const [roomName, setRoomName] = useState('');
 
@@ -129,7 +130,14 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteId.trim()) return;
-    await inviteUser(groupId, inviteId.trim());
+    setInviteError(null);
+    try {
+      await inviteUser(groupId, inviteId.trim());
+    } catch (err) {
+      // Keep the typed id and the form open so the invite can be retried.
+      setInviteError(err instanceof Error ? err.message : 'Failed to invite user');
+      return;
+    }
     setInviteId('');
     setShowInvite(false);
   };
@@ -172,6 +180,11 @@ function CompactGroupDetail({ group, members, rooms, groupId, currentUserId, cre
             Invite
           </button>
         </form>
+      )}
+      {showInvite && inviteError && (
+        <div role="alert" data-testid="compact-invite-error" className="text-danger text-[11px] mb-1.5">
+          {inviteError}
+        </div>
       )}
 
       {/* Member avatars row */}
@@ -338,16 +351,36 @@ function GroupCard({ group, currentUserId, isSelected, onSelect, onDelete }: {
 
 function InviteForm({ groupId, onInvite }: { groupId: string; onInvite: (groupId: string, userId: string) => Promise<void> }) {
   const [userId, setUserId] = useState('');
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!userId.trim()) return; void onInvite(groupId, userId.trim()); setUserId(''); };
+  const [error, setError] = useState<string | null>(null);
+
+  // Fire-and-forget + unconditional `setUserId('')` used to make a rejected
+  // invite look exactly like an accepted one: the field emptied either way.
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userId.trim()) return;
+    setError(null);
+    try {
+      await onInvite(groupId, userId.trim());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to invite user');
+      return;
+    }
+    setUserId('');
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mt-2">
-      <Input className="flex-1" value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" />
-      <button type="submit" disabled={!userId.trim()} className={cn(
-        'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
-        !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
-      )}>Invite</button>
-    </form>
+    <>
+      <form onSubmit={(e) => { void handleSubmit(e); }} className="flex gap-2 mt-2">
+        <Input className="flex-1" value={userId} onChange={e => setUserId(e.target.value)} placeholder="User ID to invite" />
+        <button type="submit" disabled={!userId.trim()} className={cn(
+          'h-9 px-3 rounded-lg text-sm font-semibold font-[system-ui,-apple-system,sans-serif]',
+          !userId.trim() ? 'bg-surface-hover text-text-tertiary border border-border cursor-default' : 'bg-primary text-white border-none cursor-pointer',
+        )}>Invite</button>
+      </form>
+      {error && (
+        <div role="alert" data-testid="invite-error" className="text-danger text-xs mt-1">{error}</div>
+      )}
+    </>
   );
 }
 

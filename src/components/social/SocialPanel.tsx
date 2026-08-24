@@ -450,7 +450,10 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
 
 export function SocialPanel({ idToken, onMessage }: { idToken: string | null; onMessage: OnMessageFn }) {
   const { profile, loading: profileLoading, updateProfile } = useSocialProfile({ idToken });
-  const { followers, following, friends, follow, unfollow } = useFriends({ idToken });
+  // `error` was previously dropped on the floor, so a failed social-graph load
+  // rendered as empty Followers/Following/Friends tabs with nothing to explain
+  // them. Surface it in the banner this panel already has.
+  const { followers, following, friends, follow, unfollow, error: graphError } = useFriends({ idToken });
 
   // Derive follow states from live following array
   const followingIds = new Set(following.map(u => u.userId));
@@ -512,9 +515,9 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
           />
         </>
       ) : null}
-      {formError && (
-        <div className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
-          {formError}
+      {(formError ?? graphError) && (
+        <div role="alert" data-testid="social-panel-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+          {formError ?? graphError}
         </div>
       )}
     </div>

@@ -53,10 +53,21 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
 
     const headers = { Authorization: `Bearer ${idToken}` };
 
+    // `res.ok` MUST be checked before parsing. Without it a 401/500 whose body
+    // still parses as JSON produced `{ followers: undefined }` → `?? []`, so an
+    // auth or backend failure rendered as "you follow nobody" in SocialPanel's
+    // tabs and as an empty friend list in RoomList's DM picker — with `error`
+    // null, so no banner and no retry were offered.
+    const getList = async (path: string): Promise<unknown> => {
+      const r = await fetch(`${baseUrl}${path}`, { headers });
+      if (!r.ok) throw new Error(`Failed to load ${path.split('/').pop()} (${r.status})`);
+      return r.json();
+    };
+
     Promise.all([
-      fetch(`${baseUrl}/api/social/followers`, { headers }).then((r) => r.json()),
-      fetch(`${baseUrl}/api/social/following`, { headers }).then((r) => r.json()),
-      fetch(`${baseUrl}/api/social/friends`, { headers }).then((r) => r.json()),
+      getList('/api/social/followers'),
+      getList('/api/social/following'),
+      getList('/api/social/friends'),
     ])
       .then(([followersRes, followingRes, friendsRes]) => {
         setFollowers((followersRes as { followers: PublicProfile[] }).followers ?? []);
@@ -78,11 +89,13 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
     const res = await fetch(`${baseUrl}/api/social/following`, {
       headers: { Authorization: `Bearer ${idToken}` },
     });
-    if (res.ok) {
-      const data = await res.json() as { following: PublicProfile[] };
-      setFollowing(data.following ?? []);
-    }
-  }, [idToken, baseUrl]);  
+    // Throw rather than no-op: a swallowed refresh left the Follow button
+    // unchanged after a successful follow, which looks exactly like the click
+    // never registered. The caller turns this into a visible message.
+    if (!res.ok) throw new Error(`Failed to refresh following (${res.status})`);
+    const data = await res.json() as { following: PublicProfile[] };
+    setFollowing(data.following ?? []);
+  }, [idToken, baseUrl]);
 
   // ---- follow --------------------------------------------------------------
 

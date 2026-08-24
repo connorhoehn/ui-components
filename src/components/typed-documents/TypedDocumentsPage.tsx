@@ -146,8 +146,12 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
 
   // Phase C — pre-fetch instances of any DocumentType referenced by the
   // selected type's `reference`-kind fields so the picker has a populated
-  // option list. Keyed by referenced typeId. Best-effort: failed fetches
-  // leave the picker disabled with the "no options" hint.
+  // option list. Keyed by referenced typeId.
+  //
+  // A failed lookup used to resolve `[refTypeId, []]`, which the picker spells
+  // "No referenceable documents yet for this type." next to a disabled select —
+  // i.e. a backend failure told the user the documents did not exist and left
+  // them no way to link one or to retry. Failures are tracked separately now.
   const referencedTypeIds = useMemo<string[]>(() => {
     if (!selectedType) return [];
     const ids = new Set<string>();
@@ -158,32 +162,48 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
   }, [selectedType]);
 
   const [referenceOptions, setReferenceOptions] = useState<Record<string, ReferenceOption[]>>({});
+  const [referenceOptionsErrors, setReferenceOptionsErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!idToken || referencedTypeIds.length === 0) {
       setReferenceOptions({});
+      setReferenceOptionsErrors({});
       return;
     }
     let cancelled = false;
     Promise.all(
-      referencedTypeIds.map(async (refTypeId) => {
-        const res = await fetch(
-          `${getBaseUrl()}/api/typed-documents?typeId=${encodeURIComponent(refTypeId)}`,
-          { headers: { Authorization: `Bearer ${idToken}` } },
-        );
-        if (!res.ok) return [refTypeId, []] as const;
-        const data = (await res.json()) as { items: TypedDocument[] };
-        const refTypeMeta = types.find((t) => t.typeId === refTypeId);
-        const labelField = refTypeMeta?.fields.find((f) => f.fieldType === 'text');
-        const opts: ReferenceOption[] = (data.items ?? []).map((d) => ({
-          value: d.documentId,
-          label: (labelField && (d.values[labelField.fieldId] as string)) || d.documentId,
-        }));
-        return [refTypeId, opts] as const;
+      referencedTypeIds.map(async (refTypeId): Promise<readonly [string, ReferenceOption[] | { error: string }]> => {
+        try {
+          const res = await fetch(
+            `${getBaseUrl()}/api/typed-documents?typeId=${encodeURIComponent(refTypeId)}`,
+            { headers: { Authorization: `Bearer ${idToken}` } },
+          );
+          if (!res.ok) throw new Error(`Failed to load referenceable documents (${res.status})`);
+          const data = (await res.json()) as { items: TypedDocument[] };
+          const refTypeMeta = types.find((t) => t.typeId === refTypeId);
+          const labelField = refTypeMeta?.fields.find((f) => f.fieldType === 'text');
+          const opts: ReferenceOption[] = (data.items ?? []).map((d) => ({
+            value: d.documentId,
+            label: (labelField && (d.values[labelField.fieldId] as string)) || d.documentId,
+          }));
+          return [refTypeId, opts] as const;
+        } catch (err) {
+          // Caught per entry rather than around the whole Promise.all: one
+          // referenced type failing must not blank the options of the others,
+          // and an uncaught reject here would be an unhandled rejection.
+          return [refTypeId, { error: err instanceof Error ? err.message : String(err) }] as const;
+        }
       }),
     ).then((entries) => {
       if (cancelled) return;
-      setReferenceOptions(Object.fromEntries(entries));
+      const opts: Record<string, ReferenceOption[]> = {};
+      const errs: Record<string, string> = {};
+      for (const [refTypeId, result] of entries) {
+        if (Array.isArray(result)) opts[refTypeId] = result;
+        else errs[refTypeId] = result.error;
+      }
+      setReferenceOptions(opts);
+      setReferenceOptionsErrors(errs);
     });
     return () => { cancelled = true; };
   }, [idToken, referencedTypeIds, types]);
@@ -243,6 +263,7 @@ export function TypedDocumentsPage({ idToken }: Props): JSX.Element {
               type={selectedType}
               onSubmit={async (values) => { await createDocument(values); }}
               referenceOptions={referenceOptions}
+              referenceOptionsErrors={referenceOptionsErrors}
             />
 
             <section data-testid="documents-list">
