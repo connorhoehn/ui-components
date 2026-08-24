@@ -928,3 +928,42 @@ describe('AppLayout — active view derivation', () => {
     expect(screen.queryByRole('button', { name: 'Document Types' })).not.toBeInTheDocument();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Sidebar collapse/expand focus handoff
+//
+// REGRESSION SUITE: collapsing the sidebar unmounts CollapsibleSidebar (and
+// with it the ✕ the user just pressed) and mounts CollapsedIconStrip in its
+// place. Focus fell to <body>, so a keyboard user's next Tab restarted from
+// the top of the document with no announcement. Expanding had the mirror-image
+// problem. AppLayout owns the swap, so it hands focus to the counterpart
+// control in whichever chrome just mounted.
+// ---------------------------------------------------------------------------
+
+describe('AppLayout — sidebar collapse focus handoff', () => {
+  it('moves focus to the expand control when the sidebar collapses', () => {
+    renderAppLayout();
+    const collapse = screen.getByRole('button', { name: /collapse sidebar/i });
+    collapse.focus();
+    fireEvent.click(collapse);
+
+    const expand = screen.getByRole('button', { name: /expand sidebar/i });
+    expect(document.activeElement).toBe(expand);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('moves focus back to the collapse control when the sidebar expands', () => {
+    renderAppLayout({ props: { defaultSidebarOpen: false } });
+    const expand = screen.getByRole('button', { name: /expand sidebar/i });
+    expand.focus();
+    fireEvent.click(expand);
+
+    const collapse = screen.getByRole('button', { name: /collapse sidebar/i });
+    expect(document.activeElement).toBe(collapse);
+  });
+
+  it('does not steal focus on first mount', () => {
+    renderAppLayout({ props: { defaultSidebarOpen: false } });
+    expect(document.activeElement).toBe(document.body);
+  });
+});

@@ -485,6 +485,30 @@ function AppLayoutInner({
     }
   }, [navigate, dismissNotification]);
 
+  // Collapsing/expanding the sidebar swaps CollapsibleSidebar for
+  // CollapsedIconStrip, so the control the user just activated unmounts and
+  // the browser drops focus to <body> — a keyboard user silently restarts
+  // their Tab walk from the top of the document. AppLayout owns the swap, so
+  // it owns the handoff: move focus to the counterpart control in whichever
+  // chrome just mounted. Only after a user-driven toggle, never on first
+  // mount (defaultSidebarOpen={false} must not steal focus).
+  //
+  // The two labels below are the aria-labels of the collapse/expand buttons
+  // in the sibling components; both are asserted by their own test files, so
+  // renaming one fails loudly rather than silently un-fixing this.
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const pendingSidebarFocusRef = useRef<'Expand sidebar' | 'Collapse sidebar' | null>(null);
+  const toggleSidebar = useCallback((open: boolean) => {
+    pendingSidebarFocusRef.current = open ? 'Collapse sidebar' : 'Expand sidebar';
+    setSidebarOpen(open);
+  }, []);
+  useEffect(() => {
+    const label = pendingSidebarFocusRef.current;
+    if (!label) return;
+    pendingSidebarFocusRef.current = null;
+    sidebarRef.current?.querySelector<HTMLElement>(`[aria-label="${label}"]`)?.focus();
+  }, [sidebarOpen]);
+
   // App-level hamburger menu dismissal. The menu was hand-rolled with no way
   // out other than re-clicking the trigger: clicking the page behind it or
   // pressing Escape left it parked over the content. Escape also restores
@@ -650,6 +674,7 @@ function AppLayoutInner({
             Always visible, full-height, persistent. Replaces the previous
             display:none + overlay hamburger pattern. */}
         <div
+          ref={sidebarRef}
           className="shrink-0 border-r border-border bg-surface flex flex-col fixed top-[53px] left-0 bottom-0 overflow-y-auto overflow-x-hidden z-40 box-border transition-[width,padding] duration-[180ms] ease-in-out"
           style={{
             width: SIDEBAR_WIDTH,
@@ -661,7 +686,7 @@ function AppLayoutInner({
               connectionState={connectionState}
               onDisconnect={onDisconnect}
               onReconnect={onReconnect}
-              onCollapse={() => setSidebarOpen(false)}
+              onCollapse={() => toggleSidebar(false)}
               presenceUsers={presenceUsers}
               currentClientId={currentClientId ?? ''}
               currentChannel={currentChannel}
@@ -679,7 +704,7 @@ function AppLayoutInner({
           ) : (
             <CollapsedIconStrip
               connectionState={connectionState}
-              onExpand={() => setSidebarOpen(true)}
+              onExpand={() => toggleSidebar(true)}
               onPipelines={() => navigate('/pipelines')}
               onObservability={() => navigate('/observability')}
               onDocuments={() => navigate('/documents')}
