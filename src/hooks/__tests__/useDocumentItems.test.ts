@@ -369,3 +369,63 @@ describe('ackItem', () => {
     expect(result.current.items[SEC_ID][0].status).toBe('acked');
   });
 });
+
+// ---------------------------------------------------------------------------
+// A failed section must be distinguishable from an empty one
+// ---------------------------------------------------------------------------
+
+// The per-section catch returns `[]` so the page can still render. Without a
+// companion error, that empty array WAS the only signal the caller got, so a
+// section whose fetch failed looked exactly like a section with no items —
+// the reader is told "no items" for content that exists on the server, and is
+// offered no retry because nothing knows anything went wrong.
+//
+// The control case in the second test is the point: `[]` with NO error still
+// has to mean "genuinely empty", or this just trades one wrong answer for
+// another.
+describe('useDocumentItems per-section load failures', () => {
+  const OPTS_TWO = { ...BASE_OPTS, sectionIds: ['sec-ok', 'sec-bad'] };
+
+  it('reports the failing section in itemErrors and leaves the healthy one clean', async () => {
+    vi.stubGlobal('fetch', vi.fn((url: string) =>
+      url.includes('sec-bad')
+        // A fresh Error per call: a shared instance can mask ordering bugs.
+        ? Promise.reject(new Error('network down'))
+        : Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve({ items: [RAW_ITEM] }) } as unknown as Response),
+    ));
+
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentItems({ ...OPTS_TWO, ...ws }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.itemErrors['sec-bad']).toMatch(/network down/);
+    expect(result.current.itemErrors['sec-ok']).toBeUndefined();
+    // The healthy section still renders its items — one bad section must not
+    // take the others down with it.
+    expect(result.current.items['sec-ok']).toEqual([TASK_ITEM]);
+  });
+
+  it('a genuinely empty section is NOT reported as an error', async () => {
+    vi.stubGlobal('fetch', stubFetch({ items: [] }));
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentItems({ ...BASE_OPTS, ...ws }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.items[SEC_ID]).toEqual([]);
+    expect(result.current.itemErrors).toEqual({});
+  });
+
+  it('a non-ok response counts as a failure, not as an empty section', async () => {
+    // `res.ok` false with a JSON body is the shape that silently produced
+    // "no items" — the body parses fine, so nothing downstream looked wrong.
+    vi.stubGlobal('fetch', stubFetch({ message: 'forbidden' }, false, 403));
+    const ws = makeWs();
+    const { result } = renderHook(() => useDocumentItems({ ...BASE_OPTS, ...ws }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.itemErrors[SEC_ID]).toMatch(/403/);
+  });
+});

@@ -49,6 +49,13 @@ export interface UseDocumentItemsReturn {
   removeItem: (sectionId: string, itemId: string) => Promise<void>;
   ackItem: (sectionId: string, itemId: string) => Promise<void>;
   loading: boolean;
+  /**
+   * Per-section load failures, keyed by sectionId. A section present here
+   * failed to load — which is NOT the same as having no items, and the two
+   * used to be indistinguishable (see the catch in the load effect).
+   * Sections that loaded fine are absent from this map.
+   */
+  itemErrors: Record<string, string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -62,6 +69,7 @@ export function useDocumentItems(
 
   // ---- State ---------------------------------------------------------------
   const [items, setItems] = useState<Record<string, TaskItem[]>>({});
+  const [itemErrors, setItemErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   // ---- Stable refs ----------------------------------------------------------
@@ -106,10 +114,14 @@ export function useDocumentItems(
         );
         if (!res.ok) throw new Error(`Failed to load items for section ${sectionId} (${res.status})`);
         const data = (await res.json()) as { items: Record<string, unknown>[] };
-        return { sectionId, items: (data.items ?? []).map(normalizeItem) };
+        return { sectionId, items: (data.items ?? []).map(normalizeItem), error: null };
       } catch (err) {
+        // The empty array here is a RENDERING fallback, not an answer: without
+        // the `error` field beside it, a section whose fetch failed was
+        // indistinguishable from a section that genuinely has no items, and
+        // the reader was told "no items" for content that exists on the server.
         console.warn(`[useDocumentItems] fetch error for section ${sectionId}:`, (err as Error).message);
-        return { sectionId, items: [] as TaskItem[] };
+        return { sectionId, items: [] as TaskItem[], error: (err as Error).message };
       }
     });
 
@@ -117,10 +129,13 @@ export function useDocumentItems(
       .then((results) => {
         if (cancelled) return;
         const grouped: Record<string, TaskItem[]> = {};
-        for (const { sectionId, items: sectionItems } of results) {
+        const failed: Record<string, string> = {};
+        for (const { sectionId, items: sectionItems, error } of results) {
           grouped[sectionId] = sectionItems;
+          if (error) failed[sectionId] = error;
         }
         setItems(grouped);
+        setItemErrors(failed);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -342,5 +357,5 @@ export function useDocumentItems(
     [idToken, authHeaders],
   );
 
-  return { items, addItem, updateItem, removeItem, ackItem, loading };
+  return { items, addItem, updateItem, removeItem, ackItem, loading, itemErrors };
 }

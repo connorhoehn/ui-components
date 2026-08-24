@@ -214,6 +214,7 @@ export function useDocumentEditorState({
     addItem: restAddItem,
     updateItem: restUpdateItem,
     removeItem: restRemoveItem,
+    itemErrors,
   } = useDocumentItems({
     documentId,
     sectionIds,
@@ -617,6 +618,10 @@ export function useDocumentEditorState({
     sections,
     updateSection,
     getSectionFragment,
+    // Per-section item load failures, keyed by sectionId. Passed through so a
+    // section whose items failed to load can say so instead of rendering the
+    // same empty state as a section that genuinely has none.
+    itemErrors,
     // Document
     ydoc,
     provider,
