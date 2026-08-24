@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { configure } from '@testing-library/react';
 
 // Node.js 25 ships a built-in (non-functional) `localStorage` global that
 // shadows jsdom's proper Web Storage implementation. Redirect the global so
@@ -48,3 +49,25 @@ if (typeof globalThis.ResizeObserver === 'undefined') {
 if (typeof Element !== 'undefined' && !Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = function scrollIntoView() {};
 }
+
+// ---------------------------------------------------------------------------
+// Global React StrictMode
+// ---------------------------------------------------------------------------
+// Every `render()` and `renderHook()` in the suite mounts inside
+// <StrictMode>, so React double-invokes render, `useState`/`useReducer`
+// updaters, and mount effects (mount -> unmount -> remount).
+//
+// Why this seam rather than a custom `render` re-exported from a test-utils
+// module: RTL's own `renderHook` is implemented on top of `render` (see
+// @testing-library/react `pure.js`), so flipping the shared config covers
+// hooks as well as components with no import churn and no way to opt in by
+// accident. A hand-rolled wrapper would have to be re-implemented for
+// `renderHook`, and any file that forgot to import it would silently keep
+// the old single-mount behaviour — which is exactly the hole this closes.
+// Several of the confirmed double-invocation bugs lived in hooks
+// (useBBoxAuthoring, useCanvasKeyboard, useJudgmentResults), so hook
+// coverage is the point, not a bonus.
+//
+// A file that genuinely cannot run under StrictMode opts out explicitly with
+// `configure({ reactStrictMode: false })` in a `beforeAll`, and must say why.
+configure({ reactStrictMode: true });

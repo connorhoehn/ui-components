@@ -13,11 +13,22 @@ interface CapturedProps {
   onDidAutoFocus?: () => void;
 }
 
-const captures: CapturedProps[] = [];
+// The suite runs under React StrictMode, so every child renders twice. An
+// append-only render log would therefore hold each row twice and index-based
+// lookups would land on the wrong item. Key by the row's stable identity and
+// let each render overwrite, so the map holds the LATEST props per item —
+// and, since a Map keeps insertion order, still in document order.
+const captures = new Map<string, CapturedProps>();
+
+function propsFor(itemId: string): CapturedProps {
+  const p = captures.get(itemId);
+  if (!p) throw new Error(`TaskItemRow never rendered for item ${itemId}`);
+  return p;
+}
 
 vi.mock('../TaskItemRow', () => ({
   default: (props: CapturedProps) => {
-    captures.push(props);
+    captures.set(props.item.id, props);
     return (
       <div
         data-testid="task-item-row"
@@ -34,7 +45,7 @@ function mk(id: string, overrides: Partial<TaskItem> = {}): TaskItem {
 }
 
 beforeEach(() => {
-  captures.length = 0;
+  captures.clear();
 });
 
 describe('TaskList', () => {
@@ -68,7 +79,7 @@ describe('TaskList', () => {
     expect(rows).toHaveLength(3);
     expect(rows.map(r => r.dataset.itemId)).toEqual(['a', 'b', 'c']);
     for (const r of rows) expect(r.dataset.editable).toBe('false');
-    expect(captures.map(c => c.item.id)).toEqual(['a', 'b', 'c']);
+    expect([...captures.keys()]).toEqual(['a', 'b', 'c']);
   });
 
   it("routes per-row onUpdate to parent onUpdateItem with the row's item id", () => {
@@ -82,7 +93,7 @@ describe('TaskList', () => {
         onRemoveItem={vi.fn()}
       />,
     );
-    captures[1].onUpdate({ status: 'done' });
+    propsFor('b').onUpdate({ status: 'done' });
     expect(onUpdateItem).toHaveBeenCalledTimes(1);
     expect(onUpdateItem).toHaveBeenCalledWith('b', { status: 'done' });
   });
@@ -98,7 +109,7 @@ describe('TaskList', () => {
         onRemoveItem={onRemoveItem}
       />,
     );
-    captures[2].onRemove();
+    propsFor('c').onRemove();
     expect(onRemoveItem).toHaveBeenCalledTimes(1);
     expect(onRemoveItem).toHaveBeenCalledWith('c');
   });
@@ -164,9 +175,9 @@ describe('TaskList', () => {
         focusLastItem={focusLastItem}
       />,
     );
-    expect(captures[0].onDidAutoFocus).toBeUndefined();
-    expect(captures[1].onDidAutoFocus).toBeUndefined();
-    expect(typeof captures[2].onDidAutoFocus).toBe('function');
+    expect(propsFor('a').onDidAutoFocus).toBeUndefined();
+    expect(propsFor('b').onDidAutoFocus).toBeUndefined();
+    expect(typeof propsFor('c').onDidAutoFocus).toBe('function');
   });
 
   it("calling the last row's onDidAutoFocus flips focusLastItem.current back to false", () => {
@@ -184,7 +195,7 @@ describe('TaskList', () => {
     const row = screen.getByTestId('task-item-row');
     expect(row.dataset.autoFocus).toBe('true');
     expect(focusLastItem.current).toBe(true);
-    captures[0].onDidAutoFocus?.();
+    propsFor('only').onDidAutoFocus?.();
     expect(focusLastItem.current).toBe(false);
   });
 

@@ -1,5 +1,5 @@
-import { n as e } from "./IdentityContext-m2wQF4sJ.js";
-import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-DNj4F6oF.js";
+import { n as e } from "./IdentityContext-CQM1qwH6.js";
+import { a as t, c as n, i as r, l as i, n as a, o, r as s, s as c, t as l, u } from "./useSyncConflicts-BfD5J3QA.js";
 import { n as d } from "./useDocumentTypes-C-AMWgYq.js";
 import { t as f } from "./cn-DhjIN-s0.js";
 import { t as p } from "./Chip-2lIuHwy5.js";
@@ -17,16 +17,16 @@ function F(e) {
 	let t = Date.now() - new Date(e).getTime();
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : `${Math.floor(t / 864e5)}d ago`;
 }
-function ee(e) {
+function I(e) {
 	return Date.now() - new Date(e).getTime() < 864e5;
 }
-function I(e) {
+function L(e) {
 	return Date.now() - new Date(e).getTime() < 36e5;
 }
-var L = 50;
-function R() {
+var R = 50;
+function z() {
 	let e = O(), { sources: n, loading: r, error: i, refresh: a } = t(), { items: o, loading: s, error: l, refresh: u } = c(), d = r || s, g = i || l, _ = S(() => {
-		let e = n.filter((e) => e.status === "active").length, t = n.filter((e) => e.status === "paused").length, r = n.filter((e) => e.status === "error").length, i = o.filter((e) => e.status !== "done" && e.status !== "failed").length, a = o.filter((e) => e.status === "done" && ee(e.updatedAt)).length, s = o.filter((e) => e.status === "failed").length;
+		let e = n.filter((e) => e.status === "active").length, t = n.filter((e) => e.status === "paused").length, r = n.filter((e) => e.status === "error").length, i = o.filter((e) => e.status !== "done" && e.status !== "failed").length, a = o.filter((e) => e.status === "done" && I(e.updatedAt)).length, s = o.filter((e) => e.status === "failed").length;
 		return {
 			total: n.length,
 			active: e,
@@ -43,7 +43,7 @@ function R() {
 			level: "critical",
 			message: `Source "${t.name}" is in error state — check its config or last sync log.`
 		});
-		let t = o.filter((e) => I(e.updatedAt));
+		let t = o.filter((e) => L(e.updatedAt));
 		if (t.length >= 5) {
 			let n = t.filter((e) => e.status === "failed").length, r = n / t.length;
 			r > .1 && e.push({
@@ -52,7 +52,7 @@ function R() {
 				message: `Last-hour failure rate is ${(r * 100).toFixed(0)}% (${n} of ${t.length} items failed).`
 			});
 		}
-		return _.queued > L && e.push({
+		return _.queued > R && e.push({
 			id: "queue-depth",
 			level: "warning",
 			message: `Queue depth is ${_.queued} items — sources may be ingesting faster than the engine can drain.`
@@ -243,7 +243,7 @@ function R() {
 }
 //#endregion
 //#region src/components/ingest/SourcesPage.tsx
-function z(e) {
+function B(e) {
 	switch (e) {
 		case "active": return "success";
 		case "paused": return "warning";
@@ -251,7 +251,7 @@ function z(e) {
 		default: return "neutral";
 	}
 }
-function B(e) {
+function V(e) {
 	switch (e) {
 		case "local": return "Local";
 		case "s3": return "S3";
@@ -260,7 +260,7 @@ function B(e) {
 		default: return e;
 	}
 }
-function V(e) {
+function H(e) {
 	switch (e) {
 		case "s3": return "info";
 		case "google-drive": return "purple";
@@ -269,17 +269,19 @@ function V(e) {
 		default: return "neutral";
 	}
 }
-function H(e) {
+function U(e) {
 	let t = Date.now() - new Date(e).getTime();
 	return t < 6e4 ? "just now" : t < 36e5 ? `${Math.floor(t / 6e4)}m ago` : t < 864e5 ? `${Math.floor(t / 36e5)}h ago` : t < 2592e5 ? `${Math.floor(t / 864e5)}d ago` : new Date(e).toLocaleDateString();
 }
-function U() {
-	let e = O(), { sources: n, loading: r, error: i, refresh: a, deleteSource: o, triggerSync: s } = t(), [c, l] = w(() => /* @__PURE__ */ new Set()), u = y(async (e) => {
-		l((t) => new Set(t).add(e)), await s(e), l((t) => {
+function W() {
+	let e = O(), { sources: n, loading: r, error: i, refresh: a, deleteSource: o, triggerSync: s, actionError: c, clearActionError: l } = t(), [u, d] = w(() => /* @__PURE__ */ new Set()), g = y(async (e) => {
+		d((t) => new Set(t).add(e));
+		let t = await s(e);
+		d((t) => {
 			let n = new Set(t);
 			return n.delete(e), n;
-		}), a();
-	}, [s, a]), d = y(async (e) => {
+		}), t && a();
+	}, [s, a]), _ = y(async (e) => {
 		confirm(`Delete source "${e.name}"? This cannot be undone.`) && await o(e.sourceId);
 	}, [o]);
 	return r && n.length === 0 ? /* @__PURE__ */ D("div", {
@@ -330,6 +332,19 @@ function U() {
 					onClick: () => void a(),
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-[var(--color-state-failed)] border border-[var(--color-state-failed)] rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
+				})]
+			}),
+			c && /* @__PURE__ */ D("div", {
+				"data-testid": "sources-action-error",
+				role: "alert",
+				className: "px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4",
+				children: [/* @__PURE__ */ D("span", {
+					className: "text-[13px] font-medium",
+					children: ["That action did not go through: ", c]
+				}), /* @__PURE__ */ E("button", {
+					onClick: l,
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
+					children: "Dismiss"
 				})]
 			}),
 			!i && n.length === 0 ? /* @__PURE__ */ E(m, {
@@ -386,22 +401,22 @@ function U() {
 							/* @__PURE__ */ E("td", {
 								className: "p-2",
 								children: /* @__PURE__ */ E(p, {
-									tone: V(t.type),
+									tone: H(t.type),
 									size: "xs",
-									children: B(t.type)
+									children: V(t.type)
 								})
 							}),
 							/* @__PURE__ */ E("td", {
 								className: "p-2",
 								children: /* @__PURE__ */ E(p, {
-									tone: z(t.status),
+									tone: B(t.status),
 									size: "sm",
 									children: t.status
 								})
 							}),
 							/* @__PURE__ */ E("td", {
 								className: "p-2 text-text-secondary",
-								children: t.lastSyncAt ? H(t.lastSyncAt) : "Never"
+								children: t.lastSyncAt ? U(t.lastSyncAt) : "Never"
 							}),
 							/* @__PURE__ */ E("td", {
 								"data-testid": `source-files-synced-${t.sourceId}`,
@@ -420,14 +435,14 @@ function U() {
 								children: /* @__PURE__ */ D("div", {
 									className: "flex gap-1.5 justify-end",
 									children: [/* @__PURE__ */ E("button", {
-										className: f("px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]", c.has(t.sourceId) || t.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-border bg-surface text-text-secondary"),
-										disabled: c.has(t.sourceId) || t.status === "paused",
-										onClick: () => void u(t.sourceId),
+										className: f("px-2.5 py-1 text-[11px] font-medium rounded-[5px] cursor-pointer font-[inherit]", u.has(t.sourceId) || t.status === "paused" ? "border border-border bg-surface-inset text-text-tertiary opacity-70 cursor-not-allowed" : "border border-border bg-surface text-text-secondary"),
+										disabled: u.has(t.sourceId) || t.status === "paused",
+										onClick: () => void g(t.sourceId),
 										"data-testid": `sync-${t.sourceId}`,
-										children: c.has(t.sourceId) ? "Syncing..." : "Sync Now"
+										children: u.has(t.sourceId) ? "Syncing..." : "Sync Now"
 									}), /* @__PURE__ */ E("button", {
 										className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
-										onClick: () => void d(t),
+										onClick: () => void _(t),
 										"data-testid": `delete-${t.sourceId}`,
 										children: "Delete"
 									})]
@@ -442,19 +457,19 @@ function U() {
 }
 //#endregion
 //#region src/components/ingest/MappingRuleEditor.tsx
-var W = "", te = [
+var G = "", ee = [
 	"extension",
 	"path",
 	"mimeType",
 	"tag",
 	"name"
-], G = [
+], K = [
 	"eq",
 	"contains",
 	"regex",
 	"startsWith"
 ];
-function K({ rules: t, onChange: n }) {
+function te({ rules: t, onChange: n }) {
 	let { idToken: r } = e(), [i, a] = w(null), [o, s] = w(""), [c, l] = w(null), [u, d] = w(!1), [p, m] = w(null), h = y((e) => {
 		a(e), m({ ...t[e] });
 	}, [t]), g = y(() => {
@@ -519,7 +534,7 @@ function K({ rules: t, onChange: n }) {
 			try {
 				let e = { "Content-Type": "application/json" };
 				r && (e.Authorization = `Bearer ${r}`);
-				let n = await fetch(`${W}/api/ingest/mapping/preview`, {
+				let n = await fetch(`${G}/api/ingest/mapping/preview`, {
 					method: "POST",
 					headers: e,
 					body: JSON.stringify({
@@ -619,7 +634,7 @@ function K({ rules: t, onChange: n }) {
 														...p,
 														pattern: A(t.target.value, e.op, e.value)
 													}),
-													options: te.map((e) => ({
+													options: ee.map((e) => ({
 														value: e,
 														label: e
 													}))
@@ -633,7 +648,7 @@ function K({ rules: t, onChange: n }) {
 														...p,
 														pattern: A(e.field, t.target.value, e.value)
 													}),
-													options: G.map((e) => ({
+													options: K.map((e) => ({
 														value: e,
 														label: e
 													}))
@@ -939,7 +954,10 @@ function ne({ sourceId: e }) {
 							/* @__PURE__ */ E("div", {
 								"data-testid": "slo-queue-depth-value",
 								className: "text-base font-bold text-text-primary",
-								children: Y(r.queueDepth) ?? 0
+								children: (() => {
+									let e = Y(r.queueDepth);
+									return e === null ? "—" : e;
+								})()
 							}),
 							/* @__PURE__ */ E(J, {
 								points: r.queueDepth,
@@ -1027,7 +1045,7 @@ function le(e) {
 	}) : [];
 }
 function ue() {
-	let { id: t } = k(), n = O(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = w(null), [l, u] = w(!0), [m, g] = w(null), [S, C] = w(!1), A = x(), [j, M] = w(!1), [N, P] = w(!1), [F, ee] = w({}), [I, L] = w([]), [R, z] = w(""), [B, V] = w(""), [H, U] = w({}), [W, te] = w(!1), G = y(() => {
+	let { id: t } = k(), n = O(), { idToken: r } = e(), { pipelines: i } = s(), { types: a } = d({ idToken: r }), [o, c] = w(null), [l, u] = w(!0), [m, g] = w(null), [S, C] = w(!1), A = x(), [j, M] = w(!1), [N, P] = w(!1), [F, I] = w({}), [L, R] = w([]), [z, B] = w(""), [V, H] = w(""), [U, W] = w({}), [G, ee] = w(!1), K = y(() => {
 		let e = { "Content-Type": "application/json" };
 		return r && (e.Authorization = `Bearer ${r}`), e;
 	}, [r]), q = y(async (e) => {
@@ -1035,7 +1053,7 @@ function ue() {
 			u(!0), g(null);
 			try {
 				let n = await fetch(`${X}/api/ingest/sources/${t}`, {
-					headers: G(),
+					headers: K(),
 					signal: e
 				});
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
@@ -1053,13 +1071,13 @@ function ue() {
 				e?.aborted || u(!1);
 			}
 		}
-	}, [t, G]);
+	}, [t, K]);
 	b(() => {
 		let e = new AbortController();
 		return q(e.signal), () => e.abort();
 	}, [q]);
 	let J = y(() => {
-		o && (ee({ ...o.config }), L([...o.mappingRules]), z(o.syncSchedule ?? ""), V(o.defaultPipelineId ?? ""), U({ ...o.pipelineByDocType ?? {} }), C(!0));
+		o && (I({ ...o.config }), R([...o.mappingRules]), B(o.syncSchedule ?? ""), H(o.defaultPipelineId ?? ""), W({ ...o.pipelineByDocType ?? {} }), C(!0));
 	}, [o]), Y = y(() => {
 		C(!1);
 	}, []), ue = y(async () => {
@@ -1068,13 +1086,13 @@ function ue() {
 			try {
 				let e = {
 					config: F,
-					mappingRules: I,
-					syncSchedule: R.trim() || null,
-					defaultPipelineId: B.trim() || null,
-					pipelineByDocType: H
+					mappingRules: L,
+					syncSchedule: z.trim() || null,
+					defaultPipelineId: V.trim() || null,
+					pipelineByDocType: U
 				}, n = await fetch(`${X}/api/ingest/sources/${t}`, {
 					method: "PUT",
-					headers: G(),
+					headers: K(),
 					body: JSON.stringify(e)
 				});
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
@@ -1090,12 +1108,12 @@ function ue() {
 		o,
 		t,
 		F,
-		I,
-		R,
-		B,
-		H,
-		G
-	]), de = S && o !== null && (JSON.stringify(F) !== JSON.stringify(o.config) || JSON.stringify(I) !== JSON.stringify(o.mappingRules) || R !== (o.syncSchedule ?? "") || B !== (o.defaultPipelineId ?? "") || JSON.stringify(H) !== JSON.stringify(o.pipelineByDocType ?? {}));
+		L,
+		z,
+		V,
+		U,
+		K
+	]), de = S && o !== null && (JSON.stringify(F) !== JSON.stringify(o.config) || JSON.stringify(L) !== JSON.stringify(o.mappingRules) || z !== (o.syncSchedule ?? "") || V !== (o.defaultPipelineId ?? "") || JSON.stringify(U) !== JSON.stringify(o.pipelineByDocType ?? {}));
 	b(() => {
 		if (!de) return;
 		let e = (e) => {
@@ -1109,7 +1127,7 @@ function ue() {
 			try {
 				let e = await fetch(`${X}/api/ingest/sources/${t}/sync`, {
 					method: "POST",
-					headers: G()
+					headers: K()
 				});
 				if (!e.ok) throw Error(`HTTP ${e.status}`);
 				await q();
@@ -1121,7 +1139,7 @@ function ue() {
 		}
 	}, [
 		t,
-		G,
+		K,
 		q
 	]), fe = y(async () => {
 		if (!o || !t) return;
@@ -1129,7 +1147,7 @@ function ue() {
 		try {
 			let n = await fetch(`${X}/api/ingest/sources/${t}`, {
 				method: "PATCH",
-				headers: G(),
+				headers: K(),
 				body: JSON.stringify({ status: e })
 			});
 			if (!n.ok) throw Error(`HTTP ${n.status}`);
@@ -1141,7 +1159,7 @@ function ue() {
 	}, [
 		o,
 		t,
-		G
+		K
 	]);
 	return l && !o ? /* @__PURE__ */ D("div", {
 		"data-testid": "source-detail-page",
@@ -1260,7 +1278,7 @@ function ue() {
 						id: `${A}-cfg-${e}`,
 						className: "flex-1",
 						value: typeof t == "string" ? t : JSON.stringify(t),
-						onChange: (t) => ee({
+						onChange: (t) => I({
 							...F,
 							[e]: t.target.value
 						})
@@ -1285,10 +1303,10 @@ function ue() {
 				children: [/* @__PURE__ */ E("div", {
 					className: "text-sm font-semibold text-text-primary mb-3",
 					children: "Mapping Rules"
-				}), S ? /* @__PURE__ */ E(K, {
-					rules: I,
-					onChange: L
-				}) : /* @__PURE__ */ E(K, {
+				}), S ? /* @__PURE__ */ E(te, {
+					rules: L,
+					onChange: R
+				}) : /* @__PURE__ */ E(te, {
 					rules: o.mappingRules,
 					onChange: () => {}
 				})]
@@ -1394,9 +1412,9 @@ function ue() {
 							children: [/* @__PURE__ */ E(v, {
 								"aria-label": "Schedule preset",
 								className: "w-auto min-w-[160px]",
-								value: re.some((e) => e.cron === R) ? R : "__custom__",
+								value: re.some((e) => e.cron === z) ? z : "__custom__",
 								onChange: (e) => {
-									e.target.value !== "__custom__" && z(e.target.value);
+									e.target.value !== "__custom__" && B(e.target.value);
 								},
 								"data-testid": "schedule-preset",
 								options: [...re.map((e) => ({
@@ -1410,8 +1428,8 @@ function ue() {
 								mono: !0,
 								"aria-label": "Cron expression",
 								className: "flex-1",
-								value: R,
-								onChange: (e) => z(e.target.value),
+								value: z,
+								onChange: (e) => B(e.target.value),
 								placeholder: "Cron (e.g. 0 */6 * * *) — empty = manual",
 								"data-testid": "schedule-cron"
 							})]
@@ -1426,8 +1444,8 @@ function ue() {
 						}), /* @__PURE__ */ E(v, {
 							id: `${A}-default-pipeline`,
 							className: "flex-1",
-							value: B,
-							onChange: (e) => V(e.target.value),
+							value: V,
+							onChange: (e) => H(e.target.value),
 							"data-testid": "default-pipeline-picker",
 							options: [
 								{
@@ -1438,9 +1456,9 @@ function ue() {
 									value: e.id,
 									label: `${e.name}${e.status ? ` (${e.status})` : ""}`
 								})),
-								...B && !i.some((e) => e.id === B) ? [{
-									value: B,
-									label: `${B} (unknown)`
+								...V && !i.some((e) => e.id === V) ? [{
+									value: V,
+									label: `${V} (unknown)`
 								}] : []
 							]
 						})]
@@ -1455,21 +1473,21 @@ function ue() {
 							children: [/* @__PURE__ */ D("button", {
 								type: "button",
 								"data-testid": "overrides-toggle",
-								onClick: () => te(!W),
+								onClick: () => ee(!G),
 								className: "bg-transparent border-none text-left text-text-secondary p-0 cursor-pointer text-[13px]",
 								children: [
-									W ? "▾" : "▸",
+									G ? "▾" : "▸",
 									" Per-matched-DocType pipeline override (",
-									Object.keys(H).length,
+									Object.keys(U).length,
 									")"
 								]
-							}), W ? /* @__PURE__ */ D("div", {
+							}), G ? /* @__PURE__ */ D("div", {
 								"data-testid": "overrides-section",
 								className: "flex flex-col gap-1.5",
-								children: [Object.keys(H).length === 0 ? /* @__PURE__ */ E("div", {
+								children: [Object.keys(U).length === 0 ? /* @__PURE__ */ E("div", {
 									className: "text-xs text-text-tertiary",
 									children: "No overrides — every matched type uses the default pipeline."
-								}) : Object.entries(H).map(([e, t]) => /* @__PURE__ */ D("div", {
+								}) : Object.entries(U).map(([e, t]) => /* @__PURE__ */ D("div", {
 									className: "flex gap-2 items-center",
 									children: [
 										/* @__PURE__ */ E("span", {
@@ -1481,8 +1499,8 @@ function ue() {
 											"data-testid": `overrides-pipeline-${e}`,
 											className: "flex-1",
 											value: t,
-											onChange: (t) => U({
-												...H,
+											onChange: (t) => W({
+												...U,
 												[e]: t.target.value
 											}),
 											options: i.map((e) => ({
@@ -1494,8 +1512,8 @@ function ue() {
 											type: "button",
 											"data-testid": `overrides-remove-${e}`,
 											onClick: () => {
-												let t = { ...H };
-												delete t[e], U(t);
+												let t = { ...U };
+												delete t[e], W(t);
 											},
 											className: "border border-border-field rounded-md px-2.5 py-1.5 text-[13px] bg-surface-inset text-text-primary outline-none cursor-pointer",
 											children: "Remove"
@@ -1508,15 +1526,15 @@ function ue() {
 									value: "",
 									onChange: (e) => {
 										let t = e.target.value;
-										t && U({
-											...H,
+										t && W({
+											...U,
 											[t]: i[0]?.id ?? ""
 										});
 									},
 									options: [{
 										value: "",
 										label: "+ Add override for type…"
-									}, ...a.filter((e) => H[e.id] === void 0).map((e) => ({
+									}, ...a.filter((e) => U[e.id] === void 0).map((e) => ({
 										value: e.id,
 										label: e.name
 									}))]
@@ -1956,16 +1974,16 @@ function be(e, t = 50) {
 	return e.length <= t ? e : "..." + e.slice(e.length - t + 3);
 }
 function xe() {
-	let [e, n] = w(null), [r, i] = w(null), [a, o] = w(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: _, skipItem: b } = c({
+	let [e, n] = w(null), [r, i] = w(null), [a, o] = w(null), { sources: s } = t(), { items: l, loading: u, error: d, refresh: f, retryItem: _, skipItem: b, actionError: x, clearActionError: C } = c({
 		sourceId: e,
 		status: r
-	}), x = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, C = S(() => {
+	}), T = a ? l.find((e) => e.itemId === a.itemId) ?? a : null, O = S(() => {
 		let e = /* @__PURE__ */ new Map();
 		for (let t of s) e.set(t.sourceId, t.name);
 		return e;
-	}, [s]), T = y(async (e) => {
+	}, [s]), k = y(async (e) => {
 		await _(e);
-	}, [_]), O = y(async (e) => {
+	}, [_]), A = y(async (e) => {
 		await b(e);
 	}, [b]);
 	return u && l.length === 0 ? /* @__PURE__ */ D("div", {
@@ -2052,6 +2070,19 @@ function xe() {
 					children: "Retry"
 				})]
 			}),
+			x && /* @__PURE__ */ D("div", {
+				"data-testid": "ingest-items-action-error",
+				role: "alert",
+				className: "px-4 py-3 bg-danger-bg border border-danger-border text-danger-fg rounded-lg flex items-center justify-between gap-3 mb-4",
+				children: [/* @__PURE__ */ D("span", {
+					className: "text-[13px] font-medium",
+					children: ["Could not update that item: ", x]
+				}), /* @__PURE__ */ E("button", {
+					onClick: C,
+					className: "px-3.5 py-1.5 text-[13px] font-medium bg-surface text-danger-fg border border-danger-border rounded-md cursor-pointer font-[inherit]",
+					children: "Dismiss"
+				})]
+			}),
 			!d && l.length === 0 ? /* @__PURE__ */ E(m, {
 				icon: "📋",
 				title: "No items found",
@@ -2108,7 +2139,7 @@ function xe() {
 							}),
 							/* @__PURE__ */ E("td", {
 								className: "p-2 text-text-secondary",
-								children: C.get(e.sourceId) ?? e.sourceId.slice(0, 8)
+								children: O.get(e.sourceId) ?? e.sourceId.slice(0, 8)
 							}),
 							/* @__PURE__ */ E("td", {
 								className: "p-2",
@@ -2148,12 +2179,12 @@ function xe() {
 									className: "flex gap-1.5 justify-end",
 									children: [e.status === "failed" && /* @__PURE__ */ E("button", {
 										className: "px-2.5 py-1 text-[11px] font-medium border border-border rounded-[5px] bg-surface cursor-pointer font-[inherit] text-text-secondary",
-										onClick: () => void T(e.itemId),
+										onClick: () => void k(e.itemId),
 										"data-testid": `retry-${e.itemId}`,
 										children: "Retry"
 									}), e.status !== "done" && /* @__PURE__ */ E("button", {
 										className: "px-2.5 py-1 text-[11px] font-medium border border-[var(--color-state-failed)] rounded-[5px] bg-danger-bg cursor-pointer font-[inherit] text-[var(--color-state-failed)]",
-										onClick: () => void O(e.itemId),
+										onClick: () => void A(e.itemId),
 										"data-testid": `skip-${e.itemId}`,
 										children: "Skip"
 									})]
@@ -2164,14 +2195,14 @@ function xe() {
 				})
 			}),
 			/* @__PURE__ */ E(ge, {
-				item: x,
-				sourceName: x ? C.get(x.sourceId) : void 0,
+				item: T,
+				sourceName: T ? O.get(T.sourceId) : void 0,
 				onClose: () => o(null),
 				onRetry: async (e) => {
-					await T(e);
+					await k(e);
 				},
 				onSkip: async (e) => {
-					await O(e);
+					await A(e);
 				}
 			})
 		]
@@ -3373,4 +3404,4 @@ function He() {
 	});
 }
 //#endregion
-export { De as ConflictsPage, je as DeadLetterQueuePage, Ne as DocTypeProposalsPage, we as IngestAuditPage, R as IngestDashboard, ge as IngestItemDrawer, xe as IngestItemsPage, Fe as MappingReviewPage, K as MappingRuleEditor, ue as SourceDetailPage, ne as SourceSloPanel, U as SourcesPage, He as SyncMonitorPage };
+export { De as ConflictsPage, je as DeadLetterQueuePage, Ne as DocTypeProposalsPage, we as IngestAuditPage, z as IngestDashboard, ge as IngestItemDrawer, xe as IngestItemsPage, Fe as MappingReviewPage, te as MappingRuleEditor, ue as SourceDetailPage, ne as SourceSloPanel, W as SourcesPage, He as SyncMonitorPage };

@@ -40,6 +40,30 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+/**
+ * The suite runs under React StrictMode, so mount effects fire twice and the
+ * mutation's fetch is no longer at a fixed index. Select the call we actually
+ * mean by its method (and optionally a URL fragment) instead of by position.
+ */
+function callWith(
+  fetchMock: { mock: { calls: unknown[][] } },
+  method: string,
+  urlPart?: string,
+): [string, RequestInit] {
+  const call = fetchMock.mock.calls.find(
+    (c) =>
+      (c[1] as RequestInit | undefined)?.method === method &&
+      (urlPart === undefined || String(c[0]).includes(urlPart)),
+  );
+  if (!call) {
+    throw new Error(
+      `no fetch call with method ${method}` +
+        (urlPart ? ` and url containing ${urlPart}` : ''),
+    );
+  }
+  return call as [string, RequestInit];
+}
+
 function defaultOpts(ws: ReturnType<typeof makeWs>) {
   return {
     documentId: DOC_ID,
@@ -196,7 +220,7 @@ describe('reviewSection', () => {
 
     await act(async () => { await result.current.reviewSection('s1', 'approved', 'LGTM'); });
 
-    const [url, init] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, init] = callWith(fetchMock, 'POST');
     expect(url).toContain(`/api/documents/${DOC_ID}/sections/s1/reviews`);
     expect(init.method).toBe('POST');
     expect(JSON.parse(init.body as string)).toMatchObject({ status: 'approved', comment: 'LGTM' });

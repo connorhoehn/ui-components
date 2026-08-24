@@ -1,4 +1,4 @@
-import { n as e } from "./IdentityContext-m2wQF4sJ.js";
+import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { t } from "./cn-DhjIN-s0.js";
 import { t as n } from "./Card-CcJetqWt.js";
 import { n as r, r as i, t as a } from "./Chart-B40fkHgm.js";
@@ -10,7 +10,7 @@ import { t as f } from "./StatusDot-Bgx2zxgC.js";
 import { t as p } from "./activationKey-CjbL3LUv.js";
 import { t as m } from "./Input-DcK2h-jK.js";
 import { n as h } from "./EventStreamContext-C0egqLaF.js";
-import { n as g, r as _ } from "./ObservabilityContext-1dWNBRm7.js";
+import { n as g, r as _ } from "./ObservabilityContext-CYf5AAod.js";
 import { t as v } from "./Select-Z0TLUVeL.js";
 import { t as y } from "./Checkbox-DsS7fIUO.js";
 import { useCallback as b, useEffect as x, useId as S, useMemo as C, useRef as w, useState as T } from "react";
@@ -598,7 +598,7 @@ function xe({ events: e, onViewAll: t }) {
 	});
 }
 function Se() {
-	let e = A(), n = w(null), { live: r, setLive: i, recentEvents: a, activeRunsCount: o, isLiveData: s } = g(), c = M() ?? _, { metrics: l, source: u } = L(), d = c?.overview ?? {}, f = C(() => _e(d), [d]), p = l?.runsStarted ?? U, m = [], h = o > 0 ? o : l?.runsActive ?? U, v = l?.runsAwaitingApproval ?? U, y = l?.runsFailed ?? U, b = ge(l?.avgFirstTokenLatencyMs ?? null), x = Array.isArray(c?.alerts) ? c.alerts : [];
+	let e = A(), n = w(null), { live: r, setLive: i, recentEvents: a, activeRunsCount: o, isLiveData: s, unauthorized: c } = g(), l = M() ?? _, { metrics: u, source: d } = L(), f = l?.overview ?? {}, p = C(() => _e(f), [f]), m = u?.runsStarted ?? U, h = [], v = o > 0 ? o : u?.runsActive ?? U, y = u?.runsAwaitingApproval ?? U, b = u?.runsFailed ?? U, x = ge(u?.avgFirstTokenLatencyMs ?? null), S = Array.isArray(l?.alerts) ? l.alerts : [];
 	return /* @__PURE__ */ O("div", {
 		"data-testid": "observability-dashboard",
 		className: "p-6 flex flex-col gap-4 font-sans text-[13px] text-text-primary bg-surface-panel min-h-full",
@@ -613,11 +613,11 @@ function Se() {
 					children: [
 						/* @__PURE__ */ D("span", {
 							"data-testid": "dashboard-data-source",
-							title: s ? "Connected to /api/observability/dashboard" : "Backend unreachable — using fixture data",
-							className: t("text-[11px] font-semibold", s ? "text-state-completed" : "text-text-tertiary"),
-							children: s ? "live data" : "fixture"
+							title: s ? "Connected to /api/observability/dashboard" : c ? "Not authorized to read /api/observability/dashboard — the numbers below are fixture data, NOT your cluster. Sign in or supply a token to ObservabilityProvider." : "Backend unreachable — using fixture data",
+							className: t("text-[11px] font-semibold", s ? "text-state-completed" : c ? "text-danger-fg bg-danger-bg border border-danger-border rounded-sm px-1.5 py-0.5" : "text-text-tertiary"),
+							children: s ? "live data" : c ? "not authorized — fixture" : "fixture"
 						}),
-						/* @__PURE__ */ D(ve, { source: u }),
+						/* @__PURE__ */ D(ve, { source: d }),
 						/* @__PURE__ */ D(ye, {
 							live: r,
 							onChange: i
@@ -626,12 +626,12 @@ function Se() {
 				})]
 			}),
 			/* @__PURE__ */ D(z, {
-				runsToday: p,
-				runsSparkline: m,
-				activeNow: h,
-				pendingApprovals: v,
-				failed24h: y,
-				avgFirstTokenLatency: b,
+				runsToday: m,
+				runsSparkline: h,
+				activeNow: v,
+				pendingApprovals: y,
+				failed24h: b,
+				avgFirstTokenLatency: x,
 				onScrollToActive: () => {
 					n.current?.scrollIntoView({
 						behavior: "smooth",
@@ -646,9 +646,9 @@ function Se() {
 				}
 			}),
 			/* @__PURE__ */ D(be, {
-				nodes: f,
-				healthyCount: d.healthyNodes ?? 0,
-				totalCount: d.totalNodes ?? 0,
+				nodes: p,
+				healthyCount: f.healthyNodes ?? 0,
+				totalCount: f.totalNodes ?? 0,
 				onSelect: (t) => {
 					e(`/observability/nodes?selected=${encodeURIComponent(t)}`);
 				}
@@ -677,10 +677,10 @@ function Se() {
 				className: "text-sm font-semibold text-text-primary mb-2 font-[inherit]",
 				children: [
 					"Alerts (",
-					x.length,
+					S.length,
 					")"
 				]
-			}), /* @__PURE__ */ D(he, { alerts: x })] })
+			}), /* @__PURE__ */ D(he, { alerts: S })] })
 		]
 	});
 }

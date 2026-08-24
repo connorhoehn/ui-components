@@ -21,18 +21,44 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-/** Mock the three initial parallel fetches (followers / following / friends). */
+/**
+ * Mock the three initial parallel fetches (followers / following / friends).
+ *
+ * The suite runs under React StrictMode, so the mount effect fires twice and
+ * these three GETs are issued 2x. Answering from the requested URL rather than
+ * from call ordering keeps the second pass supplied — an ordering-based mock
+ * under-supplies it and lets a real `fetch` escape.
+ */
 function mockInitialLoad(
   followers: PublicProfile[] = [],
   following: PublicProfile[] = [],
   friends: PublicProfile[] = [],
 ) {
-  const mock = vi.fn()
-    .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ followers }) } as unknown as Response)
-    .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ following }) } as unknown as Response)
-    .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ friends }) } as unknown as Response);
+  const ok = (body: unknown) =>
+    Promise.resolve({ ok: true, json: () => Promise.resolve(body) } as unknown as Response);
+  const mock = vi.fn((url: string) => {
+    if (url.endsWith('/api/social/followers')) return ok({ followers });
+    if (url.endsWith('/api/social/following')) return ok({ following });
+    if (url.endsWith('/api/social/friends')) return ok({ friends });
+    return Promise.reject(new Error(`unexpected fetch: ${url}`));
+  });
   vi.stubGlobal('fetch', mock);
   return mock;
+}
+
+/**
+ * StrictMode also means the mutation's fetch is no longer at a fixed index.
+ * Select the call we actually mean by its method.
+ */
+function callWith(
+  fetchMock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = fetchMock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  if (!call) throw new Error(`no fetch call with method ${method}`);
+  return call as [string, RequestInit];
 }
 
 // ---------------------------------------------------------------------------
@@ -98,7 +124,7 @@ describe('follow', () => {
 
     await act(async () => { await result.current.follow('u2'); });
 
-    const postCall = fetchMock.mock.calls[3] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[0]).toContain('/api/social/follow/u2');
     expect(postCall[1].method).toBe('POST');
     expect(result.current.following).toEqual([BOB]);
@@ -145,7 +171,7 @@ describe('unfollow', () => {
 
     await act(async () => { await result.current.unfollow('u2'); });
 
-    const deleteCall = fetchMock.mock.calls[3] as [string, RequestInit];
+    const deleteCall = callWith(fetchMock, 'DELETE');
     expect(deleteCall[0]).toContain('/api/social/follow/u2');
     expect(deleteCall[1].method).toBe('DELETE');
     expect(result.current.following).toEqual([]);

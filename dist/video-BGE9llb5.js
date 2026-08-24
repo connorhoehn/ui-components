@@ -2289,18 +2289,24 @@ function Ve({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 		}
 	}), a = y(null), o = y(!1), s = y(r);
 	s.current = r;
-	let c = m((e, t) => {
+	let c = y({
+		key: e,
+		value: r
+	}), l = m((e, t) => {
 		try {
 			let n = {
 				v: Be,
 				...t
 			};
-			window.localStorage.setItem(e, JSON.stringify(n));
+			window.localStorage.setItem(e, JSON.stringify(n)), c.current = {
+				key: e,
+				value: t
+			};
 		} catch {}
 	}, []);
 	return h(() => {
-		if (!(!e || typeof window > "u")) return a.current && clearTimeout(a.current), o.current = !0, a.current = setTimeout(() => {
-			o.current = !1, c(e, s.current);
+		if (!(!e || typeof window > "u") && (c.current.key !== e || c.current.value !== r)) return a.current && clearTimeout(a.current), o.current = !0, a.current = setTimeout(() => {
+			o.current = !1, l(e, s.current);
 		}, n), () => {
 			a.current && clearTimeout(a.current);
 		};
@@ -2308,12 +2314,12 @@ function Ve({ persistKey: e, defaults: t, debounceMs: n = 200 }) {
 		e,
 		r,
 		n,
-		c
+		l
 	]), h(() => {
 		if (!(!e || typeof window > "u")) return () => {
-			o.current && (o.current = !1, c(e, s.current));
+			o.current && (o.current = !1, l(e, s.current));
 		};
-	}, [e, c]), {
+	}, [e, l]), {
 		state: r,
 		setState: m((e) => {
 			i((t) => ({

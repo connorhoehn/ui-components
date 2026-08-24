@@ -1613,6 +1613,22 @@ export declare interface PipelineEditorValue {
     saveError: string | null;
     /** Dismiss `saveError`. Does not clear `dirty` and does not retry. */
     clearSaveError: () => void;
+    /**
+     * Why the last `publish()` failed, or `null`. Additive (v2.95.0).
+     *
+     * `publish()` returns `void` and used to swallow its outcome entirely, so
+     * `PipelineEditorPage` fired an unconditional green "Pipeline published"
+     * toast — including when the POST never landed and the pipeline was still
+     * a draft. A caller cannot act on an outcome it is never told about.
+     */
+    publishError: string | null;
+    /** Dismiss `publishError`. Additive (v2.95.0). */
+    clearPublishError: () => void;
+    /**
+     * ISO timestamp of the last SUCCESSFUL publish, or `null`. Changes on every
+     * success so a caller can confirm one actually happened. Additive (v2.95.0).
+     */
+    publishedAt: string | null;
     undo: () => void;
     redo: () => void;
     canUndo: boolean;

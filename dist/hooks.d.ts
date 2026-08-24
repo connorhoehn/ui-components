@@ -1559,10 +1559,26 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestItemsReturn {
      items: IngestItem[];
      loading: boolean;
+     /** Why the LIST fetch failed. Never set by retry/skip — see `actionError`. */
      error: string | null;
      refresh: () => Promise<void>;
      retryItem: (itemId: string) => Promise<boolean>;
      skipItem: (itemId: string) => Promise<boolean>;
+     /**
+      * Why the last `retryItem`/`skipItem` failed, or `null`. Additive
+      * (v2.95.0).
+      *
+      * These used to write into `error`, the same state the list loader owns.
+      * A failed Skip therefore made `IngestItemsPage` hide the entire,
+      * correctly-loaded table behind a banner reading "Failed to load ingest
+      * items." — a statement that was simply false — whose Retry button
+      * re-fetched the list rather than re-trying the skip. The next refresh
+      * cleared `error`, everything reappeared, and the operator concluded the
+      * skip had worked. It had not.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
  }
 
  export declare function useIngestProgress(): UseIngestProgressResult;
@@ -1578,11 +1594,25 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestSourcesReturn {
      sources: IngestSource[];
      loading: boolean;
+     /** Why the LIST fetch failed. Never set by the mutations — see `actionError`. */
      error: string | null;
      refresh: () => Promise<void>;
      createSource: (data: Omit<IngestSource, 'sourceId' | 'createdAt' | 'updatedAt' | 'lastSyncAt' | 'lastSyncStats'>) => Promise<IngestSource | null>;
      deleteSource: (sourceId: string) => Promise<boolean>;
      triggerSync: (sourceId: string) => Promise<boolean>;
+     /**
+      * Why the last create/delete/sync failed, or `null`. Additive (v2.95.0).
+      *
+      * These used to write into `error`, which `SourcesPage` renders as the
+      * hard-coded "Failed to load sources." — blaming the wrong operation — and
+      * which `refresh()` clears unconditionally. A failed "Sync now" was
+      * therefore erased before it could be rendered at all: the spinner stopped
+      * and nothing else happened, exactly like a successful trigger, and the
+      * operator walked away believing a sync was running.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
  }
 
  /**

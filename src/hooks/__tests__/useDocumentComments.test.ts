@@ -40,6 +40,30 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+/**
+ * The suite runs under React StrictMode, so mount effects fire twice and the
+ * mutation's fetch is no longer at a fixed index. Select the call we actually
+ * mean by its method (and optionally a URL fragment) instead of by position.
+ */
+function callWith(
+  fetchMock: { mock: { calls: unknown[][] } },
+  method: string,
+  urlPart?: string,
+): [string, RequestInit] {
+  const call = fetchMock.mock.calls.find(
+    (c) =>
+      (c[1] as RequestInit | undefined)?.method === method &&
+      (urlPart === undefined || String(c[0]).includes(urlPart)),
+  );
+  if (!call) {
+    throw new Error(
+      `no fetch call with method ${method}` +
+        (urlPart ? ` and url containing ${urlPart}` : ''),
+    );
+  }
+  return call as [string, RequestInit];
+}
+
 function defaultOpts(ws: ReturnType<typeof makeWs>) {
   return {
     documentId: DOC_ID,
@@ -233,7 +257,7 @@ describe('addComment', () => {
       await result.current.addComment('s1', 'Hello');
     });
 
-    const [url, init] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, init] = callWith(fetchMock, 'POST');
     expect(url).toContain(`/api/documents/${DOC_ID}/comments`);
     expect(init.method).toBe('POST');
     expect(JSON.parse(init.body as string)).toMatchObject({ sectionId: 's1', text: 'Hello' });
@@ -289,7 +313,7 @@ describe('resolveThread', () => {
     await act(async () => { await result.current.resolveThread('s1', 'c1'); });
 
     expect(result.current.comments['s1'][0].resolved).toBe(true);
-    const [url, init] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, init] = callWith(fetchMock, 'PATCH');
     expect(url).toContain(`/api/documents/${DOC_ID}/comments/c1`);
     expect(JSON.parse(init.body as string)).toEqual({ resolved: true });
   });

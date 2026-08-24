@@ -136,13 +136,15 @@ describe('useAgentMetrics', () => {
     );
 
     await flush();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // The absolute count after mount is a StrictMode artifact (mount effects
+    // run twice). The property under test is the cadence, so assert the delta.
+    const afterMount = fetchMock.mock.calls.length;
 
     await act(async () => {
       vi.advanceTimersByTime(2001);
       await Promise.resolve();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls.length).toBe(afterMount + 1);
   });
 
   it('exposes per-agent lookup and rolled-up totals over the fixture', () => {

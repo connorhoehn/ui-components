@@ -1,4 +1,4 @@
-import { n as e } from "./IdentityContext-m2wQF4sJ.js";
+import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import { n as t } from "./WebSocketContext-DUvjGLFq.js";
 import { useCallback as n, useEffect as r, useRef as i, useState as a } from "react";
 //#region src/hooks/useDocTypeProposals.ts
@@ -167,40 +167,42 @@ function g(e) {
 	};
 }
 function _(t = {}) {
-	let { sourceId: o, status: s } = t, { idToken: c } = e(), [l, u] = a([]), [d, f] = a(!0), [p, m] = a(null), _ = i(!1), v = n(() => {
+	let { sourceId: o, status: s } = t, { idToken: c } = e(), [l, u] = a([]), [d, f] = a(!0), [p, m] = a(null), [_, v] = a(null), y = i(!1), b = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return c && (e.Authorization = `Bearer ${c}`), e;
-	}, [c]), y = n(async () => {
+	}, [c]), x = n(async () => {
 		f(!0), m(null);
 		try {
 			let e = new URLSearchParams();
 			o && e.set("sourceId", o), s && e.set("status", s);
-			let t = e.toString(), n = `${h}/api/ingest/items${t ? `?${t}` : ""}`, r = await fetch(n, { headers: v() });
+			let t = e.toString(), n = `${h}/api/ingest/items${t ? `?${t}` : ""}`, r = await fetch(n, { headers: b() });
 			if (!r.ok) throw Error(`HTTP ${r.status}`);
 			let i = await r.json();
-			_.current || u((i.items ?? []).map(g));
+			y.current || u((i.items ?? []).map(g));
 		} catch (e) {
-			_.current || m(e instanceof Error ? e.message : String(e));
+			y.current || m(e instanceof Error ? e.message : String(e));
 		} finally {
-			_.current || f(!1);
+			y.current || f(!1);
 		}
 	}, [
-		v,
+		b,
 		o,
 		s
 	]);
-	return r(() => (_.current = !1, y(), () => {
-		_.current = !0;
-	}), [y]), {
+	r(() => (y.current = !1, x(), () => {
+		y.current = !0;
+	}), [x]);
+	let S = n(() => v(null), []);
+	return {
 		items: l,
 		loading: d,
 		error: p,
-		refresh: y,
+		refresh: x,
 		retryItem: n(async (e) => {
 			try {
 				let t = await fetch(`${h}/api/ingest/items/${e}/retry`, {
 					method: "POST",
-					headers: v()
+					headers: b()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return u((t) => t.map((t) => t.itemId === e ? {
@@ -209,21 +211,23 @@ function _(t = {}) {
 					error: null
 				} : t)), !0;
 			} catch (e) {
-				return m(e instanceof Error ? e.message : String(e)), !1;
+				return v(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [v]),
+		}, [b]),
 		skipItem: n(async (e) => {
 			try {
 				let t = await fetch(`${h}/api/ingest/items/${e}/skip`, {
 					method: "POST",
-					headers: v()
+					headers: b()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return u((t) => t.filter((t) => t.itemId !== e)), !0;
 			} catch (e) {
-				return m(e instanceof Error ? e.message : String(e)), !1;
+				return v(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [v])
+		}, [b]),
+		actionError: _,
+		clearActionError: S
 	};
 }
 //#endregion
@@ -315,67 +319,70 @@ function y() {
 //#region src/hooks/useIngestSources.ts
 var b = "";
 function x() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), f = i(!1), p = n(() => {
+	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(null), m = i(!0), h = i(0), g = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), m = n(async () => {
+	}, [t]), _ = n(() => p(null), []), v = n(async () => {
+		let e = ++h.current, t = () => m.current && e === h.current;
 		l(!0), d(null);
 		try {
-			let e = await fetch(`${b}/api/ingest/sources`, { headers: p() });
+			let e = await fetch(`${b}/api/ingest/sources`, { headers: g() });
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
-			let t = await e.json();
-			f.current || s(t.sources ?? []);
+			let n = await e.json();
+			t() && s(n.sources ?? []);
 		} catch (e) {
-			f.current || d(e instanceof Error ? e.message : String(e));
+			t() && d(e instanceof Error ? e.message : String(e));
 		} finally {
-			f.current || l(!1);
+			t() && l(!1);
 		}
-	}, [p]);
-	return r(() => (f.current = !1, m(), () => {
-		f.current = !0;
-	}), [m]), {
+	}, [g]);
+	return r(() => (m.current = !0, v(), () => {
+		m.current = !1, h.current += 1;
+	}), [v]), {
 		sources: o,
 		loading: c,
 		error: u,
-		refresh: m,
+		refresh: v,
 		createSource: n(async (e) => {
 			try {
 				let t = await fetch(`${b}/api/ingest/sources`, {
 					method: "POST",
-					headers: p(),
+					headers: g(),
 					body: JSON.stringify(e)
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				let n = await t.json();
 				return s((e) => [...e, n]), n;
 			} catch (e) {
-				return d(e instanceof Error ? e.message : String(e)), null;
+				return p(e instanceof Error ? e.message : String(e)), null;
 			}
-		}, [p]),
+		}, [g]),
 		deleteSource: n(async (e) => {
 			try {
 				let t = await fetch(`${b}/api/ingest/sources/${e}`, {
 					method: "DELETE",
-					headers: p()
+					headers: g()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return s((t) => t.filter((t) => t.sourceId !== e)), !0;
 			} catch (e) {
-				return d(e instanceof Error ? e.message : String(e)), !1;
+				return p(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [p]),
+		}, [g]),
 		triggerSync: n(async (e) => {
 			try {
 				let t = await fetch(`${b}/api/ingest/sources/${e}/sync`, {
 					method: "POST",
-					headers: p()
+					headers: g()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return !0;
 			} catch (e) {
-				return d(e instanceof Error ? e.message : String(e)), !1;
+				return p(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [p])
+		}, [g]),
+		actionError: f,
+		clearActionError: _
 	};
 }
 //#endregion
@@ -565,34 +572,35 @@ function M() {
 	}];
 }
 function N() {
-	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(!1), m = i(!1), h = n(() => {
+	let { idToken: t } = e(), [o, s] = a([]), [c, l] = a(!0), [u, d] = a(null), [f, p] = a(!1), m = i(!0), h = i(0), g = n(() => {
 		let e = { "Content-Type": "application/json" };
 		return t && (e.Authorization = `Bearer ${t}`), e;
-	}, [t]), g = n(async () => {
+	}, [t]), _ = n(async () => {
+		let e = ++h.current, t = () => m.current && e === h.current;
 		l(!0), d(null);
 		try {
-			let e = await fetch(`${j}/api/sync/conflicts`, { headers: h() });
+			let e = await fetch(`${j}/api/sync/conflicts`, { headers: g() });
 			if (e.status === 404) {
-				m.current || (s(M()), p(!0));
+				t() && (s(M()), p(!0));
 				return;
 			}
 			if (!e.ok) throw Error(`HTTP ${e.status}`);
-			let t = await e.json();
-			m.current || (s(t.conflicts ?? []), p(!1));
+			let n = await e.json();
+			t() && (s(n.conflicts ?? []), p(!1));
 		} catch (e) {
-			m.current || (s(M()), p(!0), d(e instanceof Error ? e.message : String(e)));
+			t() && (s(M()), p(!0), d(e instanceof Error ? e.message : String(e)));
 		} finally {
-			m.current || l(!1);
+			t() && l(!1);
 		}
-	}, [h]);
-	return r(() => (m.current = !1, g(), () => {
-		m.current = !0;
-	}), [g]), {
+	}, [g]);
+	return r(() => (m.current = !0, _(), () => {
+		m.current = !1, h.current += 1;
+	}), [_]), {
 		conflicts: o,
 		loading: c,
 		error: u,
 		usingMock: f,
-		refresh: g,
+		refresh: _,
 		resolveConflict: n(async (e, t) => {
 			if (f) return s((t) => t.map((t) => t.conflictId === e ? {
 				...t,
@@ -602,7 +610,7 @@ function N() {
 			try {
 				let n = await fetch(`${j}/api/sync/conflicts/${e}/resolve`, {
 					method: "POST",
-					headers: h(),
+					headers: g(),
 					body: JSON.stringify(t)
 				});
 				if (!n.ok) throw Error(`HTTP ${n.status}`);
@@ -611,7 +619,7 @@ function N() {
 			} catch (e) {
 				return d(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [h, f]),
+		}, [g, f]),
 		discardConflict: n(async (e) => {
 			if (f) return s((t) => t.map((t) => t.conflictId === e ? {
 				...t,
@@ -621,7 +629,7 @@ function N() {
 			try {
 				let t = await fetch(`${j}/api/sync/conflicts/${e}/discard`, {
 					method: "POST",
-					headers: h()
+					headers: g()
 				});
 				if (!t.ok) throw Error(`HTTP ${t.status}`);
 				return s((t) => t.map((t) => t.conflictId === e ? {
@@ -632,7 +640,7 @@ function N() {
 			} catch (e) {
 				return d(e instanceof Error ? e.message : String(e)), !1;
 			}
-		}, [h, f])
+		}, [g, f])
 	};
 }
 //#endregion

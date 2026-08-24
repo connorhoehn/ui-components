@@ -2786,8 +2786,16 @@ export declare function getPagesView(type: DocumentType_2): DocumentTypePage[];
 /**
  * Fetch a single pipeline run by runId from the dedicated v2 endpoint.
  * The v2 handler does live-then-stored fallback so historical runs (no
- * longer in the runtime's in-memory state) resolve correctly. Returns
- * null on 404 or transport failure.
+ * longer in the runtime's in-memory state) resolve correctly.
+ *
+ * **Resolves `null` for a genuine 404 only. Rejects for everything else** —
+ * transport failure, 5xx, 401, malformed JSON. It used to spell both the
+ * same way, so an unreachable API was indistinguishable from a run that had
+ * really been garbage-collected: `PipelineRunReplayPage` told the user
+ * "Run not available — it may have been trimmed from history." with no
+ * retry, and `PendingApprovalsPage` claimed the upstream steps "haven't
+ * produced reviewable output yet" while the approver decided blind.
+ * Same class as `listPipelineRuns` above (fixed in v2.92.0).
  *
  * Wire shape comes from `PipelineRunDetailResponse` in
  * frontend/src/types/pipeline-contracts.ts — kept in lockstep with
@@ -8278,10 +8286,26 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestItemsReturn {
      items: IngestItem[];
      loading: boolean;
+     /** Why the LIST fetch failed. Never set by retry/skip — see `actionError`. */
      error: string | null;
      refresh: () => Promise<void>;
      retryItem: (itemId: string) => Promise<boolean>;
      skipItem: (itemId: string) => Promise<boolean>;
+     /**
+      * Why the last `retryItem`/`skipItem` failed, or `null`. Additive
+      * (v2.95.0).
+      *
+      * These used to write into `error`, the same state the list loader owns.
+      * A failed Skip therefore made `IngestItemsPage` hide the entire,
+      * correctly-loaded table behind a banner reading "Failed to load ingest
+      * items." — a statement that was simply false — whose Retry button
+      * re-fetched the list rather than re-trying the skip. The next refresh
+      * cleared `error`, everything reappeared, and the operator concluded the
+      * skip had worked. It had not.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
  }
 
  export declare function useIngestProgress(): UseIngestProgressResult;
@@ -8297,11 +8321,25 @@ declare interface UseActivityBusReturn {
  declare interface UseIngestSourcesReturn {
      sources: IngestSource[];
      loading: boolean;
+     /** Why the LIST fetch failed. Never set by the mutations — see `actionError`. */
      error: string | null;
      refresh: () => Promise<void>;
      createSource: (data: Omit<IngestSource, 'sourceId' | 'createdAt' | 'updatedAt' | 'lastSyncAt' | 'lastSyncStats'>) => Promise<IngestSource | null>;
      deleteSource: (sourceId: string) => Promise<boolean>;
      triggerSync: (sourceId: string) => Promise<boolean>;
+     /**
+      * Why the last create/delete/sync failed, or `null`. Additive (v2.95.0).
+      *
+      * These used to write into `error`, which `SourcesPage` renders as the
+      * hard-coded "Failed to load sources." — blaming the wrong operation — and
+      * which `refresh()` clears unconditionally. A failed "Sync now" was
+      * therefore erased before it could be rendered at all: the spinner stopped
+      * and nothing else happened, exactly like a successful trigger, and the
+      * operator walked away believing a sync was running.
+      */
+     actionError: string | null;
+     /** Dismiss `actionError`. Additive (v2.95.0). */
+     clearActionError: () => void;
  }
 
  /**
@@ -8376,6 +8414,20 @@ declare interface UseActivityBusReturn {
      displayName: string;
      userId: string;
  }
+
+ /**
+  * Non-throwing variant: returns `null` when there is no `<IdentityProvider>`
+  * above.
+  *
+  * `useIdentityContext` is the right hook for a component that genuinely
+  * cannot work unsigned-in. It is the wrong hook for a component that would
+  * merely *like* a token — calling it there turns an optional enhancement
+  * into a hard mount-time dependency on the provider. `ObservabilityProvider`
+  * is exactly that case: it wants a bearer token when one exists, and must
+  * still render (against fixture data) in a backendless demo with no identity
+  * in the tree.
+  */
+ export declare function useOptionalIdentityContext(): IdentityContextValue | null;
 
  export declare function usePipelineDefs(): UsePipelineDefsReturn;
 

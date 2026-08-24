@@ -1,9 +1,9 @@
-import { n as e } from "./IdentityContext-m2wQF4sJ.js";
+import { n as e } from "./IdentityContext-CQM1qwH6.js";
 import "./WebSocketContext-DUvjGLFq.js";
 import { a as t, n } from "./ToastProvider-DPq8u2eM.js";
 import { t as r } from "./cn-DhjIN-s0.js";
 import { t as i } from "./useEventCallback-Cwx9QVSi.js";
-import { a, i as o, l as s, n as c, o as l, r as u, s as d, t as f, u as p } from "./StatusPill-CoK1q9Yc.js";
+import { a, i as o, l as s, n as c, o as l, r as u, s as d, t as f, u as p } from "./StatusPill-D3iya25t.js";
 import { t as m } from "./Button-CTpms90-.js";
 import { n as h, r as g, t as _ } from "./FileUploadDrop-CpLUJEjW.js";
 import { t as v } from "./Banner-BLOg1hC_.js";
@@ -17,7 +17,7 @@ import { t as E } from "./activationKey-CjbL3LUv.js";
 import { t as D } from "./Input-DcK2h-jK.js";
 import { t as O } from "./Textarea-C3t5PCLv.js";
 import { n as k, r as A, t as ee } from "./EventStreamContext-C0egqLaF.js";
-import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-CK_zipW-.js";
+import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-D0h-h8MX.js";
 import { t as Je } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as Ye } from "./Select-Z0TLUVeL.js";
 import { t as Xe } from "./Checkbox-DsS7fIUO.js";
@@ -14850,12 +14850,22 @@ function Xc({ pipelineId: e }) {
 		Ce,
 		s
 	]);
-	let { retryError: we, clearRetryError: Te } = a;
+	let { publishError: we, clearPublishError: Te, publishedAt: Ee } = i, De = z(Ee);
 	L(() => {
-		we && (s(`Retry failed: ${we.message}`, { type: "error" }), Te());
+		Ee && Ee !== De.current && s("Pipeline published", { type: "success" }), De.current = Ee;
+	}, [Ee, s]), L(() => {
+		we && (s(`Could not publish: ${we}`, { type: "error" }), Te());
 	}, [
 		we,
 		Te,
+		s
+	]);
+	let { retryError: Oe, clearRetryError: P } = a;
+	L(() => {
+		Oe && (s(`Retry failed: ${Oe.message}`, { type: "error" }), P());
+	}, [
+		Oe,
+		P,
 		s
 	]), L(() => {
 		let e = (e) => {
@@ -14900,15 +14910,15 @@ function Xc({ pipelineId: e }) {
 		_,
 		d
 	]);
-	let Ee = () => {
+	let ke = () => {
 		if (!c) return;
 		let e = ve(c.id);
 		e && t(`/pipelines/${e.id}`);
-	}, De = () => {
+	}, Ae = () => {
 		if (!c) return;
 		let e = be(c.id);
 		e && Ri(`${Kc(c.name)}.pipeline.json`, e);
-	}, Oe = async () => {
+	}, je = async () => {
 		if (!c) return;
 		let e = wi(c);
 		try {
@@ -14917,15 +14927,15 @@ function Xc({ pipelineId: e }) {
 		} catch (e) {
 			console.warn("[PipelineEditor] clipboard write failed", e), s("Could not copy Mermaid diagram", { type: "error" });
 		}
-	}, P = () => {
+	}, Me = () => {
 		ue(!0);
-	}, ke = () => {
-		M(!1), !E && (p(), s("Pipeline published", { type: "success" }));
-	}, Ae = () => {
+	}, Ne = () => {
+		M(!1), !E && p();
+	}, Pe = () => {
 		c && (oe(c.id), ae(!1), t("/pipelines"));
-	}, je = () => {
+	}, Fe = () => {
 		me(e), ce(!1), s("Run history cleared", { type: "success" });
-	}, Me = y.currentRunId ? a.runs[y.currentRunId] : void 0;
+	}, Ie = y.currentRunId ? a.runs[y.currentRunId] : void 0;
 	return c ? /* @__PURE__ */ U("div", {
 		className: r("flex flex-col min-h-[calc(100vh-200px)]", "bg-surface-inset font-inherit text-text-primary", "rounded-lg border border-border overflow-hidden"),
 		"data-testid": "pipeline-editor",
@@ -14939,15 +14949,15 @@ function Xc({ pipelineId: e }) {
 				isTriggering: y.isTriggering,
 				runDisabled: ge,
 				runTitle: ye,
-				currentRun: Me,
+				currentRun: Ie,
 				breakpoints: y.breakpoints,
 				onRunClick: xe,
 				onDebugRunClick: y.handleDebugRunClick,
-				onExport: De,
+				onExport: Ae,
 				onPublishClick: () => M(!0),
-				onDuplicate: Ee,
-				onCopyMermaid: Oe,
-				onViewVersions: P,
+				onDuplicate: ke,
+				onCopyMermaid: je,
+				onViewVersions: Me,
 				onRevert: h,
 				onToggleShowTags: ne,
 				showTags: j,
@@ -15018,17 +15028,17 @@ function Xc({ pipelineId: e }) {
 			/* @__PURE__ */ H(Ii, {
 				publishConfirmOpen: re,
 				onPublishClose: () => M(!1),
-				onPublishConfirm: ke,
+				onPublishConfirm: Ne,
 				hasErrors: E,
 				validationErrorCount: T?.errors.length ?? 0,
 				definitionName: c.name,
 				definitionVersion: c.version,
 				deleteConfirmOpen: ie,
 				onDeleteClose: () => ae(!1),
-				onDeleteConfirm: Ae,
+				onDeleteConfirm: Pe,
 				clearRunsConfirmOpen: se,
 				onClearRunsClose: () => ce(!1),
-				onClearRunsConfirm: je,
+				onClearRunsConfirm: Fe,
 				versionDiffOpen: le,
 				onVersionDiffClose: () => ue(!1),
 				currentDef: c,
@@ -17743,18 +17753,22 @@ function Bl() {
 	}, ze = async () => {
 		let e = Array.from(N);
 		if (e.length === 0) return;
-		let t = 0, n = 0;
-		for (let r of e) {
-			let e = await he(r);
+		let t = 0, n = 0, r = 0;
+		for (let i of e) {
+			let e = await he(i);
 			if (e) {
 				if (e.status === "published") {
 					n += 1;
 					continue;
 				}
-				await qe(r) && (t += 1);
+				try {
+					await qe(i) ? t += 1 : r += 1;
+				} catch {
+					r += 1;
+				}
 			}
 		}
-		oe(), a(n > 0 ? `Published ${t}; skipped ${n} already published` : `Published ${t} pipeline${t === 1 ? "" : "s"}`, { type: "success" });
+		oe(), r > 0 ? a(`Published ${t}; ${r} failed${n > 0 ? `; skipped ${n} already published` : ""}`, { type: "error" }) : a(n > 0 ? `Published ${t}; skipped ${n} already published` : `Published ${t} pipeline${t === 1 ? "" : "s"}`, { type: "success" });
 	}, Be = async () => {
 		let e = Array.from(N);
 		if (e.length === 0) return;
@@ -19774,18 +19788,22 @@ function Wu() {
 	});
 }
 function Gu({ pipelineId: e, runId: t }) {
-	let n = rt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null);
+	let n = rt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
-		return import("./services-CK_zipW-.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
-			r(e, t).then((e) => {
-				!n && e && c(e);
-			});
+		return u(null), import("./services-D0h-h8MX.js").then((e) => e.X).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+			!n && e && c(e);
+		})).catch((e) => {
+			n || u(e instanceof Error ? e.message : String(e));
 		}), () => {
 			n = !0;
 		};
-	}, [e, t]);
-	let l = R(() => {
+	}, [
+		e,
+		t,
+		d
+	]);
+	let h = R(() => {
 		let e = a.runs[t], n = s;
 		if (!(!e && !n)) return e ? !n || Object.keys(e.steps).length >= Object.keys(n.steps).length ? e : {
 			...n,
@@ -19798,7 +19816,7 @@ function Gu({ pipelineId: e, runId: t }) {
 		s
 	]);
 	Me(t);
-	let u = vu(l ?? null), d = R(() => {
+	let _ = vu(h ?? null), y = R(() => {
 		let e = {};
 		if (!o) return e;
 		for (let t of o.nodes) e[t.id] = {
@@ -19806,106 +19824,132 @@ function Gu({ pipelineId: e, runId: t }) {
 			data: t.data
 		};
 		return e;
-	}, [o]), [f, p] = B(!1), h = z(null);
-	Gn(h, () => p(!1), f);
-	let [_, y] = B("steps"), [b, S] = B(null), w = I((e) => {
-		S(e), y("steps");
-	}, []), [T, E] = B(null), [D, O] = B(null), [k, A] = B(!1), ee = l?.status === "failed" ? l.error?.nodeId : void 0, j = I((e) => {
-		if (!l) return;
-		let t = Object.entries(l.steps).filter(([t, n]) => t !== e && n.status === "completed").map(([e]) => e);
-		E({
+	}, [o]), [b, S] = B(!1), w = z(null);
+	Gn(w, () => S(!1), b);
+	let [T, E] = B("steps"), [D, O] = B(null), k = I((e) => {
+		O(e), E("steps");
+	}, []), [A, ee] = B(null), [j, te] = B(null), [ne, re] = B(!1), M = h?.status === "failed" ? h.error?.nodeId : void 0, ie = I((e) => {
+		if (!h) return;
+		let t = Object.entries(h.steps).filter(([t, n]) => t !== e && n.status === "completed").map(([e]) => e);
+		ee({
 			nodeId: e,
 			skippedNodes: t,
 			snapshotInput: !1
-		}), O(null);
-	}, [l]), te = I(async () => {
-		if (!(!T || !l)) {
-			O(null), A(!0);
+		}), te(null);
+	}, [h]), ae = I(async () => {
+		if (!(!A || !h)) {
+			te(null), re(!0);
 			try {
-				let t = await Ie(e, l.id, T.nodeId, void 0, T.snapshotInput || void 0);
-				E(null), n(`/pipelines/${e}/runs/${t.newRunId}`);
+				let t = await Ie(e, h.id, A.nodeId, void 0, A.snapshotInput || void 0);
+				ee(null), n(`/pipelines/${e}/runs/${t.newRunId}`);
 			} catch (e) {
-				O(e instanceof Error ? e.message : String(e)), A(!1);
+				te(e instanceof Error ? e.message : String(e)), re(!1);
 			}
 		}
 	}, [
-		T,
-		l,
+		A,
+		h,
 		e,
 		n
-	]), [ne, re] = B(null), [M, ie] = B(null), [ae, oe] = B(null), [se, ce] = B(null), le = z(null);
+	]), [oe, se] = B(null), [ce, le] = B(null), [ue, N] = B(null), [de, fe] = B(null), me = z(null);
 	L(() => () => {
-		le.current && clearTimeout(le.current);
+		me.current && clearTimeout(me.current);
 	}, []);
-	let ue = I(async (t) => {
-		if (l) {
-			ie(null), re(t);
+	let he = I(async (t) => {
+		if (h) {
+			le(null), se(t);
 			try {
-				let r = await ke(e, l.id, t);
-				oe(`Resumed from ${t.slice(0, 10)}${t.length > 10 ? "…" : ""} (replay #${r.replayAttempts})`), le.current && clearTimeout(le.current), le.current = setTimeout(() => oe(null), 4e3), n(`/pipelines/${e}/runs/${l.id}`);
+				let r = await ke(e, h.id, t);
+				N(`Resumed from ${t.slice(0, 10)}${t.length > 10 ? "…" : ""} (replay #${r.replayAttempts})`), me.current && clearTimeout(me.current), me.current = setTimeout(() => N(null), 4e3), n(`/pipelines/${e}/runs/${h.id}`);
 			} catch (e) {
-				ie(e instanceof Error ? e.message : String(e));
+				le(e instanceof Error ? e.message : String(e));
 			} finally {
-				re(null);
+				se(null);
 			}
 		}
 	}, [
-		l,
+		h,
 		e,
 		n
-	]), N = I(async () => {
-		ce(null);
+	]), ge = I(async () => {
+		fe(null);
 		try {
-			let t = await a.triggerRun(e, l ? l.triggeredBy.payload : void 0);
+			let t = await a.triggerRun(e, h ? h.triggeredBy.payload : void 0);
 			n(`/pipelines/${e}/runs/${t}`);
 		} catch (e) {
-			console.error("[PipelineRunReplay] re-run failed", e), ce(e instanceof Error ? e.message : String(e));
+			console.error("[PipelineRunReplay] re-run failed", e), fe(e instanceof Error ? e.message : String(e));
 		}
 	}, [
-		l,
+		h,
 		a,
 		e,
 		n
-	]), de = async () => {
-		p(!1);
+	]), ye = async () => {
+		S(!1);
 		try {
 			await navigator.clipboard?.writeText(t);
 		} catch {}
-	}, fe = () => {
-		if (p(!1), !l) return;
-		let e = JSON.stringify(l, null, 2);
+	}, be = () => {
+		if (S(!1), !h) return;
+		let e = JSON.stringify(h, null, 2);
 		Ri(`run-${t}.json`, e);
-	}, me = () => {
-		if (p(!1), !o) return;
+	}, xe = () => {
+		if (S(!1), !o) return;
 		let e = ve(o.id, `${o.name} (from run)`);
 		e && n(`/pipelines/${e.id}`);
 	};
-	if (!l) return /* @__PURE__ */ U("div", {
-		className: "flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border",
-		"data-testid": "pipeline-replay-missing",
-		children: [/* @__PURE__ */ U("div", {
-			className: "h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]",
-			children: [/* @__PURE__ */ H(g, {
-				onClick: () => n(`/pipelines/${e}`),
-				"aria-label": "Back to pipeline",
-				title: "Back to pipeline",
-				children: "←"
+	if (!h) {
+		let t = l !== null;
+		return /* @__PURE__ */ U("div", {
+			className: "flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border",
+			"data-testid": t ? "pipeline-replay-error" : "pipeline-replay-missing",
+			children: [/* @__PURE__ */ U("div", {
+				className: "h-11 shrink-0 flex items-center gap-2.5 px-3 border-b border-border bg-surface relative z-[5]",
+				children: [/* @__PURE__ */ H(g, {
+					onClick: () => n(`/pipelines/${e}`),
+					"aria-label": "Back to pipeline",
+					title: "Back to pipeline",
+					children: "←"
+				}), /* @__PURE__ */ H("div", {
+					className: "text-[13px] font-semibold text-text-primary",
+					children: o?.name ?? "Pipeline"
+				})]
 			}), /* @__PURE__ */ H("div", {
-				className: "text-[13px] font-semibold text-text-primary",
-				children: o?.name ?? "Pipeline"
+				className: "flex-1 flex flex-col items-center justify-center gap-3.5 p-8 text-center",
+				children: t ? /* @__PURE__ */ U(V, { children: [
+					/* @__PURE__ */ H("div", {
+						className: "text-sm text-text-secondary",
+						"data-testid": "replay-load-error",
+						children: "Couldn't load this run — the pipeline API is unreachable. The run has not necessarily been deleted."
+					}),
+					/* @__PURE__ */ H("div", {
+						className: "text-xs text-danger-fg font-mono",
+						"data-testid": "replay-load-error-detail",
+						children: l
+					}),
+					/* @__PURE__ */ U("div", {
+						className: "flex gap-2",
+						children: [/* @__PURE__ */ H(m, {
+							onClick: p,
+							"data-testid": "replay-retry",
+							children: "Retry"
+						}), /* @__PURE__ */ H(m, {
+							variant: "secondary",
+							onClick: () => n(`/pipelines/${e}`),
+							children: "Back to pipeline"
+						})]
+					})
+				] }) : /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("div", {
+					className: "text-sm text-text-secondary",
+					children: "Run not available — it may have been trimmed from history."
+				}), /* @__PURE__ */ H(m, {
+					onClick: () => n(`/pipelines/${e}`),
+					children: "Back to pipeline"
+				})] })
 			})]
-		}), /* @__PURE__ */ U("div", {
-			className: "flex-1 flex flex-col items-center justify-center gap-3.5 p-8 text-center",
-			children: [/* @__PURE__ */ H("div", {
-				className: "text-sm text-text-secondary",
-				children: "Run not available — it may have been trimmed from history."
-			}), /* @__PURE__ */ H(m, {
-				onClick: () => n(`/pipelines/${e}`),
-				children: "Back to pipeline"
-			})]
-		})]
-	});
-	let he = fu(l.status), ge = l.triggeredBy.userId ?? l.triggeredBy.triggerType, ye = Wl(u);
+		});
+	}
+	let Se = fu(h.status), Ce = h.triggeredBy.userId ?? h.triggeredBy.triggerType, we = Wl(_);
 	return /* @__PURE__ */ U("div", {
 		className: "flex flex-col flex-1 h-0 overflow-hidden bg-surface-inset font-[inherit] text-text-primary rounded-lg border border-border",
 		"data-testid": "pipeline-replay",
@@ -19933,51 +19977,51 @@ function Gu({ pipelineId: e, runId: t }) {
 						"data-testid": "replay-subtitle",
 						children: [
 							"Run from ",
-							aa(l.startedAt),
+							aa(h.startedAt),
 							" by ",
-							ge
+							Ce
 						]
 					}),
 					/* @__PURE__ */ U("span", {
 						className: "text-text-tertiary text-xs",
 						"data-testid": "replay-cost",
-						children: ["· ", ye]
+						children: ["· ", we]
 					}),
 					/* @__PURE__ */ H(x, {
-						tone: he.tone,
-						"aria-label": `Status: ${he.label}`,
-						children: he.label
+						tone: Se.tone,
+						"aria-label": `Status: ${Se.label}`,
+						children: Se.label
 					}),
-					l.status === "failed" && l.error?.errorCategory ? /* @__PURE__ */ H(x, {
+					h.status === "failed" && h.error?.errorCategory ? /* @__PURE__ */ H(x, {
 						tone: "danger",
-						title: l.error.message || "Error details unavailable",
-						children: l.error.errorCategory
+						title: h.error.message || "Error details unavailable",
+						children: h.error.errorCategory
 					}) : null,
 					/* @__PURE__ */ H("div", { className: "flex-1" }),
-					ee && /* @__PURE__ */ H(m, {
-						onClick: () => j(ee),
-						disabled: k,
+					M && /* @__PURE__ */ H(m, {
+						onClick: () => ie(M),
+						disabled: ne,
 						"data-testid": "retry-from-failed-step-button",
-						title: `Retry from "${ee}" with the original upstream context`,
+						title: `Retry from "${M}" with the original upstream context`,
 						children: "↻ Retry from failure"
 					}),
 					/* @__PURE__ */ H(m, {
-						onClick: N,
+						onClick: ge,
 						"data-testid": "rerun-button",
 						title: "Re-run with the original trigger payload",
 						children: "↻ Re-run"
 					}),
 					/* @__PURE__ */ U("div", {
 						className: "relative",
-						ref: h,
+						ref: w,
 						children: [/* @__PURE__ */ H(g, {
-							onClick: () => p((e) => !e),
+							onClick: () => S((e) => !e),
 							"aria-label": "More actions",
 							"aria-haspopup": "menu",
-							"aria-expanded": f,
+							"aria-expanded": b,
 							"data-testid": "replay-overflow-btn",
 							children: "⋯"
-						}), f ? /* @__PURE__ */ U("div", {
+						}), b ? /* @__PURE__ */ U("div", {
 							className: "absolute top-full right-0 mt-1.5 bg-surface border border-border rounded-lg shadow-[0_12px_28px_rgba(15,23,42,0.14)] min-w-[200px] z-20 overflow-hidden",
 							role: "menu",
 							"aria-label": "More actions",
@@ -19985,19 +20029,19 @@ function Gu({ pipelineId: e, runId: t }) {
 								/* @__PURE__ */ H("button", {
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
-									onClick: de,
+									onClick: ye,
 									children: "Copy runId"
 								}),
 								/* @__PURE__ */ H("button", {
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
-									onClick: fe,
+									onClick: be,
 									children: "Export run JSON"
 								}),
 								/* @__PURE__ */ H("button", {
 									className: "block w-full text-left py-2 px-3.5 text-[13px] border-none bg-transparent cursor-pointer font-[inherit] text-text-primary",
 									role: "menuitem",
-									onClick: me,
+									onClick: xe,
 									children: "Open as new draft"
 								})
 							]
@@ -20006,15 +20050,15 @@ function Gu({ pipelineId: e, runId: t }) {
 				]
 			}),
 			/* @__PURE__ */ H(C, {
-				open: T !== null,
-				onConfirm: te,
+				open: A !== null,
+				onConfirm: ae,
 				onCancel: () => {
-					k || E(null);
+					ne || ee(null);
 				},
 				title: "Retry from step",
-				confirmLabel: k ? "Starting…" : "Confirm retry",
-				confirmDisabled: k,
-				children: T && /* @__PURE__ */ U("div", {
+				confirmLabel: ne ? "Starting…" : "Confirm retry",
+				confirmDisabled: ne,
+				children: A && /* @__PURE__ */ U("div", {
 					className: "flex flex-col gap-2.5",
 					children: [
 						/* @__PURE__ */ U("div", {
@@ -20024,22 +20068,22 @@ function Gu({ pipelineId: e, runId: t }) {
 								" ",
 								/* @__PURE__ */ U("code", {
 									className: "bg-surface-inset px-1 rounded text-xs",
-									children: [T.nodeId.slice(0, 12), T.nodeId.length > 12 ? "…" : ""]
+									children: [A.nodeId.slice(0, 12), A.nodeId.length > 12 ? "…" : ""]
 								}),
 								" ",
 								"using the original upstream context."
 							]
 						}),
-						T.skippedNodes.length > 0 && /* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("div", {
+						A.skippedNodes.length > 0 && /* @__PURE__ */ U("div", { children: [/* @__PURE__ */ U("div", {
 							className: "text-[11px] font-semibold text-text-tertiary uppercase mb-1.5",
 							children: [
 								"Steps that will be skipped (",
-								T.skippedNodes.length,
+								A.skippedNodes.length,
 								")"
 							]
 						}), /* @__PURE__ */ H("div", {
 							className: "max-h-20 overflow-y-auto flex flex-wrap gap-1",
-							children: T.skippedNodes.map((e) => /* @__PURE__ */ H("span", {
+							children: A.skippedNodes.map((e) => /* @__PURE__ */ H("span", {
 								className: "bg-surface-inset border border-border rounded px-1.5 py-px text-[11px] font-mono text-text-secondary",
 								children: e.slice(0, 10)
 							}, e))
@@ -20047,17 +20091,17 @@ function Gu({ pipelineId: e, runId: t }) {
 						/* @__PURE__ */ U("label", {
 							className: "flex items-center gap-2 text-[13px] text-text-secondary cursor-pointer",
 							children: [/* @__PURE__ */ H(Xe, {
-								checked: T.snapshotInput,
-								onChange: (e) => E((t) => t && {
+								checked: A.snapshotInput,
+								onChange: (e) => ee((t) => t && {
 									...t,
 									snapshotInput: e
 								})
 							}), "Use persisted input snapshot"]
 						}),
-						D && /* @__PURE__ */ H("div", {
+						j && /* @__PURE__ */ H("div", {
 							"data-testid": "retry-modal-error",
 							className: "py-2 px-3 bg-danger-bg border border-danger-border rounded-md text-xs text-danger-fg",
-							children: D
+							children: j
 						})
 					]
 				})
@@ -20074,72 +20118,72 @@ function Gu({ pipelineId: e, runId: t }) {
 									className: "m-0 text-[15px] font-bold text-text-primary",
 									children: [
 										"Steps (",
-										Object.keys(l.steps).length,
+										Object.keys(h.steps).length,
 										")"
 									]
 								}),
 								/* @__PURE__ */ U("span", {
 									className: "text-xs text-text-tertiary",
 									children: [
-										l.startedAt ? new Date(l.startedAt).toLocaleTimeString() : "",
+										h.startedAt ? new Date(h.startedAt).toLocaleTimeString() : "",
 										" — ",
-										l.completedAt ? new Date(l.completedAt).toLocaleTimeString() : "in progress"
+										h.completedAt ? new Date(h.completedAt).toLocaleTimeString() : "in progress"
 									]
 								}),
-								l.durationMs != null && /* @__PURE__ */ U("span", {
+								h.durationMs != null && /* @__PURE__ */ U("span", {
 									className: "text-xs text-text-secondary ml-auto",
-									children: ["Total: ", l.durationMs < 1e3 ? `${l.durationMs}ms` : `${(l.durationMs / 1e3).toFixed(1)}s`]
+									children: ["Total: ", h.durationMs < 1e3 ? `${h.durationMs}ms` : `${(h.durationMs / 1e3).toFixed(1)}s`]
 								})
 							]
 						}),
-						D && /* @__PURE__ */ H(v, {
+						j && /* @__PURE__ */ H(v, {
 							title: "Retry failed:",
 							className: "mb-4",
-							children: D
+							children: j
 						}),
-						M && /* @__PURE__ */ H(v, {
+						ce && /* @__PURE__ */ H(v, {
 							title: "Resume failed:",
 							className: "mb-4",
 							"data-testid": "resume-error-banner",
-							children: M
+							children: ce
 						}),
-						se && /* @__PURE__ */ H(v, {
+						de && /* @__PURE__ */ H(v, {
 							title: "Re-run failed:",
 							className: "mb-4",
 							"data-testid": "rerun-error-banner",
-							children: se
+							children: de
 						}),
-						(l.replayAttempts ?? 0) > 0 && /* @__PURE__ */ H(v, {
+						(h.replayAttempts ?? 0) > 0 && /* @__PURE__ */ H(v, {
 							title: "Resumed from a previous failure",
 							className: "mb-4",
 							"data-testid": "resume-history-banner",
 							children: /* @__PURE__ */ U("div", {
 								className: "flex flex-col gap-1.5",
 								children: [/* @__PURE__ */ U("div", { children: [
-									l.error?.nodeId && l.error.nodeId !== "unknown" && /* @__PURE__ */ U(V, { children: [
+									h.error?.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ U(V, { children: [
 										"Originally failed at ",
-										/* @__PURE__ */ H("code", { children: l.error.nodeId.slice(0, 12) }),
+										/* @__PURE__ */ H("code", { children: h.error.nodeId.slice(0, 12) }),
 										" — "
 									] }),
 									"Resumed ",
-									l.replayAttempts,
+									h.replayAttempts,
 									" time",
-									l.replayAttempts === 1 ? "" : "s",
+									h.replayAttempts === 1 ? "" : "s",
 									".",
-									l.resumeHistory && l.resumeHistory.length > 0 && /* @__PURE__ */ U(V, { children: [
+									h.resumeHistory && h.resumeHistory.length > 0 && /* @__PURE__ */ U(V, { children: [
 										" ",
 										"Most recent: from",
 										" ",
-										/* @__PURE__ */ H("code", { children: l.resumeHistory[l.resumeHistory.length - 1].fromNodeId.slice(0, 12) }),
+										/* @__PURE__ */ H("code", { children: h.resumeHistory[h.resumeHistory.length - 1].fromNodeId.slice(0, 12) }),
 										" ",
 										"at ",
-										aa(l.resumeHistory[l.resumeHistory.length - 1].at),
+										aa(h.resumeHistory[h.resumeHistory.length - 1].at),
 										"."
 									] })
-								] }), l.resumeHistory && l.resumeHistory.length > 1 && /* @__PURE__ */ H("ol", {
+								] }), h.resumeHistory && h.resumeHistory.length > 1 && /* @__PURE__ */ H("ol", {
 									className: "m-0 pl-[18px] text-[11px] text-text-tertiary leading-relaxed",
 									"data-testid": "resume-history-timeline",
-									children: l.resumeHistory.map((e, t) => /* @__PURE__ */ U("li", { children: [
+									children: h.resumeHistory.map((e, t) => /* @__PURE__ */ U("li", { children: [
 										"from ",
 										/* @__PURE__ */ H("code", { children: e.fromNodeId.slice(0, 12) }),
 										" at ",
@@ -20148,29 +20192,29 @@ function Gu({ pipelineId: e, runId: t }) {
 								})]
 							})
 						}),
-						ae && /* @__PURE__ */ H(v, {
+						ue && /* @__PURE__ */ H(v, {
 							title: "Resumed",
 							className: "mb-4",
 							"data-testid": "resume-toast",
-							children: ae
+							children: ue
 						}),
-						l.error && /* @__PURE__ */ U(v, {
+						h.error && /* @__PURE__ */ U(v, {
 							title: "Run failed:",
 							className: "mb-4",
 							children: [
-								l.error.message,
-								l.error.nodeId && l.error.nodeId !== "unknown" && /* @__PURE__ */ U("span", {
+								h.error.message,
+								h.error.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ U("span", {
 									className: "ml-2 text-[11px] text-danger-fg",
-									children: ["at node ", l.error.nodeId.slice(0, 8)]
+									children: ["at node ", h.error.nodeId.slice(0, 8)]
 								}),
-								l.status === "failed" && l.error.nodeId && l.error.nodeId !== "unknown" && /* @__PURE__ */ H("div", {
+								h.status === "failed" && h.error.nodeId && h.error.nodeId !== "unknown" && /* @__PURE__ */ H("div", {
 									className: "mt-2",
 									children: /* @__PURE__ */ H(m, {
-										onClick: () => ue(l.error.nodeId),
-										disabled: ne !== null,
+										onClick: () => he(h.error.nodeId),
+										disabled: oe !== null,
 										"data-testid": "resume-from-here-button",
-										title: `Resume this run from "${l.error.nodeId}" using its accumulated upstream context`,
-										children: ne === l.error.nodeId ? "Resuming…" : "↻ Resume from here"
+										title: `Resume this run from "${h.error.nodeId}" using its accumulated upstream context`,
+										children: oe === h.error.nodeId ? "Resuming…" : "↻ Resume from here"
 									})
 								})
 							]
@@ -20188,30 +20232,30 @@ function Gu({ pipelineId: e, runId: t }) {
 								id: "log",
 								label: "Executor Log"
 							}].map((e) => {
-								let t = _ === e.id;
+								let t = T === e.id;
 								return /* @__PURE__ */ H("button", {
 									role: "tab",
 									"aria-selected": t,
 									tabIndex: t ? 0 : -1,
-									onClick: () => y(e.id),
+									onClick: () => E(e.id),
 									"data-testid": `run-replay-tab-${e.id}`,
 									className: r("font-[inherit] text-[13px] font-semibold py-1.5 px-3.5 border-none bg-transparent cursor-pointer -mb-px", t ? "text-text-primary border-b-2 border-b-primary" : "text-text-tertiary border-b-2 border-b-transparent"),
 									children: e.label
 								}, e.id);
 							})
 						}),
-						_ === "steps" ? /* @__PURE__ */ H(wu, {
-							steps: l.steps,
-							nodeDataMap: d,
+						T === "steps" ? /* @__PURE__ */ H(wu, {
+							steps: h.steps,
+							nodeDataMap: y,
 							edges: o?.edges,
-							onRetryFromStep: j,
-							onResumeFromStep: l.status === "failed" ? ue : void 0
+							onRetryFromStep: ie,
+							onResumeFromStep: h.status === "failed" ? he : void 0
 						}) : /* @__PURE__ */ H("div", {
 							className: "flex flex-col min-h-[400px] h-[60vh]",
 							children: /* @__PURE__ */ H(Uu, {
 								pipelineId: e,
 								runId: t,
-								onStepClick: w
+								onStepClick: k
 							})
 						})
 					]
@@ -22093,8 +22137,25 @@ function Xd({ row: e, onSubmit: t, onOpenPipeline: n }) {
 				className: "flex flex-col gap-1.5 px-3 py-2.5 bg-surface-inset rounded-md border border-border",
 				children: [/* @__PURE__ */ H("div", {
 					className: "text-[11px] font-semibold text-text-tertiary uppercase tracking-[0.5px]",
-					children: c.length > 0 ? "Context" : "Run details"
-				}), c.length > 0 ? c.map(({ label: e, value: t }) => /* @__PURE__ */ U("div", {
+					children: c.length > 0 ? "Context" : e.runFetchError ? "Review context unavailable" : "Run details"
+				}), c.length === 0 && e.runFetchError ? /* @__PURE__ */ U("div", {
+					"data-testid": `approval-context-error-${e.runId}`,
+					className: "flex flex-col gap-0.5 px-2.5 py-2 rounded-md bg-danger-bg border border-danger-border",
+					children: [
+						/* @__PURE__ */ H("div", {
+							className: "text-[11px] font-semibold text-danger-fg",
+							children: "Couldn't load this run — decide with caution"
+						}),
+						/* @__PURE__ */ H("div", {
+							className: "text-[11px] text-danger-fg leading-normal",
+							children: "The pipeline API is unreachable, so what this step produced is unknown. This is not the same as there being nothing to review."
+						}),
+						/* @__PURE__ */ H("div", {
+							className: "font-mono text-[11px] text-danger-fg break-words",
+							children: e.runFetchError
+						})
+					]
+				}) : c.length > 0 ? c.map(({ label: e, value: t }) => /* @__PURE__ */ U("div", {
 					className: "flex flex-col gap-0.5",
 					children: [/* @__PURE__ */ H("div", {
 						className: "text-[11px] font-medium text-text-secondary",
@@ -22196,31 +22257,42 @@ function Zd() {
 		for (let t of s) e.has(t) || (r.delete(t), n = !0);
 		n && c(r);
 	}, [t, s]);
-	let [l, u] = B({}), d = z(/* @__PURE__ */ new Set());
+	let [l, u] = B({}), [d, f] = B({}), p = z(/* @__PURE__ */ new Set());
 	L(() => {
-		for (let e of t) d.current.has(e.runId) || (d.current.add(e.runId), ce(e.pipelineId, e.runId).then((t) => {
-			t && u((n) => ({
-				...n,
-				[e.runId]: {
-					context: t.context,
-					steps: t.steps
-				}
-			}));
-		}));
+		for (let e of t) {
+			if (p.current.has(e.runId)) continue;
+			p.current.add(e.runId);
+			let { runId: t } = e;
+			ce(e.pipelineId, t).then((e) => {
+				e && u((n) => ({
+					...n,
+					[t]: {
+						context: e.context,
+						steps: e.steps
+					}
+				}));
+			}, (e) => {
+				f((n) => ({
+					...n,
+					[t]: e instanceof Error ? e.message : String(e)
+				}));
+			});
+		}
 	}, [t]);
-	let f = R(() => {
+	let m = R(() => {
 		let e = /* @__PURE__ */ new Map(), n = [];
 		for (let r of t) {
 			let t = `${r.runId}::${r.stepId}`;
 			if (s.has(t)) continue;
 			let i = e.get(r.pipelineId);
 			i === void 0 && (i = le(r.pipelineId), e.set(r.pipelineId, i));
-			let a = i?.name ?? (r.pipelineId ? `Pipeline ${r.pipelineId.slice(0, 8)}` : "Unknown pipeline"), c = l[r.runId]?.context ?? o[r.runId]?.context, u = l[r.runId]?.steps;
+			let a = i?.name ?? (r.pipelineId ? `Pipeline ${r.pipelineId.slice(0, 8)}` : "Unknown pipeline"), c = l[r.runId]?.context ?? o[r.runId]?.context, u = l[r.runId]?.steps, f = c ? void 0 : d[r.runId];
 			n.push({
 				...r,
 				pipelineName: a,
 				runContext: c,
-				runSteps: u
+				runSteps: u,
+				runFetchError: f
 			});
 		}
 		return n;
@@ -22228,8 +22300,9 @@ function Zd() {
 		t,
 		s,
 		o,
-		l
-	]), p = I((t, n, r, i, o) => {
+		l,
+		d
+	]), h = I((t, n, r, i, o) => {
 		a(n, r, i, o || void 0), c((e) => {
 			let t = new Set(e);
 			return t.add(`${n}::${r}`), t;
@@ -22245,7 +22318,7 @@ function Zd() {
 		}).catch((e) => {
 			console.error("[approvals] POST failed", e);
 		}), e(`/pipelines/${t}/runs/${n}`);
-	}, [a, e]), m = f.length;
+	}, [a, e]), g = m.length;
 	return /* @__PURE__ */ U("div", {
 		"data-testid": "pending-approvals-page",
 		className: "flex flex-col h-full overflow-hidden bg-surface-inset font-[inherit]",
@@ -22258,9 +22331,9 @@ function Zd() {
 					children: "Pending approvals"
 				}), /* @__PURE__ */ H(x, {
 					"data-testid": "pending-count",
-					tone: m > 0 ? "warning" : "neutral",
+					tone: g > 0 ? "warning" : "neutral",
 					size: "sm",
-					children: m
+					children: g
 				})]
 			})
 		}), /* @__PURE__ */ U("div", {
@@ -22278,7 +22351,7 @@ function Zd() {
 					className: "px-3.5 py-1.5 text-[13px] font-medium bg-white text-danger-fg border border-danger rounded-md cursor-pointer font-[inherit]",
 					children: "Retry"
 				})]
-			}) : null, n && m === 0 ? /* @__PURE__ */ U("div", {
+			}) : null, n && g === 0 ? /* @__PURE__ */ U("div", {
 				"data-testid": "approvals-loading",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
 				children: [
@@ -22286,7 +22359,7 @@ function Zd() {
 					/* @__PURE__ */ H(T, { height: 140 }),
 					/* @__PURE__ */ H(T, { height: 140 })
 				]
-			}) : m === 0 && !r ? /* @__PURE__ */ H(w, {
+			}) : g === 0 && !r ? /* @__PURE__ */ H(w, {
 				icon: "✋",
 				title: "No pending approvals",
 				body: "When a pipeline reaches an approval step, it'll show up here.",
@@ -22294,10 +22367,10 @@ function Zd() {
 			}) : /* @__PURE__ */ H("div", {
 				"data-testid": "approvals-list",
 				className: "flex flex-col gap-3 max-w-[680px] mx-auto",
-				children: f.map((t) => /* @__PURE__ */ H(Xd, {
+				children: m.map((t) => /* @__PURE__ */ H(Xd, {
 					row: t,
 					onOpenPipeline: () => e(`/pipelines/${t.pipelineId}`),
-					onSubmit: (e, n) => p(t.pipelineId, t.runId, t.stepId, e, n)
+					onSubmit: (e, n) => h(t.pipelineId, t.runId, t.stepId, e, n)
 				}, `${t.runId}:${t.stepId}`))
 			})]
 		})]
@@ -23427,50 +23500,51 @@ function kf({ entries: e, selectedImageId: t, onSelect: n, maxRenderedNodes: i =
 }
 //#endregion
 //#region src/components/pipelines/lineage/useImageLineage.ts
-var Af = /* @__PURE__ */ new Map(), jf = 6e4;
-function Mf(e) {
+var Af = /* @__PURE__ */ new Map(), jf = 6e4, Mf = /* @__PURE__ */ new Map();
+function Nf(e) {
 	let t = Af.get(e);
 	return t ? Date.now() - t.fetchedAt > jf ? (Af.delete(e), null) : t.entries : null;
 }
-function Nf(e, t) {
+function Pf(e, t) {
 	Af.set(e, {
 		entries: t,
 		fetchedAt: Date.now()
 	});
 }
-function Pf() {
-	Af.clear();
+function Ff() {
+	Af.clear(), Mf.clear();
 }
-function Ff(e, t) {
-	let [n, r] = B(() => e ? Mf(e) ?? [] : []), [i, a] = B(!1), [o, s] = B(null), c = z(0), l = I(() => {
+function If(e, t) {
+	let n = Mf.get(e);
+	if (n) return n;
+	let r = `/api/pipeline/runs/${encodeURIComponent(e)}/image-lineage?pipelineId=${encodeURIComponent(t)}`, i = fetch(r, {
+		headers: { "Content-Type": "application/json" },
+		credentials: "include"
+	}).then(async (t) => {
+		if (!t.ok) throw Error(`image-lineage: ${t.status} ${t.statusText}`);
+		let n = await t.json(), r = Array.isArray(n.entries) ? n.entries : [];
+		return Pf(e, r), r;
+	}).finally(() => {
+		Mf.get(e) === i && Mf.delete(e);
+	});
+	return Mf.set(e, i), i;
+}
+function Lf(e, t) {
+	let [n, r] = B(() => e ? Nf(e) ?? [] : []), [i, a] = B(!1), [o, s] = B(null), c = z(0), l = I(() => {
 		if (!e || !t) return;
-		let n = Mf(e);
+		let n = Nf(e);
 		if (n) {
 			r(n), a(!1), s(null);
 			return;
 		}
 		let i = ++c.current;
-		a(!0), s(null);
-		let o = `/api/pipeline/runs/${encodeURIComponent(e)}/image-lineage?pipelineId=${encodeURIComponent(t)}`;
-		fetch(o, {
-			headers: { "Content-Type": "application/json" },
-			credentials: "include"
-		}).then(async (t) => {
-			if (i !== c.current) return;
-			if (!t.ok) {
-				let e = `image-lineage: ${t.status} ${t.statusText}`;
-				s(e), a(!1);
-				return;
-			}
-			let n = await t.json();
-			if (i !== c.current) return;
-			let o = Array.isArray(n.entries) ? n.entries : [];
-			Nf(e, o), r(o), a(!1);
+		a(!0), s(null), If(e, t).then((e) => {
+			i === c.current && (r(e), a(!1));
 		}).catch((e) => {
 			i === c.current && (s(e instanceof Error ? e.message : String(e)), a(!1));
 		});
 	}, [e, t]), u = I(() => {
-		e && Af.delete(e), l();
+		e && (Af.delete(e), Mf.delete(e)), l();
 	}, [e, l]);
 	return L(() => {
 		l();
@@ -23482,4 +23556,4 @@ function Ff(e, t) {
 	};
 }
 //#endregion
-export { Bt as ActionNode, rs as AdjustBwConfig, yn as AdjustBwNode, xs as AdjustLayerConfig, xn as AdjustLayerNode, en as AgUiOutputNode, qt as AgentNode, uf as AggregateSummaryCard, jd as AllRunsPage, Wn as AnimatedEdge, Kt as ApprovalNode, K as BaseNode, sc as CaptionPanel, Rt as ConditionNode, Y as ConfigField, sa as ConfigSection, Ia as ContextVariablePicker, nf as CriteriaPanel, ts as CropConfig, vn as CropNode, Cs as DimensionsConfig, Sn as DimensionsNode, qs as EditPromptConfig, Bn as EditPromptNode, gc as EditRecommendationsPanel, ee as EventStreamProvider, Vt as ForkNode, Fo as FormatConvertConfig, mn as FormatConvertNode, Hs as GenerateConfig, Fn as GenerateNode, Xt as GraphQueryNode, Qt as GuardrailNode, kf as ImageLineageGraph, Ys as ImageSourceConfig, nn as ImageSourceNode, lc as ImageWithBBoxOverlay, Wt as JoinNode, of as JudgmentApiProvider, cf as JudgmentResultViewer, df as JudgmentTrendChart, Yt as KnowledgeBaseNode, Pt as LLMNode, Jt as McpToolNode, Zt as MemoryNode, Dt as NODE_CATEGORIES, Dc as NODE_TYPES_WITHOUT_CONFIG, X as NodeConfigShell, vr as NodePalette, on as NodeThumbStrip, fc as ObjectsPanel, ar as PALETTE_ITEMS, Ot as PORT_CLS, Zd as PendingApprovalsPage, dc as PeoplePanel, Ir as PipelineCanvas, N as PipelineEditorContext, Yc as PipelineEditorPage, de as PipelineEditorProvider, He as PipelineEditorServicesProvider, re as PipelineNodeRuntimeProvider, ld as PipelineRunComparePage, Ad as PipelineRunDiff, Wu as PipelineRunReplayPage, _u as PipelineRunsPage, ne as PipelineRunsProvider, Gd as PipelineStatsPage, Bl as PipelinesPage, $t as PolicyNode, Eo as ResizeConfig, un as ResizeNode, ca as SamplePills, Zs as SaveConfig, sn as SaveNode, wo as ScatterConfig, ln as ScatterNode, Io as SharpenConfig, hn as SharpenNode, _a as SourceImagePathField, pc as TagsPanel, va as ToggleField, jo as TransformGeoConfig, fn as TransformGeoNode, It as TransformNode, jt as TriggerNode, Ts as UpscaleConfig, Cn as UpscaleNode, Gs as VariationConfig, Ln as VariationNode, tf as VerdictPanel, Ps as VisionClassifyConfig, kn as VisionClassifyNode, As as VisionConfig, Fs as VisionDescribeConfig, An as VisionDescribeNode, Ls as VisionExtractTextConfig, Mn as VisionExtractTextNode, On as VisionNode, _c as VisionResultViewer, Qd as VisionRunCard, Ms as VisionTagConfig, jn as VisionTagNode, Ro as WatermarkConfig, gn as WatermarkNode, da as availableContextPaths, ma as availableImageRefs, q as categoryFor, Pf as clearImageLineageCache, la as contextContributions, uc as imageOverlayPropsFrom, Vn as nodeTypes, J as portCls, fr as recordRecentType, fa as unresolvedTemplatePaths, ua as upstreamNodeIds, k as useEventStream, A as useEventStreamContext, Ff as useImageLineage, Fe as useImageUrl, Be as useIsNodeTypeExecutable, hf as useJudgmentAggregates, sf as useJudgmentApi, mf as useJudgmentResults, F as useLatestStepForNode, pe as usePipelineEditor, Ve as usePipelineEditorServices, fe as usePipelineNodeRuntime, _e as usePipelineRuns, M as useRetryFromStep, ha as useUpstreamContext, ga as useUpstreamImageRefs, $d as useVisionResults };
+export { Bt as ActionNode, rs as AdjustBwConfig, yn as AdjustBwNode, xs as AdjustLayerConfig, xn as AdjustLayerNode, en as AgUiOutputNode, qt as AgentNode, uf as AggregateSummaryCard, jd as AllRunsPage, Wn as AnimatedEdge, Kt as ApprovalNode, K as BaseNode, sc as CaptionPanel, Rt as ConditionNode, Y as ConfigField, sa as ConfigSection, Ia as ContextVariablePicker, nf as CriteriaPanel, ts as CropConfig, vn as CropNode, Cs as DimensionsConfig, Sn as DimensionsNode, qs as EditPromptConfig, Bn as EditPromptNode, gc as EditRecommendationsPanel, ee as EventStreamProvider, Vt as ForkNode, Fo as FormatConvertConfig, mn as FormatConvertNode, Hs as GenerateConfig, Fn as GenerateNode, Xt as GraphQueryNode, Qt as GuardrailNode, kf as ImageLineageGraph, Ys as ImageSourceConfig, nn as ImageSourceNode, lc as ImageWithBBoxOverlay, Wt as JoinNode, of as JudgmentApiProvider, cf as JudgmentResultViewer, df as JudgmentTrendChart, Yt as KnowledgeBaseNode, Pt as LLMNode, Jt as McpToolNode, Zt as MemoryNode, Dt as NODE_CATEGORIES, Dc as NODE_TYPES_WITHOUT_CONFIG, X as NodeConfigShell, vr as NodePalette, on as NodeThumbStrip, fc as ObjectsPanel, ar as PALETTE_ITEMS, Ot as PORT_CLS, Zd as PendingApprovalsPage, dc as PeoplePanel, Ir as PipelineCanvas, N as PipelineEditorContext, Yc as PipelineEditorPage, de as PipelineEditorProvider, He as PipelineEditorServicesProvider, re as PipelineNodeRuntimeProvider, ld as PipelineRunComparePage, Ad as PipelineRunDiff, Wu as PipelineRunReplayPage, _u as PipelineRunsPage, ne as PipelineRunsProvider, Gd as PipelineStatsPage, Bl as PipelinesPage, $t as PolicyNode, Eo as ResizeConfig, un as ResizeNode, ca as SamplePills, Zs as SaveConfig, sn as SaveNode, wo as ScatterConfig, ln as ScatterNode, Io as SharpenConfig, hn as SharpenNode, _a as SourceImagePathField, pc as TagsPanel, va as ToggleField, jo as TransformGeoConfig, fn as TransformGeoNode, It as TransformNode, jt as TriggerNode, Ts as UpscaleConfig, Cn as UpscaleNode, Gs as VariationConfig, Ln as VariationNode, tf as VerdictPanel, Ps as VisionClassifyConfig, kn as VisionClassifyNode, As as VisionConfig, Fs as VisionDescribeConfig, An as VisionDescribeNode, Ls as VisionExtractTextConfig, Mn as VisionExtractTextNode, On as VisionNode, _c as VisionResultViewer, Qd as VisionRunCard, Ms as VisionTagConfig, jn as VisionTagNode, Ro as WatermarkConfig, gn as WatermarkNode, da as availableContextPaths, ma as availableImageRefs, q as categoryFor, Ff as clearImageLineageCache, la as contextContributions, uc as imageOverlayPropsFrom, Vn as nodeTypes, J as portCls, fr as recordRecentType, fa as unresolvedTemplatePaths, ua as upstreamNodeIds, k as useEventStream, A as useEventStreamContext, Lf as useImageLineage, Fe as useImageUrl, Be as useIsNodeTypeExecutable, hf as useJudgmentAggregates, sf as useJudgmentApi, mf as useJudgmentResults, F as useLatestStepForNode, pe as usePipelineEditor, Ve as usePipelineEditorServices, fe as usePipelineNodeRuntime, _e as usePipelineRuns, M as useRetryFromStep, ha as useUpstreamContext, ga as useUpstreamImageRefs, $d as useVisionResults };

@@ -1,9 +1,9 @@
 import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-Be2vqdKv.js";
-import { n as i } from "./IdentityContext-m2wQF4sJ.js";
+import { n as i } from "./IdentityContext-CQM1qwH6.js";
 import "./useWebSocket-BKfGpImp.js";
 import "./useSocialProfile-DHI6vBUX.js";
-import "./useSyncConflicts-DNj4F6oF.js";
+import "./useSyncConflicts-BfD5J3QA.js";
 import "./useDocumentTypes-C-AMWgYq.js";
 import { n as a } from "./ToastProvider-DPq8u2eM.js";
 import "./useEventCallback-Cwx9QVSi.js";
@@ -151,7 +151,7 @@ function O(e = D) {
 		checks: {},
 		failing: []
 	});
-	return l(!1), s(() => {}, ["", e]), t;
+	return s(() => {}, ["", e]), t;
 }
 //#endregion
 //#region src/hooks/identityApi.ts

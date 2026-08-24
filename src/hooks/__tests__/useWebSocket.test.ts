@@ -42,6 +42,21 @@ function opts(overrides: Partial<Parameters<typeof useWebSocket>[0]> = {}) {
 
 function ws() { return MockWebSocket.instances[MockWebSocket.instances.length - 1]; }
 
+/**
+ * `MockWebSocket.instances` is an append-only log of every socket ever
+ * constructed, so its length is not "how many connections exist" — the suite
+ * runs under StrictMode, where the mount effect runs twice and the first
+ * pass's socket is legitimately created and then closed by its cleanup.
+ *
+ * What the hook actually owes callers is that it never leaves a *live*
+ * connection dangling, so assert on the open ones. This holds under a single
+ * mount too, which is why it is the right expectation rather than a doubled
+ * instance count.
+ */
+function liveSockets() {
+  return MockWebSocket.instances.filter((s) => s.readyState !== MockWebSocket.CLOSED);
+}
+
 // ---------------------------------------------------------------------------
 // Setup / teardown
 // ---------------------------------------------------------------------------
@@ -67,7 +82,10 @@ afterEach(() => {
 describe('initial state', () => {
   it('creates a WebSocket on mount and enters connecting', () => {
     const { result } = renderHook(() => useWebSocket(opts()));
-    expect(MockWebSocket.instances).toHaveLength(1);
+    // Exactly one socket is live, and every socket a discarded mount pass
+    // opened was closed by its cleanup.
+    expect(liveSockets()).toHaveLength(1);
+    expect(liveSockets()[0]).toBe(ws());
     expect(result.current.connectionState).toBe('connecting');
   });
 
@@ -180,8 +198,12 @@ describe('reconnect', () => {
   it('creates a fresh socket and reconnects', () => {
     const { result } = renderHook(() => useWebSocket(opts()));
     act(() => { ws().open(); });
+    const before = MockWebSocket.instances.length;
     act(() => { result.current.reconnect(); });
-    expect(MockWebSocket.instances).toHaveLength(2);
+    // One *additional* socket, not a fixed total: the mount count is a
+    // StrictMode artefact, "reconnect opens exactly one fresh socket" is not.
+    expect(MockWebSocket.instances).toHaveLength(before + 1);
+    expect(liveSockets()).toHaveLength(1);
     act(() => { ws().open(); });
     expect(result.current.connectionState).toBe('connected');
   });
@@ -196,9 +218,13 @@ describe('retry on unexpected close', () => {
 
   it('creates a new socket after the backoff timer fires', () => {
     renderHook(() => useWebSocket(opts()));
-    act(() => { ws().open(); ws().serverClose(); });
+    act(() => { ws().open(); });
+    const before = MockWebSocket.instances.length;
+    act(() => { ws().serverClose(); });
     act(() => { vi.runAllTimers(); });
-    expect(MockWebSocket.instances).toHaveLength(2);
+    // The backoff timer opens exactly one replacement, however many sockets
+    // the mount passes happened to construct.
+    expect(MockWebSocket.instances).toHaveLength(before + 1);
   });
 
   it('sets RECONNECT_EXHAUSTED error after MAX_RETRIES closes', () => {

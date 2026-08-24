@@ -170,7 +170,9 @@ describe('useIdentityResource', () => {
         ),
       );
       await waitFor(() => expect(result.current.loading).toBe(false));
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      // Absolute count after mount is a StrictMode artifact (the mount effect
+      // runs twice). What refresh() must guarantee is one *additional* fetch.
+      const afterMount = mockFetch.mock.calls.length;
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -180,7 +182,7 @@ describe('useIdentityResource', () => {
 
       await act(() => result.current.refresh());
       await waitFor(() => expect(result.current.data.count).toBe(5));
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetch.mock.calls.length).toBe(afterMount + 1);
     });
   });
 });

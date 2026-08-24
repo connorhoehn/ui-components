@@ -106,8 +106,12 @@ describe('ActivityPanel hydrate', () => {
     // toast the hook fires — so assert on the message itself.
     expect(screen.getByText('HTTP 503')).toBeInTheDocument();
 
+    // Assert the DELTA, not the total: the suite runs under StrictMode, so the
+    // hydrate effect already ran twice before the click. What Retry owes is
+    // "one more request than there were", which reads the same either way.
+    const beforeRetry = failing.mock.calls.length;
     fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
-    await waitFor(() => expect(failing).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(failing).toHaveBeenCalledTimes(beforeRetry + 1));
   });
 
   it('resolves to the empty state when no API base URL is configured', async () => {

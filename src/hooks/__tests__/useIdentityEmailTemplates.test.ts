@@ -35,6 +35,20 @@ function stubFetch(body: unknown, ok = true) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -78,7 +92,7 @@ describe('createTemplate', () => {
     });
 
     expect(result.current.templates).toHaveLength(1);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain('/api/email-templates');
     expect(opts.method).toBe('POST');
   });
@@ -100,7 +114,7 @@ describe('updateTemplate', () => {
     await act(async () => { await result.current.updateTemplate('t1', { subject: 'Updated Subject' }); });
 
     expect(result.current.templates[0].subject).toBe('Updated Subject');
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'PUT');
     expect(url).toContain('/api/email-templates/t1');
     expect(opts.method).toBe('PUT');
   });
@@ -121,7 +135,7 @@ describe('deleteTemplate', () => {
     await act(async () => { await result.current.deleteTemplate('t1'); });
 
     expect(result.current.templates).toHaveLength(0);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'DELETE');
     expect(url).toContain('/api/email-templates/t1');
     expect(opts.method).toBe('DELETE');
   });
@@ -141,7 +155,7 @@ describe('testSend', () => {
     fetchMock.mockResolvedValueOnce({ ok: true, status: 200, json: () => Promise.resolve(null) } as unknown as Response);
     await act(async () => { await result.current.testSend('t1', 'test@example.com'); });
 
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain('/api/email-templates/t1/test');
     expect(opts.method).toBe('POST');
   });

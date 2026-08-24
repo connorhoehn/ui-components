@@ -8,6 +8,152 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.95.0] — 2026-08-24
+
+Four parallel efforts. **19 bugs**, plus the whole suite now runs under
+React StrictMode. Tests 4,666 → 4,736.
+
+### The suite runs under StrictMode
+
+`configure({ reactStrictMode: true })` in `src/test-setup.ts`. RTL's
+`renderHook` is built on `render`, so one flip covers hooks and components
+alike — which was the deciding factor, since three of last release's
+confirmed double-invocation bugs were hook-side. **87 tests across 33 files
+failed** on the flip. Triaged individually: **5 were real bugs**, the other
+83 were assertion churn.
+
+The churn is worth describing, because "double the expected number" would
+have been the wrong fix in every case: 42 tests looked up
+`fetchMock.mock.calls[1]`, encoding "index 0 is the mount fetch" — now
+selected by method/URL rather than re-hardcoded at `[2]`. 20 asserted
+absolute poll counts — now deltas ("one interval adds exactly one fetch"),
+a number identical with or without StrictMode, which is what makes it the
+right expectation. 21 were append-only recorder fixtures, now keyed maps.
+
+**One documented opt-out**, in `RecordingPlayer`'s hls.js block: the
+component loads its engine with `import(/* @vite-ignore */ 'hls.js')`, and
+that pragma stops vitest routing the specifier through `vi.mock`, so the test
+file and the component don't reliably share a module instance. Verified this
+is a test-infrastructure artifact and not the component: instrumenting the
+effect shows both passes take the hls branch with a live video ref, pass 1
+correctly bails on its own cancelled flag, and pass 2 runs through to engine
+construction.
+
+### Fixed — real bugs the StrictMode flip caught immediately
+
+- **Fabricated data replaced real data.** `useSyncConflicts` reset a shared
+  cancel ref to `false` at the top of each effect run, undoing the previous
+  cleanup's cancellation. `refresh` is memoised on `idToken`, so after a token
+  refresh the *old* token's request could still write — and both its 404 and
+  its failure branches swap in `buildMockConflicts()`. The Sync Conflicts page
+  silently replaced real conflicts with **fabricated rows**, and the operator
+  then resolved and discarded against conflicts that don't exist.
+- `useIngestSources` had the same resurrected flag: last-to-resolve won
+  regardless of last-to-be-issued, so the list could be overwritten by a
+  response fetched under the previous token.
+- `useCallWidgetPersistence` marked a write pending on its *first* run, so any
+  mount/unmount inside the debounce window persisted a value the user never
+  produced — including re-creating a key the corrupt-JSON path had just
+  deliberately removed.
+- `useImageLineage`'s cache didn't dedupe concurrent callers, despite its
+  header promising exactly that.
+- `useApiHealth` could let a superseded `/health` sample mis-colour the
+  degraded banner.
+
+Three of these are the same anti-pattern `usePipelineMetrics` already warns
+about in a comment. Nothing enforced it; now something does.
+
+### Fixed — a failure that renders as an answer (6 bugs)
+
+- **`getPipelineRun` conflated "not found" with "request failed"**, so a dead
+  API rendered "Run not available — it may have been trimmed from history."
+  The user is told their run was garbage-collected when the server is simply
+  down. Now rejects for transport/5xx/401, resolves `null` only for a real
+  404, and both callers gained real error branches — `PipelineRunReplayPage`
+  offers a Retry; `PendingApprovalsPage` warns per card rather than falling
+  through to "upstream steps haven't produced reviewable output yet", which an
+  approver would act on.
+- `usePendingApprovals`' "no endpoint" `null` also swallowed
+  `TypeError: Failed to fetch`, rendering **"No pending approvals"** while runs
+  sat blocked.
+- `savePipeline` resolved whether or not the PUT landed: `dirty` cleared, the
+  editor flashed **"Saved"**, and the user closed the tab believing the
+  pipeline was on the server when it was localStorage-only.
+- `publishPipeline` returned `null` for both "no such pipeline" and "publish
+  failed", so the editor fired a green **"Pipeline published"** over a
+  still-Draft pipeline.
+- `useIngestItems` / `useIngestSources` wrote action failures into the *list
+  loader's* error, so one rejected Skip hid a correctly-loaded table behind
+  "Failed to load ingest items."
+- `TypedDocumentForm`'s `coerceSingle` treated un-coercible as empty, silently
+  stripping a bad optional number while the form said "✓ Saved".
+
+`ObservabilityContext` now sends credentials without a hard `IdentityProvider`
+dependency (new `useOptionalIdentityContext`), distinguishes 401/403 from
+unreachable, and the pill reads "not authorized — fixture" instead of a muted
+"fixture" whose tooltip blamed the backend.
+
+### Fixed — collaboration (4 bugs)
+
+- **Departing clients lingered in the participant list.** The awareness sender
+  is debounced 50ms, and `destroy()` only cleared local state, so the "I've
+  left" broadcast was scheduled *after* the channel unsubscribe — and on page
+  unload never ran at all. Close a document and your avatar stayed in every
+  colleague's list until timeout, or forever.
+- **Presence was never attached to a section.** The awareness updaters were
+  stable, but the *object* holding them was a fresh literal each render, and
+  it sits in a 500ms auto-focus effect's dependency array — so a live session
+  cleared and restarted that timer forever. No avatar on any section card, and
+  follow-mode had nothing to aim at.
+- **Duplicate sections were never repaired.** `dedupeSectionsById` ran only on
+  the `synced` edge — before the other client's copy merged in. Two people
+  opening the same new templated document saw every section listed twice,
+  permanently, while the design comment claimed this pass healed the race.
+- `itemErrors` (added in v2.93.0) is finally rendered: a section whose items
+  failed to load no longer shows the same empty state as one with none.
+
+### Fixed — resource leaks in video
+
+- **A stranded screen capture kept Chrome's sharing bar up for the tab's
+  lifetime.** `isScreenSharing` only flips true *after* `getDisplayMedia`
+  resolves, so a second click during the OS picker acquired a second capture
+  and orphaned the first — unreachable by any UI. Worse, the `ended` handler
+  read the current ref, so "Stop sharing" on the stale bar killed the **live**
+  share.
+- **A detached `<audio>` kept playing.** The branch split deliberately never
+  renders `<audio>` and `<StreamVideo>` together to avoid double playback, but
+  React only *detaches* the node and a detached element with a live
+  `srcObject` keeps producing sound — so a participant turning their camera on
+  became audible twice for the rest of the call.
+- The hls.js engine was keyed to render identity via an `onError` prop in its
+  deps, so a parent mirroring `onTimeUpdate` rebuilt the decoder several times
+  a second and the recording never advanced.
+
+### Added
+
+`StandaloneTiptap` gains opt-in `requireSync`. Bootstrap mode mounts before
+any server snapshot arrives, so a user can type into what looks like an empty
+document and have the server's content merge *around* their text. Opt-in
+rather than default because a gateway that sends no snapshot for a brand-new
+document never fires `synced`, and an unconditional gate would hang the editor
+forever. `onFragmentReady` respects it too — seeding an unsynced doc is the
+same corruption by another route.
+
+Also additive: `useOptionalIdentityContext`, `ObservabilityProvider`
+`authToken`/`fetchImpl`/`credentials`, `ObservabilityValue.unauthorized`,
+`PipelineEditorContextValue.publishError`/`clearPublishError`/`publishedAt`,
+`actionError` on the two ingest hooks.
+
+### Packaging
+
+The packed-tarball consumer check found that `optional: true` on the peer deps
+is partly a lie: with them absent, **8 of 13 subpaths fail to import**, because
+`shared/Chart.tsx` imports recharts at module scope and is `export *`'d from
+the barrel. Not changed here — moving Chart out is breaking and needs a
+consumer handoff — but the per-entry-point peer surface is now pinned by a
+test tracking **static** and **dynamic** imports separately, since only the
+static kind breaks the import itself.
+
 ## [2.94.0] — 2026-08-24
 
 ### Fixed — form labels outside `pipelines/`

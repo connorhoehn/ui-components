@@ -61,6 +61,30 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+/**
+ * The suite runs under React StrictMode, so mount effects fire twice and the
+ * mutation's fetch is no longer at a fixed index. Select the call we actually
+ * mean by its method (and optionally a URL fragment) instead of by position.
+ */
+function callWith(
+  fetchMock: { mock: { calls: unknown[][] } },
+  method: string,
+  urlPart?: string,
+): [string, RequestInit] {
+  const call = fetchMock.mock.calls.find(
+    (c) =>
+      (c[1] as RequestInit | undefined)?.method === method &&
+      (urlPart === undefined || String(c[0]).includes(urlPart)),
+  );
+  if (!call) {
+    throw new Error(
+      `no fetch call with method ${method}` +
+        (urlPart ? ` and url containing ${urlPart}` : ''),
+    );
+  }
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -157,7 +181,7 @@ describe('createRoom', () => {
     await act(async () => { await result.current.createRoom('General'); });
 
     expect(result.current.rooms[0].name).toBe('General');
-    const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[1].method).toBe('POST');
     expect(JSON.parse(postCall[1].body as string)).toEqual({ name: 'General' });
   });
@@ -194,7 +218,7 @@ describe('leaveRoom', () => {
     await act(async () => { await result.current.leaveRoom('r1'); });
 
     expect(result.current.rooms).toHaveLength(0);
-    const leaveCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const leaveCall = callWith(fetchMock, 'DELETE');
     expect(leaveCall[0]).toContain('/api/rooms/r1/leave');
     expect(leaveCall[1].method).toBe('DELETE');
   });

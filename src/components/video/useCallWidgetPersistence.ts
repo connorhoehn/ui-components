@@ -78,15 +78,41 @@ export function useCallWidgetPersistence({
   const latestStateRef = useRef(state);
   latestStateRef.current = state;
 
+  // What storage is already known to hold, and under which key. Seeded with
+  // the HYDRATED value, because nothing is owed for it — `state` on the first
+  // render is precisely what we just read out of storage (or the defaults we
+  // fell back to).
+  //
+  // Without this the debounce effect marked a write pending on its very first
+  // run, so a mount/unmount pair inside the debounce window made the flush
+  // below persist a value the user never produced. Two ways that bit:
+  // hydration that fell back (corrupt JSON, version mismatch, fullscreen→mini)
+  // had its fallback written straight back over the stored entry — including
+  // re-creating the key the corrupt-JSON path had deliberately removed — and
+  // any double-mount (StrictMode, an <Activity>/Offscreen re-show, a Suspense
+  // retry) triggered it on every single mount.
+  const persistedRef = useRef<{ key: string | undefined; value: PersistedWidgetState }>({
+    key: persistKey,
+    value: state,
+  });
+
   const write = useCallback((key: string, value: PersistedWidgetState) => {
     try {
       const stored: Stored = { v: STORAGE_VERSION, ...value };
       window.localStorage.setItem(key, JSON.stringify(stored));
+      persistedRef.current = { key, value };
     } catch { /* quota / private mode — ignore */ }
   }, []);
 
   useEffect(() => {
     if (!persistKey || typeof window === 'undefined') return;
+    // Nothing changed since the last write/hydrate — no write is owed, so
+    // don't arm the debounce and don't mark a flush pending. `setState` always
+    // produces a fresh object, so identity is the right comparison; a changed
+    // `persistKey` still seeds the new key with the on-screen state.
+    if (persistedRef.current.key === persistKey && persistedRef.current.value === state) {
+      return;
+    }
     if (timerRef.current) clearTimeout(timerRef.current);
     pendingRef.current = true;
     timerRef.current = setTimeout(() => {

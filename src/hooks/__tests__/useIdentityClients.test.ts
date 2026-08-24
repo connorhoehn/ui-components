@@ -34,6 +34,20 @@ function stubFetch(body: unknown, ok = true) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -75,7 +89,7 @@ describe('createClient', () => {
     await act(async () => { await result.current.createClient({ clientName: 'Test', poolId: 'p1', redirectUris: [] }); });
 
     expect(result.current.clients).toHaveLength(1);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain('/api/clients');
     expect(opts.method).toBe('POST');
   });
@@ -97,7 +111,7 @@ describe('updateClient', () => {
     await act(async () => { await result.current.updateClient('c1', { clientName: 'Updated' }); });
 
     expect(result.current.clients[0].clientName).toBe('Updated');
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'PUT');
     expect(url).toContain('/api/clients/c1');
     expect(opts.method).toBe('PUT');
   });
@@ -118,7 +132,7 @@ describe('deleteClient', () => {
     await act(async () => { await result.current.deleteClient('c1'); });
 
     expect(result.current.clients).toHaveLength(0);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'DELETE');
     expect(url).toContain('/api/clients/c1');
     expect(opts.method).toBe('DELETE');
   });
@@ -139,7 +153,7 @@ describe('createWithPool', () => {
     await act(async () => { await result.current.createWithPool({ clientName: 'New', poolName: 'pool', redirectUris: [] }); });
 
     expect(result.current.clients).toHaveLength(1);
-    const [url, opts] = fetchMock.mock.calls[1] as [string, RequestInit];
+    const [url, opts] = callWith(fetchMock, 'POST');
     expect(url).toContain('/api/clients/with-pool');
     expect(opts.method).toBe('POST');
   });

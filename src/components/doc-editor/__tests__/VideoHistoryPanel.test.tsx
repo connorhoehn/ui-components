@@ -33,10 +33,24 @@ afterEach(() => {
 });
 
 describe('VideoHistoryPanel', () => {
-  it('calls onFetch exactly once on mount', () => {
+  // The panel loads its history from a mount effect. The suite runs under
+  // StrictMode, where React deliberately mounts, unmounts and remounts, so the
+  // effect fires twice — that is correct for an idempotent GET and asserting
+  // "exactly 1" would only be asserting that StrictMode is off. What actually
+  // matters (and what a bug would break) is that a re-render with the SAME
+  // callback does not refetch: `onFetch` is in the effect's dep array, so an
+  // unstable host callback would put the panel in a fetch-render-fetch loop.
+  it('fetches on mount and does not refetch on re-render with a stable callback', () => {
     const onFetch = vi.fn();
-    render(<VideoHistoryPanel sessions={[]} loading={false} onFetch={onFetch} onClose={vi.fn()} />);
-    expect(onFetch).toHaveBeenCalledTimes(1);
+    const { rerender } = render(
+      <VideoHistoryPanel sessions={[]} loading={false} onFetch={onFetch} onClose={vi.fn()} />,
+    );
+    expect(onFetch).toHaveBeenCalled();
+
+    const afterMount = onFetch.mock.calls.length;
+    rerender(<VideoHistoryPanel sessions={[]} loading={false} onFetch={onFetch} onClose={vi.fn()} />);
+    rerender(<VideoHistoryPanel sessions={[]} loading={false} onFetch={onFetch} onClose={vi.fn()} />);
+    expect(onFetch).toHaveBeenCalledTimes(afterMount);
   });
 
   it('renders "Loading..." when loading=true', () => {

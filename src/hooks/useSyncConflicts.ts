@@ -97,7 +97,25 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usingMock, setUsingMock] = useState(false);
-  const cancelledRef = useRef(false);
+  // Two DIFFERENT concerns, deliberately not one flag.
+  //
+  // `mountedRef` answers "is this hook still mounted"; it is shared across
+  // effect runs, which is correct — a re-run means we are still mounted.
+  //
+  // `requestIdRef` answers "is this response still the one we want". That
+  // question used to be answered by the mount flag too, and it cannot be: the
+  // cleanup set it true-for-cancelled and the next effect run immediately set
+  // it back to false, resurrecting the cancellation. `refresh` is memoised on
+  // `idToken`, so the effect re-runs on every token refresh or identity
+  // switch — and the request issued under the OLD token then sailed past the
+  // guard. That request usually 404s or fails, and BOTH of those branches
+  // swap in `buildMockConflicts()` with `usingMock = true`, so the page could
+  // silently replace real conflicts with fabricated ones and let an operator
+  // resolve/discard against rows that do not exist. A monotonic token can't
+  // be resurrected: each call claims the next id and only the current holder
+  // may write.
+  const mountedRef = useRef(true);
+  const requestIdRef = useRef(0);
 
   const headers = useCallback((): Record<string, string> => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -106,13 +124,15 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
   }, [idToken]);
 
   const refresh = useCallback(async () => {
+    const token = ++requestIdRef.current;
+    const current = () => mountedRef.current && token === requestIdRef.current;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`${BASE_URL}/api/sync/conflicts`, { headers: headers() });
       if (res.status === 404) {
         // Endpoint not implemented yet — fall back to the mock set.
-        if (!cancelledRef.current) {
+        if (current()) {
           setConflicts(buildMockConflicts());
           setUsingMock(true);
         }
@@ -120,27 +140,31 @@ export function useSyncConflicts(): UseSyncConflictsReturn {
       }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = await res.json() as { conflicts?: SyncConflict[] };
-      if (!cancelledRef.current) {
+      if (current()) {
         setConflicts(body.conflicts ?? []);
         setUsingMock(false);
       }
     } catch (err) {
       // Network-level failure (server down, CORS, …) — keep operator working
       // against mock data so the page is still verifiable.
-      if (!cancelledRef.current) {
+      if (current()) {
         setConflicts(buildMockConflicts());
         setUsingMock(true);
         setError(err instanceof Error ? err.message : String(err));
       }
     } finally {
-      if (!cancelledRef.current) setLoading(false);
+      if (current()) setLoading(false);
     }
   }, [headers]);
 
   useEffect(() => {
-    cancelledRef.current = false;
+    mountedRef.current = true;
     void refresh();
-    return () => { cancelledRef.current = true; };
+    return () => {
+      mountedRef.current = false;
+      // Retire whatever is in flight so a superseded run can never write.
+      requestIdRef.current += 1;
+    };
   }, [refresh]);
 
   const resolveConflict = useCallback(async (id: string, resolution: ConflictResolution): Promise<boolean> => {

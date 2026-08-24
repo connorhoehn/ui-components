@@ -22,11 +22,23 @@ interface CapturedSectionBlockProps {
   onOpenComments?: (sectionId: string) => void;
 }
 
-const captures: CapturedSectionBlockProps[] = [];
+// The suite runs under React StrictMode, so every child renders twice. An
+// append-only render log would therefore hold each section twice and
+// index-based lookups would land on the wrong section. Key by the section's
+// stable identity and let each render overwrite, so the map holds the LATEST
+// props per section — and, since a Map keeps insertion order, still in
+// document order.
+const captures = new Map<string, CapturedSectionBlockProps>();
+
+function propsFor(sectionId: string): CapturedSectionBlockProps {
+  const p = captures.get(sectionId);
+  if (!p) throw new Error(`SectionBlock never rendered for section ${sectionId}`);
+  return p;
+}
 
 vi.mock('../SectionBlock', () => ({
   default: (props: CapturedSectionBlockProps) => {
-    captures.push(props);
+    captures.set(props.section.id, props);
     return <div
       data-testid="section-block"
       data-section-id={props.section.id}
@@ -49,20 +61,20 @@ function renderList(overrides: Partial<ComponentProps<typeof SectionList>> = {})
   return { ...render(<SectionList {...props} />), props };
 }
 
-beforeEach(() => { captures.length = 0; });
+beforeEach(() => { captures.clear(); });
 
 describe('SectionList', () => {
   it('renders no SectionBlock when sections is empty', () => {
     renderList();
     expect(screen.queryAllByTestId('section-block')).toHaveLength(0);
-    expect(captures).toHaveLength(0);
+    expect(captures.size).toBe(0);
   });
 
   it('renders one SectionBlock per section in document order', () => {
     renderList({ sections: [mkSection('a'), mkSection('b'), mkSection('c')] });
     const blocks = screen.getAllByTestId('section-block');
     expect(blocks.map(b => b.dataset.sectionId)).toEqual(['a', 'b', 'c']);
-    expect(captures.map(c => c.section.id)).toEqual(['a', 'b', 'c']);
+    expect([...captures.keys()]).toEqual(['a', 'b', 'c']);
   });
 
   it('calls getSectionFragment per section.id and forwards the returned fragment', () => {
@@ -74,8 +86,8 @@ describe('SectionList', () => {
     renderList({ sections: [mkSection('a'), mkSection('b')], getSectionFragment });
     expect(getSectionFragment).toHaveBeenCalledWith('a');
     expect(getSectionFragment).toHaveBeenCalledWith('b');
-    expect(captures.find(c => c.section.id === 'a')?.fragment).toBe(fragA);
-    expect(captures.find(c => c.section.id === 'b')?.fragment).toBe(fragB);
+    expect(propsFor('a').fragment).toBe(fragA);
+    expect(propsFor('b').fragment).toBe(fragB);
   });
 
   it('filters participants per section by currentSectionId', () => {
@@ -85,7 +97,7 @@ describe('SectionList', () => {
     });
     const participants = [mk('a', 'c1'), mk('a', 'c2'), mk('b', 'c3'), mk(null, 'c4')];
     renderList({ sections: [mkSection('a'), mkSection('b'), mkSection('c')], participants });
-    const byId = (id: string) => captures.find(c => c.section.id === id)!;
+    const byId = propsFor;
     expect(byId('a').participants?.map(p => p.clientId)).toEqual(['c1', 'c2']);
     expect(byId('b').participants?.map(p => p.clientId)).toEqual(['c3']);
     expect(byId('c').participants).toEqual([]);
@@ -97,7 +109,7 @@ describe('SectionList', () => {
       b: [{ id: 'cmt-3' } as CommentThread],
     };
     renderList({ sections: [mkSection('a'), mkSection('b'), mkSection('c')], comments });
-    const byId = (id: string) => captures.find(c => c.section.id === id)!;
+    const byId = propsFor;
     expect(byId('a').comments.map(c => c.id)).toEqual(['cmt-1', 'cmt-2']);
     expect(byId('a').commentCount).toBe(2);
     expect(byId('b').comments.map(c => c.id)).toEqual(['cmt-3']);
@@ -113,7 +125,7 @@ describe('SectionList', () => {
     });
     expect(screen.getAllByTestId('section-block').map(b => b.dataset.isFocused))
       .toEqual(['false', 'true', 'false']);
-    captures.length = 0;
+    captures.clear();
     rerender(<SectionList {...props} focusedSectionId={null} />);
     for (const b of screen.getAllByTestId('section-block')) expect(b.dataset.isFocused).toBe('false');
   });
@@ -121,7 +133,7 @@ describe('SectionList', () => {
   it('per-section onUpdateSection proxy routes to parent with the right section id', () => {
     const onUpdateSection = vi.fn();
     renderList({ sections: [mkSection('a'), mkSection('b')], onUpdateSection });
-    captures[1].onUpdateSection({ title: 'renamed' });
+    propsFor('b').onUpdateSection({ title: 'renamed' });
     expect(onUpdateSection).toHaveBeenCalledTimes(1);
     expect(onUpdateSection).toHaveBeenCalledWith('b', { title: 'renamed' });
   });
@@ -135,9 +147,9 @@ describe('SectionList', () => {
       text: 'x', status: 'pending', assignee: '', ackedBy: '',
       ackedAt: '', priority: 'medium', notes: '',
     } as Omit<TaskItem, 'id'>;
-    captures[1].onAddItem(newItem);
-    captures[1].onUpdateItem('item-1', { status: 'done' });
-    captures[1].onRemoveItem('item-1');
+    propsFor('b').onAddItem(newItem);
+    propsFor('b').onUpdateItem('item-1', { status: 'done' });
+    propsFor('b').onRemoveItem('item-1');
     expect(onAddItem).toHaveBeenCalledWith('b', newItem);
     expect(onUpdateItem).toHaveBeenCalledWith('b', 'item-1', { status: 'done' });
     expect(onRemoveItem).toHaveBeenCalledWith('b', 'item-1');
@@ -148,12 +160,12 @@ describe('SectionList', () => {
     const { rerender, props } = renderList({
       sections: [mkSection('a'), mkSection('b')], onSectionFocus,
     });
-    captures[1].onFocus();
+    propsFor('b').onFocus();
     expect(onSectionFocus).toHaveBeenCalledWith('b');
-    captures.length = 0;
+    captures.clear();
     const { onSectionFocus: _drop, ...rest } = props;
     rerender(<SectionList {...rest} />);
-    expect(() => captures[1].onFocus()).not.toThrow();
+    expect(() => propsFor('b').onFocus()).not.toThrow();
   });
 
   it('comment-thread proxies route with section.id; omitted handlers do not throw', () => {
@@ -161,18 +173,18 @@ describe('SectionList', () => {
     const { rerender, props } = renderList({
       sections: [mkSection('a'), mkSection('b')], onAddComment, onResolveThread, onUnresolveThread,
     });
-    captures[1].onAddComment('hello', 'parent-1');
-    captures[1].onResolveThread('cmt-1');
-    captures[1].onUnresolveThread('cmt-1');
+    propsFor('b').onAddComment('hello', 'parent-1');
+    propsFor('b').onResolveThread('cmt-1');
+    propsFor('b').onUnresolveThread('cmt-1');
     expect(onAddComment).toHaveBeenCalledWith('b', 'hello', 'parent-1');
     expect(onResolveThread).toHaveBeenCalledWith('b', 'cmt-1');
     expect(onUnresolveThread).toHaveBeenCalledWith('b', 'cmt-1');
-    captures.length = 0;
+    captures.clear();
     const { onAddComment: _a, onResolveThread: _r, onUnresolveThread: _u, ...rest } = props;
     rerender(<SectionList {...rest} />);
-    expect(() => captures[1].onAddComment('hi')).not.toThrow();
-    expect(() => captures[1].onResolveThread('cmt-1')).not.toThrow();
-    expect(() => captures[1].onUnresolveThread('cmt-1')).not.toThrow();
+    expect(() => propsFor('b').onAddComment('hi')).not.toThrow();
+    expect(() => propsFor('b').onResolveThread('cmt-1')).not.toThrow();
+    expect(() => propsFor('b').onUnresolveThread('cmt-1')).not.toThrow();
   });
 
   it('onUpdateCursorInfo and onOpenComments pass through as the same reference to every block', () => {
@@ -180,9 +192,9 @@ describe('SectionList', () => {
     renderList({
       sections: [mkSection('a'), mkSection('b')], onUpdateCursorInfo, onOpenComments,
     });
-    expect(captures[0].onUpdateCursorInfo).toBe(onUpdateCursorInfo);
-    expect(captures[1].onUpdateCursorInfo).toBe(onUpdateCursorInfo);
-    expect(captures[0].onOpenComments).toBe(onOpenComments);
-    expect(captures[1].onOpenComments).toBe(onOpenComments);
+    expect(propsFor('a').onUpdateCursorInfo).toBe(onUpdateCursorInfo);
+    expect(propsFor('b').onUpdateCursorInfo).toBe(onUpdateCursorInfo);
+    expect(propsFor('a').onOpenComments).toBe(onOpenComments);
+    expect(propsFor('b').onOpenComments).toBe(onOpenComments);
   });
 });

@@ -51,6 +51,31 @@ function stubFetch(body: unknown, ok = true) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
+// Same reason as callWith, for calls that share a method and are told apart by
+// their URL instead.
+function callTo(
+  mock: { mock: { calls: unknown[][] } },
+  urlPart: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find((c) => String(c[0]).includes(urlPart));
+  expect(call, `expected a fetch to ${urlPart}`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -99,7 +124,7 @@ describe('createPool', () => {
 
     expect((created as IdentityPool | null)?.poolId).toBe('p1');
     expect(result.current.pools).toHaveLength(1);
-    const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[0]).toContain('/api/pools');
     expect(postCall[1].method).toBe('POST');
     expect(JSON.parse(postCall[1].body as string)).toEqual({ poolName: 'Main Pool' });
@@ -157,7 +182,7 @@ describe('deletePool', () => {
     await act(async () => { await result.current.deletePool('p1'); });
 
     expect(result.current.pools).toHaveLength(0);
-    const deleteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const deleteCall = callWith(fetchMock, 'DELETE');
     expect(deleteCall[0]).toContain('/api/pools/p1');
     expect(deleteCall[1].method).toBe('DELETE');
   });
@@ -182,7 +207,7 @@ describe('getStats', () => {
 
     expect(fetched).toHaveLength(1);
     expect(fetched[0].userCount).toBe(5);
-    const statsCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const statsCall = callTo(fetchMock, '/api/pools/stats');
     expect(statsCall[0]).toContain('/api/pools/stats');
   });
 

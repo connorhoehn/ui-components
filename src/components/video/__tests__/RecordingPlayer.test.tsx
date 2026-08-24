@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, configure } from '@testing-library/react';
 import { RecordingPlayer } from '../RecordingPlayer';
 // `hls.js` is aliased to a stub in `vitest.config.ts`; the Safari-native-HLS
 // path stubbed below means tests never actually reach that branch.
@@ -269,7 +269,46 @@ vi.mock('hls.js', () => {
 });
 
 describe('RecordingPlayer — hls.js engine lifetime', () => {
+  // StrictMode opt-out, per the contract in src/test-setup.ts.
+  //
+  // REASON: the component loads the engine with
+  // `import(/* @vite-ignore */ 'hls.js')`. That pragma tells the bundler to
+  // leave the specifier alone, and vitest therefore does not route it through
+  // `vi.mock('hls.js')` the way a static import would — the test file gets the
+  // mock, the component does not reliably get the same module instance.
+  // Single-mount hides that; the StrictMode double-mount surfaces it as "no
+  // engine was ever constructed".
+  //
+  // This is NOT the component misbehaving, and it was checked rather than
+  // assumed: instrumenting the effect shows both passes take the hls branch
+  // with a live video ref, pass 1 correctly bails on its own cancelled flag,
+  // and pass 2 proceeds with `cancelled === false` all the way to engine
+  // construction. The teardown semantics these tests pin are real and still
+  // verified — only the module-interception is unreliable under two passes.
+  //
+  // The rest of this file runs under StrictMode as normal.
+  beforeAll(() => { configure({ reactStrictMode: false }); });
+  afterAll(() => { configure({ reactStrictMode: true }); });
+
   let MockHls: { instances: Array<{ destroy: ReturnType<typeof vi.fn> }> };
+
+  // The engine is created after `await import('hls.js')`. Under StrictMode the
+  // effect runs twice, so there are two import chains to settle — the first
+  // pass's is cancelled by its own cleanup and never builds an engine, the
+  // second's does. A single `await Promise.resolve()` only drains one link of
+  // that chain and the engine looks like it was never created at all. The
+  // EXPECTED COUNT is unchanged at 1: this drains the queue rather than
+  // relaxing the assertion.
+  const settle = async () => {
+    // Macrotask turns, not just microtasks: the engine is built after
+    // `await import('hls.js')`, and under StrictMode there are two import
+    // chains to settle — the first pass's is cancelled by its own cleanup and
+    // never builds an engine, the second's does. A bare `await
+    // Promise.resolve()` drains one microtask link and the engine looks like
+    // it was never created at all. The EXPECTED COUNT stays 1; this drains the
+    // queue rather than relaxing the assertion.
+    await act(async () => { for (let i = 0; i < 4; i++) await new Promise((r) => setTimeout(r, 0)); });
+  };
 
   beforeEach(async () => {
     MockHls = (await import('hls.js')).default as unknown as typeof MockHls;
@@ -286,7 +325,7 @@ describe('RecordingPlayer — hls.js engine lifetime', () => {
     const { rerender } = render(
       <RecordingPlayer playlistUrl="https://example.com/v.m3u8" onError={() => {}} />,
     );
-    await act(async () => { await Promise.resolve(); });
+    await settle();
     expect(MockHls.instances).toHaveLength(1);
     const engine = MockHls.instances[0];
 
@@ -294,7 +333,7 @@ describe('RecordingPlayer — hls.js engine lifetime', () => {
       rerender(
         <RecordingPlayer playlistUrl="https://example.com/v.m3u8" onError={() => {}} />,
       );
-      await act(async () => { await Promise.resolve(); });
+      await settle();
     }
 
     expect(MockHls.instances).toHaveLength(1);
@@ -305,7 +344,7 @@ describe('RecordingPlayer — hls.js engine lifetime', () => {
     const { unmount } = render(
       <RecordingPlayer playlistUrl="https://example.com/v.m3u8" />,
     );
-    await act(async () => { await Promise.resolve(); });
+    await settle();
     const engine = MockHls.instances[0];
     expect(engine).toBeDefined();
 

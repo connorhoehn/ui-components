@@ -39,8 +39,30 @@ export function useIngestSources(): UseIngestSourcesReturn {
   const [sources, setSources] = useState<IngestSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // A refused action ("Sync now", pause, delete) is NOT a list-load failure.
+  // Writing it into the loader's `error` hid a correctly-loaded table behind
+  // "Failed to load ingest sources." — and the page's unconditional refresh()
+  // then cleared it before it could render, so a refused sync was
+  // indistinguishable from a successful one.
   const [actionError, setActionError] = useState<string | null>(null);
-  const cancelledRef = useRef(false);
+
+  // Two DIFFERENT concerns, deliberately not one flag.
+  //
+  // `mountedRef` answers "is this hook still mounted"; it is shared across
+  // effect runs, which is correct — a re-run means we are still mounted.
+  //
+  // `requestIdRef` answers "is this response still the one we want". That
+  // question used to be answered by the mount flag too, and it cannot be: the
+  // cleanup set it true-for-cancelled and the next effect run immediately set
+  // it back to false, resurrecting the cancellation. `refresh` is memoised on
+  // `idToken`, so the effect re-runs on every token refresh or identity
+  // switch — and the response fetched under the OLD token then sailed past the
+  // guard and overwrote the list. Whichever request happened to resolve last
+  // won, regardless of which was issued last. A monotonic token can't be
+  // resurrected: each call claims the next id and only the current holder may
+  // write.
+  const mountedRef = useRef(true);
+  const requestIdRef = useRef(0);
 
   const headers = useCallback((): Record<string, string> => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -51,30 +73,36 @@ export function useIngestSources(): UseIngestSourcesReturn {
   const clearActionError = useCallback(() => setActionError(null), []);
 
   const refresh = useCallback(async () => {
+    const token = ++requestIdRef.current;
+    const current = () => mountedRef.current && token === requestIdRef.current;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`${BASE_URL}/api/ingest/sources`, { headers: headers() });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = await res.json() as { sources?: IngestSource[] };
-      if (!cancelledRef.current) {
+      if (current()) {
         setSources(body.sources ?? []);
       }
     } catch (err) {
-      if (!cancelledRef.current) {
+      if (current()) {
         setError(err instanceof Error ? err.message : String(err));
       }
     } finally {
-      if (!cancelledRef.current) {
+      if (current()) {
         setLoading(false);
       }
     }
   }, [headers]);
 
   useEffect(() => {
-    cancelledRef.current = false;
+    mountedRef.current = true;
     void refresh();
-    return () => { cancelledRef.current = true; };
+    return () => {
+      mountedRef.current = false;
+      // Retire whatever is in flight so a superseded run can never write.
+      requestIdRef.current += 1;
+    };
   }, [refresh]);
 
   const createSource = useCallback(async (

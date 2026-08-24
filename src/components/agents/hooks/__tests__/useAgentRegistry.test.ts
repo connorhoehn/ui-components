@@ -136,13 +136,15 @@ describe('useAgentRegistry', () => {
     );
 
     await flush();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // The absolute count after mount is a StrictMode artifact (mount effects
+    // run twice). The property under test is the cadence, so assert the delta.
+    const afterMount = fetchMock.mock.calls.length;
 
     await act(async () => {
       vi.advanceTimersByTime(1001);
       await Promise.resolve();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls.length).toBe(afterMount + 1);
   });
 
   it('clears the polling interval on unmount', async () => {
@@ -152,14 +154,16 @@ describe('useAgentRegistry', () => {
     );
 
     await flush();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
     unmount();
+    // Absolute count is a StrictMode artifact; what matters is that no further
+    // fetch happens once the interval is torn down.
+    const atUnmount = fetchMock.mock.calls.length;
 
     await act(async () => {
       vi.advanceTimersByTime(5000);
       await Promise.resolve();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls.length).toBe(atUnmount);
   });
 
   it('refresh() triggers an extra fetch on demand', async () => {
@@ -169,13 +173,15 @@ describe('useAgentRegistry', () => {
     );
 
     await flush();
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // Absolute count after mount is a StrictMode artifact; refresh() must add
+    // exactly one fetch on top of whatever mount did.
+    const afterMount = fetchMock.mock.calls.length;
 
     await act(async () => {
       result.current.refresh();
       await Promise.resolve();
     });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock.mock.calls.length).toBe(afterMount + 1);
   });
 
   it('exposes getAgent and status counters over the fixture', () => {

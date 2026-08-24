@@ -62,37 +62,43 @@ describe('usePipelineMetrics poll cadence', () => {
     const fetchSpy = stubFetch();
     renderHook(() => usePipelineMetrics(), { wrapper });
     await flush();
-    expect(fetchSpy).toHaveBeenCalledTimes(1); // initial fetch
+    // The absolute count after mount is a StrictMode artifact (mount effects
+    // run twice). The property under test is the cadence, so assert the delta.
+    const afterMount = fetchSpy.mock.calls.length;
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(10_000);
     });
-    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(fetchSpy.mock.calls.length).toBe(afterMount + 1);
   });
 
   it('honours a shorter host-supplied cadence', async () => {
     const fetchSpy = stubFetch();
     renderHook(() => usePipelineMetrics({ pollIntervalMs: 5_000 }), { wrapper });
     await flush();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    // Absolute count after mount is a StrictMode artifact; the delta is what
+    // pins the cadence.
+    const afterMount = fetchSpy.mock.calls.length;
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(5_000);
     });
-    // Against the bug (hard-coded 10s) this is still 1.
-    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    // Against the bug (hard-coded 10s) the delta is still 0.
+    expect(fetchSpy.mock.calls.length).toBe(afterMount + 1);
   });
 
   it('stops polling after the initial fetch when the cadence is off (null)', async () => {
     const fetchSpy = stubFetch();
     renderHook(() => usePipelineMetrics({ pollIntervalMs: null }), { wrapper });
     await flush();
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    // Absolute count after mount is a StrictMode artifact; what "off" means is
+    // that advancing the clock adds nothing.
+    const afterMount = fetchSpy.mock.calls.length;
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(60_000);
     });
-    // "Refresh: Off" must mean off. Against the bug this is 7.
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    // "Refresh: Off" must mean off. Against the bug the delta is 6.
+    expect(fetchSpy.mock.calls.length).toBe(afterMount);
   });
 });

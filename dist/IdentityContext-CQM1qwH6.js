@@ -13,5 +13,8 @@ function a() {
 	if (!e) throw Error("useIdentityContext must be used within an <IdentityProvider>");
 	return e;
 }
+function o() {
+	return t(r);
+}
 //#endregion
-export { a as n, i as t };
+export { a as n, o as r, i as t };

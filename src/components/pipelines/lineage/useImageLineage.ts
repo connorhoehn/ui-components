@@ -35,6 +35,15 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>();
 const CACHE_TTL_MS = 60_000; // 1 minute
 
+// In-flight requests by runId. The `cache` above only dedupes callers that
+// mount AFTER a response has landed; two callers that mount while the first
+// request is still open both saw an empty cache and both fetched. That is the
+// normal case, not an edge case — a StrictMode/dev double-mount, an
+// <Activity>/Offscreen re-show, a Suspense retry, or simply two lineage panels
+// on one page all mount concurrently. Sharing the promise makes the module's
+// stated contract ("multiple consumers share the same fetch") actually true.
+const inflight = new Map<string, Promise<ImageLineageEntry[]>>();
+
 function getCached(runId: string): ImageLineageEntry[] | null {
   const entry = cache.get(runId);
   if (!entry) return null;
@@ -52,6 +61,41 @@ function setCached(runId: string, entries: ImageLineageEntry[]): void {
 // Exported for test-time cache clearing.
 export function clearImageLineageCache(): void {
   cache.clear();
+  inflight.clear();
+}
+
+/**
+ * One GET per runId, shared by every concurrent caller. Resolves with the
+ * entries; rejects with the fetch/HTTP error so each caller can surface it.
+ */
+function fetchLineage(runId: string, pipelineId: string): Promise<ImageLineageEntry[]> {
+  const existing = inflight.get(runId);
+  if (existing) return existing;
+
+  const url = `/api/pipeline/runs/${encodeURIComponent(runId)}/image-lineage?pipelineId=${encodeURIComponent(pipelineId)}`;
+
+  const promise: Promise<ImageLineageEntry[]> = fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  })
+    .then(async (res) => {
+      if (!res.ok) {
+        throw new Error(`image-lineage: ${res.status} ${res.statusText}`);
+      }
+      const data = (await res.json()) as { entries: ImageLineageEntry[] };
+      const fetched = Array.isArray(data.entries) ? data.entries : [];
+      setCached(runId, fetched);
+      return fetched;
+    })
+    .finally(() => {
+      // Only retire OUR entry: a `refetch()` may already have replaced it with
+      // a newer request, and deleting that would let a third caller start yet
+      // another duplicate fetch.
+      if (inflight.get(runId) === promise) inflight.delete(runId);
+    });
+
+  inflight.set(runId, promise);
+  return promise;
 }
 
 export function useImageLineage(
@@ -83,24 +127,9 @@ export function useImageLineage(
     setLoading(true);
     setError(null);
 
-    const url = `/api/pipeline/runs/${encodeURIComponent(runId)}/image-lineage?pipelineId=${encodeURIComponent(pipelineId)}`;
-
-    fetch(url, {
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-    })
-      .then(async (res) => {
+    fetchLineage(runId, pipelineId)
+      .then((fetched) => {
         if (token !== fetchCountRef.current) return;
-        if (!res.ok) {
-          const msg = `image-lineage: ${res.status} ${res.statusText}`;
-          setError(msg);
-          setLoading(false);
-          return;
-        }
-        const data = (await res.json()) as { entries: ImageLineageEntry[] };
-        if (token !== fetchCountRef.current) return;
-        const fetched = Array.isArray(data.entries) ? data.entries : [];
-        setCached(runId, fetched);
         setEntries(fetched);
         setLoading(false);
       })
@@ -113,7 +142,12 @@ export function useImageLineage(
 
   // Expose a stable refetch that busts the cache for this run.
   const refetch = useCallback(() => {
-    if (runId) cache.delete(runId);
+    if (runId) {
+      cache.delete(runId);
+      // Drop the shared in-flight entry too, or "refetch" would silently
+      // re-join the very request the caller is trying to supersede.
+      inflight.delete(runId);
+    }
     doFetch();
   }, [runId, doFetch]);
 

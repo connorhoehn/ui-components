@@ -98,10 +98,15 @@ describe('usePendingApprovalsState — endpoint absent vs. request failed', () =
   });
 
   it('retry() re-issues the fetch and clears the error when the server returns', async () => {
-    let attempt = 0;
+    // Keyed on SERVER STATE, not call index: `attempt === 1` fails would mean
+    // "the first fetch fails", and a StrictMode mount issues two — the second
+    // would quietly succeed and the error under test would never appear.
+    let serverDown = true;
+    let calls = 0;
     vi.stubGlobal('fetch', vi.fn(() => {
-      attempt += 1;
-      if (attempt === 1) return Promise.reject(new Error('Failed to fetch'));
+      calls += 1;
+      // Fresh Error per call; a shared instance can mask ordering bugs.
+      if (serverDown) return Promise.reject(new Error('Failed to fetch'));
       return Promise.resolve({
         ok: true, status: 200, statusText: 'OK',
         json: () => Promise.resolve({ approvals: [] }),
@@ -111,8 +116,11 @@ describe('usePendingApprovalsState — endpoint absent vs. request failed', () =
     const { result } = renderHook(() => usePendingApprovalsState());
     await waitFor(() => expect(result.current.error).not.toBeNull());
 
+    serverDown = false;
+    const before = calls;
     act(() => result.current.retry());
     await waitFor(() => expect(result.current.error).toBeNull());
-    expect(attempt).toBe(2);
+    // A delta, not an absolute: retry() must actually re-issue the request.
+    expect(calls).toBeGreaterThan(before);
   });
 });

@@ -55,6 +55,20 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -115,7 +129,7 @@ describe('remap', () => {
 
     await act(async () => { await result.current.remap('i1', 'dt-new'); });
 
-    const remapCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const remapCall = callWith(fetchMock, 'POST');
     expect(remapCall[0]).toContain('/api/ingest/items/i1/remap');
     expect(remapCall[1].method).toBe('POST');
     expect(JSON.parse(remapCall[1].body as string)).toEqual({ typeId: 'dt-new' });
@@ -153,7 +167,7 @@ describe('skip', () => {
 
     await act(async () => { await result.current.skip('i1'); });
 
-    const skipCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const skipCall = callWith(fetchMock, 'POST');
     expect(skipCall[0]).toContain('/api/ingest/items/i1/skip');
     expect(skipCall[1].method).toBe('POST');
     expect(result.current.items).toHaveLength(0);

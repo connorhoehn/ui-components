@@ -27,6 +27,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  // Restore real timers here rather than at the end of the polling test: if
+  // that test fails mid-body the fake clock leaks and every later waitFor hangs.
+  vi.useRealTimers();
   vi.unstubAllEnvs();
   vi.restoreAllMocks();
 });
@@ -106,15 +109,16 @@ describe('polling', () => {
     renderHook(() => useSourceSloMetrics('src-1'));
 
     await act(async () => { await Promise.resolve(); });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    // The absolute count after mount is a StrictMode artifact (mount effects
+    // run twice). The property under test is the cadence, so assert the delta.
+    const afterMount = fetchMock.mock.calls.length;
 
     await act(async () => {
       vi.advanceTimersByTime(30_001);
       await Promise.resolve();
     });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    vi.useRealTimers();
+    expect(fetchMock.mock.calls.length).toBe(afterMount + 1);
   });
 });
 

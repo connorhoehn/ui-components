@@ -56,6 +56,20 @@ function stubFetch(body: unknown, ok = true, status = ok ? 200 : 500) {
   } as unknown as Response);
 }
 
+// The suite runs under React StrictMode, so mount effects fire twice and the
+// mutation is no longer at a fixed call index. Locate the call we mean by its
+// HTTP method rather than by position.
+function callWith(
+  mock: { mock: { calls: unknown[][] } },
+  method: string,
+): [string, RequestInit] {
+  const call = mock.mock.calls.find(
+    (c) => (c[1] as RequestInit | undefined)?.method === method,
+  );
+  expect(call, `expected a ${method} fetch`).toBeDefined();
+  return call as [string, RequestInit];
+}
+
 // ---------------------------------------------------------------------------
 // Initial load
 // ---------------------------------------------------------------------------
@@ -115,7 +129,7 @@ describe('createSource', () => {
 
     expect(created).not.toBeNull();
     expect(result.current.sources).toHaveLength(1);
-    const postCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const postCall = callWith(fetchMock, 'POST');
     expect(postCall[1].method).toBe('POST');
   });
 
@@ -158,7 +172,7 @@ describe('deleteSource', () => {
 
     expect(ok).toBe(true);
     expect(result.current.sources).toHaveLength(0);
-    const deleteCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const deleteCall = callWith(fetchMock, 'DELETE');
     expect(deleteCall[0]).toContain('/api/ingest/sources/src-1');
     expect(deleteCall[1].method).toBe('DELETE');
   });
@@ -202,7 +216,7 @@ describe('triggerSync', () => {
     await act(async () => { ok = await result.current.triggerSync('src-1'); });
 
     expect(ok).toBe(true);
-    const syncCall = fetchMock.mock.calls[1] as [string, RequestInit];
+    const syncCall = callWith(fetchMock, 'POST');
     expect(syncCall[0]).toContain('/api/ingest/sources/src-1/sync');
     expect(syncCall[1].method).toBe('POST');
   });
@@ -225,5 +239,57 @@ describe('triggerSync', () => {
     // unconditionally so a failed sync vanished before it could be shown.
     expect(result.current.actionError).toMatch(/503/);
     expect(result.current.error).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Out-of-order responses
+// ---------------------------------------------------------------------------
+
+describe('superseded requests', () => {
+  it('keeps the newest request list when an older one resolves last', async () => {
+    // Staleness used to be tracked by a single `cancelledRef` that the effect
+    // reset to `false` on every run — so a cancelled request had its own
+    // cancellation resurrected and wrote anyway, and whichever request
+    // happened to resolve LAST won regardless of which was issued last.
+    // `refresh` is memoised on `idToken`, so in the app the superseded request
+    // is the one fetched under the *old* token: after a silent token refresh
+    // or an identity switch the sources list could be replaced by the previous
+    // identity's (or a failing request's) result.
+    const resolvers: ((r: Response) => void)[] = [];
+    const fetchMock = vi.fn(
+      () => new Promise<Response>((resolve) => { resolvers.push(resolve); }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const { result } = renderHook(() => useIngestSources());
+    await waitFor(() => { expect(resolvers.length).toBeGreaterThan(0); });
+    const stale = resolvers.length - 1;
+
+    // A newer request supersedes the in-flight one.
+    act(() => { void result.current.refresh(); });
+    await waitFor(() => { expect(resolvers.length).toBeGreaterThan(stale + 1); });
+
+    const json = (sources: IngestSource[]) =>
+      ({ ok: true, status: 200, json: () => Promise.resolve({ sources }) }) as unknown as Response;
+
+    const fresh: IngestSource = { ...SOURCE, sourceId: 'fresh', name: 'Fresh' };
+    const older: IngestSource = { ...SOURCE, sourceId: 'old', name: 'Old' };
+
+    await act(async () => {
+      resolvers[resolvers.length - 1](json([fresh]));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    await waitFor(() => { expect(result.current.sources).toHaveLength(1); });
+    expect(result.current.sources[0].sourceId).toBe('fresh');
+
+    // The superseded request answers late — it must not write.
+    await act(async () => {
+      resolvers[stale](json([older]));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(result.current.sources.map((s) => s.sourceId)).toEqual(['fresh']);
   });
 });

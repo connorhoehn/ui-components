@@ -232,12 +232,19 @@ describe('useYjsDoc', () => {
     const bus = makeMessageBus();
     let docId = 'doc-1';
     const { rerender } = renderHook(() => useYjsDoc(opts(ws, bus, { documentId: docId })));
-    expect(refs.all).toHaveLength(1);
+    // `refs.all` is an append-only construction log, and the suite runs under
+    // StrictMode, so the mount effect legitimately builds a provider, tears it
+    // down, and builds another. Assert on the LIVE provider instead of the
+    // total, which is what "a fresh provider" actually means.
+    const first = refs.last;
+    expect(first.channel).toBe('doc:doc-1');
 
     docId = 'doc-2';
     rerender();
 
-    expect(refs.all).toHaveLength(2);
-    expect(refs.all[1].channel).toBe('doc:doc-2');
+    expect(refs.last).not.toBe(first);
+    expect(refs.last.channel).toBe('doc:doc-2');
+    // …and the old one is torn down rather than left subscribed.
+    expect(first.destroy).toHaveBeenCalled();
   });
 });

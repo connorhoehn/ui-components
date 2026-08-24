@@ -108,10 +108,16 @@ describe('PipelineRunReplayPage — 404 vs. failed request', () => {
       startedAt: new Date().toISOString(), completedAt: new Date().toISOString(),
       triggeredBy: { triggerType: 'manual' }, steps: {}, currentStepIds: [],
     };
-    let attempt = 0;
+    // Keyed on SERVER STATE, not on call index. `attempt === 1` fails would
+    // mean "the first fetch fails" — and under StrictMode a mount issues two,
+    // so the second pass would silently get the success and no error would
+    // ever render. Mount count is not something this test should care about.
+    let serverDown = true;
+    let calls = 0;
     vi.stubGlobal('fetch', vi.fn(() => {
-      attempt += 1;
-      if (attempt === 1) return Promise.reject(new Error('Failed to fetch'));
+      calls += 1;
+      // A fresh Error per call: one shared instance can mask ordering bugs.
+      if (serverDown) return Promise.reject(new Error('Failed to fetch'));
       return Promise.resolve({
         ok: true, status: 200, statusText: 'OK', json: () => Promise.resolve(run),
       });
@@ -121,12 +127,16 @@ describe('PipelineRunReplayPage — 404 vs. failed request', () => {
     await settle();
     expect(screen.getByTestId('pipeline-replay-error')).toBeInTheDocument();
 
+    // The server comes back, THEN the user retries.
+    serverDown = false;
+    const before = calls;
     await act(async () => {
       screen.getByTestId('replay-retry').click();
     });
     await settle();
 
     expect(screen.getByTestId('pipeline-replay')).toBeInTheDocument();
-    expect(attempt).toBe(2);
+    // A delta, not an absolute: Retry must actually re-issue the request.
+    expect(calls).toBeGreaterThan(before);
   });
 });
