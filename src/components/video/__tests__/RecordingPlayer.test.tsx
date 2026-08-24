@@ -246,3 +246,84 @@ describe('RecordingPlayer — controls must be visible when focused', () => {
     expect((overlay as HTMLElement).className).toContain('focus-within:opacity-100');
   });
 });
+
+// The hls.js engine is the expensive resource this component owns: a worker,
+// a fetch loop and a decode buffer. `vitest.config.ts` aliases `hls.js` to a
+// stub; this block replaces it with an instrumented one so the effect's
+// hls.js branch (isSupported() === true) is actually exercised and every
+// construction/destruction is counted.
+vi.mock('hls.js', () => {
+  class MockHls {
+    static instances: MockHls[] = [];
+    static isSupported = () => true;
+    static Events = { MEDIA_ATTACHED: 'media-attached', ERROR: 'error' } as const;
+    // Fresh spies per construction — a shared instance would hide the very
+    // thing under test (which engine got torn down, and how many exist).
+    attachMedia = vi.fn();
+    loadSource = vi.fn();
+    destroy = vi.fn();
+    on = vi.fn();
+    constructor() { MockHls.instances.push(this); }
+  }
+  return { default: MockHls };
+});
+
+describe('RecordingPlayer — hls.js engine lifetime', () => {
+  let MockHls: { instances: Array<{ destroy: ReturnType<typeof vi.fn> }> };
+
+  beforeEach(async () => {
+    MockHls = (await import('hls.js')).default as unknown as typeof MockHls;
+    MockHls.instances.length = 0;
+  });
+
+  it('keeps ONE engine across parent re-renders that change the onError identity', async () => {
+    // `onError` is almost always an inline arrow. While it was an effect
+    // dependency, the engine was keyed to the parent's render identity: each
+    // render destroyed it and built a new one, re-importing, re-attaching and
+    // re-buffering from zero. A parent that mirrors progress via onTimeUpdate
+    // re-renders several times a second, so the recording never advanced and
+    // the decoder churned nonstop.
+    const { rerender } = render(
+      <RecordingPlayer playlistUrl="https://example.com/v.m3u8" onError={() => {}} />,
+    );
+    await act(async () => { await Promise.resolve(); });
+    expect(MockHls.instances).toHaveLength(1);
+    const engine = MockHls.instances[0];
+
+    for (let i = 0; i < 4; i++) {
+      rerender(
+        <RecordingPlayer playlistUrl="https://example.com/v.m3u8" onError={() => {}} />,
+      );
+      await act(async () => { await Promise.resolve(); });
+    }
+
+    expect(MockHls.instances).toHaveLength(1);
+    expect(engine.destroy).not.toHaveBeenCalled();
+  });
+
+  it('destroys the engine on unmount', async () => {
+    const { unmount } = render(
+      <RecordingPlayer playlistUrl="https://example.com/v.m3u8" />,
+    );
+    await act(async () => { await Promise.resolve(); });
+    const engine = MockHls.instances[0];
+    expect(engine).toBeDefined();
+
+    unmount();
+    expect(engine.destroy).toHaveBeenCalledTimes(1);
+  });
+
+  it('replaces the engine when the playlist actually changes', async () => {
+    const { rerender } = render(
+      <RecordingPlayer playlistUrl="https://example.com/a.m3u8" />,
+    );
+    await act(async () => { await Promise.resolve(); });
+    const first = MockHls.instances[0];
+
+    rerender(<RecordingPlayer playlistUrl="https://example.com/b.m3u8" />);
+    await act(async () => { await Promise.resolve(); });
+
+    expect(first.destroy).toHaveBeenCalledTimes(1);
+    expect(MockHls.instances).toHaveLength(2);
+  });
+});

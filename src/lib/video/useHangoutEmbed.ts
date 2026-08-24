@@ -296,6 +296,16 @@ export function useHangoutEmbed({
         screenStream.getTracks().forEach((t) => t.stop());
         return;
       }
+      // REPLACEMENT, not just acquisition. `isScreenSharing` only flips true
+      // after this await resolves, so the consumer's toggle still reads
+      // "Share screen" for the entire time the OS picker is open — a second
+      // click starts a second capture. Overwriting the ref would strand the
+      // first one: nothing renders it, nothing can stop it, and the browser
+      // keeps its "you are sharing your screen" bar up for the tab's lifetime.
+      const superseded = screenStreamRef.current;
+      if (superseded && superseded !== screenStream) {
+        superseded.getTracks().forEach((t) => t.stop());
+      }
       screenStreamRef.current = screenStream;
       const videoTrack = screenStream.getVideoTracks()[0];
       videoTrack.contentHint = 'detail';
@@ -318,7 +328,15 @@ export function useHangoutEmbed({
       setParticipants((prev) => prev.map((p) => p.isLocal ? { ...p, screenStream } : p));
       setIsScreenSharing(true);
 
-      videoTrack.addEventListener('ended', () => { stopScreenShare(); });
+      // The handler must tear down THIS capture, not whatever is current.
+      // `stopScreenShare` reads `screenStreamRef.current`, so a superseded
+      // capture ending (the user hitting "Stop sharing" on its stale browser
+      // bar) would otherwise stop its replacement — killing the live share
+      // and leaving the dead one's state behind.
+      videoTrack.addEventListener('ended', () => {
+        if (screenStreamRef.current !== screenStream) return;
+        stopScreenShare();
+      });
     } catch (err: any) {
       if (err.name === 'AbortError' || err.name === 'NotAllowedError') return;
       console.error('[useHangoutEmbed] Screen share failed:', err);

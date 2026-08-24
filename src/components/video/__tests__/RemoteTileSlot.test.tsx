@@ -132,6 +132,58 @@ describe('RemoteTileSlot', () => {
     expect(screen.queryByTestId('remote-tile-hidden-audio')).not.toBeInTheDocument();
   });
 
+  it('releases the hidden <audio> binding when the tile flips to the video branch', () => {
+    // The guard in the test above stops both elements rendering AT ONCE, but
+    // it cannot stop the old one from still playing: React only detaches the
+    // <audio> node, and a detached media element with a live srcObject keeps
+    // producing sound in Chrome. So the moment a remote turns their camera on
+    // — avatar branch out, <StreamVideo> in, both bound to the same stream —
+    // that participant would be audible twice for the rest of the call.
+    const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    try {
+      const audioOnly = makeStream([makeTrack({ kind: 'audio' })]);
+      const { rerender } = render(
+        <RemoteTileSlot stream={audioOnly} displayName="Alice" cameraOn={false} />,
+      );
+      // Capture the node while it is still mounted — after the flip it is
+      // detached and unreachable through queries, which is the whole problem.
+      const audio = screen.getByTestId('remote-tile-hidden-audio') as HTMLAudioElement;
+      expect(audio.srcObject).not.toBe(null);
+      pause.mockClear();
+
+      const withVideo = makeStream([
+        makeTrack({ kind: 'audio' }),
+        makeTrack({ kind: 'video' }),
+      ]);
+      rerender(<RemoteTileSlot stream={withVideo} displayName="Alice" cameraOn={true} />);
+
+      expect(screen.queryByTestId('remote-tile-hidden-audio')).not.toBeInTheDocument();
+      expect(audio.srcObject).toBe(null);
+      expect(pause).toHaveBeenCalled();
+    } finally {
+      pause.mockRestore();
+    }
+  });
+
+  it('releases the hidden <audio> binding on unmount', () => {
+    const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause').mockImplementation(() => {});
+    try {
+      const stream = makeStream([makeTrack({ kind: 'audio' })]);
+      const { unmount } = render(
+        <RemoteTileSlot stream={stream} displayName="Alice" cameraOn={false} />,
+      );
+      const audio = screen.getByTestId('remote-tile-hidden-audio') as HTMLAudioElement;
+      pause.mockClear();
+
+      // A participant leaving the call must take their audio with them.
+      unmount();
+      expect(audio.srcObject).toBe(null);
+      expect(pause).toHaveBeenCalled();
+    } finally {
+      pause.mockRestore();
+    }
+  });
+
   it('renders the display name on the avatar fallback', () => {
     render(<RemoteTileSlot stream={undefined} displayName="Alice Liddell" cameraOn={false} />);
     // Avatar renders the title attribute with the name, or initials in
