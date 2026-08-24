@@ -6,7 +6,12 @@
 
 import { Observable } from 'lib0/observable';
 import * as Y from 'yjs';
-import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate } from 'y-protocols/awareness';
+import {
+  Awareness,
+  applyAwarenessUpdate,
+  encodeAwarenessUpdate,
+  removeAwarenessStates,
+} from 'y-protocols/awareness';
 import { toBase64, fromBase64 } from 'lib0/buffer';
 
 export type SendMessage = (msg: Record<string, unknown>) => void;
@@ -18,6 +23,7 @@ export class GatewayProvider extends Observable<string> {
 
   private readonly _sendMessage: SendMessage;
   private _synced = false;
+  private _destroyed = false;
   private _awarenessTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly _updateHandler: (update: Uint8Array, origin: unknown) => void;
 
@@ -51,6 +57,9 @@ export class GatewayProvider extends Observable<string> {
     }, origin: unknown) => {
       // Skip updates applied from remote (applyAwarenessUpdate uses `this` as origin)
       if (origin === this) return;
+      // Teardown removes the local state, which lands here. Nothing scheduled
+      // after destroy() can be delivered — see _broadcastDeparture below.
+      if (this._destroyed) return;
       const changedClients = added.concat(updated, removed);
       // Only send if local client changed (not remote echoes)
       if (!changedClients.includes(this.awareness.clientID)) return;
@@ -102,9 +111,42 @@ export class GatewayProvider extends Observable<string> {
     applyAwarenessUpdate(this.awareness, bytes, this);
   }
 
+  /**
+   * Tell peers this client is gone — synchronously, on the current tick.
+   *
+   * The awareness sender is debounced by 50ms, which is fatal at teardown:
+   * `Awareness.destroy()` clears the local state, our update handler schedules
+   * the removal broadcast 50ms in the future, and by then `useYjsDoc` has
+   * already sent `unsubscribe` for this channel (a gateway routes crdt
+   * messages by subscription, so it drops the late one). On a page unload the
+   * timer never runs at all. Either way the departing client lingers in every
+   * other participant's avatar list until awareness times it out — or forever,
+   * if no other awareness traffic arrives to prompt a re-render.
+   */
+  private _broadcastDeparture(): void {
+    const clientID = this.awareness.clientID;
+    // Nothing was ever published for this client — nothing to retract.
+    if (!this.awareness.getStates().has(clientID)) return;
+    // Bumps the local clock so peers accept the null state over what they hold.
+    removeAwarenessStates(this.awareness, [clientID], 'provider-destroy');
+    const encoded = encodeAwarenessUpdate(this.awareness, [clientID]);
+    this._sendMessage({
+      service: 'crdt',
+      action: 'awareness',
+      channel: this.channel,
+      update: toBase64(encoded),
+    });
+  }
+
   override destroy(): void {
+    if (this._destroyed) return;
+    this._destroyed = true;
     this.doc.off('update', this._updateHandler);
-    if (this._awarenessTimer) clearTimeout(this._awarenessTimer);
+    if (this._awarenessTimer) {
+      clearTimeout(this._awarenessTimer);
+      this._awarenessTimer = null;
+    }
+    this._broadcastDeparture();
     this.awareness.destroy();
     super.destroy();
   }

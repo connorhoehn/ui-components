@@ -48,6 +48,13 @@ export interface EditorModeSwitchProps {
   onUpdateItem: (sectionId: string, itemId: string, patch: Partial<TaskItem>) => void;
   onRemoveItem: (sectionId: string, itemId: string) => void;
   restItems: Record<string, TaskItem[]>;
+  /**
+   * Per-section item-load failures from `useDocumentItems`, keyed by sectionId.
+   * A section listed here failed to fetch its action items, which is NOT the
+   * same as having none — without this the two render identically and the
+   * reader is told "no items" for content that exists on the server.
+   */
+  itemErrors?: Record<string, string>;
 
   // Comment sidebar
   commentSidebarOpen: boolean;
@@ -112,6 +119,7 @@ export default function EditorModeSwitch({
   onUpdateItem,
   onRemoveItem,
   restItems,
+  itemErrors,
   commentSidebarOpen,
   commentSectionId,
   commentSidebarTop,
@@ -131,8 +139,32 @@ export default function EditorModeSwitch({
   onLoadDemo,
   activityPublish,
 }: EditorModeSwitchProps) {
+  const failedSectionIds = Object.keys(itemErrors ?? {});
+  const failedSectionTitles = failedSectionIds.map(
+    (id) => sections.find((s) => s.id === id)?.title || id,
+  );
+
   return (
     <>
+      {/* Item-load failures — distinguishes "could not load" from "none". */}
+      {failedSectionTitles.length > 0 && (
+        <div
+          role="alert"
+          data-testid="item-load-error-banner"
+          className={cn(
+            'rounded-lg border px-4 py-2.5 mb-3 text-[13px]',
+            'bg-warning-bg border-warning-border text-warning-fg',
+          )}
+        >
+          Action items could not be loaded for{' '}
+          {failedSectionTitles.length === 1
+            ? `"${failedSectionTitles[0]}"`
+            : `${failedSectionTitles.length} sections: ${failedSectionTitles
+                .map((t) => `"${t}"`)
+                .join(', ')}`}
+          . These sections may have items that are not shown.
+        </div>
+      )}
       {/* Read-only banner for finalized documents */}
       {isFinalized && mode === 'editor' && (
         <div className={cn(

@@ -89,10 +89,14 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
       clearTimeout(retryTimer);
       clearTimeout(retryTimer2);
 
-      ws.sendMessage({ service: 'crdt', action: 'unsubscribe', channel });
-
       const curProvider = providerRef.current;
       const curDoc = ydocRef.current;
+
+      // Destroy the provider BEFORE unsubscribing. provider.destroy() emits
+      // this client's awareness departure on `channel`, and the gateway routes
+      // crdt messages by subscription — sent after the unsubscribe it is
+      // dropped, and every remaining participant keeps rendering the avatar of
+      // someone who has left the document.
       if (curProvider) {
         curProvider.off('synced', handleSynced);
         curProvider.destroy();
@@ -100,6 +104,8 @@ export function useYjsDoc(options: UseYjsDocOptions): UseYjsDocReturn {
       if (curDoc) {
         curDoc.destroy();
       }
+
+      ws.sendMessage({ service: 'crdt', action: 'unsubscribe', channel });
 
       ydocRef.current = null;
       providerRef.current = null;

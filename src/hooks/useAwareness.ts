@@ -9,7 +9,7 @@
 // writers remain centralised — independent consumers setting partial
 // `user` state can't clobber each other's fields.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { GatewayProvider } from '../providers/GatewayProvider';
 import { useAwarenessState } from './useAwarenessState';
 import type { AwarenessUpdaters } from './useAwarenessState';
@@ -104,5 +104,11 @@ export function useAwareness(
     };
   }, [provider]);
 
-  return { awareness, participants };
+  // Stable identity — see the note in useAwarenessState. `awareness` and
+  // `participants` are both stable between changes, so the wrapper must be too,
+  // or every consumer that depends on this return value churns each render.
+  return useMemo(
+    () => ({ awareness, participants }),
+    [awareness, participants],
+  );
 }

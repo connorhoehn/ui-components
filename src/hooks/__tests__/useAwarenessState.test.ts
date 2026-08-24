@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+import { useEffect } from 'react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // Mock useIdleDetector so the suite is deterministic — useIdleDetector is
@@ -170,5 +171,62 @@ describe('useAwarenessState', () => {
     const lastSeen = lastCall[1].lastSeen;
     expect(typeof lastSeen).toBe('number');
     expect(lastSeen).toBeGreaterThanOrEqual(before);
+  });
+
+  // -------------------------------------------------------------------------
+  // Referential stability of the returned object.
+  //
+  // The four updaters were always stable useCallbacks, but the object holding
+  // them was rebuilt every render — and the object is what consumers put in
+  // dependency arrays. useDocumentEditorState has it in the deps of the 500ms
+  // "focus the first section and publish my presence" effect, so a fresh
+  // identity per render cleared and restarted that timer forever. In a live
+  // session the page re-renders far more often than twice a second (every peer
+  // awareness change re-renders it), so the effect never fired: this client's
+  // presence was never attached to a section, no avatar appeared on any section
+  // card, and a peer's follow-mode / jump-to-user had nothing to aim at.
+  // -------------------------------------------------------------------------
+
+  it('returns the same object identity across re-renders', () => {
+    const { result, rerender } = renderHook(() =>
+      useAwarenessState(provider as unknown as GatewayProvider, INITIAL),
+    );
+    const first = result.current;
+
+    rerender();
+    rerender();
+
+    expect(result.current).toBe(first);
+  });
+
+  it('is safe in a dependency array: a deferred effect keyed on it still fires', () => {
+    vi.useFakeTimers();
+    try {
+      const fired = vi.fn();
+      const { rerender } = renderHook(() => {
+        const awareness = useAwarenessState(
+          provider as unknown as GatewayProvider,
+          INITIAL,
+        );
+        useEffect(() => {
+          const timer = setTimeout(fired, 500);
+          return () => clearTimeout(timer);
+        }, [awareness]);
+      });
+
+      // Re-render faster than the timer's own delay — exactly what a live
+      // collaborative session does. A churning dependency resets the timeout
+      // on every pass and it never reaches 500ms.
+      for (let i = 0; i < 5; i++) {
+        act(() => {
+          vi.advanceTimersByTime(200);
+        });
+        rerender();
+      }
+
+      expect(fired).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
