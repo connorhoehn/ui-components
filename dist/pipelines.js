@@ -17,7 +17,7 @@ import { t as E } from "./activationKey-CjbL3LUv.js";
 import { t as D } from "./Input-DcK2h-jK.js";
 import { t as O } from "./Textarea-C3t5PCLv.js";
 import { n as k, r as A, t as ee } from "./EventStreamContext-C0egqLaF.js";
-import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-buxrr1Qy.js";
+import { $ as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as ue, M as N, N as de, O as fe, P as pe, Q as me, R as he, S as ge, T as _e, U as ve, V as ye, W as be, Y as xe, Z as Se, _ as Ce, a as we, b as Te, c as Ee, d as De, et as Oe, f as P, g as ke, i as Ae, j as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as Re, q as ze, r as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as F, y as Ke, z as qe } from "./services-BLXtNDL8.js";
 import { t as Je } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as Ye } from "./Select-Z0TLUVeL.js";
 import { t as Xe } from "./Checkbox-CsbxMNgR.js";
@@ -14848,8 +14848,22 @@ function Xc({ pipelineId: e }) {
 		a,
 		ge,
 		D
-	]);
+	]), { saveError: Se, clearSaveError: Ce } = i;
 	L(() => {
+		Se && (s(`Could not save: ${Se}`, { type: "error" }), Ce());
+	}, [
+		Se,
+		Ce,
+		s
+	]);
+	let { retryError: we, clearRetryError: Te } = a;
+	L(() => {
+		we && (s(`Retry failed: ${we.message}`, { type: "error" }), Te());
+	}, [
+		we,
+		Te,
+		s
+	]), L(() => {
 		let e = (e) => {
 			if (Jc(e.target)) return;
 			let t = e.metaKey || e.ctrlKey;
@@ -14892,15 +14906,15 @@ function Xc({ pipelineId: e }) {
 		_,
 		d
 	]);
-	let Se = () => {
+	let Ee = () => {
 		if (!c) return;
 		let e = ve(c.id);
 		e && t(`/pipelines/${e.id}`);
-	}, Ce = () => {
+	}, De = () => {
 		if (!c) return;
 		let e = be(c.id);
 		e && Ri(`${Kc(c.name)}.pipeline.json`, e);
-	}, we = async () => {
+	}, Oe = async () => {
 		if (!c) return;
 		let e = wi(c);
 		try {
@@ -14909,15 +14923,15 @@ function Xc({ pipelineId: e }) {
 		} catch (e) {
 			console.warn("[PipelineEditor] clipboard write failed", e), s("Could not copy Mermaid diagram", { type: "error" });
 		}
-	}, Te = () => {
+	}, P = () => {
 		ue(!0);
-	}, Ee = () => {
+	}, ke = () => {
 		M(!1), !E && (p(), s("Pipeline published", { type: "success" }));
-	}, De = () => {
+	}, Ae = () => {
 		c && (oe(c.id), ae(!1), t("/pipelines"));
-	}, Oe = () => {
+	}, je = () => {
 		me(e), ce(!1), s("Run history cleared", { type: "success" });
-	}, P = y.currentRunId ? a.runs[y.currentRunId] : void 0;
+	}, Me = y.currentRunId ? a.runs[y.currentRunId] : void 0;
 	return c ? /* @__PURE__ */ U("div", {
 		className: r("flex flex-col min-h-[calc(100vh-200px)]", "bg-surface-inset font-inherit text-text-primary", "rounded-lg border border-border overflow-hidden"),
 		"data-testid": "pipeline-editor",
@@ -14931,15 +14945,15 @@ function Xc({ pipelineId: e }) {
 				isTriggering: y.isTriggering,
 				runDisabled: ge,
 				runTitle: ye,
-				currentRun: P,
+				currentRun: Me,
 				breakpoints: y.breakpoints,
 				onRunClick: xe,
 				onDebugRunClick: y.handleDebugRunClick,
-				onExport: Ce,
+				onExport: De,
 				onPublishClick: () => M(!0),
-				onDuplicate: Se,
-				onCopyMermaid: we,
-				onViewVersions: Te,
+				onDuplicate: Ee,
+				onCopyMermaid: Oe,
+				onViewVersions: P,
 				onRevert: h,
 				onToggleShowTags: ne,
 				showTags: j,
@@ -15010,17 +15024,17 @@ function Xc({ pipelineId: e }) {
 			/* @__PURE__ */ H(Ii, {
 				publishConfirmOpen: re,
 				onPublishClose: () => M(!1),
-				onPublishConfirm: Ee,
+				onPublishConfirm: ke,
 				hasErrors: E,
 				validationErrorCount: T?.errors.length ?? 0,
 				definitionName: c.name,
 				definitionVersion: c.version,
 				deleteConfirmOpen: ie,
 				onDeleteClose: () => ae(!1),
-				onDeleteConfirm: De,
+				onDeleteConfirm: Ae,
 				clearRunsConfirmOpen: se,
 				onClearRunsClose: () => ce(!1),
-				onClearRunsConfirm: Oe,
+				onClearRunsConfirm: je,
 				versionDiffOpen: le,
 				onVersionDiffClose: () => ue(!1),
 				currentDef: c,
@@ -19769,7 +19783,7 @@ function Gu({ pipelineId: e, runId: t }) {
 	let n = rt(), i = pe(), a = _e(), { definition: o } = i, [s, c] = B(null);
 	L(() => {
 		let n = !1;
-		return import("./services-buxrr1Qy.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
+		return import("./services-BLXtNDL8.js").then((e) => e.X).then(({ getPipelineRun: r }) => {
 			r(e, t).then((e) => {
 				!n && e && c(e);
 			});

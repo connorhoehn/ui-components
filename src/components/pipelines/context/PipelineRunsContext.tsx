@@ -106,10 +106,33 @@ export interface PipelineRunsValue {
    * Retry the most recent failed run from a specific step (per §18.4.4 / §17.6).
    * Finds the newest run that contained `nodeId` AND ended in `failed` AND had
    * `nodeId` itself fail; calls the backend retry-from-node API to spawn a new
-   * run that resumes traversal at `nodeId` and skips upstream nodes. No-op +
-   * console.warn when no eligible run is found.
+   * run that resumes traversal at `nodeId` and skips upstream nodes.
+   *
+   * Always resolves — never rejects. When no eligible run is found, or the
+   * API refuses, the reason lands on `retryError` (below) rather than in the
+   * returned promise.
    */
   retryFromStep: (nodeId: string) => Promise<void>;
+  /**
+   * Why the most recent `retryFromStep` did not start a run, or `null` when
+   * the last attempt succeeded (or none has been made). Additive field.
+   *
+   * `retryFromStep` is frozen at `Promise<void>` and deliberately still
+   * resolves on failure — making it reject would break every existing
+   * `onClick={() => retryFromStep(id)}` call site with an unhandled
+   * rejection. Until this field existed, both failure modes (the API
+   * rejecting, and no eligible failed run being found) were a `console`
+   * line and nothing else: the user clicked "Retry from here" and the UI
+   * did not move, which is indistinguishable from a retry that silently
+   * worked. `reason` separates the two so a host can word them differently.
+   */
+  retryError: {
+    nodeId: string;
+    message: string;
+    reason: 'no-failed-run' | 'request-failed';
+  } | null;
+  /** Dismiss `retryError`. Also cleared automatically by the next retry. */
+  clearRetryError: () => void;
   /**
    * Merge a polled PipelineRun into the in-memory runs map. Used by the
    * poll-based live status visualizer to inject fresh run data fetched from
@@ -208,6 +231,8 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
   // mount to avoid clobbering live state; new runs are folded via events.
   const [runs, setRuns] = useState<Record<string, PipelineRun>>({});
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [retryError, setRetryError] =
+    useState<PipelineRunsValue['retryError']>(null);
 
   // Track which runs have already been persisted so we don't re-write the
   // same terminal state every time the reducer returns a new reference.
@@ -327,8 +352,11 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
     runsRef.current = runs;
   }, [runs]);
 
+  const clearRetryError = useCallback(() => setRetryError(null), []);
+
   const retryFromStep = useCallback(
     async (nodeId: string): Promise<void> => {
+      setRetryError(null);
       // Find the most recent run that:
       //   - actually executed `nodeId` (steps[nodeId] exists)
       //   - has step status 'failed' (the node itself failed)
@@ -345,6 +373,12 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
           '[PipelineRuns] retryFromStep — no failed run found for node',
           nodeId,
         );
+        setRetryError({
+          nodeId,
+          reason: 'no-failed-run',
+          message:
+            'No failed run to retry from. The run history may have been cleared, or this node did not fail.',
+        });
         return;
       }
 
@@ -354,6 +388,13 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
       } catch (err) {
         // eslint-disable-next-line no-console
         console.error('[PipelineRuns] retryFromNode API failed', err);
+        // Resolve, don't reject: the signature is frozen and every call site
+        // is a bare `onClick` handler. The failure leaves via `retryError`.
+        setRetryError({
+          nodeId,
+          reason: 'request-failed',
+          message: err instanceof Error ? err.message : 'Retry request failed.',
+        });
       }
     },
     [],
@@ -506,6 +547,8 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
       applyContextPatch,
       revertContextPatch: revertContextPatchFn,
       retryFromStep,
+      retryError,
+      clearRetryError,
       ingestRun,
     }),
     [
@@ -519,6 +562,8 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
       applyContextPatch,
       revertContextPatchFn,
       retryFromStep,
+      retryError,
+      clearRetryError,
       ingestRun,
     ],
   );
