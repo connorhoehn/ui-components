@@ -16,6 +16,7 @@
 // backing store is a consumer extension rather than something this node knows
 // anything about.
 
+import { useId } from 'react';
 import type { MemoryNodeData, MemoryMode, MemoryScope } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -41,6 +42,7 @@ const SCOPES: { value: MemoryScope; label: string; help: string }[] = [
 ];
 
 export default function MemoryConfig({ data, onChange, nodeId }: MemoryConfigProps) {
+  const uid = useId();
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
 
   const isWrite = data.mode === 'write';
@@ -54,71 +56,101 @@ export default function MemoryConfig({ data, onChange, nodeId }: MemoryConfigPro
 
   return (
     <NodeConfigShell>
-      <ConfigField label="Mode" required help={modeHelp}>
-        <Select
-          size="sm"
-          value={data.mode}
-          onChange={(e) => onChange({ mode: e.target.value as MemoryMode })}
-          aria-label="Memory mode"
-          options={MODES.map((m) => ({ value: m.value, label: m.label }))}
-        />
-      </ConfigField>
+      {/* Every control here carried an aria-label that RESTATED the visible
+          label with a different wording ("Memory mode" beside a label reading
+          "Mode"), which is a second name for the same field. The visible label
+          wins now that it is wired. */}
+      <ConfigField
+        label="Mode"
+        required
+        help={modeHelp}
+        controlId={`${uid}-mode`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.mode}
+            onChange={(e) => onChange({ mode: e.target.value as MemoryMode })}
+            options={MODES.map((m) => ({ value: m.value, label: m.label }))}
+          />
+        )}
+      />
 
-      <ConfigField label="Scope" required help={scopeHelp}>
-        <Select
-          size="sm"
-          value={data.scope}
-          onChange={(e) => onChange({ scope: e.target.value as MemoryScope })}
-          aria-label="Memory scope"
-          options={SCOPES.map((sc) => ({ value: sc.value, label: sc.label }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Scope"
+        required
+        help={scopeHelp}
+        controlId={`${uid}-scope`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.scope}
+            onChange={(e) => onChange({ scope: e.target.value as MemoryScope })}
+            options={SCOPES.map((sc) => ({ value: sc.value, label: sc.label }))}
+          />
+        )}
+      />
 
       <ConfigField
         label="Namespace"
         required
         error={namespaceMissing ? 'Namespace is required.' : undefined}
         help={!namespaceMissing ? 'Groups related records. Reads only see their own namespace.' : undefined}
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.namespace ?? ''}
-          onChange={(e) => onChange({ namespace: e.target.value })}
-          placeholder="support-conversations"
-          aria-label="Memory namespace"
-        />
-      </ConfigField>
+        controlId={`${uid}-namespace`}
+        render={({ controlId, describedById }) => (
+          <Input
+            size="sm"
+            mono
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.namespace ?? ''}
+            onChange={(e) => onChange({ namespace: e.target.value })}
+            placeholder="support-conversations"
+          />
+        )}
+      />
 
       <ConfigField
         label="Key expression"
         required
         error={keyMissing ? 'Key expression is required.' : undefined}
         help={!keyMissing ? 'Identifies the record. Supports {{ context.* }} substitution.' : undefined}
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.keyExpression ?? ''}
-          onChange={(e) => onChange({ keyExpression: e.target.value })}
-          placeholder="{{context.trigger.userId}}"
-          aria-label="Memory key expression"
-        />
-      </ConfigField>
+        controlId={`${uid}-key-expression`}
+        render={({ controlId, describedById }) => (
+          <Input
+            size="sm"
+            mono
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.keyExpression ?? ''}
+            onChange={(e) => onChange({ keyExpression: e.target.value })}
+            placeholder="{{context.trigger.userId}}"
+          />
+        )}
+      />
 
-      <ConfigField label="Available context">
-        <ContextVariablePicker
-          paths={paths}
-          unresolved={unresolved(
-            `${data.keyExpression ?? ''}\n${isWrite ? (data.valueField ?? '') : ''}`,
-          )}
-          onInsert={(token) =>
-            onChange({ keyExpression: `${data.keyExpression ?? ''}${token}` })
-          }
-        />
-      </ConfigField>
+      {/* A row of insert buttons, not a labelable control. */}
+      <ConfigField
+        label="Available context"
+        render={() => (
+          <div role="group" aria-label="Available context">
+            <ContextVariablePicker
+              paths={paths}
+              unresolved={unresolved(
+                `${data.keyExpression ?? ''}\n${isWrite ? (data.valueField ?? '') : ''}`,
+              )}
+              onInsert={(token) =>
+                onChange({ keyExpression: `${data.keyExpression ?? ''}${token}` })
+              }
+            />
+          </div>
+        )}
+      />
 
       {isWrite ? (
         <ConfigField
@@ -126,32 +158,38 @@ export default function MemoryConfig({ data, onChange, nodeId }: MemoryConfigPro
           required
           error={valueMissing ? 'Value field is required for a write.' : undefined}
           help={!valueMissing ? 'Context path whose value is persisted.' : undefined}
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.valueField ?? ''}
-            onChange={(e) => onChange({ valueField: e.target.value || undefined })}
-            placeholder="context.steps.llm-1.output"
-            aria-label="Memory value field"
-          />
-        </ConfigField>
+          controlId={`${uid}-value-field`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.valueField ?? ''}
+              onChange={(e) => onChange({ valueField: e.target.value || undefined })}
+              placeholder="context.steps.llm-1.output"
+            />
+          )}
+        />
       ) : (
         <ConfigField
           label="Output key"
           help="Where retrieved records land in context. Defaults to this step's output."
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            value={data.outputKey ?? ''}
-            onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
-            placeholder="recalled"
-            aria-label="Memory output key"
-          />
-        </ConfigField>
+          controlId={`${uid}-output-key`}
+          render={({ controlId, describedById }) => (
+            <Input
+              size="sm"
+              mono
+              spellCheck={false}
+              id={controlId}
+              aria-describedby={describedById}
+              value={data.outputKey ?? ''}
+              onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
+              placeholder="recalled"
+            />
+          )}
+        />
       )}
     </NodeConfigShell>
   );

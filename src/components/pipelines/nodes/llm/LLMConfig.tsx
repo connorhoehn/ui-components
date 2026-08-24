@@ -6,7 +6,7 @@
 // clickable variable pills (insert at cursor), and a collapsible
 // Advanced section for temperature / maxTokens / streaming.
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { LLMNodeData, LLMProvider } from '../../../../types/pipeline';
 import { ConfigField, ConfigSection, NodeConfigShell, ToggleField } from '../shared';
 import { cn } from '../../../../lib/cn';
@@ -91,6 +91,7 @@ function resolveTemplate(template: string, kinds: Map<string, string>): string {
 }
 
 export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
+  const uid = useId();
   const [previewOpen, setPreviewOpen] = useState(false);
   const { paths, unresolved } = useUpstreamContext(nodeId ?? null);
   const kinds = new Map<string, string>(paths.map((p) => [p.path, p.kind]));
@@ -121,40 +122,59 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
   return (
     <NodeConfigShell>
       {/* Provider */}
-      <ConfigField label="Provider" required>
-        <Select
-          size="sm"
-          value={data.provider}
-          onChange={(e) => setProvider(e.target.value as LLMProvider)}
-          aria-label="Provider"
-          options={PROVIDER_OPTIONS}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Provider"
+        required
+        controlId={`${uid}-provider`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.provider}
+            onChange={(e) => setProvider(e.target.value as LLMProvider)}
+            options={PROVIDER_OPTIONS}
+          />
+        )}
+      />
 
       {/* Model */}
-      <ConfigField label="Model" required>
-        <Select
-          size="sm"
-          value={data.model}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={modelOptions.map((m) => ({
-            value: m.value,
-            label: m.label ?? m.value,
-          }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Model"
+        required
+        controlId={`${uid}-model`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.model}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={modelOptions.map((m) => ({
+              value: m.value,
+              label: m.label ?? m.value,
+            }))}
+          />
+        )}
+      />
 
-      {/* Available run context, derived from the graph upstream of this node. */}
-      <ConfigField label="Available context">
-        <ContextVariablePicker
-          paths={paths}
-          unresolved={unresolvedPaths}
-          onInsert={(token) =>
-            onChange({ userPromptTemplate: `${data.userPromptTemplate ?? ''}${token}` })
-          }
-        />
-      </ConfigField>
+      {/* Available run context, derived from the graph upstream of this node.
+          A row of insert buttons, not a labelable control, so the field label
+          names the group. */}
+      <ConfigField
+        label="Available context"
+        render={() => (
+          <div role="group" aria-label="Available context">
+            <ContextVariablePicker
+              paths={paths}
+              unresolved={unresolvedPaths}
+              onInsert={(token) =>
+                onChange({ userPromptTemplate: `${data.userPromptTemplate ?? ''}${token}` })
+              }
+            />
+          </div>
+        )}
+      />
 
       {/* System prompt */}
       <ConfigField
@@ -162,15 +182,18 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
         required
         error={systemMissing ? 'System prompt is required.' : undefined}
         help={!systemMissing ? 'Sets the model\'s role and constraints.' : undefined}
-      >
-        <Textarea
-          rows={4}
-          invalid={systemMissing}
-          value={data.systemPrompt}
-          onChange={(e) => onChange({ systemPrompt: e.target.value })}
-          aria-label="System prompt"
-        />
-      </ConfigField>
+        controlId={`${uid}-system-prompt`}
+        render={({ controlId, describedById }) => (
+          <Textarea
+            rows={4}
+            invalid={systemMissing}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.systemPrompt}
+            onChange={(e) => onChange({ systemPrompt: e.target.value })}
+          />
+        )}
+      />
 
       {/* User prompt template */}
       <ConfigField
@@ -179,6 +202,9 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
         error={userMissing ? 'User prompt template is required.' : undefined}
         help={!userMissing ? 'Supports {{ context.* }} substitution — click a pill above to append.' : undefined}
       >
+        {/* CodeEditor accepts no `id`, so ConfigField's htmlFor has nothing to
+            point at; the control's own name is kept and already matches the
+            visible label verbatim. */}
         <CodeEditor
           value={data.userPromptTemplate}
           onChange={(next) => onChange({ userPromptTemplate: next })}
@@ -195,6 +221,8 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
           label="Temperature"
           help="0 = deterministic, 1 = creative."
         >
+          {/* <Slider> accepts no `id` either, so the same rule applies: one
+              name, matching the visible label. */}
           <Slider
             min={0}
             max={1}
@@ -207,17 +235,23 @@ export default function LLMConfig({ data, onChange, nodeId }: LLMConfigProps) {
           />
         </ConfigField>
 
-        <ConfigField label="Max tokens" help="Upper bound on response length.">
-          <NumberInput
-            size="sm"
-            min={1}
-            value={data.maxTokens}
-            onChange={(maxTokens) => onChange({ maxTokens })}
-            onClear={() => onChange({ maxTokens: undefined })}
-            aria-label="Max tokens"
-            data-testid="llm-max-tokens"
-          />
-        </ConfigField>
+        <ConfigField
+          label="Max tokens"
+          help="Upper bound on response length."
+          controlId={`${uid}-max-tokens`}
+          render={({ controlId, describedById }) => (
+            <NumberInput
+              size="sm"
+              min={1}
+              value={data.maxTokens}
+              onChange={(maxTokens) => onChange({ maxTokens })}
+              onClear={() => onChange({ maxTokens: undefined })}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="llm-max-tokens"
+            />
+          )}
+        />
 
         <div>
           <ToggleField

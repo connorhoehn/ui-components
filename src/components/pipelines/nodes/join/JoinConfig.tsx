@@ -30,48 +30,63 @@ const STRATEGY_OPTIONS: Array<{ value: JoinMergeStrategy; label: string; hint: s
 export default function JoinConfig({ data, onChange }: JoinConfigProps) {
   return (
     <NodeConfigShell>
-      {/* Mode */}
-      <ConfigField label="Mode" required>
-        <RadioGroup
-          name="join-mode"
-          value={data.mode}
-          onChange={(mode) => onChange({ mode })}
-          options={MODE_OPTIONS.map((o) => ({
-            value: o.value,
-            label: o.label,
-            description: o.hint,
-          }))}
-          data-testid="join-mode"
-        />
+      {/* Mode — a radio set plus its dependent count, i.e. several controls
+          rather than one labelable element, so the field label names a group.
+          htmlFor would have nothing valid to point at. */}
+      <ConfigField
+        label="Mode"
+        required
+        render={() => (
+          <div role="group" aria-label="Mode">
+            <RadioGroup
+              name="join-mode"
+              value={data.mode}
+              onChange={(mode) => onChange({ mode })}
+              options={MODE_OPTIONS.map((o) => ({
+                value: o.value,
+                label: o.label,
+                description: o.hint,
+              }))}
+              data-testid="join-mode"
+            />
 
-        {data.mode === 'n_of_m' && (
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-text-secondary">N</span>
-            <NumberInput
-              size="sm"
-              min={1}
-              value={data.n ?? 1}
-              onChange={(n) => onChange({ n })}
-              data-testid="join-n"
+            {data.mode === 'n_of_m' && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-text-secondary">N</span>
+                <NumberInput
+                  size="sm"
+                  min={1}
+                  value={data.n ?? 1}
+                  onChange={(n) => onChange({ n })}
+                  aria-label="N"
+                  data-testid="join-n"
+                />
+              </div>
+            )}
+          </div>
+        )}
+      />
+
+      {/* Merge strategy */}
+      <ConfigField
+        label="Merge strategy"
+        required
+        render={() => (
+          <div role="group" aria-label="Merge strategy">
+            <RadioGroup
+              name="join-merge"
+              value={data.mergeStrategy}
+              onChange={(mergeStrategy) => onChange({ mergeStrategy })}
+              options={STRATEGY_OPTIONS.map((o) => ({
+                value: o.value,
+                label: o.label,
+                description: o.hint,
+              }))}
+              data-testid="join-merge"
             />
           </div>
         )}
-      </ConfigField>
-
-      {/* Merge strategy */}
-      <ConfigField label="Merge strategy" required>
-        <RadioGroup
-          name="join-merge"
-          value={data.mergeStrategy}
-          onChange={(mergeStrategy) => onChange({ mergeStrategy })}
-          options={STRATEGY_OPTIONS.map((o) => ({
-            value: o.value,
-            label: o.label,
-            description: o.hint,
-          }))}
-          data-testid="join-merge"
-        />
-      </ConfigField>
+      />
 
       {/* Current inputs (read-only) */}
       <div className="p-2 bg-surface-inset border border-border rounded-md text-xs text-text-secondary">

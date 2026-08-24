@@ -8,7 +8,7 @@
 // approvers are editable via the chip list (the picker will grow
 // role support in a later phase).
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { ApprovalNodeData, Approver, ApprovalTimeoutAction } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import UserPicker from '../../../shared/UserPicker';
@@ -51,6 +51,7 @@ function inferUnit(ms: number | undefined): TimeUnit {
 }
 
 export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) {
+  const uid = useId();
   const approvers = data.approvers ?? [];
   const approversMissing = approvers.length === 0;
 
@@ -104,120 +105,144 @@ export default function ApprovalConfig({ data, onChange }: ApprovalConfigProps) 
 
   return (
     <NodeConfigShell>
-      {/* Approvers */}
+      {/* Approvers — a picker plus a removable chip per approver, i.e. a set of
+          controls rather than one labelable element, so the label names a
+          group. */}
       <ConfigField
         label="Approvers"
         required
         error={approversMissing ? 'At least one approver is required.' : undefined}
         help={!approversMissing ? 'Who can approve this step.' : undefined}
-      >
-        <UserPicker
-          value={userApproverIds}
-          onChange={setUserApprovers}
-          placeholder="Add approver…"
-        />
+        render={({ describedById }) => (
+          <div role="group" aria-label="Approvers" aria-describedby={describedById}>
+            <UserPicker
+              value={userApproverIds}
+              onChange={setUserApprovers}
+              placeholder="Add approver…"
+            />
 
-        {approvers.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
-            {approvers.map((a, idx) => (
-              <span
-                key={`${a.type}:${a.value}:${idx}`}
-                className={cn(
-                  'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-[1.4] whitespace-nowrap',
-                  a.type === 'role'
-                    ? 'bg-warning-bg text-warning-fg'
-                    : 'bg-info-bg text-info-fg',
-                )}
-              >
-                {a.type === 'role' ? '🎖' : '👤'} {a.value}
-                <button
-                  type="button"
-                  onClick={() => removeApprover(idx)}
-                  aria-label={`Remove ${a.value}`}
-                  className="bg-transparent border-none p-0 ml-0.5 cursor-pointer text-current font-inherit text-xs leading-none"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
+            {approvers.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {approvers.map((a, idx) => (
+                  <span
+                    key={`${a.type}:${a.value}:${idx}`}
+                    className={cn(
+                      'inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold font-inherit leading-[1.4] whitespace-nowrap',
+                      a.type === 'role'
+                        ? 'bg-warning-bg text-warning-fg'
+                        : 'bg-info-bg text-info-fg',
+                    )}
+                  >
+                    {a.type === 'role' ? '🎖' : '👤'} {a.value}
+                    <button
+                      type="button"
+                      onClick={() => removeApprover(idx)}
+                      aria-label={`Remove ${a.value}`}
+                      className="bg-transparent border-none p-0 ml-0.5 cursor-pointer text-current font-inherit text-xs leading-none"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         )}
-      </ConfigField>
+      />
 
-      {/* Required count */}
+      {/* Required count — one control; the "of N" text beside it is static. */}
       <ConfigField
         label="Required count"
         required
         help="How many approvers must say yes."
-      >
-        <div className="flex items-center gap-2">
-          <NumberInput
-            size="sm"
-            min={1}
-            max={requiredCountMax}
-            value={data.requiredCount || 1}
-            onChange={(requiredCount) => onChange({ requiredCount })}
-            data-testid="approval-required-count"
-          />
-          <span className="text-text-tertiary text-xs whitespace-nowrap">
-            of {requiredCountMax}
-          </span>
-        </div>
-      </ConfigField>
-
-      {/* Timeout */}
-      <ConfigField label="Timeout" help="Leave blank for no timeout.">
-        <div className="flex items-center gap-2">
-          <NumberInput
-            size="sm"
-            min={0}
-            value={unitValue === '' ? undefined : Number(unitValue)}
-            onChange={(v) => setTimeoutValue(String(v))}
-            onClear={() => setTimeoutValue('')}
-            placeholder="24"
-            data-testid="approval-timeout-value"
-          />
-          <Select
-            size="sm"
-            className="w-[120px] flex-none"
-            value={unit}
-            onChange={(e) => setTimeoutUnit(e.target.value as TimeUnit)}
-            aria-label="Timeout unit"
-            options={TIMEOUT_UNITS}
-          />
-        </div>
-
-        {data.timeoutMs !== undefined && data.timeoutMs > 0 && (
-          <div className="mt-2">
-            <span className="text-[11px] font-semibold text-text-secondary">
-              If timeout
+        controlId={`${uid}-required-count`}
+        render={({ controlId, describedById }) => (
+          <div className="flex items-center gap-2">
+            <NumberInput
+              size="sm"
+              min={1}
+              max={requiredCountMax}
+              value={data.requiredCount || 1}
+              onChange={(requiredCount) => onChange({ requiredCount })}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="approval-required-count"
+            />
+            <span className="text-text-tertiary text-xs whitespace-nowrap">
+              of {requiredCountMax}
             </span>
-            <div className="mt-1">
-              <RadioGroup
-                name="approval-timeout-action"
-                orientation="horizontal"
-                value={data.timeoutAction ?? 'reject'}
-                onChange={(timeoutAction) =>
-                  onChange({ timeoutAction: timeoutAction as ApprovalTimeoutAction })
-                }
-                options={TIMEOUT_ACTIONS}
-                data-testid="approval-timeout-action"
-              />
-            </div>
           </div>
         )}
-      </ConfigField>
+      />
+
+      {/* Timeout — amount + unit + the on-timeout action: three controls, so
+          the label names the group and each control keeps its own narrower
+          name. The number box had no name at all before. */}
+      <ConfigField
+        label="Timeout"
+        help="Leave blank for no timeout."
+        render={({ describedById }) => (
+          <div role="group" aria-label="Timeout" aria-describedby={describedById}>
+            <div className="flex items-center gap-2">
+              <NumberInput
+                size="sm"
+                min={0}
+                value={unitValue === '' ? undefined : Number(unitValue)}
+                onChange={(v) => setTimeoutValue(String(v))}
+                onClear={() => setTimeoutValue('')}
+                placeholder="24"
+                aria-label="Timeout value"
+                data-testid="approval-timeout-value"
+              />
+              <Select
+                size="sm"
+                className="w-[120px] flex-none"
+                value={unit}
+                onChange={(e) => setTimeoutUnit(e.target.value as TimeUnit)}
+                aria-label="Timeout unit"
+                options={TIMEOUT_UNITS}
+              />
+            </div>
+
+            {data.timeoutMs !== undefined && data.timeoutMs > 0 && (
+              <div className="mt-2">
+                <span className="text-[11px] font-semibold text-text-secondary">
+                  If timeout
+                </span>
+                <div className="mt-1">
+                  <RadioGroup
+                    name="approval-timeout-action"
+                    orientation="horizontal"
+                    value={data.timeoutAction ?? 'reject'}
+                    onChange={(timeoutAction) =>
+                      onChange({ timeoutAction: timeoutAction as ApprovalTimeoutAction })
+                    }
+                    options={TIMEOUT_ACTIONS}
+                    data-testid="approval-timeout-action"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      />
 
       {/* Message */}
-      <ConfigField label="Message for approver (optional)" help="Shown to the approver when the request is sent.">
-        <Textarea
-          rows={4}
-          value={data.message ?? ''}
-          onChange={(e) => onChange({ message: e.target.value || undefined })}
-          placeholder="Please review the summary before it's posted to the document."
-          aria-label="Message for approver"
-        />
-      </ConfigField>
+      <ConfigField
+        label="Message for approver (optional)"
+        help="Shown to the approver when the request is sent."
+        controlId={`${uid}-message`}
+        render={({ controlId, describedById }) => (
+          <Textarea
+            rows={4}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.message ?? ''}
+            onChange={(e) => onChange({ message: e.target.value || undefined })}
+            placeholder="Please review the summary before it's posted to the document."
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

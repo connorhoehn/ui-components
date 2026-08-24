@@ -176,7 +176,10 @@ describe('nodeVocabulary host override', () => {
       },
       <GraphQueryConfig data={gq} onChange={vi.fn()} />,
     );
-    expect(screen.getByLabelText('Graph ID')).toHaveAttribute(
+    // Graph ID is a required field, so its <label> text ends in an
+    // aria-hidden "●" that getByLabelText would match on but the accessible
+    // name omits.
+    expect(screen.getByRole('textbox', { name: 'Graph ID' })).toHaveAttribute(
       'placeholder',
       'neptune-prod',
     );

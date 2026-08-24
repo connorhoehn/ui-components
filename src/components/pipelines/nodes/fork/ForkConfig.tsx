@@ -6,6 +6,7 @@
 // branch label is an optional free-form string; we keep the array sized
 // to branchCount so downstream consumers can index safely.
 
+import { useId } from 'react';
 import type { ForkNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -28,6 +29,7 @@ function resizeLabels(labels: string[] | undefined, count: number): string[] {
 }
 
 export default function ForkConfig({ data, onChange }: ForkConfigProps) {
+  const uid = useId();
   const count = Math.max(MIN_BRANCHES, Math.min(MAX_BRANCHES, data.branchCount || MIN_BRANCHES));
   const labels = resizeLabels(data.branchLabels, count);
 
@@ -47,50 +49,69 @@ export default function ForkConfig({ data, onChange }: ForkConfigProps) {
 
   return (
     <NodeConfigShell>
-      {/* Branch count */}
+      {/* Branch count — the slider and the number box are two editors of ONE
+          value, so this stays an htmlFor association pointed at the number box
+          rather than a role="group": there is no set of distinct settings here
+          to group. The slider keeps its own name because <Slider> takes no
+          `id`, and it is the same name because it edits the same thing. */}
       <ConfigField
         label="Branch count"
         required
         help={`Between ${MIN_BRANCHES} and ${MAX_BRANCHES} parallel branches.`}
-      >
-        <Slider
-          min={MIN_BRANCHES}
-          max={MAX_BRANCHES}
-          step={1}
-          value={count}
-          onChange={setBranchCount}
-          aria-label="Branch count"
-          data-testid="fork-branch-slider"
-        />
-        <NumberInput
-          size="sm"
-          min={MIN_BRANCHES}
-          max={MAX_BRANCHES}
-          value={count}
-          onChange={setBranchCount}
-          data-testid="fork-branch-count"
-        />
-      </ConfigField>
+        controlId={`${uid}-branch-count`}
+        render={({ controlId, describedById }) => (
+          <>
+            <Slider
+              min={MIN_BRANCHES}
+              max={MAX_BRANCHES}
+              step={1}
+              value={count}
+              onChange={setBranchCount}
+              aria-label="Branch count"
+              data-testid="fork-branch-slider"
+            />
+            <NumberInput
+              size="sm"
+              min={MIN_BRANCHES}
+              max={MAX_BRANCHES}
+              value={count}
+              onChange={setBranchCount}
+              id={controlId}
+              aria-describedby={describedById}
+              data-testid="fork-branch-count"
+            />
+          </>
+        )}
+      />
 
-      {/* Branch labels */}
-      <ConfigField label="Branch labels (optional)">
-        <div className="flex flex-col gap-1.5">
-          {labels.map((label, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <span className="text-xs text-text-secondary min-w-[72px]">
-                Branch {idx}:
-              </span>
-              <Input
-                size="sm"
-                value={label}
-                onChange={(e) => setLabel(idx, e.target.value)}
-                placeholder={idx === 0 ? 'primary' : `branch-${idx}`}
-                aria-label={`Branch ${idx} label`}
-              />
-            </div>
-          ))}
-        </div>
-      </ConfigField>
+      {/* Branch labels — a set of per-branch inputs, each already carrying its
+          own name, so the field label names the GROUP instead of trying to
+          name one control. */}
+      <ConfigField
+        label="Branch labels (optional)"
+        render={() => (
+          <div
+            role="group"
+            aria-label="Branch labels (optional)"
+            className="flex flex-col gap-1.5"
+          >
+            {labels.map((label, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <span className="text-xs text-text-secondary min-w-[72px]">
+                  Branch {idx}:
+                </span>
+                <Input
+                  size="sm"
+                  value={label}
+                  onChange={(e) => setLabel(idx, e.target.value)}
+                  placeholder={idx === 0 ? 'primary' : `branch-${idx}`}
+                  aria-label={`Branch ${idx} label`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      />
     </NodeConfigShell>
   );
 }

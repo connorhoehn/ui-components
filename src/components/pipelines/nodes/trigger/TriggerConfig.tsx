@@ -7,7 +7,7 @@
 //   schedule    → cron input + placeholder "Next fires" preview
 //   webhook     → path input + read-only full-URL preview
 
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useId, useMemo, useState } from 'react';
 import type { TriggerNodeData, TriggerType } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import { Input } from '../../../forms/Input';
@@ -61,6 +61,7 @@ const TRIGGER_TYPE_OPTIONS: Array<{ value: TriggerType; label: string }> = [
 ];
 
 export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
+  const uid = useId();
   const { toast } = useToast();
   // Secret is server-minted and lives on `triggerBinding`, not on the node
   // data — but the editor context owns the live definition so we can pull it
@@ -122,15 +123,21 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
   return (
     <NodeConfigShell>
       {/* Trigger type */}
-      <ConfigField label="Trigger type" required>
-        <Select
-          size="sm"
-          value={data.triggerType}
-          onChange={(e) => onChange({ triggerType: e.target.value as TriggerType })}
-          aria-label="Trigger type"
-          options={TRIGGER_TYPE_OPTIONS}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Trigger type"
+        required
+        controlId={`${uid}-trigger-type`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.triggerType}
+            onChange={(e) => onChange({ triggerType: e.target.value as TriggerType })}
+            options={TRIGGER_TYPE_OPTIONS}
+          />
+        )}
+      />
 
       {/* Document type (when document.*) */}
       {isDoc && (
@@ -139,24 +146,29 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
           required
           error={docTypeMissing ? 'Select a document type.' : undefined}
           help={!docTypeMissing ? 'Which document type should trigger this pipeline.' : undefined}
-        >
-          <Select
-            size="sm"
-            invalid={docTypeMissing}
-            value={data.documentTypeId ?? ''}
-            onChange={(e) => onChange({ documentTypeId: e.target.value || undefined })}
-            aria-label="Document type"
-            options={[
-              { value: '', label: '— select a document type —' },
-              ...docTypes.map((dt) => ({ value: dt.id, label: dt.name })),
-            ]}
-          />
-          {eventLabel && (
-            <div className="text-[11px] text-text-tertiary mt-1.5">
-              Event: <span className="font-semibold text-text-secondary">{eventLabel}</span>
-            </div>
+          controlId={`${uid}-document-type`}
+          render={({ controlId, describedById }) => (
+            <>
+              <Select
+                size="sm"
+                invalid={docTypeMissing}
+                id={controlId}
+                aria-describedby={describedById}
+                value={data.documentTypeId ?? ''}
+                onChange={(e) => onChange({ documentTypeId: e.target.value || undefined })}
+                options={[
+                  { value: '', label: '— select a document type —' },
+                  ...docTypes.map((dt) => ({ value: dt.id, label: dt.name })),
+                ]}
+              />
+              {eventLabel && (
+                <div className="text-[11px] text-text-tertiary mt-1.5">
+                  Event: <span className="font-semibold text-text-secondary">{eventLabel}</span>
+                </div>
+              )}
+            </>
           )}
-        </ConfigField>
+        />
       )}
 
       {/* Schedule (cron) */}
@@ -170,32 +182,37 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
             undefined
           }
           help={!scheduleMissing && !cronInvalid ? '5-field cron: minute hour day month weekday.' : undefined}
-        >
-          <Input
-            size="sm"
-            mono
-            spellCheck={false}
-            invalid={scheduleMissing || cronInvalid}
-            placeholder="*/15 * * * *"
-            value={data.schedule ?? ''}
-            onChange={(e) => onChange({ schedule: e.target.value })}
-            aria-label="Cron schedule"
-          />
-          <div className="mt-2 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-tertiary font-mono">
-            {upcomingFires.length > 0 ? (
-              <>
-                <div className="text-text-secondary mb-1">
-                  Next 3 fires:
-                </div>
-                {upcomingFires.map((d, i) => (
-                  <div key={i}>{d.toLocaleString()}</div>
-                ))}
-              </>
-            ) : (
-              <span>Next fires: enter a valid cron expression to preview.</span>
-            )}
-          </div>
-        </ConfigField>
+          controlId={`${uid}-schedule`}
+          render={({ controlId, describedById }) => (
+            <>
+              <Input
+                size="sm"
+                mono
+                spellCheck={false}
+                invalid={scheduleMissing || cronInvalid}
+                placeholder="*/15 * * * *"
+                id={controlId}
+                aria-describedby={describedById}
+                value={data.schedule ?? ''}
+                onChange={(e) => onChange({ schedule: e.target.value })}
+              />
+              <div className="mt-2 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-tertiary font-mono">
+                {upcomingFires.length > 0 ? (
+                  <>
+                    <div className="text-text-secondary mb-1">
+                      Next 3 fires:
+                    </div>
+                    {upcomingFires.map((d, i) => (
+                      <div key={i}>{d.toLocaleString()}</div>
+                    ))}
+                  </>
+                ) : (
+                  <span>Next fires: enter a valid cron expression to preview.</span>
+                )}
+              </div>
+            </>
+          )}
+        />
       )}
 
       {/* Webhook */}
@@ -210,18 +227,21 @@ export default function TriggerConfig({ data, onChange }: TriggerConfigProps) {
               undefined
             }
             help={!webhookMissing && !webhookPathInvalid ? 'Alphanumeric, _, or - (max 64 chars). No leading slash.' : undefined}
-          >
-            <Input
-              size="sm"
-              mono
-              spellCheck={false}
-              invalid={webhookMissing || webhookPathInvalid}
-              placeholder="weekly-digest"
-              value={webhookPathRaw}
-              onChange={(e) => onChange({ webhookPath: e.target.value })}
-              aria-label="Webhook path"
-            />
-          </ConfigField>
+            controlId={`${uid}-webhook-path`}
+            render={({ controlId, describedById }) => (
+              <Input
+                size="sm"
+                mono
+                spellCheck={false}
+                invalid={webhookMissing || webhookPathInvalid}
+                placeholder="weekly-digest"
+                id={controlId}
+                aria-describedby={describedById}
+                value={webhookPathRaw}
+                onChange={(e) => onChange({ webhookPath: e.target.value })}
+              />
+            )}
+          />
 
           {/* Full URL preview / copy button */}
           <div className="p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2">

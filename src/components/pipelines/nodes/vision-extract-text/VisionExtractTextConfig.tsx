@@ -2,6 +2,7 @@
 //
 // Config panel for image:vision-extract-text.
 
+import { useId } from 'react';
 import type { ImageVisionExtractTextNodeData } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell, SourceImagePathField } from '../shared';
 import { Select } from '../../../forms/Select';
@@ -34,6 +35,7 @@ export default function VisionExtractTextConfig({
   onChange,
   nodeId,
 }: VisionExtractTextConfigProps) {
+  const uid = useId();
   const models = useModelOptions('image:vision-ocr', DEFAULT_OCR_MODELS);
   const pathMissing = !data.imageRefPath?.trim();
 
@@ -51,44 +53,57 @@ export default function VisionExtractTextConfig({
         }
       />
 
-      <ConfigField label="Model" help="Defaults to the more accurate model for OCR.">
-        <Select
-          size="sm"
-          value={data.model ?? models[0]?.value ?? ''}
-          onChange={(e) => onChange({ model: e.target.value })}
-          aria-label="Model"
-          options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Model"
+        help="Defaults to the more accurate model for OCR."
+        controlId={`${uid}-model`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.model ?? models[0]?.value ?? ''}
+            onChange={(e) => onChange({ model: e.target.value })}
+            options={models.map((m) => ({ value: m.value, label: m.label ?? m.value }))}
+          />
+        )}
+      />
 
       <ConfigField
         label="System prompt override"
         help="Optional. Sent verbatim — {{context.*}} is NOT substituted here."
-      >
-        <Textarea
-          rows={3}
-          spellCheck={false}
-          value={data.systemPrompt ?? ''}
-          onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
-          placeholder="Leave blank to use the default OCR system prompt."
-          aria-label="System prompt override"
-        />
-      </ConfigField>
+        controlId={`${uid}-system-prompt`}
+        render={({ controlId, describedById }) => (
+          <Textarea
+            rows={3}
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.systemPrompt ?? ''}
+            onChange={(e) => onChange({ systemPrompt: e.target.value || undefined })}
+            placeholder="Leave blank to use the default OCR system prompt."
+          />
+        )}
+      />
 
       <ConfigField
         label="Max output tokens"
         help="Default 1024. Increase for documents with large amounts of text."
-      >
-        <NumberInput
-          size="sm"
-          min={64}
-          max={8192}
-          step={64}
-          value={data.maxOutputTokens ?? 1024}
-          onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
-          data-testid="vision-extract-text-max-output-tokens"
-        />
-      </ConfigField>
+        controlId={`${uid}-max-output-tokens`}
+        render={({ controlId, describedById }) => (
+          <NumberInput
+            size="sm"
+            min={64}
+            max={8192}
+            step={64}
+            value={data.maxOutputTokens ?? 1024}
+            onChange={(maxOutputTokens) => onChange({ maxOutputTokens })}
+            id={controlId}
+            aria-describedby={describedById}
+            data-testid="vision-extract-text-max-output-tokens"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }

@@ -13,6 +13,7 @@
 // The runtime type only admits two onError values, so "Retry" is
 // represented as a halt with an attached retry budget in config.
 
+import { useId } from 'react';
 import type { ActionNodeData, ActionType } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell, ToggleField } from '../shared';
 import RetryPolicyEditor from '../RetryPolicyEditor';
@@ -85,6 +86,7 @@ const IDEMPOTENCY_MODES = [
 ];
 
 export default function ActionConfig({ data, onChange }: ActionConfigProps) {
+  const uid = useId();
   const fieldDefs = SUBTYPE_FIELD_DEFS[data.actionType];
   const config = data.config ?? {};
   const retryCount = typeof config.retryCount === 'number' ? config.retryCount : 3;
@@ -114,44 +116,74 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
   return (
     <NodeConfigShell>
       {/* Action type */}
-      <ConfigField label="Action type" required>
-        <Select
-          size="sm"
-          value={data.actionType}
-          onChange={(e) => onChange({ actionType: e.target.value as ActionType, config: {} })}
-          aria-label="Action type"
-          options={ACTION_OPTIONS}
-        />
-      </ConfigField>
+      <ConfigField
+        label="Action type"
+        required
+        controlId={`${uid}-action-type`}
+        render={({ controlId, describedById }) => (
+          <Select
+            size="sm"
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.actionType}
+            onChange={(e) => onChange({ actionType: e.target.value as ActionType, config: {} })}
+            options={ACTION_OPTIONS}
+          />
+        )}
+      />
 
-      {/* Per-subtype fields */}
-      <ConfigField label="Configuration">
-        <div className="flex flex-col gap-2.5">
-          {fieldDefs.map(fd => (
-            <div key={fd.key}>
-              <label className="text-[11px] font-semibold text-text-secondary">{fd.label}</label>
-              {fd.multiline ? (
-                <Textarea
-                  rows={2}
-                  placeholder={fd.placeholder}
-                  value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
-                  onChange={(e) => setConfigField(fd.key, e.target.value)}
-                  aria-label={fd.label}
-                />
-              ) : (
-                <Input
-                  size="sm"
-                  placeholder={fd.placeholder}
-                  value={typeof config[fd.key] === 'string' ? (config[fd.key] as string) : ''}
-                  onChange={(e) => setConfigField(fd.key, e.target.value)}
-                  aria-label={fd.label}
-                />
-              )}
-              {fd.help && <div className="text-[11px] text-text-tertiary mt-0.5">{fd.help}</div>}
-            </div>
-          ))}
-        </div>
-      </ConfigField>
+      {/* Per-subtype fields — a SET of controls, so "Configuration" names the
+          group. The per-field labels inside had the same bug ConfigField had:
+          no htmlFor and no wrapped control, so each named nothing and the
+          control fell back to an aria-label that duplicated it. Each row now
+          associates its own label, and its help text via aria-describedby. */}
+      <ConfigField
+        label="Configuration"
+        render={() => (
+          <div role="group" aria-label="Configuration" className="flex flex-col gap-2.5">
+            {fieldDefs.map(fd => {
+              const fieldId = `${uid}-cfg-${fd.key}`;
+              const helpId = fd.help ? `${fieldId}-help` : undefined;
+              const value =
+                typeof config[fd.key] === 'string' ? (config[fd.key] as string) : '';
+              return (
+                <div key={fd.key}>
+                  <label
+                    htmlFor={fieldId}
+                    className="text-[11px] font-semibold text-text-secondary"
+                  >
+                    {fd.label}
+                  </label>
+                  {fd.multiline ? (
+                    <Textarea
+                      rows={2}
+                      id={fieldId}
+                      aria-describedby={helpId}
+                      placeholder={fd.placeholder}
+                      value={value}
+                      onChange={(e) => setConfigField(fd.key, e.target.value)}
+                    />
+                  ) : (
+                    <Input
+                      size="sm"
+                      id={fieldId}
+                      aria-describedby={helpId}
+                      placeholder={fd.placeholder}
+                      value={value}
+                      onChange={(e) => setConfigField(fd.key, e.target.value)}
+                    />
+                  )}
+                  {fd.help && (
+                    <div id={helpId} className="text-[11px] text-text-tertiary mt-0.5">
+                      {fd.help}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      />
 
       <ToggleField
         label="Idempotent"
@@ -163,22 +195,31 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
 
       {/* Idempotency mode — visible only when idempotent is checked */}
       {data.idempotent && (
-        <ConfigField label="Dedup scope">
-          <Select
-            size="sm"
-            value={data.idempotencyMode ?? 'per-step'}
-            onChange={(e) =>
-              onChange({ idempotencyMode: e.target.value as 'per-attempt' | 'per-step' })
-            }
-            aria-label="Dedup scope"
-            options={IDEMPOTENCY_MODES}
-          />
-          <div className="text-[11px] text-text-tertiary mt-0.5">
-            {(data.idempotencyMode ?? 'per-step') === 'per-step'
-              ? 'Retries skip this action if it already succeeded. Best for post-comment, notify.'
-              : 'Each retry attempt can execute the action. Best for idempotent PUTs/webhooks.'}
-          </div>
-        </ConfigField>
+        <ConfigField
+          label="Dedup scope"
+          controlId={`${uid}-dedup-scope`}
+          render={({ controlId }) => (
+            <>
+              <Select
+                size="sm"
+                id={controlId}
+                // This field explains itself with its own hint node rather than
+                // ConfigField's `help`, so it points aria-describedby there.
+                aria-describedby={`${uid}-dedup-help`}
+                value={data.idempotencyMode ?? 'per-step'}
+                onChange={(e) =>
+                  onChange({ idempotencyMode: e.target.value as 'per-attempt' | 'per-step' })
+                }
+                options={IDEMPOTENCY_MODES}
+              />
+              <div id={`${uid}-dedup-help`} className="text-[11px] text-text-tertiary mt-0.5">
+                {(data.idempotencyMode ?? 'per-step') === 'per-step'
+                  ? 'Retries skip this action if it already succeeded. Best for post-comment, notify.'
+                  : 'Each retry attempt can execute the action. Best for idempotent PUTs/webhooks.'}
+              </div>
+            </>
+          )}
+        />
       )}
 
       {/* Retry policy (hub#1289) */}
@@ -187,34 +228,42 @@ export default function ActionConfig({ data, onChange }: ActionConfigProps) {
         onChange={(next) => onChange({ retryPolicy: next })}
       />
 
-      <ConfigField label="On error">
-        <RadioGroup
-          name="action-on-error"
-          value={onErrorUI}
-          onChange={setOnErrorUI}
-          options={ON_ERROR_OPTIONS}
-          data-testid="action-on-error"
-        />
-
-        {/* The count sits outside the radio label rather than inside it: a
-            control nested in a <label> steals clicks meant for the option. */}
-        {onErrorUI === 'retry' && (
-          <div className="mt-2 flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-text-secondary">
-              Attempts
-            </span>
-            <NumberInput
-              size="sm"
-              min={1}
-              value={retryCount}
-              onChange={(n) =>
-                onChange({ onError: 'fail-run', config: { ...config, retryCount: n } })
-              }
-              data-testid="action-retry-count"
+      {/* On error — a radio set plus its dependent attempt count, so the label
+          names a group; htmlFor has no single control to point at. */}
+      <ConfigField
+        label="On error"
+        render={() => (
+          <div role="group" aria-label="On error">
+            <RadioGroup
+              name="action-on-error"
+              value={onErrorUI}
+              onChange={setOnErrorUI}
+              options={ON_ERROR_OPTIONS}
+              data-testid="action-on-error"
             />
+
+            {/* The count sits outside the radio label rather than inside it: a
+                control nested in a <label> steals clicks meant for the option. */}
+            {onErrorUI === 'retry' && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-[11px] font-semibold text-text-secondary">
+                  Attempts
+                </span>
+                <NumberInput
+                  size="sm"
+                  min={1}
+                  value={retryCount}
+                  onChange={(n) =>
+                    onChange({ onError: 'fail-run', config: { ...config, retryCount: n } })
+                  }
+                  aria-label="Attempts"
+                  data-testid="action-retry-count"
+                />
+              </div>
+            )}
           </div>
         )}
-      </ConfigField>
+      />
     </NodeConfigShell>
   );
 }

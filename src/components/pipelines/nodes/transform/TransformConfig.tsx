@@ -6,6 +6,7 @@
 // expression textarea, an optional outputKey, and a visual-only
 // "sample input | sample output" preview area (not yet implemented).
 
+import { useId } from 'react';
 import type { TransformNodeData, TransformType } from '../../../../types/pipeline';
 import { ConfigField, NodeConfigShell } from '../shared';
 import CodeEditor from '../../../shared/CodeEditor';
@@ -30,20 +31,28 @@ const RADIO_OPTIONS: Array<{ value: TransformType; label: string }> = [
 ];
 
 export default function TransformConfig({ data, onChange }: TransformConfigProps) {
+  const uid = useId();
   const expressionMissing = !data.expression?.trim();
 
   return (
     <NodeConfigShell>
-      {/* Type */}
-      <ConfigField label="Type" required>
-        <RadioGroup
-          name="transform-type"
-          value={data.transformType}
-          onChange={(transformType) => onChange({ transformType })}
-          options={RADIO_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
-          data-testid="transform-type"
-        />
-      </ConfigField>
+      {/* Type — a radio set, so the label names a group rather than one
+          control; htmlFor cannot point at a radio group. */}
+      <ConfigField
+        label="Type"
+        required
+        render={() => (
+          <div role="group" aria-label="Type">
+            <RadioGroup
+              name="transform-type"
+              value={data.transformType}
+              onChange={(transformType) => onChange({ transformType })}
+              options={RADIO_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+              data-testid="transform-type"
+            />
+          </div>
+        )}
+      />
 
       {/* Expression */}
       <ConfigField
@@ -57,12 +66,16 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
           undefined
         ) : undefined}
       >
+        {/* CodeEditor accepts no `id`, so ConfigField's htmlFor has nothing to
+            point at. One name, matching the visible label verbatim — it used to
+            announce as "Transform expression" while the screen said
+            "Expression". */}
         <CodeEditor
           value={data.expression}
           onChange={(next) => onChange({ expression: next })}
           language={data.transformType === 'javascript' ? 'javascript' : 'jsonpath'}
           variables={TRANSFORM_VARIABLES}
-          aria-label="Transform expression"
+          aria-label="Expression"
         />
       </ConfigField>
 
@@ -70,17 +83,20 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
       <ConfigField
         label="Output key (optional)"
         help={`If set, writes to context.${data.outputKey || 'outputKey'}. Otherwise merges into root context.`}
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.outputKey ?? ''}
-          onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
-          placeholder="activeItems"
-          aria-label="Output key"
-        />
-      </ConfigField>
+        controlId={`${uid}-output-key`}
+        render={({ controlId, describedById }) => (
+          <Input
+            size="sm"
+            mono
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.outputKey ?? ''}
+            onChange={(e) => onChange({ outputKey: e.target.value || undefined })}
+            placeholder="activeItems"
+          />
+        )}
+      />
 
       {/* Retry policy (hub#1289) */}
       <RetryPolicyEditor
@@ -91,6 +107,9 @@ export default function TransformConfig({ data, onChange }: TransformConfigProps
       {/* Preview is not implemented. It used to render as two permanently
           disabled <textarea>s, which read as input fields the user had failed
           to enable rather than as a feature that does not exist yet. */}
+      {/* Deliberately NOT wired: there is no control here to name — EmptyState
+          is static copy. Adding a role="group" would announce an interactive
+          grouping that contains nothing to interact with. */}
       <ConfigField label="Preview">
         <EmptyState
           title="Preview not available yet"

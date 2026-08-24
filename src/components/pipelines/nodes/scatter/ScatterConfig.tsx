@@ -8,7 +8,7 @@
 // plain <JsonPathInput> when no upstream is connected or the schema is
 // dynamic (e.g. image:vision-classify).
 
-import { useMemo } from 'react';
+import { useId, useMemo } from 'react';
 import type { ScatterNodeData } from '../../../../types/pipeline';
 import { usePipelineEditor } from '../../context/PipelineEditorContext';
 import { ScatterPathPicker } from './ScatterPathPicker';
@@ -46,6 +46,7 @@ function useUpstreamKind(selectedNodeId: string | null): string | undefined {
 // ---------------------------------------------------------------------------
 
 export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
+  const uid = useId();
   const { selectedNodeId } = usePipelineEditor();
   const upstreamKind = useUpstreamKind(selectedNodeId);
 
@@ -65,45 +66,57 @@ export default function ScatterConfig({ data, onChange }: ScatterConfigProps) {
               : undefined
         }
         help="JSONPath into context resolving to an array. Each element becomes one scatter arm."
-      >
-        <ScatterPathPicker
-          value={data.itemsPath ?? ''}
-          onChange={(path) => onChange({ itemsPath: path })}
-          upstreamKind={upstreamKind}
-        />
-      </ConfigField>
+        render={({ describedById }) => (
+          // ScatterPathPicker is a composite — a schema tree of buttons plus a
+          // path input — not one labelable control, so the label names a group.
+          <div role="group" aria-label="Items path" aria-describedby={describedById}>
+            <ScatterPathPicker
+              value={data.itemsPath ?? ''}
+              onChange={(path) => onChange({ itemsPath: path })}
+              upstreamKind={upstreamKind}
+            />
+          </div>
+        )}
+      />
 
       {/* Item alias */}
       <ConfigField
         label="Item alias"
         help="Optional, default 'item'. Key written to $.scatter.<alias> for each arm."
-      >
-        <Input
-          size="sm"
-          mono
-          spellCheck={false}
-          value={data.itemAlias ?? ''}
-          onChange={(e) => onChange({ itemAlias: e.target.value.trim() || undefined })}
-          placeholder="item"
-          aria-label="Item alias"
-        />
-      </ConfigField>
+        controlId={`${uid}-item-alias`}
+        render={({ controlId, describedById }) => (
+          <Input
+            size="sm"
+            mono
+            spellCheck={false}
+            id={controlId}
+            aria-describedby={describedById}
+            value={data.itemAlias ?? ''}
+            onChange={(e) => onChange({ itemAlias: e.target.value.trim() || undefined })}
+            placeholder="item"
+          />
+        )}
+      />
 
       <ConfigField
         label="Max concurrency"
         help="Optional, default 4. Maximum number of arms executing concurrently."
-      >
-        <NumberInput
-          size="sm"
-          min={1}
-          max={64}
-          value={data.maxConcurrency}
-          onChange={(maxConcurrency) => onChange({ maxConcurrency })}
-          onClear={() => onChange({ maxConcurrency: undefined })}
-          placeholder="4"
-          data-testid="scatter-max-concurrency"
-        />
-      </ConfigField>
+        controlId={`${uid}-max-concurrency`}
+        render={({ controlId, describedById }) => (
+          <NumberInput
+            size="sm"
+            min={1}
+            max={64}
+            value={data.maxConcurrency}
+            onChange={(maxConcurrency) => onChange({ maxConcurrency })}
+            onClear={() => onChange({ maxConcurrency: undefined })}
+            placeholder="4"
+            id={controlId}
+            aria-describedby={describedById}
+            data-testid="scatter-max-concurrency"
+          />
+        )}
+      />
     </NodeConfigShell>
   );
 }
