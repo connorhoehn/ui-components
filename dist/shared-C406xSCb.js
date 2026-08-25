@@ -2573,7 +2573,7 @@ function Ot({ open: t, onClose: n, title: r, children: i, defaultPosition: a = "
 		return document.addEventListener("pointermove", e), document.addEventListener("pointerup", t), () => {
 			document.removeEventListener("pointermove", e), document.removeEventListener("pointerup", t);
 		};
-	}, [v]), t ? /* @__PURE__ */ N("div", {
+	}, [v]), t ? F(/* @__PURE__ */ N("div", {
 		ref: m,
 		role: "dialog",
 		"aria-label": r,
@@ -2629,7 +2629,7 @@ function Ot({ open: t, onClose: n, title: r, children: i, defaultPosition: a = "
 			className: "min-h-0 flex-1 overflow-hidden flex flex-col",
 			children: i
 		})]
-	}) : null;
+	}), document.body) : null;
 }
 //#endregion
 //#region src/components/shared/DropdownMenu.tsx

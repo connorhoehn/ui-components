@@ -2104,20 +2104,20 @@ function Fe(e) {
 	let t = e.trim().split(/\s+/);
 	return t.length === 1 ? t[0].slice(0, 2).toUpperCase() : (t[0].charAt(0) + t[t.length - 1].charAt(0)).toUpperCase();
 }
-function Ie({ participants: t, activeSpeakerId: n, onParticipantClick: r, count: i, title: a = "Participants", footer: o, className: s }) {
-	let c = i ?? t.length;
+function Ie({ participants: t, activeSpeakerId: n, onParticipantClick: r, count: i, title: a = "Participants", footer: o, tone: s = "light", className: c }) {
+	let l = s === "dark", u = i ?? t.length;
 	return /* @__PURE__ */ T("aside", {
-		className: e("flex flex-col w-64 shrink-0 bg-[var(--color-surface)] border-l border-[var(--color-border)]", s),
+		className: e("flex flex-col w-64 shrink-0", l ? "bg-surface-inverse border-l border-white/10" : "bg-[var(--color-surface)] border-l border-[var(--color-border)]", c),
 		"aria-label": "Call participants",
 		children: [
 			/* @__PURE__ */ T("header", {
-				className: "px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between",
+				className: e("px-4 py-3 border-b flex items-center justify-between", l ? "border-white/10" : "border-[var(--color-border)]"),
 				children: [/* @__PURE__ */ w("h3", {
-					className: "text-sm font-semibold text-[var(--color-text-primary)]",
+					className: e("text-sm font-semibold", l ? "text-white" : "text-[var(--color-text-primary)]"),
 					children: a
 				}), /* @__PURE__ */ w("span", {
-					className: "text-xs text-[var(--color-text-secondary)] tabular-nums",
-					children: c
+					className: e("text-xs tabular-nums", l ? "text-white/50" : "text-[var(--color-text-secondary)]"),
+					children: u
 				})]
 			}),
 			/* @__PURE__ */ w("ul", {
@@ -2142,9 +2142,9 @@ function Ie({ participants: t, activeSpeakerId: n, onParticipantClick: r, count:
 								})]
 							}),
 							/* @__PURE__ */ T("span", {
-								className: "flex-1 truncate text-sm text-[var(--color-text-primary)]",
+								className: e("flex-1 truncate text-sm", l ? "text-white/90" : "text-[var(--color-text-primary)]"),
 								children: [t.displayName, t.isLocal && /* @__PURE__ */ w("span", {
-									className: "ml-1 text-xs text-[var(--color-text-secondary)]",
+									className: e("ml-1 text-xs", l ? "text-white/50" : "text-[var(--color-text-secondary)]"),
 									children: "(you)"
 								})]
 							}),
@@ -2157,7 +2157,7 @@ function Ie({ participants: t, activeSpeakerId: n, onParticipantClick: r, count:
 								width: "14",
 								height: "14",
 								viewBox: "0 0 16 16",
-								className: "text-[var(--color-text-secondary)]",
+								className: l ? "text-white/50" : "text-[var(--color-text-secondary)]",
 								"aria-label": "Muted",
 								children: /* @__PURE__ */ w("path", {
 									fill: "currentColor",

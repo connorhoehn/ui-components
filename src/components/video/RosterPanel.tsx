@@ -27,6 +27,10 @@ export interface RosterPanelProps {
   title?: string;
   /** Optional footer — e.g. an "+ Add" button. */
   footer?: ReactNode;
+  /** 'dark' renders on black call chrome (the shipped token palette is
+   *  light-only, so the default is a white slab inside the dark call
+   *  widget — 2026-08-25 audit P0-3). */
+  tone?: 'light' | 'dark';
   className?: string;
 }
 
@@ -44,20 +48,25 @@ export function RosterPanel({
   count,
   title = 'Participants',
   footer,
+  tone = 'light',
   className,
 }: RosterPanelProps) {
+  const dark = tone === 'dark';
   const total = count ?? participants.length;
   return (
     <aside
       className={cn(
-        'flex flex-col w-64 shrink-0 bg-[var(--color-surface)] border-l border-[var(--color-border)]',
+        'flex flex-col w-64 shrink-0',
+        dark
+          ? 'bg-surface-inverse border-l border-white/10'
+          : 'bg-[var(--color-surface)] border-l border-[var(--color-border)]',
         className,
       )}
       aria-label="Call participants"
     >
-      <header className="px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">{title}</h3>
-        <span className="text-xs text-[var(--color-text-secondary)] tabular-nums">{total}</span>
+      <header className={cn('px-4 py-3 border-b flex items-center justify-between', dark ? 'border-white/10' : 'border-[var(--color-border)]')}>
+        <h3 className={cn('text-sm font-semibold', dark ? 'text-white' : 'text-[var(--color-text-primary)]')}>{title}</h3>
+        <span className={cn('text-xs tabular-nums', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>{total}</span>
       </header>
       <ul className="flex-1 overflow-y-auto py-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {participants.map((p) => {
@@ -94,9 +103,9 @@ export function RosterPanel({
                     />
                   )}
                 </div>
-                <span className="flex-1 truncate text-sm text-[var(--color-text-primary)]">
+                <span className={cn('flex-1 truncate text-sm', dark ? 'text-white/90' : 'text-[var(--color-text-primary)]')}>
                   {p.displayName}
-                  {p.isLocal && <span className="ml-1 text-xs text-[var(--color-text-secondary)]">(you)</span>}
+                  {p.isLocal && <span className={cn('ml-1 text-xs', dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]')}>(you)</span>}
                 </span>
                 {p.handRaised && (
                   <span title="Hand raised" aria-label="Hand raised">✋</span>
@@ -104,7 +113,7 @@ export function RosterPanel({
                 {p.isMuted && (
                   <svg
                     width="14" height="14" viewBox="0 0 16 16"
-                    className="text-[var(--color-text-secondary)]" aria-label="Muted"
+                    className={dark ? 'text-white/50' : 'text-[var(--color-text-secondary)]'} aria-label="Muted"
                   >
                     <path
                       fill="currentColor"

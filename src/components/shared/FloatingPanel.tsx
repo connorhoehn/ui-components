@@ -13,6 +13,7 @@
 // - Renders null when `!open`. Dark tone (default) matches the
 //   CallWidget chrome; no external drag libs.
 
+import { createPortal } from 'react-dom';
 import {
   useCallback,
   useEffect,
@@ -204,7 +205,13 @@ export function FloatingPanel({
 
   if (!open) return null;
 
-  return (
+  // Portal into document.body: consumers render this inside call chromes
+  // whose roots carry `transform: translate(...)` (CallWidget drag), and
+  // any non-none transform makes that ancestor the containing block for
+  // position:fixed — the panel's viewport coordinates then resolve
+  // against a 320px widget box and land off the bottom of the screen
+  // (2026-08-25 audit, P0-1). Same escape hatch Modal uses.
+  return createPortal(
     <div
       ref={rootRef}
       role="dialog"
@@ -262,7 +269,8 @@ export function FloatingPanel({
       <div data-testid="floating-panel-body" className="min-h-0 flex-1 overflow-hidden flex flex-col">
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

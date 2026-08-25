@@ -2733,7 +2733,7 @@ export declare interface FilterChipProps {
     'data-testid'?: string;
 }
 
-export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): JSX.Element | null;
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
 
 export declare interface FloatingPanelProps {
     open: boolean;
@@ -6356,7 +6356,7 @@ declare interface RoomMemberItem {
     joinedAt: string;
 }
 
-export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, className, }: RosterPanelProps): JSX.Element;
+export declare function RosterPanel({ participants, activeSpeakerId, onParticipantClick, count, title, footer, tone, className, }: RosterPanelProps): JSX.Element;
 
 export declare interface RosterPanelProps {
     participants: RosterParticipant[];
@@ -6369,6 +6369,10 @@ export declare interface RosterPanelProps {
     title?: string;
     /** Optional footer — e.g. an "+ Add" button. */
     footer?: ReactNode;
+    /** 'dark' renders on black call chrome (the shipped token palette is
+     *  light-only, so the default is a white slab inside the dark call
+     *  widget — 2026-08-25 audit P0-3). */
+    tone?: 'light' | 'dark';
     className?: string;
 }
 

@@ -744,7 +744,7 @@ export declare interface FilterChipProps {
     'data-testid'?: string;
 }
 
-export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): JSX.Element | null;
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): ReactPortal | null;
 
 export declare interface FloatingPanelProps {
     open: boolean;
