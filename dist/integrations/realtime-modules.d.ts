@@ -692,7 +692,7 @@ export declare interface WrappedActivityPanelProps {
     className?: string;
 }
 
-export declare function WrappedChatPanel({ chat, presence, disabled, typingUsers: typingUsersOverride, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
+export declare function WrappedChatPanel({ chat, presence, disabled, typingUsers: typingUsersOverride, tone, wrapWithNetworkShim, }: WrappedChatPanelProps): JSX.Element;
 
 export declare interface WrappedChatPanelProps {
     /** Return value of useChat(channel) from realtime-modules */
@@ -703,6 +703,8 @@ export declare interface WrappedChatPanelProps {
     disabled?: boolean;
     /** Override typing banner (supersedes presence-derived list) */
     typingUsers?: string[];
+    /** Forwarded to ChatPanel — 'dark' for call chrome surfaces. */
+    tone?: 'light' | 'dark';
     /**
      * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
      * ReconnectingShim using the supplied connection state and retry

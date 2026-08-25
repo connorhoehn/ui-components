@@ -4,7 +4,7 @@ import { t as s } from "./cn-DhjIN-s0.js";
 import { t as c } from "./PresenceDot-3gBZGPvX.js";
 import { n as l, t as u } from "./Avatar-BzicCOft.js";
 import { t as d } from "./Input-DcK2h-jK.js";
-import { i as f, r as p } from "./PresencePanel-DypPzySm.js";
+import { i as f, r as p } from "./PresencePanel-D_-C0sP7.js";
 import { t as m } from "./Textarea-C3t5PCLv.js";
 import { t as h } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as g } from "./Select-Z0TLUVeL.js";

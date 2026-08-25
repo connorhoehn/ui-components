@@ -163,6 +163,25 @@
   50%       { opacity: 0; }
 }
 
+/* TranscriptOverlay — new caption lines pop onto the stack (fade + 8px
+   rise). Reduced motion keeps the fade but drops the transform. */
+@keyframes transcript-line-pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes transcript-line-pop-reduced {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.transcript-line-enter {
+  animation: transcript-line-pop 180ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .transcript-line-enter {
+    animation: transcript-line-pop-reduced 180ms ease-out;
+  }
+}
+
 @keyframes reaction-fade-up {
   0%   { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-60px); }

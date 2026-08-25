@@ -13,9 +13,12 @@ function ago(secondsAgo: number): string {
   return new Date(NOW - secondsAgo * 1000).toISOString();
 }
 
+// Ages stay inside the drop window (fadeAfterMs * 1.6 = 12.8s by default):
+// past that, lines are removed from the DOM entirely — the overlay reads as
+// a running ticker, not an archive.
 const LINES: CaptionLine[] = [
-  { id: 'c1', speakerId: 'spk-1', speakerName: 'Alice Johnson', text: 'Can everyone see the deploy dashboard?', at: ago(14) },
-  { id: 'c2', speakerId: 'spk-2', speakerName: 'Bob Smith', text: 'Yep, the green bar on the left is the canary.', at: ago(7) },
+  { id: 'c1', speakerId: 'spk-1', speakerName: 'Alice Johnson', text: 'Can everyone see the deploy dashboard?', at: ago(11) },
+  { id: 'c2', speakerId: 'spk-2', speakerName: 'Bob Smith', text: 'Yep, the green bar on the left is the canary.', at: ago(6) },
   { id: 'c3', speakerId: 'spk-3', speakerName: 'Cai Lund', text: "I'm still seeing the old build, give me a second.", at: ago(1) },
 ];
 
@@ -76,13 +79,14 @@ export const UnnamedSpeakers: Story = {
 };
 
 /** The fade ramp end to end: fresh (opacity 1), half-aged (0.5), and past the
- *  window (clamped to the 0.35 floor). Only reproducible because `now` is
- *  pinned — with a live clock all three would sit on the floor. */
+ *  fade window (clamped to the 0.35 floor — anything older than 1.6× the
+ *  window drops from the DOM entirely). Only reproducible because `now` is
+ *  pinned — with a live clock all three would have aged out. */
 export const FadeRamp: Story = {
   args: {
     fadeAfterMs: 8000,
     lines: [
-      { id: 'f1', speakerId: 'spk-1', speakerName: 'Alice Johnson', text: 'Oldest line — clamped at the 0.35 floor.', at: ago(32) },
+      { id: 'f1', speakerId: 'spk-1', speakerName: 'Alice Johnson', text: 'Oldest line — clamped at the 0.35 floor.', at: ago(10) },
       { id: 'f2', speakerId: 'spk-2', speakerName: 'Bob Smith', text: 'Half way through the fade window.', at: ago(4) },
       { id: 'f3', speakerId: 'spk-3', speakerName: 'Cai Lund', text: 'Just spoken — full opacity.', at: ago(0) },
     ],

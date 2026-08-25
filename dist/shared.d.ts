@@ -744,6 +744,28 @@ export declare interface FilterChipProps {
     'data-testid'?: string;
 }
 
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): JSX.Element | null;
+
+export declare interface FloatingPanelProps {
+    open: boolean;
+    onClose: () => void;
+    title: string;
+    children: ReactNode;
+    /** Viewport-relative initial anchor when no persisted position exists. */
+    defaultPosition?: 'left-center' | 'right-center' | {
+        x: number;
+        y: number;
+    };
+    /** localStorage key persisting the dragged position across sessions. */
+    persistKey?: string;
+    widthClassName?: string;
+    heightClassName?: string;
+    tone?: 'light' | 'dark';
+    zIndexClassName?: string;
+    className?: string;
+    'data-testid'?: string;
+}
+
 /**
  * A strip of clickable follow-up suggestion chips, with optional refresh button.
  */

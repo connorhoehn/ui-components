@@ -1,4 +1,6 @@
-import { render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { act, render, screen } from '@testing-library/react';
 import { TranscriptOverlay, type CaptionLine } from '../TranscriptOverlay';
 
 // Fixed clock so age-based opacity is deterministic.
@@ -27,28 +29,33 @@ describe('TranscriptOverlay', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders nothing when every visible line floors above 0.35 but the slice is empty', () => {
-    // Note: the floor is 0.35, so a line never has opacity 0 if it makes
-    // it into the slice. The only way to render nothing with non-empty
-    // input is if the slice is empty (lines.length === 0), already
-    // covered above. Sanity-check that very-old lines still surface at
-    // the floor.
-    const old = line({ id: 'a', speakerId: 's1', at: new Date(NOW - 60_000).toISOString() });
-    render(<TranscriptOverlay lines={[old]} />);
+  it('lines inside the visible window surface at the 0.35 floor; fully-faded lines drop', () => {
+    // Within fadeAfterMs * 1.6 (default 12.8s) a stale line clamps to the
+    // floor instead of vanishing…
+    const stale = line({ id: 'a', speakerId: 's1', at: new Date(NOW - 10_000).toISOString() });
+    const first = render(<TranscriptOverlay lines={[stale]} />);
     expect(screen.getByLabelText('Live transcript')).toBeInTheDocument();
+    first.unmount();
+
+    // …but past the extended window it is removed from the DOM entirely —
+    // the ticker never lingers at the floor forever.
+    const gone = line({ id: 'b', speakerId: 's1', at: new Date(NOW - 60_000).toISOString() });
+    const { container } = render(<TranscriptOverlay lines={[gone]} />);
+    expect(container.firstChild).toBeNull();
   });
 
-  it('renders at most maxLines (default 3) — older lines are sliced off', () => {
-    const lines: CaptionLine[] = Array.from({ length: 5 }, (_, i) =>
+  it('renders at most maxLines (default 4) — older lines are sliced off', () => {
+    const lines: CaptionLine[] = Array.from({ length: 6 }, (_, i) =>
       line({ id: `id-${i}`, speakerId: 's1', text: `line ${i}` }),
     );
     render(<TranscriptOverlay lines={lines} />);
-    // slice(-3) → last 3
+    // slice(-4) → last 4
     expect(screen.queryByText('line 0')).not.toBeInTheDocument();
     expect(screen.queryByText('line 1')).not.toBeInTheDocument();
     expect(screen.getByText('line 2')).toBeInTheDocument();
     expect(screen.getByText('line 3')).toBeInTheDocument();
     expect(screen.getByText('line 4')).toBeInTheDocument();
+    expect(screen.getByText('line 5')).toBeInTheDocument();
   });
 
   it('honors a caller-supplied maxLines', () => {
@@ -120,24 +127,121 @@ describe('TranscriptOverlay', () => {
     expect(band).toHaveAttribute('aria-live', 'polite');
   });
 
-  it('opacity decays with age — fresh ~1.0, half-aged ~0.5, very old floors at 0.35', () => {
+  it('opacity decays with age — fresh ~1.0, half-aged ~0.5, stale (within window) floors at 0.35', () => {
     const fade = 8000;
     const fresh = line({ id: '1', speakerId: 's1', text: 'fresh', at: new Date(NOW).toISOString() });
     const halfAged = line({
       id: '2', speakerId: 's1', text: 'half',
       at: new Date(NOW - fade / 2).toISOString(),
     });
-    const veryOld = line({
+    // 1.5× the fade window: past the 0.35-floor crossover but still inside
+    // the 1.6× drop window, so it renders at the floor.
+    const stale = line({
       id: '3', speakerId: 's1', text: 'old',
-      at: new Date(NOW - fade * 4).toISOString(),
+      at: new Date(NOW - fade * 1.5).toISOString(),
     });
-    render(<TranscriptOverlay lines={[fresh, halfAged, veryOld]} fadeAfterMs={fade} />);
+    render(<TranscriptOverlay lines={[fresh, halfAged, stale]} fadeAfterMs={fade} />);
     const freshOpacity = parseFloat((screen.getByText('fresh').parentElement as HTMLElement).style.opacity);
     const halfOpacity = parseFloat((screen.getByText('half').parentElement as HTMLElement).style.opacity);
     const oldOpacity = parseFloat((screen.getByText('old').parentElement as HTMLElement).style.opacity);
     expect(freshOpacity).toBeCloseTo(1, 5);
     expect(halfOpacity).toBeCloseTo(0.5, 5);
     expect(oldOpacity).toBeCloseTo(0.35, 5);
+  });
+
+  it('applies the entrance animation class to newly-added lines', () => {
+    const first = line({ id: '1', speakerId: 's1', text: 'first' });
+    const { rerender } = render(<TranscriptOverlay lines={[first]} />);
+    expect(screen.getByText('first').parentElement!.className).toContain('transcript-line-enter');
+
+    const second = line({ id: '2', speakerId: 's2', text: 'second' });
+    rerender(<TranscriptOverlay lines={[first, second]} />);
+    // The class is present on every line element; because each line keeps a
+    // stable key, the CSS animation only plays when the element first mounts.
+    expect(screen.getByText('second').parentElement!.className).toContain('transcript-line-enter');
+  });
+});
+
+describe('TranscriptOverlay — live fade interval', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(NOW));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('progresses the ghost fade between prop changes via the ~500ms tick', () => {
+    const fade = 8000;
+    const l = line({ id: '1', speakerId: 's1', text: 'ticking' });
+    render(<TranscriptOverlay lines={[l]} fadeAfterMs={fade} />);
+    expect(parseFloat((screen.getByText('ticking').parentElement as HTMLElement).style.opacity)).toBeCloseTo(1, 5);
+
+    // 4s of fake time = half the fade window; the interval re-renders and
+    // the opacity halves without any prop change.
+    act(() => {
+      vi.advanceTimersByTime(4000);
+    });
+    expect(parseFloat((screen.getByText('ticking').parentElement as HTMLElement).style.opacity)).toBeCloseTo(0.5, 1);
+  });
+
+  it('drops fully-faded lines from the DOM as the interval ticks', () => {
+    const fade = 1000;
+    const l = line({ id: '1', speakerId: 's1', text: 'ephemeral' });
+    const { container } = render(<TranscriptOverlay lines={[l]} fadeAfterMs={fade} />);
+    expect(screen.getByText('ephemeral')).toBeInTheDocument();
+
+    // Past fadeAfterMs * 1.6 the line is removed even though the `lines`
+    // prop still contains it.
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+    expect(screen.queryByText('ephemeral')).not.toBeInTheDocument();
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('starts an interval while lines exist and cleans it up on unmount', () => {
+    const l = line({ id: '1', speakerId: 's1' });
+    const { unmount } = render(<TranscriptOverlay lines={[l]} />);
+    expect(vi.getTimerCount()).toBe(1);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('tears the interval down when the line list empties', () => {
+    const l = line({ id: '1', speakerId: 's1' });
+    const { rerender } = render(<TranscriptOverlay lines={[l]} />);
+    expect(vi.getTimerCount()).toBe(1);
+    rerender(<TranscriptOverlay lines={[]} />);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('does not run the interval when the `now` override is provided', () => {
+    const l = line({ id: '1', speakerId: 's1' });
+    render(<TranscriptOverlay lines={[l]} now={NOW} />);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+});
+
+describe('TranscriptOverlay — entrance animation CSS', () => {
+  const css = readFileSync(resolve(__dirname, '../../../styles.css'), 'utf8');
+
+  it('defines the pop keyframes with the 8px rise', () => {
+    expect(css).toContain('@keyframes transcript-line-pop');
+    expect(css).toContain('translateY(8px)');
+    expect(css).toMatch(/\.transcript-line-enter\s*\{\s*animation:\s*transcript-line-pop/);
+  });
+
+  it('provides a reduced-motion variant without the transform', () => {
+    // The prefers-reduced-motion block swaps in the fade-only keyframes.
+    const reducedBlock = css.split('prefers-reduced-motion').find((chunk) => chunk.includes('transcript-line-enter'));
+    expect(reducedBlock).toBeTruthy();
+    expect(reducedBlock).toContain('transcript-line-pop-reduced');
+    // And the fade-only keyframes themselves carry no transform.
+    const keyframes = css.slice(css.indexOf('@keyframes transcript-line-pop-reduced'));
+    const body = keyframes.slice(0, keyframes.indexOf('}', keyframes.indexOf('to')));
+    expect(body).not.toContain('transform');
   });
 });
 
@@ -165,7 +269,7 @@ describe('TranscriptOverlay — injected clock (now prop)', () => {
         lines={[
           { id: '1', speakerId: 's1', text: 'fresh', at: at(0) },
           { id: '2', speakerId: 's1', text: 'half', at: at(4000) },
-          { id: '3', speakerId: 's1', text: 'floored', at: at(60_000) },
+          { id: '3', speakerId: 's1', text: 'floored', at: at(12_000) },
         ]}
       />,
     );
@@ -174,10 +278,27 @@ describe('TranscriptOverlay — injected clock (now prop)', () => {
     expect(opacityOf('floored')).toBeCloseTo(0.35, 5);
   });
 
-  it('without `now`, the same fixed-timestamp fixture collapses onto the floor', () => {
-    // This is the bug the prop exists to fix: a 2020 fixture is ~years old
-    // against the real clock, so every line clamps and the ramp is untestable.
+  it('drops lines older than fadeAfterMs * 1.6 from the DOM', () => {
     render(
+      <TranscriptOverlay
+        now={FIXED}
+        fadeAfterMs={8000}
+        lines={[
+          { id: '1', speakerId: 's1', text: 'kept', at: at(12_000) },
+          { id: '2', speakerId: 's1', text: 'dropped', at: at(13_000) },
+        ]}
+      />,
+    );
+    // 12s < 12.8s window → floored but present; 13s > 12.8s → gone.
+    expect(opacityOf('kept')).toBeCloseTo(0.35, 5);
+    expect(screen.queryByText('dropped')).not.toBeInTheDocument();
+  });
+
+  it('without `now`, the same fixed-timestamp fixture is ancient and renders nothing', () => {
+    // This is the trap the prop exists to fix: a 2020 fixture is ~years old
+    // against the real clock, so every line has aged past the drop window
+    // and the overlay renders null.
+    const { container } = render(
       <TranscriptOverlay
         fadeAfterMs={8000}
         lines={[
@@ -186,8 +307,7 @@ describe('TranscriptOverlay — injected clock (now prop)', () => {
         ]}
       />,
     );
-    expect(opacityOf('a')).toBeCloseTo(0.35, 5);
-    expect(opacityOf('b')).toBeCloseTo(0.35, 5);
+    expect(container.firstChild).toBeNull();
   });
 
   it('reads the same for the same inputs across renders (no wall-clock drift)', () => {
@@ -203,7 +323,8 @@ describe('TranscriptOverlay — injected clock (now prop)', () => {
   it('now interacts with fadeAfterMs — a longer window keeps an old line brighter', () => {
     const lines = [{ id: '1', speakerId: 's1', text: 'line', at: at(6000) }];
     const short = render(<TranscriptOverlay now={FIXED} fadeAfterMs={8000} lines={lines} />);
-    // 1 - 6000/8000 = 0.25, below the 0.35 floor.
+    // 1 - 6000/8000 = 0.25, below the 0.35 floor (still inside the 12.8s
+    // drop window, so the line renders).
     expect(opacityOf('line')).toBeCloseTo(0.35, 5);
     short.unmount();
 

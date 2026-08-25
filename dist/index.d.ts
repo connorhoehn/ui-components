@@ -1429,14 +1429,20 @@ export declare interface ChatMessage {
     avatarUrl?: string;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone }: ChatPanelProps): JSX.Element;
 
-declare interface ChatPanelProps {
+export declare interface ChatPanelProps {
     messages: ChatMessage[];
     onSend: (content: string) => void;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
+    /** Surface the panel renders on. 'light' (default) keeps the theme
+     *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
+     *  (e.g. inside a FloatingPanel next to the call widget) — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
@@ -2724,6 +2730,28 @@ export declare interface FilterChipProps {
     className?: string;
     disabled?: boolean;
     /** Forwarded to the underlying <button> for test selectors. */
+    'data-testid'?: string;
+}
+
+export declare function FloatingPanel({ open, onClose, title, children, defaultPosition, persistKey, widthClassName, heightClassName, tone, zIndexClassName, className, 'data-testid': testId, }: FloatingPanelProps): JSX.Element | null;
+
+export declare interface FloatingPanelProps {
+    open: boolean;
+    onClose: () => void;
+    title: string;
+    children: ReactNode;
+    /** Viewport-relative initial anchor when no persisted position exists. */
+    defaultPosition?: 'left-center' | 'right-center' | {
+        x: number;
+        y: number;
+    };
+    /** localStorage key persisting the dragged position across sessions. */
+    persistKey?: string;
+    widthClassName?: string;
+    heightClassName?: string;
+    tone?: 'light' | 'dark';
+    zIndexClassName?: string;
+    className?: string;
     'data-testid'?: string;
 }
 
@@ -4358,7 +4386,7 @@ export declare interface MessageGroupProps {
     className?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -4380,6 +4408,11 @@ export declare interface MessageRowProps {
      * Indented under the content so it lines up under text, not under the avatar.
      */
     footer?: ReactNode;
+    /** Surface the row renders on. 'light' (default) keeps the theme tokens;
+     *  'dark' swaps to white/alpha classes for dark call chrome — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
     className?: string;
 }
 
@@ -7798,19 +7831,21 @@ export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: n
 
 export declare interface TranscriptOverlayProps {
     lines: CaptionLine[];
-    /** How many recent lines to show simultaneously. Default 3. */
+    /** How many recent lines to show simultaneously. Default 4. */
     maxLines?: number;
-    /** Fade-out duration ms. Default 8000. */
+    /** Fade-out duration ms. Default 8000. Lines older than 1.6× this drop
+     *  from the DOM entirely. */
     fadeAfterMs?: number;
     /**
      * "Now" in ms since epoch, used as the reference point for each line's
      * age-based opacity. Defaults to `Date.now()` — exposed for deterministic
-     * tests and stories.
+     * tests and stories. When provided, the internal live-fade interval is
+     * disabled, so the render is a pure function of props.
      *
      * Without it, any fixture built from fixed ISO timestamps is arbitrarily
-     * old by the time it renders, so every line clamps to the 0.35 opacity
-     * floor and the fade ramp can never be exercised. Pass the same epoch the
-     * fixture timestamps were written against and the ramp is reproducible.
+     * old by the time it renders, so every line has aged past the drop window
+     * and nothing renders at all. Pass the same epoch the fixture timestamps
+     * were written against and the ramp is reproducible.
      */
     now?: number;
     className?: string;

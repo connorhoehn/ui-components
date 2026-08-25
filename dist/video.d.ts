@@ -1023,19 +1023,21 @@ export declare function TranscriptOverlay({ lines, maxLines, fadeAfterMs, now: n
 
 export declare interface TranscriptOverlayProps {
     lines: CaptionLine[];
-    /** How many recent lines to show simultaneously. Default 3. */
+    /** How many recent lines to show simultaneously. Default 4. */
     maxLines?: number;
-    /** Fade-out duration ms. Default 8000. */
+    /** Fade-out duration ms. Default 8000. Lines older than 1.6× this drop
+     *  from the DOM entirely. */
     fadeAfterMs?: number;
     /**
      * "Now" in ms since epoch, used as the reference point for each line's
      * age-based opacity. Defaults to `Date.now()` — exposed for deterministic
-     * tests and stories.
+     * tests and stories. When provided, the internal live-fade interval is
+     * disabled, so the render is a pure function of props.
      *
      * Without it, any fixture built from fixed ISO timestamps is arbitrarily
-     * old by the time it renders, so every line clamps to the 0.35 opacity
-     * floor and the fade ramp can never be exercised. Pass the same epoch the
-     * fixture timestamps were written against and the ramp is reproducible.
+     * old by the time it renders, so every line has aged past the drop window
+     * and nothing renders at all. Pass the same epoch the fixture timestamps
+     * were written against and the ramp is reproducible.
      */
     now?: number;
     className?: string;

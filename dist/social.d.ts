@@ -32,14 +32,20 @@ declare interface ChatMessage {
     avatarUrl?: string;
 }
 
-export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers }: ChatPanelProps): JSX.Element;
+export declare function ChatPanel({ messages, onSend, disabled, onTyping, typingUsers, tone }: ChatPanelProps): JSX.Element;
 
-declare interface ChatPanelProps {
+export declare interface ChatPanelProps {
     messages: ChatMessage[];
     onSend: (content: string) => void;
     disabled?: boolean;
     onTyping?: (isTyping: boolean) => void;
     typingUsers?: string[];
+    /** Surface the panel renders on. 'light' (default) keeps the theme
+     *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
+     *  (e.g. inside a FloatingPanel next to the call widget) — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
 }
 
 export declare function ChatRoom({ idToken, roomId, roomName, onMessage }: ChatRoomProps): JSX.Element;
@@ -171,7 +177,7 @@ export declare interface MessageGroupProps {
     className?: string;
 }
 
-export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, className, }: MessageRowProps): JSX.Element;
+export declare function MessageRow({ author, content, timestamp, avatarUrl, hideAvatar, hideAuthor, mine, footer, tone, className, }: MessageRowProps): JSX.Element;
 
 export declare interface MessageRowProps {
     /** Display name shown next to the message; required even for anonymous rows (use a fallback). */
@@ -193,6 +199,11 @@ export declare interface MessageRowProps {
      * Indented under the content so it lines up under text, not under the avatar.
      */
     footer?: ReactNode;
+    /** Surface the row renders on. 'light' (default) keeps the theme tokens;
+     *  'dark' swaps to white/alpha classes for dark call chrome — without it
+     *  the message text renders dark-on-dark and disappears. Mirrors
+     *  InviteCandidateList's tone seam. */
+    tone?: 'light' | 'dark';
     className?: string;
 }
 

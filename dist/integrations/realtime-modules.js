@@ -7,7 +7,7 @@ import { t as s } from "../SkeletonCard-CGe8XFPB.js";
 import { t as c } from "../Avatar-BzicCOft.js";
 import { a as l, i as u, n as d, r as f, t as p } from "../Badge-Dokf1Hkq.js";
 import { n as m, r as h, t as g } from "../ReactionsOverlay-Ob1ecsgg.js";
-import { n as _, t as v } from "../PresencePanel-DypPzySm.js";
+import { n as _, t as v } from "../PresencePanel-D_-C0sP7.js";
 import { i as y, n as b, r as x, s as S, t as C } from "../MediaEffectsTray-DjQfomQI.js";
 import { Component as ee, useEffect as w, useMemo as T, useRef as te, useState as E } from "react";
 import { Fragment as D, jsx as O, jsxs as k } from "react/jsx-runtime";
@@ -235,14 +235,15 @@ function q(e, t) {
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedChatPanel.tsx
-function le({ chat: e, presence: t, disabled: n, typingUsers: r, wrapWithNetworkShim: i }) {
-	let a = j(e.messages), o = r ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], s = /* @__PURE__ */ O(_, {
-		messages: a,
+function le({ chat: e, presence: t, disabled: n, typingUsers: r, tone: i, wrapWithNetworkShim: a }) {
+	let o = j(e.messages), s = r ?? t?.roster.filter((e) => e.metadata?.isTyping === !0).map((e) => e.metadata?.displayName ?? e.clientId.slice(0, 8)) ?? [], c = /* @__PURE__ */ O(_, {
+		messages: o,
 		onSend: e.sendMessage,
 		disabled: n,
-		typingUsers: o
+		typingUsers: s,
+		tone: i
 	});
-	return /* @__PURE__ */ O(D, { children: q(s, i) });
+	return /* @__PURE__ */ O(D, { children: q(c, a) });
 }
 //#endregion
 //#region src/integrations/realtime-modules/WrappedPresencePanel.tsx

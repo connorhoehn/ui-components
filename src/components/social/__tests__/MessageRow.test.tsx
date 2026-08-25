@@ -70,6 +70,28 @@ describe('MessageRow', () => {
   });
 });
 
+describe('MessageRow — tone', () => {
+  const baseProps = {
+    author: 'Alice',
+    content: 'Hello world',
+    timestamp: '2026-05-30T15:30:00Z',
+  };
+
+  it('tone="dark" renders content/author/time with white/alpha classes', () => {
+    render(<MessageRow {...baseProps} tone="dark" />);
+    expect(screen.getByTestId('message-row-content').className).toContain('text-white/90');
+    expect(screen.getByTestId('message-row-author').className).toContain('text-white/70');
+    expect(screen.getByTestId('message-row-time').className).toContain('text-white/40');
+  });
+
+  it('default (light) keeps the theme-token classes', () => {
+    render(<MessageRow {...baseProps} />);
+    expect(screen.getByTestId('message-row-content').className).toContain('text-text-primary');
+    expect(screen.getByTestId('message-row-author').className).toContain('text-text-secondary');
+    expect(screen.getByTestId('message-row-time').className).toContain('text-text-tertiary');
+  });
+});
+
 describe('formatChatTime', () => {
   it('returns HH:MM for a valid ISO string', () => {
     expect(formatChatTime('2026-05-30T05:09:00Z')).toMatch(/^\d{2}:\d{2}$/);

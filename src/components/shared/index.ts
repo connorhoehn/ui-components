@@ -166,6 +166,8 @@ export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant, BadgeColor } from './Badge';
 export { InlinePopover } from './InlinePopover';
 export type { InlinePopoverProps, InlinePopoverPlacement } from './InlinePopover';
+export { FloatingPanel } from './FloatingPanel';
+export type { FloatingPanelProps } from './FloatingPanel';
 export { DropdownMenu } from './DropdownMenu';
 export type { DropdownMenuProps, DropdownMenuSection, DropdownMenuItem } from './DropdownMenu';
 

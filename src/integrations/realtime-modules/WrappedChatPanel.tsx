@@ -17,6 +17,8 @@ export interface WrappedChatPanelProps {
   disabled?: boolean;
   /** Override typing banner (supersedes presence-derived list) */
   typingUsers?: string[];
+  /** Forwarded to ChatPanel — 'dark' for call chrome surfaces. */
+  tone?: 'light' | 'dark';
   /**
    * Opt-in: wrap the rendered ChatPanel in a NetworkErrorBoundary +
    * ReconnectingShim using the supplied connection state and retry
@@ -30,6 +32,7 @@ export function WrappedChatPanel({
   presence,
   disabled,
   typingUsers: typingUsersOverride,
+  tone,
   wrapWithNetworkShim,
 }: WrappedChatPanelProps) {
   const messages = adaptChatMessages(chat.messages);
@@ -51,6 +54,7 @@ export function WrappedChatPanel({
       onSend={chat.sendMessage}
       disabled={disabled}
       typingUsers={typingUsers}
+      tone={tone}
     />
   );
 

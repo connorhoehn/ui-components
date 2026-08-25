@@ -9,17 +9,24 @@ import type { ChatMessage } from '../../hooks/useChat';
 import { MessageRow } from './MessageRow';
 import { cn } from '../../lib/cn';
 import { Input } from '../forms/Input';
+import { Button } from '../ui/Button';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
-interface ChatPanelProps {
+export interface ChatPanelProps {
   messages: ChatMessage[];
   onSend: (content: string) => void;
   disabled?: boolean;
   onTyping?: (isTyping: boolean) => void;
   typingUsers?: string[];
+  /** Surface the panel renders on. 'light' (default) keeps the theme
+   *  tokens; 'dark' swaps to white/alpha classes for dark call chrome
+   *  (e.g. inside a FloatingPanel next to the call widget) — without it
+   *  the message text renders dark-on-dark and disappears. Mirrors
+   *  InviteCandidateList's tone seam. */
+  tone?: 'light' | 'dark';
 }
 
 // ---------------------------------------------------------------------------
@@ -39,7 +46,8 @@ function formatTypingBanner(users: string[]): string {
 // Component
 // ---------------------------------------------------------------------------
 
-export function ChatPanel({ messages, onSend, disabled = false, onTyping, typingUsers = [] }: ChatPanelProps) {
+export function ChatPanel({ messages, onSend, disabled = false, onTyping, typingUsers = [], tone = 'light' }: ChatPanelProps) {
+  const dark = tone === 'dark';
   const [inputValue, setInputValue] = useState('');
   const listRef = useRef<HTMLDivElement>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,15 +90,15 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
   }
 
   return (
-    <div className="border border-border rounded p-3 mt-4 font-mono">
+    <div className={cn('border rounded p-3 mt-4 font-mono', dark ? 'border-white/10 bg-white/5' : 'border-border')}>
       {/* Header */}
-      <div className="text-[0.8rem] font-bold mb-2 text-text-primary">
+      <div className={cn('text-[0.8rem] font-bold mb-2', dark ? 'text-white/90' : 'text-text-primary')}>
         Chat ({messages.length})
       </div>
 
       {/* Typing banner */}
       {typingUsers.length > 0 && (
-        <div className="text-[0.7rem] text-text-tertiary italic mb-1">
+        <div className={cn('text-[0.7rem] italic mb-1', dark ? 'text-white/50' : 'text-text-tertiary')}>
           {formatTypingBanner(typingUsers)}
         </div>
       )}
@@ -101,7 +109,7 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
         className="max-h-[200px] overflow-y-auto mb-2"
       >
         {messages.length === 0 ? (
-          <div className="text-text-tertiary text-xs">
+          <div className={cn('text-xs', dark ? 'text-white/40' : 'text-text-tertiary')}>
             No messages yet
           </div>
         ) : (
@@ -114,6 +122,7 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
                 content={message.content}
                 timestamp={message.timestamp}
                 avatarUrl={message.avatarUrl}
+                tone={tone}
               />
             );
           })
@@ -130,20 +139,21 @@ export function ChatPanel({ messages, onSend, disabled = false, onTyping, typing
           onKeyDown={handleKeyDown}
           disabled={disabled}
           placeholder={disabled ? 'Not connected' : 'Type a message...'}
-          className="flex-1 text-[0.8rem]"
+          className={cn(
+            'flex-1 text-[0.8rem]',
+            dark &&
+              'border-white/20 bg-white/10 text-white placeholder:text-white/35 focus:border-white/40 focus:bg-white/10 focus:ring-white/20',
+          )}
         />
-        <button
+        <Button
+          variant="primary"
+          size="sm"
           onClick={handleSend}
           disabled={disabled || !inputValue.trim()}
-          className={cn(
-            'text-[0.8rem] px-3 py-1 border border-border-field rounded font-mono',
-            disabled || !inputValue.trim()
-              ? 'bg-surface-inset text-text-tertiary cursor-default'
-              : 'bg-info text-white cursor-pointer',
-          )}
+          className="text-[0.8rem] px-3 shrink-0"
         >
           Send
-        </button>
+        </Button>
       </div>
     </div>
   );

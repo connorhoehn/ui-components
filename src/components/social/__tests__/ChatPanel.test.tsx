@@ -168,6 +168,12 @@ describe('ChatPanel', () => {
     }
   });
 
+  it('renders the Send action as the shared Button primitive (primary variant)', () => {
+    render(<ChatPanel messages={[]} onSend={vi.fn()} />);
+    const button = screen.getByRole('button', { name: 'Send' });
+    expect(button.className).toContain('bg-primary');
+  });
+
   it('fires onTyping(false) after the 2s idle timer elapses', () => {
     vi.useFakeTimers();
     try {
@@ -184,5 +190,62 @@ describe('ChatPanel', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+// tone="dark" — the call-chrome variant. The regression this locks in:
+// message text rendered with light-theme tokens on a dark surface was
+// invisible (operator screenshot, 2026-08-25).
+describe('ChatPanel — dark tone', () => {
+  it('renders message content, author, and time with readable white/alpha classes', () => {
+    render(
+      <ChatPanel
+        tone="dark"
+        messages={[msg({ clientId: 'a', content: 'hello there', displayName: 'Alice' })]}
+        onSend={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('message-row-content').className).toContain('text-white/90');
+    expect(screen.getByTestId('message-row-author').className).toContain('text-white/70');
+    expect(screen.getByTestId('message-row-time').className).toContain('text-white/40');
+  });
+
+  it('light tone (default) keeps the theme-token classes', () => {
+    render(
+      <ChatPanel
+        messages={[msg({ clientId: 'a', content: 'hello there', displayName: 'Alice' })]}
+        onSend={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('message-row-content').className).toContain('text-text-primary');
+    expect(screen.getByTestId('message-row-content').className).not.toContain('text-white/90');
+  });
+
+  it('empty state is tone-aware', () => {
+    render(<ChatPanel tone="dark" messages={[]} onSend={vi.fn()} />);
+    expect(screen.getByText('No messages yet').className).toContain('text-white/40');
+  });
+
+  it('typing banner is tone-aware', () => {
+    render(<ChatPanel tone="dark" messages={[]} onSend={vi.fn()} typingUsers={['Alice']} />);
+    expect(screen.getByText('Alice is typing...').className).toContain('text-white/50');
+  });
+
+  it('styles the input for dark chrome and keeps the Send Button primitive', () => {
+    render(<ChatPanel tone="dark" messages={[]} onSend={vi.fn()} />);
+    const input = screen.getByPlaceholderText('Type a message...');
+    expect(input.className).toContain('bg-white/10');
+    expect(input.className).toContain('placeholder:text-white/35');
+    expect(screen.getByRole('button', { name: 'Send' }).className).toContain('bg-primary');
+  });
+
+  it('keeps the exact submit semantics — Enter sends and clears', () => {
+    const onSend = vi.fn();
+    render(<ChatPanel tone="dark" messages={[]} onSend={onSend} />);
+    const input = screen.getByPlaceholderText('Type a message...') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'dark send' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onSend).toHaveBeenCalledWith('dark send');
+    expect(input.value).toBe('');
   });
 });

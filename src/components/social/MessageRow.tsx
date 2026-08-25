@@ -26,6 +26,11 @@ export interface MessageRowProps {
    * Indented under the content so it lines up under text, not under the avatar.
    */
   footer?: ReactNode;
+  /** Surface the row renders on. 'light' (default) keeps the theme tokens;
+   *  'dark' swaps to white/alpha classes for dark call chrome — without it
+   *  the message text renders dark-on-dark and disappears. Mirrors
+   *  InviteCandidateList's tone seam. */
+  tone?: 'light' | 'dark';
   className?: string;
 }
 
@@ -51,8 +56,10 @@ export function MessageRow({
   hideAuthor = false,
   mine = false,
   footer,
+  tone = 'light',
   className,
 }: MessageRowProps) {
+  const dark = tone === 'dark';
   const time = formatChatTime(timestamp);
   return (
     <div
@@ -67,21 +74,21 @@ export function MessageRow({
         {!hideAuthor && (
           <span
             data-testid="message-row-author"
-            className="text-[0.7rem] text-text-secondary shrink-0"
+            className={cn('text-[0.7rem] shrink-0', dark ? 'text-white/70' : 'text-text-secondary')}
           >
             {author}
           </span>
         )}
         <span
           data-testid="message-row-content"
-          className="text-[0.8rem] text-text-primary grow"
+          className={cn('text-[0.8rem] grow', dark ? 'text-white/90' : 'text-text-primary')}
         >
           {content}
         </span>
         {time && (
           <span
             data-testid="message-row-time"
-            className="text-[0.65rem] text-text-tertiary shrink-0"
+            className={cn('text-[0.65rem] shrink-0', dark ? 'text-white/40' : 'text-text-tertiary')}
           >
             {time}
           </span>
