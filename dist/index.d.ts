@@ -1311,6 +1311,9 @@ export declare interface CaptionLine {
     interim?: boolean;
 }
 
+/** CC / captions glyph — the live-captions affordance. */
+export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare function Card({ children, padding, className, ...rest }: CardProps): JSX.Element;
 
 export declare function CardHeader({ title, subtitle, meta, action, className }: CardHeaderProps): default_2.JSX.Element;

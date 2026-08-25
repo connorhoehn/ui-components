@@ -144,6 +144,17 @@ export function ChatBubbleIcon({ size = 20, ...rest }: IconProps) {
   );
 }
 
+/** CC / captions glyph — the live-captions affordance. */
+export function CaptionsIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M10.5 10.2a2.2 2.2 0 1 0 0 3.6" />
+      <path d="M16.5 10.2a2.2 2.2 0 1 0 0 3.6" />
+    </svg>
+  );
+}
+
 export function MoreHorizontalIcon({ size = 20, ...rest }: IconProps) {
   return (
     <svg {...base(size, rest)}>

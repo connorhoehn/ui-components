@@ -293,6 +293,9 @@ export declare interface CaptionLine {
     interim?: boolean;
 }
 
+/** CC / captions glyph — the live-captions affordance. */
+export declare function CaptionsIcon({ size, ...rest }: IconProps): JSX.Element;
+
 /** Chat bubble glyph — the in-call chat affordance. Pair with
  *  CircularIconToggle in a controls `extras` slot to open a chat side
  *  panel (CallSidePanel) or the settings dialog's Chat tab. */
