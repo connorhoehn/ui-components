@@ -74,3 +74,23 @@ export type { Participant as VideoParticipant } from './components/video';
 export { FormField as IdentityFormField } from './components/identity';
 export type { FormFieldProps as IdentityFormFieldProps } from './components/identity';
 export { AuditPage as IdentityAuditPage } from './components/identity';
+
+// ---------------------------------------------------------------------------
+// Error boundary
+// ---------------------------------------------------------------------------
+
+// `ErrorBoundary` lives in `components/misc/`, which is neither re-exported
+// here nor an `exports` subpath — so until now it had NO consumer-reachable
+// import path at all. It reached `dist` only through
+// `integrations/realtime-modules`, which resolves to an unpublished peer
+// (#1493), i.e. nowhere a consumer can get to.
+//
+// That is the same reachability gap #1021 closed for layout/social/video/
+// identity, left open on the one component whose entire job is to stop a bad
+// row from blanking a page. A consumer importing `PipelineEditorPage` or
+// `DocumentEditorPage` directly — which is exactly what event-catalog and
+// websocket-gateway do — had no way to wrap it in the library's own boundary.
+//
+// Additive export; no existing symbol changes. `misc/` deliberately stays
+// otherwise unexported — the rest of it is dev/debug surface, not API.
+export { ErrorBoundary } from './components/misc/ErrorBoundary';

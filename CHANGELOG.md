@@ -8,6 +8,115 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.98.0] — 2026-08-25
+
+Four hunts. Tests 4,978 → 5,102.
+
+### Fixed — one Escape closed every open overlay
+
+The best find of the round, and one nobody had named. Every overlay bound
+Escape on `window` — the *last* node in the propagation path — so a single
+keystroke ran **every** open overlay's handler. Summon the command palette
+over a settings drawer, press Escape, and both close: the drawer's unsaved
+edits go with it. Two components had tried to defend with
+`e.stopPropagation()`, which cannot work here — same-node listeners need
+`stopImmediatePropagation`, and even that hands the win to whichever layer
+registered *first*, i.e. the bottom one. A new internal `lib/overlayStack.ts`
+gives Escape to the top layer only; seven overlays adopted it.
+
+### Fixed — focus stranded by overlays
+
+- `IngestItemDrawer` declared `aria-modal="true"` while Tab walked into the
+  table behind it; focus never entered and closing lost it entirely.
+- `FieldTypesPage`'s **destructive** delete confirm was a bare portal: no
+  role, no accessible name, no Escape, no focus move. Rebuilt on `Modal`.
+- `ExecutionLog` and `ErrorOverlay` rendered full-viewport scrims that focus
+  never reached.
+- `FieldTypesPage`'s wizard advanced by unmounting the button just pressed
+  ("Next →" becomes "Save"), dropping focus to `<body>`.
+- **15 async results were announced to nobody** — a dead agent stream, a
+  recording that won't load, and five ingest load-failure banners sitting
+  three lines from an action-failure banner that already had `role="alert"`.
+
+### Fixed — crashes that blank a page (5)
+
+Weighted by blast radius, and the worst is unrecoverable by the user:
+
+- **`handleCompatibility`** throws on a `node.type` outside `NodeType` — a
+  pipeline stored by another build. `PipelineEditorPage` calls
+  `validatePipeline` from a render `useMemo`, so **the entire editor blanks,
+  leaving no canvas on which to find or delete the offending node.**
+- **`runHistory` / `PipelineRunsContext`** are the two untrusted doors into
+  the runs map — one casting raw `localStorage`, the other taking a host poll
+  directly. Every runs surface then does `Object.values(r.steps)` during
+  render, so **one stored run from an older build blanks the whole page and
+  takes the other 49 runs, the filter bar and the header with it.** The
+  malformed run is now normalised and rendered, not dropped.
+- `ReviewMode` and `ReviewableItem` throw on a review status a peer on
+  another build wrote through the CRDT — inside `sections.map`, so every
+  other section and all comment threads disappear.
+- `AgentDetailPage` throws on a host-registry record, and the Back button
+  goes with it — the user is stranded on a broken record.
+
+### Fixed — an outage rendering as a fact about the user's data
+
+- `SocialPanel`'s connection tabs read "No followers yet" / "Followers (0)"
+  when the graph load had 500'd, with the error banner sitting *underneath* a
+  panel still asserting the fact. Counts now show "—", not a fabricated 0.
+- `SocialTabContent` rendered a failed `GET /api/rooms` as "Channels 0 / No
+  channels yet".
+- `useFriends`, `usePosts` and `useRooms` each had one `error` written by
+  both reads and writes, so a rejected first post in an empty room replaced
+  "No posts yet" with "Couldn't load posts". Each gains an additive
+  `loadError`, matching `useGroups`' precedent.
+- `useChat`'s history mapper dropped `id`, the only key the live branch
+  dedupes on, so a reconnect replay rendered messages twice.
+- "Load earlier" yanked the view back to the bottom: auto-scroll keyed on
+  `posts.length`, and `loadMore` appends older posts to a newest-first list.
+
+### Fixed — controls that looked live and were not
+
+`AgentCard` and `ProjectCard` rendered as `<button>` with a pointer cursor
+and hover lift even with no `onClick` — a read-only 20-agent dashboard was 20
+tab stops that announce as buttons and swallow every click. A
+`ParticipantAvatar` was a button labelled "Jump to Alice Anderson" with
+nothing behind it, while the Follow action *in the same tooltip* was already
+gated. `CallWidget`'s minimized pill claimed `role="button"` and answered
+neither click nor Enter, pinning the user to it.
+
+### Changed — the webhook trigger says it isn't wired
+
+`TriggerConfig` handed the user a webhook URL, a Copy button and a signing
+secret for a relay that doesn't forward anything: a correctly-signed POST got
+202 and started nothing. The services seam already existed
+(`webhookRelay: { enabled, publicUrlBase }`) and the panel already computed
+`relayActive` — it just never read it in the JSX. Undeclared or disabled now
+shows a warning and no URL, no Copy, no secret. **Behaviour change on a
+frozen barrel:** a host with a real relay must declare `{ enabled: true }`.
+
+### Added
+
+`ErrorBoundary` is exported from the root barrel. It lives in
+`components/misc/`, which is neither re-exported nor an `exports` subpath, so
+it had **no consumer-reachable import path at all** — it reached `dist` only
+through `integrations/realtime-modules`, which resolves to an unpublished
+peer. That is the same reachability gap #1021 closed for
+layout/social/video/identity, left open on the one component whose entire job
+is to stop a bad row from blanking a page.
+
+### Note on verification
+
+Three of four sites I flagged as inert were **already fixed** — and four of
+those six had no test that could tell. Neutering each guard failed nothing.
+This is the second round where "revert the fix and nothing fails" exposed a
+hole, so it is worth stating as a rule: a fix whose behaviour no test covers
+is indistinguishable from no fix. Those five now have tests, each confirmed
+failing against the neutered version.
+
+Three tests written this round passed against unfixed code and were
+strengthened rather than kept, including one whose premise the agent
+retracted outright after the revert step disproved it.
+
 ## [2.97.0] — 2026-08-24
 
 Four audits were cut short by a session limit before any of them committed.
