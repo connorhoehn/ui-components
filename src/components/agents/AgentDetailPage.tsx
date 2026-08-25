@@ -56,14 +56,20 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       {/* Config grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Section title="Configuration">
-          <Row label="Protocol" value={agent.protocol.toUpperCase()} />
+          {/* `agent` comes from the host's agent registry via AgentsContext,
+              so its fields are only typed, not guaranteed. `protocol` fed
+              `.toUpperCase()` and `tools` fed `.map()`, and this is a PAGE —
+              either throw left the whole agent detail view blank, including
+              the Back button, with no way to tell which agent record was
+              malformed. Absent fields now render as absent. */}
+          <Row label="Protocol" value={agent.protocol ? agent.protocol.toUpperCase() : '—'} />
           <Row label="Model" value={agent.model} />
           <Row label="Endpoint" value={agent.endpoint} mono />
         </Section>
 
         <Section title="Tools">
           <div className="flex flex-wrap gap-1">
-            {agent.tools.map((t) => (
+            {(Array.isArray(agent.tools) ? agent.tools : []).map((t) => (
               <span key={t} className="text-[11px] px-2 py-0.5 bg-surface-hover rounded font-mono text-text-primary">
                 {t}
               </span>
@@ -81,8 +87,8 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
             <Row label="Errors" value={String(metrics.errorsLast24h)} />
             <Row label="Avg Latency" value={`${metrics.avgLatencyMs}ms`} />
             <Row label="P99 Latency" value={`${metrics.p99LatencyMs}ms`} />
-            <Row label="Tokens In" value={metrics.tokensInLast24h.toLocaleString()} />
-            <Row label="Tokens Out" value={metrics.tokensOutLast24h.toLocaleString()} />
+            <Row label="Tokens In" value={formatCount(metrics.tokensInLast24h)} />
+            <Row label="Tokens Out" value={formatCount(metrics.tokensOutLast24h)} />
             <Row label="Guardrail Blocks" value={String(metrics.guardrailBlocksLast24h)} />
           </Section>
         )}
@@ -97,6 +103,16 @@ export function AgentDetailPage({ agentId, trace, onBack, className }: AgentDeta
       )}
     </div>
   );
+}
+
+/**
+ * `.toLocaleString()` is a TypeError on `undefined`, and a metrics endpoint
+ * that has no token accounting for an agent returns exactly that. The two
+ * token Rows were the only unguarded ones — the rest already go through
+ * `String(...)`, which absorbs it.
+ */
+function formatCount(n: number | undefined | null): string {
+  return typeof n === 'number' && Number.isFinite(n) ? n.toLocaleString() : '—';
 }
 
 function StatusBadge({ status }: { status: string }) {

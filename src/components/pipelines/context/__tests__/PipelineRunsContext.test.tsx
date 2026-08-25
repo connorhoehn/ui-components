@@ -173,6 +173,41 @@ describe('PipelineRunsContext', () => {
       expect(runsCtx.runs['polled-only']).toBeDefined();
       expect(runsCtx.activeRunIds).toEqual(['polled-only']);
     });
+
+    // Crash resistance: `ingestRun` takes a run straight off a host poll, and
+    // a run-LIST endpoint that returns summaries omits `steps`. The very next
+    // line did `Object.keys(run.steps).length`, and every runs page's render
+    // memo does the same — so a single summary-shaped response threw the
+    // provider away and blanked everything mounted under it, the runs the
+    // provider already held included.
+    it('survives a polled run with no `steps` and keeps the runs it already had', () => {
+      mount();
+      startRun();
+      act(() => {
+        runsCtx.ingestRun({
+          id: 'summary-only',
+          pipelineId: 'p1',
+          status: 'running',
+          startedAt: '2026-02-01T10:00:00.000Z',
+        } as unknown as PipelineRun);
+      });
+
+      expect(runsCtx.runs.r1).toBeDefined();
+      expect(() => Object.keys(runsCtx.runs['summary-only'].steps)).not.toThrow();
+    });
+
+    it('survives a polled run with no `startedAt`', () => {
+      mount();
+      act(() => {
+        runsCtx.ingestRun({
+          id: 'no-start',
+          pipelineId: 'p1',
+          status: 'completed',
+          steps: {},
+        } as unknown as PipelineRun);
+      });
+      expect(typeof runsCtx.runs['no-start'].startedAt).toBe('string');
+    });
   });
 
   // -------------------------------------------------------------------------

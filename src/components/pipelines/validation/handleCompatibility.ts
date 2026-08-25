@@ -115,14 +115,25 @@ export function isValidHandleConnection(
 // Internals
 // ---------------------------------------------------------------------------
 
+// `NodeType` is a compile-time union, and a `PipelineDefinition` reaches this
+// module from localStorage or a host API — a pipeline authored on a build that
+// knew a type this one doesn't carries a `node.type` outside the union. Both
+// tables are keyed by that union, so the lookup returned `undefined` and
+// `spec.includes(...)` threw a TypeError. `validatePipeline` runs inside
+// `PipelineEditorPage`'s render memo, so that throw blanked the entire editor —
+// leaving no canvas on which to see, let alone delete, the offending node.
+// An unmapped type now yields a normal INVALID_HANDLE validation error, which
+// the editor renders in its issue list.
 function isValidOutputHandle(type: NodeType, handle: string): boolean {
-  const spec = OUTPUT_HANDLES[type];
+  const spec = OUTPUT_HANDLES[type] as readonly string[] | 'fork' | undefined;
+  if (spec === undefined) return false;
   if (spec === 'fork') return isForkBranchHandle(handle);
   return spec.includes(handle);
 }
 
 function isValidInputHandle(type: NodeType, handle: string): boolean {
-  const spec = INPUT_HANDLES[type];
+  const spec = INPUT_HANDLES[type] as readonly string[] | 'join' | null | undefined;
+  if (spec === undefined) return false;
   if (spec === null) return false; // Trigger — no inputs
   if (spec === 'join') return isJoinInputHandle(handle);
   return spec.includes(handle);

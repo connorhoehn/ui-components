@@ -25,7 +25,7 @@ import {
   type WildcardEvent,
 } from './EventStreamContext';
 import { retryFromNode } from '../../../api/pipelineRetry';
-import { appendRun, listRuns } from '../persistence/runHistory';
+import { appendRun, listRuns, normalizeRun } from '../persistence/runHistory';
 import { listPipelineRuns } from '../../../api/pipelineRuns';
 import { PipelineEditorContext } from './PipelineEditorContext';
 import { useTriggerRun } from '../hooks/useTriggerRun';
@@ -509,7 +509,16 @@ export function PipelineRunsProvider({ children }: PipelineRunsProviderProps) {
     [],
   );
 
-  const ingestRun = useCallback((run: PipelineRun): void => {
+  const ingestRun = useCallback((rawRun: PipelineRun): void => {
+    // The OTHER untrusted door into `runs` (the first is `listRuns`, which
+    // normalises for the same reason). `ingestRun` takes a run straight off a
+    // host poll, and a list endpoint that returns run *summaries* omits
+    // `steps` — which `Object.keys(run.steps)` two lines down, and every runs
+    // page's render memo, treat as always present. Normalising here keeps the
+    // run visible with whatever fields it did carry instead of throwing the
+    // provider (and the entire subtree under it) away.
+    const run = normalizeRun(rawRun);
+    if (!run) return;
     setRuns((prev) => {
       const existing = prev[run.id];
       // If the polled run is identical or older than what we already have
