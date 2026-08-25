@@ -67,12 +67,18 @@ export const lightTheme: ThemeTokens = {
   shadowXl: '0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)',
 };
 
-/** Dark theme preset — proper dark UI design, not simply inverted. */
+/** Dark theme preset — proper dark UI design, not simply inverted.
+ *
+ * MUST stay consistent with the `[data-theme="dark"]` token block in
+ * src/styles.css (same source-of-truth direction as the light preset: the
+ * CSS block mirrors this file). Primary was re-derived 2026-08 from the
+ * brand indigo (#646cff lightened for dark surfaces) — it had drifted to a
+ * plain blue (#60a5fa) from the pre-#646cff era. */
 export const darkTheme: ThemeTokens = {
   // Colors
-  primary: '#60a5fa',
-  primaryDark: '#3b82f6',
-  primaryLight: '#1e40af',
+  primary: '#8b91ff',
+  primaryDark: '#646cff',
+  primaryLight: '#312e81',
   danger: '#f87171',
   dangerLight: '#7f1d1d',
   success: '#34d399',

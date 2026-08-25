@@ -42,7 +42,7 @@ import { n as Cr, r as wr, t as Tr } from "./EventStreamContext-CLzG8O5_.js";
 import { B as Er, E as Dr, J as Or, N as kr, Q as Ar, S as jr, Y as Mr, Z as Nr, _ as Pr, at as Fr, b as Ir, d as Lr, f as Rr, g as zr, h as Br, it as Vr, j as Hr, l as Ur, m as Wr, n as Gr, p as Kr, s as qr, t as Jr, u as Yr, v as Xr, w as Zr, x as Qr, y as $r } from "./services-DrJviHEM.js";
 import { n as ei, t as ti } from "./ObservabilityContext-DpoDrm3T.js";
 import { t as ni } from "./Select-Z0TLUVeL.js";
-import { A as ri, B as ii, C as ai, D as oi, E as si, F as ci, G as li, H as ui, I as di, J as fi, K as pi, L as mi, M as hi, N as gi, O as _i, P as vi, R as yi, S as bi, T as xi, U as Si, V as Ci, W as wi, Y as Ti, _ as Ei, a as Di, b as Oi, c as ki, d as Ai, f as ji, g as Mi, h as Ni, i as Pi, j as Fi, k as Ii, l as Li, m as Ri, n as zi, o as Bi, p as Vi, q as Hi, r as Ui, s as Wi, t as Gi, u as Ki, v as qi, w as Ji, x as Yi, y as Xi, z as Zi } from "./video-BFEJ-B-N.js";
+import { A as ri, B as ii, C as ai, D as oi, E as si, F as ci, G as li, H as ui, I as di, J as fi, K as pi, L as mi, M as hi, N as gi, O as _i, P as vi, R as yi, S as bi, T as xi, U as Si, V as Ci, W as wi, Y as Ti, _ as Ei, a as Di, b as Oi, c as ki, d as Ai, f as ji, g as Mi, h as Ni, i as Pi, j as Fi, k as Ii, l as Li, m as Ri, n as zi, o as Bi, p as Vi, q as Hi, r as Ui, s as Wi, t as Gi, u as Ki, v as qi, w as Ji, x as Yi, y as Xi, z as Zi } from "./video-aMWCBHoQ.js";
 import { a as Qi, c as $i, d as ea, f as ta, i as na, l as ra, n as ia, o as aa, r as oa, s as sa, t as ca, u as la } from "./MediaEffectsTray-DjQfomQI.js";
 import { A as ua, C as da, D as fa, E as pa, O as ma, S as ha, T as ga, _ as _a, a as va, b as ya, c as ba, d as xa, f as Sa, g as Ca, h as wa, i as Ta, k as Ea, l as Da, m as Oa, n as ka, o as Aa, p as ja, r as Ma, s as Na, t as Pa, u as Fa, v as Ia, w as La, x as Ra, y as za } from "./identity-eUI7EbEP.js";
 import { t as Ba } from "./Checkbox-DsS7fIUO.js";
@@ -2468,9 +2468,9 @@ var as = {
 	shadowLg: "0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)",
 	shadowXl: "0 20px 25px rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.04)"
 }, hs = {
-	primary: "#60a5fa",
-	primaryDark: "#3b82f6",
-	primaryLight: "#1e40af",
+	primary: "#8b91ff",
+	primaryDark: "#646cff",
+	primaryLight: "#312e81",
 	danger: "#f87171",
 	dangerLight: "#7f1d1d",
 	success: "#34d399",

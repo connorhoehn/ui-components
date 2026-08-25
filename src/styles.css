@@ -138,6 +138,109 @@
   --font-code: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
 }
 
+/* ── Dark palette ─────────────────────────────────────────────────────
+ * Tailwind v4 @theme variables are ordinary custom properties, so a plain
+ * attribute-scoped override AFTER the @theme block re-tones every utility
+ * that compiles against them. Scope-aware by design:
+ *
+ *   <html data-theme="dark">  → whole app flips dark
+ *   <div  data-theme="dark">  → just that subtree flips (call chrome, code
+ *                               panels) — the eventual retirement path for
+ *                               per-component `tone="dark"` hacks.
+ *
+ * Values mirror the darkTheme preset in src/theme/presets.ts (single source
+ * of truth direction: this block follows presets.ts). Deliberate omissions:
+ * --color-code-* (Catppuccin Mocha, already a dark family) and
+ * --color-video-* (near-black stage surfaces) are theme-invariant.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-primary: #8b91ff;
+  --color-primary-hover: #a5aaff;
+
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+  --color-text-disabled: #475569;
+
+  --color-surface: #1e293b;
+  --color-surface-inset: #1b2536;
+  --color-surface-panel: #0f172a;
+  --color-surface-hover: #293548;
+
+  --color-border: #334155;
+  --color-border-emphasis: #475569;
+  --color-border-field: #4b5563;
+  --color-border-subtle: #293548;
+
+  --color-surface-emphasis: #334155;
+
+  /* Inverse pair flips: "inverse" panels read light-on-dark chrome. */
+  --color-surface-inverse: #f8fafc;
+  --color-text-inverse: #0f172a;
+
+  --color-state-idle: #4b5563;
+  --color-state-pending: #93c5fd;
+  --color-state-running: #60a5fa;
+  --color-state-awaiting: #fbbf24;
+  --color-state-completed: #4ade80;
+  --color-state-failed: #f87171;
+  --color-state-skipped: #4b5563;
+
+  --color-cat-source: #2dd4bf;
+  --color-cat-transform: #94a3b8;
+  --color-cat-ai: #a78bfa;
+  --color-cat-control: #fbbf24;
+  --color-cat-sink: #60a5fa;
+  --color-cat-human: #f472b6;
+
+  /* Semantic tone scale — soft bg tints become dark tints with LIGHT fg so
+     each pair stays readable. */
+  --color-neutral: #94a3b8;
+  --color-neutral-bg: #334155;
+  --color-neutral-fg: #cbd5e1;
+  --color-neutral-border: #475569;
+
+  --color-success: #34d399;
+  --color-success-bg: #064e3b;
+  --color-success-fg: #6ee7b7;
+  --color-success-border: #065f46;
+
+  --color-warning: #fbbf24;
+  --color-warning-bg: #78350f;
+  --color-warning-fg: #fcd34d;
+  --color-warning-border: #92400e;
+
+  --color-danger: #f87171;
+  --color-danger-bg: #7f1d1d;
+  --color-danger-fg: #fca5a5;
+  --color-danger-border: #991b1b;
+
+  --color-info: #38bdf8;
+  --color-info-bg: #0c4a6e;
+  --color-info-fg: #7dd3fc;
+  --color-info-border: #075985;
+
+  --color-caution: #fb923c;
+  --color-caution-bg: #7c2d12;
+  --color-caution-fg: #fdba74;
+  --color-caution-border: #9a3412;
+
+  --color-accent: #c084fc;
+  --color-accent-bg: #581c87;
+  --color-accent-fg: #d8b4fe;
+  --color-accent-border: #6b21a8;
+
+  --color-primary-bg: #312e81;
+  --color-primary-fg: #c7cbff;
+  --color-primary-border: #4338ca;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
 @keyframes skeleton-shimmer {
   0%   { background-position: -200px 0; }
   100% { background-position: 200px 0; }
@@ -180,6 +283,17 @@
   .transcript-line-enter {
     animation: transcript-line-pop-reduced 180ms ease-out;
   }
+}
+/* Readability scrim behind each caption line's text. An INLINE element so
+   the dark backing hugs the text itself, and box-decoration-break: clone so
+   every wrapped fragment keeps its own padding + rounded backing instead of
+   one full-width bar. */
+.transcript-line-scrim {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 6px;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
 @keyframes reaction-fade-up {

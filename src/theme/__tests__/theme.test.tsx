@@ -59,7 +59,7 @@ describe('ThemeProvider', () => {
     );
 
     const root = document.documentElement;
-    expect(root.style.getPropertyValue('--ui-primary')).toBe('#60a5fa');
+    expect(root.style.getPropertyValue('--ui-primary')).toBe('#8b91ff');
     expect(root.style.getPropertyValue('--ui-background')).toBe('#0f172a');
   });
 
@@ -112,7 +112,7 @@ describe('useTheme', () => {
 
     const { result } = renderHook(() => useTheme(), { wrapper: darkWrapper });
 
-    expect(result.current.primary).toBe('#60a5fa');
+    expect(result.current.primary).toBe('#8b91ff');
     expect(result.current.textPrimary).toBe('#f1f5f9');
     expect(result.current.background).toBe('#0f172a');
   });
