@@ -246,10 +246,22 @@ export default function SocialTabContent({
         {/* Scrollable sections */}
         <div className="flex-1 overflow-y-auto pt-2">
           {/* Channels section */}
-          <CollapsibleSection title="Channels" count={channels.length} unreadTotal={channelUnreadTotal}>
+          {/* No `count` when the rooms fetch failed — `channels.length` is 0
+              from an array nothing ever filled, and "Channels 0" reads as a
+              fact. */}
+          <CollapsibleSection title="Channels" count={roomsError ? undefined : channels.length} unreadTotal={channelUnreadTotal}>
             <div className="px-1">
               {roomsLoading && channels.length === 0 ? (
                 <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
+              ) : roomsError && channels.length === 0 ? (
+                /* `roomsError` reached only the (usually hidden) nested
+                   RoomList. A failed GET /api/rooms therefore rendered here as
+                   "No channels yet" — the sidebar stating the user belongs to
+                   no channels on the strength of a request that never
+                   succeeded. */
+                <div role="alert" data-testid="channels-error" className="px-6 py-2 text-xs text-danger-fg">
+                  Couldn&rsquo;t load channels
+                </div>
               ) : channels.length === 0 ? (
                 <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No channels yet</div>
               ) : (
@@ -290,9 +302,18 @@ export default function SocialTabContent({
           </CollapsibleSection>
 
           {/* Direct Messages section */}
-          <CollapsibleSection title="Direct Messages" count={dms.length} unreadTotal={dmUnreadTotal}>
+          <CollapsibleSection title="Direct Messages" count={roomsError ? undefined : dms.length} unreadTotal={dmUnreadTotal}>
             <div className="px-1">
-              {dms.length === 0 ? (
+              {roomsLoading && dms.length === 0 ? (
+                <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>Loading…</div>
+              ) : roomsError && dms.length === 0 ? (
+                /* Same as Channels above: DMs come from the same `rooms`
+                   fetch, so its failure used to read as "No conversations
+                   yet". */
+                <div role="alert" data-testid="dms-error" className="px-6 py-2 text-xs text-danger-fg">
+                  Couldn&rsquo;t load conversations
+                </div>
+              ) : dms.length === 0 ? (
                 <div className="px-6 py-2 text-xs" style={{ color: sidebarTextSecondary }}>No conversations yet</div>
               ) : (
                 dms.map(room => (

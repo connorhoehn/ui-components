@@ -28,6 +28,17 @@ export interface UseFriendsReturn {
   unfollow: (userId: string) => Promise<void>;
   loading: boolean;
   error: string | null;
+  /**
+   * Failure of the three list loads specifically. Kept separate from `error`,
+   * which is whatever the last follow/unfollow reported.
+   *
+   * A caller cannot use `error` to decide between "you follow nobody" and "we
+   * never managed to read your graph": a refused *follow* also sets `error`,
+   * so keying an error state off it made a rejected button click claim the
+   * whole graph had failed to load. Only `loadError` means the lists below are
+   * empty because we do not know, not because they are empty.
+   */
+  loadError: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -40,6 +51,7 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
   const [friends, setFriends] = useState<PublicProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_SOCIAL_API_URL ?? '';
 
@@ -50,6 +62,7 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
 
     setLoading(true);
     setError(null);
+    setLoadError(null);
 
     const headers = { Authorization: `Bearer ${idToken}` };
 
@@ -76,6 +89,7 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
       })
       .catch((err: Error) => {
         setError(err.message);
+        setLoadError(err.message);
       })
       .finally(() => {
         setLoading(false);
@@ -133,5 +147,5 @@ export function useFriends({ idToken }: UseFriendsOptions): UseFriendsReturn {
     }
   }, [idToken, baseUrl, refreshFollowing]);  
 
-  return { followers, following, friends, follow, unfollow, loading, error };
+  return { followers, following, friends, follow, unfollow, loading, error, loadError };
 }

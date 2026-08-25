@@ -307,7 +307,7 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           </button>
         </div>
         {saveError && (
-          <div role="alert" data-testid="profile-save-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+          <div role="alert" data-testid="profile-save-error" className="text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
             {saveError}
           </div>
         )}
@@ -334,10 +334,13 @@ function ProfileCard({ user, isOwnProfile, onSave }: ProfileCardProps) {
           </p>
         </div>
       </div>
+      {/* `?? 0` here printed "0 Followers" for a count that was never read —
+          `SocialPanel` leaves these undefined when the follow-graph load
+          failed. An unknown count renders as a dash, not as zero. */}
       <div className="flex gap-4 text-sm text-text-secondary mb-3">
-        <span><strong className="text-text-primary">{user.followersCount ?? 0}</strong> Followers</span>
-        <span><strong className="text-text-primary">{user.followingCount ?? 0}</strong> Following</span>
-        <span><strong className="text-text-primary">{user.friendsCount ?? 0}</strong> Friends</span>
+        <span><strong className="text-text-primary">{user.followersCount ?? '—'}</strong> Followers</span>
+        <span><strong className="text-text-primary">{user.followingCount ?? '—'}</strong> Following</span>
+        <span><strong className="text-text-primary">{user.friendsCount ?? '—'}</strong> Friends</span>
       </div>
       {isOwnProfile && (
         <button
@@ -363,15 +366,26 @@ interface SocialGraphPanelProps {
   friends: UserProfile[];
   followStates: Record<string, FollowState>;
   onFollowChange: (userId: string, newState: FollowState) => void | Promise<void>;
+  /**
+   * Set when the follow-graph LOAD failed. The three arrays are then empty
+   * because nothing was ever read, not because the user has no connections —
+   * so neither the counts nor the empty state may be rendered.
+   */
+  loadError?: string | null;
 }
 
-function SocialGraphPanel({ followers, following, friends, followStates, onFollowChange }: SocialGraphPanelProps) {
+function SocialGraphPanel({ followers, following, friends, followStates, onFollowChange, loadError }: SocialGraphPanelProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('followers');
 
+  // With no successful load there is no count to show. Rendering
+  // "Followers (0)" off an array that was never populated states a number the
+  // app has no basis for.
+  const count = (users: UserProfile[]) => (loadError ? '' : ` (${users.length})`);
+
   const tabs: { key: TabKey; label: string; users: UserProfile[] }[] = [
-    { key: 'followers', label: `Followers (${followers.length})`, users: followers },
-    { key: 'following', label: `Following (${following.length})`, users: following },
-    { key: 'friends', label: `Friends (${friends.length})`, users: friends },
+    { key: 'followers', label: `Followers${count(followers)}`, users: followers },
+    { key: 'following', label: `Following${count(following)}`, users: following },
+    { key: 'friends', label: `Friends${count(friends)}`, users: friends },
   ];
 
   const emptyStates: Record<TabKey, { heading: string; body: string }> = {
@@ -424,7 +438,17 @@ function SocialGraphPanel({ followers, following, friends, followStates, onFollo
         aria-labelledby={`social-tab-${activeTab}`}
         className="min-h-[120px]"
       >
-        {activeUsers.length === 0 ? (
+        {loadError && activeUsers.length === 0 ? (
+          /* An outage used to render here as "No followers yet" / "Not
+             following anyone yet" — the app making a confident statement about
+             the user's own social graph that it had never successfully read. */
+          <div role="alert" data-testid="social-graph-error" className="py-6 text-center">
+            <div className="text-sm font-semibold text-danger-fg mb-1">
+              Couldn&rsquo;t load your connections
+            </div>
+            <div className="text-sm text-text-tertiary">{loadError}</div>
+          </div>
+        ) : activeUsers.length === 0 ? (
           <div className="py-6 text-center">
             <div className="text-sm font-semibold text-text-primary mb-1">
               {emptyStates[activeTab].heading}
@@ -477,7 +501,10 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
   // `error` was previously dropped on the floor, so a failed social-graph load
   // rendered as empty Followers/Following/Friends tabs with nothing to explain
   // them. Surface it in the banner this panel already has.
-  const { followers, following, friends, follow, unfollow, error: graphError } = useFriends({ idToken });
+  // `graphError` is the last follow/unfollow failure; `graphLoadError` is the
+  // list load specifically. Only the latter may suppress the tabs' counts and
+  // empty states — a refused follow says nothing about whether the graph loaded.
+  const { followers, following, friends, follow, unfollow, error: graphError, loadError: graphLoadError } = useFriends({ idToken });
 
   // Derive follow states from live following array
   const followingIds = new Set(following.map(u => u.userId));
@@ -507,9 +534,11 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
 
   const currentUserProfile: UserProfile | null = profile ? {
     ...profileItemToUserProfile(profile),
-    followersCount: followers.length,
-    followingCount: following.length,
-    friendsCount: friends.length,
+    // Same reasoning as the tab labels: with no successful graph load these
+    // are zeroes from an array nothing ever filled, not counts.
+    followersCount: graphLoadError ? undefined : followers.length,
+    followingCount: graphLoadError ? undefined : following.length,
+    friendsCount: graphLoadError ? undefined : friends.length,
   } : null;
 
   // Suppress unused warning for onMessage — it's accepted as a prop for symmetry
@@ -536,11 +565,12 @@ export function SocialPanel({ idToken, onMessage }: { idToken: string | null; on
             friends={friendsProfiles}
             followStates={followStates}
             onFollowChange={handleFollowChange}
+            loadError={graphLoadError}
           />
         </>
       ) : null}
       {(formError ?? profileError ?? graphError) && (
-        <div role="alert" data-testid="social-panel-error" className="text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
+        <div role="alert" data-testid="social-panel-error" className="text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]">
           {formError ?? profileError ?? graphError}
         </div>
       )}

@@ -24,6 +24,7 @@ function makeFriends(over: Partial<UseFriendsReturn> = {}): UseFriendsReturn {
     unfollow: vi.fn().mockResolvedValue(undefined),
     loading: false,
     error: null,
+    loadError: null,
     ...over,
   };
 }
@@ -51,7 +52,9 @@ beforeEach(() => useFriendsMock.mockReset());
 describe('RoomList DM picker — follow-graph failure', () => {
   it('does not claim the user has no friends when the graph failed to load', () => {
     useFriendsMock.mockReturnValue(
-      makeFriends({ error: 'Failed to load friends (500)' }),
+      // `loadError`, not `error`: `error` also carries follow/unfollow
+      // failures, which say nothing about whether `friends` was ever read.
+      makeFriends({ error: 'Failed to load friends (500)', loadError: 'Failed to load friends (500)' }),
     );
     renderList();
     openDmPicker();

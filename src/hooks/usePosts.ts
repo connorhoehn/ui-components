@@ -49,6 +49,18 @@ export interface UsePostsReturn {
    */
   mutating: boolean;
   error: string | null;
+  /**
+   * Failure of the feed LOAD specifically (initial fetch + `loadMore`). Kept
+   * separate from `error`, which is also set by `createPost`/`editPost`/
+   * `deletePost`.
+   *
+   * Callers use it to tell "this room has no posts" from "we never managed to
+   * read this room". Keying that off `error` made a rejected *send* in an
+   * empty room replace the "No posts yet" empty state with "Couldn't load
+   * posts" — blaming the read for a write that failed, next to a composer that
+   * was already reporting the real reason.
+   */
+  loadError: string | null;
   hasMore: boolean;
   loadMore: () => Promise<void>;
 }
@@ -63,6 +75,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
   const [loading, setLoading] = useState(false);       // initial fetch / loadMore
   const [mutating, setMutating] = useState(false);     // createPost / editPost / deletePost
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const baseUrl = (import.meta.env as Record<string, string>).VITE_PLATFORM_API_URL ?? '';
 
@@ -87,6 +100,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     setPosts([]);
     setLastKey(undefined);
     setError(null);
+    setLoadError(null);
 
     if (!idToken || !roomId) {
       setLoading(false);
@@ -119,6 +133,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       .catch((err: Error) => {
         if (cancelled) return;
         setError(err.message);
+        setLoadError(err.message);
       })
       .finally(() => {
         if (cancelled) return;
@@ -178,6 +193,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     if (!idToken || !roomId || !lastKey) return;
     setLoading(true);
     setError(null);
+    setLoadError(null);
     try {
       const res = await fetch(
         `${baseUrl}/api/rooms/${roomId}/posts?lastKey=${encodeURIComponent(lastKey)}`,
@@ -196,6 +212,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
       setLastKey(data.lastKey);
     } catch (err) {
       setError((err as Error).message);
+      setLoadError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -304,6 +321,7 @@ export function usePosts({ idToken, roomId, onMessage }: UsePostsOptions): UsePo
     loading,
     mutating,
     error,
+    loadError,
     hasMore: lastKey !== undefined,
     loadMore,
   };

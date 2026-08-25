@@ -72,8 +72,15 @@ export function useChat(options: UseChatOptions): UseChatReturn {
       if (msg.type === 'chat' && msg.action === 'history') {
         // Only process history for the current channel
         if (msg.channel !== currentChannelRef.current) return;
-        const incoming = (msg.messages as Array<{ clientId: string; message: string; timestamp: string; metadata?: { displayName?: string; avatarUrl?: string } }> | undefined) ?? [];
+        const incoming = (msg.messages as Array<{ id?: string; clientId: string; message: string; timestamp: string; metadata?: { displayName?: string; avatarUrl?: string } }> | undefined) ?? [];
+        // `id` MUST be carried across from the history rows. It is the only
+        // key the `action: 'message'` branch below dedupes on, and dropping it
+        // here made every replayed message un-dedupable: on reconnect the
+        // gateway replays the last 100 AND broadcasts anything that landed
+        // during the join, so a message present in both arrived twice and the
+        // transcript showed it twice.
         setMessages(incoming.map((m) => ({
+          id: m.id,
           clientId: m.clientId,
           content: m.message,
           timestamp: m.timestamp,

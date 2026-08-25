@@ -48,6 +48,7 @@ function makePosts(over: Partial<UsePostsReturn> = {}): UsePostsReturn {
     loading: false,
     mutating: false,
     error: null,
+    loadError: null,
     hasMore: false,
     loadMore: vi.fn().mockResolvedValue(undefined),
     ...over,
@@ -245,7 +246,10 @@ describe('PostFeed destructive actions', () => {
 
 describe('PostFeed failure vs emptiness', () => {
   it('shows the load error instead of the "be the first to post" empty state', () => {
-    renderFeed(makePosts({ posts: [], error: 'Failed to load posts (503)' }));
+    // `loadError`, not `error` — see the sibling case below: `error` is also
+    // set by a failed createPost, and a refused post must not make the feed
+    // claim the room failed to load.
+    renderFeed(makePosts({ posts: [], error: 'Failed to load posts (503)', loadError: 'Failed to load posts (503)' }));
 
     // A room whose posts API is down used to be indistinguishable from a
     // room nobody has posted in — so nobody knew there was anything to retry.
