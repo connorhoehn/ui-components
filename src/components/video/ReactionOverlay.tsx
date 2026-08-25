@@ -1,6 +1,31 @@
 import { useState, useEffect, type CSSProperties } from 'react';
 import { cn } from '../../lib/cn';
 
+// Stable test-selector names for the default emoji set. Anything outside
+// the map falls back to the emoji's codepoints so a caller-supplied set
+// still gets a deterministic (if uglier) testid.
+const EMOJI_TESTID_NAMES: Record<string, string> = {
+  '👍': 'thumbs-up',
+  '❤️': 'heart',
+  '🔥': 'fire',
+  '😂': 'laugh',
+  '👏': 'clap',
+  '🎉': 'party',
+  '😮': 'wow',
+  '💯': 'hundred',
+};
+
+/** Testid-safe name for a reaction emoji: 'heart', 'thumbs-up', … for the
+ *  default set, hyphen-joined hex codepoints for anything else. Exported so
+ *  consumers can build `reaction-option-${reactionEmojiName(e)}` selectors. */
+export function reactionEmojiName(emoji: string): string {
+  const named = EMOJI_TESTID_NAMES[emoji];
+  if (named) return named;
+  return Array.from(emoji)
+    .map((c) => c.codePointAt(0)!.toString(16))
+    .join('-');
+}
+
 export interface Reaction {
   id: string;
   emoji: string;
@@ -59,10 +84,15 @@ export function ReactionOverlay({ reactions, className, style }: ReactionOverlay
   }, []);
 
   return (
-    <div className={cn('absolute inset-0 pointer-events-none overflow-hidden', className)} style={style}>
+    <div
+      data-testid="reaction-overlay"
+      className={cn('absolute inset-0 pointer-events-none overflow-hidden', className)}
+      style={style}
+    >
       {floating.map(r => (
         <span
           key={r.id}
+          data-testid="reaction-float"
           className={cn('absolute bottom-0 text-2xl opacity-0 animate-[floatUp_3s_ease-out_forwards]')}
           style={{ left: `${r.x}%` }}
         >
@@ -91,20 +121,122 @@ const DEFAULT_EMOJIS = ['👍', '❤️', '🔥', '😂', '👏', '🎉', '😮'
 
 export function ReactionPicker({ onReact, emojis = DEFAULT_EMOJIS, className, style }: ReactionPickerProps) {
   return (
-    <div className={cn('flex gap-1 px-2 py-1.5 bg-black/80 rounded-[20px]', className)} style={style}>
-      {emojis.map(emoji => (
-        <button
-          key={emoji}
-          type="button"
-          onClick={() => onReact(emoji)}
-          className={cn('bg-transparent border-none text-xl cursor-pointer px-1 py-0.5 rounded transition-transform duration-100')}
-          onMouseDown={e => (e.currentTarget.style.transform = 'scale(1.3)')}
-          onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
-          onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
-        >
-          {emoji}
-        </button>
-      ))}
+    <div
+      data-testid="reaction-picker"
+      className={cn(
+        // Inverse-surface tokens (the way MediaEffectsTray styles itself):
+        // the picker always sits over dark call chrome.
+        'flex gap-1 px-2 py-1.5 rounded-[20px] bg-surface-inverse/90 border border-white/10',
+        className,
+      )}
+      style={style}
+    >
+      {emojis.map(emoji => {
+        const name = reactionEmojiName(emoji);
+        return (
+          <button
+            key={emoji}
+            type="button"
+            onClick={() => onReact(emoji)}
+            aria-label={`React with ${name}`}
+            data-testid={`reaction-option-${name}`}
+            className={cn(
+              'bg-transparent border-none text-xl cursor-pointer px-1 py-0.5 rounded',
+              'transition-transform duration-100 hover:bg-white/10 active:scale-125',
+            )}
+          >
+            {emoji}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// ReactionPickerButton — compact trigger for a call control bar
+// ---------------------------------------------------------------------------
+
+export interface ReactionPickerButtonProps {
+  onReact: (emoji: string) => void;
+  emojis?: string[];
+  /** Close the popover after an emoji is picked. Default true. */
+  closeOnReact?: boolean;
+  /** Horizontal anchoring of the popover relative to the trigger. Default
+   *  'center'. Use 'right' when the button sits near the widget's right
+   *  edge (docked CallWidget) so the row doesn't overflow the clip rect. */
+  align?: 'center' | 'left' | 'right';
+  /** Dims the trigger and blocks opening — e.g. while the send path
+   *  is unavailable. */
+  disabled?: boolean;
+  className?: string;
+}
+
+// Same stroke style as the CallControls glyph set (16×16, stroke=currentColor).
+const smileyIcon = (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+    <line x1="9" y1="9" x2="9.01" y2="9" />
+    <line x1="15" y1="9" x2="15.01" y2="9" />
+  </svg>
+);
+
+/**
+ * Icon trigger + popover pairing of ReactionPicker, sized to sit in a call
+ * control row next to CallControls' 36px round buttons.
+ *
+ * The popover is positioned `absolute` against the wrapper — NEVER
+ * `position: fixed` — because CallWidget applies a CSS transform to its
+ * root, which makes transformed ancestors the containing block for fixed
+ * children. Absolute-in-relative keeps the popover anchored to the button
+ * in both the docked and expanded layouts.
+ */
+export function ReactionPickerButton({
+  onReact,
+  emojis,
+  closeOnReact = true,
+  align = 'center',
+  disabled = false,
+  className,
+}: ReactionPickerButtonProps) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={cn('relative inline-flex', className)}>
+      <button
+        type="button"
+        title="Send a reaction"
+        aria-label="Send a reaction"
+        aria-expanded={open}
+        disabled={disabled}
+        onClick={() => setOpen(v => !v)}
+        data-testid="reaction-picker-open"
+        className={cn(
+          // Mirrors CallControls' ControlButton chrome so the trigger reads
+          // as one more control in the row.
+          'w-9 h-9 rounded-full flex items-center justify-center border-none cursor-pointer transition-all duration-150',
+          open ? 'bg-white/20 text-white' : 'bg-white/10 text-white/80 hover:bg-white/20 hover:text-white',
+          disabled && 'opacity-40 cursor-not-allowed',
+        )}
+      >
+        {smileyIcon}
+      </button>
+      {open && (
+        <ReactionPicker
+          emojis={emojis}
+          onReact={emoji => {
+            onReact(emoji);
+            if (closeOnReact) setOpen(false);
+          }}
+          className={cn(
+            'absolute bottom-full mb-2 z-10 shadow-lg',
+            align === 'center' && 'left-1/2 -translate-x-1/2',
+            align === 'left' && 'left-0',
+            align === 'right' && 'right-0',
+          )}
+        />
+      )}
     </div>
   );
 }

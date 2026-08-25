@@ -13,8 +13,18 @@ export type { NetworkQualityBadgeProps, NetworkQuality } from './NetworkQualityB
 export { VideoGrid } from './VideoGrid';
 export type { VideoGridProps, Participant } from './VideoGrid';
 
-export { ReactionOverlay, ReactionPicker } from './ReactionOverlay';
-export type { ReactionOverlayProps, ReactionPickerProps, Reaction } from './ReactionOverlay';
+export {
+  ReactionOverlay,
+  ReactionPicker,
+  ReactionPickerButton,
+  reactionEmojiName,
+} from './ReactionOverlay';
+export type {
+  ReactionOverlayProps,
+  ReactionPickerProps,
+  ReactionPickerButtonProps,
+  Reaction,
+} from './ReactionOverlay';
 
 export { StatusStrip } from './StatusStrip';
 export type { StatusStripProps } from './StatusStrip';

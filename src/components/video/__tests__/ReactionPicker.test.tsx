@@ -1,5 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ReactionPicker } from '../ReactionOverlay';
+import {
+  ReactionOverlay,
+  ReactionPicker,
+  ReactionPickerButton,
+  reactionEmojiName,
+} from '../ReactionOverlay';
 
 const DEFAULT_EMOJIS = ['👍', '❤️', '🔥', '😂', '👏', '🎉', '😮', '💯'];
 
@@ -29,5 +34,72 @@ describe('ReactionPicker', () => {
   it('renders nothing inside the picker when given an empty emoji array', () => {
     render(<ReactionPicker onReact={() => {}} emojis={[]} />);
     expect(screen.queryAllByRole('button')).toHaveLength(0);
+  });
+
+  it('gives every default emoji a stable reaction-option-<name> testid', () => {
+    render(<ReactionPicker onReact={() => {}} />);
+    for (const name of ['thumbs-up', 'heart', 'fire', 'laugh', 'clap', 'party', 'wow', 'hundred']) {
+      expect(screen.getByTestId(`reaction-option-${name}`)).toBeInTheDocument();
+    }
+  });
+
+  it('falls back to codepoint names for non-default emojis', () => {
+    render(<ReactionPicker onReact={() => {}} emojis={['🚀']} />);
+    expect(reactionEmojiName('🚀')).toBe('1f680');
+    expect(screen.getByTestId('reaction-option-1f680')).toBeInTheDocument();
+  });
+});
+
+describe('ReactionPickerButton', () => {
+  it('opens the picker from the trigger, reacts, and closes on pick', () => {
+    const onReact = vi.fn();
+    render(<ReactionPickerButton onReact={onReact} />);
+
+    expect(screen.queryByTestId('reaction-picker')).not.toBeInTheDocument();
+
+    const trigger = screen.getByTestId('reaction-picker-open');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(trigger);
+
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByTestId('reaction-picker')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('reaction-option-heart'));
+    expect(onReact).toHaveBeenCalledWith('❤️');
+    // closeOnReact defaults to true.
+    expect(screen.queryByTestId('reaction-picker')).not.toBeInTheDocument();
+  });
+
+  it('keeps the popover open when closeOnReact is false', () => {
+    render(<ReactionPickerButton onReact={() => {}} closeOnReact={false} />);
+    fireEvent.click(screen.getByTestId('reaction-picker-open'));
+    fireEvent.click(screen.getByTestId('reaction-option-fire'));
+    expect(screen.getByTestId('reaction-picker')).toBeInTheDocument();
+  });
+
+  it('never uses position:fixed — the popover must survive CallWidget\'s transformed root', () => {
+    render(<ReactionPickerButton onReact={() => {}} />);
+    fireEvent.click(screen.getByTestId('reaction-picker-open'));
+    const picker = screen.getByTestId('reaction-picker');
+    expect(picker.className).toContain('absolute');
+    expect(picker.className).not.toContain('fixed');
+  });
+
+  it('does not open while disabled', () => {
+    render(<ReactionPickerButton onReact={() => {}} disabled />);
+    fireEvent.click(screen.getByTestId('reaction-picker-open'));
+    expect(screen.queryByTestId('reaction-picker')).not.toBeInTheDocument();
+  });
+});
+
+describe('ReactionOverlay testids', () => {
+  it('exposes reaction-overlay on the root and reaction-float per floater', () => {
+    const { rerender } = render(<ReactionOverlay reactions={[]} />);
+    expect(screen.getByTestId('reaction-overlay')).toBeInTheDocument();
+    expect(screen.queryAllByTestId('reaction-float')).toHaveLength(0);
+
+    rerender(<ReactionOverlay reactions={[{ id: 'r1', emoji: '🎉' }]} />);
+    expect(screen.getAllByTestId('reaction-float')).toHaveLength(1);
+    expect(screen.getByTestId('reaction-float')).toHaveTextContent('🎉');
   });
 });

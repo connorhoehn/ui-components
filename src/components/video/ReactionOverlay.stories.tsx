@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type ReactNode } from 'react';
-import { ReactionOverlay, ReactionPicker, type Reaction } from './ReactionOverlay';
+import { ReactionOverlay, ReactionPicker, ReactionPickerButton, type Reaction } from './ReactionOverlay';
 
 // ReactionOverlay animates the LAST item of `reactions` whenever that array
 // changes, then garbage-collects each floater after 3s. A static snapshot is
@@ -93,4 +93,30 @@ export const Idle: Story = {
       <ReactionOverlay {...args} />
     </Stage>
   ),
+};
+
+/** ReactionPickerButton — the compact control-bar trigger. It sits in a dark
+ *  control row (like CallControls' 36px round buttons) and opens the emoji
+ *  row as an absolute popover above itself: never position:fixed, so it
+ *  stays anchored inside CallWidget's transformed root. */
+export const ControlBarTrigger: Story = {
+  args: { reactions: [] },
+  render: () => {
+    const [reactions, setReactions] = useState<Reaction[]>([]);
+    return (
+      <Stage>
+        <ReactionOverlay reactions={reactions} />
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-2 rounded-full bg-surface-inverse/90 border border-white/10">
+          <ReactionPickerButton
+            onReact={(emoji) =>
+              setReactions((prev) => [
+                ...prev,
+                { id: `${emoji}-${Date.now()}`, emoji },
+              ])
+            }
+          />
+        </div>
+      </Stage>
+    );
+  },
 };
