@@ -118,6 +118,21 @@ export function UserPlusIcon({ size = 20, ...rest }: IconProps) {
   );
 }
 
+/** Sparkles / magic-wand glyph — the media-effects affordance. Pair with
+ *  CircularIconToggle in MediaControlsBar's `extras` slot to open a
+ *  MediaEffectsTray. */
+export function SparklesIcon({ size = 20, ...rest }: IconProps) {
+  return (
+    <svg {...base(size, rest)}>
+      <path d="M12 3l1.9 5.1a1 1 0 0 0 .6.6L19.6 10.6a1 1 0 0 1 0 1.9L14.5 14.4a1 1 0 0 0-.6.6L12 20.1a1 1 0 0 1-1.9 0L8.2 15a1 1 0 0 0-.6-.6L2.5 12.5a1 1 0 0 1 0-1.9L7.6 8.7a1 1 0 0 0 .6-.6L10.1 3a1 1 0 0 1 1.9 0z" />
+      <path d="M19 3v4" />
+      <path d="M17 5h4" />
+      <path d="M19 17v4" />
+      <path d="M17 19h4" />
+    </svg>
+  );
+}
+
 export function MoreHorizontalIcon({ size = 20, ...rest }: IconProps) {
   return (
     <svg {...base(size, rest)}>

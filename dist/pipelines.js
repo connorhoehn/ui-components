@@ -17,7 +17,7 @@ import { t as E } from "./activationKey-CjbL3LUv.js";
 import { t as D } from "./Input-DcK2h-jK.js";
 import { t as O } from "./Textarea-C3t5PCLv.js";
 import { n as k, r as A, t as ee } from "./EventStreamContext-CLzG8O5_.js";
-import { A as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as N, M as ue, O as de, P as fe, Q as pe, R as me, T as P, U as he, V as ge, W as _e, X as ve, Y as ye, Z as be, _ as xe, a as Se, at as Ce, b as we, c as Te, d as Ee, et as De, f as Oe, h as ke, i as Ae, it as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as F, q as Re, r as ze, rt as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./services-D7KHr7HB.js";
+import { A as j, B as te, C as ne, D as re, E as M, F as ie, G as ae, H as oe, I as se, J as ce, K as le, L as N, M as ue, O as de, P as fe, Q as pe, R as me, T as P, U as he, V as ge, W as _e, X as ve, Y as ye, Z as be, _ as xe, a as Se, at as Ce, b as we, c as Te, d as Ee, et as De, f as Oe, h as ke, i as Ae, it as je, k as Me, l as Ne, m as Pe, n as Fe, nt as Ie, o as Le, p as F, q as Re, r as ze, rt as Be, s as Ve, t as He, tt as Ue, u as We, v as Ge, w as Ke, x as qe, y as Je, z as Ye } from "./services-DrJviHEM.js";
 import { t as Xe } from "./rovingFocus-Bj5Y6kwY.js";
 import { t as Ze } from "./Select-Z0TLUVeL.js";
 import { t as Qe } from "./Checkbox-DsS7fIUO.js";
@@ -109,11 +109,11 @@ function St(e, t, n, r) {
 }
 function Ct(e, t) {
 	let n = bt[e];
-	return n === "fork" ? Tt(t) : n.includes(t);
+	return n === void 0 ? !1 : n === "fork" ? Tt(t) : n.includes(t);
 }
 function wt(e, t) {
 	let n = xt[e];
-	return n === null ? !1 : n === "join" ? Et(t) : n.includes(t);
+	return n == null ? !1 : n === "join" ? Et(t) : n.includes(t);
 }
 function Tt(e) {
 	return /^branch-(\d+)$/.exec(e) !== null;
@@ -7312,13 +7312,11 @@ var Aa = [
 	}
 ];
 function ja({ data: e, onChange: t }) {
-	let r = rt(), { toast: i } = n(), a = nt(ie)?.definition?.triggerBinding?.webhookSecret, [o, s] = B(!1), c = Te();
-	c.enabled, c.publicUrlBase;
-	let l = e.triggerType.startsWith("document."), u = R(() => l ? ka() : [], [l]), d = l && !e.documentTypeId, f = e.triggerType === "schedule" && !e.schedule, p = e.triggerType === "webhook" && !e.webhookPath, m = e.webhookPath ?? "", h = e.triggerType === "webhook" && m.length > 0 && !Da.test(m), g = e.triggerType === "webhook" && Da.test(m) ? `${Oa}/hooks/pipeline/${m}` : null, _ = () => {
-		g && navigator.clipboard.writeText(g).then(() => i("Webhook URL copied", { type: "success" })).catch(() => i("Could not copy webhook URL", { type: "error" }));
-	}, v = () => {
+	let r = rt(), { toast: i } = n(), a = nt(ie)?.definition?.triggerBinding?.webhookSecret, [o, s] = B(!1), c = Te(), l = c.enabled, u = c.publicUrlBase ?? Oa, d = e.triggerType.startsWith("document."), f = R(() => d ? ka() : [], [d]), p = d && !e.documentTypeId, m = e.triggerType === "schedule" && !e.schedule, h = e.triggerType === "webhook" && !e.webhookPath, g = e.webhookPath ?? "", _ = e.triggerType === "webhook" && g.length > 0 && !Da.test(g), y = e.triggerType === "webhook" && Da.test(g) ? `${u}/hooks/pipeline/${g}` : null, b = () => {
+		y && navigator.clipboard.writeText(y).then(() => i("Webhook URL copied", { type: "success" })).catch(() => i("Could not copy webhook URL", { type: "error" }));
+	}, x = () => {
 		a && navigator.clipboard.writeText(a).then(() => i("Webhook secret copied", { type: "success" })).catch(() => i("Could not copy webhook secret", { type: "error" }));
-	}, y = e.triggerType === "schedule" ? e.schedule ?? "" : "", b = R(() => y ? Ca(y) : null, [y]), x = R(() => b ? Ea(b, /* @__PURE__ */ new Date(), 3) : [], [b]), S = e.triggerType === "schedule" && !!y && !b, C = e.triggerType === "document.finalize" ? "On finalize" : e.triggerType === "document.submit" ? "On submit for review" : e.triggerType === "document.comment" ? "On comment added" : "";
+	}, S = e.triggerType === "schedule" ? e.schedule ?? "" : "", C = R(() => S ? Ca(S) : null, [S]), w = R(() => C ? Ea(C, /* @__PURE__ */ new Date(), 3) : [], [C]), T = e.triggerType === "schedule" && !!S && !C, E = e.triggerType === "document.finalize" ? "On finalize" : e.triggerType === "document.submit" ? "On submit for review" : e.triggerType === "document.comment" ? "On comment added" : "";
 	return /* @__PURE__ */ U(X, { children: [
 		/* @__PURE__ */ H(Y, {
 			label: "Trigger type",
@@ -7333,15 +7331,15 @@ function ja({ data: e, onChange: t }) {
 				options: Aa
 			})
 		}),
-		l && /* @__PURE__ */ H(Y, {
+		d && /* @__PURE__ */ H(Y, {
 			label: "Document type",
 			required: !0,
-			error: d ? "Select a document type." : void 0,
-			help: d ? void 0 : "Which document type should trigger this pipeline.",
+			error: p ? "Select a document type." : void 0,
+			help: p ? void 0 : "Which document type should trigger this pipeline.",
 			controlId: `${r}-document-type`,
 			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(Ze, {
 				size: "sm",
-				invalid: d,
+				invalid: p,
 				id: n,
 				"aria-describedby": r,
 				value: e.documentTypeId ?? "",
@@ -7349,29 +7347,29 @@ function ja({ data: e, onChange: t }) {
 				options: [{
 					value: "",
 					label: "— select a document type —"
-				}, ...u.map((e) => ({
+				}, ...f.map((e) => ({
 					value: e.id,
 					label: e.name
 				}))]
-			}), C && /* @__PURE__ */ U("div", {
+			}), E && /* @__PURE__ */ U("div", {
 				className: "text-[11px] text-text-tertiary mt-1.5",
 				children: ["Event: ", /* @__PURE__ */ H("span", {
 					className: "font-semibold text-text-secondary",
-					children: C
+					children: E
 				})]
 			})] })
 		}),
 		e.triggerType === "schedule" && /* @__PURE__ */ H(Y, {
 			label: "Schedule (cron)",
 			required: !0,
-			error: f ? "Cron expression is required." : S ? "Invalid cron expression — supports *, */N, N,M, A-B, exact values." : void 0,
-			help: !f && !S ? "5-field cron: minute hour day month weekday." : void 0,
+			error: m ? "Cron expression is required." : T ? "Invalid cron expression — supports *, */N, N,M, A-B, exact values." : void 0,
+			help: !m && !T ? "5-field cron: minute hour day month weekday." : void 0,
 			controlId: `${r}-schedule`,
 			render: ({ controlId: n, describedById: r }) => /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H(D, {
 				size: "sm",
 				mono: !0,
 				spellCheck: !1,
-				invalid: f || S,
+				invalid: m || T,
 				placeholder: "*/15 * * * *",
 				id: n,
 				"aria-describedby": r,
@@ -7379,10 +7377,10 @@ function ja({ data: e, onChange: t }) {
 				onChange: (e) => t({ schedule: e.target.value })
 			}), /* @__PURE__ */ H("div", {
 				className: "mt-2 p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-tertiary font-mono",
-				children: x.length > 0 ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("div", {
+				children: w.length > 0 ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ H("div", {
 					className: "text-text-secondary mb-1",
 					children: "Next 3 fires:"
-				}), x.map((e, t) => /* @__PURE__ */ H("div", { children: e.toLocaleString() }, t))] }) : /* @__PURE__ */ H("span", { children: "Next fires: enter a valid cron expression to preview." })
+				}), w.map((e, t) => /* @__PURE__ */ H("div", { children: e.toLocaleString() }, t))] }) : /* @__PURE__ */ H("span", { children: "Next fires: enter a valid cron expression to preview." })
 			})] })
 		}),
 		e.triggerType === "webhook" && /* @__PURE__ */ U("div", {
@@ -7391,32 +7389,38 @@ function ja({ data: e, onChange: t }) {
 				/* @__PURE__ */ H(Y, {
 					label: "Path",
 					required: !0,
-					error: p ? "Webhook path is required." : h ? "Path must be alphanumeric (plus _, -)" : void 0,
-					help: !p && !h ? "Alphanumeric, _, or - (max 64 chars). No leading slash." : void 0,
+					error: h ? "Webhook path is required." : _ ? "Path must be alphanumeric (plus _, -)" : void 0,
+					help: !h && !_ ? "Alphanumeric, _, or - (max 64 chars). No leading slash." : void 0,
 					controlId: `${r}-webhook-path`,
 					render: ({ controlId: e, describedById: n }) => /* @__PURE__ */ H(D, {
 						size: "sm",
 						mono: !0,
 						spellCheck: !1,
-						invalid: p || h,
+						invalid: h || _,
 						placeholder: "weekly-digest",
 						id: e,
 						"aria-describedby": n,
-						value: m,
+						value: g,
 						onChange: (e) => t({ webhookPath: e.target.value })
 					})
 				}),
-				/* @__PURE__ */ H("div", {
+				!l && /* @__PURE__ */ H(v, {
+					variant: "warning",
+					title: "Endpoint not active.",
+					"data-testid": "webhook-relay-inactive",
+					children: "This deployment has not declared an inbound webhook relay, so a POST to this path is accepted and starts no run. The path is still saved with the pipeline; the delivery URL and signing secret appear once the host wires the relay."
+				}),
+				l && /* @__PURE__ */ H("div", {
 					className: "p-2 bg-surface-inset border border-dashed border-border rounded-md text-[11px] text-text-secondary font-mono break-all flex items-center gap-2",
-					children: g ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("span", {
+					children: y ? /* @__PURE__ */ U(V, { children: [/* @__PURE__ */ U("span", {
 						className: "flex-1",
 						children: [/* @__PURE__ */ H("span", {
 							className: "font-sans text-text-tertiary mr-1",
 							children: "Full URL:"
-						}), g]
+						}), y]
 					}), /* @__PURE__ */ H("button", {
 						type: "button",
-						onClick: _,
+						onClick: b,
 						className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
 						children: "Copy"
 					})] }) : /* @__PURE__ */ H("span", {
@@ -7424,7 +7428,7 @@ function ja({ data: e, onChange: t }) {
 						children: "Set a path above to see the URL"
 					})
 				}),
-				/* @__PURE__ */ U("div", { children: [
+				l && /* @__PURE__ */ U("div", { children: [
 					/* @__PURE__ */ H("label", {
 						className: "text-xs font-semibold text-text-secondary",
 						children: "Signing secret"
@@ -7445,7 +7449,7 @@ function ja({ data: e, onChange: t }) {
 							}),
 							/* @__PURE__ */ H("button", {
 								type: "button",
-								onClick: v,
+								onClick: x,
 								className: "text-[11px] px-2 py-0.5 border border-border rounded bg-transparent text-text-secondary cursor-pointer font-sans",
 								children: "Copy"
 							})
@@ -19850,7 +19854,7 @@ function Yu({ pipelineId: e, runId: t }) {
 	let n = at(), i = N(), a = M(), { definition: o } = i, [s, c] = B(null), [l, u] = B(null), [d, f] = B(0), p = I(() => f((e) => e + 1), []);
 	L(() => {
 		let n = !1;
-		return u(null), import("./services-D7KHr7HB.js").then((e) => e.$).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
+		return u(null), import("./services-DrJviHEM.js").then((e) => e.$).then(({ getPipelineRun: r }) => r(e, t).then((e) => {
 			!n && e && c(e);
 		})).catch((e) => {
 			n || u(e instanceof Error ? e.message : String(e));

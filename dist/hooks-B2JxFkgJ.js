@@ -2,7 +2,7 @@ import { a as e, t } from "./registry-DbX3MVAA.js";
 import { n, t as r } from "./fieldType-CGXsQUaC.js";
 import { n as i } from "./IdentityContext-CQM1qwH6.js";
 import "./useWebSocket-BKfGpImp.js";
-import "./useSocialProfile-Cx5JTV0Y.js";
+import "./useSocialProfile-5S1qyvsv.js";
 import "./useSyncConflicts-y7kUJko3.js";
 import "./useDocumentTypes-C-AMWgYq.js";
 import { n as a } from "./ToastProvider-DPq8u2eM.js";
@@ -336,7 +336,7 @@ function P() {
 }
 //#endregion
 //#region src/hooks/useIdentityDiagnostics.ts
-function ee() {
+function F() {
 	let { idToken: e } = i(), [t, n] = u(null), [r, a] = u(null), [s, c] = u([]), [l, d] = u(!1), [f, p] = u(null), m = o(async () => {
 		if (e) {
 			d(!0), p(null);
@@ -385,7 +385,7 @@ function ee() {
 }
 //#endregion
 //#region src/hooks/useIdentityEmailTemplates.ts
-function te() {
+function I() {
 	let { data: e, loading: t, error: n, setData: r, refresh: i, mutate: a } = N([], { url: "/api/email-templates" });
 	return {
 		templates: e,
@@ -419,7 +419,7 @@ function te() {
 }
 //#endregion
 //#region src/hooks/useIdentityGroups.ts
-function ne(e) {
+function ee(e) {
 	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: s } = N([], { url: e ? `/api/pools/${e}/groups` : null });
 	return {
 		groups: t,
@@ -482,7 +482,7 @@ function ne(e) {
 }
 //#endregion
 //#region src/hooks/useIdentityMfa.ts
-function re() {
+function te() {
 	let { data: e, loading: t, error: n, setData: r, mutate: i } = N([], {
 		url: null,
 		fetchOnMount: !1
@@ -525,7 +525,7 @@ function re() {
 }
 //#endregion
 //#region src/hooks/useIdentityMfaAdmin.ts
-function ie() {
+function ne() {
 	let { idToken: e } = i(), [t, n] = u(null), [r, a] = u([]), [s, c] = u([]), [l, d] = u(!1), [f, p] = u(null);
 	return {
 		metrics: t,
@@ -554,7 +554,7 @@ function ie() {
 }
 //#endregion
 //#region src/hooks/useIdentityPools.ts
-function ae() {
+function re() {
 	let { idToken: e } = i(), { data: t, loading: n, error: r, setData: a, refresh: s, mutate: c } = N([], { url: "/api/pools" });
 	return {
 		pools: t,
@@ -590,7 +590,7 @@ function ae() {
 }
 //#endregion
 //#region src/hooks/useIdentitySetupStatus.ts
-function F() {
+function ie() {
 	let { data: e, loading: t, error: n, refresh: r } = N(null, { url: "/api/admin/setup-status" });
 	return {
 		status: e,
@@ -601,7 +601,7 @@ function F() {
 }
 //#endregion
 //#region src/hooks/useIdentityUsers.ts
-function I(e) {
+function ae(e) {
 	let { data: t, loading: n, error: r, setData: i, refresh: a, mutate: s } = N([], { url: e ? `/api/pools/${e}/users` : null });
 	return {
 		users: t,
@@ -842,6 +842,7 @@ function H(e) {
 			if (e.channel !== p.current) return;
 			let t = e.messages ?? [];
 			d(t.map((e) => ({
+				id: e.id,
 				clientId: e.clientId,
 				content: e.message,
 				timestamp: e.timestamp,
@@ -1518,39 +1519,43 @@ function Q(e) {
 //#endregion
 //#region src/hooks/useRooms.ts
 function he({ idToken: e, onMessage: t }) {
-	let [n, r] = u([]), [i, c] = u(null), [d, f] = u([]), [p, m] = u(!1), [h, g] = u(null), [_, v] = u(0), { toast: y } = a(), b = o(() => v((e) => e + 1), []), x = l(t);
+	let [n, r] = u([]), [i, c] = u(null), [d, f] = u([]), [p, m] = u(!1), [h, g] = u(null), [_, v] = u(null), [y, b] = u(0), { toast: x } = a(), S = o(() => b((e) => e + 1), []), C = l(t);
 	s(() => {
-		x.current = t;
+		C.current = t;
 	}, [t]);
-	let S = l(null);
+	let w = l(null), T = l(0);
 	s(() => {}, [
 		e,
 		"",
-		_,
-		y
-	]), s(() => x.current((e) => {
+		y,
+		x
+	]), s(() => C.current((e) => {
 		let t = e.payload ?? e;
-		e.type === "social:member_joined" && t.roomId === S.current ? f((e) => [...e, {
+		e.type === "social:member_joined" && t.roomId === w.current ? f((e) => [...e, {
 			roomId: t.roomId,
 			userId: t.userId,
 			displayName: t.displayName,
 			joinedAt: (/* @__PURE__ */ new Date()).toISOString()
-		}]) : e.type === "social:member_left" && t.roomId === S.current && f((e) => e.filter((e) => e.userId !== t.userId));
+		}]) : e.type === "social:member_left" && t.roomId === w.current && f((e) => e.filter((e) => e.userId !== t.userId));
 	}), []);
-	let C = o(async (t) => {
-		if (e) try {
-			let n = await fetch(`/api/rooms/${t}/members`, { headers: { Authorization: `Bearer ${e}` } });
-			if (!n.ok) throw Error(`Failed to load members (${n.status})`);
-			let r = await n.json();
-			f(r.members ?? []);
+	let E = o(async (t) => {
+		if (!e) return;
+		let n = ++T.current;
+		try {
+			let r = await fetch(`/api/rooms/${t}/members`, { headers: { Authorization: `Bearer ${e}` } });
+			if (!r.ok) throw Error(`Failed to load members (${r.status})`);
+			let i = await r.json();
+			if (n !== T.current) return;
+			f(i.members ?? []);
 		} catch (e) {
+			if (n !== T.current) return;
 			g(e.message);
 		}
-	}, [e, ""]), w = o((e) => {
-		S.current = e?.roomId ?? null, c(e), e && C(e.roomId);
-	}, [C]), T = o(async (e) => {
+	}, [e, ""]), D = o((e) => {
+		w.current = e?.roomId ?? null, c(e), e ? E(e.roomId) : (T.current += 1, f([]));
+	}, [E]), O = o(async (e) => {
 		g("Social API not configured");
-	}, [e, ""]), E = o(async (t) => {
+	}, [e, ""]), k = o(async (t) => {
 		if (e) {
 			m(!0), g(null);
 			try {
@@ -1571,7 +1576,7 @@ function he({ idToken: e, onMessage: t }) {
 				m(!1);
 			}
 		}
-	}, [e, ""]), D = o(async (t) => {
+	}, [e, ""]), A = o(async (t) => {
 		if (e) {
 			g(null);
 			try {
@@ -1584,7 +1589,7 @@ function he({ idToken: e, onMessage: t }) {
 				g(e.message);
 			}
 		}
-	}, [e, ""]), O = o(async (t) => {
+	}, [e, ""]), j = o(async (t) => {
 		if (e) {
 			g(null);
 			try {
@@ -1593,7 +1598,7 @@ function he({ idToken: e, onMessage: t }) {
 					headers: { Authorization: `Bearer ${e}` }
 				});
 				if (!n.ok) throw Error(`Failed to leave room (${n.status})`);
-				r((e) => e.filter((e) => e.roomId !== t));
+				r((e) => e.filter((e) => e.roomId !== t)), w.current === t && (w.current = null, c(null), T.current += 1, f([]));
 			} catch (e) {
 				g(e.message);
 			}
@@ -1602,9 +1607,9 @@ function he({ idToken: e, onMessage: t }) {
 	return {
 		rooms: n,
 		activeRoom: i,
-		setActiveRoom: w,
-		createRoom: T,
-		createDM: E,
+		setActiveRoom: D,
+		createRoom: O,
+		createDM: k,
 		createGroupRoom: o(async (t, n) => {
 			if (e) {
 				m(!0), g(null);
@@ -1627,13 +1632,14 @@ function he({ idToken: e, onMessage: t }) {
 				}
 			}
 		}, [e, ""]),
-		joinRoom: D,
-		leaveRoom: O,
-		loadMembers: C,
+		joinRoom: A,
+		leaveRoom: j,
+		loadMembers: E,
 		members: d,
 		loading: p,
 		error: h,
-		retry: b
+		loadError: _,
+		retry: S
 	};
 }
 //#endregion
@@ -1719,4 +1725,4 @@ function _e(e) {
 	};
 }
 //#endregion
-export { T as A, N as C, A as D, k as E, O, P as S, j as T, ie as _, me as a, te as b, se as c, U as d, H as f, ae as g, F as h, Q as i, E as k, q as l, I as m, ge as n, fe as o, V as p, he as r, ue as s, _e as t, K as u, re as v, M as w, ee as x, ne as y };
+export { T as A, N as C, A as D, k as E, O, P as S, j as T, ne as _, me as a, I as b, se as c, U as d, H as f, re as g, ie as h, Q as i, E as k, q as l, ae as m, ge as n, fe as o, V as p, he as r, ue as s, _e as t, K as u, te as v, M as w, F as x, ee as y };

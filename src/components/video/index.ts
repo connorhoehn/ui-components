@@ -139,6 +139,13 @@ export type {
 export { default as MediaControlsBar } from './MediaControlsBar';
 export type { MediaControlsBarProps } from './MediaControlsBar';
 
+export { default as MediaEffectsTray } from './MediaEffectsTray';
+export type {
+  MediaEffectsTrayProps,
+  MediaEffectsFilterOption,
+  MediaEffectsBackgroundOption,
+} from './MediaEffectsTray';
+
 export {
   MicIcon,
   MicOffIcon,
@@ -147,6 +154,7 @@ export {
   ScreenShareIcon,
   ScreenShareOffIcon,
   PhoneOffIcon,
+  SparklesIcon,
   MoreHorizontalIcon,
   UserPlusIcon,
 } from './MediaIcons';

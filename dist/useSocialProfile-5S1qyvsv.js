@@ -113,9 +113,9 @@ function i({ idToken: i, roomId: a, postId: o, onMessage: s }) {
 //#endregion
 //#region src/hooks/useFriends.ts
 function a({ idToken: n }) {
-	let [i, a] = r([]), [o, s] = r([]), [c, l] = r([]), [u, d] = r(!1), [f, p] = r(null);
+	let [i, a] = r([]), [o, s] = r([]), [c, l] = r([]), [u, d] = r(!1), [f, p] = r(null), [m, h] = r(null);
 	t(() => {}, [n, ""]);
-	let m = e(async () => {
+	let g = e(async () => {
 		if (!n) return;
 		let e = await fetch("/api/social/following", { headers: { Authorization: `Bearer ${n}` } });
 		if (!e.ok) throw Error(`Failed to refresh following (${e.status})`);
@@ -135,7 +135,7 @@ function a({ idToken: n }) {
 						headers: { Authorization: `Bearer ${n}` }
 					});
 					if (!t.ok) throw Error(`Failed to follow (${t.status})`);
-					await m();
+					await g();
 				} catch (e) {
 					throw p(e.message), e;
 				}
@@ -143,7 +143,7 @@ function a({ idToken: n }) {
 		}, [
 			n,
 			"",
-			m
+			g
 		]),
 		unfollow: e(async (e) => {
 			if (n) {
@@ -154,7 +154,7 @@ function a({ idToken: n }) {
 						headers: { Authorization: `Bearer ${n}` }
 					});
 					if (!t.ok) throw Error(`Failed to unfollow (${t.status})`);
-					await m();
+					await g();
 				} catch (e) {
 					throw p(e.message), e;
 				}
@@ -162,10 +162,11 @@ function a({ idToken: n }) {
 		}, [
 			n,
 			"",
-			m
+			g
 		]),
 		loading: u,
-		error: f
+		error: f,
+		loadError: m
 	};
 }
 //#endregion
@@ -444,15 +445,15 @@ function c({ idToken: i, roomId: a, postId: o, commentId: c, onMessage: l }) {
 //#endregion
 //#region src/hooks/usePosts.ts
 function l({ idToken: i, roomId: a, onMessage: o }) {
-	let [s, c] = r([]), [l, u] = r(void 0), [d, f] = r(!1), [p, m] = r(!1), [h, g] = r(null), _ = n(o);
+	let [s, c] = r([]), [l, u] = r(void 0), [d, f] = r(!1), [p, m] = r(!1), [h, g] = r(null), [_, v] = r(null), y = n(o);
 	t(() => {
-		_.current = o;
+		y.current = o;
 	}, [o]);
-	let v = n(a);
+	let b = n(a);
 	t(() => {
-		v.current = a;
+		b.current = a;
 	}, [a]), t(() => {
-		if (c([]), u(void 0), g(null), !i || !a) {
+		if (c([]), u(void 0), g(null), v(null), !i || !a) {
 			f(!1);
 			return;
 		}
@@ -464,7 +465,7 @@ function l({ idToken: i, roomId: a, onMessage: o }) {
 		}).then((t) => {
 			e || (c(t.posts ?? []), u(t.lastKey));
 		}).catch((t) => {
-			e || g(t.message);
+			e || (g(t.message), v(t.message));
 		}).finally(() => {
 			e || f(!1);
 		}), () => {
@@ -475,10 +476,10 @@ function l({ idToken: i, roomId: a, onMessage: o }) {
 		a,
 		""
 	]), t(() => {
-		let e = /* @__PURE__ */ new Set(), t = _.current((t) => {
+		let e = /* @__PURE__ */ new Set(), t = y.current((t) => {
 			if (t.type === "social:post") {
 				let n = t.payload ?? t;
-				if (n.roomId !== v.current) return;
+				if (n.roomId !== b.current) return;
 				let r = {
 					...n,
 					_fadeIn: !0
@@ -497,9 +498,9 @@ function l({ idToken: i, roomId: a, onMessage: o }) {
 			t(), e.forEach((e) => clearTimeout(e)), e.clear();
 		};
 	}, []);
-	let y = e(async () => {
+	let x = e(async () => {
 		if (!(!i || !a || !l)) {
-			f(!0), g(null);
+			f(!0), g(null), v(null);
 			try {
 				let e = await fetch(`/api/rooms/${a}/posts?lastKey=${encodeURIComponent(l)}`, { headers: { Authorization: `Bearer ${i}` } });
 				if (!e.ok) throw Error(`Failed to load more posts (${e.status})`);
@@ -509,7 +510,7 @@ function l({ idToken: i, roomId: a, onMessage: o }) {
 					return [...e, ...(t.posts ?? []).filter((e) => !n.has(e.postId))];
 				}), u(t.lastKey);
 			} catch (e) {
-				g(e.message);
+				g(e.message), v(e.message);
 			} finally {
 				f(!1);
 			}
@@ -604,8 +605,9 @@ function l({ idToken: i, roomId: a, onMessage: o }) {
 		loading: d,
 		mutating: p,
 		error: h,
+		loadError: _,
 		hasMore: l !== void 0,
-		loadMore: y
+		loadMore: x
 	};
 }
 //#endregion

@@ -99,6 +99,7 @@ src/components/social/ReactionPickerPopover.tsx   # position + style spread
 src/components/video/CallParticipantStrip.tsx     # size arithmetic + HSL
 src/components/video/HangoutGrid.tsx              # grid template from cols/rows
 src/components/video/HangoutSpotlight.tsx         # filmstrip tile width
+src/components/video/MediaEffectsTray.tsx         # prop-driven background-image thumbnail URL
 src/components/video/RecordingPlayer.tsx          # --progress CSS var
 src/components/video/TranscriptOverlay.tsx        # per-line opacity + speaker color
 src/components/video/TranscriptPanel.tsx          # HSL from speaker hash

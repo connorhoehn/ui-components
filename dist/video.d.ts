@@ -396,7 +396,7 @@ export declare type HangoutMode = 'auto' | 'spotlight';
 
 export declare type HangoutPhase = 'idle' | 'joining' | 'joined' | 'reconnecting' | 'ended' | 'failed';
 
-export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
+export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, effectsSlot, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
 
 export declare interface HangoutPreJoinShellProps {
     /** Channel display name surfaced at the top of the shell. */
@@ -424,6 +424,11 @@ export declare interface HangoutPreJoinShellProps {
     /** When true, render a small spinner above the roster instead of the
      *  participant list — for the "/ready not yet fetched" phase. */
     readyLoading?: boolean;
+    /** Rendered in the green room between the camera preview (with its
+     *  mic/cam pre-flight toggles) and the Join controls. Intended for
+     *  <MediaEffectsTray> so users can pick filters / background / face FX
+     *  before joining. Omitted = rendering is unchanged. */
+    effectsSlot?: ReactNode;
     /** Called when the user clicks Join. Carries the pre-flight intent so
      *  the consumer can spawn the publisher in the desired mute state. */
     onJoin: (intent: {
@@ -533,6 +538,43 @@ export declare interface MediaControlsBarProps {
     leaveLabel?: string;
     /** Size of each control. Defaults to 'md'. */
     size?: CircularIconToggleSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MediaEffectsBackgroundOption {
+    id: string;
+    label: string;
+    /** Thumbnail + replacement image URL, rendered as the chip's preview. */
+    url: string;
+}
+
+export declare interface MediaEffectsFilterOption {
+    id: string;
+    label: string;
+}
+
+export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
+
+export declare interface MediaEffectsTrayProps {
+    filters: MediaEffectsFilterOption[];
+    /** 'none' = no filter active. */
+    activeFilterId: string;
+    onSelectFilter: (id: string) => void;
+    backgrounds: MediaEffectsBackgroundOption[];
+    backgroundMode: 'none' | 'blur' | 'image';
+    /** Only meaningful when backgroundMode === 'image'. */
+    activeBackgroundUrl: string | null;
+    /** ('none', null) | ('blur', null) | ('image', url) */
+    onSelectBackground: (mode: 'none' | 'blur' | 'image', url: string | null) => void;
+    faceSprites: MediaEffectsFilterOption[];
+    /** null = no sprite active. */
+    activeFaceSpriteId: string | null;
+    onSelectFaceSprite: (id: string | null) => void;
+    /** Dims every chip and blocks clicks — e.g. while the engine loads. */
+    disabled?: boolean;
+    /** Compact = tighter paddings for popover placement. */
+    compact?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -826,6 +868,11 @@ export declare interface RosterParticipant {
 export declare function ScreenShareIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function ScreenShareOffIcon({ size, ...rest }: IconProps): JSX.Element;
+
+/** Sparkles / magic-wand glyph — the media-effects affordance. Pair with
+ *  CircularIconToggle in MediaControlsBar's `extras` slot to open a
+ *  MediaEffectsTray. */
+export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
 
 export declare function StatsCard({ metrics, className, style }: StatsCardProps): JSX.Element;
 

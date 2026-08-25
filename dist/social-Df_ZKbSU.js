@@ -1,4 +1,4 @@
-import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-Cx5JTV0Y.js";
+import { a as e, i as t, n, o as r, r as i, t as a } from "./useSocialProfile-5S1qyvsv.js";
 import { n as o } from "./ToastProvider-DPq8u2eM.js";
 import { t as s } from "./cn-DhjIN-s0.js";
 import { r as c } from "./PresencePanel-Ba6lVUBQ.js";
@@ -228,7 +228,7 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 		S && /* @__PURE__ */ C("div", {
 			role: "alert",
 			"data-testid": "profile-save-error",
-			className: "text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
+			className: "text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
 			children: S
 		})
 	] }) : /* @__PURE__ */ w("div", { children: [
@@ -259,15 +259,15 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 			children: [
 				/* @__PURE__ */ w("span", { children: [/* @__PURE__ */ C("strong", {
 					className: "text-text-primary",
-					children: e.followersCount ?? 0
+					children: e.followersCount ?? "—"
 				}), " Followers"] }),
 				/* @__PURE__ */ w("span", { children: [/* @__PURE__ */ C("strong", {
 					className: "text-text-primary",
-					children: e.followingCount ?? 0
+					children: e.followingCount ?? "—"
 				}), " Following"] }),
 				/* @__PURE__ */ w("span", { children: [/* @__PURE__ */ C("strong", {
 					className: "text-text-primary",
-					children: e.friendsCount ?? 0
+					children: e.friendsCount ?? "—"
 				}), " Friends"] })
 			]
 		}),
@@ -278,24 +278,24 @@ function P({ user: e, isOwnProfile: t, onSave: n }) {
 		})
 	] });
 }
-function F({ followers: e, following: t, friends: n, followStates: r, onFollowChange: i }) {
-	let [a, o] = x("followers"), c = [
+function F({ followers: e, following: t, friends: n, followStates: r, onFollowChange: i, loadError: a }) {
+	let [o, c] = x("followers"), l = (e) => a ? "" : ` (${e.length})`, u = [
 		{
 			key: "followers",
-			label: `Followers (${e.length})`,
+			label: `Followers${l(e)}`,
 			users: e
 		},
 		{
 			key: "following",
-			label: `Following (${t.length})`,
+			label: `Following${l(t)}`,
 			users: t
 		},
 		{
 			key: "friends",
-			label: `Friends (${n.length})`,
+			label: `Friends${l(n)}`,
 			users: n
 		}
-	], l = {
+	], f = {
 		followers: {
 			heading: "No followers yet",
 			body: "When someone follows you, they'll appear here."
@@ -308,7 +308,7 @@ function F({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 			heading: "No mutual friends yet",
 			body: "Mutual follows become friends. Start by following someone."
 		}
-	}, u = c.find((e) => e.key === a)?.users ?? [];
+	}, p = u.find((e) => e.key === o)?.users ?? [];
 	return /* @__PURE__ */ w("div", {
 		className: "mt-4",
 		children: [/* @__PURE__ */ C("div", {
@@ -316,32 +316,43 @@ function F({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 			"aria-label": "Connections",
 			onKeyDown: d,
 			className: "flex border-b border-border mb-3",
-			children: c.map((e) => /* @__PURE__ */ C("button", {
+			children: u.map((e) => /* @__PURE__ */ C("button", {
 				type: "button",
 				role: "tab",
 				id: `social-tab-${e.key}`,
 				"aria-controls": "social-tabpanel",
-				"aria-selected": a === e.key,
-				tabIndex: a === e.key ? 0 : -1,
-				onClick: () => o(e.key),
-				className: s("px-4 py-2 text-sm font-normal bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif] -mb-px", a === e.key ? "text-text-primary border-b-2 border-b-primary" : "text-text-secondary border-b-2 border-b-transparent"),
+				"aria-selected": o === e.key,
+				tabIndex: o === e.key ? 0 : -1,
+				onClick: () => c(e.key),
+				className: s("px-4 py-2 text-sm font-normal bg-transparent border-none cursor-pointer font-[system-ui,-apple-system,sans-serif] -mb-px", o === e.key ? "text-text-primary border-b-2 border-b-primary" : "text-text-secondary border-b-2 border-b-transparent"),
 				children: e.label
 			}, e.key))
 		}), /* @__PURE__ */ C("div", {
 			role: "tabpanel",
 			id: "social-tabpanel",
-			"aria-labelledby": `social-tab-${a}`,
+			"aria-labelledby": `social-tab-${o}`,
 			className: "min-h-[120px]",
-			children: u.length === 0 ? /* @__PURE__ */ w("div", {
+			children: a && p.length === 0 ? /* @__PURE__ */ w("div", {
+				role: "alert",
+				"data-testid": "social-graph-error",
+				className: "py-6 text-center",
+				children: [/* @__PURE__ */ C("div", {
+					className: "text-sm font-semibold text-danger-fg mb-1",
+					children: "Couldn’t load your connections"
+				}), /* @__PURE__ */ C("div", {
+					className: "text-sm text-text-tertiary",
+					children: a
+				})]
+			}) : p.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "py-6 text-center",
 				children: [/* @__PURE__ */ C("div", {
 					className: "text-sm font-semibold text-text-primary mb-1",
-					children: l[a].heading
+					children: f[o].heading
 				}), /* @__PURE__ */ C("div", {
 					className: "text-sm text-text-tertiary",
-					children: l[a].body
+					children: f[o].body
 				})]
-			}) : /* @__PURE__ */ C("div", { children: u.map((e) => /* @__PURE__ */ w("div", {
+			}) : /* @__PURE__ */ C("div", { children: p.map((e) => /* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 h-14 border-b border-surface-hover",
 				children: [
 					/* @__PURE__ */ C(M, {
@@ -373,26 +384,26 @@ function F({ followers: e, following: t, friends: n, followStates: r, onFollowCh
 	});
 }
 function I({ idToken: t, onMessage: n }) {
-	let { profile: r, loading: i, error: o, updateProfile: s } = a({ idToken: t }), { followers: c, following: l, friends: u, follow: d, unfollow: f, error: p } = e({ idToken: t }), m = new Set(l.map((e) => e.userId)), h = {};
+	let { profile: r, loading: i, error: o, updateProfile: s } = a({ idToken: t }), { followers: c, following: l, friends: u, follow: d, unfollow: f, error: p, loadError: m } = e({ idToken: t }), h = new Set(l.map((e) => e.userId)), g = {};
 	[
 		...c,
 		...l,
 		...u
 	].forEach((e) => {
-		h[e.userId] = m.has(e.userId) ? "following" : "not-following";
+		g[e.userId] = h.has(e.userId) ? "following" : "not-following";
 	});
-	let [g, _] = x(null), v = async (e, t) => {
-		_(null);
+	let [_, v] = x(null), y = async (e, t) => {
+		v(null);
 		try {
 			t === "following" || t === "pending" ? await d(e) : await f(e);
 		} catch (e) {
-			_(e instanceof Error ? e.message : "Follow action failed");
+			v(e instanceof Error ? e.message : "Follow action failed");
 		}
-	}, y = c.map((e) => A(e, h[e.userId] ?? "not-following")), b = l.map((e) => A(e, "following")), T = u.map((e) => A(e, "following")), E = r ? {
+	}, b = c.map((e) => A(e, g[e.userId] ?? "not-following")), T = l.map((e) => A(e, "following")), E = u.map((e) => A(e, "following")), D = r ? {
 		...j(r),
-		followersCount: c.length,
-		followingCount: l.length,
-		friendsCount: u.length
+		followersCount: m ? void 0 : c.length,
+		followingCount: m ? void 0 : l.length,
+		friendsCount: m ? void 0 : u.length
 	} : null;
 	return /* @__PURE__ */ w("div", {
 		className: "bg-surface border border-border rounded-lg p-5",
@@ -401,25 +412,26 @@ function I({ idToken: t, onMessage: n }) {
 				className: "text-xs font-semibold uppercase tracking-wide text-text-secondary mb-3",
 				children: "Social Profile"
 			}),
-			i && !E ? /* @__PURE__ */ C("div", {
+			i && !D ? /* @__PURE__ */ C("div", {
 				className: "py-10 text-center text-text-tertiary text-sm",
 				children: "Loading profile…"
-			}) : E ? /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C(P, {
-				user: E,
+			}) : D ? /* @__PURE__ */ w(S, { children: [/* @__PURE__ */ C(P, {
+				user: D,
 				isOwnProfile: !0,
 				onSave: s
 			}), /* @__PURE__ */ C(F, {
-				followers: y,
-				following: b,
-				friends: T,
-				followStates: h,
-				onFollowChange: v
+				followers: b,
+				following: T,
+				friends: E,
+				followStates: g,
+				onFollowChange: y,
+				loadError: m
 			})] }) : null,
-			(g ?? o ?? p) && /* @__PURE__ */ C("div", {
+			(_ ?? o ?? p) && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "social-panel-error",
-				className: "text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
-				children: g ?? o ?? p
+				className: "text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
+				children: _ ?? o ?? p
 			})
 		]
 	});
@@ -468,7 +480,7 @@ function L({ onCreate: e, onDiscard: t, loading: n }) {
 				})]
 			}),
 			a && /* @__PURE__ */ C("div", {
-				className: "text-danger text-[11px] mt-1",
+				className: "text-danger-fg text-[11px] mt-1",
 				children: a
 			})
 		]
@@ -508,7 +520,7 @@ function R({ onCreateDM: e, loading: t, friends: n, friendsError: r }) {
 			r && n.length === 0 && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "dm-friends-error",
-				className: "text-danger text-[11px] mb-1.5",
+				className: "text-danger-fg text-[11px] mb-1.5",
 				children: r
 			}),
 			/* @__PURE__ */ w("div", {
@@ -526,7 +538,7 @@ function R({ onCreateDM: e, loading: t, friends: n, friendsError: r }) {
 				})]
 			}),
 			l && /* @__PURE__ */ C("div", {
-				className: "text-danger text-[11px] mt-1",
+				className: "text-danger-fg text-[11px] mt-1",
 				children: l
 			})
 		]
@@ -587,7 +599,7 @@ function V({ message: e, onRetry: t, compact: n }) {
 	});
 }
 function H({ idToken: t, rooms: n, createRoom: r, createDM: i, loading: a, error: o, onRetry: s, onRoomSelect: c, activeRoomId: l, compact: u }) {
-	let { friends: d, error: f } = e({ idToken: t }), [p, m] = x(!1), h = async (e) => {
+	let { friends: d, loadError: f } = e({ idToken: t }), [p, m] = x(!1), h = async (e) => {
 		await r(e), m(!1);
 	};
 	return u ? /* @__PURE__ */ w("div", {
@@ -731,7 +743,7 @@ function te({ onCreate: e, onDiscard: t, loading: n }) {
 				})]
 			}),
 			a && /* @__PURE__ */ C("div", {
-				className: "text-danger text-[11px] mt-1",
+				className: "text-danger-fg text-[11px] mt-1",
 				children: a
 			})
 		]
@@ -800,7 +812,7 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 			d && h && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "compact-invite-error",
-				className: "text-danger text-[11px] mb-1.5",
+				className: "text-danger-fg text-[11px] mb-1.5",
 				children: h
 			}),
 			/* @__PURE__ */ w("div", {
@@ -850,7 +862,7 @@ function ne({ group: e, members: t, rooms: n, groupId: r, currentUserId: i, crea
 			_ && S && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "compact-group-room-error",
-				className: "text-danger text-[11px] mb-1.5",
+				className: "text-danger-fg text-[11px] mb-1.5",
 				children: S
 			}),
 			D.map((e) => /* @__PURE__ */ w(o ? "button" : "div", {
@@ -941,7 +953,7 @@ function re({ onCreate: e, onDiscard: t, loading: n }) {
 			c && /* @__PURE__ */ C("div", {
 				id: `${d}-form-error`,
 				role: "alert",
-				className: "text-danger text-[13px] mt-1.5",
+				className: "text-danger-fg text-[13px] mt-1.5",
 				children: c
 			})
 		]
@@ -994,7 +1006,7 @@ function ie({ group: e, currentUserId: t, isSelected: n, onSelect: r, onDelete: 
 					})]
 				}) : /* @__PURE__ */ C("button", {
 					onClick: () => o(e.groupId),
-					className: "text-xs text-danger bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]",
+					className: "text-xs text-danger-fg bg-transparent border-none cursor-pointer px-2 py-1 font-[system-ui,-apple-system,sans-serif]",
 					"aria-label": `Delete group ${e.name}`,
 					children: "Delete"
 				})
@@ -1034,7 +1046,7 @@ function ae({ groupId: e, onInvite: t }) {
 	}), i && /* @__PURE__ */ C("div", {
 		role: "alert",
 		"data-testid": "invite-error",
-		className: "text-danger text-xs mt-1",
+		className: "text-danger-fg text-xs mt-1",
 		children: i
 	})] });
 }
@@ -1113,7 +1125,7 @@ function se({ rooms: e, groupId: t, selectedGroupRole: n, createGroupRoom: r, on
 				}), f && /* @__PURE__ */ C("div", {
 					role: "alert",
 					"data-testid": "group-room-error",
-					className: "text-danger text-[13px] mt-1.5",
+					className: "text-danger-fg text-[13px] mt-1.5",
 					children: f
 				})]
 			}) : /* @__PURE__ */ C("button", {
@@ -1372,24 +1384,24 @@ function de({ post: e, isOwn: t, showSender: n }) {
 	});
 }
 function K({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
-	let { posts: a, createPost: o, loading: c, hasMore: u, loadMore: d, error: f } = n({
+	let { posts: a, createPost: o, loading: c, hasMore: u, loadMore: d, error: f, loadError: p } = n({
 		idToken: e,
 		roomId: t,
 		onMessage: i
-	}), [p, m] = x(""), [h, _] = x(!1), [v, y] = x(null), S = b(null), T = ue(e), E = [...a].reverse();
+	}), [m, h] = x(""), [_, v] = x(!1), [y, S] = x(null), T = b(null), E = ue(e), D = [...a].reverse(), O = a[0]?.postId;
 	g(() => {
-		S.current?.scrollIntoView({ behavior: "smooth" });
-	}, [a.length]);
-	let D = async () => {
-		if (!p.trim() || h) return;
-		let e = p.trim();
-		m(""), y(null), _(!0);
+		O && T.current?.scrollIntoView({ behavior: "smooth" });
+	}, [O]);
+	let k = async () => {
+		if (!m.trim() || _) return;
+		let e = m.trim();
+		h(""), S(null), v(!0);
 		try {
 			await o(e);
 		} catch (t) {
-			y(t instanceof Error ? t.message : "Failed to send message"), m(e);
+			S(t instanceof Error ? t.message : "Failed to send message"), h(e);
 		} finally {
-			_(!1);
+			v(!1);
 		}
 	};
 	return /* @__PURE__ */ w("div", {
@@ -1414,10 +1426,10 @@ function K({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
 							children: c ? "Loading…" : "Load earlier"
 						})
 					}),
-					c && E.length === 0 ? /* @__PURE__ */ C("div", {
+					c && D.length === 0 ? /* @__PURE__ */ C("div", {
 						className: "flex-1 flex items-center justify-center text-text-tertiary text-[13px]",
 						children: "Loading messages…"
-					}) : f && E.length === 0 ? /* @__PURE__ */ w("div", {
+					}) : p && D.length === 0 ? /* @__PURE__ */ w("div", {
 						role: "alert",
 						className: "flex-1 flex flex-col items-center justify-center gap-1.5 px-6 text-center",
 						children: [
@@ -1431,10 +1443,10 @@ function K({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
 							}),
 							/* @__PURE__ */ C("span", {
 								className: "text-[13px] text-text-tertiary",
-								children: f
+								children: p
 							})
 						]
-					}) : E.length === 0 ? /* @__PURE__ */ w("div", {
+					}) : D.length === 0 ? /* @__PURE__ */ w("div", {
 						className: "flex-1 flex flex-col items-center justify-center text-text-tertiary gap-1.5",
 						children: [
 							/* @__PURE__ */ C("span", {
@@ -1450,36 +1462,36 @@ function K({ idToken: e, roomId: t, roomName: r, onMessage: i }) {
 								children: "Be the first to say something!"
 							})
 						]
-					}) : E.map((e, t) => {
-						let n = e.authorId === T, r = E[t - 1], i = !r || r.authorId !== e.authorId || new Date(e.createdAt).getTime() - new Date(r.createdAt).getTime() > 3e5;
+					}) : D.map((e, t) => {
+						let n = e.authorId === E, r = D[t - 1], i = !r || r.authorId !== e.authorId || new Date(e.createdAt).getTime() - new Date(r.createdAt).getTime() > 3e5;
 						return /* @__PURE__ */ C(de, {
 							post: e,
 							isOwn: n,
 							showSender: i
 						}, e.postId);
 					}),
-					/* @__PURE__ */ C("div", { ref: S })
+					/* @__PURE__ */ C("div", { ref: T })
 				]
 			}),
-			(f || v) && /* @__PURE__ */ C("div", {
-				className: "px-4 py-1.5 bg-danger-bg border-t border-danger-border text-xs text-danger",
-				children: v ?? f
+			(f || y) && /* @__PURE__ */ C("div", {
+				className: "px-4 py-1.5 bg-danger-bg border-t border-danger-border text-xs text-danger-fg",
+				children: y ?? f
 			}),
 			/* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 px-3 py-2.5 border-t border-border bg-surface shrink-0",
 				children: [/* @__PURE__ */ C(l, {
-					value: p,
-					onChange: (e) => m(e.target.value),
+					value: m,
+					onChange: (e) => h(e.target.value),
 					onKeyDown: (e) => {
-						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), D());
+						e.key === "Enter" && !e.shiftKey && (e.preventDefault(), k());
 					},
 					placeholder: `Message #${r}…`,
-					disabled: h,
+					disabled: _,
 					className: "flex-1 rounded-[22px] px-4"
 				}), /* @__PURE__ */ C("button", {
-					onClick: () => void D(),
-					disabled: !p.trim() || h,
-					className: s("w-[34px] h-[34px] rounded-full shrink-0 border-none flex items-center justify-center text-base", !p.trim() || h ? "bg-surface-hover text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
+					onClick: () => void k(),
+					disabled: !m.trim() || _,
+					className: s("w-[34px] h-[34px] rounded-full shrink-0 border-none flex items-center justify-center text-base", !m.trim() || _ ? "bg-surface-hover text-text-tertiary cursor-default" : "bg-primary text-white cursor-pointer"),
 					children: "↑"
 				})]
 			})
@@ -1604,7 +1616,7 @@ function fe({ userId: e, displayName: t, idToken: n, rooms: r, createRoom: i, cr
 				children: [
 					/* @__PURE__ */ C(q, {
 						title: "Channels",
-						count: P.length,
+						count: l ? void 0 : P.length,
 						unreadTotal: I,
 						children: /* @__PURE__ */ w("div", {
 							className: "px-1",
@@ -1613,6 +1625,11 @@ function fe({ userId: e, displayName: t, idToken: n, rooms: r, createRoom: i, cr
 									className: "px-6 py-2 text-xs",
 									style: { color: V },
 									children: "Loading…"
+								}) : l && P.length === 0 ? /* @__PURE__ */ C("div", {
+									role: "alert",
+									"data-testid": "channels-error",
+									className: "px-6 py-2 text-xs text-danger-fg",
+									children: "Couldn’t load channels"
 								}) : P.length === 0 ? /* @__PURE__ */ C("div", {
 									className: "px-6 py-2 text-xs",
 									style: { color: V },
@@ -1652,11 +1669,20 @@ function fe({ userId: e, displayName: t, idToken: n, rooms: r, createRoom: i, cr
 					}),
 					/* @__PURE__ */ C(q, {
 						title: "Direct Messages",
-						count: F.length,
+						count: l ? void 0 : F.length,
 						unreadTotal: L,
 						children: /* @__PURE__ */ C("div", {
 							className: "px-1",
-							children: F.length === 0 ? /* @__PURE__ */ C("div", {
+							children: c && F.length === 0 ? /* @__PURE__ */ C("div", {
+								className: "px-6 py-2 text-xs",
+								style: { color: V },
+								children: "Loading…"
+							}) : l && F.length === 0 ? /* @__PURE__ */ C("div", {
+								role: "alert",
+								"data-testid": "dms-error",
+								className: "px-6 py-2 text-xs text-danger-fg",
+								children: "Couldn’t load conversations"
+							}) : F.length === 0 ? /* @__PURE__ */ C("div", {
 								className: "px-6 py-2 text-xs",
 								style: { color: V },
 								children: "No conversations yet"
@@ -1805,7 +1831,7 @@ function Y({ onSubmit: e, placeholder: t = "Write a reply…", loading: n }) {
 			a && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "comment-submit-error",
-				className: "basis-full text-danger text-[13px]",
+				className: "basis-full text-danger-fg text-[13px]",
 				children: a
 			})
 		]
@@ -2007,7 +2033,7 @@ function be({ onCreate: e, loading: t }) {
 				})
 			}),
 			i && /* @__PURE__ */ C("div", {
-				className: "text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
+				className: "text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
 				children: i
 			})
 		]
@@ -2178,7 +2204,7 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, onE
 			(A ?? h) && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "post-action-error",
-				className: "text-danger text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
+				className: "text-danger-fg text-[13px] mt-1.5 font-[system-ui,-apple-system,sans-serif]",
 				children: A ?? h
 			}),
 			y && /* @__PURE__ */ C(X, {
@@ -2191,11 +2217,11 @@ function Z({ post: e, idToken: t, roomId: n, currentUserId: r, onMessage: a, onE
 	});
 }
 function Ce({ idToken: e, roomId: t, onMessage: r }) {
-	let { posts: i, createPost: a, editPost: o, deletePost: c, loading: l, mutating: u, error: d, hasMore: f, loadMore: p } = n({
+	let { posts: i, createPost: a, editPost: o, deletePost: c, loading: l, mutating: u, error: d, loadError: f, hasMore: p, loadMore: m } = n({
 		idToken: e,
 		roomId: t,
 		onMessage: r
-	}), m = ye(e);
+	}), h = ye(e);
 	return /* @__PURE__ */ w("div", {
 		className: "bg-surface border border-border rounded-lg p-5",
 		children: [
@@ -2204,8 +2230,8 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 				loading: l || u
 			}),
 			/* @__PURE__ */ C("div", { className: "border-t border-border my-4" }),
-			f && /* @__PURE__ */ C("button", {
-				onClick: () => void p(),
+			p && /* @__PURE__ */ C("button", {
+				onClick: () => void m(),
 				disabled: l,
 				className: s("w-full h-9 mb-4 bg-surface text-text-primary border border-border rounded-lg text-sm font-[system-ui,-apple-system,sans-serif]", l ? "cursor-default" : "cursor-pointer"),
 				children: l ? "Loading…" : "Load more"
@@ -2213,13 +2239,13 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 			d && i.length > 0 && /* @__PURE__ */ C("div", {
 				role: "alert",
 				"data-testid": "post-feed-error",
-				className: "text-danger text-[13px] mb-3 font-[system-ui,-apple-system,sans-serif]",
+				className: "text-danger-fg text-[13px] mb-3 font-[system-ui,-apple-system,sans-serif]",
 				children: d
 			}),
 			l && i.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "flex items-center gap-2 p-4 justify-center text-text-secondary",
 				children: [/* @__PURE__ */ C("span", { className: "inline-block w-4 h-4 border-2 border-border border-t-primary rounded-full animate-spin" }), "Loading..."]
-			}) : d && i.length === 0 ? /* @__PURE__ */ w("div", {
+			}) : f && i.length === 0 ? /* @__PURE__ */ w("div", {
 				role: "alert",
 				className: "py-6 text-center",
 				children: [/* @__PURE__ */ C("div", {
@@ -2227,7 +2253,7 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 					children: "Couldn’t load posts"
 				}), /* @__PURE__ */ C("div", {
 					className: "text-sm text-text-tertiary",
-					children: d
+					children: f
 				})]
 			}) : i.length === 0 ? /* @__PURE__ */ w("div", {
 				className: "py-6 text-center",
@@ -2242,7 +2268,7 @@ function Ce({ idToken: e, roomId: t, onMessage: r }) {
 				post: n,
 				idToken: e,
 				roomId: t,
-				currentUserId: m,
+				currentUserId: h,
 				onMessage: r,
 				onEdit: o,
 				onDelete: c

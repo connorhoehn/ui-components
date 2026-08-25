@@ -282,4 +282,42 @@ describe('HangoutPreJoinShell', () => {
     );
     expect(screen.queryByTestId('prejoin-identity-tile')).not.toBeInTheDocument();
   });
+
+  // ── effectsSlot (media-effects tray) ───────────────────────────────────
+  // Optional slot between the camera preview and the Join controls,
+  // intended for <MediaEffectsTray>. Omitted = rendering unchanged.
+
+  it('renders the effectsSlot content when provided', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({
+          effectsSlot: <div data-testid="my-effects-tray">effects</div>,
+        })}
+      />,
+    );
+    expect(screen.getByTestId('prejoin-effects-slot')).toBeInTheDocument();
+    expect(screen.getByTestId('my-effects-tray')).toBeInTheDocument();
+  });
+
+  it('renders no slot wrapper at all when effectsSlot is omitted', () => {
+    render(<HangoutPreJoinShell {...baseProps()} />);
+    expect(screen.queryByTestId('prejoin-effects-slot')).not.toBeInTheDocument();
+  });
+
+  it('places the effectsSlot between the pre-flight toggles and the Join button', () => {
+    render(
+      <HangoutPreJoinShell
+        {...baseProps({ effectsSlot: <div>effects</div> })}
+      />,
+    );
+    const toggles = screen.getByTestId('prejoin-toggle-video');
+    const slot = screen.getByTestId('prejoin-effects-slot');
+    const join = screen.getByTestId('prejoin-join-button');
+    expect(
+      toggles.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      slot.compareDocumentPosition(join) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
 });

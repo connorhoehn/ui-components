@@ -3046,7 +3046,7 @@ export declare type HangoutMode = 'auto' | 'spotlight';
 
 export declare type HangoutPhase = 'idle' | 'joining' | 'joined' | 'reconnecting' | 'ended' | 'failed';
 
-export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
+export declare function HangoutPreJoinShell({ channelName, localIdentity, previewStream, permission, permissionMessage, audioEnabled, videoEnabled, onToggleAudio, onToggleVideo, onRetryPermission, participants, readyState, readyLoading, effectsSlot, onJoin, onCancel, joinLabel, joinDisabled, subtitleOverride, className, 'data-testid': testId, }: HangoutPreJoinShellProps): JSX.Element;
 
 export declare interface HangoutPreJoinShellProps {
     /** Channel display name surfaced at the top of the shell. */
@@ -3074,6 +3074,11 @@ export declare interface HangoutPreJoinShellProps {
     /** When true, render a small spinner above the roster instead of the
      *  participant list — for the "/ready not yet fetched" phase. */
     readyLoading?: boolean;
+    /** Rendered in the green room between the camera preview (with its
+     *  mic/cam pre-flight toggles) and the Join controls. Intended for
+     *  <MediaEffectsTray> so users can pick filters / background / face FX
+     *  before joining. Omitted = rendering is unchanged. */
+    effectsSlot?: ReactNode;
     /** Called when the user clicks Join. Carries the pre-flight intent so
      *  the consumer can spawn the publisher in the desired mute state. */
     onJoin: (intent: {
@@ -4043,6 +4048,43 @@ export declare interface MediaControlsBarProps {
     leaveLabel?: string;
     /** Size of each control. Defaults to 'md'. */
     size?: CircularIconToggleSize;
+    className?: string;
+    'data-testid'?: string;
+}
+
+export declare interface MediaEffectsBackgroundOption {
+    id: string;
+    label: string;
+    /** Thumbnail + replacement image URL, rendered as the chip's preview. */
+    url: string;
+}
+
+export declare interface MediaEffectsFilterOption {
+    id: string;
+    label: string;
+}
+
+export declare function MediaEffectsTray({ filters, activeFilterId, onSelectFilter, backgrounds, backgroundMode, activeBackgroundUrl, onSelectBackground, faceSprites, activeFaceSpriteId, onSelectFaceSprite, disabled, compact, className, 'data-testid': testId, }: MediaEffectsTrayProps): JSX.Element;
+
+export declare interface MediaEffectsTrayProps {
+    filters: MediaEffectsFilterOption[];
+    /** 'none' = no filter active. */
+    activeFilterId: string;
+    onSelectFilter: (id: string) => void;
+    backgrounds: MediaEffectsBackgroundOption[];
+    backgroundMode: 'none' | 'blur' | 'image';
+    /** Only meaningful when backgroundMode === 'image'. */
+    activeBackgroundUrl: string | null;
+    /** ('none', null) | ('blur', null) | ('image', url) */
+    onSelectBackground: (mode: 'none' | 'blur' | 'image', url: string | null) => void;
+    faceSprites: MediaEffectsFilterOption[];
+    /** null = no sprite active. */
+    activeFaceSpriteId: string | null;
+    onSelectFaceSprite: (id: string | null) => void;
+    /** Dims every chip and blocks clicks — e.g. while the engine loads. */
+    disabled?: boolean;
+    /** Compact = tighter paddings for popover placement. */
+    compact?: boolean;
     className?: string;
     'data-testid'?: string;
 }
@@ -6571,6 +6613,11 @@ export declare type SpanKind = 'agent' | 'tool' | 'llm' | 'retrieval' | 'guardra
 
 export declare type SpanStatus = 'ok' | 'error' | 'unset';
 
+/** Sparkles / magic-wand glyph — the media-effects affordance. Pair with
+ *  CircularIconToggle in MediaControlsBar's `extras` slot to open a
+ *  MediaEffectsTray. */
+export declare function SparklesIcon({ size, ...rest }: IconProps): JSX.Element;
+
 export declare function Sparkline({ data, width, height, color }: SparklineProps): JSX.Element;
 
 export declare interface SparklineProps {
@@ -8158,6 +8205,17 @@ declare interface UseActivityBusReturn {
      unfollow: (userId: string) => Promise<void>;
      loading: boolean;
      error: string | null;
+     /**
+      * Failure of the three list loads specifically. Kept separate from `error`,
+      * which is whatever the last follow/unfollow reported.
+      *
+      * A caller cannot use `error` to decide between "you follow nobody" and "we
+      * never managed to read your graph": a refused *follow* also sets `error`,
+      * so keying an error state off it made a rejected button click claim the
+      * whole graph had failed to load. Only `loadError` means the lists below are
+      * empty because we do not know, not because they are empty.
+      */
+     loadError: string | null;
  }
 
  export declare function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn;
@@ -8580,6 +8638,18 @@ declare interface UseActivityBusReturn {
       */
      mutating: boolean;
      error: string | null;
+     /**
+      * Failure of the feed LOAD specifically (initial fetch + `loadMore`). Kept
+      * separate from `error`, which is also set by `createPost`/`editPost`/
+      * `deletePost`.
+      *
+      * Callers use it to tell "this room has no posts" from "we never managed to
+      * read this room". Keying that off `error` made a rejected *send* in an
+      * empty room replace the "No posts yet" empty state with "Couldn't load
+      * posts" — blaming the read for a write that failed, next to a composer that
+      * was already reporting the real reason.
+      */
+     loadError: string | null;
      hasMore: boolean;
      loadMore: () => Promise<void>;
  }
@@ -8739,6 +8809,18 @@ declare interface UseActivityBusReturn {
      members: RoomMemberItem[];
      loading: boolean;
      error: string | null;
+     /**
+      * Failure of the `GET /api/rooms` hydrate specifically. Kept separate from
+      * `error`, which is also set by create/join/leave/loadMembers.
+      *
+      * `RoomList` renders "Couldn't load rooms" + Retry whenever the `error` prop
+      * it is given is set and the list is empty — so wiring `error` straight
+      * through made a refused *createRoom* by a user with no rooms yet blame the
+      * read: the panel claimed the room list had failed to load and offered to
+      * re-fetch it, while the create form beside it showed the real reason.
+      * Pass this to `RoomList`'s `error` prop; use `error` for mutation feedback.
+      */
+     loadError: string | null;
      /** Retry the GET /api/rooms hydrate after a fetch failure. */
      retry: () => void;
  }

@@ -2076,8 +2076,8 @@ function _t({ name: e, id: t, status: n, statusColors: r, contributorNames: i = 
 		...mt,
 		...r
 	}[(n ?? "unknown").toLowerCase().replace(/ /g, "_")] ?? ht, h = a === void 0 ? 0 : Math.max(0, a - i.length), _ = l % 8 * 525;
-	return /* @__PURE__ */ k("button", {
-		type: "button",
+	return /* @__PURE__ */ k(u ? "button" : "div", {
+		type: u ? "button" : void 0,
 		onClick: u,
 		className: d,
 		style: {
@@ -2086,7 +2086,7 @@ function _t({ name: e, id: t, status: n, statusColors: r, contributorNames: i = 
 			borderTop: `3px solid ${m.accent}`,
 			borderRadius: 10,
 			padding: "14px 16px 12px",
-			cursor: "pointer",
+			cursor: u ? "pointer" : "default",
 			display: "flex",
 			flexDirection: "column",
 			gap: 10,

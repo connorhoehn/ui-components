@@ -1377,6 +1377,17 @@ declare interface UseActivityBusReturn {
      unfollow: (userId: string) => Promise<void>;
      loading: boolean;
      error: string | null;
+     /**
+      * Failure of the three list loads specifically. Kept separate from `error`,
+      * which is whatever the last follow/unfollow reported.
+      *
+      * A caller cannot use `error` to decide between "you follow nobody" and "we
+      * never managed to read your graph": a refused *follow* also sets `error`,
+      * so keying an error state off it made a rejected button click claim the
+      * whole graph had failed to load. Only `loadError` means the lists below are
+      * empty because we do not know, not because they are empty.
+      */
+     loadError: string | null;
  }
 
  export declare function useGroups({ idToken }: UseGroupsOptions): UseGroupsReturn;
@@ -1760,6 +1771,18 @@ declare interface UseActivityBusReturn {
       */
      mutating: boolean;
      error: string | null;
+     /**
+      * Failure of the feed LOAD specifically (initial fetch + `loadMore`). Kept
+      * separate from `error`, which is also set by `createPost`/`editPost`/
+      * `deletePost`.
+      *
+      * Callers use it to tell "this room has no posts" from "we never managed to
+      * read this room". Keying that off `error` made a rejected *send* in an
+      * empty room replace the "No posts yet" empty state with "Couldn't load
+      * posts" — blaming the read for a write that failed, next to a composer that
+      * was already reporting the real reason.
+      */
+     loadError: string | null;
      hasMore: boolean;
      loadMore: () => Promise<void>;
  }
@@ -1815,6 +1838,18 @@ declare interface UseActivityBusReturn {
      members: RoomMemberItem[];
      loading: boolean;
      error: string | null;
+     /**
+      * Failure of the `GET /api/rooms` hydrate specifically. Kept separate from
+      * `error`, which is also set by create/join/leave/loadMembers.
+      *
+      * `RoomList` renders "Couldn't load rooms" + Retry whenever the `error` prop
+      * it is given is set and the list is empty — so wiring `error` straight
+      * through made a refused *createRoom* by a user with no rooms yet blame the
+      * read: the panel claimed the room list had failed to load and offered to
+      * re-fetch it, while the create form beside it showed the real reason.
+      * Pass this to `RoomList`'s `error` prop; use `error` for mutation feedback.
+      */
+     loadError: string | null;
      /** Retry the GET /api/rooms hydrate after a fetch failure. */
      retry: () => void;
  }

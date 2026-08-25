@@ -18,7 +18,7 @@
 // The component is a controlled-render shell: every state lives on the
 // consumer, mirroring the AppShell / ChatPanel ergonomic.
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { cn } from '../../lib/cn';
 import { Button } from '../ui/Button';
 import Avatar from '../shared/Avatar';
@@ -91,6 +91,13 @@ export interface HangoutPreJoinShellProps {
    *  participant list — for the "/ready not yet fetched" phase. */
   readyLoading?: boolean;
 
+  // ── Slots ─────────────────────────────────────────────────────────────
+  /** Rendered in the green room between the camera preview (with its
+   *  mic/cam pre-flight toggles) and the Join controls. Intended for
+   *  <MediaEffectsTray> so users can pick filters / background / face FX
+   *  before joining. Omitted = rendering is unchanged. */
+  effectsSlot?: ReactNode;
+
   // ── Actions ───────────────────────────────────────────────────────────
   /** Called when the user clicks Join. Carries the pre-flight intent so
    *  the consumer can spawn the publisher in the desired mute state. */
@@ -151,6 +158,7 @@ export default function HangoutPreJoinShell({
   participants,
   readyState,
   readyLoading = false,
+  effectsSlot,
   onJoin,
   onCancel,
   joinLabel,
@@ -279,6 +287,14 @@ export default function HangoutPreJoinShell({
               data-testid="prejoin-toggle-video"
             />
           </div>
+
+          {/* Effects slot — sits between the preview area and the Join
+              controls. Consumers drop a <MediaEffectsTray> here. */}
+          {effectsSlot && (
+            <div className="mt-4" data-testid="prejoin-effects-slot">
+              {effectsSlot}
+            </div>
+          )}
         </section>
 
         {/* Right: room status + Join CTA */}

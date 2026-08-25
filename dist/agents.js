@@ -341,9 +341,9 @@ var E = {
 	deploying: "bg-info"
 };
 function O({ agent: t, metrics: n, selected: r, onClick: i }) {
-	return /* @__PURE__ */ f("button", {
-		type: "button",
-		className: e("flex flex-col w-full text-left font-[inherit] border rounded-lg cursor-pointer transition-all hover:shadow-sm overflow-hidden", r ? "border-info bg-info-bg/50 shadow-sm" : "border-border bg-white hover:border-border-emphasis"),
+	return /* @__PURE__ */ f(i ? "button" : "div", {
+		type: i ? "button" : void 0,
+		className: e("flex flex-col w-full text-left font-[inherit] border rounded-lg transition-all overflow-hidden", i && "cursor-pointer hover:shadow-sm", r ? "border-info bg-info-bg/50 shadow-sm" : e("border-border bg-white", i && "hover:border-border-emphasis")),
 		onClick: i,
 		children: [/* @__PURE__ */ d("div", {
 			className: e("flex items-center justify-end px-3 py-1.5", t.status === "healthy" && "bg-success-bg", t.status === "degraded" && "bg-warning-bg", t.status === "offline" && "bg-danger-bg", t.status === "deploying" && "bg-info-bg"),
@@ -757,7 +757,7 @@ function L({ agentId: t, trace: n, onBack: r, className: i }) {
 						className: "text-sm text-text-secondary mt-2",
 						children: s.description
 					})
-				] }), /* @__PURE__ */ d(R, { status: s.status })]
+				] }), /* @__PURE__ */ d(ee, { status: s.status })]
 			}),
 			/* @__PURE__ */ f("div", {
 				className: "grid grid-cols-1 md:grid-cols-2 gap-4",
@@ -767,7 +767,7 @@ function L({ agentId: t, trace: n, onBack: r, className: i }) {
 						children: [
 							/* @__PURE__ */ d(B, {
 								label: "Protocol",
-								value: s.protocol.toUpperCase()
+								value: s.protocol ? s.protocol.toUpperCase() : "—"
 							}),
 							/* @__PURE__ */ d(B, {
 								label: "Model",
@@ -784,7 +784,7 @@ function L({ agentId: t, trace: n, onBack: r, className: i }) {
 						title: "Tools",
 						children: /* @__PURE__ */ d("div", {
 							className: "flex flex-wrap gap-1",
-							children: s.tools.map((e) => /* @__PURE__ */ d("span", {
+							children: (Array.isArray(s.tools) ? s.tools : []).map((e) => /* @__PURE__ */ d("span", {
 								className: "text-[11px] px-2 py-0.5 bg-surface-hover rounded font-mono text-text-primary",
 								children: e
 							}, e))
@@ -815,11 +815,11 @@ function L({ agentId: t, trace: n, onBack: r, className: i }) {
 							}),
 							/* @__PURE__ */ d(B, {
 								label: "Tokens In",
-								value: c.tokensInLast24h.toLocaleString()
+								value: R(c.tokensInLast24h)
 							}),
 							/* @__PURE__ */ d(B, {
 								label: "Tokens Out",
-								value: c.tokensOutLast24h.toLocaleString()
+								value: R(c.tokensOutLast24h)
 							}),
 							/* @__PURE__ */ d(B, {
 								label: "Guardrail Blocks",
@@ -846,7 +846,10 @@ function L({ agentId: t, trace: n, onBack: r, className: i }) {
 		})]
 	});
 }
-function R({ status: t }) {
+function R(e) {
+	return typeof e == "number" && Number.isFinite(e) ? e.toLocaleString() : "—";
+}
+function ee({ status: t }) {
 	return /* @__PURE__ */ d("span", {
 		className: e("text-xs font-medium px-2.5 py-1 rounded-full", {
 			healthy: "bg-success-bg text-success-fg",
@@ -880,7 +883,7 @@ function B({ label: t, value: n, mono: r }) {
 }
 //#endregion
 //#region src/components/agents/components/AgentFlowCanvas.tsx
-function ee(e, t) {
+function te(e, t) {
 	let n = /* @__PURE__ */ new Map(), r = /* @__PURE__ */ new Map();
 	for (let t of e) n.set(t.id, 0), r.set(t.id, 0);
 	for (let e of t) n.set(e.from, (n.get(e.from) ?? 0) + 1), r.set(e.to, (r.get(e.to) ?? 0) + 1);
@@ -915,7 +918,7 @@ function ee(e, t) {
 	}
 	return a;
 }
-function te(e, t) {
+function ne(e, t) {
 	let n = new Set(t.map((e) => e.id));
 	return e.filter((e) => n.has(e.from) && n.has(e.to)).map((e, n) => {
 		let r = t.find((t) => t.id === e.from)?.protocol === "a2a";
@@ -943,9 +946,9 @@ function te(e, t) {
 		};
 	});
 }
-var ne = [];
-function V({ agents: t, edges: n = ne, onAgentClick: r, className: i }) {
-	let a = s(() => ee(t, n), [t, n]), o = s(() => te(n, t), [n, t]);
+var re = [];
+function V({ agents: t, edges: n = re, onAgentClick: r, className: i }) {
+	let a = s(() => te(t, n), [t, n]), o = s(() => ne(n, t), [n, t]);
 	return /* @__PURE__ */ d("div", {
 		className: e("w-full h-[500px]", i),
 		children: /* @__PURE__ */ f(g, {
@@ -967,7 +970,7 @@ function V({ agents: t, edges: n = ne, onAgentClick: r, className: i }) {
 }
 //#endregion
 //#region src/components/agents/AgentFlowPage.tsx
-var re = [
+var ie = [
 	{
 		from: "orgiq-supervisor",
 		to: "orgiq-search"
@@ -993,7 +996,7 @@ var re = [
 		to: "orgiq-scoring"
 	}
 ];
-function ie({ edges: t = re, onAgentClick: n, className: r }) {
+function ae({ edges: t = ie, onAgentClick: n, className: r }) {
 	let { agents: i } = w(), a = i.filter((e) => e.protocol === "a2a"), o = i.filter((e) => e.protocol === "direct");
 	return /* @__PURE__ */ f("div", {
 		className: e("space-y-4", r),
@@ -1056,7 +1059,7 @@ function W(e, t) {
 function G(e) {
 	return !e || e === "/" ? [] : e.replace(/^\//, "").split("/").map((e) => e.replace(/~1/g, "/").replace(/~0/g, "~"));
 }
-function ae(e, t) {
+function oe(e, t) {
 	let n = e;
 	for (let e of t) try {
 		let t = G(e.path);
@@ -1247,7 +1250,7 @@ function q({ url: e, threadId: t, headers: n, extraBody: r, onEvent: a }) {
 				g(e.snapshot);
 				break;
 			case "STATE_DELTA":
-				g((t) => ae(t, e.delta));
+				g((t) => oe(t, e.delta));
 				break;
 			case "MESSAGES_SNAPSHOT":
 				u(e.messages);
@@ -1357,7 +1360,7 @@ function q({ url: e, threadId: t, headers: n, extraBody: r, onEvent: a }) {
 		N
 	]), R = i((e, t) => {
 		I(), v(e), b(null), u(t), f(""), m([]), w(null), D.current = "", O.current = [], E.current = null, A.current = /* @__PURE__ */ new Set(), k.current = !1;
-	}, [I]), z = i(() => {
+	}, [I]), ee = i(() => {
 		T.current?.abort(), T.current = null, A.current = /* @__PURE__ */ new Set(), k.current = !1, u([]), S(!1), f(""), m([]), g(void 0), v(null), b(null), w(null), D.current = "", O.current = [], E.current = null;
 	}, []);
 	return o(() => () => T.current?.abort(), []), {
@@ -1371,13 +1374,13 @@ function q({ url: e, threadId: t, headers: n, extraBody: r, onEvent: a }) {
 		error: C,
 		sendMessage: L,
 		cancelStream: I,
-		reset: z,
+		reset: ee,
 		loadHistory: R
 	};
 }
 //#endregion
 //#region src/components/agents/components/ToolCallRenderer.tsx
-var oe = {
+var se = {
 	streaming: "⏳",
 	completed: "✓",
 	error: "✗"
@@ -1392,7 +1395,7 @@ function J({ toolCall: t, className: n }) {
 			children: [
 				/* @__PURE__ */ d("span", {
 					className: e(t.status === "streaming" && "animate-pulse", t.status === "completed" && "text-success-fg", t.status === "error" && "text-danger-fg"),
-					children: oe[t.status]
+					children: se[t.status]
 				}),
 				/* @__PURE__ */ d("span", {
 					className: "text-text-primary font-medium",
@@ -1420,7 +1423,7 @@ function J({ toolCall: t, className: n }) {
 				children: "result"
 			}), /* @__PURE__ */ d("pre", {
 				className: "text-[11px] text-text-secondary whitespace-pre-wrap break-all max-h-[100px] overflow-y-auto",
-				children: se(t.result)
+				children: ce(t.result)
 			})] })]
 		})]
 	});
@@ -1432,7 +1435,7 @@ function Y(e) {
 		return e;
 	}
 }
-function se(e) {
+function ce(e) {
 	if (typeof e == "string") return Y(e);
 	try {
 		return JSON.stringify(e, null, 2);
@@ -1615,7 +1618,7 @@ function Q({ messages: t, isStreaming: r, streamingText: i = "", activeToolCalls
 }
 //#endregion
 //#region src/components/agents/AgentInvokePage.tsx
-function ce({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
+function le({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 	let { agents: i } = w(), [a, o] = l(t ?? i[0]?.id ?? ""), [s, c] = l([]), { messages: u, isStreaming: p, streamingText: m, activeToolCalls: h, error: g, sendMessage: _, cancelStream: v, reset: y } = q({
 		url: `${n}/${a}/invoke`,
 		onEvent: (e) => c((t) => [...t, e])
@@ -1736,7 +1739,7 @@ function ce({ defaultAgentId: t, baseUrl: n = "/api/agents", className: r }) {
 }
 //#endregion
 //#region src/components/agents/hooks/useAgentRegistry.ts
-function le({ baseUrl: e, pollIntervalMs: t = 3e4, enabled: n = !0 } = {}) {
+function ue({ baseUrl: e, pollIntervalMs: t = 3e4, enabled: n = !0 } = {}) {
 	let [r, a] = l(_), [s, c] = l("fixture"), [u, d] = l(!1), [f, p] = l(null), m = i(async () => {
 		if (!e) {
 			a(_), c("fixture");
@@ -1777,7 +1780,7 @@ function le({ baseUrl: e, pollIntervalMs: t = 3e4, enabled: n = !0 } = {}) {
 }
 //#endregion
 //#region src/components/agents/hooks/useAgentMetrics.ts
-function ue({ baseUrl: e, agentId: t, pollIntervalMs: n = 6e4, enabled: r = !0 } = {}) {
+function de({ baseUrl: e, agentId: t, pollIntervalMs: n = 6e4, enabled: r = !0 } = {}) {
 	let [a, u] = l(v), [d, f] = l("fixture"), [p, m] = l(!1), [h, g] = l(null), _ = c(0), y = i(async () => {
 		let n = ++_.current, r = () => _.current === n;
 		if (!e) {
@@ -1824,7 +1827,7 @@ function ue({ baseUrl: e, agentId: t, pollIntervalMs: n = 6e4, enabled: r = !0 }
 function $() {
 	return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
-function de({ baseUrl: e, participants: t } = {}) {
+function fe({ baseUrl: e, participants: t } = {}) {
 	let [n, r] = l(null), [a, o] = l([]), s = c(null), u = i((e) => {
 		let t = `a2a-${$()}`;
 		s.current = t;
@@ -1867,13 +1870,13 @@ function de({ baseUrl: e, participants: t } = {}) {
 }
 //#endregion
 //#region src/components/agents/components/AgentDirectory.tsx
-var fe = [
+var pe = [
 	"healthy",
 	"degraded",
 	"offline",
 	"deploying"
 ];
-function pe({ agents: t, metricsById: r, filters: i = fe, selectedId: a = null, onSelect: o, emptyMessage: c = "No agents match your filter.", className: u }) {
+function me({ agents: t, metricsById: r, filters: i = pe, selectedId: a = null, onSelect: o, emptyMessage: c = "No agents match your filter.", className: u }) {
 	let [p, m] = l(""), [h, g] = l(null), _ = s(() => {
 		let e = p.trim().toLowerCase();
 		return t.filter((t) => h && t.status !== h ? !1 : !e || t.name.toLowerCase().includes(e) || t.id.toLowerCase().includes(e) || (t.description?.toLowerCase().includes(e) ?? !1));
@@ -1926,7 +1929,7 @@ function pe({ agents: t, metricsById: r, filters: i = fe, selectedId: a = null, 
 }
 //#endregion
 //#region src/components/agents/components/ConversationHistory.tsx
-function me(e) {
+function he(e) {
 	let t = e.find((e) => e.role === "user" && e.content.trim().length > 0);
 	if (t) {
 		let e = t.content.trim().replace(/\s+/g, " ");
@@ -1934,13 +1937,13 @@ function me(e) {
 	}
 	return "New conversation";
 }
-function he(e) {
+function ge(e) {
 	let t = [...e].reverse().find((e) => e.role === "assistant" && e.content.trim().length > 0);
 	if (!t) return null;
 	let n = t.content.trim().replace(/\s+/g, " ");
 	return n.length > 120 ? `${n.slice(0, 117)}…` : n;
 }
-function ge({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, emptyMessage: a = "No prior conversations.", className: o }) {
+function _e({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, emptyMessage: a = "No prior conversations.", className: o }) {
 	return t.length === 0 ? /* @__PURE__ */ d("div", {
 		className: e("rounded-md border border-dashed border-border-emphasis bg-surface-panel px-4 py-6 text-center text-sm text-neutral", o),
 		children: a
@@ -1948,7 +1951,7 @@ function ge({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 		className: e("flex flex-col gap-1", o),
 		"aria-label": "Prior conversations",
 		children: t.map((t) => {
-			let a = n === t.threadId, o = me(t.messages), s = he(t.messages);
+			let a = n === t.threadId, o = he(t.messages), s = ge(t.messages);
 			return /* @__PURE__ */ f("li", {
 				className: e("group flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors", a ? "border-info bg-info-bg/60" : "border-border bg-white hover:border-border-emphasis hover:bg-surface-panel"),
 				children: [/* @__PURE__ */ f("button", {
@@ -1987,7 +1990,7 @@ function ge({ sessions: t, activeThreadId: n = null, onResume: r, onDelete: i, e
 }
 //#endregion
 //#region src/components/agents/components/PolicyDecisionLog.tsx
-function _e({ decisions: t, className: n, maxItems: r = 50 }) {
+function ve({ decisions: t, className: n, maxItems: r = 50 }) {
 	let i = t.slice(0, r);
 	return /* @__PURE__ */ f("div", {
 		className: e("border border-border rounded-lg overflow-hidden bg-white", n),
@@ -2048,14 +2051,14 @@ function _e({ decisions: t, className: n, maxItems: r = 50 }) {
 					}),
 					/* @__PURE__ */ d("span", {
 						className: "text-[10px] text-text-tertiary shrink-0",
-						children: ve(t.timestamp)
+						children: ye(t.timestamp)
 					})
 				]
 			}, t.id))
 		})]
 	});
 }
-function ve(e) {
+function ye(e) {
 	try {
 		let t = new Date(e);
 		return `${t.getHours().toString().padStart(2, "0")}:${t.getMinutes().toString().padStart(2, "0")}:${t.getSeconds().toString().padStart(2, "0")}`;
@@ -2065,7 +2068,7 @@ function ve(e) {
 }
 //#endregion
 //#region src/components/agents/components/MemoryInspector.tsx
-function ye({ entries: t, className: r, onDelete: i }) {
+function be({ entries: t, className: r, onDelete: i }) {
 	let [a, o] = l("all"), [s, c] = l(""), u = t.filter((e) => !(a !== "all" && e.scope !== a || s && !e.key.toLowerCase().includes(s.toLowerCase()) && !e.value.toLowerCase().includes(s.toLowerCase()))), p = t.filter((e) => e.scope === "session").length, m = t.filter((e) => e.scope === "long-term").length;
 	return /* @__PURE__ */ f("div", {
 		className: e("border border-border rounded-lg overflow-hidden bg-white", r),
@@ -2141,11 +2144,11 @@ function ye({ entries: t, className: r, onDelete: i }) {
 						}),
 						/* @__PURE__ */ d("pre", {
 							className: "text-[11px] text-text-secondary font-mono whitespace-pre-wrap break-all max-h-[60px] overflow-y-auto",
-							children: be(t.value)
+							children: xe(t.value)
 						}),
 						/* @__PURE__ */ f("div", {
 							className: "flex items-center gap-2 mt-0.5 text-[10px] text-text-tertiary",
-							children: [/* @__PURE__ */ f("span", { children: ["Created ", xe(t.createdAt)] }), t.ttl && /* @__PURE__ */ f("span", { children: [
+							children: [/* @__PURE__ */ f("span", { children: ["Created ", Se(t.createdAt)] }), t.ttl && /* @__PURE__ */ f("span", { children: [
 								"· TTL ",
 								t.ttl,
 								"s"
@@ -2157,14 +2160,14 @@ function ye({ entries: t, className: r, onDelete: i }) {
 		]
 	});
 }
-function be(e) {
+function xe(e) {
 	try {
 		return JSON.stringify(JSON.parse(e), null, 2);
 	} catch {
 		return e;
 	}
 }
-function xe(e) {
+function Se(e) {
 	try {
 		return new Date(e).toLocaleString(void 0, {
 			month: "short",
@@ -2177,4 +2180,4 @@ function xe(e) {
 	}
 }
 //#endregion
-export { X as AgUiReasoningBlock, O as AgentCard, L as AgentDetailPage, pe as AgentDirectory, V as AgentFlowCanvas, ie as AgentFlowPage, ce as AgentInvokePage, A as AgentsDashboardPage, T as AgentsLayout, C as AgentsProvider, ge as ConversationHistory, k as GuardrailBadge, ye as MemoryInspector, _e as PolicyDecisionLog, Q as StreamingChatPanel, J as ToolCallRenderer, I as TraceTimeline, _ as fixtureAgents, v as fixtureMetrics, x as fixtureTrace, de as useA2ASession, q as useAgUiStream, ue as useAgentMetrics, le as useAgentRegistry, w as useAgentsContext };
+export { X as AgUiReasoningBlock, O as AgentCard, L as AgentDetailPage, me as AgentDirectory, V as AgentFlowCanvas, ae as AgentFlowPage, le as AgentInvokePage, A as AgentsDashboardPage, T as AgentsLayout, C as AgentsProvider, _e as ConversationHistory, k as GuardrailBadge, be as MemoryInspector, ve as PolicyDecisionLog, Q as StreamingChatPanel, J as ToolCallRenderer, I as TraceTimeline, _ as fixtureAgents, v as fixtureMetrics, x as fixtureTrace, fe as useA2ASession, q as useAgUiStream, de as useAgentMetrics, ue as useAgentRegistry, w as useAgentsContext };
